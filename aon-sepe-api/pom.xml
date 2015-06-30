@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>8.26-SNAPSHOT</version>
+		<version>8.26</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.esferalia.aon</groupId>
@@ -38,7 +38,7 @@
 				<executions>
 					<execution>
 						<id>preprocessSources</id>
-						<phase/>
+						<phase />
 					</execution>
 				</executions>
 			</plugin>
