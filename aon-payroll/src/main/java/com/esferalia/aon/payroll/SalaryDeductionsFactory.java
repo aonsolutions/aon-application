@@ -89,7 +89,7 @@ public class SalaryDeductionsFactory implements IDeductionsFactory {
 		} else if (sd.getType() == DeductionType.IN_KIND) {
 			deductions.setInKind(sd);
 		} else if (sd.getType() == DeductionType.OTHER) {
-			deductions.setOther(sd);
+			deductions.addOther(sd);
 		}
 	}
 
