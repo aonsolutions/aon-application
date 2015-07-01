@@ -230,11 +230,19 @@ public class LearningModel extends AbstractContractModel {
 			}
 			
 			
-			String subsidized = getContractDataMap(contract).get(ContextVariable.SUBSIDIZED.getName());
-			if( subsidized!=null ){
-				if( Boolean.parseBoolean(subsidized) ){
+//			String subsidized = getContractDataMap(contract).get(ContextVariable.SUBSIDIZED.getName());
+//			if( subsidized!=null ){
+//				if( Boolean.parseBoolean(subsidized) ){
+//					setPdfFieldValue(PdfFieldLearning.QUOTE_BONUS_YES.getValue(),"true");
+//				} else if( !Boolean.parseBoolean(subsidized) ){
+//					setPdfFieldValue(PdfFieldLearning.QUOTE_BONUS_NO.getValue(),"true");
+//				}
+//			}
+			String quoteBonus = getContractInfoMap(contract).get(PdfFieldLearning.QUOTE_BONUS.toString());
+			if(StringUtils.isNotBlank(quoteBonus)){
+				if(PdfFieldLearning.QUOTE_BONUS_YES.toString().equals(quoteBonus)){
 					setPdfFieldValue(PdfFieldLearning.QUOTE_BONUS_YES.getValue(),"true");
-				} else if( !Boolean.parseBoolean(subsidized) ){
+				} else if(PdfFieldLearning.QUOTE_BONUS_NO.toString().equals(quoteBonus)){
 					setPdfFieldValue(PdfFieldLearning.QUOTE_BONUS_NO.getValue(),"true");
 				}
 			}
@@ -263,6 +271,18 @@ public class LearningModel extends AbstractContractModel {
 					setPdfFieldValue(PdfFieldLearning.CNO2.getValue(),cno.substring(1, 2));
 					setPdfFieldValue(PdfFieldLearning.CNO3.getValue(),cno.substring(2, 3));
 					setPdfFieldValue(PdfFieldLearning.CNO4.getValue(),cno.substring(3, 4));
+				}
+			} else {
+				if(contrata!=null && contrata.getCno()!=null ){
+					setPdfFieldValue(PdfFieldLearning.ACTIVITY_EMPLOYEE_PROFFESION.getValue(),contrata.getCno().getTitle());
+					setPdfFieldValue(PdfFieldLearning.ACTIVITY_EMPLOYEE_CATEGORY.getValue(), contract.getCategoryDescription());
+					String cno = contrata.getCno().getCode();
+					if( !StringUtils.isEmpty(cno) ){
+						setPdfFieldValue(PdfFieldLearning.CNO1.getValue(),cno.substring(0, 1));
+						setPdfFieldValue(PdfFieldLearning.CNO2.getValue(),cno.substring(1, 2));
+						setPdfFieldValue(PdfFieldLearning.CNO3.getValue(),cno.substring(2, 3));
+						setPdfFieldValue(PdfFieldLearning.CNO4.getValue(),cno.substring(3, 4));
+					}
 				}
 			}
 			
@@ -339,7 +359,10 @@ public class LearningModel extends AbstractContractModel {
 			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldLearning.TRIAL_DURATION.toString()))){
 				setPdfFieldValue(PdfFieldLearning.TRIAL_DURATION.getValue(),getContractInfoMap(contract).get(PdfFieldLearning.TRIAL_DURATION.toString()));
 			}
-			setPdfFieldValue(PdfFieldLearning.TRIAL_DURATION_INCREASE.getValue(), null);
+			String trialDurationIncrease = getContractInfoMap(contract).get(PdfFieldLearning.TRIAL_DURATION_INCREASE.toString());
+			if(StringUtils.isNotBlank(trialDurationIncrease) && new Boolean(trialDurationIncrease)){
+				setPdfFieldValue(PdfFieldLearning.TRIAL_DURATION_INCREASE.getValue(), "true");
+			}
 			
 			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldLearning.SALARY_AMOUNT.toString()))){
 				setPdfFieldValue(PdfFieldLearning.SALARY_AMOUNT.getValue(),getContractInfoMap(contract).get(PdfFieldLearning.SALARY_AMOUNT.toString()));
@@ -379,10 +402,10 @@ public class LearningModel extends AbstractContractModel {
 			if(modelOption == ModelOption.LEARNING_OPT1){
 				setPdfFieldValue(PdfFieldLearning.MAIN_OPT1_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldLearning.OPT1_OPTION_CHECK.getValue(),"true");
-				if( subsidized!=null ){
-					if( Boolean.parseBoolean(subsidized) ){
+				if(StringUtils.isNotBlank(quoteBonus)){
+					if(PdfFieldLearning.QUOTE_BONUS_YES.toString().equals(quoteBonus)){
 						setPdfFieldValue(PdfFieldLearning.OPT1_QUOTE_BONUS.getValue(),"true");
-					} else if( !Boolean.parseBoolean(subsidized) ){
+					} else if(PdfFieldLearning.QUOTE_BONUS_NO.toString().equals(quoteBonus)){
 						setPdfFieldValue(PdfFieldLearning.OPT1_QUOTE_NO_BONUS.getValue(),"true");
 					}
 				}

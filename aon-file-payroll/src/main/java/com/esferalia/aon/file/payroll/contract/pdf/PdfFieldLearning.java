@@ -100,6 +100,7 @@ public enum PdfFieldLearning implements IContractFieldName{
 	 */
 	QUOTE_BONUS_YES,
 	QUOTE_BONUS_NO,
+	QUOTE_BONUS(QUOTE_BONUS_YES, QUOTE_BONUS_NO),
 	EMPLOYEE_OPT1,
 	EMPLOYEE_OPT2,
 	EMPLOYEE_OPT3,
@@ -140,7 +141,7 @@ public enum PdfFieldLearning implements IContractFieldName{
 	START_DATE,
 	END_DATE,
 	TRIAL_DURATION(Boolean.TRUE),
-	TRIAL_DURATION_INCREASE,
+	TRIAL_DURATION_INCREASE(Boolean.TRUE, Boolean.TRUE),
 	
 	SALARY_AMOUNT(Boolean.TRUE),
 	SALARY_PERIOD(Boolean.TRUE),

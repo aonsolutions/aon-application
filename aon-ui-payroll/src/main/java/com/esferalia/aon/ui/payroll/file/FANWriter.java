@@ -806,7 +806,7 @@ public class FANWriter implements Serializable {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			String select = "SELECT sum(quote) FROM salary_payment";
 			select += " WHERE salary = " + salary.getId();
-			select += " AND payment_concept = '" + ContextVariable.PREST_IT.getName() + "'";
+			select += " AND payment_concept IN ('" + ContextVariable.PREST_IT.getName() + "', '" + ContextVariable.MATERNITY.getName() + "')";
 			select += " GROUP BY payment_concept;";
 			ps = conn.prepareStatement(select);
 			ResultSet rs = ps.executeQuery();
@@ -1225,7 +1225,7 @@ public class FANWriter implements Serializable {
 	private Integer getEreDays(List<ITransferObject> list) {
 		String _workedDays = null;
 		String _monthDays = null;
-		String _ereFactor = null;
+		String _ereBase = null;
 		for(ITransferObject to: list){
 			SalaryData sd = (SalaryData) to;
 			if(sd.getName().equals(ContextVariable.WORKED_DAYS.getName())){
@@ -1234,13 +1234,13 @@ public class FANWriter implements Serializable {
 			if(sd.getName().equals(ContextVariable.MONTH_DAYS.getName())){
 				_monthDays = sd.getExpression();
 			}
-			if(sd.getName().equals(ContextVariable.ERE_FACTOR.getName())){
-				_ereFactor = sd.getExpression();
+			if(sd.getName().equals(ContextVariable.ERE_BASE.getName())){
+				_ereBase = sd.getExpression();
 			}
 		}
-		if(_ereFactor!=null && NumberUtils.isNumber(_ereFactor)){
+		if(_ereBase!=null && NumberUtils.isNumber(_ereBase)){
 			Integer ereDays = Double.valueOf(_monthDays).intValue() - Double.valueOf(_workedDays).intValue();
-			if(Double.valueOf(_ereFactor)>0.0 && ereDays>0){
+			if(Double.parseDouble(_ereBase)>0.0 && ereDays>0){
 				return ereDays;
 			}
 		}
@@ -1405,6 +1405,7 @@ public class FANWriter implements Serializable {
 			fanFactory.createEDTCd29Segment(emp);
 			fanFactory.createEDTCd30Segment(emp);
 			fanFactory.createEDTCd31Segment(ccc, emp);
+			fanFactory.createEDTCd34Segment(ccc, emp);
 			
 			fanFactory.createEDTCa01Segment(obtainCGCTotalEnterprise(ccc), obtainCGCTotalEmployee(ccc), emp);
 			

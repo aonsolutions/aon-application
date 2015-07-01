@@ -130,24 +130,29 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 		// Item Tag
 		updateParam(APP_ITEM_TAG_TEMPLATE_PARAM, companyController.getItemTagTemplate());
 		updateParam(AppParam.APP_ITEM_TAG_TEXT_PARAM, companyController.getItemTagDefaultText());
-		if(checkItemTagBarcodePattern(companyController.getItemTagBarcodePattern())){
-			updateParam(AppParam.APP_ITEM_TAG_BARCODE_PARAM, companyController.getItemTagBarcodePattern());
-		} else {
-			AonUtil.addErrorMessage("Invalid barcode pattern!");
+		if(StringUtils.isNotBlank(companyController.getItemTagBarcodePattern())){
+			if(checkItemTagBarcodePattern(companyController.getItemTagBarcodePattern())){
+				updateParam(AppParam.APP_ITEM_TAG_BARCODE_PARAM, companyController.getItemTagBarcodePattern());
+			} else {
+				AonUtil.addErrorMessage("Invalid barcode pattern!");
+			}
 		}
 	}
 	
 	private boolean checkItemTagBarcodePattern(String itemTagBarcodePattern) {
 		final String[] VALID_VAR_NAMES = {"codigo_barras", "lote", "fecha_caducidad"}; 
 		final Pattern TAG_REGEX = Pattern.compile("\\$\\{(.+?)\\}");
-	    Matcher matcher = TAG_REGEX.matcher(itemTagBarcodePattern);
-	    boolean validPattern = true;
-	    while (matcher.find() && validPattern) {
-	    	if( !ArrayUtils.contains(VALID_VAR_NAMES, matcher.group(1)) ){
-	    		validPattern = false;
-	    	}
-	    }
-		return validPattern;
+		if(StringUtils.isNotBlank(itemTagBarcodePattern)){
+			Matcher matcher = TAG_REGEX.matcher(itemTagBarcodePattern);
+			boolean validPattern = true;
+			while (matcher.find() && validPattern) {
+				if( !ArrayUtils.contains(VALID_VAR_NAMES, matcher.group(1)) ){
+					validPattern = false;
+				}
+			}
+			return validPattern;
+		}
+		return false;
 	}
 
 	private void updateParam(AppParam appParam, ReportPrintOption value) throws ManagerBeanException {
