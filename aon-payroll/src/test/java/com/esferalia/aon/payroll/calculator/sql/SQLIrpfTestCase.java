@@ -109,8 +109,11 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 		
-		Date startDate = new Date(2015-1900, 4, 1);
-		Date endDate = new Date(2015-1900, 5, 30);
+		Calendar calendar = Calendar.getInstance();
+		// Be care that the first day of the month has value 1.
+		calendar.set(DAY_OF_MONTH, 1);
+		Date startDate = new Date(calendar.getTimeInMillis());
+		Date endDate = getLastDayOfMonth(add(startDate, Calendar.MONTH, 1));
 
 		AgreementLevelCategoryRecord category = newAgreement(aonContext,
 				new Extra[] { 
@@ -146,13 +149,8 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				}
 				, category);
 
-		Calendar calendar = Calendar.getInstance();
-		// Be care that the first day of the month has value 1.
-		calendar.set(DAY_OF_MONTH, 1);
-		Date start = new Date(calendar.getTimeInMillis());
-
-		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(DAY_OF_MONTH));
-		Date end = new Date(calendar.getTimeInMillis());
+		Date start = startDate;
+		Date end = getLastDayOfMonth(startDate);
 
 		Date issue = new Date(calendar.getTimeInMillis());
 
