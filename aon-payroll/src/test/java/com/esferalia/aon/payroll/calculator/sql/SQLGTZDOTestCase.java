@@ -252,13 +252,13 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				}, new String[] { 
 						"( P_1 + P_2 )* 0.10 ",
 						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
-						"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+						"250.00*DIAS_TRABAJADOS/DIAS_MES" ,
 						"GTZDO(P_1 + P_2,4,30)" ,
 						}
 				, new String[] {
 						"BASE_CGC * 0.10", 
 						"BASE_CGP * 0.05",
-						"BASE_IRPF * PORCENTAJE_IRPF/100" }, category);
+						"BASE_IRPF * 0.00/100" }, category);
 		//@formatter:on
 		
 		
@@ -301,7 +301,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		//@formatter:off
 		Assert.assertEquals(
 				(( 1500.00 + 250.00 ) * 1.10) * workedDays / monthDays 
-				+ (1500.00 + 250.00 ) * Math.max(0,Math.min(30,itDays-3)) / monthDays
+				+ (1500.00 + 250.00 ) * Math.max(0,Math.min(30,itDays)-3) / monthDays
+				+ 50 * 0.75 * Math.max(itDays-30,0) 
 				, 
 				salary.getTotalPayment() 
 				, DELTA);
