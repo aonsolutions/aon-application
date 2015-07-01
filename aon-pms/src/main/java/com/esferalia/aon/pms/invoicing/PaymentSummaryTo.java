@@ -1,13 +1,18 @@
 package com.esferalia.aon.pms.invoicing;
 
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.PayMethod;
 
-public class PaymentSummaryTo {
+public class PaymentSummaryTo implements Serializable {
+
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private PayMethod payMethod;
-	private double reservationReturnAmount;
-	private double servicesReturnAmount;
+	private boolean service;
+	private double returnAmount;
 	private double paymentAmount;
 
 	public PayMethod getPayMethod() {
@@ -18,20 +23,20 @@ public class PaymentSummaryTo {
 		this.payMethod = payMethod;
 	}
 
-	public double getReservationReturnAmount() {
-		return reservationReturnAmount;
+	public boolean isService() {
+		return service;
 	}
 
-	public void setReservationReturnAmount(double reservationReturnAmount) {
-		this.reservationReturnAmount = reservationReturnAmount;
+	public void setService(boolean service) {
+		this.service = service;
 	}
 
-	public double getServicesReturnAmount() {
-		return servicesReturnAmount;
+	public double getReturnAmount() {
+		return returnAmount;
 	}
 
-	public void setServicesReturnAmount(double servicesReturnAmount) {
-		this.servicesReturnAmount = servicesReturnAmount;
+	public void setReturnAmount(double returnAmount) {
+		this.returnAmount = returnAmount;
 	}
 
 	public double getPaymentAmount() {
@@ -42,16 +47,12 @@ public class PaymentSummaryTo {
 		this.paymentAmount = paymentAmount;
 	}
 
-	public double getTotalReturnAmount() {
-		return CommonUtil.round(getReservationReturnAmount() + getServicesReturnAmount());
+	public double getLiquidationAmount() {
+		return CommonUtil.round(getPaymentAmount() - getReturnAmount());
 	}
 
-	public double getTotalAmount() {
-		return CommonUtil.round(getPaymentAmount() - getReservationReturnAmount() - getServicesReturnAmount());
-	}
-
-	public double getTotalAmountAbs() {
-		return Math.abs(getTotalAmount());
+	public double getLiquidationAmountAbs() {
+		return Math.abs(getLiquidationAmount());
 	}
 
 	@Override

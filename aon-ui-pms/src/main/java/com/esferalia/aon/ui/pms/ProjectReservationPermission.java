@@ -158,7 +158,7 @@ public class ProjectReservationPermission implements Serializable {
 	public boolean isEarlyCheckOutAllowed() {
 		Date now = new Date();
 		boolean roleAllowed = (isInHouse(now)) || ((isRoleConfig() || isRoleFinance()) && isAfterCheckOut(now));
-		return roleAllowed && reservation.isInvoiced() && reservation.isCheckIn();
+		return roleAllowed && !reservation.isEarlyCheckOut() && reservation.isInvoiced() && reservation.isCheckIn();
 	}
 
 	public boolean isAdvanceInvoiceAllowed() throws ManagerBeanException {

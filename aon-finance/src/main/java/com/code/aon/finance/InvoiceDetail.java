@@ -247,6 +247,10 @@ public class InvoiceDetail extends InvoiceDetailDB implements ICalculable, IStoc
 		return (getSource() == InvoiceSource.FEE);
 	}
 	@Transient
+	public boolean isReservationSource() {
+		return (getSource() == InvoiceSource.RESERVATION);
+	}
+	@Transient
 	public boolean isPrepaymentSource() throws ManagerBeanException {
 		if (isFeeSource() && isPrepayment()) {
 			IManagerBean prepaymentBean = BeanManager.getManagerBean(Prepayment.class);
