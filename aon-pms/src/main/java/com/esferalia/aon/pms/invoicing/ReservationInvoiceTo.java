@@ -46,6 +46,7 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 	private double penaltyAmount;
 	private PosShift posShift;
 	private List<HotelService> services;
+	private List<Integer> servicesIds;
 	private List<Finance> finances;
 
 	public ReservationInvoiceTo(boolean service) {
@@ -57,13 +58,13 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 		setComments(null);
 		setServiceType(ProductType.SERVICE);
 		setServices(new LinkedList<HotelService>());
+		setServicesIds(new LinkedList<Integer>());
 		setFinances(new LinkedList<Finance>());
 	}
 
 	public boolean isService() {
 		return service;
 	}
-
 	public void setService(boolean service) {
 		this.service = service;
 	}
@@ -71,7 +72,6 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 	public Date getIssueDate() {
 		return issueDate;
 	}
-
 	public void setIssueDate(Date issueDate) {
 		this.issueDate = issueDate;
 	}
@@ -79,7 +79,6 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 	public Hotel getHotel() {
 		return hotel;
 	}
-
 	public void setHotel(Hotel hotel) {
 		this.hotel = hotel;
 	}
@@ -87,7 +86,6 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 	public String getSeries() {
 		return series;
 	}
-
 	public void setSeries(String series) {
 		this.series = series;
 	}
@@ -95,7 +93,6 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 	public int getNumber() {
 		return number;
 	}
-
 	public void setNumber(int number) {
 		this.number = number;
 	}
@@ -103,7 +100,6 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 	public ProjectReservationRoomDetail getRoom() {
 		return room;
 	}
-
 	public void setRoom(ProjectReservationRoomDetail room) {
 		this.room = room;
 	}
@@ -111,7 +107,6 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 	public ProjectReservationGuest getGuest() {
 		return guest;
 	}
-
 	public void setGuest(ProjectReservationGuest guest) {
 		this.guest = guest;
 	}
@@ -119,7 +114,6 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 	public boolean isDirectCustomer() {
 		return directCustomer;
 	}
-
 	public void setDirectCustomer(boolean directCustomer) {
 		this.directCustomer = directCustomer;
 	}
@@ -127,7 +121,6 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 	public Registry getRegistry() {
 		return registry;
 	}
-
 	public void setRegistry(Registry registry) {
 		this.registry = registry;
 	}
@@ -135,7 +128,6 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 	public IAddress getAddress() {
 		return address;
 	}
-
 	public void setAddress(IAddress address) {
 		this.address = address;
 	}
@@ -143,7 +135,6 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 	public String getComments() {
 		return comments;
 	}
-
 	public void setComments(String comments) {
 		this.comments = comments;
 	}
@@ -151,7 +142,6 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 	public ProductType getServiceType() {
 		return serviceType;
 	}
-
 	public void setServiceType(ProductType serviceType) {
 		this.serviceType = serviceType;
 	}
@@ -159,7 +149,6 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 	public boolean isEarlyCheckOut() {
 		return earlyCheckOut;
 	}
-
 	public void setEarlyCheckOut(boolean earlyCheckOut) {
 		this.earlyCheckOut = earlyCheckOut;
 	}
@@ -167,7 +156,6 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 	public Date getEarlyCheckOutDate() {
 		return earlyCheckOutDate;
 	}
-
 	public void setEarlyCheckOutDate(Date earlyCheckOutDate) {
 		this.earlyCheckOutDate = earlyCheckOutDate;
 	}
@@ -175,7 +163,6 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 	public int getPenaltyDays() {
 		return penaltyDays;
 	}
-
 	public void setPenaltyDays(int penaltyDays) {
 		this.penaltyDays = penaltyDays;
 	}
@@ -183,7 +170,6 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 	public double getPenaltyAmount() {
 		return penaltyAmount;
 	}
-
 	public void setPenaltyAmount(double penaltyAmount) {
 		this.penaltyAmount = penaltyAmount;
 	}
@@ -191,7 +177,6 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 	public PosShift getPosShift() {
 		return posShift;
 	}
-
 	public void setPosShift(PosShift posShift) {
 		this.posShift = posShift;
 	}
@@ -199,15 +184,20 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 	public List<HotelService> getServices() {
 		return services;
 	}
-
 	public void setServices(List<HotelService> services) {
 		this.services = services;
+	}
+
+	public List<Integer> getServicesIds() {
+		return servicesIds;
+	}
+	public void setServicesIds(List<Integer> servicesIds) {
+		this.servicesIds = servicesIds;
 	}
 
 	public List<Finance> getFinances() {
 		return finances;
 	}
-
 	public void setFinances(List<Finance> finances) {
 		this.finances = finances;
 	}
@@ -215,15 +205,12 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 	public HotelService getNewService() {
 		return new HotelService(this);
 	}
-
 	public int getServicesCount() {
 		return getServices().size();
 	}
-
 	public HotelService getFirstService() {
 		return getServices().get(0);
 	}
-
 	public HotelService getLastService() {
 		return getServices().get(getServicesCount()-1);
 	}
@@ -231,11 +218,9 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 	public int getFinancesCount() {
 		return getFinances().size();
 	}
-
 	public Finance getFirstFinance() {
 		return getFinances().get(0);
 	}
-
 	public Finance getLastFinance() {
 		return getFinances().get(getFinancesCount()-1);
 	}

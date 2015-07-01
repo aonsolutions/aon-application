@@ -14,7 +14,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -38,11 +37,14 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.finance.util.FinanceUtil;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.IAddress;
 import com.code.aon.ui.common.role.BasicRoleManager;
 import com.code.aon.ui.finance.util.PosUtils;
@@ -64,8 +66,12 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 
 	private ProjectReservation reservation;
 	private ReservationInvoiceTo reservationInvoiceTo;
+	private List<ProjectReservationServiceDetail> reservationUsedServices;
+	private List<ProjectReservationServiceDetail> reservationNotUsedServices;
+	private List<ITransferObject> reservationInvoicesToRectify;
 	private List<Finance> reservationFinances;
-	private Map<Tax, Double> reservationUsedServices;
+	private List<PaymentSummaryTo> reservationPaymentSummary;
+	private List<PaymentSummaryTo> servicesPaymentSummary;
 	private boolean showEarlyCheckOutWindow;
 	private boolean chargeCheckOut;
 	private Integer earlyCheckOutPenalty;
@@ -73,7 +79,6 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 	public ProjectReservation getReservation() {
 		return reservation;
 	}
-
 	public void setReservation(ProjectReservation reservation) {
 		this.reservation = reservation;
 	}
@@ -81,31 +86,55 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 	public ReservationInvoiceTo getReservationInvoiceTo() {
 		return reservationInvoiceTo;
 	}
-
 	public void setReservationInvoiceTo(ReservationInvoiceTo reservationInvoiceTo) {
 		this.reservationInvoiceTo = reservationInvoiceTo;
+	}
+
+	public List<ProjectReservationServiceDetail> getReservationUsedServices() {
+		return reservationUsedServices;
+	}
+	public void setReservationUsedServices(List<ProjectReservationServiceDetail> reservationUsedServices) {
+		this.reservationUsedServices = reservationUsedServices;
+	}
+
+	public List<ProjectReservationServiceDetail> getReservationNotUsedServices() {
+		return reservationNotUsedServices;
+	}
+	public void setReservationNotUsedServices(List<ProjectReservationServiceDetail> reservationNotUsedServices) {
+		this.reservationNotUsedServices = reservationNotUsedServices;
+	}
+
+	public List<ITransferObject> getReservationInvoicesToRectify() {
+		return reservationInvoicesToRectify;
+	}
+	public void setReservationInvoicesToRectify(List<ITransferObject> reservationInvoicesToRectify) {
+		this.reservationInvoicesToRectify = reservationInvoicesToRectify;
 	}
 
 	public List<Finance> getReservationFinances() {
 		return reservationFinances;
 	}
-
 	public void setReservationFinances(List<Finance> reservationFinances) {
 		this.reservationFinances = reservationFinances;
 	}
 
-	public Map<Tax, Double> getReservationUsedServices() {
-		return reservationUsedServices;
+	public List<PaymentSummaryTo> getReservationPaymentSummary() {
+		return reservationPaymentSummary;
+	}
+	public void setReservationPaymentSummary(List<PaymentSummaryTo> reservationPaymentSummary) {
+		this.reservationPaymentSummary = reservationPaymentSummary;
 	}
 
-	public void setReservationUsedServices(Map<Tax, Double> reservationUsedServices) {
-		this.reservationUsedServices = reservationUsedServices;
+	public List<PaymentSummaryTo> getServicesPaymentSummary() {
+		return servicesPaymentSummary;
+	}
+	public void setServicesPaymentSummary(List<PaymentSummaryTo> servicesPaymentSummary) {
+		this.servicesPaymentSummary = servicesPaymentSummary;
 	}
 
 	public boolean isShowEarlyCheckOutWindow() {
 		return showEarlyCheckOutWindow;
 	}
-
 	public void setShowEarlyCheckOutWindow(boolean showEarlyCheckOutWindow) {
 		this.showEarlyCheckOutWindow = showEarlyCheckOutWindow;
 	}
@@ -113,7 +142,6 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 	public boolean isChargeCheckOut() {
 		return chargeCheckOut;
 	}
-
 	public void setChargeCheckOut(boolean chargeCheckOut) {
 		this.chargeCheckOut = chargeCheckOut;
 	}
@@ -121,57 +149,174 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 	public Integer getEarlyCheckOutPenalty() {
 		return earlyCheckOutPenalty;
 	}
-
 	public void setEarlyCheckOutPenalty(Integer earlyCheckOutPenalty) {
 		this.earlyCheckOutPenalty = earlyCheckOutPenalty;
 	}
 
 	public void onInit() {
 		try {
-			if (getReservation().getHotelReservation().getItemPenalty() == null || getReservation().getHotelReservation().getItemPenalty().getId() == null) {
-				setShowEarlyCheckOutWindow(false);
-				String msg = "El Hotel no tiene definido Producto para Salidas Anticipadas.";
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg);
+			fillReservationInvoiceTo();
+			fillReservationServiceLists();
+			if (validateEarlyCheckOutShow()) {
+				setChargeCheckOut(true);
+				setEarlyCheckOutPenalty(null);
+				setReservationFinances(obtainReservationFinances());
+				setReservationPaymentSummary(obtainPaymentSummary(false));
+				setServicesPaymentSummary(obtainPaymentSummary(true));
 			}
-			for (ITransferObject ito : obtainReservationInvoiceList(getReservation())) {
-	    		Invoice invoiceToRectify = (Invoice)ito;
-	    		if (!FinanceUtil.isValidLimitRectificationDate(invoiceToRectify)) {
-					setShowEarlyCheckOutWindow(false);
-	    			String msg = AonUtil.addErrorMessageFromBundle(FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR);
-	    			throw new AbortProcessingException(msg);
-	    		}
-			}
-
-			setChargeCheckOut(true);
-			setEarlyCheckOutPenalty(null);
-			setReservationInvoiceTo(new ReservationInvoiceTo(false));
-			getReservationInvoiceTo().setIssueDate(getReservation().getStartDate());
-			getReservationInvoiceTo().setDirectCustomer(true);
-			getReservationInvoiceTo().setEarlyCheckOut(true);
-			getReservationInvoiceTo().setEarlyCheckOutDate(DateUtils.truncate(new Date(), Calendar.DATE));
-			getReservationInvoiceTo().setFinances(new LinkedList<Finance>());
-			setReservationFinances(obtainReservationFinances());
-			setReservationUsedServices(obtainReservationUsedServices());
-			onNewFinance(null);
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
 	}
 
+	private void fillReservationInvoiceTo() {
+		setReservationInvoiceTo(new ReservationInvoiceTo(false));
+		getReservationInvoiceTo().setHotel(getReservation().getHotel());
+		getReservationInvoiceTo().setIssueDate(getReservation().getStartDate());
+		getReservationInvoiceTo().setDirectCustomer(true);
+		getReservationInvoiceTo().setEarlyCheckOut(true);
+		getReservationInvoiceTo().setEarlyCheckOutDate(DateUtils.truncate(new Date(), Calendar.DATE));
+		getReservationInvoiceTo().setFinances(new LinkedList<Finance>());
+	}
+
+	private void fillReservationServiceLists() throws ManagerBeanException {
+		List<ProjectReservationServiceDetail> usedServicesList = new LinkedList<ProjectReservationServiceDetail>();
+		List<ProjectReservationServiceDetail> notUsedServicesList = new LinkedList<ProjectReservationServiceDetail>();
+		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
+		Criteria criteria = new Criteria();
+		String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID);
+		criteria.addEqualExpression(alias, getReservation().getId());
+		if (getReservation().isAgencyHolder()) {
+			alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA);
+			criteria.addEqualExpression(alias, Boolean.TRUE);
+		}
+		criteria.addOrder(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_ID));
+		for (ITransferObject ito : reservationServiceDetailBean.getList(criteria)) {
+			ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)ito;
+			ProjectReservationService reservationService = reservationServiceDetail.getProjectReservationService();
+			if (!reservationService.isExtra() || reservationService.getItem().getProduct().getType() == ProductType.SERVICE) {
+				if (reservationServiceDetail.getEffectiveDate().before(getReservationInvoiceTo().getEarlyCheckOutDate())) {
+					usedServicesList.add(reservationServiceDetail);
+				} else {
+					notUsedServicesList.add(reservationServiceDetail);
+				}
+			}
+		}
+
+		setReservationUsedServices(usedServicesList);
+		setReservationNotUsedServices(notUsedServicesList);
+		setReservationInvoicesToRectify(obtainReservationInvoicesToRectify(getReservation()));
+		excludeNotRectifiedExtraServices();
+	}
+
+	private void excludeNotRectifiedExtraServices() throws ManagerBeanException {
+		List<Integer> serviceDetailsToRectifyIds = obtainReservationExtraServiceDetailsToRectifyIds();
+		List<ProjectReservationServiceDetail> serviceDetailsToExclude = new LinkedList<ProjectReservationServiceDetail>();
+		for (ProjectReservationServiceDetail reservationServiceDetail : getReservationUsedServices()) {
+			if (reservationServiceDetail.getProjectReservationService().isExtra() && !serviceDetailsToRectifyIds.contains(reservationServiceDetail.getId())) {
+				serviceDetailsToExclude.add(reservationServiceDetail);
+			}
+		}
+		getReservationUsedServices().removeAll(serviceDetailsToExclude);
+	}
+
+	private List<Integer> obtainReservationExtraServiceDetailsToRectifyIds() throws ManagerBeanException {
+		List<Integer> serviceInvoicesToRectifyIds = new LinkedList<Integer>();
+		for (ITransferObject ito : getReservationInvoicesToRectify()) {
+			Invoice invoice = (Invoice)ito;
+			if (invoice.isService()) {
+				serviceInvoicesToRectifyIds.add(invoice.getId());
+			}
+		}
+
+		List<Integer> extraServiceDetailsToRectifyIds = new LinkedList<Integer>();
+		if (serviceInvoicesToRectifyIds.size() > 0) {
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addInExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), serviceInvoicesToRectifyIds);
+			for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
+				InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
+				if (invoiceDetail.isReservationSource() && invoiceDetail.getSourceId() != null) {
+					extraServiceDetailsToRectifyIds.add(invoiceDetail.getSourceId());
+				}
+			}
+		}
+		return extraServiceDetailsToRectifyIds;
+	}
+
+	private boolean validateEarlyCheckOutShow() throws ManagerBeanException {
+		if (getReservation().getHotelReservation().getItemPenalty() == null || getReservation().getHotelReservation().getItemPenalty().getId() == null) {
+			setShowEarlyCheckOutWindow(false);
+			String msg = "El Hotel no tiene definido Producto para Salidas Anticipadas.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		for (ITransferObject ito : getReservationInvoicesToRectify()) {
+    		Invoice invoiceToRectify = (Invoice)ito;
+    		if (!FinanceUtil.isValidLimitRectificationDate(invoiceToRectify)) {
+				setShowEarlyCheckOutWindow(false);
+    			String msg = AonUtil.addErrorMessageFromBundle(FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR);
+    			throw new AbortProcessingException(msg);
+    		}
+		}
+
+		return true;
+	}
+
+	private List<ITransferObject> obtainReservationInvoicesToRectify(ProjectReservation reservation) throws ManagerBeanException {
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_PROJECT_ID), reservation.getId());
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_RECTIFICATION_TYPE), RectificationType.NONE);
+		criteria.addNotEqualExpression("Invoice.lines.item.product.type", ProductType.EXTERNAL_WORK);
+		if (getReservationNotUsedExtraServiceIds().size() == 0) {
+			if (!reservation.isAgencyHolder()) {
+				criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERVICE), Boolean.FALSE);
+			} else {
+				return new LinkedList<ITransferObject>();
+			}
+		} else {
+			Expression serviceExpr = ExpressionUtilities.getEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERVICE), reservation.isAgencyHolder());
+			Expression sourceExpr = ExpressionUtilities.getEqualExpression("Invoice.lines.source", InvoiceSource.RESERVATION);
+			Expression sourceIdExpr = ExpressionUtilities.getInExpression("Invoice.lines.sourceId", getReservationNotUsedExtraServiceIds());
+			sourceExpr = ExpressionUtilities.getAndExpression(sourceExpr, sourceIdExpr);
+			if (reservation.isAgencyHolder()) {
+				criteria.addExpression(ExpressionUtilities.getAndExpression(serviceExpr, ExpressionUtilities.getAndExpression(sourceExpr, sourceIdExpr)));
+			} else {
+				criteria.addExpression(ExpressionUtilities.getOrExpression(serviceExpr, ExpressionUtilities.getAndExpression(sourceExpr, sourceIdExpr)));
+			}
+		}
+		criteria.addOrder(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERVICE), Boolean.FALSE);
+		return invoiceBean.getList(criteria);
+	}
+
 	private List<Finance> obtainReservationFinances() throws ManagerBeanException {
 		List<Finance> financeList = new LinkedList<Finance>();
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAYMENT), false);
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAYMENT), Boolean.FALSE);
 		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_PROJECT_ID), getReservation().getId());
 		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_RECTIFICATION_TYPE), RectificationType.NONE);
-		if (getReservation().isAgencyHolder()) {
-			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_SERVICE), true);
-		}
 		criteria.addNotEqualExpression("Finance.invoice<lines.item.product.type", ProductType.EXTERNAL_WORK);
-		criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_TYPE), false);
+		if (getReservationNotUsedExtraServiceIds().size() == 0) {
+			if (!getReservation().isAgencyHolder()) {
+				criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_SERVICE), Boolean.FALSE);
+			} else {
+				return financeList;
+			}
+		} else {
+			Expression serviceExpr = ExpressionUtilities.getEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_SERVICE), reservation.isAgencyHolder());
+			Expression sourceExpr = ExpressionUtilities.getEqualExpression("Finance.invoice<lines.source", InvoiceSource.RESERVATION);
+			Expression sourceIdExpr = ExpressionUtilities.getInExpression("Finance.invoice<lines.sourceId", getReservationNotUsedExtraServiceIds());
+			sourceExpr = ExpressionUtilities.getAndExpression(sourceExpr, sourceIdExpr);
+			if (reservation.isAgencyHolder()) {
+				criteria.addExpression(ExpressionUtilities.getAndExpression(serviceExpr, ExpressionUtilities.getAndExpression(sourceExpr, sourceIdExpr)));
+			} else {
+				criteria.addExpression(ExpressionUtilities.getOrExpression(serviceExpr, ExpressionUtilities.getAndExpression(sourceExpr, sourceIdExpr)));
+			}
+		}
+		criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_TYPE));
 		for (ITransferObject ito : financeBean.getList(criteria)) {
 			Finance finance = (Finance)ito;
 			financeList.add(finance);
@@ -179,39 +324,148 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 		return financeList;
 	}
 
-	private Map<Tax, Double> obtainReservationUsedServices() throws ManagerBeanException {
-		Map<Tax, Double> usedServicesMap = new HashMap<Tax, Double>();
-		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
-		Criteria criteria = new Criteria();
-		String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID);
-		criteria.addEqualExpression(alias, getReservation().getId());
-		alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE);
-		criteria.addLessThanExpression(alias, getReservationInvoiceTo().getEarlyCheckOutDate());
-		if (getReservation().isAgencyHolder()) {
-			alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA);
-			criteria.addEqualExpression(alias, true);
-		}
-		for (ITransferObject ito : reservationServiceDetailBean.getList(criteria)) {
-			ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)ito;
-			if (!isDepositOrDamage(reservationServiceDetail.getProjectReservationService())) {
-				Tax vat = reservationServiceDetail.getItem().getProduct().getVat();
-				double taxableBase = reservationServiceDetail.getTaxableBase();
-				if (usedServicesMap.containsKey(vat)) {
-					taxableBase += usedServicesMap.get(vat).doubleValue();
+	private List<PaymentSummaryTo> obtainPaymentSummary(boolean service) throws ManagerBeanException {
+		List<PaymentSummaryTo> paymentSummary = new LinkedList<PaymentSummaryTo>();
+		for (Finance finance : getReservationFinances()) {
+			if (service == finance.getInvoice().isService()) {
+				PaymentSummaryTo paymentSummaryTo = new PaymentSummaryTo();
+				paymentSummaryTo.setPayMethod(finance.getPayMethod());
+				paymentSummaryTo.setService(service);
+				if (paymentSummary.contains(paymentSummaryTo)) {
+					paymentSummaryTo = paymentSummary.get(paymentSummary.indexOf(paymentSummaryTo));
 				}
-				usedServicesMap.put(vat, CommonUtil.round(taxableBase, 4));
+				paymentSummaryTo.setReturnAmount(CommonUtil.round(paymentSummaryTo.getReturnAmount() + finance.getTotalAmount()));
+				if (!paymentSummary.contains(paymentSummaryTo)) {
+					paymentSummary.add(paymentSummaryTo);
+				}
 			}
 		}
 
-		if (getEarlyCheckOutPenalty() != null) {
+		double paymentAmount = getReservationUsedServicesAmount(service);
+		for (PaymentSummaryTo paymentSummaryTo : paymentSummary) {
+			if (paymentAmount > paymentSummaryTo.getReturnAmount()) {
+				paymentSummaryTo.setPaymentAmount(paymentSummaryTo.getReturnAmount());
+				paymentAmount = CommonUtil.round(paymentAmount - paymentSummaryTo.getReturnAmount());
+			} else {
+				paymentSummaryTo.setPaymentAmount(paymentAmount);
+				break;
+			}				
+		}
+		return paymentSummary;
+	}
+
+	private List<ProjectReservationServiceDetail> getReservationUsedExtraServices() throws ManagerBeanException {
+		List<ProjectReservationServiceDetail> usedExtraServicesList = new LinkedList<ProjectReservationServiceDetail>();
+		for (ProjectReservationServiceDetail reservationServiceDetail : getReservationUsedServices()) {
+			if (reservationServiceDetail.getProjectReservationService().isExtra()) {
+				usedExtraServicesList.add(reservationServiceDetail);
+			}
+		}
+		return usedExtraServicesList;
+	}
+
+	private List<Integer> getReservationNotUsedExtraServiceIds() throws ManagerBeanException {
+		List<Integer> notUsedExtraServicesList = new LinkedList<Integer>();
+		for (ProjectReservationServiceDetail reservationServiceDetail : getReservationNotUsedServices()) {
+			if (reservationServiceDetail.getProjectReservationService().isExtra()) {
+				notUsedExtraServicesList.add(reservationServiceDetail.getId());
+			}
+		}
+		return notUsedExtraServicesList;
+	}
+
+	private Map<Tax, Double> getReservationUsedServicesAmountMap(boolean service) throws ManagerBeanException {
+		Map<Tax, Double> usedServicesAmountMap = new HashMap<Tax, Double>();
+		for (ProjectReservationServiceDetail reservationServiceDetail : getReservationUsedServices()) {
+			if (service == reservationServiceDetail.getProjectReservationService().isExtra()) {
+				Tax vat = reservationServiceDetail.getItem().getProduct().getVat();
+				double taxableBase = reservationServiceDetail.getTaxableBase();
+				if (usedServicesAmountMap.containsKey(vat)) {
+					taxableBase += usedServicesAmountMap.get(vat).doubleValue();
+				}
+				usedServicesAmountMap.put(vat, CommonUtil.round(taxableBase, 4));
+			}
+		}
+
+		if (!service && getEarlyCheckOutPenalty() != null) {
 			Tax vat = getReservation().getHotelReservation().getItemPenalty().getProduct().getVat();
 			double amount = getEarlyCheckOutPenaltyAmount();
-			if (usedServicesMap.containsKey(vat)) {
-				amount += usedServicesMap.get(vat).doubleValue();
+			if (usedServicesAmountMap.containsKey(vat)) {
+				amount += usedServicesAmountMap.get(vat).doubleValue();
 			}
-			usedServicesMap.put(vat, CommonUtil.round(amount, 4));
+			usedServicesAmountMap.put(vat, CommonUtil.round(amount, 4));
 		}
-		return usedServicesMap;
+		return usedServicesAmountMap;
+	}
+
+	private double getReservationUsedServicesAmount(boolean service) throws ManagerBeanException {
+		ReservationUtils reservationUtils = new ReservationUtils();
+		double amount = 0;
+		Map<Tax, Double> reservationUsedServicesAmountMap = getReservationUsedServicesAmountMap(service);
+		for (Tax vat : reservationUsedServicesAmountMap.keySet()) {
+			double vatPercent = reservationUtils.getTaxPercentage(vat, getReservationInvoiceTo().getIssueDate());
+			amount = CommonUtil.round(amount + reservationUsedServicesAmountMap.get(vat) * (1 + vatPercent / 100));
+		}
+		return amount;
+	}
+
+	public double getReservationTotalPaymentAmount() throws ManagerBeanException {
+		return getReservationUsedServicesAmount(false);
+	}
+
+	public double getReservationCurrentPaymentAmount() throws ManagerBeanException {
+		double amount = 0;
+		for (PaymentSummaryTo paymentSummaryTo : getReservationPaymentSummary()) {
+			amount = CommonUtil.round(amount + paymentSummaryTo.getPaymentAmount());
+		}
+		return amount;
+	}
+
+	public double getReservationTotalReturnAmount() {
+		double amount = 0;
+		for (PaymentSummaryTo paymentSummaryTo : getReservationPaymentSummary()) {
+			amount = CommonUtil.round(amount + paymentSummaryTo.getReturnAmount());
+		}
+		return amount;
+	}
+
+	public double getServicesTotalPaymentAmount() throws ManagerBeanException {
+		return getReservationUsedServicesAmount(true);
+	}
+
+	public double getServicesCurrentPaymentAmount() throws ManagerBeanException {
+		double amount = 0;
+		for (PaymentSummaryTo paymentSummaryTo : getServicesPaymentSummary()) {
+			amount = CommonUtil.round(amount + paymentSummaryTo.getPaymentAmount());
+		}
+		return amount;
+	}
+
+	public double getServicesTotalReturnAmount() {
+		double amount = 0;
+		for (PaymentSummaryTo paymentSummaryTo : getServicesPaymentSummary()) {
+			amount = CommonUtil.round(amount + paymentSummaryTo.getReturnAmount());
+		}
+		return amount;
+	}
+
+	public List<PaymentSummaryTo> getTotalSummary() throws ManagerBeanException {
+		List<PaymentSummaryTo> totalSummary = new LinkedList<PaymentSummaryTo>();
+		if (getReservationPaymentSummary().size() > 0) {
+			PaymentSummaryTo totalSummaryTo = new PaymentSummaryTo();
+			totalSummaryTo.setService(false);
+			totalSummaryTo.setReturnAmount(getReservationTotalReturnAmount());
+			totalSummaryTo.setPaymentAmount(getReservationTotalPaymentAmount());
+			totalSummary.add(totalSummaryTo);
+		}
+		if (getServicesPaymentSummary().size() > 0) {
+			PaymentSummaryTo totalSummaryTo = new PaymentSummaryTo();
+			totalSummaryTo.setService(true);
+			totalSummaryTo.setReturnAmount(getServicesTotalReturnAmount());
+			totalSummaryTo.setPaymentAmount(getServicesTotalPaymentAmount());
+			totalSummary.add(totalSummaryTo);
+		}
+		return totalSummary;
 	}
 
 	public boolean isEarlyCheckOutDateEditable() throws ManagerBeanException {
@@ -219,41 +473,13 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 		return ((roleManager.isConfig() || roleManager.isFinanceOperator()) && DateUtils.addDays(getReservation().getEndDate(), 1).before(new Date()));
 	}
 
-	public double getReservationUsedServicesAmount() throws ManagerBeanException {
-		ReservationUtils reservationUtils = new ReservationUtils();
-		double amount = 0;
-		for (Tax vat : reservationUsedServices.keySet()) {
-			double vatPercent = reservationUtils.getTaxPercentage(vat, getReservationInvoiceTo().getIssueDate());
-			amount += CommonUtil.round(reservationUsedServices.get(vat) * (1 + vatPercent / 100));
-		}
-		return amount;
-	}
-
-	private boolean isDepositOrDamage(ProjectReservationService reservationService) {
-		return (reservationService.isExtra() && reservationService.getItem().getProduct().getType() != ProductType.SERVICE);
-	}
-
-	private int getEarlyCheckOutPenaltyDays() throws ManagerBeanException {
-		return (getEarlyCheckOutPenalty() != null) ? getEarlyCheckOutPenalty() : 0;
-	}
-
-	private double getEarlyCheckOutPenaltyAmount() throws ManagerBeanException {
-		if (getEarlyCheckOutPenalty() != null) {
-			switch (getEarlyCheckOutPenalty().intValue()) {
-			case 1:
-				return getReservation().getOneNightPenaltyTaxableBase();
-			case 2:
-				return getReservation().getTwoNightPenaltyTaxableBase();
-			}
-		}
-		return 0;
-	}
-
 	public void onCheckOutDateChanged(ActionEvent event) {
 		try {
-			setReservationUsedServices(obtainReservationUsedServices());
-			getReservationInvoiceTo().setFinances(new LinkedList<Finance>());
-			onNewFinance(null);
+			setEarlyCheckOutPenalty(null);
+			fillReservationServiceLists();
+			setReservationFinances(obtainReservationFinances());
+			setReservationPaymentSummary(obtainPaymentSummary(false));
+			setServicesPaymentSummary(obtainPaymentSummary(true));
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
@@ -263,9 +489,7 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 	public void onCheckOutPenaltyChanged(ValueChangeEvent event) {
 		setEarlyCheckOutPenalty((Integer)event.getNewValue());
 		try {
-			setReservationUsedServices(obtainReservationUsedServices());
-			getReservationInvoiceTo().setFinances(new LinkedList<Finance>());
-			onNewFinance(null);
+			setReservationPaymentSummary(obtainPaymentSummary(false));
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
@@ -285,127 +509,20 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 		return penaltyDays;
 	}
 
-	public List<PaymentSummaryTo> getReturns() {
-		List<PaymentSummaryTo> returns = new LinkedList<PaymentSummaryTo>();
-		for (Finance finance : getReservationFinances()) {
-			PaymentSummaryTo returnSummaryTo = new PaymentSummaryTo();
-			returnSummaryTo.setPayMethod(finance.getPayMethod());
-			if (returns.contains(returnSummaryTo)) {
-				returnSummaryTo = returns.get(returns.indexOf(returnSummaryTo));
-			}
-			if (!finance.getInvoice().isService()) {
-				returnSummaryTo.setReservationReturnAmount(CommonUtil.round(returnSummaryTo.getReservationReturnAmount() + finance.getTotalAmount()));
-			} else {
-				returnSummaryTo.setServicesReturnAmount(CommonUtil.round(returnSummaryTo.getServicesReturnAmount() + finance.getTotalAmount()));
-			}
-			if (!returns.contains(returnSummaryTo)) {
-				returns.add(returnSummaryTo);
+	private double getEarlyCheckOutPenaltyAmount() throws ManagerBeanException {
+		if (getEarlyCheckOutPenalty() != null) {
+			switch (getEarlyCheckOutPenalty().intValue()) {
+			case 1:
+				return getReservation().getOneNightPenaltyTaxableBase();
+			case 2:
+				return getReservation().getTwoNightPenaltyTaxableBase();
 			}
 		}
-		return returns;
+		return 0;
 	}
 
-	public double getReservationReturnAmount() {
-		double amount = 0;
-		for (Finance finance : getReservationFinances()) {
-			if (!finance.getInvoice().isService()) {
-				amount += finance.getTotalAmount();
-			}
-		}
-		return CommonUtil.round(amount);
-	}
-
-	public double getServicesReturnAmount() {
-		double amount = 0;
-		for (Finance finance : getReservationFinances()) {
-			if (finance.getInvoice().isService()) {
-				amount += finance.getTotalAmount();
-			}
-		}
-		return CommonUtil.round(amount);
-	}
-
-	public double getReturnsAmount() {
-		double amount = 0;
-		for (Finance finance : getReservationFinances()) {
-			amount += finance.getTotalAmount();
-		}
-		return CommonUtil.round(amount);
-	}
-
-	public List<PaymentSummaryTo> getTotals() {
-		List<PaymentSummaryTo> totals = getReturns();
-		for (Finance finance : getReservationInvoiceTo().getFinances()) {
-			if (finance.getPayMethod() != null) {
-				PaymentSummaryTo totalSummaryTo = new PaymentSummaryTo();
-				totalSummaryTo.setPayMethod(finance.getPayMethod());
-				if (totals.contains(totalSummaryTo)) {
-					totalSummaryTo = totals.get(totals.indexOf(totalSummaryTo));
-				}
-				totalSummaryTo.setPaymentAmount(CommonUtil.round(totalSummaryTo.getPaymentAmount() + finance.getTotalAmount()));
-				if (totalSummaryTo.getTotalAmount() != 0) {
-					if (!totals.contains(totalSummaryTo)) {
-						totals.add(totalSummaryTo);
-					}
-				} else {
-					if (totals.contains(totalSummaryTo)) {
-						totals.remove(totalSummaryTo);
-					}
-				}
-			}
-		}
-		return totals;
-	}
-
-	public void onNewFinance(ActionEvent event) throws ManagerBeanException {
-		double amount = CommonUtil.round(getReservationUsedServicesAmount() - getFinancesAmount());
-		if (getReservationFinances().size() > 0 && getReservationInvoiceTo().getFinancesCount() == 0) {
-			List<PaymentSummaryTo> returns = getReturns();
-			do {
-				Finance finance = new Finance();
-				finance.setAmount(amount);
-
-				PaymentSummaryTo returnSummary = returns.get(getReservationInvoiceTo().getFinancesCount());
-				if (returnSummary != null) {
-					finance.setPayMethod(returnSummary.getPayMethod());
-					if (returnSummary.getTotalReturnAmount() < finance.getAmount()) {
-						finance.setAmount(returnSummary.getTotalReturnAmount());
-					}
-				}
-				getReservationInvoiceTo().getFinances().add(finance);
-
-				amount = CommonUtil.round(amount - finance.getAmount());
-			} while (amount != 0 && returns.size() > getReservationInvoiceTo().getFinancesCount());
-
-			if (amount != 0) {
-				Finance finance = new Finance();
-				finance.setAmount(amount);
-				getReservationInvoiceTo().getFinances().add(finance);
-			}
-		} else {
-			Finance finance = new Finance();
-			finance.setAmount(amount);
-			getReservationInvoiceTo().getFinances().add(finance);
-		}
-	}
-
-	public void onRemoveFinance(ActionEvent event) {
-        FacesContext context = FacesContext.getCurrentInstance();
-        int financeIndex = Integer.parseInt(context.getExternalContext().getRequestParameterMap().get("hotelInvoiceFinanceIndex"));
-
-        Finance financeToRemove = getReservationInvoiceTo().getFinances().get(financeIndex);
-        getReservationInvoiceTo().getFinances().remove(financeIndex);
-
-        Finance previousFinance = getReservationInvoiceTo().getFinances().get(financeIndex-1);
-        previousFinance.setAmount(CommonUtil.round(previousFinance.getAmount() + financeToRemove.getAmount()));
-	}
-
-	public double getFinancesAmount() {
-		double amount = 0;
-		for (Finance finance : getReservationInvoiceTo().getFinances()) {
-			amount += CommonUtil.round(finance.getAmount());
-		}
-		return CommonUtil.round(amount);
+	private int getEarlyCheckOutPenaltyDays() throws ManagerBeanException {
+		return (getEarlyCheckOutPenalty() != null) ? getEarlyCheckOutPenalty() : 0;
 	}
 
 	public void onEarlyCheckOut(ActionEvent event) {
@@ -432,7 +549,7 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 
 			    	if (isChargeCheckOut() && getReservationFinances().size() > 0) {
 						ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
-						for (ITransferObject ito : obtainReservationInvoiceList(getReservation())) {
+						for (ITransferObject ito : getReservationInvoicesToRectify()) {
 				    		Invoice invoiceToRectify = (Invoice)ito;
 					    	if (invoiceToRectify != null) {
 								getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries(invoiceToRectify));
@@ -450,10 +567,21 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 					    	}
 			    		}
 
-				    	if (getReservationUsedServices().size() > 0) {
+				    	if (!getReservation().isAgencyHolder() && getReservationUsedServices().size() > 0) {
 				    		getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
 							getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 							getReservationInvoiceTo().setIssueDate(getReservation().getStartDate());
+							getReservationInvoiceTo().setFinances(obtainFinances(getReservationPaymentSummary()));
+							reservationInvoicing.invoice(getReservationInvoiceTo(), getReservation());
+				    	}
+
+				    	if (getReservationUsedExtraServices().size() > 0) {
+				    		getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
+							getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
+							getReservationInvoiceTo().setIssueDate(getReservation().getStartDate());
+							getReservationInvoiceTo().setFinances(obtainFinances(getServicesPaymentSummary()));
+							getReservationInvoiceTo().setService(true);
+							getReservationInvoiceTo().setServicesIds(obtainReservationExtraServiceDetailsToRectifyIds());
 							reservationInvoicing.invoice(getReservationInvoiceTo(), getReservation());
 				    	}
 			    	}
@@ -487,7 +615,7 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 			throw new AbortProcessingException(msg);
 		}
 
-		if (isChargeCheckOut() && !isFinancesAmountOk()) {
+		if (isChargeCheckOut() && !isPaymentsAmountOk()) {
 			String msg = "El importe de los Pagos no coincide con el Total a Pagar.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
@@ -508,39 +636,44 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 		return true;
 	}
 
-	private boolean isCashOrCardPayment() {
-		for (Finance finance : getReservationInvoiceTo().getFinances()) {
-			if (finance.getTotalAmount() != 0) {
-				PayMethodType type = finance.getPayMethod().getType();
-				if (type == PayMethodType.CASH_BASIS || type == PayMethodType.CREDIT_CARD || type == PayMethodType.DEBIT_CARD) {
-					return true;
-				}
-			 }
-		}
-		return false;
-	}
-
-	public boolean isFinancesAmountOk() throws ManagerBeanException {
-		return CommonUtil.round(getReservationUsedServicesAmount() - getFinancesAmount()) == 0;
+	public boolean isPaymentsAmountOk() throws ManagerBeanException {
+		double totalPayment = CommonUtil.round(getReservationTotalPaymentAmount() + getServicesTotalPaymentAmount());
+		double currentPayment = CommonUtil.round(getReservationCurrentPaymentAmount() + getServicesCurrentPaymentAmount());
+		return CommonUtil.round(totalPayment - currentPayment) == 0;
 	}
 
 	public boolean isPayMethodOk() {
-		for (Finance finance : getReservationInvoiceTo().getFinances()) {
-			if (finance.getPayMethod() == null && finance.getTotalAmount() != 0) {
+		for (PaymentSummaryTo paymentSummaryTo : getReservationPaymentSummary()) {
+			if (paymentSummaryTo.getPayMethod() == null && paymentSummaryTo.getPaymentAmount() != 0) {
+				return false;
+			}
+		}
+		for (PaymentSummaryTo paymentSummaryTo : getServicesPaymentSummary()) {
+			if (paymentSummaryTo.getPayMethod() == null && paymentSummaryTo.getPaymentAmount() != 0) {
 				return false;
 			}
 		}
 		return true;
 	}
 
-	private IAddress obtainInvoiceAddress(Invoice invoice) throws ManagerBeanException {
-		IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceAddressBean.getFieldName(IEntityAlias.INVOICE_ADDRESS_INVOICE_ID), invoice.getId());
-		for (ITransferObject ito : invoiceAddressBean.getList(criteria)) {
-			return (InvoiceAddress)ito;
+	private boolean isCashOrCardPayment() {
+		for (PaymentSummaryTo paymentSummaryTo : getReservationPaymentSummary()) {
+			if (paymentSummaryTo.getPaymentAmount() != 0) {
+				PayMethodType type = paymentSummaryTo.getPayMethod().getType();
+				if (type == PayMethodType.CASH_BASIS || type == PayMethodType.CREDIT_CARD || type == PayMethodType.DEBIT_CARD) {
+					return true;
+				}
+			}
 		}
-		return invoice.getRegistryAddress();
+		for (PaymentSummaryTo paymentSummaryTo : getServicesPaymentSummary()) {
+			if (paymentSummaryTo.getPaymentAmount() != 0) {
+				PayMethodType type = paymentSummaryTo.getPayMethod().getType();
+				if (type == PayMethodType.CASH_BASIS || type == PayMethodType.CREDIT_CARD || type == PayMethodType.DEBIT_CARD) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private String obtainHotelInvoiceSeries() throws ManagerBeanException {
@@ -548,7 +681,7 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 		return (seriesList.size() > 0) ? (String)seriesList.get(0).getValue() : "";
 	}
 
-	public List<SelectItem> getHotelInvoiceSeries() throws ManagerBeanException {
+	private List<SelectItem> getHotelInvoiceSeries() throws ManagerBeanException {
 		return getHotelSeries(getReservation().getHotelReservation().getScope(), false);
 	}
 
@@ -557,7 +690,7 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 		return (seriesList.size() > 0) ? (String)seriesList.get(0).getValue() : "";
 	}
 
-	public List<SelectItem> getHotelRectificationSeries(Invoice invoiceToRectify) throws ManagerBeanException {
+	private List<SelectItem> getHotelRectificationSeries(Invoice invoiceToRectify) throws ManagerBeanException {
 		return getHotelSeries(obtainRectifiedInvoiceScope(invoiceToRectify), true);
 	}
 
@@ -601,17 +734,25 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 		return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
 	}
 
-	private List<ITransferObject> obtainReservationInvoiceList(ProjectReservation reservation) throws ManagerBeanException {
-		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+	private IAddress obtainInvoiceAddress(Invoice invoice) throws ManagerBeanException {
+		IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_PROJECT_ID), reservation.getId());
-		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_RECTIFICATION_TYPE), RectificationType.NONE);
-		if (reservation.isAgencyHolder()) {
-			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERVICE), true);
+		criteria.addEqualExpression(invoiceAddressBean.getFieldName(IEntityAlias.INVOICE_ADDRESS_INVOICE_ID), invoice.getId());
+		for (ITransferObject ito : invoiceAddressBean.getList(criteria)) {
+			return (InvoiceAddress)ito;
 		}
-		criteria.addNotEqualExpression("Invoice.lines.item.product.type", ProductType.EXTERNAL_WORK);
-		criteria.addOrder(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERVICE), false);
-		return invoiceBean.getList(criteria);
+		return invoice.getRegistryAddress();
+	}
+
+	private List<Finance> obtainFinances(List<PaymentSummaryTo> paymentSummaryList) {
+		List<Finance> financeList = new LinkedList<Finance>();
+		for (PaymentSummaryTo paymentSummaryTo : paymentSummaryList) {
+			Finance finance = new Finance();
+			finance.setPayMethod(paymentSummaryTo.getPayMethod());
+			finance.setAmount(paymentSummaryTo.getPaymentAmount());
+			financeList.add(finance);
+		}
+		return financeList;
 	}
 
 }

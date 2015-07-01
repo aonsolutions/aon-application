@@ -36,14 +36,11 @@ import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.product.Item;
-import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.IAddress;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
@@ -265,7 +262,7 @@ public class ReservationInvoicing implements IReservationConstants {
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setType(InvoiceType.SALES);
 		invoice.setScope((!reservationInvoiceTo.isService()) ? reservation.getHotelReservation().getScope() : reservationInvoiceTo.getHotel().getScope());
-		invoice.setService(reservationInvoiceTo.isService() || (reservationInvoiceTo.isEarlyCheckOut() && reservation.isAgencyHolder()));
+		invoice.setService(reservationInvoiceTo.isService());
 		invoice.setComments(reservationInvoiceTo.getComments());
 		invoice.setPosShift(reservationInvoiceTo.getPosShift());
 
@@ -274,7 +271,7 @@ public class ReservationInvoicing implements IReservationConstants {
 	}
 
 	private void createInvoiceDetails(Invoice invoice, ProjectReservation reservation, ReservationInvoiceTo reservationInvoiceTo) throws ManagerBeanException {
-		if (!reservationInvoiceTo.isService()) {
+		if (!reservationInvoiceTo.isService() || reservationInvoiceTo.isEarlyCheckOut()) {
 			createReservationDetails(invoice, reservation, reservationInvoiceTo);
 		} else {
 			createServiceDetails(invoice, reservation, reservationInvoiceTo);
@@ -300,22 +297,14 @@ public class ReservationInvoicing implements IReservationConstants {
 		Criteria criteria = new Criteria();
 		String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID);
 		criteria.addEqualExpression(alias, reservation.getId());
-		if (!reservationInvoiceTo.isEarlyCheckOut()) {
+		if (!reservationInvoiceTo.isService()) {
 			alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA);
-			criteria.addEqualExpression(alias, false);
-		} else {
-			if (reservation.isAgencyHolder()) {
-				alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA);
-				criteria.addEqualExpression(alias, true);
-				alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ITEM_PRODUCT_TYPE);
-				criteria.addEqualExpression(alias, ProductType.SERVICE);
-			} else {
-				alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA);
-				Expression noDepositOrDamageExpr = ExpressionUtilities.getEqualExpression(alias, false);
-				alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ITEM_PRODUCT_TYPE);
-				noDepositOrDamageExpr = ExpressionUtilities.getOrExpression(noDepositOrDamageExpr, ExpressionUtilities.getEqualExpression(alias, ProductType.SERVICE));
-				criteria.addExpression(noDepositOrDamageExpr);
-			}
+			criteria.addEqualExpression(alias, Boolean.FALSE);
+		} else if (reservationInvoiceTo.isEarlyCheckOut() && reservationInvoiceTo.getServicesIds().size() > 0) {
+			alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA);
+			criteria.addEqualExpression(alias, Boolean.TRUE);
+			alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_ID);
+			criteria.addInExpression(alias, reservationInvoiceTo.getServicesIds());
 		}
 		criteria.addOrder(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ITEM_PRODUCT_TYPE));
 		criteria.addOrder(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE));
@@ -365,7 +354,7 @@ public class ReservationInvoicing implements IReservationConstants {
 		if (advancedAmount > 0 && !reservationInvoiceTo.isEarlyCheckOut()) {
 			criteria = new Criteria();
 			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_PROJECT_ID), reservation.getId());
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ADVANCE), true);
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ADVANCE), Boolean.TRUE);
 			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_RECTIFICATION_TYPE), RectificationType.NONE);
 			for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
 				InvoiceDetail advanceDetail = (InvoiceDetail)ito;
@@ -402,7 +391,7 @@ public class ReservationInvoicing implements IReservationConstants {
 			}
 		}
 
-		if (reservationInvoiceTo.isEarlyCheckOut()) {
+		if (reservationInvoiceTo.isEarlyCheckOut() && !reservationInvoiceTo.isService()) {
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setInvoice(invoice);
 			invoiceDetail.setProject(reservation.getProject());

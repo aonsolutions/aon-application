@@ -639,9 +639,9 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 
 	public MailAccount obtainNoShowMailAccount() throws ManagerBeanException {
-		MailProcess mp = MailProcessUtil.get(MailProcessType.AGENCY_NO_SHOW);
-		if ( mp != null ) {
-			return mp.getMailAccount();
+		MailProcess mailProcess = MailProcessUtil.get(MailProcessType.AGENCY_NO_SHOW);
+		if (mailProcess != null) {
+			return mailProcess.getMailAccount();
 		}
 		return getReservationUtils().obtainCompanyMailAccount();
 	}
@@ -662,30 +662,30 @@ public class ProjectReservationController extends BasicController implements IPm
 	private Map<String,String> getAgencyNoShowMap(ProjectReservation reservation) throws ManagerBeanException {
 		DateFormat formatter = new SimpleDateFormat(AonUtil.getMessage(DATE_PATTERN));
 
-		Map<String,String> map = new HashMap<String,String>();		
-		map.put("hotel_description", reservation.getHotelReservation().getWorkPlace().getDescription() );
-		map.put("reservation_id", reservation.getId().toString() );
-		map.put("reservation_code", reservation.getCode().toString() );
-		map.put("reservation_startDate", formatter.format(reservation.getStartDate()) );
-		map.put("reservation_endDate", formatter.format(reservation.getEndDate()) );
-		map.put("reservation_guestFullName", reservation.getGuestFullName() );
-		map.put("reservation_roomCount", String.valueOf(reservation.getRoomCount()) );
-		map.put("reservation_personCount", String.valueOf(reservation.getPersonCount()) );	
-		return map;
+		Map<String,String> agencyNoShowMap = new HashMap<String,String>();		
+		agencyNoShowMap.put("hotel_description", reservation.getHotelReservation().getWorkPlace().getDescription());
+		agencyNoShowMap.put("reservation_id", reservation.getId().toString());
+		agencyNoShowMap.put("reservation_code", reservation.getCode().toString());
+		agencyNoShowMap.put("reservation_startDate", formatter.format(reservation.getStartDate()));
+		agencyNoShowMap.put("reservation_endDate", formatter.format(reservation.getEndDate()));
+		agencyNoShowMap.put("reservation_guestFullName", reservation.getGuestFullName());
+		agencyNoShowMap.put("reservation_roomCount", String.valueOf(reservation.getRoomCount()));
+		agencyNoShowMap.put("reservation_personCount", String.valueOf(reservation.getPersonCount()));	
+		return agencyNoShowMap;
 	}
 	
-	private void setAgencyNoShowEmailContent(EmailSender mailSender, AonMessage message, ProjectReservation reservation) throws ManagerBeanException, WebmailException {
+	private void setAgencyNoShowEmailContent(EmailSender sender, AonMessage message, ProjectReservation reservation) throws ManagerBeanException, WebmailException {
 		String subject = null;
-		MailProcess mp = MailProcessUtil.get(MailProcessType.AGENCY_NO_SHOW);
-		if ( mp != null ) {
-			Map<String,String> map = getAgencyNoShowMap(reservation);
-			subject = TemplateController.createSubject(mp.getTemplate(), map);
-			String content = TemplateController.createContent(mp.getTemplate(), map);
-			mailSender.addMessageContent(message, content, MimeType.MIME_HTML);
+		MailProcess mailProcess = MailProcessUtil.get(MailProcessType.AGENCY_NO_SHOW);
+		if (mailProcess != null) {
+			Map<String,String> agencyNoShowMap = getAgencyNoShowMap(reservation);
+			subject = TemplateController.createSubject(mailProcess.getTemplate(), agencyNoShowMap);
+			String content = TemplateController.createContent(mailProcess.getTemplate(), agencyNoShowMap);
+			sender.addMessageContent(message, content, MimeType.MIME_HTML);
 		} else {
 			subject = createAgencyNoShowEmailSubject(reservation);
 			String content = createAgencyNoShowEmailMessage(reservation);
-			mailSender.addMessageContent(message, content, MimeType.MIME_TXT);
+			sender.addMessageContent(message, content, MimeType.MIME_TXT);
 		}
 		message.setSubject(subject);
 	}
@@ -1068,7 +1068,7 @@ public class ProjectReservationController extends BasicController implements IPm
 				reservationInvoicing.invoice(getReservationInvoiceTo(), reservation);
 
 				reservation.setStatus(ReservationStatus.INVOICED);
-				if (reservation.getCheckStatus() == ReservationCheckStatus.NO_CHECK) {
+				if (reservation.isNoCheck()) {
 					reservation.setCheckStatus(reservation.getEndDate().after(new Date()) ? ReservationCheckStatus.CHECK_IN : ReservationCheckStatus.CHECK_OUT);
 				}
 				accept(event);
@@ -1137,8 +1137,8 @@ public class ProjectReservationController extends BasicController implements IPm
 		try {
 			if (getInvoiceModel().isRowAvailable()) {
 				Invoice invoice = (Invoice)getInvoiceModel().getRowData();
-				ProjectReservation pr = (ProjectReservation)this.getTo();
-				return isInvoiceRectificable(invoice, pr);
+				ProjectReservation reservation = (ProjectReservation)this.getTo();
+				return isInvoiceRectificable(invoice, reservation);
 			}
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
@@ -1147,14 +1147,14 @@ public class ProjectReservationController extends BasicController implements IPm
 		return false;
 	}
 
-	public static boolean isInvoiceRectificable( Invoice invoice, ProjectReservation pr ) throws ManagerBeanException {		
+	public static boolean isInvoiceRectificable(Invoice invoice, ProjectReservation reservation) throws ManagerBeanException {		
 		if (invoice.isNoRectification()) {
 			boolean financeOperator = AonUtil.getRoleManager().isFinanceOperator();
 			if (invoice.isService()) {
 				return financeOperator || invoice.isAllCommercialProducts();
 			} else {
 				if (invoice.isAdvance()) {
-					return financeOperator && (pr != null) && !pr.isInvoiced();
+					return financeOperator && (reservation != null) && !reservation.isInvoiced();
 				} else {
 					return financeOperator && isLastReservationInvoice(invoice);
 				}
