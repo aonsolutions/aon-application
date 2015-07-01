@@ -3,27 +3,35 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:connect='urn:import:com.esferalia.aon.gwt.connect.client'>
 
-
 	<g:DockLayoutPanel ui:field="splitLayoutPanel">
 		<g:center>
+		<g:ScrollPanel>
 			<g:HTMLPanel styleName="aon-scroll-area">
-				<g:HTMLPanel styleName="aon-panelGrid-search">
-					<div class="aon-panelGrid-search-info ">
-						<span class="aon-panelGrid-search-info-internal">Seleccione el fichero a importar: </span>
-					</div>
+				
+					<g:HTMLPanel styleName="aon-panelGrid-search">
 
-					<div class="aon-scroll-area">
-						<g:FlexTable ui:field="flexTable" />
-						<div>
-							<g:Button ui:field="button" />
+						<div class="aon-panelGrid-search-info ">
+							<span class="aon-panelGrid-search-info-internal">Seleccione el fichero a importar: </span>
 						</div>
-					</div>
 
-					<div class="aon-margin-top">
-						<g:FlowPanel ui:field="messages" />
-					</div>
-				</g:HTMLPanel>
+						<div class="aon-scroll-area">
+
+							<g:FlexTable ui:field="flexTable" />
+							<div>
+								<g:Button ui:field="button" />
+							</div>
+						</div>
+
+						<div class="aon-margin-top">
+
+							<g:FlowPanel ui:field="messages" />
+
+						</div>
+
+					</g:HTMLPanel>
+				
 			</g:HTMLPanel>
+			</g:ScrollPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 </ui:UiBinder> 
