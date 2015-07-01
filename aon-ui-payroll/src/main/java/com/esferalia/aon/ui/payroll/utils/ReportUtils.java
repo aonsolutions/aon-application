@@ -26,6 +26,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.IResourceable;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryDirStaff;
@@ -317,7 +318,7 @@ public class ReportUtils {
 	public static String spellout(Locale locale, double d, int precision) {
 		StringBuffer buffer = new StringBuffer();
 		long integral = (long) Math.floor(d);
-		long fractional = (long) Math.floor((d - integral)
+		long fractional = (long) Math.floor(CommonUtil.round((d - integral),2)
 				* Math.pow(10, precision));
 		RuleBasedNumberFormat format = new RuleBasedNumberFormat(locale,
 				RuleBasedNumberFormat.SPELLOUT);
