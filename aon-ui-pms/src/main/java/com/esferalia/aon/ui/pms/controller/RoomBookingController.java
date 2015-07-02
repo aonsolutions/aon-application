@@ -170,20 +170,22 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 					int index = getBookingList().indexOf(dayBooking);
 					if (index >= 0) {
 						dayBooking = getBookingList().get(index);
-						if (type == BookingStayType.CHECKIN.ordinal()) {
-							dayBooking.setRoomCheckin(rooms);
-							dayBooking.setGuestCheckin(guests);
-							dayBooking.setRoomBusy(dayBooking.getRoomBusy() + rooms);
-							dayBooking.setGuestTotal(dayBooking.getGuestTotal() + guests);
-						} else if (type == BookingStayType.CHECKOUT.ordinal()) {
-							dayBooking.setRoomCheckout(rooms);
-							dayBooking.setGuestCheckout(guests);
-						} else if (type == BookingStayType.STAY.ordinal()) {
-							dayBooking.setRoomBusy(dayBooking.getRoomBusy() + rooms);
-							dayBooking.setGuestTotal(dayBooking.getGuestTotal() + guests);
-						} else {
-							dayBooking.setRoomBlocked(dayBooking.getRoomBlocked() + rooms);
-						}
+					} else {
+						getBookingList().add(dayBooking);
+					}
+					if (type == BookingStayType.CHECKIN.ordinal()) {
+						dayBooking.setRoomCheckin(rooms);
+						dayBooking.setGuestCheckin(guests);
+						dayBooking.setRoomBusy(dayBooking.getRoomBusy() + rooms);
+						dayBooking.setGuestTotal(dayBooking.getGuestTotal() + guests);
+					} else if (type == BookingStayType.CHECKOUT.ordinal()) {
+						dayBooking.setRoomCheckout(rooms);
+						dayBooking.setGuestCheckout(guests);
+					} else if (type == BookingStayType.STAY.ordinal()) {
+						dayBooking.setRoomBusy(dayBooking.getRoomBusy() + rooms);
+						dayBooking.setGuestTotal(dayBooking.getGuestTotal() + guests);
+					} else {
+						dayBooking.setRoomBlocked(dayBooking.getRoomBlocked() + rooms);
 					}
 				}
 			}
