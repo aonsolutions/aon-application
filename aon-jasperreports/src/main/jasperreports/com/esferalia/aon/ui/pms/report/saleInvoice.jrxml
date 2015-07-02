@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="saleInvoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="d0abe166-e181-4562-a76a-09e892626bcd">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="saleInvoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
@@ -8,7 +8,7 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<subDataset name="detail" uuid="9cb1ea7a-53a1-436f-9535-63db2dd3abce">
+	<subDataset name="detail">
 		<parameter name="parameter1" class="java.lang.String"/>
 		<field name="description" class="java.lang.String"/>
 		<field name="quantity" class="java.lang.Double"/>
@@ -24,7 +24,7 @@
 			<groupExpression><![CDATA[$F{sourceTo}.getDelivery().getId()]]></groupExpression>
 		</group>
 	</subDataset>
-	<subDataset name="tax" uuid="3dcfee15-0ac7-4083-a3bc-b1db9b4d5515">
+	<subDataset name="tax">
 		<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
 		<field name="taxPercent" class="java.lang.Double"/>
 		<field name="taxQuota" class="java.lang.Double"/>
@@ -37,7 +37,7 @@
 			<initialValueExpression><![CDATA[new Double(0)]]></initialValueExpression>
 		</variable>
 	</subDataset>
-	<subDataset name="finances" uuid="43ac1095-5f10-45d1-b548-49e8a8fea48b">
+	<subDataset name="finances">
 		<field name="payMethod" class="com.code.aon.config.PayMethod"/>
 		<field name="bankAccount" class="com.code.aon.config.BankAccount"/>
 		<field name="bankAlias" class="java.lang.String"/>
@@ -46,7 +46,7 @@
 		<field name="amount" class="java.lang.Double"/>
 		<field name="negotiableDocument" class="java.lang.Boolean"/>
 	</subDataset>
-	<subDataset name="reservationServices" uuid="028dea20-f549-4583-a4a5-58cec33db9a1">
+	<subDataset name="reservationServices">
 		<field name="projectReservationService" class="com.esferalia.aon.pms.ProjectReservationService"/>
 		<field name="projectReservationRoomDetail" class="com.esferalia.aon.pms.ProjectReservationRoomDetail"/>
 		<field name="effectiveDate" class="java.util.Date"/>
@@ -147,7 +147,7 @@
 	<background>
 		<band height="802" splitType="Stretch">
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="99b59a69-ed26-4af3-b5aa-7eec659aded0" key="textField-42" x="-15" y="47" width="9" height="703"/>
+				<reportElement key="textField-42" x="-15" y="47" width="9" height="703"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -174,16 +174,16 @@
     )]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement uuid="2f66a5f8-1a4b-4b72-8cd1-b20b5795fe38" key="line-5" x="-25" y="241" width="4" height="1"/>
+				<reportElement key="line-5" x="-25" y="241" width="4" height="1"/>
 			</line>
 			<line>
-				<reportElement uuid="7d8d5dc1-fba0-406c-ac6d-a00c38216771" key="line-6" x="553" y="241" width="4" height="1"/>
+				<reportElement key="line-6" x="553" y="241" width="4" height="1"/>
 			</line>
 			<line>
-				<reportElement uuid="22acc9f3-9a11-41fe-82a6-eb651fb66fdc" key="line-7" x="-25" y="539" width="4" height="1"/>
+				<reportElement key="line-7" x="-25" y="539" width="4" height="1"/>
 			</line>
 			<line>
-				<reportElement uuid="41968f87-4b6d-44ea-b664-ebbe91452ebe" key="line-8" x="553" y="539" width="4" height="1"/>
+				<reportElement key="line-8" x="553" y="539" width="4" height="1"/>
 			</line>
 		</band>
 	</background>
@@ -193,7 +193,7 @@
 	<pageHeader>
 		<band height="87" splitType="Stretch">
 			<image scaleImage="RetainShape" hAlign="Center" vAlign="Top" isUsingCache="true" onErrorType="Blank">
-				<reportElement uuid="b6531441-1a23-48b7-ae9f-1ac14d1fc678" key="image-1" positionType="Float" mode="Opaque" x="21" y="0" width="166" height="87" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="image-1" positionType="Float" mode="Opaque" x="21" y="0" width="166" height="87" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -206,7 +206,7 @@
 				<imageExpression><![CDATA[$P{logoImageFile}]]></imageExpression>
 			</image>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="c722709e-e71a-4091-8739-5939c4eab685" key="textField-26" x="350" y="42" width="170" height="21" isPrintWhenDetailOverflows="true"/>
+				<reportElement key="textField-26" x="350" y="42" width="170" height="21" isPrintWhenDetailOverflows="true"/>
 				<box bottomPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -221,7 +221,7 @@
 ($V{address}.getFullAddress())]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="facfa101-adcb-4200-bf17-434fb9fa4ef8" key="textField-23" x="350" y="4" width="170" height="13"/>
+				<reportElement key="textField-23" x="350" y="4" width="170" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -234,7 +234,7 @@
 				<textFieldExpression><![CDATA[$V{hotel}.getWorkPlace().getDescription()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="57635ca6-3de8-47e0-8595-6e72f3183d3b" key="textField-25" x="350" y="63" width="170" height="12"/>
+				<reportElement key="textField-25" x="350" y="63" width="170" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -253,7 +253,7 @@
 + "(" + $V{address}.getGeozone().getName() + ")")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="ffa2b2a6-092a-4234-a331-841091765fc8" key="textField-56" x="208" y="63" width="123" height="12"/>
+				<reportElement key="textField-56" x="208" y="63" width="123" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -268,7 +268,7 @@
 ($V{web}.getValue())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="24b1c918-8613-4a15-9d5d-14052f939378" key="textField-56" x="208" y="75" width="123" height="12"/>
+				<reportElement key="textField-56" x="208" y="75" width="123" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -282,7 +282,7 @@
 $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="a0de2962-c4f6-4186-ace4-dc8b527aef74" key="textField-24" x="350" y="75" width="170" height="12"/>
+				<reportElement key="textField-24" x="350" y="75" width="170" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -306,7 +306,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
     + $V{fax}.getValue()):""))]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="393259da-c3c9-473a-b0f9-2e6565c5fe93" key="textField-56" x="350" y="30" width="170" height="12"/>
+				<reportElement key="textField-56" x="350" y="30" width="170" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -322,7 +322,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 + $V{enterprise}.getRegistry().getDocument()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="44d8944d-d00f-4c9d-8ef0-9a76963eac4c" key="textField-23" x="350" y="17" width="170" height="13"/>
+				<reportElement key="textField-23" x="350" y="17" width="170" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -342,7 +342,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 	<detail>
 		<band height="381" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="5f6343fb-1f42-422f-a630-e8200a985be9" key="textField-53" positionType="Float" x="22" y="330" width="495" height="38" isRemoveLineWhenBlank="true"/>
+				<reportElement key="textField-53" positionType="Float" x="22" y="330" width="495" height="38" isRemoveLineWhenBlank="true"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -355,7 +355,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$P{invoiceFooterText}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="f1221181-08da-44b8-9597-a09445abdcc4" key="textField-48" x="20" y="35" width="48" height="13"/>
+				<reportElement key="textField-48" x="20" y="35" width="48" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -368,7 +368,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$R{aon_number} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="76a9f2fb-b141-4863-9a52-53c14a4faa07" key="textField-34" x="273" y="15" width="246" height="16"/>
+				<reportElement key="textField-34" x="273" y="15" width="246" height="16"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -381,7 +381,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$F{registryName}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement uuid="5884fe8c-856e-420c-89a2-68cf10cc7622" key="textField-49" x="68" y="48" width="170" height="13"/>
+				<reportElement key="textField-49" x="68" y="48" width="170" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -394,7 +394,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$F{issueDate}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="f3da8534-e61e-4af4-b3b0-29e3282855f2" key="textField-55" x="115" y="15" width="123" height="20"/>
+				<reportElement key="textField-55" x="115" y="15" width="123" height="20"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -404,10 +404,10 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{rectifier}) ?  $R{finance_rectifier_invoice}.toUpperCase() : ($F{rectified}) ? $R{finance_rectified_invoice}.toUpperCase() : ""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{rectifier}) ?  $R{finance_rectifier_invoice}.toUpperCase() : ($F{rectified}) ? $R{finance_rectified_invoice}.toUpperCase() : ($F{registryDocument} == null || $F{registryDocument}.trim().equals("")) ? $R{finance_pos_receipt_abbrv}.toUpperCase() : ""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="56f40d21-e77c-42a9-8071-c6c6a6512065" key="textField-47" x="68" y="35" width="170" height="13"/>
+				<reportElement key="textField-47" x="68" y="35" width="170" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -420,7 +420,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[($F{referenceCode}!= null && !"".equals($F{referenceCode})?$F{referenceCode} :"")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="656cd4e0-67a3-49fb-9b54-ee9c493ec6cd" key="textField-55" x="20" y="15" width="95" height="20"/>
+				<reportElement key="textField-55" x="20" y="15" width="95" height="20"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -433,7 +433,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$R{finance_invoice}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="5083787d-35e4-4a05-b0d9-5d74dfe16a67" key="textField-52" x="20" y="61" width="48" height="13"/>
+				<reportElement key="textField-52" x="20" y="61" width="48" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -446,7 +446,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$R{aon_company_document} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="fb8225af-7f00-4ef4-a142-32bc174d2b7c" key="textField-50" x="20" y="48" width="48" height="13"/>
+				<reportElement key="textField-50" x="20" y="48" width="48" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -459,7 +459,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$R{aon_date} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="85cb5f89-3e5b-4d32-b92e-39ea72f2c2ca" key="textField-54" positionType="Float" x="21" y="144" width="70" height="15">
+				<reportElement key="textField-54" positionType="Float" x="21" y="144" width="70" height="15">
 					<printWhenExpression><![CDATA[new Boolean($V{comments} != null && !"".equals($V{comments}))]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -474,7 +474,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$R{aon_comment} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="2c4bc357-f7e9-455b-b90f-b642153224ba" key="textField-53" positionType="Float" x="91" y="144" width="428" height="38" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-53" positionType="Float" x="91" y="144" width="428" height="38" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[new Boolean($V{comments} != null && !"".equals($V{comments}))]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -489,7 +489,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$V{comments}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="448e5b19-5536-43e5-8d61-f4c62a51ecba" key="textField-51" x="68" y="61" width="170" height="13"/>
+				<reportElement key="textField-51" x="68" y="61" width="170" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -502,7 +502,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$F{registryDocument}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="594c26d4-b6a3-43ec-8c5b-0e28fa1ffc4c" key="textField-51" positionType="Float" x="76" y="92" width="131" height="13" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-51" positionType="Float" x="76" y="92" width="131" height="13" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -517,7 +517,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$V{reservation}.getId()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="f0727c84-e1be-4d46-a8d5-2413b3505489" key="textField-52" positionType="Float" x="21" y="92" width="55" height="13" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-52" positionType="Float" x="21" y="92" width="55" height="13" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -532,7 +532,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$R{report_id} +": "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="43b44f69-db45-404b-9722-f1117e05c001" key="textField-51" positionType="Float" x="76" y="105" width="131" height="13" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-51" positionType="Float" x="76" y="105" width="131" height="13" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -547,7 +547,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$V{reservation}.getCode()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="013d82e6-5f5d-4688-a428-30621623cf2e" key="textField-52" positionType="Float" x="21" y="105" width="55" height="13" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-52" positionType="Float" x="21" y="105" width="55" height="13" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -562,7 +562,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$R{report_reservation_code} +": "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="c1185f47-b459-49fd-ad9f-e1d3681a6cac" key="textField-52" positionType="Float" x="207" y="92" width="40" height="13" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-52" positionType="Float" x="207" y="92" width="40" height="13" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -577,7 +577,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$R{report_checkin} +": "]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement uuid="67503b5b-f0d7-4c6c-8e1b-49a7e16232a0" key="textField-51" positionType="Float" x="247" y="92" width="106" height="13" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-51" positionType="Float" x="247" y="92" width="106" height="13" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -592,7 +592,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$V{reservation}.getStartDate()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="9d7fc953-b2f5-4b8c-a543-2661210fe458" key="textField-52" positionType="Float" x="207" y="105" width="40" height="13" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-52" positionType="Float" x="207" y="105" width="40" height="13" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -607,7 +607,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$R{report_checkout} +": "]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement uuid="11ee7511-ed99-403e-a92c-03d3e57db95b" key="textField-51" positionType="Float" x="247" y="105" width="106" height="13" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-51" positionType="Float" x="247" y="105" width="106" height="13" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -622,7 +622,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$V{reservation}.getEndDate()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="95f71121-45d5-4fa1-943a-39f77dd6c8cd" key="textField-52" x="-161" y="-146" width="65" height="13">
+				<reportElement key="textField-52" x="-161" y="-146" width="65" height="13">
 					<printWhenExpression><![CDATA[new Boolean($V{reservation}!=null)]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -637,7 +637,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$R{report_guest} +": "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="4c9085b5-2868-4e37-b743-801f2bb8c306" key="textField-51" x="-96" y="-146" width="101" height="13">
+				<reportElement key="textField-51" x="-96" y="-146" width="101" height="13">
 					<printWhenExpression><![CDATA[new Boolean($V{reservation}!=null)]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -652,7 +652,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$V{reservation}.getGuestFullName()]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement uuid="c13e5166-61c7-4427-a486-5565454f66b7" key="textField-51" positionType="Float" x="413" y="92" width="106" height="13" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-51" positionType="Float" x="413" y="92" width="106" height="13" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -667,7 +667,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$V{reservation}.getRoomCount()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="9aec4760-3ddc-4d19-8c7c-f76dbf016387" key="textField-52" positionType="Float" x="353" y="92" width="60" height="13" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-52" positionType="Float" x="353" y="92" width="60" height="13" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -682,7 +682,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$R{report_rooms} +": "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="b917d0eb-9e33-41b1-a2e6-973268852498" key="textField-52" positionType="Float" x="353" y="105" width="60" height="13" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-52" positionType="Float" x="353" y="105" width="60" height="13" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -697,7 +697,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$R{report_room_persons} +": "]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement uuid="e0d78bd8-cf6e-4caf-954b-27a8653a83a9" key="textField-51" positionType="Float" x="413" y="105" width="106" height="13" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-51" positionType="Float" x="413" y="105" width="106" height="13" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -712,15 +712,15 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$V{reservation}.getPersonCount()]]></textFieldExpression>
 			</textField>
 			<componentElement>
-				<reportElement uuid="be479a12-d14d-4405-b730-a35409db6a4c" key="detail" positionType="Float" x="0" y="188" width="535" height="31"/>
+				<reportElement key="detail" positionType="Float" x="0" y="188" width="535" height="31"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="detail" uuid="3860447e-8560-4fb9-be82-568b4f942e34">
+					<datasetRun subDataset="detail">
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{lines})]]></dataSourceExpression>
 					</datasetRun>
-					<jr:column width="75" uuid="0532c4ed-51ed-4ade-b5ce-b3bca5781e69">
+					<jr:column width="75">
 						<jr:columnHeader height="15" rowSpan="1">
 							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-								<reportElement uuid="74a79591-07ff-4389-967c-3b3e1f251d18" key="textField-1" mode="Opaque" x="0" y="0" width="75" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
+								<reportElement key="textField-1" mode="Opaque" x="0" y="0" width="75" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
 								<box leftPadding="0" rightPadding="0">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -736,7 +736,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
 							<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-								<reportElement uuid="19aab355-4281-4179-8a13-90e20cc5fdcd" key="textField-1" x="0" y="0" width="75" height="14"/>
+								<reportElement key="textField-1" x="0" y="0" width="75" height="14"/>
 								<box leftPadding="0" rightPadding="0">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -748,10 +748,10 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="40" uuid="1632e520-ec15-4b62-9af1-757f04c251d1">
+					<jr:column width="40">
 						<jr:columnHeader height="15" rowSpan="1">
 							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-								<reportElement uuid="69ae1450-9d87-4a74-89a6-98d220719725" key="textField-1" mode="Opaque" x="0" y="0" width="40" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
+								<reportElement key="textField-1" mode="Opaque" x="0" y="0" width="40" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
 								<box leftPadding="0" rightPadding="0">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -767,7 +767,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement uuid="e1c085c3-47ee-48b7-95fa-f50bafc5066f" key="textField-1" x="0" y="0" width="40" height="14"/>
+								<reportElement key="textField-1" x="0" y="0" width="40" height="14"/>
 								<box leftPadding="0" rightPadding="0">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -779,14 +779,14 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="0" uuid="aad77df1-45cd-4d7a-bfcc-8d9f23ddb5a6">
+					<jr:column width="0">
 						<jr:columnHeader height="15" rowSpan="1"/>
 						<jr:detailCell height="14" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="318" uuid="ab7ee9d7-00cb-4b75-bb74-ba1f358db79b">
+					<jr:column width="318">
 						<jr:columnHeader height="15" rowSpan="1">
 							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-								<reportElement uuid="6f50e6b2-56ef-46c9-857d-49b57f761c5e" key="textField-1" mode="Opaque" x="0" y="0" width="318" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
+								<reportElement key="textField-1" mode="Opaque" x="0" y="0" width="318" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
 								<box leftPadding="0" rightPadding="0">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -805,7 +805,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								<bottomPen lineWidth="0.0"/>
 							</box>
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement uuid="244adffe-3064-466f-9734-55c9fd445fec" key="textField-1" x="0" y="0" width="318" height="14"/>
+								<reportElement key="textField-1" x="0" y="0" width="318" height="14"/>
 								<box leftPadding="0" rightPadding="0">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -817,10 +817,10 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="101" uuid="12118b84-5a7a-4639-80bd-8beffc3b9bf6">
+					<jr:column width="101">
 						<jr:columnHeader height="15" rowSpan="1">
 							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-								<reportElement uuid="d561786b-e2f3-4260-a765-9388f9c78570" key="textField-1" mode="Opaque" x="0" y="0" width="101" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
+								<reportElement key="textField-1" mode="Opaque" x="0" y="0" width="101" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
 								<box leftPadding="0" rightPadding="2">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -834,7 +834,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								<textFieldExpression><![CDATA[$R{aon_taxable_base}]]></textFieldExpression>
 							</textField>
 							<genericElement>
-								<reportElement uuid="0b92ab45-a496-4287-986d-ffad26f50df5" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -852,7 +852,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="e9c2a031-bb01-436c-8c9e-08cf833fb59d" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -870,7 +870,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="5c527562-2ad7-4c99-9174-cb4c30b14bb4" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -888,7 +888,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="6d614c9b-cdab-48f4-8b88-12f6dab7c0b6" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -906,7 +906,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="f766fd90-d411-46a3-b0ef-192b21d27f09" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -924,7 +924,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="f5d9fd49-d4fc-414b-9d54-e9eef55f6552" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -942,7 +942,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="a0b3cb3c-f452-4178-87b9-6054d8a2a238" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -960,7 +960,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="9655a378-bca0-4d9a-8132-e1379bd2704b" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -978,7 +978,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="9402529b-7d0b-4002-8be9-1162dd509701" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -996,7 +996,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="37021416-ccab-4237-8987-cac4945ddd26" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1014,7 +1014,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="deab9d79-238c-4825-9284-adf62f4775f8" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1032,7 +1032,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="4d74968d-4d57-4d18-b932-b5d74bea298a" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1050,7 +1050,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="3d9d4bad-ffed-420f-856a-ed69d01bada8" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1068,7 +1068,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="de63e279-b552-4284-9ca3-9adf9f8e1371" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1086,7 +1086,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="3e65cfbc-8800-4269-b617-16ccf3fdf73e" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1104,7 +1104,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="adddfca6-a37e-45ca-aa6f-e575ec7205ae" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1122,7 +1122,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="6025b1d8-d9b3-45a4-a2d5-ea0cd2aa8afe" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1140,7 +1140,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="463d47ff-da55-4929-824f-189f1be8bc65" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1158,7 +1158,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="97971ca4-9da8-4641-bae1-194a21a3d087" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1176,7 +1176,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="dc0c007b-6437-4f87-947d-b5248f68fc53" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1194,7 +1194,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="68849b75-33f5-4996-9dba-dfe5108e837b" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1212,7 +1212,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="58afacdf-16d2-4d24-9f35-fb8f2b9ccf2b" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1230,7 +1230,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="43b3d5d1-7a67-4d21-ae74-93011c2f91a3" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1248,7 +1248,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="13988bcf-3e4c-4b78-a7ef-622d78b8c0a0" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1266,7 +1266,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="5651c160-bf2d-4543-acb9-bca7f292fdd4" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1284,7 +1284,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="14b320b3-9360-434b-a84b-12e24d8f4fe5" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1307,7 +1307,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								<bottomPen lineWidth="0.0"/>
 							</box>
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
-								<reportElement uuid="0f795354-a9e4-487e-9080-3a8213512fb0" key="textField-5" x="0" y="0" width="86" height="14">
+								<reportElement key="textField-5" x="0" y="0" width="86" height="14">
 									<printWhenExpression><![CDATA[new Boolean($F{price}.doubleValue() != 0)]]></printWhenExpression>
 								</reportElement>
 								<box leftPadding="0" rightPadding="2">
@@ -1320,7 +1320,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								<textFieldExpression><![CDATA[$F{taxableBase}]]></textFieldExpression>
 							</textField>
 							<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
-								<reportElement uuid="e175855a-e146-4e0e-9c9a-d5179b93dfa9" key="textField-44" positionType="Float" x="86" y="0" width="15" height="14">
+								<reportElement key="textField-44" positionType="Float" x="86" y="0" width="15" height="14">
 									<printWhenExpression><![CDATA[new Boolean($F{price}.doubleValue() != 0)]]></printWhenExpression>
 								</reportElement>
 								<box rightPadding="2">
@@ -1339,15 +1339,15 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				</jr:table>
 			</componentElement>
 			<componentElement>
-				<reportElement uuid="285a6f2f-b752-4a5e-aa24-f80dfad744ab" key="finances" positionType="Float" x="182" y="277" width="353" height="34"/>
+				<reportElement key="finances" positionType="Float" x="182" y="277" width="353" height="34"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="finances" uuid="1ed39dba-a629-406d-a5c2-7b7a77870f49">
+					<datasetRun subDataset="finances">
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{finances})]]></dataSourceExpression>
 					</datasetRun>
-					<jr:column width="109" uuid="c609ca32-1ff6-44d4-ac98-136010409020">
+					<jr:column width="109">
 						<jr:columnHeader height="15" rowSpan="1">
 							<textField isBlankWhenNull="true">
-								<reportElement uuid="27e15c85-ac7b-4353-b514-2dd0d47a6c00" key="textField-9" mode="Opaque" x="0" y="0" width="109" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
+								<reportElement key="textField-9" mode="Opaque" x="0" y="0" width="109" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
 								<box>
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1360,7 +1360,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								<textFieldExpression><![CDATA[$R{aon_date}]]></textFieldExpression>
 							</textField>
 							<genericElement>
-								<reportElement uuid="3440443a-6f14-4f20-bb46-af6ab6c46a6d" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1378,7 +1378,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="e276a382-a43b-4670-a439-3fa041563f0a" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1396,7 +1396,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="90abc317-4cf0-4c03-8efb-b8d32097336a" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1414,7 +1414,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="84f359ae-6997-4668-b07d-051fb404d71a" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1432,7 +1432,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="bd5d611a-8e5c-4b3e-9279-26cb0f832c28" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1450,7 +1450,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="c2f15950-f3bd-44bb-957b-caa40880ec62" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1468,7 +1468,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="498a5c5f-54db-46f3-8761-3c7e552fde49" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1486,7 +1486,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="0a69fc6e-088f-4564-bf15-e19fb182ddf6" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1504,7 +1504,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="cabf4a06-a59b-4d55-8375-18e6c033b018" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1522,7 +1522,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="e4fa08da-3c19-4e9c-8854-7278af26b3fc" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1540,7 +1540,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="c384e935-7b7c-4235-a5a1-6faa1c3c25cb" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1558,7 +1558,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="b2676d40-8d1d-41c2-8014-a6365afce26a" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1576,7 +1576,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="ed3e6f7d-6a27-4584-be94-a31f52d022ac" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1594,7 +1594,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="48d0ffcb-5263-48bf-9cfc-a395c2dbea86" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1612,7 +1612,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="f3772c14-b0b0-48e5-826c-676335e1fdf8" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1630,7 +1630,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="f4b2ec7f-81f9-464f-9b92-a838ac3b0c37" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1648,7 +1648,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="e7871207-f64c-42d0-aee2-dceadd35cc88" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1666,7 +1666,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="9fbb1bf7-a3ec-455d-9eca-b48f598f925d" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1684,7 +1684,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="18887d80-e1ef-4f1a-b0ee-8ad487a264d3" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1702,7 +1702,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="ed5c0478-94c3-4922-a38b-d16251899d13" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1720,7 +1720,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="b2cb5ca1-0ff3-4d2f-a405-c7af8b47ba5b" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1738,7 +1738,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="d8b6c5dd-7f98-4d57-af84-df61624a87a5" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1756,7 +1756,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="c3b26b9a-9252-4a36-ac2f-d9b45e86b001" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1774,7 +1774,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="62981976-c564-418e-ad47-e51801d15535" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1792,7 +1792,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="d2b263f7-96cb-4e50-8094-7de1583a29e7" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1810,7 +1810,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="66539899-3d0d-4d7a-b19b-9ea7dbc1819c" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1830,7 +1830,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
 							<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-								<reportElement uuid="631af905-c33b-457c-bbe8-74a925845d56" key="textField-4" x="0" y="0" width="109" height="14"/>
+								<reportElement key="textField-4" x="0" y="0" width="109" height="14"/>
 								<box leftPadding="5" rightPadding="5">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1842,10 +1842,10 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="149" uuid="b4f00b69-11d0-4abf-a956-1a4423267b8c">
+					<jr:column width="149">
 						<jr:columnHeader height="15" rowSpan="1">
 							<textField isBlankWhenNull="true">
-								<reportElement uuid="dde9bd31-a4cd-4458-9e16-f7e266039e5b" key="textField-6" mode="Opaque" x="0" y="0" width="149" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
+								<reportElement key="textField-6" mode="Opaque" x="0" y="0" width="149" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
 								<box>
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1860,7 +1860,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
 							<textField isBlankWhenNull="true">
-								<reportElement uuid="dec004ff-13cc-4309-996a-25cde354919f" key="textField-1" x="0" y="0" width="149" height="14"/>
+								<reportElement key="textField-1" x="0" y="0" width="149" height="14"/>
 								<box>
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1872,10 +1872,10 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="94" uuid="7c00e7c4-b200-4649-b51f-c3f9cf2cea26">
+					<jr:column width="94">
 						<jr:columnHeader height="15" rowSpan="1">
 							<textField isBlankWhenNull="true">
-								<reportElement uuid="fc867ea2-ceef-4b59-9502-ae6c574e628b" key="textField-10" mode="Opaque" x="0" y="0" width="94" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
+								<reportElement key="textField-10" mode="Opaque" x="0" y="0" width="94" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
 								<box rightPadding="2">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1888,7 +1888,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								<textFieldExpression><![CDATA[$R{aon_amount}]]></textFieldExpression>
 							</textField>
 							<genericElement>
-								<reportElement uuid="786ce839-b3c9-4b6d-b68f-3c4b15f74072" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1906,7 +1906,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="b058c7ab-639c-46f0-a2ae-367618febcb4" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1924,7 +1924,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="5fb3c758-7c5f-4200-ac9b-b7f3b5f33759" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1942,7 +1942,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="6380826f-6d52-482a-8ffd-093dd68c0a91" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1960,7 +1960,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="40b08e2d-871c-4679-b0c0-08df4a3e0561" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1978,7 +1978,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="eadfbb3a-8146-41b2-8079-8e62d09ad0ea" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -1996,7 +1996,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="592c7767-7fbd-4219-99bc-2607ce652250" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2014,7 +2014,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="8878c39d-ef46-4a5c-a977-be30d4cc2c58" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2032,7 +2032,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="3a8508fe-7210-4c03-b7ec-0c64403d15aa" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2050,7 +2050,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="0bc6b5bf-d793-40c0-9615-df2bf3b8e2e9" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2068,7 +2068,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="02270c2c-30c5-4df5-9a6b-a340e58efc35" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2086,7 +2086,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="099a24bf-9aa3-4f77-8f34-36eb1e16588c" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2104,7 +2104,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="32bcf2ba-d70c-4a3a-a18d-17ec9f8ac842" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2122,7 +2122,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="c583825e-3757-450e-b5cd-744e761c227b" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2140,7 +2140,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="41b21adf-0325-45fd-aad7-5599402971d7" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2158,7 +2158,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="df3678b8-2f61-4d74-9086-cf0ef690ca84" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2176,7 +2176,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="15c2830e-6e74-43cc-92dd-e57ba87908d0" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2194,7 +2194,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="144ecb17-19b7-4369-8206-bd42aa0e5095" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2212,7 +2212,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="e0c906a8-50c0-4180-b688-8c9f637b6cfd" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2230,7 +2230,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="cb942fc5-7e53-46cd-818d-b52f65daee51" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2248,7 +2248,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="eae72b90-06ec-4448-90d2-c6350f466093" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2266,7 +2266,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="4c23d5b6-b229-4ca9-afcb-e57de5860f48" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2284,7 +2284,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="c79cc4e7-ffbd-48da-bbd3-61a1af48dd77" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2302,7 +2302,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="cd9d54bb-9b99-4cfc-9619-e917fa43cbe8" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2320,7 +2320,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="b106c42d-74f8-40b8-a137-aa2599544cf8" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2338,7 +2338,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="e7483113-69c3-4f81-9726-5cb26336d884" mode="Transparent" x="0" y="0" width="0" height="15">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2358,7 +2358,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
-								<reportElement uuid="2f3bca08-3f36-475d-b9ca-7340a604cb1a" key="textField-5" x="0" y="0" width="84" height="14"/>
+								<reportElement key="textField-5" x="0" y="0" width="84" height="14"/>
 								<box>
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2371,7 +2371,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 							</textField>
 							<textField pattern="" isBlankWhenNull="true">
-								<reportElement uuid="1b05ad8b-451c-42b1-b5f1-4a04d33dc722" key="textField-5" x="84" y="0" width="10" height="14"/>
+								<reportElement key="textField-5" x="84" y="0" width="10" height="14"/>
 								<box rightPadding="2">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2388,7 +2388,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				</jr:table>
 			</componentElement>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="bf4db7dd-cd24-405e-87ef-68ef0d12ec50" key="textField-52" positionType="Float" x="21" y="118" width="55" height="13" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-52" positionType="Float" x="21" y="118" width="55" height="13" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -2403,7 +2403,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$R{report_guest} +": "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="62a749d8-072b-4a48-a23a-1945ade625b1" key="textField-51" positionType="Float" x="76" y="118" width="131" height="26" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+				<reportElement key="textField-51" positionType="Float" x="76" y="118" width="131" height="26" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
 					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -2418,7 +2418,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$V{reservation}.getGuestFullName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="a615a63b-e0ce-4edb-9a3d-1ffb135eb61f" key="textField-52" positionType="Float" x="207" y="118" width="40" height="13" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-52" positionType="Float" x="207" y="118" width="40" height="13" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -2433,7 +2433,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$R{report_tariff} +": "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="3d818390-e6df-4874-878b-bc77d77fb16e" key="textField-51" positionType="Float" x="247" y="118" width="272" height="26" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+				<reportElement key="textField-51" positionType="Float" x="247" y="118" width="272" height="26" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
 					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -2448,13 +2448,13 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$V{reservation}.getTariffInfo()]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement uuid="13cf785c-fb2e-4e98-bd05-d6c7c69a55e2" key="line-5" x="21" y="82" width="498" height="1" forecolor="#CCCCCC"/>
+				<reportElement key="line-5" x="21" y="82" width="498" height="1" forecolor="#CCCCCC"/>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</line>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="2edb5c44-5ca6-4f15-8d10-bf516189061f" key="textField-35" x="273" y="31" width="246" height="15"/>
+				<reportElement key="textField-35" x="273" y="31" width="246" height="15"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2467,7 +2467,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$F{address}.getFullAddress()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="acb61539-ef9f-4c86-b740-ef429f861b16" key="textField-37" x="273" y="61" width="246" height="15"/>
+				<reportElement key="textField-37" x="273" y="61" width="246" height="15"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2480,7 +2480,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$F{address}.getGeozone().getName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="bbe37f99-68ba-4592-bb9d-ae52e586fe6c" key="textField-36" x="273" y="46" width="246" height="15"/>
+				<reportElement key="textField-36" x="273" y="46" width="246" height="15"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2493,15 +2493,15 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[($F{address}.getZip()==null?"":$F{address}.getZip() + " ") + ($F{address}.getCity()==null?"":$F{address}.getCity())]]></textFieldExpression>
 			</textField>
 			<componentElement>
-				<reportElement uuid="30e5bbea-1124-43be-be52-154aa520412c" key="finances" positionType="Float" x="182" y="234" width="245" height="29"/>
+				<reportElement key="finances" positionType="Float" x="182" y="234" width="245" height="29"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="tax" uuid="757eb488-dedc-443d-9452-c0e9fac9609c">
+					<datasetRun subDataset="tax">
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{PriceStrategy}.getTaxBreakDowns($V{currentInvoice}, $V{currentInvoice}))]]></dataSourceExpression>
 					</datasetRun>
-					<jr:column width="70" uuid="3e83d683-bb37-45c4-a3f6-fbd296cf3dd3">
+					<jr:column width="70">
 						<jr:columnHeader height="14" rowSpan="1">
 							<textField isBlankWhenNull="true">
-								<reportElement uuid="9e49a713-34bc-47f9-9115-0696f8d5e261" key="textField-15" mode="Opaque" x="0" y="0" width="70" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
+								<reportElement key="textField-15" mode="Opaque" x="0" y="0" width="70" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
 								<box>
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2514,7 +2514,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								<textFieldExpression><![CDATA[$R{aon_taxable_base}]]></textFieldExpression>
 							</textField>
 							<genericElement>
-								<reportElement uuid="19b987f6-d456-47f8-8a61-4d2aa68a1bef" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2532,7 +2532,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="206a5b40-23d0-4c84-8374-eaeed2b89674" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2550,7 +2550,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="d264f41a-d7be-4027-a19f-0043313d4cc6" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2568,7 +2568,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="d1e5a3d5-3c6b-4ed6-9c78-89f4cacd9aeb" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2586,7 +2586,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="86943848-1eac-445a-acb5-c9853fee18e1" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2604,7 +2604,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="7520a503-1a7f-46a7-aa5c-3924d7e9653f" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2622,7 +2622,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="a28674fc-a623-477a-a203-b12e771b8dc2" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2640,7 +2640,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="01467abc-99ac-44d7-acfd-f7b96f85d66a" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2658,7 +2658,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="d8f911f2-e595-4e44-bf70-8eee1b7ae95a" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2676,7 +2676,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="c24dafe3-bb9c-4921-abdd-63d1a8e36612" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2694,7 +2694,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="9ede1751-446c-4ed2-a848-b35aff2b838a" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2712,7 +2712,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="8dee9a15-6453-457c-89f2-738f27738bcf" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2730,7 +2730,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="56149755-239c-4d9b-80a0-cd6589608ff7" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2748,7 +2748,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="9a3ee410-1a81-4202-a2e9-4e82f7f26eb1" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2766,7 +2766,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="34775cda-fb92-4c96-bc59-edf3bbf122b8" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2784,7 +2784,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="dfa3d374-d2f4-4261-a7f8-23a03b279f88" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2802,7 +2802,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="c9c8af38-8c82-4135-becc-4cb372db3c65" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2820,7 +2820,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="331b9a18-429d-474e-b8e6-b484e8808314" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2838,7 +2838,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="dbbc0ae6-69a9-4c37-a291-e643228d558e" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2856,7 +2856,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="da957fa4-8663-4083-90df-978601966fa1" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2874,7 +2874,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="468328b0-1af3-4d9e-a6d7-2a423eca5a0c" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2892,7 +2892,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="f84e1ca8-9eb0-4369-81f1-c84d1d65dd17" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2910,7 +2910,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="5ffe36af-533c-4216-b988-0f3cb3d9f889" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2928,7 +2928,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								</genericElementParameter>
 							</genericElement>
 							<genericElement>
-								<reportElement uuid="070967ee-c3dc-4c85-afb0-c51768bf8165" mode="Transparent" x="0" y="0" width="0" height="14">
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
 								</reportElement>
 								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -2948,7 +2948,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
 							<textField pattern="#,##0.00##" isBlankWhenNull="true">
-								<reportElement uuid="deb5be2b-7a44-4c98-808e-4009a4b480c5" key="textField-16" x="0" y="0" width="70" height="14">
+								<reportElement key="textField-16" x="0" y="0" width="70" height="14">
 									<printWhenExpression><![CDATA[new Boolean($F{base}.doubleValue() != 0)]]></printWhenExpression>
 								</reportElement>
 								<box rightPadding="5">
@@ -2964,10 +2964,10 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="50" uuid="32d475dc-2b38-4d49-97b0-e5d0f65e7ee4">
+					<jr:column width="50">
 						<jr:columnHeader height="14" rowSpan="1">
 							<textField isBlankWhenNull="true">
-								<reportElement uuid="48bac269-0743-4752-8e4c-bc446f8a1a71" key="textField-17" mode="Opaque" x="0" y="0" width="50" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
+								<reportElement key="textField-17" mode="Opaque" x="0" y="0" width="50" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
 								<box>
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2982,7 +2982,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
-								<reportElement uuid="281ff53a-036b-4c06-b07b-f7cf9c30a139" key="textField-18" x="0" y="0" width="50" height="14">
+								<reportElement key="textField-18" x="0" y="0" width="50" height="14">
 									<printWhenExpression><![CDATA[new Boolean($F{base}.doubleValue() != 0)]]></printWhenExpression>
 								</reportElement>
 								<box>
@@ -2998,10 +2998,10 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="60" uuid="c59dcf38-7c75-4d70-b657-47b571b33265">
+					<jr:column width="60">
 						<jr:columnHeader height="14" rowSpan="1">
 							<textField isBlankWhenNull="true">
-								<reportElement uuid="42cb83ca-2746-4b7c-8e02-2df821a9360c" key="textField-19" mode="Opaque" x="0" y="0" width="60" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
+								<reportElement key="textField-19" mode="Opaque" x="0" y="0" width="60" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
 								<box leftPadding="5">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3016,7 +3016,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
 							<textField pattern="" isBlankWhenNull="true">
-								<reportElement uuid="80bb3a25-76fc-4f26-a366-51ae786f9921" key="textField-21" x="0" y="0" width="60" height="14">
+								<reportElement key="textField-21" x="0" y="0" width="60" height="14">
 									<printWhenExpression><![CDATA[new Boolean($F{base}.doubleValue() != 0)]]></printWhenExpression>
 								</reportElement>
 								<box leftPadding="5">
@@ -3032,10 +3032,10 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="65" uuid="c5b6c799-bc22-4d20-ba46-14217de8347d">
+					<jr:column width="65">
 						<jr:columnHeader height="14" rowSpan="1">
 							<textField isBlankWhenNull="true">
-								<reportElement uuid="c880ebed-b339-459a-83b6-f05857d67ef5" key="textField-20" mode="Opaque" x="0" y="0" width="65" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
+								<reportElement key="textField-20" mode="Opaque" x="0" y="0" width="65" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
 								<box rightPadding="2">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3050,7 +3050,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
-								<reportElement uuid="040d0a1b-b8a1-4efe-9e99-7b2144e974a9" key="textField-22" x="0" y="0" width="65" height="14">
+								<reportElement key="textField-22" x="0" y="0" width="65" height="14">
 									<printWhenExpression><![CDATA[new Boolean($F{base}.doubleValue() != 0)]]></printWhenExpression>
 								</reportElement>
 								<box rightPadding="2">
@@ -3069,7 +3069,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				</jr:table>
 			</componentElement>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement uuid="e8142890-71b7-43c7-b1cc-80c1730bf319" key="textField-44" positionType="Float" x="522" y="248" width="13" height="14"/>
+				<reportElement key="textField-44" positionType="Float" x="522" y="248" width="13" height="14"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3082,7 +3082,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA["&euro;"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="b8e3f108-5e3b-42eb-8e28-f6cf058f7f12" key="textField-43" positionType="Float" mode="Opaque" x="460" y="234" width="75" height="14" forecolor="#FFFFFF" backcolor="#000000"/>
+				<reportElement key="textField-43" positionType="Float" mode="Opaque" x="460" y="234" width="75" height="14" forecolor="#FFFFFF" backcolor="#000000"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3095,7 +3095,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$R{invoice_total}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement uuid="48d6d45c-f62e-4ba2-8b7d-507293253587" key="textField-44" positionType="Float" x="460" y="248" width="62" height="14"/>
+				<reportElement key="textField-44" positionType="Float" x="460" y="248" width="62" height="14"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
