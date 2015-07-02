@@ -13,6 +13,7 @@ public class AdvanceInvoiceTo implements IReservationConstants, Serializable {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+	private ReservationInvoiceTo reservationInvoiceTo;
 	private boolean guestReservation;
 	private Date issueDate;
 	private double percent;
@@ -22,11 +23,18 @@ public class AdvanceInvoiceTo implements IReservationConstants, Serializable {
 	private Date financeDate;
 	private PosShift posShift;
 
+	public ReservationInvoiceTo getReservationInvoiceTo() {
+		return reservationInvoiceTo;
+	}
+	public void setReservationInvoiceTo(ReservationInvoiceTo reservationInvoiceTo) {
+		this.reservationInvoiceTo = reservationInvoiceTo;
+	}
+
 	public boolean isGuestReservation() {
 		return guestReservation;
 	}
 	public void setGuestReservation(boolean guestReservation) {
-		this.guestReservation= guestReservation;
+		this.guestReservation = guestReservation;
 	}
 
 	public Date getIssueDate() {

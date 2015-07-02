@@ -68,17 +68,17 @@ public class AdvanceInvoicing {
 			try {
 				HibernateUtil.setBeginTransaction(false);
 				HibernateUtil.setCloseSession(false);
-	
+
 				HibernateUtil.beginTransaction(sessionName);
-	
+
 				Invoice invoice = createAdvanceInvoice(advanceInvoiceTo, reservation);
 				double advanceAmount = createAdvanceInvoiceDetails(invoice, reservation, advanceInvoiceTo.getPercent(), advanceInvoiceTo.getAmount());
-				createAdvanceInvoiceAddress(invoice, reservation);
+				createAdvanceInvoiceAddress(invoice, advanceInvoiceTo.getReservationInvoiceTo(), reservation);
 				if (advanceAmount != 0) {
 					createAdvanceInvoiceFinances(invoice, advanceInvoiceTo, advanceAmount);
 				}
 				recordInvoice(invoice);
-	
+
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
 	
@@ -106,7 +106,7 @@ public class AdvanceInvoicing {
 		invoice.setProject(reservation.getProject());
 		invoice.setSeries(getHotelSeries(reservation));
 		invoice.setNumber(obtainSeriesMaxNumber(invoice.getSeries()));
-		invoice.setRegistry(obtainRegistry(reservation));
+		invoice.setRegistry(obtainRegistry(advanceInvoiceTo.getReservationInvoiceTo(), reservation));
 		invoice.setRegistryDocument(invoice.getRegistry().getDocument());
 		invoice.setRegistryDocumentType(invoice.getRegistry().getDocumentType());
 		invoice.setRegistryDocumentCountry(invoice.getRegistry().getDocumentCountry());
@@ -156,15 +156,20 @@ public class AdvanceInvoicing {
 		return advanceAmount;
 	}
 
-	private void createAdvanceInvoiceAddress(Invoice invoice, ProjectReservation reservation) throws ManagerBeanException {
+	private void createAdvanceInvoiceAddress(Invoice invoice, ReservationInvoiceTo reservationInvoiceTo, ProjectReservation reservation) 
+			throws ManagerBeanException {
 		IAddress address = null;
 		if (reservation.isGuestHolder()) {
-			ProjectReservationGuest reservationGuest = obtainMainGuest(reservation);
-			address = new InvoiceAddress();
-			address.setAddress(StringUtils.abbreviate(reservationGuest.getAddress(), 45));
-			address.setZip(StringUtils.abbreviate(reservationGuest.getZip(), 16));
-			address.setCity(StringUtils.abbreviate(reservationGuest.getCity(), 45));
-			address.setProvince(StringUtils.abbreviate(reservationGuest.getProvince(), 45));
+			if (reservationInvoiceTo != null) {
+				address = reservationInvoiceTo.getAddress();
+			} else {
+				ProjectReservationGuest reservationGuest = obtainMainGuest(reservation);
+				address = new InvoiceAddress();
+				address.setAddress(StringUtils.abbreviate(reservationGuest.getAddress(), 45));
+				address.setZip(StringUtils.abbreviate(reservationGuest.getZip(), 16));
+				address.setCity(StringUtils.abbreviate(reservationGuest.getCity(), 45));
+				address.setProvince(StringUtils.abbreviate(reservationGuest.getProvince(), 45));
+			}
 		} else {
 			address = invoice.getRegistry().getDefaultAddress();
 		}
@@ -178,6 +183,7 @@ public class AdvanceInvoicing {
 			invoiceAddress.setNumber(address.getNumber()); 
 			invoiceAddress.setZip(address.getZip()); 
 			invoiceAddress.setCity(address.getCity()); 
+			invoiceAddress.setProvince(address.getProvince()); 
 			invoiceAddress.setGeozone(address.getGeozone()); 
 
 			IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
@@ -237,21 +243,25 @@ public class AdvanceInvoicing {
 		return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
 	}
 
-	private Registry obtainRegistry(ProjectReservation reservation) throws ManagerBeanException {
+	private Registry obtainRegistry(ReservationInvoiceTo reservationInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
 		if (reservation.isGuestHolder()) {
 			Registry registry = new Registry();
-			registry.setId(reservation.getHotelReservation().getCustomer().getRegistry().getId());
-			ProjectReservationGuest reservationGuest = obtainMainGuest(reservation);
-			if (reservationGuest != null) {
-				registry.setName(reservationGuest.getFullName());
-				registry.setDocument(reservationGuest.getDocument());
-				registry.setDocumentType(reservationGuest.getDocumentType());
-				registry.setDocumentCountry(reservationGuest.getDocumentCountry());
+			if (reservationInvoiceTo != null) {
+				registry = reservationInvoiceTo.getRegistry();
 			} else {
-				registry.setName(reservation.getHotelReservation().getCustomer().getRegistry().getFullName());
-				registry.setDocument(reservation.getHotelReservation().getCustomer().getRegistry().getDocument());
-				registry.setDocumentType(reservation.getHotelReservation().getCustomer().getRegistry().getDocumentType());
-				registry.setDocumentCountry(reservation.getHotelReservation().getCustomer().getRegistry().getDocumentCountry());
+				registry.setId(reservation.getHotelReservation().getCustomer().getRegistry().getId());
+				ProjectReservationGuest reservationGuest = obtainMainGuest(reservation);
+				if (reservationGuest != null) {
+					registry.setName(reservationGuest.getFullName());
+					registry.setDocument(reservationGuest.getDocument());
+					registry.setDocumentType(reservationGuest.getDocumentType());
+					registry.setDocumentCountry(reservationGuest.getDocumentCountry());
+				} else {
+					registry.setName(reservation.getHotelReservation().getCustomer().getRegistry().getFullName());
+					registry.setDocument(reservation.getHotelReservation().getCustomer().getRegistry().getDocument());
+					registry.setDocumentType(reservation.getHotelReservation().getCustomer().getRegistry().getDocumentType());
+					registry.setDocumentCountry(reservation.getHotelReservation().getCustomer().getRegistry().getDocumentCountry());
+				}
 			}
 			return registry;
 		} else {

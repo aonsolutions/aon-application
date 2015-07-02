@@ -773,11 +773,14 @@ public class ProjectReservationController extends BasicController implements IPm
 				throw new AbortProcessingException(msg);
 			}
 			setAdvanceInvoiceTo(new AdvanceInvoiceTo());
+			setReservationInvoiceTo(new ReservationInvoiceTo(false));
+			getAdvanceInvoiceTo().setReservationInvoiceTo(getReservationInvoiceTo());
 			getAdvanceInvoiceTo().setGuestReservation(reservation.isGuestHolder());
 			getAdvanceInvoiceTo().setIssueDate(new Date());
 			getAdvanceInvoiceTo().setAmount(reservation.getAdvance());
 			getAdvanceInvoiceTo().setFinanceDate(getAdvanceInvoiceTo().getIssueDate());
 			getAdvanceInvoiceTo().setPosShift(PosUtils.getUserPosShift());
+			fillInvoiceData(reservation);
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
@@ -806,6 +809,11 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	private boolean validateAdvanceInvoice() throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		if (getReservationInvoiceTo().getRegistry().isDocumentValidable() && !getReservationInvoiceTo().getRegistry().isValidDocument()) {
+			String msg = AonUtil.getMessage(REGISTRY_DOCUMENT_INCORRECT_ERROR);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 		if (getAdvanceInvoiceTo().getPayMethod() == null) {
 			String msg = "La Forma de Pago es obligatoria.";
 			AonUtil.addErrorMessage(msg);

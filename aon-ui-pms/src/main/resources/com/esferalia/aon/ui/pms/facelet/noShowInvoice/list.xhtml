@@ -81,7 +81,12 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.report_reservation_code}" />
 							</f:facet>
-							<aon:outputText value="#{to.code}" />
+							<aon:outputText value="#{to.code}">
+								<aon:abbreviateConverter maxWidth="15" />
+							</aon:outputText>
+							<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
+								<aon:outputText	value="#{to.code}" />
+							</rich:toolTip>
 						</aon:column>
 
 						<aon:column alias="ProjectReservation.startDate"
@@ -110,7 +115,9 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.report_guest}" />
 							</f:facet>
-							<aon:outputText value="#{to.guestFullName}" />
+							<aon:outputText value="#{to.guestFullName}">
+								<aon:abbreviateConverter maxWidth="30" />
+							</aon:outputText>
 						</aon:column>
 
 						<aon:column alias="ProjectReservation.agency.registry.name"
@@ -118,7 +125,12 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.report_agency}" />
 							</f:facet>
-							<aon:outputText value="#{to.agency.registry.fullName}" />
+							<aon:outputText value="#{to.agency.registry.fullName}">
+								<aon:abbreviateConverter maxWidth="25" />
+							</aon:outputText>
+							<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto" rendered="#{!empty to.agency.registry.fullName}">
+								<aon:outputText	value="#{to.agency.registry.fullName}" />
+							</rich:toolTip>
 						</aon:column>
 
 						<aon:column styleClass="aon-editDataTable-numberColumn">

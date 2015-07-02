@@ -10,7 +10,7 @@
 
 	<aon:panelGroup id="showAdvanceInvoiceWindow">
 		<aon:if test="#{controller.showAdvanceInvoiceWindow}">
-			<rich:modalPanel id="advanceInvoiceModalPanel" minHeight="240" minWidth="580" 
+			<rich:modalPanel id="advanceInvoiceModalPanel" minHeight="320" minWidth="580" 
 				rendered="#{controller.showAdvanceInvoiceWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
@@ -62,6 +62,16 @@
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" styleClass="aon-width-all"
 										columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
 
+										<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/form.xhtml" />
+
+										<aon:outputLabel for="AdvanceInvoice_payMethod"
+											value="#{bundle.finance_payMethod}" />
+										<aon:selectOneMenu id="AdvanceInvoice_payMethod"
+											value="#{controller.advanceInvoiceTo.payMethod}" required="true">
+											<f:selectItem itemLabel="-" value="#{null}" />
+											<f:selectItems value="#{configCollections.directPayMethods}" />
+										</aon:selectOneMenu>
+
 										<aon:outputLabel for="AdvanceInvoice_amount"
 											value="#{bundle.pms_invoice_amount}" />
 										<aon:outputText value="#{controller.advanceInvoiceTo.amount}" 
@@ -72,17 +82,7 @@
 										<aon:inputText id="AdvanceInvoice_amount" 
 											value="#{controller.advanceInvoiceTo.amount}"
 											required="true" size="10"
-											rendered="#{controller.to.advance == 0 or controller.reservationPermission.advanceEditable}"
-											ajaxSingle="true" />
-
-										<aon:outputLabel for="AdvanceInvoice_payMethod"
-											value="#{bundle.finance_payMethod}" />
-										<aon:selectOneMenu id="AdvanceInvoice_payMethod"
-											value="#{controller.advanceInvoiceTo.payMethod}" required="true"
-											reRender="advanceInvoiceModalContent" ajaxSingle="true">
-											<f:selectItem itemLabel="-" value="#{null}" />
-											<f:selectItems value="#{configCollections.directPayMethods}" />
-										</aon:selectOneMenu>
+											rendered="#{controller.to.advance == 0 or controller.reservationPermission.advanceEditable}" />
 
 									</aon:panelGrid>
 								</aon:div>
