@@ -497,25 +497,27 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 	}
 
 	public List<SelectItem> getCheckOutPenaltyDays() throws ManagerBeanException {
+		Date fromDate = getReservationInvoiceTo().getEarlyCheckOutDate();
 		NumberFormat formatter = new DecimalFormat(AonUtil.getMessage(PRICE_PATTERN));
 		List<SelectItem> penaltyDays = new LinkedList<SelectItem>();
 		penaltyDays.add(new SelectItem("0", "0 - 0,00 EUR."));
-		if (DateUtils.addDays(getReservationInvoiceTo().getEarlyCheckOutDate(), 1).compareTo(getReservation().getEndDate()) <= 0) {
-			penaltyDays.add(new SelectItem("1", "1 - " + formatter.format(getReservation().getOneNightPenaltyPrice()) + " EUR."));
+		if (DateUtils.addDays(fromDate, 1).compareTo(getReservation().getEndDate()) <= 0) {
+			penaltyDays.add(new SelectItem("1", "1 - " + formatter.format(getReservation().getNextNightPenaltyPrice(fromDate)) + " EUR."));
 		}
-		if (DateUtils.addDays(getReservationInvoiceTo().getEarlyCheckOutDate(), 2).compareTo(getReservation().getEndDate()) <= 0) {
-			penaltyDays.add(new SelectItem("2", "2 - " + formatter.format(getReservation().getTwoNightPenaltyPrice()) + " EUR."));
+		if (DateUtils.addDays(fromDate, 2).compareTo(getReservation().getEndDate()) <= 0) {
+			penaltyDays.add(new SelectItem("2", "2 - " + formatter.format(getReservation().getNextTwoNightPenaltyPrice(fromDate)) + " EUR."));
 		}
 		return penaltyDays;
 	}
 
 	private double getEarlyCheckOutPenaltyAmount() throws ManagerBeanException {
+		Date fromDate = getReservationInvoiceTo().getEarlyCheckOutDate();
 		if (getEarlyCheckOutPenalty() != null) {
 			switch (getEarlyCheckOutPenalty().intValue()) {
 			case 1:
-				return getReservation().getOneNightPenaltyTaxableBase();
+				return getReservation().getNextNightPenaltyTaxableBase(fromDate);
 			case 2:
-				return getReservation().getTwoNightPenaltyTaxableBase();
+				return getReservation().getNextTwoNightPenaltyTaxableBase(fromDate);
 			}
 		}
 		return 0;

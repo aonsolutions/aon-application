@@ -155,7 +155,7 @@ public class NoShowInvoicing {
 		} else if (noShowInvoiceTo.getPenaltyDays() < 2) {
 			penaltyTaxableBases.put(reservation.getStartDate(), penaltyTaxableBase);
 		} else if (noShowInvoiceTo.getPenaltyDays() == 2) {
-			double firstNightPenaltyTaxableBase = reservation.getOneNightPenaltyTaxableBase();
+			double firstNightPenaltyTaxableBase = reservation.getFirstNightPenaltyTaxableBase();
 			penaltyTaxableBases.put(reservation.getStartDate(), firstNightPenaltyTaxableBase);
 			double secondNightPenaltyTaxableBase = CommonUtil.round(penaltyTaxableBase - firstNightPenaltyTaxableBase, 4);
 			if (secondNightPenaltyTaxableBase != 0) {
@@ -348,9 +348,9 @@ public class NoShowInvoicing {
 			case -1:
 				return reservation.getAllNightPenaltyTaxableBase();
 			case 1:
-				return reservation.getOneNightPenaltyTaxableBase();
+				return reservation.getFirstNightPenaltyTaxableBase();
 			case 2:
-				return reservation.getTwoNightPenaltyTaxableBase();
+				return reservation.getFirstTwoNightPenaltyTaxableBase();
 			default:
 				return 0;
 		}
