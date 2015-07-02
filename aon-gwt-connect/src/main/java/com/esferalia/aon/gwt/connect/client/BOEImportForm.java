@@ -16,9 +16,12 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -33,6 +36,11 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ResizeLayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class BOEImportForm extends Composite implements EntryPoint {
@@ -75,9 +83,9 @@ public class BOEImportForm extends Composite implements EntryPoint {
 	
 	@UiField
 	Button button;
-	
+
 	@UiField
-	FlowPanel messages;
+	SplitLayoutPanel splitLayoutPanel;
 	
 	private long progress = 10;
 
@@ -203,7 +211,7 @@ public class BOEImportForm extends Composite implements EntryPoint {
 		if (up == null)
 			return;	
 		
-		messages.clear();
+		//messages.clear();
 		
 		if (Window.confirm(AON.MSG.continueAction()+"?")) {
 			CONNECT_SERVICE.importZippedMod2002013(getCurrentDomainName(), getCurrentDomain(), new AsyncCallback<List<String>>() {
@@ -216,8 +224,10 @@ public class BOEImportForm extends Composite implements EntryPoint {
 
 				@Override
 				public void onSuccess(List<String> result) {
-					flexTable.setWidget(0, 1, newUploader(URL));
-					Label label = null;
+					flexTable.setWidget(0, 1, newUploader(URL));					
+					Label label = null;					
+					FlowPanel messages = new FlowPanel();
+					
 					for (String msg : result) {
 						if (AonStringUtils.isEmpty(msg)) {
 							label = new Label("");
@@ -229,10 +239,18 @@ public class BOEImportForm extends Composite implements EntryPoint {
 							messages.add(label);
 						}
 					}
+					showImportMessages(messages);
 				}
 			});
 		}
 	}
+	
+	private void showImportMessages (FlowPanel messages) {
+
+		ScrollPanel scrollPanel = new ScrollPanel(messages);
+		splitLayoutPanel.addSouth(scrollPanel, Window.getClientHeight() / 2);
+	}
+	
 	
 	
 	public static native String getCurrentDomainName()
