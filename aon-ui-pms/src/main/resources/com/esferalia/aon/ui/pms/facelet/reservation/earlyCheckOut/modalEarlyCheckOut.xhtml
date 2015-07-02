@@ -11,7 +11,7 @@
 	<aon:panelGroup id="showEarlyCheckOutWindow">
 		<aon:if test="#{controller.showEarlyCheckOutWindow}">
 			<rich:modalPanel id="earlyCheckOutModalPanel" 
-				minHeight="#{(controller.chargeCheckOut and (!controller.reservation.agencyHolder or !empty controller.reservationFinances)) ? (520) : (350)}" 
+				minHeight="#{(controller.chargeCheckOut and (!controller.reservation.agencyHolder or !empty controller.reservationFinances)) ? (580) : (350)}" 
 				minWidth="#{(controller.chargeCheckOut and (!controller.reservation.agencyHolder or !empty controller.reservationFinances)) ? (640) : (450)}" 
 				rendered="#{controller.showEarlyCheckOutWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
@@ -59,9 +59,16 @@
 											target="#{controller.showEarlyCheckOutWindow}"
 											value="#{false}" />
 									</aon:commandButton>
+									<aon:commandButton id="earlyCheckOut-refresh"
+										styleClass="aon-finding-toolbar-item aon-icon-refresh"
+										value="#{bundle.webmail_refresh}"
+										actionListener="#{controller.onInit}"
+										reRender="showEarlyCheckOutWindow"
+										onclick="Richfaces.showModalPanel('waitProccess')"
+										oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 								</aon:div>
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 1em;">
-									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;"
+									<aon:panelGrid id="menuGrid" columns="2" styleClass="aon-width-all"
 										columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
 
 										<aon:outputLabel for="ProjectReservation_earlyCheckOutDate"

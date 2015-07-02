@@ -58,6 +58,7 @@ import com.esferalia.aon.pms.invoicing.PaymentSummaryTo;
 import com.esferalia.aon.pms.invoicing.PenalizationInvoicing;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
+import com.esferalia.aon.pms.invoicing.TotalSummaryTo;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class EarlyCheckOutController implements IPmsConstants, Serializable {
@@ -151,6 +152,10 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 	}
 	public void setEarlyCheckOutPenalty(Integer earlyCheckOutPenalty) {
 		this.earlyCheckOutPenalty = earlyCheckOutPenalty;
+	}
+
+	public void onInit(ActionEvent event) {
+		onInit();
 	}
 
 	public void onInit() {
@@ -449,23 +454,45 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 		return amount;
 	}
 
-	public List<PaymentSummaryTo> getTotalSummary() throws ManagerBeanException {
-		List<PaymentSummaryTo> totalSummary = new LinkedList<PaymentSummaryTo>();
-		if (getReservationPaymentSummary().size() > 0) {
-			PaymentSummaryTo totalSummaryTo = new PaymentSummaryTo();
-			totalSummaryTo.setService(false);
-			totalSummaryTo.setReturnAmount(getReservationTotalReturnAmount());
-			totalSummaryTo.setPaymentAmount(getReservationTotalPaymentAmount());
-			totalSummary.add(totalSummaryTo);
-		}
-		if (getServicesPaymentSummary().size() > 0) {
-			PaymentSummaryTo totalSummaryTo = new PaymentSummaryTo();
-			totalSummaryTo.setService(true);
-			totalSummaryTo.setReturnAmount(getServicesTotalReturnAmount());
-			totalSummaryTo.setPaymentAmount(getServicesTotalPaymentAmount());
-			totalSummary.add(totalSummaryTo);
+	public List<TotalSummaryTo> getTotalSummary() throws ManagerBeanException {
+		List<TotalSummaryTo> totalSummary = new LinkedList<TotalSummaryTo>();
+		if (getReservationPaymentSummary().size() > 0 && getServicesPaymentSummary().size() > 0) {
+			for (PaymentSummaryTo paymentSummaryTo : getReservationPaymentSummary()) {
+				TotalSummaryTo totalSummaryTo = new TotalSummaryTo();
+				totalSummaryTo.setPayMethod(paymentSummaryTo.getPayMethod());
+				int index = totalSummary.indexOf(totalSummaryTo);
+				if (index >= 0) {
+					totalSummaryTo = totalSummary.get(index);
+				} else {
+					totalSummary.add(totalSummaryTo);
+				}
+				totalSummaryTo.setReservationAmount(CommonUtil.round(totalSummaryTo.getReservationAmount() + paymentSummaryTo.getLiquidationAmount()));
+			}
+			for (PaymentSummaryTo paymentSummaryTo : getServicesPaymentSummary()) {
+				TotalSummaryTo totalSummaryTo = new TotalSummaryTo();
+				totalSummaryTo.setPayMethod(paymentSummaryTo.getPayMethod());
+				int index = totalSummary.indexOf(totalSummaryTo);
+				if (index >= 0) {
+					totalSummaryTo = totalSummary.get(index);
+				} else {
+					totalSummary.add(totalSummaryTo);
+				}
+				totalSummaryTo.setServicesAmount(CommonUtil.round(totalSummaryTo.getServicesAmount() + paymentSummaryTo.getLiquidationAmount()));
+			}
 		}
 		return totalSummary;
+	}
+
+	public double getTotalAmount() throws ManagerBeanException {
+		double amount = 0;
+		for (TotalSummaryTo totalSummaryTo : getTotalSummary()) {
+			amount = CommonUtil.round(amount + totalSummaryTo.getTotalAmount());
+		}
+		return amount;
+	}
+
+	public double getTotalAmountAbs() throws ManagerBeanException {
+		return Math.abs(getTotalAmount());
 	}
 
 	public boolean isEarlyCheckOutDateEditable() throws ManagerBeanException {

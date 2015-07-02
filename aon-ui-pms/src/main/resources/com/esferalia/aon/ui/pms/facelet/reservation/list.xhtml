@@ -15,7 +15,7 @@
 				<ui:param name="skipResetButton" value="#{!reservation.reservationPermission.newReservationAllowed}" />
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="reservation-Refresh"
-						value="#{bundle.webmail_refresh}"	immediate="#{true}"
+						value="#{bundle.webmail_refresh}" immediate="#{true}"
 						styleClass="aon-finding-toolbar-item aon-icon-refresh"
 						actionListener="#{reservation.onSearch}"
 						reRender="aonContent" />

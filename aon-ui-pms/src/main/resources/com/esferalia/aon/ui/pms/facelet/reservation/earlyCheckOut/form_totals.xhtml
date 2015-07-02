@@ -10,7 +10,7 @@
 
 	<aon:div id="earlyCheckOutPaymentTotalDiv" 
 		styleClass="aon-group aon-width-all" style="margin-top: 2em;"
-		ajaxRendered="true">
+		rendered="#{!empty controller.totalSummary}" ajaxRendered="true">
 		<aon:div styleClass="aon-group-title">
 			<aon:outputText value="#{bundle.aon_total} #{bundle.pms_liquidation}" styleClass="aon-uppercase" />
 		</aon:div>
@@ -20,36 +20,52 @@
 					value="#{controller.totalSummary}" var="earlyCheckOutTotalSummary">
 
 					<aon:column styleClass="aon-width-auto aon-editDataTable-textColumn">
-						<aon:outputText value="#{(!earlyCheckOutTotalSummary.service) ? bundle.aon_reservation : bundle.pms_services}" 
-							styleClass="aon-uppercase" />
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.finance_payMethod}" />
+						</f:facet>
+						<aon:outputText value="#{earlyCheckOutTotalSummary.payMethod.name}" />
 					</aon:column>
 
 					<aon:column styleClass="aon-width-100 aon-editDataTable-numberColumn">
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.pms_total_to_return}" />
+							<aon:outputText value="#{bundle.aon_reservation}" />
 						</f:facet>
-						<aon:outputText value="#{earlyCheckOutTotalSummary.returnAmount}">
+						<aon:outputText value="#{earlyCheckOutTotalSummary.reservationAmountAbs}"
+							styleClass="#{(earlyCheckOutTotalSummary.reservationAmount >= 0) ? ('aon-label-info') : ('aon-label-error')}">
 							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 						</aon:outputText>
 					</aon:column>
 
 					<aon:column styleClass="aon-width-100 aon-editDataTable-numberColumn">
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.pms_total_to_charge}" />
+							<aon:outputText value="#{bundle.pms_services}" />
 						</f:facet>
-						<aon:outputText value="#{earlyCheckOutTotalSummary.paymentAmount}">
+						<aon:outputText value="#{earlyCheckOutTotalSummary.servicesAmountAbs}"
+							styleClass="#{(earlyCheckOutTotalSummary.servicesAmount >= 0) ? ('aon-label-info') : ('aon-label-error')}">
 							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 						</aon:outputText>
+						<f:facet name="footer">
+							<aon:div styleClass="aon-bold aon-text-right" style="font-size: 0.9em;">
+								<aon:outputText value="#{bundle.aon_total}" styleClass="aon-uppercase" />
+							</aon:div>
+						</f:facet>
 					</aon:column>
 
 					<aon:column styleClass="aon-width-100 aon-editDataTable-numberColumn">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.pms_liquidation}" />
 						</f:facet>
-						<aon:outputText value="#{earlyCheckOutTotalSummary.liquidationAmountAbs}"
-							styleClass="#{(earlyCheckOutTotalSummary.liquidationAmount >= 0) ? ('aon-label-info') : ('aon-label-error')}">
+						<aon:outputText value="#{earlyCheckOutTotalSummary.totalAmountAbs}"
+							styleClass="#{(earlyCheckOutTotalSummary.totalAmount >= 0) ? ('aon-label-info') : ('aon-label-error')}">
 							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 						</aon:outputText>
+						<f:facet name="footer">
+							<aon:div styleClass="aon-bold aon-text-right" style="font-size: 0.9em;">
+								<aon:outputText value="#{controller.totalAmountAbs}">
+									<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+								</aon:outputText>
+							</aon:div>
+						</f:facet>
 					</aon:column>
 
 				</aon:dataTable>
