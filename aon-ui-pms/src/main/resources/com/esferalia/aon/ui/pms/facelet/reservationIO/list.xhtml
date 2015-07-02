@@ -146,7 +146,7 @@
 								<aon:outputLabel value="#{bundle.aon_type}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomCode}"
-								style="#{(to.diverted) ? ((!to.myDivert) ? ('color:red;') : ('color:forestgreen;')) : ''}" />
+								style="#{(to.diverted || to.noRooms) ? ((!to.myDivert || to.noRooms) ? ('color:red;') : ('color:forestgreen;')) : ''}" />
 						</aon:column>
 	
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">

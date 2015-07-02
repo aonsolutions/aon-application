@@ -161,6 +161,7 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 				reservationIO.setRoomCode(reservationIORs.getString(ROOM_CODE));
 				reservationIO.setRoomType(reservationIORs.getString(ROOM_TYPE));
 				reservationIO.setRoomNumber(reservationIORs.getString(ROOM_NUMBER));
+				reservationIO.setRoomCount(reservationIORs.getInt(ROOMS));
 				reservationIO.setMealPlan(reservationIORs.getString(MEAL_PLAN));
 
 				getReservationIOList().add(reservationIO);
@@ -205,6 +206,10 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		stmt.append("     WHERE PRRD.project_reservation_room = B.project_reservation_room AND PRRD.asset_activity = AA.id");
 		stmt.append("     AND AA.date = IF (B.stay_type = 0, B.stay_date, DATE_SUB(B.stay_date, INTERVAL 1 DAY))");
 		stmt.append("     AND AA.asset = A.id LIMIT 1) AS " + ROOM_NUMBER);
+		stmt.append(", (SELECT COUNT(*) FROM room AS R");
+		stmt.append("     WHERE R.hotel = PR.hotel");
+		stmt.append("     AND R.item = I.id");
+		stmt.append("     AND R.active = 1) AS " + ROOMS);
 		stmt.append(", (SELECT PRS.meal_plan FROM project_reservation_service AS PRS, item AS I2, product AS P2");
 		stmt.append("     WHERE PRS.project_reservation = PR.project AND PRS.project_reservation_room = B.project_reservation_room");
 		stmt.append("     AND PRS.item = I2.id AND I2.detail IS NOT NULL");
@@ -315,6 +320,7 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		private String roomCode;
 		private String roomType;
 		private String roomNumber;
+		private int roomCount;
 		private String mealPlan;
 		
 		public ReservationIO(ReservationInOutController controller) {
@@ -482,6 +488,13 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 			this.roomNumber = roomNumber;
 		}
 
+		public int getRoomCount() {
+			return roomCount;
+		}
+		public void setRoomCount(int roomCount) {
+			this.roomCount = roomCount;
+		}
+
 		public String getMealPlan() {
 			return mealPlan;
 		}
@@ -528,6 +541,10 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		}
 		public boolean isMyDivert() {
 			return (isDiverted() && getHotel().equals(controller.getHotel().getId()));
+		}
+
+		public boolean isNoRooms() {
+			return getRoomCount() == 0;
 		}
 
 	}

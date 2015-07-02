@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="292"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -41,6 +41,7 @@
 	<field name="earlyCheckOut" class="java.lang.Boolean"/>
 	<field name="diverted" class="java.lang.Boolean"/>
 	<field name="myDivert" class="java.lang.Boolean"/>
+	<field name="noRooms" class="java.lang.Boolean"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -504,7 +505,7 @@
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-53" x="62" y="0" width="32" height="14">
-					<printWhenExpression><![CDATA[!$F{diverted}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[!$F{diverted} && !$F{noRooms}]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -519,7 +520,7 @@
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-53" x="62" y="0" width="32" height="14" forecolor="#FF0033">
-					<printWhenExpression><![CDATA[$F{diverted} && !$F{myDivert}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[($F{diverted} && !$F{myDivert}) || $F{noRooms}]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -534,7 +535,7 @@
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-53" x="62" y="0" width="32" height="14" forecolor="#00CC66">
-					<printWhenExpression><![CDATA[$F{myDivert}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{myDivert} && !$F{noRooms}]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
