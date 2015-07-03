@@ -134,10 +134,10 @@ public class AdvanceInvoiceController extends BasicController{
 				advanceInvoiceTo.setRegistryBank(getAdvanceBank());
 				advanceInvoiceTo.setFinanceDate(getAdvancePaymentDate());
 				advanceInvoiceTo.setPosShift(PosUtils.getUserPosShift());
-	
+
 				AdvanceInvoicing advanceInvoicing = new AdvanceInvoicing();
 				int count = advanceInvoicing.invoice(advanceInvoiceTo, getCheckedReservations());
-	
+
 				clearCheckedReservations();
 				onSearch(event);
 				String msg = "Facturas de Anticipos generadas: " + count; 

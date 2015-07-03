@@ -71,13 +71,17 @@ public class AdvanceInvoicing {
 
 				HibernateUtil.beginTransaction(sessionName);
 
-				Invoice invoice = createAdvanceInvoice(advanceInvoiceTo, reservation);
-				double advanceAmount = createAdvanceInvoiceDetails(invoice, reservation, advanceInvoiceTo.getPercent(), advanceInvoiceTo.getAmount());
-				createAdvanceInvoiceAddress(invoice, advanceInvoiceTo.getReservationInvoiceTo(), reservation);
-				if (advanceAmount != 0) {
-					createAdvanceInvoiceFinances(invoice, advanceInvoiceTo, advanceAmount);
+				Invoice invoice = null;
+				double advanceAmount = getAdvanceInvoiceAmount(reservation, advanceInvoiceTo.getPercent(), advanceInvoiceTo.getAmount());
+				if (advanceAmount > 0) {
+					invoice = createAdvanceInvoice(advanceInvoiceTo, reservation);
+					advanceAmount = createAdvanceInvoiceDetails(invoice, reservation, advanceAmount);
+					createAdvanceInvoiceAddress(invoice, advanceInvoiceTo.getReservationInvoiceTo(), reservation);
+					if (advanceAmount != 0) {
+						createAdvanceInvoiceFinances(invoice, advanceInvoiceTo, advanceAmount);
+					}
+					recordInvoice(invoice);
 				}
-				recordInvoice(invoice);
 
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
@@ -99,6 +103,18 @@ public class AdvanceInvoicing {
 			}
 		}
 		return null;
+	}
+
+	private double getAdvanceInvoiceAmount(ProjectReservation reservation, double advancePercent, double advanceAmount) throws ManagerBeanException {
+		double totalAmount = 0;
+		double pendingAmount = reservation.getPendingAmount();
+		if (pendingAmount > 0) {
+			if (advanceAmount == 0) {
+				advanceAmount = (reservation.isGuestHolder()) ? reservation.getAdvance() : CommonUtil.round(reservation.getTotal() * advancePercent / 100);
+			}
+			totalAmount = (pendingAmount > advanceAmount) ? advanceAmount : pendingAmount;
+		}
+		return totalAmount;
 	}
 
 	private Invoice createAdvanceInvoice(AdvanceInvoiceTo advanceInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
@@ -124,12 +140,7 @@ public class AdvanceInvoicing {
 		return (Invoice)invoiceBean.insert(invoice);
 	}
 
-	private double createAdvanceInvoiceDetails(Invoice invoice, ProjectReservation reservation, double advancePercent, double advanceAmount) 
-			throws ManagerBeanException {
-		if (advanceAmount == 0) {
-			advanceAmount = (reservation.isGuestHolder()) ? reservation.getAdvance() : CommonUtil.round(reservation.getTotal() * advancePercent / 100);
-		}
-
+	private double createAdvanceInvoiceDetails(Invoice invoice, ProjectReservation reservation, double advanceAmount) throws ManagerBeanException {
 		ReservationUtils reservationUtils = new ReservationUtils();
 		double vatPercent = reservationUtils.getTaxPercentage(reservation.getHotelReservation().getItemAdvance().getVat(), invoice.getIssueDate());
 		double taxableBase = CommonUtil.round(advanceAmount / (1 + vatPercent / 100));
