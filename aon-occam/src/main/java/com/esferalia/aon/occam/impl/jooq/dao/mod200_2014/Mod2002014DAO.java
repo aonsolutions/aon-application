@@ -281,7 +281,9 @@ public class Mod2002014DAO  {
 				.selectFrom(FS_MODEL200)
 				.where(FS_MODEL200.ID.equal(id))
 				.fetchOne();
-		return populateMod200(ctx,record);
+		Mod2002014 mod200 =  populateMod200(ctx,record);
+		initializeActiveMap(mod200);
+		return mod200;
 	}
 
 	public static Mod2002014 getByYear(AONContext ctx, int year) {
