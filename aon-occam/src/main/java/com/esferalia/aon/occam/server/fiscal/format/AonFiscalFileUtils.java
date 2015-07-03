@@ -49,6 +49,11 @@ public class AonFiscalFileUtils {
 				.format(date);
 	}
 	
+	public static String dateZero(Date date) {
+		return date == null ? AonStringUtils.repeat('0', 8) : DATE_FORMAT
+				.format(date);
+	}
+	
 	public static String signedZero(Double value, int size) {
 		return signed(value, '0', size);	
 	}
