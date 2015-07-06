@@ -121,6 +121,7 @@ public interface ICommonMessages {
 	String ROLE_TGC = "aon_role_tgc";
 	String SALES = "aon_sales";
 	String SEARCH_NO_RESULTS = "aon_search_no_results";
+	String SEE = "aon_see";
 	String SELLER = "seller_stat_name";
 	String SOURCE = "aon_source";
 	String STATE = "aon_state";
@@ -463,7 +464,7 @@ public interface ICommonMessages {
 	String PMS_DEPOSITS = "pms_deposits";
 	String PMS_DAMAGES = "pms_damages";	
 	String PMS_EARLY_CHECK_OUT = "pms_early_check_out";	
-
+	String PMS_ROOM_ABBRV = "report_room_abbreviated";
 	String PMS_REGENERATE_BOOKING_CLEAN = "pms_regenerate_booking_clean";
 	String PMS_REGENERATE_BOOKING_INFO = "pms_regenerate_booking_info";
 	String PMS_REGENERATE_BOOKING_PROCESS_END = "pms_regenerate_booking_process_end";

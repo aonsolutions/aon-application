@@ -30,6 +30,8 @@ public interface ISQLConstants {
 	String START_DATE = "startDate";
 	String END_DATE = "endDate";
 	String GUEST = "guest";
+	String GUEST_NAME = "guestName";
+	String GUEST_DOCUMENT = "guestDocument";
 	String HOLDER = "holder";
 	String STATUS = "status";
 	String CHECK_STATUS = "checkStatus";
