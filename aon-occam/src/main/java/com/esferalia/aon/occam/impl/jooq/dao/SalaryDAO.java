@@ -286,7 +286,70 @@ public class SalaryDAO {
 		//@formatter:on
 
 	}
+	
+	public static Stream<Salary> getSalaryData(AONContext ctx,
+			SalaryFilter filter, Supplier<Salary> supplier) {
 
+		Condition conditions[] = SALARY_PROPERTIES.getConditions(filter);
+		
+		if ( ctx == null ){
+				List<Salary> emptyList = Collections.emptyList();
+				return emptyList.stream();
+		}
+		
+		
+		//@formatter:off
+		Cursor<Record> rootCursor = 
+		ctx.getDslContext()
+		.select()
+		.from(SALARY)
+		.where(conditions)
+		.orderBy(SALARY.EMPLOYEE_DOCUMENT)
+		.fetchLazy();
+		//@formatter:on
+		
+		//@formatter:off
+		Cursor<Record> dataCursor = 
+		ctx.getDslContext()
+		.select()
+		.from(SALARY)
+		.join(SALARY_DATA)
+		.onKey(FK_SALARY_DATA_SALARY)
+		.where(conditions)
+		.orderBy(SALARY.EMPLOYEE_DOCUMENT)
+		.fetchLazy();
+		//@formatter:on
+
+		//@formatter:off
+		return Seq.seq(rootCursor)
+				.map(rootRecord-> {
+				String employeeDocument = rootRecord.getValue(SALARY.EMPLOYEE_DOCUMENT);	
+				Salary salary = supplier.get()
+				.setEmployeeDocument(employeeDocument)
+				.setEmployeeName(rootRecord.getValue(SALARY.EMPLOYEE_NAME))
+				.setEmployeeSSNumber(rootRecord.getValue(SALARY.SOCIAL_SECURITY_NUMBER))
+				;
+				
+				Seq.limitWhile(
+				Seq.skipUntil(Seq.seq(dataCursor), 
+				r -> r.getValue(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) ),
+				r -> r.getValue(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) )
+				.forEachOrdered(dataRecord->
+					salary.setContextData(
+					dataRecord.getValue(SALARY_DATA.NAME), 
+					dataRecord.getValue(SALARY_DATA.EXPRESSION),
+					dataRecord.getValue(SALARY_DATA.START_DATE),
+					dataRecord.getValue(SALARY_DATA.END_DATE))
+				);
+				
+				return salary;
+				}
+		);
+		//@formatter:on
+
+	}
+
+	
 	private enum SalaryType {
 		SALARY, EXTRA, SETTLE, DELAY, NOT_ENJOYED_VACATIONS;
 

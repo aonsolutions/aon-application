@@ -1354,6 +1354,10 @@ public class AON {
 		return getSalary().getSalaries(ctx, filter, Salary::new);
 	}
 
+	public static Stream<Salary> getSalaryData(AONContext ctx, SalaryFilter filter) {
+		return getSalary().getSalaryData(ctx, filter, Salary::new);
+	}
+
 	public static Stream<Bonus> getAvailableBonuses(AONContext ctx,
 			BonusFilter filter) {
 		return getSystem().getAvailableBonus(ctx, filter, Bonus::new);

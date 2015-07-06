@@ -43,5 +43,7 @@ public interface ISalary {
 	public Stream<Salary> getSalaries(AONContext ctx,
 			SalaryFilter filter, Supplier<Salary> supplier);
 
+	public Stream<Salary> getSalaryData(AONContext ctx,
+			SalaryFilter filter, Supplier<Salary> supplier);
 
 }
