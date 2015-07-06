@@ -9,7 +9,9 @@ import java.util.UUID;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Marshaller.Listener;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.XMLStreamWriter;
 
 public class Utils {
 
@@ -24,6 +26,21 @@ public class Utils {
 		newMarshaller(t.getClass()).marshal(t, os);
 	}
 
+	public static <T> void marshal(T t, OutputStream os, Listener listener) throws JAXBException {
+		Marshaller marshaller = newMarshaller(t.getClass());
+		marshaller.setListener(listener);
+		marshaller.marshal(t, os);
+	}
+
+	public static <T> void marshal(T t, XMLStreamWriter xsw) throws JAXBException {
+		newMarshaller(t.getClass()).marshal(t, xsw);
+	}
+
+	public static <T> void marshal(T t, XMLStreamWriter xsw, Listener listener) throws JAXBException {
+		Marshaller marshaller = newMarshaller(t.getClass());
+		marshaller.setListener(listener);
+		marshaller.marshal(t, xsw);
+	}
 	// -----------------------------------------------------------------------
 
 	@SuppressWarnings("unchecked")
@@ -38,6 +55,7 @@ public class Utils {
 			throws JAXBException {
 		Marshaller marshaller = newJAXBContext(classToBeBound)
 				.createMarshaller();
+//		marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 		return marshaller;
 	}
