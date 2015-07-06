@@ -1,4 +1,10 @@
-package com.esferalia.aon.payroll.tgss;
+package com.esferalia.aon.payroll.tgss.creta;
+
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,12 +19,17 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller.Listener;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import net.aonsolutions.tgss.creta.jaxb.ConceptoEconomicoCotizacion;
-import net.aonsolutions.tgss.creta.jaxb.ConceptoEconomicoCotizacion.IVisitor;
 import net.aonsolutions.tgss.creta.jaxb.Utils;
-import net.aonsolutions.tgss.creta.jaxb.bases.Bases;
 import net.aonsolutions.tgss.creta.jaxb.bases.BasesBuilder;
+import net.aonsolutions.tgss.creta.jaxb.bases.Dato;
 import net.aonsolutions.tgss.creta.jaxb.bases.DatoBuilder;
 import net.aonsolutions.tgss.creta.jaxb.bases.LiquidacionBuilder;
 import net.aonsolutions.tgss.creta.jaxb.bases.LiquidacionMesBuilder;
@@ -47,6 +58,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
+import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.Period;
@@ -55,11 +67,13 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 import com.google.api.services.drive.model.File;
 
-public class Creta {
+public class Bases {
 
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) throws JAXBException, SQLException,
-			ClassNotFoundException, IOException {
+			ClassNotFoundException, IOException, XMLStreamException,
+			FactoryConfigurationError, TransformerConfigurationException,
+			TransformerFactoryConfigurationError {
 
 		//@formatter:off
 		Option hostName =  OptionBuilder.withArgName("name")
@@ -91,12 +105,17 @@ public class Creta {
 									.withDescription("XML file.")
 									.withType(File.class)
 									.create("x");
+		Option comments =  OptionBuilder.withLongOpt("comments")
+										.withDescription("Write additional information.")
+										.create("c");
+		
 		Options options = new Options()
 		.addOption(hostName)
 		.addOption(user)
 		.addOption(password)
 		.addOption(database)
 		.addOption(xml)
+		.addOption(comments)
 		;
 		//@formatter:on
 
@@ -126,12 +145,22 @@ public class Creta {
 			AONContext ctx = new AONContext(connection);
 			BasesBuilder builder = new BasesBuilder()
 					.setAutorizado(trabajadoresTramos.getAutorizado());
-
-			bases(builder, ctx, trabajadoresTramos.getLiquidacion());
+			
+			XMLStreamWriter xsw = new IndentXMLStreamWriter(XMLOutputFactory.newInstance()
+					.createXMLStreamWriter(System.out), "  ");
+			Comments comment = new Comments(xsw);
+			
+			bases(builder, ctx, trabajadoresTramos.getLiquidacion(), comment);
 			is.close();
 
-			Bases bases = builder.create();
-			Utils.marshal(bases, System.out);
+			net.aonsolutions.tgss.creta.jaxb.bases.Bases bases = builder
+					.create();
+
+			
+			if (cmd.hasOption(comments.getLongOpt()))
+				Utils.marshal(bases, xsw, comment);
+			else
+				Utils.marshal(bases, xsw);
 
 		} catch (ParseException e) {
 			// oops, something went wrong
@@ -145,7 +174,78 @@ public class Creta {
 	}
 
 	public static interface BasesCallback {
-		void unknownDato(DatoSolicitado datoSolicitado) ;
+		
+		default void trabajadorAdded(String naf, Salary salary){};
+
+		default void unknownDato(DatoSolicitado datoSolicitado){};
+
+
+	}
+
+	private static class Comments extends Listener implements BasesCallback{
+		
+		private static class TrabajadorData {
+			
+			private String ss ;
+			private String name ;
+
+			public TrabajadorData(String name,String ss) {
+				super();
+				this.ss = ss;
+				this.name = name;
+			}
+			
+		}
+		
+		private XMLStreamWriter xsw;
+		private Map<String, TrabajadorData> trabajadorDataMap;
+		
+		
+		
+		public Comments(XMLStreamWriter xsw) {
+			super();
+			this.xsw = xsw;
+			this.trabajadorDataMap = new HashMap<String, TrabajadorData>();
+		}
+
+		@Override
+		public void beforeMarshal(Object source) {
+
+			if (source instanceof net.aonsolutions.tgss.creta.jaxb.bases.Trabajador)
+				beforeMarshalTrabajador((net.aonsolutions.tgss.creta.jaxb.bases.Trabajador) source);
+			else if (source instanceof Dato)
+				beforeMarshalDato((Dato) source);
+
+			super.beforeMarshal(source);
+		}
+
+		@Override
+		public void trabajadorAdded(String naf, Salary salary){
+			trabajadorDataMap.put(naf, new TrabajadorData(salary.getEmployeeName(), salary.getEmployeeSSNumber()));
+		};
+
+		public void beforeMarshalDato(Dato dato) {
+			MandatoryCretaData cretaData = getCretaData(dato.getCodigo());
+			try {
+				xsw.writeComment(String.format("%s", cretaData.getSecond()
+						.getName()));
+			} catch (XMLStreamException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		public void beforeMarshalTrabajador(net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajador) {
+			TrabajadorData data = trabajadorDataMap.get(trabajador.getNaf());
+			try {
+				xsw.writeComment(String.format("\r\n%s\r\nNúmero afiliación a la Seguridad Social:\r\n%s\r\n", 
+						data.name, data.ss));
+			} catch (XMLStreamException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		
 	}
 
@@ -225,7 +325,7 @@ public class Creta {
 		Date endDate = calendar.getTime();
 
 		//@formatter:off
-		AON.getSalaries(ctx, props->
+		AON.getSalaryData(ctx, props->
 			props.getCCCProperty().eq(ccc)
 			.and(props.getEndDateProperty().ge(startDate))
 			.and(props.getStartDateProperty().le(endDate))
@@ -261,22 +361,21 @@ public class Creta {
 
 			for (DatoSolicitado datoSolicitado : tramo.getDatosTramo()
 					.getDatoSolicitado()) {
+				
 				DatoBuilder datoBuilder = new DatoBuilder();
 
 				datoBuilder.setCodigo(datoSolicitado.getCodigo());
 				datoBuilder.setTipo(datoSolicitado.getTipoDato());
-				
 
-				ContextVariable var = getContextVariable(datoSolicitado
-						.getCodigo());
-				
-				if ( var == null ) {
-					for(BasesCallback cb: cbs) 
+				MandatoryCretaData data = getCretaData(datoSolicitado.getCodigo());
+
+				if (data == null) {
+					for (BasesCallback cb : cbs)
 						cb.unknownDato(datoSolicitado);
 					continue;
 				}
 
-				Double newValue = get(var, salary, tramo.getFechaDesde(),
+				Double newValue = data.get(salary, tramo.getFechaDesde(),
 						tramo.getFechaHasta());
 				try {
 					Double oldValue = Double.parseDouble(datoSolicitado
@@ -293,7 +392,12 @@ public class Creta {
 			trabajadorBuilder.addTramo(tramoBuilder.create());
 		}
 
+		for(BasesCallback cb: cbs ) 
+			cb.trabajadorAdded(trabajador.getNaf(), salary);
+
 		liquidacionMesBuilder.add(trabajadorBuilder.create());
+
+			
 	}
 
 	private static Calendar toCalendar(Periodo periodo) {
@@ -332,206 +436,64 @@ public class Creta {
 		return calendar.getTime();
 	}
 
-	private static Double get(ContextVariable var, Salary salary, Fecha desde,
-			Fecha hasta) {
-		return get(var, salary, new Period(toDate(desde), toDate(hasta)));
-	}
-
-	private static Double get(ContextVariable var, Salary salary, Period p) {
-		List<ContextData> datas = salary.getContextData().get(var.getName());
-		if (datas == null)
-			return 0.00;
-
-		double ret = 0.00;
-		for (ContextData data : datas) {
-			Period intersect = p.intersect(new Period(data.getStartDate(), data
-					.getEndDate()));
-			if (intersect == null)
-				continue;
-
-			ret += ExpressionContext.eval(data.getExpression(), Double.class)
-					* days(intersect) / days(p);
-		}
-		return ret;
-	}
-
 	private static long days(Period p) {
 		return AonDateUtils.getDaysBetweenDates(p.getStart(), p.getEnd()) + 1;
 	}
 
-	private static ContextVariable getContextVariable(String codigo) {
-		try {
-		return ConceptoEconomicoCotizacion.conceptoOf(codigo).visit(
-				new IVisitor<ContextVariable>() {
+	private static class MandatoryCretaData extends Pair<Boolean, ContextVariable> {
 
-					@Override
-					public ContextVariable visitPerception(
-							ConceptoEconomicoCotizacion cec) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public ContextVariable visitCommonContingency(
-							ConceptoEconomicoCotizacion cec) {
-						return ContextVariable.CGC_BASE;
-					}
-
-					@Override
-					public ContextVariable visitForceOvertime(
-							ConceptoEconomicoCotizacion cec) {
-						return ContextVariable.STRUCTURAL_OVERTIME_BASE;
-					}
-
-					@Override
-					public ContextVariable visitOtherOvertime(
-							ConceptoEconomicoCotizacion cec) {
-						return ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
-					}
-
-					@Override
-					public ContextVariable visitEnterpriseCommonContingency(
-							ConceptoEconomicoCotizacion cec) {
-						return ContextVariable.CGP_BASE;
-					}
-
-					@Override
-					public ContextVariable visitMaternityPartCommonContingency(
-							ConceptoEconomicoCotizacion cec) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public ContextVariable visitErePartCommonContingency(
-							ConceptoEconomicoCotizacion cec) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public ContextVariable visitAdditionalHours(
-							ConceptoEconomicoCotizacion cec) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public ContextVariable visitCommonIT(
-							ConceptoEconomicoCotizacion cec) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public ContextVariable visitWorkIT(
-							ConceptoEconomicoCotizacion cec) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public ContextVariable visitSpecialWorkIT(
-							ConceptoEconomicoCotizacion cec) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public ContextVariable visitWorkIMS(
-							ConceptoEconomicoCotizacion cec) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public ContextVariable visitSpecialWorkIMS(
-							ConceptoEconomicoCotizacion cec) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public ContextVariable visitMaternityPartIT(
-							ConceptoEconomicoCotizacion cec) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public ContextVariable visitMaternityPartIMS(
-							ConceptoEconomicoCotizacion cec) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public ContextVariable visitErePartIT(
-							ConceptoEconomicoCotizacion cec) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public ContextVariable visitErePartIMS(
-							ConceptoEconomicoCotizacion cec) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public ContextVariable visitWorkITComplement(
-							ConceptoEconomicoCotizacion cec) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public ContextVariable visitUnemployment(
-							ConceptoEconomicoCotizacion cec) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public ContextVariable visitEnterpriseUnemployment(
-							ConceptoEconomicoCotizacion cec) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public ContextVariable visitMaternityPartUnemployment(
-							ConceptoEconomicoCotizacion cec) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public ContextVariable visitErePartUnemployment(
-							ConceptoEconomicoCotizacion cec) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public ContextVariable visitEducationBonus(
-							ConceptoEconomicoCotizacion cec) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					@Override
-					public ContextVariable visitTutorshipBonus(
-							ConceptoEconomicoCotizacion cec) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-				});
-		} catch ( IllegalArgumentException e){
-			return null;
+		public MandatoryCretaData(Boolean mandatory, ContextVariable var) {
+			super(mandatory, var);
 		}
+
+		public Double get(Salary salary, Fecha desde, Fecha hasta) {
+			return get(getSecond(), salary, new Period(toDate(desde),
+					toDate(hasta)));
+		}
+
+
+		private static Double get(ContextVariable var, Salary salary, Period p) {
+			List<ContextData> datas = salary.getContextData()
+					.get(var.getName());
+			if (datas == null)
+				return 0.00;
+
+			double ret = 0.00;
+			for (ContextData data : datas) {
+				Period intersect = p.intersect(new Period(data.getStartDate(),
+						data.getEndDate()));
+				if (intersect == null)
+					continue;
+
+				ret += ExpressionContext.eval(data.getExpression(),
+						Double.class) * days(intersect) / days(p);
+			}
+			return ret;
+		}
+
+	}
+
+	private static Map<String, MandatoryCretaData> CONTEXT_VARIABLE_MAP = new HashMap<String, MandatoryCretaData>() {
+		{
+			put("500", new MandatoryCretaData(true, CGC_BASE));
+
+			put("501", new MandatoryCretaData(false, STRUCTURAL_OVERTIME_BASE));
+			put("502", new MandatoryCretaData(false, NON_STRUCTURAL_OVERTIME_BASE));
+			put("537", new MandatoryCretaData(false, NON_STRUCTURAL_OVERTIME_BASE)); // TODO:
+																			// Base
+																			// de
+																			// horas
+																			// complementarias
+
+			put("601", new MandatoryCretaData(true, CGP_BASE));
+			put("611", new MandatoryCretaData(true, CGP_BASE));
+
+			put("01", new MandatoryCretaData(true, WORKED_HOURS));
+		}
+	};
+
+	private static MandatoryCretaData getCretaData(String codigo) {
+		return CONTEXT_VARIABLE_MAP.get(codigo);
 	}
 
 }
