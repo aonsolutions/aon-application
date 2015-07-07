@@ -149,7 +149,6 @@ import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractDelayCalculatorContext;
-import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractNotEnjoyedCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -3707,7 +3706,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					public SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> visitExtra(
 							SalaryType salaryType) {
 						try {
-							return getExtraCalculatorContextImpl(conn, draft,
+							return EmployeesServiceHelper.getExtraCalculatorContextImpl(conn, draft,
 									listener);
 						} catch (SQLException e) {
 							throw new IllegalArgumentException(e);
@@ -3772,28 +3771,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				draft, conn, draft.getStartDate(), draft.getEndDate(),
 				draft.getIssueDate(), criteria);
 		draftCtx.next();
-		draftCtx.setListener(listener);
-		return draftCtx;
-	}
-
-	private static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getExtraCalculatorContextImpl(
-			final Connection conn, final SalaryDraft draft,
-			IContractSalaryCalculatorContext.IListener listener)
-			throws ExpressionException, SQLException {
-
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(tableCol(CONTRACT, ContractColumns.ID),
-				draft.getEmployee().getId());
-
-		SQLContractSalaryCalculatorContext ctx = new SQLContractExtraCalculatorContext(
-				conn, draft.getStartDate(), draft.getEndDate(),
-				draft.getIssueDate(), draft.getIssueDate(), criteria);
-
-		ctx.setListener(listener);
-		ctx.next();
-
-		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
-				draft, ctx);
 		draftCtx.setListener(listener);
 		return draftCtx;
 	}
@@ -3956,7 +3933,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		return types[ordinal];
 	}
 
-	private static String tableCol(String table, String col) {
+	static String tableCol(String table, String col) {
 		return String.format("%1$s.%2$s", table, col);
 	}
 

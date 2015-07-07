@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
+import static com.esferalia.aon.salary.expression.ExpressionContext.getCurrentBindings;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -27,8 +28,10 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 
 public class SQLContractExtraCalculatorContext extends
 		SQLContractSalaryCalculatorContext {
@@ -79,8 +82,8 @@ public class SQLContractExtraCalculatorContext extends
 	}
 
 	@Override
-	protected void initContractExpressionCtx(NextHook hook) throws SQLException,
-			ExpressionException {
+	protected void initContractExpressionCtx(NextHook hook)
+			throws SQLException, ExpressionException {
 		super.initContractExpressionCtx(hook);
 		initMonthVariables(getExpressionContext());
 	}
@@ -110,7 +113,8 @@ public class SQLContractExtraCalculatorContext extends
 
 	}
 
-	private void initMonthVariables(ExpressionContext ctx) {
+	private void initMonthVariables(ExpressionContext ctx)
+			throws UndefinedVariablesException, ExpressionException {
 		List<ITimedVariable<?>> monthDaysList = ctx
 				.getTimedVariables(MONTH_DAYS.getName());
 
@@ -120,10 +124,21 @@ public class SQLContractExtraCalculatorContext extends
 			Period month = monthDays.getPeriod();
 			List<ITimedVariable<Object>> vars = ctx.getVariables(WORKED_DAYS,
 					month.getStart(), month.getEnd());
-			for (ITimedVariable<Object> var : vars ) {
-				Number days = (Number) var.getValue(var.getPeriod());
-				ctx.setVariable(WORKED_DAYS, days.doubleValue() / months,
-						var.getPeriod().getStart(), var.getPeriod().getEnd());
+			for (ITimedVariable<Object> var : vars) {
+
+				List<ITimedResult<Double>> workedDays = getExpressionContext()
+						.eval(String.format("%s/%d", WORKED_DAYS, months),
+								var.getPeriod().getStart(),
+								var.getPeriod().getEnd(), Double.class);
+				for (ITimedResult<Double> workedDay : workedDays) {
+					ctx.setVariable(WORKED_DAYS, workedDay.getValue()
+							, workedDay.getPeriod().getStart(), 
+							workedDay.getPeriod().getEnd());
+
+				}
+//				 Number days = (Number) var.getValue(var.getPeriod());
+//				 ctx.setVariable(WORKED_DAYS, days.doubleValue() / months,
+//				 var.getPeriod().getStart(), var.getPeriod().getEnd());
 			}
 
 			// ctx.setVariable(MONTH_DAYS, days.doubleValue() * months,

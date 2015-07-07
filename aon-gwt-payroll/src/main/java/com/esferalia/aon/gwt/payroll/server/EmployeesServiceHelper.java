@@ -44,8 +44,10 @@ import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementContextFactory;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.AgreementContextKey;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.CCCContextKey;
@@ -762,6 +764,28 @@ public class EmployeesServiceHelper {
 
 	private static String tableCol(String table, String col) {
 		return String.format("%1$s.%2$s", table, col);
+	}
+
+	public static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getExtraCalculatorContextImpl(
+			final Connection conn, final SalaryDraft draft,
+			IContractSalaryCalculatorContext.IListener listener)
+			throws ExpressionException, SQLException {
+	
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(EmployeesServiceImpl.tableCol(CONTRACT, ContractColumns.ID),
+				draft.getEmployee().getId());
+	
+		SQLContractSalaryCalculatorContext ctx = new SQLContractExtraCalculatorContext(
+				conn, draft.getStartDate(), draft.getEndDate(),
+				draft.getIssueDate(), draft.getIssueDate(), criteria);
+	
+		ctx.setListener(listener);
+		ctx.next();
+	
+		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
+				draft, ctx);
+		draftCtx.setListener(listener);
+		return draftCtx;
 	}
 
 }
