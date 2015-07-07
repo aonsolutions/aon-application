@@ -202,7 +202,7 @@ public class Declaration {
 		this.simplRegimeOnly = simplRegimeOnly;
 	}
 	public int getSimplRegimeOnlyNumber() {
-		return isSimplRegimeOnly()?1:2;
+		return isSimplRegimeOnly()?1:3;
 	}
 	public boolean isMergedDeclaration() {
 		return mergedDeclaration;
