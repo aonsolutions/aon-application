@@ -96,5 +96,12 @@ public class AonDocumentUtil {
 		}
     	return (doc.matches("^(A|B|C|D|E|F|G|H|J|P|Q|R|S|U|V|N|W).{8}"));
     }
+
+    public static boolean isCulturalAssociation(String doc) {
+		if (doc == null || doc.length() == 0) {
+			return false;
+		}
+    	return (doc.matches("^(G).{8}"));
+    }
 }
 
