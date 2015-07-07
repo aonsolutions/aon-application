@@ -88,6 +88,7 @@ public class SEPA19_14CoreXmlWriter {
 			if (iAddress != null) {
 				individual.setSEPAAddress(SEPA34_14XmlWriter.getAddress(iAddress));
 			}
+			individual.setDocumentNumber(finance.getDocumentNumber());
 		}
 	}
 	

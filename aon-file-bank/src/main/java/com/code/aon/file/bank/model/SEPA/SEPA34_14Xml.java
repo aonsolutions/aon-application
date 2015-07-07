@@ -103,6 +103,7 @@ public class SEPA34_14Xml extends BasicSEPAXml {
 		addCreditorAgent(creditTransferTransactionInformation, detail.getAccount());
 		addCreditor(creditTransferTransactionInformation, detail.getReceiver(), true);
 		addCreditorAccount(creditTransferTransactionInformation, detail.getAccount());
+		addRemittanceInformation(creditTransferTransactionInformation, detail.getDocumentNumber(), true);
 	}	
 	
 }

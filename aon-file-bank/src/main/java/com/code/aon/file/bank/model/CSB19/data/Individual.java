@@ -24,6 +24,7 @@ public class Individual implements Entity {
 	private boolean organisation;
 	private String document;
 	private String documentType;
+	private String documentNumber;
 	
 	/**
 	 * Concepts
@@ -221,6 +222,14 @@ public class Individual implements Entity {
 	
 	public void setDocumentType(String documentType) {
 		this.documentType = documentType;
+	}
+	
+	public String getDocumentNumber() {
+		return documentNumber;
+	}
+
+	public void setDocumentNumber(String documentNumber) {
+		this.documentNumber = documentNumber;
 	}
 	
 	/* (non-Javadoc)

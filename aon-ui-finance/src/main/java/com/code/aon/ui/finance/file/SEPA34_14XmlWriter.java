@@ -95,6 +95,7 @@ public class SEPA34_14XmlWriter {
 			if (iAddress != null) {
 				receiver.setSEPAAddress(SEPA34_14XmlWriter.getAddress(iAddress));
 			}	
+			detail.setDocumentNumber(finance.getDocumentNumber());
 		}
 		master.setAmount(total);
 	}

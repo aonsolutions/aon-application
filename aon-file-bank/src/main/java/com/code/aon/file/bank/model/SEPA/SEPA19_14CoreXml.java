@@ -95,6 +95,7 @@ public class SEPA19_14CoreXml extends BasicSEPAXml {
 		addDebtorAgent(directDebitTransactionInformation, individual.getAccount());
 		addDebtor(directDebitTransactionInformation, individual);
 		addDebtorAccount(directDebitTransactionInformation, individual.getAccount(), null);
+		addRemittanceInformation(directDebitTransactionInformation, individual.getDocumentNumber(), false);
 	}
 	
 	private String getLocalInstrumentCode() {

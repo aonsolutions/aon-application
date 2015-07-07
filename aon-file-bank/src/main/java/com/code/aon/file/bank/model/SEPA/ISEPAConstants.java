@@ -141,5 +141,9 @@ public interface ISEPAConstants {
 	String CHARGE_BEARER = "ChrgBr";
 	
 	String FOLLOWING_SERVICE_LEVEL = "SLEV";
+
+	String REMITTANCE_INFORMATION = "RmtInf";
+	
+	String UNSTRUCTURED = "Ustrd";
 	
 }

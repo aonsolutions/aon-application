@@ -10,6 +10,7 @@ public abstract class Detail {
 	private double amount;
 	private String concept;
 	private String categoryPurposeCode;
+	private String documentNumber;
 
 	public abstract String getType();
 
@@ -69,6 +70,14 @@ public abstract class Detail {
 		this.categoryPurposeCode = categoryPurposeCode;
 	}
 
+	public String getDocumentNumber() {
+		return documentNumber;
+	}
+
+	public void setDocumentNumber(String documentNumber) {
+		this.documentNumber = documentNumber;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

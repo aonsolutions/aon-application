@@ -405,6 +405,19 @@ public abstract class BasicSEPAXml implements FileFiller, ISEPAConstants {
 		}
 	}	
 	
+	protected void addRemittanceInformation( Element parent, String documentNumber, boolean payment ) {
+		if (! StringUtils.isEmpty(documentNumber) ) {			
+			Element remittanceInformation = createElement(REMITTANCE_INFORMATION);
+			parent.appendChild(remittanceInformation);			
+			
+			Element unstructured = createElement(UNSTRUCTURED);
+			StringBuffer sb = new StringBuffer(payment?"PAGO":"COBRO");
+			sb.append( " Factura: ").append(documentNumber);
+			addValue(unstructured, sb.toString(), 140);
+			remittanceInformation.appendChild(unstructured);				
+		}
+	}	
+	
 	@Override
 	public ArrayList<Exception> create() {
 		try {
