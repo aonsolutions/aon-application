@@ -85,9 +85,9 @@ public class Mod2002014MVELContext extends AccMiningMVELContext {
 		if ( isChecked(C0003) ) return 1.0;
 		if ( isChecked(C0004) ) return 1.0;
 		if ( isChecked(C0005) ) return 25.0;
+		if ( isChecked(C0006) && isChecked(C0056)) return 20.0;
 		if ( isChecked(C0006) && !isChecked(C0034)) return 25.0;
 		if ( isChecked(C0006) && isChecked(C0034)) return 35.0;
-		if ( isChecked(C0006) && isChecked(C0056)) return 20.0;
 		if ( isChecked(C0012) ) return 30.0;
 		if ( isChecked(C0015) ) return 4.0;
 		// ---
