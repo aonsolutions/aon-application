@@ -1,7 +1,11 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,11 +13,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.code.aon.file.format.output.FileOutput;
-import com.esferalia.aon.gwt.fiscal.server.file.MOD2002014Writer;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002014Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
@@ -29,8 +32,16 @@ public class Mod2002014File extends HttpServlet {
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			Mod2002014 mod200 = AON.getMod2002014ById(domainName,domainId,id);
-			MOD2002014Writer writer = new MOD2002014Writer();
-			FileOutput fileoutput = writer.createMOD200(mod200);
+			ByteArrayOutputStream output = new ByteArrayOutputStream();
+			OutputStreamWriter wr = null;
+			try {
+				wr = new OutputStreamWriter(output,"ISO-8859-1");
+			} catch (UnsupportedEncodingException e) {
+				wr = new OutputStreamWriter(output);
+			}
+			PrintWriter writer = new PrintWriter(wr);
+			Mod2002014Writer.fillWriter(mod200, writer);
+
 			String s = mod200.getEnterpriseName();
 			StringBuilder sb = new StringBuilder();
 			if (!Character.isJavaIdentifierStart(s.charAt(0))) {
@@ -42,7 +53,7 @@ public class Mod2002014File extends HttpServlet {
 				}
 			}
 			String fileName = "Mod200" + "_" + mod200.getYear() + "_" + sb.toString();
-			ByteArrayInputStream in = new ByteArrayInputStream(fileoutput.getContent());
+			ByteArrayInputStream in = new ByteArrayInputStream(output.toByteArray());
 			resp.setContentType(MimeType.TXT.getName());
 			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\";");
 			AonIOUtils.copy(in, resp.getOutputStream());
