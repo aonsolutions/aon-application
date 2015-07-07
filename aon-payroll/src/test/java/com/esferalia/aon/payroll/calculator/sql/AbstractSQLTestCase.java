@@ -67,6 +67,7 @@ import com.esferalia.aon.jooq.tables.AgreementLevelData;
 import com.esferalia.aon.jooq.tables.AgreementPayment;
 import com.esferalia.aon.jooq.tables.BonusConcept;
 import com.esferalia.aon.jooq.tables.ContractBonus;
+import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
@@ -433,6 +434,27 @@ public abstract class AbstractSQLTestCase {
 
 	}
 
+	public static AgreementExtraRecord addExtra(AONContext aonContext,
+			AgreementPaymentRecord payment, Date startDate, Extra extra) {
+
+		aonContext.getDslContext()
+		.update(AGREEMENT_PAYMENT)
+		.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P/12")
+		.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) EXTRA.ordinal())
+		.set(AGREEMENT_PAYMENT.MONTH, (byte) extra.month.ordinal())
+		.where(AGREEMENT_PAYMENT.ID.eq(payment.getId()))
+		.execute();
+		
+		return aonContext.getDslContext().insertInto(AGREEMENT_EXTRA)
+					.set(AGREEMENT_EXTRA.DOMAIN, payment.getDomain())
+					.set(AGREEMENT_EXTRA.AGREEMENT, payment.getAgreement())
+					.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, payment.getId())
+					.set(AGREEMENT_EXTRA.START_DATE, extra.start)
+					.set(AGREEMENT_EXTRA.END_DATE, extra.end)
+					.set(AGREEMENT_EXTRA.ISSUE_DATE, extra.issue).returning()
+					.fetchOne();
+	}
+
 	public static void addPayments(AONContext aonContext,
 			AgreementRecord agreement, Date startDate, Payment payments[]) {
 		addPayments(aonContext, agreement.getDomain(), agreement, startDate,
@@ -454,6 +476,27 @@ public abstract class AbstractSQLTestCase {
 							(byte) payment.salary.ordinal()).returning()
 					.fetchOne();
 		}
+	}
+
+	public static AgreementPaymentRecord addPayment(AONContext aonContext,
+			AgreementRecord agreement, Date startDate, Payment payment) {
+		return addPayment(aonContext, agreement.getDomain(), agreement,
+				startDate, payment);
+	}
+
+	public static AgreementPaymentRecord addPayment(AONContext aonContext,
+			int domainId, AgreementRecord agreement, Date startDate,
+			Payment payment) {
+		return aonContext
+				.getDslContext()
+				.insertInto(AGREEMENT_PAYMENT)
+				.set(AGREEMENT_PAYMENT.DOMAIN, domainId)
+				.set(AGREEMENT_PAYMENT.AGREEMENT, agreement.getId())
+				.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, payment.concept)
+				.set(AGREEMENT_PAYMENT.EXPRESSION, payment.expression)
+				.set(AGREEMENT_PAYMENT.START_DATE, startDate)
+				.set(AGREEMENT_PAYMENT.SALARY_TYPE,
+						(byte) payment.salary.ordinal()).returning().fetchOne();
 	}
 
 	public static void addData(AONContext aonContext,
@@ -830,7 +873,8 @@ public abstract class AbstractSQLTestCase {
 	public static final void addPayment(AONContext aonContext,
 			ContractRecord contract, PaymentConceptRecord concept,
 			String expression, String quoteExpression) {
-		addPayment(aonContext, contract, concept, expression, quoteExpression, PaymentType.CRA_0001);
+		addPayment(aonContext, contract, concept, expression, quoteExpression,
+				PaymentType.CRA_0001);
 	}
 
 	public static final void addPayment(AONContext aonContext,
@@ -847,8 +891,7 @@ public abstract class AbstractSQLTestCase {
 				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
 				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
 				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, "_P")
-				.set(CONTRACT_PAYMENT.TYPE,
-						(byte) type.ordinal())
+				.set(CONTRACT_PAYMENT.TYPE, (byte) type.ordinal())
 				.set(CONTRACT_PAYMENT.SALARY_TYPE,
 						(byte) SalaryType.SALARY.ordinal()).execute();
 
