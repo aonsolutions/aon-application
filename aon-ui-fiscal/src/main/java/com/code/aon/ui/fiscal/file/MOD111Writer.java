@@ -35,6 +35,7 @@ import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class MOD111Writer implements IFinanceConstants{
 	
@@ -52,8 +53,10 @@ public class MOD111Writer implements IFinanceConstants{
 
 	public FileOutput createMOD111(List<FiscalModel> fiscalModels,MOD111Format format) throws ManagerBeanException {
 		List<Declaration> declarations = new LinkedList<Declaration>();
+		boolean moreThan2014 = false;
 		for (FiscalModel fiscalModel : fiscalModels) {
 			Declaration declaration = getDeclaration(fiscalModel);
+			moreThan2014 = moreThan2014 || (declaration.getYear() > 2014); 
 			declarations.add(declaration);
 		}
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -68,7 +71,13 @@ public class MOD111Writer implements IFinanceConstants{
 		MOD111 mod111 = new MOD111();
 		FileOutput fileOutput = new FileOutput();
 		fileOutput.setErrors(mod111.create(declarations, format, writer));
-		fileOutput.setContent(output.toByteArray());
+		if (moreThan2014) {
+			String fileString = new String(output.toByteArray());
+			fileString = AonStringUtils.chomp(fileString);
+			fileOutput.setContent(fileString.getBytes());
+		} else {
+			fileOutput.setContent(output.toByteArray());
+		}
 		return fileOutput;
 	}
 
