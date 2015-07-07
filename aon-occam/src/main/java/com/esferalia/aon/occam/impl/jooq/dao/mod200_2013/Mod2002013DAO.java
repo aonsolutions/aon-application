@@ -33,10 +33,10 @@ import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Secretary;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.DoubleVariable2013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013.BalanceType;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Character;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.ValidationMessage2013;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013.BalanceType;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.CNAE;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
@@ -276,7 +276,9 @@ public class Mod2002013DAO  {
 				.selectFrom(FS_MODEL200)
 				.where(FS_MODEL200.ID.equal(id))
 				.fetchOne();
-		return populateMod200(ctx,record);
+		Mod2002013 mod200 =  populateMod200(ctx,record);
+		initializeActiveMap(mod200);
+		return mod200;
 	}
 
 	public static Mod2002013 getByYear(AONContext ctx, int year) {
