@@ -57,6 +57,8 @@ import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.IExpressionVariable;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.Variables;
@@ -532,8 +534,14 @@ public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
 
 	private void putContext(Map<String, ITimedVariable<?>> ctx) {
 		for (Map.Entry<String, ITimedVariable<?>> entry : ctx.entrySet())
-			if (filter(entry))
+			if (filter(entry)) {
+				ITimedVariable<?> var = entry.getValue();
 				addVariable(entry.getKey(), entry.getValue());
+				if ( var instanceof ITimedResult<?> )
+					putContext(((ITimedResult<?>) var).getContext());
+				if ( var instanceof IExpressionVariable<?> )
+					putContext(((IExpressionVariable<?>) var).getContext());
+			}
 	}
 
 
