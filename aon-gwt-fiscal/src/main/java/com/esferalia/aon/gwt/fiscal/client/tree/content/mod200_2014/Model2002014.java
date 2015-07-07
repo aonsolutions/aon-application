@@ -259,7 +259,7 @@ public class Model2002014 extends ResizeComposite  {
 		calculateCheck.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 		calculateButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null 
 								&& !calculateCheck.isVisible());
-		aeatAccountingFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() == null);
+		aeatAccountingFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 		aeatFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 		aeatPrintButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 	}
