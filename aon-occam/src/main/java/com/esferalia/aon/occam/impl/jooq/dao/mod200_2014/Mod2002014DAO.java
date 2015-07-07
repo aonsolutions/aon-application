@@ -797,7 +797,8 @@ public class Mod2002014DAO  {
 	}
 	
 	private static void validateParticipationsIn(List<ValidationMessage2014> list,Mod2002014 mod200) {
-		 if (AonDocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
+		 if (AonDocumentUtil.isEntity(mod200.getEnterpriseDocument())
+			&& !AonDocumentUtil.isCulturalAssociation(mod200.getEnterpriseDocument())) {
 			 List<CompanyParticipation> participations = mod200.getParticipationsIn();
 			if (participations == null || participations.size() == 0) {
 				list.add(new ValidationMessage2014(PAGE02,"Para personas jur\u00EDdicas, debe rellenar los datos de participaci\u00F3n en la declarante"));
