@@ -7,9 +7,10 @@ import com.code.aon.common.enumeration.IResourceable;
 
 public enum NoticeStatus implements IResourceable {
 
-	ATTENDED,
-	WILL_CALL,
-	CALL;
+	CLOSED,
+	REOPEN,
+	OPEN,
+	DUPLICATED;
 	
     private static final String MSG_KEY_PREFIX = "aon_enum_notice_status_";
 

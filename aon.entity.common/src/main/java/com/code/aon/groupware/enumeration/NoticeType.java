@@ -10,7 +10,8 @@ public enum NoticeType implements IResourceable {
 	CALL,
 	VISIT,
 	MESSAGE,
-    COMMUNICATION;
+    COMMUNICATION,
+    ISSUE;
 
     private static final String MSG_KEY_PREFIX = "aon_enum_notice_type_";
 	

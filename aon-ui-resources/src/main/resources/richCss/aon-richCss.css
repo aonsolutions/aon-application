@@ -878,6 +878,9 @@ color:#000;
 .aon-icon-open-popup{
 	background:transparent url(images/aon-icon/aon-icon-open-popup.png) scroll left center no-repeat;
 	}
+.aon-icon-callcenter{
+	background:transparent url(images/aon-icon/aon-icon-callcenter.png) scroll left center no-repeat;
+	}
 .aon-icon-alarms{
 	background:transparent url(images/aon-icon/aon-icon-alarms.png) scroll left center no-repeat;
 	}
@@ -2911,6 +2914,15 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
  .aon-icon-ccc{
 	background:transparent url(images/aon-main-menu/aon-icon-ccc.png) scroll left center no-repeat;	
  }
+.aon-icon-issue-opened{
+	background:transparent url(images/aon-main-menu/aon-icon-issue-opened.png) no-repeat scroll center left;
+}
+.aon-icon-issue-reopened{
+	background:transparent url(images/aon-main-menu/aon-icon-issue-reopened.png) no-repeat scroll center left;
+}
+.aon-icon-issue-closed{
+	background:transparent url(images/aon-main-menu/aon-icon-issue-closed.png) no-repeat scroll center left;
+}
 
 .aon-subTable-column{
 	padding-left: 10px; 
