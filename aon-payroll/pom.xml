@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
@@ -20,32 +21,32 @@
 				</configuration>
 			</plugin>
 			<plugin>
-			     <groupId>org.apache.maven.plugins</groupId>
-			     <artifactId>maven-surefire-plugin</artifactId>
-			     <configuration>
-			        <systemProperties>
-			          <property>
-			             <name>dbName</name>
-			             <value>aon_jooq_</value>
-			          </property>
-			        </systemProperties>
-			     </configuration>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<systemProperties>
+						<property>
+							<name>dbName</name>
+							<value>aon_jooq_</value>
+						</property>
+					</systemProperties>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<executions>
 					<execution>
-					  <goals>
-					    <goal>test-jar</goal>
-					  </goals>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
-		
+
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.watson</artifactId>
@@ -58,7 +59,7 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		<!-- We must remove this as soon as possible.-->  
+		<!-- We must remove this as soon as possible. -->
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.entity</artifactId>
@@ -133,21 +134,10 @@
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
-		<!--
-		<dependency>
-			<groupId>com.aeat</groupId>
-			<artifactId>Retenciones2011xml</artifactId>
-			<scope>compile</scope>
-			<version>1.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.aeat</groupId>
-			<artifactId>ModRet2011</artifactId>
-			<scope>compile</scope>
-			<version>1.0</version>
-		</dependency>
-		-->
+		<!-- <dependency> <groupId>com.aeat</groupId> <artifactId>Retenciones2011xml</artifactId> 
+			<scope>compile</scope> <version>1.0</version> </dependency> <dependency> 
+			<groupId>com.aeat</groupId> <artifactId>ModRet2011</artifactId> <scope>compile</scope> 
+			<version>1.0</version> </dependency> -->
 		<dependency>
 			<groupId>es.aeat</groupId>
 			<artifactId>ModRet2013</artifactId>
@@ -191,5 +181,95 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		</dependencies>
+	</dependencies>
+	<profiles>
+		<profile>
+			<id>rpm-release</id>
+			<activation>
+				<property>
+					<name>rpm.release</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<!-- Build el RPM -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>rpm-maven-plugin</artifactId>
+						<version>2.0.1</version>
+						<extensions>true</extensions>
+						<executions>
+							<execution>
+								<id>rpm-build</id>
+								<goals>
+									<goal>attached-rpm</goal>
+								</goals>
+							</execution>
+						</executions>
+
+						<configuration>
+							<group>Applications/Aon</group>
+							<release>${buildNumber}</release>
+							<copyright>2015, AON SOLUTIONS S.L.U</copyright>
+							<requires>
+								<require>apache-commons-cli</require>
+								<require>mysql-connector-java</require>
+							</requires>
+							<mappings>
+								<mapping>
+									<filemode>644</filemode>
+									<username>root</username>
+									<groupname>root</groupname>
+									<directory>/usr/share/java</directory>
+									<dependency>
+										<includes>
+											<include>com.code.aon:aon.common</include>
+											<include>net.aonsolutions:aon.tgss</include>
+											<include>com.esferalia.aon:aon.occam</include>
+										</includes>
+									</dependency>
+									<sources>
+										<source>
+											<location>target</location>
+											<includes>
+												<include>${project.artifactId}-${project.version}.jar</include>
+											</includes>
+										</source>
+										<softlinkSource>
+											<location>/usr/share/java/${project.artifactId}-${project.version}.jar</location>
+											<destination>aon-payroll.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/aon.tgss-${project.version}.jar</location>
+											<destination>aon-tgss.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/aon.common-${project.version}.jar</location>
+											<destination>aon-common.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/aon.occam-${project.version}.jar</location>
+											<destination>aon-occam.jar</destination>
+										</softlinkSource>
+									</sources>
+								</mapping>
+								<mapping>
+									<sources>
+										<source>
+											<location>src/main/scripts</location>
+										</source>
+									</sources>
+									<filemode>755</filemode>
+									<username>root</username>
+									<groupname>root</groupname>
+									<directory>/usr/bin</directory>
+								</mapping>
+							</mappings>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

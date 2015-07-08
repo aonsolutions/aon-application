@@ -1,0 +1,33 @@
+#!/bin/sh
+# The cret@ executable script.
+
+# Copyright (C) 2015, AON SOLUTIONS, S.L.U
+
+
+usage="usage: $0 [--version] [--help] <command> [<args>]"
+help="$usage
+The most commonly used $0 commands are:
+   bases        Fichero de Bases
+   tramos       Fichero de Solicitud de Trabajadores y Tramos
+
+'$0 <command> --help' to read about a specific subcommand ."
+
+
+classpath=/usr/share/java/mysql-connector-java.jar
+classpath=$classpath:/usr/share/java/aon-tgss.jar
+classpath=$classpath:/usr/share/java/aon-common.jar
+classpath=$classpath:/usr/share/java/aon-occam.jar
+classpath=$classpath:/usr/share/java/aon-payroll.jar
+classpath=$classpath:/usr/share/java/commons-cli.jar
+
+case $1 in
+"")    		exec echo -e "$help";;
+--help)    	exec echo -e "$help";;
+--version) 	exec echo -e "$version";;
+bases)    	exec java -classpath $classpath com.esferalia.aon.payroll.tgss.creta.Bases ${@:2};;
+tramos)    	exec java -classpath $classpath com.esferalia.aon.payroll.tgss.creta.TrabajadoresTramos ${@:2};;
+-*)    		exec echo -e "Unknown option: $1.\r\n$usage";;
+*)    		exec echo -e "$0: '$1' is not a $0 command. See '$0 --help'.";;
+esac
+
+
