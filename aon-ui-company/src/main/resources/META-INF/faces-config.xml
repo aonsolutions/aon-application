@@ -39,6 +39,7 @@
 				<value>#{companyLogoControllerListener}</value>
 				<value>#{companySignatureControllerListener}</value>
 				<value>#{companyAppParamControllerListener}</value>
+				<value>#{companySaleInvoiceFooterChildListener}</value>				
 			</list-entries>
 		</managed-property>
 		<managed-property>
@@ -51,7 +52,6 @@
 				<value>#{companyRBankChildListener}</value>
 				<value>#{companyRecordDataChildListener}</value>
 				<value>#{companyDirStaffListener}</value>
-				<value>#{companySaleInvoiceFooterChildListener}</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>
