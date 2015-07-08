@@ -67,14 +67,20 @@ public class MOD111Writer implements IFinanceConstants{
 			wr = new OutputStreamWriter(output);
 		}
 		PrintWriter writer = new PrintWriter(wr);
-//		PrintWriter writer = new PrintWriter(output);
 		MOD111 mod111 = new MOD111();
 		FileOutput fileOutput = new FileOutput();
 		fileOutput.setErrors(mod111.create(declarations, format, writer));
 		if (moreThan2014) {
-			String fileString = new String(output.toByteArray());
-			fileString = AonStringUtils.chomp(fileString);
-			fileOutput.setContent(fileString.getBytes());
+			String fileString = null;
+			try {
+				fileString = new String(output.toByteArray(),"ISO-8859-1");
+				fileString = AonStringUtils.chomp(fileString);
+				fileOutput.setContent(fileString.getBytes("ISO-8859-1"));
+			} catch (UnsupportedEncodingException e) {
+				fileString = new String(output.toByteArray());
+				fileString = AonStringUtils.chomp(fileString);
+				fileOutput.setContent(fileString.getBytes());
+			}
 		} else {
 			fileOutput.setContent(output.toByteArray());
 		}
