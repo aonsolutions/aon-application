@@ -359,12 +359,17 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Generar fichero")
 	String generateFile();
+	@DefaultMessage("Fichero")
+	String generateFileAbr();
 	
 	@DefaultMessage("Imprimir certificado")
 	String printCertificate();
 
 	@DefaultMessage("Imprimir via AEAT")
 	String printViaAeat();
+
+	@DefaultMessage("Imprimir")
+	String print();
 
 	@DefaultMessage("Finalizado")
 	String finished();
@@ -1588,6 +1593,8 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Exportar datos contables")
 	String aeatAccountingFile();
+	@DefaultMessage("Exp.Dat.Ctb.")
+	String aeatAccountingFileAbr();
 
 	@DefaultMessage("Datos de Grupo Fiscal")
 	String fiscalGroupLabel();
@@ -1988,6 +1995,9 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Importar Datos Contables")
 	String importAccounting();
+	
+	@DefaultMessage("Imp.Dat.Ctb.")
+	String importAccountingAbr();
 
 	@DefaultMessage("Guardar la declaraci\u00F3n inclu\u00EDda en el modelo importado.")
 	String saveImportedModel();
