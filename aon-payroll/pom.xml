@@ -224,9 +224,11 @@
 									<directory>/usr/share/java</directory>
 									<dependency>
 										<includes>
+											<include>commons-cli:commons-cli</include>
 											<include>com.code.aon:aon.common</include>
 											<include>net.aonsolutions:aon.tgss</include>
 											<include>com.esferalia.aon:aon.occam</include>
+											<include>com.esferalia.aon:aon.salary</include>
 										</includes>
 									</dependency>
 									<sources>
@@ -236,6 +238,14 @@
 												<include>${project.artifactId}-${project.version}.jar</include>
 											</includes>
 										</source>
+										<softlinkSource>
+											<location>/usr/share/java/commons-cli-1.2.jar</location>
+											<destination>commons-cli.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/aon.tgss-${project.version}.jar</location>
+											<destination>aon-tgss.jar</destination>
+										</softlinkSource>
 										<softlinkSource>
 											<location>/usr/share/java/${project.artifactId}-${project.version}.jar</location>
 											<destination>aon-payroll.jar</destination>
@@ -251,6 +261,10 @@
 										<softlinkSource>
 											<location>/usr/share/java/aon.occam-${project.version}.jar</location>
 											<destination>aon-occam.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/aon.salary-${project.version}.jar</location>
+											<destination>aon-salary.jar</destination>
 										</softlinkSource>
 									</sources>
 								</mapping>
