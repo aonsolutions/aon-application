@@ -86,8 +86,8 @@ public class Mod2002014MVELContext extends AccMiningMVELContext {
 		if ( isChecked(C0004) ) return 1.0;
 		if ( isChecked(C0005) ) return 25.0;
 		if ( isChecked(C0006) && isChecked(C0056)) return 20.0;
-		if ( isChecked(C0006) && !isChecked(C0034)) return 25.0;
 		if ( isChecked(C0006) && isChecked(C0034)) return 35.0;
+		if ( isChecked(C0006) && !isChecked(C0034)) return 25.0;
 		if ( isChecked(C0012) ) return 30.0;
 		if ( isChecked(C0015) ) return 4.0;
 		// ---
@@ -126,13 +126,6 @@ public class Mod2002014MVELContext extends AccMiningMVELContext {
 				return (getLimit(LIM_1)*15/100) + (lq552 - getLimit(LIM_1))*20/100;				
 			}
 		}
-		if (isChecked(C0006)) {
-			if (lq552<=getLimit(LIM_1)){
-				return round( lq552*25/100);			
-			} else {
-				return (getLimit(LIM_1)*25/100) + (lq552 - getLimit(LIM_1))*30/100;				
-			}
-		}
 		if (isChecked(C0056)) {
 			if (lq552<=getLimit(LIM_1)){
 				return round( lq552*20/100);			
@@ -140,7 +133,6 @@ public class Mod2002014MVELContext extends AccMiningMVELContext {
 				return (getLimit(LIM_1)*20/100) + (lq552 - getLimit(LIM_1))*25/100;				
 			}
 		}
-		
 		if (isChecked(C0015)) {
 			if (isChecked(C0057)) {
 				if (round(lq552 - lq559 - lq521) > 0) {
@@ -151,6 +143,14 @@ public class Mod2002014MVELContext extends AccMiningMVELContext {
 			}
 			return round((lq559 * lq558 / 100) + (lq552 - lq559) * 30 / 100);
 		}
+		if (isChecked(C0006)) {
+			if (lq552<=getLimit(LIM_1)){
+				return round( lq552*25/100);			
+			} else {
+				return (getLimit(LIM_1)*25/100) + (lq552 - getLimit(LIM_1))*30/100;				
+			}
+		}
+	
 		
 		if (isChecked(C0030) || isChecked(C0047)) {
 			return getValue(LQ562);
@@ -168,14 +168,6 @@ public class Mod2002014MVELContext extends AccMiningMVELContext {
 			}
 			return 0;
 		}
-		
-		if (isChecked(C0056)) {
-			if (round(lq552-lq521) > 0) {
-				return round((lq552 -lq521)* lq558 /100);
-			}
-			return 0;
-		}
-		
 		return round(lq552 * lq558 / 100);
 	}
 	
