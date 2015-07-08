@@ -2225,7 +2225,7 @@ public class Mod2002014Writer {
 					line.append(" ");   // RESERVADO AEAT
 					line.append(" ");   // RESERVADO AEAT
 					line.append( AonFiscalFileUtils.signedZero(importe>0 ? importe : 0.0, DEFAULT_SIZE, DEFAULT_DEC) );               // Ingreso - Importe a ingresar
-					line.append( AonFiscalFileUtils.text(importe>0 && ("I".equals(mod200.getDevType()) || "U".equals(mod200.getDevType())) ? mod200.getIban() : "",34) ); // Ingreso - Número de cuenta IBAN (si cargo en cuenta o domiciliacion bancaria)			
+					line.append( AonFiscalFileUtils.text(importe>0 && ("I".equals(mod200.getPayType()) || "U".equals(mod200.getPayType())) ? mod200.getIban() : "",34) ); // Ingreso - Número de cuenta IBAN (si cargo en cuenta o domiciliacion bancaria)			
 	
 					addSignedKey(line, mod200, Mod2002014Key.BN150);  // Abono/Compensación - Abono por conversión de activos impuesto diferido - A       
 					addSignedKey(line, mod200, Mod2002014Key.BN506);  // Abono/Compensación - Compensación por conversión de activos impuesto diferido - C
