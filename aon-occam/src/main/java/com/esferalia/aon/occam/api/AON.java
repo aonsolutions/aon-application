@@ -30,6 +30,8 @@ import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.callcenter.Issue;
+import com.esferalia.aon.occam.api.model.callcenter.IssueComment;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -65,6 +67,7 @@ import com.esferalia.aon.occam.impl.jooq.CommonImpl;
 import com.esferalia.aon.occam.impl.jooq.FeeImpl;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
 import com.esferalia.aon.occam.impl.jooq.FiscalImpl;
+import com.esferalia.aon.occam.impl.jooq.GroupwareImpl;
 import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
 import com.esferalia.aon.occam.impl.jooq.ProductImpl;
 import com.esferalia.aon.occam.impl.jooq.SalaryImpl;
@@ -116,6 +119,10 @@ public class AON {
 
 	private static IFee getFee() {
 		return new FeeImpl();
+	}
+	
+	private static IGroupware getGroupware() {
+		return new GroupwareImpl();
 	}
 
 	// ********************************************
@@ -1386,5 +1393,45 @@ public class AON {
 	public static void deleteFee(AONContext ctx, Stream<Fee> fs) {
 		getFee().deleteFee(ctx, fs);
 	}
+	
+	// ********************************************
+	// ****************************** CALLCENTER **
+	// ********************************************
+	
+	public static ArrayList<Issue> getOpenIssues(String domainName,
+			int domain, String subject) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain);
+			return getGroupware().getOpenIssues(ctx, domain, subject);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static ArrayList<Issue> getClosedIssues(String domainName,
+			int domain, String subject) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain);
+			return getGroupware().getClosedIssues(ctx, domain, subject);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
+	public static ArrayList<IssueComment> getIssueComments(String domainName,
+			int domain, int issue) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain);
+			return getGroupware().getIssueComments(ctx, issue);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 }

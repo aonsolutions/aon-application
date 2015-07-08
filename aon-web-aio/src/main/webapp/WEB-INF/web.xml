@@ -120,6 +120,10 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>Resource Servlet</servlet-name>
+		<url-pattern>/aon_gwt_callcenter/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Resource Servlet</servlet-name>
 		<url-pattern>/aon_gwt_connect/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
@@ -393,7 +397,11 @@
 		<servlet-name>Common Servlet</servlet-name>
 		<url-pattern>/aon_gwt_fiscal/Common</url-pattern>
 	</servlet-mapping>
-
+	<servlet-mapping>
+		<servlet-name>Common Servlet</servlet-name>
+		<url-pattern>/aon_gwt_callcenter/Common</url-pattern>
+	</servlet-mapping>
+	
 	<servlet>
 		<servlet-name>Fiscal Servlet</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.fiscal.server.FiscalServiceImpl</servlet-class>
