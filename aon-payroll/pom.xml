@@ -251,10 +251,6 @@
 											<destination>aon-payroll.jar</destination>
 										</softlinkSource>
 										<softlinkSource>
-											<location>/usr/share/java/aon.tgss-${project.version}.jar</location>
-											<destination>aon-tgss.jar</destination>
-										</softlinkSource>
-										<softlinkSource>
 											<location>/usr/share/java/aon.common-${project.version}.jar</location>
 											<destination>aon-common.jar</destination>
 										</softlinkSource>

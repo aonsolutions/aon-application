@@ -1,0 +1,19 @@
+#!/bin/sh
+# The calc executable script.
+
+# Copyright (C) 2015, AON SOLUTIONS, S.L.U
+
+
+
+classpath=/usr/share/java/mysql-connector-java.jar
+classpath=$classpath:/usr/share/java/aon-tgss.jar
+classpath=$classpath:/usr/share/java/aon-common.jar
+classpath=$classpath:/usr/share/java/aon-occam.jar
+classpath=$classpath:/usr/share/java/aon-salary.jar
+classpath=$classpath:/usr/share/java/aon-payroll.jar
+classpath=$classpath:/usr/share/java/commons-cli.jar
+
+exec java -classpath $classpath com.esferalia.aon.payroll.calculator.Main ${@:1};;
+
+
+
