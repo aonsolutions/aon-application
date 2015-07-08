@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.EnumMap;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -25,6 +26,7 @@ import org.xml.sax.SAXException;
 
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.DoubleVariable2014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
@@ -359,9 +361,9 @@ public class Mod2002014Writer {
 			,(line,mod200, label) -> line.append( AonFiscalFileUtils.text(mod200.getSecretary().getDocument(),9) )  // N.I.F. - Secretario del Consejo de Administración
 			,(line,mod200, label) -> line.append( AonFiscalFileUtils.dateZero(mod200.getSecretary().getIrnr()) )    // Fecha - Contribuyentes por el I.R.N.R. 
 			
-			,(line,mod200, label) -> addLegalRepresentative(line, mod200, 1) // Representantes legales de la entidad (1)
-			,(line,mod200, label) -> addLegalRepresentative(line, mod200, 2) // Representantes legales de la entidad (2)
-			,(line,mod200, label) -> addLegalRepresentative(line, mod200, 3) // Representantes legales de la entidad (3)
+			,(line,mod200, label) -> addLegalRepresentative(line, mod200, 0) // Representantes legales de la entidad (1)
+			,(line,mod200, label) -> addLegalRepresentative(line, mod200, 1) // Representantes legales de la entidad (2)
+			,(line,mod200, label) -> addLegalRepresentative(line, mod200, 2) // Representantes legales de la entidad (3)
 			
 			,(line,mod200, label) -> line.append( AonFiscalFileUtils.spaces(21) ) // RESERVADO PARA LA A E A T (Dejar en blanco) A.E.A.T. Incluye Nº Referencia
 			,(line,mod200, label) -> line.append( AonFiscalFileUtils.spaces(20) ) // Identificador cliente EEDD. RESERVADO PARA LAS EEDD.
@@ -2312,7 +2314,7 @@ public class Mod2002014Writer {
 				input.close();
 
 				// prueba - dejar todas las claves a cero
-				//mod2002014.setKeysMap(new EnumMap<Mod2002014Key,DoubleVariable2014>(Mod2002014Key.class));
+				mod2002014.setKeysMap(new EnumMap<Mod2002014Key,DoubleVariable2014>(Mod2002014Key.class));
 				
 				//Writer line = new StringWriter();
 				filename = "c:\\tmp\\prueba.txt";
