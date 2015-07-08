@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -26,6 +27,7 @@ import com.code.aon.facturae.enumeration.TaxTypeCode;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.finance.util.FinanceUtil;
 import com.code.aon.geozone.GeoZone;
@@ -38,6 +40,8 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryType;
+import com.code.aon.warehouse.DeliveryDetail;
+import com.code.aon.warehouse.IncomeDetail;
 import com.esferalia.aon.entity.IEntityAlias;
 
 import es.mityc.facturae.FacturaeVersion;
@@ -52,6 +56,8 @@ import es.mityc.facturae32.BusinessType;
 import es.mityc.facturae32.ContactDetailsType;
 import es.mityc.facturae32.CountryType;
 import es.mityc.facturae32.CurrencyCodeType;
+import es.mityc.facturae32.DeliveryNoteType;
+import es.mityc.facturae32.DeliveryNotesReferencesType;
 import es.mityc.facturae32.DiscountType;
 import es.mityc.facturae32.DiscountsAndRebatesType;
 import es.mityc.facturae32.ExtensionsType;
@@ -659,6 +665,55 @@ public class FacturaeWriter {
 		return dar;
 	}
 	
+	private String getReferenceCode( InvoiceDetail detail ) {
+		try {
+			ITransferObject header = detail.getSourceTo();
+			if ( header != null ) {
+				return ((IHeaderObject)header).getReferenceCode();
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		return null;
+	}
+
+	private String getIssuerContractReference( InvoiceDetail detail ) {
+		if ( detail.getSource() == InvoiceSource.DELIVERY ) {
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(DeliveryDetail.class);
+				DeliveryDetail dd = (DeliveryDetail) bean.get(detail.getSourceId());
+				if ( (dd != null) && (dd.getSalesDetail() != null) ) {
+					return dd.getSalesDetail().getSales().getReferenceCode();
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+		} else if ( detail.getSource() == InvoiceSource.INCOME ) {
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(IncomeDetail.class);
+				IncomeDetail id = (IncomeDetail) bean.get(detail.getSourceId());
+				if ( (id != null) && (id.getPurchaseDetail() != null) ) {
+					return id.getPurchaseDetail().getPurchase().getReferenceCode();
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.error(e.getMessage(), e);
+			}			
+		} else {
+			return getReferenceCode(detail);	
+		}
+		return null;
+	}
+	
+	private String getDeliveryNoteNumber( InvoiceDetail detail ) {
+		switch ( detail.getSource() ) {
+			case DELIVERY:
+			case INCOME:
+				return getReferenceCode(detail);
+			default:
+				return null;
+		}
+	}
+	
 	private InvoiceLineType getInvoiceLine( InvoiceDetail line, InvoiceType invoiceType ) {
 		InvoiceLineType invoiceLine = new InvoiceLineType();
 		invoiceLine.setIssuerTransactionReference(Util.toTextMax20Type(String.valueOf(line.getId())) );
@@ -670,6 +725,18 @@ public class FacturaeWriter {
 		invoiceLine.setGrossAmount( line.getTaxableBase() );
 		if ( line.getDiscountExpression() != null ) {
 			invoiceLine.setDiscountsAndRebates( getDiscountsAndRebates(line, totalCost) );
+		}
+		String issuerContractReference = getIssuerContractReference(line);
+		if (! StringUtils.isEmpty(issuerContractReference) ) {
+			invoiceLine.setIssuerContractReference(Util.toTextMax20Type(issuerContractReference));
+		}		
+		String deliveryNoteNumber = getDeliveryNoteNumber(line);
+		if (! StringUtils.isEmpty(deliveryNoteNumber) ) {
+			DeliveryNotesReferencesType notes = new DeliveryNotesReferencesType();
+			DeliveryNoteType noteType = new DeliveryNoteType();
+			noteType.setDeliveryNoteNumber(deliveryNoteNumber);
+			notes.getDeliveryNote().add(noteType);
+			invoiceLine.setDeliveryNotesReferences(notes);
 		}
 		addLinesTaxes( invoiceType, invoiceLine, line );
 		if ( this.pmsUtil.isReservationAvailable() ) {
