@@ -308,12 +308,12 @@ public class Page02 extends PageAbs {
 
 	@UiHandler("newParticipationIn")
 	void onNewParticipationIn(ClickEvent event) {
-		if (dataProviderIn.getList().size() < 6) {
+//		if (dataProviderIn.getList().size() < 6) {
 			dataProviderIn.getList().add(new CompanyParticipation());
 			tableIn.redraw();		    		
-		} else {
-			Window.alert("La aplicaci\u00F3n no permite m\u00E1s de seis participaciones");
-		}
+//		} else {
+//			Window.alert("La aplicaci\u00F3n no permite m\u00E1s de seis participaciones");
+//		}
 	}
 	
 	private void addOutDocumentColumn() {
@@ -426,15 +426,15 @@ public class Page02 extends PageAbs {
 
 	@UiHandler("newParticipationOut")
 	void onNewParticipationOut(ClickEvent event) {
-		if (dataProviderOut.getList().size() < 4) {
+//		if (dataProviderOut.getList().size() < 4) {
 			CompanyParticipation cp = new CompanyParticipation();
 			dataProviderOut.getList().add(cp);
 			participationPanel.dump(cp);
 			participationPanel.center();
 			participationPanel.show();
-		} else {
-			Window.alert("La aplicaci\u00F3n no permite m\u00E1s de cuatro participaciones");
-		}		
+//		} else {
+//			Window.alert("La aplicaci\u00F3n no permite m\u00E1s de cuatro participaciones");
+//		}		
 	}
 	
 	@Override
