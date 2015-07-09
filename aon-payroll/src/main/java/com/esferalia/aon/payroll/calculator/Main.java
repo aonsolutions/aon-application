@@ -246,6 +246,10 @@ public class Main {
 									  .withDescription("Delete existing salaries.")
 									  .create();
 		
+		Option pretty =  OptionBuilder.withLongOpt("pretty")
+				  .withDescription("Makes the output readable to a human.")
+				  .create();
+
 		Options options = new Options()
 		.addOption(hostName)
 		.addOption(user)
@@ -256,6 +260,7 @@ public class Main {
 		.addOption(dryRun)
 		.addOption(ccc)
 		.addOption(delete)
+		.addOption(pretty)
 		;
 		//@formatter:on
 
@@ -311,7 +316,8 @@ public class Main {
 				try {
 					calculator.calculate(ctx);
 				} catch (Throwable e) {
-					System.err.println(e.getMessage());
+					e.printStackTrace();
+//					System.err.println(e.getMessage());
 				}
 			}
 			

@@ -213,7 +213,11 @@
 							<release>${buildNumber}</release>
 							<copyright>2015, AON SOLUTIONS S.L.U</copyright>
 							<requires>
+								<require>slf4j</require>
+								<require>antlr</require>
+								<require>apache-commons-lang</require>
 								<require>mysql-connector-java</require>
+								<require>apache-commons-logging</require>
 							</requires>
 							<mappings>
 								<mapping>
@@ -223,11 +227,19 @@
 									<directory>/usr/share/java</directory>
 									<dependency>
 										<includes>
+											<include>org.jooq:jooq</include>
+											<include>org.mvel:mvel2</include>
 											<include>commons-cli:commons-cli</include>
+											<include>com.code.aon:aon.ql</include>
 											<include>com.code.aon:aon.common</include>
 											<include>net.aonsolutions:aon.tgss</include>
+											<include>com.esferalia.aon:aon.entity</include>
+											<include>com.esferalia.aon:aon.entity.common</include>
 											<include>com.esferalia.aon:aon.occam</include>
+											<include>com.esferalia.aon:aon.watson</include>
 											<include>com.esferalia.aon:aon.salary</include>
+											<include>com.esferalia.aon:aon.master.jooq</include>
+											<include>org.apache.commons:commons-math3</include>
 										</includes>
 									</dependency>
 									<sources>
@@ -238,8 +250,20 @@
 											</includes>
 										</source>
 										<softlinkSource>
+											<location>/usr/share/java/mvel2-2.2.4.Final.jar</location>
+											<destination>mvel2.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/jooq-3.5.2.jar</location>
+											<destination>jooq.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
 											<location>/usr/share/java/commons-cli-1.2.jar</location>
 											<destination>commons-cli.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/commons-math3-3.2.jar</location>
+											<destination>commons-math3.jar</destination>
 										</softlinkSource>
 										<softlinkSource>
 											<location>/usr/share/java/aon.tgss-${project.version}.jar</location>
@@ -250,8 +274,16 @@
 											<destination>aon-payroll.jar</destination>
 										</softlinkSource>
 										<softlinkSource>
+											<location>/usr/share/java/aon.ql-${project.version}.jar</location>
+											<destination>aon-ql.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
 											<location>/usr/share/java/aon.common-${project.version}.jar</location>
 											<destination>aon-common.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/aon.watson-${project.version}.jar</location>
+											<destination>aon-watson.jar</destination>
 										</softlinkSource>
 										<softlinkSource>
 											<location>/usr/share/java/aon.occam-${project.version}.jar</location>
@@ -260,6 +292,18 @@
 										<softlinkSource>
 											<location>/usr/share/java/aon.salary-${project.version}.jar</location>
 											<destination>aon-salary.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/aon.master.jooq-${project.version}.jar</location>
+											<destination>aon-master-jooq.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/aon.entity-${project.version}.jar</location>
+											<destination>aon-entity.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/aon.entity.common-${project.version}.jar</location>
+											<destination>aon-entity-common.jar</destination>
 										</softlinkSource>
 									</sources>
 								</mapping>

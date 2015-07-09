@@ -6,12 +6,26 @@
 
 
 classpath=/usr/share/java/mysql-connector-java.jar
+classpath=$classpath:/usr/share/java/jooq.jar
 classpath=$classpath:/usr/share/java/aon-tgss.jar
 classpath=$classpath:/usr/share/java/aon-common.jar
 classpath=$classpath:/usr/share/java/aon-occam.jar
 classpath=$classpath:/usr/share/java/aon-salary.jar
 classpath=$classpath:/usr/share/java/aon-payroll.jar
 classpath=$classpath:/usr/share/java/commons-cli.jar
+classpath=$classpath:/usr/share/java/aon-master-jooq.jar
+classpath=$classpath:/usr/share/java/apache-commons-lang.jar
+classpath=$classpath:/usr/share/java/apache-commons-logging.jar
+classpath=$classpath:/usr/share/java/slf4j/api.jar
+classpath=$classpath:/usr/share/java/slf4j/jcl.jar
+classpath=$classpath:/usr/share/java/antlr.jar
+classpath=$classpath:/usr/share/java/aon-ql.jar
+classpath=$classpath:/usr/share/java/aon-watson.jar
+classpath=$classpath:/usr/share/java/commons-math3.jar
+classpath=$classpath:/usr/share/java/mvel2.jar
+classpath=$classpath:/usr/share/java/aon-entity-common.jar
+classpath=$classpath:/usr/share/java/aon-entity.jar
+
 
 exec java -classpath $classpath com.esferalia.aon.payroll.calculator.Main ${@:1};
 
