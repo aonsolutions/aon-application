@@ -13,7 +13,7 @@ classpath=$classpath:/usr/share/java/aon-salary.jar
 classpath=$classpath:/usr/share/java/aon-payroll.jar
 classpath=$classpath:/usr/share/java/commons-cli.jar
 
-exec java -classpath $classpath com.esferalia.aon.payroll.calculator.Main ${@:1};;
+exec java -classpath $classpath com.esferalia.aon.payroll.calculator.Main ${@:1};
 
 
 

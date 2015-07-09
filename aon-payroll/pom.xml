@@ -269,7 +269,7 @@
 											<location>src/main/scripts</location>
 										</source>
 									</sources>
-									<filemode>755</filemode>
+									<filemode>555</filemode>
 									<username>root</username>
 									<groupname>root</groupname>
 									<directory>/usr/bin</directory>
