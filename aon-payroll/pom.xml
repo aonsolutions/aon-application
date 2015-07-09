@@ -228,11 +228,14 @@
 									<dependency>
 										<includes>
 											<include>org.jooq:jooq</include>
+											<include>org.jooq:jool</include>
 											<include>org.mvel:mvel2</include>
 											<include>commons-cli:commons-cli</include>
 											<include>com.code.aon:aon.ql</include>
+											<include>com.code.aon:aon.pool</include>
 											<include>com.code.aon:aon.common</include>
 											<include>net.aonsolutions:aon.tgss</include>
+											<include>com.esferalia.aon:aon.aeat</include>
 											<include>com.esferalia.aon:aon.entity</include>
 											<include>com.esferalia.aon:aon.entity.common</include>
 											<include>com.esferalia.aon:aon.occam</include>
@@ -240,6 +243,8 @@
 											<include>com.esferalia.aon:aon.salary</include>
 											<include>com.esferalia.aon:aon.master.jooq</include>
 											<include>org.apache.commons:commons-math3</include>
+											<include>es.aeat:ModRet2015</include>
+											<include>PRET-R150_shared</include>
 										</includes>
 									</dependency>
 									<sources>
@@ -256,6 +261,10 @@
 										<softlinkSource>
 											<location>/usr/share/java/jooq-3.5.2.jar</location>
 											<destination>jooq.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/jool-0.9.6.jar</location>
+											<destination>jool.jar</destination>
 										</softlinkSource>
 										<softlinkSource>
 											<location>/usr/share/java/commons-cli-1.2.jar</location>
@@ -276,6 +285,10 @@
 										<softlinkSource>
 											<location>/usr/share/java/aon.ql-${project.version}.jar</location>
 											<destination>aon-ql.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/aon.pool-${project.version}.jar</location>
+											<destination>aon-pool.jar</destination>
 										</softlinkSource>
 										<softlinkSource>
 											<location>/usr/share/java/aon.common-${project.version}.jar</location>
@@ -304,6 +317,18 @@
 										<softlinkSource>
 											<location>/usr/share/java/aon.entity.common-${project.version}.jar</location>
 											<destination>aon-entity-common.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/aon.aeat-${project.version}.jar</location>
+											<destination>aon-aeat.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/ModRet2015-1.0.jar</location>
+											<destination>ModRet2015.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/PRET-R150_shared-1.0.jar</location>
+											<destination>PRET-R150_shared.jar</destination>
 										</softlinkSource>
 									</sources>
 								</mapping>
