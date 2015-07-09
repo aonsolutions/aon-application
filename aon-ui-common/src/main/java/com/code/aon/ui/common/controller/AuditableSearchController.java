@@ -1,8 +1,13 @@
 package com.code.aon.ui.common.controller;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class AuditableSearchController {
+import com.code.aon.AonVersion;
+
+public class AuditableSearchController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private String creationUser;
 	private Date creationDate1;

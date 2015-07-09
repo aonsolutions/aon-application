@@ -2,17 +2,22 @@ package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.NEW_PASSWORD_ERROR;
 
+import java.io.Serializable;
+
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.util.AonUtil;
 
-public class DEHOnlineController {
+public class DEHOnlineController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String user;
 	

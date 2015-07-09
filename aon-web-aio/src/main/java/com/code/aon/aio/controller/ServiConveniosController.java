@@ -1,14 +1,20 @@
 package com.code.aon.aio.controller;
 
+import java.io.Serializable;
+
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.faces.controller.IRichConstants;
 import com.code.aon.faces.controller.SelectedMenuController;
 import com.code.aon.ui.google.apis.controller.GoogleDriveController;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class ServiConveniosController {
+public class ServiConveniosController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	public static Boolean serviConvenios;
 
 	public static Boolean getServiConvenios() {

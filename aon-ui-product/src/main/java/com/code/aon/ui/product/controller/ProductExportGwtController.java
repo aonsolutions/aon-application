@@ -1,7 +1,6 @@
 package com.code.aon.ui.product.controller;
 
 
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,7 +15,7 @@ import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.controller.AuditableSearchController;
 
-public class ProductExportGwtController extends AuditableSearchController implements Serializable {
+public class ProductExportGwtController extends AuditableSearchController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 

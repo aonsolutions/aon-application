@@ -475,13 +475,6 @@
 		<managed-bean-class>com.code.aon.ui.fiscal.event.VatTaxDeclarationControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
-	<!-- **************** VAT TAX SUMMARY REPORT *************** -->
-	<managed-bean>
-		<managed-bean-name>vatTaxSummaryReport</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.fiscal.controller.VatTaxSummaryReport</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
 
 	<!-- **************** MODEL 111  *************** -->
 	<managed-bean>

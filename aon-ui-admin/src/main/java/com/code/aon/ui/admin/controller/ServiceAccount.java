@@ -1,8 +1,14 @@
 package com.code.aon.ui.admin.controller;
 
+import java.io.Serializable;
+
 import org.apache.commons.io.FileUtils;
 
-public class ServiceAccount {
+import com.code.aon.AonVersion;
+
+public class ServiceAccount implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	String client_id;
 	String domain;
