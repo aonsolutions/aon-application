@@ -8,9 +8,11 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMPLOYEE_QUO
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ENTERPRISE_QUOTA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
 
 import java.text.Collator;
 import java.util.Calendar;
@@ -23,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
@@ -32,6 +35,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.calculator.TaxCalculator.NotNowException;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
@@ -296,6 +300,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 		Double totalPayment = fillPayments(contractSalaryCalculatorContext);
 		Double totalDeduction = fillDeductions(contractSalaryCalculatorContext);
 
+
 		expressionContext.setVariable(TOTAL_LIQUID, totalPayment
 				- totalDeduction, start, end);
 		Double totalEmbargos = fillEmbargos(contractSalaryCalculatorContext);
@@ -313,7 +318,9 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 				- totalEmbargos);
 
 		//salaryBuilder.setTimeUnits(getTimeUnits(contractSalaryCalculatorContext, start, end));
-
+		
+		fillData(contractSalaryCalculatorContext);
+		
 		return salaryBuilder.getSalary();
 	}
 
@@ -746,6 +753,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 				} catch (IllegalArgumentException e) {
 					// costStart > costEnd, ignore .
 				} catch (UndefinedVariablesException e) {
+					
 				} catch (ExpressionException e) {
 					throw new SalaryException(e.getMessage(), e);
 				}
@@ -883,7 +891,8 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 
 				expressionContext.setVariable(ALL, resultValue, resultStart,
 						resultEnd);
-
+				
+				
 				Double quote = quoteCalculator.quote(contractPayment,
 						resultStart, resultEnd, resultValue);
 
@@ -959,9 +968,9 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 
 		Double total = 0.00;
 
+
 		for (ITimedResult<Double> result : results) {
 			Double value = result.getValue();
-
 			if (value == null || value == 0) {
 				salaryBuilder.addZeroDeduction(d, result.getContext());
 				continue;
@@ -1021,6 +1030,26 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 		return total;
 	}
 
+	protected void fillData(IContractSalaryCalculatorContext ctx)
+			throws SalaryException {
+		ExpressionContext expressionContext = ctx.getExpressionContext();
+		for ( String name : new String []{
+				QUOTE_DAYS.getName(),
+				CGC_BASE.getName(), 
+				CGP_BASE.getName(),
+				STRUCTURAL_OVERTIME_BASE.getName(),
+				NON_STRUCTURAL_OVERTIME_BASE.getName(),
+				WORKED_HOURS.getName()}){
+			try {
+				for ( ITimedVariable<Object> data: expressionContext.getVariables(name) ){
+					try {
+						salaryBuilder.addData(name, data);
+					} catch ( Throwable t ){}
+				}
+			} catch ( Throwable t ) {}
+		}
+	}
+	
 	private void onInvalidData(String... variableNames) {
 		if (listener != null) {
 			for (int i = 0; i < variableNames.length; i++) {
