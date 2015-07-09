@@ -74,7 +74,7 @@ public class Mod2002014Validation {
 				,MessageFormat.format(MUST_EQUAL_EXP,BA180.toString(),BP252.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2014(PAGE03,BA180
 				,EMPTY_BALANCE_MSG
-				,"round(BA180) != 0.0 && round(BP252) != 0.0 && round(BP187)"));
+				,"round(BA180) != 0.0 && round(BP252) != 0.0 && round(BP187) != 0.0"));
 	}
 
 	
