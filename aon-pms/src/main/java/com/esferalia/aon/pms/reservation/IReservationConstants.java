@@ -58,6 +58,7 @@ public interface IReservationConstants {
 	String SERVICE_BREAKDOWN = "SERVICE_BREAKDOWN";
 	String AUTO_DISCOUNT = "AUTO_DISCOUNT";
 	String AGENCY_COMMISSION = "AGENCY_COMMISSION";
+	String BOARD_NEXT_DAY = "BOARD_NEXT_DAY";
 
 	String SIRIUS = "SIRIUS";
 	String PLS = "PLS";
@@ -69,14 +70,14 @@ public interface IReservationConstants {
 	String TR = "TR";
 	String YES = "YES";
 	String NO = "NO";
+	String TRUE = "TRUE";
+	String FALSE = "FALSE";
 	String CRS = "crs";
 	String CUST_PROFILE = "CustProfile";
 	String AVAILABILITY_QUERY_REQUEST = "AvailabilityQueryRequest";
 	String RESERVATION_BOOKING_REQUEST = "ReservationBookingRequest";
 	String CRS_SIMPLE_AVAILABILITY_URL = "PMS_SIMPLE_AVAILABILITY_URL";
 	String CRS_BOOKING_URL = "PMS_BOOKING_URL";
-
-	String ROOM_CATEGORY = "PMS_ROOM_CATEGORY";
 
 	String UNDEFINED_TARIFF = "PMS_UNDEFINED_TARIFF";
 	String UNDEFINED_ROOM_ITEM = "PMS_UNDEFINED_ROOM_ITEM";

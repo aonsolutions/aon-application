@@ -8,13 +8,16 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.math.NumberUtils;
+
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.ApplicationParameter;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.Tariff;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.InvoicingGroup;
 import com.code.aon.customer.enumeration.CustomerStatus;
@@ -258,21 +261,35 @@ public class PmsCollectionsController implements Serializable {
 
 	public List<SelectItem> getRoomItems() throws ManagerBeanException {
 		List<SelectItem> roomItems = new LinkedList<SelectItem>();
-		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+		String roomCategory = AppParamUtil.getValue(AppParam.PMS_ROOM_CATEGORY);
+		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), IReservationConstants.ROOM_CATEGORY);
-		for (ITransferObject ito : appParamBean.getList(criteria)) {
-			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
-			criteria = new Criteria();
-			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), new Integer(((ApplicationParameter)ito).getValue()));
-			criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
-			for (ITransferObject itr : itemBean.getList(criteria)) {
-				Item item = (Item)itr;
-				SelectItem roomItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
-				roomItems.add(roomItem);
-			}
+		criteria = new Criteria();
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), NumberUtils.toInt(roomCategory));
+		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
+		for (ITransferObject itr : itemBean.getList(criteria)) {
+			Item item = (Item)itr;
+			SelectItem roomItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
+			roomItems.add(roomItem);
 		}
 		return roomItems;
+	}
+
+	public List<SelectItem> getBoardItems() throws ManagerBeanException {
+		List<SelectItem> boardItems = new LinkedList<SelectItem>();
+		String boardCategory = AppParamUtil.getValue(AppParam.PMS_BOARD_CATEGORY);
+		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+		Criteria criteria = new Criteria();
+		criteria = new Criteria();
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), NumberUtils.toInt(boardCategory));
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_COMPOSITION), Boolean.FALSE);
+		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CODE));
+		for (ITransferObject itr : itemBean.getList(criteria)) {
+			Item item = (Item)itr;
+			SelectItem boardItem = new SelectItem(item, item.getProduct().getName());
+			boardItems.add(boardItem);
+		}
+		return boardItems;
 	}
 
 	public List<SelectItem> getTariffs() throws ManagerBeanException {

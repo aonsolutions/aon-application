@@ -61,8 +61,7 @@
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="hotel" value="#{boardList.getHotel}" />
 			<param id="date" value="#{boardList.getDate}" />
-			<param id="boardPageBreak" value="#{boardList.isBoardPageBreak}" />
-			<param id="boardsTotal" value="#{boardList.getBoardsTotalList}" />
+			<param id="pageBreak" value="#{boardList.isPageBreak}" />
 		</params>
 	</report>
 

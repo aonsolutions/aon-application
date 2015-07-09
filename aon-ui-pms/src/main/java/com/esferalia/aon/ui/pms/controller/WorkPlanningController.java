@@ -279,7 +279,7 @@ public class WorkPlanningController extends DataScrollerState implements ICollec
 		return getRoomPlanningList();
 	}
 	@SuppressWarnings("rawtypes")
-	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+	public Collection getCollection(boolean forceRefresh) {
 		return getCollection();
 	}
 	

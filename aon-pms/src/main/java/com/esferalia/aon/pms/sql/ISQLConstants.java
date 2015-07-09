@@ -41,6 +41,8 @@ public interface ISQLConstants {
 	String ROOM_NUMBER = "roomNumber";
 	String ROOM_CODE = "roomCode";
 	String ROOM_TYPE = "roomType";
+	String BOARD_CODE = "boardCode";
+	String BOARD_NAME = "boardName";
 	String ADULTS = "adults";
 	String CHILDREN = "children";
 	String MEAL_PLAN = "mealPlan";

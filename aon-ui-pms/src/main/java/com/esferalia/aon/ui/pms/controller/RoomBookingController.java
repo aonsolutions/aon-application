@@ -396,7 +396,7 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 		return getBookingList();
 	}
 	@SuppressWarnings("rawtypes")
-	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+	public Collection getCollection(boolean forceRefresh) {
 		return getCollection();
 	}
 

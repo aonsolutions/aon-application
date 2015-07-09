@@ -187,7 +187,7 @@ public class HotelGuestController extends DataScrollerState implements ICollecti
 		return getHotelGuestList();
 	}
 	@SuppressWarnings("rawtypes")
-	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+	public Collection getCollection(boolean forceRefresh) {
 		return getCollection();
 	}
 

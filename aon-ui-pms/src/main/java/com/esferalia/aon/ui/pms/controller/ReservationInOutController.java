@@ -285,7 +285,7 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		return getReservationIOList();
 	}
 	@SuppressWarnings("rawtypes")
-	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+	public Collection getCollection(boolean forceRefresh) {
 		return getCollection();
 	}
 
