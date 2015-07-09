@@ -65,7 +65,6 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
-import com.google.api.services.drive.model.File;
 
 public class Bases {
 
@@ -103,12 +102,15 @@ public class Bases {
 									.hasArg()
 									.withLongOpt("xml")
 									.withDescription("XML file.")
-									.withType(File.class)
 									.create("x");
 		Option comments =  OptionBuilder.withLongOpt("comments")
 										.withDescription("Write additional information.")
 										.create("c");
 		
+		Option skiptPrevBases =  OptionBuilder.withLongOpt("skip-prev-bases")
+				.withDescription("Skip previous bases.")
+				.create("b");
+
 		Options options = new Options()
 		.addOption(hostName)
 		.addOption(user)
@@ -116,6 +118,7 @@ public class Bases {
 		.addOption(database)
 		.addOption(xml)
 		.addOption(comments)
+		.addOption(skiptPrevBases)
 		;
 		//@formatter:on
 
@@ -138,24 +141,28 @@ public class Bases {
 			String path = cmd.getOptionValue(xml.getLongOpt());
 			InputStream is = AonStringUtils.isEmpty(path) ? System.in
 					: new FileInputStream(cmd.getOptionValue(xml.getLongOpt()));
-
+			
+			boolean aceptarBasesAnteriores = !cmd.hasOption(skiptPrevBases.getLongOpt());
+			
 			TrabajadoresTramos trabajadoresTramos = Utils.unmarshal(
 					TrabajadoresTramos.class, is);
 
 			AONContext ctx = new AONContext(connection);
 			BasesBuilder builder = new BasesBuilder()
 					.setAutorizado(trabajadoresTramos.getAutorizado());
+
+			XMLStreamWriter xsw = new IndentXMLStreamWriter(XMLOutputFactory
+					.newInstance().createXMLStreamWriter(System.out), "  ");
 			
-			XMLStreamWriter xsw = new IndentXMLStreamWriter(XMLOutputFactory.newInstance()
-					.createXMLStreamWriter(System.out), "  ");
+			Errors errors = new Errors();
 			Comments comment = new Comments(xsw);
-			
-			bases(builder, ctx, trabajadoresTramos.getLiquidacion(), comment);
+
+			bases(builder, ctx, trabajadoresTramos.getLiquidacion(), aceptarBasesAnteriores, errors, comment);
 			is.close();
 
+			
 			net.aonsolutions.tgss.creta.jaxb.bases.Bases bases = builder
 					.create();
-
 			
 			if (cmd.hasOption(comments.getLongOpt()))
 				Utils.marshal(bases, xsw, comment);
@@ -174,34 +181,41 @@ public class Bases {
 	}
 
 	public static interface BasesCallback {
-		
-		default void trabajadorAdded(String naf, Salary salary){};
 
-		default void unknownDato(DatoSolicitado datoSolicitado){};
+		default void trabajadorAdded(Trabajador trabajador, Salary salary) {
+		};
 
+		default void unknownDato(DatoSolicitado datoSolicitado) {
+		};
 
 	}
+	
+	private static class Errors implements BasesCallback {
+		@Override
+		public void unknownDato(DatoSolicitado datoSolicitado) {
+			System.err.println(String.format("ERROR: Unknown Dato '%s'", datoSolicitado.getCodigo()));
+		}
+	}
+	
 
-	private static class Comments extends Listener implements BasesCallback{
-		
+	private static class Comments extends Listener implements BasesCallback {
+
 		private static class TrabajadorData {
-			
-			private String ss ;
-			private String name ;
 
-			public TrabajadorData(String name,String ss) {
+			private String ss;
+			private String name;
+
+			public TrabajadorData(String name, String ss) {
 				super();
 				this.ss = ss;
 				this.name = name;
 			}
-			
+
 		}
-		
+
 		private XMLStreamWriter xsw;
 		private Map<String, TrabajadorData> trabajadorDataMap;
-		
-		
-		
+
 		public Comments(XMLStreamWriter xsw) {
 			super();
 			this.xsw = xsw;
@@ -220,40 +234,44 @@ public class Bases {
 		}
 
 		@Override
-		public void trabajadorAdded(String naf, Salary salary){
-			trabajadorDataMap.put(naf, new TrabajadorData(salary.getEmployeeName(), salary.getEmployeeSSNumber()));
+		public void trabajadorAdded(Trabajador trabajador, Salary salary) {
+			trabajadorDataMap.put(
+					trabajador.getNaf(),
+					new TrabajadorData(salary.getEmployeeName(), salary
+							.getEmployeeSSNumber()));
 		};
 
 		public void beforeMarshalDato(Dato dato) {
-			MandatoryCretaData cretaData = getCretaData(dato.getCodigo());
+			CretaData cretaData = getCretaData(dato.getCodigo());
 			try {
-				xsw.writeComment(String.format("%s", cretaData.getSecond()
-						.getName()));
+				xsw.writeComment(String.format("%s", cretaData.getComment()));
 			} catch (XMLStreamException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 
-		public void beforeMarshalTrabajador(net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajador) {
+		public void beforeMarshalTrabajador(
+				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajador) {
 			TrabajadorData data = trabajadorDataMap.get(trabajador.getNaf());
 			try {
-				xsw.writeComment(String.format("\r\n%s\r\nNúmero afiliación a la Seguridad Social:\r\n%s\r\n", 
-						data.name, data.ss));
+				xsw.writeComment(String
+						.format("\r\n%s\r\nNúmero afiliación a la Seguridad Social:\r\n%s\r\n",
+								data.name, data.ss));
 			} catch (XMLStreamException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		
-		
+
 	}
 
 	// ------------------------------------------------------------------------
 
 	private static void bases(BasesBuilder basesBuilder, AONContext ctx,
-			Liquidacion liquidacion, BasesCallback... cbs) {
+			Liquidacion liquidacion, boolean  aceptarBasesAnteriores, BasesCallback... cbs) {
 		LiquidacionBuilder liquidacionBuilder = new LiquidacionBuilder()
+				.setAceptarBasesAnteriores(aceptarBasesAnteriores)
 				.setCCC(liquidacion.getCcc().getRegimen(),
 						liquidacion.getCcc().getProvincia(),
 						liquidacion.getCcc().getNumero())
@@ -279,7 +297,7 @@ public class Bases {
 			Map<String, Trabajador> trabajadores = new HashMap<String, Trabajador>();
 			for (Trabajador trabajador : liquidacionMes.getTrabajadores()
 					.getTrabajador())
-				trabajadores.put(
+				trabajadores.put( 
 						trabajador.getIpf().getNumeroIpf()
 								.replaceAll("^0+", ""), trabajador);
 
@@ -361,13 +379,8 @@ public class Bases {
 
 			for (DatoSolicitado datoSolicitado : tramo.getDatosTramo()
 					.getDatoSolicitado()) {
-				
-				DatoBuilder datoBuilder = new DatoBuilder();
 
-				datoBuilder.setCodigo(datoSolicitado.getCodigo());
-				datoBuilder.setTipo(datoSolicitado.getTipoDato());
-
-				MandatoryCretaData data = getCretaData(datoSolicitado.getCodigo());
+				CretaData data = getCretaData(datoSolicitado.getCodigo());
 
 				if (data == null) {
 					for (BasesCallback cb : cbs)
@@ -375,29 +388,17 @@ public class Bases {
 					continue;
 				}
 
-				Double newValue = data.get(salary, tramo.getFechaDesde(),
-						tramo.getFechaHasta());
-				try {
-					Double oldValue = Double.parseDouble(datoSolicitado
-							.getValor());
-					if (AonUtils.equals(oldValue, newValue))
-						datoBuilder.setValor(newValue);
-				} catch (NullPointerException e) {
-					datoBuilder.setValor(newValue);
-				}
-
-				tramoBuilder.addDato(datoBuilder.create());
+				data.add(salary, tramo, datoSolicitado, tramoBuilder);
 			}
 
 			trabajadorBuilder.addTramo(tramoBuilder.create());
 		}
 
-		for(BasesCallback cb: cbs ) 
-			cb.trabajadorAdded(trabajador.getNaf(), salary);
+		for (BasesCallback cb : cbs)
+			cb.trabajadorAdded(trabajador, salary);
 
 		liquidacionMesBuilder.add(trabajadorBuilder.create());
 
-			
 	}
 
 	private static Calendar toCalendar(Periodo periodo) {
@@ -440,21 +441,59 @@ public class Bases {
 		return AonDateUtils.getDaysBetweenDates(p.getStart(), p.getEnd()) + 1;
 	}
 
-	private static class MandatoryCretaData extends Pair<Boolean, ContextVariable> {
+	private static interface CretaData {
 
-		public MandatoryCretaData(Boolean mandatory, ContextVariable var) {
-			super(mandatory, var);
+		String getComment();
+
+		void add(Salary salary, Tramo tramo, DatoSolicitado datoSolicitado,
+				TramoBuilder tramoBuilder);
+
+	}
+
+	private static class CContextCretaData implements CretaData {
+
+		private ContextVariable contextVariable;
+
+		public CContextCretaData(ContextVariable contextVariable) {
+			this.contextVariable = contextVariable;
+		}
+
+		@Override
+		public String getComment() {
+			return contextVariable.name();
+		}
+
+		@Override
+		public void add(Salary salary, Tramo tramo,
+				DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
+			//B -> El código del dato solicitado es obligatorio.
+			//P -> El código del dato solicitado es opcional.
+			
+			double newValue = get(salary, tramo.getFechaDesde(),
+					tramo.getFechaHasta());
+			boolean optional = "P".equals(datoSolicitado.getIndicadorObligatoriedad());
+			if ( optional && newValue == 0.00 ) 
+				return;
+
+//			String oldValor = datoSolicitado.getValor();
+//			Double oldValue = Double.parseDouble(oldValor);
+
+			
+			DatoBuilder datoBuilder = new DatoBuilder();
+			datoBuilder.setCodigo(datoSolicitado.getCodigo());
+			datoBuilder.setTipo(datoSolicitado.getTipoDato());
+			datoBuilder.setImporteEuros(newValue);
+			tramoBuilder.addDato(datoBuilder.create());
 		}
 
 		public Double get(Salary salary, Fecha desde, Fecha hasta) {
-			return get(getSecond(), salary, new Period(toDate(desde),
+			return get(salary, new Period(toDate(desde),
 					toDate(hasta)));
 		}
 
-
-		private static Double get(ContextVariable var, Salary salary, Period p) {
+		protected Double get(Salary salary, Period p) {
 			List<ContextData> datas = salary.getContextData()
-					.get(var.getName());
+					.get(contextVariable.getName());
 			if (datas == null)
 				return 0.00;
 
@@ -472,27 +511,52 @@ public class Bases {
 		}
 
 	}
+	
+	private static class HContextCretaData extends CContextCretaData {
 
-	private static Map<String, MandatoryCretaData> CONTEXT_VARIABLE_MAP = new HashMap<String, MandatoryCretaData>() {
+		public HContextCretaData(ContextVariable contextVariable) {
+			super(contextVariable);
+		}
+		
+		@Override
+		public void add(Salary salary, Tramo tramo,
+				DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
+			//B -> El código del dato solicitado es obligatorio.
+			//P -> El código del dato solicitado es opcional.
+			
+			double newValue = get(salary, tramo.getFechaDesde(),
+					tramo.getFechaHasta());
+			boolean optional = "P".equals(datoSolicitado.getIndicadorObligatoriedad());
+			if ( optional && newValue == 0.00 ) 
+				return;
+
+//			String oldValor = datoSolicitado.getValor();
+//			Double oldValue = Double.parseDouble(oldValor);
+
+			DatoBuilder datoBuilder = new DatoBuilder();
+			datoBuilder.setCodigo(datoSolicitado.getCodigo());
+			datoBuilder.setTipo(datoSolicitado.getTipoDato());
+			datoBuilder.setHoras((int)Math.round(newValue));
+			tramoBuilder.addDato(datoBuilder.create());
+		}
+	}
+
+	private static Map<String, CretaData> CONTEXT_VARIABLE_MAP = new HashMap<String, CretaData>() {
 		{
-			put("500", new MandatoryCretaData(true, CGC_BASE));
+			put("500", new CContextCretaData(CGC_BASE));
 
-			put("501", new MandatoryCretaData(false, STRUCTURAL_OVERTIME_BASE));
-			put("502", new MandatoryCretaData(false, NON_STRUCTURAL_OVERTIME_BASE));
-			put("537", new MandatoryCretaData(false, NON_STRUCTURAL_OVERTIME_BASE)); // TODO:
-																			// Base
-																			// de
-																			// horas
-																			// complementarias
+			put("501", new CContextCretaData(STRUCTURAL_OVERTIME_BASE));
+			put("502", new CContextCretaData(NON_STRUCTURAL_OVERTIME_BASE));
+			put("537", new CContextCretaData(NON_STRUCTURAL_OVERTIME_BASE));
+			put("601", new CContextCretaData(CGP_BASE));
+			put("611", new CContextCretaData(CGP_BASE));
 
-			put("601", new MandatoryCretaData(true, CGP_BASE));
-			put("611", new MandatoryCretaData(true, CGP_BASE));
-
-			put("01", new MandatoryCretaData(true, WORKED_HOURS));
+			put("01", new CContextCretaData(WORKED_HOURS));
+//			put("02", new ContextCretaData(WORKED_HOURS));
 		}
 	};
 
-	private static MandatoryCretaData getCretaData(String codigo) {
+	private static CretaData getCretaData(String codigo) {
 		return CONTEXT_VARIABLE_MAP.get(codigo);
 	}
 

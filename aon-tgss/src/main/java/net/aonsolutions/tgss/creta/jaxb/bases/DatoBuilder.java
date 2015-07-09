@@ -23,15 +23,6 @@ public class DatoBuilder {
 		return this;
 	}
 	
-	public DatoBuilder setValor(String valor) {
-		this.valor = valor;
-		return this;
-	}
-
-	public DatoBuilder setValor(Double valor) {
-		this.valor = String.format("%.2f", valor);
-		return this;
-	}
 
 	public DatoBuilder setCodigo(String codigo) {
 		this.codigo = codigo;
@@ -39,4 +30,29 @@ public class DatoBuilder {
 	}
 	
 	
+	public DatoBuilder setHoras(int horas ) {
+		// H -> Número entero de horas
+		this.valor = String.format("%d", horas );
+		return this;
+	}
+
+	public DatoBuilder setClave(String clave) {
+		// I -> Clave alfanumérica asociada al indicador
+		this.valor = clave;
+		return this;
+	}
+
+	public DatoBuilder setImporteCentimos(long importe) {
+		// C -> Importe expresado en céntimos de euro
+		this.valor = String.format("%d", importe );
+		return this;
+	}
+
+	public DatoBuilder setImporteEuros(Double importe) {
+		// C -> Importe expresado en céntimos de euro
+		this.valor = String.format("%d", Math.round( importe * 100.00 ) );
+		return this;
+	}
+
+
 }
