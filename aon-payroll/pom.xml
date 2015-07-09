@@ -213,7 +213,6 @@
 							<release>${buildNumber}</release>
 							<copyright>2015, AON SOLUTIONS S.L.U</copyright>
 							<requires>
-								<require>apache-commons-cli</require>
 								<require>mysql-connector-java</require>
 							</requires>
 							<mappings>
