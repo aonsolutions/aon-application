@@ -1,11 +1,16 @@
 package com.esferalia.aon.salary.expression;
 
+import static java.util.Calendar.DAY_OF_MONTH;
+
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.time.DateUtils;
 
@@ -106,6 +111,29 @@ public class Period implements Comparable<Period> {
 			return null;
 		}
 		return new Period(maxStart, minEnd);
+	}
+	
+	public void forEachDay(Consumer<Calendar> cb) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(start);
+		
+		Date day = calendar.getTime(); 
+		while( compare(day, end) <= 0 ) {
+			
+			Calendar c = Calendar.getInstance();
+			c.setTime(day);
+			cb.accept(c);
+			
+			calendar.add(DAY_OF_MONTH,1);
+			day = calendar.getTime();
+		}
+		
+	}
+
+	public Stream<Calendar> daysStream() {
+		Stream.Builder<Calendar> builder = Stream.builder();
+		forEachDay(builder);
+		return builder.build();
 	}
 
 	@Override

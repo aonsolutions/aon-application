@@ -63,6 +63,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOUR
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEEK_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_YEARS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.parse;
 import static com.esferalia.aon.salary.expression.ExpressionContext.getCurrentBindings;
@@ -70,7 +71,15 @@ import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static com.esferalia.aon.watson.util.AonUtils.ifnull;
 import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.DAY_OF_WEEK;
+import static java.util.Calendar.FRIDAY;
+import static java.util.Calendar.MONDAY;
 import static java.util.Calendar.MONTH;
+import static java.util.Calendar.SATURDAY;
+import static java.util.Calendar.SUNDAY;
+import static java.util.Calendar.THURSDAY;
+import static java.util.Calendar.TUESDAY;
+import static java.util.Calendar.WEDNESDAY;
 import static java.util.stream.Collectors.summingDouble;
 
 import java.lang.reflect.Method;
@@ -87,6 +96,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -98,6 +108,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.math3.analysis.UnivariateFunction;
@@ -3383,8 +3394,10 @@ public class SQLContractSalaryCalculatorContext extends
 				};
 
 				ctx.putVariable(PARTIAL_FACTOR, partial_factor);
-			}
 
+			}
+			
+			
 			if (!containsVariable(SALARY_DAYS, period)) {
 				ITimedVariable<Double> salaryDays = new ITimedVariable<Double>() {
 					@Override
@@ -3399,6 +3412,38 @@ public class SQLContractSalaryCalculatorContext extends
 
 				};
 				ctx.putVariable(SALARY_DAYS, salaryDays);
+			}
+			
+			if (!containsVariable(WORKED_HOURS, period)) {
+				ITimedVariable<Double> workedHours = new ITimedVariable<Double>() {
+					private Map<Integer, ContextVariable> DAYS = 
+							new HashMap<Integer, ContextVariable>(){
+						{
+							put(MONDAY, MONDAY_HOURS);
+							put(TUESDAY, TUESDAY_HOURS);
+							put(WEDNESDAY, WEDNESDAY_HOURS);
+							put(THURSDAY, THURSDAY_HOURS);
+							put(FRIDAY, FRIDAY_HOURS);
+							put(SATURDAY, SATURDAY_HOURS);
+							put(SUNDAY, SUNDAY_HOURS);
+						}
+					};
+					
+					@Override
+					public Period getPeriod() {
+						return period;
+					}
+
+					@Override
+					public Double getValue(Period p) {
+						
+						return p.daysStream().collect(
+								Collectors.summingDouble(day->ctx.getVariable(DAYS.get(day.get(DAY_OF_WEEK)), day.getTime(), day.getTime(), Number.class).doubleValue())
+								);
+					}
+
+				};
+				ctx.putVariable(WORKED_HOURS, workedHours);
 			}
 		}
 
@@ -3495,7 +3540,7 @@ public class SQLContractSalaryCalculatorContext extends
 		intersects = splitWorkedDays(intersects);
 
 		for (Period period : intersects) {
-
+			
 			ITimedVariable<Double> workedDays = new ITimedVariable<Double>() {
 				@Override
 				public Period getPeriod() {
@@ -3576,7 +3621,7 @@ public class SQLContractSalaryCalculatorContext extends
 
 			};
 
-			ctx.putVariable(WEEK_HOURS, weeks_hours);
+ 			ctx.putVariable(WEEK_HOURS, weeks_hours);
 
 		}
 
