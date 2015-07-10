@@ -45,25 +45,26 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 
 public class Main {
 
-	public static final class MainSalaryBuilder extends JooqSalaryBuilder {
+	public static class MainSalaryBuilder extends JooqSalaryBuilder {
 		
 		private List<Integer> olds ;
 		
-		private Date endDate;
-		private Date startDate;
-		private Integer contract;
+		protected Date endDate;
+		protected Date startDate;
+		protected Integer contract;
 
-		private Double cgcBase;
-		private Double totalLiquid;
-		private Double totalPayment;
+		protected Double cgcBase;
+		protected Double totalLiquid;
+		protected Double totalPayment;
 		
-		private String employeeName ;
-		private String enterpriseName ;
+		protected String employeeName ;
+		protected String enterpriseName ;
 		
 		
 		public MainSalaryBuilder(Connection connection) {
 			super(connection);
 			olds = new ArrayList<Integer>();
+			head();
 		}
 		
 		@Override
@@ -72,41 +73,22 @@ public class Main {
 			Salary oldOnes [] = getOlds(contract, startDate, endDate);
 			
 			if ( oldOnes.length == 0 )
-				System.out.printf("%-20s %-35s LIQUID:%9.3f            \tPAYMENT:%9.3f            \tCOMMON BASE:%9.3f            \r\n",
-						enterpriseName,
-						employeeName,
-						totalLiquid,
-						totalPayment,
-						cgcBase);
+				newOne();
 			
 			for(Salary oldOne: oldOnes ) {
 				olds.add(oldOne.getId());
-				
 				
 				Double oldCgcBase = oldOne.getCommonContingenciesBase();
 				Double oldTotalLiquid = oldOne.getTotalLiquid();
 				Double oldTotalPayment = oldOne.getTotalPayment();
 				
-				Double newCgcBase = Math.round(cgcBase*1000)/1000.00d;
-				Double newTotalLiquid = Math.round(totalLiquid*1000)/1000.00d;;
-				Double newTotalPayment = Math.round(totalPayment*1000)/1000.00d;;
-
-				PrintStream os = System.err;
-				if (newTotalLiquid.equals(oldTotalLiquid)
-					&& newCgcBase.equals(oldCgcBase)
-					&& newTotalPayment.equals(oldTotalPayment))
-					os = System.out;
+				if (totalLiquid.equals(oldTotalLiquid)
+					&& cgcBase.equals(oldCgcBase)
+					&& totalPayment.equals(oldTotalPayment))
+					existEqual(oldTotalLiquid, oldTotalPayment, oldCgcBase);
+				else
+					existNotEqual(oldTotalLiquid, oldTotalPayment, oldCgcBase);
 				
-				os.printf("%-20s %-35s LIQUID:%9.3f (%9.3f)\tPAYMENT:%9.3f (%9.3f)\tCOMMON BASE:%9.3f (%9.3f)\r\n",
-						enterpriseName,
-						employeeName,
-						newTotalLiquid,
-						oldTotalLiquid,
-						newTotalPayment,
-						oldTotalPayment,
-						newCgcBase,
-						oldCgcBase
-						);
 			}
 			
 			return newOne;
@@ -144,25 +126,71 @@ public class Main {
 		
 		@Override
 		public void setCgcBase(Double cgcBase) {
-			this.cgcBase = cgcBase;
+			this.cgcBase = Math.round(cgcBase*1000)/1000.00d;;
 			super.setCgcBase(cgcBase);
 		}
 
 		@Override
 		public void setTotalLiquid(Double totalLiquid) {
-			this.totalLiquid = totalLiquid;
+			this.totalLiquid = Math.round(totalLiquid*1000)/1000.00d;
 			super.setTotalLiquid(totalLiquid);
 		}
 		
 		@Override
 		public void setTotalPayment(Double totalPayment) {
-			this.totalPayment = totalPayment;
+			this.totalPayment = Math.round(totalPayment*1000)/1000.00d;
 			super.setTotalPayment(totalPayment);
 		}
 		
+		public void head() {
+			System.out.printf("%-20s %-33s %-9s            \t%-9s            \t%-9s            \r\n",
+					"ENTERPRISE",
+					"EMPLOYEE",
+					"LIQUID",
+					"PAYMENT",
+					"BASE");
+			System.out.printf("----------------------------------------------------------------------------------------------------------------------------\r\n");
+		}
+		
+		public void newOne(){
+			System.out.printf("%-20s %-33s %9.3f            \t%9.3f            \t%9.3f            \r\n",
+					enterpriseName,
+					employeeName,
+					totalLiquid,
+					totalPayment,
+					cgcBase);
+		}
+		
+		public void existEqual(Double oldTotalLiquid, Double oldTotalPayment, Double oldCgcBase){
+			System.out.printf("%-20s %-35s %9.3f (%9.3f)\t%9.3f (%9.3f)\t%9.3f (%9.3f)\r\n",
+					enterpriseName,
+					employeeName,
+					totalLiquid,
+					oldTotalLiquid,
+					totalPayment,
+					oldTotalPayment,
+					cgcBase,
+					oldCgcBase
+					);
+		}
+		
+		public void existNotEqual(Double oldTotalLiquid, Double oldTotalPayment, Double oldCgcBase){
+			System.err.printf("%-20s %-35s %9.3f (%9.3f)\t%9.3f (%9.3f)\t%9.3f (%9.3f)\r\n",
+					enterpriseName,
+					employeeName,
+					totalLiquid,
+					oldTotalLiquid,
+					totalPayment,
+					oldTotalPayment,
+					cgcBase,
+					oldCgcBase
+					);
+		}
+
 		public void delete() {
 			delete(olds.toArray(new Integer[olds.size()]));
 		}
+
 		public void delete(Integer ...olds) {
 			getDSLContext().delete(SALARY_DATA)
 					.where(SALARY_DATA.SALARY.in(olds)).execute();
@@ -193,6 +221,109 @@ public class Main {
 			;
 		}
 	}
+	
+	/**
+	 * 
+	 * I know that for printing a colored text, for example red color, the code is:
+	 * "\e[1;31m This is red text \e[0m"
+	 * and I know that in this example, 31 is code of red color and the number of other colors is:
+	 *  
+	 * Black       0;30     Dark Gray     1;30
+	 * Blue        0;34     Light Blue    1;34
+	 * Green       0;32     Light Green   1;32
+	 * Cyan        0;36     Light Cyan    1;36
+	 * Red         0;31     Light Red     1;31
+	 * Purple      0;35     Light Purple  1;35
+	 * Brown       0;33     Yellow        1;33
+	 * Light Gray  0;37     White         1;37
+	 *
+	 * @author rtrepiana
+	 *
+	 */
+	private static class PrettyMainSalaryBuilder extends MainSalaryBuilder {
+
+		
+		public static final String ANSI_RESET = "\u001B[0m";
+		public static final String ANSI_BOLD = "\u001B[1m";
+		public static final String ANSI_BLACK = "\u001B[30m";
+		public static final String ANSI_RED = "\u001B[31m";
+		public static final String ANSI_GREEN = "\u001B[32m";
+		public static final String ANSI_YELLOW = "\u001B[33m";
+		public static final String ANSI_BLUE = "\u001B[34m";
+		public static final String ANSI_PURPLE = "\u001B[35m";
+		public static final String ANSI_CYAN = "\u001B[36m";
+		public static final String ANSI_WHITE = "\u001B[37m";
+
+		public PrettyMainSalaryBuilder(Connection connection) {
+			super(connection);
+		}
+		
+		
+		@Override
+		public void newOne() {
+			super.newOne();
+		}
+		
+		public void head() {
+			System.out.printf("%s%-20s %-33s %-9s            \t%-9s            \t%-9s            %s\r\n",
+					ANSI_BOLD,
+					"ENTERPRISE",
+					"EMPLOYEE",
+					"LIQUID",
+					"PAYMENT",
+					"BASE",
+					ANSI_RESET);
+			System.out.printf("----------------------------------------------------------------------------------------------------------------------------\r\n");
+		}
+
+		@Override
+		public void existEqual(Double oldTotalLiquid, Double oldTotalPayment,
+				Double oldCgcBase) {
+			System.out.printf("%-20s %-33s %9.3f (%s%9.3f%s)\t%9.3f (%s%9.3f%s)\t%9.3f (%s%9.3f%s)\r\n",
+					enterpriseName,
+					employeeName,
+					totalLiquid,
+					ANSI_YELLOW,
+					oldTotalLiquid,
+					ANSI_RESET,
+					
+					totalPayment,
+					ANSI_YELLOW,
+					oldTotalPayment,
+					ANSI_RESET,
+					
+					cgcBase,
+					ANSI_YELLOW,
+					oldCgcBase,
+					ANSI_RESET
+					);
+		}
+		
+		@Override
+		public void existNotEqual(Double oldTotalLiquid,
+				Double oldTotalPayment, Double oldCgcBase) {
+			System.out.printf("%-20s %-33s %9.3f (%s%9.3f%s)\t%9.3f (%s%9.3f%s)\t%9.3f (%s%9.3f%s)\r\n",
+					enterpriseName,
+					employeeName,
+					totalLiquid,
+					totalLiquid.equals(oldTotalLiquid) ? ANSI_YELLOW : ANSI_RED,
+					oldTotalLiquid,
+					ANSI_RESET,
+					
+					totalPayment,
+					totalPayment.equals(oldTotalPayment) ? ANSI_YELLOW : ANSI_RED,
+					oldTotalPayment,
+					ANSI_RESET,
+					
+					cgcBase,
+					cgcBase.equals(oldCgcBase) ? ANSI_YELLOW : ANSI_RED,
+					oldCgcBase,
+					ANSI_RESET
+					);
+		}
+		
+	}
+	
 
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) throws JAXBException, SQLException,
@@ -296,7 +427,8 @@ public class Main {
 			Date endDate = calendar.getTime();
 			Date issueDate = calendar.getTime();
 
-			MainSalaryBuilder salaryBuilder = new MainSalaryBuilder(connection);
+			MainSalaryBuilder salaryBuilder = cmd.hasOption(pretty.getLongOpt()) ? 
+					new PrettyMainSalaryBuilder(connection) : new  MainSalaryBuilder(connection);
 
 			Criteria criteria = new Criteria();
 			if (cmd.hasOption(ccc.getLongOpt()))
@@ -317,7 +449,7 @@ public class Main {
 					calculator.calculate(ctx);
 				} catch (Throwable e) {
 					e.printStackTrace();
-//					System.err.println(e.getMessage());
+					System.err.println(e.getMessage());
 				}
 			}
 			
