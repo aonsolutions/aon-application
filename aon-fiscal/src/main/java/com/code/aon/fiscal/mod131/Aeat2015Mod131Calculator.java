@@ -36,7 +36,15 @@ public class Aeat2015Mod131Calculator extends FiscalModelDetailCalculator implem
 		double c10 =  CommonUtil.round(c07 - c08 - c09 );
 		mod131.getDetail( Mod131Key.C10 ).setAmount( c10 );		
 		
-		double c11 =  mod131.getDetail( Mod131Key.C11 ).getAmount();
+		double c11 =  0;
+		if (c10 > 0) {
+			c11 =  mod131.getDetail( Mod131Key.C11 ).getAmount();
+			c11 = c11>c10?c10:c11;
+		} else {
+			c11 =  0;
+		}
+		mod131.getDetail( Mod131Key.C11 ).setAmount( c11 );
+		
 		double c12 =  mod131.getDetail( Mod131Key.C12 ).getAmount();
 		double c13 =  CommonUtil.round(c10 - c11 - c12 );
 		mod131.getDetail( Mod131Key.C13 ).setAmount( c13 );
