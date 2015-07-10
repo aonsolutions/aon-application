@@ -48,7 +48,7 @@ public class BoardListController extends DataScrollerState implements ICollectio
 
 	private List<DayBoard> boardList;
 	private List<BoardTotal> boardTotalList;
-	
+
 	public Hotel getHotel() {
 		return hotel;
 	}

@@ -77,7 +77,7 @@
 			<param id="hotel" value="#{boardBooking.getHotel}" />
 			<param id="fromDate" value="#{boardBooking.getFromDate}" />
 			<param id="toDate" value="#{boardBooking.getToDate}" />
-			<param id="boardItems" value="#{boardBooking.getBoardItems}" />
+			<param id="boardLabels" value="#{boardBooking.getBoardLabels}" />
 		</params>
 	</report>
 

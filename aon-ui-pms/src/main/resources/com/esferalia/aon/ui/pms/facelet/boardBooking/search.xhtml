@@ -5,73 +5,69 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:rich="http://richfaces.org/rich"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
 
 		<aon:form id="boardBookingSearch">
-			
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.pms_boardBooking_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_search}" />
-			</ui:decorate>
-			
+			</ui:include>
+
 			<aon:div styleClass="aon-scroll-area">
-			
 				<aon:div styleClass="aon-panelGrid-search">
 					<aon:div styleClass="aon-panelGrid-search-info">
 						<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
 					</aon:div>	
-						<aon:panelGrid columns="2"  style="width:100%;"
-							columnClasses="aon-panelGrid-odd aon-width-50, 
-							aon-panelGrid-even aon-width-auto">
-					
-							<aon:outputLabel for="BoardBooking_hotel_id"
-								value="#{bundle.aon_module_hotel}" />
-							<aon:selectOneMenu id="BoardBooking_hotel_id"
-								value="#{boardBooking.hotel}" >
-								<f:selectItems value="#{pmsCollections.currentUserHotels}" />
-							</aon:selectOneMenu>
-							
-							<aon:outputText value="#{bundle.aon_date}" />
-							<aon:div>
-								<aon:outputLabel for="BoardBooking_startDate"
-									styleClass="aon-italic aon-margin-right" 
-									value="#{bundle.aon_date_from}" />
-								<aon:selectInputDate id="BoardBooking_startDate"
-									required="true"	
-									value="#{boardBooking.fromDate}"
-									timeZone="#{timeZoneController.timeZone}"
-									popupDateFormat="#{bundle.aon_date_pattern}">
-									<a4j:support event="oninputchange" reRender="boardBookingSearch"/>
-									<a4j:support event="onchanged" reRender="boardBookingSearch"  />
-								</aon:selectInputDate>
-									
-								<aon:outputLabel for="BoardBooking_endDate"
-									styleClass="aon-italic aon-margin-right" 
-									value="#{bundle.aon_date_to}" />
-								<aon:selectInputDate id="BoardBooking_endDate"
-									required="true"	
-									value="#{boardBooking.toDate}"
-									timeZone="#{timeZoneController.timeZone}"
-									popupDateFormat="#{bundle.aon_date_pattern}">
-									<a4j:support event="oninputchange" reRender="boardBookingSearch" />
-									<a4j:support event="onchanged" reRender="boardBookingSearch"  />
-								</aon:selectInputDate>
-							</aon:div>
-									
-							<aon:outputText value="&#160;" />
-							<aon:commandButton id="search" ignoreDupResponses="true"
-								value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
-								action="boardBooking_list"
-								actionListener="#{boardBooking.onSearch}"
-								accesskey="#{bundle.aon_key_search}"
-								onclick="Richfaces.showModalPanel('waitProccess')"
-								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+
+					<aon:panelGrid columns="2" style="width:100%;"
+						columnClasses="aon-panelGrid-odd aon-width-50, 
+						aon-panelGrid-even aon-width-auto">
+
+						<aon:outputLabel for="BoardBooking_hotel_id"
+							value="#{bundle.aon_module_hotel}" />
+						<aon:selectOneMenu id="BoardBooking_hotel_id"
+							value="#{boardBooking.hotel}" required="true">
+							<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+						</aon:selectOneMenu>
+
+						<aon:outputText value="#{bundle.aon_date}" />
+						<aon:div id="BoardBooking_dates">
+							<aon:outputLabel for="BoardBooking_startDate"
+								styleClass="aon-italic aon-margin-right" 
+								value="#{bundle.aon_date_from}" />
+							<aon:selectInputDate id="BoardBooking_startDate"
+								value="#{boardBooking.fromDate}" required="true"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}">
+								<a4j:support event="oninputchange" reRender="BoardBooking_dates"/>
+								<a4j:support event="onchanged" reRender="BoardBooking_dates"  />
+							</aon:selectInputDate>
 								
-						</aon:panelGrid>
-					
+							<aon:outputLabel for="BoardBooking_endDate"
+								styleClass="aon-italic aon-margin-right" 
+								value="#{bundle.aon_date_to}" />
+							<aon:selectInputDate id="BoardBooking_endDate"
+								value="#{boardBooking.toDate}" required="true"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}">
+								<a4j:support event="oninputchange" reRender="BoardBooking_dates" />
+								<a4j:support event="onchanged" reRender="BoardBooking_dates"  />
+							</aon:selectInputDate>
+						</aon:div>
+
+						<aon:outputText value="&#160;" />
+						<aon:commandButton id="search" ignoreDupResponses="true"
+							value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
+							action="boardBooking_list"
+							actionListener="#{boardBooking.onSearch}"
+							accesskey="#{bundle.aon_key_search}"
+							onclick="Richfaces.showModalPanel('waitProccess')"
+							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+
+					</aon:panelGrid>
 				</aon:div>
 			</aon:div>
 			

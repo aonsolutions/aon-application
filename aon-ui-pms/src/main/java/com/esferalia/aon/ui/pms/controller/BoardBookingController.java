@@ -1,297 +1,316 @@
 package com.esferalia.aon.ui.pms.controller;
 
 import java.io.Serializable;
-import java.util.Calendar;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
-import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.util.CommonUtil;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.config.util.AppParamUtil;
+import com.code.aon.dbutils.AonSQLException;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.product.Item;
-import com.code.aon.product.enumeration.ProductStatus;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
-import com.esferalia.aon.ui.pms.util.PmsReportManager;
+import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
+import com.esferalia.aon.pms.enumeration.ReservationStatus;
+import com.esferalia.aon.pms.reservation.IReservationConstants;
+import com.esferalia.aon.pms.sql.ISQLConstants;
+import com.esferalia.aon.pms.sql.SQLUtils;
 
-public class BoardBookingController extends DataScrollerState implements ICollectionProvider {
-	
+public class BoardBookingController extends DataScrollerState implements ICollectionProvider, ISQLConstants, IReservationConstants {
+
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(BoardBookingController.class.getName());
-	
+
 	private Hotel hotel;
 	private Date fromDate;
 	private Date toDate;
-	
-	private List<Booking> bookingList;
-	
-	private List<ITransferObject> boardItems;
-	
+	private Integer boardCategoryId;
+
+	private List<BoardBooking> boardBookingList;
+	private List<String> boardLabels;
+
 	public Hotel getHotel() {
 		return hotel;
 	}
 	public void setHotel(Hotel hotel) {
 		this.hotel = hotel;
 	}
+
 	public Date getFromDate() {
 		return fromDate;
 	}
 	public void setFromDate(Date fromDate) {
-		if(CommonUtil.getDaysBetweenDates(fromDate, toDate, false)>15){
-			toDate = DateUtils.addDays(fromDate, 15);
+		if (fromDate != null) {
+			if (toDate == null || !DateUtils.addMonths(fromDate, 1).after(toDate)) {
+				toDate = DateUtils.addDays(DateUtils.addMonths(fromDate, 1), -1);
+			}
 		}
 		this.fromDate = fromDate;
 	}
+
 	public Date getToDate() {
 		return toDate;
 	}
 	public void setToDate(Date toDate) {
-		if(toDate.before(fromDate)){
-			this.toDate = fromDate;
-		} else if(CommonUtil.getDaysBetweenDates(fromDate, toDate, false)>15){
-			this.toDate = DateUtils.addDays(fromDate, 15);
-		} else {
-			this.toDate = toDate;
+		if (toDate != null) {
+			if (fromDate != null && !DateUtils.addMonths(fromDate, 1).after(toDate)) {
+				toDate = DateUtils.addDays(DateUtils.addMonths(fromDate, 1), -1);
+			}
 		}
+		this.toDate = toDate;
 	}
-	public List<Booking> getBookingList() {
-		return bookingList;
+
+	public Integer getBoardCategoryId() {
+		return boardCategoryId;
 	}
-	public void setBookingList(List<Booking> bookingList) {
-		this.bookingList = bookingList;
+	public void setBoardCategoryId(Integer boardCategoryId) {
+		this.boardCategoryId = boardCategoryId;
 	}
-	private Integer getBoardCategoryId() {
-		// TODO: Id de categoria a pinon. Se asume que la categoria de las pensiones es la de id=4
-		return 4;
+
+	public List<BoardBooking> getBoardBookingList() {
+		return boardBookingList;
 	}
-	
+	public void setBoardBookingList(List<BoardBooking> boardBookingList) {
+		this.boardBookingList = boardBookingList;
+	}
+
+	public List<String> getBoardLabels() {
+		return boardLabels;
+	}
+	public void setBoardLabels(List<String> boardLabels) {
+		this.boardLabels = boardLabels;
+	}
+
 	public void onInit(ActionEvent event) {
 		setHotel(null);
-		fromDate = new Date();
-		toDate = DateUtils.addDays(new Date(), 10);
+		setFromDate(new Date());
+		setBoardCategoryId(obtainBoardCategoryId());
 	}
-	
+
+	private Integer obtainBoardCategoryId() {
+		String value = AppParamUtil.getValue(AppParam.PMS_BOARD_CATEGORY);
+		return (NumberUtils.isNumber(value)) ? Integer.parseInt(value) : null;
+	}
+
 	public void onSearch(ActionEvent event) {
 		try {
-			buildBookingList();
-		} catch (ManagerBeanException e) {
-			String msg = "Error al construir el booking de pensiones";
-			LOGGER.error(msg);
-			throw new AbortProcessingException(msg, e);
+			buildBoardBookingList();
+		} catch (AonSQLException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
 		}
-		setModel(new SerializableListDataModel(getBookingList()));
+		setModel(new SerializableListDataModel(getBoardBookingList()));
 	}
 	
-	@SuppressWarnings("rawtypes")
-	private void buildBookingList() throws ManagerBeanException {
-		buildEmptyList(getHotel());
-		
-		String select = PmsReportManager.getInstance().getBoardBookingSQL(getHotel());
-		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-		Query query = session.createSQLQuery(select);
-		query.setDate("start", new java.sql.Date(DateUtils.addDays(getFromDate(), -1).getTime()));
-		query.setDate("end", new java.sql.Date(getToDate().getTime()));
+	private void buildBoardBookingList() throws AonSQLException {
+		Connection connection = null;
+		PreparedStatement boardBookingStmt = null;
+		ResultSet boardBookingRs = null;
+		try {
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			setBoardBookingList(new LinkedList<BoardBooking>());
+			setBoardLabels(new LinkedList<String>());
+			List<String> boardLabels = new LinkedList<String>();
 
-		Iterator it = query.list().iterator();
-				
-		Object o = it.hasNext()?it.next():null;
-		Integer hotelId = o!=null?(Integer)(((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
-		Date date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
-		String code = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_CODE]):null;
-		Double quantity = o!=null?Double.parseDouble((((Object[])o)[PmsReportManager.BOARD_QUANTITY]).toString()):null;
-		
-		for(Booking booking: getBookingList() ){
-			while( booking.getHotelId().equals(hotelId) && booking.getDate().after(date) && it.hasNext() ){
-				o = it.next();
-				hotelId = o!=null?(Integer)(((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
-				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
-			}
+			boardBookingStmt = connection.prepareStatement(getBoardBookingSQL());
+			SQLUtils.setDate(boardBookingStmt, 1, getFromDate());
+			SQLUtils.setDate(boardBookingStmt, 2, getToDate());
+			SQLUtils.setDate(boardBookingStmt, 3, DateUtils.addDays(getFromDate(), -1));
+			SQLUtils.setDate(boardBookingStmt, 4, DateUtils.addDays(getToDate(), -1));
+			SQLUtils.setDate(boardBookingStmt, 5, getFromDate());
+			SQLUtils.setDate(boardBookingStmt, 6, getToDate());
+			SQLUtils.setDate(boardBookingStmt, 7, DateUtils.addDays(getFromDate(), -1));
+			SQLUtils.setDate(boardBookingStmt, 8, DateUtils.addDays(getToDate(), -1));
+			SQLUtils.setDate(boardBookingStmt, 9, getFromDate());
+			SQLUtils.setDate(boardBookingStmt, 10, getToDate());
+			boardBookingRs = boardBookingStmt.executeQuery();
+			while (boardBookingRs.next()) {
+				String hotelName = boardBookingRs.getString(HOTEL_NAME);
+				Date boardDate = boardBookingRs.getDate(BOARD_DATE);
+				String boardName = boardBookingRs.getString(BOARD_NAME);
+				Integer quantity = boardBookingRs.getObject(QUANTITY) != null ? boardBookingRs.getInt(QUANTITY) : 0;
 
-			while( booking.getHotelId().equals(hotelId) && booking.getDate().equals(date) && it.hasNext() ){
-				code = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_CODE]):null;
-				quantity = o!=null?Double.parseDouble((((Object[])o)[PmsReportManager.BOARD_QUANTITY]).toString()):null;
-				booking.getQuantityList().set(getBoardPosition(code), booking.getQuantityList().get(getBoardPosition(code))+quantity.intValue());
-				
-				o = it.next();
-				hotelId = o!=null?(Integer)(((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
-				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
-			}
-		}
-		
-	}
-	
-	private void buildEmptyList(Hotel hotel2) throws ManagerBeanException{
-		setBookingList(new LinkedList<Booking>());
-		Calendar fromCal = Calendar.getInstance();
-		Calendar toCal = Calendar.getInstance();
-		if( getHotel() != null && getHotel().getId()!=null ){
-			fromCal.setTime(getFromDate());
-			toCal.setTime(getToDate());
-			while(fromCal.before(toCal) || fromCal.equals(toCal)){
-				Booking b = new Booking();
-				b.setHotelId(getHotel().getId());
-				b.setDate(fromCal.getTime());
-				b.setQuantityList(obtainEmptyQuantityList());
-				getBookingList().add(b);
-				fromCal.add(Calendar.DAY_OF_MONTH, 1);
-			}
-		} else {
-			PmsCollectionsController collections = (PmsCollectionsController) AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
-			Hotel hotel = null;
-			for(ITransferObject to: collections.getCurrentUserHotelList() ){
-				hotel = (Hotel) to;
-				fromCal.setTime(getFromDate());
-				toCal.setTime(getToDate());
-				Booking b = null;
-				while(fromCal.before(toCal) || fromCal.equals(toCal)){
-					b = new Booking();
-					b.setHotelId(hotel.getId());
-					b.setDate(fromCal.getTime());
-					b.setQuantityList(obtainEmptyQuantityList());
-					getBookingList().add(b);
-					fromCal.add(Calendar.DAY_OF_MONTH, 1);
+				BoardBooking boardBooking = new BoardBooking();
+				boardBooking.setHotel(hotelName);
+				boardBooking.setBoardDate(boardDate);
+				int index = getBoardBookingList().indexOf(boardBooking);
+				if (index >= 0) {
+					boardBooking = getBoardBookingList().get(index);
+				} else {
+					getBoardBookingList().add(boardBooking);
+				}
+				boardBooking.getBoardList().add(boardName);
+				boardBooking.getQuantityList().add(quantity);
+
+				if (!boardLabels.contains(boardName)) {
+					boardLabels.add(boardName);
 				}
 			}
-		}
-	}
-	
-	private List<Integer> obtainEmptyQuantityList() {
-		List<Integer> list = new LinkedList<Integer>();
-		for(int i=0; i<getBoardItems().size();i++){
-			list.add(0);
-		}
-		return list;
-	}
-	
-	private int getBoardPosition(String code) {
-		Iterator<ITransferObject> it = getBoardItems().iterator();
-		int i = 0;
-		while(it.hasNext()){
-			Item item = (Item) it.next();
-			if(item.getProduct().getCode().equals(code)){
-				return i;
+
+			PmsCollectionsController collections = (PmsCollectionsController) AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
+			for (SelectItem selectItem : collections.getBoardItems()) {
+				Item boardItem = (Item)selectItem.getValue();
+				if (boardLabels.contains(boardItem.getProduct().getName())) {
+					getBoardLabels().add(boardItem.getProduct().getName());
+				}
 			}
-			++i;
-		}
-		return -1;
-	}
-	
-	public List<ITransferObject> getBoardItems() {
-		if(boardItems==null){
+
+			for (BoardBooking boardBooking : getBoardBookingList()) {
+				for (int i=0; i<getBoardLabels().size(); i++) {
+					String boardLabel = getBoardLabels().get(i);
+					if (!boardBooking.getBoardList().contains(boardLabel)) {
+						boardBooking.getBoardList().add(i, boardLabel);
+						boardBooking.getQuantityList().add(i, 0);
+					}
+				}
+			}
+		} catch (ManagerBeanException e) {
 			try {
-				IManagerBean bean = BeanManager.getManagerBean(Item.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), getBoardCategoryId());
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_COMPOSITION), false);
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
-				criteria.addOrder(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_CODE));
-				List<ITransferObject> list = bean.getList(criteria);
-				return list.isEmpty()?null:list;
-			} catch (ManagerBeanException e) {
-				String msg =  "******** Error getting board items. ";
-				LOGGER.error(msg, e);
-				AonUtil.addErrorMessage(msg + e.getMessage());
+				connection.rollback();
+			} catch (SQLException ex) {
 			}
+			throw new AonSQLException(e.getMessage());
+		} catch (Throwable e) {
+			try {
+				connection.rollback();
+			} catch (SQLException ex) {
+			}
+			throw new AonSQLException(e.getMessage());
+		} finally {
+			SQLUtils.closeQuietly(boardBookingRs);
+			SQLUtils.closeQuietly(boardBookingStmt);
+			SQLUtils.closeQuietly(connection);
 		}
-		return boardItems;
 	}
-	
+
+	private String getBoardBookingSQL() throws ManagerBeanException {
+		StringBuffer stmt = new StringBuffer();
+		stmt.append("SELECT " + HOTEL_NAME + ", " + BOARD_DATE + ", " + BOARD_CODE + ", " + BOARD_NAME + ", SUM(" + QUANTITY + ") AS " + QUANTITY);
+		stmt.append(" FROM (");
+		stmt.append("	SELECT W.description AS " + HOTEL_NAME);
+		stmt.append("	, IF(PRS.extra = 0 AND (IA.id IS NOT NULL OR IA2.id IS NOT NULL), ");
+		stmt.append("			DATE_ADD(PRSD.effective_date, INTERVAL 1 DAY), PRSD.effective_date) AS " + BOARD_DATE);
+		stmt.append("	, IFNULL(P2.code, P.code) AS " + BOARD_CODE + ", IFNULL(P2.name, P.name) AS " + BOARD_NAME);
+		stmt.append("	, A.name AS " + ROOM_NUMBER + ", PR.project AS " + RESERVATION); 
+		stmt.append("	, GREATEST(SUM(PRR.adults + PRR.children) / COUNT(DISTINCT PRSD.id), SUM(PRSD.quantity) / COUNT(DISTINCT PRR.id)) AS " + QUANTITY);
+		stmt.append("	 FROM project_reservation AS PR");
+		stmt.append("	 LEFT JOIN project_reservation_service AS PRS ON PRS.project_reservation = PR.project");
+		stmt.append("	 LEFT JOIN project_reservation_service_detail AS PRSD ON PRSD.project_reservation_service = PRS.id");
+		stmt.append("	 LEFT JOIN item AS I ON I.id = PRS.item");
+		stmt.append("	 LEFT JOIN product AS P ON P.id = I.product");
+		stmt.append("	 LEFT JOIN item_addinfo AS IA ON IA.item = I.id AND IA.attribute = '" + BOARD_NEXT_DAY + "' AND IA.value = '" + TRUE + "'");
+		stmt.append("	 LEFT JOIN item_composition AS IC ON IC.item = I.id");
+		stmt.append("	 LEFT JOIN item AS I2 ON I2.id = IC.composition_item");
+		stmt.append("	 LEFT JOIN product AS P2 ON P2.id = I2.product AND P2.category = " + getBoardCategoryId());
+		stmt.append("	 LEFT JOIN item_addinfo AS IA2 ON IA2.item = I2.id AND IA2.attribute = '" + BOARD_NEXT_DAY + "' AND IA2.value = '" + TRUE + "'");
+		stmt.append("	 LEFT JOIN project_reservation_room AS PRR ON PRR.project_reservation = PR.project");
+		stmt.append("	 LEFT JOIN project_reservation_room_detail AS PRRD ON PRRD.project_reservation_room = PRR.id");
+		stmt.append("	 LEFT JOIN asset_activity AS AA ON AA.id = PRRD.asset_activity");
+		stmt.append("	 LEFT JOIN asset AS A ON A.id = AA.asset");
+		stmt.append("	 LEFT JOIN room AS R ON R.asset = A.id");
+		stmt.append("	 LEFT JOIN hotel AS H ON H.id = IF(R.asset IS NOT NULL, R.hotel, PR.hotel)");
+		stmt.append("	 LEFT JOIN workplace AS W ON W.id = H.workplace");
+		stmt.append("	 WHERE" + DomainManager.getSQLWhereClause("PR.domain"));
+		stmt.append("	 AND PR.status <> " + ReservationStatus.CANCELLED.ordinal());
+		stmt.append("	 AND PR.check_status <> " + ReservationCheckStatus.NO_SHOW.ordinal());
+		stmt.append("	 AND PR.check_status <> " + ReservationCheckStatus.NO_SHOW_NO_INVOICEABLE.ordinal());
+		stmt.append("	 AND PR.end_date >= ?");
+		stmt.append("	 AND PR.start_date <= ?");
+		stmt.append("	 AND ((R.asset IS NULL AND PR.hotel = " + getHotel().getId() + ") ");
+		stmt.append("		OR (R.asset IS NOT NULL AND R.hotel = " + getHotel().getId() + "))");
+		stmt.append("	 AND ((P.composition = 0 AND P.category = " + getBoardCategoryId() + ") ");
+		stmt.append("		OR (P.composition = 1 AND P2.category = " + getBoardCategoryId() + "))");
+		stmt.append("	 AND ((P2.id IS NULL AND ((IA.id IS NOT NULL AND PRS.extra = 0 AND PRSD.effective_date BETWEEN ? AND ?)");
+		stmt.append("			OR ((IA.id IS NULL OR PRS.extra = 1) AND PRSD.effective_date BETWEEN ? AND ?)))");
+		stmt.append("		OR (P2.id IS NOT NULL AND ((IA2.id IS NOT NULL AND PRS.extra = 0 AND PRSD.effective_date BETWEEN ? AND ?)");
+		stmt.append("			OR ((IA2.id IS NULL OR PRS.extra = 1) AND PRSD.effective_date BETWEEN ? AND ?))))");
+		stmt.append("	 AND (PRSD.project_reservation_room_detail IS NULL OR PRSD.project_reservation_room_detail = PRRD.id)");
+		stmt.append("	 GROUP BY " + HOTEL_NAME + ", " + BOARD_DATE + ", " + BOARD_CODE + ", " + BOARD_NAME + ", " + ROOM_NUMBER + ", " + RESERVATION);
+		stmt.append(" ) AS " + BOARD_LIST);
+		stmt.append(" GROUP BY " + HOTEL_NAME + ", " + BOARD_DATE + ", " + BOARD_CODE + ", " + BOARD_NAME);
+		stmt.append(" ORDER BY " + HOTEL_NAME + ", " + BOARD_DATE + ", " + BOARD_CODE + ", " + BOARD_NAME);
+
+		return stmt.toString();
+	}
+
 	@SuppressWarnings("rawtypes")
-	@Override
 	public Collection getCollection() {
-		return getBookingList();
+		return getBoardBookingList();
 	}
 	@SuppressWarnings("rawtypes")
-	@Override
-	public Collection getCollection(boolean forceRefresh)
-			throws ManagerBeanException {
+	public Collection getCollection(boolean forceRefresh) {
 		return getCollection();
 	}
-	
-	/**************************************************/
-	/**************************************************/
-	
-	public class DayBooking {
+
+	/***************** BOARD BOOKING *********************************/
+
+	public static class BoardBooking implements Serializable {
+
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+
 		private String hotel;
-		private Date date;
-		private Integer quantity;
+		private Date boardDate;
+		private List<String> boardList;
+		private List<Integer> quantityList;
+
+		public BoardBooking() {
+			boardList = new LinkedList<String>();
+			quantityList = new LinkedList<Integer>();
+		}
+
 		public String getHotel() {
 			return hotel;
 		}
 		public void setHotel(String hotel) {
 			this.hotel = hotel;
 		}
-		public Date getDate() {
-			return date;
+
+		public Date getBoardDate() {
+			return boardDate;
 		}
-		public void setDate(Date date) {
-			this.date = date;
+		public void setBoardDate(Date boardDate) {
+			this.boardDate = boardDate;
 		}
-		public Integer getQuantity() {
-			return quantity;
+
+		public List<String> getBoardList() {
+			return boardList;
 		}
-		public void setQuantity(Integer quantity) {
-			this.quantity = quantity;
+		public void setBoardList(List<String> boardList) {
+			this.boardList = boardList;
 		}
-	}
-	
-	public static class Booking implements Serializable {
-		
-		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-		
-		private Integer hotelId;
-		private String hotelName;
-		private Date date;
-		private List<Integer> quantityList;
-		
-		public Booking (){
-			
-		}
-		public Integer getHotelId() {
-			return hotelId;
-		}
-		public void setHotelId(Integer hotelId) throws ManagerBeanException {
-			this.hotelId = hotelId;
-			hotelName = ((Hotel)BeanManager.getManagerBean(Hotel.class).get(hotelId)).getWorkPlace().getDescription();
-		}
-		public Date getDate() {
-			return date;
-		}
-		public void setDate(Date date) {
-			this.date = date;
-		}
+
 		public List<Integer> getQuantityList() {
 			return quantityList;
 		}
 		public void setQuantityList(List<Integer> quantityList) {
 			this.quantityList = quantityList;
 		}
-		public String getHotelName() {
-			return hotelName;
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null) return false;
+			final BoardBooking o = (BoardBooking)obj;
+			return o.getHotel().equals(getHotel()) && o.getBoardDate().equals(getBoardDate());
 		}
-	
+
 	}
-	
+
 }
