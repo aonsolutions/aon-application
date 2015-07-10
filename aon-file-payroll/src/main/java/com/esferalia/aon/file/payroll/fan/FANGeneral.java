@@ -21,6 +21,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryData;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.ss.T33;
@@ -31,7 +32,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 	
 	@Override
 	public String getQuoteIndicator(List<ITransferObject> salaryDataList, Map<String, String> contractDataMap) {
-		ContractCode code = getContractCode(salaryDataList);
+		ContractCode code = getContractCode(salaryDataList, contractDataMap);
 		if(code!=null && (code.getValue().startsWith("2") || code.getValue().startsWith("3") || code.getValue().startsWith("5"))){
 			String weekHours = obtainWeekHours(salaryDataList, contractDataMap);
 			if( StringUtils.isNotBlank(weekHours) ){
@@ -65,7 +66,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 		
 		Contract contract = salary.getContract();
 		
-		ContractCode code = getContractCode(salaryDataList);
+		ContractCode code = getContractCode(salaryDataList, contractDataMap);
 		if(code==null || code.getValue().startsWith("1") || code.getValue().startsWith("4")){
 			if(itDays!=null && itDays>0){
 				Calendar cal = Calendar.getInstance();
@@ -124,20 +125,18 @@ public class FANGeneral implements Serializable, IFanFactory {
 		return CommonUtil.getDaysBetweenDates(startCal.getTime(), endCal.getTime());
 	}
 	
-	private ContractCode getContractCode(List<ITransferObject> salaryDataList) {
+	private ContractCode getContractCode(List<ITransferObject> salaryDataList, Map<String, String> contractDataMap) {
 		String o;
 		o = null;
 		List<ITransferObject> list = salaryDataList;
 		for(ITransferObject to: list){
 			SalaryData sa = (SalaryData) to;
-			if(sa.getName().equals("TC2")){
+			if(sa.getName().equals(ContextVariable.TC2.getName())){
 				o = sa.getExpression();
 			}
 		}
-		if(o!=null){
-			return ContractCode.getContractCodeByValue(o);
-		}
-		return null;
+		ContractCode code = ContractCode.getContractCodeByValue(o);
+		return code!=null?code:ContractCode.getContractCodeByValue(contractDataMap.get(ContextVariable.TC2.getName()));
 	}
 	
 	private String obtainWeekHours(List<ITransferObject> salaryDataList, Map<String, String> contractDataMap){
@@ -145,12 +144,12 @@ public class FANGeneral implements Serializable, IFanFactory {
 		List<ITransferObject> list = salaryDataList;
 		for(ITransferObject to: list){
 			SalaryData sa = (SalaryData) to;
-			if(sa.getName().equals("HORAS_SEMANA")){
+			if(sa.getName().equals(ContextVariable.WEEK_HOURS.getName())){
 				o = sa.getExpression();
 			}
 		}
 		if(o==null || !NumberUtils.isNumber(o)){
-			return contractDataMap.get("HORAS_SEMANA");
+			return contractDataMap.get(ContextVariable.WEEK_HOURS.getName());
 		}
 		return o;
 	}
