@@ -244,7 +244,7 @@
 											<include>com.esferalia.aon:aon.master.jooq</include>
 											<include>org.apache.commons:commons-math3</include>
 											<include>es.aeat:ModRet2015</include>
-											<include>PRET-R150_shared</include>
+											<include>es.aeat:PRET-R150_shared</include>
 										</includes>
 									</dependency>
 									<sources>
