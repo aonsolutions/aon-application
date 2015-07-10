@@ -37,6 +37,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.User;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.util.AppParamUtil;
@@ -66,6 +67,7 @@ import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.LocaleElement;
 import com.code.aon.ui.common.controller.ConfigurationController;
+import com.code.aon.ui.common.role.IAonRole;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.config.controller.ConfigConstants;
@@ -106,6 +108,7 @@ public class DesktopState implements Serializable {
     private boolean showTirant;
     private boolean showDehOnline;
 	private boolean portalUser;
+	private boolean adminRole;
     
     public DesktopState() {
     	initCompany();
@@ -203,6 +206,30 @@ public class DesktopState implements Serializable {
 		this.patchInitAction = StringUtils.equals(value, Boolean.TRUE.toString());
 	}
 	
+	public boolean isAdminRole() {
+		return this.adminRole;
+	}
+
+	private boolean calculateAdminRole() {
+		Integer applicationUser = AdminUtil.getApplicationUser(AonUtil.getAuthPrincipal());
+		if ( applicationUser != null ) {
+			List<Integer> profiles = AdminUtil.getProfiles(applicationUser);
+			if ( (profiles != null) && (!profiles.isEmpty()) ) {
+				for( Integer profile : profiles ) {
+					List<String> list = AdminUtil.getProfileRoles(profile);
+					if ( list != null ) {
+						for( String role : list ) {
+							if ( IAonRole.ADMIN.getName().equals(role) ) {
+								return true;
+							}
+						}
+					}
+				}
+			}						
+		}
+		return false;
+	}
+	
 	private User initUser( User user ) {
 		setupInitAction(user);
 		ConfigurationController cc = AonUtil.getConfigurationController();
@@ -220,6 +247,7 @@ public class DesktopState implements Serializable {
 		if ( user.getLinesPageLimit() != null ) {
 			cc.setPageLimit(user.getLinesPageLimit());
 		}
+		this.adminRole = calculateAdminRole();
 		return user;
 	}
 	

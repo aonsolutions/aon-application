@@ -36,11 +36,11 @@
 					<aon:commandButton value="#{bundle.aon_activate}"
 						actionListener="#{desktop.onEnableSupport}"
 						reRender="remoteSupport"
-						rendered="#{aonRole.admin and !desktop.state.supportEnabled}" />
+						rendered="#{!desktop.state.supportEnabled and (!domainSwitcher.adminDomain or (domainSwitcher.adminDomain and desktop.state.adminRole))}" />
 					<aon:commandButton value="#{bundle.aon_deactivate}"
 						actionListener="#{desktop.onDisableSupport}"
 						reRender="remoteSupport"
-						rendered="#{aonRole.admin and desktop.state.supportEnabled}" />
+						rendered="#{desktop.state.supportEnabled and (!domainSwitcher.adminDomain or (domainSwitcher.adminDomain and desktop.state.adminRole))}" />
 				</aon:div>
 			</aon:div>
 		</aon:div>
