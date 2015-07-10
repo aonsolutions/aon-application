@@ -353,16 +353,16 @@ public class FANWriter implements Serializable {
 			} else {
 				Integer daysHours = getContractDaysOrHours(contract, salaryDataList);
 				Integer discountDaysHours = 0;
-				if(isErePartial(salaryDataList)){
+				if(isErePartial(salary, salaryDataList)){
 					ContractCode code = getContractCode(contract);
-					discountDaysHours = Double.valueOf(CommonUtil.round(getEreDays(salaryDataList), 0)).intValue();
+					discountDaysHours = Double.valueOf(CommonUtil.round(getEreDays(salary, salaryDataList), 0)).intValue();
 					if(code!=null && !code.getValue().startsWith("1") && !code.getValue().startsWith("4")){
 						String weekHours = obtainWeekHours(contract);
 						Double dayHours = (Double.parseDouble(weekHours)/5);
 						discountDaysHours = Double.valueOf(CommonUtil.round(discountDaysHours * dayHours, 0)).intValue();
 					}
 				}
-				if(isEreTotal(salaryDataList)){
+				if(isEreTotal(salary, salaryDataList)){
 					daysHours = null;
 				}
 				if(daysHours!=null){
@@ -397,15 +397,15 @@ public class FANWriter implements Serializable {
 //			if(isNoRetributionDischarge(contract)){
 //				datList.add(createDATRecord(contract, autoComplete("A", 5, " ", true), getContractDaysOrHours(contract)));
 //			}
-			if(StringUtils.isNotBlank(getOthers(salaryDataList))){
-				Integer ereDays = getEreDays(salaryDataList);
+			if(StringUtils.isNotBlank(getOthers(salary, salaryDataList))){
+				Integer ereDays = getEreDays(salary, salaryDataList);
 				ContractCode code = getContractCode(contract);
 				if(code!=null && !code.getValue().startsWith("1") && !code.getValue().startsWith("4")){
 					String weekHours = obtainWeekHours(contract);
 					Double dayHours = (Double.parseDouble(weekHours)/5);
 					ereDays = Double.valueOf(CommonUtil.round(ereDays * dayHours, 0)).intValue();
 				}
-				createDATRecord(datList, contract, salaryDataList, autoComplete(getOthers(salaryDataList), 6, " ", true), ereDays);
+				createDATRecord(datList, contract, salaryDataList, autoComplete(getOthers(salary, salaryDataList), 6, " ", true), ereDays);
 			}
 		} else if(liquidationType==LiquidationType.L13){
 			createDATRecord(datList, contract, salaryDataList, null, getNotEnjoyedVacationDays(contract));
@@ -554,18 +554,23 @@ public class FANWriter implements Serializable {
 	}
 	
 	private Integer getItDays(Contract contract, Integer startIncrease){
-		Date startDate = null;
-		Date endDate = null;
 		
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 		Connection conn = null;
 		PreparedStatement ps = null;
 		try {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
-			String select = "SELECT start_date, end_date FROM contract_leave";
-			select += " WHERE contract = " + contract.getId();
-			select += " AND start_date <= '" + dateFormatter.format(getEndDate()) + "'";
-			select += " AND (end_date >= '" + dateFormatter.format(getStartDate()) + "' OR end_date is null);";
+			
+			String sqlStart = dateFormatter.format(getStartDate());
+			String sqlEnd = dateFormatter.format(getEndDate());
+			String select = "SELECT sum( DATEDIFF("
+						+ "	IF(ISNULL(end_date),LAST_DAY('" + sqlStart + "'),IF(end_date>'" + sqlEnd + "','" + sqlEnd + "',end_date)),"
+						+ " IF(start_date<'" + sqlStart + "','" + sqlStart + "',start_date)"
+						+ " ) + 1)"
+					+ " FROM contract_leave"
+					+ " WHERE contract = " + contract.getId()
+					+ " AND start_date <= '" + sqlEnd + "'"
+					+ " AND (end_date>='" + sqlStart + "' OR end_date IS NULL)";
 			
 			ps = conn.prepareStatement(select);
 			ResultSet rs = ps.executeQuery();
@@ -573,31 +578,11 @@ public class FANWriter implements Serializable {
 			rs.last();
 			if(rs.getRow()>0){
 				rs.beforeFirst();
-				while(rs.next()){
-					Calendar cal = Calendar.getInstance();
-					if(rs.getDate(1)!=null){
-						cal.setTime(rs.getDate(1));
-						startDate = cal.getTime();
-					}
-					if(rs.getDate(2)!=null){
-						cal.setTime(rs.getDate(2));
-						endDate = cal.getTime();
-					}
-					if(startDate!=null && startIncrease!=null && startIncrease>0){
-						Calendar start = Calendar.getInstance();
-						start.setTime(startDate);
-						start.add(Calendar.DAY_OF_MONTH, startIncrease);
-						startDate = start.getTime();
-					}
-					
-					if(startDate.before(getStartDate())) startDate = getStartDate();
-					if(endDate == null || endDate.after(getEndDate())) endDate = getEndDate();
-					
-					days += Integer.parseInt(String.valueOf(CommonUtil.getDaysBetweenDates(startDate, endDate, false)));
+				if(rs.next()){
+					days = rs.getInt(1);
 				}
-				days = days>=0?days+1:0;
-				days = days>CommonUtil.daysInMonth(getStartDate())?CommonUtil.daysInMonth(getStartDate()):days;
 			}
+			
 			return days;
 		} catch (AonConnectionException e) {
 			// return null
@@ -627,7 +612,7 @@ public class FANWriter implements Serializable {
 						Double itBase = getITBase(salary);
 						fanFactory.createEDLBa01Segment(salary.getCommonBase() - itBase, dat);
 						fanFactory.createEDLBa02Segment(salary.getProfessionalBase() - itBase, dat);
-					} else if(isErePartial(salaryDataList) || isEreTotal(salaryDataList)){
+					} else if(isErePartial(salary, salaryDataList) || isEreTotal(salary, salaryDataList)){
 						Double ereBase = getEreBase(salary,salaryDataList);
 						fanFactory.createEDLBa01Segment(salary.getCommonBase() - ereBase, dat);
 						fanFactory.createEDLBa02Segment(salary.getProfessionalBase() - ereBase, dat);
@@ -667,7 +652,7 @@ public class FANWriter implements Serializable {
 						fanFactory.createEDLBa02Segment(datList.size()>1?itBase:salary.getProfessionalBase(), dat);
 						fanFactory.createEDLCd01Segment(getECSSAmount(salary), dat);
 						fanFactory.createEDLCd03Segment(getATEPAmount(salary), dat);
-					} else if(isErePartial(salaryDataList) || isEreTotal(salaryDataList)){
+					} else if(isErePartial(salary, salaryDataList) || isEreTotal(salary, salaryDataList)){
 						Double ereBase = getEreBase(salary, salaryDataList);
 						fanFactory.createEDLBa21Segment(datList.size()>1?ereBase:salary.getCommonBase(), dat);
 						fanFactory.createEDLBa22Segment(datList.size()>1?ereBase:salary.getProfessionalBase(), dat);
@@ -795,7 +780,7 @@ public class FANWriter implements Serializable {
 	private Double getEreBase(Salary salary, List<ITransferObject> salaryDataList) {
 		// TODO
 		Integer salaryDays = salary.getTimeUnits();
-		Integer ereDays = Math.min(getEreDays(salaryDataList), salaryDays);
+		Integer ereDays = Math.min(getEreDays(salary, salaryDataList), salaryDays);
 		return (salary.getCommonBase()*ereDays)/salaryDays;
 	}
 	
@@ -1210,19 +1195,19 @@ public class FANWriter implements Serializable {
 	 * @param c
 	 * @return
 	 */
-	private String getOthers(List<ITransferObject> list) {
+	private String getOthers(Salary salary, List<ITransferObject> list) {
 		// TODO 
 		
-		if(isErePartial(list)){
+		if(isErePartial(salary, list)){
 			return "P";
 		}
-		if(isEreTotal(list)){
+		if(isEreTotal(salary, list)){
 			return "T";
 		}
 		return " ";
 	}
 	
-	private Integer getEreDays(List<ITransferObject> list) {
+	private Integer getEreDays(Salary salary, List<ITransferObject> list) {
 		String _workedDays = null;
 		String _monthDays = null;
 		String _ereBase = null;
@@ -1239,22 +1224,26 @@ public class FANWriter implements Serializable {
 			}
 		}
 		if(_ereBase!=null && NumberUtils.isNumber(_ereBase)){
-			Integer ereDays = Double.valueOf(_monthDays).intValue() - Double.valueOf(_workedDays).intValue();
-			if(Double.parseDouble(_ereBase)>0.0 && ereDays>0){
-				return ereDays;
+			if(CommonUtil.round(Double.parseDouble(_ereBase))==CommonUtil.round(salary.getCommonBase())){
+				return 30;
+			} else {
+				Integer ereDays = Double.valueOf(_monthDays).intValue() - Double.valueOf(_workedDays).intValue();
+				if(Double.parseDouble(_ereBase)>0.0 && ereDays>0){
+					return ereDays;
+				}
 			}
 		}
 		
 		return null;
 	}
 	
-	private boolean isErePartial(List<ITransferObject> list) {
-		Integer days = getEreDays(list);
+	private boolean isErePartial(Salary salary, List<ITransferObject> list) {
+		Integer days = getEreDays(salary, list);
 		return (days!=null && days>0 && days<CommonUtil.getDay(getEndDate()));
 	}
 	
-	private boolean isEreTotal(List<ITransferObject> list) {
-		Integer days = getEreDays(list);
+	private boolean isEreTotal(Salary salary, List<ITransferObject> list) {
+		Integer days = getEreDays(salary, list);
 		return (days!=null && days>0 && days==CommonUtil.getDay(getEndDate()));
 	}
 	
