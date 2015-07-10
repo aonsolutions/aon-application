@@ -9,6 +9,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ClassUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -36,6 +37,7 @@ import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerSearchListenerEx;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.code.aon.ui.util.AonUtil;
@@ -72,6 +74,8 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 	private ProjectType projectType;
 	
 	private ActivityType activityType;
+	
+	private String address;
 	
 	public Scope[] getScopes() {
 		if (ArrayUtils.isEmpty(scopes)) {
@@ -271,6 +275,14 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 		return activityTypes;
 	}	
 
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		setMediaTypes(new LinkedList<MediaType>());
@@ -284,6 +296,7 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 		resetQuestionValue();
 		setProjectType(null);
 		setActivityType(null);
+		setAddress(null);
 	}
 	
 	public String getPreffix() throws ManagerBeanException {
@@ -377,7 +390,15 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 			addActivityTypeSubQuery(getActivityType(), criteria);
 		} else if ( (getProjectType() != null) && (getProjectType().getId() != null) ) {
 			addProjectTypeSubQuery(getProjectType(), criteria);			
-		}		
+		}	
+		if (! StringUtils.isEmpty(address) ) {
+			String pojo = ((BasicController) getController()).getPojo();
+			Expression exp1 = FormUtil.getExpression(criteria, pojo, resolveAlias("addresses_address"), address);
+			Expression exp2 = FormUtil.getExpression(criteria, pojo, resolveAlias("addresses_address2"), address);
+			Expression exp3 = FormUtil.getExpression(criteria, pojo, resolveAlias("addresses_address3"), address);
+			Expression expOr = ExpressionUtilities.getOrExpression(exp1, exp2);
+			criteria.addExpression(ExpressionUtilities.getOrExpression(expOr, exp3));
+		}
 	}
 	
 	public void onAddMediaType(ActionEvent event) {

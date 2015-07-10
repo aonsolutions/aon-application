@@ -21,7 +21,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +30,6 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.TypeResolver;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.domain.IDomain;
 import com.code.aon.common.enumeration.IConfidentialable;
@@ -40,13 +38,8 @@ import com.code.aon.ql.Order;
 import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
-import com.code.aon.ql.ast.ConstantExpression;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.ast.IdentExpression;
-import com.code.aon.ql.ast.RelationalExpression;
-import com.code.aon.ql.ast.RelationalType;
-import com.code.aon.ql.ast.impl.ConstantExpressionImpl;
-import com.code.aon.ql.ast.impl.RelationalExpressionImpl;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -759,42 +752,11 @@ public class BasicController extends AbstractPojoController implements IControll
 	public ITransferObject getTo() {
 		return this.to;
 	}
-	
-	private boolean isOnlyTextExpression( Expression expression, String fieldName ) {
-		if ( expression instanceof RelationalExpression ) {
-			RelationalExpression re = (RelationalExpression) expression;
-			if ( re.getType()==RelationalType.EQUAL &&  
-				(re.getLeftExpression() instanceof IdentExpression) &&
-				(re.getRightExpression() instanceof ConstantExpression) ) {
-				TypeResolver typeResolver = new TypeResolver(getPojo());
-				Type type = typeResolver.getType(fieldName);
-				return typeResolver.isString(type);
-			}
-		}			
-		return false;
-	}
-	
-	private void updateTextExpression( Expression expression ) {
-		RelationalExpressionImpl re = (RelationalExpressionImpl) expression;
-		re.setType(RelationalType.LIKE);
-		ConstantExpressionImpl ce = (ConstantExpressionImpl) re.getRightExpression();
-		ce.setData( "%" + ce.getData().toString() + "%" );
-	}
 
 	public void addExpression( Criteria criteria, String id, String value ) throws ManagerBeanException {
-		String fieldName = resolveAlias(id); 
-		try {
-			if (value.charAt(0) == '=') {
-				criteria.addExpression(ExpressionUtilities.getExpression(value.substring(1), fieldName));
-			} else {
-				Expression exp = ExpressionUtilities.getExpression(value, fieldName);
-				if ( isOnlyTextExpression(exp, fieldName) ) {
-					updateTextExpression(exp);
-				}
-				criteria.addExpression(exp);
-			}
-		} catch (ExpressionException e) {
-			throw new ManagerBeanException(e.getMessage(), e);
+		Expression expression = FormUtil.getExpression(criteria, getPojo(), resolveAlias(id), value);
+		if ( expression != null ) {
+			criteria.addExpression(expression);
 		}
 	}
 	

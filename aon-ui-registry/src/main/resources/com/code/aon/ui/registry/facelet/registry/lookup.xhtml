@@ -14,6 +14,9 @@
 	<aon:valueParam name="lookupInputSuggestExpression" default="#{lto.registry.name} (#{lto.registry.document})"/>
 	<aon:valueParam name="lookupInputNameDisabled" default="#{lookupDisabled}"/>
 
+	<aon:valueParam name="newButtonHeight" default="700"/>
+	<aon:valueParam name="newButtonWidth" default="740"/>
+
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookupAudit.xhtml" >
 		<ui:define name="afterLookupContent">
 			<aon:if test="#{skipSuggestText}">

@@ -5,6 +5,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:valueParam name="showMunicipality" default="#{false}" />
@@ -27,18 +28,18 @@
 	</aon:div>
 
 	<aon:outputLabel for="#{pojoName}_address2" value="#{bundle.registry_address_detail}" />
-	<aon:div>
+	<h:panelGrid columns="2" cellpadding="0" cellspacing="0">
 		<aon:inputText id="#{pojoName}_address2" value="#{registryAddress.address2}" 
 			style="display:inline" maxlength="128" size="32" />
 		<aon:inputText id="#{pojoName}_address3" value="#{registryAddress.address3}" 
 			style="margin-left: 5px" maxlength="128" size="37" />
-	</aon:div>
+	</h:panelGrid>
 
 	<aon:outputLabel for="#{pojoName}_address_zip" 
 		value="#{bundle.aon_postal_code}" />
 	<aon:div>
 		<aon:inputText id="#{pojoName}_address_zip" 
-			size="32" maxlength="16"
+			size="16" maxlength="16"
 			value="#{registryAddress.zip}" 
 			reRender="#{pojoName}_address_geozone, #{pojoName}_address_municipality"
 			focus="#{pojoName}#{showMunicipality?'_address_municipality':'_address_city'}"
