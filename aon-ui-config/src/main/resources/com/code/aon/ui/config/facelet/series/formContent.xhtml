@@ -82,10 +82,10 @@
 						value="&#160;" title="#{bundle.aon_edit}"
 						reRender="#{sfc_div}"
 						focus="#{sfc_aliasPreffix}_number"
-						actionListener="#{sfc_onNumberEditable}"
 						rendered="#{!sfc_numberEditable}" ajaxSingle="true" >
 						<f:setPropertyActionListener
 							target="#{sfc_numberEditable}" value="#{true}" />
+						<aon:actionListener method="#{sfc_onNumberEditable}" />							
 					</aon:commandLink>
 				</aon:if>
 			</aon:if>

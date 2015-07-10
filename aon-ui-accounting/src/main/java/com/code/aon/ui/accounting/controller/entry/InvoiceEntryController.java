@@ -1534,10 +1534,12 @@ public class InvoiceEntryController implements ISpecialAccountEntry, Serializabl
 	}			
 	
 	private void seriesChanged( String series ) throws ManagerBeanException {
-		int number = obtainMaxNumber(series);
-		SecurityLevel securityLevel = obtainSeriesSecurityLevel(series);
 		if (getHeader() != null) {
-			getHeader().setNumber(number);
+			if ( getSaleInvoiceController().isNumberEditable() ) {
+				int number = obtainMaxNumber(series);
+				getHeader().setNumber(number);
+			}
+			SecurityLevel securityLevel = obtainSeriesSecurityLevel(series);
 			getHeader().setSecurityLevel(securityLevel);
 		}
 	}
