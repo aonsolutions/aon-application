@@ -18,6 +18,7 @@ classpath=$classpath:/usr/share/java/jooq.jar
 classpath=$classpath:/usr/share/java/aon-tgss.jar
 classpath=$classpath:/usr/share/java/aon-common.jar
 classpath=$classpath:/usr/share/java/aon-occam.jar
+classpath=$classpath:/usr/share/java/aon-salary.jar
 classpath=$classpath:/usr/share/java/aon-payroll.jar
 classpath=$classpath:/usr/share/java/commons-cli.jar
 classpath=$classpath:/usr/share/java/aon-master-jooq.jar
@@ -32,6 +33,12 @@ classpath=$classpath:/usr/share/java/commons-math3.jar
 classpath=$classpath:/usr/share/java/mvel2.jar
 classpath=$classpath:/usr/share/java/aon-entity-common.jar
 classpath=$classpath:/usr/share/java/aon-entity.jar
+classpath=$classpath:/usr/share/java/aon-pool.jar
+classpath=$classpath:/usr/share/java/jool.jar
+classpath=$classpath:/usr/share/java/aon-aeat.jar
+classpath=$classpath:usr/share/java/ModRet2015.jar
+classpath=$classpath:usr/share/java/PRET-R150_shared.jar
+
 
 case $1 in
 "")    		exec echo -e "$help";;

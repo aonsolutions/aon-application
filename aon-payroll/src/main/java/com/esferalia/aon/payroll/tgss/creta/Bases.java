@@ -111,6 +111,10 @@ public class Bases {
 				.withDescription("Skip previous bases.")
 				.create("b");
 
+		Option pretty =  OptionBuilder.withLongOpt("pretty")
+				  .withDescription("Makes the output readable to a human.")
+				  .create();
+
 		Options options = new Options()
 		.addOption(hostName)
 		.addOption(user)
@@ -119,6 +123,7 @@ public class Bases {
 		.addOption(xml)
 		.addOption(comments)
 		.addOption(skiptPrevBases)
+		.addOption(pretty)
 		;
 		//@formatter:on
 
@@ -551,7 +556,7 @@ public class Bases {
 			put("601", new CContextCretaData(CGP_BASE));
 			put("611", new CContextCretaData(CGP_BASE));
 
-			put("01", new CContextCretaData(WORKED_HOURS));
+			put("01", new HContextCretaData(WORKED_HOURS));
 //			put("02", new ContextCretaData(WORKED_HOURS));
 		}
 	};
