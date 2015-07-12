@@ -10,6 +10,7 @@ import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.C0015;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.C0017;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.C0018;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.C0019;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.C0022;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.C0030;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.C0034;
@@ -101,8 +102,9 @@ public class Mod2002014MVELContext extends AccMiningMVELContext {
 		if ( isChecked(C0057) ) return 20.0;
 		if ( isChecked(C0058) ) return 25.0;
 		// TODO
-		if ( isChecked(C0017) ) return 20.0;
-		if ( isChecked(C0018) ) return 20.0;
+		if ( isChecked(C0017) ) return round(getValue(LQ558));
+		if ( isChecked(C0018) ) return round(getValue(LQ558));
+		if ( isChecked(C0019) ) return round(getValue(LQ558));
 		return 30.0;
 	}
 	private double getLimit(int limit) {
