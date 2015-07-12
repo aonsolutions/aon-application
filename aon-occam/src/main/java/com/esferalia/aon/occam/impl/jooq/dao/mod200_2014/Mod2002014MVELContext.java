@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao.mod200_2014;
 
+
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.C0001;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.C0002;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.C0003;
@@ -34,8 +35,11 @@ import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.LQ520;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.LQ521;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.LQ552;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.LQ553;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.LQ554;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.LQ558;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.LQ559;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.LQ560;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.LQ562;
 
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
@@ -186,6 +190,57 @@ public class Mod2002014MVELContext extends AccMiningMVELContext {
 			 return lm043>getLimit(LIM_2)?lm043:getLimit(LIM_2);
 		}
 		return lm043>(lm253 + lm258)?lm043:(lm253 + lm258);
+	}
+	
+	public double computeLQ560() throws AonCoreException {
+		double lq521 = round(getValue(LQ521));
+		double lq552 = round(getValue(LQ552));
+		double lq553 = round(getValue(LQ553));
+		double lq554 = round(getValue(LQ554));
+		double lq558 = round(getValue(LQ558));
+		if (isChecked(C0017) || isChecked(C0018)) {
+			if (isChecked(C0057) && !isChecked(C0063)) {
+				return round( (lq553 * lq558 / 100) + (lq554 * 30 / 100) + (lq521 * 0));		
+			}
+			if (isChecked(C0063)) {
+				if (lq552<=getLimit(LIM_1)){
+					return round( lq552*15/100);			
+				} else {
+					return (getLimit(LIM_1)*15/100) + (lq552 - getLimit(LIM_1))*20/100;				
+				}
+			}
+			return round( (lq553 * lq558 / 100) + (lq554 * 30 / 100));
+		} else if (isChecked(C0019) ) {
+			if (isChecked(C0006)) {
+				if (lq552<=getLimit(LIM_1)){
+					return round( lq552*25/100);			
+				} else {
+					return (getLimit(LIM_1)*25/100) + (lq552 - getLimit(LIM_1))*30/100;				
+				}
+			}
+			if (isChecked(C0030) || isChecked(C0047)) {
+				return round(getValue(LQ560));
+			}
+			if (isChecked(C0056)) {
+				if (lq552<=getLimit(LIM_1)){
+					return round( lq552*20/100);			
+				} else {
+					return (getLimit(LIM_1)*20/100) + (lq552 - getLimit(LIM_1))*25/100;				
+				}
+			}
+			if (isChecked(C0063)) {
+				if (lq552<=getLimit(LIM_1)){
+					return round( lq552*15/100);			
+				} else {
+					return (getLimit(LIM_1)*15/100) + (lq552 - getLimit(LIM_1))*20/100;				
+				}
+			}
+			if (isChecked(C0057)) {
+				return round( ((lq552 - lq521) * lq558 / 100) + (lq554 * 30 / 100) + (lq521 *0));
+			}
+			return round( (lq553 * lq558 / 100) );			
+		}
+		return 0.0;
 	}
 	
 }
