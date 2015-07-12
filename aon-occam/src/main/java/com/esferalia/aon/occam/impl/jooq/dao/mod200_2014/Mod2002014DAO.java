@@ -72,6 +72,10 @@ public class Mod2002014DAO  {
 	};
 
 	public static Mod2002014 save(AONContext ctx, Mod2002014 mod200) {
+		if (mod200.getPeriodType() == 1) {
+			mod200.setPeriodStart(AonDateUtils.getYearFirstDay(2014));
+			mod200.setPeriodEnd(AonDateUtils.getYearLastDay(2014));
+		}
 		if (mod200.getId() == null) {
 			return insert(ctx, mod200);
 		} else {
