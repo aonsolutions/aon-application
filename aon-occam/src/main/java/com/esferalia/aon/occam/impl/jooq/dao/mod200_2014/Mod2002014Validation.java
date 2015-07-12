@@ -860,9 +860,9 @@ public class Mod2002014Validation {
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2014(PAGE13,LM274
 				,MessageFormat.format(EQUAL_LESS_MSG,LM274.getDescription(),LM273.getDescription())
 				,MessageFormat.format(EQUAL_LESS_EXP,LM274.toString(),LM273.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2014(PAGE13,LM537
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2014(PAGE13,LM957
 				,"Compruebe el importe pendiente de adici\u00F3n por l\u00EDmite beneficio operativo no aplicado"
-				,"LM537==(LM043+LM049)-LM254-LM258"));
+				,"LM957==(LM043+LM049)-LM254-LM258"));
 	}
 
 	
