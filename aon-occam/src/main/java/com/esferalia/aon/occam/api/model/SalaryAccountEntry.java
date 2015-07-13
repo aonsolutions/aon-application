@@ -177,7 +177,7 @@ public class SalaryAccountEntry implements Serializable {
 				}
 				)
 		,DED_ADVANCE_PAYMENT (
-				AppParam.ACC_SALARY_DED_ADVANCE_PAYMENT_ACC
+				AppParam.ACC_SALARY_DED_ADV_PAYMENT_ACC
 				, new IFillAccountEntryAmountVisitor() {
 					@Override
 					public void visit(AccountEntryDetail aed,
