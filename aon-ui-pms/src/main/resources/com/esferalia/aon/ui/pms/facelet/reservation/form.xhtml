@@ -92,7 +92,18 @@
 							value="#{true}" />
 					</aon:menuItem>
 				</ui:define>
-				<ui:define name="beforeSpinToolbarContent">				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:if test="#{reservation.invoiceModel.rowCount > 0}">
+						<aon:htmlCommandLink id="reservationLiquidation-report"
+							styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+							value="#{bundle.pms_reservation_invoiceLiquidation}"
+							action="#{report.onExecute}">
+							<f:setPropertyActionListener target="#{reservationLiquidationPrinter.projectReservation}"
+								value="#{reservation.to}" />
+							<f:param name="reportKey" value="reservationLiquidation" />
+							<f:param name="outputFormat" value="PDF" />
+						</aon:htmlCommandLink>
+					</aon:if>
 					<ui:include
 						src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />											
 				</ui:define>				

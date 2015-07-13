@@ -36,6 +36,18 @@
 		</params>
 	</report>
 
+	<!--  *********  Reservation Invoice liquidation  ********* -->
+	<report id="reservationLiquidation" description="Reservation liquidation Report">
+		<template path="/com/esferalia/aon/ui/pms/report/reservationLiquidation.jasper" />
+		<collection provider="#{reservationLiquidationPrinter}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+		</params>
+	</report>
+
 	<!--  ********* Governess - Work planning  ********* -->
 	<report id="workPlanning" description="Governess Work Planning Report">
 		<template path="/com/esferalia/aon/ui/pms/report/workPlanning.jasper" />

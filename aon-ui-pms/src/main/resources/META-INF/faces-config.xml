@@ -1282,6 +1282,13 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ********** RESERVATION LIQUIDATION PRINTER********** -->
+	<managed-bean>
+		<managed-bean-name>reservationLiquidationPrinter</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.print.ReservationLiquidationPrinter</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- **************************************************** -->
 	<!-- ************* LOOKUP ******************************* -->
 	<!-- **************************************************** -->
