@@ -64,6 +64,7 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.LiquidationType;
 import com.esferalia.aon.payroll.enumeration.Mutual;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.payroll.enumeration.ss.T54;
 import com.esferalia.aon.payroll.enumeration.ss.T86;
 import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -967,8 +968,18 @@ public class FANWriter implements Serializable {
 		if(liquidationType!=LiquidationType.L13){
 			Salary salary = getSalary(contract, SalaryType.SALARY);
 			if(existSalaryBonuses(salary)){
-				String o = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.QUOTE_PECULIARITY_COLLECTIVE.getName());
-				return o!=null && !o.isEmpty()?o.replaceAll("\"", ""):null;
+				String code = null;
+				for(ITransferObject to: getSalaryBonuses(salary)){
+					SalaryBonus sb = (SalaryBonus) to;
+					T54 value = T54.getEnumByValue(sb.getBonusConcept());
+					if(value!=null){
+						code = value.getCode();
+					}
+				}
+				if(StringUtils.isBlank(code)){
+					code = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.QUOTE_PECULIARITY_COLLECTIVE.getName());
+				}
+				return code!=null && !code.isEmpty()?code.replaceAll("\"", ""):null;
 			}
 		}
 		return null;
