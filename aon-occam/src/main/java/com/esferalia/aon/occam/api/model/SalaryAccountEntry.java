@@ -182,7 +182,7 @@ public class SalaryAccountEntry implements Serializable {
 					@Override
 					public void visit(AccountEntryDetail aed,
 							SalaryAccountEntry sae, SalaryAccountEntryLine sael) {
-						aed.setDebit( sae.getNetAmount() );
+						aed.setDebit( sael.getAmount() );
 					}
 				}
 				, null 
