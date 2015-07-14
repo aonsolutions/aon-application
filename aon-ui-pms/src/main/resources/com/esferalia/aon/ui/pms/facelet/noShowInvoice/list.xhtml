@@ -5,6 +5,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -137,7 +138,7 @@
 							<f:facet name="header">
 								<aon:outputText value="1N" />
 							</f:facet>
-							<aon:outputText value="#{to.oneNightPenaltyPrice}">
+							<aon:outputText value="#{to.firstNightPenaltyPrice}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 						</aon:column>
@@ -146,7 +147,7 @@
 							<f:facet name="header">
 								<aon:outputText value="2N" />
 							</f:facet>
-							<aon:outputText value="#{to.twoNightPenaltyPrice}">
+							<aon:outputText value="#{to.firstTwoNightPenaltyPrice}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 						</aon:column>
