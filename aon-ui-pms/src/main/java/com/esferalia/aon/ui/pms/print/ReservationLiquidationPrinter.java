@@ -6,7 +6,9 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.PosShift.POS_SHIFT;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -14,7 +16,9 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 
+import org.apache.commons.lang.StringUtils;
 import org.jooq.DSLContext;
+import org.jooq.Record7;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
@@ -29,6 +33,8 @@ import com.esferalia.aon.pms.ProjectReservation;
 public class ReservationLiquidationPrinter implements ICollectionProvider {
 	
 	private static Settings SETTINGS = null;
+	
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 	
 	private ProjectReservation projectReservation;
 	
@@ -65,11 +71,8 @@ public class ReservationLiquidationPrinter implements ICollectionProvider {
 	}
 	
 	private List<ReservationLiquidation> getList(Connection connection, Integer project) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-		DSLContext ctx = DSL.using(connection, getDefaultSettings());
-		
 		List<ReservationLiquidation> list = new LinkedList<ReservationLiquidationPrinter.ReservationLiquidation>();
-		
+		DSLContext ctx = DSL.using(connection, getDefaultSettings());
 		ctx.select(
 				POS_SHIFT.START_TIME,
 				POS_SHIFT.SHIFT,
@@ -86,19 +89,69 @@ public class ReservationLiquidationPrinter implements ICollectionProvider {
 			.where(INVOICE.TYPE.equal((byte) 1))
 			.and(INVOICE.PROJECT.equal(project))
 			.groupBy(INVOICE.REFERENCE_CODE, PAY_METHOD.NAME, DSL.sign(FINANCE.AMOUNT))
-			.orderBy(INVOICE.REFERENCE_CODE, PAY_METHOD.NAME)
+			.orderBy(POS_SHIFT.START_TIME, POS_SHIFT.SHIFT, PAY_METHOD.NAME, INVOICE.REFERENCE_CODE)
 			.fetch()
-			.forEach( record -> {
-				ReservationLiquidation liq = new ReservationLiquidation();
-				liq.setShiftName(sdf.format(record.value1()) +" / "+ getShift(new Integer(record.value2())));
-				liq.setReferenceCode(record.value3());
-				liq.setTotal(record.value4());
-				liq.setPaymethod(record.value5());
-				liq.setPayment(record.value6().doubleValue());
-				liq.setCharge(record.value7().doubleValue());
-				list.add(liq);
+			.forEach( record -> { 
+				addReservationLiquidation(record, list);
 			});
 		return list;
+	}
+	
+
+	private void addReservationLiquidation(Record7<Timestamp, Byte, String, Double, String, BigDecimal, BigDecimal> record, List<ReservationLiquidation> list){
+		
+		String name = sdf.format(record.value1()) +" / "+ getShift(new Integer(record.value2()));
+		String referenceCode = record.value3();
+		Double total = record.value4();
+		String paymethod = record.value5();
+		Double payment = record.value6().doubleValue();
+		Double charge = record.value7().doubleValue();
+		
+		ReservationLiquidation liq = null;
+		if(!list.isEmpty() && name.equals(list.get(list.size()-1).getShiftName())){
+			liq = list.get(list.size()-1);
+			
+			if(!liq.getInvoices().isEmpty() && !referenceCode.equals(liq.getInvoices().get(liq.getInvoices().size()-1).getReferenceCode())){
+				ReservationLiquidationInvoice invoice = new ReservationLiquidationInvoice();
+				invoice.setReferenceCode(referenceCode);
+				invoice.setTotal(total);
+				liq.getInvoices().add(invoice);
+			}
+			if(!liq.getFinances().isEmpty() && paymethod.equals(liq.getFinances().get(liq.getFinances().size()-1).getPaymethod())){
+				ReservationLiquidationFinance finance = liq.getFinances().get(liq.getFinances().size()-1);
+				finance.setPaymethod(paymethod);
+				finance.setPayment(finance.getPayment()+payment);
+				finance.setCharge(finance.getCharge()+charge);
+			} else {
+				if(StringUtils.isNotBlank(paymethod)){
+					ReservationLiquidationFinance finance = new ReservationLiquidationFinance();
+					finance.setPaymethod(paymethod);
+					finance.setPayment(payment);
+					finance.setCharge(charge);
+					liq.getFinances().add(finance);
+				}
+			}
+		} else {
+			liq = new ReservationLiquidation();
+			liq.setShiftName(name);
+
+			liq.setInvoices(new LinkedList<>());
+			ReservationLiquidationInvoice invoice = new ReservationLiquidationInvoice();
+			invoice.setReferenceCode(referenceCode);
+			invoice.setTotal(total);
+			liq.getInvoices().add(invoice);
+			
+			liq.setFinances(new LinkedList<>());
+			if(StringUtils.isNotBlank(paymethod)){
+				ReservationLiquidationFinance finance = new ReservationLiquidationFinance();
+				finance.setPaymethod(paymethod);
+				finance.setPayment(payment);
+				finance.setCharge(charge);
+				liq.getFinances().add(finance);
+			}
+			list.add(liq);
+		}
+		
 	}
 	
 	private String getShift(Integer ordinal){
@@ -122,17 +175,31 @@ public class ReservationLiquidationPrinter implements ICollectionProvider {
 	
 	public class ReservationLiquidation {
 		private String shiftName;
-		private String referenceCode;
-		private Double total;
-		private String paymethod;
-		private Double charge;
-		private Double payment;
+		private List<ReservationLiquidationInvoice> invoices;
+		private List<ReservationLiquidationFinance> finances;
 		public String getShiftName() {
 			return shiftName;
 		}
 		public void setShiftName(String shiftName) {
 			this.shiftName = shiftName;
 		}
+		public List<ReservationLiquidationInvoice> getInvoices() {
+			return invoices;
+		}
+		public void setInvoices(List<ReservationLiquidationInvoice> invoices) {
+			this.invoices = invoices;
+		}
+		public List<ReservationLiquidationFinance> getFinances() {
+			return finances;
+		}
+		public void setFinances(List<ReservationLiquidationFinance> finances) {
+			this.finances = finances;
+		}
+	}
+
+	public class ReservationLiquidationInvoice {
+		private String referenceCode;
+		private Double total;
 		public String getReferenceCode() {
 			return referenceCode;
 		}
@@ -145,6 +212,12 @@ public class ReservationLiquidationPrinter implements ICollectionProvider {
 		public void setTotal(Double total) {
 			this.total = total;
 		}
+	}
+	
+	public class ReservationLiquidationFinance {
+		private String paymethod;
+		private Double charge;
+		private Double payment;
 		public String getPaymethod() {
 			return paymethod;
 		}
