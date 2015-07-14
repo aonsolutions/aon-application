@@ -90,6 +90,9 @@ public class Mod2002014MVELContext extends AccMiningMVELContext {
 		if ( isChecked(C0003) ) return 1.0;
 		if ( isChecked(C0004) ) return 1.0;
 		if ( isChecked(C0005) ) return 25.0;
+		if ( isChecked(C0017) ) return round(getValue(LQ558));
+		if ( isChecked(C0018) ) return round(getValue(LQ558));
+		if ( isChecked(C0019) ) return round(getValue(LQ558));
 		if ( isChecked(C0006) && isChecked(C0056)) return 20.0;
 		if ( isChecked(C0006) && isChecked(C0034)) return 35.0;
 		if ( isChecked(C0006) && !isChecked(C0034)) return 25.0;
@@ -105,10 +108,6 @@ public class Mod2002014MVELContext extends AccMiningMVELContext {
 		if ( isChecked(C0056) ) return 20.0;
 		if ( isChecked(C0057) ) return 20.0;
 		if ( isChecked(C0058) ) return 25.0;
-		// TODO
-		if ( isChecked(C0017) ) return round(getValue(LQ558));
-		if ( isChecked(C0018) ) return round(getValue(LQ558));
-		if ( isChecked(C0019) ) return round(getValue(LQ558));
 		return 30.0;
 	}
 	private double getLimit(int limit) {
