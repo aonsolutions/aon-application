@@ -2,6 +2,7 @@ package net.aonsolutions.tgss.creta.jaxb;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.io.Writer;
 import java.time.Month;
 import java.util.UUID;
@@ -49,6 +50,11 @@ public class Utils {
 		return (T) newUnmarshaller(clazz).unmarshal(is);
 	}
 
+	@SuppressWarnings("unchecked")
+	public static <T> T unmarshal(Class<T> clazz, Reader reader)
+			throws JAXBException {
+		return (T) newUnmarshaller(clazz).unmarshal(reader);
+	}
 	// ------------------------------------------------------------------------
 
 	private static Marshaller newMarshaller(Class classToBeBound)

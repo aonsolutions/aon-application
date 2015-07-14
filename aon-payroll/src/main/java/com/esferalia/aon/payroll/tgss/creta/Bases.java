@@ -2,8 +2,13 @@ package com.esferalia.aon.payroll.tgss.creta;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.EXTRA_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATION;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
 
 import java.io.FileInputStream;
@@ -12,6 +17,7 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,23 +33,23 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import net.aonsolutions.tgss.creta.jaxb.CtaCot;
+import net.aonsolutions.tgss.creta.jaxb.Dato;
+import net.aonsolutions.tgss.creta.jaxb.DatoSolicitado;
+import net.aonsolutions.tgss.creta.jaxb.Fecha;
+import net.aonsolutions.tgss.creta.jaxb.Liquidacion;
+import net.aonsolutions.tgss.creta.jaxb.LiquidacionMes;
+import net.aonsolutions.tgss.creta.jaxb.Peculiaridad;
+import net.aonsolutions.tgss.creta.jaxb.Periodo;
+import net.aonsolutions.tgss.creta.jaxb.Trabajador;
+import net.aonsolutions.tgss.creta.jaxb.Tramo;
 import net.aonsolutions.tgss.creta.jaxb.Utils;
 import net.aonsolutions.tgss.creta.jaxb.bases.BasesBuilder;
-import net.aonsolutions.tgss.creta.jaxb.bases.Dato;
 import net.aonsolutions.tgss.creta.jaxb.bases.DatoBuilder;
 import net.aonsolutions.tgss.creta.jaxb.bases.LiquidacionBuilder;
 import net.aonsolutions.tgss.creta.jaxb.bases.LiquidacionMesBuilder;
 import net.aonsolutions.tgss.creta.jaxb.bases.TrabajadorBuilder;
 import net.aonsolutions.tgss.creta.jaxb.bases.TramoBuilder;
-import net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.CtaCot;
-import net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.DatoSolicitado;
-import net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.Fecha;
-import net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.Liquidacion;
-import net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes;
-import net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.Periodo;
-import net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.Trabajador;
-import net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos;
-import net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.Tramo;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -53,12 +59,12 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang.StringUtils;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
-import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.Period;
@@ -68,140 +74,165 @@ import com.esferalia.aon.watson.util.AonUtils;
 
 public class Bases {
 
-	@SuppressWarnings("static-access")
-	public static void main(String[] args) throws JAXBException, SQLException,
-			ClassNotFoundException, IOException, XMLStreamException,
-			FactoryConfigurationError, TransformerConfigurationException,
-			TransformerFactoryConfigurationError {
+	private static class NoSuchContextVariableException extends Exception {
+		private ContextVariable contextVariable;
 
-		//@formatter:off
-		Option hostName =  OptionBuilder.withArgName("name")
-					 					.hasArg()
-										.withLongOpt("host")
-										.withDescription("Connect to host.")
-										.create("h");
-		Option user =  OptionBuilder.withArgName("name")
-					 				.hasArg()
-									.isRequired(true)
-									.withLongOpt("user")
-									.withDescription("User for login.")
-									.create("u");
-		Option password =  OptionBuilder.withArgName("name")
-										.hasArg()
-										.isRequired(true)
-										.withLongOpt("password")
-										.withDescription("Password to use when connecting to server.")
-										.create("p");
-		Option database =  OptionBuilder.withArgName("name")
-										.hasArg()
-										.isRequired(true)
-										.withLongOpt("database")
-										.withDescription("Database to use.")
-										.create("D");
-		Option xml =  OptionBuilder.withArgName("file")
-									.hasArg()
-									.withLongOpt("xml")
-									.withDescription("XML file.")
-									.create("x");
-		Option comments =  OptionBuilder.withLongOpt("comments")
-										.withDescription("Write additional information.")
-										.create("c");
-		
-		Option skiptPrevBases =  OptionBuilder.withLongOpt("skip-prev-bases")
-				.withDescription("Skip previous bases.")
-				.create("b");
+		public NoSuchContextVariableException(ContextVariable contextVariable) {
+			super();
+			this.contextVariable = contextVariable;
+		}
 
-		Option pretty =  OptionBuilder.withLongOpt("pretty")
-				  .withDescription("Makes the output readable to a human.")
-				  .create();
-
-		Options options = new Options()
-		.addOption(hostName)
-		.addOption(user)
-		.addOption(password)
-		.addOption(database)
-		.addOption(xml)
-		.addOption(comments)
-		.addOption(skiptPrevBases)
-		.addOption(pretty)
-		;
-		//@formatter:on
-
-		// create the parser
-		CommandLineParser parser = new GnuParser();
-
-		try {
-			// parse the command line arguments
-			CommandLine cmd = parser.parse(options, args);
-
-			Class.forName(com.mysql.jdbc.Driver.class.getName());
-
-			Connection connection = DriverManager.getConnection(String.format(
-					"jdbc:mysql://%s:%d/%s",
-					cmd.getOptionValue(hostName.getLongOpt(), "127.0.0.1"),
-					3306, cmd.getOptionValue(database.getLongOpt())), cmd
-					.getOptionValue(user.getLongOpt()), cmd
-					.getOptionValue(password.getLongOpt()));
-
-			String path = cmd.getOptionValue(xml.getLongOpt());
-			InputStream is = AonStringUtils.isEmpty(path) ? System.in
-					: new FileInputStream(cmd.getOptionValue(xml.getLongOpt()));
-			
-			boolean aceptarBasesAnteriores = !cmd.hasOption(skiptPrevBases.getLongOpt());
-			
-			TrabajadoresTramos trabajadoresTramos = Utils.unmarshal(
-					TrabajadoresTramos.class, is);
-
-			AONContext ctx = new AONContext(connection);
-			BasesBuilder builder = new BasesBuilder()
-					.setAutorizado(trabajadoresTramos.getAutorizado());
-
-			XMLStreamWriter xsw = new IndentXMLStreamWriter(XMLOutputFactory
-					.newInstance().createXMLStreamWriter(System.out), "  ");
-			
-			Errors errors = new Errors();
-			Comments comment = new Comments(xsw);
-
-			bases(builder, ctx, trabajadoresTramos.getLiquidacion(), aceptarBasesAnteriores, errors, comment);
-			is.close();
-
-			
-			net.aonsolutions.tgss.creta.jaxb.bases.Bases bases = builder
-					.create();
-			
-			if (cmd.hasOption(comments.getLongOpt()))
-				Utils.marshal(bases, xsw, comment);
-			else
-				Utils.marshal(bases, xsw);
-
-		} catch (ParseException e) {
-			// oops, something went wrong
-			System.err.println("Parsing failed.  Reason: " + e.getMessage());
-			// automatically generate the help statement
-			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("cret@", options);
-
+		public ContextVariable getContextVariable() {
+			return contextVariable;
 		}
 
 	}
 
-	public static interface BasesCallback {
+	private static class AmbiguousContextVariableException extends Exception {
+
+		private String values[];
+		private ContextVariable contextVariable;
+
+		public AmbiguousContextVariableException(
+				ContextVariable contextVariable, String... values) {
+			super();
+			this.values = values;
+			this.contextVariable = contextVariable;
+		}
+
+		public String[] getValues() {
+			return values;
+		}
+
+		public ContextVariable getContextVariable() {
+			return contextVariable;
+		}
+	}
+
+	private static abstract class HContextCretaData extends CContextCretaData {
+
+		public HContextCretaData(ContextVariable contextVariable) {
+			super(contextVariable);
+		}
+
+		@Override
+		public void add(Salary salary, Tramo tramo, Dato datoSolicitado,
+				TramoBuilder tramoBuilder) {
+			// B -> El código del dato solicitado es obligatorio.
+			// P -> El código del dato solicitado es opcional.
+
+			double newValue = get(salary, tramo.getFechaDesde(),
+					tramo.getFechaHasta());
+			boolean optional = isOptional();
+			if (optional && newValue == 0.00)
+				return;
+
+			DatoBuilder datoBuilder = new DatoBuilder();
+			datoBuilder.setCodigo(datoSolicitado.getCodigo());
+			datoBuilder.setTipo(datoSolicitado.getTipoDato());
+			datoBuilder.setHoras((int) Math.round(newValue));
+			tramoBuilder.addDato(datoBuilder.create());
+		}
+
+		protected abstract boolean isOptional();
+	}
+
+	private static class OptionalHContextCretaData extends HContextCretaData {
+
+		public OptionalHContextCretaData(ContextVariable contextVariable) {
+			super(contextVariable);
+		}
+
+		@Override
+		protected boolean isOptional() {
+			return true;
+		}
+	}
+
+	private static class MandatoryHContextCretaData extends HContextCretaData {
+
+		public MandatoryHContextCretaData(ContextVariable contextVariable) {
+			super(contextVariable);
+		}
+
+		@Override
+		protected boolean isOptional() {
+			return false;
+		}
+	}
+
+	private static interface BasesCallback {
 
 		default void trabajadorAdded(Trabajador trabajador, Salary salary) {
 		};
 
-		default void unknownDato(DatoSolicitado datoSolicitado) {
+		default void unknownSalary(Salary salary) {
+		};
+
+		default void unknownDato(Dato datoSolicitado) {
+		};
+
+		default void unknownTrabajador(Trabajador trabajador) {
+		};
+
+		default void rightContextVariable(ContextVariable var, Period p,
+				String right) {
+		};
+
+		default void noSuchContextVariable(ContextVariable var, Period p,
+				String right) {
+		};
+
+		default void wrongContextVariable(ContextVariable var, Period p,
+				String right, String wrong) {
+		};
+
+		default void ambigousContextVariable(ContextVariable var, Period p,
+				String right, String... wrongs) {
 		};
 
 	}
-	
+
 	private static class Errors implements BasesCallback {
 		@Override
-		public void unknownDato(DatoSolicitado datoSolicitado) {
-			System.err.println(String.format("ERROR: Unknown Dato '%s'", datoSolicitado.getCodigo()));
+		public void unknownDato(Dato datoSolicitado) {
+			System.err.println(String.format("ERROR: Unknown Dato '%s'",
+					datoSolicitado.getCodigo()));
+		}
+		
+		@Override
+		public void unknownTrabajador(Trabajador trabajador) {
+			System.err.println(String.format(
+					"FATAL : Employee %s (%s), not at aon ", trabajador.getNaf(), trabajador.getIpf().getNumeroIpf()));
+		}
+		
+		@Override
+		public void unknownSalary(Salary salary) {
+			System.err.println(String.format(
+					"WARNING: Employee %s (%s), not at Cret@ ", salary.getEmployeeName(), salary.getEmployeeDocument()));
+		}
+
+		@Override
+		public void noSuchContextVariable(ContextVariable var, Period p,
+				String right) {
+			System.err.println(String.format(
+					"WARNING: '%s' (%s) not in salary data", var, right));
+		}
+		
+		@Override
+		public void rightContextVariable(ContextVariable var, Period p,
+				String right) {
+			System.err.println(String.format(
+					"INFO: '%s' (%s) right value at salary data", var, right));
+		}
+
+		@Override
+		public void wrongContextVariable(ContextVariable var, Period p,
+				String right, String wrong) {
+			System.err.println(String.format(
+					"ERROR: '%s' (%s) wrong value (%s) at salary data", var, right, wrong));
 		}
 	}
-	
 
 	private static class Comments extends Listener implements BasesCallback {
 
@@ -240,10 +271,8 @@ public class Bases {
 
 		@Override
 		public void trabajadorAdded(Trabajador trabajador, Salary salary) {
-			trabajadorDataMap.put(
-					trabajador.getNaf(),
-					new TrabajadorData(salary.getEmployeeName(), salary
-							.getEmployeeSSNumber()));
+			trabajadorDataMap.put(trabajador.getNaf(), new TrabajadorData(
+					salary.getEmployeeName(), salary.getEmployeeSSNumber()));
 		};
 
 		public void beforeMarshalDato(Dato dato) {
@@ -271,10 +300,119 @@ public class Bases {
 
 	}
 
+	private static interface CretaData {
+
+		String getComment();
+
+		void add(Salary salary, Tramo tramo, Dato datoSolicitado,
+				TramoBuilder tramoBuilder);
+
+	}
+
+	private static abstract class CContextCretaData implements CretaData {
+
+		private ContextVariable contextVariable;
+
+		public CContextCretaData(ContextVariable contextVariable) {
+			this.contextVariable = contextVariable;
+		}
+
+		@Override
+		public String getComment() {
+			return contextVariable.name();
+		}
+
+		@Override
+		public void add(Salary salary, Tramo tramo, Dato datoSolicitado,
+				TramoBuilder tramoBuilder) {
+			// B -> El código del dato solicitado es obligatorio.
+			// P -> El código del dato solicitado es opcional.
+
+			double newValue = get(salary, tramo.getFechaDesde(),
+					tramo.getFechaHasta());
+			boolean optional = isOptional();
+			if (optional && newValue == 0.00)
+				return;
+
+			DatoBuilder datoBuilder = new DatoBuilder();
+			datoBuilder.setCodigo(datoSolicitado.getCodigo());
+			datoBuilder.setTipo(datoSolicitado.getTipoDato());
+			datoBuilder.setImporteEuros(newValue);
+			tramoBuilder.addDato(datoBuilder.create());
+		}
+
+		public Double get(Salary salary, Fecha desde, Fecha hasta) {
+			return get(salary, new Period(toDate(desde), toDate(hasta)));
+		}
+
+		protected Double get(Salary salary, Period p) {
+			List<ContextData> datas = salary.getContextData().get(
+					contextVariable.getName());
+			if (datas == null)
+				return 0.00;
+
+			double ret = 0.00;
+			for (ContextData data : datas) {
+				Period intersect = p.intersect(new Period(data.getStartDate(),
+						data.getEndDate()));
+				if (intersect == null)
+					continue;
+
+				ret += ExpressionContext.eval(data.getExpression(),
+						Double.class) * days(intersect) / days(p);
+			}
+			return ret;
+		}
+
+		protected abstract boolean isOptional();
+	}
+
+	private static class MandatoryCContextCretaData extends CContextCretaData {
+
+		public MandatoryCContextCretaData(ContextVariable contextVariable) {
+			super(contextVariable);
+		}
+
+		@Override
+		protected boolean isOptional() {
+			return false;
+		}
+	}
+
+	private static class OptionalCContextCretaData extends CContextCretaData {
+
+		public OptionalCContextCretaData(ContextVariable contextVariable) {
+			super(contextVariable);
+		}
+
+		@Override
+		protected boolean isOptional() {
+			return true;
+		}
+	}
+
+	private static Map<String, CretaData> CONTEXT_VARIABLE_MAP = new HashMap<String, CretaData>() {
+		{
+			put("500", new MandatoryCContextCretaData(CGC_BASE));
+
+			put("501", new OptionalCContextCretaData(STRUCTURAL_OVERTIME_BASE));
+			put("502", new OptionalCContextCretaData(
+					NON_STRUCTURAL_OVERTIME_BASE));
+			put("537", new OptionalCContextCretaData(
+					NON_STRUCTURAL_OVERTIME_BASE));
+			put("601", new MandatoryCContextCretaData(CGP_BASE));
+			put("611", new MandatoryCContextCretaData(CGP_BASE));
+
+			put("01", new MandatoryHContextCretaData(WORKED_HOURS));
+			put("02", new OptionalHContextCretaData(EXTRA_HOURS));
+		}
+	};
+
 	// ------------------------------------------------------------------------
 
 	private static void bases(BasesBuilder basesBuilder, AONContext ctx,
-			Liquidacion liquidacion, boolean  aceptarBasesAnteriores, BasesCallback... cbs) {
+			Liquidacion<?> liquidacion, boolean aceptarBasesAnteriores,
+			BasesCallback... cbs) {
 		LiquidacionBuilder liquidacionBuilder = new LiquidacionBuilder()
 				.setAceptarBasesAnteriores(aceptarBasesAnteriores)
 				.setCCC(liquidacion.getCcc().getRegimen(),
@@ -298,11 +436,13 @@ public class Bases {
 					liquidacion.getFechaControl().getMes()).setAnhoControl(
 					liquidacion.getFechaControl().getAnho());
 
-		for (LiquidacionMes liquidacionMes : liquidacion.getLiquidacionMes()) {
+		for (LiquidacionMes<?> liquidacionMes : liquidacion.getLiquidacionMes()) {
+			
 			Map<String, Trabajador> trabajadores = new HashMap<String, Trabajador>();
+			
 			for (Trabajador trabajador : liquidacionMes.getTrabajadores()
 					.getTrabajador())
-				trabajadores.put( 
+				trabajadores.put(
 						trabajador.getIpf().getNumeroIpf()
 								.replaceAll("^0+", ""), trabajador);
 
@@ -314,7 +454,7 @@ public class Bases {
 						liquidacionMes.getMesLiquidativo().getAnho());
 
 			if (liquidacionMes.getDatosMes() != null)
-				for (DatoSolicitado dato : liquidacionMes.getDatosMes()
+				for (Dato dato : liquidacionMes.getDatosMes()
 						.getDatoSolicitado())
 					liquidacionMesBuilder.add(new DatoBuilder()
 							.setCodigo(dato.getCodigo())
@@ -356,6 +496,10 @@ public class Bases {
 		).forEach(salary -> trabajador(liquidacionMesBuilder, salary, trabajadores, cbs));
 		;
 		//@formatter:on
+		
+		trabajadores.values().forEach( t -> { 
+			for ( BasesCallback cb: cbs ) cb.unknownTrabajador(t);
+		});
 
 	}
 
@@ -366,12 +510,16 @@ public class Bases {
 		TrabajadorBuilder trabajadorBuilder = new TrabajadorBuilder();
 		Trabajador trabajador = trabajadores.get(salary.getEmployeeDocument());
 		if (trabajador == null) {
-			// TODO:
+			for ( BasesCallback cb: cbs)
+				cb.unknownSalary(salary);
 			return;
 		}
 
 		trabajadorBuilder.setNaf(trabajador.getNaf());
-		for (Tramo tramo : trabajador.getTramos().getTramo()) {
+		for (Tramo<?> tramo : trabajador.getTramos().getTramo()) {
+
+			checkTramo(tramo, salary, cbs);
+
 			TramoBuilder tramoBuilder = new TramoBuilder();
 
 			tramoBuilder.setDiaDesde(tramo.getFechaDesde().getDia());
@@ -382,7 +530,7 @@ public class Bases {
 			tramoBuilder.setMesHasta(tramo.getFechaHasta().getMes());
 			tramoBuilder.setAnhoHasta(tramo.getFechaHasta().getAnho());
 
-			for (DatoSolicitado datoSolicitado : tramo.getDatosTramo()
+			for (Dato datoSolicitado : tramo.getDatosTramo()
 					.getDatoSolicitado()) {
 
 				CretaData data = getCretaData(datoSolicitado.getCodigo());
@@ -403,16 +551,71 @@ public class Bases {
 			cb.trabajadorAdded(trabajador, salary);
 
 		liquidacionMesBuilder.add(trabajadorBuilder.create());
+		
+		trabajadores.remove(salary.getEmployeeDocument());
 
 	}
 
+	private static void checkTramo(Tramo<?> tramo, Salary salary,
+			BasesCallback... cbs) {
+		Period p = new Period(toDate(tramo.getFechaDesde()),
+				toDate(tramo.getFechaHasta()));
+
+		checkContextVariable(QUOTE_GROUP, tramo.getInformacionAfiliacion()
+				.getGrupoCotizacion(), p, salary, cbs);
+		checkContextVariable(TC2, tramo.getInformacionAfiliacion()
+				.getTipoContrato(), p, salary, cbs);
+		checkContextVariable(OCCUPATION, tramo.getInformacionAfiliacion()
+				.getOcupacion(), p, salary, cbs);
+		String partialFactor = tramo.getInformacionAfiliacion()
+				.getCoeficienteTiempoParcial();
+		checkContextVariable(PARTIAL_FACTOR, 
+				( partialFactor != null ? Double.toString(Integer.parseInt(partialFactor) /1000.00): null),
+				p, 
+				salary,
+				cbs);
+		for ( Peculiaridad peculiaridad : tramo.getInformacionAfiliacion().getPeculiaridades().getPeculiaridad() ){
+			
+		}
+			
+	}
+
+	private static void checkContextVariable(ContextVariable contextVariable,
+			String rigthValue, Period p, Salary salary, BasesCallback... cbs) {
+
+		try {
+			String salaryValue = get(salary, contextVariable, p);
+			if ( !StringUtils.equalsIgnoreCase(rigthValue, salaryValue))
+				for (BasesCallback cb : cbs)
+					cb.wrongContextVariable(contextVariable, p, rigthValue,
+							salaryValue);
+			else 
+				for (BasesCallback cb : cbs)
+					cb.rightContextVariable(contextVariable, p, rigthValue);
+			
+		} catch (NoSuchContextVariableException e) {
+			if (rigthValue != null)
+				for (BasesCallback cb : cbs)
+					cb.noSuchContextVariable(contextVariable, p, rigthValue);
+		} catch (AmbiguousContextVariableException e) {
+			for (BasesCallback cb : cbs)
+				cb.ambigousContextVariable(contextVariable, p, rigthValue,
+						e.getValues());
+		}
+	}
+
+
 	private static Calendar toCalendar(Periodo periodo) {
-		int mes = Integer.parseInt(periodo.getMes()) - 1;
-		int anho = Integer.parseInt(periodo.getAnho());
+		return toCalendar(periodo.getAnho(), periodo.getMes());
+	}
+
+	private static Calendar toCalendar(String anho, String mes) {
+		int month = Integer.parseInt(mes) - 1;
+		int year = Integer.parseInt(anho);
 
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.YEAR, anho);
-		calendar.set(Calendar.MONTH, mes);
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, month);
 
 		// Reset time
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -442,127 +645,192 @@ public class Bases {
 		return calendar.getTime();
 	}
 
+	private static Date toDate(String anho, String mes, String dia) {
+		int day = Integer.parseInt(dia);
+		int month = Integer.parseInt(mes) - 1;
+		int year = Integer.parseInt(anho);
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, month);
+		calendar.set(Calendar.DAY_OF_MONTH, day);
+
+		// Reset time
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+
+		return calendar.getTime();
+	}
+
 	private static long days(Period p) {
 		return AonDateUtils.getDaysBetweenDates(p.getStart(), p.getEnd()) + 1;
 	}
 
-	private static interface CretaData {
+	private static String get(Salary salary, ContextVariable contextVariable,
+			Period p) throws NoSuchContextVariableException,
+			AmbiguousContextVariableException {
+		List<ContextData> datas = salary.getContextData().get(
+				contextVariable.getName());
 
-		String getComment();
+		if (datas == null)
+			throw new NoSuchContextVariableException(contextVariable);
 
-		void add(Salary salary, Tramo tramo, DatoSolicitado datoSolicitado,
-				TramoBuilder tramoBuilder);
+		String expression = null;
+		for (ContextData data : datas) {
+			Period intersect = p.intersect(new Period(data.getStartDate(), data
+					.getEndDate()));
+			if (intersect == null)
+				continue;
+			if (expression == null || expression.equals(data.getExpression()))
+				expression = data.getExpression();
+			else
+				throw new AmbiguousContextVariableException(contextVariable,
+						expression, data.getExpression());
+		}
+		if (expression == null)
+			throw new NoSuchContextVariableException(contextVariable);
 
+		return expression;
 	}
 
-	private static class CContextCretaData implements CretaData {
-
-		private ContextVariable contextVariable;
-
-		public CContextCretaData(ContextVariable contextVariable) {
-			this.contextVariable = contextVariable;
-		}
-
-		@Override
-		public String getComment() {
-			return contextVariable.name();
-		}
-
-		@Override
-		public void add(Salary salary, Tramo tramo,
-				DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
-			//B -> El código del dato solicitado es obligatorio.
-			//P -> El código del dato solicitado es opcional.
-			
-			double newValue = get(salary, tramo.getFechaDesde(),
-					tramo.getFechaHasta());
-			boolean optional = "P".equals(datoSolicitado.getIndicadorObligatoriedad());
-			if ( optional && newValue == 0.00 ) 
-				return;
-
-//			String oldValor = datoSolicitado.getValor();
-//			Double oldValue = Double.parseDouble(oldValor);
-
-			
-			DatoBuilder datoBuilder = new DatoBuilder();
-			datoBuilder.setCodigo(datoSolicitado.getCodigo());
-			datoBuilder.setTipo(datoSolicitado.getTipoDato());
-			datoBuilder.setImporteEuros(newValue);
-			tramoBuilder.addDato(datoBuilder.create());
-		}
-
-		public Double get(Salary salary, Fecha desde, Fecha hasta) {
-			return get(salary, new Period(toDate(desde),
-					toDate(hasta)));
-		}
-
-		protected Double get(Salary salary, Period p) {
-			List<ContextData> datas = salary.getContextData()
-					.get(contextVariable.getName());
-			if (datas == null)
-				return 0.00;
-
-			double ret = 0.00;
-			for (ContextData data : datas) {
-				Period intersect = p.intersect(new Period(data.getStartDate(),
-						data.getEndDate()));
-				if (intersect == null)
-					continue;
-
-				ret += ExpressionContext.eval(data.getExpression(),
-						Double.class) * days(intersect) / days(p);
-			}
-			return ret;
-		}
-
-	}
-	
-	private static class HContextCretaData extends CContextCretaData {
-
-		public HContextCretaData(ContextVariable contextVariable) {
-			super(contextVariable);
-		}
-		
-		@Override
-		public void add(Salary salary, Tramo tramo,
-				DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
-			//B -> El código del dato solicitado es obligatorio.
-			//P -> El código del dato solicitado es opcional.
-			
-			double newValue = get(salary, tramo.getFechaDesde(),
-					tramo.getFechaHasta());
-			boolean optional = "P".equals(datoSolicitado.getIndicadorObligatoriedad());
-			if ( optional && newValue == 0.00 ) 
-				return;
-
-//			String oldValor = datoSolicitado.getValor();
-//			Double oldValue = Double.parseDouble(oldValor);
-
-			DatoBuilder datoBuilder = new DatoBuilder();
-			datoBuilder.setCodigo(datoSolicitado.getCodigo());
-			datoBuilder.setTipo(datoSolicitado.getTipoDato());
-			datoBuilder.setHoras((int)Math.round(newValue));
-			tramoBuilder.addDato(datoBuilder.create());
-		}
-	}
-
-	private static Map<String, CretaData> CONTEXT_VARIABLE_MAP = new HashMap<String, CretaData>() {
-		{
-			put("500", new CContextCretaData(CGC_BASE));
-
-			put("501", new CContextCretaData(STRUCTURAL_OVERTIME_BASE));
-			put("502", new CContextCretaData(NON_STRUCTURAL_OVERTIME_BASE));
-			put("537", new CContextCretaData(NON_STRUCTURAL_OVERTIME_BASE));
-			put("601", new CContextCretaData(CGP_BASE));
-			put("611", new CContextCretaData(CGP_BASE));
-
-			put("01", new HContextCretaData(WORKED_HOURS));
-//			put("02", new ContextCretaData(WORKED_HOURS));
-		}
-	};
 
 	private static CretaData getCretaData(String codigo) {
 		return CONTEXT_VARIABLE_MAP.get(codigo);
+	}
+
+	// ------------------------------------------------------------------------
+	// Main
+	//
+
+	@SuppressWarnings("static-access")
+	public static void main(String[] args) throws JAXBException, SQLException,
+			ClassNotFoundException, IOException, XMLStreamException,
+			FactoryConfigurationError, TransformerConfigurationException,
+			TransformerFactoryConfigurationError {
+
+		//@formatter:off
+		Option hostName =  OptionBuilder.withArgName("name")
+					 					.hasArg()
+										.withLongOpt("host")
+										.withDescription("Connect to host.")
+										.create("h");
+		Option user =  OptionBuilder.withArgName("name")
+					 				.hasArg()
+									.isRequired(true)
+									.withLongOpt("user")
+									.withDescription("User for login.")
+									.create("u");
+		Option password =  OptionBuilder.withArgName("name")
+										.hasArg()
+										.isRequired(true)
+										.withLongOpt("password")
+										.withDescription("Password to use when connecting to server.")
+										.create("p");
+		Option database =  OptionBuilder.withArgName("name")
+										.hasArg()
+										.isRequired(true)
+										.withLongOpt("database")
+										.withDescription("Database to use.")
+										.create("D");
+		Option trabajadoresTramosFile =  OptionBuilder.withArgName("file")
+									.hasArg()
+									.withLongOpt("trabajadores-tramos")
+									.withDescription("Fichero de Trabajadores y Tramos.")
+									.create("t");
+		Option respuestaFile =  OptionBuilder.withArgName("file")
+				.hasArg()
+				.withLongOpt("respuesta")
+				.withDescription("Fichero de Respuesta.")
+				.create("r");
+		Option comments =  OptionBuilder.withLongOpt("comments")
+										.withDescription("Write additional information.")
+										.create("c");
+		
+		Option skiptPrevBases =  OptionBuilder.withLongOpt("skip-prev-bases")
+				.withDescription("Skip previous bases.")
+				.create("b");
+
+		Option pretty =  OptionBuilder.withLongOpt("pretty")
+				  .withDescription("Makes the output readable to a human.")
+				  .create();
+
+		Options options = new Options()
+		.addOption(hostName)
+		.addOption(user)
+		.addOption(password)
+		.addOption(database)
+		.addOption(comments)
+		.addOption(skiptPrevBases)
+		.addOption(pretty)
+		.addOption(trabajadoresTramosFile)
+		.addOption(respuestaFile)
+		;
+		//@formatter:on
+
+		// create the parser
+		CommandLineParser parser = new GnuParser();
+
+		try {
+			// parse the command line arguments
+			CommandLine cmd = parser.parse(options, args);
+
+			Class.forName(com.mysql.jdbc.Driver.class.getName());
+
+			Connection connection = DriverManager.getConnection(String.format(
+					"jdbc:mysql://%s:%d/%s",
+					cmd.getOptionValue(hostName.getLongOpt(), "127.0.0.1"),
+					3306, cmd.getOptionValue(database.getLongOpt())), cmd
+					.getOptionValue(user.getLongOpt()), cmd
+					.getOptionValue(password.getLongOpt()));
+
+			String path = cmd.getOptionValue(trabajadoresTramosFile
+					.getLongOpt());
+			InputStream is = AonStringUtils.isEmpty(path) ? System.in
+					: new FileInputStream(
+							cmd.getOptionValue(trabajadoresTramosFile
+									.getLongOpt()));
+
+			boolean aceptarBasesAnteriores = !cmd.hasOption(skiptPrevBases
+					.getLongOpt());
+
+			net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
+					.unmarshal(
+							net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
+							is);
+
+			AONContext ctx = new AONContext(connection);
+			BasesBuilder builder = new BasesBuilder()
+					.setAutorizado(trabajadoresTramos.getAutorizado());
+
+			XMLStreamWriter xsw = new IndentXMLStreamWriter(XMLOutputFactory
+					.newInstance().createXMLStreamWriter(System.out), "  ");
+
+			Errors errors = new Errors();
+			Comments comment = new Comments(xsw);
+
+			bases(builder, ctx, trabajadoresTramos.getLiquidacion(),
+					aceptarBasesAnteriores, errors, comment);
+			is.close();
+
+			net.aonsolutions.tgss.creta.jaxb.bases.Bases bases = builder
+					.create();
+
+			if (cmd.hasOption(comments.getLongOpt()))
+				Utils.marshal(bases, xsw, comment);
+			else
+				Utils.marshal(bases, xsw);
+
+		} catch (ParseException e) {
+			// oops, something went wrong
+			System.err.println("Parsing failed.  Reason: " + e.getMessage());
+			// automatically generate the help statement
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp("cret@", options);
+
+		}
+
 	}
 
 }

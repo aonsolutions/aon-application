@@ -36,7 +36,7 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="Liquidacion">
+	<!--  xs:element name="Liquidacion">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="Ccc"/>
@@ -58,6 +58,27 @@
 						</xs:choice>
 					</xs:sequence>
 				</xs:choice>
+				<xs:element ref="FechaHoraRecaudacion"/>
+				<xs:element ref="NumeroLiquidacion" minOccurs="0"/>
+				<xs:sequence>
+					<xs:element ref="Errores" minOccurs="0"/>
+					<xs:element ref="DatosLiquidacion" minOccurs="0"/>
+					<xs:element ref="LiquidacionMes" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="DatosNoTratados" minOccurs="0"/>
+				</xs:sequence>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element-->
+	<xs:element name="Liquidacion">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Ccc"/>
+				<xs:element ref="CccConcertado"/>
+				<xs:element ref="PeriodoDesde"/>
+				<xs:element ref="PeriodoHasta"/>
+				<xs:element ref="Tipo"/>
+				<xs:element ref="FechaControl" minOccurs="0"/>
+				<xs:element ref="AceptarBasesAnteriores" minOccurs="0"/>
 				<xs:element ref="FechaHoraRecaudacion"/>
 				<xs:element ref="NumeroLiquidacion" minOccurs="0"/>
 				<xs:sequence>
@@ -224,7 +245,7 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="LiquidacionMes">
+	<!-- xs:element name="LiquidacionMes">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="MesLiquidativo"/>
@@ -236,6 +257,16 @@
 					</xs:sequence>
 					<xs:element ref="Trabajadores"/>
 				</xs:choice>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element-->
+	<xs:element name="LiquidacionMes">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="MesLiquidativo"/>
+					<xs:element ref="Errores"/>
+					<xs:element ref="DatosMes"/>
+					<xs:element ref="Trabajadores" minOccurs="0"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -270,7 +301,7 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="Tramo">
+	<!--  xs:element name="Tramo">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="FechaDesdeAlta" minOccurs="0"/>
@@ -285,6 +316,19 @@
 					</xs:sequence>
 					<xs:element ref="DatosTramo"/>
 				</xs:choice>				
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element-->
+	<xs:element name="Tramo">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="FechaDesdeAlta" minOccurs="0"/>
+				<xs:element ref="FechaHastaAlta" minOccurs="0"/>
+				<xs:element ref="FechaDesde"/>
+				<xs:element ref="FechaHasta"/>
+				<xs:element ref="MarcaBorrado" minOccurs="0"/>
+				<xs:element ref="Errores"/>
+				<xs:element ref="DatosTramo" minOccurs="0"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

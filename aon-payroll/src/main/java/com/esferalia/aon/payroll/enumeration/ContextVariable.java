@@ -83,6 +83,7 @@ public enum ContextVariable implements IResourceable{
 	SUNDAY_HOURS("HORAS_DOMINGO", VariableType.DOUBLE, false),
 	AGREEMENT_HOURS("HORAS_CONVENIO", VariableType.DOUBLE, false),
 	WORKED_HOURS("HORAS_TRABAJADAS", VariableType.DOUBLE, false),
+	EXTRA_HOURS("HORAS_EXTRAS", VariableType.DOUBLE, false),
 
 	NIGHT("NOCTURNO", VariableType.BOOLEAN, false),
 	//NIGHT_HOURS("HORAS_NOCHE", VariableType.INTEGER, false),
@@ -106,7 +107,10 @@ public enum ContextVariable implements IResourceable{
 	NON_STRUCTURAL_OVERTIME_BASE("BASE_NESTR", VariableType.DOUBLE),
 	MATERNITY_BASE("BASE_MTNAD", VariableType.DOUBLE),
 	ERE_BASE("BASE_ERE", VariableType.DOUBLE),
-	
+
+	CGC_BASE_RAW("BASE_CGC_BRUTA", VariableType.DOUBLE),
+	CGP_BASE_RAW("BASE_CGP_BRUTA", VariableType.DOUBLE),
+
 	REGULATORY_BASE("BASE_REGULADORA", VariableType.DOUBLE, false),
 	
 	// Cuotas
