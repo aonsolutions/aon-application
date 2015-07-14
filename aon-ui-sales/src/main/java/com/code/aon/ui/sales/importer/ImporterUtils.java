@@ -262,6 +262,7 @@ public class ImporterUtils implements Serializable {
 	
 	public static void loadAmazonSellerMap() {
 		SalesAppParamController params = (SalesAppParamController) AonUtil.getRegisteredBean("salesAppParam");
+		amazonSellerMap = new HashMap<String, Seller>();
 		for(AmazonSalesChannel asc: params.getAmazonSalesChannels()){
 			amazonSellerMap.put(asc.getName(), asc.getSeller());
 		}

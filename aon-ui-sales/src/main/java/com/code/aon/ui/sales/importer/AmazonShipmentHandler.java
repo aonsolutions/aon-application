@@ -279,7 +279,7 @@ public class AmazonShipmentHandler implements SalesImporterHandler {
 		Result<Record2<Integer, String>> salesRecords = ImporterUtils.getSalesRecords(salesList.keySet());
 		if(salesRecords==null || salesRecords.size()<=0){
 			nonExistentSales = new ArrayList<AmazonSales>(salesList.values());
-			importedSalesList = new ArrayList<AmazonSales>(null);
+			importedSalesList = new ArrayList<AmazonSales>();
 		} else {
 			
 			// existing sales in data base
