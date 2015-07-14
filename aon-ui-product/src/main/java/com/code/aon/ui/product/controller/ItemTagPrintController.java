@@ -18,6 +18,8 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.enumeration.ItemTagTemplate;
 import com.code.aon.product.Item;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
@@ -150,6 +152,15 @@ public class ItemTagPrintController extends ItemController {
 		setStartPosition(1);
 		setFreeTextAll(obtainDefaultText());
 		setTagRepeatCountAll(1);
+		try {
+			Expression expNoSerializable = ExpressionUtilities.getEqualExpression(this.getFieldName(IEntityAlias.ITEM_PRODUCT_SERIALIZABLE), false);
+			Expression expSerializable = ExpressionUtilities.getEqualExpression(this.getFieldName(IEntityAlias.ITEM_PRODUCT_SERIALIZABLE), true);
+			Expression expNullSerialNumber = ExpressionUtilities.getNotNullExpression(this.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER));
+			Expression expSerializableAndNullSerial = ExpressionUtilities.getAndExpression(expSerializable, expNullSerialNumber);
+			this.getCriteria().addExpression(ExpressionUtilities.getOrExpression(expNoSerializable, expSerializableAndNullSerial));
+		} catch (ManagerBeanException e) {
+			LOGGER.error("No se ha podido filtrar los productos base");
+		}
 	}
 	
 	private String obtainDefaultText() {
