@@ -77,62 +77,54 @@ public class SalaryDAO {
 			throw new AonCoreException(AonError.EMPTY_DATE_FROM.getMessage());
 		if (to == null)
 			throw new AonCoreException(AonError.EMPTY_DATE_TO.getMessage());
-		Field<BigDecimal> sueldosYSalarios = DSL.sum(
-				DSL.round(SALARY.IRPF_BASE, 2)).as(SUM_IRPF_BASE);
-		Field<BigDecimal> totalIRPF = DSL.sum(DSL.round(SALARY.TOTAL_IRPF, 2))
-				.as(SUM_TOTAL_IRPF);
-		Field<BigDecimal> segSocEmployee = DSL.sum(
-				DSL.round(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS, 2)).as(
-				SUM_SOCIAL_SECURITY_CONTRIBUTIONS);
-		Field<BigDecimal> segSocCompany = DSL.sum(
-				DSL.round(SALARY.TOTAL_ENTERPRISE, 2)).as(SUM_TOTAL_ENTERPRISE);
-		Field<BigDecimal> totalLiquid = DSL.sum(
-				DSL.round(SALARY.TOTAL_LIQUID, 2)).as(SUM_TOTAL_LIQUID);
+		Field<BigDecimal> sueldosYSalarios = DSL.round(DSL.sum(SALARY.IRPF_BASE), 2).as(SUM_IRPF_BASE);
+		Field<BigDecimal> totalIRPF = DSL.round(DSL.sum(SALARY.TOTAL_IRPF), 2).as(SUM_TOTAL_IRPF);
+		Field<BigDecimal> segSocEmployee = DSL.round(DSL.sum(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS), 2).as(SUM_SOCIAL_SECURITY_CONTRIBUTIONS);
+		Field<BigDecimal> segSocCompany = DSL.round(DSL.sum(SALARY.TOTAL_ENTERPRISE), 2).as(SUM_TOTAL_ENTERPRISE);
+		Field<BigDecimal> totalLiquid = DSL.round(DSL.sum(SALARY.TOTAL_LIQUID), 2).as(SUM_TOTAL_LIQUID);
 
-		AggregateFunction<BigDecimal> salaryPaymentAmountSum = DSL.sum(DSL
-				.round(SALARY_PAYMENT.AMOUNT, 2));
+		AggregateFunction<BigDecimal> salaryPaymentAmountSum = DSL.sum(SALARY_PAYMENT.AMOUNT);
 		// DIETAS
-		Field<BigDecimal> dietas = DSL.sum(
+		Field<BigDecimal> dietas = DSL.round(DSL.sum(
 				DSL.select(salaryPaymentAmountSum).from(SALARY_PAYMENT)
 						.where(SALARY_PAYMENT.SALARY.equal(SALARY.ID))
 						.and(SALARY_PAYMENT.TYPE.between((byte) 42, (byte) 50))
-						.asField()).as(ALLOWANCE_SUM);
+						.asField()), 2).as(ALLOWANCE_SUM);
 
 		// INDEMNIZACIONES
-		Field<BigDecimal> indemnizaciones = DSL.sum(
+		Field<BigDecimal> indemnizaciones = DSL.round(DSL.sum(
 				DSL.select(salaryPaymentAmountSum).from(SALARY_PAYMENT)
 						.where(SALARY_PAYMENT.SALARY.equal(SALARY.ID))
 						.and(SALARY_PAYMENT.TYPE.between((byte) 51, (byte) 54))
-						.asField()).as(COMPENSATION_SUM);
+						.asField()), 2).as(COMPENSATION_SUM);
 
 		AggregateFunction<BigDecimal> salaryDeductionAmountSum = DSL.sum(DSL
 				.round(SALARY_DEDUCTION.AMOUNT, 2));
 		// OTRAS DEDUCCIONES
-		Field<BigDecimal> otherDeductions = DSL.sum(
+		Field<BigDecimal> otherDeductions = DSL.round(DSL.sum(
 				DSL.select(salaryDeductionAmountSum).from(SALARY_DEDUCTION)
 						.where(SALARY_DEDUCTION.SALARY.equal(SALARY.ID))
 						.and(SALARY_DEDUCTION.TYPE.equal(DEDUCTION_TYPE_OTHER))
-						.asField()).as(DED_OTHER_SUM);
+						.asField()), 2).as(DED_OTHER_SUM);
 		// DEDUCCIONES EN ESPECIE
-		Field<BigDecimal> inKindDeductions = DSL.sum(
+		Field<BigDecimal> inKindDeductions = DSL.round(DSL.sum(
 				DSL.select(salaryDeductionAmountSum).from(SALARY_DEDUCTION)
 						.where(SALARY_DEDUCTION.SALARY.equal(SALARY.ID))
 						.and(SALARY_DEDUCTION.TYPE.equal(DEDUCTION_IN_KIND))
-						.asField()).as(DED_IN_KIND_SUM);
+						.asField()), 2).as(DED_IN_KIND_SUM);
 		// DEDUCCIONES de ANTICIPOS
-		Field<BigDecimal> advanceDeductions = DSL.sum(
+		Field<BigDecimal> advanceDeductions = DSL.round(DSL.sum(
 				DSL.select(salaryDeductionAmountSum).from(SALARY_DEDUCTION)
 						.where(SALARY_DEDUCTION.SALARY.equal(SALARY.ID))
 						.and(SALARY_DEDUCTION.TYPE.equal(DEDUCTION_ADVANCE))
-						.asField()).as(DED_ADVANCE_SUM);
+						.asField()), 2).as(DED_ADVANCE_SUM);
 
-		AggregateFunction<BigDecimal> salaryEmbargoAmountSum = DSL.sum(DSL
-				.round(SALARY_EMBARGO.AMOUNT, 2));
+		AggregateFunction<BigDecimal> salaryEmbargoAmountSum = DSL.sum(SALARY_EMBARGO.AMOUNT);
 		// DIETAS
-		Field<BigDecimal> seize = DSL.sum(
+		Field<BigDecimal> seize = DSL.round(DSL.sum(
 				DSL.select(salaryEmbargoAmountSum).from(SALARY_EMBARGO)
 						.where(SALARY_EMBARGO.SALARY.equal(SALARY.ID))
-						.asField()).as(SEIZE_SUM);
+						.asField()), 2).as(SEIZE_SUM);
 
 		String sql = ctx
 				.getDslContext()
