@@ -79,8 +79,8 @@ public class ReservationLiquidationPrinter implements ICollectionProvider {
 				INVOICE.REFERENCE_CODE,
 				INVOICE.TOTAL,
 				PAY_METHOD.NAME,
-				DSL.sum(DSL.decode().when(FINANCE.AMOUNT.greaterOrEqual(0.0), FINANCE.AMOUNT).otherwise(0.0)),
-				DSL.sum(DSL.decode().when(FINANCE.AMOUNT.lessThan(0.0), FINANCE.AMOUNT).otherwise(0.0))
+				DSL.sum(DSL.decode().when(FINANCE.AMOUNT.lessThan(0.0), FINANCE.AMOUNT).otherwise(0.0)),
+				DSL.sum(DSL.decode().when(FINANCE.AMOUNT.greaterOrEqual(0.0), FINANCE.AMOUNT).otherwise(0.0))
 			)
 			.from(INVOICE)
 			.join(POS_SHIFT).on(INVOICE.POS_SHIFT.equal(POS_SHIFT.ID))
