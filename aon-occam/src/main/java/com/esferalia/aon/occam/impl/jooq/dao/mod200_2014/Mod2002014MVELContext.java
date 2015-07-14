@@ -75,7 +75,7 @@ public class Mod2002014MVELContext extends AccMiningMVELContext {
 	}
 	private int getDays() {
 		if ( mod200.getPeriodType() == 3) {
-			return (int) AonDateUtils.getDaysBetweenDates(mod200.getPeriodStart(), mod200.getPeriodStart());
+			return (int) AonDateUtils.getDaysBetweenDates(mod200.getPeriodStart(), mod200.getPeriodEnd());
 		}
 		return 365;
 	}
