@@ -637,7 +637,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @param salary
 	 * @param dat
 	 */
-	public void createEDLCd29Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, DAT dat) {
+	public void createEDLCd29Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, DAT dat, List<ITransferObject> salaryDataList) {
 		
 	}
 

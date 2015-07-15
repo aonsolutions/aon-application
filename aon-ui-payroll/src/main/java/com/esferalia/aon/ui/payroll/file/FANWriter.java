@@ -660,7 +660,7 @@ public class FANWriter implements Serializable {
 					}  
 				}
 
-				createBonusSegment(salary, dat, datList);
+				createBonusSegment(salary, dat, datList, salaryDataList);
 				
 			}
 //			createEDLCd05Segment(salary, dat);
@@ -682,7 +682,7 @@ public class FANWriter implements Serializable {
 	}
 	
 	
-	private void createBonusSegment(Salary salary, DAT dat, List<DAT> datList){
+	private void createBonusSegment(Salary salary, DAT dat, List<DAT> datList, List<ITransferObject> salaryDataList){
 		List<ITransferObject> bonusList = getSalaryBonuses(salary);
 		if (bonusList!=null && !bonusList.isEmpty()) {
 			SalaryBonus bonus = null;
@@ -743,7 +743,7 @@ public class FANWriter implements Serializable {
 			} catch (SQLException e) {
 				// do nothing
 			} 
-			fanFactory.createEDLCd29Segment(cgcTotalEnterprise, cgcTotalEmployee, dat);
+			fanFactory.createEDLCd29Segment(cgcTotalEnterprise, cgcTotalEmployee, dat, salaryDataList);
 			if(isContractLeave(salary.getContract())){
 				fanFactory.createEDLCd30Segment(dat);
 			}

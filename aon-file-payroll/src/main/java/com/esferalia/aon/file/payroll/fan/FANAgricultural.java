@@ -156,24 +156,39 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 	 * @param dat
 	 */
 	@Override
-	public void createEDLCd29Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, DAT dat) {
+	public void createEDLCd29Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, DAT dat, List<ITransferObject> salaryDataList) {
 		
-		Double ENTERPRISE_PERCENT = reductionPercentByYear.get(CommonUtil.getYear(new Date()));
-		Double EMPLOYEE_PERCENT = 4.7;
+		String _reductionPercent = obtainSeaReduction(salaryDataList);
 		
-		// se obtiene la cuota de la reduccion obteniendo la diferencia entre 
-		// 1) la cuota calculada a partir de la base y el porcentaje correspondiente y  
-		// 2) la cuota ya calculada (la cual ya incluye la reduccion SEA).
+		// la cuota de la reduccion se obtiene a aplicando 
+		// el porcentaje de reduccion a la base de contingencias comunes 
 		
 		Double cgcBase = new Double(dat.getEdlSegment("BA01").getImporte()/100);
-		Double cgcPercent = ENTERPRISE_PERCENT + EMPLOYEE_PERCENT;
-		Double rectifiedCgcAmount = cgcBase * cgcPercent / 100;
-		Double cgcAmount = null; 
+		Double reductionPercent = NumberUtils.isNumber(_reductionPercent)?Double.parseDouble(_reductionPercent):0.0;
 		
-		cgcAmount = cgcTotalEnterprise;
-		cgcAmount += cgcTotalEmployee;
 		EDL edl = dat.getEdlSegment("CD29");
-		super.createEDLRecord(edl, "CD", 29, new Double(CommonUtil.round(rectifiedCgcAmount-cgcAmount)*100).intValue());
+		super.createEDLRecord(edl, "CD", 29, new Double(CommonUtil.round(cgcBase*reductionPercent/100)*100).intValue());
+		
+	}
+	
+	private String obtainSeaReduction(List<ITransferObject> salaryDataList){
+		String _reductionPercent = null;
+		List<ITransferObject> list = salaryDataList;
+		for(ITransferObject to: list){
+			SalaryData sa = (SalaryData) to;
+			if(sa.getName().equals("REDUCCION_CGC_E_02")){
+				_reductionPercent = sa.getExpression();
+			}
+		}
+		if(_reductionPercent==null){
+			for(ITransferObject to: list){
+				SalaryData sa = (SalaryData) to;
+				if(sa.getName().equals("REDUCCION_CGC_E_01")){
+					_reductionPercent = sa.getExpression();
+				}
+			}
+		}
+		return _reductionPercent;
 	}
 
 	/**
@@ -201,6 +216,26 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 	// ELEMENTO CALCULADO TOTALES
 	// ****************************
 	// ****************************
+	
+	/**
+	 * 01 Contingencias Comunes
+	 * 
+	 * @param cgcTotalEnterprise
+	 * @param cgcTotalEmployee
+	 * @param emp
+	 */
+	@Override
+	public void createEDTCa01Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, EMP emp) {
+		// Para agrarios, las cuotas de contingencias comunes generadas tienen aplicadas la reduccion SEA,
+		// por lo que, a la cuota total de contingencias comunes, hay que sumarle la reduccion total,
+		// para obtener la cuota correcta 
+		EDT edtCd29 = emp.getEdtSegment("EDTCD29");
+		super.createEDTCa01Segment(cgcTotalEnterprise, cgcTotalEmployee, emp);
+		EDT edt = emp.getEdtSegment("EDTCA01");
+		edt.setParteEnteraTipo(0);
+		edt.setParteDecimalFactorTipo(0);
+		edt.setImporte(edt.getImporte()+edtCd29.getImporte());
+	}
 	
 	/**
 	13
