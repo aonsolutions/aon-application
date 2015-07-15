@@ -32,13 +32,15 @@ public class Mod2002014TreeObject implements Serializable {
 	private int domain;
 	private int year;
 	private Integer id;
+	private boolean complementary;
 	private Mod2002014 mod200;
 	
 	private boolean authomaticCalculation = true;
 	
-	public Mod2002014TreeObject(String currentDomainName,int currentDomain,int year,Integer id) {
+	public Mod2002014TreeObject(String currentDomainName,int currentDomain,int year,Integer id, boolean complementary) {
 		this(currentDomainName, currentDomain, year);
 		this.id = id;
+		this.complementary = complementary;
 	}
 
 	public Mod2002014TreeObject(String currentDomainName,int currentDomain,int year) {
@@ -56,7 +58,12 @@ public class Mod2002014TreeObject implements Serializable {
 	public boolean isInitialized() {
 		return initialized;
 	}
-	
+	public boolean isComplementary() {
+		return complementary;
+	}
+	public void setComplementary(boolean complementary) {
+		this.complementary = complementary;
+	}
 	public void register(IMod200ChangeListener listener) {
 		if (changeListeners == null) {
 			changeListeners = new LinkedList<IMod200ChangeListener>();
@@ -98,7 +105,9 @@ public class Mod2002014TreeObject implements Serializable {
 			@Override
 			public void onSuccess(Mod2002014 result) {
 				mod200 = result;
+				id = mod200.getId();
 				callback.onSuccess(result);
+				changeNodeLabel();
 			}
 			
 			@Override
@@ -161,6 +170,25 @@ public class Mod2002014TreeObject implements Serializable {
 			}
 		});
 	}
+	
+	public void createMod200(final AsyncCallback<Mod2002014> callback) {
+		FiscalTree.FISCAL_SERVICE.createMod2002014(domainName,domain, year, new AsyncCallback<Mod2002014>() {
+			
+			@Override
+			public void onSuccess(Mod2002014 result) {
+				mod200 = result;
+				initialized = false;
+				callback.onSuccess(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				initialized = false;
+				callback.onFailure(caught);
+			}
+		});
+	}
+	
 	public void fillMod2002014AccountingData(final AsyncCallback<Mod2002014> callback) {
 		FiscalTree.FISCAL_SERVICE.fillMod2002014AccountingData(mod200, new AsyncCallback<Mod2002014>() {
 			
@@ -288,4 +316,10 @@ public class Mod2002014TreeObject implements Serializable {
 	public void deleteFromTree() {
 		fiscalTreeCallback.remove(this);
 	}
+	public void changeNodeLabel() {
+		if (fiscalTreeCallback != null) {
+			fiscalTreeCallback.changeLabel(Mod2002014TreeObject.this);
+		}
+	}
+
 }

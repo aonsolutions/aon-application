@@ -289,6 +289,14 @@ public class Mod2002014DAO  {
 		initializeActiveMap(mod200);
 		return mod200;
 	}
+	
+	public static Mod2002014 createNewMod200(AONContext ctx, int year) {
+		Mod2002014 mod200 = new Mod2002014();
+		mod200.setDomain(ctx.getDomainId());
+		mod200.setYear(year);
+		initializeNewMod200(ctx,mod200);
+		return mod200;
+	}
 
 	public static Mod2002014 getByYear(AONContext ctx, int year) {
 		FsModel200Record record = ctx.getDslContext()
@@ -298,10 +306,7 @@ public class Mod2002014DAO  {
 				.fetchOne();
 		Mod2002014 mod200 = populateMod200(ctx,record);
 		if (mod200 == null) {
-			mod200 = new Mod2002014();
-			mod200.setDomain(ctx.getDomainId());
-			mod200.setYear(year);
-			initializeNewMod200(ctx,mod200);
+			createNewMod200(ctx, year);
 		} else {
 			initializeActiveMap(mod200);
 		}

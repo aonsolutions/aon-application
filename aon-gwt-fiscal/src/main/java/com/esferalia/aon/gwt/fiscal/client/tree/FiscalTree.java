@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.fiscal.client.tree.node.FiscalModelsTreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.FiscalModelsTreeNode.TreeNodeFiscalModelTypes;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002013TreeObject;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002014TreeObject;
+import com.esferalia.aon.gwt.fiscal.client.tree.node.Model2002014TreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.ModelTreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.TreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.TreeNodeTypes;
@@ -59,6 +60,7 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 	public static FiscalServiceAsync FISCAL_SERVICE;
 	
 	public static interface FiscalTreeCallback<T> {
+		void changeLabel( T treeObject);
 		void remove( T treeObject);
 		void onError( T treeObject);
 	}
@@ -213,7 +215,7 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 		// TreeNodeTypes.FISCAL_ACTIVITY_GROUP.getInstance().render(rootNode,enterprise);
 		
 		// Nodo:  "Deposito Digital"
-		TreeNode<Enterprise> digitalDeposit = TreeNodeTypes.DIGITAL_DEPOSIT.getInstance().render(rootNode, enterprise);
+		TreeNodeTypes.DIGITAL_DEPOSIT.getInstance().render(rootNode, enterprise);
 		
 
 		rootNode.setState(true);
@@ -448,9 +450,9 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 								public void onSuccess(Mod2002014 mod200) {
 		        					final ModelTreeNode parentNode = getFiscalModelsNode().getModelNode(
 		        							mod200.getYear(),FiscalModelType.M200);
-		        					final TreeNode<Mod2002014TreeObject> node = 
+		        					final Model2002014TreeNode node = (Model2002014TreeNode)  
 		        						TreeNodeFiscalModelTypes.CORPORATE_TAX_2014.getInstance().render(parentNode
-		            		    			,TreeNodeFiscalModelTypes.MODEL_200_2014.getFiscalModel(mod200));
+										,TreeNodeFiscalModelTypes.MODEL_200_2014.getFiscalModel(mod200));
 		        					node.getTreeObject().setFiscalTreeCallback(new FiscalTreeCallback<Mod2002014TreeObject>() {
 										
 										@Override
@@ -458,10 +460,12 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 											node.remove();
 											parentNode.getTree().setSelectedItem(parentNode);
 										}
-
 										@Override
-										public void onError(Mod2002014TreeObject treeObject) {
-											
+										public void onError(Mod2002014TreeObject treeObject) {}
+										
+										@Override
+										public void changeLabel(Mod2002014TreeObject treeObject) {
+											node.setLabel(treeObject);
 										}
 									});
 

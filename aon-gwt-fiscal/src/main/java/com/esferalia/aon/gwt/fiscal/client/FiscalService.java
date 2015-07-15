@@ -128,6 +128,7 @@ public interface FiscalService extends RemoteService {
 	String dumpAEATMod2002013(Mod2002013 mod200) throws AonCoreException;
 
 	// ---------------------------------------------------------------MODELO 200 - 2014
+	Mod2002014 createMod2002014(String domainName,int domain,int year) throws AonCoreException;
 	Mod2002014 initializeNewMod2002014(String domainName,int domain,Mod2002014 mod200) throws AonCoreException;
 	Mod2002014 initializeMod2002014(String domainName,int domain,Mod2002014 mod200) throws AonCoreException;
 	Mod2002014 getMod2002014ByYear(String domainName,int domain, int year) throws AonCoreException;

@@ -319,6 +319,12 @@ public class Page00 extends PageAbs {
 		cf.setStyleName(3, AON.AON_CSS.aonWidthHalf());
 	}
 	
+	@UiHandler("complementary")
+	void onChangeComplementary(ClickEvent event) {
+		mod200Object.setComplementary(complementary.getValue());
+		mod200Object.changeNodeLabel();
+	}
+
 	@UiHandler("showCnae")
 	void onSelectCnae(ClickEvent event) {
 		cnaePanel.onShow();

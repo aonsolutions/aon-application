@@ -395,6 +395,10 @@ public class FiscalImpl implements IFiscal {
 
 	// ----------------------------------------------------------- [MODELO 200 - 2014]
 	@Override
+	public Mod2002014 createMod2002014(AONContext ctx, int year) {
+		return Mod2002014DAO.createNewMod200(ctx,year);
+	}
+	@Override
 	public Mod2002014 initializeNewMod2002014(AONContext ctx, Mod2002014 mod200) {
 		return Mod2002014DAO.initializeNewMod200(ctx,mod200);
 	}

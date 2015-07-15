@@ -110,6 +110,7 @@ public interface IFiscal {
 	public String dumpAEATMod2002013(Mod2002013 mod200);
 
 	// 				   		  MOD200 - 2014
+	public Mod2002014 createMod2002014(AONContext ctx, int year);
 	public Mod2002014 initializeNewMod2002014(AONContext ctx, Mod2002014 mod200);
 	public Mod2002014 initializeMod2002014(AONContext ctx, Mod2002014 mod200);
 	public Mod2002014 getMod2002014ByYear(AONContext ctx, int year);
@@ -120,5 +121,6 @@ public interface IFiscal {
 	public void deleteMod2002014(AONContext ctx, int id);
 	public String dumpAEATMod2002014(Mod2002014 mod200);
 	public Mod2002014 importMod2002013(AONContext ctx, Mod2002014 mod200);
+	
 
 }

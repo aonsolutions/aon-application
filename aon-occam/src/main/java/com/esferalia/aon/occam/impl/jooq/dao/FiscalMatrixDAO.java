@@ -326,7 +326,7 @@ public class FiscalMatrixDAO {
 
 	private static Stream<IFiscalModel> fillModel200(AONContext ctx, int domain, int year, int user) {
 		return ctx.getDslContext()
-				.select(FS_MODEL200.ID,FS_MODEL200.YEAR,FS_MODEL200.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
+				.select(FS_MODEL200.ID,FS_MODEL200.YEAR,FS_MODEL200.ADMINISTRATION,FS_MODEL200.COMPLEMENTARY,DOMAIN.ID,DOMAIN.DESCRIPTION)
 				.from(FS_MODEL200)
 				.join(DOMAIN).onKey()
 				.where(FS_MODEL200.DOMAIN.equal(domain))
@@ -351,6 +351,7 @@ public class FiscalMatrixDAO {
 					.setModel( FiscalModelType.M200)
 					.setPeriod(Period.YEAR)
 					.setYear(rec.getValue(FS_MODEL200.YEAR))
+					.setComplementary(rec.getValue(FS_MODEL200.COMPLEMENTARY)==1)
 					.setStatus(FiscalStatus.PENDING) // TODO ??
 				)
 				.stream();

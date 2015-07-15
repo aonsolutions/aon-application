@@ -306,7 +306,7 @@ public class Model2002014 extends ResizeComposite  {
 		if (mod200Object.getId() != null ) {
 			mod200Object.getMod200ById( callback );
 		} else {
-			mod200Object.getMod200ByYear( callback );
+			mod200Object.createMod200( callback );
 		}
 	}
 	

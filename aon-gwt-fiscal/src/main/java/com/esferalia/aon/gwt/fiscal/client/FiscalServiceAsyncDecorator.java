@@ -568,6 +568,14 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 	// ---------------------------------------------------------------MODELO 200 - 2014
 
 	@Override
+	public void createMod2002014(String domainName, int domain, int year,
+			AsyncCallback<Mod2002014> callback) {
+		AON.start();
+		fsa.createMod2002014(domainName,domain, year,  
+				new AsyncCallbackWrapper<Mod2002014>(callback));
+	}
+
+	@Override
 	public void initializeNewMod2002014(String domainName, int domain, Mod2002014 mod200,
 			AsyncCallback<Mod2002014> callback) {
 		AON.start();
@@ -667,8 +675,5 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fsa.deleteMemory(memory, new AsyncCallbackWrapper<Void>(callback));
 	}
-
-
-
 
 }

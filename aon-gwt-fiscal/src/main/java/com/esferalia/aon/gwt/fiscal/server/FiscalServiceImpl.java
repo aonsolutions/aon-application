@@ -434,6 +434,13 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	}
 	
 	// ---------------------------------------------------------------MODELO 200 - 2014
+
+	@Override
+	public Mod2002014 createMod2002014(String domainName, int domain, int year)
+			throws AonCoreException {
+		return AON.createMod2002014(domainName,domain,year);
+	}
+
 	@Override
 	public Mod2002014 initializeNewMod2002014(String domainName, int domain, Mod2002014 mod200) {
 		return AON.initializeNewMod2002014(domainName,domain,mod200);
@@ -535,6 +542,4 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	public void deleteMemory(Memory memory) throws AonCoreException {
 		// TODO
 	}
-
-	
 }

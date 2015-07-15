@@ -83,6 +83,7 @@ public class FiscalModelsTreeNode extends TreeNode<Enterprise> {
 			}
 			@Override
 			public Mod2002013TreeObject getFiscalModel(IFiscalModel fm) {
+				
 				Mod2002013TreeObject treeObj = fm.getId() == null
 					?new Mod2002013TreeObject(FiscalTree.getCurrentDomainName(), fm.getDomain(), fm.getYear())
 					:new Mod2002013TreeObject(FiscalTree.getCurrentDomainName(), fm.getDomain(), fm.getYear(), fm.getId());
@@ -103,7 +104,7 @@ public class FiscalModelsTreeNode extends TreeNode<Enterprise> {
 			public Mod2002014TreeObject getFiscalModel(IFiscalModel fm) {
 				Mod2002014TreeObject treeObj = fm.getId() == null
 					?new Mod2002014TreeObject(FiscalTree.getCurrentDomainName(), fm.getDomain(), fm.getYear())
-					:new Mod2002014TreeObject(FiscalTree.getCurrentDomainName(), fm.getDomain(), fm.getYear(), fm.getId());
+					:new Mod2002014TreeObject(FiscalTree.getCurrentDomainName(), fm.getDomain(), fm.getYear(), fm.getId(), fm.isComplementary());
 				return treeObj;
 			}
 		};
@@ -246,11 +247,11 @@ public class FiscalModelsTreeNode extends TreeNode<Enterprise> {
 									item.remove();
 									parentNode.getTree().setSelectedItem(parentNode);
 								}
-
 								@Override
-								public void onError(Mod2002013TreeObject treeObject) {
-									
-								}
+								public void onError(Mod2002013TreeObject treeObject) {}
+								@Override
+								public void changeLabel(Mod2002013TreeObject treeObject) {}
+								
 							});
             		    	parentNode.setState(true);
         				} else if (TreeNodeFiscalModelTypes.MODEL_200_2014.accept(fm) ) {
@@ -268,6 +269,9 @@ public class FiscalModelsTreeNode extends TreeNode<Enterprise> {
 								@Override
 								public void onError(Mod2002014TreeObject treeObject) {
 									
+								}
+								@Override
+								public void changeLabel(Mod2002014TreeObject treeObject) {
 								}
 							});
             		    	parentNode.setState(true);

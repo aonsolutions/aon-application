@@ -1141,6 +1141,18 @@ public class AON {
 	}
 
 	// ----------------------------------MODELO 200 - 2014
+	public static Mod2002014 createMod2002014(String domainName,
+			int domain, int year) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain);
+			return getFiscal().createMod2002014(ctx, year);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static Mod2002014 initializeNewMod2002014(String domainName,
 			int domain, Mod2002014 mod200) {
 		AONContext ctx = null;
