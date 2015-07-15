@@ -12,7 +12,7 @@ import com.code.aon.AonVersion;
 import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
 
-public class ServletUtils implements ISQLConstants, Serializable {
+public class ServletUtils implements Serializable, ISQLConstants {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 

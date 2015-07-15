@@ -5,6 +5,7 @@ public interface ISQLConstants {
 	String ID = "id";
 	String DOMAIN = "domain";
 	String LOGIN = "login";
+	String PROJECT = "project";
 	String PROJECT_RESERVATION_ROOM = "project_reservation_room";
 	String AGENCY = "agency";
 	String AGENCY_GROUP = "agency_group";
@@ -30,8 +31,6 @@ public interface ISQLConstants {
 	String START_DATE = "startDate";
 	String END_DATE = "endDate";
 	String GUEST = "guest";
-	String GUEST_NAME = "guestName";
-	String GUEST_DOCUMENT = "guestDocument";
 	String HOLDER = "holder";
 	String STATUS = "status";
 	String CHECK_STATUS = "checkStatus";
@@ -73,9 +72,26 @@ public interface ISQLConstants {
 	String RESPONSE_DETAIL = "response_detail";
 	String EMAIL = "email";
 	String PHONE = "phone";
-	String GUEST_EMAIL = "guest_email";
-	String GUEST_PHONE = "guest_phone";
+
+	String GUEST_ID = "guestId";
+	String GUEST_INDEX = "guestIndex";
+	String GUEST_NAME = "guestName";
+	String GUEST_SURNAME = "guestSurname";
+	String GUEST_SURNAME2 = "guestSurname2";
+	String GUEST_DOCUMENT = "guestDocument";
+	String GUEST_DOCUMENT_TYPE = "guestDocument_type";
+	String GUEST_DOCUMENT_COUNTRY = "guestDocument_country";
+	String GUEST_BIRTH_DATE = "guestBirth_date";
+	String GUEST_ADDRESS = "guestAddress";
+	String GUEST_CITY = "guestCity";
+	String GUEST_PROVINCE = "guestProvince";
+	String GUEST_COUNTRY = "guestCountry";
+	String GUEST_BARCODE = "guestBarcode";
+	String GUEST_EMAIL = "guestEmail";
+	String GUEST_PHONE = "guestPhone";
+	String PERSON_GENDER = "personGender";
 
 	String SERVLET_LOGIN = "PMS_SERVLET_LOGIN";
+	String SERVLET_USER = "usuario";
 
 }
