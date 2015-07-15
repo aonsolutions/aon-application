@@ -34,6 +34,7 @@ import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
+import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
@@ -66,7 +67,8 @@ public class NoShowInvoicing {
 	}
 
 	public Invoice invoice(NoShowInvoiceTo noShowInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
-		if (reservation.getHotelReservation().getItemNoShow() != null && reservation.getHotelReservation().getItemNoShow().getId() != null) {
+		Item itemNoShow = reservation.getHotelReservation().getItemNoShow();
+		if (!reservation.isInvoiced() && itemNoShow != null && itemNoShow.getId() != null) {
 			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 			boolean mustCloseSession = HibernateUtil.mustCloseSession();
 			String sessionName = HibernateUtil.getSessionFactoryName();

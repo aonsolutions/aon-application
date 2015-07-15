@@ -29,6 +29,7 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
@@ -61,7 +62,8 @@ public class AdvanceInvoicing {
 	}
 
 	public Invoice invoice(AdvanceInvoiceTo advanceInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
-		if (reservation.getHotelReservation().getItemAdvance() != null && reservation.getHotelReservation().getItemAdvance().getId() != null) {
+		Item itemAdvance = reservation.getHotelReservation().getItemAdvance();
+		if (itemAdvance != null && itemAdvance.getId() != null) {
 			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 			boolean mustCloseSession = HibernateUtil.mustCloseSession();
 			String sessionName = HibernateUtil.getSessionFactoryName();
