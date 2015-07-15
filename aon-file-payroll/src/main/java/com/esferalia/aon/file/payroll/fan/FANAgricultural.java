@@ -231,47 +231,6 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 	// ****************************
 	
 	/**
-	 * 01 Contingencias Comunes
-	 * 
-	 * @param cgcTotalEnterprise
-	 * @param cgcTotalEmployee
-	 * @param emp
-	 */
-	@Override
-	public void createEDTCa01Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, EMP emp) {
-		// Para agrarios, las cuotas de contingencias comunes generadas tienen aplicadas la reduccion SEA,
-		// por lo que, a la cuota total de contingencias comunes, hay que sumarle la reduccion total,
-		// para obtener la cuota correcta 
-		Integer reductionAmount = 0;
-		for (TRA tra : emp.getTrabajadores()) {
-			for (DAT dat : tra.getDat()) {
-				reductionAmount += dat.getEdl().containsKey("CD29") ? dat.getEdlSegment("CD29").getImporte() : 0;
-			}
-		}
-		
-		Integer base = emp.getEdt().containsKey("EDTBA01") ? emp.getEdtSegment("EDTBA01").getBase() : 0;
-		
-		Double amount = 0.0;
-		amount += cgcTotalEnterprise;
-		amount += cgcTotalEmployee;
-		amount = CommonUtil.round(amount, 2);
-
-		if (base != 0) {
-			EDT edt = emp.getEdtSegment("EDTCA01");
-			edt.setTipoElemento("CA");
-			edt.setClave(1);
-			edt.setCalificadorClave(null);
-			edt.setBase(base);
-			edt.setIndicadorFactorTipo("T");
-			edt.setParteEnteraTipo(0);
-			edt.setParteDecimalFactorTipo(0);
-			edt.setImporte((new Double(amount * 100)).intValue()+reductionAmount);
-			edt.setSigno(" ");
-		}
-		
-	}
-	
-	/**
 	13
 	Cotización especial de solidaridad.
 	=EDLBA01+EDLBA21
