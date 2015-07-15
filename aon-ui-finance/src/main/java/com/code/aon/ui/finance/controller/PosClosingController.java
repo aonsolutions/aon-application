@@ -156,6 +156,7 @@ public class PosClosingController implements IFinanceConstants, Serializable {
 				if (getPosShift().getPos().isInvoiceable()) {
 	                PosInvoicing posInvoicing = new PosInvoicing();
 	                Invoice invoice = posInvoicing.completeInvoice(getPosShift(), ticketInfo);
+					onSave(event);
 	
 	        		AccountEntryInvoiceWriter entryWriter = new AccountEntryInvoiceWriter();
 	        		entryWriter.recordAndUpdateInvoice(invoice);

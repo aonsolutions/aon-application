@@ -142,7 +142,7 @@ public class PosOpeningController implements Serializable {
 			getPosShift().setInitialAmount(getPosShift().getAmount());
 			setPosShift((PosShift)BeanManager.getManagerBean(PosShift.class).insertOrUpdate(getPosShift()));
 
-            if (getPosShift().getId() == null && getPosShift().getPos().isInvoiceable()) {
+            if (getPosShift().getPos().isInvoiceable()) {
                 PosInvoicing posInvoicing = new PosInvoicing();
     			posInvoicing.createInvoice(getPosShift(), getPosShift().getShift().getName(AonUtil.getCurrentLocale()));
             }
