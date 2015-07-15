@@ -4,13 +4,11 @@ import java.text.ParseException;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
-import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2PDepositConstants;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.common.collect.Table;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -64,10 +62,108 @@ public class PageH4 extends PageAbs {
 
 	@Override
 	protected void initializeTable() {
-		table();
-		table1();
+		//table(); //NO EN PYMES
+		//table1();
+		
+		table4Pymes();
 
 
+	}
+	
+	private void table4Pymes () {
+		table1.setWidth("100%");
+		table1.setCellSpacing(0);
+		table1.getColumnFormatter().setWidth(1, "200px");
+		table1.getColumnFormatter().setWidth(2, "200px");
+		table1.getColumnFormatter().setWidth(3, "200px");
+		
+		table1.getColumnFormatter().setWidth(4, "200px");
+		table1.getColumnFormatter().setWidth(5, "200px");
+		table1.getColumnFormatter().setWidth(6, "200px");
+		table1.getColumnFormatter().setWidth(7, "200px");
+		table1.getColumnFormatter().setWidth(8, "200px");
+		table1.getColumnFormatter().setWidth(9, "200px");
+		
+		table1.getColumnFormatter().setWidth(10, "200px");
+		table1.getColumnFormatter().setWidth(11, "200px");
+		table1.getColumnFormatter().setWidth(12, "200px");
+
+		
+		int row = 0;
+
+		table1.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
+		table1.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
+		table1.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
+		table1.setWidget(row, 1, new Label("Capital escriturado"));
+		table1.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
+		table1.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
+		table1.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
+		table1.setWidget(row, 2, new Label("Capital (no exigido)"));
+		table1.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBold());
+		table1.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBorderBottom());
+		table1.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextCenter());
+		table1.setWidget(row, 3, new Label("Prima de emisi\u00F3n"));
+		table1.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBold());
+		table1.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBorderBottom());
+		table1.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonTextCenter());
+		table1.setWidget(row, 4, new Label("Reservas"));
+		table1.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonBold());
+		table1.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonBorderBottom());
+		table1.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonTextCenter());
+		table1.setWidget(row, 5, new Label("Acciones y participaciones en patrimonio propias"));
+		table1.getFlexCellFormatter().addStyleName(row, 5, AON.AON_CSS.aonBold());
+		table1.getFlexCellFormatter().addStyleName(row, 5, AON.AON_CSS.aonBorderBottom());
+		table1.getFlexCellFormatter().addStyleName(row, 5, AON.AON_CSS.aonTextCenter());
+		table1.setWidget(row, 6, new Label("Resultados de ejercicios anteriores"));
+		table1.getFlexCellFormatter().addStyleName(row, 6, AON.AON_CSS.aonBold());
+		table1.getFlexCellFormatter().addStyleName(row, 6, AON.AON_CSS.aonBorderBottom());
+		table1.getFlexCellFormatter().addStyleName(row, 6, AON.AON_CSS.aonTextCenter());
+		table1.setWidget(row, 7, new Label("Otras aportaciones de socios"));
+		table1.getFlexCellFormatter().addStyleName(row, 7, AON.AON_CSS.aonBold());
+		table1.getFlexCellFormatter().addStyleName(row, 7, AON.AON_CSS.aonBorderBottom());
+		table1.getFlexCellFormatter().addStyleName(row, 7, AON.AON_CSS.aonTextCenter());
+		table1.setWidget(row, 8, new Label("Resultados del ejercicio"));
+		table1.getFlexCellFormatter().addStyleName(row, 8, AON.AON_CSS.aonBold());
+		table1.getFlexCellFormatter().addStyleName(row, 8, AON.AON_CSS.aonBorderBottom());
+		table1.getFlexCellFormatter().addStyleName(row, 8, AON.AON_CSS.aonTextCenter());
+		table1.setWidget(row, 9, new Label("Dividendo a cuenta"));
+		table1.getFlexCellFormatter().addStyleName(row, 9, AON.AON_CSS.aonBold());
+		table1.getFlexCellFormatter().addStyleName(row, 9, AON.AON_CSS.aonBorderBottom());
+		table1.getFlexCellFormatter().addStyleName(row, 9, AON.AON_CSS.aonTextCenter());
+		table1.setWidget(row, 10, new Label("Ajustes en patrimonio neto"));
+		table1.getFlexCellFormatter().addStyleName(row, 10, AON.AON_CSS.aonBold());
+		table1.getFlexCellFormatter().addStyleName(row, 10, AON.AON_CSS.aonBorderBottom());
+		table1.getFlexCellFormatter().addStyleName(row, 10, AON.AON_CSS.aonTextCenter());
+		table1.setWidget(row, 11, new Label("Subvenciones, donaciones y legados recibidos"));
+		table1.getFlexCellFormatter().addStyleName(row, 11, AON.AON_CSS.aonBold());
+		table1.getFlexCellFormatter().addStyleName(row, 11, AON.AON_CSS.aonBorderBottom());
+		table1.getFlexCellFormatter().addStyleName(row, 11, AON.AON_CSS.aonTextCenter());
+		table1.setWidget(row, 12, new Label("Total"));
+		table1.getFlexCellFormatter().addStyleName(row, 12, AON.AON_CSS.aonBold());
+		table1.getFlexCellFormatter().addStyleName(row, 12, AON.AON_CSS.aonBorderBottom());
+		table1.getFlexCellFormatter().addStyleName(row, 12, AON.AON_CSS.aonTextCenter());
+		
+		++row;
+		
+		//******************************** PYMES **************************
+		for(Integer i = 0; i< D2PDepositConstants.PNP_ABREVIATE_KEYS_1.length; i+=12){
+			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
+					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i],
+					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+1],
+					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+2],
+					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+3],
+					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+4],
+					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+5],
+					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+6],
+					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+7],
+					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+8],
+					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+9],
+					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+10],
+					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+11],
+				//	D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+12],
+			};
+			row = paintKey(table1, d2 , row);
+		}
 	}
 	
 	private void table1(){
@@ -148,6 +244,28 @@ public class PageH4 extends PageAbs {
 		table1.getFlexCellFormatter().addStyleName(row, 13, AON.AON_CSS.aonTextCenter());
 		
 		++row;
+		
+		//******************************** PYMES **************************
+//		for(Integer i = 0; i< D2PDepositConstants.PNP_ABREVIATE_KEYS_1.length; i+=13){
+//			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
+//					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i],
+//					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+1],
+//					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+2],
+//					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+3],
+//					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+4],
+//					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+5],
+//					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+6],
+//					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+7],
+//					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+8],
+//					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+9],
+//					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+10],
+//					D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+11],
+//				//	D2PDepositConstants.PNP_ABREVIATE_KEYS_1[i+12],
+//			};
+//			row = paintKey(table1, d2 , row);
+//		}
+
+		//******************************** ABREVIADO **************************		
 		for(Integer i = 0; i< D2DepositConstants.PNA_ABREVIATE_KEYS_2.length; i+=13){
 			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
 					D2DepositConstants.PNA_ABREVIATE_KEYS_2[i],

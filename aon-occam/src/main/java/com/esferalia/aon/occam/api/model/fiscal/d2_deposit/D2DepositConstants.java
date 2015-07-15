@@ -1,9 +1,6 @@
 package com.esferalia.aon.occam.api.model.fiscal.d2_deposit;
 
 
-
-
-
 public class D2DepositConstants {
 	
 	public static D2DepositHeaderKey[] IDA_ABREVIATE_KEYS = new D2DepositHeaderKey[]{
@@ -18,6 +15,7 @@ public class D2DepositConstants {
 		D2DepositHeaderKey.IDA041219, D2DepositHeaderKey.IDA04122, D2DepositHeaderKey.IDA041229, D2DepositHeaderKey.IDA04123,
 		D2DepositHeaderKey.IDA041239, D2DepositHeaderKey.IDA09001, D2DepositHeaderKey.IDA09002, D2DepositHeaderKey.IDA09003
 	};
+	
 	public static D2DepositHeaderKey[] IMA_ABREVIATE_KEYS = new D2DepositHeaderKey[]{
 		D2DepositHeaderKey.IMA8099000, D2DepositHeaderKey.IMA8099010
 	};
@@ -233,8 +231,9 @@ public class D2DepositConstants {
 		
 	};
 
+
 	public static D2DepositHeaderKey[] BA_ABREVIATE_KEYS_1 = new D2DepositHeaderKey[]{
-		D2DepositHeaderKey.BA11100098
+		 D2DepositHeaderKey.BA11100098
 		,D2DepositHeaderKey.BA111000
 		,D2DepositHeaderKey.BA1110009
 		,D2DepositHeaderKey.BA11110098
@@ -385,6 +384,7 @@ public class D2DepositConstants {
 		
 	};
 	
+	
 	public static D2DepositHeaderKey[] BA_ABREVIATE_KEYS_3 = new D2DepositHeaderKey[]{
 		D2DepositHeaderKey.BA2232000
 		,D2DepositHeaderKey.BA2232100
@@ -435,6 +435,7 @@ public class D2DepositConstants {
 		,D2DepositHeaderKey.BA223270098
 		,D2DepositHeaderKey.BA223000098
 	};
+
 	public static D2DepositHeaderKey[] PA_ABREVIATE_KEYS = new D2DepositHeaderKey[]{
 
 	D2DepositHeaderKey.PA40100
@@ -525,6 +526,8 @@ public class D2DepositConstants {
 	,D2DepositHeaderKey.PA4930098
 	,D2DepositHeaderKey.PA4950098
 	};
+	
+
 	
 	public static D2DepositHeaderKey[] PNA_ABREVIATE_KEYS = new D2DepositHeaderKey[]{
 
@@ -907,6 +910,9 @@ public class D2DepositConstants {
 	,D2DepositHeaderKey.PNA252513
 	};
 	
+	
+
+	
 	public static D2DepositHeaderKey[] PNA_ABREVIATE_KEYS_1 = new D2DepositHeaderKey[]{
 
 	D2DepositHeaderKey.PNA159100
@@ -963,8 +969,7 @@ public class D2DepositConstants {
 	,D2DepositHeaderKey.PNA15930098
 	,D2DepositHeaderKey.PNA15940098
 	};
-	
-	
+
 	public static D2DepositHeaderKey[] PNA_ABREVIATE_KEYS_2 = new D2DepositHeaderKey[]{
 		D2DepositHeaderKey.PNA251101
 		,D2DepositHeaderKey.PNA251102
@@ -1292,6 +1297,8 @@ public class D2DepositConstants {
 		,D2DepositHeaderKey.PNA252512
 		,D2DepositHeaderKey.PNA252513
 	};
+
+	
 	public static D2DepositKey[] MAT1_ABREVIATE_KEYS = new D2DepositKey[]{
 		D2DepositKey.MAT19019001
 	};
@@ -1314,6 +1321,8 @@ public class D2DepositConstants {
 		D2DepositKey.MA391012, D2DepositKey.MA3910129
 	};
 	
+
+	
 	public static D2DepositKey[] MA3_ABREVIATE_KEYS_1 = new D2DepositKey[]{
 		D2DepositKey.MA391000, D2DepositKey.MA391001,
 		D2DepositKey.MA391002, D2DepositKey.MA391003,
@@ -1332,6 +1341,8 @@ public class D2DepositConstants {
 		D2DepositKey.MA391009, D2DepositKey.MA391010, 
 		D2DepositKey.MA391011, D2DepositKey.MA391012
 	};
+	
+
 	
 	public static D2DepositKey[] MA3_ABREVIATE_KEYS_4 = new D2DepositKey[]{
 		D2DepositKey.MA3910059, D2DepositKey.MA3910069, 
@@ -1667,7 +1678,6 @@ public class D2DepositConstants {
 	,D2DepositKey.MA61931539
 	,D2DepositKey.MA6193154
 	,D2DepositKey.MA61931549
-
 	
 	
 	,D2DepositKey.MA6193201
@@ -1847,6 +1857,7 @@ public class D2DepositConstants {
 	,D2DepositKey.MA6293534
 	,D2DepositKey.MA6293535
 	};
+
 	
 	public static D2DepositKey[] MA6_ABREVIATE_KEYS_1 = new D2DepositKey[]{
 		D2DepositKey.MA6193001
@@ -1958,9 +1969,8 @@ public class D2DepositConstants {
 		,D2DepositKey.MA61931539
 		,D2DepositKey.MA6193154
 		,D2DepositKey.MA61931549
-		
 	};
-	
+
 	public static D2DepositKey[] MA6_ABREVIATE_KEYS_3 = new D2DepositKey[]{
 		D2DepositKey.MA6193201
 		,D2DepositKey.MA61932019
@@ -1997,6 +2007,7 @@ public class D2DepositConstants {
 		,D2DepositKey.MA6193243
 		,D2DepositKey.MA61932439
 	};
+	
 	public static D2DepositKey[] MA6_ABREVIATE_KEYS_4 = new D2DepositKey[]{
 		D2DepositKey.MA6293301
 		,D2DepositKey.MA6293302
@@ -2111,6 +2122,8 @@ public class D2DepositConstants {
 		,D2DepositKey.MA62934339
 		,D2DepositKey.MA62934349
 	};
+
+	
 	public static D2DepositKey[] MA6_ABREVIATE_KEYS_6 = new D2DepositKey[]{
 		D2DepositKey.MA62935059
 		,D2DepositKey.MA6293501
@@ -2203,7 +2216,6 @@ public class D2DepositConstants {
 		,D2DepositKey.MA11960169
 	};
 	
-	
 	public static D2DepositKey[] MA11_ABREVIATE_KEYS_1 = new D2DepositKey[]{
 		D2DepositKey.MA1196000
 		,D2DepositKey.MA11960009
@@ -2277,6 +2289,7 @@ public class D2DepositConstants {
 	,D2DepositKey.MA1095020
 	,D2DepositKey.MA10950209
 	};
+	
 	public static D2DepositKey[] MA7_ABREVIATE_KEYS = new D2DepositKey[]{
 		D2DepositKey.MA794001
 	,D2DepositKey.MA7940019
@@ -3458,6 +3471,7 @@ public class D2DepositConstants {
 		,D2DepositKey.MA12C97731
 		,D2DepositKey.MA12C977319
 	};
+
 	
 	public static D2DepositKey[] MA12_ABREVIATE_KEYS_1 = new D2DepositKey[]{
 		D2DepositKey.MA12A97001
@@ -4294,6 +4308,7 @@ public class D2DepositConstants {
 		,D2DepositKey.MA12C977119
 	};
 
+
 	public static D2DepositKey[] MA12_ABREVIATE_KEYS_6 = new D2DepositKey[]{
 		D2DepositKey.MA12C97720
 		,D2DepositKey.MA12C977209
@@ -4320,10 +4335,6 @@ public class D2DepositConstants {
 		,D2DepositKey.MA12C97731
 		,D2DepositKey.MA12C977319
 	};
-
-
-
-
 
 	
 	public static D2DepositKey[] MA14_ABREVIATE_KEYS = new D2DepositKey[]{

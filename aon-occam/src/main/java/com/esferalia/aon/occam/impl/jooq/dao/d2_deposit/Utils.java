@@ -563,13 +563,14 @@ public class Utils {
 				Integer code = Integer.parseInt(k.getCode());
 				clave.setCodigo(BigInteger.valueOf(code));
 				clave.setValor(acc.get(value).toString());
+				
 				keys.getClave().add(clave);
 			}
 		}finally {
 			if (ctx2 != null) ctx2.close();
 		}
 		
-		schema.setClaves(keys);
+		schema.setClaves(keys);		
 		
 		byte[] b = null;
 		try {

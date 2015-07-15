@@ -318,8 +318,6 @@ public class NormalizedMemory extends ResizeComposite {
 						@Override
 						public void onFailure(Throwable caught) {	}
 					});
-					
-		
 				}
 			};
 		}
@@ -842,129 +840,265 @@ public class NormalizedMemory extends ResizeComposite {
 	private void update(){
 		switch (page) {
 		case "IDA":
-			Header1 h1 = (Header1) pagesPanel.getWidget(0);
-			h1.dump(new D2DepositTreeObject(), "IDA");
+			Header1 hA1 = (Header1) pagesPanel.getWidget(0);
+			hA1.dump(new D2DepositTreeObject(), page);
+			break;
+		case "IDP":
+			Header1 hP1 = (Header1) pagesPanel.getWidget(0);
+			hP1.dump(new D2DepositTreeObject(), page);
 			break;
 		case "BA":
-			PageH2 h2 = (PageH2) pagesPanel.getWidget(0);
-			h2.dump(h2.d2DepositObject, "BA");
+			PageH2 hA2 = (PageH2) pagesPanel.getWidget(0);
+			hA2.dump(hA2.d2DepositObject, page);
+			break;
+		case "BP":
+			PageH2 hP2 = (PageH2) pagesPanel.getWidget(0);
+			hP2.dump(hP2.d2DepositObject, page);
 			break;
 		case "PA":
-			PageH3 h3 = (PageH3) pagesPanel.getWidget(0);
-			h3.dump(h3.d2DepositObject, "PA");
+			PageH3 hA3 = (PageH3) pagesPanel.getWidget(0);
+			hA3.dump(hA3.d2DepositObject, page);
+			break;
+		case "PP":
+			PageH3 hP3 = (PageH3) pagesPanel.getWidget(0);
+			hP3.dump(hP3.d2DepositObject, page);
 			break;
 		case "PNA":
-			PageH4 h4 = (PageH4) pagesPanel.getWidget(0);
-			h4.dump(h4.d2DepositObject, "PNA");
+			PageH4 hA4 = (PageH4) pagesPanel.getWidget(0);
+			hA4.dump(hA4.d2DepositObject, page);
 			break;
+		case "PNP":
+			PageH4 hP4 = (PageH4) pagesPanel.getWidget(0);
+			hP4.dump(hP4.d2DepositObject, page);
+			break;
+
 		case "IMA":
-			PageH5 h5 = (PageH5) pagesPanel.getWidget(0);
-			h5.dump(new D2DepositTreeObject(), "IMA");;
+			PageH5 hA5 = (PageH5) pagesPanel.getWidget(0);
+			hA5.dump(new D2DepositTreeObject(), page);
 			break;
+		case "IMP":
+			PageH5 hP5 = (PageH5) pagesPanel.getWidget(0);
+			hP5.dump(new D2DepositTreeObject(), page);
+			break;
+
 		case "MAT1":
-			FreeText ft = (FreeText) pagesPanel.getWidget(0);
-			ft.dump(ft.d2DepositObject, "MAT1");
+			FreeText ftA = (FreeText) pagesPanel.getWidget(0);
+			ftA.dump(ftA.d2DepositObject, page);
 			break;
+		case "MPT1":
+			FreeText ftP = (FreeText) pagesPanel.getWidget(0);
+			ftP.dump(ftP.d2DepositObject, page);
+			break;
+
 		case "MAT2":
-			FreeText ft2 = (FreeText) pagesPanel.getWidget(0);
-			ft2.dump(ft2.d2DepositObject, "MAT2");
+			FreeText ftA2 = (FreeText) pagesPanel.getWidget(0);
+			ftA2.dump(ftA2.d2DepositObject, page);
 			break;
+		case "MPT2":
+			FreeText ftP2 = (FreeText) pagesPanel.getWidget(0);
+			ftP2.dump(ftP2.d2DepositObject, page);
+			break;
+
 		case "MAT3":
-			FreeText ft3 = (FreeText) pagesPanel.getWidget(0);
-			ft3.dump(ft3.d2DepositObject, "MAT3");
+			FreeText ftA3 = (FreeText) pagesPanel.getWidget(0);
+			ftA3.dump(ftA3.d2DepositObject, page);
 			break;
+		case "MPT3":
+			FreeText ftP3 = (FreeText) pagesPanel.getWidget(0);
+			ftP3.dump(ftP3.d2DepositObject, page);
+			break;
+
 		case "MA3":
-			PageM3_2 p32 = (PageM3_2) pagesPanel.getWidget(0);
-			p32.dump(p32.d2DepositObject, "MA3");
+			PageM3_2 pA32 = (PageM3_2) pagesPanel.getWidget(0);
+			pA32.dump(pA32.d2DepositObject, page);
 			break;
+		case "MP3":
+			PageM3_2 pP32 = (PageM3_2) pagesPanel.getWidget(0);
+			pP32.dump(pP32.d2DepositObject, page);
+			break;
+
 		case "MAT4":
-			FreeText ft4 = (FreeText) pagesPanel.getWidget(0);
-			ft4.dump(ft4.d2DepositObject, "MAT4");
+			FreeText ftA4 = (FreeText) pagesPanel.getWidget(0);
+			ftA4.dump(ftA4.d2DepositObject, page);
 			break;
+		case "MPT4":
+			FreeText ftP4 = (FreeText) pagesPanel.getWidget(0);
+			ftP4.dump(ftP4.d2DepositObject, page);
+			break;
+
 		case "MAT5":
-			FreeText ft5 = (FreeText) pagesPanel.getWidget(0);
-			ft5.dump(ft5.d2DepositObject, "MAT5");;
+			FreeText ftA5 = (FreeText) pagesPanel.getWidget(0);
+			ftA5.dump(ftA5.d2DepositObject, page);;
 			break;
+		case "MPT5":
+			FreeText ftP5 = (FreeText) pagesPanel.getWidget(0);
+			ftP5.dump(ftP5.d2DepositObject, page);
+			break;
+
 		case "MA5":
-			PageM5_2 p52 = (PageM5_2) pagesPanel.getWidget(0);
-			p52.dump(p52.d2DepositObject, "MA3");;
+			PageM5_2 pA52 = (PageM5_2) pagesPanel.getWidget(0);
+			pA52.dump(pA52.d2DepositObject, page);
 			break;
+		case "MP5":
+			PageM5_2 pP52 = (PageM5_2) pagesPanel.getWidget(0);
+			pP52.dump(pP52.d2DepositObject, page);
+			break;
+
 		case "MAT6":
-			FreeText ft6 = (FreeText) pagesPanel.getWidget(0);
-			ft6.dump(ft6.d2DepositObject, "MAT6");
+			FreeText ftA6 = (FreeText) pagesPanel.getWidget(0);
+			ftA6.dump(ftA6.d2DepositObject, page);
 			break;
+		case "MPT6":
+			FreeText ftP6 = (FreeText) pagesPanel.getWidget(0);
+			ftP6.dump(ftP6.d2DepositObject, page);
+			break;
+
 		case "MA6":
-			PageM6_2 p62= (PageM6_2) pagesPanel.getWidget(0);
-			p62.dump(p62.d2DepositObject, "MA6");
+			PageM6_2 pA62= (PageM6_2) pagesPanel.getWidget(0);
+			pA62.dump(pA62.d2DepositObject, page);
+			break;
+		case "MP6":
+			PageM6_2 pP62= (PageM6_2) pagesPanel.getWidget(0);
+			pP62.dump(pP62.d2DepositObject, page);
 			break;
 			
 		case "MAT7":
-			FreeText ft7 = (FreeText) pagesPanel.getWidget(0);
-			ft7.dump(ft7.d2DepositObject, "MAT7");
+			FreeText ftA7 = (FreeText) pagesPanel.getWidget(0);
+			ftA7.dump(ftA7.d2DepositObject, page);
 			break;
+		case "MPT7":
+			FreeText ftP7 = (FreeText) pagesPanel.getWidget(0);
+			ftP7.dump(ftP7.d2DepositObject, page);
+			break;
+
 		case "MA7":
-			PageM7_2 p72 = (PageM7_2) pagesPanel.getWidget(0);
-			p72.dump(p72.d2DepositObject, "MA7");
+			PageM7_2 pA72 = (PageM7_2) pagesPanel.getWidget(0);
+			pA72.dump(pA72.d2DepositObject, page);
 			break;
+		case "MP7":
+			PageM7_2 pP72 = (PageM7_2) pagesPanel.getWidget(0);
+			pP72.dump(pP72.d2DepositObject, page);
+			break;
+
 		case "MAT8":
-			FreeText ft8 = (FreeText) pagesPanel.getWidget(0);
-			ft8.dump(ft8.d2DepositObject, "MAT8");
+			FreeText ftA8 = (FreeText) pagesPanel.getWidget(0);
+			ftA8.dump(ftA8.d2DepositObject, page);
 			break;
+		case "MPT8":
+			FreeText ftP8 = (FreeText) pagesPanel.getWidget(0);
+			ftP8.dump(ftP8.d2DepositObject, page);
+			break;
+
 		case "MAT9":
-			FreeText ft9 = (FreeText) pagesPanel.getWidget(0);
-			ft9.dump(ft9.d2DepositObject, "MAT9");
+			FreeText ftA9 = (FreeText) pagesPanel.getWidget(0);
+			ftA9.dump(ftA9.d2DepositObject, page);
 			break;
+		case "MPT9":
+			FreeText ftP9 = (FreeText) pagesPanel.getWidget(0);
+			ftP9.dump(ftP9.d2DepositObject, page);
+			break;
+
 		case "MA10":
-			PageM10 p10 = (PageM10) pagesPanel.getWidget(0);
-			p10.dump(new D2DepositTreeObject(), "MA10");
+			PageM10 pA10 = (PageM10) pagesPanel.getWidget(0);
+			pA10.dump(new D2DepositTreeObject(), page);
 			break;
+		case "MP10":
+			PageM10 pP10 = (PageM10) pagesPanel.getWidget(0);
+			pP10.dump(new D2DepositTreeObject(), page);
+			break;
+
 		case "MAT11":
-			FreeText ft11 = (FreeText) pagesPanel.getWidget(0);
-			ft11.dump(ft11.d2DepositObject, "MAT11");
+			FreeText ftA11 = (FreeText) pagesPanel.getWidget(0);
+			ftA11.dump(ftA11.d2DepositObject, page);
 			break;
+		case "MPT11":
+			FreeText ftP11 = (FreeText) pagesPanel.getWidget(0);
+			ftP11.dump(ftP11.d2DepositObject, page);
+			break;
+
 		case "MA11":
-			PageM11_2 p112 = (PageM11_2) pagesPanel.getWidget(0);
-			p112.dump(new D2DepositTreeObject(), "MA11");
+			PageM11_2 pA112 = (PageM11_2) pagesPanel.getWidget(0);
+			pA112.dump(new D2DepositTreeObject(), page);
 			break;
+		case "MP11":
+			PageM11_2 pP112 = (PageM11_2) pagesPanel.getWidget(0);
+			pP112.dump(new D2DepositTreeObject(), page);
+			break;
+
 		case "MAT12":
-			FreeText ft12 = (FreeText) pagesPanel.getWidget(0);
-			ft12.dump(ft12.d2DepositObject, "MAT12");
+			FreeText ftA12 = (FreeText) pagesPanel.getWidget(0);
+			ftA12.dump(ftA12.d2DepositObject, page);
 			break;
+		case "MPT12":
+			FreeText ftP12 = (FreeText) pagesPanel.getWidget(0);
+			ftP12.dump(ftP12.d2DepositObject, page);
+			break;
+
 		case "MA12":
-			PageM12_2 p122 = (PageM12_2) pagesPanel.getWidget(0);
-			p122.dump(new D2DepositTreeObject(), "MA12");
+			PageM12_2 pA122 = (PageM12_2) pagesPanel.getWidget(0);
+			pA122.dump(new D2DepositTreeObject(), page);
 			break;
+		case "MP12":
+			PageM12_2 pP122 = (PageM12_2) pagesPanel.getWidget(0);
+			pP122.dump(new D2DepositTreeObject(), page);
+			break;
+
 		case "MAT13":
-			FreeText ft13 = (FreeText) pagesPanel.getWidget(0);
-			ft13.dump(ft13.d2DepositObject, "MAT13");
+			FreeText ftA13 = (FreeText) pagesPanel.getWidget(0);
+			ftA13.dump(ftA13.d2DepositObject, page);
 			break;
+		case "MPT13":
+			FreeText ftP13 = (FreeText) pagesPanel.getWidget(0);
+			ftP13.dump(ftP13.d2DepositObject, page);
+			break;
+
 		case "MA13":
-			PageM13_2 p132 = (PageM13_2) pagesPanel.getWidget(0);
-			p132.dump(new D2DepositTreeObject(), "MA13");
+			PageM13_2 pA132 = (PageM13_2) pagesPanel.getWidget(0);
+			pA132.dump(new D2DepositTreeObject(), page);
 			break;
+		case "MP13":
+			PageM13_2 pP132 = (PageM13_2) pagesPanel.getWidget(0);
+			pP132.dump(new D2DepositTreeObject(), page);
+			break;
+
 		case "MAT14":
-			FreeText ft14 = (FreeText) pagesPanel.getWidget(0);
-			ft14.dump(ft14.d2DepositObject, "MAT14");
+			FreeText ftA14 = (FreeText) pagesPanel.getWidget(0);
+			ftA14.dump(ftA14.d2DepositObject, page);
 			break;
+		case "MPT14":
+			FreeText ftP14 = (FreeText) pagesPanel.getWidget(0);
+			ftP14.dump(ftP14.d2DepositObject, page);
+			break;
+
 		case "MA14":
-			PageM14_2 p142 = (PageM14_2) pagesPanel.getWidget(0);
-			p142.dump(new D2DepositTreeObject(), "MA14");
+			PageM14_2 pA142 = (PageM14_2) pagesPanel.getWidget(0);
+			pA142.dump(new D2DepositTreeObject(), page);
 			break;
+		case "MP14":
+			PageM14_2 pP142 = (PageM14_2) pagesPanel.getWidget(0);
+			pP142.dump(new D2DepositTreeObject(), page);
+			break;
+
 		case "MA15":
-			PageM15 p15 = (PageM15) pagesPanel.getWidget(0);
-			p15.dump(new D2DepositTreeObject(), "MA15");
+			PageM15 pA15 = (PageM15) pagesPanel.getWidget(0);
+			pA15.dump(new D2DepositTreeObject(), page);
 			break;
+		case "MP15":
+			PageM15 pP15 = (PageM15) pagesPanel.getWidget(0);
+			pP15.dump(new D2DepositTreeObject(), page);
+			break;
+
 		case "A":
 			PageF1 pf1 = (PageF1) pagesPanel.getWidget(0);
-			pf1.dump(new D2DepositTreeObject(), "A");
+			pf1.dump(new D2DepositTreeObject(), page);
 			break;
 		case "PR":
 			PageF2 pf2 = (PageF2)  pagesPanel.getWidget(0);
-			pf2.dump(new D2DepositTreeObject(), "PR");
+			pf2.dump(new D2DepositTreeObject(), page);
 			break;
 		case "H":
 			PageF3  pf3 = (PageF3)  pagesPanel.getWidget(0);
-			pf3.dump(new D2DepositTreeObject(), "H");
+			pf3.dump(new D2DepositTreeObject(), page);
 			break;
 		default:
 			break;

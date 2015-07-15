@@ -144,6 +144,11 @@ public class D2DepositBehaviour {
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.BA212160098.getName(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.BA212170098.getName(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.BA212180098.getName(),new Boolean[]{TRUE,FALSE});
+		
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.BA2121900.getName(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.BA21219009.getName(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.BA212190098.getName(),new Boolean[]{TRUE,FALSE});
+		
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.BA212190098.getName(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.BA212200098.getName(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.BA212300098.getName(),new Boolean[]{TRUE,FALSE});

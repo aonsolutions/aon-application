@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2PDepositConstants;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -92,7 +93,8 @@ public class PageH2 extends PageAbs {
 		table.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBorderBottom());
 		table.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonTextCenter());
 
-		++row;
+		++row;		
+		
 		for(Integer i = 0; i< D2DepositConstants.BA_ABREVIATE_KEYS_1.length; i+=3){
 			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
 					D2DepositConstants.BA_ABREVIATE_KEYS_1[i],
@@ -128,14 +130,26 @@ public class PageH2 extends PageAbs {
 		table1.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonTextCenter());
 
 		++row;
-		for(Integer i = 0; i< (D2DepositConstants.BA_ABREVIATE_KEYS_2.length/3); i++){
+
+		//*************** PYMES ********************
+		for(Integer i = 0; i< (D2PDepositConstants.BP_ABREVIATE_KEYS_2.length/3); i++){
 			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
-					D2DepositConstants.BA_ABREVIATE_KEYS_2[((D2DepositConstants.BA_ABREVIATE_KEYS_2.length/3)*2)+i],
-					D2DepositConstants.BA_ABREVIATE_KEYS_2[i],
-					D2DepositConstants.BA_ABREVIATE_KEYS_2[(D2DepositConstants.BA_ABREVIATE_KEYS_2.length/3)+i],
+					D2PDepositConstants.BP_ABREVIATE_KEYS_2[((D2PDepositConstants.BP_ABREVIATE_KEYS_2.length/3)*2)+i],
+					D2PDepositConstants.BP_ABREVIATE_KEYS_2[i],
+					D2PDepositConstants.BP_ABREVIATE_KEYS_2[(D2PDepositConstants.BP_ABREVIATE_KEYS_2.length/3)+i],
 			};
 			row = paintKey(table1, d2 , row);
 		}
+
+		//*************** ABREVIADO ****************
+//		for(Integer i = 0; i< (D2DepositConstants.BA_ABREVIATE_KEYS_2.length/3); i++){
+//			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
+//					D2DepositConstants.BA_ABREVIATE_KEYS_2[((D2DepositConstants.BA_ABREVIATE_KEYS_2.length/3)*2)+i],
+//					D2DepositConstants.BA_ABREVIATE_KEYS_2[i],
+//					D2DepositConstants.BA_ABREVIATE_KEYS_2[(D2DepositConstants.BA_ABREVIATE_KEYS_2.length/3)+i],
+//			};
+//			row = paintKey(table1, d2 , row);
+//		}
 	}
 	
 	private void table2(){
@@ -163,14 +177,26 @@ public class PageH2 extends PageAbs {
 		table2.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonTextCenter());
 
 		++row;
-		for(Integer i = 0; i< (D2DepositConstants.BA_ABREVIATE_KEYS_3.length/3); i++){
+
+		//******************* PYMES *************************
+		for(Integer i = 0; i< (D2PDepositConstants.BP_ABREVIATE_KEYS_3.length/3); i++){
 			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
-					D2DepositConstants.BA_ABREVIATE_KEYS_3[((D2DepositConstants.BA_ABREVIATE_KEYS_3.length/3)*2)+i],
-					D2DepositConstants.BA_ABREVIATE_KEYS_3[i],
-					D2DepositConstants.BA_ABREVIATE_KEYS_3[(D2DepositConstants.BA_ABREVIATE_KEYS_3.length/3)+i],
+					D2PDepositConstants.BP_ABREVIATE_KEYS_3[((D2PDepositConstants.BP_ABREVIATE_KEYS_3.length/3)*2)+i],
+					D2PDepositConstants.BP_ABREVIATE_KEYS_3[i],
+					D2PDepositConstants.BP_ABREVIATE_KEYS_3[(D2PDepositConstants.BP_ABREVIATE_KEYS_3.length/3)+i],
 			};
 			row = paintKey(table2, d2 , row);
 		}
+
+		//********************** ABREVIADO ****************
+//		for(Integer i = 0; i< (D2DepositConstants.BA_ABREVIATE_KEYS_3.length/3); i++){
+//			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
+//					D2DepositConstants.BA_ABREVIATE_KEYS_3[((D2DepositConstants.BA_ABREVIATE_KEYS_3.length/3)*2)+i],
+//					D2DepositConstants.BA_ABREVIATE_KEYS_3[i],
+//					D2DepositConstants.BA_ABREVIATE_KEYS_3[(D2DepositConstants.BA_ABREVIATE_KEYS_3.length/3)+i],
+//			};
+//			row = paintKey(table2, d2 , row);
+//		}
 	}
 	
 	

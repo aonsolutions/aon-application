@@ -228,8 +228,7 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 	}
 	
 	private void memoryInitialize() {
-		newContextMenu = new NewContextMenu();
-		this.enterprise = enterprise;
+		newContextMenu = new NewContextMenu();		
 		subtitle.setText(AON.MSG.enterprise());
 		toolbar.setVisible(true);
 		tree.removeItems();

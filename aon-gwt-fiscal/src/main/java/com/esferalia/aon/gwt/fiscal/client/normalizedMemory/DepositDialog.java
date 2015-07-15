@@ -144,10 +144,9 @@ public abstract class DepositDialog extends CustomDialogB {
 		flex_table.setBorderWidth(1);
 		flex_table.setCellSpacing(0);
 		
-		ListBox lb = new ListBox();
-		//lb.addItem("-");
+		ListBox lb = new ListBox();		
 		lb.addItem("Abreviado");
-		//lb.addItem("Pymes");
+		lb.addItem("Pymes");
 
 		flex_table.setWidget(0, 0, new Label("Tipo de Deposito"));
 		flex_table.setWidget(0, 1, lb);
@@ -187,8 +186,12 @@ public abstract class DepositDialog extends CustomDialogB {
 		flex_table.setCellSpacing(0);
 		
 		ListBox lb = new ListBox();
-		//lb.addItem("-");
+		
 		lb.addItem("Abreviado");
+		lb.addItem("Pymes");
+
+		//lb.addItem("-");
+		//lb.addItem("Abreviado");
 		//lb.addItem("Pymes");
 
 		flex_table.setWidget(0, 0, new Label("Tipo de Deposito"));
@@ -411,6 +414,7 @@ public abstract class DepositDialog extends CustomDialogB {
 				progress = 0;		
 			}
 		});
+        
         upload.getForm().addFormHandler(new FormHandler() {
         	SingleUploader upload = up;
 			@Override

@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2PDepositConstants;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -53,7 +54,7 @@ public class PageM7_2 extends PageAbs {
 		table();
 		table1();
 		table2();
-		table3();
+		//table3(); NO EN PYMES
 
 	}
 	
@@ -113,19 +114,36 @@ public class PageM7_2 extends PageAbs {
 		}
 		
 		++row;
-		for(Integer i = 0; i< D2DepositConstants.MA7_ABREVIATE_KEYS_1.length; i+=8){
+		
+		//*************************** PYMES **********************
+		for(Integer i = 0; i< D2PDepositConstants.MP7_ABREVIATE_KEYS_1.length; i+=8){
 			D2DepositKey[] d2 = new D2DepositKey[]{
-					D2DepositConstants.MA7_ABREVIATE_KEYS_1[i],
-					D2DepositConstants.MA7_ABREVIATE_KEYS_1[i+1],
-					D2DepositConstants.MA7_ABREVIATE_KEYS_1[i+2],
-					D2DepositConstants.MA7_ABREVIATE_KEYS_1[i+3],
-					D2DepositConstants.MA7_ABREVIATE_KEYS_1[i+4],
-					D2DepositConstants.MA7_ABREVIATE_KEYS_1[i+5],
-					D2DepositConstants.MA7_ABREVIATE_KEYS_1[i+6],
-					D2DepositConstants.MA7_ABREVIATE_KEYS_1[i+7]
+					D2PDepositConstants.MP7_ABREVIATE_KEYS_1[i],
+					D2PDepositConstants.MP7_ABREVIATE_KEYS_1[i+1],
+					D2PDepositConstants.MP7_ABREVIATE_KEYS_1[i+2],
+					D2PDepositConstants.MP7_ABREVIATE_KEYS_1[i+3],
+					D2PDepositConstants.MP7_ABREVIATE_KEYS_1[i+4],
+					D2PDepositConstants.MP7_ABREVIATE_KEYS_1[i+5],
+					D2PDepositConstants.MP7_ABREVIATE_KEYS_1[i+6],
+					D2PDepositConstants.MP7_ABREVIATE_KEYS_1[i+7]
 			};
 			row = paintKey(table, d2 , row);
 		}
+		
+		//*************************** ABREVIADO ************************
+//		for(Integer i = 0; i< D2DepositConstants.MA7_ABREVIATE_KEYS_1.length; i+=8){
+//			D2DepositKey[] d2 = new D2DepositKey[]{
+//					D2DepositConstants.MA7_ABREVIATE_KEYS_1[i],
+//					D2DepositConstants.MA7_ABREVIATE_KEYS_1[i+1],
+//					D2DepositConstants.MA7_ABREVIATE_KEYS_1[i+2],
+//					D2DepositConstants.MA7_ABREVIATE_KEYS_1[i+3],
+//					D2DepositConstants.MA7_ABREVIATE_KEYS_1[i+4],
+//					D2DepositConstants.MA7_ABREVIATE_KEYS_1[i+5],
+//					D2DepositConstants.MA7_ABREVIATE_KEYS_1[i+6],
+//					D2DepositConstants.MA7_ABREVIATE_KEYS_1[i+7]
+//			};
+//			row = paintKey(table, d2 , row);
+//		}
 
 	}
 	
@@ -185,19 +203,36 @@ public class PageM7_2 extends PageAbs {
 		}
 		
 		++row;
-		for(Integer i = 0; i< D2DepositConstants.MA7_ABREVIATE_KEYS_2.length; i+=8){
+		
+		//*********************** PYMES *******************************
+		for(Integer i = 0; i< D2PDepositConstants.MP7_ABREVIATE_KEYS_2.length; i+=8){
 			D2DepositKey[] d2 = new D2DepositKey[]{
-					D2DepositConstants.MA7_ABREVIATE_KEYS_2[i],
-					D2DepositConstants.MA7_ABREVIATE_KEYS_2[i+1],
-					D2DepositConstants.MA7_ABREVIATE_KEYS_2[i+2],
-					D2DepositConstants.MA7_ABREVIATE_KEYS_2[i+3],
-					D2DepositConstants.MA7_ABREVIATE_KEYS_2[i+4],
-					D2DepositConstants.MA7_ABREVIATE_KEYS_2[i+5],
-					D2DepositConstants.MA7_ABREVIATE_KEYS_2[i+6],
-					D2DepositConstants.MA7_ABREVIATE_KEYS_2[i+7]
+					D2PDepositConstants.MP7_ABREVIATE_KEYS_2[i],
+					D2PDepositConstants.MP7_ABREVIATE_KEYS_2[i+1],
+					D2PDepositConstants.MP7_ABREVIATE_KEYS_2[i+2],
+					D2PDepositConstants.MP7_ABREVIATE_KEYS_2[i+3],
+					D2PDepositConstants.MP7_ABREVIATE_KEYS_2[i+4],
+					D2PDepositConstants.MP7_ABREVIATE_KEYS_2[i+5],
+					D2PDepositConstants.MP7_ABREVIATE_KEYS_2[i+6],
+					D2PDepositConstants.MP7_ABREVIATE_KEYS_2[i+7]
 			};
 			row = paintKey(table1, d2 , row);
 		}
+
+		//******************** ABREVIADO ***************************
+//		for(Integer i = 0; i< D2DepositConstants.MA7_ABREVIATE_KEYS_2.length; i+=8){
+//			D2DepositKey[] d2 = new D2DepositKey[]{
+//					D2DepositConstants.MA7_ABREVIATE_KEYS_2[i],
+//					D2DepositConstants.MA7_ABREVIATE_KEYS_2[i+1],
+//					D2DepositConstants.MA7_ABREVIATE_KEYS_2[i+2],
+//					D2DepositConstants.MA7_ABREVIATE_KEYS_2[i+3],
+//					D2DepositConstants.MA7_ABREVIATE_KEYS_2[i+4],
+//					D2DepositConstants.MA7_ABREVIATE_KEYS_2[i+5],
+//					D2DepositConstants.MA7_ABREVIATE_KEYS_2[i+6],
+//					D2DepositConstants.MA7_ABREVIATE_KEYS_2[i+7]
+//			};
+//			row = paintKey(table1, d2 , row);
+//		}
 
 	}
 	

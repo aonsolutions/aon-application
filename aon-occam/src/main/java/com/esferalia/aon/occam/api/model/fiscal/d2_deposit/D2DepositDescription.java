@@ -14,7 +14,7 @@ public class D2DepositDescription {
 	
 	public static EnumMap<D2DepositKey,String> DESCRIPTION_MAP = new EnumMap<D2DepositKey,String>(D2DepositKey.class);
 	public static EnumMap<D2DepositHeaderKey,String> DESCRIPTION_MAP_HEADER = new EnumMap<D2DepositHeaderKey,String>(D2DepositHeaderKey.class);
-
+	
 	static {
 		DESCRIPTION_MAP.put(D2DepositKey.MA391000,"Saldo de la cuenta de p\u00e9rdidas y ganancias");
 		DESCRIPTION_MAP.put(D2DepositKey.MA391001,"Remanente");
@@ -91,7 +91,16 @@ public class D2DepositDescription {
 		DESCRIPTION_MAP.put(D2DepositKey.MA6193141,"Derivados de cobertura");
 		DESCRIPTION_MAP.put(D2DepositKey.MA6193151,"TOTAL");
 
+		///////////////////////////////***PYMES***///////////////////////////////
+		DESCRIPTION_MAP.put(D2DepositKey.MP6193061,"Activos financieros mantenidos para negociar");
+		DESCRIPTION_MAP.put(D2DepositKey.MP6193071,"Activos financieros a coste amortizado");
+		DESCRIPTION_MAP.put(D2DepositKey.MP6193081,"Activos financieros a coste");		
 		
+		DESCRIPTION_MAP.put(D2DepositKey.MP6193161,"Activos financieros mantenidos para negociar");
+		DESCRIPTION_MAP.put(D2DepositKey.MP6193171,"Activos financieros a coste amortizado");
+		DESCRIPTION_MAP.put(D2DepositKey.MP6193181,"Activos financieros a coste");		
+
+		//////////////////////////////////////////////////////////////
 		
 		DESCRIPTION_MAP.put(D2DepositKey.MA6193201,"Inversiones mantenidas hasta el vencimiento");
 		DESCRIPTION_MAP.put(D2DepositKey.MA6193211,"Activos financieros mantenidos para negociar");
@@ -145,7 +154,15 @@ public class D2DepositDescription {
 
 		
 		DESCRIPTION_MAP.put(D2DepositKey.MA794131,"TOTAL");
+		
+		/////////////////////////////**** PYMES***** ///////////////////////////////
+		DESCRIPTION_MAP.put(D2DepositKey.MP794041,"Pasivos financieros a coste amortizado");
+		DESCRIPTION_MAP.put(D2DepositKey.MP794051,"Pasivos financieros mantenidos para negociar");
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MP794141,"Pasivos financieros a coste amortizado");
+		DESCRIPTION_MAP.put(D2DepositKey.MP794151,"Pasivos financieros mantenidos para negociar");
 
+		////////////////////////////////////////////////////////////////////////////
 		
 		DESCRIPTION_MAP.put(D2DepositKey.MA794201,"Deudas con entidades de cr\u00E9dito");
 	
@@ -246,7 +263,11 @@ public class D2DepositDescription {
 		DESCRIPTION_MAP.put(D2DepositKey.MA1196015,"(-) Otros movimientos");
 
 		DESCRIPTION_MAP.put(D2DepositKey.MA1196016,"Saldo al cierre del ejercicio");
-
+		
+		//************** PYMES **********************
+		DESCRIPTION_MAP.put(D2DepositKey.MP1196017,"(+) Aumentos");
+		DESCRIPTION_MAP.put(D2DepositKey.MP1196018,"(+) Disminuciones");
+		//*******************************************
 	}
 	
 	static{
@@ -358,6 +379,13 @@ public class D2DepositDescription {
 		DESCRIPTION_MAP.put(D2DepositKey.MA12B97561,"a)Proveedores");
 		DESCRIPTION_MAP.put(D2DepositKey.MA12B97571,"b)Otros Acreedores");
 		DESCRIPTION_MAP.put(D2DepositKey.MA12B97581,"3.Deuda con caracter\u00EDsticas especiales a corto plazo");
+		
+		
+		
+		//////////////////////////////////////////********PYMES*******//////////////////////////////////////////
+		DESCRIPTION_MAP.put(D2DepositKey.MP12B97591,"a)Clientes por ventas y prestaci\u00F3n de servicios a largo plazo, de las cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MP12B97601,"-Correcciones valorativas por cr\u00E9ditos de dudoso cobro a largo plazo");		
+		////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		DESCRIPTION_MAP.put(D2DepositKey.MA12B973019,"A) ACTIVO NO CORRIENTE");
 		DESCRIPTION_MAP.put(D2DepositKey.MA12B973119,"1.Invesiones financieras a largo plazo, de las cuales:");
@@ -471,7 +499,7 @@ public class D2DepositDescription {
 		DESCRIPTION_MAP.put(D2DepositKey.MA14294614,"Importe de las subvenciones imputadas a resultados como ingresos de ejercicio 2014");
 	}
 	
-	static{
+	static { 
 
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11100098 ,"A) ACTIVO NO CORRIENTE");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA11110098,"I. Inmovilizado tangible");
@@ -510,6 +538,9 @@ public class D2DepositDescription {
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA212170098,"VII. Resultado del ejercicio");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA212180098,"VIII. (Dividendo a cuenta)");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA212190098,"IX. Otros instrumentos de patrimonio");
+		
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BP212200098,"A2). Ajustes en patrimonio neto");
+		
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA212200098,"A-2) Ajustes por cambios de valor");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA212300098,"A-3) Subvenciones, donaciones y legados recibidos");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA213100098,"B) PASIVO NO CORRIENTE");
@@ -603,6 +634,17 @@ public class D2DepositDescription {
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251401,"B) SALDO AJUSTADO, INICIO DEL EJERCICIO 2013");
 		
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251501,"I. Total ingresos y gastos reconocidos");
+		
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP152801,"I. Resultado de la cuenta de p\u00E9rdidas y ganancias");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP153001,"II. Ingresos y gastos reconocidos en patrimonio neto");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP152701,"1. Ingresos fiscales a distribuir en varios ejercicios");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP152901,"2. Otros ingresos y gastos reconocidos en patrimonio neto");
+		
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP1528019,"I. Resultado de la cuenta de p\u00E9rdidas y ganancias");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP1530019,"II. Ingresos y gastos reconocidos en patrimonio neto");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP1527019,"1. Ingresos fiscales a distribuir en varios ejercicios");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP1529019,"2. Otros ingresos y gastos reconocidos en patrimonio neto");
+
 
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251601,"II. Operaciones con socios o propietarios");
 
@@ -643,6 +685,13 @@ public class D2DepositDescription {
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2532019,"2. Otras variaciones ");
 		
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA252501,"E) SALDO, FINAL DEL EJERCICIO 2014");
+		
+	}
+	
+	public static void main(String[] args) {
+		
+		for (D2DepositHeaderKey key : D2DepositDescription.DESCRIPTION_MAP_HEADER.keySet())
+			System.out.println("----> " + D2DepositDescription.DESCRIPTION_MAP_HEADER.get(key));
 		
 	}
 }

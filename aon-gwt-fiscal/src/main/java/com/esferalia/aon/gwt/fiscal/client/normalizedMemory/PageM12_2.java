@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2PDepositConstants;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -253,18 +254,34 @@ public class PageM12_2 extends PageAbs {
 
 		
 		++row;
-		for(Integer i = 0; i< D2DepositConstants.MA12_ABREVIATE_KEYS_3.length; i+=7){
+		
+		//****************************** PYMES ****************************
+		for(Integer i = 0; i< D2PDepositConstants.MP12_ABREVIATE_KEYS_3.length; i+=7){
 			D2DepositKey[] d2 = new D2DepositKey[]{
-					D2DepositConstants.MA12_ABREVIATE_KEYS_3[i],
-					D2DepositConstants.MA12_ABREVIATE_KEYS_3[i+1],
-					D2DepositConstants.MA12_ABREVIATE_KEYS_3[i+2],
-					D2DepositConstants.MA12_ABREVIATE_KEYS_3[i+3],
-					D2DepositConstants.MA12_ABREVIATE_KEYS_3[i+4],
-					D2DepositConstants.MA12_ABREVIATE_KEYS_3[i+5],
-					D2DepositConstants.MA12_ABREVIATE_KEYS_3[i+6]
+					D2PDepositConstants.MP12_ABREVIATE_KEYS_3[i],
+					D2PDepositConstants.MP12_ABREVIATE_KEYS_3[i+1],
+					D2PDepositConstants.MP12_ABREVIATE_KEYS_3[i+2],
+					D2PDepositConstants.MP12_ABREVIATE_KEYS_3[i+3],
+					D2PDepositConstants.MP12_ABREVIATE_KEYS_3[i+4],
+					D2PDepositConstants.MP12_ABREVIATE_KEYS_3[i+5],
+					D2PDepositConstants.MP12_ABREVIATE_KEYS_3[i+6]
 			};
 			row = paintKey(table2, d2 , row);
 		}
+
+		//****************************** ABREVIADO ****************************		
+//		for(Integer i = 0; i< D2DepositConstants.MA12_ABREVIATE_KEYS_3.length; i+=7){
+//			D2DepositKey[] d2 = new D2DepositKey[]{
+//					D2DepositConstants.MA12_ABREVIATE_KEYS_3[i],
+//					D2DepositConstants.MA12_ABREVIATE_KEYS_3[i+1],
+//					D2DepositConstants.MA12_ABREVIATE_KEYS_3[i+2],
+//					D2DepositConstants.MA12_ABREVIATE_KEYS_3[i+3],
+//					D2DepositConstants.MA12_ABREVIATE_KEYS_3[i+4],
+//					D2DepositConstants.MA12_ABREVIATE_KEYS_3[i+5],
+//					D2DepositConstants.MA12_ABREVIATE_KEYS_3[i+6]
+//			};
+//			row = paintKey(table2, d2 , row);
+//		}
 	}
 	private void table3(){
 
@@ -352,13 +369,24 @@ public class PageM12_2 extends PageAbs {
 		table4.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextCenter());
 		
 		++row;
-		for(Integer i = 0; i< D2DepositConstants.MA12_ABREVIATE_KEYS_5.length; i+=2){
+		
+		//**************************** PYMES *****************************
+		for(Integer i = 0; i< D2PDepositConstants.MP12_ABREVIATE_KEYS_5.length; i+=2){
 			D2DepositKey[] d2 = new D2DepositKey[]{
-					D2DepositConstants.MA12_ABREVIATE_KEYS_5[i],
-					D2DepositConstants.MA12_ABREVIATE_KEYS_5[i+1],
+					D2PDepositConstants.MP12_ABREVIATE_KEYS_5[i],
+					D2PDepositConstants.MP12_ABREVIATE_KEYS_5[i+1],
 			};
 			row = paintKey(table4, d2 , row);
 		}
+		
+		//**************************** ABREVIADO *****************************
+//		for(Integer i = 0; i< D2DepositConstants.MA12_ABREVIATE_KEYS_5.length; i+=2){
+//			D2DepositKey[] d2 = new D2DepositKey[]{
+//					D2DepositConstants.MA12_ABREVIATE_KEYS_5[i],
+//					D2DepositConstants.MA12_ABREVIATE_KEYS_5[i+1],
+//			};
+//			row = paintKey(table4, d2 , row);
+//		}
 	}
 	private void table5(){
 		table5.setWidth("100%");
@@ -382,13 +410,25 @@ public class PageM12_2 extends PageAbs {
 		table5.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextCenter());
 		
 		++row;
-		for(Integer i = 0; i< D2DepositConstants.MA12_ABREVIATE_KEYS_6.length; i+=2){
+		
+		//**************************** PYMES *****************************
+		for(Integer i = 0; i< D2PDepositConstants.MP12_ABREVIATE_KEYS_6.length; i+=2){
 			D2DepositKey[] d2 = new D2DepositKey[]{
-					D2DepositConstants.MA12_ABREVIATE_KEYS_6[i],
-					D2DepositConstants.MA12_ABREVIATE_KEYS_6[i+1],
+					D2PDepositConstants.MP12_ABREVIATE_KEYS_6[i],
+					D2PDepositConstants.MP12_ABREVIATE_KEYS_6[i+1],
 			};
 			row = paintKey(table5, d2 , row);
 		}
+		
+		//**************************** ABREVIADO *****************************
+
+//		for(Integer i = 0; i< D2DepositConstants.MA12_ABREVIATE_KEYS_6.length; i+=2){
+//			D2DepositKey[] d2 = new D2DepositKey[]{
+//					D2DepositConstants.MA12_ABREVIATE_KEYS_6[i],
+//					D2DepositConstants.MA12_ABREVIATE_KEYS_6[i+1],
+//			};
+//			row = paintKey(table5, d2 , row);
+//		}
 	}
 	
 	

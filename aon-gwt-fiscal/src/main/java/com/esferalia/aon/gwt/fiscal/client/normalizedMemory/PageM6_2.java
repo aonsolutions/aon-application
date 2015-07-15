@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2PDepositConstants;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -68,11 +69,82 @@ public class PageM6_2 extends PageAbs {
 	protected void initializeTable() {
 		table();
 		table1();
-		table2();
+		//table2(); NO EN PYMES
 		table3();
 		table4();
 		table5();
 	}
+	
+	private void table_4Pymes(){
+		FlexTable.FlexCellFormatter flexCellFormatter = table.getFlexCellFormatter();
+		flexCellFormatter.setColSpan(0, 1, 2);
+		flexCellFormatter.setColSpan(0, 2, 2);
+		flexCellFormatter.setColSpan(0, 3, 2);
+		flexCellFormatter.setColSpan(0, 4, 2);
+		table.setWidth("100%");
+		table.setCellSpacing(0);
+		table.getColumnFormatter().setWidth(1, "200px");
+		table.getColumnFormatter().setWidth(2, "200px");
+		table.getColumnFormatter().setWidth(3, "200px");
+		table.getColumnFormatter().setWidth(4, "200px");
+		table.getColumnFormatter().setWidth(5, "200px");
+		table.getColumnFormatter().setWidth(6, "200px");
+		table.getColumnFormatter().setWidth(7, "200px");
+		table.getColumnFormatter().setWidth(8, "200px");
+
+		int row = 0;
+	
+		table.setWidget(row, 1, new Label("Instrumentos de patrimonio"));
+		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
+		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
+		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
+		table.setWidget(row, 2, new Label("Valores representables de deuda"));
+		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBold());
+		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBorderBottom());
+		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextCenter());
+		table.setWidget(row, 3, new Label("Cr\u00e9ditos, derivados y otros"));
+		table.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBold());
+		table.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBorderBottom());
+		table.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonTextCenter());
+		table.setWidget(row, 4, new Label("TOTAL"));
+		table.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonBold());
+		table.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonBorderBottom());
+		table.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonTextCenter());
+
+		++row;
+		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
+		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
+		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
+		for(Integer i = 1; i<9;i+=2){
+			table.setWidget(row, i, new Label("Ejercicio 2014"));
+			table.getFlexCellFormatter().addStyleName(row, i, AON.AON_CSS.aonBold());
+			table.getFlexCellFormatter().addStyleName(row, i, AON.AON_CSS.aonBorderBottom());
+			table.getFlexCellFormatter().addStyleName(row, i, AON.AON_CSS.aonTextCenter());
+			
+			table.setWidget(row, i+1, new Label("Ejercicio 2013"));
+			table.getFlexCellFormatter().addStyleName(row, i+1, AON.AON_CSS.aonBold());
+			table.getFlexCellFormatter().addStyleName(row, i+1, AON.AON_CSS.aonBorderBottom());
+			table.getFlexCellFormatter().addStyleName(row, i+1, AON.AON_CSS.aonTextCenter());
+
+		}
+		++row;
+		
+		//******************* PYMES **************************
+		for(Integer i = 0; i< D2PDepositConstants.MP6_ABREVIATE_KEYS_1.length; i+=8){
+			D2DepositKey[] d2 = new D2DepositKey[]{
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_1[i],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_1[i+1],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_1[i+2],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_1[i+3],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_1[i+4],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_1[i+5],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_1[i+6],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_1[i+7]
+			};
+			row = paintKey(table, d2 , row);
+		}
+	}
+
 	
 	private void table(){
 		FlexTable.FlexCellFormatter flexCellFormatter =table.getFlexCellFormatter();
@@ -127,19 +199,37 @@ public class PageM6_2 extends PageAbs {
 
 		}
 		++row;
-		for(Integer i = 0; i< D2DepositConstants.MA6_ABREVIATE_KEYS_1.length; i+=8){
+		
+		//******************* PYMES **************************
+		for(Integer i = 0; i< D2PDepositConstants.MP6_ABREVIATE_KEYS_1.length; i+=8){
 			D2DepositKey[] d2 = new D2DepositKey[]{
-					D2DepositConstants.MA6_ABREVIATE_KEYS_1[i],
-					D2DepositConstants.MA6_ABREVIATE_KEYS_1[i+1],
-					D2DepositConstants.MA6_ABREVIATE_KEYS_1[i+2],
-					D2DepositConstants.MA6_ABREVIATE_KEYS_1[i+3],
-					D2DepositConstants.MA6_ABREVIATE_KEYS_1[i+4],
-					D2DepositConstants.MA6_ABREVIATE_KEYS_1[i+5],
-					D2DepositConstants.MA6_ABREVIATE_KEYS_1[i+6],
-					D2DepositConstants.MA6_ABREVIATE_KEYS_1[i+7]
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_1[i],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_1[i+1],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_1[i+2],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_1[i+3],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_1[i+4],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_1[i+5],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_1[i+6],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_1[i+7]
 			};
 			row = paintKey(table, d2 , row);
 		}
+
+		
+		//******************** ABREVIADO **************************
+//		for(Integer i = 0; i< D2DepositConstants.MA6_ABREVIATE_KEYS_1.length; i+=8){
+//			D2DepositKey[] d2 = new D2DepositKey[]{
+//					D2DepositConstants.MA6_ABREVIATE_KEYS_1[i],
+//					D2DepositConstants.MA6_ABREVIATE_KEYS_1[i+1],
+//					D2DepositConstants.MA6_ABREVIATE_KEYS_1[i+2],
+//					D2DepositConstants.MA6_ABREVIATE_KEYS_1[i+3],
+//					D2DepositConstants.MA6_ABREVIATE_KEYS_1[i+4],
+//					D2DepositConstants.MA6_ABREVIATE_KEYS_1[i+5],
+//					D2DepositConstants.MA6_ABREVIATE_KEYS_1[i+6],
+//					D2DepositConstants.MA6_ABREVIATE_KEYS_1[i+7]
+//			};
+//			row = paintKey(table, d2 , row);
+//		}
 
 	}
 	
@@ -196,19 +286,36 @@ public class PageM6_2 extends PageAbs {
 
 		}
 		++row;
-		for(Integer i = 0; i< D2DepositConstants.MA6_ABREVIATE_KEYS_2.length; i+=8){
+		
+		//******************** PYMES ********************
+		for(Integer i = 0; i< D2PDepositConstants.MP6_ABREVIATE_KEYS_2.length; i+=8){
 			D2DepositKey[] d2 = new D2DepositKey[]{
-					D2DepositConstants.MA6_ABREVIATE_KEYS_2[i],
-					D2DepositConstants.MA6_ABREVIATE_KEYS_2[i+1],
-					D2DepositConstants.MA6_ABREVIATE_KEYS_2[i+2],
-					D2DepositConstants.MA6_ABREVIATE_KEYS_2[i+3],
-					D2DepositConstants.MA6_ABREVIATE_KEYS_2[i+4],
-					D2DepositConstants.MA6_ABREVIATE_KEYS_2[i+5],
-					D2DepositConstants.MA6_ABREVIATE_KEYS_2[i+6],
-					D2DepositConstants.MA6_ABREVIATE_KEYS_2[i+7]
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_2[i],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_2[i+1],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_2[i+2],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_2[i+3],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_2[i+4],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_2[i+5],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_2[i+6],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_2[i+7]
 			};
 			row = paintKey(table1, d2 , row);
 		}
+		
+		//*************************** ABREVIADO********************************
+//		for(Integer i = 0; i< D2DepositConstants.MA6_ABREVIATE_KEYS_2.length; i+=8){
+//			D2DepositKey[] d2 = new D2DepositKey[]{
+//					D2DepositConstants.MA6_ABREVIATE_KEYS_2[i],
+//					D2DepositConstants.MA6_ABREVIATE_KEYS_2[i+1],
+//					D2DepositConstants.MA6_ABREVIATE_KEYS_2[i+2],
+//					D2DepositConstants.MA6_ABREVIATE_KEYS_2[i+3],
+//					D2DepositConstants.MA6_ABREVIATE_KEYS_2[i+4],
+//					D2DepositConstants.MA6_ABREVIATE_KEYS_2[i+5],
+//					D2DepositConstants.MA6_ABREVIATE_KEYS_2[i+6],
+//					D2DepositConstants.MA6_ABREVIATE_KEYS_2[i+7]
+//			};
+//			row = paintKey(table1, d2 , row);
+//		}
 	}
 	private void table2(){
 		FlexTable.FlexCellFormatter flexCellFormatter =table2.getFlexCellFormatter();
@@ -376,15 +483,28 @@ public class PageM6_2 extends PageAbs {
 	
 		
 		++row;
-		for(Integer i = 0; i< D2DepositConstants.MA6_ABREVIATE_KEYS_5.length; i+=4){
+		
+		// ***************** PYMES *************************
+		for(Integer i = 0; i< D2PDepositConstants.MP6_ABREVIATE_KEYS_5.length; i+=4){
 			D2DepositKey[] d2 = new D2DepositKey[]{
-					D2DepositConstants.MA6_ABREVIATE_KEYS_5[i],
-					D2DepositConstants.MA6_ABREVIATE_KEYS_5[i+1],
-					D2DepositConstants.MA6_ABREVIATE_KEYS_5[i+2],
-					D2DepositConstants.MA6_ABREVIATE_KEYS_5[i+3],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_5[i],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_5[i+1],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_5[i+2],
+					D2PDepositConstants.MP6_ABREVIATE_KEYS_5[i+3],
 			};
 			row = paintKey(table4, d2 , row);
 		}
+		
+		//******************** ABREVIADO ********************
+//		for(Integer i = 0; i< D2DepositConstants.MA6_ABREVIATE_KEYS_5.length; i+=4){
+//			D2DepositKey[] d2 = new D2DepositKey[]{
+//					D2DepositConstants.MA6_ABREVIATE_KEYS_5[i],
+//					D2DepositConstants.MA6_ABREVIATE_KEYS_5[i+1],
+//					D2DepositConstants.MA6_ABREVIATE_KEYS_5[i+2],
+//					D2DepositConstants.MA6_ABREVIATE_KEYS_5[i+3],
+//			};
+//			row = paintKey(table4, d2 , row);
+//		}
 	}
 	private void table5(){
 		table5.setWidth("100%");
