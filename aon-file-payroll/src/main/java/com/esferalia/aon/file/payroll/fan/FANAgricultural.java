@@ -16,6 +16,7 @@ import com.esferalia.aon.file.payroll.fan.data.DAT;
 import com.esferalia.aon.file.payroll.fan.data.EDL;
 import com.esferalia.aon.file.payroll.fan.data.EDT;
 import com.esferalia.aon.file.payroll.fan.data.EMP;
+import com.esferalia.aon.file.payroll.fan.data.TRA;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryData;
 
@@ -229,12 +230,17 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 		// Para agrarios, las cuotas de contingencias comunes generadas tienen aplicadas la reduccion SEA,
 		// por lo que, a la cuota total de contingencias comunes, hay que sumarle la reduccion total,
 		// para obtener la cuota correcta 
-		EDT edtCd29 = emp.getEdtSegment("EDTCD29");
+		Integer reductionAmount = 0;
+		for (TRA tra : emp.getTrabajadores()) {
+			for (DAT dat : tra.getDat()) {
+				reductionAmount += dat.getEdl().containsKey("CD29") ? dat.getEdlSegment("CD29").getImporte() : 0;
+			}
+		}
 		super.createEDTCa01Segment(cgcTotalEnterprise, cgcTotalEmployee, emp);
 		EDT edt = emp.getEdtSegment("EDTCA01");
 		edt.setParteEnteraTipo(0);
 		edt.setParteDecimalFactorTipo(0);
-		edt.setImporte(edt.getImporte()+edtCd29.getImporte());
+		edt.setImporte(edt.getImporte()+reductionAmount);
 	}
 	
 	/**
