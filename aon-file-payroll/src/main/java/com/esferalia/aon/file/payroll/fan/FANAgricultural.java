@@ -236,11 +236,27 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 				reductionAmount += dat.getEdl().containsKey("CD29") ? dat.getEdlSegment("CD29").getImporte() : 0;
 			}
 		}
-		super.createEDTCa01Segment(cgcTotalEnterprise, cgcTotalEmployee, emp);
-		EDT edt = emp.getEdtSegment("EDTCA01");
-		edt.setParteEnteraTipo(0);
-		edt.setParteDecimalFactorTipo(0);
-		edt.setImporte(edt.getImporte()+reductionAmount);
+		
+		Integer base = emp.getEdt().containsKey("EDTBA01") ? emp.getEdtSegment("EDTBA01").getBase() : 0;
+		
+		Double amount = 0.0;
+		amount += cgcTotalEnterprise;
+		amount += cgcTotalEmployee;
+		amount = CommonUtil.round(amount, 2);
+
+		if (base != 0) {
+			EDT edt = emp.getEdtSegment("EDTCA01");
+			edt.setTipoElemento("CA");
+			edt.setClave(1);
+			edt.setCalificadorClave(null);
+			edt.setBase(base);
+			edt.setIndicadorFactorTipo("T");
+			edt.setParteEnteraTipo(0);
+			edt.setParteDecimalFactorTipo(0);
+			edt.setImporte((new Double(amount * 100)).intValue());
+			edt.setSigno(" ");
+		}
+		
 	}
 	
 	/**
