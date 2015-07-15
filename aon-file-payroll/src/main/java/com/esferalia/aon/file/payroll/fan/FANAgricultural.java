@@ -159,12 +159,13 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 	@Override
 	public void createEDLCd29Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, DAT dat, List<ITransferObject> salaryDataList) {
 		
+		String _cgcBase = obtainCgcBaseE(salaryDataList);
 		String _reductionPercent = obtainSeaReduction(salaryDataList);
 		
 		// la cuota de la reduccion se obtiene a aplicando 
 		// el porcentaje de reduccion a la base de contingencias comunes 
 		
-		Double cgcBase = new Double(dat.getEdlSegment("BA01").getImporte()/100);
+		Double cgcBase = NumberUtils.isNumber(_cgcBase)?Double.parseDouble(_cgcBase):0.0;
 		Double reductionPercent = NumberUtils.isNumber(_reductionPercent)?Double.parseDouble(_reductionPercent):0.0;
 		
 		EDL edl = dat.getEdlSegment("CD29");
@@ -172,6 +173,17 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 		
 	}
 	
+	private String obtainCgcBaseE(List<ITransferObject> salaryDataList){
+		String _reductionPercent = null;
+		List<ITransferObject> list = salaryDataList;
+		for(ITransferObject to: list){
+			SalaryData sa = (SalaryData) to;
+			if(sa.getName().equals("BASE_CGC_E")){
+				_reductionPercent = sa.getExpression();
+			}
+		}
+		return _reductionPercent;
+	}
 	private String obtainSeaReduction(List<ITransferObject> salaryDataList){
 		String _reductionPercent = null;
 		List<ITransferObject> list = salaryDataList;
@@ -253,7 +265,7 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 			edt.setIndicadorFactorTipo("T");
 			edt.setParteEnteraTipo(0);
 			edt.setParteDecimalFactorTipo(0);
-			edt.setImporte((new Double(amount * 100)).intValue());
+			edt.setImporte((new Double(amount * 100)).intValue()+reductionAmount);
 			edt.setSigno(" ");
 		}
 		
