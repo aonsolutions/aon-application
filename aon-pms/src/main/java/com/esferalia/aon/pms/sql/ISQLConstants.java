@@ -70,6 +70,7 @@ public interface ISQLConstants {
 	String QUESTION_TYPE = "question_type";
 	String RESPONSE = "response";
 	String RESPONSE_DETAIL = "response_detail";
+	String MEDIA = "media";
 	String EMAIL = "email";
 	String PHONE = "phone";
 

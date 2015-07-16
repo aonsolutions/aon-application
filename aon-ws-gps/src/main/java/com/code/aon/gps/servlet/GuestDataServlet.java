@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Types;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -21,8 +22,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.gps.servlet.util.ServletUtils;
+import com.code.aon.person.enumeration.Gender;
+import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.QuestionType;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
@@ -34,15 +38,21 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GuestDataServlet.class.getName());
-	private static final String DATE_PATTERN = "dd/MM/yyyy";
+	private static final String DATE_PATTERN = "yyyy-MM-dd";
 	private static String JSON_OK_RESPONSE = "{\"result\":OK}";
 	private static String JSON_KO_RESPONSE = "{\"result\":KO}";
 	private static String SELECT_REGISTRY_ID =
 			"SELECT R.id AS " + ID + " FROM registry AS R WHERE R.document = ? AND R.document_type = ? AND R.document_country = ? ORDER BY R.id DESC";
+	private static String SELECT_REGISTRY_MEDIA_DATA =
+			"SELECT RM.value AS " + MEDIA + " FROM rmedia AS RM WHERE RM.registry = ? AND RM.media = ? LIMIT 1";
 	private static String INSERT_REGISTRY_DATA =
 			"INSERT INTO registry (domain, document, document_type, document_country, name, type) VALUES (?, ?, ?, ?, ?, 0)";
+	private static String UPDATE_REGISTRY_DATA =
+			"UPDATE registry SET name =? WHERE id = ?";
 	private static String INSERT_PERSON_DATA =
 			"INSERT INTO person (registry, domain, birth_date, gender, name, first_surname, second_surname) VALUES (?, ?, ?, ?, ?, ?, ?)";
+	private static String UPDATE_PERSON_DATA =
+			"UPDATE person SET birth_date = ?, gender = ?, name = ?, first_surname = ?, second_surname = ? WHERE registry = ?";
 	private static String SELECT_RESERVATION_GUEST_PERSON =
 			"SELECT PRG.person AS " + PERSON + " FROM project_reservation_guest AS PRG WHERE PRG.id = ?";
 	private static String SELECT_RESERVATION_GUEST_INDEX =
@@ -166,9 +176,17 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 	}
 
 	private String insertGuestData(HttpServletRequest request, Connection connection, Integer domainId) throws Exception {
-		DateFormat formatter = new SimpleDateFormat(DATE_PATTERN);
 		Integer guestId = Integer.parseInt(request.getParameter(GUEST_ID));
-		Integer registryId = (guestId == 0) ? obtainRegistryId(request, connection, domainId) : obtainRegistryId(connection, guestId);
+		Integer registryId = null;
+		if (guestId == 0) {
+			registryId = obtainRegistryId(request, connection, domainId);
+		} else {
+			registryId = obtainRegistryId(connection, guestId);
+			if (registryId == null || registryId == 0) {
+				registryId = obtainRegistryId(request, connection, domainId);
+			}
+		}
+
 		if (registryId == null) {
 			PreparedStatement insertRegistryStmt = null;
 			PreparedStatement insertPersonStmt = null;
@@ -176,8 +194,8 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 				insertRegistryStmt = connection.prepareStatement(INSERT_REGISTRY_DATA);
 				SQLUtils.setInt(insertRegistryStmt, 1, domainId);
 				SQLUtils.setString(insertRegistryStmt, 2, request.getParameter(GUEST_DOCUMENT));
-				SQLUtils.setInt(insertRegistryStmt, 3, Integer.parseInt(request.getParameter(GUEST_DOCUMENT_TYPE)));
-				SQLUtils.setString(insertRegistryStmt, 4, request.getParameter(GUEST_DOCUMENT_COUNTRY));
+				SQLUtils.setInt(insertRegistryStmt, 3, obtainDocumentType(request.getParameter(GUEST_DOCUMENT_TYPE)));
+				SQLUtils.setString(insertRegistryStmt, 4, obtainCountry(request.getParameter(GUEST_DOCUMENT_COUNTRY)));
 				SQLUtils.setString(insertRegistryStmt, 5, obtainGuestFullName(request));
 				insertRegistryStmt.execute();
 
@@ -186,8 +204,8 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 					insertPersonStmt = connection.prepareStatement(INSERT_PERSON_DATA);
 					SQLUtils.setInt(insertPersonStmt, 1, registryId);
 					SQLUtils.setInt(insertPersonStmt, 2, domainId);
-					SQLUtils.setDate(insertPersonStmt, 3, formatter.parse(request.getParameter(GUEST_BIRTH_DATE)));
-					SQLUtils.setInt(insertPersonStmt, 4, Integer.parseInt(request.getParameter(PERSON_GENDER)));
+					SQLUtils.setDate(insertPersonStmt, 3, obtainBirthDate(request.getParameter(GUEST_BIRTH_DATE)));
+					SQLUtils.setInt(insertPersonStmt, 4, obtainGender(request.getParameter(PERSON_GENDER)));
 					SQLUtils.setString(insertPersonStmt, 5, request.getParameter(GUEST_NAME));
 					SQLUtils.setString(insertPersonStmt, 6, request.getParameter(GUEST_SURNAME));
 					SQLUtils.setString(insertPersonStmt, 7, request.getParameter(GUEST_SURNAME2));
@@ -198,6 +216,29 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 			} finally {
 				SQLUtils.closeQuietly(insertPersonStmt);
 				SQLUtils.closeQuietly(insertRegistryStmt);
+			}
+		} else {
+			PreparedStatement updateRegistryStmt = null;
+			PreparedStatement updatePersonStmt = null;
+			try {
+				updateRegistryStmt = connection.prepareStatement(UPDATE_REGISTRY_DATA);
+				SQLUtils.setString(updateRegistryStmt, 1, obtainGuestFullName(request));
+				SQLUtils.setInt(updateRegistryStmt, 2, registryId);
+				updateRegistryStmt.execute();
+
+				updatePersonStmt = connection.prepareStatement(UPDATE_PERSON_DATA);
+				SQLUtils.setDate(updatePersonStmt, 1, obtainBirthDate(request.getParameter(GUEST_BIRTH_DATE)));
+				SQLUtils.setInt(updatePersonStmt, 2, obtainGender(request.getParameter(PERSON_GENDER)));
+				SQLUtils.setString(updatePersonStmt, 3, request.getParameter(GUEST_NAME));
+				SQLUtils.setString(updatePersonStmt, 4, request.getParameter(GUEST_SURNAME));
+				SQLUtils.setString(updatePersonStmt, 5, request.getParameter(GUEST_SURNAME2));
+				SQLUtils.setInt(updatePersonStmt, 6, registryId);
+				updatePersonStmt.execute();
+			} catch (Exception ex) {
+				throw ex;
+			} finally {
+				SQLUtils.closeQuietly(updatePersonStmt);
+				SQLUtils.closeQuietly(updateRegistryStmt);
 			}
 		}
 
@@ -221,13 +262,13 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 				SQLUtils.setString(insertReservationGuestStmt, 5, request.getParameter(GUEST_SURNAME));
 				SQLUtils.setString(insertReservationGuestStmt, 6, request.getParameter(GUEST_SURNAME2));
 				SQLUtils.setString(insertReservationGuestStmt, 7, request.getParameter(GUEST_DOCUMENT));
-				SQLUtils.setInt(insertReservationGuestStmt, 8, Integer.parseInt(request.getParameter(GUEST_DOCUMENT_TYPE)));
-				SQLUtils.setString(insertReservationGuestStmt, 9, request.getParameter(GUEST_DOCUMENT_COUNTRY));
-				SQLUtils.setDate(insertReservationGuestStmt, 10, formatter.parse(request.getParameter(GUEST_BIRTH_DATE)));
+				SQLUtils.setInt(insertReservationGuestStmt, 8, obtainDocumentType(request.getParameter(GUEST_DOCUMENT_TYPE)));
+				SQLUtils.setString(insertReservationGuestStmt, 9, obtainCountry(request.getParameter(GUEST_DOCUMENT_COUNTRY)));
+				SQLUtils.setDate(insertReservationGuestStmt, 10, obtainBirthDate(request.getParameter(GUEST_BIRTH_DATE)));
 				SQLUtils.setString(insertReservationGuestStmt, 11, request.getParameter(GUEST_ADDRESS));
 				SQLUtils.setString(insertReservationGuestStmt, 12, request.getParameter(GUEST_CITY));
 				SQLUtils.setString(insertReservationGuestStmt, 13, request.getParameter(GUEST_PROVINCE));
-				SQLUtils.setString(insertReservationGuestStmt, 14, request.getParameter(GUEST_COUNTRY));
+				SQLUtils.setString(insertReservationGuestStmt, 14, obtainCountry(request.getParameter(GUEST_COUNTRY)));
 				SQLUtils.setString(insertReservationGuestStmt, 15, request.getParameter(GUEST_BARCODE));
 				SQLUtils.setInt(insertReservationGuestStmt, 16, registryId);
 				insertReservationGuestStmt.execute();
@@ -255,13 +296,13 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 				SQLUtils.setString(updateReservationGuestStmt, 2, request.getParameter(GUEST_SURNAME));
 				SQLUtils.setString(updateReservationGuestStmt, 3, request.getParameter(GUEST_SURNAME2));
 				SQLUtils.setString(updateReservationGuestStmt, 4, request.getParameter(GUEST_DOCUMENT));
-				SQLUtils.setInt(updateReservationGuestStmt, 5, Integer.parseInt(request.getParameter(GUEST_DOCUMENT_TYPE)));
-				SQLUtils.setString(updateReservationGuestStmt, 6, request.getParameter(GUEST_DOCUMENT_COUNTRY));
-				SQLUtils.setDate(updateReservationGuestStmt, 7, formatter.parse(request.getParameter(GUEST_BIRTH_DATE)));
+				SQLUtils.setInt(updateReservationGuestStmt, 5, obtainDocumentType(request.getParameter(GUEST_DOCUMENT_TYPE)));
+				SQLUtils.setString(updateReservationGuestStmt, 6, obtainCountry(request.getParameter(GUEST_DOCUMENT_COUNTRY)));
+				SQLUtils.setDate(updateReservationGuestStmt, 7, obtainBirthDate(request.getParameter(GUEST_BIRTH_DATE)));
 				SQLUtils.setString(updateReservationGuestStmt, 8, request.getParameter(GUEST_ADDRESS));
 				SQLUtils.setString(updateReservationGuestStmt, 9, request.getParameter(GUEST_CITY));
 				SQLUtils.setString(updateReservationGuestStmt, 10, request.getParameter(GUEST_PROVINCE));
-				SQLUtils.setString(updateReservationGuestStmt, 11, request.getParameter(GUEST_COUNTRY));
+				SQLUtils.setString(updateReservationGuestStmt, 11, obtainCountry(request.getParameter(GUEST_COUNTRY)));
 				SQLUtils.setString(updateReservationGuestStmt, 12, request.getParameter(GUEST_BARCODE));
 				SQLUtils.setInt(updateReservationGuestStmt, 13, registryId);
 				SQLUtils.setInt(updateReservationGuestStmt, 14, guestId);
@@ -272,6 +313,37 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 				SQLUtils.closeQuietly(updateReservationGuestStmt);
 			}
 		}
+
+		if (StringUtils.isBlank(request.getParameter(GUEST_EMAIL))) {
+			String email = obtainMediaValue(connection, registryId, MediaType.EMAIL.ordinal());
+			PreparedStatement updateReservationGuestStmt = null;
+			try {
+				updateReservationGuestStmt = connection.prepareStatement(UPDATE_RESERVATION_GUEST.replace("${field}", EMAIL));
+				SQLUtils.setString(updateReservationGuestStmt, 1, email);
+				SQLUtils.setInt(updateReservationGuestStmt, 2, guestId);
+				updateReservationGuestStmt.execute();
+			} catch (Exception ex) {
+				throw ex;
+			} finally {
+				SQLUtils.closeQuietly(updateReservationGuestStmt);
+			}
+		}
+
+		if (StringUtils.isBlank(request.getParameter(GUEST_PHONE))) {
+			String phone = obtainMediaValue(connection, registryId, MediaType.CELLULAR.ordinal());
+			PreparedStatement updateReservationGuestStmt = null;
+			try {
+				updateReservationGuestStmt = connection.prepareStatement(UPDATE_RESERVATION_GUEST.replace("${field}", PHONE));
+				SQLUtils.setString(updateReservationGuestStmt, 1, phone);
+				SQLUtils.setInt(updateReservationGuestStmt, 2, guestId);
+				updateReservationGuestStmt.execute();
+			} catch (Exception ex) {
+				throw ex;
+			} finally {
+				SQLUtils.closeQuietly(updateReservationGuestStmt);
+			}
+		}
+
 		return Integer.toString(guestId);
 	}
 
@@ -434,8 +506,8 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 		try {
 			selectRegistryStmt = connection.prepareStatement(SELECT_REGISTRY_ID, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			SQLUtils.setString(selectRegistryStmt, 1, request.getParameter(GUEST_DOCUMENT));
-			SQLUtils.setInt(selectRegistryStmt, 2, Integer.parseInt(request.getParameter(GUEST_DOCUMENT_TYPE)));
-			SQLUtils.setString(selectRegistryStmt, 3, request.getParameter(GUEST_DOCUMENT_COUNTRY));
+			SQLUtils.setInt(selectRegistryStmt, 2, obtainDocumentType(request.getParameter(GUEST_DOCUMENT_TYPE)));
+			SQLUtils.setString(selectRegistryStmt, 3, obtainCountry(request.getParameter(GUEST_DOCUMENT_COUNTRY)));
 			registryRs = selectRegistryStmt.executeQuery();
 			return (registryRs.next()) ? registryRs.getInt(ID) : null;
 		} catch (Exception ex) {
@@ -462,6 +534,50 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 		}
 	}
 
+	private Integer obtainDocumentType(String type) {
+		if (type.equals("D") || type.equals("C") || type.equals("I")) {
+			return DocumentType.NIF.ordinal();
+		} else if (type.equals("P")) {
+			return DocumentType.PASSPORT.ordinal();
+		} else if (type.equals("N")) {
+			return DocumentType.NIE.ordinal();
+		} else if (type.equals("X")) {
+			return DocumentType.COMMUNITY_CARD.ordinal();
+		}
+		return -1;
+	}
+
+	private String obtainCountry(String countryIso) {
+		Country country = null;
+		if (StringUtils.isNotBlank(countryIso)) {
+			if (countryIso.length() == 2) {
+				country = Country.valueOf(countryIso);
+			} else if (countryIso.length() == 3) {
+				country = Country.valueOfIso3(countryIso);
+			}
+		}
+		return (country!=null) ? country.getValue() : StringUtils.EMPTY;
+	}
+
+	private Date obtainBirthDate(String value) {
+		Date birthDate = null;
+		if (StringUtils.isNotBlank(value)) {
+			try {
+				birthDate = new SimpleDateFormat(DATE_PATTERN).parse(value);
+			} catch (ParseException ex) {}
+		}
+		return birthDate;
+	}
+
+	private Integer obtainGender(String gender) {
+		if (gender.equals("M")) {
+			return Gender.MALE.ordinal();
+		} else if (gender.equals("F")) {
+			return Gender.FEMALE.ordinal();
+		} 
+		return Gender.UNKNOWN.ordinal();
+	}
+
 	private String obtainGuestFullName(HttpServletRequest request) {
 		StringBuffer sb = new StringBuffer();
 		if (!StringUtils.isBlank(request.getParameter(GUEST_SURNAME))) {
@@ -477,6 +593,23 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 			sb.append(request.getParameter(GUEST_NAME));
 		}
 		return (sb.length() > 64) ? sb.substring(0, 64) : sb.toString();
+	}
+
+	private String obtainMediaValue(Connection connection, Integer registryId, Integer mediaType) throws Exception {
+		PreparedStatement selectRegistryMediaStmt = null;
+		ResultSet registryMediaRs = null;
+		try {
+			selectRegistryMediaStmt = connection.prepareStatement(SELECT_REGISTRY_MEDIA_DATA, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			SQLUtils.setInt(selectRegistryMediaStmt, 1, registryId);
+			SQLUtils.setInt(selectRegistryMediaStmt, 2, mediaType);
+			registryMediaRs = selectRegistryMediaStmt.executeQuery();
+			return (registryMediaRs.next()) ? registryMediaRs.getString(MEDIA) : null;
+		} catch (Exception ex) {
+			throw ex;
+		} finally {
+			SQLUtils.closeQuietly(registryMediaRs);
+			SQLUtils.closeQuietly(selectRegistryMediaStmt);
+		}
 	}
 
 	private String obtainHtmlResponse(HttpServletRequest request) {
