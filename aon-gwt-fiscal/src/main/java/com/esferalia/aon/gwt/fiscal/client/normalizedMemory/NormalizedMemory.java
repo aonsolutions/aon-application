@@ -555,7 +555,7 @@ public class NormalizedMemory extends ResizeComposite {
 											
 										}
 										else if(t.equals("Perdidas y ganancias")){
-											ListBox ej = (ListBox) flex_table.getWidget(1, 1);
+											ListBox ej = (ListBox) flex_table.getWidget(2, 1);
 											String ejercicio = ej.getSelectedItemText();
 											
 											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), new AsyncCallback<Void>() {
@@ -573,7 +573,7 @@ public class NormalizedMemory extends ResizeComposite {
 											
 										}
 										else if(t.equals("ECPN")){
-											ListBox ej = (ListBox) flex_table.getWidget(1, 1);
+											ListBox ej = (ListBox) flex_table.getWidget(2, 1);
 											String ejercicio = ej.getSelectedItemText();
 											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), new AsyncCallback<Void>() {
 												@Override
