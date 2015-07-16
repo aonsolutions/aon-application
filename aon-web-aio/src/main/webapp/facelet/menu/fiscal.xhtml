@@ -252,18 +252,6 @@
 												<aon:outputText styleClass="aon-fiscal-link-box" value="202"/>
 												<aon:outputText styleClass="aon-fiscal-link-label" value="Impuesto Sociedades. Pago fraccionado." />
 											</aon:commandLink>
-<!-- 
-											<aon:commandLink id="gwt_fiscalPanel"
-												styleClass="aon-fiscal-link"
-												action="gwt_fiscalPanel"
-												title="Integral fiscal">
-												<aon:outputText styleClass="aon-fiscal-link-box"
-													style="font-size: 0.8em;" 
-													value="BETA" />
-												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-													style="margin-left: 5px; padding-left: 20px;" value="Integral fiscal (en desarrollo)" />
-											</aon:commandLink>
- -->
 							    </h:panelGrid>
 							     
 							</aon:div>
@@ -340,16 +328,6 @@
 												action="reports_launcher"
 												actionListener="#{reportsLauncher.onReset}"
 												value="#{bundle.accounting_reports_launcher_module}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:if test="#{customize.snapshotVersion}">
-												<aon:commandLink id="gwt_normalizedMemory"
-													action="gwt_normalizedMemory"
-													title="Memoria normalizada" >
-													<aon:outputText value="Memoria normalizada"
-														styleClass="aon-icon-new-text" style="margin-left: 5px; padding-left: 20px;"/>
-												</aon:commandLink>
-											</aon:if>
 										</aon:div>
 									</aon:div>
 								</aon:panelGrid>

@@ -268,9 +268,7 @@
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="template-configuration"
 											action="gwt_templates" title="#{bundle.aon_templates}">
-											<aon:outputText styleClass="aon-icon-new-text"
-												style="margin-left: 5px; padding-left: 20px;"
-												value="#{bundle.aon_templates}" />
+											<aon:outputText value="#{bundle.aon_templates}" />
 										</aon:commandLink>
 									</aon:div>
 								</aon:div>
@@ -296,10 +294,7 @@
 											<aon:commandLink id="gwt_invoiceReport"
 												action="gwt_invoiceReport"
 												title="Descarga de datos en formato Excel">
-												<aon:outputText
-													styleClass="aon-fiscal-link-label aon-icon-new-text"
-													style="margin-left: 5px; padding-left: 20px;"
-													value="Descarga de datos en formato Excel" />
+												<aon:outputText value="Descarga de datos en formato Excel" />
 											</aon:commandLink>
 										</aon:div>
 										<aon:if test="#{aonRole.accountingOperator}">
@@ -344,9 +339,7 @@
 												<aon:outputText styleClass="aon-icon-dsi-gestion"
 													style="white-space: normal; margin-left: 5px; padding-left: 20px;"
 													value="" />
-												<aon:outputText styleClass="aon-icon aon-icon-new-text"
-													style="white-space: normal; margin-left: 5px; padding-left: 20px;"
-													value="#{bundle.dsi_import_module}" />
+												<aon:outputText value="#{bundle.dsi_import_module}" />
 											</aon:commandLink>
 										</aon:div>
 									</aon:if>
@@ -357,9 +350,7 @@
 												<aon:outputText styleClass="aon-icon-aeat"
 													style="white-space: normal; margin-left: 5px; padding-left: 20px;"
 													value="" />
-												<aon:outputText styleClass="aon-icon aon-icon-new-text"
-													style="white-space: normal; margin-left: 5px; padding-left: 20px;"
-													value="#{bundle.boe_import_module}" />
+												<aon:outputText value="#{bundle.boe_import_module}" />
 											</aon:commandLink>
 										</aon:div>
 									</aon:if>
