@@ -45,7 +45,7 @@
 							rendered="#{(!aonConfiguration.properties.hideMenuEmail) and (mailConfig.mailAccountCount &gt; 0)}"
 							value="&#160;" actionListener="#{webmailMessage.onSendEmail}" >
 						</aon:commandLink>
-						<aon:if test="#{customize.snapshotVersion}">
+						<aon:if test="#{customize.snapshotVersion and !actionDenied.moduleEnabled['hotel']}">
 							<aon:commandLink id="quickIssue" 
 								styleClass="aon-menu-icon aon-icon-issue-opened"
 								title="Nueva incidencia -i18n-" 
