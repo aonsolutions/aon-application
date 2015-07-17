@@ -93,6 +93,11 @@
 					</aon:menuItem>
 				</ui:define>
 				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="reservation-Refresh"
+						value="#{bundle.webmail_refresh}" immediate="#{true}"
+						styleClass="aon-finding-toolbar-item aon-icon-refresh"
+						actionListener="#{reservation.refresh}"
+						reRender="aonContent" />
 <!-- 
 					<aon:if test="#{reservation.invoiceModel.rowCount > 0}">
 						<aon:htmlCommandLink id="reservationLiquidation-report"
