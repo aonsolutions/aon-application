@@ -2352,4 +2352,13 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Nombre de las personas que expiden la certificaci\u00f3n")
  	String footer3Label();
 
+ 	@DefaultMessage("Notas de la memoria")
+ 	String memoryNotes();
+ 	
+ 	@DefaultMessage("Ejercicio 2013")
+ 	String year2013();
+ 	
+ 	@DefaultMessage("Ejercicio 2014")
+ 	String year2014();
+	
 }

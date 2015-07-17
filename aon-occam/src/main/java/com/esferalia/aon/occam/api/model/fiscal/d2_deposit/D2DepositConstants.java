@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.fiscal.d2_deposit;
 
 
 public class D2DepositConstants {
+	public static String DEPOSIT_TYPE = "DepositType";
 	
 	public static D2DepositHeaderKey[] IDA_ABREVIATE_KEYS = new D2DepositHeaderKey[]{
 		D2DepositHeaderKey.IDA01010, D2DepositHeaderKey.IDA01011, D2DepositHeaderKey.IDA01012, D2DepositHeaderKey.IDA01013,
@@ -232,208 +233,79 @@ public class D2DepositConstants {
 	};
 
 
-	public static D2DepositHeaderKey[] BA_ABREVIATE_KEYS_1 = new D2DepositHeaderKey[]{
-		 D2DepositHeaderKey.BA11100098
-		,D2DepositHeaderKey.BA111000
-		,D2DepositHeaderKey.BA1110009
-		,D2DepositHeaderKey.BA11110098
-		,D2DepositHeaderKey.BA111100
-		,D2DepositHeaderKey.BA1111009
-		,D2DepositHeaderKey.BA11120098	
-		,D2DepositHeaderKey.BA111200		
-		,D2DepositHeaderKey.BA1112009
-		,D2DepositHeaderKey.BA11130098
-		,D2DepositHeaderKey.BA111300
-		,D2DepositHeaderKey.BA1113009
-		,D2DepositHeaderKey.BA11140098
-		,D2DepositHeaderKey.BA111400
-		,D2DepositHeaderKey.BA1114009
-		,D2DepositHeaderKey.BA11150098
-		,D2DepositHeaderKey.BA111500
-		,D2DepositHeaderKey.BA1115009
-		,D2DepositHeaderKey.BA11160098
-		,D2DepositHeaderKey.BA111600
-		,D2DepositHeaderKey.BA1116009
-		,D2DepositHeaderKey.BA11170098
-		,D2DepositHeaderKey.BA111700
-		,D2DepositHeaderKey.BA1117009
-		,D2DepositHeaderKey.BA11200098
-		,D2DepositHeaderKey.BA112000
-		,D2DepositHeaderKey.BA1120009
-		,D2DepositHeaderKey.BA11210098
-		,D2DepositHeaderKey.BA112100
-		,D2DepositHeaderKey.BA1121009
-		,D2DepositHeaderKey.BA11220098
-		,D2DepositHeaderKey.BA112200
-		,D2DepositHeaderKey.BA1122009
-		,D2DepositHeaderKey.BA11230098
-		,D2DepositHeaderKey.BA112300
-		,D2DepositHeaderKey.BA1123009
-		,D2DepositHeaderKey.BA11238098
-		,D2DepositHeaderKey.BA112380
-		,D2DepositHeaderKey.BA1123809
-		,D2DepositHeaderKey.BA11238198
-		,D2DepositHeaderKey.BA112381
-		,D2DepositHeaderKey.BA1123819
-		,D2DepositHeaderKey.BA11238298
-		,D2DepositHeaderKey.BA112382
-		,D2DepositHeaderKey.BA1123829
-		,D2DepositHeaderKey.BA11237098
-		,D2DepositHeaderKey.BA112370
-		,D2DepositHeaderKey.BA1123709
-		,D2DepositHeaderKey.BA11239098
-		,D2DepositHeaderKey.BA112390
-		,D2DepositHeaderKey.BA1123909
-		,D2DepositHeaderKey.BA11240098
-		,D2DepositHeaderKey.BA112400
-		,D2DepositHeaderKey.BA1124009
-		,D2DepositHeaderKey.BA11250098
-		,D2DepositHeaderKey.BA112500
-		,D2DepositHeaderKey.BA1125009
-		,D2DepositHeaderKey.BA11260098
-		,D2DepositHeaderKey.BA112600
-		,D2DepositHeaderKey.BA1126009
-		,D2DepositHeaderKey.BA11270098
-		,D2DepositHeaderKey.BA112700
-		,D2DepositHeaderKey.BA1127009
-		,D2DepositHeaderKey.BA11000098
-		,D2DepositHeaderKey.BA110000
-		,D2DepositHeaderKey.BA1100009
-		
+	public static D2DepositHeaderKey[][] BA_ABREVIATE_KEYS_1 = new D2DepositHeaderKey[][]{
+		 new D2DepositHeaderKey[]{D2DepositHeaderKey.BA111000,D2DepositHeaderKey.BA1110009,D2DepositHeaderKey.BA11100098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA111100,D2DepositHeaderKey.BA1111009,D2DepositHeaderKey.BA11110098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA111200,D2DepositHeaderKey.BA1112009,D2DepositHeaderKey.BA11120098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA111300,D2DepositHeaderKey.BA1113009,D2DepositHeaderKey.BA11130098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA111400,D2DepositHeaderKey.BA1114009,D2DepositHeaderKey.BA11140098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA111500,D2DepositHeaderKey.BA1115009,D2DepositHeaderKey.BA11150098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA111600,D2DepositHeaderKey.BA1116009,D2DepositHeaderKey.BA11160098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA111700,D2DepositHeaderKey.BA1117009,D2DepositHeaderKey.BA11170098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA112000,D2DepositHeaderKey.BA1120009,D2DepositHeaderKey.BA11200098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA112100,D2DepositHeaderKey.BA1121009,D2DepositHeaderKey.BA11210098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA112200,D2DepositHeaderKey.BA1122009,D2DepositHeaderKey.BA11220098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA112300,D2DepositHeaderKey.BA1123009,D2DepositHeaderKey.BA11230098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA112380,D2DepositHeaderKey.BA1123809,D2DepositHeaderKey.BA11238098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA112381,D2DepositHeaderKey.BA1123819,D2DepositHeaderKey.BA11238198}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA112382,D2DepositHeaderKey.BA1123829,D2DepositHeaderKey.BA11238298}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA112370,D2DepositHeaderKey.BA1123709,D2DepositHeaderKey.BA11237098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA112390,D2DepositHeaderKey.BA1123909,D2DepositHeaderKey.BA11239098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA112400,D2DepositHeaderKey.BA1124009,D2DepositHeaderKey.BA11240098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA112500,D2DepositHeaderKey.BA1125009,D2DepositHeaderKey.BA11250098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA112600,D2DepositHeaderKey.BA1126009,D2DepositHeaderKey.BA11260098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA112700,D2DepositHeaderKey.BA1127009,D2DepositHeaderKey.BA11270098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA110000,D2DepositHeaderKey.BA1100009,D2DepositHeaderKey.BA11000098}
 	};
 	
-	public static D2DepositHeaderKey[] BA_ABREVIATE_KEYS_2 = new D2DepositHeaderKey[]{
-		D2DepositHeaderKey.BA2120000
-		,D2DepositHeaderKey.BA2121000
-		,D2DepositHeaderKey.BA2121100
-		,D2DepositHeaderKey.BA2121110
-		,D2DepositHeaderKey.BA2121120
-		,D2DepositHeaderKey.BA2121200
-		,D2DepositHeaderKey.BA2121300
-		,D2DepositHeaderKey.BA2121400
-		,D2DepositHeaderKey.BA2121500
-		,D2DepositHeaderKey.BA2121600
-		,D2DepositHeaderKey.BA2121700
-		,D2DepositHeaderKey.BA2121800
-		,D2DepositHeaderKey.BA2121900
-		,D2DepositHeaderKey.BA2122000
-		,D2DepositHeaderKey.BA2123000
-		,D2DepositHeaderKey.BA2131000
-		,D2DepositHeaderKey.BA2131100
-		,D2DepositHeaderKey.BA2131200
-		,D2DepositHeaderKey.BA2131220
-		,D2DepositHeaderKey.BA2131230
-		,D2DepositHeaderKey.BA2131290
-		,D2DepositHeaderKey.BA2131300
-		,D2DepositHeaderKey.BA2131400
-		,D2DepositHeaderKey.BA2131500
-		,D2DepositHeaderKey.BA2131600
-		,D2DepositHeaderKey.BA2131700
-		,D2DepositHeaderKey.BA21200009
-		,D2DepositHeaderKey.BA21210009
-		,D2DepositHeaderKey.BA21211009
-		,D2DepositHeaderKey.BA21211109
-		,D2DepositHeaderKey.BA21211209
-		,D2DepositHeaderKey.BA21212009
-		,D2DepositHeaderKey.BA21213009
-		,D2DepositHeaderKey.BA21214009
-		,D2DepositHeaderKey.BA21215009
-		,D2DepositHeaderKey.BA21216009
-		,D2DepositHeaderKey.BA21217009
-		,D2DepositHeaderKey.BA21218009
-		,D2DepositHeaderKey.BA21219009
-		,D2DepositHeaderKey.BA21220009
-		,D2DepositHeaderKey.BA21230009
-		,D2DepositHeaderKey.BA21310009
-		,D2DepositHeaderKey.BA21311009
-		,D2DepositHeaderKey.BA21312009
-		,D2DepositHeaderKey.BA21312209
-		,D2DepositHeaderKey.BA21312309
-		,D2DepositHeaderKey.BA21312909
-		,D2DepositHeaderKey.BA21313009
-		,D2DepositHeaderKey.BA21314009
-		,D2DepositHeaderKey.BA21315009
-		,D2DepositHeaderKey.BA21316009
-		,D2DepositHeaderKey.BA21317009
-		,D2DepositHeaderKey.BA212000098
-		,D2DepositHeaderKey.BA212100098
-		,D2DepositHeaderKey.BA212110098
-		,D2DepositHeaderKey.BA212111098
-		,D2DepositHeaderKey.BA212112098
-		,D2DepositHeaderKey.BA212120098
-		,D2DepositHeaderKey.BA212130098
-		,D2DepositHeaderKey.BA212140098
-		,D2DepositHeaderKey.BA212150098
-		,D2DepositHeaderKey.BA212160098
-		,D2DepositHeaderKey.BA212170098
-		,D2DepositHeaderKey.BA212180098
-		,D2DepositHeaderKey.BA212190098
-		,D2DepositHeaderKey.BA212200098
-		,D2DepositHeaderKey.BA212300098
-		,D2DepositHeaderKey.BA213100098
-		,D2DepositHeaderKey.BA213110098
-		,D2DepositHeaderKey.BA213120098
-		,D2DepositHeaderKey.BA213122098
-		,D2DepositHeaderKey.BA213123098
-		,D2DepositHeaderKey.BA213129098
-		,D2DepositHeaderKey.BA213130098
-		,D2DepositHeaderKey.BA213140098
-		,D2DepositHeaderKey.BA213150098
-		,D2DepositHeaderKey.BA213160098
-		,D2DepositHeaderKey.BA213170098
+	public static D2DepositHeaderKey[][] BA_ABREVIATE_KEYS_2 = new D2DepositHeaderKey[][]{
+		 new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2120000,D2DepositHeaderKey.BA21200009,D2DepositHeaderKey.BA212000098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2121000,D2DepositHeaderKey.BA21210009,D2DepositHeaderKey.BA212100098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2121100,D2DepositHeaderKey.BA21211009,D2DepositHeaderKey.BA212110098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2121110,D2DepositHeaderKey.BA21211109,D2DepositHeaderKey.BA212111098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2121120,D2DepositHeaderKey.BA21211209,D2DepositHeaderKey.BA212112098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2121200,D2DepositHeaderKey.BA21212009,D2DepositHeaderKey.BA212120098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2121300,D2DepositHeaderKey.BA21213009,D2DepositHeaderKey.BA212130098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2121400,D2DepositHeaderKey.BA21214009,D2DepositHeaderKey.BA212140098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2121500,D2DepositHeaderKey.BA21215009,D2DepositHeaderKey.BA212150098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2121600,D2DepositHeaderKey.BA21216009,D2DepositHeaderKey.BA212160098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2121700,D2DepositHeaderKey.BA21217009,D2DepositHeaderKey.BA212170098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2121800,D2DepositHeaderKey.BA21218009,D2DepositHeaderKey.BA212180098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2121900,D2DepositHeaderKey.BA21219009,D2DepositHeaderKey.BA212190098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2122000,D2DepositHeaderKey.BA21220009,D2DepositHeaderKey.BA212200098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2123000,D2DepositHeaderKey.BA21230009,D2DepositHeaderKey.BA212300098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2131000,D2DepositHeaderKey.BA21310009,D2DepositHeaderKey.BA213100098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2131100,D2DepositHeaderKey.BA21311009,D2DepositHeaderKey.BA213110098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2131200,D2DepositHeaderKey.BA21312009,D2DepositHeaderKey.BA213120098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2131220,D2DepositHeaderKey.BA21312209,D2DepositHeaderKey.BA213122098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2131230,D2DepositHeaderKey.BA21312309,D2DepositHeaderKey.BA213123098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2131290,D2DepositHeaderKey.BA21312909,D2DepositHeaderKey.BA213129098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2131300,D2DepositHeaderKey.BA21313009,D2DepositHeaderKey.BA213130098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2131400,D2DepositHeaderKey.BA21314009,D2DepositHeaderKey.BA213140098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2131500,D2DepositHeaderKey.BA21315009,D2DepositHeaderKey.BA213150098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2131600,D2DepositHeaderKey.BA21316009,D2DepositHeaderKey.BA213160098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2131700,D2DepositHeaderKey.BA21317009,D2DepositHeaderKey.BA213170098}
 		
 	};
 	
 	
-	public static D2DepositHeaderKey[] BA_ABREVIATE_KEYS_3 = new D2DepositHeaderKey[]{
-		D2DepositHeaderKey.BA2232000
-		,D2DepositHeaderKey.BA2232100
-		,D2DepositHeaderKey.BA2232200
-		,D2DepositHeaderKey.BA2232300
-		,D2DepositHeaderKey.BA2232320
-		,D2DepositHeaderKey.BA2232330
-		,D2DepositHeaderKey.BA2232390
-		,D2DepositHeaderKey.BA2232400
-		,D2DepositHeaderKey.BA2232500
-		,D2DepositHeaderKey.BA2232580
-		,D2DepositHeaderKey.BA2232581
-		,D2DepositHeaderKey.BA2232582
-		,D2DepositHeaderKey.BA2232590
-		,D2DepositHeaderKey.BA2232600
-		,D2DepositHeaderKey.BA2232700
-		,D2DepositHeaderKey.BA2230000
-		,D2DepositHeaderKey.BA22320009
-		,D2DepositHeaderKey.BA22321009
-		,D2DepositHeaderKey.BA22322009
-		,D2DepositHeaderKey.BA22323009
-		,D2DepositHeaderKey.BA22323209
-		,D2DepositHeaderKey.BA22323309
-		,D2DepositHeaderKey.BA22323909
-		,D2DepositHeaderKey.BA22324009
-		,D2DepositHeaderKey.BA22325009
-		,D2DepositHeaderKey.BA22325809
-		,D2DepositHeaderKey.BA22325819
-		,D2DepositHeaderKey.BA22325829
-		,D2DepositHeaderKey.BA22325909
-		,D2DepositHeaderKey.BA22326009
-		,D2DepositHeaderKey.BA22327009
-		,D2DepositHeaderKey.BA22300009
-		,D2DepositHeaderKey.BA223200098
-		,D2DepositHeaderKey.BA223210098
-		,D2DepositHeaderKey.BA223220098
-		,D2DepositHeaderKey.BA223230098
-		,D2DepositHeaderKey.BA223232098
-		,D2DepositHeaderKey.BA223233098
-		,D2DepositHeaderKey.BA223239098
-		,D2DepositHeaderKey.BA223240098
-		,D2DepositHeaderKey.BA223250098
-		,D2DepositHeaderKey.BA223258098
-		,D2DepositHeaderKey.BA223258198
-		,D2DepositHeaderKey.BA223258298
-		,D2DepositHeaderKey.BA223259098
-		,D2DepositHeaderKey.BA223260098
-		,D2DepositHeaderKey.BA223270098
-		,D2DepositHeaderKey.BA223000098
+	public static D2DepositHeaderKey[][] BA_ABREVIATE_KEYS_3 = new D2DepositHeaderKey[][]{
+		 new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2232000,D2DepositHeaderKey.BA22320009,D2DepositHeaderKey.BA223200098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2232100,D2DepositHeaderKey.BA22321009,D2DepositHeaderKey.BA223210098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2232200,D2DepositHeaderKey.BA22322009,D2DepositHeaderKey.BA223220098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2232300,D2DepositHeaderKey.BA22323009,D2DepositHeaderKey.BA223230098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2232320,D2DepositHeaderKey.BA22323209,D2DepositHeaderKey.BA223232098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2232330,D2DepositHeaderKey.BA22323309,D2DepositHeaderKey.BA223233098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2232390,D2DepositHeaderKey.BA22323909,D2DepositHeaderKey.BA223239098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2232400,D2DepositHeaderKey.BA22324009,D2DepositHeaderKey.BA223240098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2232500,D2DepositHeaderKey.BA22325009,D2DepositHeaderKey.BA223250098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2232580,D2DepositHeaderKey.BA22325809,D2DepositHeaderKey.BA223258098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2232581,D2DepositHeaderKey.BA22325819,D2DepositHeaderKey.BA223258198}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2232582,D2DepositHeaderKey.BA22325829,D2DepositHeaderKey.BA223258298}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2232590,D2DepositHeaderKey.BA22325909,D2DepositHeaderKey.BA223259098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2232600,D2DepositHeaderKey.BA22326009,D2DepositHeaderKey.BA223260098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2232700,D2DepositHeaderKey.BA22327009,D2DepositHeaderKey.BA223270098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA2230000,D2DepositHeaderKey.BA22300009,D2DepositHeaderKey.BA223000098}
 	};
 
 	public static D2DepositHeaderKey[] PA_ABREVIATE_KEYS = new D2DepositHeaderKey[]{

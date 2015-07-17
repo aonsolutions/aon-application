@@ -40,11 +40,10 @@ import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2PDepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
-import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema;
-import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002013toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves.Clave;
+import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002013toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002014toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Utils;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -101,7 +100,6 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		D2DepositKey[] keyList = null;
 		D2DepositHeaderKey[] keyListHeader = null;
 		D2DepositFooterKey[] keyListFooter = null;
-		String type = schema.getCabecera().getTipoCuestionario();
 		switch (part) {
 		case "IDA":			
 			keyListHeader = D2DepositConstants.IDA_ABREVIATE_KEYS;
@@ -282,28 +280,25 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		}
 		List<Clave> claves = schema.getClaves().getClave();
 		Map<String, String> map = new HashMap<String, String>();
+		String type = schema.getCabecera().getTipoCuestionario();
+		map.put(D2DepositConstants.DEPOSIT_TYPE, type);
 		for (Integer i = 0; i < claves.size(); i++) {
 			if (keyList != null)
 				for (Integer j = 0; j < keyList.length; j++) {
-					if (claves.get(i).getCodigo().toString()
-							.equals(keyList[j].getCode())) {
+					if (claves.get(i).getCodigo().toString().equals(keyList[j].getCode())) {
 						map.put(keyList[j].getName(), claves.get(i).getValor());
 					}
 				}
 			if (keyListHeader != null)
 				for (Integer j = 0; j < keyListHeader.length; j++) {
-					if (claves.get(i).getCodigo().toString()
-							.equals(keyListHeader[j].getCode())) {
-						map.put(keyListHeader[j].getName(), claves.get(i)
-								.getValor());
+					if (claves.get(i).getCodigo().toString().equals(keyListHeader[j].getCode())) {
+						map.put(keyListHeader[j].getName(), claves.get(i).getValor());
 					}
 				}
 			if (keyListFooter != null)
 				for (Integer j = 0; j < keyListFooter.length; j++) {
-					if (claves.get(i).getCodigo().toString()
-							.equals(keyListFooter[j].getCode())) {
-						map.put(keyListFooter[j].getName(), claves.get(i)
-								.getValor());
+					if (claves.get(i).getCodigo().toString().equals(keyListFooter[j].getCode())) {
+						map.put(keyListFooter[j].getName(), claves.get(i).getValor());
 					}
 				}
 
@@ -332,8 +327,8 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 			c.setValor(value);
 			schema.getClaves().getClave().add(c);
 		}
-		request.getSession().putValue("d2DepositSchema" + cif, schema);
-		request.getSession().putValue("ModifyD2DepositSchema" + cif, "true");
+		request.getSession().setAttribute("d2DepositSchema" + cif, schema);
+		request.getSession().setAttribute("ModifyD2DepositSchema" + cif, "true");
 	}
 
 	public Boolean isDigitalDeposit(Integer domainId) {

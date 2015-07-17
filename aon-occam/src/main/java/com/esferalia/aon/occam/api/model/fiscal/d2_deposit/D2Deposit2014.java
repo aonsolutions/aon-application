@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema;
 
 public class D2Deposit2014 {
+	
 	String domain;
 	Enterprise enterprise;
 	
