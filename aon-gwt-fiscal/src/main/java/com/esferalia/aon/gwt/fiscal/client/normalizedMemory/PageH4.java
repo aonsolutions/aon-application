@@ -381,6 +381,7 @@ public class PageH4 extends PageAbs {
 					
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
+					onEdit(code, d);
 					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),code, d , new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}

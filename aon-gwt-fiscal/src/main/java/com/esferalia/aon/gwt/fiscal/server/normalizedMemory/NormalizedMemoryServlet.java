@@ -305,6 +305,37 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		}
 		return map;
 	}
+	
+	public Map<String, String> getSchema(String cif,
+			Integer domainId, Boolean textMode) {
+		String domain = AonUtil.getDomainName();
+		HttpServletRequest request = getThreadLocalRequest();
+		// String cif = DBConsults.getCIF(domain, domainId);
+		Esquema schema = (Esquema) request.getSession().getAttribute(
+				"d2DepositSchema" + cif);
+		if (schema == null) {
+			// System.out.println(domainId);
+			if (textMode) {
+				schema = DBConsults.getDeposit(domain, domainId, cif);
+			} else
+				schema = DBConsults.getDeposit(domain, domainId);
+			request.getSession().putValue("d2DepositSchema" + cif, schema);
+		}
+		// TODO
+		// COMPROBAR SI EL SCHEMA ESTÁ EN LA SESIÓN
+		// SI NO ESTA GETDEPOSIT() --> DE DBCONSULTS.
+		// DEVOLVER SCHEMA
+		
+		List<Clave> claves = schema.getClaves().getClave();
+		Map<String, String> map = new HashMap<String, String>();
+		String type = schema.getCabecera().getTipoCuestionario();
+		map.put(D2DepositConstants.DEPOSIT_TYPE, type);
+		for (Integer i = 0; i < claves.size(); i++) {
+			if(!map.containsKey(claves.get(i).getCodigo().toString()))
+				map.put(claves.get(i).getCodigo().toString(), claves.get(i).getValor());
+		}
+		return map;
+	}
 
 	public void updateSchema(String cif, Integer domainId, String key,
 			String value) {
@@ -561,8 +592,8 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		 */
 	}
 
-	public void importAll(String type, String ejercicio, MemoryTemplate mt,
-			Integer domainId, String cif) {
+	public Map<String, String> importAll(String type, String ejercicio, MemoryTemplate mt,
+			Integer domainId, String cif, Map<String, String> map) {
 		String domainName = getDomainName(domainId);
 		if (type.equals("Balance")) {
 			if (ejercicio.equals("2013")) {
@@ -572,6 +603,10 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 				Mod2002013toD2.fillBalance(ctx, mod2002013);
 
 				for (D2DepositHeaderKey key : ctx.keySet()) {
+					if(map.containsKey(key.getCode().toString()))
+						map.remove(key.getCode().toString());
+					map.put(key.getCode(), ctx.get(key)
+							.toString());
 					updateSchema(cif, domainId, key.getCode(), ctx.get(key)
 							.toString());
 				}
@@ -582,6 +617,10 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 				Mod2002014toD2.fillBalance(ctx, mod2002014);
 
 				for (D2DepositHeaderKey key : ctx.keySet()) {
+					if(map.containsKey(key.getCode().toString()))
+						map.remove(key.getCode().toString());
+					map.put(key.getCode(), ctx.get(key)
+							.toString());
 					updateSchema(cif, domainId, key.getCode(), ctx.get(key)
 							.toString());
 				}
@@ -594,6 +633,10 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 				Mod2002013toD2.fillPyg(ctx, mod2002013);
 
 				for (D2DepositHeaderKey key : ctx.keySet()) {
+					if(map.containsKey(key.getCode().toString()))
+						map.remove(key.getCode().toString());
+					map.put(key.getCode(), ctx.get(key)
+							.toString());
 					updateSchema(cif, domainId, key.getCode(), ctx.get(key)
 							.toString());
 				}
@@ -604,6 +647,10 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 				Mod2002014toD2.fillPyg(ctx, mod2002014);
 
 				for (D2DepositHeaderKey key : ctx.keySet()) {
+					if(map.containsKey(key.getCode().toString()))
+						map.remove(key.getCode().toString());
+					map.put(key.getCode(), ctx.get(key)
+							.toString());
 					updateSchema(cif, domainId, key.getCode(), ctx.get(key)
 							.toString());
 				}
@@ -617,6 +664,10 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 				Mod2002013toD2.fillEcpn2(ctx, mod2002013);
 
 				for (D2DepositHeaderKey key : ctx.keySet()) {
+					if(map.containsKey(key.getCode().toString()))
+						map.remove(key.getCode().toString());
+					map.put(key.getCode(), ctx.get(key)
+							.toString());
 					updateSchema(cif, domainId, key.getCode(), ctx.get(key)
 							.toString());
 				}
@@ -628,6 +679,10 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 				Mod2002014toD2.fillEcpn2(ctx, mod2002014);
 
 				for (D2DepositHeaderKey key : ctx.keySet()) {
+					if(map.containsKey(key.getCode().toString()))
+						map.remove(key.getCode().toString());
+					map.put(key.getCode(), ctx.get(key)
+							.toString());
 					updateSchema(cif, domainId, key.getCode(), ctx.get(key)
 							.toString());
 				}
@@ -642,6 +697,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 
 			}
 		}
+		return map;
 
 	}
 
@@ -651,11 +707,13 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		DBConsults.deleteDeposit(domain, domainId);
 	}
 
-	public void createD2Deposit(Integer domainId, Integer id, String name,
+	public Map<String, String> createD2Deposit(Integer domainId, Integer id, String name,
 			String type) {
 		String domainName = AonUtil.getDomainName();
 		Enterprise enterprise = AON.getEnterprise(domainName, domainId, id);
 		byte[] b = Utils.CreateXml(enterprise, name, type, domainName);
 		Integer depositId = DBConsults.insertDeposit(domainName, b, domainId);
+		
+		return getSchema(enterprise.getDocument(), domainId, false);
 	}
 }

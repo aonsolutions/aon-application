@@ -43,13 +43,17 @@ public interface INormalizedMemoryAsync {
 	void importSocietyValues(String document, Integer domainId,
 			AsyncCallback<Void> callback);
 
-	void createD2Deposit(Integer domainId, Integer id, String name, String type,
-			AsyncCallback<Void> callback);
+	void createD2Deposit(Integer domainId, Integer id, String name,
+			String type, AsyncCallback<Map<String, String>> callback);
 
 	void importAll(String type, String ejercicio, MemoryTemplate mt,
-			Integer domainId, String cif, AsyncCallback<Void> callback);
+			Integer domainId, String cif, Map<String, String> map,
+			AsyncCallback<Map<String, String>> callback);
 
 	void delete(Integer domainId, String document, AsyncCallback<Void> callback);
+
+	void getSchema(String cif, Integer domainId, Boolean textMode,
+			AsyncCallback<Map<String, String>> callback);
 
 
 

@@ -75,22 +75,23 @@ public abstract class PageAbs extends ResizeComposite {
 		table = new FlexTable();
 	}
 	
-	public void dump(D2DepositTreeObject d2DepositObject, String part) {
+	public void dump(D2DepositTreeObject d2DepositObject) {
+
 		this.d2DepositObject = d2DepositObject;
-		inma.getSchema(enterprise.getDocument(),part,enterprise.getDomain(),false, new AsyncCallback<Map<String, String>>() {
-			
-			@Override
-			public void onSuccess(Map<String, String> result) {
-				map = result;
-				depositType = DepositType.valueOfLabel( map.get(D2DepositConstants.DEPOSIT_TYPE));
-				initializeTable();
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				
-			}
-		});
+
 		
+		if(d2DepositObject.getModify())
+			map = d2DepositObject.getMapDraft();
+		else
+			map = d2DepositObject.getMap();
+
+
+		depositType = DepositType.valueOfLabel( map.get(D2DepositConstants.DEPOSIT_TYPE));
+
+
+		initializeTable();
+
+
 		//refreshDraftMap(this.d2DepositObject.getD2Deposit());
 	}
 	public boolean isPymes() {
@@ -211,6 +212,7 @@ public abstract class PageAbs extends ResizeComposite {
 					
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
+					onEdit(code, d.toString());
 					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),code, d.toString() , new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
@@ -223,8 +225,8 @@ public abstract class PageAbs extends ResizeComposite {
 				
 			}
 		});
-		if(map.containsKey(key.getName())){
-			Double d = Double.parseDouble(map.get(key.getName()));
+		if(map.containsKey(key.getCode().toString())){
+			Double d = Double.parseDouble(map.get(key.getCode().toString()));
 			text.setValue(d);
 		}
 		else text.setValue(0.0);
@@ -263,6 +265,7 @@ public abstract class PageAbs extends ResizeComposite {
 					text.addStyleName(AON.AON_CSS.aonChanged());
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
+					onEdit(key.getCode(), d.toString());
 					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), d.toString() , new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
@@ -275,8 +278,8 @@ public abstract class PageAbs extends ResizeComposite {
 				
 			}
 		});
-		if(map.containsKey(key.getName())){
-			Double d = Double.parseDouble(map.get(key.getName()));
+		if(map.containsKey(key.getCode().toString())){
+			Double d = Double.parseDouble(map.get(key.getCode().toString()));
 			text.setValue(d);
 		}
 		else text.setValue(0.0);
@@ -322,6 +325,7 @@ public abstract class PageAbs extends ResizeComposite {
 					
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
+					onEdit(code, d.toString());
 					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),code, d.toString() , new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
@@ -336,8 +340,8 @@ public abstract class PageAbs extends ResizeComposite {
 			}
 		});
 		//text.setValue(d2DepositObject.getDoubleValue(key));
-		if(map.containsKey(key.getName())){
-			Double d = Double.parseDouble(map.get(key.getName()));
+		if(map.containsKey(key.getCode().toString())){
+			Double d = Double.parseDouble(map.get(key.getCode().toString()));
 			text.setValue(d);
 		}
 		else text.setValue(0.0);
@@ -465,6 +469,7 @@ public abstract class PageAbs extends ResizeComposite {
 					
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
+					onEdit(key.getCode(), d);
 					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), d , new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
@@ -476,8 +481,8 @@ public abstract class PageAbs extends ResizeComposite {
 				}
 			}
 		});
-		if (map.containsKey(key.getName())){
-			String d = map.get(key.getName());
+		if (map.containsKey(key.getCode().toString())){
+			String d = map.get(key.getCode().toString());
 			text.setValue(d);
 		} else {
 			text.setValue(AonStringUtils.EMPTY);
@@ -491,5 +496,14 @@ public abstract class PageAbs extends ResizeComposite {
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
 	}
 
+	protected void onEdit(String key, String value){
+		if(d2DepositObject.getMapDraft().containsKey(key))
+			d2DepositObject.getMapDraft().remove(key);
+		d2DepositObject.getMapDraft().put(key, value);
+		d2DepositObject.setModify(true);
+		
+		normalizedMemory.getDigitalDepositTreeNode().setD2Deposit2014(d2DepositObject);
+	}
+	
 	protected abstract void initializeTable();
 }

@@ -14,6 +14,9 @@ public interface INormalizedMemory extends RemoteService{
 
 	public Map<String, String>  getSchema(String cif,String part,Integer domainId, Boolean textMode);
 	
+	public Map<String, String> getSchema(String cif,
+			Integer domainId, Boolean textMode);
+	
 	public Integer initialize();
 	
 	public void updateSchema(String cif,Integer domainId, String key, String value);
@@ -38,10 +41,10 @@ public interface INormalizedMemory extends RemoteService{
 	
 	public void importSocietyValues(String document, Integer domainId);
 	
-	public void createD2Deposit(Integer domainId, Integer id, String name, String type);
+	public Map<String, String> createD2Deposit(Integer domainId, Integer id, String name, String type);
 	
-	public void importAll(String type, String ejercicio,MemoryTemplate mt, Integer domainId, String cif);
-
+	public Map<String, String> importAll(String type, String ejercicio, MemoryTemplate mt,
+			Integer domainId, String cif, Map<String, String> map);
 	public void delete(Integer domainId, String document);
 
 }

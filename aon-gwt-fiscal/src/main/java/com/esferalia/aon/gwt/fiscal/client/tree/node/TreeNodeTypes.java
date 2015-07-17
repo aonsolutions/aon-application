@@ -70,9 +70,9 @@ public abstract class TreeNodeTypes<T> {
 		}
 	};
 	
-	public static TreeNodeTypes<Enterprise> DIGITAL_DEPOSIT = new TreeNodeTypes<Enterprise>() {
+	public static TreeNodeTypes<D2DepositTreeObject> DIGITAL_DEPOSIT = new TreeNodeTypes<D2DepositTreeObject>() {
 		@Override
-		public TreeNode<Enterprise> getInstance() {
+		public TreeNode<D2DepositTreeObject> getInstance() {
 			return new DigitalDepositTreeNode();
 		}
 	};

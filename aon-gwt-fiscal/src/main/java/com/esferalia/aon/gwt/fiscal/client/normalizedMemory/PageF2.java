@@ -227,6 +227,7 @@ public class PageF2 extends PageAbs {
 
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
+					onEdit(key2, t.getValue());
 					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, t.getValue(), new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
@@ -248,7 +249,8 @@ public class PageF2 extends PageAbs {
 				@Override
 				public void onValueChange(ValueChangeEvent<Boolean> event) {
 					normalizedMemory.saveButton.setEnabled(true);
-					normalizedMemory.cancelButton.setVisible(true);		
+					normalizedMemory.cancelButton.setVisible(true);	
+					onEdit(key2, event.getValue()?"True":"False");
 					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, event.getValue()?"True":"False", new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
@@ -296,6 +298,7 @@ public class PageF2 extends PageAbs {
 					Integer month = d.getValue().getMonth();
 					Integer year = d.getValue().getYear()+1900;
 					String value = day+"."+month+"."+year;
+					onEdit(key2, value);
 					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, value, new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
@@ -326,27 +329,33 @@ public class PageF2 extends PageAbs {
 						monthKey = "110129";
 						dayKey = "110139";
 					}
-					if(dayKey != null)
+					if(dayKey != null){
+						onEdit(dayKey, day.toString());
 						inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),dayKey, day.toString(), new AsyncCallback<Void>() {
 							@Override
 							public void onFailure(Throwable caught) {}
 							@Override
 							public void onSuccess(Void result) {}
 						});	
-					if(monthKey != null)
+					}
+					if(monthKey != null){
+						onEdit(monthKey, month.toString());
 						inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),monthKey, month.toString(), new AsyncCallback<Void>() {
 							@Override
 							public void onFailure(Throwable caught) {}
 							@Override
 							public void onSuccess(Void result) {}
 						});	
-					if(yearKey != null)
+					}
+					if(yearKey != null){
+						onEdit(yearKey, year.toString());
 						inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),yearKey, year.toString(), new AsyncCallback<Void>() {
 							@Override
 							public void onFailure(Throwable caught) {}
 							@Override
 							public void onSuccess(Void result) {}
-						});		
+						});	
+					}
 				}
 			});
 		}
@@ -403,6 +412,7 @@ public class PageF2 extends PageAbs {
 					}
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
+					onEdit(key2, value);
 					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, value, new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
@@ -430,6 +440,7 @@ public class PageF2 extends PageAbs {
 
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
+					onEdit(key2, dl.getValue().toString());
 					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, dl.getValue().toString(), new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}

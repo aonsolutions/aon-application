@@ -630,6 +630,7 @@ public class PageF1 extends PageAbs {
 					text.setTitle(code);
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
+					onEdit(code, d);
 					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),code, d , new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
@@ -685,6 +686,7 @@ public class PageF1 extends PageAbs {
 					text.setTitle(code);
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
+					onEdit(code, value);
 					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),code, value, new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
@@ -745,6 +747,7 @@ public class PageF1 extends PageAbs {
 					text.setTitle(code);
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
+					onEdit(code, d.toString());
 					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),code, d.toString() , new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
@@ -796,6 +799,7 @@ public class PageF1 extends PageAbs {
 					
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
+					onEdit(code, d.toString());
 					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),code, d.toString() , new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
@@ -840,7 +844,8 @@ public class PageF1 extends PageAbs {
 				@Override
 				public void onValueChange(ValueChangeEvent<Boolean> event) {
 					normalizedMemory.saveButton.setEnabled(true);
-					normalizedMemory.cancelButton.setVisible(true);		
+					normalizedMemory.cancelButton.setVisible(true);	
+					onEdit(key2, event.getValue()?"1":"0");
 					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, event.getValue()?"1":"0", new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
@@ -880,6 +885,7 @@ public class PageF1 extends PageAbs {
 
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
+					onEdit(key2, dl.getValue().toString());
 					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, dl.getValue().toString(), new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
@@ -912,7 +918,7 @@ public class PageF1 extends PageAbs {
 				if(j == 0 || j == 2){
 					DateBox dateBox= (DateBox)table.getWidget(i, j);
 					dateBox.setValue(null);
-					
+
 					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),dateBox.getTitle(), "", new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
