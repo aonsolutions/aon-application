@@ -45,6 +45,7 @@
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="reservation" value="#{reservationLiquidationPrinter.getProjectReservation}" />
 		</params>
 	</report>
 

@@ -34,7 +34,7 @@ public class ReservationLiquidationPrinter implements ICollectionProvider {
 	
 	private static Settings SETTINGS = null;
 	
-	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	
 	private ProjectReservation projectReservation;
 	
@@ -100,7 +100,7 @@ public class ReservationLiquidationPrinter implements ICollectionProvider {
 
 	private void addReservationLiquidation(Record7<Timestamp, Byte, String, Double, String, BigDecimal, BigDecimal> record, List<ReservationLiquidation> list){
 		
-		String name = sdf.format(record.value1()) +" / "+ getShift(new Integer(record.value2()));
+		String name = sdf.format(record.value1()) +" "+ getShift(new Integer(record.value2()));
 		String referenceCode = record.value3();
 		Double total = record.value4();
 		String paymethod = record.value5();
