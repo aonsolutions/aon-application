@@ -65,7 +65,7 @@ public class DBConsults {
 			byte[] data;
 			if (record != null) {
 
-				parent = new File(record.value2()+"/");
+				parent = new File("RAIZ/");
 				parent.mkdir();
 				new File(parent, "Documentos").mkdir();
 				new File(parent, "Documentos TMP").mkdir();

@@ -11,9 +11,11 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.D2DepositTreeObject;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositBehaviour;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.DepositType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -26,8 +28,6 @@ import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.text.shared.SafeHtmlRenderer;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DisclosurePanel;
@@ -37,9 +37,11 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.TextBox;
 
 public abstract class PageAbs extends ResizeComposite {
-
+	
+	protected static final int MEMORY_NOTE_VISIBLE_LENGTH = 8;
 	
 	final INormalizedMemoryAsync inma = GWT.create(INormalizedMemory.class);
 	NormalizedMemory normalizedMemory;
@@ -56,10 +58,12 @@ public abstract class PageAbs extends ResizeComposite {
 	
 
 	protected D2DepositTreeObject d2DepositObject;
-
+	
 
 	private HashMap<D2DepositKey, DoubleBox> inputs = new HashMap<D2DepositKey, DoubleBox>();
 	private HashMap<D2DepositKey, BoxLabel> labels = new HashMap<D2DepositKey, BoxLabel>();
+	
+	private static DepositType depositType;
 
 	@UiField
 	Panel basePanel;
@@ -78,6 +82,7 @@ public abstract class PageAbs extends ResizeComposite {
 			@Override
 			public void onSuccess(Map<String, String> result) {
 				map = result;
+				depositType = DepositType.valueOfLabel( map.get(D2DepositConstants.DEPOSIT_TYPE));
 				initializeTable();
 			}
 			@Override
@@ -88,17 +93,9 @@ public abstract class PageAbs extends ResizeComposite {
 		
 		//refreshDraftMap(this.d2DepositObject.getD2Deposit());
 	}
-	
-	/*private void refreshDraftMap(D2Deposit d2Deposit) {
-		for (D2DepositKey key : d2Deposit.getDraftMap().keySet()) {
-			if (inputs.containsKey(key)) {
-				DoubleBox input = inputs.get(key);
-				DoubleVariable2014 var = d2Deposit.getDraftMap().get(key);
-				input.setValue(var.getValue()); ;
-				input.addStyleName(AON.AON_CSS.aonChanged());
-			}
-		}
-	}*/
+	public boolean isPymes() {
+		return depositType == DepositType.PYMES;
+	}
 	
 	public Map<D2DepositKey, DoubleBox> getInputs() {
 		return inputs;
@@ -220,14 +217,12 @@ public abstract class PageAbs extends ResizeComposite {
 						@Override
 						public void onSuccess(Void result) {}
 					});
-					//d2DepositObject.doubleValueChanged(key, d );
 				} catch (ParseException e) {
 					// nothing.
 				}
 				
 			}
 		});
-		//text.setValue(d2DepositObject.getDoubleValue(key));
 		if(map.containsKey(key.getName())){
 			Double d = Double.parseDouble(map.get(key.getName()));
 			text.setValue(d);
@@ -239,36 +234,25 @@ public abstract class PageAbs extends ResizeComposite {
 		panel.add(text);
 		
 		getInputs().put(key, text);
-		if (!isTitle(key)) {
-			//panel.addStyleName(AON.AON_CSS.aonFiscalPaddingRight());
-		}
 		tab.setWidget(row, col, panel);
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextRight());
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
 	}
 	
 	protected void paintKeyField(FlexTable tab,final D2DepositHeaderKey key,int row, int col) {
+		paintKeyField(tab,key,row,col, true);	
+	}
+	
+	protected void paintKeyField(FlexTable tab,final D2DepositHeaderKey key,int row, int col, boolean showBox) {
 		boolean disabled = isDisabled(key);
 		
 		FlowPanel panel = new FlowPanel();
-		String codeId = key.getCode();
-		boolean show = true;
-		try {
-			show = Integer.parseInt(codeId) > 0;
-		} catch (NumberFormatException e) {
-			// Nothing;
-		}
-		if (show) {
-			BoxLabel code = new BoxLabel(codeId);
-			//getLabels().put(key, code);
+		if (showBox) {
+			BoxLabel code = new BoxLabel(key.getCode());
 			panel.add(code);
 		}
-
 		final DoubleBox text = new DoubleBox();
-		
-		codeAux = codeId;
 		text.addChangeHandler(new ChangeHandler() {
-			String code = codeAux;
 			@Override
 			public void onChange(ChangeEvent event) {
 				try {
@@ -277,23 +261,20 @@ public abstract class PageAbs extends ResizeComposite {
 					}
 					Double d = text.getValueOrThrow();
 					text.addStyleName(AON.AON_CSS.aonChanged());
-					
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),code, d.toString() , new AsyncCallback<Void>() {
+					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), d.toString() , new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
 						@Override
 						public void onSuccess(Void result) {}
 					});
-					//d2DepositObject.doubleValueChanged(key, d );
 				} catch (ParseException e) {
 					// nothing.
 				}
 				
 			}
 		});
-		//text.setValue(d2DepositObject.getDoubleValue(key));
 		if(map.containsKey(key.getName())){
 			Double d = Double.parseDouble(map.get(key.getName()));
 			text.setValue(d);
@@ -303,11 +284,6 @@ public abstract class PageAbs extends ResizeComposite {
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
 		text.setEnabled(!disabled);
 		panel.add(text);
-		
-		//getInputs().put(key, text);
-		if (!isTitle(key)) {
-			panel.addStyleName(AON.AON_CSS.aonFiscalPaddingRight());
-		}
 		tab.setWidget(row, col, panel);
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextRight());
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
@@ -408,61 +384,6 @@ public abstract class PageAbs extends ResizeComposite {
 		return (behaviour != null && behaviour[0]); 
 	}
 
-/*	
-	protected int paintKeyBreakdown(FlexTable tab,int row,final String label, IMod200KeysProvider[] keysProvider,String[] headers) {
-		
-		FlexTable tableDetail = getFlexTable(tab,row,label,headers);
-		int r = 1;
-		int col = 0;
-		for (IMod200KeysProvider key : keysProvider) {
-			Label desc = new Label(key.getDescription() );
-			tableDetail.setWidget(r, 0, desc);
-			tableDetail.getFlexCellFormatter().setStyleName(r, 0, AON.AON_CSS.aonFiscalBorderBottom());
-			col = 1;
-			for (final Mod2002014Key k : key.getKeys() ) {
-				if (k != null){
-					Boolean[] behaviour = BEHAVIOUR_KEYS_MAP.get(k.toString());
-					boolean disabled = behaviour != null && behaviour[1];
-	
-					FlowPanel panel = new FlowPanel();
-					BoxLabel code = new BoxLabel(k.getCode( mod200Object.getAdministration() ));
-					panel.add(code);
-					getLabels().put(k, code);
-					
-					final DoubleBox text = new DoubleBox(12);
-					text.addChangeHandler(new ChangeHandler() {
-						@Override
-						public void onChange(ChangeEvent event) {
-							try {
-								if (AonStringUtils.isEmpty(text.getText())) {
-									text.setValue(0.0,false);
-								}
-								Double d = text.getValueOrThrow();
-								text.addStyleName(AON.AON_CSS.aonChanged());
-								mod200Object.doubleValueChanged(k, d);
-							} catch (ParseException e) {
-								// nothing.
-							}
-						}
-					});
-					text.setValue(mod200Object.getDoubleValue(k));
-					text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
-					text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-					text.setEnabled(!disabled);
-					panel.add(text);
-					
-					getInputs().put(k, text);
-					tableDetail.setWidget(r, col, panel);
-					tableDetail.getFlexCellFormatter().addStyleName(r, col, AON.AON_CSS.aonTextRight());
-					tableDetail.getFlexCellFormatter().addStyleName(r, col, AON.AON_CSS.aonNowrap());
-				}
-				++col;
-			}
-			++r;
-		}
-		return ++row;
-	}
-	*/
 	protected FlexTable getFlexTable(FlexTable tab,int row,final String label, String[] headers) {
 		FlowPanel container = new FlowPanel();
 		container.addStyleName(AON.AON_CSS.aonGroup());
@@ -521,6 +442,53 @@ public abstract class PageAbs extends ResizeComposite {
 		tab.setWidget(row, 0, container);
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		return tableDetail;
+	}
+
+	protected void paintKeyFieldTextBox(FlexTable tab,final String codeId, final D2DepositHeaderKey key,int row, int col) {
+		boolean disabled = isDisabled(key);
+		FlowPanel panel = new FlowPanel();
+		BoxLabel code = new BoxLabel(codeId);
+		panel.add(code);
+
+		final TextBox text = new TextBox();
+		text.setVisibleLength(MEMORY_NOTE_VISIBLE_LENGTH);
+		text.setStyleName(AON.AON_CSS.aonInputText());
+		text.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				try {
+					if (AonStringUtils.isEmpty(text.getText())) {
+						text.setValue("",false);
+					}
+					String d = text.getValueOrThrow();
+					text.addStyleName(AON.AON_CSS.aonChanged());
+					
+					normalizedMemory.saveButton.setEnabled(true);
+					normalizedMemory.cancelButton.setVisible(true);
+					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), d , new AsyncCallback<Void>() {
+						@Override
+						public void onFailure(Throwable caught) {}
+						@Override
+						public void onSuccess(Void result) {}
+					});
+				} catch (ParseException e) {
+					// nothing.
+				}
+			}
+		});
+		if (map.containsKey(key.getName())){
+			String d = map.get(key.getName());
+			text.setValue(d);
+		} else {
+			text.setValue(AonStringUtils.EMPTY);
+		}
+		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
+		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
+		text.setEnabled(!disabled);
+		panel.add(text);
+		tab.setWidget(row, col, panel);
+		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextLeft());
+		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
 	}
 
 	protected abstract void initializeTable();
