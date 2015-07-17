@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.26.1
+# Version: 8.28.0
 # Created by: girazu
-# Creation Date: 24/06/2015 18:30
+# Creation Date: 15/07/2015 18:25
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -4736,7 +4736,7 @@ CREATE TABLE `fs_model200_registry` (
   `document` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'NIF',
   `name` varchar(45) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
   `province` tinyint(1) NOT NULL default '0' COMMENT 'Provincia',
-  `country` varchar(2) DEFAULT NULL COMMENT 'Pais',
+  `country` varchar(2) collate latin1_spanish_ci default NULL COMMENT 'Pais',
   `residence` varchar(45) collate latin1_spanish_ci default NULL COMMENT 'Residencia',
   `representative` tinyint(1) NOT NULL default '0' COMMENT 'Representante',
   `type` tinyint(1) NOT NULL default '0' COMMENT 'Tipo. Administrador/participacion ',
@@ -6568,6 +6568,10 @@ CREATE TABLE `project_reservation_guest` (
   `country` varchar(3) collate latin1_spanish_ci default NULL COMMENT 'Pais',
   `barcode` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Codigo de pulsera',
   `person` int(4) default NULL COMMENT 'Identificador de la Persona',
+  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY  (`id`),
   KEY `IDX_PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION` (`project_reservation`),
   KEY `IDX_PROJECT_RESERVATION_GUEST_DOMAIN` (`domain`),
@@ -7973,7 +7977,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.26.2');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.28.0');
 
 COMMIT;
 

@@ -93,6 +93,8 @@ public interface ISQLConstants {
 	String PERSON_GENDER = "personGender";
 
 	String SERVLET_LOGIN = "PMS_SERVLET_LOGIN";
+	String SERVLET_WIFI = "wifi";
 	String SERVLET_USER = "usuario";
+	String SERVLET_SCANNER = "escaner";
 
 }

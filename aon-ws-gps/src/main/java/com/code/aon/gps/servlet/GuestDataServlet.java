@@ -61,10 +61,12 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 			"SELECT PRG.id AS " + ID + " FROM project_reservation_guest AS PRG WHERE PRG.project_reservation = ? AND guest_index = ? AND person = ?";
 	private static String INSERT_RESERVATION_GUEST_DATA =
 			"INSERT INTO project_reservation_guest (domain, project_reservation, guest_index, name, surname, surname2, document, document_type, document_country" +
-			"	, birth_date, address, city, province, country, barcode, person) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			"	, birth_date, address, city, province, country, barcode, person, creation_user, creation_date)" +
+			" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	private static String UPDATE_RESERVATION_GUEST_DATA =
 			"UPDATE project_reservation_guest SET name = ?, surname = ?, surname2 = ?, document = ?, document_type = ?, document_country = ?" +
-			"	, birth_date = ?, address = ?, city = ?, province = ?, country = ?, barcode = ?, person = ? WHERE id = ?";
+			"	, birth_date = ?, address = ?, city = ?, province = ?, country = ?, barcode = ?, person = ?, modification_user = ?, modification_date = ?" + 
+			" WHERE id = ?";
 
 	private static String SELECT_GUEST_DATA =
 			"SELECT PRG.person AS " + PERSON + ", PRG.email AS " + GUEST_EMAIL + ", PRG.phone AS " + GUEST_PHONE +
@@ -114,7 +116,7 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 	private static String INSERT_MEDIA_DATA =
 			"INSERT INTO rmedia (domain, registry, media, value) VALUES (?, ?, ?, ?)";
 	private static String UPDATE_RESERVATION_GUEST =
-			"UPDATE project_reservation_guest SET ${field} = ? WHERE id = ?";
+			"UPDATE project_reservation_guest SET ${field} = ?, modification_user = ?, modification_date = ? WHERE id = ?";
 
 	private ServletUtils servletUtils;
 
@@ -271,6 +273,8 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 				SQLUtils.setString(insertReservationGuestStmt, 14, obtainCountry(request.getParameter(GUEST_COUNTRY)));
 				SQLUtils.setString(insertReservationGuestStmt, 15, request.getParameter(GUEST_BARCODE));
 				SQLUtils.setInt(insertReservationGuestStmt, 16, registryId);
+				SQLUtils.setString(insertReservationGuestStmt, 17, SERVLET_SCANNER);
+				SQLUtils.set(insertReservationGuestStmt, 18, new Date(), Types.TIMESTAMP);
 				insertReservationGuestStmt.execute();
 
 				selectGuestIdStmt = connection.prepareStatement(SELECT_RESERVATION_GUEST_ID, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -305,7 +309,9 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 				SQLUtils.setString(updateReservationGuestStmt, 11, obtainCountry(request.getParameter(GUEST_COUNTRY)));
 				SQLUtils.setString(updateReservationGuestStmt, 12, request.getParameter(GUEST_BARCODE));
 				SQLUtils.setInt(updateReservationGuestStmt, 13, registryId);
-				SQLUtils.setInt(updateReservationGuestStmt, 14, guestId);
+				SQLUtils.setString(updateReservationGuestStmt, 14, SERVLET_SCANNER);
+				SQLUtils.set(updateReservationGuestStmt, 15, new Date(), Types.TIMESTAMP);
+				SQLUtils.setInt(updateReservationGuestStmt, 16, guestId);
 				updateReservationGuestStmt.execute();
 			} catch (Exception ex) {
 				throw ex;
@@ -320,7 +326,9 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 			try {
 				updateReservationGuestStmt = connection.prepareStatement(UPDATE_RESERVATION_GUEST.replace("${field}", EMAIL));
 				SQLUtils.setString(updateReservationGuestStmt, 1, email);
-				SQLUtils.setInt(updateReservationGuestStmt, 2, guestId);
+				SQLUtils.setString(updateReservationGuestStmt, 2, SERVLET_SCANNER);
+				SQLUtils.set(updateReservationGuestStmt, 3, new Date(), Types.TIMESTAMP);
+				SQLUtils.setInt(updateReservationGuestStmt, 4, guestId);
 				updateReservationGuestStmt.execute();
 			} catch (Exception ex) {
 				throw ex;
@@ -335,7 +343,9 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 			try {
 				updateReservationGuestStmt = connection.prepareStatement(UPDATE_RESERVATION_GUEST.replace("${field}", PHONE));
 				SQLUtils.setString(updateReservationGuestStmt, 1, phone);
-				SQLUtils.setInt(updateReservationGuestStmt, 2, guestId);
+				SQLUtils.setString(updateReservationGuestStmt, 2, SERVLET_SCANNER);
+				SQLUtils.set(updateReservationGuestStmt, 3, new Date(), Types.TIMESTAMP);
+				SQLUtils.setInt(updateReservationGuestStmt, 4, guestId);
 				updateReservationGuestStmt.execute();
 			} catch (Exception ex) {
 				throw ex;
@@ -470,12 +480,16 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 						if (question.equals(EMAIL) && StringUtils.isBlank(guestEmail)) {
 							updateReservationGuestStmt = connection.prepareStatement(UPDATE_RESERVATION_GUEST.replace("${field}", EMAIL));
 							SQLUtils.setString(updateReservationGuestStmt, 1, value);
-							SQLUtils.setInt(updateReservationGuestStmt, 2, Integer.parseInt(guest));
+							SQLUtils.setString(updateReservationGuestStmt, 2, SERVLET_WIFI);
+							SQLUtils.set(updateReservationGuestStmt, 3, new Date(), Types.TIMESTAMP);
+							SQLUtils.setInt(updateReservationGuestStmt, 4, Integer.parseInt(guest));
 							updateReservationGuestStmt.execute();
 						} else if (question.equals(PHONE) && StringUtils.isBlank(guestPhone)) {
 							updateReservationGuestStmt = connection.prepareStatement(UPDATE_RESERVATION_GUEST.replace("${field}", PHONE));
 							SQLUtils.setString(updateReservationGuestStmt, 1, value);
-							SQLUtils.setInt(updateReservationGuestStmt, 2, Integer.parseInt(guest));
+							SQLUtils.setString(updateReservationGuestStmt, 2, SERVLET_WIFI);
+							SQLUtils.set(updateReservationGuestStmt, 3, new Date(), Types.TIMESTAMP);
+							SQLUtils.setInt(updateReservationGuestStmt, 4, Integer.parseInt(guest));
 							updateReservationGuestStmt.execute();
 						}
 					}

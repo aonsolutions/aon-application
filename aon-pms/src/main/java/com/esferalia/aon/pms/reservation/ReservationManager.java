@@ -379,6 +379,8 @@ public class ReservationManager implements IReservationConstants {
 						reservationGuest.setCountry(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getAddressArray(0).getCountryName().getCode());
 					}
 				}
+				reservationGuest.setCreationUser(CRS);
+				reservationGuest.setCreationDate(new Date());
 				reservationGuestBean.insert(reservationGuest);
 				if (reservationGuest.getGuestIndex() == 1) {
 					getReservationUtils().fillProject(reservation);

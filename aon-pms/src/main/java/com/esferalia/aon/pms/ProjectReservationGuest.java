@@ -11,6 +11,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.dbutils.DatabaseUtil;
@@ -24,18 +25,9 @@ import com.esferalia.aon.pms.sql.SQLUtils;
 
 @Entity
 @Table(name="project_reservation_guest")
-public class ProjectReservationGuest extends ProjectReservationGuestDB implements ISQLConstants {
+public class ProjectReservationGuest extends ProjectReservationGuestDB implements IAuditable, ISQLConstants {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-
-	private static String SELECT_GUEST_TYPE =
-			"SELECT IF(PR.hotel != ?, 1, 2) AS " + GUEST_TYPE +  
-			" FROM project_reservation AS PR, project_reservation_guest AS PRG" +
-			" WHERE PRG.domain = ?" +
-			" AND PRG.person = ?" +
-			" AND PRG.project_reservation = PR.project" +
-			" AND PR.start_date < ?" + 
-			" ORDER BY " + GUEST_TYPE + " DESC";
 
 	private ReservationGuestType guestType;
 
@@ -58,12 +50,19 @@ public class ProjectReservationGuest extends ProjectReservationGuestDB implement
 	@Transient
 	public ReservationGuestType obtainGuestType() {
 		if (getPerson() != null && getPerson().getId() != null) {
+			String query = "SELECT IF(PR.hotel != ?, 1, 2) AS " + GUEST_TYPE + 
+							" FROM project_reservation AS PR, project_reservation_guest AS PRG" +
+							" WHERE PRG.domain = ?" +
+							" AND PRG.person = ?" +
+							" AND PRG.project_reservation = PR.project" +
+							" AND PR.start_date < ?" +
+							" ORDER BY " + GUEST_TYPE + " DESC";
 			Connection connection = null;
 			PreparedStatement stmt = null;
 			ResultSet rs = null;
 			try {
 				connection = DatabaseUtil.getConnection(AdminUtil.getDomainName(getProjectReservation().getDomain()));
-				stmt = connection.prepareStatement(SELECT_GUEST_TYPE, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+				stmt = connection.prepareStatement(query, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 				SQLUtils.setInt(stmt, 1, getProjectReservation().getHotelReservation().getId());
 				SQLUtils.setInt(stmt, 2, getProjectReservation().getDomain());
 				SQLUtils.setInt(stmt, 3, getPerson().getId());
