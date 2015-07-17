@@ -6,6 +6,8 @@ import gwtupload.client.IUploader.OnFinishUploaderHandler;
 import gwtupload.client.IUploader.OnStartUploaderHandler;
 import gwtupload.client.SingleUploader;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -22,6 +24,7 @@ import com.esferalia.aon.gwt.fiscal.client.tree.node.DigitalDepositTreeNode;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit2014;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -95,7 +98,7 @@ public class NormalizedMemory extends ResizeComposite {
 	@UiField
 	Anchor download;							
 	
-
+	
 	
 	
 	// selected item content panel
@@ -103,16 +106,31 @@ public class NormalizedMemory extends ResizeComposite {
 	FlowPanel pagesPanel;
 	SingleUploader upload;
 	Enterprise enterprise;
-	String page;
+	//String page;
 	Boolean textMode;
 	MemoryTemplate memoryTemplate;
+	
+	Map<String, String> d2Deposit2014;
+	Map<String, String> d2Deposit2014Draft;
 	
 	DigitalDepositTreeNode digitalDepositTreeNode;
 	DigitalDepositFreeTextTreeNode digitalDepositFreeTextTreeNode;
 	
 
 	FiscalTree fiscalTree;
-	public NormalizedMemory(Enterprise enterprise,String page, DigitalDepositTreeNode ddtn, FiscalTree ft) {
+	
+	
+	//-------------------- Constructors
+	
+	/**
+	 * Constructor NormalizedMemory,
+	 * El deposito de cuentas está creado.
+	 * @param enterprise
+	 * @param page
+	 * @param ddtn
+	 * @param ft
+	 */
+	public NormalizedMemory(DigitalDepositTreeNode ddtn, FiscalTree ft) {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 
@@ -123,8 +141,8 @@ public class NormalizedMemory extends ResizeComposite {
        	importTextButton = new Button();
         deleteButton = new Button();
 		cancelButton = new Button();
-		this.enterprise = enterprise;
-		this.page = page;
+		enterprise = ddtn.getD2Deposit2014().getEnterprise();
+		//this.page = page;
 		this.textMode = false;
 		digitalDepositTreeNode = ddtn;
 		fiscalTree = ft;
@@ -138,6 +156,16 @@ public class NormalizedMemory extends ResizeComposite {
 		deleteButton.setVisible(true);
 		importButton.setVisible(false);
 		importTextButton.setVisible(false);
+		inma.getSchema(enterprise.getDocument(), enterprise.getDomain(), textMode,new AsyncCallback<Map<String, String>>() {
+			
+			@Override
+			public void onSuccess(Map<String, String> result) {
+				d2Deposit2014 = result;
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
 		inma.isModify(enterprise.getDocument(),new AsyncCallback<Boolean>() {
 			
 			@Override
@@ -151,7 +179,15 @@ public class NormalizedMemory extends ResizeComposite {
 		});
 	}
 	
-	public NormalizedMemory(Enterprise enterprise,String page,MemoryTemplate mt) {
+	/**
+	 * Constructor NormalizedMemory,
+	 * El deposito de cuentas está creado,
+	 * Memoria predefinida (solo texto libre).
+	 * @param enterprise
+	 * @param page
+	 * @param mt
+	 */
+	public NormalizedMemory(Enterprise enterprise,MemoryTemplate mt) {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 
@@ -165,7 +201,7 @@ public class NormalizedMemory extends ResizeComposite {
         generateFileButton = new Button();
 		cancelButton = new Button();
 		this.enterprise = enterprise;
-		this.page = page;
+		//this.page = page;
 		this.textMode = true;
 		this.memoryTemplate = mt;
 		
@@ -192,12 +228,18 @@ public class NormalizedMemory extends ResizeComposite {
 			public void onFailure(Throwable caught) {}
 		});
 	}
-	
 
-	public NormalizedMemory(Boolean type, DigitalDepositTreeNode ddtn, Enterprise e) {
+	/**
+	 * Constructor NormalizedMemory,
+	 * El deposito de cuentas no está creado.
+	 * @param type
+	 * @param ddtn
+	 * @param e
+	 */
+	public NormalizedMemory(Boolean type, DigitalDepositTreeNode ddtn) {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
-
+		
 		RESOURCES.css().ensureInjected();
 		depositType = new Label();
 		newButton = new Button();
@@ -207,9 +249,9 @@ public class NormalizedMemory extends ResizeComposite {
 		generateFileButton = new Button();
 		digitalDepositTreeNode = ddtn;
 		this.textMode = false;
-		enterprise = e;
 		pagesPanel = new FlowPanel();
 		headerPanel = new SimplePanel();
+		enterprise = ddtn.getD2Deposit2014().getEnterprise();
 		
 		Widget ui = MODEL_NORMALIZED_MEMORY_BINDER.createAndBindUi(this);
 		initWidget(ui);
@@ -225,6 +267,14 @@ public class NormalizedMemory extends ResizeComposite {
 		depositType.setText("Abreviado");
 	}
 	
+	/**
+	 * Constructor NormalizedMemory,
+	 * El deposito de cuentas no está creado,
+	 * Memoria predefinida (solo texto libre).
+	 * @param type
+	 * @param ddtn
+	 * @param e
+	 */
 	public NormalizedMemory(Boolean type, DigitalDepositFreeTextTreeNode ddtn, Enterprise e) {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
@@ -335,7 +385,7 @@ public class NormalizedMemory extends ResizeComposite {
 					TextBox tb = (TextBox) flex_table.getWidget(1, 1);
 					hide();
 					
-					inma.createD2Deposit(enterprise.getDomain(), enterprise.getId(), tb.getValue(), lb.getSelectedItemText() , new AsyncCallback<Void>() {
+					inma.createD2Deposit(enterprise.getDomain(), enterprise.getId(), tb.getValue(), lb.getSelectedItemText() , new AsyncCallback<Map<String, String>>() {
 
 								@Override
 								public void onFailure(Throwable caught) {
@@ -343,7 +393,10 @@ public class NormalizedMemory extends ResizeComposite {
 								}
 
 								@Override
-								public void onSuccess(Void result) {
+								public void onSuccess(Map<String, String> result) {
+									d2Deposit2014 = result;
+									digitalDepositTreeNode.getD2Deposit2014().setMap(result);
+									digitalDepositTreeNode.getD2Deposit2014().setMapDraft(result);
 									digitalDepositTreeNode.items();
 									newButton.setVisible(false);
 									saveButton.setVisible(true);
@@ -382,8 +435,14 @@ public class NormalizedMemory extends ResizeComposite {
 			
 				@Override
 				public void onSuccess(Void result) {
+					
+					digitalDepositTreeNode.getD2Deposit2014().setModify(false);
+					digitalDepositTreeNode.getD2Deposit2014().setMap(digitalDepositTreeNode.getD2Deposit2014().getMapDraft());
+					
 					saveButton.setEnabled(false);
 					cancelButton.setVisible(false);
+					
+					update();
 				}
 			
 				@Override
@@ -483,6 +542,9 @@ public class NormalizedMemory extends ResizeComposite {
 			
 				@Override
 				public void onSuccess(Void result) {
+					digitalDepositTreeNode.getD2Deposit2014().setModify(false);
+					digitalDepositTreeNode.getD2Deposit2014().setMapDraft(null);
+
 					saveButton.setEnabled(false);
 					cancelButton.setVisible(false);
 				
@@ -538,14 +600,16 @@ public class NormalizedMemory extends ResizeComposite {
 										if(t.equals("Balance")){
 											ListBox ej = (ListBox) flex_table.getWidget(2, 1);
 											String ejercicio = ej.getSelectedItemText();
-											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), new AsyncCallback<Void>() {
+											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(),digitalDepositTreeNode.getD2Deposit2014().getMap(), new AsyncCallback<Map<String, String>>() {
 												@Override
 												public void onFailure(
 														Throwable caught) {
 												}
 
 												@Override
-												public void onSuccess(Void result) {
+												public void onSuccess(Map<String, String> result) {
+													digitalDepositTreeNode.getD2Deposit2014().setMap(result);
+													digitalDepositTreeNode.getD2Deposit2014().setMapDraft(result);		
 													update();
 												}
 											
@@ -558,14 +622,16 @@ public class NormalizedMemory extends ResizeComposite {
 											ListBox ej = (ListBox) flex_table.getWidget(2, 1);
 											String ejercicio = ej.getSelectedItemText();
 											
-											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), new AsyncCallback<Void>() {
+											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), digitalDepositTreeNode.getD2Deposit2014().getMap(), new AsyncCallback<Map<String,String>>() {
 												@Override
 												public void onFailure(
 														Throwable caught) {
 												}
 
 												@Override
-												public void onSuccess(Void result) {
+												public void onSuccess(Map<String , String> result) {
+													digitalDepositTreeNode.getD2Deposit2014().setMap(result);
+													digitalDepositTreeNode.getD2Deposit2014().setMapDraft(result);		
 													update();
 												}
 											
@@ -575,14 +641,16 @@ public class NormalizedMemory extends ResizeComposite {
 										else if(t.equals("ECPN")){
 											ListBox ej = (ListBox) flex_table.getWidget(2, 1);
 											String ejercicio = ej.getSelectedItemText();
-											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), new AsyncCallback<Void>() {
+											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), digitalDepositTreeNode.getD2Deposit2014().getMap(), new AsyncCallback<Map<String, String>>() {
 												@Override
 												public void onFailure(
 														Throwable caught) {
 												}
 
 												@Override
-												public void onSuccess(Void result) {
+												public void onSuccess(Map<String, String> result) {
+													digitalDepositTreeNode.getD2Deposit2014().setMap(result);
+													digitalDepositTreeNode.getD2Deposit2014().setMapDraft(result);		
 													update();
 												}
 											
@@ -725,12 +793,6 @@ public class NormalizedMemory extends ResizeComposite {
 			
 			
 		});
-		
-			
-			
-		
-		
-	
 	}
 	
 	@UiHandler("deleteButton")
@@ -838,7 +900,12 @@ public class NormalizedMemory extends ResizeComposite {
 	
 	
 	private void update(){
-		switch (page) {
+		PageAbs p = (PageAbs) pagesPanel.getWidget(0);
+		p.dump(digitalDepositTreeNode.getD2Deposit2014());
+
+
+
+		/*switch (page) {
 		case "IDA":
 			Header1 hA1 = (Header1) pagesPanel.getWidget(0);
 			hA1.dump(new D2DepositTreeObject(), page);
@@ -1103,9 +1170,10 @@ public class NormalizedMemory extends ResizeComposite {
 		default:
 			break;
 		}
+		*/
 	}
 	
-	public void paintHeaderTable(String text) {
+	public void paintHeaderTable(String text){//,String type) {
 		headerPanel.setStyleName(AON.AON_CSS.aonWidthAll());
 		
 		FlexTable headerTable = new FlexTable();
@@ -1123,7 +1191,7 @@ public class NormalizedMemory extends ResizeComposite {
 		headerTable.getFlexCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonFiscalRegistroMercantil());
 		headerTable.getFlexCellFormatter().setRowSpan(0, 1, 2);
 		
-		headerTable.setWidget(0, 2, new Label("D2"));
+		headerTable.setWidget(0, 2, new Label(""));//type));
 		headerTable.getFlexCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonFiscalModelTableHeaderModel());
 		headerTable.getFlexCellFormatter().addStyleName(0, 2, AON.AON_CSS.aonFiscalRegistroMercantil());
 		
@@ -1133,6 +1201,25 @@ public class NormalizedMemory extends ResizeComposite {
 		
 		headerPanel.setWidget(headerTable);
 	}
-	
 
+	//-------------------- Getters & Setters
+	
+	public Map<String, String> getD2Deposit2014() {
+		return d2Deposit2014;
+	}
+
+	public void setD2Deposit2014(Map<String, String> d2Deposit2014) {
+		this.d2Deposit2014 = d2Deposit2014;
+	}
+
+	public DigitalDepositTreeNode getDigitalDepositTreeNode() {
+		return digitalDepositTreeNode;
+	}
+
+	public void setDigitalDepositTreeNode(
+			DigitalDepositTreeNode digitalDepositTreeNode) {
+		this.digitalDepositTreeNode = digitalDepositTreeNode;
+	}
+	
+	
 }

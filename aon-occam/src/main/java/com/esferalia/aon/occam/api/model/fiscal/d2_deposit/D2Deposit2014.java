@@ -10,6 +10,8 @@ public class D2Deposit2014 {
 	String domain;
 	Enterprise enterprise;
 	
+	Map<String, String> map;
+ 	
 	Map<D2DepositKey, String> memoryMap;
 	Map<D2DepositHeaderKey, String> headerMap;
 	Map<D2DepositFooterKey, String> footerMap;
@@ -71,6 +73,15 @@ public class D2Deposit2014 {
 	public void setFooterMap(Map<D2DepositFooterKey, String> footerMap) {
 		this.footerMap = footerMap;
 	}
+
+	public Map<String, String> getMap() {
+		return map;
+	}
+
+	public void setMap(Map<String, String> map) {
+		this.map = map;
+	}
+	
 	
 	
 }

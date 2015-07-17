@@ -65,6 +65,7 @@ public class PageH5 extends PageAbs {
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				normalizedMemory.saveButton.setEnabled(true);
 				normalizedMemory.cancelButton.setVisible(true);	
+				onEdit("8099000", event.getValue()?"1":"0");
 				inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),"8099000", event.getValue()?"1":"0", new AsyncCallback<Void>() {
 					@Override
 					public void onFailure(Throwable caught) {}
@@ -83,6 +84,7 @@ public class PageH5 extends PageAbs {
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				normalizedMemory.saveButton.setEnabled(true);
 				normalizedMemory.cancelButton.setVisible(true);	
+				onEdit("8099010", event.getValue()?"1":"0");
 				inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),"8099010", event.getValue()?"1":"0", new AsyncCallback<Void>() {
 					@Override
 					public void onFailure(Throwable caught) {}
@@ -116,6 +118,7 @@ public class PageH5 extends PageAbs {
 	}
 	
 	private void specialUpdate(String key, String value ){
+		onEdit(key, value);
 		inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key, value, new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) {}

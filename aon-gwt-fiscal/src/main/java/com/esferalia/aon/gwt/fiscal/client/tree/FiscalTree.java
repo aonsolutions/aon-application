@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.tree.node.D2DepositTreeObject;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.FiscalModelsTreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.FiscalModelsTreeNode.TreeNodeFiscalModelTypes;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002013TreeObject;
@@ -215,7 +216,7 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 		// TreeNodeTypes.FISCAL_ACTIVITY_GROUP.getInstance().render(rootNode,enterprise);
 		
 		// Nodo:  "Deposito Digital"
-		TreeNodeTypes.DIGITAL_DEPOSIT.getInstance().render(rootNode, enterprise);
+		TreeNodeTypes.DIGITAL_DEPOSIT.getInstance().render(rootNode, new D2DepositTreeObject(enterprise));
 		
 
 		rootNode.setState(true);
