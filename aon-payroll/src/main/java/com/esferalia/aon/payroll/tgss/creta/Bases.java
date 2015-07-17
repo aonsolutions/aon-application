@@ -14,6 +14,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -23,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller.Listener;
@@ -117,7 +119,7 @@ public class Bases {
 
 		@Override
 		public void add(Salary salary, Tramo tramo, Dato datoSolicitado,
-				TramoBuilder tramoBuilder) {
+				TramoBuilder tramoBuilder, BasesCallback... cb) {
 			// B -> El código del dato solicitado es obligatorio.
 			// P -> El código del dato solicitado es opcional.
 
@@ -191,6 +193,10 @@ public class Bases {
 				String right, String... wrongs) {
 		};
 
+		default void zeroDato(ContextVariable var, Dato datoSolicitado,
+				Tramo tramo, Salary salary) {
+		};
+
 	}
 
 	private static class Errors implements BasesCallback {
@@ -199,17 +205,19 @@ public class Bases {
 			System.err.println(String.format("ERROR: Unknown Dato '%s'",
 					datoSolicitado.getCodigo()));
 		}
-		
+
 		@Override
 		public void unknownTrabajador(Trabajador trabajador) {
 			System.err.println(String.format(
-					"FATAL : Employee %s (%s), not at aon ", trabajador.getNaf(), trabajador.getIpf().getNumeroIpf()));
+					"FATAL : Employee %s, not at aon ",
+					trabajador.getNaf()));
 		}
-		
+
 		@Override
 		public void unknownSalary(Salary salary) {
 			System.err.println(String.format(
-					"WARNING: Employee %s (%s), not at Cret@ ", salary.getEmployeeName(), salary.getEmployeeDocument()));
+					"WARNING: Employee %s (%s), not at Cret@ ",
+					salary.getEmployeeName(), salary.getEmployeeDocument()));
 		}
 
 		@Override
@@ -218,7 +226,7 @@ public class Bases {
 			System.err.println(String.format(
 					"WARNING: '%s' (%s) not in salary data", var, right));
 		}
-		
+
 		@Override
 		public void rightContextVariable(ContextVariable var, Period p,
 				String right) {
@@ -230,8 +238,34 @@ public class Bases {
 		public void wrongContextVariable(ContextVariable var, Period p,
 				String right, String wrong) {
 			System.err.println(String.format(
-					"ERROR: '%s' (%s) wrong value (%s) at salary data", var, right, wrong));
+					"ERROR: '%s' (%s) wrong value (%s) at salary data", var,
+					right, wrong));
 		}
+
+		@Override
+		public void zeroDato(ContextVariable var, Dato datoSolicitado,
+				Tramo tramo, Salary salary) {
+			System.err.println(String.format(
+					"WARNING: %s (%s) for %s [%s-%s-%s...%s-%s-%s] is zero",
+					var.getName(), datoSolicitado.getCodigo(), salary
+							.getEmployeeName(), tramo.getFechaDesde().getDia(),
+					tramo.getFechaDesde().getMes(), tramo.getFechaDesde()
+							.getAnho(), tramo.getFechaHasta().getDia(), tramo
+							.getFechaHasta().getMes(), tramo.getFechaHasta()
+							.getAnho()));
+			for (Entry<String, List<ContextData>> entry : salary
+					.getContextData().entrySet()) {
+				for (ContextData data : entry.getValue())
+					System.err
+							.println(String
+									.format("         %s for %s [%3$td-%3$tm-%3$tY...%4$td-%4$tm-%4$tY] is %s",
+											entry.getKey(),
+											salary.getEmployeeName(),
+											data.getStartDate(),
+											data.getEndDate(),
+											data.getExpression()));
+			}
+		};
 	}
 
 	private static class Comments extends Listener implements BasesCallback {
@@ -239,11 +273,13 @@ public class Bases {
 		private static class TrabajadorData {
 
 			private String ss;
+			private String nif;
 			private String name;
 
-			public TrabajadorData(String name, String ss) {
+			public TrabajadorData(String name, String ss, String nif) {
 				super();
 				this.ss = ss;
+				this.nif = nif;
 				this.name = name;
 			}
 
@@ -272,7 +308,8 @@ public class Bases {
 		@Override
 		public void trabajadorAdded(Trabajador trabajador, Salary salary) {
 			trabajadorDataMap.put(trabajador.getNaf(), new TrabajadorData(
-					salary.getEmployeeName(), salary.getEmployeeSSNumber()));
+					salary.getEmployeeName(), salary.getEmployeeSSNumber(),
+					salary.getEmployeeDocument()));
 		};
 
 		public void beforeMarshalDato(Dato dato) {
@@ -290,8 +327,8 @@ public class Bases {
 			TrabajadorData data = trabajadorDataMap.get(trabajador.getNaf());
 			try {
 				xsw.writeComment(String
-						.format("\r\n%s\r\nNúmero afiliación a la Seguridad Social:\r\n%s\r\n",
-								data.name, data.ss));
+						.format("\r\n%s\r\nNúmero afiliación a la Seguridad Social:\r\n%s\r\nNúmero de identificación fiscal de las personas físicas:\r\n%s\r\n",
+								data.name, data.ss, data.nif));
 			} catch (XMLStreamException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -305,7 +342,7 @@ public class Bases {
 		String getComment();
 
 		void add(Salary salary, Tramo tramo, Dato datoSolicitado,
-				TramoBuilder tramoBuilder);
+				TramoBuilder tramoBuilder, BasesCallback... cb);
 
 	}
 
@@ -324,7 +361,7 @@ public class Bases {
 
 		@Override
 		public void add(Salary salary, Tramo tramo, Dato datoSolicitado,
-				TramoBuilder tramoBuilder) {
+				TramoBuilder tramoBuilder, BasesCallback... cbs) {
 			// B -> El código del dato solicitado es obligatorio.
 			// P -> El código del dato solicitado es opcional.
 
@@ -333,6 +370,10 @@ public class Bases {
 			boolean optional = isOptional();
 			if (optional && newValue == 0.00)
 				return;
+
+			if (newValue == 0.00)
+				for (BasesCallback cb : cbs)
+					cb.zeroDato(contextVariable, datoSolicitado, tramo, salary);
 
 			DatoBuilder datoBuilder = new DatoBuilder();
 			datoBuilder.setCodigo(datoSolicitado.getCodigo());
@@ -411,7 +452,7 @@ public class Bases {
 	// ------------------------------------------------------------------------
 
 	private static void bases(BasesBuilder basesBuilder, AONContext ctx,
-			Liquidacion<?> liquidacion, boolean aceptarBasesAnteriores,
+			Liquidacion<?,?,?> liquidacion, boolean aceptarBasesAnteriores,
 			BasesCallback... cbs) {
 		LiquidacionBuilder liquidacionBuilder = new LiquidacionBuilder()
 				.setAceptarBasesAnteriores(aceptarBasesAnteriores)
@@ -437,14 +478,13 @@ public class Bases {
 					liquidacion.getFechaControl().getAnho());
 
 		for (LiquidacionMes<?> liquidacionMes : liquidacion.getLiquidacionMes()) {
-			
+
 			Map<String, Trabajador> trabajadores = new HashMap<String, Trabajador>();
-			
+
 			for (Trabajador trabajador : liquidacionMes.getTrabajadores()
 					.getTrabajador())
 				trabajadores.put(
-						trabajador.getIpf().getNumeroIpf()
-								.replaceAll("^0+", ""), trabajador);
+						trabajador.getNaf(), trabajador);
 
 			LiquidacionMesBuilder liquidacionMesBuilder = new LiquidacionMesBuilder();
 
@@ -496,9 +536,10 @@ public class Bases {
 		).forEach(salary -> trabajador(liquidacionMesBuilder, salary, trabajadores, cbs));
 		;
 		//@formatter:on
-		
-		trabajadores.values().forEach( t -> { 
-			for ( BasesCallback cb: cbs ) cb.unknownTrabajador(t);
+
+		trabajadores.values().forEach(t -> {
+			for (BasesCallback cb : cbs)
+				cb.unknownTrabajador(t);
 		});
 
 	}
@@ -508,17 +549,21 @@ public class Bases {
 			BasesCallback... cbs) {
 
 		TrabajadorBuilder trabajadorBuilder = new TrabajadorBuilder();
-		Trabajador trabajador = trabajadores.get(salary.getEmployeeDocument());
+		Trabajador trabajador = trabajadores.get(salary.getEmployeeSSNumber());
 		if (trabajador == null) {
-			for ( BasesCallback cb: cbs)
+			for (BasesCallback cb : cbs)
 				cb.unknownSalary(salary);
 			return;
 		}
 
 		trabajadorBuilder.setNaf(trabajador.getNaf());
 		for (Tramo<?> tramo : trabajador.getTramos().getTramo()) {
-
-			checkTramo(tramo, salary, cbs);
+			
+			try {
+				checkTramo(tramo, salary, cbs);
+			} catch ( UnsupportedOperationException e){
+				
+			}
 
 			TramoBuilder tramoBuilder = new TramoBuilder();
 
@@ -541,7 +586,7 @@ public class Bases {
 					continue;
 				}
 
-				data.add(salary, tramo, datoSolicitado, tramoBuilder);
+				data.add(salary, tramo, datoSolicitado, tramoBuilder, cbs);
 			}
 
 			trabajadorBuilder.addTramo(tramoBuilder.create());
@@ -551,8 +596,8 @@ public class Bases {
 			cb.trabajadorAdded(trabajador, salary);
 
 		liquidacionMesBuilder.add(trabajadorBuilder.create());
-		
-		trabajadores.remove(salary.getEmployeeDocument());
+
+		trabajadores.remove(salary.getEmployeeSSNumber());
 
 	}
 
@@ -567,17 +612,20 @@ public class Bases {
 				.getTipoContrato(), p, salary, cbs);
 		checkContextVariable(OCCUPATION, tramo.getInformacionAfiliacion()
 				.getOcupacion(), p, salary, cbs);
+
 		String partialFactor = tramo.getInformacionAfiliacion()
 				.getCoeficienteTiempoParcial();
-		checkContextVariable(PARTIAL_FACTOR, 
-				( partialFactor != null ? Double.toString(Integer.parseInt(partialFactor) /1000.00): null),
-				p, 
-				salary,
-				cbs);
-		for ( Peculiaridad peculiaridad : tramo.getInformacionAfiliacion().getPeculiaridades().getPeculiaridad() ){
-			
+		if ( partialFactor != null )
+			checkContextVariable(
+					PARTIAL_FACTOR,
+					(partialFactor != null ? Double.toString(Integer
+							.parseInt(partialFactor) / 1000.00) : null), p, salary,
+					cbs);
+		for (Peculiaridad peculiaridad : tramo.getInformacionAfiliacion()
+				.getPeculiaridades().getPeculiaridad()) {
+
 		}
-			
+
 	}
 
 	private static void checkContextVariable(ContextVariable contextVariable,
@@ -585,14 +633,14 @@ public class Bases {
 
 		try {
 			String salaryValue = get(salary, contextVariable, p);
-			if ( !StringUtils.equalsIgnoreCase(rigthValue, salaryValue))
+			if (!StringUtils.equalsIgnoreCase(rigthValue, salaryValue))
 				for (BasesCallback cb : cbs)
 					cb.wrongContextVariable(contextVariable, p, rigthValue,
 							salaryValue);
-			else 
+			else
 				for (BasesCallback cb : cbs)
 					cb.rightContextVariable(contextVariable, p, rigthValue);
-			
+
 		} catch (NoSuchContextVariableException e) {
 			if (rigthValue != null)
 				for (BasesCallback cb : cbs)
@@ -603,7 +651,6 @@ public class Bases {
 						e.getValues());
 		}
 	}
-
 
 	private static Calendar toCalendar(Periodo periodo) {
 		return toCalendar(periodo.getAnho(), periodo.getMes());
@@ -695,9 +742,38 @@ public class Bases {
 		return expression;
 	}
 
-
 	private static CretaData getCretaData(String codigo) {
 		return CONTEXT_VARIABLE_MAP.get(codigo);
+	}
+
+	private static net.aonsolutions.tgss.creta.jaxb.bases.Bases bases(
+			net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos,
+			AONContext ctx, boolean aceptarBasesAnteriores,
+			XMLStreamWriter xsw, BasesCallback... cbs) {
+
+		BasesBuilder builder = new BasesBuilder()
+				.setAutorizado(trabajadoresTramos.getAutorizado());
+
+		bases(builder, ctx, trabajadoresTramos.getLiquidacion(),
+				aceptarBasesAnteriores, cbs);
+
+		return builder.create();
+
+	}
+
+	private static net.aonsolutions.tgss.creta.jaxb.bases.Bases bases(
+			net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta respuesta,
+			AONContext ctx, boolean aceptarBasesAnteriores,
+			XMLStreamWriter xsw, BasesCallback... cbs) {
+
+		BasesBuilder builder = new BasesBuilder().setAutorizado(respuesta
+				.getAutorizado());
+
+		for (Liquidacion<?,?,?> liquidacion : respuesta.getLiquidacion())
+			bases(builder, ctx, liquidacion, aceptarBasesAnteriores, cbs);
+
+		return builder.create();
+
 	}
 
 	// ------------------------------------------------------------------------
@@ -785,24 +861,10 @@ public class Bases {
 					.getOptionValue(user.getLongOpt()), cmd
 					.getOptionValue(password.getLongOpt()));
 
-			String path = cmd.getOptionValue(trabajadoresTramosFile
-					.getLongOpt());
-			InputStream is = AonStringUtils.isEmpty(path) ? System.in
-					: new FileInputStream(
-							cmd.getOptionValue(trabajadoresTramosFile
-									.getLongOpt()));
-
 			boolean aceptarBasesAnteriores = !cmd.hasOption(skiptPrevBases
 					.getLongOpt());
 
-			net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
-					.unmarshal(
-							net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
-							is);
-
 			AONContext ctx = new AONContext(connection);
-			BasesBuilder builder = new BasesBuilder()
-					.setAutorizado(trabajadoresTramos.getAutorizado());
 
 			XMLStreamWriter xsw = new IndentXMLStreamWriter(XMLOutputFactory
 					.newInstance().createXMLStreamWriter(System.out), "  ");
@@ -810,12 +872,38 @@ public class Bases {
 			Errors errors = new Errors();
 			Comments comment = new Comments(xsw);
 
-			bases(builder, ctx, trabajadoresTramos.getLiquidacion(),
-					aceptarBasesAnteriores, errors, comment);
-			is.close();
+			InputStream is = null;
+			net.aonsolutions.tgss.creta.jaxb.bases.Bases bases = null;
 
-			net.aonsolutions.tgss.creta.jaxb.bases.Bases bases = builder
-					.create();
+			if (cmd.hasOption(trabajadoresTramosFile.getLongOpt())) {
+
+				String path = cmd.getOptionValue(trabajadoresTramosFile
+						.getLongOpt());
+				is = AonStringUtils.isEmpty(path) ? System.in
+						: new FileInputStream(path);
+
+				net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
+						.unmarshal(
+								net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
+								is);
+
+				bases = bases(trabajadoresTramos, ctx, aceptarBasesAnteriores,
+						xsw, errors, comment);
+			} else {
+				String path = cmd.getOptionValue(respuestaFile.getLongOpt());
+				is = AonStringUtils.isEmpty(path) ? System.in
+						: new FileInputStream(path);
+
+				net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta respuesta = Utils
+						.unmarshal(
+								net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta.class,
+								is);
+
+				bases = bases(respuesta, ctx, aceptarBasesAnteriores, xsw,
+						errors, comment);
+			}
+
+			is.close();
 
 			if (cmd.hasOption(comments.getLongOpt()))
 				Utils.marshal(bases, xsw, comment);

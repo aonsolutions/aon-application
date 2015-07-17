@@ -6,5 +6,8 @@ public interface CtaCot {
 	String getRegimen();
 	String getNumero();
 	
+	void setNumero(String numero);
+	void setRegimen(String regimen);
+	void setProvincia(String provincia);
 	
 }

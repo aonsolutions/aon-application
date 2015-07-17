@@ -9,6 +9,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 
 import net.aonsolutions.tgss.creta.jaxb.Utils;
+import net.aonsolutions.tgss.creta.jaxb.solicitud.calculos.SolicitudCalculos;
+import net.aonsolutions.tgss.creta.jaxb.solicitud.calculos.SolicitudCalculosBuilder;
 import net.aonsolutions.tgss.creta.jaxb.solicitud.trabajadorestramos.SolicitudTrabajadoresTramos;
 import net.aonsolutions.tgss.creta.jaxb.solicitud.trabajadorestramos.SolicitudTrabajadoresTramosBuilder;
 
@@ -20,13 +22,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-public class TrabajadoresTramos {
+public class Calculo {
 
-	public TrabajadoresTramos() {
-		// TODO Auto-generated constructor stub
-	}
-	
-	
 	public static void main(String[] args) throws JAXBException, DatatypeConfigurationException {
 		String tipo = "L00";
 		int anho = Calendar.getInstance().get(Calendar.YEAR);
@@ -68,8 +65,8 @@ public class TrabajadoresTramos {
 			int autorizado = Integer.parseInt(cmd.getOptionValue(authorized.getLongOpt()));
 			
 			
-			SolicitudTrabajadoresTramosBuilder builder = 
-					new SolicitudTrabajadoresTramosBuilder()
+			SolicitudCalculosBuilder builder = 
+					new SolicitudCalculosBuilder()
 			.setAutorizado(autorizado);
 
 			for ( String cCC: cccs ) {
@@ -81,14 +78,13 @@ public class TrabajadoresTramos {
 				.setMesHasta(mes)
 				.setAnhoHasta(anho)
 				.addLiquidacion()
+				.setMesPresentacion(mes)
+				.setAnhoPresentacion(anho)
 				;
 			}
-			SolicitudTrabajadoresTramos solicitudTrabajadoresTramos = builder.createSolicitudBorrador();
+			SolicitudCalculos solicitud = builder.createSolicitudCalculos();
 
-			Utils.marshal(solicitudTrabajadoresTramos, System.out);
-// -a 228115
-// -c 011101105360062 
-// -c 011101105577910
+			Utils.marshal(solicitud, System.out);
 			
 		} catch (ParseException e) {
 			// oops, something went wrong

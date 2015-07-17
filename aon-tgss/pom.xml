@@ -59,7 +59,7 @@
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
-					<execution>
+					<!--  execution>
 						<id>xjc-request-calc</id>
 						<goals>
 							<goal>xjc</goal>
@@ -69,7 +69,7 @@
 							<packageName>net.aonsolutions.tgss.creta.jaxb.solicitud.calculos</packageName>
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
-					</execution>
+					</execution-->
 					<execution>
 						<id>xjc-response-calc</id>
 						<goals>
@@ -81,7 +81,7 @@
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
-					<execution>
+					<!--  execution>
 						<id>xjc-request-confirm</id>
 						<goals>
 							<goal>xjc</goal>
@@ -91,7 +91,7 @@
 							<packageName>net.aonsolutions.tgss.creta.jaxb.solicitud.confirmacion</packageName>
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
-					</execution>
+					</execution-->
 					<!--  execution>
 						<id>xjc-response</id>
 						<goals>
@@ -181,6 +181,8 @@
  					<schemaIncludes>
                 		<include>Respuesta.xsd</include>
                 		<include>TrabajadoresTramos.xsd</include>
+                		<include>SolicitudCalculos.xsd</include>
+                		<include>SolicitudConfirmacion.xsd</include>
                 		<include>SolicitudTrabajadoresTramos.xsd</include>
             		</schemaIncludes>			        
 					<!-- Default to the schemaDirectory -->

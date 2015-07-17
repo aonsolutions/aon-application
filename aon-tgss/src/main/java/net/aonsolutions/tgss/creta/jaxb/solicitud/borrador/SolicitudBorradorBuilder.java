@@ -173,12 +173,5 @@ public class SolicitudBorradorBuilder {
 		}
 		return builder.createSolicitudBorrador();
 	}
-	// ------------------------------------------------------------------------
-	public static void main(String[] args) throws JAXBException, DatatypeConfigurationException {
-		Utils.marshal(
-				createL00(228115, Month.MAY, 2015, true, "011101105360062",
-						"011101105577910"), System.out);
-		
-	}
 
 }

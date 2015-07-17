@@ -1,21 +1,22 @@
-package net.aonsolutions.tgss.creta.jaxb.solicitud.trabajadorestramos;
+package net.aonsolutions.tgss.creta.jaxb.solicitud.confirmacion;
 
 import java.util.UUID;
 
 import net.aonsolutions.tgss.creta.jaxb.AbstractLiquidacionBuilder;
 
-public class SolicitudTrabajadoresTramosBuilder extends AbstractLiquidacionBuilder<SolicitudTrabajadoresTramosBuilder, Liquidacion, CtaCot, Periodo> {
+
+public class SolicitudConfirmacionBuilder extends AbstractLiquidacionBuilder<SolicitudConfirmacionBuilder, Liquidacion, CtaCot, Periodo> {
 
 	private int autorizado;
 	
 
-	public SolicitudTrabajadoresTramosBuilder setAutorizado(int autorizado) {
+	public SolicitudConfirmacionBuilder setAutorizado(int autorizado) {
 		this.autorizado = autorizado;
 		return this;
 	}
 	
-	public SolicitudTrabajadoresTramos createSolicitudBorrador() {
-		SolicitudTrabajadoresTramos solicitud = new SolicitudTrabajadoresTramos();
+	public SolicitudConfirmacion createSolicitudConfirmacion() {
+		SolicitudConfirmacion solicitud = new SolicitudConfirmacion();
 
 		solicitud.setAutorizado(String.format("%08d",autorizado));
 		solicitud.setReferenciaExterna(createReferenciaExterna());

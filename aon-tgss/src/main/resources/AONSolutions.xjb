@@ -23,7 +23,7 @@
       </jaxb:bindings>
       <jaxb:bindings node="//xs:element[@name='Liquidacion']">
       	 <jaxb:class/>
-        <inheritance:implements>net.aonsolutions.tgss.creta.jaxb.Liquidacion</inheritance:implements> 
+        <inheritance:implements><![CDATA[net.aonsolutions.tgss.creta.jaxb.Liquidacion<LiquidacionMes,CtaCot,Periodo>]]></inheritance:implements> 
       </jaxb:bindings>
       <jaxb:bindings node="//xs:element[@name='LiquidacionMes']">
       	 <jaxb:class/>
@@ -63,6 +63,54 @@
        <jaxb:schemaBindings>
        	<jaxb:package name="net.aonsolutions.tgss.creta.jaxb.solicitud.trabajadorestramos"/>
        </jaxb:schemaBindings>
+      <jaxb:bindings node="//xs:complexType[@name='CtaCot']">
+        <inheritance:implements>net.aonsolutions.tgss.creta.jaxb.CtaCot</inheritance:implements> 
+      </jaxb:bindings>
+      <jaxb:bindings node="//xs:complexType[@name='Periodo']">
+        <inheritance:implements>net.aonsolutions.tgss.creta.jaxb.Periodo</inheritance:implements> 
+      </jaxb:bindings>
+      <jaxb:bindings node="//xs:element[@name='Liquidacion']">
+      	 <jaxb:class/>
+        <inheritance:implements><![CDATA[net.aonsolutions.tgss.creta.jaxb.Liquidacion<net.aonsolutions.tgss.creta.jaxb.LiquidacionMes,CtaCot,Periodo>]]></inheritance:implements> 
+      </jaxb:bindings>
+    </jaxb:bindings>
+
+    <jaxb:bindings schemaLocation="../xsd/SolicitudConfirmacion.xsd" node="/xs:schema">
+       <jaxb:schemaBindings>
+       	<jaxb:package name="net.aonsolutions.tgss.creta.jaxb.solicitud.confirmacion"/>
+       </jaxb:schemaBindings>
+      <jaxb:bindings node="//xs:complexType[@name='CtaCot']">
+        <inheritance:implements>net.aonsolutions.tgss.creta.jaxb.CtaCot</inheritance:implements> 
+      </jaxb:bindings>
+      <jaxb:bindings node="//xs:complexType[@name='Periodo']">
+        <inheritance:implements>net.aonsolutions.tgss.creta.jaxb.Periodo</inheritance:implements> 
+      </jaxb:bindings>
+      <jaxb:bindings node="//xs:element[@name='Liquidacion']">
+      	 <jaxb:class/>
+        <inheritance:implements><![CDATA[net.aonsolutions.tgss.creta.jaxb.Liquidacion<net.aonsolutions.tgss.creta.jaxb.LiquidacionMes,CtaCot,Periodo>]]></inheritance:implements> 
+      </jaxb:bindings>
+      <jaxb:bindings node="//xs:element[@name='Anho']">
+      	<jaxb:javaType name="java.lang.String" />
+      </jaxb:bindings>
+    </jaxb:bindings>
+
+    <jaxb:bindings schemaLocation="../xsd/SolicitudCalculos.xsd" node="/xs:schema">
+       <jaxb:schemaBindings>
+       	<jaxb:package name="net.aonsolutions.tgss.creta.jaxb.solicitud.calculos"/>
+       </jaxb:schemaBindings>
+      <jaxb:bindings node="//xs:complexType[@name='CtaCot']">
+        <inheritance:implements>net.aonsolutions.tgss.creta.jaxb.CtaCot</inheritance:implements> 
+      </jaxb:bindings>
+      <jaxb:bindings node="//xs:complexType[@name='Periodo']">
+        <inheritance:implements>net.aonsolutions.tgss.creta.jaxb.Periodo</inheritance:implements> 
+      </jaxb:bindings>
+      <jaxb:bindings node="//xs:element[@name='Liquidacion']">
+      	 <jaxb:class/>
+        <inheritance:implements><![CDATA[net.aonsolutions.tgss.creta.jaxb.Liquidacion<net.aonsolutions.tgss.creta.jaxb.LiquidacionMes,CtaCot,Periodo>]]></inheritance:implements> 
+      </jaxb:bindings>
+      <jaxb:bindings node="//xs:element[@name='Anho']">
+      	<jaxb:javaType name="java.lang.String" />
+      </jaxb:bindings>
     </jaxb:bindings>
 
     <jaxb:bindings schemaLocation="../xsd/TrabajadoresTramos.xsd" node="/xs:schema">
@@ -83,7 +131,7 @@
       </jaxb:bindings>
       <jaxb:bindings node="//xs:element[@name='Liquidacion']">
       	 <jaxb:class/>
-        <inheritance:implements>net.aonsolutions.tgss.creta.jaxb.Liquidacion</inheritance:implements> 
+        <inheritance:implements><![CDATA[net.aonsolutions.tgss.creta.jaxb.Liquidacion<LiquidacionMes,CtaCot,Periodo>]]></inheritance:implements> 
       </jaxb:bindings>
       <jaxb:bindings node="//xs:element[@name='LiquidacionMes']">
       	 <jaxb:class/>

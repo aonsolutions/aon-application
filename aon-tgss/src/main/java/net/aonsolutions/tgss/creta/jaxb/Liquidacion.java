@@ -2,19 +2,27 @@ package net.aonsolutions.tgss.creta.jaxb;
 
 import java.util.List;
 
-public interface Liquidacion<L extends LiquidacionMes> {
+public interface Liquidacion<L extends LiquidacionMes, C extends CtaCot, P extends Periodo> {
 	
-	CtaCot getCcc();
+	C getCcc();
+	void setCcc(C ccc);
 	
 	String getTipo();
+	void setTipo(String tipo);
 	
 	Periodo getFechaControl();
+	void setFechaControl(P fechaControl);
 
-	CtaCot getCccConcertado();
+	C getCccConcertado();
+	void setCccConcertado(C ccc);
 
-	Periodo getPeriodoDesde();
-	Periodo getPeriodoHasta();
+	P getPeriodoDesde();
+	void setPeriodoDesde(P periodoDesde);
+	P getPeriodoHasta();
+	void setPeriodoHasta(P periodoHasta);
 	
-	List<L> getLiquidacionMes();
+	default List<L> getLiquidacionMes() {
+		throw new UnsupportedOperationException();
+	}
 
 }

@@ -9,8 +9,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 
 import net.aonsolutions.tgss.creta.jaxb.Utils;
+import net.aonsolutions.tgss.creta.jaxb.solicitud.confirmacion.SolicitudConfirmacion;
+import net.aonsolutions.tgss.creta.jaxb.solicitud.confirmacion.SolicitudConfirmacionBuilder;
 import net.aonsolutions.tgss.creta.jaxb.solicitud.trabajadorestramos.SolicitudTrabajadoresTramos;
-import net.aonsolutions.tgss.creta.jaxb.solicitud.trabajadorestramos.SolicitudTrabajadoresTramosBuilder;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -20,12 +21,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-public class TrabajadoresTramos {
+public class Confirmacion {
 
-	public TrabajadoresTramos() {
-		// TODO Auto-generated constructor stub
-	}
-	
 	
 	public static void main(String[] args) throws JAXBException, DatatypeConfigurationException {
 		String tipo = "L00";
@@ -68,8 +65,8 @@ public class TrabajadoresTramos {
 			int autorizado = Integer.parseInt(cmd.getOptionValue(authorized.getLongOpt()));
 			
 			
-			SolicitudTrabajadoresTramosBuilder builder = 
-					new SolicitudTrabajadoresTramosBuilder()
+			SolicitudConfirmacionBuilder builder = 
+					new SolicitudConfirmacionBuilder()
 			.setAutorizado(autorizado);
 
 			for ( String cCC: cccs ) {
@@ -83,12 +80,9 @@ public class TrabajadoresTramos {
 				.addLiquidacion()
 				;
 			}
-			SolicitudTrabajadoresTramos solicitudTrabajadoresTramos = builder.createSolicitudBorrador();
+			SolicitudConfirmacion solicitudConfirmacion = builder.createSolicitudConfirmacion();
 
-			Utils.marshal(solicitudTrabajadoresTramos, System.out);
-// -a 228115
-// -c 011101105360062 
-// -c 011101105577910
+			Utils.marshal(solicitudConfirmacion, System.out);
 			
 		} catch (ParseException e) {
 			// oops, something went wrong

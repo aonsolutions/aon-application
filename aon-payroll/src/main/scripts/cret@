@@ -9,6 +9,9 @@ help="$usage
 The most commonly used $0 commands are:
    bases        Fichero de Bases
    tramos       Fichero de Solicitud de Trabajadores y Tramos
+   borrador     Fichero de Solicitud de Borrador
+   calculos     Fichero de Solicitud de Calculos
+   confirmacion Fichero de Solicitud de Confirmacion
 
 '$0 <command> --help' to read about a specific subcommand ."
 
@@ -41,13 +44,16 @@ classpath=$classpath:usr/share/java/PRET-R150_shared.jar
 
 
 case $1 in
-"")    		exec echo -e "$help";;
---help)    	exec echo -e "$help";;
---version) 	exec echo -e "$version";;
-bases)    	exec java -classpath $classpath com.esferalia.aon.payroll.tgss.creta.Bases ${@:2};;
-tramos)    	exec java -classpath $classpath com.esferalia.aon.payroll.tgss.creta.TrabajadoresTramos ${@:2};;
--*)    		exec echo -e "Unknown option: $1.\r\n$usage";;
-*)    		exec echo -e "$0: '$1' is not a $0 command. See '$0 --help'.";;
+"")    			exec echo -e "$help";;
+--help)    		exec echo -e "$help";;
+--version) 		exec echo -e "$version";;
+bases)    		exec java -classpath $classpath com.esferalia.aon.payroll.tgss.creta.Bases ${@:2};;
+tramos)    		exec java -classpath $classpath com.esferalia.aon.payroll.tgss.creta.TrabajadoresTramos ${@:2};;
+borrador)   	exec java -classpath $classpath com.esferalia.aon.payroll.tgss.creta.Borrador ${@:2};;
+calculos)   	exec java -classpath $classpath com.esferalia.aon.payroll.tgss.creta.Calculo ${@:2};;
+confirmacion)	exec java -classpath $classpath com.esferalia.aon.payroll.tgss.creta.Confirmacion ${@:2};;
+-*)    			exec echo -e "Unknown option: $1.\r\n$usage";;
+*)    			exec echo -e "$0: '$1' is not a $0 command. See '$0 --help'.";;
 esac
 
 
