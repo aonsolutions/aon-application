@@ -10,8 +10,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface INormalizedMemoryAsync {
 
-	void getSchema(String cif, String part, Integer domainId, Boolean textMode,
-			AsyncCallback<Map<String, String>> callback);
+	//void getSchema(String cif, String part, Integer domainId, Boolean textMode,
+		//	AsyncCallback<Map<String, String>> callback);
 
 	void initialize(AsyncCallback<Integer> callback);
 

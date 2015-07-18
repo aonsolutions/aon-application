@@ -39,23 +39,18 @@ public class PageH5 extends PageAbs {
 		IMA8099010 = new CheckBox();
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
-		init();
 	}
 
 	private void init(){
-	inma.getSchema(enterprise.getDocument(),"IDA",enterprise.getDomain(),false, new AsyncCallback<Map<String, String>>() {
-			
-			@Override
-			public void onSuccess(Map<String, String> result) {
-				map = result;
+
 				
-		if(map.containsKey(IMA8099000.getName())){
-			String value = map.get(IMA8099000.getName());
+		if(map.containsKey("8099000")){
+			String value = map.get("8099000");
 			IMA8099000.setValue(value.equals("1"));
 			
 		}
-		if(map.containsKey(IMA8099010.getName())){
-			String value = map.get(IMA8099010.getName());
+		if(map.containsKey("8099010")){
+			String value = map.get("8099010");
 			IMA8099010.setValue(value.equals("1"));
 			
 		}
@@ -100,19 +95,13 @@ public class PageH5 extends PageAbs {
 		
 		
 		
-		
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				
-			}
-		});
+	
 	}
 	
 	@Override
 	protected void initializeTable() {
 	
-		
+		init();
 
 
 	}

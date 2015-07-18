@@ -129,17 +129,12 @@ public class PageF2 extends PageAbs {
 		PR8081208 = new TextBox(); // telefono
 		PR8081209 = new TextBox(); // email
 		
-		init();
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 	}
 
 	private void init() {
-		inma.getSchema(enterprise.getDocument(),"PR",enterprise.getDomain(),false, new AsyncCallback<Map<String, String>>() {
-			
-			@Override
-			public void onSuccess(Map<String, String> result) {
-				map = result;
+
 				
 
 
@@ -148,51 +143,46 @@ public class PageF2 extends PageAbs {
 				if(map.containsKey("IDA01101")) IDA01101.setText(map.get("IDA01101"));
 				
 				listBoxItemAddCities(PR8081001);
-				keyExe(map, "PR8081001", "80810001", PR8081001, "list", true);
+				keyExe(map, "80810001", PR8081001, "list", true);
 
-				keyExe(map, "PR8081002", "80810002", PR8081002, "text", true);
-				keyExe(map, "PR8081003", "80810003", PR8081003, "text", true);
-				keyExe(map, "PR8081004", "80810004", PR8081004, "text", true);
+				keyExe(map, "80810002", PR8081002, "text", true);
+				keyExe(map, "80810003", PR8081003, "text", true);
+				keyExe(map, "80810004", PR8081004, "text", true);
 
-				keyExe(map, "PR8080805", "8080805", PR8080805, "check", false);
-				keyExe(map, "PR8080854", "8080854", PR8080854, "check", false);
-				keyExe(map, "PR8080801", "8080801", PR8080801, "check", false);
-				keyExe(map, "PR8080803", "8080803", PR8080803, "check", false);
-				keyExe(map, "PR8080811", "8080811", PR8080811, "check", false);
-				keyExe(map, "PR8080800", "8080800", PR8080800, "check", false);
-				keyExe(map, "PR8080819", "8080819", PR8080819, "check", false);
+				keyExe(map, "8080805", PR8080805, "check", false);
+				keyExe(map, "8080854", PR8080854, "check", false);
+				keyExe(map, "8080801", PR8080801, "check", false);
+				keyExe(map, "8080803", PR8080803, "check", false);
+				keyExe(map, "8080811", PR8080811, "check", false);
+				keyExe(map, "8080800", PR8080800, "check", false);
+				keyExe(map, "8080819", PR8080819, "check", false);
 
 				PR8081201.setWidth("99%");
-				keyExe(map, "PR8081201", "8081201", PR8081201, "text", true);
+				keyExe(map, "8081201", PR8081201, "text", true);
 				PR8081202.setWidth("99%");
-				keyExe(map, "PR8081202", "8081202", PR8081202, "text", true);
+				keyExe(map, "8081202", PR8081202, "text", true);
 				PR8081203.setWidth("99%");
-				keyExe(map, "PR8081203", "8081203", PR8081203, "text", true);
+				keyExe(map, "8081203", PR8081203, "text", true);
 				PR8081204.setWidth("99%");
-				keyExe(map, "PR8081204", "8081204", PR8081204, "text", true);
+				keyExe(map, "8081204", PR8081204, "text", true);
 				PR8081205.setWidth("99%");
-				keyExe(map, "PR8081205", "8081205", PR8081205, "text", true);
+				keyExe(map, "8081205", PR8081205, "text", true);
 				PR8081206.setWidth("99%");
 				listBoxItemAdd(PR8081206);
-				keyExe(map, "PR8081206", "8081206", PR8081206, "list", true);
+				keyExe(map, "8081206", PR8081206, "list", true);
 				PR8081207.setWidth("99%");
-				keyExe(map, "PR8081207", "8081207", PR8081207, "text", true);
+				keyExe(map, "8081207", PR8081207, "text", true);
 				PR8081208.setWidth("99%");
-				keyExe(map, "PR8081208", "8081208", PR8081208, "text", true);
+				keyExe(map, "8081208", PR8081208, "text", true);
 				PR8081209.setWidth("99%");
-				keyExe(map, "PR8081209", "8081209", PR8081209, "text", true);
+				keyExe(map, "8081209", PR8081209, "text", true);
 				
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				
-			}
-		});
+
 	}
 	
 	@Override
 	protected void initializeTable() {
-	
+		init();
 	}
 	
 
@@ -210,12 +200,12 @@ public class PageF2 extends PageAbs {
 	DateBox dAux;
 	ListBox lbAux;
 	DoubleBox dlAux;
-	private void keyExe(Map<String, String> map, String key, String key2, Widget w, String type, Boolean enable) {
+	private void keyExe(Map<String, String> map, String key2, Widget w, String type, Boolean enable) {
 		key2Aux = key2;
 		if(type.equals("text")) {
 			TextBox t = (TextBox) w;
-			if(map.containsKey(key)){
-				t.setValue(map.get(key));
+			if(map.containsKey(key2)){
+				t.setValue(map.get(key2));
 				t.setEnabled(enable);
 			}
 			tAux = t;
@@ -240,8 +230,8 @@ public class PageF2 extends PageAbs {
 		
 		if(type.equals("check")) {
 			CheckBox c = (CheckBox) w;
-			if(map.containsKey(key)){
-				c.setValue(map.get(key).equals("True")); 
+			if(map.containsKey(key2)){
+				c.setValue(map.get(key2).equals("True")); 
 				c.setEnabled(enable);
 			}
 			c.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -267,9 +257,9 @@ public class PageF2 extends PageAbs {
   
 			DateBox d = (DateBox) w;
 			dAux = d;
-			if(map.containsKey(key)){
+			if(map.containsKey(key2)){
 				
-				String datestr = map.get(key);
+				String datestr = map.get(key2);
 				inma.getDate(datestr, new AsyncCallback<Date>() {
 					DateBox d = dAux;
 					@Override
@@ -363,8 +353,8 @@ public class PageF2 extends PageAbs {
 		
 		if(type.equals("list")){
 			ListBox lb = (ListBox) w;
-			if(map.containsKey(key)){
-				String value = map.get(key);
+			if(map.containsKey(key2)){
+				String value = map.get(key2);
 				String value2 = "";
 				if(key2.equals("8081206")){
 					for(Integer i = 0;i< D2DepositConstants.PROVINCES.length; i++){
@@ -426,8 +416,8 @@ public class PageF2 extends PageAbs {
 		
 		if(type.equals("double")){
 			DoubleBox dl = (DoubleBox) w;
-			if(map.containsKey(key)){
-				Double d = Double.parseDouble(map.get(key));
+			if(map.containsKey(key2)){
+				Double d = Double.parseDouble(map.get(key2));
 				dl.setValue(d);
 				dl.setEnabled(enable);
 			}
