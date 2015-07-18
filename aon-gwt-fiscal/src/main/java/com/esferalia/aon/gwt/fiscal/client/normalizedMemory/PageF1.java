@@ -111,7 +111,7 @@ public class PageF1 extends PageAbs {
 		table7 = new FlexTable();
 		tabPanel = new TabPanel();
 		
-		init();
+		
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 
@@ -119,29 +119,21 @@ public class PageF1 extends PageAbs {
 	}
 
 	private void init(){
-		inma.getSchema(enterprise.getDocument(),"A",enterprise.getDomain(),false, new AsyncCallback<Map<String, String>>() {
-			
-			@Override
-			public void onSuccess(Map<String, String> result) {
-				map = result;
-				keyExe(map, "A18009010", "8009010", A18009010, "double", true);
-				keyExe(map, "A18009020", "8009020", A18009020, "double", true);
-				keyExe(map, "A18009030", "8009030", A18009030, "double", true);
-				keyExe(map, "A18009040", "8009040", A18009040, "double", true);
-				keyExe(map, "A18009050", "8009050", A18009050, "check", true);
+
+				keyExe(map, "8009010", A18009010, "double", true);
+				keyExe(map, "8009020", A18009020, "double", true);
+				keyExe(map, "8009030", A18009030, "double", true);
+				keyExe(map, "8009040", A18009040, "double", true);
+				keyExe(map, "8009050", A18009050, "check", true);
 				
 				
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				
-			}
-		});
+	
 	}
 	
 	
 	@Override
 	protected void initializeTable() {
+		init();
 		table();
 		table1();
 		table2();
@@ -831,12 +823,12 @@ public class PageF1 extends PageAbs {
 	
 	String key2Aux;
 	DoubleBox dlAux;
-	private void keyExe(Map<String, String> map, String key, String key2, Widget w, String type, Boolean enable) {
+	private void keyExe(Map<String, String> map, String key2, Widget w, String type, Boolean enable) {
 		key2Aux = key2;
 		if(type.equals("check")) {
 			CheckBox c = (CheckBox) w;
-			if(map.containsKey(key)){
-				c.setValue(map.get(key).equals("1")); 
+			if(map.containsKey(key2)){
+				c.setValue(map.get(key2).equals("1")); 
 				c.setEnabled(enable);
 			}
 			c.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -871,8 +863,8 @@ public class PageF1 extends PageAbs {
 		}
 		if(type.equals("double")){
 			DoubleBox dl = (DoubleBox) w;
-			if(map.containsKey(key)){
-				Double d = Double.parseDouble(map.get(key));
+			if(map.containsKey(key2)){
+				Double d = Double.parseDouble(map.get(key2));
 				dl.setValue(d);
 				dl.setEnabled(enable);
 			}

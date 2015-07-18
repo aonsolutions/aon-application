@@ -104,8 +104,8 @@ public class PageF3 extends PageAbs {
 				
 			}
 		});
-		if(map.containsKey(key.getName())){
-			String d =map.get(key.getName());
+		if(map.containsKey(key.getCode())){
+			String d =map.get(key.getCode());
 			text.setValue(d);
 		}
 		else text.setValue("");

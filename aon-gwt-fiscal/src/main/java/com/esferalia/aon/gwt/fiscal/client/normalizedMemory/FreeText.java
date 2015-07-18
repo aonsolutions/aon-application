@@ -115,7 +115,7 @@ public class FreeText extends PageAbs {
 
 		final TextArea text = new TextArea();
 		text.setWidth("100%");
-		text.setVisibleLines(150);
+		text.setVisibleLines(40);
 		codeAux = codeId;
 		text.addChangeHandler(new ChangeHandler() {
 			String code = codeAux;
@@ -130,6 +130,7 @@ public class FreeText extends PageAbs {
 					
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
+					onEdit(code, s);
 					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),code, s, new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
@@ -142,8 +143,8 @@ public class FreeText extends PageAbs {
 				
 			}
 		});
-		if(map.containsKey(key.getName())){
-			text.setValue(map.get(key.getName()));
+		if(map.containsKey(key.getCode())){
+			text.setValue(map.get(key.getCode()));
 		}
 		else text.setValue("");
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
@@ -158,25 +159,6 @@ public class FreeText extends PageAbs {
 		tab.setWidget(row, col, panel);
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextRight());
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-	}
-	
-
-	public void dump(D2DepositTreeObject d2DepositObject, String part) {
-		this.d2DepositObject = d2DepositObject;
-		inma.getSchema(enterprise.getDocument(),part,enterprise.getDomain(),textMode, new AsyncCallback<Map<String, String>>() {
-			
-			@Override
-			public void onSuccess(Map<String, String> result) {
-				map = result;
-				initializeTable();
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				
-			}
-		});
-		
-		//refreshDraftMap(this.d2DepositObject.getD2Deposit());
 	}
 	
 }

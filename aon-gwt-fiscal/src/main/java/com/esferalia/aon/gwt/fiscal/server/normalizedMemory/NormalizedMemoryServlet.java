@@ -22,6 +22,7 @@ import javax.xml.bind.JAXBException;
 
 import org.jooq.Record1;
 import org.jooq.Record2;
+import org.jooq.Record3;
 import org.jooq.Result;
 
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
@@ -29,6 +30,7 @@ import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
+import com.esferalia.aon.gwt.fiscal.client.tree.node.D2DepositTreeObject;
 import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -78,7 +80,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		}
 	}
 
-	public Map<String, String> getSchema(String cif, String part,
+	/*public Map<String, String> getSchema(String cif, String part,
 			Integer domainId, Boolean textMode) {
 		String domain = AonUtil.getDomainName();
 		HttpServletRequest request = getThreadLocalRequest();
@@ -304,7 +306,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 
 		}
 		return map;
-	}
+	}*/
 	
 	public Map<String, String> getSchema(String cif,
 			Integer domainId, Boolean textMode) {
@@ -407,13 +409,14 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 
 	private Vector<MemoryTemplate> getDepositText(String domain,
 			Integer domainId) {
+		HttpServletRequest request = getThreadLocalRequest();
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
 
-			Result<Record2<Integer, String>> data = ctx
+			Result<Record3<Integer, String, byte[]>> data = ctx
 					.getDslContext()
-					.select(RATTACH.ID, RATTACH.DESCRIPTION)
+					.select(RATTACH.ID, RATTACH.DESCRIPTION, RATTACH.DATA)
 					.from(RATTACH)
 					.where(RATTACH.DOMAIN.eq(domainId))
 					.and(RATTACH.TYPE
@@ -421,10 +424,29 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 									.ordinal())).fetch();
 
 			Vector<MemoryTemplate> v = new Vector<MemoryTemplate>();
-			for (Record2<Integer, String> record2 : data) {
+			for (Record3<Integer, String, byte[]> record3 : data) {
 				MemoryTemplate mt = new MemoryTemplate();
-				mt.setId(record2.value1());
-				mt.setName(record2.value2());
+				mt.setId(record3.value1());
+				mt.setName(record3.value2());
+				if(record3.value3() != null){
+					D2DepositTreeObject d2 = new D2DepositTreeObject();
+					
+					Esquema schema = DBConsults.readXml(record3.value3());
+					
+					request.getSession().putValue("d2DepositSchema" + record3.value1(), schema);
+					
+					List<Clave> claves = schema.getClaves().getClave();
+					Map<String, String> map = new HashMap<String, String>();
+					String type = schema.getCabecera().getTipoCuestionario();
+					map.put(D2DepositConstants.DEPOSIT_TYPE, type);
+					for (Integer i = 0; i < claves.size(); i++) {
+						if(!map.containsKey(claves.get(i).getCodigo().toString()))
+							map.put(claves.get(i).getCodigo().toString(), claves.get(i).getValor());
+					}
+					d2.setMap(map);
+					d2.setMapDraft(map);
+					mt.setD2Deposit2014(d2);
+				}
 				v.add(mt);
 			}
 

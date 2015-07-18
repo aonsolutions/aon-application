@@ -181,9 +181,10 @@ public class Header1 extends PageAbs {
 		IDA09001 = new CheckBox(); 
 		IDA09002 = new CheckBox(); 
 		IDA09003 = new CheckBox(); 
-		init();
+
 		Widget ui = header1Binder.createAndBindUi(this);
 		initWidget(ui);
+		init();
 		
 	}
 
@@ -204,104 +205,96 @@ public class Header1 extends PageAbs {
 	}
 	
 	private void init(){
-		inma.getSchema(enterprise.getDocument(),"IDA",enterprise.getDomain(),false, new AsyncCallback<Map<String, String>>() {
+			map = normalizedMemory.getDigitalDepositTreeNode().getD2Deposit2014().getMap();
+				
+			keyExe(map, "1010", IDA01010, "text", false);
+				
+			keyExe(map, "1011", IDA01011, "check", true);
+				
+			keyExe(map, "1012", IDA01012, "check", true);
 			
-			@Override
-			public void onSuccess(Map<String, String> result) {
-				map = result;
-				keyExe(map, "IDA01010", "1010", IDA01010, "text", false);
+			keyExe(map, "1013", IDA01013, "text", true);
 				
-				keyExe(map, "IDA01011", "1011", IDA01011, "check", true);
+			keyExe(map, "1020", IDA01020, "text", true);
 				
-				keyExe(map, "IDA01012", "1012", IDA01012, "check", true);
+			keyExe(map, "1022", IDA01022, "text", true);
 				
-				keyExe(map, "IDA01013", "1013", IDA01013, "text", true);
+			keyExe(map, "1023", IDA01023, "text", true);
 				
-				keyExe(map, "IDA01020", "1020", IDA01020, "text", true);
+			listBoxItemAdd(IDA01025);
+			keyExe(map, "1025", IDA01025, "list", true);
 				
-				keyExe(map, "IDA01022", "1022", IDA01022, "text", true);
+			keyExe(map, "1024", IDA01024, "text", true);
 				
-				keyExe(map, "IDA01023", "1023", IDA01023, "text", true);
+			keyExe(map, "1031", IDA01031, "text", true);
 				
-				listBoxItemAdd(IDA01025);
-				keyExe(map, "IDA01025", "1025", IDA01025, "list", true);
+			keyExe(map, "1037", IDA01037, "text", true);
 				
-				keyExe(map, "IDA01024", "1024", IDA01024, "text", true);
+			keyExe(map, "1041", IDA01041, "text", true);
 				
-				keyExe(map, "IDA01031", "1031", IDA01031, "text", true);
+			keyExe(map, "1040", IDA01040, "text", true);
 				
-				keyExe(map, "IDA01037", "1037", IDA01037, "text", true);
+			keyExe(map, "1061", IDA01061, "text", true);
 				
-				keyExe(map, "IDA01041", "1041", IDA01041, "text", true);
+			keyExe(map, "1060", IDA01060, "text", true);
 				
-				keyExe(map, "IDA01040", "1040", IDA01040, "text", true);
+			keyExe(map, "2009", IDA02009, "text", true);
 				
-				keyExe(map, "IDA01061", "1061", IDA01061, "text", true);
-				
-				keyExe(map, "IDA01060", "1060", IDA01060, "text", true);
-				
-				keyExe(map, "IDA02009", "2009", IDA02009, "text", true);
-				
-				keyExe(map, "IDA02001", "2001", IDA02001, "text", true);
-				
-				keyExe(map, "IDA04001", "4001", IDA04001, "double", true);
-
-				keyExe(map, "IDA040019", "40019", IDA040019, "double", true);
-
-				keyExe(map, "IDA04002", "4002", IDA04002, "double", true);
-
-				keyExe(map, "IDA040029", "40029", IDA040029, "double", true);
-
-				keyExe(map, "IDA04010", "4010", IDA04010, "double", true);
-
-				keyExe(map, "IDA040109", "40109", IDA040109, "double", true);
-
-				keyExe(map, "IDA04120", "4120", IDA04120, "double", true);
-
-				keyExe(map, "IDA04121", "4121", IDA04121, "double", true);
-
-				keyExe(map, "IDA041209", "41209", IDA041209, "double", true);
-
-				keyExe(map, "IDA041219", "41219", IDA041219, "double", true);
-
-				keyExe(map, "IDA04122", "4122", IDA04122, "double", true);
-
-				keyExe(map, "IDA04123", "4123", IDA04123, "double", true);
-
-				keyExe(map, "IDA041229", "41229", IDA041229, "double", true);
-
-				keyExe(map, "IDA041239", "41239", IDA041239, "double", true);
-
-				keyExe(map, "IDA01102", "1102", IDA01102, "date", true);
-
-				keyExe(map, "IDA011029", "11029", IDA011029, "date", true);
-
-				keyExe(map, "IDA01101", "1101", IDA01101, "date", true);
-
-				keyExe(map, "IDA011019", "11019", IDA011019, "date", true);
-
-				keyExe(map, "IDA01901", "1901", IDA01901, "double", true);
-
-				keyExe(map, "IDA01903", "1903", IDA01903, "text", true);
+			keyExe(map, "2001", IDA02001, "text", true);
 			
-				keyExe(map, "IDA09001", "9001", IDA09001, "check", true);
+			keyExe(map, "4001", IDA04001, "double", true);
+
+			keyExe(map, "40019", IDA040019, "double", true);
+
+			keyExe(map, "4002", IDA04002, "double", true);
+
+			keyExe(map, "40029", IDA040029, "double", true);
+
+			keyExe(map, "4010", IDA04010, "double", true);
+
+			keyExe(map, "40109", IDA040109, "double", true);
+			
+			keyExe(map, "4120", IDA04120, "double", true);
+
+			keyExe(map, "4121", IDA04121, "double", true);
+
+			keyExe(map, "41209", IDA041209, "double", true);
+
+			keyExe(map, "41219", IDA041219, "double", true);
+
+			keyExe(map, "4122", IDA04122, "double", true);
+			
+			keyExe(map, "4123", IDA04123, "double", true);
+
+			keyExe(map, "41229", IDA041229, "double", true);
+
+			keyExe(map, "41239", IDA041239, "double", true);
+
+			keyExe(map, "1102", IDA01102, "date", true);
+
+			keyExe(map, "11029", IDA011029, "date", true);
+
+			keyExe(map, "1101", IDA01101, "date", true);
+
+			keyExe(map, "11019", IDA011019, "date", true);
+
+			keyExe(map, "1901", IDA01901, "double", true);
+
+			keyExe(map, "1903", IDA01903, "text", true);
+			
+			keyExe(map, "9001", IDA09001, "check", true);
 				
-				keyExe(map, "IDA09002", "9002", IDA09002, "check", true);
+			keyExe(map, "9002", IDA09002, "check", true);
 				
-				keyExe(map, "IDA09003", "9003", IDA09003, "check", true);
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				
-			}
-		});
+			keyExe(map, "9003", IDA09003, "check", true);
+			
 	}
 	
 	@Override
 	protected void initializeTable() {
 				
 				
-				
+		//init();		
 			
 			
 	}
@@ -311,12 +304,12 @@ public class Header1 extends PageAbs {
 	DateBox dAux;
 	ListBox lbAux;
 	DoubleBox dlAux;
-	private void keyExe(Map<String, String> map, String key, String key2, Widget w, String type, Boolean enable) {
+	private void keyExe(Map<String, String> map, String key2, Widget w, String type, Boolean enable) {
 		key2Aux = key2;
 		if(type.equals("text")) {
 			TextBox t = (TextBox) w;
-			if(map.containsKey(key)){
-				t.setValue(map.get(key));
+			if(map.containsKey(key2)){
+				t.setValue(map.get(key2));
 				t.setEnabled(enable);
 			}
 			tAux = t;
@@ -341,8 +334,8 @@ public class Header1 extends PageAbs {
 		
 		if(type.equals("check")) {
 			CheckBox c = (CheckBox) w;
-			if(map.containsKey(key)){
-				c.setValue(map.get(key).equals("True")); 
+			if(map.containsKey(key2)){
+				c.setValue(map.get(key2).equals("True")); 
 				c.setEnabled(enable);
 			}
 			c.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -397,9 +390,9 @@ public class Header1 extends PageAbs {
   
 			DateBox d = (DateBox) w;
 			dAux = d;
-			if(map.containsKey(key)){
+			if(map.containsKey(key2)){
 				
-				String datestr = map.get(key);
+				String datestr = map.get(key2);
 				inma.getDate(datestr, new AsyncCallback<Date>() {
 					DateBox d = dAux;
 					@Override
@@ -493,9 +486,9 @@ public class Header1 extends PageAbs {
 		
 		if(type.equals("list")){
 			ListBox lb = (ListBox) w;
-			if(map.containsKey(key)){
+			if(map.containsKey(key2)){
 				
-				String value = map.get(key);
+				String value = map.get(key2);
 				String value2 ="";
 				for (Integer i = 0 ; i< D2DepositConstants.PROVINCES.length; i++){
 		
@@ -541,8 +534,8 @@ public class Header1 extends PageAbs {
 		
 		if(type.equals("double")){
 			DoubleBox dl = (DoubleBox) w;
-			if(map.containsKey(key)){
-				Double d = Double.parseDouble(map.get(key));
+			if(map.containsKey(key2)){
+				Double d = Double.parseDouble(map.get(key2));
 				dl.setValue(d);
 				dl.setEnabled(enable);
 			}

@@ -7,6 +7,8 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import java.io.File;
 import java.io.IOException;
 
+import javax.xml.bind.JAXBException;
+
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record3;
@@ -93,6 +95,16 @@ public class DBConsults {
 		}
 	}
 
+	public static Esquema readXml(byte[] data){
+		Esquema schema = null;
+		try {
+			schema = Utils.readXml(data);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+		return schema;
+	}
+	
 	public static Esquema getDeposit(String domain, Integer domainId) {
 		AONContext ctx = null;
 		try {
