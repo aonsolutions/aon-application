@@ -1,12 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.client.normalizedMemory;
 
 import java.text.ParseException;
-import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.fiscal.client.tree.node.D2DepositTreeObject;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -25,14 +23,9 @@ import com.google.gwt.user.client.ui.Widget;
 public class FreeText extends PageAbs {
 
 	final INormalizedMemoryAsync inma = GWT.create(INormalizedMemory.class);
-
 	
 	@UiField
 	InlineLabel  title1;
-
-	//@UiField
-//	TextArea value;
-	//<g:TextArea visibleLines="150" width="100%" styleName="{style.textArea-border}" ui:field="value" />
 
 	String part;
 
@@ -106,19 +99,16 @@ public class FreeText extends PageAbs {
 		paintKeyField(table, key, 0, 0);
 	}
 	
+	String codeAux;
 	@Override
 	protected void paintKeyField(FlexTable tab,final D2DepositKey key,int row, int col) {
 		boolean disabled = isDisabled(key);
 		
 		FlowPanel panel = new FlowPanel();
-		String codeId = key.getCode();
-
 		final TextArea text = new TextArea();
 		text.setWidth("100%");
-		text.setVisibleLines(40);
-		codeAux = codeId;
+		text.setVisibleLines(20);
 		text.addChangeHandler(new ChangeHandler() {
-			String code = codeAux;
 			@Override
 			public void onChange(ChangeEvent event) {
 				try {
@@ -130,8 +120,8 @@ public class FreeText extends PageAbs {
 					
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
-					onEdit(code, s);
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),code, s, new AsyncCallback<Void>() {
+					onEdit(key.getCode(), s);
+					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), s, new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
 						@Override
@@ -151,8 +141,6 @@ public class FreeText extends PageAbs {
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
 		text.setEnabled(!disabled);
 		panel.add(text);
-		
-		//getInputs().put(key, text);
 		if (!isTitle(key)) {
 			panel.addStyleName(AON.AON_CSS.aonFiscalPaddingRight());
 		}

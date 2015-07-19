@@ -18,7 +18,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -68,6 +67,8 @@ public class PageF1 extends PageAbs {
 	
 	@UiField TabPanel tabPanel;
 	
+	String codeAux;
+
 	public PageF1() {
 		super();
 		

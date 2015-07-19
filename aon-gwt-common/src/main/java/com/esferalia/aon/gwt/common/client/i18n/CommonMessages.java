@@ -2220,9 +2220,6 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Cuenta de p\u00E9rdidas y ganancias")
  	String header3Title();
  	
- 	@DefaultMessage("Estado de cambios en el patrimonio neto")
- 	String header4Title();
- 	
  	@DefaultMessage("Declaraci\u00f3n medioambiental")
  	String header5Title();
 
@@ -2360,5 +2357,8 @@ public interface CommonMessages extends Messages {
  	
  	@DefaultMessage("Ejercicio 2014")
  	String year2014();
+ 	
+ 	@DefaultMessage("(Debe)/ Haber")
+	String debitCredit();
 	
 }
