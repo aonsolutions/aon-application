@@ -35,13 +35,13 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
 
 public abstract class PageAbs extends ResizeComposite {
 	
 	protected static final int MEMORY_NOTE_VISIBLE_LENGTH = 8;
+	protected static final int NUMERIC_VISIBLE_LENGTH = 10;
 	
 	final INormalizedMemoryAsync inma = GWT.create(INormalizedMemory.class);
 	NormalizedMemory normalizedMemory;
@@ -52,21 +52,13 @@ public abstract class PageAbs extends ResizeComposite {
 		@Template("<input type=\"button\" value=\"&nbsp;\" class=\"aon-icon-delete\" style=\"border: medium none !important;\">")
 		SafeHtml render(String option);
 	}
-	
-
-	
-	
 
 	protected D2DepositTreeObject d2DepositObject;
-	
 
 	private HashMap<D2DepositKey, DoubleBox> inputs = new HashMap<D2DepositKey, DoubleBox>();
 	private HashMap<D2DepositKey, BoxLabel> labels = new HashMap<D2DepositKey, BoxLabel>();
 	
-	private static DepositType depositType;
-
-	@UiField
-	Panel basePanel;
+	private DepositType depositType;
 
 	@UiField(provided = true)
 	FlexTable table;
@@ -85,14 +77,8 @@ public abstract class PageAbs extends ResizeComposite {
 		else
 			map = d2DepositObject.getMap();
 
-
 		depositType = DepositType.valueOfLabel( map.get(D2DepositConstants.DEPOSIT_TYPE));
-
-
 		initializeTable();
-
-
-		//refreshDraftMap(this.d2DepositObject.getD2Deposit());
 	}
 	public boolean isPymes() {
 		return depositType == DepositType.PYMES;
@@ -108,11 +94,9 @@ public abstract class PageAbs extends ResizeComposite {
 	protected int paintKey(final D2DepositKey key,int row) {
 		return paintKey(table,key,row);
 	}
-	
 	protected int paintKey(final D2DepositHeaderKey key,int row) {
 		return paintKey(table,key,row);
 	}
-	
 	protected int paintKey(final D2DepositFooterKey key,int row) {
 		return paintKey(table,key,row);
 	}
@@ -122,13 +106,11 @@ public abstract class PageAbs extends ResizeComposite {
 		paintKeyField(tab,key,row,1);	
 		return ++row;
 	}
-	
 	protected int paintKey(FlexTable tab,final D2DepositHeaderKey key,int row) {
 		paintKeyDescription(tab,key,row,0);
 		paintKeyField(tab,key,row,1);	
 		return ++row;
 	}
-	
 	protected int paintKey(FlexTable tab,final D2DepositFooterKey key,int row) {
 		paintKeyDescription(tab,key,row,0);
 		paintKeyField(tab,key,row,1);	
@@ -178,29 +160,27 @@ public abstract class PageAbs extends ResizeComposite {
 		tab.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalBorderBottom());
 	}
 	
-	String codeAux;
+	
 	protected void paintKeyField(FlexTable tab,final D2DepositKey key,int row, int col) {
 		boolean disabled = isDisabled(key);
 		
 		FlowPanel panel = new FlowPanel();
-		String codeId = key.getCode();
 		boolean show = true;
 		try {
-			show = Integer.parseInt(codeId) > 0;
+			show = Integer.parseInt(key.getCode()) > 0;
 		} catch (NumberFormatException e) {
 			// Nothing;
 		}
 		if (show) {
-			BoxLabel code = new BoxLabel(codeId);
+			BoxLabel code = new BoxLabel(key.getCode());
 			getLabels().put(key, code);
 			panel.add(code);
 		}
 
 		final DoubleBox text = new DoubleBox();
 		
-		codeAux = codeId;
 		text.addChangeHandler(new ChangeHandler() {
-			String code = codeAux;
+
 			@Override
 			public void onChange(ChangeEvent event) {
 				try {
@@ -212,8 +192,8 @@ public abstract class PageAbs extends ResizeComposite {
 					
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
-					onEdit(code, d.toString());
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),code, d.toString() , new AsyncCallback<Void>() {
+					onEdit(key.getCode(), d.toString());
+					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), d.toString() , new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
 						@Override
@@ -244,16 +224,19 @@ public abstract class PageAbs extends ResizeComposite {
 	protected void paintKeyField(FlexTable tab,final D2DepositHeaderKey key,int row, int col) {
 		paintKeyField(tab,key,row,col, true);	
 	}
-	
 	protected void paintKeyField(FlexTable tab,final D2DepositHeaderKey key,int row, int col, boolean showBox) {
+		paintKeyField(tab,key,row,col,showBox,key.getCode());
+	}
+	protected void paintKeyField(FlexTable tab,final D2DepositHeaderKey key,int row, int col, boolean showBox, String boxContent) {
 		boolean disabled = isDisabled(key);
 		
 		FlowPanel panel = new FlowPanel();
 		if (showBox) {
-			BoxLabel code = new BoxLabel(key.getCode());
+			BoxLabel code = new BoxLabel(boxContent);
 			panel.add(code);
 		}
 		final DoubleBox text = new DoubleBox();
+		text.setVisibleLength(NUMERIC_VISIBLE_LENGTH);
 		text.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -296,24 +279,21 @@ public abstract class PageAbs extends ResizeComposite {
 		boolean disabled = isDisabled(key);
 		
 		FlowPanel panel = new FlowPanel();
-		String codeId = key.getCode();
 		boolean show = true;
 		try {
-			show = Integer.parseInt(codeId) > 0;
+			show = Integer.parseInt(key.getCode()) > 0;
 		} catch (NumberFormatException e) {
 			// Nothing;
 		}
 		if (show) {
-			BoxLabel code = new BoxLabel(codeId);
-			//getLabels().put(key, code);
+			BoxLabel code = new BoxLabel(key.getCode());
 			panel.add(code);
 		}
 
 		final DoubleBox text = new DoubleBox();
-		
-		codeAux = codeId;
+
 		text.addChangeHandler(new ChangeHandler() {
-			String code = codeAux;
+			
 			@Override
 			public void onChange(ChangeEvent event) {
 				try {
@@ -325,8 +305,8 @@ public abstract class PageAbs extends ResizeComposite {
 					
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
-					onEdit(code, d.toString());
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),code, d.toString() , new AsyncCallback<Void>() {
+					onEdit(key.getCode(), d.toString());
+					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), d.toString() , new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
 						@Override
@@ -505,5 +485,44 @@ public abstract class PageAbs extends ResizeComposite {
 		normalizedMemory.getDigitalDepositTreeNode().setD2Deposit2014(d2DepositObject);
 	}
 	
+	protected void defineBalanceTable( FlexTable tab, String title, D2DepositHeaderKey[][] keys){
+		tab.setWidth("100%");
+		tab.setCellSpacing(0);
+		tab.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonWidthAuto());
+		tab.getColumnFormatter().addStyleName(1, AON.AON_CSS.aonWidth130());
+		tab.getColumnFormatter().addStyleName(2, AON.AON_CSS.aonWidth140());
+		tab.getColumnFormatter().addStyleName(3, AON.AON_CSS.aonWidth140());
+		int row = 0;
+		tab.setWidget(row, 0, new Label(title));
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
+		tab.setWidget(row, 1, new Label(AON.MSG.memoryNotes()));
+		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
+		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
+		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextLeft());
+		tab.setWidget(row, 2, new Label(AON.MSG.year2014()));
+		tab.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBold());
+		tab.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBorderBottom());
+		tab.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextRight());
+		tab.setWidget(row, 3, new Label(AON.MSG.year2013()));
+		tab.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBold());
+		tab.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBorderBottom());
+		tab.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonTextRight());
+		++row;
+		
+		for (D2DepositHeaderKey[] innerKeys : keys) {
+			row = paintKey(tab, innerKeys , row);
+		}
+	}
+	
+	protected int paintKey(FlexTable tab, D2DepositHeaderKey[] keys,  int row) {
+		paintKeyDescription(tab, keys[0], row, 0);
+		paintKeyFieldTextBox(tab,keys[0].getCode(), keys[2], row, 1);
+		paintKeyField(tab,keys[0],row,2,false);
+		paintKeyField(tab,keys[1],row,3,false);
+		return  ++row;
+	}
+
 	protected abstract void initializeTable();
 }

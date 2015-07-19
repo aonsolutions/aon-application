@@ -68,6 +68,8 @@ public class PageF3 extends PageAbs {
 		return  ++row;
 	}
 
+	String codeAux;
+
 	private void paintTextKeyField(FlexTable tab, D2DepositFooterKey key,  int row, int col){
 
 		

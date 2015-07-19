@@ -8,37 +8,36 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
 
-	<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
-		<g:HTMLPanel ui:field="basePanel"
-			styleName="{aonResources.css.aonFiscalContainer}">
-			<g:SimplePanel ui:field="headerPanel" />
-			<div class="{aonResources.css.aonGroup}">
-				<div class="{aonResources.css.aonGroupTitle}">
-					<g:InlineLabel text="{msg.header5Title}" />
-				</div>
-				<div class="{aonResources.css.aonGroupBody}">
+	<g:TabPanel ui:field="tabPanel" height="100%" width="100%">
+		<g:Tab text="{msg.header5Title}">
+			<g:ScrollPanel>
+				<g:HTMLPanel>
 					<table>
 						<tr>
+							<td class="{aonResources.css.aonPadding}">
+								<g:Label ui:field="LMA8099000" />
+							</td>
+						</tr> 
+						<tr class="{aonResources.css.aonTextCenter}">
 							<td>
-								<g:Label text="Los abajo firmantes, como Administradores de la Sociedad citada, manifiestan que en la contabilidad correspondiente a las presentes cuentas anuales NO existe ninguna partida de naturaleza medioambiental que deba ser incluida de acuerdo a la norma de elaboración '4ª Cuentas anuales abreviadas' en su punto 5, de la tercera parte del Plan General de Contabilidad (Real Decreto 1514/2007 de 16 de Noviembre)." />
-								<g:CheckBox ui:field="IMA8099000" styleName="{aonResources.css.aonTextCenter}"/>
+								<g:CheckBox ui:field="IMA8099000"/>
+							</td>
+						</tr> 
+						<tr>
+							<td class="{aonResources.css.aonPadding}">
+								<g:Label ui:field="LMA8099010" />
+							</td>
+						</tr> 
+						<tr class="{aonResources.css.aonTextCenter}">
+							<td>
+								<g:CheckBox ui:field="IMA8099010"/>
 							</td>
 						</tr> 
 					</table>
-					<table>
-						<tr>
-							<td>
-							<g:Label text="Los abajo firmantes, como Administradores de la Sociedad citada, manifiestan que en la contabilidad correspondiente a las presentes cuentas anuales SI existen partidas de naturaleza medioambiental, y han sido incluidas en un Apartado adiciones de la Memoria de acuerdo a la norma de elaboración '4ª Cuentas anuales abreviadas' en su punto 5, de la tercera parte del Plan General de Contabilidad (Real Decreto 1514/2007 de 16 de Noviembre)." />
-							<g:CheckBox ui:field="IMA8099010"  styleName="{aonResources.css.aonTextCenter}"></g:CheckBox>
-							</td>
-						</tr> 
-					</table>
-					<g:FlexTable ui:field="table"
-						styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonMarginTop}" />
-				
-				</div>
-			</div>
-		</g:HTMLPanel>
-	</g:ScrollPanel>
-		
+					<g:FlexTable ui:field="table"/>
+				</g:HTMLPanel>
+			</g:ScrollPanel>
+		</g:Tab>
+	</g:TabPanel>
+	
 </ui:UiBinder>
