@@ -40,7 +40,7 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 
 import es.aeat.pret.rd13.ModeloRetencionesXMLJaxb;
 import es.aeat.pret.rd13.XMLProgressListener;
-import es.aeat.pret.rd15.modulo.retenciones.ModuloCalculo;
+import es.aeat.pret.rd15.julio.modulo.retenciones.ModuloCalculo;
 import es.aeat.pret.rw13.jaxb.AEATRetencionesEntrada2013;
 import es.aeat.pret.rw13.jaxb.AEATRetencionesError2013;
 import es.aeat.pret.rw13.jaxb.AEATRetencionesSalida2013;
