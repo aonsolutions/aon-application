@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
+import com.google.gwt.user.client.rpc.SerializationException;
 
 @WebServlet(name = "DownloadXml", urlPatterns = { "/aon_gwt_fiscal/gwt_download_deposit/*" })
 public class DownloadXmlFileServlet extends HttpServlet {
@@ -48,16 +49,20 @@ public class DownloadXmlFileServlet extends HttpServlet {
 		String domain = AonUtil.getDomainName();
 
 		File f = DBConsults.getXmlFile(domain, domainId);
-		
+		ZipOutputStream zos = null;
 		try {
 			
-			ZipOutputStream zos = makeZip(f, p_response.getOutputStream());
+			zos = makeZip(f, p_response.getOutputStream());
 			
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		} finally {
+			if (zos != null)
+				zos.close();
 		}
+		
 
 		// FileInputStream input = new FileInputStream(zos.toString());
 		//
@@ -101,18 +106,22 @@ public class DownloadXmlFileServlet extends HttpServlet {
 			while (!queue.isEmpty()) {
 				
 				directory = queue.pop();
-				String dirName = directory.getName()+"/";								
+				String dirName = getChangeName(directory.getName()) + "/";
+				//String dirName = directory.getName()+"/";
 
 				for (File kid : directory.listFiles()) {
 					
 					String name = base.relativize(kid.toURI()).getPath();
+					
 					if (kid.isDirectory()) {
 						queue.push(kid);
-						String fileName = dirName + ((name.endsWith("/")) ? name : name + "/");
+						String changeName = getChangeName(name);
+						String fileName = dirName + ((name.endsWith("/")) 
+								? changeName+"/" : changeName);
 						zos.putNextEntry(new ZipEntry(fileName));
 						
 					} else {
-						String fileName= dirName+"/"+name;
+						String fileName= dirName+getChangeName(name);
 						zos.putNextEntry(new ZipEntry(fileName));
 						copy(kid, zos);
 						zos.closeEntry();
@@ -122,6 +131,8 @@ public class DownloadXmlFileServlet extends HttpServlet {
 				}
 				zos.putNextEntry(new ZipEntry(dirName));
 				directory.delete();
+				queue.clear();
+				
 			}
 		} finally {
 			res.close();
@@ -150,5 +161,19 @@ public class DownloadXmlFileServlet extends HttpServlet {
 		    }
 		  }
 	// *****************************************************************************
-
-}
+	  
+	  private static String getChangeName (String name) {
+		  
+		  Integer startPosition = null;
+		  
+		  if (name.endsWith(".xml")) {
+			  startPosition = name.indexOf('%');
+			  return new String(name.substring(0, startPosition)+".xml");
+		  }
+		  
+		  else {
+			  startPosition = name.indexOf('%');
+			  return new String(name.substring(0, startPosition));
+		  }
+	  }
+ }
