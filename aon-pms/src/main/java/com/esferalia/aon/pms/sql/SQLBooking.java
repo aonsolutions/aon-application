@@ -76,7 +76,7 @@ public class SQLBooking implements ISQLConstants {
 			" LEFT JOIN room AS R ON R.asset = AA.asset" +
 			" WHERE PRR.domain = ?" +
 			" AND PR.status <> " + ReservationStatus.CANCELLED.ordinal() + 
-			" AND (PR.status <> " + ReservationStatus.INVOICED.ordinal() + " OR PRRD.id IS NOT NULL)" + 
+			" AND PR.cancellation_date IS NULL" + 
 			" AND PR.check_status <> " + ReservationCheckStatus.NO_SHOW.ordinal() + 
 			" AND PR.check_status <> " + ReservationCheckStatus.NO_SHOW_NO_INVOICEABLE.ordinal() +
 			" AND PR.end_date >= ? AND PR.start_date <= ?" +
