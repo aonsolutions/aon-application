@@ -100,7 +100,7 @@ public class ProjectReservationGuest extends ProjectReservationGuestDB implement
     	String fullName = StringUtils.isEmpty(getTreatment()) ? "" : getTreatment() + " ";
     	fullName += StringUtils.isEmpty(getName()) ? "" : getName() + " ";
     	fullName += StringUtils.isEmpty(getSurname()) ? "" : getSurname() + " ";
-    	fullName += StringUtils.isEmpty(getSurname2()) ? "" : getSurname2() + " ";
+    	fullName += StringUtils.isEmpty(getSurname2()) ? "" : getSurname2();
     	return fullName;
 	}
 

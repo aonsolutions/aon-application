@@ -35,6 +35,8 @@ import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.project.IProject;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.registry.Registry;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.ProjectReservationDB;
@@ -278,10 +280,17 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_ID), getId());
 		criteria.addOrder(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_GUEST_INDEX));
-		List<ITransferObject> reservationGuestList = reservationGuestBean.getList(criteria);
-		if (reservationGuestList.size() > 0) {
-			ProjectReservationGuest reservationGuest = (ProjectReservationGuest)reservationGuestList.get(0);
-			return reservationGuest.getFullName();
+		Projection prjName = Projection.property(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_NAME));
+		Projection prjSurname = Projection.property(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_SURNAME));
+		Projection prjSurname2 = Projection.property(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_SURNAME2));
+		ProjectionList projectionList = new ProjectionList(prjName, prjSurname, prjSurname2);
+		List<?> resultList = reservationGuestBean.getList(projectionList, criteria);
+		if (resultList.size() > 0) {
+			Object[] result = (Object[])resultList.get(0);
+	    	String guestName = (result[0] == null) ? "" : result[0].toString() + " ";
+	    	guestName += (result[1] == null) ? "" : result[1].toString() + " ";
+	    	guestName += (result[2] == null) ? "" : result[2].toString();
+			return guestName;
 		}
 		return null;
 	}
@@ -329,12 +338,17 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), getId());
-		int count = 0;
-		for (ITransferObject to : reservationRoomBean.getList(criteria)) {
-			count += ((ProjectReservationRoom)to).getAdults();
-			count += ((ProjectReservationRoom)to).getChildren();
+		Projection prjAdults = Projection.sum(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_ADULTS));
+		Projection prjChildren = Projection.sum(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_CHILDREN));
+		ProjectionList projectionList = new ProjectionList(prjAdults, prjChildren);
+		List<?> resultList = reservationRoomBean.getList(projectionList, criteria);
+		if (resultList.size() > 0) {
+			Object[] result = (Object[])resultList.get(0);
+	    	Integer adults = (result[0] == null) ? 0 : (Integer)result[0];
+	    	Integer children = (result[1] == null) ? 0 : (Integer)result[1];
+	    	return adults + children;
 		}
-		return count;
+		return 0;
 	}
 
 	@Transient
@@ -342,11 +356,12 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), getId());
-		int count = 0;
-		for (ITransferObject to : reservationRoomBean.getList(criteria)) {
-			count += ((ProjectReservationRoom)to).getAdults();
+		Projection prjAdults = Projection.sum(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_ADULTS));
+		List<?> resultList = reservationRoomBean.getList(new ProjectionList(prjAdults), criteria);
+		if (resultList.size() > 0) {
+			return (Integer)resultList.get(0);
 		}
-		return count;
+		return 0;
 	}
 
 	@Transient
@@ -354,11 +369,12 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), getId());
-		int count = 0;
-		for (ITransferObject to : reservationRoomBean.getList(criteria)) {
-			count += ((ProjectReservationRoom)to).getChildren();
+		Projection prjChild = Projection.sum(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_CHILDREN));
+		List<?> resultList = reservationRoomBean.getList(new ProjectionList(prjChild), criteria);
+		if (resultList.size() > 0) {
+			return (Integer)resultList.get(0);
 		}
-		return count;
+		return 0;
 	}
 
 	@Transient
@@ -385,10 +401,10 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		criteria.addEqualExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID), getId());
 		criteria.addNotNullExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_MEAL_PLAN));
 		criteria.addOrder(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_ITEM_PRODUCT_COMPOSITION), false);
-		List<ITransferObject> reservationServiceList = reservationServiceBean.getList(criteria);
-		if (reservationServiceList.size() > 0) {
-			ProjectReservationService reservationService = (ProjectReservationService)reservationServiceList.get(0);
-			return reservationService.getMealPlan();
+		Projection prjMealPlan = Projection.property(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_MEAL_PLAN));
+		List<?> resultList = reservationServiceBean.getList(new ProjectionList(prjMealPlan), criteria);
+		if (resultList.size() > 0) {
+			return (MealPlan)resultList.get(0);
 		}
 		return null;
 	}
@@ -405,10 +421,10 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 				criteria.addEqualExpression(reservationRoomDetailBean.getFieldName(alias), getId());
 				alias = IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE;
 				criteria.addOrder(reservationRoomDetailBean.getFieldName(alias), false);
-				List<ITransferObject> reservationRoomDetailList = reservationRoomDetailBean.getList(criteria);
-				if (reservationRoomDetailList.size() > 0) {
-					ProjectReservationRoomDetail roomDetail = (ProjectReservationRoomDetail)reservationRoomDetailList.get(0);
-					return DateUtils.addDays(roomDetail.getAssetActivity().getDate(), 1);
+				Projection prjCheckOutDate = Projection.property(reservationRoomDetailBean.getFieldName(alias));
+				List<?> resultList = reservationRoomDetailBean.getList(new ProjectionList(prjCheckOutDate), criteria);
+				if (resultList.size() > 0) {
+					return DateUtils.addDays((Date)resultList.get(0), 1);
 				} else {
 					return getStartDate();
 				}
