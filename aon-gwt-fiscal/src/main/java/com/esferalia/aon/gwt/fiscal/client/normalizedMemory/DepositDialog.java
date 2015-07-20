@@ -148,13 +148,13 @@ public abstract class DepositDialog extends CustomDialogB {
 		lb.addItem("Abreviado");
 		lb.addItem("Pymes");
 
-		flex_table.setWidget(0, 0, new Label("Tipo de Deposito"));
+		flex_table.setWidget(0, 0, new Label("Tipo de Dep\u00f3sito"));
 		flex_table.setWidget(0, 1, lb);
 		
 		TextBox tb1 = new TextBox();
 		tb1.setText(enterprise.getName());
 		tb1.setStyleName("aon-inputText");
-		flex_table.setWidget(1, 0, new Label("Nombre del Deposito"));
+		flex_table.setWidget(1, 0, new Label("Nombre del Dep\u00f3sito"));
 		flex_table.setWidget(1, 1, tb1);
 		
 		TextBox tb2 = new TextBox();
@@ -173,7 +173,7 @@ public abstract class DepositDialog extends CustomDialogB {
 		
 		TextBox tb4 = new TextBox();
 		tb4.setStyleName("aon-inputText");
-		flex_table.setWidget(4, 0, new Label("Descripcion"));
+		flex_table.setWidget(4, 0, new Label("Descripci\u00f3n"));
 		flex_table.setWidget(4, 1,tb4);
 		
 		flexTableCss();

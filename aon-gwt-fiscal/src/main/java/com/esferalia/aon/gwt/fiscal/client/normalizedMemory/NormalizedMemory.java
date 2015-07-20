@@ -141,6 +141,7 @@ public class NormalizedMemory extends ResizeComposite {
        	importTextButton = new Button();
         deleteButton = new Button();
 		cancelButton = new Button();
+		importAllButton = new Button();
 		enterprise = ddtn.getD2Deposit2014().getEnterprise();
 		//this.page = page;
 		this.textMode = false;
@@ -154,6 +155,7 @@ public class NormalizedMemory extends ResizeComposite {
 		initWidget(ui);
 		depositType.setText("Deposito");
 		deleteButton.setVisible(true);
+		importAllButton.setVisible(true);
 		importButton.setVisible(false);
 		importTextButton.setVisible(false);
 		inma.getSchema(enterprise.getDocument(), enterprise.getDomain(), textMode,new AsyncCallback<Map<String, String>>() {
@@ -200,6 +202,7 @@ public class NormalizedMemory extends ResizeComposite {
         deleteButton = new Button();
         generateFileButton = new Button();
 		cancelButton = new Button();
+		importAllButton = new Button();
 		this.enterprise = enterprise;
 		//this.page = page;
 		this.textMode = true;
@@ -215,6 +218,7 @@ public class NormalizedMemory extends ResizeComposite {
 		importButton.setVisible(false);
 		importTextButton.setVisible(false);
 		generateFileButton.setVisible(false);
+		importAllButton.setVisible(true);
 		//deleteButton.setVisible(true);
 		inma.isModify(mt.getId().toString(),new AsyncCallback<Boolean>() {
 			
@@ -247,6 +251,7 @@ public class NormalizedMemory extends ResizeComposite {
        	importTextButton = new Button();
 		saveButton = new Button();
 		generateFileButton = new Button();
+		importAllButton = new Button();
 		digitalDepositTreeNode = ddtn;
 		this.textMode = false;
 		pagesPanel = new FlowPanel();
@@ -257,6 +262,7 @@ public class NormalizedMemory extends ResizeComposite {
 		initWidget(ui);
 		importButton.setVisible(false);
 		importTextButton.setVisible(false);
+		importAllButton.setVisible(false);
 		if(type){
 			newButton.setVisible(true);
 			saveButton.setVisible(false);
@@ -287,6 +293,7 @@ public class NormalizedMemory extends ResizeComposite {
 		saveButton = new Button();
 		generateFileButton = new Button();
 		digitalDepositFreeTextTreeNode = ddtn;
+		importAllButton = new Button();
 		this.textMode = true;
 		
 		enterprise = e;
@@ -297,6 +304,7 @@ public class NormalizedMemory extends ResizeComposite {
 		initWidget(ui);
 		importButton.setVisible(false);
 		importTextButton.setVisible(false);
+		importAllButton.setVisible(false);
 		if(type){
 			importButton.setVisible(false);
 			importTextButton.setVisible(false);
@@ -401,7 +409,8 @@ public class NormalizedMemory extends ResizeComposite {
 									newButton.setVisible(false);
 									saveButton.setVisible(true);
 									saveButton.setEnabled(false);
-									generateFileButton.setVisible(true);									
+									generateFileButton.setVisible(true);		
+									importAllButton.setVisible(true);
 								}
 					});
 					
