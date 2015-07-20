@@ -6,6 +6,8 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.xml.bind.JAXBException;
 
@@ -66,17 +68,28 @@ public class DBConsults {
 
 			byte[] data;
 			if (record != null) {
-
-				parent = new File("RAIZ/");
-				parent.mkdir();
-				new File(parent, "Documentos").mkdir();
-				new File(parent, "Documentos TMP").mkdir();
-				new File(parent, "Otros Documentos").mkdir();
-				new File(parent, "Otros Documentos TMP").mkdir();
-
-				//File f = File.createTempFile("DEPOSITO", ".xml", parent);
 				
-				File f = new File(parent, "Deposito.xml");
+				parent = File.createTempFile(record.value2()+"%", "");
+				parent.delete();
+				parent.mkdir();
+				
+				File documents = File.createTempFile("Documentos%", "", parent);
+				documents.delete();
+				documents.mkdir();
+				
+				File tmpDocuments = File.createTempFile("Documentos TMP%", "", parent);
+				tmpDocuments.delete();
+				tmpDocuments.mkdir();
+				
+				File otherDocuments =File.createTempFile("Otros Documentos%", "", parent);
+				otherDocuments.delete();
+				otherDocuments.mkdir();
+				
+				File otherTmpDocuments =File.createTempFile("Otros Documentos TMP%", "", parent);
+				otherTmpDocuments.delete();
+				otherTmpDocuments.mkdir();
+
+				File f = File.createTempFile("DEPOSITO%", ".xml", parent);
 				
 				data = record.value5();
 
