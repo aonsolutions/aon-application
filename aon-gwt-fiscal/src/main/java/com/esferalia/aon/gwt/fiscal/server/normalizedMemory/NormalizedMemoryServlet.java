@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.server.normalizedMemory;
 
-import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 
@@ -15,39 +14,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
 
 import org.jooq.Record1;
-import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Result;
 
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
-import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.D2DepositTreeObject;
 import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
-import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
-import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
-import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2PDepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
+import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2MVELContext;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves.Clave;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002013toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002014toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Utils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class NormalizedMemoryServlet extends RemoteServiceServlet implements
@@ -57,271 +51,46 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-	void initFacesContext() {
-		ServletContext context = getServletContext();
-		HttpServletRequest request = getThreadLocalRequest();
-		HttpServletResponse response = getThreadLocalResponse();
-		AonServletUtils.initFacesContext(context, request, response);
-	}
-
-	void releaseFacesContext() {
-		AonServletUtils.releaseFacesContext();
-	}
-
+	private static final String D2_DEPOSIT_SCHEMA = "d2DepositSchema";
+	private static final String MODIFY_D2_DEPOSIT_SCHEMA = "ModifyD2DepositSchema";
+	
+//	void initFacesContext() {
+//		ServletContext context = getServletContext();
+//		HttpServletRequest request = getThreadLocalRequest();
+//		HttpServletResponse response = getThreadLocalResponse();
+//		AonServletUtils.initFacesContext(context, request, response);
+//	}
+//	void releaseFacesContext() {
+//		AonServletUtils.releaseFacesContext();
+//	}
+//	public Integer initialize() {
+//		try {
+//			initFacesContext();
+//			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+//			return null;
+//		} finally {
+//			releaseFacesContext();
+//		}
+//	}
+	
 	public Integer initialize() {
-		try {
-			initFacesContext();
-			DomainSwitcher ds = (DomainSwitcher) AonUtil
-					.getRegisteredBean(DOMAIN_SWITCHER);
-			return ds.getDomainId();
-		} finally {
-			releaseFacesContext();
-		}
+		return null;
 	}
 
-	/*public Map<String, String> getSchema(String cif, String part,
-			Integer domainId, Boolean textMode) {
-		String domain = AonUtil.getDomainName();
-		HttpServletRequest request = getThreadLocalRequest();
-		// String cif = DBConsults.getCIF(domain, domainId);
-		Esquema schema = (Esquema) request.getSession().getAttribute(
-				"d2DepositSchema" + cif);
-		if (schema == null) {
-			// System.out.println(domainId);
-			if (textMode) {
-				schema = DBConsults.getDeposit(domain, domainId, cif);
-			} else
-				schema = DBConsults.getDeposit(domain, domainId);
-			request.getSession().putValue("d2DepositSchema" + cif, schema);
-		}
-		// TODO
-		// COMPROBAR SI EL SCHEMA ESTÁ EN LA SESIÓN
-		// SI NO ESTA GETDEPOSIT() --> DE DBCONSULTS.
-		// DEVOLVER SCHEMA
-		D2DepositKey[] keyList = null;
-		D2DepositHeaderKey[] keyListHeader = null;
-		D2DepositFooterKey[] keyListFooter = null;
-		switch (part) {
-		case "IDA":			
-			keyListHeader = D2DepositConstants.IDA_ABREVIATE_KEYS;
-			break;
-		case "IDP":			
-			keyListHeader = D2PDepositConstants.IDP_ABREVIATE_KEYS;
-			break;
-		case "BA":
-			keyListHeader = D2DepositConstants.BA_ABREVIATE_KEYS;
-			break;
-		case "BP":
-			keyListHeader = D2PDepositConstants.BP_ABREVIATE_KEYS; 
-			break;
-		case "PA":			
-			keyListHeader = D2DepositConstants.PA_ABREVIATE_KEYS;
-			break;
-		case "PP":
-			keyListHeader = D2PDepositConstants.PP_ABREVIATE_KEYS;
-			break;
-		case "PNA":
-			keyListHeader = D2DepositConstants.PNA_ABREVIATE_KEYS;
-			break;
-		case "PNP":
-			keyListHeader = D2PDepositConstants.PNP_ABREVIATE_KEYS; 
-			break;
-			
-		case "IMA":
-		case "IMP":
-			keyListHeader = D2DepositConstants.IMA_ABREVIATE_KEYS;
-			break;
-
-		case "MAT1":
-		case "MPT1":
-			keyList = D2DepositConstants.MAT1_ABREVIATE_KEYS;
-			break;
-
-		case "MAT2":
-		case "MPT2":
-			keyList = D2DepositConstants.MAT2_ABREVIATE_KEYS;
-			break;
-
-		case "MAT3":
-		case "MPT3":		
-			keyList = D2DepositConstants.MAT3_ABREVIATE_KEYS;
-			break;
-
-		case "MA3":
-			keyList = D2DepositConstants.MA3_ABREVIATE_KEYS;
-			break;
-		case "MP3":
-			keyList = D2PDepositConstants.MP3_ABREVIATE_KEYS; 
-			break;
-			
-		case "MAT4":
-		case "MPT4":
-			keyList = D2DepositConstants.MAT4_ABREVIATE_KEYS;
-			break;
-			
-		case "MAT5":
-		case "MPT5":
-			keyList = D2DepositConstants.MAT5_ABREVIATE_KEYS;
-			break;
-
-		case "MA5":
-		case "MP5":
-			keyList = D2DepositConstants.MA5_ABREVIATE_KEYS;
-			break;
-
-		case "MAT6":
-		case "MPT6":
-			keyList = D2DepositConstants.MAT6_ABREVIATE_KEYS;
-			break;
-
-		case "MA6":
-			keyList = D2DepositConstants.MA6_ABREVIATE_KEYS;
-			break;
-		case "MP6":
-			keyList = D2PDepositConstants.MP6_ABREVIATE_KEYS;
-			break;
-
-		case "MAT7":
-		case "MPT7":
-			keyList = D2DepositConstants.MAT7_ABREVIATE_KEYS;
-			break;
-
-		case "MA7":
-			keyList = D2DepositConstants.MA7_ABREVIATE_KEYS;
-			break;
-
-		case "MP7":
-			keyList = D2PDepositConstants.MP7_ABREVIATE_KEYS;
-			break;
-
-
-		case "MAT8":
-		case "MPT8":
-			keyList = D2DepositConstants.MAT8_ABREVIATE_KEYS;
-			break;
-
-		case "MAT9":
-		case "MPT9":
-			keyList = D2DepositConstants.MAT9_ABREVIATE_KEYS;
-			break;
-
-		case "MA10":
-			keyList = D2DepositConstants.MA10_ABREVIATE_KEYS;
-			break;
-		case "MP10":
-			keyList = D2PDepositConstants.MP10_ABREVIATE_KEYS;
-			break;
-
-
-		case "MAT11":
-		case "MPT11":
-			keyList = D2DepositConstants.MAT11_ABREVIATE_KEYS;
-			break;
-
-		case "MA11":
-			keyList = D2DepositConstants.MA11_ABREVIATE_KEYS;
-			break;
-			
-		case "MP11":
-			keyList = D2PDepositConstants.MP11_ABREVIATE_KEYS;
-			break;
-
-
-		case "MAT12":
-		case "MPT12":
-			keyList = D2DepositConstants.MAT12_ABREVIATE_KEYS;
-			break;
-
-		case "MA12":
-			keyList = D2DepositConstants.MA12_ABREVIATE_KEYS;
-			break;
-		case "MP12":
-			keyList = D2PDepositConstants.MP12_ABREVIATE_KEYS;
-			break;
-
-
-		case "MAT13":
-		case "MPT13":
-			keyList = D2DepositConstants.MAT13_ABREVIATE_KEYS;
-			break;
-
-		case "MA13":
-		case "MP13":
-			keyList = D2DepositConstants.MA13_ABREVIATE_KEYS;
-			break;
-
-			
-		case "MAT14":
-		case "MPT14":
-			keyList = D2DepositConstants.MAT14_ABREVIATE_KEYS;
-			break;
-
-		case "MA14":
-		case "MP14":
-			keyList = D2DepositConstants.MA14_ABREVIATE_KEYS;
-	
-		case "MA15":
-		case "MP15":
-			keyList = D2DepositConstants.MA15_ABREVIATE_KEYS;
-			break;
-
-		case "A":
-			keyListFooter = D2DepositConstants.A_ABREVIATE_KEYS;
-			break;
-		case "PR":
-			keyListFooter = D2DepositConstants.PR_ABREVIATE_KEYS;
-			keyListHeader = D2DepositConstants.PR_DATOS_EXTRA;
-			break;
-		case "H":
-			keyListFooter = D2DepositConstants.H_ABREVIATE_KEYS;
-			break;
-
-		default:
-			break;
-		}
-		List<Clave> claves = schema.getClaves().getClave();
-		Map<String, String> map = new HashMap<String, String>();
-		String type = schema.getCabecera().getTipoCuestionario();
-		map.put(D2DepositConstants.DEPOSIT_TYPE, type);
-		for (Integer i = 0; i < claves.size(); i++) {
-			if (keyList != null)
-				for (Integer j = 0; j < keyList.length; j++) {
-					if (claves.get(i).getCodigo().toString().equals(keyList[j].getCode())) {
-						map.put(keyList[j].getName(), claves.get(i).getValor());
-					}
-				}
-			if (keyListHeader != null)
-				for (Integer j = 0; j < keyListHeader.length; j++) {
-					if (claves.get(i).getCodigo().toString().equals(keyListHeader[j].getCode())) {
-						map.put(keyListHeader[j].getName(), claves.get(i).getValor());
-					}
-				}
-			if (keyListFooter != null)
-				for (Integer j = 0; j < keyListFooter.length; j++) {
-					if (claves.get(i).getCodigo().toString().equals(keyListFooter[j].getCode())) {
-						map.put(keyListFooter[j].getName(), claves.get(i).getValor());
-					}
-				}
-
-		}
-		return map;
-	}*/
-	
 	public Map<String, String> getSchema(String cif,
 			Integer domainId, Boolean textMode) {
 		String domain = AonUtil.getDomainName();
 		HttpServletRequest request = getThreadLocalRequest();
 		// String cif = DBConsults.getCIF(domain, domainId);
 		Esquema schema = (Esquema) request.getSession().getAttribute(
-				"d2DepositSchema" + cif);
+				D2_DEPOSIT_SCHEMA + cif);
 		if (schema == null) {
 			// System.out.println(domainId);
 			if (textMode) {
 				schema = DBConsults.getDeposit(domain, domainId, cif);
 			} else
 				schema = DBConsults.getDeposit(domain, domainId);
-			request.getSession().putValue("d2DepositSchema" + cif, schema);
+			request.getSession().setAttribute(D2_DEPOSIT_SCHEMA + cif, schema);
 		}
 		// TODO
 		// COMPROBAR SI EL SCHEMA ESTÁ EN LA SESIÓN
@@ -339,29 +108,28 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		return map;
 	}
 
-	public void updateSchema(String cif, Integer domainId, String key,
-			String value) {
-		String domain = AonUtil.getDomainName();
+	public void updateSchema(String cif, Integer domainId, String key, String value) {
 		HttpServletRequest request = getThreadLocalRequest();
-		// String cif = DBConsults.getCIF(domain, domainId);
-		Esquema schema = (Esquema) request.getSession().getAttribute(
-				"d2DepositSchema" + cif);
-		Boolean bool = true;
+		Esquema schema = (Esquema) request.getSession().getAttribute(D2_DEPOSIT_SCHEMA + cif);
+		Boolean isNew = true;
 		for (Integer i = 0; i < schema.getClaves().getClave().size(); i++) {
-			if (schema.getClaves().getClave().get(i).getCodigo().toString()
-					.equals(key)) {
+			if (schema.getClaves().getClave().get(i).getCodigo().toString().equals(key)) {
 				schema.getClaves().getClave().get(i).setValor(value);
-				bool = false;
+				isNew = false;
 			}
 		}
-		if (bool) {
+		if (isNew) {
 			Clave c = new Clave();
 			c.setCodigo(BigInteger.valueOf(Integer.parseInt(key)));
 			c.setValor(value);
 			schema.getClaves().getClave().add(c);
 		}
-		request.getSession().setAttribute("d2DepositSchema" + cif, schema);
-		request.getSession().setAttribute("ModifyD2DepositSchema" + cif, "true");
+		// ------
+		calculate(schema);
+		// ------
+		
+		request.getSession().setAttribute(D2_DEPOSIT_SCHEMA + cif, schema);
+		request.getSession().setAttribute(MODIFY_D2_DEPOSIT_SCHEMA + cif, "true");
 	}
 
 	public Boolean isDigitalDeposit(Integer domainId) {
@@ -372,21 +140,21 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 	public Boolean isModify(String cif) {
 		HttpServletRequest request = getThreadLocalRequest();
 		String modify = (String) request.getSession().getAttribute(
-				"ModifyD2DepositSchema" + cif);
+				MODIFY_D2_DEPOSIT_SCHEMA + cif);
 		return modify != null && modify.equals("true");
 	}
 
 	public void clearSession(String cif) {
 		HttpServletRequest request = getThreadLocalRequest();
-		request.getSession().removeAttribute("d2DepositSchema" + cif);
-		request.getSession().removeAttribute("ModifyD2DepositSchema" + cif);
+		request.getSession().removeAttribute(D2_DEPOSIT_SCHEMA + cif);
+		request.getSession().removeAttribute(MODIFY_D2_DEPOSIT_SCHEMA + cif);
 	}
 
 	public void saveDeposit(String cif, Integer domainId, Boolean textMode) {
 		String domain = AonUtil.getDomainName();
 		HttpServletRequest request = getThreadLocalRequest();
 		Esquema schema = (Esquema) request.getSession().getAttribute(
-				"d2DepositSchema" + cif);
+				D2_DEPOSIT_SCHEMA + cif);
 
 		try {
 			byte[] b = Utils.writeXml(schema);
@@ -433,7 +201,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 					
 					Esquema schema = DBConsults.readXml(record3.value3());
 					
-					request.getSession().putValue("d2DepositSchema" + record3.value1(), schema);
+					request.getSession().setAttribute(D2_DEPOSIT_SCHEMA + record3.value1(), schema);
 					
 					List<Clave> claves = schema.getClaves().getClave();
 					Map<String, String> map = new HashMap<String, String>();
@@ -474,7 +242,6 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 
 	public void updateTexts(MemoryTemplate mt, Integer domainId, String cif) {
 		String domain = AonUtil.getDomainName();
-		HttpServletRequest request = getThreadLocalRequest();
 		Esquema schema = DBConsults.getDeposit(domain, domainId, mt.getId()
 				.toString());
 
@@ -734,8 +501,52 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		String domainName = AonUtil.getDomainName();
 		Enterprise enterprise = AON.getEnterprise(domainName, domainId, id);
 		byte[] b = Utils.CreateXml(enterprise, name, type, domainName);
-		Integer depositId = DBConsults.insertDeposit(domainName, b, domainId);
-		
+		DBConsults.insertDeposit(domainName, b, domainId);
 		return getSchema(enterprise.getDocument(), domainId, false);
 	}
+	
+	
+	// TODO Create new class for map
+	public static Map<String,String> COMPUTE_MAP = new LinkedHashMap<String,String>();
+	static {
+		COMPUTE_MAP.put(D2DepositHeaderKey.BA111000.toString(),"(PYMES)?(Q11100+Q11200+Q11300+Q11400+Q11500+Q11600+Q11700):(Q11100+Q11200)");
+	}
+
+	private void calculate(Esquema schema) {
+		D2MVELContext ctx = new D2MVELContext(schema, new IAccMiningKeyAccept() {
+			@Override
+			public boolean acceptKey(Object key) {
+				return AonStringUtils.isNotEmpty((String) key);
+			}
+		});
+		ctx.setExpressionMap(COMPUTE_MAP);
+		List<Clave> claves = schema.getClaves().getClave();
+		for (Clave clave : claves) {
+			try {
+				if (AonStringUtils.isNotEmpty( clave.getValor() )) {
+					Double d = Double.parseDouble(clave.getValor());
+					ctx.put("Q"+clave.getCodigo().toString(), d);
+				}
+			} catch (NumberFormatException e) {
+				// Ignore value
+			}
+		}
+		ctx.put("PYMES", false);
+		for (String key : COMPUTE_MAP.keySet()) {
+			String expression = COMPUTE_MAP.get(key);
+			Object ret = ctx.evaluateExpression(key,expression);
+			if (ret instanceof Double) {
+				Double calculated = (Double) ret;
+				// TODO Remove trace
+				System.out.println(key + " = " + calculated +  " --> " +  expression);
+				// ------------
+				ctx.put(key, calculated);
+
+				
+				// TODO 
+				// populate data
+			}
+		}
+	}
+	
 }

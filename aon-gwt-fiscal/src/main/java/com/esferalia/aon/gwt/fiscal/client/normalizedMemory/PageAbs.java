@@ -344,7 +344,7 @@ public abstract class PageAbs extends ResizeComposite {
 		return behaviour != null && behaviour[1];
 	}
 	protected boolean isDisabled(D2DepositHeaderKey key) {
-		Boolean[] behaviour = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(key.getName());
+		Boolean[] behaviour = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(key.toString());
 		return behaviour != null && behaviour[1];
 	}
 	
@@ -359,7 +359,7 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	protected boolean isTitle(D2DepositHeaderKey key) {
-		Boolean[] behaviour = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(key.getName());
+		Boolean[] behaviour = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(key.toString());
 		return (behaviour != null && behaviour[0]); 
 	}
 	
