@@ -89,7 +89,7 @@ public class ReservationLiquidationPrinter implements ICollectionProvider {
 			.where(INVOICE.TYPE.equal((byte) 1))
 			.and(INVOICE.PROJECT.equal(project))
 			.groupBy(INVOICE.REFERENCE_CODE, PAY_METHOD.NAME, DSL.sign(FINANCE.AMOUNT))
-			.orderBy(POS_SHIFT.START_TIME, POS_SHIFT.SHIFT, PAY_METHOD.NAME, INVOICE.REFERENCE_CODE)
+			.orderBy(POS_SHIFT.START_TIME, POS_SHIFT.SHIFT, PAY_METHOD.NAME, INVOICE.ID)
 			.fetch()
 			.forEach( record -> { 
 				addReservationLiquidation(record, list);
