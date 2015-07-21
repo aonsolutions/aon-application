@@ -160,9 +160,10 @@ public class D2PDepositConstants {
 	
 	public static D2DepositKey[][] MRN_PYMES_KEYS_1 = new D2DepositKey[][] {
 		new D2DepositKey[]{D2DepositKey.MA391000, D2DepositKey.MA3910009}
-		,new D2DepositKey[]{D2DepositKey.MA391001, D2DepositKey.MA3910029}
-		,new D2DepositKey[]{D2DepositKey.MA391002, D2DepositKey.MA3910039}
-		,new D2DepositKey[]{D2DepositKey.MA391003, D2DepositKey.MA3910049}
+		,new D2DepositKey[]{D2DepositKey.MA391001, D2DepositKey.MA3910019}
+		,new D2DepositKey[]{D2DepositKey.MA391002, D2DepositKey.MA3910029}
+		,new D2DepositKey[]{D2DepositKey.MA391003, D2DepositKey.MA3910039}
+		,new D2DepositKey[]{D2DepositKey.MA391004, D2DepositKey.MA3910049}
 	};
 
 	public static D2DepositKey[][] MRN_PYMES_KEYS_2 = new D2DepositKey[][] {

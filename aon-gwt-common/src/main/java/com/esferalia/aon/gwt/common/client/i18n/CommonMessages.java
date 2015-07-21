@@ -1591,6 +1591,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Aplicaci\u00F3n")
 	String aplication();
 	
+	@DefaultMessage("Aplicaci\u00F3n a")
+	String aplicationTo();
+	
 	@DefaultMessage("Exportar datos contables")
 	String aeatAccountingFile();
 	@DefaultMessage("Exp.Dat.Ctb.")
