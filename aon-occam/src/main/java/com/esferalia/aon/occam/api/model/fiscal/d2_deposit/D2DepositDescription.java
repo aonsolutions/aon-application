@@ -115,6 +115,8 @@ public class D2DepositDescription {
 		DESCRIPTION_MAP.put(D2DepositKey.MA6293331,"(-) Salidas y reducciones");
 		DESCRIPTION_MAP.put(D2DepositKey.MA6293341,"(+/-) Traspasos y otras variaciones (combinaciones de negocio,etc.)");
 		DESCRIPTION_MAP.put(D2DepositKey.MA6293351,"P\u00E9rdida por deterioro al final del ejercicio 2013");
+		//TODO
+		DESCRIPTION_MAP.put(D2DepositKey.MA62933019,"P\u00E9rdida por deterioro al inicio del ejercicio 2014");
 		DESCRIPTION_MAP.put(D2DepositKey.MA62933119,"(+)Correcci\u00F3n valorativo por deterioro");
 		DESCRIPTION_MAP.put(D2DepositKey.MA62933219,"(-) Reversi\u00F3n del deterioro");
 		DESCRIPTION_MAP.put(D2DepositKey.MA62933319,"(-) Salidas y reducciones");
@@ -126,6 +128,8 @@ public class D2DepositDescription {
 		DESCRIPTION_MAP.put(D2DepositKey.MA6293411,"Variaciones del valor razonable registradas en p\u00E9rdidas y ganancias en el ejercicio 2013");
 		DESCRIPTION_MAP.put(D2DepositKey.MA6293421,"Variaciones del valor razonable registradas en patrimonio neto en el ejercicio 2013");
 		DESCRIPTION_MAP.put(D2DepositKey.MA6293431,"Valor razonable al final del ejercicio 2013");
+		//TODO
+		DESCRIPTION_MAP.put(D2DepositKey.MA62934019,"Valor razonable al inicio del ejercicio 2013");
 		DESCRIPTION_MAP.put(D2DepositKey.MA62934119,"Variaciones del valor razonable registradas en p\u00E9rdidas y ganancias en el ejercicio 2013");
 		DESCRIPTION_MAP.put(D2DepositKey.MA62934219,"Variaciones del valor razonable registradas en patrimonio neto en el ejercicio 2013");
 		DESCRIPTION_MAP.put(D2DepositKey.MA62934319,"Valor razonable al final del ejercicio 2013");
