@@ -12,7 +12,8 @@
 			<aon:selectOneMenu id="ProjectReservationGuest_documentType#{suffix}" styleClass="aon-form-input-text"
 				value="#{controller.to.documentType}"
 				valueChangeListener="#{controller.onDocumentTypeChanged}"
-				reRender="GuestDocumentDiv#{suffix},GuestNameDiv#{suffix},GuestContactDiv#{suffix},GuestAddressDiv#{suffix}">
+				reRender="GuestDocumentDiv#{suffix},GuestNameDiv#{suffix},GuestContactDiv#{suffix},GuestAddressDiv#{suffix}"
+				focus="ProjectReservationGuest_documentCountry#{suffix}">
 				<f:selectItems value="#{pmsCollections.personDocumentTypes}" />
 			</aon:selectOneMenu>
 
@@ -21,7 +22,8 @@
 				<aon:selectOneMenu id="ProjectReservationGuest_documentCountry#{suffix}" styleClass="aon-form-input-text aon-margin-right"
 					value="#{controller.to.documentCountry}"
 					valueChangeListener="#{controller.onDocumentCountryChanged}"
-					reRender="GuestDocumentDiv#{suffix},GuestNameDiv#{suffix},GuestContactDiv#{suffix},GuestAddressDiv#{suffix}">
+					reRender="GuestDocumentDiv#{suffix},GuestNameDiv#{suffix},GuestContactDiv#{suffix},GuestAddressDiv#{suffix}"
+					focus="ProjectReservationGuest_document#{suffix}">
 					<f:selectItems value="#{commonCollections.countryCodes}" />
 				</aon:selectOneMenu>
 				<aon:outputText value="&#160;" styleClass="aon-icon-commandButton aon-icon-contact"
@@ -41,7 +43,8 @@
 				valueChangeListener="#{controller.onDocumentChanged}"
 				reRender="GuestDocumentDiv#{suffix},GuestNameDiv#{suffix},GuestContactDiv#{suffix},GuestAddressDiv#{suffix}"
 				onblur="toUpperCase(this);"
-				converter="aon.TrimStringConverter" />
+				converter="aon.TrimStringConverter"
+				focus="ProjectReservationGuest_name#{suffix}" />
 		</aon:panelGrid>
 
 		<aon:outputText value="#{bundle.registry_document_incorrect}" styleClass="aon-label-error aon-margin-left"
