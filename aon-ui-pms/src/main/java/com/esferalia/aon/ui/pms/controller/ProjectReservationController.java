@@ -64,6 +64,7 @@ import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.marketing.controller.TemplateController;
 import com.code.aon.ui.util.AonUtil;
@@ -356,6 +357,21 @@ public class ProjectReservationController extends BasicController implements IPm
 			String msg = "No se puede acceder a la Reserva. Recargue la lista y vuelva a intentarlo.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
+		}
+	}
+
+	public void refreshEntireReservation(ActionEvent event) {
+		try {
+			refresh(event);
+			IController reservationGuestController = FormUtil.getController(IPmsConstants.RESERVATION_GUEST_CONTROLLER_NAME);
+			reservationGuestController.onSearch(event);
+			IController reservationRoomController = FormUtil.getController(IPmsConstants.RESERVATION_ROOM_CONTROLLER_NAME);
+			reservationRoomController.onSearch(event);
+			IController reservationServiceController = FormUtil.getController(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
+			reservationServiceController.onSearch(event);
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
 	}
 
