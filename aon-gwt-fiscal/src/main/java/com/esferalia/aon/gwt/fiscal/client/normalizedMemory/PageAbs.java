@@ -227,6 +227,10 @@ public abstract class PageAbs extends ResizeComposite {
 	protected void paintKeyField(FlexTable tab,final D2DepositHeaderKey key,int row, int col, boolean showBox) {
 		paintKeyField(tab,key,row,col,showBox,key.getCode());
 	}
+	protected void paintKeyField(FlexTable tab,final D2DepositKey key,int row, int col, boolean showBox) {
+		paintKeyField(tab,key,row,col,showBox,key.getCode());
+	}
+
 	protected void paintKeyField(FlexTable tab,final D2DepositHeaderKey key,int row, int col, boolean showBox, String boxContent) {
 		boolean disabled = isDisabled(key);
 		
@@ -274,6 +278,55 @@ public abstract class PageAbs extends ResizeComposite {
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextRight());
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
 	}
+	
+	protected void paintKeyField(FlexTable tab,final D2DepositKey key,int row, int col, boolean showBox, String boxContent) {
+		boolean disabled = isDisabled(key);
+		
+		FlowPanel panel = new FlowPanel();
+		if (showBox) {
+			BoxLabel code = new BoxLabel(boxContent);
+			panel.add(code);
+		}
+		final DoubleBox text = new DoubleBox();
+		text.setVisibleLength(NUMERIC_VISIBLE_LENGTH);
+		text.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				try {
+					if (AonStringUtils.isEmpty(text.getText())) {
+						text.setValue(0.0,false);
+					}
+					Double d = text.getValueOrThrow();
+					text.addStyleName(AON.AON_CSS.aonChanged());
+					normalizedMemory.saveButton.setEnabled(true);
+					normalizedMemory.cancelButton.setVisible(true);
+					onEdit(key.getCode(), d.toString());
+					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), d.toString() , new AsyncCallback<Void>() {
+						@Override
+						public void onFailure(Throwable caught) {}
+						@Override
+						public void onSuccess(Void result) {}
+					});
+				} catch (ParseException e) {
+					// nothing.
+				}
+				
+			}
+		});
+		if(map.containsKey(key.getCode().toString())){
+			Double d = Double.parseDouble(map.get(key.getCode().toString()));
+			text.setValue(d);
+		}
+		else text.setValue(0.0);
+		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
+		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
+		text.setEnabled(!disabled);
+		panel.add(text);
+		tab.setWidget(row, col, panel);
+		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextRight());
+		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
+	}
+
 	
 	protected void paintKeyField(FlexTable tab,final D2DepositFooterKey key,int row, int col) {
 		boolean disabled = isDisabled(key);
@@ -340,7 +393,7 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 
 	protected boolean isDisabled(D2DepositKey key) {
-		Boolean[] behaviour = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(key.getName());
+		Boolean[] behaviour = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(key.getCode());
 		return behaviour != null && behaviour[1];
 	}
 	protected boolean isDisabled(D2DepositHeaderKey key) {
@@ -354,7 +407,7 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 
 	protected boolean isTitle(D2DepositKey key) {
-		Boolean[] behaviour = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(key.getName());
+		Boolean[] behaviour = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(key.getCode());
 		return (behaviour != null && behaviour[0]); 
 	}
 	
@@ -475,6 +528,55 @@ public abstract class PageAbs extends ResizeComposite {
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextLeft());
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
 	}
+	
+	protected void paintKeyFieldTextBox(FlexTable tab,final String codeId, final D2DepositKey key,int row, int col) {
+		boolean disabled = isDisabled(key);
+		FlowPanel panel = new FlowPanel();
+		BoxLabel code = new BoxLabel(codeId);
+		panel.add(code);
+
+		final TextBox text = new TextBox();
+		text.setVisibleLength(MEMORY_NOTE_VISIBLE_LENGTH);
+		text.setStyleName(AON.AON_CSS.aonInputText());
+		text.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				try {
+					if (AonStringUtils.isEmpty(text.getText())) {
+						text.setValue("",false);
+					}
+					String d = text.getValueOrThrow();
+					text.addStyleName(AON.AON_CSS.aonChanged());
+					
+					normalizedMemory.saveButton.setEnabled(true);
+					normalizedMemory.cancelButton.setVisible(true);
+					onEdit(key.getCode(), d);
+					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), d , new AsyncCallback<Void>() {
+						@Override
+						public void onFailure(Throwable caught) {}
+						@Override
+						public void onSuccess(Void result) {}
+					});
+				} catch (ParseException e) {
+					// nothing.
+				}
+			}
+		});
+		if (map.containsKey(key.getCode().toString())){
+			String d = map.get(key.getCode().toString());
+			text.setValue(d);
+		} else {
+			text.setValue(AonStringUtils.EMPTY);
+		}
+		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
+		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
+		text.setEnabled(!disabled);
+		panel.add(text);
+		tab.setWidget(row, col, panel);
+		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextLeft());
+		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
+	}
+
 
 	protected void onEdit(String key, String value){
 		if(d2DepositObject.getMapDraft().containsKey(key))

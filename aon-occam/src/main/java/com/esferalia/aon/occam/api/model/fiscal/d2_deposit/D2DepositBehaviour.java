@@ -13,63 +13,63 @@ public class D2DepositBehaviour {
 	// Elemento 1 ---> isDisabled?
 
 	static { // APARTADO 3
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA391000.getName(),new Boolean[]{FALSE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA391000.getCode(),new Boolean[]{FALSE,FALSE});
 	}
 
 	static { // APARTADO 5
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA592001.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA592031.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA592041.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA592081.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA592091.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA592131.getName(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA592001.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA592031.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA592041.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA592081.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA592091.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA592131.getCode(),new Boolean[]{TRUE,FALSE});
 
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA5920019.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA5920319.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA5920419.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA5920819.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA5920919.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA5921319.getName(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA5920019.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA5920319.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA5920419.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA5920819.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA5920919.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA5921319.getCode(),new Boolean[]{TRUE,FALSE});
 	}
 	
 	static{ // APARTADO 6
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA6193201.getName(),new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA61932019.getName(),new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA6193202.getName(),new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA61932029.getName(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA6193201.getCode(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA61932019.getCode(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA6193202.getCode(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA61932029.getCode(),new Boolean[]{FALSE,TRUE});
 
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA6193211.getName(),new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA61932119.getName(),new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA6193213.getName(),new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA61932139.getName(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA6193211.getCode(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA61932119.getCode(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA6193213.getCode(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA61932139.getCode(),new Boolean[]{FALSE,TRUE});
 		
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA6193221.getName(),new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA61932219.getName(),new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA6193223.getName(),new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA61932239.getName(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA6193221.getCode(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA61932219.getCode(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA6193223.getCode(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA61932239.getCode(),new Boolean[]{FALSE,TRUE});
 		
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA6193231.getName(),new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA61932319.getName(),new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA6193232.getName(),new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA61932329.getName(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA6193231.getCode(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA61932319.getCode(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA6193232.getCode(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA61932329.getCode(),new Boolean[]{FALSE,TRUE});
 		
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA6193243.getName(),new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA61932439.getName(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA6193243.getCode(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA61932439.getCode(),new Boolean[]{FALSE,TRUE});
 		
 	}
 	
 	static{ // APARTADO 7
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA794301.getName(),new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA794302.getName(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA794301.getCode(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA794302.getCode(),new Boolean[]{FALSE,TRUE});
 	}
 	
 	static{ // APARTADO 10
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA1095000.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA1095006.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA1095012.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA1095016.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA1095019.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA1095020.getName(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA1095000.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA1095006.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA1095012.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA1095016.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA1095019.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA1095020.getCode(),new Boolean[]{TRUE,FALSE});
 	}
 	
 	static{ // APARTADO 11
@@ -77,15 +77,15 @@ public class D2DepositBehaviour {
 	}
 	
 	static{ // APARTADO 12
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA12B97301.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA12B97331.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA12B97441.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA12B97501.getName(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA12B97301.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA12B97331.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA12B97441.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA12B97501.getCode(),new Boolean[]{TRUE,FALSE});
 		
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA12B973019.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA12B973319.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA12B974419.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA12B975019.getName(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA12B973019.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA12B973319.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA12B974419.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA12B975019.getCode(),new Boolean[]{TRUE,FALSE});
 
 	}
 	
@@ -96,16 +96,16 @@ public class D2DepositBehaviour {
 	static{ // APARTADO 14
 
 	
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA14199004.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA14199014.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA14199015.getName(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA14199004.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA14199014.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA14199015.getCode(),new Boolean[]{TRUE,FALSE});
 
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA14294600.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA14294603.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA14294604.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA14294607.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA14294608.getName(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA14294613.getName(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA14294600.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA14294603.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA14294604.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA14294607.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA14294608.getCode(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositKey.MA14294613.getCode(),new Boolean[]{TRUE,FALSE});
 	}
 	
 	static{ // APARTADO 15
