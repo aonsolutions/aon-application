@@ -218,146 +218,55 @@ public class D2DepositConstants {
 		,new D2DepositKey[]{D2DepositKey.MA391011, D2DepositKey.MA3910119}
 		,new D2DepositKey[]{D2DepositKey.MA391012, D2DepositKey.MA391012}
 	};
-
 	
-	public static D2DepositKey[] MA3_ABREVIATE_KEYS_1 = new D2DepositKey[]{
-		D2DepositKey.MA391000, D2DepositKey.MA391001,
-		D2DepositKey.MA391002, D2DepositKey.MA391003,
-		D2DepositKey.MA391004
-	};
+	public static D2DepositKey[][] MRN5_ABREVIATE_PYMES_KEYS_1 = new D2DepositKey[][] {
+		
+		new D2DepositKey[] {D2DepositKey.MA592001, D2DepositKey.MA592002, D2DepositKey.MA592003}
+		,new D2DepositKey[] {D2DepositKey.MA592011, D2DepositKey.MA592012, D2DepositKey.MA592013}
+		,new D2DepositKey[] {D2DepositKey.MA592141, D2DepositKey.MA592142, D2DepositKey.MA592143}
+		,new D2DepositKey[] {D2DepositKey.MA592021, D2DepositKey.MA592022, D2DepositKey.MA592023}
+		,new D2DepositKey[] {D2DepositKey.MA592031, D2DepositKey.MA592032, D2DepositKey.MA592033}
+		,new D2DepositKey[] {D2DepositKey.MA592041, D2DepositKey.MA592042, D2DepositKey.MA592043}
+		,new D2DepositKey[] {D2DepositKey.MA592051, D2DepositKey.MA592052, D2DepositKey.MA592053}
+		,new D2DepositKey[] {D2DepositKey.MA592051, D2DepositKey.MA592052, D2DepositKey.MA592053}
+		,new D2DepositKey[] {D2DepositKey.MA592151, D2DepositKey.MA592152, D2DepositKey.MA592153}
+		,new D2DepositKey[] {D2DepositKey.MA592061, D2DepositKey.MA592062, D2DepositKey.MA592063}
+		,new D2DepositKey[] {D2DepositKey.MA592071, D2DepositKey.MA592072, D2DepositKey.MA592073}
+		,new D2DepositKey[] {D2DepositKey.MA592081, D2DepositKey.MA592082, D2DepositKey.MA592083}
+		,new D2DepositKey[] {D2DepositKey.MA592091, D2DepositKey.MA592092, D2DepositKey.MA592093}
+		,new D2DepositKey[] {D2DepositKey.MA592101, D2DepositKey.MA592102, D2DepositKey.MA592103}
+		,new D2DepositKey[] {D2DepositKey.MA592111, D2DepositKey.MA592112, D2DepositKey.MA592113}
+		,new D2DepositKey[] {D2DepositKey.MA592121, D2DepositKey.MA592122, D2DepositKey.MA592123}
+		,new D2DepositKey[] {D2DepositKey.MA592131, D2DepositKey.MA592132, D2DepositKey.MA592133}
+		};
 	
-	public static D2DepositKey[] MA3_ABREVIATE_KEYS_2 = new D2DepositKey[]{
-		D2DepositKey.MA3910009, D2DepositKey.MA3910019,
-		D2DepositKey.MA3910029, D2DepositKey.MA3910039,
-		D2DepositKey.MA3910049
-	};
+	public static D2DepositKey[][] MRN5_ABREVIATE_PYMES_KEYS_2 = new D2DepositKey[][] {
+		
+		new D2DepositKey[] {D2DepositKey.MA5920019, D2DepositKey.MA5920029, D2DepositKey.MA5920039}
+		,new D2DepositKey[] {D2DepositKey.MA5920119, D2DepositKey.MA5920129, D2DepositKey.MA5920139}
+		,new D2DepositKey[] {D2DepositKey.MA5921419, D2DepositKey.MA5921429, D2DepositKey.MA5921439}
+		,new D2DepositKey[] {D2DepositKey.MA5920219, D2DepositKey.MA5920229, D2DepositKey.MA5920239}
+		,new D2DepositKey[] {D2DepositKey.MA5920319, D2DepositKey.MA5920329, D2DepositKey.MA5920339}
+		,new D2DepositKey[] {D2DepositKey.MA5920419, D2DepositKey.MA5920429, D2DepositKey.MA5920439}
+		,new D2DepositKey[] {D2DepositKey.MA5920519, D2DepositKey.MA5920529, D2DepositKey.MA5920539}
+		,new D2DepositKey[] {D2DepositKey.MA5921519, D2DepositKey.MA5921529, D2DepositKey.MA5921539}
+		,new D2DepositKey[] {D2DepositKey.MA5920619, D2DepositKey.MA5920629, D2DepositKey.MA5920639}
+		,new D2DepositKey[] {D2DepositKey.MA5920719, D2DepositKey.MA5920729, D2DepositKey.MA5920739}
+		,new D2DepositKey[] {D2DepositKey.MA5920819, D2DepositKey.MA5920829, D2DepositKey.MA5920839}
+		,new D2DepositKey[] {D2DepositKey.MA5920919, D2DepositKey.MA5920929, D2DepositKey.MA5920939}
+		,new D2DepositKey[] {D2DepositKey.MA5921019, D2DepositKey.MA5921029, D2DepositKey.MA5921039}
+		,new D2DepositKey[] {D2DepositKey.MA5921119, D2DepositKey.MA5921129, D2DepositKey.MA5921139}
+		,new D2DepositKey[] {D2DepositKey.MA5921219, D2DepositKey.MA5921229, D2DepositKey.MA5921239}
+		,new D2DepositKey[] {D2DepositKey.MA5921319, D2DepositKey.MA5921329, D2DepositKey.MA5921339}
+		};
 	
-	public static D2DepositKey[] MA3_ABREVIATE_KEYS_3 = new D2DepositKey[]{
-		D2DepositKey.MA391005, D2DepositKey.MA391006, 
-		D2DepositKey.MA391007, D2DepositKey.MA391008, 
-		D2DepositKey.MA391009, D2DepositKey.MA391010, 
-		D2DepositKey.MA391011, D2DepositKey.MA391012
-	};
-	
-
-	
-	public static D2DepositKey[] MA3_ABREVIATE_KEYS_4 = new D2DepositKey[]{
-		D2DepositKey.MA3910059, D2DepositKey.MA3910069, 
-		D2DepositKey.MA3910079, D2DepositKey.MA3910089, 
-		D2DepositKey.MA3910099, D2DepositKey.MA3910109, 
-		D2DepositKey.MA3910119, D2DepositKey.MA3910129
-	};
-	
-	public static D2DepositKey[] MA5_ABREVIATE_KEYS_1 = new D2DepositKey[]{
-		D2DepositKey.MA592001
-		,D2DepositKey.MA592002
-		,D2DepositKey.MA592003
-		,D2DepositKey.MA592011
-		,D2DepositKey.MA592012
-		,D2DepositKey.MA592013
-		,D2DepositKey.MA592141
-		,D2DepositKey.MA592142
-		,D2DepositKey.MA592143
-		,D2DepositKey.MA592021
-		,D2DepositKey.MA592022
-		,D2DepositKey.MA592023
-		,D2DepositKey.MA592031
-		,D2DepositKey.MA592032
-		,D2DepositKey.MA592033
-		,D2DepositKey.MA592041
-		,D2DepositKey.MA592042
-		,D2DepositKey.MA592043
-		,D2DepositKey.MA592051
-		,D2DepositKey.MA592052
-		,D2DepositKey.MA592053
-		,D2DepositKey.MA592151
-		,D2DepositKey.MA592152
-		,D2DepositKey.MA592153
-		,D2DepositKey.MA592061
-		,D2DepositKey.MA592062
-		,D2DepositKey.MA592063
-		,D2DepositKey.MA592071
-		,D2DepositKey.MA592072
-		,D2DepositKey.MA592073
-		,D2DepositKey.MA592081
-		,D2DepositKey.MA592082
-		,D2DepositKey.MA592083
-		,D2DepositKey.MA592091
-		,D2DepositKey.MA592092
-		,D2DepositKey.MA592093
-		,D2DepositKey.MA592101
-		,D2DepositKey.MA592102	
-		,D2DepositKey.MA592103
-		,D2DepositKey.MA592111
-		,D2DepositKey.MA592112
-		,D2DepositKey.MA592113
-		,D2DepositKey.MA592121
-		,D2DepositKey.MA592122
-		,D2DepositKey.MA592123
-		,D2DepositKey.MA592131
-		,D2DepositKey.MA592132
-		,D2DepositKey.MA592133
-	};
-	
-	public static D2DepositKey[] MA5_ABREVIATE_KEYS_2 = new D2DepositKey[]{
-		D2DepositKey.MA5920019
-		,D2DepositKey.MA5920029
-		,D2DepositKey.MA5920039
-		,D2DepositKey.MA5920119
-		,D2DepositKey.MA5920129
-		,D2DepositKey.MA5920139
-		,D2DepositKey.MA5921419
-		,D2DepositKey.MA5921429
-		,D2DepositKey.MA5921439
-		,D2DepositKey.MA5920219
-		,D2DepositKey.MA5920229
-		,D2DepositKey.MA5920239
-		,D2DepositKey.MA5920319
-		,D2DepositKey.MA5920329
-		,D2DepositKey.MA5920339
-		,D2DepositKey.MA5920419
-		,D2DepositKey.MA5920429
-		,D2DepositKey.MA5920439
-		,D2DepositKey.MA5920519
-		,D2DepositKey.MA5920529
-		,D2DepositKey.MA5920539
-		,D2DepositKey.MA5921519
-		,D2DepositKey.MA5921529
-		,D2DepositKey.MA5921539
-		,D2DepositKey.MA5920619
-		,D2DepositKey.MA5920629
-		,D2DepositKey.MA5920639
-		,D2DepositKey.MA5920719
-		,D2DepositKey.MA5920729
-		,D2DepositKey.MA5920739
-		,D2DepositKey.MA5920819
-		,D2DepositKey.MA5920829
-		,D2DepositKey.MA5920839
-		,D2DepositKey.MA5920919
-		,D2DepositKey.MA5920929
-		,D2DepositKey.MA5920939
-		,D2DepositKey.MA5921019
-		,D2DepositKey.MA5921029
-		,D2DepositKey.MA5921039
-		,D2DepositKey.MA5921119
-		,D2DepositKey.MA5921129
-		,D2DepositKey.MA5921139
-		,D2DepositKey.MA5921219
-		,D2DepositKey.MA5921229
-		,D2DepositKey.MA5921239
-		,D2DepositKey.MA5921319
-		,D2DepositKey.MA5921329
-		,D2DepositKey.MA5921339
-	
-	};
-	
-	public static D2DepositKey[] MA5_ABREVIATE_KEYS_3 = new D2DepositKey[]{
-		D2DepositKey.MA592200
-		,D2DepositKey.MA592201
-		,D2DepositKey.MA592202
-		,D2DepositKey.MA592203
-		,D2DepositKey.MA592204
-		,D2DepositKey.MA592205
+	public static D2DepositKey[][] MRN5_ABREVIATE_PYMES_KEYS_3 = new D2DepositKey[][]{
+		new D2DepositKey[] {D2DepositKey.MA592200}
+		, new D2DepositKey[] {D2DepositKey.MA592201}
+		, new D2DepositKey[] {D2DepositKey.MA592202}
+		, new D2DepositKey[] {D2DepositKey.MA592203}
+		, new D2DepositKey[] {D2DepositKey.MA592204}
+		, new D2DepositKey[] {D2DepositKey.MA592205}
 	};
 
 	public static D2DepositKey[] MA6_ABREVIATE_KEYS_1 = new D2DepositKey[]{
