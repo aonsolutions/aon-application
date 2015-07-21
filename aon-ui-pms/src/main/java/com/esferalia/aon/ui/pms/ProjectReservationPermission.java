@@ -309,8 +309,8 @@ public class ProjectReservationPermission implements Serializable {
 
 	/*************************** RESERVATION GUEST *******************************/
 
-	public boolean isNewReservationGuestAllowed() {
-		return (reservation.isActive() || reservation.isInvoiced()) && isMyScope();
+	public boolean isNewReservationGuestAllowed() throws ManagerBeanException {
+		return (reservation.isActive() || reservation.isInvoiced()) && isMyScope() && reservation.getPersonCount() > reservation.getGuestCount();
 	}
 
 	public boolean isEditReservationGuestAllowed() {
