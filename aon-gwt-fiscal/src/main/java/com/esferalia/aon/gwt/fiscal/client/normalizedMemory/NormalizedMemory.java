@@ -213,12 +213,12 @@ public class NormalizedMemory extends ResizeComposite {
 		
 		Widget ui = MODEL_NORMALIZED_MEMORY_BINDER.createAndBindUi(this);
 		initWidget(ui);
-		depositType.setText("Abreviado");
+		depositType.setText("Deposito");
 		newButton.setVisible(true);
 		importButton.setVisible(false);
 		importTextButton.setVisible(false);
 		generateFileButton.setVisible(false);
-		importAllButton.setVisible(true);
+		importAllButton.setVisible(false);
 		//deleteButton.setVisible(true);
 		inma.isModify(mt.getId().toString(),new AsyncCallback<Boolean>() {
 			
@@ -678,7 +678,7 @@ public class NormalizedMemory extends ResizeComposite {
 											
 											inma.updateTexts(m, enterprise.getDomain(),
 													enterprise.getDocument(),
-													new AsyncCallback<Void>() {
+													new AsyncCallback<Map<String, String>>() {
 
 														@Override
 														public void onFailure(
@@ -686,7 +686,15 @@ public class NormalizedMemory extends ResizeComposite {
 														}
 
 														@Override
-														public void onSuccess(Void result) {
+														public void onSuccess(Map<String, String> result) {
+															Map<String, String> map = digitalDepositTreeNode.getD2Deposit2014().getMapDraft();
+ 															for(String obj : result.keySet()){
+																
+																if(map.containsKey(obj)) digitalDepositTreeNode.getD2Deposit2014().getMapDraft().remove(obj);
+																digitalDepositTreeNode.getD2Deposit2014().getMapDraft().put(obj, result.get(obj));
+						
+															}
+															
 															update();
 														}
 													});
@@ -770,7 +778,7 @@ public class NormalizedMemory extends ResizeComposite {
 										}
 										inma.updateTexts(m, enterprise.getDomain(),
 												enterprise.getDocument(),
-												new AsyncCallback<Void>() {
+												new AsyncCallback<Map<String, String>>() {
 
 													@Override
 													public void onFailure(
@@ -778,7 +786,7 @@ public class NormalizedMemory extends ResizeComposite {
 													}
 
 													@Override
-													public void onSuccess(Void result) {
+													public void onSuccess(Map<String, String> result) {
 														update();
 													}
 												});
@@ -836,6 +844,9 @@ public class NormalizedMemory extends ResizeComposite {
 			popup.addStyleName("gwt-PopupPanel-template");
 			popup.setGlassEnabled(true);
 			popup.show();
+		}
+		else{
+			
 		}
 	}
 	

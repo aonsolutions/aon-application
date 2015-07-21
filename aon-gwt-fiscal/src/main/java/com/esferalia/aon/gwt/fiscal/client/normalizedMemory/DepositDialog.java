@@ -295,7 +295,7 @@ public abstract class DepositDialog extends CustomDialogB {
 					}
 					flex_table.setWidget(1, 0, new Label("Memoria Predefinida"));
 					flex_table.setWidget(1, 1, lb1);
-			
+					flexTableCss();
 					flex_table.removeRow(2);
 				}
 
