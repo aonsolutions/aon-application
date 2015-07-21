@@ -636,8 +636,8 @@ public class PageF1 extends PageAbs {
 				
 			}
 		});
-		if(map.containsKey(key.getName())){
-			String d =map.get(key.getName());
+		if(map.containsKey(key.getCode())){
+			String d =map.get(key.getCode());
 			text.setValue(d);
 		}
 		else text.setValue("");
@@ -690,8 +690,8 @@ public class PageF1 extends PageAbs {
 			}
 		});
 		
-		if(map.containsKey(key.getName())){
-			String datestr = map.get(key.getName());
+		if(map.containsKey(key.getCode())){
+			String datestr = map.get(key.getCode());
 
 			inma.getDate(datestr, new AsyncCallback<Date>() {
 				@Override
@@ -753,8 +753,8 @@ public class PageF1 extends PageAbs {
 				
 			}
 		});
-		if(map.containsKey(key.getName())){
-			Double d =Double.parseDouble(map.get(key.getName()));
+		if(map.containsKey(key.getCode())){
+			Double d =Double.parseDouble(map.get(key.getCode()));
 			text.setValue(d);
 		}
 		else text.setValue(0.0);
@@ -803,8 +803,8 @@ public class PageF1 extends PageAbs {
 				
 			}
 		});
-		if(map.containsKey(key.getName())){
-			String d = map.get(key.getName());
+		if(map.containsKey(key.getCode())){
+			String d = map.get(key.getCode());
 			for(Integer i = 0; i< text.getItemCount(); i++){
 				if(text.getItemText(i).equals(d))
 					text.setSelectedIndex(i);

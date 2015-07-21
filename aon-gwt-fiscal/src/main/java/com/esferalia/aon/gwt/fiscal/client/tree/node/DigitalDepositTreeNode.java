@@ -9,6 +9,14 @@ import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemoryAsync;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.NormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageF1;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageF1A;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageF1B;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageF1C;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageF1D;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageF1E;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageF1F;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageF1G;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageF1H;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageF2;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageF3;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageH2;
@@ -1047,12 +1055,12 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			@Override
 			public void select(FiscalTree fiscalPanel) {
 				
-				NormalizedMemory nm = new NormalizedMemory(ddtn,  fiscalPanel);
+				/*NormalizedMemory nm = new NormalizedMemory(ddtn,  fiscalPanel);
 				nm.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
 				PageF1 pf1 = new PageF1(d2Deposit2014.getEnterprise(), nm);
 				pf1.dump(d2Deposit2014);
 				nm.setPagesPanel(pf1);
-    			fiscalPanel.setContent(nm);	
+    			fiscalPanel.setContent(nm);	*/
 			}
 			
 			@Override
@@ -1067,6 +1075,215 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 		}; 
 		ma.setText("Modelo de Autocartera");
 		this.addItem(ma);
+		
+		TreeNode<Enterprise> ma1 = new TreeNode<Enterprise>() {
+			
+			@Override
+			public void select(FiscalTree fiscalPanel) {
+				
+				NormalizedMemory nm = new NormalizedMemory(ddtn,  fiscalPanel);
+				nm.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				PageF1A pf1a = new PageF1A(d2Deposit2014.getEnterprise(), nm);
+				pf1a.dump(d2Deposit2014);
+				nm.setPagesPanel(pf1a);
+    			fiscalPanel.setContent(nm);	
+			}
+			
+			@Override
+			public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+				return null;
+			}
+			
+			@Override
+			public Enterprise getTreeObject() {
+				return (Enterprise) getUserObject();
+			}
+		}; 
+		ma1.setText("Modelo de Autocartera 1");
+		ma.addItem(ma1);
+		
+		TreeNode<Enterprise> ma2 = new TreeNode<Enterprise>() {
+			
+			@Override
+			public void select(FiscalTree fiscalPanel) {
+				
+				NormalizedMemory nm = new NormalizedMemory(ddtn,  fiscalPanel);
+				nm.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				PageF1B pf1b = new PageF1B(d2Deposit2014.getEnterprise(), nm);
+				pf1b.dump(d2Deposit2014);
+				nm.setPagesPanel(pf1b);
+    			fiscalPanel.setContent(nm);	
+			}
+			
+			@Override
+			public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+				return null;
+			}
+			
+			@Override
+			public Enterprise getTreeObject() {
+				return (Enterprise) getUserObject();
+			}
+		}; 
+		ma2.setText("Modelo de Autocartera 2");
+		ma.addItem(ma2);
+		
+		TreeNode<Enterprise> ma3 = new TreeNode<Enterprise>() {
+			
+			@Override
+			public void select(FiscalTree fiscalPanel) {
+				
+				NormalizedMemory nm = new NormalizedMemory(ddtn,  fiscalPanel);
+				nm.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				PageF1C pf1c = new PageF1C(d2Deposit2014.getEnterprise(), nm);
+				pf1c.dump(d2Deposit2014);
+				nm.setPagesPanel(pf1c);
+    			fiscalPanel.setContent(nm);	
+			}
+			
+			@Override
+			public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+				return null;
+			}
+			
+			@Override
+			public Enterprise getTreeObject() {
+				return (Enterprise) getUserObject();
+			}
+		}; 
+		ma3.setText("Modelo de Autocartera 3");
+		ma.addItem(ma3);
+		
+		TreeNode<Enterprise> ma4 = new TreeNode<Enterprise>() {
+			
+			@Override
+			public void select(FiscalTree fiscalPanel) {
+				
+				NormalizedMemory nm = new NormalizedMemory(ddtn,  fiscalPanel);
+				nm.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				PageF1D pf1d = new PageF1D(d2Deposit2014.getEnterprise(), nm);
+				pf1d.dump(d2Deposit2014);
+				nm.setPagesPanel(pf1d);
+    			fiscalPanel.setContent(nm);	
+			}
+			
+			@Override
+			public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+				return null;
+			}
+			
+			@Override
+			public Enterprise getTreeObject() {
+				return (Enterprise) getUserObject();
+			}
+		}; 
+		ma4.setText("Modelo de Autocartera 4");
+		ma.addItem(ma4);
+		
+		TreeNode<Enterprise> ma5 = new TreeNode<Enterprise>() {
+			
+			@Override
+			public void select(FiscalTree fiscalPanel) {
+				
+				NormalizedMemory nm = new NormalizedMemory(ddtn,  fiscalPanel);
+				nm.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				PageF1E pf1e = new PageF1E(d2Deposit2014.getEnterprise(), nm);
+				pf1e.dump(d2Deposit2014);
+				nm.setPagesPanel(pf1e);
+    			fiscalPanel.setContent(nm);	
+			}
+			
+			@Override
+			public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+				return null;
+			}
+			
+			@Override
+			public Enterprise getTreeObject() {
+				return (Enterprise) getUserObject();
+			}
+		}; 
+		ma5.setText("Modelo de Autocartera 5");
+		ma.addItem(ma5);
+		
+		TreeNode<Enterprise> ma6 = new TreeNode<Enterprise>() {
+			
+			@Override
+			public void select(FiscalTree fiscalPanel) {
+				
+				NormalizedMemory nm = new NormalizedMemory(ddtn,  fiscalPanel);
+				nm.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				PageF1F pf1f = new PageF1F(d2Deposit2014.getEnterprise(), nm);
+				pf1f.dump(d2Deposit2014);
+				nm.setPagesPanel(pf1f);
+    			fiscalPanel.setContent(nm);	
+			}
+			
+			@Override
+			public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+				return null;
+			}
+			
+			@Override
+			public Enterprise getTreeObject() {
+				return (Enterprise) getUserObject();
+			}
+		}; 
+		ma6.setText("Modelo de Autocartera 6");
+		ma.addItem(ma6);
+		
+		
+		TreeNode<Enterprise> ma7 = new TreeNode<Enterprise>() {
+			
+			@Override
+			public void select(FiscalTree fiscalPanel) {
+				
+				NormalizedMemory nm = new NormalizedMemory(ddtn,  fiscalPanel);
+				nm.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				PageF1G pf1g = new PageF1G(d2Deposit2014.getEnterprise(), nm);
+				pf1g.dump(d2Deposit2014);
+				nm.setPagesPanel(pf1g);
+    			fiscalPanel.setContent(nm);	
+			}
+			
+			@Override
+			public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+				return null;
+			}
+			
+			@Override
+			public Enterprise getTreeObject() {
+				return (Enterprise) getUserObject();
+			}
+		}; 
+		ma7.setText("Modelo de Autocartera 7");
+		ma.addItem(ma7);
+		
+		TreeNode<Enterprise> ma8 = new TreeNode<Enterprise>() {
+			
+			@Override
+			public void select(FiscalTree fiscalPanel) {
+				
+				NormalizedMemory nm = new NormalizedMemory(ddtn,  fiscalPanel);
+				nm.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				PageF1H pf1h = new PageF1H(d2Deposit2014.getEnterprise(), nm);
+				pf1h.dump(d2Deposit2014);
+				nm.setPagesPanel(pf1h);
+    			fiscalPanel.setContent(nm);	
+			}
+			
+			@Override
+			public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+				return null;
+			}
+			
+			@Override
+			public Enterprise getTreeObject() {
+				return (Enterprise) getUserObject();
+			}
+		}; 
+		ma8.setText("Modelo de Autocartera 8");
+		ma.addItem(ma8);
 		
 		TreeNode<Enterprise> ip = new TreeNode<Enterprise>() {
 			
