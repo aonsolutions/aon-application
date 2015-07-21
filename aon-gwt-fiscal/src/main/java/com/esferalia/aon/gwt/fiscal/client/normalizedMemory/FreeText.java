@@ -1,10 +1,12 @@
 package com.esferalia.aon.gwt.fiscal.client.normalizedMemory;
 
 import java.text.ParseException;
+import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.fiscal.client.tree.node.D2DepositTreeObject;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -120,7 +122,8 @@ public class FreeText extends PageAbs {
 					
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
-					onEdit(key.getCode(), s);
+					if(!textMode) onEdit(key.getCode(), s);
+				
 					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), s, new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {}
@@ -147,6 +150,28 @@ public class FreeText extends PageAbs {
 		tab.setWidget(row, col, panel);
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextRight());
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
+	}
+	
+	@Override
+	public void dump(D2DepositTreeObject d2DepositObject) {
+		// TODO Auto-generated method stub
+		
+		if(textMode){
+			this.d2DepositObject = d2DepositObject;
+			inma.getSchema(enterprise.getDocument(),enterprise.getDomain(),textMode, new AsyncCallback<Map<String, String>>() {
+				
+				@Override
+				public void onSuccess(Map<String, String> result) {
+					map = result;
+					initializeTable();
+				}
+				@Override
+				public void onFailure(Throwable caught) {
+					
+				}
+			});
+		}else super.dump(d2DepositObject);
+		
 	}
 	
 }

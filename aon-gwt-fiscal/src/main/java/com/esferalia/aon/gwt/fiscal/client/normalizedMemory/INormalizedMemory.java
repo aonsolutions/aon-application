@@ -33,7 +33,7 @@ public interface INormalizedMemory extends RemoteService{
 	
 	public MemoryTemplate createTextMemory(Integer domainId, String name);
 
-	public void updateTexts(MemoryTemplate mt, Integer domainId, String cif);
+	public Map<String, String> updateTexts(MemoryTemplate mt, Integer domainId, String cif);
 	
 	public Integer getParentDomain(Integer domainId);
 	

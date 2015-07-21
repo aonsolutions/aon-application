@@ -34,7 +34,7 @@ public interface INormalizedMemoryAsync {
 			AsyncCallback<MemoryTemplate> callback);
 
 	void updateTexts(MemoryTemplate mt, Integer domainId, String cif,
-			AsyncCallback<Void> callback);
+			AsyncCallback<Map<String, String>> callback);
 
 	void getParentDomain(Integer domainId, AsyncCallback<Integer> callback);
 

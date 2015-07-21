@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2MVELContext;
@@ -239,8 +240,104 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		return mt;
 
 	}
+	
+	public Map<String, String> updateTexts(MemoryTemplate mt, Integer domainId, String cif) {
+		String domain = AonUtil.getDomainName();
+		Esquema schema = DBConsults.getDeposit(domain, domainId, mt.getId()
+				.toString());
+		Map<String, String> map = new  HashMap<String, String>();
+		for (Integer i = 0; i < schema.getClaves().getClave().size(); i++) {
+			if (schema.getClaves().getClave().get(i).getCodigo().toString()
+					.equals(D2DepositKey.MAT19019001.getCode())) { 
+				updateSchema(cif, domainId,D2DepositKey.MAT19019001.getCode() , schema.getClaves()
+						.getClave().get(i).getValor());
+				map.put(D2DepositKey.MAT19019001.getCode(),  schema.getClaves().getClave().get(i).getValor());
+			} 
+			else if (schema.getClaves().getClave().get(i).getCodigo()
+					.toString().equals(D2DepositKey.MAT29029001.getCode())) { 
+				updateSchema(cif, domainId, D2DepositKey.MAT29029001.getCode(), schema.getClaves()
+						.getClave().get(i).getValor());
+				map.put(D2DepositKey.MAT29029001.getCode(), schema.getClaves().getClave().get(i).getValor());
 
-	public void updateTexts(MemoryTemplate mt, Integer domainId, String cif) {
+			} 
+			else if (schema.getClaves().getClave().get(i).getCodigo()
+					.toString().equals(D2DepositKey.MAT39039001.getCode())) { 
+				updateSchema(cif, domainId, D2DepositKey.MAT39039001.getCode(), schema.getClaves()
+						.getClave().get(i).getValor());
+				map.put(D2DepositKey.MAT39039001.getCode(), schema.getClaves().getClave().get(i).getValor());
+
+			} 
+			else if (schema.getClaves().getClave().get(i).getCodigo()
+					.toString().equals(D2DepositKey.MAT49049001.getCode())) { 
+				updateSchema(cif, domainId, D2DepositKey.MAT49049001.getCode(), schema.getClaves()
+						.getClave().get(i).getValor());
+				map.put(D2DepositKey.MAT49049001.getCode(), schema.getClaves().getClave().get(i).getValor());
+
+			} 
+			else if (schema.getClaves().getClave().get(i).getCodigo()
+					.toString().equals(D2DepositKey.MAT59059001.getCode())) { 
+ 				updateSchema(cif, domainId, D2DepositKey.MAT59059001.getCode(), schema.getClaves()
+						.getClave().get(i).getValor());
+				map.put(D2DepositKey.MAT59059001.getCode(), schema.getClaves().getClave().get(i).getValor());
+			} 
+			else if (schema.getClaves().getClave().get(i).getCodigo()
+					.toString().equals(D2DepositKey.MAT69069001.getCode())) {
+				updateSchema(cif, domainId, D2DepositKey.MAT69069001.getCode(), schema.getClaves()
+						.getClave().get(i).getValor());
+				map.put(D2DepositKey.MAT69069001.getCode(), schema.getClaves().getClave().get(i).getValor());
+			} 
+			else if (schema.getClaves().getClave().get(i).getCodigo()
+					.toString().equals(D2DepositKey.MAT79079001.getCode())) {
+				updateSchema(cif, domainId,D2DepositKey.MAT79079001.getCode(), schema.getClaves()
+						.getClave().get(i).getValor());
+				map.put(D2DepositKey.MAT79079001.getCode(), schema.getClaves().getClave().get(i).getValor());
+			} 
+			else if (schema.getClaves().getClave().get(i).getCodigo()
+					.toString().equals(D2DepositKey.MAT89089001.getCode())) { 
+				updateSchema(cif, domainId, D2DepositKey.MAT89089001.getCode(), schema.getClaves()
+						.getClave().get(i).getValor());
+				map.put(D2DepositKey.MAT89089001.getCode(), schema.getClaves().getClave().get(i).getValor());
+
+			} 
+			else if (schema.getClaves().getClave().get(i).getCodigo()
+					.toString().equals(D2DepositKey.MAT99099001.getCode())) { 
+				updateSchema(cif, domainId, D2DepositKey.MAT99099001.getCode(), schema.getClaves()
+						.getClave().get(i).getValor());
+				map.put(D2DepositKey.MAT99099001.getCode(), schema.getClaves().getClave().get(i).getValor());
+
+			} 
+			else if (schema.getClaves().getClave().get(i).getCodigo()
+					.toString().equals(D2DepositKey.MAT119119001.getCode())) { 
+				updateSchema(cif, domainId, D2DepositKey.MAT119119001.getCode(), schema.getClaves()
+						.getClave().get(i).getValor());
+				map.put(D2DepositKey.MAT119119001.getCode(), schema.getClaves().getClave().get(i).getValor());
+
+			} 
+			else if (schema.getClaves().getClave().get(i).getCodigo()
+					.toString().equals(D2DepositKey.MAT129129001.getCode())) { 
+				updateSchema(cif, domainId,D2DepositKey.MAT129129001.getCode(), schema.getClaves()
+						.getClave().get(i).getValor());
+				map.put(D2DepositKey.MAT129129001.getCode(), schema.getClaves().getClave().get(i).getValor());
+
+			} else if (schema.getClaves().getClave().get(i).getCodigo()
+					.toString().equals(D2DepositKey.MAT139139001.getCode())) { 
+				updateSchema(cif, domainId, D2DepositKey.MAT139139001.getCode(), schema.getClaves()
+						.getClave().get(i).getValor());
+				map.put(D2DepositKey.MAT139139001.getCode(), schema.getClaves().getClave().get(i).getValor());
+
+			} else if (schema.getClaves().getClave().get(i).getCodigo()
+					.toString().equals(D2DepositKey.MAT149149001.getCode())) { 
+				updateSchema(cif, domainId, D2DepositKey.MAT149149001.getCode(), schema.getClaves()
+						.getClave().get(i).getValor());
+				map.put(D2DepositKey.MAT149149001.getCode(), schema.getClaves().getClave().get(i).getValor());
+
+			}
+		}
+		//saveDeposit(cif, domainId, false);
+		return map;
+	}
+
+	/*public void updateTexts(MemoryTemplate mt, Integer domainId, String cif) {
 		String domain = AonUtil.getDomainName();
 		Esquema schema = DBConsults.getDeposit(domain, domainId, mt.getId()
 				.toString());
@@ -302,7 +399,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		}
 		saveDeposit(cif, domainId, false);
 
-	}
+	}*/
 
 	public String getDateStr(Date date) {
 		return "";
