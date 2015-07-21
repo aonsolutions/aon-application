@@ -552,6 +552,13 @@ public class D2DepositConstants {
 		,D2DepositKey.MA6293355
 		,D2DepositKey.MA6293356
 		
+		,D2DepositKey.MA62933019
+		,D2DepositKey.MA62933029
+		,D2DepositKey.MA62933039
+		,D2DepositKey.MA62933049
+		,D2DepositKey.MA62933059
+		,D2DepositKey.MA62933069
+		
 		,D2DepositKey.MA62933119
 		,D2DepositKey.MA62933129
 		,D2DepositKey.MA62933139
@@ -607,6 +614,11 @@ public class D2DepositConstants {
 		,D2DepositKey.MA6293432
 		,D2DepositKey.MA6293433
 		,D2DepositKey.MA6293434
+		
+		,D2DepositKey.MA62934019
+		,D2DepositKey.MA62934029
+		,D2DepositKey.MA62934039
+		,D2DepositKey.MA62934049
 		
 		,D2DepositKey.MA62934119
 		,D2DepositKey.MA62934129
