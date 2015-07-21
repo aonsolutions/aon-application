@@ -251,6 +251,12 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 	}
 
 	private boolean validateEarlyCheckOutShow() throws ManagerBeanException {
+		if (!PosUtils.isUserPosShiftOpened()) {
+			setShowEarlyCheckOutWindow(false);
+			String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 		if (getReservation().getHotelReservation().getItemPenalty() == null || getReservation().getHotelReservation().getItemPenalty().getId() == null) {
 			setShowEarlyCheckOutWindow(false);
 			String msg = "El Hotel no tiene definido Producto para Salidas Anticipadas.";
