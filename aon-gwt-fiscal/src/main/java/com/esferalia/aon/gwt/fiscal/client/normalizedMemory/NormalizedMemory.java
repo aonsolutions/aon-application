@@ -189,7 +189,7 @@ public class NormalizedMemory extends ResizeComposite {
 	 * @param page
 	 * @param mt
 	 */
-	public NormalizedMemory(Enterprise enterprise,MemoryTemplate mt) {
+	public NormalizedMemory(Enterprise enterprise,MemoryTemplate mt, DigitalDepositFreeTextTreeNode ddtn) {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 
@@ -204,6 +204,7 @@ public class NormalizedMemory extends ResizeComposite {
 		cancelButton = new Button();
 		importAllButton = new Button();
 		this.enterprise = enterprise;
+		this.digitalDepositFreeTextTreeNode = ddtn;
 		//this.page = page;
 		this.textMode = true;
 		this.memoryTemplate = mt;
@@ -219,7 +220,7 @@ public class NormalizedMemory extends ResizeComposite {
 		importTextButton.setVisible(false);
 		generateFileButton.setVisible(false);
 		importAllButton.setVisible(false);
-		//deleteButton.setVisible(true);
+		deleteButton.setVisible(true);
 		inma.isModify(mt.getId().toString(),new AsyncCallback<Boolean>() {
 			
 			@Override
@@ -364,7 +365,7 @@ public class NormalizedMemory extends ResizeComposite {
 				@Override
 				protected void onAccept() {
 					hide();
-					TextBox tb = (TextBox) flex_table.getWidget(1, 1);
+					TextBox tb = (TextBox) flex_table.getWidget(0, 1);
 					
 					inma.createTextMemory(enterprise.getDomain(),tb.getValue(),new AsyncCallback<MemoryTemplate>() {
 						
@@ -818,7 +819,6 @@ public class NormalizedMemory extends ResizeComposite {
 				@Override
 				protected void onCancel() {
 					hide();
-
 				}
 
 				@Override
@@ -832,7 +832,6 @@ public class NormalizedMemory extends ResizeComposite {
 
 						@Override
 						public void onSuccess(Void result) {
-				
 							digitalDepositTreeNode.removeItems();
 							
 							digitalDepositTreeNode.select(fiscalTree);
@@ -846,7 +845,39 @@ public class NormalizedMemory extends ResizeComposite {
 			popup.show();
 		}
 		else{
+			DepositDialog popup = new DepositDialog(
+					"Borrar Deposito", "delete", enterprise,
+					"", null) {
 			
+				@Override
+				protected void onCancel() {
+					hide();
+				}
+
+				@Override
+				protected void onAccept() {
+					hide();
+					inma.deleteFreeText(enterprise.getDomain(), memoryTemplate.getId(), new AsyncCallback<Void>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							
+						}
+
+						@Override
+						public void onSuccess(Void result) {
+							for(Integer i = 0; i< digitalDepositFreeTextTreeNode.getChildCount(); i++){
+								if(digitalDepositFreeTextTreeNode.getChild(i).getTitle().equals(memoryTemplate.getId().toString())){
+									digitalDepositFreeTextTreeNode.removeItem(digitalDepositFreeTextTreeNode.getChild(i));
+								}
+							}
+						}
+					});
+				}
+				
+			};
+			popup.addStyleName("gwt-PopupPanel-template");
+			popup.setGlassEnabled(true);
+			popup.show();
 		}
 	}
 	

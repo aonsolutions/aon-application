@@ -593,6 +593,13 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		DBConsults.deleteDeposit(domain, domainId);
 	}
 
+	public void deleteFreeText(Integer domainId, Integer rattachId) {
+		String domain = AonUtil.getDomainName();
+		clearSession(rattachId.toString());
+		
+		DBConsults.deleteText(domain, domainId, rattachId);
+	}
+	
 	public Map<String, String> createD2Deposit(Integer domainId, Integer id, String name,
 			String type) {
 		String domainName = AonUtil.getDomainName();

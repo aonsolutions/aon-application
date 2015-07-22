@@ -6,8 +6,6 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import javax.xml.bind.JAXBException;
 
@@ -315,6 +313,19 @@ public class DBConsults {
 		}
 	}	
 
+	public static void deleteText(String domain,Integer domainId, Integer rattachId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+		
+			ctx.getDslContext().delete(RATTACH).where(RATTACH.ID.eq(rattachId))
+			.and(RATTACH.TYPE.eq((byte)17)).execute();
+			
+		}finally {
+			if (ctx != null) ctx.close();
+		}
+	}	
+	
 	public static Integer insertDepositText(String domain, String name,
 			byte[] b, Integer domainId) {
 		AONContext ctx = null;

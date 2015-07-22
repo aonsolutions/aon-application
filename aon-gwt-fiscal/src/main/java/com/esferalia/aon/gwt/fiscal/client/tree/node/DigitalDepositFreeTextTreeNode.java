@@ -49,6 +49,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 	
 	public void digitalDepositMenu(FiscalTree fiscalTree){
 		NormalizedMemory nm =  new NormalizedMemory(true, this, enterpriseAux);
+		nm.paintHeaderTable("Memoria Normalizada", "Plantilla");
 		nm.setPagesPanel(fiscalTree.getGenericContent(this));
 		fiscalTree.setContent(nm);
 	}
@@ -91,10 +92,14 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 	}
 	
 	
+
+	
 	MemoryTemplate memoryTemplate;
+	DigitalDepositFreeTextTreeNode ddtn;
 	public void items(MemoryTemplate mt) {
 		memoryTemplate = mt;
-		TreeNode<Enterprise> memory = new TreeNode<Enterprise>() {
+		ddtn = this;
+		TreeNode<Integer> memory = new TreeNode<Integer>() {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
@@ -102,15 +107,16 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 			}
 			
 			@Override
-			public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+			public TreeNode<Integer> render(HasTreeItems parent, Integer t) {
 				return null;
 			}
 			
 			@Override
-			public Enterprise getTreeObject() {
-				return (Enterprise) getUserObject();
+			public Integer getTreeObject() {
+				return memoryTemplate.getId();
 			}
 		};
+		memory.setTitle(mt.getId().toString());
 		memory.setText("Memoria - " + mt.getName());
 			
 			TreeNode<Enterprise> ae = new TreeNode<Enterprise>() {
@@ -118,7 +124,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				@Override
 				public void select(FiscalTree fiscalPanel) {
 					String page = "MAT1"; 
-					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt);
+					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
 					nm.paintHeaderTable("Memoria Normalizada", "Plantilla");
 					FreeText paragraph1Page = new FreeText("Apartado 1: Actividad de la empresa", true, page, enterpriseAux, nm,true, mt.getId().toString());
 	    			paragraph1Page.dump(mt.getD2Deposit2014());
@@ -145,7 +151,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				@Override
 				public void select(FiscalTree fiscalPanel) {
 					String page = "MAT2";
-					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt);
+					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
 					nm.paintHeaderTable("Memoria Normalizada", "Plantilla");
 					FreeText paragraph2Page = new FreeText("Apartado 2: Bases de presentaci\u00F3n de las cuentas anuales", true, page, enterpriseAux, nm,true, mt.getId().toString());
 	    			paragraph2Page.dump(mt.getD2Deposit2014());
@@ -168,11 +174,17 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 			
 			
 			TreeNode<Enterprise> ar = new TreeNode<Enterprise>() {
-				
+				MemoryTemplate mt = memoryTemplate;
 				@Override
 				public void select(FiscalTree fiscalPanel) {
-					// APARTADO 3 CARPETA
-				}
+					String page =  "MAT3";
+					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
+					nm.paintHeaderTable("Memoria Normalizada", "Plantilla");
+					FreeText paragraph3_1Page = new FreeText("Apartado 3: Aplicaci\u00F3n de resultados", true, page, enterpriseAux, nm,true, mt.getId().toString());
+	    			paragraph3_1Page.dump(mt.getD2Deposit2014());
+	    			nm.setPagesPanel(paragraph3_1Page);
+	    			fiscalPanel.setContent(nm);	
+	    		}
 				
 				@Override
 				public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
@@ -185,33 +197,6 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				}
 			};
 			ar.setText("Apartado 3:<<Aplicaci\u00F3n de Resultados>>");
-			
-				
-				TreeNode<Enterprise> tl3 = new TreeNode<Enterprise>() {
-					MemoryTemplate mt = memoryTemplate;
-					@Override
-					public void select(FiscalTree fiscalPanel) {
-						String page =  "MAT3";
-						NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt);
-						nm.paintHeaderTable("Memoria Normalizada", "Plantilla");
-						FreeText paragraph3_1Page = new FreeText("Apartado 3: Aplicaci\u00F3n de resultados", true, page, enterpriseAux, nm,true, mt.getId().toString());
-		    			paragraph3_1Page.dump(mt.getD2Deposit2014());
-		    			nm.setPagesPanel(paragraph3_1Page);
-		    			fiscalPanel.setContent(nm);	
-					}
-					
-					@Override
-					public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
-						return null;
-					}
-					
-					@Override
-					public Enterprise getTreeObject() {
-						return (Enterprise) getUserObject();
-					}
-				};
-				tl3.setText("Texto Libre");
-				ar.addItem(tl3);
 			memory.addItem(ar);
 			
 			TreeNode<Enterprise> nrv = new TreeNode<Enterprise>() {
@@ -219,7 +204,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				@Override
 				public void select(FiscalTree fiscalPanel) {
 					String page = "MAT4";
-					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt);
+					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
 					nm.paintHeaderTable("Memoria Normalizada","Plantilla");
 					FreeText paragraph4Page = new FreeText("Apartado 4: Normas de registro y valoraci\u00F3n", true, page, enterpriseAux, nm,true, mt.getId().toString());
 	    			paragraph4Page.dump(mt.getD2Deposit2014());
@@ -241,10 +226,16 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 			memory.addItem(nrv);
 			
 			TreeNode<Enterprise> imiii = new TreeNode<Enterprise>() {
-				
+				MemoryTemplate mt = memoryTemplate;
 				@Override
 				public void select(FiscalTree fiscalPanel) {
-					
+					String page = "MAT5";
+					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
+					nm.paintHeaderTable("Memoria Normalizada", "Plantilla");
+					FreeText paragraph5_1Page = new FreeText("Apartado 5: Inmovilizado material, intangible, e inversiones inmobiliarias", true, page, enterpriseAux, nm,true, mt.getId().toString());
+	    			paragraph5_1Page.dump(mt.getD2Deposit2014());
+	    			nm.setPagesPanel(paragraph5_1Page);
+	    			fiscalPanel.setContent(nm);	
 				}
 				
 				@Override
@@ -257,43 +248,22 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 					return (Enterprise) getUserObject();
 				}
 			};
-			imiii.setText("Apartado 5:<<Inmovilizado Material, Intangible e Inversiones Inmobiliarias>>");
-			
-				
-				TreeNode<Enterprise> tl5 = new TreeNode<Enterprise>() {
-					MemoryTemplate mt = memoryTemplate;
-					@Override
-					public void select(FiscalTree fiscalPanel) {
-						String page = "MAT5";
-						NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt);
-						nm.paintHeaderTable("Memoria Normalizada", "Plantilla");
-						FreeText paragraph5_1Page = new FreeText("Apartado 5: Inmovilizado material, intangible, e inversiones inmobiliarias", true, page, enterpriseAux, nm,true, mt.getId().toString());
-		    			paragraph5_1Page.dump(mt.getD2Deposit2014());
-		    			nm.setPagesPanel(paragraph5_1Page);
-		    			fiscalPanel.setContent(nm);	
-					}
-					
-					@Override
-					public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
-						return null;
-					}
-					
-					@Override
-					public Enterprise getTreeObject() {
-						return (Enterprise) getUserObject();
-					}
-				};
-				tl5.setText("Texto Libre");
-				imiii.addItem(tl5);
-				
+			imiii.setText("Apartado 5:<<Inmovilizado Material, Intangible e Inversiones Inmobiliarias>>");		
 			memory.addItem(imiii);
 			
 			
 			TreeNode<Enterprise> af = new TreeNode<Enterprise>() {
-				
+				MemoryTemplate mt = memoryTemplate;
+
 				@Override
 				public void select(FiscalTree fiscalPanel) {
-					
+					String page = "MAT6";
+					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
+					nm.paintHeaderTable("Memoria Normalizada", "Plantilla");
+					FreeText paragraph6_1Page = new FreeText("Apartado 6: Activos financieros", true, page, enterpriseAux, nm,true, mt.getId().toString());
+	    			paragraph6_1Page.dump(mt.getD2Deposit2014());
+	    			nm.setPagesPanel(paragraph6_1Page);
+	    			fiscalPanel.setContent(nm);	
 				}
 				
 				@Override
@@ -306,42 +276,21 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 					return (Enterprise) getUserObject();
 				}
 			};
-			af.setText("Apartado 6:<<Activos Financieros");
-			
-				
-				TreeNode<Enterprise> tl6 = new TreeNode<Enterprise>() {
-					MemoryTemplate mt = memoryTemplate;
-					@Override
-					public void select(FiscalTree fiscalPanel) {
-						String page = "MAT6";
-						NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt);
-						nm.paintHeaderTable("Memoria Normalizada", "Plantilla");
-						FreeText paragraph6_1Page = new FreeText("Apartado 6: Activos financieros", true, page, enterpriseAux, nm,true, mt.getId().toString());
-		    			paragraph6_1Page.dump(mt.getD2Deposit2014());
-		    			nm.setPagesPanel(paragraph6_1Page);
-		    			fiscalPanel.setContent(nm);	
-					}
-					
-					@Override
-					public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
-						return null;
-					}
-					
-					@Override
-					public Enterprise getTreeObject() {
-						return (Enterprise) getUserObject();
-					}
-				};
-				tl6.setText("Texto Libre");
-				af.addItem(tl6);
-				
+			af.setText("Apartado 6:<<Activos Financieros");		
 			memory.addItem(af);
 			
 			TreeNode<Enterprise> pf = new TreeNode<Enterprise>() {
-				
+				MemoryTemplate mt = memoryTemplate;
+
 				@Override
 				public void select(FiscalTree fiscalPanel) {
-					
+					String page = "MAT7";
+					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
+					nm.paintHeaderTable("Memoria Normalizada", "Plantilla");
+					FreeText paragraph7_1Page = new FreeText("Apartado 7: Pasivos financieros", true, page, enterpriseAux, nm,true, mt.getId().toString());
+	    			paragraph7_1Page.dump(mt.getD2Deposit2014());
+	    			nm.setPagesPanel(paragraph7_1Page);
+	    			fiscalPanel.setContent(nm);	
 				}
 				
 				@Override
@@ -355,35 +304,6 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				}
 			};
 			pf.setText("Apartado 7:<<Pasivos Financieros>>");
-			
-				
-				TreeNode<Enterprise> tl7 = new TreeNode<Enterprise>() {
-					MemoryTemplate mt = memoryTemplate;
-					@Override
-					public void select(FiscalTree fiscalPanel) {
-						String page = "MAT7";
-						NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt);
-						nm.paintHeaderTable("Memoria Normalizada", "Plantilla");
-						FreeText paragraph7_1Page = new FreeText("Apartado 7: Pasivos financieros", true, page, enterpriseAux, nm,true, mt.getId().toString());
-		    			paragraph7_1Page.dump(mt.getD2Deposit2014());
-		    			nm.setPagesPanel(paragraph7_1Page);
-		    			fiscalPanel.setContent(nm);	
-					}
-					
-					@Override
-					public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
-						return null;
-					}
-					
-					@Override
-					public Enterprise getTreeObject() {
-						return (Enterprise) getUserObject();
-					}
-				};
-				tl7.setText("Texto Libre");
-				pf.addItem(tl7);
-				
-				
 			memory.addItem(pf);
 			
 			
@@ -392,7 +312,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				@Override
 				public void select(FiscalTree fiscalPanel) {
 					String page = "MAT8";
-					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt);
+					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
 					nm.paintHeaderTable("Memoria Normalizada", "Plantilla");
 					FreeText paragraph8Page = new FreeText("Apartado 8: Fondos propios", true, page, enterpriseAux, nm,true, mt.getId().toString());
 	    			paragraph8Page.dump(mt.getD2Deposit2014());
@@ -418,7 +338,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				@Override
 				public void select(FiscalTree fiscalPanel) {
 					String page = "MAT9";
-					NormalizedMemory nm = new NormalizedMemory(enterpriseAux,  mt);
+					NormalizedMemory nm = new NormalizedMemory(enterpriseAux,  mt, ddtn);
 					nm.paintHeaderTable("Memoria Normalizada", "Plantilla");
 					FreeText paragraph9Page = new FreeText("Apartado 9: Situaci\u00F3n fiscal", true, page, enterpriseAux, nm,true, mt.getId().toString());
 	    			paragraph9Page.dump(mt.getD2Deposit2014());
@@ -442,10 +362,17 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 			
 			
 			TreeNode<Enterprise> sdl = new TreeNode<Enterprise>() {
-				
+				MemoryTemplate mt = memoryTemplate;
+
 				@Override
 				public void select(FiscalTree fiscalPanel) {
-					
+					String page = "MAT11";
+					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
+					nm.paintHeaderTable("Memoria Normalizada", "Plantilla");
+					FreeText paragraph11_1Page = new FreeText("Apartado 11: Subvenciones, donaciones y legados", true, page, enterpriseAux, nm,true, mt.getId().toString());
+	    			paragraph11_1Page.dump(mt.getD2Deposit2014());
+	    			nm.setPagesPanel(paragraph11_1Page);
+	    			fiscalPanel.setContent(nm);
 				}
 				
 				@Override
@@ -459,42 +386,20 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				}
 			};
 			sdl.setText("Apartado 11:<<Subvenciones, Donaciones y Legados>>");
-			
-				
-				TreeNode<Enterprise> tl11 = new TreeNode<Enterprise>() {
-					MemoryTemplate mt = memoryTemplate;
-					@Override
-					public void select(FiscalTree fiscalPanel) {
-						String page = "MAT11";
-						NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt);
-						nm.paintHeaderTable("Memoria Normalizada", "Plantilla");
-						FreeText paragraph11_1Page = new FreeText("Apartado 11: Subvenciones, donaciones y legados", true, page, enterpriseAux, nm,true, mt.getId().toString());
-		    			paragraph11_1Page.dump(mt.getD2Deposit2014());
-		    			nm.setPagesPanel(paragraph11_1Page);
-		    			fiscalPanel.setContent(nm);
-					}
-					
-					@Override
-					public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
-						return null;
-					}
-					
-					@Override
-					public Enterprise getTreeObject() {
-						return (Enterprise) getUserObject();
-					}
-				};
-				tl11.setText("Texto Libre");
-				sdl.addItem(tl11);
-				
-				
 			memory.addItem(sdl);
 			
 			TreeNode<Enterprise> opv = new TreeNode<Enterprise>() {
-				
+				MemoryTemplate mt = memoryTemplate;
+
 				@Override
 				public void select(FiscalTree fiscalPanel) {
-					
+					String page = "MAT12";
+					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
+					nm.paintHeaderTable("Memoria Normalizada", "Plantilla");
+					FreeText paragraph12_1Page = new FreeText("Apartado 12: Operaciones con partes vinculadas", true, page, enterpriseAux, nm,true, mt.getId().toString());
+	    			paragraph12_1Page.dump(mt.getD2Deposit2014());
+	    			nm.setPagesPanel(paragraph12_1Page);
+	    			fiscalPanel.setContent(nm);
 				}
 				
 				@Override
@@ -508,42 +413,20 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				}
 			};
 			opv.setText("Apartado 12:<<Operaciones con Partes Vinculantes>>");
-			
-				
-				TreeNode<Enterprise> tl12 = new TreeNode<Enterprise>() {
-					MemoryTemplate mt = memoryTemplate;
-					@Override
-					public void select(FiscalTree fiscalPanel) {
-						String page = "MAT12";
-						NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt);
-						nm.paintHeaderTable("Memoria Normalizada", "Plantilla");
-						FreeText paragraph12_1Page = new FreeText("Apartado 12: Operaciones con partes vinculadas", true, page, enterpriseAux, nm,true, mt.getId().toString());
-		    			paragraph12_1Page.dump(mt.getD2Deposit2014());
-		    			nm.setPagesPanel(paragraph12_1Page);
-		    			fiscalPanel.setContent(nm);
-					}
-					
-					@Override
-					public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
-						return null;
-					}
-					
-					@Override
-					public Enterprise getTreeObject() {
-						return (Enterprise) getUserObject();
-					}
-				};
-				tl12.setText("Texto Libre");
-				opv.addItem(tl12);
-				
-				
 			memory.addItem(opv);
 			
 			TreeNode<Enterprise> oi = new TreeNode<Enterprise>() {
-				
+				MemoryTemplate mt = memoryTemplate;
+
 				@Override
 				public void select(FiscalTree fiscalPanel) {
-					
+					String page =  "MAT13";
+					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
+					nm.paintHeaderTable("Memoria Normalizada", "Plantilla");
+					FreeText paragraph13_1Page = new FreeText("Apartado 13: Otra informaci\u00F3n", true, page, enterpriseAux, nm,true, mt.getId().toString());
+	    			paragraph13_1Page.dump(mt.getD2Deposit2014());
+	    			nm.setPagesPanel(paragraph13_1Page);
+	    			fiscalPanel.setContent(nm);
 				}
 				
 				@Override
@@ -557,41 +440,20 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				}
 			};
 			oi.setText("Apartado 13:<<Otra Informaci\u00F3n>>");
-			
-				
-				TreeNode<Enterprise> tl13 = new TreeNode<Enterprise>() {
-					MemoryTemplate mt = memoryTemplate;
-					@Override
-					public void select(FiscalTree fiscalPanel) {
-						String page =  "MAT13";
-						NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt);
-						nm.paintHeaderTable("Memoria Normalizada", "Plantilla");
-						FreeText paragraph13_1Page = new FreeText("Apartado 13: Otra informaci\u00F3n", true, page, enterpriseAux, nm,true, mt.getId().toString());
-		    			paragraph13_1Page.dump(mt.getD2Deposit2014());
-		    			nm.setPagesPanel(paragraph13_1Page);
-		    			fiscalPanel.setContent(nm);
-					}
-					
-					@Override
-					public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
-						return null;
-					}
-					
-					@Override
-					public Enterprise getTreeObject() {
-						return (Enterprise) getUserObject();
-					}
-				};
-				tl13.setText("Texto Libre");
-				oi.addItem(tl13);
-				
 			memory.addItem(oi);
 			
 			TreeNode<Enterprise> ima = new TreeNode<Enterprise>() {
-				
+				MemoryTemplate mt = memoryTemplate;
+
 				@Override
 				public void select(FiscalTree fiscalPanel) {
-					
+					String page =  "MAT14";
+					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
+					nm.paintHeaderTable("Memoria Normalizada", "Plantilla");
+					FreeText paragraph14_1Page = new FreeText("Apartado 14: Informaci\u00F3n sobre medio ambiente", true, page, enterpriseAux, nm, true, mt.getId().toString());
+	    			paragraph14_1Page.dump(mt.getD2Deposit2014());
+	    			nm.setPagesPanel(paragraph14_1Page);
+	    			fiscalPanel.setContent(nm);
 				}
 				
 				@Override
@@ -605,36 +467,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				}
 			};
 			ima.setText("Apartado 14:<<Informaci\u00F3n sobre el Medio Ambiente>>");
-			
-				
-				TreeNode<Enterprise> tl14 = new TreeNode<Enterprise>() {
-					MemoryTemplate mt = memoryTemplate;
-					@Override
-					public void select(FiscalTree fiscalPanel) {
-						String page =  "MAT14";
-						NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt);
-						nm.paintHeaderTable("Memoria Normalizada", "Plantilla");
-						FreeText paragraph14_1Page = new FreeText("Apartado 14: Informaci\u00F3n sobre medio ambiente", true, page, enterpriseAux, nm, true, mt.getId().toString());
-		    			paragraph14_1Page.dump(mt.getD2Deposit2014());
-		    			nm.setPagesPanel(paragraph14_1Page);
-		    			fiscalPanel.setContent(nm);
-					}
-					
-					@Override
-					public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
-						return null;
-					}
-					
-					@Override
-					public Enterprise getTreeObject() {
-						return (Enterprise) getUserObject();
-					}
-				};
-				tl14.setText("Texto Libre");
-				ima.addItem(tl14);
-				
 			memory.addItem(ima);
-			
 		this.addItem(memory);
 	}
 }
