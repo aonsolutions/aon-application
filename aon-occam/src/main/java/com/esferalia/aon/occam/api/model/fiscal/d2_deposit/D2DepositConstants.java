@@ -354,24 +354,16 @@ public class D2DepositConstants {
 	};
 	
 	
-	public static D2DepositKey[] MA13_ABREVIATE_KEYS = new D2DepositKey[]{
+	public static D2DepositKey[][] MRN13_ABREVIATE_KEYS = new D2DepositKey[][]{
 
-		D2DepositKey.MA1398000
-	,D2DepositKey.MA13980009
-	,D2DepositKey.MA1398001
-	,D2DepositKey.MA13980019
-	,D2DepositKey.MA1398002
-	,D2DepositKey.MA13980029
-	,D2DepositKey.MA1398003
-	,D2DepositKey.MA13980039
-	,D2DepositKey.MA1398004
-	,D2DepositKey.MA13980049
-	,D2DepositKey.MA1398005
-	,D2DepositKey.MA13980059
-	,D2DepositKey.MA1398006
-	,D2DepositKey.MA13980069
-	,D2DepositKey.MA1398007
-	,D2DepositKey.MA13980079
+		new D2DepositKey[] {D2DepositKey.MA1398000, D2DepositKey.MA13980009}
+	,new D2DepositKey[] {D2DepositKey.MA1398001, D2DepositKey.MA13980019}
+	,new D2DepositKey[] {D2DepositKey.MA1398002, D2DepositKey.MA13980029}
+	,new D2DepositKey[] {D2DepositKey.MA1398003, D2DepositKey.MA13980039}
+	,new D2DepositKey[] {D2DepositKey.MA1398004, D2DepositKey.MA13980049}
+	,new D2DepositKey[] {D2DepositKey.MA1398005, D2DepositKey.MA13980059}
+	,new D2DepositKey[] {D2DepositKey.MA1398006, D2DepositKey.MA13980069}
+	,new D2DepositKey[] {D2DepositKey.MA1398007, D2DepositKey.MA13980079}
 	};
 	
 	public static D2DepositKey[][] MRN11_ABREVIATE_KEYS_1 = new D2DepositKey[][]{

@@ -7,16 +7,12 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
+	<g:TabPanel ui:field="tabPanel" styleName="{aonResources.css.aonWidthAll}">
+		<g:Tab text="{msg.memory11_2Title}">
+
 	<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
 		<g:HTMLPanel ui:field="basePanel" styleName="{aonResources.css.aonFiscalContainer}">
-			<g:SimplePanel ui:field="headerPanel"/>
-		 	<div class="{aonResources.css.aonGroup}">
-				<div class="{aonResources.css.aonGroupTitle}">
-					<g:InlineLabel text="{msg.memory13_2Title}" />
-				</div>
 				<div class="{aonResources.css.aonGroupBody}">
-					
-					
 		 			<div class="{aonResources.css.aonGroup}">
 						<div class="{aonResources.css.aonGroupTitle}">
 							<g:InlineLabel text="{msg.memory13_2Table}" />
@@ -25,10 +21,10 @@
 							<g:FlexTable ui:field="table"/>
 						</div>
 					</div>
-	
-		 		
 				</div>
-			</div>
 		</g:HTMLPanel>
 	</g:ScrollPanel>
+			</g:Tab>
+	</g:TabPanel>
+	
 </ui:UiBinder>
