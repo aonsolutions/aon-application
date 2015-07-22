@@ -126,7 +126,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 			schema.getClaves().getClave().add(c);
 		}
 		// ------
-		calculate(schema);
+		// calculate(schema);
 		// ------
 		
 		request.getSession().setAttribute(D2_DEPOSIT_SCHEMA + cif, schema);
@@ -634,12 +634,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 			Object ret = ctx.evaluateExpression(key,expression);
 			if (ret instanceof Double) {
 				Double calculated = (Double) ret;
-				// TODO Remove trace
-				System.out.println(key + " = " + calculated +  " --> " +  expression);
-				// ------------
 				ctx.put(key, calculated);
-
-				
 				// TODO 
 				// populate data
 			}
