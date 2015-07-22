@@ -631,66 +631,40 @@ public class D2DepositDescription {
 	}
 	
 	static{
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251101,"A) SALDO, FINAL DEL EJERCICIO 2012");
-
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251201,"I. Ajustes por cambios de criterio del ejercicio 2012 y anteriores");
-
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251301,"II. Ajustes por errores del ejercicio 2012 y anteriores");
-
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251401,"B) SALDO AJUSTADO, INICIO DEL EJERCICIO 2013");
-		
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251501,"I. Total ingresos y gastos reconocidos");
-		
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP152801,"I. Resultado de la cuenta de p\u00E9rdidas y ganancias");
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP153001,"II. Ingresos y gastos reconocidos en patrimonio neto");
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP152701,"1. Ingresos fiscales a distribuir en varios ejercicios");
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP152901,"2. Otros ingresos y gastos reconocidos en patrimonio neto");
-		
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2511019,"A) SALDO, FINAL DEL EJERCICIO 2012");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2512019,"I. Ajustes por cambios de criterio del ejercicio 2012 y anteriores");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2513019,"II. Ajustes por errores del ejercicio 2012 y anteriores");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2514019,"B) SALDO AJUSTADO, INICIO DEL EJERCICIO 2013");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP1528019,"I. Resultado de la cuenta de p\u00E9rdidas y ganancias");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP1530019,"II. Ingresos y gastos reconocidos en patrimonio neto");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP1527019,"1. Ingresos fiscales a distribuir en varios ejercicios");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP1529019,"2. Otros ingresos y gastos reconocidos en patrimonio neto");
-
-
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251601,"II. Operaciones con socios o propietarios");
-
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251701,"1. Aumentos de capital");
-
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251801,"2. (-) Reducciones de capital");
-
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA252601,"3. Otras operaciones con socios o propietarios");
-
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA252401,"III. Otras variaciones del patrimonio neto");
-
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA253101,"1. Movimiento de la reserva de revalorizaci\u00F3n");
-
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA253201,"2. Otras variaciones");
-
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2511019,"C) SALDO, FINAL DEL EJERCICIO 2013");
-
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2512019,"I. Ajustes por cambios de criterio en el ejercicio 2013");
-
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2513019,"II. Ajustes por errores del ejercicio 2013");
-
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2514019,"D) SALDO AJUSTADO, INICIO DEL EJERCICIO 2014 ");
-	
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2515019,"I. Total ingresos y gastos reconocidos");
-
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2516019,"II. Operaciones con socios o propietarios");
-
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2517019,"1. Aumentos de capital");
-
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2518019,"2. (-) Reducciones de capital");
-
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2526019,"3. Otras operaciones con socios o propietarios");
-
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2524019,"III. Otras variaciones del patrimonio neto");
-		
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2531019,"1. Movimiento de la reserva de revalorizaci\u00F3n");
-
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2532019,"2. Otras variaciones ");
-		
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2532019,"2. Otras variaciones");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251101,"C) SALDO, FINAL DEL EJERCICIO 2013");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251201,"I. Ajustes por cambios de criterio en el ejercicio 2013");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251301,"II. Ajustes por errores del ejercicio 2013");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251401,"D) SALDO AJUSTADO, INICIO DEL EJERCICIO 2014 ");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP152801,"I. Resultado de la cuenta de p\u00E9rdidas y ganancias");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP153001,"II. Ingresos y gastos reconocidos en patrimonio neto");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP152701,"1. Ingresos fiscales a distribuir en varios ejercicios");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP152901,"2. Otros ingresos y gastos reconocidos en patrimonio neto");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251601,"II. Operaciones con socios o propietarios");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251701,"1. Aumentos de capital");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251801,"2. (-) Reducciones de capital");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA252601,"3. Otras operaciones con socios o propietarios");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA252401,"III. Otras variaciones del patrimonio neto");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA253101,"1. Movimiento de la reserva de revalorizaci\u00F3n");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA253201,"2. Otras variaciones ");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA252501,"E) SALDO, FINAL DEL EJERCICIO 2014");
+		
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251501,"I. Total ingresos y gastos reconocidos");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2515019,"I. Total ingresos y gastos reconocidos");
 		
 	}
 	

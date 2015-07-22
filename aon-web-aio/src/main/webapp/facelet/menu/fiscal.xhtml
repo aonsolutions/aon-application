@@ -221,8 +221,7 @@
 												action="gwt_fiscalPanel-mod200"
 												title="#{bundle.fiscal_model_200_module}">
 												<aon:outputText styleClass="aon-fiscal-link-box" value="200"/>
-												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-												style="margin-left: 5px; padding-left: 20px;" value="#{bundle.fiscal_model_200_module}" />
+												<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_200_module}" />
 											</aon:commandLink>
 
 											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
@@ -246,7 +245,7 @@
 												</aon:div> 
 											</aon:if>
 											
-											<aon:commandLink id="gwt_fiscalPanel"
+											<aon:commandLink id="gwt_mod202"
 												action="gwt_fiscalPanel-mod202"
 												title="Impuesto Sociedades. Pago fraccionado.">
 												<aon:outputText styleClass="aon-fiscal-link-box" value="202"/>
@@ -283,7 +282,6 @@
 								</aon:panelGrid>
 						</aon:panelGroup>
 
-					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 						<aon:panelGroup>
 								<aon:panelGrid id="group_fiscal_mercantile_registry"
 									styleClass="aon-width-all" columnClasses="aon-padding"
@@ -292,23 +290,34 @@
 										<aon:outputText value="#{bundle.fiscal_mercantile_registry}"/>
 									</f:facet>
 									<aon:div styleClass="aon-direct-access-list">
+										<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="accountingBook_report"
+													action="accountingBook_search"
+													actionListener="#{accountingBook.onReset}"
+													value="#{bundle.accounting_book_module}" />
+											</aon:div>
+										</aon:if>
 										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="accountingBook_report"
-												action="accountingBook_search"
-												actionListener="#{accountingBook.onReset}"
-												value="#{bundle.accounting_book_module}" />
+											<aon:commandLink id="gwt_deposit"
+												action="gwt_fiscalPanel-deposit"
+												title="#{bundle.accounting_annual_financial_statements_module}">
+												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+													style="margin-left: 5px; padding-left: 20px;" 
+													value="#{bundle.accounting_annual_financial_statements_module}" />												
+											</aon:commandLink>
 										</aon:div>
-		
-										<aon:div styleClass="aon-direct-access-list-element">
+										<!-- 
 											<aon:commandLink id="annualFinancialStatements_report"
 												action="annualFinancialStatements_search"
 												actionListener="#{annualFinancialStatements.onReset}"
 												value="#{bundle.accounting_annual_financial_statements_module}" />
-										</aon:div>
+										 -->
 									</aon:div>
 								</aon:panelGrid>
 						</aon:panelGroup>
 
+					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 						<aon:panelGroup>
 								<aon:panelGrid id="group_fiscal_reports"
 									styleClass="aon-width-all" columnClasses="aon-padding"
