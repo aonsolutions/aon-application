@@ -55,6 +55,9 @@ public interface INormalizedMemoryAsync {
 	void getSchema(String cif, Integer domainId, Boolean textMode,
 			AsyncCallback<Map<String, String>> callback);
 
+	void deleteFreeText(Integer domainId, Integer rattachId,
+			AsyncCallback<Void> callback);
+
 
 
 }
