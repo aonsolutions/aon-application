@@ -15,6 +15,17 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PageM3_2 extends PageAbs {
+	
+	private static final String[] MRN_HEADER_1 = new String[] {
+		AON.MSG.distributionBases().toUpperCase(), 
+		AON.MSG.year2014() , AON.MSG.year2013()
+	};
+	
+	private static final String[] MRN_HEADER_2 = new String[] {
+		AON.MSG.aplicationTo().toUpperCase(), 
+		AON.MSG.year2014() , AON.MSG.year2013()
+	};
+
 
 	interface PageBinder extends UiBinder<Widget, PageM3_2> {
 	}
@@ -47,50 +58,48 @@ public class PageM3_2 extends PageAbs {
 		tabPanel.selectTab(0);
 		
 		if (isPymes()) {
-			modelRequestTable(table, AON.MSG.distributionBases().toUpperCase(), D2PDepositConstants.MRN_PYMES_KEYS_1);
-			modelRequestTable(table1, AON.MSG.aplicationTo().toUpperCase(), D2PDepositConstants.MRN_PYMES_KEYS_2);
+			
+			defineMRNTable(table, MRN_HEADER_1, D2PDepositConstants.MRN_PYMES_KEYS_1);
+			defineMRNTable(table1, MRN_HEADER_2, D2PDepositConstants.MRN_PYMES_KEYS_2);
 		}
 		else {
-			modelRequestTable(table, AON.MSG.distributionBases().toUpperCase(), D2DepositConstants.MRN_ABREVIATE_KEYS_1);
-			modelRequestTable(table1, AON.MSG.aplicationTo().toUpperCase(), D2DepositConstants.MRN_ABREVIATE_KEYS_2);
+			defineMRNTable(table, MRN_HEADER_1, D2DepositConstants.MRN_ABREVIATE_KEYS_1);
+			defineMRNTable(table1, MRN_HEADER_2, D2DepositConstants.MRN_ABREVIATE_KEYS_2);
 		}
 	}
-		
 	
-	protected void modelRequestTable(FlexTable tab, String title, D2DepositKey[][] keys) {
+	protected void defineMRNTable( FlexTable tab, String[] headers, D2DepositKey[][] keys){
 		
 		tab.setWidth("100%");
 		tab.setCellSpacing(0);
-		tab.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonWidthAuto());
-		tab.getColumnFormatter().addStyleName(1, AON.AON_CSS.aonWidth140());
-		tab.getColumnFormatter().addStyleName(2, AON.AON_CSS.aonWidth140());		
 		int row = 0;
-		tab.setWidget(row, 0, new Label(title));
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
-		tab.setWidget(row, 1, new Label(AON.MSG.year2014()));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextRight());
-		tab.setWidget(row, 2, new Label(AON.MSG.year2013()));
-		tab.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBold());
-		tab.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBorderBottom());
-		tab.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextRight());
+		int col = 0;
+		tab.getColumnFormatter().addStyleName(col, AON.AON_CSS.aonWidthAuto());
+		tab.getColumnFormatter().addStyleName(col, AON.AON_CSS.aonNowrap());		
+		
+		for (String primary : headers) {
+			
+			tab.getColumnFormatter().addStyleName(col, AON.AON_CSS.aonWidth140());
+			tab.setWidget(row, col, new Label(primary));	
+			tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
+			tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
+			tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
+			++col;
+		}
+		
 		++row;
 		
 		for (D2DepositKey[] innerKeys : keys) {
-			row = paint(tab, innerKeys , row);
+			col = 0;
+			paintKeyDescription(tab, innerKeys[0], row, col);
+			tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
+			col++;
+			for (D2DepositKey key : innerKeys ) {
+				
+				paintKeyField(tab,key,row,col,(col==1), key.getCode()); 
+				col++;
+			}
+			++row;
 		}
-	}
-
-	protected int paint(FlexTable tab, D2DepositKey[] keys, int row) {
-		paintKeyDescription(tab, keys[0], row, 0);
-		paintKeyFieldTextBox(tab,keys[0].getCode(), keys[0], row, 1);
-		//paintKeyField(tab,keys[0],row,1,false);
-		paintKeyField(tab,keys[1],row,2,false);
-		return  ++row;
-
-		
 	}
 }

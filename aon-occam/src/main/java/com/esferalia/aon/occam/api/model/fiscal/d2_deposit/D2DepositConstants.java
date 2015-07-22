@@ -1308,6 +1308,7 @@ public class D2DepositConstants {
 	};
 	
 	public static D2DepositKey[] MA14_ABREVIATE_KEYS_1 = new D2DepositKey[]{
+	
 		D2DepositKey.MA14199000
 		,D2DepositKey.MA141990009
 		,D2DepositKey.MA14199001
