@@ -98,7 +98,9 @@ public class PageM5_2 extends PageAbs {
 			col++;
 			for (D2DepositKey key : innerKeys ) {
 				
-				paintKeyField(tab,key,row,col,(col==1), key.getCode()); 
+				paintKeyField(tab,key,row,col,(col==1), (tab == table2) ? key.getCode() : AonStringUtils.substring(key.getCode(), 0, 4));
+				
+				//paintKeyField(tab,key,row,col,(col==1), AonStringUtils.substring(key.getCode(), 0, 4)); 
 				col++;
 			}
 			++row;
