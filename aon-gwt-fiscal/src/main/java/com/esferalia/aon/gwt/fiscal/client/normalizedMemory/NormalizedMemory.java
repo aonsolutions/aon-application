@@ -607,7 +607,7 @@ public class NormalizedMemory extends ResizeComposite {
 										ListBox lb = (ListBox) flex_table.getWidget(0,1);
 										String t = lb.getSelectedItemText();
 										
-										if(t.equals("Balance")){
+										if(t.equals("Balance (I.S.)")){
 											ListBox ej = (ListBox) flex_table.getWidget(2, 1);
 											String ejercicio = ej.getSelectedItemText();
 											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(),digitalDepositTreeNode.getD2Deposit2014().getMap(), new AsyncCallback<Map<String, String>>() {
@@ -628,7 +628,7 @@ public class NormalizedMemory extends ResizeComposite {
 										
 											
 										}
-										else if(t.equals("Perdidas y ganancias")){
+										else if(t.equals("Perdidas y ganancias (I.S.)")){
 											ListBox ej = (ListBox) flex_table.getWidget(2, 1);
 											String ejercicio = ej.getSelectedItemText();
 											
@@ -648,7 +648,7 @@ public class NormalizedMemory extends ResizeComposite {
 											});
 											
 										}
-										else if(t.equals("ECPN")){
+										else if(t.equals("ECPN (I.S.)")){
 											ListBox ej = (ListBox) flex_table.getWidget(2, 1);
 											String ejercicio = ej.getSelectedItemText();
 											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), digitalDepositTreeNode.getD2Deposit2014().getMap(), new AsyncCallback<Map<String, String>>() {
@@ -700,7 +700,7 @@ public class NormalizedMemory extends ResizeComposite {
 														}
 													});
 										}
-										else if(t.equals("Memoria")){
+										else if(t.equals("Memoria (Deposito.xml)")){
 											ListBox ej = (ListBox) flex_table.getWidget(1, 1);
 											String ejercicio = ej.getSelectedItemText();
 											

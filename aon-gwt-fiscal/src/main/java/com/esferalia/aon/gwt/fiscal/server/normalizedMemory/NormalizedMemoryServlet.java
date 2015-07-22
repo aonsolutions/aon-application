@@ -481,7 +481,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 	public Map<String, String> importAll(String type, String ejercicio, MemoryTemplate mt,
 			Integer domainId, String cif, Map<String, String> map) {
 		String domainName = getDomainName(domainId);
-		if (type.equals("Balance")) {
+		if (type.equals("Balance (I.S.)")) {
 			if (ejercicio.equals("2013")) {
 				Mod2002013 mod2002013 = com.esferalia.aon.occam.api.AON
 						.getMod2002013ByYear(domainName, domainId, 2013);
@@ -511,7 +511,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 							.toString());
 				}
 			}
-		} else if (type.equals("Perdidas y ganancias")) {
+		} else if (type.equals("Perdidas y ganancias (I.S.)")) {
 			if (ejercicio.equals("2013")) {
 				Mod2002013 mod2002013 = com.esferalia.aon.occam.api.AON
 						.getMod2002013ByYear(domainName, domainId, 2013);
@@ -541,7 +541,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 							.toString());
 				}
 			}
-		} else if (type.equals("ECPN")) {
+		} else if (type.equals("ECPN (I.S.)")) {
 			if (ejercicio.equals("2013")) {
 				Mod2002013 mod2002013 = com.esferalia.aon.occam.api.AON
 						.getMod2002013ByYear(domainName, domainId, 2013);
@@ -575,7 +575,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 			}
 		} else if (type.equals("Memoria predefinida")) {
 			updateTexts(mt, domainId, cif);
-		} else if (type.equals("Memoria")) {
+		} else if (type.equals("Memoria (Deposito.xml)")) {
 			
 			if (ejercicio.equals("2013")) {
 

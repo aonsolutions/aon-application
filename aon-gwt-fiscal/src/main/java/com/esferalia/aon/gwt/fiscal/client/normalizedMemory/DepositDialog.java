@@ -241,7 +241,7 @@ public abstract class DepositDialog extends CustomDialogB {
 			Enterprise enterprise = enterpriseAux;
 			@Override
 			public void onChange(ChangeEvent event) {
-				if(lb.getSelectedItemText().equals("Balance")){
+				if(lb.getSelectedItemText().equals("Balance (I.S.)")){
 					ListBox lb1 = new ListBox();
 					lb1.addItem("Sociedades");
 					//lb1.addItem("D2");
@@ -255,7 +255,7 @@ public abstract class DepositDialog extends CustomDialogB {
 					flex_table.setWidget(2, 0, new Label("Ejercicio"));
 					flex_table.setWidget(2,	1, lb2);					
 				}
-				if(lb.getSelectedItemText().equals("Perdidas y ganancias")){
+				if(lb.getSelectedItemText().equals("Perdidas y ganancias (I.S.)")){
 					ListBox lb1 = new ListBox();
 					lb1.addItem("Sociedades");
 					//lb1.addItem("D2");
@@ -269,7 +269,7 @@ public abstract class DepositDialog extends CustomDialogB {
 					flex_table.setWidget(2, 0, new Label("Ejercicio"));
 					flex_table.setWidget(2,	1, lb2);	
 				}
-				if(lb.getSelectedItemText().equals("ECPN")){
+				if(lb.getSelectedItemText().equals("ECPN (I.S.)")){
 					ListBox lb1 = new ListBox();
 					lb1.addItem("Sociedades");
 					//lb1.addItem("D2");
@@ -295,7 +295,7 @@ public abstract class DepositDialog extends CustomDialogB {
 					flex_table.removeRow(2);
 				}
 
-				if(lb.getSelectedItemText().equals("Memoria")){
+				if(lb.getSelectedItemText().equals("Memoria (Deposito.xml)")){
 					ListBox lb1 = new ListBox();
 					//lb1.addItem("2013");
 					lb1.addItem("2014");
