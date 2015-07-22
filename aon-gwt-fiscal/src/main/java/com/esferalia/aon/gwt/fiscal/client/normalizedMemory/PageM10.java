@@ -20,7 +20,7 @@ public class PageM10 extends PageAbs {
 	}
 	
 	private static final String[] PERIODS = new String[] {
-		"Ejercicio 2014" , "Ejercicio 2013"
+		AON.MSG.year2014() , AON.MSG.year2013()
 	};
 
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
@@ -53,7 +53,7 @@ public class PageM10 extends PageAbs {
 		tabPanel.selectTab(0);
 		
 		if (isPymes()) {
-			defineMRNTable(table, PERIODS, D2PDepositConstants.MP10_ABREVIATE_KEYS);
+			defineMRNTable(table, PERIODS, D2PDepositConstants.MP10_PYMES_KEYS);
 		}
 		else {
 			defineMRNTable(table, PERIODS, D2DepositConstants.MRN10_ABREVIATE_KEYS);
@@ -95,6 +95,5 @@ public class PageM10 extends PageAbs {
 			}
 			++row;
 		}
-
 	}
 }
