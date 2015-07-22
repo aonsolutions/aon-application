@@ -558,7 +558,7 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 		} else if (type.equals("X")) {
 			return DocumentType.COMMUNITY_CARD.ordinal();
 		}
-		return -1;
+		return DocumentType.OTHER.ordinal();
 	}
 
 	private String obtainCountry(String countryIso) {

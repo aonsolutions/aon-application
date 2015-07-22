@@ -110,10 +110,8 @@ public abstract class DepositDialog extends CustomDialogB {
 					}
 				}
 				if(type.equals("new2")){
-					ListBox lb = (ListBox)flex_table.getWidget(0, 1);
-					TextBox tb1 = (TextBox) flex_table.getWidget(1, 1);
-					if(!lb.getSelectedItemText().equals("-") && 
-							!tb1.getText().equals("")){
+					TextBox tb1 = (TextBox) flex_table.getWidget(0, 1);
+					if(!tb1.getText().equals("")){
 							onAccept();	
 					}
 					else{
@@ -194,13 +192,11 @@ public abstract class DepositDialog extends CustomDialogB {
 		//lb.addItem("Abreviado");
 		//lb.addItem("Pymes");
 
-		flex_table.setWidget(0, 0, new Label("Tipo de Deposito"));
-		flex_table.setWidget(0, 1, lb);
-		
+	
 		TextBox tb1 = new TextBox();
 		tb1.setStyleName("aon-inputText");
-		flex_table.setWidget(1, 0, new Label("Nombre del Deposito"));
-		flex_table.setWidget(1, 1, tb1);
+		flex_table.setWidget(0, 0, new Label("Nombre de la Plantilla"));
+		flex_table.setWidget(0, 1, tb1);
 		
 		flexTableCss();
 	}
@@ -232,11 +228,11 @@ public abstract class DepositDialog extends CustomDialogB {
 		
 		final ListBox lb = new ListBox();
 		lb.addItem("-");
-		lb.addItem("Balance");
-		lb.addItem("Perdidas y ganancias");
-		lb.addItem("ECPN");
 		lb.addItem("Memoria predefinida");
-		lb.addItem("Memoria");
+		lb.addItem("Balance (I.S.)");
+		lb.addItem("Perdidas y ganancias (I.S.)");
+		lb.addItem("ECPN (I.S.)");
+		lb.addItem("Memoria (Deposito.xml)");
 		
 		mtsAux = mts;urlAux = url; enterpriseAux = enterprise;
 		lb.addChangeHandler(new ChangeHandler() {
@@ -318,7 +314,7 @@ public abstract class DepositDialog extends CustomDialogB {
 				flexTableCss();
 			}
 		});
-		flex_table.setWidget(0, 0, new Label("Que"));
+		flex_table.setWidget(0, 0, new Label("Seleccione"));
 		flex_table.setWidget(0,	1, lb);
 	
 		

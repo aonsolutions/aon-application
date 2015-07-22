@@ -126,7 +126,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 			schema.getClaves().getClave().add(c);
 		}
 		// ------
-		calculate(schema);
+		// calculate(schema);
 		// ------
 		
 		request.getSession().setAttribute(D2_DEPOSIT_SCHEMA + cif, schema);
@@ -593,6 +593,13 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		DBConsults.deleteDeposit(domain, domainId);
 	}
 
+	public void deleteFreeText(Integer domainId, Integer rattachId) {
+		String domain = AonUtil.getDomainName();
+		clearSession(rattachId.toString());
+		
+		DBConsults.deleteText(domain, domainId, rattachId);
+	}
+	
 	public Map<String, String> createD2Deposit(Integer domainId, Integer id, String name,
 			String type) {
 		String domainName = AonUtil.getDomainName();
@@ -634,12 +641,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 			Object ret = ctx.evaluateExpression(key,expression);
 			if (ret instanceof Double) {
 				Double calculated = (Double) ret;
-				// TODO Remove trace
-				System.out.println(key + " = " + calculated +  " --> " +  expression);
-				// ------------
 				ctx.put(key, calculated);
-
-				
 				// TODO 
 				// populate data
 			}

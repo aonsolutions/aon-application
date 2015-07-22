@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
-import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -47,4 +46,5 @@ public interface INormalizedMemory extends RemoteService{
 			Integer domainId, String cif, Map<String, String> map);
 	public void delete(Integer domainId, String document);
 
+	public void deleteFreeText(Integer domainId, Integer rattachId);
 }
