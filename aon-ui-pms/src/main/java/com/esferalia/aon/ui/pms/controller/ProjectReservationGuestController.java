@@ -50,16 +50,7 @@ public class ProjectReservationGuestController extends LinesController {
 	private void obtainPersonData(ProjectReservationGuest reservationGuest) throws ManagerBeanException {
 		Person person = null;
 		if (StringUtils.isNotBlank(reservationGuest.getDocument()) && (!reservationGuest.isDocumentValidable() || reservationGuest.isValidDocument())) {
-			IManagerBean personBean = BeanManager.getManagerBean(Person.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(personBean.getFieldName(IEntityAlias.PERSON_REGISTRY_DOCUMENT_TYPE), reservationGuest.getDocumentType());
-			criteria.addEqualExpression(personBean.getFieldName(IEntityAlias.PERSON_REGISTRY_DOCUMENT_COUNTRY), reservationGuest.getDocumentCountry());
-			criteria.addEqualExpression(personBean.getFieldName(IEntityAlias.PERSON_REGISTRY_DOCUMENT), reservationGuest.getDocument());
-			criteria.addOrder(personBean.getFieldName(IEntityAlias.PERSON_REGISTRY_ID), false);
-			List<ITransferObject> personList = personBean.getList(criteria);
-			if (personList.size() > 0) {
-				person = (Person)personList.get(0);
-			}
+			person = obtainPerson(reservationGuest);
 		}
 
 		if (person != null) {
@@ -85,6 +76,20 @@ public class ProjectReservationGuestController extends LinesController {
 		} else {
 			reservationGuest.setPerson(null);
 		}
+	}
+
+	public Person obtainPerson(ProjectReservationGuest reservationGuest) throws ManagerBeanException {
+		IManagerBean personBean = BeanManager.getManagerBean(Person.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(personBean.getFieldName(IEntityAlias.PERSON_REGISTRY_DOCUMENT_TYPE), reservationGuest.getDocumentType());
+		criteria.addEqualExpression(personBean.getFieldName(IEntityAlias.PERSON_REGISTRY_DOCUMENT_COUNTRY), reservationGuest.getDocumentCountry());
+		criteria.addEqualExpression(personBean.getFieldName(IEntityAlias.PERSON_REGISTRY_DOCUMENT), reservationGuest.getDocument());
+		criteria.addOrder(personBean.getFieldName(IEntityAlias.PERSON_REGISTRY_ID), false);
+		List<ITransferObject> personList = personBean.getList(criteria);
+		if (personList.size() > 0) {
+			return (Person)personList.get(0);
+		}
+		return null;
 	}
 
 }

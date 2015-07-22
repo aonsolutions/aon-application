@@ -39,7 +39,7 @@ public class ProjectReservationGuestControllerListener extends ControllerAdapter
 		ProjectReservationGuest to = (ProjectReservationGuest)event.getController().getTo();
 		to.setGuestIndex(0);
 		if (StringUtils.isNotBlank(to.getDocument())) {
-			savePerson(to);
+			savePerson(event);
 		}
 	}
 
@@ -47,15 +47,22 @@ public class ProjectReservationGuestControllerListener extends ControllerAdapter
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationGuest to = (ProjectReservationGuest)event.getController().getTo();
 		if (StringUtils.isNotBlank(to.getDocument())) {
-			savePerson(to);
+			savePerson(event);
 		}
 	}
 
-	private void savePerson(ProjectReservationGuest reservationGuest) throws ControllerListenerException {
+	private void savePerson(ControllerEvent event) throws ControllerListenerException {
+		ProjectReservationGuestController controller = (ProjectReservationGuestController)event.getController();
+		ProjectReservationGuest reservationGuest = (ProjectReservationGuest)controller.getTo();
 		if (!reservationGuest.isDocumentValidable() || reservationGuest.isValidDocument()) {
 			try {
 				if (reservationGuest.getPerson() == null || reservationGuest.getPerson().getId() == null) {
-					insertPerson(reservationGuest);
+					Person person = controller.obtainPerson(reservationGuest);
+					if (person == null) {
+						insertPerson(reservationGuest);
+					} else {
+						updatePerson(reservationGuest);
+					}
 				} else {
 					updatePerson(reservationGuest);
 				}
