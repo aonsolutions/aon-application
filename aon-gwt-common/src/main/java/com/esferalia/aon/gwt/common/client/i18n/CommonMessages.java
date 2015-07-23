@@ -2217,8 +2217,14 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Apartado 15: Informaci\u00f3n sobre los aplazamientos de pago efectuados a proveedores")
  	String memory15_2Title();
  	
+ 	@DefaultMessage("%")
+ 	String memory15_2Header1();
+ 	
  	@DefaultMessage("Pagos realizados y pendientes de pago en la fecha de cierre del Balance")
  	String memory15_2Table();
+ 	
+ 	@DefaultMessage("PAGOS DEL EJERCICIO")
+ 	String memory15_2Row1();
  	
  	@DefaultMessage("Datos generales de identificaci\u00f3n")
  	String header1Title();
