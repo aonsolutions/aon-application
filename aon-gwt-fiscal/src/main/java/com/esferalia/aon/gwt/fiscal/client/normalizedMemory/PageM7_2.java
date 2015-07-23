@@ -35,7 +35,7 @@ public class PageM7_2 extends PageAbs {
 	};
 	
 	private static final String[] AUXILIARES = new String[] {
-		"Ejercicio 2014" , "Ejercicio 2013"
+		AON.MSG.year2014() , AON.MSG.year2013()
 	};
  
 
