@@ -12,7 +12,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -94,25 +93,23 @@ public class PageF3 extends PageAbs {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					onEdit(code, d);
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),code, d , new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});
+				
 				} catch (ParseException e) {
 					// nothing.
 				}
 				
 			}
 		});
-		if(map.containsKey(key.getCode())){
-			String d =map.get(key.getCode());
+		if(mapDraft.containsKey(key.getCode())){
+			String d =mapDraft.get(key.getCode());
 			text.setValue(d);
 		}
 		else text.setValue("");
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
+		if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+			text.addStyleName(AON.AON_CSS.aonChanged());
+		}
 		panel.add(text);
 		
 		tab.setWidget(row, col, panel);

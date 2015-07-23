@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Vector;
 
+import com.esferalia.aon.gwt.fiscal.shared.D2Deposit2014;
 import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -34,7 +35,7 @@ public interface INormalizedMemoryAsync {
 			AsyncCallback<MemoryTemplate> callback);
 
 	void updateTexts(MemoryTemplate mt, Integer domainId, String cif,
-			AsyncCallback<Map<String, String>> callback);
+			Map<String, String> map, AsyncCallback<Map<String, String>> callback);
 
 	void getParentDomain(Integer domainId, AsyncCallback<Integer> callback);
 
@@ -57,6 +58,12 @@ public interface INormalizedMemoryAsync {
 
 	void deleteFreeText(Integer domainId, Integer rattachId,
 			AsyncCallback<Void> callback);
+
+	void saveDeposit(String cif, Integer domainId, D2Deposit2014 d2Deposit2014,
+			Boolean textMode, AsyncCallback<Void> callback);
+
+	void calculate(Map<String, String> map,
+			AsyncCallback<Map<String, String>> callback);
 
 
 

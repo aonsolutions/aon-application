@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.client.normalizedMemory;
 
 import java.text.ParseException;
 import java.util.Date;
-import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
@@ -24,8 +23,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
@@ -82,15 +79,14 @@ public class PageF1A extends PageAbs {
 	}
 
 	private void init(){
-
-				keyExe(map, "8009010", A18009010, "double", true);
-				keyExe(map, "8009020", A18009020, "double", true);
-				keyExe(map, "8009030", A18009030, "double", true);
-				keyExe(map, "8009040", A18009040, "double", true);
-				keyExe(map, "8009050", A18009050, "check", true);
+		map = normalizedMemory.getDigitalDepositTreeNode().getD2Deposit2014().getMap();
+		mapDraft = normalizedMemory.getDigitalDepositTreeNode().getD2Deposit2014().getMapDraft();
 				
-				
-	
+		keyExe("8009010", A18009010, "double", true);
+		keyExe("8009020", A18009020, "double", true);
+		keyExe("8009030", A18009030, "double", true);
+		keyExe("8009040", A18009040, "double", true);
+		keyExe("8009050", A18009050, "check", true);
 	}
 	
 	
@@ -207,7 +203,7 @@ public class PageF1A extends PageAbs {
 					
 					Date d = text.getValue();
 					Integer day = d.getDate();
-					Integer month = d.getMonth();
+					Integer month = d.getMonth()+1;
 					Integer year = d.getYear()+1900;
 					String value = day+"."+month+"."+year;
 					
@@ -215,19 +211,12 @@ public class PageF1A extends PageAbs {
 					text.setTitle(code);
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
-					onEdit(code, value);
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),code, value, new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});
-								
+					onEdit(code, value);	
 			}
 		});
 		
-		if(map.containsKey(key.getCode())){
-			String datestr = map.get(key.getCode());
+		if(mapDraft.containsKey(key.getCode())){
+			String datestr = mapDraft.get(key.getCode());
 
 			inma.getDate(datestr, new AsyncCallback<Date>() {
 				@Override
@@ -245,6 +234,9 @@ public class PageF1A extends PageAbs {
 
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
+		if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+			text.addStyleName(AON.AON_CSS.aonChanged());
+		}
 		text.setEnabled(!disabled);
 		panel.add(text);
 		
@@ -277,25 +269,23 @@ public class PageF1A extends PageAbs {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					onEdit(code, d.toString());
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),code, d.toString() , new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});
+					
 				} catch (ParseException e) {
 					// nothing.
 				}
 				
 			}
 		});
-		if(map.containsKey(key.getCode())){
-			Double d =Double.parseDouble(map.get(key.getCode()));
+		if(mapDraft.containsKey(key.getCode())){
+			Double d =Double.parseDouble(mapDraft.get(key.getCode()));
 			text.setValue(d);
 		}
 		else text.setValue(0.0);
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
+		if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+			text.addStyleName(AON.AON_CSS.aonChanged());
+		}
 		text.setEnabled(!disabled);
 		panel.add(text);
 		
@@ -328,19 +318,11 @@ public class PageF1A extends PageAbs {
 					
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
-					onEdit(code, d.toString());
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),code, d.toString() , new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});
-			
-				
+					onEdit(code, d.toString());		
 			}
 		});
-		if(map.containsKey(key.getCode())){
-			String d = map.get(key.getCode());
+		if(mapDraft.containsKey(key.getCode())){
+			String d = mapDraft.get(key.getCode());
 			for(Integer i = 0; i< text.getItemCount(); i++){
 				if(text.getItemText(i).equals(d))
 					text.setSelectedIndex(i);
@@ -349,6 +331,9 @@ public class PageF1A extends PageAbs {
 		else text.setSelectedIndex(0);
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
+		if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+			text.addStyleName(AON.AON_CSS.aonChanged());
+		}
 		text.setEnabled(!disabled);
 		panel.add(text);
 		
@@ -360,12 +345,12 @@ public class PageF1A extends PageAbs {
 	
 	String key2Aux;
 	DoubleBox dlAux;
-	private void keyExe(Map<String, String> map, String key2, Widget w, String type, Boolean enable) {
+	private void keyExe( String key2, Widget w, String type, Boolean enable) {
 		key2Aux = key2;
 		if(type.equals("check")) {
 			CheckBox c = (CheckBox) w;
-			if(map.containsKey(key2)){
-				c.setValue(map.get(key2).equals("1")); 
+			if(mapDraft.containsKey(key2)){
+				c.setValue(mapDraft.get(key2).equals("1")); 
 				c.setEnabled(enable);
 			}
 			c.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -375,19 +360,14 @@ public class PageF1A extends PageAbs {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);	
 					onEdit(key2, event.getValue()?"1":"0");
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, event.getValue()?"1":"0", new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});					
+							
 					if(key2.equals("8009050") ){
 			
 						if(event.getValue()){
 							for(Integer i = 1 ; i < 8 ; i++){
 								//tabPanel.getWidget(i).setVisible(false);
 							}
-							resetTables();
+							
 						}
 						else{
 							for(Integer i = 1 ; i < 8 ; i++){
@@ -400,10 +380,13 @@ public class PageF1A extends PageAbs {
 		}
 		if(type.equals("double")){
 			DoubleBox dl = (DoubleBox) w;
-			if(map.containsKey(key2)){
-				Double d = Double.parseDouble(map.get(key2));
+			if(mapDraft.containsKey(key2)){
+				Double d = Double.parseDouble(mapDraft.get(key2));
 				dl.setValue(d);
 				dl.setEnabled(enable);
+				if(!map.get(key2).equals(mapDraft.get(key2))){
+					dl.addStyleName(AON.AON_CSS.aonChanged());
+				}
 			}
 			dlAux = dl;
 			dl.addChangeHandler(new ChangeHandler() {
@@ -415,12 +398,6 @@ public class PageF1A extends PageAbs {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					onEdit(key2, dl.getValue().toString());
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, dl.getValue().toString(), new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});
 				}
 			});
 		}
@@ -440,50 +417,7 @@ public class PageF1A extends PageAbs {
 		lb.addItem("AG");
 		lb.addItem("PR");
 	}
-	private void resetTables(){
-		for (Integer i = 0; i < table.getRowCount(); i++) {
-			for(Integer j = 0; j < table.getCellCount(i); j++){
-				
-				if(j == 0 || j == 2){
-					DateBox dateBox= (DateBox)table.getWidget(i, j);
-					dateBox.setValue(null);
-
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),dateBox.getTitle(), "", new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});			
-					dateBox.setEnabled(false);
-				}
-				else if(j == 1){
-					ListBox listBox = (ListBox) table.getWidget(i, j);
-					listBox.setSelectedIndex(0);
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),listBox.getTitle(), "", new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});		
-					listBox.setEnabled(false);
-				}
-				else{
-					DoubleBox doubleBox = (DoubleBox) table.getWidget(i, j);
-					doubleBox.setValue(0.0);
-					Double d = 0.0;
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),doubleBox.getTitle(),"" , new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});		
-					doubleBox.setEnabled(false);
-				}
-					
-				
-			}
-		}
-	}
+	
 	
 	
 }

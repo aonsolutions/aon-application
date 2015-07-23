@@ -1,8 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.normalizedMemory;
 
 import java.util.Date;
-import java.util.Map;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Cities;
@@ -134,48 +134,49 @@ public class PageF2 extends PageAbs {
 	}
 
 	private void init() {
-
+		map = normalizedMemory.getDigitalDepositTreeNode().getD2Deposit2014().getMap();
+		mapDraft = normalizedMemory.getDigitalDepositTreeNode().getD2Deposit2014().getMapDraft();
 				
 
 
-				if(map.containsKey("IDA01010")) IDA01010.setText(map.get("IDA01010"));
-				if(map.containsKey("IDA01020")) IDA01020.setText(map.get("IDA01020"));
-				if(map.containsKey("IDA01101")) IDA01101.setText(map.get("IDA01101"));
+		if(map.containsKey("IDA01010")) IDA01010.setText(map.get("IDA01010"));
+		if(map.containsKey("IDA01020")) IDA01020.setText(map.get("IDA01020"));
+		if(map.containsKey("IDA01101")) IDA01101.setText(map.get("IDA01101"));
 				
-				listBoxItemAddCities(PR8081001);
-				keyExe(map, "80810001", PR8081001, "list", true);
+		listBoxItemAddCities(PR8081001);
+		keyExe("80810001", PR8081001, "list", true);
 
-				keyExe(map, "80810002", PR8081002, "text", true);
-				keyExe(map, "80810003", PR8081003, "text", true);
-				keyExe(map, "80810004", PR8081004, "text", true);
+		keyExe("80810002", PR8081002, "text", true);
+		keyExe("80810003", PR8081003, "text", true);
+		keyExe("80810004", PR8081004, "text", true);
 
-				keyExe(map, "8080805", PR8080805, "check", false);
-				keyExe(map, "8080854", PR8080854, "check", false);
-				keyExe(map, "8080801", PR8080801, "check", false);
-				keyExe(map, "8080803", PR8080803, "check", false);
-				keyExe(map, "8080811", PR8080811, "check", false);
-				keyExe(map, "8080800", PR8080800, "check", false);
-				keyExe(map, "8080819", PR8080819, "check", false);
+		keyExe("8080805", PR8080805, "check", false);
+		keyExe("8080854", PR8080854, "check", false);
+		keyExe("8080801", PR8080801, "check", false);
+		keyExe("8080803", PR8080803, "check", false);
+		keyExe("8080811", PR8080811, "check", false);
+		keyExe("8080800", PR8080800, "check", false);
+		keyExe("8080819", PR8080819, "check", false);
 
-				PR8081201.setWidth("99%");
-				keyExe(map, "8081201", PR8081201, "text", true);
-				PR8081202.setWidth("99%");
-				keyExe(map, "8081202", PR8081202, "text", true);
-				PR8081203.setWidth("99%");
-				keyExe(map, "8081203", PR8081203, "text", true);
-				PR8081204.setWidth("99%");
-				keyExe(map, "8081204", PR8081204, "text", true);
-				PR8081205.setWidth("99%");
-				keyExe(map, "8081205", PR8081205, "text", true);
-				PR8081206.setWidth("99%");
-				listBoxItemAdd(PR8081206);
-				keyExe(map, "8081206", PR8081206, "list", true);
-				PR8081207.setWidth("99%");
-				keyExe(map, "8081207", PR8081207, "text", true);
-				PR8081208.setWidth("99%");
-				keyExe(map, "8081208", PR8081208, "text", true);
-				PR8081209.setWidth("99%");
-				keyExe(map, "8081209", PR8081209, "text", true);
+		PR8081201.setWidth("99%");
+		keyExe("8081201", PR8081201, "text", true);
+		PR8081202.setWidth("99%");
+		keyExe("8081202", PR8081202, "text", true);
+		PR8081203.setWidth("99%");
+		keyExe("8081203", PR8081203, "text", true);
+		PR8081204.setWidth("99%");
+		keyExe("8081204", PR8081204, "text", true);
+		PR8081205.setWidth("99%");
+		keyExe("8081205", PR8081205, "text", true);
+		PR8081206.setWidth("99%");
+		listBoxItemAdd(PR8081206);
+		keyExe("8081206", PR8081206, "list", true);
+		PR8081207.setWidth("99%");
+		keyExe("8081207", PR8081207, "text", true);
+		PR8081208.setWidth("99%");
+		keyExe("8081208", PR8081208, "text", true);
+		PR8081209.setWidth("99%");
+		keyExe("8081209", PR8081209, "text", true);
 				
 
 	}
@@ -200,14 +201,18 @@ public class PageF2 extends PageAbs {
 	DateBox dAux;
 	ListBox lbAux;
 	DoubleBox dlAux;
-	private void keyExe(Map<String, String> map, String key2, Widget w, String type, Boolean enable) {
+	private void keyExe(String key2, Widget w, String type, Boolean enable) {
 		key2Aux = key2;
 		if(type.equals("text")) {
 			TextBox t = (TextBox) w;
-			if(map.containsKey(key2)){
-				t.setValue(map.get(key2));
+			if(mapDraft.containsKey(key2)){
+				t.setValue(mapDraft.get(key2));
 				t.setEnabled(enable);
+				if(!map.get(key2).equals(mapDraft.get(key2))){
+					t.addStyleName(AON.AON_CSS.aonChanged());
+				}
 			}
+			
 			tAux = t;
 			t.addChangeHandler(new ChangeHandler() {
 				String key2 = key2Aux ;
@@ -218,20 +223,15 @@ public class PageF2 extends PageAbs {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					onEdit(key2, t.getValue());
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, t.getValue(), new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});
+					
 				}
 			});
 		}
 		
 		if(type.equals("check")) {
 			CheckBox c = (CheckBox) w;
-			if(map.containsKey(key2)){
-				c.setValue(map.get(key2).equals("True")); 
+			if(mapDraft.containsKey(key2)){
+				c.setValue(mapDraft.get(key2).equals("True")); 
 				c.setEnabled(enable);
 			}
 			c.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -241,12 +241,7 @@ public class PageF2 extends PageAbs {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);	
 					onEdit(key2, event.getValue()?"True":"False");
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, event.getValue()?"True":"False", new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});					
+								
 					
 				}
 			});
@@ -257,9 +252,9 @@ public class PageF2 extends PageAbs {
   
 			DateBox d = (DateBox) w;
 			dAux = d;
-			if(map.containsKey(key2)){
+			if(mapDraft.containsKey(key2)){
 				
-				String datestr = map.get(key2);
+				String datestr = mapDraft.get(key2);
 				inma.getDate(datestr, new AsyncCallback<Date>() {
 					DateBox d = dAux;
 					@Override
@@ -273,6 +268,9 @@ public class PageF2 extends PageAbs {
 						
 					}
 				} );
+				if(!map.get(key2).equals(mapDraft.get(key2))){
+					d.addStyleName(AON.AON_CSS.aonChanged());
+				}
 				d.setEnabled(enable);
 
 			}
@@ -285,16 +283,11 @@ public class PageF2 extends PageAbs {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					Integer day = d.getValue().getDate();
-					Integer month = d.getValue().getMonth();
+					Integer month = d.getValue().getMonth()+1;
 					Integer year = d.getValue().getYear()+1900;
 					String value = day+"."+month+"."+year;
 					onEdit(key2, value);
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, value, new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});	
+					
 					
 					String dayKey = null;
 					String monthKey = null;
@@ -321,30 +314,15 @@ public class PageF2 extends PageAbs {
 					}
 					if(dayKey != null){
 						onEdit(dayKey, day.toString());
-						inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),dayKey, day.toString(), new AsyncCallback<Void>() {
-							@Override
-							public void onFailure(Throwable caught) {}
-							@Override
-							public void onSuccess(Void result) {}
-						});	
+						
 					}
 					if(monthKey != null){
 						onEdit(monthKey, month.toString());
-						inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),monthKey, month.toString(), new AsyncCallback<Void>() {
-							@Override
-							public void onFailure(Throwable caught) {}
-							@Override
-							public void onSuccess(Void result) {}
-						});	
+						
 					}
 					if(yearKey != null){
 						onEdit(yearKey, year.toString());
-						inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),yearKey, year.toString(), new AsyncCallback<Void>() {
-							@Override
-							public void onFailure(Throwable caught) {}
-							@Override
-							public void onSuccess(Void result) {}
-						});	
+					
 					}
 				}
 			});
@@ -353,8 +331,8 @@ public class PageF2 extends PageAbs {
 		
 		if(type.equals("list")){
 			ListBox lb = (ListBox) w;
-			if(map.containsKey(key2)){
-				String value = map.get(key2);
+			if(mapDraft.containsKey(key2)){
+				String value = mapDraft.get(key2);
 				String value2 = "";
 				if(key2.equals("8081206")){
 					for(Integer i = 0;i< D2DepositConstants.PROVINCES.length; i++){
@@ -378,6 +356,9 @@ public class PageF2 extends PageAbs {
 					
 				}
 				lb.setEnabled(enable);
+				if(!map.get(key2).equals(mapDraft.get(key2))){
+					lb.addStyleName(AON.AON_CSS.aonChanged());
+				}
 			}
 			lbAux = lb;
 			lb.addChangeHandler(new ChangeHandler() {
@@ -403,12 +384,6 @@ public class PageF2 extends PageAbs {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					onEdit(key2, value);
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, value, new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});
 					
 				}
 			});
@@ -416,10 +391,13 @@ public class PageF2 extends PageAbs {
 		
 		if(type.equals("double")){
 			DoubleBox dl = (DoubleBox) w;
-			if(map.containsKey(key2)){
-				Double d = Double.parseDouble(map.get(key2));
+			if(mapDraft.containsKey(key2)){
+				Double d = Double.parseDouble(mapDraft.get(key2));
 				dl.setValue(d);
 				dl.setEnabled(enable);
+				if(!map.get(key2).equals(mapDraft.get(key2))){
+					dl.addStyleName(AON.AON_CSS.aonChanged());
+				}
 			}
 			dlAux = dl;
 			dl.addChangeHandler(new ChangeHandler() {
@@ -431,12 +409,7 @@ public class PageF2 extends PageAbs {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					onEdit(key2, dl.getValue().toString());
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key2, dl.getValue().toString(), new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});
+					
 				}
 			});
 		}

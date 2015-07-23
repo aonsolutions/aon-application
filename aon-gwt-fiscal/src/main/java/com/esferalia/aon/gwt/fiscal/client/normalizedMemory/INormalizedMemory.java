@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Vector;
 
+import com.esferalia.aon.gwt.fiscal.shared.D2Deposit2014;
 import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -28,11 +29,13 @@ public interface INormalizedMemory extends RemoteService{
 	
 	public void saveDeposit(String cif, Integer domainId, Boolean textMode);
 	
+	public void saveDeposit(String cif, Integer domainId, D2Deposit2014 d2Deposit2014, Boolean textMode);
+	
 	public Vector<MemoryTemplate> getDigitalDepositTemplates(Integer domainId);
 	
 	public MemoryTemplate createTextMemory(Integer domainId, String name);
 
-	public Map<String, String> updateTexts(MemoryTemplate mt, Integer domainId, String cif);
+	public Map<String, String> updateTexts(MemoryTemplate mt, Integer domainId, String cif, Map<String, String> map);
 	
 	public Integer getParentDomain(Integer domainId);
 	
@@ -47,4 +50,6 @@ public interface INormalizedMemory extends RemoteService{
 	public void delete(Integer domainId, String document);
 
 	public void deleteFreeText(Integer domainId, Integer rattachId);
+	
+	public Map<String, String> calculate(Map<String, String> map);
 }

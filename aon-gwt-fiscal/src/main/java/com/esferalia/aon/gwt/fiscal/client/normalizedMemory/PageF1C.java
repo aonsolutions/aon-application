@@ -143,25 +143,23 @@ public class PageF1C extends PageAbs {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					onEdit(code, d);
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),code, d , new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});
+					
 				} catch (ParseException e) {
 					// nothing.
 				}
 				
 			}
 		});
-		if(map.containsKey(key.getCode())){
-			String d =map.get(key.getCode());
+		if(mapDraft.containsKey(key.getCode())){
+			String d =mapDraft.get(key.getCode());
 			text.setValue(d);
 		}
 		else text.setValue("");
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
+		if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+			text.addStyleName(AON.AON_CSS.aonChanged());
+		}
 		//text.setEnabled(!disabled);
 		panel.add(text);
 		
@@ -190,7 +188,7 @@ public class PageF1C extends PageAbs {
 					
 					Date d = text.getValue();
 					Integer day = d.getDate();
-					Integer month = d.getMonth();
+					Integer month = d.getMonth()+1;
 					Integer year = d.getYear()+1900;
 					String value = day+"."+month+"."+year;
 					
@@ -199,18 +197,13 @@ public class PageF1C extends PageAbs {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					onEdit(code, value);
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),code, value, new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});
+					
 								
 			}
 		});
 		
-		if(map.containsKey(key.getCode())){
-			String datestr = map.get(key.getCode());
+		if(mapDraft.containsKey(key.getCode())){
+			String datestr = mapDraft.get(key.getCode());
 
 			inma.getDate(datestr, new AsyncCallback<Date>() {
 				@Override
@@ -228,6 +221,9 @@ public class PageF1C extends PageAbs {
 
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
+		if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+			text.addStyleName(AON.AON_CSS.aonChanged());
+		}
 		//text.setEnabled(!disabled);
 		panel.add(text);
 		

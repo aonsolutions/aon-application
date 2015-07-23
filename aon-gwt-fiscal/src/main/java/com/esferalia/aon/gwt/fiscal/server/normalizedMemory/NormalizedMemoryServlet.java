@@ -25,6 +25,7 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.D2DepositTreeObject;
+import com.esferalia.aon.gwt.fiscal.shared.D2Deposit2014;
 import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -35,9 +36,11 @@ import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
+import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2Compute;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2MVELContext;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema;
+import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves.Clave;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002013toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002014toD2;
@@ -168,7 +171,43 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		}
 		request.getSession().removeAttribute("ModifyD2DepositSchema" + cif);
 	}
+	
+	public void saveDeposit(String cif, Integer domainId, D2Deposit2014 d2Deposit2014, Boolean textMode) {
+		String domain = AonUtil.getDomainName();
+		HttpServletRequest request = getThreadLocalRequest();
+		Esquema schema = DBConsults.getDeposit(domain, domainId);
+		schema = D2Deposit2014ToSchema(schema, d2Deposit2014);
+		try {
+			byte[] b = Utils.writeXml(schema);
+			if (textMode) {
+				DBConsults.insertDeposit(domain, b, domainId, cif);
+			} else
+				DBConsults.insertDeposit(domain, b, domainId);
+		} catch (JAXBException | IOException e) {
+			e.printStackTrace();
+		}
+		request.getSession().removeAttribute("ModifyD2DepositSchema" + cif);
+	}
 
+	private Esquema D2Deposit2014ToSchema(Esquema schema, D2Deposit2014 d2Deposit2014) {
+		Esquema s = new Esquema();
+		s.setCabecera(schema.getCabecera());
+		Claves claves = new Claves();
+
+		for(String key : d2Deposit2014.getMapDraft().keySet()){
+			if(!key.equals("DepositType")){
+				Clave clave = new Clave();
+				clave.setCodigo(BigInteger.valueOf(Integer.parseInt(key)));
+				clave.setValor(d2Deposit2014.getMapDraft().get(key));
+				claves.getClave().add(clave);
+			}
+		}
+		
+		s.setClaves(claves);
+		
+		return s;
+	}
+	
 	public Vector<MemoryTemplate> getDigitalDepositTemplates(Integer domainId) {
 		String domain = AonUtil.getDomainName();
 
@@ -241,94 +280,81 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 
 	}
 	
-	public Map<String, String> updateTexts(MemoryTemplate mt, Integer domainId, String cif) {
+	public Map<String, String> updateTexts(MemoryTemplate mt, Integer domainId, String cif, Map<String, String> map) {
 		String domain = AonUtil.getDomainName();
 		Esquema schema = DBConsults.getDeposit(domain, domainId, mt.getId()
 				.toString());
-		Map<String, String> map = new  HashMap<String, String>();
+		
 		for (Integer i = 0; i < schema.getClaves().getClave().size(); i++) {
 			if (schema.getClaves().getClave().get(i).getCodigo().toString()
 					.equals(D2DepositKey.MAT19019001.getCode())) { 
-				updateSchema(cif, domainId,D2DepositKey.MAT19019001.getCode() , schema.getClaves()
-						.getClave().get(i).getValor());
+				
 				map.put(D2DepositKey.MAT19019001.getCode(),  schema.getClaves().getClave().get(i).getValor());
 			} 
 			else if (schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT29029001.getCode())) { 
-				updateSchema(cif, domainId, D2DepositKey.MAT29029001.getCode(), schema.getClaves()
-						.getClave().get(i).getValor());
+				
 				map.put(D2DepositKey.MAT29029001.getCode(), schema.getClaves().getClave().get(i).getValor());
 
 			} 
 			else if (schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT39039001.getCode())) { 
-				updateSchema(cif, domainId, D2DepositKey.MAT39039001.getCode(), schema.getClaves()
-						.getClave().get(i).getValor());
+				
 				map.put(D2DepositKey.MAT39039001.getCode(), schema.getClaves().getClave().get(i).getValor());
 
 			} 
 			else if (schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT49049001.getCode())) { 
-				updateSchema(cif, domainId, D2DepositKey.MAT49049001.getCode(), schema.getClaves()
-						.getClave().get(i).getValor());
+				
 				map.put(D2DepositKey.MAT49049001.getCode(), schema.getClaves().getClave().get(i).getValor());
 
 			} 
 			else if (schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT59059001.getCode())) { 
- 				updateSchema(cif, domainId, D2DepositKey.MAT59059001.getCode(), schema.getClaves()
-						.getClave().get(i).getValor());
+ 				
 				map.put(D2DepositKey.MAT59059001.getCode(), schema.getClaves().getClave().get(i).getValor());
 			} 
 			else if (schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT69069001.getCode())) {
-				updateSchema(cif, domainId, D2DepositKey.MAT69069001.getCode(), schema.getClaves()
-						.getClave().get(i).getValor());
+				
 				map.put(D2DepositKey.MAT69069001.getCode(), schema.getClaves().getClave().get(i).getValor());
 			} 
 			else if (schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT79079001.getCode())) {
-				updateSchema(cif, domainId,D2DepositKey.MAT79079001.getCode(), schema.getClaves()
-						.getClave().get(i).getValor());
+				
 				map.put(D2DepositKey.MAT79079001.getCode(), schema.getClaves().getClave().get(i).getValor());
 			} 
 			else if (schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT89089001.getCode())) { 
-				updateSchema(cif, domainId, D2DepositKey.MAT89089001.getCode(), schema.getClaves()
-						.getClave().get(i).getValor());
+				
 				map.put(D2DepositKey.MAT89089001.getCode(), schema.getClaves().getClave().get(i).getValor());
 
 			} 
 			else if (schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT99099001.getCode())) { 
-				updateSchema(cif, domainId, D2DepositKey.MAT99099001.getCode(), schema.getClaves()
-						.getClave().get(i).getValor());
+				
 				map.put(D2DepositKey.MAT99099001.getCode(), schema.getClaves().getClave().get(i).getValor());
 
 			} 
 			else if (schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT119119001.getCode())) { 
-				updateSchema(cif, domainId, D2DepositKey.MAT119119001.getCode(), schema.getClaves()
-						.getClave().get(i).getValor());
+				
 				map.put(D2DepositKey.MAT119119001.getCode(), schema.getClaves().getClave().get(i).getValor());
 
 			} 
 			else if (schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT129129001.getCode())) { 
-				updateSchema(cif, domainId,D2DepositKey.MAT129129001.getCode(), schema.getClaves()
-						.getClave().get(i).getValor());
+				
 				map.put(D2DepositKey.MAT129129001.getCode(), schema.getClaves().getClave().get(i).getValor());
 
 			} else if (schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT139139001.getCode())) { 
-				updateSchema(cif, domainId, D2DepositKey.MAT139139001.getCode(), schema.getClaves()
-						.getClave().get(i).getValor());
+				
 				map.put(D2DepositKey.MAT139139001.getCode(), schema.getClaves().getClave().get(i).getValor());
 
 			} else if (schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT149149001.getCode())) { 
-				updateSchema(cif, domainId, D2DepositKey.MAT149149001.getCode(), schema.getClaves()
-						.getClave().get(i).getValor());
+				
 				map.put(D2DepositKey.MAT149149001.getCode(), schema.getClaves().getClave().get(i).getValor());
 
 			}
@@ -493,8 +519,6 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 						map.remove(key.getCode().toString());
 					map.put(key.getCode(), ctx.get(key)
 							.toString());
-					updateSchema(cif, domainId, key.getCode(), ctx.get(key)
-							.toString());
 				}
 			} else if (ejercicio.equals("2014")) {
 				Mod2002014 mod2002014 = com.esferalia.aon.occam.api.AON
@@ -506,8 +530,6 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 					if(map.containsKey(key.getCode().toString()))
 						map.remove(key.getCode().toString());
 					map.put(key.getCode(), ctx.get(key)
-							.toString());
-					updateSchema(cif, domainId, key.getCode(), ctx.get(key)
 							.toString());
 				}
 			}
@@ -523,8 +545,6 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 						map.remove(key.getCode().toString());
 					map.put(key.getCode(), ctx.get(key)
 							.toString());
-					updateSchema(cif, domainId, key.getCode(), ctx.get(key)
-							.toString());
 				}
 			} else if (ejercicio.equals("2014")) {
 				Mod2002014 mod2002014 = com.esferalia.aon.occam.api.AON
@@ -536,8 +556,6 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 					if(map.containsKey(key.getCode().toString()))
 						map.remove(key.getCode().toString());
 					map.put(key.getCode(), ctx.get(key)
-							.toString());
-					updateSchema(cif, domainId, key.getCode(), ctx.get(key)
 							.toString());
 				}
 			}
@@ -554,8 +572,6 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 						map.remove(key.getCode().toString());
 					map.put(key.getCode(), ctx.get(key)
 							.toString());
-					updateSchema(cif, domainId, key.getCode(), ctx.get(key)
-							.toString());
 				}
 			} else if (ejercicio.equals("2014")) {
 				Mod2002014 mod2002014 = com.esferalia.aon.occam.api.AON
@@ -569,12 +585,10 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 						map.remove(key.getCode().toString());
 					map.put(key.getCode(), ctx.get(key)
 							.toString());
-					updateSchema(cif, domainId, key.getCode(), ctx.get(key)
-							.toString());
 				}
 			}
 		} else if (type.equals("Memoria predefinida")) {
-			updateTexts(mt, domainId, cif);
+			map = updateTexts(mt, domainId, cif, map);
 		} else if (type.equals("Memoria (Deposito.xml)")) {
 			
 			if (ejercicio.equals("2013")) {
@@ -611,41 +625,40 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 	
 	
 	// TODO Create new class for map
-	public static Map<String,String> COMPUTE_MAP = new LinkedHashMap<String,String>();
-	static {
-		COMPUTE_MAP.put(D2DepositHeaderKey.BA111000.toString(),"(PYMES)?(Q11100+Q11200+Q11300+Q11400+Q11500+Q11600+Q11700):(Q11100+Q11200)");
-	}
-
-	private void calculate(Esquema schema) {
-		D2MVELContext ctx = new D2MVELContext(schema, new IAccMiningKeyAccept() {
+	public Map<String, String> calculate(Map<String, String> map) {
+		D2MVELContext ctx = new D2MVELContext(map, new IAccMiningKeyAccept() {
 			@Override
 			public boolean acceptKey(Object key) {
 				return AonStringUtils.isNotEmpty((String) key);
 			}
 		});
-		ctx.setExpressionMap(COMPUTE_MAP);
-		List<Clave> claves = schema.getClaves().getClave();
-		for (Clave clave : claves) {
+		ctx.setExpressionMap(D2Compute.COMPUTE_MAP);
+		
+		for(String key : map.keySet()){
 			try {
-				if (AonStringUtils.isNotEmpty( clave.getValor() )) {
-					Double d = Double.parseDouble(clave.getValor());
-					ctx.put("Q"+clave.getCodigo().toString(), d);
+				if (AonStringUtils.isNotEmpty( map.get(key) )) {
+					Double d = Double.parseDouble(map.get(key));
+					ctx.put("Q"+key, d);
 				}
 			} catch (NumberFormatException e) {
 				// Ignore value
 			}
 		}
 		ctx.put("PYMES", false);
-		for (String key : COMPUTE_MAP.keySet()) {
-			String expression = COMPUTE_MAP.get(key);
+		for (String key : D2Compute.COMPUTE_MAP.keySet()) {
+			String expression = D2Compute.COMPUTE_MAP.get(key);
 			Object ret = ctx.evaluateExpression(key,expression);
 			if (ret instanceof Double) {
 				Double calculated = (Double) ret;
 				ctx.put(key, calculated);
 				// TODO 
 				// populate data
+				
+				if(map.containsKey(key)) map.remove(key);
+				map.put(key, calculated.toString());
 			}
 		}
+		return map;
 	}
 	
 }

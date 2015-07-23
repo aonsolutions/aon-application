@@ -122,26 +122,40 @@ public class FreeText extends PageAbs {
 					
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
-					if(!textMode) onEdit(key.getCode(), s);
-				
-					inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), s, new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});
+					if(!textMode) 
+						onEdit(key.getCode(), s);
+					else
+						inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), s, new AsyncCallback<Void>() {
+							@Override
+							public void onFailure(Throwable caught) {}
+							@Override
+							public void onSuccess(Void result) {}
+						});
 				} catch (ParseException e) {
 					// nothing.
 				}
 				
 			}
 		});
-		if(map.containsKey(key.getCode())){
-			text.setValue(map.get(key.getCode()));
+		if(textMode){
+			if(map.containsKey(key.getCode())){
+				text.setValue(map.get(key.getCode()));
+			}
+			else text.setValue("");
 		}
-		else text.setValue("");
+		else {
+			if(mapDraft.containsKey(key.getCode())){
+				text.setValue(mapDraft.get(key.getCode()));
+			}
+			else text.setValue("");
+			if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+				text.addStyleName(AON.AON_CSS.aonChanged());
+			}
+		}
+		
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
+		
 		text.setEnabled(!disabled);
 		panel.add(text);
 		if (!isTitle(key)) {
@@ -157,7 +171,7 @@ public class FreeText extends PageAbs {
 		// TODO Auto-generated method stub
 		
 		if(textMode){
-			this.d2DepositObject = d2DepositObject;
+
 			inma.getSchema(enterprise.getDocument(),enterprise.getDomain(),textMode, new AsyncCallback<Map<String, String>>() {
 				
 				@Override
@@ -171,7 +185,8 @@ public class FreeText extends PageAbs {
 				}
 			});
 		}else super.dump(d2DepositObject);
-		
 	}
+	
+	
 	
 }
