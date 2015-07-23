@@ -347,8 +347,8 @@ public class NoShowInvoicing {
 
 	private double getPenaltyTaxableBase(ProjectReservation reservation, int penaltyDays) throws ManagerBeanException {
 		switch (penaltyDays) {
-			case -1:
-				return reservation.getAllNightPenaltyTaxableBase();
+			/*case -1:
+				return reservation.getAllNightPenaltyTaxableBase();*/
 			case 1:
 				return reservation.getFirstNightPenaltyTaxableBase();
 			case 2:
