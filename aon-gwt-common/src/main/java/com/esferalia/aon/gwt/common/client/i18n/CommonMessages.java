@@ -2154,6 +2154,28 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Subvenciones, donaciones y legados recogidos en el patrimonio neto del balance, otorgados por terceros distintos a los socios: an\u00E1lisis del movimiento")
  	String memory11_2Table2();
  	
+ 	@DefaultMessage("Entidad Dominante")
+ 	String memory12_2Header1();
+ 	
+ 	@DefaultMessage("Otras empresas del grupo")
+ 	String memory12_2Header2();
+ 	
+ 	@DefaultMessage("Negocios conjuntos en los que la empresa sea uno de los participantes")
+ 	String memory12_2Header3();
+ 	
+ 	@DefaultMessage("Empresas Asociadas")
+ 	String memory12_2Header4();
+ 	
+ 	@DefaultMessage("Empresas con control conjunto o influencia significativa sobre la empresa")
+ 	String memory12_2Header5();
+ 	
+ 	@DefaultMessage("Personal clave de la direcci\u00F3 de la empresa o de la entidad dominante")
+ 	String memory12_2Header6();
+ 	
+ 	@DefaultMessage("Otras partes vinculadas")
+ 	String memory12_2Header7();
+ 	
+ 	
  	@DefaultMessage("Apartado 12: Operaciones con partes vinculadas")
  	String memory12_2Title();
  	
