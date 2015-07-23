@@ -2182,13 +2182,34 @@ public interface CommonMessages extends Messages {
  	String memory13_2Table();
  	
  	@DefaultMessage("Apartado 14: Informaci\u00f3n sobre el medio ambiente")
- 	String memory14_2Title();
+ 	String memory14_2Title1();
  	
- 	@DefaultMessage("Descripci\u00f3n del concepto")
+ 	@DefaultMessage("Apartado 14: Informaci\u00f3n sobre derechos de emisi\u00f3n de gases de efecto invernadero")
+ 	String memory14_2Title2();
+ 	
+ 	@DefaultMessage("DESCRIPCI\u00D3N DEL CONCEPTO")
  	String memory14_2Table1();
  	
  	@DefaultMessage("Movimiento durante el ejercicio")
  	String memory14_2Table2();
+ 	
+ 	@DefaultMessage("DERECHOS DE EMISI\u00D3N DE GASES DE EFECTO INVERNADERO")
+ 	String memory14_2Table2header1();
+ 	
+ 	@DefaultMessage("CONCEPTO")
+ 	String memory14_2Table2header2();
+ 	
+ 	@DefaultMessage("A) ACTIVOS DE NATURALEZA MEDIOAMBIENTAL")
+ 	String memory14_2Row1();
+ 	
+ 	@DefaultMessage("3.Correcciones valorativas por deterioro")
+ 	String memory14_2Row2();
+ 	
+ 	@DefaultMessage("C)Riesgos cubiertos por las provisiones para actuaciones medioambientales")
+ 	String memory14_2Row3();
+ 	
+ 	@DefaultMessage("1.Provisi\u00F3n para actuaciones medioambientales, inclu\u00EDdas en provisiones")
+ 	String memory14_2Row4();
  	
  	@DefaultMessage("Otra Informaci\u00f3n")
  	String memory14_2Table3();

@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.normalizedMemory;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
@@ -13,7 +16,28 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PageM14_2 extends PageAbs {
+	
+	private static final Map<Integer, String> DEFINED_ROWS = new HashMap<Integer, String>() {
+		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
+		{
+			put(new Integer(1), new String(AON.MSG.memory14_2Row1()));
+			put(new Integer(4), new String(AON.MSG.memory14_2Row2()));
+			put(new Integer(8), new String(AON.MSG.memory14_2Row3()));
+			put(new Integer(9), new String(AON.MSG.memory14_2Row4()));
+		};
+	};
+	
+	private static final String[][] AUXILIARES = new String[][] {
+		  new String[] {AON.MSG.memory14_2Table1() , AON.MSG.year2014() , AON.MSG.year2013()}
+		, new String[] {AON.MSG.memory14_2Table2header1(), AON.MSG.amount()}
+		, new String[] {AON.MSG.memory14_2Table2header2(), AON.MSG.amount()}
+	};
+	
 	interface PageBinder extends UiBinder<Widget, PageM14_2> {
 	}
 
@@ -52,116 +76,53 @@ public class PageM14_2 extends PageAbs {
 
 	@Override
 	protected void initializeTable() {
-		table();
-		table1();
-		table2();
-
+		
+		defineMRNTable(table, AUXILIARES[0], DEFINED_ROWS, D2DepositConstants.MRN14_ABREVIATE_PYMES_KEYS_1);
+		defineMRNTable(table1, AUXILIARES[1], null, D2DepositConstants.MRN14_ABREVIATE_PYMES_KEYS_2);
+		defineMRNTable(table2, AUXILIARES[2], null, D2DepositConstants.MRN14_ABREVIATE_PYMES_KEYS_3);
 	}
-	
-	private void table(){
-		table.setWidth("100%");
-		table.setCellSpacing(0);
-		table.getColumnFormatter().setWidth(1, "200px");
-		table.getColumnFormatter().setWidth(2, "200px");
 
-
+	protected void defineMRNTable( FlexTable tab, String[] headers, Map<Integer, String> rows, D2DepositKey[][] keys){
+		
+		tab.setWidth("100%");
+		tab.setCellSpacing(0);
 		int row = 0;
-		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
-		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
-		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
-
-		table.setWidget(row, 1, new Label("Ejercicio 2014"));
-		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
-		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
-		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
-		table.setWidget(row, 2, new Label("Ejercicio 2013"));
-		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBold());
-		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBorderBottom());
-		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextCenter());
+		int col = 0;
+		tab.getColumnFormatter().addStyleName(col, AON.AON_CSS.aonWidthAuto());
+		tab.getColumnFormatter().addStyleName(col, AON.AON_CSS.aonNowrap());
+		
+		for (String primary : headers) {
+			
+			tab.getColumnFormatter().addStyleName(col, AON.AON_CSS.aonWidth140());
+			tab.setWidget(row, col, new Label(primary));	
+			tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
+			tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
+			tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
+			++col;
+		}
 		
 		++row;
-		table.setWidget(row, 0, new Label("A) ACTIVOS DE NATURALEZA MEDIOAMBIENTAL"));
-		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
-		++row;
-		for(Integer i = 0; i< D2DepositConstants.MA14_ABREVIATE_KEYS_1.length; i+=2){
-			if(row == 4){
-				table.setWidget(row, 0, new Label("3.Correcciones valorativas por deterioro"));
-				++row;
-			}
-			if(row == 8){
-				table.setWidget(row, 0, new Label("C)Riesgos cubiertos por las provisiones para actuaciones medioambientales"));
-				table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
-				++row;
-			}
-			if(row == 9){
-				table.setWidget(row, 0, new Label("1.Provisi\u00F3n para actuaciones medioambientales, inclu\u00EDdas en provisiones"));
-				++row;
-			}
-			D2DepositKey[] d2 = new D2DepositKey[]{
-					D2DepositConstants.MA14_ABREVIATE_KEYS_1[i],
-					D2DepositConstants.MA14_ABREVIATE_KEYS_1[i+1],
-			};
-			row = paintKey(table, d2 , row);
-		}
-
-	}
-	
-	private void table1(){
-		table1.setWidth("100%");
-		table1.setCellSpacing(0);
-		table1.getColumnFormatter().setWidth(1, "200px");
-	
-
-
-		int row = 0;
-		table1.setWidget(row, 0, new Label("Derechos de emisi\u00F3n de gases de efecto invernadero"));
-		table1.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
-		table1.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
-		table1.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
-
-		table1.setWidget(row, 1, new Label("Importe"));
-		table1.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
-		table1.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
-		table1.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
 		
-		++row;
-		for(Integer i = 0; i< D2DepositConstants.MA14_ABREVIATE_KEYS_2.length; i++){
-
-			row = paintKey(table1, D2DepositConstants.MA14_ABREVIATE_KEYS_2[i] , row);
+		for (D2DepositKey[] innerKeys : keys) {
+			col = 0;
+			
+			if (rows != null) {
+				if (rows.containsKey(row)) {
+					tab.setWidget(row, col, new Label(rows.get(row)));
+					tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
+					++row;
+				}
+			}
+			
+			paintKeyDescription(tab, innerKeys[0], row, col);
+			tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
+			col++;
+			for (D2DepositKey key : innerKeys ) {
+				
+				paintKeyField(tab,key,row,col,(col==1), key.getCode()); 
+				col++;
+			}
+			++row;
 		}
 	}
-	private void table2(){
-		table2.setWidth("100%");
-		table2.setCellSpacing(0);
-		table2.getColumnFormatter().setWidth(1, "200px");
-	
-
-
-		int row = 0;
-		table2.setWidget(row, 0, new Label("Concepto"));
-		table2.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
-		table2.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
-		table2.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
-
-		table2.setWidget(row, 1, new Label("Importe"));
-		table2.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
-		table2.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
-		table2.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
-		
-		++row;
-		for(Integer i = 0; i< D2DepositConstants.MA14_ABREVIATE_KEYS_3.length; i++){
-
-			row = paintKey(table2, D2DepositConstants.MA14_ABREVIATE_KEYS_3[i] , row);
-		}
-	}
-	
-	
-	protected int paintKey(FlexTable tab, D2DepositKey[] keys,  int row) {
-		paintKeyDescription(tab, keys[0], row, 0);
-		for (Integer i = 0; i < keys.length ; i++) {
-			paintKeyField(tab,keys[i],row,i+1);
-		}
-		return  ++row;
-	}
-
 }

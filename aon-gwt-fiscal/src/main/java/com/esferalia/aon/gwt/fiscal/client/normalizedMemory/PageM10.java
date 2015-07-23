@@ -60,7 +60,7 @@ public class PageM10 extends PageAbs {
 		}
 	}
 	
-	protected void defineMRNTable( FlexTable tab, String[] headers, D2DepositKey[][] keys){
+	protected void defineMRNTable( FlexTable tab, String[] headers, D2DepositKey[][] keys) {
 		
 		tab.setWidth("100%");
 		tab.setCellSpacing(0);
