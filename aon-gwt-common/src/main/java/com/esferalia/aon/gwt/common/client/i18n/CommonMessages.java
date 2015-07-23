@@ -2175,6 +2175,21 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Otras partes vinculadas")
  	String memory12_2Header7();
  	
+ 	@DefaultMessage("Apartado 12.1")
+ 	String memory12_2Title1();
+ 	
+ 	@DefaultMessage("Apartado 12.2")
+ 	String memory12_2Title2();
+ 	
+ 	@DefaultMessage("Apartado 12.3")
+ 	String memory12_2Title3();
+ 	
+ 	@DefaultMessage("Apartado 12.4")
+ 	String memory12_2Title4();
+ 	
+ 	@DefaultMessage("Apartado 12.5")
+ 	String memory12_2Title5();
+
  	
  	@DefaultMessage("Apartado 12: Operaciones con partes vinculadas")
  	String memory12_2Title();
