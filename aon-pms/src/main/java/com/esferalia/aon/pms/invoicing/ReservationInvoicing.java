@@ -492,13 +492,12 @@ public class ReservationInvoicing implements IReservationConstants {
 
 	private void createInvoiceFinances(Invoice invoice, ReservationInvoiceTo reservationInvoiceTo) throws ManagerBeanException {
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-		for (Finance finance : reservationInvoiceTo.getFinances()) {
-			if (finance.getAmount() > 0) {
-				if (!reservationInvoiceTo.isDirectCustomer()) {
-					FinanceGenerator financeGenerator = new FinanceGenerator();
-					financeGenerator.generateFinances(invoice, finance.getAmount());
-					break;
-				} else {
+		if (!reservationInvoiceTo.isDirectCustomer() && invoice.getTotal() != 0) {
+			FinanceGenerator financeGenerator = new FinanceGenerator();
+			financeGenerator.generateFinances(invoice, invoice.getTotal());
+		} else {
+			for (Finance finance : reservationInvoiceTo.getFinances()) {
+				if (finance.getAmount() > 0) {
 					finance.setInvoice(invoice);
 					finance.setRegistry(invoice.getRegistry());
 					finance.setPayment(false);

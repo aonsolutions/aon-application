@@ -32,6 +32,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.common.util.CryptoUtil;
+import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.TariffAddInfo;
@@ -48,6 +49,7 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddInfo;
@@ -606,9 +608,9 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), customer.getRegistry().getId());
 			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), context);
 			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_DOMAIN), domain);
-			for (ITransferObject ito : rAddInfoBean.getList(criteria)) {
-				RegistryAddInfo rAddInfo = (RegistryAddInfo)ito;
-				customerCodes = (String[])ArrayUtils.add(customerCodes, rAddInfo.getValue());
+			Projection prjValue = Projection.property(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_VALUE));
+			for (Object obj : rAddInfoBean.getList(new ProjectionList(prjValue), criteria)) {
+				customerCodes = (String[])ArrayUtils.add(customerCodes, obj.toString());
 			}
 		}
 		return customerCodes;
@@ -617,6 +619,30 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 	public String obtainCustomerCode(Customer customer, String context) throws ManagerBeanException {
 		String[] customerCodes = obtainCustomerCodes(customer, context);
 		return customerCodes.length > 0 ? customerCodes[0] : null;
+	}
+
+	private Company getCompany() throws ManagerBeanException {
+		IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+		for (ITransferObject ito : companyBean.getList(null, 0, 1)) {
+			return (Company)ito;
+		}
+		return null;
+	}
+
+	public String[] obtainCompanyCodes(Company company, String context) throws ManagerBeanException {
+		String[] companyCodes = ArrayUtils.EMPTY_STRING_ARRAY;
+		if (company != null) {
+			IManagerBean rAddInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), company.getRegistry().getId());
+			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), context);
+			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_DOMAIN), domain);
+			Projection prjValue = Projection.property(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_VALUE));
+			for (Object obj : rAddInfoBean.getList(new ProjectionList(prjValue), criteria)) {
+				companyCodes = (String[])ArrayUtils.add(companyCodes, obj.toString());
+			}
+		}
+		return companyCodes;
 	}
 
 	public BookingHolder obtainBookingHolder(String bookingHolder) {
@@ -898,6 +924,22 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		return null;
 	}
 
+	public String[] obtainTariffCodes(Integer tariffId, String context) throws ManagerBeanException {
+		String[] tariffCodes = ArrayUtils.EMPTY_STRING_ARRAY;
+		if (tariffId != null) {
+			IManagerBean tariffAddInfoBean = BeanManager.getManagerBean(TariffAddInfo.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(tariffAddInfoBean.getFieldName(IEntityAlias.TARIFF_ADD_INFO_TARIFF_ID), tariffId);
+			criteria.addEqualExpression(tariffAddInfoBean.getFieldName(IEntityAlias.TARIFF_ADD_INFO_ATTRIBUTE), context);
+			criteria.addEqualExpression(tariffAddInfoBean.getFieldName(IEntityAlias.TARIFF_ADD_INFO_DOMAIN), domain);
+			Projection prjValue = Projection.property(tariffAddInfoBean.getFieldName(IEntityAlias.TARIFF_ADD_INFO_VALUE));
+			for (Object obj : tariffAddInfoBean.getList(new ProjectionList(prjValue), criteria)) {
+				tariffCodes = (String[])ArrayUtils.add(tariffCodes, obj.toString());
+			}
+		}
+		return tariffCodes;
+	}
+
 	public Tariff obtainDefaultTariff() throws ManagerBeanException {
 		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();
@@ -1119,6 +1161,113 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 			if (rMediaList.size() > 0) {
 				return ((RegistryMedia)rMediaList.get(0)).getValue();
 			}
+		}
+		return null;
+	}
+
+	public Integer obtainEarlyCheckOutPenaltyDays(ProjectReservation reservation, Date date) throws ManagerBeanException {
+		return obtainPenaltyDays(reservation, EARLY_CHECKOUT_PENALTY, date);
+	}
+
+	private Integer obtainPenaltyDays(ProjectReservation reservation, String key, Date date) throws ManagerBeanException {
+		String penaltyStr = null;
+		Integer tariffId = reservation.getMainTariffId();
+		if (StringUtils.isNotEmpty(reservation.getHotel().getCode())) {
+			for (String profileTmp : obtainTariffCodes(tariffId, key + "_" + reservation.getHotel().getCode())) {
+				if (profileTmp.contains("|")) {
+					profileTmp = obtainProfileData(profileTmp, date);
+					if (profileTmp != null) {
+						penaltyStr = profileTmp;
+						break;
+					}
+				} else if (penaltyStr == null) {
+					penaltyStr = profileTmp;
+				}
+			}
+		}
+		if (penaltyStr == null) {
+			for (String profileTmp : obtainTariffCodes(tariffId, key)) {
+				if (profileTmp.contains("|")) {
+					profileTmp = obtainProfileData(profileTmp, date);
+					if (profileTmp != null) {
+						penaltyStr = profileTmp;
+						break;
+					}
+				} else if (penaltyStr == null) {
+					penaltyStr = profileTmp;
+				}
+			}
+		}
+		if (penaltyStr == null) {
+			if (StringUtils.isNotEmpty(reservation.getHotel().getCode())) {
+				for (String profileTmp : obtainCustomerCodes(reservation.getCustomer(), key + "_" + reservation.getHotel().getCode())) {
+					if (profileTmp.contains("|")) {
+						profileTmp = obtainProfileData(profileTmp, date);
+						if (profileTmp != null) {
+							penaltyStr = profileTmp;
+							break;
+						}
+					} else if (penaltyStr == null) {
+						penaltyStr = profileTmp;
+					}
+				}
+			}
+		}
+		if (penaltyStr == null) {
+			for (String profileTmp : obtainCustomerCodes(reservation.getCustomer(), key)) {
+				if (profileTmp.contains("|")) {
+					profileTmp = obtainProfileData(profileTmp, date);
+					if (profileTmp != null) {
+						penaltyStr = profileTmp;
+						break;
+					}
+				} else if (penaltyStr == null) {
+					penaltyStr = profileTmp;
+				}
+			}
+		}
+		Company company = getCompany();
+		if (penaltyStr == null) {
+			if (StringUtils.isNotEmpty(reservation.getHotel().getCode())) {
+				for (String profileTmp : obtainCompanyCodes(company, key + "_" + reservation.getHotel().getCode())) {
+					if (profileTmp.contains("|")) {
+						profileTmp = obtainProfileData(profileTmp, date);
+						if (profileTmp != null) {
+							penaltyStr = profileTmp;
+							break;
+						}
+					} else if (penaltyStr == null) {
+						penaltyStr = profileTmp;
+					}
+				}
+			}
+		}
+		if (penaltyStr == null) {
+			for (String profileTmp : obtainCompanyCodes(company, key)) {
+				if (profileTmp.contains("|")) {
+					profileTmp = obtainProfileData(profileTmp, date);
+					if (profileTmp != null) {
+						penaltyStr = profileTmp;
+						break;
+					}
+				} else if (penaltyStr == null) {
+					penaltyStr = profileTmp;
+				}
+			}
+		}
+		return (NumberUtils.isNumber(penaltyStr)) ? Integer.parseInt(penaltyStr) : null;
+	}
+
+	public String obtainProfileData(String profile, Date date) {
+		String[] patterns = {"ddMMyyyy", "dd/MM/yyyy"};
+		try {
+			String period = profile.substring(profile.indexOf("|") + 1);
+			Date startPeriod = DateUtils.parseDateStrictly(period.substring(0, period.indexOf("-")), patterns);
+			Date endPeriod = DateUtils.parseDateStrictly(period.substring(period.indexOf("-") + 1), patterns);
+			if (!date.before(startPeriod) && !date.after(endPeriod)) {
+				return profile.substring(0, profile.indexOf("|"));
+			}
+		} catch (Exception ex) {
 		}
 		return null;
 	}

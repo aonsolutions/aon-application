@@ -208,36 +208,23 @@ public class ReservationRequestManager implements IReservationConstants {
 		if (StringUtils.isNotEmpty(request.getHotel().getCode())) {
 			for (String profileTmp : getReservationUtils().obtainCustomerCodes(request.getAgency(), PROMO_CODE + "_" + request.getHotel().getCode())) {
 				if (profileTmp.contains("|")) {
-					String[] patterns = {"ddMMyyyy", "dd/MM/yyyy"};
-					try {
-						String period = profileTmp.substring(profileTmp.indexOf("|") + 1);
-						Date startPeriod = DateUtils.parseDateStrictly(period.substring(0, period.indexOf("-")), patterns);
-						Date endPeriod = DateUtils.parseDateStrictly(period.substring(period.indexOf("-") + 1), patterns);
-						if (!today.before(startPeriod) && !today.after(endPeriod)) {
-							profileId = profileTmp.substring(0, profileTmp.indexOf("|"));
-							break;
-						}
-					} catch (Exception ex) {
+					profileTmp = getReservationUtils().obtainProfileData(profileTmp, today);
+					if (profileTmp != null) {
+						profileId = profileTmp;
+						break;
 					}
 				} else if (profileId == null) {
 					profileId = profileTmp;
 				}
 			}
 		}
-
 		if (profileId == null) {
 			for (String profileTmp : getReservationUtils().obtainCustomerCodes(request.getAgency(), PROMO_CODE)) {
 				if (profileTmp.contains("|")) {
-					String[] patterns = {"ddMMyyyy", "dd/MM/yyyy"};
-					try {
-						String period = profileTmp.substring(profileTmp.indexOf("|") + 1);
-						Date startPeriod = DateUtils.parseDateStrictly(period.substring(0, period.indexOf("-")), patterns);
-						Date endPeriod = DateUtils.parseDateStrictly(period.substring(period.indexOf("-") + 1), patterns);
-						if (!today.before(startPeriod) && !today.after(endPeriod)) {
-							profileId = profileTmp.substring(0, profileTmp.indexOf("|"));
-							break;
-						}
-					} catch (Exception ex) {
+					profileTmp = getReservationUtils().obtainProfileData(profileTmp, today);
+					if (profileTmp != null) {
+						profileId = profileTmp;
+						break;
 					}
 				} else if (profileId == null) {
 					profileId = profileTmp;
