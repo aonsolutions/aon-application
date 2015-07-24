@@ -2138,6 +2138,42 @@ public interface CommonMessages extends Messages {
 
  	@DefaultMessage("Lineas de descuento y p\u00f3lizas al cierre del ejercicio 2014")
  	String memory7_2Table4();
+
+ 	@DefaultMessage("Deudas con entidades de cr\u00e9dito")
+ 	String memory7_2Header1();
+
+ 	@DefaultMessage("Obligaciones y otros valores negociables")
+ 	String memory7_2Header2();
+
+ 	@DefaultMessage("Derivados y otros")
+ 	String memory7_2Header3();
+
+ 	@DefaultMessage("Uno")
+ 	String memory7_2One();
+
+ 	@DefaultMessage("Dos")
+ 	String memory7_2Two();
+
+ 	@DefaultMessage("Tres")
+ 	String memory7_2Three();
+
+ 	@DefaultMessage("Cuatro")
+ 	String memory7_2Four();
+
+ 	@DefaultMessage("Cinco")
+ 	String memory7_2Five();
+
+ 	@DefaultMessage("M\u00e1s de 5")
+ 	String memory7_2MoreFive();
+
+ 	@DefaultMessage("L\u00edmite concedido")
+ 	String memory7_2Header4();
+
+ 	@DefaultMessage("Dispuesto")
+ 	String memory7_2Header5();
+
+ 	@DefaultMessage("Disponible")
+ 	String memory7_2Header6();
  	
  	@DefaultMessage("Apartado 10: Ingresos y gastos")
  	String memory10_2Title();

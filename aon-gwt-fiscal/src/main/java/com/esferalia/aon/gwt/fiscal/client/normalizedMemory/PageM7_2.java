@@ -18,20 +18,26 @@ import com.google.gwt.user.client.ui.Widget;
 public class PageM7_2 extends PageAbs {
 	
 	private static final String[] MRN_HEADER_1 = new String[] {
-		"Deudas con entidades de cr\u00e9dito"
-		,"Obligaciones y otros valores negociables"
-		,"Derivados y otros"
-		,"TOTAL"
+		AON.MSG.memory7_2Header1()
+		,AON.MSG.memory7_2Header2()
+		,AON.MSG.memory7_2Header3()
+		,AON.MSG.mod202Correction4()
 	};
 	
 	private static final String[] MRN_HEADER_2 = new String[] {
-		"Uno", "Dos", "Tres", "Cuatro", "Cinco","M\u00e1s de 5", "TOTAL"
+		AON.MSG.memory7_2One()
+		, AON.MSG.memory7_2Two()
+		, AON.MSG.memory7_2Three()
+		, AON.MSG.memory7_2Four()
+		, AON.MSG.memory7_2Five()
+		, AON.MSG.memory7_2MoreFive()
+		, AON.MSG.mod202Correction4()
 	};
 	
 	private static final String[] MRN_HEADER_3 = new String[] {
-		"L\u00edmite concedido"
-		, "Dispuesto"
-		, "Disponible"
+		AON.MSG.memory7_2Header4()
+		, AON.MSG.memory7_2Header5()
+		, AON.MSG.memory7_2Header6()
 	};
 	
 	private static final String[] AUXILIARES = new String[] {
