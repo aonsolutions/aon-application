@@ -659,6 +659,7 @@ public class PageF1 extends PageAbs {
 		String codeId = key.getCode();
 		
 		final DateBox text = new DateBox();
+		text.setFormat(new DateBox.DefaultFormat(AON.DATE_FORMAT));
 		text.setTitle(codeId);
 		text.setStyleName(AON.AON_CSS.aonInputText());
 		codeAux = codeId;
