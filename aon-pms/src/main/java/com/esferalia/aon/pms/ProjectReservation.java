@@ -223,6 +223,19 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 
 	@Transient
+	public boolean isSourceManual() {
+		return getSource() == ReservationSource.MANUAL;
+	}
+	@Transient
+	public boolean isSourceCrs() {
+		return getSource() == ReservationSource.CRS;
+	}
+	@Transient
+	public boolean isSourceRequest() {
+		return getSource() == ReservationSource.REQUEST;
+	}
+
+	@Transient
 	public boolean isNoCheck() {
 		return getCheckStatus() == ReservationCheckStatus.NO_CHECK;
 	}
@@ -257,16 +270,22 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 
 	@Transient
-	public boolean isSourceManual() {
-		return getSource() == ReservationSource.MANUAL;
-	}
-	@Transient
-	public boolean isSourceCrs() {
-		return getSource() == ReservationSource.CRS;
-	}
-	@Transient
-	public boolean isSourceRequest() {
-		return getSource() == ReservationSource.REQUEST;
+	public ReservationStatus getSavedStatus() {
+		if (getId() != null) {
+			try {
+				IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), getId());
+				Projection prjStatus = Projection.property(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS));
+				List<?> resultList = reservationBean.getList(new ProjectionList(prjStatus), criteria);
+				if (resultList.size() > 0) {
+					return (ReservationStatus)resultList.get(0);
+				}
+			} catch (ManagerBeanException ex) {
+				LOGGER.error("Error obtaining saved status", ex);
+			}
+		}
+		return null;
 	}
 
 	@Transient

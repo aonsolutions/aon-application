@@ -563,6 +563,9 @@ public class ProjectReservationController extends BasicController implements IPm
 		reservation.setEarlyCheckOut(true);
 		reservation.setEndTime(earlyCheckOutDate);
 		reservation.setCheckStatus(ReservationCheckStatus.CHECK_OUT);
+		if (DateUtils.isSameDay(reservation.getStartDate(), earlyCheckOutDate) && reservation.getSavedStatus() == ReservationStatus.ACTIVE) {
+			reservation.setStatus(ReservationStatus.CANCELLED);
+		}
 		reservation.setSkipDirtyControl(true);
 		accept(null);
 	}
