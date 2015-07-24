@@ -62,16 +62,8 @@ public class PageF1H extends PageAbs {
 
 	}
 
-	private void init(){
-
-			
-	
-	}
-	
-	
 	@Override
 	protected void initializeTable() {
-		init();
 		table();
 	}
 	
@@ -107,15 +99,14 @@ public class PageF1H extends PageAbs {
 		table.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonBold());
 		table.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonBorderBottom());
 		table.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonTextCenter());
-
 		++row;
-		for(Integer i = 0; i< D2DepositConstants.A1_ABREVIATE_KEYS_1.length; i+=5){
+		for(Integer i = 0; i< D2DepositConstants.A7_ABREVIATE_KEYS.length; i+=5){
 			D2DepositFooterKey[] d2 = new D2DepositFooterKey[]{
-					D2DepositConstants.A1_ABREVIATE_KEYS_1[i],
-					D2DepositConstants.A1_ABREVIATE_KEYS_1[i+1],
-					D2DepositConstants.A1_ABREVIATE_KEYS_1[i+2],
-					D2DepositConstants.A1_ABREVIATE_KEYS_1[i+3],
-					D2DepositConstants.A1_ABREVIATE_KEYS_1[i+4],
+					D2DepositConstants.A7_ABREVIATE_KEYS[i],
+					D2DepositConstants.A7_ABREVIATE_KEYS[i+1],
+					D2DepositConstants.A7_ABREVIATE_KEYS[i+2],
+					D2DepositConstants.A7_ABREVIATE_KEYS[i+3],
+					D2DepositConstants.A7_ABREVIATE_KEYS[i+4],
 
 			};
 			for (Integer j = 0; j < d2.length ;j++) {
@@ -210,11 +201,12 @@ public class PageF1H extends PageAbs {
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
 				
-					
+
 					Date d = text.getValue();
 					Integer day = d.getDate();
 					Integer month = d.getMonth()+1;
 					Integer year = d.getYear()+1900;
+
 					String value = day+"."+month+"."+year;
 					
 					text.addStyleName(AON.AON_CSS.aonChanged());

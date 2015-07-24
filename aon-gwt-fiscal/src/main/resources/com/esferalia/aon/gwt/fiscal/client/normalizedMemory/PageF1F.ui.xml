@@ -22,7 +22,7 @@
 							<table>
 								<tr> 
 									<td>
-										<g:Label text="{msg.footer1Label8" />
+										<g:Label text="{msg.footer1Label8}" />
 									</td>
 								</tr>
 							</table>
