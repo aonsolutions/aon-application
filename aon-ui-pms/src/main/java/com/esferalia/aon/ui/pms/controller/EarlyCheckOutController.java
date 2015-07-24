@@ -619,7 +619,7 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 					    	}
 			    		}
 
-				    	if (getReservationUsedServices().size() > 0) {
+				    	if (getReservationUsedServices().size() > 0 || getEarlyCheckOutPenaltyDays() > 0) {
 				    		getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
 							getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 							getReservationInvoiceTo().setIssueDate(getReservation().getStartDate());
