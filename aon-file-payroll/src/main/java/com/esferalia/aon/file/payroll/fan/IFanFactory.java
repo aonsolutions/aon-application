@@ -179,7 +179,9 @@ public interface IFanFactory {
 	public void createEDTCa54Segment(EMP emp);
 	public void createEDTCa55Segment(EMP emp);
 	public void createEDTCa56Segment(EMP emp);
-	public void createEDTCa57Segment(EMP emp);
+	public void createEDTCa57Segment(Double desmplOnlyEnterpriseTotal, Double fogasaOnlyEnterpriseTotal,
+			Double fpOnlyEnterpriseTotal, EMP emp);
+	
 	public void createEDTCa60Segment(EMP emp);
 	public void createEDTCa80Segment(Double continuousFormationTotal, EMP emp);
 	public void createEDTCa90Segment(EMP emp);

@@ -17,7 +17,6 @@ import com.esferalia.aon.file.payroll.fan.data.EDL;
 import com.esferalia.aon.file.payroll.fan.data.EDT;
 import com.esferalia.aon.file.payroll.fan.data.EMP;
 import com.esferalia.aon.file.payroll.fan.data.TRA;
-import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryData;
@@ -62,43 +61,32 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @return
 	 */
 	public Integer getContractDaysOrHours(Salary salary, List<ITransferObject> salaryDataList, Map<String, String> contractDataMap, Integer itDays, Date startDate, Date endDate) {
-		// TODO 
-		
-		Contract contract = salary.getContract();
+		Date contractStart = salary.getContract().getStartDate();
+		Date contractEnd = salary.getContract().getEndDate();
 		
 		ContractCode code = getContractCode(salaryDataList, contractDataMap);
 		if(code==null || code.getValue().startsWith("1") || code.getValue().startsWith("4")){
-			if(itDays!=null && itDays>0){
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(startDate);
-				int days = cal.getActualMaximum(Calendar.DAY_OF_MONTH)-itDays; 
-				return (days==0)?null:days;
-			}
-			if( startDate.before(contract.getStartDate()) 
-					|| (contract.getEndDate()!=null && endDate.after(contract.getEndDate())) ){
-				Date start = startDate.before(contract.getStartDate())?contract.getStartDate():startDate;
-				Date end = (contract.getEndDate()!=null && endDate.after(contract.getEndDate()))?contract.getEndDate():endDate;
-				return (int) getAvailableDays(start, end);
+			if( startDate.before(contractStart) || (contractEnd!=null && endDate.after(contractEnd)) ){
+				Date start = startDate.before(contractStart)?contractStart:startDate;
+				Date end = (contractEnd!=null && endDate.after(contractEnd))?contractEnd:endDate;
+				int availableDays = (int) getAvailableDays(start, end);
+				if(itDays!=null && itDays>0){
+					availableDays = availableDays-itDays; 
+					return (availableDays==0)?null:availableDays;
+				}
+				return availableDays;
 			} else {
 				return 30;
 			}
 		} else {
 			String weekHours = obtainWeekHours(salaryDataList, contractDataMap);
 			Double dayHours = (Double.parseDouble(NumberUtils.isNumber(weekHours)?weekHours:"0")/7);
+			long totalDays = getAvailableDays(startDate, endDate);
 			
-			Calendar startCal = Calendar.getInstance();
-			startCal.setTime(startDate);
-			Calendar endCal = Calendar.getInstance();
-			endCal.setTime(endDate); 
-			
-			long totalDays = 0;
-			if( startDate.before(contract.getStartDate()) 
-					|| (contract.getEndDate()!=null && endDate.after(contract.getEndDate())) ){
-				Date start = startDate.before(contract.getStartDate())?contract.getStartDate():startDate;
-				Date end = (contract.getEndDate()!=null && endDate.after(contract.getEndDate()))?contract.getEndDate():endDate;
+			if( startDate.before(contractStart) || (contractEnd!=null && endDate.after(contractEnd)) ){
+				Date start = startDate.before(contractStart)?contractStart:startDate;
+				Date end = (contractEnd!=null && endDate.after(contractEnd))?contractEnd:endDate;
 				totalDays =  getAvailableDays(start, end);
-			} else {
-				totalDays =  getAvailableDays(startDate, endDate);
 			}
 			
 			if(itDays!=null && itDays>0){
@@ -108,7 +96,6 @@ public class FANGeneral implements Serializable, IFanFactory {
 			
 			return (totalDays * dayHours)<1?1:Double.valueOf(CommonUtil.round(totalDays * dayHours, 0)).intValue();
 		}
-		
 	}
 	
 	protected long getAvailableDays(Date start, Date end) {
@@ -229,12 +216,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @param dat
 	 */
 	public void createEDLBa10Segment(Double overtimeBase, DAT dat) {
-		if (
-//				salary.getContract().getRegimeType() != SSRegimeType.ARTIST
-//				&& salary.getContract().getRegimeType() != SSRegimeType.COAL_MINING
-//				&& 
-				overtimeBase != null
-				&& overtimeBase.compareTo(0.0d) > 0) {
+		if ( overtimeBase != null && overtimeBase.compareTo(0.0d) > 0) {
 			EDL edl = dat.getEdlSegment("BA10");
 			createEDLRecord(edl, "BA", 10, new Double((overtimeBase) * 100).intValue());
 		}
@@ -249,12 +231,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @param dat
 	 */
 	public void createEDLBa11Segment(Double nonEstructuralOvertimeBase, DAT dat) {
-		if (
-//				salary.getContract().getRegimeType() != SSRegimeType.ARTIST
-//				&& salary.getContract().getRegimeType() != SSRegimeType.COAL_MINING
-//				&& 
-				nonEstructuralOvertimeBase != null
-				&& nonEstructuralOvertimeBase.compareTo(0.0d) > 0) {
+		if ( nonEstructuralOvertimeBase != null && nonEstructuralOvertimeBase.compareTo(0.0d) > 0) {
 			EDL edl = dat.getEdlSegment("BA11");
 			createEDLRecord(edl, "BA", 11, new Double((nonEstructuralOvertimeBase) * 100).intValue());
 		}
@@ -434,13 +411,8 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @param dat
 	 */
 	public void createEDLCd01Segment(Double ecssAmount, DAT dat) {
-//		Double amount = (-1) * getECSSAmount(salary);
 		Double amount = (-1) * ecssAmount;
-		if (
-//				salary.getContract().getRegimeType() != SSRegimeType.ARTIST
-//				&& salary.getContract().getRegimeType() != SSRegimeType.AGRICULTURAL
-//				&& 
-				Double.compare(amount,0.0d)>0) {
+		if ( Double.compare(amount,0.0d) > 0 ) {
 			EDL edl = dat.getEdlSegment("CD01");
 			createEDLRecord( edl, "CD", 1, new Double(CommonUtil.round(amount)*100).intValue());
 		}
@@ -453,13 +425,8 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @param dat
 	 */
 	public void createEDLCd03Segment(Double atepAmount, DAT dat) {
-//		Double amount = (-1) * getATEPAmount(salary);
 		Double amount = (-1) * atepAmount;
-		if (
-//				salary.getContract().getRegimeType() != SSRegimeType.ARTIST
-//				&& salary.getContract().getRegimeType() != SSRegimeType.AGRICULTURAL
-//				&& 
-				Double.compare(amount,0.0d)>0) {
+		if ( Double.compare(amount,0.0d) > 0 ) {
 			EDL edl = dat.getEdlSegment("CD03");
 			createEDLRecord(edl, "CD", 3, new Double(CommonUtil.round(amount)*100).intValue());
 		}
@@ -496,8 +463,6 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 */
 	public void createEDLCd10Segment(Integer formationDays, Double bonusAmount, DAT dat) {
 		EDL edl = dat.getEdlSegment("CD10");
-//		Integer amount = new Double(CommonUtil.round((bonus).getAmount())*100).intValue();
-//		Integer days = obtainFormationDays(bonus.getSalary().getContract());
 		Integer amount = new Double(CommonUtil.round(bonusAmount)*100).intValue();
 		Integer days = formationDays;
 		createEDLRecord(edl, "CD", 10, days, amount);
@@ -510,8 +475,6 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 */
 	public void createEDLCd11Segment(Integer formationDays, Double bonusAmount, DAT dat) {
 		EDL edl = dat.getEdlSegment("CD11");
-//		Integer amount = new Double(CommonUtil.round((bonus).getAmount())*100).intValue();
-//		Integer days = obtainFormationDays(bonus.getSalary().getContract());
 		Integer amount = new Double(CommonUtil.round(bonusAmount)*100).intValue();
 		Integer days = formationDays;
 		createEDLRecord(edl, "CD", 11, days, amount);
@@ -523,10 +486,8 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @param dat
 	 */
 	public void createEDLCd12Segment(Double bonusAmount, DAT dat) {
-//		if(bonus.getSalary().getContract().getRegimeType()==SSRegimeType.SEA_WORKERS){
-			EDL edl = dat.getEdlSegment("CD12");
-			createEDLRecord(edl, "CD", 12, new Double(CommonUtil.round(bonusAmount)*100).intValue());
-//		}
+		EDL edl = dat.getEdlSegment("CD12");
+		createEDLRecord(edl, "CD", 12, new Double(CommonUtil.round(bonusAmount)*100).intValue());
 	}
 	
 	/**
@@ -575,19 +536,9 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @param dat
 	 */
 	public void createEDLCd22Segment(Integer bonusDays, Double bonusAmount, DAT dat) {
-//		if(bonus.getSalary().getContract().getRegimeType()!=SSRegimeType.ARTIST){
-			EDL edl = dat.getEdlSegment("CD22");
-//			Date bonusStart = bonus.getSalary().getStartDate();
-//			Date bonusEnd = bonus.getSalary().getEndDate();
-//			int bonusDays = 30;
-//			if(bonusStart.after(getStartDate()) || (bonusEnd!=null && bonusEnd.before(getEndDate())) ){
-//				bonusStart = bonusStart.before(getStartDate())?getStartDate():bonusStart;
-//				bonusEnd = (bonusEnd!=null && bonusEnd.after(getEndDate()))?getEndDate():bonusEnd;
-//				bonusDays = differenceBetweenDates(bonusStart, bonusEnd);
-//			}
-			dat.setDiasAlta(bonusDays);
-			createEDLRecord(edl, "CD", 22, bonusDays,new Double(CommonUtil.round(bonusAmount)*100).intValue());
-//		}
+		EDL edl = dat.getEdlSegment("CD22");
+		dat.setDiasAlta(bonusDays);
+		createEDLRecord(edl, "CD", 22, bonusDays,new Double(CommonUtil.round(bonusAmount)*100).intValue());
 	}
 	
 	/**
@@ -658,12 +609,8 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @param emp
 	 */
 	public void createEDLCd31Segment(Double bonusAmount, DAT dat) {
-//		if(bonus.getSalary().getContract().getRegimeType()==SSRegimeType.GENERAL
-//			|| bonus.getSalary().getContract().getRegimeType()==SSRegimeType.SEA_WORKERS
-//			||  bonus.getSalary().getContract().getRegimeType()==SSRegimeType.COAL_MINING){
-			EDL edl = dat.getEdlSegment("CD31");
-			createEDLRecord(edl, "CD", 31, new Double(CommonUtil.round(bonusAmount)*100).intValue());
-//		}
+		EDL edl = dat.getEdlSegment("CD31");
+		createEDLRecord(edl, "CD", 31, new Double(CommonUtil.round(bonusAmount)*100).intValue());
 	}
 	
 	/**
@@ -703,13 +650,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 			EDT edt = emp.getEdtSegment("EDTBA01");
 			edt.setTipoElemento("BA");
 			edt.setClave(1);
-//		edt.setCalificadorClave(null);
 			edt.setBase(base);
-//		edt.setIndicadorFactorTipo(null);
-//		edt.setParteEnteraTipo(0);
-//		edt.setParteDecimalFactorTipo(0);
-//		edt.setImporte(null);
-//		edt.setSigno(" ");
 		}
 	}
 	
@@ -728,13 +669,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 			EDT edt = emp.getEdtSegment("EDTBA02");
 			edt.setTipoElemento("BA");
 			edt.setClave(2);
-//		edt.setCalificadorClave(null);
 			edt.setBase(base);
-//		edt.setIndicadorFactorTipo(null);
-//		edt.setParteEnteraTipo(0);
-//		edt.setParteDecimalFactorTipo(0);
-//		edt.setImporte(null);
-//		edt.setSigno(" ");
 		}
 	}
 	
@@ -828,23 +763,21 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @param emp
 	 */
 	public void createEDTBa21Segment(EnterpriseCCC ccc, EMP emp) {
-		// TODO
-//		if(ccc.getActivity().getType() != SSRegimeType.AGRICULTURAL && CommonUtil.getYear(getStartDate()) < 2012) {
-			Integer base = 0;
-			for(TRA tra: emp.getTrabajadores()){
-				for(DAT dat: tra.getDat()){
-					base += dat.getEdl().containsKey("BA20")?dat.getEdlSegment("BA20").getImporte():0;
-					base += dat.getEdl().containsKey("BA21")?dat.getEdlSegment("BA21").getImporte():0;
-				}
-			}	
-			if(base != 0){
-				EDT edt = emp.getEdtSegment("EDTBA21");
-				edt.setTipoElemento("BA");
-				edt.setClave(21);
-				edt.setBase(base);
+		Integer base = 0;
+		for(TRA tra: emp.getTrabajadores()){
+			for(DAT dat: tra.getDat()){
+				base += dat.getEdl().containsKey("BA20")?dat.getEdlSegment("BA20").getImporte():0;
+				base += dat.getEdl().containsKey("BA21")?dat.getEdlSegment("BA21").getImporte():0;
 			}
-//		}
+		}	
+		if(base != 0){
+			EDT edt = emp.getEdtSegment("EDTBA21");
+			edt.setTipoElemento("BA");
+			edt.setClave(21);
+			edt.setBase(base);
+		}
 	}
+	
 	/**
 	 *  22 Base de cotización empresarial por AT y EP y Otras Cotizaciones
 	 * @param contract
@@ -942,21 +875,18 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @param emp
 	 */
 	public void createEDTCd01Segment(EnterpriseCCC ccc, EMP emp) {
-//		if (ccc.getActivity().getType() != SSRegimeType.ARTIST
-//				&& ccc.getActivity().getType() != SSRegimeType.COAL_MINING) {
-			Integer amount = 0;
-			for (TRA tra : emp.getTrabajadores()) {
-				for (DAT dat : tra.getDat()) {
-					amount += dat.getEdl().containsKey("CD01") ? dat.getEdlSegment("CD01").getImporte() : 0;
-				}
+		Integer amount = 0;
+		for (TRA tra : emp.getTrabajadores()) {
+			for (DAT dat : tra.getDat()) {
+				amount += dat.getEdl().containsKey("CD01") ? dat.getEdlSegment("CD01").getImporte() : 0;
 			}
-			if (amount != 0) {
-				EDT edt = emp.getEdtSegment("EDTCD01");
-				edt.setTipoElemento("CD");
-				edt.setClave(1);
-				edt.setImporte(amount);
-			}
-//		}
+		}
+		if (amount != 0) {
+			EDT edt = emp.getEdtSegment("EDTCD01");
+			edt.setTipoElemento("CD");
+			edt.setClave(1);
+			edt.setImporte(amount);
+		}
 	}
 	
 	/**
@@ -967,21 +897,18 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @param emp
 	 */
 	public void createEDTCd03Segment(EnterpriseCCC ccc, EMP emp) {
-//		if (ccc.getActivity().getType() != SSRegimeType.ARTIST
-//				&& ccc.getActivity().getType() != SSRegimeType.COAL_MINING) {
-			Integer amount = 0;
-			for (TRA tra : emp.getTrabajadores()) {
-				for (DAT dat : tra.getDat()) {
-					amount += dat.getEdl().containsKey("CD03") ? dat.getEdlSegment("CD03").getImporte() : 0;
-				}
+		Integer amount = 0;
+		for (TRA tra : emp.getTrabajadores()) {
+			for (DAT dat : tra.getDat()) {
+				amount += dat.getEdl().containsKey("CD03") ? dat.getEdlSegment("CD03").getImporte() : 0;
 			}
-			if (amount != 0) {
-				EDT edt = emp.getEdtSegment("EDTCD03");
-				edt.setTipoElemento("CD");
-				edt.setClave(3);
-				edt.setImporte(amount);
-			}
-//		}
+		}
+		if (amount != 0) {
+			EDT edt = emp.getEdtSegment("EDTCD03");
+			edt.setTipoElemento("CD");
+			edt.setClave(3);
+			edt.setImporte(amount);
+		}
 	}
 
 	public void createEDTCd05Segment(EMP emp) {
@@ -1127,20 +1054,18 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @param emp
 	 */
 	public void createEDTCd17Segment(EnterpriseCCC ccc, EMP emp) {
-//		if (ccc.getActivity().getType() != SSRegimeType.AGRICULTURAL) {
-			Integer amount = 0;
-			for (TRA tra : emp.getTrabajadores()) {
-				for (DAT dat : tra.getDat()) {
-					amount += dat.getEdl().containsKey("CD17") ? dat.getEdlSegment("CD17").getImporte() : 0;
-				}
+		Integer amount = 0;
+		for (TRA tra : emp.getTrabajadores()) {
+			for (DAT dat : tra.getDat()) {
+				amount += dat.getEdl().containsKey("CD17") ? dat.getEdlSegment("CD17").getImporte() : 0;
 			}
-			if (amount != 0) {
-				EDT edt = emp.getEdtSegment("EDTCD17");
-				edt.setTipoElemento("CD");
-				edt.setClave(17);
-				edt.setImporte(amount);
-			}
-//		}
+		}
+		if (amount != 0) {
+			EDT edt = emp.getEdtSegment("EDTCD17");
+			edt.setTipoElemento("CD");
+			edt.setClave(17);
+			edt.setImporte(amount);
+		}
 	}
 
 	public void createEDTCd18Segment(EMP emp) {
@@ -1195,20 +1120,18 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * (0112)
 	 */
 	public void createEDTCd22Segment(EnterpriseCCC ccc, EMP emp) {
-//		if (ccc.getActivity().getType() != SSRegimeType.ARTIST) {
-			Integer amount = 0;
-			for (TRA tra : emp.getTrabajadores()) {
-				for (DAT dat : tra.getDat()) {
-					amount += dat.getEdl().containsKey("CD22") ? dat.getEdlSegment("CD22").getImporte() : 0;
-				}
+		Integer amount = 0;
+		for (TRA tra : emp.getTrabajadores()) {
+			for (DAT dat : tra.getDat()) {
+				amount += dat.getEdl().containsKey("CD22") ? dat.getEdlSegment("CD22").getImporte() : 0;
 			}
-			if (amount != 0) {
-				EDT edt = emp.getEdtSegment("EDTCD22");
-				edt.setTipoElemento("CD");
-				edt.setClave(22);
-				edt.setImporte(amount);
-			}
-//		}
+		}
+		if (amount != 0) {
+			EDT edt = emp.getEdtSegment("EDTCD22");
+			edt.setTipoElemento("CD");
+			edt.setClave(22);
+			edt.setImporte(amount);
+		}
 	}
 
 	/**
@@ -1239,20 +1162,18 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @param emp
 	 */
 	public void createEDTCd24Segment(EnterpriseCCC ccc, EMP emp) {
-//		if (ccc.getActivity().getType() == SSRegimeType.GENERAL) {
-			Integer amount = 0;
-			for (TRA tra : emp.getTrabajadores()) {
-				for (DAT dat : tra.getDat()) {
-					amount += dat.getEdl().containsKey("CD24") ? dat.getEdlSegment("CD24").getImporte() : 0;
-				}
+		Integer amount = 0;
+		for (TRA tra : emp.getTrabajadores()) {
+			for (DAT dat : tra.getDat()) {
+				amount += dat.getEdl().containsKey("CD24") ? dat.getEdlSegment("CD24").getImporte() : 0;
 			}
-			if (amount != 0) {
-				EDT edt = emp.getEdtSegment("EDTCD24");
-				edt.setTipoElemento("CD");
-				edt.setClave(24);
-				edt.setImporte(amount);
-			}
-//		}
+		}
+		if (amount != 0) {
+			EDT edt = emp.getEdtSegment("EDTCD24");
+			edt.setTipoElemento("CD");
+			edt.setClave(24);
+			edt.setImporte(amount);
+		}
 	}
 
 	/**
@@ -1447,27 +1368,19 @@ public class FANGeneral implements Serializable, IFanFactory {
 	public void createEDTCa02Segment(Double cgcOnlyEnterprise, EMP emp) {
 		Integer base = emp.getEdt().containsKey("EDTBA21") ? emp.getEdtSegment("EDTBA21").getBase() : 0;
 		
+		Double amount = 0.0;
+		amount += cgcOnlyEnterprise;
+		amount = CommonUtil.round(amount, 2);
+		
 		if (base != 0) {
-			if(emp.getEdt().containsKey("EDTBA01") && emp.getEdt().containsKey("EDTBA21")){
-				emp.getEdtSegment("EDTBA01").setBase(emp.getEdtSegment("EDTBA01").getBase() - emp.getEdtSegment("EDTBA21").getBase());
-			}
-			if(emp.getEdt().containsKey("EDTCA01")){
-				emp.getEdtSegment("EDTCA01").setBase(emp.getEdtSegment("EDTCA01").getBase() - emp.getEdtSegment("EDTBA21").getBase());
-				emp.getEdtSegment("EDTCA01").setImporte(emp.getEdtSegment("EDTCA01").getImporte() - (new Double(cgcOnlyEnterprise * 100)).intValue());
-			}
-			
-			Double amount = 0.0;
-			amount += cgcOnlyEnterprise;
-			amount = CommonUtil.round(amount, 2);
-			
 			EDT edt = emp.getEdtSegment("EDTCA02");
 			edt.setTipoElemento("CA");
 			edt.setClave(2);
 			edt.setCalificadorClave(null);
 			edt.setBase(base);
 			edt.setIndicadorFactorTipo("T");
-			edt.setParteEnteraTipo(0);
-			edt.setParteDecimalFactorTipo(0);
+			edt.setParteEnteraTipo(23);
+			edt.setParteDecimalFactorTipo(60000);
 			edt.setImporte((new Double(amount * 100)).intValue());
 			edt.setSigno(" ");
 		}
@@ -1567,7 +1480,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 		Integer amount = 0;
 		amount += emp.getEdt().containsKey("EDTCA31") ? emp.getEdtSegment("EDTCA31").getImporte() : 0;
 		amount += emp.getEdt().containsKey("EDTCA32") ? emp.getEdtSegment("EDTCA32").getImporte() : 0;
-		// if(amount != 0){
+		
 		EDT edt = emp.getEdtSegment("EDTCA30");
 		edt.setTipoElemento("CA");
 		edt.setClave(30);
@@ -1575,7 +1488,6 @@ public class FANGeneral implements Serializable, IFanFactory {
 		edt.setBase(null);
 		edt.setImporte(amount);
 		edt.setSigno(" ");
-		// }
 	}
 
 	/**
@@ -1584,8 +1496,6 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @param emp
 	 */
 	public void createEDTCa31Segment(Double itTotal, EMP emp) {
-		// TODO
-
 		Double amount = 0.0;
 		amount = itTotal;
 		amount = CommonUtil.round(amount, 2);
@@ -1608,8 +1518,6 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @param emp
 	 */
 	public void createEDTCa32Segment(Double imsTotal, EMP emp) {
-		// TODO
-
 		Double amount = 0.0;
 		amount = imsTotal;
 		amount = CommonUtil.round(amount, 2);
@@ -1635,16 +1543,13 @@ public class FANGeneral implements Serializable, IFanFactory {
 	public void createEDTCa50Segment(Double desmplEnterpriseTotal, Double fogasaEnterpriseTotal, Double fpEnterpriseTotal, 
 			Double desmplEmployeeTotal, Double fpEmployeeTotal, EMP emp) {
 		Integer base = emp.getEdt().containsKey("EDTBA02") ? emp.getEdtSegment("EDTBA02").getBase() : 0;
-
-		// Double amount = new Double((base)*0.283);
-
+		
 		Double amount = 0.0;
 		amount += desmplEnterpriseTotal;
 		amount += fogasaEnterpriseTotal;
 		amount += fpEnterpriseTotal;
 		amount += desmplEmployeeTotal;
 		amount += fpEmployeeTotal;
-		
 		amount = CommonUtil.round(amount, 2);
 
 		if (base != 0) {
@@ -1653,8 +1558,8 @@ public class FANGeneral implements Serializable, IFanFactory {
 			edt.setClave(50);
 			edt.setBase(base);
 			edt.setIndicadorFactorTipo("T");
-			// edt.setParteEnteraTipo(28);
-			// edt.setParteDecimalFactorTipo(30000);
+			edt.setParteEnteraTipo(0);
+			edt.setParteDecimalFactorTipo(0);
 			edt.setImporte((new Double(amount * 100)).intValue());
 		}
 	}
@@ -1700,8 +1605,31 @@ public class FANGeneral implements Serializable, IFanFactory {
 		// Especial del Mar
 	}
 
-	public void createEDTCa57Segment(EMP emp) {
-		// TODO 57 Cuota empresarial por Otras Cotizaciones
+	/**
+	 * 57 Cuota empresarial por Otras Cotizaciones
+	 * 
+	 */
+	public void createEDTCa57Segment(Double desmplOnlyEnterpriseTotal, Double fogasaOnlyEnterpriseTotal,
+			Double fpOnlyEnterpriseTotal, EMP emp) {
+		
+		Integer base = emp.getEdt().containsKey("EDTBA22") ? emp.getEdtSegment("EDTBA22").getBase() : 0;
+
+		Double amount = 0.0;
+		amount += desmplOnlyEnterpriseTotal;
+		amount += fogasaOnlyEnterpriseTotal;
+		amount += fpOnlyEnterpriseTotal;
+		amount = CommonUtil.round(amount, 2);
+
+		if (base != 0) {
+			EDT edt = emp.getEdtSegment("EDTCA57");
+			edt.setTipoElemento("CA");
+			edt.setClave(57);
+			edt.setBase(base);
+			edt.setIndicadorFactorTipo("T");
+			edt.setParteEnteraTipo(0);
+			edt.setParteDecimalFactorTipo(0);
+			edt.setImporte((new Double(amount * 100)).intValue());
+		}
 	}
 
 	/**
@@ -1729,10 +1657,6 @@ public class FANGeneral implements Serializable, IFanFactory {
 			edt.setClave(60);
 			edt.setCalificadorClave(null);
 			edt.setBase(null);
-			// edt.setIndicadorFactorTipo("T");
-			// edt.setParteEnteraTipo(28);
-			// edt.setParteDecimalFactorTipo(03);
-			// edt.setImporte(edt.getBase()*28);
 			edt.setImporte(amount);
 			edt.setSigno(" ");
 		}
@@ -1745,7 +1669,6 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @param emp
 	 */
 	public void createEDTCa80Segment(Double continuousFormationTotal, EMP emp) {
-		// if (liquidationType == LiquidationType.L00) {
 		Double amount = 0.0;
 		amount = continuousFormationTotal;
 		amount = CommonUtil.round(amount, 2);
@@ -1760,7 +1683,6 @@ public class FANGeneral implements Serializable, IFanFactory {
 			edt.setParteDecimalFactorTipo(null);
 			edt.setImporte((new Double(amount * 100)).intValue());
 		}
-		// }
 	}
 
 	public void createEDTCa90Segment(EMP emp) {

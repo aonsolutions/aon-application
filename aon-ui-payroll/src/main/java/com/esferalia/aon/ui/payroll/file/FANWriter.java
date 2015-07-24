@@ -458,7 +458,36 @@ public class FANWriter implements Serializable {
 			SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			String select = "SELECT * FROM salary_payment";
-			select += " WHERE payment_concept IN ('" + ContextVariable.PREST_IT.getName() + "', '" + ContextVariable.MATERNITY.getName() + "')";
+			select += " WHERE payment_concept IN ('" + ContextVariable.PREST_IT.getName() + "')";
+			select += " AND salary in (";
+			select += " SELECT id FROM salary WHERE contract = " + contract.getId()
+					+ " AND end_date >= '" + dateFormatter.format(getStartDate()) + "'" 
+					+ " AND end_date <= '" + dateFormatter.format(getEndDate())+"'";
+			select += " );";
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			return rs.next();
+		} catch (AonConnectionException e) {
+			// do nothing
+			System.out.println("isContractLeave - AonConnectionException");
+		} catch (SQLException e) {
+			// do nothing
+			System.out.println("isContractLeave - SQLException");
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+		return false;
+	}
+	
+	private boolean isContractLeaveMaternity(Contract contract){
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			String select = "SELECT * FROM salary_payment";
+			select += " WHERE payment_concept IN ('" + ContextVariable.MATERNITY.getName() + "')";
 			select += " AND salary in (";
 			select += " SELECT id FROM salary WHERE contract = " + contract.getId()
 					+ " AND end_date >= '" + dateFormatter.format(getStartDate()) + "'" 
@@ -607,12 +636,18 @@ public class FANWriter implements Serializable {
 					
 				if(dat.getIndicadoresPerfil()==null 
 						|| (!dat.getIndicadoresPerfil().contains("I")
+								&& !dat.getIndicadoresPerfil().contains("D") 
 								&& !dat.getIndicadoresPerfil().contains("P") 
 								&& !dat.getIndicadoresPerfil().contains("T")) ){
-					if(isContractLeave(contract)){
+					if(isContractLeave(contract) || isContractLeaveMaternity(contract)){
 						Double itBase = getITBase(salary);
-						fanFactory.createEDLBa01Segment(salary.getCommonBase() - itBase, dat);
-						fanFactory.createEDLBa02Segment(salary.getProfessionalBase() - itBase, dat);
+						if(isContractLeave(contract)){
+							fanFactory.createEDLBa01Segment(salary.getCommonBase() - itBase, dat);
+							fanFactory.createEDLBa02Segment(salary.getProfessionalBase() - itBase, dat);
+						} else if(isContractLeaveMaternity(contract)){
+							fanFactory.createEDLBa21Segment(salary.getCommonBase() - itBase, dat);
+							fanFactory.createEDLBa22Segment(salary.getProfessionalBase() - itBase, dat);
+						}
 					} else if(isErePartial(salary, salaryDataList) || isEreTotal(salary, salaryDataList)){
 						Double ereBase = getEreBase(salary,salaryDataList);
 						fanFactory.createEDLBa01Segment(salary.getCommonBase() - ereBase, dat);
@@ -653,6 +688,12 @@ public class FANWriter implements Serializable {
 						fanFactory.createEDLBa02Segment(datList.size()>1?itBase:salary.getProfessionalBase(), dat);
 						fanFactory.createEDLCd01Segment(getECSSAmount(salary), dat);
 						fanFactory.createEDLCd03Segment(getATEPAmount(salary), dat);
+					} else if(isContractLeaveMaternity(contract)){
+						Calendar cal = Calendar.getInstance();
+						cal.setTime(getStartDate());
+						Double itBase = getITBase(salary);
+						fanFactory.createEDLBa21Segment(datList.size()>1?itBase:salary.getCommonBase(), dat);
+						fanFactory.createEDLBa22Segment(datList.size()>1?itBase:salary.getProfessionalBase(), dat);
 					} else if(isErePartial(salary, salaryDataList) || isEreTotal(salary, salaryDataList)){
 						Double ereBase = getEreBase(salary, salaryDataList);
 						fanFactory.createEDLBa21Segment(datList.size()>1?ereBase:salary.getCommonBase(), dat);
@@ -718,6 +759,8 @@ public class FANWriter implements Serializable {
 						fanFactory.createEDLCd06Segment(bonus.getAmount(), dat);
 					} else if(bonusType==BonusType.REDUCTION_COMMON_CONTINGENCY_EXCEPT_IT){
 						fanFactory.createEDLCd17Segment(bonus.getAmount(), dat);
+					} else if(bonusType==BonusType.CONTINUOUS_FORMATION){
+						// no se tiene en cuenta, se suma en los totalizadores
 					} else if(bonusType==BonusType.REDUCTION_FLAT_RATE_RDL03_2014){
 						fanFactory.createEDLCd31Segment(bonus.getAmount(), dat);
 						if(datList.size()>1){
@@ -744,7 +787,7 @@ public class FANWriter implements Serializable {
 				// do nothing
 			} 
 			fanFactory.createEDLCd29Segment(cgcTotalEnterprise, cgcTotalEmployee, dat, salaryDataList);
-			if(isContractLeave(salary.getContract())){
+			if(isContractLeave(salary.getContract()) || isContractLeaveMaternity(salary.getContract())){
 				fanFactory.createEDLCd30Segment(dat);
 			}
 		}
@@ -779,7 +822,6 @@ public class FANWriter implements Serializable {
 	}
 	
 	private Double getEreBase(Salary salary, List<ITransferObject> salaryDataList) {
-		// TODO
 		Integer salaryDays = salary.getTimeUnits();
 		Integer ereDays = Math.min(getEreDays(salary, salaryDataList), salaryDays);
 		return (salary.getCommonBase()*ereDays)/salaryDays;
@@ -890,11 +932,11 @@ public class FANWriter implements Serializable {
 		try {
 			if(bonus.getBonusConcept()!=null && NumberUtils.isNumber(bonus.getBonusConcept())){
 				IManagerBean bean = BeanManager.getManagerBean(BonusConcept.class);
-				BonusConcept bc = (BonusConcept) bean.get(bonus.getBonusConcept());
+				BonusConcept bc = (BonusConcept) bean.get(Integer.parseInt(bonus.getBonusConcept()));
 				type = bc.getType();
 				if ( type == null )
 					type = PayrollUtils.getInstance().getBonusTypeByCode(bonus.getBonusConcept());
-				return bc.getType();
+				return type;
 			}
 		} catch (ManagerBeanException e) {
 			// continue
@@ -1292,12 +1334,11 @@ public class FANWriter implements Serializable {
 	 * @return
 	 */
 	private String getJournalReduction(Contract contract) {
-		// TODO 
 
-//		List<ITransferObject> leaveList = getContractLeaves(contract, getStartDate(), getEndDate());
-//		if(leaveList!=null && !leaveList.isEmpty()){
 		if(isContractLeave(contract)){
 			return "I";
+		} else if(isContractLeaveMaternity(contract)){
+			return "D";
 		}
 		return null;
 	}
@@ -1329,7 +1370,7 @@ public class FANWriter implements Serializable {
 	 * @return
 	 */
 	private TCT createTCTRecord(EnterpriseCCC ccc) {
-		// TODO
+		
 		Calendar cal = Calendar.getInstance();
 		cal.set(year, endMonth.ordinal(), 1);
 		TCT tct = new TCT();
@@ -1407,9 +1448,16 @@ public class FANWriter implements Serializable {
 			fanFactory.createEDTCd31Segment(ccc, emp);
 			fanFactory.createEDTCd34Segment(ccc, emp);
 			
-			fanFactory.createEDTCa01Segment(obtainCGCTotalEnterprise(ccc), obtainCGCTotalEmployee(ccc), emp);
 			
-			fanFactory.createEDTCa02Segment(obtainCGCTotalEnterprise(ccc), emp);
+			Double CGCEnterpriseTotal = obtainCGCEnterpriseTotal(ccc);
+			Double CGCOnlyEnterpriseTotal = obtainCGCOnlyEnterpriseTotal(ccc);
+			Double CGCEmployeeTotal = obtainCGCEmployeeTotal(ccc);
+			
+			fanFactory.createEDTCa01Segment(
+					CGCEnterpriseTotal - CGCOnlyEnterpriseTotal, 
+					CGCEmployeeTotal, 
+					emp);
+			fanFactory.createEDTCa02Segment(CGCOnlyEnterpriseTotal, emp);
 			fanFactory.createEDTCa03Segment(emp);
 			fanFactory.createEDTCa11Segment(obtainLessThanSevenDaysContractAmount(ccc), emp);
 			fanFactory.createEDTCa12Segment(emp);
@@ -1421,22 +1469,43 @@ public class FANWriter implements Serializable {
 			fanFactory.createEDTCa32Segment(obtainImsTotal(ccc), emp);
 			fanFactory.createEDTCa30Segment(emp);
 			
-			fanFactory.createEDTCa50Segment(obtainOtherEnterpriseTotal(ccc, DeductionType.UNEMPLOYMENT),
-					obtainOtherEnterpriseTotal(ccc, DeductionType.FOGASA),
-					obtainOtherEnterpriseTotal(ccc, DeductionType.JOB_TRAINING),
-					obtainOtherEmployeeTotal(ccc, DeductionType.UNEMPLOYMENT),
-					obtainOtherEmployeeTotal(ccc, DeductionType.JOB_TRAINING), emp);
+			
+			Double otherEnterpriseTotalUnemployment = obtainOtherEnterpriseTotal(ccc, DeductionType.UNEMPLOYMENT);
+			Double otherEnterpriseTotalFogasa = obtainOtherEnterpriseTotal(ccc, DeductionType.FOGASA);
+			Double otherEnterpriseTotalJobTraining = obtainOtherEnterpriseTotal(ccc, DeductionType.JOB_TRAINING);
+			Double otherEmployeeTotalUnemployment = obtainOtherEmployeeTotal(ccc, DeductionType.UNEMPLOYMENT);
+			Double otherEmployeeTotalJobTraining = obtainOtherEmployeeTotal(ccc, DeductionType.JOB_TRAINING);
+
+			Double otherOnlyEnterpriseTotalUnemployment = obtainOtherOnlyEnterpriseTotal(ccc, DeductionType.UNEMPLOYMENT);
+			Double otherOnlyEnterpriseTotalFogasa = obtainOtherOnlyEnterpriseTotal(ccc, DeductionType.FOGASA);
+			Double otherOnlyEnterpriseTotalJobTraining = obtainOtherOnlyEnterpriseTotal(ccc, DeductionType.JOB_TRAINING);
+			Double otherOnlyEmployeeTotalUnemployment = obtainOtherOnlyEmployeeTotal(ccc, DeductionType.UNEMPLOYMENT);
+			Double otherOnlyEmployeeTotalJobTraining = obtainOtherOnlyEmployeeTotal(ccc, DeductionType.JOB_TRAINING);
+			
+			fanFactory.createEDTCa50Segment(
+					otherEnterpriseTotalUnemployment - otherOnlyEnterpriseTotalUnemployment,
+					otherEnterpriseTotalFogasa - otherOnlyEnterpriseTotalFogasa,
+					otherEnterpriseTotalJobTraining - otherOnlyEnterpriseTotalJobTraining,
+					otherEmployeeTotalUnemployment - otherOnlyEmployeeTotalUnemployment,
+					otherEmployeeTotalJobTraining - otherOnlyEmployeeTotalJobTraining,
+					emp);
 			fanFactory.createEDTCa51Segment(emp);
-			fanFactory.createEDTCa52Segment(obtainOtherEnterpriseTotal(ccc, DeductionType.UNEMPLOYMENT),
-					obtainOtherEnterpriseTotal(ccc, DeductionType.FOGASA),
-					obtainOtherEnterpriseTotal(ccc, DeductionType.JOB_TRAINING),
-					obtainOtherEmployeeTotal(ccc, DeductionType.UNEMPLOYMENT),
-					obtainOtherEmployeeTotal(ccc, DeductionType.JOB_TRAINING), emp);
+			fanFactory.createEDTCa52Segment(
+					otherEnterpriseTotalUnemployment,
+					otherEnterpriseTotalFogasa,
+					otherEnterpriseTotalJobTraining,
+					otherEmployeeTotalUnemployment,
+					otherEmployeeTotalJobTraining, 
+					emp);
 			fanFactory.createEDTCa53Segment(emp);
 			fanFactory.createEDTCa54Segment(emp);
 			fanFactory.createEDTCa55Segment(emp);
 			fanFactory.createEDTCa56Segment(emp);
-			fanFactory.createEDTCa57Segment(emp);
+			fanFactory.createEDTCa57Segment(
+					otherOnlyEnterpriseTotalUnemployment,
+					otherOnlyEnterpriseTotalFogasa,
+					otherOnlyEnterpriseTotalJobTraining,
+					emp);
 			
 			emp.getEdtSegment("EDTCA60");
 			fanFactory.createEDTCa80Segment(obtainContinuousFormationTotal(ccc), emp);
@@ -1526,6 +1595,7 @@ public class FANWriter implements Serializable {
 	}
 	
 	private Double obtainOtherEmployeeTotal(EnterpriseCCC ccc)  throws AonConnectionException, SQLException {
+		
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 		SalaryType salaryType = null;
 		if(liquidationType==LiquidationType.L00){
@@ -1557,6 +1627,7 @@ public class FANWriter implements Serializable {
 		}
 	}
 	private Double obtainOtherEnterpriseTotal(EnterpriseCCC ccc, DeductionType type) throws AonConnectionException, SQLException {
+		
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 		SalaryType salaryType = null;
 		if(liquidationType==LiquidationType.L00){
@@ -1613,6 +1684,86 @@ public class FANWriter implements Serializable {
 			ps = conn.prepareStatement(select);
 			ResultSet rs = ps.executeQuery();
 			if(rs.next()) return rs.getDouble(1);
+			return 0.0;
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+	}
+
+	private Double obtainOtherOnlyEnterpriseTotal(EnterpriseCCC ccc, DeductionType type) throws AonConnectionException, SQLException {
+		
+		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+		SalaryType salaryType = null;
+		if(liquidationType==LiquidationType.L00){
+			salaryType = SalaryType.SALARY;
+		} else if(liquidationType==LiquidationType.L13){
+			salaryType = SalaryType.SETTLE;
+		}
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			
+			String maternitySelect = "SELECT salary FROM salary_payment";
+			maternitySelect += " WHERE payment_concept IN ('" + ContextVariable.MATERNITY.getName() + "')";
+			maternitySelect += " AND salary in (";
+			maternitySelect += " SELECT id FROM salary WHERE domain = " + ccc.getDomain()
+					+ " AND ccc = '" + ccc.getCcc() + "'"
+					+ " AND type = " + salaryType.ordinal()
+					+ " AND end_date >= '" + dateFormatter.format(getStartDate()) + "'" 
+					+ " AND end_date <= '" + dateFormatter.format(getEndDate())+"'";
+			maternitySelect += " )";
+			
+			String select = "SELECT sum(amount) FROM salary_cost"
+					+ " WHERE type in (" + type.ordinal() + ")"
+					+ " AND salary in ( " + maternitySelect + " )";
+			
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()){
+				return rs.getDouble(1);
+			}
+			return 0.0;
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+	}
+
+	private Double obtainOtherOnlyEmployeeTotal(EnterpriseCCC ccc, DeductionType type) throws AonConnectionException, SQLException {
+		
+		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+		SalaryType salaryType = null;
+		if(liquidationType==LiquidationType.L00){
+			salaryType = SalaryType.SALARY;
+		} else if(liquidationType==LiquidationType.L13){
+			salaryType = SalaryType.SETTLE;
+		}
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			
+			String maternitySelect = "SELECT salary FROM salary_payment";
+			maternitySelect += " WHERE payment_concept IN ('" + ContextVariable.MATERNITY.getName() + "')";
+			maternitySelect += " AND salary in (";
+			maternitySelect += " SELECT id FROM salary WHERE domain = " + ccc.getDomain()
+					+ " AND ccc = '" + ccc.getCcc() + "'"
+					+ " AND type = " + salaryType.ordinal()
+					+ " AND end_date >= '" + dateFormatter.format(getStartDate()) + "'" 
+					+ " AND end_date <= '" + dateFormatter.format(getEndDate())+"'";
+			maternitySelect += " )";
+			
+			String select = "SELECT sum(amount) FROM salary_deduction"
+					+ " WHERE type in (" + type.ordinal() + ")"
+					+ " AND salary in ( " + maternitySelect + " );";
+			
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()){
+				return rs.getDouble(1);
+			}
 			return 0.0;
 		} finally {
 			DatabaseUtil.closeQuietly(ps);
@@ -1711,7 +1862,7 @@ public class FANWriter implements Serializable {
 	}
 	
 	
-	private Double obtainCGCTotalEnterprise(EnterpriseCCC ccc) throws AonConnectionException, SQLException {
+	private Double obtainCGCEnterpriseTotal(EnterpriseCCC ccc) throws AonConnectionException, SQLException {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 		SalaryType salaryType = null;
 		if(liquidationType==LiquidationType.L00){
@@ -1743,7 +1894,44 @@ public class FANWriter implements Serializable {
 			DatabaseUtil.closeQuietly(conn);
 		}
 	}
-	private Double obtainCGCTotalEmployee(EnterpriseCCC ccc) throws AonConnectionException, SQLException {
+	private Double obtainCGCOnlyEnterpriseTotal(EnterpriseCCC ccc) throws AonConnectionException, SQLException {
+		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+		SalaryType salaryType = null;
+		if(liquidationType==LiquidationType.L00){
+			salaryType = SalaryType.SALARY;
+		} else if(liquidationType==LiquidationType.L13){
+			salaryType = SalaryType.SETTLE;
+		}
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			
+			String maternitySelect = "SELECT salary FROM salary_payment";
+			maternitySelect += " WHERE payment_concept IN ('" + ContextVariable.MATERNITY.getName() + "')";
+			maternitySelect += " AND salary in (";
+			maternitySelect += " SELECT id FROM salary WHERE domain = " + ccc.getDomain()
+					+ " AND ccc = '" + ccc.getCcc() + "'"
+					+ " AND type = " + salaryType.ordinal()
+					+ " AND end_date >= '" + dateFormatter.format(getStartDate()) + "'" 
+					+ " AND end_date <= '" + dateFormatter.format(getEndDate())+"'";
+			maternitySelect += " )";
+			
+			String select = "SELECT sum(amount) FROM salary_cost";
+			select += " WHERE type in (" + DeductionType.COMMON_CONTINGENCY.ordinal() + ")";
+			select += " AND cost_concept in ('CGC_E')";
+			select += " AND salary in ( " + maternitySelect + " );";
+			
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) return rs.getDouble(1);
+			return 0.0;
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+	}
+	private Double obtainCGCEmployeeTotal(EnterpriseCCC ccc) throws AonConnectionException, SQLException {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 		SalaryType salaryType = null;
 		if(liquidationType==LiquidationType.L00){
