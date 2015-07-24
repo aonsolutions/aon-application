@@ -6,7 +6,6 @@ import java.util.Vector;
 
 import com.esferalia.aon.gwt.fiscal.shared.D2Deposit2014;
 import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
-import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface INormalizedMemoryAsync {
@@ -40,9 +39,6 @@ public interface INormalizedMemoryAsync {
 	void getParentDomain(Integer domainId, AsyncCallback<Integer> callback);
 
 	void getDate(String str, AsyncCallback<Date> callback);
-
-	void importSocietyValues(String document, Integer domainId,
-			AsyncCallback<Void> callback);
 
 	void createD2Deposit(Integer domainId, Integer id, String name,
 			String type, AsyncCallback<Map<String, String>> callback);

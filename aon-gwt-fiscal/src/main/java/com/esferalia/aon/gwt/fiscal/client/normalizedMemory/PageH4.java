@@ -76,7 +76,10 @@ public class PageH4 extends PageAbs {
 		} else {
 			defineBalanceTable(table,AON.MSG.patrimonioIngresos(),D2DepositConstants.ECPN_INCOMES_KEYS);
 			defineECPNTable(table1,ECPN_ABREVIATE_HEADER,D2DepositConstants.ECPN_ABREVIATE_KEYS);
-			tabPanel.selectTab(0);
+			
+			if(tabPanel.getTabBar().getSelectedTab() != 0)
+				tabPanel.selectTab(tabPanel.getTabBar().getSelectedTab());
+			else tabPanel.selectTab(0);
 		}
 	}
 	

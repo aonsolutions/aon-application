@@ -329,25 +329,6 @@ public class NormalizedMemory extends ResizeComposite {
 		label.addStyleName("aon-icon");
 	}
 	
-	
-	//@UiHandler("importSocietyButton")
-	void onSocietyButtonClick(ClickEvent event) {
-		
-		inma.importSocietyValues(enterprise.getDocument(), enterprise.getDomain(), new AsyncCallback<Void>() {
-			
-			@Override
-			public void onSuccess(Void result) {
-				update();
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
-		});
-		
-		
-		
-	}
-	
 	@UiHandler("newButton")
 	void onNewButtonClick(ClickEvent event) {
 		String url = GWT.getModuleBaseURL()+"gwt_deposit_upload";
@@ -470,7 +451,7 @@ public class NormalizedMemory extends ResizeComposite {
 	@UiHandler("importButton")
 	void onImportButtonClick(ClickEvent event) {
 		
-		String url = GWT.getModuleBaseURL()+"gwt_deposit_upload";
+		//String url = GWT.getModuleBaseURL()+"gwt_deposit_upload";
 		DepositDialog popup = new DepositDialog("Importar Deposito","import", enterprise, GWT.getModuleBaseURL(), null) {
 
 			@Override
@@ -552,22 +533,18 @@ public class NormalizedMemory extends ResizeComposite {
 			});
 		}
 		else{
-			inma.clearSession(enterprise.getDocument(), new AsyncCallback<Void>() {
+			digitalDepositTreeNode.getD2Deposit2014().setModify(false);
+			digitalDepositTreeNode.getD2Deposit2014().setMapDraft(null);
 			
-				@Override
-				public void onSuccess(Void result) {
-					digitalDepositTreeNode.getD2Deposit2014().setModify(false);
-					digitalDepositTreeNode.getD2Deposit2014().setMapDraft(null);
-
-					saveButton.setEnabled(false);
-					cancelButton.setVisible(false);
-				
-					update();
-				}
+			d2Deposit2014.setMapDraft(d2Deposit2014.getMap());
+			d2Deposit2014.setModify(false);
 			
-				@Override
-				public void onFailure(Throwable caught) {}
-			});
+			saveButton.setEnabled(false);
+			cancelButton.setVisible(false);
+		
+			update();
+		
+			
 		}
 	}
 	

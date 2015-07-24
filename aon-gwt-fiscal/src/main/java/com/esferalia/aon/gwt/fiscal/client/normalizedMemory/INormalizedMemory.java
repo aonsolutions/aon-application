@@ -40,9 +40,7 @@ public interface INormalizedMemory extends RemoteService{
 	public Integer getParentDomain(Integer domainId);
 	
 	public Date getDate(String str);
-	
-	public void importSocietyValues(String document, Integer domainId);
-	
+		
 	public Map<String, String> createD2Deposit(Integer domainId, Integer id, String name, String type);
 	
 	public Map<String, String> importAll(String type, String ejercicio, MemoryTemplate mt,

@@ -57,26 +57,8 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 	private static final long serialVersionUID = 1L;
 	private static final String D2_DEPOSIT_SCHEMA = "d2DepositSchema";
 	private static final String MODIFY_D2_DEPOSIT_SCHEMA = "ModifyD2DepositSchema";
-	
-//	void initFacesContext() {
-//		ServletContext context = getServletContext();
-//		HttpServletRequest request = getThreadLocalRequest();
-//		HttpServletResponse response = getThreadLocalResponse();
-//		AonServletUtils.initFacesContext(context, request, response);
-//	}
-//	void releaseFacesContext() {
-//		AonServletUtils.releaseFacesContext();
-//	}
-//	public Integer initialize() {
-//		try {
-//			initFacesContext();
-//			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-//			return null;
-//		} finally {
-//			releaseFacesContext();
-//		}
-//	}
-	
+	private static final String TRUE = "true";
+
 	public Integer initialize() {
 		return null;
 	}
@@ -133,7 +115,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		// ------
 		
 		request.getSession().setAttribute(D2_DEPOSIT_SCHEMA + cif, schema);
-		request.getSession().setAttribute(MODIFY_D2_DEPOSIT_SCHEMA + cif, "true");
+		request.getSession().setAttribute(MODIFY_D2_DEPOSIT_SCHEMA + cif, TRUE);
 	}
 
 	public Boolean isDigitalDeposit(Integer domainId) {
@@ -145,7 +127,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		HttpServletRequest request = getThreadLocalRequest();
 		String modify = (String) request.getSession().getAttribute(
 				MODIFY_D2_DEPOSIT_SCHEMA + cif);
-		return modify != null && modify.equals("true");
+		return modify != null && modify.equals(TRUE);
 	}
 
 	public void clearSession(String cif) {
@@ -169,7 +151,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
-		request.getSession().removeAttribute("ModifyD2DepositSchema" + cif);
+		request.getSession().removeAttribute(MODIFY_D2_DEPOSIT_SCHEMA + cif);
 	}
 	
 	public void saveDeposit(String cif, Integer domainId, D2Deposit2014 d2Deposit2014, Boolean textMode) {
@@ -186,7 +168,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
-		request.getSession().removeAttribute("ModifyD2DepositSchema" + cif);
+		request.getSession().removeAttribute(MODIFY_D2_DEPOSIT_SCHEMA + cif);
 	}
 
 	private Esquema D2Deposit2014ToSchema(Esquema schema, D2Deposit2014 d2Deposit2014) {
@@ -359,73 +341,8 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 
 			}
 		}
-		//saveDeposit(cif, domainId, false);
 		return map;
 	}
-
-	/*public void updateTexts(MemoryTemplate mt, Integer domainId, String cif) {
-		String domain = AonUtil.getDomainName();
-		Esquema schema = DBConsults.getDeposit(domain, domainId, mt.getId()
-				.toString());
-
-		for (Integer i = 0; i < schema.getClaves().getClave().size(); i++) {
-			if (schema.getClaves().getClave().get(i).getCodigo().toString()
-					.equals("9019001")) {
-				updateSchema(cif, domainId, "9019001", schema.getClaves()
-						.getClave().get(i).getValor());
-			} else if (schema.getClaves().getClave().get(i).getCodigo()
-					.toString().equals("9029001")) {
-				updateSchema(cif, domainId, "9029001", schema.getClaves()
-						.getClave().get(i).getValor());
-			} else if (schema.getClaves().getClave().get(i).getCodigo()
-					.toString().equals("9039001")) {
-				updateSchema(cif, domainId, "9039001", schema.getClaves()
-						.getClave().get(i).getValor());
-			} else if (schema.getClaves().getClave().get(i).getCodigo()
-					.toString().equals("9049001")) {
-				updateSchema(cif, domainId, "9049001", schema.getClaves()
-						.getClave().get(i).getValor());
-			} else if (schema.getClaves().getClave().get(i).getCodigo()
-					.toString().equals("9059001")) {
-				updateSchema(cif, domainId, "9059001", schema.getClaves()
-						.getClave().get(i).getValor());
-			} else if (schema.getClaves().getClave().get(i).getCodigo()
-					.toString().equals("9069001")) {
-				updateSchema(cif, domainId, "9069001", schema.getClaves()
-						.getClave().get(i).getValor());
-			} else if (schema.getClaves().getClave().get(i).getCodigo()
-					.toString().equals("9079001")) {
-				updateSchema(cif, domainId, "9079001", schema.getClaves()
-						.getClave().get(i).getValor());
-			} else if (schema.getClaves().getClave().get(i).getCodigo()
-					.toString().equals("9089001")) {
-				updateSchema(cif, domainId, "9089001", schema.getClaves()
-						.getClave().get(i).getValor());
-			} else if (schema.getClaves().getClave().get(i).getCodigo()
-					.toString().equals("9099001")) {
-				updateSchema(cif, domainId, "9099001", schema.getClaves()
-						.getClave().get(i).getValor());
-			} else if (schema.getClaves().getClave().get(i).getCodigo()
-					.toString().equals("9119001")) {
-				updateSchema(cif, domainId, "9119001", schema.getClaves()
-						.getClave().get(i).getValor());
-			} else if (schema.getClaves().getClave().get(i).getCodigo()
-					.toString().equals("9129001")) {
-				updateSchema(cif, domainId, "9129001", schema.getClaves()
-						.getClave().get(i).getValor());
-			} else if (schema.getClaves().getClave().get(i).getCodigo()
-					.toString().equals("9139001")) {
-				updateSchema(cif, domainId, "9139001", schema.getClaves()
-						.getClave().get(i).getValor());
-			} else if (schema.getClaves().getClave().get(i).getCodigo()
-					.toString().equals("9149001")) {
-				updateSchema(cif, domainId, "9149001", schema.getClaves()
-						.getClave().get(i).getValor());
-			}
-		}
-		saveDeposit(cif, domainId, false);
-
-	}*/
 
 	public String getDateStr(Date date) {
 		return "";
@@ -474,34 +391,6 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 			if (ctx != null)
 				ctx.close();
 		}
-	}
-
-	public void importSocietyValues(String document, Integer domainId) {
-		String domainName = getDomainName(domainId);
-
-		// 2014
-
-		Mod2002014 mod2002014 = com.esferalia.aon.occam.api.AON
-				.getMod2002014ByYear(domainName, domainId, 2014);
-		Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
-		Mod2002014toD2.fill(ctx, mod2002014);
-
-		for (D2DepositHeaderKey key : ctx.keySet()) {
-			updateSchema(document, domainId, key.getCode(), ctx.get(key)
-					.toString());
-		}
-
-		// 2013
-
-		/*
-		 * Mod2002013 mod2002013 =
-		 * com.esferalia.aon.occam.api.AON.getMod2002013ByYear(domainName,
-		 * domainId, 2013); ctx = new LinkedHashMap<D2DepositHeaderKey,
-		 * Double>(); Mod2002013toD2.fill(ctx, mod2002013);
-		 * 
-		 * for(D2DepositHeaderKey key : ctx.keySet()){ updateSchema(document,
-		 * domainId, key.getCode(), ctx.get(key).toString()); }
-		 */
 	}
 
 	public Map<String, String> importAll(String type, String ejercicio, MemoryTemplate mt,
@@ -644,13 +533,14 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 				// Ignore value
 			}
 		}
-		ctx.put("PYMES", false);
+
+		ctx.put("PYMES", map.get(D2DepositConstants.DEPOSIT_TYPE).equals("Pymes"));
 		for (String key : D2Compute.COMPUTE_MAP.keySet()) {
 			String expression = D2Compute.COMPUTE_MAP.get(key);
 			Object ret = ctx.evaluateExpression(key,expression);
 			if (ret instanceof Double) {
 				Double calculated = (Double) ret;
-				ctx.put(key, calculated);
+				ctx.put("Q"+key, calculated);
 				// TODO 
 				// populate data
 				

@@ -83,7 +83,9 @@ public class PageM7_2 extends PageAbs {
 	@Override
 	protected void initializeTable() {
 		
-		tabPanel.selectTab(0);
+		if(tabPanel.getTabBar().getSelectedTab() != 0)
+			tabPanel.selectTab(tabPanel.getTabBar().getSelectedTab());
+		else tabPanel.selectTab(0);
 		
 		if (isPymes()) {
 			defineMRNTable(table, MRN_HEADER_1, AUXILIARES, D2PDepositConstants.MRN7_PYMES_KEYS_1, 2);

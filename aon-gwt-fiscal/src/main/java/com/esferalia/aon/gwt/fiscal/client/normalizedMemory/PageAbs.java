@@ -206,12 +206,6 @@ public abstract class PageAbs extends ResizeComposite {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					onEdit(key.getCode(), d.toString());
-					/*inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), d.toString() , new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});*/
 				} catch (ParseException e) {
 					// nothing.
 				}
@@ -225,7 +219,7 @@ public abstract class PageAbs extends ResizeComposite {
 		else text.setValue(0.0);
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+		if(!disabled && !map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
 			text.addStyleName(AON.AON_CSS.aonChanged());
 		}
 		
@@ -272,12 +266,6 @@ public abstract class PageAbs extends ResizeComposite {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					onEdit(key.getCode(), d.toString());
-					/*inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), d.toString() , new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});*/
 				} catch (ParseException e) {
 					// nothing.
 				}
@@ -292,7 +280,7 @@ public abstract class PageAbs extends ResizeComposite {
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
 		
-		if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+		if(!disabled && !map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
 			text.addStyleName(AON.AON_CSS.aonChanged());
 		}
 		text.setEnabled(!disabled);
@@ -325,12 +313,6 @@ public abstract class PageAbs extends ResizeComposite {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					onEdit(key.getCode(), d.toString());
-					/*inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), d.toString() , new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});*/
 				} catch (ParseException e) {
 					// nothing.
 				}
@@ -344,7 +326,7 @@ public abstract class PageAbs extends ResizeComposite {
 		else text.setValue(0.0);
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+		if(!disabled && !map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
 			text.addStyleName(AON.AON_CSS.aonChanged());
 		}
 		text.setEnabled(!disabled);
@@ -387,20 +369,12 @@ public abstract class PageAbs extends ResizeComposite {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					onEdit(key.getCode(), d.toString());
-					/*inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), d.toString() , new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});*/
-					//d2DepositObject.doubleValueChanged(key, d );
 				} catch (ParseException e) {
 					// nothing.
 				}
 				
 			}
 		});
-		//text.setValue(d2DepositObject.getDoubleValue(key));
 		if(mapDraft.containsKey(key.getCode().toString())){
 			Double d = Double.parseDouble(mapDraft.get(key.getCode().toString()));
 			text.setValue(d);
@@ -408,7 +382,7 @@ public abstract class PageAbs extends ResizeComposite {
 		else text.setValue(0.0);
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+		if(!disabled && !map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
 			text.addStyleName(AON.AON_CSS.aonChanged());
 		}
 		text.setEnabled(!disabled);
@@ -535,12 +509,6 @@ public abstract class PageAbs extends ResizeComposite {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					onEdit(key.getCode(), d);
-					/*inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), d , new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});*/
 				} catch (ParseException e) {
 					// nothing.
 				}
@@ -554,7 +522,7 @@ public abstract class PageAbs extends ResizeComposite {
 		}
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+		if(!disabled && !map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
 			text.addStyleName(AON.AON_CSS.aonChanged());
 		}
 		text.setEnabled(!disabled);
@@ -587,12 +555,7 @@ public abstract class PageAbs extends ResizeComposite {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					onEdit(key.getCode(), d);
-					/*inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), d , new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {}
-						@Override
-						public void onSuccess(Void result) {}
-					});*/
+					
 				} catch (ParseException e) {
 					// nothing.
 				}
@@ -606,7 +569,7 @@ public abstract class PageAbs extends ResizeComposite {
 		}
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+		if(!disabled && !map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
 			text.addStyleName(AON.AON_CSS.aonChanged());
 		}
 		text.setEnabled(!disabled);
@@ -619,7 +582,6 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 
 	protected void onEdit(String key, String value){
-	//	Map<String, String> aux = normalizedMemory.getD2Deposit2014().getMap();
 		
 		if(mapDraft.containsKey(key))
 			mapDraft.remove(key);
