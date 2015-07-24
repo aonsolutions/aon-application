@@ -20,6 +20,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
+import com.esferalia.aon.ui.pms.controller.ProjectReservationController;
 import com.esferalia.aon.ui.pms.controller.ProjectReservationGuestController;
 
 public class ProjectReservationGuestControllerListener extends ControllerAdapter {
@@ -44,10 +45,38 @@ public class ProjectReservationGuestControllerListener extends ControllerAdapter
 	}
 
 	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		ProjectReservationGuestController controller = (ProjectReservationGuestController)event.getController();
+		ProjectReservationGuest to = (ProjectReservationGuest)controller.getTo();
+		if (to.getGuestIndex() == 1) {
+			ProjectReservationController masterController = (ProjectReservationController)controller.getMasterController();
+			try {
+				masterController.refresh(null);
+			} catch (ManagerBeanException ex) {
+				throw new ControllerListenerException(ex.getMessage());
+			}
+		}
+	}
+
+	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationGuest to = (ProjectReservationGuest)event.getController().getTo();
 		if (StringUtils.isNotBlank(to.getDocument())) {
 			savePerson(event);
+		}
+	}
+
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		ProjectReservationGuestController controller = (ProjectReservationGuestController)event.getController();
+		ProjectReservationGuest to = (ProjectReservationGuest)controller.getTo();
+		if (to.getGuestIndex() == 1) {
+			ProjectReservationController masterController = (ProjectReservationController)controller.getMasterController();
+			try {
+				masterController.refresh(null);
+			} catch (ManagerBeanException ex) {
+				throw new ControllerListenerException(ex.getMessage());
+			}
 		}
 	}
 

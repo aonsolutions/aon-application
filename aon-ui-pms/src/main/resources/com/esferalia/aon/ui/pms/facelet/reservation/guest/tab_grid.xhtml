@@ -11,6 +11,8 @@
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 		<ui:param name="skipSelectRow" value="#{true}" />
 		<ui:param name="skipLineEdition" value="#{true}" />
+		<ui:param name="newSaveButtonReRender" value="reservationForm" />
+		<ui:param name="saveButtonReRender" value="reservationForm" />
 		<ui:param name="skipRemoveButton" value="#{controller.to.guestIndex == 1}" />
 
 		<ui:define name="columns">

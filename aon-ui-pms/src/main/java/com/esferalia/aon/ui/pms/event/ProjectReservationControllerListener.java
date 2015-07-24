@@ -117,8 +117,12 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		if (CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate()) > 90) {
 			throw new ControllerListenerException("La Estancia no puede ser superior a 90 días.");
 		}
-		if (StringUtils.isEmpty(reservation.getCrsCode())) {
-			try {
+		try {
+			if (reservation.isDirty()) {
+				String message = "La Reserva ha sido modificada por otro usuario. Refrescar para obtener los datos actualizados.";
+				throw new ControllerListenerException(message);
+			}
+			if (StringUtils.isEmpty(reservation.getCrsCode())) {
 				IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 				Criteria criteria = new Criteria();
 				if (reservation.getId() != null) {
@@ -142,9 +146,9 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 					}
 					throw new ControllerListenerException(message.toString());
 				}
-			} catch (ManagerBeanException e) {
-				throw new ControllerListenerException(e.getMessage(), e);
 			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
 

@@ -571,4 +571,20 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		return null;
 	}
 
+	@Transient
+	public boolean isDirty() throws ManagerBeanException {
+		if (getId() != null) {
+			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), getId());
+			if (getModificationDate() != null) {
+				criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_MODIFICATION_DATE), getModificationDate());
+			} else {
+				criteria.addNullExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_MODIFICATION_DATE));
+			}
+			return reservationBean.getCount(criteria) == 0;
+		}
+		return false;
+	}
+
 }
