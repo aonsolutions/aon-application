@@ -76,7 +76,7 @@ public class PageM10 extends PageAbs {
 			tab.setWidget(row, col, new Label(primary));	
 			tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
 			tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
-			tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
+			tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextRight());
 			++col;
 		}
 		

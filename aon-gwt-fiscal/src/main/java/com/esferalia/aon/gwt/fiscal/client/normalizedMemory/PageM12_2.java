@@ -7,10 +7,17 @@ import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2PDepositConstants;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TabBar;
+import com.google.gwt.user.client.ui.TabBar.Tab;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -68,25 +75,19 @@ public class PageM12_2 extends PageAbs {
 	}
 	
 	public PageM12_2(Enterprise enterprise, NormalizedMemory nm) {
-		super();
+		this();
 		this.enterprise = enterprise;
 		this.normalizedMemory = nm;
-		table1 = new FlexTable();
-		table2 = new FlexTable();
-		table3 = new FlexTable();
-		table4 = new FlexTable();
-		table5 = new FlexTable();
-		tabPanel = new TabPanel();
-		Widget ui = pageBinder.createAndBindUi(this);
-		initWidget(ui);
-		tabPanel.selectTab(0);
 	}
 
 	@Override
 	protected void initializeTable() {
 		
+		tabPanel.selectTab(0);
 		defineMRNTable(table, MRN_HEADERS, D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_1);
 		defineMRNTable(table1, MRN_HEADERS, D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_2);
+		defineMRNTable(table3, MRN_HEADERS, D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_4);
+		
 		
 		if (isPymes()) {
 			defineMRNTable(table2, MRN_HEADERS, D2PDepositConstants.MRN12_PYMES_KEYS_3);
@@ -97,9 +98,6 @@ public class PageM12_2 extends PageAbs {
 			defineMRNTable(table4, PERIODS, D2DepositConstants.MRN12_ABREVIATE_KEYS_5);
 			defineMRNTable(table5, PERIODS, D2DepositConstants.MRN12_ABREVIATE_KEYS_6);
 		}
-		
-		defineMRNTable(table3, MRN_HEADERS, D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_4);
-	
 	}
 	
 	protected void defineMRNTable( FlexTable tab, String[] headers, D2DepositKey[][] keys){
@@ -130,9 +128,10 @@ public class PageM12_2 extends PageAbs {
 			paintKeyDescription(tab, innerKeys[0], row, col);
 			tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
 			col++;
-			for (D2DepositKey key : innerKeys ) {
+			for (D2DepositKey key : innerKeys ) {			
 				
-				paintKeyField(tab,key,row,col,(col==1), AonStringUtils.substring(key.getCode(), 0, 4)); 
+				paintKeyField(tab,key,row,col,(col==1), (tab == table4 || tab == table5) ? AonStringUtils.substring(key.getCode(), 0, 5)
+						: AonStringUtils.substring(key.getCode(), 0, 4)); 
 				col++;
 			}
 			++row;

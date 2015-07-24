@@ -9,7 +9,7 @@
 		field="aonResources"></ui:with>
 
 	<g:TabPanel ui:field="tabPanel" styleName="{aonResources.css.aonWidthAll}">
-		<g:Tab text="{msg.memory12_2Title1}">
+		<g:Tab text="{msg.memory12_2Title1}" ui:field="tab1">
 
 			<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
 				<g:HTMLPanel ui:field="basePanel"
@@ -32,7 +32,7 @@
 			</g:ScrollPanel>
 		</g:Tab>
 
-		<g:Tab text="{msg.memory12_2Title2}">
+		<g:Tab text="{msg.memory12_2Title2}" ui:field="tab2">
 			<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
 				<g:HTMLPanel styleName="{aonResources.css.aonFiscalContainer}">
 					<div class="{aonResources.css.aonGroupBody}">
@@ -53,7 +53,7 @@
 				</g:HTMLPanel>
 			</g:ScrollPanel>
 		</g:Tab>
-		<g:Tab text="{msg.memory12_2Title3}">
+		<g:Tab text="{msg.memory12_2Title3}" ui:field="tab3">
 			<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
 				<g:HTMLPanel styleName="{aonResources.css.aonFiscalContainer}">
 
@@ -75,7 +75,7 @@
 				</g:HTMLPanel>
 			</g:ScrollPanel>
 		</g:Tab>
-		<g:Tab text="{msg.memory12_2Title4}">
+		<g:Tab text="{msg.memory12_2Title4}" ui:field="tab4">
 			<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
 				<g:HTMLPanel styleName="{aonResources.css.aonFiscalContainer}">
 
@@ -97,7 +97,7 @@
 				</g:HTMLPanel>
 			</g:ScrollPanel>
 		</g:Tab>
-		<g:Tab text="{msg.memory12_2Title5}">
+		<g:Tab text="{msg.memory12_2Title5}" ui:field="tab5">
 			<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
 				<g:HTMLPanel styleName="{aonResources.css.aonFiscalContainer}">
 					<div class="{aonResources.css.aonGroupBody}">
