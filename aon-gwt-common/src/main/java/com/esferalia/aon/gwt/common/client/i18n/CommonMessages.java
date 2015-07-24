@@ -2293,6 +2293,30 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Modelo de autocartera")
 	String footer1Title();
 
+ 	@DefaultMessage("P\u00E1gina A1")
+	String autocarteraModelA1();
+
+ 	@DefaultMessage("P\u00E1gina A1.1")
+	String autocarteraModelA11();
+
+ 	@DefaultMessage("P\u00E1gina A2")
+	String autocarteraModelA2();
+
+ 	@DefaultMessage("P\u00E1gina A3")
+	String autocarteraModelA3();
+
+ 	@DefaultMessage("P\u00E1gina A4")
+	String autocarteraModelA4();
+
+ 	@DefaultMessage("P\u00E1gina A5")
+	String autocarteraModelA5();
+
+ 	@DefaultMessage("P\u00E1gina A6")
+	String autocarteraModelA6();
+
+ 	@DefaultMessage("P\u00E1gina A7")
+	String autocarteraModelA7();
+
 	@DefaultMessage("La sociedad no ha realizado durante el presente ejercicio operaci\u00f3n alguna sobre acciones / participaciones propias")
 	String footer1Label1();
  	

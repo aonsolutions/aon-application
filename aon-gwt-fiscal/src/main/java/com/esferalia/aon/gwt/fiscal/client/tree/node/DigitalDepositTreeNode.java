@@ -1024,7 +1024,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 				return (Enterprise) getUserObject();
 			}
 		}; 
-		ma1.setText("Modelo de Autocartera 1");
+		ma1.setText(AON.MSG.autocarteraModelA1());
 		ma.addItem(ma1);
 		
 		TreeNode<Enterprise> ma2 = new TreeNode<Enterprise>() {
@@ -1047,7 +1047,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 				return (Enterprise) getUserObject();
 			}
 		}; 
-		ma2.setText("Modelo de Autocartera 2");
+		ma2.setText(AON.MSG.autocarteraModelA11());
 		ma.addItem(ma2);
 		
 		TreeNode<Enterprise> ma3 = new TreeNode<Enterprise>() {
@@ -1070,7 +1070,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 				return (Enterprise) getUserObject();
 			}
 		}; 
-		ma3.setText("Modelo de Autocartera 3");
+		ma3.setText(AON.MSG.autocarteraModelA2());
 		ma.addItem(ma3);
 		
 		TreeNode<Enterprise> ma4 = new TreeNode<Enterprise>() {
@@ -1093,7 +1093,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 				return (Enterprise) getUserObject();
 			}
 		}; 
-		ma4.setText("Modelo de Autocartera 4");
+		ma4.setText(AON.MSG.autocarteraModelA3());
 		ma.addItem(ma4);
 		
 		TreeNode<Enterprise> ma5 = new TreeNode<Enterprise>() {
@@ -1116,7 +1116,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 				return (Enterprise) getUserObject();
 			}
 		}; 
-		ma5.setText("Modelo de Autocartera 5");
+		ma5.setText(AON.MSG.autocarteraModelA4());
 		ma.addItem(ma5);
 		
 		TreeNode<Enterprise> ma6 = new TreeNode<Enterprise>() {
@@ -1139,7 +1139,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 				return (Enterprise) getUserObject();
 			}
 		}; 
-		ma6.setText("Modelo de Autocartera 6");
+		ma6.setText(AON.MSG.autocarteraModelA5());
 		ma.addItem(ma6);
 		
 		
@@ -1163,7 +1163,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 				return (Enterprise) getUserObject();
 			}
 		}; 
-		ma7.setText("Modelo de Autocartera 7");
+		ma7.setText(AON.MSG.autocarteraModelA6());
 		ma.addItem(ma7);
 		
 		TreeNode<Enterprise> ma8 = new TreeNode<Enterprise>() {
@@ -1186,7 +1186,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 				return (Enterprise) getUserObject();
 			}
 		}; 
-		ma8.setText("Modelo de Autocartera 8");
+		ma8.setText(AON.MSG.autocarteraModelA7());
 		ma.addItem(ma8);
 		
 		TreeNode<Enterprise> ip = new TreeNode<Enterprise>() {
