@@ -163,12 +163,12 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 	}
 
 	public void onInit() {
+		fillReservationInvoiceTo();
 		try {
-			fillReservationInvoiceTo();
+			setPenaltyDays(obtainCheckOutPenaltyDays());
 			fillReservationServiceLists();
 			if (validateEarlyCheckOutShow()) {
 				setPayCheckOut(true);
-				setPenaltyDays(obtainCheckOutPenaltyDays());
 				setReservationFinances(obtainReservationFinances());
 				setReservationPaymentSummary(obtainPaymentSummary(false));
 				setServicesPaymentSummary(obtainPaymentSummary(true));
