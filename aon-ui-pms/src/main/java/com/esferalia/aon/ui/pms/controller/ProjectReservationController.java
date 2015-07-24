@@ -563,6 +563,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		reservation.setEarlyCheckOut(true);
 		reservation.setEndTime(earlyCheckOutDate);
 		reservation.setCheckStatus(ReservationCheckStatus.CHECK_OUT);
+		reservation.setSkipDirtyControl(true);
 		accept(null);
 	}
 
@@ -814,6 +815,7 @@ public class ProjectReservationController extends BasicController implements IPm
 				reservation.setAdvanceInvoiced(true);
 				reservation.setAdvance(0);
         		reservation.setAdvancedAmount(null);
+        		reservation.setSkipDirtyControl(true);
 				accept(event);
 				setSelectedTab(INVOICE);
 			}
@@ -1095,6 +1097,7 @@ public class ProjectReservationController extends BasicController implements IPm
 				if (reservation.isNoCheck()) {
 					reservation.setCheckStatus(reservation.getEndDate().after(new Date()) ? ReservationCheckStatus.CHECK_IN : ReservationCheckStatus.CHECK_OUT);
 				}
+				reservation.setSkipDirtyControl(true);
 				accept(event);
 				setSelectedTab(INVOICE);
 			}
@@ -1241,6 +1244,7 @@ public class ProjectReservationController extends BasicController implements IPm
 					if (reservation.getStatus() == ReservationStatus.ACTIVE) {
 						reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
 					}
+					reservation.setSkipDirtyControl(true);
 					accept(event);
 				}
 			}

@@ -57,6 +57,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectReservation.class.getName());
 	private boolean forceCalculateTotals;
 	private boolean forceRefreshBooking;
+	private boolean skipDirtyControl;
 	private double vatPercent;
 	private double realDiscountPercent;
 	private Double advancedAmount;
@@ -74,6 +75,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		setStatus(ReservationStatus.ACTIVE);
 		setForceCalculateTotals(false);
 		setForceRefreshBooking(false);
+		setSkipDirtyControl(false);
 	}
 
 	@Transient
@@ -90,6 +92,14 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 	public void setForceRefreshBooking(boolean forceRefreshBooking) {
 		this.forceRefreshBooking = forceRefreshBooking;
+	}
+
+	@Transient
+	public boolean isSkipDirtyControl() {
+		return skipDirtyControl;
+	}
+	public void setSkipDirtyControl(boolean skipDirtyControl) {
+		this.skipDirtyControl = skipDirtyControl;
 	}
 
 	@Transient
@@ -573,7 +583,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 
 	@Transient
 	public boolean isDirty() throws ManagerBeanException {
-		if (getId() != null) {
+		if (!isSkipDirtyControl() && getId() != null) {
 			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), getId());
@@ -584,6 +594,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 			}
 			return reservationBean.getCount(criteria) == 0;
 		}
+		setSkipDirtyControl(false);
 		return false;
 	}
 
