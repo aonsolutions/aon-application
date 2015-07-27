@@ -264,28 +264,71 @@ public class D2DepositBehaviour {
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2511129.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2511139.toString(),new Boolean[]{FALSE,TRUE});
 
-		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2512019.toString(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2512019.toString(),new Boolean[]{TRUE,FALSE});		
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2512139.toString(),new Boolean[]{FALSE,TRUE});
 
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2513019.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2513139.toString(),new Boolean[]{FALSE,TRUE});
 		
-		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2514019.toString(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2514019.toString(),new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2514029.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2514039.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2514049.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2514059.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2514069.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2514079.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2514089.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2514099.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2514109.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2514119.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2514129.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2514139.toString(),new Boolean[]{FALSE,TRUE});
 
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2515019.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2515139.toString(),new Boolean[]{FALSE,TRUE});
 		
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2516019.toString(), new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2516029.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2516039.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2516049.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2516059.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2516069.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2516079.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2516089.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2516099.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2516109.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2516119.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2516129.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2516139.toString(), new Boolean[]{FALSE,TRUE});
+		
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP1528019.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP1528139.toString(),new Boolean[]{FALSE,TRUE});
 
-		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP1530019.toString(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP1530019.toString(),new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP1530029.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP1530039.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP1530049.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP1530059.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP1530069.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP1530079.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP1530089.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP1530099.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP1530119.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP1530129.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP1530139.toString(),new Boolean[]{FALSE,TRUE});
 
-		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2516019.toString(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2516139.toString(),new Boolean[]{FALSE,TRUE});
-
-		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2524019.toString(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2524019.toString(),new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2524029.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2524039.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2524049.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2524059.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2524069.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2524079.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2524089.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2524099.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2524109.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2524119.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2524129.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2524139.toString(),new Boolean[]{FALSE,TRUE});
 		
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA2517139.toString(), new Boolean[]{FALSE,TRUE});
@@ -318,7 +361,18 @@ public class D2DepositBehaviour {
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251301.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251313.toString(),new Boolean[]{FALSE,TRUE});
 
-		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251401.toString(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251401.toString(),new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251402.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251403.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251404.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251405.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251406.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251407.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251408.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251409.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251410.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251411.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251412.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251413.toString(),new Boolean[]{FALSE,TRUE});
 
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251501.toString(),new Boolean[]{TRUE,FALSE});
@@ -328,13 +382,45 @@ public class D2DepositBehaviour {
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP152801.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP152813.toString(),new Boolean[]{FALSE,TRUE});
 
-		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP153001.toString(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP153001.toString(),new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP153002.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP153003.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP153004.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP153005.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP153006.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP153007.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP153008.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP153009.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP153011.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP153012.toString(),new Boolean[]{FALSE,TRUE});		
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP153013.toString(),new Boolean[]{FALSE,TRUE});
 		
-		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251601.toString(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251613.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251601.toString(), new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251602.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251603.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251604.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251605.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251606.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251607.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251608.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251609.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251610.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251611.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251612.toString(), new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA251613.toString(), new Boolean[]{FALSE,TRUE});
 		
-		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA252401.toString(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA252401.toString(),new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA252402.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA252403.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA252404.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA252405.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA252406.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA252407.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA252408.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA252409.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA252410.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA252411.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA252412.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA252413.toString(),new Boolean[]{FALSE,TRUE});
 		
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA252501.toString(),new Boolean[]{TRUE,FALSE});
