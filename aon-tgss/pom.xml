@@ -114,7 +114,7 @@
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
-					<execution>
+					<!-- execution>
 						<id>xjc-response-dcl</id>
 						<goals>
 							<goal>xjc</goal>
@@ -124,7 +124,7 @@
 							<packageName>net.aonsolutions.tgss.creta.jaxb.dcl</packageName>
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
-					</execution>
+					</execution-->
 					<execution>
 						<id>xjc-response-rlc</id>
 						<goals>
@@ -136,7 +136,7 @@
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
-					<execution>
+					<!--  execution>
 						<id>xjc-response-rnt</id>
 						<goals>
 							<goal>xjc</goal>
@@ -146,7 +146,7 @@
 							<packageName>net.aonsolutions.tgss.creta.jaxb.rnt</packageName>
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
-					</execution>
+					</execution  -->
 				</executions>
 			</plugin>
 			
@@ -179,6 +179,8 @@
 			        <!-- The schema directory or xsd files. -->
 			        <schemaDirectory>${basedir}/src/main/xsd</schemaDirectory>
  					<schemaIncludes>
+                		<include>DCL.xsd</include>
+                		<include>RNT.xsd</include>
                 		<include>Respuesta.xsd</include>
                 		<include>TrabajadoresTramos.xsd</include>
                 		<include>SolicitudCalculos.xsd</include>

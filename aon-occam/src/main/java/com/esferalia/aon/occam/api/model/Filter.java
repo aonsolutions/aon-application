@@ -14,6 +14,7 @@ public interface Filter {
 		Filter isNull();
 		Filter isNotNull();
 		Filter like(T t);
+		Filter between(T min, T max);
 	}
 	
 	

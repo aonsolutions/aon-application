@@ -1,8 +1,13 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.Keys.FK_SALARY_BONUS_SALARY;
+import static com.esferalia.aon.jooq.Keys.FK_SALARY_COST_SALARY;
 import static com.esferalia.aon.jooq.Keys.FK_SALARY_DATA_SALARY;
+import static com.esferalia.aon.jooq.Keys.FK_SALARY_DEDUCTION_SALARY;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
+import static com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
@@ -13,9 +18,12 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -31,6 +39,9 @@ import org.jooq.lambda.SQL;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.Unchecked;
 
+import com.esferalia.aon.jooq.Keys;
+import com.esferalia.aon.jooq.tables.SalaryBonus;
+import com.esferalia.aon.jooq.tables.SalaryCost;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Salary;
@@ -39,6 +50,7 @@ import com.esferalia.aon.occam.api.model.SalaryAccountEntry.SalaryAccountEntryLi
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry.SalaryAccountEntryLineType;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.SalaryProperties;
+import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -77,23 +89,30 @@ public class SalaryDAO {
 			throw new AonCoreException(AonError.EMPTY_DATE_FROM.getMessage());
 		if (to == null)
 			throw new AonCoreException(AonError.EMPTY_DATE_TO.getMessage());
-		Field<BigDecimal> sueldosYSalarios = DSL.round(DSL.sum(SALARY.IRPF_BASE), 2).as(SUM_IRPF_BASE);
-		Field<BigDecimal> totalIRPF = DSL.round(DSL.sum(SALARY.TOTAL_IRPF), 2).as(SUM_TOTAL_IRPF);
-		Field<BigDecimal> segSocEmployee = DSL.round(DSL.sum(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS), 2).as(SUM_SOCIAL_SECURITY_CONTRIBUTIONS);
-		Field<BigDecimal> segSocCompany = DSL.round(DSL.sum(SALARY.TOTAL_ENTERPRISE), 2).as(SUM_TOTAL_ENTERPRISE);
-		Field<BigDecimal> totalLiquid = DSL.round(DSL.sum(SALARY.TOTAL_LIQUID), 2).as(SUM_TOTAL_LIQUID);
+		Field<BigDecimal> sueldosYSalarios = DSL.round(
+				DSL.sum(SALARY.IRPF_BASE), 2).as(SUM_IRPF_BASE);
+		Field<BigDecimal> totalIRPF = DSL.round(DSL.sum(SALARY.TOTAL_IRPF), 2)
+				.as(SUM_TOTAL_IRPF);
+		Field<BigDecimal> segSocEmployee = DSL.round(
+				DSL.sum(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS), 2).as(
+				SUM_SOCIAL_SECURITY_CONTRIBUTIONS);
+		Field<BigDecimal> segSocCompany = DSL.round(
+				DSL.sum(SALARY.TOTAL_ENTERPRISE), 2).as(SUM_TOTAL_ENTERPRISE);
+		Field<BigDecimal> totalLiquid = DSL.round(DSL.sum(SALARY.TOTAL_LIQUID),
+				2).as(SUM_TOTAL_LIQUID);
 
-		AggregateFunction<BigDecimal> salaryPaymentAmountSum = DSL.sum(SALARY_PAYMENT.AMOUNT);
+		AggregateFunction<BigDecimal> salaryPaymentAmountSum = DSL
+				.sum(SALARY_PAYMENT.AMOUNT);
 		// DIETAS
-		Field<BigDecimal> dietas = DSL.round(DSL.sum(
-				DSL.select(salaryPaymentAmountSum).from(SALARY_PAYMENT)
+		Field<BigDecimal> dietas = DSL.round(
+				DSL.sum(DSL.select(salaryPaymentAmountSum).from(SALARY_PAYMENT)
 						.where(SALARY_PAYMENT.SALARY.equal(SALARY.ID))
 						.and(SALARY_PAYMENT.TYPE.between((byte) 42, (byte) 50))
 						.asField()), 2).as(ALLOWANCE_SUM);
 
 		// INDEMNIZACIONES
-		Field<BigDecimal> indemnizaciones = DSL.round(DSL.sum(
-				DSL.select(salaryPaymentAmountSum).from(SALARY_PAYMENT)
+		Field<BigDecimal> indemnizaciones = DSL.round(
+				DSL.sum(DSL.select(salaryPaymentAmountSum).from(SALARY_PAYMENT)
 						.where(SALARY_PAYMENT.SALARY.equal(SALARY.ID))
 						.and(SALARY_PAYMENT.TYPE.between((byte) 51, (byte) 54))
 						.asField()), 2).as(COMPENSATION_SUM);
@@ -101,28 +120,32 @@ public class SalaryDAO {
 		AggregateFunction<BigDecimal> salaryDeductionAmountSum = DSL.sum(DSL
 				.round(SALARY_DEDUCTION.AMOUNT, 2));
 		// OTRAS DEDUCCIONES
-		Field<BigDecimal> otherDeductions = DSL.round(DSL.sum(
-				DSL.select(salaryDeductionAmountSum).from(SALARY_DEDUCTION)
+		Field<BigDecimal> otherDeductions = DSL.round(
+				DSL.sum(DSL.select(salaryDeductionAmountSum)
+						.from(SALARY_DEDUCTION)
 						.where(SALARY_DEDUCTION.SALARY.equal(SALARY.ID))
 						.and(SALARY_DEDUCTION.TYPE.equal(DEDUCTION_TYPE_OTHER))
 						.asField()), 2).as(DED_OTHER_SUM);
 		// DEDUCCIONES EN ESPECIE
-		Field<BigDecimal> inKindDeductions = DSL.round(DSL.sum(
-				DSL.select(salaryDeductionAmountSum).from(SALARY_DEDUCTION)
+		Field<BigDecimal> inKindDeductions = DSL.round(
+				DSL.sum(DSL.select(salaryDeductionAmountSum)
+						.from(SALARY_DEDUCTION)
 						.where(SALARY_DEDUCTION.SALARY.equal(SALARY.ID))
 						.and(SALARY_DEDUCTION.TYPE.equal(DEDUCTION_IN_KIND))
 						.asField()), 2).as(DED_IN_KIND_SUM);
 		// DEDUCCIONES de ANTICIPOS
-		Field<BigDecimal> advanceDeductions = DSL.round(DSL.sum(
-				DSL.select(salaryDeductionAmountSum).from(SALARY_DEDUCTION)
+		Field<BigDecimal> advanceDeductions = DSL.round(
+				DSL.sum(DSL.select(salaryDeductionAmountSum)
+						.from(SALARY_DEDUCTION)
 						.where(SALARY_DEDUCTION.SALARY.equal(SALARY.ID))
 						.and(SALARY_DEDUCTION.TYPE.equal(DEDUCTION_ADVANCE))
 						.asField()), 2).as(DED_ADVANCE_SUM);
 
-		AggregateFunction<BigDecimal> salaryEmbargoAmountSum = DSL.sum(SALARY_EMBARGO.AMOUNT);
+		AggregateFunction<BigDecimal> salaryEmbargoAmountSum = DSL
+				.sum(SALARY_EMBARGO.AMOUNT);
 		// DIETAS
-		Field<BigDecimal> seize = DSL.round(DSL.sum(
-				DSL.select(salaryEmbargoAmountSum).from(SALARY_EMBARGO)
+		Field<BigDecimal> seize = DSL.round(
+				DSL.sum(DSL.select(salaryEmbargoAmountSum).from(SALARY_EMBARGO)
 						.where(SALARY_EMBARGO.SALARY.equal(SALARY.ID))
 						.asField()), 2).as(SEIZE_SUM);
 
@@ -208,13 +231,12 @@ public class SalaryDAO {
 			SalaryFilter filter, Supplier<Salary> supplier) {
 
 		Condition conditions[] = SALARY_PROPERTIES.getConditions(filter);
-		
-		if ( ctx == null ){
-				List<Salary> emptyList = Collections.emptyList();
-				return emptyList.stream();
+
+		if (ctx == null) {
+			List<Salary> emptyList = Collections.emptyList();
+			return emptyList.stream();
 		}
-		
-		
+
 		//@formatter:off
 		Cursor<Record> rootCursor = 
 		ctx.getDslContext()
@@ -224,7 +246,7 @@ public class SalaryDAO {
 		.orderBy(SALARY.ID)
 		.fetchLazy();
 		//@formatter:on
-		
+
 		//@formatter:off
 		Cursor<Record> dataCursor = 
 		ctx.getDslContext()
@@ -236,6 +258,47 @@ public class SalaryDAO {
 		.orderBy(SALARY.ID)
 		.fetchLazy();
 		//@formatter:on
+
+		//@formatter:off
+		Cursor<Record> deductionCursor = 
+		ctx.getDslContext()
+		.select()
+		.from(SALARY)
+		.join(SALARY_DEDUCTION)
+		.onKey(FK_SALARY_DEDUCTION_SALARY)
+		.where(conditions)
+		.orderBy(SALARY_DEDUCTION.SALARY)
+		.fetchLazy();
+		//@formatter:on
+
+		//@formatter:off
+		Cursor<Record> costCursor = 
+		ctx.getDslContext()
+		.select()
+		.from(SALARY)
+		.join(SALARY_COST)
+		.onKey(FK_SALARY_COST_SALARY)
+		.where(conditions)
+		.orderBy(SALARY_COST.SALARY)
+		.fetchLazy();
+		//@formatter:on
+		
+		//@formatter:off
+		Cursor<Record> bonusCursor = 
+		ctx.getDslContext()
+		.select()
+		.from(SALARY)
+		.join(SALARY_BONUS)
+		.onKey(FK_SALARY_BONUS_SALARY)
+		.where(conditions)
+		.orderBy(SALARY_BONUS.SALARY)
+		.fetchLazy();
+		//@formatter:on
+
+//		BackIterator<Record> dataIter = new BackIterator<>(dataCursor.iterator());
+		BackIterator<Record> costIter = new BackIterator<>(costCursor.iterator());
+		BackIterator<Record> deductionIter = new BackIterator<>(deductionCursor.iterator());
+		BackIterator<Record> bonusIter = new BackIterator<>(bonusCursor.iterator());
 
 		//@formatter:off
 		return Seq.seq(rootCursor)
@@ -254,13 +317,16 @@ public class SalaryDAO {
 				.setTotalPayment(rootRecord.getValue(SALARY.TOTAL_PAYMENT))
 				.setCommonContingenciesBase(rootRecord.getValue(SALARY.CGC_BASE))
 				.setProfessionalContingenciesBase(rootRecord.getValue(SALARY.CGP_BASE))
+
+				.setTotalEnterprise(rootRecord.getValue(SALARY.TOTAL_ENTERPRISE))
+				.setTotalSSContributions(rootRecord.getValue(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS))				
 				;
 				
 				int salaryId = rootRecord.getValue(SALARY.ID);
 				
 				Seq.limitWhile(
 				Seq.skipUntil(Seq.seq(dataCursor), 
-				r -> r.getValue(SALARY_DATA.SALARY) == salaryId ),
+				r -> r.getValue(SALARY_DATA.SALARY) >= salaryId ),
 				r -> r.getValue(SALARY_DATA.SALARY) == salaryId )
 				.forEachOrdered(dataRecord->
 					salary.setContextData(
@@ -270,24 +336,62 @@ public class SalaryDAO {
 					dataRecord.getValue(SALARY_DATA.END_DATE))
 				);
 				
+				
+				Seq.limitWhile(
+				Seq.skipUntil(Seq.seq(deductionIter), 
+				r -> r.getValue(SALARY_DEDUCTION.SALARY) >= salaryId ),
+				r -> r.getValue(SALARY_DEDUCTION.SALARY) == salaryId )
+				.forEachOrdered(deductionRecord->{
+					salary.addDeduction(
+							deductionRecord.getValue(SALARY_DEDUCTION.TYPE), 
+							deductionRecord.getValue(SALARY_DEDUCTION.DESCRIPTION), 
+							deductionRecord.getValue(SALARY_DEDUCTION.AMOUNT));
+				}
+				);
+				deductionIter.back();
+				
+				Seq.limitWhile(
+				Seq.skipUntil(Seq.seq(costIter), 
+				r -> r.getValue(SALARY_COST.SALARY) >= salaryId ),
+				r -> r.getValue(SALARY_COST.SALARY) == salaryId )
+				.forEachOrdered(costRecord->
+					salary.addCost(
+							costRecord.getValue(SALARY_COST.TYPE), 
+							costRecord.getValue(SALARY_COST.COST_CONCEPT), 
+							costRecord.getValue(SALARY_COST.DESCRIPTION), 
+							costRecord.getValue(SALARY_COST.AMOUNT))
+				);
+				costIter.back();
+
+				Seq.limitWhile(
+				Seq.skipUntil(Seq.seq(bonusIter), 
+				r -> r.getValue(SALARY_BONUS.SALARY) >= salaryId ),
+				r -> r.getValue(SALARY_BONUS.SALARY) == salaryId )
+				.forEachOrdered(bonusRecord->
+					salary.addBonus(
+							bonusRecord.getValue(SALARY_BONUS.BONUS_CONCEPT), 
+							bonusRecord.getValue(SALARY_BONUS.DESCRIPTION), 
+							bonusRecord.getValue(SALARY_BONUS.AMOUNT))
+				);
+				bonusIter.back();
+
 				return salary;
 				}
 		);
 		//@formatter:on
 
 	}
-	
+
 	public static Stream<Salary> getSalaryData(AONContext ctx,
 			SalaryFilter filter, Supplier<Salary> supplier) {
 
 		Condition conditions[] = SALARY_PROPERTIES.getConditions(filter);
-		
-		if ( ctx == null ){
-				List<Salary> emptyList = Collections.emptyList();
-				return emptyList.stream();
+
+		if (ctx == null) {
+			List<Salary> emptyList = Collections.emptyList();
+			return emptyList.stream();
 		}
-		
-		
+
 		//@formatter:off
 		Cursor<Record> rootCursor = 
 		ctx.getDslContext()
@@ -297,7 +401,7 @@ public class SalaryDAO {
 		.orderBy(SALARY.EMPLOYEE_DOCUMENT)
 		.fetchLazy();
 		//@formatter:on
-		
+
 		//@formatter:off
 		Cursor<Record> dataCursor = 
 		ctx.getDslContext()
@@ -339,7 +443,6 @@ public class SalaryDAO {
 
 	}
 
-	
 	private enum SalaryType {
 		SALARY, EXTRA, SETTLE, DELAY, NOT_ENJOYED_VACATIONS;
 
@@ -350,11 +453,10 @@ public class SalaryDAO {
 
 	private static final SalaryPropertiesDAO SALARY_PROPERTIES = new SalaryPropertiesDAO();
 
-	private static class SalaryPropertiesDAO implements
-			SalaryProperties {
+	private static class SalaryPropertiesDAO implements SalaryProperties {
 
 		private Condition[] getConditions(SalaryFilter filter) {
-			FilterDAO filterDAO = (FilterDAO)filter.filter(this);
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null)
 				return new Condition[0];
 
@@ -411,5 +513,31 @@ public class SalaryDAO {
 		}
 	}
 
+	private static class BackIterator<T> implements Iterator<T> {
+
+		private T next;
+		private T prev;
+		private Iterator<T> iterator;
+
+		public BackIterator(Iterator<T> iterator) {
+			this.iterator = iterator;
+		}
+
+		@Override
+		public T next() {
+			prev = next != null ? next : iterator.next();
+			next = null;
+			return prev;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return next != null || iterator.hasNext();
+		}
+
+		public void back(){
+			next = prev;
+		}
+	}
 
 }

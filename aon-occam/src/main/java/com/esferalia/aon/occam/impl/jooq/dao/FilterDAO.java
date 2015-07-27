@@ -72,6 +72,11 @@ public class FilterDAO implements Filter {
 			}
 		}
 		
+		@Override
+		public Filter between(T min, T max) {
+			return new FilterDAO(field.between(min, max));
+		}
+		
 	}
 
 	public static class DatePropertyDAO implements Property<Date> {
@@ -129,6 +134,11 @@ public class FilterDAO implements Filter {
 		@Override
 		public Filter like(Date date) {
 			throw new UnsupportedOperationException();				
+		}
+		
+		@Override
+		public Filter between(Date min, Date max) {
+			return new FilterDAO(field.between(new java.sql.Date(min.getTime()), new java.sql.Date(max.getTime())));
 		}
 		
 	}
@@ -193,6 +203,11 @@ public class FilterDAO implements Filter {
 			throw new UnsupportedOperationException();				
 		}
 		
+		@Override
+		public Filter between(Boolean min, Boolean max) {
+			throw new UnsupportedOperationException();
+		}
+		
 	}
 
 	public static class PropertyNullDAO implements Property<Boolean> {
@@ -253,6 +268,10 @@ public class FilterDAO implements Filter {
 			throw new UnsupportedOperationException();				
 		}
 		
+		@Override
+		public Filter between(Boolean min, Boolean max) {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	private Condition condition;

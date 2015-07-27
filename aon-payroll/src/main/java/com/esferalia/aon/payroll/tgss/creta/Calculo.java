@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll.tgss.creta;
 
 import static com.esferalia.aon.payroll.tgss.creta.Borrador.getYearOption;
 
+import java.io.OutputStream;
 import java.time.Month;
 import java.util.Calendar;
 
@@ -9,6 +10,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 
 import net.aonsolutions.tgss.creta.jaxb.Utils;
+import net.aonsolutions.tgss.creta.jaxb.solicitud.borrador.SolicitudBorrador;
+import net.aonsolutions.tgss.creta.jaxb.solicitud.borrador.SolicitudBorradorBuilder;
 import net.aonsolutions.tgss.creta.jaxb.solicitud.calculos.SolicitudCalculos;
 import net.aonsolutions.tgss.creta.jaxb.solicitud.calculos.SolicitudCalculosBuilder;
 import net.aonsolutions.tgss.creta.jaxb.solicitud.trabajadorestramos.SolicitudTrabajadoresTramos;
@@ -26,8 +29,8 @@ public class Calculo {
 
 	public static void main(String[] args) throws JAXBException, DatatypeConfigurationException {
 		String tipo = "L00";
-		int anho = Calendar.getInstance().get(Calendar.YEAR);
-		Month mes = Month.of(Calendar.getInstance().get(Calendar.MONTH)+1);
+		String anho = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
+		String mes = Integer.toString(Calendar.getInstance().get(Calendar.MONTH)+1);
 
 		//@formatter:off
 		Option year =  getYearOption(anho);
@@ -53,38 +56,13 @@ public class Calculo {
 			// parse the command line arguments
 			CommandLine cmd = parser.parse(options, args);
 			
+			mes = cmd.getOptionValue(month.getLongOpt(), mes);
+			anho = cmd.getOptionValue(year.getLongOpt(), anho);
+			tipo = cmd.getOptionValue(type.getLongOpt(), tipo);
 			String cccs [] = cmd.getOptionValues(ccc.getLongOpt());
+			String autorizado = cmd.getOptionValue(authorized.getLongOpt());
 			
-			if ( cmd.hasOption(month.getLongOpt()))
-				mes = Month.of(Integer.parseInt(cmd.getOptionValue(month.getLongOpt())));
-			if ( cmd.hasOption(year.getLongOpt()))
-					anho = Integer.parseInt(cmd.getOptionValue(year.getLongOpt()));
-			if ( cmd.hasOption(type.getLongOpt())) 
-				tipo = cmd.getOptionValue(type.getLongOpt());
-			
-			int autorizado = Integer.parseInt(cmd.getOptionValue(authorized.getLongOpt()));
-			
-			
-			SolicitudCalculosBuilder builder = 
-					new SolicitudCalculosBuilder()
-			.setAutorizado(autorizado);
-
-			for ( String cCC: cccs ) {
-				builder
-				.setCCC(cCC)
-				.setTipo("L00")
-				.setMesDesde(mes)
-				.setAnhoDesde(anho)
-				.setMesHasta(mes)
-				.setAnhoHasta(anho)
-				.addLiquidacion()
-				.setMesPresentacion(mes)
-				.setAnhoPresentacion(anho)
-				;
-			}
-			SolicitudCalculos solicitud = builder.createSolicitudCalculos();
-
-			Utils.marshal(solicitud, System.out);
+			generate(autorizado, mes, anho, tipo, cccs, System.out);
 			
 		} catch (ParseException e) {
 			// oops, something went wrong
@@ -97,4 +75,40 @@ public class Calculo {
 
 		
 	}
+	
+	public static void generate(String autorizado, String mes, String anho,
+			String tipo, String cccs[], OutputStream os) throws JAXBException {
+
+		int authorized = Integer.parseInt(autorizado);
+		Month month = Month.of(Integer.parseInt(mes));
+		int year = Integer.parseInt(anho);
+
+		generate(authorized, month, year, tipo, cccs, os);
+	}
+
+	public static void generate(int autorizado, Month mes, int anho,
+			String tipo, String cccs[], OutputStream os) throws JAXBException {
+
+		SolicitudCalculosBuilder builder = 
+				new SolicitudCalculosBuilder()
+		.setAutorizado(autorizado);
+
+		for ( String cCC: cccs ) {
+			builder
+			.setCCC(cCC)
+			.setTipo(tipo)
+			.setMesDesde(mes)
+			.setAnhoDesde(anho)
+			.setMesHasta(mes)
+			.setAnhoHasta(anho)
+			.addLiquidacion()
+			.setMesPresentacion(mes)
+			.setAnhoPresentacion(anho)
+			;
+		}
+		SolicitudCalculos solicitud = builder.createSolicitudCalculos();
+
+		Utils.marshal(solicitud, os);
+	}
+	
 }

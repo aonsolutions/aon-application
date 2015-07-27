@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll.tgss.creta;
 
 import static com.esferalia.aon.payroll.tgss.creta.Borrador.getYearOption;
 
+import java.io.OutputStream;
 import java.time.Month;
 import java.util.Calendar;
 
@@ -25,12 +26,12 @@ public class TrabajadoresTramos {
 	public TrabajadoresTramos() {
 		// TODO Auto-generated constructor stub
 	}
-	
-	
-	public static void main(String[] args) throws JAXBException, DatatypeConfigurationException {
+
+	public static void main(String[] args) throws JAXBException,
+			DatatypeConfigurationException {
 		String tipo = "L00";
-		int anho = Calendar.getInstance().get(Calendar.YEAR);
-		Month mes = Month.of(Calendar.getInstance().get(Calendar.MONTH)+1);
+		String anho = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
+		String mes = Integer.toString(Calendar.getInstance().get(Calendar.MONTH) + 1);
 
 		//@formatter:off
 		Option year =  getYearOption(anho);
@@ -55,41 +56,15 @@ public class TrabajadoresTramos {
 
 			// parse the command line arguments
 			CommandLine cmd = parser.parse(options, args);
-			
-			String cccs [] = cmd.getOptionValues(ccc.getLongOpt());
-			
-			if ( cmd.hasOption(month.getLongOpt()))
-				mes = Month.of(Integer.parseInt(cmd.getOptionValue(month.getLongOpt())));
-			if ( cmd.hasOption(year.getLongOpt()))
-					anho = Integer.parseInt(cmd.getOptionValue(year.getLongOpt()));
-			if ( cmd.hasOption(type.getLongOpt())) 
-				tipo = cmd.getOptionValue(type.getLongOpt());
-			
-			int autorizado = Integer.parseInt(cmd.getOptionValue(authorized.getLongOpt()));
-			
-			
-			SolicitudTrabajadoresTramosBuilder builder = 
-					new SolicitudTrabajadoresTramosBuilder()
-			.setAutorizado(autorizado);
 
-			for ( String cCC: cccs ) {
-				builder
-				.setCCC(cCC)
-				.setTipo("L00")
-				.setMesDesde(mes)
-				.setAnhoDesde(anho)
-				.setMesHasta(mes)
-				.setAnhoHasta(anho)
-				.addLiquidacion()
-				;
-			}
-			SolicitudTrabajadoresTramos solicitudTrabajadoresTramos = builder.createSolicitudBorrador();
+			mes = cmd.getOptionValue(month.getLongOpt(), mes);
+			anho = cmd.getOptionValue(year.getLongOpt(), anho);
+			tipo = cmd.getOptionValue(type.getLongOpt(), tipo);
+			String cccs[] = cmd.getOptionValues(ccc.getLongOpt());
+			String autorizado = cmd.getOptionValue(authorized.getLongOpt());
 
-			Utils.marshal(solicitudTrabajadoresTramos, System.out);
-// -a 228115
-// -c 011101105360062 
-// -c 011101105577910
-			
+			generate(autorizado, mes, anho, tipo, cccs, System.out);
+
 		} catch (ParseException e) {
 			// oops, something went wrong
 			System.err.println("Parsing failed.  Reason: " + e.getMessage());
@@ -99,6 +74,32 @@ public class TrabajadoresTramos {
 
 		}
 
-		
+	}
+
+	public static void generate(String autorizado, String mes, String anho,
+			String tipo, String cccs[], OutputStream os) throws JAXBException {
+
+		int authorized = Integer.parseInt(autorizado);
+		Month month = Month.of(Integer.parseInt(mes));
+		int year = Integer.parseInt(anho);
+
+		generate(authorized, month, year, tipo, cccs, os);
+	}
+
+	public static void generate(int autorizado, Month mes, int anho,
+			String tipo, String cccs[], OutputStream os) throws JAXBException {
+
+		SolicitudTrabajadoresTramosBuilder builder = new SolicitudTrabajadoresTramosBuilder()
+				.setAutorizado(autorizado);
+
+		for (String cCC : cccs) {
+			builder.setCCC(cCC).setTipo(tipo).setMesDesde(mes)
+					.setAnhoDesde(anho).setMesHasta(mes).setAnhoHasta(anho)
+					.addLiquidacion();
+		}
+		SolicitudTrabajadoresTramos solicitudTrabajadoresTramos = builder
+				.createSolicitudBorrador();
+
+		Utils.marshal(solicitudTrabajadoresTramos, os);
 	}
 }

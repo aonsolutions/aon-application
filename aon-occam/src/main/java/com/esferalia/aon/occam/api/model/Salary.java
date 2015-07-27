@@ -9,39 +9,281 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collector;
 
-public class Salary implements Serializable{
-	
-	
+import org.jooq.lambda.Seq;
+
+import com.esferalia.aon.occam.api.model.type.DeductionType;
+import com.esferalia.aon.occam.api.model.type.DeductionType.Visitor;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
+public class Salary implements Serializable {
+
 	public static class ContextData {
 		String expression;
 		Date startDate;
 		Date endDate;
-		
+
 		public Date getEndDate() {
 			return endDate;
 		}
-		
+
 		public Date getStartDate() {
 			return startDate;
 		}
-		
+
 		public String getExpression() {
 			return expression;
 		}
 	}
 
-	private Integer id;
+	public static class Deduction {
+		Double amount;
+		String description;
+
+		public Deduction(Double amount, String description) {
+			super();
+			this.amount = amount;
+			this.description = description;
+		}
+
+		public Double getAmount() {
+			return amount;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public boolean isIrpf() {
+			return false;
+		}
+
+		public boolean isJobTraining() {
+			return false;
+		}
+
+		public boolean isUnemployment() {
+			return false;
+		}
+
+		public boolean isCommonContingency() {
+			return false;
+		}
+
+		public boolean isProfesionalContingency() {
+			return false;
+		}
+		
+
+	}
+
+
+	public static class CommonContingecyDeduction extends Deduction {
+
+		public CommonContingecyDeduction(Double amount, String description) {
+			super(amount, description);
+		}
+
+		@Override
+		public boolean isCommonContingency() {
+			return true;
+		}
+	}
 	
+	public static class ProfessionalContingecyDeduction extends Deduction {
+
+		public ProfessionalContingecyDeduction(Double amount, String description) {
+			super(amount, description);
+		}
+
+		@Override
+		public boolean isProfesionalContingency() {
+			return true;
+		}
+	}
+	
+	public static class UnemploymentDeduction extends Deduction{
+
+		public UnemploymentDeduction(Double amount, String description) {
+			super(amount, description);
+		}
+		
+		@Override
+		public boolean isUnemployment() {
+			return true;
+		}
+
+	}
+
+	public static class JobTrainingDeduction extends Deduction{
+
+		public JobTrainingDeduction(Double amount, String description) {
+			super(amount, description);
+		}
+		
+		@Override
+		public boolean isJobTraining() {
+			return true;
+		}
+
+	}
+
+	public static class Cost {
+		
+		Double amount;
+		String description;
+
+		public Cost(Double amount, String description) {
+			super();
+			this.amount = amount;
+			this.description = description;
+		}
+
+		public Double getAmount() {
+			return amount;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+
+		public boolean isIT() {
+			return false;
+		}
+
+		public boolean isIMS() {
+			return false;
+		}
+
+		public boolean isFogasa() {
+			return false;
+		}
+
+
+		public boolean isJobTraining() {
+			return false;
+		}
+
+		public boolean isUnemployment() {
+			return false;
+		}
+
+		public boolean isCommonContingency() {
+			return false;
+		}
+
+		public boolean isProfesionalContingency() {
+			return false;
+		}
+	}
+
+	public static class CommonContingecyCost extends Cost {
+
+		public CommonContingecyCost(Double amount, String description) {
+			super(amount, description);
+		}
+
+		@Override
+		public boolean isCommonContingency() {
+			return true;
+		}
+	}
+	
+	public static class UnemploymentCost extends Cost{
+
+		public UnemploymentCost(Double amount, String description) {
+			super(amount, description);
+		}
+		
+		@Override
+		public boolean isUnemployment() {
+			return true;
+		}
+
+	}
+
+	public static class JobTrainingCost extends Cost{
+
+		public JobTrainingCost(Double amount, String description) {
+			super(amount, description);
+		}
+		
+		@Override
+		public boolean isJobTraining() {
+			return true;
+		}
+
+	}
+	
+	public static class ITCost extends Cost {
+
+		public ITCost(Double amount, String description) {
+			super(amount, description);
+		}
+
+		@Override
+		public boolean isIT() {
+			return true;
+		}
+	}
+	
+	public static class IMSCost extends Cost {
+
+		public IMSCost(Double amount, String description) {
+			super(amount, description);
+		}
+
+		@Override
+		public boolean isIMS() {
+			return true;
+		}
+	}
+
+	public static class FogasaCost extends Cost {
+
+		public FogasaCost(Double amount, String description) {
+			super(amount, description);
+		}
+
+		@Override
+		public boolean isFogasa() {
+			return true;
+		}
+	}
+	
+	public static class Bonus {
+		Double amount;
+		String description;
+
+		public Bonus(Double amount, String description) {
+			super();
+			this.amount = amount;
+			this.description = description;
+		}
+
+		public Double getAmount() {
+			return amount;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+		
+	}
+	
+	
+	private Integer id;
+
 	private Date startDate;
 	private Date endDate;
 	private int salaryDays;
-	
+
 	// Enterprise related data
 	private String enterpriseCCC;
 	private String enterpriseName;
 	private String enterpriseAddress;
-	private String enterpriseDocument;	
-	
+	private String enterpriseDocument;
+
 	// Employee related data
 	private String employeeName;
 	private String employeeSSNumber;
@@ -57,8 +299,8 @@ public class Salary implements Serializable{
 	private Double totalEnterprise;
 	private Double totalIrpf;
 	private Double totalSSContributions;
-	
-	// Tax (I.R.P.F) bases 
+
+	// Tax (I.R.P.F) bases
 	private Double irpfBase;
 	private double moneyIrpfBase;
 	private double inkindIrpfBase;
@@ -69,40 +311,40 @@ public class Salary implements Serializable{
 	private Double estructuralOvertimeBase;
 	private Double nonEstructuralOvertimeBase;
 
-	
-	
-	private Map<String, List<ContextData>> contextdata ;
-	
-	
+	private List<Cost> costs;
+	private List<Bonus> bonuses;
+	private List<Deduction> deductions;
+	private Map<String, List<ContextData>> contextdata;
+
 	public Salary() {
+		costs = new ArrayList<Cost>();
+		bonuses = new ArrayList<Bonus>();
+		deductions = new ArrayList<Deduction>();
 		contextdata = new HashMap<String, List<ContextData>>();
 	}
-	
+
 	public Integer getId() {
 		return id;
 	}
-	
-	
+
 	public Salary setId(Integer id) {
 		this.id = id;
 		return this;
 	}
-	
+
 	public String getEnterpriseCCC() {
 		return enterpriseCCC;
 	}
-	
-	
+
 	public Salary setEnterpriseCCC(String enterpriseCCC) {
 		this.enterpriseCCC = enterpriseCCC;
 		return this;
 	}
-	
-	
+
 	public String getEnterpriseName() {
 		return enterpriseName;
 	}
-	
+
 	public Salary setEnterpriseName(String enterpriseName) {
 		this.enterpriseName = enterpriseName;
 		return this;
@@ -111,202 +353,168 @@ public class Salary implements Serializable{
 	public String getEnterpriseDocument() {
 		return enterpriseDocument;
 	}
-	
+
 	public Salary setEnterpriseDocument(String enterpriseDocument) {
 		this.enterpriseDocument = enterpriseDocument;
 		return this;
 	}
-	
+
 	public String getEnterpriseAddress() {
 		return enterpriseAddress;
 	}
-	
+
 	public Salary setEnterpriseAddress(String enterpriseAddress) {
 		this.enterpriseAddress = enterpriseAddress;
 		return this;
 	}
 
-
 	public String getEmployeeName() {
 		return employeeName;
 	}
-
 
 	public Salary setEmployeeName(String employeeName) {
 		this.employeeName = employeeName;
 		return this;
 	}
 
-
 	public String getEmployeeSSNumber() {
 		return employeeSSNumber;
 	}
-
 
 	public Salary setEmployeeSSNumber(String employeeSSNumber) {
 		this.employeeSSNumber = employeeSSNumber;
 		return this;
 	}
 
-
 	public String getEmployeeDocument() {
 		return employeeDocument;
 	}
-
 
 	public Salary setEmployeeDocument(String employeeDocument) {
 		this.employeeDocument = employeeDocument;
 		return this;
 	}
 
-
 	public Date getEmployeeSeniorityDate() {
 		return employeeSeniorityDate;
 	}
-
 
 	public Salary setEmployeeSeniorityDate(Date employeeSeniorityDate) {
 		this.employeeSeniorityDate = employeeSeniorityDate;
 		return this;
 	}
 
-
 	public String getEmployeeQuoteGroup() {
 		return employeeQuoteGroup;
 	}
-
 
 	public Salary setEmployeeQuoteGroup(String employeeQuoteGroup) {
 		this.employeeQuoteGroup = employeeQuoteGroup;
 		return this;
 	}
 
-
 	public String getEmployeeCategory() {
 		return employeeCategory;
 	}
-
 
 	public Salary setEmployeeCategory(String employeeCategory) {
 		this.employeeCategory = employeeCategory;
 		return this;
 	}
 
-
 	public Double getTotalPayment() {
 		return totalPayment;
 	}
-
 
 	public Salary setTotalPayment(Double totalPayment) {
 		this.totalPayment = totalPayment;
 		return this;
 	}
 
-
 	public Double getTotalDeduction() {
 		return totalDeduction;
 	}
-
 
 	public Salary setTotalDeduction(Double totalDeduction) {
 		this.totalDeduction = totalDeduction;
 		return this;
 	}
 
-
 	public Double getTotalLiquid() {
 		return totalLiquid;
 	}
-
 
 	public Salary setTotalLiquid(Double totalLiquid) {
 		this.totalLiquid = totalLiquid;
 		return this;
 	}
 
-
 	public Double getTotalEnterprise() {
 		return totalEnterprise;
 	}
-
 
 	public Salary setTotalEnterprise(Double totalEnterprise) {
 		this.totalEnterprise = totalEnterprise;
 		return this;
 	}
 
-
 	public Double getTotalIrpf() {
 		return totalIrpf;
 	}
-
 
 	public Salary setTotalIrpf(Double totalIrpf) {
 		this.totalIrpf = totalIrpf;
 		return this;
 	}
 
-
 	public Double getTotalSSContributions() {
 		return totalSSContributions;
 	}
-
 
 	public Salary setTotalSSContributions(Double totalSSContributions) {
 		this.totalSSContributions = totalSSContributions;
 		return this;
 	}
 
-
 	public Double getIrpfBase() {
 		return irpfBase;
 	}
-
 
 	public Salary setIrpfBase(Double irpfBase) {
 		this.irpfBase = irpfBase;
 		return this;
 	}
 
-
 	public double getMoneyIrpfBase() {
 		return moneyIrpfBase;
 	}
-
 
 	public Salary setMoneyIrpfBase(double moneyIrpfBase) {
 		this.moneyIrpfBase = moneyIrpfBase;
 		return this;
 	}
 
-
 	public double getInkindIrpfBase() {
 		return inkindIrpfBase;
 	}
-
 
 	public Salary setInkindIrpfBase(double inkindIrpfBase) {
 		this.inkindIrpfBase = inkindIrpfBase;
 		return this;
 	}
 
-
 	public Double getCommonContingenciesBase() {
 		return commonContingenciesBase;
 	}
-
 
 	public Salary setCommonContingenciesBase(Double commonContingenciesBase) {
 		this.commonContingenciesBase = commonContingenciesBase;
 		return this;
 	}
 
-
 	public Double getProfessionalContingenciesBase() {
 		return professionalContingenciesBase;
 	}
-
 
 	public Salary setProfessionalContingenciesBase(
 			Double professionalContingenciesBase) {
@@ -314,76 +522,184 @@ public class Salary implements Serializable{
 		return this;
 	}
 
-
 	public Double getEstructuralOvertimeBase() {
 		return estructuralOvertimeBase;
 	}
-
 
 	public Salary setEstructuralOvertimeBase(Double estructuralOvertimeBase) {
 		this.estructuralOvertimeBase = estructuralOvertimeBase;
 		return this;
 	}
 
-
 	public Double getNonEstructuralOvertimeBase() {
 		return nonEstructuralOvertimeBase;
 	}
 
-
-	public Salary setNonEstructuralOvertimeBase(Double nonEstructuralOvertimeBase) {
+	public Salary setNonEstructuralOvertimeBase(
+			Double nonEstructuralOvertimeBase) {
 		this.nonEstructuralOvertimeBase = nonEstructuralOvertimeBase;
 		return this;
 	}
-	
-	
+
 	public int getSalaryDays() {
 		return salaryDays;
 	}
-	
+
 	public Salary setSalaryDays(int salaryDays) {
 		this.salaryDays = salaryDays;
 		return this;
 	}
-	
+
 	public Date getStartDate() {
 		return startDate;
 	}
-	
+
 	public Salary setStartDate(Date startDate) {
 		this.startDate = startDate;
 		return this;
 	}
-	
+
 	public Date getEndDate() {
 		return endDate;
 	}
-	
+
 	public Salary setEndDate(Date endDate) {
 		this.endDate = endDate;
 		return this;
 	}
 	
+	public List<Bonus> getBonuses() {
+		return Collections.unmodifiableList(bonuses);
+	}
+
+	public void addBonus(String code, String description,
+			Double amount) {
+		System.out.println(code + " = " + amount);
+		bonuses.add(new Bonus(amount, description));
+	}
+	
+
+	public List<Cost> getCosts() {
+		return Collections.unmodifiableList(costs);
+	}
+	
+
+	public void addCost(Byte type, String code, String description,
+			Double amount) {
+		Cost cost = null ;
+		if ( AonStringUtils.equals("IT_E", code) ) 
+			type = (byte)DeductionType.IT.ordinal();
+		else if ( AonStringUtils.equals("IMS_E", code) ) 
+			type = (byte)DeductionType.IMS.ordinal();
+
+		try {
+			cost = DeductionType.deductionTypeOf(type)
+				.accept(new DeductionType.Visitor<Cost>() {
+				@Override
+				public Cost visitCommonContigency(DeductionType deductionType) {
+					return new CommonContingecyCost(amount, description);
+				}
+				
+				@Override
+				public Cost visitUnemployent(
+						DeductionType deductionType) {
+					return new UnemploymentCost(amount, description);
+				}
+
+				@Override
+				public Cost visitFogasa(
+						DeductionType deductionType) {
+					return new FogasaCost(amount, description);
+				}
+				
+				@Override
+				public Cost visitJobTraining(
+						DeductionType deductionType) {
+					return new JobTrainingCost(amount, description);
+				}
+				
+				@Override
+				public Cost visitIT(DeductionType deductionType) {
+					return new ITCost(amount, description);
+				}
+
+				@Override
+				public Cost visitIMS(DeductionType deductionType) {
+					return new IMSCost(amount, description);
+				}
+
+			});
+		} catch (Exception e) {
+		}
+		if ( cost == null )
+			cost = new Cost(amount, description);
+		
+		costs.add(cost);
+	}
+
+	public List<Deduction> getDeductions() {
+		return Collections.unmodifiableList(deductions);
+	}
+
+	public void addDeduction(Byte type, String description,
+			Double amount) {
+		Deduction deduction = null ;
+		try {
+			deduction = DeductionType.deductionTypeOf(type)
+				.accept(new DeductionType.Visitor<Deduction>() {
+				@Override
+				public Deduction visitCommonContigency(DeductionType deductionType) {
+					return new CommonContingecyDeduction(amount, description);
+				}
+				
+				@Override
+				public Deduction visitUnemployent(
+						DeductionType deductionType) {
+					return new UnemploymentDeduction(amount, description);
+				}
+				
+				@Override
+				public Deduction visitJobTraining(
+						DeductionType deductionType) {
+					return new JobTrainingDeduction(amount, description);
+				}
+				
+				@Override
+				public Deduction visitProfessionalContigency(
+						DeductionType deductionType) {
+					
+					return new ProfessionalContingecyDeduction(amount, description);
+				}
+				
+
+			});
+		} catch (Exception e) {
+		}
+		if ( deduction == null )
+			deduction = new Deduction(amount, description);
+		
+		deductions.add(deduction);
+	}
+
 	public Map<String, List<ContextData>> getContextData() {
 		return Collections.unmodifiableMap(contextdata);
 	}
-	
 
-	public <A,R> R getContextData(String name, Collector<? super String,A,R> collector ) {
+	public <A, R> R getContextData(String name,
+			Collector<? super String, A, R> collector) {
 		List<ContextData> datas = contextdata.get(name);
-		if ( datas == null ) 
+		if (datas == null)
 			return null;
-		return datas.stream()
-		.map(d-> d.expression)
-		.collect(collector);
+		return datas.stream().map(d -> d.expression).collect(collector);
 	}
 
-	public Salary setContextData(String name, String value, Date startDate, Date endDate) {
-		
+	public Salary setContextData(String name, String value, Date startDate,
+			Date endDate) {
+
 		List<ContextData> datas = contextdata.get(name);
-		if ( datas == null  ) 
+		if (datas == null)
 			contextdata.put(name, datas = new ArrayList<ContextData>(1));
-	
+
 		ContextData contextData = new ContextData();
 		contextData.endDate = endDate;
 		contextData.startDate = startDate;
@@ -391,4 +707,5 @@ public class Salary implements Serializable{
 		datas.add(contextData);
 		return this;
 	}
+	
 }

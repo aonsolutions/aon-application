@@ -621,10 +621,10 @@ public class Bases {
 					(partialFactor != null ? Double.toString(Integer
 							.parseInt(partialFactor) / 1000.00) : null), p, salary,
 					cbs);
-		for (Peculiaridad peculiaridad : tramo.getInformacionAfiliacion()
-				.getPeculiaridades().getPeculiaridad()) {
-
-		}
+//		for (Peculiaridad peculiaridad : tramo.getInformacionAfiliacion()
+//				.getPeculiaridades().getPeculiaridad()) {
+//
+//		}
 
 	}
 
@@ -652,64 +652,6 @@ public class Bases {
 		}
 	}
 
-	private static Calendar toCalendar(Periodo periodo) {
-		return toCalendar(periodo.getAnho(), periodo.getMes());
-	}
-
-	private static Calendar toCalendar(String anho, String mes) {
-		int month = Integer.parseInt(mes) - 1;
-		int year = Integer.parseInt(anho);
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.YEAR, year);
-		calendar.set(Calendar.MONTH, month);
-
-		// Reset time
-		calendar.set(Calendar.HOUR_OF_DAY, 0);
-		calendar.set(Calendar.MINUTE, 0);
-		calendar.set(Calendar.SECOND, 0);
-		calendar.set(Calendar.MILLISECOND, 0);
-
-		return calendar;
-	}
-
-	private static Date toDate(Fecha fecha) {
-		int dia = Integer.parseInt(fecha.getDia());
-		int mes = Integer.parseInt(fecha.getMes()) - 1;
-		int anho = Integer.parseInt(fecha.getAnho());
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.YEAR, anho);
-		calendar.set(Calendar.MONTH, mes);
-		calendar.set(Calendar.DAY_OF_MONTH, dia);
-
-		// Reset time
-		calendar.set(Calendar.HOUR_OF_DAY, 0);
-		calendar.set(Calendar.MINUTE, 0);
-		calendar.set(Calendar.SECOND, 0);
-		calendar.set(Calendar.MILLISECOND, 0);
-
-		return calendar.getTime();
-	}
-
-	private static Date toDate(String anho, String mes, String dia) {
-		int day = Integer.parseInt(dia);
-		int month = Integer.parseInt(mes) - 1;
-		int year = Integer.parseInt(anho);
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.YEAR, year);
-		calendar.set(Calendar.MONTH, month);
-		calendar.set(Calendar.DAY_OF_MONTH, day);
-
-		// Reset time
-		calendar.set(Calendar.HOUR_OF_DAY, 0);
-		calendar.set(Calendar.MINUTE, 0);
-		calendar.set(Calendar.SECOND, 0);
-		calendar.set(Calendar.MILLISECOND, 0);
-
-		return calendar.getTime();
-	}
 
 	private static long days(Period p) {
 		return AonDateUtils.getDaysBetweenDates(p.getStart(), p.getEnd()) + 1;
@@ -775,6 +717,121 @@ public class Bases {
 		return builder.create();
 
 	}
+	
+	// ------------------------------------------------------------------------
+	
+	@SuppressWarnings("static-access")
+	public static Option getHostNameOption(){
+		return OptionBuilder.withArgName("name")
+							.hasArg()
+							.withLongOpt("host")
+							.withDescription("Connect to host.")
+							.create("h");
+	}
+	
+	@SuppressWarnings("static-access")
+	public static Option getDbUserOption(){
+		return OptionBuilder.withArgName("name")
+							.hasArg()
+							.isRequired(true)
+							.withLongOpt("user")
+							.withDescription("User for login.")
+							.create("u");
+	}	
+	
+	@SuppressWarnings("static-access")
+	public static Option getDbPasswordOption(){
+		return OptionBuilder.withArgName("name")
+				.hasArg()
+				.isRequired(true)
+				.withLongOpt("password")
+				.withDescription("Password to use when connecting to server.")
+				.create("p");
+	}
+	
+	@SuppressWarnings("static-access")
+	public static Option getDatabaseOption(){
+		return OptionBuilder.withArgName("name")
+				.hasArg()
+				.isRequired(true)
+				.withLongOpt("database")
+				.withDescription("Database to use.")
+				.create("D");
+	}
+	
+	
+	@SuppressWarnings("static-access")
+	public static Option getCommentsOption(){
+		return OptionBuilder.withLongOpt("comments")
+				.withDescription("Write additional information.")
+				.create("c");
+	}	
+	
+	@SuppressWarnings("static-access")
+	public static Option getPrettyOption(){
+		return OptionBuilder.withLongOpt("pretty")
+		  .withDescription("Makes the output readable to a human.")
+		  .create();		
+	}
+	
+	public static Calendar toCalendar(Periodo periodo) {
+		return toCalendar(periodo.getAnho(), periodo.getMes());
+	}
+
+	public static Calendar toCalendar(String anho, String mes) {
+		int month = Integer.parseInt(mes) - 1;
+		int year = Integer.parseInt(anho);
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, month);
+
+		// Reset time
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+
+		return calendar;
+	}
+
+	public static Date toDate(Fecha fecha) {
+		int dia = Integer.parseInt(fecha.getDia());
+		int mes = Integer.parseInt(fecha.getMes()) - 1;
+		int anho = Integer.parseInt(fecha.getAnho());
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, anho);
+		calendar.set(Calendar.MONTH, mes);
+		calendar.set(Calendar.DAY_OF_MONTH, dia);
+
+		// Reset time
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+
+		return calendar.getTime();
+	}
+
+	public static Date toDate(String anho, String mes, String dia) {
+		int day = Integer.parseInt(dia);
+		int month = Integer.parseInt(mes) - 1;
+		int year = Integer.parseInt(anho);
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, month);
+		calendar.set(Calendar.DAY_OF_MONTH, day);
+
+		// Reset time
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+
+		return calendar.getTime();
+	}
 
 	// ------------------------------------------------------------------------
 	// Main
@@ -787,29 +844,10 @@ public class Bases {
 			TransformerFactoryConfigurationError {
 
 		//@formatter:off
-		Option hostName =  OptionBuilder.withArgName("name")
-					 					.hasArg()
-										.withLongOpt("host")
-										.withDescription("Connect to host.")
-										.create("h");
-		Option user =  OptionBuilder.withArgName("name")
-					 				.hasArg()
-									.isRequired(true)
-									.withLongOpt("user")
-									.withDescription("User for login.")
-									.create("u");
-		Option password =  OptionBuilder.withArgName("name")
-										.hasArg()
-										.isRequired(true)
-										.withLongOpt("password")
-										.withDescription("Password to use when connecting to server.")
-										.create("p");
-		Option database =  OptionBuilder.withArgName("name")
-										.hasArg()
-										.isRequired(true)
-										.withLongOpt("database")
-										.withDescription("Database to use.")
-										.create("D");
+		Option hostName =  getHostNameOption();
+		Option user =  getDbUserOption();
+		Option password =  getDbPasswordOption();
+		Option database =  getDatabaseOption();
 		Option trabajadoresTramosFile =  OptionBuilder.withArgName("file")
 									.hasArg()
 									.withLongOpt("trabajadores-tramos")
@@ -820,17 +858,14 @@ public class Bases {
 				.withLongOpt("respuesta")
 				.withDescription("Fichero de Respuesta.")
 				.create("r");
-		Option comments =  OptionBuilder.withLongOpt("comments")
-										.withDescription("Write additional information.")
-										.create("c");
+
+		Option comments = getCommentsOption();
 		
 		Option skiptPrevBases =  OptionBuilder.withLongOpt("skip-prev-bases")
 				.withDescription("Skip previous bases.")
 				.create("b");
 
-		Option pretty =  OptionBuilder.withLongOpt("pretty")
-				  .withDescription("Makes the output readable to a human.")
-				  .create();
+		Option pretty =  getPrettyOption();
 
 		Options options = new Options()
 		.addOption(hostName)
