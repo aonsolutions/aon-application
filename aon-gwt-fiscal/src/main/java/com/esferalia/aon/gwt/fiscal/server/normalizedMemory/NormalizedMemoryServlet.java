@@ -3,7 +3,12 @@ package com.esferalia.aon.gwt.fiscal.server.normalizedMemory;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,15 +22,19 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemHeaders;
 import org.jooq.Record1;
 import org.jooq.Record3;
 import org.jooq.Result;
 
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.D2DepositTreeObject;
 import com.esferalia.aon.gwt.fiscal.shared.D2Deposit2014;
+import com.esferalia.aon.gwt.fiscal.shared.MemoryFiles;
 import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -56,8 +65,17 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final String D2_DEPOSIT_SCHEMA = "d2DepositSchema";
+	private static final String D2_DEPOSIT_FILE = "D2DepositFile";
+	private static final String D2_DEPOSIT_MIMETYPE = "D2DepositMimeType";
 	private static final String MODIFY_D2_DEPOSIT_SCHEMA = "ModifyD2DepositSchema";
 	private static final String TRUE = "true";
+	
+	private static final String D2_FILE_MEMORY = "Memoria";
+	private static final String D2_FILE_AUTOCARTERA_MODEL = "Modelo de Autocartera";
+	private static final String D2_FILE_GESTION = "Informe de Gestion";
+	private static final String D2_FILE_AUDIT = "Informe de Auditoria";
+	private static final String D2_FILE_CONVOC = "Anuncios de Convocatoria";
+	private static final String D2_FILE_SICAV = "Certificacion SICAV";
 
 	public Integer initialize() {
 		return null;
@@ -78,10 +96,6 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 				schema = DBConsults.getDeposit(domain, domainId);
 			request.getSession().setAttribute(D2_DEPOSIT_SCHEMA + cif, schema);
 		}
-		// TODO
-		// COMPROBAR SI EL SCHEMA ESTÁ EN LA SESIÓN
-		// SI NO ESTA GETDEPOSIT() --> DE DBCONSULTS.
-		// DEVOLVER SCHEMA
 		
 		List<Clave> claves = schema.getClaves().getClave();
 		Map<String, String> map = new HashMap<String, String>();
@@ -353,6 +367,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		Date date = null;
 		try {
 			date = formatter.parse(str);
+			
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -512,8 +527,6 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		return getSchema(enterprise.getDocument(), domainId, false);
 	}
 	
-	
-	// TODO Create new class for map
 	public Map<String, String> calculate(Map<String, String> map) {
 		D2MVELContext ctx = new D2MVELContext(map, new IAccMiningKeyAccept() {
 			@Override
@@ -541,8 +554,6 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 			if (ret instanceof Double) {
 				Double calculated = (Double) ret;
 				ctx.put("Q"+key, calculated);
-				// TODO 
-				// populate data
 				
 				if(map.containsKey(key)) map.remove(key);
 				map.put(key, calculated.toString());
@@ -551,4 +562,84 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		return map;
 	}
 	
+	private byte[] getFile(Integer domainId) {
+		HttpServletRequest request = getThreadLocalRequest();
+		return (byte[]) request.getSession().getAttribute(D2_DEPOSIT_FILE+domainId);
+	}
+	
+	private String getMimeType(Integer domainId) {
+		HttpServletRequest request = getThreadLocalRequest();
+		return (String) request.getSession().getAttribute(D2_DEPOSIT_MIMETYPE+domainId);
+	}
+	
+	public String getAsHTML(int zoom) {
+		//FileItem file = getFile();
+		
+		//file.getContentType();
+		/*IDocument2HtmlConverter converter = 
+				getDocument2HtmlConverter(doc);
+		try {
+			ByteArrayOutputStream os = 
+					new ByteArrayOutputStream();
+			converter.transform(doc, os, zoom);
+			os.flush();
+			return os.toString();
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}*/
+		return "";
+	}
+	
+	
+	public Vector<MemoryFiles> getMemoryFiles(Integer domainId){
+		String domain = AonUtil.getDomainName();
+
+		Vector<MemoryFiles> ms = new Vector<MemoryFiles>();
+		
+		MemoryFiles m = new MemoryFiles();
+		Integer id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_MEMORY);
+		m.setId(id);m.setBool(id != -1);m.setName(D2_FILE_MEMORY);ms.add(m);
+		
+		MemoryFiles m2 = new MemoryFiles();
+		id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_AUTOCARTERA_MODEL);
+		m2.setId(id);m2.setBool(id != -1);m2.setName(D2_FILE_AUTOCARTERA_MODEL);ms.add(m2);
+		
+		MemoryFiles m3 = new MemoryFiles();
+		id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_GESTION);
+		m3.setId(id);m3.setBool(id != -1);m3.setName(D2_FILE_GESTION);ms.add(m3);
+
+		MemoryFiles m4 = new MemoryFiles();
+		id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_AUDIT);
+		m4.setId(id);m4.setBool(id != -1);m4.setName(D2_FILE_AUDIT);ms.add(m4);
+
+		MemoryFiles m5 = new MemoryFiles();
+		id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_CONVOC);
+		m5.setId(id);m5.setBool(id != -1);m5.setName(D2_FILE_CONVOC);ms.add(m5);
+
+		MemoryFiles m6 = new MemoryFiles();
+		id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_SICAV);
+		m6.setId(id);m6.setBool(id != -1);m6.setName(D2_FILE_SICAV);ms.add(m6);
+		
+		return ms;
+	}
+	
+	public void deleteMemoryFile(Integer domainId, Integer id){
+		String domain = AonUtil.getDomainName();
+		DBConsults.deleteMemoryFile(domain, domainId, id);
+		
+	}
+	
+	public MemoryFiles insertMemoryFile(Integer domainId, MemoryFiles mf){
+		String domain = AonUtil.getDomainName(); 
+		byte[] b = getFile(domainId);
+		byte  m = (byte) MimeType.get(getMimeType(domainId)).ordinal();
+		if(mf.getBool()){			
+			DBConsults.updateMemoryFile(domain, domainId, m, b, mf.getId());
+		}
+		else {
+			Integer id = DBConsults.insertMemoryFile(domain, domainId, m, b, mf.getName());
+			mf.setId(id);
+		}
+		return mf;
+	}
 }

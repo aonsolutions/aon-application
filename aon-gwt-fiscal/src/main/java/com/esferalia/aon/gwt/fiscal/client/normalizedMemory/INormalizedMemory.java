@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.fiscal.shared.D2Deposit2014;
+import com.esferalia.aon.gwt.fiscal.shared.MemoryFiles;
 import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -50,4 +51,10 @@ public interface INormalizedMemory extends RemoteService{
 	public void deleteFreeText(Integer domainId, Integer rattachId);
 	
 	public Map<String, String> calculate(Map<String, String> map);
+	
+	public Vector<MemoryFiles> getMemoryFiles(Integer domainId);
+	
+	public void deleteMemoryFile(Integer domainId, Integer id);
+	
+	public MemoryFiles insertMemoryFile(Integer domainId, MemoryFiles mf);
 }

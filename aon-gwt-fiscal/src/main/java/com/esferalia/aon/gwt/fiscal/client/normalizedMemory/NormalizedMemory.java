@@ -60,7 +60,7 @@ public class NormalizedMemory extends ResizeComposite {
 	private final static FiscalMessages MSG = GWT.create(FiscalMessages.class);
 	private final static AonResources RESOURCES = GWT.create(AonResources.class);
 
-	private Memory memory;
+
 	private D2Deposit2014 d2Deposit2014;
 	
 	
@@ -888,6 +888,7 @@ public class NormalizedMemory extends ResizeComposite {
 		if(pagesPanel.getWidgetCount() > 0) pagesPanel.remove(0);
 		pagesPanel.add(widget);
 	}
+
 	
 	public void setPagesPanel(Widget widget, Boolean nuevo){
 		if(!nuevo && !textMode){

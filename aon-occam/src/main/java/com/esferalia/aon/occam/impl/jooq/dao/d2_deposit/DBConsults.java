@@ -14,9 +14,11 @@ import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record5;
 import org.jooq.Record7;
+import org.jooq.Result;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
+import com.mchange.v2.io.FileIterator;
 
 public class DBConsults {
 
@@ -361,5 +363,151 @@ public class DBConsults {
 		}
 
 	}
+	
+	public static Integer getMemoryFile(String domain, Integer domainId, String name){
+		AONContext ctx = null;
+		try {
+			
+			ctx = AONContext.getAONContext(domain, domainId);
+			Result<Record1<Integer>> record = ctx
+					.getDslContext()
+					.select(RATTACH.ID)
+					.from(RATTACH)
+					.where(RATTACH.DESCRIPTION.eq(name))
+					.and(RATTACH.DOMAIN.eq(domainId))
+					.and(RATTACH.TYPE.eq((byte)7))
+					.fetch();		
+			
+			if(!record.isEmpty()){
+				return record.get(0).value1();
+			}
+			return -1;
+			
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static File getMemoryFile(String domain, Integer domainId, Integer id, String name){
+		AONContext ctx = null;
+		try {
+			
+			ctx = AONContext.getAONContext(domain, domainId);
+			Result<Record2<Byte, byte[]>> record = ctx
+					.getDslContext()
+					.select(RATTACH.MIMETYPE, RATTACH.DATA)
+					.from(RATTACH)
+					.where(RATTACH.ID.eq(id))
+					.fetch();		
+			
+		
+			byte[] data;
+			File file;
+			if(!record.isEmpty()){
+				if(record.get(0).value2() != null){
+					data = record.get(0).value2();
+					file = new File("/tmp/" + name );
+					if(!file.isDirectory())
+						try {
+							AonFileUtils.writeByteArrayToFile(file, data);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					return file;
+				}
+			}
+			return null;
+			
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
+	public static Byte getMimeType(String domain, Integer domainId, Integer id){
+		AONContext ctx = null;
+		try {
+			
+			ctx = AONContext.getAONContext(domain, domainId);
+			Result<Record1<Byte>> record = ctx
+					.getDslContext()
+					.select(RATTACH.MIMETYPE)
+					.from(RATTACH)
+					.where(RATTACH.ID.eq(id))
+					.fetch();		
+			
+			if(!record.isEmpty()){
+				if(record.get(0).value1() != null){
+					return record.get(0).value1();
+				}
+			}
+			return -1;
+			
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	
+	public static void deleteMemoryFile(String domain,Integer domainId, Integer rattachId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+		
+			ctx.getDslContext().delete(RATTACH).where(RATTACH.ID.eq(rattachId))
+			.and(RATTACH.TYPE.eq((byte)7)).execute();
+			
+		}finally {
+			if (ctx != null) ctx.close();
+		}
+	}	
+	
+	public static Integer insertMemoryFile(String domain, Integer domainId, byte mimetype, byte[] data, String name){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+
+			Record1<Integer> reg = ctx
+					.getDslContext()
+					.select(ENTERPRISE.REGISTRY)
+					.from(ENTERPRISE.join(REGISTRY).on(
+							REGISTRY.ID.eq(ENTERPRISE.REGISTRY)))
+					.where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne();
+			Integer registry = reg.value1();
+
+			return ctx.getDslContext()
+					.insertInto(RATTACH, RATTACH.REGISTRY, RATTACH.DOMAIN,
+							RATTACH.CATEGORY, RATTACH.MIMETYPE,
+							RATTACH.DESCRIPTION, RATTACH.TYPE, RATTACH.SCOPE,
+							RATTACH.SECURITY_LEVEL, RATTACH.ATTACH_DATE,
+							RATTACH.DATA, RATTACH.DRIVE_ID, RATTACH.DPARENT_ID)
+					.values(registry, domainId,null,
+							mimetype, name, (byte) 7, null,
+							(byte) 0, null, data, null, null)
+					.returning(RATTACH.ID).fetchOne().getId();
+
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static void updateMemoryFile(String domain, Integer domainId, byte mimetype, byte[] data, Integer id){
+	
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+
+			ctx.getDslContext().update(RATTACH).set(RATTACH.DATA, data)
+					.set(RATTACH.MIMETYPE, mimetype)
+					.where(RATTACH.ID.eq(id)).execute();
+
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 }

@@ -371,6 +371,7 @@ public class Header1 extends PageAbs {
 			//SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
   
 			DateBox d = (DateBox) w;
+			d.setFormat(new DateBox.DefaultFormat(AON.DATE_FORMAT));
 			dAux = d;
 			if(mapDraft.containsKey(key2)){
 				

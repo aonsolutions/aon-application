@@ -35,6 +35,15 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class DepositDialog extends CustomDialogB {
 	
+	private static final String DIALOG_NEW = "new";
+	private static final String DIALOG_NEW2 = "new2";
+	private static final String DIALOG_IMPORT = "import";
+	private static final String DIALOG_IMPORT_TEXT = "importText";
+	private static final String DIALOG_IMPORT_ALL = "importAll";
+	private static final String DIALOG_DELETE = "delete";
+
+
+
 	interface Binder extends UiBinder<Widget, DepositDialog>{
 		
 	}
@@ -53,30 +62,31 @@ public abstract class DepositDialog extends CustomDialogB {
 		vp = new VerticalPanel();
 		typeAux = type;
 		switch (type) {
-		case "new": newDeposit(enterprise);break;
-		case "new2": newDeposit2();break;
-		case "import": importar(enterprise, url);break;
-		case "importText": importarTextos(mts);break;
-		case "importAll": importAll(mts, enterprise, url); break;
-		case "delete": label.setText("Esta seguro de eliminar el Deposito");
+		case DIALOG_NEW: newDeposit(enterprise);break;
+		case DIALOG_NEW2: newDeposit2();break;
+		case DIALOG_IMPORT: label.setText("Al importar un archivo se eliminarán todos los datos referentes a la memoria normalizada.");
+							importar(enterprise, url);break;
+		case DIALOG_IMPORT_TEXT: importarTextos(mts);break;
+		case DIALOG_IMPORT_ALL: importAll(mts, enterprise, url); break;
+		case DIALOG_DELETE: label.setText("Esta seguro de eliminar el Deposito");
 		default:
 			break;
 		}
 		
 		setWidget(binder.createAndBindUi(this));
 		
-		if(type.equals("new")) accept_button.setText("Nuevo");
-		if(type.equals("new2")) accept_button.setText("Nuevo");
-		if(type.equals("import")) accept_button.setText("Importar");
-		if(type.equals("importText")) accept_button.setText("Importar");
-		if(type.equals("importAll")) accept_button.setText("Importar");
-		if(type.equals("delete")) accept_button.setText("Eliminar");
+		if(type.equals(DIALOG_NEW)) accept_button.setText("Nuevo");
+		if(type.equals(DIALOG_NEW2)) accept_button.setText("Nuevo");
+		if(type.equals(DIALOG_IMPORT)) accept_button.setText("Importar");
+		if(type.equals(DIALOG_IMPORT_TEXT)) accept_button.setText("Importar");
+		if(type.equals(DIALOG_IMPORT_ALL)) accept_button.setText("Importar");
+		if(type.equals(DIALOG_DELETE)) accept_button.setText("Eliminar");
 		accept_button.setVisible(true);
 		accept_button.addClickHandler(new ClickHandler() {
 			String type = typeAux;
 			@Override
 			public void onClick(ClickEvent event) {
-				if(type.equals("new")){
+				if(type.equals(DIALOG_NEW)){
 					ListBox lb = (ListBox)flex_table.getWidget(0, 1);
 					TextBox tb1 = (TextBox) flex_table.getWidget(1, 1);
 					TextBox tb2 = (TextBox) flex_table.getWidget(4, 1);
@@ -90,16 +100,16 @@ public abstract class DepositDialog extends CustomDialogB {
 						label.setStyleName("aon-check-template");
 					}
 				}
-				if(type.equals("delete")){
+				if(type.equals(DIALOG_DELETE)){
 					onAccept();
 				}
-				if(type.equals("importAll")){
+				if(type.equals(DIALOG_IMPORT_ALL)){
 					onAccept();
 				}
-				if(type.equals("import")){
+				if(type.equals(DIALOG_IMPORT)){
 					onAccept();
 				}
-				if(type.equals("importText")){
+				if(type.equals(DIALOG_IMPORT_TEXT)){
 					ListBox lb =(ListBox) flex_table.getWidget(0, 1);
 					if(!lb.getSelectedItemText().equals("-")){
 						onAccept();
@@ -109,7 +119,7 @@ public abstract class DepositDialog extends CustomDialogB {
 						label.setStyleName("aon-check-template");
 					}
 				}
-				if(type.equals("new2")){
+				if(type.equals(DIALOG_NEW2)){
 					TextBox tb1 = (TextBox) flex_table.getWidget(0, 1);
 					if(!tb1.getText().equals("")){
 							onAccept();	
@@ -204,15 +214,13 @@ public abstract class DepositDialog extends CustomDialogB {
 	private void importar(Enterprise enterprise,String url){
 		
 		flex_table.setStyleName("aon-panelGrid");
-		flex_table.setWidth("400px");
+		flex_table.setWidth("100%");
 		flex_table.setBorderWidth(1);
 		flex_table.setCellSpacing(0);
 		
 		
-		
 		flex_table.setWidget(0, 0, new Label("Fichero"));
-		flex_table.setWidget(0, 1, newUploader(url+"gwt_deposit_upload?domain_id="+enterprise.getDomain()+
-																		"&cif="+enterprise.getDocument()));
+		flex_table.setWidget(0, 1, newUploader(url+"gwt_deposit_upload?domain_id="+enterprise.getDomain()));
 		
 		
 		flexTableCss();
@@ -233,6 +241,7 @@ public abstract class DepositDialog extends CustomDialogB {
 		lb.addItem("Perdidas y ganancias (I.S.)");
 		lb.addItem("ECPN (I.S.)");
 		lb.addItem("Memoria (Deposito.xml)");
+		//lb.addItem("Documento Memoria");
 		
 		mtsAux = mts;urlAux = url; enterpriseAux = enterprise;
 		lb.addChangeHandler(new ChangeHandler() {
@@ -306,6 +315,12 @@ public abstract class DepositDialog extends CustomDialogB {
 					flex_table.setWidget(2, 1, newUploader(url+"gwt_deposit_upload?domain_id="+enterprise.getDomain()+
 																					"&cif="+enterprise.getDocument()));
 					
+				}
+				if(lb.getSelectedItemText().equals("Documento Memoria")){
+					
+					flex_table.setWidget(1, 0, new Label("Memoria"));
+					flex_table.setWidget(1, 1, newUploader(url+"gwt_deposit_upload?domain_id="+enterprise.getDomain()+
+																					"&cif="+enterprise.getDocument()));
 				}
 				if(lb.getSelectedItemText().equals("-")){
 					flex_table.removeRow(1);

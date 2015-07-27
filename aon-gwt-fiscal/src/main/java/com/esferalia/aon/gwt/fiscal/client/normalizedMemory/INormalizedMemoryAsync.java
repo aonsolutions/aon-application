@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.fiscal.shared.D2Deposit2014;
+import com.esferalia.aon.gwt.fiscal.shared.MemoryFiles;
 import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -60,6 +61,14 @@ public interface INormalizedMemoryAsync {
 
 	void calculate(Map<String, String> map,
 			AsyncCallback<Map<String, String>> callback);
+
+	void getMemoryFiles(Integer domainId, AsyncCallback<Vector<MemoryFiles>> callback);
+
+	void deleteMemoryFile(Integer domainId, Integer id,
+			AsyncCallback<Void> callback);
+
+	void insertMemoryFile(Integer domainId, MemoryFiles mf,
+			AsyncCallback<MemoryFiles> callback);
 
 
 
