@@ -225,7 +225,9 @@ public class D2DepositBehaviour {
 	}
 	
 	static{ 	// ESTADO DE INGRESOS Y GASTOS RECONOCIDOS EN EL EJERCICIO
+		
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA159100.toString(),new Boolean[]{TRUE,FALSE});
+		
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA150010.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA150020.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA150030.toString(),new Boolean[]{TRUE,FALSE});
@@ -233,16 +235,20 @@ public class D2DepositBehaviour {
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA150050.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA150060.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA150070.toString(),new Boolean[]{TRUE,FALSE});
+		
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA159200.toString(),new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA1592009.toString(),new Boolean[]{FALSE,TRUE});
+		
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA150080.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA150090.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA150100.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA150110.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA150120.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA150130.toString(),new Boolean[]{TRUE,FALSE});
+		
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA159300.toString(),new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA1593009.toString(),new Boolean[]{FALSE,TRUE});
+		
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA159400.toString(),new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNA1594009.toString(),new Boolean[]{FALSE,TRUE});
 	

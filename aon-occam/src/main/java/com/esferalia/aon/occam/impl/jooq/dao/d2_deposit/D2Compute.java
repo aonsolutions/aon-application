@@ -407,6 +407,12 @@ public class D2Compute {
 				+ ":(Q51506 + Q51606 + Q52406)");
 		COMPUTE_MAP.put(D2DepositHeaderKey.PNA2514069.getCode(), "(PYMES)?(Q528069 + Q530069 + Q516069 + Q524069)"
 				+ ":(Q515069 + Q516069 + Q524069)");
+		
+		COMPUTE_MAP.put(D2DepositHeaderKey.PNA251407.getCode(), "(PYMES)?(Q52807 + Q53007 + Q51607 + Q52407)"
+				+ ":(Q51507 + Q51607 + Q52407)");
+		COMPUTE_MAP.put(D2DepositHeaderKey.PNA2514079.getCode(), "(PYMES)?(Q528079 + Q530079 + Q516079 + Q524079)"
+				+ ":(Q515079 + Q516079 + Q524079)");
+
 
 		COMPUTE_MAP.put(D2DepositHeaderKey.PNA251408.getCode(), "(PYMES)?(Q52808 + Q53008 + Q51608 + Q52408)"
 				+ ":(Q51508 + Q51608 + Q52408)");
