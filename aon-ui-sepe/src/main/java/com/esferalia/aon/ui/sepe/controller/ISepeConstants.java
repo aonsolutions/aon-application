@@ -121,6 +121,7 @@ public interface ISepeConstants {
 //		ModelOption.TEMPORARY_OPT16,
 //		ModelOption.TEMPORARY_OPT17,
 //		ModelOption.TEMPORARY_OPT18,
+		ModelOption.INTERNSHIP,
 	};
 
 }

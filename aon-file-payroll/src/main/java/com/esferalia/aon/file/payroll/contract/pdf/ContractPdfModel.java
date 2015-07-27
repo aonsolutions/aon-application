@@ -21,7 +21,9 @@ public enum ContractPdfModel implements IResourceable{
 	
 	PE192,
 	
-	PE191;
+	PE191,
+	
+	INTERNSHIP;
 	
 
 	/** Message key prefix. */

@@ -4,6 +4,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
+import com.esferalia.aon.file.payroll.contract.pdf.internship.InternshipModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.IndefiniteModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.LearningModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.PracticeModel;
@@ -199,6 +200,11 @@ public enum ModelOption implements IResourceable {
 	 */
 	TEMPORARY_OPT18(ContractPdfModel.TEMPORARY, 21, ContractCode.C990),
 	
+	
+	/**
+	 * BECARIOS
+	 */
+	INTERNSHIP(ContractPdfModel.INTERNSHIP, null),
 	;
 	
 	private ContractPdfModel pdfModel;
@@ -228,6 +234,8 @@ public enum ModelOption implements IResourceable {
 			return PracticeModel.MODEL_NAME;
 		} else if(pdfModel==ContractPdfModel.TEMPORARY){
 			return TemporaryModel.MODEL_NAME;
+		} else if(pdfModel==ContractPdfModel.INTERNSHIP){
+			return InternshipModel.MODEL_NAME;
 		}
 		return null;
 	}

@@ -609,9 +609,9 @@ public class CertificadosWriter implements Serializable {
 					Double baseCg = settle.getCommonBase();
 					Double baseAcc = settle.getProfessionalBase();
 					
-					// obtener las bases de los atrasos de finiquitos 
-					baseCg += getDelayBaseAmount(settleList, null, null, ContextVariable.CGC_BASE);
-					baseAcc += getDelayBaseAmount(settleList, null, null, ContextVariable.CGP_BASE);
+					// TODO: obtener las bases de los atrasos de finiquitos 
+//					baseCg += getDelayBaseAmount(settleList, null, null, ContextVariable.CGC_BASE);
+//					baseAcc += getDelayBaseAmount(settleList, null, null, ContextVariable.CGP_BASE);
 					
 					o.setNumDiasCotizados(completeLength(noHolidays.intValue(),3,false));
 					o.setBaseCotizacionContingenciasComunes(completeLength(baseCg, 9,false));

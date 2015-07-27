@@ -12,7 +12,7 @@
 		<aon:if test="#{contractPdf.showDocumentGenerationWindow}">
 			<rich:modalPanel id="documentGenerationPanel" 
 				width="350" height="#{110+(contractPdf.availableDocumentCount*25)}"
-				minWidth="350" minHeight="#{110+(contractPdf.availableDocumentCount*25)}"
+				minWidth="350" minHeight="#{150+(contractPdf.availableDocumentCount*25)}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -37,47 +37,72 @@
 							<aon:div styleClass="aon-popupWindow-content-internal">
 								<aon:div style="width:99%">
 									
-									<aon:if test="#{!contractPdf.generationAvailable and contractPdf.modelOption!=null}">
-										<aon:div style="margin-top: 15px; padding: 5px; color: blue; border: 1px blue solid; text-align: center;">
-											<aon:outputText value="Modelo de contrato sin implementar" />
-											<br />
-											<aon:outputText value="(desarrollo en curso)" />
+									<aon:if test="#{contractPdf.generationAvailable}">
+										<aon:div styleClass="aon-toolbar">
+											<aon:if test="#{contractPdf.modelOption!=null or contractPdf.availableDocumentCount>0}">
+												<aon:commandButton id="documentGeneration-generate"
+													value="#{bundle.aon_accept}"
+													rendered="#{!contractPdf.generatonFinished}"
+													reRender="documentGenerationForm"
+													actionListener="#{contractPdf.onGenerateDocument}"
+													styleClass="aon-finding-toolbar-item aon-icon-accept"
+													onclick="Richfaces.showModalPanel('waitProccess')" 
+		 											oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+												<aon:commandButton value="#{bundle.aon_save}" id="documents-accept" 
+													rendered="#{contractPdf.generatonFinished}"
+													actionListener="#{contractPdf.onSaveFiles}"
+													styleClass="aon-finding-toolbar-item aon-icon-accept"
+													reRender="showDocumentGenerationWindow, contractForm"
+													title="Guardar documentos adjuntos" >
+													<f:setPropertyActionListener
+														target="#{contract.selectedTab}" value="attachData" />
+												</aon:commandButton>
+												<aon:commandButton value="#{bundle.aon_email_abrv}" id="documents-email" 
+													rendered="#{contractPdf.generatonFinished}"
+													actionListener="#{contractPdf.onSendSelectedByEmail}"
+													styleClass="aon-finding-toolbar-item aon-icon-webmail2"
+													reRender="showNewMessageWindow"
+													title="Enviar por email" />
+											    <aon:htmlCommandLink id="download-pdf" target="_blank" 
+													rendered="#{contractPdf.generatonFinished}"
+										     		actionListener="#{contractPdf.onDownloadMergedFile}" 
+													styleClass="aon-finding-toolbar-item aon-icon-pdf"
+													style="line-height:16px;margin-right:0;"
+													title="Descargar todo en un archivo">
+													<aon:outputText value="#{bundle.webmail_download}" />
+												</aon:htmlCommandLink>			
+											</aon:if>
 										</aon:div>
 									</aon:if>
 									
-									<aon:if test="#{contractPdf.generationAvailable and contractPdf.modelOption!=null}">
-										<aon:div styleClass="aon-toolbar">
-											<aon:commandButton id="documentGeneration-generate"
-												value="#{bundle.aon_accept}"
-												rendered="#{!contractPdf.generatonFinished}"
+									<aon:div styleClass="aon-scroll-area" style="margin-top: 2px;">
+										
+										<aon:if test="#{contractPdf.modelOption!=null and !contractPdf.generationAvailable}">
+											<aon:div style="margin-top: 15px; padding: 5px; color: blue; border: 1px blue solid; text-align: center;">
+												<aon:outputText value="Modelo de contrato sin implementar" />
+												<br />
+												<aon:outputText value="(desarrollo en curso)" />
+											</aon:div>
+										</aon:if>
+										
+										<aon:if test="#{contractPdf.modelOption==null and !contractPdf.generationAvailable}">
+											<aon:div style="margin-top: 15px; padding: 5px; color: blue; border: 1px blue solid; text-align: center;">
+												<aon:outputText value="Modelo de contrato no seleccionado" />
+											</aon:div>
+										</aon:if>
+										
+										<!-- CERTIFICADO DE EMPRESA -->
+										<aon:div rendered="#{contractPdf.contract.endDate!=null and contractPdf.contractSuspensionCause==null}">
+											<aon:outputText value="#{bundle.certifica2Batch_suspension_cause}" />
+											<aon:selectOneMenu value="#{contractPdf.contractSuspensionCause}" 
 												reRender="documentGenerationForm"
-												actionListener="#{contractPdf.onGenerateDocument}"
-												styleClass="aon-finding-toolbar-item aon-icon-accept"
-												onclick="Richfaces.showModalPanel('waitProccess')" 
-	 											oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-											<aon:commandButton value="#{bundle.aon_save}" id="documents-accept" 
-												rendered="#{contractPdf.generatonFinished}"
-												actionListener="#{contractPdf.onSaveFiles}"
-												styleClass="aon-finding-toolbar-item aon-icon-accept"
-												reRender="showDocumentGenerationWindow, contractForm"
-												title="Guardar documentos adjuntos" />
-											<aon:commandButton value="#{bundle.aon_email_abrv}" id="documents-email" 
-												rendered="#{contractPdf.generatonFinished}"
-												actionListener="#{contractPdf.onSendSelectedByEmail}"
-												styleClass="aon-finding-toolbar-item aon-icon-webmail2"
-												reRender="showNewMessageWindow"
-												title="Enviar por email" />
-										    <aon:htmlCommandLink id="download-pdf" target="_blank" 
-												rendered="#{contractPdf.generatonFinished}"
-									     		actionListener="#{contractPdf.onDownloadMergedFile}" 
-												styleClass="aon-finding-toolbar-item aon-icon-pdf"
-												style="line-height:16px;margin-right:0;"
-												title="Descargar todo en un archivo">
-												<aon:outputText value="#{bundle.webmail_download}" />
-											</aon:htmlCommandLink>			
+												actionListener="#{contractPdf.onSuspensionCauseSelect}">
+												<f:selectItem itemLabel="-" value="#{null}" />
+												<f:selectItems value="#{contractPdf.TLDCAUSSCodeList}" />
+											</aon:selectOneMenu>
 										</aon:div>
-									
-										<aon:div styleClass="aon-scroll-area" style="margin-top: 2px;">
+										
+										<aon:if test="#{contractPdf.generationAvailable}">
 											<aon:outputText value="Documentos que se van a generar:"
 												rendered="#{!contractPdf.generatonFinished}"/>
 											<aon:outputText value="Documentos generados correctamente"
@@ -91,8 +116,9 @@
 												value="#{contractPdf.selectedDocuments}">
 												<f:selectItems value="#{contractPdf.availableDocumentList}"/>
 											</aon:selectManyCheckbox>
-										</aon:div>
-									</aon:if>
+										</aon:if>
+										
+									</aon:div>
 									
 								</aon:div>
 							</aon:div>

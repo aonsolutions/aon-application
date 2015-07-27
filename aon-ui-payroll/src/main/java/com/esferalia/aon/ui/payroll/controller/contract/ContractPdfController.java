@@ -62,12 +62,14 @@ import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.payroll.enumeration.certificados.TLDCAUSS;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.CertificadoEmpresa;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.file.ContractPdfWriter;
 import com.esferalia.aon.ui.payroll.utils.ContractUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollEmailUtil;
 import com.esferalia.aon.ui.payroll.utils.PdfUtils;
+import com.esferalia.aon.ui.sepe.controller.CertificadosCollectionsController;
 import com.esferalia.aon.ui.sepe.controller.ContrataController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.file.CertificadosWriter;
@@ -97,6 +99,7 @@ public class ContractPdfController implements Serializable {
 	private String backAction;
 	private ContractAttachmentType documentType;
 	private List<IContrataParams> contrataParams;
+	private TLDCAUSS suspensionCause;
 	
 	private boolean showDocumentGenerationWindow;
 	private boolean readOnly;
@@ -238,6 +241,21 @@ public class ContractPdfController implements Serializable {
 	public void setContrataParams(List<IContrataParams> contrataParams) {
 		this.contrataParams = contrataParams;
 	}
+	public TLDCAUSS getContractSuspensionCause() {
+		return this.suspensionCause;
+	}
+	public void setContractSuspensionCause(TLDCAUSS suspensionCause) {
+		this.suspensionCause = suspensionCause;
+	}
+	public List<SelectItem> getTLDCAUSSCodeList() {
+		CertificadosCollectionsController controller = new CertificadosCollectionsController();
+		for(SelectItem item: controller.getTLDCAUSSCodeList()){
+			TLDCAUSS e = (TLDCAUSS) item.getValue();
+			item.setLabel(e.getCode() + " - " + item.getLabel());
+		}
+		return controller.getTLDCAUSSCodeList();
+	}
+	
 	private void initialize() {
 		initialize(true);
 	}
@@ -248,6 +266,8 @@ public class ContractPdfController implements Serializable {
 		if(loadDocumentType){
 			setContractPdfDraft( obtainContractPdfDraft() );
 		}
+		String code = ContractUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.CONTRACT_END_CODE.getName());
+		setContractSuspensionCause(TLDCAUSS.getEnumByValue(code));
 	}
 	
 	private ContractAttachment obtainContractPdfDraft() {
@@ -407,7 +427,7 @@ public class ContractPdfController implements Serializable {
 			setContrataParams(new LinkedList<IContrataParams>());
 		}
 		
-		if(isTransformedContract(code) && getDocumentType()==getContractPdfType()){
+		if(code!=null && isTransformedContract(code) && getDocumentType()==getContractPdfType()){
 			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
 			contrataController.initialize(getContract());
 			contrataController.onContrataDataShow(null);
@@ -419,7 +439,7 @@ public class ContractPdfController implements Serializable {
 	}
 	
 	private boolean isTransformedContract(ContractCode contractCode) {
-		return ArrayUtils.contains(ISepeConstants.AVAILABLE_TRANSFORM_CODE_COMMUNICATION, contractCode.getValue());
+		return contractCode!=null && ArrayUtils.contains(ISepeConstants.AVAILABLE_TRANSFORM_CODE_COMMUNICATION, contractCode.getValue());
 	}
 	
 	
@@ -472,7 +492,7 @@ public class ContractPdfController implements Serializable {
 		CertificadosWriter writer = new CertificadosWriter();
 		try {
 			List<CertificadoEmpresa> list = new LinkedList<CertificadoEmpresa>();
-			list.add(writer.createCertificadoEmpresaType(getContract(), getContractSuspensionCause()));
+			list.add(writer.createCertificadoEmpresaType(getContract(), getContractSuspensionCause().getCode()));
 			
 			return list;
 		} catch (ManagerBeanException e) {
@@ -669,7 +689,8 @@ public class ContractPdfController implements Serializable {
 	}
 	
 	public boolean isGenerationAvailable(){
-		return ArrayUtils.contains(ISepeConstants.AVAILABLE_CONTRACT_MODEL_OPTIONS, modelOption);
+		return ArrayUtils.contains(ISepeConstants.AVAILABLE_CONTRACT_MODEL_OPTIONS, modelOption) || 
+				(getContract().getEndDate()!=null && getContractSuspensionCause()!=null);
 	}
 	
 	public List<SelectItem> getAvailableDocumentList(){
@@ -678,23 +699,27 @@ public class ContractPdfController implements Serializable {
 			availableDocumentList = new LinkedList<SelectItem>();
 			SelectItem item = null;
 			
-			if(controller.isExtendedContract()){
-				item = new SelectItem(ContractAttachmentType.EXTENSION_DOC_DRAFT, ContractAttachmentType.EXTENSION_DOC_DRAFT.getName(AonUtil.getCurrentLocale()));
+			if(getModelOption()!=null && ArrayUtils.contains(ISepeConstants.AVAILABLE_CONTRACT_MODEL_OPTIONS, getModelOption())){
+				if(controller.isExtendedContract()){
+					item = new SelectItem(ContractAttachmentType.EXTENSION_DOC_DRAFT, ContractAttachmentType.EXTENSION_DOC_DRAFT.getName(AonUtil.getCurrentLocale()));
+					availableDocumentList.add(item);
+				}
+				ContractUtils utils = ContractUtils.getInstance();
+				item = new SelectItem(ContractAttachmentType.CONTRACT_DOC_DRAFT, ContractAttachmentType.CONTRACT_DOC_DRAFT.getName(AonUtil.getCurrentLocale()));
 				availableDocumentList.add(item);
-			}
-			ContractUtils utils = ContractUtils.getInstance();
-			item = new SelectItem(ContractAttachmentType.CONTRACT_DOC_DRAFT, ContractAttachmentType.CONTRACT_DOC_DRAFT.getName(AonUtil.getCurrentLocale()));
-			availableDocumentList.add(item);
-			item = new SelectItem(ContractAttachmentType.BASIC_COPY_DRAFT, ContractAttachmentType.BASIC_COPY_DRAFT.getName(AonUtil.getCurrentLocale()));
-			availableDocumentList.add(item);
-			if( utils.isTrainingContract(getContract(), getCode()) && utils.getContractInfoMap(getContract()).get(ContractVariable.TRAINING_COURSE.getValue())!=null ){
-				item = new SelectItem(ContractAttachmentType.TRAINING_ANNEX_II, ContractAttachmentType.TRAINING_ANNEX_II.getName(AonUtil.getCurrentLocale()));
-				availableDocumentList.add(item);
-				item = new SelectItem(ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT, ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT.getName(AonUtil.getCurrentLocale()));
-				availableDocumentList.add(item);
+				if(!controller.isInternship()){
+					item = new SelectItem(ContractAttachmentType.BASIC_COPY_DRAFT, ContractAttachmentType.BASIC_COPY_DRAFT.getName(AonUtil.getCurrentLocale()));
+					availableDocumentList.add(item);
+				}
+				if( utils.isTrainingContract(getContract(), getCode()) && utils.getContractInfoMap(getContract()).get(ContractVariable.TRAINING_COURSE.getValue())!=null ){
+					item = new SelectItem(ContractAttachmentType.TRAINING_ANNEX_II, ContractAttachmentType.TRAINING_ANNEX_II.getName(AonUtil.getCurrentLocale()));
+					availableDocumentList.add(item);
+					item = new SelectItem(ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT, ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT.getName(AonUtil.getCurrentLocale()));
+					availableDocumentList.add(item);
+				}
 			}
 			
-			if(getContract().getEndDate()!=null && StringUtils.isNotBlank(getContractSuspensionCause())){
+			if(getContract().getEndDate()!=null && getContractSuspensionCause()!=null){
 //				suspension_notice_letter
 //				item = new SelectItem(ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT, ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT.getName(AonUtil.getCurrentLocale()));
 //				availableDocumentList.add(item);
@@ -706,15 +731,15 @@ public class ContractPdfController implements Serializable {
 		return availableDocumentList;
 	}
 	
-	private String getContractSuspensionCause() {
-		return ContractUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.CONTRACT_END_CODE.getName());
-	}
-	
 	public void onDocumentGenerationShow(ActionEvent event){
 		initialize(false);
 		beforeDocumentShow();
 		availableDocumentList = null;
 		generatedDocumentMap = null;
+		selectedDocuments = null;
+		selectRequiredDocuments();
+	}
+	public void onSuspensionCauseSelect(ActionEvent event){
 		selectedDocuments = null;
 		selectRequiredDocuments();
 	}
@@ -725,7 +750,9 @@ public class ContractPdfController implements Serializable {
 	
 	public void selectRequiredDocuments(){
 		ContractController controller =  (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
-		if(controller.isExtendedContract()){
+		if(getContractSuspensionCause()!=null){
+			selectedDocuments = (ContractAttachmentType[]) ArrayUtils.add(selectedDocuments, ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT);
+		} else if(controller.isExtendedContract()){
 			selectedDocuments = (ContractAttachmentType[]) ArrayUtils.add(selectedDocuments, ContractAttachmentType.EXTENSION_DOC_DRAFT);
 		} else {
 			selectAllDocuments();

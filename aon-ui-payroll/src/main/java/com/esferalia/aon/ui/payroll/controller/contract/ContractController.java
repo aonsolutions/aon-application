@@ -106,7 +106,6 @@ import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.payroll.controller.TrainingCenterController;
 import com.esferalia.aon.ui.payroll.utils.ContractUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
-import com.esferalia.aon.ui.sepe.controller.CertificadosCollectionsController;
 import com.esferalia.aon.ui.sepe.controller.CertificadosController;
 import com.esferalia.aon.ui.sepe.controller.ContrataController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
@@ -450,7 +449,7 @@ public class ContractController extends BasicController {
 			ContractBonus bonus = (ContractBonus) to;
 			
 			BonusType type = bonus.getBonusConcept().getType();
-			if(bonus.getBonusConcept().getType()==null){
+			if(bonus.getBonusConcept().getType()==null && bonus.getBonusConcept().getId()!=null){
 				type = PayrollUtils.getInstance().getBonusTypeByCode(Integer.toString(bonus.getBonusConcept().getId()));
 			}
 			
@@ -559,8 +558,8 @@ public class ContractController extends BasicController {
 	public List<?> getContractModel() {
 		ModelOption[] availableModels = ISepeConstants.AVAILABLE_CONTRACT_MODEL_OPTIONS; 
 		List<SelectItem> list = new LinkedList<SelectItem>();
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		if(getParams().getContractCode()!=null){
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			for(ModelOption opt: ModelOption.values()){
 				if( ArrayUtils.contains(opt.getCodes(), ContractCode.getContractCodeByValue(getParams().getContractCode())) ){
 					String label = ArrayUtils.contains(availableModels, opt)?"":"* ";
@@ -569,6 +568,11 @@ public class ContractController extends BasicController {
 					list.add(item);
 				}
 			}
+		}
+		if(isInternship()){
+			String label = ModelOption.INTERNSHIP.getName(locale);
+			SelectItem item = new SelectItem(ModelOption.INTERNSHIP, label);
+			list.add(item);
 		}
 		return list;
 	}
@@ -1200,15 +1204,6 @@ public class ContractController extends BasicController {
 			tcController.clearCriteria();
 			tcController.initializeModel();
 		}
-	}
-	
-	public List<SelectItem> getTLDCAUSSCodeList() {
-		CertificadosCollectionsController controller = new CertificadosCollectionsController();
-		for(SelectItem item: controller.getTLDCAUSSCodeList()){
-			TLDCAUSS e = (TLDCAUSS) item.getValue();
-			item.setLabel(e.getCode() + " - " + item.getLabel());
-		}
-		return controller.getTLDCAUSSCodeList();
 	}
 	
 	public void onChangeEndDate(ActionEvent event){

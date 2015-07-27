@@ -136,7 +136,7 @@
 			<aon:outputText value="#{bundle.payroll_contract_reta}" />
 		</aon:div>
 		
-		<aon:if test="#{!contract.params.retaQuote and !contract.internship}">
+		<aon:if test="#{!contract.params.retaQuote}">
 			<aon:outputLabel for="Contract_contractModel"
 				value="#{bundle.payroll_contract_contract_model}" />
 			<aon:div id="Contract_contractModelDiv">
@@ -214,19 +214,6 @@
 				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 					timeZone="#{timeZoneController.timeZoneId}" />
 			</aon:outputText> 
-			<aon:panelGroup id="suspensionCauseContainer" rendered="#{!contract.nevv and !contract.readOnly}">
-				<aon:div style="display:inline;"
-					rendered="#{contract.to.endDate!=null}">
-					<aon:outputLabel for="contract_suspensionCause" 
-						value="#{bundle.certifica2Batch_suspension_cause}"
-						styleClass="aon-italic aon-margin-right" style="font-size: 0.9em" />
-					<aon:selectOneMenu id="contract_suspensionCause"
-						value="#{contract.params.suspensionCause}" >
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{contract.TLDCAUSSCodeList}" />
-					</aon:selectOneMenu>
-				</aon:div>
-			</aon:panelGroup>
 		</aon:div>
 		
 		<aon:if test="#{actionDenied.moduleEnabled['payroll']}">

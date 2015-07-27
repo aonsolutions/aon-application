@@ -5,6 +5,7 @@ import com.esferalia.aon.file.payroll.contract.pdf.annex.ModelPE230;
 import com.esferalia.aon.file.payroll.contract.pdf.basicCopy.BasicCopy;
 import com.esferalia.aon.file.payroll.contract.pdf.enterpriseCertificate.EnterpriseCertificate;
 import com.esferalia.aon.file.payroll.contract.pdf.extension.Extension;
+import com.esferalia.aon.file.payroll.contract.pdf.internship.InternshipModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.ClausulasModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.IndefiniteModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.LearningModel;
@@ -26,6 +27,8 @@ public class ContractPdfFactory<E> {
 			return new TemporaryModel(contract);
 		} else if (document.equals(IndefiniteModel.MODEL_NAME)) {
 			return new IndefiniteModel(contract);
+		} else if (document.equals(InternshipModel.MODEL_NAME)) {
+			return new InternshipModel(contract);
 		}		
 		// CLAUSES DOCUMENT
 		if (document.equals(ClausulasModel.MODEL_NAME)) {
