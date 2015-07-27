@@ -250,6 +250,8 @@
 											<include>org.apache.commons:commons-math3</include>
 											<include>es.aeat:ModRet2015</include>
 											<include>es.aeat:PRET-R150_shared</include>
+											<include>es.aeat:ModRet2013</include>
+											<include>es.aeat:PRET-RW13_shared</include>
 										</includes>
 									</dependency>
 									<sources>
@@ -334,6 +336,14 @@
 										<softlinkSource>
 											<location>/usr/share/java/PRET-R150_shared-1.0.jar</location>
 											<destination>PRET-R150_shared.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/ModRet2013-1.00.jar</location>
+											<destination>ModRet2013.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/PRET-RW13_shared-1.00.jar</location>
+											<destination>PRET-RW13_shared</destination>
 										</softlinkSource>
 									</sources>
 								</mapping>

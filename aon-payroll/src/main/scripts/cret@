@@ -41,6 +41,8 @@ classpath=$classpath:/usr/share/java/jool.jar
 classpath=$classpath:/usr/share/java/aon-aeat.jar
 classpath=$classpath:usr/share/java/ModRet2015.jar
 classpath=$classpath:usr/share/java/PRET-R150_shared.jar
+classpath=$classpath:usr/share/java/ModRet2013.jar
+classpath=$classpath:usr/share/java/PRET-RW13_shared.jar
 
 
 case $1 in
