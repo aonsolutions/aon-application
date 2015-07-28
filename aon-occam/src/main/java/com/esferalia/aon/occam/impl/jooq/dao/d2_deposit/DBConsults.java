@@ -16,11 +16,21 @@ import org.jooq.Record5;
 import org.jooq.Record7;
 import org.jooq.Result;
 
+import com.esferalia.aon.jooq.tables.records.RattachRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.mchange.v2.io.FileIterator;
 
 public class DBConsults {
+	
+	private static final String D2_FILE_MEMORY = "Memoria";
+	private static final String D2_FILE_AUTOCARTERA_MODEL = "Modelo de Autocartera";
+	private static final String D2_FILE_GESTION = "Informe de Gestion";
+	private static final String D2_FILE_AUDIT = "Informe de Auditoria";
+	private static final String D2_FILE_CONVOC = "Anuncios de Convocatoria";
+	private static final String D2_FILE_SICAV = "Certificacion SICAV";
+
 
 	public static Boolean isDigitalDeposit(String domain, Integer domainId) {
 		AONContext ctx = null;
@@ -65,7 +75,7 @@ public class DBConsults {
 					.on(REGISTRY.ID.eq(RATTACH.REGISTRY))
 					.where(RATTACH.TYPE.eq((byte) 17).and(
 							RATTACH.DOMAIN.eq(domainId))).fetchOne();
-
+			
 			byte[] data;
 			if (record != null) {
 				
@@ -76,6 +86,15 @@ public class DBConsults {
 				File documents = File.createTempFile("Documentos%", "", parent);
 				documents.delete();
 				documents.mkdir();
+				
+				//**************************
+				getFileDocuments2Zip(domain, domainId, D2_FILE_MEMORY, documents);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_AUTOCARTERA_MODEL, documents);	
+				getFileDocuments2Zip(domain, domainId, D2_FILE_GESTION, documents);			
+				getFileDocuments2Zip(domain, domainId, D2_FILE_AUDIT, documents);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_CONVOC, documents);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_SICAV, documents);
+				//**************************
 				
 				File tmpDocuments = File.createTempFile("Documentos TMP%", "", parent);
 				tmpDocuments.delete();
@@ -388,6 +407,41 @@ public class DBConsults {
 				ctx.close();
 		}
 	}
+	
+	public static File getFileDocuments2Zip(String domain, Integer domainId, String name, File parent) {
+		AONContext ctx = null;
+		try {
+			
+			ctx = AONContext.getAONContext(domain, domainId);
+			
+			RattachRecord record = ctx.getDslContext()
+					.selectFrom(RATTACH)
+					.where(RATTACH.DESCRIPTION.eq(name)
+							.and(RATTACH.DOMAIN.eq(domainId))
+							.and(RATTACH.TYPE.eq((byte)7)))
+					.fetchOne();
+			
+			byte[] data;
+			
+			if(record != null){
+				
+				String extension = MimeType.values()[record.getValue(RATTACH.MIMETYPE)].getExtension();
+				File tempFile = File.createTempFile(name.toUpperCase() +"%", "."+extension, parent);				
+				data = record.getValue(RATTACH.DATA);
+				AonFileUtils.writeByteArrayToFile(tempFile, data);				
+				return tempFile;			
+			}
+			return null;
+			
+		} catch (IOException ex) {
+			System.out.println(ex.getMessage() + " " + ex.getLocalizedMessage());
+			return null;
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	
 	public static File getMemoryFile(String domain, Integer domainId, Integer id, String name){
 		AONContext ctx = null;

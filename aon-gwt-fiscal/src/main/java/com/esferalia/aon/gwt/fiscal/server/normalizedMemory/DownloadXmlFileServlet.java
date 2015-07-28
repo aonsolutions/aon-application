@@ -22,9 +22,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FilenameUtils;
+
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
+import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.google.gwt.user.client.rpc.SerializationException;
 
 @WebServlet(name = "DownloadXml", urlPatterns = { "/aon_gwt_fiscal/gwt_download_deposit/*" })
@@ -112,10 +115,21 @@ public class DownloadXmlFileServlet extends HttpServlet {
 				for (File kid : directory.listFiles()) {
 					
 					String name = base.relativize(kid.toURI()).getPath();
+					String changeName = (name.endsWith("/")) ? getChangeName(name)+"/" : getChangeName(name);
+					
 					
 					if (kid.isDirectory()) {
+						
 						queue.push(kid);
-						String changeName = getChangeName(name);
+						for (File file : kid.listFiles()) {							
+							String nameAux = getChangeName(file.getName());
+							String changeNameAux = dirName + changeName + nameAux;
+							zos.putNextEntry(new ZipEntry(changeNameAux));
+							copy(file, zos);
+							file.delete();
+						}
+						
+						//String changeName = getChangeName(name);
 						String fileName = dirName + ((name.endsWith("/")) 
 								? changeName+"/" : changeName);
 						zos.putNextEntry(new ZipEntry(fileName));
@@ -165,10 +179,12 @@ public class DownloadXmlFileServlet extends HttpServlet {
 	  private static String getChangeName (String name) {
 		  
 		  Integer startPosition = null;
+		  Integer extPosition = name.lastIndexOf('.');
 		  
-		  if (name.endsWith(".xml")) {
+		  if (extPosition > 0) {
 			  startPosition = name.indexOf('%');
-			  return new String(name.substring(0, startPosition)+".xml");
+			  String fileName = name.substring(0, startPosition)+"."+name.substring(extPosition+1);
+			  return fileName;
 		  }
 		  
 		  else {
