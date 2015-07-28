@@ -447,6 +447,7 @@ public class D2DepositBehaviour {
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP1527139.toString(), new Boolean[]{FALSE, TRUE});
 
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP152913.toString(), new Boolean[]{FALSE, TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PNP1529139.toString(), new Boolean[]{FALSE, TRUE});
 	
 	}
 }

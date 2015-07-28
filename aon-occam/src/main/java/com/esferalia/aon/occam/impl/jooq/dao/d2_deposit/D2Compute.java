@@ -4,7 +4,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
-import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 
 public class D2Compute {
 
@@ -372,11 +371,11 @@ public class D2Compute {
 		COMPUTE_MAP.put(D2DepositHeaderKey.PNA252410.getCode(), "(PYMES)?():(Q53110 + Q53210)");
 		COMPUTE_MAP.put(D2DepositHeaderKey.PNA2524109.getCode(), "(PYMES)?():(Q531109 + Q532109)");
 		
-		COMPUTE_MAP.put(D2DepositHeaderKey.PNA252411.getCode(), "(PYMES)?():(Q53111 + Q53211)");
-		COMPUTE_MAP.put(D2DepositHeaderKey.PNA2524119.getCode(), "(PYMES)?():(Q531119 + Q532119)");
+		COMPUTE_MAP.put(D2DepositHeaderKey.PNA252411.getCode(), "Q53111 + Q53211");
+		COMPUTE_MAP.put(D2DepositHeaderKey.PNA2524119.getCode(), "Q531119 + Q532119");
 		
-		COMPUTE_MAP.put(D2DepositHeaderKey.PNA252412.getCode(), "(PYMES)?():(Q53112 + Q53212)");
-		COMPUTE_MAP.put(D2DepositHeaderKey.PNA2524129.getCode(), "(PYMES)?():(Q531129 + Q532129)");
+		COMPUTE_MAP.put(D2DepositHeaderKey.PNA252412.getCode(), "Q53112 + Q53212");
+		COMPUTE_MAP.put(D2DepositHeaderKey.PNA2524129.getCode(), "Q531129 + Q532129");
 
 		COMPUTE_MAP.put(D2DepositHeaderKey.PNA251401.getCode(), "(PYMES)?(Q52801 + Q53001 + Q51601 + Q52401)"
 				+ ":(Q51501 + Q51601 + Q52401)");
