@@ -85,11 +85,13 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	public void dump(D2Deposit2014 d2Deposit2014) {
-
+		map = new HashMap<String, String>();
+		mapDraft = new HashMap<String, String>();
+		
 		map.putAll(d2Deposit2014.getMap());
 		mapDraft.putAll(d2Deposit2014.getMapDraft());
 	
-		depositType = DepositType.valueOfLabel( map.get(D2DepositConstants.DEPOSIT_TYPE));
+		depositType = DepositType.valueOfLabel(map.get(D2DepositConstants.DEPOSIT_TYPE));
 		initializeTable();
 	}
 	

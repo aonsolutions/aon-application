@@ -26,10 +26,10 @@ public class MemoryDocuments extends PageAbs {
 
 	private static final String D2_FILE_MEMORY = "Memoria";
 	private static final String D2_FILE_AUTOCARTERA_MODEL = "Modelo de Autocartera";
-	private static final String D2_FILE_GESTION = "Informe de Gestion";
-	private static final String D2_FILE_AUDIT = "Informe de Auditoria";
+	private static final String D2_FILE_GESTION = "Informe de Gesti\u00f3n";
+	private static final String D2_FILE_AUDIT = "Informe de Auditor\u00eda";
 	private static final String D2_FILE_CONVOC = "Anuncios de Convocatoria";
-	private static final String D2_FILE_SICAV = "Certificacion SICAV";
+	private static final String D2_FILE_SICAV = "Certificaci\u00f3n SICAV";
 	
 	final INormalizedMemoryAsync inma = GWT.create(INormalizedMemory.class);
 
@@ -88,7 +88,7 @@ public class MemoryDocuments extends PageAbs {
 		tab.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonWidthAuto());
 		tab.getColumnFormatter().addStyleName(1, AON.AON_CSS.aonWidth130());
 		int row = 0;
-		tab.setWidget(row, 0, new Label("Descripcion"));
+		tab.setWidget(row, 0, new Label("Descripci\u00f3n"));
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
