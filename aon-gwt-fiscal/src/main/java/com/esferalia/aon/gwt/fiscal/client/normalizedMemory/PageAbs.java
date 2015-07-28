@@ -410,7 +410,7 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	protected boolean isDisabled(D2DepositFooterKey key) {
-		Boolean[] behaviour = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(key.getName());
+		Boolean[] behaviour = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(key.getCode());
 		return behaviour != null && behaviour[1];
 	}
 
@@ -425,7 +425,7 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	protected boolean isTitle(D2DepositFooterKey key) {
-		Boolean[] behaviour = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(key.getName());
+		Boolean[] behaviour = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(key.getCode());
 		return (behaviour != null && behaviour[0]); 
 	}
 
@@ -584,11 +584,9 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 
 	protected void onEdit(String key, String value){
-		
 		if(mapDraft.containsKey(key))
 			mapDraft.remove(key);
 		mapDraft.put(key, value);
-		
 		inma.calculate(mapDraft, new AsyncCallback<Map<String,String>>() {
 			@Override
 			public void onSuccess(Map<String, String> result) {

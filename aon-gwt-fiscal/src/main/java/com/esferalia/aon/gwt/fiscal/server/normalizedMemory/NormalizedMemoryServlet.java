@@ -79,8 +79,10 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		String domain = AonUtil.getDomainName();
 		HttpServletRequest request = getThreadLocalRequest();
 		// String cif = DBConsults.getCIF(domain, domainId);
-		Esquema schema = (Esquema) request.getSession().getAttribute(
-				D2_DEPOSIT_SCHEMA + cif);
+		Esquema schema = null;
+		if(textMode)
+			schema = (Esquema) request.getSession().getAttribute(
+						D2_DEPOSIT_SCHEMA + cif);
 		if (schema == null) {
 			// System.out.println(domainId);
 			if (textMode) {

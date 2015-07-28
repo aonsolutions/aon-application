@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.TreeNode;
 import com.esferalia.aon.gwt.fiscal.shared.MemoryFiles;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -162,16 +163,14 @@ public class MemoryDocuments extends PageAbs {
 					public void onSuccess(Void result){
 						if(mf.getName().equals("Memoria")){
 							normalizedMemory.getDigitalDepositTreeNode().setIsMemory(false);
-							Window.alert(normalizedMemory.getDigitalDepositTreeNode().getIsMemory()+"");
-							Window.alert(normalizedMemory.getDigitalDepositTreeNode().getIsMa()+"");
 							normalizedMemory.getDigitalDepositTreeNode().removeItems();
 							normalizedMemory.getDigitalDepositTreeNode().items();
 							memory = normalizedMemory.getDigitalDepositTreeNode().getMemory();
+							onEdit(D2DepositFooterKey.PR8080805.getCode(), "1");
+							normalizedMemory.saveButton.click();
 						}
 						if(mf.getName().equals("Modelo de Autocartera")){
 							normalizedMemory.getDigitalDepositTreeNode().setIsMa(false);
-							Window.alert(normalizedMemory.getDigitalDepositTreeNode().getIsMemory()+"");
-							Window.alert(normalizedMemory.getDigitalDepositTreeNode().getIsMa()+"");
 							normalizedMemory.getDigitalDepositTreeNode().removeItems();
 							normalizedMemory.getDigitalDepositTreeNode().items();
 							autocartera = normalizedMemory.getDigitalDepositTreeNode().getMa();
@@ -210,14 +209,17 @@ public class MemoryDocuments extends PageAbs {
 							@Override
 							public void onSuccess(MemoryFiles result) {
 								mf = result;
-								if(memory != null && mf.getName().equals("Memoria")){
+								if(memory != null && mf.getName().equals(D2_FILE_MEMORY)){
 									memory.remove();
 									normalizedMemory.getDigitalDepositTreeNode().setIsMemory(true);
+									onEdit(D2DepositFooterKey.PR8080805.getCode(), "0");		
+									normalizedMemory.saveButton.click();
 								}
-								if(autocartera != null && mf.getName().equals("Modelo de Autocartera")){
+								if(autocartera != null && mf.getName().equals(D2_FILE_AUTOCARTERA_MODEL)){
 									autocartera.remove();
 									normalizedMemory.getDigitalDepositTreeNode().setIsMa(true);
 								}
+				
 								download.setEnabled(true);
 								delete.setEnabled(true);
 								normalizedMemory.update();

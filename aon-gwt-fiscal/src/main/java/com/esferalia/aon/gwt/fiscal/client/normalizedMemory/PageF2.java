@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Cities;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
 import com.google.gwt.core.client.GWT;
@@ -134,8 +135,8 @@ public class PageF2 extends PageAbs {
 	}
 
 	private void init() {
-		map = normalizedMemory.getDigitalDepositTreeNode().getD2Deposit2014().getMap();
-		mapDraft = normalizedMemory.getDigitalDepositTreeNode().getD2Deposit2014().getMapDraft();
+		//map = normalizedMemory.getDigitalDepositTreeNode().getD2Deposit2014().getMap();
+		//mapDraft = normalizedMemory.getDigitalDepositTreeNode().getD2Deposit2014().getMapDraft();
 				
 
 
@@ -150,13 +151,13 @@ public class PageF2 extends PageAbs {
 		keyExe("80810003", PR8081003, "text", true);
 		keyExe("80810004", PR8081004, "text", true);
 
-		keyExe("8080805", PR8080805, "check", false);
-		keyExe("8080854", PR8080854, "check", false);
-		keyExe("8080801", PR8080801, "check", false);
-		keyExe("8080803", PR8080803, "check", false);
-		keyExe("8080811", PR8080811, "check", false);
-		keyExe("8080800", PR8080800, "check", false);
-		keyExe("8080819", PR8080819, "check", false);
+		keyExe(D2DepositFooterKey.PR8080805.getCode(), PR8080805, "check", false);
+		keyExe(D2DepositFooterKey.PR8080854.getCode(), PR8080854, "check", false);
+		keyExe(D2DepositFooterKey.PR8080801.getCode(), PR8080801, "check", false);
+		keyExe(D2DepositFooterKey.PR8080803.getCode(), PR8080803, "check", false);
+		keyExe(D2DepositFooterKey.PR8080811.getCode(), PR8080811, "check", false);
+		keyExe(D2DepositFooterKey.PR8080800.getCode(), PR8080800, "check", false);
+		keyExe(D2DepositFooterKey.PR8080819.getCode(), PR8080819, "check", false);
 
 		PR8081201.setWidth("99%");
 		keyExe("8081201", PR8081201, "text", true);
@@ -211,6 +212,7 @@ public class PageF2 extends PageAbs {
 				if(!map.get(key2).equals(mapDraft.get(key2))){
 					t.addStyleName(AON.AON_CSS.aonChanged());
 				}
+				else t.removeStyleName(AON.AON_CSS.aonChanged());
 			}
 			
 			tAux = t;
@@ -219,7 +221,6 @@ public class PageF2 extends PageAbs {
 				TextBox t = tAux;
 				@Override
 				public void onChange(ChangeEvent event) {
-
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					onEdit(key2, t.getValue());
@@ -231,7 +232,7 @@ public class PageF2 extends PageAbs {
 		if(type.equals("check")) {
 			CheckBox c = (CheckBox) w;
 			if(mapDraft.containsKey(key2)){
-				c.setValue(mapDraft.get(key2).equals("True")); 
+				c.setValue(mapDraft.get(key2).equals("1")); 
 				c.setEnabled(enable);
 			}
 			c.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -240,7 +241,7 @@ public class PageF2 extends PageAbs {
 				public void onValueChange(ValueChangeEvent<Boolean> event) {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);	
-					onEdit(key2, event.getValue()?"True":"False");
+					onEdit(key2, event.getValue()?"1":"0");
 								
 					
 				}
@@ -271,6 +272,7 @@ public class PageF2 extends PageAbs {
 				if(!map.get(key2).equals(mapDraft.get(key2))){
 					d.addStyleName(AON.AON_CSS.aonChanged());
 				}
+				else d.removeStyleName(AON.AON_CSS.aonChanged());
 				d.setEnabled(enable);
 
 			}
@@ -359,6 +361,7 @@ public class PageF2 extends PageAbs {
 				if(!map.get(key2).equals(mapDraft.get(key2))){
 					lb.addStyleName(AON.AON_CSS.aonChanged());
 				}
+				else lb.removeStyleName(AON.AON_CSS.aonChanged());
 			}
 			lbAux = lb;
 			lb.addChangeHandler(new ChangeHandler() {
@@ -398,6 +401,7 @@ public class PageF2 extends PageAbs {
 				if(!map.get(key2).equals(mapDraft.get(key2))){
 					dl.addStyleName(AON.AON_CSS.aonChanged());
 				}
+				else dl.removeStyleName(AON.AON_CSS.aonChanged());
 			}
 			dlAux = dl;
 			dl.addChangeHandler(new ChangeHandler() {

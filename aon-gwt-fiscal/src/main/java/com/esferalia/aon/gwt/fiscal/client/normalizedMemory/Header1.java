@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.client.normalizedMemory;
 
 
 import java.util.Date;
-import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -49,7 +48,7 @@ public class Header1 extends PageAbs {
 	@UiField TextBox IDA01040; // groupMainEnterpriseDocument;
 	@UiField TextBox IDA01061; // groupLastEnterpriseName;
 	@UiField TextBox IDA01060; // groupLastEnterpriseDocument;
-	@UiField TextBox IDA02009; // enterpriseMainActivity;
+	@UiField InlineLabel IDA02009; // enterpriseMainActivity;
 	@UiField TextBox IDA02001; // cnaeCode;
 	@UiField DoubleBox IDA04001; // fixedCurrentAvg;
 	@UiField DoubleBox IDA040019; // fixedPreviousAvg;
@@ -76,8 +75,6 @@ public class Header1 extends PageAbs {
 	@UiField CheckBox IDA09003; // millones de euros
 	
 	@UiField
-	InlineLabel cnaeLabel;	
-	@UiField
 	Button showCnae;
 
 	Cnae2009Panel cnaePanel;
@@ -85,7 +82,7 @@ public class Header1 extends PageAbs {
 	final INormalizedMemoryAsync inma = GWT.create(INormalizedMemory.class);
 
 	
-	Map<String, String> map;
+
 	interface Header1Binder extends UiBinder<Widget, Header1> {
 	}
 
@@ -103,25 +100,6 @@ public class Header1 extends PageAbs {
 		RESOURCES.css().ensureInjected();
 		this.normalizedMemory = nm;
 		this.enterprise = enterprise;
-		cnaePanel = new Cnae2009Panel( new Cnae2009Panel.SelectionCallBack() {
-			@Override
-			public void onSelect(CNAE2009 selected) {
-
-				IDA02001.setText(selected.getCode());
-				normalizedMemory.saveButton.setEnabled(true);
-				normalizedMemory.cancelButton.setVisible(true);
-				onEdit("2001", selected.getCode());
-				
-				IDA02009.setValue(selected.getDescription());
-				onEdit("2009", selected.getDescription());
-				
-			}
-			@Override
-			public void onClose() {
-				// Nothing
-			}
-		});
-		
 		
 		IDA01010 = new DocumentTextBox();
 		IDA01011 = new CheckBox(); 
@@ -140,7 +118,7 @@ public class Header1 extends PageAbs {
 		IDA01040 = new TextBox(); 
 		IDA01061 = new TextBox(); 
 		IDA01060 = new TextBox(); 
-		IDA02009 = new TextBox(); 
+		IDA02009 = new InlineLabel(); 
 		
 		
 		IDA02001 = new TextBox(); //TODO CNAE
@@ -172,7 +150,7 @@ public class Header1 extends PageAbs {
 
 		Widget ui = header1Binder.createAndBindUi(this);
 		initWidget(ui);
-		init();
+	//	init();
 		
 	}
 
@@ -193,8 +171,28 @@ public class Header1 extends PageAbs {
 	}
 	
 	private void init(){
-			map = normalizedMemory.getDigitalDepositTreeNode().getD2Deposit2014().getMap();
-			mapDraft = normalizedMemory.getDigitalDepositTreeNode().getD2Deposit2014().getMapDraft();
+			//map = normalizedMemory.getDigitalDepositTreeNode().getD2Deposit2014().getMap();
+			//mapDraft = normalizedMemory.getDigitalDepositTreeNode().getD2Deposit2014().getMapDraft();
+			
+			cnaePanel = new Cnae2009Panel( new Cnae2009Panel.SelectionCallBack() {
+				@Override
+				public void onSelect(CNAE2009 selected) {
+					IDA02001.setEnabled(false);
+					IDA02001.setText(selected.getCode());
+					normalizedMemory.saveButton.setEnabled(true);
+					normalizedMemory.cancelButton.setVisible(true);
+					onEdit("2001", selected.getCode());
+					
+					IDA02009.setText(selected.getDescription());
+					onEdit("2009", selected.getDescription());
+					
+					
+				}
+				@Override
+				public void onClose() {
+					// Nothing
+				}
+			});
 				
 			keyExe("1010", IDA01010, "text", false);
 				
@@ -227,9 +225,10 @@ public class Header1 extends PageAbs {
 				
 			keyExe("1060", IDA01060, "text", true);
 				
-			keyExe("2009", IDA02009, "text", true);
+			keyExe("2009", IDA02009, "label", true);
 				
-			keyExe("2001", IDA02001, "text", true);
+			IDA02001.setEnabled(false);
+			keyExe("2001", IDA02001, "text", false);
 			
 			keyExe("4001", IDA04001, "double", true);
 
@@ -283,7 +282,7 @@ public class Header1 extends PageAbs {
 	protected void initializeTable() {
 				
 				
-		//init();		
+		init();		
 			
 			
 	}
@@ -295,6 +294,13 @@ public class Header1 extends PageAbs {
 	DoubleBox dlAux;
 	private void keyExe(String key2, Widget w, String type, Boolean enable) {
 		key2Aux = key2;
+		
+		if(type.equals("label")){
+			InlineLabel t = (InlineLabel) w;
+			if(mapDraft.containsKey(key2)){
+				t.setText(mapDraft.get(key2));
+			}
+		}
 		if(type.equals("text")) {
 			TextBox t = (TextBox) w;
 			if(mapDraft.containsKey(key2)){
@@ -303,6 +309,7 @@ public class Header1 extends PageAbs {
 				if(!map.get(key2).equals(mapDraft.get(key2))){
 					t.addStyleName(AON.AON_CSS.aonChanged());
 				}
+				else t.removeStyleName(AON.AON_CSS.aonChanged());
 			}
 			tAux = t;
 			t.addChangeHandler(new ChangeHandler() {
@@ -310,11 +317,10 @@ public class Header1 extends PageAbs {
 				TextBox t = tAux;
 				@Override
 				public void onChange(ChangeEvent event) {
-
+					t.addStyleName(AON.AON_CSS.aonChanged());
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					onEdit(key2, t.getValue());
-					
 				}
 			});
 		}
@@ -393,6 +399,8 @@ public class Header1 extends PageAbs {
 				if(!map.get(key2).equals(mapDraft.get(key2))){
 					d.addStyleName(AON.AON_CSS.aonChanged());
 				}
+				else d.removeStyleName(AON.AON_CSS.aonChanged());
+
 
 			}
 			
@@ -407,6 +415,7 @@ public class Header1 extends PageAbs {
 					Integer month = d.getValue().getMonth()+1;
 					Integer year = d.getValue().getYear()+1900;
 					String value = day+"."+month+"."+year;
+					d.addStyleName(AON.AON_CSS.aonChanged());
 					onEdit(key2, value);
 					
 					
@@ -471,6 +480,8 @@ public class Header1 extends PageAbs {
 				if(!map.get(key2).equals(mapDraft.get(key2))){
 					lb.addStyleName(AON.AON_CSS.aonChanged());
 				}
+				else lb.removeStyleName(AON.AON_CSS.aonChanged());
+
 			}
 			lbAux = lb;
 			lb.addChangeHandler(new ChangeHandler() {
@@ -485,7 +496,7 @@ public class Header1 extends PageAbs {
 							value = p.getId(); 
 						}
 					}
-					
+					lb.addStyleName(AON.AON_CSS.aonChanged());
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					onEdit(key2, value);
@@ -504,6 +515,8 @@ public class Header1 extends PageAbs {
 				if(!map.get(key2).equals(mapDraft.get(key2))){
 					dl.addStyleName(AON.AON_CSS.aonChanged());
 				}
+				else dl.removeStyleName(AON.AON_CSS.aonChanged());
+
 			}
 			dlAux = dl;
 			dl.addChangeHandler(new ChangeHandler() {
@@ -511,7 +524,7 @@ public class Header1 extends PageAbs {
 				DoubleBox dl = dlAux;
 				@Override
 				public void onChange(ChangeEvent event) {
-
+					dl.addStyleName(AON.AON_CSS.aonChanged());
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					onEdit(key2, dl.getValue().toString());

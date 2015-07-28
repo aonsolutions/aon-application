@@ -388,6 +388,7 @@ public class PageF1A extends PageAbs {
 				if(!map.get(key2).equals(mapDraft.get(key2))){
 					dl.addStyleName(AON.AON_CSS.aonChanged());
 				}
+				else dl.removeStyleName(AON.AON_CSS.aonChanged());
 			}
 			dlAux = dl;
 			dl.addChangeHandler(new ChangeHandler() {
@@ -395,7 +396,7 @@ public class PageF1A extends PageAbs {
 				DoubleBox dl = dlAux;
 				@Override
 				public void onChange(ChangeEvent event) {
-
+					dl.addStyleName(AON.AON_CSS.aonChanged());
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					onEdit(key2, dl.getValue().toString());

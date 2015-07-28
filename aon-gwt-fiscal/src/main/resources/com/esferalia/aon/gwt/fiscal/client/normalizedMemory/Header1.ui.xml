@@ -138,14 +138,7 @@
 										</div>
 										<div class="{aonResources.css.aonGroupBody}">
 											<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">
-
-												<tr>
-													<td>
-														<g:Label text="Actividad principal" styleName="{aonResources.css.aonInnerLabel}" />
-														<g:TextBox visibleLength="42" maxLength="40"
-															ui:field="IDA02009" styleName="{aonResources.css.aonInputText}" />
-													</td>
-												</tr>
+											
 												<tr>
 													<td>
 														<g:Label text="Código CNAE" styleName="{aonResources.css.aonInnerLabel}" />
@@ -155,7 +148,7 @@
 															styleName="aon-icon-lookup {aonResources.css.aonBorderNone}">
 															&#160;
 														</g:Button>
-														<g:InlineLabel ui:field="cnaeLabel" styleName="{aonResources.css.aonMarginLeft}"/>
+														<g:InlineLabel ui:field="IDA02009" styleName="{aonResources.css.aonMarginLeft}"/>
 													</td>
 												</tr>
 											</table>
