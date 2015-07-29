@@ -3437,7 +3437,9 @@ public class SQLContractSalaryCalculatorContext extends
 					@Override
 					public Double getValue(Period p) {
 						
-						return p.daysStream().collect(
+						return p.daysStream()
+								.filter(day->ctx.containsVariable(DAYS.get(day.get(DAY_OF_WEEK)), day.getTime(), day.getTime()))
+								.collect(
 								Collectors.summingDouble(day->ctx.getVariable(DAYS.get(day.get(DAY_OF_WEEK)), day.getTime(), day.getTime(), Number.class).doubleValue())
 								);
 					}

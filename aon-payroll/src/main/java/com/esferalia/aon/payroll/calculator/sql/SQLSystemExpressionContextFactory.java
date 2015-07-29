@@ -146,20 +146,20 @@ public class SQLSystemExpressionContextFactory implements
 
 		// TODO: Defaults. Must they be at `system_data` instead of hardcoded
 		// here?
-		systemExpressionContext.setVariable(MONDAY_HOURS,
-				DEFAULT_DAY_HOURS, startDate, endDate);
-		systemExpressionContext.setVariable(TUESDAY_HOURS,
-				DEFAULT_DAY_HOURS, startDate, endDate);
-		systemExpressionContext.setVariable(WEDNESDAY_HOURS,
-				DEFAULT_DAY_HOURS, startDate, endDate);
-		systemExpressionContext.setVariable(THURSDAY_HOURS,
-				DEFAULT_DAY_HOURS, startDate, endDate);
-		systemExpressionContext.setVariable(FRIDAY_HOURS,
-				DEFAULT_DAY_HOURS, startDate, endDate);
-		systemExpressionContext.setVariable(SATURDAY_HOURS,
-				0, startDate, endDate);
-		systemExpressionContext.setVariable(SUNDAY_HOURS,
-				0, startDate, endDate);
+//		systemExpressionContext.setVariable(MONDAY_HOURS,
+//				DEFAULT_DAY_HOURS, startDate, endDate);
+//		systemExpressionContext.setVariable(TUESDAY_HOURS,
+//				DEFAULT_DAY_HOURS, startDate, endDate);
+//		systemExpressionContext.setVariable(WEDNESDAY_HOURS,
+//				DEFAULT_DAY_HOURS, startDate, endDate);
+//		systemExpressionContext.setVariable(THURSDAY_HOURS,
+//				DEFAULT_DAY_HOURS, startDate, endDate);
+//		systemExpressionContext.setVariable(FRIDAY_HOURS,
+//				DEFAULT_DAY_HOURS, startDate, endDate);
+//		systemExpressionContext.setVariable(SATURDAY_HOURS,
+//				0, startDate, endDate);
+//		systemExpressionContext.setVariable(SUNDAY_HOURS,
+//				0, startDate, endDate);
 		systemExpressionContext.setVariable(AGREEMENT_HOURS,
 				DEFAULT_AGRREEMENT_HOURS, startDate, endDate);
 
