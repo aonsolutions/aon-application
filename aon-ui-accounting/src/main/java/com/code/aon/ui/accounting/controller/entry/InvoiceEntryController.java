@@ -1559,7 +1559,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry, Serializabl
 				return series.getSecurityLevel();
 			}
 		}
-		return null;
+		return SecurityLevel.OFFICIAL;
 	}
 
 	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
