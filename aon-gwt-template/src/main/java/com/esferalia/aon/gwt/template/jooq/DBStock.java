@@ -808,13 +808,21 @@ public class DBStock {
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
 			
-			Result<Record3< Integer, String,Integer>> data = ctx.getDslContext().select(WAREHOUSE.ID,WAREHOUSE.NAME,WAREHOUSE.WORKPLACE)
+			Result<Record3< Integer, String,Integer>> data ;
+			if(DBCatalogue.isParentUser(ctx, userId, domainId)){
+				data = ctx.getDslContext().select(WAREHOUSE.ID,WAREHOUSE.NAME,WAREHOUSE.WORKPLACE)
+						.from(WAREHOUSE).join(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
+						.where(WAREHOUSE.NAME.eq(warehouse)).and(WAREHOUSE.DOMAIN.eq(domainId))
+						.fetch();	
+			}
+			else{
+			data = ctx.getDslContext().select(WAREHOUSE.ID,WAREHOUSE.NAME,WAREHOUSE.WORKPLACE)
 				.from(WAREHOUSE).join(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
 				.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(WORKPLACE.SCOPE))
 				.where(WAREHOUSE.NAME.eq(warehouse)).and(WAREHOUSE.DOMAIN.eq(domainId))
 				.and(USER_SCOPE.USER_ID.eq(userId))
 				.fetch();
-				
+			}
 			Warehouse w = new Warehouse();
 			
 			for(Record3<Integer, String,Integer> r : data){
@@ -835,15 +843,23 @@ public class DBStock {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
-			
-			Result<Record3< Integer, String,Integer>> data = ctx.getDslContext().select(WAREHOUSE.ID,WAREHOUSE.NAME,WAREHOUSE.WORKPLACE)
+			Result<Record3< Integer, String,Integer>> data ;
+			if(DBCatalogue.isParentUser(ctx, userId, domainId)){
+				data = ctx.getDslContext().select(WAREHOUSE.ID,WAREHOUSE.NAME,WAREHOUSE.WORKPLACE)
+						.from(WAREHOUSE).join(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
+						.where(WAREHOUSE.DOMAIN.eq(domainId))
+						.orderBy(WAREHOUSE.NAME)
+						.fetch();
+			}
+			else{
+			data = ctx.getDslContext().select(WAREHOUSE.ID,WAREHOUSE.NAME,WAREHOUSE.WORKPLACE)
 				.from(WAREHOUSE).join(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
 				.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(WORKPLACE.SCOPE))
 				.where(WAREHOUSE.DOMAIN.eq(domainId))
 				.and(USER_SCOPE.USER_ID.eq(userId))
 				.orderBy(WAREHOUSE.NAME)
 				.fetch();
-			
+			}
 			Vector<Warehouse> v = new Vector<Warehouse>();
 			
 			for(Record3<Integer, String,Integer> r : data){

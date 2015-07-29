@@ -8,6 +8,9 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPARTMENT;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
+import static com.esferalia.aon.jooq.tables.User.USER;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+
 
 import java.util.Vector;
 
@@ -32,15 +35,24 @@ public class DBCatalogue {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
-			
-			Result<Record2<Integer, String>> record = ctx.getDslContext().select(WORKPLACE.ID, WORKPLACE.DESCRIPTION)
+			Result<Record2<Integer, String>> record;
+			if(isParentUser(ctx, userId, domainId)){
+				record = ctx.getDslContext().select(WORKPLACE.ID, WORKPLACE.DESCRIPTION)
+						.from(WORKPLACE)
+						.where(WORKPLACE.DOMAIN.eq(domainId))
+						.and(WORKPLACE.ACTIVE.eq((byte)1))
+						.orderBy(WORKPLACE.DESCRIPTION)
+						.fetch();				
+			}
+			else{
+				record = ctx.getDslContext().select(WORKPLACE.ID, WORKPLACE.DESCRIPTION)
 					.from(WORKPLACE).join(USER_SCOPE).on(WORKPLACE.SCOPE.eq(USER_SCOPE.SCOPE))
 					.where(WORKPLACE.DOMAIN.eq(domainId))
 					.and(WORKPLACE.ACTIVE.eq((byte)1))
 					.and(USER_SCOPE.USER_ID.eq(userId))
 					.orderBy(WORKPLACE.DESCRIPTION)
 					.fetch();
-			
+			}
 			Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> v = new Vector<com.esferalia.aon.gwt.template.shared.WorkPlace>();
 			record.stream().forEach(r -> {
 				com.esferalia.aon.gwt.template.shared.WorkPlace w = new com.esferalia.aon.gwt.template.shared.WorkPlace() ;
@@ -252,6 +264,28 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 		} finally{
 			if (ctx != null) ctx.close();	
 		}
+	}
+	
+	public  static  Boolean isParentUser(AONContext ctx, Integer userId, Integer domainId) {
+				
+				Record1<Integer> record = ctx.getDslContext().selectDistinct(USER.DOMAIN)
+					.from(USER)
+					.where(USER.ID.eq(userId))
+					.fetchOne();
+				
+				Integer userDomain = record.value1();
+				
+				if(userDomain != domainId){
+					Record1<Integer> record1 =	ctx.getDslContext().select(DOMAIN.PARENT)
+					.from(DOMAIN)
+					.where(DOMAIN.ID.eq(domainId))
+					.fetchOne();
+					
+					Integer parentDomain =  record1.value1();
+					
+					return parentDomain == userDomain;
+				}
+				else return false;
 	}
 	
 }
