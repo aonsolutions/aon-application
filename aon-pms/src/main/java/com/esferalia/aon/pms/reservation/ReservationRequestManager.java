@@ -80,8 +80,7 @@ public class ReservationRequestManager implements IReservationConstants {
 
 	public ReservationUtils getReservationUtils() {
 		if (reservationUtils == null) {
-			reservationUtils = new ReservationUtils();
-			reservationUtils.setDomain(DomainManager.getCurrentDomain());
+			reservationUtils = new ReservationUtils(DomainManager.getCurrentDomain());
 		}
 		return reservationUtils;
 	}

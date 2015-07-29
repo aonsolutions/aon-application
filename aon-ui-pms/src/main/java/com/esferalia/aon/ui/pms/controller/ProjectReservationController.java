@@ -121,8 +121,7 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	public ReservationUtils getReservationUtils() {
 		if (reservationUtils == null) {
-			reservationUtils = new ReservationUtils();
-			reservationUtils.setDomain(DomainManager.getCurrentDomain());
+			reservationUtils = new ReservationUtils(DomainManager.getCurrentDomain());
 		}
 		return reservationUtils;
 	}
@@ -642,7 +641,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		if (noShow) {
 			penaltyDays = getReservationUtils().obtainNoShowPenaltyDays(reservation, reservation.getStartDate());
 		} else {
-			penaltyDays = getReservationUtils().obtainCancellationPenaltyDays(reservation, reservation.getStartDate());
+			penaltyDays = getReservationUtils().obtainCancellationPenaltyDays(reservation, new Date());
 		}
 		if (penaltyDays != null && (penaltyDays < 0 || penaltyDays > CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate()))) {
 			penaltyDays = (int)CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate());

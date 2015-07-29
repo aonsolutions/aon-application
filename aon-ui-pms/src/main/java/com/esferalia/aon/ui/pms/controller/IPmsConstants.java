@@ -13,6 +13,8 @@ public interface IPmsConstants {
 	String EARLY_CHECKOUT_CONTROLLER_NAME = "earlyCheckOut";
 	String NO_SHOW_INVOICE_CONTROLLER_NAME = "noShowInvoice";
 	String NO_SHOW_INVOICE_SEARCH_LISTENER_NAME = "noShowInvoiceSearch";
+	String CANCELLATION_INVOICE_CONTROLLER_NAME = "cancellationInvoice";
+	String CANCELLATION_INVOICE_SEARCH_LISTENER_NAME = "cancellationInvoiceSearch";
 	String PAYMENT_CARD_SETTLE_CONTROLLER_NAME = "paymentCardSettle";
 	String RACK_CONTROLLER_NAME = "rack";
 	String RACK_SEARCH_LISTENER_NAME = "rackSearch";

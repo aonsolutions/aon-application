@@ -310,8 +310,7 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 	private Integer obtainCheckOutPenaltyDays() throws ManagerBeanException {
 		Integer penaltyDays = null;
 		if (getReservation().isAgencyHolder() && !getEarlyCheckOutDate().after(getReservation().getEndDate())) {
-			ReservationUtils reservationUtils = new ReservationUtils();
-			reservationUtils.setDomain(getReservation().getDomain());
+			ReservationUtils reservationUtils = new ReservationUtils(getReservation().getDomain());
 			penaltyDays = reservationUtils.obtainEarlyCheckOutPenaltyDays(getReservation(), getEarlyCheckOutDate());
 		}
 		if (penaltyDays != null && penaltyDays > CommonUtil.getDaysBetweenDates(getEarlyCheckOutDate(), getReservation().getEndDate())) {

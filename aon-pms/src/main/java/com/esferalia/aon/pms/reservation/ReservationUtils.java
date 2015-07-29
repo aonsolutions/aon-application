@@ -30,6 +30,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.common.util.CryptoUtil;
 import com.code.aon.company.Company;
@@ -38,6 +39,7 @@ import com.code.aon.config.Tariff;
 import com.code.aon.config.TariffAddInfo;
 import com.code.aon.config.Tax;
 import com.code.aon.config.TaxDetail;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.finance.Invoice;
@@ -83,6 +85,13 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 	private boolean sellerUnknown;
 	private boolean agencyUnknown;
 	private boolean companyUnknown;
+
+	public ReservationUtils() {
+	}
+
+	public ReservationUtils(int domain) {
+		setDomain(domain);
+	}
 
 	public int getDomain() {
 		return domain;
@@ -801,6 +810,14 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		return null;
 	}
 
+	public Item obtainAppParamItem(AppParam param) throws ManagerBeanException {
+		ApplicationParameter appParam = AppParamUtil.getParameter(param);
+		if (appParam != null) {
+			return obtainItem(appParam.getValue());
+		}
+		return null;
+	}
+
 	private Item obtainItem(String itemCode) throws ManagerBeanException {
 		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 		Criteria criteria = new Criteria();
@@ -1165,6 +1182,18 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		return null;
 	}
 
+	public Item obtainEarlyCheckOutItem() throws ManagerBeanException {
+		return obtainAppParamItem(AppParam.PMS_EARLY_CHECKOUT_ITEM);
+	}
+
+	public Item obtainNoShowItem() throws ManagerBeanException {
+		return obtainAppParamItem(AppParam.PMS_NOSHOW_ITEM);
+	}
+
+	public Item obtainCancellationItem() throws ManagerBeanException {
+		return obtainAppParamItem(AppParam.PMS_CANCELLATION_ITEM);
+	}
+
 	public Integer obtainEarlyCheckOutPenaltyDays(ProjectReservation reservation, Date date) throws ManagerBeanException {
 		return obtainPenaltyDays(reservation, EARLY_CHECKOUT_PENALTY, date);
 	}
@@ -1260,6 +1289,18 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 					}
 				} else if (penaltyStr == null) {
 					penaltyStr = profileTmp;
+				}
+			}
+		}
+		
+		if (StringUtils.contains(penaltyStr, "#")) {
+			String penaltyTmp = penaltyStr.substring(0, penaltyStr.indexOf("#"));
+			String dueHours = penaltyStr.substring(penaltyStr.indexOf("#") + 1);
+			penaltyStr = "0";
+			if (NumberUtils.isNumber(dueHours)) {
+				Date dueDate = DateUtils.addHours(DateUtils.addHours(reservation.getStartDate(), 23), 0-Integer.parseInt(dueHours));
+				if (dueDate.before(date)) {
+					penaltyStr = penaltyTmp;
 				}
 			}
 		}

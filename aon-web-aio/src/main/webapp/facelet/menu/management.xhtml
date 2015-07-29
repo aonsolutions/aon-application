@@ -40,6 +40,12 @@
 												actionListener="#{noShowInvoice.onEditSearch}"
 												value="#{bundle.pms_noShow_invoice_module}"/>
 										</aon:div>
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="cancellationInvoice" 
+												action="cancellationInvoice_search"
+												actionListener="#{cancellationInvoice.onEditSearch}"
+												value="#{bundle.pms_cancellation_invoice_module}"/>
+										</aon:div>
 									</aon:if>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleInvoiceManagement"

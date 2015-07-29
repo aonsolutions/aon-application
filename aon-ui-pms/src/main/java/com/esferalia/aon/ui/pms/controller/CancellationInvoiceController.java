@@ -14,67 +14,68 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.product.Item;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.ProjectReservation;
-import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
-import com.esferalia.aon.pms.invoicing.NoShowInvoiceTo;
-import com.esferalia.aon.pms.invoicing.NoShowInvoicing;
+import com.esferalia.aon.pms.invoicing.CancellationInvoiceTo;
+import com.esferalia.aon.pms.invoicing.CancellationInvoicing;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
-import com.esferalia.aon.ui.pms.event.NoShowInvoiceSearchListener;
+import com.esferalia.aon.ui.pms.event.CancellationInvoiceSearchListener;
 
-public class NoShowInvoiceController extends BasicController implements IPmsConstants {
+public class CancellationInvoiceController extends BasicController implements IPmsConstants {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-	private Date noShowDate;
-	private Integer noShowPenalty;
-	private PayMethod noShowPayMethod;
-	private RegistryBank noShowBank;
-	private int noShowDaysToPayment;
+	private Date cancellationDate;
+	private Integer cancellationPenalty;
+	private PayMethod cancellationPayMethod;
+	private RegistryBank cancellationBank;
+	private int cancellationDaysToPayment;
 	private ProjectReservation reservation;
 	private boolean showInvoiceWindow;
 	private boolean showConfirmWindow;
 	private boolean showCreditCardWindow;
 
-	public Date getNoShowDate() {
-		return noShowDate;
+	public Date getCancellationDate() {
+		return cancellationDate;
 	}
-	public void setNoShowDate(Date noShowDate) {
-		this.noShowDate = noShowDate;
-	}
-
-	public Integer getNoShowPenalty() {
-		return noShowPenalty;
+	public void setCancellationDate(Date cancellationDate) {
+		this.cancellationDate = cancellationDate;
 	}
 
-	public void setNoShowPenalty(Integer noShowPenalty) {
-		this.noShowPenalty = noShowPenalty;
+	public Integer getCancellationPenalty() {
+		return cancellationPenalty;
 	}
 
-	public PayMethod getNoShowPayMethod() {
-		return noShowPayMethod;
-	}
-	public void setNoShowPayMethod(PayMethod noShowPayMethod) {
-		this.noShowPayMethod = noShowPayMethod;
+	public void setCancellationPenalty(Integer cancellationPenalty) {
+		this.cancellationPenalty = cancellationPenalty;
 	}
 
-	public RegistryBank getNoShowBank() {
-		return noShowBank;
+	public PayMethod getCancellationPayMethod() {
+		return cancellationPayMethod;
 	}
-	public void setNoShowBank(RegistryBank noShowBank) {
-		this.noShowBank = noShowBank;
+	public void setCancellationPayMethod(PayMethod cancellationPayMethod) {
+		this.cancellationPayMethod = cancellationPayMethod;
 	}
 
-	public int getNoShowDaysToPayment() {
-		return noShowDaysToPayment;
+	public RegistryBank getCancellationBank() {
+		return cancellationBank;
 	}
-	public void setNoShowDaysToPayment(int noShowDaysToPayment) {
-		this.noShowDaysToPayment = noShowDaysToPayment;
+	public void setCancellationBank(RegistryBank cancellationBank) {
+		this.cancellationBank = cancellationBank;
+	}
+
+	public int getCancellationDaysToPayment() {
+		return cancellationDaysToPayment;
+	}
+	public void setCancellationDaysToPayment(int cancellationDaysToPayment) {
+		this.cancellationDaysToPayment = cancellationDaysToPayment;
 	}
 
 	public ProjectReservation getReservation() {
@@ -115,52 +116,53 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 		setReservation(reservation);
 	}
 
-	public void onNoShowInvoiceShow(ActionEvent event) throws ManagerBeanException {
-		setNoShowDate(new Date());
-		setNoShowPenalty(null);
-		setNoShowPayMethod(null);
-		setNoShowBank(null);
-		setNoShowDaysToPayment(0);
+	public void onCancellationInvoiceShow(ActionEvent event) throws ManagerBeanException {
+		setCancellationDate(new Date());
+		setCancellationPenalty(null);
+		setCancellationPayMethod(null);
+		setCancellationBank(null);
+		setCancellationDaysToPayment(0);
 	}
 
 	public boolean isBankRequired() {
-		PayMethod payMethod = getNoShowPayMethod();
+		PayMethod payMethod = getCancellationPayMethod();
 		return (payMethod != null && (payMethod.getType() == PayMethodType.BANK_TRANSFER || payMethod.getType() == PayMethodType.CHEQUE)); 		 
 	}
 	
-	public Date getNoShowPaymentDate() {
-		return DateUtils.addDays(getNoShowDate(), getNoShowDaysToPayment());
+	public Date getCancellationPaymentDate() {
+		return DateUtils.addDays(getCancellationDate(), getCancellationDaysToPayment());
 	}
 	
-	public void onNoShowInvoice(ActionEvent event) {
+	public void onCancellationInvoice(ActionEvent event) {
 		try {
-			if (validateNoShowInvoice()) {
-				NoShowInvoiceTo noShowInvoiceTo = new NoShowInvoiceTo();
-				NoShowInvoiceSearchListener search = (NoShowInvoiceSearchListener)AonUtil.getRegisteredBean(NO_SHOW_INVOICE_SEARCH_LISTENER_NAME);
-				noShowInvoiceTo.setGuestReservation(search.isGuestReservationSearch());
-				noShowInvoiceTo.setIssueDate(getNoShowDate());
-				noShowInvoiceTo.setPenaltyDays(getNoShowPenalty());
-				noShowInvoiceTo.setPayMethod(getNoShowPayMethod());
-				noShowInvoiceTo.setRegistryBank(getNoShowBank());
-				noShowInvoiceTo.setFinanceDate(getNoShowPaymentDate());
-				noShowInvoiceTo.setPosShift(PosUtils.getUserPosShift());
+			if (validateCancellationInvoice()) {
+				CancellationInvoiceTo cancellationInvoiceTo = new CancellationInvoiceTo();
+				CancellationInvoiceSearchListener search = (CancellationInvoiceSearchListener)AonUtil.getRegisteredBean(CANCELLATION_INVOICE_SEARCH_LISTENER_NAME);
+				cancellationInvoiceTo.setGuestReservation(search.isGuestReservationSearch());
+				cancellationInvoiceTo.setIssueDate(getCancellationDate());
+				cancellationInvoiceTo.setItem(obtainCancellationItem());
+				cancellationInvoiceTo.setPenaltyDays(getCancellationPenalty());
+				cancellationInvoiceTo.setPayMethod(getCancellationPayMethod());
+				cancellationInvoiceTo.setRegistryBank(getCancellationBank());
+				cancellationInvoiceTo.setFinanceDate(getCancellationPaymentDate());
+				cancellationInvoiceTo.setPosShift(PosUtils.getUserPosShift());
 	
-				NoShowInvoicing noShowInvoicing = new NoShowInvoicing();
-				int count = noShowInvoicing.invoice(noShowInvoiceTo, getCheckedReservations());
+				CancellationInvoicing cancellationInvoicing = new CancellationInvoicing();
+				int count = cancellationInvoicing.invoice(cancellationInvoiceTo, getCheckedReservations());
 	
 				clearCheckedReservations();
 				onSearch(event);
-				String msg = "Facturas de No Show generadas: " + count; 
+				String msg = "Facturas de Cancelacion generadas: " + count; 
 				AonUtil.addInfoMessage(msg);
 			}
 		} catch (ManagerBeanException ex) {
-			String msg = "Se produjo un error al generar las Facturas de No Show. [" + ex.getMessage() + "]";
+			String msg = "Se produjo un error al generar las Facturas de Cancelacion. [" + ex.getMessage() + "]";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, ex);
 		}
 	}
 	
-	private boolean validateNoShowInvoice() throws ManagerBeanException {
+	private boolean validateCancellationInvoice() throws ManagerBeanException {
 		if (isCashOrCardPayment() && !PosUtils.isUserPosShiftOpened()) {
 			String msg = "No se puede Facturar en Metálico/Tarjetas. El Usuario no ha abierto la Caja.";
 			AonUtil.addErrorMessage(msg);
@@ -171,32 +173,38 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 	}
 
 	private boolean isCashOrCardPayment() {
-		PayMethodType type = getNoShowPayMethod().getType();
+		PayMethodType type = getCancellationPayMethod().getType();
 		if (type == PayMethodType.CASH_BASIS || type == PayMethodType.CREDIT_CARD || type == PayMethodType.DEBIT_CARD) {
 			return true;
 		}
 		return false;
 	}
 
-	public void onNoShowNoInvoice(ActionEvent event) {
+	private Item obtainCancellationItem() throws ManagerBeanException {
+		ReservationUtils reservationUtils = new ReservationUtils(DomainManager.getCurrentDomain());
+		return reservationUtils.obtainCancellationItem();
+	}
+
+	public void onCancellationNoInvoice(ActionEvent event) {
 		try {
 			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 			for (Integer reservationId : getCheckedReservations()) {
 				ProjectReservation reservation = (ProjectReservation)reservationBean.get(reservationId);
 				double advancedAmount = reservation.getAdvancedAmount();
 				if (advancedAmount > 0) {
-					NoShowInvoiceSearchListener search = (NoShowInvoiceSearchListener)AonUtil.getRegisteredBean(NO_SHOW_INVOICE_SEARCH_LISTENER_NAME);
-					NoShowInvoiceTo noShowInvoiceTo = new NoShowInvoiceTo();
-					noShowInvoiceTo.setGuestReservation(search.isGuestReservationSearch());
-					noShowInvoiceTo.setIssueDate(new Date());
-					noShowInvoiceTo.setKeepAdvance(search.isGuestReservationSearch());
-					noShowInvoiceTo.setPosShift(PosUtils.getUserPosShift());
+					CancellationInvoiceSearchListener search = (CancellationInvoiceSearchListener)AonUtil.getRegisteredBean(CANCELLATION_INVOICE_SEARCH_LISTENER_NAME);
+					CancellationInvoiceTo cancellationInvoiceTo = new CancellationInvoiceTo();
+					cancellationInvoiceTo.setGuestReservation(search.isGuestReservationSearch());
+					cancellationInvoiceTo.setIssueDate(new Date());
+					cancellationInvoiceTo.setItem(obtainCancellationItem());
+					cancellationInvoiceTo.setKeepAdvance(search.isGuestReservationSearch());
+					cancellationInvoiceTo.setPosShift(PosUtils.getUserPosShift());
 
-					NoShowInvoicing noShowInvoicing = new NoShowInvoicing();
-					noShowInvoicing.invoice(noShowInvoiceTo, reservation);
+					CancellationInvoicing cancellationInvoicing = new CancellationInvoicing();
+					cancellationInvoicing.invoice(cancellationInvoiceTo, reservation);
 				}
 
-				reservation.setCheckStatus(ReservationCheckStatus.NO_SHOW_NO_INVOICEABLE);
+				reservation.setPenaltyDays(0);
 				reservationBean.update(reservation);
 			}
 

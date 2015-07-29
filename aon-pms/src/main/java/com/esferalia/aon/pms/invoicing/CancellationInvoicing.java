@@ -19,6 +19,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Series;
@@ -33,7 +34,6 @@ import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
-import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
@@ -44,17 +44,17 @@ import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 
-public class NoShowInvoicing {
+public class CancellationInvoicing {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(NoShowInvoicing.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(CancellationInvoicing.class.getName());
 
-	public int invoice(NoShowInvoiceTo noShowInvoiceTo, List<Integer> reservations) throws ManagerBeanException {
+	public int invoice(CancellationInvoiceTo cancellationInvoiceTo, List<Integer> reservations) throws ManagerBeanException {
 		try {
 			int count = 0;
 			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 			for (Integer reservationId : reservations) {
 				ProjectReservation reservation = (ProjectReservation)reservationBean.get(reservationId);
-				if (invoice(noShowInvoiceTo, reservation) != null) {
+				if (invoice(cancellationInvoiceTo, reservation) != null) {
 					++count;
 				}
 			}
@@ -65,10 +65,9 @@ public class NoShowInvoicing {
 		}
 	}
 
-	public Invoice invoice(NoShowInvoiceTo noShowInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
-		Item itemNoShow = reservation.getHotelReservation().getItemNoShow();
-		Integer penaltyDays = (noShowInvoiceTo.getPenaltyDays() != null) ? noShowInvoiceTo.getPenaltyDays() : reservation.getPenaltyDays();
-		if (!reservation.isInvoiced() && itemNoShow != null && itemNoShow.getId() != null && penaltyDays != null) {
+	public Invoice invoice(CancellationInvoiceTo cancellationInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
+		Integer penaltyDays = (cancellationInvoiceTo.getPenaltyDays() != null) ? cancellationInvoiceTo.getPenaltyDays() : reservation.getPenaltyDays();
+		if (!reservation.isInvoiced() && cancellationInvoiceTo.getItem() != null && cancellationInvoiceTo.getItem().getId() != null && penaltyDays != null) {
 			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 			boolean mustCloseSession = HibernateUtil.mustCloseSession();
 			String sessionName = HibernateUtil.getSessionFactoryName();
@@ -79,11 +78,11 @@ public class NoShowInvoicing {
 				HibernateUtil.beginTransaction(sessionName);
 	
 				reservation.setPenaltyDays(penaltyDays);
-				Invoice invoice = createInvoice(noShowInvoiceTo, reservation);
-				double noShowAmount = createInvoiceDetails(invoice, reservation, noShowInvoiceTo);
+				Invoice invoice = createInvoice(cancellationInvoiceTo, reservation);
+				double cancellationAmount = createInvoiceDetails(invoice, reservation, cancellationInvoiceTo);
 				createInvoiceAddress(invoice, reservation);
-				if (noShowAmount != 0) {
-					createInvoiceFinances(invoice, noShowInvoiceTo, noShowAmount);
+				if (cancellationAmount != 0) {
+					createInvoiceFinances(invoice, cancellationInvoiceTo, cancellationAmount);
 				}
 				recordInvoice(invoice);
 	
@@ -109,7 +108,7 @@ public class NoShowInvoicing {
 		return null;
 	}
 
-	private Invoice createInvoice(NoShowInvoiceTo noShowInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
+	private Invoice createInvoice(CancellationInvoiceTo cancellationInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
 		Invoice invoice = new Invoice();
 		invoice.setProject(reservation.getProject());
 		invoice.setSeries(getHotelSeries(reservation));
@@ -120,18 +119,18 @@ public class NoShowInvoicing {
 		invoice.setRegistryDocumentCountry(invoice.getRegistry().getDocumentCountry());
 		invoice.setRegistryName(invoice.getRegistry().getName());
 		invoice.setRegistryAddress(null);
-		invoice.setIssueDate(noShowInvoiceTo.getIssueDate());
+		invoice.setIssueDate(cancellationInvoiceTo.getIssueDate());
 		invoice.setSecurityLevel(SecurityLevel.OFFICIAL);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setType(InvoiceType.SALES);
 		invoice.setScope(reservation.getHotelReservation().getScope());
-		invoice.setPosShift(noShowInvoiceTo.getPosShift());
+		invoice.setPosShift(cancellationInvoiceTo.getPosShift());
 
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		return (Invoice)invoiceBean.insert(invoice);
 	}
 
-	private double createInvoiceDetails(Invoice invoice, ProjectReservation reservation, NoShowInvoiceTo noShowInvoiceTo) throws ManagerBeanException {
+	private double createInvoiceDetails(Invoice invoice, ProjectReservation reservation, CancellationInvoiceTo cancellationInvoiceTo) throws ManagerBeanException {
 		ReservationUtils reservationUtils = new ReservationUtils();
 
 		double advanceVatPercent = reservationUtils.getTaxPercentage(reservation.getHotelReservation().getItemAdvance().getVat(), invoice.getIssueDate());
@@ -139,10 +138,10 @@ public class NoShowInvoicing {
 		double advanceTaxableBase = CommonUtil.round(advancedAmount / (1 + advanceVatPercent / 100), 4);
 		double advanceVatQuota = CommonUtil.round(advancedAmount - CommonUtil.round(advanceTaxableBase));
 
-		double penaltyVatPercent = reservationUtils.getTaxPercentage(reservation.getHotelReservation().getItemNoShow().getVat(), invoice.getIssueDate());
+		double penaltyVatPercent = reservationUtils.getTaxPercentage(cancellationInvoiceTo.getItem().getVat(), invoice.getIssueDate());
 		double penaltyAmount = advancedAmount;
 		double penaltyTaxableBase = CommonUtil.round(penaltyAmount / (1 + penaltyVatPercent / 100), 4);
-		if (!noShowInvoiceTo.isKeepAdvance()) {
+		if (!cancellationInvoiceTo.isKeepAdvance()) {
 			penaltyTaxableBase = getPenaltyTaxableBase(reservation, reservation.getPenaltyDays());
 			penaltyAmount = CommonUtil.round(CommonUtil.round(penaltyTaxableBase) * (1 + penaltyVatPercent / 100));
 		}
@@ -153,7 +152,7 @@ public class NoShowInvoicing {
 		if (reservation.getPenaltyDays() < 0 || reservation.getPenaltyDays() > 0) {
 			Date fromDate = reservation.getStartDate();
 			Date toDate = (reservation.getPenaltyDays() < 0) ? reservation.getEndDate() : DateUtils.addDays(fromDate, reservation.getPenaltyDays()-1);
-			penaltyTaxableBases = reservation.getReservationTaxableBasesPerDay(fromDate, toDate, reservation.getHotelReservation().getItemNoShow().getVat());
+			penaltyTaxableBases = reservation.getReservationTaxableBasesPerDay(fromDate, toDate, cancellationInvoiceTo.getItem().getVat());
 		} else {
 			penaltyTaxableBases.put(reservation.getStartDate(), penaltyTaxableBase);
 		}
@@ -167,7 +166,7 @@ public class NoShowInvoicing {
 				invoiceDetail.setInvoice(invoice);
 				invoiceDetail.setProject(reservation.getProject());
 				invoiceDetail.setLine(++line);
-				invoiceDetail.setItem(reservation.getHotelReservation().getItemNoShow());
+				invoiceDetail.setItem(cancellationInvoiceTo.getItem());
 				invoiceDetail.setDescription(obtainDetailDescription(date, null, invoiceDetail.getItem().getFullName()));
 				invoiceDetail.setQuantity(1);
 				invoiceDetail.setPrice(taxableBase);
@@ -210,13 +209,13 @@ public class NoShowInvoicing {
 		if (advancedAmount > 0 && invoiceTotal != 0) {
 			Finance finance = getAdvancedFinance(reservation);
 			if (finance != null) {
-				noShowInvoiceTo.setPayMethod(finance.getPayMethod());
+				cancellationInvoiceTo.setPayMethod(finance.getPayMethod());
 				if (finance.getBankAccount() != null && StringUtils.isNotEmpty(finance.getBankAccount().toString())) {
 					RegistryBank registryBank = new RegistryBank();
 					registryBank.setBankAccount(finance.getBankAccount());
 					registryBank.setBankAlias(finance.getBankAlias());
 					registryBank.setBic(finance.getBic());
-					noShowInvoiceTo.setRegistryBank(registryBank);
+					cancellationInvoiceTo.setRegistryBank(registryBank);
 				}
 			}
 		}
@@ -253,20 +252,20 @@ public class NoShowInvoicing {
 		}
 	}
 
-	private void createInvoiceFinances(Invoice invoice, NoShowInvoiceTo noShowInvoiceTo, double noShowAmount) throws ManagerBeanException {
+	private void createInvoiceFinances(Invoice invoice, CancellationInvoiceTo cancellationInvoiceTo, double cancellationAmount) throws ManagerBeanException {
 		Finance finance = new Finance();
 		finance.setInvoice(invoice);
 		finance.setRegistry(invoice.getRegistry());
 		finance.setPayment(false);
-		finance.setDueDate(noShowInvoiceTo.getFinanceDate());
+		finance.setDueDate(cancellationInvoiceTo.getFinanceDate());
 		finance.setScope(invoice.getScope());
 		finance.setFinanceStatus(FinanceStatus.PENDING);
-		finance.setPayMethod(noShowInvoiceTo.getPayMethod());
-		if (noShowInvoiceTo.getRegistryBank() != null) {
-			finance.setBankAccount(noShowInvoiceTo.getRegistryBank().getBankAccount());
-			finance.setBankAlias(noShowInvoiceTo.getRegistryBank().getBankAlias());
-			finance.setBic(noShowInvoiceTo.getRegistryBank().getBic());
-		} else if (noShowInvoiceTo.getPayMethod().getType() == PayMethodType.NEGOTIABLE_DOCUMENT) {
+		finance.setPayMethod(cancellationInvoiceTo.getPayMethod());
+		if (cancellationInvoiceTo.getRegistryBank() != null) {
+			finance.setBankAccount(cancellationInvoiceTo.getRegistryBank().getBankAccount());
+			finance.setBankAlias(cancellationInvoiceTo.getRegistryBank().getBankAlias());
+			finance.setBic(cancellationInvoiceTo.getRegistryBank().getBic());
+		} else if (cancellationInvoiceTo.getPayMethod().getType() == PayMethodType.NEGOTIABLE_DOCUMENT) {
 			RegistryBank rBank = getRegistryBank(invoice.getRegistry());
 			if (rBank != null) {
 				finance.setBankAccount(rBank.getBankAccount());
@@ -274,7 +273,7 @@ public class NoShowInvoicing {
 				finance.setBic(rBank.getBic());
 			}
 		}
-		finance.setAmount(noShowAmount);
+		finance.setAmount(cancellationAmount);
 
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		financeBean.insert(finance);
@@ -339,10 +338,11 @@ public class NoShowInvoicing {
 	}
 
 	private double getPenaltyTaxableBase(ProjectReservation reservation, int penaltyDays) throws ManagerBeanException {
+		AppParam penaltyParam = AppParam.PMS_CANCELLATION_ITEM;
 		if (penaltyDays < 0) {
-			return reservation.getNoShowPenaltyTaxableBase(reservation.getStartDate(), reservation.getEndDate());
+			return reservation.getPenaltyTaxableBase(penaltyParam, reservation.getStartDate(), reservation.getEndDate());
 		} else if (penaltyDays > 0) {
-			return reservation.getNoShowPenaltyTaxableBase(reservation.getStartDate(), DateUtils.addDays(reservation.getStartDate(), penaltyDays-1));
+			return reservation.getPenaltyTaxableBase(penaltyParam, reservation.getStartDate(), DateUtils.addDays(reservation.getStartDate(), penaltyDays-1));
 		} 
 		return 0;
 	}

@@ -26,7 +26,7 @@
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 1em;" >
 									<aon:div style="margin-bottom:30px">
 										<aon:outputText styleClass="aon-bold"
-											value="#{bundle.pms_no_show_no_invoiceable_confirm}" />
+											value="#{bundle.pms_cancellation_no_invoiceable_confirm}" />
 										<aon:outputText styleClass="aon-bold" style="display:block;"
 											value="#{bundle.pms_no_invoiceable_confirm_agency}"
 											rendered="#{!searchListener.guestReservationSearch}" />
@@ -40,7 +40,7 @@
 										<aon:commandButton id="confirm-accept"
 											styleClass="aon-commandButton"
 											value="#{bundle.aon_confirm}"
-											actionListener="#{controller.onNoShowNoInvoice}"
+											actionListener="#{controller.onCancellationNoInvoice}"
 											reRender="aonContent"
 											onclick="Richfaces.showModalPanel('waitProccess')"
 											oncomplete="Richfaces.hideModalPanel('waitProccess')">

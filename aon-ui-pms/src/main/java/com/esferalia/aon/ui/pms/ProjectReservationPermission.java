@@ -54,8 +54,7 @@ public class ProjectReservationPermission implements Serializable {
 
 	private ReservationUtils getReservationUtils() {
 		if (reservationUtils == null) {
-			reservationUtils = new ReservationUtils();
-			reservationUtils.setDomain(DomainManager.getCurrentDomain());
+			reservationUtils = new ReservationUtils(DomainManager.getCurrentDomain());
 		}
 		return reservationUtils;
 	}

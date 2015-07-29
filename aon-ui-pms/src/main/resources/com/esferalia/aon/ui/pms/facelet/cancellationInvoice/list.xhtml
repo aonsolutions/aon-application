@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="cancellationInvoiceList">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{bundle.pms_cancellation_invoice_module}" />
+				<ui:param name="controller" value="#{cancellationInvoice}" />
+				<ui:param name="skipResetButton" value="#{true}" />
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="cancellationInvoice-selectAll"
+						value="#{bundle.aon_check_all}" immediate="#{true}"
+						styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+						actionListener="#{cancellationInvoice.checkAll}" />
+					<aon:commandButton id="cancellationInvoice-selectNone"
+						value="#{bundle.aon_uncheck_all}" immediate="#{true}"
+						styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+						actionListener="#{cancellationInvoice.checkNone}" />
+					<aon:commandButton id="cancellationInvoice-invoice"
+						value="#{bundle.aon_key_invoice_description}"
+						immediate="#{true}" rendered="#{cancellationInvoice.checkedCount > 0}"
+						styleClass="aon-finding-toolbar-item aon-icon-favorite"
+						actionListener="#{cancellationInvoice.onCancellationInvoiceShow}"
+						reRender="showInvoiceWindow">
+						<f:setPropertyActionListener target="#{cancellationInvoice.showInvoiceWindow}"
+							value="#{true}" />
+					</aon:commandButton>
+					<aon:commandButton id="cancellationInvoice-noInvoice"
+						value="#{bundle.pms_no_invoiceable}"
+						immediate="true" rendered="#{cancellationInvoice.checkedCount > 0}"
+						styleClass="aon-finding-toolbar-item aon-icon-exit"
+						reRender="showConfirmWindow">
+						<f:setPropertyActionListener target="#{cancellationInvoice.showConfirmWindow}"
+							value="#{true}" />
+					</aon:commandButton>
+				</ui:define>				
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{cancellationInvoice}" />
+					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
+					<ui:define name="columns">
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{controller.checkedCount}" />
+							</f:facet>
+							<aon:selectBooleanCheckbox id="ProjectReservation_check"
+								value="#{controller.rowChecked}"
+								valueChangeListener="#{controller.rowSelected}"
+								reRender="aonContent" />	
+						</aon:column>
+
+						<aon:column alias="ProjectReservation.hotelReservation.workPlace.description"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_module_hotel}" />
+							</f:facet>
+							<aon:outputText value="#{to.hotelReservation.workPlace.description}">
+								<aon:abbreviateConverter maxWidth="25" />
+							</aon:outputText>
+							<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
+								<aon:outputText	value="#{to.hotelReservation.workPlace.description}" />
+							</rich:toolTip>
+						</aon:column>
+
+						<aon:column alias="ProjectReservation.project.id"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.report_id}" />
+							</f:facet>
+							<aon:outputText value="#{to.id}" />
+						</aon:column>
+
+						<aon:column alias="ProjectReservation.code"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.report_reservation_code}" />
+							</f:facet>
+							<aon:outputText value="#{to.code}">
+								<aon:abbreviateConverter maxWidth="15" />
+							</aon:outputText>
+							<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
+								<aon:outputText	value="#{to.code}" />
+							</rich:toolTip>
+						</aon:column>
+
+						<aon:column alias="ProjectReservation.startDate"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.report_checkin}" />
+							</f:facet>
+							<aon:outputText value="#{to.startDate}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column alias="ProjectReservation.endDate"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.report_checkout}" />
+							</f:facet>
+							<aon:outputText value="#{to.endDate}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.report_guest}" />
+							</f:facet>
+							<aon:outputText value="#{to.guestFullName}">
+								<aon:abbreviateConverter maxWidth="25" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column alias="ProjectReservation.agency.registry.name"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.report_agency}" />
+							</f:facet>
+							<aon:outputText value="#{to.agency.registry.fullName}">
+								<aon:abbreviateConverter maxWidth="25" />
+							</aon:outputText>
+							<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto" rendered="#{!empty to.agency.registry.fullName}">
+								<aon:outputText	value="#{to.agency.registry.fullName}" />
+							</rich:toolTip>
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="AUTO" />
+							</f:facet>
+							<aon:outputText value="#{to.autoNoShowPenaltyPrice}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="1N" />
+							</f:facet>
+							<aon:outputText value="#{to.firstNightNoShowPenaltyPrice}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="2N" />
+							</f:facet>
+							<aon:outputText value="#{to.firstTwoNightNoShowPenaltyPrice}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column alias="ProjectReservation.total"
+							styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_total}" />
+							</f:facet>
+							<aon:div styleClass="aon-nowrap">
+								<aon:div styleClass="aon-nowrap" style="display:inline;" rendered="#{!empty to.creditCardNumber}">
+									<aon:commandLink id="CancellationInvoice_creditCardShow" immediate="true"
+										value="&#160;" title="#{bundle.aon_credit_card}"
+										styleClass="aon-icon-card" style="margin-left: 5px; padding-right: 12px;"
+										actionListener="#{controller.onCreditCardShow}" 
+										reRender="showCreditCardWindow" ajaxSingle="true">
+										<f:setPropertyActionListener target="#{controller.showCreditCardWindow}"
+											value="#{true}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-nowrap" style="display:inline;" rendered="#{to.advancedAmount > 0}">
+									<aon:outputText value="&#160;" title="#{bundle.finance_money_advance}"
+										styleClass="aon-icon-cash" style="margin-left: 5px; padding-right: 12px;" />
+									<rich:toolTip showEvent="onclick" hideEvent="onmouseout" direction="auto">
+										<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-70, aon-noborder aon-bold aon-text-left">
+											<aon:outputText	value="#{bundle.finance_money_advance}:" />
+											<aon:outputText value="#{to.advancedAmount}">
+												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+											</aon:outputText>
+										</aon:panelGrid>
+									</rich:toolTip>
+								</aon:div>
+								<aon:outputText value="#{to.total}" styleClass="aon-margin-left">
+									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								</aon:outputText>
+							</aon:div>
+						</aon:column>
+					</ui:define>
+				</ui:decorate>
+			</aon:div>
+		</aon:form>
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/cancellationInvoice/modalCreditCard.xhtml">
+			<ui:param name="controller" value="#{cancellationInvoice}" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/cancellationInvoice/modalInvoice.xhtml">
+			<ui:param name="controller" value="#{cancellationInvoice}" />
+			<ui:param name="searchListener" value="#{cancellationInvoiceSearch}" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/cancellationInvoice/modalNoInvoice.xhtml">
+			<ui:param name="controller" value="#{cancellationInvoice}" />
+			<ui:param name="searchListener" value="#{cancellationInvoiceSearch}" />
+		</ui:include>
+
+	</ui:define>
+</ui:composition>
