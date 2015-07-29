@@ -222,7 +222,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		}
 		if(!getMimetype().equals(MimeType.MIME_MS_EXCEL.getName())
 				&& !getMimetype().equals(MimeType.MIME_MS_EXCEL_2007.getName())
-				&& !getMimetype().equals(MimeType.MIME_STAR_OFFICE_SPREADSHEET.getName())){
+				&& !getMimetype().equals(MimeType.MIME_STAR_OFFICE_SPREADSHEET.getName())
+				&& !getMimetype().equals("application/msexcel")){
 				//El archivo no es un fichero Excel.
 				error.setError(false);
 	 			textError =  textError + "*El archivo importado no es de tipo excel.\n";

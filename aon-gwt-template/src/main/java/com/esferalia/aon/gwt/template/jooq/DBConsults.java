@@ -397,8 +397,13 @@ public class DBConsults {
 			Record1<String> data = ctx.getDslContext().select(USER.LOGIN)
 				.from(USER)
 				.where(USER.ID.eq(id))
-				.and(USER.DOMAIN.eq(domainId))
+				.and(USER.DOMAIN.eq(domainId).or(USER.DOMAIN.in(ctx.getDslContext().select(DOMAIN.PARENT)
+																.from(DOMAIN)
+																.where(DOMAIN.ID.eq(domainId)))))
+				
 				.fetchOne();
+			
+			
 			
 			return data.value1();
 			
