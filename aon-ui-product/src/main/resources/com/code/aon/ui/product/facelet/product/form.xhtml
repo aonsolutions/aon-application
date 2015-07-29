@@ -118,7 +118,7 @@
 								</ui:include>
 							</aon:panelTab>
 						</aon:if>
-						<aon:if test="#{aonConfiguration.bean.product.showComposition and product.to.composition}">
+						<aon:if test="#{aonConfiguration.bean.product.showComposition and (product.to.composition or product.to.manufactured)}">
 							<aon:panelTab id="itemCompositionPanelTab"
 								label="#{bundle.product_composition}">
 								<ui:include
