@@ -78,9 +78,8 @@
 										<aon:outputLabel for="NoShowInvoice_noShowPenalty"
 											value="#{bundle.pms_penalty_days}" />
 										<aon:selectOneMenu id="NoShowInvoice_noShowPenalty"
-											value="#{controller.noShowPenalty}" required="true"
-											ajaxSingle="true">
-											<f:selectItem itemLabel="-" value="#{null}" />
+											value="#{controller.noShowPenalty}"	ajaxSingle="true">
+											<f:selectItem itemLabel="Auto" value="#{null}" />
 											<f:selectItem itemLabel="0" itemValue="0" />
 											<f:selectItem itemLabel="1"  itemValue="1" />
 											<f:selectItem itemLabel="2" itemValue="2" />

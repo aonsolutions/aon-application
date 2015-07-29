@@ -11,7 +11,7 @@ public class NoShowInvoiceTo implements IReservationConstants {
 
 	private boolean guestReservation;
 	private Date issueDate;
-	private int penaltyDays;
+	private Integer penaltyDays;
 	private PayMethod payMethod;
 	private RegistryBank registryBank;
 	private Date financeDate;
@@ -32,11 +32,11 @@ public class NoShowInvoiceTo implements IReservationConstants {
 		this.issueDate = issueDate;
 	}
 
-	public int getPenaltyDays() {
+	public Integer getPenaltyDays() {
 		return penaltyDays;
 	}
 
-	public void setPenaltyDays(int penaltyDays) {
+	public void setPenaltyDays(Integer penaltyDays) {
 		this.penaltyDays = penaltyDays;
 	}
 

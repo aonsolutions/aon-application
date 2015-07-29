@@ -614,8 +614,13 @@ public class ProjectReservationController extends BasicController implements IPm
 			}
 		}
 
+		reservation.setPenaltyDays(obtainCancelPenaltyDays(reservation, isConfirmNoShow()));
 		if (isConfirmNoShow()) {
-			reservation.setCheckStatus(ReservationCheckStatus.NO_SHOW);
+			if (reservation.getPenaltyDays() != null && reservation.getPenaltyDays() == 0 && reservation.getAdvancedAmount() == 0) {
+				reservation.setCheckStatus(ReservationCheckStatus.NO_SHOW_NO_INVOICEABLE);
+			} else {
+				reservation.setCheckStatus(ReservationCheckStatus.NO_SHOW);
+			}
 		}
 		reservation.setStatus(ReservationStatus.CANCELLED);
 		reservation.setCancellationUser(UserUtils.getInstance().getLoggedUser().getLogin());
@@ -630,6 +635,19 @@ public class ProjectReservationController extends BasicController implements IPm
 		if (isConfirmNoShow() && reservation.isAgencyHolder()) {
 			sendAgencyNoShowEmail(reservation);
 		}
+	}
+
+	private Integer obtainCancelPenaltyDays(ProjectReservation reservation, boolean noShow) throws ManagerBeanException {
+		Integer penaltyDays = null;
+		if (noShow) {
+			penaltyDays = getReservationUtils().obtainNoShowPenaltyDays(reservation, reservation.getStartDate());
+		} else {
+			penaltyDays = getReservationUtils().obtainCancellationPenaltyDays(reservation, reservation.getStartDate());
+		}
+		if (penaltyDays != null && (penaltyDays < 0 || penaltyDays > CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate()))) {
+			penaltyDays = (int)CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate());
+		}
+		return penaltyDays;
 	}
 
 	private void sendAgencyNoShowEmail(ProjectReservation reservation) throws ManagerBeanException {

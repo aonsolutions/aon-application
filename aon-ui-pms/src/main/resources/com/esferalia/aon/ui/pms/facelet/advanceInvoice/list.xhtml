@@ -64,7 +64,12 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_module_hotel}" />
 							</f:facet>
-							<aon:outputText value="#{to.hotelReservation.workPlace.description}" />
+							<aon:outputText value="#{to.hotelReservation.workPlace.description}">
+								<aon:abbreviateConverter maxWidth="25" />
+							</aon:outputText>
+							<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
+								<aon:outputText	value="#{to.hotelReservation.workPlace.description}" />
+							</rich:toolTip>
 						</aon:column>
 
 						<aon:column alias="ProjectReservation.project.id"
@@ -115,7 +120,7 @@
 								<aon:outputText value="#{bundle.report_guest}" />
 							</f:facet>
 							<aon:outputText value="#{to.guestFullName}">
-								<aon:abbreviateConverter maxWidth="30" />
+								<aon:abbreviateConverter maxWidth="25" />
 							</aon:outputText>
 						</aon:column>
 

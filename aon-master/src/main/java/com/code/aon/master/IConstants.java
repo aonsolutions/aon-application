@@ -59,7 +59,7 @@ public interface IConstants {
 			//#ifdef env.GPS
 			//#echo Version for GPS only
 		 	//Uncomment line below this  to set new database version for GPS  
-			//,"8.27.0"
+			,"8.28.1"
 			//#endif
 
 			};

@@ -24,6 +24,7 @@ import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.invoicing.NoShowInvoiceTo;
 import com.esferalia.aon.pms.invoicing.NoShowInvoicing;
+import com.esferalia.aon.pms.reservation.ReservationUtils;
 import com.esferalia.aon.ui.pms.event.NoShowInvoiceSearchListener;
 
 public class NoShowInvoiceController extends BasicController{
@@ -35,8 +36,10 @@ public class NoShowInvoiceController extends BasicController{
 	private PayMethod noShowPayMethod;
 	private RegistryBank noShowBank;
 	private int noShowDaysToPayment;
+	private ProjectReservation reservation;
 	private boolean showInvoiceWindow;
 	private boolean showConfirmWindow;
+	private boolean showCreditCardWindow;
 
 	public Date getNoShowDate() {
 		return noShowDate;
@@ -74,6 +77,13 @@ public class NoShowInvoiceController extends BasicController{
 		this.noShowDaysToPayment = noShowDaysToPayment;
 	}
 
+	public ProjectReservation getReservation() {
+		return reservation;
+	}
+	public void setReservation(ProjectReservation reservation) {
+		this.reservation = reservation;
+	}
+
 	public boolean isShowInvoiceWindow() {
 		return showInvoiceWindow;
 	}
@@ -88,6 +98,21 @@ public class NoShowInvoiceController extends BasicController{
 
 	public void setShowConfirmWindow(boolean showConfirmWindow) {
 		this.showConfirmWindow = showConfirmWindow;
+	}
+
+	public boolean isShowCreditCardWindow() {
+		return showCreditCardWindow;
+	}
+
+	public void setShowCreditCardWindow(boolean showCreditCardWindow) {
+		this.showCreditCardWindow = showCreditCardWindow;
+	}
+
+	public void onCreditCardShow(ActionEvent event) {
+		ProjectReservation reservation = (ProjectReservation)model.getRowData();
+		ReservationUtils reservationUtils = new ReservationUtils();
+		reservationUtils.decryptReservationCreditCardData(reservation);
+		setReservation(reservation);
 	}
 
 	public void onNoShowInvoiceShow(ActionEvent event) throws ManagerBeanException {

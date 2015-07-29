@@ -1169,6 +1169,14 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		return obtainPenaltyDays(reservation, EARLY_CHECKOUT_PENALTY, date);
 	}
 
+	public Integer obtainNoShowPenaltyDays(ProjectReservation reservation, Date date) throws ManagerBeanException {
+		return obtainPenaltyDays(reservation, NOSHOW_PENALTY, date);
+	}
+
+	public Integer obtainCancellationPenaltyDays(ProjectReservation reservation, Date date) throws ManagerBeanException {
+		return obtainPenaltyDays(reservation, OUTOFDATE_CANCEL_PENALTY, date);
+	}
+
 	private Integer obtainPenaltyDays(ProjectReservation reservation, String key, Date date) throws ManagerBeanException {
 		String penaltyStr = null;
 		Integer tariffId = reservation.getMainTariffId();

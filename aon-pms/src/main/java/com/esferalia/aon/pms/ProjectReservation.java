@@ -501,51 +501,15 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 
 	@Transient
+	public Map<Date, Double> getReservationTaxableBasesPerDay(Date fromDate, Date toDate, Tax vat) throws ManagerBeanException {
+		ReservationUtils reservationUtils = new ReservationUtils();
+		return reservationUtils.getReservationServicesTaxableBasesPerDay(getId(), fromDate, toDate, vat);
+	}
+
+	@Transient
 	public Map<Tax, Double> getReservationTaxableBasesPerTax(Date fromDate, Date toDate) throws ManagerBeanException {
 		ReservationUtils reservationUtils = new ReservationUtils();
 		return reservationUtils.getReservationServicesTaxableBasesPerTax(getId(), fromDate, toDate);
-	}
-
-	@Transient
-	public Map<Tax, Double> getFirstNightTaxableBases() throws ManagerBeanException {
-		return getReservationTaxableBasesPerTax(getStartDate(), getStartDate());
-	}
-
-	@Transient
-	public Map<Tax, Double> getFirstTwoNightTaxableBases() throws ManagerBeanException {
-		return getReservationTaxableBasesPerTax(getStartDate(), DateUtils.addDays(getStartDate(), 1));
-	}
-
-	@Transient
-	public double getFirstNightPenaltyTaxableBase() throws ManagerBeanException {
-		if (getHotelReservation().getItemNoShow() != null && getHotelReservation().getItemNoShow().getId() != null) {
-			Double taxableBase = getFirstNightTaxableBases().get(getHotelReservation().getItemNoShow().getProduct().getVat());
-			return (taxableBase != null) ? CommonUtil.round(taxableBase.doubleValue(), 4) : 0;
-		}
-		return 0;
-	}
-
-	@Transient
-	public double getFirstTwoNightPenaltyTaxableBase() throws ManagerBeanException {
-		if (getHotelReservation().getItemNoShow() != null && getHotelReservation().getItemNoShow().getId() != null) {
-			Double taxableBase = getFirstTwoNightTaxableBases().get(getHotelReservation().getItemNoShow().getProduct().getVat());
-			return (taxableBase != null) ? CommonUtil.round(taxableBase.doubleValue(), 4) : 0;
-		}
-		return 0;
-	}
-
-	@Transient
-	public double getFirstNightPenaltyPrice() throws ManagerBeanException {
-		ReservationUtils reservationUtils = new ReservationUtils();
-		double vatPercent = reservationUtils.getTaxPercentage(getHotelReservation().getItemNoShow().getProduct().getVat(), getStartDate());
-		return CommonUtil.round(CommonUtil.round(getFirstNightPenaltyTaxableBase()) * (1 + vatPercent / 100));
-	}
-
-	@Transient
-	public double getFirstTwoNightPenaltyPrice() throws ManagerBeanException {
-		ReservationUtils reservationUtils = new ReservationUtils();
-		double vatPercent = reservationUtils.getTaxPercentage(getHotelReservation().getItemNoShow().getProduct().getVat(), getStartDate());
-		return CommonUtil.round(CommonUtil.round(getFirstTwoNightPenaltyTaxableBase()) * (1 + vatPercent / 100));
 	}
 
 	@Transient
@@ -559,9 +523,52 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 
 	@Transient
 	public double getReservationPenaltyPrice(Date fromDate, Date toDate) throws ManagerBeanException {
-		ReservationUtils reservationUtils = new ReservationUtils();
-		double vatPercent = reservationUtils.getTaxPercentage(getHotelReservation().getItemPenalty().getProduct().getVat(), getStartDate());
-		return CommonUtil.round(CommonUtil.round(getReservationPenaltyTaxableBase(fromDate, toDate)) * (1 + vatPercent / 100));
+		if (getHotelReservation().getItemPenalty() != null && getHotelReservation().getItemPenalty().getId() != null) {
+			ReservationUtils reservationUtils = new ReservationUtils();
+			double vatPercent = reservationUtils.getTaxPercentage(getHotelReservation().getItemPenalty().getProduct().getVat(), getStartDate());
+			return CommonUtil.round(CommonUtil.round(getReservationPenaltyTaxableBase(fromDate, toDate)) * (1 + vatPercent / 100));
+		}
+		return 0;
+	}
+
+	@Transient
+	public double getNoShowPenaltyTaxableBase(Date fromDate, Date toDate) throws ManagerBeanException {
+		if (getHotelReservation().getItemNoShow() != null && getHotelReservation().getItemNoShow().getId() != null) {
+			Double taxableBase = getReservationTaxableBasesPerTax(fromDate, toDate).get(getHotelReservation().getItemNoShow().getProduct().getVat());
+			return (taxableBase != null) ? CommonUtil.round(taxableBase.doubleValue(), 4) : 0;
+		}
+		return 0;
+	}
+
+	@Transient
+	public double getFirstNightNoShowPenaltyPrice() throws ManagerBeanException {
+		if (getHotelReservation().getItemNoShow() != null && getHotelReservation().getItemNoShow().getId() != null) {
+			ReservationUtils reservationUtils = new ReservationUtils();
+			double vatPercent = reservationUtils.getTaxPercentage(getHotelReservation().getItemNoShow().getProduct().getVat(), getStartDate());
+			return CommonUtil.round(CommonUtil.round(getNoShowPenaltyTaxableBase(getStartDate(), getStartDate())) * (1 + vatPercent / 100));
+		}
+		return 0;
+	}
+
+	@Transient
+	public double getFirstTwoNightNoShowPenaltyPrice() throws ManagerBeanException {
+		if (getHotelReservation().getItemNoShow() != null && getHotelReservation().getItemNoShow().getId() != null) {
+			ReservationUtils reservationUtils = new ReservationUtils();
+			double vatPercent = reservationUtils.getTaxPercentage(getHotelReservation().getItemNoShow().getProduct().getVat(), getStartDate());
+			return CommonUtil.round(CommonUtil.round(getNoShowPenaltyTaxableBase(getStartDate(), DateUtils.addDays(getStartDate(), 1))) * (1 + vatPercent / 100));
+		}
+		return 0;
+	}
+
+	@Transient
+	public Double getAutoNoShowPenaltyPrice() throws ManagerBeanException {
+		if (getHotelReservation().getItemNoShow() != null && getHotelReservation().getItemNoShow().getId() != null && getPenaltyDays() != null) {
+			ReservationUtils reservationUtils = new ReservationUtils();
+			double vatPercent = reservationUtils.getTaxPercentage(getHotelReservation().getItemNoShow().getProduct().getVat(), getStartDate());
+			Date toDate = DateUtils.addDays(getStartDate(), getPenaltyDays()-1);
+			return CommonUtil.round(CommonUtil.round(getNoShowPenaltyTaxableBase(getStartDate(), toDate)) * (1 + vatPercent / 100));
+		}
+		return null;
 	}
 
 	@Transient
