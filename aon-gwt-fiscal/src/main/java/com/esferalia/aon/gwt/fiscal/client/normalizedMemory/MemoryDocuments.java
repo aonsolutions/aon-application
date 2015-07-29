@@ -167,13 +167,61 @@ public class MemoryDocuments extends PageAbs {
 							normalizedMemory.getDigitalDepositTreeNode().items();
 							memory = normalizedMemory.getDigitalDepositTreeNode().getMemory();
 							onEdit(D2DepositFooterKey.PR8080805.getCode(), "1");
-							normalizedMemory.saveButton.click();
+							inma.updateSchemaMemory(false, enterprise.getDomain(), D2DepositFooterKey.PR8080805.getCode(), new AsyncCallback<Void>() {
+								@Override
+								public void onFailure(Throwable caught) {}
+								@Override
+								public void onSuccess(Void result) {}
+							});
 						}
 						if(mf.getName().equals("Modelo de Autocartera")){
 							normalizedMemory.getDigitalDepositTreeNode().setIsMa(false);
 							normalizedMemory.getDigitalDepositTreeNode().removeItems();
 							normalizedMemory.getDigitalDepositTreeNode().items();
 							autocartera = normalizedMemory.getDigitalDepositTreeNode().getMa();
+							onEdit(D2DepositFooterKey.PR8080809.getCode(), "0");
+							inma.updateSchemaMemory(false, enterprise.getDomain(), D2DepositFooterKey.PR8080809.getCode(), new AsyncCallback<Void>() {
+								@Override
+								public void onFailure(Throwable caught) {}
+								@Override
+								public void onSuccess(Void result) {}
+							});
+						}
+						if(mf.getName().equals(D2_FILE_GESTION)){
+							onEdit(D2DepositFooterKey.PR8080807.getCode(), "0");
+							inma.updateSchemaMemory(false, enterprise.getDomain(), D2DepositFooterKey.PR8080807.getCode(), new AsyncCallback<Void>() {
+								@Override
+								public void onFailure(Throwable caught) {}
+								@Override
+								public void onSuccess(Void result) {}
+							});
+						}
+						if(mf.getName().equals(D2_FILE_AUDIT)){
+							onEdit(D2DepositFooterKey.PR8080817.getCode(), "0");
+							inma.updateSchemaMemory(false, enterprise.getDomain(), D2DepositFooterKey.PR8080817.getCode(), new AsyncCallback<Void>() {
+								@Override
+								public void onFailure(Throwable caught) {}
+								@Override
+								public void onSuccess(Void result) {}
+							});
+						}
+						if(mf.getName().equals(D2_FILE_CONVOC)){
+							onEdit(D2DepositFooterKey.PR8080823.getCode(), "0");
+							inma.updateSchemaMemory(false, enterprise.getDomain(), D2DepositFooterKey.PR8080823.getCode(), new AsyncCallback<Void>() {
+								@Override
+								public void onFailure(Throwable caught) {}
+								@Override
+								public void onSuccess(Void result) {}
+							});
+						}
+						if(mf.getName().equals(D2_FILE_SICAV)){
+							onEdit(D2DepositFooterKey.PR8080821.getCode(), "0");
+							inma.updateSchemaMemory(false, enterprise.getDomain(), D2DepositFooterKey.PR8080821.getCode(), new AsyncCallback<Void>() {
+								@Override
+								public void onFailure(Throwable caught) {}
+								@Override
+								public void onSuccess(Void result) {}
+							});
 						}
 						download.setEnabled(false);
 						delete.setEnabled(false);
@@ -213,11 +261,59 @@ public class MemoryDocuments extends PageAbs {
 									memory.remove();
 									normalizedMemory.getDigitalDepositTreeNode().setIsMemory(true);
 									onEdit(D2DepositFooterKey.PR8080805.getCode(), "0");		
-									normalizedMemory.saveButton.click();
+									inma.updateSchemaMemory(true, enterprise.getDomain(),D2DepositFooterKey.PR8080805.getCode() , new AsyncCallback<Void>() {
+										@Override
+										public void onFailure(Throwable caught) {}
+										@Override
+										public void onSuccess(Void result) {}
+									});
 								}
 								if(autocartera != null && mf.getName().equals(D2_FILE_AUTOCARTERA_MODEL)){
 									autocartera.remove();
 									normalizedMemory.getDigitalDepositTreeNode().setIsMa(true);
+									onEdit(D2DepositFooterKey.PR8080809.getCode(), "1");		
+									inma.updateSchemaMemory(true, enterprise.getDomain(),D2DepositFooterKey.PR8080809.getCode() , new AsyncCallback<Void>() {
+										@Override
+										public void onFailure(Throwable caught) {}
+										@Override
+										public void onSuccess(Void result) {}
+									});
+								}
+								if(mf.getName().equals(D2_FILE_GESTION)){
+									onEdit(D2DepositFooterKey.PR8080807.getCode(), "1");		
+									inma.updateSchemaMemory(true, enterprise.getDomain(),D2DepositFooterKey.PR8080807.getCode() , new AsyncCallback<Void>() {
+										@Override
+										public void onFailure(Throwable caught) {}
+										@Override
+										public void onSuccess(Void result) {}
+									});
+								}
+								if(mf.getName().equals(D2_FILE_AUDIT)){
+									onEdit(D2DepositFooterKey.PR8080817.getCode(), "1");		
+									inma.updateSchemaMemory(true, enterprise.getDomain(),D2DepositFooterKey.PR8080817.getCode() , new AsyncCallback<Void>() {
+										@Override
+										public void onFailure(Throwable caught) {}
+										@Override
+										public void onSuccess(Void result) {}
+									});
+								}
+								if(mf.getName().equals(D2_FILE_CONVOC)){
+									onEdit(D2DepositFooterKey.PR8080823.getCode(), "1");		
+									inma.updateSchemaMemory(true, enterprise.getDomain(),D2DepositFooterKey.PR8080823.getCode() , new AsyncCallback<Void>() {
+										@Override
+										public void onFailure(Throwable caught) {}
+										@Override
+										public void onSuccess(Void result) {}
+									});
+								}
+								if(mf.getName().equals(D2_FILE_CONVOC)){
+									onEdit(D2DepositFooterKey.PR8080821.getCode(), "1");		
+									inma.updateSchemaMemory(true, enterprise.getDomain(),D2DepositFooterKey.PR8080821.getCode() , new AsyncCallback<Void>() {
+										@Override
+										public void onFailure(Throwable caught) {}
+										@Override
+										public void onSuccess(Void result) {}
+									});
 								}
 				
 								download.setEnabled(true);

@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
@@ -35,28 +34,19 @@ import org.xml.sax.SAXException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
-import com.esferalia.aon.occam.api.model.CompanyAdministrator;
-import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
-import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.DoubleVariable2014;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Cabecera;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves.Clave;
-import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.Mod2002014MVELContext;
 import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
-import com.esferalia.aon.watson.util.AonUtils;
 
 
 
@@ -376,10 +366,19 @@ public class Utils {
 		header.setMemoriaNormalizada(true);
 		schema.setCabecera(header);
 		
-		Clave c8080805 = new Clave();
-		c8080805.setCodigo(BigInteger.valueOf(8080805));
-		c8080805.setValor("1");
-		keys.getClave().add(c8080805);
+		if(type.equals("Abreviado")){
+			Clave c8080805 = new Clave();
+			c8080805.setCodigo(BigInteger.valueOf(8080805));
+			c8080805.setValor("1");
+			keys.getClave().add(c8080805);
+		}
+		else if(type.equals("Pymes")){
+			Clave c8080852 = new Clave();
+			c8080852.setCodigo(BigInteger.valueOf(8080852));
+			c8080852.setValor("1");
+			keys.getClave().add(c8080852);
+		}
+
 		
 		Clave c8009020 = new Clave();
 		c8009020.setCodigo(BigInteger.valueOf(8009020));
@@ -507,10 +506,18 @@ public class Utils {
 		c8009030.setValor("0");
 		keys.getClave().add(c8009030);  
 		
-		Clave c8080854 = new Clave();
-		c8080854.setCodigo(BigInteger.valueOf(8080854));
-		c8080854.setValor("1");
-		keys.getClave().add(c8080854);
+		if(type.equals("Abreviado")){
+			Clave c8080854 = new Clave();
+			c8080854.setCodigo(BigInteger.valueOf(8080854));
+			c8080854.setValor("1");
+			keys.getClave().add(c8080854);
+		}
+		else if(type.equals("Pymes")){
+			Clave c8080855 = new Clave();
+			c8080855.setCodigo(BigInteger.valueOf(8080855));
+			c8080855.setValor("1");
+			keys.getClave().add(c8080855);
+		}
 		
 		Clave c110119 = new Clave();
 		c110119.setCodigo(BigInteger.valueOf(110119));
@@ -522,16 +529,29 @@ public class Utils {
 		c11013.setValor("31");
 		keys.getClave().add(c11013);
 		
-		Clave c8080801 = new Clave();
-		c8080801.setCodigo(BigInteger.valueOf(8080801));
-		c8080801.setValor("1");
-		keys.getClave().add(c8080801);
+		if(type.equals("Abreviado")){
+			Clave c8080801 = new Clave();
+			c8080801.setCodigo(BigInteger.valueOf(8080801));
+			c8080801.setValor("1");
+			keys.getClave().add(c8080801);
+			
+			Clave c8080803 = new Clave();
+			c8080803.setCodigo(BigInteger.valueOf(8080803));
+			c8080803.setValor("1");
+			keys.getClave().add(c8080803);
+		}
+		else if(type.equals("Pymes")){
+			Clave c8080850 = new Clave();
+			c8080850.setCodigo(BigInteger.valueOf(8080850));
+			c8080850.setValor("1");
+			keys.getClave().add(c8080850);
+			
+			Clave c8080851 = new Clave();
+			c8080851.setCodigo(BigInteger.valueOf(8080851));
+			c8080851.setValor("1");
+			keys.getClave().add(c8080851);
+		}
 
-		Clave c8080803 = new Clave();
-		c8080803.setCodigo(BigInteger.valueOf(8080803));
-		c8080803.setValor("1");
-		keys.getClave().add(c8080803);
-		
 		Clave c8080811 = new Clave();
 		c8080811.setCodigo(BigInteger.valueOf(8080811));
 		c8080811.setValor("1");

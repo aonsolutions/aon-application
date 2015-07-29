@@ -112,32 +112,32 @@
 								</tr>
 								<tr>
 									<td>
-										<g:CheckBox ui:field="PR8080801" enabled="false" value="true" text="{msg.abreviate}" />
+										<g:CheckBox ui:field="PR8080801" enabled="false" text="{msg.abreviate}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="PR8080803" enabled="false" value="true" text="{msg.abreviate}" />
+										<g:CheckBox ui:field="PR8080803" enabled="false" text="{msg.abreviate}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="PR8080805" enabled="false" value="true" text="{msg.abreviate}" />
+										<g:CheckBox ui:field="PR8080805" enabled="false" text="{msg.abreviate}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="PR8080854" enabled="false" value="true" text="{msg.abreviate}" />
+										<g:CheckBox ui:field="PR8080854" enabled="false" text="{msg.abreviate}" />
 									</td>
 									<td>
 									</td>
 								</tr>
 								<tr>
 									<td>
-										<g:CheckBox ui:field="balanpyme" enabled="false" text="{msg.pyme}" />
+										<g:CheckBox ui:field="PR8080850" enabled="false" text="{msg.pyme}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="pygpye" enabled="false" text="{msg.pyme}" />
+										<g:CheckBox ui:field="PR8080851" enabled="false" text="{msg.pyme}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="memoriapyme" enabled="false" text="{msg.pyme}" />
+										<g:CheckBox ui:field="PR8080852" enabled="false" text="{msg.pyme}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="ecpnpyme" enabled="false" text="{msg.pyme}" />
+										<g:CheckBox ui:field="PR8080855" enabled="false" text="{msg.pyme}" />
 									</td>
 									<td>
 									</td>
@@ -152,21 +152,21 @@
 										<g:CheckBox ui:field="PR8080819" enabled="false" value="true" text="{msg.footer2Label12}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="IG" enabled="false" text="{msg.footer2Label13}" />
+										<g:CheckBox ui:field="PR8080807" enabled="false" text="{msg.footer2Label13}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="IA" enabled="false" text="{msg.footer2Label14}" />
+										<g:CheckBox ui:field="PR8080817" enabled="false" text="{msg.footer2Label14}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="MA" enabled="false" text="{msg.footer1Title}" />
+										<g:CheckBox ui:field="PR8080809" enabled="false" text="{msg.footer1Title}" />
 									</td>
 								</tr>
 								<tr>
 									<td>
-										<g:CheckBox ui:field="ac" enabled="false" text="{msg.footer2Label15}" />
+										<g:CheckBox ui:field="PR8080823" enabled="false" text="{msg.footer2Label15}" />
 									</td>
 									<td>
-										<g:CheckBox ui:field="SICAV" enabled="false" text="{msg.footer2Label16}" />
+										<g:CheckBox ui:field="PR8080821" enabled="false" text="{msg.footer2Label16}" />
 									</td>
 									<td>
 										<g:CheckBox ui:field="PR8080811" enabled="true" value="true" text="{msg.footer2Label17}" />
@@ -233,12 +233,8 @@
 								</tr>
 								</tr>
 							</table>
-			
 						</div>
 					</div>
-	
-					
-					
 				</div>
 			</div>
 		</g:HTMLPanel>

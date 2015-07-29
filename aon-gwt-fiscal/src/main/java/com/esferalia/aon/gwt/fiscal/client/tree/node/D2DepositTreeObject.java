@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.tree.node;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.Enterprise;
@@ -64,6 +65,7 @@ public class D2DepositTreeObject implements IsSerializable{
 	}
 	
 	public void setMapDraft(Map<String, String> mapDraft) {
+		this.mapDraft = new HashMap<String, String>();
 		this.mapDraft = mapDraft;
 	}
 	

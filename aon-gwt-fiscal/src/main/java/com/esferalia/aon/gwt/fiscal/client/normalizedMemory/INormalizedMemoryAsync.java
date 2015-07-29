@@ -70,6 +70,9 @@ public interface INormalizedMemoryAsync {
 	void insertMemoryFile(Integer domainId, MemoryFiles mf,
 			AsyncCallback<MemoryFiles> callback);
 
+	void updateSchemaMemory(Boolean bool, Integer domainId, String key,
+			AsyncCallback<Void> callback);
+
 
 
 }

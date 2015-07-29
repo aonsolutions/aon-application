@@ -20,7 +20,6 @@ import com.esferalia.aon.jooq.tables.records.RattachRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
-import com.mchange.v2.io.FileIterator;
 
 public class DBConsults {
 	
@@ -517,6 +516,20 @@ public class DBConsults {
 			if (ctx != null) ctx.close();
 		}
 	}	
+	public static void deleteMemoryFile(String domain,Integer domainId, String name){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+		
+			ctx.getDslContext().delete(RATTACH)
+			.where(RATTACH.DOMAIN.eq(domainId))
+			.and(RATTACH.DESCRIPTION.eq(name))
+			.and(RATTACH.TYPE.eq((byte)7)).execute();
+			
+		}finally {
+			if (ctx != null) ctx.close();
+		}
+	}
 	
 	public static Integer insertMemoryFile(String domain, Integer domainId, byte mimetype, byte[] data, String name){
 		AONContext ctx = null;

@@ -18,14 +18,7 @@
 							<g:InlineLabel text="{msg.footer1Title}" />
 						</div>
 						<div class="{aonResources.css.aonGroupBody}">
-							<table>
-								<tr> 
-									<td>
-										<g:Label text="{msg.footer1Label1}" />
-										<g:CheckBox ui:field="A18009050"></g:CheckBox>
-									</td>
-								</tr>
-							</table>
+				
 							<table style="width:50%">
 								<tr>
 									<td>

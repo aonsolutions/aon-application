@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemoryAsync;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.MemoryDocuments;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.NormalizedMemory;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageF1;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageF1A;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageF1B;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.PageF1C;
@@ -38,6 +39,7 @@ import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree;
 import com.esferalia.aon.gwt.fiscal.shared.MemoryFiles;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasTreeItems;
@@ -1146,7 +1148,10 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			@Override
 			public void select(FiscalTree fiscalPanel) {
 			//	if(getState()) setState(false); else setState(true);
-
+				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				PageF1 pf1 = new PageF1(d2Deposit2014.getEnterprise(), normalizedMemory);
+				normalizedMemory.setPagesPanel(pf1);
+    			fiscalPanel.setContent(normalizedMemory);	
 			}
 			
 			@Override
@@ -1160,7 +1165,9 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			}
 		}; 
 		ma.setText("Modelo de Autocartera");
-
+		
+		if(d2Deposit2014.getMapDraft().get(D2DepositFooterKey.A18009050.getCode())== null || d2Deposit2014.getMapDraft().get(D2DepositFooterKey.A18009050.getCode()).equals("0")){
+		
 		TreeNode<Enterprise> ma1 = new TreeNode<Enterprise>() {
 			
 			@Override
@@ -1344,7 +1351,9 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			}
 		}; 
 		ma8.setText(AON.MSG.autocarteraModelA7());
+		
 		ma.addItem(ma8);
+		}
 		}
 	}
 }

@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
@@ -65,10 +66,10 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 	
 	private static final String D2_FILE_MEMORY = "Memoria";
 	private static final String D2_FILE_AUTOCARTERA_MODEL = "Modelo de Autocartera";
-	private static final String D2_FILE_GESTION = "Informe de Gestion";
-	private static final String D2_FILE_AUDIT = "Informe de Auditoria";
+	private static final String D2_FILE_GESTION = "Informe de Gesti\u00f3n";
+	private static final String D2_FILE_AUDIT = "Informe de Auditor\u00eda";
 	private static final String D2_FILE_CONVOC = "Anuncios de Convocatoria";
-	private static final String D2_FILE_SICAV = "Certificacion SICAV";
+	private static final String D2_FILE_SICAV = "Certificaci\u00f3n SICAV";
 
 	public Integer initialize() {
 		return null;
@@ -504,6 +505,13 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		String domain = AonUtil.getDomainName();
 		clearSession(document);
 		DBConsults.deleteDeposit(domain, domainId);
+		
+		DBConsults.deleteMemoryFile(domain, domainId, D2_FILE_MEMORY);
+		DBConsults.deleteMemoryFile(domain, domainId, D2_FILE_AUTOCARTERA_MODEL);
+		DBConsults.deleteMemoryFile(domain, domainId, D2_FILE_GESTION);
+		DBConsults.deleteMemoryFile(domain, domainId, D2_FILE_AUDIT);
+		DBConsults.deleteMemoryFile(domain, domainId, D2_FILE_CONVOC);
+		DBConsults.deleteMemoryFile(domain, domainId, D2_FILE_SICAV);
 	}
 
 	public void deleteFreeText(Integer domainId, Integer rattachId) {
@@ -624,6 +632,12 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		
 	}
 	
+	public void deleteMemoryFile(Integer domainId, String name){
+		String domain = AonUtil.getDomainName();
+		DBConsults.deleteMemoryFile(domain, domainId, name);
+		
+	}
+	
 	public MemoryFiles insertMemoryFile(Integer domainId, MemoryFiles mf){
 		String domain = AonUtil.getDomainName(); 
 		byte[] b = getFile(domainId);
@@ -636,5 +650,30 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 			mf.setId(id);
 		}
 		return mf;
+	}
+	
+	public void updateSchemaMemory(Boolean bool, Integer domainId, String key){
+		String domain = AonUtil.getDomainName();
+		Esquema schema = DBConsults.getDeposit(domain, domainId);
+		if(D2DepositFooterKey.PR8080805.getCode().equals(key))
+			schema.getCabecera().setMemoriaNormalizada(!bool);
+		
+		List<Clave> claves = schema.getClaves().getClave();
+		for (Integer i = 0; i < claves.size(); i++) {
+			if(schema.getClaves().getClave().get(i).getCodigo().toString().equals(key)){
+				if(D2DepositFooterKey.PR8080805.getCode().equals(key))
+					schema.getClaves().getClave().get(i).setValor(bool?"0":"1");
+				else schema.getClaves().getClave().get(i).setValor(bool?"1":"0");
+
+
+			}
+		}
+		
+		try {
+			byte[] b = Utils.writeXml(schema);
+			DBConsults.insertDeposit(domain, b, domainId);
+		} catch (JAXBException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -52,6 +52,18 @@ public class PageF2 extends PageAbs {
 	@UiField CheckBox PR8080800 ; //CHECKBOX Abreviado - hoja identificacion
 	@UiField CheckBox PR8080819 ; //CHECKBOX Abreviado - declaracion medioambiental
 	
+	@UiField CheckBox PR8080855 ; //CHECKBOX Pymes - ecpn
+	@UiField CheckBox PR8080850 ; //CHECKBOX Abreviado - balance
+	@UiField CheckBox PR8080851 ; //CHECKBOX Abreviado - pyg
+	@UiField CheckBox PR8080852 ; //CHECKBOX Abreviado - memoria
+	
+	
+	@UiField CheckBox PR8080807 ; //CHECKBOX  INFORME DE GESTION
+	@UiField CheckBox PR8080817 ; //CHECKBOX  INFORME DE AUDITORIA
+	@UiField CheckBox PR8080809 ; //CHECKBOX  MODELO DE AUTOCARTERA
+	@UiField CheckBox PR8080823 ; //CHECKBOX  ANUNCIOS DE CONVOCATORIA
+	@UiField CheckBox PR8080821 ; //CHECKBOX  SICAV
+	
 	@UiField TextBox PR8081201 ; //Nombre y apellidos
 	@UiField TextBox PR8081202 ; //  dni
 	@UiField TextBox PR8081203 ; // domicilio
@@ -84,6 +96,17 @@ public class PageF2 extends PageAbs {
 		PR8080811 = new CheckBox(); //CHECKBOX Abreviado - certificacion acuerdo
 		PR8080800 = new CheckBox(); //CHECKBOX Abreviado - hoja identificacion
 		PR8080819 = new CheckBox(); //CHECKBOX Abreviado - declaracion medioambiental
+		
+		PR8080855 = new CheckBox(); //CHECKBOX Pymes - ecpn
+		PR8080850 = new CheckBox(); //CHECKBOX Abreviado - balance
+		PR8080851 = new CheckBox(); //CHECKBOX Abreviado - pyg
+		PR8080852 = new CheckBox(); //CHECKBOX Abreviado - memoria
+		
+		PR8080807 = new CheckBox(); //CHECKBOX  INFORME DE GESTION
+		PR8080817 = new CheckBox(); //CHECKBOX  INFORME DE AUDITORIA
+		PR8080809 = new CheckBox(); //CHECKBOX  MODELO DE AUTOCARTERA
+		PR8080823 = new CheckBox(); //CHECKBOX  ANUNCIOS DE CONVOCATORIA
+		PR8080821 = new CheckBox(); //CHECKBOX  SICAV
 		
 		PR8081201 = new TextBox(); //Nombre y apellidos
 		PR8081202 = new TextBox(); //  dni
@@ -120,6 +143,19 @@ public class PageF2 extends PageAbs {
 		PR8080800 = new CheckBox(); //CHECKBOX Abreviado - hoja identificacion
 		PR8080819 = new CheckBox(); //CHECKBOX Abreviado - declaracion medioambiental
 		
+		PR8080855 = new CheckBox(); //CHECKBOX Pymes - ecpn
+		PR8080850 = new CheckBox(); //CHECKBOX Pymes - balance
+		PR8080851 = new CheckBox(); //CHECKBOX Pymes - pyg
+		PR8080852 = new CheckBox(); //CHECKBOX Pymes - memoria
+		
+		
+		PR8080807 = new CheckBox(); //CHECKBOX  INFORME DE GESTION
+		PR8080817 = new CheckBox(); //CHECKBOX  INFORME DE AUDITORIA
+		PR8080809 = new CheckBox(); //CHECKBOX  MODELO DE AUTOCARTERA
+		PR8080823 = new CheckBox(); //CHECKBOX  ANUNCIOS DE CONVOCATORIA
+		PR8080821 = new CheckBox(); //CHECKBOX  SICAV
+
+		
 		PR8081201 = new TextBox(); //Nombre y apellidos
 		PR8081202 = new TextBox(); //  dni
 		PR8081203 = new TextBox(); // domicilio
@@ -155,10 +191,23 @@ public class PageF2 extends PageAbs {
 		keyExe(D2DepositFooterKey.PR8080854.getCode(), PR8080854, "check", false);
 		keyExe(D2DepositFooterKey.PR8080801.getCode(), PR8080801, "check", false);
 		keyExe(D2DepositFooterKey.PR8080803.getCode(), PR8080803, "check", false);
-		keyExe(D2DepositFooterKey.PR8080811.getCode(), PR8080811, "check", false);
+		keyExe(D2DepositFooterKey.PR8080811.getCode(), PR8080811, "check", true);
 		keyExe(D2DepositFooterKey.PR8080800.getCode(), PR8080800, "check", false);
 		keyExe(D2DepositFooterKey.PR8080819.getCode(), PR8080819, "check", false);
 
+		keyExe(D2DepositFooterKey.PR8080855.getCode(), PR8080855, "check", false); //CHECKBOX Pymes - ecpn
+		keyExe(D2DepositFooterKey.PR8080850.getCode(), PR8080850, "check", false); //CHECKBOX Abreviado - balance
+		keyExe(D2DepositFooterKey.PR8080851.getCode(), PR8080851, "check", false); //CHECKBOX Abreviado - pyg
+		keyExe(D2DepositFooterKey.PR8080852.getCode(), PR8080852, "check", false); //CHECKBOX Abreviado - memoria
+		
+		keyExe(D2DepositFooterKey.PR8080807.getCode(), PR8080807, "check", false);
+		keyExe(D2DepositFooterKey.PR8080817.getCode(), PR8080817, "check", false); 
+		keyExe(D2DepositFooterKey.PR8080809.getCode(), PR8080809, "check", false);
+		keyExe(D2DepositFooterKey.PR8080823.getCode(), PR8080823, "check", false); 
+		keyExe(D2DepositFooterKey.PR8080821.getCode(), PR8080821, "check", false); 
+
+
+		
 		PR8081201.setWidth("99%");
 		keyExe("8081201", PR8081201, "text", true);
 		PR8081202.setWidth("99%");
@@ -230,6 +279,7 @@ public class PageF2 extends PageAbs {
 		}
 		
 		if(type.equals("check")) {
+			
 			CheckBox c = (CheckBox) w;
 			if(mapDraft.containsKey(key2)){
 				c.setValue(mapDraft.get(key2).equals("1")); 

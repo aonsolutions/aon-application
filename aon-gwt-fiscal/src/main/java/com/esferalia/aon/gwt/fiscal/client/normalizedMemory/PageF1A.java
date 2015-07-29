@@ -18,7 +18,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -34,7 +33,7 @@ public class PageF1A extends PageAbs {
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
 
 
-	@UiField CheckBox A18009050;
+
 	
 	@UiField DoubleBox A18009010;
 	@UiField DoubleBox A18009020;
@@ -50,7 +49,7 @@ public class PageF1A extends PageAbs {
 		A18009020 = new DoubleBox();
 		A18009030 = new DoubleBox();
 		A18009040 = new DoubleBox();
-		A18009050 = new CheckBox();
+
 		
 	
 		Widget ui = pageBinder.createAndBindUi(this);
@@ -67,7 +66,7 @@ public class PageF1A extends PageAbs {
 		A18009020 = new DoubleBox();
 		A18009030 = new DoubleBox();
 		A18009040 = new DoubleBox();
-		A18009050 = new CheckBox();
+
 		
 	
 		
@@ -86,7 +85,7 @@ public class PageF1A extends PageAbs {
 		keyExe("8009020", A18009020, "double", true);
 		keyExe("8009030", A18009030, "double", true);
 		keyExe("8009040", A18009040, "double", true);
-		keyExe("8009050", A18009050, "check", true);
+
 	}
 	
 	
@@ -185,7 +184,6 @@ public class PageF1A extends PageAbs {
 	
 	private void paintDateKeyField(FlexTable tab, D2DepositFooterKey key,  int row, int col){
 		
-		boolean disabled = A18009050.getValue();
 		
 		FlowPanel panel = new FlowPanel();
 		String codeId = key.getCode();
@@ -238,7 +236,6 @@ public class PageF1A extends PageAbs {
 		if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
 			text.addStyleName(AON.AON_CSS.aonChanged());
 		}
-		text.setEnabled(!disabled);
 		panel.add(text);
 		
 		tab.setWidget(row, col, panel);
@@ -248,7 +245,6 @@ public class PageF1A extends PageAbs {
 	
 	private void paintDoubleKeyField(FlexTable tab, D2DepositFooterKey key,  int row, int col){
 		
-		boolean disabled = A18009050.getValue();
 		
 		FlowPanel panel = new FlowPanel();
 		String codeId = key.getCode();
@@ -287,7 +283,6 @@ public class PageF1A extends PageAbs {
 		if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
 			text.addStyleName(AON.AON_CSS.aonChanged());
 		}
-		text.setEnabled(!disabled);
 		panel.add(text);
 		
 		tab.setWidget(row, col, panel);
@@ -297,7 +292,6 @@ public class PageF1A extends PageAbs {
  	
 	private void paintListKeyField(FlexTable tab, D2DepositFooterKey key,  int row, int col){
 		
-		boolean disabled = A18009050.getValue();
 		
 		FlowPanel panel = new FlowPanel();
 		String codeId = key.getCode();
@@ -335,7 +329,6 @@ public class PageF1A extends PageAbs {
 		if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
 			text.addStyleName(AON.AON_CSS.aonChanged());
 		}
-		text.setEnabled(!disabled);
 		panel.add(text);
 		
 		tab.setWidget(row, col, panel);
@@ -348,37 +341,6 @@ public class PageF1A extends PageAbs {
 	DoubleBox dlAux;
 	private void keyExe( String key2, Widget w, String type, Boolean enable) {
 		key2Aux = key2;
-		if(type.equals("check")) {
-			CheckBox c = (CheckBox) w;
-			if(mapDraft.containsKey(key2)){
-				c.setValue(mapDraft.get(key2).equals("1")); 
-				c.setEnabled(enable);
-			}
-			c.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-				String key2 = key2Aux;
-				@Override
-				public void onValueChange(ValueChangeEvent<Boolean> event) {
-					normalizedMemory.saveButton.setEnabled(true);
-					normalizedMemory.cancelButton.setVisible(true);	
-					onEdit(key2, event.getValue()?"1":"0");
-							
-					if(key2.equals("8009050") ){
-			
-						if(event.getValue()){
-							for(Integer i = 1 ; i < 8 ; i++){
-								//tabPanel.getWidget(i).setVisible(false);
-							}
-							
-						}
-						else{
-							for(Integer i = 1 ; i < 8 ; i++){
-								//tabPanel.getWidget(i).setVisible(true);
-							}						
-						}
-					}
-				}
-			});
-		}
 		if(type.equals("double")){
 			DoubleBox dl = (DoubleBox) w;
 			if(mapDraft.containsKey(key2)){

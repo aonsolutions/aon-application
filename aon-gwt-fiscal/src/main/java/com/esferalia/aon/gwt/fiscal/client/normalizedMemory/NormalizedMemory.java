@@ -20,7 +20,6 @@ import com.esferalia.aon.gwt.fiscal.client.tree.node.D2DepositTreeObject;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.DigitalDepositFreeTextTreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.DigitalDepositTreeNode;
 import com.esferalia.aon.gwt.fiscal.shared.D2Deposit2014;
-import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.google.gwt.core.client.GWT;
@@ -385,6 +384,8 @@ public class NormalizedMemory extends ResizeComposite {
 									d2Deposit2014 = new D2Deposit2014(enterprise.getDomain(), enterprise.getDocument());
 									d2Deposit2014.setMap(result);
 									d2Deposit2014.setMapDraft(result);
+									digitalDepositTreeNode.setIsMa(false);
+									digitalDepositTreeNode.setIsMemory(false);
 									digitalDepositTreeNode.getD2Deposit2014().setMap(result);
 									digitalDepositTreeNode.getD2Deposit2014().setMapDraft(result);
 									digitalDepositTreeNode.items();
