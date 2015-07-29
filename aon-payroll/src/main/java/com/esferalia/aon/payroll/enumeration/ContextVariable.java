@@ -237,12 +237,12 @@ public enum ContextVariable implements IResourceable{
 	TEMP_COMPLETE("FIN_TEMPORAL", VariableType.UNKNOWN),
 	CONDITIONS_CHANGE("CAMBIO_CONDICIONES", VariableType.UNKNOWN),
 	
-	PREST_IT("PREST_IT", VariableType.DOUBLE)
+	PREST_IT("PREST_IT", VariableType.DOUBLE),
 	
-	
+	MONTHLY_SALARY("MODALIDAD_MENSUAL", VariableType.BOOLEAN)
 
 	;
-	
+	 
 	public static final String ALL = "_P";
 	public static final String SELF = "SELF";
 	public static final String REMOVE = "REMOVE";

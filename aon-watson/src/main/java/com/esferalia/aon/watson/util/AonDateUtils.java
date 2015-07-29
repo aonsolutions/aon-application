@@ -9,6 +9,21 @@ import java.util.function.LongFunction;
 
 public class AonDateUtils {
 
+	public static Date max(Date a, Date b) {
+		return compare(a, b) > 0 ? a : b;
+	}
+
+	public static Date min(Date a, Date b) {
+		return compare(a, b) < 0 ? a : b;
+	}
+
+	public static int compare(Date a, Date b) {
+		if (a == null) {
+			return b == null ? 0 : 1;
+		}
+		return b == null ? -1 : a.compareTo(b);
+	}
+
 	public static <T extends Date> T getFirstDayOfYear(T date,
 			LongFunction<T> longFunction) {
 		Calendar calendar = Calendar.getInstance();

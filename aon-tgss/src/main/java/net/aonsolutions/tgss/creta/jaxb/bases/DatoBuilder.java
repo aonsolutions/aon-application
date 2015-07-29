@@ -35,6 +35,11 @@ public class DatoBuilder {
 		this.valor = String.format("%d", horas );
 		return this;
 	}
+	
+	public DatoBuilder setValor(String valor) {
+		this.valor = valor;
+		return this;
+	}
 
 	public DatoBuilder setClave(String clave) {
 		// I -> Clave alfanumérica asociada al indicador

@@ -1,5 +1,9 @@
 package com.esferalia.aon.occam.api.model;
 
+import static com.esferalia.aon.watson.util.AonDateUtils.compare;
+import static com.esferalia.aon.watson.util.AonDateUtils.max;
+import static com.esferalia.aon.watson.util.AonDateUtils.min;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,6 +36,10 @@ public class Salary implements Serializable {
 
 		public String getExpression() {
 			return expression;
+		}
+		
+		private boolean intersectsWith(Date startDate, Date endDate){
+			return compare(max(startDate,this.startDate),min(endDate,this.endDate)) <= 0;
 		}
 	}
 
@@ -706,6 +714,28 @@ public class Salary implements Serializable {
 		contextData.expression = value;
 		datas.add(contextData);
 		return this;
+	}
+	
+	public final List<ContextData> getContextData(String name,  Date startDate,
+			Date endDate) {
+		List<ContextData> ret = new ArrayList<>();
+		
+		List<ContextData> datas = contextdata.get(name);
+		
+		if ( datas != null && !datas.isEmpty() )
+			for(ContextData data: datas )
+				if ( data.intersectsWith(startDate, endDate))
+					ret.add(data);
+		
+		return ret;
+	}
+	
+	public final void addContextData(String name,  String value, Date startDate,
+			Date endDate) {
+		List<ContextData> list = getContextData(name, startDate, endDate);
+		if ( list.isEmpty() ) {
+			setContextData(name, value, startDate, endDate);
+		}
 	}
 	
 }

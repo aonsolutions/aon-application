@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.Keys.FK_SALARY_COST_SALARY;
 import static com.esferalia.aon.jooq.Keys.FK_SALARY_DATA_SALARY;
 import static com.esferalia.aon.jooq.Keys.FK_SALARY_DEDUCTION_SALARY;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
 import static com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST;
@@ -13,17 +14,18 @@ import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.watson.util.AonDateUtils.compare;
+import static com.esferalia.aon.watson.util.AonDateUtils.max;
+import static com.esferalia.aon.watson.util.AonDateUtils.min;
 
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -33,24 +35,24 @@ import org.jooq.Condition;
 import org.jooq.Cursor;
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.TableField;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 import org.jooq.lambda.SQL;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.Unchecked;
 
-import com.esferalia.aon.jooq.Keys;
-import com.esferalia.aon.jooq.tables.SalaryBonus;
-import com.esferalia.aon.jooq.tables.SalaryCost;
+import com.esferalia.aon.jooq.tables.ContractData;
+import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Salary;
+import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry.SalaryAccountEntryLine;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry.SalaryAccountEntryLineType;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.SalaryProperties;
-import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -295,7 +297,7 @@ public class SalaryDAO {
 		.fetchLazy();
 		//@formatter:on
 
-//		BackIterator<Record> dataIter = new BackIterator<>(dataCursor.iterator());
+		BackIterator<Record> dataIter = new BackIterator<>(dataCursor.iterator());
 		BackIterator<Record> costIter = new BackIterator<>(costCursor.iterator());
 		BackIterator<Record> deductionIter = new BackIterator<>(deductionCursor.iterator());
 		BackIterator<Record> bonusIter = new BackIterator<>(bonusCursor.iterator());
@@ -325,7 +327,7 @@ public class SalaryDAO {
 				int salaryId = rootRecord.getValue(SALARY.ID);
 				
 				Seq.limitWhile(
-				Seq.skipUntil(Seq.seq(dataCursor), 
+				Seq.skipUntil(Seq.seq(dataIter), 
 				r -> r.getValue(SALARY_DATA.SALARY) >= salaryId ),
 				r -> r.getValue(SALARY_DATA.SALARY) == salaryId )
 				.forEachOrdered(dataRecord->
@@ -336,6 +338,7 @@ public class SalaryDAO {
 					dataRecord.getValue(SALARY_DATA.END_DATE))
 				);
 				
+				dataIter.back();
 				
 				Seq.limitWhile(
 				Seq.skipUntil(Seq.seq(deductionIter), 
@@ -403,7 +406,7 @@ public class SalaryDAO {
 		//@formatter:on
 
 		//@formatter:off
-		Cursor<Record> dataCursor = 
+		Cursor<Record> salaryDataCursor = 
 		ctx.getDslContext()
 		.select()
 		.from(SALARY)
@@ -415,33 +418,98 @@ public class SalaryDAO {
 		//@formatter:on
 
 		//@formatter:off
+		Cursor<Record> contractDataCursor = 
+		ctx.getDslContext()
+		.select()
+		.from(SALARY)
+		.join(CONTRACT_DATA)
+		.on(
+			SALARY.CONTRACT.eq(CONTRACT_DATA.CONTRACT)
+			.and(CONTRACT_DATA.START_DATE.le(SALARY.END_DATE))
+			.and(CONTRACT_DATA.END_DATE.isNull()
+				.or(CONTRACT_DATA.END_DATE.ge(SALARY.START_DATE))
+				)
+		)
+		.where(conditions)
+		.orderBy(SALARY.EMPLOYEE_DOCUMENT)
+		.fetchLazy();
+		//@formatter:on
+
+		BackIterator<Record> salaryDataIter = new BackIterator<>(salaryDataCursor.iterator());
+		BackIterator<Record> contractDataIter = new BackIterator<>(contractDataCursor.iterator());
+
+		//@formatter:off
 		return Seq.seq(rootCursor)
 				.map(rootRecord-> {
-				String employeeDocument = rootRecord.getValue(SALARY.EMPLOYEE_DOCUMENT);	
-				Salary salary = supplier.get()
-				.setEmployeeDocument(employeeDocument)
-				.setEmployeeName(rootRecord.getValue(SALARY.EMPLOYEE_NAME))
-				.setEmployeeSSNumber(rootRecord.getValue(SALARY.SOCIAL_SECURITY_NUMBER))
-				;
-				
-				Seq.limitWhile(
-				Seq.skipUntil(Seq.seq(dataCursor), 
-				r -> r.getValue(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) ),
-				r -> r.getValue(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) )
-				.forEachOrdered(dataRecord->
-					salary.setContextData(
-					dataRecord.getValue(SALARY_DATA.NAME), 
-					dataRecord.getValue(SALARY_DATA.EXPRESSION),
-					dataRecord.getValue(SALARY_DATA.START_DATE),
-					dataRecord.getValue(SALARY_DATA.END_DATE))
-				);
-				
-				return salary;
+
+					String employeeDocument = rootRecord.getValue(SALARY.EMPLOYEE_DOCUMENT);	
+					Salary salary = supplier.get()
+					.setEmployeeDocument(employeeDocument)
+					.setEmployeeName(rootRecord.getValue(SALARY.EMPLOYEE_NAME))
+					.setEmployeeSSNumber(rootRecord.getValue(SALARY.SOCIAL_SECURITY_NUMBER))
+					;
+					
+					Seq.limitWhile(
+					Seq.skipUntil(Seq.seq(salaryDataIter), 
+					r -> r.getValue(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) ),
+					r -> r.getValue(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) )
+					.forEachOrdered(salaryDataRecord->
+						salary.setContextData(
+						salaryDataRecord.getValue(SALARY_DATA.NAME), 
+						salaryDataRecord.getValue(SALARY_DATA.EXPRESSION),
+						salaryDataRecord.getValue(SALARY_DATA.START_DATE),
+						salaryDataRecord.getValue(SALARY_DATA.END_DATE))
+					);
+					salaryDataIter.back();
+					
+					Seq.limitWhile(
+					Seq.skipUntil(Seq.seq(contractDataIter), 
+					r -> r.getValue(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) ),
+					r -> r.getValue(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) )
+					.forEachOrdered(contractDataRecord->
+						salary.addContextData(
+						contractDataRecord.getValue(CONTRACT_DATA.NAME), 
+						contractDataRecord.getValue(CONTRACT_DATA.EXPRESSION),
+						contractDataRecord.getValue(CONTRACT_DATA.START_DATE),
+						contractDataRecord.getValue(CONTRACT_DATA.END_DATE))
+					);
+					contractDataIter.back();
+
+					//TODO: Delete this fix for old/incomplete salaries. 
+					fixSalaryData("BASE_CGC", salary, SALARY.CGC_BASE, rootRecord);
+					fixSalaryData("BASE_CGP", salary, SALARY.CGP_BASE, rootRecord);
+					fixSalaryData("BASE_ESTR", salary, SALARY.HEXTRA_BASE, rootRecord);
+					fixSalaryData("BASE_NESTR", salary, SALARY.NON_HEXTRA_BASE, rootRecord);
+					
+					return salary;
 				}
 		);
 		//@formatter:on
 
 	}
+	
+	private static void fixSalaryData(String name, Salary salary, TableField<SalaryRecord, Double> field,Record record){
+		
+		if ( record.getValue(field) == null ) 
+			return;
+		
+		Date salaryStart = record.getValue(SALARY.START_DATE);
+		Date salaryEnd = record.getValue(SALARY.END_DATE);
+		
+		List<ContextData> datas = salary.getContextData().get(name);
+		if ( datas != null && !datas.isEmpty() )
+			for(ContextData data: datas )
+				if ( compare( 
+						max(salaryStart,data.getStartDate()), 
+						min(salaryEnd,data.getEndDate()))<= 0)
+					return;
+		
+		salary.setContextData(name, 
+				Double.toString(record.getValue(field)),
+				salaryStart,
+				salaryEnd);
+	}
+	
 
 	private enum SalaryType {
 		SALARY, EXTRA, SETTLE, DELAY, NOT_ENJOYED_VACATIONS;
