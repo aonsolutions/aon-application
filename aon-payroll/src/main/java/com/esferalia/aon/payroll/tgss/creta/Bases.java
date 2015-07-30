@@ -107,8 +107,9 @@ public class Bases {
 		protected boolean get(Salary salary, Period p) throws NoSuchContextVariableException {
 			List<ContextData> datas = salary.getContextData().get(
 					MONTHLY_SALARY.getName());
+
 			if (datas == null)
-				return false;
+				throw new NoSuchContextVariableException(MONTHLY_SALARY);
 
 			for (ContextData data : datas) {
 				Period intersect = p.intersect(new Period(data.getStartDate(),
