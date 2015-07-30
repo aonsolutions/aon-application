@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.document.client;
 
-import java.util.Hashtable;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -19,7 +18,6 @@ import com.esferalia.aon.gwt.document.shared.MailAccountList;
 import com.esferalia.aon.gwt.document.shared.SearchInfo;
 import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
-import com.google.api.services.drive.model.File;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface IDocumentAsync {
@@ -100,11 +98,12 @@ public interface IDocumentAsync {
 
 	void deleteCategory(Integer categoryId, AsyncCallback<Void> callback);
 
-	void getMailAccounts(AsyncCallback<MailAccountList> callback);
+	void getMailAccounts(Integer domainId,
+			AsyncCallback<MailAccountList> callback);
 
 	void sendEmail(MailAccount ma, Emessage em, AsyncCallback<Void> callback);
 
-	void getContacts(AsyncCallback<ContactList> callback);
+	void getContacts(Integer domainId, AsyncCallback<ContactList> callback);
 
 	void sendGmail(MailAccount ma, Emessage em, Integer domainId,
 			AsyncCallback<Void> callback);

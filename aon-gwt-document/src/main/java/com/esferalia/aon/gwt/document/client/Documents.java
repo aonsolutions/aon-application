@@ -4813,7 +4813,7 @@ public class Documents extends Composite implements EntryPoint {
 	
 	@UiHandler("send")
 	void sendLote(ClickEvent event) {
-		idoc.getMailAccounts(new AsyncCallback<MailAccountList>() {
+		idoc.getMailAccounts(initDomainId, new AsyncCallback<MailAccountList>() {
 			
 			@Override
 			public void onSuccess(MailAccountList result) {

@@ -1,12 +1,9 @@
 package com.esferalia.aon.gwt.document.client;
 
-import java.util.Hashtable;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.gwt.document.jooq.DBConsults;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.ContactList;
 import com.esferalia.aon.gwt.document.shared.Document;
@@ -21,8 +18,6 @@ import com.esferalia.aon.gwt.document.shared.MailAccountList;
 import com.esferalia.aon.gwt.document.shared.SearchInfo;
 import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
-import com.google.api.services.drive.model.File;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -93,13 +88,13 @@ public interface IDocument extends RemoteService{
 
 	public void deleteCategory(Integer categoryId);
 
-	public MailAccountList getMailAccounts();
+	public MailAccountList getMailAccounts(Integer domainId);
 	
 	public void sendEmail(MailAccount ma, Emessage em);
 	
 	public void sendGmail(MailAccount ma, Emessage em, Integer domainId);
 	
-	public  ContactList getContacts();
+	public  ContactList getContacts(Integer domainId);
 	
 	public void downloadMultiple(Vector<FileInfo> fvector);
 	

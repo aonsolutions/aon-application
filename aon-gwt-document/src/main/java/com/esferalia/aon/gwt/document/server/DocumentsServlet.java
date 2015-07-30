@@ -1385,18 +1385,18 @@ public void deleteCategory(Integer categoryId) {
 
 //-------------------- Enviar Email
 
-public MailAccountList getMailAccounts() {
+public MailAccountList getMailAccounts(Integer domainId) {
 	String domain = AonUtil.getDomainName();
 	Integer user_id=AonUtil.getAuthPrincipal().getUserId();
 	Integer userDomainId = AonUtil.getAuthPrincipal().getUserDomainId();
-
+	
 	MailAccountList mal = new MailAccountList();
 	try {
 		mal = SendEmailDialogJooq.getMailAccounts(domain, user_id,userDomainId);
 	} catch (SQLException e) {
 		e.printStackTrace();
 	}
-	mal.setContactList(getContacts());
+	mal.setContactList(getContacts(domainId));
 	return mal;
 }
 
@@ -1626,14 +1626,14 @@ public MailAccountList getMailAccounts() {
 
 	}
 
-public  ContactList getContacts() {	
+public  ContactList getContacts(Integer domainId) {	
 	String domain = AonUtil.getDomainName();
 	Integer user_id=AonUtil.getAuthPrincipal().getUserId();
 	Integer userDomainId = AonUtil.getAuthPrincipal().getUserDomainId();
 
 	ContactList cl = new ContactList();
 	try {
-		cl = DBConsults.getContacts(user_id, domain, userDomainId);
+		cl = DBConsults.getContacts(user_id, domain, userDomainId, domainId);
 	} catch (AonConnectionException e) {
 		e.printStackTrace();
 	} catch (SQLException e) {

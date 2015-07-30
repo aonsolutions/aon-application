@@ -1200,7 +1200,7 @@ public class DBConsults {
 		}
 
 	}
-	public static ContactList getContacts(int user_id, String domain,Integer domainId)
+	public static ContactList getContacts(int user_id, String domain,Integer userDomainId, Integer domainId)
 			throws AonConnectionException, SQLException {
 		Connection connection = null;
 		try {
@@ -1212,7 +1212,8 @@ public class DBConsults {
 
 			Result<Record3<Integer, String, String>> result = dslContext.select(CONTACT.ID, CONTACT.DISPLAYNAME, CONTACT_DATA.EMAIL)
 														.from(CONTACT).join(CONTACT_DATA).on(CONTACT.CONTACT_DATA.eq(CONTACT_DATA.ID))
-														.where(CONTACT.USER_ID.eq(user_id).and(CONTACT.DOMAIN.eq(domainId))).fetch();
+														.where(CONTACT.USER_ID.eq(user_id).and(CONTACT.DOMAIN.eq(userDomainId)
+																								.or(CONTACT.DOMAIN.eq(domainId)))).fetch();
 			
 			Vector<Contact> v = new Vector<Contact>();
 			result.stream().forEach(r->{
