@@ -1,3 +1,4 @@
+
 package com.esferalia.aon.gwt.fiscal.server.normalizedMemory;
 
 import gwtupload.server.UploadAction;
@@ -8,8 +9,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
-
-import com.code.aon.ui.util.AonUtil;
 
 public class UploadFileServlet extends UploadAction {
 

@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.fiscal.client.tree.node.DigitalDepositTreeNode;
 import com.esferalia.aon.gwt.fiscal.shared.D2Deposit2014;
 import com.esferalia.aon.gwt.fiscal.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -392,6 +393,7 @@ public class NormalizedMemory extends ResizeComposite {
 									newButton.setVisible(false);
 									saveButton.setVisible(true);
 									saveButton.setEnabled(false);
+									deleteButton.setVisible(true);
 									generateFileButton.setVisible(true);		
 									importAllButton.setVisible(true);
 								}
@@ -568,8 +570,8 @@ public class NormalizedMemory extends ResizeComposite {
 
 							@Override
 							public void onSuccess(Vector<MemoryTemplate> result) {
-								String url = GWT.getModuleBaseURL()
-										+ "gwt_deposit_upload";
+								String url = GWT.getModuleBaseURL();
+										//+ "gwt_deposit_upload";
 								mts = result;
 								DepositDialog popup = new DepositDialog(
 										"Importar", "importAll", enterprise,
@@ -602,6 +604,7 @@ public class NormalizedMemory extends ResizeComposite {
 												public void onSuccess(Map<String, String> result) {		
 													d2Deposit2014.setMapDraft(result);
 													saveButton.setEnabled(true);
+													cancelButton.setEnabled(true);
 													update();
 												}
 											
@@ -624,6 +627,7 @@ public class NormalizedMemory extends ResizeComposite {
 												public void onSuccess(Map<String, String> result) {
 													d2Deposit2014.setMapDraft(result);
 													saveButton.setEnabled(true);
+													cancelButton.setEnabled(true);
 													update();
 												}
 											
@@ -643,6 +647,7 @@ public class NormalizedMemory extends ResizeComposite {
 												public void onSuccess(Map<String, String> result) {
 													d2Deposit2014.setMapDraft(result);
 													saveButton.setEnabled(true);
+													cancelButton.setEnabled(true);
 													update();
 												}
 											
@@ -677,6 +682,7 @@ public class NormalizedMemory extends ResizeComposite {
 						
 															}*/
  															saveButton.setEnabled(true);
+ 															cancelButton.setEnabled(true);
 															update();
 														}
 													});
@@ -685,18 +691,23 @@ public class NormalizedMemory extends ResizeComposite {
 											ListBox ej = (ListBox) flex_table.getWidget(1, 1);
 											String ejercicio = ej.getSelectedItemText();
 											
-											inma.saveDeposit(enterprise.getDocument(), enterprise.getDomain(),false, new AsyncCallback<Void>() {
-												
+											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), d2Deposit2014.getMapDraft(), new AsyncCallback<Map<String, String>>() {
 												@Override
-												public void onSuccess(Void result) {
+												public void onFailure(
+														Throwable caught) {
+												}
+
+												@Override
+												public void onSuccess(Map<String, String> result) {
+													d2Deposit2014.setMapDraft(result);
+													saveButton.setEnabled(true);
+													cancelButton.setEnabled(true);
+													paintHeaderTable("Cuentas Anuales", result.get(D2DepositConstants.DEPOSIT_TYPE));
 													update();
 												}
-												
-												@Override
-												public void onFailure(Throwable caught) {
-													
-												}
+											
 											});
+											
 										}
 										
 									}
@@ -745,7 +756,6 @@ public class NormalizedMemory extends ResizeComposite {
 									@Override
 									protected void onCancel() {
 										hide();
-
 									}
 
 									@Override
@@ -763,14 +773,15 @@ public class NormalizedMemory extends ResizeComposite {
 												new AsyncCallback<Map<String, String>>() {
 
 													@Override
-													public void onFailure(
-															Throwable caught) {
+													public void onFailure(Throwable caught) {
+														
 													}
 
 													@Override
 													public void onSuccess(Map<String, String> result) {
 														d2Deposit2014.setMapDraft(result);
 														saveButton.setEnabled(true);
+														cancelButton.setEnabled(true);
 														update();
 													}
 												});

@@ -490,10 +490,27 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		} else if (type.equals("Memoria predefinida")) {
 			map = updateTexts(mt, domainId, cif, map);
 		} else if (type.equals("Memoria (Deposito.xml)")) {
-			
+			byte[] b = getFile(domainId);
+
 			if (ejercicio.equals("2013")) {
 
 			} else if (ejercicio.equals("2014")) {
+				try {
+					Esquema schema = Utils.readXml(b);
+					if(schema.getCabecera().getCIF().equals(cif)){
+						List<Clave> claves = schema.getClaves().getClave();
+						map = new HashMap<String, String>();
+						String typeSch = schema.getCabecera().getTipoCuestionario();
+						map.put(D2DepositConstants.DEPOSIT_TYPE, typeSch);
+						for (Integer i = 0; i < claves.size(); i++) {
+							if(!map.containsKey(claves.get(i).getCodigo().toString()))
+								map.put(claves.get(i).getCodigo().toString(), claves.get(i).getValor());
+						}
+					}
+				} catch (JAXBException e) {
+					e.printStackTrace();
+				}
+				
 
 			}
 		}

@@ -312,15 +312,13 @@ public abstract class DepositDialog extends CustomDialogB {
 					flex_table.setWidget(1,	1, lb1);	
 					
 					flex_table.setWidget(2, 0, new Label("Fichero"));
-					flex_table.setWidget(2, 1, newUploader(url+"gwt_deposit_upload?domain_id="+enterprise.getDomain()+
-																					"&cif="+enterprise.getDocument()));
+					flex_table.setWidget(2, 1, newUploader(url+"gwt_deposit_upload?domain_id="+enterprise.getDomain()));
 					
 				}
 				if(lb.getSelectedItemText().equals("Documento Memoria")){
 					
 					flex_table.setWidget(1, 0, new Label("Memoria"));
-					flex_table.setWidget(1, 1, newUploader(url+"gwt_deposit_upload?domain_id="+enterprise.getDomain()+
-																					"&cif="+enterprise.getDocument()));
+					flex_table.setWidget(1, 1, newUploader(url+"gwt_deposit_upload?domain_id="+enterprise.getDomain()));
 				}
 				if(lb.getSelectedItemText().equals("-")){
 					flex_table.removeRow(1);
