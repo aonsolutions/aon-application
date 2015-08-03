@@ -41,6 +41,10 @@ import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.LQ559;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.LQ560;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.LQ562;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.LQ210;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.LQ480;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.LQ408;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key.LQ561;
 
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
@@ -119,6 +123,18 @@ public class Mod2002014MVELContext extends AccMiningMVELContext {
 		double lq552 = round(getValue(LQ552));
 		double lq558 = round(getValue(LQ558));
 		double lq559 = round(getValue(LQ559));
+		
+		double lq560 = round(getValue(LQ560));
+		double lq210 = round(getValue(LQ210));
+		double lq480 = round(getValue(LQ480));
+		double lq408 = round(getValue(LQ408));
+		double lq561 = round(getValue(LQ561));
+		
+		if (isChecked(C0017) || isChecked(C0018) || isChecked(C0019)) {
+			double lq562 = round(lq560+lq210-lq480+lq408-lq561);
+			if (lq562 < 0) lq562 = 0;
+			return lq562; 
+		}
 		
 		if (lq552 <= 0) return 0;
 		if (isChecked(C0006) && isChecked(C0022) && (isChecked(C0056) || isChecked(C0063))) {
