@@ -469,7 +469,7 @@ public class DBStock {
 						}
 						Double quantity, quantity2;
 						Integer stockId, stockId2;
-						if(ti.getSourceWarehouse() != null && ti.getTargetWarehouse() != null ){
+						if(ti.getSourceWarehouse().getId() != null && ti.getTargetWarehouse().getId() != null ){
 
 							if(data2.isNotEmpty() && data3.isNotEmpty()){
 								quantity = data2.get(0).value1();
@@ -495,7 +495,7 @@ public class DBStock {
 								stockInsertQuery.values(domainId, itemId, s.getQuantity(), ti.getTargetWarehouse().getId());
 							}
 						}
-						else if(ti.getSourceWarehouse() != null && ti.getTargetWarehouse() == null){
+						else if(ti.getSourceWarehouse().getId() != null && ti.getTargetWarehouse().getId() == null){
 							if(data3.isNotEmpty()){
 								quantity2 = data3.get(0).value1();
 								stockId2 = data3.get(0).value2();
@@ -506,7 +506,7 @@ public class DBStock {
 							}
 
 						}
-						else if(ti.getSourceWarehouse() == null && ti.getTargetWarehouse() != null){
+						else if(ti.getSourceWarehouse().getId() == null && ti.getTargetWarehouse().getId() != null){
 							if(data2.isNotEmpty()){
 								quantity = data2.get(0).value1();
 								stockId = data2.get(0).value2();
@@ -673,7 +673,7 @@ public class DBStock {
 		else i.setDetail3("");
 		Product p = getProduct(dslContext, data.get(0).value5());
 		i.setProduct(p);
-		i.setStatus( ProductStatus.values()[data.get(0).value6()] );
+		if(data.get(0).value6() != null) i.setStatus( ProductStatus.values()[data.get(0).value6()] );
 		
 		return i;
 		

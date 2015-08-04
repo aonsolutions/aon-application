@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Stream;
@@ -832,6 +833,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 
 	Integer inventoryId ;
 	Boolean transfer;
+	Map<String, StockInfo> stockMap;
 
 	public Integer executeExcel(Integer inventory, TemplateInfo templateInfo, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number){
 		transfer = istransfer;
@@ -844,6 +846,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		error.setTextError(verror);
 		textError = "";
 		Vector<StockInfo> stock = new Vector<StockInfo>();
+		Map<String, StockInfo> stockMap =  new HashMap<String, StockInfo>();
 		Error error = new Error();
 		
 		if(warehouse1.equals("-") && (warehouse2.equals("-") || warehouse2 == null)){
@@ -871,8 +874,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
     	//Boolean b = true;
 
 		transferInfo = new TransferInfo();
-		if(!warehouse1.equals("-")) transferInfo.setTargetWarehouse(w);
-		if(warehouse2 != null && !warehouse2.equals("-")) transferInfo.setSourceWarehouse(w2);
+		if(!warehouse1.equals("-")) transferInfo.setTargetWarehouse(w); else transferInfo.setTargetWarehouse(null); 
+		if(warehouse2 != null && !warehouse2.equals("-")) transferInfo.setSourceWarehouse(w2); else transferInfo.setSourceWarehouse(null);
 		transferInfo.setSeries(s);
 		transferInfo.setComments(comments);
 		if(istransfer) transferInfo.setNumber(number);
@@ -1039,8 +1042,19 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 				if(row.getRowNum() > 1){ 
 					si.setRow(row.getRowNum());
 					if(transfer){
-						if(si.getQuantity() != null && si.getQuantity()!= 0)
+						if(si.getQuantity() != null && si.getQuantity()!= 0){
 							stock.add(si);
+							if(!stockMap.containsKey(si.getProduct())){
+								stockMap.put(si.getProduct(), si);
+							}
+							else{
+								Double q = stockMap.get(si.getProduct()).getQuantity();
+								Double q2 = si.getQuantity();
+								si.setQuantity(q+q2);
+								stockMap.remove(si.getProduct());
+								stockMap.put(si.getProduct(), si);
+							}
+						}
 					}
 					else if(si.getQuantity() != null)
 						stock.add(si);
@@ -1048,6 +1062,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			}
 		});
 		this.stock = stock;
+		this.stockMap = stockMap;
 		long time = System.currentTimeMillis() - startAll;
 		System.out.println("time: " + (time/1000d));
 		if(rowCount != -1) rowCount = stock.size();
@@ -1101,7 +1116,10 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			ai.setDate(new Date());
 			ai.setUserId(userId);
 			ai.setUsername(DBConsults.getUsername(domain, domainId, userId));
-			error = DBStock.insertTransferStock(domain,domainId,stock,transferInfo,ai);
+			
+			Vector<StockInfo> v = new Vector<StockInfo>();
+			v.addAll(stockMap.values());
+			error = DBStock.insertTransferStock(domain,domainId,v,transferInfo,ai);
 
 	        //insertar STOCK en base de datos.!!
 		}

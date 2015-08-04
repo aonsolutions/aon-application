@@ -128,7 +128,7 @@ public class DBCatalogue {
 				.and(WORKPLACE.ID.eq(workplace))
 				.fetchOne();
 			
-			if(record.value1() != null){
+			if(record != null && record.value1() != null){
 				WorkPlace w = new WorkPlace();
 				w.setId(workplace);
 				w.setDescription(record.value1());
