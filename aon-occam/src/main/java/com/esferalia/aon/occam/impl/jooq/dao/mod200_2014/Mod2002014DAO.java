@@ -606,7 +606,7 @@ public class Mod2002014DAO  {
 			} else if (AonMathUtils.round(v.getValue()) < 0.0) {
 				mod200.setResultType("D");
 				mod200.setAmount( AonMathUtils.round( v.getValue() * -1));
-				mod200.setDevType(AonStringUtils.isEmpty(mod200.getDevType())?"R":mod200.getDevType());
+				mod200.setDevType(AonStringUtils.isEmpty(mod200.getDevType())?"D":mod200.getDevType());
 				mod200.setPayType(null);
 			} else {
 				mod200.setResultType("I");
