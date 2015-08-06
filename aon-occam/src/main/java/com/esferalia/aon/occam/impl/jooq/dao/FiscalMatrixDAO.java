@@ -139,7 +139,6 @@ public class FiscalMatrixDAO {
 			.join(DOMAIN).onKey()
 			.where(FS_MODEL.DOMAIN.equal(domain))
 					.or(DOMAIN.PARENT.equal(domain))
-				.and(FS_MODEL.YEAR.equal(year))
 				.and(year==Integer.MIN_VALUE
 						?FS_MODEL.YEAR.equal(FS_MODEL.YEAR)
 						:FS_MODEL.YEAR.equal(year)		
