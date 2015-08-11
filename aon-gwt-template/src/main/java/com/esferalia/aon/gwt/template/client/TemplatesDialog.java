@@ -312,6 +312,9 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(0, 0, new Label("Plantilla"));
 		flex_table.setWidget(0, 1, lb);
 		
+		flex_table.setWidget(1,  0, new Label("Detallado"));
+		flex_table.setWidget(1, 1, new CheckBox());
+		
 		flexTableCss();
 	}
 

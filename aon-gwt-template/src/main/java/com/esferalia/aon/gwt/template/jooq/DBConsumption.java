@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.jooq.Record1;
 import org.jooq.Record2;
+import org.jooq.Record3;
 import org.jooq.Record6;
 import org.jooq.Result;
 
@@ -38,19 +39,20 @@ public class DBConsumption {
 			
 			// INITIAL INVENTORY
 			
-			Result<Record2<Integer, Double>> data = ctx.getDslContext().select(INVENTORY_DETAIL.ITEM,INVENTORY_DETAIL.REAL_QUANTITY)
+			Result<Record3<Integer, Double, Double>> data = ctx.getDslContext().select(INVENTORY_DETAIL.ITEM,INVENTORY_DETAIL.REAL_QUANTITY, INVENTORY_DETAIL.COST)
 						.from(INVENTORY_DETAIL).join(INVENTORY).on(INVENTORY.ID.eq(INVENTORY_DETAIL.INVENTORY))
 						.where(INVENTORY.ID.equal(initialId))
 						.fetch();
 			
 			Map<Integer, ConsumptionItem> map = new HashMap<Integer, ConsumptionItem>();
 			
-			for (Record2<Integer, Double> record : data) {
+			for (Record3<Integer, Double, Double> record : data) {
 				if(record.value1() != null){
 					 if(!map.containsKey(record.value1())){
 						 if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1());
 						 	ci.setInitialQuantity(record.value2());
+						 	ci.setInitialValue(record.value3());
 						 	map.put(ci.getItemId(), ci);
 						 }
 					 }
@@ -60,24 +62,26 @@ public class DBConsumption {
 		
 			// FINAL INVENTORY
 
-			Result<Record2<Integer, Double>> data2 = ctx.getDslContext()
-					.select(INVENTORY_DETAIL.ITEM,INVENTORY_DETAIL.REAL_QUANTITY)
+			Result<Record3<Integer, Double, Double>> data2 = ctx.getDslContext()
+					.select(INVENTORY_DETAIL.ITEM,INVENTORY_DETAIL.REAL_QUANTITY, INVENTORY_DETAIL.COST)
 					.from(INVENTORY_DETAIL).join(INVENTORY)
 					.on(INVENTORY.ID.eq(INVENTORY_DETAIL.INVENTORY))
 					.where(INVENTORY.ID.equal(finalId)).fetch();
 
-			for (Record2<Integer, Double> record : data2) {
+			for (Record3<Integer, Double, Double> record : data2) {
 				if (record.value1() != null) {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1());
 							ci.setFinalQuantity(record.value2());
+							ci.setFinalValue(record.value3());
 							map.put(ci.getItemId(), ci);
 						}
 					}
 					else{
 						ConsumptionItem ci = map.get(record.value1());
 						ci.setFinalQuantity(record.value2());
+						ci.setFinalValue(record.value3());
 						map.replace(ci.getItemId(), ci);
 					}
 				}
@@ -85,26 +89,28 @@ public class DBConsumption {
 			
 			// COMPRAS (ALBARANES)
 			
-			Result<Record2<Integer, Double>> data3 = ctx.getDslContext()
-					.select(INCOME_DETAIL.ITEM, INCOME_DETAIL.QUANTITY)
+			Result<Record3<Integer, Double, Double>> data3 = ctx.getDslContext()
+					.select(INCOME_DETAIL.ITEM, INCOME_DETAIL.QUANTITY, INCOME_DETAIL.PRICE)
 					.from(INCOME).join(INCOME_DETAIL).on(INCOME.ID.equal(INCOME_DETAIL.INCOME))
 					.where(INCOME_DETAIL.WAREHOUSE.equal(warehouseId))
 					.and(INCOME.ISSUE_TIME.greaterOrEqual(initialDate))
 					.and(INCOME.ISSUE_TIME.lessOrEqual(finalDate))
 					.fetch();
 
-			for (Record2<Integer, Double> record : data3) {
+			for (Record3<Integer, Double, Double> record : data3) {
 				if (record.value1() != null) {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1());
 							ci.setPurchases(record.value2());
+							ci.setPurchasesValue(record.value3());
 							map.put(ci.getItemId(), ci);
 						}
 					}
 					else{
 						ConsumptionItem ci = map.get(record.value1());
 						ci.setPurchases(ci.getPurchases()+record.value2());
+						ci.setPurchasesValue(ci.getPurchasesValue()+record.value3());
 						map.replace(ci.getItemId(), ci);
 					}
 				}
@@ -112,8 +118,8 @@ public class DBConsumption {
 			
 			// COMPRAS (Facturas)
 			
-			Result<Record2<Integer, Double>> data4 = ctx.getDslContext()
-					.select(INVOICE_DETAIL.ITEM, INVOICE_DETAIL.QUANTITY)
+			Result<Record3<Integer, Double, Double>> data4 = ctx.getDslContext()
+					.select(INVOICE_DETAIL.ITEM, INVOICE_DETAIL.QUANTITY, INVOICE_DETAIL.TAXABLE_BASE)
 					.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
 					.where(INVOICE_DETAIL.WAREHOUSE.equal(warehouseId))
 					.and(INVOICE.TYPE.equal((byte)0))
@@ -122,18 +128,20 @@ public class DBConsumption {
 					.and(INVOICE.ISSUE_DATE.lessOrEqual(finalDate))
 					.fetch();
 
-			for (Record2<Integer, Double> record : data4) {
+			for (Record3<Integer, Double, Double> record : data4) {
 				if (record.value1() != null) {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1());
 							ci.setPurchases(record.value2());
+							ci.setPurchasesValue(record.value3());
 							map.put(ci.getItemId(), ci);
 						}
 					}
 					else{
 						ConsumptionItem ci = map.get(record.value1());
 						ci.setPurchases(ci.getPurchases()+record.value2());
+						ci.setPurchases(ci.getPurchasesValue()+record.value3());
 						map.replace(ci.getItemId(), ci);
 					}
 				}
@@ -141,26 +149,28 @@ public class DBConsumption {
 			
 			// VENTAS (ALBARANES)
 
-			Result<Record2<Integer, Double>> data5 = ctx.getDslContext()
-					.select(DELIVERY_DETAIL.ITEM, DELIVERY_DETAIL.QUANTITY)
+			Result<Record3<Integer, Double, Double>> data5 = ctx.getDslContext()
+					.select(DELIVERY_DETAIL.ITEM, DELIVERY_DETAIL.QUANTITY, DELIVERY_DETAIL.PRICE)
 					.from(DELIVERY).join(DELIVERY_DETAIL).on(DELIVERY.ID.equal(DELIVERY_DETAIL.DELIVERY))
 					.where(DELIVERY_DETAIL.WAREHOUSE.equal(warehouseId))
 					.and(DELIVERY.ISSUE_TIME.greaterOrEqual(new Timestamp(initialDate.getTime())))
 					.and(DELIVERY.ISSUE_TIME.lessOrEqual(new Timestamp(finalDate.getTime())))
 					.fetch();
 
-			for (Record2<Integer, Double> record : data5) {
+			for (Record3<Integer, Double, Double> record : data5) {
 				if (record.value1() != null) {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1());
 							ci.setSales(record.value2());
+							ci.setSalesValue(record.value3());
 							map.put(ci.getItemId(), ci);
 						}
 					}
 					else{
 						ConsumptionItem ci = map.get(record.value1());
 						ci.setSales(ci.getSales()+record.value2());
+						ci.setSalesValue(ci.getSalesValue()+ record.value3());
 						map.replace(ci.getItemId(), ci);
 					}
 				}
@@ -168,8 +178,8 @@ public class DBConsumption {
 			
 			// VENTAS (FACTURAS)
 			
-			Result<Record2<Integer, Double>> data6 = ctx.getDslContext()
-					.select(INVOICE_DETAIL.ITEM, INVOICE_DETAIL.QUANTITY)
+			Result<Record3<Integer, Double, Double>> data6 = ctx.getDslContext()
+					.select(INVOICE_DETAIL.ITEM, INVOICE_DETAIL.QUANTITY, INVOICE.TAXABLE_BASE)
 					.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
 					.where(INVOICE_DETAIL.WAREHOUSE.equal(warehouseId))
 					.and(INVOICE.TYPE.equal((byte)1))
@@ -178,24 +188,26 @@ public class DBConsumption {
 					.and(INVOICE.ISSUE_DATE.lessOrEqual(finalDate))
 					.fetch();
 
-			for (Record2<Integer, Double> record : data6) {
+			for (Record3<Integer, Double, Double> record : data6) {
 				if (record.value1() != null) {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1());
 							ci.setSales(record.value2());
+							ci.setSalesValue(record.value3());
 							map.put(ci.getItemId(), ci);
 						}
 					}
 					else{
 						ConsumptionItem ci = map.get(record.value1());
 						ci.setSales(ci.getSales()+record.value2());
+						ci.setSalesValue(ci.getSalesValue()+ record.value3());
 						map.replace(ci.getItemId(), ci);
 					}
 				}
 			}
 			
-			// TRANSFERS
+			// TRANSFERS salidas
 			
 			Result<Record2<Integer, Double>> data7 = ctx.getDslContext()
 					.select(WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.QUANTITY)
@@ -223,7 +235,7 @@ public class DBConsumption {
 				}
 			}
 			
-			// TRANSFERS
+			// TRANSFERS entradas
 			
 			Result<Record2<Integer, Double>> data8 = ctx.getDslContext()
 					.select(WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.QUANTITY)
@@ -281,7 +293,11 @@ public class DBConsumption {
 		ci.setTransfersMinus(0.0);
 		ci.setFinalQuantity(0.0);
 		
-		
+		ci.setInitialValue(0.0);
+		ci.setPurchasesValue(0.0);
+		ci.setSalesValue(0.0);
+		ci.setTransfersMinusValue(0.0);
+		ci.setTransfersPlusValue(0.0);
 		
 		return ci;
 		

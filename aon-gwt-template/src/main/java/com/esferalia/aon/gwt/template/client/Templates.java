@@ -1616,6 +1616,7 @@ public class Templates extends Composite implements EntryPoint {
 				protected void onAccept() {
 				
 					ListBox lb = (ListBox) flex_table.getWidget(0, 1);
+					CheckBox cb = (CheckBox) flex_table.getWidget(1, 1);
 					String template = lb.getItemText(lb.getSelectedIndex());
 					TemplateInfo ti = new TemplateInfo();
 				
@@ -1633,7 +1634,8 @@ public class Templates extends Composite implements EntryPoint {
 		            	+ "&final_date="+ finalDate
 		            	+ "&initial_id="+ initialId
 		            	+ "&final_id="+ finalId
-	            		+ "&only_negative="+ onlyNegative;					
+	            		+ "&only_negative="+ onlyNegative
+	            		+ "&detail="+cb.getValue();					
 				
 				
 					Window.open( fileDownloadURL, "_blank",null);

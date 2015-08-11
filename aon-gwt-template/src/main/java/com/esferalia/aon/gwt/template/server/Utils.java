@@ -307,6 +307,7 @@ public class Utils {
 	}
 	
 	public static Boolean isExcel(String mimetype) {
+	
 		switch (mimetype) {
 		case "application/vnd.ms-excel":
 		case "application/msexcel":
@@ -317,7 +318,7 @@ public class Utils {
 		case "application/xls":
 		case "application/x-xls":
 		case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-		case "application/vnd.oasis.opendocument.spreadsheet":
+	//	case "application/vnd.oasis.opendocument.spreadsheet":
 			return true;
 		
 

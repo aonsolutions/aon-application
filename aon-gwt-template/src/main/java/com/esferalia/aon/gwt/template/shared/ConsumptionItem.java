@@ -13,12 +13,23 @@ public class ConsumptionItem implements IsSerializable{
 	Double price;
 	
 	Double initialQuantity;
+	Double initialValue;
+	
 	Double finalQuantity;
+	Double finalValue;
 	
 	Double sales;
+	Double salesValue;
+	
 	Double purchases;
+	Double purchasesValue;
+	
 	Double transfersPlus;
+	Double transfersPlusValue;
+	
 	Double transfersMinus;
+	Double transfersMinusValue;
+	
 	Double consumption;
 	Double itemPrice;
 	Double totalPrice;
@@ -136,6 +147,42 @@ public class ConsumptionItem implements IsSerializable{
 	}
 	public void setFinalQuantity(Double finalQuantity) {
 		this.finalQuantity = finalQuantity;
+	}
+	public Double getInitialValue() {
+		return initialValue;
+	}
+	public void setInitialValue(Double initialValue) {
+		this.initialValue = initialValue;
+	}
+	public Double getFinalValue() {
+		return finalValue;
+	}
+	public void setFinalValue(Double finalValue) {
+		this.finalValue = finalValue;
+	}
+	public Double getSalesValue() {
+		return salesValue;
+	}
+	public void setSalesValue(Double salesValue) {
+		this.salesValue = salesValue;
+	}
+	public Double getPurchasesValue() {
+		return purchasesValue;
+	}
+	public void setPurchasesValue(Double purchasesValue) {
+		this.purchasesValue = purchasesValue;
+	}
+	public Double getTransfersPlusValue() {
+		return transfersPlusValue;
+	}
+	public void setTransfersPlusValue(Double transfersPlusValue) {
+		this.transfersPlusValue = transfersPlusValue;
+	}
+	public Double getTransfersMinusValue() {
+		return transfersMinusValue;
+	}
+	public void setTransfersMinusValue(Double transfersMinusValue) {
+		this.transfersMinusValue = transfersMinusValue;
 	}
 	
 	
