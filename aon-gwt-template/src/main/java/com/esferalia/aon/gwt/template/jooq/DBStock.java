@@ -396,14 +396,22 @@ public class DBStock {
 			Integer transferId = ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER,WAREHOUSE_TRANSFER.DOMAIN, WAREHOUSE_TRANSFER.SERIES,WAREHOUSE_TRANSFER.NUMBER, WAREHOUSE_TRANSFER.COMMENTS, WAREHOUSE_TRANSFER.ISSUE_TIME, WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE, WAREHOUSE_TRANSFER.TARGET_WAREHOUSE)
 					.values(domainId,scode,next,ti.getComments(),t,source,target).returning(WAREHOUSE_TRANSFER.ID).fetchOne().getId();
 			*/
-			
-			Integer transferId = ctx.getDslContext().select(WAREHOUSE_TRANSFER.ID)
+			Integer transferId;
+			if(ti.getSeries().getCode() != null){
+				transferId = ctx.getDslContext().select(WAREHOUSE_TRANSFER.ID)
 										.from(WAREHOUSE_TRANSFER)
 										.where(WAREHOUSE_TRANSFER.DOMAIN.eq(domainId))
 										.and(WAREHOUSE_TRANSFER.SERIES.eq(ti.getSeries().getCode()))
 										.and(WAREHOUSE_TRANSFER.NUMBER.eq(ti.getNumber()))
 										.fetchOne().value1();
-			
+			} else{
+				transferId = ctx.getDslContext().select(WAREHOUSE_TRANSFER.ID)
+						.from(WAREHOUSE_TRANSFER)
+						.where(WAREHOUSE_TRANSFER.DOMAIN.eq(domainId))
+						.and(WAREHOUSE_TRANSFER.SERIES.isNull())
+						.and(WAREHOUSE_TRANSFER.NUMBER.eq(ti.getNumber()))
+						.fetchOne().value1();
+			}
 			Vector<String> v = new Vector<String>();
 			AONContext sctx = ctx;
 			stock.stream().forEach(s ->{
