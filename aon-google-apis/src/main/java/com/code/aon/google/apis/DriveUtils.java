@@ -123,23 +123,6 @@ public class DriveUtils implements IBlobManager {
 
 	}
 
-	public static class View {
-
-		static void header1(String name) {
-			System.out.println();
-			System.out.println("================== " + name
-					+ " ==================");
-			System.out.println();
-		}
-
-		static void header2(String name) {
-			System.out.println();
-			System.out.println("~~~~~~~~~~~~~~~~~~ " + name
-					+ " ~~~~~~~~~~~~~~~~~~");
-			System.out.println();
-		}
-	}
-
 	public static class Quicksort {
 
 		private static FileList files;
@@ -325,12 +308,19 @@ public class DriveUtils implements IBlobManager {
 	}
 
 	private static File createFolder(Drive drive, String title, String parent) throws IOException{
-		File folder = new File();
-		folder.setParents(Arrays.asList(new ParentReference().setId(parent)));
-		folder.setTitle(title);
-		folder.setMimeType("application/vnd.google-apps.folder");
-		folder = drive.files().insert(folder).execute();
-		return folder;
+		File f = drive.files().get(parent).execute();
+		if(!f.getMimeType().equals("application/vnd.google-apps.folder")){
+			LOGGER.error(title + "- The specified parent is not a folder.");
+			return null;
+		}
+		else{
+			File folder = new File();
+			folder.setParents(Arrays.asList(new ParentReference().setId(parent)));
+			folder.setTitle(title);
+			folder.setMimeType("application/vnd.google-apps.folder");
+			folder = drive.files().insert(folder).execute();
+			return folder;
+		}	
 	}
 	
 	public static File principal(Drive drive, String domain, FileInfo fileInfo)
@@ -359,6 +349,7 @@ public class DriveUtils implements IBlobManager {
 		}
 		else domainFolder = createFolder(drive, fileInfo.getDomain(), rootId);
 		
+		
 		FileList typeFolders = SearchFiles.searchFilesTitleAndParent(drive,  fileInfo.getAonType(),domainFolder.getId());
 		File typeFolder;
 		if(typeFolders.getItems().size()>0){
@@ -366,14 +357,17 @@ public class DriveUtils implements IBlobManager {
 		}
 		else typeFolder = createFolder(drive, fileInfo.getAonType(), domainFolder.getId());
 		
-		parents.add(new ParentReference().setId(typeFolder.getId()));
-		File file = new File();
-		try {
-			file = insertFile(drive, fileInfo, parents, emails, domain);
-		} catch (MessagingException e) {
-			e.printStackTrace();
+		if(domainFolder != null && typeFolder != null){
+			parents.add(new ParentReference().setId(typeFolder.getId()));
+			File file = new File();
+			try {
+				file = insertFile(drive, fileInfo, parents, emails, domain);
+			} catch (MessagingException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+			return file;
 		}
-		return file;
+		else return null;
 	}
 
 	public static String insertToFolder(Drive drive, String email,
@@ -988,11 +982,16 @@ public class DriveUtils implements IBlobManager {
 				if (file != null) {
 					fileInfo.setDriveId(file.getId());
 					setDriveId(fileInfo, domain, file.getFileSize().toString());
+					LOGGER.info(
+							"'{}': Not at Drive. It was created & uploaded [{}].",
+							fileInfo.getTitle(), file.getId());
+					return true;
 				}
-				LOGGER.info(
-						"'{}': Not at Drive. It was created & uploaded [{}].",
-						fileInfo.getTitle(), file.getId());
-				return true;
+				else{
+					LOGGER.error("Parent of file is null");
+					return false;
+				}
+				
 			} else {
 
 				if (fileInfo.getData() == null) {
