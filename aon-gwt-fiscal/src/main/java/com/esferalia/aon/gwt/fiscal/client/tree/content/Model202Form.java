@@ -201,7 +201,7 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 	public void select(Mod202 mod202) {
 		if ( mod202.getId() != null) {
 			FiscalTree.FISCAL_SERVICE.getMod202(FiscalTree.getCurrentDomainName(), 
-					FiscalTree.getCurrentDomain(), mod202.getId()
+					mod202.getDomain(), mod202.getId()
 					,new AsyncCallback<Mod202>() {
 
 						@Override

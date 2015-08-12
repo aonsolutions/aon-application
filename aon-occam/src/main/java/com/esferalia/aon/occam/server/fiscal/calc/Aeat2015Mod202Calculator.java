@@ -57,7 +57,9 @@ public class Aeat2015Mod202Calculator {
 			double x09 = mod202.getAmount(Mod202Key.X09);
 			double c18o26 = 0.0;
 			if (x00 == 1) {
-				double x08 = AonNumberUtils.todouble(mod202.getDescription(Mod202Key.X08));
+				String s08 = mod202.getDescription(Mod202Key.X08);
+				s08 = AonStringUtils.substringBefore(s08, "/");
+				double x08 = AonNumberUtils.todouble(s08);
 				double c16 = AonMathUtils.round(c13-c44-c14+c45-c46);
 				c16 = c16<0?0:c16;
 				mod202.putAmount(Mod202Key.C16, c16);
@@ -107,7 +109,7 @@ public class Aeat2015Mod202Calculator {
 				double c21 = 0.0;
 				if ( year == 2015 ) {
 					if (!x06) {
-						c21 = AonMathUtils.round(5.0/7.0 * x08_1,0);
+						c21 = AonMathUtils.floor(5.0/7.0 * x08_1, 0);						
 					} else {
 						if (x09 == 1) {
 							c21 = AonMathUtils.round(15.0/20.0 * x08_1,0);
@@ -132,7 +134,7 @@ public class Aeat2015Mod202Calculator {
 				double c24 = 0.0;
 				if ( year == 2015 ) {
 					if (!x06) {
-						c24 = AonMathUtils.round(5.0/7.0 * x08_2,0);
+						c24 = AonMathUtils.floor(5.0/7.0 * x08_2,0);
 					} else {
 						if (x09 == 1) {
 							c24 = AonMathUtils.round(15.0/20.0 * x08_2,0);
