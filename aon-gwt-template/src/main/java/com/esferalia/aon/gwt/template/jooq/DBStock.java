@@ -452,13 +452,13 @@ public class DBStock {
 						ti.getSourceWarehouse();
 						ti.getTargetWarehouse();
 						Result<Record2<Double, Integer>> data2 = null;
-						if(ti.getTargetWarehouse() != null) 
+						if(ti.getTargetWarehouse().getId() != null) 
 							data2 = sctx.getDslContext().select(STOCK.QUANTITY, STOCK.ID)
 								.from(STOCK)
 								.where(STOCK.ITEM.eq(itemId).and(STOCK.WAREHOUSE.eq(ti.getTargetWarehouse().getId()))).fetch();
 							
 						Result<Record2<Double, Integer>> data3 = null; 
-						if(ti.getSourceWarehouse() != null) 
+						if(ti.getSourceWarehouse().getId() != null) 
 							data3= sctx.getDslContext().select(STOCK.QUANTITY, STOCK.ID)
 								.from(STOCK)
 								.where(STOCK.ITEM.eq(itemId).and(STOCK.WAREHOUSE.eq(ti.getSourceWarehouse().getId()))).fetch();
