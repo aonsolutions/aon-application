@@ -1163,7 +1163,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		}
 
 	}
-private static class OpenDocument2HtmlConverter implements IDocument2HtmlConverter {
+	private static class OpenDocument2HtmlConverter implements IDocument2HtmlConverter {
 		
 		private static  IDocument2HtmlConverter INSTANCE = new OpenDocument2HtmlConverter();
 
@@ -1221,10 +1221,12 @@ private static class Image2HtmlConverter implements IDocument2HtmlConverter {
 		
 		MimeType mimeType = MimeType.values()[doc.getMimetype()];
 		
-		printStream.printf("<div class='page'  ><img src='openDocumentConverter/%s.%s?id=%d'></img> </div>",
+		printStream.printf("<div class='page'  ><img src='openDocumentConverter/%s.%s?id=%d&domainName=%s&domainId=%d'></img> </div>",
 				doc.getMd5(),
 				mimeType.getExtension(),
-				doc.getFileId());
+				doc.getFileId(),
+				doc.getDomain(),
+				doc.getDomainId());
 	}
 }
 private abstract static class Document2HtmlConverter implements IDocument2HtmlConverter{

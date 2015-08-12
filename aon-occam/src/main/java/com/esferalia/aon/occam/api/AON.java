@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.attachment.Rattach;
 import com.esferalia.aon.occam.api.model.callcenter.Issue;
 import com.esferalia.aon.occam.api.model.callcenter.IssueComment;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -63,6 +64,7 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
 import com.esferalia.aon.occam.impl.jooq.AgreementImpl;
+import com.esferalia.aon.occam.impl.jooq.AttachmentImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
 import com.esferalia.aon.occam.impl.jooq.FeeImpl;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
@@ -123,6 +125,10 @@ public class AON {
 	
 	private static IGroupware getGroupware() {
 		return new GroupwareImpl();
+	}
+	
+	private static IAttachment getAttachment() {
+		return new AttachmentImpl();
 	}
 
 	// ********************************************
@@ -1445,5 +1451,22 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	
+	// ********************************************
+	// ****************************** ATTACHMENT **
+	// ********************************************
+
+	public static Rattach getRattach(String domainName, Integer domainId, Integer rattachId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return getAttachment().getRattach(ctx, rattachId);		
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	
 }

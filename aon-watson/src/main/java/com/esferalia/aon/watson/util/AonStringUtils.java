@@ -144,6 +144,15 @@ public class AonStringUtils {
 	public static final String SEVEN = "7";
 	public static final String EIGHT = "8";
 	public static final String NINE = "9";
+	
+	/**
+     * Eight-bit Unicode Transformation Format.
+     * <p>
+     * Every implementation of the Java platform is required to support this character encoding.
+     *
+     * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
+     */
+    public static final String UTF_8 = "UTF-8";
 
 	/**
 	 * The empty String {@code ""}.

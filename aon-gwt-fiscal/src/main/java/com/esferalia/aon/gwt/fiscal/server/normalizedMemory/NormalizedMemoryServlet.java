@@ -1,10 +1,19 @@
 package com.esferalia.aon.gwt.fiscal.server.normalizedMemory;
 
+import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,6 +22,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
@@ -24,6 +35,9 @@ import org.jooq.Result;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.common.server.OpenDocument2ImageServlet;
+import com.esferalia.aon.gwt.common.server.OpenDocument2ImageServlet.CheckSum;
+import com.esferalia.aon.gwt.common.shared.FileInfo;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.D2DepositTreeObject;
 import com.esferalia.aon.gwt.fiscal.shared.D2Deposit2014;
@@ -33,6 +47,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
+import com.esferalia.aon.occam.api.model.attachment.Rattach;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
@@ -48,8 +63,14 @@ import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves.Clave;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002013toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002014toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Utils;
+import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
+import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.sun.pdfview.PDFFile;
+import com.sun.pdfview.PDFPage;
+
 
 public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		INormalizedMemory {
@@ -592,53 +613,70 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		return (String) request.getSession().getAttribute(D2_DEPOSIT_MIMETYPE+domainId);
 	}
 	
-	public String getAsHTML(int zoom) {
-		//FileItem file = getFile();
-		
-		//file.getContentType();
-		/*IDocument2HtmlConverter converter = 
-				getDocument2HtmlConverter(doc);
-		try {
-			ByteArrayOutputStream os = 
-					new ByteArrayOutputStream();
-			converter.transform(doc, os, zoom);
-			os.flush();
-			return os.toString();
-		} catch (Exception e) {
-			throw new IllegalArgumentException(e);
-		}*/
-		return "";
-	}
-	
-	
 	public Vector<MemoryFiles> getMemoryFiles(Integer domainId){
 		String domain = AonUtil.getDomainName();
 
 		Vector<MemoryFiles> ms = new Vector<MemoryFiles>();
 		
 		MemoryFiles m = new MemoryFiles();
-		Integer id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_MEMORY);
-		m.setId(id);m.setBool(id != -1);m.setName(D2_FILE_MEMORY);ms.add(m);
+		Vector<Integer> id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_MEMORY);
+		m.setId(id.get(0));m.setBool(id.get(0) != -1);m.setName(D2_FILE_MEMORY);
+		if(id.get(0) != -1){
+			MimeType mimeType = MimeType.values()[id.get(1)];
+			m.setMimeTypeName(mimeType.getName());
+			m.setMimeTypeNumber(id.get(1));
+		}
+		ms.add(m);
 		
 		MemoryFiles m2 = new MemoryFiles();
 		id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_AUTOCARTERA_MODEL);
-		m2.setId(id);m2.setBool(id != -1);m2.setName(D2_FILE_AUTOCARTERA_MODEL);ms.add(m2);
+		m2.setId(id.get(0));m2.setBool(id.get(0) != -1);m2.setName(D2_FILE_AUTOCARTERA_MODEL);
+		if(id.get(0) != -1){
+			MimeType mimeType = MimeType.values()[id.get(1)];
+			m2.setMimeTypeName(mimeType.getName());
+			m2.setMimeTypeNumber(id.get(1));
+		}
+		ms.add(m2);
 		
 		MemoryFiles m3 = new MemoryFiles();
 		id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_GESTION);
-		m3.setId(id);m3.setBool(id != -1);m3.setName(D2_FILE_GESTION);ms.add(m3);
+		m3.setId(id.get(0));m3.setBool(id.get(0) != -1);m3.setName(D2_FILE_GESTION);
+		if(id.get(0) != -1){
+			MimeType mimeType = MimeType.values()[id.get(1)];
+			m3.setMimeTypeName(mimeType.getName());
+			m3.setMimeTypeNumber(id.get(1));
+		}		
+		ms.add(m3);
 
 		MemoryFiles m4 = new MemoryFiles();
 		id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_AUDIT);
-		m4.setId(id);m4.setBool(id != -1);m4.setName(D2_FILE_AUDIT);ms.add(m4);
+		m4.setId(id.get(0));m4.setBool(id.get(0) != -1);m4.setName(D2_FILE_AUDIT);
+		if(id.get(0) != -1){
+			MimeType mimeType = MimeType.values()[id.get(1)];
+			m4.setMimeTypeName(mimeType.getName());
+			m4.setMimeTypeNumber(id.get(1));
+		}		
+		ms.add(m4);
 
 		MemoryFiles m5 = new MemoryFiles();
 		id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_CONVOC);
-		m5.setId(id);m5.setBool(id != -1);m5.setName(D2_FILE_CONVOC);ms.add(m5);
+		m5.setId(id.get(0));m5.setBool(id.get(0) != -1);m5.setName(D2_FILE_CONVOC);
+		if(id.get(0) != -1){
+			MimeType mimeType = MimeType.values()[id.get(1)];
+			m5.setMimeTypeName(mimeType.getName());
+			m5.setMimeTypeNumber(id.get(1));
+		}		
+		ms.add(m5);
 
 		MemoryFiles m6 = new MemoryFiles();
 		id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_SICAV);
-		m6.setId(id);m6.setBool(id != -1);m6.setName(D2_FILE_SICAV);ms.add(m6);
+		m6.setId(id.get(0));m6.setBool(id.get(0) != -1);m6.setName(D2_FILE_SICAV);
+		if(id.get(0) != -1){
+			MimeType mimeType = MimeType.values()[id.get(1)];
+			m6.setMimeTypeName(mimeType.getName());
+			m6.setMimeTypeNumber(id.get(1));
+		}		
+		ms.add(m6);
 		
 		return ms;
 	}
@@ -693,4 +731,225 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 			e.printStackTrace();
 		}
 	}
+	
+	
+	//-------------------- Visualizar Archivo
+		private static final int DEFAULT_ZOOM = 130;
+		
+		public String viewer(Integer domainId, MemoryFiles mf){
+			String domainName = AonUtil.getDomainName();
+			
+			Rattach rattach = AON.getRattach(domainName, domainId, mf.getId());
+			rattach.setMd5(CheckSum.getMD5Checksum(rattach.getData()));
+			FileInfo doc = new FileInfo(rattach);
+			return getAsHTML(doc, DEFAULT_ZOOM);
+		}
+	
+		public String getAsHTML(FileInfo doc, int zoom) {
+
+		
+			
+			IDocument2HtmlConverter converter = 
+					getDocument2HtmlConverter(doc);
+			try {
+				ByteArrayOutputStream os = 
+						new ByteArrayOutputStream();
+				converter.transform(doc, os, zoom);
+				os.flush();
+				return os.toString();
+			} catch (Exception e) {
+				throw new IllegalArgumentException(e);
+			}
+		}
+		
+		
+		private IDocument2HtmlConverter getDocument2HtmlConverter(FileInfo document) {
+			
+			MimeType mimeType = MimeType.values()[document.getMimetype()];
+			return DOC2HTML_CONVERTERS.get(mimeType);
+			
+		}
+		
+		
+		public static final Map<MimeType, IDocument2HtmlConverter> DOC2HTML_CONVERTERS = 
+				new HashMap<MimeType, IDocument2HtmlConverter>(){
+			{
+				put(MimeType.MIME_PDF, OpenDocument2HtmlConverter.INSTANCE );
+				put(MimeType.MIME_MS_WORD, OpenDocument2HtmlConverter.INSTANCE );
+				put(MimeType.MIME_MS_WORD_2007, OpenDocument2HtmlConverter.INSTANCE );
+				put(MimeType.MIME_MS_EXCEL, OpenDocument2HtmlConverter.INSTANCE );
+				put(MimeType.MIME_MS_EXCEL_2007, OpenDocument2HtmlConverter.INSTANCE );
+				put(MimeType.MIME_MS_POWER_POINT, OpenDocument2HtmlConverter.INSTANCE );
+				put(MimeType.MIME_MS_POWER_POINT_2007, OpenDocument2HtmlConverter.INSTANCE );
+				put(MimeType.MIME_HTML, Noop2HtmlConverter.INSTANCE );
+				put(MimeType.MIME_TXT, Noop2HtmlConverter.INSTANCE );
+
+				put(MimeType.MIME_BMP, Image2HtmlConverter.INSTANCE );
+				put(MimeType.MIME_JPEG, Image2HtmlConverter.INSTANCE );
+				put(MimeType.MIME_PNG, Image2HtmlConverter.INSTANCE );
+				put(MimeType.MIME_GIF, Image2HtmlConverter.INSTANCE );
+				
+				put(MimeType.MIME_ZIP, Zip2HtmlConverter.INSTANCE);
+			}
+		};
+		
+		
+		private static interface IDocument2HtmlConverter {
+			void transform(FileInfo doc, OutputStream os, int zoom) throws Exception;
+
+		}
+
+		private static class Zip2HtmlConverter implements IDocument2HtmlConverter{
+			private static IDocument2HtmlConverter INSTANCE = new Zip2HtmlConverter();
+			
+			@Override
+			public void transform(FileInfo doc, OutputStream os, int zoom)
+					throws Exception {
+				
+				PrintStream printStream = new PrintStream(os);
+				InputStream in = new ByteArrayInputStream(doc.getData());
+				
+				ZipInputStream zip = new ZipInputStream(in);
+				ZipEntry entry;
+				String html="<div class='page' style=' width:150%s; background-color:#FFF;border-radius: 5px 5px 5px 5px;'>"
+						+ "<table style='padding-top:10px; padding-bottom:5px;'>";
+				while (null != (entry=zip.getNextEntry()) ){
+					String icon = entry.isDirectory()?"aon-icon-google-drive-folder":"aon-icon-google-drive-unknown";
+					if(!entry.getName().substring(0,entry.getName().length()-1).contains("/")){
+						if(entry.isDirectory())
+							html = html + "<tr><td style='padding-left:5px;'><button onclick='alert(hola);' class='aon-editDataTable-button "+icon+"' style='padding-left: 20px;'>"+entry.getName()+"</button></td></tr>";
+						else{
+							html = html + "<tr><td style='padding-left:5px;'><span class='"+icon+"' style='padding-left: 20px;'>"+entry.getName()+"</span></td></tr>";
+						}
+					}
+				}
+				html = html + "</table></div>";
+				System.out.println(html);
+				printStream.printf(html,"%");
+			}
+
+		}
+		private static class OpenDocument2HtmlConverter implements IDocument2HtmlConverter {
+			
+			private static  IDocument2HtmlConverter INSTANCE = new OpenDocument2HtmlConverter();
+
+			@Override
+			public void transform(FileInfo doc, OutputStream os, int zoom) throws Exception {
+				
+				PrintStream printStream = new PrintStream(os);
+				
+				PDFFile pdfFile = OpenDocument2ImageServlet.getPDFFile(doc);
+				
+				for (int page = 1; page <= pdfFile.getNumPages(); page++) {
+					
+					PDFPage pdfPage = pdfFile.getPage(page);
+
+					// get the width and height for the doc at the default zoom
+					double width =  pdfPage.getBBox().getWidth() * zoom / 100 ;
+					double height = pdfPage.getBBox().getHeight() * zoom / 100 ;
+					
+					printStream.printf("<div class='page' style='width:%dpx;height:%dpx;'   ><img src='openDocument2Image/%s.png?%s=%d&%s=%d&id=%d'></img> </div>",
+							(long)width,
+							(long)height,
+							doc.getMd5(),
+							OpenDocument2ImageServlet.PAGE_PARAM,
+							page,
+							OpenDocument2ImageServlet.ZOOM_PARAM,
+							zoom,
+							doc.getFileId());
+				}		
+			}
+
+		}
+
+	private static class Noop2HtmlConverter  extends  Document2HtmlConverter  {
+		
+		private static  IDocument2HtmlConverter INSTANCE = new Noop2HtmlConverter();
+		
+		
+		@Override
+		void transform(InputStream is, OutputStream os) throws Exception {
+			int read ;
+			byte buffer [] = new byte [256];
+			while ( ( read = is.read(buffer)) == buffer.length ) {
+				os.write(buffer, 0, read);
+			}
+		}
+	}
+	private static class Image2HtmlConverter implements IDocument2HtmlConverter {
+		
+		private static  IDocument2HtmlConverter INSTANCE = new Image2HtmlConverter();
+
+		@Override
+		public void transform(FileInfo doc, OutputStream os, int zoom) throws Exception {
+			
+			PrintStream printStream = new PrintStream(os);
+			
+			MimeType mimeType = MimeType.values()[doc.getMimetype()];
+			
+			printStream.printf("<div class='page'  ><img src='openDocumentConverter/%s.%s?id=%d&domainName=%s&domainId=%d'></img> </div>",
+					doc.getMd5(),
+					mimeType.getExtension(),
+					doc.getFileId(),
+					doc.getDomain(),
+					doc.getDomainId());
+		}
+	}
+	private abstract static class Document2HtmlConverter implements IDocument2HtmlConverter{
+		@Override
+		public void transform(FileInfo doc, OutputStream os, int zoom) throws Exception {
+			Connection conn = null;
+
+			ResultSet rs = null;
+			PreparedStatement stmt = null;
+			try {
+				conn = getConnection();
+				stmt = conn.prepareStatement(
+						"SELECT " + RattachColumns.DATA
+						+ " FROM " + SQLConstants.RATTACH + " WHERE "
+						+ RattachColumns.ID + "= ? ");
+
+				stmt.setInt(1, doc.getFileId());
+				
+				rs = stmt.executeQuery();
+				
+				if (!rs.next()) {
+					throw new IllegalArgumentException();
+				}
+
+				InputStream is = rs.getBinaryStream(RattachColumns.DATA);
+				transform(is, os);
+			}
+			catch (Exception e ) {
+				throw new IllegalArgumentException(e);
+			}
+			finally {
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (SQLException e) {
+						throw new IllegalArgumentException(e);
+					}
+				}
+				if (stmt != null) {
+					try {
+						stmt.close();
+					} catch (SQLException e) {
+						throw new IllegalArgumentException(e);
+					}
+				}
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+						throw new IllegalArgumentException(e);
+					}
+				}
+			}
+		}
+
+		abstract void transform(InputStream is, OutputStream os) throws Exception;
+		
+	}
+
 }

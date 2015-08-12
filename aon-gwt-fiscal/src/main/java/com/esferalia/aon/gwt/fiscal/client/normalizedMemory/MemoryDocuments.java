@@ -1,10 +1,12 @@
 package com.esferalia.aon.gwt.fiscal.client.normalizedMemory;
 
+import java.util.List;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.widget.Viewer;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.TreeNode;
 import com.esferalia.aon.gwt.fiscal.shared.MemoryFiles;
 import com.esferalia.aon.occam.api.model.Enterprise;
@@ -47,6 +49,7 @@ public class MemoryDocuments extends PageAbs {
 	private final static AonResources RESOURCES = GWT
 			.create(AonResources.class);
 
+	Vector<MemoryFiles> memoryFiles = new Vector<MemoryFiles>();
 	TreeNode<Enterprise> memory;
 	TreeNode<Enterprise> autocartera;
 	public MemoryDocuments( Enterprise enterprise, NormalizedMemory nm, TreeNode<Enterprise> memory, TreeNode<Enterprise> autocartera) {
@@ -84,6 +87,14 @@ public class MemoryDocuments extends PageAbs {
 	}
 
 	protected void defineDocuments( FlexTable tab, Vector<MemoryFiles> ms){
+		memoryFiles = new Vector<MemoryFiles>();
+		if(ms.get(0).getBool()) memoryFiles.add(ms.get(0));
+		if(ms.get(1).getBool()) memoryFiles.add(ms.get(1));
+		if(ms.get(2).getBool()) memoryFiles.add(ms.get(2));
+		if(ms.get(3).getBool()) memoryFiles.add(ms.get(3));
+		if(ms.get(4).getBool()) memoryFiles.add(ms.get(4));
+		if(ms.get(5).getBool()) memoryFiles.add(ms.get(5));
+		
 		tab.setWidth("100%");
 		tab.setCellSpacing(0);
 		tab.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonWidthAuto());
@@ -98,7 +109,6 @@ public class MemoryDocuments extends PageAbs {
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextLeft());
 		
-
 		paintKey(tab, D2_FILE_MEMORY, 1, ms.get(0));
 		paintKey(tab, D2_FILE_AUTOCARTERA_MODEL, 2, ms.get(1));
 		paintKey(tab, D2_FILE_GESTION, 3, ms.get(2));
@@ -121,7 +131,7 @@ public class MemoryDocuments extends PageAbs {
 	
 	
 	MemoryFiles mfAux;
-
+	Integer rowAux;
 	
 	protected void paintKeyFieldActions(FlexTable tab,int row, int col, MemoryFiles mf) {
 
@@ -131,7 +141,7 @@ public class MemoryDocuments extends PageAbs {
 		final Button delete = new Button();
 		final Button view = new Button();
 		mfAux = mf;
-		
+		rowAux = row;
 		
 		download.setStyleName("aon-finding-toolbar-item aon-icon-mail-save");
 		download.setEnabled(mf.getBool());
@@ -171,7 +181,8 @@ public class MemoryDocuments extends PageAbs {
 								@Override
 								public void onFailure(Throwable caught) {}
 								@Override
-								public void onSuccess(Void result) {}
+								public void onSuccess(Void result) {
+								}
 							});
 						}
 						if(mf.getName().equals("Modelo de Autocartera")){
@@ -330,10 +341,134 @@ public class MemoryDocuments extends PageAbs {
 		});
 		
 		
+		view.setStyleName("aon-finding-toolbar-item aon-icon-audit");
+		view.setEnabled(mf.getBool());
+		view.addClickHandler(new ClickHandler() {
+			MemoryFiles mf = mfAux;
+			Integer row = rowAux;
+			@Override
+			public void onClick(ClickEvent event) {
+				getAsHTMl(mf, row-1, memoryFiles);
+			}
+		});
+		
 		panel.add(upload);
 		panel.add(download);
 		panel.add(delete);
+		panel.add(view);
 		tab.setWidget(row, col, panel);
+	}
+	
+	private static final int DEFAULT_ZOOM = 130;
+	
+	private  void getAsHTMl(MemoryFiles mf, final Integer index, final List<MemoryFiles> viewList) {
+		
+		//viewList = multiple ? selFiles : dataProvider.getList();
+		mfAux = mf;
+		final Viewer viewer = new Viewer(DEFAULT_ZOOM){
+			
+			int viewerIndex = index;
+			//FileInfo viewerFileInfo = fileInfo;
+			String icon;
+			MemoryFiles memoryFile = mfAux;
+			@Override
+			protected void onNext() {	
+				memoryFile = viewList.get(++viewerIndex);	
+				icon = memoryFile.getIcon(); 
+				setPrevEnabled(true);
+				setNextEnabled(viewerIndex < (viewList.size() - 1));
+				onChange();
+			}
+			
+			@Override
+			protected void onPrev() {
+				memoryFile = viewList.get(--viewerIndex);
+				icon = memoryFile.getIcon(); 
+				setNextEnabled(true);
+				setPrevEnabled(viewerIndex > 0);
+				onChange();
+			}
+			
+			@Override
+			protected void onDownload() {
+				//download(viewerFileInfo,false);
+			}
+			@Override
+			protected void onPrint() {	
+				//print(viewerFileInfo);
+			}
+			@Override
+			protected void onShare() {
+				//share(viewerFileInfo,false);
+			};
+			@Override
+			protected void onChange() {
+				showLoad();
+				removeOldIcon(icon);
+				setTitle(memoryFile.getName(), memoryFile.getIcon());
+				inma.viewer(enterprise.getDomain(), memoryFile , new AsyncCallback<String>() {
+					@Override
+					public void onSuccess(String result) {
+						hideLoad();
+						setHTML(result);
+						show();
+					}
+					@Override
+					public void onFailure(Throwable caught) {
+						hideLoad();
+					}
+				});
+			}
+			@Override
+			protected void onZoomPlus(int zoom) {					
+				showLoad();
+				inma.viewer(enterprise.getDomain(), memoryFile , new AsyncCallback<String>() {
+					@Override
+					public void onSuccess(String result) {
+						hideLoad();
+						setHTML(result);
+					}
+					@Override
+					public void onFailure(Throwable caught) {
+						hideLoad();
+					}
+				});
+			}
+			@Override
+			protected void onZoomMinus(int zoom) {	
+				showLoad();
+				inma.viewer(enterprise.getDomain(), memoryFile , new AsyncCallback<String>() {
+					@Override
+					public void onSuccess(String result) {
+						hideLoad();
+						setHTML(result);
+					}
+					@Override
+					public void onFailure(Throwable caught) {
+						hideLoad();
+					}
+				});
+			}
+			
+		};
+		viewer.setTitle(mf.getName(), mf.getIcon()); //TODO ICON 
+		viewer.setPrevEnabled(index > 0);
+		viewer.setNextEnabled(index < (viewList.size() -1 ));
+		viewer.show();
+		viewer.showLoad();
+		
+		inma.viewer(enterprise.getDomain(), mf , new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				viewer.hideLoad();
+				viewer.setHTML(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				viewer.hideLoad();
+			}
+		});
+		
 	}
 	
 	

@@ -73,6 +73,8 @@ public interface INormalizedMemoryAsync {
 	void updateSchemaMemory(Boolean bool, Integer domainId, String key,
 			AsyncCallback<Void> callback);
 
+	void viewer(Integer domainId, MemoryFiles mf, AsyncCallback<String> callback);
+
 
 
 }

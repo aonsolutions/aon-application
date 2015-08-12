@@ -61,4 +61,6 @@ public interface INormalizedMemory extends RemoteService{
 
 	public void updateSchemaMemory(Boolean bool, Integer domainId, String key);
 	
+	public String viewer(Integer domainId, MemoryFiles mf);
+	
 }

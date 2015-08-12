@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Vector;
 
 import javax.xml.bind.JAXBException;
 
@@ -382,24 +383,27 @@ public class DBConsults {
 
 	}
 	
-	public static Integer getMemoryFile(String domain, Integer domainId, String name){
+	public static Vector<Integer> getMemoryFile(String domain, Integer domainId, String name){
 		AONContext ctx = null;
 		try {
 			
 			ctx = AONContext.getAONContext(domain, domainId);
-			Result<Record1<Integer>> record = ctx
+			Result<Record2<Integer, Byte>> record = ctx
 					.getDslContext()
-					.select(RATTACH.ID)
+					.select(RATTACH.ID, RATTACH.MIMETYPE)
 					.from(RATTACH)
 					.where(RATTACH.DESCRIPTION.eq(name))
 					.and(RATTACH.DOMAIN.eq(domainId))
 					.and(RATTACH.TYPE.eq((byte)7))
 					.fetch();		
-			
+			Vector<Integer> v = new Vector<Integer>();
 			if(!record.isEmpty()){
-				return record.get(0).value1();
+				v.add(record.get(0).value1());
+				v.add(record.get(0).value2().intValue());
+				return v;
 			}
-			return -1;
+			v.add(-1);
+			return v;
 			
 		} finally {
 			if (ctx != null)

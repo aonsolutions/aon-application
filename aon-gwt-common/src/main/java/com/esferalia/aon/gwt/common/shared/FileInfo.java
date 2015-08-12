@@ -1,11 +1,10 @@
-package com.esferalia.aon.gwt.document.shared;
+package com.esferalia.aon.gwt.common.shared;
 
 
 import java.util.Date;
 import java.util.Vector;
 
-import com.code.aon.common.IAttachment;
-import com.code.aon.common.enumeration.MimeType;
+import com.esferalia.aon.occam.api.model.attachment.Rattach;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.view.client.ProvidesKey;
 
@@ -39,7 +38,7 @@ import com.google.gwt.view.client.ProvidesKey;
 		private Boolean isDrive = false;
 		private Boolean isParent = false;
 		private Boolean isNomina = false;
-		private Vector<Tag> tags;
+		//private Vector<Tag> tags;
 		private String tagsStr;
 		private Date date;
 		private java.sql.Date dateSql;
@@ -52,7 +51,7 @@ import com.google.gwt.view.client.ProvidesKey;
 		private String icon;
 		private Boolean confidential;
 		private Byte conf;
-		private Scope scope;
+		//private Scope scope;
 		
 		private String domain;
 		private Integer domainId;
@@ -73,6 +72,23 @@ import com.google.gwt.view.client.ProvidesKey;
 			this.fileId=fileId;
 			this.title=title;
 			this.mimetype=mimetype;
+		}
+		
+		public FileInfo(Rattach rattach) {
+			this.data = rattach.getData();
+			this.mimeString = rattach.getMimeType().getName();
+			this.mimetype = (byte) rattach.getMimeType().ordinal();
+			this.type = rattach.getType();
+			this.driveId = rattach.getDriveId();
+			this.fileId = rattach.getRattachId();
+			this.title = rattach.getDescription();
+			this.date = rattach.getDate();
+			this.icon = rattach.getIcon();
+			this.confidential = rattach.getConfidential();
+			this.domain = rattach.getDomainName();
+			this.domainId = rattach.getDomainId();
+			this.domainDescription = rattach.getDomainDescription();
+			this.md5 = rattach.getMd5();
 		}
 		
 		public String getAonType(){
@@ -179,13 +195,7 @@ import com.google.gwt.view.client.ProvidesKey;
 			this.categoryStr = categoryStr;
 		}	
 		
-		public Vector<Tag> getTags() {
-			return tags;
-		}
-
-		public void setTags(Vector<Tag> tags) {
-			this.tags = tags;
-		}
+		
 
 		public String getTagsStr() {
 			return tagsStr;
@@ -221,13 +231,6 @@ import com.google.gwt.view.client.ProvidesKey;
 			this.confidential = confidential;
 		}
 
-		public Scope getScope() {
-			return scope;
-		}
-
-		public void setScope(Scope scope) {
-			this.scope = scope;
-		}
 
 		public String getDomain() {
 			return domain;
@@ -315,6 +318,11 @@ import com.google.gwt.view.client.ProvidesKey;
 		public void setMd5(String md5) {
 			this.md5 = md5;
 		}
+
+		
+
+
+		
 
 	}
 

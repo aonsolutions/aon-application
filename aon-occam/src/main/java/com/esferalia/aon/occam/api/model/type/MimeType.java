@@ -56,6 +56,24 @@ public enum MimeType implements Serializable {
 		}
 	}
 	
+	
+	
+    /**
+     * Return the MIME type.
+     * 
+     * @param extension
+     * @return The MIME type.
+     */
+    public static MimeType getByExtension(String extension) {
+    	String value = extension.toLowerCase();
+    	for( MimeType mimeType : MimeType.values() ) {
+    		if ( mimeType.extension.equals(value) ) {
+    			return mimeType;
+    		}
+    	}
+    	return null;
+    }
+    
     public String getName() {
         return name;
     }
