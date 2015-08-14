@@ -53,6 +53,7 @@ public class ConsumptionControlController implements ICollectionProvider, Serial
 	private Inventory inventoryAfter;
 	private boolean printHeader;
 	private boolean errorControl;
+	private boolean detail;
 	
 	public Warehouse getWarehouse() {
 		return warehouse;
@@ -128,6 +129,10 @@ public class ConsumptionControlController implements ICollectionProvider, Serial
 			Inventory inventory = (Inventory) afterInventories.get(0).getValue();
 			setInventoryAfter(inventory);
 		}
+	}
+	
+	public void onDetailChanged(ActionEvent event) {
+
 	}
 	
 	public void onInventoryAfterChanged(ActionEvent event) {
@@ -251,6 +256,14 @@ public class ConsumptionControlController implements ICollectionProvider, Serial
 
 	public void setErrorControl(boolean errorControl) {
 		this.errorControl = errorControl;
+	}
+	
+	public boolean isDetail() {
+		return detail;
+	}
+
+	public void setDetail(boolean detail) {
+		this.detail = detail;
 	}
 
 	public static class Consumption {

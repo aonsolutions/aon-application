@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.ListBox;
 
 public class FeeUtils {
+	
 	public static Vector<String> feeList(){
 		Vector<String> v = new Vector<String>();
 		v.add("Cliente");
@@ -47,6 +48,7 @@ public class FeeUtils {
 		}
 		return num == 8;
 	}
+	
 	public static Boolean estaFee(String s) {
 		switch (s) {
 		case "Cliente": return true;

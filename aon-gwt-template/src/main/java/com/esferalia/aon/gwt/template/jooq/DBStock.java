@@ -35,6 +35,8 @@ import org.jooq.Record4;
 import org.jooq.Record5;
 import org.jooq.Record6;
 import org.jooq.Result;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.company.Department;
 import com.code.aon.company.WorkPlace;
@@ -55,6 +57,9 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 
 public class DBStock {
+	
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(DBStock.class.getName());
 	
 	static String stockquery ;
 	static String inventoryquery ;
@@ -452,13 +457,13 @@ public class DBStock {
 						ti.getSourceWarehouse();
 						ti.getTargetWarehouse();
 						Result<Record2<Double, Integer>> data2 = null;
-						if(ti.getTargetWarehouse().getId() != null) 
+						if(ti.getTargetWarehouse() != null && ti.getTargetWarehouse().getId() != null)
 							data2 = sctx.getDslContext().select(STOCK.QUANTITY, STOCK.ID)
 								.from(STOCK)
 								.where(STOCK.ITEM.eq(itemId).and(STOCK.WAREHOUSE.eq(ti.getTargetWarehouse().getId()))).fetch();
 							
 						Result<Record2<Double, Integer>> data3 = null; 
-						if(ti.getSourceWarehouse().getId() != null) 
+						if(ti.getSourceWarehouse() != null && ti.getSourceWarehouse().getId() != null)
 							data3= sctx.getDslContext().select(STOCK.QUANTITY, STOCK.ID)
 								.from(STOCK)
 								.where(STOCK.ITEM.eq(itemId).and(STOCK.WAREHOUSE.eq(ti.getSourceWarehouse().getId()))).fetch();
@@ -477,8 +482,9 @@ public class DBStock {
 						}
 						Double quantity, quantity2;
 						Integer stockId, stockId2;
-						if(ti.getSourceWarehouse().getId() != null && ti.getTargetWarehouse().getId() != null ){
-
+						if((ti.getSourceWarehouse() != null && ti.getSourceWarehouse().getId() != null) 
+								&& (ti.getTargetWarehouse() != null && ti.getTargetWarehouse().getId() != null)){
+							LOGGER.debug("Source warehouse is not null & target warehouse is not null");
 							if(data2.isNotEmpty() && data3.isNotEmpty()){
 								quantity = data2.get(0).value1();
 								quantity2 = data3.get(0).value1();
@@ -503,7 +509,9 @@ public class DBStock {
 								stockInsertQuery.values(domainId, itemId, s.getQuantity(), ti.getTargetWarehouse().getId());
 							}
 						}
-						else if(ti.getSourceWarehouse().getId() != null && ti.getTargetWarehouse().getId() == null){
+						else if((ti.getSourceWarehouse() != null && ti.getSourceWarehouse().getId() != null) 
+								&& (ti.getTargetWarehouse() == null || ti.getTargetWarehouse().getId() == null)){
+							LOGGER.debug("Source warehouse is not null & target warehouse is null");
 							if(data3.isNotEmpty()){
 								quantity2 = data3.get(0).value1();
 								stockId2 = data3.get(0).value2();
@@ -514,7 +522,9 @@ public class DBStock {
 							}
 
 						}
-						else if(ti.getSourceWarehouse().getId() == null && ti.getTargetWarehouse().getId() != null){
+						else if((ti.getSourceWarehouse() == null || ti.getSourceWarehouse().getId() == null) 
+								&& (ti.getTargetWarehouse() != null && ti.getTargetWarehouse().getId() != null)){
+							LOGGER.debug("Source warehouse is null & target warehouse is not null");
 							if(data2.isNotEmpty()){
 								quantity = data2.get(0).value1();
 								stockId = data2.get(0).value2();
@@ -531,6 +541,7 @@ public class DBStock {
 					}
 					else{
 						v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
+						LOGGER.error("Error: *Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
 						error.setError(false);
 						error.setTextError(v);
 					}

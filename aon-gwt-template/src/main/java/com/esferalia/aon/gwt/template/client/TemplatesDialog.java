@@ -58,8 +58,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	interface Binder extends UiBinder<Widget, TemplatesDialog>{
 		
 	}
-	private static final Binder binder = GWT.create(Binder.class);
 	
+	private static final Binder binder = GWT.create(Binder.class);
 
 	@UiField(provided = true) FlexTable flex_table;
 	@UiField(provided = true) Label label;
@@ -75,6 +75,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	Vector<Warehouse> w;
 	Vector<Series> series;
 	Boolean closed;
+	
 	public TemplatesDialog(Dialog dialog) {
 		if(dialog.isClosed() != null) closed = dialog.isClosed();
 		setCaption(dialog.getTitle());
@@ -311,9 +312,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		}
 		flex_table.setWidget(0, 0, new Label("Plantilla"));
 		flex_table.setWidget(0, 1, lb);
-		
-		flex_table.setWidget(1,  0, new Label("Detallado"));
-		flex_table.setWidget(1, 1, new CheckBox());
+
 		
 		flexTableCss();
 	}

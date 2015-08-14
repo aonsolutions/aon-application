@@ -1,0 +1,97 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:doc='urn:import:com.esferalia.aon.gwt.template.client' xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:b="http://java.sun.com/jstl/core">
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages"
+		field="msg"></ui:with>
+
+	<ui:style>
+	@external .gwt-MenuBarPopup;
+	.gwt-MenuBarPopup {
+		margin: 0px !important;
+		background: none repeat scroll 0% 0% #FFF !important;
+		border: 1px solid #DDDDDD !important;
+		padding: 4px 0px !important;
+		box-shadow: 2px 2px 5px 1px #EBEBEF !important;
+	}
+	</ui:style>
+
+	<g:DockLayoutPanel unit="EM" styleName="aondockLayoutPanel-template">
+		<g:north size="2">
+			<g:FlowPanel styleName="aon-finding-title-toolbar">
+				<g:HorizontalPanel visible="true">
+					<g:HTMLPanel styleName="aon-finding-title">
+						<g:HTMLPanel styleName="aon-finding-title-internal">
+							<g:Label styleName="aon-outputText" text="{msg.aggregateConsumptionTemplates}" />
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="aon-finding-subtitle">
+						<g:HTMLPanel styleName="aon-finding-aubtitle-internal">
+							<g:Label styleName="aon-outputText" text="{msg.searchTemplates}" />
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HorizontalPanel styleName="aon-finding-toolbar">
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+							<g:Button ui:field="cleanButton" visible="true"
+								styleName='aon-finding-toolbar-item aon-icon-rubber' text="{msg.cleanTemplates}" />
+						</g:HTMLPanel>
+					</g:HorizontalPanel>
+				</g:HorizontalPanel>
+			</g:FlowPanel>
+		</g:north>
+		<g:center>
+			<g:DockLayoutPanel unit="EM"
+				styleName="aondockLayoutPanel-template">
+				<!-- Search & Options -->
+				<g:north size="16">
+					<g:HTMLPanel styleName="aon-panelGrid-search searchPanel-template">
+						<div class="aon-panelGrid-search-info">
+							<span class="aon-panelGrid-search-info-internal">
+								<g:InlineLabel styleName="aon-outputLabel" text="{msg.search2Templates}" />
+							</span>
+							<g:InlineHTML visible="false">
+							</g:InlineHTML>
+						</div>
+						<table class="aon-panelGrid">
+							<tr>
+								<td colspan="3">
+									<g:FlowPanel ui:field="panel">
+									</g:FlowPanel>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span class="aon-panelGrid-search-info-internal2-template">
+										<g:InlineLabel styleName="aon-outputLabel" text="{msg.warehouseTemplates}" />
+									</span>
+								</td>
+								<td colspan="2">
+									<g:ListBox ui:field="warehouseListBox" >
+									</g:ListBox>
+								</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td class="aon-search-lookup-button">
+									<g:Button ui:field="pdfButton" text="{msg.listTemplates}" 
+										styleName="aon-icon-commandButton aon-icon-pdf">
+									</g:Button>
+								</td>
+								<td class="aon-search-lookup-button"> 
+									<g:Button ui:field="excelButton" text="{msg.listTemplates}" enabled="false"
+										styleName="aon-icon-commandButton aon-icon-excel">
+									</g:Button>
+								</td>
+							</tr>
+						</table>
+					</g:HTMLPanel>
+				</g:north>
+				<g:center>
+					<g:Label text=""></g:Label>
+				</g:center>
+
+			</g:DockLayoutPanel>
+		</g:center>
+	</g:DockLayoutPanel>
+</ui:UiBinder>

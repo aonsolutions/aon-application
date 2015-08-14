@@ -2487,5 +2487,28 @@ public interface CommonMessages extends Messages {
  	
  	@DefaultMessage("(Debe)/ Haber")
 	String debitCredit();
-	
+ 	
+    //-------------------- AON GWT TEMPLATES - Consumption
+ 	
+ 	@DefaultMessage("Limpiar")
+	String cleanTemplates();
+ 	
+ 	@DefaultMessage("Informe Agregado de Control de Consumos")
+	String aggregateConsumptionTemplates();
+ 	
+ 	@DefaultMessage("Informe Agregado de Control de Errores en Recuentos")
+	String aggregateCountErrorTemplates();
+ 	
+ 	@DefaultMessage("B\u00FAsqueda")
+	String searchTemplates();
+ 	
+ 	@DefaultMessage("Introduzca los par\u00E1metros de b\u00FAsqueda:")
+	String search2Templates();
+ 	
+ 	@DefaultMessage("Almac\u00E9n")
+	String warehouseTemplates();
+ 	
+ 	@DefaultMessage("Listado")
+	String listTemplates();
+ 	
 }

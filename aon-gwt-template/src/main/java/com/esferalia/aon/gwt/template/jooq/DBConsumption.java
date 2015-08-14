@@ -298,6 +298,7 @@ public class DBConsumption {
 		ci.setSalesValue(0.0);
 		ci.setTransfersMinusValue(0.0);
 		ci.setTransfersPlusValue(0.0);
+		ci.setFinalValue(0.0);
 		
 		return ci;
 		
