@@ -1160,6 +1160,9 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(ctx.getStartDate());
 		int year = calendar.get(Calendar.YEAR);
+		
+		calendar.set(Calendar.DAY_OF_YEAR, calendar.getActualMaximum(Calendar.DAY_OF_YEAR));
+		Date endYear = calendar.getTime();
 
 		List<ISQLContractSalaryCalculatorContext> ctxs = new ArrayList<ISQLContractSalaryCalculatorContext>();
 		
@@ -1177,7 +1180,12 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			Date issueDate = parseAgreementDate(
 					agreementExtraRecord.getIssueDate(), year);
 			
-			if ( contract.intersects(new Period(startDate,endDate)))
+			
+			if (Period.compare(contract.getEnd(), endYear) > 0 && 
+				Period.compare(issueDate, ctx.getStartDate()) < 0 )
+				continue;
+			
+			if ( contract.intersects(new Period(startDate,endDate)) )
 				ctxs.add(getExtraContext(startDate, endDate, issueDate, criteria));
 		}
 		return ctxs;
