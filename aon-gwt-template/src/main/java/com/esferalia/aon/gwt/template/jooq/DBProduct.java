@@ -221,20 +221,6 @@ public class DBProduct {
 		return false;
 	}
 	
-	private static Boolean esta(String code, Vector<String> vector) {
-		for (String string : vector) {
-			if(string.equals(code)) return true;
-		}
-		return false;
-	}
-	
-	private static Boolean esta(Integer id, Vector<Integer> vector) {
-		for (Integer integer : vector) {
-			if(integer.equals(id)) return true;
-		}
-		return false;
-	}
-	
 	public static ProductCategory getCategory(String domain,Integer domainId, Integer id) {
 		AONContext ctx = null;
 		try {

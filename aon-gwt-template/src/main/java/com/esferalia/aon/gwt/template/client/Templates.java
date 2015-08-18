@@ -76,7 +76,7 @@ public class Templates extends Composite implements EntryPoint {
 								pagesPanel.add(w);
 							}
 							else if(entryPoint.equals(CONSUMPTION)){
-						   		ConsumptionPage cp = new ConsumptionPage();		
+						   		ConsumptionPage cp = new ConsumptionPage(domainId);		
 					 			pagesPanel.add(cp);
 							}
 						}

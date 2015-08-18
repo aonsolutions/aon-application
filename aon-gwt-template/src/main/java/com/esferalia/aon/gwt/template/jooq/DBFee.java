@@ -96,7 +96,7 @@ public class DBFee {
 	
 						Integer itemId = data.get(0).value1();
 						
-						java.sql.Date t = null;
+						
 						if(s.getEndDate() != null ) new java.sql.Date(s.getEndDate().getTime());
 						
 						Short line;

@@ -30,7 +30,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Series;
 import com.code.aon.config.Tax;
@@ -149,9 +148,11 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	
 		return tl;
 	}
-	
 
-	
+	public Vector<Warehouse> getWarehouses(Integer domainId){
+		String domain = AonUtil.getDomainName();
+		return DBStock.getWarehouse(domain, domainId, userId);
+	}
 	
 	public Vector<Warehouse> getWarehouses(){
 		String domain = AonUtil.getDomainName();

@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Date;
-import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
@@ -27,9 +25,7 @@ import org.apache.poi.ss.util.Region;
 
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
-import com.esferalia.aon.gwt.template.jooq.DBConsumption;
 import com.esferalia.aon.gwt.template.jooq.DBInventory;
-import com.esferalia.aon.gwt.template.shared.ConsumptionItem;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 
 @WebServlet(name = "DownloadTemplatesInventory", urlPatterns = { "/aon_gwt_template/gwt_download_inventory/*" })

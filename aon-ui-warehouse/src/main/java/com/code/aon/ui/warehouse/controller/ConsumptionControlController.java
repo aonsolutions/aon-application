@@ -132,7 +132,7 @@ public class ConsumptionControlController implements ICollectionProvider, Serial
 	}
 	
 	public void onDetailChanged(ActionEvent event) {
-
+		System.out.println(detail); 
 	}
 	
 	public void onInventoryAfterChanged(ActionEvent event) {
@@ -258,7 +258,11 @@ public class ConsumptionControlController implements ICollectionProvider, Serial
 		this.errorControl = errorControl;
 	}
 	
-	public boolean isDetail() {
+	/*public boolean isDetail() {
+		return detail;
+	}*/
+	
+	public boolean getDetail() {
 		return detail;
 	}
 

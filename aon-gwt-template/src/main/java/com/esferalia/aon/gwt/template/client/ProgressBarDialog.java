@@ -1,10 +1,5 @@
 package com.esferalia.aon.gwt.template.client;
 
-
-
-
-
-
 import com.esferalia.aon.gwt.common.client.ProgressBar;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
 import com.google.gwt.core.shared.GWT;
@@ -34,10 +29,6 @@ public abstract class ProgressBarDialog extends CustomDialogB {
 			if (progress > 100)
 				cancel();
 			progressBar.setProgress(progress);
-		}
-
-		private void setText(String text) {
-			progressBar.setCompletedMessage(text);
 		}
 	}
 	

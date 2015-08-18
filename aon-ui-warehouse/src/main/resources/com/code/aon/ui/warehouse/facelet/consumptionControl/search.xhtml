@@ -58,6 +58,7 @@
 					<aon:outputLabel for="ConsumptionDetail"
 						value="Detallado" />
 					<aon:selectBooleanCheckbox id="ConsumptionDetail"
+						reRender="reportButtons"
 						actionListener="#{controller.onDetailChanged}"
 						value="#{controller.detail}">
 					</aon:selectBooleanCheckbox>
@@ -85,7 +86,7 @@
 								<aon:commandLink id="SearchButton-excel" 
 									disabled="#{(controller.inventoryBefore==null) or (controller.inventoryAfter==null)}"
 									value="#{bundle.aon_listing}"
-									onclick="consumptionx(#{controller.warehouse.id},#{controller.inventoryBefore.inventoryDate.time}, #{controller.inventoryAfter.inventoryDate.time},#{controller.inventoryBefore.id},#{controller.inventoryAfter.id},#{consumptionControl.errorControl?'1':'0'},#{consumptionControl.detail})"
+									onclick="consumptionx(#{controller.warehouse.id},#{controller.inventoryBefore.inventoryDate.time}, #{controller.inventoryAfter.inventoryDate.time},#{controller.inventoryBefore.id},#{controller.inventoryAfter.id},#{consumptionControl.errorControl?'1':'0'},#{controller.detail})"
 									accesskey="#{bundle.aon_key_search}"
 									styleClass="aon-icon-commandButton aon-icon-excel">								
 								</aon:commandLink>

@@ -31,6 +31,8 @@ public interface ITemplate extends RemoteService{
 	
 	public Vector<Warehouse> getWarehouses();
 	
+	public Vector<Warehouse> getWarehouses(Integer domainId);
+	
 	public Vector<Series> getSeries(String warehouse);
 	
 	public Vector<Series> getSeries();

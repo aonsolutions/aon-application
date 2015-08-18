@@ -93,11 +93,13 @@ public class DownloadConsumptionServlet extends HttpServlet {
         TemplateInfo aux = null;
 		try {
 			aux = com.esferalia.aon.gwt.template.server.Utils.readxml(f);
+			Vector<String> v = new Vector<String>();
+			Integer i = 0;
 			if(detail){
-				Integer i = 0;
-				Vector<String> v = new Vector<String>();
 				for (String s : aux.getColumns()) {
-					v.add(s); i++;
+					if(!s.contains("Detalle"))
+						v.add(s);
+					i++;
 					switch (s) {
 					case "Inicial": v.add("Valor Inicial"); i++; break;
         			case "Compras": v.add("Valor Compras"); i++; break;
@@ -108,8 +110,15 @@ public class DownloadConsumptionServlet extends HttpServlet {
         				break;
         			}
 				}
-				aux.setColumns(v);
 			}
+			else{
+				for (String s : aux.getColumns()) {
+					if(!s.contains("Detalle"))
+						v.add(s);
+					i++;
+				}
+			}
+			aux.setColumns(v);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -166,8 +175,8 @@ public class DownloadConsumptionServlet extends HttpServlet {
 		
         for(Integer i = 0; i< columns; i++){
         	Cell celda = fila.createCell(i);
-        	celda.setCellValue(aux.getColumns().get(i));
-        	celda.setCellStyle(style);  	
+            celda.setCellValue(aux.getColumns().get(i));
+            celda.setCellStyle(style);  	
         }
         Cell celdaf = fila.createCell(columns);
         celdaf.setCellStyle(style);
@@ -193,9 +202,9 @@ public class DownloadConsumptionServlet extends HttpServlet {
      
         			switch (type) {
         			case "Producto": celda.setCellValue(ci.getProductCode());celda.setCellStyle(style3);break;
-        			case "Detalle 1":  celda.setCellValue(ci.getDetail());celda.setCellStyle(style2);break;
-        			case "Detalle 2":  celda.setCellValue(ci.getDetail2());celda.setCellStyle(style2);break;
-        			case "Detalle 3":  celda.setCellValue(ci.getDetail3());celda.setCellStyle(style2);break;
+        			//case "Detalle 1":  celda.setCellValue(ci.getDetail());celda.setCellStyle(style2);break;
+        			//case "Detalle 2":  celda.setCellValue(ci.getDetail2());celda.setCellStyle(style2);break;
+        			//case "Detalle 3":  celda.setCellValue(ci.getDetail3());celda.setCellStyle(style2);break;
         			case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
         			case "Nombre": celda.setCellValue(ci.getProductName());celda.setCellStyle(style3);break;
         			case "Inicial": celda.setCellValue(ci.getInitialQuantity());celda.setCellStyle(style2);break;

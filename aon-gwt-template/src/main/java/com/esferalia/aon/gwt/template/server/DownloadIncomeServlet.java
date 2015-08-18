@@ -1,22 +1,11 @@
 package com.esferalia.aon.gwt.template.server;
 
-import static com.esferalia.aon.jooq.tables.Item.ITEM;
-import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
@@ -34,19 +23,11 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.Region;
-import org.jooq.Condition;
 
-import com.code.aon.google.apis.DriveUtils;
-import com.code.aon.google.apis.Utils;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
-import com.code.aon.product.ProductTag;
-import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
-import com.esferalia.aon.gwt.template.jooq.DBProduct;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
-import com.google.api.services.drive.Drive;
 
 @WebServlet(name = "DownloadTemplatesIncome", urlPatterns = { "/aon_gwt_template/gwt_download_income/*" })
 public class DownloadIncomeServlet extends HttpServlet {

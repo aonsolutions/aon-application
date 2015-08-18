@@ -64,4 +64,7 @@ public interface ITemplateAsync {
 
 	void getSeries(AsyncCallback<Vector<Series>> callback);
 
+	void getWarehouses(Integer domainId,
+			AsyncCallback<Vector<Warehouse>> callback);
+
 }

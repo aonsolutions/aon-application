@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.template.jooq;
 
 
 
-import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
 import static com.esferalia.aon.jooq.tables.Inventory.INVENTORY;
 import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
@@ -11,7 +10,6 @@ import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import java.util.Vector;
 
 import org.jooq.Record1;
-import org.jooq.Record7;
 import org.jooq.Record8;
 import org.jooq.Result;
 
