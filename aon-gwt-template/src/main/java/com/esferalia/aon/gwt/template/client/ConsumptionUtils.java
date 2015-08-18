@@ -18,7 +18,7 @@ public class ConsumptionUtils {
 		v.add("Final");
 		v.add("Traspaso");
 		v.add("Precio"); // precio del producto
-		v.add("Importe");// precio total del consumo
+		v.add("Valor Consumo");// precio total del consumo
 		v.add("Detalle 1");
 		v.add("Detalle 2");
 		v.add("Detalle 3");
@@ -53,7 +53,7 @@ public class ConsumptionUtils {
 		case "Final": return true;
 		case "Traspaso": return true;
 		case "Precio": return true; 
-		case "Importe": return true;
+		case "Valor Consumo": return true;
 		case "Consumo": return true;
 		}
 		return false;

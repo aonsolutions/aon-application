@@ -66,9 +66,25 @@
 										<g:InlineLabel styleName="aon-outputLabel" text="{msg.warehouseTemplates}" />
 									</span>
 								</td>
-								<td colspan="2">
+								<td>
 									<g:ListBox ui:field="warehouseListBox" >
 									</g:ListBox>
+								</td>
+								<td>
+									<g:HorizontalPanel>
+										<g:CheckBox ui:field="warehouseCheckBox"></g:CheckBox>
+										<g:InlineLabel text="Seleccionar todos"></g:InlineLabel>
+									</g:HorizontalPanel>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span class="aon-panelGrid-search-info-internal2-template">
+										<g:InlineLabel styleName="aon-outputLabel" text="Detallado" />
+									</span>
+								</td>
+								<td colspan="2">
+									<g:CheckBox ui:field="detailCheckBox"></g:CheckBox> 
 								</td>
 							</tr>
 							<tr>

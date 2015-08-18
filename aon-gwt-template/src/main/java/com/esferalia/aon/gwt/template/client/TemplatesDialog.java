@@ -918,7 +918,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					vp.add(r6);
 					Label r7 = new Label("Precio");r7.addStyleName("aon-info-rest-template");
 					vp.add(r7);
-					Label r8 = new Label("Importe");r8.addStyleName("aon-info-rest-template");
+					Label r8 = new Label("Valor Consumo");r8.addStyleName("aon-info-rest-template");
 					vp.add(r8);
 					Label r9 = new Label("Consumo");r9.addStyleName("aon-info-rest-template");
 					vp.add(r9);
@@ -1071,7 +1071,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					vp.add(r6);
 					Label r7 = new Label("Precio");r7.addStyleName("aon-info-rest-template");
 					vp.add(r7);
-					Label r8 = new Label("Importe");r8.addStyleName("aon-info-rest-template");
+					Label r8 = new Label("Valor Consumo");r8.addStyleName("aon-info-rest-template");
 					vp.add(r8);
 					Label r9 = new Label("Consumo");r9.addStyleName("aon-info-rest-template");
 					vp.add(r9);
