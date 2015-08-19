@@ -116,8 +116,8 @@ public class Alarm extends AlarmDB {
     	return getSource() == AlarmSource.COMMERCIAL_TRACKING;
     }    
     @Transient
-    public boolean isCallCenter() {
-    	return getSource() == AlarmSource.CALL_CENTER;
+    public boolean isOffice() {
+    	return getSource() == AlarmSource.OFFICE;
     }    
 
 }

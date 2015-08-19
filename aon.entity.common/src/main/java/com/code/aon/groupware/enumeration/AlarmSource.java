@@ -11,7 +11,7 @@ public enum AlarmSource implements IResourceable {
 	TASK,
 	EXTERNAL,
 	COMMERCIAL_TRACKING,
-	CALL_CENTER;
+	OFFICE;
 	
     private static final String MSG_KEY_PREFIX = "aon_enum_alarm_source_";
 	

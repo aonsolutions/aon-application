@@ -120,7 +120,7 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>Resource Servlet</servlet-name>
-		<url-pattern>/aon_gwt_callcenter/*</url-pattern>
+		<url-pattern>/aon_gwt_office/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>Resource Servlet</servlet-name>
@@ -399,7 +399,7 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>Common Servlet</servlet-name>
-		<url-pattern>/aon_gwt_callcenter/Common</url-pattern>
+		<url-pattern>/aon_gwt_office/Common</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
