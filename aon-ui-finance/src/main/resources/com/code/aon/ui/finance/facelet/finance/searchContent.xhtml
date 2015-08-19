@@ -37,7 +37,9 @@
 						value="#{bundle.aon_company_name}" />
 					<aon:inputText id="Finance_registryName" size="60"
 						valueChangeListener="#{controller.addExpression}" />
-
+						
+					<ui:include src="/com/code/aon/ui/config/facelet/scope/searchContent.xhtml" />
+					
 					<aon:outputLabel for="Finance_registryDocument"
 						value="#{bundle.aon_document}" />
 					<aon:inputText id="Finance_registryDocument" size="20"
