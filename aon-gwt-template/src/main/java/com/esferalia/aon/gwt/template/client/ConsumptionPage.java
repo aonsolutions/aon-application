@@ -10,6 +10,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -21,6 +22,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -80,49 +82,9 @@ public class ConsumptionPage extends Composite{
 					warehouseListBox.addItem(w.getName());
 				}
 	
-				warehouseListBox.addChangeHandler(new ChangeHandler() {
-					
-					@Override
-					public void onChange(ChangeEvent event) {
-						String wtext = warehouseListBox.getSelectedItemText();
-						for (Warehouse w : warehouseList) {
-							if(w.equals(wtext)) warehouses.add(w);
-						}
-						// TODO METER UN LABEL CON EL ALAMACEN SELECCIONADO EN panel. *** mejorar
-						Label l = new Label(wtext);
-						warehouseListBox.removeItem(warehouseListBox.getSelectedIndex());
-						warehouseListBox.setSelectedIndex(0);
-						panel.add(l);
-					}
-				});
-				
-				warehouseCheckBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-					
-					@Override
-					public void onValueChange(ValueChangeEvent<Boolean> event) {
-						if(event.getValue()){
-							warehouses.addAll(warehouseList);
-							warehouseListBox.setEnabled(false);
-							for (Warehouse warehouse : warehouses) {
-								panel = new FlowPanel();
-								Label label = new Label(warehouse.getName());
-								panel.add(label);
-							}
-						}
-						else{
-							clean();
-							warehouseListBox.setEnabled(true);
-						}
-					}
-				});
-				
-				detailCheckBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-					
-					@Override
-					public void onValueChange(ValueChangeEvent<Boolean> event) {
-						detail = event.getValue();
-					}
-				});
+				warehouseListBoxChangeHandler();
+				warehouseCheckBoxChangeHandler();
+				detailCheckBoxChangeHandler();
 			}
 			
 			@Override
@@ -131,7 +93,7 @@ public class ConsumptionPage extends Composite{
 			}
 		});
 	}
-	
+
 	//------------------------------ UI Handlers
 	
 	@UiHandler("cleanButton")
@@ -149,7 +111,81 @@ public class ConsumptionPage extends Composite{
 		download(EXCEL);
 	}
 	
-	//------------------------------ Utils
+	private void warehouseListBoxChangeHandler() {
+		warehouseListBox.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				String wtext = warehouseListBox.getSelectedItemText();
+				if(wtext.equals("-") && warehouses.isEmpty()) excelButton.setEnabled(false);
+				else excelButton.setEnabled(true);
+				
+				for (Warehouse w : warehouseList) {
+					
+					if(w.getName().equals(wtext)) {
+						warehouses.add(w);
+					}
+				}
+				// TODO METER UN LABEL CON EL ALAMACEN SELECCIONADO EN panel. *** mejorar
+				HorizontalPanel wTag = closeTagButton(wtext);
+				
+				warehouseListBox.removeItem(warehouseListBox.getSelectedIndex());
+				warehouseListBox.setSelectedIndex(0);
+				panel.add(wTag);
+			}
+		});
+	}
+	
+	private void warehouseCheckBoxChangeHandler(){
+		warehouseCheckBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				if(event.getValue()){
+					for(Integer k = warehouseListBox.getItemCount();k> 0;k--){
+						String name = warehouseListBox.getItemText(k-1);
+						if(!name.equals("-")){
+							HorizontalPanel wTag = closeTagButton(name);
+						
+							warehouseListBox.removeItem(k-1);
+							warehouseListBox.setSelectedIndex(0);
+						
+							panel.add(wTag);
+						}
+					}
+				}
+				else{
+					warehouseListBox.setEnabled(true);
+					clean();
+				}
+			}
+		});
+	}
+	
+	private void detailCheckBoxChangeHandler(){
+		detailCheckBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				detail = event.getValue();
+			}
+		});
+	}
+	
+	HorizontalPanel hpAux;String nameAux;
+	private void closeTagButtonClickHandler(Button closeTagButton, HorizontalPanel hp, String name){
+		hpAux = hp;nameAux = name;
+		closeTagButton.addClickHandler(new ClickHandler() {
+			private HorizontalPanel hp = hpAux;
+			String name = nameAux;
+			@Override
+			public void onClick(ClickEvent event) {
+				hp = new HorizontalPanel();
+				clean(name);
+			}
+		});
+	}
+	//------------------------------ Actions
 	
 	private void download(String type) {
 		if(type.equals(PDF)){
@@ -164,9 +200,7 @@ public class ConsumptionPage extends Composite{
 		}
 	}
 	
-	
 	private void downloadExcel(){
-		
 		Integer size = 0;
 		TemplateInfo templateInfo = null;
 		for (TemplateInfo ti : templateList.getList()) {
@@ -199,15 +233,46 @@ public class ConsumptionPage extends Composite{
 	}
 	
 	private void clean(){
-		for(Integer i = 0; i<panel.getWidgetCount(); i++){
-			Label label = (Label) panel.getWidget(i);
-			label.getText();
+		for(Integer j = panel.getWidgetCount(); j>0; j--){
+			HorizontalPanel hp = (HorizontalPanel) panel.getWidget(j-1);
+			Label label = (Label) hp.getWidget(1);
+
 			for(Warehouse w : warehouseList){
 				if(w.getName().equals(label.getText()))
 					warehouseListBox.addItem(label.getText());
 			}
-			panel.remove(i);
+			panel.remove(j-1);
 		}
 		warehouses.removeAllElements();
+	}
+	
+	private void clean(String name){
+		for(Integer i = 0; i<panel.getWidgetCount(); i++){
+			HorizontalPanel hp = (HorizontalPanel) panel.getWidget(i);
+			Label label = (Label) hp.getWidget(1);
+			if(label.getText().equals(name)){
+				for(Warehouse w : warehouseList){
+					if(w.getName().equals(name))
+						warehouseListBox.addItem(label.getText());
+				}
+				panel.remove(i);
+			}
+			warehouses.remove(hp);
+		}
+		warehouseCheckBox.setValue(false);
+	}
+	
+	//------------------------------ Widgets
+
+	private HorizontalPanel closeTagButton(String name) {
+		HorizontalPanel horizontalPanel = new HorizontalPanel();
+		Button closeTagButton = new Button("");
+		closeTagButton.setStyleName("aon-editDataTable-button aon-icon-close");	
+		Label label = new Label(name);
+		horizontalPanel.add(closeTagButton);
+		horizontalPanel.add(label);
+		closeTagButtonClickHandler(closeTagButton, horizontalPanel, name);
+	
+		return horizontalPanel;
 	}
 }

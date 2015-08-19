@@ -19,9 +19,6 @@ public class ConsumptionUtils {
 		v.add("Traspaso");
 		v.add("Precio"); // precio del producto
 		v.add("Valor Consumo");// precio total del consumo
-		v.add("Detalle 1");
-		v.add("Detalle 2");
-		v.add("Detalle 3");
 		v.add("Consumo");
 		//v.add("Texto Libre");
 		

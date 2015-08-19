@@ -7,6 +7,10 @@
 		field="msg"></ui:with>
 
 	<ui:style>
+	.aon-search-label-template{
+		padding-top:3px;
+	}
+	
 	@external .gwt-MenuBarPopup;
 	.gwt-MenuBarPopup {
 		margin: 0px !important;
@@ -28,7 +32,7 @@
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="aon-finding-subtitle">
 						<g:HTMLPanel styleName="aon-finding-aubtitle-internal">
-							<g:Label styleName="aon-outputText" text="{msg.searchTemplates}" />
+							<g:Label styleName="aon-outputText {style.aon-search-label-template}" text="{msg.searchTemplates}" />
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HorizontalPanel styleName="aon-finding-toolbar">

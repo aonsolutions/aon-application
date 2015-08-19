@@ -339,4 +339,32 @@ public class DBConsumption {
 		}
 	}
 	
+	public static ConsumptionItem getTwoLastInventory(String domain, Integer domainId, Integer warehouseId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+			
+			Result<Record3<Integer, String, Date>> data = ctx.getDslContext().select(INVENTORY.ID,INVENTORY.DESCRIPTION, INVENTORY.INVENTORY_DATE)
+				.from(INVENTORY)
+				.where(INVENTORY.DOMAIN.eq(domainId))
+				.and(INVENTORY.WAREHOUSE.eq(warehouseId))
+				.orderBy(INVENTORY.INVENTORY_DATE.desc()).limit(2)
+				.fetch();
+			
+			Integer cont = 0;
+			ConsumptionItem ci = new ConsumptionItem();
+			for (Record3<Integer, String, Date> i : data) {
+				if(i.value1() != null && cont == 0) ci.setFinalId(i.value1());
+				if(i.value2() != null && cont == 0) ci.setFinalDate(i.value3());
+				if(i.value1() != null && cont == 1) ci.setInitialId(i.value1());
+				if(i.value2() != null && cont == 1) ci.setInitialDate(i.value3());
+				cont++;
+			}
+			
+			return ci;
+		} finally{
+			if (ctx != null) ctx.close();
+		}
+	}
+	
 }

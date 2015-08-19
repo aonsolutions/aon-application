@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.template.shared;
 
+import java.util.Date;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class ConsumptionItem implements IsSerializable{
@@ -12,9 +14,13 @@ public class ConsumptionItem implements IsSerializable{
 	String discount;
 	Double price;
 	
+	Integer initialId;
+	Date initialDate;
 	Double initialQuantity;
 	Double initialValue;
 	
+	Integer finalId;
+	Date finalDate;
 	Double finalQuantity;
 	Double finalValue;
 	
@@ -183,6 +189,30 @@ public class ConsumptionItem implements IsSerializable{
 	}
 	public void setTransfersMinusValue(Double transfersMinusValue) {
 		this.transfersMinusValue = transfersMinusValue;
+	}
+	public Integer getInitialId() {
+		return initialId;
+	}
+	public void setInitialId(Integer initialId) {
+		this.initialId = initialId;
+	}
+	public Date getInitialDate() {
+		return initialDate;
+	}
+	public void setInitialDate(Date initialDate) {
+		this.initialDate = initialDate;
+	}
+	public Integer getFinalId() {
+		return finalId;
+	}
+	public void setFinalId(Integer finalId) {
+		this.finalId = finalId;
+	}
+	public Date getFinalDate() {
+		return finalDate;
+	}
+	public void setFinalDate(Date finalDate) {
+		this.finalDate = finalDate;
 	}
 	
 	

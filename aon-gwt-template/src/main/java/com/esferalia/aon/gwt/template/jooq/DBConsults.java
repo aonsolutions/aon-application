@@ -223,7 +223,6 @@ public class DBConsults {
 						v2 = new Vector<String>();
 						v2.add("Producto");v2.add("Nombre");v2.add("Inicial");v2.add("Compras");v2.add("Ventas");
 						v2.add("Traspaso");v2.add("Final");v2.add("Consumo");v2.add("Precio");v2.add("Valor Consumo");
-						v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
 						consumptionTemplate.setColumns(v2);
 						consumptionTemplate.setDomain(domain);
 						consumptionTemplate.setDomainId(0);

@@ -65,11 +65,6 @@ public class DownloadAggregateConsumptionServlet extends HttpServlet {
 		}
         String domain = AonUtil.getDomainName();
         boolean onlyNegative = "1".equals(only_negative);
-       
-        Integer initialId = null, finalId = null;
-        
-        Date initialDate = null, finalDate = null;
-      
         
         byte[] b = null ;
         
@@ -126,8 +121,13 @@ public class DownloadAggregateConsumptionServlet extends HttpServlet {
         HSSFWorkbook libro = new HSSFWorkbook();
         FileOutputStream archivo = new FileOutputStream(archivoXLS);
         
-        for (int index = 0; index < size; size++) {
-    
+        for (int index = 0; index < size; index++) {
+        	
+        	ConsumptionItem consumptionItem = DBConsumption.getTwoLastInventory(domain, domainId, warehouses.get(index).getId());
+        	Integer initialId = consumptionItem.getInitialId(), finalId = consumptionItem.getFinalId();
+            Date initialDate = consumptionItem.getInitialDate(), finalDate = consumptionItem.getFinalDate();
+            
+        	
         	HSSFSheet hoja = libro.createSheet("Plantilla "+ index);
         
         	Integer columns = aux.getColumns().size();
