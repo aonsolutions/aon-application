@@ -816,7 +816,7 @@ public class CommunicationCenterController extends DataScrollerState implements 
 		controller.setShowNewAlarmWindow(true);
 		controller.onReset(event);
 		Alarm alarm = (Alarm) controller.getTo();
-		alarm.setSource(AlarmSource.CALL_CENTER);
+		alarm.setSource(AlarmSource.OFFICE);
 		alarm.setSourceId(getActionTarget().getId());
 	}
 
