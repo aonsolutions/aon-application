@@ -3,13 +3,17 @@ package com.esferalia.aon.payroll.calculator;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MAX;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_RAW;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MAX;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MIN;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_RAW;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.mvel2.MVEL;
 
 import com.code.aon.common.AonException;
 import com.esferalia.aon.payroll.enumeration.AbstractSSRegimeTypeVisitor;
@@ -32,8 +35,11 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedResult;
+import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
-import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.salary.expression.TimedObject;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public abstract class QuoteCalculator {
 
@@ -80,13 +86,13 @@ public abstract class QuoteCalculator {
 
 	public abstract Double getMaternityBase() throws AonException;
 
-	public abstract Double quote(IContractPayment payment, Date start, Date end,
-			double amount) throws AonException;
+	public abstract Double quote(IContractPayment payment, Date start,
+			Date end, double amount) throws AonException;
 
 	public static class NonQuote extends QuoteCalculator {
 		private NonQuote() {
 		}
-		
+
 		@Override
 		public Double getItBase() throws AonException {
 			return null;
@@ -126,13 +132,13 @@ public abstract class QuoteCalculator {
 		public Double getNonStructuralBase() throws AonException {
 			return null;
 		}
-		
+
 		@Override
 		public Double quote(IContractPayment payment, Date start, Date end,
 				double amount) throws AonException {
-			return null ; // No cotiza...
+			return null; // No cotiza...
 		}
-		
+
 		@Override
 		public Double getEreBase() throws AonException {
 			return null;
@@ -173,8 +179,9 @@ public abstract class QuoteCalculator {
 		@Override
 		public Double getCgcBase() throws AonException {
 			if (cgcBase == null) {
-				cgcBase = getLimitedCgcBase(rawCgcBase, context, salaryStart,
-						salaryEnd);
+//				cgcBase = getLimitedCgcBase(rawCgcBase, context, salaryStart,
+//						salaryEnd);
+				cgcBase = getSum(CGC_BASE, context, salaryStart, salaryEnd);
 			}
 			return cgcBase;
 		}
@@ -184,16 +191,17 @@ public abstract class QuoteCalculator {
 			if (cgpBase == null) {
 				Double rawCgpBase = rawCgcBase + structuralBase
 						+ nonStructuralBase;
-				cgpBase = getLimitedCgpBase(rawCgpBase, context, salaryStart,
-						salaryEnd);
+//				cgpBase = getLimitedCgpBase(rawCgpBase, context, salaryStart,
+//						salaryEnd);
+				cgpBase = getSum(CGP_BASE, context, salaryStart, salaryEnd);
 			}
 			return cgpBase;
 		}
 
 		@Override
 		public Double getEreBase() throws AonException {
-			return bases.containsKey(ERE.getName()) ? bases.get(ERE
-					.getName()) : 0.00;
+			return bases.containsKey(ERE.getName()) ? bases.get(ERE.getName())
+					: 0.00;
 		}
 
 		@Override
@@ -201,7 +209,6 @@ public abstract class QuoteCalculator {
 			return bases.containsKey(MATERNITY.getName()) ? bases.get(MATERNITY
 					.getName()) : 0.00;
 		}
-		
 
 		protected double getQuote(IContractPayment payment, Date start,
 				Date end, double amount) throws AonException {
@@ -209,21 +216,17 @@ public abstract class QuoteCalculator {
 			if (quoteExpr == null) {
 				return 0;
 			}
-			String name = payment.getName();
-			if (name != null && quoteExpr.equals(name)) {
-				// System.out.println("QUOTE:" + payment.getName() + ", " +
-				// payment.getDescription()+ " = " + amount);
-				return amount;
-			}
 
-			List<ITimedResult<Double>> quotes;
-			quotes = context.eval(quoteExpr, start, end, Double.class);
+			// String name = payment.getName();
+			// if (name != null && quoteExpr.equals(name)) {
+			// return amount;
+			// }
+
 			double total = 0.00;
+			List<ITimedResult<Double>> quotes = context.eval(quoteExpr, start,
+					end, Double.class);
 			for (ITimedObject<Double> quote : quotes) {
 				total += quote.getValue();
-				// System.out.println("QUOTE:" + payment.getName() + ", " +
-				// payment.getDescription()+ " = " + total + " " +
-				// payment.getQuoteExpression());
 			}
 
 			return total;
@@ -234,38 +237,68 @@ public abstract class QuoteCalculator {
 				double amount) throws AonException {
 
 			final double quote = getQuote(payment, start, end, amount);
-			if (quote == 0) {
-				return 0.00;
-			}
+
+			// if (quote == 0) {
+			// return 0.00;
+			// }
 
 			this.cgcBase = null;
 			this.cgpBase = null;
 
+			String name = payment.getName();
+			if (!StringUtils.isBlank(name)) {
+				bases.put(name, quote);
+				add(String.format("BASE_%s", name), quote, context, start, end);
+				if (AonStringUtils.equals(MATERNITY.getName(), name)
+						|| AonStringUtils.equals(ERE.getName(), name))
+					return quote;
+
+			}
+
 			PaymentType paymentType = payment.getType();
+			if ( paymentType == null )
+				paymentType = PaymentType.CRA_0001;
 
 			paymentType.accept(new PaymentTypeVisitor() {
 
 				@Override
 				public void visitOther(PaymentType type) {
+					add(CGC_BASE_RAW.getName(), quote, context, start, end);
+					limit(CGC_BASE.getName(), CGC_BASE_RAW.getName(),
+							CGC_BASE_MIN.getName(), CGC_BASE_MAX.getName(),
+							context, start, end);
 					GeneralQuote.this.rawCgcBase += quote;
 				}
 
 				@Override
 				public void visitStructuralHours(PaymentType paymentType) {
+					add(STRUCTURAL_OVERTIME_BASE.getName(), quote, context,
+							start, end);
 					GeneralQuote.this.structuralBase += quote;
 				}
 
 				@Override
 				public void visitNonStructuralHours(PaymentType paymentType) {
+					add(NON_STRUCTURAL_OVERTIME_BASE.getName(), quote, context,
+							start, end);
 					GeneralQuote.this.nonStructuralBase += quote;
 				}
 
 				@Override
 				public void visitSalaryInKind(PaymentType paymentType) {
+					add(CGC_BASE_RAW.getName(), quote, context, start, end);
+					limit(CGC_BASE.getName(), CGC_BASE_RAW.getName(),
+							CGC_BASE_MIN.getName(), CGC_BASE_MAX.getName(),
+							context, start, end);
 					GeneralQuote.this.rawCgcBase += quote;
 				}
 
 			});
+
+			add(CGP_BASE_RAW.getName(), quote, context, start, end);
+			limit(CGP_BASE.getName(), CGP_BASE_RAW.getName(),
+					CGP_BASE_MIN.getName(), CGP_BASE_MAX.getName(),
+					context, start, end);
 
 			SalaryType salaryType = payment.getSalaryType();
 			salaryType.accept(new SalaryTypeVisitor<Object>() {
@@ -296,15 +329,7 @@ public abstract class QuoteCalculator {
 					return null;
 				}
 			});
-			String name = payment.getName();
-			if (!StringUtils.isBlank(name)) {
-				bases.put(name, quote);
-				context.setVariable(String.format("BASE_%s", name), quote,
-						start, end);
-				// System.out.printf("%s : %f [[%TF..%TF][%f] %s, %s  \r\n",
-				// name, quote, start, end, amount, payment.getDescription(),
-				// payment.getQuoteExpression() );
-			}
+
 			return quote;
 		}
 
@@ -449,7 +474,6 @@ public abstract class QuoteCalculator {
 		if (quoteCalculator != null) {
 			return quoteCalculator;
 		}
-		
 
 		SalaryType salaryType = ctx.getSalaryType();
 
@@ -490,50 +514,25 @@ public abstract class QuoteCalculator {
 		return quoteCalculator;
 	}
 
-	protected double getLimitedCgcBase(double rawCgcBase,
+	protected double getSum(ContextVariable contextVariable,
 			ExpressionContext ctx, Date start, Date end)
 			throws ExpressionException {
+		Double total = 0.00;
 		
-		ctx.setVariable(CGC_BASE, rawCgcBase, start, end);
-		
-		Double minLimit = getLimit(CGC_BASE_MIN.getName(), ctx, start, end);
-		
-
-		if (minLimit != null && rawCgcBase < minLimit) {
-			return minLimit;
+		List<ITimedVariable<Double>> vars = ctx.getVariables(contextVariable, start, end);
+		for ( ITimedVariable<Double> var : vars  ){
+			try {
+				total += var.getValue(var.getPeriod());
+			} catch ( Exception e ) {
+			}
 		}
-
-		Double maxLimit = getLimit(CGC_BASE_MAX.getName(), ctx, start, end);
-
-		if (maxLimit != null && rawCgcBase > maxLimit) {
-			return maxLimit;
-		}
-
-		return rawCgcBase;
+		
+		return total;
 	}
 
-	protected double getLimitedCgpBase(double rawCgpBase,
-			ExpressionContext ctx, Date start, Date end)
-			throws ExpressionException {
 
-		ctx.setVariable(CGP_BASE, rawCgpBase, start, end);
 
-		Double minLimit = getLimit(CGP_BASE_MIN.getName(), ctx, start, end);
-
-		if (minLimit != null && rawCgpBase < minLimit) {
-			return minLimit;
-		}
-
-		Double maxLimit = getLimit(CGP_BASE_MAX.getName(), ctx, start, end);
-
-		if (maxLimit != null && rawCgpBase > maxLimit) {
-			return maxLimit;
-		}
-
-		return rawCgpBase;
-	}
-
-	private Double getLimit(String expression,
+	private static Double getLimit(String expression,
 			ExpressionContext expressionContext, Date start, Date end)
 			throws ExpressionException {
 
@@ -546,15 +545,76 @@ public abstract class QuoteCalculator {
 		if (limits == null || limits.size() == 0) {
 			return null;
 		}
-		
+
 		Double limit = 0.00;
 		for (ITimedResult<Double> result : limits) {
-			limit+=result.getValue();
+			limit += result.getValue();
 		}
-
 
 		return limit;
 	}
-	
+
+	private static void add(String name, Double value, ExpressionContext ctx,
+			Date start, Date end) {
+
+		List<ITimedVariable<Double>> vars = ctx.getVariables(name, start, end);
+
+		List<Period> valuePeriods = new ArrayList<Period>();
+
+		long valueDays = AonDateUtils.getDaysBetweenDates(start, end) + 1;
+
+		Double valueDay = value / valueDays;
+
+		for (ITimedVariable<Double> var : vars) {
+			Period period = var.getPeriod();
+			valuePeriods.add(period);
+			Double oldValue = var.getValue(period);
+			long days = AonDateUtils.getDaysBetweenDates(period.getStart(),
+					period.getEnd()) + 1;
+			ctx.putVariable(name, new TimedObject<Double>(oldValue
+					+ (valueDay * days), period));
+		}
+
+		List<Period> nullPeriods = Period.sub(new Period(start, end),
+				valuePeriods);
+		for (Period period : nullPeriods) {
+			long days = AonDateUtils.getDaysBetweenDates(period.getStart(),
+					period.getEnd()) + 1;
+			ctx.putVariable(name, new TimedObject<Double>(valueDay * days,
+					period));
+		}
+
+	}
+
+	private static void limit(String limitName, String rawName,
+			String minExpression, String maxExpression, ExpressionContext ctx,
+			Date start, Date end) {
+
+		List<ITimedVariable<Double>> raws = ctx.getVariables(rawName, start,
+				end);
+		for (ITimedVariable<Double> raw : raws) {
+			Period rawPeriod = raw.getPeriod();
+			Double rawValue = raw.getValue(raw.getPeriod());
+			try {
+				Double minValue = getLimit(minExpression, ctx,
+						rawPeriod.getStart(), rawPeriod.getEnd());
+				if (rawValue <= minValue) {
+					ctx.putVariable(limitName, new TimedObject<Double>(
+							minValue, rawPeriod));
+				} else {
+					Double maxValue = getLimit(maxExpression, ctx,
+							rawPeriod.getStart(), rawPeriod.getEnd());
+					ctx.putVariable(
+							limitName,
+							new TimedObject<Double>(Math
+									.min(rawValue, maxValue), rawPeriod));
+				}
+			} catch (Exception e) {
+				ctx.putVariable(limitName, new TimedObject<Double>(
+						rawValue, rawPeriod));
+			}
+		}
+
+	}
 
 }

@@ -7,6 +7,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_START;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
@@ -42,7 +43,9 @@ import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase.Extra;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.deduction.IDeduction;
@@ -102,6 +105,13 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
+		
+
+		cleanSystemPayments(aonContext);
+//		addSSRegimePayment(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), PaymentType.CRA_0004 , 
+//				"TRACE('DIAS_MATERNIDAD=%d\r\n',DIAS_MATERNIDAD);0.00", 
+//				"DIAS_MATERNIDAD * BASE_REGULADORA" ,
+//				"0.00");
 
 		//@formatter:off
 		ContractRecord contract = newContract(aonContext, 
@@ -112,10 +122,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				new String[] {						
 				"BASE_CGC * 0.10", 
 				"BASE_CGP * 0.05",
-				"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				"BASE_IRPF * 0.00/100" 
 				}, null);
 		//@formatter:on
-		
 		
 		PaymentConceptRecord maternity = addConcept(aonContext, MATERNITY.getName());
 		addPayment(aonContext, contract, maternity, "DIAS_MATERNIDAD * 0", "DIAS_MATERNIDAD * BASE_REGULADORA");
@@ -147,8 +156,14 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSystemPayments(aonContext);
+//		addSSRegimePayment(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), PaymentType.CRA_0004 , 
+//				"TRACE('DIAS_MATERNIDAD=%d\r\n',DIAS_MATERNIDAD);0.00", 
+//				"DIAS_MATERNIDAD * BASE_REGULADORA" ,
+//				"0.00");
+
 		//@formatter:off
-		ContractRecord contract = newContract(aonContext, 
+		ContractRecord contract = newContract(aonContext,
 				new String[] {
 				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"

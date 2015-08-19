@@ -26,6 +26,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.SystemCost.SYSTEM_COST;
 import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
+import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAYMENT;
 import static com.esferalia.aon.salary.enumeration.SalaryType.EXTRA;
@@ -67,6 +68,7 @@ import com.esferalia.aon.jooq.tables.AgreementLevelData;
 import com.esferalia.aon.jooq.tables.AgreementPayment;
 import com.esferalia.aon.jooq.tables.BonusConcept;
 import com.esferalia.aon.jooq.tables.ContractBonus;
+import com.esferalia.aon.jooq.tables.SystemPayment;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
@@ -202,6 +204,14 @@ public abstract class AbstractSQLTestCase {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
+	protected final void cleanSystemPayments(AONContext aonContext) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+
+		aonContext.getDslContext().delete(SYSTEM_PAYMENT).execute();
+
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
+
 	protected final void addCCCCost(AONContext aonContext, CCCType cccType,
 			Date startDate, String code, DeductionType type, String expression) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
@@ -237,6 +247,37 @@ public abstract class AbstractSQLTestCase {
 				.set(SYSTEM_COST.EXPRESSION, expression).execute();
 
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
+
+	protected final void addSSRegimePayment(AONContext aonContext,
+			SSRegimeType ssRegimetype, Date startDate, PaymentType type,
+			String expression, String quoteExpression, String irpfExpression) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+
+		aonContext
+				.getDslContext()
+				.insertInto(SYSTEM_PAYMENT)
+
+				.set(SYSTEM_PAYMENT.START_DATE, startDate)
+				.set(SYSTEM_PAYMENT.EXPRESSION, expression)
+				.set(SYSTEM_PAYMENT.IRPF_EXPRESSION, irpfExpression)
+				.set(SYSTEM_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
+				.set(SYSTEM_PAYMENT.DOMAIN, (-1) * ssRegimetype.ordinal())
+				.set(SYSTEM_PAYMENT.TYPE,
+						(byte) (type != null ? type.ordinal()
+								: PaymentType.CRA_0001.ordinal()))
+				.set(SYSTEM_PAYMENT.SALARY_TYPE,
+						(byte) SalaryType.SALARY.ordinal())
+
+				.execute();
+
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
+
+	protected final void addSSRegimePayment(AONContext aonContext,
+			SSRegimeType ssRegimetype, Date startDate,
+			PaymentType type, String expression) {
+		addSSRegimePayment(aonContext, ssRegimetype, startDate, type, expression, ContextVariable.ALL, ContextVariable.ALL);
 	}
 
 	public static String getDbPort() {
@@ -437,22 +478,20 @@ public abstract class AbstractSQLTestCase {
 	public static AgreementExtraRecord addExtra(AONContext aonContext,
 			AgreementPaymentRecord payment, Date startDate, Extra extra) {
 
-		aonContext.getDslContext()
-		.update(AGREEMENT_PAYMENT)
-		.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P/12")
-		.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) EXTRA.ordinal())
-		.set(AGREEMENT_PAYMENT.MONTH, (byte) extra.month.ordinal())
-		.where(AGREEMENT_PAYMENT.ID.eq(payment.getId()))
-		.execute();
-		
+		aonContext.getDslContext().update(AGREEMENT_PAYMENT)
+				.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P/12")
+				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) EXTRA.ordinal())
+				.set(AGREEMENT_PAYMENT.MONTH, (byte) extra.month.ordinal())
+				.where(AGREEMENT_PAYMENT.ID.eq(payment.getId())).execute();
+
 		return aonContext.getDslContext().insertInto(AGREEMENT_EXTRA)
-					.set(AGREEMENT_EXTRA.DOMAIN, payment.getDomain())
-					.set(AGREEMENT_EXTRA.AGREEMENT, payment.getAgreement())
-					.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, payment.getId())
-					.set(AGREEMENT_EXTRA.START_DATE, extra.start)
-					.set(AGREEMENT_EXTRA.END_DATE, extra.end)
-					.set(AGREEMENT_EXTRA.ISSUE_DATE, extra.issue).returning()
-					.fetchOne();
+				.set(AGREEMENT_EXTRA.DOMAIN, payment.getDomain())
+				.set(AGREEMENT_EXTRA.AGREEMENT, payment.getAgreement())
+				.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, payment.getId())
+				.set(AGREEMENT_EXTRA.START_DATE, extra.start)
+				.set(AGREEMENT_EXTRA.END_DATE, extra.end)
+				.set(AGREEMENT_EXTRA.ISSUE_DATE, extra.issue).returning()
+				.fetchOne();
 	}
 
 	public static void addPayments(AONContext aonContext,

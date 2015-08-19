@@ -3068,13 +3068,13 @@ public class SQLContractSalaryCalculatorContext extends
 
 		Period period = new Period(startDate, endDate);
 
-		ActiveTimedVariable<Double> cgcBase = new ActiveTimedVariable<Double>() {
-			@Override
-			public Double getValue(Period p) {
-				throw new ExpressionExceptionWrapper(
-						new UndefinedTotalPaymentException());
-			}
-		};
+//		ActiveTimedVariable<Double> cgcBase = new ActiveTimedVariable<Double>() {
+//			@Override
+//			public Double getValue(Period p) {
+//				throw new ExpressionExceptionWrapper(
+//						new UndefinedTotalPaymentException());
+//			}
+//		};
 
 		ActiveTimedVariable<Date> start = new ActiveTimedVariable<Date>() {
 			@Override
@@ -3155,7 +3155,7 @@ public class SQLContractSalaryCalculatorContext extends
 		this.implicitExpressionContext.putVariable(START, start);
 		this.implicitExpressionContext.putVariable(END, end);
 
-		this.implicitExpressionContext.putVariable(CGC_BASE, cgcBase);
+//		this.implicitExpressionContext.putVariable(CGC_BASE, cgcBase);
 
 		this.implicitExpressionContext.putVariable(SENIORITY,
 				new ActiveTimedVariable<Integer>() {
