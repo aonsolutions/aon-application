@@ -472,16 +472,16 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			expressionContext.setVariable(IRPF_BASE,
 					taxCalculator.getIrpfBase(), irpfDate, irpfDate);
 
-			try {
-				Double cgcBase = quoteCalculator.getCgcBase();
-				Double ereBase = quoteCalculator.getEreBase();
-				Double maternityBase = quoteCalculator.getMaternityBase();
-				if (cgcBase != null && maternityBase != null && ereBase != null)
-					expressionContext.setVariable(CGC_BASE, cgcBase
-							- maternityBase - ereBase, start, end);
-			} catch (UndefinedVariablesException e) {
-				onInvalidData(e.getVariableNames());
-			}
+//			try {
+//				Double cgcBase = quoteCalculator.getCgcBase();
+//				Double ereBase = quoteCalculator.getEreBase();
+//				Double maternityBase = quoteCalculator.getMaternityBase();
+//				if (cgcBase != null && maternityBase != null && ereBase != null)
+//					expressionContext.setVariable(CGC_BASE, cgcBase
+//							- maternityBase - ereBase, start, end);
+//			} catch (UndefinedVariablesException e) {
+//				onInvalidData(e.getVariableNames());
+//			}
 
 			for (UndefPayment undefTotalPayment : undefTotalPayments) {
 				try {
@@ -518,12 +518,17 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			} catch (UndefinedVariablesException e) {
 				onInvalidData(e.getVariableNames());
 			}
-			salaryBuilder.setCgcBase(cgcBase);
 			Double ereBase = quoteCalculator.getEreBase();
+			if ( ereBase != null ) 
+				cgcBase += ereBase;
 			Double maternityBase = quoteCalculator.getMaternityBase();
-			if (cgcBase != null && maternityBase != null && ereBase != null)
-				expressionContext.setVariable(CGC_BASE,
-						cgcBase - maternityBase - ereBase, start, end);
+			if ( maternityBase != null ) 
+				cgcBase += maternityBase;
+			salaryBuilder.setCgcBase(cgcBase);
+
+//			if (cgcBase != null && maternityBase != null && ereBase != null)
+//				expressionContext.setVariable(CGC_BASE,
+//						cgcBase - maternityBase - ereBase, start, end);
 
 			Double cgpBase = quoteCalculator.getRawCgpBase();
 			try {
@@ -531,10 +536,14 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			} catch (UndefinedVariablesException e) {
 				onInvalidData(e.getVariableNames());
 			}
+			if ( ereBase != null ) 
+				cgpBase += ereBase;
+			if ( maternityBase != null ) 
+				cgpBase += maternityBase;
 			salaryBuilder.setCgpBase(cgpBase);
-			if (cgpBase != null && maternityBase != null && ereBase != null )
-				expressionContext.setVariable(CGP_BASE,
-						cgpBase - maternityBase -ereBase, start, end);
+//			if (cgpBase != null && maternityBase != null && ereBase != null )
+//				expressionContext.setVariable(CGP_BASE,
+//						cgpBase - maternityBase -ereBase, start, end);
 			Double nonStructuralBase = quoteCalculator.getNonStructuralBase();
 			salaryBuilder.setNonHExtraBase(nonStructuralBase);
 			if (nonStructuralBase != null)
@@ -963,6 +972,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 	private Double resolveDeduction(ExpressionContext ctx,
 			IContractDeduction d, Date start, Date end)
 			throws ExpressionException {
+		
 		List<ITimedResult<Double>> results = ctx.addExpression(d, start, end,
 				Double.class);
 

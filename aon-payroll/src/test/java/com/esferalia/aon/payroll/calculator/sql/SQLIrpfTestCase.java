@@ -225,9 +225,17 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 					* (12 - month), 3), result.getDeducciblesExpenses());
 		});
 
-		test(asserts, new String[] {}, new String[] { "BASE_CGC * 0.10",
-				"BASE_CGP * 0.05", "BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
-				"BASE_IRPF * PORCENTAJE_IRPF/100" }, new Extra[] { new Extra() {
+		test(asserts, 
+				new String[] {}, 
+				new String[] { 
+				"TRACE('BASE_CGC=%f\r\n',BASE_CGC);BASE_CGC * 0.10",
+				"TRACE('BASE_CGP=%f\r\n',BASE_CGP);BASE_CGP * 0.05", 
+				"BASE_ESTR * 0.10", 
+				"BASE_NESTR * 0.20",
+				"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, 
+				new Extra[] { 
+				new Extra() {
 			{
 				this.expression = "1000.00 * DIAS_TRABAJADOS / DIAS_MES ";
 				this.month = Month.DECEMBER;
@@ -268,10 +276,12 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		});
 
 		test(asserts,
-				new String[] { "BRUTO(1000.00 * DIAS_TRABAJADOS / DIAS_MES )", },
-				new String[] { "BASE_CGC * 0.10", "BASE_CGP * 0.05",
-						"BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
-						"BASE_IRPF * PORCENTAJE_IRPF/100" }, new Extra[] {
+				new String[] { 
+				"BRUTO(1000.00 * DIAS_TRABAJADOS / DIAS_MES )", },
+				new String[] { 
+				"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+				"BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
+				"BASE_IRPF * PORCENTAJE_IRPF/100" }, new Extra[] {
 						new Extra() {
 							{
 								this.expression = "P_0";

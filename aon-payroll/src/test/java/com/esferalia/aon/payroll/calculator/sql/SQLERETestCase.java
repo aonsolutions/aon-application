@@ -370,7 +370,6 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 		AONContext aonContext = new AONContext(connection);
 
 		
-		
 		ContractRecord contract = newContract(aonContext,
 			getFirstDayOfYear(getToday()), new HashMap<String, String>() {
 				{
@@ -400,7 +399,7 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 				});
 		
 		PaymentConceptRecord ere = addConcept(aonContext, ERE.getName());
-		addPayment(aonContext, contract, ere, null , "DIAS_ERE * BASE_REGULADORA");
+		addPayment(aonContext, contract, ere, "0.00" , "DIAS_ERE * BASE_REGULADORA");
 		
 
 		Date startDate = getFirstDayOfMonth(getToday());
@@ -413,11 +412,11 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 				new SalaryBuilder(){
 				}).calculate(ctx);
 
-		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
-				.getSalaryPayments()) {
-			System.out.println(payment.getName() + " = " + payment.getAmount()
-					+ " (" + payment.getExpression() + ")");
-		}
+//		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+//				.getSalaryPayments()) {
+//			System.out.println(payment.getName() + " = " + payment.getAmount()
+//					+ " (" + payment.getExpression() + ")");
+//		}
 
 		Assert.assertEquals(
 				(1750.00 * 1.10) * (get(endDate, DAY_OF_MONTH) - (ereDays))
