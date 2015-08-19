@@ -225,12 +225,12 @@
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
-    <dependency>
+    <!--dependency>
       <groupId>com.esferalia.aon</groupId>
       <artifactId>aon.gwt.office</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
-    </dependency>
+    </dependency-->
     <dependency>
       <groupId>com.esferalia.aon</groupId>
       <artifactId>aon.gwt.connect</artifactId>
