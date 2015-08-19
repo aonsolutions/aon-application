@@ -90,21 +90,22 @@ public class Bases {
 								.getFechaHasta())));
 				if (!montly)
 					return;
-	
+
 				DatoBuilder datoBuilder = new DatoBuilder()
 						.setCodigo(datoSolicitado.getCodigo())
 						.setTipo(datoSolicitado.getTipoDato()).setValor("M");
 				tramoBuilder.addDato(datoBuilder.create());
-			} catch ( NoSuchContextVariableException e ){
+			} catch (NoSuchContextVariableException e) {
 				for (BasesCallback cb : cbs)
 					cb.noSuchDato(salary, tramo, datoSolicitado, tramoBuilder,
 							true);
-				
+
 			}
 
 		}
 
-		protected boolean get(Salary salary, Period p) throws NoSuchContextVariableException {
+		protected boolean get(Salary salary, Period p)
+				throws NoSuchContextVariableException {
 			List<ContextData> datas = salary.getContextData().get(
 					MONTHLY_SALARY.getName());
 
@@ -175,6 +176,29 @@ public class Bases {
 		}
 	}
 
+	private static class UnMatchedContextVariableException extends Exception {
+
+		private ContextData contextData;
+		private ContextVariable contextVariable;
+
+		public UnMatchedContextVariableException(
+				ContextVariable contextVariable, ContextData contextData) {
+			super();
+			this.contextVariable = contextVariable;
+			this.contextData = contextData;
+
+		}
+
+		public ContextData getContextData() {
+			return contextData;
+		}
+
+		public ContextVariable getContextVariable() {
+			return contextVariable;
+		}
+
+	}
+
 	private static abstract class HContextCretaData extends CContextCretaData {
 
 		public HContextCretaData(ContextVariable contextVariable) {
@@ -210,6 +234,10 @@ public class Bases {
 				for (BasesCallback cb : cbs)
 					cb.noSuchDato(salary, tramo, datoSolicitado, tramoBuilder,
 							optional);
+			} catch (UnMatchedContextVariableException e) {
+				for (BasesCallback cb : cbs)
+					cb.unMatchedContextVariable(e.getContextVariable(),
+							e.getContextData(), datoSolicitado, tramo);
 			}
 		}
 
@@ -270,6 +298,10 @@ public class Bases {
 				String right, String... wrongs) {
 		};
 
+		default void unMatchedContextVariable(ContextVariable var,
+				ContextData contextData, Dato datoSolicitado, Tramo tramo) {
+		};
+
 		default void zeroDato(ContextVariable var, Dato datoSolicitado,
 				Tramo tramo, Salary salary) {
 		};
@@ -278,45 +310,44 @@ public class Bases {
 				Dato datoSolicitado, TramoBuilder tramoBuilder, boolean optional) {
 		};
 	}
-	
-	private static class DefaultsCallback implements BasesCallback{
-		
-		private Map<String, String> defaults ;
-		
-		public DefaultsCallback(){
+
+	private static class DefaultsCallback implements BasesCallback {
+
+		private Map<String, String> defaults;
+
+		public DefaultsCallback() {
 			defaults = new HashMap<String, String>();
 		}
-		
+
 		void add(String codigo, String valor) {
 			defaults.put(codigo, valor);
 		}
-		
+
 		@Override
 		public void noSuchDato(Salary salary, Tramo tramo, Dato datoSolicitado,
 				TramoBuilder tramoBuilder, boolean optional) {
 
-			if ( defaults.containsKey(datoSolicitado.getCodigo())){
+			if (defaults.containsKey(datoSolicitado.getCodigo())) {
 				String valor = defaults.get(datoSolicitado.getCodigo());
 				DatoBuilder datoBuilder = new DatoBuilder();
 				datoBuilder.setCodigo(datoSolicitado.getCodigo());
 				datoBuilder.setTipo(datoSolicitado.getTipoDato());
 				datoBuilder.setValor(valor);
 				tramoBuilder.addDato(datoBuilder.create());
-				System.err.printf(
-						"WARNING: %s for %s (%s) [%s-%s-%s...%s-%s-%s] is default value %s \r\n",
-						datoSolicitado.getCodigo(), 
-						salary.getEmployeeSSNumber(), 
-						salary.getEmployeeDocument(), 
-						tramo.getFechaDesde().getDia(),
-						tramo.getFechaDesde().getMes(), 
-						tramo.getFechaDesde().getAnho(), 
-						tramo.getFechaHasta().getDia(), 
-						tramo.getFechaHasta().getMes(), 
-						tramo.getFechaHasta().getAnho(),
-						valor);
+				System.err
+						.printf("WARNING: %s for %s (%s) [%s-%s-%s...%s-%s-%s] is default value %s \r\n",
+								datoSolicitado.getCodigo(), salary
+										.getEmployeeSSNumber(), salary
+										.getEmployeeDocument(), tramo
+										.getFechaDesde().getDia(), tramo
+										.getFechaDesde().getMes(), tramo
+										.getFechaDesde().getAnho(), tramo
+										.getFechaHasta().getDia(), tramo
+										.getFechaHasta().getMes(), tramo
+										.getFechaHasta().getAnho(), valor);
 			}
 		}
-		
+
 	}
 
 	private static class Errors implements BasesCallback {
@@ -366,27 +397,24 @@ public class Bases {
 				Tramo tramo, Salary salary) {
 			System.err.println(String.format(
 					"WARNING: %s (%s) for %s [%s-%s-%s...%s-%s-%s] is zero",
-					var.getName(), 
-					datoSolicitado.getCodigo(), 
-					salary.getEmployeeName(), 
-					tramo.getFechaDesde().getDia(),
-					tramo.getFechaDesde().getMes(), 
-					tramo.getFechaDesde().getAnho(), 
-					tramo.getFechaHasta().getDia(), 
-					tramo.getFechaHasta().getMes(), 
-					tramo.getFechaHasta().getAnho()));
-//			for (Entry<String, List<ContextData>> entry : salary
-//					.getContextData().entrySet()) {
-//				for (ContextData data : entry.getValue())
-//					System.err
-//							.println(String
-//									.format("         %s for %s [%3$td-%3$tm-%3$tY...%4$td-%4$tm-%4$tY] is %s",
-//											entry.getKey(),
-//											salary.getEmployeeName(),
-//											data.getStartDate(),
-//											data.getEndDate(),
-//											data.getExpression()));
-//			}
+					var.getName(), datoSolicitado.getCodigo(), salary
+							.getEmployeeName(), tramo.getFechaDesde().getDia(),
+					tramo.getFechaDesde().getMes(), tramo.getFechaDesde()
+							.getAnho(), tramo.getFechaHasta().getDia(), tramo
+							.getFechaHasta().getMes(), tramo.getFechaHasta()
+							.getAnho()));
+			// for (Entry<String, List<ContextData>> entry : salary
+			// .getContextData().entrySet()) {
+			// for (ContextData data : entry.getValue())
+			// System.err
+			// .println(String
+			// .format("         %s for %s [%3$td-%3$tm-%3$tY...%4$td-%4$tm-%4$tY] is %s",
+			// entry.getKey(),
+			// salary.getEmployeeName(),
+			// data.getStartDate(),
+			// data.getEndDate(),
+			// data.getExpression()));
+			// }
 		};
 
 		@Override
@@ -528,16 +556,22 @@ public class Bases {
 				for (BasesCallback cb : cbs)
 					cb.noSuchDato(salary, tramo, datoSolicitado, tramoBuilder,
 							optional);
+			} catch (UnMatchedContextVariableException e) {
+				for (BasesCallback cb : cbs)
+					cb.unMatchedContextVariable(e.getContextVariable(),
+							e.getContextData(), datoSolicitado, tramo);
 			}
 		}
 
 		public Double get(Salary salary, Fecha desde, Fecha hasta)
-				throws NoSuchContextVariableException {
+				throws NoSuchContextVariableException,
+				UnMatchedContextVariableException {
 			return get(salary, new Period(toDate(desde), toDate(hasta)));
 		}
 
 		protected Double get(Salary salary, Period p)
-				throws NoSuchContextVariableException {
+				throws NoSuchContextVariableException,
+				UnMatchedContextVariableException {
 			List<ContextData> datas = salary.getContextData().get(
 					contextVariable.getName());
 			if (datas == null)
@@ -547,6 +581,11 @@ public class Bases {
 			boolean found = false;
 
 			for (ContextData data : datas) {
+				if (Period.compare(data.getStartDate(), p.getStart()) > 0
+						|| Period.compare(data.getEndDate(), p.getEnd()) > 0)
+					throw new UnMatchedContextVariableException(
+							contextVariable, data);
+
 				Period intersect = p.intersect(new Period(data.getStartDate(),
 						data.getEndDate()));
 				if (intersect == null)
@@ -604,11 +643,12 @@ public class Bases {
 
 			put("01", new MandatoryHContextCretaData(WORKED_HOURS) {
 				@Override
-				public Double get(Salary salary, Fecha desde, Fecha hasta) 
-						throws NoSuchContextVariableException {
+				public Double get(Salary salary, Fecha desde, Fecha hasta)
+						throws NoSuchContextVariableException,
+						UnMatchedContextVariableException {
 					try {
 						return super.get(salary, desde, hasta);
-					} catch ( NoSuchContextVariableException e) {
+					} catch (NoSuchContextVariableException e) {
 						return getWorkedHours(salary, desde, hasta);
 					}
 				};
@@ -616,6 +656,10 @@ public class Bases {
 			put("02", new OptionalHContextCretaData(EXTRA_HOURS));
 
 			put("51", new MonthlySalaryCretaData());
+
+			put("509", new MandatoryCContextCretaData(CGC_BASE));
+			put("603", new MandatoryCContextCretaData(CGP_BASE));
+			put("613", new MandatoryCContextCretaData(CGP_BASE));
 		}
 	};
 
@@ -1080,6 +1124,13 @@ public class Bases {
 				.withDescription("Skip previous bases.")
 				.create("b");
 		
+		
+		Option skipExisting =  OptionBuilder.withLongOpt("--skip-existing")
+				.withDescription("Informar únicamente de las bases y resto de datos de trabajadores que sufren variaciones o de las de nuevos trabajadores.")
+				.create();
+		
+		
+		
 
 		Option pretty =  getPrettyOption();
 
@@ -1094,6 +1145,7 @@ public class Bases {
 		.addOption(trabajadoresTramosFile)
 		.addOption(respuestaFile)
 		.addOption(indicador51)
+		.addOption(skipExisting)
 		;
 		//@formatter:on
 
@@ -1123,12 +1175,11 @@ public class Bases {
 
 			Errors errors = new Errors();
 			Comments comment = new Comments(xsw);
-			
-			DefaultsCallback defaultsCallback = new DefaultsCallback();					
-			if ( cmd.hasOption(indicador51.getLongOpt()) ) {
+
+			DefaultsCallback defaultsCallback = new DefaultsCallback();
+			if (cmd.hasOption(indicador51.getLongOpt())) {
 				defaultsCallback.add("51", "M");
 			}
-			
 
 			InputStream is = null;
 			net.aonsolutions.tgss.creta.jaxb.bases.Bases bases = null;
