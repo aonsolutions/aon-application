@@ -186,21 +186,8 @@ public class ConsumptionPage extends Composite{
 		});
 	}
 	//------------------------------ Actions
-	
-	private void download(String type) {
-		if(type.equals(PDF)){
-			// TODO descargar en pdf.
-			Window.alert(PDF);
-			downloadPdf();
-		}
-		else if(type.equals(EXCEL)){
-			// TODO descargar en excel.
-			Window.alert(EXCEL);
-			downloadExcel();
-		}
-	}
-	
-	private void downloadExcel(){
+
+	private void download(String type){
 		Integer size = 0;
 		TemplateInfo templateInfo = null;
 		for (TemplateInfo ti : templateList.getList()) {
@@ -223,13 +210,10 @@ public class ConsumptionPage extends Composite{
 		
 		
 		fileDownloadURL = fileDownloadURL + "&size=" + warehouses.size()
-							+ "&detail=" + detail;	
+							+ "&detail=" + detail
+							+ "&file_type="+type;	
 						
 		Window.open( fileDownloadURL, "_blank",null);
-	}
-	
-	private void downloadPdf(){
-		// TODO
 	}
 	
 	private void clean(){

@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
@@ -31,6 +32,13 @@ import com.esferalia.aon.gwt.template.jooq.DBConsumption;
 import com.esferalia.aon.gwt.template.shared.ConsumptionItem;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 
 @WebServlet(name = "DownloadTemplatesAggregateConsumption", urlPatterns = { "/aon_gwt_template/gwt_download_aggregate_consumption/*" })
 public class DownloadAggregateConsumptionServlet extends HttpServlet {
@@ -39,7 +47,9 @@ public class DownloadAggregateConsumptionServlet extends HttpServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	private static final String PDF = "pdf";
+	private static final String EXCEL = "excel";
+	
 	@Override
     protected void doGet(HttpServletRequest p_request, HttpServletResponse p_response)throws ServletException, IOException{
 
@@ -50,6 +60,7 @@ public class DownloadAggregateConsumptionServlet extends HttpServlet {
         Integer domainId = Integer.parseInt(domain_id);
         Boolean detail = p_request.getParameter("detail").equalsIgnoreCase("True");
         String only_negative = p_request.getParameter("only_negative");
+        String fileType = p_request.getParameter("file_type");
 
         Vector<Warehouse> warehouses = new Vector<Warehouse>();
         
@@ -113,14 +124,18 @@ public class DownloadAggregateConsumptionServlet extends HttpServlet {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+	
 		
         File archivoXLS = new File("consumo" + ".xls" );
+        File archivoPDF = new File("consumo" + ".pdf" );
         if(archivoXLS.exists()) archivoXLS.delete();
-        archivoXLS.createNewFile();        
+        if(archivoPDF.exists()) archivoPDF.delete();
+        archivoXLS.createNewFile();     
+        archivoPDF.createNewFile();
+        
         HSSFWorkbook libro = new HSSFWorkbook();
         FileOutputStream archivo = new FileOutputStream(archivoXLS);
-        
+        Integer columns = aux.getColumns().size();
         for (int index = 0; index < size; index++) {
         	
         	ConsumptionItem consumptionItem = DBConsumption.getTwoLastInventory(domain, domainId, warehouses.get(index).getId());
@@ -130,7 +145,7 @@ public class DownloadAggregateConsumptionServlet extends HttpServlet {
         	
         	HSSFSheet hoja = libro.createSheet("Plantilla "+ index);
         
-        	Integer columns = aux.getColumns().size();
+        	//Integer columns = aux.getColumns().size();
         	hoja.addMergedRegion(new Region(0,(short)0,0,columns.shortValue()));
         	Row rowInfo = hoja.createRow(0);
         	Row fila = hoja.createRow(1);
@@ -234,17 +249,114 @@ public class DownloadAggregateConsumptionServlet extends HttpServlet {
         		hoja.autoSizeColumn(h);
         	}
         }
-        libro.write(archivo);        
-        archivo.close();
-
-
-        long length = archivoXLS.length();
-        FileInputStream fis = new FileInputStream(archivoXLS);
+        libro.write(archivo);    
         
-        p_response.addHeader("Content-Disposition","attachment; filename=\"" + archivoXLS.getName() +"\"");
-        //p_response.setContentType("application/octet-stream");
-        p_response.setContentType("application/msexcel");
+        if(fileType.equals(PDF)){
+        	
+             HSSFSheet my_worksheet = libro.getSheetAt(0); 
+             // To iterate over the rows
+             Iterator<Row> rowIterator = my_worksheet.iterator();
+             //We will create output PDF document objects at this point
+             
+            Document iText_xls_2_pdf = new Document(PageSize.A4.rotate());
+            try {
+				PdfWriter.getInstance(iText_xls_2_pdf, new FileOutputStream(archivoPDF));
+			} catch (DocumentException e) {
+				e.printStackTrace();
+			}
+            iText_xls_2_pdf.open();
 
+            //we have two columns in the Excel sheet, so we create a PDF table with two columns
+            //Note: There are ways to make this dynamic in nature, if you want to.
+            
+            PdfPTable my_table = new PdfPTable(columns+1);
+            //We will use the object below to dynamically add new data to the table
+            PdfPCell table_cell;
+            //Loop through rows.
+            Integer i = 0;
+            while(rowIterator.hasNext()) {
+                    Row row = rowIterator.next(); 
+                    Iterator<Cell> cellIterator = row.cellIterator();
+                    		
+                            while(cellIterator.hasNext()) {
+                            		if(i == 0){
+                            			Cell cell = cellIterator.next();
+                            		}
+                            		else{
+                            			
+                            		
+                                    Cell cell = cellIterator.next(); //Fetch CELL
+                                    switch(cell.getCellType()) { //Identify CELL type
+                                            //you need to add more code here based on
+                                            //your requirement / transformations
+                                    case Cell.CELL_TYPE_STRING:
+                                            //Push the data from Excel to PDF Cell
+                                             table_cell=new PdfPCell(new Phrase(cell.getStringCellValue()));
+                                             //feel free to move the code below to suit to your needs
+                                             my_table.addCell(table_cell);
+                                            break;
+                                    case Cell.CELL_TYPE_BLANK:
+                                    	//Push the data from Excel to PDF Cell
+                                        table_cell=new PdfPCell();
+                                        //feel free to move the code below to suit to your needs
+                                        my_table.addCell(table_cell);
+                                       break;
+                                    
+                            		case Cell.CELL_TYPE_BOOLEAN:
+                            			//Push the data from Excel to PDF Cell
+                            			String text ="";
+                            			if(cell.getBooleanCellValue())text = "true";
+                            			else text = "false";
+                                		table_cell=new PdfPCell(new Phrase(text));
+                                		//feel free to move the code below to suit to your needs
+                                		my_table.addCell(table_cell);
+                                		break;
+                            		case Cell.CELL_TYPE_FORMULA:
+                            			//Push the data from Excel to PDF Cell
+                            			table_cell=new PdfPCell(new Phrase(cell.getCellFormula()));
+                                		//feel free to move the code below to suit to your needs
+                                		my_table.addCell(table_cell);
+                                		break;
+                            		case Cell.CELL_TYPE_NUMERIC:
+                            			//Push the data from Excel to PDF Cell
+                            			Double d = cell.getNumericCellValue();
+                            			table_cell=new PdfPCell(new Phrase(d.toString()));
+                                		//feel free to move the code below to suit to your needs
+                                		my_table.addCell(table_cell);
+                                		break;
+                            		}	
+                            		}
+                            		i++;
+                                    //next line
+                            }
+            
+            }
+            //Finally add the table to PDF document
+            try {
+				iText_xls_2_pdf.add(my_table);
+			} catch (DocumentException e) {
+				e.printStackTrace();
+			}                       
+            iText_xls_2_pdf.close();   
+
+        }
+        archivo.close();
+        
+        long length;
+        FileInputStream fis;
+        if(fileType.equals(PDF)){
+        	length = archivoPDF.length();
+        	fis = new FileInputStream(archivoPDF);
+        	p_response.addHeader("Content-Disposition","attachment; filename=\"" + archivoPDF.getName() +"\"");
+        	p_response.setContentType("application/pdf");
+        }
+        else{// if(fileType.equals(EXCEL)){
+        	length = archivoXLS.length();
+        	fis = new FileInputStream(archivoXLS);
+ 
+        	p_response.addHeader("Content-Disposition","attachment; filename=\"" + archivoXLS.getName() +"\"");
+        	p_response.setContentType("application/msexcel");
+        }
         if (length > 0 && length <= Integer.MAX_VALUE);
             p_response.setContentLength((int)length);
         ServletOutputStream out = p_response.getOutputStream();
