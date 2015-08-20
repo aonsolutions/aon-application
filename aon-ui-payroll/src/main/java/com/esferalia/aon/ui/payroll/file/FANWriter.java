@@ -71,7 +71,6 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FANWriter implements Serializable {
 	
@@ -639,25 +638,17 @@ public class FANWriter implements Serializable {
 								&& !dat.getIndicadoresPerfil().contains("D") 
 								&& !dat.getIndicadoresPerfil().contains("P") 
 								&& !dat.getIndicadoresPerfil().contains("T")) ){
+					
+					Double decreaseBase = 0.0;
 					if(isContractLeave(contract) || isContractLeaveMaternity(contract)){
-						Double itBase = getITBase(salary);
-						if(isContractLeave(contract)){
-							fanFactory.createEDLBa01Segment(salary.getCommonBase() - itBase, dat);
-							fanFactory.createEDLBa02Segment(salary.getProfessionalBase() - itBase, dat);
-						} else if(isContractLeaveMaternity(contract)){
-							fanFactory.createEDLBa21Segment(salary.getCommonBase() - itBase, dat);
-							fanFactory.createEDLBa22Segment(salary.getProfessionalBase() - itBase, dat);
-						}
+						decreaseBase = getITBase(salary);
 					} else if(isErePartial(salary, salaryDataList) || isEreTotal(salary, salaryDataList)){
-						Double ereBase = getEreBase(salary,salaryDataList);
-						fanFactory.createEDLBa01Segment(salary.getCommonBase() - ereBase, dat);
-						fanFactory.createEDLBa02Segment(salary.getProfessionalBase() - ereBase, dat);
-					} else {
-						fanFactory.createEDLBa01Segment(salary.getCommonBase(), dat);
-						fanFactory.createEDLBa02Segment(salary.getProfessionalBase(), dat);
+						decreaseBase = getEreBase(salary,salaryDataList);
 					}
-						
-						
+					fanFactory.createEDLBa01Segment(salary.getCommonBase()-decreaseBase, dat);
+					fanFactory.createEDLBa02Segment(salary.getProfessionalBase()-decreaseBase, dat);
+					
+					
 					fanFactory.createEDLBa05Segment();
 					fanFactory.createEDLBa06Segment();
 					fanFactory.createEDLBa07Segment();

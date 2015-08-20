@@ -66,14 +66,14 @@ public class FANGeneral implements Serializable, IFanFactory {
 		
 		ContractCode code = getContractCode(salaryDataList, contractDataMap);
 		if(code==null || code.getValue().startsWith("1") || code.getValue().startsWith("4")){
+			Date start = startDate.before(contractStart)?contractStart:startDate;
+			Date end = (contractEnd!=null && endDate.after(contractEnd))?contractEnd:endDate;
+			int availableDays = (int) getAvailableDays(start, end);
+			if(itDays!=null && itDays>0){
+				availableDays = availableDays-itDays; 
+				return (availableDays==0)?null:availableDays;
+			}
 			if( startDate.before(contractStart) || (contractEnd!=null && endDate.after(contractEnd)) ){
-				Date start = startDate.before(contractStart)?contractStart:startDate;
-				Date end = (contractEnd!=null && endDate.after(contractEnd))?contractEnd:endDate;
-				int availableDays = (int) getAvailableDays(start, end);
-				if(itDays!=null && itDays>0){
-					availableDays = availableDays-itDays; 
-					return (availableDays==0)?null:availableDays;
-				}
 				return availableDays;
 			} else {
 				return 30;

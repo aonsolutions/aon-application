@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -225,13 +227,15 @@ public class Extension extends AbstractContractExtension {
 			}
 			try {
 				RegistryAddress address = contract.getPerson().getRegistry().getDefaultAddress();
-				ResourceBundle bundle = ResourceBundle.getBundle(MUNICIPALITIES_BUNDLE_BASE_NAME);
-				setPdfFieldValue(EMPLOYEE_ADDRESS_MUNICIPALITY,bundle.getString(address.getMunicipalityCode()));
-				setPdfFieldValue(EMPLOYEE_ADDRESS_MUNICIPALITY_CODE1,address.getMunicipalityCode().substring(0, 1));
-				setPdfFieldValue(EMPLOYEE_ADDRESS_MUNICIPALITY_CODE2,address.getMunicipalityCode().substring(1, 2));
-				setPdfFieldValue(EMPLOYEE_ADDRESS_MUNICIPALITY_CODE3,address.getMunicipalityCode().substring(2, 3));
-				setPdfFieldValue(EMPLOYEE_ADDRESS_MUNICIPALITY_CODE4,address.getMunicipalityCode().substring(3, 4));
-				setPdfFieldValue(EMPLOYEE_ADDRESS_MUNICIPALITY_CODE5,address.getMunicipalityCode().substring(4, 5));
+				if(StringUtils.isNotBlank(address.getMunicipalityCode())){				
+					ResourceBundle bundle = ResourceBundle.getBundle(MUNICIPALITIES_BUNDLE_BASE_NAME);
+					setPdfFieldValue(EMPLOYEE_ADDRESS_MUNICIPALITY,bundle.getString(address.getMunicipalityCode()));
+					setPdfFieldValue(EMPLOYEE_ADDRESS_MUNICIPALITY_CODE1,address.getMunicipalityCode().substring(0, 1));
+					setPdfFieldValue(EMPLOYEE_ADDRESS_MUNICIPALITY_CODE2,address.getMunicipalityCode().substring(1, 2));
+					setPdfFieldValue(EMPLOYEE_ADDRESS_MUNICIPALITY_CODE3,address.getMunicipalityCode().substring(2, 3));
+					setPdfFieldValue(EMPLOYEE_ADDRESS_MUNICIPALITY_CODE4,address.getMunicipalityCode().substring(3, 4));
+					setPdfFieldValue(EMPLOYEE_ADDRESS_MUNICIPALITY_CODE5,address.getMunicipalityCode().substring(4, 5));
+				}
 			} catch (StringIndexOutOfBoundsException aie) {
 				// do nothing
 			} catch (NullPointerException npe) {
