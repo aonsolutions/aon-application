@@ -153,6 +153,7 @@
 		<module>aon-gwt-fiscal</module>
 		<module>aon-gwt-document</module>
 		<module>aon-gwt-template</module>
+		<module>aon-gwt-office</module>
 
 		<!-- GENERATED -->
 		<module>aon-audabridge-api</module>
@@ -184,8 +185,7 @@
 		<!-- COMMING SOON -->
 		<module>aon-tgss</module>
 		<module>aon-creta</module>
-
-		<module>aon.gwt.office</module>
+		
 	</modules>
 
 	<scm>
