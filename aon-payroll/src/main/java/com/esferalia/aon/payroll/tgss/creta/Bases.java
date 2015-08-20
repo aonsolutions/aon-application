@@ -19,11 +19,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller.Listener;
@@ -270,7 +271,9 @@ public class Bases {
 
 	private static interface BasesCallback {
 
-		default void trabajadorAdded(Trabajador trabajador, Salary salary) {
+		default void trabajadorAdded(
+				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
+				Trabajador trabajadorCreta, Salary salary) {
 		};
 
 		default void unknownSalary(Salary salary) {
@@ -309,6 +312,23 @@ public class Bases {
 		default void noSuchDato(Salary salary, Tramo tramo,
 				Dato datoSolicitado, TramoBuilder tramoBuilder, boolean optional) {
 		};
+	}
+
+	private static class Different extends RuntimeException {
+
+	}
+
+	private static class SkipExisting extends RuntimeException {
+
+	}
+
+	private static class SkipExistingCallback implements BasesCallback {
+		@Override
+		public void trabajadorAdded(
+				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
+				Trabajador trabajadorCreta, Salary salary) {
+			skip(trabajadorAon, trabajadorCreta);
+		}
 	}
 
 	private static class DefaultsCallback implements BasesCallback {
@@ -475,8 +495,10 @@ public class Bases {
 		}
 
 		@Override
-		public void trabajadorAdded(Trabajador trabajador, Salary salary) {
-			trabajadorDataMap.put(trabajador.getNaf(), new TrabajadorData(
+		public void trabajadorAdded(
+				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
+				Trabajador trabajadorCreta, Salary salary) {
+			trabajadorDataMap.put(trabajadorCreta.getNaf(), new TrabajadorData(
 					salary.getEmployeeName(), salary.getEmployeeSSNumber(),
 					salary.getEmployeeDocument()));
 		};
@@ -740,15 +762,17 @@ public class Bases {
 				calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 		Date endDate = calendar.getTime();
 
-		//@formatter:off
-		AON.getSalaryData(ctx, props->
-			props.getCCCProperty().eq(ccc)
-			.and(props.getEndDateProperty().ge(startDate))
-			.and(props.getStartDateProperty().le(endDate))
-			.and(props.getIsSalaryProperty().eq(true))
-		).forEach(salary -> trabajador(liquidacionMesBuilder, salary, trabajadores, cbs));
+		// @formatter:off
+		AON.getSalaryData(
+				ctx,
+				props -> props.getCCCProperty().eq(ccc)
+						.and(props.getEndDateProperty().ge(startDate))
+						.and(props.getStartDateProperty().le(endDate))
+						.and(props.getIsSalaryProperty().eq(true))).forEach(
+				salary -> trabajador(liquidacionMesBuilder, salary,
+						trabajadores, cbs));
 		;
-		//@formatter:on
+		// @formatter:on
 
 		trabajadores.values().forEach(t -> {
 			for (BasesCallback cb : cbs)
@@ -805,13 +829,18 @@ public class Bases {
 			trabajadorBuilder.addTramo(tramoBuilder.create());
 		}
 
-		for (BasesCallback cb : cbs)
-			cb.trabajadorAdded(trabajador, salary);
-
-		liquidacionMesBuilder.add(trabajadorBuilder.create());
-
 		trabajadores.remove(salary.getEmployeeSSNumber());
 
+		net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon = trabajadorBuilder
+				.create();
+		try {
+			for (BasesCallback cb : cbs)
+				cb.trabajadorAdded(trabajadorAon, trabajador, salary);
+
+			liquidacionMesBuilder.add(trabajadorAon);
+		} catch (SkipExisting e) {
+			//
+		}
 	}
 
 	private static void checkTramo(Tramo<?> tramo, Salary salary,
@@ -982,6 +1011,128 @@ public class Bases {
 
 	// ------------------------------------------------------------------------
 
+	private static int compare(Dato d1, Dato d2) {
+		int compare = d1.getTipoDato().compareToIgnoreCase(d2.getTipoDato());
+		if (compare != 0)
+			return compare;
+
+		return d1.getCodigo().compareToIgnoreCase(d2.getCodigo());
+	}
+
+	private static int compare(net.aonsolutions.tgss.creta.jaxb.bases.Dato d1,
+			net.aonsolutions.tgss.creta.jaxb.bases.Dato d2) {
+		int compare = d1.getTipoDato().compareToIgnoreCase(d2.getTipoDato());
+		if (compare != 0)
+			return compare;
+
+		return d1.getCodigo().compareToIgnoreCase(d2.getCodigo());
+	}
+
+	private static int compare(Tramo t1, Tramo t2) {
+		return toDate(t1.getFechaDesde()).compareTo(toDate(t2.getFechaDesde()));
+	}
+
+	private static int compare(net.aonsolutions.tgss.creta.jaxb.bases.Tramo t1,
+			net.aonsolutions.tgss.creta.jaxb.bases.Tramo t2) {
+		return toDate(t1.getFechaDesde().getAnho(),
+				t1.getFechaDesde().getMes(), t1.getFechaDesde().getDia())
+				.compareTo(
+						toDate(t2.getFechaDesde().getAnho(), t2.getFechaDesde()
+								.getMes(), t2.getFechaDesde().getDia()));
+	}
+
+	private static void different(
+			net.aonsolutions.tgss.creta.jaxb.bases.Dato datoAon,
+			Dato datoCreta) {
+		
+		if ( AonStringUtils.isEmpty(datoCreta.getValor())) 
+			throw new Different(); //Nuevo trabajador ???.
+
+		if ( "C".equalsIgnoreCase(datoCreta.getTipoDato() )){
+			if ( Long.parseLong(datoAon.getValor()) != Long.parseLong(datoCreta.getValor()))
+				throw new Different(); //El tipo de dato se refiere a "Concepto".
+		} else if ("H".equalsIgnoreCase(datoCreta.getTipoDato() )){
+			if ( Long.parseLong(datoAon.getValor()) != Long.parseLong(datoCreta.getValor()))
+				throw new Different(); //El tipo de dato se refiere a "Horas".
+		} else if ("I".equalsIgnoreCase(datoCreta.getTipoDato() )){
+			if ( !datoAon.getValor().equalsIgnoreCase(datoCreta.getValor()))
+				throw new Different(); //El tipo de dato se refiere a "Indicador".
+		}
+	}
+
+	private static void different(
+			net.aonsolutions.tgss.creta.jaxb.bases.Tramo tramoAon,
+			Tramo tramoCreta) {
+		Date dateFromAon = toDate(tramoAon.getFechaDesde().getAnho(), tramoAon
+				.getFechaDesde().getMes(), tramoAon.getFechaDesde().getDia());
+		Date dateFromCreta = toDate(tramoCreta.getFechaDesde());
+		if (dateFromAon.compareTo(dateFromCreta) != 0)
+			throw new Different(); // Don't skip. Diffente 'FechaDesde'.
+
+		Date dateToAon = toDate(tramoAon.getFechaHasta().getAnho(), tramoAon
+				.getFechaHasta().getMes(), tramoAon.getFechaHasta().getDia());
+		Date dateToCreta = toDate(tramoCreta.getFechaHasta());
+		if (dateToAon.compareTo(dateToCreta) != 0)
+			throw new Different(); // Don't skip. Diffente 'FechaHasta'.
+
+		List<net.aonsolutions.tgss.creta.jaxb.DatoSolicitado> datosCreta = tramoCreta.getDatosTramo().getDato();
+		Collections.sort(datosCreta, Bases::compare);
+		List<net.aonsolutions.tgss.creta.jaxb.bases.Dato> datosAon = tramoAon
+				.getDatosTramo().getDato();
+		Collections.sort(datosAon, Bases::compare);
+
+		int j = 0;
+		for (int i = 0; i < datosCreta.size(); i++) {
+			net.aonsolutions.tgss.creta.jaxb.DatoSolicitado datoCreta = datosCreta.get(i);
+			net.aonsolutions.tgss.creta.jaxb.bases.Dato datoAon = datosAon
+					.get(j);
+
+			if (!datoCreta.getTipoDato()
+					.equalsIgnoreCase(datoAon.getTipoDato())
+					|| !datoCreta.getCodigo().equalsIgnoreCase(
+							datoAon.getCodigo())) {
+				//El dato solicitado es obligatorio.
+				if ( "B".equalsIgnoreCase(datoCreta.getIndicadorObligatoriedad()))
+					throw new Different(); // ???
+
+				if ( AonStringUtils.isNotEmpty(datoCreta.getValor()) )
+					throw new Different(); // ???
+				
+				continue;
+			}
+
+			different(datoAon, datoCreta);
+			j++;
+
+		}
+
+	}
+
+	private static void skip(
+			net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
+			Trabajador trabajadorCreta) {
+
+		List<net.aonsolutions.tgss.creta.jaxb.bases.Tramo> tramosAon = trabajadorAon
+				.getTramos().getTramo();
+		List<Tramo> tramosCreta = trabajadorCreta.getTramos().getTramo();
+		if (tramosAon.size() != tramosCreta.size())
+			return; // Don't skip. Different number of 'tramos'.
+
+		Collections.sort(tramosAon, Bases::compare);
+		Collections.sort(tramosCreta, Bases::compare);
+
+		try {
+			for (int i = 0; i < tramosAon.size(); i++)
+				different(tramosAon.get(i), tramosCreta.get(i));
+		} catch (Different e) {
+			return;
+		}
+
+		throw new SkipExisting();
+	}
+
+	// ------------------------------------------------------------------------
+
 	@SuppressWarnings("static-access")
 	public static Option getHostNameOption() {
 		return OptionBuilder.withArgName("name").hasArg().withLongOpt("host")
@@ -1096,58 +1247,45 @@ public class Bases {
 			FactoryConfigurationError, TransformerConfigurationException,
 			TransformerFactoryConfigurationError {
 
-		//@formatter:off
-		Option hostName =  getHostNameOption();
-		Option user =  getDbUserOption();
-		Option password =  getDbPasswordOption();
-		Option database =  getDatabaseOption();
-		Option trabajadoresTramosFile =  OptionBuilder.withArgName("file")
-									.hasArg()
-									.withLongOpt("trabajadores-tramos")
-									.withDescription("Fichero de Trabajadores y Tramos.")
-									.create("t");
-		Option respuestaFile =  OptionBuilder.withArgName("file")
-				.hasArg()
+		// @formatter:off
+		Option hostName = getHostNameOption();
+		Option user = getDbUserOption();
+		Option password = getDbPasswordOption();
+		Option database = getDatabaseOption();
+		Option trabajadoresTramosFile = OptionBuilder.withArgName("file")
+				.hasArg().withLongOpt("trabajadores-tramos")
+				.withDescription("Fichero de Trabajadores y Tramos.")
+				.create("t");
+		Option respuestaFile = OptionBuilder.withArgName("file").hasArg()
 				.withLongOpt("respuesta")
-				.withDescription("Fichero de Respuesta.")
-				.create("r");
+				.withDescription("Fichero de Respuesta.").create("r");
 
-		Option indicador51 =  OptionBuilder.withArgName("valor")
+		Option indicador51 = OptionBuilder
+				.withArgName("valor")
 				.withLongOpt("modalidad-salario")
-				.withDescription("Modalidad Salario. Para grupos de cotización diario (GC del 08 al 11) con retribución mensual")
+				.withDescription(
+						"Modalidad Salario. Para grupos de cotización diario (GC del 08 al 11) con retribución mensual")
 				.create();
-		
 
 		Option comments = getCommentsOption();
-		
-		Option skiptPrevBases =  OptionBuilder.withLongOpt("skip-prev-bases")
-				.withDescription("Skip previous bases.")
-				.create("b");
-		
-		
-		Option skipExisting =  OptionBuilder.withLongOpt("--skip-existing")
-				.withDescription("Informar únicamente de las bases y resto de datos de trabajadores que sufren variaciones o de las de nuevos trabajadores.")
+
+		Option skipPrevBases = OptionBuilder.withLongOpt("skip-prev-bases")
+				.withDescription("Skip previous bases.").create("b");
+
+		Option skipExisting = OptionBuilder
+				.withLongOpt("skip-existing")
+				.withDescription(
+						"Informar únicamente de las bases y resto de datos de trabajadores que sufren variaciones o de las de nuevos trabajadores.")
 				.create();
-		
-		
-		
 
-		Option pretty =  getPrettyOption();
+		Option pretty = getPrettyOption();
 
-		Options options = new Options()
-		.addOption(hostName)
-		.addOption(user)
-		.addOption(password)
-		.addOption(database)
-		.addOption(comments)
-		.addOption(skiptPrevBases)
-		.addOption(pretty)
-		.addOption(trabajadoresTramosFile)
-		.addOption(respuestaFile)
-		.addOption(indicador51)
-		.addOption(skipExisting)
-		;
-		//@formatter:on
+		Options options = new Options().addOption(hostName).addOption(user)
+				.addOption(password).addOption(database).addOption(comments)
+				.addOption(skipPrevBases).addOption(pretty)
+				.addOption(trabajadoresTramosFile).addOption(respuestaFile)
+				.addOption(indicador51).addOption(skipExisting);
+		// @formatter:on
 
 		// create the parser
 		CommandLineParser parser = new GnuParser();
@@ -1165,21 +1303,31 @@ public class Bases {
 					.getOptionValue(user.getLongOpt()), cmd
 					.getOptionValue(password.getLongOpt()));
 
-			boolean aceptarBasesAnteriores = !cmd.hasOption(skiptPrevBases
-					.getLongOpt());
+			boolean acceptPrevBases = !cmd
+					.hasOption(skipPrevBases.getLongOpt());
 
 			AONContext ctx = new AONContext(connection);
 
 			XMLStreamWriter xsw = new IndentXMLStreamWriter(XMLOutputFactory
 					.newInstance().createXMLStreamWriter(System.out), "  ");
 
-			Errors errors = new Errors();
-			Comments comment = new Comments(xsw);
+			List<BasesCallback> callbacksList = new LinkedList<BasesCallback>();
+			if (cmd.hasOption(skipExisting.getLongOpt()))
+				callbacksList.add(new SkipExistingCallback());
 
-			DefaultsCallback defaultsCallback = new DefaultsCallback();
+			Errors errors = new Errors();
+			callbacksList.add(errors);
+
+			Comments comment = new Comments(xsw);
+			callbacksList.add(comment);
+
+			DefaultsCallback defaults = new DefaultsCallback();
 			if (cmd.hasOption(indicador51.getLongOpt())) {
-				defaultsCallback.add("51", "M");
+				defaults.add("51", "M");
 			}
+			callbacksList.add(defaults);
+			BasesCallback callbacks[] = callbacksList
+					.toArray(new BasesCallback[callbacksList.size()]);
 
 			InputStream is = null;
 			net.aonsolutions.tgss.creta.jaxb.bases.Bases bases = null;
@@ -1196,8 +1344,8 @@ public class Bases {
 								net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
 								is);
 
-				bases = bases(trabajadoresTramos, ctx, aceptarBasesAnteriores,
-						xsw, errors, comment, defaultsCallback);
+				bases = bases(trabajadoresTramos, ctx, acceptPrevBases, xsw,
+						callbacks);
 			} else {
 				String path = cmd.getOptionValue(respuestaFile.getLongOpt());
 				is = AonStringUtils.isEmpty(path) ? System.in
@@ -1208,8 +1356,7 @@ public class Bases {
 								net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta.class,
 								is);
 
-				bases = bases(respuesta, ctx, aceptarBasesAnteriores, xsw,
-						errors, comment, defaultsCallback);
+				bases = bases(respuesta, ctx, acceptPrevBases, xsw, callbacks);
 			}
 
 			is.close();
