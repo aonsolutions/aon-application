@@ -31,6 +31,12 @@ public class FACeUtil {
 	private static final String CENTRE_CODE_SUFFIX = "_CENTRE_CODE";
 	
 	private static final String ADDRESS_SUFFIX = "_ADDRESS";
+
+	private static final String DELIVERY_NUMBER_SUFFIX = "_DELIVERY_NUMBER";
+	
+	private static final String SEQUENCE_NUMBER_SUFFIX = "_SEQUENCE_NUMBER";
+
+	private static final String ISSUER_CONTRACT_REFERENCE_SUFFIX = "_ISSUER_CONTRACT_REFERENCE";
 	
 	private static final String FISCAL = "FISCAL";
 	
@@ -39,6 +45,8 @@ public class FACeUtil {
 	private static final String PAGADOR = "PAGADOR";
 	
 	private static final String COMPRADOR = "COMPRADOR";
+	
+	private static final String INVOICE = "INVOICE";
 	
 	public static final String FACE_ENABLED = FACE_PREFFIX + "ENABLED";
 	
@@ -74,11 +82,21 @@ public class FACeUtil {
 	
 	public static final String FACE_COMPRADOR_DESCRIPTION = "Subdirección de compras";
 	
+	public static final String FACE_INVOICE_DELIVERY_NUMBER = FACE_PREFFIX + INVOICE + DELIVERY_NUMBER_SUFFIX;
+	
+	public static final String FACE_INVOICE_SEQUENCE_NUMBER = FACE_PREFFIX + INVOICE + SEQUENCE_NUMBER_SUFFIX;
+
+	public static final String FACE_INVOICE_ISSUER_CONTRACT_REFERENCE = FACE_PREFFIX + INVOICE + ISSUER_CONTRACT_REFERENCE_SUFFIX;
+	
 	public static final String[] FACE_CONSTANTS = {
 		FACeUtil.FACE_FISCAL_CENTRE_CODE, FACeUtil.FACE_FISCAL_ADDRESS,
 		FACeUtil.FACE_RECEPTOR_CENTRE_CODE, FACeUtil.FACE_RECEPTOR_ADDRESS,
 		FACeUtil.FACE_PAGADOR_CENTRE_CODE, FACeUtil.FACE_PAGADOR_ADDRESS,
-		FACeUtil.FACE_COMPRADOR_CENTRE_CODE, FACeUtil.FACE_COMPRADOR_ADDRESS		
+		FACeUtil.FACE_COMPRADOR_CENTRE_CODE, FACeUtil.FACE_COMPRADOR_ADDRESS
+	};	
+	public static final String[] FACE_REQUIRED_CONSTANTS = {
+		FACeUtil.FACE_INVOICE_DELIVERY_NUMBER, FACeUtil.FACE_INVOICE_SEQUENCE_NUMBER, 
+		FACeUtil.FACE_INVOICE_ISSUER_CONTRACT_REFERENCE
 	};	
 
 	public static RegistryNote getRegistryNote( String key, Integer registryId ) {

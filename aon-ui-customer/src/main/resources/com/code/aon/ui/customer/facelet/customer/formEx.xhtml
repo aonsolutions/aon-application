@@ -82,24 +82,13 @@
 								value="#{bundle.customer_eInvoice}" />
 							<aon:div id="customerEInvoiceDiv">
 								<h:panelGrid columns="2" cellpadding="0" cellspacing="0">
-									<aon:selectOneRadio id="Customer_eInvoice" value="#{customer.to.EInvoice}">
+									<aon:selectOneRadio id="Customer_eInvoice" value="#{customer.to.EInvoice}"
+										valueChangeListener="#{customer.eInvoiceChange}">
 										<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
 										<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
 										<a4j:support event="onchange" ajaxSingle="true"
-											reRender="customerEInvoiceDiv,customerTab" />								
+											reRender="customerEInvoiceDiv,customerTab" />
 									</aon:selectOneRadio>
-									<aon:panelGroup rendered="#{customer.to.EInvoice}">
-										<aon:div styleClass="aon-margin-left">
-											<aon:selectBooleanCheckbox
-												value="#{customerFACe.enabled}" >
-												<a4j:support event="onchange" ajaxSingle="true"
-													actionListener="#{customerFACe.onEnabledChanged}"
-													reRender="customerEInvoiceDiv,customerTab" />
-											</aon:selectBooleanCheckbox>								
-											<aon:outputText styleClass="aon-italic"
-												value="#{bundle.finance_face}" />
-										</aon:div>
-									</aon:panelGroup>								
 								</h:panelGrid>
 							</aon:div>
 						</aon:if>
@@ -348,9 +337,9 @@
 							</aon:if>
 						</aon:if>
 						
-						<aon:if test="#{customer.to.EInvoice and customerFACe.enabled}">
-							<aon:panelTab id="customerFACe" label="#{bundle.finance_face}">
-								<ui:include src="/com/code/aon/ui/customer/facelet/customer/formFACe.xhtml" >
+						<aon:if test="#{customer.to.EInvoice}">
+							<aon:panelTab id="customerEInvoice" label="#{bundle.customer_eInvoice}">
+								<ui:include src="/com/code/aon/ui/customer/facelet/customer/formEInvoice.xhtml" >
 									<ui:param name="controller" value="#{customer}" />
 								</ui:include>
  							</aon:panelTab>

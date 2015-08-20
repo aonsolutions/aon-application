@@ -19,6 +19,7 @@ public interface ICustomerConstants {
 	// NAVIGATION
 	// ************************************************************
 
+	String CUSTOMER_EINVOICE_TAB = "customerEInvoice";
 	String CUSTOMER_FORM_NAME = "customer_form";
 	String CUSTOMER_FEE_TAB = "fee";
 	String INVOICING_GROUP_FORM_NAME = "invoicingGroup_form";

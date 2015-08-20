@@ -6,6 +6,7 @@ import java.util.Locale;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -677,13 +678,16 @@ public class FacturaeWriter {
 		return null;
 	}
 
-	private String getIssuerContractReference( InvoiceDetail detail ) {
+	private String getIssuerContractReference( InvoiceDetail detail, boolean purchaseReference ) {
 		if ( detail.getSource() == InvoiceSource.DELIVERY ) {
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(DeliveryDetail.class);
 				DeliveryDetail dd = (DeliveryDetail) bean.get(detail.getSourceId());
 				if ( (dd != null) && (dd.getSalesDetail() != null) ) {
-					return dd.getSalesDetail().getSales().getReferenceCode();
+					if (purchaseReference)
+						return dd.getSalesDetail().getSales().getPurchaseReference();
+					else
+						return dd.getSalesDetail().getSales().getReferenceCode();
 				}
 			} catch (ManagerBeanException e) {
 				LOGGER.error(e.getMessage(), e);
@@ -693,7 +697,10 @@ public class FacturaeWriter {
 				IManagerBean bean = BeanManager.getManagerBean(IncomeDetail.class);
 				IncomeDetail id = (IncomeDetail) bean.get(detail.getSourceId());
 				if ( (id != null) && (id.getPurchaseDetail() != null) ) {
-					return id.getPurchaseDetail().getPurchase().getReferenceCode();
+					if (purchaseReference)
+						return id.getPurchaseDetail().getPurchase().getPurchaseReference();
+					else
+						return id.getPurchaseDetail().getPurchase().getReferenceCode();
 				}
 			} catch (ManagerBeanException e) {
 				LOGGER.error(e.getMessage(), e);
@@ -726,17 +733,27 @@ public class FacturaeWriter {
 		if ( line.getDiscountExpression() != null ) {
 			invoiceLine.setDiscountsAndRebates( getDiscountsAndRebates(line, totalCost) );
 		}
-		String issuerContractReference = getIssuerContractReference(line);
-		if (! StringUtils.isEmpty(issuerContractReference) ) {
-			invoiceLine.setIssuerContractReference(Util.toTextMax20Type(issuerContractReference));
-		}		
-		String deliveryNoteNumber = getDeliveryNoteNumber(line);
-		if (! StringUtils.isEmpty(deliveryNoteNumber) ) {
-			DeliveryNotesReferencesType notes = new DeliveryNotesReferencesType();
-			DeliveryNoteType noteType = new DeliveryNoteType();
-			noteType.setDeliveryNoteNumber(deliveryNoteNumber);
-			notes.getDeliveryNote().add(noteType);
-			invoiceLine.setDeliveryNotesReferences(notes);
+		String issuerContractReferenceOption = FACeUtil.getValue(FACeUtil.FACE_INVOICE_ISSUER_CONTRACT_REFERENCE, invoice);
+		if (! StringUtils.isEmpty(issuerContractReferenceOption)) {
+			String issuerContractReference = getIssuerContractReference(line, Boolean.parseBoolean(issuerContractReferenceOption));
+			if (! StringUtils.isEmpty(issuerContractReference) ) {
+				invoiceLine.setIssuerContractReference(Util.toTextMax20Type(issuerContractReference));
+			}		
+		}
+		String sequenceNumber = FACeUtil.getValue(FACeUtil.FACE_INVOICE_SEQUENCE_NUMBER, invoice);
+		if (! StringUtils.isEmpty(sequenceNumber) && NumberUtils.isNumber(sequenceNumber) ) {
+			invoiceLine.setSequenceNumber(Double.parseDouble(sequenceNumber));
+		}
+		String deliveryNoteNumberOption = FACeUtil.getValue(FACeUtil.FACE_INVOICE_DELIVERY_NUMBER, invoice);
+		if (Boolean.parseBoolean(deliveryNoteNumberOption)) {
+			String deliveryNoteNumber = getDeliveryNoteNumber(line);
+			if (! StringUtils.isEmpty(deliveryNoteNumber) ) {
+				DeliveryNotesReferencesType notes = new DeliveryNotesReferencesType();
+				DeliveryNoteType noteType = new DeliveryNoteType();
+				noteType.setDeliveryNoteNumber(deliveryNoteNumber);
+				notes.getDeliveryNote().add(noteType);
+				invoiceLine.setDeliveryNotesReferences(notes);
+			}
 		}
 		addLinesTaxes( invoiceType, invoiceLine, line );
 		if ( this.pmsUtil.isReservationAvailable() ) {

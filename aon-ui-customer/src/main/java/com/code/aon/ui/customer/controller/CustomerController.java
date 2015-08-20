@@ -4,6 +4,7 @@ import static com.code.aon.ui.common.ICommonMessages.CUSTOMER_REPORT;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
@@ -148,6 +149,14 @@ public class CustomerController extends CustomerListController implements ICusto
 		Customer customer = (Customer)getTo();
 		BasicController invoicingGroupController = (BasicController)AonUtil.getRegisteredBean(INVOICING_GROUP_CONTROLLER_NAME);
 		invoicingGroupController.onLoad(event, customer.getInvoicingGroup().getId(), CUSTOMER_FORM_NAME, CUSTOMER_CONTROLLER_NAME + ".select");
+	}
+
+	public void eInvoiceChange(ValueChangeEvent event) throws ManagerBeanException {
+		if(event.getNewValue()!=null && (boolean) event.getNewValue()){
+			setSelectedTab(CUSTOMER_EINVOICE_TAB);
+		} else {
+			setSelectedTab(null);
+		}
 	}
 
 	@Override

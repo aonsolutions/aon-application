@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
@@ -51,13 +52,28 @@ public class CustomerFACeController implements Serializable {
 	
 	private void init( Customer customer ) throws ManagerBeanException {
 		this.notes = new HashMap<String, RegistryNote>();
+		setEnabled(FACeUtil.getRegistryNote(FACeUtil.FACE_ENABLED, customer.getId()) != null);
+		for( String key : FACeUtil.FACE_REQUIRED_CONSTANTS ) {
+			updateRegistryNote(key, customer);
+		}
+		if(isEnabled()){
+			initFACe( customer );
+		}
+	}
+
+	private void initFACe( Customer customer ) throws ManagerBeanException {
+		if(this.notes == null)
+			this.notes = new HashMap<String, RegistryNote>();
 		for( String key : FACeUtil.FACE_CONSTANTS ) {
 			updateRegistryNote(key, customer);
 		}
-		setEnabled(FACeUtil.getRegistryNote(FACeUtil.FACE_ENABLED, customer.getId()) != null);
 	}
 	
 	private void clear( Customer customer ) {
+		for( String key : FACeUtil.FACE_REQUIRED_CONSTANTS ) {
+			RegistryNote note = getEmptyNote(customer.getRegistry(), key);
+			setNote(key, note);
+		}
 		for( String key : FACeUtil.FACE_CONSTANTS ) {
    			RegistryNote note = getEmptyNote(customer.getRegistry(), key);
    	   		setNote(key, note);
@@ -66,17 +82,21 @@ public class CustomerFACeController implements Serializable {
 	
 	private void save() throws ManagerBeanException {
 		for( RegistryNote note : this.notes.values() ) {
-			saveRegistryNote(note);
+			if(!isEnabled() || ArrayUtils.contains(FACeUtil.FACE_CONSTANTS, note.getDescription())){
+				saveRegistryNote(note);
+			}
 		}
 	}
 
 	public void onUpdate( Customer customer ) throws ManagerBeanException {
-		if ( customer.isEInvoice() && isEnabled() ) {
-			RegistryNote note = FACeUtil.getRegistryNote(FACeUtil.FACE_ENABLED, customer.getId());
-			if ( note == null ) {
-				note = getEmptyNote(customer.getRegistry(), FACeUtil.FACE_ENABLED);
-				note.setComments(Boolean.TRUE.toString());
-				saveRegistryNote(note);
+		if ( customer.isEInvoice() ) {
+			if ( isEnabled() ) {
+				RegistryNote note = FACeUtil.getRegistryNote(FACeUtil.FACE_ENABLED, customer.getId());
+				if ( note == null ) {
+					note = getEmptyNote(customer.getRegistry(), FACeUtil.FACE_ENABLED);
+					note.setComments(Boolean.TRUE.toString());
+					saveRegistryNote(note);
+				}
 			}
 			save();
 		} else {
@@ -90,8 +110,10 @@ public class CustomerFACeController implements Serializable {
    		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_NOTE_REGISTRY_ID), customer.getId());
    		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE), NoteType.FACTURAE);
 		for( ITransferObject to : bean.getList(criteria) ) {
-			bean.remove(to);
-		}			
+			if(!isEnabled() || !ArrayUtils.contains(FACeUtil.FACE_CONSTANTS, ((RegistryNote)to).getDescription())){
+				bean.remove(to);
+			}
+		}
 		clear(customer);
 	}
 	
@@ -186,6 +208,30 @@ public class CustomerFACeController implements Serializable {
 	public void setCompradorAddress(RegistryAddress address) {
 		setAddress(FACeUtil.FACE_COMPRADOR_ADDRESS, address);
 	}
+	
+	public RegistryNote getOrderNumber() {
+		return getNote(FACeUtil.FACE_INVOICE_ISSUER_CONTRACT_REFERENCE);
+	}
+	
+	public void setOrderNumber(RegistryNote orderNumber) {
+		setNote(FACeUtil.FACE_INVOICE_ISSUER_CONTRACT_REFERENCE, orderNumber);
+	}
+	
+	public RegistryNote getDeliveryNumber() {
+		return getNote(FACeUtil.FACE_INVOICE_DELIVERY_NUMBER);
+	}
+	
+	public void setDeliveryNumber(RegistryNote deliveryNumber) {
+		setNote(FACeUtil.FACE_INVOICE_ISSUER_CONTRACT_REFERENCE, deliveryNumber);
+	}
+	
+	public RegistryNote getCenterIdentification() {
+		return getNote(FACeUtil.FACE_INVOICE_SEQUENCE_NUMBER);
+	}
+	
+	public void setCenterIdentification(RegistryNote centerIdentification) {
+		setNote(FACeUtil.FACE_INVOICE_ISSUER_CONTRACT_REFERENCE, centerIdentification);
+	}
 
 	private String getLabel( RegistryAddress address ) {
 		String addressLabel = address.getFullAddress();
@@ -264,11 +310,12 @@ public class CustomerFACeController implements Serializable {
 		this.enabled = enabled;
 	}
 	
-	public void onEnabledChanged( ActionEvent event ) {
+	public void onEnabledChanged( ActionEvent event ) throws ManagerBeanException {
 		if ( isEnabled() ) {
 			CustomerController cc = (CustomerController) AonUtil.getRegisteredBean(ICustomerConstants.CUSTOMER_CONTROLLER_NAME);
 			cc.setSelectedTab("customerFACe");
 			Customer customer = (Customer) cc.getTo();
+			initFACe( customer );
 			updateCustomerAddresses(customer);
 		}					
 	}
