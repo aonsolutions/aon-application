@@ -211,6 +211,13 @@ public class DownloadAggregateConsumptionServlet extends HttpServlet {
         		ConsumptionItem ci = v.get(j);
         		ci.setConsumption(ci.getInitialQuantity()+ci.getPurchases()+ci.getTransfersPlus()-ci.getSales()-ci.getTransfersMinus()-ci.getFinalQuantity());
 
+        		Double consumValue = (ci.getInitialValue() * ci.getInitialQuantity()) 
+    					+  	(ci.getPurchases() * ci.getPurchasesValue())
+    					+	((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()))
+    					-	(ci.getSales() * ci.getSalesValue())
+    					-	(ci.getFinalQuantity() * ci.getFinalValue());
+            	
+        		
         		if(!(ci.getInitialQuantity() == 0 && 
         			ci.getPurchases() == 0 &&
         			ci.getSales() == 0 &&
@@ -237,8 +244,12 @@ public class DownloadAggregateConsumptionServlet extends HttpServlet {
         				case "Valor Final": celda.setCellValue(ci.getFinalQuantity() * ci.getFinalValue());celda.setCellStyle(style2);break;
         				case "Traspaso": celda.setCellValue(ci.getTransfersPlus()-ci.getTransfersMinus());celda.setCellStyle(style2);break;
         				case "Valor Traspaso": celda.setCellValue((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()));celda.setCellStyle(style2);break;
-        				case "Precio": celda.setCellValue(round(ci.getPrice(),2));celda.setCellStyle(style2);break; 
-        				case "Valor Consumo": celda.setCellValue(round(ci.getPrice()*ci.getConsumption(),2));celda.setCellStyle(style2);break;
+        				//case "Precio": celda.setCellValue(round(ci.getPrice(),2));celda.setCellStyle(style2);break; 
+        				//case "Valor Consumo": celda.setCellValue(round(ci.getPrice()*ci.getConsumption(),2));celda.setCellStyle(style2);break;
+        				case "Precio": celda.setCellValue(round(consumValue / ci.getConsumption(), 2));celda.setCellStyle(style2);break; 
+        				case "Valor Consumo": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
+        				case "Importe": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
+
         				case "Consumo": celda.setCellValue(ci.getConsumption());celda.setCellStyle(style2);break;
         				default:
         					break;

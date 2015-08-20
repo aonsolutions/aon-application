@@ -60,8 +60,8 @@
 						<table class="aon-panelGrid">
 							<tr>
 								<td colspan="3">
-									<g:FlowPanel ui:field="panel">
-									</g:FlowPanel>
+									<g:HorizontalPanel ui:field="panel">
+									</g:HorizontalPanel>
 								</td>
 							</tr>
 							<tr>

@@ -265,12 +265,7 @@
 											actionListener="#{catalogue.onEditSearch}"
 											value="#{bundle.product_catalogue_module}" />
 									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="template-configuration"
-											action="gwt_templates" title="#{bundle.aon_templates}">
-											<aon:outputText value="#{bundle.aon_templates}" />
-										</aon:commandLink>
-									</aon:div>
+									
 								</aon:div>
 							</aon:panelGrid>
 						</aon:if>
@@ -283,6 +278,12 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:if test="#{aonRole.config}">
+									<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="template-configuration"
+													action="gwt_templates" title="#{bundle.aon_templates}">
+												<aon:outputText value="Plantillas - Carga de Datos" />
+											</aon:commandLink>
+									</aon:div>
 									<aon:if
 										test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
 										<aon:div styleClass="aon-direct-access-list-element">
@@ -290,6 +291,7 @@
 												actionListener="#{aonLoader.onStart}"
 												value="#{bundle.aon_loader_module}" />
 										</aon:div>
+										
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="gwt_invoiceReport"
 												action="gwt_invoiceReport"

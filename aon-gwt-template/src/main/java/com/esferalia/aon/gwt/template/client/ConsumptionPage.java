@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.template.client;
 
 import java.util.Vector;
 
+import org.apache.bcel.generic.GOTO;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
@@ -26,6 +28,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ConsumptionPage extends Composite{
@@ -40,7 +43,7 @@ public class ConsumptionPage extends Composite{
 
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
 	
-	@UiField FlowPanel panel;
+	@UiField HorizontalPanel panel;
 	@UiField ListBox warehouseListBox;
 	@UiField CheckBox warehouseCheckBox;
 	@UiField CheckBox detailCheckBox;
@@ -56,7 +59,7 @@ public class ConsumptionPage extends Composite{
 	
 	public ConsumptionPage(Integer domainId, TemplateList templateList) {
 		titleLabel = new Label();
-		panel = new FlowPanel();
+		panel = new HorizontalPanel();
 		warehouseListBox = new ListBox();
 		warehouseCheckBox = new CheckBox();
 		detailCheckBox = new CheckBox();
@@ -75,6 +78,7 @@ public class ConsumptionPage extends Composite{
 
 	private void init() {
 		titleLabel.setText(AON.MSG.aggregateConsumptionTemplates());
+		panel.add(new VerticalPanel());
 		item.getWarehouses(domainId, new AsyncCallback<Vector<Warehouse>>() {
 			
 			@Override
@@ -135,7 +139,19 @@ public class ConsumptionPage extends Composite{
 				
 				warehouseListBox.removeItem(warehouseListBox.getSelectedIndex());
 				warehouseListBox.setSelectedIndex(0);
-				panel.add(wTag);
+				
+				VerticalPanel vp = (VerticalPanel) panel.getWidget(panel.getWidgetCount()-1);
+				if(vp.getWidgetCount() < 3){
+					vp.add(wTag);
+				}
+				else{
+					VerticalPanel vpNew = new VerticalPanel();
+					vpNew.add(wTag);
+					panel.add(vpNew);
+				}
+				
+				
+				//panel.add(wTag);
 			}
 		});
 	}
@@ -153,8 +169,18 @@ public class ConsumptionPage extends Composite{
 						
 							warehouseListBox.removeItem(k-1);
 							warehouseListBox.setSelectedIndex(0);
+							
+							VerticalPanel vp = (VerticalPanel) panel.getWidget(panel.getWidgetCount()-1);
+							if(vp.getWidgetCount() < 3){
+								vp.add(wTag);
+							}
+							else{
+								VerticalPanel vpNew = new VerticalPanel();
+								vpNew.add(wTag);
+								panel.add(vpNew);
+							}
 						
-							panel.add(wTag);
+							//panel.add(wTag);
 						}
 					}
 				}
@@ -222,30 +248,46 @@ public class ConsumptionPage extends Composite{
 	
 	private void clean(){
 		for(Integer j = panel.getWidgetCount(); j>0; j--){
-			HorizontalPanel hp = (HorizontalPanel) panel.getWidget(j-1);
-			Label label = (Label) hp.getWidget(1);
-
-			for(Warehouse w : warehouseList){
-				if(w.getName().equals(label.getText()))
-					warehouseListBox.addItem(label.getText());
+			VerticalPanel vp = (VerticalPanel) panel.getWidget(j-1);
+			for(Integer i = vp.getWidgetCount(); i>0; i--){
+				HorizontalPanel hp = (HorizontalPanel) vp.getWidget(i-1);
+				Label label = (Label) hp.getWidget(1);
+				for(Warehouse w : warehouseList){
+					if(w.getName().equals(label.getText())){
+						warehouseListBox.addItem(label.getText());
+						vp.remove(i-1);						
+					}
+				}
 			}
-			panel.remove(j-1);
 		}
 		warehouses.removeAllElements();
+		warehouseCheckBox.setValue(false);
+		//panel.add(new VerticalPanel());
 	}
 	
 	private void clean(String name){
 		for(Integer i = 0; i<panel.getWidgetCount(); i++){
-			HorizontalPanel hp = (HorizontalPanel) panel.getWidget(i);
-			Label label = (Label) hp.getWidget(1);
-			if(label.getText().equals(name)){
-				for(Warehouse w : warehouseList){
-					if(w.getName().equals(name))
-						warehouseListBox.addItem(label.getText());
+			VerticalPanel vp = (VerticalPanel) panel.getWidget(i);
+			for(Integer j = 0; j<vp.getWidgetCount();j++){
+				HorizontalPanel hp = (HorizontalPanel) vp.getWidget(j);
+				Label label = (Label) hp.getWidget(1);
+				if(label.getText().equals(name)){
+					for(Warehouse w : warehouseList){
+						if(w.getName().equals(name)){
+							warehouseListBox.addItem(label.getText());
+							vp.remove(j);
+							warehouses.remove(w);
+						
+							for(Integer k = i+1; k < panel.getWidgetCount(); k++){
+								VerticalPanel vp1 = (VerticalPanel) panel.getWidget(k-1); 
+								VerticalPanel vp2 = (VerticalPanel) panel.getWidget(k);
+								vp1.add(vp2.getWidget(0));
+							}
+							
+						}
+					}		
 				}
-				panel.remove(i);
 			}
-			warehouses.remove(hp);
 		}
 		warehouseCheckBox.setValue(false);
 	}

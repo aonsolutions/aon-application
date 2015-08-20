@@ -220,12 +220,12 @@ public class DownloadConsumptionServlet extends HttpServlet {
         			case "Valor Final": celda.setCellValue(ci.getFinalQuantity() * ci.getFinalValue());celda.setCellStyle(style2);break;
         			case "Traspaso": celda.setCellValue(ci.getTransfersPlus()-ci.getTransfersMinus());celda.setCellStyle(style2);break;
         			case "Valor Traspaso": celda.setCellValue((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()));celda.setCellStyle(style2);break;
-        			case "Precio": if(!detail) celda.setCellValue(round(ci.getPrice(),2));
-        						else celda.setCellValue(consumValue / ci.getConsumption());
+        			case "Precio":/* if(!detail) celda.setCellValue(round(ci.getPrice(),2));
+        						else*/ celda.setCellValue(consumValue / ci.getConsumption());
         						celda.setCellStyle(style2);
         						break; 
-        			case "Valor Consumo": if(!detail)celda.setCellValue(round(ci.getPrice()*ci.getConsumption(),2));
-        								else celda.setCellValue(consumValue);
+        			case "Valor Consumo": /*if(!detail)celda.setCellValue(round(ci.getPrice()*ci.getConsumption(),2));
+        								else*/ celda.setCellValue(consumValue);
         								celda.setCellStyle(style2);
         								break;
         			case "Consumo": celda.setCellValue(ci.getConsumption());celda.setCellStyle(style2);break;
