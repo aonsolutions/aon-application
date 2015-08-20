@@ -2,8 +2,6 @@ package com.esferalia.aon.gwt.template.client;
 
 import java.util.Vector;
 
-import org.apache.bcel.generic.GOTO;
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
