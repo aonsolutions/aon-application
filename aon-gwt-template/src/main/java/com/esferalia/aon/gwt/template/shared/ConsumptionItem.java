@@ -14,15 +14,20 @@ public class ConsumptionItem implements IsSerializable{
 	String discount;
 	Double price;
 	
+	String initialInventoryName;
 	Integer initialId;
 	Date initialDate;
 	Double initialQuantity;
 	Double initialValue;
 	
+	String finalInventoryName;
 	Integer finalId;
 	Date finalDate;
 	Double finalQuantity;
 	Double finalValue;
+	
+	Integer warehouseId;
+	String warehouseName;
 	
 	Double sales;
 	Double salesValue;
@@ -213,6 +218,30 @@ public class ConsumptionItem implements IsSerializable{
 	}
 	public void setFinalDate(Date finalDate) {
 		this.finalDate = finalDate;
+	}
+	public Integer getWarehouseId() {
+		return warehouseId;
+	}
+	public void setWarehouseId(Integer warehouseId) {
+		this.warehouseId = warehouseId;
+	}
+	public String getWarehouseName() {
+		return warehouseName;
+	}
+	public void setWarehouseName(String warehouseName) {
+		this.warehouseName = warehouseName;
+	}
+	public String getInitialInventoryName() {
+		return initialInventoryName;
+	}
+	public void setInitialInventoryName(String initialInventoryName) {
+		this.initialInventoryName = initialInventoryName;
+	}
+	public String getFinalInventoryName() {
+		return finalInventoryName;
+	}
+	public void setFinalInventoryName(String finalInventoryName) {
+		this.finalInventoryName = finalInventoryName;
 	}
 	
 	
