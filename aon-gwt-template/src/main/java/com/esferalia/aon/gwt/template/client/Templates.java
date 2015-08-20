@@ -36,6 +36,7 @@ public class Templates extends Composite implements EntryPoint {
 
 	private static final String SILENT = "silent";
 	private static final String CONSUMPTION = "consumption";
+	private static final String CONSUMPTION_ERROR = "consumption_error";
 	private static final String TEMPLATES = "templates";
 	
 	final ITemplateAsync item = GWT.create(ITemplate.class);
@@ -78,6 +79,10 @@ public class Templates extends Composite implements EntryPoint {
 							else if(entryPoint.equals(CONSUMPTION)){
 						   		ConsumptionPage cp = new ConsumptionPage(domainId, template_list);		
 					 			pagesPanel.add(cp);
+							}
+							else if(entryPoint.equals(CONSUMPTION_ERROR)){
+								ConsumptionErrorPage cep = new ConsumptionErrorPage(domainId, template_list);
+								pagesPanel.add(cep);
 							}
 						}
 					}

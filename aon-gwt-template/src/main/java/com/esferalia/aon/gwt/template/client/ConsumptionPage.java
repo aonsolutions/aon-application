@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.template.client;
 
 import java.util.Vector;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
@@ -46,6 +47,7 @@ public class ConsumptionPage extends Composite{
 	@UiField Button pdfButton;
 	@UiField Button excelButton;
 	@UiField Button cleanButton;
+	@UiField Label titleLabel;
 	
 	Integer domainId;
 	Vector<Warehouse> warehouses, warehouseList;
@@ -53,6 +55,7 @@ public class ConsumptionPage extends Composite{
 	Boolean detail = false;
 	
 	public ConsumptionPage(Integer domainId, TemplateList templateList) {
+		titleLabel = new Label();
 		panel = new FlowPanel();
 		warehouseListBox = new ListBox();
 		warehouseCheckBox = new CheckBox();
@@ -71,6 +74,7 @@ public class ConsumptionPage extends Composite{
 	}
 
 	private void init() {
+		titleLabel.setText(AON.MSG.aggregateConsumptionTemplates());
 		item.getWarehouses(domainId, new AsyncCallback<Vector<Warehouse>>() {
 			
 			@Override
@@ -187,7 +191,7 @@ public class ConsumptionPage extends Composite{
 	}
 	//------------------------------ Actions
 
-	private void download(String type){
+	public void download(String type){
 		Integer size = 0;
 		TemplateInfo templateInfo = null;
 		for (TemplateInfo ti : templateList.getList()) {
