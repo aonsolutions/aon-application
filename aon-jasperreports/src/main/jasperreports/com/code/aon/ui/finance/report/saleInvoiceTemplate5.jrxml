@@ -4,13 +4,13 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="48"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<import value="com.code.aon.product.enumeration.ProductType"/>
 	<subDataset name="detail" scriptletClass="com.code.aon.ui.finance.util.print.InvoiceDetailReportScriptlet" uuid="8477062c-7931-4fec-b109-59b92635182f">
-		<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>	
+		<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>
 		<parameter name="printDiscountPriceApplied" class="java.lang.Boolean"/>
 		<parameter name="isDeliverySource" class="java.lang.String">
 			<defaultValueExpression><![CDATA[$F{deliverySource} && $F{sourceTo} != null]]></defaultValueExpression>
@@ -87,7 +87,7 @@
 		<field name="negotiableDocument" class="java.lang.Boolean"/>
 	</subDataset>
 	<scriptlet name="invoiceReportScriptlet" class="com.code.aon.ui.finance.util.print.InvoiceReportScriptlet"/>
-	<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>	
+	<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
@@ -504,7 +504,9 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ")
++ ($P{address}.getCity()==null?"":$P{address}.getCity() + " ")
++ ($P{address}.getGeozone()==null?"":"(" + $P{address}.getGeozone().getName() + ")")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="4ceef784-34f2-4835-b92c-c55382e560e7" key="textField-24" x="5" y="150" width="246" height="15">
@@ -519,7 +521,8 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_telephone} + ": " + $P{phone}.getValue() + ($P{fax}==null?"":" - " + $R{aon_fax} + ": " + $P{fax}.getValue())]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_telephone} + ": " + $P{phone}.getValue()
++ (($P{fax}==null || "".equals($P{fax}.getValue()))?"":" - " + $R{aon_fax} + ": " + $P{fax}.getValue())]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="b2ffd1b1-e3be-4958-8dfd-bdb8e535f2e7" key="textField-23" x="5" y="95" width="246" height="16">
@@ -689,7 +692,7 @@
 						</datasetParameter>
 						<datasetParameter name="companyController">
 							<datasetParameterExpression><![CDATA[$P{companyController}]]></datasetParameterExpression>
-						</datasetParameter>						
+						</datasetParameter>
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false), new Boolean(false)))]]></dataSourceExpression>
 					</datasetRun>
 					<jr:columnGroup width="535" uuid="797ebeb3-631c-4072-b29e-16e58bc3c043">
@@ -828,7 +831,7 @@ $R{report_from} + " " + new SimpleDateFormat("dd/MM/yyyy").format($F{sourceTo}.g
 						</datasetParameter>
 						<datasetParameter name="companyController">
 							<datasetParameterExpression><![CDATA[$P{companyController}]]></datasetParameterExpression>
-						</datasetParameter>						
+						</datasetParameter>
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false), new Boolean(true), ProductType.INCREASE))]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="315" uuid="45efd749-8408-49cb-ab87-7593c3e8dd01">
@@ -940,7 +943,7 @@ $R{report_from} + " " + new SimpleDateFormat("dd/MM/yyyy").format($F{sourceTo}.g
 					<datasetRun subDataset="detail" uuid="00dae9df-901a-48b3-89de-d39de667a1e6">
 						<datasetParameter name="companyController">
 							<datasetParameterExpression><![CDATA[$P{companyController}]]></datasetParameterExpression>
-						</datasetParameter>						
+						</datasetParameter>
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(true)))]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="315" uuid="da26410a-d1d7-4c64-8881-4e420b081ef5">
@@ -1141,9 +1144,9 @@ $R{report_from} + " " + new SimpleDateFormat("dd/MM/yyyy").format($F{sourceTo}.g
 				<textFieldExpression><![CDATA[($P{printAddress}.name().equals( "FOOTER" ) ?
 $P{address}.getFullAddress()
 +  " - "
-+ ($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"
++ ($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + ($P{address}.getGeozone()==null?"":"(" + $P{address}.getGeozone().getName() + ")")
 +  " - "
-+ "T: " + $P{phone}.getValue() + ($P{fax}==null?"":" - " + "F: " + $P{fax}.getValue())
++ "T: " + $P{phone}.getValue() + (($P{fax}==null || "".equals($P{fax}.getValue()))?"":" - " + "F: " + $P{fax}.getValue())
 : "")
 + ($P{printAddress}.name().equals( "FOOTER" ) && $P{printInternetData}.name().equals( "FOOTER" ) ? " - " : "")
 + ($P{printInternetData}.name().equals( "FOOTER" ) ?

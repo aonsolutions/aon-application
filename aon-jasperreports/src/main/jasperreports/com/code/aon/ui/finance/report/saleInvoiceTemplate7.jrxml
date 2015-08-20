@@ -4,13 +4,13 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="96"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<import value="com.code.aon.product.enumeration.ProductType"/>
 	<subDataset name="detail" scriptletClass="com.code.aon.ui.finance.util.print.InvoiceDetailReportScriptlet" uuid="7eb8ace6-7f91-42ff-9ee9-d00327a05b69">
-		<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>	
+		<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>
 		<parameter name="printDiscountPriceApplied" class="java.lang.Boolean"/>
 		<parameter name="isDeliverySource" class="java.lang.String">
 			<defaultValueExpression><![CDATA[$F{deliverySource} && $F{sourceTo} != null]]></defaultValueExpression>
@@ -83,7 +83,7 @@
 		<field name="negotiableDocument" class="java.lang.Boolean"/>
 	</subDataset>
 	<scriptlet name="invoiceReportScriptlet" class="com.code.aon.ui.finance.util.print.InvoiceReportScriptlet"/>
-	<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>	
+	<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
@@ -311,7 +311,9 @@
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ")
++ ($P{address}.getCity()==null?"":$P{address}.getCity() + " ")
++ ($P{address}.getGeozone()==null?"":"(" + $P{address}.getGeozone().getName() + ")")]]></textFieldExpression>
 			</textField>
 			<image scaleImage="RetainShape" hAlign="Left" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
 				<reportElement uuid="0986f151-2d40-4e38-97f8-991439baad06" key="image-1" positionType="Float" mode="Opaque" x="16" y="8" width="180" height="75" forecolor="#000000" backcolor="#FFFFFF">
@@ -356,7 +358,8 @@
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_telephone} + ": " + $P{phone}.getValue() + ($P{fax}==null?"":" - " + $R{aon_fax} + ": " + $P{fax}.getValue())]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_telephone} + ": " + $P{phone}.getValue()
++ (($P{fax}==null || "".equals($P{fax}.getValue()))?"":" - " + $R{aon_fax} + ": " + $P{fax}.getValue())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement uuid="33115f43-f0fc-4130-8b8f-6ff5f2fa74ea" key="textField-56" x="278" y="27" width="227" height="12">
@@ -372,8 +375,7 @@
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_company_document} + ": "
-+ $P{company}.getDocumentType().getName( $P{REPORT_LOCALE} ) + ": "
+				<textFieldExpression><![CDATA[$P{company}.getDocumentType().getName( $P{REPORT_LOCALE} ) + ": "
 + $P{company}.getDocumentCountry() + "-"
 + $P{company}.getDocument()]]></textFieldExpression>
 			</textField>
@@ -670,7 +672,7 @@
 						</datasetParameter>
 						<datasetParameter name="companyController">
 							<datasetParameterExpression><![CDATA[$P{companyController}]]></datasetParameterExpression>
-						</datasetParameter>						
+						</datasetParameter>
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false), new Boolean(false)))]]></dataSourceExpression>
 					</datasetRun>
 					<jr:columnGroup width="535" uuid="58baf29e-ab92-4672-8ba4-9b2acc38aff5">
@@ -746,7 +748,7 @@ $R{report_from} + " " + new SimpleDateFormat("dd/MM/yyyy").format($F{sourceTo}.g
 					<datasetRun subDataset="detail" uuid="7f4d2c10-5349-4c81-b811-1e8f1527bff2">
 						<datasetParameter name="companyController">
 							<datasetParameterExpression><![CDATA[$P{companyController}]]></datasetParameterExpression>
-						</datasetParameter>						
+						</datasetParameter>
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(true)))]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="435" uuid="1605d767-39b5-4f91-82bb-4cbe5e9bff27">
@@ -863,7 +865,7 @@ $R{report_from} + " " + new SimpleDateFormat("dd/MM/yyyy").format($F{sourceTo}.g
     $P{address}.getFullAddress() +  "\n"
     + ($P{address}.getZip()==null?"":$P{address}.getZip() + " ")
     + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ")
-    + "(" + $P{address}.getGeozone().getName() + ")" +  "\n"
+    + ($P{address}.getGeozone()==null?"":"(" + $P{address}.getGeozone().getName() + ")") +  "\n"
     + "T: " + $P{phone}.getValue()
     + (($P{fax}==null && "".equals($P{fax}.getValue()))?"":"\n" + "F: " + $P{fax}.getValue())
     : "")

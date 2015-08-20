@@ -23,7 +23,7 @@
 		</variable>
 	</subDataset>
 	<scriptlet name="invoiceReportScriptlet" class="com.code.aon.ui.finance.util.print.InvoiceReportScriptlet"/>
-	<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>	
+	<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
@@ -188,7 +188,8 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_telephone} + ": " + $P{phone}.getValue() + ($P{fax}==null?"":" - " + $R{aon_fax} + ": " + $P{fax}.getValue())]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_telephone} + ": " + $P{phone}.getValue()
++ (($P{fax}==null || "".equals($P{fax}.getValue()))?"":" - " + $R{aon_fax} + ": " + $P{fax}.getValue())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement uuid="bf639a90-93c1-4416-8895-870a14eaa755" key="textField-56" x="317" y="24" width="235" height="12">
@@ -203,7 +204,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_company_document} + ": "
+				<textFieldExpression><![CDATA[$P{company}.getDocumentType().getName( $P{REPORT_LOCALE} ) + ": "
 + $P{company}.getDocumentCountry() + "-"
 + $P{company}.getDocument()]]></textFieldExpression>
 			</textField>
@@ -220,7 +221,9 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ")
++ ($P{address}.getCity()==null?"":$P{address}.getCity() + " ")
++ ($P{address}.getGeozone()==null?"":"(" + $P{address}.getGeozone().getName() + ")")]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="5b478442-fd96-4a8f-b83b-912820ae1253" key="textField-26" x="382" y="36" width="170" height="21" isPrintWhenDetailOverflows="true">
@@ -423,7 +426,7 @@
 				</subreportParameter>
 				<subreportParameter name="companyController">
 					<subreportParameterExpression><![CDATA[$P{companyController}]]></subreportParameterExpression>
-				</subreportParameter>								
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false), new Boolean(false)))]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceDetail")]]></subreportExpression>
 			</subreport>
@@ -554,7 +557,7 @@
 				</subreportParameter>
 				<subreportParameter name="companyController">
 					<subreportParameterExpression><![CDATA[$P{companyController}]]></subreportParameterExpression>
-				</subreportParameter>								
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false), new Boolean(true), ProductType.INCREASE))]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceDetail")]]></subreportExpression>
 			</subreport>
@@ -667,9 +670,9 @@
 				<textFieldExpression><![CDATA[($P{printAddress}.name().equals( "FOOTER" ) ?
 $P{address}.getFullAddress()
 +  " - "
-+ ($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"
++ ($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + ($P{address}.getGeozone()==null?"":"(" + $P{address}.getGeozone().getName() + ")")
 +  " - "
-+ "T: " + $P{phone}.getValue() + ($P{fax}==null?"":" - " + "F: " + $P{fax}.getValue())
++ "T: " + $P{phone}.getValue() + (($P{fax}==null || "".equals($P{fax}.getValue()))?"":" - " + "F: " + $P{fax}.getValue())
 : "")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
