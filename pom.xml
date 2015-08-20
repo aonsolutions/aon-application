@@ -185,6 +185,7 @@
 		<module>aon-tgss</module>
 		<module>aon-creta</module>
 
+		<module>aon.gwt.office</module>
 	</modules>
 
 	<scm>
