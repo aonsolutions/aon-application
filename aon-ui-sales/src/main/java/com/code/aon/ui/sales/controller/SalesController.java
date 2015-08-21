@@ -372,6 +372,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 			Customer customer = (Customer)event.getNewValue();
 			isBlocked(customer);
 			((Sales)this.getTo()).setCustomer(customer);
+			((Sales)this.getTo()).setShippingAddress(null);
 			loadAddresses(customer.getId());
 			loadProjects(customer.getId());
 			loadDefaultPayMethod(customer.getId(), false);
