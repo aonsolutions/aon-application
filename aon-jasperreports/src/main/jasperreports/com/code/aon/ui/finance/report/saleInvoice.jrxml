@@ -489,8 +489,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_company_document} + ": "
-+ $P{company}.getDocumentType().getName( $P{REPORT_LOCALE} ) + ": "
+				<textFieldExpression><![CDATA[$P{company}.getDocumentType().getName( $P{REPORT_LOCALE} ) + ": "
 + $P{company}.getDocumentCountry() + "-"
 + $P{company}.getDocument()]]></textFieldExpression>
 			</textField>
