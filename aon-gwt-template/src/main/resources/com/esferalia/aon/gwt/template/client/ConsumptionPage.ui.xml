@@ -11,6 +11,10 @@
 		padding-top:3px;
 	}
 	
+	.padding_left_template{
+		padding-left:20px;
+	}
+	
 	@external .gwt-MenuBarPopup;
 	.gwt-MenuBarPopup {
 		margin: 0px !important;
@@ -60,7 +64,7 @@
 						<table class="aon-panelGrid">
 							<tr>
 								<td colspan="3">
-									<g:HorizontalPanel ui:field="panel">
+									<g:HorizontalPanel ui:field="panel" styleName="{style.padding_left_template}">
 									</g:HorizontalPanel>
 								</td>
 							</tr>
