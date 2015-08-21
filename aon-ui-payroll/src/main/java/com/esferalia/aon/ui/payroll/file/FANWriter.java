@@ -813,9 +813,18 @@ public class FANWriter implements Serializable {
 	}
 	
 	private Double getEreBase(Salary salary, List<ITransferObject> salaryDataList) {
-		Integer salaryDays = salary.getTimeUnits();
-		Integer ereDays = Math.min(getEreDays(salary, salaryDataList), salaryDays);
-		return (salary.getCommonBase()*ereDays)/salaryDays;
+		Double ereBase = 0.0;
+		String _ereBase = null;
+		for(ITransferObject to: salaryDataList){
+			SalaryData sd = (SalaryData) to;
+			if(sd.getName().equals(ContextVariable.ERE_BASE.getName())){
+				_ereBase = sd.getExpression();
+			}
+		}
+		if(_ereBase!=null && NumberUtils.isNumber(_ereBase)){
+			ereBase = Double.parseDouble(_ereBase);
+		}
+		return ereBase;
 	}
 	
 	private Double getITBase(Salary salary) {
@@ -1221,8 +1230,14 @@ public class FANWriter implements Serializable {
 	 * @return
 	 */
 	private boolean isLessThan7DaysContract(Contract contract) {
+		ContractCode code = getContractCode(contract);
 		if(contract.getEndDate()!=null && differenceBetweenDates(contract.getStartDate(), contract.getEndDate())<7){
-			return true;
+			if(code != ContractCode.C410 && code != ContractCode.C418 
+					&& code != ContractCode.C510 && code != ContractCode.C518
+					&& code != ContractCode.C421
+					&& contract.getEnterpriseCCC().getType() != CCCType.AGRICULTURAL){
+				return true;
+			}
 		}
 		return false;
 	}

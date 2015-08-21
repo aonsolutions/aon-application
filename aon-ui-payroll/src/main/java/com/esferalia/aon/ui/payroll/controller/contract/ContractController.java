@@ -449,7 +449,9 @@ public class ContractController extends BasicController {
 			ContractBonus bonus = (ContractBonus) to;
 			
 			BonusType type = bonus.getBonusConcept().getType();
-			if(bonus.getBonusConcept().getType()==null && bonus.getBonusConcept().getId()!=null){
+			if(bonus.getBonusConcept()!=null 
+					&& bonus.getBonusConcept().getType()==null 
+					&& bonus.getBonusConcept().getId()!=null){
 				type = PayrollUtils.getInstance().getBonusTypeByCode(Integer.toString(bonus.getBonusConcept().getId()));
 			}
 			

@@ -202,9 +202,13 @@ public class CraBatchController extends BasicController {
 	private List<EnterpriseCCC> getEnterpriseCCCList() {
 		LinesController controller = (LinesController)FormUtil.getController(IPayrollConstants.CRA_BATCH_DETAIL_CONTROLLER_NAME);
 		List<EnterpriseCCC> list = new LinkedList<EnterpriseCCC>();
-		for(ITransferObject to: controller.getWrappedList()){
-			CraBatchDetail detail = (CraBatchDetail) to;
-			list.add(detail.getCcc());
+		try {
+			for(ITransferObject to: controller.getManagerBean().getList(controller.getCriteria())){
+				CraBatchDetail detail = (CraBatchDetail) to;
+				list.add(detail.getCcc());
+			}
+		} catch (ManagerBeanException e) {
+			throw new AbortProcessingException(e.getMessage());
 		}
 		return list;
 	}
