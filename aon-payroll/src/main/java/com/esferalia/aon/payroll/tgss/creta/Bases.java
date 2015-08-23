@@ -15,6 +15,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -25,8 +26,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Marshaller.Listener;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
@@ -37,6 +41,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import net.aonsolutions.tgss.creta.jaxb.CtaCot;
 import net.aonsolutions.tgss.creta.jaxb.Dato;
+import net.aonsolutions.tgss.creta.jaxb.DatoSolicitado;
 import net.aonsolutions.tgss.creta.jaxb.Fecha;
 import net.aonsolutions.tgss.creta.jaxb.Liquidacion;
 import net.aonsolutions.tgss.creta.jaxb.LiquidacionMes;
@@ -50,7 +55,6 @@ import net.aonsolutions.tgss.creta.jaxb.bases.LiquidacionBuilder;
 import net.aonsolutions.tgss.creta.jaxb.bases.LiquidacionMesBuilder;
 import net.aonsolutions.tgss.creta.jaxb.bases.TrabajadorBuilder;
 import net.aonsolutions.tgss.creta.jaxb.bases.TramoBuilder;
-import net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.DatoSolicitado;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -72,6 +76,7 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
 
 public class Bases {
 
@@ -128,20 +133,22 @@ public class Bases {
 		}
 	}
 
+	@SuppressWarnings("serial")
 	private static class NoSuchDatoException extends Exception {
 
-		private DatoSolicitado datoSolicitado;
+		private net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.DatoSolicitado datoSolicitado;
 
-		public NoSuchDatoException(DatoSolicitado datoSolicitado) {
+		public NoSuchDatoException(net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.DatoSolicitado datoSolicitado) {
 			this.datoSolicitado = datoSolicitado;
 		}
 
-		public DatoSolicitado getDatoSolicitado() {
+		public net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.DatoSolicitado getDatoSolicitado() {
 			return datoSolicitado;
 		}
 
 	}
 
+	@SuppressWarnings("serial")
 	private static class NoSuchContextVariableException extends Exception {
 		private ContextVariable contextVariable;
 
@@ -156,6 +163,7 @@ public class Bases {
 
 	}
 
+	@SuppressWarnings("serial")
 	private static class AmbiguousContextVariableException extends Exception {
 
 		private String values[];
@@ -177,6 +185,7 @@ public class Bases {
 		}
 	}
 
+	@SuppressWarnings("serial")
 	private static class UnMatchedContextVariableException extends Exception {
 
 		private ContextData contextData;
@@ -276,10 +285,15 @@ public class Bases {
 				Trabajador trabajadorCreta, Salary salary) {
 		};
 
+		default void trabajadorSkipped(
+				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
+				Trabajador trabajadorCreta, Salary salary) {
+		};
+
 		default void unknownSalary(Salary salary) {
 		};
 
-		default void unknownDato(Dato datoSolicitado) {
+		default void unknownDato(DatoSolicitado datoSolicitado) {
 		};
 
 		default void unknownTrabajador(Trabajador trabajador) {
@@ -314,10 +328,12 @@ public class Bases {
 		};
 	}
 
+	@SuppressWarnings("serial")
 	private static class Different extends RuntimeException {
 
 	}
 
+	@SuppressWarnings("serial")
 	private static class SkipExisting extends RuntimeException {
 
 	}
@@ -372,8 +388,11 @@ public class Bases {
 
 	private static class Errors implements BasesCallback {
 		@Override
-		public void unknownDato(Dato datoSolicitado) {
-			System.err.println(String.format("ERROR: Unknown Dato '%s'",
+		public void unknownDato(DatoSolicitado datoSolicitado) {
+			boolean mandatory ="B".equalsIgnoreCase(datoSolicitado.getIndicadorObligatoriedad());
+			System.err.println(String.format("%s: Unknown %s Dato '%s'",
+					mandatory ? "FATAL" : "WARNING",
+					mandatory ? "Mandatory" : "Optional",
 					datoSolicitado.getCodigo()));
 		}
 
@@ -464,23 +483,25 @@ public class Bases {
 			private String ss;
 			private String nif;
 			private String name;
-
-			public TrabajadorData(String name, String ss, String nif) {
-				super();
+			private net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajador;
+			
+			public TrabajadorData(String name, String nif, String ss, net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajador) {
 				this.ss = ss;
 				this.nif = nif;
 				this.name = name;
+				this.trabajador = trabajador;
 			}
-
 		}
 
 		private XMLStreamWriter xsw;
-		private Map<String, TrabajadorData> trabajadorDataMap;
+		private Map<String, TrabajadorData> addedTrabajadorDataMap;
+		private Stack<TrabajadorData> skippedTrabajadorList;
 
 		public Comments(XMLStreamWriter xsw) {
 			super();
 			this.xsw = xsw;
-			this.trabajadorDataMap = new HashMap<String, TrabajadorData>();
+			this.addedTrabajadorDataMap = new HashMap<String, TrabajadorData>();
+			this.skippedTrabajadorList = new Stack<TrabajadorData>();
 		}
 
 		@Override
@@ -493,14 +514,27 @@ public class Bases {
 
 			super.beforeMarshal(source);
 		}
-
+		
 		@Override
 		public void trabajadorAdded(
 				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
 				Trabajador trabajadorCreta, Salary salary) {
-			trabajadorDataMap.put(trabajadorCreta.getNaf(), new TrabajadorData(
-					salary.getEmployeeName(), salary.getEmployeeSSNumber(),
-					salary.getEmployeeDocument()));
+			addedTrabajadorDataMap.put(trabajadorCreta.getNaf(), new TrabajadorData(
+					salary.getEmployeeName(), 
+					salary.getEmployeeDocument(),
+					salary.getEmployeeSSNumber(),
+					trabajadorAon));
+		};
+
+		@Override
+		public void trabajadorSkipped(
+				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
+				Trabajador trabajadorCreta, Salary salary) {
+			skippedTrabajadorList.add(new TrabajadorData(
+					salary.getEmployeeName(), 
+					salary.getEmployeeDocument(),
+					salary.getEmployeeSSNumber(),
+					trabajadorAon));
 		};
 
 		public void beforeMarshalDato(Dato dato) {
@@ -515,7 +549,8 @@ public class Bases {
 
 		public void beforeMarshalTrabajador(
 				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajador) {
-			TrabajadorData data = trabajadorDataMap.get(trabajador.getNaf());
+			marshallSkipped();
+			TrabajadorData data = addedTrabajadorDataMap.get(trabajador.getNaf());
 			try {
 				xsw.writeComment(String
 						.format("\r\n%s\r\nNúmero afiliación a la Seguridad Social:\r\n%s\r\nNúmero de identificación fiscal de las personas físicas:\r\n%s\r\n",
@@ -525,6 +560,36 @@ public class Bases {
 				e.printStackTrace();
 			}
 		}
+		
+		// --------------------------------------------------------------------
+		
+		private void marshallSkipped() {
+			while( !skippedTrabajadorList.isEmpty() ){
+				TrabajadorData skippedTrabajador = skippedTrabajadorList.pop();
+				try {
+					StringWriter writer = new StringWriter();
+					Marshaller marshaller = JAXBContext.newInstance(skippedTrabajador.trabajador.getClass()).createMarshaller();
+//					marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "");
+					marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+					marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+//					marshaller.setProperty(Marshaller.JAXB_NO_NAMESPACE_SCHEMA_LOCATION, "http://www.seg-social.es/creta/esquemas/V100/Bases");
+					marshaller.marshal(skippedTrabajador.trabajador, writer);
+
+					xsw.writeComment(String
+							.format("\r\n%s\r\nNúmero afiliación a la Seguridad Social:\r\n%s\r\nNúmero de identificación fiscal de las personas físicas:\r\n%s\r\n%s\r\n",
+									skippedTrabajador.name, skippedTrabajador.ss, skippedTrabajador.nif, writer.toString()));
+					
+				} catch (XMLStreamException e) {
+					// TODO Auto-generated catch block
+				} catch (JAXBException e) {
+					e.printStackTrace();
+					// TODO Auto-generated catch block
+				} 
+				
+			}
+			
+		}
+		
 
 	}
 
@@ -687,7 +752,7 @@ public class Bases {
 
 	// ------------------------------------------------------------------------
 
-	private static void bases(BasesBuilder basesBuilder, AONContext ctx,
+	private static <D extends DatoSolicitado> void bases(BasesBuilder basesBuilder, AONContext ctx,
 			Liquidacion<?, ?, ?> liquidacion, boolean aceptarBasesAnteriores,
 			BasesCallback... cbs) {
 		LiquidacionBuilder liquidacionBuilder = new LiquidacionBuilder()
@@ -715,9 +780,9 @@ public class Bases {
 
 		for (LiquidacionMes<?> liquidacionMes : liquidacion.getLiquidacionMes()) {
 
-			Map<String, Trabajador> trabajadores = new HashMap<String, Trabajador>();
+			Map<String, Trabajador<D>> trabajadores = new HashMap<String, Trabajador<D>>();
 
-			for (Trabajador trabajador : liquidacionMes.getTrabajadores()
+			for (Trabajador<D> trabajador : liquidacionMes.getTrabajadores()
 					.getTrabajador())
 				trabajadores.put(trabajador.getNaf(), trabajador);
 
@@ -746,10 +811,10 @@ public class Bases {
 		basesBuilder.addLiquidacion(liquidacionBuilder.create());
 	}
 
-	private static void trabajadores(
+	private static <D extends DatoSolicitado> void trabajadores(
 			LiquidacionMesBuilder liquidacionMesBuilder, AONContext ctx,
 			CtaCot ctaCot, Periodo mesLiquidativo,
-			Map<String, Trabajador> trabajadores, BasesCallback... cbs) {
+			Map<String, Trabajador<D>> trabajadores, BasesCallback... cbs) {
 
 		String ccc = String.format("%s%s", ctaCot.getProvincia(),
 				ctaCot.getNumero());
@@ -781,12 +846,12 @@ public class Bases {
 
 	}
 
-	private static void trabajador(LiquidacionMesBuilder liquidacionMesBuilder,
-			Salary salary, Map<String, Trabajador> trabajadores,
+	private static <D extends DatoSolicitado> void trabajador(LiquidacionMesBuilder liquidacionMesBuilder,
+			Salary salary, Map<String, Trabajador<D>> trabajadores,
 			BasesCallback... cbs) {
 
 		TrabajadorBuilder trabajadorBuilder = new TrabajadorBuilder();
-		Trabajador trabajador = trabajadores.get(salary.getEmployeeSSNumber());
+		Trabajador<D> trabajador = trabajadores.get(salary.getEmployeeSSNumber());
 		if (trabajador == null) {
 			for (BasesCallback cb : cbs)
 				cb.unknownSalary(salary);
@@ -794,7 +859,7 @@ public class Bases {
 		}
 
 		trabajadorBuilder.setNaf(trabajador.getNaf());
-		for (Tramo<?> tramo : trabajador.getTramos().getTramo()) {
+		for (Tramo<D> tramo : trabajador.getTramos().getTramo()) {
 
 			try {
 				checkTramo(tramo, salary, cbs);
@@ -812,7 +877,7 @@ public class Bases {
 			tramoBuilder.setMesHasta(tramo.getFechaHasta().getMes());
 			tramoBuilder.setAnhoHasta(tramo.getFechaHasta().getAnho());
 
-			for (Dato datoSolicitado : tramo.getDatosTramo()
+			for (DatoSolicitado datoSolicitado : tramo.getDatosTramo()
 					.getDatoSolicitado()) {
 
 				CretaData data = getCretaData(datoSolicitado.getCodigo());
@@ -839,7 +904,9 @@ public class Bases {
 
 			liquidacionMesBuilder.add(trabajadorAon);
 		} catch (SkipExisting e) {
-			//
+			for (BasesCallback cb : cbs)
+				cb.trabajadorSkipped(trabajadorAon, trabajador, salary);
+			
 		}
 	}
 
@@ -1075,7 +1142,7 @@ public class Bases {
 		if (dateToAon.compareTo(dateToCreta) != 0)
 			throw new Different(); // Don't skip. Diffente 'FechaHasta'.
 
-		List<net.aonsolutions.tgss.creta.jaxb.DatoSolicitado> datosCreta = tramoCreta.getDatosTramo().getDato();
+		List<DatoSolicitado> datosCreta = tramoCreta.getDatosTramo().getDato();
 		Collections.sort(datosCreta, Bases::compare);
 		List<net.aonsolutions.tgss.creta.jaxb.bases.Dato> datosAon = tramoAon
 				.getDatosTramo().getDato();
@@ -1083,7 +1150,7 @@ public class Bases {
 
 		int j = 0;
 		for (int i = 0; i < datosCreta.size(); i++) {
-			net.aonsolutions.tgss.creta.jaxb.DatoSolicitado datoCreta = datosCreta.get(i);
+			DatoSolicitado datoCreta = datosCreta.get(i);
 			net.aonsolutions.tgss.creta.jaxb.bases.Dato datoAon = datosAon
 					.get(j);
 

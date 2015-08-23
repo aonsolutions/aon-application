@@ -236,6 +236,6 @@ public class IndentXMLStreamWriter implements XMLStreamWriter {
 
 	private String indent(String str) throws XMLStreamException {
 		indent();
-		return str.replaceAll("\r\n", "\r\n"+StringUtils.repeat(indent, depth));
+		return str.replaceAll("\n", "\n"+StringUtils.repeat(indent, depth));
 	}
 }
