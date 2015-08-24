@@ -1,0 +1,90 @@
+package com.code.aon.ui.purchase.controller;
+
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
+
+import com.code.aon.AonVersion;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.purchase.Purchase;
+import com.code.aon.ql.Criteria;
+import com.code.aon.sales.Sales;
+import com.code.aon.sales.bridge.SalesTransferManager;
+import com.code.aon.sales.enumeration.SalesStatus;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
+import com.code.aon.ui.purchase.util.PurchaseManager;
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
+
+public class ManufacturingOrderController extends PurchaseController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private boolean showSalesTransferWindow;
+	
+	private SalesTransferManager salesTransferManager;
+	
+	
+	public boolean isShowSalesTransferWindow() {
+		return showSalesTransferWindow;
+	}
+
+	public void setShowSalesTransferWindow(boolean showSalesTransferWindow) {
+		this.showSalesTransferWindow = showSalesTransferWindow;
+	}
+
+
+	public SalesTransferManager getSalesTransferManager() {
+		if (salesTransferManager == null) {
+			salesTransferManager = new SalesTransferManager(); 
+		}
+		return salesTransferManager;
+	}
+
+	public void setSalesTransferManager(SalesTransferManager salesTransferManager) {
+		this.salesTransferManager = salesTransferManager;
+	}
+
+	@Override
+	protected String getTableName() {
+		return "Purchase";
+	}
+	 
+	public void onSalesTransferShow(ActionEvent event) throws ManagerBeanException {
+		Purchase to = (Purchase)this.getTo();
+
+		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
+		Criteria criteria = new Criteria();
+		if (to.getProject() != null && to.getProject().getId() != null) {
+			criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_PROJECT_ID), to.getProject().getId());
+		}
+		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_STATUS), SalesStatus.PENDING);
+		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_SECURITY_LEVEL), to.getSecurityLevel());
+		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_WORK_PLACE_ID), to.getWorkPlace().getId());
+		criteria.addEqualExpression("Sales.lines.item.product.manufactured", Boolean.TRUE);
+		
+		criteria.addOrder(salesBean.getFieldName(IEntityAlias.SALES_ISSUE_DATE));
+		criteria.addOrder(salesBean.getFieldName(IEntityAlias.SALES_SERIES));
+		criteria.addOrder(salesBean.getFieldName(IEntityAlias.SALES_NUMBER));
+		getSalesTransferManager().setSalesList(salesBean.getList(criteria));
+
+	}
+
+	public void onSalesTransfer(ActionEvent event) {
+		Purchase to = (Purchase)this.getTo();
+		try {
+			PurchaseManager purchaseManager = new PurchaseManager();
+			purchaseManager.transferSalesDetails((Purchase)this.getTo(), getSalesTransferManager().getCheckedDetails(), to.getWarehouse());
+
+			refresh(null);
+			IController detailController = FormUtil.getController(IPurchaseConstants.MANUFACTURING_ORDER_DETAIL_CONTROLLER_NAME);
+			detailController.onSearch(null);
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
+	}
+	
+}

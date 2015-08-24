@@ -8,10 +8,12 @@
 
 	<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
 
-	<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
-		<ui:param name="lookupTo" value="#{searchController.supplier}" />
-		<ui:param name="skipNewButton" value="#{true}" />
-	</ui:include>
+	<aon:if test="#{!skipSupplierLookup}">
+		<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
+			<ui:param name="lookupTo" value="#{searchController.supplier}" />
+			<ui:param name="skipNewButton" value="#{true}" />
+		</ui:include>
+	</aon:if>
 	
 	<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
 		<ui:param name="lookupTo" value="#{searchController.project}" />
@@ -42,14 +44,16 @@
 		size="30">
 	</aon:inputText>
 							
-	<aon:outputLabel for="Purchase_documentType"
-		value="#{bundle.aon_type}" />
-	<aon:selectOneMenu id="Purchase_documentType"
-		converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addEqualExpression}">
-		<f:selectItem itemLabel="-" value="#{null}" />
-		<f:selectItems value="#{purchaseCollections.documentTypes}" />
-	</aon:selectOneMenu>
+	<aon:if test="#{!skipDocumentType}">
+		<aon:outputLabel for="Purchase_documentType"
+			value="#{bundle.aon_type}" />
+		<aon:selectOneMenu id="Purchase_documentType"
+			converter="aon.EnumConverter"
+			valueChangeListener="#{controller.addEqualExpression}">
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{purchaseCollections.documentTypes}" />
+		</aon:selectOneMenu>
+	</aon:if>
 	
 	<aon:outputLabel for="Purchase_workPlace_id"
 		value="#{bundle.purchase_workplace}" />
@@ -74,13 +78,15 @@
 		<f:selectItems value="#{purchaseCollections.purchaseStatuses}"/>
 	</aon:selectManyCheckbox>							
 	
-	<aon:outputLabel for="Purchase_emailCommunication" 
-		value="#{bundle.purchase_emailSend}" />
-	<aon:selectManyCheckbox id="Purchase_emailCommunication"
-		value="#{searchController.emailCommunication}">
-		<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
-		<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
-	</aon:selectManyCheckbox>
+	<aon:if test="#{!skipEmailCommunication}">
+		<aon:outputLabel for="Purchase_emailCommunication" 
+			value="#{bundle.purchase_emailSend}" />
+		<aon:selectManyCheckbox id="Purchase_emailCommunication"
+			value="#{searchController.emailCommunication}">
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+		</aon:selectManyCheckbox>
+	</aon:if>
 								
 
 </ui:composition>

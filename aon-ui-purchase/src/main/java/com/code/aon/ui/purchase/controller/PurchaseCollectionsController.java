@@ -43,15 +43,13 @@ public class PurchaseCollectionsController implements Serializable {
 
 	public List<SelectItem> getDocumentTypes() {
 		if (documentTypes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
+					.getLocale();
 			documentTypes = new LinkedList<SelectItem>();
-			for (PurchaseDocumentType type : PurchaseDocumentType.values()) {
-				if(type!=PurchaseDocumentType.SAMPLE){
-					String name = type.getName(locale);
-					SelectItem item = new SelectItem(type, name);
-					documentTypes.add(item);
-				}
-			}
+			documentTypes.add(new SelectItem(PurchaseDocumentType.NORMAL,
+					PurchaseDocumentType.NORMAL.getName(locale)));
+			documentTypes.add(new SelectItem(PurchaseDocumentType.ITEM_RETURN,
+					PurchaseDocumentType.ITEM_RETURN.getName(locale)));
 		}
 		return documentTypes;
 	}

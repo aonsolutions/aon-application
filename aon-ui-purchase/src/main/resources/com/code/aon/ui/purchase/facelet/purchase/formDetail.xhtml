@@ -29,7 +29,7 @@
 				styleClass="aon-table-row-link" value="&#160;"
 				immediate="true" ajaxSingle="true" requestDelay="100"
 				rendered="#{purchase.pending}"
-				actionListener="#{purchaseDetail.onSelect}"
+				actionListener="#{controller.onSelect}"
 				onkeyup="#{dataTableId}KeyUp(this)"
 				onfocus="#{dataTableId}SelectRow(this)"
 				onblur="#{dataTableId}DeselectRow(this)"
@@ -73,79 +73,79 @@
 					value="&#160;" title="#{bundle.aon_to_specify} #{to.item.product.lotable ? bundle.aon_lot_number : bundle.aon_serial_number}"
 					styleClass="aon-icon-version" style="margin-left: 5px; padding-right: 12px;"
 					rendered="#{formList and to.item.wildCard}"
-					actionListener="#{purchaseDetail.onAssignSerialNumberShow}" 
+					actionListener="#{controller.onAssignSerialNumberShow}" 
 					reRender="showSerialNumberWindow" ajaxSingle="true">
-					<f:setPropertyActionListener target="#{purchaseDetail.showSerialNumberWindow}"
+					<f:setPropertyActionListener target="#{controller.showSerialNumberWindow}"
 						value="#{true}" />
 				</aon:commandLink>
 				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
-					<ui:param name="lookupTo" value="#{purchaseDetail.to.item}" />
+					<ui:param name="lookupTo" value="#{controller.to.item}" />
 					<ui:param name="idRequired" value="#{true}" />
 					<ui:param name="skipLabel" value="#{true}" />
-					<ui:param name="skipSuggestText" value="#{purchaseDetail.to.item != null and purchaseDetail.to.item.id != null}" />
+					<ui:param name="skipSuggestText" value="#{controller.to.item != null and controller.to.item.id != null}" />
 					<ui:param name="lookupInputOnFocus" value="PurchaseDetail_description" />
 					<ui:param name="lookupRendered" value="#{formEdit}" />
-					<ui:param name="lookupDisabled" value="#{!controller.to.pending}" />
+					<ui:param name="lookupDisabled" value="#{(itemLookupDisabled)?(itemLookupDisabled):(!controller.to.pending)}" />
 					<ui:param name="lookupReRender" 
 						value="purchaseDetailItemEdit,PurchaseDetail_quantity,PurchaseDetail_price,PurchaseDetail_amount" />
 					<aon:methodParam name="lookupChangeListener"
-						value="#{purchaseDetail.onItemChanged}" type="lookupChangeListener" />
+						value="#{controller.onItemChanged}" type="lookupChangeListener" />
 				</ui:include>
 				<aon:panelGroup id="purchaseDetailItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
 					<aon:inputTextarea id="PurchaseDetail_description" 
-						value="#{purchaseDetail.to.description}"
-						rendered="#{purchaseDetail.to.item != null and purchaseDetail.to.item.id != null}"
-						cols="60" rows="#{!purchaseDetail.longDescription?1:5}"
-						style="#{!purchaseDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+						value="#{controller.to.description}"
+						rendered="#{controller.to.item != null and controller.to.item.id != null}"
+						cols="60" rows="#{!controller.longDescription?1:5}"
+						style="#{!controller.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 						<f:validateLength maximum="1024" />
 					</aon:inputTextarea>
 					<aon:commandLink id="PurchaseDetail_description_short" immediate="true"
 						value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
 						styleClass="aon-icon-edit-end-simple" style="margin-left: 5px; padding-right: 12px;"
-						rendered="#{purchaseDetail.longDescription and purchaseDetail.to.item.product.code != null}"
-						actionListener="#{purchaseDetail.onShortDescription}" 
+						rendered="#{controller.longDescription and controller.to.item.product.code != null}"
+						actionListener="#{controller.onShortDescription}" 
 						reRender="purchaseDetailItemEdit" ajaxSingle="true" />
 					<aon:commandLink id="PurchaseDetail_description_long" immediate="true"
 						value="&#160;" title="#{bundle.aon_edit}"
 						styleClass="aon-icon-edit-add-simple" style="margin-left: 5px; padding-right: 12px;"
-						rendered="#{!purchaseDetail.longDescription and purchaseDetail.to.item.product.code != null}"
-						actionListener="#{purchaseDetail.onLongDescription}"
+						rendered="#{!controller.longDescription and controller.to.item.product.code != null}"
+						actionListener="#{controller.onLongDescription}"
 						reRender="purchaseDetailItemEdit" ajaxSingle="true" />
 				</aon:panelGroup>
 				<f:facet name="footer">
 					<aon:div>
 						<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
-							<ui:param name="lookupTo" value="#{purchaseDetail.to.item}" />
+							<ui:param name="lookupTo" value="#{controller.to.item}" />
 							<ui:param name="idRequired" value="#{true}" />
 							<ui:param name="skipLabel" value="#{true}" />
-							<ui:param name="skipSuggestText" value="#{purchaseDetail.to.item != null and purchaseDetail.to.item.id != null}" />
+							<ui:param name="skipSuggestText" value="#{controller.to.item != null and controller.to.item.id != null}" />
 							<ui:param name="lookupInputOnFocus" value="PurchaseDetail_description-New" />
 							<ui:param name="lookupSuffix" value="-New" />
 							<ui:param name="lookupRendered" value="#{formNew}" />
 							<ui:param name="lookupReRender" 
 								value="purchaseDetailItemNew,PurchaseDetail_quantity-New,PurchaseDetail_price-New,PurchaseDetail_amount-New" />
 							<aon:methodParam name="lookupChangeListener"
-								value="#{purchaseDetail.onItemChanged}" type="lookupChangeListener" />
+								value="#{controller.onItemChanged}" type="lookupChangeListener" />
 						</ui:include>
 						<aon:panelGroup id="purchaseDetailItemNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
 							<aon:inputTextarea id="PurchaseDetail_description-New"
-								value="#{purchaseDetail.to.description}"
-								rendered="#{purchaseDetail.to.item != null and purchaseDetail.to.item.id != null}"
-								cols="60" rows="#{!purchaseDetail.longDescription?1:5}"
-								style="#{!purchaseDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+								value="#{controller.to.description}"
+								rendered="#{controller.to.item != null and controller.to.item.id != null}"
+								cols="60" rows="#{!controller.longDescription?1:5}"
+								style="#{!controller.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 								<f:validateLength maximum="1024" />
 							</aon:inputTextarea>
 							<aon:commandLink id="PurchaseDetail_description_short-New" immediate="true"
 								value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
 								styleClass="aon-icon-edit-end-simple" style="margin-left: 5px; padding-right: 12px;"
-								rendered="#{purchaseDetail.longDescription and purchaseDetail.to.item.product.code != null}"
-								actionListener="#{purchaseDetail.onShortDescription}" 
+								rendered="#{controller.longDescription and controller.to.item.product.code != null}"
+								actionListener="#{controller.onShortDescription}" 
 								reRender="purchaseDetailItemNew" ajaxSingle="true" />
 							<aon:commandLink id="PurchaseDetail_description_long-New" immediate="true"
 								value="&#160;" title="#{bundle.aon_edit}"
 								styleClass="aon-icon-edit-add-simple" style="margin-left: 5px; padding-right: 12px;"
-								rendered="#{!purchaseDetail.longDescription and purchaseDetail.to.item.product.code != null}"
-								actionListener="#{purchaseDetail.onLongDescription}"
+								rendered="#{!controller.longDescription and controller.to.item.product.code != null}"
+								actionListener="#{controller.onLongDescription}"
 								reRender="purchaseDetailItemNew" ajaxSingle="true" />
 						</aon:panelGroup>
 					</aon:div>
@@ -320,6 +320,7 @@
 						</aon:panelGrid>
 					</rich:toolTip>
 				</aon:commandLink>
+				<ui:insert name="afterInfoColumnContent"/>
 			</aon:column>
 		</ui:define>
 	</ui:decorate>

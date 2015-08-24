@@ -796,6 +796,7 @@
 		</navigation-case>
 	</navigation-rule>
 	
+   	<!-- ************* ORDER PROPOSAL *************************** -->	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>orderProposal_search</from-outcome>

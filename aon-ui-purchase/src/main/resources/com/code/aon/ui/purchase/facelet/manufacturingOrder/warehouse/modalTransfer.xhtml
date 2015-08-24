@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showLineCloseWindow">
+		<aon:if test="#{manufacturingOrderDetail.showLineCloseWindow}">
+			<rich:modalPanel id="lineCloseModalPanel" minHeight="580"
+				minWidth="760" rendered="#{manufacturingOrderDetail.showLineCloseWindow}"
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.aon_close} #{bundle.warehouse_manufacture_module}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showLineCloseWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{manufacturingOrderDetail.showLineCloseWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="lineCloseForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="manufacturingOrderDetail_close-accept"
+										value="#{bundle.aon_accept}"
+										reRender="showLineCloseWindow,manufacturingOrderForm"
+										actionListener="#{manufacturingOrderDetail.onCloseLines}"
+										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<rich:componentControl for="lineCloseModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{manufacturingOrderDetail.showLineCloseWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+									<aon:commandButton id="manufacturingOrderDetail_close-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showLineCloseWindow"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<f:setPropertyActionListener
+											target="#{manufacturingOrderDetail.showLineCloseWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								
+								<aon:div styleClass="aon-scroll-area">
+								
+									<aon:dataTable id="detailData" value="#{manufacturingOrderDetail.manufacturingOrderManager.detailModel}"
+										var="to" rows="10" rendered="#{manufacturingOrderDetail.manufacturingOrderManager.detailModel.rowCount > 0}"
+										columnClasses="aon-editDataTable-textColumn, aon-editDataTable-numberColumn, 
+											aon-editDataTable-numberColumn, aon-editDataTable-iconColumn, aon-editDataTable-iconColumn">
+
+										<aon:column styleClass="#{manufacturingOrderDetail.manufacturingOrderManager.selectedDetail.detail.id==to.detail.id?'aon-highlight':''}">
+											<f:facet name="header">
+												<h:outputText value="#{bundle.aon_product}" />
+											</f:facet>
+											<aon:outputText value="#{to.detail.description}" />
+										</aon:column>
+										
+										<aon:column styleClass="#{manufacturingOrderDetail.manufacturingOrderManager.selectedDetail.detail.id==to.detail.id?'aon-highlight':''}">
+											<f:facet name="header">
+												<h:outputText value="#{bundle.aon_pending}" />
+											</f:facet>
+											<aon:outputText value="#{to.detail.pendingQuantity}">
+												<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
+											</aon:outputText>
+										</aon:column>
+										
+										<aon:column styleClass="#{manufacturingOrderDetail.manufacturingOrderManager.selectedDetail.detail.id==to.detail.id?'aon-highlight':''}">
+											<f:facet name="header">
+												<aon:outputLabel for="detailData_total" value="#{bundle.aon_total}" />
+											</f:facet>
+											<aon:inputText id="detailData_total" value="#{to.totalQuantity}" size="5" >
+												<f:validateDoubleRange minimum="0.0" />
+												<a4j:support event="onblur" reRender="detailData, compositeDataContainer" ajaxSingle="true" />
+											</aon:inputText>
+										</aon:column>
+										
+										<aon:column styleClass="#{manufacturingOrderDetail.manufacturingOrderManager.selectedDetail.detail.id==to.detail.id?'aon-highlight':''}">
+											<f:facet name="header">
+												<aon:outputText value="&#160;" />
+											</f:facet>
+											<aon:div rendered="#{manufacturingOrderDetail.manufacturingOrderManager.transferedLessThanPending}">
+												<aon:commandButton value="&#160;" immediate="true"
+													title="#{bundle.aon_finalice}"
+													rendered="#{!manufacturingOrderDetail.manufacturingOrderManager.forceCloseRowChecked}"
+													styleClass="aon-finding-toolbar-item aon-icon-point-red aon-finding-toolbar-item-no-border"
+													actionListener="#{manufacturingOrderDetail.manufacturingOrderManager.forceCloseRowSelected}"
+													reRender="detailData,compositeDataContainer" ajaxSingle="true">
+												</aon:commandButton>															
+												<aon:commandButton value="&#160;" immediate="true"
+													title="#{bundle.aon_no} #{bundle.aon_finalice}"
+													rendered="#{manufacturingOrderDetail.manufacturingOrderManager.forceCloseRowChecked}"
+													styleClass="aon-finding-toolbar-item aon-icon-point-green aon-finding-toolbar-item-no-border"
+													actionListener="#{manufacturingOrderDetail.manufacturingOrderManager.forceCloseRowSelected}"
+													reRender="detailData,compositeDataContainer" ajaxSingle="true">
+												</aon:commandButton>															
+											</aon:div>
+										</aon:column>
+										
+										<aon:column styleClass="#{manufacturingOrderDetail.manufacturingOrderManager.selectedDetail.detail.id==to.detail.id?'aon-highlight':''}">
+											<f:facet name="header">
+												<aon:outputText value="&#160;" />
+											</f:facet>
+											<aon:commandButton value="&#160;" immediate="true"
+												title="#{bundle.aon_see}"
+												styleClass="aon-finding-toolbar-item aon-icon-tree-root aon-finding-toolbar-item-no-border"
+												actionListener="#{manufacturingOrderDetail.manufacturingOrderManager.onSelectDetail}"
+												reRender="detailData,compositeDataContainer" ajaxSingle="true">
+											</aon:commandButton>															
+										</aon:column>
+									</aon:dataTable>
+					
+									<aon:dataScroller for="detailData" showNote="true" pageSize="10"
+										rowCount="#{manufacturingOrderDetail.manufacturingOrderManager.detailModel.rowCount}" />
+
+									<rich:spacer />
+									
+									<aon:panel id="compositeDataContainer">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.product_composition}" />
+										</f:facet>
+										
+										<aon:dataTable id="compositeData" value="#{manufacturingOrderDetail.manufacturingOrderManager.compositeModel}"
+											var="to" rows="0" rendered="#{manufacturingOrderDetail.manufacturingOrderManager.compositeModel.rowCount > 0}"
+											columnClasses="aon-editDataTable-textColumn, aon-editDataTable-numberColumn, 
+												aon-editDataTable-numberColumn, aon-editDataTable-iconColumn">
+											
+											<aon:column>
+												<f:facet name="header">
+													<h:outputText value="#{bundle.aon_product}" />
+												</f:facet>
+												<aon:outputText value="#{to.composition.description}">
+													<aon:abbreviateConverter maxWidth="50" />
+												</aon:outputText>
+											</aon:column>
+											
+											<aon:column>
+												<f:facet name="header">
+													<h:outputText value="#{bundle.aon_quantity}" />
+												</f:facet>
+												<aon:outputText value="#{(manufacturingOrderDetail.manufacturingOrderManager.selectedDetail.totalQuantity)*(to.composition.quantity)}">
+													<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
+												</aon:outputText>
+											</aon:column>
+											
+											<aon:column>
+												<f:facet name="header">
+													<aon:outputLabel for="compositeData_total" value="#{bundle.aon_total}" />
+												</f:facet>
+												<aon:div>
+													<aon:inputText id="compositeData_total" value="#{to.totalQuantity}" size="5" >
+														<f:validateDoubleRange minimum="0.0" />
+														<a4j:support event="onblur" reRender="compositeDataContainer" ajaxSingle="true" />
+													</aon:inputText>
+												</aon:div>
+											</aon:column>
+											
+											<aon:column>
+												<f:facet name="header">
+													<aon:outputText value="&#160;" />
+												</f:facet>
+												<aon:outputText value="&#160;"
+													rendered="#{(manufacturingOrderDetail.manufacturingOrderManager.selectedDetail.totalQuantity)*(to.composition.quantity) != to.totalQuantity}"
+													styleClass="aon-finding-toolbar-item aon-icon-warning aon-finding-toolbar-item-no-border" />
+											</aon:column>
+											
+										</aon:dataTable>
+									</aon:panel>
+								
+								</aon:div>
+								
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+
+</ui:composition>

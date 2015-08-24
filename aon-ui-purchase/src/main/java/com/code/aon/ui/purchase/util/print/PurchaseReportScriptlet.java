@@ -1,0 +1,44 @@
+package com.code.aon.ui.purchase.util.print;
+
+import java.io.Serializable;
+
+import net.sf.jasperreports.engine.JRDefaultScriptlet;
+import net.sf.jasperreports.engine.JRScriptletException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.code.aon.AonVersion;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.product.ItemAddInfo;
+import com.code.aon.purchase.PurchaseDetail;
+
+public class PurchaseReportScriptlet extends JRDefaultScriptlet implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseReportScriptlet.class.getName());
+	
+	private static final String FIELD_ID = "id";
+
+	private static final String MANUFACTURING_DETAIL_TEXT = "ELABORACION_DETALLE";
+	
+	public String getItemManufacturingDetail() throws JRScriptletException{
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(PurchaseDetail.class);
+			PurchaseDetail detail = (PurchaseDetail) bean.get((Integer)super.getFieldValue(FIELD_ID));
+			for(ItemAddInfo addInfo: detail.getItem().getAddInfos().toArray(new ItemAddInfo[0])){
+				if(addInfo.getAttribute().equals(MANUFACTURING_DETAIL_TEXT)){
+					return addInfo.getValue();
+				}
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "ERROR: imposible obtener los datos de la factura al generar su informe";
+			LOGGER.error(msg,e);
+		}
+		return null;
+	}
+	
+}

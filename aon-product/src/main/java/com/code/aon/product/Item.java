@@ -44,6 +44,7 @@ public class Item extends ItemDB implements IPriceable, IAuditable {
 	
     private Set<RegistryItem> customers = new HashSet<RegistryItem>();
     private Set<RegistryItem> suppliers = new HashSet<RegistryItem>();
+    private Set<ItemAddInfo> addInfos = new HashSet<ItemAddInfo>();
     private Set<ItemComposition> compositions = new HashSet<ItemComposition>();
 
 	@OneToMany(mappedBy = "item", cascade={CascadeType.REMOVE})
@@ -62,6 +63,14 @@ public class Item extends ItemDB implements IPriceable, IAuditable {
 	}
 	public void setSuppliers(Set<RegistryItem> suppliers) {
 		this.suppliers = suppliers;
+	}
+	
+	@OneToMany(mappedBy = "item", cascade={CascadeType.REMOVE})
+	public Set<ItemAddInfo> getAddInfos() {
+		return addInfos;
+	}
+	public void setAddInfos(Set<ItemAddInfo> addInfos) {
+		this.addInfos = addInfos;
 	}
 	
 	@OneToMany(mappedBy = "item", cascade={CascadeType.REMOVE})

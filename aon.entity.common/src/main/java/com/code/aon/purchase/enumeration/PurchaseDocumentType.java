@@ -23,7 +23,12 @@ public enum PurchaseDocumentType implements IResourceable {
     /**
      * ITEM_RETURN
      */
-    ITEM_RETURN;
+    ITEM_RETURN,
+    
+    /**
+     * MANUFACTURE
+     */
+    MANUFACTURE;
 
 
     /** Message key prefix. */

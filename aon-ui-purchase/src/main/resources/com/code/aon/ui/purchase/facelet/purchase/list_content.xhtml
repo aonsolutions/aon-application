@@ -25,23 +25,25 @@
 		<aon:outputText value="#{to.referenceCode}" />
 	</aon:column>
 
-	<aon:column alias="Purchase.supplier.registry.name"
-		styleClass="aon-editDataTable-textColumn aon-width-auto">
-		<f:facet name="header">
-			<h:outputText value="#{bundle.aon_supplier}" />
-		</f:facet>
-		<aon:outputText value="#{to.supplier.registry.fullName}">
-			<aon:abbreviateConverter maxWidth="50" />
-		</aon:outputText>
-	</aon:column>
-
-	<aon:column alias="Purchase.supplier.registry.document"
-		styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-120">
-		<f:facet name="header">
-			<h:outputText value="#{bundle.aon_company_document}" />
-		</f:facet>
-		<aon:outputText value="#{to.supplier.registry.document}" />
-	</aon:column>
+	<aon:if test="#{!skipSupplierColumn}">
+		<aon:column alias="Purchase.supplier.registry.name"
+			styleClass="aon-editDataTable-textColumn aon-width-auto">
+			<f:facet name="header">
+				<h:outputText value="#{bundle.aon_supplier}" />
+			</f:facet>
+			<aon:outputText value="#{to.supplier.registry.fullName}">
+				<aon:abbreviateConverter maxWidth="50" />
+			</aon:outputText>
+		</aon:column>
+	
+		<aon:column alias="Purchase.supplier.registry.document"
+			styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-120">
+			<f:facet name="header">
+				<h:outputText value="#{bundle.aon_company_document}" />
+			</f:facet>
+			<aon:outputText value="#{to.supplier.registry.document}" />
+		</aon:column>
+	</aon:if>
 
 	<aon:if test="#{companyCollections.workPlacesCount > 1}">
 		<aon:column alias="Purchase.workPlace.description" 
@@ -108,17 +110,19 @@
 			rendered="#{to.invoiced}" />
 	</aon:column>
 
-	<aon:column alias="Purchase.emailCommunication"
-		styleClass="aon-editDataTable-iconColumn aon-width-20">
-		<f:facet name="header">
-			<aon:outputText value="email" />
-		</f:facet>
-		<aon:div>
-			<aon:outputText value="&#160;" style="padding-left: 15px;"
-				styleClass="aon-icon-check" rendered="#{!to.emailCommunication}" />
-			<aon:outputText value="&#160;" style="padding-left: 15px;"
-				styleClass="aon-icon-checked" rendered="#{to.emailCommunication}" />
-		</aon:div>
-	</aon:column>
+	<aon:if test="#{!skipEmailCommunicationColumn}">
+		<aon:column alias="Purchase.emailCommunication"
+			styleClass="aon-editDataTable-iconColumn aon-width-20">
+			<f:facet name="header">
+				<aon:outputText value="email" />
+			</f:facet>
+			<aon:div>
+				<aon:outputText value="&#160;" style="padding-left: 15px;"
+					styleClass="aon-icon-check" rendered="#{!to.emailCommunication}" />
+				<aon:outputText value="&#160;" style="padding-left: 15px;"
+					styleClass="aon-icon-checked" rendered="#{to.emailCommunication}" />
+			</aon:div>
+		</aon:column>
+	</aon:if>
 
 </ui:composition>

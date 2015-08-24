@@ -361,6 +361,10 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 		return getRegistryValidationManager().isBlocked(supplier);
 	}
 
+	public void emptyAddresses() {
+		setAddresses(null);
+	}
+	
 	public void loadAddresses(Integer id) throws ManagerBeanException {
 		List<SelectItem> addresses = new LinkedList<SelectItem>();
 		if (id != null) {

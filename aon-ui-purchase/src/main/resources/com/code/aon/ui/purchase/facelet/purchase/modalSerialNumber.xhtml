@@ -8,16 +8,18 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 
+	<ui:param name="controller" value="#{(controller!=null)?(controller):(purchaseDetail)}" />
+	
 	<aon:panelGroup id="showSerialNumberWindow">
-		<aon:if test="#{purchaseDetail.showSerialNumberWindow}">
+		<aon:if test="#{controller.showSerialNumberWindow}">
 			<rich:modalPanel id="serialNumberModalPanel" minHeight="380"
-				minWidth="520" rendered="#{purchaseDetail.showSerialNumberWindow}"
+				minWidth="520" rendered="#{controller.showSerialNumberWindow}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{bundle.aon_to_specify}" />
 						<aon:outputText value="&#160;" />
-						<aon:outputText value="#{purchaseDetail.serializableItem.product.lotable ? bundle.aon_lot_number : bundle.aon_serial_number}" />
+						<aon:outputText value="#{controller.serializableItem.product.lotable ? bundle.aon_lot_number : bundle.aon_serial_number}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -27,7 +29,7 @@
 							reRender="showSerialNumberWindow" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
-								target="#{purchaseDetail.showSerialNumberWindow}"
+								target="#{controller.showSerialNumberWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
@@ -40,13 +42,13 @@
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="serialNumber-accept"
 										value="#{bundle.aon_accept}"
-										actionListener="#{purchaseDetail.onAssignSerialNumber}"
+										actionListener="#{controller.onAssignSerialNumber}"
 										action="purchaseForm"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
 										<rich:componentControl for="serialNumberModalPanel"
 											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener
-											target="#{purchaseDetail.showSerialNumberWindow}"
+											target="#{controller.showSerialNumberWindow}"
 											value="#{false}" />
 									</aon:commandButton>
 									<aon:commandButton id="serialNumber-cancel"
@@ -55,7 +57,7 @@
 										immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel">
 										<f:setPropertyActionListener
-											target="#{purchaseDetail.showSerialNumberWindow}"
+											target="#{controller.showSerialNumberWindow}"
 											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>
@@ -64,40 +66,40 @@
 
 										<aon:outputLabel value="#{bundle.aon_product}" />
 										<aon:outputText styleClass="aon-bold"
-											value="#{purchaseDetail.serializableItem.product.name}" />
+											value="#{controller.serializableItem.product.name}" />
 
 										<aon:outputLabel for="PurchaseDetail_serialQuantity"
 											value="#{bundle.aon_quantity}"
-											rendered="#{purchaseDetail.serializableItem.product.lotable}" />
+											rendered="#{controller.serializableItem.product.lotable}" />
 										<aon:inputText id="PurchaseDetail_serialQuantity" 
-											value="#{purchaseDetail.serializableQuantity}"
-											rendered="#{purchaseDetail.serializableItem.product.lotable}"
+											value="#{controller.serializableQuantity}"
+											rendered="#{controller.serializableItem.product.lotable}"
 											required="true" size="5" />
 
 										<aon:outputLabel for="PurchaseDetail_serialDate"
-											value="#{purchaseDetail.serializableItem.product.lotable ? bundle.aon_lot_date : bundle.aon_serial_date}" />
+											value="#{controller.serializableItem.product.lotable ? bundle.aon_lot_date : bundle.aon_serial_date}" />
 										<aon:selectInputDate id="PurchaseDetail_serialDate" 
-											value="#{purchaseDetail.serialDate}"
+											value="#{controller.serialDate}"
 											timeZone="#{timeZoneController.timeZone}"
 											popupDateFormat="#{bundle.aon_date_pattern}" />
 
 										<aon:outputLabel for="PurchaseDetail_serialNumber"
-											value="#{purchaseDetail.serializableItem.product.lotable ? bundle.aon_lot_number : bundle.aon_serial_number}" />
+											value="#{controller.serializableItem.product.lotable ? bundle.aon_lot_number : bundle.aon_serial_number}" />
 										<aon:div>
 											<aon:inputText id="PurchaseDetail_serialNumber"
-												value="#{purchaseDetail.serialNumber}" 
+												value="#{controller.serialNumber}" 
 												size="40" maxlength="32"
 												converter="aon.TrimStringConverter" />
 											<aon:commandButton id="PurchaseDetail_serialNumber-add"
 												styleClass="aon-finding-toolbar-item aon-search-add"
 												value="&#160;"
 												rendered="#{true}"
-												actionListener="#{purchaseDetail.onAddSerialNumber}"
+												actionListener="#{controller.onAddSerialNumber}"
 												reRender="serialNumberGrid" />
 											<aon:commandButton id="PurchaseDetail_serialNumber-remove"
 												styleClass="aon-finding-toolbar-item aon-search-minus"
 												value="&#160;"
-												actionListener="#{purchaseDetail.onRemoveSerialNumber}"
+												actionListener="#{controller.onRemoveSerialNumber}"
 												reRender="serialNumberGrid">
 											</aon:commandButton>
 										</aon:div>
@@ -106,8 +108,8 @@
 											value="#{bundle.aon_list}" />
 										<aon:selectManyListbox id="PurchaseDetail_serialNumbers"
 											style="width:280px;"
-											value="#{purchaseDetail.selectedBreakdown}" size="12">
-											<f:selectItems value="#{purchaseDetail.serialNumbers}" />
+											value="#{controller.selectedBreakdown}" size="12">
+											<f:selectItems value="#{controller.serialNumbers}" />
 										</aon:selectManyListbox>
 
 									</aon:panelGrid>
