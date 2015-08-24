@@ -78,7 +78,7 @@ public interface ISepeConstants {
 	
 	public static final ModelOption[] AVAILABLE_CONTRACT_MODEL_OPTIONS = {
 		ModelOption.INDEFINITE_OPT1,
-//		ModelOption.INDEFINITE_OPT2,
+		ModelOption.INDEFINITE_OPT2,
 //		ModelOption.INDEFINITE_OPT3,
 //		ModelOption.INDEFINITE_OPT4,
 		ModelOption.INDEFINITE_OPT5,
@@ -112,7 +112,7 @@ public interface ISepeConstants {
 //		ModelOption.TEMPORARY_OPT7,
 		ModelOption.TEMPORARY_OPT8,
 //		ModelOption.TEMPORARY_OPT9,
-//		ModelOption.TEMPORARY_OPT10,
+		ModelOption.TEMPORARY_OPT10,
 		ModelOption.TEMPORARY_OPT11,
 		ModelOption.TEMPORARY_OPT12,
 //		ModelOption.TEMPORARY_OPT13,

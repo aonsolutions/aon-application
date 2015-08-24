@@ -431,6 +431,44 @@ public class TemporaryModel extends AbstractContractModel {
 			} else if(modelOption == ModelOption.TEMPORARY_OPT10){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT10_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT10_OPTION_CHECK.getValue(),"true");
+				if(code == ContractCode.C501){
+					setPdfFieldValue(PdfFieldTemporary.OPT10_TC2_501.getValue(),"true");
+				} else if(code == ContractCode.C502){
+					setPdfFieldValue(PdfFieldTemporary.OPT10_TC2_502.getValue(),"true");
+				}
+				String key = getContractInfoMap(contract).get(PdfFieldTemporary.OPT10_REQUIREMENTS_OPT.toString());
+				if(StringUtils.isNotBlank(key)){
+					if(PdfFieldTemporary.OPT10_REQUIREMENTS_OPT1.toString().equals(key)){
+						setPdfFieldValue(PdfFieldTemporary.OPT10_REQUIREMENTS_OPT1.getValue(), "true");
+					} else if(PdfFieldTemporary.OPT10_REQUIREMENTS_OPT2.toString().equals(key)){
+						setPdfFieldValue(PdfFieldTemporary.OPT10_REQUIREMENTS_OPT2.getValue(), "true");
+					} else if(PdfFieldTemporary.OPT10_REQUIREMENTS_OPT3.toString().equals(key)){
+						setPdfFieldValue(PdfFieldTemporary.OPT10_REQUIREMENTS_OPT3.getValue(), "true");
+					} else if(PdfFieldTemporary.OPT10_REQUIREMENTS_OPT4.toString().equals(key)){
+						setPdfFieldValue(PdfFieldTemporary.OPT10_REQUIREMENTS_OPT4.getValue(), "true");
+					}
+				}
+				key = getContractInfoMap(contract).get(PdfFieldTemporary.OPT10_FORMATION_OPT.toString());
+				if(StringUtils.isNotBlank(key)){
+					if(PdfFieldTemporary.OPT10_FORMATION_OPT1.toString().equals(key)){
+						setPdfFieldValue(PdfFieldTemporary.OPT10_FORMATION_OPT1.getValue(), "true");
+					} else if(PdfFieldTemporary.OPT10_FORMATION_OPT2.toString().equals(key)){
+						setPdfFieldValue(PdfFieldTemporary.OPT10_FORMATION_OPT2.getValue(), "true");
+					}
+				}
+				key = getContractInfoMap(contract).get(PdfFieldTemporary.OPT10_FORMATION_TYPE_OPT.toString());
+				if(StringUtils.isNotBlank(key)){
+					if(PdfFieldTemporary.OPT10_FORMATION_TYPE_OPT1.toString().equals(key)){
+						setPdfFieldValue(PdfFieldTemporary.OPT10_FORMATION_TYPE_OPT1.getValue(), "true");
+						setPdfFieldValue(PdfFieldTemporary.OPT10_FORMATION_TYPE_OPT1_TEXT.getValue(), 
+								getContractInfoMap(contract).get(PdfFieldTemporary.OPT10_FORMATION_TYPE_OPT1_TEXT.toString()));
+					} else if(PdfFieldTemporary.OPT10_FORMATION_TYPE_OPT2.toString().equals(key)){
+						setPdfFieldValue(PdfFieldTemporary.OPT10_FORMATION_TYPE_OPT2.getValue(), "true");
+						setPdfFieldValue(PdfFieldTemporary.OPT10_FORMATION_TYPE_OPT2_TEXT.getValue(), 
+								getContractInfoMap(contract).get(PdfFieldTemporary.OPT10_FORMATION_TYPE_OPT2_TEXT.toString()));
+					}
+				}				
+				setPdfFieldValue(PdfFieldTemporary.OPT10_REDUCTION_OPT1.getValue(), "true");
 			} else if(modelOption == ModelOption.TEMPORARY_OPT11){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT11_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT11_OPTION_CHECK.getValue(),"true");

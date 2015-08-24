@@ -200,6 +200,23 @@ public enum PdfFieldTemporary implements IContractFieldName{
 	OPT9_OPTION_CHECK,
 //		A TIEMPO PARCIAL CON VINCULACIÓN FORMATIVA. ( pág.13 )
 	OPT10_OPTION_CHECK,
+	OPT10_TC2_501,
+	OPT10_TC2_502,
+	OPT10_REQUIREMENTS_OPT1,
+	OPT10_REQUIREMENTS_OPT2,
+	OPT10_REQUIREMENTS_OPT3,
+	OPT10_REQUIREMENTS_OPT4,
+	OPT10_REQUIREMENTS_OPT(OPT10_REQUIREMENTS_OPT1, OPT10_REQUIREMENTS_OPT2, OPT10_REQUIREMENTS_OPT3, OPT10_REQUIREMENTS_OPT4),
+	OPT10_FORMATION_OPT1,
+	OPT10_FORMATION_OPT2,
+	OPT10_FORMATION_OPT(OPT10_FORMATION_OPT1, OPT10_FORMATION_OPT2),
+	OPT10_FORMATION_TYPE_OPT1,
+	OPT10_FORMATION_TYPE_OPT2,
+	OPT10_FORMATION_TYPE_OPT(OPT10_FORMATION_TYPE_OPT1, OPT10_FORMATION_TYPE_OPT2),
+	OPT10_FORMATION_TYPE_OPT1_TEXT(Boolean.TRUE),
+	OPT10_FORMATION_TYPE_OPT2_TEXT(Boolean.TRUE),
+	OPT10_REDUCTION_OPT1,
+	OPT10_REDUCTION_OPT2,
 //		DE TRABAJOS DE INTERÉS SOCIAL/FOMENTO DE EMPLEO AGRARIO. ( pág.14 )
 	OPT11_OPTION_CHECK,
 	OPT11_FULL_TIME,
@@ -297,18 +314,18 @@ public enum PdfFieldTemporary implements IContractFieldName{
 	
 	@Override
 	public boolean isOverridable(){
-		return overridable;
+		return overridable || compositeValues!=null;
 	}
 	@Override
 	public boolean isCheck(){
-		return check;
+		return check || compositeValues!=null;
 	}
 	@Override
 	public boolean isCommonValue(){
 		return !this.toString().matches("OPT\\d+_\\w+");
 	}
 	@Override
-	public String getValue(){
+	public String getValue() {
 		return ResourceBundle.getBundle(BASE_NAME).getString(toString());
 	}
 	@Override

@@ -387,6 +387,47 @@ public class IndefiniteModel extends AbstractContractModel {
 				} else if(code == ContractCode.C300){
 					setPdfFieldValue(PdfFieldIndefinite.OPT1_TC2_300.getValue(),"true");
 				}
+			} else if(modelOption == ModelOption.INDEFINITE_OPT2){
+				setPdfFieldValue(PdfFieldIndefinite.MAIN_OPT2_CHECK.getValue(),"true");
+				setPdfFieldValue(PdfFieldIndefinite.OPT2_OPTION_CHECK.getValue(),"true");
+				if(code == ContractCode.C130){
+					setPdfFieldValue(PdfFieldIndefinite.OPT2_TC2_130.getValue(),"true");
+				} else if(code == ContractCode.C230){
+					setPdfFieldValue(PdfFieldIndefinite.OPT2_TC2_230.getValue(),"true");
+				} else if(code == ContractCode.C330){
+					setPdfFieldValue(PdfFieldIndefinite.OPT2_TC2_330.getValue(),"true");
+				}
+				String key = getContractInfoMap(contract).get(PdfFieldIndefinite.OPT2_SEPE_MUNICIPALITY.toString());
+				if(StringUtils.isNotBlank(key)){
+					setPdfFieldValue(PdfFieldIndefinite.OPT2_SEPE_MUNICIPALITY.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.OPT2_SEPE_MUNICIPALITY.toString()));
+				}
+				key = getContractInfoMap(contract).get(PdfFieldIndefinite.OPT2_DISABILITY_NO_SEVERE.toString());
+				if(StringUtils.isNotBlank(key)){
+					if(PdfFieldIndefinite.OPT2_DISABILITY_NO_SEVERE_MAN_LT_45.toString().equals(key)){
+						setPdfFieldValue(PdfFieldIndefinite.OPT2_DISABILITY_NO_SEVERE_MAN_LT_45.getValue(), "true");
+					} else if(PdfFieldIndefinite.OPT2_DISABILITY_NO_SEVERE_MAN_GT_45.toString().equals(key)){
+						setPdfFieldValue(PdfFieldIndefinite.OPT2_DISABILITY_NO_SEVERE_MAN_GT_45.getValue(), "true");
+					} else if(PdfFieldIndefinite.OPT2_DISABILITY_NO_SEVERE_WOMAN_LT_45.toString().equals(key)){
+						setPdfFieldValue(PdfFieldIndefinite.OPT2_DISABILITY_NO_SEVERE_WOMAN_LT_45.getValue(), "true");
+					} else if(PdfFieldIndefinite.OPT2_DISABILITY_NO_SEVERE_WOMAN_GT_45.toString().equals(key)){
+						setPdfFieldValue(PdfFieldIndefinite.OPT2_DISABILITY_NO_SEVERE_WOMAN_GT_45.getValue(), "true");
+					}
+				}
+				key = getContractInfoMap(contract).get(PdfFieldIndefinite.OPT2_DISABILITY_SEVERE.toString());
+				if(StringUtils.isNotBlank(key)){
+					if(PdfFieldIndefinite.OPT2_DISABILITY_SEVERE_MAN_LT_45.toString().equals(key)){
+						setPdfFieldValue(PdfFieldIndefinite.OPT2_DISABILITY_SEVERE_MAN_LT_45.getValue(), "true");
+					} else if(PdfFieldIndefinite.OPT2_DISABILITY_SEVERE_MAN_GT_45.toString().equals(key)){
+						setPdfFieldValue(PdfFieldIndefinite.OPT2_DISABILITY_SEVERE_MAN_GT_45.getValue(), "true");
+					} else if(PdfFieldIndefinite.OPT2_DISABILITY_SEVERE_WOMAN_LT_45.toString().equals(key)){
+						setPdfFieldValue(PdfFieldIndefinite.OPT2_DISABILITY_SEVERE_WOMAN_LT_45.getValue(), "true");
+					} else if(PdfFieldIndefinite.OPT2_DISABILITY_SEVERE_WOMAN_GT_45.toString().equals(key)){
+						setPdfFieldValue(PdfFieldIndefinite.OPT2_DISABILITY_SEVERE_WOMAN_GT_45.getValue(), "true");
+					}
+				}
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.OPT2_REDUCTION.toString()))){
+					setPdfFieldValue(PdfFieldIndefinite.OPT2_REDUCTION.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.OPT2_REDUCTION.toString()));
+				}
 			} else if(modelOption == ModelOption.INDEFINITE_OPT5){
 				setPdfFieldValue(PdfFieldIndefinite.MAIN_OPT5_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldIndefinite.OPT5_OPTION_CHECK.getValue(),"true");
