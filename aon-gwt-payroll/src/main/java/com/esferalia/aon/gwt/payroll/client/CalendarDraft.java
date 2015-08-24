@@ -77,6 +77,7 @@ public class CalendarDraft extends Composite implements
 		String other();
 
 	}
+	
 
 	private static CalendarDraftUiBinder uiBinder = GWT
 			.create(CalendarDraftUiBinder.class);

@@ -9,12 +9,15 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MAX
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_RAW;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,6 +27,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.AonException;
+import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.enumeration.AbstractSSRegimeTypeVisitor;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
@@ -244,14 +248,31 @@ public abstract class QuoteCalculator {
 
 			this.cgcBase = null;
 			this.cgpBase = null;
+			
 
 			String name = payment.getName();
+			
+			
+			System.out.println ( name + " = " + quote );
+			
 			if (!StringUtils.isBlank(name)) {
 				bases.put(name, quote);
 				add(String.format("BASE_%s", name), quote, context, start, end);
+				
 				if (AonStringUtils.equals(MATERNITY.getName(), name)
-						|| AonStringUtils.equals(ERE.getName(), name))
+						|| AonStringUtils.equals(ERE.getName(), name)){
+					
+					if ( context.containsVariable(CGC_BASE.getName(), start, end) )
+						limit(CGC_BASE.getName(), CGC_BASE_RAW.getName(),
+								CGC_BASE_MIN.getName(), CGC_BASE_MAX.getName(),
+								context, start, end, MATERNITY_BASE.getName(), ERE_BASE.getName());
+					if ( context.containsVariable(CGP_BASE.getName(), start, end) )
+						limit(CGP_BASE.getName(),  CGP_BASE_RAW.getName(),
+								CGP_BASE_MIN.getName(), CGP_BASE_MAX.getName(),
+								context, start, end, MATERNITY_BASE.getName(), ERE_BASE.getName());
+						
 					return quote;
+				}
 
 			}
 
@@ -266,7 +287,7 @@ public abstract class QuoteCalculator {
 					add(CGC_BASE_RAW.getName(), quote, context, start, end);
 					limit(CGC_BASE.getName(), CGC_BASE_RAW.getName(),
 							CGC_BASE_MIN.getName(), CGC_BASE_MAX.getName(),
-							context, start, end);
+							context, start, end, MATERNITY_BASE.getName(), ERE_BASE.getName());
 					GeneralQuote.this.rawCgcBase += quote;
 				}
 
@@ -289,16 +310,16 @@ public abstract class QuoteCalculator {
 					add(CGC_BASE_RAW.getName(), quote, context, start, end);
 					limit(CGC_BASE.getName(), CGC_BASE_RAW.getName(),
 							CGC_BASE_MIN.getName(), CGC_BASE_MAX.getName(),
-							context, start, end);
+							context, start, end, MATERNITY_BASE.getName(), ERE_BASE.getName());
 					GeneralQuote.this.rawCgcBase += quote;
 				}
 
 			});
 
 			add(CGP_BASE_RAW.getName(), quote, context, start, end);
-			limit(CGP_BASE.getName(), CGP_BASE_RAW.getName(),
+			limit(CGP_BASE.getName(),  CGP_BASE_RAW.getName(),
 					CGP_BASE_MIN.getName(), CGP_BASE_MAX.getName(),
-					context, start, end);
+					context, start, end, MATERNITY_BASE.getName(), ERE_BASE.getName());
 
 			SalaryType salaryType = payment.getSalaryType();
 			salaryType.accept(new SalaryTypeVisitor<Object>() {
@@ -588,33 +609,88 @@ public abstract class QuoteCalculator {
 
 	private static void limit(String limitName, String rawName,
 			String minExpression, String maxExpression, ExpressionContext ctx,
-			Date start, Date end) {
+			Date start, Date end, String ...others) {
 
 		List<ITimedVariable<Double>> raws = ctx.getVariables(rawName, start,
 				end);
+		
 		for (ITimedVariable<Double> raw : raws) {
 			Period rawPeriod = raw.getPeriod();
 			Double rawValue = raw.getValue(raw.getPeriod());
+			
+			Double othersValue = 0.00;
+			for ( String other: others )
+				othersValue += sum(other, rawPeriod, ctx );
+			
 			try {
 				Double minValue = getLimit(minExpression, ctx,
 						rawPeriod.getStart(), rawPeriod.getEnd());
-				if (rawValue <= minValue) {
+				
+				minValue -= othersValue;
+				
+				
+				if ( rawValue <= minValue) {
 					ctx.putVariable(limitName, new TimedObject<Double>(
-							minValue, rawPeriod));
-				} else {
-					Double maxValue = getLimit(maxExpression, ctx,
-							rawPeriod.getStart(), rawPeriod.getEnd());
-					ctx.putVariable(
-							limitName,
-							new TimedObject<Double>(Math
-									.min(rawValue, maxValue), rawPeriod));
+							minValue , rawPeriod));
+					return;
 				}
-			} catch (Exception e) {
-				ctx.putVariable(limitName, new TimedObject<Double>(
-						rawValue, rawPeriod));
+			} catch ( Exception e ){
 			}
+				
+			try{
+				Double maxValue = getLimit(maxExpression, ctx,
+						rawPeriod.getStart(), rawPeriod.getEnd());
+				
+				System.out.println(rawName + " = " + maxValue + ", " + rawValue);
+
+				maxValue -= othersValue;
+				
+				
+				ctx.putVariable(
+						limitName,
+						new TimedObject<Double>(Math
+								.min(rawValue, maxValue), rawPeriod));
+				return;
+			} catch (Exception e) {
+			}
+			ctx.putVariable(limitName, new TimedObject<Double>(
+					rawValue, rawPeriod));
 		}
 
 	}
+	
+	private static Double sum(String name, Period p, ExpressionContext ctx) {
+		Double sum = 0.00;
+		
+		List<ITimedVariable<Double>> vars = getVariables(name, p, ctx);
+		
+		for (ITimedVariable<Double> var : vars) {
+			Period intersect = var.getPeriod().intersect(p);
+			sum += var.getValue(var.getPeriod()) * days(intersect) / days(var.getPeriod());
+		}
+
+		return sum;
+	}
+	
+	private static long days(Period p) {
+		return CommonUtil.getDaysBetweenDates(p.getStart(), p.getEnd()) + 1;
+	}
+
+	private static  <T> List<ITimedVariable<T>> getVariables(String name, Period p, ExpressionContext ctx) {
+		List<ITimedVariable<Object>> variables = ctx.getVariables(name);
+		if (variables == null)
+			return Collections.emptyList();
+
+		List<ITimedVariable<T>> ret = new ArrayList<ITimedVariable<T>>();
+
+		for (ITimedVariable<?> var : variables) {
+			if ( var.getPeriod().intersects(p))
+				ret.add((ITimedVariable<T>) var);
+		}
+
+		return ret;
+
+	}
+	
 
 }

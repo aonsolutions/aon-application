@@ -3,6 +3,8 @@ package com.esferalia.aon.payroll.calculator.sql;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MAX;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
@@ -28,6 +30,7 @@ import java.util.Map;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.code.aon.common.enumeration.Month;
@@ -59,7 +62,8 @@ import com.esferalia.aon.watson.util.AonDateUtils;
 public class SQLITTestCase extends AbstractSQLTestCase {
 
 	private static final double DELTA = 0.000001;
-
+	
+	
 	@Test
 	public void testCommonDiseaseITI() throws ExpressionException, SQLException,
 			SalaryException {
@@ -106,13 +110,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 		
-
-		cleanSystemPayments(aonContext);
-//		addSSRegimePayment(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), PaymentType.CRA_0004 , 
-//				"TRACE('DIAS_MATERNIDAD=%d\r\n',DIAS_MATERNIDAD);0.00", 
-//				"DIAS_MATERNIDAD * BASE_REGULADORA" ,
-//				"0.00");
-
+		
 		//@formatter:off
 		ContractRecord contract = newContract(aonContext, 
 				new String[] {
@@ -122,7 +120,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				new String[] {						
 				"BASE_CGC * 0.10", 
 				"BASE_CGP * 0.05",
-				"BASE_IRPF * 0.00/100" 
+				"BASE_IRPF * PORCENTAJE_IRPF/100" 
 				}, null);
 		//@formatter:on
 		
@@ -151,16 +149,113 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testMaternityITII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, 
+				new HashMap<String,String>(){
+			{
+				put(CGC_BASE_MIN.getName(), "(1000.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30))");
+			}
+		});
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"0.00"
+							}, 
+				new String[] {						
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05",
+				"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, null);
+		//@formatter:on
+		
+		PaymentConceptRecord maternity = addConcept(aonContext, MATERNITY.getName());
+		addPayment(aonContext, contract, maternity, "DIAS_MATERNIDAD * 0", "DIAS_MATERNIDAD * BASE_REGULADORA");
+		
+		Date startITDate = getToday();
+		addIT(aonContext, contract, LeaveType.MATERNITY, startITDate,
+				null, 100.00);
+
+		
+		Date startDate = add(getFirstDayOfMonth(getToday()),MONTH,1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		Assert.assertEquals(0.00, salary.getTotalPayment());
+		Assert.assertEquals(0.00, salary.getTotalLiquid());
+		Assert.assertEquals(get(endDate, DAY_OF_MONTH) * 100.00, salary.getCommonBase());
+
+	}
+
+	@Test
+	public void testMaternityITIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, 
+				new HashMap<String,String>(){
+			{
+				put(CGC_BASE_MAX.getName(), "(3500.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30))");
+			}
+		});
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"1000.00"
+							}, 
+				new String[] {						
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05",
+//				"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, null);
+		//@formatter:on
+		
+		PaymentConceptRecord maternity = addConcept(aonContext, MATERNITY.getName());
+		addPayment(aonContext, contract, maternity, "DIAS_MATERNIDAD * 0", "DIAS_MATERNIDAD * BASE_REGULADORA");
+		
+		Date startITDate = getToday();
+		addIT(aonContext, contract, LeaveType.MATERNITY, startITDate,
+				null, 100.00);
+
+		
+		Date startDate = add(getFirstDayOfMonth(getToday()),MONTH,1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		Assert.assertEquals(3500.00, salary.getCommonBase());
+
+	}
+
+	@Test
 	public void testPregnancyRiskIT() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
-		cleanSystemPayments(aonContext);
-//		addSSRegimePayment(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), PaymentType.CRA_0004 , 
-//				"TRACE('DIAS_MATERNIDAD=%d\r\n',DIAS_MATERNIDAD);0.00", 
-//				"DIAS_MATERNIDAD * BASE_REGULADORA" ,
-//				"0.00");
 
 		//@formatter:off
 		ContractRecord contract = newContract(aonContext,
@@ -524,7 +619,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
-
+		
+		
 		//@formatter:off
 		ContractRecord contract = newContract(aonContext, 
 				new String[] {

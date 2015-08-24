@@ -121,6 +121,10 @@ public abstract class AbstractSQLTestCase {
 	public void setUp() throws ClassNotFoundException, SQLException,
 			AonSQLException {
 		connection = connect();
+		AONContext context = new AONContext(connection);
+		cleanSystemData(context);
+		cleanSystemCosts(context);
+		cleanSystemPayments(context);
 	}
 
 	@After

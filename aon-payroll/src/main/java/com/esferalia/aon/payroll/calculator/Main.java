@@ -38,6 +38,7 @@ import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorConte
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseCccColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
@@ -141,6 +142,7 @@ public class Main {
 			this.totalPayment = Math.round(totalPayment*1000)/1000.00d;
 			super.setTotalPayment(totalPayment);
 		}
+		
 		
 		public void head() {
 			System.out.printf("%-20s %-33s %-9s            \t%-9s            \t%-9s            \r\n",
@@ -369,6 +371,12 @@ public class Main {
 									.withLongOpt("ccc")
 									.withDescription("Calculate only selected CCCs.")
 									.create("c");
+		Option ipf =  OptionBuilder.withArgName("name")
+				.hasArg()
+				.withLongOpt("ipf")
+				.withDescription("Calculate only selected IPFs (DNI, NIE...)")
+				.create("i");
+
 		Option dryRun =  OptionBuilder.withLongOpt("dry-run")
 									  .withDescription("Perform a trial run with no changes made.")
 									  .create("d");
@@ -390,6 +398,7 @@ public class Main {
 		.addOption(month)
 		.addOption(dryRun)
 		.addOption(ccc)
+		.addOption(ipf)
 		.addOption(delete)
 		.addOption(pretty)
 		;
@@ -435,6 +444,10 @@ public class Main {
 				criteria.addEqualExpression(SQLConstants.ENTERPRISE_CCC + "."
 						+ EnterpriseCccColumns.CCC,
 						cmd.getOptionValue(ccc.getLongOpt()));
+			if (cmd.hasOption(ipf.getLongOpt()))
+				criteria.addEqualExpression(SQLContractSalaryCalculatorContext.PERSON_REGISTRY + "."
+						+ RegistryColumns.DOCUMENT,
+						cmd.getOptionValue(ipf.getLongOpt()));
 
 			connection.setAutoCommit(false);
 
