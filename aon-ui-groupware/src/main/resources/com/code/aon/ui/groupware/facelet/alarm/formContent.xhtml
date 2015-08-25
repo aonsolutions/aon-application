@@ -51,7 +51,7 @@
 						<aon:goToButton controller="#{commercialTracking}"
 							propertyId="#{alarm.to.sourceId}" />					
 					</aon:if>
-					<aon:if test="#{aonConfiguration.bean.alarm.showGoToCallCenter and alarm.to.callCenter}" >
+					<aon:if test="#{aonConfiguration.bean.alarm.showGoToCallCenter and alarm.to.office}" >
 						<aon:commandButton immediate="true"
 							value="&#160;" style="border:0;"
 							title="#{bundle.marketing_survey_start}"
