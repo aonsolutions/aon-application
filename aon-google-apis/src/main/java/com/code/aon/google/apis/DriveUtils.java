@@ -869,8 +869,12 @@ public class DriveUtils implements IBlobManager {
 					if (rat.equals(type) && type != null) {
 						return true;
 					}
-					if(type.equals("registry"))
+					if(type.equals("registry")){
+						if(file.getType() == 0 || file.getType() == 15 || file.getType() == 17){
+							return false;
+						}
 						return true;
+					}
 			}
 		}
 		else{
@@ -989,7 +993,8 @@ public class DriveUtils implements IBlobManager {
 				}
 				else{
 					LOGGER.error("Parent of file is null");
-					return false;
+					//Para que pase al siguiente archivo a subir devuelve true
+					return true;
 				}
 				
 			} else {

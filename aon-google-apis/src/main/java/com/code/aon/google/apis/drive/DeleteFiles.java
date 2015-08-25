@@ -126,7 +126,7 @@ public class DeleteFiles {
 
 	public static void deleteFile(Drive drive, File f, String domain)
 			throws IOException, SQLException, AonConnectionException {
-		Integer idAux = -1;
+		//Integer idAux = -1;
 		if(id == -1){
 			if(f.getProperties() != null){
 				for (Property property : f.getProperties()) {
@@ -138,22 +138,22 @@ public class DeleteFiles {
 				}
 			}
 		}
-		else idAux = id; 
-		if(idAux != -1){
+		//else idAux = id; 
+		if(id/*Aux*/ != -1){
 			if(remove.equals("force")){
 				if(!f.getMimeType().equals("application/vnd.google-apps.folder")){
-					deleteFileBD(f, domain, idAux);
+					deleteFileBD(f, domain, id/*Aux*/);
 				}
 				drive.files().delete(f.getId()).execute();
 			}
 			else{
 				if(!f.getMimeType().equals("application/vnd.google-apps.folder")){
 					InputStream data = DriveUtils.downloadFile(drive, f);
-					insertBlobs(Utils.InputStreamToByte(data), f.getId(), domain, idAux);
+					insertBlobs(Utils.InputStreamToByte(data), f.getId(), domain, id/*Aux*/);
 				}
 				drive.files().delete(f.getId()).execute();
 		
-				if(!f.getMimeType().equals("application/vnd.google-apps.folder")) deleteDriveIds(f, domain, idAux);
+				if(!f.getMimeType().equals("application/vnd.google-apps.folder")) deleteDriveIds(f, domain, id/*Aux*/);
 			}
 			View.delete(f);
 		}
@@ -240,7 +240,7 @@ public class DeleteFiles {
 	private static String values[];
 	private static String out = "normally";
 	private static String remove = "normally";
-	private static Integer id;
+	private static Integer id = -1;
  
 	private static void parse(String args[]) {
 		CommandLineParser parser = new PosixParser();
