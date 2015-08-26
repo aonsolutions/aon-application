@@ -81,6 +81,7 @@ public abstract class PageAbs extends ResizeComposite {
 			map = d2DepositObject.getMap();
 
 		depositType = DepositType.valueOfLabel( map.get(D2DepositConstants.DEPOSIT_TYPE));
+		
 		initializeTable();
 	}
 	

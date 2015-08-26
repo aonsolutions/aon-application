@@ -6,7 +6,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree;
 import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree.FiscalTreeCallback;
 import com.esferalia.aon.gwt.fiscal.client.tree.content.EnterpriseYear;
-import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -18,7 +17,7 @@ import com.google.gwt.user.client.ui.HasTreeItems;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.TreeItem;
 
-public class FiscalModelsTreeNode extends TreeNode<Enterprise> {
+public class FiscalModelsTreeNode extends TreeNode<EnterpriseYear> {
 	
 	public static abstract class TreeNodeFiscalModelTypes<T> extends TreeNodeTypes<T>{
 
@@ -170,8 +169,8 @@ public class FiscalModelsTreeNode extends TreeNode<Enterprise> {
 	}
 	
 	@Override
-	public Enterprise getTreeObject() {
-		return (Enterprise) getUserObject();
+	public EnterpriseYear getTreeObject() {
+		return (EnterpriseYear) getUserObject();
 	}
 
 	@Override
@@ -191,7 +190,7 @@ public class FiscalModelsTreeNode extends TreeNode<Enterprise> {
 			}
 		}
 		EnterpriseYear ey = new EnterpriseYear();
-		ey.setEnterprise(getTreeObject());
+		ey.setEnterprise(getTreeObject().getEnterprise());
 		ey.setYear(year);
 		yearNode = (YearTreeNode) TreeNodeFiscalModelTypes.YEAR.getInstance().render(this, ey);
 		yearNode.setState(true);
@@ -199,92 +198,95 @@ public class FiscalModelsTreeNode extends TreeNode<Enterprise> {
 	}
 	
 	public ModelTreeNode getModelNode(int year,FiscalModelType type) {
-		YearTreeNode yearNode = getYearNode(year);
+		//YearTreeNode yearNode = getYearNode(year);
 		ModelTreeNode modelNode = null;
-		for (int i = 0; i < yearNode.getChildCount(); i++) {
-			if (yearNode.getChild(i) instanceof ModelTreeNode) {
-				modelNode = (ModelTreeNode) yearNode.getChild(i);
+		for (int i = 0; i < this.getChildCount(); i++) {
+			if (this.getChild(i) instanceof ModelTreeNode) {
+				modelNode = (ModelTreeNode) this.getChild(i);
 				if (modelNode.getTreeObject() == type) {
 					modelNode.setState(true);
 					return modelNode;
 				}
 			}
 		}
-		modelNode = (ModelTreeNode) TreeNodeFiscalModelTypes.MODEL.getInstance().render(yearNode, type);
-		yearNode.setState(true);
+		modelNode = (ModelTreeNode) TreeNodeFiscalModelTypes.MODEL.getInstance().render(this, type);
+		//yearNode.setState(true);
 		modelNode.setState(true);
 		return modelNode;
 	}
 
-
+	
 	@Override
-	public TreeNode<Enterprise> render(final HasTreeItems parent,Enterprise enterprise) {
+	public TreeNode<EnterpriseYear> render(final HasTreeItems parent,final EnterpriseYear ey) {
     	InlineLabel label = new InlineLabel();
     	label.setText(AON.MSG.fiscalModels());
     	label.addStyleName(AON.AON_CSS.aonIconModel());
     	label.addStyleName(AON.AON_CSS.aonTreeIconNode() );
     	setWidget(label);
-    	setUserObject(enterprise);
+    	setUserObject(ey);
     	parent.addItem(this);
-    	FiscalTree.FISCAL_SERVICE.getAllModels(FiscalTree.getCurrentDomainName(), enterprise.getDomain(), new AsyncCallback<LinkedList<IFiscalModel>>() {
+    	FiscalTree.FISCAL_SERVICE.getAllModels(FiscalTree.getCurrentDomainName(), ey.getEnterprise().getDomain(), new AsyncCallback<LinkedList<IFiscalModel>>() {
     			
     			@Override
     			public void onSuccess(LinkedList<IFiscalModel> result) {
     				for (IFiscalModel fm : result) {
     					// TODO HACER ALGO CON ESTO!!!
-    					if (TreeNodeFiscalModelTypes.MODEL_202.accept(fm) ) {
-        					final ModelTreeNode parentNode = getModelNode(fm.getYear(),fm.getModel());
-    						TreeNodeFiscalModelTypes.MODEL_202.getInstance().render(parentNode, TreeNodeFiscalModelTypes.MODEL_202.getFiscalModel(fm));
-    						parentNode.setState(true);	
-        				} else if (TreeNodeFiscalModelTypes.MODEL_200_2013.accept(fm) ) {
-        					final ModelTreeNode parentNode = getModelNode(fm.getYear(),fm.getModel());
-        					Mod2002013TreeObject to = TreeNodeFiscalModelTypes.MODEL_200_2013.getFiscalModel(fm);
-        					final TreeItem item = TreeNodeFiscalModelTypes.CORPORATE_TAX_2013.getInstance().render(parentNode,to);
-        					to.setFiscalTreeCallback(new FiscalTreeCallback<Mod2002013TreeObject>() {
+    					if(fm.getYear() == ey.getYear()){
+    						
+    						if (TreeNodeFiscalModelTypes.MODEL_202.accept(fm) ) {
+        						final ModelTreeNode parentNode = getModelNode(fm.getYear(),fm.getModel());
+    							TreeNodeFiscalModelTypes.MODEL_202.getInstance().render(parentNode, TreeNodeFiscalModelTypes.MODEL_202.getFiscalModel(fm));
+    							parentNode.setState(true);	
+        					} else if (TreeNodeFiscalModelTypes.MODEL_200_2013.accept(fm) ) {
+        						final ModelTreeNode parentNode = getModelNode(fm.getYear(),fm.getModel());
+        						Mod2002013TreeObject to = TreeNodeFiscalModelTypes.MODEL_200_2013.getFiscalModel(fm);
+        						final TreeItem item = TreeNodeFiscalModelTypes.CORPORATE_TAX_2013.getInstance().render(parentNode,to);
+        						to.setFiscalTreeCallback(new FiscalTreeCallback<Mod2002013TreeObject>() {
 								
-								@Override
-								public void remove(Mod2002013TreeObject treeObject) {
-									item.remove();
-									parentNode.getTree().setSelectedItem(parentNode);
-								}
-								@Override
-								public void onError(Mod2002013TreeObject treeObject) {}
-								@Override
-								public void changeLabel(Mod2002013TreeObject treeObject) {}
-								
-							});
-            		    	parentNode.setState(true);
-        				} else if (TreeNodeFiscalModelTypes.MODEL_200_2014.accept(fm) ) {
-        					final ModelTreeNode parentNode = getModelNode(fm.getYear(),fm.getModel());
-        					Mod2002014TreeObject to = TreeNodeFiscalModelTypes.MODEL_200_2014.getFiscalModel(fm);
-        					final TreeItem item = TreeNodeFiscalModelTypes.CORPORATE_TAX_2014.getInstance().render(parentNode,to);
-        					to.setFiscalTreeCallback(new FiscalTreeCallback<Mod2002014TreeObject>() {
-								
-								@Override
-								public void remove(Mod2002014TreeObject treeObject) {
-									item.remove();
-									parentNode.getTree().setSelectedItem(parentNode);
-								}
-
-								@Override
-								public void onError(Mod2002014TreeObject treeObject) {
+									@Override
+									public void remove(Mod2002013TreeObject treeObject) {
+										item.remove();
+										parentNode.getTree().setSelectedItem(parentNode);
+									}
+									@Override
+									public void onError(Mod2002013TreeObject treeObject) {}
+									@Override
+									public void changeLabel(Mod2002013TreeObject treeObject) {}
 									
-								}
-								@Override
-								public void changeLabel(Mod2002014TreeObject treeObject) {
-								}
-							});
-            		    	parentNode.setState(true);
-//        				} else if (TreeNodeFiscalModelTypes.MODEL_111.accept(fm) ) {
-//    						TreeNodeFiscalModelTypes.MODEL_111.getInstance().render(parentNode, TreeNodeFiscalModelTypes.MODEL_111.getFiscalModel(fm));
-//        				} else if (TreeNodeFiscalModelTypes.MODEL_131.accept(fm) ) {
-//        					TreeNodeFiscalModelTypes.MODEL_131.getInstance().render(parentNode, TreeNodeFiscalModelTypes.MODEL_131.getFiscalModel(fm));
-//        				} else {
-//            				TreeNodeFiscalModelTypes.MODEL_GENERIC.getInstance().render(parentNode, TreeNodeFiscalModelTypes.MODEL_GENERIC.getFiscalModel(fm));
-        				}
-    					
+								});
+            		    		parentNode.setState(true);
+        					} else if (TreeNodeFiscalModelTypes.MODEL_200_2014.accept(fm) ) {
+        						final ModelTreeNode parentNode = getModelNode(fm.getYear(),fm.getModel());
+        						Mod2002014TreeObject to = TreeNodeFiscalModelTypes.MODEL_200_2014.getFiscalModel(fm);
+        						final TreeItem item = TreeNodeFiscalModelTypes.CORPORATE_TAX_2014.getInstance().render(parentNode,to);
+        						to.setFiscalTreeCallback(new FiscalTreeCallback<Mod2002014TreeObject>() {
+								
+									@Override
+									public void remove(Mod2002014TreeObject treeObject) {
+										item.remove();
+										parentNode.getTree().setSelectedItem(parentNode);
+									}
+
+									@Override
+									public void onError(Mod2002014TreeObject treeObject) {
+									
+									}
+									@Override
+									public void changeLabel(Mod2002014TreeObject treeObject) {
+									}
+								});
+            		    		parentNode.setState(true);
+//        					} else if (TreeNodeFiscalModelTypes.MODEL_111.accept(fm) ) {
+//    							TreeNodeFiscalModelTypes.MODEL_111.getInstance().render(parentNode, TreeNodeFiscalModelTypes.MODEL_111.getFiscalModel(fm));
+//        					} else if (TreeNodeFiscalModelTypes.MODEL_131.accept(fm) ) {
+//        						TreeNodeFiscalModelTypes.MODEL_131.getInstance().render(parentNode, TreeNodeFiscalModelTypes.MODEL_131.getFiscalModel(fm));
+//        					} else {
+//            					TreeNodeFiscalModelTypes.MODEL_GENERIC.getInstance().render(parentNode, TreeNodeFiscalModelTypes.MODEL_GENERIC.getFiscalModel(fm));
+        					}
+    					}
     				}
     				FiscalModelsTreeNode.this.setState(true);
+    				
     			}
 
 				@Override

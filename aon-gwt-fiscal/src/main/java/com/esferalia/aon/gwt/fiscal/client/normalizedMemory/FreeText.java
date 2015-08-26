@@ -172,7 +172,7 @@ public class FreeText extends PageAbs {
 		
 		if(textMode){
 
-			inma.getSchema(enterprise.getDocument(),enterprise.getDomain(),textMode, new AsyncCallback<Map<String, String>>() {
+			inma.getSchema(enterprise.getDocument(),enterprise.getDomain(),textMode, d2DepositObject.getYear(), new AsyncCallback<Map<String, String>>() {
 				
 				@Override
 				public void onSuccess(Map<String, String> result) {

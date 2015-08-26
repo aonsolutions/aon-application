@@ -108,6 +108,7 @@ public class NormalizedMemory extends ResizeComposite {
 	Boolean textMode;
 	MemoryTemplate memoryTemplate;
 	
+	Integer year;
 
 	
 	DigitalDepositTreeNode digitalDepositTreeNode;
@@ -140,6 +141,7 @@ public class NormalizedMemory extends ResizeComposite {
 		cancelButton = new Button();
 		importAllButton = new Button();
 		enterprise = ddtn.getD2Deposit2014().getEnterprise();
+		year = ddtn.getD2Deposit2014().getYear();
 		//this.page = page;
 		this.textMode = false;
 		digitalDepositTreeNode = ddtn;
@@ -256,6 +258,7 @@ public class NormalizedMemory extends ResizeComposite {
 		pagesPanel = new FlowPanel();
 		headerPanel = new SimplePanel();
 		enterprise = ddtn.getD2Deposit2014().getEnterprise();
+		year = ddtn.getD2Deposit2014().getYear();
 		
 		Widget ui = MODEL_NORMALIZED_MEMORY_BINDER.createAndBindUi(this);
 		initWidget(ui);
@@ -334,7 +337,7 @@ public class NormalizedMemory extends ResizeComposite {
 		String url = GWT.getModuleBaseURL()+"gwt_deposit_upload";
 		DepositDialog popup ;
 		if(textMode){
-			 popup = new DepositDialog("Nuevo Deposito","new2", enterprise,url,null) {
+			 popup = new DepositDialog("Nuevo Deposito","new2", enterprise,url,null, false) {
 				
 				@Override
 				protected void onCancel() {
@@ -360,7 +363,7 @@ public class NormalizedMemory extends ResizeComposite {
 			};
 		}
 		else{
-			popup = new DepositDialog("Nuevo Deposito","new", enterprise,url,null) {
+			popup = new DepositDialog("Nuevo Deposito","new", enterprise,url,null, false) {
 			
 				@Override
 				protected void onCancel() {
@@ -373,7 +376,7 @@ public class NormalizedMemory extends ResizeComposite {
 					TextBox tb = (TextBox) flex_table.getWidget(1, 1);
 					hide();
 					
-					inma.createD2Deposit(enterprise.getDomain(), enterprise.getId(), tb.getValue(), lb.getSelectedItemText() , new AsyncCallback<Map<String, String>>() {
+					inma.createD2Deposit(enterprise.getDomain(), enterprise.getId(), tb.getValue(), lb.getSelectedItemText() , year, new AsyncCallback<Map<String, String>>() {
 
 								@Override
 								public void onFailure(Throwable caught) {
@@ -411,7 +414,7 @@ public class NormalizedMemory extends ResizeComposite {
 	void onSaveButtonClick(ClickEvent event) {
 		//Window.alert("onSaveButtonClick");
 		if(textMode){
-			inma.saveDeposit(memoryTemplate.getId().toString(),enterprise.getDomain(),textMode, new AsyncCallback<Void>() {
+			inma.saveDeposit(memoryTemplate.getId().toString(),enterprise.getDomain(),textMode, year, new AsyncCallback<Void>() {
 				
 				@Override
 				public void onSuccess(Void result) {
@@ -455,11 +458,11 @@ public class NormalizedMemory extends ResizeComposite {
 	void onImportButtonClick(ClickEvent event) {
 		
 		//String url = GWT.getModuleBaseURL()+"gwt_deposit_upload";
-		DepositDialog popup = new DepositDialog("Importar Deposito","import", enterprise, GWT.getModuleBaseURL(), null) {
+		DepositDialog popup = new DepositDialog("Importar Deposito","import", enterprise, GWT.getModuleBaseURL(), null, false) {
 
 			@Override
 			protected void onAccept() {
-				inma.saveDeposit(enterprise.getDocument(), enterprise.getDomain(),false, new AsyncCallback<Void>() {
+				inma.saveDeposit(enterprise.getDocument(), enterprise.getDomain(),false, year, new AsyncCallback<Void>() {
 					
 					@Override
 					public void onSuccess(Void result) {
@@ -575,7 +578,7 @@ public class NormalizedMemory extends ResizeComposite {
 								mts = result;
 								DepositDialog popup = new DepositDialog(
 										"Importar", "importAll", enterprise,
-										url, result) {
+										url, result, false) {
 									Vector<MemoryTemplate> vector = mts;
 
 									@Override
@@ -750,7 +753,7 @@ public class NormalizedMemory extends ResizeComposite {
 								mts = result;
 								DepositDialog popup = new DepositDialog(
 										"Importar Textos", "importText", enterprise,
-										url, result) {
+										url, result, false) {
 									Vector<MemoryTemplate> vector = mts;
 
 									@Override
@@ -808,7 +811,7 @@ public class NormalizedMemory extends ResizeComposite {
 		if(!textMode){
 			DepositDialog popup = new DepositDialog(
 					"Borrar Deposito", "delete", enterprise,
-					"", null) {
+					"", null, false) {
 			
 				@Override
 				protected void onCancel() {
@@ -818,7 +821,7 @@ public class NormalizedMemory extends ResizeComposite {
 				@Override
 				protected void onAccept() {
 					hide();
-					inma.delete(enterprise.getDomain(), enterprise.getDocument(), new AsyncCallback<Void>() {
+					inma.delete(enterprise.getDomain(), enterprise.getDocument(), year, new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {
 							
@@ -841,7 +844,7 @@ public class NormalizedMemory extends ResizeComposite {
 		else{
 			DepositDialog popup = new DepositDialog(
 					"Borrar Deposito", "delete", enterprise,
-					"", null) {
+					"", null, false) {
 			
 				@Override
 				protected void onCancel() {
@@ -1005,6 +1008,7 @@ public class NormalizedMemory extends ResizeComposite {
 		D2Deposit2014 d2 =  new D2Deposit2014(ddto.getDomain(), ddto.getEnterprise().getDocument());
 		d2.setMap(ddto.getMap());
 		d2.setMapDraft(ddto.getMapDraft());
+		d2.setYear(ddto.getYear());
 		return d2;
 		
 	}

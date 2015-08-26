@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.tree;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.Stack;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -14,7 +16,12 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.DepositDialog;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
+import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemoryAsync;
+import com.esferalia.aon.gwt.fiscal.client.tree.content.EnterpriseYear;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.D2DepositTreeObject;
+import com.esferalia.aon.gwt.fiscal.client.tree.node.DigitalDepositTreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.FiscalModelsTreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.FiscalModelsTreeNode.TreeNodeFiscalModelTypes;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002013TreeObject;
@@ -23,8 +30,10 @@ import com.esferalia.aon.gwt.fiscal.client.tree.node.Model2002014TreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.ModelTreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.TreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.TreeNodeTypes;
+import com.esferalia.aon.gwt.fiscal.client.tree.node.YearTreeNode;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
@@ -44,6 +53,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -51,6 +61,7 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -77,6 +88,7 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 	
 	TreeNode<Enterprise> rootNode;
 	TreeNode<Enterprise> enterpriseDataNode;
+
 	NewContextMenu newContextMenu;
 	
 	@UiField
@@ -182,20 +194,130 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 	public NewContextMenu getNewContextMenu() {
 		return newContextMenu;
 	}
-	public FiscalModelsTreeNode getFiscalModelsNode() {
+	public FiscalModelsTreeNode getFiscalModelsNode(Integer year) {
+		Boolean bool = true;
+		Boolean bool2 = true;
 		for (int i = 0; i < rootNode.getChildCount(); i++) {
-			if (rootNode.getChild(i) instanceof FiscalModelsTreeNode) {
+			if (rootNode.getChild(i) instanceof YearTreeNode){
+				YearTreeNode yearTreeNode = (YearTreeNode) rootNode.getChild(i);
+				yearTreeNode.setState(true);
+				if(yearTreeNode.getTreeObject().getYear().equals(year)){
+					bool = false;
+					for(Integer j = 0 ; j< yearTreeNode.getChildCount();j++){
+						if (yearTreeNode.getChild(j) instanceof FiscalModelsTreeNode) {
+							bool2 = false;
+							FiscalModelsTreeNode node = (FiscalModelsTreeNode) yearTreeNode.getChild(j);
+							node.setState(true);
+							return node;
+						}
+					}
+					if(bool2){
+						EnterpriseYear ey = new EnterpriseYear();
+						ey.setEnterprise(enterprise);
+						ey.setYear(year);
+						FiscalModelsTreeNode fiscalModelsNode = 
+								(FiscalModelsTreeNode) TreeNodeTypes.FISCAL_MODELS.getInstance().render(yearTreeNode, ey);
+						fiscalModelsNode.setState(true);
+						return fiscalModelsNode;
+					}
+				}
+			}
+			/*if (rootNode.getChild(i) instanceof FiscalModelsTreeNode) {
+				
 				FiscalModelsTreeNode node = (FiscalModelsTreeNode) rootNode.getChild(i);
 				node.setState(true);
 				return node;
-			}
+			}*/
 		}
+		if(bool){
+			EnterpriseYear ey = new EnterpriseYear();
+			ey.setEnterprise(enterprise);
+			ey.setYear(year);
+			TreeNode<EnterpriseYear> yearTreeNode = TreeNodeTypes.YEAR.getInstance().render(rootNode, ey);
+			yearTreeNode.setState(true);
+			// Nodo:  "Modelos Fiscales"
+			FiscalModelsTreeNode fiscalModelsNode = 
+				(FiscalModelsTreeNode) TreeNodeTypes.FISCAL_MODELS.getInstance().render(yearTreeNode, ey);
+			fiscalModelsNode.setState(true);
+			return fiscalModelsNode;
+		}
+		
+		// Nunca deberia llegar aqui.
+		Window.alert("Nodo Modelos Fiscales no agregado");
+		return null;
+	}
+	
+	public DigitalDepositTreeNode getDepositNode(Integer year) {
+		Boolean bool = true;
+		Boolean bool2 = true;
+		for (int i = 0; i < rootNode.getChildCount(); i++) {
+			if (rootNode.getChild(i) instanceof YearTreeNode){
+				YearTreeNode yearTreeNode = (YearTreeNode) rootNode.getChild(i);
+				yearTreeNode.setState(true);
+				if(yearTreeNode.getTreeObject().getYear().equals(year)){
+					bool = false;
+					for(Integer j = 0 ; j< yearTreeNode.getChildCount();j++){
+						if (yearTreeNode.getChild(j) instanceof DigitalDepositTreeNode) {
+							bool2 = false;
+							DigitalDepositTreeNode node = (DigitalDepositTreeNode) yearTreeNode.getChild(j);
+							node.setState(true);
+							return node;
+						}
+					}
+					if(bool2){
+						EnterpriseYear ey = new EnterpriseYear();
+						ey.setEnterprise(enterprise);
+						ey.setYear(year);
+						DigitalDepositTreeNode digitalDepositNode = 
+								(DigitalDepositTreeNode) TreeNodeTypes.DIGITAL_DEPOSIT.getInstance().render(yearTreeNode, new D2DepositTreeObject(enterprise, year));
+						digitalDepositNode.setState(true);
+						return digitalDepositNode;
+					}
+				}
+			}
+			/*if (rootNode.getChild(i) instanceof FiscalModelsTreeNode) {
+				
+				FiscalModelsTreeNode node = (FiscalModelsTreeNode) rootNode.getChild(i);
+				node.setState(true);
+				return node;
+			}*/
+		}
+		if(bool){
+			EnterpriseYear ey = new EnterpriseYear();
+			ey.setEnterprise(enterprise);
+			ey.setYear(year);
+			TreeNode<EnterpriseYear> yearTreeNode = TreeNodeTypes.YEAR.getInstance().render(rootNode, ey);
+			yearTreeNode.setState(true);
+			// Nodo:  "Modelos Fiscales"
+			TreeNodeTypes.FISCAL_MODELS.getInstance().render(yearTreeNode, ey);
+			// Nodo:  "Cuentas Anuales"
+			DigitalDepositTreeNode digitalDepositNode = 
+				(DigitalDepositTreeNode) TreeNodeTypes.DIGITAL_DEPOSIT.getInstance().render(yearTreeNode, new D2DepositTreeObject(enterprise, year));
+			digitalDepositNode.setState(true);
+			return digitalDepositNode;
+		}
+		
 		// Nunca deberia llegar aqui.
 		Window.alert("Nodo Modelos Fiscales no agregado");
 		return null;
 	}
 
-	private void initialize(Enterprise enterprise, Boolean isParent) {
+	public YearTreeNode getYearNode(Integer year) {
+		for (int i = 0; i < rootNode.getChildCount(); i++) {
+			if (rootNode.getChild(i) instanceof YearTreeNode){
+				YearTreeNode yearTreeNode = (YearTreeNode) rootNode.getChild(i);
+				yearTreeNode.setState(true);
+				return yearTreeNode;
+			}
+		}
+		
+		// Nunca deberia llegar aqui.
+		Window.alert("Nodo Modelos Fiscales no agregado");
+		return null;
+	}
+	
+	Integer yearAux, yearAux2;Boolean boolAux;
+	private void initialize(final Enterprise enterprise, Boolean isParent) {
 		newContextMenu = new NewContextMenu();
 		this.enterprise = enterprise;
 		subtitle.setText(AON.MSG.enterprise());
@@ -203,22 +325,60 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 		tree.removeItems();
 		rootNode = TreeNodeTypes.ENTERPRISE.getInstance();
 		rootNode.render(tree, enterprise);
-
+		
 		// Nodo:  "Datos de la empresa"
 		enterpriseDataNode = TreeNodeTypes.ENTERPRISE_DATA.getInstance().render(rootNode, enterprise);
 		
-		// Nodo:  "Modelos Fiscales"
-		TreeNode<Enterprise> fiscalModelsNode = 
-				TreeNodeTypes.FISCAL_MODELS.getInstance().render(rootNode, enterprise);
-		fiscalModelsNode.setState(true);
+		for(Integer y = 2013; y <= CURRENT_YEAR; y++){
+			yearAux = y;
+			inma.isDigitalDeposit(enterprise.getDomain(), y, new AsyncCallback<Boolean>() {
+				Integer year = yearAux;
+				@Override
+				public void onSuccess(Boolean result) {
+					boolAux = result;
+					yearAux2 = year;
+					//Boolean hasFiscalModels = hasFiscalModels(year);
+					FiscalTree.FISCAL_SERVICE.getAllModels(FiscalTree.getCurrentDomainName(), enterprise.getDomain(), year, new AsyncCallback<LinkedList<IFiscalModel>>() {
+						Integer year = yearAux2;
+						Boolean hasDeposit = boolAux;
+		    			@Override
+		    			public void onSuccess(LinkedList<IFiscalModel> result) {
+		    				Boolean hasFiscalModels = result.size()>0;
+		    				if(hasDeposit || hasFiscalModels || year == CURRENT_YEAR -1){// Has Fiscal Model or deposit
+								// Nodo:  "Ejercicio YEAR"
+								EnterpriseYear ey = new EnterpriseYear();
+								ey.setEnterprise(enterprise);
+								ey.setYear(year);
+								TreeNode<EnterpriseYear> yearTreeNode = TreeNodeTypes.YEAR.getInstance().render(rootNode, ey);
+								yearTreeNode.setState(true);
+								// Nodo:  "Modelos Fiscales"
+								//if(hasFiscalModels){ // has model 
+									TreeNode<EnterpriseYear> fiscalModelsNode = 
+											TreeNodeTypes.FISCAL_MODELS.getInstance().render(yearTreeNode, ey);
+									fiscalModelsNode.setState(true);
+								//}
+								
+								// Nodo:  "Deposito Digital"
+								if(hasDeposit || year == CURRENT_YEAR -1){ // has deposit || last year
+									TreeNode<D2DepositTreeObject> digitalDepositNode = TreeNodeTypes.DIGITAL_DEPOSIT.getInstance().render(yearTreeNode, new D2DepositTreeObject(enterprise, year));
+									digitalDepositNode.setState(true);
+								}
+							}						
+		    			}
+		  
+		    			@Override
+		    			public void onFailure(Throwable caught) {};
+					});
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+		}
 		
 		// Nodo:  "Modulo: Actividades empresariales."
 		// TreeNodeTypes.FISCAL_ACTIVITY_GROUP.getInstance().render(rootNode,enterprise);
 		
-		// Nodo:  "Deposito Digital"
-		TreeNodeTypes.DIGITAL_DEPOSIT.getInstance().render(rootNode, new D2DepositTreeObject(enterprise));
-		
-
 		rootNode.setState(true);
 		tree.addItem(rootNode);
 		
@@ -351,6 +511,8 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 			addSeparator();
 			addNewMod202();
 			addNewMod2002014();
+			addSeparator();
+			addNewDeposit();
 			addStyleName(AON.AON_CSS.aonSelector());
 		}
 		
@@ -380,9 +542,9 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 								@Override
 								public void onSuccess(Mod202 mod202) {
 									TreeNode<Mod202> node = TreeNodeFiscalModelTypes.MODEL_202.getInstance().render(
-										getFiscalModelsNode().getModelNode(mod202.getYear(),mod202.getModel())
+										getFiscalModelsNode(mod202.getYear()).getModelNode(mod202.getYear(),mod202.getModel())
 										, mod202);
-									getFiscalModelsNode().setState(true);
+									getFiscalModelsNode(mod202.getYear()).setState(true);
 									tree.setSelectedItem(node);
 								}
 			
@@ -412,7 +574,7 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 			
 								@Override
 								public void onSuccess(Mod2002013 mod200) {
-									final FiscalModelsTreeNode fiscalModelsNode = getFiscalModelsNode();
+									final FiscalModelsTreeNode fiscalModelsNode = getFiscalModelsNode(mod200.getYear());
 									fiscalModelsNode.setState(true);
 		        					final ModelTreeNode parentNode = fiscalModelsNode.getModelNode(
 		        							mod200.getYear(),FiscalModelType.M200);
@@ -449,7 +611,7 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 			
 								@Override
 								public void onSuccess(Mod2002014 mod200) {
-		        					final ModelTreeNode parentNode = getFiscalModelsNode().getModelNode(
+		        					final ModelTreeNode parentNode = getFiscalModelsNode(mod200.getYear()).getModelNode(
 		        							mod200.getYear(),FiscalModelType.M200);
 		        					final Model2002014TreeNode node = (Model2002014TreeNode)  
 		        						TreeNodeFiscalModelTypes.CORPORATE_TAX_2014.getInstance().render(parentNode
@@ -470,7 +632,7 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 										}
 									});
 
-		        					getFiscalModelsNode().setState(true);
+		        					getFiscalModelsNode(mod200.getYear()).setState(true);
 		            		    	parentNode.setState(true);
 	            		    		tree.setSelectedItem(node);
 								}
@@ -518,8 +680,80 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 //				});
 //			return this;
 //		}
+		
+		
+		protected NewContextMenu addNewDeposit() {
+			addItem("Nuevo Cuentas Anuales", new ScheduledCommand() {
+
+				@Override
+				public void execute() {
+					// AÑADIR NUEVO
+					PopupPanel popup = new DepositDialog("Nuevo Deposito",
+							"new", enterprise, "", null, true) {
+
+						@Override
+						protected void onCancel() {
+							hide();
+						}
+
+						@Override
+						protected void onAccept() {
+
+							final ListBox lb = (ListBox) flex_table.getWidget(0, 1);
+							final TextBox tb = (TextBox) flex_table.getWidget(1, 1);
+							ListBox lb3 = (ListBox) flex_table.getWidget(3, 1);
+							final Integer year = Integer.parseInt(lb3.getSelectedItemText());
+							hide();
+							inma.isDigitalDeposit(enterprise.getDomain(), year, new AsyncCallback<Boolean>() {
+								
+								@Override
+								public void onSuccess(Boolean result) {
+									if(result){
+										DigitalDepositTreeNode ddtn = getDepositNode(year);
+										ddtn.select(FiscalTree.this);
+									}
+									else{
+										inma.createD2Deposit(enterprise.getDomain(),
+											enterprise.getId(), tb.getValue(),
+											lb.getSelectedItemText(),year,
+											new AsyncCallback<Map<String, String>>() {
+												@Override
+												public void onFailure(Throwable caught) {
+
+												}
+
+												@Override
+												public void onSuccess(
+														Map<String, String> result) {
+													DigitalDepositTreeNode ddtn = getDepositNode(year);
+													ddtn.newFromFiscalTree(FiscalTree.this, new D2DepositTreeObject(enterprise, year), result);
+													//ddtn.select(FiscalTree.this);
+												}
+											});
+									}									
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {}
+							});
+						}
+					};
+
+					popup.addStyleName("gwt-PopupPanel-template");
+					popup.setGlassEnabled(true);
+					popup.show();
+				}
+
+			});
+			return this;
+		}
 	}
 
+	
+	
+
+	
+	
 	@Override
 	public void onNewButtonClick(ClickEvent event) {
 		NativeEvent nativeEvent = event.getNativeEvent();
@@ -571,5 +805,10 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 		}
 		return widget;
 	}
-
+	final INormalizedMemoryAsync inma = GWT.create(INormalizedMemory.class);
+	
+	public Boolean hasFiscalModels(Integer year){
+		// TODO 
+		return true;
+	}
 }

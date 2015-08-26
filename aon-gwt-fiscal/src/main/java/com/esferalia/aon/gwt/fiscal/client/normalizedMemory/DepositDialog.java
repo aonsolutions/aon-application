@@ -49,20 +49,21 @@ public abstract class DepositDialog extends CustomDialogB {
 	}
 	private static final Binder binder = GWT.create(Binder.class);
 	
-	@UiField(provided = true) FlexTable flex_table;
+	@UiField(provided = true)
+	protected FlexTable flex_table;
 	@UiField(provided = true) Label label;
 	@UiField Button accept_button;
 	@UiField Button cancel_button;
 	@UiField(provided = true) VerticalPanel vp;
 	String typeAux;
-	public DepositDialog(String title, String type, Enterprise enterprise, String url, Vector<MemoryTemplate> mts) {
+	public DepositDialog(String title, String type, Enterprise enterprise, String url, Vector<MemoryTemplate> mts, Boolean ej) {
 		setCaption(title);
 		label = new Label();
 		flex_table = new FlexTable();
 		vp = new VerticalPanel();
 		typeAux = type;
 		switch (type) {
-		case DIALOG_NEW: newDeposit(enterprise);break;
+		case DIALOG_NEW: newDeposit(enterprise, ej);break;
 		case DIALOG_NEW2: newDeposit2();break;
 		case DIALOG_IMPORT: label.setText("Al importar un archivo se eliminarán todos los datos referentes a la memoria normalizada.");
 							importar(enterprise, url);break;
@@ -146,7 +147,7 @@ public abstract class DepositDialog extends CustomDialogB {
 	
 	protected abstract void onCancel();
 	
-	private void newDeposit(Enterprise enterprise) {
+	private void newDeposit(Enterprise enterprise, Boolean ej) {
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
@@ -172,12 +173,15 @@ public abstract class DepositDialog extends CustomDialogB {
 		flex_table.setWidget(2, 0, new Label("CIF"));
 		flex_table.setWidget(2, 1, tb2);
 		
-		TextBox tb3 = new TextBox();
-		tb3.setText("2014");
-		tb3.setStyleName("aon-inputText");
-		tb3.setEnabled(false);
+		ListBox  lb3 = new ListBox();
+		lb3.addItem("-");
+		lb3.addItem("2014");
+		//lb3.addItem("2015");
+		lb3.setSelectedIndex(1);
+		lb3.setStyleName("aon-inputText");
+		lb3.setEnabled(ej);
 		flex_table.setWidget(3, 0, new Label("Ejercicio"));
-		flex_table.setWidget(3, 1, tb3);
+		flex_table.setWidget(3, 1, lb3);
 		
 		TextBox tb4 = new TextBox();
 		tb4.setStyleName("aon-inputText");

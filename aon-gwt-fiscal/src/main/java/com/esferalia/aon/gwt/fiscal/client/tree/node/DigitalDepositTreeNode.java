@@ -61,7 +61,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 	@Override
 	public void select(final FiscalTree fiscalTree) {
 		
-		inma.isDigitalDeposit(d2Deposit2014.getDomain(), new AsyncCallback<Boolean>(){
+		inma.isDigitalDeposit(d2Deposit2014.getDomain(), d2Deposit2014.getYear(), new AsyncCallback<Boolean>(){
 			
 			@Override
 			public void onFailure(Throwable caught) {}
@@ -95,7 +95,19 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 		fiscalTree.setContent(normalizedMemory);
 	}
 	
-	
+	public void newFromFiscalTree(final FiscalTree fiscalTree, D2DepositTreeObject d2, Map<String, String> map){
+		isMemory = false;
+		isMa = false;
+		d2Deposit2014 = d2;
+		d2Deposit2014.setMap(map);
+		d2Deposit2014.setMapDraft(map);
+		normalizedMemory = new NormalizedMemory(this, fiscalTree);
+		normalizedMemory.paintHeaderTable("Cuentas Anuales", d2Deposit2014.getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+		//normalizedMemory.setPagesPanel(fiscalTree.getGenericContent(this));
+		items();
+		setState(true);
+		
+	}
 	
 	@Override
 	public TreeNode<D2DepositTreeObject> render(final HasTreeItems parent,D2DepositTreeObject d2DepositTreeObject) {
@@ -107,7 +119,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
     	setUserObject(d2DepositTreeObject.getEnterprise());
     	parent.addItem(this);
     	d2Deposit2014 = d2DepositTreeObject;
-    	inma.isDigitalDeposit(d2DepositTreeObject.getDomain(), new AsyncCallback<Boolean>() {
+    	inma.isDigitalDeposit(d2DepositTreeObject.getDomain(), d2Deposit2014.getYear(), new AsyncCallback<Boolean>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -115,9 +127,9 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			}
 
 			@Override
-			public void onSuccess(Boolean result) {		
+			public void onSuccess(Boolean result) {	
 				if(result){
-					inma.getSchema(d2Deposit2014.getEnterprise().getDocument(), d2Deposit2014.getDomain(), false, new AsyncCallback<Map<String, String>>() {
+					inma.getSchema(d2Deposit2014.getEnterprise().getDocument(), d2Deposit2014.getDomain(), false, d2Deposit2014.getYear(), new AsyncCallback<Map<String, String>>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -225,6 +237,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 		};
     	his.setText("Hoja Identificativa de la Sociedad");
     	this.addItem(his);
+
  
     	
     	TreeNode<Enterprise> bs = new TreeNode<Enterprise>() {
@@ -319,9 +332,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 		};
 		dm.setText("Declaraci\u00F3n Medioambiental");
 		this.addItem(dm);
-		
 		itemsMemory();
-	
 		itemsMa();
 
 		TreeNode<Enterprise> documents = new TreeNode<Enterprise>() {
@@ -329,7 +340,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			@Override
 			public void select(FiscalTree fiscalPanel) {
 				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
-				MemoryDocuments md = new MemoryDocuments(d2Deposit2014.getEnterprise(), normalizedMemory, memory, ma);
+				MemoryDocuments md = new MemoryDocuments(d2Deposit2014.getEnterprise(), normalizedMemory, memory, ma, d2Deposit2014.getYear());
 
 				normalizedMemory.setPagesPanel(md);
     			fiscalPanel.setContent(normalizedMemory);
@@ -1165,8 +1176,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			}
 		}; 
 		ma.setText("Modelo de Autocartera");
-		
-		if(d2Deposit2014.getMapDraft().get(D2DepositFooterKey.A18009050.getCode())== null || d2Deposit2014.getMapDraft().get(D2DepositFooterKey.A18009050.getCode()).equals("0")){
+		if(d2Deposit2014.getMapDraft().get(D2DepositFooterKey.A18009050.getCode()) == null || d2Deposit2014.getMapDraft().get(D2DepositFooterKey.A18009050.getCode()).equals("0")){
 		
 		TreeNode<Enterprise> ma1 = new TreeNode<Enterprise>() {
 			

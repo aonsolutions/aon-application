@@ -39,9 +39,9 @@ public abstract class TreeNodeTypes<T> {
 			return new ActivityTreeNode();
 		}
 	};
-	public static TreeNodeTypes<Enterprise> FISCAL_MODELS = new TreeNodeTypes<Enterprise>() {
+	public static TreeNodeTypes<EnterpriseYear> FISCAL_MODELS = new TreeNodeTypes<EnterpriseYear>() {
 		@Override
-		public TreeNode<Enterprise> getInstance() {
+		public TreeNode<EnterpriseYear> getInstance() {
 			return new FiscalModelsTreeNode();
 		}
 	};

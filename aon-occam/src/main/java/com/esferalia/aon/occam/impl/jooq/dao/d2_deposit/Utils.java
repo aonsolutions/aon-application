@@ -353,13 +353,13 @@ public class Utils {
 		return b;
 	}
 	
-	public static byte[] CreateXml(Enterprise enterprise, String name, String type , String domain) {
+	public static byte[] CreateXml(Enterprise enterprise, String name, String type , String domain, Integer year) {
 		Esquema schema = new Esquema();
 		Cabecera header = new Cabecera();
 		Claves keys = new Claves();
 		
 		header.setCIF(enterprise.getDocument());
-		header.setEjercicio(BigInteger.valueOf(2014));
+		header.setEjercicio(BigInteger.valueOf(year));
 		header.setRazonSocial("");
 		header.setTipoCuestionario(type);
 		header.setIdiomaCuestionario("Castellano");

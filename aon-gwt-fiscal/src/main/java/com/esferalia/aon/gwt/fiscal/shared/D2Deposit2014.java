@@ -13,7 +13,7 @@ public class D2Deposit2014 implements IsSerializable{
 	private Map<String, String> map;
 	private Map<String, String> mapDraft;
 	private Boolean modify = false;
-
+	private Integer year;
 	
 	public D2Deposit2014() {
 
@@ -73,6 +73,14 @@ public class D2Deposit2014 implements IsSerializable{
 
 	public void setCif(String cif) {
 		this.cif = cif;
+	}
+
+	public Integer getYear() {
+		return year;
+	}
+
+	public void setYear(Integer year) {
+		this.year = year;
 	}
 	
 	

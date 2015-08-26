@@ -52,7 +52,8 @@ public class MemoryDocuments extends PageAbs {
 	Vector<MemoryFiles> memoryFiles = new Vector<MemoryFiles>();
 	TreeNode<Enterprise> memory;
 	TreeNode<Enterprise> autocartera;
-	public MemoryDocuments( Enterprise enterprise, NormalizedMemory nm, TreeNode<Enterprise> memory, TreeNode<Enterprise> autocartera) {
+	Integer year;
+	public MemoryDocuments( Enterprise enterprise, NormalizedMemory nm, TreeNode<Enterprise> memory, TreeNode<Enterprise> autocartera, Integer year) {
 		
 		
 		super();
@@ -65,6 +66,7 @@ public class MemoryDocuments extends PageAbs {
 		this.normalizedMemory = nm;
 		this.memory = memory;
 		this.autocartera = autocartera;
+		this.year = year;
 		
 		Widget ui = binder.createAndBindUi(this);
 		initWidget(ui);
@@ -177,7 +179,7 @@ public class MemoryDocuments extends PageAbs {
 							normalizedMemory.getDigitalDepositTreeNode().items();
 							memory = normalizedMemory.getDigitalDepositTreeNode().getMemory();
 							onEdit(D2DepositFooterKey.PR8080805.getCode(), "1");
-							inma.updateSchemaMemory(false, enterprise.getDomain(), D2DepositFooterKey.PR8080805.getCode(), new AsyncCallback<Void>() {
+							inma.updateSchemaMemory(false, enterprise.getDomain(), D2DepositFooterKey.PR8080805.getCode(), year, new AsyncCallback<Void>() {
 								@Override
 								public void onFailure(Throwable caught) {}
 								@Override
@@ -191,7 +193,7 @@ public class MemoryDocuments extends PageAbs {
 							normalizedMemory.getDigitalDepositTreeNode().items();
 							autocartera = normalizedMemory.getDigitalDepositTreeNode().getMa();
 							onEdit(D2DepositFooterKey.PR8080809.getCode(), "0");
-							inma.updateSchemaMemory(false, enterprise.getDomain(), D2DepositFooterKey.PR8080809.getCode(), new AsyncCallback<Void>() {
+							inma.updateSchemaMemory(false, enterprise.getDomain(), D2DepositFooterKey.PR8080809.getCode(), year, new AsyncCallback<Void>() {
 								@Override
 								public void onFailure(Throwable caught) {}
 								@Override
@@ -200,7 +202,7 @@ public class MemoryDocuments extends PageAbs {
 						}
 						if(mf.getName().equals(D2_FILE_GESTION)){
 							onEdit(D2DepositFooterKey.PR8080807.getCode(), "0");
-							inma.updateSchemaMemory(false, enterprise.getDomain(), D2DepositFooterKey.PR8080807.getCode(), new AsyncCallback<Void>() {
+							inma.updateSchemaMemory(false, enterprise.getDomain(), D2DepositFooterKey.PR8080807.getCode(), year, new AsyncCallback<Void>() {
 								@Override
 								public void onFailure(Throwable caught) {}
 								@Override
@@ -209,7 +211,7 @@ public class MemoryDocuments extends PageAbs {
 						}
 						if(mf.getName().equals(D2_FILE_AUDIT)){
 							onEdit(D2DepositFooterKey.PR8080817.getCode(), "0");
-							inma.updateSchemaMemory(false, enterprise.getDomain(), D2DepositFooterKey.PR8080817.getCode(), new AsyncCallback<Void>() {
+							inma.updateSchemaMemory(false, enterprise.getDomain(), D2DepositFooterKey.PR8080817.getCode(), year, new AsyncCallback<Void>() {
 								@Override
 								public void onFailure(Throwable caught) {}
 								@Override
@@ -218,7 +220,7 @@ public class MemoryDocuments extends PageAbs {
 						}
 						if(mf.getName().equals(D2_FILE_CONVOC)){
 							onEdit(D2DepositFooterKey.PR8080823.getCode(), "0");
-							inma.updateSchemaMemory(false, enterprise.getDomain(), D2DepositFooterKey.PR8080823.getCode(), new AsyncCallback<Void>() {
+							inma.updateSchemaMemory(false, enterprise.getDomain(), D2DepositFooterKey.PR8080823.getCode(), year,new AsyncCallback<Void>() {
 								@Override
 								public void onFailure(Throwable caught) {}
 								@Override
@@ -227,7 +229,7 @@ public class MemoryDocuments extends PageAbs {
 						}
 						if(mf.getName().equals(D2_FILE_SICAV)){
 							onEdit(D2DepositFooterKey.PR8080821.getCode(), "0");
-							inma.updateSchemaMemory(false, enterprise.getDomain(), D2DepositFooterKey.PR8080821.getCode(), new AsyncCallback<Void>() {
+							inma.updateSchemaMemory(false, enterprise.getDomain(), D2DepositFooterKey.PR8080821.getCode(), year, new AsyncCallback<Void>() {
 								@Override
 								public void onFailure(Throwable caught) {}
 								@Override
@@ -250,7 +252,7 @@ public class MemoryDocuments extends PageAbs {
 			public void onClick(ClickEvent event) {
 				// TODO UPLOAD ACTION
 
-				DepositDialog popup = new DepositDialog("Importar Archivo","import", enterprise,GWT.getModuleBaseURL(),null) {
+				DepositDialog popup = new DepositDialog("Importar Archivo","import", enterprise,GWT.getModuleBaseURL(),null, false) {
 						
 					@Override
 					protected void onCancel() {
@@ -272,7 +274,7 @@ public class MemoryDocuments extends PageAbs {
 									memory.remove();
 									normalizedMemory.getDigitalDepositTreeNode().setIsMemory(true);
 									onEdit(D2DepositFooterKey.PR8080805.getCode(), "0");		
-									inma.updateSchemaMemory(true, enterprise.getDomain(),D2DepositFooterKey.PR8080805.getCode() , new AsyncCallback<Void>() {
+									inma.updateSchemaMemory(true, enterprise.getDomain(),D2DepositFooterKey.PR8080805.getCode() , year, new AsyncCallback<Void>() {
 										@Override
 										public void onFailure(Throwable caught) {}
 										@Override
@@ -283,7 +285,7 @@ public class MemoryDocuments extends PageAbs {
 									autocartera.remove();
 									normalizedMemory.getDigitalDepositTreeNode().setIsMa(true);
 									onEdit(D2DepositFooterKey.PR8080809.getCode(), "1");		
-									inma.updateSchemaMemory(true, enterprise.getDomain(),D2DepositFooterKey.PR8080809.getCode() , new AsyncCallback<Void>() {
+									inma.updateSchemaMemory(true, enterprise.getDomain(),D2DepositFooterKey.PR8080809.getCode() , year, new AsyncCallback<Void>() {
 										@Override
 										public void onFailure(Throwable caught) {}
 										@Override
@@ -292,7 +294,7 @@ public class MemoryDocuments extends PageAbs {
 								}
 								if(mf.getName().equals(D2_FILE_GESTION)){
 									onEdit(D2DepositFooterKey.PR8080807.getCode(), "1");		
-									inma.updateSchemaMemory(true, enterprise.getDomain(),D2DepositFooterKey.PR8080807.getCode() , new AsyncCallback<Void>() {
+									inma.updateSchemaMemory(true, enterprise.getDomain(),D2DepositFooterKey.PR8080807.getCode() , year, new AsyncCallback<Void>() {
 										@Override
 										public void onFailure(Throwable caught) {}
 										@Override
@@ -301,7 +303,7 @@ public class MemoryDocuments extends PageAbs {
 								}
 								if(mf.getName().equals(D2_FILE_AUDIT)){
 									onEdit(D2DepositFooterKey.PR8080817.getCode(), "1");		
-									inma.updateSchemaMemory(true, enterprise.getDomain(),D2DepositFooterKey.PR8080817.getCode() , new AsyncCallback<Void>() {
+									inma.updateSchemaMemory(true, enterprise.getDomain(),D2DepositFooterKey.PR8080817.getCode() , year, new AsyncCallback<Void>() {
 										@Override
 										public void onFailure(Throwable caught) {}
 										@Override
@@ -310,7 +312,7 @@ public class MemoryDocuments extends PageAbs {
 								}
 								if(mf.getName().equals(D2_FILE_CONVOC)){
 									onEdit(D2DepositFooterKey.PR8080823.getCode(), "1");		
-									inma.updateSchemaMemory(true, enterprise.getDomain(),D2DepositFooterKey.PR8080823.getCode() , new AsyncCallback<Void>() {
+									inma.updateSchemaMemory(true, enterprise.getDomain(),D2DepositFooterKey.PR8080823.getCode() , year, new AsyncCallback<Void>() {
 										@Override
 										public void onFailure(Throwable caught) {}
 										@Override
@@ -319,7 +321,7 @@ public class MemoryDocuments extends PageAbs {
 								}
 								if(mf.getName().equals(D2_FILE_CONVOC)){
 									onEdit(D2DepositFooterKey.PR8080821.getCode(), "1");		
-									inma.updateSchemaMemory(true, enterprise.getDomain(),D2DepositFooterKey.PR8080821.getCode() , new AsyncCallback<Void>() {
+									inma.updateSchemaMemory(true, enterprise.getDomain(),D2DepositFooterKey.PR8080821.getCode() , year, new AsyncCallback<Void>() {
 										@Override
 										public void onFailure(Throwable caught) {}
 										@Override

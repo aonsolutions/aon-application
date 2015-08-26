@@ -15,6 +15,7 @@ public class D2DepositTreeObject implements IsSerializable{
 	private Map<String, String> map;
 	private Map<String, String> mapDraft;
 	private Boolean modify = false;
+	private Integer year;
 
 	public D2DepositTreeObject() {
 
@@ -25,6 +26,11 @@ public class D2DepositTreeObject implements IsSerializable{
 		this.domain = enterprise.getDomain();
 	}
 	
+	public D2DepositTreeObject(Enterprise enterprise, Integer year) {
+		this.enterprise = enterprise;
+		this.domain = enterprise.getDomain();
+		this.year = year;
+	}
 	
 	//-------------------- Getters & Setters
 	
@@ -76,4 +82,13 @@ public class D2DepositTreeObject implements IsSerializable{
 	public void setModify(Boolean modify) {
 		this.modify = modify;
 	}
+
+	public Integer getYear() {
+		return year;
+	}
+
+	public void setYear(Integer year) {
+		this.year = year;
+	}
+	
 }

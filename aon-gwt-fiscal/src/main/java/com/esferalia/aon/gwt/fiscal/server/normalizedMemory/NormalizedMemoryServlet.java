@@ -35,6 +35,7 @@ import org.jooq.Result;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.server.OpenDocument2ImageServlet;
 import com.esferalia.aon.gwt.common.server.OpenDocument2ImageServlet.CheckSum;
 import com.esferalia.aon.gwt.common.shared.FileInfo;
@@ -67,12 +68,13 @@ import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+
+
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
 
 
-public class NormalizedMemoryServlet extends RemoteServiceServlet implements
+public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		INormalizedMemory {
 
 	/**
@@ -97,7 +99,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 	}
 
 	public Map<String, String> getSchema(String cif,
-			Integer domainId, Boolean textMode) {
+			Integer domainId, Boolean textMode, Integer year) {
 		String domain = AonUtil.getDomainName();
 		HttpServletRequest request = getThreadLocalRequest();
 		// String cif = DBConsults.getCIF(domain, domainId);
@@ -110,7 +112,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 			if (textMode) {
 				schema = DBConsults.getDeposit(domain, domainId, cif);
 			} else
-				schema = DBConsults.getDeposit(domain, domainId);
+				schema = DBConsults.getDeposit(domain, domainId, year, this.getUserLogin());
 			request.getSession().setAttribute(D2_DEPOSIT_SCHEMA + cif, schema);
 		}
 		
@@ -149,9 +151,9 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		request.getSession().setAttribute(MODIFY_D2_DEPOSIT_SCHEMA + cif, TRUE);
 	}
 
-	public Boolean isDigitalDeposit(Integer domainId) {
+	public Boolean isDigitalDeposit(Integer domainId, Integer year) {
 		String domain = AonUtil.getDomainName();
-		return DBConsults.isDigitalDeposit(domain, domainId);
+		return DBConsults.isDigitalDeposit(domain, domainId, year);
 	}
 
 	public Boolean isModify(String cif) {
@@ -167,7 +169,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		request.getSession().removeAttribute(MODIFY_D2_DEPOSIT_SCHEMA + cif);
 	}
 
-	public void saveDeposit(String cif, Integer domainId, Boolean textMode) {
+	public void saveDeposit(String cif, Integer domainId, Boolean textMode, Integer year) {
 		String domain = AonUtil.getDomainName();
 		HttpServletRequest request = getThreadLocalRequest();
 		Esquema schema = (Esquema) request.getSession().getAttribute(
@@ -176,9 +178,9 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		try {
 			byte[] b = Utils.writeXml(schema);
 			if (textMode) {
-				DBConsults.insertDeposit(domain, b, domainId, cif);
+				DBConsults.insertDeposit(domain, b, domainId, cif, this.getUserLogin());
 			} else
-				DBConsults.insertDeposit(domain, b, domainId);
+				DBConsults.insertDeposit(domain, b, domainId, year, this.getUserLogin());
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
@@ -188,14 +190,14 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 	public void saveDeposit(String cif, Integer domainId, D2Deposit2014 d2Deposit2014, Boolean textMode) {
 		String domain = AonUtil.getDomainName();
 		HttpServletRequest request = getThreadLocalRequest();
-		Esquema schema = DBConsults.getDeposit(domain, domainId);
+		Esquema schema = DBConsults.getDeposit(domain, domainId, d2Deposit2014.getYear(), this.getUserLogin());
 		schema = D2Deposit2014ToSchema(schema, d2Deposit2014);
 		try {
 			byte[] b = Utils.writeXml(schema);
 			if (textMode) {
-				DBConsults.insertDeposit(domain, b, domainId, cif);
+				DBConsults.insertDeposit(domain, b, domainId, cif, this.getUserLogin());
 			} else
-				DBConsults.insertDeposit(domain, b, domainId);
+				DBConsults.insertDeposit(domain, b, domainId, d2Deposit2014.getYear(), this.getUserLogin());
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
@@ -284,7 +286,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		MemoryTemplate mt = new MemoryTemplate();
 
 		byte[] data = Utils.CreateXml("", name);
-		Integer id = DBConsults.insertDepositText(domain, name, data, domainId);
+		Integer id = DBConsults.insertDepositText(domain, name, data, domainId, this.getUserLogin());
 
 		mt.setId(id);
 		mt.setName(name);
@@ -539,10 +541,10 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 
 	}
 
-	public void delete(Integer domainId, String document) {
+	public void delete(Integer domainId, String document, Integer year) {
 		String domain = AonUtil.getDomainName();
 		clearSession(document);
-		DBConsults.deleteDeposit(domain, domainId);
+		DBConsults.deleteDeposit(domain, domainId, year);
 		
 		DBConsults.deleteMemoryFile(domain, domainId, D2_FILE_MEMORY);
 		DBConsults.deleteMemoryFile(domain, domainId, D2_FILE_AUTOCARTERA_MODEL);
@@ -560,12 +562,12 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 	}
 	
 	public Map<String, String> createD2Deposit(Integer domainId, Integer id, String name,
-			String type) {
+			String type,Integer year) {
 		String domainName = AonUtil.getDomainName();
 		Enterprise enterprise = AON.getEnterprise(domainName, domainId, id);
-		byte[] b = Utils.CreateXml(enterprise, name, type, domainName);
-		DBConsults.insertDeposit(domainName, b, domainId);
-		return getSchema(enterprise.getDocument(), domainId, false);
+		byte[] b = Utils.CreateXml(enterprise, name, type, domainName, year);
+		DBConsults.insertDeposit(domainName, b, domainId, year, this.getUserLogin());
+		return getSchema(enterprise.getDocument(), domainId, false, year);
 	}
 	
 	public Map<String, String> calculate(Map<String, String> map) {
@@ -701,15 +703,15 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 			DBConsults.updateMemoryFile(domain, domainId, m, b, mf.getId());
 		}
 		else {
-			Integer id = DBConsults.insertMemoryFile(domain, domainId, m, b, mf.getName());
+			Integer id = DBConsults.insertMemoryFile(domain, domainId, m, b, mf.getName(), this.getUserLogin());
 			mf.setId(id);
 		}
 		return mf;
 	}
 	
-	public void updateSchemaMemory(Boolean bool, Integer domainId, String key){
+	public void updateSchemaMemory(Boolean bool, Integer domainId, String key, Integer year){
 		String domain = AonUtil.getDomainName();
-		Esquema schema = DBConsults.getDeposit(domain, domainId);
+		Esquema schema = DBConsults.getDeposit(domain, domainId, year, this.getUserLogin());
 		if(D2DepositFooterKey.PR8080805.getCode().equals(key))
 			schema.getCabecera().setMemoriaNormalizada(!bool);
 		
@@ -726,7 +728,7 @@ public class NormalizedMemoryServlet extends RemoteServiceServlet implements
 		
 		try {
 			byte[] b = Utils.writeXml(schema);
-			DBConsults.insertDeposit(domain, b, domainId);
+			DBConsults.insertDeposit(domain, b, domainId, year, this.getUserLogin());
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}

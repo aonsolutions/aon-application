@@ -2485,6 +2485,9 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Ejercicio 2014")
  	String year2014();
  	
+ 	@DefaultMessage("Ejercicio 2015")
+ 	String year2015();
+ 	
  	@DefaultMessage("(Debe)/ Haber")
 	String debitCredit();
  	
