@@ -706,7 +706,7 @@ public class NormalizedMemory extends ResizeComposite {
 													d2Deposit2014.setMapDraft(result);
 													saveButton.setEnabled(true);
 													cancelButton.setEnabled(true);
-													paintHeaderTable("Cuentas Anuales", result.get(D2DepositConstants.DEPOSIT_TYPE));
+													paintHeaderTable("Cuentas Anuales", result.get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 													update();
 												}
 											
@@ -900,7 +900,7 @@ public class NormalizedMemory extends ResizeComposite {
 			PageAbs w = (PageAbs) widget;
 			w.dump(d2Deposit2014);
 		}
-		if(pagesPanel.getWidgetCount() > 0) pagesPanel.remove(0);
+		if(pagesPanel.getWidgetCount() > 0)pagesPanel.remove(0);
 		pagesPanel.add(widget);
 	}
 
@@ -956,7 +956,7 @@ public class NormalizedMemory extends ResizeComposite {
 		p.dump(d2Deposit2014);
 	}
 	
-	public void paintHeaderTable(String text,String type) {
+	public void paintHeaderTable(String text,String type,String year) {
 		headerPanel.setStyleName(AON.AON_CSS.aonWidthAll());
 		
 		FlexTable headerTable = new FlexTable();
@@ -978,7 +978,7 @@ public class NormalizedMemory extends ResizeComposite {
 		headerTable.getFlexCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonFiscalModelTableHeaderModel());
 		headerTable.getFlexCellFormatter().addStyleName(0, 2, AON.AON_CSS.aonFiscalRegistroMercantil());
 		
-		headerTable.setWidget(1, 0, new Label("2014"));
+		headerTable.setWidget(1, 0, new Label(year));
 		headerTable.getFlexCellFormatter().setStyleName(1, 0, AON.AON_CSS.aonFiscalModelTableHeaderModel());
 		headerTable.getFlexCellFormatter().addStyleName(1, 0, AON.AON_CSS.aonFiscalRegistroMercantil());
 		

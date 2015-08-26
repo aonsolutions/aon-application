@@ -67,27 +67,55 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			public void onFailure(Throwable caught) {}
 
 			@Override
-			public void onSuccess(Boolean result) {
-				digitalDepositMenu(result, fiscalTree);
+			public void onSuccess(Boolean isD2) {
+
+				digitalDepositMenu(isD2, fiscalTree);
 			}
 		});
 	}
 	
-	public void digitalDepositMenu(Boolean result, FiscalTree fiscalTree){
+	public void digitalDepositMenu(Boolean result, final FiscalTree fiscalTree){
 		
 		if(result){
 			//if(getState()) setState(false); else setState(true);
 			if(this.getChildCount() <= 0){
-				items();			
-				setState(true);
-				normalizedMemory = new NormalizedMemory(this, fiscalTree);
-    			normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				final DigitalDepositTreeNode ddtn = this;
+				inma.getSchema(d2Deposit2014.getEnterprise().getDocument(), d2Deposit2014.getDomain(), false, d2Deposit2014.getYear(), new AsyncCallback<Map<String, String>>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						
+					}
+
+					@Override
+					public void onSuccess(Map<String, String> result) {
+						d2Deposit2014.setMap(result);
+						d2Deposit2014.setMapDraft(result);
+						
+						inma.getMemoryFiles(d2Deposit2014.getDomain(), new AsyncCallback<Vector<MemoryFiles>>() {
+							
+							@Override
+							public void onSuccess(Vector<MemoryFiles> result) {
+								isMemory = result.get(0).getBool();
+								isMa = result.get(1).getBool();
+								
+								items();			
+								setState(true);
+								normalizedMemory = new NormalizedMemory(ddtn, fiscalTree);
+								normalizedMemory.paintHeaderTable("Cuentas Anuales", d2Deposit2014.getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
+								normalizedMemory.setPagesPanel(fiscalTree.getGenericContent(ddtn), true);
+								fiscalTree.setContent(normalizedMemory);							}
+							@Override
+							public void onFailure(Throwable caught) {}
+						});
+					}
+				});
 			}
-			normalizedMemory.setPagesPanel(fiscalTree.getGenericContent(this));
+			else normalizedMemory.setPagesPanel(fiscalTree.getGenericContent(this),true);
 		}
 		else{
 			normalizedMemory = new NormalizedMemory(true, this, fiscalTree);
-			normalizedMemory.paintHeaderTable("Cuentas Anuales","Tipo");
+			normalizedMemory.paintHeaderTable("Cuentas Anuales","Tipo", d2Deposit2014.getYear().toString());
 			normalizedMemory.setPagesPanel(fiscalTree.getGenericContent(this), true);
 		}
 		fiscalTree.setContent(normalizedMemory);
@@ -106,7 +134,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 		normalizedMemory.getDeleteButton().setVisible(true);
 		normalizedMemory.getGenerateFileButton().setVisible(true);		
 		normalizedMemory.getImportAllButton().setVisible(true);
-		normalizedMemory.paintHeaderTable("Cuentas Anuales", d2Deposit2014.getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+		normalizedMemory.paintHeaderTable("Cuentas Anuales", d2Deposit2014.getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 		normalizedMemory.setPagesPanel(fiscalTree.getGenericContent(this), true);
 
 		fiscalTree.setContent(normalizedMemory);
@@ -129,7 +157,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
     	setUserObject(d2DepositTreeObject.getEnterprise());
     	parent.addItem(this);
     	d2Deposit2014 = d2DepositTreeObject;
-    	inma.isDigitalDeposit(d2DepositTreeObject.getDomain(), d2Deposit2014.getYear(), new AsyncCallback<Boolean>() {
+    	/*inma.isDigitalDeposit(d2DepositTreeObject.getDomain(), d2Deposit2014.getYear(), new AsyncCallback<Boolean>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -167,7 +195,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 				}
 			}
 		
-    	});
+    	});*/
     	
     	return this;
 	}
@@ -228,7 +256,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
   
     		@Override
     		public void select(FiscalTree fiscalPanel) {
-    			normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+    			normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
     			Header1 header1Page = new Header1(d2Deposit2014.getEnterprise(), normalizedMemory);
     			normalizedMemory.setPagesPanel(header1Page);
     			fiscalPanel.setContent(normalizedMemory);	
@@ -254,7 +282,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {	
-    			normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+    			normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
     			PageH2 ph2 = new PageH2(d2Deposit2014.getEnterprise(), normalizedMemory);
     			normalizedMemory.setPagesPanel(ph2);
     			fiscalPanel.setContent(normalizedMemory);	
@@ -278,7 +306,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-    			normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+    			normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
     			PageH3 ph3 = new PageH3(d2Deposit2014.getEnterprise(), normalizedMemory);
     			normalizedMemory.setPagesPanel(ph3);
     			fiscalPanel.setContent(normalizedMemory);	
@@ -301,7 +329,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-    			normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+    			normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
     			PageH4 ph4 = new PageH4(d2Deposit2014.getEnterprise(), normalizedMemory);
     			normalizedMemory.setPagesPanel(ph4);
     			fiscalPanel.setContent(normalizedMemory);
@@ -324,7 +352,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
     			PageH5 ph5 = new PageH5(d2Deposit2014.getEnterprise(),normalizedMemory);
     			normalizedMemory.setPagesPanel(ph5);
     			fiscalPanel.setContent(normalizedMemory);	
@@ -349,7 +377,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 				MemoryDocuments md = new MemoryDocuments(d2Deposit2014.getEnterprise(), normalizedMemory, memory, ma, d2Deposit2014.getYear());
 
 				normalizedMemory.setPagesPanel(md);
@@ -374,7 +402,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 				PageF2 pf2 = new PageF2(d2Deposit2014.getEnterprise(), normalizedMemory);
 				normalizedMemory.setPagesPanel(pf2);
     			fiscalPanel.setContent(normalizedMemory);	
@@ -397,7 +425,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 				PageF3 pf3 = new PageF3(d2Deposit2014.getEnterprise(), normalizedMemory);
 				normalizedMemory.setPagesPanel(pf3);
     			fiscalPanel.setContent(normalizedMemory);	
@@ -453,7 +481,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 					@Override
 					public void select(FiscalTree fiscalPanel) {
 						String page =  "MAT1";
-		    			normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+		    			normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 						FreeText paragraph1Page = new FreeText("Apartado 1: Actividad de la empresa", true, page, d2Deposit2014.getEnterprise(), normalizedMemory,false);
 						normalizedMemory.setPagesPanel(paragraph1Page);
 		    			fiscalPanel.setContent(normalizedMemory);	
@@ -477,7 +505,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 					@Override
 					public void select(FiscalTree fiscalPanel) {
 						String page = "MAT2";
-						normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+						normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 						FreeText paragraph2Page = new FreeText("Apartado 2: Bases de presentaci\u00F3n de las cuentas anuales", true, page, d2Deposit2014.getEnterprise(), normalizedMemory, false);
 						normalizedMemory.setPagesPanel(paragraph2Page);
 		    			fiscalPanel.setContent(normalizedMemory);	
@@ -522,7 +550,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 						@Override
 						public void select(FiscalTree fiscalPanel) {
 							String page = "MAT3";
-							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 							FreeText paragraph3_1Page = new FreeText("Apartado 3: Aplicaci\u00F3n de resultados", true, page, d2Deposit2014.getEnterprise(), normalizedMemory,false);
 							normalizedMemory.setPagesPanel(paragraph3_1Page);
 			    			fiscalPanel.setContent(normalizedMemory);	
@@ -545,7 +573,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 						
 						@Override
 						public void select(FiscalTree fiscalPanel) {
-							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 							PageM3_2 p32 = new PageM3_2(d2Deposit2014.getEnterprise(), normalizedMemory);
 							normalizedMemory.setPagesPanel(p32);
 			    			fiscalPanel.setContent(normalizedMemory);	
@@ -570,7 +598,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 					@Override
 					public void select(FiscalTree fiscalPanel) {
 						String page =  "MAT4";
-						normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+						normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 						FreeText paragraph4Page = new FreeText("Apartado 4: Normas de registro y valoraci\u00F3n", true, page, d2Deposit2014.getEnterprise(), normalizedMemory, false);
 						normalizedMemory.setPagesPanel(paragraph4Page);
 		    			fiscalPanel.setContent(normalizedMemory);	
@@ -614,7 +642,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 						@Override
 						public void select(FiscalTree fiscalPanel) {
 							String page =  "MAT5";
-							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 							FreeText paragraph5_1Page = new FreeText("Apartado 5: Inmovilizado material, intangible, e inversiones inmobiliarias", true, page, d2Deposit2014.getEnterprise(), normalizedMemory,false);
 							normalizedMemory.setPagesPanel(paragraph5_1Page);
 			    			fiscalPanel.setContent(normalizedMemory);	
@@ -637,7 +665,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 						
 						@Override
 						public void select(FiscalTree fiscalPanel) {
-							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 							PageM5_2 p52 = new PageM5_2(d2Deposit2014.getEnterprise(), normalizedMemory);
 							normalizedMemory.setPagesPanel(p52);
 			    			fiscalPanel.setContent(normalizedMemory);	
@@ -683,7 +711,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 						@Override
 						public void select(FiscalTree fiscalPanel) {
 							String page = "MAT6";
-							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 							FreeText paragraph6_1Page = new FreeText("Apartado 6: Activos financieros", true, page, d2Deposit2014.getEnterprise(), normalizedMemory,false);
 							normalizedMemory.setPagesPanel(paragraph6_1Page);
 			    			fiscalPanel.setContent(normalizedMemory);	
@@ -706,7 +734,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 						
 						@Override
 						public void select(FiscalTree fiscalPanel) {	
-							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 							PageM6_2 p62 = new PageM6_2(d2Deposit2014.getEnterprise(), normalizedMemory);
 							normalizedMemory.setPagesPanel(p62);
 			    			fiscalPanel.setContent(normalizedMemory);	
@@ -751,7 +779,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 						@Override
 						public void select(FiscalTree fiscalPanel) {
 							String page = "MAT7";
-							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 							FreeText paragraph7_1Page = new FreeText("Apartado 7: Pasivos financieros", true, page, d2Deposit2014.getEnterprise(), normalizedMemory, false);
 							normalizedMemory.setPagesPanel(paragraph7_1Page);
 			    			fiscalPanel.setContent(normalizedMemory);	
@@ -774,7 +802,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 						
 						@Override
 						public void select(FiscalTree fiscalPanel) {
-							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 							PageM7_2 p72 = new PageM7_2(d2Deposit2014.getEnterprise(), normalizedMemory);
 							normalizedMemory.setPagesPanel(p72);
 			    			fiscalPanel.setContent(normalizedMemory);
@@ -823,7 +851,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 					@Override
 					public void select(FiscalTree fiscalPanel) {
 						String page = "MAT9";
-						normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+						normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 						FreeText paragraph9Page = new FreeText("Apartado 9: Situaci\u00F3n fiscal", true, page, d2Deposit2014.getEnterprise(), normalizedMemory, false);
 						normalizedMemory.setPagesPanel(paragraph9Page);
 		    			fiscalPanel.setContent(normalizedMemory);
@@ -846,7 +874,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 					
 					@Override
 					public void select(FiscalTree fiscalPanel) {
-						normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+						normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 						PageM10 p10 = new PageM10(d2Deposit2014.getEnterprise(), normalizedMemory);
 						normalizedMemory.setPagesPanel(p10);
 		    			fiscalPanel.setContent(normalizedMemory);
@@ -890,7 +918,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 						@Override
 						public void select(FiscalTree fiscalPanel) {
 							String page =  "MAT11";
-							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 							FreeText paragraph11_1Page = new FreeText("Apartado 11: Subvenciones, donaciones y legados", true, page, d2Deposit2014.getEnterprise(), normalizedMemory, false);
 							normalizedMemory.setPagesPanel(paragraph11_1Page);
 			    			fiscalPanel.setContent(normalizedMemory);
@@ -913,7 +941,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 						
 						@Override
 						public void select(FiscalTree fiscalPanel) {
-							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 							PageM11_2 p112 = new PageM11_2(d2Deposit2014.getEnterprise(), normalizedMemory);
 							normalizedMemory.setPagesPanel(p112);
 			    			fiscalPanel.setContent(normalizedMemory);
@@ -958,7 +986,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 						@Override
 						public void select(FiscalTree fiscalPanel) {
 							String page = "MAT12";
-							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 							FreeText paragraph12_1Page = new FreeText("Apartado 12: Operaciones con partes vinculadas", true, page, d2Deposit2014.getEnterprise(), normalizedMemory, false);
 							normalizedMemory.setPagesPanel(paragraph12_1Page);
 			    			fiscalPanel.setContent(normalizedMemory);
@@ -979,7 +1007,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 					
 					TreeNode<Enterprise> cn12 = new TreeNode<Enterprise>() {
 						public void select(FiscalTree fiscalPanel) {
-							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 							PageM12_2 p122 = new PageM12_2(d2Deposit2014.getEnterprise(), normalizedMemory);
 							normalizedMemory.setPagesPanel(p122);
 			    			fiscalPanel.setContent(normalizedMemory);
@@ -1024,7 +1052,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 						@Override
 						public void select(FiscalTree fiscalPanel) {
 							String page =  "MAT13";
-							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 							FreeText paragraph13_1Page = new FreeText("Apartado 13: Otra informaci\u00F3n", true, page, d2Deposit2014.getEnterprise(), normalizedMemory, false);
 							normalizedMemory.setPagesPanel(paragraph13_1Page);
 			    			fiscalPanel.setContent(normalizedMemory);
@@ -1047,7 +1075,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 						
 						@Override
 						public void select(FiscalTree fiscalPanel) {
-							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 							PageM13_2 p132 = new PageM13_2(d2Deposit2014.getEnterprise(), normalizedMemory);
 							normalizedMemory.setPagesPanel(p132);
 			    			fiscalPanel.setContent(normalizedMemory);
@@ -1092,7 +1120,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 						@Override
 						public void select(FiscalTree fiscalPanel) {
 							String page = "MAT14";
-							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 							FreeText paragraph14_1Page = new FreeText("Apartado 14: Informaci\u00F3n sobre medio ambiente", true, page, d2Deposit2014.getEnterprise(), normalizedMemory, false);
 							normalizedMemory.setPagesPanel(paragraph14_1Page);
 			    			fiscalPanel.setContent(normalizedMemory);
@@ -1115,7 +1143,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 						
 						@Override
 						public void select(FiscalTree fiscalPanel) {
-							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+							normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 							PageM14_2 p142 = new PageM14_2(d2Deposit2014.getEnterprise(), normalizedMemory);
 							normalizedMemory.setPagesPanel(p142);
 			    			fiscalPanel.setContent(normalizedMemory);
@@ -1139,7 +1167,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 					
 					@Override
 					public void select(FiscalTree fiscalPanel) {
-						normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+						normalizedMemory.paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 						PageM15 p15 = new PageM15(d2Deposit2014.getEnterprise(), normalizedMemory);
 						normalizedMemory.setPagesPanel(p15);
 		    			fiscalPanel.setContent(normalizedMemory);
@@ -1169,7 +1197,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			@Override
 			public void select(FiscalTree fiscalPanel) {
 			//	if(getState()) setState(false); else setState(true);
-				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 				PageF1 pf1 = new PageF1(d2Deposit2014.getEnterprise(), normalizedMemory);
 				normalizedMemory.setPagesPanel(pf1);
     			fiscalPanel.setContent(normalizedMemory);	
@@ -1192,7 +1220,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 				PageF1A pf1a = new PageF1A(d2Deposit2014.getEnterprise(), normalizedMemory);
 				normalizedMemory.setPagesPanel(pf1a);
     			fiscalPanel.setContent(normalizedMemory);	
@@ -1215,7 +1243,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 				PageF1B pf1b = new PageF1B(d2Deposit2014.getEnterprise(), normalizedMemory);
 				normalizedMemory.setPagesPanel(pf1b);
     			fiscalPanel.setContent(normalizedMemory);	
@@ -1238,7 +1266,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 				PageF1C pf1c = new PageF1C(d2Deposit2014.getEnterprise(), normalizedMemory);
 				normalizedMemory.setPagesPanel(pf1c);
     			fiscalPanel.setContent(normalizedMemory);	
@@ -1261,7 +1289,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 				PageF1D pf1d = new PageF1D(d2Deposit2014.getEnterprise(), normalizedMemory);
 				normalizedMemory.setPagesPanel(pf1d);
     			fiscalPanel.setContent(normalizedMemory);	
@@ -1284,7 +1312,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 				PageF1E pf1e = new PageF1E(d2Deposit2014.getEnterprise(), normalizedMemory);
 				normalizedMemory.setPagesPanel(pf1e);
     			fiscalPanel.setContent(normalizedMemory);	
@@ -1307,7 +1335,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 				PageF1F pf1f = new PageF1F(d2Deposit2014.getEnterprise(), normalizedMemory);
 				normalizedMemory.setPagesPanel(pf1f);
     			fiscalPanel.setContent(normalizedMemory);	
@@ -1331,7 +1359,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 				PageF1G pf1g = new PageF1G(d2Deposit2014.getEnterprise(), normalizedMemory);
 				normalizedMemory.setPagesPanel(pf1g);
     			fiscalPanel.setContent(normalizedMemory);	
@@ -1354,7 +1382,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
 				PageF1H pf1h = new PageF1H(d2Deposit2014.getEnterprise(), normalizedMemory);
 				normalizedMemory.setPagesPanel(pf1h);
     			fiscalPanel.setContent(normalizedMemory);	
