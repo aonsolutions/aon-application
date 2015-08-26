@@ -259,16 +259,18 @@
 				<f:facet name="header">
 					<aon:outputLabel value="INFO" />
 				</f:facet>
-				<aon:commandLink id="purchaseDetailIncomeLink" immediate="true"
-					styleClass="#{controller.settled ? 'aon-icon-predetermine' : 'aon-icon-predetermine2'}"
-					style="padding-right: 20px;" 
-					value="&#160;" title="#{bundle.aon_go}" 
-					rendered="#{!controller.pending}" 
-					actionListener="#{controller.onLoadIncome}"
-					action="income_form"
-					reRender="aonContent">
-					<rich:toolTip value="#{controller.lineStatusInfo}" direction="top-left" />
-				</aon:commandLink>
+				<c:if test="#{!skipIncomeLink}">
+					<aon:commandLink id="purchaseDetailIncomeLink" immediate="true"
+						styleClass="#{controller.settled ? 'aon-icon-predetermine' : 'aon-icon-predetermine2'}"
+						style="padding-right: 20px;" 
+						value="&#160;" title="#{bundle.aon_go}" 
+						rendered="#{!controller.pending}" 
+						actionListener="#{controller.onLoadIncome}"
+						action="income_form"
+						reRender="aonContent">
+						<rich:toolTip value="#{controller.lineStatusInfo}" direction="top-left" />
+					</aon:commandLink>
+				</c:if>
 				<aon:commandButton id="purchaseDetailProject" value="&#160;"
 					styleClass="#{(to.project != null and to.project.id == purchase.to.project.id) ? 
 									('aon-icon-commandButton aon-icon-project-ok') : ('aon-icon-commandButton aon-icon-project-warn')}"

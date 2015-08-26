@@ -26,6 +26,7 @@ public interface IPurchaseConstants {
 	// ************************************************************
 	// NAVIGATION
 	// ************************************************************
+	String MANUFACTURING_ORDER_FORM_NAME = "manufacturingOrder_form";
 	String PURCHASE_FORM_NAME = "purchase_form";
 
 	

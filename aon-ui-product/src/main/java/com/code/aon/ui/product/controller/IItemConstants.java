@@ -11,6 +11,7 @@ public interface IItemConstants  {
 	String ITEM_ALTERNATIVE = "itemAlternative";
 	String ITEM_COMPOSITION = "itemComposition";
 	String ITEM_SUPPLIER = "itemSupplier";
+	String ITEM_TAG_PRINT_CONTROLLER_NAME = "itemTagPrint";
 	String ITEM_TARIFF = "itemTariff";
 	String ITEM_SEARCH_CONTROLLER_NAME = "itemSearch";
 	String PRODUCT = "product";

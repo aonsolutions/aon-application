@@ -530,8 +530,8 @@
 	</bean>
 	
 	<bean class="com.code.aon.warehouse.WarehouseTransfer">
-		<alias names="comments,domain,id,issueTime,number,series,sourceWarehouse,sourceWarehouse_id,sourceWarehouse_workPlace_scope_id,targetWarehouse,targetWarehouse_id,targetWarehouse_workPlace_scope_id"/>
-		<hibernate names="comments,domain,id,issueTime,number,series,sourceWarehouse,sourceWarehouse.id,sourceWarehouse.workPlace.scope.id,targetWarehouse,targetWarehouse.id,targetWarehouse.workPlace.scope.id"/>
+		<alias names="comments,domain,id,issueTime,number,series,source,sourceId,sourceWarehouse,sourceWarehouse_id,sourceWarehouse_workPlace_scope_id,targetWarehouse,targetWarehouse_id,targetWarehouse_workPlace_scope_id"/>
+		<hibernate names="comments,domain,id,issueTime,number,series,source,sourceId,sourceWarehouse,sourceWarehouse.id,sourceWarehouse.workPlace.scope.id,targetWarehouse,targetWarehouse.id,targetWarehouse.workPlace.scope.id"/>
 	</bean>
 	
 	<!-- ** AON WEBMAIL   **************************************************** -->

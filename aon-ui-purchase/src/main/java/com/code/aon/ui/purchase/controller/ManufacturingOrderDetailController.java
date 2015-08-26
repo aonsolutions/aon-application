@@ -2,30 +2,51 @@ package com.code.aon.ui.purchase.controller;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
+import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.product.ItemComposition;
+import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
+import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
+import com.code.aon.ui.config.controller.ConfigCollectionsController;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.form.AbstractPojoController;
+import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
+import com.code.aon.ui.purchase.util.PurchaseUtils;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.warehouse.controller.IWarehouseConstants;
+import com.code.aon.warehouse.WarehouseTransfer;
+import com.code.aon.warehouse.WarehouseTransferDetail;
+import com.code.aon.warehouse.enumeration.WarehouseTransferSource;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ManufacturingOrderDetailController extends PurchaseDetailController {
@@ -66,14 +87,23 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 		return this.productFilter;
 	}
 	
-	// TODO enable line close button
-	public boolean isCloseableLine() throws ManagerBeanException{
-//		PurchaseDetail detail = (PurchaseDetail) this.getModel().getRowData();
-//		return this.isPending() && detail !=null
-//				&& (!detail.getItem().getProduct().isSerializable() || (detail
-//						.getItem().getProduct().isSerializable() && detail
-//						.getItem().getSerialNumber() != null));
+	public boolean isCloseableLine() throws ManagerBeanException {
+		return isCloseable((PurchaseDetail) this.getModel().getRowData());
+	}
+
+	public boolean isCloseableTransfer() throws ManagerBeanException {
+		if(getManufacturingOrderManager().getDetailModel().isRowAvailable()){
+			TransferPurchaseDetail transfer = (TransferPurchaseDetail) getManufacturingOrderManager().getDetailModel().getRowData();
+			return isCloseable(transfer.getDetail());
+		}
 		return false;
+	}
+
+	private boolean isCloseable(PurchaseDetail detail) throws ManagerBeanException {
+		return detail !=null && detail.getStatus().equals(PurchaseDetailStatus.PENDING)
+				&& (!detail.getItem().getProduct().isSerializable() 
+						|| (detail.getItem().getProduct().isSerializable() 
+						&& detail.getItem().getSerialNumber() != null));
 	}
 	
 	public void onLineCloseShow(ActionEvent event){
@@ -82,7 +112,7 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 			List<TransferPurchaseDetail> list = new LinkedList<TransferPurchaseDetail>();
 			PurchaseDetail detail = (PurchaseDetail) this.getModel().getRowData();
 			list.add( loadTransfer(detail) );
-			getManufacturingOrderManager().setDetailList(list);
+			getManufacturingOrderManager().init(list);
 			getManufacturingOrderManager().getDetailModel().setRowIndex(0);
 			getManufacturingOrderManager().onSelectDetail(null);
 		} catch (ManagerBeanException e) {
@@ -97,9 +127,11 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 			List<TransferPurchaseDetail> list = new LinkedList<TransferPurchaseDetail>();
 			for(ITransferObject to: this.getManagerBean().getList(this.getCriteria())){
 				PurchaseDetail detail = (PurchaseDetail) to;
-				list.add( loadTransfer(detail) );
+				if(isCloseable(detail)){
+					list.add( loadTransfer(detail) );
+				}
 			}
-			getManufacturingOrderManager().setDetailList(list);
+			getManufacturingOrderManager().init(list);
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
@@ -126,17 +158,154 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 		}
 	}
 	
-	// TODO onCloseLines
-	public void onCloseLines(ActionEvent event){
-//		for(TransferPurchaseDetail transfer: getManufacturingOrderManager().getDetailList()){
-//			
-//		}
-		
-		AonUtil.addInfoMessage("Opcion NO implementada");
+	public void onLoadManufacturedTransfer(ActionEvent event) throws ManagerBeanException {
+		loadCompositionTransfer(event, false);
+	}
+	
+	public void onLoadCompositionTransfer(ActionEvent event) throws ManagerBeanException {
+		loadCompositionTransfer(event, true);
+	}
+	
+	private void loadCompositionTransfer(ActionEvent event, boolean searchSourceWarehouse) throws ManagerBeanException {
+		PurchaseDetail purchaseDetail = (PurchaseDetail)this.getModel().getRowData();
+		IManagerBean bean = BeanManager.getManagerBean(WarehouseTransfer.class);
+		Criteria criteria = new Criteria();
+		// TODO generate alias for source and sourceId of  WarehouseTransfer 
+//		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_TRANSFER_SOURCE), WarehouseTransferSource.MANUFACTURING_ORDER);
+//		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_TRANSFER_SOURCE_ID), purchaseDetail.getPurchase().getId());
+		if(searchSourceWarehouse){
+			criteria.addNullExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_TRANSFER_TARGET_WAREHOUSE));
+		} else {
+			criteria.addNullExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_TRANSFER_SOURCE_WAREHOUSE));
+		}
+		criteria.addEqualExpression("WarehouseTransfer.source", WarehouseTransferSource.MANUFACTURING_ORDER);
+		criteria.addEqualExpression("WarehouseTransfer.sourceId", purchaseDetail.getId());
+		Iterator<?> iterator = bean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			WarehouseTransfer transfer = (WarehouseTransfer) iterator.next();
+			BasicController wtController = (BasicController)AonUtil.getRegisteredBean(IWarehouseConstants.WAREHOUSE_TRANSFER_CONTROLLER_NAME);
+			wtController.onLoad(event, transfer.getId(), MANUFACTURING_ORDER_FORM_NAME, null);
+		} else {
+			AonUtil.addErrorMessage("Traspaso no encontrado.");
+			throw new AbortProcessingException("Traspaso no encontrado.");
+		}
 	}
 	
 	
+	public void onCloseLines(ActionEvent event){
+		try {
+			Purchase purchase = (Purchase) this.getMasterController().getTo();
+			if(purchase.getWarehouse()!=null && purchase.getWarehouse().getId()!=null){
+				for(TransferPurchaseDetail transfer: getManufacturingOrderManager().getDetailList()){
+					
+					if(manufacturingOrderManager.getForceCloseRowChecked(transfer)){
+						createPendingDetailLine(transfer); 
+					}
+					closeDetailLine(transfer);
+					
+					createManufacturedTransfer(transfer);
+					createCompositionTransfer(transfer.getDetail(), transfer.getCompositionList());
+				}
+			}
+			
+			if(isSettledAllLines()){
+				closePurchase(event);
+			}
+			
+			this.initializeModel();
+			
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+
+	private void createPendingDetailLine(TransferPurchaseDetail transfer) throws ManagerBeanException {
+		PurchaseUtils utils = new PurchaseUtils();
+		utils.createPurchaseDetail(transfer.getDetail().getPurchase(), transfer.getDetail().getItem(), transfer.getDetail().getProject(), 
+				transfer.getDetail().getProposalDetail(), utils.calculateNextLine(transfer.getDetail().getPurchase()), 
+				transfer.getDetail().getDescription(), transfer.getDetail().getQuantity()-transfer.getTotalQuantity(), 
+				transfer.getDetail().getPrice(), transfer.getDetail().getDiscountExpression(), transfer.getDetail().getTaxes(), 
+				null, 0);
+	}
 	
+	private void closeDetailLine(TransferPurchaseDetail transfer) throws ManagerBeanException {
+		PurchaseDetail detail = transfer.getDetail();
+		detail.setQuantity(transfer.getTotalQuantity());
+		detail.setDelivered(transfer.getTotalQuantity());
+		detail.setStatus(PurchaseDetailStatus.SETTLED);
+		IManagerBean bean = BeanManager.getManagerBean(PurchaseDetail.class);
+		bean.restoreNullSubPOJOs(detail);	
+		bean.update(detail);
+	}
+
+	private void createManufacturedTransfer(TransferPurchaseDetail transferPurchaseDetail) throws ManagerBeanException {
+		WarehouseTransfer transfer = new WarehouseTransfer();
+		transfer.setSeries(getManufacturingOrderManager().getSeries());
+		int number = getManufacturingOrderManager().getNumber();
+		if(getManufacturingOrderManager().getNumber()==0){
+			number = getManufacturingOrderManager().obtainMaxNumber(getManufacturingOrderManager().getSeries());	
+		}
+		transfer.setNumber(number);
+		transfer.setIssueTime(getManufacturingOrderManager().getIssueTime());
+		transfer.setComments(null);
+		transfer.setSource(WarehouseTransferSource.MANUFACTURING_ORDER);
+		transfer.setSourceId(transferPurchaseDetail.getDetail().getId());
+		transfer.setSourceWarehouse(null);
+		transfer.setTargetWarehouse(transferPurchaseDetail.getDetail().getPurchase().getWarehouse());
+		transfer = (WarehouseTransfer) BeanManager.getManagerBean(WarehouseTransfer.class).insert(transfer);
+		
+		WarehouseTransferDetail transferDetail = new WarehouseTransferDetail();
+		transferDetail.setWarehouseTransfer(transfer);
+		transferDetail.setItem(transferPurchaseDetail.getDetail().getItem());
+		transferDetail.setQuantity(transferPurchaseDetail.getTotalQuantity());
+		BeanManager.getManagerBean(WarehouseTransferDetail.class).insert(transferDetail);
+	}
+
+	
+	private void createCompositionTransfer(PurchaseDetail detail, List<TransferConposition> compositionList) throws ManagerBeanException {
+		WarehouseTransfer transfer = new WarehouseTransfer();
+		transfer.setSeries(getManufacturingOrderManager().getSeries());
+		int number = getManufacturingOrderManager().getNumber();
+		if(getManufacturingOrderManager().getNumber()==0){
+			number = getManufacturingOrderManager().obtainMaxNumber(getManufacturingOrderManager().getSeries());	
+		}
+		transfer.setNumber(number);
+		transfer.setIssueTime(getManufacturingOrderManager().getIssueTime());
+		transfer.setComments(null);
+		transfer.setSource(WarehouseTransferSource.MANUFACTURING_ORDER);
+		transfer.setSourceId(detail.getId());
+		transfer.setSourceWarehouse(detail.getPurchase().getWarehouse());
+		transfer.setTargetWarehouse(null);
+		transfer = (WarehouseTransfer) BeanManager.getManagerBean(WarehouseTransfer.class).insert(transfer);
+		
+		for(TransferConposition tc: compositionList){
+			WarehouseTransferDetail transferDetail = new WarehouseTransferDetail();
+			transferDetail.setWarehouseTransfer(transfer);
+			transferDetail.setItem(tc.getComposition().getCompositionItem());
+			transferDetail.setQuantity(tc.getTotalQuantity());
+			
+			BeanManager.getManagerBean(WarehouseTransferDetail.class).insert(transferDetail);
+		}
+	}
+	
+	private boolean isSettledAllLines() throws ManagerBeanException {
+		for(ITransferObject to: this.getManagerBean().getList(this.getCriteria())){
+			PurchaseDetail detail = (PurchaseDetail) to;
+			if(!detail.isSettled()){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private void closePurchase(ActionEvent event) throws ManagerBeanException {
+		((ManufacturingOrderController)this.getMasterController()).onClose(event);
+	}
+
+	
+	
+
 	public static class ManufacturingOrderManager implements Serializable {
 		
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
@@ -147,7 +316,12 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 		private DataModel detailModel;
 		private DataModel compositeModel;
 		private ArrayList<TransferPurchaseDetail> forceCloseChecks = new ArrayList<TransferPurchaseDetail>();
-
+		private String series;
+		private int number;
+		private boolean numberEditable;
+		private int seriesListLength;
+		private Date issueTime;
+		
 		public TransferPurchaseDetail getSelectedDetail() {
 			return selectedDetail;
 		}
@@ -194,14 +368,63 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 			this.compositeModel = model;
 		}
 		
+		public void init(List<TransferPurchaseDetail> list) {
+			setDetailList(list);
+			initSeries();
+			setIssueTime(new Date());
+		}
+		
 		public void onSelectDetail(ActionEvent event) {
 			TransferPurchaseDetail transfer = (TransferPurchaseDetail)getDetailModel().getRowData();
 			setSelectedDetail(transfer);
 			setCompositeList(transfer.getCompositionList());
 			setCompositeModel(null);
 		}
+				
+		public String getSeries() {
+			return series;
+		}
 
+		public void setSeries(String series) {
+			this.series = series;
+		}
+
+		public int getNumber() {
+			return number;
+		}
+
+		public void setNumber(int number) {
+			this.number = number;
+		}
 		
+		public boolean isNumberEditable() {
+			return numberEditable;
+		}
+
+		public void setNumberEditable(boolean numberEditable) {
+			this.numberEditable = numberEditable;
+		}
+		
+		public int getSeriesListLength() {
+			return seriesListLength;
+		}
+
+		public void setSeriesListLength(int seriesListLength) {
+			this.seriesListLength = seriesListLength;
+		}
+
+		public Date getIssueTime() {
+			return issueTime;
+		}
+
+		public void setIssueTime(Date issueTime) {
+			this.issueTime = issueTime;
+		}
+		
+		public boolean isEmptyForceCloseChecks(){
+			return forceCloseChecks==null || forceCloseChecks.size()<=0;
+		}
+
 		/**
 		 *  FORCED CLOSE CHECK LIST CONTROL
 		 */
@@ -217,7 +440,9 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 		}
 
 		public boolean getForceCloseRowChecked() {
-			TransferPurchaseDetail transfer = (TransferPurchaseDetail) detailModel.getRowData();
+			return getForceCloseRowChecked((TransferPurchaseDetail) detailModel.getRowData());
+		}
+		public boolean getForceCloseRowChecked(TransferPurchaseDetail transfer) {
 			return forceCloseChecks.contains(transfer);
 		}
 
@@ -242,6 +467,70 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 				return true;
 			}
 			return false;
+		}
+		
+		/**
+		 * SERIES-NUMBER 
+		 */
+		
+		public List<SelectItem> getSeriesCodes() throws ManagerBeanException {
+			ConfigCollectionsController ccc = (ConfigCollectionsController) AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
+			return ccc.getDeliverySeriesIds();
+		}	
+		
+		
+		public void onNumberEditable(ActionEvent event) {
+			if ( getNumber() == 0 ) {
+				int number = obtainMaxNumber(getSeries());
+				setNumber(number);
+			}
+		}
+		
+		public int obtainMaxNumber(String seriesId) {
+	    	return SeriesNumberUtil.obtainNumber(seriesId, getTableName(), getSeriesCriteria());
+		}
+		
+		protected String getTableName() {
+			return StringUtils.capitalize(((AbstractPojoController)FormUtil.getController(IWarehouseConstants.WAREHOUSE_TRANSFER_CONTROLLER_NAME)).getBeanName());
+		}
+		
+		protected Criteria getSeriesCriteria() {
+			return null;
+		}
+		
+		public void onSeriesChanged(ValueChangeEvent event)  {
+			updateSeries( (String)event.getNewValue() );
+		}
+
+		public void updateSeries( String seriesCode ) {
+			if ( numberEditable ) {
+				int number = obtainMaxNumber(seriesCode);	
+				setNumber(number);
+			}
+		}
+		
+		public void initSeries() {
+			setSeries(initSeries(true));
+		}
+		
+		public String initSeries(boolean update) {
+			String seriesCode = null;
+			setSeriesListLength(0);
+			setNumberEditable(false);
+			try {
+				List<SelectItem> list = getSeriesCodes();
+				setSeriesListLength(list.size());
+				if ( getSeriesListLength() == 1 ) {
+					seriesCode = (String) list.get(0).getValue();
+					if ( update ) {
+						setSeries(seriesCode);					
+						updateSeries(seriesCode);	
+					}
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+			return seriesCode;
 		}
 		
 	}

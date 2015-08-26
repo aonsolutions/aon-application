@@ -61,6 +61,66 @@
 								
 								<aon:div styleClass="aon-scroll-area">
 								
+									<aon:panelGrid columns="4" style="width: 100%; margin-bottom: 15px;"
+										rendered="#{manufacturingOrderDetail.manufacturingOrderManager.detailModel.rowCount > 0}">
+										<aon:outputLabel for="manufacturingOrderTransfer_number" value="#{bundle.aon_series}/#{bundle.aon_number}" />
+										<aon:div id="manufacturingOrderTransfer_seriesNumberDiv">
+											<aon:if test="#{(manufacturingOrderDetail.manufacturingOrderManager.seriesListLength > 0)}">
+												<aon:selectOneMenu id="manufacturingOrderTransfer_number-Series" 
+													value="#{manufacturingOrderDetail.manufacturingOrderManager.series}" required="#{true}"
+													disabled="#{false}"
+													valueChangeListener="#{manufacturingOrderDetail.manufacturingOrderManager.onSeriesChanged}"
+													reRender="manufacturingOrderTransfer_number-Series,manufacturingOrderTransfer_numberDiv#{(seriesChangedReRender != null)?',':''}#{seriesChangedReRender}">
+													<f:selectItems value="#{manufacturingOrderDetail.manufacturingOrderManager.seriesCodes}" />
+												</aon:selectOneMenu>
+											</aon:if>
+											
+											<aon:div id="manufacturingOrderTransfer_numberDiv"
+												layout="inline" styleClass="aon-margin-left">
+												<aon:if test="#{manufacturingOrderDetail.manufacturingOrderManager.numberEditable or (manufacturingOrderDetail.manufacturingOrderManager.number != 0)}">
+													<aon:inputText id="manufacturingOrderTransfer_number"
+														value="#{manufacturingOrderDetail.manufacturingOrderManager.number}"
+														required="true" size="6" maxlength="10"
+														disabled="#{!manufacturingOrderDetail.manufacturingOrderManager.numberEditable or false}"
+														reRender="manufacturingOrderTransfer_number" />
+												</aon:if>
+												<aon:if test="#{!manufacturingOrderDetail.manufacturingOrderManager.numberEditable and (manufacturingOrderDetail.manufacturingOrderManager.number == 0)}">
+													<aon:inputText id="manufacturingOrderTransfer_number"
+														value=" &lt;Auto&gt;"
+														size="6" maxlength="10" disabled="true" />
+												</aon:if>
+											</aon:div>
+											<aon:commandLink styleClass="aon-icon-edit-end-simple aon-margin-right"
+											 	style="margin-left: 5px; padding-right: 12px;"
+												value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
+												reRender="manufacturingOrderTransfer_seriesNumberDiv"
+												rendered="#{manufacturingOrderDetail.manufacturingOrderManager.numberEditable}" ajaxSingle="true" >
+												<aon:if test="#{true}">
+													<f:setPropertyActionListener
+														target="#{manufacturingOrderDetail.manufacturingOrderManager.number}" value="#{0}" />
+												</aon:if>
+												<f:setPropertyActionListener
+													target="#{manufacturingOrderDetail.manufacturingOrderManager.numberEditable}" value="#{false}" />
+											</aon:commandLink>
+											<aon:commandLink styleClass="aon-icon-edit-add-simple aon-margin-right"
+											 	style="margin-left: 5px; padding-right: 12px;"
+												value="&#160;" title="#{bundle.aon_edit}"
+												reRender="manufacturingOrderTransfer_seriesNumberDiv"
+												focus="manufacturingOrderTransfer_number"
+												rendered="#{!manufacturingOrderDetail.manufacturingOrderManager.numberEditable}" ajaxSingle="true" >
+												<f:setPropertyActionListener
+													target="#{manufacturingOrderDetail.manufacturingOrderManager.numberEditable}" value="#{true}" />
+												<aon:actionListener method="#{manufacturingOrderDetail.manufacturingOrderManager.onNumberEditable}" />							
+											</aon:commandLink>
+										</aon:div>
+					
+										<aon:outputLabel for="WarehouseTransfer_issueTime" value="#{bundle.aon_date}" />
+										<aon:selectInputDate id="WarehouseTransfer_issueTime"
+											value="#{manufacturingOrderDetail.manufacturingOrderManager.issueTime}" required="true" 
+											timeZone="#{timeZoneController.timeZone}"
+											popupDateFormat="#{bundle.aon_date_pattern}"/>
+									</aon:panelGrid>
+								
 									<aon:dataTable id="detailData" value="#{manufacturingOrderDetail.manufacturingOrderManager.detailModel}"
 										var="to" rows="10" rendered="#{manufacturingOrderDetail.manufacturingOrderManager.detailModel.rowCount > 0}"
 										columnClasses="aon-editDataTable-textColumn, aon-editDataTable-numberColumn, 
@@ -86,7 +146,8 @@
 											<f:facet name="header">
 												<aon:outputLabel for="detailData_total" value="#{bundle.aon_total}" />
 											</f:facet>
-											<aon:inputText id="detailData_total" value="#{to.totalQuantity}" size="5" >
+											<aon:inputText id="detailData_total" value="#{to.totalQuantity}" size="5"
+												disabled="#{!manufacturingOrderDetail.closeableTransfer}">
 												<f:validateDoubleRange minimum="0.0" />
 												<a4j:support event="onblur" reRender="detailData, compositeDataContainer" ajaxSingle="true" />
 											</aon:inputText>
@@ -98,16 +159,16 @@
 											</f:facet>
 											<aon:div rendered="#{manufacturingOrderDetail.manufacturingOrderManager.transferedLessThanPending}">
 												<aon:commandButton value="&#160;" immediate="true"
-													title="#{bundle.aon_finalice}"
+													title="#{bundle.aon_no} #{bundle.aon_finalice}"
 													rendered="#{!manufacturingOrderDetail.manufacturingOrderManager.forceCloseRowChecked}"
-													styleClass="aon-finding-toolbar-item aon-icon-point-red aon-finding-toolbar-item-no-border"
+													styleClass="aon-finding-toolbar-item aon-icon-point-green aon-finding-toolbar-item-no-border"
 													actionListener="#{manufacturingOrderDetail.manufacturingOrderManager.forceCloseRowSelected}"
 													reRender="detailData,compositeDataContainer" ajaxSingle="true">
 												</aon:commandButton>															
 												<aon:commandButton value="&#160;" immediate="true"
-													title="#{bundle.aon_no} #{bundle.aon_finalice}"
+													title="#{bundle.aon_finalice}"
 													rendered="#{manufacturingOrderDetail.manufacturingOrderManager.forceCloseRowChecked}"
-													styleClass="aon-finding-toolbar-item aon-icon-point-green aon-finding-toolbar-item-no-border"
+													styleClass="aon-finding-toolbar-item aon-icon-point-red aon-finding-toolbar-item-no-border"
 													actionListener="#{manufacturingOrderDetail.manufacturingOrderManager.forceCloseRowSelected}"
 													reRender="detailData,compositeDataContainer" ajaxSingle="true">
 												</aon:commandButton>															
@@ -120,10 +181,14 @@
 											</f:facet>
 											<aon:commandButton value="&#160;" immediate="true"
 												title="#{bundle.aon_see}"
+												rendered="#{manufacturingOrderDetail.closeableTransfer}"
 												styleClass="aon-finding-toolbar-item aon-icon-tree-root aon-finding-toolbar-item-no-border"
 												actionListener="#{manufacturingOrderDetail.manufacturingOrderManager.onSelectDetail}"
-												reRender="detailData,compositeDataContainer" ajaxSingle="true">
-											</aon:commandButton>															
+												reRender="lineCloseForm, detailData, compositeDataContainer" ajaxSingle="true">
+											</aon:commandButton>
+											<aon:outputText value="&#160;"
+												rendered="#{!manufacturingOrderDetail.closeableTransfer}"
+												styleClass="aon-finding-toolbar-item aon-icon-errorwarning aon-finding-toolbar-item-no-border" />															
 										</aon:column>
 									</aon:dataTable>
 					
@@ -132,7 +197,8 @@
 
 									<rich:spacer />
 									
-									<aon:panel id="compositeDataContainer">
+									<aon:panel id="compositeDataContainer"
+										rendered="#{manufacturingOrderDetail.manufacturingOrderManager.compositeModel.rowCount > 0}">
 										<f:facet name="header">
 											<aon:outputText value="#{bundle.product_composition}" />
 										</f:facet>

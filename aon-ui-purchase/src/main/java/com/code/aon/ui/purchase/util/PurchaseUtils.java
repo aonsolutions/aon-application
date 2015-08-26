@@ -187,7 +187,7 @@ public class PurchaseUtils implements Serializable {
 		detail.setPrice(price);
 		detail.setDiscountExpression(discountExpression);
 		detail.setTaxes(taxes);
-		detail.setStatus(PurchaseDetailStatus.PENDING);
+		detail.setStatus(status!=null?status:PurchaseDetailStatus.PENDING);
 		detail.setDelivered(delivered);
 
 		bean.insert(detail);

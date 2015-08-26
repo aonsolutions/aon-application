@@ -1,19 +1,26 @@
 package com.code.aon.ui.purchase.controller;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.purchase.Purchase;
+import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.ql.Criteria;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.bridge.SalesTransferManager;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.product.controller.IItemConstants;
+import com.code.aon.ui.product.controller.ItemTagPrintController;
 import com.code.aon.ui.purchase.util.PurchaseManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -51,7 +58,11 @@ public class ManufacturingOrderController extends PurchaseController {
 	protected String getTableName() {
 		return "Purchase";
 	}
-	 
+	
+	public void ispending(){
+		
+	}
+	
 	public void onSalesTransferShow(ActionEvent event) throws ManagerBeanException {
 		Purchase to = (Purchase)this.getTo();
 
@@ -85,6 +96,22 @@ public class ManufacturingOrderController extends PurchaseController {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
+	}
+	
+	public void onLoadItemTagPrint(ActionEvent event) throws ManagerBeanException {
+		IController detailController = FormUtil.getController(IPurchaseConstants.MANUFACTURING_ORDER_DETAIL_CONTROLLER_NAME);
+		List<Integer> idList = new LinkedList<Integer>();
+		List<ITransferObject> list = detailController.getManagerBean().getList(detailController.getCriteria());
+		for(ITransferObject to: list){
+			idList.add(((PurchaseDetail)to).getItem().getId());
+		}
+		
+		ItemTagPrintController itemTagController = (ItemTagPrintController) FormUtil.getController(IItemConstants.ITEM_TAG_PRINT_CONTROLLER_NAME);
+		itemTagController.clearCriteria();
+		itemTagController.getCriteria().addInExpression(itemTagController.getFieldName(IEntityAlias.ITEM_ID), idList);
+		itemTagController.onSearch(event);
+		itemTagController.checkAll(event);
+		itemTagController.clearCriteria();
 	}
 	
 }
