@@ -67,4 +67,7 @@ public interface ITemplateAsync {
 	void getWarehouses(Integer domainId,
 			AsyncCallback<Vector<Warehouse>> callback);
 
+	void getWarehousesToConsumption(Integer domainId,
+			AsyncCallback<Vector<Warehouse>> callback);
+
 }

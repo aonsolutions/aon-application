@@ -323,7 +323,7 @@ public class DBConsumption {
 	}
 	
 	public static String getInventoryName(String domain, Integer domainId, Integer inventoryId){
-		
+		if(inventoryId == null) return "";
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
@@ -333,7 +333,7 @@ public class DBConsumption {
 				.where(INVENTORY.ID.eq(inventoryId))
 				.fetchOne();
 			
-			return data.value1();
+			return (data.value1()!= null)?data.value1():"";
 		} finally{
 			if (ctx != null) ctx.close();
 		}

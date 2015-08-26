@@ -234,23 +234,25 @@ public class DownloadAggregateConsumptionServlet extends HttpServlet {
         				case "Producto": celda.setCellValue(ci.getProductCode());celda.setCellStyle(style3);break;
         				case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
         				case "Nombre": celda.setCellValue(ci.getProductName());celda.setCellStyle(style3);break;
-        				case "Inicial": celda.setCellValue(ci.getInitialQuantity());celda.setCellStyle(style2);break;
-        				case "Valor Inicial": celda.setCellValue(ci.getInitialValue() * ci.getInitialQuantity());celda.setCellStyle(style2);break;
-        				case "Compras": celda.setCellValue(ci.getPurchases());celda.setCellStyle(style2);break;
-        				case "Valor Compras": celda.setCellValue(ci.getPurchases() * ci.getPurchasesValue());celda.setCellStyle(style2);break;
-        				case "Ventas": celda.setCellValue(ci.getSales());celda.setCellStyle(style2);break;
-        				case "Valor Ventas": celda.setCellValue(ci.getSales() * ci.getSalesValue());celda.setCellStyle(style2);break;
-        				case "Final": celda.setCellValue(ci.getFinalQuantity());celda.setCellStyle(style2);break;
-        				case "Valor Final": celda.setCellValue(ci.getFinalQuantity() * ci.getFinalValue());celda.setCellStyle(style2);break;
-        				case "Traspaso": celda.setCellValue(ci.getTransfersPlus()-ci.getTransfersMinus());celda.setCellStyle(style2);break;
-        				case "Valor Traspaso": celda.setCellValue((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()));celda.setCellStyle(style2);break;
+        				case "Inicial": celda.setCellValue(round(ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
+        				case "Valor Inicial": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
+        				case "Compras": celda.setCellValue(round(ci.getPurchases(),2));celda.setCellStyle(style2);break;
+        				case "Valor Compras": celda.setCellValue(round(ci.getPurchases() * ci.getPurchasesValue(),2));celda.setCellStyle(style2);break;
+        				case "Ventas": celda.setCellValue(round(ci.getSales(),2));celda.setCellStyle(style2);break;
+        				case "Valor Ventas": celda.setCellValue(round(ci.getSales() * ci.getSalesValue(),2));celda.setCellStyle(style2);break;
+        				case "Final": celda.setCellValue(round(ci.getFinalQuantity(),2));celda.setCellStyle(style2);break;
+        				case "Valor Final": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style2);break;
+        				case "Traspaso": celda.setCellValue(round(ci.getTransfersPlus()-ci.getTransfersMinus(),2));celda.setCellStyle(style2);break;
+        				case "Valor Traspaso": celda.setCellValue(round((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()),2));celda.setCellStyle(style2);break;
         				//case "Precio": celda.setCellValue(round(ci.getPrice(),2));celda.setCellStyle(style2);break; 
         				//case "Valor Consumo": celda.setCellValue(round(ci.getPrice()*ci.getConsumption(),2));celda.setCellStyle(style2);break;
-        				case "Precio": celda.setCellValue(round(consumValue / ci.getConsumption(), 2));celda.setCellStyle(style2);break; 
+        				case "Precio": if(ci.getConsumption() != 0) celda.setCellValue(round(consumValue / ci.getConsumption(), 2));
+        							else celda.setCellValue(0);	
+        							celda.setCellStyle(style2);break; 
         				case "Valor Consumo": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
         				case "Importe": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
 
-        				case "Consumo": celda.setCellValue(ci.getConsumption());celda.setCellStyle(style2);break;
+        				case "Consumo": celda.setCellValue(round(ci.getConsumption(),2));celda.setCellStyle(style2);break;
         				default:
         					break;
         			}

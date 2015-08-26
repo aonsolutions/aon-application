@@ -76,7 +76,7 @@ public class ConsumptionPage extends Composite{
 	private void init() {
 		titleLabel.setText(AON.MSG.aggregateConsumptionTemplates());
 		panel.add(new VerticalPanel());
-		item.getWarehouses(domainId, new AsyncCallback<Vector<Warehouse>>() {
+		item.getWarehousesToConsumption(domainId, new AsyncCallback<Vector<Warehouse>>() {
 			
 			@Override
 			public void onSuccess(Vector<Warehouse> result) {
@@ -131,7 +131,6 @@ public class ConsumptionPage extends Composite{
 						warehouses.add(w);
 					}
 				}
-				// TODO METER UN LABEL CON EL ALAMACEN SELECCIONADO EN panel. *** mejorar
 				HorizontalPanel wTag = closeTagButton(wtext);
 				
 				warehouseListBox.removeItem(warehouseListBox.getSelectedIndex());

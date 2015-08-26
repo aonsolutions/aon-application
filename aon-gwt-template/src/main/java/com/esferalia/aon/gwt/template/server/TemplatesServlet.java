@@ -49,9 +49,11 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.template.client.ITemplate;
 import com.esferalia.aon.gwt.template.jooq.DBCatalogue;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
+import com.esferalia.aon.gwt.template.jooq.DBConsumption;
 import com.esferalia.aon.gwt.template.jooq.DBFee;
 import com.esferalia.aon.gwt.template.jooq.DBProduct;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
+import com.esferalia.aon.gwt.template.shared.ConsumptionItem;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
@@ -152,6 +154,18 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	public Vector<Warehouse> getWarehouses(Integer domainId){
 		String domain = AonUtil.getDomainName();
 		return DBStock.getWarehouse(domain, domainId, userId);
+	}
+	
+	public Vector<Warehouse> getWarehousesToConsumption(Integer domainId){
+		String domain = AonUtil.getDomainName();
+		Vector<Warehouse> v = DBStock.getWarehouse(domain, domainId, userId);
+		Vector<Warehouse> v2 = new Vector<Warehouse>();
+		for (Warehouse w : v) {
+			ConsumptionItem ci = DBConsumption.getTwoLastInventory(domain, domainId, w.getId());
+			if(ci.getInitialId() != null && ci.getFinalId() != null)
+				v2.add(w);
+		}
+		return v2;
 	}
 	
 	public Vector<Warehouse> getWarehouses(){
