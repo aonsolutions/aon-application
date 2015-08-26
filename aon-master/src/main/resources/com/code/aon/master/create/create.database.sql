@@ -7834,6 +7834,8 @@ CREATE TABLE `warehouse_transfer` (
   `source_warehouse` int(4) default NULL COMMENT 'Identificador del Almacen Origen',
   `target_warehouse` int(4) default NULL COMMENT 'Identificador del Almacen Destino',
   `inventory` int(4) default NULL COMMENT 'Identificador del Inventario',
+  `source` tinyint(2) NOT NULL default '0' COMMENT 'Origen',
+  `source_id` int(4) NOT NULL default '0' COMMENT 'Identificador del origen',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `IDX_UNQ_WAREHOUSE_TRANSFER_DOMAIN_SERIES_NUMBER` (`domain`,`series`,`number`),
   KEY `IDX_WAREHOUSE_TRANSFER_ISSUE_TIME` (`issue_time`),
@@ -7978,7 +7980,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.28.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.28.2');
 
 COMMIT;
 

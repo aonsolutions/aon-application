@@ -1668,6 +1668,7 @@
 	<table name="user_workgroup" class="com.esferalia.aon.entity.master.UserWorkGroup" />
 	
 	<table name="warehouse_transfer">
+		<column name="source" type="com.code.aon.warehouse.enumeration.WarehouseTransferSource"/>
 		<column name="comments" type="text"/>
 		<foreign-key constraint-name="FK_WAREHOUSE_TRANSFER_SOURCE_WAREHOUSE">
 			<many-to-one property="sourceWarehouse"/>
