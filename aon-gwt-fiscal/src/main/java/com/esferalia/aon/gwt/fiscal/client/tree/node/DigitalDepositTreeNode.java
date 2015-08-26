@@ -68,7 +68,6 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 
 			@Override
 			public void onSuccess(Boolean result) {
-				
 				digitalDepositMenu(result, fiscalTree);
 			}
 		});
@@ -87,11 +86,10 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			normalizedMemory.setPagesPanel(fiscalTree.getGenericContent(this));
 		}
 		else{
-			normalizedMemory = new NormalizedMemory(true, this);
+			normalizedMemory = new NormalizedMemory(true, this, fiscalTree);
 			normalizedMemory.paintHeaderTable("Cuentas Anuales","Tipo");
 			normalizedMemory.setPagesPanel(fiscalTree.getGenericContent(this), true);
 		}
-		
 		fiscalTree.setContent(normalizedMemory);
 	}
 	
@@ -102,7 +100,19 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 		d2Deposit2014.setMap(map);
 		d2Deposit2014.setMapDraft(map);
 		normalizedMemory = new NormalizedMemory(this, fiscalTree);
+		normalizedMemory.getNewButton().setVisible(false);
+		normalizedMemory.getSaveButton().setVisible(true);
+		normalizedMemory.getSaveButton().setEnabled(false);
+		normalizedMemory.getDeleteButton().setVisible(true);
+		normalizedMemory.getGenerateFileButton().setVisible(true);		
+		normalizedMemory.getImportAllButton().setVisible(true);
 		normalizedMemory.paintHeaderTable("Cuentas Anuales", d2Deposit2014.getMap().get(D2DepositConstants.DEPOSIT_TYPE));
+		normalizedMemory.setPagesPanel(fiscalTree.getGenericContent(this), true);
+
+		fiscalTree.setContent(normalizedMemory);
+
+
+		
 		//normalizedMemory.setPagesPanel(fiscalTree.getGenericContent(this));
 		items();
 		setState(true);

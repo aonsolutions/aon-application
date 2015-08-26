@@ -95,10 +95,10 @@ public class NormalizedMemory extends ResizeComposite {
 	
 	@UiField
 	Anchor download;							
-	
-	
-	
-	
+
+	public void setImportAllButton(Button importAllButton) {
+		this.importAllButton = importAllButton;
+	}
 	// selected item content panel
 	@UiField
 	FlowPanel pagesPanel;
@@ -241,7 +241,7 @@ public class NormalizedMemory extends ResizeComposite {
 	 * @param ddtn
 	 * @param e
 	 */
-	public NormalizedMemory(Boolean type, DigitalDepositTreeNode ddtn) {
+	public NormalizedMemory(Boolean type, DigitalDepositTreeNode ddtn, FiscalTree ft) {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		
@@ -259,7 +259,7 @@ public class NormalizedMemory extends ResizeComposite {
 		headerPanel = new SimplePanel();
 		enterprise = ddtn.getD2Deposit2014().getEnterprise();
 		year = ddtn.getD2Deposit2014().getYear();
-		
+		fiscalTree = ft;
 		Widget ui = MODEL_NORMALIZED_MEMORY_BINDER.createAndBindUi(this);
 		initWidget(ui);
 		importButton.setVisible(false);
@@ -393,6 +393,7 @@ public class NormalizedMemory extends ResizeComposite {
 									digitalDepositTreeNode.getD2Deposit2014().setMap(result);
 									digitalDepositTreeNode.getD2Deposit2014().setMapDraft(result);
 									digitalDepositTreeNode.items();
+									digitalDepositTreeNode.setState(true);
 									newButton.setVisible(false);
 									saveButton.setVisible(true);
 									saveButton.setEnabled(false);
@@ -830,7 +831,6 @@ public class NormalizedMemory extends ResizeComposite {
 						@Override
 						public void onSuccess(Void result) {
 							digitalDepositTreeNode.removeItems();
-							
 							digitalDepositTreeNode.select(fiscalTree);
 						}
 					});
@@ -1013,5 +1013,72 @@ public class NormalizedMemory extends ResizeComposite {
 		
 	}
 	
+	public Label getDepositType() {
+		return depositType;
+	}
+
+	public void setDepositType(Label depositType) {
+		this.depositType = depositType;
+	}
+
+	public Button getNewButton() {
+		return newButton;
+	}
+
+	public void setNewButton(Button newButton) {
+		this.newButton = newButton;
+	}
+
+	public Button getSaveButton() {
+		return saveButton;
+	}
+
+	public void setSaveButton(Button saveButton) {
+		this.saveButton = saveButton;
+	}
+
+	public Button getCancelButton() {
+		return cancelButton;
+	}
+
+	public void setCancelButton(Button cancelButton) {
+		this.cancelButton = cancelButton;
+	}
+
+	public Button getDeleteButton() {
+		return deleteButton;
+	}
+
+	public void setDeleteButton(Button deleteButton) {
+		this.deleteButton = deleteButton;
+	}
+
+	public Button getImportButton() {
+		return importButton;
+	}
+
+	public void setImportButton(Button importButton) {
+		this.importButton = importButton;
+	}
+
+	public Button getImportTextButton() {
+		return importTextButton;
+	}
+
+	public void setImportTextButton(Button importTextButton) {
+		this.importTextButton = importTextButton;
+	}
+
+	public Button getImportAllButton() {
+		return importAllButton;
+	}
+	
+	public void setGenerateFileButton(Button generateFileButton) {
+		this.generateFileButton = generateFileButton;
+	}
+
+	public Button getGenerateFileButton() {
+		return generateFileButton;
+	}
 	
 }

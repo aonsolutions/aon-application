@@ -572,6 +572,7 @@ public class Utils {
 		c9000000.setValor("1");
 		keys.getClave().add(c9000000);
 		
+		/* INICIALIZAR LOS VALORES DE LAS CUENTAS ANUALES MEDIANTE SUS FORMULAS DE CÁLCULO.
 		AONContext ctx2 = null;
 		try {
 			ctx2 = AONContext.getAONContext( domain ,enterprise.getDomain());
@@ -589,6 +590,7 @@ public class Utils {
 		}finally {
 			if (ctx2 != null) ctx2.close();
 		}
+		*/
 		
 		schema.setClaves(keys);		
 		
