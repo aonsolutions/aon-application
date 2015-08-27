@@ -310,6 +310,7 @@ public class DriveUtils implements IBlobManager {
 	private static File createFolder(Drive drive, String title, String parent) throws IOException{
 		File f = drive.files().get(parent).execute();
 		if(!f.getMimeType().equals("application/vnd.google-apps.folder")){
+			LOGGER.info(f.getMimeType());
 			LOGGER.error(title + "- The specified parent is not a folder.");
 			return null;
 		}

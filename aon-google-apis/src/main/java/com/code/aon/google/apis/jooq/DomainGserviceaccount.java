@@ -1,7 +1,5 @@
 package com.code.aon.google.apis.jooq;
 
-import java.io.InputStream;
-
 import org.jooq.Record10;
 
 public class DomainGserviceaccount {

@@ -29,9 +29,9 @@ import com.google.api.services.drive.model.FileList;
 
 public class SearchFiles {
 
-
+	
 	public static FileList searchFilesProperties(final Drive drive, final String key, final String property) throws IOException {
-        return (FileList)drive.files().list().setQ("properties has {key='" + key + "' and value='" + property + "' and visibility='PRIVATE'}").execute();
+        return (FileList) drive.files().list().setQ("properties has {key='" + key + "' and value='" + property + "' and visibility='PRIVATE'}").execute();
     }
 
 	
@@ -40,15 +40,17 @@ public class SearchFiles {
 		return fl;
 	}
 	
-	public static FileList searchFilesFulltextAndTypes(Drive drive, String searcher) throws IOException{
+	public static FileList searchFilesFulltextAndTypes(Drive drive, String searcher, String domain) throws IOException{
 		String type1 = types[0];
 		FileList fl= new FileList();
 		if(type1.equals("all")){
-			fl = drive.files().list().setQ("fullText contains '"+searcher+"'").execute();
+			fl = drive.files().list().setQ("fullText contains '"+searcher+"'"
+					+"and properties has {key='" + "domain" + "' and value='" + domain + "' and visibility='PRIVATE'}").execute();
 		}
 		else{
 			for (String type2 : types) {
-				FileList aux = drive.files().list().setQ("properties has {etag='type' and value ='"+type2+"'} and fullText contains '"+searcher+"'").execute();
+				FileList aux = drive.files().list().setQ("properties has {etag='type' and value ='"+type2+"'} and fullText contains '"+searcher+"'"
+						+"and properties has {key='" + "domain" + "' and value='" + domain + "' and visibility='PRIVATE'}").execute();
 				fl.getItems().addAll(aux.getItems());
 				
 			}
@@ -71,15 +73,17 @@ public class SearchFiles {
 		return fl;
 	}
 	
-	public static FileList searchFilesTitleAndTypes(Drive drive, String searcher) throws IOException{
+	public static FileList searchFilesTitleAndTypes(Drive drive, String searcher, String domain) throws IOException{
 		String type1 = types[0];
 		FileList fl= new FileList();
 		if(type1.equals("all")){
-			fl = drive.files().list().setQ("title contains '"+searcher+"'").execute();
+			fl = drive.files().list().setQ("title contains '"+searcher+"'"
+					+"and properties has {key='" + "domain" + "' and value='" + domain + "' and visibility='PRIVATE'}").execute();
 		}
 		else{
 			for (String type2 : types) {
-				FileList aux = drive.files().list().setQ("properties has {etag='type' and value ='"+type2+"'} and title contains '"+searcher+"'").execute();
+				FileList aux = drive.files().list().setQ("properties has {etag='type' and value ='"+type2+"'} and title contains '"+searcher+"'"
+						+"and properties has {key='" + "domain" + "' and value='" + domain + "' and visibility='PRIVATE'}").execute();
 				fl.getItems().addAll(aux.getItems());
 			}
 		}
@@ -101,15 +105,17 @@ public class SearchFiles {
 		
 	}
 
-	public static FileList searchFilesMimetypeAndTypes(Drive drive, String searcher) throws IOException{
+	public static FileList searchFilesMimetypeAndTypes(Drive drive, String searcher, String domain) throws IOException{
 		String type1 = types[0];
 		FileList fl= new FileList();
 		if(type1.equals("all")){
-			fl = drive.files().list().setQ("mimetype contains '"+searcher+"'").execute();
+			fl = drive.files().list().setQ("mimetype contains '"+searcher+"'"
+					+"and properties has {key='" + "domain" + "' and value='" + domain + "' and visibility='PRIVATE'}").execute();
 		}
 		else{
 			for (String type2 : types) {
-				FileList aux = drive.files().list().setQ("properties has {key='type' and value ='"+type2+"'} and mimetype contains '"+searcher+"'").execute();
+				FileList aux = drive.files().list().setQ("properties has {key='type' and value ='"+type2+"'} and mimetype contains '"+searcher+"'"
+						+"and properties has {key='" + "domain" + "' and value='" + domain + "' and visibility='PRIVATE'}").execute();
 				fl.getItems().addAll(aux.getItems());
 			}
 		}
@@ -133,10 +139,38 @@ public class SearchFiles {
 	 
 			
 			for (String type2 : types) {
-				FileList aux = drive.files().list().setQ("properties has {key='type' and value ='"+type2+"'}").execute();
-				fl.getItems().addAll(aux.getItems());
-				
-				
+				//FileList aux = drive.files().list().setQ("properties has {key='type' and value ='"+type2+"'}").execute();
+				FileList aux = searchFilesProperties(drive, "type", type2);
+				if(fl.getItems() != null)
+					fl.getItems().addAll(aux.getItems());	
+				else 
+					fl = aux;
+			}
+			
+		}
+		return fl;
+	}
+	
+	public static FileList searchFilesAllAndTypes(Drive drive,String domain) throws IOException{
+		String type1 = types[0];
+
+		FileList fl= new FileList();
+
+		if(type1.equals("all")){
+			fl = drive.files().list().setQ("properties has {key='" + "domain" + "' and value='" + domain + "' and visibility='PRIVATE'}").execute();
+		}
+		else{
+	 
+			
+			for (String type2 : types) {
+				String key = "type";
+				FileList aux = drive.files().list().setQ("properties has {key='" + key + "' and value='" + type2 + "'and visibility='PRIVATE'}"
+						+"and properties has {key='" + "domain" + "' and value='" + domain + "' and visibility='PRIVATE'}").execute();
+
+				if(fl.getItems() != null)
+					fl.getItems().addAll(aux.getItems());	
+				else 
+					fl = aux;
 			}
 			
 		}
@@ -158,16 +192,16 @@ public class SearchFiles {
 			View.domain(domain);
 
 			if(action.equals("title")){
-				fl = searchFilesTitleAndTypes(drive, value);
+				fl = searchFilesTitleAndTypes(drive, value, domain);
 			}
 			else if(action.equals("fulltext")){
-				fl = searchFilesFulltextAndTypes(drive, value);
+				fl = searchFilesFulltextAndTypes(drive, value, domain);
 			}
 			else if(action.equals("mimetype")){
-				fl = searchFilesMimetypeAndTypes(drive, value);
+				fl = searchFilesMimetypeAndTypes(drive, value, domain);
 			}
 			else if(action.equals("all")){
-				fl = searchFilesAllAndTypes(drive);
+				fl = searchFilesAllAndTypes(drive, domain);
 			}
 			else if(action.equals("id")){
 				File f = searchFile(drive, value);

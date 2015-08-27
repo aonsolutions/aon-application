@@ -45,7 +45,7 @@ import com.google.api.services.drive.model.Property;
 
 public class DBDrive {
 	
-	public static Vector<FileInfo> getRAttachLimit(String domain, Integer domainId, Vector<RegistryAttachmentType> rats) throws SQLException{
+	public static Vector<FileInfo> getRAttachLimit(String domain, Integer domainId, Vector<RegistryAttachmentType> rats,Integer firstId ) throws SQLException{
 		
 		Connection connection = null;
 		try {
@@ -72,7 +72,11 @@ public class DBDrive {
 																	.select(DOMAIN.ID)
 																	.from(DOMAIN)
 																	.where(DOMAIN.PARENT.eq(domainId)))))
-							.and(RATTACH.DRIVE_ID.isNull()).and(RATTACH.DATA.isNotNull()).and(condition).limit(10)
+							.and(RATTACH.DRIVE_ID.isNull()).and(RATTACH.DATA.isNotNull()).and(condition)
+							//.and(RATTACH.TYPE.ne((byte)0)).and(RATTACH.TYPE.ne((byte)15)).and(RATTACH.TYPE.ne((byte)17))
+							.and(RATTACH.ID.greaterThan(firstId))
+							.orderBy(RATTACH.ID)
+							.limit(10)
 					.fetch();
 	
 			Vector<FileInfo> attachs = new Vector<FileInfo>();
@@ -105,7 +109,7 @@ public class DBDrive {
 		}
 	}
 	
-	public static Vector<FileInfo> getContractAttachLimit(String domain, Integer domainId) throws SQLException{
+	public static Vector<FileInfo> getContractAttachLimit(String domain, Integer domainId, Integer firstId) throws SQLException{
 		
 		Connection connection = null;
 		try {
@@ -124,7 +128,10 @@ public class DBDrive {
 																	.select(DOMAIN.ID)
 																	.from(DOMAIN)
 																	.where(DOMAIN.PARENT.eq(domainId)))))
-							.and(CONTRACT_ATTACH.DRIVEID.isNull()).and(CONTRACT_ATTACH.DATA.isNotNull()).limit(10)
+							.and(CONTRACT_ATTACH.DRIVEID.isNull()).and(CONTRACT_ATTACH.DATA.isNotNull())
+							.and(CONTRACT_ATTACH.ID.greaterThan(firstId))
+							.orderBy(CONTRACT_ATTACH.ID)
+							.limit(10)
 					.fetch();
 	
 			Vector<FileInfo> attachs = new Vector<FileInfo>();
@@ -153,7 +160,7 @@ public class DBDrive {
 		}
 	}
 	
-	public static Vector<FileInfo> getIAttachLimit(String domain, Integer domainId) throws SQLException{
+	public static Vector<FileInfo> getIAttachLimit(String domain, Integer domainId, Integer firstId) throws SQLException{
 		
 		Connection connection = null;
 		try {
@@ -172,7 +179,10 @@ public class DBDrive {
 																	.select(DOMAIN.ID)
 																	.from(DOMAIN)
 																	.where(DOMAIN.PARENT.eq(domainId)))))
-							.and(IATTACH.DRIVEID.isNull()).and(IATTACH.DATA.isNotNull()).limit(10)
+							.and(IATTACH.DRIVEID.isNull()).and(IATTACH.DATA.isNotNull())
+							.and(IATTACH.ID.greaterThan(firstId))
+							.orderBy(IATTACH.ID)
+							.limit(10)
 					.fetch();
 	
 			Vector<FileInfo> attachs = new Vector<FileInfo>();
@@ -201,7 +211,7 @@ public class DBDrive {
 		}
 	}
 	
-	public static Vector<FileInfo> getInvoiceAttachLimit(String domain, Integer domainId) throws SQLException{
+	public static Vector<FileInfo> getInvoiceAttachLimit(String domain, Integer domainId, Integer firstId) throws SQLException{
 		
 		Connection connection = null;
 		try {
@@ -220,7 +230,10 @@ public class DBDrive {
 																	.select(DOMAIN.ID)
 																	.from(DOMAIN)
 																	.where(DOMAIN.PARENT.eq(domainId)))))
-							.and(INVOICE_ATTACH.DRIVEID.isNull()).and(INVOICE_ATTACH.DATA.isNotNull()).limit(10)
+							.and(INVOICE_ATTACH.DRIVEID.isNull()).and(INVOICE_ATTACH.DATA.isNotNull())
+							.and(INVOICE_ATTACH.ID.greaterThan(firstId))
+							.orderBy(INVOICE_ATTACH.ID)
+							.limit(10)
 					.fetch();
 	
 			Vector<FileInfo> attachs = new Vector<FileInfo>();
@@ -249,7 +262,7 @@ public class DBDrive {
 		}
 	}
 	
-	public static Vector<FileInfo> getOfferAttachLimit(String domain, Integer domainId) throws SQLException{
+	public static Vector<FileInfo> getOfferAttachLimit(String domain, Integer domainId, Integer firstId) throws SQLException{
 		
 		Connection connection = null;
 		try {
@@ -267,7 +280,10 @@ public class DBDrive {
 																	.select(DOMAIN.ID)
 																	.from(DOMAIN)
 																	.where(DOMAIN.PARENT.eq(domainId)))))
-							.and(OFFER_ATTACH.DRIVEID.isNull()).and(OFFER_ATTACH.DATA.isNotNull()).limit(10)
+							.and(OFFER_ATTACH.DRIVEID.isNull()).and(OFFER_ATTACH.DATA.isNotNull())
+							.and(OFFER_ATTACH.ID.greaterThan(firstId))
+							.orderBy(OFFER_ATTACH.ID)
+							.limit(10)
 					.fetch();
 	
 			Vector<FileInfo> attachs = new Vector<FileInfo>();
@@ -295,7 +311,7 @@ public class DBDrive {
 		}
 	}
 	
-	public static Vector<FileInfo> getPayrollAttachLimit(String domain, Integer domainId) throws SQLException{
+	public static Vector<FileInfo> getPayrollAttachLimit(String domain, Integer domainId, Integer firstId) throws SQLException{
 		
 		Connection connection = null;
 		try {
@@ -314,7 +330,10 @@ public class DBDrive {
 																	.select(DOMAIN.ID)
 																	.from(DOMAIN)
 																	.where(DOMAIN.PARENT.eq(domainId)))))
-							.and(PAYROLL_BATCH_ATTACH.DRIVEID.isNull()).and(PAYROLL_BATCH_ATTACH.DATA.isNotNull()).limit(10)
+							.and(PAYROLL_BATCH_ATTACH.DRIVEID.isNull()).and(PAYROLL_BATCH_ATTACH.DATA.isNotNull())
+							.and(PAYROLL_BATCH_ATTACH.ID.greaterThan(firstId))
+							.orderBy(PAYROLL_BATCH_ATTACH.ID)
+							.limit(10)
 					.fetch();
 	
 			Vector<FileInfo> attachs = new Vector<FileInfo>();
@@ -343,7 +362,7 @@ public class DBDrive {
 		}
 	}
 	
-	public static Vector<FileInfo> getProjectAttachLimit(String domain, Integer domainId) throws SQLException{
+	public static Vector<FileInfo> getProjectAttachLimit(String domain, Integer domainId, Integer firstId) throws SQLException{
 		
 		Connection connection = null;
 		try {
@@ -361,7 +380,10 @@ public class DBDrive {
 																	.select(DOMAIN.ID)
 																	.from(DOMAIN)
 																	.where(DOMAIN.PARENT.eq(domainId)))))
-							.and(PROJECT_ATTACH.DRIVEID.isNull()).and(PROJECT_ATTACH.DATA.isNotNull()).limit(10)
+							.and(PROJECT_ATTACH.DRIVEID.isNull()).and(PROJECT_ATTACH.DATA.isNotNull())
+							.and(PROJECT_ATTACH.ID.greaterThan(firstId))
+							.orderBy(PROJECT_ATTACH.ID)
+							.limit(10)
 					.fetch();
 	
 			Vector<FileInfo> attachs = new Vector<FileInfo>();
@@ -389,7 +411,7 @@ public class DBDrive {
 		}
 	}
 	
-	public static Vector<FileInfo> getSepeAttachLimit(String domain, Integer domainId) throws SQLException{
+	public static Vector<FileInfo> getSepeAttachLimit(String domain, Integer domainId, Integer firstId) throws SQLException{
 		
 		Connection connection = null;
 		try {
@@ -408,7 +430,10 @@ public class DBDrive {
 																	.select(DOMAIN.ID)
 																	.from(DOMAIN)
 																	.where(DOMAIN.PARENT.eq(domainId)))))
-							.and(SEPE_BATCH_ATTACH.DRIVEID.isNull()).and(SEPE_BATCH_ATTACH.DATA.isNotNull()).limit(10)
+							.and(SEPE_BATCH_ATTACH.DRIVEID.isNull()).and(SEPE_BATCH_ATTACH.DATA.isNotNull())
+							.and(PROJECT_ATTACH.ID.greaterThan(firstId))
+							.orderBy(PROJECT_ATTACH.ID)
+							.limit(10)
 					.fetch();
 	
 			Vector<FileInfo> attachs = new Vector<FileInfo>();

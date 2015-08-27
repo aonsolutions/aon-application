@@ -126,34 +126,33 @@ public class DeleteFiles {
 
 	public static void deleteFile(Drive drive, File f, String domain)
 			throws IOException, SQLException, AonConnectionException {
-		//Integer idAux = -1;
-		if(id == -1){
-			if(f.getProperties() != null){
-				for (Property property : f.getProperties()) {
-					if(property.getKey().equals("fileId")){
-						String fileId = property.getValue();
-						id = Integer.parseInt(fileId);
-					}
-				
+		Integer idAux = -1;
+		
+		if(f.getProperties() != null){
+			for (Property property : f.getProperties()) {
+				if(property.getKey().equals("fileId")){
+					String fileId = property.getValue();
+					idAux = Integer.parseInt(fileId);
 				}
+			
 			}
 		}
-		//else idAux = id; 
-		if(id/*Aux*/ != -1){
+	 
+		if(idAux != -1){
 			if(remove.equals("force")){
 				if(!f.getMimeType().equals("application/vnd.google-apps.folder")){
-					deleteFileBD(f, domain, id/*Aux*/);
+					deleteFileBD(f, domain, idAux);
 				}
 				drive.files().delete(f.getId()).execute();
 			}
 			else{
 				if(!f.getMimeType().equals("application/vnd.google-apps.folder")){
 					InputStream data = DriveUtils.downloadFile(drive, f);
-					insertBlobs(Utils.InputStreamToByte(data), f.getId(), domain, id/*Aux*/);
+					insertBlobs(Utils.InputStreamToByte(data), f.getId(), domain, idAux);
 				}
 				drive.files().delete(f.getId()).execute();
 		
-				if(!f.getMimeType().equals("application/vnd.google-apps.folder")) deleteDriveIds(f, domain, id/*Aux*/);
+				if(!f.getMimeType().equals("application/vnd.google-apps.folder")) deleteDriveIds(f, domain, idAux);
 			}
 			View.delete(f);
 		}
@@ -177,7 +176,7 @@ public class DeleteFiles {
 	public static void deleteFilesAll(Drive drive, String domain)
 			throws IOException, SQLException, AonConnectionException {
 		SearchFiles.types = types;
-		FileList fl = SearchFiles.searchFilesAllAndTypes(drive);
+		FileList fl = SearchFiles.searchFilesAllAndTypes(drive, domain);
 		if (fl.getItems() != null){
 			for (File f : fl.getItems()) {
 				deleteFile(drive, f, domain);
