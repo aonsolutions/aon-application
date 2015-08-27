@@ -363,6 +363,8 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 									TreeNode<D2DepositTreeObject> digitalDepositNode = TreeNodeTypes.DIGITAL_DEPOSIT.getInstance().render(yearTreeNode, new D2DepositTreeObject(enterprise, year));
 									digitalDepositNode.setState(true);
 								}
+								if(year == CURRENT_YEAR - 1)
+									yearTreeNode.setState(true);
 							}						
 		    			}
 		  

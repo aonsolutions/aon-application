@@ -61,10 +61,11 @@ public class PageH4 extends PageAbs {
 		tabPanel.selectTab(0);
 	}
 	
-	public PageH4(Enterprise enterprise, NormalizedMemory nm) {
+	public PageH4(Enterprise enterprise, NormalizedMemory nm, Integer year) {
 		this();
 		this.enterprise = enterprise;
 		this.normalizedMemory = nm;
+		this.year = year;
 	}
 
 	@Override

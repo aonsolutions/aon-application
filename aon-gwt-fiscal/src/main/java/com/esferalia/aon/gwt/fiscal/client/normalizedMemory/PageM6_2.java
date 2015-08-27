@@ -44,29 +44,30 @@ public class PageM6_2 extends PageAbs {
 	};
 
 	private static final String[] MRN_ABREVIATE_HEADER_5 = new String[] {
-		"P\u00e9rdidas por deteriodo al final del ejercicio 2013 (1)"
+		"P\u00e9rdidas por deteriodo al final del ejercicio # (1)"
 		,"(+/-) Variaci\u00f3n deteriodo a p\u00e9rdidas y ganancias"
 		,"(+) Variaci\u00f3n contra patrimonio neto"
 		,"(-) Salidas y reducciones"
 		,"(+/-) Traspasos y otras variaciones (combinaciones de negocio, etc.)"
-		,"P\u00e9rdida por deteriodo al final del ejercicio 2014 (2)"
+		,"P\u00e9rdida por deteriodo al final del ejercicio @ (2)"
 	};
 	
 	private static final String[] MRN_PYMES_HEADER_5 = new String[] {
-		"P\u00e9rdidas por deteriodo al final del ejercicio 2013 (1)"
+		"P\u00e9rdidas por deteriodo al final del ejercicio # (1)"
 		,"(+/-) Variaci\u00f3n deteriodo a p\u00e9rdidas y ganancias"		
 		,"(-) Salidas y reducciones"
 		,"(+/-) Traspasos y otras variaciones (combinaciones de negocio, etc.)"
-		,"P\u00e9rdida por deteriodo al final del ejercicio 2014 (2)"
+		,"P\u00e9rdida por deteriodo al final del ejercicio @ (2)"
 	};
 
 	
 	private static final String[][] AUXILIARES = new String[][] {
 		new String[] {AON.MSG.year2014(), AON.MSG.year2013()}
 		, new String[] {"Largo plazo", "Corto plazo"}
+		,new String[] {AON.MSG.year2015(), AON.MSG.year2014()}
 	};
 
-	
+
 
 
 	interface PageBinder extends UiBinder<Widget, PageM6_2> {
@@ -105,10 +106,11 @@ public class PageM6_2 extends PageAbs {
 		tabPanel.selectTab(0);
 	}
 	
-	public PageM6_2(Enterprise enterprise, NormalizedMemory nm) {
+	public PageM6_2(Enterprise enterprise, NormalizedMemory nm, Integer year) {
 		super();
 		this.enterprise = enterprise;
 		this.normalizedMemory = nm;
+		this.year = year;
 		table1 = new FlexTable();
 		table2 = new FlexTable();
 		table3 = new FlexTable();
@@ -125,29 +127,51 @@ public class PageM6_2 extends PageAbs {
 		if(tabPanel.getTabBar().getSelectedTab() != 0)
 			tabPanel.selectTab(tabPanel.getTabBar().getSelectedTab());
 		else tabPanel.selectTab(0);
-		
-		if (isPymes()) {
-			
-			defineMRNTable(table, MRN_HEADER_1, AUXILIARES[0], D2PDepositConstants.MRN6_PYMES_KEYS_1, 2);
-			defineMRNTable(table1, MRN_HEADER_1, AUXILIARES[0], D2PDepositConstants.MRN6_PYMES_KEYS_2, 2);
-			//NO HAY table2
-			defineMRNTable(table3, MRN_HEADER_3, AUXILIARES[1], D2PDepositConstants.MRN6_PYMES_KEYS_4, 2);
-			defineMRNTable(table4, MRN_HEADER_4, null, D2PDepositConstants.MRN6_PYMES_KEYS_5, 1);
-			defineMRNTable(table5, MRN_PYMES_HEADER_5, null, D2DepositConstants.MRN6_ABREVIATE_KEYS_6, 1);
-
-			abreviateCLabel.setText("");
+		switch (year) {
+		case 2014:
+			if (isPymes()) {
+				defineMRNTable(table, MRN_HEADER_1, AUXILIARES[0], D2PDepositConstants.MRN6_PYMES_KEYS_1, 2);
+				defineMRNTable(table1, MRN_HEADER_1, AUXILIARES[0], D2PDepositConstants.MRN6_PYMES_KEYS_2, 2);
+				//NO HAY table2
+				defineMRNTable(table3, MRN_HEADER_3, AUXILIARES[1], D2PDepositConstants.MRN6_PYMES_KEYS_4, 2);
+				defineMRNTable(table4, MRN_HEADER_4, null, D2PDepositConstants.MRN6_PYMES_KEYS_5, 1);
+				defineMRNTable(table5, MRN_PYMES_HEADER_5, null, D2DepositConstants.MRN6_ABREVIATE_KEYS_6, 1);
+				abreviateCLabel.setText("");
+			}
+			else {
+				defineMRNTable(table, MRN_HEADER_1, AUXILIARES[0], D2DepositConstants.MRN6_ABREVIATE_KEYS_1, 2);
+				defineMRNTable(table1, MRN_HEADER_1, AUXILIARES[0], D2DepositConstants.MRN6_ABREVIATE_KEYS_2, 2);
+				defineMRNTable(table2, AUXILIARES[0], MRN_HEADER_2, D2DepositConstants.MRN6_ABREVIATE_KEYS_3, 3);
+				
+				defineMRNTable(table3, MRN_HEADER_3, AUXILIARES[1], D2DepositConstants.MRN6_ABREVIATE_KEYS_4, 2);
+				defineMRNTable(table4, MRN_HEADER_4, null, D2DepositConstants.MRN6_ABREVIATE_KEYS_5, 1);
+				defineMRNTable(table5, MRN_ABREVIATE_HEADER_5, null, D2DepositConstants.MRN6_ABREVIATE_KEYS_6, 1);
+			}
+			break;
+		case 2015:
+			if (isPymes()) {
+				defineMRNTable(table, MRN_HEADER_1, AUXILIARES[2], D2PDepositConstants.MRN6_PYMES_KEYS_1, 2);
+				defineMRNTable(table1, MRN_HEADER_1, AUXILIARES[2], D2PDepositConstants.MRN6_PYMES_KEYS_2, 2);
+				//NO HAY table2
+				defineMRNTable(table3, MRN_HEADER_3, AUXILIARES[1], D2PDepositConstants.MRN6_PYMES_KEYS_4, 2);
+				defineMRNTable(table4, MRN_HEADER_4, null, D2PDepositConstants.MRN6_PYMES_KEYS_5, 1);
+				defineMRNTable(table5, MRN_PYMES_HEADER_5, null, D2DepositConstants.MRN6_ABREVIATE_KEYS_6, 1);
+				abreviateCLabel.setText("");
+			}
+			else {
+				defineMRNTable(table, MRN_HEADER_1, AUXILIARES[2], D2DepositConstants.MRN6_ABREVIATE_KEYS_1, 2);
+				defineMRNTable(table1, MRN_HEADER_1, AUXILIARES[2], D2DepositConstants.MRN6_ABREVIATE_KEYS_2, 2);
+				defineMRNTable(table2, AUXILIARES[2], MRN_HEADER_2, D2DepositConstants.MRN6_ABREVIATE_KEYS_3, 3);
+				
+				defineMRNTable(table3, MRN_HEADER_3, AUXILIARES[1], D2DepositConstants.MRN6_ABREVIATE_KEYS_4, 2);
+				defineMRNTable(table4, MRN_HEADER_4, null, D2DepositConstants.MRN6_ABREVIATE_KEYS_5, 1);
+				defineMRNTable(table5, MRN_ABREVIATE_HEADER_5, null, D2DepositConstants.MRN6_ABREVIATE_KEYS_6, 1);
+			}
+			break;
+		default:
+			break;
 		}
-
-		else {
-			
-			defineMRNTable(table, MRN_HEADER_1, AUXILIARES[0], D2DepositConstants.MRN6_ABREVIATE_KEYS_1, 2);
-			defineMRNTable(table1, MRN_HEADER_1, AUXILIARES[0], D2DepositConstants.MRN6_ABREVIATE_KEYS_2, 2);
-			defineMRNTable(table2, AUXILIARES[0], MRN_HEADER_2, D2DepositConstants.MRN6_ABREVIATE_KEYS_3, 3);
-			
-			defineMRNTable(table3, MRN_HEADER_3, AUXILIARES[1], D2DepositConstants.MRN6_ABREVIATE_KEYS_4, 2);
-			defineMRNTable(table4, MRN_HEADER_4, null, D2DepositConstants.MRN6_ABREVIATE_KEYS_5, 1);
-			defineMRNTable(table5, MRN_ABREVIATE_HEADER_5, null, D2DepositConstants.MRN6_ABREVIATE_KEYS_6, 1);
-		}
+	
 	}
 	
 	protected void defineMRNTable (FlexTable tab, String[] headers, String[] footers, D2DepositKey[][] keys, int colSpan) {
@@ -182,7 +206,7 @@ public class PageM6_2 extends PageAbs {
 				for (String secundary : footers) {
 
 					tab.getColumnFormatter().addStyleName(col, AON.AON_CSS.aonWidth140());
-					tab.setWidget(row, col, new Label(secundary));	
+					tab.setWidget(row, col, new Label(putYear(secundary, year)));	
 					tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
 					tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
 					tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());

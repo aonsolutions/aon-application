@@ -12,6 +12,10 @@ public class D2DepositDescription {
 	// ª --> \u00AA º --> \u00BA
 	// ¿ --> \u00BF
 	
+	// AÑO ACTUAL --> @      	Ej: 2014 
+	// AÑO ANTERIOR --> #		Ej: 2013 
+	// 2 AÑOS ANTES --> ¬ 		Ej: 2012 
+	
 	public static EnumMap<D2DepositKey,String> DESCRIPTION_MAP = new EnumMap<D2DepositKey,String>(D2DepositKey.class);
 	public static EnumMap<D2DepositHeaderKey,String> DESCRIPTION_MAP_HEADER = new EnumMap<D2DepositHeaderKey,String>(D2DepositHeaderKey.class);
 	
@@ -34,45 +38,45 @@ public class D2DepositDescription {
 	}
 	
 	static {
-		DESCRIPTION_MAP.put(D2DepositKey.MA592001,"A) SALDO INICIAL BRUTO, EJERCICIO 2014");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592001,"A) SALDO INICIAL BRUTO, EJERCICIO @ ");
 		DESCRIPTION_MAP.put(D2DepositKey.MA592011,"(+) Entradas");
 		DESCRIPTION_MAP.put(D2DepositKey.MA592141,"(+) Correcciones de valor por actualizaci\u00F3n");
 		DESCRIPTION_MAP.put(D2DepositKey.MA592021,"(-) Salidas");
-		DESCRIPTION_MAP.put(D2DepositKey.MA592031,"B) SALDO FINAL BRUTO, EJERCICIO 2014");
-		DESCRIPTION_MAP.put(D2DepositKey.MA592041,"C) AMORTIZACI\u00D3N ACUMULADA, SALDO INICIAL EJERCICIO 2014");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592031,"B) SALDO FINAL BRUTO, EJERCICIO @ ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592041,"C) AMORTIZACI\u00D3N ACUMULADA, SALDO INICIAL EJERCICIO @ ");
 		DESCRIPTION_MAP.put(D2DepositKey.MA592051,"(+) Dotaci\u00F3n a la amortizaci\u00F3n del ejercicio");
 		DESCRIPTION_MAP.put(D2DepositKey.MA592151,"(+) Aumento de la amortizaci\u00F3n acumulada por efecto de la actualizaci\u00F3n");
 		DESCRIPTION_MAP.put(D2DepositKey.MA592061,"(+) Aumentos por adquisiciones o traspasos");
 		DESCRIPTION_MAP.put(D2DepositKey.MA592071,"(-) Disminuciones por salidas, bajas o traspasos");
-		DESCRIPTION_MAP.put(D2DepositKey.MA592081,"D) AMORTIZACI\u00D3N ACUMULADA, SALDO FINAL EJERCICIO 2014");
-		DESCRIPTION_MAP.put(D2DepositKey.MA592091,"E) CORRECCIONES DE VALOR POR DETERIORO, SALDO INICIAL EJERCICIO 2014");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592081,"D) AMORTIZACI\u00D3N ACUMULADA, SALDO FINAL EJERCICIO @ ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592091,"E) CORRECCIONES DE VALOR POR DETERIORO, SALDO INICIAL EJERCICIO @ ");
 		DESCRIPTION_MAP.put(D2DepositKey.MA592101,"(+) Correcciones valorativas por deterioro reconocidas en el periodo");
 		DESCRIPTION_MAP.put(D2DepositKey.MA592111,"(-) Reversi\u00F3n de correcciones valorativas por deteriodo");
 		DESCRIPTION_MAP.put(D2DepositKey.MA592121,"(-) Disminuciones por salidas, bajas o traspasos");
-		DESCRIPTION_MAP.put(D2DepositKey.MA592131,"F) CORRECCIONES DE VALOR POR DETERIORO, SALDO FINAL EJERCICIO 2014");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592131,"F) CORRECCIONES DE VALOR POR DETERIORO, SALDO FINAL EJERCICIO @ ");
 		
-		DESCRIPTION_MAP.put(D2DepositKey.MA5920019,"A) SALDO INICIAL BRUTO, EJERCICIO 2013");
+		DESCRIPTION_MAP.put(D2DepositKey.MA5920019,"A) SALDO INICIAL BRUTO, EJERCICIO # ");
 		DESCRIPTION_MAP.put(D2DepositKey.MA5920119,"(+) Entradas");
 		DESCRIPTION_MAP.put(D2DepositKey.MA5921419,"(+) Correcciones de valor por actualizaci\u00F3n");
 		DESCRIPTION_MAP.put(D2DepositKey.MA5920219,"(-) Salidas");
-		DESCRIPTION_MAP.put(D2DepositKey.MA5920319,"B) SALDO FINAL BRUTO, EJERCICIO 2013");
-		DESCRIPTION_MAP.put(D2DepositKey.MA5920419,"C) AMORTIZACI\u00D3N ACUMULADA, SALDO INICIAL EJERCICIO 2013");
+		DESCRIPTION_MAP.put(D2DepositKey.MA5920319,"B) SALDO FINAL BRUTO, EJERCICIO # ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA5920419,"C) AMORTIZACI\u00D3N ACUMULADA, SALDO INICIAL EJERCICIO # ");
 		DESCRIPTION_MAP.put(D2DepositKey.MA5920519,"(+) Dotaci\u00F3n a la amortizaci\u00F3n del ejercicio");
 		DESCRIPTION_MAP.put(D2DepositKey.MA5921519,"(+) Aumento de la amortizaci\u00F3n acumulada por efecto de la actualizaci\u00F3n");
 		DESCRIPTION_MAP.put(D2DepositKey.MA5920619,"(+) Aumentos por adquisiciones o traspasos");
 		DESCRIPTION_MAP.put(D2DepositKey.MA5920719,"(-) Disminuciones por salidas, bajas o traspasos");
-		DESCRIPTION_MAP.put(D2DepositKey.MA5920819,"D) AMORTIZACI\u00D3N ACUMULADA, SALDO FINAL EJERCICIO 2013");
-		DESCRIPTION_MAP.put(D2DepositKey.MA5920919,"E) CORRECCIONES DE VALOR POR DETERIORO, SALDO INICIAL EJERCICIO 2013");
+		DESCRIPTION_MAP.put(D2DepositKey.MA5920819,"D) AMORTIZACI\u00D3N ACUMULADA, SALDO FINAL EJERCICIO # ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA5920919,"E) CORRECCIONES DE VALOR POR DETERIORO, SALDO INICIAL EJERCICIO # ");
 		DESCRIPTION_MAP.put(D2DepositKey.MA5921019,"(+) Correcciones valorativas por deterioro reconocidas en el periodo");
 		DESCRIPTION_MAP.put(D2DepositKey.MA5921119,"(-) Reversi\u00F3n de correcciones valorativas por deteriodo");
 		DESCRIPTION_MAP.put(D2DepositKey.MA5921219,"(-) Disminuciones por salidas, bajas o traspasos");
-		DESCRIPTION_MAP.put(D2DepositKey.MA5921319,"F) CORRECCIONES DE VALOR POR DETERIORO, SALDO FINAL EJERCICIO 2013");
+		DESCRIPTION_MAP.put(D2DepositKey.MA5921319,"F) CORRECCIONES DE VALOR POR DETERIORO, SALDO FINAL EJERCICIO # ");
 	
 		DESCRIPTION_MAP.put(D2DepositKey.MA592200,"Coste del bien en origen");
 		DESCRIPTION_MAP.put(D2DepositKey.MA592201,"Cuotas satisfechas");
 		DESCRIPTION_MAP.put(D2DepositKey.MA592202,"Ejercicios anteriores");
-		DESCRIPTION_MAP.put(D2DepositKey.MA592203,"Ejercicio 2014");
-		DESCRIPTION_MAP.put(D2DepositKey.MA592204,"Importe cuotas pendientes 2014");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592203,"Ejercicio @ ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA592204,"Importe cuotas pendientes @ ");
 		DESCRIPTION_MAP.put(D2DepositKey.MA592205,"Valor de la opci\u00f3n de compra");
 	}
 	
@@ -109,30 +113,30 @@ public class D2DepositDescription {
 		DESCRIPTION_MAP.put(D2DepositKey.MA6193241,"Activos financieros disponibles para la venta");
 		
 		
-		DESCRIPTION_MAP.put(D2DepositKey.MA6293301,"P\u00E9rdida por deterioro al inicio del ejercicio 2013");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293301,"P\u00E9rdida por deterioro al inicio del ejercicio # ");
 		DESCRIPTION_MAP.put(D2DepositKey.MA6293311,"(+)Correci\u00F3n valorativo por deterior");
 		DESCRIPTION_MAP.put(D2DepositKey.MA6293321,"(-) Reversi\u00F3n del deterioro");
 		DESCRIPTION_MAP.put(D2DepositKey.MA6293331,"(-) Salidas y reducciones");
 		DESCRIPTION_MAP.put(D2DepositKey.MA6293341,"(+/-) Traspasos y otras variaciones (combinaciones de negocio,etc.)");
-		DESCRIPTION_MAP.put(D2DepositKey.MA6293351,"P\u00E9rdida por deterioro al final del ejercicio 2013");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293351,"P\u00E9rdida por deterioro al final del ejercicio # ");
 		//TODO
-		DESCRIPTION_MAP.put(D2DepositKey.MA62933019,"P\u00E9rdida por deterioro al inicio del ejercicio 2014");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62933019,"P\u00E9rdida por deterioro al inicio del ejercicio @ ");
 		DESCRIPTION_MAP.put(D2DepositKey.MA62933119,"(+)Correcci\u00F3n valorativo por deterioro");
 		DESCRIPTION_MAP.put(D2DepositKey.MA62933219,"(-) Reversi\u00F3n del deterioro");
 		DESCRIPTION_MAP.put(D2DepositKey.MA62933319,"(-) Salidas y reducciones");
 		DESCRIPTION_MAP.put(D2DepositKey.MA62933419,"(+/-) Traspasos y otras variaciones (combinaciones de negocio,etc.)");
-		DESCRIPTION_MAP.put(D2DepositKey.MA62933519,"P\u00E9rdida por deterioro al final del ejercicio 2014");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62933519,"P\u00E9rdida por deterioro al final del ejercicio @ ");
 
 		
-		DESCRIPTION_MAP.put(D2DepositKey.MA6293401,"Valor razonable al inicio del ejercicio 2013");
-		DESCRIPTION_MAP.put(D2DepositKey.MA6293411,"Variaciones del valor razonable registradas en p\u00E9rdidas y ganancias en el ejercicio 2013");
-		DESCRIPTION_MAP.put(D2DepositKey.MA6293421,"Variaciones del valor razonable registradas en patrimonio neto en el ejercicio 2013");
-		DESCRIPTION_MAP.put(D2DepositKey.MA6293431,"Valor razonable al final del ejercicio 2013");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293401,"Valor razonable al inicio del ejercicio # ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293411,"Variaciones del valor razonable registradas en p\u00E9rdidas y ganancias en el ejercicio # ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293421,"Variaciones del valor razonable registradas en patrimonio neto en el ejercicio # ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293431,"Valor razonable al final del ejercicio # ");
 		//TODO
-		DESCRIPTION_MAP.put(D2DepositKey.MA62934019,"Valor razonable al inicio del ejercicio 2013");
-		DESCRIPTION_MAP.put(D2DepositKey.MA62934119,"Variaciones del valor razonable registradas en p\u00E9rdidas y ganancias en el ejercicio 2013");
-		DESCRIPTION_MAP.put(D2DepositKey.MA62934219,"Variaciones del valor razonable registradas en patrimonio neto en el ejercicio 2013");
-		DESCRIPTION_MAP.put(D2DepositKey.MA62934319,"Valor razonable al final del ejercicio 2013");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62934019,"Valor razonable al inicio del ejercicio @ ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62934119,"Variaciones del valor razonable registradas en p\u00E9rdidas y ganancias en el ejercicio @ ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62934219,"Variaciones del valor razonable registradas en patrimonio neto en el ejercicio @ ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62934319,"Valor razonable al final del ejercicio @ ");
 
 		DESCRIPTION_MAP.put(D2DepositKey.MA62935059,"Empresas del grupo");
 		DESCRIPTION_MAP.put(D2DepositKey.MA62935159,"Empresas multigrupo");
@@ -487,20 +491,20 @@ public class D2DepositDescription {
 
 		
 
-		DESCRIPTION_MAP.put(D2DepositKey.MA14294600,"A) IMPORTE (BRUTO) AL INICIO DEL EJERCICIO 2014");
+		DESCRIPTION_MAP.put(D2DepositKey.MA14294600,"A) IMPORTE (BRUTO) AL INICIO DEL EJERCICIO @ ");
 		DESCRIPTION_MAP.put(D2DepositKey.MA14294601,"(+) Entradas o adquisiciones");
 		DESCRIPTION_MAP.put(D2DepositKey.MA14294602,"(-) Enajenaciones y otras bajas");
-		DESCRIPTION_MAP.put(D2DepositKey.MA14294603,"B) IMPORTE (BRUTO) AL CIERRE DEL EJERCICIO 2014");
-		DESCRIPTION_MAP.put(D2DepositKey.MA14294604,"C) CORRECCIONES DE VALOR POR DETERIORO AL INICIO DEL EJERCICIO 2014");
+		DESCRIPTION_MAP.put(D2DepositKey.MA14294603,"B) IMPORTE (BRUTO) AL CIERRE DEL EJERCICIO @ ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA14294604,"C) CORRECCIONES DE VALOR POR DETERIORO AL INICIO DEL EJERCICIO @ ");
 		DESCRIPTION_MAP.put(D2DepositKey.MA14294605,"(+) Dotaciones");
 		DESCRIPTION_MAP.put(D2DepositKey.MA14294606,"(-) Aplicaci\u00F3n y bajas");
-		DESCRIPTION_MAP.put(D2DepositKey.MA14294607,"D) CORRECCIONES DE VALOR POR DETERIORO AL CIERRE DEL EJERCICIO 2014");
-		DESCRIPTION_MAP.put(D2DepositKey.MA14294608,"E) GASTOS DEL EJERCICIO 2014 POR EMISI\u00D3N DE GASES DE EFECTO INVERNADERO");
+		DESCRIPTION_MAP.put(D2DepositKey.MA14294607,"D) CORRECCIONES DE VALOR POR DETERIORO AL CIERRE DEL EJERCICIO @ ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA14294608,"E) GASTOS DEL EJERCICIO @  POR EMISI\u00D3N DE GASES DE EFECTO INVERNADERO");
 		DESCRIPTION_MAP.put(D2DepositKey.MA14294610,"(+) Por derechos de emisi\u00F3n transferidos a la cuenta de haberes de las empresas del registro nacional de derechos de emisi\u00F3n, imputados a las emisiones en el año");
 		DESCRIPTION_MAP.put(D2DepositKey.MA14294611,"(+) Por restantes derechos de emisi\u00F3n, adquiridos o generados, que figuran en el balance, imputados a las emisiones del año");
 		DESCRIPTION_MAP.put(D2DepositKey.MA14294612,"(+) Cuant\u00EDa que procede por deficits de derechos de emisi\u00F3n");
-		DESCRIPTION_MAP.put(D2DepositKey.MA14294613,"F) SUBVENCIONES RECIBIDAS EN EL EJERCICIO 2014, POR DERECHOS DE EMISI\u00D3N DE GASES DE EFECTO INVERNADERO");
-		DESCRIPTION_MAP.put(D2DepositKey.MA14294614,"Importe de las subvenciones imputadas a resultados como ingresos de ejercicio 2014");
+		DESCRIPTION_MAP.put(D2DepositKey.MA14294613,"F) SUBVENCIONES RECIBIDAS EN EL EJERCICIO @ , POR DERECHOS DE EMISI\u00D3N DE GASES DE EFECTO INVERNADERO");
+		DESCRIPTION_MAP.put(D2DepositKey.MA14294614,"Importe de las subvenciones imputadas a resultados como ingresos de ejercicio @ ");
 	}
 	
 	static { 
@@ -631,10 +635,10 @@ public class D2DepositDescription {
 	}
 	
 	static{
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2511019,"A) SALDO, FINAL DEL EJERCICIO 2012");
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2512019,"I. Ajustes por cambios de criterio del ejercicio 2012 y anteriores");
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2513019,"II. Ajustes por errores del ejercicio 2012 y anteriores");
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2514019,"B) SALDO AJUSTADO, INICIO DEL EJERCICIO 2013");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2511019,"A) SALDO, FINAL DEL EJERCICIO ¬ ");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2512019,"I. Ajustes por cambios de criterio del ejercicio ¬  y anteriores");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2513019,"II. Ajustes por errores del ejercicio ¬  y anteriores");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2514019,"B) SALDO AJUSTADO, INICIO DEL EJERCICIO # ");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP1528019,"I. Resultado de la cuenta de p\u00E9rdidas y ganancias");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP1530019,"II. Ingresos y gastos reconocidos en patrimonio neto");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP1527019,"1. Ingresos fiscales a distribuir en varios ejercicios");
@@ -646,10 +650,10 @@ public class D2DepositDescription {
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2524019,"III. Otras variaciones del patrimonio neto");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2531019,"1. Movimiento de la reserva de revalorizaci\u00F3n");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2532019,"2. Otras variaciones");
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251101,"C) SALDO, FINAL DEL EJERCICIO 2013");
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251201,"I. Ajustes por cambios de criterio en el ejercicio 2013");
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251301,"II. Ajustes por errores del ejercicio 2013");
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251401,"D) SALDO AJUSTADO, INICIO DEL EJERCICIO 2014 ");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251101,"C) SALDO, FINAL DEL EJERCICIO # ");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251201,"I. Ajustes por cambios de criterio en el ejercicio # ");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251301,"II. Ajustes por errores del ejercicio # ");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251401,"D) SALDO AJUSTADO, INICIO DEL EJERCICIO @  ");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP152801,"I. Resultado de la cuenta de p\u00E9rdidas y ganancias");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP153001,"II. Ingresos y gastos reconocidos en patrimonio neto");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNP152701,"1. Ingresos fiscales a distribuir en varios ejercicios");
@@ -661,7 +665,7 @@ public class D2DepositDescription {
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA252401,"III. Otras variaciones del patrimonio neto");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA253101,"1. Movimiento de la reserva de revalorizaci\u00F3n");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA253201,"2. Otras variaciones ");
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA252501,"E) SALDO, FINAL DEL EJERCICIO 2014");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA252501,"E) SALDO, FINAL DEL EJERCICIO @ ");
 		
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA251501,"I. Total ingresos y gastos reconocidos");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.PNA2515019,"I. Total ingresos y gastos reconocidos");

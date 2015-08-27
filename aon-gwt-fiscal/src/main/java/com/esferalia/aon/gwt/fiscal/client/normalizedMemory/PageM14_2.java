@@ -36,6 +36,7 @@ public class PageM14_2 extends PageAbs {
 		  new String[] {AON.MSG.memory14_2Table1() , AON.MSG.year2014() , AON.MSG.year2013()}
 		, new String[] {AON.MSG.memory14_2Table2header1(), AON.MSG.amount()}
 		, new String[] {AON.MSG.memory14_2Table2header2(), AON.MSG.amount()}
+		, new String[] {AON.MSG.memory14_2Table1() , AON.MSG.year2015() , AON.MSG.year2014()} 
 	};
 	
 	interface PageBinder extends UiBinder<Widget, PageM14_2> {
@@ -61,10 +62,11 @@ public class PageM14_2 extends PageAbs {
 		tabPanel.selectTab(0);
 	}
 	
-	public PageM14_2(Enterprise enterprise, NormalizedMemory nm) {
+	public PageM14_2(Enterprise enterprise, NormalizedMemory nm, Integer year) {
 		super();
 		this.enterprise = enterprise;
 		this.normalizedMemory = nm;
+		this.year = year;
 		table1 = new FlexTable();
 		table2 = new FlexTable();
 		tabPanel = new TabPanel();
@@ -76,8 +78,16 @@ public class PageM14_2 extends PageAbs {
 
 	@Override
 	protected void initializeTable() {
-		
-		defineMRNTable(table, AUXILIARES[0], DEFINED_ROWS, D2DepositConstants.MRN14_ABREVIATE_PYMES_KEYS_1);
+		switch (year) {
+		case 2014:
+			defineMRNTable(table, AUXILIARES[0], DEFINED_ROWS, D2DepositConstants.MRN14_ABREVIATE_PYMES_KEYS_1);
+			break;
+		case 2015:
+			defineMRNTable(table, AUXILIARES[3], DEFINED_ROWS, D2DepositConstants.MRN14_ABREVIATE_PYMES_KEYS_1);
+			break;
+		default:
+			break;
+		}
 		defineMRNTable(table1, AUXILIARES[1], null, D2DepositConstants.MRN14_ABREVIATE_PYMES_KEYS_2);
 		defineMRNTable(table2, AUXILIARES[2], null, D2DepositConstants.MRN14_ABREVIATE_PYMES_KEYS_3);
 	}

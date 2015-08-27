@@ -15,8 +15,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class PageM11_2 extends PageAbs {
 	
-	private static final String[] PERIODS = new String[] {
+	private static final String[] PERIODS2014 = new String[] {
 		AON.MSG.year2014() , AON.MSG.year2013()
+	};
+	
+	private static final String[] PERIODS2015 = new String[] {
+		AON.MSG.year2015() , AON.MSG.year2014()
 	};
 
 
@@ -39,10 +43,11 @@ public class PageM11_2 extends PageAbs {
 		initWidget(ui);
 	}
 	
-	public PageM11_2(Enterprise enterprise, NormalizedMemory nm) {
+	public PageM11_2(Enterprise enterprise, NormalizedMemory nm, Integer year) {
 		super();
 		this.enterprise = enterprise;
 		this.normalizedMemory = nm;
+		this.year = year;
 		table1 = new FlexTable();
 
 		Widget ui = pageBinder.createAndBindUi(this);
@@ -51,17 +56,30 @@ public class PageM11_2 extends PageAbs {
 
 	@Override
 	protected void initializeTable() {
-		
 		tabPanel.selectTab(0);
-		
-		if (isPymes()) {
-			defineMRNTable(table, PERIODS, D2PDepositConstants.MRN11_PYMES_KEYS_1);
-			defineMRNTable(table1, PERIODS, D2PDepositConstants.MRN11_PYMES_KEYS_2);
-		} else {
-			defineMRNTable(table, PERIODS, D2DepositConstants.MRN11_ABREVIATE_KEYS_1);
-			defineMRNTable(table1, PERIODS, D2DepositConstants.MRN11_ABREVIATE_KEYS_2);
-			
+		switch (year) {
+		case 2014:
+			if (isPymes()) {
+				defineMRNTable(table, PERIODS2014, D2PDepositConstants.MRN11_PYMES_KEYS_1);
+				defineMRNTable(table1, PERIODS2014, D2PDepositConstants.MRN11_PYMES_KEYS_2);
+			} else {
+				defineMRNTable(table, PERIODS2014, D2DepositConstants.MRN11_ABREVIATE_KEYS_1);
+				defineMRNTable(table1, PERIODS2014, D2DepositConstants.MRN11_ABREVIATE_KEYS_2);
+			}
+			break;
+		case 2015:
+			if (isPymes()) {
+				defineMRNTable(table, PERIODS2015, D2PDepositConstants.MRN11_PYMES_KEYS_1);
+				defineMRNTable(table1, PERIODS2015, D2PDepositConstants.MRN11_PYMES_KEYS_2);
+			} else {
+				defineMRNTable(table, PERIODS2015, D2DepositConstants.MRN11_ABREVIATE_KEYS_1);
+				defineMRNTable(table1, PERIODS2015, D2DepositConstants.MRN11_ABREVIATE_KEYS_2);
+			}
+			break;
+		default:
+			break;
 		}
+		
 	}
 
 	

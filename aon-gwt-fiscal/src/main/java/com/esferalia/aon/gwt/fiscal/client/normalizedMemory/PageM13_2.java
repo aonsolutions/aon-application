@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -14,9 +15,15 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class PageM13_2 extends PageAbs {
 
-	private static final String[] PERIODS = new String[] {
+	private static final String[] PERIODS2014 = new String[] {
 		AON.MSG.year2014() , AON.MSG.year2013() 
 	};
+
+
+	private static final String[] PERIODS2015 = new String[] {
+		AON.MSG.year2015() , AON.MSG.year2014() 
+	};
+
 	
 	interface PageBinder extends UiBinder<Widget, PageM13_2> {
 	}
@@ -26,7 +33,7 @@ public class PageM13_2 extends PageAbs {
 	@UiField
 	TabPanel tabPanel;
 	
-
+	
 
 	public PageM13_2() {
 		super();
@@ -35,11 +42,11 @@ public class PageM13_2 extends PageAbs {
 		initWidget(ui);
 	}
 	
-	public PageM13_2(Enterprise enterprise, NormalizedMemory nm) {
+	public PageM13_2(Enterprise enterprise, NormalizedMemory nm, Integer year) {
 		super();
 		this.enterprise = enterprise;
 		this.normalizedMemory = nm;
-
+		this.year = year;
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 	}
@@ -47,7 +54,20 @@ public class PageM13_2 extends PageAbs {
 	@Override
 	protected void initializeTable() {
 		tabPanel.selectTab(0);
-		defineMRNTable(table, PERIODS, D2DepositConstants.MRN13_ABREVIATE_KEYS);
+	
+		switch (year) {
+		case 2014:
+			defineMRNTable(table, PERIODS2014, D2DepositConstants.MRN13_ABREVIATE_KEYS);
+			break;
+		case 2015:
+			defineMRNTable(table, PERIODS2015, D2DepositConstants.MRN13_ABREVIATE_KEYS);
+			break;
+		default:
+			defineMRNTable(table, PERIODS2014, D2DepositConstants.MRN13_ABREVIATE_KEYS);
+			break;
+		}
+		
+		
 	}
 	
 	protected void defineMRNTable( FlexTable tab, String[] headers, D2DepositKey[][] keys){

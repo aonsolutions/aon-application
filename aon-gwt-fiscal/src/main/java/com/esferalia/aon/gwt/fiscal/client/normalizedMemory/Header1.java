@@ -93,9 +93,9 @@ public class Header1 extends PageAbs {
 			.create(AonResources.class);
 	
 
-	public Header1(Enterprise enterprise, NormalizedMemory nm) {
+	public Header1(Enterprise enterprise, NormalizedMemory nm, Integer year) {
 		
-		super();
+		super(year);
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		RESOURCES.css().ensureInjected();
 		this.normalizedMemory = nm;

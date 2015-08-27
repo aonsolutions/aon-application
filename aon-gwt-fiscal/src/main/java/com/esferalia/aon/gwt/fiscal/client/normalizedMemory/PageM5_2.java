@@ -53,8 +53,8 @@ public class PageM5_2 extends PageAbs {
 		initWidget(ui);
 	}
 	
-	public PageM5_2(Enterprise enterprise, NormalizedMemory nm) {
-		super();
+	public PageM5_2(Enterprise enterprise, NormalizedMemory nm, Integer year) {
+		super(year);
 		this.enterprise = enterprise;
 		this.normalizedMemory = nm;
 		table1 = new FlexTable();

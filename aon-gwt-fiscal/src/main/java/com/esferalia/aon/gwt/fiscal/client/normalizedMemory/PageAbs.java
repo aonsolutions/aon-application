@@ -30,6 +30,7 @@ import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -50,6 +51,7 @@ public abstract class PageAbs extends ResizeComposite {
 	Map<String, String> mapDraft;
 	Map<String, String> aux;
 	Enterprise enterprise;
+	Integer year;
 	
 	interface DeleteButtonTemplate extends SafeHtmlTemplates {
 		@Template("<input type=\"button\" value=\"&nbsp;\" class=\"aon-icon-delete\" style=\"border: medium none !important;\">")
@@ -71,6 +73,13 @@ public abstract class PageAbs extends ResizeComposite {
 		table = new FlexTable();
 		map = new HashMap<String, String>();
 		mapDraft = new HashMap<String, String>();
+	}
+	
+	public PageAbs(Integer year) {
+		table = new FlexTable();
+		map = new HashMap<String, String>();
+		mapDraft = new HashMap<String, String>();
+		this.year = year;
 	}
 	
 	public void dump(D2DepositTreeObject d2DepositObject) {
@@ -137,8 +146,26 @@ public abstract class PageAbs extends ResizeComposite {
 		tab.setWidget(row, col, new Label());
 	}
 	
+	public String putYear(String s,Integer year){
+		String string = s;
+		if(s.contains("@")){
+			Integer i = s.indexOf("@");
+			string = s.substring(0, i)+year+s.substring(i+1);
+ 		}
+		if(s.contains("#")){
+			Integer i = s.indexOf("#");
+			string = s.substring(0, i)+(year-1)+s.substring(i+1);
+		}
+		if(s.contains("¬")){
+			Integer i = s.indexOf("¬");
+			string = s.substring(0, i)+(year-2)+s.substring(i+1);
+		}
+		return string;
+	}
+	
 	protected void paintKeyDescription(FlexTable tab, D2DepositKey key, int row,int col) {
 		String d = key.getDescription();
+		d = putYear(d, year);
 		Label desc = new Label( AonStringUtils.abbreviate(d, 120) );
 		if (AonStringUtils.length(d) > 117) {
 			desc.setTitle(key.getDescription());
@@ -152,6 +179,7 @@ public abstract class PageAbs extends ResizeComposite {
 
 	protected void paintKeyDescription(FlexTable tab, D2DepositHeaderKey key, int row,int col) {
 		String d = key.getDescription();
+		d = putYear(d, year);
 		Label desc = new Label( AonStringUtils.abbreviate(d, 120) );
 		if (AonStringUtils.length(d) > 117) {
 			desc.setTitle(key.getDescription());
@@ -602,6 +630,22 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	protected void defineBalanceTable( FlexTable tab, String title, D2DepositHeaderKey[][] keys){
+		String current_ej, ant_ej;
+		switch (year) {
+		case 2014:
+			current_ej = AON.MSG.year2014();
+			ant_ej = AON.MSG.year2013();
+			break;
+		case 2015:
+			current_ej = AON.MSG.year2015();
+			ant_ej = AON.MSG.year2014();
+			break;
+		default:
+			current_ej = AON.MSG.year2014();
+			ant_ej = AON.MSG.year2013();
+			break;
+		}
+		
 		tab.setWidth("100%");
 		tab.setCellSpacing(0);
 		tab.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonWidthAuto());
@@ -617,11 +661,11 @@ public abstract class PageAbs extends ResizeComposite {
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextLeft());
-		tab.setWidget(row, 2, new Label(AON.MSG.year2014()));
+		tab.setWidget(row, 2, new Label(current_ej));
 		tab.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBold());
 		tab.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBorderBottom());
 		tab.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextRight());
-		tab.setWidget(row, 3, new Label(AON.MSG.year2013()));
+		tab.setWidget(row, 3, new Label(ant_ej));
 		tab.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBold());
 		tab.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBorderBottom());
 		tab.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonTextRight());
