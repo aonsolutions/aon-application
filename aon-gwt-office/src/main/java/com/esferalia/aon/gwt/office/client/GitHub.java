@@ -1,8 +1,10 @@
 package com.esferalia.aon.gwt.office.client;
 
+import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.Issue;
 import com.esferalia.aon.gwt.office.client.models.repos.Repo;
+import com.esferalia.aon.gwt.office.client.values.RepoValue;
 import com.esferalia.aon.gwt.office.client.values.Value;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
 import com.google.gwt.core.client.GWT;
@@ -13,6 +15,7 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.jsonp.client.JsonpRequestBuilder;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -33,6 +36,25 @@ public class GitHub {
 	public boolean isAuthorized () {
 		return this.authorized;
 	}
+	
+	// *********** REPOSITORIES ***********
+	
+    public void getRepos(AsyncCallback<JSON<Repo>> callback) {
+        get(baseUrl + "user/repos", callback);
+    }
+
+    public void getRepos(String user, AsyncCallback<JSON<Repo>> callback) {
+        get(baseUrl + "users/" + URL.encode(user) + "/repos", callback);
+    }
+
+    public void getRepo(String login, String name, AsyncCallback<AJSON<Repo>> callback) {
+        get(baseUrl + "repos/" + URL.encode(login) + "/" + URL.encode(name), callback);
+    }
+    
+    public void saveRepo(Repo r, RepoValue prop, AsyncCallback<Repo> callback) {
+        post(r.getUrl(), prop, callback);
+    }
+
 	
 	// ************** ISSUES **************
 	
