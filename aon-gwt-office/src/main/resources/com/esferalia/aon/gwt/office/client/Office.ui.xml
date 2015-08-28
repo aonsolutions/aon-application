@@ -1,0 +1,33 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:cell='urn:import:com.google.gwt.user.cellview.client'
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages"
+		field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
+		field="aonResources"></ui:with>
+
+	<g:TabPanel ui:field="tabPanel" height="100%" width="100%">
+		<g:Tab text="Notificaciones">
+
+			<g:DockPanel width="100%">
+				<g:Dock direction='WEST'>
+					<g:VerticalPanel>
+						<g:Button ui:field="boton1" text="Boton 1" />
+						<g:Button ui:field="boton2" text="Boton 1" />
+						<g:Button ui:field="boton3" text="Boton 1" />
+					</g:VerticalPanel>
+				</g:Dock>
+				<g:Dock direction='CENTER'>
+					<g:VerticalPanel>
+						<g:Label text="Label1"></g:Label>
+						<g:Label text="Label1"></g:Label>
+						<g:Label text="Label1"></g:Label>
+					</g:VerticalPanel>
+				</g:Dock>
+				
+			</g:DockPanel>
+		</g:Tab>
+	</g:TabPanel>
+</ui:UiBinder> 
