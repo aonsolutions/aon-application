@@ -253,8 +253,6 @@ public abstract class QuoteCalculator {
 			String name = payment.getName();
 			
 			
-			System.out.println ( name + " = " + quote );
-			
 			if (!StringUtils.isBlank(name)) {
 				bases.put(name, quote);
 				add(String.format("BASE_%s", name), quote, context, start, end);
@@ -354,6 +352,13 @@ public abstract class QuoteCalculator {
 			return quote;
 		}
 
+		protected void limit(String limitName, String rawName,
+				String minExpression, String maxExpression, ExpressionContext ctx,
+				Date start, Date end, String ...others) {
+			QuoteCalculator.limit(limitName, rawName, minExpression, maxExpression, ctx, start, end, others);
+		}
+
+		
 	}
 
 	public static class UnlimitedQuote extends GeneralQuote {
@@ -371,6 +376,21 @@ public abstract class QuoteCalculator {
 		public Double getCgpBase() throws AonException {
 			return super.getRawCgcBase() + getStructuralBase()
 					+ getNonStructuralBase();
+		}
+
+		protected void limit(String limitName, String rawName,
+				String minExpression, String maxExpression, ExpressionContext ctx,
+				Date start, Date end, String ...others) {
+
+			List<ITimedVariable<Double>> raws = ctx.getVariables(rawName, start,
+					end);
+			
+			for (ITimedVariable<Double> raw : raws) {
+				Period rawPeriod = raw.getPeriod();
+				Double rawValue = raw.getValue(raw.getPeriod());
+				ctx.putVariable(limitName, new TimedObject<Double>(
+						rawValue, rawPeriod));
+			}
 		}
 	}
 
@@ -628,7 +648,6 @@ public abstract class QuoteCalculator {
 				
 				minValue -= othersValue;
 				
-				
 				if ( rawValue <= minValue) {
 					ctx.putVariable(limitName, new TimedObject<Double>(
 							minValue , rawPeriod));
@@ -640,11 +659,8 @@ public abstract class QuoteCalculator {
 			try{
 				Double maxValue = getLimit(maxExpression, ctx,
 						rawPeriod.getStart(), rawPeriod.getEnd());
-				
-				System.out.println(rawName + " = " + maxValue + ", " + rawValue);
 
 				maxValue -= othersValue;
-				
 				
 				ctx.putVariable(
 						limitName,
