@@ -7,6 +7,8 @@ import com.code.aon.common.enumeration.IResourceable;
 
 public enum WarehouseTransferSource implements IResourceable {
 
+	DIRECT_TRANSFER,
+	
 	INVENTORY,
 	
 	MANUFACTURING_ORDER;
