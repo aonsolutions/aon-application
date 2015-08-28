@@ -7835,7 +7835,7 @@ CREATE TABLE `warehouse_transfer` (
   `target_warehouse` int(4) default NULL COMMENT 'Identificador del Almacen Destino',
   `inventory` int(4) default NULL COMMENT 'Identificador del Inventario',
   `source` tinyint(2) NOT NULL default '0' COMMENT 'Origen',
-  `source_id` int(4) NOT NULL default NULL COMMENT 'Identificador del origen',
+  `source_id` int(4) default NULL COMMENT 'Identificador del origen',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `IDX_UNQ_WAREHOUSE_TRANSFER_DOMAIN_SERIES_NUMBER` (`domain`,`series`,`number`),
   KEY `IDX_WAREHOUSE_TRANSFER_ISSUE_TIME` (`issue_time`),
