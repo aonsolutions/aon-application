@@ -173,10 +173,10 @@
 													<td>
 													</td>
 													<td colspan="2">
-														<g:Label text="Ejercicio 2014" styleName="{aonResources.css.aonInnerLabel}" />
+														<g:Label ui:field="current1"  styleName="{aonResources.css.aonInnerLabel}" />
 													</td>
 													<td colspan="2">
-														<g:Label text="Ejercicio 2013" styleName="{aonResources.css.aonInnerLabel}" />
+														<g:Label ui:field="ant1"  styleName="{aonResources.css.aonInnerLabel}" />
 													</td>
 												</tr>
 												<tr>
@@ -229,10 +229,10 @@
 													<td>
 													</td>
 													<td colspan="2">
-														<g:Label text="Ejercicio 2014" styleName="{aonResources.css.aonInnerLabel}" />
+														<g:Label ui:field="current2" styleName="{aonResources.css.aonInnerLabel}" />
 													</td>
 													<td colspan="2">
-														<g:Label text="Ejercicio 2013" styleName="{aonResources.css.aonInnerLabel}" />
+														<g:Label ui:field="ant2" styleName="{aonResources.css.aonInnerLabel}" />
 													</td>
 												</tr>
 												<tr>
@@ -301,10 +301,10 @@
 													<td>
 													</td>
 													<td>
-														<g:Label text="Ejercicio 2014" styleName="{aonResources.css.aonInnerLabel}" />
+														<g:Label ui:field="current3" styleName="{aonResources.css.aonInnerLabel}" />
 													</td>
 													<td>
-														<g:Label text="Ejercicio 2013" styleName="{aonResources.css.aonInnerLabel}" />
+														<g:Label ui:field="ant3" styleName="{aonResources.css.aonInnerLabel}" />
 													</td>
 												</tr>
 												<tr>

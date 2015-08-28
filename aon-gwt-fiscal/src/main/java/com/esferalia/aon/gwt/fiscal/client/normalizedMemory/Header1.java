@@ -26,6 +26,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -73,6 +74,13 @@ public class Header1 extends PageAbs {
 	@UiField CheckBox IDA09001; // euros
 	@UiField CheckBox IDA09002; // miles de euros
 	@UiField CheckBox IDA09003; // millones de euros
+	
+	@UiField Label current1;
+	@UiField Label ant1;
+	@UiField Label current2;
+	@UiField Label ant2;
+	@UiField Label current3;
+	@UiField Label ant3;
 	
 	@UiField
 	Button showCnae;
@@ -148,6 +156,13 @@ public class Header1 extends PageAbs {
 		IDA09002 = new CheckBox(); 
 		IDA09003 = new CheckBox(); 
 
+		current1 = new Label();
+		ant1 = new Label();
+		current2 = new Label();
+		ant2 = new Label();
+		current3 = new Label();
+		ant3 = new Label();
+
 		Widget ui = header1Binder.createAndBindUi(this);
 		initWidget(ui);
 	//	init();
@@ -156,13 +171,10 @@ public class Header1 extends PageAbs {
 
 
 	private void listBoxItemAdd(ListBox lb) {
-		
-	
 		for(Integer i = 0; i< D2DepositConstants.PROVINCES.length; i++){
 			Provinces p = D2DepositConstants.PROVINCES[i];
 			lb.addItem(p.getName());
 		}
-		
 	}
 	
 	@UiHandler("showCnae")
@@ -194,6 +206,13 @@ public class Header1 extends PageAbs {
 				}
 			});
 				
+			current1.setText("Ejercicio " + year);
+			ant1.setText("Ejercicio " + (year-1));
+			current2.setText("Ejercicio " + year);
+			ant2.setText("Ejercicio " + (year-1));
+			current3.setText("Ejercicio " + year);
+			ant3.setText("Ejercicio" + (year-1));
+			
 			keyExe("1010", IDA01010, "text", false);
 				
 			keyExe("1011", IDA01011, "check", true);

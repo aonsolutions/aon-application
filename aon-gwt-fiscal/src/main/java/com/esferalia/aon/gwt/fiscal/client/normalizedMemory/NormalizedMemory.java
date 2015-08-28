@@ -353,6 +353,8 @@ public class NormalizedMemory extends ResizeComposite {
 						
 						@Override
 						public void onSuccess(MemoryTemplate result) {
+							D2DepositTreeObject ddto = new D2DepositTreeObject(enterprise, 2014);
+							result.setD2Deposit2014(ddto);
 							digitalDepositFreeTextTreeNode.items(result);							
 						}
 						

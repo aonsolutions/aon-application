@@ -81,10 +81,8 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 					memoryTemplate.getD2Deposit2014().setEnterprise(enterpriseAux);
 					memoryTemplate.getD2Deposit2014().setDomain(enterpriseAux.getDomain());
 					items(memoryTemplate);
-				}
-									
+				}						
 			}
-		
     	});
     	
     	return this;
@@ -102,7 +100,10 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 			
 			@Override
 			public void select(FiscalTree fiscalPanel) {
-				
+				NormalizedMemory nm =  new NormalizedMemory(true, ddtn, enterpriseAux);
+				nm.paintHeaderTable("Memoria Normalizada", "Plantilla","2014");
+				nm.setPagesPanel(fiscalPanel.getGenericContent(this));
+				fiscalPanel.setContent(nm);
 			}
 			
 			@Override
@@ -153,9 +154,9 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
 					nm.paintHeaderTable("Memoria Normalizada", "Plantilla","2014");
 					FreeText paragraph2Page = new FreeText("Apartado 2: Bases de presentaci\u00F3n de las cuentas anuales", true, page, enterpriseAux, nm,true, mt.getId().toString());
-	    			paragraph2Page.dump(mt.getD2Deposit2014());
-	    			nm.setPagesPanel(paragraph2Page);
-	    			fiscalPanel.setContent(nm);	
+					paragraph2Page.dump(mt.getD2Deposit2014());
+					nm.setPagesPanel(paragraph2Page);
+					fiscalPanel.setContent(nm);
 				}
 				
 				@Override
