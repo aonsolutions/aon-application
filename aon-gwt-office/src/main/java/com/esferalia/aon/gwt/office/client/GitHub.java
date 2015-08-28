@@ -1,7 +1,10 @@
 package com.esferalia.aon.gwt.office.client;
 
+import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.Issue;
+import com.esferalia.aon.gwt.office.client.models.repos.Repo;
 import com.esferalia.aon.gwt.office.client.values.Value;
+import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
@@ -33,9 +36,26 @@ public class GitHub {
 	
 	// ************** ISSUES **************
 	
-	public void getIssues (String user, String r, final AsyncCallback<Issue> callback) {
-		
-	}
+    public void getIssues(String user, String r, AsyncCallback<JSON<Issue>> callback) {
+        get(baseUrl + "repos/" + user + "/" + r + "/issues", callback);
+    }
+
+    public void getIssues(Repo r, AsyncCallback<JSON<Issue>> callback) {
+        get(r.getUrl() + "/issues", callback);
+    }
+
+    public void createIssue(Repo r, IssueValue prop, final AsyncCallback<Issue> callback) {
+        post(r.getUrl() + "/issues", prop, callback);
+    }
+
+    public void editIssue(Repo r, Issue issue, IssueValue prop,
+            final AsyncCallback<Issue> callback) {
+        if (issue == null) {
+            createIssue(r, prop, callback);
+        } else {
+            post(r.getUrl() + "/issues/" + issue.getNumber(), prop, callback);
+        }
+    }
 	
 	
     // ********* PRIVATE METHODS ***********
