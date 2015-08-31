@@ -2,11 +2,15 @@ package com.esferalia.aon.payroll.calculator;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ALL;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMBARGO_PAID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMPLOYEE_QUOTA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ENTERPRISE_QUOTA;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
@@ -526,9 +530,9 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 				cgcBase += maternityBase;
 			salaryBuilder.setCgcBase(cgcBase);
 
-//			if (cgcBase != null && maternityBase != null && ereBase != null)
-//				expressionContext.setVariable(CGC_BASE,
-//						cgcBase - maternityBase - ereBase, start, end);
+			if (cgcBase != null )
+				expressionContext.setVariable(CGC_BASE_ENTERPRISE,
+						cgcBase , start, end);
 
 			Double cgpBase = quoteCalculator.getRawCgpBase();
 			try {
@@ -541,9 +545,10 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			if ( maternityBase != null ) 
 				cgpBase += maternityBase;
 			salaryBuilder.setCgpBase(cgpBase);
-//			if (cgpBase != null && maternityBase != null && ereBase != null )
-//				expressionContext.setVariable(CGP_BASE,
-//						cgpBase - maternityBase -ereBase, start, end);
+			if (cgpBase != null )
+				expressionContext.setVariable(CGP_BASE_ENTERPRISE,
+						cgpBase , start, end);
+
 			Double nonStructuralBase = quoteCalculator.getNonStructuralBase();
 			salaryBuilder.setNonHExtraBase(nonStructuralBase);
 			if (nonStructuralBase != null)
@@ -1047,6 +1052,8 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 				QUOTE_DAYS.getName(),
 				CGC_BASE.getName(), 
 				CGP_BASE.getName(),
+				ERE_BASE.getName(),
+				MATERNITY_BASE.getName(),
 				STRUCTURAL_OVERTIME_BASE.getName(),
 				NON_STRUCTURAL_OVERTIME_BASE.getName(),
 				WORKED_HOURS.getName()}){

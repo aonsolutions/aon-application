@@ -37,6 +37,7 @@ public enum ContextVariable implements IResourceable{
 	// Dias
 	YEAR_DAYS("DIAS_AÑO", VariableType.INTEGER, false),
 	MONTH_DAYS("DIAS_MES", VariableType.INTEGER, false),
+	NATURAL_MONTH_DAYS("DIAS_NATURALES_MES", VariableType.INTEGER, false),
 	HOLIDAYS("DIAS_VACACIONES", VariableType.INTEGER, false),
 	NO_HOLIDAYS("DIAS_VACACIONES_NO_DISFRUTADOS", VariableType.INTEGER, false),
 	WORKED_DAYS("DIAS_TRABAJADOS", VariableType.INTEGER, false),
@@ -110,6 +111,8 @@ public enum ContextVariable implements IResourceable{
 
 	CGC_BASE_RAW("BASE_CGC_BRUTA", VariableType.DOUBLE),
 	CGP_BASE_RAW("BASE_CGP_BRUTA", VariableType.DOUBLE),
+	CGC_BASE_ENTERPRISE("BASE_CGC_E", VariableType.DOUBLE),
+	CGP_BASE_ENTERPRISE("BASE_CGP_E", VariableType.DOUBLE),
 
 	REGULATORY_BASE("BASE_REGULADORA", VariableType.DOUBLE, false),
 	

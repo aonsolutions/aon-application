@@ -5,6 +5,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT_HO
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_START;
@@ -83,6 +84,7 @@ public class SQLSystemExpressionContextFactory implements
 
 			ctx.setVariable(MONTH_DAYS, monthDays, monthStart, monthEnd);
 			ctx.setVariable(PAY_DAYS, monthDays, monthStart, monthEnd);
+			ctx.setVariable(NATURAL_MONTH_DAYS, monthDays, monthStart, monthEnd);
 
 			startCalendar.set(Calendar.DAY_OF_MONTH, 1);
 			startCalendar.add(Calendar.MONTH, 1);

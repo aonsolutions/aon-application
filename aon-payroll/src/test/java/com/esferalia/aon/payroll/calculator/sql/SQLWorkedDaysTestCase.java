@@ -78,6 +78,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.apache.velocity.runtime.parser.node.GetExecutor;
 import org.junit.Test;
 
 import com.code.aon.ql.Criteria;
@@ -143,11 +144,11 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 					{
 						put(TC2.getName(),
 								format("\"%s\"", random(FULL_TIME).getValue()));
-						put(MONTH_DAYS.getName(), format("%d", 20));
+						put(MONTH_DAYS.getName(), format("%d", 30));
 					}
 				});
 
-		testWorkedDays(contract, 1d, 20.00);
+		testWorkedDays(contract, 1d, 30.00);
 
 	}
 
@@ -795,12 +796,24 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		ctx = new SQLContractSalaryCalculatorContext(connection, start, end,
 				end, criteria);
 		ctx.next();
-
-		assertEquals(
-				ctx,
-				(double) ((get(end, DAY_OF_YEAR)
-						- get(contractStart, DAY_OF_YEAR) + 1) * coefficient),
-				contractStart, end, monthdays);
+		double firstYearDays = 0.00;
+		if ( monthdays == null )
+			firstYearDays = (get(end, DAY_OF_YEAR)
+				- get(contractStart, DAY_OF_YEAR) + 1);
+		else {
+			int months = 12 - (get(contractStart, MONTH) + 1);
+			firstYearDays = ( months  * monthdays ) ;
+			int contractStartDay = get(contractStart,DAY_OF_MONTH);
+			if ( contractStartDay == 1)
+				firstYearDays += monthdays;
+			else
+				firstYearDays += ( getMax(contractStart,DAY_OF_MONTH) - contractStartDay +1);
+		}
+		
+			assertEquals(
+					ctx,
+					firstYearDays * coefficient,
+					contractStart, end, monthdays);
 
 		// Extras. Second year. This will be whole
 		start = getFirstDayOfYear(add(start, YEAR, 1));
@@ -808,21 +821,30 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		ctx = new SQLContractSalaryCalculatorContext(connection, start, end,
 				end, criteria);
 		ctx.next();
-		assertEquals(ctx, (double) get(end, DAY_OF_YEAR) * coefficient, start,
-				end, monthdays);
-
+		if ( monthdays == null )
+			assertEquals(ctx, (double) get(end, DAY_OF_YEAR) * coefficient, start,
+					end, monthdays);
+		else 
+			assertEquals(ctx, (double) 12 * monthdays * coefficient, start,
+					end, monthdays);
+			
 		// Extras. Second/Third year. This will be whole
 		start = addMonths(getFirstDayOfYear(add(start, YEAR, 1)), 6);
-		end = add(addMonths(start, 11), DAY_OF_MONTH, -1);
+		end = add(addMonths(start, 12), DAY_OF_MONTH, -1);
 		ctx = new SQLContractSalaryCalculatorContext(connection, start, end,
 				end, criteria);
 		ctx.next();
-		assertEquals(
-				ctx,
-				(double) (get(end, DAY_OF_YEAR)
-						+ (get(getLastDayOfYear(start), DAY_OF_YEAR) - get(
-								start, DAY_OF_YEAR)) + 1)
-						* coefficient, start, end, monthdays);
+		if ( monthdays == null )
+			assertEquals(
+					ctx,
+					(double) (get(end, DAY_OF_YEAR)
+							+ (get(getLastDayOfYear(start), DAY_OF_YEAR) - get(
+									start, DAY_OF_YEAR)) + 1)
+							* coefficient, start, end, monthdays);
+		else 
+			assertEquals(
+					ctx,
+					12 *  monthdays * coefficient, start, end, monthdays);
 
 	}
 
@@ -869,16 +891,17 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 					.getPeriod().getStart(), workedDay.getPeriod().getEnd(),
 					workedDay.getValue(), ctxMonthDays);
 
-			values += workedDay.getValue()
-					* (monthDays != null ? getMax(workedDay.getPeriod()
-							.getStart(), DAY_OF_MONTH)
-							/ monthDays : 1.00);
+			values += workedDay.getValue();
+//			values += workedDay.getValue()
+//					* (monthDays != null ? getMax(workedDay.getPeriod()
+//							.getStart(), DAY_OF_MONTH)
+//							/ monthDays : 1.00);
 		}
 		System.out.printf("%f == %f \r\n", values, value);
 
-		Assert.assertEquals(value, values, DELTA);
 		Assert.assertEquals(start, workedDays.get(0).getPeriod().getStart());
 		Assert.assertEquals(end, workedDays.get(months - 1).getPeriod()
 				.getEnd());
+		Assert.assertEquals(value, values, DELTA);
 	}
 }

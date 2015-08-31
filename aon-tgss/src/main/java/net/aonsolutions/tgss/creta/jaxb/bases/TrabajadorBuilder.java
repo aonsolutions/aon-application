@@ -22,11 +22,9 @@ public class TrabajadorBuilder {
 
 		trabajador.setNaf(naf);
 
-		if (!tramos.isEmpty()) {
-			Tramos tram0s = OBJECT_FACTORY.createTramos();
-			tram0s.getTramo().addAll(tramos);
-			trabajador.setTramos(tram0s);
-		}
+		Tramos tram0s = OBJECT_FACTORY.createTramos();
+		tram0s.getTramo().addAll(tramos);
+		trabajador.setTramos(tram0s);
 
 		return trabajador;
 	}

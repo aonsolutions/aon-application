@@ -12,9 +12,47 @@ import com.esferalia.aon.payroll.enumeration.LeaveTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
+import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 public class ContractLeaveLoader {
+
+//	private static class Days implements ITimedVariable<Double> {
+//
+//		private Period period;
+//		private ExpressionContext expressionContext;
+//
+//		public Days(Date start, Date end, ExpressionContext expressionContext) {
+//			this(new Period(start, end), expressionContext);
+//		}
+//		
+//		public Days(Period period, ExpressionContext expressionContext) {
+//			this.period = period;
+//			this.expressionContext = expressionContext;
+//		}
+//
+//		@Override
+//		public Period getPeriod() {
+//			return period;
+//		}
+//
+//		@Override
+//		public Double getValue(Period period) {
+//			long periodDays = CommonUtil.getDaysBetweenDates(period.getStart(),
+//					period.getEnd()) + 1;
+//
+//			long realMonthDays = AonDateUtils.getMax(period.getStart(),
+//					Calendar.DAY_OF_MONTH);
+//
+//			Number payrollMonthDays = expressionContext.getVariable(
+//					ContextVariable.MONTH_DAYS, period.getStart(),
+//					period.getEnd(), Number.class);
+//			
+//			return (double) (periodDays * payrollMonthDays.doubleValue() / realMonthDays);
+//		}
+//
+//	}
 
 	public static class Leave extends Period {
 		private Integer id;
@@ -133,6 +171,8 @@ public class ContractLeaveLoader {
 		final Date end = Period.min(leaveEnd, endDate);
 
 		final long leaveDays = CommonUtil.getDaysBetweenDates(start, end) + 1;
+		
+		
 
 		exprCtx.setVariable(ContextVariable.IT_START, leaveStart, start, end);
 
@@ -182,6 +222,7 @@ public class ContractLeaveLoader {
 				// regBase, start, end );
 				exprCtx.setVariable(ContextVariable.COMMON_DISEASE_DAYS,
 						leaveDays, start, end);
+				
 				return null;
 			}
 
@@ -192,8 +233,8 @@ public class ContractLeaveLoader {
 					return null;
 				exprCtx.setVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS,
 						days, start, end);
-				// exprCtx.addVariable(ContextVariable.REGULATORY_BASE,
-				// regBase, start, end );
+//				 exprCtx.addVariable(ContextVariable.REGULATORY_BASE,
+//				 regBase, start, end );
 				return null;
 			}
 
@@ -201,8 +242,11 @@ public class ContractLeaveLoader {
 			public Void visitMaternity(LeaveType leaveType) {
 				exprCtx.setVariable(ContextVariable.MATERNITY_DAYS, leaveDays,
 						start, end);
-				// exprCtx.addVariable(ContextVariable.REGULATORY_BASE,
-				// regBase, start, end );
+//				 exprCtx.addVariable(ContextVariable.REGULATORY_BASE,
+//				 regBase, start, end );
+
+//				exprCtx.putVariable(ContextVariable.MATERNITY_DAYS, new Days(start, end, exprCtx));
+				
 				return null;
 			}
 
@@ -210,6 +254,7 @@ public class ContractLeaveLoader {
 			public Void visitPaternity(LeaveType leaveType) {
 				exprCtx.setVariable(ContextVariable.PATERNITY_DAYS, leaveDays,
 						start, end);
+//				exprCtx.putVariable(ContextVariable.PATERNITY_DAYS, new Days(start, end, exprCtx));
 				return null;
 			}
 

@@ -65,12 +65,10 @@ public class TramoBuilder {
 		
 //		tramo.setMarcaBorrado(marcaBorardor);
 		
-		if ( !datos.isEmpty()  ) {
-			DatosTramo datosTramo = OBJECT_FACTORY.createDatosTramo();
-			datosTramo.getDato().addAll(datos);
-			tramo.setDatosTramo(datosTramo);
-			datos.clear();
-		}
+		DatosTramo datosTramo = OBJECT_FACTORY.createDatosTramo();
+		datosTramo.getDato().addAll(datos);
+		tramo.setDatosTramo(datosTramo);
+		datos.clear();
 		
 		return tramo;
 	}
