@@ -867,7 +867,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	public ContextDescriptor getContext(SalaryDraft salaryDraft) {
 		try {
 			initFacesContext();
-			return getDraftContext(salaryDraft);
+			return new ContextDescriptor();
+			//return getDraftContext(salaryDraft);
 		} finally {
 			releaseFacesContext();
 		}

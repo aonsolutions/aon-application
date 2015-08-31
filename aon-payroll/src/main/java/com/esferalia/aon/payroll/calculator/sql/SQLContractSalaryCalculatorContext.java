@@ -37,9 +37,11 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MALE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MORE_THAN_65;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATION;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAYMENT_VARIABLE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
@@ -2761,8 +2763,8 @@ public class SQLContractSalaryCalculatorContext extends
 
 		double monthDays = getMax(p.getStart(), DAY_OF_MONTH);
 		double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
-
-		return workedDays * ctxMonthDays / monthDays;
+		
+		return workedDays == monthDays ? ctxMonthDays : workedDays;
 
 	}
 
@@ -2770,7 +2772,7 @@ public class SQLContractSalaryCalculatorContext extends
 		Long availableDays = getAvailableDays(p.getStart(), p.getEnd());
 		double monthDays = getMax(p.getStart(), DAY_OF_MONTH);
 		double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
-		return availableDays * factor * ctxMonthDays / monthDays;
+		return availableDays == monthDays ? ctxMonthDays : availableDays;
 	}
 
 	private int getSeniorityYears(Period period) {
@@ -2827,15 +2829,19 @@ public class SQLContractSalaryCalculatorContext extends
 		double br = salaries
 				.collect(Collectors.summingDouble(s -> s
 						.getCommonContingenciesBase()
-						/ (s.getSalaryDays()
-								* ifnull(
-										s.getContextData(
-												MONTH_DAYS.getName(),
-												summingDouble(Double::parseDouble)),
-										(double) getMax(s.getStartDate(),
-												DAY_OF_MONTH)) / getMax(
-									s.getStartDate(), DAY_OF_MONTH))));
-		salaries.close();
+						/ s.getContextData(
+								QUOTE_DAYS.getName(),
+								summingDouble(Double::parseDouble))
+//						/ (s.getSalaryDays()
+//								* ifnull(
+//										s.getContextData(
+//												MONTH_DAYS.getName(),
+//												summingDouble(Double::parseDouble)),
+//										(double) getMax(s.getStartDate(),
+//												DAY_OF_MONTH)) / getMax(
+//									s.getStartDate(), DAY_OF_MONTH))
+						));
+						salaries.close();
 		if (br > 0.00)
 			return br;
 
@@ -3581,6 +3587,7 @@ public class SQLContractSalaryCalculatorContext extends
 
 		}
 	}
+
 
 	private void loadWeekHoursContextVariable(ContractExpressionContext ctx) {
 

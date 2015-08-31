@@ -108,7 +108,8 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 					}
 				}, new String[] { "( P_1 + P_2 ) * 0.10 ",
 						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
-						"250.00 * DIAS_TRABAJADOS / DIAS_MES" }, new String[] {
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES" }, 
+						new String[] {
 						"BASE_CGC * 0.10", "BASE_CGP * 0.05",
 						"BASE_IRPF * PORCENTAJE_IRPF/100" }, category);
 		//@formatter:off

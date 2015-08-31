@@ -70,6 +70,12 @@
 			<artifactId>aon.entity.common</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>asm</artifactId>
+					<groupId>asm</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>

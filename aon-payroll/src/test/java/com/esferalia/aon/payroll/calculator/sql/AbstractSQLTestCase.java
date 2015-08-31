@@ -254,8 +254,9 @@ public abstract class AbstractSQLTestCase {
 	}
 
 	protected final void addSSRegimePayment(AONContext aonContext,
-			SSRegimeType ssRegimetype, Date startDate, PaymentType type,
-			String expression, String quoteExpression, String irpfExpression) {
+			SSRegimeType ssRegimetype, Date startDate, PaymentType paymentType,
+			String expression, String quoteExpression, String irpfExpression,
+			SalaryType salaryType) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
 
 		aonContext
@@ -268,10 +269,11 @@ public abstract class AbstractSQLTestCase {
 				.set(SYSTEM_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
 				.set(SYSTEM_PAYMENT.DOMAIN, (-1) * ssRegimetype.ordinal())
 				.set(SYSTEM_PAYMENT.TYPE,
-						(byte) (type != null ? type.ordinal()
+						(byte) (paymentType != null ? paymentType.ordinal()
 								: PaymentType.CRA_0001.ordinal()))
 				.set(SYSTEM_PAYMENT.SALARY_TYPE,
-						(byte) SalaryType.SALARY.ordinal())
+						(byte) (salaryType != null ? salaryType.ordinal()
+								: SalaryType.SALARY.ordinal()))
 
 				.execute();
 
@@ -279,9 +281,17 @@ public abstract class AbstractSQLTestCase {
 	}
 
 	protected final void addSSRegimePayment(AONContext aonContext,
-			SSRegimeType ssRegimetype, Date startDate,
-			PaymentType type, String expression) {
-		addSSRegimePayment(aonContext, ssRegimetype, startDate, type, expression, ContextVariable.ALL, ContextVariable.ALL);
+			SSRegimeType ssRegimetype, Date startDate, PaymentType paymentType,
+			String expression, String quoteExpression, String irpfExpression) {
+		addSSRegimePayment(aonContext, ssRegimetype, startDate, paymentType,
+				expression, quoteExpression, irpfExpression, null);
+	}
+
+	protected final void addSSRegimePayment(AONContext aonContext,
+			SSRegimeType ssRegimetype, Date startDate, PaymentType type,
+			String expression) {
+		addSSRegimePayment(aonContext, ssRegimetype, startDate, type,
+				expression, ContextVariable.ALL, ContextVariable.ALL);
 	}
 
 	public static String getDbPort() {

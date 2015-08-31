@@ -26,9 +26,11 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import javax.xml.bind.JAXBContext;
@@ -79,7 +81,6 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-
 
 public class Bases {
 
@@ -141,7 +142,8 @@ public class Bases {
 
 		private net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.DatoSolicitado datoSolicitado;
 
-		public NoSuchDatoException(net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.DatoSolicitado datoSolicitado) {
+		public NoSuchDatoException(
+				net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.DatoSolicitado datoSolicitado) {
 			this.datoSolicitado = datoSolicitado;
 		}
 
@@ -165,17 +167,20 @@ public class Bases {
 		}
 
 	}
-	// TODO: CompositeException ???
-	private static class NoSuchContextVariablesException extends RuntimeException {
-		private ContextVariable contextVariables [];
 
-	@SuppressWarnings("serial")
-		public NoSuchContextVariablesException(ContextVariable ...contextVariables) {
+	// TODO: CompositeException ???
+	private static class NoSuchContextVariablesException extends
+			RuntimeException {
+		private ContextVariable contextVariables[];
+
+		@SuppressWarnings("serial")
+		public NoSuchContextVariablesException(
+				ContextVariable... contextVariables) {
 			super();
 			this.contextVariables = contextVariables;
 		}
 
-		public ContextVariable [] getContextVariables() {
+		public ContextVariable[] getContextVariables() {
 			return contextVariables;
 		}
 
@@ -192,6 +197,7 @@ public class Bases {
 			return contextVariable;
 		}
 	}
+
 	private static class AmbiguousContextVariableException extends Exception {
 
 		private String values[];
@@ -275,7 +281,8 @@ public class Bases {
 			} catch (UnMatchedContextVariableException e) {
 				for (BasesCallback cb : cbs)
 					cb.unMatchedContextVariable(salary, e.getContextVariable(),
-							e.getContextData(), datoSolicitado, tramo, tramoBuilder, optional);
+							e.getContextData(), datoSolicitado, tramo,
+							tramoBuilder, optional);
 			}
 		}
 
@@ -321,9 +328,6 @@ public class Bases {
 		default void unknownSalary(Salary salary) {
 		};
 
-		default void unknownDato(DatoSolicitado datoSolicitado) {
-		};
-
 		default void unknownTrabajador(Trabajador trabajador) {
 		};
 
@@ -343,8 +347,10 @@ public class Bases {
 				String right, String... wrongs) {
 		};
 
-		default void unMatchedContextVariable(Salary salary, ContextVariable var,
-				ContextData contextData, Dato datoSolicitado, Tramo tramo, TramoBuilder tramoBuilder, boolean optional) {
+		default void unMatchedContextVariable(Salary salary,
+				ContextVariable var, ContextData contextData,
+				Dato datoSolicitado, Tramo tramo, TramoBuilder tramoBuilder,
+				boolean optional) {
 		};
 
 		default void zeroDato(ContextVariable var, Dato datoSolicitado,
@@ -354,6 +360,11 @@ public class Bases {
 		default void noSuchDato(Salary salary, Tramo tramo,
 				Dato datoSolicitado, TramoBuilder tramoBuilder, boolean optional) {
 		};
+
+		default void unknownDato(Salary salary, Tramo tramo,
+				DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
+		};
+
 	}
 
 	@SuppressWarnings("serial")
@@ -375,6 +386,32 @@ public class Bases {
 		}
 	}
 
+	private static class NAFFilterCallback implements BasesCallback {
+		
+		
+		private Set<String> nafs = new HashSet<String>();
+		
+		public NAFFilterCallback(String ...nafs) {
+			this.nafs = new HashSet<String>();
+			for( String naf: nafs )
+				this.nafs.add(naf);
+		}
+		
+		public void add(String ...nafs) {
+			for( String naf: nafs )
+				this.nafs.add(naf);
+		}
+		
+		
+		@Override
+		public void trabajadorAdded(
+				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
+				Trabajador trabajadorCreta, Salary salary) {
+			if ( !nafs.contains(trabajadorAon.getNaf()))
+				throw new SkipExisting();
+		}
+	}
+
 	private static class DefaultsCallback implements BasesCallback {
 
 		private Map<String, String> defaults;
@@ -390,7 +427,18 @@ public class Bases {
 		@Override
 		public void noSuchDato(Salary salary, Tramo tramo, Dato datoSolicitado,
 				TramoBuilder tramoBuilder, boolean optional) {
+			addDefault(salary, tramo, datoSolicitado, tramoBuilder);
+		}
 
+		@Override
+		public void unknownDato(Salary salary, Tramo tramo,
+				DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
+			addDefault(salary, tramo, datoSolicitado, tramoBuilder);
+		}
+		// --------------------------------------------------------------------
+
+		private void addDefault(Salary salary, Tramo tramo,
+				Dato datoSolicitado, TramoBuilder tramoBuilder) {
 			if (defaults.containsKey(datoSolicitado.getCodigo())) {
 				String valor = defaults.get(datoSolicitado.getCodigo());
 				DatoBuilder datoBuilder = new DatoBuilder();
@@ -411,49 +459,48 @@ public class Bases {
 										.getFechaHasta().getAnho(), valor);
 			}
 		}
-		
 	}
 
 	private static class FixConceptUnMatchedCallback implements BasesCallback {
-		
-		private String datos [] ;
-		
-		public FixConceptUnMatchedCallback(String ...datos) {
+
+		private String datos[];
+
+		public FixConceptUnMatchedCallback(String... datos) {
 			this.datos = datos;
 			Arrays.sort(this.datos);
 		}
-		
+
 		@Override
 		public void unMatchedContextVariable(Salary salary,
 				ContextVariable var, ContextData contextData,
-				Dato datoSolicitado, Tramo tramo, TramoBuilder tramoBuilder, boolean optional) {
-			
-			if ( Arrays.binarySearch(datos, datoSolicitado.getCodigo())< 0)
+				Dato datoSolicitado, Tramo tramo, TramoBuilder tramoBuilder,
+				boolean optional) {
+
+			if (Arrays.binarySearch(datos, datoSolicitado.getCodigo()) < 0)
 				return;
-				
+
 			DatoBuilder datoBuilder = new DatoBuilder();
 			datoBuilder.setCodigo(datoSolicitado.getCodigo());
 			datoBuilder.setTipo(datoSolicitado.getTipoDato());
-			
+
 			Double total = MVEL.eval(contextData.getExpression(), Double.class);
-			if ( total == 0.00 && optional) {
+			if (total == 0.00 && optional) {
 				System.err
-				.printf("WARN: %s for %s (%s) [%s-%s-%s...%s-%s-%s] fixed value is zero. Not send because is optional  \r\n",
-						datoSolicitado.getCodigo(), salary
-								.getEmployeeSSNumber(), salary
-								.getEmployeeDocument(), tramo
-								.getFechaDesde().getDia(), tramo
-								.getFechaDesde().getMes(), tramo
-								.getFechaDesde().getAnho(), tramo
-								.getFechaHasta().getDia(), tramo
-								.getFechaHasta().getMes(), tramo
-								.getFechaHasta().getAnho(), 
-								total);
+						.printf("WARN: %s for %s (%s) [%s-%s-%s...%s-%s-%s] fixed value is zero. Not send because is optional  \r\n",
+								datoSolicitado.getCodigo(), salary
+										.getEmployeeSSNumber(), salary
+										.getEmployeeDocument(), tramo
+										.getFechaDesde().getDia(), tramo
+										.getFechaDesde().getMes(), tramo
+										.getFechaDesde().getAnho(), tramo
+										.getFechaHasta().getDia(), tramo
+										.getFechaHasta().getMes(), tramo
+										.getFechaHasta().getAnho(), total);
 				return;
 			}
-				
+
 			datoBuilder.setImporteEuros(total);
-			
+
 			tramoBuilder.addDato(datoBuilder.create());
 			System.err
 					.printf("WARN: %s for %s (%s) [%s-%s-%s...%s-%s-%s] fixed value %f \r\n",
@@ -465,42 +512,39 @@ public class Bases {
 									.getFechaDesde().getAnho(), tramo
 									.getFechaHasta().getDia(), tramo
 									.getFechaHasta().getMes(), tramo
-									.getFechaHasta().getAnho(), 
-									total);
+									.getFechaHasta().getAnho(), total);
 		}
 	}
-	
-	private static class Errors implements BasesCallback {
-		
-		private static Map<String,String> DESCRIPTIONS_MAP = new HashMap<String,String>(){
-			{
-				
-				put("01","Número de horas realizadas a tiempo parcial");
-				put("02","Número de horas complementarias");
-				
-				put("51","Modalidad de salario");
 
-				put("500","Base de contingencias comunes");
-				put("501","Base de Horas Extras Fuerza Mayor");
-				put("502","Base de Otras Horas Extras");
-				put("537","Base de horas complementarias");
-				put("563","Compensación IT contingencias comunes");
-				
-				put("601","Base de Accidentes de Trabajo");
-				put("611","Base de Accidentes de Trabajo");
-				put("603","Base de Accidentes de Trabajo en situación de IT");
-				put("613","Base de Accidentes de Trabajo en situación de IT");
-				put("663","Compensación IT AT y EP");
+	private static class Errors implements BasesCallback {
+
+		private static Map<String, String> DESCRIPTIONS_MAP = new HashMap<String, String>() {
+			{
+
+				put("01", "Número de horas realizadas a tiempo parcial");
+				put("02", "Número de horas complementarias");
+
+				put("51", "Modalidad de salario");
+
+				put("500", "Base de contingencias comunes");
+				put("501", "Base de Horas Extras Fuerza Mayor");
+				put("502", "Base de Otras Horas Extras");
+				put("537", "Base de horas complementarias");
+				put("563", "Compensación IT contingencias comunes");
+
+				put("601", "Base de Accidentes de Trabajo");
+				put("611", "Base de Accidentes de Trabajo");
+				put("603", "Base de Accidentes de Trabajo en situación de IT");
+				put("613", "Base de Accidentes de Trabajo en situación de IT");
+				put("663", "Compensación IT AT y EP");
 			}
 		};
-		
-		@Override
-		public void unknownDato(DatoSolicitado datoSolicitado) {
-			boolean mandatory ="B".equalsIgnoreCase(datoSolicitado.getIndicadorObligatoriedad());
+		public void unknownDato(Salary salary, Tramo tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
+			boolean mandatory = "B".equalsIgnoreCase(datoSolicitado
+					.getIndicadorObligatoriedad());
 			System.err.println(String.format("%s: Unknown %s Dato '%s'",
-					mandatory ? "ERROR" : "WARN",
-					mandatory ? "Mandatory" : "Optional",
-					datoSolicitado.getCodigo()));
+					mandatory ? "ERROR" : "WARN", mandatory ? "Mandatory"
+							: "Optional", datoSolicitado.getCodigo()));
 		}
 
 		@Override
@@ -542,9 +586,8 @@ public class Bases {
 		public void zeroDato(ContextVariable var, Dato datoSolicitado,
 				Tramo tramo, Salary salary) {
 			System.err.println(String.format(
-					"WARN: %s (%s) for %s [%s-%s-%s...%s-%s-%s] is zero",
-					var.getName(), datoSolicitado.getCodigo()
-					, salary
+					"WARN: %s (%s) for %s [%s-%s-%s...%s-%s-%s] is zero", var
+							.getName(), datoSolicitado.getCodigo(), salary
 							.getEmployeeName(), tramo.getFechaDesde().getDia(),
 					tramo.getFechaDesde().getMes(), tramo.getFechaDesde()
 							.getAnho(), tramo.getFechaHasta().getDia(), tramo
@@ -570,12 +613,12 @@ public class Bases {
 											.getFechaHasta().getMes(), tramo
 											.getFechaHasta().getAnho()));
 		}
-		
-		
+
 		@Override
-		public void unMatchedContextVariable(Salary salary, ContextVariable var,
- ContextData contextData,
-				Dato datoSolicitado, Tramo tramo, TramoBuilder tramoBuilder, boolean optional) {
+		public void unMatchedContextVariable(Salary salary,
+				ContextVariable var, ContextData contextData,
+				Dato datoSolicitado, Tramo tramo, TramoBuilder tramoBuilder,
+				boolean optional) {
 			//@formatter:off
 			System.err.println(String.format(
 					"ERROR: %s for %s [%3$td-%3$tm-%3$tY...%4$td-%4$tm-%4$tY] not match %5$s [%6$s-%7$s-%8$s...%9$s-%10$s-%11$s]",
@@ -605,8 +648,9 @@ public class Bases {
 			private String nif;
 			private String name;
 			private net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajador;
-			
-			public TrabajadorData(String name, String nif, String ss, net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajador) {
+
+			public TrabajadorData(String name, String nif, String ss,
+					net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajador) {
 				this.ss = ss;
 				this.nif = nif;
 				this.name = name;
@@ -635,27 +679,25 @@ public class Bases {
 
 			super.beforeMarshal(source);
 		}
-		
+
 		@Override
 		public void trabajadorAdded(
 				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
 				Trabajador trabajadorCreta, Salary salary) {
-			addedTrabajadorDataMap.put(trabajadorCreta.getNaf(), new TrabajadorData(
-					salary.getEmployeeName(), 
-					salary.getEmployeeDocument(),
-					salary.getEmployeeSSNumber(),
-					trabajadorAon));
+			addedTrabajadorDataMap.put(
+					trabajadorCreta.getNaf(),
+					new TrabajadorData(salary.getEmployeeName(), salary
+							.getEmployeeDocument(), salary
+							.getEmployeeSSNumber(), trabajadorAon));
 		};
 
 		@Override
 		public void trabajadorSkipped(
 				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
 				Trabajador trabajadorCreta, Salary salary) {
-			skippedTrabajadorList.add(new TrabajadorData(
-					salary.getEmployeeName(), 
-					salary.getEmployeeDocument(),
-					salary.getEmployeeSSNumber(),
-					trabajadorAon));
+			skippedTrabajadorList.add(new TrabajadorData(salary
+					.getEmployeeName(), salary.getEmployeeDocument(), salary
+					.getEmployeeSSNumber(), trabajadorAon));
 		};
 
 		public void beforeMarshalDato(Dato dato) {
@@ -671,7 +713,8 @@ public class Bases {
 		public void beforeMarshalTrabajador(
 				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajador) {
 			marshallSkipped();
-			TrabajadorData data = addedTrabajadorDataMap.get(trabajador.getNaf());
+			TrabajadorData data = addedTrabajadorDataMap.get(trabajador
+					.getNaf());
 			try {
 				xsw.writeComment(String
 						.format("\r\n%s\r\nNúmero afiliación a la Seguridad Social:\r\n%s\r\nNúmero de identificación fiscal de las personas físicas:\r\n%s\r\n",
@@ -681,36 +724,43 @@ public class Bases {
 				e.printStackTrace();
 			}
 		}
-		
+
 		// --------------------------------------------------------------------
-		
+
 		private void marshallSkipped() {
-			while( !skippedTrabajadorList.isEmpty() ){
+			while (!skippedTrabajadorList.isEmpty()) {
 				TrabajadorData skippedTrabajador = skippedTrabajadorList.pop();
 				try {
 					StringWriter writer = new StringWriter();
-					Marshaller marshaller = JAXBContext.newInstance(skippedTrabajador.trabajador.getClass()).createMarshaller();
-//					marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "");
-					marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-					marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-//					marshaller.setProperty(Marshaller.JAXB_NO_NAMESPACE_SCHEMA_LOCATION, "http://www.seg-social.es/creta/esquemas/V100/Bases");
+					Marshaller marshaller = JAXBContext.newInstance(
+							skippedTrabajador.trabajador.getClass())
+							.createMarshaller();
+					// marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION,
+					// "");
+					marshaller.setProperty(Marshaller.JAXB_FRAGMENT,
+							Boolean.TRUE);
+					marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+							Boolean.TRUE);
+					// marshaller.setProperty(Marshaller.JAXB_NO_NAMESPACE_SCHEMA_LOCATION,
+					// "http://www.seg-social.es/creta/esquemas/V100/Bases");
 					marshaller.marshal(skippedTrabajador.trabajador, writer);
 
 					xsw.writeComment(String
 							.format("\r\n%s\r\nNúmero afiliación a la Seguridad Social:\r\n%s\r\nNúmero de identificación fiscal de las personas físicas:\r\n%s\r\n%s\r\n",
-									skippedTrabajador.name, skippedTrabajador.ss, skippedTrabajador.nif, writer.toString()));
-					
+									skippedTrabajador.name,
+									skippedTrabajador.ss,
+									skippedTrabajador.nif, writer.toString()));
+
 				} catch (XMLStreamException e) {
 					// TODO Auto-generated catch block
 				} catch (JAXBException e) {
 					e.printStackTrace();
 					// TODO Auto-generated catch block
-				} 
-				
+				}
+
 			}
-			
+
 		}
-		
 
 	}
 
@@ -728,7 +778,8 @@ public class Bases {
 		protected abstract boolean isOptional();
 
 		protected abstract Double get(Salary salary, Fecha desde, Fecha hasta)
-		throws NoSuchContextVariableException, UnMatchedContextVariableException;
+				throws NoSuchContextVariableException,
+				UnMatchedContextVariableException;
 
 		protected abstract void zeroValue(Salary salary, Tramo tramo,
 				Dato datoSolicitado, TramoBuilder tramoBuilder,
@@ -764,7 +815,8 @@ public class Bases {
 			} catch (UnMatchedContextVariableException e) {
 				for (BasesCallback cb : cbs)
 					cb.unMatchedContextVariable(salary, e.getContextVariable(),
-							e.getContextData(), datoSolicitado, tramo, tramoBuilder, optional);
+							e.getContextData(), datoSolicitado, tramo,
+							tramoBuilder, optional);
 			}
 		}
 
@@ -789,9 +841,10 @@ public class Bases {
 		public Double get(Salary salary, Fecha desde, Fecha hasta)
 				throws NoSuchContextVariableException,
 				UnMatchedContextVariableException {
-			return get(contextVariable, salary, new Period(toDate(desde), toDate(hasta)));
+			return get(contextVariable, salary, new Period(toDate(desde),
+					toDate(hasta)));
 		}
-		
+
 		@Override
 		protected void zeroValue(Salary salary, Tramo tramo,
 				Dato datoSolicitado, TramoBuilder tramoBuilder,
@@ -802,8 +855,8 @@ public class Bases {
 
 		// --------------------------------------------------------------------
 
-		protected static Double get(ContextVariable contextVariable, Salary salary, Period p)
-				throws NoSuchContextVariableException,
+		protected static Double get(ContextVariable contextVariable,
+				Salary salary, Period p) throws NoSuchContextVariableException,
 				UnMatchedContextVariableException {
 			List<ContextData> datas = salary.getContextData().get(
 					contextVariable.getName());
@@ -828,7 +881,7 @@ public class Bases {
 				ret += ExpressionContext.eval(data.getExpression(),
 						Double.class) * days(intersect) / days(p);
 			}
-			
+
 			if (!found)
 				throw new NoSuchContextVariableException(contextVariable);
 
@@ -862,7 +915,8 @@ public class Bases {
 		}
 	}
 
-	private static abstract class CompositeCContextCretaData extends AbstractCCretaData {
+	private static abstract class CompositeCContextCretaData extends
+			AbstractCCretaData {
 
 		private ContextVariable contextVariables[];
 
@@ -870,41 +924,46 @@ public class Bases {
 			this.contextVariables = contextVariables;
 		}
 
-		// AbstractCCretaData -------------------------------------------------		
-		
+		// AbstractCCretaData -------------------------------------------------
+
 		@Override
 		public String getComment() {
 			// TODO Auto-generated method stub
 			return null;
 		}
-		
+
 		@Override
 		public void add(Salary salary, Tramo tramo, Dato datoSolicitado,
 				TramoBuilder tramoBuilder, BasesCallback... cbs) {
 			try {
 				super.add(salary, tramo, datoSolicitado, tramoBuilder, cbs);
-			} catch ( ZeroValueException e){
+			} catch (ZeroValueException e) {
 				for (BasesCallback cb : cbs)
-					cb.zeroDato(e.getContextVariable(), datoSolicitado, tramo, salary);
-			}catch ( NoSuchContextVariablesException e){
+					cb.zeroDato(e.getContextVariable(), datoSolicitado, tramo,
+							salary);
+			} catch (NoSuchContextVariablesException e) {
 				for (BasesCallback cb : cbs)
-					cb.noSuchDato(salary, tramo, datoSolicitado, tramoBuilder, isOptional());
+					cb.noSuchDato(salary, tramo, datoSolicitado, tramoBuilder,
+							isOptional());
 			}
 		}
-		
+
 		@Override
 		public Double get(Salary salary, Fecha desde, Fecha hasta)
 				throws NoSuchContextVariableException,
 				UnMatchedContextVariableException {
 			Period p = new Period(toDate(desde), toDate(hasta));
-			for(ContextVariable  contextVariable: contextVariables ) {
+			for (ContextVariable contextVariable : contextVariables) {
 				try {
-					Double value = CContextCretaData.get(contextVariable, salary, p);
-					if ( value == 0.00 )
+					Double value = CContextCretaData.get(contextVariable,
+							salary, p);
+					if (value == 0.00)
 						throw new ZeroValueException(contextVariable);
-//					System.err.println("--- CompositeCContextCretaData " + contextVariable.getName() + ", " + salary.getEmployeeName() + " = "  + value );
+					// System.err.println("--- CompositeCContextCretaData " +
+					// contextVariable.getName() + ", " +
+					// salary.getEmployeeName() + " = " + value );
 					return value;
-				} catch ( NoSuchContextVariableException e) {
+				} catch (NoSuchContextVariableException e) {
 					// Try next variable
 				}
 			}
@@ -917,17 +976,18 @@ public class Bases {
 				BasesCallback... cbs) {
 			// Nothing 'ZeroValueException' .
 		}
-		
+
 		// --------------------------------------------------------------------
 	}
-	
-	private static class MandatoryCompositecContextData extends CompositeCContextCretaData{
+
+	private static class MandatoryCompositecContextData extends
+			CompositeCContextCretaData {
 
 		public MandatoryCompositecContextData(
 				ContextVariable... contextVariables) {
 			super(contextVariables);
 		}
-		
+
 		// CompositeCContextCretaData -----------------------------------------
 		@Override
 		protected boolean isOptional() {
@@ -963,15 +1023,19 @@ public class Bases {
 
 			put("51", new MonthlySalaryCretaData());
 
-			put("509", new MandatoryCompositecContextData(MATERNITY_BASE, ERE_BASE));
-			put("603", new MandatoryCompositecContextData(MATERNITY_BASE, ERE_BASE));
-			put("613", new MandatoryCompositecContextData(MATERNITY_BASE, ERE_BASE));
+			put("509", new MandatoryCompositecContextData(MATERNITY_BASE,
+					ERE_BASE));
+			put("603", new MandatoryCompositecContextData(MATERNITY_BASE,
+					ERE_BASE));
+			put("613", new MandatoryCompositecContextData(MATERNITY_BASE,
+					ERE_BASE));
 		}
 	};
 
 	// ------------------------------------------------------------------------
 
-	private static <D extends DatoSolicitado> void bases(BasesBuilder basesBuilder, AONContext ctx,
+	private static <D extends DatoSolicitado> void bases(
+			BasesBuilder basesBuilder, AONContext ctx,
 			Liquidacion<?, ?, ?> liquidacion, boolean aceptarBasesAnteriores,
 			BasesCallback... cbs) {
 		LiquidacionBuilder liquidacionBuilder = new LiquidacionBuilder()
@@ -1065,12 +1129,13 @@ public class Bases {
 
 	}
 
-	private static <D extends DatoSolicitado> void trabajador(LiquidacionMesBuilder liquidacionMesBuilder,
-			Salary salary, Map<String, Trabajador<D>> trabajadores,
-			BasesCallback... cbs) {
+	private static <D extends DatoSolicitado> void trabajador(
+			LiquidacionMesBuilder liquidacionMesBuilder, Salary salary,
+			Map<String, Trabajador<D>> trabajadores, BasesCallback... cbs) {
 
 		TrabajadorBuilder trabajadorBuilder = new TrabajadorBuilder();
-		Trabajador<D> trabajador = trabajadores.get(salary.getEmployeeSSNumber());
+		Trabajador<D> trabajador = trabajadores.get(salary
+				.getEmployeeSSNumber());
 		if (trabajador == null) {
 			for (BasesCallback cb : cbs)
 				cb.unknownSalary(salary);
@@ -1103,7 +1168,7 @@ public class Bases {
 
 				if (data == null) {
 					for (BasesCallback cb : cbs)
-						cb.unknownDato(datoSolicitado);
+						cb.unknownDato(salary, tramo, datoSolicitado, tramoBuilder);
 					continue;
 				}
 
@@ -1125,7 +1190,7 @@ public class Bases {
 		} catch (SkipExisting e) {
 			for (BasesCallback cb : cbs)
 				cb.trabajadorSkipped(trabajadorAon, trabajador, salary);
-			
+
 		}
 	}
 
@@ -1365,8 +1430,9 @@ public class Bases {
 			throw new Different(); // Don't skip. Diffente 'FechaHasta'.
 
 		List<DatoSolicitado> datosCreta = tramoCreta.getDatosTramo().getDato();
-//		List<net.aonsolutions.tgss.creta.jaxb.DatoSolicitado> datosCreta = tramoCreta
-//				.getDatosTramo().getDato();
+		// List<net.aonsolutions.tgss.creta.jaxb.DatoSolicitado> datosCreta =
+		// tramoCreta
+		// .getDatosTramo().getDato();
 		Collections.sort(datosCreta, Bases::compare);
 		List<net.aonsolutions.tgss.creta.jaxb.bases.Dato> datosAon = tramoAon
 				.getDatosTramo().getDato();
@@ -1375,8 +1441,9 @@ public class Bases {
 		int j = 0;
 		for (int i = 0; i < datosCreta.size(); i++) {
 			DatoSolicitado datoCreta = datosCreta.get(i);
-//			net.aonsolutions.tgss.creta.jaxb.DatoSolicitado datoCreta = datosCreta
-//					.get(i);
+			// net.aonsolutions.tgss.creta.jaxb.DatoSolicitado datoCreta =
+			// datosCreta
+			// .get(i);
 			net.aonsolutions.tgss.creta.jaxb.bases.Dato datoAon = datosAon
 					.get(j);
 
@@ -1540,7 +1607,7 @@ public class Bases {
 			FactoryConfigurationError, TransformerConfigurationException,
 			TransformerFactoryConfigurationError {
 
-		// @formatter:off
+		//@formatter:off
 		Option hostName = getHostNameOption();
 		Option user = getDbUserOption();
 		Option password = getDbPasswordOption();
@@ -1553,12 +1620,6 @@ public class Bases {
 				.withLongOpt("respuesta")
 				.withDescription("Fichero de Respuesta.").create("r");
 
-		Option indicador51 = OptionBuilder
-				.withArgName("valor")
-				.withLongOpt("modalidad-salario")
-				.withDescription(
-						"Modalidad Salario. Para grupos de cotización diario (GC del 08 al 11) con retribución mensual")
-				.create();
 
 		Option comments = getCommentsOption();
 
@@ -1571,14 +1632,38 @@ public class Bases {
 						"Informar únicamente de las bases y resto de datos de trabajadores que sufren variaciones o de las de nuevos trabajadores.")
 				.create();
 
+		Option defaults = OptionBuilder
+				.hasArg()
+				.withArgName("<code>=<value>")
+				.withLongOpt("default")
+				.withDescription(
+						"Set a default data value")
+				.create('d');
+
+		Option naf = OptionBuilder
+				.hasArg()
+				.withArgName("naf")
+				.withLongOpt("naf")
+				.withDescription(
+						"Only send this NAF")
+				.create();
+
 		Option pretty = getPrettyOption();
 
-		Options options = new Options().addOption(hostName).addOption(user)
-				.addOption(password).addOption(database).addOption(comments)
-				.addOption(skipPrevBases).addOption(pretty)
-				.addOption(trabajadoresTramosFile).addOption(respuestaFile)
-				.addOption(indicador51).addOption(skipExisting);
-		// @formatter:on
+		Options options = new Options()
+				.addOption(hostName)
+				.addOption(user)
+				.addOption(password)
+				.addOption(database)
+				.addOption(comments)
+				.addOption(skipPrevBases)
+				.addOption(pretty)
+				.addOption(trabajadoresTramosFile)
+				.addOption(respuestaFile)
+				.addOption(defaults)
+				.addOption(skipExisting)
+				.addOption(naf);
+		//@formatter:on
 
 		// create the parser
 		CommandLineParser parser = new GnuParser();
@@ -1613,17 +1698,28 @@ public class Bases {
 
 			Comments comment = new Comments(xsw);
 			callbacksList.add(comment);
-			
-			FixConceptUnMatchedCallback fixConceptsUnMatched = 
-					new FixConceptUnMatchedCallback("500", "501","502", "601", "611");
-			callbacksList.add(fixConceptsUnMatched);
-			
 
-			DefaultsCallback defaults = new DefaultsCallback();
-			if (cmd.hasOption(indicador51.getLongOpt())) {
-				defaults.add("51", "M");
+			FixConceptUnMatchedCallback fixConceptsUnMatched = new FixConceptUnMatchedCallback(
+					"500", "501", "502", "601", "611");
+			callbacksList.add(fixConceptsUnMatched);
+
+			DefaultsCallback defaultsCb = new DefaultsCallback();
+			
+			String defaultsValues [] = cmd.getOptionValues(defaults.getLongOpt());
+			if ( defaultsValues != null ){
+				for ( String defaultValue : cmd.getOptionValues(defaults.getLongOpt()) ) {
+					String codeValue [] = defaultValue.split("=");
+					defaultsCb.add(codeValue[0], codeValue[1]);
+				}
 			}
-			callbacksList.add(defaults);
+			callbacksList.add(defaultsCb);
+			
+			String nafs [] = cmd.getOptionValues(naf.getLongOpt());
+			if ( nafs != null ) {
+				NAFFilterCallback nafFilterCb = new NAFFilterCallback(nafs);
+				callbacksList.add(nafFilterCb);
+			}
+
 			BasesCallback callbacks[] = callbacksList
 					.toArray(new BasesCallback[callbacksList.size()]);
 
