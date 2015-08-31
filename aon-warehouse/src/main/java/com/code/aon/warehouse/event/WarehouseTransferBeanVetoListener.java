@@ -7,6 +7,7 @@ import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.warehouse.WarehouseTransfer;
+import com.code.aon.warehouse.enumeration.WarehouseTransferSource;
 
 public class WarehouseTransferBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	
@@ -25,6 +26,9 @@ public class WarehouseTransferBeanVetoListener extends ManagerBeanVetoListenerAd
 	}
 
 	private void check(WarehouseTransfer wt) throws ManagerBeanVetoListenerException{
+		if (wt.getSource()==null) {
+			wt.setSource(WarehouseTransferSource.DIRECT_TRANSFER);
+		}
 		if (wt.getSourceWarehouse() == null && wt.getTargetWarehouse() == null) {
 			throw new ManagerBeanVetoListenerException("Debe indicar al menos un almacén origen y/o destino.");
 		}
