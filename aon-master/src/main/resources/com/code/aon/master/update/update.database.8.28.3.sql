@@ -3,6 +3,8 @@
 # Created by: rtrepiana
 # Creation Date: 27/08/2015 10:00
 
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+
 BEGIN;
 
 UPDATE `system_payment` 
@@ -34,3 +36,5 @@ INSERT INTO `system_data`
 UPDATE `db_version` SET `version_number` = '8.29.0';
 
 COMMIT;
+
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
