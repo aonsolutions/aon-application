@@ -86,6 +86,7 @@
 ($F{shippingAlternativeRecipient}):
 ($F{workPlace}.getDescription())]]></variableExpression>
 	</variable>
+	<variable name="currentLineNumber" class="java.lang.Integer"/>
 	<background>
 		<band height="802" splitType="Stretch">
 			<textField isBlankWhenNull="true">
@@ -178,7 +179,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{referenceCode}!= null && !"".equals($F{referenceCode})?$F{referenceCode} :"")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{referenceCode}!= null && !"".equals($F{referenceCode})?$F{referenceCode}+"/"+$V{PAGE_NUMBER}:"")]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement uuid="06df7cb2-c37c-4a59-9b59-2b3c9e5e5798" key="textField-77" x="435" y="39" width="103" height="13"/>
