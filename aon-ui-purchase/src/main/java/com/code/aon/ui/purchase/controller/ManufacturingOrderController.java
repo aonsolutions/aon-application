@@ -99,9 +99,7 @@ public class ManufacturingOrderController extends PurchaseController {
 		List<ITransferObject> list = detailController.getManagerBean().getList(detailController.getCriteria());
 		for(ITransferObject to: list){
 			PurchaseDetail detail = (PurchaseDetail)to;
-			if(detail.isSettled()){
-				idList.add(detail.getItem().getId());
-			}
+			idList.add(detail.getItem().getId());
 		}
 		
 		ItemTagPrintController itemTagController = (ItemTagPrintController) FormUtil.getController(IItemConstants.ITEM_TAG_PRINT_CONTROLLER_NAME);

@@ -161,20 +161,22 @@
 											
 											<aon:column styleClass="#{manufacturingOrderDetail.manufacturingOrderManager.selectedDetail.detail.id==to.detail.id?'aon-highlight':''}">
 												<f:facet name="header">
-													<aon:outputText value="&#160;" />
+													<aon:outputText value="#{bundle.aon_finalice}" title="#{bundle.aon_finalice}" >
+														<aon:abbreviateConverter maxWidth="6" />
+													</aon:outputText>
 												</f:facet>
 												<aon:div rendered="#{manufacturingOrderDetail.manufacturingOrderManager.transferedLessThanPending}">
 													<aon:commandButton value="&#160;" immediate="true"
-														title="#{bundle.aon_no} #{bundle.aon_finalice}"
+														title="#{bundle.aon_finalice}"
 														rendered="#{!manufacturingOrderDetail.manufacturingOrderManager.forceCloseRowChecked}"
-														styleClass="aon-finding-toolbar-item aon-icon-point-green aon-finding-toolbar-item-no-border"
+														styleClass="aon-finding-toolbar-item aon-icon-checked aon-finding-toolbar-item-no-border"
 														actionListener="#{manufacturingOrderDetail.manufacturingOrderManager.forceCloseRowSelected}"
 														reRender="detailData,compositeDataContainer" ajaxSingle="true">
 													</aon:commandButton>															
 													<aon:commandButton value="&#160;" immediate="true"
-														title="#{bundle.aon_finalice}"
+														title="#{bundle.aon_no} #{bundle.aon_finalice}"
 														rendered="#{manufacturingOrderDetail.manufacturingOrderManager.forceCloseRowChecked}"
-														styleClass="aon-finding-toolbar-item aon-icon-point-red aon-finding-toolbar-item-no-border"
+														styleClass="aon-finding-toolbar-item aon-icon-check aon-finding-toolbar-item-no-border"
 														actionListener="#{manufacturingOrderDetail.manufacturingOrderManager.forceCloseRowSelected}"
 														reRender="detailData,compositeDataContainer" ajaxSingle="true">
 													</aon:commandButton>															

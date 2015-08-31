@@ -31,7 +31,7 @@ public class PurchaseReportScriptlet extends JRDefaultScriptlet implements Seria
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(PurchaseDetail.class);
 			PurchaseDetail detail = (PurchaseDetail) bean.get((Integer)super.getFieldValue(FIELD_ID));
-			for(ItemAddInfo addInfo: detail.getItem().getAddInfos().toArray(new ItemAddInfo[0])){
+			for(ItemAddInfo addInfo: detail.getItem().getProduct().getBaseItem().getAddInfos().toArray(new ItemAddInfo[0])){
 				if(addInfo.getAttribute().equals(MANUFACTURING_DETAIL_TEXT)){
 					return addInfo.getValue();
 				}
@@ -47,7 +47,7 @@ public class PurchaseReportScriptlet extends JRDefaultScriptlet implements Seria
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(PurchaseDetail.class);
 			PurchaseDetail detail = (PurchaseDetail) bean.get((Integer)super.getFieldValue(FIELD_ID));
-			for(ItemAddInfo addInfo: detail.getItem().getAddInfos().toArray(new ItemAddInfo[0])){
+			for(ItemAddInfo addInfo: detail.getItem().getProduct().getBaseItem().getAddInfos().toArray(new ItemAddInfo[0])){
 				if(addInfo.getAttribute().equals(MANUFACTURING_COMMENTS_TEXT)){
 					return addInfo.getValue();
 				}

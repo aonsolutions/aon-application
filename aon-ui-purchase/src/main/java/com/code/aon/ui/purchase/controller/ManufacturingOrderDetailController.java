@@ -144,11 +144,9 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 	}
 	
 	public void onChangeDetailProductQuantity(ActionEvent event){
-		if(getManufacturingOrderManager().getSelectedDetail()!=null){
-			for(TransferConposition tc: getManufacturingOrderManager().getSelectedDetail().getCompositionList()){
-				tc.setTotalQuantity( tc.getComposition().getQuantity()
-						* getManufacturingOrderManager().getSelectedDetail().getTotalQuantity() );
-			}
+		TransferPurchaseDetail detail = ((TransferPurchaseDetail)getManufacturingOrderManager().getDetailModel().getRowData());
+		for(TransferConposition tc: detail.getCompositionList()){
+			tc.setTotalQuantity( tc.getComposition().getQuantity() * detail.getTotalQuantity() );
 		}
 	}
 	
