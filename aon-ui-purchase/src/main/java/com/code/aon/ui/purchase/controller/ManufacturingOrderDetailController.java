@@ -88,15 +88,19 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 	}
 	
 	public boolean isCloseableLine() throws ManagerBeanException {
-		return isCloseable((PurchaseDetail) this.getModel().getRowData());
+		return isPending((PurchaseDetail) this.getModel().getRowData());
 	}
 
 	public boolean isCloseableTransfer() throws ManagerBeanException {
 		if(getManufacturingOrderManager().getDetailModel().isRowAvailable()){
 			TransferPurchaseDetail transfer = (TransferPurchaseDetail) getManufacturingOrderManager().getDetailModel().getRowData();
-			return isCloseable(transfer.getDetail());
+			return isPending(transfer.getDetail()) && !transfer.getDetail().getItem().isWildCard();
 		}
 		return false;
+	}
+
+	private boolean isPending(PurchaseDetail detail) throws ManagerBeanException {
+		return detail !=null && detail.getStatus().equals(PurchaseDetailStatus.PENDING);
 	}
 
 	private boolean isCloseable(PurchaseDetail detail) throws ManagerBeanException {
@@ -114,7 +118,8 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 			list.add( loadTransfer(detail) );
 			getManufacturingOrderManager().init(list);
 			getManufacturingOrderManager().getDetailModel().setRowIndex(0);
-			getManufacturingOrderManager().onSelectDetail(null);
+			getManufacturingOrderManager().setUniqueDetailSelected(true);
+			onSelectCloseDetail(null);
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
@@ -127,7 +132,7 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 			List<TransferPurchaseDetail> list = new LinkedList<TransferPurchaseDetail>();
 			for(ITransferObject to: this.getManagerBean().getList(this.getCriteria())){
 				PurchaseDetail detail = (PurchaseDetail) to;
-				if(isCloseable(detail)){
+				if(isPending(detail)){
 					list.add( loadTransfer(detail) );
 				}
 			}
@@ -138,13 +143,28 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 		}
 	}
 	
+	public void onChangeDetailProductQuantity(ActionEvent event){
+		if(getManufacturingOrderManager().getSelectedDetail()!=null){
+			for(TransferConposition tc: getManufacturingOrderManager().getSelectedDetail().getCompositionList()){
+				tc.setTotalQuantity( tc.getComposition().getQuantity()
+						* getManufacturingOrderManager().getSelectedDetail().getTotalQuantity() );
+			}
+		}
+	}
+	
 	private TransferPurchaseDetail loadTransfer(PurchaseDetail detail){
 		try {
 			TransferPurchaseDetail transfer = new TransferPurchaseDetail();
 			transfer.setDetail(detail);
 			transfer.setTotalQuantity(detail.getPendingQuantity());
 			List<TransferConposition> compositionList = new LinkedList<TransferConposition>();
-			for(ItemComposition ic: transfer.getDetail().getItem().getItemCompositionList()){
+			List<ItemComposition> itemCompositionList = null;
+			if(transfer.getDetail().getItem().getProduct().isSerializable()){
+				itemCompositionList = transfer.getDetail().getItem().getProduct().getBaseItem().getItemCompositionList();
+			} else {
+				itemCompositionList = transfer.getDetail().getItem().getItemCompositionList();
+			}
+			for(ItemComposition ic: itemCompositionList){
 				TransferConposition composition = new TransferConposition();
 				composition.setComposition(ic);
 				composition.setTotalQuantity(ic.getQuantity() * transfer.getTotalQuantity());
@@ -170,16 +190,13 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 		PurchaseDetail purchaseDetail = (PurchaseDetail)this.getModel().getRowData();
 		IManagerBean bean = BeanManager.getManagerBean(WarehouseTransfer.class);
 		Criteria criteria = new Criteria();
-		// TODO generate alias for source and sourceId of  WarehouseTransfer 
-//		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_TRANSFER_SOURCE), WarehouseTransferSource.MANUFACTURING_ORDER);
-//		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_TRANSFER_SOURCE_ID), purchaseDetail.getPurchase().getId());
 		if(searchSourceWarehouse){
 			criteria.addNullExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_TRANSFER_TARGET_WAREHOUSE));
 		} else {
 			criteria.addNullExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_TRANSFER_SOURCE_WAREHOUSE));
 		}
-		criteria.addEqualExpression("WarehouseTransfer.source", WarehouseTransferSource.MANUFACTURING_ORDER);
-		criteria.addEqualExpression("WarehouseTransfer.sourceId", purchaseDetail.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_TRANSFER_SOURCE), WarehouseTransferSource.MANUFACTURING_ORDER);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_TRANSFER_SOURCE_ID), purchaseDetail.getId());
 		Iterator<?> iterator = bean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			WarehouseTransfer transfer = (WarehouseTransfer) iterator.next();
@@ -197,22 +214,22 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 			Purchase purchase = (Purchase) this.getMasterController().getTo();
 			if(purchase.getWarehouse()!=null && purchase.getWarehouse().getId()!=null){
 				for(TransferPurchaseDetail transfer: getManufacturingOrderManager().getDetailList()){
-					
 					if(manufacturingOrderManager.getForceCloseRowChecked(transfer)){
 						createPendingDetailLine(transfer); 
 					}
-					closeDetailLine(transfer);
-					
-					createManufacturedTransfer(transfer);
-					createCompositionTransfer(transfer.getDetail(), transfer.getCompositionList());
+					if(isCloseable(transfer.getDetail())){
+						closeDetailLine(transfer);
+						createManufacturedTransfer(transfer);
+						createCompositionTransfer(transfer.getDetail(), transfer.getCompositionList());
+					}
 				}
+				
+				if(isSettledAllLines()){
+					closePurchase(event);
+				}
+				
+				this.initializeModel();
 			}
-			
-			if(isSettledAllLines()){
-				closePurchase(event);
-			}
-			
-			this.initializeModel();
 			
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -303,7 +320,26 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 		((ManufacturingOrderController)this.getMasterController()).onClose(event);
 	}
 
-	
+	public void onSelectCloseDetail(ActionEvent event) {
+		TransferPurchaseDetail transfer = (TransferPurchaseDetail)getManufacturingOrderManager().getDetailModel().getRowData();
+		getManufacturingOrderManager().setSelectedDetail(transfer);
+		getManufacturingOrderManager().setCompositeList(transfer.getCompositionList());
+		getManufacturingOrderManager().setCompositeModel(null);
+		loadAssignSerialNumber(transfer.getDetail());
+	}
+	public void onAssignSerialNumber(ActionEvent event) throws ManagerBeanException {
+		super.onAssignSerialNumber(event);
+		if(getManufacturingOrderManager().isUniqueDetailSelected()){
+			setShowLineCloseWindow(false);	
+		} else {
+			onFullCloseShow(event);
+		}
+	}
+	public void onCancelAssignSerialNumber(ActionEvent event) throws ManagerBeanException {
+		getManufacturingOrderManager().setSelectedDetail(null);
+		getManufacturingOrderManager().setCompositeList(null);
+		getManufacturingOrderManager().setCompositeModel(null);
+	}
 	
 
 	public static class ManufacturingOrderManager implements Serializable {
@@ -316,6 +352,7 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 		private DataModel detailModel;
 		private DataModel compositeModel;
 		private ArrayList<TransferPurchaseDetail> forceCloseChecks = new ArrayList<TransferPurchaseDetail>();
+		private boolean uniqueDetailSelected;
 		private String series;
 		private int number;
 		private boolean numberEditable;
@@ -374,13 +411,14 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 			setIssueTime(new Date());
 		}
 		
-		public void onSelectDetail(ActionEvent event) {
-			TransferPurchaseDetail transfer = (TransferPurchaseDetail)getDetailModel().getRowData();
-			setSelectedDetail(transfer);
-			setCompositeList(transfer.getCompositionList());
-			setCompositeModel(null);
+		public boolean isUniqueDetailSelected() {
+			return uniqueDetailSelected;
 		}
-				
+
+		public void setUniqueDetailSelected(boolean uniqueDetailSelected) {
+			this.uniqueDetailSelected = uniqueDetailSelected;
+		}
+		
 		public String getSeries() {
 			return series;
 		}

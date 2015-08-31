@@ -104,6 +104,8 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 	private boolean showShipmentWindow;
 	private Purchase returnSourcePurchase;
 	private BankAccountHelper accountHelper;
+	private boolean showCommentsWindow;
+	private boolean showRemarksWindow;
 	
 	private List<String> moreRecipients;
 	private List<IEmailControllerListener> emailControllerListenerClasses;
@@ -248,6 +250,22 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 
 	public void setShowShipmentWindow(boolean showShipmentWindow) {
 		this.showShipmentWindow = showShipmentWindow;
+	}
+	
+	public boolean isShowCommentsWindow() {
+		return showCommentsWindow;
+	}
+
+	public void setShowCommentsWindow(boolean showCommentsWindow) {
+		this.showCommentsWindow = showCommentsWindow;
+	}
+
+	public boolean isShowRemarksWindow() {
+		return showRemarksWindow;
+	}
+
+	public void setShowRemarksWindow(boolean showRemarksWindow) {
+		this.showRemarksWindow = showRemarksWindow;
 	}
 
 	@Override

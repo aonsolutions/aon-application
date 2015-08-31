@@ -88,6 +88,21 @@
 							<f:setPropertyActionListener target="#{purchase.showShipmentWindow}"
 								value="#{true}" />
 						</aon:menuItem>
+						<rich:menuSeparator id="actionMenuSeparator" />
+						<aon:menuItem id="comments"
+							value="#{bundle.aon_comment}"
+							iconClass="aon-icon-comments"
+							reRender="showCommentsWindow">
+							<f:setPropertyActionListener target="#{purchase.showCommentsWindow}"
+								value="#{true}" />							
+						</aon:menuItem>		
+						<aon:menuItem id="remarks"
+							value="#{bundle.aon_remark}"
+							iconClass="aon-icon-notes"
+							reRender="showRemarksWindow">
+							<f:setPropertyActionListener target="#{purchase.showRemarksWindow}"
+								value="#{true}" />							
+						</aon:menuItem>
 						<ui:include
 							src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />						
 					</ui:define>
@@ -315,7 +330,7 @@
 						aon-panelGrid-odd aon-width-100,
 						aon-panelGrid-even aon-width-auto">
 
-					<aon:div>
+					<aon:div rendered="#{!empty purchase.to.comments}">
 						<aon:outputLabel for="Purchase_comments"
 							value="#{bundle.aon_comment}" />
 						<aon:div>
@@ -325,9 +340,10 @@
 					</aon:div>
 					<aon:inputTextarea id="Purchase_comments" cols="80" rows="3"
 						disabled="#{!purchase.pending}"
+						rendered="#{!empty purchase.to.comments}"
 						value="#{purchase.to.comments}" />
 
-					<aon:div>
+					<aon:div rendered="#{!empty purchase.to.remarks}">
 						<aon:outputLabel for="Purchase_remarks"
 							value="#{bundle.aon_remark}" />
 						<aon:div>
@@ -337,6 +353,7 @@
 					</aon:div>
 					<aon:inputTextarea id="Purchase_remarks" cols="80" rows="3"
 						disabled="#{!purchase.pending}"
+						rendered="#{!empty purchase.to.remarks}"
 						value="#{purchase.to.remarks}" />
 
 				</aon:panelGrid>
@@ -470,6 +487,12 @@
 		<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
 			<ui:param name="bankAccountController" value="#{purchase.accountHelper}" />
 			<ui:param name="modalReRender" value="payMethodDiv" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/modalRemarks.xhtml">
+			<ui:param name="controller" value="#{purchase}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/modalComments.xhtml">
+			<ui:param name="controller" value="#{purchase}" />
 		</ui:include>
 	</ui:define>
 </ui:composition>

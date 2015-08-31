@@ -1,7 +1,6 @@
 package com.code.aon.product;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -83,16 +82,17 @@ public class Product extends ProductDB implements IAuditable {
 	}
 	
 	@Transient
-	public Item getBaseItem(){
-		Iterator<Item> it = getItems().iterator();
-		Item base = null;
-		while(it.hasNext() && base==null){
-			Item item = it.next();
-			if(item.getSerialNumber()==null && item.getProduct().isSerializable()){
-				base = item;
-			}
-		}
-		return base;
+	public Item getBaseItem() throws ManagerBeanException{
+		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+    	Criteria criteria = new Criteria();
+    	criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), getId());
+    	criteria.addNullExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER));
+    	List<ITransferObject> list = itemBean.getList(criteria);
+    	Item base = null;
+    	if(list!=null && list.size()>0){
+    		base = (Item) list.get(0);
+    	}
+    	return base;
 	}
 
 	@Transient

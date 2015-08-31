@@ -69,15 +69,17 @@
 					rendered="#{formList}">
 					<aon:abbreviateConverter maxWidth="64" />
 				</aon:outputText>
-				<aon:commandLink id="PurchaseDetail_serialNumber" immediate="true"
-					value="&#160;" title="#{bundle.aon_to_specify} #{to.item.product.lotable ? bundle.aon_lot_number : bundle.aon_serial_number}"
-					styleClass="aon-icon-version" style="margin-left: 5px; padding-right: 12px;"
-					rendered="#{formList and to.item.wildCard}"
-					actionListener="#{controller.onAssignSerialNumberShow}" 
-					reRender="showSerialNumberWindow" ajaxSingle="true">
-					<f:setPropertyActionListener target="#{controller.showSerialNumberWindow}"
-						value="#{true}" />
-				</aon:commandLink>
+				<c:if test="#{!skipSerialNumberButton}">
+					<aon:commandLink id="PurchaseDetail_serialNumber" immediate="true"
+						value="&#160;" title="#{bundle.aon_to_specify} #{to.item.product.lotable ? bundle.aon_lot_number : bundle.aon_serial_number}"
+						styleClass="aon-icon-version" style="margin-left: 5px; padding-right: 12px;"
+						rendered="#{formList and to.item.wildCard}"
+						actionListener="#{controller.onAssignSerialNumberShow}" 
+						reRender="showSerialNumberWindow" ajaxSingle="true">
+						<f:setPropertyActionListener target="#{controller.showSerialNumberWindow}"
+							value="#{true}" />
+					</aon:commandLink>
+				</c:if>
 				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
 					<ui:param name="lookupTo" value="#{controller.to.item}" />
 					<ui:param name="idRequired" value="#{true}" />

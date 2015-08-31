@@ -208,17 +208,20 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 
 	public void onAssignSerialNumberShow(ActionEvent event) throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
-			PurchaseDetail purchaseDetail = (PurchaseDetail)this.getModel().getRowData();
-			setPurchaseDetail(purchaseDetail);
-			setSerializableItem(purchaseDetail.getItem());
-			setSerializableQuantity(purchaseDetail.getItem().getProduct().isLotable() ? purchaseDetail.getQuantity() : 1);
-			setSerialNumber(null);
-			setSerialDate(null);
-			setSerialNumbers(new LinkedList<SelectItem>());
-			setSelectedBreakdown(null);
+			loadAssignSerialNumber((PurchaseDetail)this.getModel().getRowData());
 		} else {
 			setShowSerialNumberWindow(false);
 		}
+	}
+	
+	protected void loadAssignSerialNumber(PurchaseDetail purchaseDetail) {
+		setPurchaseDetail(purchaseDetail);
+		setSerializableItem(purchaseDetail.getItem());
+		setSerializableQuantity(purchaseDetail.getItem().getProduct().isLotable() ? purchaseDetail.getQuantity() : 1);
+		setSerialNumber(null);
+		setSerialDate(null);
+		setSerialNumbers(new LinkedList<SelectItem>());
+		setSelectedBreakdown(null);
 	}
 
 	public void onAddSerialNumber(ActionEvent event) {

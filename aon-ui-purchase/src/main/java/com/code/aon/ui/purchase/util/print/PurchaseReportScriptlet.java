@@ -25,12 +25,30 @@ public class PurchaseReportScriptlet extends JRDefaultScriptlet implements Seria
 
 	private static final String MANUFACTURING_DETAIL_TEXT = "ELABORACION_DETALLE";
 	
+	private static final String MANUFACTURING_COMMENTS_TEXT = "ELABORACION_OBSERVACIONES";
+	
 	public String getItemManufacturingDetail() throws JRScriptletException{
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(PurchaseDetail.class);
 			PurchaseDetail detail = (PurchaseDetail) bean.get((Integer)super.getFieldValue(FIELD_ID));
 			for(ItemAddInfo addInfo: detail.getItem().getAddInfos().toArray(new ItemAddInfo[0])){
 				if(addInfo.getAttribute().equals(MANUFACTURING_DETAIL_TEXT)){
+					return addInfo.getValue();
+				}
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "ERROR: imposible obtener los datos de la factura al generar su informe";
+			LOGGER.error(msg,e);
+		}
+		return null;
+	}
+
+	public String getItemManufacturingComments() throws JRScriptletException{
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(PurchaseDetail.class);
+			PurchaseDetail detail = (PurchaseDetail) bean.get((Integer)super.getFieldValue(FIELD_ID));
+			for(ItemAddInfo addInfo: detail.getItem().getAddInfos().toArray(new ItemAddInfo[0])){
+				if(addInfo.getAttribute().equals(MANUFACTURING_COMMENTS_TEXT)){
 					return addInfo.getValue();
 				}
 			}

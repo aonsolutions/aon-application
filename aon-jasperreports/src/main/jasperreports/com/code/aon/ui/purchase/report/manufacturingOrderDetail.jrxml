@@ -6,8 +6,8 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
-	<import value="net.sf.jasperreports.engine.data.*"/>
 	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
 	<subDataset name="composite" uuid="08a60d6f-f2ba-4cc7-9e48-c7d51a4e44e4">
 		<parameter name="quantity" class="java.lang.Double"/>
 		<field name="compositionItem" class="com.code.aon.product.Item"/>
@@ -30,16 +30,102 @@
 	<field name="itemSupplierCode" class="java.lang.String"/>
 	<detail>
 		<band height="600" splitType="Stretch">
-			<componentElement>
-				<reportElement uuid="43ae5bf3-caef-4ce6-a921-26787d643050" key="detail" positionType="Float" x="0" y="66" width="535" height="16">
-					<printWhenExpression><![CDATA[!$F{item}.getItemCompositionList().isEmpty()]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="5a80efbc-e577-433c-8099-09c30dac2d8f" key="textField-5" x="85" y="5" width="450" height="12"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item}.getProduct().getCode() + " - " + $F{description}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="false">
+				<reportElement uuid="4265fdb5-b02f-4bf5-8c7d-5ab443baf376" key="textField-6" x="85" y="17" width="450" height="12">
+					<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 || $F{price}.doubleValue()>0.0))]]></printWhenExpression>
 				</reportElement>
+				<box rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="0c7d3b26-289e-4206-ba80-7fec0fa436df" key="textField-1" mode="Transparent" x="0" y="5" width="85" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle" rotation="None">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{aon_product}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement uuid="90aed6fc-50c1-48fb-87fa-e278f3cc0b77" key="textField-2" mode="Transparent" x="0" y="17" width="85" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{aon_quantity}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="4bc352ed-87ae-4919-b851-f1c87a023dfb" key="textField-113" positionType="Float" x="85" y="29" width="450" height="25" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$P{comments}!=null && !"".equals($P{comments})]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{comments}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement uuid="135ff604-5777-468c-bf87-c854b7bc4bcb" key="textField-2" mode="Transparent" x="0" y="29" width="85" height="12" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$P{comments}!=null && !"".equals($P{comments})]]></printWhenExpression>
+				</reportElement>
+				<box rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{aon_remark}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement uuid="43ae5bf3-caef-4ce6-a921-26787d643050" key="detail" positionType="Float" x="0" y="59" width="535" height="16"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="composite" uuid="9460b56a-db80-4d23-a1ee-ccd8bfda8859">
+					<datasetRun subDataset="composite" uuid="d382333e-5939-49d4-a1f0-331288796847">
 						<datasetParameter name="quantity">
 							<datasetParameterExpression><![CDATA[$F{quantity}]]></datasetParameterExpression>
 						</datasetParameter>
-						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{item}.getItemCompositionList())]]></dataSourceExpression>
+						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{item}.getProduct().getBaseItem().getItemCompositionList())]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="74" uuid="77d84680-f783-4343-bde0-0aa793a15ac5">
 						<jr:columnHeader height="12" rowSpan="1">
@@ -61,7 +147,7 @@
 						<jr:detailCell height="14" rowSpan="1">
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 								<reportElement uuid="0367d588-eb91-4702-9d2b-ce345f40ee18" key="textField-1" x="0" y="0" width="74" height="14"/>
-								<box leftPadding="0" rightPadding="0">
+								<box leftPadding="2" rightPadding="0">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -94,7 +180,7 @@
 						<jr:detailCell height="14" rowSpan="1">
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 								<reportElement uuid="867aca0c-a1e4-46f3-9c5e-da9cd95c72c6" key="textField-1" x="0" y="0" width="239" height="14"/>
-								<box leftPadding="0" rightPadding="0">
+								<box leftPadding="2" rightPadding="0">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -125,7 +211,7 @@
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
-							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+							<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00" isBlankWhenNull="true">
 								<reportElement uuid="7a4a0746-1297-4f64-a685-c52b54cfa3f6" key="textField-1" x="0" y="0" width="63" height="14"/>
 								<box leftPadding="0" rightPadding="0">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -133,7 +219,9 @@
 									<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
-								<textElement textAlignment="Right" verticalAlignment="Middle"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
 								<textFieldExpression><![CDATA[$P{quantity}*$F{quantity}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
@@ -148,7 +236,7 @@
 									<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
-								<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+								<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None">
 									<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 									<paragraph lineSpacing="Single"/>
 								</textElement>
@@ -159,7 +247,7 @@
 							<box>
 								<bottomPen lineWidth="0.0"/>
 							</box>
-							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+							<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00" isBlankWhenNull="true">
 								<reportElement uuid="f2ded95e-5a7f-4f77-b721-f1a470d74f10" key="textField-1" x="0" y="0" width="90" height="14"/>
 								<box leftPadding="0" rightPadding="0">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -195,9 +283,9 @@
 							<box>
 								<bottomPen lineWidth="0.0"/>
 							</box>
-							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+							<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00" isBlankWhenNull="true">
 								<reportElement uuid="cff4a153-ab80-47b4-9340-be212d75330a" key="textField-1" x="0" y="0" width="69" height="14"/>
-								<box leftPadding="0" rightPadding="0">
+								<box leftPadding="0" rightPadding="2">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -213,7 +301,7 @@
 				</jr:table>
 			</componentElement>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="43548bf3-2041-48ec-a891-1d6e9ea38975" key="textField-113" positionType="Float" x="0" y="127" width="267" height="62" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="43548bf3-2041-48ec-a891-1d6e9ea38975" key="textField-113" positionType="Float" x="0" y="120" width="267" height="80" isPrintWhenDetailOverflows="true"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.5" lineStyle="Solid"/>
@@ -224,10 +312,10 @@
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{comments}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{purchaseScriptlet_SCRIPTLET}.getItemManufacturingComments()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="08c0ab45-86e8-4899-a83d-858d423def9c" key="textField-113" positionType="Float" x="267" y="127" width="268" height="62" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="08c0ab45-86e8-4899-a83d-858d423def9c" key="textField-113" positionType="Float" x="267" y="120" width="268" height="80" isPrintWhenDetailOverflows="true"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.5" lineStyle="Solid"/>
@@ -241,7 +329,7 @@
 				<textFieldExpression><![CDATA[$P{purchaseScriptlet_SCRIPTLET}.getItemManufacturingDetail()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="36d9365c-c416-4df3-a49b-abaf57bef64d" key="textField-112" positionType="Float" x="267" y="112" width="268" height="15" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="36d9365c-c416-4df3-a49b-abaf57bef64d" key="textField-112" positionType="Float" x="267" y="105" width="268" height="15" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -254,7 +342,7 @@
 				<textFieldExpression><![CDATA[$R{aon_detail}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="c14f7ce2-7b66-4b2e-a2d1-0787610e82cb" key="textField-112" positionType="Float" x="0" y="112" width="267" height="15" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="c14f7ce2-7b66-4b2e-a2d1-0787610e82cb" key="textField-112" positionType="Float" x="0" y="105" width="267" height="15" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -265,148 +353,6 @@
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{aon_remark}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="5a80efbc-e577-433c-8099-09c30dac2d8f" key="textField-5" x="163" y="5" width="239" height="12"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="false">
-				<reportElement uuid="7ecba92d-47c5-48f1-bab3-faffd8eafd16" key="textField-7" x="89" y="29" width="69" height="12">
-					<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 ||$F{price}.doubleValue()>0.0)&&$P{printValue})]]></printWhenExpression>
-				</reportElement>
-				<box rightPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{price}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0.00 %" isBlankWhenNull="true">
-				<reportElement uuid="1bfb0ca2-d152-4b31-9957-55794869e20b" key="textField-11" x="158" y="29" width="31" height="12">
-					<printWhenExpression><![CDATA[new Boolean((($F{quantity}.doubleValue()>=0.0 || $F{price}.doubleValue()>0.0)&&! $F{discountExpression}.getDiscountExpr().equals("0.0"))&&$P{printValue})]]></printWhenExpression>
-				</reportElement>
-				<box rightPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{discountExpression}.getDiscountExpr()+"%"]]></textFieldExpression>
-			</textField>
-			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement uuid="fc0b3d2b-b18a-4bdf-abe9-c5009eda5317" key="textField-13" x="89" y="41" width="69" height="12">
-					<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 || $F{price}.doubleValue()>0.0) && $P{printValue})]]></printWhenExpression>
-				</reportElement>
-				<box rightPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[new Double($P{PriceStrategy}.getBasePrice((com.code.aon.product.strategy.ICalculable)((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()))]]></textFieldExpression>
-			</textField>
-			<textField pattern="###0.00" isBlankWhenNull="false">
-				<reportElement uuid="4265fdb5-b02f-4bf5-8c7d-5ab443baf376" key="textField-6" x="89" y="17" width="69" height="12">
-					<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 || $F{price}.doubleValue()>0.0))]]></printWhenExpression>
-				</reportElement>
-				<box rightPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="9a45428d-f981-4ec2-bc9f-f97bc9cd108d" key="textField-6" x="89" y="5" width="74" height="12"/>
-				<box leftPadding="2" rightPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{item}.getProduct().getCode()]]></textFieldExpression>
-			</textField>
-			<textField pattern="" isBlankWhenNull="false">
-				<reportElement uuid="0c7d3b26-289e-4206-ba80-7fec0fa436df" key="textField-1" mode="Transparent" x="10" y="5" width="79" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
-				<box leftPadding="0">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle" rotation="None">
-					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_product}]]></textFieldExpression>
-			</textField>
-			<textField pattern="" isBlankWhenNull="false">
-				<reportElement uuid="90aed6fc-50c1-48fb-87fa-e278f3cc0b77" key="textField-2" mode="Transparent" x="10" y="17" width="79" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
-				<box rightPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="SansSerif" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_quantity}]]></textFieldExpression>
-			</textField>
-			<textField pattern="" isBlankWhenNull="false">
-				<reportElement uuid="d766b378-0321-438c-8e65-90ce5d58a712" key="textField-3" mode="Transparent" x="10" y="29" width="79" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="SansSerif" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_price}]]></textFieldExpression>
-			</textField>
-			<textField pattern="" isBlankWhenNull="false">
-				<reportElement uuid="4cbaaf76-8c75-4b65-b8b7-46a5f52c1aa2" key="textField-4" mode="Transparent" x="10" y="41" width="79" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
-				<box rightPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="SansSerif" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_amount}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

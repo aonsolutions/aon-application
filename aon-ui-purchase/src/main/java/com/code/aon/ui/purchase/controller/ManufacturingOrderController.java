@@ -42,7 +42,6 @@ public class ManufacturingOrderController extends PurchaseController {
 		this.showSalesTransferWindow = showSalesTransferWindow;
 	}
 
-
 	public SalesTransferManager getSalesTransferManager() {
 		if (salesTransferManager == null) {
 			salesTransferManager = new SalesTransferManager(); 
@@ -57,10 +56,6 @@ public class ManufacturingOrderController extends PurchaseController {
 	@Override
 	protected String getTableName() {
 		return "Purchase";
-	}
-	
-	public void ispending(){
-		
 	}
 	
 	public void onSalesTransferShow(ActionEvent event) throws ManagerBeanException {
@@ -98,20 +93,22 @@ public class ManufacturingOrderController extends PurchaseController {
 		}
 	}
 	
-	public void onLoadItemTagPrint(ActionEvent event) throws ManagerBeanException {
+	public void onItemTagPrintShow(ActionEvent event) throws ManagerBeanException {
 		IController detailController = FormUtil.getController(IPurchaseConstants.MANUFACTURING_ORDER_DETAIL_CONTROLLER_NAME);
 		List<Integer> idList = new LinkedList<Integer>();
 		List<ITransferObject> list = detailController.getManagerBean().getList(detailController.getCriteria());
 		for(ITransferObject to: list){
-			idList.add(((PurchaseDetail)to).getItem().getId());
+			PurchaseDetail detail = (PurchaseDetail)to;
+			if(detail.isSettled()){
+				idList.add(detail.getItem().getId());
+			}
 		}
 		
 		ItemTagPrintController itemTagController = (ItemTagPrintController) FormUtil.getController(IItemConstants.ITEM_TAG_PRINT_CONTROLLER_NAME);
-		itemTagController.clearCriteria();
+		itemTagController.onEditSearch(event);
 		itemTagController.getCriteria().addInExpression(itemTagController.getFieldName(IEntityAlias.ITEM_ID), idList);
 		itemTagController.onSearch(event);
 		itemTagController.checkAll(event);
-		itemTagController.clearCriteria();
 	}
 	
 }

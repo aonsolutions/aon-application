@@ -30,26 +30,31 @@
 							<f:param name="reportKey" value="manufacturingOrder" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
-						<aon:htmlCommandLink id="itemTag-report" value="#{bundle.registry_tag_module}"
-							target="_new" rendered="#{manufacturingOrder.closed}"
-							disabled="#{empty itemTagPrint.reportTemplate}"
-							action="#{report.onExecute}"
-							actionListener="#{manufacturingOrder.onLoadItemTagPrint}"
-							accesskey="#{bundle.aon_key_print}"
-							styleClass="aon-finding-toolbar-item aon-icon-pdf">
-							<f:param name="reportKey" value="#{itemTagPrint.reportTemplate}" />
-							<f:param name="outputFormat" value="PDF" />
-						</aon:htmlCommandLink>
 					</ui:define>
 					<ui:define name="moreMenuContent">
 						<aon:menuItem id="salesTransfer"
-							value="#{bundle.aon_sales}"
+							value="#{bundle.sales_module}"
 							immediate="#{true}" rendered="#{manufacturingOrder.pending}"
 							iconClass="aon-icon-sincronize"
 							actionListener="#{manufacturingOrder.onSalesTransferShow}"
 							reRender="showManufacturingOrderSalesTransferWindow">
 							<f:setPropertyActionListener target="#{manufacturingOrder.showSalesTransferWindow}"
 								value="#{true}" />
+						</aon:menuItem>
+						<rich:menuSeparator id="actionMenuSeparator" />
+						<aon:menuItem id="comments"
+							value="#{bundle.aon_comment}"
+							iconClass="aon-icon-comments"
+							reRender="showCommentsWindow">
+							<f:setPropertyActionListener target="#{manufacturingOrder.showCommentsWindow}"
+								value="#{true}" />							
+						</aon:menuItem>		
+						<aon:menuItem id="remarks"
+							value="#{bundle.aon_remark}"
+							iconClass="aon-icon-notes"
+							reRender="showRemarksWindow">
+							<f:setPropertyActionListener target="#{manufacturingOrder.showRemarksWindow}"
+								value="#{true}" />							
 						</aon:menuItem>
 						<ui:include
 							src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />
@@ -206,30 +211,14 @@
 					</aon:div>
 
 				</aon:panelGrid>
-
-				<aon:div id="PurchaseProject">
-					<aon:panelGrid columns="2" style="width: 100%;"
-						rendered="#{manufacturingOrder.to.project.id != null or (manufacturingOrder.pending and manufacturingOrder.to.supplier.id != null)}"
-						columnClasses="aon-panelGrid-odd aon-width-140, aon-panelGrid-even aon-width-auto">
-						<aon:outputText value="#{bundle.aon_project}" />
-						<aon:div>
-							<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
-								<ui:param name="lookupTo" value="#{manufacturingOrder.to.project}" />
-								<ui:param name="lookupRendered" value="#{manufacturingOrder.pending}" />
-								<ui:param name="skipLabel" value="#{true}" />
-								<ui:param name="skipGoToButton" value="#{true}" />
-							</ui:include>
-						</aon:div>
-					</aon:panelGrid>
-				</aon:div>
-
+				
 				<aon:panelGrid columns="4" style="width: 100%;"
 					columnClasses="aon-panelGrid-odd aon-width-140,
 						aon-panelGrid-even aon-width-500,
 						aon-panelGrid-odd aon-width-100,
 						aon-panelGrid-even aon-width-auto">
 
-					<aon:div>
+					<aon:div rendered="#{!empty manufacturingOrder.to.comments}">
 						<aon:outputLabel for="Purchase_comments"
 							value="#{bundle.aon_comment}" />
 						<aon:div>
@@ -239,9 +228,10 @@
 					</aon:div>
 					<aon:inputTextarea id="Purchase_comments" cols="80" rows="3"
 						disabled="#{!manufacturingOrder.pending}"
+						rendered="#{!empty manufacturingOrder.to.comments}"
 						value="#{manufacturingOrder.to.comments}" />
 
-					<aon:div>
+					<aon:div rendered="#{!empty manufacturingOrder.to.remarks}">
 						<aon:outputLabel for="Purchase_remarks"
 							value="#{bundle.aon_remark}" />
 						<aon:div>
@@ -251,6 +241,7 @@
 					</aon:div>
 					<aon:inputTextarea id="Purchase_remarks" cols="80" rows="3"
 						disabled="#{!manufacturingOrder.pending}"
+						rendered="#{!empty manufacturingOrder.to.remarks}"
 						value="#{manufacturingOrder.to.remarks}" />
 
 				</aon:panelGrid>
@@ -262,6 +253,7 @@
 								<ui:param name="purchase" value="#{manufacturingOrder}" />
 								<ui:param name="purchaseDetail" value="#{manufacturingOrderDetail}" />
 								<ui:param name="projectLabel" value="#{bundle.aon_project}" />
+								<ui:param name="skipSerialNumberButton" value="#{true}" />
 								<ui:param name="skipIncomeLink" value="#{true}" />
 								<ui:param name="itemLookupDisabled" value="#{true}" />
 								<ui:param name="lookupControllerListener" value="#{manufacturingOrderDetail.productFilter}" />
@@ -296,6 +288,15 @@
 								</ui:define>
 							</ui:decorate>
 						</aon:panelTab>
+						<aon:panelTab label="#{bundle.report_print_of} #{bundle.registry_tag_module}"
+							actionListener="#{manufacturingOrder.onItemTagPrintShow}">
+							<ui:decorate template="/com/code/aon/ui/product/facelet/itemTagPrint/list_content.xhtml" >
+								<ui:param name="innerToolbar" value="#{true}" />
+								<ui:param name="showDescription" value="#{false}" />
+								<ui:param name="skipSearchButton" value="#{true}" />
+								<ui:param name="skipChecksButtons" value="#{true}" />
+							</ui:decorate>
+						</aon:panelTab>
 					</aon:panelTabSet>
 				</aon:if>
 				
@@ -316,6 +317,13 @@
 		<ui:include src="/com/code/aon/ui/purchase/facelet/manufacturingOrder/sales/modalTransfer.xhtml" />
 		
 		<ui:include src="/com/code/aon/ui/purchase/facelet/manufacturingOrder/warehouse/modalTransfer.xhtml" />
+		
+		<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/modalRemarks.xhtml">
+			<ui:param name="controller" value="#{manufacturingOrder}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/modalComments.xhtml">
+			<ui:param name="controller" value="#{manufacturingOrder}" />
+		</ui:include>
 		
 		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
 			<ui:param name="auditableController" value="#{manufacturingOrder}" />
