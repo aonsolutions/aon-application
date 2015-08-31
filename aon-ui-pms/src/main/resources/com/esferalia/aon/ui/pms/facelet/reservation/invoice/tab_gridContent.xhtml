@@ -128,7 +128,7 @@
 				actionListener="#{controller.onLoadInvoice}"
 				action="saleInvoice_form" />
 		</aon:if>
-		<aon:if test="#{!showInvoiceLink or !aonRole.financeOperator}">
+		<aon:if test="#{!showInvoiceLink or !aonRole.financeOperator or aonRole.guest}">
 			<aon:htmlCommandLink id="reservationInvoice-report" target="_blank"
 				styleClass="aon-icon-pdf"
 				value="&#160;&#160;&#160;&#160;&#160;&#160;" 
