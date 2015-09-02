@@ -11,6 +11,7 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.DOMAIN;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE_ACTIVITY;
+import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE_CCC;
 import static com.esferalia.aon.payroll.sql.SQLConstants.IRPF_DATA;
 import static com.esferalia.aon.payroll.sql.SQLConstants.IRPF_REGULARIZATION;
 import static com.esferalia.aon.payroll.sql.SQLConstants.IRPF_RESULT;
@@ -98,6 +99,7 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -159,6 +161,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseActivityColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseCccColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfRegularizationColumns;
@@ -868,7 +871,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			initFacesContext();
 			return new ContextDescriptor();
-			//return getDraftContext(salaryDraft);
+			// return getDraftContext(salaryDraft);
 		} finally {
 			releaseFacesContext();
 		}
@@ -940,7 +943,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> ctx = getSalaryCalculatorContext(
 					getConnection(), salaryDraft, null);
 
-			Map<String, boolean[]> defined = EmployeesServiceHelper.getDefinedMap(ctx);
+			Map<String, boolean[]> defined = EmployeesServiceHelper
+					.getDefinedMap(ctx);
 
 			List<Variable> variables = new LinkedList<Variable>();
 			for (String name : names) {
@@ -1487,11 +1491,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			conn = getConnection();
 			List<Bonus> availableBonuses = new ArrayList<Bonus>();
-			for ( Bonus bonus : EmployeesServiceHelper.getAvailableBonuses(conn, employeeId, 0 ))
-				if ( bonus.getType() == null )
+			for (Bonus bonus : EmployeesServiceHelper.getAvailableBonuses(conn,
+					employeeId, 0))
+				if (bonus.getType() == null)
 					availableBonuses.add(bonus);
-				
-				return availableBonuses;
+
+			return availableBonuses;
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -2827,7 +2832,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			while (rs.next()) {
 
 				Activity activity = new Activity();
-
 				activity.setId(rs.getInt(EnterpriseActivityColumns.ID));
 				activity.setDescription(rs
 						.getString(EnterpriseActivityColumns.DESCRIPTION));
@@ -2848,6 +2852,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+
 	private static Enterprise getEnterprise(Integer registryID, Integer userID,
 			Connection connection) throws SQLException {
 
@@ -2855,16 +2860,22 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		PreparedStatement stmt = null;
 
 		try {
-			String sql = "SELECT * " + " FROM " + REGISTRY + ", " + ENTERPRISE
-					+ " LEFT JOIN " + WORKPLACE + " ON ( " + ENTERPRISE + "."
-					+ EnterpriseColumns.REGISTRY + " = " + WORKPLACE + "."
-					+ WorkplaceColumns.ENTERPRISE + " )" + " LEFT JOIN "
-					+ PAYROLL_WORKPLACE + " ON ( " + WORKPLACE + "."
-					+ WorkplaceColumns.ID + " = " + PAYROLL_WORKPLACE + "."
-					+ PayrollWorkplaceColumns.WORKPLACE + ") LEFT JOIN "
-					+ AGREEMENT + " ON ( " + PAYROLL_WORKPLACE + "."
-					+ PayrollWorkplaceColumns.AGREEMENT + " = " + AGREEMENT
-					+ "." + AgreementColumns.ID + " )" + " WHERE " + REGISTRY
+			String sql = "SELECT * " 
+					+ " FROM " + REGISTRY 
+					+ ", " + ENTERPRISE
+					+ " LEFT JOIN " + WORKPLACE 
+						+ " ON ( " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " = " + WORKPLACE + "." + WorkplaceColumns.ENTERPRISE + " )" 
+					+ " LEFT JOIN "	+ PAYROLL_WORKPLACE
+						+ " ON ( " + WORKPLACE + "." + WorkplaceColumns.ID + " = " + PAYROLL_WORKPLACE + "." + PayrollWorkplaceColumns.WORKPLACE + ")"
+					+ " LEFT JOIN " + AGREEMENT 
+						+ " ON ( " + PAYROLL_WORKPLACE + "." + PayrollWorkplaceColumns.AGREEMENT + " = " + AGREEMENT + "." + AgreementColumns.ID + " )"
+					
+					+ " LEFT JOIN " + ENTERPRISE_ACTIVITY 
+						+ " ON ( " + PAYROLL_WORKPLACE + "." + PayrollWorkplaceColumns.ENTERPRISE_ACTIVITY + " = " + ENTERPRISE_ACTIVITY + "." + EnterpriseActivityColumns.ID + " )"
+					+ " LEFT JOIN " + ENTERPRISE_CCC 
+						+ " ON ( " + ENTERPRISE_CCC + "." + EnterpriseCccColumns.ENTERPRISE_ACTIVITY + " = " + ENTERPRISE_ACTIVITY + "." + EnterpriseActivityColumns.ID + " )"
+					
+					+ " WHERE " + REGISTRY
 					+ "." + RegistryColumns.ID + " = ?" + " AND " + REGISTRY
 					+ "." + RegistryColumns.ID + " = " + ENTERPRISE + "."
 					+ EnterpriseColumns.REGISTRY + " AND " + WORKPLACE + "."
@@ -2890,7 +2901,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			WorkplaceHandler workplaceHandler = new WorkplaceHandler(
 					enterpriseHandler);
 
-			groups(rs, enterpriseHandler, workplaceHandler);
+			CCCHandler cccHandler = new CCCHandler(
+					workplaceHandler);
+
+			groups(rs, enterpriseHandler, workplaceHandler, cccHandler);
 
 			Enterprise enterprise = enterpriseHandler.getEnterprise();
 
@@ -3024,9 +3038,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					workplaceId, startDate, endDate);
 
 			if (agreementId != null) {
-				//payments.addAll(SQLAgreementDraft.getPayments(connection,
-						//agreementId, startDate, endDate));
-				payments.addAll(SQLAgreementDraft.getPaymentsAux(connection, agreementId, startDate, endDate));
+				// payments.addAll(SQLAgreementDraft.getPayments(connection,
+				// agreementId, startDate, endDate));
+				payments.addAll(SQLAgreementDraft.getPaymentsAux(connection,
+						agreementId, startDate, endDate));
 			}
 
 			Map<String, String> variables = new HashMap<String, String>();
@@ -3707,8 +3722,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					public SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> visitExtra(
 							SalaryType salaryType) {
 						try {
-							return EmployeesServiceHelper.getExtraCalculatorContextImpl(conn, draft,
-									listener);
+							return EmployeesServiceHelper
+									.getExtraCalculatorContextImpl(conn, draft,
+											listener);
 						} catch (SQLException e) {
 							throw new IllegalArgumentException(e);
 						} catch (ExpressionException e) {
@@ -4015,6 +4031,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					WorkplaceColumns.DESCRIPTION)));
 			workplace.setActive(rs.getBoolean(tableCol(WORKPLACE,
 					WorkplaceColumns.ACTIVE)));
+			
+			
 
 			Object agreementId = rs.getObject(tableCol(PAYROLL_WORKPLACE,
 					PayrollWorkplaceColumns.AGREEMENT));
@@ -4026,7 +4044,50 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				workplace.setAgreement(agreement);
 			}
 
+			Object activityId = rs.getObject(tableCol(PAYROLL_WORKPLACE,
+					PayrollWorkplaceColumns.ENTERPRISE_ACTIVITY));
+			if (activityId != null) {
+				Activity activity = new Activity();
+				activity.setId((Integer) agreementId);
+				activity.setDescription(rs.getString(tableCol(ENTERPRISE_ACTIVITY,
+						EnterpriseActivityColumns.DESCRIPTION)));
+				workplace.setActivity(activity);
+			}
+
 			enterpriseHandler.getEnterprise().addWorkplace(workplace);
+		}
+
+	}
+
+	private static class CCCHandler extends AbstractHandler {
+
+		private CCC ccc;
+		private WorkplaceHandler workplaceHandler;
+
+		public CCCHandler(WorkplaceHandler workplaceHandler) {
+			super(ENTERPRISE_CCC, EnterpriseCccColumns.ID);
+			this.workplaceHandler = workplaceHandler;
+		}
+
+		/**
+		 * 
+		 * @return Last, active workplace.
+		 */
+		public CCC getCCC() {
+			return ccc;
+		}
+
+		@Override
+		public void beginGroup(ResultSet rs) throws SQLException {
+			
+			Object id = rs.getObject(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.ID));
+			if ( id == null )
+				return;
+			
+			ccc = new CCC();
+			ccc.setId(rs.getInt(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.ID)));
+			ccc.setCode(rs.getString(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.CCC)));
+			workplaceHandler.getWorkplace().getActivity().addCcc(ccc);
 		}
 
 	}

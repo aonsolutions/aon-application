@@ -50,7 +50,7 @@ public class SalaryExporterServlet extends HttpServlet {
 
 		String requestURI = req.getRequestURI();
 		String extension = AonServletUtils.getExtn(requestURI);
-		String salaryRequestStr = AonServletUtils.getWithoutExtn(requestURI);
+		String salaryRequestStr = AonServletUtils.getFileName(requestURI);
 		
 		try {
 			ServletContext ctx = getServletContext();

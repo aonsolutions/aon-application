@@ -151,6 +151,8 @@ public class AON {
 	public static final String AON_ICON_REDO = AON_CSS.aonIconRedo(); //"aon-icon-redo";
 	public static final String AON_ICON_UNDO = AON_CSS.aonIconUndo(); //"aon-icon-undo";
 	public static final String AON_ICON_VIEW = AON_CSS.aonIconView(); //"aon-icon-view";
+	public static final String AON_ICON_SEGSOCIAL = "aon-icon-segsocial";
+	public static final String AON_ICON_SEGSOCIAL_SMALL = "aon-icon-segsocial-small";
 	
 	public static final String AON_CALENDAR_STATAL_HOLIDAY = Calendar_CSS.statalHoliday();
 	public static final String AON_CALENDAR_AUTONOMI_HOLIDAY = Calendar_CSS.autonomiHoliday();

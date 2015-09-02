@@ -465,6 +465,7 @@ public class CodeMirror extends JavaScriptObject {
 	public final native void save() /*-{
 		this.save();
 	}-*/;
+	
 
 	/**
 	 * Set the editor content.

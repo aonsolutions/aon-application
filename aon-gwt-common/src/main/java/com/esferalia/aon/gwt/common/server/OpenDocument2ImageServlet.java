@@ -123,7 +123,7 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 			
 			String requestURI = req.getRequestURI();
 			String ext = AonServletUtils.getExtn(requestURI);
-			String rattach = AonServletUtils.getWithoutExtn(requestURI);
+			String rattach = AonServletUtils.getFileName(requestURI);
 
 			//int rattachId = Integer.parseInt(rattach);
 			String format = ext != null ? ext : DEFAULT_FORMAT;

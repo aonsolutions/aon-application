@@ -88,9 +88,12 @@ public class AonServletUtils {
 		return path.substring(path.lastIndexOf('.') + 1);
 	}
 
-	public static String getWithoutExtn(String path) {
+	public static String getFileName(String path) {
 		String fileName = path.substring(path.lastIndexOf('/') + 1);
-		return fileName.substring(0, fileName.lastIndexOf('.'));
+		int startExt = fileName.lastIndexOf('.');
+		if ( startExt == -1 )
+			return fileName;
+		return fileName.substring(0, startExt);
 	}
 
 	public static void initFacesContext(ServletContext context,

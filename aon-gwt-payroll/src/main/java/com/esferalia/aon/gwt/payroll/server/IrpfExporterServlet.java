@@ -41,7 +41,7 @@ public class IrpfExporterServlet extends HttpServlet {
 
 		String requestURI = req.getRequestURI();
 		String extension = AonServletUtils.getExtn(requestURI);
-		String fileName = AonServletUtils.getWithoutExtn(requestURI);
+		String fileName = AonServletUtils.getFileName(requestURI);
 
 		final Irpf irpf = getIrpf(fileName);
 

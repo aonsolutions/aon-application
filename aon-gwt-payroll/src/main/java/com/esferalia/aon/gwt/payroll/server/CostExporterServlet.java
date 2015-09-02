@@ -53,7 +53,7 @@ public class CostExporterServlet extends HttpServlet {
 
 		String requestURI = req.getRequestURI();
 		String extension = AonServletUtils.getExtn(requestURI);
-		String fileName = AonServletUtils.getWithoutExtn(requestURI);
+		String fileName = AonServletUtils.getFileName(requestURI);
 		
 		String fileNameParts [] = fileName.split("_");
 		int month = Integer.parseInt(fileNameParts[0]);
