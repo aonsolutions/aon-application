@@ -8,7 +8,12 @@ public interface CretaService {
 		MES ,
 		ANHO ,
 		TIPO ,
+		NAFS, 
+		FILE, 
+		COMMENTS,
+		DEFAULTS, 
 		AUTORIZADO, 
+		SKIP_EXISTING,
 		ACEPTAR_BASES_ANTERIORES
 	}
 
