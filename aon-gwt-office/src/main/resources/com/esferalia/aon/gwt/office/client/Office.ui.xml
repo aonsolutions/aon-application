@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:cell='urn:import:com.google.gwt.user.cellview.client'
+	xmlns:office='urn:import:com.esferalia.aon.gwt.office.client'
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages"
@@ -8,26 +9,77 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
 		field="aonResources"></ui:with>
 
-	<g:TabPanel ui:field="tabPanel" height="100%" width="100%">
-		<g:Tab text="Notificaciones">
+	<ui:style>
+	.options-scroll-panel>div {
+		height: 99%;
+	}
+	
+	.simple-panel {
+		background: #FFFFFF;
+	}
+	</ui:style>
 
-			<g:DockPanel width="100%">
-				<g:Dock direction='WEST'>
-					<g:VerticalPanel>
-						<g:Button ui:field="boton1" text="Boton 1" />
-						<g:Button ui:field="boton2" text="Boton 1" />
-						<g:Button ui:field="boton3" text="Boton 1" />
-					</g:VerticalPanel>
-				</g:Dock>
-				<g:Dock direction='CENTER'>
-					<g:VerticalPanel>
-						<g:Label text="Label1"></g:Label>
-						<g:Label text="Label1"></g:Label>
-						<g:Label text="Label1"></g:Label>
-					</g:VerticalPanel>
-				</g:Dock>
-				
-			</g:DockPanel>
-		</g:Tab>
-	</g:TabPanel>
+	<g:DockLayoutPanel unit="PX">
+		<g:north size="100">
+			<g:FlowPanel>
+
+				<g:FlowPanel styleName="aon-finding-title-toolbar">
+					<g:HorizontalPanel>
+						<g:HTMLPanel styleName="aon-finding-title">
+							<g:HTMLPanel styleName="aon-finding-title-internal">
+								<g:Label styleName="aon-outputText" ui:field="titleLabel"
+									text="Notificaciones" />
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="aon-finding-subtitle">
+							<g:HTMLPanel styleName="aon-finding-subtitle-internal">
+								<g:Label styleName="aon-outputText"></g:Label>
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+						<g:HorizontalPanel styleName="aon-finding-toolbar">
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+								<g:InlineLabel
+									styleName="aon-finding-toolbar-item aon-finding-toolbar-item-no-border"
+									text="Search AonHub" />
+								<g:SuggestBox ui:field='nameEmployee' styleName="aon-inputText"
+									width="300px" enabled="false" />
+							</g:HTMLPanel>
+						</g:HorizontalPanel>
+					</g:HorizontalPanel>
+				</g:FlowPanel>
+
+				<g:FlowPanel styleName="aon-finding-title-toolbar">
+					<g:HorizontalPanel>
+						<g:HTMLPanel styleName="aon-finding-title">
+							<g:HTMLPanel styleName="aon-finding-title-internal">
+								<g:Label styleName="aon-outputText" text="Edici&oacute;n" />
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="aon-finding-subtitle">
+							<g:HTMLPanel styleName="aon-finding-subtitle-internal">
+								<g:Label styleName="aon-outputText" />
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+							<g:Button ui:field='newIssue'
+								styleName='aon-finding-toolbar-item aon-icon-new' text="NUEVO"
+								enabled="false" />
+						</g:HTMLPanel>
+					</g:HorizontalPanel>
+				</g:FlowPanel>
+			</g:FlowPanel>
+		</g:north>
+
+		<g:center>
+			<g:ResizeLayoutPanel ui:field="dockPanel">
+				<g:HTMLPanel styleName="aon-scroll-area {style.options-scroll-panel}">
+					<g:SimpleLayoutPanel ui:field="resultsPanel"
+						styleName="aon-panelGrid-search {style.simple-panel}">
+						<office:IssueGrid ui:field="dataGrid" />
+					</g:SimpleLayoutPanel>
+				</g:HTMLPanel>
+			</g:ResizeLayoutPanel>
+		</g:center>
+	</g:DockLayoutPanel>
+
 </ui:UiBinder> 

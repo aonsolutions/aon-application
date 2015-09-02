@@ -64,7 +64,7 @@ public class DSILoadSelectedGrid extends CustomDataGrid<DSILoadSelected>
 		}
 	}
 
-	public static class DefaultDSILoadSelected implements DSILoadSelected {
+	private static class DefaultDSILoadSelected implements DSILoadSelected {
 
 		private JsEmpres empres;
 
