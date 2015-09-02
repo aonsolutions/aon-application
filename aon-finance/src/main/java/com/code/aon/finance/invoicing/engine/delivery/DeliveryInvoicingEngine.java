@@ -152,13 +152,13 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine, Serializable {
 												retValue =  delivery1.getBankAccount().toString().compareTo(delivery2.getBankAccount().toString());
 											}
 										}
-										if (retValue == 0) {
+										if (retValue == 0 && delivery1.getNumberOfPayments() != delivery2.getNumberOfPayments()) {
 											retValue = (delivery1.getNumberOfPayments() < delivery2.getNumberOfPayments()) ? -1 : 1;
 										}
-										if (retValue == 0) {
+										if (retValue == 0 && delivery1.getDaysToFirstPayment() != delivery2.getDaysToFirstPayment()) {
 											retValue = (delivery1.getDaysToFirstPayment() < delivery2.getDaysToFirstPayment()) ? -1 : 1;
 										}
-										if (retValue == 0) {
+										if (retValue == 0 && delivery1.getDaysBetweenPayments() != delivery2.getDaysBetweenPayments()) {
 											retValue = (delivery1.getDaysBetweenPayments() < delivery2.getDaysBetweenPayments()) ? -1 : 1;
 										}
 										if (retValue == 0) {
