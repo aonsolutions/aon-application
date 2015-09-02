@@ -74,6 +74,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.MenuBar;
@@ -591,7 +593,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		
 	}
 	
-	class  CreateResponseCommand extends CretaCommand implements ChangeHandler {
+	class  CreateResponseCommand extends CretaCommand implements ChangeHandler, SubmitCompleteHandler {
 		
 		private FormPanel form;
 		private FileUpload upload;
@@ -602,6 +604,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			// Create a FormPanel and point it at a service.
 			form = new FormPanel();
 			form.setVisible(false);
+			form.setMethod(FormPanel.METHOD_POST);
 			form.setAction(CRETA_URL + "/" + file.name());
 
 			// Because we're going to add a FileUpload widget, we'll need to set the
@@ -615,7 +618,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		    form.add(upload);
 		    
 			upload.addChangeHandler(this);
-//			form.addSubmitCompleteHandler(this);
+			form.addSubmitCompleteHandler(this);
 		    
 		}
 
@@ -630,7 +633,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		
 		@Override
 		public void onChange(ChangeEvent event) {
+			Window.alert(upload.getFilename());
 			form.submit();
+			
+		}
+		
+		@Override
+		public void onSubmitComplete(SubmitCompleteEvent event) {
+			// TODO Auto-generated method stub
+			Window.alert(event.getResults());
 		}
 		
 	}
@@ -889,7 +900,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de C\u00E1lculo", cretaRequestCmds[1] = new WorkplaceCreateRequestCommand(CretaService.File.CALCULOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addItem("SLD-Fichero de Bases", new CreateResponseCommand(CretaService.File.BORRADOR),
+			addItem("SLD-Fichero de Bases", new CreateResponseCommand(CretaService.File.BASES),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n", cretaRequestCmds[2] = new WorkplaceCreateRequestCommand(CretaService.File.CONFIRMACION),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);

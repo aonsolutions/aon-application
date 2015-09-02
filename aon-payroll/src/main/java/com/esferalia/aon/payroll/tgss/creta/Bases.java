@@ -17,6 +17,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -387,27 +388,25 @@ public class Bases {
 	}
 
 	private static class NAFFilterCallback implements BasesCallback {
-		
-		
+
 		private Set<String> nafs = new HashSet<String>();
-		
-		public NAFFilterCallback(String ...nafs) {
+
+		public NAFFilterCallback(String... nafs) {
 			this.nafs = new HashSet<String>();
-			for( String naf: nafs )
+			for (String naf : nafs)
 				this.nafs.add(naf);
 		}
-		
-		public void add(String ...nafs) {
-			for( String naf: nafs )
+
+		public void add(String... nafs) {
+			for (String naf : nafs)
 				this.nafs.add(naf);
 		}
-		
-		
+
 		@Override
 		public void trabajadorAdded(
 				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
 				Trabajador trabajadorCreta, Salary salary) {
-			if ( !nafs.contains(trabajadorAon.getNaf()))
+			if (!nafs.contains(trabajadorAon.getNaf()))
 				throw new SkipExisting();
 		}
 	}
@@ -435,6 +434,7 @@ public class Bases {
 				DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
 			addDefault(salary, tramo, datoSolicitado, tramoBuilder);
 		}
+
 		// --------------------------------------------------------------------
 
 		private void addDefault(Salary salary, Tramo tramo,
@@ -539,7 +539,9 @@ public class Bases {
 				put("663", "Compensación IT AT y EP");
 			}
 		};
-		public void unknownDato(Salary salary, Tramo tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
+
+		public void unknownDato(Salary salary, Tramo tramo,
+				DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
 			boolean mandatory = "B".equalsIgnoreCase(datoSolicitado
 					.getIndicadorObligatoriedad());
 			System.err.println(String.format("%s: Unknown %s Dato '%s'",
@@ -619,24 +621,23 @@ public class Bases {
 				ContextVariable var, ContextData contextData,
 				Dato datoSolicitado, Tramo tramo, TramoBuilder tramoBuilder,
 				boolean optional) {
-			//@formatter:off
-			System.err.println(String.format(
-					"ERROR: %s for %s [%3$td-%3$tm-%3$tY...%4$td-%4$tm-%4$tY] not match %5$s [%6$s-%7$s-%8$s...%9$s-%10$s-%11$s]",
+			// @formatter:off
+			System.err
+					.println(String
+							.format("ERROR: %s for %s [%3$td-%3$tm-%3$tY...%4$td-%4$tm-%4$tY] not match %5$s [%6$s-%7$s-%8$s...%9$s-%10$s-%11$s]",
 
-					var.getName(), 
-					salary.getEmployeeName(), 
-					contextData.getStartDate(),
-					contextData.getEndDate(),
-					
-					datoSolicitado.getCodigo(),
-					tramo.getFechaDesde().getDia(),
-					tramo.getFechaDesde().getMes(), 
-					tramo.getFechaDesde().getAnho(), 
-					tramo.getFechaHasta().getDia(), 
-					tramo.getFechaHasta().getMes(), 
-					tramo.getFechaHasta().getAnho()
-					));
-			//@formatter:on
+							var.getName(), salary.getEmployeeName(),
+									contextData.getStartDate(), contextData
+											.getEndDate(),
+
+									datoSolicitado.getCodigo(), tramo
+											.getFechaDesde().getDia(), tramo
+											.getFechaDesde().getMes(), tramo
+											.getFechaDesde().getAnho(), tramo
+											.getFechaHasta().getDia(), tramo
+											.getFechaHasta().getMes(), tramo
+											.getFechaHasta().getAnho()));
+			// @formatter:on
 		}
 	}
 
@@ -1168,7 +1169,8 @@ public class Bases {
 
 				if (data == null) {
 					for (BasesCallback cb : cbs)
-						cb.unknownDato(salary, tramo, datoSolicitado, tramoBuilder);
+						cb.unknownDato(salary, tramo, datoSolicitado,
+								tramoBuilder);
 					continue;
 				}
 
@@ -1607,7 +1609,7 @@ public class Bases {
 			FactoryConfigurationError, TransformerConfigurationException,
 			TransformerFactoryConfigurationError {
 
-		//@formatter:off
+		// @formatter:off
 		Option hostName = getHostNameOption();
 		Option user = getDbUserOption();
 		Option password = getDbPasswordOption();
@@ -1620,7 +1622,6 @@ public class Bases {
 				.withLongOpt("respuesta")
 				.withDescription("Fichero de Respuesta.").create("r");
 
-
 		Option comments = getCommentsOption();
 
 		Option skipPrevBases = OptionBuilder.withLongOpt("skip-prev-bases")
@@ -1632,38 +1633,22 @@ public class Bases {
 						"Informar únicamente de las bases y resto de datos de trabajadores que sufren variaciones o de las de nuevos trabajadores.")
 				.create();
 
-		Option defaults = OptionBuilder
-				.hasArg()
-				.withArgName("<code>=<value>")
+		Option defaults = OptionBuilder.hasArg().withArgName("<code>=<value>")
 				.withLongOpt("default")
-				.withDescription(
-						"Set a default data value")
-				.create('d');
+				.withDescription("Set a default data value").create('d');
 
-		Option naf = OptionBuilder
-				.hasArg()
-				.withArgName("naf")
-				.withLongOpt("naf")
-				.withDescription(
-						"Only send this NAF")
+		Option naf = OptionBuilder.hasArg().withArgName("naf")
+				.withLongOpt("naf").withDescription("Only send this NAF")
 				.create();
 
 		Option pretty = getPrettyOption();
 
-		Options options = new Options()
-				.addOption(hostName)
-				.addOption(user)
-				.addOption(password)
-				.addOption(database)
-				.addOption(comments)
-				.addOption(skipPrevBases)
-				.addOption(pretty)
-				.addOption(trabajadoresTramosFile)
-				.addOption(respuestaFile)
-				.addOption(defaults)
-				.addOption(skipExisting)
-				.addOption(naf);
-		//@formatter:on
+		Options options = new Options().addOption(hostName).addOption(user)
+				.addOption(password).addOption(database).addOption(comments)
+				.addOption(skipPrevBases).addOption(pretty)
+				.addOption(trabajadoresTramosFile).addOption(respuestaFile)
+				.addOption(defaults).addOption(skipExisting).addOption(naf);
+		// @formatter:on
 
 		// create the parser
 		CommandLineParser parser = new GnuParser();
@@ -1681,84 +1666,33 @@ public class Bases {
 					.getOptionValue(user.getLongOpt()), cmd
 					.getOptionValue(password.getLongOpt()));
 
-			boolean acceptPrevBases = !cmd
-					.hasOption(skipPrevBases.getLongOpt());
 
-			AONContext ctx = new AONContext(connection);
-
-			XMLStreamWriter xsw = new IndentXMLStreamWriter(XMLOutputFactory
-					.newInstance().createXMLStreamWriter(System.out), "  ");
-
-			List<BasesCallback> callbacksList = new LinkedList<BasesCallback>();
-			if (cmd.hasOption(skipExisting.getLongOpt()))
-				callbacksList.add(new SkipExistingCallback());
-
-			Errors errors = new Errors();
-			callbacksList.add(errors);
-
-			Comments comment = new Comments(xsw);
-			callbacksList.add(comment);
-
-			FixConceptUnMatchedCallback fixConceptsUnMatched = new FixConceptUnMatchedCallback(
-					"500", "501", "502", "601", "611");
-			callbacksList.add(fixConceptsUnMatched);
-
-			DefaultsCallback defaultsCb = new DefaultsCallback();
-			
-			String defaultsValues [] = cmd.getOptionValues(defaults.getLongOpt());
-			if ( defaultsValues != null ){
-				for ( String defaultValue : cmd.getOptionValues(defaults.getLongOpt()) ) {
-					String codeValue [] = defaultValue.split("=");
-					defaultsCb.add(codeValue[0], codeValue[1]);
-				}
-			}
-			callbacksList.add(defaultsCb);
-			
-			String nafs [] = cmd.getOptionValues(naf.getLongOpt());
-			if ( nafs != null ) {
-				NAFFilterCallback nafFilterCb = new NAFFilterCallback(nafs);
-				callbacksList.add(nafFilterCb);
-			}
-
-			BasesCallback callbacks[] = callbacksList
-					.toArray(new BasesCallback[callbacksList.size()]);
-
-			InputStream is = null;
-			net.aonsolutions.tgss.creta.jaxb.bases.Bases bases = null;
-
+			InputStream trabajadoresTramosIs = null;
 			if (cmd.hasOption(trabajadoresTramosFile.getLongOpt())) {
-
 				String path = cmd.getOptionValue(trabajadoresTramosFile
 						.getLongOpt());
-				is = AonStringUtils.isEmpty(path) ? System.in
+				trabajadoresTramosIs = AonStringUtils.isEmpty(path) ? System.in
 						: new FileInputStream(path);
-
-				net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
-						.unmarshal(
-								net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
-								is);
-
-				bases = bases(trabajadoresTramos, ctx, acceptPrevBases, xsw,
-						callbacks);
-			} else {
-				String path = cmd.getOptionValue(respuestaFile.getLongOpt());
-				is = AonStringUtils.isEmpty(path) ? System.in
+			}
+			InputStream respuestaIs = null;
+			if (cmd.hasOption(trabajadoresTramosFile.getLongOpt())) {
+				String path = cmd.getOptionValue(trabajadoresTramosFile
+						.getLongOpt());
+				respuestaIs = AonStringUtils.isEmpty(path) ? System.in
 						: new FileInputStream(path);
-
-				net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta respuesta = Utils
-						.unmarshal(
-								net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta.class,
-								is);
-
-				bases = bases(respuesta, ctx, acceptPrevBases, xsw, callbacks);
 			}
 
-			is.close();
+			// @formatter:off
+			generate(connection, cmd.hasOption(comments.getLongOpt()),
+					cmd.hasOption(skipExisting.getLongOpt()),
+					!cmd.hasOption(skipPrevBases.getLongOpt()),
+					cmd.getOptionValues(naf.getLongOpt()),
+					cmd.getOptionValues(defaults.getLongOpt()), 
+					trabajadoresTramosIs,
+					respuestaIs, 
+					System.out);
+			// @formatter:on
 
-			if (cmd.hasOption(comments.getLongOpt()))
-				Utils.marshal(bases, xsw, comment);
-			else
-				Utils.marshal(bases, xsw);
 
 		} catch (ParseException e) {
 			// oops, something went wrong
@@ -1768,6 +1702,78 @@ public class Bases {
 			formatter.printHelp("cret@", options);
 
 		}
+
+	}
+
+	public static void generate(Connection connection, boolean comments,
+			boolean skipExisting, boolean acceptPrevBases, String nafs[],
+			String defaultsValues[], InputStream trabajadoresTramosIs,
+			InputStream respuestaIs, OutputStream os) throws JAXBException,
+			XMLStreamException, FactoryConfigurationError, IOException {
+		AONContext ctx = new AONContext(connection);
+
+		XMLStreamWriter xsw = new IndentXMLStreamWriter(XMLOutputFactory
+				.newInstance().createXMLStreamWriter(os), "  ");
+
+		List<BasesCallback> callbacksList = new LinkedList<BasesCallback>();
+
+		if (skipExisting)
+			callbacksList.add(new SkipExistingCallback());
+
+		Errors errors = new Errors();
+		callbacksList.add(errors);
+
+		Comments comment = new Comments(xsw);
+		callbacksList.add(comment);
+
+		FixConceptUnMatchedCallback fixConceptsUnMatched = new FixConceptUnMatchedCallback(
+				"500", "501", "502", "601", "611");
+		callbacksList.add(fixConceptsUnMatched);
+
+		DefaultsCallback defaultsCb = new DefaultsCallback();
+
+		if (defaultsValues != null) {
+			for (String defaultValue : defaultsValues) {
+				String codeValue[] = defaultValue.split("=");
+				defaultsCb.add(codeValue[0], codeValue[1]);
+			}
+		}
+		callbacksList.add(defaultsCb);
+
+		if (nafs != null) {
+			NAFFilterCallback nafFilterCb = new NAFFilterCallback(nafs);
+			callbacksList.add(nafFilterCb);
+		}
+
+		BasesCallback callbacks[] = callbacksList
+				.toArray(new BasesCallback[callbacksList.size()]);
+
+		net.aonsolutions.tgss.creta.jaxb.bases.Bases bases = null;
+
+		if (trabajadoresTramosIs != null) {
+
+			net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
+					.unmarshal(
+							net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
+							trabajadoresTramosIs);
+
+			bases = bases(trabajadoresTramos, ctx, acceptPrevBases, xsw,
+					callbacks);
+			trabajadoresTramosIs.close();
+		} else {
+			net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta respuesta = Utils
+					.unmarshal(
+							net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta.class,
+							respuestaIs);
+
+			bases = bases(respuesta, ctx, acceptPrevBases, xsw, callbacks);
+			respuestaIs.close();
+		}
+
+		if (comments)
+			Utils.marshal(bases, xsw, comment);
+		else
+			Utils.marshal(bases, xsw);
 
 	}
 
