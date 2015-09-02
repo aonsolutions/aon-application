@@ -8,9 +8,11 @@ import static com.esferalia.aon.gwt.payroll.shared.CalculateService.SAVE;
 import static com.esferalia.aon.gwt.payroll.shared.CalculateService.START_DATE;
 import static com.esferalia.aon.gwt.payroll.shared.CalculateService.WORKPLACES;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,7 +22,6 @@ import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.metrics.StatsEventLogger;
-import com.esferalia.aon.gwt.common.client.widget.Calendar;
 import com.esferalia.aon.gwt.common.client.widget.DetailPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
@@ -33,7 +34,9 @@ import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptEvent;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptHandler;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CalculateService;
+import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
@@ -46,6 +49,10 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.AttachEvent.Handler;
@@ -54,7 +61,6 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -65,6 +71,10 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FileUpload;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -93,6 +103,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	static String SHARE_URL = URL.encode(GWT.getModuleBaseURL() + "share");
 	static String CALC_URL = URL.encode(GWT.getModuleBaseURL() + "calculate");
+	static String CRETA_URL = URL.encode(GWT.getModuleBaseURL() + "sdl");
 
 	static DateTimeFormat DATE_FORMAT = DateTimeFormat
 			.getFormat(CalculateService.DATE_FORMAT_PATTERN);
@@ -519,6 +530,205 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					salaryResult.getEndDate());
 		}
 	}
+	
+	abstract class CretaCommand implements ScheduledCommand, CretaService{
+		
+		private File file;
+		
+		public CretaCommand(File file) {
+			this.file = file;
+		}
+		
+		
+		protected void send(long autorizado, int month, int year, String tipo, Collection<CCC> cccs) {
+			StringBuffer requestDataBuffer = new StringBuffer();
+
+			requestDataBuffer.append("&" + Parameter.TIPO + "="+ tipo );
+			requestDataBuffer.append("&" + Parameter.MES + "=" + month );
+			requestDataBuffer.append("&" + Parameter.ANHO + "="	+ year);
+			requestDataBuffer.append("&" + Parameter.AUTORIZADO + "=" + autorizado);
+
+
+			for (CCC ccc : cccs)
+				requestDataBuffer.append("&" + Parameter.CCC + "=" + ccc.getCode());
+
+			// Send request to server and catch any errors.
+
+			XMLHttpRequest xhr = XMLHttpRequest.create();
+			xhr.open("POST", CRETA_URL + "/" + file.name());
+			xhr.setRequestHeader("Content-type",
+					"application/x-www-form-urlencoded");
+			xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
+
+				private int loaded = 0;
+
+				@Override
+				public void onReadyStateChange(XMLHttpRequest xhr) {
+					int state = xhr.getReadyState();
+					
+					if (state != XMLHttpRequest.DONE)
+						return;
+					
+					onRequestDone(xhr.getResponseText());
+				}
+
+			});
+
+			xhr.send(requestDataBuffer.toString());
+			
+		}
+		
+		// --------------------------------------------------------------------
+		
+		private void onRequestDone(String response) {
+			fileEditor.setMode("xml");
+			fileEditor.setText(response);
+			fileEditor.setLineNumbers(true);
+			fileEditor.setTitle(file.getFilename());
+			fileEditor.setFilename(file.getFilename()+".xml");
+			employeeDetail.setWidget(fileEditor);
+		}
+		
+	}
+	
+	class  CreateResponseCommand extends CretaCommand implements ChangeHandler {
+		
+		private FormPanel form;
+		private FileUpload upload;
+		
+		public CreateResponseCommand(File file) {
+			super(file);
+			
+			// Create a FormPanel and point it at a service.
+			form = new FormPanel();
+			form.setVisible(false);
+			form.setAction(CRETA_URL + "/" + file.name());
+
+			// Because we're going to add a FileUpload widget, we'll need to set the
+		    // form to use the POST method, and multipart MIME encoding.
+		    form.setMethod(FormPanel.METHOD_POST);			
+		    form.setEncoding(FormPanel.ENCODING_MULTIPART);
+		    
+		    // Create a FileUpload widget.
+		    upload = new FileUpload();
+		    upload.setName("any");
+		    form.add(upload);
+		    
+			upload.addChangeHandler(this);
+//			form.addSubmitCompleteHandler(this);
+		    
+		}
+
+		// --------------------------------------------------------------------
+		@Override
+		public void execute() {
+			upload.click();
+			
+		}
+		
+		// --------------------------------------------------------------------
+		
+		@Override
+		public void onChange(ChangeEvent event) {
+			form.submit();
+		}
+		
+	}
+
+	abstract class  CreateRequestCommand extends CretaCommand  implements CretaRequestDialog.Callback {
+		
+		CretaRequestDialog dialog ;
+		
+		public CreateRequestCommand(File file) {
+			super(file);
+			dialog = new CretaRequestDialog(this);
+		}
+		
+		
+
+		// --------------------------------------------------------------------
+		@Override
+		public void execute() {
+			dialog.show();
+		}
+		
+		// --------------------------------------------------------------------
+		@Override
+		public boolean onAccept(CretaRequestDialog dialog) {
+			
+			String tipo = "L01";
+			Date month = dialog.getMonth();
+			int mes = month.getMonth() + 1;
+			int anyo = month.getYear() + 1900;
+			long autorizado = dialog.getAuthorized();
+			
+			Set<CCC> ccs = dialog.getSelectedData();
+			
+			send(autorizado, mes, anyo, tipo, ccs);
+
+			return true;
+		}
+		
+	}
+	
+	class WorkplaceCreateRequestCommand extends CreateRequestCommand {
+		
+		public WorkplaceCreateRequestCommand(File file) {
+			super(file);
+		}
+
+		// --------------------------------------------------------------------
+		public void setWorkplace(Workplace workplace) {
+			
+			dialog.setData(getCCs(workplace));
+		}
+		
+		private  List<CCC> getCCs(Workplace workplace) {
+
+			Activity activity = workplace.getActivity();
+			if ( activity == null ) 
+				return Collections.emptyList();
+			List<CCC> ccs = activity.getCccs();
+			if ( ccs == null )
+				return Collections.emptyList();
+			return ccs;
+		}
+	}
+	
+	class EnterpriseCretaRequestCommand extends CreateRequestCommand {
+		
+		public EnterpriseCretaRequestCommand(File file) {
+			super(file);
+		}
+
+		// --------------------------------------------------------------------
+		public void setEnterprise(Enterprise enterprise) {
+			
+			dialog.setData(getCCs(enterprise));
+		}
+		
+		private  List<CCC> getCCs(Enterprise enterprise) {
+			
+			List<CCC> ccs  = new LinkedList<CCC>();
+			
+			for ( Workplace workplace : enterprise.getWorkplaces()){
+				
+				Activity activity = workplace.getActivity();
+				if ( activity == null ) {
+					continue;
+				}
+				
+				List<CCC> workplaceCcs = activity.getCccs();
+				if ( workplaceCcs == null ){
+					continue;
+				}
+				
+
+				ccs.addAll(workplaceCcs);
+			}
+			return ccs;
+		}
+	}
 
 	class CalcWorkplaceCommand implements ScheduledCommand, AcceptHandler,
 			CalculateService, AsyncCallback<JsSalaryResult>,
@@ -647,7 +857,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		CalcWorkplaceCommand calcCmd;
 		PasteEmployeeCommand pasteCmd;
-
+		
+		WorkplaceCreateRequestCommand cretaRequestCmds [] = new WorkplaceCreateRequestCommand[3];
+		
 		public WorkplaceContextMenu() {
 
 			MenuBar newPopup = new MenuBar(true);
@@ -672,23 +884,25 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					AON.AON_ICON_TASK_START, AON.AON_ICON_CMD_BUTTON);
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME,
 					AON.AON_ICON_CMD_BUTTON);
+			addSeparator();
+			addItem("SLD-Fichero de Solicitud de Trabajadores y Tramos", cretaRequestCmds[0] = new WorkplaceCreateRequestCommand(CretaService.File.TRABAJADORES_TRAMOS),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Solicitud de C\u00E1lculo", cretaRequestCmds[1] = new WorkplaceCreateRequestCommand(CretaService.File.CALCULOS),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Bases", new CreateResponseCommand(CretaService.File.BORRADOR),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n", cretaRequestCmds[2] = new WorkplaceCreateRequestCommand(CretaService.File.CONFIRMACION),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 		}
 
 		public void setWorkplace(Workplace workplace) {
 			calcCmd.setWorkplace(workplace);
+			
+			for(WorkplaceCreateRequestCommand cmd: cretaRequestCmds)
+				cmd.setWorkplace(workplace);
+			
 		}
 
-		private void setEmployee(Employee employee) {
-			pasteCmd.setEmployeePaste(employee);
-		}
-
-		private void setMapAvaiableEmployees(Map<String, String> map) {
-			pasteCmd.setMapAvaiableEmployees(map);
-		}
-
-		private void showPastePanel() {
-			pasteCmd.showPopUpPanel();
-		}
 		
 		public void pasteContract () {
 			pasteCmd.execute();
@@ -698,6 +912,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	class EnterpriseContextMenu extends ContextMenu {
 
 		CalcEnterpriseCommand calcCmd;
+		EnterpriseCretaRequestCommand cretaRequestCommands [] = new EnterpriseCretaRequestCommand[3];
 
 		public EnterpriseContextMenu() {
 
@@ -726,10 +941,21 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					AON.AON_ICON_TASK_START, AON.AON_ICON_CMD_BUTTON);
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME,
 					AON.AON_ICON_CMD_BUTTON);
+			addSeparator();
+			addItem("SLD-Fichero de Solicitud de Trabajadores y Tramos", cretaRequestCommands[0] = new EnterpriseCretaRequestCommand(CretaService.File.TRABAJADORES_TRAMOS),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Solicitud de C\u00E1lculo", new EnterpriseCretaRequestCommand(CretaService.File.CALCULOS),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Bases", new CalcEnterpriseCommand(),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n", new EnterpriseCretaRequestCommand(CretaService.File.CONFIRMACION),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 		}
 
 		void setEnterprise(Enterprise enterprise) {
 			calcCmd.setEnterprise(enterprise);
+			for ( EnterpriseCretaRequestCommand cmd: cretaRequestCommands)
+				cmd.setEnterprise(enterprise);
 		}
 
 	}
@@ -859,6 +1085,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private DeductionEditor deductionEditor;
 	private EmployeePopupCopy paste;
 
+	private FileEditor fileEditor;
+
 	private ResultsPanel resultsPanel;
 
 	private EmployeeContextMenu employeeContextMenu;
@@ -919,7 +1147,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		employees.addListener(this);
 		metaData.addListener(this);
-
+		
+		fileEditor = new FileEditor();
 		resultsPanel = new ResultsPanel();
 		shareResultsGrid = new ShareResultsGrid();
 		shareResultsProvider = new ListDataProvider<JsShareResult>();

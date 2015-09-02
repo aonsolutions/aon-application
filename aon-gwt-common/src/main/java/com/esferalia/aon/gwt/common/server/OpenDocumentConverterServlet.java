@@ -52,7 +52,7 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 
 			String requestURI = req.getRequestURI();
 			String extension = AonServletUtils.getExtn(requestURI);
-			String md5 = AonServletUtils.getWithoutExtn(requestURI);
+			String md5 = AonServletUtils.getFileName(requestURI);
 			//int rattachId = Integer.parseInt(rattachIdStr);
 			Map<String, String[]> params = req.getParameterMap();
 			Integer id = null;

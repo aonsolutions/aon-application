@@ -20,7 +20,7 @@ public class DocumentServlet extends HttpServlet {
 		
 		String requestURI = req.getRequestURI();
 		String ext = AonServletUtils.getExtn(requestURI);
-		String rattachIdStr = AonServletUtils.getWithoutExtn(requestURI);
+		String rattachIdStr = AonServletUtils.getFileName(requestURI);
 		
 		int rattachId = Integer.parseInt(rattachIdStr);
 		MimeType mimetype = MimeType.getByExtension(ext);

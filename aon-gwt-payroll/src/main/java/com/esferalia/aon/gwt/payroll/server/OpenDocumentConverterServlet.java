@@ -48,7 +48,7 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 
 			String requestURI = req.getRequestURI();
 			String extension = AonServletUtils.getExtn(requestURI);
-			String rattachIdStr = AonServletUtils.getWithoutExtn(requestURI);
+			String rattachIdStr = AonServletUtils.getFileName(requestURI);
 			int rattachId = Integer.parseInt(rattachIdStr);
 
 			MimeType mimeType = MimeType.getByExtension(extension);
