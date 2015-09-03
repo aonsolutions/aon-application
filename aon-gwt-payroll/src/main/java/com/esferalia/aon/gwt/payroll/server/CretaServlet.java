@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.util.Collection;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -65,6 +65,11 @@ public class CretaServlet extends HttpServlet implements CretaService.File.Visit
 		boolean comments = AonStringUtils.equalsIgnoreCase(Boolean.toString(true), CretaService.Parameter.COMMENTS.name());
 		boolean skipExisting = AonStringUtils.equalsIgnoreCase(Boolean.toString(true), CretaService.Parameter.SKIP_EXISTING.name());
 		boolean acceptPrevBases = AonStringUtils.equalsIgnoreCase(Boolean.toString(true), CretaService.Parameter.ACEPTAR_BASES_ANTERIORES.name());
+		
+		for ( Map.Entry<String,String[]> entry: req.getParameterMap().entrySet()){
+			for ( String value : entry.getValue())
+				System.out.println(entry.getKey() + " = "+ value);
+		}
 		
 		for (Part part: req.getParts() ) {
 			Bases.generate(connection, comments, skipExisting, acceptPrevBases, nafs, defaults, part.getInputStream(), null /*respuestaIs*/, resp.getOutputStream());

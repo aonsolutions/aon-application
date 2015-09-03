@@ -1,9 +1,12 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.URL;
+
 
 public interface CretaService {
 
-	static enum Parameter {
+	public static enum Parameter {
 		CCC ,
 		MES ,
 		ANHO ,
@@ -17,7 +20,7 @@ public interface CretaService {
 		ACEPTAR_BASES_ANTERIORES
 	}
 
-	static enum File {
+	public static enum File {
 		BASES {
 			
 			@Override
@@ -91,6 +94,8 @@ public interface CretaService {
 		abstract public <T, L, E extends Throwable> void  accept(Visitor<T, L, E> visitor, T t, L l)throws E;
 		
 	}
+
+	public static String CRETA_URL = URL.encode(GWT.getModuleBaseURL() + "sdl");
 	
 	
 }
