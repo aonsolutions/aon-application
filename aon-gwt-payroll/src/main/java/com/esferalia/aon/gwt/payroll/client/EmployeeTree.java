@@ -7,6 +7,8 @@ import static com.esferalia.aon.gwt.payroll.shared.CalculateService.OVERWRITE;
 import static com.esferalia.aon.gwt.payroll.shared.CalculateService.SAVE;
 import static com.esferalia.aon.gwt.payroll.shared.CalculateService.START_DATE;
 import static com.esferalia.aon.gwt.payroll.shared.CalculateService.WORKPLACES;
+import static com.google.gwt.user.client.Event.setEventListener;
+import static com.google.gwt.user.client.Event.sinkEvents;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -48,6 +50,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.FormElement;
+import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -69,6 +74,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -82,6 +89,7 @@ import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
@@ -105,8 +113,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	static String SHARE_URL = URL.encode(GWT.getModuleBaseURL() + "share");
 	static String CALC_URL = URL.encode(GWT.getModuleBaseURL() + "calculate");
-	static String CRETA_URL = URL.encode(GWT.getModuleBaseURL() + "sdl");
-
 	static DateTimeFormat DATE_FORMAT = DateTimeFormat
 			.getFormat(CalculateService.DATE_FORMAT_PATTERN);
 
@@ -557,7 +563,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			// Send request to server and catch any errors.
 
 			XMLHttpRequest xhr = XMLHttpRequest.create();
-			xhr.open("POST", CRETA_URL + "/" + file.name());
+			xhr.open("POST", CretaService.CRETA_URL + "/" + file.name());
 			xhr.setRequestHeader("Content-type",
 					"application/x-www-form-urlencoded");
 			xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
@@ -593,56 +599,25 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		
 	}
 	
-	class  CreateResponseCommand extends CretaCommand implements ChangeHandler, SubmitCompleteHandler {
+	class  CreateResponseCommand extends CretaCommand implements CretaResponseDialog.Callback  {
 		
-		private FormPanel form;
-		private FileUpload upload;
+		CretaResponseDialog dialog;
 		
 		public CreateResponseCommand(File file) {
 			super(file);
+			dialog = new CretaResponseDialog(file,this);
 			
-			// Create a FormPanel and point it at a service.
-			form = new FormPanel();
-			form.setVisible(false);
-			form.setMethod(FormPanel.METHOD_POST);
-			form.setAction(CRETA_URL + "/" + file.name());
-
-			// Because we're going to add a FileUpload widget, we'll need to set the
-		    // form to use the POST method, and multipart MIME encoding.
-		    form.setMethod(FormPanel.METHOD_POST);			
-		    form.setEncoding(FormPanel.ENCODING_MULTIPART);
-		    
-		    // Create a FileUpload widget.
-		    upload = new FileUpload();
-		    upload.setName("any");
-		    form.add(upload);
-		    
-			upload.addChangeHandler(this);
-			form.addSubmitCompleteHandler(this);
-		    
 		}
 
 		// --------------------------------------------------------------------
 		@Override
 		public void execute() {
-			upload.click();
-			
+			dialog.center();
+			dialog.show();
 		}
 		
 		// --------------------------------------------------------------------
 		
-		@Override
-		public void onChange(ChangeEvent event) {
-			Window.alert(upload.getFilename());
-			form.submit();
-			
-		}
-		
-		@Override
-		public void onSubmitComplete(SubmitCompleteEvent event) {
-			// TODO Auto-generated method stub
-			Window.alert(event.getResults());
-		}
 		
 	}
 
@@ -660,6 +635,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		// --------------------------------------------------------------------
 		@Override
 		public void execute() {
+			dialog.center();
 			dialog.show();
 		}
 		
