@@ -12,6 +12,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.ProjectReservationService;
 import com.esferalia.aon.pms.enumeration.MealPlan;
@@ -24,6 +25,7 @@ public class ProjectReservationServiceControllerListener extends ControllerAdapt
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationService to = (ProjectReservationService)event.getController().getTo();
+		validateReservation(to.getProjectReservation());
 		to.setServiceIndex(0);
 		to.setMealPlan(obtainMealPlan(to.getItem().getDetail()));
 		linkServiceToRoom(to);
@@ -32,8 +34,26 @@ public class ProjectReservationServiceControllerListener extends ControllerAdapt
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationService to = (ProjectReservationService)event.getController().getTo();
+		validateReservation(to.getProjectReservation());
 		to.setMealPlan(obtainMealPlan(to.getItem().getDetail()));
 		linkServiceToRoom(to);
+	}
+
+	@Override
+	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
+		ProjectReservationService to = (ProjectReservationService)event.getController().getTo();
+		validateReservation(to.getProjectReservation());
+	}
+
+	private void validateReservation(ProjectReservation reservation) throws ControllerListenerException {
+		try {
+			if (reservation.isDirty()) {
+				String message = "La Reserva ha sido modificada por otro usuario. Refrescar para obtener los datos actualizados.";
+				throw new ControllerListenerException(message);
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
 	}
 
 	private MealPlan obtainMealPlan(String mealPlanValue) {
