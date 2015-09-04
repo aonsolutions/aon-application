@@ -85,10 +85,18 @@ public class PersonPayMethodFormListener extends RegistryPayMethodFormListener {
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		super.beforeBeanAdded(event);
 		checkRegistryBank();
 	}
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		super.beforeBeanUpdated(event);
+		try {
+			IManagerBean rPayBean = event.getController().getManagerBean();
+			rPayBean.restoreNullSubPOJOs(getRegistryPayMethod());
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
 		checkRegistryBank();
 	}
 	
