@@ -620,6 +620,8 @@ public class ProjectReservationController extends BasicController implements IPm
 			} else {
 				reservation.setCheckStatus(ReservationCheckStatus.NO_SHOW);
 			}
+		} else {
+			reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
 		}
 		reservation.setStatus(ReservationStatus.CANCELLED);
 		reservation.setCancellationUser(UserUtils.getInstance().getLoggedUser().getLogin());
