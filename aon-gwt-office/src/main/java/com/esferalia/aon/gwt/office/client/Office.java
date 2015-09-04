@@ -119,8 +119,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener{
 	
 	@UiHandler("newIssue")
 	void onNewIssueClick(ClickEvent event) {
-		NewIssuePopupPanel newIssue = new NewIssuePopupPanel();
-		
+		NewIssuePopupPanel newIssue = new NewIssuePopupPanel();		
 		newIssue.showPopUpPanel();
 	}
 	
@@ -139,7 +138,11 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener{
 
 	@Override
 	public void onSelectionTitle(IssueSelected issue) {
-		Window.alert("Title: " + issue.getTitle() + " Id: " + issue.getId());
+		NewIssuePopupPanel getIssuePanel = new NewIssuePopupPanel();
 		
+		getIssuePanel.setTitle(issue.getTitle());
+		getIssuePanel.setBodyTextArea(issue.getBody());
+		
+		getIssuePanel.showPopUpPanel();		
 	}
 }

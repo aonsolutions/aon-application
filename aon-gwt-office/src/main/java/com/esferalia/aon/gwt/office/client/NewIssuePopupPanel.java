@@ -4,7 +4,10 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class NewIssuePopupPanel extends CustomDialog {
@@ -15,14 +18,21 @@ public class NewIssuePopupPanel extends CustomDialog {
 	interface NewIssuePopupPanelUiBinder extends
 			UiBinder<Widget, NewIssuePopupPanel> {
 	}
+	
+	@UiField
+	TextBox titleTextBox;
+	@UiField
+	TextArea bodyTextArea;
 
 	public NewIssuePopupPanel() {
+		
 		setCaption("Nueva Incidencia");
 		
 		setWidget(uiBinder.createAndBindUi(this));
 		
 		setAnimationEnabled(false);
-		setGlassEnabled(true);
+		setGlassEnabled(true);		
+		
 	}
 	
 	@UiHandler("acceptButton")
@@ -33,6 +43,14 @@ public class NewIssuePopupPanel extends CustomDialog {
 	@UiHandler("cancelButton")
 	void onCancelButtonClick(ClickEvent event) {
 		hide();
+	}
+	
+	public void setTitle (String title) {
+		titleTextBox.setText(title);
+	}
+	
+	public void setBodyTextArea (String body) {
+		bodyTextArea.setText(body);
 	}
 	
 	public void showPopUpPanel() {
