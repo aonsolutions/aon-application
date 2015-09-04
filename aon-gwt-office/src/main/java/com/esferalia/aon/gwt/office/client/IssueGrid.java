@@ -8,11 +8,14 @@ import java.util.Set;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.office.client.models.issues.Issue;
+import com.esferalia.aon.gwt.office.client.models.issues.Label;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.builder.shared.TableCellBuilder;
 import com.google.gwt.dom.builder.shared.TableRowBuilder;
 import com.google.gwt.dom.client.Style.Unit;
@@ -39,11 +42,13 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 	interface Listener {
 		void onSelectionChangeHandler(SelectionChangeEvent event);
+		
+		void onSelectionTitle(IssueSelected issue);
 	}
 
 	public enum Columns {
 
-		CHECK(""), TITLE("Asunto"), CREATED_AT("Creado en ..");
+		CHECK(""), TITLE("Asunto"), LABELS(""), CREATED_AT("Creado en ..");
 
 		private String mensaje;
 
@@ -69,7 +74,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		}
 
 		@Override
-		public String getTitle() {			
+		public String getTitle() {
 			return issue.getTitle();
 		}
 
@@ -107,6 +112,11 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		public Integer getId() {
 			return issue.getId();
 		}
+
+		@Override
+		public JsArray<Label> getLabels() {
+			return issue.getLabels();
+		}
 	}
 	
 	public static class IssueLoadSelected extends DefaultAonIssuesSelected {
@@ -114,7 +124,6 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		public IssueLoadSelected(Issue issue) {			
 			super(issue);
 		}
-		
 	}
 
 	private class HeaderBuilder extends
@@ -124,6 +133,8 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		private Header<Boolean> checkHeader = IssueGrid.this.newCheckHeader();
 		private Header<String> titleHeader = new TextHeader(
 				Columns.TITLE.getColumnName());
+		private Header<String> labelsHeader = new TextHeader(
+				Columns.LABELS.getColumnName());
 		private Header<String> createdAtHeader = new TextHeader(
 				Columns.CREATED_AT.getColumnName());
 
@@ -152,6 +163,8 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 					isSortAscending, false, false);
 			buildHeader(tr, titleHeader, title, sortedColumn, isSortAscending,
 					false, false);
+			buildHeader(tr, labelsHeader, labels, sortedColumn, isSortAscending,
+					false, false);
 			buildHeader(tr, createdAtHeader, createdAt, sortedColumn,
 					isSortAscending, false, false);
 			
@@ -175,7 +188,6 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 			th.endTH();
 
 		}
-
 	}
 
 	private class CellTableBuilder extends
@@ -217,8 +229,13 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 			td.endTD();
 
 			td = row.startTD().align(
-					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
+					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());			
 			renderCell(td, createContext(col++), title, rowValue);
+			td.endTD();
+			
+			td = row.startTD().align(
+					HasHorizontalAlignment.ALIGN_LEFT.getTextAlignString());			
+			renderCell(td, createContext(col++), labels, rowValue);
 			td.endTD();
 
 			td = row.startTD().align(
@@ -230,8 +247,6 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 			row.endTR();
 
 		}
-		
-		
 
 	}
 
@@ -249,6 +264,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 	private Column<IssueSelected, Boolean> checkBox;
 	private Column<IssueSelected, String> title;
+	private Column<IssueSelected, String> labels;
 	private Column<IssueSelected, String> createdAt;
 
 	public IssueGrid() {
@@ -304,18 +320,52 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 	private void initializeColumns() {
 		int col = 0;
-
+		
+		
 		addColumn(checkBox);
-		setColumnWidth(col++, 2, Unit.PCT);
+		setColumnWidth(col++, 2, Unit.PCT);		
 
-		title = new Column<IssueSelected, String>(new TextCell()) {
-
+		title = new Column<IssueSelected, String>(new ClickableTextCell()) {
+			
 			@Override
 			public String getValue(IssueSelected object) {
+				
 				return object.getTitle();
 			}
 		};
+		
+		title.setFieldUpdater(new FieldUpdater<IssueSelected, String>() {
+
+			@Override
+			public void update(int index, IssueSelected object, String value) {
+				for (Listener listener : listeners)
+					listener.onSelectionTitle(object);
+			}
+		});
 		setColumnWidth(col++, 40, Unit.PX);
+		
+		labels = new Column<IssueSelected, String>(new TextCell()) {
+
+			@Override
+			public String getValue(IssueSelected object) {				
+				
+				String labels = "";
+				if (object.getLabels() == null)
+					return labels;
+				
+				for (int z = 0; z < object.getLabels().length(); z++) {
+					
+					String aux = object.getLabels().get(z).getName().toUpperCase();
+					labels += object.getLabels().get(z).getName().toUpperCase() + " ";
+				}
+					
+					 
+				
+				return labels;
+				
+			}
+		};
+		setColumnWidth(col++, 60, Unit.PX);
 
 		createdAt = new Column<IssueSelected, String>(new TextCell()) {
 

@@ -2,6 +2,9 @@ package com.esferalia.aon.gwt.office.client;
 
 import java.util.Date;
 
+import com.esferalia.aon.gwt.office.client.models.issues.Label;
+import com.google.gwt.core.client.JsArray;
+
 public interface IssueSelected {
 	
 	String getTitle();
@@ -22,6 +25,6 @@ public interface IssueSelected {
 	
 	Integer getId();
 	
-	/** List<LabelSelected> getLabels(); **/
+	JsArray<Label> getLabels();
 
 }

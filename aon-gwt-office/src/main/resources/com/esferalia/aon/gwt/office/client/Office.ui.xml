@@ -40,6 +40,12 @@
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:InlineLabel
 									styleName="aon-finding-toolbar-item aon-finding-toolbar-item-no-border"
+									text="Repositorios" />
+								<g:ListBox ui:field='repoListBox' />
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+								<g:InlineLabel
+									styleName="aon-finding-toolbar-item aon-finding-toolbar-item-no-border"
 									text="Search AonHub" />
 								<g:SuggestBox ui:field='nameEmployee' styleName="aon-inputText"
 									width="300px" enabled="false" />
@@ -62,8 +68,7 @@
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 							<g:Button ui:field='newIssue'
-								styleName='aon-finding-toolbar-item aon-icon-new' text="NUEVO"
-								enabled="false" />
+								styleName='aon-finding-toolbar-item aon-icon-new' text="NUEVO" />
 						</g:HTMLPanel>
 					</g:HorizontalPanel>
 				</g:FlowPanel>

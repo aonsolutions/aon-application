@@ -1,0 +1,111 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
+	<ui:style>
+	
+		.form {
+		padding: 10px;
+	}
+	
+	.label {
+		margin-top: 10x;
+		font-weight: bold;
+		padding: 1px 0.5em;
+		white-space: nowrap;
+		background-color: #F2F2F2;
+	}
+	
+	.labeltop {
+		margin-top: 10x;
+		font-weight: bold;
+		padding: 1px 0.5em;
+		vertical-align: top;
+		white-space: nowrap;
+		background-color: #F2F2F2;
+	}
+	
+	.field {
+		padding: 1px 0.5em;
+	}
+	
+	.buttons {
+		padding-top: 10px;
+		text-align: right;
+	}
+	
+	.errorLabel {
+		text-align: center;
+	}
+	
+	.info {
+		
+	}
+	
+	.warn {
+		
+	}
+	
+	.error {
+		
+	}
+	
+	.messages {
+		padding-left: 0.5em;
+		padding-bottom: 10px;
+	}
+	
+	</ui:style>
+	<g:HTMLPanel styleName="{style.form}">
+
+		<g:Grid width="100%">
+			<g:row>
+				<g:customCell>
+					<g:Label styleName="aon-icon-employee aon-icon-commandButton"
+						title="Selecciona la persona sobre la que desee copiar el contrato" />
+				</g:customCell>
+				<g:customCell styleName="{style.field}">
+					<g:SuggestBox ui:field="suggest" styleName="aon-inputText"
+						width="280px" />
+				</g:customCell>
+			</g:row>
+
+		</g:Grid>
+
+		<g:Grid width="100%">
+			<g:row>
+				<g:customCell styleName="{style.label}">
+					<g:Label text="Inicio de contrato" />
+				</g:customCell>
+				<g:customCell styleName="{style.field}">
+					<datepicker:DateBox width="50%" ui:field="startDate" />
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.label}">
+					<g:Label text="Fin de contrato" />
+				</g:customCell>
+				<g:customCell styleName="{style.field}">
+					<datepicker:DateBox width="50%" ui:field="endDate" />
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell>
+					<g:InlineLabel styleName="aon-icon-warn aon-icon-commandButton" 
+					ui:field="warnLabel" visible="false"
+					title="Compruebe los datos introducidos."></g:InlineLabel>
+				</g:customCell>
+				<g:customCell styleName="{style.field}">
+					<g:CheckBox ui:field="especifico"
+						text="Añadir datos específicos de contrato" />
+				</g:customCell>
+			</g:row>
+		</g:Grid>
+
+		<div class="{style.buttons}">
+			<g:Button ui:field="cancelButton">Cancelar</g:Button>
+			<g:Button ui:field="acceptButton">Aceptar</g:Button>
+		</div>
+
+	</g:HTMLPanel>
+</ui:UiBinder> 
