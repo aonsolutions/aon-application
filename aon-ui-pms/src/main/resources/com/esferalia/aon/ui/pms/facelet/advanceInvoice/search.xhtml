@@ -43,6 +43,12 @@
 						</aon:selectOneMenu>
 					</aon:if>
 
+					<aon:outputLabel for="ProjectReservation_project_id" 
+						value="#{bundle.report_id}" />
+					<aon:inputText id="ProjectReservation_project_id"
+						valueChangeListener="#{controller.addExpression}"
+						size="20" />
+
 					<aon:outputText value="#{bundle.report_checkin}" />
 					<aon:div>
 						<aon:outputLabel for="ProjectReservation_startDate-From"
