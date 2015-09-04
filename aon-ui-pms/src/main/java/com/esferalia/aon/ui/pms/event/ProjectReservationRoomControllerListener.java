@@ -3,12 +3,15 @@ package com.esferalia.aon.ui.pms.event;
 import java.util.Arrays;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -63,16 +66,29 @@ public class ProjectReservationRoomControllerListener extends ControllerAdapter 
 				if (ArrayUtils.indexOf(services, reservationService.getId()) >= 0) {
 					if (reservationService.getProjectReservationRoom() == null || reservationService.getProjectReservationRoom() != reservationRoom.getId()) {
 			    		reservationService.setProjectReservationRoom(reservationRoom.getId());
-			    		reservationServiceBean.update(reservationService);
+			    		updateLinkedServiceRoom(reservationService, reservationRoom);
 			    	}
 				} else {
 		    		reservationService.setProjectReservationRoom(null);
-		    		reservationServiceBean.update(reservationService);
+		    		updateLinkedServiceRoom(reservationService, null);
 				}
 			}
 		} catch (ManagerBeanException ex) {
 			throw new ControllerListenerException(ex.getMessage());
 		}
 	}
+
+    private void updateLinkedServiceRoom(ProjectReservationService reservationService, ProjectReservationRoom reservationRoom) throws ManagerBeanException {
+		String stmt = "UPDATE project_reservation_service" +
+						" SET project_reservation_room = " + ((reservationRoom != null) ? ":reservationRoom" : "NULL") +
+						" WHERE id = :id";
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+		SQLQuery query = session.createSQLQuery(stmt);
+		query.setInteger("id", reservationService.getId());
+		if (reservationRoom != null) {
+			query.setInteger("reservationRoom", reservationRoom.getId());
+		}
+		query.executeUpdate();
+    }
 
 }
