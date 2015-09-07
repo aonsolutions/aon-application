@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.tree;
+package com.esferalia.aon.gwt.common.client.widget;
 
 
 import com.esferalia.aon.gwt.common.client.AON;

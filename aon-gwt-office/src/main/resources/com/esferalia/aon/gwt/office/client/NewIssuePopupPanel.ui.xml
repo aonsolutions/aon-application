@@ -1,10 +1,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
 	<ui:style>
-	
-		.form {
+	.form {
 		padding: 10px;
 	}
 	
@@ -16,7 +14,6 @@
 		padding-top: 10px;
 		text-align: right;
 	}
-	
 	</ui:style>
 	<g:HTMLPanel styleName="{style.form}">
 
@@ -29,11 +26,18 @@
 					<g:TextBox ui:field="titleTextBox" styleName="aon-inputText"
 						width="280px" />
 				</g:customCell>
+				<g:customCell>
+					<g:Label text="Etiquetas" />
+				</g:customCell>
+				<g:customCell>
+					<g:Button styleName="aon-icon-expand aon-icon-commandButton"
+						title="Agrega etiquetas para el nuevo tema" ui:field="addLabelsButton" />
+				</g:customCell>
 			</g:row>
 
 		</g:Grid>
-		
-		<g:TextArea ui:field="bodyTextArea" width="100%"/>
+
+		<g:TextArea ui:field="bodyTextArea" width="100%" />
 
 		<div class="{style.buttons}">
 			<g:Button ui:field="cancelButton">Cancelar</g:Button>

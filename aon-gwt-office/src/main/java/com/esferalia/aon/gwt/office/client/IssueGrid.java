@@ -18,6 +18,7 @@ import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.builder.shared.TableCellBuilder;
 import com.google.gwt.dom.builder.shared.TableRowBuilder;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -229,7 +230,8 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 			td.endTD();
 
 			td = row.startTD().align(
-					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());			
+					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
+			td.style().cursor(Cursor.POINTER);
 			renderCell(td, createContext(col++), title, rowValue);
 			td.endTD();
 			
@@ -342,6 +344,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 					listener.onSelectionTitle(object);
 			}
 		});
+		
 		setColumnWidth(col++, 40, Unit.PX);
 		
 		labels = new Column<IssueSelected, String>(new TextCell()) {
