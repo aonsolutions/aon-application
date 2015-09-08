@@ -130,7 +130,8 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 		if(_realDays!=null && !"".equals(_realDays)){
 			return Double.valueOf(_realDays).intValue();
 		} else {
-			return 30;
+			Date contractEnd = salary.getContract().getEndDate();
+			return (contractEnd!=null && contractEnd.before(endDate)) ? CommonUtil.getDay(contractEnd) : 30;
 		}
 		
 	}
