@@ -96,21 +96,26 @@ public class DBConsumption {
 					.and(INCOME.ISSUE_TIME.greaterOrEqual(initialDate))
 					.and(INCOME.ISSUE_TIME.lessOrEqual(finalDate))
 					.fetch();
-
+			
+			Double valorPAlb = 0.0;
+			
 			for (Record3<Integer, Double, Double> record : data3) {
 				if (record.value1() != null) {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1());
-							ci.setPurchases(record.value2());
-							ci.setPurchasesValue(record.value3());
+							valorPAlb = record.value2() * record.value3();
+							ci.setPurchasesAlb(record.value2());
+							ci.setPurchasesValueAlb(record.value3());
 							map.put(ci.getItemId(), ci);
 						}
 					}
 					else{
 						ConsumptionItem ci = map.get(record.value1());
-						ci.setPurchases(ci.getPurchases()+record.value2());
-						ci.setPurchasesValue(ci.getPurchasesValue()+record.value3());
+						valorPAlb = valorPAlb + (record.value2() * record.value3());
+						ci.setPurchasesAlb(ci.getPurchasesAlb()+record.value2());
+						ci.setPurchasesValueAlb(valorPAlb / ci.getPurchasesAlb());
+						//ci.setPurchasesValueAlb(ci.getPurchasesValueAlb()+record.value3());
 						map.replace(ci.getItemId(), ci);
 					}
 				}
@@ -128,20 +133,24 @@ public class DBConsumption {
 					.and(INVOICE.ISSUE_DATE.lessOrEqual(finalDate))
 					.fetch();
 
+			Double valorPFac = 0.0;
 			for (Record3<Integer, Double, Double> record : data4) {
 				if (record.value1() != null) {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1());
-							ci.setPurchases(record.value2());
-							ci.setPurchasesValue(record.value3());
+							valorPFac = record.value2() * record.value3();
+							ci.setPurchasesFac(record.value2());
+							ci.setPurchasesValueFac(record.value3());
 							map.put(ci.getItemId(), ci);
 						}
 					}
 					else{
 						ConsumptionItem ci = map.get(record.value1());
-						ci.setPurchases(ci.getPurchases()+record.value2());
-						ci.setPurchases(ci.getPurchasesValue()+record.value3());
+						valorPFac = valorPFac + (record.value2() * record.value3());
+						ci.setPurchasesFac(ci.getPurchasesFac()+record.value2());
+						ci.setPurchasesValueFac(valorPFac / ci.getPurchasesFac());
+						//ci.setPurchasesValueFac(ci.getPurchasesValueFac()+record.value3());
 						map.replace(ci.getItemId(), ci);
 					}
 				}
@@ -157,20 +166,25 @@ public class DBConsumption {
 					.and(DELIVERY.ISSUE_TIME.lessOrEqual(new Timestamp(finalDate.getTime())))
 					.fetch();
 
+			Double valorSAlb = 0.0;
+
 			for (Record3<Integer, Double, Double> record : data5) {
 				if (record.value1() != null) {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1());
-							ci.setSales(record.value2());
-							ci.setSalesValue(record.value3());
+							valorSAlb = record.value2() * record.value3();
+							ci.setSalesAlb(record.value2());
+							ci.setSalesValueAlb(record.value3());
 							map.put(ci.getItemId(), ci);
 						}
 					}
 					else{
 						ConsumptionItem ci = map.get(record.value1());
-						ci.setSales(ci.getSales()+record.value2());
-						ci.setSalesValue(ci.getSalesValue()+ record.value3());
+						valorSAlb = valorSAlb + (record.value2() * record.value3());
+						ci.setSalesAlb(ci.getSalesAlb()+record.value2());
+						ci.setSalesValueAlb(valorSAlb / ci.getSalesAlb());
+						//ci.setSalesValueAlb(ci.getSalesValueAlb()+ record.value3());
 						map.replace(ci.getItemId(), ci);
 					}
 				}
@@ -188,20 +202,25 @@ public class DBConsumption {
 					.and(INVOICE.ISSUE_DATE.lessOrEqual(finalDate))
 					.fetch();
 
+			Double valorSFac = 0.0;
+			
 			for (Record3<Integer, Double, Double> record : data6) {
 				if (record.value1() != null) {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1());
-							ci.setSales(record.value2());
-							ci.setSalesValue(record.value3());
+							valorSFac = record.value2() * record.value3();
+							ci.setSalesFac(record.value2());
+							ci.setSalesValueFac(record.value3());
 							map.put(ci.getItemId(), ci);
 						}
 					}
 					else{
 						ConsumptionItem ci = map.get(record.value1());
-						ci.setSales(ci.getSales()+record.value2());
-						ci.setSalesValue(ci.getSalesValue()+ record.value3());
+						valorSFac = valorSFac + (record.value2() * record.value3());
+						ci.setSalesFac(ci.getSalesFac()+record.value2());
+						ci.setSalesValueFac(valorSFac / ci.getSalesFac());
+						//ci.setSalesValueFac(ci.getSalesValueFac()+ record.value3());
 						map.replace(ci.getItemId(), ci);
 					}
 				}
@@ -287,15 +306,19 @@ public class DBConsumption {
 		ci.setDetail3(data.value6());		
 
 		ci.setInitialQuantity(0.0);
-		ci.setPurchases(0.0);
-		ci.setSales(0.0);
+		ci.setPurchasesAlb(0.0);
+		ci.setPurchasesFac(0.0);
+		ci.setSalesAlb(0.0);
+		ci.setSalesFac(0.0);
 		ci.setTransfersPlus(0.0);
 		ci.setTransfersMinus(0.0);
 		ci.setFinalQuantity(0.0);
 		
 		ci.setInitialValue(0.0);
-		ci.setPurchasesValue(0.0);
-		ci.setSalesValue(0.0);
+		ci.setPurchasesValueAlb(0.0);
+		ci.setPurchasesValueFac(0.0);
+		ci.setSalesValueAlb(0.0);
+		ci.setSalesValueFac(0.0);
 		ci.setTransfersMinusValue(0.0);
 		ci.setTransfersPlusValue(0.0);
 		ci.setFinalValue(0.0);

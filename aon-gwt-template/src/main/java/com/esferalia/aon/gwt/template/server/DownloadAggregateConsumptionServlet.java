@@ -209,18 +209,22 @@ public class DownloadAggregateConsumptionServlet extends HttpServlet {
         	Integer num = 0;
         	for(Integer j = 0; j< v.size();j++){
         		ConsumptionItem ci = v.get(j);
-        		ci.setConsumption(ci.getInitialQuantity()+ci.getPurchases()+ci.getTransfersPlus()-ci.getSales()-ci.getTransfersMinus()-ci.getFinalQuantity());
+        		ci.setConsumption(ci.getInitialQuantity()+ci.getPurchasesAlb()+ci.getPurchasesFac()+ci.getTransfersPlus()-ci.getSalesAlb()-ci.getSalesFac()-ci.getTransfersMinus()-ci.getFinalQuantity());
 
         		Double consumValue = (ci.getInitialValue() * ci.getInitialQuantity()) 
-    					+  	(ci.getPurchases() * ci.getPurchasesValue())
+    					+  	(ci.getPurchasesAlb() * ci.getPurchasesValueAlb())
+    					+  	(ci.getPurchasesFac() * ci.getPurchasesValueFac())
     					+	((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()))
-    					-	(ci.getSales() * ci.getSalesValue())
+    					-	(ci.getSalesAlb() * ci.getSalesValueAlb())
+    					-	(ci.getSalesFac() * ci.getSalesValueFac())
     					-	(ci.getFinalQuantity() * ci.getFinalValue());
             	
         		
         		if(!(ci.getInitialQuantity() == 0 && 
-        			ci.getPurchases() == 0 &&
-        			ci.getSales() == 0 &&
+        			ci.getPurchasesAlb() == 0 &&
+   					ci.getPurchasesFac() == 0 &&
+        			ci.getSalesAlb() == 0 &&
+    				ci.getSalesFac() == 0 &&
         			ci.getFinalQuantity() == 0 &&
         			(ci.getTransfersPlus()-ci.getTransfersMinus()) == 0 &&
         			ci.getConsumption() == 0) && 
@@ -236,10 +240,10 @@ public class DownloadAggregateConsumptionServlet extends HttpServlet {
         				case "Nombre": celda.setCellValue(ci.getProductName());celda.setCellStyle(style3);break;
         				case "Inicial": celda.setCellValue(round(ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
         				case "Valor Inicial": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
-        				case "Compras": celda.setCellValue(round(ci.getPurchases(),2));celda.setCellStyle(style2);break;
-        				case "Valor Compras": celda.setCellValue(round(ci.getPurchases() * ci.getPurchasesValue(),2));celda.setCellStyle(style2);break;
-        				case "Ventas": celda.setCellValue(round(ci.getSales(),2));celda.setCellStyle(style2);break;
-        				case "Valor Ventas": celda.setCellValue(round(ci.getSales() * ci.getSalesValue(),2));celda.setCellStyle(style2);break;
+        				case "Compras": celda.setCellValue(round(ci.getPurchasesAlb()+ci.getPurchasesFac(),2));celda.setCellStyle(style2);break;
+        				case "Valor Compras": celda.setCellValue(round((ci.getPurchasesAlb() * ci.getPurchasesValueAlb())+(ci.getPurchasesFac() * ci.getPurchasesValueFac()),2));celda.setCellStyle(style2);break;
+        				case "Ventas": celda.setCellValue(round(ci.getSalesAlb()+ ci.getSalesFac(),2));celda.setCellStyle(style2);break;
+        				case "Valor Ventas": celda.setCellValue(round((ci.getSalesAlb() * ci.getSalesValueAlb())+(ci.getSalesFac() * ci.getSalesValueFac()),2));celda.setCellStyle(style2);break;
         				case "Final": celda.setCellValue(round(ci.getFinalQuantity(),2));celda.setCellStyle(style2);break;
         				case "Valor Final": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style2);break;
         				case "Traspaso": celda.setCellValue(round(ci.getTransfersPlus()-ci.getTransfersMinus(),2));celda.setCellStyle(style2);break;

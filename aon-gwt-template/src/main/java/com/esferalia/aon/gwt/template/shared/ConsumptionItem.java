@@ -29,11 +29,15 @@ public class ConsumptionItem implements IsSerializable{
 	Integer warehouseId;
 	String warehouseName;
 	
-	Double sales;
-	Double salesValue;
+	Double salesAlb;
+	Double salesValueAlb;
+	Double salesFac;
+	Double salesValueFac;
 	
-	Double purchases;
-	Double purchasesValue;
+	Double purchasesAlb;
+	Double purchasesValueAlb;
+	Double purchasesFac;
+	Double purchasesValueFac;
 	
 	Double transfersPlus;
 	Double transfersPlusValue;
@@ -87,17 +91,29 @@ public class ConsumptionItem implements IsSerializable{
 	public void setPrice(Double price) {
 		this.price = price;
 	}
-	public Double getSales() {
-		return sales;
+	public Double getSalesAlb() {
+		return salesAlb;
 	}
-	public void setSales(Double sales) {
-		this.sales = sales;
+	public void setSalesAlb(Double sales) {
+		this.salesAlb = sales;
 	}
-	public Double getPurchases() {
-		return purchases;
+	public Double getSalesFac() {
+		return salesFac;
 	}
-	public void setPurchases(Double purchases) {
-		this.purchases = purchases;
+	public void setSalesFac(Double sales) {
+		this.salesFac = sales;
+	}
+	public Double getPurchasesAlb() {
+		return purchasesAlb;
+	}
+	public void setPurchasesAlb(Double purchases) {
+		this.purchasesAlb = purchases;
+	}
+	public Double getPurchasesFac() {
+		return purchasesFac;
+	}
+	public void setPurchasesFac(Double purchases) {
+		this.purchasesFac = purchases;
 	}
 	public Double getTransfersPlus() {
 		return transfersPlus;
@@ -171,17 +187,29 @@ public class ConsumptionItem implements IsSerializable{
 	public void setFinalValue(Double finalValue) {
 		this.finalValue = finalValue;
 	}
-	public Double getSalesValue() {
-		return salesValue;
+	public Double getSalesValueAlb() {
+		return salesValueAlb;
 	}
-	public void setSalesValue(Double salesValue) {
-		this.salesValue = salesValue;
+	public void setSalesValueAlb(Double salesValue) {
+		this.salesValueAlb = salesValue;
 	}
-	public Double getPurchasesValue() {
-		return purchasesValue;
+	public Double getSalesValueFac() {
+		return salesValueFac;
 	}
-	public void setPurchasesValue(Double purchasesValue) {
-		this.purchasesValue = purchasesValue;
+	public void setSalesValueFac(Double salesValue) {
+		this.salesValueFac = salesValue;
+	}
+	public Double getPurchasesValueAlb() {
+		return purchasesValueAlb;
+	}
+	public void setPurchasesValueAlb(Double purchasesValue) {
+		this.purchasesValueAlb = purchasesValue;
+	}
+	public Double getPurchasesValueFac() {
+		return purchasesValueFac;
+	}
+	public void setPurchasesValueFac(Double purchasesValue) {
+		this.purchasesValueFac = purchasesValue;
 	}
 	public Double getTransfersPlusValue() {
 		return transfersPlusValue;
