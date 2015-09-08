@@ -105,13 +105,11 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener{
 					issues.add(selected);
 					
 				}
-				
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub
-				
 			}
 		});
 		

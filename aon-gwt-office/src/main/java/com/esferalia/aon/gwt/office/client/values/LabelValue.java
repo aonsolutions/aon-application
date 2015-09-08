@@ -3,15 +3,28 @@ package com.esferalia.aon.gwt.office.client.values;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum LabelValue {
-	BUG("bug", "bug"),
-	DUPLICATE("duplicate", "duplicate"),
-	ENHANCEMENT("enhancement", "enhancement"),
-	HELP_WANTED("helpWanted", "helpWanted"),
-	HOT_FIX("hotFix", "hotFix"),
-	INVALID("invalid", "invalid"),
-	QA_SUCCESS("qaSuccess", "qaSuccess"),
-	QUESTION("question", "question"),
-	WONT_FIX("wontFix", "wontFix")
+	ACADEMY("ACD", "Academy"),	
+	BUG("BUG", "Bug"),
+	COMERCIAL("COMER", "Comercial"),
+	CONFIGURACION("CONF", "Configuracion"),
+	CONTABILIDAD("CONT", "Contabilidad"),
+	DOCUMENTAL("DOC", "Documental"),	
+	DUPLICATE("DUP", "Duplicar"),
+	ENHANCEMENT("ENH", "Mejorar"),
+	EXPEDIENTES("EXP", "Expedientes"),
+	FISCAL("FIS", "Fiscal"),
+	GESTION("GEST", "Gestion"),	
+	HELP_WANTED("HELP", "Ayuda"),
+	HOT_FIX("HOTFIX", "HotFix"),
+	HOTEL("HOT", "Hotel"),	
+	INVALID("INV", "Invalid"),
+	LABORAL("LAB", "Laboral"),
+	MARKETING("MARK", "Marketing"),
+	MARKET_PLACE("MP", "MarketPlace"),
+	QA_SUCCESS("QAS", "qaSuccess"),
+	QUESTION("QUEST", "Pregunta"),
+	TESORERIA("TESO", "Tesoreria"),
+	WONT_FIX("WNTFIX", "WontFix")
 	;
 	
 	private String value;

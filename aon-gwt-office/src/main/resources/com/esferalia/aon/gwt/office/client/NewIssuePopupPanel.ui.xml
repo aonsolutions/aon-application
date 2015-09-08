@@ -34,7 +34,6 @@
 						title="Agrega etiquetas para el nuevo tema" ui:field="addLabelsButton" />
 				</g:customCell>
 			</g:row>
-
 		</g:Grid>
 
 		<g:TextArea ui:field="bodyTextArea" width="100%" />
