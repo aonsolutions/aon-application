@@ -54,17 +54,9 @@
 									<aon:commandButton id="salesTransfer-accept"
 										value="#{bundle.warehouse_delivery_to_transfer}"
 										rendered="#{delivery.salesTransferManager.salesModel.rowCount > 0}"
-										reRender="showSalesTransferWindow,deliveryForm"
+										reRender="showSalesTransferWindow,deliveryForm,showConfirmWindow"
 										actionListener="#{delivery.onSalesTransfer}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
-										<rich:componentControl for="salesTransferModalPanel"
-											event="onclick" operation="hide"/>																					
-										<f:setPropertyActionListener
-											target="#{delivery.showSalesTransferWindow}"
-											value="#{false}" />
-										<f:setPropertyActionListener
-											target="#{delivery.salesTransferManager}"
-											value="#{null}" />
 									</aon:commandButton>
 									<aon:commandButton id="salesTransfer-cancel"
 										value="#{bundle.aon_cancel}"
@@ -152,7 +144,8 @@
 											var="to" rows="0" rendered="#{delivery.salesTransferManager.detailModel.rowCount > 0}"
 											columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
 												aon-editDataTable-numberColumn, aon-editDataTable-numberColumn, 
-												aon-editDataTable-numberColumn, aon-editDataTable-numberColumn">
+												aon-editDataTable-numberColumn, aon-editDataTable-numberColumn, 
+												aon-editDataTable-iconColumn">
 	
 											<aon:column>
 												<f:facet name="header">
@@ -207,8 +200,35 @@
 												</f:facet>
 												<aon:inputText id="transfered"
 													value="#{to.transfered}" size="4"
-													valueChangeListener="#{delivery.salesTransferManager.onTransferedChanged}"
-													reRender="salesData,detailDataContainer" ajaxSingle="true" />	
+													rendered="#{!to.item.wildCard}"
+													reRender="salesData,detailDataContainer" ajaxSingle="true"
+													actionListener="#{delivery.salesTransferManager.onTransferedChanged}" />	
+											</aon:column>
+											
+											<aon:column id="buttonColumn">
+												<f:facet name="header">
+													<h:outputText value="&#160;" />
+												</f:facet>
+												<aon:div>
+													<aon:outputText value="&#160;&#160;&#160;"
+														rendered="#{delivery.salesTransferManager.transferedGreatherThanPending}" 
+														styleClass="aon-padding-right aon-icon-point-orange" 
+														title="#{bundle.warehouse_income_transfered_gt_quantity}" />
+													
+													<aon:commandButton value="&#160;" immediate="true"
+														rendered="#{delivery.salesTransferManager.detailRowChecked and delivery.salesTransferManager.transferedLessThanPending}" 
+														title="#{(to.forcePendingQuantityCancel)?(bundle.warehouse_income_purchase_product_transfered):(bundle.warehouse_income_purchase_product_pending)}"
+														styleClass="aon-icon-commandButton #{(to.forcePendingQuantityCancel)?('aon-icon-point-red'):('aon-icon-point-light-green')}"
+														actionListener="#{delivery.salesTransferManager.detailToCloseRowSelected}"
+														reRender="buttonColumn" ajaxSingle="true">
+													</aon:commandButton>
+													
+													<aon:outputText value="&#160;"
+														title="#{bundle.product_item_serializable_wildcard_error}"
+														rendered="#{to.item.wildCard}"
+														styleClass="aon-finding-toolbar-item aon-icon-errorwarning aon-finding-toolbar-item-no-border" />
+													
+												</aon:div>
 											</aon:column>
 	
 										</aon:dataTable>

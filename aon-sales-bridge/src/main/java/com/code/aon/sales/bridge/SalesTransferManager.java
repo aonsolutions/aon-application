@@ -125,6 +125,21 @@ public class SalesTransferManager implements Serializable {
 		return detailList;
 	}
 
+	public void onTransferedChanged(ActionEvent event) {
+		SalesDetail salesDetail = (SalesDetail) getDetailModel().getRowData();
+		if(salesDetail.getPendingQuantity() > 0 && salesDetail.getTransfered() < 0 ){
+			salesDetail.setTransfered(0);
+		} else if( salesDetail.getPendingQuantity() < 0 && salesDetail.getTransfered() > 0 ){
+			salesDetail.setTransfered(0);
+		}
+		if( salesDetail.getTransfered()!=0 && !detailChecks.contains(salesDetail)){
+			detailChecks.add(salesDetail);
+		} else if(Math.signum(salesDetail.getPendingQuantity()) != Math.signum(salesDetail.getTransfered()) 
+				&& salesDetail.getTransfered()!=0 && detailChecks.contains(salesDetail)){
+			detailChecks.remove(salesDetail);
+		}
+		salesDetail.setForcePendingQuantityCancel(false);
+	}
 	public void onTransferedChanged(ValueChangeEvent event) {
 		double value = (event.getNewValue()!=null) ? ((Double)event.getNewValue()).doubleValue() : 0;
 		selectDetailRow(value > 0);
@@ -263,6 +278,38 @@ public class SalesTransferManager implements Serializable {
 				detailChecks.remove(detail);
 			}
 		}
+	}
+	
+	public boolean isTransferedGreatherThanPending() {
+		return isTransferedGreatherThanPending((SalesDetail) getDetailModel().getRowData());
+	}
+	
+	public boolean isTransferedGreatherThanPending(SalesDetail salesDetail) {
+		if( (salesDetail.getPendingQuantity() > 0 && salesDetail.getTransfered() > salesDetail.getPendingQuantity())
+				|| (salesDetail.getPendingQuantity() < 0 && salesDetail.getTransfered() < salesDetail.getPendingQuantity()) ){
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isTransferedLessThanPending() {
+		return isTransferedLessThanPending((SalesDetail) getDetailModel().getRowData());
+	}
+
+	public boolean isTransferedLessThanPending(SalesDetail salesDetail) {
+		if( salesDetail.getTransfered() < salesDetail.getPendingQuantity() ){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * PURCHASE DETAIL TO CLOSE CHECK LIST CONTROL
+	 */
+	
+	public void detailToCloseRowSelected(ActionEvent event){
+		SalesDetail detail = (SalesDetail)detailModel.getRowData();
+		detail.setForcePendingQuantityCancel(!detail.isForcePendingQuantityCancel());
 	}
 
 }

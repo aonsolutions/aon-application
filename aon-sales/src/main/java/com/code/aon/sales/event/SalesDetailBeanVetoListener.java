@@ -35,7 +35,10 @@ public class SalesDetailBeanVetoListener extends ManagerBeanVetoListenerAdapter 
 	}
 
 	private void checkSalesDetail(SalesDetail salesDetail) throws ManagerBeanVetoListenerException {
-		if (salesDetail.getDelivered() == 0) {
+		if (salesDetail.isForcePendingQuantityCancel()) {
+			salesDetail.setQuantity(salesDetail.getDelivered());
+			salesDetail.setStatus(SalesDetailStatus.SETTLED);
+		} else if (salesDetail.getDelivered() == 0) {
 			salesDetail.setStatus(SalesDetailStatus.PENDING);
 		} else if ( Math.abs(salesDetail.getDelivered()) >= Math.abs(salesDetail.getQuantity()) ) {
 			salesDetail.setQuantity(salesDetail.getDelivered());

@@ -149,7 +149,8 @@ public class DeliveryManager {
 			HibernateUtil.beginTransaction(sessionName);
 
 			for (SalesDetail salesDetail : salesDetailList) {
-				if (salesDetail.getTransfered() > 0) {
+				if ((salesDetail.getPendingQuantity() > 0 && salesDetail.getTransfered() >= 0) 
+						|| (salesDetail.getPendingQuantity() < 0 && salesDetail.getTransfered() <= 0)) {
 					transferSalesDetail(sessionName, delivery, salesDetail, warehouse);
 				}
 			}
@@ -173,6 +174,9 @@ public class DeliveryManager {
 	}
 
 	private DeliveryDetail transferSalesDetail(String sessionName, Delivery delivery, SalesDetail salesDetail, Warehouse warehouse) throws ManagerBeanException {
+		Double transferQuantity = salesDetail.getTransfered();
+		boolean forcePendingQuantityCancel = salesDetail.isForcePendingQuantityCancel();
+		
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 		DeliveryDetail deliveryDetail = new DeliveryDetail();
 		deliveryDetail.setDelivery(delivery);
@@ -184,8 +188,10 @@ public class DeliveryManager {
 		deliveryDetail.setPrice(salesDetail.getPrice());
 		deliveryDetail.setDiscountExpression(salesDetail.getDiscountExpression());
 		deliveryDetail.setSalesDetail(salesDetail);
-		deliveryDetailBean.restoreNullSubPOJOs(deliveryDetail);
-		deliveryDetail = (DeliveryDetail)deliveryDetailBean.insert(deliveryDetail);
+		if (transferQuantity != 0) {
+			deliveryDetailBean.restoreNullSubPOJOs(deliveryDetail);
+			deliveryDetail = (DeliveryDetail)deliveryDetailBean.insert(deliveryDetail);
+		}
 
 		Project salesProject = salesDetail.getSales().getProject();
 		if ((delivery.getProject() == null || delivery.getProject().getId() == null) && salesProject != null && salesProject.getId() != null ) {
@@ -197,7 +203,9 @@ public class DeliveryManager {
 		}
 
 		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
-		salesDetail.setDelivered(CommonUtil.round(salesDetail.getDelivered() + salesDetail.getTransfered(), 3));
+		salesDetail = (SalesDetail) salesDetailBean.get(salesDetail.getId());
+		salesDetail.setForcePendingQuantityCancel(forcePendingQuantityCancel);
+		salesDetail.setDelivered(CommonUtil.round(salesDetail.getDelivered() + transferQuantity, 3));
 		salesDetail.setStatus((salesDetail.getPendingQuantity() > 0) ? SalesDetailStatus.PARTIAL_SETTLED : SalesDetailStatus.SETTLED);
 		salesDetailBean.restoreNullSubPOJOs(salesDetail);
 		salesDetail = (SalesDetail)HibernateUtil.getSession(sessionName).merge(salesDetail);	

@@ -397,6 +397,9 @@
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/modalTransfer.xhtml" />
+		<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/modalConfirm.xhtml" >
+			<ui:param name="controller" value="#{delivery}" />
+		</ui:include>
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/modalInvoice.xhtml" />
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/shared/modalWarehouseChange.xhtml">
 			<ui:param name="controller" value="#{delivery}" />

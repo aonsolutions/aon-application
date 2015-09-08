@@ -19,6 +19,7 @@ public class SalesDetail extends SalesDetailDB implements ICalculable, IAuditabl
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     private double transfered;
+    private boolean forcePendingQuantityCancel;
 
     public void setPrice(double price) {
         super.setPrice(CommonUtil.round(price, 4));
@@ -30,12 +31,17 @@ public class SalesDetail extends SalesDetailDB implements ICalculable, IAuditabl
 	}
 	@Transient
 	public double getTransfered() {
-		double pending = getPendingQuantity();
-		transfered = transfered > pending ? pending : transfered;
 		return transfered;
 	}
 	public void setTransfered(double transfered) {
 		this.transfered = transfered;
+	}
+	@Transient
+	public boolean isForcePendingQuantityCancel() {
+		return forcePendingQuantityCancel;
+	}
+	public void setForcePendingQuantityCancel(boolean forcePendingQuantityCancel) {
+		this.forcePendingQuantityCancel = forcePendingQuantityCancel;
 	}
 
 	@Transient

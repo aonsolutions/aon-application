@@ -41,6 +41,7 @@ import com.code.aon.ql.Projection;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.sales.Sales;
+import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.bridge.DeliveryManager;
 import com.code.aon.sales.bridge.SalesTransferManager;
 import com.code.aon.sales.enumeration.SalesStatus;
@@ -85,6 +86,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	private int invoiceNumber;
 	private Date invoiceDate;
 	private String selectedTab;
+	private boolean showConfirmWindow;
 	private boolean showAuditInfoWindow;
 	private boolean showWarehouseChangeWindow;
 	private Warehouse newWarehouse;
@@ -206,6 +208,13 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		this.selectedTab = selectedTab;
 	}
 
+	public boolean isShowConfirmWindow() {
+		return showConfirmWindow;
+	}
+	public void setShowConfirmWindow(boolean showConfirmWindow) {
+		this.showConfirmWindow = showConfirmWindow;
+	}
+	
 	public boolean isShowAuditInfoWindow() {
 		return showAuditInfoWindow;
 	}
@@ -518,7 +527,38 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		}
 	}
 
-	public void onSalesTransfer(ActionEvent event) {
+	public boolean isTransferedGreatherThanPending() {
+		Iterator<SalesDetail> iterator = getSalesTransferManager().getCheckedDetails().iterator();
+		boolean transferedGreatherThanPending = false;
+		while (iterator.hasNext() && !transferedGreatherThanPending) {
+			transferedGreatherThanPending = getSalesTransferManager().isTransferedGreatherThanPending((SalesDetail)iterator.next());
+		}
+		return transferedGreatherThanPending;
+	}
+
+	public boolean isExistsDetailToCancel() {
+		Iterator<SalesDetail> iterator = getSalesTransferManager().getCheckedDetails().iterator();
+		while (iterator.hasNext()) {
+			if(((SalesDetail)iterator.next()).isForcePendingQuantityCancel()){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean checkConfirmWindowShow(){
+		return isTransferedGreatherThanPending() || isExistsDetailToCancel();
+	}
+	
+	public void onSalesTransfer(ActionEvent event) throws ManagerBeanException {
+		if (checkConfirmWindowShow()) {
+			setShowConfirmWindow(true);
+		} else {
+			confirmSalesTrasfer(event);
+		}
+	}
+
+	public void confirmSalesTrasfer(ActionEvent event) throws ManagerBeanException {
 		try {
 			DeliveryManager deliveryManager = new DeliveryManager();
 			deliveryManager.transferSalesDetails((Delivery)this.getTo(), getSalesTransferManager().getCheckedDetails(), getWarehouse());
@@ -529,6 +569,9 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
+		} finally {
+			setShowSalesTransferWindow(false);
+			setSalesTransferManager(null);
 		}
 	}
 	
