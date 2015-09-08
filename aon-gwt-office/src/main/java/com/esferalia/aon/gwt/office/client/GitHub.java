@@ -2,8 +2,8 @@ package com.esferalia.aon.gwt.office.client;
 
 import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.JSON;
-import com.esferalia.aon.gwt.office.client.models.issues.Issue;
-import com.esferalia.aon.gwt.office.client.models.repos.Repo;
+import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
+import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
 import com.esferalia.aon.gwt.office.client.values.RepoValue;
 import com.esferalia.aon.gwt.office.client.values.Value;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
@@ -39,39 +39,39 @@ public class GitHub {
 	
 	// *********** REPOSITORIES ***********
 	
-    public void getRepos(AsyncCallback<JSON<Repo>> callback) {
+    public void getRepos(AsyncCallback<JSON<JsRepo>> callback) {
         get(baseUrl + "user/repos", callback);
     }
 
-    public void getRepos(String user, AsyncCallback<JSON<Repo>> callback) {
+    public void getRepos(String user, AsyncCallback<JSON<JsRepo>> callback) {
         get(baseUrl + "users/" + URL.encode(user) + "/repos", callback);
     }
 
-    public void getRepo(String login, String name, AsyncCallback<AJSON<Repo>> callback) {
+    public void getRepo(String login, String name, AsyncCallback<AJSON<JsRepo>> callback) {
         get(baseUrl + "repos/" + URL.encode(login) + "/" + URL.encode(name), callback);
     }
     
-    public void saveRepo(Repo r, RepoValue prop, AsyncCallback<Repo> callback) {
+    public void saveRepo(JsRepo r, RepoValue prop, AsyncCallback<JsRepo> callback) {
         post(r.getUrl(), prop, callback);
     }
 
 	
 	// ************** ISSUES **************
 	
-    public void getIssues(String user, String r, AsyncCallback<JSON<Issue>> callback) {
+    public void getIssues(String user, String r, AsyncCallback<JSON<JsIssue>> callback) {
         get(baseUrl + "repos/" + user + "/" + r + "/issues", callback);
     }
 
-    public void getIssues(Repo r, AsyncCallback<JSON<Issue>> callback) {
+    public void getIssues(JsRepo r, AsyncCallback<JSON<JsIssue>> callback) {
         get(r.getUrl() + "/issues", callback);
     }
 
-    public void createIssue(Repo r, IssueValue prop, final AsyncCallback<Issue> callback) {
+    public void createIssue(JsRepo r, IssueValue prop, final AsyncCallback<JsIssue> callback) {
         post(r.getUrl() + "/issues", prop, callback);
     }
 
-    public void editIssue(Repo r, Issue issue, IssueValue prop,
-            final AsyncCallback<Issue> callback) {
+    public void editIssue(JsRepo r, JsIssue issue, IssueValue prop,
+            final AsyncCallback<JsIssue> callback) {
         if (issue == null) {
             createIssue(r, prop, callback);
         } else {

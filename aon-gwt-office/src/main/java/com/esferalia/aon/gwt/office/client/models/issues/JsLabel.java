@@ -2,9 +2,9 @@ package com.esferalia.aon.gwt.office.client.models.issues;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
-public class Label extends JavaScriptObject {
+public class JsLabel extends JavaScriptObject {
 
-	protected Label() {
+	protected JsLabel() {
 	}
 
 	public final native String getColor() /*-{

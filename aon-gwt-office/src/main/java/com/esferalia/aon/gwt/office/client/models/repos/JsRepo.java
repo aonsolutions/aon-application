@@ -4,17 +4,17 @@ import java.util.Date;
 
 import com.esferalia.aon.gwt.office.client.GitHub;
 import com.esferalia.aon.gwt.office.client.models.AJSON;
-import com.esferalia.aon.gwt.office.client.models.issues.Label;
-import com.esferalia.aon.gwt.office.client.models.users.User;
+import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
+import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class Repo extends JavaScriptObject {
+public class JsRepo extends JavaScriptObject {
 	
-	protected Repo() {
+	protected JsRepo() {
 	}
 
 	public final native String getMirrorUrl() /*-{
@@ -97,7 +97,7 @@ public class Repo extends JavaScriptObject {
 		return this["private"];
 	}-*/;
 
-	public final native User getOwner() /*-{
+	public final native JsUser getOwner() /*-{
 		return this.owner;
 	}-*/;
 
@@ -158,11 +158,11 @@ public class Repo extends JavaScriptObject {
 
 	// single only
 
-	public final native User getOrganization() /*-{
+	public final native JsUser getOrganization() /*-{
 		return this.organization;
 	}-*/;
 
-	public final void getLabels(final AsyncCallback<AJSON<JsArray<Label>>> callback) {
+	public final void getLabels(final AsyncCallback<AJSON<JsArray<JsLabel>>> callback) {
 		
 		final String labelsUrl = getLabelsUrl();
 		int finalPosition = labelsUrl.indexOf("{/name}");

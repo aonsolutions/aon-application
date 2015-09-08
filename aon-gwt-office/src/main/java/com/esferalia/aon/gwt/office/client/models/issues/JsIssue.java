@@ -2,12 +2,12 @@ package com.esferalia.aon.gwt.office.client.models.issues;
 
 import java.util.Date;
 
-import com.esferalia.aon.gwt.office.client.models.users.User;
+import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 
-public class Issue extends JavaScriptObject {
-	protected Issue() {
+public class JsIssue extends JavaScriptObject {
+	protected JsIssue() {
 	}
 
 	public final native int getNumber() /*-{
@@ -30,7 +30,7 @@ public class Issue extends JavaScriptObject {
 		return this.state;
 	}-*/;
 
-	public final native User getUser() /*-{
+	public final native JsUser getUser() /*-{
 		return this.user;
 	}-*/;
 
@@ -50,7 +50,7 @@ public class Issue extends JavaScriptObject {
 		return this.comments;
 	}-*/;
 
-	public final native User getAssignee() /*-{
+	public final native JsUser getAssignee() /*-{
 		return this.assignee;
 	}-*/;
 
@@ -58,11 +58,11 @@ public class Issue extends JavaScriptObject {
 		return this.id;
 	}-*/;
 
-	public final native Milestone getMilestone() /*-{
+	public final native JsMilestone getMilestone() /*-{
 		return this.milestone;
 	}-*/;
 
-	public final native JsArray<Label> getLabels() /*-{
+	public final native JsArray<JsLabel> getLabels() /*-{
 		return this.labels;
 	}-*/;
 

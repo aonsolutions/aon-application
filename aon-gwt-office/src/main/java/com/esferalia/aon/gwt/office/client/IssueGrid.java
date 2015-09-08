@@ -7,8 +7,8 @@ import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
-import com.esferalia.aon.gwt.office.client.models.issues.Issue;
-import com.esferalia.aon.gwt.office.client.models.issues.Label;
+import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
+import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ClickableTextCell;
@@ -64,13 +64,13 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 	public static class DefaultAonIssuesSelected implements IssueSelected {
 
-		private Issue issue;
+		private JsIssue issue;
 
-		public DefaultAonIssuesSelected(Issue issue) {
+		public DefaultAonIssuesSelected(JsIssue issue) {
 			setIssue(issue);
 		}
 
-		private void setIssue(Issue issue) {
+		private void setIssue(JsIssue issue) {
 			this.issue = issue;
 		}
 
@@ -115,14 +115,14 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		}
 
 		@Override
-		public JsArray<Label> getLabels() {
+		public JsArray<JsLabel> getLabels() {
 			return issue.getLabels();
 		}
 	}
 	
 	public static class IssueLoadSelected extends DefaultAonIssuesSelected {
 
-		public IssueLoadSelected(Issue issue) {			
+		public IssueLoadSelected(JsIssue issue) {			
 			super(issue);
 		}
 	}

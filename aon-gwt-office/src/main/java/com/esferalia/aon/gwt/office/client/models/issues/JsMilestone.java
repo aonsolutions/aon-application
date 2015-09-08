@@ -2,14 +2,14 @@ package com.esferalia.aon.gwt.office.client.models.issues;
 
 import java.util.Date;
 
-import com.esferalia.aon.gwt.office.client.models.users.User;
+import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 
-public class Milestone extends JavaScriptObject {
+public class JsMilestone extends JavaScriptObject {
 
-	protected Milestone() {
+	protected JsMilestone() {
 	}
 
 	public final native String getTitle() /*-{
@@ -36,7 +36,7 @@ public class Milestone extends JavaScriptObject {
 		return this.url;
 	}-*/;
 
-	public final native User getCreator() /*-{
+	public final native JsUser getCreator() /*-{
 		return this.creator;
 	}-*/;
 

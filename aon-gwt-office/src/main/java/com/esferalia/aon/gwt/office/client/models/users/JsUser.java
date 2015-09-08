@@ -2,9 +2,9 @@ package com.esferalia.aon.gwt.office.client.models.users;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
-public class User extends JavaScriptObject {
+public class JsUser extends JavaScriptObject {
 	
-	protected User() {}
+	protected JsUser() {}
 	
 	public final native String getLogin() /*-{ 
 		return this.login; 

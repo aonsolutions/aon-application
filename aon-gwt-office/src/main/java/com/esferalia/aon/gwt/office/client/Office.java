@@ -9,9 +9,9 @@ import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.JSON;
-import com.esferalia.aon.gwt.office.client.models.issues.Issue;
-import com.esferalia.aon.gwt.office.client.models.issues.Label;
-import com.esferalia.aon.gwt.office.client.models.repos.Repo;
+import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
+import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
+import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
@@ -48,9 +48,9 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener{
 	@UiField
 	Button newIssue;
 	
-	private Repo repo;
+	private JsRepo repo;
 	private List<IssueSelected> issues;
-	private Map<Integer, Repo> repositories;
+	private Map<Integer, JsRepo> repositories;
 	
 	public Office() {
 		Widget ui = uiBinder.createAndBindUi(this);
@@ -67,7 +67,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener{
 		this.dockPanel.setSize("100%", "100%");
 		this.dataGrid.addListener(this);
 		
-		this.repositories = new HashMap<Integer, Repo>();
+		this.repositories = new HashMap<Integer, JsRepo>();
 		
 		ListDataProvider<IssueSelected> listIssuesProvider = new ListDataProvider<IssueSelected>();
 		listIssuesProvider.addDataDisplay(dataGrid);
@@ -75,7 +75,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener{
 		
 		GitHub gitHub = new GitHub();
 		
-		gitHub.getRepos("amtzdelagos", new AsyncCallback<JSON<Repo>>() {
+		gitHub.getRepos("amtzdelagos", new AsyncCallback<JSON<JsRepo>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -84,16 +84,16 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener{
 			}
 
 			@Override
-			public void onSuccess(JSON<Repo> result) {
+			public void onSuccess(JSON<JsRepo> result) {
 				if (result != null) {
 					for (int z = 0; z < result.getData().length(); z++) {						
-						Repo repo = result.getData().get(z);
+						JsRepo repo = result.getData().get(z);
 						Office.this.repositories.put(repo.getId(), repo);						
 						Office.this.repoListBox.addItem(repo.getName(), String.valueOf(repo.getId()));
 						Office.this.repo = repo;
 					}
 					
-					repo.getLabels(new AsyncCallback<AJSON<JsArray<Label>>>() {
+					repo.getLabels(new AsyncCallback<AJSON<JsArray<JsLabel>>>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -102,7 +102,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener{
 						}
 
 						@Override
-						public void onSuccess(AJSON<JsArray<Label>> result) {
+						public void onSuccess(AJSON<JsArray<JsLabel>> result) {
 							
 						}
 					});
@@ -110,10 +110,10 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener{
 			}
 		});
 		
-		gitHub.getIssues("amtzdelagos", "aon-GwtOffice", new AsyncCallback<JSON<Issue>>() {
+		gitHub.getIssues("amtzdelagos", "aon-GwtOffice", new AsyncCallback<JSON<JsIssue>>() {
 			
 			@Override
-			public void onSuccess(JSON<Issue> result) {
+			public void onSuccess(JSON<JsIssue> result) {
 				
 				for (int x = 0; x < result.getData().length(); x++) {
 					

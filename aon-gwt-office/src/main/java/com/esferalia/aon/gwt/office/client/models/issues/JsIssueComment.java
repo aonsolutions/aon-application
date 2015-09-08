@@ -2,14 +2,14 @@ package com.esferalia.aon.gwt.office.client.models.issues;
 
 import java.util.Date;
 
-import com.esferalia.aon.gwt.office.client.models.users.User;
+import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 
-public class IssueComment extends JavaScriptObject {
+public class JsIssueComment extends JavaScriptObject {
 
-	protected IssueComment() {
+	protected JsIssueComment() {
 	}
 
 	public final native String getUrl() /*-{
@@ -20,7 +20,7 @@ public class IssueComment extends JavaScriptObject {
 		return this.body;
 	}-*/;
 
-	public final native User getUser() /*-{
+	public final native JsUser getUser() /*-{
 		return this.user;
 	}-*/;
 
