@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.office.client;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
@@ -45,6 +48,8 @@ public class NewIssuePopupPanel extends CustomDialog {
 	public NewIssuePopupPanel() {
 		
 		images = GWT.create(Images.class);
+		
+		
 
 		setCaption("Nueva Incidencia");
 		setWidget(uiBinder.createAndBindUi(this));

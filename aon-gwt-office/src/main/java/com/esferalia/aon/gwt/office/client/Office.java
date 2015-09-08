@@ -7,11 +7,14 @@ import java.util.Map;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.Issue;
+import com.esferalia.aon.gwt.office.client.models.issues.Label;
 import com.esferalia.aon.gwt.office.client.models.repos.Repo;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -76,8 +79,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener{
 
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert("Error al obtener los respositorios. "
-						+ "Amo a tene que revisar porque no esta bien."
+				Window.alert("Error al obtener los respositorios. "						
 						+ " " + caught.getMessage());
 			}
 
@@ -90,6 +92,20 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener{
 						Office.this.repoListBox.addItem(repo.getName(), String.valueOf(repo.getId()));
 						Office.this.repo = repo;
 					}
+					
+					repo.getLabels(new AsyncCallback<AJSON<JsArray<Label>>>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							// TODO Auto-generated method stub
+							
+						}
+
+						@Override
+						public void onSuccess(AJSON<JsArray<Label>> result) {
+							
+						}
+					});
 				}
 			}
 		});

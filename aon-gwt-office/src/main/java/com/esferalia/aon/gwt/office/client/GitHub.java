@@ -17,14 +17,13 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.jsonp.client.JsonpRequestBuilder;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class GitHub {
 	
-	private String accessToken = null;
+	private static String accessToken = null;
 	private String baseUrl = "https://api.github.com/";
-	private boolean authorized = false;
+	private static boolean authorized = false;
 	
 	public void setGitHubUrl (String url) {
 		this.baseUrl = url;
@@ -81,9 +80,9 @@ public class GitHub {
     }
 	
 	
-    // ********* PRIVATE METHODS ***********
+    // ********* PUBLIC STATIC METHODS ***********
     
-    private <T extends JavaScriptObject> AsyncCallback<T> hookCallback(final AsyncCallback<T> callback) {
+    private static <T extends JavaScriptObject> AsyncCallback<T> hookCallback(final AsyncCallback<T> callback) {
         return new AsyncCallback<T>() {
             @Override
             public void onSuccess(T result) {
@@ -98,7 +97,7 @@ public class GitHub {
         };
     }
 
-    private <T extends JavaScriptObject> void get(String url, final AsyncCallback<T> callback) {
+    public static final<T extends JavaScriptObject> void get(String url, final AsyncCallback<T> callback) {
         String requestUrl = makeRequestUrl(url);
         GWT.log("[GET]" + requestUrl);
         JsonpRequestBuilder jsonp = new JsonpRequestBuilder();
@@ -137,7 +136,7 @@ public class GitHub {
         }
     }
 
-    private String makeRequestUrl(String url) {
+    private static String makeRequestUrl(String url) {
         String prefix = "?";
         if (url.contains("?")) {
             prefix = "&";

@@ -2,12 +2,18 @@ package com.esferalia.aon.gwt.office.client.models.repos;
 
 import java.util.Date;
 
+import com.esferalia.aon.gwt.office.client.GitHub;
+import com.esferalia.aon.gwt.office.client.models.AJSON;
+import com.esferalia.aon.gwt.office.client.models.issues.Label;
 import com.esferalia.aon.gwt.office.client.models.users.User;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class Repo extends JavaScriptObject {
+	
 	protected Repo() {
 	}
 
@@ -53,6 +59,10 @@ public class Repo extends JavaScriptObject {
 
 	public final native String getGitUrl() /*-{
 		return this.git_url;
+	}-*/;
+
+	public final native String getLabelsUrl() /*-{
+		return this.labels_url;
 	}-*/;
 
 	public final native boolean hasWiki() /*-{
@@ -151,5 +161,15 @@ public class Repo extends JavaScriptObject {
 	public final native User getOrganization() /*-{
 		return this.organization;
 	}-*/;
+
+	public final void getLabels(final AsyncCallback<AJSON<JsArray<Label>>> callback) {
+		
+		final String labelsUrl = getLabelsUrl();
+		int finalPosition = labelsUrl.indexOf("{/name}");
+		
+		final String url = labelsUrl.substring(0, finalPosition);
+		
+		GitHub.get(url, callback);
+	}
 
 }
