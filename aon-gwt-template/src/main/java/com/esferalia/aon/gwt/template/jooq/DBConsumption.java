@@ -97,14 +97,12 @@ public class DBConsumption {
 					.and(INCOME.ISSUE_TIME.lessOrEqual(finalDate))
 					.fetch();
 			
-			Double valorPAlb = 0.0;
-			
 			for (Record3<Integer, Double, Double> record : data3) {
 				if (record.value1() != null) {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1());
-							valorPAlb = record.value2() * record.value3();
+							ci.setValuePAlb(record.value2() * record.value3());
 							ci.setPurchasesAlb(record.value2());
 							ci.setPurchasesValueAlb(record.value3());
 							map.put(ci.getItemId(), ci);
@@ -112,9 +110,9 @@ public class DBConsumption {
 					}
 					else{
 						ConsumptionItem ci = map.get(record.value1());
-						valorPAlb = valorPAlb + (record.value2() * record.value3());
+						ci.setValuePAlb(ci.getValuePAlb() + (record.value2() * record.value3()));
 						ci.setPurchasesAlb(ci.getPurchasesAlb()+record.value2());
-						ci.setPurchasesValueAlb(valorPAlb / ci.getPurchasesAlb());
+						ci.setPurchasesValueAlb(ci.getValuePAlb() / ci.getPurchasesAlb());
 						//ci.setPurchasesValueAlb(ci.getPurchasesValueAlb()+record.value3());
 						map.replace(ci.getItemId(), ci);
 					}
@@ -133,13 +131,12 @@ public class DBConsumption {
 					.and(INVOICE.ISSUE_DATE.lessOrEqual(finalDate))
 					.fetch();
 
-			Double valorPFac = 0.0;
 			for (Record3<Integer, Double, Double> record : data4) {
 				if (record.value1() != null) {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1());
-							valorPFac = record.value2() * record.value3();
+							ci.setValuePFac(record.value2() * record.value3());
 							ci.setPurchasesFac(record.value2());
 							ci.setPurchasesValueFac(record.value3());
 							map.put(ci.getItemId(), ci);
@@ -147,9 +144,9 @@ public class DBConsumption {
 					}
 					else{
 						ConsumptionItem ci = map.get(record.value1());
-						valorPFac = valorPFac + (record.value2() * record.value3());
+						ci.setValuePFac(ci.getValuePFac() + (record.value2() * record.value3()));
 						ci.setPurchasesFac(ci.getPurchasesFac()+record.value2());
-						ci.setPurchasesValueFac(valorPFac / ci.getPurchasesFac());
+						ci.setPurchasesValueFac(ci.getValuePFac() / ci.getPurchasesFac());
 						//ci.setPurchasesValueFac(ci.getPurchasesValueFac()+record.value3());
 						map.replace(ci.getItemId(), ci);
 					}
@@ -166,14 +163,12 @@ public class DBConsumption {
 					.and(DELIVERY.ISSUE_TIME.lessOrEqual(new Timestamp(finalDate.getTime())))
 					.fetch();
 
-			Double valorSAlb = 0.0;
-
 			for (Record3<Integer, Double, Double> record : data5) {
 				if (record.value1() != null) {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1());
-							valorSAlb = record.value2() * record.value3();
+							ci.setValueSAlb(record.value2() * record.value3());
 							ci.setSalesAlb(record.value2());
 							ci.setSalesValueAlb(record.value3());
 							map.put(ci.getItemId(), ci);
@@ -181,9 +176,9 @@ public class DBConsumption {
 					}
 					else{
 						ConsumptionItem ci = map.get(record.value1());
-						valorSAlb = valorSAlb + (record.value2() * record.value3());
+						ci.setValueSAlb(ci.getValueSAlb() + (record.value2() * record.value3()));
 						ci.setSalesAlb(ci.getSalesAlb()+record.value2());
-						ci.setSalesValueAlb(valorSAlb / ci.getSalesAlb());
+						ci.setSalesValueAlb(ci.getValueSAlb() / ci.getSalesAlb());
 						//ci.setSalesValueAlb(ci.getSalesValueAlb()+ record.value3());
 						map.replace(ci.getItemId(), ci);
 					}
@@ -201,15 +196,13 @@ public class DBConsumption {
 					.and(INVOICE.ISSUE_DATE.greaterOrEqual(initialDate))
 					.and(INVOICE.ISSUE_DATE.lessOrEqual(finalDate))
 					.fetch();
-
-			Double valorSFac = 0.0;
 			
 			for (Record3<Integer, Double, Double> record : data6) {
 				if (record.value1() != null) {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1());
-							valorSFac = record.value2() * record.value3();
+							ci.setValueSFac(record.value2() * record.value3());
 							ci.setSalesFac(record.value2());
 							ci.setSalesValueFac(record.value3());
 							map.put(ci.getItemId(), ci);
@@ -217,9 +210,9 @@ public class DBConsumption {
 					}
 					else{
 						ConsumptionItem ci = map.get(record.value1());
-						valorSFac = valorSFac + (record.value2() * record.value3());
+						ci.setValueSFac(ci.getValueSFac() + (record.value2() * record.value3()));
 						ci.setSalesFac(ci.getSalesFac()+record.value2());
-						ci.setSalesValueFac(valorSFac / ci.getSalesFac());
+						ci.setSalesValueFac(ci.getValueSFac() / ci.getSalesFac());
 						//ci.setSalesValueFac(ci.getSalesValueFac()+ record.value3());
 						map.replace(ci.getItemId(), ci);
 					}
@@ -322,6 +315,11 @@ public class DBConsumption {
 		ci.setTransfersMinusValue(0.0);
 		ci.setTransfersPlusValue(0.0);
 		ci.setFinalValue(0.0);
+		
+		ci.setValuePAlb(0.0);
+		ci.setValuePFac(0.0);
+		ci.setValueSAlb(0.0);
+		ci.setValueSFac(0.0);
 		
 		return ci;
 		

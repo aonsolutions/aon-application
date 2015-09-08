@@ -39,6 +39,11 @@ public class ConsumptionItem implements IsSerializable{
 	Double purchasesFac;
 	Double purchasesValueFac;
 	
+	Double valuePAlb;
+	Double valuePFac;
+	Double valueSAlb;
+	Double valueSFac;
+	
 	Double transfersPlus;
 	Double transfersPlusValue;
 	
@@ -55,6 +60,30 @@ public class ConsumptionItem implements IsSerializable{
 	
 	
 	
+	public Double getValuePAlb() {
+		return valuePAlb;
+	}
+	public void setValuePAlb(Double value) {
+		this.valuePAlb = value;
+	}
+	public Double getValuePFac() {
+		return valuePFac;
+	}
+	public void setValuePFac(Double value) {
+		this.valuePFac = value;
+	}
+	public Double getValueSAlb() {
+		return valueSAlb;
+	}
+	public void setValueSAlb(Double value) {
+		this.valueSAlb = value;
+	}
+	public Double getValueSFac() {
+		return valueSFac;
+	}
+	public void setValueSFac(Double value) {
+		this.valueSFac = value;
+	}
 	public Integer getItemId() {
 		return itemId;
 	}
