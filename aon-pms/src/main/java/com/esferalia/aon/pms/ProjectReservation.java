@@ -253,6 +253,10 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	public boolean isNoShow() {
 		return getCheckStatus() == ReservationCheckStatus.NO_SHOW || getCheckStatus() == ReservationCheckStatus.NO_SHOW_NO_INVOICEABLE;
 	}
+	@Transient
+	public boolean isCheckCancelled() {
+		return getCheckStatus() == ReservationCheckStatus.CANCEL_INVOICEABLE || getCheckStatus() == ReservationCheckStatus.CANCEL_NO_INVOICEABLE;
+	}
 
 	@Transient
 	public boolean isActive() {
@@ -264,7 +268,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 	@Transient
 	public boolean isCancelled() {
-		return getStatus() == ReservationStatus.CANCELLED;
+		return getStatus() == ReservationStatus.CANCELLED || getCancellationDate() != null || isCheckCancelled();
 	}
 	@Transient
 	public boolean isInvoiced() {
@@ -282,6 +286,25 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 				List<?> resultList = reservationBean.getList(new ProjectionList(prjStatus), criteria);
 				if (resultList.size() > 0) {
 					return (ReservationStatus)resultList.get(0);
+				}
+			} catch (ManagerBeanException ex) {
+				LOGGER.error("Error obtaining saved status", ex);
+			}
+		}
+		return null;
+	}
+
+	@Transient
+	public ReservationCheckStatus getSavedCheckStatus() {
+		if (getId() != null) {
+			try {
+				IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), getId());
+				Projection prjStatus = Projection.property(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CHECK_STATUS));
+				List<?> resultList = reservationBean.getList(new ProjectionList(prjStatus), criteria);
+				if (resultList.size() > 0) {
+					return (ReservationCheckStatus)resultList.get(0);
 				}
 			} catch (ManagerBeanException ex) {
 				LOGGER.error("Error obtaining saved status", ex);

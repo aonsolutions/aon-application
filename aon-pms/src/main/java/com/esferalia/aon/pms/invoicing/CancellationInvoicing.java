@@ -184,7 +184,7 @@ public class CancellationInvoicing {
 				BeanManager.getManagerBean(InvoiceDetail.class).insert(invoiceDetail);
 			}
 		}
-		
+
 		if (advancedAmount > 0) {
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setInvoice(invoice);

@@ -63,12 +63,11 @@ public class CancellationInvoiceSearchListener extends ControllerSearchListener 
 
 		((CancellationInvoiceController)getController()).clearCheckedReservations();
 	}
-	
+
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
-		criteria.addNotEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_CHECK_STATUS), ReservationCheckStatus.NO_SHOW);
-		criteria.addNotEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_CHECK_STATUS), ReservationCheckStatus.NO_SHOW_NO_INVOICEABLE);
+		criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_CHECK_STATUS), ReservationCheckStatus.CANCEL_INVOICEABLE);
 		Expression nullDays = ExpressionUtilities.getNullExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_PENALTY_DAYS));
 		Expression zeroDays = ExpressionUtilities.getNotEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_PENALTY_DAYS), 0);
 		criteria.addExpression(ExpressionUtilities.getOrExpression(nullDays, zeroDays));

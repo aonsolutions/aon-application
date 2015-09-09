@@ -23,6 +23,7 @@ import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.ProjectReservation;
+import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.invoicing.CancellationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.CancellationInvoicing;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
@@ -205,6 +206,7 @@ public class CancellationInvoiceController extends BasicController implements IP
 				}
 
 				reservation.setPenaltyDays(0);
+				reservation.setCheckStatus(ReservationCheckStatus.CANCEL_NO_INVOICEABLE);
 				reservationBean.update(reservation);
 			}
 

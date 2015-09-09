@@ -79,6 +79,8 @@ public class SQLBooking implements ISQLConstants {
 			" AND PR.cancellation_date IS NULL" + 
 			" AND PR.check_status <> " + ReservationCheckStatus.NO_SHOW.ordinal() + 
 			" AND PR.check_status <> " + ReservationCheckStatus.NO_SHOW_NO_INVOICEABLE.ordinal() +
+			" AND PR.check_status <> " + ReservationCheckStatus.CANCEL_INVOICEABLE.ordinal() + 
+			" AND PR.check_status <> " + ReservationCheckStatus.CANCEL_NO_INVOICEABLE.ordinal() +
 			" AND PR.end_date >= ? AND PR.start_date <= ?" +
 			" AND FIND_IN_SET(IFNULL(R.hotel, PR.hotel), ?)" +
 			" ORDER BY " + RESERVATION_HOTEL + "," + RESERVATION + "," + RESERVATION_ROOM + "," + START_DATE;

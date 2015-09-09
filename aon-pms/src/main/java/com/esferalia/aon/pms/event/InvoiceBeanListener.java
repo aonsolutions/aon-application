@@ -1,5 +1,7 @@
 package com.esferalia.aon.pms.event;
 
+import java.util.Date;
+
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -13,6 +15,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
+import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
 public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
@@ -62,7 +65,13 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 
 			boolean invoiced = (totalInvoiced != 0 || countInvoices % 2 != 0);
     		if (!invoice.isAdvance()) {
-       			reservation.setStatus((invoiced) ? ReservationStatus.INVOICED : (reservation.isNoShow()) ? ReservationStatus.CANCELLED : ReservationStatus.ACTIVE);
+    			boolean cancelled = (reservation.isCancelled() || reservation.isNoShow());
+       			reservation.setStatus((invoiced) ? ReservationStatus.INVOICED : (cancelled) ? ReservationStatus.CANCELLED : ReservationStatus.ACTIVE);
+				if (reservation.isInvoiced() && reservation.isNoCheck()) {
+					reservation.setCheckStatus(reservation.getEndDate().after(new Date()) ? ReservationCheckStatus.CHECK_IN : ReservationCheckStatus.CHECK_OUT);
+				} else if (reservation.isActive() && !reservation.isNoCheck()) {
+					reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
+				}
     		} else {
         		reservation.setAdvanceInvoiced(invoiced);
         		reservation.setAdvance(0);

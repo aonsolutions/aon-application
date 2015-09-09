@@ -63,15 +63,19 @@
 									((to.checkOut) ? 
 										('aon-icon-check-out') : 
 										((to.noShow) ? 
-											('aon-icon-no-show') : 
-											('')))}" 
+											('aon-icon-no-show') :
+											((to.checkCancelled) ?
+												('aon-icon-removed') :
+												(''))))}" 
 				title="#{(to.checkIn) ? 
 							(bundle.pms_check_in) : 
 							((to.checkOut) ? 
 								(bundle.pms_check_out) : 
 								((to.noShow) ? 
 									(bundle.pms_no_show) : 
-									('')))}" /> 
+										((to.checkCancelled) ?
+											(bundle.pms_cancelled) :
+											(''))))}" />
 		</aon:column>
 	</aon:if>
 

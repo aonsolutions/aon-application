@@ -81,6 +81,18 @@
 			</aon:panelGrid>
 		</aon:panelCollapsible>
 
+		<aon:panelCollapsible expanded="false" 
+			label="#{bundle.pms_check}">
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+
+				<aon:outputText value="&#160;" />
+				<aon:selectManyCheckbox value="#{searchController.reservationCheckStatuses}" layout="pageDirection">
+					<f:selectItems value="#{pmsCollections.abbreviatedReservationCheckStatuses}"/>
+				</aon:selectManyCheckbox>
+
+			</aon:panelGrid>
+		</aon:panelCollapsible>
+
 		<ui:decorate template="/com/code/aon/ui/common/facelet/auditable/searchContent.xhtml">
 			<ui:define name="additionalAuditableContent">
 				<aon:outputLabel for="ProjectReservation_cancellationUser"

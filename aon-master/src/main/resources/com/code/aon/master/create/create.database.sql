@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.28.1
+# Version: 8.29.0
 # Created by: girazu
-# Creation Date: 28/07/2015 14:05
+# Creation Date: 09/09/2015 11:15
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -7980,7 +7980,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.28.3');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.29.0');
 
 COMMIT;
 

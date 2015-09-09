@@ -782,6 +782,12 @@ public class ReservationManager implements IReservationConstants {
 		Connection connection = null;
 		try {
 			reservation.getProject().setActive(false);
+			reservation.setPenaltyDays(obtainCancelPenaltyDays(reservation));
+			if (reservation.getPenaltyDays() != null && reservation.getPenaltyDays() == 0 && reservation.getAdvancedAmount() == 0) {
+				reservation.setCheckStatus(ReservationCheckStatus.CANCEL_NO_INVOICEABLE);
+			} else {
+				reservation.setCheckStatus(ReservationCheckStatus.CANCEL_INVOICEABLE);
+			}
 			reservation.setStatus(ReservationStatus.CANCELLED);
 			reservation.setModificationUser(CRS);
 			reservation.setModificationDate(new Date());
@@ -798,6 +804,14 @@ public class ReservationManager implements IReservationConstants {
 		} finally {
 			SQLUtils.closeQuietly(connection);
 		}
+	}
+
+	private Integer obtainCancelPenaltyDays(ProjectReservation reservation) throws ManagerBeanException {
+		Integer penaltyDays = getReservationUtils().obtainCancellationPenaltyDays(reservation, new Date());
+		if (penaltyDays != null && (penaltyDays < 0 || penaltyDays > CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate()))) {
+			penaltyDays = (int)CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate());
+		}
+		return penaltyDays;
 	}
 
 	private String findReservationId(ResGlobalInfoType resGlobalInfoType, String source, String type) {

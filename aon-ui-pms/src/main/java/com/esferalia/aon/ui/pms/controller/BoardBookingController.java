@@ -230,8 +230,11 @@ public class BoardBookingController extends DataScrollerState implements ICollec
 		stmt.append("	 LEFT JOIN workplace AS W ON W.id = H.workplace");
 		stmt.append("	 WHERE" + DomainManager.getSQLWhereClause("PR.domain"));
 		stmt.append("	 AND PR.status <> " + ReservationStatus.CANCELLED.ordinal());
+		stmt.append("	 AND PR.cancellation_date IS NULL");
 		stmt.append("	 AND PR.check_status <> " + ReservationCheckStatus.NO_SHOW.ordinal());
 		stmt.append("	 AND PR.check_status <> " + ReservationCheckStatus.NO_SHOW_NO_INVOICEABLE.ordinal());
+		stmt.append("	 AND PR.check_status <> " + ReservationCheckStatus.CANCEL_INVOICEABLE.ordinal());
+		stmt.append("	 AND PR.check_status <> " + ReservationCheckStatus.CANCEL_NO_INVOICEABLE.ordinal());
 		stmt.append("	 AND PR.end_date >= ?");
 		stmt.append("	 AND PR.start_date <= ?");
 		stmt.append("	 AND ((R.asset IS NULL AND PR.hotel = " + getHotel().getId() + ") ");

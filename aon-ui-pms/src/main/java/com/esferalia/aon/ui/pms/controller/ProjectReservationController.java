@@ -621,7 +621,11 @@ public class ProjectReservationController extends BasicController implements IPm
 				reservation.setCheckStatus(ReservationCheckStatus.NO_SHOW);
 			}
 		} else {
-			reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
+			if (reservation.getPenaltyDays() != null && reservation.getPenaltyDays() == 0 && reservation.getAdvancedAmount() == 0) {
+				reservation.setCheckStatus(ReservationCheckStatus.CANCEL_NO_INVOICEABLE);
+			} else {
+				reservation.setCheckStatus(ReservationCheckStatus.CANCEL_INVOICEABLE);
+			}
 		}
 		reservation.setStatus(ReservationStatus.CANCELLED);
 		reservation.setCancellationUser(UserUtils.getInstance().getLoggedUser().getLogin());
@@ -1115,12 +1119,15 @@ public class ProjectReservationController extends BasicController implements IPm
 				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
 				reservationInvoicing.invoice(getReservationInvoiceTo(), reservation);
 
-				reservation.setStatus(ReservationStatus.INVOICED);
-				if (reservation.isNoCheck()) {
+				if (reservation.getSavedStatus() != ReservationStatus.INVOICED || reservation.getSavedCheckStatus() == ReservationCheckStatus.NO_CHECK) {
+					reservation.setStatus(ReservationStatus.INVOICED);
 					reservation.setCheckStatus(reservation.getEndDate().after(new Date()) ? ReservationCheckStatus.CHECK_IN : ReservationCheckStatus.CHECK_OUT);
+					reservation.setSkipDirtyControl(true);
+					accept(event);
+				} else {
+					refreshEntireReservation(event);
 				}
-				reservation.setSkipDirtyControl(true);
-				accept(event);
+
 				setSelectedTab(INVOICE);
 			}
 		} catch (ManagerBeanException ex) {
@@ -1259,16 +1266,8 @@ public class ProjectReservationController extends BasicController implements IPm
 			ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
 			reservationInvoicing.rectify(getInvoiceToRectify(), getReservationInvoiceTo(), false);
 
-			if (!reservation.isCancelled()) {
-				ProjectReservation savedReservation = (ProjectReservation)getManagerBean().get(reservation.getId());
-				if (savedReservation.getStatus() != reservation.getStatus()) {
-					reservation.setStatus(savedReservation.getStatus());
-					if (reservation.getStatus() == ReservationStatus.ACTIVE) {
-						reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
-					}
-					reservation.setSkipDirtyControl(true);
-					accept(event);
-				}
+			if (reservation.getSavedStatus() != reservation.getStatus() || reservation.getSavedCheckStatus() != reservation.getCheckStatus()) {
+				refreshEntireReservation(event);
 			}
 
 			if (getInvoiceToRectify().isAdvance()) {

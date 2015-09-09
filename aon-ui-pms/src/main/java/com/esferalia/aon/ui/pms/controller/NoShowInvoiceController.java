@@ -196,6 +196,7 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 					noShowInvoicing.invoice(noShowInvoiceTo, reservation);
 				}
 
+				reservation.setPenaltyDays(0);
 				reservation.setCheckStatus(ReservationCheckStatus.NO_SHOW_NO_INVOICEABLE);
 				reservationBean.update(reservation);
 			}

@@ -61,7 +61,7 @@ public class NoShowInvoiceSearchListener extends ControllerSearchListener {
 
 		((NoShowInvoiceController)getController()).clearCheckedReservations();
 	}
-	
+
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		criteria.addNotEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.INVOICED);

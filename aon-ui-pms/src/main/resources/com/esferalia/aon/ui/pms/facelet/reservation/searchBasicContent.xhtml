@@ -85,11 +85,6 @@
 	</aon:div>
 
 	<aon:if test="#{!skipStatus}">
-		<aon:outputText value="#{bundle.pms_check}"/>
-		<aon:selectManyCheckbox value="#{searchController.reservationCheckStatuses}">
-			<f:selectItems value="#{pmsCollections.abbreviatedReservationCheckStatuses}"/>
-		</aon:selectManyCheckbox>
-
 		<aon:outputText value="#{bundle.aon_status}"/>
 		<aon:selectManyCheckbox value="#{searchController.reservationStatuses}">
 			<f:selectItems value="#{pmsCollections.reservationStatuses}"/>

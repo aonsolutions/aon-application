@@ -11,7 +11,9 @@ public enum ReservationCheckStatus implements IResourceable {
 	CHECK_IN,
 	CHECK_OUT,
 	NO_SHOW,
-	NO_SHOW_NO_INVOICEABLE;
+	NO_SHOW_NO_INVOICEABLE,
+	CANCEL_INVOICEABLE,
+	CANCEL_NO_INVOICEABLE;
     
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_reservation_check_status_";
