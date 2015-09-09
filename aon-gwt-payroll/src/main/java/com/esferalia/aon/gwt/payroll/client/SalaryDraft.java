@@ -92,6 +92,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
@@ -117,6 +118,8 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -1895,6 +1898,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	@UiField
 	MyStyle style;
 
+	@UiField
+	Button moreButton;
+	
+	
+	
 	private int zoom;
 	private Scope scope;
 	private List<HasVisibility> dbUIObjects;
@@ -1919,6 +1927,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	private List<VariableChangeHandler<?>> variableChangeHandlers;
 
 	private final ContentAsistManager contentAssistManager = new ContentAsistManager();
+	
+	private PopupPanel morePopup ;
+	private boolean autoSave = true;
+	private MenuItem autoSaveMenuItem;
 
 	public SalaryDraft() {
 		initWidget(binder.createAndBindUi(this));
@@ -1979,6 +1991,52 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	public void onCalculateFailure(Throwable throwable) {
 		// TODO Auto-generated method stub
 		Window.alert(throwable.getMessage());
+	}
+	
+	// ------------------------------------------------------------ @UIHandlers
+
+	@UiHandler("moreButton")
+	void onMoreClick(ClickEvent event) {
+		if ( morePopup == null ) {
+			MenuBar menuBar = new MenuBar(true);
+			autoSaveMenuItem = new MenuItem("Guardar Autom\u00e1ticamente al Emitir N\u00f3mina",
+					new Command() {
+						@Override
+						public void execute() {
+							autoSave = !autoSave;
+							autoSaveMenuItem.setStyleName("aon-MenuItemCheckYes", autoSave); 
+						}
+					});
+			autoSaveMenuItem.setStyleName("aon-MenuItemCheckYes", autoSave);
+			autoSaveMenuItem.getElement().getStyle().setWhiteSpace(WhiteSpace.NOWRAP);
+			menuBar.addItem(autoSaveMenuItem);
+			
+			morePopup = new PopupPanel();
+			morePopup.add(menuBar);
+			morePopup.setStyleName("gwt-MenuBarPopup");
+			morePopup.setAutoHideEnabled(true);
+		}
+		
+		
+		morePopup.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
+			
+			@Override
+			public void setPosition(int offsetWidth, int offsetHeight) {
+
+				int left = moreButton.getAbsoluteLeft();
+				int top = moreButton.getAbsoluteTop()
+						+ moreButton.getOffsetHeight();
+				
+				int popUpWidth = morePopup.getOffsetWidth();
+				int windowWidth = Window.getClientWidth();
+				
+				left = Math.min(left, windowWidth - popUpWidth ); 
+				
+				morePopup.setPopupPosition(left, top);
+			}
+		});
+		
+
 	}
 
 	@UiHandler("irpfPreviewButton")
@@ -2789,6 +2847,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	@UiHandler("salaryButton")
 	void onSalaryButtonClick(ClickEvent event) {
 		salaryDraftObject.emitSalary(this);
+		if ( autoSave )
+			salaryDraftObject.save(this);
 	}
 
 	@UiHandler("contextTableButton")
