@@ -127,6 +127,14 @@
 			box-shadow: 4px 4px 4px rgb(204, 204, 204);
 		}
 		
+		.aon-button-view {
+			width: auto !important;
+			margin-top: 6px !important ;
+			padding-left: 5px !important ;
+			padding-right: 16px !important ;
+			background-position-x : right !important;
+		}
+		
 	</ui:style>
 
 
@@ -139,6 +147,7 @@
 
 				<g:FlowPanel styleName="aon-finding-title-toolbar">
 					<g:HorizontalPanel>
+			
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal">
 								<g:Label styleName="aon-outputText">Borrador</g:Label>
@@ -168,6 +177,9 @@
 								<g:ListBox ui:field="zoomListBox" />
 								<g:Button ui:field='closePreviewButton'
 									styleName='aon-finding-toolbar-item aon-icon-cancel' text="CERRAR PRELIMINAR" />
+								<g:Button ui:field='moreButton'
+									styleName='{style.aon-button-view} aon-finding-toolbar-item aon-icon-view'
+									text="M&Aacute;S..." />
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
