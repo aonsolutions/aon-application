@@ -17,12 +17,36 @@
 	.simple-panel {
 		background: #FFFFFF;
 	}
+	
+	.href {
+		background: none !important;
+		border: none;
+		font-family: arial, sans-serif;
+		font-size: 12px;
+		cursor: pointer;
+		padding-left: 14px;
+	}
+
+	.button {
+		font-family: arial, sans-serif;
+		cursor: pointer;
+		font-size: 14px;
+		padding-left: 10px;
+		margin-left: 14px;
+	}
+	
+	.button_bar {
+		
+	}
+	
+	.button_bar button {
+		
+	}
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
-		<g:north size="100">
+		<g:north size="52">
 			<g:FlowPanel>
-
 				<g:FlowPanel styleName="aon-finding-title-toolbar">
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">
@@ -53,31 +77,104 @@
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
 				</g:FlowPanel>
-
-				<g:FlowPanel styleName="aon-finding-title-toolbar">
-					<g:HorizontalPanel>
-						<g:HTMLPanel styleName="aon-finding-title">
-							<g:HTMLPanel styleName="aon-finding-title-internal">
-								<g:Label styleName="aon-outputText" text="Edici&oacute;n" />
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="aon-finding-subtitle">
-							<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-								<g:Label styleName="aon-outputText" />
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-							<g:Button ui:field='newIssue'
-								styleName='aon-finding-toolbar-item aon-icon-new' text="NUEVO" />
-						</g:HTMLPanel>
-					</g:HorizontalPanel>
-				</g:FlowPanel>
 			</g:FlowPanel>
 		</g:north>
 
+		<g:west size="120">
+
+			<g:ScrollPanel>
+				<g:Grid styleName="{style.button_bar}">
+					<g:row>
+						<g:customCell horizontalAlignment="ALIGN_CENTER"
+							verticalAlignment="ALIGN_MIDDLE">
+							<g:Button styleName="{style.button} aon-bold" text="Redactar"
+								ui:field="newIssue" />
+						</g:customCell>
+					</g:row>
+					<g:row />
+					<g:row>
+						<g:customCell>
+							<g:Button styleName="{style.href}" text="Pendientes"
+								ui:field="openIssues" />
+						</g:customCell>
+					</g:row>
+
+					<g:row>
+						<g:customCell>
+							<g:Button styleName="{style.href}" text="Cerrados"
+								ui:field="receivedIssues" />
+						</g:customCell>
+					</g:row>
+					<g:row>
+						<g:customCell>
+							<g:Button styleName="{style.href}" text="Todos"
+								ui:field="allIssues" />
+						</g:customCell>
+					</g:row>
+					<g:row>
+						<g:customCell>
+							<g:Button styleName="{style.href}" text="Eliminados"
+								ui:field="deletedIssues" />
+						</g:customCell>
+					</g:row>
+					<g:row>
+					</g:row>
+					<g:row>
+						<g:customCell>
+							<g:Button styleName="{style.href}" text="Consultas"
+								ui:field="questionButton" />
+						</g:customCell>
+					</g:row>
+					<g:row>
+						<g:customCell>
+							<g:Button styleName="{style.href}" text="Errores"
+								ui:field="errorButton" />
+						</g:customCell>
+					</g:row>
+					<g:row>
+						<g:customCell>
+							<g:Button styleName="{style.href}" text="FAQs" ui:field="faqsButton" />
+						</g:customCell>
+					</g:row>
+
+					<g:row>
+						<g:customCell>
+							<g:DisclosurePanel animationEnabled="true">
+								<g:customHeader>
+									<g:InlineLabel text="Etiquetas"
+										styleName="{style.href} aon-icon-commandButton" />
+								</g:customHeader>
+								<g:Grid>
+									<g:row>
+										<g:customCell>
+											<g:Button text="Laboral" styleName="{style.href}" />
+										</g:customCell>
+									</g:row>
+									<g:row>
+										<g:customCell>
+											<g:Button text="Fiscal" styleName="{style.href}" />
+										</g:customCell>
+									</g:row>
+									<g:row>
+										<g:customCell>
+											<g:Button text="Gestion" styleName="{style.href}" />
+										</g:customCell>
+									</g:row>
+									<g:row>
+										<g:customCell>
+											<g:Button text="CallCenter" styleName="{style.href}" />
+										</g:customCell>
+									</g:row>
+								</g:Grid>
+							</g:DisclosurePanel>
+						</g:customCell>
+					</g:row>
+				</g:Grid>
+
+			</g:ScrollPanel>
+		</g:west>
+
 		<g:center>
-		
-		
 			<g:ResizeLayoutPanel ui:field="dockPanel">
 				<g:HTMLPanel styleName="aon-scroll-area {style.options-scroll-panel}">
 					<g:SimpleLayoutPanel ui:field="resultsPanel"
