@@ -14,6 +14,7 @@ import org.mvel2.util.MethodStub;
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.CompositeDeduction;
 import com.esferalia.aon.gwt.payroll.shared.CompositePayment;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.InvalidVariable;
@@ -489,7 +490,13 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 		deduction.setDescription(description);
 		deduction.setType(getDeductionType(ideduction.getType()));
 
-		salaryDraft.addDeduction(deduction);
+		CompositeDeduction compositeDeduction = getDeduction(deduction.getId());
+
+		if (compositeDeduction != null)
+			compositeDeduction.addChild(deduction);
+		else
+			salaryDraft.addDeduction(deduction);
+
 
 	}
 
@@ -866,6 +873,23 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 		return null;
 	}
 
+	private CompositeDeduction getDeduction(Integer id) {
+		List<Deduction> deductions = salaryDraft.getDeductions();
+		for (int i = 0; i < deductions.size(); i++) {
+			Deduction deduction = deductions.get(i);
+			if (deduction.getId().equals(id)) {
+				if (deduction instanceof CompositeDeduction)
+					return (CompositeDeduction) deduction;
+
+				CompositeDeduction composite = new CompositeDeduction();
+				composite.addChild(deduction);
+				deductions.set(i, composite);
+				return composite;
+
+			}
+		}
+		return null;
+	}
 	// ------------------------------------------------------------------------
 
 	private Short getMonth(Month month) {
