@@ -374,6 +374,13 @@
       </exclusions>
     </dependency>
     
+    <dependency>
+      <groupId>com.code.aon</groupId>
+      <artifactId>aon.conexflow</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    
     <!-- EXTERNAL LIBRARIES -->
     <dependency>
       <groupId>org.openid4java</groupId>

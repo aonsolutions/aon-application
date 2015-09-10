@@ -71,6 +71,7 @@
 		<module>aon-ui-admin</module>
 		<module>aon-google-apis</module>
 		<module>aon-amazon-apis</module>
+		<module>aon-conexflow</module>
 		<module>aon-aeat</module>
 		
 

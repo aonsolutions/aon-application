@@ -246,7 +246,7 @@
 		<url-pattern>/amazonoauth2callback/*</url-pattern>
 	</servlet-mapping>
 	
-		<servlet>
+	<servlet>
 		<servlet-name>AmazonLoginCallbackServlet</servlet-name>
 		<servlet-class>com.code.aon.amazon.apis.servlet.AmazonLoginCallbackServlet</servlet-class>
 	</servlet>
