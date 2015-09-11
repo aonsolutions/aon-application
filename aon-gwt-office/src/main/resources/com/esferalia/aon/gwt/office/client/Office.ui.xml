@@ -10,6 +10,15 @@
 		field="aonResources"></ui:with>
 
 	<ui:style>
+	.button-href {
+		background: none !important;
+		border: none;
+		font-family: arial, sans-serif;
+		font-size: 12px;
+		cursor: pointer;
+		padding-left: 14px;
+	}
+	
 	.options-scroll-panel>div {
 		height: 99%;
 	}
@@ -18,16 +27,7 @@
 		background: #FFFFFF;
 	}
 	
-	.href {
-		background: none !important;
-		border: none;
-		font-family: arial, sans-serif;
-		font-size: 12px;
-		cursor: pointer;
-		padding-left: 14px;
-	}
-
-	.button {
+	.principal-button {
 		font-family: arial, sans-serif;
 		cursor: pointer;
 		font-size: 14px;
@@ -40,12 +40,17 @@
 	}
 	
 	.button_bar button {
-		
+		background: none !important;
+		border: none;
+		font-family: arial, sans-serif;
+		font-size: 12px;
+		cursor: pointer;
+		padding-left: 14px;		
 	}
 	</ui:style>
 
-	<g:DockLayoutPanel unit="PX">
-		<g:north size="52">
+	<g:DockLayoutPanel unit="PX" height="100%" width="100%">
+		<g:north size="60">
 			<g:FlowPanel>
 				<g:FlowPanel styleName="aon-finding-title-toolbar">
 					<g:HorizontalPanel>
@@ -83,37 +88,37 @@
 		<g:west size="120">
 
 			<g:ScrollPanel>
-				<g:Grid styleName="{style.button_bar}">
+				<g:Grid>
 					<g:row>
 						<g:customCell horizontalAlignment="ALIGN_CENTER"
 							verticalAlignment="ALIGN_MIDDLE">
-							<g:Button styleName="{style.button} aon-bold" text="Redactar"
+							<g:Button styleName="{style.principal-button} aon-bold" text="Nuevo"
 								ui:field="newIssue" />
 						</g:customCell>
 					</g:row>
 					<g:row />
 					<g:row>
 						<g:customCell>
-							<g:Button styleName="{style.href}" text="Pendientes"
+							<g:Button styleName="{style.button-href}" text="Pendientes"
 								ui:field="openIssues" />
 						</g:customCell>
 					</g:row>
 
 					<g:row>
 						<g:customCell>
-							<g:Button styleName="{style.href}" text="Cerrados"
+							<g:Button styleName="{style.button-href}" text="Cerrados"
 								ui:field="receivedIssues" />
 						</g:customCell>
 					</g:row>
 					<g:row>
 						<g:customCell>
-							<g:Button styleName="{style.href}" text="Todos"
+							<g:Button styleName="{style.button-href}" text="Todos"
 								ui:field="allIssues" />
 						</g:customCell>
 					</g:row>
 					<g:row>
 						<g:customCell>
-							<g:Button styleName="{style.href}" text="Eliminados"
+							<g:Button styleName="{style.button-href}" text="Eliminados"
 								ui:field="deletedIssues" />
 						</g:customCell>
 					</g:row>
@@ -121,19 +126,20 @@
 					</g:row>
 					<g:row>
 						<g:customCell>
-							<g:Button styleName="{style.href}" text="Consultas"
+							<g:Button styleName="{style.button-href}" text="Consultas"
 								ui:field="questionButton" />
 						</g:customCell>
 					</g:row>
 					<g:row>
 						<g:customCell>
-							<g:Button styleName="{style.href}" text="Errores"
+							<g:Button styleName="{style.button-href}" text="Errores"
 								ui:field="errorButton" />
 						</g:customCell>
 					</g:row>
 					<g:row>
 						<g:customCell>
-							<g:Button styleName="{style.href}" text="FAQs" ui:field="faqsButton" />
+							<g:Button styleName="{style.button-href}" text="FAQs"
+								ui:field="faqsButton" />
 						</g:customCell>
 					</g:row>
 
@@ -142,30 +148,10 @@
 							<g:DisclosurePanel animationEnabled="true">
 								<g:customHeader>
 									<g:InlineLabel text="Etiquetas"
-										styleName="{style.href} aon-icon-commandButton" />
+										styleName="{style.button-href} aon-icon-commandButton" />
 								</g:customHeader>
-								<g:Grid>
-									<g:row>
-										<g:customCell>
-											<g:Button text="Laboral" styleName="{style.href}" />
-										</g:customCell>
-									</g:row>
-									<g:row>
-										<g:customCell>
-											<g:Button text="Fiscal" styleName="{style.href}" />
-										</g:customCell>
-									</g:row>
-									<g:row>
-										<g:customCell>
-											<g:Button text="Gestion" styleName="{style.href}" />
-										</g:customCell>
-									</g:row>
-									<g:row>
-										<g:customCell>
-											<g:Button text="CallCenter" styleName="{style.href}" />
-										</g:customCell>
-									</g:row>
-								</g:Grid>
+								<g:VerticalPanel ui:field="labelsVPanel"
+									styleName="{style.button_bar}" />
 							</g:DisclosurePanel>
 						</g:customCell>
 					</g:row>
@@ -184,6 +170,19 @@
 				</g:HTMLPanel>
 			</g:ResizeLayoutPanel>
 		</g:center>
+
+		<g:south size="40">
+			<g:FlowPanel>
+				<g:Grid>
+					<g:row>
+						<g:customCell>
+							<cell:SimplePager ui:field='pager' />
+						</g:customCell>
+					</g:row>
+				</g:Grid>
+			</g:FlowPanel>
+		</g:south>
+
 	</g:DockLayoutPanel>
 
 </ui:UiBinder> 
