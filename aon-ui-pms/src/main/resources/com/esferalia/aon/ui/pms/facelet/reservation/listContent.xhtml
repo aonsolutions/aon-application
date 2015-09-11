@@ -63,18 +63,18 @@
 									((to.checkOut) ? 
 										('aon-icon-check-out') : 
 										((to.noShow) ? 
-											('aon-icon-no-show') :
+											((to.noInvoiceable) ? 'aon-icon-no-show' : 'aon-icon-no-show-invoiceable') :
 											((to.checkCancelled) ?
-												('aon-icon-removed') :
+												((to.noInvoiceable) ? 'aon-icon-removed' : 'aon-icon-invoiceable') :
 												(''))))}" 
 				title="#{(to.checkIn) ? 
 							(bundle.pms_check_in) : 
 							((to.checkOut) ? 
 								(bundle.pms_check_out) : 
 								((to.noShow) ? 
-									(bundle.pms_no_show) : 
+									((to.noInvoiceable) ? bundle.pms_no_invoiceable : bundle.pms_no_show) :
 										((to.checkCancelled) ?
-											(bundle.pms_cancelled) :
+											((to.noInvoiceable) ? bundle.pms_no_invoiceable : bundle.pms_invoiceable) :
 											(''))))}" />
 		</aon:column>
 	</aon:if>

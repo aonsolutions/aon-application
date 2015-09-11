@@ -16,6 +16,7 @@ import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.ProjectReservationService;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
+import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class ProjectReservationPermission implements Serializable {
@@ -175,7 +176,7 @@ public class ProjectReservationPermission implements Serializable {
 	public boolean isNoShowAllowed() throws ManagerBeanException {
 		Date now = new Date();
 		boolean roleAllowed = (isNoShowable(now)) || (!isRoleUser() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
-		return roleAllowed && (reservation.isActive() || reservation.isCancelled()) && reservation.isNoCheck();
+		return roleAllowed && reservation.isActive() && reservation.isNoCheck();
 	}
 
 	public boolean isCancelAllowed() throws ManagerBeanException {
@@ -203,9 +204,13 @@ public class ProjectReservationPermission implements Serializable {
 
 	public boolean isUndoCheckStatusAllowed() throws ManagerBeanException {
 		Date now = new Date();
-		boolean roleAllowed = (!isRoleUser() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
+		boolean isCancelled = reservation.getStatus() == ReservationStatus.CANCELLED;
 		boolean isOnlyNoShow = reservation.getCheckStatus() == ReservationCheckStatus.NO_SHOW;
-		return roleAllowed && ((isOnlyNoShow && reservation.isCancelled()) || (reservation.isCheckIn() && reservation.isActive() && isInHouse(now)));
+		boolean isCancelInvoiceable = reservation.getCheckStatus() == ReservationCheckStatus.CANCEL_INVOICEABLE;
+		boolean roleCheckAllowed = reservation.isCheckIn() && !isRoleUser() && isInHouse(now);
+		boolean roleNoShowAllowed = isCancelled && isOnlyNoShow && ((isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleFinance() && !isBeforeCheckIn(now)));
+		boolean roleCancelAllowed = isCancelled && isCancelInvoiceable && isRoleFinance();
+		return roleCheckAllowed || roleNoShowAllowed || roleCancelAllowed;
 	}
 
 	public boolean isCheckStatusVisible() throws ManagerBeanException {

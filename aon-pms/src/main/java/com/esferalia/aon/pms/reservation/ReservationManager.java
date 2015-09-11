@@ -782,17 +782,17 @@ public class ReservationManager implements IReservationConstants {
 		Connection connection = null;
 		try {
 			reservation.getProject().setActive(false);
+			reservation.setStatus(ReservationStatus.CANCELLED);
+			reservation.setModificationUser(CRS);
+			reservation.setModificationDate(new Date());
+			reservation.setCancellationUser(CRS);
+			reservation.setCancellationDate(new Date());
 			reservation.setPenaltyDays(obtainCancelPenaltyDays(reservation));
 			if (reservation.getPenaltyDays() != null && reservation.getPenaltyDays() == 0 && reservation.getAdvancedAmount() == 0) {
 				reservation.setCheckStatus(ReservationCheckStatus.CANCEL_NO_INVOICEABLE);
 			} else {
 				reservation.setCheckStatus(ReservationCheckStatus.CANCEL_INVOICEABLE);
 			}
-			reservation.setStatus(ReservationStatus.CANCELLED);
-			reservation.setModificationUser(CRS);
-			reservation.setModificationDate(new Date());
-			reservation.setCancellationUser(CRS);
-			reservation.setCancellationDate(new Date());
 			BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
 
 			connection = DatabaseUtil.getConnection(AdminUtil.getDomainName(reservation.getDomain()));
@@ -807,7 +807,7 @@ public class ReservationManager implements IReservationConstants {
 	}
 
 	private Integer obtainCancelPenaltyDays(ProjectReservation reservation) throws ManagerBeanException {
-		Integer penaltyDays = getReservationUtils().obtainCancellationPenaltyDays(reservation, new Date());
+		Integer penaltyDays = getReservationUtils().obtainCancellationPenaltyDays(reservation, reservation.getCancellationDate());
 		if (penaltyDays != null && (penaltyDays < 0 || penaltyDays > CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate()))) {
 			penaltyDays = (int)CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate());
 		}

@@ -55,7 +55,12 @@
 				styleClass="aon-icon-commandButton aon-icon-sincronize aon-margin-left"
 				title="#{bundle.aon_undo}" immediate="true" 
 				actionListener="#{reservation.onUndoCheckStatus}"
-				rendered="#{reservation.reservationPermission.undoCheckStatusAllowed}" />
+				rendered="#{reservation.reservationPermission.undoCheckStatusAllowed}">
+				<f:setPropertyActionListener target="#{reservation.showConfirmWindow}"
+					value="#{reservation.to.noShow}" />
+						<f:setPropertyActionListener target="#{reservation.confirmNoShow}"
+							value="#{false}" />
+			</aon:commandButton>
 		</aon:div>
 	</aon:panelGrid>
 

@@ -257,6 +257,10 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	public boolean isCheckCancelled() {
 		return getCheckStatus() == ReservationCheckStatus.CANCEL_INVOICEABLE || getCheckStatus() == ReservationCheckStatus.CANCEL_NO_INVOICEABLE;
 	}
+	@Transient
+	public boolean isNoInvoiceable() {
+		return getCheckStatus() == ReservationCheckStatus.NO_SHOW_NO_INVOICEABLE || getCheckStatus() == ReservationCheckStatus.CANCEL_NO_INVOICEABLE;
+	}
 
 	@Transient
 	public boolean isActive() {

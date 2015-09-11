@@ -368,6 +368,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			reservationRoomController.onSearch(event);
 			IController reservationServiceController = FormUtil.getController(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
 			reservationServiceController.onSearch(event);
+			synchronizeAddedPojo();
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
@@ -571,8 +572,13 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	public void onUndoCheckStatus(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
-		accept(event);
+		if (reservation.isCheckIn()) {
+			reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
+			accept(event);
+		} else if (reservation.getCheckStatus() == ReservationCheckStatus.CANCEL_INVOICEABLE) {
+			reservation.setCheckStatus(ReservationCheckStatus.CANCEL_NO_INVOICEABLE);
+			accept(event);
+		}
 	}
 
 	public void onBlock(ActionEvent event) {
@@ -611,6 +617,10 @@ public class ProjectReservationController extends BasicController implements IPm
 				DateFormat dateFormat = new SimpleDateFormat(AonUtil.getMessage(TIMESTAMP_PATTERN));
 				reservation.setRemarks((cancelOk ? "OK" : "ERROR") + " CANCEL CRS: " + dateFormat.format(new Date()) + "\n" + reservation.getRemarks());
 			}
+
+			reservation.setStatus(ReservationStatus.CANCELLED);
+			reservation.setCancellationUser(UserUtils.getInstance().getLoggedUser().getLogin());
+			reservation.setCancellationDate(new Date());
 		}
 
 		reservation.setPenaltyDays(obtainCancelPenaltyDays(reservation, isConfirmNoShow()));
@@ -627,9 +637,6 @@ public class ProjectReservationController extends BasicController implements IPm
 				reservation.setCheckStatus(ReservationCheckStatus.CANCEL_INVOICEABLE);
 			}
 		}
-		reservation.setStatus(ReservationStatus.CANCELLED);
-		reservation.setCancellationUser(UserUtils.getInstance().getLoggedUser().getLogin());
-		reservation.setCancellationDate(new Date());
 		accept(event);
 
 		IController reservationRoomController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_ROOM_CONTROLLER_NAME);
@@ -647,7 +654,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		if (noShow) {
 			penaltyDays = getReservationUtils().obtainNoShowPenaltyDays(reservation, reservation.getStartDate());
 		} else {
-			penaltyDays = getReservationUtils().obtainCancellationPenaltyDays(reservation, new Date());
+			penaltyDays = getReservationUtils().obtainCancellationPenaltyDays(reservation, reservation.getCancellationDate());
 		}
 		if (penaltyDays != null && (penaltyDays < 0 || penaltyDays > CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate()))) {
 			penaltyDays = (int)CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate());
