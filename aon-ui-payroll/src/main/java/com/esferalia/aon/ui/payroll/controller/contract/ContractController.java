@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,6 +89,7 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractDuration;
 import com.esferalia.aon.payroll.enumeration.ContractModelCode;
 import com.esferalia.aon.payroll.enumeration.ContractOption;
+import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.ContractType;
 import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
@@ -1060,8 +1062,9 @@ public class ContractController extends BasicController {
 		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
 		contrataController.initialize((Contract) this.getTo());
 		ContrataTransformacionesParams params = (ContrataTransformacionesParams) contrataController.getParams();
+		Contract contract = (Contract) this.getTo();
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(((Contract) this.getTo()).getEndDate());
+		cal.setTime(contract.getEndDate()!=null?contract.getEndDate():new Date());
 		cal.add(Calendar.DAY_OF_MONTH, 1);
 		params.setFechaInicio(cal.getTime());
 		contrataController.onContrataDataShow(event);
@@ -1072,43 +1075,80 @@ public class ContractController extends BasicController {
 	}
 	
 	public void onTransformContract(ActionEvent event){
+		ContrataController contrataTransformController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
+		ContrataTransformacionesParams params = (ContrataTransformacionesParams) contrataTransformController.getParams();
 		Contract contract = (Contract)this.getTo();
-		ContractData currentCodeData = SEPEUtils.getInstance().getContractDataMap(contract, null, null).get(ContextVariable.TC2.getName());
-		ContractData newCodeData = new ContractData();
-		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
-		ContrataTransformacionesParams params = (ContrataTransformacionesParams) contrataController.getParams();
-		newCodeData.setContract(currentCodeData.getContract());
-		newCodeData.setStartDate(params.getFechaInicio());
-		newCodeData.setEndDate(params.getFechaTerminoReal());
-		newCodeData.setName(currentCodeData.getName());
-		newCodeData.setExpression("\""+params.getTransformCode()+"\"");
+		// cerrar el contrato actual
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-			currentCodeData.setEndDate(currentCodeData.getContract().getEndDate());
-			bean.update(currentCodeData);
-			bean.insert(newCodeData);
-		} catch (ManagerBeanException e) {
-			String msg = "No se ha podido transformar el contrato. (" +e.getMessage() + ")"; 
-			AonUtil.addErrorMessage(msg);
-			AonUtil.addErrorMessage(e.getMessage());
-			LOGGER.error(msg);
-			throw new AbortProcessingException(msg);
-		}
-		try {
+			contract.setEndDate(DateUtils.addDays(params.getFechaInicio(), -1));
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
-			contract.setStartDate(newCodeData.getStartDate());
-			contract.setEndDate(null);
 			bean.restoreNullSubPOJOs(contract);
 			bean.update(contract);
-			ContractUtils.getInstance().loadContractData((Contract) this.getTo(), this.getParams());
 		} catch (ManagerBeanException e) {
 			String msg = "No se ha podido transformar el contrato. (" +e.getMessage() + ")"; 
 			AonUtil.addErrorMessage(msg);
-			AonUtil.addErrorMessage(e.getMessage());
 			LOGGER.error(msg);
 			throw new AbortProcessingException(msg);
 		}
-		contrataController.onContrataAccept(event);
+		// nuevo contrato para la transformacion 
+		try {
+			Contract newContract = new Contract();
+			newContract.setDomain(contract.getDomain());
+			newContract.setPerson(contract.getPerson());
+			newContract.setWorkPlace(contract.getWorkPlace());
+			newContract.setActivity(contract.getActivity());
+			newContract.setEnterpriseCCC(contract.getEnterpriseCCC());
+			newContract.setAgreementLevelCategory(contract.getAgreementLevelCategory());
+			newContract.setCategoryDescription(contract.getCategoryDescription());
+			newContract.setCalendar(contract.getCalendar());
+			newContract.setDescription(contract.getDescription());
+			newContract.setSeniorityDate(contract.getSeniorityDate());
+			newContract.setStartDate(params.getFechaInicio());
+			newContract.setEndDate(null);
+			newContract.setModel(null);
+			newContract.setRegimeType(contract.getRegimeType());
+			newContract.setRegistration(contract.getRegistration());
+			newContract.setSepeStatus(ContractStatus.PENDING);
+			newContract.setSsStatus(ContractStatus.PENDING);
+			
+			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
+			contract = (Contract) bean.insert(newContract);
+		} catch (ManagerBeanException e) {
+			String msg = "No se ha podido transformar el contrato. (" +e.getMessage() + ")"; 
+			AonUtil.addErrorMessage(msg);
+			LOGGER.error(msg);
+			throw new AbortProcessingException(msg);
+		}
+		// datos basicos necesarios
+		getParams().setContractCode(params.getTransformCode());
+		getParams().setSuspensionCause(null);
+		getParams().setCollectivePeculiarityQuote(null);
+		getContractUtils().insertContractData(contract, getParams());
+		
+		try {
+			ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+			ContractAttachment newContractContrata = new ContractAttachment();
+			newContractContrata.setAttachDate(contract.getSeniorityDate());
+			newContractContrata.setAttachmentType(ContractAttachmentType.SEPE_CONTRACT_FILE);
+			newContractContrata.setMimeType(MimeType.MIME_XML);
+			newContractContrata.setContract(contract);
+			newContractContrata.setData(contrataController.getGeneratedFile().getData());
+			newContractContrata.setDomain(contract.getDomain());
+			newContractContrata.setDescription(ContractAttachmentType.SEPE_CONTRACT_FILE.getName(AonUtil.getCurrentLocale()));
+			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
+			bean.insert(newContractContrata);
+			
+			contrataTransformController.getHandler().initialize(contract);
+			contrataTransformController.onContrataDataShow(event);
+			contrataTransformController.onContrataAccept(event);
+			
+			this.onLoad(event, contract.getId(), null, null);
+		} catch (ManagerBeanException e) {
+			String msg = "No se ha cargar el contrato transformado. (" +e.getMessage() + ")"; 
+			AonUtil.addErrorMessage(msg);
+			LOGGER.error(msg);
+			throw new AbortProcessingException(msg);
+		}
 	}
 	
 
