@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.resources.client.ClientBundle.Source;
 
 public interface AonResources extends ClientBundle, Images {
 	
@@ -166,5 +167,6 @@ public interface AonResources extends ClientBundle, Images {
 	ImageResource aonRegistroMercantilImage();
 
 	// ------------------------------------------------------------------------
+
 }
 

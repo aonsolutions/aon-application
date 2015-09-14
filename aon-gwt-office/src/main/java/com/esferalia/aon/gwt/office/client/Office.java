@@ -12,12 +12,15 @@ import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
+import com.esferalia.aon.gwt.office.client.values.IssueValue;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style.BorderStyle;
+import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -35,12 +38,12 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class Office extends Composite implements EntryPoint, IssueGrid.Listener {
-	
+
 	private static OfficeUiBinder uiBinder = GWT.create(OfficeUiBinder.class);
 
 	interface OfficeUiBinder extends UiBinder<Widget, Office> {
 	}
-	
+
 	@UiField
 	SimpleLayoutPanel resultsPanel;
 	@UiField
@@ -52,18 +55,35 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener 
 	@UiField
 	VerticalPanel labelsVPanel;
 
+	// Buttons Bar
+	@UiField
+	Button openIssues;
+	@UiField
+	Button closedIssues;
+	@UiField
+	Button allIssues;
+	@UiField
+	Button deletedIssues;
+	// ***********
+
 	@UiField(provided = true)
 	SimplePager pager;
 
 	private JsRepo repo;
+	private Button seletedButton;
 	private List<IssueSelected> issues;
 	private Map<Integer, JsRepo> repositories;
+
+	private Map<Integer, JsIssue> openedIssuesMap;
+	private Map<Integer, JsIssue> closedIssuesMap;
 
 	public Office() {
 		Widget ui = uiBinder.createAndBindUi(this);
 
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
+
+		seletedButton = new Button();
 	}
 
 	@Override
@@ -81,10 +101,14 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener 
 		pager.setDisplay(dataGrid);
 
 		this.repositories = new HashMap<Integer, JsRepo>();
+		this.openedIssuesMap = new HashMap<Integer, JsIssue>();
+		this.closedIssuesMap = new HashMap<Integer, JsIssue>();
 
 		ListDataProvider<IssueSelected> listIssuesProvider = new ListDataProvider<IssueSelected>();
 		listIssuesProvider.addDataDisplay(dataGrid);
 		this.issues = listIssuesProvider.getList();
+
+		setFontColor(openIssues, FontWeight.BOLD);
 
 		GitHub gitHub = new GitHub();
 
@@ -112,15 +136,12 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener 
 						@Override
 						public void onFailure(Throwable caught) {
 							// TODO Auto-generated method stub
-
 						}
 
 						@Override
 						public void onSuccess(AJSON<JsArray<JsLabel>> result) {
-
 							for (int x = 0; x < result.getData().length(); x++)
 								addLabel(x, result.getData().get(x));
-
 						}
 					});
 				}
@@ -133,20 +154,12 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener 
 					@Override
 					public void onSuccess(JSON<JsIssue> result) {
 
-						int contador = 0;
-
-						while (contador < 500) {
-
-							for (int x = 0; x < result.getData().length(); x++) {
-								IssueSelected selected = new IssueGrid.IssueLoadSelected(
-										result.getData().get(x));
-								issues.add(selected);
-							}
-
-							contador++;
-
+						for (int x = 0; x < result.getData().length(); x++) {
+							JsIssue issue = result.getData().get(x);
+							evalIssueSelected(issue);
 						}
-
+						openIssues.setText(openIssues.getText() + " ("
+								+ result.getData().length() + ")");
 					}
 
 					@Override
@@ -154,7 +167,26 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener 
 						// TODO Auto-generated method stub
 					}
 				});
+	}
 
+	@UiHandler("openIssues")
+	void onOpenIssuesClickHandler(ClickEvent event) {
+		setFontColor(openIssues, FontWeight.BOLD);
+	}
+
+	@UiHandler("closedIssues")
+	void onReceivedIssuesClickHandler(ClickEvent event) {
+		setFontColor(closedIssues, FontWeight.BOLD);
+	}
+
+	@UiHandler("allIssues")
+	void onAllIssuesClickHandler(ClickEvent event) {
+		setFontColor(allIssues, FontWeight.BOLD);
+	}
+
+	@UiHandler("deletedIssues")
+	void onDeletedIssuesClickHandler(ClickEvent event) {
+		setFontColor(deletedIssues, FontWeight.BOLD);
 	}
 
 	@UiHandler("newIssue")
@@ -191,6 +223,25 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener 
 	// ********************** PRIVATE METHODS ***************************
 	// ******************************************************************
 
+	private void evalIssueSelected(JsIssue issue) {
+
+		if (issue.getState().equals(IssueValue.Prop.OPEN.value))
+			addOpenIssue(issue);
+		else
+			addCloseIssue(issue);
+	}
+
+	private void addOpenIssue(JsIssue issue) {
+		IssueSelected issueSelected = new IssueGrid.IssueOpenLoadSelected(issue);
+		issues.add(issueSelected);
+
+		openedIssuesMap.put(issueSelected.getId(), issue);
+	}
+
+	private void addCloseIssue(JsIssue issue) {
+		closedIssuesMap.put(issue.getId(), issue);
+	}
+
 	private void addLabel(int row, JsLabel label) {
 
 		final Button labelButton = new Button();
@@ -198,15 +249,42 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener 
 		labelButton.setText(label.getName());
 		labelButton.setTitle(label.getName() + "-" + label.getUrl());
 		labelButton.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
-		
-		if (!isWhite(label.getColor()))
-			labelButton.getElement().getStyle().setColor("#" + label.getColor());
+		labelButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 
+		if (!isWhite(label.getColor()))
+			labelButton.getElement().getStyle()
+					.setColor("#" + label.getColor());
+
+		setClickEvent(labelButton);
 		labelsVPanel.add(labelButton);
 	}
-	
+
+	private boolean setFontColor(Button button, FontWeight fontWeiht) {
+
+		if (button != seletedButton) {
+			seletedButton.getElement().getStyle().clearFontWeight();
+			button.getElement().getStyle().setFontWeight(fontWeiht);
+			seletedButton = button;
+			return true;
+		}
+		return false;
+	}
+
 	private boolean isWhite(String color) {
 		return color == "ffffff";
 	}
 
+	private void setClickEvent(final Button button) {
+
+		button.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				Window.alert("Etiqueta: " + button.getText());
+			}
+		});
+	}
+	// ******************************************************************
+	// ******************************************************************
+	// ******************************************************************
 }

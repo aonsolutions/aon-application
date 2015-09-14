@@ -9,7 +9,7 @@ public interface IssueSelected {
 	
 	String getTitle();
 	
-	String getState();
+	String getStateIconStyle();
 	
 	/** UserSelected getUser(); **/
 	

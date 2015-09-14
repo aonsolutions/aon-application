@@ -161,6 +161,8 @@ public class AON {
 	public static final String AON_CALENDAR_MyHOLIDAY_4 = Calendar_CSS.myHoliday_4();
 	
 
+	public static final String AON_ICON_ISSUE_CLOSED = "aon-icon-issue-closed";
+	public static final String AON_ICON_ISSUE_OPENED = "aon-icon-issue-opened";
 	
 	public static final String AON_ICON_CALENDAR = "aon-icon-calendar";
 	public static final String AON_ICON_COST = "aon-icon-cost";
