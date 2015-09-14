@@ -22,7 +22,7 @@ public class ItemBeanListener extends ManagerBeanListenerAdapter {
 	@Override
 	public void beanUpdated(ManagerBeanEvent event) throws ManagerBeanException {
 		Item item = (Item)event.getTo();
-		if (!item.getProduct().isComposition()) {
+		if (!item.getProduct().isComposition() && !item.getProduct().isManufactured()) {
 			IManagerBean itemCompositionBean = BeanManager.getManagerBean(ItemComposition.class);
 			for (ItemComposition composition : item.getItemCompositionList()) {
 				itemCompositionBean.remove(composition);
