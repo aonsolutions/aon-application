@@ -163,8 +163,8 @@ public class ReservationUtils implements IReservationConstants, Serializable {
     	BeanManager.getManagerBean(ProjectReservationRoom.class).update(reservationRoom);
     }
 
-    public Map<Tax, Double> getReservationServicesTaxableBasesPerTax(Integer reservationId, Date fromDate, Date toDate) throws ManagerBeanException {
-		Map<Tax, Double> reservationBases = new HashMap<Tax, Double>();
+    public Map<Integer, Double> getReservationServicesTaxableBasesPerTax(Integer reservationId, Date fromDate, Date toDate) throws ManagerBeanException {
+		Map<Integer, Double> reservationBases = new HashMap<Integer, Double>();
 		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 		Criteria criteria = new Criteria();
 		String alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID;
@@ -173,14 +173,17 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		criteria.addBetweenExpression(reservationServiceDetailBean.getFieldName(alias), fromDate, toDate);
 		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA;
 		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), false);
-		for (ITransferObject ito : reservationServiceDetailBean.getList(criteria)) {
-			ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)ito;
-			Tax vat = reservationServiceDetail.getProjectReservationService().getItem().getProduct().getVat();
-			double base = reservationServiceDetail.getTaxableBase();
-			if (reservationBases.containsKey(vat)) {
-				base += reservationBases.get(vat);
+		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ITEM_PRODUCT_VAT_ID;
+		Projection prjVat = Projection.property(reservationServiceDetailBean.getFieldName(alias));
+		Projection prjBase = Projection.property(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_TAXABLE_BASE));
+		for (Object obj : reservationServiceDetailBean.getList(new ProjectionList(prjVat, prjBase), criteria)) {
+			Object[] objs = (Object[])obj;
+			Integer vatId = (Integer)objs[0];
+			double base = (Double)objs[1];
+			if (reservationBases.containsKey(vatId)) {
+				base += reservationBases.get(vatId);
 			}
-			reservationBases.put(vat, CommonUtil.round(base, 4));
+			reservationBases.put(vatId, CommonUtil.round(base, 4));
 		}
 		return reservationBases;
 	}
@@ -197,10 +200,12 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), vat.getId());
 		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA;
 		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), false);
-		for (ITransferObject ito : reservationServiceDetailBean.getList(criteria)) {
-			ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)ito;
-			Date date = reservationServiceDetail.getEffectiveDate();
-			double base = reservationServiceDetail.getTaxableBase();
+		Projection prjDate = Projection.property(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE));
+		Projection prjBase = Projection.property(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_TAXABLE_BASE));
+		for (Object obj : reservationServiceDetailBean.getList(new ProjectionList(prjDate, prjBase), criteria)) {
+			Object[] objs = (Object[])obj;
+			Date date = (Date)objs[0];
+			double base = (Double)objs[1];
 			if (reservationBases.containsKey(date)) {
 				base += reservationBases.get(date);
 			}
@@ -320,12 +325,13 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), reservation.getId());
-		for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
+		Projection prjRoomId = Projection.property(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_ID));
+		for (Object obj : reservationRoomBean.getList(new ProjectionList(prjRoomId), criteria)) {
 			pendingRooms = false;
-			ProjectReservationRoom reservationRoom = (ProjectReservationRoom)ito;
+			Integer reservationRoomId = (Integer)obj;
 			criteria = new Criteria();
 			String alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_ID);
-			criteria.addEqualExpression(alias, reservationRoom.getId());
+			criteria.addEqualExpression(alias, reservationRoomId);
 			if (reservationRoomDetailBean.getCount(criteria) == 0) {
 				return true;
 			}
@@ -434,12 +440,13 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 			String alias = reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_EXTRA);
 			criteria.addEqualExpression(alias, false);
 		}
-		for (ITransferObject ito : reservationServiceBean.getList(criteria)) {
+		Projection prjServiceId = Projection.property(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_ID));
+		for (Object obj : reservationServiceBean.getList(new ProjectionList(prjServiceId), criteria)) {
 			pendingServices = false;
-			ProjectReservationService reservationService = (ProjectReservationService)ito;
+			Integer reservationServiceId = (Integer)obj;
 			criteria = new Criteria();
 			String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ID);
-			criteria.addEqualExpression(alias, reservationService.getId());
+			criteria.addEqualExpression(alias, reservationServiceId);
 			criteria.addNullExpression(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL));
 			if (reservationServiceDetailBean.getCount(criteria) > 0) {
 				return true;

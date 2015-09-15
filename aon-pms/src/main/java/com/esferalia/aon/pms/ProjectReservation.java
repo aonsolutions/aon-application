@@ -258,8 +258,8 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		return getCheckStatus() == ReservationCheckStatus.CANCEL_INVOICEABLE || getCheckStatus() == ReservationCheckStatus.CANCEL_NO_INVOICEABLE;
 	}
 	@Transient
-	public boolean isNoInvoiceable() {
-		return getCheckStatus() == ReservationCheckStatus.NO_SHOW_NO_INVOICEABLE || getCheckStatus() == ReservationCheckStatus.CANCEL_NO_INVOICEABLE;
+	public boolean isInvoiceable() {
+		return getCheckStatus() == ReservationCheckStatus.NO_SHOW || getCheckStatus() == ReservationCheckStatus.CANCEL_INVOICEABLE;
 	}
 
 	@Transient
@@ -341,8 +341,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		Projection prjName = Projection.property(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_NAME));
 		Projection prjSurname = Projection.property(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_SURNAME));
 		Projection prjSurname2 = Projection.property(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_SURNAME2));
-		ProjectionList projectionList = new ProjectionList(prjName, prjSurname, prjSurname2);
-		List<?> resultList = reservationGuestBean.getList(projectionList, criteria);
+		List<?> resultList = reservationGuestBean.getList(new ProjectionList(prjName, prjSurname, prjSurname2), criteria);
 		if (resultList.size() > 0) {
 			Object[] result = (Object[])resultList.get(0);
 	    	String guestName = (result[0] == null) ? "" : result[0].toString() + " ";
@@ -412,8 +411,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), getId());
 		Projection prjAdults = Projection.sum(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_ADULTS));
 		Projection prjChildren = Projection.sum(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_CHILDREN));
-		ProjectionList projectionList = new ProjectionList(prjAdults, prjChildren);
-		List<?> resultList = reservationRoomBean.getList(projectionList, criteria);
+		List<?> resultList = reservationRoomBean.getList(new ProjectionList(prjAdults, prjChildren), criteria);
 		if (resultList.size() > 0) {
 			Object[] result = (Object[])resultList.get(0);
 	    	Integer adults = (result[0] == null) ? 0 : (Integer)result[0];
@@ -536,7 +534,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 
 	@Transient
-	public Map<Tax, Double> getReservationTaxableBasesPerTax(Date fromDate, Date toDate) throws ManagerBeanException {
+	public Map<Integer, Double> getReservationTaxableBasesPerTax(Date fromDate, Date toDate) throws ManagerBeanException {
 		ReservationUtils reservationUtils = new ReservationUtils(getDomain());
 		return reservationUtils.getReservationServicesTaxableBasesPerTax(getId(), fromDate, toDate);
 	}
@@ -544,7 +542,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	@Transient
 	public double getPenaltyTaxableBase(Item item, Date fromDate, Date toDate) throws ManagerBeanException {
 		if (item != null && item.getId() != null) {
-			Double taxableBase = getReservationTaxableBasesPerTax(fromDate, toDate).get(item.getProduct().getVat());
+			Double taxableBase = getReservationTaxableBasesPerTax(fromDate, toDate).get(item.getProduct().getVat().getId());
 			return (taxableBase != null) ? CommonUtil.round(taxableBase.doubleValue(), 4) : 0;
 		}
 		return 0;
@@ -577,7 +575,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	@Transient
 	public double getReservationPenaltyTaxableBase(Date fromDate, Date toDate) throws ManagerBeanException {
 		if (getHotelReservation().getItemPenalty() != null && getHotelReservation().getItemPenalty().getId() != null) {
-			Double taxableBase = getReservationTaxableBasesPerTax(fromDate, toDate).get(getHotelReservation().getItemPenalty().getProduct().getVat());
+			Double taxableBase = getReservationTaxableBasesPerTax(fromDate, toDate).get(getHotelReservation().getItemPenalty().getProduct().getVat().getId());
 			return (taxableBase != null) ? CommonUtil.round(taxableBase.doubleValue(), 4) : 0;
 		}
 		return 0;
@@ -596,7 +594,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	@Transient
 	public double getNoShowPenaltyTaxableBase(Date fromDate, Date toDate) throws ManagerBeanException {
 		if (getHotelReservation().getItemNoShow() != null && getHotelReservation().getItemNoShow().getId() != null) {
-			Double taxableBase = getReservationTaxableBasesPerTax(fromDate, toDate).get(getHotelReservation().getItemNoShow().getProduct().getVat());
+			Double taxableBase = getReservationTaxableBasesPerTax(fromDate, toDate).get(getHotelReservation().getItemNoShow().getProduct().getVat().getId());
 			return (taxableBase != null) ? CommonUtil.round(taxableBase.doubleValue(), 4) : 0;
 		}
 		return 0;

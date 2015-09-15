@@ -1,6 +1,7 @@
 package com.esferalia.aon.pms;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -13,11 +14,12 @@ import javax.persistence.Transient;
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.ReservationRequestDB;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
@@ -69,9 +71,14 @@ public class ReservationRequest extends ReservationRequestDB implements IAuditab
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(requestGuestBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_GUEST_RESERVATION_REQUEST_ID), getId());
 		criteria.addOrder(requestGuestBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_GUEST_GUEST_INDEX));
-		for (ITransferObject ito : requestGuestBean.getList(criteria)) {
-			ReservationRequestGuest requestGuest = (ReservationRequestGuest)ito;
-			return requestGuest.getFullName();
+		Projection prjName = Projection.property(requestGuestBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_GUEST_NAME));
+		Projection prjSurname = Projection.property(requestGuestBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_GUEST_SURNAME));
+		List<?> resultList = requestGuestBean.getList(new ProjectionList(prjName, prjSurname), criteria);
+		if (resultList.size() > 0) {
+			Object[] result = (Object[])resultList.get(0);
+	    	String guestName = (result[0] == null) ? "" : result[0].toString() + " ";
+	    	guestName += (result[1] == null) ? "" : result[1].toString();
+			return guestName;
 		}
 		return null;
 	}
