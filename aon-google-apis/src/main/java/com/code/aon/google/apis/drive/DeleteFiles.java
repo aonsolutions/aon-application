@@ -17,6 +17,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
@@ -31,7 +33,10 @@ import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Property;
 
 public class DeleteFiles {
-
+	
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(DeleteFiles.class.getName());
+	
 	private static void deleteDriveIds(File f, String domain, Integer id)
 			throws SQLException, AonConnectionException {
 		String aonType = null;
@@ -172,6 +177,25 @@ public class DeleteFiles {
 		}
 
 	}
+	
+	public static void deleteFileId(String domain, Integer id)
+			throws IOException, SQLException, AonConnectionException {
+
+		Domain d = DBConsults.getDomain(domain);
+		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());
+		if (g.getClientId() != null) {
+			Drive drive;
+			try {
+				drive = DriveUtils.serviceInitialize(g);
+				FileList fl = SearchFiles.searchFilesProperties(drive, "fileId", id.toString());
+				File f = fl.getItems().get(0);
+				deleteFile(drive, f, domain);
+			} catch (GeneralSecurityException e) {
+				LOGGER.error(e.getMessage(), e);					
+			}
+			
+		}
+	}
 
 	public static void deleteFilesAll(Drive drive, String domain)
 			throws IOException, SQLException, AonConnectionException {
@@ -191,6 +215,7 @@ public class DeleteFiles {
 		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());
 		if (g.getClientId() != null) {
 			Drive drive = DriveUtils.serviceInitialize(g);
+
 			View.domain(domain);
 
 			if (action.equals("all")) {
@@ -200,6 +225,7 @@ public class DeleteFiles {
 			} else {
 				View.error2();
 			}
+			
 		}
 	}
 
@@ -208,7 +234,12 @@ public class DeleteFiles {
 			AonConnectionException {
 		parse(args);
 		System.out.println(domains[0]);
-		if (domains[0].equals("all")) {
+		if(id != -1){
+			Map<String, String> domains1=DatabaseSync.getDomains();
+			Vector<String> v = new Vector<String>(domains1.keySet());
+			deleteFileId(v.get(0),id);
+		}
+		else if (domains[0].equals("all")) {
 			Map<String, String> domains1=DatabaseSync.getDomains();
 			Hashtable<String,String> schemas = new Hashtable<String, String>();
 			

@@ -79,7 +79,7 @@ public class SynchronizeFiles2 {
 				while(size == 10){
 					Vector<FileInfo> v = DBDrive.getRAttachLimit(d.getName(), d.getId(),rats, firstId);
 					System.out.println(v.size());
-					sync(drive, d.getName(), v);
+					if(v.size() != 0) sync(drive, d.getName(), v);
 					if (numero >= num) return;
 					size = v.size();
 					firstId = v.get(v.size()-1).getFileId();
@@ -90,7 +90,7 @@ public class SynchronizeFiles2 {
 				Integer firstId = 0;
 				while(size == 10){
 					Vector<FileInfo> v = DBDrive.getContractAttachLimit(d.getName(), d.getId(), firstId);
-					sync(drive, d.getName(), v);
+					if(v.size() != 0) sync(drive, d.getName(), v);
 					if (numero >= num) return;
 					size = v.size();
 					firstId = v.get(v.size()-1).getFileId();
@@ -101,7 +101,7 @@ public class SynchronizeFiles2 {
 				Integer firstId = 0;
 				while(size == 10){
 					Vector<FileInfo> v = DBDrive.getIAttachLimit(d.getName(), d.getId(), firstId);
-					sync(drive, d.getName(), v);
+					if(v.size() != 0) sync(drive, d.getName(), v);
 					if (numero >= num) return;
 					size = v.size();
 					firstId = v.get(v.size()-1).getFileId();
@@ -112,7 +112,7 @@ public class SynchronizeFiles2 {
 				Integer firstId = 0;
 				while(size == 10){
 					Vector<FileInfo> v = DBDrive.getInvoiceAttachLimit(d.getName(), d.getId(), firstId);
-					sync(drive, d.getName(), v);
+					if(v.size() != 0) sync(drive, d.getName(), v);
 					if (numero >= num) return;
 					size = v.size();
 					firstId = v.get(v.size()-1).getFileId();
@@ -123,7 +123,7 @@ public class SynchronizeFiles2 {
 				Integer firstId = 0;
 				while(size == 10){
 					Vector<FileInfo> v = DBDrive.getOfferAttachLimit(d.getName(), d.getId(), firstId);
-					sync(drive, d.getName(), v);
+					if(v.size() != 0) sync(drive, d.getName(), v);
 					if (numero >= num) return;
 					size = v.size();
 					firstId = v.get(v.size()-1).getFileId();
@@ -134,7 +134,7 @@ public class SynchronizeFiles2 {
 				Integer firstId = 0;
 				while(size == 10){
 					Vector<FileInfo> v = DBDrive.getPayrollAttachLimit(d.getName(), d.getId(), firstId);
-					sync(drive, d.getName(), v);
+					if(v.size() != 0) sync(drive, d.getName(), v);
 					if (numero >= num) return;
 					size = v.size();
 					firstId = v.get(v.size()-1).getFileId();
@@ -145,7 +145,7 @@ public class SynchronizeFiles2 {
 				Integer firstId = 0;
 				while(size == 10){
 					Vector<FileInfo> v = DBDrive.getProjectAttachLimit(d.getName(), d.getId(), firstId);
-					sync(drive, d.getName(), v);
+					if(v.size() != 0) sync(drive, d.getName(), v);
 					if (numero >= num) return;
 					size = v.size();
 					firstId = v.get(v.size()-1).getFileId();
@@ -156,7 +156,7 @@ public class SynchronizeFiles2 {
 				Integer firstId = 0;
 				while(size == 10){
 					Vector<FileInfo> v = DBDrive.getSepeAttachLimit(d.getName(), d.getId(), firstId);
-					sync(drive, d.getName(), v);
+					if(v.size() != 0) sync(drive, d.getName(), v);
 					if (numero >= num) return;
 					size = v.size();
 					firstId = v.get(v.size()-1).getFileId();
