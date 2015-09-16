@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import com.esferalia.aon.gwt.codemirror.client.ui.CodeArea;
+import com.esferalia.aon.gwt.codemirror.client.ui.MergeArea;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
@@ -19,9 +19,9 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 
-public class FileEditor extends ResizeComposite {
+public class MergeEditor extends ResizeComposite {
 
-	interface Binder extends UiBinder<Widget, FileEditor> {
+	interface Binder extends UiBinder<Widget, MergeEditor> {
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
@@ -33,14 +33,14 @@ public class FileEditor extends ResizeComposite {
 	Button saveButton;
 
 	@UiField
-	CodeArea codeArea;
+	MergeArea mergeArea;
 
 	@UiField
 	MenuItem saveMenuItem;
 
 	private String filename;
 
-	public FileEditor() {
+	public MergeEditor() {
 		initWidget(binder.createAndBindUi(this));
 		saveMenuItem.setScheduledCommand(new ScheduledCommand() {
 			@Override
@@ -55,20 +55,26 @@ public class FileEditor extends ResizeComposite {
 	}
 
 	public void setMode(String mode) {
-		codeArea.setMode(mode);
+		mergeArea.setMode(mode);
 	}
 
 	public void setLineNumbers(boolean lineNumbers) {
-		codeArea.setLineNumbers(lineNumbers);
+		mergeArea.setLineNumbers(lineNumbers);
 	}
 
 	public void setText(String content) {
-		codeArea.setText(content);
+		mergeArea.setValue(content);
+	}
+
+	public void setOrig(String content) {
+		mergeArea.setOrig(content);
 	}
 
 	public void setFilename(String filename) {
 		this.filename = filename;
 	}
+	
+	
 
 	// -----------------------------------------------------------------------
 
@@ -76,18 +82,21 @@ public class FileEditor extends ResizeComposite {
 		Scheduler.get().scheduleFixedDelay(new RepeatingCommand() {
 			@Override
 			public boolean execute() {
-				codeArea.refresh();
-				return (codeArea.getOffsetHeight() == 0
-						|| codeArea.getOffsetWidth() == 0);
+				
+				mergeArea.refresh();
+
+				Widget parent = mergeArea.getParent();
+				if ( parent != null ) 
+					mergeArea.resize(parent.getOffsetHeight());
+
+				return (mergeArea.getOffsetHeight() == 0
+						|| mergeArea.getOffsetWidth() == 0);
+				
 			}
 		}, 100);
 	}
 
 	// -----------------------------------------------------------------------
-
-	public void setFocus(boolean focused) {
-		codeArea.setFocus(focused);
-	}
 
 	// -----------------------------------------------------------------------
 
@@ -104,7 +113,7 @@ public class FileEditor extends ResizeComposite {
 		anchor.setAttribute("download", filename); // HTML5
 		String ext = filename.substring(filename.lastIndexOf('.'));
 		anchor.setHref("data:text/" + ext + ";charset=utf-8" + ","
-				+ URL.encode(codeArea.getText()));
+				+ URL.encode(mergeArea.getValue()));
 
 		doc.getBody().appendChild(anchor);
 		// Anchor.wrap(anchor).fireEvent(new ClickEvent(){});

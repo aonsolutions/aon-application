@@ -986,20 +986,24 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 
 		for (ITimedResult<Double> result : results) {
 			Double value = result.getValue();
+			Period period = result.getPeriod();
+
 			if (value == null || value == 0) {
-				salaryBuilder.addZeroDeduction(d, result.getContext());
+				salaryBuilder.addZeroDeduction(period.getStart(), period.getEnd(),d, result.getContext());
 				continue;
 			}
 
 			String description = null;
 			try {
-				Period period = result.getPeriod();
 				description = ctx.evalTemplate(d.getDescription(),
 						period.getStart(), period.getEnd());
 			} catch (Exception e) {
 				// TODO : Log ???
 			}
-			salaryBuilder.addDeduction(value, description, d,
+			salaryBuilder.addDeduction(value, description, 
+					period.getStart(),
+					period.getEnd(),
+					d,
 					result.getContext());
 			total += value;
 		}

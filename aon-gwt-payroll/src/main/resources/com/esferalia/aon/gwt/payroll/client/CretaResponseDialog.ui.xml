@@ -16,6 +16,9 @@
 		white-space: nowrap;
 		background-color: #F2F2F2;
 	}
+	.nowrap {
+		white-space: nowrap;
+	}
 	
 	.labeltop {
 		margin-top: 10x;
@@ -63,6 +66,7 @@
 	.options-scroll-panel>div {
 		height: 99%;
 	}
+	
 	</ui:Style>
 
 	<ui:import field="com.google.gwt.user.client.ui.FormPanel.*" />
@@ -71,14 +75,13 @@
 	<ui:import field="com.esferalia.aon.gwt.payroll.shared.CretaService.Parameter.*" />
 
 	<g:FormPanel ui:field="formPanel" method="{METHOD_POST}" action="{CRETA_URL}"  encoding="{ENCODING_MULTIPART}">
-	
 	<g:HTMLPanel styleName="aon-width-all aon-height-all">
 			<table class="aon-width-all {style.form} ">
 				<tr>
 					<td class="{style.label}">
 						<g:Label text="Aceptar Bases Anteriores" />
 					</td>
-					<td class="{style.field}">
+					<td class="{style.field}" >
 						<g:CheckBox  name="{ACEPTAR_BASES_ANTERIORES.name}" ui:field="basesCheck" checked="false"/>
 					</td>
 				</tr>
@@ -87,7 +90,11 @@
 						<g:Label text="SDL-Fichero Trabajadores y Tramos" />
 					</td>
 					<td class="{style.field}">
-						<g:FileUpload name="{TRABAJADORES_TRAMOS.name}" ui:field="fileUpload" />
+						<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
+							<g:Button ui:field="fileButton" enabled="true" >Seleccionar</g:Button>
+							<g:InlineLabel styleName="{style.nowrap}" >&nbsp;&nbsp;</g:InlineLabel> 
+							<g:InlineLabel styleName="{style.nowrap}"  ui:field="fileLabel" text="Trabajadores y Tramos" />
+						</g:HorizontalPanel>
 					</td>
 				</tr>
 				<tr style="display:none" >
@@ -107,11 +114,12 @@
 	
 			<div class="{style.buttons} {style.form} ">
 				<g:Button ui:field="cancelButton">Cancelar</g:Button>
-				<g:SubmitButton ui:field="acceptButton" enabled="false" >Aceptar</g:SubmitButton>
+				<g:Button ui:field="acceptButton" enabled="false" >Aceptar</g:Button>
 			</div>
-	</g:HTMLPanel>
 	
-
+			<g:FileUpload visible="false"  name="{TRABAJADORES_TRAMOS.name}" ui:field="fileUpload" />
+	
+	</g:HTMLPanel>
 	</g:FormPanel>
 
 

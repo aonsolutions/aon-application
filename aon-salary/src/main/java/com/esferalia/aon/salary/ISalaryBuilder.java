@@ -119,9 +119,9 @@ public interface ISalaryBuilder<T extends ISalary> {
 			Date startDate, Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context);
 
 	public void addDeduction(Double amount, String description,
-			IDeduction deduction, Map<String, ITimedVariable<?>> context);
+			Date start, Date end, IDeduction deduction, Map<String, ITimedVariable<?>> context);
 
-	public void addZeroDeduction(IDeduction deduction,
+	public void addZeroDeduction(Date start, Date end, IDeduction deduction,
 			Map<String, ITimedVariable<?>> context);
 
 	public void addEmbargo(Integer id, Double amount, String description,

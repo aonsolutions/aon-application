@@ -319,8 +319,10 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 
 	@Override
 	public void addDeduction(final Double amount, String description,
-			IDeduction deduction, Map<String, ITimedVariable<?>> context) {
+			Date start, Date end, IDeduction deduction, Map<String, ITimedVariable<?>> context) {
 
+		// TODO: start & end dates ????
+		
 		SalaryDeduction salaryDeduction = new SalaryDeduction();
 
 		DeductionType type = deduction.getType();
@@ -331,7 +333,7 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 		salaryDeduction.setDescription(description);
 		salaryDeduction.setDeductionConcept(deduction.getName());
 		salaryDeduction.setExpression(deduction.getExpression());
-
+		
 		this.salary.getSalaryDeductions().add(salaryDeduction);
 
 		if (type == DeductionType.IRPF) {
@@ -346,7 +348,7 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 	}
 
 	@Override
-	public void addZeroDeduction(IDeduction deduction,
+	public void addZeroDeduction(Date start, Date end, IDeduction deduction,
 			Map<String, ITimedVariable<?>> context) {
 	}
 

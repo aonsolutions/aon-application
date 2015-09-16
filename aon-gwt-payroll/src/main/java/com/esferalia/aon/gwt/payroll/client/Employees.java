@@ -327,8 +327,9 @@ public class Employees extends ResizeComposite implements
 							new ITDataObject(workplace.getId(),
 									employeesService));
 			if (extended) {
-				final TreeItem eventsItem = addImageItem(workplaceItem,
-						"Incidencias", images.data());
+				//final TreeItem eventsItem = addImageItem(workplaceItem,
+				//		"Incidencias", images.data());
+				final TreeItem eventsItem = new TreeItem();
 
 				// --------------------------------------------------------------
 				//
@@ -1298,8 +1299,9 @@ public class Employees extends ResizeComposite implements
 						salaryDraft, dataObject, employeesService);
 				salaryDraftItem.setUserObject(draftObject);
 
-				final TreeItem employeeEventsItem = addImageItem(employeeItem,
-						"Incidencias", images.data());
+				//final TreeItem employeeEventsItem = addImageItem(employeeItem,
+				//		"Incidencias", images.data());
+				final TreeItem employeeEventsItem = new TreeItem();
 
 				final EmployeeEventsDraftObject employeeEventsDraftObject;
 

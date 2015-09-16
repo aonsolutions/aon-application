@@ -294,9 +294,11 @@ public abstract class AbstractSQLSalaryBuilder<T extends ISalary> implements ISa
 
 	@Override
 	public void addDeduction(Double amount,
-			String description, IDeduction deduction, Map<String, ITimedVariable<?>> context) {
+			String description, Date start, Date end,IDeduction deduction, Map<String, ITimedVariable<?>> context) {
 		AbstractSQL.SalaryDeduction salaryDeduction = 
 			new AbstractSQL.SalaryDeduction();
+		
+		// TODO: start & end dates ?
 		
 		salaryDeduction.setType(deduction.getType());
 		salaryDeduction.setAmount(amount);
@@ -308,7 +310,7 @@ public abstract class AbstractSQLSalaryBuilder<T extends ISalary> implements ISa
 	}
 	
 	@Override
-	public void addZeroDeduction(IDeduction deduction, Map<String, ITimedVariable<?>> context) {
+	public void addZeroDeduction(Date start, Date end, IDeduction deduction, Map<String, ITimedVariable<?>> context) {
 		// TODO Auto-generated method stub
 	}
 	

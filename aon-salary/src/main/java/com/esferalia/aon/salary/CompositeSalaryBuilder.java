@@ -291,16 +291,16 @@ public class CompositeSalaryBuilder<E extends ISalary,T extends ISalaryBuilder<E
 
 	@Override
 	public void addDeduction(Double amount, String description,
-			IDeduction deduction, Map<String, ITimedVariable<?>> context) {
+			Date start, Date end,IDeduction deduction, Map<String, ITimedVariable<?>> context) {
 		for (ISalaryBuilder<E> builder : builders)
-			builder.addDeduction(amount, description, deduction, context);
+			builder.addDeduction(amount, description, start, end, deduction, context);
 	}
 
 	@Override
-	public void addZeroDeduction(IDeduction deduction,
+	public void addZeroDeduction(Date start, Date end,IDeduction deduction,
 			Map<String, ITimedVariable<?>> context) {
 		for (ISalaryBuilder<E> builder : builders)
-			builder.addZeroDeduction(deduction, context);
+			builder.addZeroDeduction(start, end,deduction, context);
 	}
 	
 	

@@ -278,13 +278,13 @@ public class MockSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 
 	@Override
 	public void addDeduction(Double amount, String description,
-			IDeduction deduction, Map<String, ITimedVariable<?>> context) {
+			Date start, Date end, IDeduction deduction, Map<String, ITimedVariable<?>> context) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void addZeroDeduction(IDeduction deduction,
+	public void addZeroDeduction(Date start, Date end, IDeduction deduction,
 			Map<String, ITimedVariable<?>> context) {
 		// TODO Auto-generated method stub
 

@@ -202,6 +202,7 @@ import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
+import com.google.api.client.repackaged.com.google.common.base.Throwables;
 
 public class SQLContractSalaryCalculatorContext extends
 		AbstractContractSalaryCalculatorContext implements
@@ -2819,29 +2820,49 @@ public class SQLContractSalaryCalculatorContext extends
 
 		Date prevMonth = getLastDayOfMonth(add(date, Calendar.MONTH, -1));
 
-		Stream<com.esferalia.aon.occam.api.model.Salary> salaries = AON
-				.getSalaries(
-						new AONContext(connection),
-						p -> p.getIsSalaryProperty().eq(true)
-								.and(p.getContractProperty().eq(contractId))
-								.and(p.getStartDateProperty().le(prevMonth))
-								.and(p.getEndDateProperty().ge(prevMonth)));
-		double br = salaries
-				.collect(Collectors.summingDouble(s -> s
-						.getCommonContingenciesBase()
-						/ s.getContextData(
-								QUOTE_DAYS.getName(),
-								summingDouble(Double::parseDouble))
-//						/ (s.getSalaryDays()
-//								* ifnull(
-//										s.getContextData(
-//												MONTH_DAYS.getName(),
-//												summingDouble(Double::parseDouble)),
-//										(double) getMax(s.getStartDate(),
-//												DAY_OF_MONTH)) / getMax(
-//									s.getStartDate(), DAY_OF_MONTH))
-						));
-						salaries.close();
+		double br = 0.00;
+		
+		
+		try {
+			Stream<com.esferalia.aon.occam.api.model.Salary> salaries = AON
+					.getSalaries(
+							new AONContext(connection),
+							p -> p.getIsSalaryProperty().eq(true)
+									.and(p.getContractProperty().eq(contractId))
+									.and(p.getStartDateProperty().le(prevMonth))
+									.and(p.getEndDateProperty().ge(prevMonth)));
+			br = salaries
+					.collect(Collectors.summingDouble(s -> s
+							.getCommonContingenciesBase()
+							/ s.getContextData(
+									QUOTE_DAYS.getName(),
+									summingDouble(Double::parseDouble))
+							));
+			salaries.close();
+		} catch (Throwable t){
+			Stream<com.esferalia.aon.occam.api.model.Salary> salaries = AON
+					.getSalaries(
+							new AONContext(connection),
+							p -> p.getIsSalaryProperty().eq(true)
+									.and(p.getContractProperty().eq(contractId))
+									.and(p.getStartDateProperty().le(prevMonth))
+									.and(p.getEndDateProperty().ge(prevMonth)));
+			br = salaries
+					.collect(Collectors.summingDouble(s -> s
+							.getCommonContingenciesBase()
+							/ (s.getSalaryDays()
+									* ifnull(
+											s.getContextData(
+													MONTH_DAYS.getName(),
+													summingDouble(Double::parseDouble)),
+											(double) getMax(s.getStartDate(),
+													DAY_OF_MONTH)) / getMax(
+										s.getStartDate(), DAY_OF_MONTH))
+							));
+			salaries.close();
+			
+		} 
+		
 		if (br > 0.00)
 			return br;
 
