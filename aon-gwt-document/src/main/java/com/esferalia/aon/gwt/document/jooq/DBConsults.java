@@ -1,30 +1,31 @@
 package com.esferalia.aon.gwt.document.jooq;
 
 import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
+import static com.esferalia.aon.jooq.tables.Contact.CONTACT;
+import static com.esferalia.aon.jooq.tables.ContactData.CONTACT_DATA;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
+import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
-import static com.esferalia.aon.jooq.tables.Contact.CONTACT;
-import static com.esferalia.aon.jooq.tables.ContactData.CONTACT_DATA;
-import static com.esferalia.aon.jooq.tables.ContactDetail.CONTACT_DETAIL;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Vector;
 
 import org.apache.commons.io.FileUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
-import org.jooq.Record11;
-import org.jooq.Record14;
+import org.jooq.Record15;
 import org.jooq.Record16;
+import org.jooq.Record18;
 import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record7;
@@ -36,11 +37,9 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.jooq.JooqSettings;
 import com.code.aon.pool.AonConnectionException;
-import com.code.aon.product.enumeration.AttachmentType;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.entity.master.RegistryAttachmentDB;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.CategoryList;
 import com.esferalia.aon.gwt.document.shared.Contact;
@@ -104,10 +103,11 @@ public class DBConsults {
 				
 				Byte sh = (byte)RegistryAttachmentType.CORPORATE_IDENTITY.ordinal();//5;
 				//rattach domain + parent domain + scope not null
-				Result<Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer>> username = dslContext
+				Result<Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp>> username = dslContext
 						.selectDistinct(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.TYPE,
-								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DPARENT_ID,DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,DOMAIN.PARENT)
+								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DPARENT_ID,DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,DOMAIN.PARENT,
+								RATTACH.CREATION_USER, RATTACH.CREATION_DATE, RATTACH.MODIFICATION_USER, RATTACH.MODIFICATION_DATE)
 						.from(RATTACH)
 						.join(DOMAIN)
 						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
@@ -120,10 +120,11 @@ public class DBConsults {
 						.fetch();
 				
 				//rattach scope null parent
-				Result<Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer>> result1 = dslContext
+				Result<Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp>> result1 = dslContext
 						.select(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.TYPE,
-								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DPARENT_ID,DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,DOMAIN.PARENT)
+								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DPARENT_ID,DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,DOMAIN.PARENT,
+								RATTACH.CREATION_USER, RATTACH.CREATION_DATE, RATTACH.MODIFICATION_USER, RATTACH.MODIFICATION_DATE)
 						.from(RATTACH)
 						.join(DOMAIN)
 						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
@@ -133,10 +134,11 @@ public class DBConsults {
 						.fetch();
 				
 				//rattach scope null 
-				Result<Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer>> result = dslContext
+				Result<Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp>> result = dslContext
 						.selectDistinct(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.TYPE,
-								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DPARENT_ID,DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,DOMAIN.PARENT)
+								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DPARENT_ID,DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,DOMAIN.PARENT,
+								RATTACH.CREATION_USER, RATTACH.CREATION_DATE, RATTACH.MODIFICATION_USER, RATTACH.MODIFICATION_DATE)
 						.from(RATTACH)
 						.join(DOMAIN)
 						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
@@ -144,10 +146,11 @@ public class DBConsults {
 						.fetch();
 
 				// sons domain
-				Result<Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer>> result2 = dslContext
+				Result<Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp>> result2 = dslContext
 						.selectDistinct(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.TYPE,
-								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DPARENT_ID,DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,DOMAIN.PARENT)
+								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DPARENT_ID,DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,DOMAIN.PARENT,
+								RATTACH.CREATION_USER, RATTACH.CREATION_DATE, RATTACH.MODIFICATION_USER, RATTACH.MODIFICATION_DATE)
 						.from(RATTACH)
 						.join(DOMAIN)
 						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
@@ -156,7 +159,7 @@ public class DBConsults {
 										.where(DOMAIN.ID.eq(domainId)))))
 						.fetch();
 				
-				for (Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer> record : username) {
+				for (Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp> record : username) {
 					FileInfo fi = newFileInfo(dslContext,domain,domain2,record);
 					
 					if (!fi.getConfidential() || (confidential && fi.getConfidential())){
@@ -167,7 +170,7 @@ public class DBConsults {
 							else if(!fi.getIsParent()) vaux.add(fi);
 					}
 				}
-				for (Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer> record : result) {
+				for (Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp> record : result) {
 					FileInfo fi = newFileInfo(dslContext,domain,domain2,record);
 					if (!esta(fi,user_id,dslContext)&&(!fi.getConfidential() || (confidential && fi.getConfidential()))){
 						filesGwt.add(fi);
@@ -177,7 +180,7 @@ public class DBConsults {
 							else if(!fi.getIsParent()) vaux.add(fi);
 					}
 				}
-				for (Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer> record : result1) {
+				for (Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp> record : result1) {
 					FileInfo fi = newFileInfo(dslContext,domain,domain2,record);
 					if (!fi.getConfidential() || (confidential && fi.getConfidential())){
 						filesGwt.add(fi);
@@ -188,7 +191,7 @@ public class DBConsults {
 								vaux.add(fi);
 					}
 				}
-				for (Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer> record : result2) {
+				for (Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp> record : result2) {
 					FileInfo fi = newFileInfo(dslContext,domain,domain2,record);
 					
 					if (!fi.getConfidential() || (confidential && fi.getConfidential())){
@@ -217,7 +220,7 @@ public class DBConsults {
 		}
 	}
 	
-	private static FileInfo newFileInfo(DSLContext dslContext, String domain, String domain2, Record14<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer> record) throws SQLException {
+	private static FileInfo newFileInfo(DSLContext dslContext, String domain, String domain2, Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp> record) throws SQLException {
 		FileInfo fi = new FileInfo();
 		fi.setAonType("registry");
 		if (record.value1() != null) {
@@ -288,7 +291,24 @@ public class DBConsults {
 		if(record.value14()==null)
 			if(!fi.getDomain().equals(domain2))
 				fi.setIsParent(true);
-		
+		if(record.value15() != null)
+			fi.setCreationUser(record.value15());
+		if(record.value16() != null){
+			long a = record.value16().getTime();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new java.util.Date(a));
+			String dateStr = cal.get(Calendar.DATE)+"-"+cal.get(Calendar.MONTH)+"-"+cal.get(Calendar.YEAR);
+			fi.setCreationDateStr(dateStr);
+		}
+		if(record.value17() != null)
+			fi.setModificationUser(record.value17());
+		if(record.value18() != null){
+			long a = record.value18().getTime();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new java.util.Date(a));
+			String dateStr = cal.get(Calendar.DATE)+"-"+cal.get(Calendar.MONTH)+"-"+cal.get(Calendar.YEAR);
+			fi.setModificationDateStr(dateStr);
+		}
 		return fi;
 	}
 
@@ -884,9 +904,14 @@ public class DBConsults {
 			Result<Record1<Integer>> reg = dslContext.select(ENTERPRISE.REGISTRY)
 				.from(ENTERPRISE.join(DOMAIN).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID)))
 				.where(DOMAIN.NAME.eq(domain)).fetch();
-			//TODO AÑADIR AUDITORIAA!!!!!!		
-			return dslContext.insertInto(RATTACH,RATTACH.REGISTRY,RATTACH.DOMAIN,RATTACH.CATEGORY,RATTACH.MIMETYPE,RATTACH.DESCRIPTION,RATTACH.TYPE,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.ATTACH_DATE,RATTACH.DATA,RATTACH.DRIVE_ID,RATTACH.DPARENT_ID)
-						.values(reg.get(0).value1(),fi.getDomainId(),fi.getCategory(),fi.getMimetype(),fi.getTitle(),(byte)fi.getType(),fi.getScopeId(),fi.getSecurityLevel(),fi.getDateSql(),null,null,fi.getSize().toString()).returning(RATTACH.ID).fetchOne().getId();
+			
+			Integer userId = AonUtil.getAuthPrincipal().getUserId();
+			Record1<String> user = dslContext.select(USER.LOGIN).from(USER).where(USER.ID.eq(userId)).fetchOne();
+			long currentDate = new java.util.Date().getTime();
+			
+			return dslContext.insertInto(RATTACH,RATTACH.REGISTRY,RATTACH.DOMAIN,RATTACH.CATEGORY,RATTACH.MIMETYPE,RATTACH.DESCRIPTION,RATTACH.TYPE,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.ATTACH_DATE,RATTACH.DATA,RATTACH.DRIVE_ID,RATTACH.DPARENT_ID, RATTACH.CREATION_USER, RATTACH.CREATION_DATE, RATTACH.MODIFICATION_USER, RATTACH.MODIFICATION_DATE)
+						.values(reg.get(0).value1(),fi.getDomainId(),fi.getCategory(),fi.getMimetype(),fi.getTitle(),(byte)fi.getType(),fi.getScopeId(),fi.getSecurityLevel(),fi.getDateSql(),null,null,fi.getSize().toString()
+								,user.value1(),new Timestamp(currentDate),user.value1(),new Timestamp(currentDate)).returning(RATTACH.ID).fetchOne().getId();
 	
 		} finally {
 			if (connection != null)
@@ -902,10 +927,11 @@ public class DBConsults {
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
 			
-			Result<Record11<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, Integer, String>> record = dslContext
+			Result<Record15<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, Integer, String, String, Timestamp, String, Timestamp>> record = dslContext
 					.select(RATTACH.ID, RATTACH.DESCRIPTION,
 							RATTACH.MIMETYPE, RATTACH.TYPE,
-							RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DATA.length(),RATTACH.DPARENT_ID)
+							RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DATA.length(),RATTACH.DPARENT_ID,
+							RATTACH.CREATION_USER, RATTACH.CREATION_DATE, RATTACH.MODIFICATION_USER, RATTACH.MODIFICATION_DATE)
 					.from(RATTACH)
 					.where(RATTACH.ID.eq(id))
 					.fetch();
@@ -968,6 +994,23 @@ public class DBConsults {
 				fi.setSizeStr(FileUtils.byteCountToDisplaySize(fi.getSize()!=null?fi.getSize():0));
 				
 				fi.setIcon(getmType(fi));
+				
+				if(r.value12() != null) fi.setCreationUser(r.value12());
+				if(r.value13() != null){
+					long a = r.value13().getTime();
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(new java.util.Date(a));
+					String dateStr = cal.get(Calendar.DATE)+"-"+cal.get(Calendar.MONTH)+"-"+cal.get(Calendar.YEAR);
+					fi.setCreationDateStr(dateStr);
+				}
+				if(r.value14() != null) fi.setModificationUser(r.value14());
+				if(r.value15() != null){
+					long a = r.value15().getTime();
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(new java.util.Date(a));
+					String dateStr = cal.get(Calendar.DATE)+"-"+cal.get(Calendar.MONTH)+"-"+cal.get(Calendar.YEAR);
+					fi.setModificationDateStr(dateStr);
+				}
 			});
 			return fi;
 		}finally {
@@ -982,7 +1025,16 @@ public class DBConsults {
 			connection = DatabaseSync.getConnection(domain);
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
-			dslContext.update(RATTACH).set(RATTACH.DATA,a).where(RATTACH.ID.eq(id)).execute();
+			
+			Integer userId = AonUtil.getAuthPrincipal().getUserId();
+			Record1<String> user = dslContext.select(USER.LOGIN).from(USER).where(USER.ID.eq(userId)).fetchOne();
+			long currentDate = new java.util.Date().getTime();
+			
+			dslContext.update(RATTACH).set(RATTACH.DATA,a)
+						.set(RATTACH.MODIFICATION_USER, user.value1())
+						.set(RATTACH.MODIFICATION_DATE, new Timestamp(currentDate))
+						.where(RATTACH.ID.eq(id))
+						.execute();
 			
 		} finally {
 			if (connection != null)
@@ -1021,12 +1073,19 @@ public class DBConsults {
 				.values(domainId,fi.getFileId(),tag.getId()).execute();
 			}
 			
+			Integer userId = AonUtil.getAuthPrincipal().getUserId();
+			Record1<String> user = dslContext.select(USER.LOGIN).from(USER).where(USER.ID.eq(userId)).fetchOne();
+			long currentDate = new java.util.Date().getTime();
+			
+			
 			dslContext.update(RATTACH).set(RATTACH.CATEGORY,fi.getCategory())
 									.set(RATTACH.MIMETYPE,fi.getMimetype())
 									.set(RATTACH.DESCRIPTION,fi.getTitle())
 									.set(RATTACH.SCOPE,fi.getScopeId())
 									.set(RATTACH.SECURITY_LEVEL,fi.getSecurityLevel())
 									.set(RATTACH.ATTACH_DATE,fi.getDateSql())
+									.set(RATTACH.MODIFICATION_USER, user.value1())
+									.set(RATTACH.MODIFICATION_DATE, new Timestamp(currentDate))
 							.where(RATTACH.ID.eq(fi.getFileId())).execute();
 		} finally {
 			if (connection != null)
@@ -1142,8 +1201,19 @@ public class DBConsults {
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
 
+			Integer userId = AonUtil.getAuthPrincipal().getUserId();
+			Record1<String> user = dslContext.select(USER.LOGIN).from(USER).where(USER.ID.eq(userId)).fetchOne();
+			long currentDate = new java.util.Date().getTime();
+			
 			String sql = "UPDATE rattach SET category = NULL WHERE category = "+categoryId+";";
 			dslContext.fetch(sql);
+			
+			dslContext.update(RATTACH)
+					.set(RATTACH.MODIFICATION_USER, user.value1())
+					.set(RATTACH.MODIFICATION_DATE, new Timestamp(currentDate))
+					.where(RATTACH.CATEGORY.eq(categoryId))
+					.execute();
+			
 			dslContext.delete(CATEGORY).where(CATEGORY.ID.eq(categoryId)).execute();
 			
 		} finally {

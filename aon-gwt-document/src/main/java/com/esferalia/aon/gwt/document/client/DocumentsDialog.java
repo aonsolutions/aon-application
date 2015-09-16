@@ -1015,6 +1015,17 @@ public abstract class DocumentsDialog extends CustomDialogB {
 			grid.setWidget(8, 0, new Label("Enlace"));
 			grid.setWidget(8, 1, new Label(""));
 
+			grid.setWidget(9, 0, new Label("Creado por"));
+			grid.setWidget(9, 1, new Label(object.getCreationUser()));
+			
+			grid.setWidget(10, 0, new Label("Fecha Creaci\u00f3n"));
+			grid.setWidget(10, 1, new Label(object.getCreationDateStr()));
+			
+			grid.setWidget(11, 0, new Label("Modificado por"));
+			grid.setWidget(11, 1, new Label(object.getModificationUser()));
+			
+			grid.setWidget(12, 0, new Label("Fecha Modificaci\u00f3n"));
+			grid.setWidget(12, 1, new Label(object.getModificationDateStr()));
 			idoc.copyLink(object, dialog.getBaseUrl(), new AsyncCallback<String>() {
 				
 				@Override

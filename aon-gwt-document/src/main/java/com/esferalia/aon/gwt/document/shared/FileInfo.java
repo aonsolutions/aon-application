@@ -4,8 +4,6 @@ package com.esferalia.aon.gwt.document.shared;
 import java.util.Date;
 import java.util.Vector;
 
-import com.code.aon.common.IAttachment;
-import com.code.aon.common.enumeration.MimeType;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.view.client.ProvidesKey;
 
@@ -61,6 +59,12 @@ import com.google.gwt.view.client.ProvidesKey;
 		private String mimeString;
 		
 		private String md5;
+		
+		private String creationUser;
+		private String creationDateStr;
+		private String modificationUser;
+		private String modificationDateStr;
+		
 		
 		public FileInfo() {
 			// TODO Apéndice de constructor generado automáticamente
@@ -315,6 +319,41 @@ import com.google.gwt.view.client.ProvidesKey;
 		public void setMd5(String md5) {
 			this.md5 = md5;
 		}
+
+		public String getCreationUser() {
+			return creationUser;
+		}
+
+		public void setCreationUser(String creationUser) {
+			this.creationUser = creationUser;
+		}
+
+		public String getCreationDateStr() {
+			return creationDateStr;
+		}
+
+		public void setCreationDateStr(String creationDateStr) {
+			this.creationDateStr = creationDateStr;
+		}
+
+		public String getModificationUser() {
+			return modificationUser;
+		}
+
+		public void setModificationUser(String modificationUser) {
+			this.modificationUser = modificationUser;
+		}
+
+		public String getModificationDateStr() {
+			return modificationDateStr;
+		}
+
+		public void setModificationDateStr(String modificationDateStr) {
+			this.modificationDateStr = modificationDateStr;
+		}
+
+		
+		
 
 	}
 
