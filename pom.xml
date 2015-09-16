@@ -373,7 +373,7 @@
 
 		<pluginRepository>
 			<id>Codehaus Public</id>
-			<url>https://nexus.codehaus.org/content/groups/public/</url>
+			<url>https://repository-master.mulesoft.org/nexus/content/groups/public/</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
