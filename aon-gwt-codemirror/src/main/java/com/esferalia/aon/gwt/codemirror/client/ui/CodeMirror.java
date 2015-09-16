@@ -44,7 +44,8 @@ public class CodeMirror extends JavaScriptObject {
 			return getLine(line).length();
 		}
 
-		public native TextMarker markText(Pos from, Pos to, MarkOptions options) /*-{
+		public native TextMarker markText(Pos from, Pos to,
+				MarkOptions options) /*-{
 			return this.markText(from, to, options);
 		}-*/;
 
@@ -163,7 +164,8 @@ public class CodeMirror extends JavaScriptObject {
 			return this;
 		}-*/;
 
-		public native MarkOptions setInclusiveRight(boolean inclusiveRight) /*-{
+		public native MarkOptions setInclusiveRight(
+				boolean inclusiveRight) /*-{
 			this.inclusiveRight = inclusiveRight;
 			return this;
 		}-*/;
@@ -233,7 +235,7 @@ public class CodeMirror extends JavaScriptObject {
 		}-*/;
 	}
 
-	public static final class Configuration extends JavaScriptObject {
+	public static class Configuration extends JavaScriptObject {
 
 		public static Configuration create() {
 			return JavaScriptObject.createObject().cast();
@@ -243,35 +245,35 @@ public class CodeMirror extends JavaScriptObject {
 			// TODO Auto-generated constructor stub
 		}
 
-		public native void setValue(String value)/*-{
+		public final native void setValue(String value)/*-{
 			this.value = value;
 		}-*/;
 
-		public native void setMode(String mode)/*-{
+		public final native void setMode(String mode)/*-{
 			this.mode = mode;
 		}-*/;
 
-		public native void setMode(ModeConfiguration mode)/*-{
+		public final native void setMode(ModeConfiguration mode)/*-{
 			this.mode = mode;
 		}-*/;
 
-		public native void setTheme(String theme)/*-{
+		public final native void setTheme(String theme)/*-{
 			this.theme = theme;
 		}-*/;
 
-		public native void setKeyMap(String keyMap)/*-{
+		public final native void setKeyMap(String keyMap)/*-{
 			this.keyMap = keyMap;
 		}-*/;
 
-		public native void setReadOnly(boolean readOnly)/*-{
+		public final native void setReadOnly(boolean readOnly)/*-{
 			this.readOnly = readOnly;
 		}-*/;
 
-		public native void setLineNumbers(boolean lineNumbers)/*-{
+		public final native void setLineNumbers(boolean lineNumbers)/*-{
 			this.lineNumbers = lineNumbers;
 		}-*/;
 
-		public native void setMatchBrackets(boolean matchBrackets)/*-{
+		public final native void setMatchBrackets(boolean matchBrackets)/*-{
 			this.matchBrackets = matchBrackets;
 		}-*/;
 	}
@@ -318,14 +320,102 @@ public class CodeMirror extends JavaScriptObject {
 
 	}
 
-	public abstract static class DocumentChangeHandler extends
-			EventHandler<Doc, ChangeEvent> {
+	public abstract static class DocumentChangeHandler
+			extends EventHandler<Doc, ChangeEvent> {
 
 		public DocumentChangeHandler() {
 			super();
 		}
 
 	}
+
+	public static final class MergeView extends JavaScriptObject {
+
+		protected MergeView() {
+		}
+
+		public final native CodeMirror getEditor() /*-{
+			return this.editor();
+		}-*/;
+
+		public final native CodeMirror getLeftOriginal() /*-{
+			return this.leftOriginal();
+		}-*/;
+
+		public final native CodeMirror getRightOriginal() /*-{
+			return this.rightOriginal();
+		}-*/;
+
+		public final native void resizeWrap(int height) /*-{
+			this.wrap.style.height = height + "px";
+		}-*/;
+
+		public final boolean refresh() {
+			if (getEditor() != null)
+				getEditor().refresh();
+
+			if (getLeftOriginal() != null)
+				getLeftOriginal().refresh();
+
+			if (getRightOriginal() != null)
+				getRightOriginal().refresh();
+
+			return true;
+		}
+
+		public final boolean resize(int height) {
+			if (getEditor() != null)
+				getEditor().setHeight(height);
+
+			if (getLeftOriginal() != null)
+				getLeftOriginal().setHeight(height);
+
+			if (getRightOriginal() != null)
+				getRightOriginal().setHeight(height);
+			
+			resizeWrap(height);
+			
+			return true;
+		}
+
+		public static final class Options extends Configuration {
+
+			protected Options() {
+			}
+
+			public static Options create() {
+				return JavaScriptObject.createObject().cast();
+			}
+
+			// ----------------------------------------------------------------
+
+			public native void setConnect(boolean connect)/*-{
+				this.connect = connect;
+			}-*/;
+
+			public native void setOrig(String orig)/*-{
+				this.orig = orig;
+			}-*/;
+
+			public native void setOrigLeft(String origLeft)/*-{
+				this.origLeft = origLeft;
+			}-*/;
+
+			public native void setOrigRight(String origRight)/*-{
+				this.origRight = origRight;
+			}-*/;
+
+			public native void setRevertButtons(boolean revertButtons)/*-{
+				this.revertButtons = revertButtons;
+			}-*/;
+
+			public native void setShowDifferences(boolean showDifferences)/*-{
+				this.showDifferences = showDifferences;
+			}-*/;
+		}
+	}
+
+	// ------------------------------------------------------------------------
 
 	public static native String getVersion() /*-{
 		return $wnd.CodeMirror.version;
@@ -345,6 +435,11 @@ public class CodeMirror extends JavaScriptObject {
 		$wnd.CodeMirror.defineMode(name, mode.define);
 	}-*/;
 
+	public static native final MergeView mergeView(Element element,
+			MergeView.Options options) /*-{
+		return $wnd.CodeMirror.MergeView(element, options);
+	}-*/;
+
 	// ------------------------------------------------------------------------
 
 	protected CodeMirror() {
@@ -355,12 +450,21 @@ public class CodeMirror extends JavaScriptObject {
 	}-*/;
 
 	/**
+	 * If your code does something to change the size of the editor element
+	 * (window resizes are already listened for), or unhides it, you should
+	 * probably follow up by calling this method to ensure CodeMirror is still
+	 * looking as intended
+	 */
+	public final native void refresh()/*-{
+		this.refresh();
+	}-*/;
+
+	/**
 	 * Copy the content of the editor into the textarea.
 	 */
 	public final native void save() /*-{
 		this.save();
 	}-*/;
-	
 
 	/**
 	 * Set the editor content.
@@ -375,6 +479,10 @@ public class CodeMirror extends JavaScriptObject {
 		this.setSize(width, height);
 	}-*/;
 
+	public final native void setHeight(int height) /*-{
+		this.setSize(null, height);
+	}-*/;
+	
 	/**
 	 * Get the current editor content. Separate lines with '\n'.
 	 * 

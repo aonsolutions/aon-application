@@ -4,10 +4,12 @@ import com.esferalia.aon.gwt.codemirror.client.addon.AONFilter;
 import com.esferalia.aon.gwt.codemirror.client.addon.AONMarker;
 import com.esferalia.aon.gwt.codemirror.client.mode.CLikeConfiguration;
 import com.esferalia.aon.gwt.codemirror.client.ui.CodeArea;
+import com.esferalia.aon.gwt.codemirror.client.ui.MergeArea;
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.CssResource.NotStrict;
@@ -36,6 +38,9 @@ class Showcase implements EntryPoint {
 	@UiField
 	CodeArea javaCodeArea;
 
+	@UiField(provided=true)
+	MergeArea mergeArea;
+
 	@UiField(provided = true)
 	CodeArea payrollCodeArea;
 	
@@ -55,17 +60,30 @@ class Showcase implements EntryPoint {
 		payrollCodeArea.setMode(CLikeConfiguration.create()
 				.setKeywords(getKeywords()).setBuiltin(getBuiltin()).setName("text/x-java"));
 		
-
+		mergeArea = new MergeArea();
+		mergeArea.setOrig("<H><h>Hello World</h></H>");
+		mergeArea.setValue("<H><h>Hello World</h><h>Hello World</h></H>");
+		
+		Scheduler.get().scheduleFixedDelay(new RepeatingCommand() {
+			
+			@Override
+			public boolean execute() {
+				payrollCodeArea.refresh();
+				return (payrollCodeArea.getOffsetHeight() == 0 || payrollCodeArea.getOffsetWidth() == 0);
+			}
+		}, 100);
+		
 		// Create the UI defined in Showcase.ui.xml.
 		RootLayoutPanel.get().add(binder.createAndBindUi(this));
 		//javaCodeArea.addKeyMap("Ctrl-Space", "autocomplete");
 
 		payrollCodeArea.addDocumentChangeHandler(filterButton.getValue()  ? aonFilter : aonMarker );
 
-		payrollCodeArea.setValue("( COTIZACION_IT == \"MENSUAL\" ? 30 - ( /*re1ad-only*/DIAS_MES - DIAS_PATERNIDAD/**/) : /*user*/DIAS_PATERNIDAD/**/ ) * BASE_REGULADORA");
-
+		payrollCodeArea.setValue("( COTIZACION_IT == \"MENSUAL\" ? 30 - ( /*re1ad-only*/DIAS_MES - DIAS_PATERNIDAD/**/) : /*user*/DIAS_PATERNIDAD/**/ ) * BASE_REGULADORA", true);
+		
 		//CodeMirror.defineMode("aon", AONOverlayMode.create() );
 		//payrollCodeArea.addOverlay("aon");
+		
 		
 	}
 	
