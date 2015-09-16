@@ -149,7 +149,9 @@ select {
 	box-shadow: 2px 2px 5px 1px #BBBBBB;
 }
 
+
 .gwt-Selector .gwt-MenuBarPopup {
+	z-index: 69;
 	margin : 0px;
 	background: white;
 	border-right: 1px solid #EBEBEF;
@@ -275,6 +277,7 @@ select {
 }
 
 .gwt-Selector .gwt-PopupPanel {
+	z-index: 69;
     padding: 1px;
 	border: 1px solid  #C4C0B9;
     box-shadow: 4px 4px 0px 0px #D0D0D0;
