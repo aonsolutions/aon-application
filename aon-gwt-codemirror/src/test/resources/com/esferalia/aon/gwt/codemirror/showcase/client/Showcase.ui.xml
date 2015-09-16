@@ -45,6 +45,14 @@
 						styleName="{style.width-all} {style.height-all} gwt-TextArea {style.code-area}"
 						lineNumbers="true" matchBrackets="true" mode="text/x-java" theme="eclipse" />
 				</g:tab>
+				<g:tab>
+					<g:header size='7'>
+						<b>Merge</b>
+						View Demo
+					</g:header>
+					<aon:MergeArea ui:field='mergeArea' 
+						/> 
+				</g:tab>
 			</g:TabLayoutPanel>
 		</g:center>
 	</g:DockLayoutPanel>

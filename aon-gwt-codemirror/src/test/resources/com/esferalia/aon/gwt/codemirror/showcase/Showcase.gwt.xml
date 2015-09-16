@@ -36,13 +36,16 @@
 	<script src="codemirror/addon/edit/matchbrackets.js" />
 	-->
 
-	<script src="codemirror/lib/codemirror-compressed.js" />
+	<!--   script src="codemirror/lib/codemirror-compressed.js" /-->
 
 	<!-- stylesheets eclipse them -->
 	<stylesheet src="codemirror/theme/eclipse.css"/>
 	
 	<!-- stylesheets aon them -->
 	<stylesheet src="codemirror/theme/aon.css"/>
+
+	<!-- stylesheets merge them -->
+	<stylesheet src="codemirror/addon/merge/merge.css"/>
 
 	<!-- Specify the app entry point class. -->
 	<entry-point

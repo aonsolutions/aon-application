@@ -62,6 +62,10 @@ public class CodeArea extends TextArea {
 	public final Doc getDoc() {
 		return codeMirror.getDoc();
 	}
+	
+	public void refresh() {
+		codeMirror.refresh();
+	}
 
 	public final void addOverlay(String mode) {
 		codeMirror.addOverlay(mode);
@@ -117,6 +121,7 @@ public class CodeArea extends TextArea {
 			@Override
 			public void handleEvent(Doc source, ChangeEvent event) {
 				CodeArea.super.setValue(codeMirror.getValue(), true);
+				CodeArea.this.codeMirror.refresh();
 			}
 		});
 		
