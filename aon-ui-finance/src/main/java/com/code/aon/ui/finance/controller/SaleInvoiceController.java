@@ -50,6 +50,7 @@ public class SaleInvoiceController extends InvoiceController {
 	private RegistryValidationManager vm;
 	private DeliveryTransferManager deliveryTransferManager;
 	private boolean showDeliveryTransferWindow;
+	private boolean showDeliveryFilterWindow;
 	
 	public SaleInvoiceController() {
 		setInvoiceAddressControllerName(SALE_INVOICE_ADDRESS_CONTROLLER_NAME);
@@ -83,6 +84,14 @@ public class SaleInvoiceController extends InvoiceController {
 		this.showDeliveryTransferWindow = value;
 	}
 	
+	public boolean isShowDeliveryFilterWindow() {
+		return showDeliveryFilterWindow;
+	}
+
+	public void setShowDeliveryFilterWindow(boolean showDeliveryFilterWindow) {
+		this.showDeliveryFilterWindow = showDeliveryFilterWindow;
+	}
+
 	public boolean isSeriesValid() throws ManagerBeanException {
 		String seriesCode = getInvoice().getSeries();
 		return (StringUtils.isEmpty(seriesCode)) ? true : seriesCode.equals(SeriesUtil.ensureInvoiceSeries(seriesCode));
@@ -174,6 +183,11 @@ public class SaleInvoiceController extends InvoiceController {
 	}
 
 	public void onDeliveryTransferShow(ActionEvent event) throws ManagerBeanException {
+		getDeliveryTransferManager().clearCheckedDelivery();
+		loadDeliveryTransferModel();
+	}
+	
+	private void loadDeliveryTransferModel() throws ManagerBeanException {
 		List<ITransferObject> invoicedDeliveryList = new LinkedList<ITransferObject>();
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
@@ -187,19 +201,33 @@ public class SaleInvoiceController extends InvoiceController {
 			DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailBean.get(invoiceDetail.getSourceId());
 			if (!invoicedDeliveryList.contains(deliveryDetail.getDelivery())) {
 				invoicedDeliveryList.add(deliveryDetail.getDelivery());
-				getDeliveryTransferManager().setDeliveryRowChecked(deliveryDetail.getDelivery(), true);
 			}
 		}
 		getDeliveryTransferManager().setInvoicedDeliveryList(invoicedDeliveryList);
-
+		
 		List<ITransferObject> deliveryList = new LinkedList<ITransferObject>();
-		deliveryList.addAll(invoicedDeliveryList);
 		if (!isReadOnly()) {
 			IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
 			criteria = new Criteria();
 			criteria.addEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_CUSTOMER_ID), getInvoice().getRegistry().getId());
 			criteria.addEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_STATUS), DeliveryStatus.PENDING);
 			criteria.addEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_SECURITY_LEVEL), getInvoice().getSecurityLevel());
+			if(getDeliveryTransferManager().getFilterParams().getFromDate()!=null){
+				criteria.addGreaterThanOrEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_ISSUE_TIME), getDeliveryTransferManager().getFilterParams().getFromDate());
+			}
+			if(getDeliveryTransferManager().getFilterParams().getToDate()!=null){
+				criteria.addLessThanOrEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_ISSUE_TIME), getDeliveryTransferManager().getFilterParams().getToDate());
+			}
+			if(getDeliveryTransferManager().getCheckedDeliveryCount() > 0){
+				for(Delivery delivery: getDeliveryTransferManager().getCheckedDelivery()){
+					criteria.addNotEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_ID), delivery.getId());
+				}
+			}
+			if(getDeliveryTransferManager().getInvoicedDeliveryCount() > 0){
+				for(ITransferObject to: getDeliveryTransferManager().getInvoicedDeliveryList()){
+					criteria.addNotEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_ID), ((Delivery)to).getId());
+				}
+			}
 			criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_ISSUE_TIME));
 			criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_SERIES));
 			criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_NUMBER));
@@ -208,10 +236,20 @@ public class SaleInvoiceController extends InvoiceController {
 		getDeliveryTransferManager().setDeliveryList(deliveryList);
 	}
 
+	public void onFilterTransferModel(ActionEvent event) throws ManagerBeanException {
+		loadDeliveryTransferModel();
+	}
+	
 	public void onDeliveryTransfer(ActionEvent event) throws ManagerBeanException {
 		try {
 			DeliveryInvoicingManager invoicingManager = new DeliveryInvoicingManager();
-			invoicingManager.transferDeliveries(getInvoice(), getDeliveryTransferManager().getCheckedDelivery(), getDeliveryTransferManager().getInvoicedDeliveryList());
+			List<Delivery> transferDeliveryList = new LinkedList<>();
+			getDeliveryTransferManager().getInvoicedDeliveryList().forEach(to -> 
+				{if(!getDeliveryTransferManager().getCheckedRestoreInvoicedDelivery().contains(to))
+					transferDeliveryList.add((Delivery)to);
+				});
+			transferDeliveryList.addAll(getDeliveryTransferManager().getCheckedDelivery());
+			invoicingManager.transferDeliveries(getInvoice(), transferDeliveryList, getDeliveryTransferManager().getInvoicedDeliveryList());
 
 			refresh(null);
 			FormUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME).onSearch(null);

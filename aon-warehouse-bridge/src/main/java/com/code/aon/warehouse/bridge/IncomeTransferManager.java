@@ -35,6 +35,7 @@ public class IncomeTransferManager extends DataScrollerState {
 	private DataScrollerState detailState;
 	private List<ITransferObject> invoicedIncomeList;
 	private ArrayList<Income> incomeChecks= new ArrayList<Income>();
+	private ArrayList<Income> restoreInvoicedIncomeChecks = new ArrayList<Income>();
 	private FilterParams filterParams;
 
 	public IncomeTransferManager() {
@@ -66,12 +67,20 @@ public class IncomeTransferManager extends DataScrollerState {
 		setModel(incomeList != null ? new SerializableListDataModel(incomeList) : null);
 	}
 	
+	public Integer getIncomeListCount() {
+		return incomeList!=null?incomeList.size():-1;
+	}
+	
     public List<ITransferObject> getDetailList() {
 		return detailList;
 	}
 	
 	public void setDetailList(List<ITransferObject> detailList) {
 		this.detailList = detailList;
+	}
+	
+	public Integer getDetailListCount() {
+		return detailList!=null?detailList.size():-1;
 	}
 
 	public DataScrollerState getDetailState() {
@@ -96,7 +105,7 @@ public class IncomeTransferManager extends DataScrollerState {
 	public void setFilterParams(FilterParams filterParams) {
 		this.filterParams = filterParams;
 	}
-
+	
 	public List<ITransferObject> getInvoicedIncomeList() {
 		return invoicedIncomeList;
 	}
@@ -105,9 +114,39 @@ public class IncomeTransferManager extends DataScrollerState {
 		this.invoicedIncomeList = invoicedIncomeList;
 	}
 	
+	public Integer getInvoicedIncomeCount() {
+		return invoicedIncomeList!=null?invoicedIncomeList.size():-1;
+	}
+	
+	public boolean isInvoicedIncome(){
+		Income income = (Income)getDirectModel().getRowData();
+		return invoicedIncomeList!=null && invoicedIncomeList.contains(income);
+	}
+	
 	public double getIncomeTotalPrice() {
 		Income income = (Income)getDirectModel().getRowData();
 		return getPriceStrategy().getTotalPrice(income, income.getSupplier());
+	}
+	
+	public void onShowTransfered(ActionEvent event) {
+		setSelectedIncomeId(null);
+		setDetailList(null);
+		setDetailState(null);
+		setModel(invoicedIncomeList != null ? new SerializableListDataModel(invoicedIncomeList) : null);
+	}
+	
+	public void onShowAvailables(ActionEvent event) {
+		setSelectedIncomeId(null);
+		setDetailList(null);
+		setDetailState(null);
+		setModel(incomeList != null ? new SerializableListDataModel(incomeList) : null);
+	}
+	
+	public void onShowSelected(ActionEvent event) {
+		setSelectedIncomeId(null);
+		setDetailList(null);
+		setDetailState(null);
+		setModel(incomeChecks != null ? new SerializableListDataModel(incomeChecks) : null);
 	}
 
 	public void onSelectIncome(ActionEvent event) {
@@ -146,6 +185,18 @@ public class IncomeTransferManager extends DataScrollerState {
 		}
 	}
 
+	public void addIncomeRowSelected(ActionEvent event) {
+		selectIncomeRow(Boolean.TRUE);
+		Income income = (Income)getDirectModel().getRowData();
+		getIncomeList().remove(income);
+	}
+
+	public void removeIncomeRowSelected(ActionEvent event) {
+		Income income = (Income)getDirectModel().getRowData();
+		getIncomeList().add(income);
+		selectIncomeRow(Boolean.FALSE);
+	}
+	
 	private void selectIncomeRow(boolean rowChecked) {
 		if (getDirectModel().isRowAvailable()) {
 			Income income = (Income)getDirectModel().getRowData();
@@ -177,8 +228,12 @@ public class IncomeTransferManager extends DataScrollerState {
 		return incomeChecks;
 	}
 	
+	public Integer getCheckedIncomeCount() {
+		return incomeChecks!=null?incomeChecks.size():-1;
+	}
+	
 	public void clearCheckedIncome() {
-		incomeChecks = new ArrayList<Income>();
+		incomeChecks.clear();
 	}
 	
 	public void checkAllIncomes(ActionEvent event) {
@@ -188,10 +243,47 @@ public class IncomeTransferManager extends DataScrollerState {
 				incomeChecks.add(income);
 			}
 		}
+		getIncomeList().clear();
 	}
 
 	public void checkNoneIncomes(ActionEvent event) {
+		for (ITransferObject ito : incomeChecks) {
+			Income income = (Income)ito;
+			if (!getIncomeList().contains(income)) {
+				getIncomeList().add(income);
+			}
+		}
 		clearCheckedIncome();
+	}
+	
+	/**
+	 * INVOICED DELIVERY CHECK LIST CONTROL 
+	 */
+	public void restoreInvoicedIncome(ActionEvent event) {
+		Income income = (Income)getDirectModel().getRowData();
+		if(restoreInvoicedIncomeChecks.contains(income)){
+			restoreInvoicedIncomeChecks.remove(income);
+		}
+	}
+	
+	public void removeInvoicedIncome(ActionEvent event) {
+		Income income = (Income)getDirectModel().getRowData();
+		if(!restoreInvoicedIncomeChecks.contains(income)){
+			restoreInvoicedIncomeChecks.add(income);
+		}
+	}
+	
+	public boolean isRestoredIncome(){
+		Income income = (Income)getDirectModel().getRowData();
+		return restoreInvoicedIncomeChecks.contains(income);
+	}
+	
+	public ArrayList<Income> getCheckedRestoreInvoicedIncome() {
+		return restoreInvoicedIncomeChecks;
+	}
+	
+	public Integer getCheckedRestoreInvoicedIncomeCount() {
+		return restoreInvoicedIncomeChecks!=null?restoreInvoicedIncomeChecks.size():-1;
 	}
 	
 	public static class FilterParams implements Serializable {

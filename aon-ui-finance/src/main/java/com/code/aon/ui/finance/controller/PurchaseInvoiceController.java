@@ -130,13 +130,11 @@ public class PurchaseInvoiceController extends InvoiceController {
 			IncomeDetail incomeDetail = (IncomeDetail)incomeDetailBean.get(invoiceDetail.getSourceId());
 			if (!invoicedIncomeList.contains(incomeDetail.getIncome())) {
 				invoicedIncomeList.add(incomeDetail.getIncome());
-				getIncomeTransferManager().setIncomeRowChecked(incomeDetail.getIncome(), true);
 			}
 		}
 		getIncomeTransferManager().setInvoicedIncomeList(invoicedIncomeList);
 		
 		List<ITransferObject> incomeList = new LinkedList<ITransferObject>();
-		incomeList.addAll(invoicedIncomeList);
 		if (!isReadOnly()) {
 			IManagerBean incomeBean = BeanManager.getManagerBean(Income.class);
 			criteria = new Criteria();
@@ -153,6 +151,16 @@ public class PurchaseInvoiceController extends InvoiceController {
 				criteria.addExpression(ExpressionUtilities.getLikeExpression(
 						incomeBean.getFieldName(IEntityAlias.INCOME_REFERENCE_CODE), "%" + getIncomeTransferManager().getFilterParams().getReferenceCode() + "%"));
 			}
+			if(getIncomeTransferManager().getCheckedIncomeCount() > 0){
+				for(Income income: getIncomeTransferManager().getCheckedIncome()){
+					criteria.addNotEqualExpression(incomeBean.getFieldName(IEntityAlias.INCOME_ID), income.getId());
+				}
+			}
+			if(getIncomeTransferManager().getInvoicedIncomeCount() > 0){
+				for(ITransferObject to: getIncomeTransferManager().getInvoicedIncomeList()){
+					criteria.addNotEqualExpression(incomeBean.getFieldName(IEntityAlias.INCOME_ID), ((Income)to).getId());
+				}
+			}
 			criteria.addOrder(incomeBean.getFieldName(IEntityAlias.INCOME_ISSUE_TIME));
 			criteria.addOrder(incomeBean.getFieldName(IEntityAlias.INCOME_REFERENCE_CODE));
 			incomeList.addAll(incomeBean.getList(criteria));
@@ -161,15 +169,20 @@ public class PurchaseInvoiceController extends InvoiceController {
 	}
 	
 	public void onFilterTransferModel(ActionEvent event) throws ManagerBeanException {
-		getIncomeTransferManager().clearCheckedIncome();
 		loadIncomeTransferModel();
 	}
 
 	public void onIncomeTransfer(ActionEvent event) throws ManagerBeanException {
 		try {
 			IncomeInvoicingManager invoicingManager = new IncomeInvoicingManager();
-			invoicingManager.transferIncomes(getInvoice(), getIncomeTransferManager().getCheckedIncome(), getIncomeTransferManager().getInvoicedIncomeList());
-
+			List<Income> transferIncomeList = new LinkedList<>();
+			getIncomeTransferManager().getInvoicedIncomeList().forEach(to -> 
+			{if(!getIncomeTransferManager().getCheckedRestoreInvoicedIncome().contains(to))
+				transferIncomeList.add((Income)to);
+			});
+			transferIncomeList.addAll(getIncomeTransferManager().getCheckedIncome());
+			invoicingManager.transferIncomes(getInvoice(), transferIncomeList, getIncomeTransferManager().getInvoicedIncomeList());
+			
 			refresh(null);
 			FormUtil.getController(PURCHASE_INVOICE_DETAIL_CONTROLLER_NAME).onSearch(null);
 
