@@ -1,0 +1,46 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages"
+		field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
+		field="aonResources"></ui:with>
+
+	<ui:style>
+	.header-title {
+		font-weight: bolder;
+		font-size: 36px;
+	}
+	</ui:style>
+	<g:DockLayoutPanel unit="PX" height="100%" width="100%">
+		<g:north size="100">
+			<g:FlowPanel>
+				<g:Label ui:field="titleLabel" styleName="{style.header-title}" />
+			</g:FlowPanel>
+		</g:north>
+
+		<g:center>
+			<g:Label ui:field="bodyLabel" />
+		</g:center>
+
+		<g:south size="150">
+			<g:FlowPanel>
+				<g:Grid>
+					<g:row>
+						<g:customCell>
+							<g:Button ui:field="closeButton" text="Cerrar" 
+							styleName="{aonResources.css.aonIconCommandButton}"/>
+						</g:customCell>
+						<g:customCell>
+							<g:Button ui:field="commentButton" text="Comentar"
+							styleName="{aonResources.css.aonIconCommandButton}" />
+						</g:customCell>
+
+					</g:row>
+				</g:Grid>
+			</g:FlowPanel>
+		</g:south>
+
+	</g:DockLayoutPanel>
+</ui:UiBinder> 

@@ -4,6 +4,10 @@
 	<!-- Inherit the core Web Toolkit stuff. -->
 	<inherits name='com.google.gwt.user.User' />
 	<inherits name="com.google.gwt.i18n.I18N" />
+	<!-- Specify the app entry point class. -->
+	<inherits name="com.esferalia.aon.gwt.common.Common" />
+	<inherits name="com.esferalia.aon.occam.api.Occam" />
+	
 
 	<!-- Spanish language, independent of country -->
 	<extend-property name="locale" values="es" />
@@ -28,10 +32,6 @@
 	<!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->
 	<!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
 	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/> -->
-
-	<!-- Specify the app entry point class. -->
-	<inherits name="com.esferalia.aon.gwt.common.Common" />
-	<inherits name="com.esferalia.aon.occam.api.Occam" />
 
 	<!-- Other module inherits --> 
 	<entry-point class='com.esferalia.aon.gwt.office.client.MainEntryPoint' />

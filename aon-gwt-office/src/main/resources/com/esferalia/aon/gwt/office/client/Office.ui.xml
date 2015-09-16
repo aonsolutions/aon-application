@@ -55,7 +55,7 @@
 			</g:FlowPanel>
 		</g:north>
 
-		<g:west size="120">
+		<g:west size="200">
 			<office:LeftButtonsMenuBar ui:field="leftButtonBarMenu" />
 		</g:west>
 
@@ -69,6 +69,8 @@
 						</g:SimpleLayoutPanel>
 					</g:HTMLPanel>
 				</g:ResizeLayoutPanel>
+				
+				<office:IssuesLayoutPanel ui:field="issuesPanel"/>
 				
 				
 			</g:DeckLayoutPanel>
