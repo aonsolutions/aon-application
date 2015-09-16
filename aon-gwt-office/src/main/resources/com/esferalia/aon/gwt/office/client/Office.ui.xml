@@ -19,9 +19,7 @@
 	}
 	</ui:style>
 
-
-	<g:DockLayoutPanel unit="PX" height="100%" width="100%"
-		ui:field="officePanel">
+	<g:DockLayoutPanel unit="PX" height="100%" width="100%">
 		<g:north size="40">
 			<g:FlowPanel>
 				<g:FlowPanel styleName="aon-finding-title-toolbar">
@@ -62,14 +60,18 @@
 		</g:west>
 
 		<g:center>
-			<g:ResizeLayoutPanel ui:field="dockPanel">
-				<g:HTMLPanel styleName="aon-scroll-area {style.options-scroll-panel}">
-					<g:SimpleLayoutPanel ui:field="resultsPanel"
-						styleName="aon-panelGrid-search {style.simple-panel}">
-						<office:IssueGrid ui:field="dataGrid" />
-					</g:SimpleLayoutPanel>
-				</g:HTMLPanel>
-			</g:ResizeLayoutPanel>
+			<g:DeckLayoutPanel ui:field="deckPanel">
+				<g:ResizeLayoutPanel ui:field="dockOfficePanel">
+					<g:HTMLPanel styleName="aon-scroll-area {style.options-scroll-panel}">
+						<g:SimpleLayoutPanel ui:field="resultsPanel"
+							styleName="aon-panelGrid-search {style.simple-panel}">
+							<office:IssueGrid ui:field="dataGrid" />
+						</g:SimpleLayoutPanel>
+					</g:HTMLPanel>
+				</g:ResizeLayoutPanel>
+				
+				
+			</g:DeckLayoutPanel>
 		</g:center>
 
 		<g:south size="40">
@@ -85,6 +87,5 @@
 		</g:south>
 
 	</g:DockLayoutPanel>
-
 
 </ui:UiBinder> 

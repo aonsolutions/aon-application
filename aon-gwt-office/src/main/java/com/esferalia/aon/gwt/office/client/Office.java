@@ -25,7 +25,9 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.ResizeLayoutPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -39,6 +41,10 @@ public class Office extends Composite implements EntryPoint,
 	interface OfficeUiBinder extends UiBinder<Widget, Office> {
 	}
 
+	@UiField
+	DeckLayoutPanel deckPanel;
+	@UiField
+	ResizeLayoutPanel dockOfficePanel;
 	@UiField
 	SimpleLayoutPanel resultsPanel;
 	@UiField
@@ -55,6 +61,8 @@ public class Office extends Composite implements EntryPoint,
 
 	private Map<Integer, JsIssue> openedIssuesMap;
 	private Map<Integer, JsIssue> closedIssuesMap;
+
+	private final GitHub gitHub = new GitHub();
 
 	public Office() {
 		Widget ui = uiBinder.createAndBindUi(this);
@@ -78,9 +86,33 @@ public class Office extends Composite implements EntryPoint,
 		ListDataProvider<IssueSelected> listIssuesProvider = new ListDataProvider<IssueSelected>();
 		listIssuesProvider.addDataDisplay(dataGrid);
 		this.issues = listIssuesProvider.getList();
+		
+		loadReposList();
+		loadIssuesList();
+		
+		deckPanel.showWidget(dockOfficePanel);
 
-		GitHub gitHub = new GitHub();
+	}
 
+	@UiHandler("repoListBox")
+	void onChangeSelectionListBox(ChangeEvent event) {
+
+		Integer index = Integer.parseInt(repoListBox.getValue(repoListBox
+				.getSelectedIndex()));
+		Office.this.repo = repositories.get(index);
+	}
+
+	@Override
+	public void onSelectionChangeHandler(SelectionChangeEvent event) {
+		// TODO Auto-generated method stub
+
+	}
+
+	// ******************************************************************
+	// ********************** PRIVATE METHODS ***************************
+	// ******************************************************************
+
+	private void loadReposList() {
 		gitHub.getRepos("amtzdelagos", new AsyncCallback<JSON<JsRepo>>() {
 
 			@Override
@@ -117,6 +149,9 @@ public class Office extends Composite implements EntryPoint,
 			}
 		});
 
+	}
+
+	private void loadIssuesList() {
 		gitHub.getIssues("amtzdelagos", "aon-GwtOffice",
 				new AsyncCallback<JSON<JsIssue>>() {
 
@@ -135,35 +170,8 @@ public class Office extends Composite implements EntryPoint,
 						// TODO Auto-generated method stub
 					}
 				});
-	}
-
-	@UiHandler("repoListBox")
-	void onChangeSelectionListBox(ChangeEvent event) {
-
-		Integer index = Integer.parseInt(repoListBox.getValue(repoListBox
-				.getSelectedIndex()));
-		Office.this.repo = repositories.get(index);
-	}
-
-	@Override
-	public void onSelectionChangeHandler(SelectionChangeEvent event) {
-		// TODO Auto-generated method stub
 
 	}
-
-	@Override
-	public void onSelectionTitle(IssueSelected issue) {
-		NewIssuePopupPanel getIssuePanel = new NewIssuePopupPanel();
-
-		getIssuePanel.setTitle(issue.getTitle());
-		getIssuePanel.setBodyTextArea(issue.getBody());
-
-		getIssuePanel.showPopUpPanel();
-	}
-
-	// ******************************************************************
-	// ********************** PRIVATE METHODS ***************************
-	// ******************************************************************
 
 	private void evalIssueSelected(JsIssue issue) {
 
@@ -197,14 +205,23 @@ public class Office extends Composite implements EntryPoint,
 	// ******************************************************************
 
 	@Override
+	public void onSelectionTitle(IssueSelected issue) {
+		NewIssuePopupPanel getIssuePanel = new NewIssuePopupPanel();
+
+		getIssuePanel.setTitle(issue.getTitle());
+		getIssuePanel.setBodyTextArea(issue.getBody());
+
+		getIssuePanel.showPopUpPanel();
+	}
+
+	@Override
 	public void onNewIssueClickEvent(ClickEvent event) {
-		Window.alert("New");
 
 	}
 
 	@Override
 	public void onShowOpenIssuesClickEvent(ClickEvent event) {
-		Window.alert("Open");
+
 	}
 
 	@Override

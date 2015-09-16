@@ -140,7 +140,6 @@ public class LeftButtonsMenuBar extends Composite {
 		for (LeftMenuBarListener listener : listeners)
 			listener.onShowFaqsIssuesClickEvent(event);
 	}
-
 	// ******************************************************************
 	// ******************************************************************
 
@@ -199,9 +198,7 @@ public class LeftButtonsMenuBar extends Composite {
 	}
 	
 	private void setLabelClickEvent (final Button button) {
-		
 		button.addClickHandler(new ClickHandler() {
-			
 			@Override
 			public void onClick(ClickEvent event) {
 				
