@@ -16,28 +16,23 @@ import com.esferalia.aon.gwt.office.client.values.IssueValue;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.dom.client.Style.BorderStyle;
-import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.cellview.client.SimplePager;
-import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
-public class Office extends Composite implements EntryPoint, IssueGrid.Listener {
+public class Office extends Composite implements EntryPoint,
+		IssueGrid.Listener, LeftButtonsMenuBar.LeftMenuBarListener {
 
 	private static OfficeUiBinder uiBinder = GWT.create(OfficeUiBinder.class);
 
@@ -50,27 +45,11 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener 
 	IssueGrid dataGrid;
 	@UiField
 	ListBox repoListBox;
-	@UiField
-	Button newIssue;
-	@UiField
-	VerticalPanel labelsVPanel;
 
-	// Buttons Bar
 	@UiField
-	Button openIssues;
-	@UiField
-	Button closedIssues;
-	@UiField
-	Button allIssues;
-	@UiField
-	Button deletedIssues;
-	// ***********
-
-	@UiField(provided = true)
-	SimplePager pager;
+	LeftButtonsMenuBar leftButtonBarMenu;
 
 	private JsRepo repo;
-	private Button seletedButton;
 	private List<IssueSelected> issues;
 	private Map<Integer, JsRepo> repositories;
 
@@ -82,8 +61,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener 
 
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
-
-		seletedButton = new Button();
 	}
 
 	@Override
@@ -92,13 +69,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener 
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 
 		this.dataGrid.addListener(this);
-
-		SimplePager.Resources pagerResources = GWT
-				.create(SimplePager.Resources.class);
-		pager = new SimplePager(TextLocation.CENTER, pagerResources, false, 0,
-				true);
-		pager.setWidth("100%");
-		pager.setDisplay(dataGrid);
+		this.leftButtonBarMenu.addListener(this);
 
 		this.repositories = new HashMap<Integer, JsRepo>();
 		this.openedIssuesMap = new HashMap<Integer, JsIssue>();
@@ -107,8 +78,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener 
 		ListDataProvider<IssueSelected> listIssuesProvider = new ListDataProvider<IssueSelected>();
 		listIssuesProvider.addDataDisplay(dataGrid);
 		this.issues = listIssuesProvider.getList();
-
-		setFontColor(openIssues, FontWeight.BOLD);
 
 		GitHub gitHub = new GitHub();
 
@@ -158,8 +127,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener 
 							JsIssue issue = result.getData().get(x);
 							evalIssueSelected(issue);
 						}
-						openIssues.setText(openIssues.getText() + " ("
-								+ result.getData().length() + ")");
+						changeOpenIssuesText(result.getData().length());
 					}
 
 					@Override
@@ -167,32 +135,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener 
 						// TODO Auto-generated method stub
 					}
 				});
-	}
-
-	@UiHandler("openIssues")
-	void onOpenIssuesClickHandler(ClickEvent event) {
-		setFontColor(openIssues, FontWeight.BOLD);
-	}
-
-	@UiHandler("closedIssues")
-	void onReceivedIssuesClickHandler(ClickEvent event) {
-		setFontColor(closedIssues, FontWeight.BOLD);
-	}
-
-	@UiHandler("allIssues")
-	void onAllIssuesClickHandler(ClickEvent event) {
-		setFontColor(allIssues, FontWeight.BOLD);
-	}
-
-	@UiHandler("deletedIssues")
-	void onDeletedIssuesClickHandler(ClickEvent event) {
-		setFontColor(deletedIssues, FontWeight.BOLD);
-	}
-
-	@UiHandler("newIssue")
-	void onNewIssueClick(ClickEvent event) {
-		NewIssuePopupPanel newIssue = new NewIssuePopupPanel();
-		newIssue.showPopUpPanel();
 	}
 
 	@UiHandler("repoListBox")
@@ -243,48 +185,67 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener 
 	}
 
 	private void addLabel(int row, JsLabel label) {
-
-		final Button labelButton = new Button();
-
-		labelButton.setText(label.getName());
-		labelButton.setTitle(label.getName() + "-" + label.getUrl());
-		labelButton.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
-		labelButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-
-		if (!isWhite(label.getColor()))
-			labelButton.getElement().getStyle()
-					.setColor("#" + label.getColor());
-
-		setClickEvent(labelButton);
-		labelsVPanel.add(labelButton);
+		leftButtonBarMenu.addLabelIssueButton(row, label);
 	}
 
-	private boolean setFontColor(Button button, FontWeight fontWeiht) {
-
-		if (button != seletedButton) {
-			seletedButton.getElement().getStyle().clearFontWeight();
-			button.getElement().getStyle().setFontWeight(fontWeiht);
-			seletedButton = button;
-			return true;
-		}
-		return false;
+	private void changeOpenIssuesText(Integer number) {
+		leftButtonBarMenu.changeOpenIssuesText(number);
 	}
 
-	private boolean isWhite(String color) {
-		return color == "ffffff";
-	}
-
-	private void setClickEvent(final Button button) {
-
-		button.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				Window.alert("Etiqueta: " + button.getText());
-			}
-		});
-	}
 	// ******************************************************************
 	// ******************************************************************
 	// ******************************************************************
+
+	@Override
+	public void onNewIssueClickEvent(ClickEvent event) {
+		Window.alert("New");
+
+	}
+
+	@Override
+	public void onShowOpenIssuesClickEvent(ClickEvent event) {
+		Window.alert("Open");
+	}
+
+	@Override
+	public void onShowClosedIssuesClickEvent(ClickEvent event) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onShowAllIssuesClickEvent(ClickEvent event) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onShowDeletedIssuesClickEvent(ClickEvent event) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onShowQuestionIssuesClickEvent(ClickEvent event) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onShowErrorIssuesClickEvent(ClickEvent event) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onShowFaqsIssuesClickEvent(ClickEvent event) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onLabelIssueClickEvent(Button button) {
+		// TODO Auto-generated method stub
+
+	}
 }

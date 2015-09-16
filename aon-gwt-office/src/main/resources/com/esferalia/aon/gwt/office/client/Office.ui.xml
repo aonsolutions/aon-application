@@ -10,15 +10,6 @@
 		field="aonResources"></ui:with>
 
 	<ui:style>
-	.button-href {
-		background: none !important;
-		border: none;
-		font-family: arial, sans-serif;
-		font-size: 12px;
-		cursor: pointer;
-		padding-left: 14px;
-	}
-	
 	.options-scroll-panel>div {
 		height: 99%;
 	}
@@ -26,38 +17,19 @@
 	.simple-panel {
 		background: #FFFFFF;
 	}
-	
-	.principal-button {
-		font-family: arial, sans-serif;
-		cursor: pointer;
-		font-size: 14px;
-		padding-left: 10px;
-		margin-left: 14px;
-	}
-	
-	.button_bar {
-		
-	}
-	
-	.button_bar button {
-		background: none !important;
-		border: none;
-		font-family: arial, sans-serif;
-		font-size: 12px;
-		cursor: pointer;
-		padding-left: 14px;
-	}
 	</ui:style>
 
-	<g:DockLayoutPanel unit="PX" height="100%" width="100%">
-		<g:north size="60">
+
+	<g:DockLayoutPanel unit="PX" height="100%" width="100%"
+		ui:field="officePanel">
+		<g:north size="40">
 			<g:FlowPanel>
 				<g:FlowPanel styleName="aon-finding-title-toolbar">
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal">
 								<g:Label styleName="aon-outputText" ui:field="titleLabel"
-									text= "{msg.notifications}" />
+									text="{msg.notifications}" />
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="aon-finding-subtitle">
@@ -86,79 +58,7 @@
 		</g:north>
 
 		<g:west size="120">
-
-			<g:ScrollPanel>
-				<g:Grid>
-					<g:row>
-						<g:customCell horizontalAlignment="ALIGN_CENTER"
-							verticalAlignment="ALIGN_MIDDLE">
-							<g:Button
-								styleName="{style.principal-button} aon-bold aon-icon-commandButton aon-icon-new"
-								text="{msg.newIssue}" ui:field="newIssue" />
-						</g:customCell>
-					</g:row>
-					<g:row />
-					<g:row>
-						<g:customCell>
-							<g:Button styleName="{style.button-href}" text="{msg.openedIssues}"
-								ui:field="openIssues" />
-						</g:customCell>
-					</g:row>
-
-					<g:row>
-						<g:customCell>
-							<g:Button styleName="{style.button-href}" text="{msg.closedIssues}"
-								ui:field="closedIssues" />
-						</g:customCell>
-					</g:row>
-					<g:row>
-						<g:customCell>
-							<g:Button styleName="{style.button-href}" text="{msg.allIssues}"
-								ui:field="allIssues" />
-						</g:customCell>
-					</g:row>
-					<g:row>
-						<g:customCell>
-							<g:Button styleName="{style.button-href}" text="{msg.deletedIssues}"
-								ui:field="deletedIssues" />
-						</g:customCell>
-					</g:row>
-					<g:row>
-					</g:row>
-					<g:row>
-						<g:customCell>
-							<g:Button styleName="{style.button-href}" text="{msg.questionIssues}"
-								ui:field="questionButton" />
-						</g:customCell>
-					</g:row>
-					<g:row>
-						<g:customCell>
-							<g:Button styleName="{style.button-href}" text="{msg.questionIssues}"
-								ui:field="errorButton" />
-						</g:customCell>
-					</g:row>
-					<g:row>
-						<g:customCell>
-							<g:Button styleName="{style.button-href}" text="{msg.faqsIssues}"
-								ui:field="faqsButton" />
-						</g:customCell>
-					</g:row>
-
-					<g:row>
-						<g:customCell>
-							<g:DisclosurePanel animationEnabled="true">
-								<g:customHeader>
-									<g:InlineLabel text="{msg.labelsIssues}"
-										styleName="{style.button-href} aon-icon-commandButton" />
-								</g:customHeader>
-								<g:VerticalPanel ui:field="labelsVPanel"
-									styleName="{style.button_bar}" />
-							</g:DisclosurePanel>
-						</g:customCell>
-					</g:row>
-				</g:Grid>
-
-			</g:ScrollPanel>
+			<office:LeftButtonsMenuBar ui:field="leftButtonBarMenu" />
 		</g:west>
 
 		<g:center>
@@ -177,7 +77,7 @@
 				<g:Grid>
 					<g:row>
 						<g:customCell>
-							<cell:SimplePager ui:field='pager' />
+							<g:Label />
 						</g:customCell>
 					</g:row>
 				</g:Grid>
@@ -185,5 +85,6 @@
 		</g:south>
 
 	</g:DockLayoutPanel>
+
 
 </ui:UiBinder> 

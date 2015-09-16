@@ -11,6 +11,8 @@ public interface IssueSelected {
 	
 	String getStateIconStyle();
 	
+	String getState();
+	
 	/** UserSelected getUser(); **/
 	
 	Date getCreateAt();

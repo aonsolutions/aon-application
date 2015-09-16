@@ -10,11 +10,9 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
-import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.builder.shared.TableCellBuilder;
 import com.google.gwt.dom.builder.shared.TableRowBuilder;
@@ -50,7 +48,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 	public enum Columns {
 
-		CHECK(""), STATE(""), TITLE(""), LABELS(""), CREATED_AT("");
+		STATE(""), TITLE(""), LABELS(""), CREATED_AT("");
 
 		private String mensaje;
 
@@ -82,6 +80,11 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 		@Override
 		public String getStateIconStyle() {
+			return "";
+		}
+
+		@Override
+		public String getState() {
 			return "";
 		}
 
@@ -120,30 +123,40 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 			return issue.getLabels();
 		}
 	}
-	
+
 	public static class IssueOpenLoadSelected extends DefaultAonIssuesSelected {
 
 		public IssueOpenLoadSelected(JsIssue issue) {
 			super(issue);
 		}
-		
+
 		@Override
 		public String getStateIconStyle() {
 			return AON.AON_ICON_ISSUE_OPENED;
 		}
+
+		@Override
+		public String getState() {
+			return "Abierto";
+		}
 	}
-	
-	public static class IssueClosedLoadSelected extends DefaultAonIssuesSelected {
+
+	public static class IssueClosedLoadSelected extends
+			DefaultAonIssuesSelected {
 
 		public IssueClosedLoadSelected(JsIssue issue) {
 			super(issue);
 		}
-		
+
 		@Override
 		public String getStateIconStyle() {
 			return AON.AON_ICON_ISSUE_CLOSED;
 		}
-		
+
+		@Override
+		public String getState() {
+			return "Cerrado";
+		}
 	}
 
 	private static abstract class IconStyleColumn<T extends IssueSelected>
@@ -166,7 +179,6 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 			AbstractHeaderOrFooterBuilder<IssueSelected> {
 
 		private final Integer ROW_COUNT = 1;
-		private Header<Boolean> checkHeader = IssueGrid.this.newCheckHeader();
 		private Header<String> stateHeader = new TextHeader(
 				Columns.STATE.getColumnName());
 		private Header<String> titleHeader = new TextHeader(
@@ -184,7 +196,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		@Override
 		protected boolean buildHeaderOrFooterImpl() {
 			TableRowBuilder tr = startRow();
-			tr.startTH().colSpan(Columns.values().length).rowSpan(ROW_COUNT);
+			tr.startTH().colSpan(Columns.values().length).rowSpan(ROW_COUNT);			
 			tr.endTH();
 
 			// Get information about the sorted column.
@@ -196,9 +208,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 			boolean isSortAscending = (sortedInfo == null) ? false : sortedInfo
 					.isAscending();
 
-			tr = startRow().className(AON.AON_CSS.childCell());
-			buildHeader(tr, checkHeader, checkBox, sortedColumn,
-					isSortAscending, false, false);
+			tr = startRow().className(AON.AON_CSS.childCell());			
 			buildHeader(tr, stateHeader, stateColumn, sortedColumn,
 					isSortAscending, false, false);
 			buildHeader(tr, titleHeader, title, sortedColumn, isSortAscending,
@@ -219,6 +229,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 			boolean isSorted = (sortedColumn == column);
 			TableCellBuilder th = out.startTH();
+			th.className("aon-dataTable-header");
 			enableColumnHandlers(th, column);
 			Context context = new Context(0, 1, header.getKey());
 			renderSortableHeader(th, context, header, isSorted, isSortAscending);
@@ -243,13 +254,19 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 		@Override
 		protected void buildRowImpl(IssueSelected rowValue, int absRowIndex) {
-			buildEnterpriseImpl(rowValue, absRowIndex);
+			buildIssuesImpl(rowValue, absRowIndex);
 		}
 
-		public void buildEnterpriseImpl(IssueSelected rowValue, int rowIndex) {
+		public void buildIssuesImpl(IssueSelected rowValue, int rowIndex) {
 			boolean isSelected = (selectionModel == null || rowValue == null) ? false
 					: selectionModel.isSelected(rowValue);
-			StringBuilder trClasses = new StringBuilder(rowStyle);
+			StringBuilder trClasses;
+			
+			if ( (rowIndex % 2) ==0 )
+				trClasses = new StringBuilder(AON.AON_DATA_TABLE_ROW_EVEN);
+			else
+				trClasses = new StringBuilder(AON.AON_DATA_TABLE_ROW_ODD);
+			
 			if (isSelected) {
 				trClasses.append(selectedRowStyle);
 			}
@@ -259,22 +276,17 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 			TableRowBuilder row = startRow().className(trClasses.toString());
 			TableCellBuilder td;
 
-			td = row.startTD()
-					.align(HasHorizontalAlignment.ALIGN_LEFT
-							.getTextAlignString())
-					.className(AON.AON_CSS.childCell());
-			renderCell(td, createContext(col++), checkBox, rowValue);
-			td.endTD();
-
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_RIGHT.getTextAlignString());
 			td.className(rowValue.getStateIconStyle());
+			td.title(rowValue.getState());
 			renderCell(td, createContext(col++), stateColumn, rowValue);
 			td.endTD();
 
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
 			td.style().cursor(Cursor.POINTER);
+			td.className(AON.AON_CSS.aonDataTableTextColumn());
 			renderCell(td, createContext(col++), title, rowValue);
 			td.endTD();
 
@@ -305,7 +317,6 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 	 * ****************** Columns
 	 */
 
-	private Column<IssueSelected, Boolean> checkBox;
 	private Column<IssueSelected, String> stateColumn;
 	private Column<IssueSelected, String> title;
 	private Column<IssueSelected, String> labels;
@@ -315,10 +326,11 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		super();
 
 		listeners = new ArrayList<IssueGrid.Listener>();
-		checkBox = newCheckColumn();
 
 		selectionModel = new MultiSelectionModel<IssueSelected>();
 
+		setStyleName(AON.AON_CSS.aonDataTable());
+		
 		setAutoHeaderRefreshDisabled(false);
 		initializeSelectionModel();
 		setSkipRowHoverCheck(true);
@@ -366,9 +378,6 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 	private void initializeColumns() {
 		int col = 0;
 
-		addColumn(checkBox);
-		setColumnWidth(col++, 2, Unit.PCT);
-
 		stateColumn = new IconStyleColumn<IssueSelected>() {
 
 			@Override
@@ -382,6 +391,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 				return object.getStateIconStyle();
 			}
 		};
+
 		setColumnWidth(col++, 2, Unit.PCT);
 
 		title = new Column<IssueSelected, String>(new ClickableTextCell()) {
@@ -430,48 +440,6 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 			}
 		};
 		setColumnWidth(col++, 40, Unit.PX);
-	}
-
-	private Header<Boolean> newCheckHeader() {
-		Header<Boolean> header = new Header<Boolean>(new CheckboxCell(true,
-				false)) {
-
-			@Override
-			public Boolean getValue() {
-				return getVisibleItemCount() == ((MultiSelectionModel<?>) getSelectionModel())
-						.getSelectedSet().size();
-
-			}
-		};
-		header.setUpdater(new ValueUpdater<Boolean>() {
-			@Override
-			public void update(Boolean value) {
-				for (IssueSelected item : getVisibleItems())
-					selectionModel.setSelected(item, value);
-				// getSelectionModel().setSelected(item, value);
-			}
-		});
-		return header;
-	}
-
-	private Column<IssueSelected, Boolean> newCheckColumn() {
-		Column<IssueSelected, Boolean> checkColumn = new Column<IssueSelected, Boolean>(
-				new CheckboxCell()) {
-
-			@Override
-			public Boolean getValue(IssueSelected object) {
-				return selectionModel.isSelected(object);
-			}
-		};
-
-		checkColumn.setFieldUpdater(new FieldUpdater<IssueSelected, Boolean>() {
-
-			@Override
-			public void update(int index, IssueSelected object, Boolean value) {
-				redraw();
-			}
-		});
-		return checkColumn;
 	}
 
 	public Set<IssueSelected> getSelectedObject() {
