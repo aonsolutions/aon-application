@@ -441,7 +441,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
 
 	@Override
 	public void addDeduction(Double amount, String description,
-			IDeduction deduction, Map<String, ITimedVariable<?>> context) {
+			Date start, Date end, IDeduction deduction, Map<String, ITimedVariable<?>> context) {
 
 		InsertSetStep<SalaryDeductionRecord> insertDeduction = insertMoreDeduction == null ? dslContext
 				.insertInto(SALARY_DEDUCTION) : insertMoreDeduction.newRecord();
@@ -451,6 +451,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
 			description = null;
 		// end-if: Skip percentage descriptions
 
+		//TODO: start & end dates ???
 		insertMoreDeduction = insertDeduction
 				.set(SALARY_DEDUCTION.DOMAIN, this.domainId)
 				.set(SALARY_DEDUCTION.SALARY, salaryId)
@@ -464,7 +465,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
 	}
 
 	@Override
-	public void addZeroDeduction(IDeduction deduction,
+	public void addZeroDeduction(Date start, Date end, IDeduction deduction,
 			Map<String, ITimedVariable<?>> context) {
 		// TODO Auto-generated method stub
 

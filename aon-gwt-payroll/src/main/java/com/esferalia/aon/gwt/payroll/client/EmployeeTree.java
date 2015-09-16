@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.esferalia.aon.gwt.codemirror.client.ui.MergeArea;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -32,6 +33,7 @@ import com.esferalia.aon.gwt.common.client.widget.ResultsPanel.ClearEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel.ClearHandler;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasId;
+import com.esferalia.aon.gwt.payroll.client.CretaResponseDialog.JsBasesResult;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptEvent;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptHandler;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
@@ -49,6 +51,8 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.FormElement;
@@ -76,6 +80,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -541,7 +546,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	
 	abstract class CretaCommand implements ScheduledCommand, CretaService{
 		
-		private File file;
+		protected File file;
 		
 		public CretaCommand(File file) {
 			this.file = file;
@@ -595,11 +600,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			fileEditor.setTitle(file.getFilename());
 			fileEditor.setFilename(file.getFilename()+".xml");
 			employeeDetail.setWidget(fileEditor);
+			fileEditor.autoRefresh();
 		}
+		
+		// --------------------------------------------------------------------
+		
 		
 	}
 	
-	class  CreateResponseCommand extends CretaCommand implements CretaResponseDialog.Callback  {
+	class  CreateResponseCommand extends CretaCommand implements CretaResponseDialog.Handler  {
 		
 		CretaResponseDialog dialog;
 		
@@ -617,6 +626,32 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 		
 		// --------------------------------------------------------------------
+		
+		@Override
+		public void onBases(JsBasesResult result) {
+			dialog.hide();
+
+
+			MergeEditor mergeEditor = new MergeEditor();
+			mergeEditor.setOrig(result.getBasesFile());
+			mergeEditor.setMode("text/xml");
+			mergeEditor.setLineNumbers(true);
+			mergeEditor.setText(result.getChangedBasesFile());
+			mergeEditor.setTitle(file.getFilename());
+			mergeEditor.setFilename(file.getFilename()+".xml");
+			employeeDetail.setWidget(mergeEditor);
+			
+			CretaResults cretaResults = new CretaResults();
+			cretaResults.addErrors(result.getErrors());
+			cretaResults.addWarnings(result.getWarnings());
+			resultsPanel.setWidget(cretaResults);
+			
+			if ( result.getErrors().length > 0 || 
+					result.getWarnings().length > 0 )
+				showResultsPanel();
+			
+			mergeEditor.autoRefresh();
+		}
 		
 		
 	}
@@ -874,8 +909,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			addSeparator();
 			addItem("SLD-Fichero de Solicitud de Trabajadores y Tramos", cretaRequestCmds[0] = new WorkplaceCreateRequestCommand(CretaService.File.TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addItem("SLD-Fichero de Solicitud de C\u00E1lculo", cretaRequestCmds[1] = new WorkplaceCreateRequestCommand(CretaService.File.CALCULOS),
-					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+//			addItem("SLD-Fichero de Solicitud de C\u00E1lculo", cretaRequestCmds[1] = new WorkplaceCreateRequestCommand(CretaService.File.CALCULOS),
+//					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Bases", new CreateResponseCommand(CretaService.File.BASES),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n", cretaRequestCmds[2] = new WorkplaceCreateRequestCommand(CretaService.File.CONFIRMACION),
@@ -886,7 +921,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			calcCmd.setWorkplace(workplace);
 			
 			for(WorkplaceCreateRequestCommand cmd: cretaRequestCmds)
-				cmd.setWorkplace(workplace);
+				if ( cmd != null )
+					cmd.setWorkplace(workplace);
 			
 		}
 
@@ -931,10 +967,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			addSeparator();
 			addItem("SLD-Fichero de Solicitud de Trabajadores y Tramos", cretaRequestCommands[0] = new EnterpriseCretaRequestCommand(CretaService.File.TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addItem("SLD-Fichero de Solicitud de C\u00E1lculo", new EnterpriseCretaRequestCommand(CretaService.File.CALCULOS),
-					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addItem("SLD-Fichero de Bases", new CalcEnterpriseCommand(),
-					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+//			addItem("SLD-Fichero de Solicitud de C\u00E1lculo", new EnterpriseCretaRequestCommand(CretaService.File.CALCULOS),
+//					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+//			addItem("SLD-Fichero de Bases", new CalcEnterpriseCommand(),
+//					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n", new EnterpriseCretaRequestCommand(CretaService.File.CONFIRMACION),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 		}
@@ -942,7 +978,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		void setEnterprise(Enterprise enterprise) {
 			calcCmd.setEnterprise(enterprise);
 			for ( EnterpriseCretaRequestCommand cmd: cretaRequestCommands)
-				cmd.setEnterprise(enterprise);
+				if ( cmd != null)
+					cmd.setEnterprise(enterprise);
 		}
 
 	}

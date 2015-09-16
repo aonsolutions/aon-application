@@ -41,7 +41,6 @@ import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
-import com.esferalia.aon.payroll.sql.AbstractSQL.ISalaryDeduction;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
@@ -478,7 +477,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 
 	@Override
 	public void addDeduction(Double amount, String description,
-			IDeduction ideduction, Map<String, ITimedVariable<?>> context) {
+			Date start, Date end,IDeduction ideduction, Map<String, ITimedVariable<?>> context) {
 		addContext(context);
 
 		IContractDeduction contractDeduction = (IContractDeduction) ideduction;
@@ -489,6 +488,8 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 		deduction.setAmount(amount);
 		deduction.setDescription(description);
 		deduction.setType(getDeductionType(ideduction.getType()));
+		deduction.setStartDate(start);
+		deduction.setEndDate(end);
 
 		CompositeDeduction compositeDeduction = getDeduction(deduction.getId());
 
@@ -501,9 +502,9 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 	}
 
 	@Override
-	public void addZeroDeduction(IDeduction deduction,
+	public void addZeroDeduction(Date start, Date end, IDeduction deduction,
 			Map<String, ITimedVariable<?>> context) {
-		addDeduction(0.00, deduction.getDescription(), deduction, context);
+		addDeduction(0.00, deduction.getDescription(), start, end, deduction, context);
 	}
 
 	@Override
@@ -978,16 +979,22 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 
 		return type1.ordinal() == type2.ordinal();
 	}
+	
 
 	private static boolean isImplicit(String name) {
 		ContextVariable var = ContextVariable.getVariableByName(name);
 		if (var != null)
 			return true;
+		
+		
 		// TODO : Very, very ugly...
 		return name.matches(String.format("%s_\\d+_\\d+",
 				ContextVariable.COMMON_DISEASE_DAYS))
 				|| name.matches(String.format("%s_\\d+_\\d+",
 						ContextVariable.OCCUPATIONAL_DISEASE_DAYS));
+		
 	}
+	
+	
 
 }

@@ -36,7 +36,7 @@ public class LiquidacionMesBuilder {
 		
 		if ( !trabajadores.isEmpty()  ) {
 			Trabajadores trabajador3s = OBJECT_FACTORY.createTrabajadores();
-			trabajador3s.getTrabajador().addAll(trabajadores);
+			trabajador3s.getTrabajador().addAll(sort(trabajadores));
 			liquidacionMes.setTrabajadores(trabajador3s);
 			trabajadores.clear();
 		}
@@ -72,5 +72,11 @@ public class LiquidacionMesBuilder {
 		return this;
 	}
 	
+	// ------------------------------------------------------------------------
+	
+	protected List<Trabajador> sort(List<Trabajador> trabajadores) {
+		
+		return trabajadores;
+	}
 
 }

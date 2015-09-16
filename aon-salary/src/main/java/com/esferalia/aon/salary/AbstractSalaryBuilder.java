@@ -218,12 +218,12 @@ public abstract class AbstractSalaryBuilder<T extends ISalary> implements ISalar
 
 	@Override
 	public void addDeduction(Double amount, String description,
-			IDeduction deduction, Map<String, ITimedVariable<?>> context) {
+			Date start, Date end,IDeduction deduction, Map<String, ITimedVariable<?>> context) {
 
 	}
 
 	@Override
-	public void addZeroDeduction(IDeduction deduction,
+	public void addZeroDeduction(Date start, Date end, IDeduction deduction,
 			Map<String, ITimedVariable<?>> context) {
 	}
 	

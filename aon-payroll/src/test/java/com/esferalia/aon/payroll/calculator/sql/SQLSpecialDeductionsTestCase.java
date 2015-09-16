@@ -2,46 +2,26 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractDeduction.CONTRACT_DEDUCTION;
-import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
-import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
-import static java.lang.String.format;
-import static java.util.Calendar.DAY_OF_MONTH;
-import static java.util.Calendar.MONTH;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.Assert;
-
-import org.hibernate.dialect.SQLServerDialect;
 import org.junit.Test;
 
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
-import com.esferalia.aon.jooq.tables.ContractDeduction;
-import com.esferalia.aon.jooq.tables.ContractPayment;
-import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
-import com.esferalia.aon.payroll.calculator.IContractPayment;
-import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
-import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.deduction.IDeduction;
@@ -50,7 +30,8 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
-import com.esferalia.aon.watson.util.AonDateUtils;
+
+import junit.framework.Assert;
 
 public class SQLSpecialDeductionsTestCase extends AbstractSQLTestCase {
 
@@ -104,8 +85,10 @@ public class SQLSpecialDeductionsTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder(){
 			@Override
 			public void addDeduction(Double amount, String description,
-					IDeduction deduction, Map<String, ITimedVariable<?>> context) {
-				super.addDeduction(amount, description, deduction, context);
+					java.util.Date start, java.util.Date end,
+					IDeduction deduction,
+					Map<String, ITimedVariable<?>> context) {
+				super.addDeduction(amount, description, start, end, deduction, context);
 				System.out.println("amount : " + amount );
 			}
 		});
