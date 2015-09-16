@@ -46,7 +46,7 @@ public class Office extends Composite implements EntryPoint,
 	@UiField
 	ResizeLayoutPanel dockOfficePanel;
 	@UiField
-	IssuesLayoutPanel issuesPanel;
+	ResizeLayoutPanel issuesPanel;
 	@UiField
 	SimpleLayoutPanel resultsPanel;
 	@UiField
@@ -208,8 +208,17 @@ public class Office extends Composite implements EntryPoint,
 
 	@Override
 	public void onSelectionTitle(IssueSelected issue) {
-		issuesPanel.setTitle(issue.getTitle());
-		issuesPanel.setBody(issue.getBody());
+		
+		IssuesLayoutPanel issueLayoutPanel = new IssuesLayoutPanel();
+		
+		issueLayoutPanel.setTitle(issue.getTitle());
+		issueLayoutPanel.setUserCreated("Jacinto");
+		issueLayoutPanel.setBodyIssueText(issue.getBody());
+		issueLayoutPanel.addLabels(issue.getLabels());
+		
+		issuesPanel.clear();
+		issuesPanel.add(issueLayoutPanel);
+		
 		deckPanel.showWidget(issuesPanel);
 	}
 

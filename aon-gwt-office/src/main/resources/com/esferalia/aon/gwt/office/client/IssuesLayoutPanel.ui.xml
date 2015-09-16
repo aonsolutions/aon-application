@@ -12,16 +12,53 @@
 		font-weight: bolder;
 		font-size: 36px;
 	}
+	
+	.grid {
+		width: 150px;
+		height: 50px;
+		padding: 5px;
+		position: absolute;
+		left: 220px;
+		top: 350px;
+	}
 	</ui:style>
 	<g:DockLayoutPanel unit="PX" height="100%" width="100%">
 		<g:north size="100">
-			<g:FlowPanel>
-				<g:Label ui:field="titleLabel" styleName="{style.header-title}" />
-			</g:FlowPanel>
+			<g:Grid>
+				<g:row>
+					<g:customCell>
+						<g:Label ui:field="titleLabel" styleName="{style.header-title}" />
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell>
+						<g:Label text="ESTADO" />
+					</g:customCell>
+					<g:customCell>
+						<g:Label ui:field="userCreateLabel" />
+					</g:customCell>
+				</g:row>
+			</g:Grid>
 		</g:north>
 
 		<g:center>
-			<g:Label ui:field="bodyLabel" />
+			<g:Grid styleName="{style.grid}">
+				<g:row>
+					<g:customCell>
+						<g:Label ui:field="titleIssue" />
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell>
+						<g:TextArea ui:field="bodyIssue" />
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell>
+						<g:HorizontalPanel ui:field="labelsPanel" />
+					</g:customCell>
+				</g:row>
+			</g:Grid>
 		</g:center>
 
 		<g:south size="150">
@@ -29,12 +66,10 @@
 				<g:Grid>
 					<g:row>
 						<g:customCell>
-							<g:Button ui:field="closeButton" text="Cerrar" 
-							styleName="{aonResources.css.aonIconCommandButton}"/>
+							<g:Button ui:field="closeButton" text="Cerrar" />
 						</g:customCell>
 						<g:customCell>
-							<g:Button ui:field="commentButton" text="Comentar"
-							styleName="{aonResources.css.aonIconCommandButton}" />
+							<g:Button ui:field="commentButton" text="Comentar" />
 						</g:customCell>
 
 					</g:row>

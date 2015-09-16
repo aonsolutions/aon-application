@@ -70,8 +70,7 @@
 					</g:HTMLPanel>
 				</g:ResizeLayoutPanel>
 				
-				<office:IssuesLayoutPanel ui:field="issuesPanel"/>
-				
+				<g:ResizeLayoutPanel ui:field="issuesPanel" />	
 				
 			</g:DeckLayoutPanel>
 		</g:center>
