@@ -27,6 +27,9 @@
 							<f:setPropertyActionListener
 								target="#{controller.showCreditCardWindow}"
 								value="#{false}" />
+							<f:setPropertyActionListener
+								target="#{controller.creditCardError}"
+								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
 				</f:facet>
@@ -46,9 +49,6 @@
 										oncomplete="Richfaces.hideModalPanel('waitProccess')">
 										<rich:componentControl for="creditCardModalPanel"
 											event="onclick" operation="hide"/>																					
-										<f:setPropertyActionListener
-											target="#{controller.showCreditCardWindow}"
-											value="#{false}" />
 									</aon:commandButton>
 									<aon:commandButton id="creditCard-cancel" immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -57,8 +57,18 @@
 										<f:setPropertyActionListener
 											target="#{controller.showCreditCardWindow}"
 											value="#{false}" />
+										<f:setPropertyActionListener
+											target="#{controller.creditCardError}"
+											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>
+								<aon:if test="#{controller.creditCardError}">
+									<aon:div>
+										<aon:outputLabel 
+											value="#{controller.creditCardErrorText}"
+											styleClass="aon-label-error" />
+									</aon:div>								
+								</aon:if>
 								<aon:div id="creditCardModalContent" styleClass="aon-scroll-area" style="margin-top: 1em;">
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" styleClass="aon-width-all"
 										columnClasses="aon-panelGrid-odd aon-width-100,aon-panelGrid-even aon-width-auto">

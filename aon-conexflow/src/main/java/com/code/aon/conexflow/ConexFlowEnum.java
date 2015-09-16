@@ -88,6 +88,14 @@ public enum ConexFlowEnum {
 	,DELETE_TOKEN_OP("B")
 	,VALIDATE_CARD_OP("N")
 	,TRANSACTION_INFO_OP("S")
+	
+	/********** PLAYASOL CODES **********/
+	
+	,PLAYASOL_EMPRESA("283")
+	,PLAYASOL_CENTRO("283")
+	,PLAYASOL_TPV("283")
+	
+	/************************************/
 	;
 	
 	private String code;

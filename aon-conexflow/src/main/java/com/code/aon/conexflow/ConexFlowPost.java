@@ -17,6 +17,11 @@ import javax.net.ssl.X509TrustManager;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -30,14 +35,14 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
-import org.apache.xml.security.Init;
-import org.apache.xml.security.utils.XMLUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.code.aon.AonVersion;
 import com.code.aon.conexflow.ConexFlow.Query;
+import com.code.aon.conexflow.jooq.DBConsults;
+import com.code.aon.ui.util.AonUtil;
 
 public class ConexFlowPost implements  Serializable {
 	
@@ -70,11 +75,16 @@ public class ConexFlowPost implements  Serializable {
 		return null;
 	}
 	
-	public static ConexFlow execute(String op, Query query) {
+	public static ConexFlow execute(String op, Query query, Integer project, Integer domain) {
 		try {
-			
 			byte[] xmlFile = sendPostHttpClient(op, query);
 			ConexFlow conexFlow = com.code.aon.conexflow.XMLUtils.readXml(xmlFile, query);
+		
+			if(conexFlow.getRespuesta().getResultado().equals(RESULT_OK)){
+				if(!op.equals(ConexFlowConstant.VALIDATE_CARD_OP)){
+					DBConsults.insertConexFlowOperation(AonUtil.getDomainName(), domain, xmlFile, project,op);
+				}
+			}
 			
 			return conexFlow;			
 		} catch (Exception e) {
@@ -124,14 +134,6 @@ public class ConexFlowPost implements  Serializable {
 	    
 	    
 	    HttpPost post = new HttpPost(url);
-
-
-
-	   
-
-
-		
-		
 		// add header
 		//post.setHeader("User-Agent", USER_AGENT);
 		
@@ -139,19 +141,37 @@ public class ConexFlowPost implements  Serializable {
 		post.setEntity(new UrlEncodedFormEntity(urlParameters));
 
 		HttpResponse response = client.execute(post);
+		
+		
 		System.out.println("\nSending 'POST' request to URL : " + url);
 		System.out.println("Post parameters : " + post.getEntity());
 		System.out.println("Response Code : " + 
                                     response.getStatusLine().getStatusCode());
-
+		/* HA DEJADO DE FUNCIONAR */
 		BufferedReader rd = new BufferedReader(
                         new InputStreamReader(response.getEntity().getContent()));
 
 		StringBuffer result = new StringBuffer();
 		String line = "";
 		while ((line = rd.readLine()) != null) {
-			result.append(line);
+			String  s = line;
+			if(query.getImporte() != null && !query.getImporte().equals("")){
+				Integer pos = line.indexOf("</Respuesta>");
+				Double importe = Double.parseDouble(query.getImporte()) / 100.0;
+				s = line.substring(0, pos)+ "<Importe>"+importe+"</Importe> "+line.substring(pos);
+			}
+			result.append(s);
 		}
+		
+	/*	String entity = EntityUtils.toString(response.getEntity());
+		String result2 = entity;
+		if(query.getImporte() != null && !query.getImporte().equals("")){
+			Integer pos = entity.indexOf("</Respuesta>");
+			result2 = entity.substring(0, pos)+ "<Importe>"+query.getImporte()+"</Importe> "+entity.substring(pos);
+		}
+		
+		System.out.println("ENTITY : "+ entity);
+		System.out.println(result2);*/
 		System.out.println(result.toString());
 
 		Document doc = stringToDom(result.toString());
@@ -165,12 +185,20 @@ public class ConexFlowPost implements  Serializable {
         return builder.parse(new InputSource(new StringReader(xmlSource)));
     }
 	
-	private static  byte[] documentToByte(Document document){
+	private static  byte[] documentToByte(Document document) throws TransformerException{
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		DOMSource source = new DOMSource(document);
+		
 	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	    Init.init();
-	    XMLUtils.outputDOM(document, baos, true);
+	    StreamResult result = new StreamResult(baos);
 	    
-	    return baos.toByteArray();
+	    transformer.transform(source, result);
+	    byte[] array=baos.toByteArray();
+	    //Init.init();
+	    //XMLUtils.outputDOM(document, baos, true);
+	    
+	    return array ;// baos.toByteArray();
 	}
 	
 	private static List<NameValuePair> getParameters(String op, Query query){

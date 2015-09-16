@@ -98,6 +98,8 @@ public class ConexFlow {
         protected String CF_DocumentNumber;
         @XmlElement(name = "CF_ExpDateTime")
         protected String CF_ExpDateTime;
+        @XmlElement(name = "CF_ExpirationDate")
+        protected String CF_ExpirationDate;
         @XmlElement(name = "Cod_Res_CA")
         protected String codResCA;
         @XmlElement(name = "Fecha_Original")
@@ -269,6 +271,15 @@ public class ConexFlow {
 
 		public void setCF_ExpDateTime(String cF_ExpDateTime) {
 			CF_ExpDateTime = cF_ExpDateTime;
+		}
+		
+		
+		public String getCF_ExpirationDate(){
+			return CF_ExpirationDate;
+		}
+		
+		public void setCF_ExpirationDate(String CF_ExpirationDate){
+			this.CF_ExpirationDate = CF_ExpirationDate;
 		}
 
 		public String getCodResCA() {

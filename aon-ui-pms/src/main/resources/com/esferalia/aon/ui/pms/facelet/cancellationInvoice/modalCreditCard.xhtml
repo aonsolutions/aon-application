@@ -27,6 +27,9 @@
 							<f:setPropertyActionListener
 								target="#{controller.showCreditCardWindow}"
 								value="#{false}" />
+							<f:setPropertyActionListener
+								target="#{controller.creditCardError}"
+								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
 				</f:facet>
@@ -36,6 +39,18 @@
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div id="creditCardModalToolbar" styleClass="aon-toolbar">
+									<aon:commandButton id="creditCard-accept"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										value="Confirmar Pre-Autorización"
+										rendered="#{controller.showConfirmPreauthorization}"
+										actionListener="#{controller.onConfirmPreauthorizationCreditCard}"
+										reRender="aonContent"
+										onclick="Richfaces.showModalPanel('waitProccess')"
+										oncomplete="Richfaces.hideModalPanel('waitProccess')">
+										<rich:componentControl for="creditCardModalPanel"
+											event="onclick" operation="hide"/>																					
+									</aon:commandButton>
+									
 									<aon:commandButton id="creditCard-back" immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel"
 										value="#{bundle.aon_back}"
@@ -43,8 +58,20 @@
 										<f:setPropertyActionListener
 											target="#{controller.showCreditCardWindow}"
 											value="#{false}" />
+										<f:setPropertyActionListener
+											target="#{controller.creditCardError}"
+											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>
+								
+								<aon:if test="#{controller.creditCardError}">
+									<aon:div>
+										<aon:outputLabel 
+											value="#{controller.creditCardErrorText}"
+											styleClass="aon-label-error" />
+									</aon:div>								
+								</aon:if>
+								
 								<aon:div id="creditCardModalContent" styleClass="aon-scroll-area" style="margin-top: 1em;">
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" styleClass="aon-width-all"
 										columnClasses="aon-panelGrid-odd aon-width-100,aon-panelGrid-even aon-width-auto">
@@ -103,6 +130,27 @@
 										<aon:outputText	value="#{controller.reservation.agency.registry.fullName}" />
 
 									</aon:panelGrid>
+									
+									<aon:if test="#{controller.showConfirmPreauthorization}">
+										<aon:panelGrid id="menuGrid3" columns="2" dir="true" styleClass="aon-width-all aon-margin-top"
+										columnClasses="aon-panelGrid-odd aon-width-100,aon-panelGrid-even aon-width-auto">
+											<aon:outputLabel for="preauthorization_amount"
+												value="#{bundle.aon_amount}" />
+											<aon:inputText id="preauthorization_amount" 
+												value="#{controller.preauthorizationAmount}"
+												required="true" size="5" maxlength="8"/>
+										</aon:panelGrid>
+									</aon:if>
+									
+									<aon:if test="#{controller.confirmPreauthorization}">
+										<aon:panelGrid id="menuGrid3" columns="2" dir="true" styleClass="aon-width-all aon-margin-top"
+											columnClasses="aon-panelGrid-odd aon-width-100,aon-panelGrid-even aon-width-auto">
+											<aon:outputLabel for="preauthorization_amount_label"
+												value="#{bundle.aon_amount}" />
+											<aon:outputLabel id="preauthorization_amount_label"
+												value="#{controller.confirmPreauthorizationAmount}" />
+										</aon:panelGrid>
+									</aon:if>
 								</aon:div>
 							</aon:div>
 						</aon:div>

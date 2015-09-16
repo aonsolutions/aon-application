@@ -39,6 +39,12 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.conexflow.ConexFlowPost;
+import com.code.aon.conexflow.ConexFlow;
+import com.code.aon.conexflow.ConexFlow.Query;
+import com.code.aon.conexflow.ConexFlowConstant;
+import com.code.aon.conexflow.ConexFlowUtils;
+import com.code.aon.conexflow.jooq.DBConsults;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
 import com.code.aon.config.Tariff;
@@ -93,7 +99,8 @@ import com.esferalia.aon.ui.pms.util.PmsUtils;
 public class ProjectReservationController extends BasicController implements IPmsConstants, IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-
+	private static final String CONEXFLOW_RESULT_OK = "000";
+	
 	private ReservationUtils reservationUtils;
 	private ProjectReservationPermission reservationPermission;
 	private String selectedTab;
@@ -115,7 +122,6 @@ public class ProjectReservationController extends BasicController implements IPm
 	private Invoice invoiceToRectify;
 	private boolean showModificationWindow;
 	private Invoice invoiceToModify;
-	private boolean showCreditCardWindow;
 	private List<Integer> multipleReservation;
 	private DataModel invoiceModel;
 
@@ -309,13 +315,8 @@ public class ProjectReservationController extends BasicController implements IPm
 		this.invoiceToModify = invoiceToModify;
 	}
 
-	public boolean isShowCreditCardWindow() {
-		return showCreditCardWindow;
-	}
-	public void setShowCreditCardWindow(boolean showCreditCardWindow) {
-		this.showCreditCardWindow = showCreditCardWindow;
-	}
 
+	
 	public List<Integer> getMultipleReservation() {
 		return multipleReservation;
 	}
@@ -1409,26 +1410,6 @@ public class ProjectReservationController extends BasicController implements IPm
 		((ProjectReservationDivert)divertController.getTo()).setProjectReservation((ProjectReservation)this.getTo());
 	}
 
-	public void onCreditCardShow(ActionEvent event) {
-		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		getReservationUtils().decryptReservationCreditCardData(reservation);
-	}
-
-	public List<SelectItem> getCreditCardYears() {
-		DateFormat formatter = new SimpleDateFormat("yy");
-		List<SelectItem> years = new LinkedList<SelectItem>();
-		for (int i=0,year=Integer.parseInt(formatter.format(new Date())); i<=5; i++) {
-			SelectItem item = new SelectItem("" + (year+i));
-			years.add(item);
-		}
-		return years;
-	}
-
-	public void onSaveCreditCard(ActionEvent event) {
-		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		getReservationUtils().encryptReservationCreditCardData(reservation);
-		accept(event);
-	}
 
 	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {
 		if (getInvoiceModel().isRowAvailable()) {
@@ -1448,5 +1429,195 @@ public class ProjectReservationController extends BasicController implements IPm
 			invoiceController.load(event, ((Invoice)getInvoiceModel().getRowData()).getId());
 		}
 	}
+	
+	/********** CREDIT CARD OPERATIONS / CONEXFLOW **********/
+	
+	private boolean showCreditCardWindow;	
+	private boolean creditCardError = false;
+	private String creditCardErrorText = "";
+	private boolean showCreditCardPreauthorizationWindow;
+	private String creditCard;
+	private Double preauthorizationAmount;
+	private String preauthorizationDate;
+	private boolean preauthorization;
+	
+	//*********** GETTERS & SETTERS **********//
+	
+	public boolean isShowCreditCardWindow() {
+		return showCreditCardWindow;
+	}
+	public void setShowCreditCardWindow(boolean showCreditCardWindow) {
+		this.showCreditCardWindow = showCreditCardWindow;
+	}
+
+	public boolean isCreditCardError() {
+		return creditCardError;
+	}
+	public void setCreditCardError(boolean creditCardError) {
+		this.creditCardError = creditCardError;
+	}
+
+	public String getCreditCardErrorText() {
+		return creditCardErrorText;
+	}
+	public void setCreditCardErrorText(String creditCardErrorText) {
+		this.creditCardErrorText = creditCardErrorText;
+	}
+	
+	public boolean isCreditCardTokenExist(){
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		return DBConsults.getConexFlowLastOperationId(AonUtil.getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP) != null;
+	}
+	
+	public boolean isShowCreditCardPreauthorizationWindow() {
+		return showCreditCardPreauthorizationWindow;
+	}
+	public void setShowCreditCardPreauthorizationWindow(boolean showCreditCardPreauthorizationWindow) {
+		this.showCreditCardPreauthorizationWindow = showCreditCardPreauthorizationWindow;
+	}
+	
+	public String getCreditCard(){
+		return creditCard;
+	}
+	
+	public void setCreditCard(String creditCard){
+		this.creditCard = creditCard;
+	}
+	
+	public Double getPreauthorizationAmount(){
+		return preauthorizationAmount;
+	}
+	
+	public void setPreauthorizationAmount(Double preauthorizationAmount){
+		this.preauthorizationAmount = preauthorizationAmount;
+	}
+	
+	public String getPreauthorizationDate(){
+		return preauthorizationDate;
+	}
+	
+	public void setPreauthorizationDate(String preauthorizationDate){
+		this.preauthorizationDate = preauthorizationDate;
+	}
+	
+	public boolean getPreauthorization(){
+		return preauthorization;
+	}
+	
+	public void setPreauthorization(boolean preauthorization){
+		this.preauthorization = preauthorization;
+	}
+	
+	public boolean getNotPreauthorization(){
+		return !preauthorization;
+	}
+	
+	//********** EVENTS **********//
+	
+	public void onCreditCardShow(ActionEvent event) {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		getReservationUtils().decryptReservationCreditCardData(reservation);
+	}
+	
+	public void onCreditCardPreauthorization(ActionEvent event) {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		ConexFlow cf = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
+		setCreditCard(cf.getRespuesta().getCF_PAN());
+		ConexFlow cf2 = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+		setPreauthorization(cf2 != null);
+		if(cf2 != null){
+			String date = cf2.getRespuesta().getFecha();
+			setPreauthorizationDate(date.substring(0, 2) + "/" + date.substring(2, 4)+ "/" + date.substring(4));
+			if(cf2.getRespuesta().getImporte() != null)
+				setPreauthorizationAmount(Double.parseDouble(cf2.getRespuesta().getImporte()));
+			else setPreauthorizationAmount(0.0);
+		}
+		getReservationUtils().decryptReservationCreditCardData(reservation);
+	}
+
+	public List<SelectItem> getCreditCardYears() {
+		DateFormat formatter = new SimpleDateFormat("yy");
+		List<SelectItem> years = new LinkedList<SelectItem>();
+		for (int i=0,year=Integer.parseInt(formatter.format(new Date())); i<=5; i++) {
+			SelectItem item = new SelectItem("" + (year+i));
+			years.add(item);
+		}
+		//years.add(new SelectItem("49"));//TODO SOLO PARA PRUEBAS (ELIMINAR AL SUBIR)
+		return years;
+	}
+	
+	
+	public void onSaveCreditCard(ActionEvent event) {
+		Boolean conexFlowActive = false;
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		if(conexFlowActive){
+			ConexFlow conexFlowValidate, conexFlowCreateToken = null;
+			Query validateQuery = ConexFlowUtils.getConexFlowValidateCardQuery(reservation.getHrCreditCardNumber()
+				, "283"//reservation.getHotel().getWorkPlace().getEnterprise().getId().toString()
+				, /*reservation.getHotel().getWorkPlace().getId().toString()*/"283", "283"
+				, reservation.getCustomer().getId().toString());
+			conexFlowValidate = ConexFlowPost.execute(ConexFlowConstant.VALIDATE_CARD_OP, validateQuery, reservation.getId(), reservation.getDomain());
+
+			if(conexFlowValidate.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)){
+				Query createTokenQuery = ConexFlowUtils.getConexFlowCreateTokenQuery(reservation.getHrCreditCardNumber()
+					,"283" //reservation.getHotel().getWorkPlace().getEnterprise().getId().toString()
+					, /*reservation.getHotel().getWorkPlace().getId().toString()*/"283", "283"
+					, reservation.getHrCreditCardExpirationMonth() + reservation.getHrCreditCardExpirationYear()
+					, reservation.getCustomer().getId().toString());
+				conexFlowCreateToken = ConexFlowPost.execute(ConexFlowConstant.CREATE_TOKEN_OP, createTokenQuery, reservation.getId(), reservation.getDomain());
+				if(conexFlowCreateToken.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)){
+					getReservationUtils().encryptReservationCreditCardData(reservation);
+					accept(event);
+					setShowCreditCardWindow(false);
+					setCreditCardError(false);
+				}
+				else{
+					setCreditCardError(true);
+					String error = "*Error " + conexFlowCreateToken.getRespuesta().getResultado() + ": " + conexFlowCreateToken.getRespuesta().getDesResultado()+".";
+					setCreditCardErrorText(error);
+				}
+			}
+			else{
+				setCreditCardError(true);
+				String error = "*Error " + conexFlowValidate.getRespuesta().getResultado() + ": " + conexFlowValidate.getRespuesta().getDesResultado()+".";
+				setCreditCardErrorText(error);
+			}
+		}
+		else{
+			getReservationUtils().encryptReservationCreditCardData(reservation);
+			accept(event);
+			setShowCreditCardWindow(false);
+		}
+	}
+	
+	public void onPreauthorizedCreditCard(ActionEvent event){
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		if(getPreauthorizationAmount() <= reservation.getTotal()){
+			ConexFlow cf = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
+			String token = cf.getRespuesta().getToken();
+			Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(
+					//reservation.getHotel().getWorkPlace().getEnterprise().getId().toString()
+					"283", "283", "283", reservation.getCustomer().getId().toString(), token
+					, getPreauthorizationAmount());
+			ConexFlow conexFlowPreauthorization = ConexFlowPost.execute(ConexFlowConstant.PREAUTHORIZATION_OP, query, reservation.getId(), reservation.getDomain());
+			if(!conexFlowPreauthorization.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)){
+				setCreditCardError(true);
+				String error = "*Error " + conexFlowPreauthorization.getRespuesta().getResultado() + ": " + conexFlowPreauthorization.getRespuesta().getDesResultado()+".";
+				setCreditCardErrorText(error);
+			}
+			else{
+				setShowCreditCardPreauthorizationWindow(false);
+				setCreditCardError(false);
+			}
+
+		}
+		else{
+			setCreditCardError(true);
+			String error = "*Error : El importe es a pre-autorizar es mayor que el importe de la reserva.";
+			setCreditCardErrorText(error);
+		}
+	}
+	
+	/********************************************************/
 
 }

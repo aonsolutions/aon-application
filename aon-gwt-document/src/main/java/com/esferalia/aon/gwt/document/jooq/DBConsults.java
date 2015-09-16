@@ -884,7 +884,7 @@ public class DBConsults {
 			Result<Record1<Integer>> reg = dslContext.select(ENTERPRISE.REGISTRY)
 				.from(ENTERPRISE.join(DOMAIN).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID)))
 				.where(DOMAIN.NAME.eq(domain)).fetch();
-						
+			//TODO AÑADIR AUDITORIAA!!!!!!		
 			return dslContext.insertInto(RATTACH,RATTACH.REGISTRY,RATTACH.DOMAIN,RATTACH.CATEGORY,RATTACH.MIMETYPE,RATTACH.DESCRIPTION,RATTACH.TYPE,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.ATTACH_DATE,RATTACH.DATA,RATTACH.DRIVE_ID,RATTACH.DPARENT_ID)
 						.values(reg.get(0).value1(),fi.getDomainId(),fi.getCategory(),fi.getMimetype(),fi.getTitle(),(byte)fi.getType(),fi.getScopeId(),fi.getSecurityLevel(),fi.getDateSql(),null,null,fi.getSize().toString()).returning(RATTACH.ID).fetchOne().getId();
 	

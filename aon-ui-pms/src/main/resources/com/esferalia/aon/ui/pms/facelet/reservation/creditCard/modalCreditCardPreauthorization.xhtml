@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showCreditCardPreauthorizationWindow">
+		<aon:if test="#{controller.showCreditCardPreauthorizationWindow}">
+			<rich:modalPanel id="creditCardPreauthorizationModalPanel" minHeight="240" minWidth="580" 
+				rendered="#{controller.showCreditCardPreauthorizationWindow}"
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="Pre-Autorización" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showCreditCardPreauthorizationWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{controller.showCreditCardPreauthorizationWindow}"
+								value="#{false}" />
+							<f:setPropertyActionListener
+								target="#{controller.creditCardError}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="creditCardPreauthorizationForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div id="creditCardPreauthorizationModalToolbar" styleClass="aon-toolbar">
+									<aon:if test="#{controller.notPreauthorization}">
+										<aon:commandButton id="creditCardPreauthorization-accept"
+											styleClass="aon-finding-toolbar-item aon-icon-accept"
+											value="Pre-Autorizar"
+											actionListener="#{controller.onPreauthorizedCreditCard}"
+											reRender="aonContent"
+											onclick="Richfaces.showModalPanel('waitProccess')"
+											oncomplete="Richfaces.hideModalPanel('waitProccess')">
+											<rich:componentControl for="creditCardPreauthorizationModalPanel"
+												event="onclick" operation="hide"/>						
+										</aon:commandButton>
+									</aon:if>
+									<aon:commandButton id="creditCardPreauthorization-cancel" immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel"
+										value="#{bundle.aon_back}"
+										reRender="showCreditCardPreauthorizationWindow">
+										<f:setPropertyActionListener
+											target="#{controller.showCreditCardPreauthorizationWindow}"
+											value="#{false}" />
+										<f:setPropertyActionListener
+											target="#{controller.creditCardError}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								
+								<aon:if test="#{controller.creditCardError}">
+									<aon:div>
+										<aon:outputLabel
+											value="#{controller.creditCardErrorText}"
+											styleClass="aon-label-error" />
+									</aon:div>								
+								</aon:if>
+								
+								<aon:div id="creditCardPreauthorizationModalContent" styleClass="aon-scroll-area" style="margin-top: 1em;">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true" styleClass="aon-width-all"
+										columnClasses="aon-panelGrid-odd aon-width-100,aon-panelGrid-even aon-width-auto">
+								
+										<aon:outputLabel for="creditCard"
+											value="Tarjeta de Crédito" />
+										<aon:outputLabel id="creditCard"
+											value="#{controller.creditCard}" />
+										
+										<aon:if test="#{controller.notPreauthorization}">
+											<aon:outputLabel for="preauthorization_amount"
+												value="#{bundle.aon_amount}" />
+											<aon:inputText id="preauthorization_amount" 
+												value="#{controller.preauthorizationAmount}"
+												required="true" size="5" maxlength="8"/>
+										</aon:if>
+										<aon:if test="#{controller.preauthorization}">
+											<aon:outputLabel for="preauthorization_date"
+												value="Fecha de Pre-Autorización" />
+											<aon:outputLabel id="preauthorization_date"
+											value="#{controller.preauthorizationDate}" />
+											
+											<aon:outputLabel for="preauthorization_amount_label"
+												value="#{bundle.aon_amount}" />
+											<aon:outputLabel id="preauthorization_amount_label"
+											value="#{controller.preauthorizationAmount}" />
+										</aon:if>
+									</aon:panelGrid>
+								</aon:div>
+								
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+
+</ui:composition>

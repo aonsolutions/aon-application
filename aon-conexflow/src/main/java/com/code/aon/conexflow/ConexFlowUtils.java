@@ -50,6 +50,38 @@ public class ConexFlowUtils {
 		return cf;
 	}
 	
+	public static Query getConexFlowCardPaymentQuery(String empresa, String centro, String tpv, String token, String amount, String cliente) {
+		Query query = new Query();
+		query.setOperacion(ConexFlowConstant.SALE_OP);
+		query.setEmpresa(leftZeros(8, empresa));
+		query.setCentro(leftZeros(4, centro));
+		query.setTpv(leftZeros(4, tpv));
+		query.setFecha(getCurrentDate());
+		query.setHora(getCurrentTime());
+		query.setSoporte("K");
+		query.setDocumento(token);
+		query.setFechaCad("");
+		query.setImporte(amount);
+		query.setMoneda("EUR");
+		query.setPlazos("000");
+		query.setSecurityCode("");
+		query.setRefCliente(leftZeros(20, cliente));
+		query.setInfoAdicionalEntrada("");
+		query.setCF_ReplyURL("");
+		query.setCF_ReplyURLAuth("");
+		query.setFlagAltaToken("");
+		query.setFlagTestSaldo("");
+		query.setObservaciones("");
+		query.setRefTokenCliente("");
+		query.setCentroOriginal("");
+		query.setTpvOriginal("");
+		query.setFechaOriginal("");
+		query.setIdOperacionOriginal("");
+		query.setAutOriginal("");
+		
+		return query;
+	}
+	
 	protected static List<NameValuePair> getCardPaymentParameters(Query query){
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.OPERACION_STR.getCode(), query.getOperacion()));
@@ -135,6 +167,43 @@ public class ConexFlowUtils {
 		return cf;
 	}
 	
+	public static Query getConexFlowPreauthorizationPaymentQuery(String empresa, String centro, String tpv, String cliente, String token, Double amount) {
+		Integer eur = amount.intValue();
+		Double cent = (amount - eur.doubleValue()) * 100;
+		
+		Integer importe = (eur * 100) + cent.intValue(); 
+		
+		Query query = new Query();
+		query.setOperacion(ConexFlowConstant.PREAUTHORIZATION_OP);
+		query.setEmpresa(leftZeros(8, empresa));
+		query.setCentro(leftZeros(4, centro));
+		query.setTpv(leftZeros(4, tpv));
+		query.setFecha(getCurrentDate());
+		query.setHora(getCurrentTime());
+		query.setSoporte("K");
+		query.setDocumento(token);
+		query.setFechaCad("");
+		query.setImporte(importe.toString());
+		query.setMoneda("EUR");
+		query.setPlazos("000");
+		query.setSecurityCode("");
+		query.setRefCliente(leftZeros(20, cliente));
+		query.setInfoAdicionalEntrada("");
+		query.setCF_ReplyURL("");
+		query.setCF_ReplyURLAuth("");
+		query.setFlagAltaToken("");
+		query.setFlagTestSaldo("");
+		query.setObservaciones("");
+		query.setRefTokenCliente("");
+		query.setCentroOriginal("");
+		query.setTpvOriginal("");
+		query.setFechaOriginal("");
+		query.setIdOperacionOriginal("");
+		query.setAutOriginal("");
+		
+		return query;
+	}
+	
 	protected static List<NameValuePair> getPreauthorizationPaymentParameters(Query query){
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.OPERACION_STR.getCode(), query.getOperacion()));
@@ -214,6 +283,32 @@ public class ConexFlowUtils {
 		
 		cf.setQuery(query);
 		return cf;
+	}
+	
+	protected static Query getConexFlowRefundQuery(String empresa, String centro, String tpv, String token, String amount, String cliente) {
+		Query query = new Query();
+		query.setOperacion(ConexFlowConstant.REFUND_OP);
+		query.setEmpresa(leftZeros(8, empresa));
+		query.setCentro(leftZeros(4, centro));
+		query.setTpv(leftZeros(4, tpv));
+		query.setFecha(getCurrentDate());
+		query.setHora(getCurrentTime());
+		query.setOperador("");
+		query.setSoporte("K");
+		query.setDocumento(token);
+		query.setFechaCad("");
+		query.setImporte(amount);
+		query.setMoneda("EUR");
+		query.setRefCliente(leftZeros(20, cliente));
+		query.setInfoAdicionalEntrada("");
+		query.setCF_ReplyURL("");
+		query.setObservaciones("");
+		query.setCentroOriginal("");
+		query.setTpvOriginal("");
+		query.setFechaOriginal("");
+		query.setIdOperacionOriginal("");
+		
+		return query;
 	}
 	
 	protected static List<NameValuePair> getRefundParameters(Query query){
@@ -345,6 +440,30 @@ public class ConexFlowUtils {
 		return cf;
 	}
 	
+	public static Query getConexFlowCancelationQuery(String empresa, String centro, String tpv, String cancelOperation, String amount, String amountOriginal, String autorizacion, String cliente, String operacionId, String fechaOriginal) {
+		Query query = new Query();
+		query.setOperacion(ConexFlowConstant.CANCELATION_OP);
+		query.setEmpresa(leftZeros(8, empresa));
+		query.setCentro(leftZeros(4, centro));
+		query.setTpv(leftZeros(4, tpv));
+		query.setFecha(getCurrentDate());
+		query.setHora(getCurrentTime());
+		query.setOperacionOriginal(cancelOperation);
+		query.setImporte(amount);
+		query.setImporteOriginal(amountOriginal);
+		query.setAutOriginal(autorizacion);
+		query.setRefCliente(leftZeros(20, cliente));
+		query.setInfoAdicionalEntrada("");
+		query.setCF_ReplyURL("");
+		query.setObservaciones("");
+		query.setCentroOriginal(leftZeros(4, centro));
+		query.setTpvOriginal(leftZeros(4, tpv));
+		query.setFechaOriginal(fechaOriginal);
+		query.setIdOperacionOriginal(operacionId);
+		
+		return query;
+	}
+	
 	protected static List<NameValuePair> getCancelationParameters(Query query){
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.OPERACION_STR.getCode(), query.getOperacion()));
@@ -413,6 +532,36 @@ public class ConexFlowUtils {
 		return cf;
 	}
 	
+	public static Query getConexFlowConfirmPreauthorizationQuery(String empresa, String centro, String tpv, String cliente, String token, Double amount, Integer amountOriginal, String fechaCad, String autorizacion, String fechaOriginal, String operacionId) {
+		Integer eur = amount.intValue();
+		Double cent = (amount - eur.doubleValue()) * 100;
+		Integer importe = (eur * 100) + cent.intValue(); 
+		
+		Query query = new Query();
+		query.setOperacion(ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
+		query.setEmpresa(leftZeros(8, empresa));
+		query.setCentro(leftZeros(4, centro));
+		query.setTpv(leftZeros(4, tpv));
+		query.setFecha(getCurrentDate());
+		query.setHora(getCurrentTime());
+		query.setDocumento(token);
+		query.setFechaCad(fechaCad);
+		query.setImporte(importe.toString());
+		query.setImporteOriginal(amountOriginal != null ? amountOriginal.toString() : importe.toString());
+		query.setAutOriginal(autorizacion);
+		query.setMoneda("EUR");
+		query.setRefCliente(leftZeros(20, cliente));
+		query.setInfoAdicionalEntrada("");
+		query.setCF_ReplyURL("");
+		query.setObservaciones("");
+		query.setCentroOriginal(leftZeros(4, centro));
+		query.setTpvOriginal(leftZeros(4, tpv));
+		query.setFechaOriginal(fechaOriginal);
+		query.setIdOperacionOriginal(operacionId);
+		
+		return query;
+	}
+	
 	protected static List<NameValuePair> getConfirmPreauthorizationParameters(Query query){
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.OPERACION_STR.getCode(), query.getOperacion()));
@@ -421,35 +570,46 @@ public class ConexFlowUtils {
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.TPV_STR.getCode(), query.getTpv()));
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.FECHA_STR.getCode(), query.getFecha()));
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.HORA_STR.getCode(), query.getHora()));
-		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.DOCUMENTO_STR.getCode(), query.getDocumento()));
-		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.FECHACAD_STR.getCode(), query.getFechaCad()));
-		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.IMPORTE_STR.getCode(), query.getImporte()));
-		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.IMPORTE_ORIGINAL_STR.getCode(), query.getImporteOriginal()));
-		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.AUT_ORIGINAL_STR.getCode(), query.getAutOriginal()));
-		if(!query.getMoneda().equals("")) urlParameters.add(new BasicNameValuePair(ConexFlowEnum.MONEDA_STR.getCode(), query.getMoneda()));
-		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.REF_CLIENTE_STR.getCode(), query.getRefCliente()));
-		if(!query.getInfoAdicionalEntrada().equals("")) urlParameters.add(new BasicNameValuePair(ConexFlowEnum.INFOADICIONALENTRADA_STR.getCode(), query.getInfoAdicionalEntrada()));
-		if(!query.getCF_ReplyURL().equals("")) urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_REPLYURL_STR.getCode(), query.getCF_ReplyURL()));
-		if(!query.getObservaciones().equals("")) urlParameters.add(new BasicNameValuePair(ConexFlowEnum.OBSERVACIONES_STR.getCode(), query.getObservaciones()));
+		//urlParameters.add(new BasicNameValuePair(ConexFlowEnum.DOCUMENTO_STR.getCode(), query.getDocumento()));
+		//urlParameters.add(new BasicNameValuePair(ConexFlowEnum.FECHACAD_STR.getCode(), query.getFechaCad()));
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CENTRO_ORIGINAL_STR.getCode(), query.getCentroOriginal()));
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.TPV_ORIGINAL_MAYUS_STR.getCode(), query.getTpvOriginal()));
+		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.AUT_ORIGINAL_STR.getCode(), query.getAutOriginal()));
+		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.IMPORTE_STR.getCode(), query.getImporte()));
+		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.IMPORTE_ORIGINAL_STR.getCode(), query.getImporteOriginal()));
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.FECHA_ORIGINAL_STR.getCode(), query.getFechaOriginal()));
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.ID_OPERACION_ORIGINAL_STR.getCode(), query.getIdOperacionOriginal()));
-	
-		String cadena = query.getOperacion() + query.getEmpresa() + query.getCentro() +
-				query.getTpv() + query.getFecha() + query.getHora() +query.getDocumento() + 
-				query.getFechaCad() + query.getImporte() + query.getImporteOriginal() + 
-				query.getAutOriginal() + query.getMoneda() + query.getRefCliente() + 
-				query.getInfoAdicionalEntrada() + query.getCF_ReplyURL() + query.getObservaciones() + 
+		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.REF_CLIENTE_STR.getCode(), query.getRefCliente()));
+		//if(!query.getInfoAdicionalEntrada().equals("")) urlParameters.add(new BasicNameValuePair(ConexFlowEnum.INFOADICIONALENTRADA_STR.getCode(), query.getInfoAdicionalEntrada()));
+		//if(!query.getCF_ReplyURL().equals("")) urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_REPLYURL_STR.getCode(), query.getCF_ReplyURL()));
+
+		//String cadena = query.getOperacion() + query.getEmpresa() + query.getCentro() +
+			//	query.getTpv() + query.getFecha() + query.getHora() +//query.getDocumento() + 
+			//	/*query.getFechaCad() +*/ query.getCentroOriginal() + query.getTpvOriginal() + query.getAutOriginal() +
+			//	query.getImporte() + query.getImporteOriginal() + query.getFechaOriginal() +
+			//	query.getIdOperacionOriginal() + 
+			//	query.getRefCliente();// + 
+			//	query.getInfoAdicionalEntrada() + query.getCF_ReplyURL();
+		
+		
+		String cadena2 = query.getOperacion() + query.getEmpresa() + query.getCentro() +
+				query.getTpv() + query.getFecha() + query.getHora() +
 				query.getCentroOriginal() + query.getTpvOriginal() + query.getFechaOriginal() +
-				query.getIdOperacionOriginal();
+				query.getIdOperacionOriginal() +  
+				query.getImporte() + query.getImporteOriginal() + query.getAutOriginal() +
+				
+				 query.getRefCliente();
 	
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, ConexFlowEnum.CONEXFLOW_MAC_KEYA.getCode(), ConexFlowEnum.CONEXFLOW_MAC_KEYB.getCode())));
+					, claveMAC.dameClaveMAC(cadena2, ConexFlowEnum.CONEXFLOW_MAC_KEYA.getCode(), ConexFlowEnum.CONEXFLOW_MAC_KEYB.getCode())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
+		
+		//if(!query.getObservaciones().equals("")) urlParameters.add(new BasicNameValuePair(ConexFlowEnum.OBSERVACIONES_STR.getCode(), query.getObservaciones()));
+		//if(!query.getMoneda().equals("")) urlParameters.add(new BasicNameValuePair(ConexFlowEnum.MONEDA_STR.getCode(), query.getMoneda()));
+		//urlParameters.add(new BasicNameValuePair(ConexFlowEnum.SOPORTE_STR.getCode(), "K"));
 		
 		return urlParameters;
 	}
@@ -755,7 +915,7 @@ public class ConexFlowUtils {
 		query.setHora(getCurrentTime());
 		query.setDocumento(creditCardNumber);
 		query.setRefCliente(leftZeros(20, client));
-	
+		query.setCF_ReplyURL("");
 		return query;
 	}
 	
@@ -829,7 +989,7 @@ public class ConexFlowUtils {
 	private static String getCurrentDate(){
 		Calendar cal = Calendar.getInstance();
 		Integer day = cal.get(Calendar.DATE);
-		Integer month = cal.get(Calendar.MONTH);
+		Integer month = cal.get(Calendar.MONTH) + 1;
 		Integer year = cal.get(Calendar.YEAR);
 		return leftZeros(2, day.toString()) + leftZeros(2, month.toString()) + year.toString();
 	}
