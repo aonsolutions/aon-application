@@ -53,24 +53,8 @@
 		</g:north>
 
 		<g:center>
-			<g:Grid styleName="{style.grid}">
-				<g:row>
-					<g:customCell>
-						<g:Label ui:field="titleIssue" />
-					</g:customCell>
-				</g:row>
-				<g:row>
-					<g:customCell>
-						<g:TextArea ui:field="bodyIssue" />
-					</g:customCell>
-				</g:row>
-				<g:row>
-					<g:customCell>
-						<g:HorizontalPanel ui:field="labelsPanel"
-							spacing="5" />
-					</g:customCell>
-				</g:row>
-			</g:Grid>
+		<g:FlowPanel ui:field="flowIssuesPanel">
+		</g:FlowPanel>
 		</g:center>
 
 		<g:south size="150">

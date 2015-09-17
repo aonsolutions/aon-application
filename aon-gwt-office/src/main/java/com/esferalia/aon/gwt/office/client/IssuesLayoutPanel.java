@@ -7,6 +7,9 @@ import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -30,13 +33,9 @@ public class IssuesLayoutPanel extends Composite {
 	InlineLabel userCreateLabel;
 	@UiField
 	InlineLabel whenCreateLabel;
-	@UiField
-	Label titleIssue;
-	@UiField
-	TextArea bodyIssue;
 	
 	@UiField
-	HorizontalPanel labelsPanel;
+	FlowPanel flowIssuesPanel;
 	
 	private IssueSelected issue;
 
@@ -54,6 +53,7 @@ public class IssuesLayoutPanel extends Composite {
 
 	private void init() {
 		setHeaderTitle();
+		addIssue();
 	}
 	
 	private void setHeaderTitle() {
@@ -63,32 +63,50 @@ public class IssuesLayoutPanel extends Composite {
 		whenCreateLabel.setText("Abierto hace ");
 	}
 	
-	public void setUserCreated(String text) {
-		userCreateLabel.setText(text);
-		titleIssue.setText(text);
+	private void addIssue() {
+		
+		FlexTable table = new FlexTable();
+		
+		FlexCellFormatter cellFormatter = table.getFlexCellFormatter();
+		table.addStyleName("aon-data-table");
+		table.setWidth("100%");
+		table.setCellSpacing(5);
+		table.setCellPadding(3);
+		
+		Label issueHeader = new Label(issue.getUser().getLogin() + " comentado hace ..");
+		
+		TextArea textArea = new TextArea();
+		textArea.setReadOnly(true);
+		textArea.setText(issue.getBody());
+		
+		HorizontalPanel hPanel = new HorizontalPanel();
+		hPanel.setSpacing(10);
+		
+		Label footerUser = new Label(issue.getUser().getLogin() + " added ");
+		hPanel.add(footerUser);
+		addLabels(hPanel, issue.getLabels());
+		
+		table.setWidget(0, 0, issueHeader);
+		table.setWidget(1, 0, textArea);
+		table.setWidget(2, 0, hPanel);
+		
+		flowIssuesPanel.add(table);
+		
 	}
 	
-	public void setTitleIssue(String text) {
-		titleIssue.setText(userCreateLabel.getText());
-	}
-	
-	public void setBodyIssueText(String text) {
-		bodyIssue.setText(text);
-	}
-	
-	public void addLabels(JsArray<JsLabel> labels) {
+	private void addLabels(HorizontalPanel hPanel, JsArray<JsLabel> labels) {
 		
 		for (int x = 0; x < labels.length() ; x++)
-			addLabel(labels.get(x));
+			hPanel.add(addLabel(labels.get(x)));
 	}
 	
 	
-	private void addLabel(JsLabel jsLabel) {
+	private Widget addLabel(JsLabel jsLabel) {
 		Label label = new Label(jsLabel.getName());
 		label.getElement().getStyle().setColor("#" + jsLabel.getColor());
 		label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		
-		labelsPanel.add(label);
+		return label;
 
 	}
 
