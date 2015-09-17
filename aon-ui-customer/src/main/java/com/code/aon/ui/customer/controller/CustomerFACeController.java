@@ -10,7 +10,6 @@ import java.util.Map;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
@@ -52,7 +51,8 @@ public class CustomerFACeController implements Serializable {
 	
 	private void init( Customer customer ) throws ManagerBeanException {
 		this.notes = new HashMap<String, RegistryNote>();
-		setEnabled(FACeUtil.getRegistryNote(FACeUtil.FACE_ENABLED, customer.getId()) != null);
+		RegistryNote active = FACeUtil.getRegistryNote(FACeUtil.FACE_ENABLED, customer.getId());
+		setEnabled(active != null && new Boolean(active.getComments()));
 		for( String key : FACeUtil.FACE_REQUIRED_CONSTANTS ) {
 			updateRegistryNote(key, customer);
 		}
@@ -82,22 +82,13 @@ public class CustomerFACeController implements Serializable {
 	
 	private void save() throws ManagerBeanException {
 		for( RegistryNote note : this.notes.values() ) {
-			if(!isEnabled() || ArrayUtils.contains(FACeUtil.FACE_CONSTANTS, note.getDescription())){
-				saveRegistryNote(note);
-			}
+			saveRegistryNote(note);
 		}
 	}
 
 	public void onUpdate( Customer customer ) throws ManagerBeanException {
 		if ( customer.isEInvoice() ) {
-			if ( isEnabled() ) {
-				RegistryNote note = FACeUtil.getRegistryNote(FACeUtil.FACE_ENABLED, customer.getId());
-				if ( note == null ) {
-					note = getEmptyNote(customer.getRegistry(), FACeUtil.FACE_ENABLED);
-					note.setComments(Boolean.TRUE.toString());
-					saveRegistryNote(note);
-				}
-			}
+			getNote(FACeUtil.FACE_ENABLED).setComments(String.valueOf(isEnabled()));
 			save();
 		} else {
 			onRemove(customer);
@@ -110,9 +101,7 @@ public class CustomerFACeController implements Serializable {
    		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_NOTE_REGISTRY_ID), customer.getId());
    		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE), NoteType.FACTURAE);
 		for( ITransferObject to : bean.getList(criteria) ) {
-			if(!isEnabled() || !ArrayUtils.contains(FACeUtil.FACE_CONSTANTS, ((RegistryNote)to).getDescription())){
-				bean.remove(to);
-			}
+			bean.remove(to);
 		}
 		clear(customer);
 	}
@@ -313,7 +302,6 @@ public class CustomerFACeController implements Serializable {
 	public void onEnabledChanged( ActionEvent event ) throws ManagerBeanException {
 		if ( isEnabled() ) {
 			CustomerController cc = (CustomerController) AonUtil.getRegisteredBean(ICustomerConstants.CUSTOMER_CONTROLLER_NAME);
-			cc.setSelectedTab("customerFACe");
 			Customer customer = (Customer) cc.getTo();
 			initFACe( customer );
 			updateCustomerAddresses(customer);

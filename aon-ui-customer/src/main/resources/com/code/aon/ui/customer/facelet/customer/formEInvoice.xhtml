@@ -8,23 +8,25 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:panelGrid id="eInvoiceGrid"
-		columns="2" styleClass="aon-margin-top aon-width-all" >
+		columns="2" styleClass="aon-margin-top aon-width-all"
+		columnClasses="aon-panelGrid-odd aon-width-200,
+			aon-panelGrid-even aon-width-auto" >
 		
 		<aon:outputLabel for="Customer_eInvoice_order"
 			 value="#{bundle.aon_order_number}" />
 		<aon:selectOneMenu id="Customer_eInvoice_order"
 			value="#{customerFACe.orderNumber.comments}" >
-			<f:selectItem itemLabel="no incluir" value="#{null}" />
-			<f:selectItem itemLabel="incluir Número Pedido" itemValue="#{false}" />
-			<f:selectItem itemLabel="incluir Su referencia" itemValue="#{true}" />
+			<f:selectItem itemLabel="No incluir" value="#{null}" />
+			<f:selectItem itemLabel="Incluir número pedido" itemValue="#{false}" />
+			<f:selectItem itemLabel="Incluir su referencia" itemValue="#{true}" />
 		</aon:selectOneMenu>
    
 		<aon:outputLabel for="Customer_eInvoice_delivery_note"
 			value="#{bundle.aon_delivery_number}" />
 		<aon:selectOneMenu id="Customer_eInvoice_delivery_note"
 			value="#{customerFACe.deliveryNumber.comments}" >
-			<f:selectItem itemLabel="no incluir" itemValue="#{false}" />
-			<f:selectItem itemLabel="incluir" itemValue="#{true}" />
+			<f:selectItem itemLabel="No incluir" itemValue="#{false}" />
+			<f:selectItem itemLabel="Incluir" itemValue="#{true}" />
 		</aon:selectOneMenu>
 		
 		<aon:outputLabel for="Customer_eInvoice_center_identification"
@@ -36,14 +38,14 @@
 		
 	</aon:panelGrid>
 		
-	<aon:panel id="customerFACe" label="#{bundle.finance_face}">
+	<aon:panel id="customerFACe-panel" label="#{bundle.finance_face}">
 		<f:facet name="header">
 			<aon:panelGroup>
 				<aon:selectBooleanCheckbox id="customerFACe_check"
 					value="#{customerFACe.enabled}" >
 					<a4j:support event="onchange" ajaxSingle="true"
 						actionListener="#{customerFACe.onEnabledChanged}"
-						reRender="customerFACe" />
+						reRender="customerFACe-panel" />
 				</aon:selectBooleanCheckbox>								
 				<aon:outputLabel for="customerFACe_check" 
 					styleClass="aon-italic"
