@@ -60,7 +60,7 @@ public class IssuesLayoutPanel extends Composite {
 		titleLabel.setText(issue.getTitle());
 		numberIssueLabel.setText("#" + issue.getNumber());
 		userCreateLabel.setText(issue.getUser().getLogin());
-		whenCreateLabel.setText("Abierto hace ");
+		whenCreateLabel.setText("Abierto hace .... - " + issue.getComments() + " comentarios");
 	}
 	
 	private void addIssue() {

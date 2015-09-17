@@ -27,6 +27,16 @@
 		padding-left: 31px;
 	}
 	
+	.state {
+		border-radius: 3px;
+		color: #fff;
+		display: inline-block;
+		font-weight: bold;
+		line-height: 20px;
+		padding: 4px 8px;
+		text-align: center;
+	}
+	
 	.grid {
 		width: 150px;
 		height: 50px;
@@ -44,8 +54,9 @@
 					<g:InlineLabel ui:field="numberIssueLabel" styleName="{style.header-title-number}" />
 				</g:HTMLPanel>
 				<g:HTMLPanel>
+					<g:InlineLabel ui:field="stateLabel" />
 					<g:InlineLabel ui:field="userCreateLabel"
-						styleName="{style.header-subtitle} aon-icon-employee aon-icon-commandButton" />
+						styleName="{style.header-subtitle} aon-icon-employee" />
 					<g:InlineLabel ui:field="whenCreateLabel"
 						styleName="{style.header-subtitle} {style.header-title-number}" />
 				</g:HTMLPanel>
@@ -53,8 +64,8 @@
 		</g:north>
 
 		<g:center>
-		<g:FlowPanel ui:field="flowIssuesPanel">
-		</g:FlowPanel>
+			<g:FlowPanel ui:field="flowIssuesPanel">
+			</g:FlowPanel>
 		</g:center>
 
 		<g:south size="150">
