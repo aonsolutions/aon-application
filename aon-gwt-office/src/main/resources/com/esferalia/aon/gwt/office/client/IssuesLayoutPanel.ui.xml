@@ -10,7 +10,21 @@
 	<ui:style>
 	.header-title {
 		font-weight: bolder;
-		font-size: 36px;
+		font-size: 30px;
+		font-color: #333;
+		line-height: 1.1;
+		word-wrap: break-word;
+	}
+	
+	.header-title-number {
+		color: #aaa;
+	}
+	
+	.header-subtitle {
+		color: #767676;
+		font-size: 16px;
+		line-height: 20px;
+		padding-left: 31px;
 	}
 	
 	.grid {
@@ -24,21 +38,18 @@
 	</ui:style>
 	<g:DockLayoutPanel unit="PX" height="100%" width="100%">
 		<g:north size="100">
-			<g:Grid>
-				<g:row>
-					<g:customCell>
-						<g:Label ui:field="titleLabel" styleName="{style.header-title}" />
-					</g:customCell>
-				</g:row>
-				<g:row>
-					<g:customCell>
-						<g:Label text="ESTADO" />
-					</g:customCell>
-					<g:customCell>
-						<g:Label ui:field="userCreateLabel" />
-					</g:customCell>
-				</g:row>
-			</g:Grid>
+			<g:FlowPanel>
+				<g:HTMLPanel styleName="{style.header-title}">
+					<g:InlineLabel ui:field="titleLabel" />
+					<g:InlineLabel ui:field="numberIssueLabel" styleName="{style.header-title-number}" />
+				</g:HTMLPanel>
+				<g:HTMLPanel>
+					<g:InlineLabel ui:field="userCreateLabel"
+						styleName="{style.header-subtitle} aon-icon-employee aon-icon-commandButton" />
+					<g:InlineLabel ui:field="whenCreateLabel"
+						styleName="{style.header-subtitle} {style.header-title-number}" />
+				</g:HTMLPanel>
+			</g:FlowPanel>
 		</g:north>
 
 		<g:center>
@@ -55,7 +66,8 @@
 				</g:row>
 				<g:row>
 					<g:customCell>
-						<g:HorizontalPanel ui:field="labelsPanel" />
+						<g:HorizontalPanel ui:field="labelsPanel"
+							spacing="5" />
 					</g:customCell>
 				</g:row>
 			</g:Grid>

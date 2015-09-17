@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
+import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
@@ -77,6 +78,11 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		public String getTitle() {
 			return issue.getTitle();
 		}
+		
+		@Override
+		public Integer getNumber() {
+			return issue.getNumber();
+		}
 
 		@Override
 		public String getStateIconStyle() {
@@ -121,6 +127,11 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		@Override
 		public JsArray<JsLabel> getLabels() {
 			return issue.getLabels();
+		}
+		
+		@Override
+		public JsUser getUser() {			
+			return issue.getUser();
 		}
 	}
 

@@ -22,10 +22,7 @@ public class JsUser extends JavaScriptObject {
 		return this.avatar_url; 
 	}-*/;
 	
-	public final native String getId() /*-{ 
+	public final native String getUserId() /*-{ 
 		return this.id; 
 	}-*/;
-
-
-
 }

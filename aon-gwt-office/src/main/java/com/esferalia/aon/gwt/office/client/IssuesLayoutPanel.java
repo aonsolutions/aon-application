@@ -8,6 +8,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
@@ -22,9 +23,13 @@ public class IssuesLayoutPanel extends Composite {
 	}
 	
 	@UiField
-	Label titleLabel;
+	InlineLabel titleLabel;
 	@UiField
-	Label userCreateLabel;
+	InlineLabel numberIssueLabel;
+	@UiField
+	InlineLabel userCreateLabel;
+	@UiField
+	InlineLabel whenCreateLabel;
 	@UiField
 	Label titleIssue;
 	@UiField
@@ -32,13 +37,30 @@ public class IssuesLayoutPanel extends Composite {
 	
 	@UiField
 	HorizontalPanel labelsPanel;
+	
+	private IssueSelected issue;
 
-	public IssuesLayoutPanel() {
+	public IssuesLayoutPanel(final IssueSelected issue) {
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		this.issue = issue;
+		init();
 	}
 	
-	public void setTitle(String text) {
-		titleLabel.setText(text);
+	
+	// ******************************************************************
+	// ********************** PRIVATE METHODS ***************************
+	// ******************************************************************
+
+	private void init() {
+		setHeaderTitle();
+	}
+	
+	private void setHeaderTitle() {
+		titleLabel.setText(issue.getTitle());
+		numberIssueLabel.setText("#" + issue.getNumber());
+		userCreateLabel.setText(issue.getUser().getLogin());
+		whenCreateLabel.setText("Abierto hace ");
 	}
 	
 	public void setUserCreated(String text) {

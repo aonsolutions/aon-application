@@ -90,10 +90,7 @@ public class Office extends Composite implements EntryPoint,
 		this.issues = listIssuesProvider.getList();
 		
 		loadReposList();
-		loadIssuesList();
-		
-		deckPanel.showWidget(dockOfficePanel);
-
+		loadIssuesList();	
 	}
 
 	@UiHandler("repoListBox")
@@ -172,6 +169,8 @@ public class Office extends Composite implements EntryPoint,
 						// TODO Auto-generated method stub
 					}
 				});
+		
+		showDockOfficePanel();
 
 	}
 
@@ -201,6 +200,14 @@ public class Office extends Composite implements EntryPoint,
 	private void changeOpenIssuesText(Integer number) {
 		leftButtonBarMenu.changeOpenIssuesText(number);
 	}
+	
+	private void showDockOfficePanel() {
+		deckPanel.showWidget(dockOfficePanel);
+	}
+	
+	private void showIssueLayoutPanel() {
+		deckPanel.showWidget(issuesPanel);
+	}
 
 	// ******************************************************************
 	// ******************************************************************
@@ -209,13 +216,8 @@ public class Office extends Composite implements EntryPoint,
 	@Override
 	public void onSelectionTitle(IssueSelected issue) {
 		
-		IssuesLayoutPanel issueLayoutPanel = new IssuesLayoutPanel();
-		
-		issueLayoutPanel.setTitle(issue.getTitle());
-		issueLayoutPanel.setUserCreated("Jacinto");
-		issueLayoutPanel.setBodyIssueText(issue.getBody());
-		issueLayoutPanel.addLabels(issue.getLabels());
-		
+		IssuesLayoutPanel issueLayoutPanel = new IssuesLayoutPanel(issue);
+	
 		issuesPanel.clear();
 		issuesPanel.add(issueLayoutPanel);
 		
@@ -224,12 +226,12 @@ public class Office extends Composite implements EntryPoint,
 
 	@Override
 	public void onNewIssueClickEvent(ClickEvent event) {
-		deckPanel.showWidget(issuesPanel);
+		showIssueLayoutPanel();
 	}
 
 	@Override
 	public void onShowOpenIssuesClickEvent(ClickEvent event) {
-		deckPanel.showWidget(dockOfficePanel);
+		showDockOfficePanel();
 	}
 
 	@Override

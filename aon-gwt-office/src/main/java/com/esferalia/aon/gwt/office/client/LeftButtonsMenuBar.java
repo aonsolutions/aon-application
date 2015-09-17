@@ -161,7 +161,11 @@ public class LeftButtonsMenuBar extends Composite {
 	
 	public void changeOpenIssuesText(int number) {
 		openIssues.setText(openIssues.getText() + " (" + number +")");
-	}	
+	}
+	
+	public boolean isSelected(Button button) {
+		return button == selectedButton;
+	}
 
 	// ******************************************************************
 	// ********************** PRIVATE METHODS ***************************
