@@ -19,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.Collator;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -87,7 +88,6 @@ import com.esferalia.aon.gwt.document.shared.Tags;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
-import com.esferalia.aon.watson.util.AonUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.About;
 import com.google.api.services.drive.model.File;
@@ -449,8 +449,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		for (FileInfo f : files) {
 			Date date = null;
 			if (fi.getDate() != null){
-				date = new Date(fi.getDate().getYear(),
-						fi.getDate().getMonth(), fi.getDate().getDate());
+				date = new Date(fi.getDate().getTime());
 				f.setDate(fi.getDate());
 			}
 			/*
@@ -540,17 +539,17 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 				vector.add(fil);
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOGGER.error(e.getMessage());
 			} catch (KeyStoreException e) {
-				e.printStackTrace();
+				LOGGER.error(e.getMessage());
 			} catch (IOException e) {
-				e.printStackTrace();
+				LOGGER.error(e.getMessage());
 			} catch (GeneralSecurityException e) {
-				e.printStackTrace();
+				LOGGER.error(e.getMessage());
 			} catch (AonConnectionException e) {
-				e.printStackTrace();
+				LOGGER.error(e.getMessage());
 			} catch (NamingException e) {
-				e.printStackTrace();
+				LOGGER.error(e.getMessage());
 			}
 		}
 		clearOuts(new Vector<FileInfo>(), getThreadLocalRequest());
@@ -583,8 +582,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 					fileInfo.setDate(fi.getDate());
 					Date date = null;
 					if (fi.getDate() != null)
-					date = new Date(fi.getDate().getYear(),
-							fi.getDate().getMonth(), fi.getDate().getDate());
+					date = new Date(fi.getDate().getTime());
 					fileInfo.setDateSql(date);
 					
 					f.setDate(fi.getDate());
@@ -594,15 +592,15 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 					fileInfo.setDate(f.getDate());
 					Date date = null;
 					if(f.getDate()!= null)
-						date = new Date(f.getDate().getYear(),
-							f.getDate().getMonth(), f.getDate().getDate());
+						date = new Date(f.getDate().getTime());
 					fileInfo.setDateSql(date);
 				}
 				if(fi.getScope() != null){
 					fileInfo.setScopeId(fi.getScope().getId());
 					f.setScope(fi.getScope());
 				}
-				else fileInfo.setScopeId(f.getScope().getId());
+				else if(f.getScope()!= null && f.getScope().getId() != null)
+					fileInfo.setScopeId(f.getScope().getId());
 				Byte conf;if(fi.getConfidential())conf=1; else conf=0;
 				fileInfo.setSecurityLevel(conf);
 				f.setConfidential(fi.getConfidential());
@@ -614,6 +612,17 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 					f.setTagsStr(fi.getTagsStr());
 				}
 				else tags = f.getTags();
+				
+				try {
+					String user = DBConsults.getUserLogin(domain);
+					f.setModificationUser(user);
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				Calendar cal = Calendar.getInstance();
+				String dateStr = cal.get(Calendar.DATE)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.YEAR);
+				f.setModificationDateStr(dateStr);
+				
 				try {
 					DBConsults.updateFile(domain, fileInfo,tags,domainId);
 				} catch (SQLException e) {
@@ -631,8 +640,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 				fileInfo.setDate(fi.getDate());
 				Date date = null;
 				if (fi.getDate() != null)
-				date = new Date(fi.getDate().getYear(),
-						fi.getDate().getMonth(), fi.getDate().getDate());
+				date = new Date(fi.getDate().getTime());
 				fileInfo.setDateSql(date);
 			}
 			if(getMimetype()!=null){
@@ -646,6 +654,16 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			if(fi.getScope() != null)fileInfo.setScopeId(fi.getScope().getId());
 			Byte conf;if(fi.getConfidential())conf=1; else conf=0;
 			fileInfo.setSecurityLevel(conf);
+			
+			try {
+				String user = DBConsults.getUserLogin(domain);
+				fi.setModificationUser(user);
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			Calendar cal = Calendar.getInstance();
+			String dateStr = cal.get(Calendar.DATE)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.YEAR);
+			fi.setModificationDateStr(dateStr);
 			
 			try {
 				DBConsults.updateFile(domain, fileInfo,fi.getTags(),domainId);
@@ -1037,7 +1055,6 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		try {
 			rattach = ViewerUtils.getRAttach(doc.getFileId());
 		} catch (SQLException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		doc.setDriveId(rattach.driveId);
@@ -1065,8 +1082,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 				try {
 					d = DriveUtils.serviceInitialize(g);
 				} catch (IOException | GeneralSecurityException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOGGER.error(e.getMessage());
 				}
         	}
 			com.google.api.services.drive.model.File f = null;
@@ -1096,6 +1112,11 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	
 	public static final Map<MimeType, IDocument2HtmlConverter> DOC2HTML_CONVERTERS = 
 			new HashMap<MimeType, IDocument2HtmlConverter>(){
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
 		{
 			put(MimeType.MIME_PDF, OpenDocument2HtmlConverter.INSTANCE );
 			put(MimeType.MIME_MS_WORD, OpenDocument2HtmlConverter.INSTANCE );
@@ -1606,8 +1627,7 @@ public MailAccountList getMailAccounts(Integer domainId) {
 			try {
 				bodyPart = WebmailUtil.getBodyPart(aonFile);
 			} catch (MessagingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.error(e.getMessage());
 			}
 			bodyParts.add(bodyPart);
 		}
@@ -1618,11 +1638,9 @@ public MailAccountList getMailAccounts(Integer domainId) {
 			GmailUtils.sendMessage(gmail, "me", email); 
 
 		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 		clearOuts(new Vector<FileInfo>(), getThreadLocalRequest());
 
@@ -1664,8 +1682,7 @@ public Vector<FileInfo> insertFileMultiple(FileInfo fi, Integer domainId2) {
 	for(FileInfo f : files){
 	Date date = null;
 	if (fi.getDate() != null)
-		date = new Date(fi.getDate().getYear(),
-				fi.getDate().getMonth(), fi.getDate().getDate());
+		date = new Date(fi.getDate().getTime());
 
 
 	String domain = AonUtil.getDomainName();
@@ -1738,17 +1755,17 @@ public Vector<FileInfo> insertFileMultiple(FileInfo fi, Integer domainId2) {
 		if(fi.getDomain()==null) fi.setDomain(domain);
 
 	} catch (SQLException e) {
-		e.printStackTrace();
+		LOGGER.error(e.getMessage());
 	} catch (KeyStoreException e) {
-		e.printStackTrace();
+		LOGGER.error(e.getMessage());
 	} catch (IOException e) {
-		e.printStackTrace();
+		LOGGER.error(e.getMessage());
 	} catch (GeneralSecurityException e) {
-		e.printStackTrace();
+		LOGGER.error(e.getMessage());
 	} catch (AonConnectionException e) {
-		e.printStackTrace();
+		LOGGER.error(e.getMessage());
 	} catch (NamingException e) {
-		e.printStackTrace();
+		LOGGER.error(e.getMessage());
 	}
 	}
 	clearOuts(new Vector<FileInfo>(), getThreadLocalRequest());

@@ -11,11 +11,6 @@ import com.google.gwt.view.client.ProvidesKey;
 
 	public class FileInfo implements IsSerializable{
 		
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 7311059692227227973L;
-
 		public static final ProvidesKey<FileInfo> PROVIDES_KEY = new ProvidesKey<FileInfo>() {
 			@Override
 			public Object getKey(FileInfo fileInfo) {

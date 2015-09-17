@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.document.server;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.document.jooq;
 
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Signature.SIGNATURE;
 
 import java.sql.Connection;
@@ -9,7 +9,6 @@ import java.util.Vector;
 
 import org.jooq.DSLContext;
 import org.jooq.Record1;
-import org.jooq.Record3;
 import org.jooq.Record4;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
@@ -18,8 +17,6 @@ import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.jooq.JooqSettings;
 import com.esferalia.aon.gwt.document.shared.MailAccount;
 import com.esferalia.aon.gwt.document.shared.MailAccountList;
-
-import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
 
 
 public class SendEmailDialogJooq {

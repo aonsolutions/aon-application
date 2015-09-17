@@ -297,7 +297,7 @@ public class DBConsults {
 			long a = record.value16().getTime();
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(new java.util.Date(a));
-			String dateStr = cal.get(Calendar.DATE)+"-"+cal.get(Calendar.MONTH)+"-"+cal.get(Calendar.YEAR);
+			String dateStr = cal.get(Calendar.DATE)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.YEAR);
 			fi.setCreationDateStr(dateStr);
 		}
 		if(record.value17() != null)
@@ -306,7 +306,7 @@ public class DBConsults {
 			long a = record.value18().getTime();
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(new java.util.Date(a));
-			String dateStr = cal.get(Calendar.DATE)+"-"+cal.get(Calendar.MONTH)+"-"+cal.get(Calendar.YEAR);
+			String dateStr = cal.get(Calendar.DATE)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.YEAR);
 			fi.setModificationDateStr(dateStr);
 		}
 		return fi;
@@ -1000,7 +1000,7 @@ public class DBConsults {
 					long a = r.value13().getTime();
 					Calendar cal = Calendar.getInstance();
 					cal.setTime(new java.util.Date(a));
-					String dateStr = cal.get(Calendar.DATE)+"-"+cal.get(Calendar.MONTH)+"-"+cal.get(Calendar.YEAR);
+					String dateStr = cal.get(Calendar.DATE)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.YEAR);
 					fi.setCreationDateStr(dateStr);
 				}
 				if(r.value14() != null) fi.setModificationUser(r.value14());
@@ -1008,7 +1008,7 @@ public class DBConsults {
 					long a = r.value15().getTime();
 					Calendar cal = Calendar.getInstance();
 					cal.setTime(new java.util.Date(a));
-					String dateStr = cal.get(Calendar.DATE)+"-"+cal.get(Calendar.MONTH)+"-"+cal.get(Calendar.YEAR);
+					String dateStr = cal.get(Calendar.DATE)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.YEAR);
 					fi.setModificationDateStr(dateStr);
 				}
 			});
@@ -1299,6 +1299,24 @@ public class DBConsults {
 			return cl;
 			
 		
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+
+	}
+	
+	public static String getUserLogin(String domain) throws SQLException {
+		Connection connection = null;
+		try {
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			Integer userId = AonUtil.getAuthPrincipal().getUserId();
+			Record1<String> user = dslContext.select(USER.LOGIN).from(USER).where(USER.ID.eq(userId)).fetchOne();
+
+			return user.value1();
 		} finally {
 			if (connection != null)
 				connection.close();
