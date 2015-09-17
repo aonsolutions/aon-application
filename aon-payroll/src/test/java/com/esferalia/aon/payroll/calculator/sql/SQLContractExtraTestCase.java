@@ -15,6 +15,7 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 
 public class SQLContractExtraTestCase extends SQLExtraTestCase {
 	
+	
 	@Override
 	protected ISQLContractSalaryCalculatorContext getSqlExtraSalaryCalculatorContext(
 			Connection connection, ContractRecord contract, Date startDate,
