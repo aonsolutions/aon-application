@@ -4,10 +4,13 @@ import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.event.logical.shared.AttachEvent.Handler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -49,7 +52,6 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 		setCaption("Sistema de Liquidaci\u00F3n Directa (Proyecto Cret@)");
 		
 		setWidget(binder.createAndBindUi(this));
-		monthListBox.setSelectedMonth(new Date());
 		
 		
 		// Full CCC.
@@ -63,8 +65,9 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 
 		addColumn(fullNameColumn, "C\u00F3digo de Cuenta de Cotizaci\u00F3n");
 		
-		
+		monthListBox.setSelectedMonth(DateUtils.getFirstDayOfMonth());
 	}
+	
 	
 	// ------------------------------------------------------------------------
 	

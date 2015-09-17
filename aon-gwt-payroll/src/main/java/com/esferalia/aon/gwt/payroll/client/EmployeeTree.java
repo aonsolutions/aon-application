@@ -553,7 +553,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 		
 		
-		protected void send(long autorizado, int month, int year, String tipo, Collection<CCC> cccs) {
+		
+		protected void send(long autorizado, final int month, final int year, final String tipo, final  Collection<CCC> cccs) {
 			StringBuffer requestDataBuffer = new StringBuffer();
 
 			requestDataBuffer.append("&" + Parameter.TIPO + "="+ tipo );
@@ -563,7 +564,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 
 			for (CCC ccc : cccs)
-				requestDataBuffer.append("&" + Parameter.CCC + "=" + ccc.getCode());
+				requestDataBuffer.append("&" + Parameter.CCC + "=0111" + ccc.getCode());
 
 			// Send request to server and catch any errors.
 
@@ -582,7 +583,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					if (state != XMLHttpRequest.DONE)
 						return;
 					
-					onRequestDone(xhr.getResponseText());
+					onRequestDone(xhr.getResponseText(), month, year, tipo, cccs);
 				}
 
 			});
@@ -593,14 +594,38 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		
 		// --------------------------------------------------------------------
 		
-		private void onRequestDone(String response) {
+		private void onRequestDone(String response,int month, int year, String tipo, Collection<CCC> cccs) {
 			fileEditor.setMode("xml");
 			fileEditor.setText(response);
 			fileEditor.setLineNumbers(true);
 			fileEditor.setTitle(file.getFilename());
-			fileEditor.setFilename(file.getFilename()+".xml");
+			fileEditor.setFilename(getFileName(month, year, tipo, cccs));
 			employeeDetail.setWidget(fileEditor);
 			fileEditor.autoRefresh();
+		}
+		
+		private String getFileName(int month, int year, String tipo, Collection<CCC> cccs){
+			
+			StringBuffer buffer = new StringBuffer();
+			
+			buffer.append(file.getFilename());
+			for (CCC ccc : cccs) {
+				buffer.append('-');
+				buffer.append("0111");
+				buffer.append(ccc.getCode());
+			}
+			buffer.append('-');
+			buffer.append(tipo);
+			buffer.append('-');
+			buffer.append(year);
+			buffer.append('-');
+			if ( month < 10 )
+				buffer.append('0');
+			buffer.append(month);
+			buffer.append(".xml");
+			
+			
+			return buffer.toString();	
 		}
 		
 		// --------------------------------------------------------------------
