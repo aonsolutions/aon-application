@@ -787,7 +787,9 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		ctx = new SQLContractSalaryCalculatorContext(connection, start, end,
 				end, criteria);
 		ctx.next();
-		assertEquals(ctx, (double) (get(end, DAY_OF_MONTH) * coefficient),
+		//assertEquals(ctx, (double) (get(end, DAY_OF_MONTH) * coefficient),
+		//		start, end, monthdays);
+		assertEquals(ctx, (double) ((monthdays == null ? get(end, DAY_OF_MONTH): monthdays) * coefficient),
 				start, end, monthdays);
 
 		// Extras. First year, almost all the times will be partial.
