@@ -7,7 +7,7 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
 		field="aonResources"></ui:with>
 
-	<ui:style>
+	<ui:style type='com.esferalia.aon.gwt.office.client.IssuesLayoutPanel.MyStyle'>
 	.header-title {
 		font-weight: bolder;
 		font-size: 30px;
@@ -24,7 +24,10 @@
 		color: #767676;
 		font-size: 16px;
 		line-height: 20px;
-		padding-left: 31px;
+	}
+	
+	.state-open {
+		background-color: #6cc644;
 	}
 	
 	.state {
@@ -33,7 +36,7 @@
 		display: inline-block;
 		font-weight: bold;
 		line-height: 20px;
-		padding: 4px 8px;
+		padding: 4px 8px 4px 17px;
 		text-align: center;
 	}
 	
@@ -45,6 +48,13 @@
 		left: 220px;
 		top: 350px;
 	}
+	
+	.issue-header {
+		background-color: #dfdfc5;
+		padding-bottom: 14px;
+		padding-left: 14px;
+		padding-top: 14px;
+	}
 	</ui:style>
 	<g:DockLayoutPanel unit="PX" height="100%" width="100%">
 		<g:north size="100">
@@ -53,12 +63,11 @@
 					<g:InlineLabel ui:field="titleLabel" />
 					<g:InlineLabel ui:field="numberIssueLabel" styleName="{style.header-title-number}" />
 				</g:HTMLPanel>
-				<g:HTMLPanel>
-					<g:InlineLabel ui:field="stateLabel" />
-					<g:InlineLabel ui:field="userCreateLabel"
-						styleName="{style.header-subtitle} aon-icon-employee" />
-					<g:InlineLabel ui:field="whenCreateLabel"
-						styleName="{style.header-subtitle} {style.header-title-number}" />
+				<g:HTMLPanel styleName="{style.header-subtitle}">
+					<g:InlineLabel ui:field="stateLabel" text="Open"
+						styleName="{style.state} {style.state-open} aon-icon-issue-opened" />
+					<g:InlineLabel ui:field="userCreateLabel" />
+					<g:InlineLabel ui:field="whenCreateLabel" styleName="{style.header-title-number}" />
 				</g:HTMLPanel>
 			</g:FlowPanel>
 		</g:north>

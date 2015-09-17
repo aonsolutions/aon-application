@@ -1,9 +1,11 @@
 package com.esferalia.aon.gwt.office.client;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -17,6 +19,12 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
 public class IssuesLayoutPanel extends Composite {
+	
+	interface MyStyle extends CssResource {
+		@ClassName("issue-header")
+		String issueHeader();
+		
+	}
 
 	private static IssuesLayoutPanelUiBinder uiBinder = GWT
 			.create(IssuesLayoutPanelUiBinder.class);
@@ -25,6 +33,8 @@ public class IssuesLayoutPanel extends Composite {
 			UiBinder<Widget, IssuesLayoutPanel> {
 	}
 	
+	@UiField
+	MyStyle style;
 	@UiField
 	InlineLabel titleLabel;
 	@UiField
@@ -66,14 +76,14 @@ public class IssuesLayoutPanel extends Composite {
 	private void addIssue() {
 		
 		FlexTable table = new FlexTable();
-		
-		FlexCellFormatter cellFormatter = table.getFlexCellFormatter();
-		table.addStyleName("aon-data-table");
-		table.setWidth("100%");
+				
+		table.setWidth("70%");
 		table.setCellSpacing(5);
 		table.setCellPadding(3);
 		
-		Label issueHeader = new Label(issue.getUser().getLogin() + " comentado hace ..");
+		Label issueHeader = new Label(issue.getUser().getLogin());		
+		issueHeader.setStyleName(AON.AON_BOLD);
+		issueHeader.addStyleName(style.issueHeader());
 		
 		TextArea textArea = new TextArea();
 		textArea.setReadOnly(true);
