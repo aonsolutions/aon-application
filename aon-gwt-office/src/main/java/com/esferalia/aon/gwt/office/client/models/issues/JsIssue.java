@@ -2,11 +2,15 @@ package com.esferalia.aon.gwt.office.client.models.issues;
 
 import java.util.Date;
 
+import com.esferalia.aon.gwt.office.client.GitHub;
+import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class JsIssue extends JavaScriptObject {
+	
 	protected JsIssue() {
 	}
 
@@ -50,6 +54,10 @@ public class JsIssue extends JavaScriptObject {
 		return this.comments;
 	}-*/;
 
+	public final native String getCommentsUrl() /*-{
+		return this.comments_url;
+	}-*/;
+
 	public final native JsUser getAssignee() /*-{
 		return this.assignee;
 	}-*/;
@@ -66,4 +74,10 @@ public class JsIssue extends JavaScriptObject {
 		return this.labels;
 	}-*/;
 
+	public final void getCommments(
+			final AsyncCallback<AJSON<JsArray<JsIssueComment>>> callback) {
+		
+		final String commentsUrl = getCommentsUrl();
+		GitHub.get(commentsUrl, callback);
+	}
 }

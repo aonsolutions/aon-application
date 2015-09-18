@@ -8,6 +8,7 @@ import java.util.Set;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
+import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.google.gwt.cell.client.Cell.Context;
@@ -62,12 +63,17 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		}
 	}
 
-	private static class DefaultAonIssuesSelected implements IssueSelected {
+	private static abstract class DefaultAonIssuesSelected implements IssueSelected {
 
 		private JsIssue issue;
+		private JsArray<JsIssueComment> comments;
 
 		public DefaultAonIssuesSelected(JsIssue issue) {
 			setIssue(issue);
+		}
+		
+		public Object getJsIssue() {
+			return issue;
 		}
 
 		private void setIssue(JsIssue issue) {
@@ -132,6 +138,16 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		@Override
 		public JsUser getUser() {			
 			return issue.getUser();
+		}
+		
+		@Override
+		public void setIssueComments(JsArray<JsIssueComment> comments) {
+			this.comments = comments;
+		}
+		
+		@Override
+		public JsArray<JsIssueComment> getIssueComments() {
+			return comments;
 		}
 	}
 

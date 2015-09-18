@@ -7,55 +7,54 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
 		field="aonResources"></ui:with>
 
-	<ui:style type='com.esferalia.aon.gwt.office.client.IssuesLayoutPanel.MyStyle'>
-	.header-title {
-		font-weight: bolder;
-		font-size: 30px;
-		font-color: #333;
-		line-height: 1.1;
-		word-wrap: break-word;
-	}
-	
-	.header-title-number {
-		color: #aaa;
-	}
-	
-	.header-subtitle {
-		color: #767676;
-		font-size: 16px;
-		line-height: 20px;
-	}
-	
-	.state-open {
-		background-color: #6cc644;
-	}
-	
-	.state {
-		border-radius: 3px;
-		color: #fff;
-		display: inline-block;
-		font-weight: bold;
-		line-height: 20px;
-		padding: 4px 8px 4px 17px;
-		text-align: center;
-	}
-	
-	.grid {
-		width: 150px;
-		height: 50px;
-		padding: 5px;
-		position: absolute;
-		left: 220px;
-		top: 350px;
-	}
-	
-	.issue-header {
-		background-color: #dfdfc5;
-		padding-bottom: 14px;
-		padding-left: 14px;
-		padding-top: 14px;
-	}
-	</ui:style>
+	<ui:style
+		type='com.esferalia.aon.gwt.office.client.IssuesLayoutPanel.MyStyle'>
+		.header-title {
+			font-weight: bolder;
+			font-size: 30px;
+			font-color: #333;
+			line-height: 1.1;
+			word-wrap: break-word;
+		}
+		
+		.header-title-number {
+			color: #aaa;
+		}
+		
+		.header-subtitle {
+			color: #767676;
+			font-size: 16px;
+			line-height: 20px;
+		}
+		
+		.state-open {
+			background-color: #6cc644;
+		}
+		
+		.state {
+			border-radius: 3px;
+			color: #fff;
+			display: inline-block;
+			font-weight: bold;
+			line-height: 20px;
+			padding: 4px 8px 4px 17px;
+			text-align: center;
+		}
+		
+		.issue-header {
+			background-color: #dfdfc5;
+			padding-bottom: 14px;
+			padding-left: 14px;
+			padding-top: 14px;
+		}
+		
+		.issue-body {
+			resize: none;
+			border: none;
+			background: transparent;
+			color: none;
+		}
+		</ui:style>
 	<g:DockLayoutPanel unit="PX" height="100%" width="100%">
 		<g:north size="100">
 			<g:FlowPanel>
@@ -73,25 +72,16 @@
 		</g:north>
 
 		<g:center>
-			<g:FlowPanel ui:field="flowIssuesPanel">
-			</g:FlowPanel>
+			<g:ScrollPanel>
+				<g:FlowPanel ui:field="flowIssuesPanel">
+				</g:FlowPanel>
+			</g:ScrollPanel>
 		</g:center>
 
-		<g:south size="150">
-			<g:FlowPanel>
-				<g:Grid>
-					<g:row>
-						<g:customCell>
-							<g:Button ui:field="closeButton" text="Cerrar" />
-						</g:customCell>
-						<g:customCell>
-							<g:Button ui:field="commentButton" text="Comentar" />
-						</g:customCell>
-
-					</g:row>
-				</g:Grid>
-			</g:FlowPanel>
-		</g:south>
+		<!--g:south size="150"> <g:FlowPanel> <g:Grid> <g:row> <g:customCell> <g:Button 
+			ui:field="closeButton" text="Cerrar" /> </g:customCell> <g:customCell> <g:Button 
+			ui:field="commentButton" text="Comentar" /> </g:customCell> </g:row> </g:Grid> 
+			</g:FlowPanel> </g:south! -->
 
 	</g:DockLayoutPanel>
 </ui:UiBinder> 
