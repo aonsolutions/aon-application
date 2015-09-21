@@ -24,6 +24,7 @@ import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.cellview.client.AbstractCellTableBuilder;
 import com.google.gwt.user.cellview.client.AbstractHeaderOrFooterBuilder;
 import com.google.gwt.user.cellview.client.Column;
@@ -63,15 +64,21 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		}
 	}
 
-	private static abstract class DefaultAonIssuesSelected implements IssueSelected {
+	private static abstract class DefaultAonIssuesSelected implements
+			IssueSelected {
 
 		private JsIssue issue;
 		private JsArray<JsIssueComment> comments;
 
+		private DateTimeFormat timeFormat;
+
 		public DefaultAonIssuesSelected(JsIssue issue) {
+			this.timeFormat = DateTimeFormat
+					.getFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
 			setIssue(issue);
 		}
-		
+
 		public Object getJsIssue() {
 			return issue;
 		}
@@ -84,7 +91,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		public String getTitle() {
 			return issue.getTitle();
 		}
-		
+
 		@Override
 		public Integer getNumber() {
 			return issue.getNumber();
@@ -102,12 +109,12 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 		@Override
 		public Date getCreateAt() {
-			return new Date();
+			return timeFormat.parse(issue.getCreatedAt());
 		}
 
 		@Override
 		public Date getUpdatedAt() {
-			return issue.getUpdatedAt();
+			return timeFormat.parse(issue.getUpdatedAt());
 		}
 
 		@Override
@@ -134,17 +141,17 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		public JsArray<JsLabel> getLabels() {
 			return issue.getLabels();
 		}
-		
+
 		@Override
-		public JsUser getUser() {			
+		public JsUser getUser() {
 			return issue.getUser();
 		}
-		
+
 		@Override
 		public void setIssueComments(JsArray<JsIssueComment> comments) {
 			this.comments = comments;
 		}
-		
+
 		@Override
 		public JsArray<JsIssueComment> getIssueComments() {
 			return comments;
@@ -223,7 +230,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		@Override
 		protected boolean buildHeaderOrFooterImpl() {
 			TableRowBuilder tr = startRow();
-			tr.startTH().colSpan(Columns.values().length).rowSpan(ROW_COUNT);			
+			tr.startTH().colSpan(Columns.values().length).rowSpan(ROW_COUNT);
 			tr.endTH();
 
 			// Get information about the sorted column.
@@ -235,7 +242,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 			boolean isSortAscending = (sortedInfo == null) ? false : sortedInfo
 					.isAscending();
 
-			tr = startRow().className(AON.AON_CSS.childCell());			
+			tr = startRow().className(AON.AON_CSS.childCell());
 			buildHeader(tr, stateHeader, stateColumn, sortedColumn,
 					isSortAscending, false, false);
 			buildHeader(tr, titleHeader, title, sortedColumn, isSortAscending,
@@ -288,12 +295,12 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 			boolean isSelected = (selectionModel == null || rowValue == null) ? false
 					: selectionModel.isSelected(rowValue);
 			StringBuilder trClasses;
-			
-			if ( (rowIndex % 2) ==0 )
+
+			if ((rowIndex % 2) == 0)
 				trClasses = new StringBuilder(AON.AON_DATA_TABLE_ROW_EVEN);
 			else
 				trClasses = new StringBuilder(AON.AON_DATA_TABLE_ROW_ODD);
-			
+
 			if (isSelected) {
 				trClasses.append(selectedRowStyle);
 			}
@@ -357,7 +364,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		selectionModel = new MultiSelectionModel<IssueSelected>();
 
 		setStyleName(AON.AON_CSS.aonDataTable());
-		
+
 		setAutoHeaderRefreshDisabled(false);
 		initializeSelectionModel();
 		setSkipRowHoverCheck(true);

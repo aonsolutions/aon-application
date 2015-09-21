@@ -38,11 +38,11 @@ public class JsIssue extends JavaScriptObject {
 		return this.user;
 	}-*/;
 
-	public final native Date getCreatedAt() /*-{
+	public final native String getCreatedAt() /*-{
 		return this.created_at;
 	}-*/;
 
-	public final native Date getUpdatedAt() /*-{
+	public final native String getUpdatedAt() /*-{
 		return this.updated_at;
 	}-*/;
 

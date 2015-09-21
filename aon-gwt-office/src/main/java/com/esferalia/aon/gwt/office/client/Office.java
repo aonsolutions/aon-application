@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.office.client;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -63,11 +62,6 @@ public class Office extends Composite implements EntryPoint,
 	private List<IssueSelected> issues;
 	private Map<Integer, JsRepo> repositories;
 
-//	private Map<Integer, JsIssue> openedIssuesMap;
-//	private Map<Integer, JsIssue> closedIssuesMap;
-	
-	private Map<JsIssue, List<JsIssueComment>> issuesMap;
-
 	private final GitHub gitHub = new GitHub();
 
 	public Office() {
@@ -86,10 +80,6 @@ public class Office extends Composite implements EntryPoint,
 		this.leftButtonBarMenu.addListener(this);
 
 		this.repositories = new HashMap<Integer, JsRepo>();
-//		this.openedIssuesMap = new HashMap<Integer, JsIssue>();
-//		this.closedIssuesMap = new HashMap<Integer, JsIssue>();
-		
-		this.issuesMap = new HashMap<JsIssue, List<JsIssueComment>>();
 
 		ListDataProvider<IssueSelected> listIssuesProvider = new ListDataProvider<IssueSelected>();
 		listIssuesProvider.addDataDisplay(dataGrid);
@@ -163,23 +153,23 @@ public class Office extends Composite implements EntryPoint,
 					public void onSuccess(JSON<JsIssue> result) {
 
 						for (int x = 0; x < result.getData().length(); x++) {
-							JsIssue issue = result.getData().get(x);							
-							loadIssueComments(issue);							
+							JsIssue issue = result.getData().get(x);
+							loadIssueComments(issue);
 						}
 						changeOpenIssuesText(result.getData().length());
 					}
 
 					@Override
 					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
+						GWT.log(caught.getMessage());
 					}
 				});
 
 		showDockOfficePanel();
 	}
-	
+
 	private void loadIssueComments(final JsIssue issue) {
-		
+
 		issue.getCommments(new AsyncCallback<AJSON<JsArray<JsIssueComment>>>() {
 
 			@Override
@@ -189,16 +179,16 @@ public class Office extends Composite implements EntryPoint,
 
 			@Override
 			public void onSuccess(AJSON<JsArray<JsIssueComment>> result) {
-				
+
 				if (issue.getState().equals(IssueValue.Prop.OPEN.value))
 					addOpenIssue(issue, result.getData());
 			}
 		});
-		
+
 	}
 
 	private void addOpenIssue(JsIssue issue, JsArray<JsIssueComment> comments) {
-		
+
 		IssueSelected issueSelected = new IssueGrid.IssueOpenLoadSelected(issue);
 		issueSelected.setIssueComments(comments);
 		issues.add(issueSelected);
@@ -227,12 +217,9 @@ public class Office extends Composite implements EntryPoint,
 
 	@Override
 	public void onSelectionTitle(IssueSelected issue) {
-
-		IssuesLayoutPanel issueLayoutPanel = new IssuesLayoutPanel(issue);	
-		
+		IssuesLayoutPanel issueLayoutPanel = new IssuesLayoutPanel(issue);
 		issuesPanel.clear();
 		issuesPanel.add(issueLayoutPanel);
-
 		deckPanel.showWidget(issuesPanel);
 	}
 

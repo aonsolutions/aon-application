@@ -7,8 +7,7 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
 		field="aonResources"></ui:with>
 
-	<ui:style
-		type='com.esferalia.aon.gwt.office.client.IssuesLayoutPanel.MyStyle'>
+	<ui:style>
 		.header-title {
 			font-weight: bolder;
 			font-size: 30px;
@@ -40,20 +39,6 @@
 			padding: 4px 8px 4px 17px;
 			text-align: center;
 		}
-		
-		.issue-header {
-			background-color: #dfdfc5;
-			padding-bottom: 14px;
-			padding-left: 14px;
-			padding-top: 14px;
-		}
-		
-		.issue-body {
-			resize: none;
-			border: none;
-			background: transparent;
-			color: none;
-		}
 		</ui:style>
 	<g:DockLayoutPanel unit="PX" height="100%" width="100%">
 		<g:north size="100">
@@ -77,11 +62,5 @@
 				</g:FlowPanel>
 			</g:ScrollPanel>
 		</g:center>
-
-		<!--g:south size="150"> <g:FlowPanel> <g:Grid> <g:row> <g:customCell> <g:Button 
-			ui:field="closeButton" text="Cerrar" /> </g:customCell> <g:customCell> <g:Button 
-			ui:field="commentButton" text="Comentar" /> </g:customCell> </g:row> </g:Grid> 
-			</g:FlowPanel> </g:south! -->
-
 	</g:DockLayoutPanel>
 </ui:UiBinder> 
