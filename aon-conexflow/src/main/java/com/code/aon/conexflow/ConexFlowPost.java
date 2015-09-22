@@ -42,7 +42,6 @@ import org.xml.sax.SAXException;
 import com.code.aon.AonVersion;
 import com.code.aon.conexflow.ConexFlow.Query;
 import com.code.aon.conexflow.jooq.DBConsults;
-import com.code.aon.ui.util.AonUtil;
 
 public class ConexFlowPost implements  Serializable {
 	
@@ -51,38 +50,26 @@ public class ConexFlowPost implements  Serializable {
 	private static final String TLS = "TLS";
 	private static final String HTTPS = "https";
 	
-	public static ConexFlow execute(String op) {
+	public static ConexFlow execute(ConexFlowConnection connection, String op, Query query) {
 		try {
-			
-			byte[] xmlFile;
-			ConexFlow conexFlow = getConexFlowQuery(op);
-			if(op.equals(ConexFlowConstant.NEW_OP)){
-				xmlFile = sendPostHttpClient(ConexFlowConstant.VALIDATE_CARD_OP, conexFlow.getQuery());
-				ConexFlow cf = com.code.aon.conexflow.XMLUtils.readXml(xmlFile);
-				if(cf.getRespuesta().getResultado().equals(RESULT_OK)){
-					xmlFile = sendPostHttpClient(ConexFlowConstant.CREATE_TOKEN_OP, conexFlow.getQuery());
-				}
-			}
-			else xmlFile = sendPostHttpClient(op, conexFlow.getQuery());
-			conexFlow = com.code.aon.conexflow.XMLUtils.readXml(xmlFile, conexFlow.getQuery());
-			
-			return conexFlow;
-			//TODO GUARDAR operacion EN BD DATOS !!!
-			
+			byte[] xmlFile = sendPostHttpClient(connection, op, query);
+			ConexFlow conexFlow = com.code.aon.conexflow.XMLUtils.readXml(xmlFile, query);
+			return conexFlow;			
 		} catch (Exception e) {
 			System.out.println(e);
 		}
 		return null;
 	}
 	
-	public static ConexFlow execute(String op, Query query, Integer project, Integer domain) {
+	public static ConexFlow execute(ConexFlowConnection connection, String op, Query query, Integer project, Integer domainId, String domainName) {
 		try {
-			byte[] xmlFile = sendPostHttpClient(op, query);
+			byte[] xmlFile = sendPostHttpClient(connection, op, query);
 			ConexFlow conexFlow = com.code.aon.conexflow.XMLUtils.readXml(xmlFile, query);
 		
+			/* Guardar Operacion en project_attach (response en xml) */
 			if(conexFlow.getRespuesta().getResultado().equals(RESULT_OK)){
 				if(!op.equals(ConexFlowConstant.VALIDATE_CARD_OP)){
-					DBConsults.insertConexFlowOperation(AonUtil.getDomainName(), domain, xmlFile, project,op);
+					DBConsults.insertConexFlowOperation(domainName, domainId, xmlFile, project,op);
 				}
 			}
 			
@@ -93,11 +80,10 @@ public class ConexFlowPost implements  Serializable {
 		return null;
 	}
 
-	protected static byte[] sendPostHttpClient(String op, Query query) throws Exception {
-		String url = ConexFlowEnum.CONEXFLOW_SERVER.getCode();
+	protected static byte[] sendPostHttpClient(ConexFlowConnection connection, String op, Query query) throws Exception {
+		String url = connection.getServer();
 		
 		HttpClientBuilder base = HttpClientBuilder.create();
-		// (DEPRECATED) HttpClient base = new DefaultHttpClient();
 
 		SSLContext ctx = SSLContext.getInstance(TLS);
 		
@@ -120,34 +106,21 @@ public class ConexFlowPost implements  Serializable {
 	            .build();
 	    HttpClientConnectionManager ccm = new BasicHttpClientConnectionManager(registry);
 	    base.setConnectionManager(ccm);
-	    
-		/* (DEPRECATED)
-		SSLSocketFactory ssf = new SSLSocketFactory(ctx); //new SSLSocketFactory(ctx,SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-		ClientConnectionManager ccm = base.getConnectionManager();
-		SchemeRegistry sr = ccm.getSchemeRegistry();
-		sr.register(new Scheme(HTTPS, ssf, 443));
-		
-		HttpClient client = new DefaultHttpClient(ccm, base.getParams());*/
 
 	    HttpClient client = base.build();
 
-	    
-	    
 	    HttpPost post = new HttpPost(url);
-		// add header
-		//post.setHeader("User-Agent", USER_AGENT);
-		
+
 		List<NameValuePair> urlParameters = getParameters(op, query);
 		post.setEntity(new UrlEncodedFormEntity(urlParameters));
 
 		HttpResponse response = client.execute(post);
 		
-		
 		System.out.println("\nSending 'POST' request to URL : " + url);
 		System.out.println("Post parameters : " + post.getEntity());
 		System.out.println("Response Code : " + 
                                     response.getStatusLine().getStatusCode());
-		/* HA DEJADO DE FUNCIONAR */
+		
 		BufferedReader rd = new BufferedReader(
                         new InputStreamReader(response.getEntity().getContent()));
 
@@ -163,15 +136,6 @@ public class ConexFlowPost implements  Serializable {
 			result.append(s);
 		}
 		
-	/*	String entity = EntityUtils.toString(response.getEntity());
-		String result2 = entity;
-		if(query.getImporte() != null && !query.getImporte().equals("")){
-			Integer pos = entity.indexOf("</Respuesta>");
-			result2 = entity.substring(0, pos)+ "<Importe>"+query.getImporte()+"</Importe> "+entity.substring(pos);
-		}
-		
-		System.out.println("ENTITY : "+ entity);
-		System.out.println(result2);*/
 		System.out.println(result.toString());
 
 		Document doc = stringToDom(result.toString());

@@ -284,6 +284,8 @@ public class BookingInfo implements Serializable {
 				hotel.setRendered(false);
 				hotel.setChecked(true);
 				break;
+		default:
+			break;
 		}
 		this.aioInfo.sortApplicationModules(list);
 		return list;

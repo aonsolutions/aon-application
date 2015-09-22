@@ -314,7 +314,28 @@
 										target="#{globalConfig.currentOption}" />
 								</aon:commandLink>									
 							</aon:if>								
-						</aon:if>			
+						</aon:if>		
+						<aon:if test="#{!domainSwitcher.domainManagementAvailable}"> <!-- si es hotel!!  -->
+							<aon:selectBooleanCheckbox id="ExternalApplication_ConexFlow"
+								value="#{conexflow.conexFlow}" reRender="aonContent">
+							
+								<a4j:support event="onchange" reRender="showConexFlowWindow"
+									actionListener="#{conexflow.onChangeConexFlowStatus}"
+									ajaxSingle="true" />
+							</aon:selectBooleanCheckbox>
+							<aon:if test="#{!conexflow.conexFlow}">
+								<aon:outputLabel for="ExternalApplication_ConexFlow"
+									value="#{bundle.aon_external_conexFlow}" />	
+							</aon:if>
+							<aon:if test="#{conexflow.conexFlow}">
+								<aon:commandButton id="conexFlow-link"
+										styleClass="aon-table-portlet aon-selectInputDate-buttonClass aon-nopadding"
+										value="#{bundle.aon_external_conexFlow}"
+										actionListener="#{conexflow.onChangeConexFlowStatus}"
+										reRender="showConexFlowWindow">
+								</aon:commandButton>
+							</aon:if>
+						</aon:if>	
 					</aon:div>
 					
 				</aon:panelGrid>								
@@ -339,5 +360,8 @@
 		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
 			<ui:param name="auditableController" value="#{adminDomain}" />
 		</ui:include>		
+		<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/conexflow.xhtml">
+			<ui:param name="controller" value="#{conexflow}" />
+		</ui:include>
 	</ui:define>
 </ui:composition>

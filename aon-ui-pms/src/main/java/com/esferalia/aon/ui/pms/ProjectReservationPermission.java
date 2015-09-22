@@ -9,10 +9,9 @@ import org.apache.commons.lang.time.DateUtils;
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.conexflow.ConexFlowConnection;
 import com.code.aon.conexflow.ConexFlowConstant;
 import com.code.aon.conexflow.jooq.DBConsults;
-import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ui.common.role.BasicRoleManager;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
@@ -321,8 +320,8 @@ public class ProjectReservationPermission implements Serializable {
 
 	public boolean isCreditCardPreauthorizationAllowed() {
 		boolean roleAllowed = isRoleCommercial() || isRoleFinance();
-		boolean conexFlowAvail = AppParamUtil.getParameter(AppParam.PMS_CONEXFLOW_ENTERPRISE, reservation.getDomain()) != null;
-		return roleAllowed && conexFlowAvail && 
+		ConexFlowConnection connection = DBConsults.getConection(getDomainName(), reservation.getDomain());
+		return roleAllowed && connection.getActive() && 
 			DBConsults.getConexFlowLastOperationBool(getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
 	}
 	

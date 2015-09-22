@@ -27,9 +27,6 @@
 							<f:setPropertyActionListener
 								target="#{controller.showCreditCardWindow}"
 								value="#{false}" />
-							<f:setPropertyActionListener
-								target="#{controller.creditCardError}"
-								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
 				</f:facet>
@@ -41,9 +38,9 @@
 								<aon:div id="creditCardModalToolbar" styleClass="aon-toolbar">
 									<aon:commandButton id="creditCard-accept"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
-										value="Confirmar Pre-Autorización"
-										rendered="#{controller.showConfirmPreauthorization}"
-										actionListener="#{controller.onConfirmPreauthorizationCreditCard}"
+										value="#{bundle.finance_charge}"
+										rendered="#{controller.showSale}"
+										actionListener="#{controller.onChargeCreditCard}"
 										reRender="aonContent"
 										onclick="Richfaces.showModalPanel('waitProccess')"
 										oncomplete="Richfaces.hideModalPanel('waitProccess')">
@@ -58,20 +55,9 @@
 										<f:setPropertyActionListener
 											target="#{controller.showCreditCardWindow}"
 											value="#{false}" />
-										<f:setPropertyActionListener
-											target="#{controller.creditCardError}"
-											value="#{false}" />
+
 									</aon:commandButton>
 								</aon:div>
-								
-								<aon:if test="#{controller.creditCardError}">
-									<aon:div>
-										<aon:outputLabel 
-											value="#{controller.creditCardErrorText}"
-											styleClass="aon-label-error" />
-									</aon:div>								
-								</aon:if>
-								
 								<aon:div id="creditCardModalContent" styleClass="aon-scroll-area" style="margin-top: 1em;">
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" styleClass="aon-width-all"
 										columnClasses="aon-panelGrid-odd aon-width-100,aon-panelGrid-even aon-width-auto">
@@ -131,7 +117,7 @@
 
 									</aon:panelGrid>
 									
-									<aon:if test="#{controller.showConfirmPreauthorization}">
+									<aon:if test="#{controller.showSale}">
 										<aon:panelGrid id="menuGrid3" columns="2" dir="true" styleClass="aon-width-all aon-margin-top"
 										columnClasses="aon-panelGrid-odd aon-width-100,aon-panelGrid-even aon-width-auto">
 											<aon:outputLabel for="preauthorization_amount"

@@ -45,6 +45,18 @@
 											onclick="Richfaces.showModalPanel('waitProccess')"
 											oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 									</aon:if>
+									<aon:if test="#{controller.cardOperationTo.operationOk}">
+										<aon:commandButton id="creditCardPreauthorization-cancelOp"
+											styleClass="aon-finding-toolbar-item aon-icon-black-list"
+											value="#{bundle.aon_cancel}"
+											actionListener="#{controller.onCreditCardCancelPreauthorization}"
+											reRender="aonContent"
+											onclick="Richfaces.showModalPanel('waitProccess')"
+											oncomplete="Richfaces.hideModalPanel('waitProccess')">
+											<rich:componentControl for="creditCardPreauthorizationModalPanel"
+												event="onclick" operation="hide"/>						
+										</aon:commandButton>
+									</aon:if>
 									<aon:commandButton id="creditCardPreauthorization-cancel" immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel"
 										value="#{bundle.aon_back}"

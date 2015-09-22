@@ -178,7 +178,7 @@ public class ServiceAccountController extends BasicController {
 						.from(DOMAIN_GSERVICEACCOUNT).join(DOMAIN)
 						.on(DOMAIN.ID.eq(DOMAIN_GSERVICEACCOUNT.DOMAIN))
 						.fetch();
-				int i=0;
+				//int i=0;
 				for (Record8<String, String, Double, Double, String, String, byte[], String> record : data) {
 					ServiceAccount sa = new ServiceAccount("", "", "", "", "",
 							"", null, "");
@@ -348,12 +348,7 @@ public class ServiceAccountController extends BasicController {
 	}
 
 	public static void main(String[] args) throws SQLException {
-		Vector<ServiceAccount> vector = null;// getAccounts();
-		System.out.println("Holaaaaa");
-		System.out.println(vector);
-		for (ServiceAccount serviceAccount : vector) {
-			System.out.println(serviceAccount.domain);
-		}
+		
 	}
 	
 	AonFile aonFile;

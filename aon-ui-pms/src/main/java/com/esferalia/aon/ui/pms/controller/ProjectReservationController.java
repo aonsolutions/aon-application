@@ -38,12 +38,12 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.conexflow.ConexFlow;
 import com.code.aon.conexflow.ConexFlow.Query;
+import com.code.aon.conexflow.ConexFlowConnection;
 import com.code.aon.conexflow.ConexFlowConstant;
 import com.code.aon.conexflow.ConexFlowPost;
 import com.code.aon.conexflow.ConexFlowUtils;
@@ -51,7 +51,6 @@ import com.code.aon.conexflow.jooq.DBConsults;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
 import com.code.aon.config.Tariff;
-import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Finance;
@@ -1519,33 +1518,18 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 
 	private boolean conexFlowData(ProjectReservation reservation) {
-		Boolean conexFlowActive = AppParamUtil.getParameter(AppParam.PMS_CONEXFLOW_ENTERPRISE, reservation.getDomain()) != null;
-		if (conexFlowActive) {
-			ConexFlow conexFlowValidate, conexFlowCreateToken = null;
-			Query validateQuery = ConexFlowUtils.getConexFlowValidateCardQuery(reservation.getHrCreditCardNumber()
-				, AppParamUtil.getParameter(AppParam.PMS_CONEXFLOW_ENTERPRISE, reservation.getDomain()).getValue()
-				, AppParamUtil.getParameter(AppParam.PMS_CONEXFLOW_WORKPLACE, reservation.getDomain()).getValue()
-				, AppParamUtil.getParameter(AppParam.PMS_CONEXFLOW_POS, reservation.getDomain()).getValue()
-				, reservation.getCustomer().getId().toString());
-			conexFlowValidate = ConexFlowPost.execute(ConexFlowConstant.VALIDATE_CARD_OP, validateQuery, reservation.getId(), reservation.getDomain());
-
+		ConexFlowConnection connection = DBConsults.getConection(AonUtil.getDomainName(), reservation.getDomain());
+		if (connection.getActive()) {
+			ConexFlow conexFlowCreateToken = null;
 			String errorMsg = null;
-			if (conexFlowValidate.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) {
-				Query createTokenQuery = ConexFlowUtils.getConexFlowCreateTokenQuery(reservation.getHrCreditCardNumber()
-					, AppParamUtil.getParameter(AppParam.PMS_CONEXFLOW_ENTERPRISE, reservation.getDomain()).getValue()
-					, AppParamUtil.getParameter(AppParam.PMS_CONEXFLOW_WORKPLACE, reservation.getDomain()).getValue()
-					, AppParamUtil.getParameter(AppParam.PMS_CONEXFLOW_POS, reservation.getDomain()).getValue()
+			Query createTokenQuery = ConexFlowUtils.getConexFlowCreateTokenQuery(reservation.getHrCreditCardNumber()
+					, connection.getEmpresa().toString(), connection.getCentro().toString(), connection.getTpv().toString()
 					, reservation.getHrCreditCardExpirationMonth() + reservation.getHrCreditCardExpirationYear()
 					, reservation.getCustomer().getId().toString());
-				conexFlowCreateToken = ConexFlowPost.execute(ConexFlowConstant.CREATE_TOKEN_OP, createTokenQuery, reservation.getId(), reservation.getDomain());
-				if (!conexFlowCreateToken.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) {
-					errorMsg = "Error " + conexFlowCreateToken.getRespuesta().getResultado() + ": " + conexFlowCreateToken.getRespuesta().getDesResultado() + ".";
-				}
+			conexFlowCreateToken = ConexFlowPost.execute(connection,ConexFlowConstant.CREATE_TOKEN_OP, createTokenQuery, reservation.getId(), reservation.getDomain(), AonUtil.getDomainName());
+			if (!conexFlowCreateToken.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) {
+				errorMsg = "Error " + conexFlowCreateToken.getRespuesta().getResultado() + ": " + conexFlowCreateToken.getRespuesta().getDesResultado() + ".";
 			}
-			else{
-				errorMsg = "Error " + conexFlowValidate.getRespuesta().getResultado() + ": " + conexFlowValidate.getRespuesta().getDesResultado() + ".";
-			}
-
 			if (errorMsg != null) {
 				AonUtil.addErrorMessage(errorMsg);
 				throw new AbortProcessingException(errorMsg);
@@ -1580,28 +1564,59 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	public void onCreditCardPreauthorization(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		if (reservation.getTotal() >= getCardOperationTo().getOperationAmount()) {
-			ConexFlow cf = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), 
+		ConexFlowConnection connection = DBConsults.getConection(AonUtil.getDomainName(), reservation.getDomain());
+		if(connection.getActive()){
+			String errorMsg = null;
+			if (reservation.getTotal() >= getCardOperationTo().getOperationAmount()) {
+				ConexFlow cf = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), 
 					reservation.getDomain(), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
-			Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(
-					AppParamUtil.getParameter(AppParam.PMS_CONEXFLOW_ENTERPRISE, reservation.getDomain()).getValue()
-					, AppParamUtil.getParameter(AppParam.PMS_CONEXFLOW_WORKPLACE, reservation.getDomain()).getValue()
-					, AppParamUtil.getParameter(AppParam.PMS_CONEXFLOW_POS, reservation.getDomain()).getValue()
-					, reservation.getCustomer().getId().toString() 
-					, cf.getRespuesta().getToken()
+				Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(
+					connection.getEmpresa().toString(), connection.getCentro().toString(), connection.getTpv().toString()
+					, reservation.getCustomer().getId().toString(), cf.getRespuesta().getToken()
 					, getCardOperationTo().getOperationAmount());
-			ConexFlow cf2 = ConexFlowPost.execute(ConexFlowConstant.PREAUTHORIZATION_OP, query, reservation.getId(), reservation.getDomain());
-			if (cf2.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) {
-				setShowCreditCardPreauthorizationWindow(false);
-			} else {
-				String errorMsg = "Error " + cf2.getRespuesta().getResultado() + ": " + cf2.getRespuesta().getDesResultado() + ".";
+				ConexFlow cf2 = ConexFlowPost.execute(connection, ConexFlowConstant.PREAUTHORIZATION_OP, query, reservation.getId(), reservation.getDomain(), AonUtil.getDomainName());
+				if(cf2 != null){
+					if (cf2.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) 
+						setShowCreditCardPreauthorizationWindow(false);
+					else errorMsg = "Error " + cf2.getRespuesta().getResultado() + ": " + cf2.getRespuesta().getDesResultado() + ".";
+				}
+				else errorMsg = "Los datos de conexión a conexFlow son incorrectos.";	
+			} else errorMsg = "El importe a pre-autorizar es mayor que el importe de la Reserva.";
+			
+			if(errorMsg != null){
 				AonUtil.addErrorMessage(errorMsg);
 				throw new AbortProcessingException(errorMsg);
 			}
-		} else {
-			String errorMsg = "El importe a pre-autorizar es mayor que el importe de la Reserva.";
-			AonUtil.addErrorMessage(errorMsg);
-			throw new AbortProcessingException(errorMsg);
+		}
+	}
+	
+	public void onCreditCardCancelPreauthorization(ActionEvent event) {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		ConexFlowConnection connection = DBConsults.getConection(AonUtil.getDomainName(), reservation.getDomain());
+		if(connection.getActive()){
+			String errorMsg = null;
+			ConexFlow cf = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+			DBConsults.deletePreuthorization(AonUtil.getDomainName(), reservation.getDomain(), reservation.getId());
+			
+			Double importe = Double.parseDouble(cf.getRespuesta().getImporte());
+			Query query = ConexFlowUtils.getConexFlowCancelationQuery(connection.getEmpresa().toString()
+				, connection.getCentro().toString(), connection.getTpv().toString()
+				, ConexFlowConstant.PREAUTHORIZATION_OP, importe
+				, importe, cf.getRespuesta().getAutorizacion()
+				, cf.getRespuesta().getRefClient(), cf.getRespuesta().getIdOperacion(), cf.getRespuesta().getFecha());
+		
+			ConexFlow cf2 = ConexFlowPost.execute(connection, ConexFlowConstant.CANCELATION_OP, query, reservation.getId(), reservation.getDomain(), AonUtil.getDomainName());
+			if(cf2 != null){
+				if (cf2.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) 
+					setShowCreditCardPreauthorizationWindow(false);
+				else errorMsg = "Error " + cf2.getRespuesta().getResultado() + ": " + cf2.getRespuesta().getDesResultado() + ".";
+			}
+			else errorMsg = "Los datos de conexión a conexFlow son incorrectos.";	
+			
+			if(errorMsg != null){
+				AonUtil.addErrorMessage(errorMsg);
+				throw new AbortProcessingException(errorMsg);
+			}
 		}
 	}
 

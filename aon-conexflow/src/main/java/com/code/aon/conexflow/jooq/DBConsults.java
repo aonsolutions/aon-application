@@ -9,14 +9,22 @@ import java.util.Calendar;
 
 import javax.xml.bind.JAXBException;
 
+import org.jooq.Condition;
 import org.jooq.Record1;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.conexflow.ConexFlow;
 import com.code.aon.conexflow.ConexFlow.Query;
+import com.code.aon.conexflow.ConexFlowConnection;
 import com.code.aon.conexflow.ConexFlowConstant;
 import com.code.aon.conexflow.XMLUtils;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 
 public class DBConsults {
 
@@ -34,6 +42,17 @@ public class DBConsults {
 		}
 	}
 	
+	public static void deletePreuthorization(String domain, Integer domainId, Integer projectId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+			ctx.getDslContext().delete(PROJECT_ATTACH).where(PROJECT_ATTACH.PROJECT.eq(projectId)).and(PROJECT_ATTACH.DESCRIPTION.eq("CONEXFLOW-P")).execute();
+		}finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	
 	public static void insertConexFlowOperation(String domain , Integer domainId, byte[] xmlFile, Integer project, String op){
 		AONContext ctx = null;
 		try {
@@ -46,6 +65,7 @@ public class DBConsults {
 					ctx.getDslContext().update(PROJECT_ATTACH).set(PROJECT_ATTACH.DATA, xmlFile)
 						.where(PROJECT_ATTACH.ID.eq(id))
 						.execute();
+					ctx.getDslContext().delete(PROJECT_ATTACH).where(PROJECT_ATTACH.PROJECT.eq(project)).and(PROJECT_ATTACH.DESCRIPTION.eq("CONEXFLOW-P")).execute();
 				}
 			}
 			if(id == null)
@@ -81,19 +101,32 @@ public class DBConsults {
 			if (ctx != null) ctx.close();
 		}
 	}
+
+	public static ConexFlow getConexFlowLastOperationXXX(String domain , Integer domainId, Integer project, String op){
+		//TODO COGER LA ULTIMA OPERACION CONEXFLOW (POR FECHA) DE PROJECT_ATTACH
+		Condition condition = (PROJECT_ATTACH.PROJECT.eq(project)).and(PROJECT_ATTACH.DESCRIPTION.eq("CONEXFLOW-"+op));
+		Attach projectAttach = AON.getAttach(domain, domainId, condition, AttachType.PROJECT);
+		try {
+			return  XMLUtils.readXml(projectAttach.getData(), new Query());
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 	public static ConexFlow getConexFlowLastOperation(String domain , Integer domainId, Integer project, String op){
 		//TODO COGER LA ULTIMA OPERACION CONEXFLOW (POR FECHA) DE PROJECT_ATTACH
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
+			
 			Record1<byte[]> data = ctx.getDslContext().select(PROJECT_ATTACH.DATA)
 				.from(PROJECT_ATTACH)
 				.where(PROJECT_ATTACH.PROJECT.eq(project))
 				.and(PROJECT_ATTACH.DESCRIPTION.eq("CONEXFLOW-"+op))
 				.orderBy(PROJECT_ATTACH.ATTACH_DATE.desc())
 				.limit(1).fetchOne();
-			
+
 			if(data != null && data.value1() != null){
 				try {
 					return  XMLUtils.readXml(data.value1(), new Query());
@@ -108,7 +141,6 @@ public class DBConsults {
 	}
 	
 	public static Boolean getConexFlowLastOperationBool(String domain , Integer domainId, Integer project, String op){
-		//TODO COGER LA ULTIMA OPERACION CONEXFLOW (POR FECHA) DE PROJECT_ATTACH
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
@@ -116,7 +148,6 @@ public class DBConsults {
 				.from(PROJECT_ATTACH)
 				.where(PROJECT_ATTACH.PROJECT.eq(project))
 				.and(PROJECT_ATTACH.DESCRIPTION.eq("CONEXFLOW-"+op))
-				.orderBy(PROJECT_ATTACH.ATTACH_DATE.desc())
 				.limit(1).fetchOne();
 			
 			return data != null && data.value1() != null;
@@ -142,6 +173,52 @@ public class DBConsults {
 				return  data.value1();
 			}
 			return null;
+		}finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	/*public static ConexFlowConnection getConnection(String domain, Integer domainId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+			Result<DomainConexflowRecord> result = ctx.getDslContext().select()
+					.from(DOMAIN_CONEXFLOW)
+					.where(DOMAIN_CONEXFLOW.DOMAIN.eq(domainId))
+					.fetchInto(DOMAIN_CONEXFLOW);
+
+			ConexFlowConnection cfc = new ConexFlowConnection();
+			cfc.setActive(result.isNotEmpty() && result.size() == 1);
+			if(cfc.getActive()){
+				DomainConexflowRecord dcr = result.get(1);
+				cfc.setServer(dcr.getServer());
+				cfc.setServerAck(dcr.getServerAck());
+				cfc.setCfUser(dcr.getCfUser());
+			}
+			
+			return cfc;
+		}finally {
+			if (ctx != null) ctx.close();
+		}
+	}*/	
+	
+	public static ConexFlowConnection getConection(String domain, Integer domainId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+			ApplicationParameter server = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_SERVER_PARAM);
+			ApplicationParameter serverAck = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_SERVER_ACK_PARAM);
+			ApplicationParameter user = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_USER);
+			
+			ConexFlowConnection cfc = new ConexFlowConnection();
+			cfc.setActive(server != null);
+			if(cfc.getActive()){
+				cfc.setServer(server.getValue());
+				cfc.setServerAck(serverAck.getValue());
+				cfc.setCfUser(user.getValue());
+			}
+			
+			return cfc;
 		}finally {
 			if (ctx != null) ctx.close();
 		}

@@ -15,10 +15,11 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.conexflow.ConexFlow;
+import com.code.aon.conexflow.ConexFlow.Query;
+import com.code.aon.conexflow.ConexFlowConnection;
 import com.code.aon.conexflow.ConexFlowConstant;
 import com.code.aon.conexflow.ConexFlowPost;
 import com.code.aon.conexflow.ConexFlowUtils;
-import com.code.aon.conexflow.ConexFlow.Query;
 import com.code.aon.conexflow.jooq.DBConsults;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
@@ -269,31 +270,15 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 	
 	private static final String CONEXFLOW_RESULT_OK = "000";
 	
-	private boolean creditCardError = false;
-	private String creditCardErrorText = "";
 	private boolean preauthorization;
 	private boolean confirmPreauthorization;
+	private boolean creditCardToken;
+	private boolean sale;
 	private Double preauthorizationAmount;
 	private Double confirmPreauthorizationAmount;
 
 	
 	//********** GETTERS && SETTERS **********//
-	
-	public boolean isCreditCardError() {
-		return creditCardError;
-	}
-	
-	public void setCreditCardError(boolean creditCardError) {
-		this.creditCardError = creditCardError;
-	}
-	
-	public String getCreditCardErrorText() {
-		return creditCardErrorText;
-	}
-	
-	public void setCreditCardErrorText(String creditCardErrorText) {
-		this.creditCardErrorText = creditCardErrorText;
-	}
 	
 	public boolean isPreauthorization() {
 		return preauthorization;
@@ -323,8 +308,31 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 		return !confirmPreauthorization;
 	}
 	
-	public boolean isShowConfirmPreauthorization(){
-		return isPreauthorization() && isNotConfirmPreauthorization();
+	public boolean isCreditCardToken(){
+		return creditCardToken;
+	}
+	
+	public void setCreditCardToken(boolean creditCardToken){
+		this.creditCardToken = creditCardToken;
+	}
+	
+	public boolean isSale(){
+		return sale;
+	}
+	
+	public void setSale(boolean sale){
+		this.sale = sale;
+	}
+	
+	public boolean isNotSale(){
+		return !sale;
+	}
+	
+	public boolean isShowSale(){
+
+		ConexFlowConnection connection = DBConsults.getConection(AonUtil.getDomainName(), getReservation().getDomain());
+		
+		return connection.getActive() && (isPreauthorization()|| isCreditCardToken()) && isNotConfirmPreauthorization() && isNotSale();
 	}
 	
 	public Double getConfirmPreauthorizationAmount(){
@@ -346,61 +354,70 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 		setPreauthorization(cf != null);
 		ConexFlow cf2 = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
 		setConfirmPreauthorization(cf2 != null);
+		ConexFlow cf3 = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
+		setCreditCardToken(cf3 != null);
+		ConexFlow cf4 = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.SALE_OP);
+		setSale(cf4 != null);
 		if(isPreauthorization() && cf.getRespuesta().getImporte() !=  null) setPreauthorizationAmount(Double.parseDouble(cf.getRespuesta().getImporte()));
 		if(isConfirmPreauthorization() && cf.getRespuesta().getImporte() != null) setConfirmPreauthorizationAmount(Double.parseDouble(cf2.getRespuesta().getImporte()));
 	}
 	
-	public void onConfirmPreauthorizationCreditCard(ActionEvent event) {
-		System.out.println("CONFIRMAR PREAUTHORIZACIÓN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		//TODO
+	public void onChargeCreditCard(ActionEvent event) {
+		boolean resultOk = false;
 		ProjectReservation reservation = getReservation();
-		ConexFlow cf1 = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
-		if(cf1 != null){
-			ConexFlow cf2 = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
-			if(cf2 != null){
-				// confirm preauthorization
-				Integer importeOriginal = null;
-				if(cf2.getRespuesta().getImporte() != null){
-					Double aux = Double.parseDouble(cf2.getRespuesta().getImporte()) * 100;
-					importeOriginal = aux.intValue();
-				}
-				System.out.println("importeORG : " + importeOriginal);
-				Query confirmPreauthorizationQuery = ConexFlowUtils.getConexFlowConfirmPreauthorizationQuery(
-						"283"//reservation.getHotel().getWorkPlace().getEnterprise().getId().toString()	
-						, "283", "283", reservation.getCustomer().getId().toString(), cf1.getRespuesta().getToken()
-						, getPreauthorizationAmount(), importeOriginal, cf1.getRespuesta().getCF_ExpirationDate(), cf2.getRespuesta().getAutorizacion()
-						, cf2.getRespuesta().getFecha(), cf2.getRespuesta().getIdOperacion());
+		ConexFlowConnection connection = DBConsults.getConection(AonUtil.getDomainName(), reservation.getDomain());
+		if(connection.getActive()){
+			String errorMsg = null;
+			if(getPreauthorizationAmount() <= reservation.getTotal()){
+				ConexFlow cf1 = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
+				if(cf1 != null){
+					ConexFlow cf2 = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+					if(cf2 != null){
+						Double importeOriginal;
+						if(cf2.getRespuesta().getImporte() != null) importeOriginal = Double.parseDouble(cf2.getRespuesta().getImporte());
+						else importeOriginal = getPreauthorizationAmount();
 						
-				ConexFlow conexFlowConfirmPreauthorization =  ConexFlowPost.execute(ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP, confirmPreauthorizationQuery, reservation.getId(), reservation.getDomain());
-
-				if(conexFlowConfirmPreauthorization.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)){
-					// crear factura ....	
-					setShowCreditCardWindow(false);
-					setCreditCardError(false);
+						Query confirmPreauthorizationQuery = ConexFlowUtils.getConexFlowConfirmPreauthorizationQuery(
+							connection.getEmpresa().toString(), connection.getCentro().toString() 
+							, connection.getTpv().toString(), reservation.getCustomer().getId().toString(), cf1.getRespuesta().getToken()
+							, getPreauthorizationAmount(), importeOriginal, cf1.getRespuesta().getCF_ExpirationDate(), cf2.getRespuesta().getAutorizacion()
+							, cf2.getRespuesta().getFecha(), cf2.getRespuesta().getIdOperacion());
+						
+						ConexFlow conexFlowConfirmPreauthorization =  ConexFlowPost.execute(connection, ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP, confirmPreauthorizationQuery, reservation.getId(), reservation.getDomain(), AonUtil.getDomainName());
+						if(conexFlowConfirmPreauthorization!= null){
+							resultOk = conexFlowConfirmPreauthorization.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
+							if(resultOk){
+								// crear factura ....	
+								setShowCreditCardWindow(false);
+							}
+						}
+						else errorMsg = "Los datos de conexión a conexFlow son incorrectos.";
+					}
+					if(cf2 == null || !resultOk){
+						Query cardPaymentQuery = ConexFlowUtils.getConexFlowCardPaymentQuery(
+						connection.getEmpresa().toString(), connection.getCentro().toString()
+							, connection.getTpv().toString(), cf1.getRespuesta().getToken()
+							, getPreauthorizationAmount(), reservation.getCustomer().getId().toString());
+				
+						ConexFlow conexFlowCardPayment = ConexFlowPost.execute(connection, ConexFlowConstant.SALE_OP, cardPaymentQuery, reservation.getId(), reservation.getDomain(), AonUtil.getDomainName());
+						if(conexFlowCardPayment != null){
+							if(conexFlowCardPayment.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)){
+								// crear factura ....	
+								setShowCreditCardWindow(false);
+							}
+							else errorMsg = "Error " + conexFlowCardPayment.getRespuesta().getResultado() + ": " + conexFlowCardPayment.getRespuesta().getDesResultado()+".";	
+						}
+						else errorMsg = "Los datos de conexión a conexFlow son incorrectos.";	
+					}
 				}
-				else{
-					setCreditCardError(true);
-					String error = "*Error " + conexFlowConfirmPreauthorization.getRespuesta().getResultado() + ": " + conexFlowConfirmPreauthorization.getRespuesta().getDesResultado()+".";
-					setCreditCardErrorText(error);
-				}
+				else errorMsg = "No tiene ninguna tarjeta de crédito asociada a la reserva.";
 			}
-			else{
-				// card charge with token
-				setCreditCardError(true);
-				String error = "*Error: No se ha realizado ninguna Pre-Autorización con anterioridad.";
-				setCreditCardErrorText(error);
+			else errorMsg = "El importe a cobrar es mayor que el importe de la reserva.";
+			
+			if(errorMsg != null){
+				AonUtil.addErrorMessage(errorMsg);
+				throw new AbortProcessingException(errorMsg);
 			}
 		}
-		else{
-			//if exist credit card --> card charge without token
-			setCreditCardError(true);
-			String error = "*Error: No tiene ninguna tarjeta de crédito asociada a la reserva.";
-			setCreditCardErrorText(error);
-		}
-		
 	}
-	
-	
-	/********************************************************/
-	
 }

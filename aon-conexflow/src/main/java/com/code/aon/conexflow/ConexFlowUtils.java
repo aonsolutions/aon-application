@@ -50,7 +50,12 @@ public class ConexFlowUtils {
 		return cf;
 	}
 	
-	public static Query getConexFlowCardPaymentQuery(String empresa, String centro, String tpv, String token, String amount, String cliente) {
+	public static Query getConexFlowCardPaymentQuery(String empresa, String centro, String tpv, String token, Double amount, String cliente) {
+		Integer eur = amount.intValue();
+		Double cent = (amount - eur.doubleValue()) * 100;
+		
+		Integer importe = (eur * 100) + cent.intValue(); 
+		
 		Query query = new Query();
 		query.setOperacion(ConexFlowConstant.SALE_OP);
 		query.setEmpresa(leftZeros(8, empresa));
@@ -61,7 +66,7 @@ public class ConexFlowUtils {
 		query.setSoporte("K");
 		query.setDocumento(token);
 		query.setFechaCad("");
-		query.setImporte(amount);
+		query.setImporte(importe.toString());
 		query.setMoneda("EUR");
 		query.setPlazos("000");
 		query.setSecurityCode("");
@@ -440,7 +445,13 @@ public class ConexFlowUtils {
 		return cf;
 	}
 	
-	public static Query getConexFlowCancelationQuery(String empresa, String centro, String tpv, String cancelOperation, String amount, String amountOriginal, String autorizacion, String cliente, String operacionId, String fechaOriginal) {
+	public static Query getConexFlowCancelationQuery(String empresa, String centro, String tpv, String cancelOperation, Double amount, Double amountOriginal, String autorizacion, String cliente, String operacionId, String fechaOriginal) {
+		Double importeAux = amount * 100;
+		Integer importe = importeAux.intValue();
+		
+		Double importeOriginalAux = amountOriginal * 100;
+		Integer importeOriginal = importeOriginalAux.intValue();
+		
 		Query query = new Query();
 		query.setOperacion(ConexFlowConstant.CANCELATION_OP);
 		query.setEmpresa(leftZeros(8, empresa));
@@ -449,8 +460,10 @@ public class ConexFlowUtils {
 		query.setFecha(getCurrentDate());
 		query.setHora(getCurrentTime());
 		query.setOperacionOriginal(cancelOperation);
-		query.setImporte(amount);
-		query.setImporteOriginal(amountOriginal);
+		
+		query.setImporte(importe.toString());
+		query.setImporteOriginal(importeOriginal.toString());
+		
 		query.setAutOriginal(autorizacion);
 		query.setRefCliente(leftZeros(20, cliente));
 		query.setInfoAdicionalEntrada("");
@@ -486,11 +499,11 @@ public class ConexFlowUtils {
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.ID_OPERACION_ORIGINAL_STR.getCode(), query.getIdOperacionOriginal()));
 	
 		String cadena = query.getOperacion() + query.getEmpresa() + query.getCentro() +
-				query.getTpv() + query.getFecha() + query.getHora() +query.getOperacionOriginal() + 
+				query.getTpv() + query.getFecha() + query.getHora() + query.getCentroOriginal() +
+				query.getTpvOriginal() + query.getFechaOriginal() + query.getIdOperacionOriginal() +
+				query.getOperacionOriginal() + 
 				query.getImporte() + query.getImporteOriginal() + query.getAutOriginal() + 
-				query.getRefCliente() + query.getInfoAdicionalEntrada() + query.getCF_ReplyURL() + 
-				query.getObservaciones() + query.getCentroOriginal() + query.getTpvOriginal() + 
-				query.getFechaOriginal() + query.getIdOperacionOriginal();
+				query.getRefCliente() + query.getInfoAdicionalEntrada() + query.getCF_ReplyURL();
 	
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
@@ -532,10 +545,15 @@ public class ConexFlowUtils {
 		return cf;
 	}
 	
-	public static Query getConexFlowConfirmPreauthorizationQuery(String empresa, String centro, String tpv, String cliente, String token, Double amount, Integer amountOriginal, String fechaCad, String autorizacion, String fechaOriginal, String operacionId) {
-		Integer eur = amount.intValue();
-		Double cent = (amount - eur.doubleValue()) * 100;
-		Integer importe = (eur * 100) + cent.intValue(); 
+	public static Query getConexFlowConfirmPreauthorizationQuery(String empresa, String centro, String tpv, String cliente, String token, Double amount, Double amountOriginal, String fechaCad, String autorizacion, String fechaOriginal, String operacionId) {
+		Double importeAux = amount * 100;
+		Integer importe = importeAux.intValue();
+		
+		Integer importeOriginal = null;
+		if(amountOriginal!=null){
+			Double importeOriginalAux = amountOriginal * 100;
+			importeOriginal = importeOriginalAux.intValue();
+		}
 		
 		Query query = new Query();
 		query.setOperacion(ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
@@ -547,7 +565,7 @@ public class ConexFlowUtils {
 		query.setDocumento(token);
 		query.setFechaCad(fechaCad);
 		query.setImporte(importe.toString());
-		query.setImporteOriginal(amountOriginal != null ? amountOriginal.toString() : importe.toString());
+		query.setImporteOriginal(amountOriginal != null ? importeOriginal.toString() : importe.toString());
 		query.setAutOriginal(autorizacion);
 		query.setMoneda("EUR");
 		query.setRefCliente(leftZeros(20, cliente));
