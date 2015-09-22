@@ -226,10 +226,10 @@ public class DBDrive {
 							INVOICE_ATTACH.DESCRIPTION, INVOICE_ATTACH.TYPE
 							,INVOICE_ATTACH.DOMAIN)
 					.from(INVOICE_ATTACH)
-					.where(INVOICE_ATTACH.DOMAIN.eq(domainId).or(INVOICE_ATTACH.DOMAIN.in(dslContext
+					.where(INVOICE_ATTACH.DOMAIN.eq(domainId)/*-or(INVOICE_ATTACH.DOMAIN.in(dslContext
 																	.select(DOMAIN.ID)
 																	.from(DOMAIN)
-																	.where(DOMAIN.PARENT.eq(domainId)))))
+																	.where(DOMAIN.PARENT.eq(domainId))))*/)
 							.and(INVOICE_ATTACH.DRIVEID.isNull()).and(INVOICE_ATTACH.DATA.isNotNull())
 							.and(INVOICE_ATTACH.ID.greaterThan(firstId))
 							.orderBy(INVOICE_ATTACH.ID)
