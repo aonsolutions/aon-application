@@ -9,7 +9,6 @@ import java.util.Calendar;
 
 import javax.xml.bind.JAXBException;
 
-import org.jooq.Condition;
 import org.jooq.Record1;
 
 import com.code.aon.common.enumeration.MimeType;
@@ -18,11 +17,8 @@ import com.code.aon.conexflow.ConexFlow.Query;
 import com.code.aon.conexflow.ConexFlowConnection;
 import com.code.aon.conexflow.ConexFlowConstant;
 import com.code.aon.conexflow.XMLUtils;
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 
@@ -100,18 +96,6 @@ public class DBConsults {
 		}finally {
 			if (ctx != null) ctx.close();
 		}
-	}
-
-	public static ConexFlow getConexFlowLastOperationXXX(String domain , Integer domainId, Integer project, String op){
-		//TODO COGER LA ULTIMA OPERACION CONEXFLOW (POR FECHA) DE PROJECT_ATTACH
-		Condition condition = (PROJECT_ATTACH.PROJECT.eq(project)).and(PROJECT_ATTACH.DESCRIPTION.eq("CONEXFLOW-"+op));
-		Attach projectAttach = AON.getAttach(domain, domainId, condition, AttachType.PROJECT);
-		try {
-			return  XMLUtils.readXml(projectAttach.getData(), new Query());
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 	
 	public static ConexFlow getConexFlowLastOperation(String domain , Integer domainId, Integer project, String op){
