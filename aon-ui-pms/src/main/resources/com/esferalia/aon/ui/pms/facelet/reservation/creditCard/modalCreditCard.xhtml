@@ -27,9 +27,6 @@
 							<f:setPropertyActionListener
 								target="#{controller.showCreditCardWindow}"
 								value="#{false}" />
-							<f:setPropertyActionListener
-								target="#{controller.creditCardError}"
-								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
 				</f:facet>
@@ -46,10 +43,15 @@
 										actionListener="#{controller.onSaveCreditCard}"
 										reRender="aonContent"
 										onclick="Richfaces.showModalPanel('waitProccess')"
-										oncomplete="Richfaces.hideModalPanel('waitProccess')">
-										<rich:componentControl for="creditCardModalPanel"
-											event="onclick" operation="hide"/>																					
-									</aon:commandButton>
+										oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+									<aon:commandButton id="creditCard-edit"
+										styleClass="aon-finding-toolbar-item aon-icon-edit"
+										value="#{bundle.aon_edit}"
+										rendered="#{!reservation.reservationPermission.creditCardEditable}"
+										actionListener="#{controller.onEditCreditCard}"
+										reRender="aonContent"
+										onclick="Richfaces.showModalPanel('waitProccess')"
+										oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 									<aon:commandButton id="creditCard-cancel" immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel"
 										value="#{bundle.aon_back}"
@@ -57,18 +59,8 @@
 										<f:setPropertyActionListener
 											target="#{controller.showCreditCardWindow}"
 											value="#{false}" />
-										<f:setPropertyActionListener
-											target="#{controller.creditCardError}"
-											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>
-								<aon:if test="#{controller.creditCardError}">
-									<aon:div>
-										<aon:outputLabel 
-											value="#{controller.creditCardErrorText}"
-											styleClass="aon-label-error" />
-									</aon:div>								
-								</aon:if>
 								<aon:div id="creditCardModalContent" styleClass="aon-scroll-area" style="margin-top: 1em;">
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" styleClass="aon-width-all"
 										columnClasses="aon-panelGrid-odd aon-width-100,aon-panelGrid-even aon-width-auto">
@@ -85,7 +77,7 @@
 
 										<aon:outputLabel for="CreditCard_number"
 											value="#{bundle.aon_credit_card_number}" />
-										<aon:outputText value="#{controller.to.hrCreditCardNumber}" 
+										<aon:outputText value="#{controller.to.hrSecureCreditCardNumber}" 
 											rendered="#{!reservation.reservationPermission.creditCardEditable}"	
 											styleClass="aon-bold" />
 										<aon:inputText id="CreditCard_number" 
@@ -128,7 +120,7 @@
 
 										<aon:outputLabel for="CreditCard_cvv"
 											value="#{bundle.aon_credit_card_cvv}" />
-										<aon:outputText value="#{controller.to.hrCreditCardCvv}" 
+										<aon:outputText value="#{controller.to.hrSecureCreditCardCvv}" 
 											rendered="#{!reservation.reservationPermission.creditCardEditable}"	
 											styleClass="aon-bold" />
 										<aon:inputText id="CreditCard_cvv" 

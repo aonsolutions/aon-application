@@ -818,7 +818,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 	}
 
 	public Item obtainAppParamItem(AppParam param) throws ManagerBeanException {
-		ApplicationParameter appParam = AppParamUtil.getParameter(param);
+		ApplicationParameter appParam = AppParamUtil.getParameter(param, domain);
 		if (appParam != null) {
 			return obtainItem(appParam.getValue());
 		}

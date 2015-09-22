@@ -11,8 +11,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.time.DateUtils;
-
+import com.code.aon.AonVersion;
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.AssetFeature;
 import com.code.aon.asset.IAsset;
@@ -20,7 +19,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.RoomDB;
 import com.esferalia.aon.pms.enumeration.RoomStatus;

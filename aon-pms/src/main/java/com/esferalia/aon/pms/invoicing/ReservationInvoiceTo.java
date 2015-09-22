@@ -21,10 +21,9 @@ import com.code.aon.registry.Registry;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
-import com.esferalia.aon.pms.reservation.IReservationConstants;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 
-public class ReservationInvoiceTo implements IReservationConstants, Serializable {
+public class ReservationInvoiceTo implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 

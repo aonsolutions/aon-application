@@ -533,6 +533,9 @@ color:#000;
  .aon-icon-card{
 	background:transparent url(images/aon-icon/aon-icon-card.png) scroll left center no-repeat;	
  }
+ .aon-icon-card-auth{
+	background:transparent url(images/aon-icon/aon-icon-card-auth.png) scroll left center no-repeat;	
+ }
  .aon-icon-cheque{
 	background:transparent url(images/aon-icon/aon-icon-cheque.png) scroll left center no-repeat;	
  }

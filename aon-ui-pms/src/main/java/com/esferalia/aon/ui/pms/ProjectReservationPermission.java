@@ -9,6 +9,10 @@ import org.apache.commons.lang.time.DateUtils;
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.conexflow.ConexFlowConstant;
+import com.code.aon.conexflow.jooq.DBConsults;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ui.common.role.BasicRoleManager;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
@@ -65,6 +69,10 @@ public class ProjectReservationPermission implements Serializable {
 			roleManager = AonUtil.getRoleManager();
 		}
 		return roleManager;
+	}
+
+	private String getDomainName() {
+		return AonUtil.getDomainName();
 	}
 
 	/*************************** GENERIC *******************************/
@@ -142,7 +150,8 @@ public class ProjectReservationPermission implements Serializable {
 	}
 
 	public boolean isShowMoreMenuAllowed() throws ManagerBeanException {
-		return (!reservation.isCancelled() || (!reservation.isNoShow() && isNoShowAllowed())) && (reservation.isActive() || !reservation.isCheckOut()) && isMyScope();
+		return (isCheckInAllowed() || isCheckOutAllowed() || isEarlyCheckOutAllowed() || isAdvanceInvoiceAllowed() || isInvoiceAllowed() || isNoShowAllowed() 
+				|| isCancelAllowed() || isDivertAllowed() || isCreditCardVisible()) && isMyScope();
 	}
 
 	public boolean isCheckInAllowed() throws ManagerBeanException {
@@ -302,14 +311,21 @@ public class ProjectReservationPermission implements Serializable {
 
 	public boolean isCreditCardVisible() throws ManagerBeanException {
 		boolean roleAllowed = isRoleCommercial();
-		return roleAllowed && reservation.getCreationDate() != null;
+		return roleAllowed && reservation.getCreationDate() != null && !reservation.isInvoiced() && !reservation.isNoInvoiceable();
 	}
 
 	public boolean isCreditCardEditable() throws ManagerBeanException {
 		boolean roleAllowed = isRoleCommercial();
-		return roleAllowed && reservation.getCreationDate() != null;
+		return roleAllowed && reservation.getCreationDate() != null && StringUtils.isEmpty(reservation.getCreditCardNumber());
 	}
 
+	public boolean isCreditCardPreauthorizationAllowed() {
+		boolean roleAllowed = isRoleCommercial() || isRoleFinance();
+		boolean conexFlowAvail = AppParamUtil.getParameter(AppParam.PMS_CONEXFLOW_ENTERPRISE, reservation.getDomain()) != null;
+		return roleAllowed && conexFlowAvail && 
+			DBConsults.getConexFlowLastOperationBool(getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
+	}
+	
 
 	/*************************** RESERVATION GUEST *******************************/
 

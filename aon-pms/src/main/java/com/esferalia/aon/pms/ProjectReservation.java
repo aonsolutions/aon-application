@@ -16,6 +16,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,6 +146,15 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 
 	@Transient
+	public String getHrSecureCreditCardNumber() {
+		int length = (hrCreditCardNumber != null) ? hrCreditCardNumber.length() : 0;
+		StringBuffer value = new StringBuffer();
+		value.append(StringUtils.substring(hrCreditCardNumber, 0, 4));
+		value.append(StringUtils.repeat("*", length-8));
+		value.append(StringUtils.substring(hrCreditCardNumber, -4, length));
+		return value.toString();
+	}
+	@Transient
 	public String getHrCreditCardNumber() {
 		return hrCreditCardNumber;
 	}
@@ -168,6 +178,11 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		this.hrCreditCardExpirationYear = hrCreditCardExpirationYear;
 	}
 
+	@Transient
+	public String getHrSecureCreditCardCvv() {
+		int length = (hrCreditCardCvv != null) ? hrCreditCardCvv.length() : 0;
+		return StringUtils.repeat("*", length);
+	}
 	@Transient
 	public String getHrCreditCardCvv() {
 		return hrCreditCardCvv;
@@ -258,8 +273,8 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		return getCheckStatus() == ReservationCheckStatus.CANCEL_INVOICEABLE || getCheckStatus() == ReservationCheckStatus.CANCEL_NO_INVOICEABLE;
 	}
 	@Transient
-	public boolean isInvoiceable() {
-		return getCheckStatus() == ReservationCheckStatus.NO_SHOW || getCheckStatus() == ReservationCheckStatus.CANCEL_INVOICEABLE;
+	public boolean isNoInvoiceable() {
+		return getCheckStatus() == ReservationCheckStatus.NO_SHOW_NO_INVOICEABLE || getCheckStatus() == ReservationCheckStatus.CANCEL_NO_INVOICEABLE;
 	}
 
 	@Transient

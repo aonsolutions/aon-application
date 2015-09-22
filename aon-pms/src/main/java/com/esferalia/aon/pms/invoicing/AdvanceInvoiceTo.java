@@ -7,9 +7,8 @@ import com.code.aon.AonVersion;
 import com.code.aon.config.PayMethod;
 import com.code.aon.finance.PosShift;
 import com.code.aon.registry.RegistryBank;
-import com.esferalia.aon.pms.reservation.IReservationConstants;
 
-public class AdvanceInvoiceTo implements IReservationConstants, Serializable {
+public class AdvanceInvoiceTo implements Serializable {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
