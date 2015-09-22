@@ -111,11 +111,13 @@ public class SynchronizeFiles2 {
 				Integer size = 10;
 				Integer firstId = 0;
 				while(size == 10){
+					LOGGER.info("DEBBUG -- NAME: "+d.getName()+" -- ID: " + d.getId() + " -- FirstId: " + firstId);
 					Vector<FileInfo> v = DBDrive.getInvoiceAttachLimit(d.getName(), d.getId(), firstId);
+					LOGGER.info("DEBBUG -- DBRESULT -- VECTOR SIZE: "+ v.size());
 					if(v.size() != 0) sync(drive, d.getName(), v);
 					if (numero >= num) return;
 					size = v.size();
-					firstId = v.get(v.size()-1).getFileId();
+					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
 				}
 			}
 			if (map.containsKey("offer")){
