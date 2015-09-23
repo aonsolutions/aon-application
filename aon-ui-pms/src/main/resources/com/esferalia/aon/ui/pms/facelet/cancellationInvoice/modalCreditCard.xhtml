@@ -67,7 +67,7 @@
 											styleClass="aon-bold" />
 
 										<aon:outputLabel value="#{bundle.aon_credit_card_number}" />
-										<aon:outputText value="#{controller.reservation.hrCreditCardNumber}" 
+										<aon:outputText value="#{controller.reservation.hrSecureCreditCardNumber}" 
 											styleClass="aon-bold" />
 
 										<aon:outputLabel value="#{bundle.aon_expiration}" />
@@ -80,7 +80,7 @@
 										</aon:div>
 
 										<aon:outputLabel value="#{bundle.aon_credit_card_cvv}" />
-										<aon:outputText value="#{controller.reservation.hrCreditCardCvv}" 
+										<aon:outputText value="#{controller.reservation.hrSecureCreditCardCvv}" 
 											styleClass="aon-bold" />
 
 									</aon:panelGrid>
@@ -128,7 +128,7 @@
 										</aon:panelGrid>
 									</aon:if>
 									
-									<aon:if test="#{controller.confirmPreauthorization}">
+									<aon:if test="#{controller.notShowSale}">
 										<aon:panelGrid id="menuGrid3" columns="2" dir="true" styleClass="aon-width-all aon-margin-top"
 											columnClasses="aon-panelGrid-odd aon-width-100,aon-panelGrid-even aon-width-auto">
 											<aon:outputLabel for="preauthorization_amount_label"

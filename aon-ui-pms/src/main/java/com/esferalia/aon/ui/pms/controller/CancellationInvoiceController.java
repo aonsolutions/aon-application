@@ -314,10 +314,6 @@ public class CancellationInvoiceController extends BasicController implements IP
 		this.confirmPreauthorization = confirmPreauthorization;
 	}
 	
-	public boolean isNotConfirmPreauthorization(){
-		return !confirmPreauthorization;
-	}
-	
 	public boolean isCreditCardToken(){
 		return creditCardToken;
 	}
@@ -334,14 +330,17 @@ public class CancellationInvoiceController extends BasicController implements IP
 		this.sale = sale;
 	}
 	
-	public boolean isNotSale(){
-		return !sale;
-	}
 	
 	public boolean isShowSale(){
 		ConexFlowConnection connection = DBConsults.getConection(AonUtil.getDomainName(), getReservation().getDomain());
 		
-		return connection.getActive() && (isPreauthorization()|| isCreditCardToken()) && isNotConfirmPreauthorization() && isNotSale();
+		return connection.getActive() && (isPreauthorization()|| isCreditCardToken()) && !isConfirmPreauthorization() && !isSale();
+	}
+	
+	public boolean isNotShowSale(){
+		ConexFlowConnection connection = DBConsults.getConection(AonUtil.getDomainName(), getReservation().getDomain());
+		
+		return connection.getActive() && (isConfirmPreauthorization() || isSale());
 	}
 	
 	public Double getConfirmPreauthorizationAmount(){
@@ -355,6 +354,8 @@ public class CancellationInvoiceController extends BasicController implements IP
 	//********** EVENTS **********//
 	
 	public void onCreditCardShow(ActionEvent event) {
+		setPreauthorizationAmount(null);
+		setConfirmPreauthorizationAmount(null);
 		ProjectReservation reservation = (ProjectReservation)model.getRowData();
 		ReservationUtils reservationUtils = new ReservationUtils();
 		reservationUtils.decryptReservationCreditCardData(reservation);
