@@ -76,11 +76,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 			this.timeFormat = DateTimeFormat
 					.getFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
-			setIssue(issue);
-		}
-
-		public Object getJsIssue() {
-			return issue;
+			setIssue(issue);			
 		}
 
 		private void setIssue(JsIssue issue) {

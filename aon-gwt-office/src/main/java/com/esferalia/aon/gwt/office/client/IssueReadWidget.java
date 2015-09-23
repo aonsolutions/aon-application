@@ -1,13 +1,18 @@
 package com.esferalia.aon.gwt.office.client;
 
+import java.util.Date;
+
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -22,7 +27,7 @@ public class IssueReadWidget extends Composite {
 
 		@ClassName("row-even")
 		String rowEven();
-		
+
 		@ClassName("issue-header-subtitle")
 		String issueHeaderSubtitle();
 	}
@@ -37,8 +42,8 @@ public class IssueReadWidget extends Composite {
 	MyStyle style;
 	@UiField
 	FlexTable flexTable;
-	
-	private Integer days;
+
+	private DateTimeFormat timeFormat;
 
 	public IssueReadWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -47,11 +52,12 @@ public class IssueReadWidget extends Composite {
 		flexTable.setCellPadding(3);
 		flexTable.setCellSpacing(5);
 
+		this.timeFormat = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 	}
 
 	public void addIssue(IssueSelected issue) {
-		
-		Label header = (Label) buildHeader(issue.getUser().getLogin());
+
+		Widget header = buildHeader(issue.getUser().getLogin(), issue.getCreateAt());
 		Label body = (Label) buildBody(issue.getBody());
 
 		flexTable.setWidget(0, 0, header);
@@ -60,9 +66,9 @@ public class IssueReadWidget extends Composite {
 
 	public void addComment(JsIssueComment comment, Integer x) {
 
-		
-		Label header = (Label) buildHeader(comment.getUser().getLogin());
-		Label body = (Label) buildBody(comment.getBody());
+		Widget header = buildHeader(comment
+				.getUser().getLogin(), comment.getCreatedAtString());
+		Widget body = buildBody(comment.getBody());
 
 		flexTable.setWidget(0, 0, header);
 		flexTable.setWidget(1, 0, body);
@@ -71,21 +77,54 @@ public class IssueReadWidget extends Composite {
 			flexTable.setStyleName(style.rowEven());
 		}
 	}
-	
-	private Widget buildHeader(String name) {
-		
+
+	private Widget buildHeader(String name, Object created) {
+
+		HorizontalPanel hPanel = new HorizontalPanel();
+		hPanel.setSpacing(5);
+		hPanel.setWidth(AON.AON_WIDTH_ALL);
+		hPanel.setStyleName(style.issueHeader());
+
 		Label header = new Label(name);
 		header.setStyleName(AON.AON_BOLD);
-		header.addStyleName(style.issueHeader());
-		
-		return header;
+		// header.addStyleName(style.issueHeader());
+
+		Widget daysLabel = buildDaysLabel(created);
+
+		hPanel.add(header);
+		hPanel.add(daysLabel);
+
+		return hPanel;
 	}
-	
-	private Widget buildBody (String text) {
+
+	private Widget buildBody(String text) {
 		Label body = new Label(text);
 		body.setWidth(AON.AON_WIDTH_ALL);
 		body.setStyleName(style.issueBody());
-		
+
 		return body;
+	}
+	
+	private Widget buildDaysLabel (Object text) {
+		
+		Integer days;
+		
+		Label dateLabel = new Label();
+		dateLabel.setStyleName(style.issueHeaderSubtitle());
+		
+		if (text instanceof Date)
+			days = DateUtils.getDaysBetween((Date) text, new Date());
+		
+		else
+			days = DateUtils.getDaysBetween(getParseDate((String) text), new Date());
+		
+
+		dateLabel.setText(" comentado hace " + days + " d\u00EDas");
+		return dateLabel;
+	 
+	}
+
+	private Date getParseDate(String date) {
+		return timeFormat.parse(date);
 	}
 }

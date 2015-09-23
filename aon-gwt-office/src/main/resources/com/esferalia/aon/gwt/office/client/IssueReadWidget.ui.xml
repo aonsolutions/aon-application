@@ -13,6 +13,7 @@
 		padding-bottom: 14px;
 		padding-left: 14px;
 		padding-top: 14px;
+		padding-right: 45%;
 	}
 	
 	.issue-header-subtitle {
@@ -30,8 +31,8 @@
 		margin-left: 150px;
 	}
 	</ui:style>
-	<g:FlowPanel ui:field="issuePanel" styleName="{style.issue-panel}"
-		width="80%">
-		<g:FlexTable ui:field="flexTable" />
-	</g:FlowPanel>
+		<g:FlowPanel ui:field="issuePanel" styleName="{style.issue-panel}"
+			width="80%">
+			<g:FlexTable ui:field="flexTable" />
+		</g:FlowPanel>
 </ui:UiBinder> 
