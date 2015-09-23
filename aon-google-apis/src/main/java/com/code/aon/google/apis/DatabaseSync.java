@@ -7,8 +7,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -1124,61 +1127,65 @@ public static void setEventId(String eventId,int id, String domain) throws SQLEx
 			throws SQLException, AonConnectionException {
 		Map<String, String> domains=getDomains();
 		
-		for (String key : domains.keySet()) {
-		ResultSet rs = null;
-		Connection connection = null;
-		PreparedStatement stmt = null;
-		try {
-
-			String sql = "SELECT CT.*" + " FROM "
+		// Ordena los dominios por orden alfabetico.
+		List<String> list = new ArrayList<String>(domains.keySet());
+		Collections.sort(list, (String s1, String s2) -> s1.compareTo(s2));
+		
+		for (String key : list) {
+			ResultSet rs = null;
+			Connection connection = null;
+			PreparedStatement stmt = null;
+			try {
+				
+				String sql = "SELECT CT.*" + " FROM "
 					+ SQLConstants.COMMERCIAL_TRACKING + " AS CT" + " WHERE "
 					+ CommercialTrackingColumns.DOMAIN + " = ? AND "
 					+ CommercialTrackingColumns.ID + "= ?";
 
-			connection = getConnection(key);
-			stmt = connection.prepareStatement(sql);
-			stmt.setInt(1, 35);
-			stmt.setInt(2, 62);
-			rs = stmt.executeQuery();
+				connection = getConnection(key);
+				stmt = connection.prepareStatement(sql);
+				stmt.setInt(1, 35);
+				stmt.setInt(2, 62);
+				rs = stmt.executeQuery();
 
-			rs.next();
-			CommercialTracking commercialTracking = new CommercialTracking();
-			commercialTracking.setId(rs.getInt(CommercialTrackingColumns.ID));
-			commercialTracking.setDomain(rs
+				rs.next();
+				CommercialTracking commercialTracking = new CommercialTracking();
+				commercialTracking.setId(rs.getInt(CommercialTrackingColumns.ID));
+				commercialTracking.setDomain(rs
 					.getInt(CommercialTrackingColumns.DOMAIN));
-			commercialTracking.setDate(rs
+				commercialTracking.setDate(rs
 					.getTimestamp(CommercialTrackingColumns.DATE));
-			commercialTracking.setSeller(rs
+				commercialTracking.setSeller(rs
 					.getInt(CommercialTrackingColumns.SELLER));
-			commercialTracking.setProjectCommercial(rs
+				commercialTracking.setProjectCommercial(rs
 					.getInt(CommercialTrackingColumns.PROJECT_COMMERCIAL));
-			commercialTracking.setActivity(rs
+				commercialTracking.setActivity(rs
 					.getInt(CommercialTrackingColumns.ACTIVITY));
-			commercialTracking.setComments(rs
+				commercialTracking.setComments(rs
 					.getString(CommercialTrackingColumns.COMMENTS));
-			commercialTracking.setStatus((short) rs
+				commercialTracking.setStatus((short) rs
 					.getInt(CommercialTrackingColumns.STATUS));
-			commercialTracking
+				commercialTracking
 					.setNextCommercialTracking(rs
 							.getInt(CommercialTrackingColumns.NEXT_COMMERCIAL_TRACKING));
-			commercialTracking.setEndDate(rs
+				commercialTracking.setEndDate(rs
 					.getTimestamp(CommercialTrackingColumns.END_DATE));
-			commercialTracking.setOffer(rs
+				commercialTracking.setOffer(rs
 					.getInt(CommercialTrackingColumns.OFFER));
-			commercialTracking.setAllDay(rs
+				commercialTracking.setAllDay(rs
 					.getBoolean(CommercialTrackingColumns.ALLDAY));
-			commercialTracking.setLocation(rs
+				commercialTracking.setLocation(rs
 					.getString(CommercialTrackingColumns.LOCATION));
 
-			return commercialTracking;
-		} finally {
-			if (rs != null)
-				rs.close();
-			if (stmt != null)
-				stmt.close();
-			if (connection != null)
-				connection.close();
-		}
+				return commercialTracking;
+			} finally {
+				if (rs != null)
+					rs.close();
+				if (stmt != null)
+					stmt.close();
+				if (connection != null)
+					connection.close();
+			}
 		}
 		return null;
 	}

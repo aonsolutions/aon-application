@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
@@ -70,10 +73,16 @@ public class ShareFiles {
 		parse(args);
 		if(emails.length != 0){
 			if( domains[0].equals("all")){
+				// Obtiene todos los dominios de la BD.
 				Map<String, String> domains1=DatabaseSync.getDomains();
-				for (String key : domains1.keySet()) { // recorre todos los dominios de la BD	
+				
+				// Ordena los dominios por orden alfabetico.
+				List<String> list = new ArrayList<String>(domains1.keySet());
+				Collections.sort(list, (String s1, String s2) -> s1.compareTo(s2));
+				
+				// Recorre todos los dominios de la BD.
+				for (String key : list) 
 					act(key);
-				}
 			}
 			else{
 				for (String domain : domains) {
