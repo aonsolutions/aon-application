@@ -30,7 +30,8 @@ import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
-import com.esferalia.aon.occam.api.model.attachment.Rattach;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.callcenter.Issue;
 import com.esferalia.aon.occam.api.model.callcenter.IssueComment;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -1457,11 +1458,23 @@ public class AON {
 	// ****************************** ATTACHMENT **
 	// ********************************************
 
-	public static Rattach getRattach(String domainName, Integer domainId, Integer rattachId) {
+	public static Attach getAttach(String domainName, Integer domainId, Condition condition, AttachType attachType) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId);
-			return getAttachment().getRattach(ctx, rattachId);		
+			
+			Attach attach = new Attach();
+			
+			if(attachType.equals(AttachType.REGISTRY)) attach = getAttachment().getRattach(ctx, condition);
+			else if(attachType.equals(AttachType.CONTRACT)) attach = null;
+			else if(attachType.equals(AttachType.INVOICE)) attach = null;
+			else if(attachType.equals(AttachType.ITEM)) attach = null;
+			else if(attachType.equals(AttachType.OFFER)) attach = null;
+			else if(attachType.equals(AttachType.PAYROLL)) attach = null;
+			else if(attachType.equals(AttachType.PROJECT)) attach = null;
+			else if(attachType.equals(AttachType.SEPE)) attach = null;
+			
+			return attach;		
 		} finally {
 			if (ctx != null)
 				ctx.close();

@@ -1788,10 +1788,10 @@ public Vector<FileInfo> insertFileMultiple(FileInfo fi, Integer domainId2) {
 	 * StringUtils.contains("", "") = true
 	 * StringUtils.contains("abc", "") = true
 	 * StringUtils.contains("abc", "a") = true
-	 * StringUtils.contains("ábc", "a") = true
+	 * StringUtils.contains("ï¿½bc", "a") = true
 	 * StringUtils.contains("abc", "z") = false
 	 * StringUtils.contains("abc", "A") = true
-	 * StringUtils.contains("ábc", "A") = true
+	 * StringUtils.contains("ï¿½bc", "A") = true
 	 * StringUtils.contains("abc", "Z") = false
 	 * </pre>
 	 * @param str

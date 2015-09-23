@@ -4,7 +4,10 @@ import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
-public class Rattach {
+public class Attach {
+	
+	AttachType attachType;
+	
 	byte[] data;
 	MimeType mimeType;
 	
@@ -25,15 +28,24 @@ public class Rattach {
 	
 	private String md5;
 	
-	public Rattach() {
+	public Attach() {
 
 	}
 	
 	//--------------------- Getters & Setters
 	
+	public AttachType getAttachType() {
+		return attachType;
+	}
+
+	public void setAttachType(AttachType attachType) {
+		this.attachType = attachType;
+	}
+	
 	public byte[] getData() {
 		return data;
 	}
+
 	public void setData(byte[] data) {
 		this.data = data;
 	}

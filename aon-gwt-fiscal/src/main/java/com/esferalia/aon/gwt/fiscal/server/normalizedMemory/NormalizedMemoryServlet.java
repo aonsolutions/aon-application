@@ -28,6 +28,7 @@ import java.util.zip.ZipInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
+import org.jooq.Condition;
 import org.jooq.Record1;
 import org.jooq.Record3;
 import org.jooq.Result;
@@ -48,7 +49,8 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
-import com.esferalia.aon.occam.api.model.attachment.Rattach;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
@@ -68,8 +70,6 @@ import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonStringUtils;
-
-
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
 
@@ -741,7 +741,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		public String viewer(Integer domainId, MemoryFiles mf){
 			String domainName = AonUtil.getDomainName();
 			
-			Rattach rattach = AON.getRattach(domainName, domainId, mf.getId());
+			Condition condition = RATTACH.ID.eq(mf.getId());
+			Attach rattach = AON.getAttach(domainName, domainId, condition, AttachType.REGISTRY);
 			rattach.setMd5(CheckSum.getMD5Checksum(rattach.getData()));
 			FileInfo doc = new FileInfo(rattach);
 			return getAsHTML(doc, DEFAULT_ZOOM);

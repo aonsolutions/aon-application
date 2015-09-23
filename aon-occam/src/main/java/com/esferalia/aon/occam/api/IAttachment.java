@@ -1,9 +1,11 @@
 package com.esferalia.aon.occam.api;
 
-import com.esferalia.aon.occam.api.model.attachment.Rattach;
+import org.jooq.Condition;
+
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 
 
 public interface IAttachment {
-	public Rattach getRattach(AONContext ctx, Integer rattachId);
+	public Attach getRattach(AONContext ctx, Condition condition);
 	
 }

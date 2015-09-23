@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.common.server;
 
 
+import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
+
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -27,10 +29,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.jooq.Condition;
 
 import com.esferalia.aon.gwt.common.shared.FileInfo;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.attachment.Rattach;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.codec.AonDigestUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
@@ -176,7 +180,8 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 		
 		//ViewerUtils.RAttach rattach1 = ViewerUtils.getRAttach(doc.getFileId());
 		
-		Rattach rattach = AON.getRattach(doc.getDomain(), doc.getDomainId(), doc.getFileId());
+		Condition condition = RATTACH.ID.eq(doc.getFileId());
+		Attach rattach = AON.getAttach(doc.getDomain(), doc.getDomainId(), condition,AttachType.REGISTRY);
 		
 		b = rattach.getData();
 		if (mimetype ==null) mimetype = rattach.getMimeType();

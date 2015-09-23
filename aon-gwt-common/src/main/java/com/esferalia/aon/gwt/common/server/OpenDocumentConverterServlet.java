@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.common.server;
 
+import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -18,9 +20,11 @@ import org.artofsolving.jodconverter.document.DefaultDocumentFormatRegistry;
 import org.artofsolving.jodconverter.document.DocumentFormatRegistry;
 import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
 import org.artofsolving.jodconverter.office.OfficeManager;
+import org.jooq.Condition;
 
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.attachment.Rattach;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
 
@@ -69,7 +73,8 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 
 			MimeType mimeType = MimeType.getByExtension(extension);
 						
-			Rattach rattach = AON.getRattach(domainName, domainId, id);
+			Condition condition = RATTACH.ID.eq(id);
+			Attach rattach = AON.getAttach(domainName, domainId, condition, AttachType.REGISTRY);
 			
 			resp.setContentType(mimeType.getName());
 			OutputStream os = resp.getOutputStream();
