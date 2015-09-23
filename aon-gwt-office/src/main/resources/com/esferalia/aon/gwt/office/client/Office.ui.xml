@@ -61,6 +61,7 @@
 
 		<g:center>
 			<g:DeckLayoutPanel ui:field="deckPanel">
+
 				<g:ResizeLayoutPanel ui:field="dockOfficePanel">
 					<g:HTMLPanel styleName="aon-scroll-area {style.options-scroll-panel}">
 						<g:SimpleLayoutPanel ui:field="resultsPanel"
@@ -70,22 +71,11 @@
 					</g:HTMLPanel>
 				</g:ResizeLayoutPanel>
 				
-				<g:ResizeLayoutPanel ui:field="issuesPanel" />	
-				
+				<g:ResizeLayoutPanel ui:field="issuesPanel" />
+
+
 			</g:DeckLayoutPanel>
 		</g:center>
-
-		<g:south size="40">
-			<g:FlowPanel>
-				<g:Grid>
-					<g:row>
-						<g:customCell>
-							<g:Label />
-						</g:customCell>
-					</g:row>
-				</g:Grid>
-			</g:FlowPanel>
-		</g:south>
 
 	</g:DockLayoutPanel>
 

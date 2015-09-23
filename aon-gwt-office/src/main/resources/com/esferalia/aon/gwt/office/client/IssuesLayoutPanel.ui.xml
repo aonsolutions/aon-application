@@ -1,6 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:o="urn:import:com.esferalia.aon.gwt.office.client">
 
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages"
 		field="msg"></ui:with>
@@ -8,38 +8,38 @@
 		field="aonResources"></ui:with>
 
 	<ui:style>
-		.header-title {
-			font-weight: bolder;
-			font-size: 30px;
-			font-color: #333;
-			line-height: 1.1;
-			word-wrap: break-word;
-		}
-		
-		.header-title-number {
-			color: #aaa;
-		}
-		
-		.header-subtitle {
-			color: #767676;
-			font-size: 16px;
-			line-height: 20px;
-		}
-		
-		.state-open {
-			background-color: #6cc644;
-		}
-		
-		.state {
-			border-radius: 3px;
-			color: #fff;
-			display: inline-block;
-			font-weight: bold;
-			line-height: 20px;
-			padding: 4px 8px 4px 17px;
-			text-align: center;
-		}
-		</ui:style>
+	.header-title {
+		font-weight: bolder;
+		font-size: 30px;
+		font-color: #333;
+		line-height: 1.1;
+		word-wrap: break-word;
+	}
+	
+	.header-title-number {
+		color: #aaa;
+	}
+	
+	.header-subtitle {
+		color: #767676;
+		font-size: 16px;
+		line-height: 20px;
+	}
+	
+	.state-open {
+		background-color: #6cc644;
+	}
+	
+	.state {
+		border-radius: 3px;
+		color: #fff;
+		display: inline-block;
+		font-weight: bold;
+		line-height: 20px;
+		padding: 4px 8px 4px 17px;
+		text-align: center;
+	}
+	</ui:style>
 	<g:DockLayoutPanel unit="PX" height="100%" width="100%">
 		<g:north size="100">
 			<g:FlowPanel>
@@ -53,13 +53,16 @@
 					<g:InlineLabel ui:field="userCreateLabel" />
 					<g:InlineLabel ui:field="whenCreateLabel" styleName="{style.header-title-number}" />
 				</g:HTMLPanel>
+				<g:HTMLPanel>
+					<g:HorizontalPanel ui:field="hPanel" spacing="10"/>
+				</g:HTMLPanel>
+
 			</g:FlowPanel>
 		</g:north>
 
 		<g:center>
-			<g:ScrollPanel>
-				<g:FlowPanel ui:field="flowIssuesPanel">
-				</g:FlowPanel>
+			<g:ScrollPanel width="80%" height="100%">
+				<g:FlowPanel ui:field="flowIssuesPanel" />
 			</g:ScrollPanel>
 		</g:center>
 	</g:DockLayoutPanel>

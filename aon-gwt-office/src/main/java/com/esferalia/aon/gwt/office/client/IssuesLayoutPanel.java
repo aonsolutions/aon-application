@@ -3,12 +3,17 @@ package com.esferalia.aon.gwt.office.client;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class IssuesLayoutPanel extends Composite {
@@ -28,6 +33,8 @@ public class IssuesLayoutPanel extends Composite {
 	InlineLabel userCreateLabel;
 	@UiField
 	InlineLabel whenCreateLabel;
+	@UiField
+	HorizontalPanel hPanel;
 
 	@UiField
 	FlowPanel flowIssuesPanel;
@@ -55,32 +62,54 @@ public class IssuesLayoutPanel extends Composite {
 		titleLabel.setText(issue.getTitle());
 		numberIssueLabel.setText("#" + issue.getNumber());
 		userCreateLabel.setText(issue.getUser().getLogin());
-		
+
 		int days = DateUtils.getDaysBetween(issue.getCreateAt(), (new Date()));
-		
-		whenCreateLabel.setText("Abierto hace " + days + " d\u00EDas - " + issue.getComments()
-				+ " comentarios");
+
+		whenCreateLabel.setText("Abierto hace " + days + " d\u00EDas - "
+				+ issue.getComments() + " comentarios");
+
+		if (issue.getLabels().length() > 0)
+			addLabels();
 	}
 
 	private void addIssue() {
-		
 		IssueReadWidget issueRead = new IssueReadWidget();
 		issueRead.addIssue(issue);
-		
 		flowIssuesPanel.add(issueRead);
-
 	}
 
 	private void addCommentIssues() {
-		
+
 		for (int x = 0; x < issue.getIssueComments().length(); x++) {
-			
 			IssueReadWidget issueRead = new IssueReadWidget();
-			issueRead.addComment(issue.getIssueComments().get(x));
+			issueRead.addComment(issue.getIssueComments().get(x), x);
 			flowIssuesPanel.add(issueRead);
 		}
+	}
 
-		
+	private void addLabels() {
+
+		InlineLabel whoCreate = new InlineLabel(issue.getUser().getLogin()
+				+ " added ");
+
+		hPanel.add(whoCreate);
+		addLabels(hPanel, issue.getLabels());
 
 	}
+
+	private void addLabels(HorizontalPanel hPanel, JsArray<JsLabel> labels) {
+
+		for (int x = 0; x < labels.length(); x++)
+			hPanel.add(addLabel(labels.get(x)));
+	}
+
+	private Widget addLabel(JsLabel jsLabel) {
+		Label label = new Label(jsLabel.getName());
+		label.getElement().getStyle().setColor("#" + jsLabel.getColor());
+		label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+
+		return label;
+
+	}
+
 }

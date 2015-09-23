@@ -24,11 +24,14 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ResizeLayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -217,10 +220,13 @@ public class Office extends Composite implements EntryPoint,
 
 	@Override
 	public void onSelectionTitle(IssueSelected issue) {
-		IssuesLayoutPanel issueLayoutPanel = new IssuesLayoutPanel(issue);
+		
 		issuesPanel.clear();
+
+		IssuesLayoutPanel issueLayoutPanel = new IssuesLayoutPanel(issue);
 		issuesPanel.add(issueLayoutPanel);
-		deckPanel.showWidget(issuesPanel);
+		
+		showIssueLayoutPanel();
 	}
 
 	@Override

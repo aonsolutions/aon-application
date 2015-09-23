@@ -1,0 +1,43 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+	
+	</ui:style>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages"
+		field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
+		field="aonResources"></ui:with>
+
+	<g:DockLayoutPanel>
+		<g:center>
+			<g:TabLayoutPanel barUnit="EM" barHeight="3"
+				ui:field="tabPanel">
+				<g:tab>
+					<g:header>
+						<b> Escribir </b>
+					</g:header>
+					<g:TextArea ui:field="textArea" />
+				</g:tab>
+				<g:tab>
+					<g:header>
+						<b> Preview </b>
+					</g:header>
+					<g:Label text="Preview" />
+				</g:tab>
+			</g:TabLayoutPanel>
+
+		</g:center>
+	</g:DockLayoutPanel>
+
+
+
+
+
+
+
+
+
+
+</ui:UiBinder> 
