@@ -68,10 +68,7 @@ public class DBDrive {
 							RATTACH.DESCRIPTION, RATTACH.TYPE
 							,RATTACH.CATEGORY,RATTACH.DOMAIN)
 					.from(RATTACH)
-					.where(RATTACH.DOMAIN.eq(domainId).or(RATTACH.DOMAIN.in(dslContext
-																	.select(DOMAIN.ID)
-																	.from(DOMAIN)
-																	.where(DOMAIN.PARENT.eq(domainId)))))
+					.where(RATTACH.DOMAIN.eq(domainId))
 							.and(RATTACH.DRIVE_ID.isNull()).and(RATTACH.DATA.isNotNull()).and(condition)
 							//.and(RATTACH.TYPE.ne((byte)0)).and(RATTACH.TYPE.ne((byte)15)).and(RATTACH.TYPE.ne((byte)17))
 							.and(RATTACH.ID.greaterThan(firstId))
@@ -124,10 +121,7 @@ public class DBDrive {
 							CONTRACT_ATTACH.DESCRIPTION, CONTRACT_ATTACH.TYPE
 							,CONTRACT_ATTACH.DOMAIN)
 					.from(CONTRACT_ATTACH)
-					.where(CONTRACT_ATTACH.DOMAIN.eq(domainId).or(CONTRACT_ATTACH.DOMAIN.in(dslContext
-																	.select(DOMAIN.ID)
-																	.from(DOMAIN)
-																	.where(DOMAIN.PARENT.eq(domainId)))))
+					.where(CONTRACT_ATTACH.DOMAIN.eq(domainId))
 							.and(CONTRACT_ATTACH.DRIVEID.isNull()).and(CONTRACT_ATTACH.DATA.isNotNull())
 							.and(CONTRACT_ATTACH.ID.greaterThan(firstId))
 							.orderBy(CONTRACT_ATTACH.ID)
@@ -175,10 +169,7 @@ public class DBDrive {
 							IATTACH.DESCRIPTION, IATTACH.TYPE
 							,IATTACH.DOMAIN)
 					.from(IATTACH)
-					.where(IATTACH.DOMAIN.eq(domainId).or(IATTACH.DOMAIN.in(dslContext
-																	.select(DOMAIN.ID)
-																	.from(DOMAIN)
-																	.where(DOMAIN.PARENT.eq(domainId)))))
+					.where(IATTACH.DOMAIN.eq(domainId))
 							.and(IATTACH.DRIVEID.isNull()).and(IATTACH.DATA.isNotNull())
 							.and(IATTACH.ID.greaterThan(firstId))
 							.orderBy(IATTACH.ID)
@@ -226,10 +217,7 @@ public class DBDrive {
 							INVOICE_ATTACH.DESCRIPTION, INVOICE_ATTACH.TYPE
 							,INVOICE_ATTACH.DOMAIN)
 					.from(INVOICE_ATTACH)
-					.where(INVOICE_ATTACH.DOMAIN.eq(domainId)/*-or(INVOICE_ATTACH.DOMAIN.in(dslContext
-																	.select(DOMAIN.ID)
-																	.from(DOMAIN)
-																	.where(DOMAIN.PARENT.eq(domainId))))*/)
+					.where(INVOICE_ATTACH.DOMAIN.eq(domainId))
 							.and(INVOICE_ATTACH.DRIVEID.isNull()).and(INVOICE_ATTACH.DATA.isNotNull())
 							.and(INVOICE_ATTACH.ID.greaterThan(firstId))
 							.orderBy(INVOICE_ATTACH.ID)
@@ -276,10 +264,7 @@ public class DBDrive {
 					.select(OFFER_ATTACH.ID, OFFER_ATTACH.MIMETYPE,
 							OFFER_ATTACH.DESCRIPTION,OFFER_ATTACH.DOMAIN)
 					.from(OFFER_ATTACH)
-					.where(OFFER_ATTACH.DOMAIN.eq(domainId).or(OFFER_ATTACH.DOMAIN.in(dslContext
-																	.select(DOMAIN.ID)
-																	.from(DOMAIN)
-																	.where(DOMAIN.PARENT.eq(domainId)))))
+					.where(OFFER_ATTACH.DOMAIN.eq(domainId))
 							.and(OFFER_ATTACH.DRIVEID.isNull()).and(OFFER_ATTACH.DATA.isNotNull())
 							.and(OFFER_ATTACH.ID.greaterThan(firstId))
 							.orderBy(OFFER_ATTACH.ID)
@@ -326,10 +311,7 @@ public class DBDrive {
 							PAYROLL_BATCH_ATTACH.DESCRIPTION, PAYROLL_BATCH_ATTACH.TYPE
 							,PAYROLL_BATCH_ATTACH.DOMAIN)
 					.from(PAYROLL_BATCH_ATTACH)
-					.where(PAYROLL_BATCH_ATTACH.DOMAIN.eq(domainId).or(PAYROLL_BATCH_ATTACH.DOMAIN.in(dslContext
-																	.select(DOMAIN.ID)
-																	.from(DOMAIN)
-																	.where(DOMAIN.PARENT.eq(domainId)))))
+					.where(PAYROLL_BATCH_ATTACH.DOMAIN.eq(domainId))
 							.and(PAYROLL_BATCH_ATTACH.DRIVEID.isNull()).and(PAYROLL_BATCH_ATTACH.DATA.isNotNull())
 							.and(PAYROLL_BATCH_ATTACH.ID.greaterThan(firstId))
 							.orderBy(PAYROLL_BATCH_ATTACH.ID)
@@ -376,10 +358,7 @@ public class DBDrive {
 					.select(PROJECT_ATTACH.ID, PROJECT_ATTACH.MIMETYPE,
 							PROJECT_ATTACH.DESCRIPTION,PROJECT_ATTACH.DOMAIN)
 					.from(PROJECT_ATTACH)
-					.where(PROJECT_ATTACH.DOMAIN.eq(domainId).or(PROJECT_ATTACH.DOMAIN.in(dslContext
-																	.select(DOMAIN.ID)
-																	.from(DOMAIN)
-																	.where(DOMAIN.PARENT.eq(domainId)))))
+					.where(PROJECT_ATTACH.DOMAIN.eq(domainId))
 							.and(PROJECT_ATTACH.DRIVEID.isNull()).and(PROJECT_ATTACH.DATA.isNotNull())
 							.and(PROJECT_ATTACH.ID.greaterThan(firstId))
 							.orderBy(PROJECT_ATTACH.ID)
@@ -426,10 +405,7 @@ public class DBDrive {
 							SEPE_BATCH_ATTACH.DESCRIPTION,SEPE_BATCH_ATTACH.TYPE,
 							SEPE_BATCH_ATTACH.DOMAIN)
 					.from(SEPE_BATCH_ATTACH)
-					.where(SEPE_BATCH_ATTACH.DOMAIN.eq(domainId).or(SEPE_BATCH_ATTACH.DOMAIN.in(dslContext
-																	.select(DOMAIN.ID)
-																	.from(DOMAIN)
-																	.where(DOMAIN.PARENT.eq(domainId)))))
+					.where(SEPE_BATCH_ATTACH.DOMAIN.eq(domainId))
 							.and(SEPE_BATCH_ATTACH.DRIVEID.isNull()).and(SEPE_BATCH_ATTACH.DATA.isNotNull())
 							.and(PROJECT_ATTACH.ID.greaterThan(firstId))
 							.orderBy(PROJECT_ATTACH.ID)
