@@ -13,35 +13,35 @@ public class AccountEntryDetail implements Serializable {
 		
 	}
 	
-	public AccountEntryDetail( Integer account, String accountCode, String accountDescription, 
-			String concept,double debit, double credit,
-			Integer balancingAccount,String balancingAccountCode,
-			String balancingAccountDescription,String documentNumber) {
-		setAccount(account);
-		setAccountCode(accountCode);
-		setAccountDescription(accountDescription);
-		setConcept(concept);
-		setDebit(debit);
-		setCredit(credit);
-		setBalancingAccount(account);
-		setBalancingAccountCode(accountCode);
-		setBalancingAccountDescription(accountDescription);
-		setDocumentNumber(documentNumber);
-	}
-	
-	public AccountEntryDetail(Integer id, Integer domain, Integer accountEntry,
-			Integer account, String accountCode, String accountDescription, 
-			Integer line, String concept,double debit, double credit,
-			Integer balancingAccount,String balancingAccountCode,
-			String balancingAccountDescription,String documentNumber) {
-		this(account, accountCode, accountDescription, concept,
-			debit, credit, balancingAccount,balancingAccountCode,
-			balancingAccountDescription,documentNumber);
-		setId(id);
-		setDomain(domain);
-		setAccountEntry(accountEntry);
-		setLine(line);
-	}
+//	public AccountEntryDetail( Integer account, String accountCode, String accountDescription, 
+//			String concept,double debit, double credit,
+//			Integer balancingAccount,String balancingAccountCode,
+//			String balancingAccountDescription,String documentNumber) {
+//		setAccount(account);
+//		setAccountCode(accountCode);
+//		setAccountDescription(accountDescription);
+//		setConcept(concept);
+//		setDebit(debit);
+//		setCredit(credit);
+//		setBalancingAccount(account);
+//		setBalancingAccountCode(accountCode);
+//		setBalancingAccountDescription(accountDescription);
+//		setDocumentNumber(documentNumber);
+//	}
+//	
+//	public AccountEntryDetail(Integer id, Integer domain, Integer accountEntry,
+//			Integer account, String accountCode, String accountDescription, 
+//			Integer line, String concept,double debit, double credit,
+//			Integer balancingAccount,String balancingAccountCode,
+//			String balancingAccountDescription,String documentNumber) {
+//		this(account, accountCode, accountDescription, concept,
+//			debit, credit, balancingAccount,balancingAccountCode,
+//			balancingAccountDescription,documentNumber);
+//		setId(id);
+//		setDomain(domain);
+//		setAccountEntry(accountEntry);
+//		setLine(line);
+//	}
 
 	private Integer id;
 	private Integer domain;
@@ -62,64 +62,72 @@ public class AccountEntryDetail implements Serializable {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public AccountEntryDetail setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 
 	public Integer getDomain() {
 		return domain;
 	}
 
-	public void setDomain(Integer domain) {
+	public AccountEntryDetail setDomain(Integer domain) {
 		this.domain = domain;
+		return this;
 	}
 
 	public Integer getAccountEntry() {
 		return accountEntry;
 	}
 
-	public void setAccountEntry(Integer accountEntry) {
+	public AccountEntryDetail setAccountEntry(Integer accountEntry) {
 		this.accountEntry = accountEntry;
+		return this;
 	}
 
 	public Integer getAccount() {
 		return account;
 	}
 
-	public void setAccount(Integer account) {
+	public AccountEntryDetail setAccount(Integer account) {
 		this.account = account;
+		return this;
 	}
 	
 	public String getAccountCode() {
 		return accountCode;
 	}
 	
-	public void setAccountCode(String accountCode) {
+	public AccountEntryDetail setAccountCode(String accountCode) {
 		this.accountCode = accountCode;
+		return this;
 	}
 
 	public String getAccountDescription() {
 		return accountDescription;
 	}
 
-	public void setAccountDescription(String accountDescription) {
+	public AccountEntryDetail setAccountDescription(String accountDescription) {
 		this.accountDescription = accountDescription;
+		return this;
 	}
 
 	public Integer getLine() {
 		return line;
 	}
 
-	public void setLine(Integer line) {
+	public AccountEntryDetail setLine(Integer line) {
 		this.line = line;
+		return this;
 	}
 
 	public String getConcept() {
 		return concept;
 	}
 
-	public void setConcept(String concept) {
+	public AccountEntryDetail setConcept(String concept) {
 		this.concept = concept;
+		return this;
 	}
 
 	public double getDebit() {
@@ -134,7 +142,7 @@ public class AccountEntryDetail implements Serializable {
 	 * 
 	 * @param debit	El debe
 	 */
-	public void setDebit(double debit) {
+	public AccountEntryDetail setDebit(double debit) {
 		if (debit != 0) {
 			if (debit < 0) {
 				this.credit = AonMathUtils.absRounded(debit);
@@ -144,6 +152,7 @@ public class AccountEntryDetail implements Serializable {
 			}
 		}
 		this.debit = AonMathUtils.round(debit);
+		return this;
 	}
 
 	public double getCredit() {
@@ -158,7 +167,7 @@ public class AccountEntryDetail implements Serializable {
 	 * 
 	 * @param credit El haber
 	 */
-	public void setCredit(double credit) {
+	public AccountEntryDetail setCredit(double credit) {
 		if (credit != 0) {
 			if (credit < 0) {
 				this.debit = AonMathUtils.absRounded(credit);
@@ -168,38 +177,60 @@ public class AccountEntryDetail implements Serializable {
 			}
 		}
 		this.credit = AonMathUtils.round(credit);
+		return this;
 	}
 
 	public Integer getBalancingAccount() {
 		return balancingAccount;
 	}
 
-	public void setBalancingAccount(Integer balancingAccount) {
+	public AccountEntryDetail setBalancingAccount(Integer balancingAccount) {
 		this.balancingAccount = balancingAccount;
+		return this;
 	}
 	
 	public String getBalancingAccountCode() {
 		return balancingAccountCode;
 	}
 
-	public void setBalancingAccountCode(String balancingAccountCode) {
+	public AccountEntryDetail setBalancingAccountCode(String balancingAccountCode) {
 		this.balancingAccountCode = balancingAccountCode;
+		return this;
 	}
 	
 	public String getBalancingAccountDescription() {
 		return balancingAccountDescription;
 	}
 
-	public void setBalancingAccountDescription(String balancingAccountDescription) {
+	public AccountEntryDetail setBalancingAccountDescription(String balancingAccountDescription) {
 		this.balancingAccountDescription = balancingAccountDescription;
+		return this;
 	}
 
 	public String getDocumentNumber() {
 		return documentNumber;
 	}
 
-	public void setDocumentNumber(String documentNumber) {
+	public AccountEntryDetail setDocumentNumber(String documentNumber) {
 		this.documentNumber = documentNumber;
+		return this;
+	}
+
+	public void print() {
+		System.out.println("\tid:{"+id+"}"+
+			"domain:{"+domain+"}"+
+			"accountEntry:{"+accountEntry+"}"+
+			"account:{"+account+"}"+
+			"accountCode:{"+accountCode+"}"+
+			"accountDescription:{"+accountDescription+"}"+
+			"line:{"+line+"}"+
+			"concept:{"+concept+"}"+
+			"debit:{"+debit+"}"+
+			"credit:{"+credit+"}"+
+			"balancingAccount:{"+balancingAccount+"}"+
+			"balancingAccountCode:{"+balancingAccountCode+"}"+
+			"balancingAccountDescription:{"+balancingAccountDescription+"}"+
+			"documentNumber:{"+documentNumber+"}");
 	}
 	
 }

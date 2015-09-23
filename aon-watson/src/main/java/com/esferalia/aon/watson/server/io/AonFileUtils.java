@@ -5,8 +5,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
+
+import com.esferalia.aon.watson.server.codec.AonDigestUtils;
+import com.esferalia.aon.watson.util.AonArrayUtils;
 
 public class AonFileUtils {
 	 /**
@@ -238,4 +242,35 @@ public class AonFileUtils {
     public static void writeLines(File file, Collection lines, String lineEnding) throws IOException {
         writeLines(file, null, lines, lineEnding);
     }
+    
+    //-----------------------------------------------------------------------
+    
+    /***
+	 * Realiza la suma de verificación de un archivo mediante MD5
+	 * 
+	 * @param archivo, archivo al que se le aplicara la suma de verificación
+	 * @return valor de la suma de verificación.
+	 * @throws IOException 
+	 */
+	public static String getMD5Checksum(InputStream is) throws IOException {
+		String md5 = null;
+	
+		byte[] data = AonIOUtils.toByteArray(is);
+		md5 = AonDigestUtils.md5Hex(AonArrayUtils.nullToEmpty(data));
+		
+		return md5;
+	}
+	
+	/***
+	 * Realiza la suma de verificación de un archivo mediante MD5
+	 * 
+	 * @param archivo, archivo al que se le aplicara la suma de verificación
+	 * @return valor de la suma de verificación.
+	 * @throws IOException 
+	 */
+	public static String getMD5Checksum(byte[] data) {
+		String md5 = null;
+		md5 = AonDigestUtils.md5Hex(AonArrayUtils.nullToEmpty(data));
+		return md5;
+	}
 }

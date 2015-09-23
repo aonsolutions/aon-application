@@ -31,7 +31,6 @@ import org.jooq.tools.csv.CSVReader;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
-import com.code.aon.google.apis.DriveUtils.CheckSum;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBConsults;
@@ -42,6 +41,7 @@ import com.code.aon.pool.AonConnectionException;
 import com.code.aon.pool.ConnectionInfo;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.google.sql.AbstractSQL.Domain;
+import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.google.api.client.http.FileContent;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.drive.Drive;
@@ -157,7 +157,7 @@ public class ServiconveniosSynchronize {
 				File file = download(client, "/"+fileName.substring(0,12).toLowerCase());
 				FileInputStream fis2 = new FileInputStream(file);
 
-				String md5 = CheckSum.getMD5Checksum(fis2);
+				String md5 = AonFileUtils.getMD5Checksum(fis2);
 				//com.google.api.services.drive.model.File fdrive = SearchFiles.searchFile(drive, fileInfo.getDriveId());
 				
 				com.google.api.services.drive.model.File fdrive = null;

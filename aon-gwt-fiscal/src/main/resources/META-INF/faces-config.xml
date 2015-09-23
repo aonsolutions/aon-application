@@ -81,5 +81,21 @@
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/normalizedMemory/gwt.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+
+	<!-- =================== Accounting ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_accountEntry</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/accountEntry.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- ============== Accounting Salary Entry =================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_salaryAccounting</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/salaryEntry.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 </faces-config>
 		

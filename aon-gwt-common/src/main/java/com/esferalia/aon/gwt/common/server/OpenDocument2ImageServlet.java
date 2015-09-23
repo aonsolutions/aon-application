@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.common.server;
 
 
+import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
+
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -8,7 +10,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.net.URLConnection;
@@ -26,14 +27,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.jooq.Condition;
 
 import com.esferalia.aon.gwt.common.shared.FileInfo;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.attachment.Rattach;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.watson.server.codec.AonDigestUtils;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
 
@@ -51,50 +51,6 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 	public static final String FORMAT_PARAM = "format";
 
 	private static Map<String, PDFFile> PDFS = new HashMap<String, PDFFile>();
-	
-	public static class CheckSum {
-		/***
-		 * Convierte un arreglo de bytes a String usando valores hexadecimales
-		 * 
-		 * @param digest
-		 *            arreglo de bytes a convertir
-		 * @return String creado a partir de <code>digest</code>
-		 */
-		private static String toHexadecimal(byte[] digest) {
-			String hash = "";
-			for (byte aux : digest) {
-				int b = aux & 0xff;
-				if (Integer.toHexString(b).length() == 1)
-					hash += "0";
-				hash += Integer.toHexString(b);
-			}
-			return hash;
-		}
-
-		/***
-		 * Realiza la suma de verificación de un archivo mediante MD5
-		 * 
-		 * @param archivo
-		 *            archivo a que se le aplicara la suma de verificación
-		 * @return valor de la suma de verificación.
-		 */
-		public static String getMD5Checksum(InputStream is) {
-			String md5 = null;
-			try {
-				byte[] data = AonIOUtils.toByteArray(is);
-				md5 = AonDigestUtils.md5Hex(ArrayUtils.nullToEmpty(data));
-			} catch (IOException e) {
-			}
-			
-			return md5;
-		}
-		public static String getMD5Checksum(byte[] data) {
-			String md5 = null;
-			md5 = AonDigestUtils.md5Hex(ArrayUtils.nullToEmpty(data));
-			return md5;
-		}
-
-	}
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -176,7 +132,8 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 		
 		//ViewerUtils.RAttach rattach1 = ViewerUtils.getRAttach(doc.getFileId());
 		
-		Rattach rattach = AON.getRattach(doc.getDomain(), doc.getDomainId(), doc.getFileId());
+		Condition condition = RATTACH.ID.eq(doc.getFileId());
+		Attach rattach = AON.getAttach(doc.getDomain(), doc.getDomainId(), condition,AttachType.REGISTRY);
 		
 		b = rattach.getData();
 		if (mimetype ==null) mimetype = rattach.getMimeType();

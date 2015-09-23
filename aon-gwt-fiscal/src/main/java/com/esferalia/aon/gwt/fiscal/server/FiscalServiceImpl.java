@@ -2,7 +2,9 @@ package com.esferalia.aon.gwt.fiscal.server;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +13,7 @@ import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -32,6 +35,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
+import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.Activities.Type1Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type2Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type3Activities;
@@ -542,4 +546,33 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	public void deleteMemory(Memory memory) throws AonCoreException {
 		// TODO
 	}
+	
+	// --------------------------------------------------------------- ACCOUNT ENTRIES
+	@Override
+	public LinkedList<AccountEntry> getSalaryAccountEntries(String domainName,
+			int domain, Date from, Date to ) {
+		return AON.getAccountEntries(domainName, domain,
+				p -> p.getDomainProperty().eq(domain)
+					.and(p.getEntryDateProperty().between(from, to))
+					.and(p.getEntryTypeProperty().eq((byte) AccountEntryType.SALARY.ordinal()))
+				, 0, 1000);
+	}
+
+	@Override
+	public void deleteAccountEntry(String domainName, int domain, Integer id) {
+		AON.delete(domainName, domain, id);
+	}
+
+	@Override
+	public LinkedList<AccountEntry> insertSalaryAccountEntries(
+			String domainName, int domain, Date from, Date to, String concept,
+			Integer registryBank) {
+		List<Integer> ids = AON.insertSalaryEntries(domainName, domain, from, to, concept, registryBank);
+		final Integer[] arr = ids.toArray(new Integer[ids.size()]);  
+		return AON.getAccountEntries(domainName, domain
+				, p -> p.getIdProperty().in(arr)
+						.and(p.getDomainProperty().eq(domain) )
+				, 0, 100);
+	}
+
 }

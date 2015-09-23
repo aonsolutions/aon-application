@@ -134,6 +134,7 @@ public class AonStringUtils {
 	public static final String SPACE = " ";
 	public static final String DOT = ".";
 	public static final String COMMA = ",";
+	public static final String PERCENT = "%";
 	public static final String ZERO = "0";
 	public static final String ONE = "1";
 	public static final String TWO = "2";

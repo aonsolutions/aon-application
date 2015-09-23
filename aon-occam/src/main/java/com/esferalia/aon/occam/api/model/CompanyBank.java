@@ -7,29 +7,42 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 @SuppressWarnings("serial")
 public class CompanyBank implements Serializable, IIbanContainer {
 	
+	private Integer id;
 	private String bankAccount;
 	private String bic;
 	private String alias;
+
+	
+	public Integer getId() {
+		return id;
+	}
+	public CompanyBank setId(Integer id) {
+		this.id = id;
+		return this;
+	}
 	
 	public String getBankAccount() {
 		return bankAccount;
 	}
-	public void setBankAccount(String bankAccount) {
+	public CompanyBank setBankAccount(String bankAccount) {
 		this.bankAccount = bankAccount;
+		return this;
 	}
+	
 	public String getBic() {
 		return bic;
 	}
-	public void setBic(String bic) {
+	public CompanyBank setBic(String bic) {
 		this.bic = bic;
+		return this;
 	}
 	public String getAlias() {
 		return alias;
 	}
-	public void setAlias(String alias) {
+	public CompanyBank setAlias(String alias) {
 		this.alias = alias;
+		return this;
 	}
-	
 	@Override
 	public String getIBan() {
 		return bankAccount;

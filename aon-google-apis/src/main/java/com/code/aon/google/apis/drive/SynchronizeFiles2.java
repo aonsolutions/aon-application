@@ -7,7 +7,10 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -182,15 +185,18 @@ public class SynchronizeFiles2 {
 	}
 	
 	public static void synchronizeSF() throws IOException, SQLException,
-	AonConnectionException, KeyStoreException,
-	GeneralSecurityException, NamingException {
+			AonConnectionException, KeyStoreException, 
+			GeneralSecurityException, NamingException {
+		// Obtiene todos los dominios de la BD.
 		Map<String, String> domains = getDomains();
-		// obtiene todos los dominios de la BD
-
-		for (String key : domains.keySet()) {
-			// recorre todos los dominios de la BD
+		
+		// Ordena los dominios por orden alfabetico.
+		List<String> list = new ArrayList<String>(domains.keySet());
+		Collections.sort(list, (String s1, String s2) -> s1.compareTo(s2));
+		
+		// Recorre todos los dominios de la BD.
+		for (String key : list)
 			synchronizeSF(key);
-		}
 	}	
 	
 	public static void main(String[] args) throws IOException, SQLException,

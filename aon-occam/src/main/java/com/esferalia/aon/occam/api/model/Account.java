@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public class Account implements Serializable {
 
 	private static final long serialVersionUID = 3940903705871158256L;
@@ -12,7 +14,7 @@ public class Account implements Serializable {
 
 	public Account(Integer id, Integer domain,
 			String code, String description, String alias,
-			boolean entryEnabled, int level,
+			boolean entryEnabled, byte level,
 			boolean active, String costCenter) {
 		setId(id);
 		setDomain(domain);
@@ -31,7 +33,7 @@ public class Account implements Serializable {
 	private String description;
 	private String alias;
 	private boolean entryEnabled;
-	private int level;
+	private byte level;
 	private boolean active;
 	private String costCenter;
 
@@ -39,72 +41,91 @@ public class Account implements Serializable {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public Account setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 
 	public int getDomain() {
 		return domain;
 	}
 
-	public void setDomain(int domain) {
+	public Account setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
 
 	public String getCode() {
 		return code;
 	}
 
-	public void setCode(String code) {
+	public Account setCode(String code) {
 		this.code = code;
+		return this;
 	}
 
 	public String getDescription() {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public Account setDescription(String description) {
 		this.description = description;
+		return this;
 	}
 
 	public String getAlias() {
 		return alias;
 	}
 
-	public void setAlias(String alias) {
+	public Account setAlias(String alias) {
 		this.alias = alias;
+		return this;
 	}
 
 	public boolean isEntryEnabled() {
 		return entryEnabled;
 	}
 
-	public void setEntryEnabled(boolean entryEnabled) {
+	public Account setEntryEnabled(boolean entryEnabled) {
 		this.entryEnabled = entryEnabled;
+		return this;
 	}
 
-	public int getLevel() {
+	public byte getLevel() {
 		return level;
 	}
 
-	public void setLevel(int level) {
+	public Account setLevel(byte level) {
 		this.level = level;
+		return this;
 	}
 
 	public boolean isActive() {
 		return active;
 	}
 
-	public void setActive(boolean active) {
+	public Account setActive(boolean active) {
 		this.active = active;
+		return this;
 	}
 
 	public String getCostCenter() {
 		return costCenter;
 	}
 
-	public void setCostCenter(String costCenter) {
+	public Account setCostCenter(String costCenter) {
 		this.costCenter = costCenter;
+		return this;
+	}
+
+	public String getFullName() {
+		return (AonStringUtils.join(
+				 AonStringUtils.defaultString(getCode())
+				,AonStringUtils.isNotBlank(getDescription())
+					?(AonStringUtils.SPACE + '-' + AonStringUtils.SPACE + getDescription())  
+					:(AonStringUtils.EMPTY)
+								   )
+				);
 	}
 	
 }

@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.common.client.widget;
 
 import java.util.Date;
 
-import com.esferalia.aon.gwt.common.client.css.AonResources;
+import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.datepicker.client.DateBox;
@@ -10,8 +10,6 @@ import com.google.gwt.user.datepicker.client.DatePicker;
 
 public class DateBoxEx extends com.google.gwt.user.datepicker.client.DateBox {
 
-	private static final AonResources AON_RESOURCES = GWT
-			.create(AonResources.class);
 	private static final DefaultFormat DEFAULT_FORMAT = GWT.create(DefaultFormat.class);
 	
 	public static class DefaultFormat implements Format {
@@ -19,7 +17,7 @@ public class DateBoxEx extends com.google.gwt.user.datepicker.client.DateBox {
 		// TODO i18n
 		public static final String MAIN_PATTERN = "dd/MM/yyyy";
 		
-		private static final String[] EXTRA_PATTERNS = new String[] {"ddMMyyyy","ddMMyy","dd/MM/yy"};
+		private static final String[] EXTRA_PATTERNS = new String[] {"ddMMyy","ddMMyyyy","dd/MM/yy"};
 
 		private final DateTimeFormat dateFormat;
 		
@@ -71,7 +69,7 @@ public class DateBoxEx extends com.google.gwt.user.datepicker.client.DateBox {
 				for (String pattern : EXTRA_PATTERNS) {
 					try {
 						date = DateTimeFormat.getFormat(pattern).parse(dateText);
-						dateBox.setValue(date);
+						dateBox.setValue(date,true);
 						parsed = true;
 						break;
 					} catch (IllegalArgumentException e) {
@@ -83,7 +81,7 @@ public class DateBoxEx extends com.google.gwt.user.datepicker.client.DateBox {
 						date = new Date(dateText);
 					} catch (IllegalArgumentException e1) {
 						if (reportError) {
-							dateBox.addStyleName(AON_RESOURCES.css().aonTextBoxError() );
+							dateBox.addStyleName(AON.AON_CSS.aonTextBoxError() );
 						}
 						return null;
 					}
@@ -93,7 +91,7 @@ public class DateBoxEx extends com.google.gwt.user.datepicker.client.DateBox {
 		}
 
 		public void reset(DateBox dateBox, boolean abandon) {
-			dateBox.removeStyleName(AON_RESOURCES.css().aonTextBoxError() );
+			dateBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
 		}
 	}
 

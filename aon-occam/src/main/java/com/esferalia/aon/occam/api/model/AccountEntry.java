@@ -12,23 +12,6 @@ public class AccountEntry implements Serializable {
 
 	private static final long serialVersionUID = 369125336534396707L;
 
-	public AccountEntry() {
-		
-	}
-
-	public AccountEntry(Integer id, Integer accountPeriod, Integer domain,
-			Date entryDate, Byte entryType, Integer journal,
-			Byte securityLevel, String comments) {
-		setId(id);
-		setAccountPeriod(accountPeriod);
-		setDomain(domain);
-		setEntryDate(entryDate);
-		setEntryType(AccountEntryType.values()[entryType]);
-		setJournal(journal);
-		setSecurityLevel(SecurityLevel.values()[securityLevel]);
-		setComments(comments);
-	}	
-	
 	private Integer id;
 	private Integer accountPeriod;
 	private Integer domain;
@@ -37,79 +20,87 @@ public class AccountEntry implements Serializable {
 	private Integer journal;
 	private SecurityLevel securityLevel;
 	private String comments;
-	private Collection<AccountEntryDetail> details;
-
-	private boolean periodCreationEnabled;
+	private LinkedList<AccountEntryDetail> details;
 	
 	public Integer getId() {
 		return this.id;
 	}
-	public void setId(Integer id) {
+	public AccountEntry setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 
 	public Integer getAccountPeriod() {
 		return this.accountPeriod;
 	}
-	public void setAccountPeriod(Integer accountPeriod) {
+	public AccountEntry setAccountPeriod(Integer accountPeriod) {
 		this.accountPeriod = accountPeriod;
+		return this;
 	}
 
 	public Integer getDomain() {
 		return this.domain;
 	}
-	public void setDomain(Integer domain) {
+	public AccountEntry setDomain(Integer domain) {
 		this.domain = domain;
+		return this;
 	}
 
 	public Date getEntryDate() {
 		return this.entryDate;
 	}
-	public void setEntryDate(Date entryDate) {
+	public AccountEntry setEntryDate(Date entryDate) {
 		this.entryDate = entryDate;
+		return this;
 	}
 
 	public AccountEntryType getEntryType() {
 		return this.entryType;
 	}
-	public void setEntryType(AccountEntryType entryType) {
+	public AccountEntry setEntryType(AccountEntryType entryType) {
 		this.entryType = entryType;
+		return this;
 	}
 
 	public Integer getJournal() {
 		return this.journal;
 	}
-	public void setJournal(Integer journal) {
+	public AccountEntry setJournal(Integer journal) {
 		this.journal = journal;
+		return this;
 	}
 
 	public SecurityLevel getSecurityLevel() {
 		return this.securityLevel;
 	}
-	public void setSecurityLevel(SecurityLevel securityLevel) {
+	public AccountEntry setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
+		return this;
 	}
 
 	public String getComments() {
 		return this.comments;
 	}
-	public void setComments(String comments) {
+	public AccountEntry setComments(String comments) {
 		this.comments = comments;
+		return this;
 	}
 
 	public boolean isConfidential() {
 		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
 	}
-	public void setConfidential(boolean confidential) {
+	public AccountEntry setConfidential(boolean confidential) {
 		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
+		return this;
 	}
 	
 	public Collection<AccountEntryDetail> getDetails() {
 		ensureNotNullCollection();
 		return details;
 	}
-	public void setDetails(Collection<AccountEntryDetail> details) {
+	public AccountEntry setDetails(LinkedList<AccountEntryDetail> details) {
 		this.details = details;
+		return this;
 	}
 	public AccountEntry addDetail( AccountEntryDetail detail) {
 		ensureNotNullCollection();
@@ -122,12 +113,18 @@ public class AccountEntry implements Serializable {
 			this.details = new LinkedList<AccountEntryDetail>();
 		}
 	}
-
-	public boolean isPeriodCreationEnabled() {
-		return periodCreationEnabled;
-	}
-	public void setPeriodCreationEnabled(boolean periodCreationEnabled) {
-		this.periodCreationEnabled = periodCreationEnabled;
-	}
 	
+	public void print() {
+		System.out.println("id:{"+id+"}"+
+			";accountPeriod:{"+ accountPeriod+"}"+
+			";domain:{"+ domain+"}"+
+			";entryDate:{"+ entryDate+"}"+
+			";entryType:{"+ entryType+"}"+
+			";journal:{"+ journal+"}"+
+			";securityLevel:{"+ securityLevel+"}"+
+			";comments:{"+comments+"}");
+		for ( AccountEntryDetail det : getDetails()) {
+			det.print();
+		}
+	}
 }

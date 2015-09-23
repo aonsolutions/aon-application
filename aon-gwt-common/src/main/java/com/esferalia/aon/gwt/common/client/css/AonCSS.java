@@ -4,6 +4,33 @@ import com.google.gwt.resources.client.CssResource;
 
 public interface AonCSS extends  CssResource {
 	
+	@ClassName("aon-finding-title-toolbar")
+	String aonFindingTitleToolbar();
+	
+	@ClassName("aon-finding-title")
+	String aonFindingTitle();
+	
+	@ClassName("aon-finding-title-internal")
+	String aonFindingTitleInternal();
+	
+	@ClassName("aon-finding-subtitle-internal")
+	String aonFindingSubtitleIternal();
+	
+	@ClassName("aon-finding-toolbar")
+	String aonFindingToolbar();
+	
+	@ClassName("aon-finding-toolbar-item-group")
+	String aonFindingToolbarItemGroup();
+	
+	@ClassName("aon-finding-toolbar-item")
+	String aonFindingToolbarItem();
+	
+	@ClassName("aon-finding-toolbar-item-no-icon")
+	String aonFindingToolbarItemNoIcon();
+	
+	@ClassName("aon-finding-toolbar-item-no-border")
+	String aonFindingToolbarItemNoBorder();
+	
 	@ClassName("aon-no-print")
 	String aonNoPrint();
 	
@@ -133,9 +160,15 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-icon-trash")
 	String aonIconTrash();
 
+	@ClassName("aon-icon-save")
+	String aonIconSave();
+
 	@ClassName("aon-icon-delete")
 	String aonIconDelete();
 
+	@ClassName("aon-icon-search")
+	String aonIconSearch();
+	
 	@ClassName("aon-icon-previous")
 	String aonIconPrevious();
 
@@ -202,6 +235,9 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-curly-lt")
 	String aonCurlyLT();
 	
+	@ClassName("aon-nopadding")
+	String aonNopadding();
+	
 	@ClassName("aon-padding-left")
     String aonPaddingLeft();
 	
@@ -210,6 +246,9 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-border-none")
     String aonBorderNone();
+	
+	@ClassName("aon-border-top")
+    String aonBorderTop();
 	
 	@ClassName("aon-border-bottom")
     String aonBorderBottom();
@@ -657,4 +696,11 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-fiscal-registro-mercantil")
 	String aonFiscalRegistroMercantil();
+	
+	@ClassName("aon-odd-background")
+	String aonOddBackground();
+
+	@ClassName("aon-even-background")
+	String aonEvenBackground();
+	
 }

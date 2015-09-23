@@ -354,11 +354,15 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Aceptar")
 	String accept();
 
+	@DefaultMessage("Vista previa")
+	String preview();
+
 	@DefaultMessage("C\u00F3digo")
 	String code();
 
 	@DefaultMessage("Generar fichero")
 	String generateFile();
+	
 	@DefaultMessage("Fichero")
 	String generateFileAbr();
 	
@@ -408,6 +412,15 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("A\u00F1o")
 	String year();
 	
+	@DefaultMessage("Periodo")
+	String period();
+
+	@DefaultMessage("Concepto")
+	String concept();
+
+	@DefaultMessage("Cuenta bancaria")
+	String bankAccount();
+
 	@DefaultMessage("Desde")
 	String from();
 
@@ -447,6 +460,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Sustitutiva")
 	String replacement();
 	
+	@DefaultMessage("Pendiente de pago")
+	String pendingPayment();
+
 	@DefaultMessage("Declaraci\u00F3n sustituva por rectificaci\u00F3n de cuotas en caso de concurso de acreedores ( art. 80.Tres LIVA)")
 	String replacementDueInsolvencyState();
 
@@ -2490,7 +2506,16 @@ public interface CommonMessages extends Messages {
  	
  	@DefaultMessage("(Debe)/ Haber")
 	String debitCredit();
- 	
+
+ 	@DefaultMessage("Debe")
+	String debit();
+
+ 	@DefaultMessage("Haber")
+	String credit();
+
+ 	@DefaultMessage("Contrapartida")
+	String balancingAccount();
+
     //-------------------- AON GWT TEMPLATES - Consumption
  	
  	@DefaultMessage("Limpiar")
@@ -2514,6 +2539,12 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Listado")
 	String listTemplates();
  	
+ 	@DefaultMessage("Apuntes contables")
+	String accountEntries();
+ 	
+ 	@DefaultMessage("Cuenta contable")
+ 	String account();
+
  	// ------------------- AON GWT OFFICE
  	
  	@DefaultMessage("Notificaciones")
@@ -2551,5 +2582,24 @@ public interface CommonMessages extends Messages {
  	
  	@DefaultMessage("Etiquetas")
 	String labelsIssues();
- 	
+
+    @DefaultMessage("Existen {0} apuntes de n\u00F3minas en el periodo seleccionado. [VER]")
+    @AlternateMessage({"=1", "Existe un apunte de n\u00F3minas en el periodo seleccionado. [VER]"})
+    String salaryEntryErrorMsg(@PluralCount int count);
+    
+    @DefaultMessage("No se pudo comprobar la existencia de apuntes")
+    String accountEntryReadError();
+    
+    @DefaultMessage("Error al recuperar las cuentas bancarias de la empresa.")
+    String registryBankReadError();
+
+	@DefaultMessage("\u00BFDesea continuar con la generaci\u00F3n de apuntes?")
+	String generateAccountEntry();
+	
+	@DefaultMessage("Apuntes generados")
+	String generatedAccountEntries();
+
+	@DefaultMessage("No se gener\u00F3 ning\u00FAn apunte.")
+	String noGeneratedAccountEntries();
+
 }

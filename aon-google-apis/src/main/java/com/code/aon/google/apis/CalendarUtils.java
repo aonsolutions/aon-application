@@ -22,6 +22,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -750,11 +751,13 @@ public static void synchronize(String key) throws IOException, SQLException, Aon
 	 * @throws NamingException 
 	 */
 	public static void synchronize() throws IOException, SQLException, AonConnectionException, KeyStoreException, GeneralSecurityException, NamingException {
-		
 		Map<String, String> domains=getDomains();//obtiene todos los dominios de la BD
-		for (String key : domains.keySet()) { // recorre todos los dominios de la BD
-			
 		
+		// Ordena los dominios por orden alfabetico.
+		List<String> list = new ArrayList<String>(domains.keySet());
+		Collections.sort(list, (String s1, String s2) -> s1.compareTo(s2));
+		
+		for (String key : list) { // recorre todos los dominios de la BD
 			Vector<Domain> companies = getDomain(key);//Obtiene todos los dominios del dominio padre
 			Map<Integer,Vector<CommercialTracking>> map= getCommercialTrackingAll(key);// Obtiene todos los eventos(CommercialTracking) de la BD
 			for(int j=0;j<companies.size();j++){

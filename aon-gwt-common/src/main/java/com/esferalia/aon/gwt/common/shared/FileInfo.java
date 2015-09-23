@@ -4,7 +4,7 @@ package com.esferalia.aon.gwt.common.shared;
 import java.util.Date;
 import java.util.Vector;
 
-import com.esferalia.aon.occam.api.model.attachment.Rattach;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.view.client.ProvidesKey;
 
@@ -12,11 +12,6 @@ import com.google.gwt.view.client.ProvidesKey;
 
 	public class FileInfo implements IsSerializable{
 		
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 7311059692227227973L;
-
 		public static final ProvidesKey<FileInfo> PROVIDES_KEY = new ProvidesKey<FileInfo>() {
 			@Override
 			public Object getKey(FileInfo fileInfo) {
@@ -74,7 +69,7 @@ import com.google.gwt.view.client.ProvidesKey;
 			this.mimetype=mimetype;
 		}
 		
-		public FileInfo(Rattach rattach) {
+		public FileInfo(Attach rattach) {
 			this.data = rattach.getData();
 			this.mimeString = rattach.getMimeType().getName();
 			this.mimetype = (byte) rattach.getMimeType().ordinal();

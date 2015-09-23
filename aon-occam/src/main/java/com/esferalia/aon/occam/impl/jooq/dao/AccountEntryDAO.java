@@ -5,124 +5,95 @@ import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 
 import java.math.BigDecimal;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.MessageFormat;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.InsertSetMoreStep;
+import org.jooq.InsertSetStep;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
-import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
-import org.jooq.lambda.SQL;
-import org.jooq.lambda.Seq;
-import org.jooq.lambda.Unchecked;
+import org.jooq.types.UInteger;
 
+import com.esferalia.aon.jooq.tables.Account;
+import com.esferalia.aon.jooq.tables.records.AccountEntryDetailRecord;
 import com.esferalia.aon.jooq.tables.records.AccountEntryRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
+import com.esferalia.aon.occam.api.model.accounting.AccountEntryProperties;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountEntryValidation;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class AccountEntryDAO {
 	
-	private final static Logger LOGGER = Logger.getLogger(AccountEntryDAO.class.getName()); 
+	// --------------------------------------------------------------- LECTURA
 
-	public static Seq<AccountEntry> fetch(AONContext ctx
-				, Condition condition
-				, int offset
-				, int numberOfRows) {
-		ctx.checkRead();
-		Function<ResultSet, AccountEntry> function = Unchecked.function(rs -> new AccountEntry(
-			 rs.getInt(ACCOUNT_ENTRY.ID.getName())
-			,rs.getInt(ACCOUNT_ENTRY.ACCOUNT_PERIOD.getName())
-			,rs.getInt(ACCOUNT_ENTRY.DOMAIN.getName())
-			,rs.getDate(ACCOUNT_ENTRY.ENTRY_DATE.getName())
-			,rs.getByte(ACCOUNT_ENTRY.ENTRY_TYPE.getName())
-			,rs.getInt(ACCOUNT_ENTRY.JOURNAL.getName())
-			,rs.getByte(ACCOUNT_ENTRY.SECURITY_LEVEL.getName())
-			,rs.getString(ACCOUNT_ENTRY.COMMENTS.getName())
-				));
-		return fetch(ctx, condition,offset,numberOfRows,function);
-	}
-	
-	
-	public static Seq<AccountEntry> fetch(AONContext ctx
-			, Condition condition
-			, int offset
-			, int numberOfRows
-			, Function<ResultSet, AccountEntry> function) {
-		ctx.checkRead();
-		String sql = ctx.getDslContext()
-			.selectFrom( ACCOUNT_ENTRY )
-			.where(condition)
-			.limit(offset, numberOfRows)
-			.getSQL();
-		try {
-			PreparedStatement stmt = ctx.getDslContext()
-					.configuration()
-					.connectionProvider()
-					.acquire()
-					.prepareStatement(sql);
-			Seq<AccountEntry> seq = SQL.seq(stmt,function);
-			return seq;
-		} catch (DataAccessException e) {
-			throw new AonCoreException(e.getMessage(),e);
-		} catch (SQLException e) {
-			throw new AonCoreException(e.getMessage(),e);
-		}
-	}
-	
-	public static String fetchCSV(AONContext ctx
-			, Condition condition
+	private static final Account DET_ACCOUNT = ACCOUNT.as("detAcc");;
+	private static final Account BAL_ACCOUNT = ACCOUNT.as("balAcc");
+
+	public static Stream<AccountEntry> fetch(AONContext ctx
+			, AccountEntryFilter filter
 			, int offset
 			, int numberOfRows) {
 		ctx.checkRead();
-		return ctx.getDslContext()
-			.selectFrom( ACCOUNT_ENTRY )
-			.where(condition)
-			.limit(offset, numberOfRows)
-			.fetch().formatCSV();
+		return  ctx.getDslContext()
+			.select(ACCOUNT_ENTRY.ID,ACCOUNT_ENTRY.DOMAIN,ACCOUNT_ENTRY.ACCOUNT_PERIOD
+					,ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY.ENTRY_TYPE,ACCOUNT_ENTRY.JOURNAL
+					,ACCOUNT_ENTRY.SECURITY_LEVEL,ACCOUNT_ENTRY.COMMENTS,ACCOUNT_ENTRY.CREATION_USER
+					,ACCOUNT_ENTRY.CREATION_DATE,ACCOUNT_ENTRY.MODIFICATION_USER,ACCOUNT_ENTRY.MODIFICATION_DATE
+					)
+				.from(ACCOUNT_ENTRY)
+				.where(ACCOUNT_ENTRY_PROPERTIES.getConditions(filter))
+				.limit(offset,numberOfRows)
+				.fetch()
+				.stream()
+				.map( new FullAccountEntryFiller() )
+				.peek( ae -> ae.setDetails( ctx.getDslContext()
+						.select(ACCOUNT_ENTRY_DETAIL.ID,ACCOUNT_ENTRY_DETAIL.DOMAIN,ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY
+								,ACCOUNT_ENTRY_DETAIL.LINE,ACCOUNT_ENTRY_DETAIL.ACCOUNT,ACCOUNT_ENTRY_DETAIL.CONCEPT
+								,ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,ACCOUNT_ENTRY_DETAIL.DEBIT,ACCOUNT_ENTRY_DETAIL.CREDIT
+								,ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER,ACCOUNT_ENTRY_DETAIL.CREATION_USER,ACCOUNT_ENTRY_DETAIL.CREATION_DATE
+								,ACCOUNT_ENTRY_DETAIL.MODIFICATION_USER,ACCOUNT_ENTRY_DETAIL.MODIFICATION_DATE
+								,DET_ACCOUNT.CODE,DET_ACCOUNT.DESCRIPTION
+								,BAL_ACCOUNT.CODE,BAL_ACCOUNT.DESCRIPTION
+								)
+							.from(ACCOUNT_ENTRY_DETAIL)
+							.join(DET_ACCOUNT).on(DET_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
+							.leftOuterJoin(BAL_ACCOUNT).on(BAL_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
+							.where(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY.eq(ae.getId()))
+							.orderBy(ACCOUNT_ENTRY_DETAIL.LINE)
+							.fetch()
+							.stream()
+							.map( new FullAccountEntryDetailFiller() )
+							.collect(Collectors.toCollection(LinkedList::new))
+							)
+							);
 	}
-
-	public static AccountEntry fetchOne(AONContext ctx, Condition condition) {
-		return populateRecord(ctx.getDslContext().fetchOne(ACCOUNT_ENTRY, condition));
-	}
-
-	public static void insert(AONContext ctx, AccountEntry ae) {
+	
+	// ------------------------------------------------------------- ESCRITURA
+	
+	public static Integer insert(AONContext ctx, AccountEntry ae) {
 		ctx.checkWrite();
-		if (ae.getAccountPeriod() == null && ae.isPeriodCreationEnabled()) {
-			LOGGER.info(MessageFormat.format(
-				"Creación automática de periodo contable para la fecha {0,date,dd/MM/yyy}: "
-				,ae.getEntryDate()));
-			AccountPeriod accountPeriod = new AccountPeriod();
-			accountPeriod.setDomain( ae.getDomain() );
-			accountPeriod.setName( Integer.toString( AonDateUtils.getYear(ae.getEntryDate())));
-			accountPeriod.setInitiationDate(AonDateUtils.getYearFirstDay(ae.getEntryDate()));
-			accountPeriod.setDeadline(AonDateUtils.getYearLastDay(ae.getEntryDate()));
-			AccountPeriodDAO.insert(ctx, accountPeriod);
-			LOGGER.info( MessageFormat.format(
-				"Periodo contable creado ID:{0}; DOMAIN:{1}: "
-				,accountPeriod.getId(),accountPeriod.getDomain()));
-			ae.setAccountPeriod(accountPeriod.getId());
-		}
 		AccountEntryValidation.validateEntry(ctx, ae);
 		increaseJournal(ctx, ae);
 		AccountEntryRecord record = ctx.getDslContext()
@@ -131,38 +102,41 @@ public class AccountEntryDAO {
 				.set(ACCOUNT_ENTRY.ACCOUNT_PERIOD,ae.getAccountPeriod())
 				.set(ACCOUNT_ENTRY.ENTRY_DATE,AonDateUtils.toSql(ae.getEntryDate()))
 				.set(ACCOUNT_ENTRY.ENTRY_TYPE, AonEnumUtils.getByte(ae.getEntryType())) 
-				.set(ACCOUNT_ENTRY.JOURNAL,ae.getJournal())
+				.set(ACCOUNT_ENTRY.JOURNAL, ae.getJournal())
 				.set(ACCOUNT_ENTRY.SECURITY_LEVEL, AonEnumUtils.getByte(ae.getSecurityLevel()))
 				.set(ACCOUNT_ENTRY.COMMENTS,ae.getComments())
-				.returning()
+				.set(ACCOUNT_ENTRY.CREATION_USER,ae.getComments())
+				.set(ACCOUNT_ENTRY.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+				.returning(ACCOUNT_ENTRY.ID)
 				.fetchOne();
-		populateRecord(record, ae);
+		ae.setId(record.getValue(ACCOUNT_ENTRY.ID));
+		batchInsert(ctx, ae);
+		return record.getValue(ACCOUNT_ENTRY.ID); 
+	}
+
+	private static void batchInsert(AONContext ctx, AccountEntry ae) {
+		InsertSetStep<AccountEntryDetailRecord> insert = ctx.getDslContext().insertInto(ACCOUNT_ENTRY_DETAIL);
+		InsertSetMoreStep<AccountEntryDetailRecord>  insertMore = null;
 		int line = 0;
-		for (AccountEntryDetail detail : ae.getDetails() ) {
-			detail.setAccountEntry(ae.getId());
-			detail.setDomain(ae.getDomain());
-			detail.setLine(++line);
+		for (AccountEntryDetail detail : ae.getDetails()) {
+			AccountEntryValidation.validateDetail(ctx, detail);
+			if (insertMore != null) {
+				insert = insertMore.newRecord();
+			}
+			insertMore =  insert
+				.set(ACCOUNT_ENTRY_DETAIL.DOMAIN,ae.getDomain())
+				.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY,ae.getId())
+				.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT,detail.getAccount())
+				.set(ACCOUNT_ENTRY_DETAIL.LINE,UInteger.valueOf( ++line ))
+				.set(ACCOUNT_ENTRY_DETAIL.CONCEPT,detail.getConcept()) 
+				.set(ACCOUNT_ENTRY_DETAIL.DEBIT,detail.getDebit())
+				.set(ACCOUNT_ENTRY_DETAIL.CREDIT,detail.getCredit())
+				.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,detail.getBalancingAccount())
+				.set(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER,detail.getDocumentNumber())
+			;
 		}
-		AccountEntryDetailDAO.batchInsert(ctx, ae.getDetails());
-	}
-
-
-	private static AccountEntry populateRecord(AccountEntryRecord record) {
-		if (record == null) return null;
-		AccountEntry entry = new AccountEntry();
-		return populateRecord(record, entry);
-	}
-
-	private static AccountEntry populateRecord(AccountEntryRecord record, AccountEntry ae) {
-		ae.setId(record.getId());
-		ae.setDomain(record.getDomain());
-		ae.setAccountPeriod(record.getAccountPeriod());
-		ae.setEntryDate(AonDateUtils.toSql(record.getEntryDate()));
-		ae.setEntryType(AccountEntryType.values()[record.getEntryType()]);
-		ae.setJournal(record.getJournal());
-		ae.setSecurityLevel(SecurityLevel.values()[record.getSecurityLevel()]);
-		ae.setComments(record.getComments());
-		return ae;
+		if (insertMore != null) 
+			insertMore.execute();
 	}
 
 	public static void update(AONContext ctx, AccountEntry ae) {
@@ -182,14 +156,27 @@ public class AccountEntryDAO {
 			.execute();
 	}
 
-	public static void delete(AONContext ctx, AccountEntry accountEntry) {
+	public static void delete(AONContext ctx, Integer id) {
 		ctx.checkWrite();
-		AccountEntryDetailDAO.deleteEntry(ctx,accountEntry.getId());
+		Integer accountPeriodId = null;
+		AccountEntryType type = null;
+		Record record = ctx.getDslContext().select(ACCOUNT_ENTRY.ACCOUNT_PERIOD,ACCOUNT_ENTRY.ENTRY_TYPE)
+			.from(ACCOUNT_ENTRY)
+			.where(ACCOUNT_ENTRY.ID.eq(id))
+			.fetchOne();
+		accountPeriodId = record.getValue(ACCOUNT_ENTRY.ACCOUNT_PERIOD);
+		type = AccountEntryType.values()[record.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)];
+		// Se borran las lineas
+		ctx.getDslContext()
+			.delete(ACCOUNT_ENTRY_DETAIL)
+			.where(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY.equal(id))
+			.execute();
+		// Se borra la cabecera
 		ctx.getDslContext()
 			.delete(ACCOUNT_ENTRY)
-			.where(ACCOUNT_ENTRY.ID.equal(accountEntry.getId()))
+			.where(ACCOUNT_ENTRY.ID.equal(id))
 			.execute();
-		afterRemove(ctx, accountEntry);
+		afterRemove(ctx, type, accountPeriodId);
 	}
 
 	public static boolean existsAnyEntry(AONContext ctx, Integer period, AccountEntryType accountEntryType) {
@@ -236,12 +223,8 @@ public class AccountEntryDAO {
 		return map;
 	}
 
-	// -----------------------------------------
-	// ------------------------- PRIVATE METHODS
-	// -----------------------------------------
-
 	private static synchronized void increaseJournal(AONContext ctx,AccountEntry accountEntry) {
-		// Se averigua el último numero de diario y se graba incrementandolo en uno.
+		// Se averigua el último numero de diario y se incrementa en uno.
 		AggregateFunction<Integer> maxFunc = DSL.max(ACCOUNT_ENTRY.JOURNAL);
 		Record1<Integer> record = ctx.getDslContext()
 				.select(maxFunc)
@@ -256,7 +239,7 @@ public class AccountEntryDAO {
 		accountEntry.setJournal(lastJournal + 1);
 	}
 
-	private static void afterRemove(AONContext ctx,AccountEntry accountEntry) {
+	private static void afterRemove(AONContext ctx,AccountEntryType removed, Integer periodId) {
 		/*
 		 * Gestión del estado del ejercicio.
 		 *  
@@ -264,12 +247,12 @@ public class AccountEntryDAO {
 		 * comprueba si existen los correspondientes
 		 * apuntes para poner el estado del ejercicio correspondiente.
 		 */
-		if (accountEntry.getEntryType() == AccountEntryType.OPENING
-			|| accountEntry.getEntryType() == AccountEntryType.OPERATING
-			|| accountEntry.getEntryType() == AccountEntryType.CLOSING) {
+		if (removed == AccountEntryType.OPENING
+			|| removed == AccountEntryType.OPERATING
+			|| removed == AccountEntryType.CLOSING) {
 
-			AccountPeriod period = AccountPeriodDAO.fetchOne(ctx, accountEntry.getAccountPeriod());
-			if (accountEntry.getEntryType() == AccountEntryType.OPENING) {
+			AccountPeriod period = AccountPeriodDAO.fetchOne(ctx, periodId);
+			if (removed == AccountEntryType.OPENING) {
 				if (!AccountEntryDAO.existsAnyEntry(ctx, period.getId(),AccountEntryType.OPENING)) {
 					// Si después de borrar apertura, existe otro apertura, se mantiene 
 					// el estado (o se modifica si era errroneo).
@@ -278,7 +261,7 @@ public class AccountEntryDAO {
 					// Si después de borrar apertura, no existe otro apertura, se activa.
 					period.setStatus( AccountPeriodStatus.ACTIVE );
 				}
-			} else if (accountEntry.getEntryType() == AccountEntryType.CLOSING ) {
+			} else if (removed == AccountEntryType.CLOSING ) {
 				if (AccountEntryDAO.existsAnyEntry(ctx, period.getId(),AccountEntryType.CLOSING)) {
 					// Si después de borrar cierre, existe otro cierre, se
 					// mantiene el estado.
@@ -293,7 +276,7 @@ public class AccountEntryDAO {
 					// Si después de borrar cierre, no existe explotación ni apertura. Se activa.
 					period.setStatus( AccountPeriodStatus.ACTIVE );
 				}
-			} else if (accountEntry.getEntryType() == AccountEntryType.OPERATING) {
+			} else if (removed == AccountEntryType.OPERATING) {
 				if (AccountEntryDAO.existsAnyEntry(ctx, period.getId(),AccountEntryType.OPERATING)) {
 					// Si después de borrar explotación, existe otro
 					// explotación, se mantiene el estado.
@@ -318,5 +301,88 @@ public class AccountEntryDAO {
 			map.put(account, new AccountBalance(type,debit,credit));	
 		}
 	}
+	
+	private static class FullAccountEntryFiller  implements Function<Record,AccountEntry> {
+		@Override
+		public AccountEntry apply(Record record) {
+			return new AccountEntry()
+				.setId( record.getValue(ACCOUNT_ENTRY.ID) )
+				.setAccountPeriod( record.getValue(ACCOUNT_ENTRY.ACCOUNT_PERIOD))
+				.setDomain( record.getValue(ACCOUNT_ENTRY.DOMAIN))
+				.setEntryDate( record.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
+				.setEntryType( AccountEntryType.values()[record.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)])
+				.setJournal( record.getValue(ACCOUNT_ENTRY.JOURNAL))
+				.setSecurityLevel(SecurityLevel.values()[record.getValue(ACCOUNT_ENTRY.SECURITY_LEVEL)])
+				.setComments( record.getValue(ACCOUNT_ENTRY.COMMENTS))
+				;
+		}
 
+			
+	}
+
+	private static class FullAccountEntryDetailFiller  implements Function<Record,AccountEntryDetail> {
+		@Override
+		public AccountEntryDetail apply(Record record) {
+			return new AccountEntryDetail()
+				.setId( record.getValue(ACCOUNT_ENTRY_DETAIL.ID) )
+				.setDomain( record.getValue(ACCOUNT_ENTRY_DETAIL.DOMAIN))
+				.setAccountEntry( record.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
+				.setAccount(record.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
+				.setAccountCode(record.getValue(DET_ACCOUNT.CODE))
+				.setAccountDescription(record.getValue(DET_ACCOUNT.DESCRIPTION))
+				.setLine( record.getValue(ACCOUNT_ENTRY_DETAIL.LINE).intValue() )
+				.setConcept(record.getValue(ACCOUNT_ENTRY_DETAIL.CONCEPT))
+				.setDebit(record.getValue(ACCOUNT_ENTRY_DETAIL.DEBIT))
+				.setCredit(record.getValue(ACCOUNT_ENTRY_DETAIL.CREDIT))
+				.setBalancingAccount(record.getValue(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
+				.setBalancingAccountCode(record.getValue(BAL_ACCOUNT.CODE))
+				.setBalancingAccountDescription(record.getValue(BAL_ACCOUNT.DESCRIPTION))
+				.setDocumentNumber(record.getValue(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER))
+				;
+		}
+	}
+
+	// ---------------------------------------------------------- FILTRO
+	private static final AccountEntryPropertiesDAO ACCOUNT_ENTRY_PROPERTIES = new AccountEntryPropertiesDAO();
+	private static class AccountEntryPropertiesDAO implements AccountEntryProperties {
+
+		private Condition[] getConditions(AccountEntryFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null)
+				return new Condition[0];
+
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override
+		public Property<Integer> getIdProperty() {
+			return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.ID);
+		}
+
+		@Override
+		public Property<Integer> getDomainProperty() {
+			return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.DOMAIN);
+		}
+
+		@Override
+		public Property<Integer> getAccountPeriodProperty() {
+			return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.ACCOUNT_PERIOD);
+		}
+		
+		@Override
+		public Property<Date> getEntryDateProperty() {
+			return new FilterDAO.DatePropertyDAO(ACCOUNT_ENTRY.ENTRY_DATE);
+		}
+
+		@Override
+		public Property<Byte> getEntryTypeProperty() {
+			return new FilterDAO.PropertyDAO<Byte>(ACCOUNT_ENTRY.ENTRY_TYPE);
+		}
+
+		@Override
+		public Property<Byte> getConfidentialProperty() {
+			return new FilterDAO.PropertyDAO<Byte>(ACCOUNT_ENTRY.SECURITY_LEVEL);
+		}
+	}
 }
+

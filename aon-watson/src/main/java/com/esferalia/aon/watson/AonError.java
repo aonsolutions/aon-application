@@ -53,7 +53,7 @@ public enum AonError implements Serializable{
 	,ACCOUNT_PERIOD_END_OVERLAP("Solape con la fecha fin y el periodo {0}")
 	,ACCOUNT_PERIOD_UNKOWN_FOR_DATE("No se encuentra un ejercicio contable para la fecha {0,date,dd/MM/yyyy}")
 	// --------------------------------------------- ACCOUNT_ENTRY
-	,ACCOUNT_ENTRY_WRONG_DOMAIN("El ejericio del asiento no existe o no es v\u00E1lido para el dominio ({0}).")
+	,ACCOUNT_ENTRY_WRONG_DOMAIN("El ejercicio del asiento no existe o no es v\u00E1lido para el dominio ({0}).")
 	,ACCOUNT_ENTRY_EMPTY_DATE("La fecha del asiento es un dato obligatorio, no puede estar vacia")
 	,ACCOUNT_ENTRY_EMPTY_PERIOD("El ejercicio del asiento es un dato obligatorio, no puede estar vacio")
 	,ACCOUNT_ENTRY_EMPTY_TYPE("El tipo de asiento es un dato obligatorio, no puede estar vacio.")
@@ -67,7 +67,9 @@ public enum AonError implements Serializable{
 	,ACCOUNT_ENTRY_ACCOUNT_INVALID_LENGTH("La cuenta contable debe ser de \u00FAltimo nivel (9 d\u00EDgitos). (ID={0}, [{1} - {2}])")
 	,ACCOUNT_ENTRY_ACCOUNT_INACTIVE("La cuenta contable est\u00E1 desactivada. (ID={0}, [{1} - {2}])")
 	,ACCOUNT_ENTRY_SALARY_NO_LINES("No se han definido l\u00EDneas en el apunte de n\u00F3minas.")
-	,ACCOUNT_ENTRY_SALARY_NO_ACCOUNT("L\u00EDnea de apunte de n\u00F3minas sin cuenta contable y la cuenta asignada al tipo no se puede recuperar. (TIPO={0}, CANTIDAD={1,number}). Revise el valor del par\u00E1metro {2}.")
+	,ACCOUNT_ENTRY_SALARY_NO_ACCOUNT("L\u00EDnea de apunte de n\u00F3minas sin cuenta contable o la cuenta asignada al tipo no se puede recuperar. "
+			+ "Revise la configuraci\u00F3n de los par\u00E1metros contables relativos a las cuentas por defecto de laboral. "
+			+ "Dato: (TIPO={0}, CANTIDAD={1,number},P\u00C1RAMETRO={2})")
 	// --------------------------------------------- FISCAL ACTIVITY
 	,DUPLICATE_EPIGRAPH("Ya existe el ep\u00EDgrafe {1} en el a\u00F1o {0}")	
 	// -----------------------------------------------------------
