@@ -1,0 +1,94 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:fiscal='urn:import:com.esferalia.aon.gwt.fiscal.client.widget'
+	xmlns:m180='urn:import:com.esferalia.aon.gwt.fiscal.client.mod180'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	<g:DockLayoutPanel ui:field="dockLayoutPanel" styleName="{aonResources.css.aonSelector}">
+		<g:north size="26">
+			<g:FlowPanel height="100%"
+				styleName="{aonResources.css.aonFindingTitleToolbar} {aonResources.css.aonWidthAll}">
+				<g:HorizontalPanel>
+					<g:HTMLPanel styleName="{aonResources.css.aonFindingTitle}">
+						<g:HTMLPanel styleName="{aonResources.css.aonFindingTitleInternal}">
+							<g:Label text="{msg.accountEntries}" />
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel>
+						<g:HTMLPanel styleName="{aonResources.css.aonFindingSubtitleIternal}">
+							<span/>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbar}">
+						<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbarItemGroup}">
+							<g:Button ui:field="accept" text="{msg.accept}" 
+								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconSave}" />
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+				</g:HorizontalPanel>
+			</g:FlowPanel>
+		</g:north>
+		
+		<g:center>
+			<g:SplitLayoutPanel ui:field="splitLayoutPanel">
+				<g:center>
+					<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+						<g:HTMLPanel styleName="{aonResources.css.aonScrollArea}">
+							<table class="{aonResources.css.aonPanelGrid} {aonResources.css.aonWidthAll}">
+								<tr>
+									<td class="{aonResources.css.aonPanelGridOdd} {aonResources.css.aonWidth200}">
+										<g:InlineLabel text="{msg.period}" />
+									</td>
+									<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonWidthAuto}">
+										<g:InlineLabel text="{msg.from}" />
+										<aon:DateBoxEx ui:field="fromDate"/>
+										<g:InlineLabel text="{msg.to}" />
+										<aon:DateBoxEx ui:field="toDate"/>
+										<g:SimplePanel ui:field="msgContainer" styleName="{aonResources.css.aonInline}"/>
+									</td>
+								</tr>
+								<tr>
+									<td class="{aonResources.css.aonPanelGridOdd} {aonResources.css.aonWidth200}">
+										<g:InlineLabel text="{msg.concept}" />
+									</td>
+									<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonWidthAuto}">
+										<g:TextBox ui:field="concept"/>
+									</td>
+								</tr>
+								<tr>
+									<td class="{aonResources.css.aonPanelGridOdd} {aonResources.css.aonWidth200}">
+										<g:InlineLabel text="{msg.bankAccount}" />
+									</td>
+									<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonWidthAuto}">
+										<g:ListBox ui:field="banks"/>
+									</td>
+								</tr>
+							</table>
+							<g:SimplePanel ui:field="tableContainer" />
+						</g:HTMLPanel>
+					</g:ScrollPanel>
+				</g:center>
+				
+				<g:south size="0">
+					<aon:MinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonNoPrint}">
+						<g:TabLayoutPanel styleName="gwt-Selector" barHeight="26" barUnit="PX" width="100%">
+							<g:tab>
+								<g:header>
+									<span class="aon-icon-time aon-icon-commandButton" style="padding-left: 20px;">
+										Notificaciones
+									</span>
+								</g:header>
+								<aon:ResultsPanel ui:field="resultsPanel" />
+							</g:tab>
+						</g:TabLayoutPanel>
+					</aon:MinimizePanel>
+				</g:south>
+			</g:SplitLayoutPanel>
+		</g:center>
+	</g:DockLayoutPanel>
+</ui:UiBinder>

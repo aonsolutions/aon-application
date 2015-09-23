@@ -1,13 +1,13 @@
 package com.esferalia.aon.occam.impl.jooq;
 
-import java.sql.ResultSet;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
-import org.jooq.lambda.Seq;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -15,16 +15,21 @@ import com.esferalia.aon.occam.api.IAccounting;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
+import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -35,13 +40,17 @@ public class AccountingImpl implements IAccounting {
 
 	// --------- ACCOUNT -------------------------------------------------
 	@Override
-	public Account fetchAccount(AONContext ctx, Integer accountId) {
-		return AccountDAO.fetchOne(ctx, accountId);
+	public Account getAccount(AONContext ctx, Integer accountId) {
+		return AccountDAO.get(ctx, accountId);
 	}
 	@Override
-	public Account fetchAccount(AONContext ctx, String code) {
-		return AccountDAO.fetchOne(ctx, code);
+	public Account getAccount(AONContext ctx, String code) {
+		return AccountDAO.get(ctx, code);
 	}
+	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter) {
+		return AccountDAO.getAccounts(ctx, filter);
+	}
+	
 
 	// --------- ACCOUNT PERIOD ------------------------------------------
 	@Override
@@ -81,31 +90,18 @@ public class AccountingImpl implements IAccounting {
 	}
 	
 	// --------- ACCOUNT ENTRY -------------------------------------------
-	@Override
-	public AccountEntry fetchOneAccountEntry(AONContext ctx,
-			Condition condition) {
-		return AccountEntryDAO.fetchOne(ctx, condition);
-	}
+//	@Override
+//	public AccountEntry fetchOneAccountEntry(AONContext ctx,
+//			Condition condition) {
+//		return AccountEntryDAO.fetchOne(ctx, condition);
+//	}
 
 	@Override
-	public Seq<AccountEntry> fetchAccountEntry(AONContext ctx,
-			Condition condition, int offset, int numberOfRows) {
-		return AccountEntryDAO.fetch(ctx, condition,offset,numberOfRows);
+	public Stream<AccountEntry> getAccountEntries(AONContext ctx,
+			AccountEntryFilter filter, int offset, int numberOfRows) {
+		return AccountEntryDAO.fetch(ctx, filter,offset,numberOfRows);
 	}
-
-	@Override
-	public Seq<AccountEntry> fetchAccountEntry(AONContext ctx,
-			Condition condition, int offset, int numberOfRows,
-			Function<ResultSet, AccountEntry> function) {
-		return AccountEntryDAO.fetch(ctx, condition,offset,numberOfRows,function);
-	}
-
-	@Override
-	public String fetchAccountEntryCSV(AONContext ctx, Condition condition,
-			int offset, int numberOfRows) {
-		return AccountEntryDAO.fetchCSV(ctx, condition,offset,numberOfRows);
-	}
-
+	
 	@Override
 	public boolean existsAnyEntry(AONContext ctx, Integer period,
 			AccountEntryType accountEntryType) {
@@ -113,36 +109,28 @@ public class AccountingImpl implements IAccounting {
 	}
 
 	@Override
-	public void insert(AONContext ctx, AccountEntry ae) {
-		ctx.getDslContext().transaction(configuration -> {
-			AccountEntryDAO.insert(ctx, ae);
-		} );		
+	public Integer insert(AONContext ctx, AccountEntry ae) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountEntryDAO.insert(ctx, ae )
+		 );		
 	}
 
 	@Override
 	public void update(AONContext ctx, AccountEntry ae) {
 		ctx.getDslContext().transaction(configuration -> {
-			AccountEntryDAO.update(ctx, ae);
+			AccountEntryDAO.update(ctx, ae );
 		} );		
 	}
 
 	@Override
-	public void delete(AONContext ctx, AccountEntry ae) {
+	public void delete(AONContext ctx, Integer id) {
 		ctx.getDslContext().transaction(configuration -> {
-			AccountEntryDAO.delete(ctx, ae);
+			AccountEntryDAO.delete(ctx, id);
 		} );		
 	}
 	
 	@Override
-	public AccountEntry insertSalaryEntry(AONContext ctx, SalaryAccountEntry sae) {
-		AccountEntry ae = getAccountEntry(ctx, sae);
-		ctx.getDslContext().transaction(configuration -> {
-			AccountEntryDAO.insert(ctx, ae);
-		} );		
-		return ae;
-	}
-
-	private AccountEntry getAccountEntry(AONContext ctx, SalaryAccountEntry sae) {
+	public AccountEntry getAccountEntry(AONContext ctx, SalaryAccountEntry sae) {
 		Objects.requireNonNull(sae);
 		AccountEntry ae = new AccountEntry();
 		ae.setDomain(ctx.getDomainId());
@@ -187,22 +175,29 @@ public class AccountingImpl implements IAccounting {
 					ae.addDetail( aed );
 				}
 			});
-//		if (sae.getRegistryBank() != null) {
-//			// TODO seek bank account and add amount
-//		} else {
-//			AccountEntryDetail aed = new AccountEntryDetail();
-//			ApplicationParameter param = AON.fetchApplicationParameter(ctx, SalaryAccountEntryLineType.DEFAULT_PENDING_SALARY.getParam());
-//			if (param != null && AonStringUtils.isNotBlank(param.getValue())) {
-//				Integer account = AonNumberUtils.toInteger(param.getValue()); 
-//				aed.setAccount( account );
-//			}
-//			aed.setConcept( sae.getConcept() );
-//			aed.setCredit(sae.getNetAmount());
-//			ae.addDetail( aed );				
-//		}
 		return ae;
 	}
 	
+	@Override
+	public List<Integer> insertSalaryEntries(String domainName, int domain,
+			Date from, Date to, String concept, Integer registryBank) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain);
+			final AONContext ctxDup = ctx;	
+			Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
+			return ctx.getDslContext().transactionResult( configuration ->
+				SalaryDAO.getSalaryEntries(ctxDup, company.getId(),from, to ,concept, registryBank)
+					.map( sae -> getAccountEntry(ctxDup, sae))
+					.map( ae -> insert(ctxDup, ae))
+					.collect(Collectors.toList())
+			 );		
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	// 					      BALANCE
 	public LinkedHashMap<String, AccountBalance>
 		getAccountBalances(AONContext ctx,AccMiningParameters params) throws AonCoreException {

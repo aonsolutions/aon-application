@@ -4,7 +4,6 @@ import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.resources.client.ClientBundle.Source;
 
 public interface AonResources extends ClientBundle, Images {
 	
@@ -38,9 +37,15 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/aon-icon-duplicate.png")
 	ImageResource aonIconDuplicate();
 	
+	@Source("images/aon-icon-save.png")
+	ImageResource aonIconSave();
+
 	@Source("images/aon-icon-delete.png")
 	ImageResource aonIconDelete();
 	
+	@Source("images/aon-icon-search.png")
+	ImageResource aonIconSearch();
+
 	@Source("images/aon-icon-previous.png")
 	ImageResource aonIconPrevious();
 	
@@ -165,6 +170,15 @@ public interface AonResources extends ClientBundle, Images {
 
 	@Source("images/aon-registro-mercantil-image.png")
 	ImageResource aonRegistroMercantilImage();
+
+	@Source("images/aon-content-subTitle.png")
+	ImageResource aonContentSubtitle();
+	
+	@Source("images/aon-content-title.png")
+	ImageResource aonContentTitle();
+	
+	@Source("images/aon-content-title-internal.png")
+	ImageResource aonContentTitleInternal();
 
 	// ------------------------------------------------------------------------
 

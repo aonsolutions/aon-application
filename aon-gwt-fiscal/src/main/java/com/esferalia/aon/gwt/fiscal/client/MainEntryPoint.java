@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
+import com.esferalia.aon.gwt.fiscal.client.accounting.SalaryEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceReport;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
 import com.esferalia.aon.gwt.fiscal.client.mod180.Model180;
@@ -15,9 +17,10 @@ public class MainEntryPoint implements EntryPoint {
 
 	
 	private static final String ENTRY_POINT_PARAM = "entryPoint";
-	
+	//
+	//    ================================================================== FISCAL
+	//
 	private static final String FS_FISCAL_PANEL = "FiscalPanel";
-	
 	private static final String FS_MOD140_ENTRY_POINT = "Model140";
 	private static final String FS_MOD190_ENTRY_POINT = "Model190";
 	private static final String FS_MOD193_ENTRY_POINT = "Model193";
@@ -27,8 +30,16 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String FS_MOD200_ENTRY_POINT = "Model200";
 	private static final String FS_MEMORY_ENTRY_POINT = "NormalizedMemory";
 	
-	
+	//	
+	//    ================================================================== FINANCE
+	//
 	private static final String FS_INVOICE_REPORT_ENTRY_POINT = "InvoiceReport";
+	
+	//
+	//    ================================================================== ACCOUNTING
+	//
+	private static final String ACC_ACCOUNT_ENTRY_ENTRY_POINT = "AccountEntryModule";
+	private static final String ACC_SALARY_ENTRY_ENTRY_POINT = "SalaryEntryModule";
 
 	@Override
 	public void onModuleLoad() {
@@ -60,6 +71,12 @@ public class MainEntryPoint implements EntryPoint {
 		} else if ( entryPoint.equalsIgnoreCase(FS_INVOICE_REPORT_ENTRY_POINT)) {
 			InvoiceReport invoiceReport = new InvoiceReport();
 			invoiceReport.onModuleLoad();
+		} else if ( entryPoint.equalsIgnoreCase(ACC_ACCOUNT_ENTRY_ENTRY_POINT)) {
+			AccountEntryModule accountEntryModule = new AccountEntryModule();
+			accountEntryModule.onModuleLoad();
+		} else if ( entryPoint.equalsIgnoreCase(ACC_SALARY_ENTRY_ENTRY_POINT)) {
+			SalaryEntryModule salaryEntryModule = new SalaryEntryModule();
+			salaryEntryModule.onModuleLoad();
 		}
 
 	}

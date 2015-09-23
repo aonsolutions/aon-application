@@ -119,7 +119,7 @@ public class AccountEntryValidation {
 
 	private static void validateAccount(AccountEntryDetail detail,
 			Integer accountId, AONContext ctx) {
-		Account account = AccountDAO.fetchOne(ctx, detail.getAccount());
+		Account account = AccountDAO.get(ctx, detail.getAccount());
 		if (account == null)
 			throw new AonCoreException(AonError.ACCOUNT_ENTRY_ACCOUNT_NOT_FOUND
 					.format(Objects.toString(detail.getAccount())

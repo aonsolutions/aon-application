@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -236,6 +237,18 @@ public class SalaryAccountEntry implements Serializable {
 				, null 
 				, null 
 				)
+		,BANK_ACCOUNT(
+				null
+				, new IFillAccountEntryAmountVisitor() {
+					@Override
+					public void visit(AccountEntryDetail aed,
+							SalaryAccountEntry sae, SalaryAccountEntryLine sael) {
+						aed.setCredit( sael.getAmount() );
+					}
+				}
+				, null 
+				, null 
+				)
 		;
 		private IFillAccountEntryAmountVisitor fillAccountEntryVisitor;
 		private INetAmountCalculatorVisitor netAmountVisitor;
@@ -278,11 +291,14 @@ public class SalaryAccountEntry implements Serializable {
 		private SalaryAccountEntryLineType type;
 		private Integer account;
 		private double amount;
+		public SalaryAccountEntryLine(SalaryAccountEntryLineType type,Integer account, BigDecimal amount) {
+			this(type,account,amount==null?0:amount.doubleValue());
+		}
 		
 		public SalaryAccountEntryLine(SalaryAccountEntryLineType type,Integer account, double amount) {
 			this.type = type;
 			this.account = account;
-			this.amount = amount;
+			this.amount = AonMathUtils.round(amount);
 		}
 
 		public SalaryAccountEntryLineType getType() {
@@ -306,29 +322,33 @@ public class SalaryAccountEntry implements Serializable {
 	public Date getDate() {
 		return date;
 	}
-	public void setDate(Date date) {
+	public SalaryAccountEntry setDate(Date date) {
 		this.date = date;
+		return this;
 	}
 
 	public Integer getRegistryBank() {
 		return registryBank;
 	}
-	public void setRegistryBank(Integer registryBank) {
+	public SalaryAccountEntry setRegistryBank(Integer registryBank) {
 		this.registryBank = registryBank;
+		return this;
 	}
 	
 	public String getConcept() {
 		return concept;
 	}
-	public void setConcept(String concept) {
+	public SalaryAccountEntry setConcept(String concept) {
 		this.concept = concept;
+		return this;
 	}
 
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
-	public void setSecurityLevel(SecurityLevel securityLevel) {
+	public SalaryAccountEntry setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
+		return this;
 	}
 	public List<SalaryAccountEntryLine> getLines() {
 		return lines;

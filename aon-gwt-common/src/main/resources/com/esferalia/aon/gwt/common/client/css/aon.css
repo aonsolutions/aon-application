@@ -250,6 +250,9 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 .aon-padding {
 	padding: 1em;
 }
+.aon-nopadding {
+	padding:0 !important; 
+}
 .aon-padding-left {
 	padding-left: 1em;
 }
@@ -263,6 +266,9 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 }
 .aon-border-bottom  {
 	border-bottom: solid #999 1px;
+}
+.aon-border-top  {
+	border-top: solid #999 1px;
 }
 .aon-padding2 {
 	padding: 2px;
@@ -368,6 +374,16 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 @sprite .aon-icon-delete {
 	width: auto;
 	gwt-image: "aonIconDelete";
+}
+
+@sprite .aon-icon-save {
+	width: auto;
+	gwt-image: "aonIconSave";
+}
+
+@sprite .aon-icon-search {
+	width: auto;
+	gwt-image: "aonIconSearch";
 }
 
 @sprite .aon-icon-previous {
@@ -871,9 +887,85 @@ input:disabled + label{
     border: 1px solid #D3C061;
     background: none repeat scroll 0 0 #FFFADC;
 }
-.aon-finding-toolbar-item {
-	height: 14px;	
+.aon-finding-title-toolbar{
+	border:#808080 1px solid;
+	border-top-color:#fff;
+	border-left-color:#fff;
+	background-color:#d4d0c8;
+	}
+	
+@sprite .aon-finding-title{
+	gwt-image: "aonContentTitle";	
+	background-position: left top ;
+	background-repeat: repeat-y;
+	background-color: transparent;
+	padding-left:1.5em;
+	width: auto;
+ }
+@sprite .aon-finding-title-internal{	
+	font-weight:bold;
+	color:#000;
+	padding:3px 0.5em 3px 0.5em;
+	white-space:nowrap;		
+	gwt-image: "aonContentSubtitle";	
+	background-position: right center;
+	background-repeat: no-repeat;
+	background-color: transparent;
+	width: auto;
+	height: auto;
+ }
+.aon-finding-subtitle-internal{
+	white-space:nowrap;
+	padding:3px 1em 3px 0.5em;
 }
+@sprite .aon-finding-toolbar{
+	gwt-image: "aonContentTitleInternal";	
+	background-position: left center;
+	background-repeat: repeat-y;
+	background-color: transparent;
+	height: 25px;
+	padding:0 1em;
+	width: auto;
+}
+.aon-finding-toolbar-item-group{
+	padding: 3px 0;
+}
+.aon-finding-toolbar-item{
+ 	color:#000;
+ 	text-transform:uppercase; 	
+ 	font-size:0.8em;
+ 	font-weight:bold;
+ 	padding:1px 5px 2px 16px;
+ 	margin:0 0 0 5px;
+ 	border:0;
+ 	border-right:#808080 1px solid;
+ 	text-align:left;
+	cursor:pointer;
+	width:auto;
+	overflow:visible;
+	height: 14px;
+} 
+.aon-finding-toolbar-item-no-icon{
+ 	color:#000;
+ 	text-transform:uppercase; 	
+ 	font-size:0.8em;
+ 	font-weight:bold;
+ 	padding:1px 5px 1px 1px;
+ 	margin:0 0 0 5px;
+ 	border:0;
+ 	border-right:#808080 1px solid;
+ 	text-align:left;
+	cursor:pointer;
+	width:auto;
+	overflow:visible;
+	background:transparent;
+ } 
+
+.aon-finding-toolbar-item-no-border{
+	border-right: none;
+	padding-right: 1px;
+ } 
+
 .aon-iCon {
     padding: 1px 0px 1px 18px;
 }
@@ -1139,12 +1231,6 @@ input:disabled + label{
     font-weight: bold;
     padding: 2px 5px;
     width: 400px;
-}
-
-.gwt-SuggestBoxPopup {
-	height: 300px;
-	width: 450px;
-	overflow: auto !important;
 }
 
 .aon-panelGrid{
@@ -1554,3 +1640,21 @@ input:disabled + label{
 	background-color:  #FA5858;
 }
 
+.aon-fiscal-registro-mercantil {
+	background-color:  #FA5858;
+}
+
+.gwt-SuggestBoxPopup {
+	height:200px;    
+	overflow-y: auto !important;
+	text-align:left;
+	cursor:pointer;
+	cursor:hand ;
+}
+
+.aon-odd-background {
+	background-color:  #E6E6E6;
+}
+.aon-even-background {
+	background-color:  #FFFFFF;
+}

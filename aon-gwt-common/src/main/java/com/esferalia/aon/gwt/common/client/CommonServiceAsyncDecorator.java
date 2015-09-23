@@ -1,7 +1,9 @@
 package com.esferalia.aon.gwt.common.client;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -45,6 +47,23 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.getCompanyBanks(domainName, domain,   
 				new AsyncCallbackWrapper<ArrayList<CompanyBank>>(callback));
+	}
+
+	// -------------------------------------------------------------- ACCOUNT
+	@Override
+	public void getAccount(String domainName, int domain, String code,
+			AsyncCallback<Account> callback) {
+		AON.start();
+		serviceAsync.getAccount(domainName, domain, code,   
+				new AsyncCallbackWrapper<Account>(callback));
+	}
+	
+	@Override
+	public void getAccounts(String domainName, int domain, String query,
+			AsyncCallback<LinkedList<Account>> callback) {
+		AON.start();
+		serviceAsync.getAccounts(domainName, domain, query,   
+				new AsyncCallbackWrapper<LinkedList<Account>>(callback));
 	}
 
 

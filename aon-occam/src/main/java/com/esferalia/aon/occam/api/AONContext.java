@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.jooq.Condition;
-import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.TableField;
@@ -70,14 +69,6 @@ public class AONContext {
 		this.dslContext = DSL.using(connection,getDefaultSettings());
 		
 	}
-
-	private AONContext(DSLContext dslContext, String domainName, int domainId) {
-		this.domainName = domainName;
-		this.domainId = domainId;
-		this.dslContext = dslContext;
-		
-	}
-
 
 	public String getDomainName() {
 		return domainName;

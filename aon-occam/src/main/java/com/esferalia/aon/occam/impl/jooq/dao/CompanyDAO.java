@@ -14,6 +14,7 @@ import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.jooq.Condition;
 import org.jooq.Record3;
@@ -220,22 +221,23 @@ public class CompanyDAO {
 	}
 		
 	public static ArrayList<CompanyBank> getBanks(AONContext ctx,int enterprise) {
-		List<Record3<String,String,String>> record = 
-			ctx.getDslContext().select(RBANK.BANK_ACCOUNT,RBANK.BIC,RBANK.ALIAS)
-				.from(COMPANY)
-				.join(RBANK).on( COMPANY.REGISTRY.equal(RBANK.REGISTRY) )
-				.where(COMPANY.REGISTRY.equal(enterprise))
-				.and(RBANK.ACTIVE.equal((byte) 1))
-				.fetch();
-		ArrayList<CompanyBank> list = new ArrayList<CompanyBank>(); 
-		for (Record3<String,String,String> rec : record) {
-			CompanyBank cb = new CompanyBank();
-			cb.setBankAccount(rec.getValue(RBANK.BANK_ACCOUNT) );
-			cb.setBic(rec.getValue(RBANK.BIC) );
-			cb.setBic(rec.getValue(RBANK.BIC) );
-			cb.setAlias(rec.getValue(RBANK.ALIAS) );
-			list.add(cb);
-		}
+		ArrayList<CompanyBank> list = new ArrayList<CompanyBank>();
+		list.addAll(
+			ctx.getDslContext().select(RBANK.ID,RBANK.BANK_ACCOUNT,RBANK.BIC,RBANK.ALIAS)
+			.from(COMPANY)
+			.join(RBANK).on( COMPANY.REGISTRY.equal(RBANK.REGISTRY) )
+			.where(COMPANY.REGISTRY.equal(enterprise))
+			.and(RBANK.ACTIVE.equal((byte) 1))
+			.fetch()
+			.stream()
+			.map(record -> new CompanyBank()
+				.setId(record.getValue(RBANK.ID) )
+				.setBankAccount(record.getValue(RBANK.BANK_ACCOUNT) )
+				.setBic(record.getValue(RBANK.BIC) )
+				.setBic(record.getValue(RBANK.BIC) )
+				.setAlias(record.getValue(RBANK.ALIAS) ) 
+				)
+			.collect(Collectors.toList()));
 		return list;
 	}
 

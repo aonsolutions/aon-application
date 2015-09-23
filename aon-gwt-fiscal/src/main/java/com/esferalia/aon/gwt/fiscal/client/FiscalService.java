@@ -1,9 +1,11 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -145,5 +147,12 @@ public interface FiscalService extends RemoteService {
 	Memory readMemory(Memory memory) throws AonCoreException;
 	Memory saveMemory(Memory memory) throws AonCoreException;
 	void deleteMemory(Memory memory) throws AonCoreException;
+	
+	// --------------------------------------------------------------- ACCOUNT ENTRIES
+	LinkedList<AccountEntry> insertSalaryAccountEntries(String domainName,int domain
+			, Date from, Date to,String concept,Integer registryBank) throws AonCoreException;
+	LinkedList<AccountEntry> getSalaryAccountEntries(String domainName,int domain, Date from
+			, Date to) throws AonCoreException;
+	void deleteAccountEntry(String domainName,int domain, Integer id) throws AonCoreException;
 	
 }

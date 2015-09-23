@@ -1,20 +1,19 @@
 package com.esferalia.aon.occam.api;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
-import org.jooq.lambda.Seq;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
@@ -26,10 +25,10 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.Salary;
-import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.callcenter.Issue;
@@ -267,11 +266,33 @@ public class AON {
 	// ****************************** ACCOUNTING **
 	// ********************************************
 	public static Account getAccount(AONContext ctx, Integer id) {
-		return getAccounting().fetchAccount(ctx, id);
+		return getAccounting().getAccount(ctx, id);
 	}
 
 	public static Account getAccount(AONContext ctx, String code) {
-		return getAccounting().fetchAccount(ctx, code);
+		return getAccounting().getAccount(ctx, code);
+	}
+	public static Account getAccount(String domainName, int domainId,String code) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return getAccount(ctx, code);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Stream<Account> getAccounts(String domainName, int domainId,AccountFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return getAccounting().getAccounts(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+		
 	}
 
 	// ********************************************
@@ -368,11 +389,6 @@ public class AON {
 	// ****************************** ACCOUNTING **
 	// ********************************************
 
-	// ------------------------------------ ACCOUNT
-	public static Account fetchAccount(AONContext ctx, Integer accountId) {
-		return getAccounting().fetchAccount(ctx, accountId);
-	}
-
 	// ----------------------------- ACCOUNT PERIOD
 	public static AccountPeriod fetchPeriod(AONContext ctx, Date date) {
 		return getAccounting().fetchPeriod(ctx, date);
@@ -399,28 +415,23 @@ public class AON {
 	}
 
 	// ------------------------------ ACCOUNT ENTRY
-	public static AccountEntry fetchOneAccountEntry(AONContext ctx,
-			Condition condition) {
-		return getAccounting().fetchOneAccountEntry(ctx, condition);
+	public static LinkedList<AccountEntry> getAccountEntries(String domainName, int domain,
+			AccountEntryFilter filter, int offset, int numberOfRows) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain);
+			return getAccountEntries(ctx, filter, offset, numberOfRows)
+					.collect(Collectors.toCollection(LinkedList::new));
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+		
 	}
-
-	public static Seq<AccountEntry> fetchAccountEntry(AONContext ctx,
-			Condition condition, int offset, int numberOfRows) {
-		return getAccounting().fetchAccountEntry(ctx, condition, offset,
-				numberOfRows);
-	}
-
-	public static Seq<AccountEntry> fetchAccountEntry(AONContext ctx,
-			Condition condition, int offset, int numberOfRows,
-			Function<ResultSet, AccountEntry> function) {
-		return getAccounting().fetchAccountEntry(ctx, condition, offset,
-				numberOfRows, function);
-	}
-
-	public static String fetchAccountEntryCSV(AONContext ctx,
-			Condition condition, int offset, int numberOfRows) {
-		return getAccounting().fetchAccountEntryCSV(ctx, condition, offset,
-				numberOfRows);
+	
+	public static Stream<AccountEntry> getAccountEntries(AONContext ctx,
+			AccountEntryFilter filter, int offset, int numberOfRows) {
+		return getAccounting().getAccountEntries(ctx, filter, offset, numberOfRows);
 	}
 
 	public static boolean existsAnyEntry(AONContext ctx, Integer period,
@@ -428,16 +439,24 @@ public class AON {
 		return getAccounting().existsAnyEntry(ctx, period, accountEntryType);
 	}
 
-	public static void insert(AONContext ctx, AccountEntry ae) {
-		getAccounting().insert(ctx, ae);
+	public static Integer insert(AONContext ctx, AccountEntry ae) {
+		return getAccounting().insert(ctx, ae);
 	}
 
 	public static void update(AONContext ctx, AccountEntry ae) {
 		getAccounting().update(ctx, ae);
 	}
 
-	public static void delete(AONContext ctx, AccountEntry ae) {
-		getAccounting().delete(ctx, ae);
+	public static void delete(String domainName, int domain, Integer id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain);
+			getAccounting().delete(ctx, id);;
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+		
 	}
 
 	public static LinkedHashMap<String, AccountBalance> getAccountBalances(
@@ -464,20 +483,39 @@ public class AON {
 	 *            Código del banco de la empresa por la que se pagarán las
 	 *            nóminas, Si el valor es NULL la partida se destinará a
 	 *            "Remuneraciones pendientes de pago"
+	 * @return 
 	 * @return El apunte contable grabado.
 	 */
-	public static AccountEntry insertSalaryEntry(AONContext ctx,
-			Integer enterprise, Date from, Date to, String concept,
-			Integer registryBank) {
-		return getAccounting().insertSalaryEntry(
-				ctx,
-				getSalary().getSalaryAccountEntry(ctx, enterprise, from, to,
-						concept, registryBank));
+	public static List<Integer> insertSalaryEntries(String domainName,int domain
+			, Date from, Date to, String concept, Integer registryBank) {
+		return getAccounting().insertSalaryEntries(domainName,domain , from, to, concept, registryBank);
 	}
+//	public static LinkedList<AccountEntry> getSalaryEntries(String domainName,int domain
+//			, Date from, Date to, String concept, Integer registryBank) {
+//		AONContext ctx = null;
+//		try {
+//			ctx = AONContext.getAONContext(domainName, domain);
+//			Company company = getCommon().getCompany(ctx, ctx.getDomainId());
+//			LinkedList<AccountEntry> list = new LinkedList<AccountEntry>();
+//			
+//			List<SalaryAccountEntry> saes = getSalary()
+//					.getSalaryAccountEntries(ctx, company.getId(), from, to, concept, registryBank)
+//					.collect(Collectors.toList());
+//			for (SalaryAccountEntry sae : saes) {
+//				list.add( getAccounting().getAccountEntry(ctx, sae) );
+//			}
+//			return list; 
+//		} finally {
+//			if (ctx != null)
+//				ctx.close();
+//		}
+//	}
 
-	public static AccountEntry insertSalaryEntry(AONContext ctx,
-			SalaryAccountEntry sae) {
-		return getAccounting().insertSalaryEntry(ctx, sae);
+	public static Stream<AccountEntry> getSalaryEntries(AONContext ctx
+			, Date from, Date to, String concept, Integer registryBank) {
+			Company company = getCommon().getCompany(ctx, ctx.getDomainId());
+			return getSalary().getSalaryAccountEntries(ctx, company.getId(), from, to, concept, registryBank)
+					.map(sae -> getAccounting().getAccountEntry(ctx, sae));
 	}
 
 	// ********************************************
