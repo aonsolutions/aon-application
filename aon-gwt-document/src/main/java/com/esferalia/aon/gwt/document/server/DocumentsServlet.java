@@ -70,7 +70,6 @@ import com.esferalia.aon.gwt.document.client.IDocument;
 import com.esferalia.aon.gwt.document.client.Utils;
 import com.esferalia.aon.gwt.document.jooq.DBConsults;
 import com.esferalia.aon.gwt.document.jooq.SendEmailDialogJooq;
-import com.esferalia.aon.gwt.document.server.OpenDocument2ImageServlet.CheckSum;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.ContactList;
 import com.esferalia.aon.gwt.document.shared.Document;
@@ -88,6 +87,7 @@ import com.esferalia.aon.gwt.document.shared.Tags;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
+import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.About;
 import com.google.api.services.drive.model.File;
@@ -1096,7 +1096,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		}
 		else {
 			byte[] b = rattach.bytes;
-			doc.setMd5(CheckSum.getMD5Checksum(b));
+			doc.setMd5(AonFileUtils.getMD5Checksum(b));
 		}
 		return doc;
 	}

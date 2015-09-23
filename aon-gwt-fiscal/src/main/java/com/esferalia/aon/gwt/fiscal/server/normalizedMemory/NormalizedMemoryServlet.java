@@ -38,7 +38,6 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.server.OpenDocument2ImageServlet;
-import com.esferalia.aon.gwt.common.server.OpenDocument2ImageServlet.CheckSum;
 import com.esferalia.aon.gwt.common.shared.FileInfo;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.D2DepositTreeObject;
@@ -68,6 +67,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002014toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Utils;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
+import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.sun.pdfview.PDFFile;
@@ -743,7 +743,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 			
 			Condition condition = RATTACH.ID.eq(mf.getId());
 			Attach rattach = AON.getAttach(domainName, domainId, condition, AttachType.REGISTRY);
-			rattach.setMd5(CheckSum.getMD5Checksum(rattach.getData()));
+			rattach.setMd5(AonFileUtils.getMD5Checksum(rattach.getData()));
 			FileInfo doc = new FileInfo(rattach);
 			return getAsHTML(doc, DEFAULT_ZOOM);
 		}

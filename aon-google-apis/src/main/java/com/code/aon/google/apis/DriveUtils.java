@@ -31,7 +31,6 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.jooq.Record1;
@@ -54,6 +53,7 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.esferalia.aon.google.sql.AbstractSQL.Rattach;
+import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.FileContent;
@@ -79,100 +79,8 @@ public class DriveUtils implements IBlobManager {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(DriveUtils.class.getName());
 
-	public static class CheckSum {
-		/***
-		 * Convierte un arreglo de bytes a String usando valores hexadecimales
-		 * 
-		 * @param digest
-		 *            arreglo de bytes a convertir
-		 * @return String creado a partir de <code>digest</code>
-		 */
-		private static String toHexadecimal(byte[] digest) {
-			String hash = "";
-			for (byte aux : digest) {
-				int b = aux & 0xff;
-				if (Integer.toHexString(b).length() == 1)
-					hash += "0";
-				hash += Integer.toHexString(b);
-			}
-			return hash;
-		}
-
-		/***
-		 * Realiza la suma de verificación de un archivo mediante MD5
-		 * 
-		 * @param archivo
-		 *            archivo a que se le aplicara la suma de verificación
-		 * @return valor de la suma de verificación.
-		 */
-		public static String getMD5Checksum(InputStream is) {
-			String md5 = null;
-			try {
-				byte[] data = IOUtils.toByteArray(is);
-				md5 = DigestUtils.md5Hex(ArrayUtils.nullToEmpty(data));
-			} catch (IOException e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-			
-			return md5;
-		}
-		public static String getMD5Checksum(byte[] data) {
-			String md5 = null;
-			md5 = DigestUtils.md5Hex(ArrayUtils.nullToEmpty(data));
-			return md5;
-		}
-
-	}
-
-	public static class Quicksort {
-
-		private static FileList files;
-		private static int number;
-
-		public static FileList sort(FileList fils) {
-			files = fils;
-			number = fils.getItems().size();
-			quicksort(0, number - 1);
-
-			// Collections.sort(fils.getItems());
-
-			return files;
-		}
-
-		static void quicksort(int low, int high) {
-			int i = low, j = high;
-			String pivot = files.getItems().get(low + (high - low) / 2)
-					.getTitle();
-			while (i <= j) {
-				while (files.getItems().get(i).getTitle().compareTo(pivot) < 0) {
-					i++;
-				}
-				while (files.getItems().get(j).getTitle().compareTo(pivot) > 0) {
-					j--;
-				}
-				if (i <= j) {
-					exchange(i, j);
-					i++;
-					j--;
-				}
-			}
-			if (low < j)
-				quicksort(low, j);
-			if (i < high)
-				quicksort(i, high);
-		}
-
-		static void exchange(int i, int j) {
-			File aux = files.getItems().get(i);
-			files.getItems().set(i, files.getItems().get(j));
-			files.getItems().set(j, aux);
-		}
-
-	}
-
 	private static final DriveUtils DRIVEUTILS = new DriveUtils();
 
-	// private static Credential credential;
 	private static Drive client;
 
 	public static DriveUtils getInstace() {
@@ -962,7 +870,7 @@ public class DriveUtils implements IBlobManager {
 		} else {
 			File fileAux = getFile(drive,rattach.getDriveId(),fileInfo.getFileId());
 			if (!fileAux.getMd5Checksum().equals(
-					CheckSum.getMD5Checksum(rattach.getData()))) {
+					AonFileUtils.getMD5Checksum(rattach.getData()))) {
 				file = updateFile(new FileInfo());
 			}
 		}
@@ -1014,7 +922,7 @@ public class DriveUtils implements IBlobManager {
 					drive = DriveUtils.serviceInitializeOld(g);
 				}
 				if (!fileAux.getMd5Checksum().equals(
-						CheckSum.getMD5Checksum(fileInfo.getData()))) {
+						AonFileUtils.getMD5Checksum(fileInfo.getData()))) {
 
 					String type = RegistryAttachmentType.values()[fileInfo
 							.getType()].name();
