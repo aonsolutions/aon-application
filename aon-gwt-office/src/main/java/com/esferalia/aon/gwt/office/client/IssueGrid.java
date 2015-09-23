@@ -171,7 +171,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 		@Override
 		public String getState() {
-			return "Abierto";
+			return "open";
 		}
 	}
 
@@ -189,7 +189,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 		@Override
 		public String getState() {
-			return "Cerrado";
+			return "closed";
 		}
 	}
 

@@ -4,7 +4,7 @@ public class IssueValue extends Value<IssueValue.Prop> {
 	
 	public static enum Prop implements ValueProp {
 		OPEN("open"),
-		CLOSE("close"),
+		CLOSE("closed"),
 		;
 		public final String value;
 		

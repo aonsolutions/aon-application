@@ -2,18 +2,12 @@ package com.esferalia.aon.gwt.office.client;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
-import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.dom.client.Style.Float;
-import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -25,9 +19,12 @@ public class IssueReadWidget extends Composite {
 
 		@ClassName("issue-body")
 		String issueBody();
+
+		@ClassName("row-even")
+		String rowEven();
 		
-		@ClassName("align")
-		String align();
+		@ClassName("issue-header-subtitle")
+		String issueHeaderSubtitle();
 	}
 
 	private static IssueReadWidgetUiBinder uiBinder = GWT
@@ -40,6 +37,8 @@ public class IssueReadWidget extends Composite {
 	MyStyle style;
 	@UiField
 	FlexTable flexTable;
+	
+	private Integer days;
 
 	public IssueReadWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -47,33 +46,46 @@ public class IssueReadWidget extends Composite {
 		flexTable.setWidth("70%");
 		flexTable.setCellPadding(3);
 		flexTable.setCellSpacing(5);
+
 	}
 
 	public void addIssue(IssueSelected issue) {
+		
+		Label header = (Label) buildHeader(issue.getUser().getLogin());
+		Label body = (Label) buildBody(issue.getBody());
 
-		Label issueHeader = new Label(issue.getUser().getLogin());
-		issueHeader.setStyleName(AON.AON_BOLD);
-		issueHeader.addStyleName(style.issueHeader());
-
-		Label body = new Label(issue.getBody());
-		body.setWidth("100%");
-		body.setStyleName(style.issueBody());
-
-		flexTable.setWidget(0, 0, issueHeader);
+		flexTable.setWidget(0, 0, header);
 		flexTable.setWidget(1, 0, body);
 	}
 
 	public void addComment(JsIssueComment comment, Integer x) {
 
-		Label issueHeader = new Label(comment.getUser().getLogin());
-		issueHeader.setStyleName(AON.AON_BOLD);
-		issueHeader.addStyleName(style.issueHeader());
+		
+		Label header = (Label) buildHeader(comment.getUser().getLogin());
+		Label body = (Label) buildBody(comment.getBody());
 
-		Label body = new Label(comment.getBody());
-		body.setWidth("100%");
-		body.setStyleName(style.issueBody());
-
-		flexTable.setWidget(0, 0, issueHeader);
+		flexTable.setWidget(0, 0, header);
 		flexTable.setWidget(1, 0, body);
+
+		if ((x % 2) == 0) {
+			flexTable.setStyleName(style.rowEven());
+		}
+	}
+	
+	private Widget buildHeader(String name) {
+		
+		Label header = new Label(name);
+		header.setStyleName(AON.AON_BOLD);
+		header.addStyleName(style.issueHeader());
+		
+		return header;
+	}
+	
+	private Widget buildBody (String text) {
+		Label body = new Label(text);
+		body.setWidth(AON.AON_WIDTH_ALL);
+		body.setStyleName(style.issueBody());
+		
+		return body;
 	}
 }

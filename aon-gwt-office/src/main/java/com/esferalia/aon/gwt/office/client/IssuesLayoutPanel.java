@@ -2,13 +2,17 @@ package com.esferalia.aon.gwt.office.client;
 
 import java.util.Date;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
+import com.esferalia.aon.gwt.office.client.values.IssueValue;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -17,6 +21,17 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class IssuesLayoutPanel extends Composite {
+	
+	interface MyStyle extends CssResource {
+		@ClassName("state")
+		String state();
+		
+		@ClassName("state-open")
+		String stateOpen();
+		
+		@ClassName("state-close")
+		String stateClose();
+	}
 
 	private static IssuesLayoutPanelUiBinder uiBinder = GWT
 			.create(IssuesLayoutPanelUiBinder.class);
@@ -24,9 +39,16 @@ public class IssuesLayoutPanel extends Composite {
 	interface IssuesLayoutPanelUiBinder extends
 			UiBinder<Widget, IssuesLayoutPanel> {
 	}
+	
+	private static final String OPEN = "Open";
+	private static final String CLOSED = "Closed";
 
 	@UiField
+	MyStyle style;
+	@UiField
 	InlineLabel titleLabel;
+	@UiField
+	InlineLabel stateLabel;
 	@UiField
 	InlineLabel numberIssueLabel;
 	@UiField
@@ -61,6 +83,18 @@ public class IssuesLayoutPanel extends Composite {
 	private void setHeaderTitle() {
 		titleLabel.setText(issue.getTitle());
 		numberIssueLabel.setText("#" + issue.getNumber());
+		
+		if (issue.getState().equals(IssueValue.Prop.OPEN.value)) {
+			stateLabel.setText(IssuesLayoutPanel.OPEN);
+			stateLabel.addStyleName(style.stateOpen());
+			stateLabel.addStyleName(AON.AON_ICON_ISSUE_OPENED);
+		}
+		else {
+			stateLabel.setText(IssuesLayoutPanel.CLOSED);
+			stateLabel.addStyleName(style.stateClose());
+			stateLabel.addStyleName(AON.AON_ICON_ISSUE_CLOSED);
+		}
+		
 		userCreateLabel.setText(issue.getUser().getLogin());
 
 		int days = DateUtils.getDaysBetween(issue.getCreateAt(), (new Date()));
