@@ -65,7 +65,7 @@
 				<g:ResizeLayoutPanel ui:field="dockOfficePanel">
 					<g:HTMLPanel styleName="aon-scroll-area {style.options-scroll-panel}">
 						<g:SimpleLayoutPanel ui:field="resultsPanel"
-							styleName="{style.simple-panel}">
+							styleName="{style.simple-panel}" height="100%">
 							<office:IssueGrid ui:field="dataGrid" />
 						</g:SimpleLayoutPanel>
 					</g:HTMLPanel>

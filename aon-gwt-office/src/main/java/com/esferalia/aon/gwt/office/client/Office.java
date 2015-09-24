@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.office.client;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -24,14 +26,11 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ResizeLayoutPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -68,6 +67,9 @@ public class Office extends Composite implements EntryPoint,
 
 	private final GitHub gitHub = new GitHub();
 
+	private Set<IssueSelected> openIssues;
+	private Set<IssueSelected> closedIssues;
+
 	public Office() {
 		Widget ui = uiBinder.createAndBindUi(this);
 
@@ -82,7 +84,8 @@ public class Office extends Composite implements EntryPoint,
 
 		this.dataGrid.addListener(this);
 		this.leftButtonBarMenu.addListener(this);
-
+		this.openIssues = new TreeSet<IssueSelected>();
+		this.closedIssues = new TreeSet<IssueSelected>();
 		this.repositories = new HashMap<Integer, JsRepo>();
 
 		ListDataProvider<IssueSelected> listIssuesProvider = new ListDataProvider<IssueSelected>();
@@ -186,6 +189,8 @@ public class Office extends Composite implements EntryPoint,
 
 				if (issue.getState().equals(IssueValue.Prop.OPEN.value))
 					addOpenIssue(issue, result.getData());
+				
+					
 			}
 		});
 
@@ -197,6 +202,10 @@ public class Office extends Composite implements EntryPoint,
 		issueSelected.setIssueComments(comments);
 		issues.add(issueSelected);
 
+	}
+	
+	private void addCloseIssue(JsIssue issue, JsArray<JsIssueComment> comments) {
+		
 	}
 
 	private void addLabel(int row, JsLabel label) {
@@ -221,12 +230,12 @@ public class Office extends Composite implements EntryPoint,
 
 	@Override
 	public void onSelectionTitle(IssueSelected issue) {
-		
+
 		issuesPanel.clear();
 
 		IssuesLayoutPanel issueLayoutPanel = new IssuesLayoutPanel(issue);
 		issuesPanel.add(issueLayoutPanel);
-		
+
 		showIssueLayoutPanel();
 	}
 

@@ -74,5 +74,8 @@
 				<g:FlowPanel ui:field="flowIssuesPanel" />
 			</g:ScrollPanel>
 		</g:center>
+		<g:south size="72">
+		<g:Label />
+		</g:south>
 	</g:DockLayoutPanel>
 </ui:UiBinder> 

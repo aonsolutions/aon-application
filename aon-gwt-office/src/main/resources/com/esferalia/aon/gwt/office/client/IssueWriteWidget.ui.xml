@@ -1,8 +1,10 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:c="urn:import:com.esferalia.aon.gwt.common.client.widget">
 	<ui:style>
-	
+	.text-area textarea {
+		resize: none;
+	}
 	</ui:style>
 
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages"
@@ -10,27 +12,17 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
 		field="aonResources"></ui:with>
 
-	<g:DockLayoutPanel>
-		<g:center>
-			<g:FlowPanel width="80%" height="50%">
-				<g:TabLayoutPanel barUnit="EM" barHeight="3"
-					ui:field="tabPanel">
-					<g:tab>
-						<g:header>
-							<b> Escribir </b>
-						</g:header>
-						<g:TextArea ui:field="textArea" />
-					</g:tab>
-					<g:tab>
-						<g:header>
-							<b> Preview </b>
-						</g:header>
-						<g:Label text="Preview" />
-					</g:tab>
-				</g:TabLayoutPanel>
-			</g:FlowPanel>
+	<g:VerticalPanel spacing="5" width="80%">
+		<g:TabPanel ui:field="tabPanel" width="100%" styleName="{style.text-area}">
+			<g:Tab text="Escribir">
+				<g:TextArea ui:field="commentTextArea" characterWidth="10"
+					visibleLines="9" />
+			</g:Tab>
+		</g:TabPanel>
+		<g:HorizontalPanel spacing="10" ui:field="hPanel" >
+			<g:Button text="Comentar" ui:field="commentButton" />
+			<g:Button ui:field="closeButton" text="Cerrar" />
+		</g:HorizontalPanel>
 
-		</g:center>
-	</g:DockLayoutPanel>
-
+	</g:VerticalPanel>
 </ui:UiBinder> 
