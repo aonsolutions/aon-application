@@ -330,8 +330,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 						verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
 						error.setTextError(verror);
 						this.error = error;
-						rowCount = -1;
-            		
+						rowCount = -1;         		
 					}
 					else{
 						if(row.getLastCellNum() != -1){
@@ -384,7 +383,6 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			ai.setUserId(userId);
 			ai.setUsername(DBConsults.getUsername(domain, domainId, userId));
 			error = DBFee.insertFee(domain,domainId,fees,ai);
-
 		}
 		else{
 			//Alguna de las filas contiene datos erroneos.
@@ -472,27 +470,26 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			else if(type.equals(Cell.CELL_TYPE_NUMERIC)){
 				fee.setEndDate(cell.getDateCellValue());
 			}
-		/*	else if(type.equals(Cell.CELL_TYPE_FORMULA)){
+			/*else if(type.equals(Cell.CELL_TYPE_FORMULA)){
 				
 			}*/
 			else return null;
 			break;
 		case "Fecha Facturaci\u00f3n": case "Billing Date":
 			if(type.equals(Cell.CELL_TYPE_STRING)){
-				Date d = Utils.stringToDate(cell.getStringCellValue());
+				Date d = Utils.stringToDateBilling(cell.getStringCellValue());
 				if(d != null) fee.setBillingDate(d); 
 				else return null;
 			}
 			else if(type.equals(Cell.CELL_TYPE_NUMERIC)){
 				fee.setBillingDate(cell.getDateCellValue());
 			}
-		/*	else if(type.equals(Cell.CELL_TYPE_FORMULA)){
-				
+			/*else if(type.equals(Cell.CELL_TYPE_FORMULA)){
+			
 			}*/
 			else return null;
 			break;
 		case "Periodo": case "period": //enum
-		
 				String t;
 				if(type.equals(Cell.CELL_TYPE_STRING)){
 					t = cell.getStringCellValue();

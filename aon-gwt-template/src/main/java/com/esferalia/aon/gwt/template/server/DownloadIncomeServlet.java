@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.Region;
 
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
@@ -85,9 +86,10 @@ public class DownloadIncomeServlet extends HttpServlet {
 
 	        Date d = new Date();
 	        
-	        String info = "Albarán de Compra ## "+com.esferalia.aon.gwt.template.server.Utils.getDay(d.getDate())
-	        		+"-"+com.esferalia.aon.gwt.template.server.Utils.getMonth(d.getMonth())
-	        		+"-"+com.esferalia.aon.gwt.template.server.Utils.getYear(d);
+	        String info = "Albarán de Compra ## "
+	        		+ DateUtil.getDay(d)
+	        		+ "-" + (DateUtil.getMonth(d)+1)
+	        		+ "-" + DateUtil.getYear(d);
 	        
 	        rowInfo.setHeightInPoints(16);
 	        fila.setHeightInPoints(16);

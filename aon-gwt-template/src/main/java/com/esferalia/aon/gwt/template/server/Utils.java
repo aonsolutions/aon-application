@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 
@@ -237,6 +238,67 @@ public class Utils {
 		return  date;
 	}
 	
+	public static Date stringToDateBilling(String s){
+		//junio/2015
+		//junio/15
+		//10/2015
+		//10/15
+		//junio-2015
+		//junio-15
+		//10-2015
+		//10-15
+			
+		String mes = null;
+		String anho = null;
+		Date d = null;
+		if(s.contains("/")){
+			Integer pos = s.indexOf("/"); 
+			mes = s.substring(0,pos);
+			anho = s.substring(pos+1);
+		}
+		else if(s.contains("-")){
+			Integer pos = s.indexOf("-"); 
+			mes = s.substring(0,pos);
+			anho = s.substring(pos+1);
+		}
+		if(mes != null && anho != null){
+			Integer day = 1;
+			Integer month = getMes(mes);
+			Integer year = getAnho(anho);
+			
+			Calendar cal = Calendar.getInstance();
+			cal.set(year, month, day);
+			d = cal.getTime();
+		}
+		if(d == null){
+			d = stringToDate(s);
+		}
+		return d;
+	}
+	
+	
+	private static Integer getMes(String mes) {
+		if(mes.equalsIgnoreCase("enero") || mes.equals("1") || mes.equals("01")) return 1;
+		if(mes.equalsIgnoreCase("febrero") || mes.equals("2") || mes.equals("02")) return 2;
+		if(mes.equalsIgnoreCase("marzo") || mes.equals("3") || mes.equals("03")) return 3;
+		if(mes.equalsIgnoreCase("abril") || mes.equals("4") || mes.equals("04")) return 4;
+		if(mes.equalsIgnoreCase("mayo") || mes.equals("5") || mes.equals("05")) return 5;
+		if(mes.equalsIgnoreCase("junio") || mes.equals("6") || mes.equals("06")) return 6;
+		if(mes.equalsIgnoreCase("julio") || mes.equals("7") || mes.equals("07")) return 7;
+		if(mes.equalsIgnoreCase("agosto") || mes.equals("8") || mes.equals("08")) return 8;
+		if(mes.equalsIgnoreCase("septiembre") || mes.equals("9") || mes.equals("09")) return 9;
+		if(mes.equalsIgnoreCase("octubre") || mes.equals("10") || mes.equals("10")) return 10;
+		if(mes.equalsIgnoreCase("noviembre") || mes.equals("11") || mes.equals("11")) return 11;
+		if(mes.equalsIgnoreCase("diciembre") || mes.equals("12") || mes.equals("12")) return 12;
+			
+		return null;
+	}
+	
+	private static Integer getAnho(String anho){
+		if(anho.length() == 2 || anho.length() == 4)
+			return Integer.parseInt(anho);		
+		return null;
+	}
 	
 	public static String getColumn(Integer integer){
 		switch (integer) {
@@ -327,35 +389,4 @@ public class Utils {
 		}
 		
 	}
-	
-	public static String getMonth(Integer i){
-		switch (i){
-		case 0 : return "01";
-		case 1 : return "02";
-		case 2 : return "03";
-		case 3 : return "04";
-		case 4 : return "05";
-		case 5 : return "06";
-		case 6 : return "07";
-		case 7 : return "08";
-		case 8 : return "09";
-		case 9 : return "10";
-		case 10 : return "11";
-		default : return "12";
-		}
-	}
-	
-	public static String getDay(Integer i){
-		if(i<10){
-			return "0"+i.toString();
-		}
-		else return i.toString();
-	}
-	public static String getYear(Date d){
-		String year = "";
-		if(d.getYear()>100) year = "20"+Integer.toString(d.getYear()).substring(1); 
-		else year = "19"+Integer.toString(d.getYear());
-		return year;
-	}
-
 }

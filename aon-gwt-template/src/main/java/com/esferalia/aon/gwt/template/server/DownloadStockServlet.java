@@ -38,6 +38,7 @@ import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
@@ -150,9 +151,10 @@ public class DownloadStockServlet extends HttpServlet {
         
         Date d = new Date();
         
-        String info = "Stock ## "+warehouse+" ## "+com.esferalia.aon.gwt.template.server.Utils.getDay(d.getDate())
-        		+"-"+com.esferalia.aon.gwt.template.server.Utils.getMonth(d.getMonth())
-        		+"-"+com.esferalia.aon.gwt.template.server.Utils.getYear(d);
+        String info = "Stock ## " + warehouse + " ## "
+        		+ DateUtil.getDay(d)
+        		+ "-" + (DateUtil.getMonth(d)+1)
+        		+ "-" + DateUtil.getYear(d);
         
         rowInfo.setHeightInPoints(16);
         fila.setHeightInPoints(16);

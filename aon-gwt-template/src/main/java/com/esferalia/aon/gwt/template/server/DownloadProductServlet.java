@@ -42,6 +42,7 @@ import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.product.ProductTag;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBProduct;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
@@ -171,10 +172,11 @@ public class DownloadProductServlet extends HttpServlet {
 
         Date d = new Date();
         
-        String info = "Productos ## "+com.esferalia.aon.gwt.template.server.Utils.getDay(d.getDate())
-        		+"-"+com.esferalia.aon.gwt.template.server.Utils.getMonth(d.getMonth())
-        		+"-"+com.esferalia.aon.gwt.template.server.Utils.getYear(d);
-        
+        String info = "Productos ## "
+        		+ DateUtil.getDay(d)
+        		+ "-" + (DateUtil.getMonth(d)+1)
+        		+ "-" + DateUtil.getYear();
+        		
         rowInfo.setHeightInPoints(16);
         fila.setHeightInPoints(16);
         CellStyle style = libro.createCellStyle();CellStyle styleInfo = libro.createCellStyle();

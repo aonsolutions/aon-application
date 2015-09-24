@@ -27,6 +27,7 @@ import org.apache.poi.ss.util.Region;
 import com.code.aon.company.Department;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.template.jooq.DBCatalogue;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
@@ -90,11 +91,12 @@ public class DownloadCatalogueServlet extends HttpServlet {
         Row fila = hoja.createRow(1);
         
         Date d = new Date();
-        
-        String info = "Catalogo ## "+workplace+" ## "+department+" ## "
-        		+com.esferalia.aon.gwt.template.server.Utils.getDay(d.getDate())
-        		+"-"+com.esferalia.aon.gwt.template.server.Utils.getMonth(d.getMonth())
-        		+"-"+com.esferalia.aon.gwt.template.server.Utils.getYear(d);
+      
+      
+        String info = "Catalogo ## " + workplace + " ## " + department + " ## "
+        		+ DateUtil.getDay(d)
+        		+ "-" + (DateUtil.getMonth(d)+1)
+        		+ "-" + DateUtil.getYear(d);
         
         
         rowInfo.setHeightInPoints(16);
