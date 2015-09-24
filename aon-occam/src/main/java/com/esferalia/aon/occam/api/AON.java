@@ -1518,6 +1518,26 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static void insertAttach(Attach attach) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(attach.getDomainName(), attach.getDomainId());
+			
+			if(attach.getAttachType().equals(AttachType.REGISTRY)) getAttachment().insertRattach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.CONTRACT)) getAttachment().insertRattach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.INVOICE)) getAttachment().insertRattach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.ITEM)) getAttachment().insertRattach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.OFFER)) getAttachment().insertRattach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.PAYROLL)) getAttachment().insertRattach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.PROJECT)) getAttachment().insertProjectAttach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.SEPE)) getAttachment().insertRattach(ctx, attach);
+			
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	
 }

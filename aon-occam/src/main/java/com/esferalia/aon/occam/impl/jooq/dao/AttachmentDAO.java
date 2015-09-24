@@ -1,6 +1,9 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
+import static com.esferalia.aon.jooq.tables.ProjectAttach.PROJECT_ATTACH;
+
+import java.sql.Date;
 
 import org.jooq.Condition;
 import org.jooq.Record7;
@@ -85,4 +88,21 @@ public class AttachmentDAO {
 
 		return rattach;
 	}	
+	
+	public static void insertRattach(AONContext ctx, Attach attach){
+		
+	}
+	
+	public static void insertProjectAttach(AONContext ctx, Attach attach){
+		ctx.getDslContext().insertInto(PROJECT_ATTACH, PROJECT_ATTACH.ATTACH_DATE, 
+								PROJECT_ATTACH.DATA, PROJECT_ATTACH.DESCRIPTION, 
+								PROJECT_ATTACH.DOMAIN, PROJECT_ATTACH.DRIVEID, 
+								PROJECT_ATTACH.MIMETYPE, PROJECT_ATTACH.PROJECT, 
+								PROJECT_ATTACH.SECURITY_LEVEL)
+						.values(new Date(attach.getDate().getTime()), attach.getData(), 
+								attach.getDescription(), attach.getDomainId(), 
+								attach.getDriveId(), (byte)attach.getMimeType().ordinal(),
+								attach.getProject(), attach.getConfidential()?(byte)1:(byte)0)
+						.execute();
+	}
 }

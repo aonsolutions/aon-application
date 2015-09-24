@@ -8,4 +8,8 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 public interface IAttachment {
 	public Attach getRattach(AONContext ctx, Condition condition);
 	
+	public void insertRattach(AONContext ctx, Attach attach);
+	
+	public void insertProjectAttach(AONContext ctx, Attach attach);
+	
 }

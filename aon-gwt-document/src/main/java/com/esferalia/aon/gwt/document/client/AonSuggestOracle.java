@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle.MultiWordSuggestion;
 import com.google.gwt.user.client.ui.SuggestOracle;
 
@@ -52,31 +51,9 @@ public class AonSuggestOracle extends SuggestOracle {
 	 private List<MultiWordSuggestion> convertToFormattedSuggestions(String query,
 		      List<String> candidates, String query2) {
 		    List<MultiWordSuggestion> suggestions = new ArrayList<MultiWordSuggestion>();
-	        SafeHtmlBuilder accum = new SafeHtmlBuilder();
 
 		    for (int i = 0; i < candidates.size(); i++) {
 		      String candidate = candidates.get(i);
-		      /*Integer pos = indexOf(candidate, query);
-		      if(pos.equals(0)){
-		    	  String part1 = candidate.substring(0,query.length());
-		    	  String part2 = candidate.substring(query.length());
-		          accum.appendHtmlConstant("<strong>");
-		          accum.appendEscaped(part1);
-		          accum.appendHtmlConstant("</strong>");
-		          accum.appendEscaped(part2);
-		      }
-		      else{
-		    	  String part1 = candidate.substring(0,pos);
-		    	  String part2 = candidate.substring(pos,pos+query.length());
-		    	  String part3 ="";
-		    	  if(candidate.length()>pos+query.length()) part3 = candidate.substring(pos+query.length());
-		          accum.appendEscaped(part1);
-		          accum.appendHtmlConstant("<strong>");
-		          accum.appendEscaped(part2);
-		          accum.appendHtmlConstant("</strong>");
-		          accum.appendEscaped(part3);
-
-		      }*/
 		      MultiWordSuggestion suggestion;
 		      if(!query.equals(query2)){
 		    	  Integer pos = query2.lastIndexOf(',');
@@ -101,13 +78,7 @@ public class AonSuggestOracle extends SuggestOracle {
 	            }
 	        }
 	        return false;
-	    }
-	 private Integer indexOf(String str, String searchStr) {
-	        if (str == null || searchStr == null) {
-	            return -1;
-	        }
-	        
-	        return str.indexOf(searchStr);
-	    }
+	  }
+	
 
 }

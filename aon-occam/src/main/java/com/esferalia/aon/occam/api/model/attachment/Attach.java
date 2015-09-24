@@ -28,10 +28,14 @@ public class Attach {
 	
 	private String md5;
 	
+	private Integer project;
+	
 	public Attach() {
 
 	}
-	
+	public Attach(AttachType attachType){
+		this.attachType = attachType;
+	}
 	//--------------------- Getters & Setters
 	
 	public AttachType getAttachType() {
@@ -143,6 +147,15 @@ public class Attach {
 	public void setMd5(String md5) {
 		this.md5 = md5;
 	}
+
+	public Integer getProject() {
+		return project;
+	}
+
+	public void setProject(Integer project) {
+		this.project = project;
+	}
+	
 	
 	
 }

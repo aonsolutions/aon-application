@@ -417,6 +417,24 @@ public class ConexFlow {
 		public void setIdOperacion(String idOperacion) {
 			this.idOperacion = idOperacion;
 		}
+
+		public String getVoucher() {
+			return voucher;
+		}
+
+		public void setVoucher(String voucher) {
+			this.voucher = voucher;
+		}
+
+		public String getTpvOriginal() {
+			return tpvOriginal;
+		}
+
+		public void setTpvOriginal(String tpvOriginal) {
+			this.tpvOriginal = tpvOriginal;
+		}
+		
+		
     }
     
     public static class Query {

@@ -14,4 +14,18 @@ public class AttachmentImpl implements IAttachment{
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> AttachmentDAO.getRattach(ctx, condition));
 	}
+
+	@Override
+	public void insertRattach(AONContext ctx, Attach attach) {
+		ctx.getDslContext().transaction(configuration -> {
+			AttachmentDAO.insertRattach(ctx, attach);
+		} );			
+	}
+
+	@Override
+	public void insertProjectAttach(AONContext ctx, Attach attach) {
+		ctx.getDslContext().transaction(configuration -> {
+			AttachmentDAO.insertProjectAttach(ctx, attach);
+		} );
+	}
 }
