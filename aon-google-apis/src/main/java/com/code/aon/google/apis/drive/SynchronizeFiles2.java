@@ -85,7 +85,7 @@ public class SynchronizeFiles2 {
 					if(v.size() != 0) sync(drive, d.getName(), v);
 					if (numero >= num) return;
 					size = v.size();
-					firstId = v.get(v.size()-1).getFileId();
+					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
 				}
 			}
 			if (map.containsKey("contract")){
@@ -96,7 +96,7 @@ public class SynchronizeFiles2 {
 					if(v.size() != 0) sync(drive, d.getName(), v);
 					if (numero >= num) return;
 					size = v.size();
-					firstId = v.get(v.size()-1).getFileId();
+					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
 				}
 			}
 			if (map.containsKey("item")){
@@ -107,7 +107,7 @@ public class SynchronizeFiles2 {
 					if(v.size() != 0) sync(drive, d.getName(), v);
 					if (numero >= num) return;
 					size = v.size();
-					firstId = v.get(v.size()-1).getFileId();
+					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
 				}
 			}
 			if (map.containsKey("invoice")){
@@ -129,7 +129,7 @@ public class SynchronizeFiles2 {
 					if(v.size() != 0) sync(drive, d.getName(), v);
 					if (numero >= num) return;
 					size = v.size();
-					firstId = v.get(v.size()-1).getFileId();
+					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
 				}
 			}	
 			if (map.containsKey("payroll")){
@@ -140,7 +140,7 @@ public class SynchronizeFiles2 {
 					if(v.size() != 0) sync(drive, d.getName(), v);
 					if (numero >= num) return;
 					size = v.size();
-					firstId = v.get(v.size()-1).getFileId();
+					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
 				}
 			}
 			if (map.containsKey("project")){
@@ -151,7 +151,7 @@ public class SynchronizeFiles2 {
 					if(v.size() != 0) sync(drive, d.getName(), v);
 					if (numero >= num) return;
 					size = v.size();
-					firstId = v.get(v.size()-1).getFileId();
+					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
 				}
 			}
 			if (map.containsKey("sepe")){
@@ -162,7 +162,7 @@ public class SynchronizeFiles2 {
 					if(v.size() != 0) sync(drive, d.getName(), v);
 					if (numero >= num) return;
 					size = v.size();
-					firstId = v.get(v.size()-1).getFileId();
+					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
 				}
 			}
 			if(numero == 0){
