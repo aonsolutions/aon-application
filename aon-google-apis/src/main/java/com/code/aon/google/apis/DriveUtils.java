@@ -252,7 +252,7 @@ public class DriveUtils implements IBlobManager {
 		 * 
 		 * }
 		 */
-		FileList domainFolders = SearchFiles.searchFilesTitleEqual(drive, fileInfo.getDomain());
+		FileList domainFolders = SearchFiles.searchFilesTitleEqualAndMimetype(drive, fileInfo.getDomain());
 		File domainFolder;
 		if(domainFolders.getItems().size()>0){
 			domainFolder = domainFolders.getItems().get(0);

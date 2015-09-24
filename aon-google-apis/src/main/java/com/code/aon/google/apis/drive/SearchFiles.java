@@ -68,6 +68,11 @@ public class SearchFiles {
 		return fl;
 	}
 	
+	public static FileList searchFilesTitleEqualAndMimetype(Drive drive, String searcher) throws IOException{
+		FileList fl = drive.files().list().setQ("title = '"+searcher+"' and mimeType = 'application/vnd.google-apps.folder'").execute();
+		return fl;
+	}
+	
 	public static FileList searchFilesTitleAndParent(Drive drive, String searcher, String parent) throws IOException{
 		FileList fl = drive.files().list().setQ("'"+parent+"' in parents and title = '"+searcher+"'").execute();
 		return fl;
