@@ -74,16 +74,20 @@
 
    <wsdl:service name="SWConsultaDatosService">
 
+      <!-- Entorno REAL -->
       <wsdl:port binding="intf:SWConsultaDatosSoapBinding" name="SWConsultaDatos">
-
-         <!-- Entorno REAL -->
-         <!--  
+         <wsdlsoap:address location="http://www.sepe.es/ccomunicacto/services/SWConsultaDatos"/>
+      </wsdl:port>
+      <wsdl:port binding="intf:SWConsultaDatosSoapBinding" name="SWConsultaDatosSsl">
          <wsdlsoap:address location="https://www.sepe.es/ccomunicacto/services/SWConsultaDatos"/>
-         -->
-         <!-- Entorno de pruebas -->
+      </wsdl:port>
+      
+      <!-- Entorno de pruebas -->
+      <wsdl:port binding="intf:SWConsultaDatosSoapBinding" name="SWConsultaDatosTesting">
          <wsdlsoap:address location="http://www.sepe.es/ecomunicacto/services/SWConsultaDatos"/>
-
-
+      </wsdl:port>
+      <wsdl:port binding="intf:SWConsultaDatosSoapBinding" name="SWConsultaDatosTestingSsl">
+         <wsdlsoap:address location="https://www.sepe.es/ecomunicacto/services/SWConsultaDatos"/>
       </wsdl:port>
 
    </wsdl:service>

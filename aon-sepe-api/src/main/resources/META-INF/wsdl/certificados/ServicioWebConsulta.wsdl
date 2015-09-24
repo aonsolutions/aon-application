@@ -74,16 +74,20 @@
 
    <wsdl:service name="ServicioWebConsultaService">
 
+	  <!-- entorno REAL - produccion -->
       <wsdl:port binding="intf:ServicioWebConsultaSoapBinding" name="ServicioWebConsulta">
-
-         <!-- entorno REAL - produccion -->
-         <!--  
+         <wsdlsoap:address location="http://sede.sepe.gob.es/DCertificadosWeb/services/ServicioWebConsulta"/>
+      </wsdl:port>
+      <wsdl:port binding="intf:ServicioWebConsultaSoapBinding" name="ServicioWebConsultaSsl">
          <wsdlsoap:address location="https://sede.sepe.gob.es/DCertificadosWeb/services/ServicioWebConsulta"/>
-         -->
-         
-         <!-- entorno TEST - pruebas -->
-         <wsdlsoap:address location="https://formacion.sepe.gob.es/DCertificadosWeb/services/ServicioWebConsulta"/>
+      </wsdl:port>
 
+      <!-- entorno TEST - pruebas -->
+      <wsdl:port binding="intf:ServicioWebConsultaSoapBinding" name="ServicioWebConsultaTesting">
+         <wsdlsoap:address location="http://formacion.sepe.gob.es/DCertificadosWeb/services/ServicioWebConsulta"/>
+      </wsdl:port>
+      <wsdl:port binding="intf:ServicioWebConsultaSoapBinding" name="ServicioWebConsultaTestingSsl">
+         <wsdlsoap:address location="https://formacion.sepe.gob.es/DCertificadosWeb/services/ServicioWebConsulta"/>
       </wsdl:port>
 
    </wsdl:service>

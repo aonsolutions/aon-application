@@ -74,16 +74,20 @@
 
    <wsdl:service name="ServicioWebEntradaService">
 
+      <!-- entorno REAL - produccion -->
       <wsdl:port binding="intf:ServicioWebEntradaSoapBinding" name="ServicioWebEntrada">
-
-         <!-- entorno REAL - produccion -->
-         <!--  
+         <wsdlsoap:address location="http://sede.sepe.gob.es/DCertificadosWeb/services/ServicioWebEntrada"/>
+      </wsdl:port>
+      <wsdl:port binding="intf:ServicioWebEntradaSoapBinding" name="ServicioWebEntradaSsl">
          <wsdlsoap:address location="https://sede.sepe.gob.es/DCertificadosWeb/services/ServicioWebEntrada"/>
-         -->
-         
-         <!-- entorno TEST - pruebas -->
-         <wsdlsoap:address location="https://formacion.sepe.gob.es/DCertificadosWeb/services/ServicioWebEntrada"/>
+      </wsdl:port>
 
+      <!-- entorno TEST - pruebas -->
+      <wsdl:port binding="intf:ServicioWebEntradaSoapBinding" name="ServicioWebEntradaTesting">
+         <wsdlsoap:address location="http://formacion.sepe.gob.es/DCertificadosWeb/services/ServicioWebEntrada"/>
+      </wsdl:port>
+      <wsdl:port binding="intf:ServicioWebEntradaSoapBinding" name="ServicioWebEntradaTestingSsl">
+         <wsdlsoap:address location="https://formacion.sepe.gob.es/DCertificadosWeb/services/ServicioWebEntrada"/>
       </wsdl:port>
 
    </wsdl:service>

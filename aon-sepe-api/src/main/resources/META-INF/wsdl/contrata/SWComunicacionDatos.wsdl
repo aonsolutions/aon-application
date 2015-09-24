@@ -757,16 +757,20 @@
 
    <wsdl:service name="SWComunicacionDatosService">
 
+      <!-- Entorno REAL -->
       <wsdl:port binding="impl:SWComunicacionDatosSoapBinding" name="SWComunicacionDatos">
-
-         <!-- Entorno REAL -->
-         <!--  
+         <wsdlsoap:address location="http://www.sepe.es/ccomunicacto/services/SWComunicacionDatos"/>
+      </wsdl:port>
+      <wsdl:port binding="impl:SWComunicacionDatosSoapBinding" name="SWComunicacionDatosSsl">
          <wsdlsoap:address location="https://www.sepe.es/ccomunicacto/services/SWComunicacionDatos"/>
-         -->
-         
-         <!--      Entorno de pruebas -->
-         <wsdlsoap:address location="http://www.sepe.es/ecomunicacto/services/SWComunicacionDatos"/>
+      </wsdl:port>
 
+      <!--      Entorno de pruebas -->
+      <wsdl:port binding="impl:SWComunicacionDatosSoapBinding" name="SWComunicacionDatosTesting">
+         <wsdlsoap:address location="http://www.sepe.es/ecomunicacto/services/SWComunicacionDatos"/>
+      </wsdl:port>
+      <wsdl:port binding="impl:SWComunicacionDatosSoapBinding" name="SWComunicacionDatosTestingSsl">
+         <wsdlsoap:address location="https://www.sepe.es/ecomunicacto/services/SWComunicacionDatos"/>
       </wsdl:port>
 
    </wsdl:service>
