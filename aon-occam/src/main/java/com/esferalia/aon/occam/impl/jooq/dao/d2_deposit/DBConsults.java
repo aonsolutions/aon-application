@@ -48,7 +48,7 @@ public class DBConsults {
 					.where(RATTACH.TYPE.eq((byte) 17)
 						.and(RATTACH.DOMAIN.eq(domainId)))
 						.and(RATTACH.ATTACH_DATE.eq(newAttachDate(year)))
-						.fetchOne();
+						.limit(1).fetchOne();
 
 			return record != null && record.value2() != null;
 
@@ -102,7 +102,7 @@ public class DBConsults {
 					.join(REGISTRY)
 					.on(REGISTRY.ID.eq(RATTACH.REGISTRY))
 					.where(RATTACH.TYPE.eq((byte) 17).and(
-							RATTACH.DOMAIN.eq(domainId))).fetchOne();
+							RATTACH.DOMAIN.eq(domainId))).limit(1).fetchOne();
 			
 			byte[] data;
 			if (record != null) {
@@ -181,7 +181,7 @@ public class DBConsults {
 					.on(REGISTRY.ID.eq(RATTACH.REGISTRY))
 					.where(RATTACH.TYPE.eq((byte) 17).and(
 							RATTACH.DOMAIN.eq(domainId)))
-							.and(RATTACH.ATTACH_DATE.eq(newAttachDate(year))).fetchOne();
+							.and(RATTACH.ATTACH_DATE.eq(newAttachDate(year))).limit(1).fetchOne();
 
 			File f = new File("/tmp/DEPOSITO.xml");
 			byte[] data;
@@ -197,7 +197,7 @@ public class DBConsults {
 								REGISTRY.NAME)
 						.from(ENTERPRISE.join(REGISTRY).on(
 								REGISTRY.ID.eq(ENTERPRISE.REGISTRY)))
-						.where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne();
+						.where(ENTERPRISE.DOMAIN.eq(domainId)).limit(1).fetchOne();
 				Integer registry = reg.value1();
 				String document = reg.value2();
 				String name = reg.value3();
@@ -230,7 +230,7 @@ public class DBConsults {
 					.getDslContext()
 					.select(RATTACH.ID, RATTACH.DESCRIPTION, RATTACH.MIMETYPE,
 							RATTACH.DRIVE_ID, RATTACH.DATA).from(RATTACH)
-					.where(RATTACH.ID.eq(id)).fetchOne();
+					.where(RATTACH.ID.eq(id)).limit(1).fetchOne();
 
 			File f = new File("/tmp/DEPOSITO.xml");
 			byte[] data;
@@ -260,7 +260,7 @@ public class DBConsults {
 					.select(REGISTRY.DOCUMENT)
 					.from(ENTERPRISE.join(REGISTRY).on(
 							REGISTRY.ID.eq(ENTERPRISE.REGISTRY)))
-					.where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne();
+					.where(ENTERPRISE.DOMAIN.eq(domainId)).limit(1).fetchOne();
 
 			return reg.value1();
 		} finally {
@@ -304,7 +304,7 @@ public class DBConsults {
 							REGISTRY.NAME)
 					.from(ENTERPRISE.join(REGISTRY).on(
 							REGISTRY.ID.eq(ENTERPRISE.REGISTRY)))
-					.where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne();
+					.where(ENTERPRISE.DOMAIN.eq(domainId)).limit(1).fetchOne();
 			Integer registry = reg.value1();
 			String document = reg.value2();
 			String name = reg.value3();
@@ -395,7 +395,8 @@ public class DBConsults {
 					.select(ENTERPRISE.REGISTRY)
 					.from(ENTERPRISE.join(REGISTRY).on(
 							REGISTRY.ID.eq(ENTERPRISE.REGISTRY)))
-					.where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne();
+					.where(ENTERPRISE.DOMAIN.eq(domainId))
+					.limit(1).fetchOne();
 			Integer registry = reg.value1();
 
 			return ctx
@@ -463,7 +464,7 @@ public class DBConsults {
 					.where(RATTACH.DESCRIPTION.eq(name)
 							.and(RATTACH.DOMAIN.eq(domainId))
 							.and(RATTACH.TYPE.eq((byte)7)))
-					.fetchOne();
+					.limit(1).fetchOne();
 			
 			byte[] data;
 			
@@ -586,7 +587,7 @@ public class DBConsults {
 					.select(ENTERPRISE.REGISTRY)
 					.from(ENTERPRISE.join(REGISTRY).on(
 							REGISTRY.ID.eq(ENTERPRISE.REGISTRY)))
-					.where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne();
+					.where(ENTERPRISE.DOMAIN.eq(domainId)).limit(1).fetchOne();
 			Integer registry = reg.value1();
 
 			return ctx.getDslContext()
