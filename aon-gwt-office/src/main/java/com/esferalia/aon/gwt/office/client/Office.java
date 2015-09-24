@@ -57,7 +57,8 @@ public class Office extends Composite implements EntryPoint,
 	IssueGrid dataGrid;
 	@UiField
 	ListBox repoListBox;
-
+	@UiField
+	ResizeLayoutPanel issuesOfficePanel;
 	@UiField
 	LeftButtonsMenuBar leftButtonBarMenu;
 
@@ -211,7 +212,7 @@ public class Office extends Composite implements EntryPoint,
 	}
 
 	private void showIssueLayoutPanel() {
-		deckPanel.showWidget(issuesPanel);
+		deckPanel.showWidget(issuesOfficePanel);
 	}
 
 	// ******************************************************************

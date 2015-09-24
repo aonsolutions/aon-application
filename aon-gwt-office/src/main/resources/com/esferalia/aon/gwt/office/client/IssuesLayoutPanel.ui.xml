@@ -7,43 +7,44 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
 		field="aonResources"></ui:with>
 
-	<ui:style type='com.esferalia.aon.gwt.office.client.IssuesLayoutPanel.MyStyle'>
-	.header-title {
-		font-weight: bolder;
-		font-size: 30px;
-		font-color: #333;
-		line-height: 1.1;
-		word-wrap: break-word;
-	}
-	
-	.header-title-number {
-		color: #aaa;
-	}
-	
-	.header-subtitle {
-		color: #767676;
-		font-size: 16px;
-		line-height: 20px;
-	}
-	
-	.state-open {
-		background-color: #6cc644;
-	}
-	
-	.state-close {
-		background-color: #bd2c00;;
-	}
-	
-	.state {
-		border-radius: 3px;
-		color: #fff;
-		display: inline-block;
-		font-weight: bold;
-		line-height: 20px;
-		padding: 4px 8px 4px 17px;
-		text-align: center;
-	}
-	</ui:style>
+	<ui:style
+		type='com.esferalia.aon.gwt.office.client.IssuesLayoutPanel.MyStyle'>
+		.header-title {
+			font-weight: bolder;
+			font-size: 30px;
+			font-color: #333;
+			line-height: 1.1;
+			word-wrap: break-word;
+		}
+		
+		.header-title-number {
+			color: #aaa;
+		}
+		
+		.header-subtitle {
+			color: #767676;
+			font-size: 16px;
+			line-height: 20px;
+		}
+		
+		.state-open {
+			background-color: #6cc644;
+		}
+		
+		.state-close {
+			background-color: #bd2c00;;
+		}
+		
+		.state {
+			border-radius: 3px;
+			color: #fff;
+			display: inline-block;
+			font-weight: bold;
+			line-height: 20px;
+			padding: 4px 8px 4px 17px;
+			text-align: center;
+		}
+		</ui:style>
 	<g:DockLayoutPanel unit="PX" height="100%" width="100%">
 		<g:north size="40">
 			<g:FlowPanel>
@@ -51,9 +52,9 @@
 					<g:InlineLabel ui:field="titleLabel" />
 					<g:InlineLabel ui:field="numberIssueLabel" styleName="{style.header-title-number}" />
 				</g:HTMLPanel>
-				</g:FlowPanel>
+			</g:FlowPanel>
 		</g:north>
-		<g:north size="75">
+		<g:north size="72">
 			<g:FlowPanel>
 				<g:HTMLPanel styleName="{style.header-subtitle}">
 					<g:InlineLabel ui:field="stateLabel" styleName="{style.state}" />
@@ -61,11 +62,11 @@
 					<g:InlineLabel ui:field="whenCreateLabel" styleName="{style.header-title-number}" />
 				</g:HTMLPanel>
 				<g:HTMLPanel>
-					<g:HorizontalPanel ui:field="hPanel" spacing="10"/>
+					<g:HorizontalPanel ui:field="hPanel" spacing="10" />
 				</g:HTMLPanel>
 
 			</g:FlowPanel>
-		
+
 		</g:north>
 
 		<g:center>

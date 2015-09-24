@@ -48,7 +48,7 @@ public class IssueReadWidget extends Composite {
 	public IssueReadWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
 
-		flexTable.setWidth("70%");
+		flexTable.setWidth("85%");
 		flexTable.setCellPadding(3);
 		flexTable.setCellSpacing(5);
 
@@ -57,60 +57,53 @@ public class IssueReadWidget extends Composite {
 
 	public void addIssue(IssueSelected issue) {
 
-		Widget header = buildHeader(issue.getUser().getLogin(), issue.getCreateAt());
-		Label body = (Label) buildBody(issue.getBody());
+		buildHeader(issue.getUser().getLogin(), issue.getCreateAt());
+		buildBody(issue.getBody());
 
-		flexTable.setWidget(0, 0, header);
-		flexTable.setWidget(1, 0, body);
 	}
 
 	public void addComment(JsIssueComment comment, Integer x) {
 
-		Widget header = buildHeader(comment
+		buildHeader(comment
 				.getUser().getLogin(), comment.getCreatedAtString());
-		Widget body = buildBody(comment.getBody());
-
-		flexTable.setWidget(0, 0, header);
-		flexTable.setWidget(1, 0, body);
-
+		buildBody(comment.getBody());
+		
 		if ((x % 2) == 0) {
 			flexTable.setStyleName(style.rowEven());
 		}
 	}
 
-	private Widget buildHeader(String name, Object created) {
-
+	private void buildHeader(String name, Object created) {
+		
 		HorizontalPanel hPanel = new HorizontalPanel();
-		hPanel.setSpacing(5);
-		hPanel.setWidth(AON.AON_WIDTH_ALL);
-		hPanel.setStyleName(style.issueHeader());
-
+		hPanel.setStyleName(style.issueHeader());		
+		
 		Label header = new Label(name);
 		header.setStyleName(AON.AON_BOLD);
-		// header.addStyleName(style.issueHeader());
 
 		Widget daysLabel = buildDaysLabel(created);
-
+		daysLabel.setStyleName(style.issueHeaderSubtitle());
+		
 		hPanel.add(header);
 		hPanel.add(daysLabel);
-
-		return hPanel;
+		
+		flexTable.getFlexCellFormatter().setColSpan(0, 0, 2);
+		flexTable.setWidget(0, 0, hPanel);
 	}
 
-	private Widget buildBody(String text) {
+	private void buildBody(String text) {
+		
+		flexTable.getFlexCellFormatter().setColSpan(1, 0, 2);
 		Label body = new Label(text);
 		body.setWidth(AON.AON_WIDTH_ALL);
 		body.setStyleName(style.issueBody());
-
-		return body;
+		
+		flexTable.setWidget(1, 0, body);
 	}
 	
 	private Widget buildDaysLabel (Object text) {
 		
-		Integer days;
-		
-		Label dateLabel = new Label();
-		dateLabel.setStyleName(style.issueHeaderSubtitle());
+		Integer days;		
 		
 		if (text instanceof Date)
 			days = DateUtils.getDaysBetween((Date) text, new Date());
@@ -118,9 +111,7 @@ public class IssueReadWidget extends Composite {
 		else
 			days = DateUtils.getDaysBetween(getParseDate((String) text), new Date());
 		
-
-		dateLabel.setText(" comentado hace " + days + " d\u00EDas");
-		return dateLabel;
+		return new Label(" comentado hace " + days + " d\u00EDas");
 	 
 	}
 

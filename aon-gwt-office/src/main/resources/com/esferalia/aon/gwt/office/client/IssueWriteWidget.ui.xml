@@ -12,32 +12,25 @@
 
 	<g:DockLayoutPanel>
 		<g:center>
-			<g:TabLayoutPanel barUnit="EM" barHeight="3"
-				ui:field="tabPanel">
-				<g:tab>
-					<g:header>
-						<b> Escribir </b>
-					</g:header>
-					<g:TextArea ui:field="textArea" />
-				</g:tab>
-				<g:tab>
-					<g:header>
-						<b> Preview </b>
-					</g:header>
-					<g:Label text="Preview" />
-				</g:tab>
-			</g:TabLayoutPanel>
+			<g:FlowPanel width="80%" height="50%">
+				<g:TabLayoutPanel barUnit="EM" barHeight="3"
+					ui:field="tabPanel">
+					<g:tab>
+						<g:header>
+							<b> Escribir </b>
+						</g:header>
+						<g:TextArea ui:field="textArea" />
+					</g:tab>
+					<g:tab>
+						<g:header>
+							<b> Preview </b>
+						</g:header>
+						<g:Label text="Preview" />
+					</g:tab>
+				</g:TabLayoutPanel>
+			</g:FlowPanel>
 
 		</g:center>
 	</g:DockLayoutPanel>
-
-
-
-
-
-
-
-
-
 
 </ui:UiBinder> 

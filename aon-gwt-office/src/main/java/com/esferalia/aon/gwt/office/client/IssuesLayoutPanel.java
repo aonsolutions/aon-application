@@ -21,14 +21,14 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class IssuesLayoutPanel extends Composite {
-	
+
 	interface MyStyle extends CssResource {
 		@ClassName("state")
 		String state();
-		
+
 		@ClassName("state-open")
 		String stateOpen();
-		
+
 		@ClassName("state-close")
 		String stateClose();
 	}
@@ -39,7 +39,7 @@ public class IssuesLayoutPanel extends Composite {
 	interface IssuesLayoutPanelUiBinder extends
 			UiBinder<Widget, IssuesLayoutPanel> {
 	}
-	
+
 	private static final String OPEN = "Open";
 	private static final String CLOSED = "Closed";
 
@@ -83,18 +83,17 @@ public class IssuesLayoutPanel extends Composite {
 	private void setHeaderTitle() {
 		titleLabel.setText(issue.getTitle());
 		numberIssueLabel.setText("#" + issue.getNumber());
-		
+
 		if (issue.getState().equals(IssueValue.Prop.OPEN.value)) {
 			stateLabel.setText(IssuesLayoutPanel.OPEN);
 			stateLabel.addStyleName(style.stateOpen());
 			stateLabel.addStyleName(AON.AON_ICON_ISSUE_OPENED);
-		}
-		else {
+		} else {
 			stateLabel.setText(IssuesLayoutPanel.CLOSED);
 			stateLabel.addStyleName(style.stateClose());
 			stateLabel.addStyleName(AON.AON_ICON_ISSUE_CLOSED);
 		}
-		
+
 		userCreateLabel.setText(issue.getUser().getLogin());
 
 		int days = DateUtils.getDaysBetween(issue.getCreateAt(), (new Date()));
@@ -121,10 +120,18 @@ public class IssuesLayoutPanel extends Composite {
 		}
 	}
 
+	private void addWriteIssue() {
+
+		IssueWriteWidget issueWrite = new IssueWriteWidget();
+		flowIssuesPanel.add(issueWrite);
+	}
+
 	private void addLabels() {
 
 		InlineLabel whoCreate = new InlineLabel(issue.getUser().getLogin()
 				+ " added ");
+		whoCreate.setStyleName(AON.AON_ICON_EMPLOYEE + " "
+				+ AON.AON_ICON_CMD_BUTTON);
 
 		hPanel.add(whoCreate);
 		addLabels(hPanel, issue.getLabels());
