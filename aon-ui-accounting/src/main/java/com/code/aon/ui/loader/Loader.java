@@ -366,7 +366,7 @@ public class Loader implements ILoaderEngine {
 							raiseException(i, e.getMessage());
 						}
 						if (i%50 == 0) {
-							log("" + i + " líneas insertadas");
+							log("" + i + " líneas tratadas");
 						}
 						if (i%10 == 0) {
 							session.flush();
@@ -380,7 +380,7 @@ public class Loader implements ILoaderEngine {
 				 
 			}
 			reader.close();
-			log("" + i + " líneas insertadas");
+			log("" + i + " líneas tratadas");
 			LOGGER.info("Carga de datos finalizada!");
 			log("Carga de datos finalizada!");
 			log(" " + errors + " errores, " + warnings + " avisos");

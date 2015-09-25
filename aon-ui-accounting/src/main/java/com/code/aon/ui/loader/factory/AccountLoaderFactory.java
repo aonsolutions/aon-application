@@ -11,6 +11,7 @@ import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.loader.Column;
 import com.code.aon.ui.loader.ILoaderEngine;
@@ -19,6 +20,7 @@ import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.loader.pojo.ILoadedPojo;
 import com.code.aon.ui.loader.pojo.LoadedAccount;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 	
@@ -30,14 +32,23 @@ public class AccountLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 	};
 	
 	private Map<String, Column[]> columns;
-
+	private IManagerBean accountBean;
+	private ILoaderEngine engine;
+	
 	public AccountLoaderFactory() {
 	}
 	public AccountLoaderFactory(ILoaderEngine engine) {
+		this.engine = engine;
 	}
 
 	public Map<String, Column[]> getColumns() {
 		return columns;
+	}
+	private IManagerBean getBean() throws ManagerBeanException {
+		if (accountBean == null) {
+			accountBean = BeanManager.getManagerBean(Account.class);
+		}
+		return accountBean;
 	}
 	
 	@Override
@@ -70,30 +81,81 @@ public class AccountLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 
 	@Override
 	public ITransferObject get(Integer id) throws AonException {
-		IManagerBean bean = BeanManager.getManagerBean(Account.class);
-		return bean.get(id);
+		return getBean().get(id);
 	}
 
 	@Override
 	public Integer insert(LoaderParams params,ILoadedPojo loadedPojo) throws AonException {
+		String codeAlias = getBean().getFieldName(IEntityAlias.ACCOUNT_CODE);
 		LoadedAccount loaded = (LoadedAccount) loadedPojo;
-		IManagerBean bean = BeanManager.getManagerBean(Account.class);
 		Account account = new Account();
-		account.setCode(loaded.getCuenta());
 		account.setDescription(loaded.getDescripcion());
 		account.setAlias(loaded.getAlias());
-		account = (Account) bean.insert(account);
+		
+		String code4 = AonStringUtils.substring(loaded.getCuenta(),0,4);
+		Criteria c = new Criteria();
+		c.addEqualExpression(codeAlias, code4);
+		if (getBean().getCount(c) != 1) {
+			String code3 = AonStringUtils.substring(loaded.getCuenta(),0,3);
+			c = new Criteria();
+			c.addEqualExpression(codeAlias, code3);
+			if (getBean().getCount(c) != 1) {
+				String code2 = AonStringUtils.substring(loaded.getCuenta(),0,2);
+				c = new Criteria();
+				c.addEqualExpression(codeAlias, code2);
+				if (getBean().getCount(c) != 1) {
+					String code1 = AonStringUtils.substring(loaded.getCuenta(),0,1);
+					c = new Criteria();
+					c.addEqualExpression(codeAlias, code1);
+					if (getBean().getCount(c) != 1) {
+						Account account1 = new Account();
+						account1.setCode(code1);
+						account1.setDescription(loaded.getDescripcion());
+						account1.setAlias(loaded.getAlias());
+						getBean().insert(account1);
+						engine.log("Cuenta de nivel 1 creada ["+ account1.getFullDescription() +"]");
+					}
+					Account account2 = new Account();
+					account2.setCode(code2);
+					account2.setDescription(loaded.getDescripcion());
+					account2.setAlias(loaded.getAlias());
+					getBean().insert(account2);			
+					engine.log("Cuenta de nivel 2 creada ["+ account2.getFullDescription() +"]");
+				}
+				Account account3 = new Account();
+				account3.setCode(code3);
+				account3.setDescription(loaded.getDescripcion());
+				account3.setAlias(loaded.getAlias());
+				getBean().insert(account3);			
+				engine.log("Cuenta de nivel 3 creada ["+ account3.getFullDescription() +"]");
+			}
+			Account account4 = new Account();
+			account4.setCode(code4);
+			account4.setDescription(loaded.getDescripcion());
+			account4.setAlias(loaded.getAlias());
+			getBean().insert(account4);			
+			engine.log("Cuenta de nivel 4 creada ["+ account4.getFullDescription() +"]");
+		}
+		
+		account.setCode(loaded.getCuenta());
+		c = new Criteria();
+		c.addEqualExpression(codeAlias, loaded.getCuenta());
+		List<ITransferObject> list = getBean().getList(c);
+		if (list != null && list.size() >0 ) {
+			account = (Account) list.get(0);	
+			engine.log("Cuenta ya existente, se ignora la del fichero ["+ account.getFullDescription() +"]");
+		} else {
+			account = (Account) getBean().insert(account);
+		}
 		return account.getId();
 	}
-
 	
 	@Override
 	public ITransferObject get(LoaderParams params, ILoadedPojo loadedPojo) throws AonException {
 		LoadedAccount loaded = (LoadedAccount) loadedPojo;
-		IManagerBean bean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_CODE), loaded.getCuenta());
-		List<ITransferObject> list = bean.getList(criteria); 
+		criteria.addEqualExpression(getBean().getFieldName(IEntityAlias.ACCOUNT_CODE), loaded.getCuenta());
+		List<ITransferObject> list = getBean().getList(criteria); 
 		if ( list.size() > 0 ) {
 			return (Account) list.get(0);
 		}
