@@ -45,6 +45,12 @@ public enum AonError implements Serializable{
 	// --------------------- ACCOUNTING --------------------------
 	// -----------------------------------------------------------
 	
+	// -------------------------------------------- -------ACCOUNT
+	,ACCOUNT_EMPTY_CODE("La cuenta contable es un dato obligatorio, no puede estar vacio.")
+	,ACCOUNT_EMPTY_DESCRIPTION("La descripción de la cuenta contable es un dato obligatorio, no puede estar vacio.")
+	,ACCOUNT_INVALID_LENGTH("La longitud de la cuenta {0} es incorrecta, debe tener una longitud de 1, 2, 3, 4 ó 9 caracteres. ")
+	,ACCOUNT_DUPLICATED_CODE("No se puede crear la cuenta ({0}) porque ya existe una con el mismo código ({1})")
+	
 	// -------------------------------------------- ACCOUNT_PERIOD
 	,ACCOUNT_PERIOD_EMPTY_INITIATION_DATE("La fecha de inicio del ejercicio es un dato obligatorio, no puede estar vacio.")
 	,ACCOUNT_PERIOD_EMPTY_DEADLINE("La fecha fin del ejercicio es un dato obligatorio, no puede estar vacio.")

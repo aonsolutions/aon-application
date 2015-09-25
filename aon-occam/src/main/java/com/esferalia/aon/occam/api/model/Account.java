@@ -28,7 +28,7 @@ public class Account implements Serializable {
 	}	
 	
 	private Integer id;
-	private int domain;
+	private Integer domain;
 	private String code;
 	private String description;
 	private String alias;
@@ -46,11 +46,11 @@ public class Account implements Serializable {
 		return this;
 	}
 
-	public int getDomain() {
+	public Integer getDomain() {
 		return domain;
 	}
 
-	public Account setDomain(int domain) {
+	public Account setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
 	}
