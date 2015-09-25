@@ -37,6 +37,8 @@ public class SupplierLoaderFactory extends RegistryLoaderFactory implements ILoa
 		,new Column(PRO,"cuenta"						,2,9	,false	,null)
 		,new Column(PRO,"transaccion"					,0,1	,false	,new int[] {0,1,2,3,4})
 		,new Column(PRO,"retencion"						,0,1	,false	,new int[] {0,1})
+		,new Column(PRO,"criterioCaja"					,0,1	,false	,new int[] {0,1})
+		,new Column(PRO,"regimenAgrario"				,0,1	,false	,new int[] {0,1})
 		,new Column(PRO,"tipoVia"						,2,2	,false	,null)
 		,new Column(PRO,"direccion"						,2,128	,false	,null)
 		,new Column(PRO,"numero"						,0,6	,false	,null)
@@ -114,6 +116,8 @@ public class SupplierLoaderFactory extends RegistryLoaderFactory implements ILoa
 		supplier.setScope(params.getScope());
 		supplier.setTransaction(loaded.getInvoiceTransactionType());
 		supplier.setWithholding(loaded.isWithholding());
+		supplier.setVatAccrualPayment(loaded.isVatAccrualPayment());
+		supplier.setWithholdingFarmer(loaded.isWithholdingFarmer());
 		supplier.setStatus(SupplierStatus.ACTIVE);
 		if (StringUtils.isNotBlank(loaded.getCuenta())) {
 			supplier.setAccount(getLoaderUtils().ensureAccount(loaded.getCuenta(), supplier.getRegistry().getName()));
