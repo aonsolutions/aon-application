@@ -65,11 +65,18 @@ public class SupplierLoaderFactory extends RegistryLoaderFactory implements ILoa
 
 	private Map<String, Column[]> columns;
 	private ILoaderEngine engine;
+	private IManagerBean supplierBean;
 
 	public SupplierLoaderFactory() {
 	}
 	public SupplierLoaderFactory(ILoaderEngine engine) {
 		this.engine = engine;
+	}
+	public IManagerBean getBean() throws ManagerBeanException {
+		if (supplierBean == null) {
+			supplierBean = BeanManager.getManagerBean(Supplier.class);
+		}
+		return supplierBean;
 	}
 
 	public Map<String, Column[]> getColumns() {
@@ -102,14 +109,12 @@ public class SupplierLoaderFactory extends RegistryLoaderFactory implements ILoa
 
 	@Override
 	public ITransferObject get(Integer id) throws AonException {
-		IManagerBean bean = BeanManager.getManagerBean(Supplier.class);
-		return bean.get(id);
+		return getBean().get(id);
 	}
 
 	@Override
 	public Integer insert(LoaderParams params,ILoadedPojo loadedPojo) throws AonException {
 		LoadedSupplier loaded = (LoadedSupplier) loadedPojo;
-		IManagerBean bean = BeanManager.getManagerBean(Supplier.class);
 		Supplier supplier  = new Supplier ();
 		
 		supplier.setRegistry(populateRegistry(params,loaded));
@@ -119,45 +124,63 @@ public class SupplierLoaderFactory extends RegistryLoaderFactory implements ILoa
 		supplier.setVatAccrualPayment(loaded.isVatAccrualPayment());
 		supplier.setWithholdingFarmer(loaded.isWithholdingFarmer());
 		supplier.setStatus(SupplierStatus.ACTIVE);
-		if (StringUtils.isNotBlank(loaded.getCuenta())) {
-			supplier.setAccount(getLoaderUtils().ensureAccount(loaded.getCuenta(), supplier.getRegistry().getName()));
+		boolean insert = true;
+		if (!params.isForceRegistryInsert()) {
+			Criteria c = new Criteria();
+			c.addEqualExpression(getBean().getFieldName(IEntityAlias.SUPPLIER_REGISTRY_DOCUMENT), loaded.getDocumento());
+			List<ITransferObject> list = getBean().getList(c);
+			if (list == null || list.size() == 0) {
+				insert = true;
+			} else {
+				insert = false;
+				supplier = (Supplier) list.get(0);
+				engine.log("Proveedor " + loaded.getDocumento() + " - " + loaded.getRazonSocial() 
+						+ " encontrado en la base de datos. ["
+						+ supplier.getRegistry().getDocument() + " - " + supplier.getRegistry().getFullName() 
+						+ "]. Se ignora.");
+			}
 		}
-		supplier = (Supplier) bean.insert(supplier);
-		
-		if (StringUtils.isNotBlank(loaded.getTipoVia())
-			|| StringUtils.isNotBlank(loaded.getDireccion())
-			|| StringUtils.isNotBlank(loaded.getNumero())
-			|| StringUtils.isNotBlank(loaded.getDireccion2())
-			|| StringUtils.isNotBlank(loaded.getDireccion3())
-			|| StringUtils.isNotBlank(loaded.getCp())
-			|| StringUtils.isNotBlank(loaded.getCiudad())
-			|| StringUtils.isNotBlank(loaded.getProvincia())
-			|| StringUtils.isNotBlank(loaded.getNombreProvincia())
-			|| StringUtils.isNotBlank(loaded.getPais())) {
-			insertRegistryAddress(supplier.getRegistry(),loaded);	
-		}
-		
-		if (StringUtils.isNotBlank(loaded.getTelefono1())) {
-			insertRegistryMedia(supplier.getRegistry(),MediaType.FIXED_PHONE,loaded.getTelefono1());
-		}
-		if (StringUtils.isNotBlank(loaded.getTelefono2())) {
-			insertRegistryMedia(supplier.getRegistry(),MediaType.FIXED_PHONE,loaded.getTelefono2());
-		}
-		if (StringUtils.isNotBlank(loaded.getFax())) {
-			insertRegistryMedia(supplier.getRegistry(),MediaType.FAX,loaded.getFax());
-		}
-		if (StringUtils.isNotBlank(loaded.getEmail())) {
-			insertRegistryMedia(supplier.getRegistry(),MediaType.EMAIL, loaded.getEmail(),true,false,false);
-		}
-		if (StringUtils.isNotBlank(loaded.getWeb())) {
-			insertRegistryMedia(supplier.getRegistry(),MediaType.WEB,loaded.getWeb());
-		}
-		RegistryBank rbank = null;
-		if (StringUtils.isNotBlank(loaded.getCuentaBanco())) {
-			rbank = insertRegistryBank(engine,params,supplier.getRegistry(),loaded);	
-		}
-		if (rbank != null && StringUtils.isNotBlank(loaded.getFormaPago())) {
-			insertRegistryPayMethod(params,supplier.getRegistry(),rbank,loaded);
+		if (insert) {	
+			if (StringUtils.isNotBlank(loaded.getCuenta())) {
+				supplier.setAccount(getLoaderUtils().ensureAccount(loaded.getCuenta(), supplier.getRegistry().getName()));
+			}
+			supplier = (Supplier) getBean().insert(supplier);
+			
+			if (StringUtils.isNotBlank(loaded.getTipoVia())
+				|| StringUtils.isNotBlank(loaded.getDireccion())
+				|| StringUtils.isNotBlank(loaded.getNumero())
+				|| StringUtils.isNotBlank(loaded.getDireccion2())
+				|| StringUtils.isNotBlank(loaded.getDireccion3())
+				|| StringUtils.isNotBlank(loaded.getCp())
+				|| StringUtils.isNotBlank(loaded.getCiudad())
+				|| StringUtils.isNotBlank(loaded.getProvincia())
+				|| StringUtils.isNotBlank(loaded.getNombreProvincia())
+				|| StringUtils.isNotBlank(loaded.getPais())) {
+				insertRegistryAddress(supplier.getRegistry(),loaded);	
+			}
+			
+			if (StringUtils.isNotBlank(loaded.getTelefono1())) {
+				insertRegistryMedia(supplier.getRegistry(),MediaType.FIXED_PHONE,loaded.getTelefono1());
+			}
+			if (StringUtils.isNotBlank(loaded.getTelefono2())) {
+				insertRegistryMedia(supplier.getRegistry(),MediaType.FIXED_PHONE,loaded.getTelefono2());
+			}
+			if (StringUtils.isNotBlank(loaded.getFax())) {
+				insertRegistryMedia(supplier.getRegistry(),MediaType.FAX,loaded.getFax());
+			}
+			if (StringUtils.isNotBlank(loaded.getEmail())) {
+				insertRegistryMedia(supplier.getRegistry(),MediaType.EMAIL, loaded.getEmail(),true,false,false);
+			}
+			if (StringUtils.isNotBlank(loaded.getWeb())) {
+				insertRegistryMedia(supplier.getRegistry(),MediaType.WEB,loaded.getWeb());
+			}
+			RegistryBank rbank = null;
+			if (StringUtils.isNotBlank(loaded.getCuentaBanco())) {
+				rbank = insertRegistryBank(engine,params,supplier.getRegistry(),loaded);	
+			}
+			if (rbank != null && StringUtils.isNotBlank(loaded.getFormaPago())) {
+				insertRegistryPayMethod(params,supplier.getRegistry(),rbank,loaded);
+			}
 		}
 		return supplier.getId();
 	}
@@ -173,12 +196,11 @@ public class SupplierLoaderFactory extends RegistryLoaderFactory implements ILoa
 	}
 	
 	private Supplier searchSupplierByDocument(LoaderParams params, LoadedSupplier loaded) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Supplier.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SUPPLIER_REGISTRY_DOCUMENT), loaded.getDocumento());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SUPPLIER_STATUS), SupplierStatus.ACTIVE);
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SUPPLIER_SCOPE_ID), params.getScope().getId());
-		List<ITransferObject> list = bean.getList(criteria); 
+		criteria.addEqualExpression(getBean().getFieldName(IEntityAlias.SUPPLIER_REGISTRY_DOCUMENT), loaded.getDocumento());
+		criteria.addEqualExpression(getBean().getFieldName(IEntityAlias.SUPPLIER_STATUS), SupplierStatus.ACTIVE);
+		criteria.addEqualExpression(getBean().getFieldName(IEntityAlias.SUPPLIER_SCOPE_ID), params.getScope().getId());
+		List<ITransferObject> list = getBean().getList(criteria); 
 		if ( list.size() > 0 ) {
 			if ( list.size() > 1 ) {
 				throw new ManagerBeanException("Existe más de un proveedor activo con el número de documento " + loaded.getDocumento());
@@ -189,12 +211,11 @@ public class SupplierLoaderFactory extends RegistryLoaderFactory implements ILoa
 	}
 	
 	private Supplier searchSupplierByAccount(LoaderParams params, LoadedSupplier loaded) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Supplier.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SUPPLIER_ACCOUNT_CODE), loaded.getCuenta());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SUPPLIER_STATUS), SupplierStatus.ACTIVE);
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SUPPLIER_SCOPE_ID), params.getScope().getId());
-		List<ITransferObject> list = bean.getList(criteria); 
+		criteria.addEqualExpression(getBean().getFieldName(IEntityAlias.SUPPLIER_ACCOUNT_CODE), loaded.getCuenta());
+		criteria.addEqualExpression(getBean().getFieldName(IEntityAlias.SUPPLIER_STATUS), SupplierStatus.ACTIVE);
+		criteria.addEqualExpression(getBean().getFieldName(IEntityAlias.SUPPLIER_SCOPE_ID), params.getScope().getId());
+		List<ITransferObject> list = getBean().getList(criteria); 
 		if ( list.size() > 0 ) {
 			if ( list.size() > 1 ) {
 				throw new ManagerBeanException("Existe más de un proveedor vinculado a la cuenta " + loaded.getCuenta());

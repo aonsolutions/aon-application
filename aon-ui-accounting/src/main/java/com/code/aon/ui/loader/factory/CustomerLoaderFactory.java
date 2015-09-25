@@ -66,6 +66,7 @@ public class CustomerLoaderFactory extends RegistryLoaderFactory implements ILoa
 
 	private Map<String, Column[]> columns;
 	private ILoaderEngine engine;
+	private IManagerBean customerBean;
 
 	public CustomerLoaderFactory() {
 	}
@@ -75,6 +76,12 @@ public class CustomerLoaderFactory extends RegistryLoaderFactory implements ILoa
 
 	public Map<String, Column[]> getColumns() {
 		return columns;
+	}
+	public IManagerBean getBean() throws ManagerBeanException {
+		if (customerBean == null) {
+			customerBean = BeanManager.getManagerBean(Customer.class);
+		}
+		return customerBean;
 	}
 
 	@Override
@@ -103,14 +110,12 @@ public class CustomerLoaderFactory extends RegistryLoaderFactory implements ILoa
 
 	@Override
 	public ITransferObject get(Integer id) throws AonException {
-		IManagerBean bean = BeanManager.getManagerBean(Customer.class);
-		return bean.get(id);
+		return getBean().get(id);
 	}
 
 	@Override
 	public Integer insert(LoaderParams params,ILoadedPojo loadedPojo) throws AonException {
 		LoadedCustomer loaded = (LoadedCustomer) loadedPojo;
-		IManagerBean bean = BeanManager.getManagerBean(Customer.class);
 		Customer customer  = new Customer ();
 		
 		customer.setRegistry(populateRegistry(params,loaded));
@@ -120,49 +125,68 @@ public class CustomerLoaderFactory extends RegistryLoaderFactory implements ILoa
 		customer.setWithholding(loaded.isWithholding());
 		customer.setDeliveryGrouped(loaded.isDeliveryGrouped());
 		customer.setStatus(CustomerStatus.ACTIVE);
-		if (StringUtils.isNotBlank(loaded.getCuenta())) {
-			customer.setAccount(getLoaderUtils().ensureAccount(loaded.getCuenta(), customer.getRegistry().getName()));
-
-		}
-		customer = (Customer) bean.insert(customer);
-
-		if (StringUtils.isNotBlank(loaded.getTipoVia())
-			|| StringUtils.isNotBlank(loaded.getDireccion())
-			|| StringUtils.isNotBlank(loaded.getNumero())
-			|| StringUtils.isNotBlank(loaded.getDireccion2())
-			|| StringUtils.isNotBlank(loaded.getDireccion3())
-			|| StringUtils.isNotBlank(loaded.getCp())
-			|| StringUtils.isNotBlank(loaded.getCiudad())
-			|| StringUtils.isNotBlank(loaded.getProvincia())
-			|| StringUtils.isNotBlank(loaded.getNombreProvincia())
-			|| StringUtils.isNotBlank(loaded.getPais())) {
-			insertRegistryAddress(customer.getRegistry(),loaded);	
-		}
 		
-		if (StringUtils.isNotBlank(loaded.getTelefono1())) {
-			insertRegistryMedia(customer.getRegistry(),MediaType.FIXED_PHONE,loaded.getTelefono1());
+		boolean insert = true;
+		if (!params.isForceRegistryInsert()) {
+			Criteria c = new Criteria();
+			c.addEqualExpression(getBean().getFieldName(IEntityAlias.CUSTOMER_REGISTRY_DOCUMENT), loaded.getDocumento());
+			List<ITransferObject> list = getBean().getList(c);
+			if (list == null || list.size() == 0) {
+				insert = true;
+			} else {
+				insert = false;
+				customer = (Customer) list.get(0);
+				engine.log("Cliente " + loaded.getDocumento() + " - " + loaded.getRazonSocial() 
+						+ " encontrado en la base de datos. ["
+						+ customer.getRegistry().getDocument() + " - " + customer.getRegistry().getFullName() 
+						+ "]. Se ignora.");
+			}
 		}
-		if (StringUtils.isNotBlank(loaded.getTelefono2())) {
-			insertRegistryMedia(customer.getRegistry(),MediaType.FIXED_PHONE,loaded.getTelefono2());
-		}
-		if (StringUtils.isNotBlank(loaded.getFax())) {
-			insertRegistryMedia(customer.getRegistry(),MediaType.FAX,loaded.getFax());
-		}
-		if (StringUtils.isNotBlank(loaded.getEmail())) {
-			insertRegistryMedia(customer.getRegistry(),MediaType.EMAIL, loaded.getEmail(),true,false,false);
-		}
-		if (StringUtils.isNotBlank(loaded.getWeb())) {
-			insertRegistryMedia(customer.getRegistry(),MediaType.WEB,loaded.getWeb());
-		}
-		if (StringUtils.isNotBlank(loaded.getSegmento())) {
-			insertRegistrySegment(customer.getRegistry(),loaded.getSegmento());
-		}
-		RegistryBank rbank = null;
-		if (StringUtils.isNotBlank(loaded.getCuentaBanco())) {
-			rbank = insertRegistryBank(engine,params,customer.getRegistry(),loaded);	
-		}
-		if (rbank != null || StringUtils.isNotBlank(loaded.getFormaPago())) {
-			insertRegistryPayMethod(params,customer.getRegistry(),rbank,loaded);
+		if (insert) {	
+			if (StringUtils.isNotBlank(loaded.getCuenta())) {
+				customer.setAccount(getLoaderUtils().ensureAccount(loaded.getCuenta(), customer.getRegistry().getName()));
+
+			}
+			customer = (Customer) getBean().insert(customer);
+
+			if (StringUtils.isNotBlank(loaded.getTipoVia())
+				|| StringUtils.isNotBlank(loaded.getDireccion())
+				|| StringUtils.isNotBlank(loaded.getNumero())
+				|| StringUtils.isNotBlank(loaded.getDireccion2())
+				|| StringUtils.isNotBlank(loaded.getDireccion3())
+				|| StringUtils.isNotBlank(loaded.getCp())
+				|| StringUtils.isNotBlank(loaded.getCiudad())
+				|| StringUtils.isNotBlank(loaded.getProvincia())
+				|| StringUtils.isNotBlank(loaded.getNombreProvincia())
+				|| StringUtils.isNotBlank(loaded.getPais())) {
+				insertRegistryAddress(customer.getRegistry(),loaded);	
+			}
+			
+			if (StringUtils.isNotBlank(loaded.getTelefono1())) {
+				insertRegistryMedia(customer.getRegistry(),MediaType.FIXED_PHONE,loaded.getTelefono1());
+			}
+			if (StringUtils.isNotBlank(loaded.getTelefono2())) {
+				insertRegistryMedia(customer.getRegistry(),MediaType.FIXED_PHONE,loaded.getTelefono2());
+			}
+			if (StringUtils.isNotBlank(loaded.getFax())) {
+				insertRegistryMedia(customer.getRegistry(),MediaType.FAX,loaded.getFax());
+			}
+			if (StringUtils.isNotBlank(loaded.getEmail())) {
+				insertRegistryMedia(customer.getRegistry(),MediaType.EMAIL, loaded.getEmail(),true,false,false);
+			}
+			if (StringUtils.isNotBlank(loaded.getWeb())) {
+				insertRegistryMedia(customer.getRegistry(),MediaType.WEB,loaded.getWeb());
+			}
+			if (StringUtils.isNotBlank(loaded.getSegmento())) {
+				insertRegistrySegment(customer.getRegistry(),loaded.getSegmento());
+			}
+			RegistryBank rbank = null;
+			if (StringUtils.isNotBlank(loaded.getCuentaBanco())) {
+				rbank = insertRegistryBank(engine,params,customer.getRegistry(),loaded);	
+			}
+			if (rbank != null || StringUtils.isNotBlank(loaded.getFormaPago())) {
+				insertRegistryPayMethod(params,customer.getRegistry(),rbank,loaded);
+			}
 		}
 		return customer.getId();
 	}
@@ -178,12 +202,11 @@ public class CustomerLoaderFactory extends RegistryLoaderFactory implements ILoa
 	}
 	
 	private Customer searchCustomerByDocument(LoaderParams params, LoadedCustomer loaded) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Customer.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CUSTOMER_REGISTRY_DOCUMENT), loaded.getDocumento());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CUSTOMER_STATUS), CustomerStatus.ACTIVE);
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CUSTOMER_SCOPE_ID), params.getScope().getId());
-		List<ITransferObject> list = bean.getList(criteria); 
+		criteria.addEqualExpression(getBean().getFieldName(IEntityAlias.CUSTOMER_REGISTRY_DOCUMENT), loaded.getDocumento());
+		criteria.addEqualExpression(getBean().getFieldName(IEntityAlias.CUSTOMER_STATUS), CustomerStatus.ACTIVE);
+		criteria.addEqualExpression(getBean().getFieldName(IEntityAlias.CUSTOMER_SCOPE_ID), params.getScope().getId());
+		List<ITransferObject> list = getBean().getList(criteria); 
 		if ( list.size() > 0 ) {
 			if ( list.size() > 1 ) {
 				engine.log("WARNING: Más de un cliente activo con el número de documento " + loaded.getDocumento()+".");
@@ -198,12 +221,11 @@ public class CustomerLoaderFactory extends RegistryLoaderFactory implements ILoa
 	}
 	
 	private Customer searchCustomerByAccount(LoaderParams params, LoadedCustomer loaded) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Customer.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CUSTOMER_ACCOUNT_CODE), loaded.getCuenta());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CUSTOMER_STATUS), CustomerStatus.ACTIVE);
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CUSTOMER_SCOPE_ID), params.getScope().getId());
-		List<ITransferObject> list = bean.getList(criteria); 
+		criteria.addEqualExpression(getBean().getFieldName(IEntityAlias.CUSTOMER_ACCOUNT_CODE), loaded.getCuenta());
+		criteria.addEqualExpression(getBean().getFieldName(IEntityAlias.CUSTOMER_STATUS), CustomerStatus.ACTIVE);
+		criteria.addEqualExpression(getBean().getFieldName(IEntityAlias.CUSTOMER_SCOPE_ID), params.getScope().getId());
+		List<ITransferObject> list = getBean().getList(criteria); 
 		if ( list.size() > 0 ) {
 			if ( list.size() > 1 ) {
 				throw new ManagerBeanException("Existe más de un cliente vinculado a la cuenta " + loaded.getCuenta());

@@ -64,6 +64,7 @@ public class CreditorLoaderFactory extends RegistryLoaderFactory implements ILoa
 
 	private Map<String, Column[]> columns;
 	private ILoaderEngine engine;
+	private IManagerBean creditorBean;
 	
 	public CreditorLoaderFactory() {
 	}
@@ -73,6 +74,12 @@ public class CreditorLoaderFactory extends RegistryLoaderFactory implements ILoa
 	
 	public Map<String, Column[]> getColumns() {
 		return columns;
+	}
+	public IManagerBean getBean() throws ManagerBeanException {
+		if (creditorBean == null) {
+			creditorBean = BeanManager.getManagerBean(Creditor.class);
+		}
+		return creditorBean;
 	}
 	
 	@Override
@@ -102,14 +109,12 @@ public class CreditorLoaderFactory extends RegistryLoaderFactory implements ILoa
 
 	@Override
 	public ITransferObject get(Integer id) throws AonException {
-		IManagerBean bean = BeanManager.getManagerBean(Creditor.class);
-		return bean.get(id);
+		return getBean().get(id);
 	}
 
 	@Override
 	public Integer insert(LoaderParams params,ILoadedPojo loadedPojo) throws AonException {
 		LoadedCreditor loaded = (LoadedCreditor) loadedPojo;
-		IManagerBean bean = BeanManager.getManagerBean(Creditor.class);
 		Creditor creditor  = new Creditor();
 		
 		creditor.setRegistry(populateRegistry(params,loaded));
@@ -118,46 +123,66 @@ public class CreditorLoaderFactory extends RegistryLoaderFactory implements ILoa
 		creditor.setWithholding(loaded.isWithholding());
 		creditor.setVatAccrualPayment(loaded.isVatAccrualPayment());
 		creditor.setStatus(CreditorStatus.ACTIVE);
-		if (StringUtils.isNotBlank(loaded.getCuenta())) {
-			creditor.setAccount(getLoaderUtils().ensureAccount(loaded.getCuenta(), creditor.getRegistry().getName()));
-		}
-		creditor = (Creditor) bean.insert(creditor);
 		
+		boolean insert = true;
+		if (!params.isForceRegistryInsert()) {
+			Criteria c = new Criteria();
+			c.addEqualExpression(getBean().getFieldName(IEntityAlias.CREDITOR_REGISTRY_DOCUMENT), loaded.getDocumento());
+			List<ITransferObject> list = getBean().getList(c);
+			if (list == null || list.size() == 0) {
+				insert = true;
+			} else {
+				insert = false;
+				creditor = (Creditor) list.get(0);
+				engine.log("Acreedor " + loaded.getDocumento() + " - " + loaded.getRazonSocial() 
+						+ " encontrado en la base de datos. ["
+						+ creditor.getRegistry().getDocument() + " - " + creditor.getRegistry().getFullName() 
+						+ "]. Se ignora.");
+			}
+		}
+		if (insert) {	
 		
-		if (StringUtils.isNotBlank(loaded.getTipoVia())
-			|| StringUtils.isNotBlank(loaded.getDireccion())
-			|| StringUtils.isNotBlank(loaded.getNumero())
-			|| StringUtils.isNotBlank(loaded.getDireccion2())
-			|| StringUtils.isNotBlank(loaded.getDireccion3())
-			|| StringUtils.isNotBlank(loaded.getCp())
-			|| StringUtils.isNotBlank(loaded.getCiudad())
-			|| StringUtils.isNotBlank(loaded.getProvincia())
-			|| StringUtils.isNotBlank(loaded.getNombreProvincia())
-			|| StringUtils.isNotBlank(loaded.getPais())) {
-			insertRegistryAddress(creditor.getRegistry(),loaded);	
-		}
-		
-		if (StringUtils.isNotBlank(loaded.getTelefono1())) {
-			insertRegistryMedia(creditor.getRegistry(),MediaType.FIXED_PHONE,loaded.getTelefono1());
-		}
-		if (StringUtils.isNotBlank(loaded.getTelefono2())) {
-			insertRegistryMedia(creditor.getRegistry(),MediaType.FIXED_PHONE,loaded.getTelefono2());
-		}
-		if (StringUtils.isNotBlank(loaded.getFax())) {
-			insertRegistryMedia(creditor.getRegistry(),MediaType.FAX,loaded.getFax());
-		}
-		if (StringUtils.isNotBlank(loaded.getEmail())) {
-			insertRegistryMedia(creditor.getRegistry(),MediaType.EMAIL, loaded.getEmail(),true,false,false);
-		}
-		if (StringUtils.isNotBlank(loaded.getWeb())) {
-			insertRegistryMedia(creditor.getRegistry(),MediaType.WEB,loaded.getWeb());
-		}
-		RegistryBank rbank = null;
-		if (StringUtils.isNotBlank(loaded.getCuentaBanco())) {
-			rbank = insertRegistryBank(engine,params,creditor.getRegistry(),loaded);	
-		}
-		if (rbank != null || StringUtils.isNotBlank(loaded.getFormaPago())) {
-			insertRegistryPayMethod(params,creditor.getRegistry(),rbank,loaded);
+			if (StringUtils.isNotBlank(loaded.getCuenta())) {
+				creditor.setAccount(getLoaderUtils().ensureAccount(loaded.getCuenta(), creditor.getRegistry().getName()));
+			}
+			creditor = (Creditor) getBean().insert(creditor);
+			
+			
+			if (StringUtils.isNotBlank(loaded.getTipoVia())
+				|| StringUtils.isNotBlank(loaded.getDireccion())
+				|| StringUtils.isNotBlank(loaded.getNumero())
+				|| StringUtils.isNotBlank(loaded.getDireccion2())
+				|| StringUtils.isNotBlank(loaded.getDireccion3())
+				|| StringUtils.isNotBlank(loaded.getCp())
+				|| StringUtils.isNotBlank(loaded.getCiudad())
+				|| StringUtils.isNotBlank(loaded.getProvincia())
+				|| StringUtils.isNotBlank(loaded.getNombreProvincia())
+				|| StringUtils.isNotBlank(loaded.getPais())) {
+				insertRegistryAddress(creditor.getRegistry(),loaded);	
+			}
+			
+			if (StringUtils.isNotBlank(loaded.getTelefono1())) {
+				insertRegistryMedia(creditor.getRegistry(),MediaType.FIXED_PHONE,loaded.getTelefono1());
+			}
+			if (StringUtils.isNotBlank(loaded.getTelefono2())) {
+				insertRegistryMedia(creditor.getRegistry(),MediaType.FIXED_PHONE,loaded.getTelefono2());
+			}
+			if (StringUtils.isNotBlank(loaded.getFax())) {
+				insertRegistryMedia(creditor.getRegistry(),MediaType.FAX,loaded.getFax());
+			}
+			if (StringUtils.isNotBlank(loaded.getEmail())) {
+				insertRegistryMedia(creditor.getRegistry(),MediaType.EMAIL, loaded.getEmail(),true,false,false);
+			}
+			if (StringUtils.isNotBlank(loaded.getWeb())) {
+				insertRegistryMedia(creditor.getRegistry(),MediaType.WEB,loaded.getWeb());
+			}
+			RegistryBank rbank = null;
+			if (StringUtils.isNotBlank(loaded.getCuentaBanco())) {
+				rbank = insertRegistryBank(engine,params,creditor.getRegistry(),loaded);	
+			}
+			if (rbank != null || StringUtils.isNotBlank(loaded.getFormaPago())) {
+				insertRegistryPayMethod(params,creditor.getRegistry(),rbank,loaded);
+			}
 		}
 		return creditor.getId();
 	}
@@ -173,12 +198,11 @@ public class CreditorLoaderFactory extends RegistryLoaderFactory implements ILoa
 	}
 	
 	private Creditor searchCreditorByDocument(LoaderParams params, LoadedCreditor loaded) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Creditor.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CREDITOR_REGISTRY_DOCUMENT), loaded.getDocumento());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CREDITOR_STATUS), CreditorStatus.ACTIVE);
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CREDITOR_SCOPE_ID), params.getScope().getId());
-		List<ITransferObject> list = bean.getList(criteria); 
+		criteria.addEqualExpression(getBean().getFieldName(IEntityAlias.CREDITOR_REGISTRY_DOCUMENT), loaded.getDocumento());
+		criteria.addEqualExpression(getBean().getFieldName(IEntityAlias.CREDITOR_STATUS), CreditorStatus.ACTIVE);
+		criteria.addEqualExpression(getBean().getFieldName(IEntityAlias.CREDITOR_SCOPE_ID), params.getScope().getId());
+		List<ITransferObject> list = getBean().getList(criteria); 
 		if ( list.size() > 0 ) {
 			if ( list.size() > 1 ) {
 				throw new ManagerBeanException("Existe más de un acreedor activo con el número de documento " + loaded.getDocumento());
@@ -189,12 +213,11 @@ public class CreditorLoaderFactory extends RegistryLoaderFactory implements ILoa
 	}
 	
 	private Creditor searchCreditorByAccount(LoaderParams params, LoadedCreditor loaded) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Creditor.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CREDITOR_ACCOUNT_CODE), loaded.getCuenta());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CREDITOR_STATUS), CreditorStatus.ACTIVE);
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CREDITOR_SCOPE_ID), params.getScope().getId());
-		List<ITransferObject> list = bean.getList(criteria); 
+		criteria.addEqualExpression(getBean().getFieldName(IEntityAlias.CREDITOR_ACCOUNT_CODE), loaded.getCuenta());
+		criteria.addEqualExpression(getBean().getFieldName(IEntityAlias.CREDITOR_STATUS), CreditorStatus.ACTIVE);
+		criteria.addEqualExpression(getBean().getFieldName(IEntityAlias.CREDITOR_SCOPE_ID), params.getScope().getId());
+		List<ITransferObject> list = getBean().getList(criteria); 
 		if ( list.size() > 0 ) {
 			if ( list.size() > 1 ) {
 				throw new ManagerBeanException("Existe más de un acreedor vinculado a la cuenta " + loaded.getCuenta());

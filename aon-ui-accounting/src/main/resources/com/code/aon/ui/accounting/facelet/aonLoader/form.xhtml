@@ -82,14 +82,23 @@
 						</aon:selectOneMenu>
 						
 						
-							<aon:outputText value ="&#160;"/>
-							<aon:div>
-								<aon:selectBooleanCheckbox id="aonLoader_documentValid"
-									value="#{aonLoader.params.documentValidable}" />
-								<aon:outputLabel
-									for="aonLoader_documentValid"
-									value="#{bundle.aon_loader_document}" />
-							</aon:div>
+						<aon:outputText value ="&#160;"/>
+						<aon:div>
+							<aon:selectBooleanCheckbox id="aonLoader_documentValid"
+								value="#{aonLoader.params.documentValidable}" />
+							<aon:outputLabel
+								for="aonLoader_documentValid"
+								value="#{bundle.aon_loader_document}" />
+						</aon:div>
+
+						<aon:outputText value ="&#160;"/>
+						<aon:div>
+							<aon:selectBooleanCheckbox id="aonLoader_forceRegistryInsert"
+								value="#{aonLoader.params.forceRegistryInsert}" />
+							<aon:outputLabel
+								for="aonLoader_forceRegistryInsert"
+								value="#{bundle.aon_loader_forceRegistryInsert}" />
+						</aon:div>
 						
 	
 						<aon:if test="#{aonRole.confidentiality}">

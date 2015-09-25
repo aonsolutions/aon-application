@@ -24,6 +24,7 @@ public class LoaderParams implements Serializable {
 	private Period accountPeriod;
 	private Long bytesRead;
 	private boolean documentValidable;
+	private boolean forceRegistryInsert;
 	
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	private static final SimpleDateFormat TIME_FORMATTER = new SimpleDateFormat("hh:mm:ss");
@@ -96,4 +97,11 @@ public class LoaderParams implements Serializable {
 	public void setDocumentValidable(boolean documentValidable) {
 		this.documentValidable = documentValidable;
 	}
+	public boolean isForceRegistryInsert() {
+		return forceRegistryInsert;
+	}
+	public void setForceRegistryInsert(boolean forceRegistryInsert) {
+		this.forceRegistryInsert = forceRegistryInsert;
+	}
+	
 }
