@@ -1,17 +1,14 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
-import static com.esferalia.aon.salary.expression.ExpressionContext.getCurrentBindings;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -24,7 +21,6 @@ import com.code.aon.ql.OrderByList;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.SimpleContractPayment;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -115,18 +111,20 @@ public class SQLContractExtraCalculatorContext extends
 
 	private void initMonthVariables(ExpressionContext ctx)
 			throws UndefinedVariablesException, ExpressionException {
-		List<ITimedVariable<?>> monthDaysList = ctx
-				.getTimedVariables(MONTH_DAYS.getName());
-
+//		List<ITimedVariable<?>> monthDaysList = new ArrayList<ITimedVariable<?>>(ctx
+//				.getTimedVariables(MONTH_DAYS.getName()));
+		
+		List<ITimedResult<Object>> monthDaysList = ctx.eval(MONTH_DAYS.getName(), getStartDate(), getEndDate());
+		
 		int months = monthDaysList.size();
+		
 
 		for (ITimedVariable<?> monthDays : monthDaysList) {
 			Period month = monthDays.getPeriod();
 			List<ITimedVariable<Object>> vars = ctx.getVariables(WORKED_DAYS,
 					month.getStart(), month.getEnd());
 			for (ITimedVariable<Object> var : vars) {
-
-				List<ITimedResult<Double>> workedDays = getExpressionContext()
+				List<ITimedResult<Double>> workedDays = ctx
 						.eval(String.format("%s/%d", WORKED_DAYS, months),
 								var.getPeriod().getStart(),
 								var.getPeriod().getEnd(), Double.class);
