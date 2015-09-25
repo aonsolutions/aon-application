@@ -16,7 +16,7 @@
 		<g:TabPanel ui:field="tabPanel" width="100%" styleName="{style.text-area}">
 			<g:Tab text="Escribir">
 				<g:TextArea ui:field="commentTextArea" characterWidth="10"
-					visibleLines="9" />
+					visibleLines="9" width="98%" height="99%" />
 			</g:Tab>
 		</g:TabPanel>
 		<g:HorizontalPanel spacing="10" ui:field="hPanel" >

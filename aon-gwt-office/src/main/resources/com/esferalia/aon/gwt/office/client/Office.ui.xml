@@ -70,24 +70,8 @@
 						</g:SimpleLayoutPanel>
 					</g:HTMLPanel>
 				</g:ResizeLayoutPanel>
-
-
-				<g:ResizeLayoutPanel ui:field="issuesOfficePanel">
-				<g:HTMLPanel styleName="aon-scroll-area {style.options-scroll-panel}">
-					<g:HTMLPanel styleName="aon-scroll-area {style.options-scroll-panel}">
-						<g:SimpleLayoutPanel
-							styleName="{style.simple-panel}">
-							<g:ResizeLayoutPanel ui:field="issuesPanel" />
-						</g:SimpleLayoutPanel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="aon-scroll-area {style.options-scroll-panel}">
-						<g:SimpleLayoutPanel
-							styleName="aon-panelGrid-search {style.simple-panel}">
-							<office:IssueWriteWidget ui:field="issueWrite"/>
-						</g:SimpleLayoutPanel>
-					</g:HTMLPanel>
-				</g:HTMLPanel>
-				</g:ResizeLayoutPanel>
+				
+				<g:ResizeLayoutPanel ui:field="issuesPanel" />
 
 			</g:DeckLayoutPanel>
 		</g:center>

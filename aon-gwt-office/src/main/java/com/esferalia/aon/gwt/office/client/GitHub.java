@@ -3,7 +3,10 @@ package com.esferalia.aon.gwt.office.client;
 import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
+import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
+import com.esferalia.aon.gwt.office.client.models.users.JsUser;
+import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
 import com.esferalia.aon.gwt.office.client.values.RepoValue;
 import com.esferalia.aon.gwt.office.client.values.Value;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
@@ -36,6 +39,16 @@ public class GitHub {
 	public boolean isAuthorized () {
 		return this.authorized;
 	}
+	
+	// ************** USERS ***************
+	
+	public void getUser(String login, final AsyncCallback<AJSON<JsUser>> callback) {
+        get(baseUrl + "users/" + URL.encode(login), callback);
+    }
+
+    public void getUser(final AsyncCallback<AJSON<JsUser>> callback) {
+        get(baseUrl + "user", callback);
+    }
 	
 	// *********** REPOSITORIES ***********
 	
@@ -78,7 +91,19 @@ public class GitHub {
             post(r.getUrl() + "/issues/" + issue.getNumber(), prop, callback);
         }
     }
-	
+    
+    // *************** COMMENTS ******************
+    
+    public void getIssueComments(JsRepo r, JsIssue issue, AsyncCallback<JSON<JsIssueComment>> callback) {
+        get(r.getUrl() + "/issues/" + issue.getNumber() + "/comments", callback);
+    }
+
+    public void createIssueComment(JsRepo r, JsIssue issue, IssueCommentValue prop,
+            final AsyncCallback<JsIssueComment> callback) {
+        post(r.getUrl() + "/issues/" + issue.getNumber() + "/comments", prop, callback);
+    }
+    
+    // *************** LABELS ******************
 	
     // ********* PUBLIC STATIC METHODS ***********
     

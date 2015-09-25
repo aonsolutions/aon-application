@@ -1,11 +1,16 @@
 package com.esferalia.aon.gwt.office.client;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
@@ -13,36 +18,71 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class IssueWriteWidget extends Composite {
 
+	interface Listener {
+
+		void onCommentButtonClick(IssueCommentValue issueCommentValue);
+
+	}
+
 	private static IssueWriteWidgetUiBinder uiBinder = GWT
 			.create(IssueWriteWidgetUiBinder.class);
 
 	interface IssueWriteWidgetUiBinder extends
 			UiBinder<Widget, IssueWriteWidget> {
 	}
-	
+
 	@UiField
 	TabPanel tabPanel;
 	@UiField
 	TextArea commentTextArea;
-	
+
 	@UiField
 	HorizontalPanel hPanel;
-	
+
 	@UiField
 	Button commentButton;
 	@UiField
 	Button closeButton;
 
+	private List<Listener> listeners;
+
 	public IssueWriteWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
-		
+
 		tabPanel.selectTab(0);
-		
-		commentTextArea.setWidth("98%");
-		commentTextArea.setHeight("99%");
-		hPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		
+
+		this.listeners = new LinkedList<Listener>();
+	}
+
+	public void addListener(Listener listener) {
+		listeners.add(listener);
+	}
+
+	public void removeListener(Listener listener) {
+		listeners.remove(listener);
+	}
+
+	@UiHandler("commentButton")
+	void onCommentButtonClick(ClickEvent event) {
+
+		if (commentTextArea.getText().isEmpty() == false) {
+			IssueCommentValue commentValue = new IssueCommentValue();
+			commentValue.setBody(commentTextArea.getText());
+			addCommentButtonClickListener(commentValue);
+			
+		}
+
+	}
+
+	@UiHandler("closeButton")
+	void onCloseButtonClickEvent(ClickEvent event) {
+
 	}
 	
-	
+	private void addCommentButtonClickListener(IssueCommentValue issueCommentValue) {
+		
+		for (Listener listener : listeners) 
+			listener.onCommentButtonClick(issueCommentValue);
+	}
+
 }

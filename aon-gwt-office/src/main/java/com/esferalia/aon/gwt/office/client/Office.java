@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
@@ -15,6 +16,7 @@ import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
+import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
 import com.esferalia.aon.gwt.office.client.values.IssueValue;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -37,7 +39,8 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class Office extends Composite implements EntryPoint,
-		IssueGrid.Listener, LeftButtonsMenuBar.LeftMenuBarListener {
+		IssueGrid.Listener, LeftButtonsMenuBar.LeftMenuBarListener,
+		IssuesLayoutPanel.Listener {
 
 	private static OfficeUiBinder uiBinder = GWT.create(OfficeUiBinder.class);
 
@@ -57,18 +60,19 @@ public class Office extends Composite implements EntryPoint,
 	@UiField
 	ListBox repoListBox;
 	@UiField
-	ResizeLayoutPanel issuesOfficePanel;
-	@UiField
 	LeftButtonsMenuBar leftButtonBarMenu;
 
 	private JsRepo repo;
 	private List<IssueSelected> issues;
 	private Map<Integer, JsRepo> repositories;
-
+	private IssuesLayoutPanel issueLayoutPanel;
+	private IssueSelected issueSelected;
 	private final GitHub gitHub = new GitHub();
 
 	private Set<IssueSelected> openIssues;
 	private Set<IssueSelected> closedIssues;
+
+	private Map<Integer, JsIssue> issuesMap;
 
 	public Office() {
 		Widget ui = uiBinder.createAndBindUi(this);
@@ -83,10 +87,14 @@ public class Office extends Composite implements EntryPoint,
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 
 		this.dataGrid.addListener(this);
+		// this.issueWrite.addListener(this);
 		this.leftButtonBarMenu.addListener(this);
+
 		this.openIssues = new TreeSet<IssueSelected>();
 		this.closedIssues = new TreeSet<IssueSelected>();
 		this.repositories = new HashMap<Integer, JsRepo>();
+
+		this.issuesMap = new TreeMap<Integer, JsIssue>();
 
 		ListDataProvider<IssueSelected> listIssuesProvider = new ListDataProvider<IssueSelected>();
 		listIssuesProvider.addDataDisplay(dataGrid);
@@ -161,6 +169,7 @@ public class Office extends Composite implements EntryPoint,
 
 						for (int x = 0; x < result.getData().length(); x++) {
 							JsIssue issue = result.getData().get(x);
+							issuesMap.put(issue.getId(), issue);
 							loadIssueComments(issue);
 						}
 						changeOpenIssuesText(result.getData().length());
@@ -189,10 +198,27 @@ public class Office extends Composite implements EntryPoint,
 
 				if (issue.getState().equals(IssueValue.Prop.OPEN.value))
 					addOpenIssue(issue, result.getData());
-				
-					
+
 			}
 		});
+	}
+
+	private void createIssueComment(JsRepo repo, JsIssue issue,
+			IssueCommentValue commentValue) {
+		gitHub.createIssueComment(repo, issue, commentValue,
+				new AsyncCallback<JsIssueComment>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						GWT.log(caught.getMessage());
+
+					}
+
+					@Override
+					public void onSuccess(JsIssueComment result) {
+						issueLayoutPanel.addCommentIssue(result);
+					}
+				});
 
 	}
 
@@ -203,9 +229,9 @@ public class Office extends Composite implements EntryPoint,
 		issues.add(issueSelected);
 
 	}
-	
+
 	private void addCloseIssue(JsIssue issue, JsArray<JsIssueComment> comments) {
-		
+
 	}
 
 	private void addLabel(int row, JsLabel label) {
@@ -221,23 +247,28 @@ public class Office extends Composite implements EntryPoint,
 	}
 
 	private void showIssueLayoutPanel() {
-		deckPanel.showWidget(issuesOfficePanel);
+		deckPanel.showWidget(issuesPanel);
 	}
 
 	// ******************************************************************
-	// ******************************************************************
+	// ********************** ISSUES DATA GRID **************************
 	// ******************************************************************
 
 	@Override
 	public void onSelectionTitle(IssueSelected issue) {
 
-		issuesPanel.clear();
-
-		IssuesLayoutPanel issueLayoutPanel = new IssuesLayoutPanel(issue);
-		issuesPanel.add(issueLayoutPanel);
+		this.issuesPanel.clear();
+		this.issueSelected = issue;
+		this.issueLayoutPanel = new IssuesLayoutPanel(issue);
+		this.issueLayoutPanel.addListener(this);
+		this.issuesPanel.add(issueLayoutPanel);
 
 		showIssueLayoutPanel();
 	}
+
+	// ******************************************************************
+	// ********************** LEFT BAR BUTTONS **************************
+	// ******************************************************************
 
 	@Override
 	public void onNewIssueClickEvent(ClickEvent event) {
@@ -290,4 +321,20 @@ public class Office extends Composite implements EntryPoint,
 		// TODO Auto-generated method stub
 
 	}
+
+	// ******************************************************************
+	// *********************** ISSUES WRITE ****************************
+	// ******************************************************************
+
+	@Override
+	public void onCommentButtonClick(IssueCommentValue issueCommentValue) {
+
+		try {
+			JsIssue jsIssue = issuesMap.get(issueSelected.getId());
+			createIssueComment(this.repo, jsIssue, issueCommentValue);
+		} catch (Exception ex) {
+			Window.alert(ex.getMessage() + " " + ex.getLocalizedMessage());
+		}
+	}
+
 }

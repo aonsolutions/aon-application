@@ -1,10 +1,14 @@
 package com.esferalia.aon.gwt.office.client;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
+import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
 import com.esferalia.aon.gwt.office.client.values.IssueValue;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
@@ -19,7 +23,12 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-public class IssuesLayoutPanel extends Composite {
+public class IssuesLayoutPanel extends Composite implements IssueWriteWidget.Listener {
+	
+	interface Listener {
+		
+		void onCommentButtonClick(IssueCommentValue issueCommentValue);
+	}
 
 	interface MyStyle extends CssResource {
 		@ClassName("state")
@@ -38,9 +47,6 @@ public class IssuesLayoutPanel extends Composite {
 	interface IssuesLayoutPanelUiBinder extends
 			UiBinder<Widget, IssuesLayoutPanel> {
 	}
-
-	private static final String OPEN = "Open";
-	private static final String CLOSED = "Closed";
 
 	@UiField
 	MyStyle style;
@@ -61,12 +67,24 @@ public class IssuesLayoutPanel extends Composite {
 	FlowPanel flowIssuesPanel;
 
 	private IssueSelected issue;
+	private IssueWriteWidget issueWriteWidget;
+	
+	private List<Listener> listeners;
 
 	public IssuesLayoutPanel(final IssueSelected issue) {
 		initWidget(uiBinder.createAndBindUi(this));
-
+		
+		this.listeners = new LinkedList<Listener>();
 		this.issue = issue;
 		init();
+	}
+	
+	public void addListener(Listener listener) {
+		listeners.add(listener);
+	}
+	
+	public void removeListener(Listener listener) {
+		listeners.remove(listener);
 	}
 
 	// ******************************************************************
@@ -85,11 +103,11 @@ public class IssuesLayoutPanel extends Composite {
 		numberIssueLabel.setText("#" + issue.getNumber());
 
 		if (issue.getState().equals(IssueValue.Prop.OPEN.value)) {
-			stateLabel.setText(IssuesLayoutPanel.OPEN);
+			stateLabel.setText(IssueValue.Prop.OPEN.value);
 			stateLabel.addStyleName(style.stateOpen());
 			stateLabel.addStyleName(AON.AON_ICON_ISSUE_OPENED);
 		} else {
-			stateLabel.setText(IssuesLayoutPanel.CLOSED);
+			stateLabel.setText(IssueValue.Prop.CLOSE.value);
 			stateLabel.addStyleName(style.stateClose());
 			stateLabel.addStyleName(AON.AON_ICON_ISSUE_CLOSED);
 		}
@@ -119,10 +137,16 @@ public class IssuesLayoutPanel extends Composite {
 			flowIssuesPanel.add(issueRead);
 		}
 	}
+	
+	public void addCommentIssue(JsIssueComment issueComment) {
+		IssueReadWidget issueRead = new IssueReadWidget();
+		issueRead.addComment(issueComment, 1);
+	}
 
 	private void addWriteIssue() {
-		IssueWriteWidget issueWrite = new IssueWriteWidget();
-		flowIssuesPanel.add(issueWrite);
+		this.issueWriteWidget = new IssueWriteWidget();
+		this.issueWriteWidget.addListener(this);
+		this.flowIssuesPanel.add(issueWriteWidget);
 	}
 
 	private void addLabels() {
@@ -150,6 +174,14 @@ public class IssuesLayoutPanel extends Composite {
 
 		return label;
 
+	}
+	
+	@Override
+	public void onCommentButtonClick(IssueCommentValue issueCommentValue) {
+		
+		for (Listener listener : listeners)
+			listener.onCommentButtonClick(issueCommentValue);
+		
 	}
 
 }
