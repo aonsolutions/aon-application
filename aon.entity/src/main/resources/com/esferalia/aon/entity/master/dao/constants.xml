@@ -388,13 +388,13 @@
 	
 	<!-- ** AON PRODUCT  **************************************************** -->
 	<bean class="com.code.aon.product.CatalogueCategory" sqlName="catalogue_category">
-		<alias names="id,catalogue_id,catalogue_name,category_id,quantity,discount,category_name" />
-		<hibernate names="id,catalogue.id,catalogue.name,category.id,quantity,discount,category.name" />
+		<alias names="id,catalogue_id,catalogue_name,category_id,category_name,quantity,discount" />
+		<hibernate names="id,catalogue.id,catalogue.name,category.id,category.name,quantity,discount" />
 	</bean>
 
 	<bean class="com.code.aon.product.CatalogueItem" sqlName="catalogue_item">
-		<alias names="id,catalogue_id,catalogue_name,item_id,quantity,discount,item_product_name,item_product_type" />
-		<hibernate names="id,catalogue.id,catalogue.name,item.id,quantity,discount,item.product.name,item.product.type" />
+		<alias names="id,catalogue_id,catalogue_name,item_id,item_product_name,item_product_type,quantity,price,discount" />
+		<hibernate names="id,catalogue.id,catalogue.name,item.id,item.product.name,item.product.type,quantity,price,discount" />
 	</bean>
 
 	<bean class="com.code.aon.product.Item" sqlName="item">

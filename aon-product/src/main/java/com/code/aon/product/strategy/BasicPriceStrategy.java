@@ -16,6 +16,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.TariffCatalogue;
 import com.code.aon.config.Tax;
@@ -24,7 +25,10 @@ import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.product.CatalogueCategory;
 import com.code.aon.product.CatalogueItem;
 import com.code.aon.product.ItemTariff;
+import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.ITariffable;
@@ -87,11 +91,14 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 					}
 					criteria.addOrder(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_WORK_PLACE), false);
 					criteria.addOrder(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY));
-					for (ITransferObject itr : rItemBean.getList(criteria)) {
-						RegistryItem rItem = (RegistryItem)itr;
-						if (rItem.getWorkPlace() == null || rItem.getWorkPlace().equals(calc.getWorkPlace())) {
-							calc.getDiscountExpression().setDiscountExpr(rItem.getDiscountExpression().getDiscountExpr());
-							return rItem.getPrice();
+					Projection prjWorkplace = Projection.property(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_WORK_PLACE));
+					Projection prjDiscount = Projection.property(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_DISCOUNT_EXPRESSION));
+					Projection prjPrice = Projection.property(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_PRICE));
+					for (Object obj : rItemBean.getList(new ProjectionList(prjWorkplace, prjDiscount, prjPrice), criteria)) {
+						Object[] objs = (Object[])obj;
+						if (objs[0] == null || ((WorkPlace)objs[0]).equals(calc.getWorkPlace())) {
+							calc.getDiscountExpression().setDiscountExpr(((DiscountExpression)objs[1]).getDiscountExpr());
+							return (Double)objs[2];
 						}
 					}
 				}
@@ -107,29 +114,32 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 					Expression nullExpr = ExpressionUtilities.getNullExpression(tCatalogueBean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_CATALOGUE_END_DATE));
 					criteria.addExpression(ExpressionUtilities.getOrExpression(dateExpr, nullExpr));
 					criteria.addOrder(tCatalogueBean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_CATALOGUE_START_DATE), false);
-					for (ITransferObject ito : tCatalogueBean.getList(criteria)) {
-						TariffCatalogue tCatalogue = (TariffCatalogue)ito;
+					Projection prjCatalogue = Projection.property(tCatalogueBean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_CATALOGUE_ID));
+					for (Object obj : tCatalogueBean.getList(new ProjectionList(prjCatalogue), criteria)) {
+						Integer catalogueId = (Integer)obj;
 
 						criteria = new Criteria();
-						criteria.addEqualExpression(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_CATALOGUE_ID), tCatalogue.getCatalogue().getId());
+						criteria.addEqualExpression(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_CATALOGUE_ID), catalogueId);
 						criteria.addEqualExpression(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_ID), calc.getItem().getId());
 						criteria.addLessThanOrEqualExpression(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_QUANTITY), calc.getQuantity());
 						criteria.addOrder(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_QUANTITY), false);
-						for (ITransferObject itr : cItemBean.getList(criteria, 0, 1)) {
-							CatalogueItem catalogueItem = (CatalogueItem)itr;
-							calc.getDiscountExpression().setDiscountExpr(Double.toString(catalogueItem.getDiscount()));
-							return catalogueItem.getPrice();
+						Projection prjDiscount = Projection.property(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_DISCOUNT));
+						Projection prjPrice = Projection.property(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_PRICE));
+						for (Object obe : cItemBean.getList(new ProjectionList(prjDiscount, prjPrice), criteria)) {
+							Object[] objs = (Object[])obe;
+							calc.getDiscountExpression().setDiscountExpr(Double.toString((Double)objs[0]));
+							return (Double)objs[1];
 						}
 
 						if (calc.getItem().getProduct().getCategory() != null && calc.getItem().getProduct().getCategory().getId() != null) {
 							criteria = new Criteria();
-							criteria.addEqualExpression(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_CATALOGUE_ID), tCatalogue.getCatalogue().getId());
+							criteria.addEqualExpression(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_CATALOGUE_ID), catalogueId);
 							criteria.addEqualExpression(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_CATEGORY_ID), calc.getItem().getProduct().getCategory().getId());
 							criteria.addLessThanOrEqualExpression(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_QUANTITY), calc.getQuantity());
 							criteria.addOrder(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_QUANTITY), false);
-							for (ITransferObject itr : cCategoryBean.getList(criteria, 0, 1)) {
-								CatalogueCategory catalogueCategory = (CatalogueCategory)itr;
-								calc.getDiscountExpression().setDiscountExpr(Double.toString(catalogueCategory.getDiscount()));
+							prjDiscount = Projection.property(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_DISCOUNT));
+							for (Object obt : cCategoryBean.getList(new ProjectionList(prjDiscount), criteria)) {
+								calc.getDiscountExpression().setDiscountExpr(Double.toString((Double)obt));
 								return 0;
 							}
 						}
@@ -140,9 +150,9 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 						criteria = new Criteria();
 						criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_ITEM_ID), calc.getItem().getId());
 						criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_TARIFF_ID), tariff.getId());
-						for (ITransferObject itr : itemTariffBean.getList(criteria)) {
-							ItemTariff itemTariff = (ItemTariff)itr;
-							return itemTariff.getPrice();
+						Projection prjPrice = Projection.property(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_PRICE));
+						for (Object obj : itemTariffBean.getList(new ProjectionList(prjPrice), criteria)) {
+							return (Double)obj;
 						}
 					}
 

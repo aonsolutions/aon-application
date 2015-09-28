@@ -266,7 +266,7 @@ public class ReservationInvoiceTo implements Serializable {
 			return quantity;
 		}
 		public void setQuantity(double quantity) {
-			this.quantity = quantity;
+			this.quantity = CommonUtil.round(quantity);
 		}
 
 		public double getPrice() {
