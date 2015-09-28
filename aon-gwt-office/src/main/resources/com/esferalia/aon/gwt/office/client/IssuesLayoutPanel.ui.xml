@@ -44,6 +44,10 @@
 			padding: 4px 8px 4px 17px;
 			text-align: center;
 		}
+		
+		.text-area textarea {
+			resize: none;
+		}
 		</ui:style>
 	<g:DockLayoutPanel unit="PX" height="100%" width="100%">
 		<g:north size="40">
@@ -71,11 +75,26 @@
 
 		<g:center>
 			<g:ScrollPanel width="80%" height="100%">
-				<g:FlowPanel ui:field="flowIssuesPanel" />
+				<g:VerticalPanel spacing="5"  width="80%" height="100%">
+					<g:FlowPanel ui:field="flowIssuesPanel" />
+					<g:TabPanel ui:field="tabPanel" width="100%"
+						styleName="{style.text-area}">
+						<g:Tab text="Escribir">
+							<g:TextArea ui:field="commentTextArea" characterWidth="10"
+								visibleLines="9" width="98%" height="99%" />
+						</g:Tab>
+					</g:TabPanel>
+					<g:HorizontalPanel spacing="10">
+						<g:Button text="Comentar" ui:field="commentButton" />
+						<g:Button ui:field="closeButton" text="Cerrar" />
+					</g:HorizontalPanel>
+
+				</g:VerticalPanel>
+
 			</g:ScrollPanel>
 		</g:center>
 		<g:south size="72">
-		<g:Label />
+			<g:Label />
 		</g:south>
 	</g:DockLayoutPanel>
 </ui:UiBinder> 

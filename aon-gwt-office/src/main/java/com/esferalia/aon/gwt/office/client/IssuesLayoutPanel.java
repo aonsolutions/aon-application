@@ -13,21 +13,25 @@ import com.esferalia.aon.gwt.office.client.values.IssueValue;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
-public class IssuesLayoutPanel extends Composite implements IssueWriteWidget.Listener {
-	
+public class IssuesLayoutPanel extends Composite {
+
 	interface Listener {
-		
+
 		void onComment(IssueCommentValue issueCommentValue);
 	}
 
@@ -63,29 +67,46 @@ public class IssuesLayoutPanel extends Composite implements IssueWriteWidget.Lis
 	InlineLabel whenCreateLabel;
 	@UiField
 	HorizontalPanel hPanel;
-
+	@UiField
+	TabPanel tabPanel;
+	@UiField
+	TextArea commentTextArea;
 	@UiField
 	FlowPanel flowIssuesPanel;
 
+	@UiField
+	Button commentButton;
+	@UiField
+	Button closeButton;
+
 	private IssueSelected issue;
-	private IssueWriteWidget issueWriteWidget;
-	
 	private List<Listener> listeners;
 
 	public IssuesLayoutPanel(final IssueSelected issue) {
 		initWidget(uiBinder.createAndBindUi(this));
-		
+
+		this.tabPanel.selectTab(0);
 		this.listeners = new LinkedList<Listener>();
 		this.issue = issue;
 		init();
 	}
-	
+
 	public void addListener(Listener listener) {
 		listeners.add(listener);
 	}
-	
+
 	public void removeListener(Listener listener) {
 		listeners.remove(listener);
+	}
+
+	@UiHandler("commentButton")
+	void onCommentButtonClick(ClickEvent event) {
+		if (commentTextArea.getText().isEmpty() == false) {
+			IssueCommentValue issueComment = new IssueCommentValue();
+			issueComment.setBody(commentTextArea.getText());
+			for (Listener listener : listeners)
+				listener.onComment(issueComment);
+		}
 	}
 
 	// ******************************************************************
@@ -96,7 +117,6 @@ public class IssuesLayoutPanel extends Composite implements IssueWriteWidget.Lis
 		setHeaderTitle();
 		addIssue();
 		addCommentIssues();
-		addWriteIssue();
 	}
 
 	private void setHeaderTitle() {
@@ -138,16 +158,10 @@ public class IssuesLayoutPanel extends Composite implements IssueWriteWidget.Lis
 			flowIssuesPanel.add(issueRead);
 		}
 	}
-	
+
 	public void addCommentIssue(JsIssueComment issueComment) {
 		IssueReadWidget issueRead = new IssueReadWidget();
 		issueRead.addComment(issueComment, 1);
-	}
-
-	private void addWriteIssue() {
-		this.issueWriteWidget = new IssueWriteWidget();
-		this.issueWriteWidget.addListener(this);
-		this.flowIssuesPanel.add(issueWriteWidget);
 	}
 
 	private void addLabels() {
@@ -176,16 +190,4 @@ public class IssuesLayoutPanel extends Composite implements IssueWriteWidget.Lis
 		return label;
 
 	}
-	
-	@Override
-	public void onCommentButtonClick(com.esferalia.aon.gwt.office.client.values.issues.IssueValue issueValue) {
-		
-		IssueCommentValue issueCommentValue = new IssueCommentValue();
-		issueCommentValue.setBody(issueValue.getBody());
-		
-		for (Listener listener : listeners)
-			listener.onComment(issueCommentValue);
-		
-	}
-
 }
