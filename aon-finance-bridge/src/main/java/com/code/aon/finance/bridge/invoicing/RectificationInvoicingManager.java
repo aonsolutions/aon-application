@@ -23,22 +23,11 @@ import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
-import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
-import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class RectificationInvoicingManager {
-
-	private IPriceStrategy priceStrategy;
-
-	public IPriceStrategy getPriceStrategy() {
-		if (priceStrategy == null) {
-			priceStrategy = new InvoicePriceStrategy();
-		}
-		return priceStrategy;
-	}
 
 	public Invoice specialRectifyInvoice(Invoice invoice, String series, int number, Date issueDate, String cause, double percent) 
 			throws ManagerBeanException {
@@ -121,12 +110,12 @@ public class RectificationInvoicingManager {
 			rectifierDetail.setLine(invoiceDetail.getLine());
 			rectifierDetail.setItem(invoiceDetail.getItem());
 			rectifierDetail.setDescription(invoiceDetail.getDescription());
-			rectifierDetail.setQuantity((invoice.isSpecialRectifier()) ? 0.0 : CommonUtil.round(0 - invoiceDetail.getQuantity(), 3));
+			rectifierDetail.setQuantity((invoice.isSpecialRectifier()) ? 0.0 : CommonUtil.round(invoiceDetail.getQuantity() * (-1), 3));
 			rectifierDetail.setPrice((invoice.isSpecialRectifier()) ? 0.0 : invoiceDetail.getPrice());
 			rectifierDetail.setDiscountExpression((invoice.isSpecialRectifier()) ? new DiscountExpression("0.0") : invoiceDetail.getDiscountExpression());
 			rectifierDetail.setSource((invoiceDetail.getSource() == InvoiceSource.RESERVATION) ? invoiceDetail.getSource() : InvoiceSource.DIRECT_INVOICE);
 			rectifierDetail.setSourceId((invoiceDetail.getSource() == InvoiceSource.RESERVATION) ? invoiceDetail.getSourceId() : null);
-			rectifierDetail.setTaxableBase(getPriceStrategy().getBasePrice(rectifierDetail));
+			rectifierDetail.setTaxableBase((invoice.isSpecialRectifier()) ? 0.0 : CommonUtil.round(invoiceDetail.getTaxableBase() * (-1), 4));
 			rectifierDetail.setWorkPlace(invoiceDetail.getWorkPlace());
 			rectifierDetail.setTaxDataInDetail(true);
 
@@ -179,7 +168,7 @@ public class RectificationInvoicingManager {
 			rectifierFinance.setRegistryDocumentType(finance.getRegistryDocumentType());
 			rectifierFinance.setRegistryDocumentCountry(finance.getRegistryDocumentCountry());
 			rectifierFinance.setRegistryName(finance.getRegistryName());
-			rectifierFinance.setAmount(CommonUtil.round(0 - finance.getTotalAmount()));
+			rectifierFinance.setAmount(CommonUtil.round(finance.getTotalAmount() * (-1)));
 			rectifierFinance.setExpenses(0);
 			rectifierFinance.setConcept(rectifier.getDocumentNumber()); 
 			rectifierFinance.setDueDate(rectifier.getIssueDate());
