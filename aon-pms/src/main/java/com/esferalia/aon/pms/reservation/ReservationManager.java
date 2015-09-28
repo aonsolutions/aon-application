@@ -153,6 +153,9 @@ public class ReservationManager implements IReservationConstants {
 				try {
 					boolean skipModification = (reservation.isSourceRequest() && reservation.isActive());
 					if (!skipModification) {
+						if (isInvalidCheckInDate(reservationType.getResGlobalInfo().getTimeSpan().getStart().getTime())) {
+							throw new ReservationException("Invalid Check-in Date", reservation.getCrsCode(), 381);
+						}
 						delay3s(reservation.getCreationDate());
 						if (isReservationRoomAssigned(reservation)) {
 							removeReservationRoomDetail(reservation, true);
@@ -210,7 +213,7 @@ public class ReservationManager implements IReservationConstants {
 			String operationTime = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), OPERATION_TIME_STAMP, TIME);
 			Date checkIn = reservationType.getResGlobalInfo().getTimeSpan().getStart().getTime();
 			Date checkOut = reservationType.getResGlobalInfo().getTimeSpan().getEnd().getTime();
-			if (DateUtils.truncate(checkIn, Calendar.DATE).before(DateUtils.addDays(DateUtils.truncate(new Date(), Calendar.DATE), -1))) {
+			if (isInvalidCheckInDate(checkIn)) {
 				throw new ReservationException("Invalid Check-in Date", reservationCrsCode, 381);
 			}
 			SourceType sellerSource = findPosSource(posType.getSourceArray(), CRO_SOURCE);
@@ -507,6 +510,10 @@ public class ReservationManager implements IReservationConstants {
 		reservation.setTaxableBase(CommonUtil.round(reservation.getTaxableBase()));
 		reservation.setVatQuota(CommonUtil.round(reservation.getTotal() - reservation.getTaxableBase() - reservation.getOtherTaxQuota()));
 		reservation = (ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
+	}
+
+	private boolean isInvalidCheckInDate(Date checkIn) {
+		return DateUtils.truncate(checkIn, Calendar.DATE).before(DateUtils.addDays(DateUtils.truncate(new Date(), Calendar.DATE), -1));
 	}
 
 	private void calculateRealDiscountPercent(ServicesType servicesType, ProjectReservation reservation) throws ReservationException {
