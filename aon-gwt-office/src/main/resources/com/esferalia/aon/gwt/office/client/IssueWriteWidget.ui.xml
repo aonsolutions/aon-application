@@ -13,6 +13,10 @@
 		field="aonResources"></ui:with>
 
 	<g:VerticalPanel spacing="5" width="80%">
+		<g:HTMLPanel>
+			<g:TextBox ui:field="title" width="80%" height="20px"/>
+		</g:HTMLPanel>
+		
 		<g:TabPanel ui:field="tabPanel" width="100%" styleName="{style.text-area}">
 			<g:Tab text="Escribir">
 				<g:TextArea ui:field="commentTextArea" characterWidth="10"

@@ -27,7 +27,7 @@ public class IssuesLayoutPanel extends Composite implements IssueWriteWidget.Lis
 	
 	interface Listener {
 		
-		void onCommentButtonClick(IssueCommentValue issueCommentValue);
+		void onComment(IssueCommentValue issueCommentValue);
 	}
 
 	interface MyStyle extends CssResource {
@@ -177,10 +177,13 @@ public class IssuesLayoutPanel extends Composite implements IssueWriteWidget.Lis
 	}
 	
 	@Override
-	public void onCommentButtonClick(IssueCommentValue issueCommentValue) {
+	public void onCommentButtonClick(com.esferalia.aon.gwt.office.client.values.issues.IssueValue issueValue) {
+		
+		IssueCommentValue issueCommentValue = new IssueCommentValue();
+		issueCommentValue.setBody(issueValue.getBody());
 		
 		for (Listener listener : listeners)
-			listener.onCommentButtonClick(issueCommentValue);
+			listener.onComment(issueCommentValue);
 		
 	}
 

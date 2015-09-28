@@ -31,6 +31,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ResizeLayoutPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -40,7 +41,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class Office extends Composite implements EntryPoint,
 		IssueGrid.Listener, LeftButtonsMenuBar.LeftMenuBarListener,
-		IssuesLayoutPanel.Listener {
+		IssuesLayoutPanel.Listener, IssueWriteWidget.Listener {
 
 	private static OfficeUiBinder uiBinder = GWT.create(OfficeUiBinder.class);
 
@@ -53,6 +54,8 @@ public class Office extends Composite implements EntryPoint,
 	ResizeLayoutPanel dockOfficePanel;
 	@UiField
 	ResizeLayoutPanel issuesPanel;
+	@UiField
+	FlowPanel issueWrite;
 	@UiField
 	SimpleLayoutPanel resultsPanel;
 	@UiField
@@ -87,7 +90,6 @@ public class Office extends Composite implements EntryPoint,
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 
 		this.dataGrid.addListener(this);
-		// this.issueWrite.addListener(this);
 		this.leftButtonBarMenu.addListener(this);
 
 		this.openIssues = new TreeSet<IssueSelected>();
@@ -202,9 +204,25 @@ public class Office extends Composite implements EntryPoint,
 			}
 		});
 	}
+	
+	private void createAnIssue(JsRepo repo, com.esferalia.aon.gwt.office.client.values.issues.IssueValue prop) {
+		gitHub.createIssue(repo, prop, new AsyncCallback<JsIssue>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log(caught.getMessage());				
+			}
+
+			@Override
+			public void onSuccess(JsIssue result) {
+				Window.alert("Recarga el dataGrid");
+				
+			}
+		});
+	}
 
 	private void createIssueComment(JsRepo repo, JsIssue issue,
-			IssueCommentValue commentValue) {
+			IssueCommentValue commentValue) {		
 		gitHub.createIssueComment(repo, issue, commentValue,
 				new AsyncCallback<JsIssueComment>() {
 
@@ -216,7 +234,7 @@ public class Office extends Composite implements EntryPoint,
 
 					@Override
 					public void onSuccess(JsIssueComment result) {
-						issueLayoutPanel.addCommentIssue(result);
+						Window.alert("Refresca el grid");
 					}
 				});
 
@@ -249,6 +267,10 @@ public class Office extends Composite implements EntryPoint,
 	private void showIssueLayoutPanel() {
 		deckPanel.showWidget(issuesPanel);
 	}
+	
+	private void showWriteIssueWritePanel() {
+		deckPanel.showWidget(issueWrite);
+	}
 
 	// ******************************************************************
 	// ********************** ISSUES DATA GRID **************************
@@ -272,7 +294,11 @@ public class Office extends Composite implements EntryPoint,
 
 	@Override
 	public void onNewIssueClickEvent(ClickEvent event) {
-		showIssueLayoutPanel();
+		issueWrite.clear();
+		IssueWriteWidget issueWriteWidget = new IssueWriteWidget();
+		issueWriteWidget.addListener(this);
+		issueWrite.add(issueWriteWidget);
+		showWriteIssueWritePanel();
 	}
 
 	@Override
@@ -327,14 +353,14 @@ public class Office extends Composite implements EntryPoint,
 	// ******************************************************************
 
 	@Override
-	public void onCommentButtonClick(IssueCommentValue issueCommentValue) {
+	public void onComment(IssueCommentValue issueCommentValue) {
+		JsIssue jsIssue = issuesMap.get(issueSelected.getId());
+		createIssueComment(this.repo, jsIssue, issueCommentValue);
+	}
 
-		try {
-			JsIssue jsIssue = issuesMap.get(issueSelected.getId());
-			createIssueComment(this.repo, jsIssue, issueCommentValue);
-		} catch (Exception ex) {
-			Window.alert(ex.getMessage() + " " + ex.getLocalizedMessage());
-		}
+	@Override
+	public void onCommentButtonClick(com.esferalia.aon.gwt.office.client.values.issues.IssueValue issueValue) {
+		createAnIssue(repo, issueValue);
 	}
 
 }

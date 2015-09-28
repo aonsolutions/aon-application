@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.office.client;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
+import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -14,13 +14,14 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class IssueWriteWidget extends Composite {
 
 	interface Listener {
 
-		void onCommentButtonClick(IssueCommentValue issueCommentValue);
+		void onCommentButtonClick(IssueValue issueValue);
 
 	}
 
@@ -35,7 +36,8 @@ public class IssueWriteWidget extends Composite {
 	TabPanel tabPanel;
 	@UiField
 	TextArea commentTextArea;
-
+	@UiField
+	TextBox title;
 	@UiField
 	HorizontalPanel hPanel;
 
@@ -66,10 +68,10 @@ public class IssueWriteWidget extends Composite {
 	void onCommentButtonClick(ClickEvent event) {
 
 		if (commentTextArea.getText().isEmpty() == false) {
-			IssueCommentValue commentValue = new IssueCommentValue();
-			commentValue.setBody(commentTextArea.getText());
-			addCommentButtonClickListener(commentValue);
-			
+			IssueValue issueValue = new IssueValue();
+			issueValue.setTitle(title.getText());
+			issueValue.setBody(commentTextArea.getText());
+			addCommentButtonClickListener(issueValue);
 		}
 
 	}
@@ -79,10 +81,10 @@ public class IssueWriteWidget extends Composite {
 
 	}
 	
-	private void addCommentButtonClickListener(IssueCommentValue issueCommentValue) {
+	private void addCommentButtonClickListener(IssueValue issueValue) {
 		
 		for (Listener listener : listeners) 
-			listener.onCommentButtonClick(issueCommentValue);
+			listener.onCommentButtonClick(issueValue);
 	}
 
 }

@@ -32,6 +32,10 @@ public class IssueValue extends Value<IssueValue.Prop> {
 	public void setBody(String body) {
 		prop.put(Prop.Body, body);
 	}
+	
+	public String getBody() {
+		return Prop.Body.value;
+	}
 
 	public void setAsignee(String user) {
 		prop.put(Prop.Assignee, user);
