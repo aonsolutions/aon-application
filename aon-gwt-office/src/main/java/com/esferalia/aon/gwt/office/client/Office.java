@@ -88,7 +88,8 @@ public class Office extends Composite implements EntryPoint,
 	public void onModuleLoad() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
-
+		
+		this.gitHub.setAccessToken("253b1b1a0c0592768a03a8636e9d5e093a794cb8");
 		this.dataGrid.addListener(this);
 		this.leftButtonBarMenu.addListener(this);
 
@@ -100,7 +101,7 @@ public class Office extends Composite implements EntryPoint,
 
 		ListDataProvider<IssueSelected> listIssuesProvider = new ListDataProvider<IssueSelected>();
 		listIssuesProvider.addDataDisplay(dataGrid);
-		this.issues = listIssuesProvider.getList();
+		this.issues = listIssuesProvider.getList();	
 
 		loadReposList();
 		loadIssuesList();
@@ -204,25 +205,27 @@ public class Office extends Composite implements EntryPoint,
 			}
 		});
 	}
-	
-	private void createAnIssue(JsRepo repo, com.esferalia.aon.gwt.office.client.values.issues.IssueValue prop) {
+
+	private void createAnIssue(JsRepo repo,
+			com.esferalia.aon.gwt.office.client.values.issues.IssueValue prop) {
+
 		gitHub.createIssue(repo, prop, new AsyncCallback<JsIssue>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				GWT.log(caught.getMessage());				
+				GWT.log(caught.getMessage());
 			}
 
 			@Override
 			public void onSuccess(JsIssue result) {
 				Window.alert("Recarga el dataGrid");
-				
+
 			}
 		});
 	}
 
 	private void createIssueComment(JsRepo repo, JsIssue issue,
-			IssueCommentValue commentValue) {		
+			IssueCommentValue commentValue) {
 		gitHub.createIssueComment(repo, issue, commentValue,
 				new AsyncCallback<JsIssueComment>() {
 
@@ -267,7 +270,7 @@ public class Office extends Composite implements EntryPoint,
 	private void showIssueLayoutPanel() {
 		deckPanel.showWidget(issuesPanel);
 	}
-	
+
 	private void showWriteIssueWritePanel() {
 		deckPanel.showWidget(issueWrite);
 	}
@@ -359,7 +362,8 @@ public class Office extends Composite implements EntryPoint,
 	}
 
 	@Override
-	public void onCommentButtonClick(com.esferalia.aon.gwt.office.client.values.issues.IssueValue issueValue) {
+	public void onCommentButtonClick(
+			com.esferalia.aon.gwt.office.client.values.issues.IssueValue issueValue) {
 		createAnIssue(repo, issueValue);
 	}
 
