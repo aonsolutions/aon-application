@@ -55,6 +55,12 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 	private Double re3;
 	private Double cuotaIVA3;
 	private Double cuotaRE3;
+	private Double baseImponible4;
+	private Double iva4;
+	private Integer tipoDeduccionIva4;
+	private Double re4;
+	private Double cuotaIVA4;
+	private Double cuotaRE4;
 	private Double irpf;
 	private Integer tipoIrpf;
 	private Double cuotaIRPF;
@@ -323,6 +329,48 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 		this.cuotaRE3 = cuotaRE3;
 	}
 
+	public Double getBaseImponible4() {
+		return baseImponible4;
+	}
+	public void setBaseImponible4(Double baseImponible4) {
+		this.baseImponible4 = baseImponible4;
+	}
+
+	public Double getIva4() {
+		return iva4;
+	}
+	public void setIva4(Double iva4) {
+		this.iva4 = iva4;
+	}
+
+	public Integer getTipoDeduccionIva4() {
+		return tipoDeduccionIva4;
+	}
+	public void setTipoDeduccionIva4(Integer tipoDeduccionIva4) {
+		this.tipoDeduccionIva4 = tipoDeduccionIva4;
+	}
+
+	public Double getRe4() {
+		return re4;
+	}
+	public void setRe4(Double re4) {
+		this.re4 = re4;
+	}
+
+	public Double getCuotaIVA4() {
+		return cuotaIVA4;
+	}
+	public void setCuotaIVA4(Double cuotaIVA4) {
+		this.cuotaIVA4 = cuotaIVA4;
+	}
+
+	public Double getCuotaRE4() {
+		return cuotaRE4;
+	}
+	public void setCuotaRE4(Double cuotaRE4) {
+		this.cuotaRE4 = cuotaRE4;
+	}
+
 	public Double getIrpf() {
 		return irpf;
 	}
@@ -489,6 +537,7 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 				  (getBaseImponible1()==null?0:getBaseImponible1())
 				+ (getBaseImponible2()==null?0:getBaseImponible2())
 				+ (getBaseImponible3()==null?0:getBaseImponible3())
+				+ (getBaseImponible4()==null?0:getBaseImponible4())
 					, 3);
 	}
 
@@ -583,6 +632,24 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 			detail.setRe(getRe3());
 			detail.setCuotaRe(getCuotaRE3());
 			detail.setTipoDeduccionIva(getTipoDeduccionIva3());
+			detail.setCuenta(getCuentaExplotacion());
+			detail.setCuentaIva(getCuentaIva());
+			detail.setCuentaIrpf(getCuentaIrpf());
+			details.add(detail);
+		}
+		if (getBaseImponible4() != null) {
+			detail = new LoadedInvoiceDetail();
+			detail.setFactura(getId());
+			detail.setLinea(4);
+			detail.setConcepto(getConcepto());
+			detail.setCantidad(1.0);
+			detail.setPrecio(getBaseImponible4());
+			detail.setBaseImponible(getBaseImponible4());
+			detail.setPorcentajeIva(getIva4());
+			detail.setCuotaIva(getCuotaIVA4());
+			detail.setRe(getRe4());
+			detail.setCuotaRe(getCuotaRE4());
+			detail.setTipoDeduccionIva(getTipoDeduccionIva4());
 			detail.setCuenta(getCuentaExplotacion());
 			detail.setCuentaIva(getCuentaIva());
 			detail.setCuentaIrpf(getCuentaIrpf());
