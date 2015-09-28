@@ -35,6 +35,7 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 	private Integer tipo;
 	private Integer inversion;
 	private Integer transaccion;
+	private Integer criterioCaja;
 	private String comentario;
 	private Double baseImponible1;
 	private Double iva1;
@@ -58,7 +59,6 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 	private Integer tipoIrpf;
 	private Double cuotaIRPF;
 	private Double totalFactura;
-//	private String articulo;
 	private String concepto;
 	private String cuentaExplotacion;
 	private String cuentaIva;
@@ -178,6 +178,16 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 	}
 	public void setTransaccion(Integer transaccion) {
 		this.transaccion = transaccion;
+	}
+	
+	public Integer getCriterioCaja() {
+		return criterioCaja;
+	}
+	public boolean isVatAccrualPayment() {
+		return (getCriterioCaja()==null?false:(getCriterioCaja() == 1));
+	}
+	public void setCriterioCaja(Integer criterioCaja) {
+		this.criterioCaja = criterioCaja;
 	}
 
 	public String getComentario() {
@@ -348,13 +358,6 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 		this.concepto = concepto;
 	}
 
-//	public String getArticulo() {
-//		return articulo;
-//	}
-//	public void setArticulo(String articulo) {
-//		this.articulo = articulo;
-//	}
-
 	public String getCuentaExplotacion() {
 		return cuentaExplotacion;
 	}
@@ -517,13 +520,13 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 		invoice.setTipo(getTipo());
 		invoice.setInversion(getInversion());
 		invoice.setTransaccion(getTransaccion());
+		invoice.setCriterioCaja(getCriterioCaja());
 		invoice.setComentario(getComentario());
 		invoice.setBaseImponible(getTotalBaseImponible());
 		invoice.setTotalCuotaIVA(getTotalCuotaIVA());
 		invoice.setTotalCuotaIRPF(getCuotaIRPF());
 		invoice.setTotalFactura(getTotalFactura());
 		invoice.setFromLoadedInvoiceAccount(true);
-//		invoice.setFromLoadedInvoiceAccountWithProduct(StringUtils.isNotBlank(getArticulo()));
 		return invoice;
 	}
 
@@ -532,7 +535,6 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 		LoadedInvoiceDetail detail = new LoadedInvoiceDetail();
 		detail.setFactura(getId());
 		detail.setLinea(1);
-//		detail.setArticulo(getArticulo());
 		detail.setConcepto(getConcepto());
 		detail.setCantidad(1.0);
 		detail.setPrecio(getBaseImponible1());
@@ -554,7 +556,6 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 			detail = new LoadedInvoiceDetail();
 			detail.setFactura(getId());
 			detail.setLinea(2);
-//			detail.setArticulo(getArticulo());
 			detail.setConcepto(getConcepto());
 			detail.setCantidad(1.0);
 			detail.setPrecio(getBaseImponible2());
@@ -573,7 +574,6 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 			detail = new LoadedInvoiceDetail();
 			detail.setFactura(getId());
 			detail.setLinea(3);
-//			detail.setArticulo(getArticulo());
 			detail.setConcepto(getConcepto());
 			detail.setCantidad(1.0);
 			detail.setPrecio(getBaseImponible3());

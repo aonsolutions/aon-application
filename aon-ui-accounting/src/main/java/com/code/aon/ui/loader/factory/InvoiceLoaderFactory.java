@@ -55,6 +55,7 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		,new Column(FRA,"tipo"			,0,1	,true	,new int[] {0,1,2,3})
 		,new Column(FRA,"inversion"		,0,1	,false	,new int[] {0,1})
 		,new Column(FRA,"transaccion"	,0,1	,false	,new int[] {0,1,2,3,4})
+		,new Column(FRA,"criterioCaja"	,0,1	,false	,new int[] {0,1})
 		,new Column(FRA,"comentario"	,2,256	,false	,null)
 		,new Column(FRA,"baseImponible"	,1,17	,true	,null)
 		,new Column(FRA,"totalCuotaIVA"	,1,17	,true	,null)
@@ -138,6 +139,7 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		invoice.setTaxDate(loaded.getFechaIva());
 		invoice.setInvestment( loaded.isInvestment() );
 		invoice.setTransaction(loaded.getInvoiceTransactionType());
+		invoice.setVatAccrualPayment(loaded.isVatAccrualPayment());
 		invoice.setComments(loaded.getComentario());
 		Date now = new Date();
 		invoice.setRemarks("Importada de fichero " + params.getDateFormatter().format(now) + " - " + params.getTimeFormatter().format(now));

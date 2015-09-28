@@ -27,6 +27,7 @@ public class LoadedInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 	private Integer tipo;
 	private Integer inversion;
 	private Integer transaccion;
+	private Integer criterioCaja;
 	private String comentario;
 	private Double baseImponible;
 	private Double totalCuotaIVA;
@@ -147,6 +148,16 @@ public class LoadedInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 	public void setTransaccion(Integer transaccion) {
 		this.transaccion = transaccion;
 	}
+	public Integer getCriterioCaja() {
+		return criterioCaja;
+	}
+	public boolean isVatAccrualPayment() {
+		return (getCriterioCaja()==null?false:(getCriterioCaja() == 1));
+	}
+	public void setCriterioCaja(Integer criterioCaja) {
+		this.criterioCaja = criterioCaja;
+	}
+
 	public String getComentario() {
 		return comentario;
 	}
@@ -205,6 +216,9 @@ public class LoadedInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 		if (getTransaccion() != null) {
 			loadedSupplier.setTransaccion(getTransaccion());
 		}
+		if (getCriterioCaja() != null) {
+			loadedSupplier.setCriterioCaja(getCriterioCaja());
+		}
 		return loadedSupplier;
 	}
 	public LoadedCreditor getLoadedCreditor() {
@@ -213,6 +227,9 @@ public class LoadedInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 		loadedCreditor.setCuenta(getCuenta());
 		if (getTransaccion() != null) {
 			loadedCreditor.setTransaccion(getTransaccion());
+		}
+		if (getCriterioCaja() != null) {
+			loadedCreditor.setCriterioCaja(getCriterioCaja());
 		}
 		return loadedCreditor;
 	}
