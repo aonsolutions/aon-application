@@ -89,7 +89,7 @@ public class Office extends Composite implements EntryPoint,
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 		
-		this.gitHub.setAccessToken("253b1b1a0c0592768a03a8636e9d5e093a794cb8");
+		this.gitHub.setAccessToken("06a75ef8dfa037f188c2075333ed73574ffd1971");
 		this.dataGrid.addListener(this);
 		this.leftButtonBarMenu.addListener(this);
 
