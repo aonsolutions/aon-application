@@ -4,9 +4,11 @@ import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
+import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
+import com.esferalia.aon.gwt.office.client.values.LabelValue;
 import com.esferalia.aon.gwt.office.client.values.RepoValue;
 import com.esferalia.aon.gwt.office.client.values.Value;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
@@ -104,6 +106,32 @@ public class GitHub {
     }
     
     // *************** LABELS ******************
+    
+    public void getLabels(JsRepo repo, AsyncCallback<JSON<JsLabel>> callback) {
+    	get(repo.getUrl() + "/labels", callback);
+    }
+    
+    public void createLabel(JsRepo repo, LabelValue prop, final AsyncCallback<JsLabel> callback) {
+    	post(repo.getUrl() + "/labels", prop, callback);
+    }
+    
+    public void saveLabel(JsRepo repo, String name, LabelValue prop, 
+    		final AsyncCallback<JsLabel> callback) {
+    	if (name == null)
+    		createLabel(repo, prop, callback);
+    	else
+    		post(repo.getUrl() + "/labels/" + URL.encode(name), prop, callback);
+    }
+    
+    public void saveLabel(JsRepo repo, JsLabel label, LabelValue prop, 
+    		final AsyncCallback<JsLabel> callback) {
+    	if (label == null) {
+    		createLabel(repo, prop, callback);
+    	}
+    	else {
+    		post(repo.getUrl() + "/labels/" + URL.encode(label.getName()), prop,  callback);
+    	}
+    }
 	
     // ********* PUBLIC STATIC METHODS ***********
     
@@ -130,10 +158,10 @@ public class GitHub {
     }
 
     private <T extends JavaScriptObject> void post(String url, Value<?> request,
-            AsyncCallback<T> callback) {
+            AsyncCallback<T> callback) {    	
         String requestUrl = makeRequestUrl(url);
         RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, requestUrl);
-        String requestJson = request.toJson();
+        String requestJson = request.toJson();        
         final AsyncCallback<T> hookedCallback = hookCallback(callback);
         final StringBuilder log = new StringBuilder();
         log.append("[POST]" + requestUrl + "\n" + requestJson);
