@@ -197,8 +197,8 @@ public class LoadedInvoiceDetail implements ILoadedPojo{
 	public LoadedAccountEntryDetail getRetentionLoadedAccountEntryDetail(AccountEntryType type) {
 		LoadedAccountEntryDetail laed = new LoadedAccountEntryDetail();
 		laed.setConcepto(getConcepto());
-		if (StringUtils.isNotEmpty( getCuentaIva()) ){
-			laed.setCuenta( getCuentaIva() );
+		if (StringUtils.isNotEmpty( getCuentaIrpf()) ){
+			laed.setCuenta( getCuentaIrpf() );
 			laed.setDescripcionCuenta( "Hacienda Pública, retenciones y pagos a cuenta." );
 		} 
 		if (type == AccountEntryType.SALES_INVOICE) {

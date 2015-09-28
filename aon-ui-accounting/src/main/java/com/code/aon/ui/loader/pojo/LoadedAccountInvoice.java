@@ -13,6 +13,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.registry.enumeration.DocumentType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 /**
  * @author ecastellano
@@ -43,31 +44,37 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 	private Double re1;
 	private Double cuotaIVA1;
 	private Double cuotaRE1;
+	private String cuentaExplotacion;
+	private String cuentaIva;
 	private Double baseImponible2;
 	private Double iva2;
 	private Integer tipoDeduccionIva2;
 	private Double re2;
 	private Double cuotaIVA2;
 	private Double cuotaRE2;
+	private String cuentaExplotacion2;
+	private String cuentaIva2;
 	private Double baseImponible3;
 	private Double iva3;
 	private Integer tipoDeduccionIva3;
 	private Double re3;
 	private Double cuotaIVA3;
 	private Double cuotaRE3;
+	private String cuentaExplotacion3;
+	private String cuentaIva3;
 	private Double baseImponible4;
 	private Double iva4;
 	private Integer tipoDeduccionIva4;
 	private Double re4;
 	private Double cuotaIVA4;
 	private Double cuotaRE4;
+	private String cuentaExplotacion4;
+	private String cuentaIva4;
 	private Double irpf;
 	private Integer tipoIrpf;
 	private Double cuotaIRPF;
 	private Double totalFactura;
 	private String concepto;
-	private String cuentaExplotacion;
-	private String cuentaIva;
 	private String cuentaIrpf;
 	private Date fechaVto;
 	private String formaPago;
@@ -245,6 +252,20 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 		this.cuotaRE1 = cuotaRE1;
 	}
 
+	public String getCuentaExplotacion() {
+		return cuentaExplotacion;
+	}
+	public void setCuentaExplotacion(String cuentaExplotacion) {
+		this.cuentaExplotacion = cuentaExplotacion;
+	}
+
+	public String getCuentaIva() {
+		return cuentaIva;
+	}
+	public void setCuentaIva(String cuentaIva) {
+		this.cuentaIva = cuentaIva;
+	}
+
 	public Double getBaseImponible2() {
 		return baseImponible2;
 	}
@@ -285,6 +306,20 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 	}
 	public void setCuotaRE2(Double cuotaRE2) {
 		this.cuotaRE2 = cuotaRE2;
+	}
+
+	public String getCuentaExplotacion2() {
+		return cuentaExplotacion2;
+	}
+	public void setCuentaExplotacion2(String cuentaExplotacion2) {
+		this.cuentaExplotacion2 = cuentaExplotacion2;
+	}
+
+	public String getCuentaIva2() {
+		return cuentaIva2;
+	}
+	public void setCuentaIva2(String cuentaIva2) {
+		this.cuentaIva2 = cuentaIva2;
 	}
 
 	public Double getBaseImponible3() {
@@ -329,6 +364,20 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 		this.cuotaRE3 = cuotaRE3;
 	}
 
+	public String getCuentaExplotacion3() {
+		return cuentaExplotacion3;
+	}
+	public void setCuentaExplotacion3(String cuentaExplotacion3) {
+		this.cuentaExplotacion3 = cuentaExplotacion3;
+	}
+
+	public String getCuentaIva3() {
+		return cuentaIva3;
+	}
+	public void setCuentaIva3(String cuentaIva3) {
+		this.cuentaIva3 = cuentaIva3;
+	}
+
 	public Double getBaseImponible4() {
 		return baseImponible4;
 	}
@@ -371,6 +420,20 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 		this.cuotaRE4 = cuotaRE4;
 	}
 
+	public String getCuentaExplotacion4() {
+		return cuentaExplotacion4;
+	}
+	public void setCuentaExplotacion4(String cuentaExplotacion4) {
+		this.cuentaExplotacion4 = cuentaExplotacion4;
+	}
+
+	public String getCuentaIva4() {
+		return cuentaIva4;
+	}
+	public void setCuentaIva4(String cuentaIva4) {
+		this.cuentaIva4 = cuentaIva4;
+	}
+
 	public Double getIrpf() {
 		return irpf;
 	}
@@ -404,20 +467,6 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 	}
 	public void setConcepto(String concepto) {
 		this.concepto = concepto;
-	}
-
-	public String getCuentaExplotacion() {
-		return cuentaExplotacion;
-	}
-	public void setCuentaExplotacion(String cuentaExplotacion) {
-		this.cuentaExplotacion = cuentaExplotacion;
-	}
-
-	public String getCuentaIva() {
-		return cuentaIva;
-	}
-	public void setCuentaIva(String cuentaIva) {
-		this.cuentaIva = cuentaIva;
 	}
 
 	public String getCuentaIrpf() {
@@ -614,8 +663,8 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 			detail.setRe(getRe2());
 			detail.setCuotaRe(getCuotaRE2());
 			detail.setTipoDeduccionIva(getTipoDeduccionIva2());
-			detail.setCuenta(getCuentaExplotacion());
-			detail.setCuentaIva(getCuentaIva());
+			detail.setCuenta(AonStringUtils.isNotBlank(getCuentaExplotacion2())?getCuentaExplotacion2():getCuentaExplotacion());
+			detail.setCuentaIva(AonStringUtils.isNotBlank(getCuentaIva2())?getCuentaIva2():getCuentaIva());
 			detail.setCuentaIrpf(getCuentaIrpf());
 			details.add(detail);
 		}
@@ -632,8 +681,8 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 			detail.setRe(getRe3());
 			detail.setCuotaRe(getCuotaRE3());
 			detail.setTipoDeduccionIva(getTipoDeduccionIva3());
-			detail.setCuenta(getCuentaExplotacion());
-			detail.setCuentaIva(getCuentaIva());
+			detail.setCuenta(AonStringUtils.isNotBlank(getCuentaExplotacion3())?getCuentaExplotacion3():getCuentaExplotacion());
+			detail.setCuentaIva(AonStringUtils.isNotBlank(getCuentaIva3())?getCuentaIva3():getCuentaIva());
 			detail.setCuentaIrpf(getCuentaIrpf());
 			details.add(detail);
 		}
@@ -650,8 +699,8 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 			detail.setRe(getRe4());
 			detail.setCuotaRe(getCuotaRE4());
 			detail.setTipoDeduccionIva(getTipoDeduccionIva4());
-			detail.setCuenta(getCuentaExplotacion());
-			detail.setCuentaIva(getCuentaIva());
+			detail.setCuenta(AonStringUtils.isNotBlank(getCuentaExplotacion4())?getCuentaExplotacion4():getCuentaExplotacion());
+			detail.setCuentaIva(AonStringUtils.isNotBlank(getCuentaIva4())?getCuentaIva4():getCuentaIva());
 			detail.setCuentaIrpf(getCuentaIrpf());
 			details.add(detail);
 		}
