@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 
 import java.sql.Connection;
@@ -21,6 +22,7 @@ import com.code.aon.ql.OrderByList;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.SimpleContractPayment;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -111,13 +113,12 @@ public class SQLContractExtraCalculatorContext extends
 
 	private void initMonthVariables(ExpressionContext ctx)
 			throws UndefinedVariablesException, ExpressionException {
-//		List<ITimedVariable<?>> monthDaysList = new ArrayList<ITimedVariable<?>>(ctx
-//				.getTimedVariables(MONTH_DAYS.getName()));
+		List<ITimedVariable<?>> monthDaysList = new ArrayList<ITimedVariable<?>>(ctx
+				.getTimedVariables(NATURAL_MONTH_DAYS.getName()));
 		
-		List<ITimedResult<Object>> monthDaysList = ctx.eval(MONTH_DAYS.getName(), getStart(), getEnd());
+		
 		
 		int months = monthDaysList.size();
-		
 
 		for (ITimedVariable<?> monthDays : monthDaysList) {
 			
