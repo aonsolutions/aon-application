@@ -114,12 +114,13 @@ public class SQLContractExtraCalculatorContext extends
 //		List<ITimedVariable<?>> monthDaysList = new ArrayList<ITimedVariable<?>>(ctx
 //				.getTimedVariables(MONTH_DAYS.getName()));
 		
-		List<ITimedResult<Object>> monthDaysList = ctx.eval(MONTH_DAYS.getName(), getStartDate(), getEndDate());
+		List<ITimedResult<Object>> monthDaysList = ctx.eval(MONTH_DAYS.getName(), getStart(), getEnd());
 		
 		int months = monthDaysList.size();
 		
 
 		for (ITimedVariable<?> monthDays : monthDaysList) {
+			
 			Period month = monthDays.getPeriod();
 			List<ITimedVariable<Object>> vars = ctx.getVariables(WORKED_DAYS,
 					month.getStart(), month.getEnd());
