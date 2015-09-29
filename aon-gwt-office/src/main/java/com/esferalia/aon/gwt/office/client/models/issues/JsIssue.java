@@ -1,7 +1,5 @@
 package com.esferalia.aon.gwt.office.client.models.issues;
 
-import java.util.Date;
-
 import com.esferalia.aon.gwt.office.client.GitHub;
 import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;

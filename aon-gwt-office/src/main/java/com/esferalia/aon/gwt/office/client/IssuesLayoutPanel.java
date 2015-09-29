@@ -119,6 +119,7 @@ public class IssuesLayoutPanel extends Composite {
 		if (commentTextArea.getText().isEmpty() == false) {
 			IssueCommentValue issueComment = new IssueCommentValue();
 			issueComment.setBody(commentTextArea.getText());
+			commentTextArea.setValue("");
 			for (Listener listener : listeners)
 				listener.onComment(issueComment);
 		}

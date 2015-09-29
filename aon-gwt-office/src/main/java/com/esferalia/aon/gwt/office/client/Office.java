@@ -242,6 +242,21 @@ public class Office extends Composite implements EntryPoint,
 				});
 	}
 
+	private void editIssue(JsRepo repo, JsIssue issue,
+			com.esferalia.aon.gwt.office.client.values.issues.IssueValue prop) {
+		gitHub.editIssue(repo, issue, prop, new AsyncCallback<JsIssue>() {
+			@Override
+			public void onFailure(Throwable caught) {				
+				GWT.log(caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(JsIssue result) {			
+				Window.alert("Recarga el datagrid");
+			}
+		});
+	}
+
 	private void addOpenIssue(JsIssue issue, JsArray<JsIssueComment> comments) {
 		IssueSelected issueSelected = new IssueGrid.IssueOpenLoadSelected(issue);
 		issueSelected.setIssueComments(comments);
@@ -249,10 +264,14 @@ public class Office extends Composite implements EntryPoint,
 	}
 
 	private void addCloseIssue(JsIssue issue, JsArray<JsIssueComment> comments) {
+		Window.alert("1");
 		IssueSelected issueSelected = new IssueGrid.IssueClosedLoadSelected(
 				issue);
+		Window.alert("2");
 		issueSelected.setIssueComments(comments);
+		Window.alert("3");
 		closedIssues.add(issueSelected);
+		Window.alert("4");
 	}
 
 	private void loadOpenIssues() {
@@ -271,6 +290,7 @@ public class Office extends Composite implements EntryPoint,
 		ListDataProvider<IssueSelected> listIssuesProvider = new ListDataProvider<IssueSelected>();
 		listIssuesProvider.addDataDisplay(dataGrid);
 		this.issues = listIssuesProvider.getList();
+		Window.alert("Closed: " + closedIssues.size());
 		Collections.sort(closedIssues, IssueGrid.Comparators.NUMBER);
 
 		for (IssueSelected issue : closedIssues)
@@ -394,11 +414,20 @@ public class Office extends Composite implements EntryPoint,
 
 	@Override
 	public void onCloseIssueClickEvent(IssueSelected issue) {
-
+		JsIssue jsIssue = issuesMap.get(issue.getId());
+		com.esferalia.aon.gwt.office.client.values.issues.IssueValue value = new com.esferalia.aon.gwt.office.client.values.issues.IssueValue();
+		value.setState(IssueValue.Prop.CLOSE.value);
+		
+		editIssue(this.repo, jsIssue, value);
 	}
 
 	@Override
 	public void onReopenedIssueClickEvent(IssueSelected issue) {
+		JsIssue jsIssue = issuesMap.get(issue.getId());
+		com.esferalia.aon.gwt.office.client.values.issues.IssueValue value = new com.esferalia.aon.gwt.office.client.values.issues.IssueValue();
+		value.setState(IssueValue.Prop.OPEN.value);
+		
+		editIssue(this.repo, jsIssue, value);
 
 	}
 
@@ -407,9 +436,9 @@ public class Office extends Composite implements EntryPoint,
 	// ******************************************************************
 
 	@Override
-	public void onComment(IssueCommentValue issueCommentValue) {		
-			JsIssue jsIssue = issuesMap.get(issueSelected.getId());
-			createIssueComment(this.repo, jsIssue, issueCommentValue);			
+	public void onComment(IssueCommentValue issueCommentValue) {
+		JsIssue jsIssue = issuesMap.get(issueSelected.getId());
+		createIssueComment(this.repo, jsIssue, issueCommentValue);
 	}
 
 	@Override
