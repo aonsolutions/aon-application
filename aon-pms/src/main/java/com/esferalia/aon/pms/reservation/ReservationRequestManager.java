@@ -161,11 +161,9 @@ public class ReservationRequestManager implements IReservationConstants {
 		}
 
 		GuestCounts guestCounts = GuestCounts.Factory.newInstance();
-		if (requestRoom.getAdults() > 0) {
-			guestCounts.addNewGuestCount();
-			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAgeQualifyingCode(ADT);
-			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setCount(requestRoom.getAdults());
-		}
+		guestCounts.addNewGuestCount();
+		guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAgeQualifyingCode(ADT);
+		guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setCount(requestRoom.getAdults());
 		if (requestRoom.getChildren() > 0) {
 			guestCounts.addNewGuestCount();
 			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAgeQualifyingCode(CHD);
