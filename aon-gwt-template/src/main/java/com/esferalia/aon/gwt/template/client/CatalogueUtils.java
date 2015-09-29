@@ -7,16 +7,24 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.ListBox;
 
 public class CatalogueUtils {
+	public static final String CATALOGUE_WORKPLACE = "Centro de Trabajo";
+	public static final String CATALOGUE_DEPARTMENT = "Departamento";
+	public static final String CATALOGUE_PRODUCT = "Producto";
+	public static final String CATALOGUE_NAME = "Nombre";
+	public static final String CATALOGUE_DETAIL1 = "Detalle 1";
+	public static final String CATALOGUE_DETAIL2 = "Detalle 2";
+	public static final String CATALOGUE_DETAIL3 = "Detalle 3";
+	public static final String CATALOGUE_QUANTITY = "Cantidad";
+
 	public static Vector<String> catalogueList(){
 		Vector<String> v = new Vector<String>();
-		v.add("Centro de Trabajo");
-		v.add("Departamento");
-		v.add("Producto");
-		v.add("Nombre");
-		v.add("Detalle 1");
-		v.add("Detalle 2");
-		v.add("Detalle 3");
-
+		v.add(CATALOGUE_WORKPLACE);
+		v.add(CATALOGUE_DEPARTMENT);
+		v.add(CATALOGUE_PRODUCT);
+		v.add(CATALOGUE_NAME);
+		v.add(CATALOGUE_DETAIL1);
+		v.add(CATALOGUE_DETAIL2);
+		v.add(CATALOGUE_DETAIL3);
 		return v;
 	}
 	
@@ -37,8 +45,8 @@ public class CatalogueUtils {
 	}
 	public static Boolean estaCatalogue(String s) {
 		switch (s) {
-		case "Producto": return true;
-		case "Cantidad" : return true;
+		case CATALOGUE_PRODUCT: return true;
+		case CATALOGUE_QUANTITY : return true;
 		}
 		return false;
 	}

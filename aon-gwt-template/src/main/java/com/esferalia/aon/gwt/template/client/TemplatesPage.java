@@ -590,6 +590,18 @@ public class TemplatesPage extends Composite{
 		popup.show();
 	}
 
+	private Integer mandatoryIndex(String type) {
+		switch (type) {
+		case TemplatesDialog.PRODUCT: return 7;
+		case TemplatesDialog.STOCK: return 5;
+		case TemplatesDialog.FEE: return 10;
+		case TemplatesDialog.CONSUMPTION: return 12;
+		case TemplatesDialog.CLOSED_INVENTORY: return 7;
+		case TemplatesDialog.VALUED_INVENTORY: return 8;
+		default:
+			return 2;
+		}
+	}
 //------------------------------ UI Handlers
 	
 	@UiHandler("nameSearchButton")
@@ -657,16 +669,21 @@ public class TemplatesPage extends Composite{
 				ti.setName(tb.getText());
 
 				ListBox lb = (ListBox) flex_table.getWidget(1, 1);
-				ti.setType(lb.getItemText(lb.getSelectedIndex()));
+				ti.setType(lb.getSelectedItemText());
 				
 				ti.sethasWarehouse(false);
 				Vector<String> v = new Vector<String>();
-				Integer i = 2;
+				Integer index = mandatoryIndex(lb.getSelectedItemText());
+				for(Integer j = 2; j< index-1 ; j++){
+					Label label = (Label) flex_table.getWidget(j, 1);
+					v.add(label.getText());
+				}
+				Integer i = index;
 				while(flex_table.isCellPresent(i, 1)){
 					ListBox lbn = (ListBox) flex_table.getWidget(i, 1);
 					if(lbn.getItemText(lbn.getSelectedIndex()) != "-")
-						v.add(lbn.getItemText(lbn.getSelectedIndex()));
-					if(lbn.getItemText(lbn.getSelectedIndex()).equals("Almac\u00e9n Destino"))
+						v.add(lbn.getSelectedItemText());
+					if(lbn.getSelectedItemText().equals("Almac\u00e9n Destino"))
 						ti.sethasWarehouse(true);
 					
 					i++;

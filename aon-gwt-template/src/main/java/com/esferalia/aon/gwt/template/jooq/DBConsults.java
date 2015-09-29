@@ -139,9 +139,9 @@ public class DBConsults {
 						e.printStackTrace();
 					}
 					String ver = AonVersion.VERSION;
-					
-
-					version = ver.compareTo(aux.getVersion()) == 1;
+					if(ver != null)
+						version = ver.compareTo(aux.getVersion()) == 1;
+					else version = true;
 					if(version){
 						DBConsults.deleteDefaultTemplates(ctx, domain, domainId);
 					}

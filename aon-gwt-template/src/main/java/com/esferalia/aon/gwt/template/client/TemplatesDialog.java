@@ -54,6 +54,12 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class TemplatesDialog extends CustomDialogB {
 	
 	final ITemplateAsync item = GWT.create(ITemplate.class);
+	public static final String PRODUCT = "Producto";
+	public static final String STOCK = "Stock";
+	public static final String FEE = "Cuota";
+	public static final String CONSUMPTION = "Consumo";
+	public static final String CLOSED_INVENTORY = "Inventario Cerrado";
+	public static final String VALUED_INVENTORY = "Inventario Valorado";
 	
 	interface Binder extends UiBinder<Widget, TemplatesDialog>{
 		
@@ -128,8 +134,10 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					}
 				}
 				else{
-				
-					if(FeeUtils.feeCheck(dialog,flex_table) || StockUtils.stockCheck(dialog,flex_table) || ProductUtils.productCheck(dialog,flex_table) 
+					if(dialog.getType().equals("new")){
+						onAccept();
+					}
+					else if(FeeUtils.feeCheck(dialog,flex_table) || StockUtils.stockCheck(dialog,flex_table) || ProductUtils.productCheck(dialog,flex_table) 
 							|| ConsumptionUtils.consumptionCheck(dialog, flex_table)|| InventoryUtils.inventoryCheck(dialog, flex_table) 
 							|| dialog.getType().equals("delete") || dialog.getType().contains("import") || dialog.getType().contains("export")){
 						onAccept();
@@ -798,12 +806,12 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		
 		ListBox lb = new ListBox();
 		lb.addItem("-");
-		lb.addItem("Producto");
-		lb.addItem("Stock");
-		lb.addItem("Cuota");
-		lb.addItem("Consumo");
-		lb.addItem("Inventario Cerrado");
-		lb.addItem("Inventario Valorado");
+		lb.addItem(PRODUCT);
+		lb.addItem(STOCK);
+		lb.addItem(FEE);
+		lb.addItem(CONSUMPTION);
+		lb.addItem(CLOSED_INVENTORY);
+		lb.addItem(VALUED_INVENTORY);
 
 		lbaux = lb;
 		lb.addChangeHandler(new ChangeHandler() {
@@ -814,35 +822,28 @@ public abstract class TemplatesDialog extends CustomDialogB {
 				for(Integer i = flex_table.getRowCount(); i>2;i--)
 					flex_table.removeRow(i-1);
 				
-				if(lb.getItemText(lb.getSelectedIndex()).equals("Producto"))
-					listBox("Producto");
-				else if(lb.getItemText(lb.getSelectedIndex()).equals("Stock"))
-					listBox("Stock");
-				else if(lb.getItemText(lb.getSelectedIndex()).equals("Cuota"))
-					listBox("Cuota");
-				else if(lb.getItemText(lb.getSelectedIndex()).equals("Consumo"))
-					listBox("Consumo");
-				else if(lb.getItemText(lb.getSelectedIndex()).equals("Inventario Cerrado"))
-					listBox("Inventario Cerrado");
-				else if(lb.getItemText(lb.getSelectedIndex()).equals("Inventario Valorado"))
-					listBox("Inventario Valorado");
+				// Genera la lista de atributos del tipo de plantilla seleccionada.
+				
+				
+				Integer index = mandatoryWidget(2, lb.getSelectedItemText());
+				
+				optionalListBox(index, lb.getSelectedItemText());	
 				
 				ListBox lb2 = new ListBox();
 				for(Integer k = 0;k< list_box.getItemCount();k++)
 					lb2.addItem(list_box.getItemText(k));
 				
-			
 				handler = lb2.addChangeHandler(changeHandler());
+
+				flex_table.setWidget(index, 0, new Label("Columna" + " " + Integer.toString(column)));
+				flex_table.setWidget(index, 1, lb2);
+				flex_table.setWidget(index, 2, new Label(""));
 				
-				flex_table.setWidget(2, 0, new Label("Columna" + " " + Integer.toString(column)));
-				flex_table.setWidget(2, 1, lb2);
-				flex_table.setWidget(2, 2, new Label(""));
-				
-				flex_table.getCellFormatter().setStyleName(2, 0,
+				flex_table.getCellFormatter().setStyleName(index, 0,
 						"aon-panelGrid-odd");
-				flex_table.getCellFormatter().setStyleName(2, 1,
+				flex_table.getCellFormatter().setStyleName(index, 1,
 						"aon-panelGrid-even");
-				flex_table.getCellFormatter().setStyleName(2, 2,
+				flex_table.getCellFormatter().setStyleName(index, 2,
 						"aon-panelGrid-aux");	
 			}
 		});
@@ -1335,6 +1336,28 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		}
 	}
 	
+	private void optionalListBox(Integer index, String type){
+		Vector<String> v = new Vector<String>();
+		if(type.equals("Producto"))
+			v = ProductUtils.productOptionalList();
+		else if(type.equals("Stock"))
+			v = StockUtils.stockOptionalList();
+		else if(type.equals("Cuota"))
+			v = FeeUtils.feeOptionalList();
+		else if(type.equals("Consumo"))
+			v = ConsumptionUtils.consumptionOptionalList();
+		else if(type.equals("Inventario Cerrado"))
+			v = InventoryUtils.inventoryCloseOptionalList();
+		else if(type.equals("Inventario Valorado"))
+			v = InventoryUtils.inventoryOptionalList();
+		list_box = new ListBox();
+		list_box.addItem("-");
+		for(String s : v){
+			list_box.addItem(s);
+		}
+		max= list_box.getItemCount() + index -2;
+	}
+	
 	long progress = 10;
 	Integer rowAux;
 	String urlAux;
@@ -1436,5 +1459,69 @@ public abstract class TemplatesDialog extends CustomDialogB {
 				}
 			}
 		}
+	}
+	
+	public Integer mandatoryWidget(Integer index, String type) {
+		switch (type) {
+		case PRODUCT:
+			setLabel(index, ProductUtils.PRODUCT_NAME);
+			setLabel(index+1, ProductUtils.PRODUCT_CODE);
+			setLabel(index+2, ProductUtils.PRODUCT_PRICE_COST);
+			setLabel(index+3, ProductUtils.PRODUCT_SALE_BASE);
+			return index+4;
+		case STOCK:
+			setLabel(index, StockUtils.STOCK_PRODUCT);
+			setLabel(index+1, StockUtils.STOCK_QUANTITY);
+			return index+2;
+		case FEE:
+			setLabel(index, FeeUtils.FEE_CLIENT);
+			setLabel(index+1, FeeUtils.FEE_PRODUCT);
+			setLabel(index+2, FeeUtils.FEE_QUANTITY);
+			setLabel(index+3, FeeUtils.FEE_PRICE);
+			setLabel(index+4, FeeUtils.FEE_DISCOUNT);
+			setLabel(index+5, FeeUtils.FEE_START_DATE);
+			setLabel(index+6, FeeUtils.FEE_BILLING_DATE);
+			return index+7;
+		case CONSUMPTION:
+			setLabel(index, ConsumptionUtils.CONSUMPTION_PRODUCT);
+			setLabel(index+1, ConsumptionUtils.CONSUMPTION_INITIAL);
+			setLabel(index+2, ConsumptionUtils.CONSUMPTION_PURCHASES);
+			setLabel(index+3, ConsumptionUtils.CONSUMPTION_SALES);
+			setLabel(index+4, ConsumptionUtils.CONSUMPTION_FINAL);
+			setLabel(index+5, ConsumptionUtils.CONSUMPTION_TRANSFER);
+			setLabel(index+6, ConsumptionUtils.CONSUMPTION_PRICE);
+			setLabel(index+7, ConsumptionUtils.CONSUMPTION_CONSUMPTION_VALUE);
+			setLabel(index+8, ConsumptionUtils.CONSUMPTION_CONSUMPTION);
+			return index+9;
+		case CLOSED_INVENTORY:
+			setLabel(index, InventoryUtils.INVENTORY_PRODUCT);
+			setLabel(index+1, InventoryUtils.INVENTORY_CATEGORY);
+			setLabel(index+2, InventoryUtils.INVENTORY_INVENTORY);
+			setLabel(index+3, InventoryUtils.INVENTORY_COUNT);
+			return index+4;
+		case VALUED_INVENTORY:
+			setLabel(index, InventoryUtils.INVENTORY_PRODUCT);
+			setLabel(index+1, InventoryUtils.INVENTORY_CATEGORY);
+			setLabel(index+2, InventoryUtils.INVENTORY_INVENTORY);
+			setLabel(index+3, InventoryUtils.INVENTORY_COST);
+			setLabel(index+4, InventoryUtils.INVENTORY_TOTAL);
+			return index+5;
+		default:
+			return index;
+		}
+	}
+	
+	public void setLabel(Integer index, String name){
+		flex_table.setWidget(index, 0, new Label("Columna" + " " + Integer.toString(column)));
+		flex_table.setWidget(index, 1, new Label(name));
+		flex_table.setWidget(index, 2, new Label(""));
+		
+		flex_table.getCellFormatter().setStyleName(index, 0,
+				"aon-panelGrid-odd");
+		flex_table.getCellFormatter().setStyleName(index, 1,
+				"aon-panelGrid-even");
+		flex_table.getCellFormatter().setStyleName(index, 2,
+				"aon-panelGrid-aux");	
+		column++;
 	}
 }

@@ -8,21 +8,35 @@ import com.google.gwt.user.client.ui.ListBox;
 
 public class ConsumptionUtils {
 
+	public static final String CONSUMPTION_PRODUCT = "Producto";
+	public static final String CONSUMPTION_NAME = "Nombre";
+	public static final String CONSUMPTION_INITIAL = "Inicial";
+	public static final String CONSUMPTION_PURCHASES = "Compras";
+	public static final String CONSUMPTION_SALES = "Ventas";
+	public static final String CONSUMPTION_FINAL = "Final";
+	public static final String CONSUMPTION_TRANSFER = "Traspaso";
+	public static final String CONSUMPTION_PRICE = "Precio";
+	public static final String CONSUMPTION_CONSUMPTION_VALUE = "Valor Consumo";
+	public static final String CONSUMPTION_CONSUMPTION = "Consumo";
+	
 	public static Vector<String> consumptionList(){
 		Vector<String> v = new Vector<String>();
-		v.add("Producto");
-		v.add("Nombre");
-		v.add("Inicial");
-		v.add("Compras");
-		v.add("Ventas");
-		v.add("Final");
-		v.add("Traspaso");
-		v.add("Precio"); // precio del producto
-		v.add("Valor Consumo");// precio total del consumo
-		v.add("Consumo");
-		//v.add("Texto Libre");
-		
-		
+		v.add(CONSUMPTION_PRODUCT);
+		v.add(CONSUMPTION_NAME);
+		v.add(CONSUMPTION_INITIAL);
+		v.add(CONSUMPTION_PURCHASES);
+		v.add(CONSUMPTION_SALES);
+		v.add(CONSUMPTION_FINAL);
+		v.add(CONSUMPTION_TRANSFER);
+		v.add(CONSUMPTION_PRICE); // precio del producto
+		v.add(CONSUMPTION_CONSUMPTION_VALUE);// precio total del consumo
+		v.add(CONSUMPTION_CONSUMPTION);
+		return v;
+	}
+	
+	public static Vector<String> consumptionOptionalList(){
+		Vector<String> v = new Vector<String>();
+		v.add(CONSUMPTION_NAME);
 		return v;
 	}
 	
@@ -43,15 +57,15 @@ public class ConsumptionUtils {
 	}
 	public static Boolean isConsumption(String s) {
 		switch (s) {
-		case "Producto": return true;
-		case "Inicial": return true;
-		case "Compras": return true;
-		case "Ventas": return true;
-		case "Final": return true;
-		case "Traspaso": return true;
-		case "Precio": return true; 
-		case "Valor Consumo": return true;
-		case "Consumo": return true;
+		case CONSUMPTION_PRODUCT: return true;
+		case CONSUMPTION_INITIAL: return true;
+		case CONSUMPTION_PURCHASES: return true;
+		case CONSUMPTION_SALES: return true;
+		case CONSUMPTION_FINAL: return true;
+		case CONSUMPTION_TRANSFER: return true;
+		case CONSUMPTION_PRICE: return true; 
+		case CONSUMPTION_CONSUMPTION_VALUE: return true;
+		case CONSUMPTION_CONSUMPTION: return true;
 		}
 		return false;
 	}

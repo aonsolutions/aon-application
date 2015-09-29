@@ -58,6 +58,7 @@ import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -202,8 +203,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	FeeInfo fi;
 	Vector<Seller> sellers = new Vector<Seller>();
 	Vector<WorkPlace> workplaces = new Vector<WorkPlace>();
-	Vector<Project> projects = new Vector<Project>();
-	Vector<Customer> customers = new Vector<Customer>();
+	
 	Vector<InvoicingGroup> invoicingGroups = new Vector<InvoicingGroup>();
 	public Integer executeExcel3(TemplateInfo templateInfo){
 		ti = templateInfo;
@@ -218,8 +218,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		try {
 			sellers = DBFee.getSellers(domain,domainId);
 			workplaces = DBFee.getWorkplaces(domain,domainId);
-			projects = DBFee.getProjects(domain,domainId);
-			customers = DBFee.getCustomers(domain, domainId);
+
 			invoicingGroups = DBFee.getInvoicingGroups(domain, domainId);
 			
 		} catch (SQLException e1) {
@@ -410,19 +409,20 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	
 	private FeeInfo checkFee(String template,FeeInfo fee, Cell cell) {
 		Integer type = cell.getCellType();
+		Domain domain = new Domain();
+		domain.setName(AonUtil.getDomainName());
+		domain.setId(domainId);
 		switch (template) {
 		case "Cliente": case "Client":
 			if(type.equals(Cell.CELL_TYPE_STRING) && !cell.getStringCellValue().equals("")){
 				String strAux = cell.getStringCellValue();
 				Boolean b = true;
-				for(Customer s : customers){
-					if(strAux.equalsIgnoreCase(s.getRegistry().getDocument()) || strAux.equalsIgnoreCase(s.getRegistry().getAlias()) || strAux.equalsIgnoreCase(s.getRegistry().getName())){
-						fee.setClient(cell.getStringCellValue());
-						fee.setClientId(s.getId());
-						b= false;
-					}
+				Customer customer = DBFee.getCustomer(domain, strAux);
+				if(customer != null){
+					fee.setClient(cell.getStringCellValue());
+					fee.setClientId(customer.getId());
 				}
-				if(b) return null;	
+				else return null;
 			}
 			else return null;
 			break;
@@ -456,9 +456,6 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			else if(type.equals(Cell.CELL_TYPE_NUMERIC)){
 				fee.setStartDate(cell.getDateCellValue());
 			}
-		/*	else if(type.equals(Cell.CELL_TYPE_FORMULA)){
-				
-			}*/
 			else return null;
 			break;
 		case "Fecha Fin": case "End Date":
@@ -470,9 +467,6 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			else if(type.equals(Cell.CELL_TYPE_NUMERIC)){
 				fee.setEndDate(cell.getDateCellValue());
 			}
-			/*else if(type.equals(Cell.CELL_TYPE_FORMULA)){
-				
-			}*/
 			else return null;
 			break;
 		case "Fecha Facturaci\u00f3n": case "Billing Date":
@@ -484,9 +478,6 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			else if(type.equals(Cell.CELL_TYPE_NUMERIC)){
 				fee.setBillingDate(cell.getDateCellValue());
 			}
-			/*else if(type.equals(Cell.CELL_TYPE_FORMULA)){
-			
-			}*/
 			else return null;
 			break;
 		case "Periodo": case "period": //enum
@@ -582,18 +573,15 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			}
 			fee.setConfidential(bool2);
 			break;
-		case "Proyecto": case "Project":  //BD
+		case "Expediente": case "Record":  //BD
 			if(type.equals(Cell.CELL_TYPE_STRING)){
 				String strAux = cell.getStringCellValue();
-				Boolean b = true;
-				for(Project s : projects){
-					if(strAux.equalsIgnoreCase(s.getName()) || strAux.equalsIgnoreCase(s.getAlias())){
-						fee.setProject(cell.getStringCellValue());
-						fee.setProjectId(s.getId());
-						b= false;
-					}
+				Project project = DBFee.getProject(domain, strAux, fee.getClientId());
+				if(project != null){
+					fee.setProject(cell.getStringCellValue());
+					fee.setProjectId(project.getId());
 				}
-				if(b) return null;	
+				else return null;
 			}
 			else return null;
 			break;

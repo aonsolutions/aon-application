@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Vector;
 
@@ -19,12 +20,14 @@ import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record4;
+import org.jooq.Record5;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
 import com.code.aon.company.WorkPlace;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.InvoicingGroup;
+import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.project.Project;
 import com.code.aon.registry.Registry;
 import com.esferalia.aon.gwt.template.server.AuditInfo;
@@ -32,6 +35,7 @@ import com.esferalia.aon.gwt.template.server.FeeInfo;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.jooq.tables.records.CustomerFeeRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 
 public class DBFee {
@@ -122,7 +126,11 @@ public class DBFee {
 								.where(WORKPLACE.DOMAIN.eq(domainId)).limit(1).fetchOne().value1();
 						if(s.getWorkplaceId() == null) s.setWorkplaceId(w);
 						Short period = s.getPeriod().shortValue();
-						customerFeeInsertQuery.values(domainIdFee, s.getProjectId(), s.getClientId(),line, itemId, s.getDescription(), s.getQuantity(), s.getPrice(), s.getDiscount().toString(), new java.sql.Date(s.getStartDate().getTime()), new java.sql.Date(s.getEndDate().getTime()), new java.sql.Date(s.getBillingDate().getTime()),period, confidential.byteValue(), s.getBillingGroup(), s.getSellerId(),s.getWorkplaceId());
+						
+						Date endDate = null;
+						if(s.getEndDate() != null) endDate =  new java.sql.Date(s.getEndDate().getTime());
+						
+						customerFeeInsertQuery.values(domainIdFee, s.getProjectId(), s.getClientId(),line, itemId, s.getDescription(), s.getQuantity(), s.getPrice(), s.getDiscount().toString(), new java.sql.Date(s.getStartDate().getTime()), endDate, new java.sql.Date(s.getBillingDate().getTime()),period, confidential.byteValue(), s.getBillingGroup(), s.getSellerId(),s.getWorkplaceId());
 					}
 					else{
 						v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
@@ -141,6 +149,43 @@ public class DBFee {
 			
 		} finally {
 				if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Customer getCustomer(Domain domain, String document){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId());
+			Result<Record5<Integer, String, String, String, Byte>> result = ctx.getDslContext().select(REGISTRY.ID, REGISTRY.ALIAS,
+												REGISTRY.DOCUMENT, REGISTRY.NAME,
+												CUSTOMER.STATUS)
+					.from(REGISTRY).join(CUSTOMER).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+					.where(REGISTRY.DOCUMENT.eq(document))
+					.and(REGISTRY.DOMAIN.eq(domain.getId()))
+					.fetch();
+			
+			if(result.isNotEmpty()){
+				Customer customer = new Customer();
+				Integer index = 0;
+				if(result.size() > 1){
+					while(index < result.size()-1 && result.get(index).value5() != 0){
+						index++;
+					}
+				}
+	
+				customer.setId(result.get(index).value1());
+				Registry registry = new Registry();
+				registry.setAlias(result.get(index).value2());
+				registry.setDocument(result.get(index).value3());
+				registry.setName(result.get(index).value4());
+				customer.setRegistry(registry);
+				customer.setStatus(CustomerStatus.values()[result.get(index).value5()]);
+			
+				return customer;
+			}
+			return null;
+		}finally {
+			if (ctx != null) ctx.close();
 		}
 	}
 	
@@ -239,6 +284,33 @@ public class DBFee {
 		}
 	}
 
+	
+	public static Project getProject(Domain domain,String str, Integer customer){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId());
+
+			Result<Record3<Integer, String, String>> result = ctx.getDslContext().select(PROJECT.ID,PROJECT.ALIAS,PROJECT.NAME)
+					.from(PROJECT)
+					.where(PROJECT.DOMAIN.eq(domain.getId()))
+					.and(PROJECT.REGISTRY.eq(customer))
+					.and(PROJECT.ALIAS.eq(str).or(PROJECT.NAME.eq(str)))
+					.fetch();
+			
+			if(result.isNotEmpty()){
+				Project project = new Project();
+				Integer index = 0;
+				project.setId(result.get(index).value1());
+				project.setAlias(result.get(index).value2());
+				project.setName(result.get(index).value3());
+			
+				return project;
+			}
+			return null;
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
 
 	public static Vector<WorkPlace> getWorkplaces(String domain,Integer domainId){
 		AONContext ctx = null;

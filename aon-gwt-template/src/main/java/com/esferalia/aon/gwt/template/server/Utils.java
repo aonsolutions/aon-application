@@ -278,18 +278,18 @@ public class Utils {
 	
 	
 	private static Integer getMes(String mes) {
-		if(mes.equalsIgnoreCase("enero") || mes.equals("1") || mes.equals("01")) return 1;
-		if(mes.equalsIgnoreCase("febrero") || mes.equals("2") || mes.equals("02")) return 2;
-		if(mes.equalsIgnoreCase("marzo") || mes.equals("3") || mes.equals("03")) return 3;
-		if(mes.equalsIgnoreCase("abril") || mes.equals("4") || mes.equals("04")) return 4;
-		if(mes.equalsIgnoreCase("mayo") || mes.equals("5") || mes.equals("05")) return 5;
-		if(mes.equalsIgnoreCase("junio") || mes.equals("6") || mes.equals("06")) return 6;
-		if(mes.equalsIgnoreCase("julio") || mes.equals("7") || mes.equals("07")) return 7;
-		if(mes.equalsIgnoreCase("agosto") || mes.equals("8") || mes.equals("08")) return 8;
-		if(mes.equalsIgnoreCase("septiembre") || mes.equals("9") || mes.equals("09")) return 9;
-		if(mes.equalsIgnoreCase("octubre") || mes.equals("10") || mes.equals("10")) return 10;
-		if(mes.equalsIgnoreCase("noviembre") || mes.equals("11") || mes.equals("11")) return 11;
-		if(mes.equalsIgnoreCase("diciembre") || mes.equals("12") || mes.equals("12")) return 12;
+		if(mes.equalsIgnoreCase("enero") || mes.equals("1") || mes.equals("01")) return 0;
+		if(mes.equalsIgnoreCase("febrero") || mes.equals("2") || mes.equals("02")) return 1;
+		if(mes.equalsIgnoreCase("marzo") || mes.equals("3") || mes.equals("03")) return 2;
+		if(mes.equalsIgnoreCase("abril") || mes.equals("4") || mes.equals("04")) return 3;
+		if(mes.equalsIgnoreCase("mayo") || mes.equals("5") || mes.equals("05")) return 4;
+		if(mes.equalsIgnoreCase("junio") || mes.equals("6") || mes.equals("06")) return 5;
+		if(mes.equalsIgnoreCase("julio") || mes.equals("7") || mes.equals("07")) return 6;
+		if(mes.equalsIgnoreCase("agosto") || mes.equals("8") || mes.equals("08")) return 7;
+		if(mes.equalsIgnoreCase("septiembre") || mes.equals("9") || mes.equals("09")) return 8;
+		if(mes.equalsIgnoreCase("octubre") || mes.equals("10") || mes.equals("10")) return 9;
+		if(mes.equalsIgnoreCase("noviembre") || mes.equals("11") || mes.equals("11")) return 10;
+		if(mes.equalsIgnoreCase("diciembre") || mes.equals("12") || mes.equals("12")) return 11;
 			
 		return null;
 	}
@@ -382,8 +382,6 @@ public class Utils {
 		case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
 	//	case "application/vnd.oasis.opendocument.spreadsheet":
 			return true;
-		
-
 		default:
 			return false;
 		}

@@ -8,21 +8,30 @@ import com.google.gwt.user.client.ui.ListBox;
 
 public class StockUtils {
 
+	public static final String STOCK_PRODUCT = "Producto";
+	public static final String STOCK_QUANTITY = "Cantidad";
+	public static final String STOCK_DETAIL1 = "Detalle 1";
+	public static final String STOCK_DETAIL2 = "Detalle 2";
+	public static final String STOCK_DETAIL3 = "Detalle 3";
+	public static final String STOCK_NAME = "Nombre";
+	
 	public static Vector<String> stockList(){
 		Vector<String> v = new Vector<String>();
-		v.add("Producto");
-		//v.add("Series");
-		//v.add("Numero");
-		//v.add("Almac\u00e9n Origen");
-		//v.add("Almac\u00e9n Destino");
-		v.add("Cantidad");
-		v.add("Detalle 1");
-		v.add("Detalle 2");
-		v.add("Detalle 3");
-		//v.add("Comentarios");
-		//v.add("Texto Libre");
-		v.add("Nombre");
-		
+		v.add(STOCK_PRODUCT);
+		v.add(STOCK_QUANTITY);
+		v.add(STOCK_DETAIL1);
+		v.add(STOCK_DETAIL2);
+		v.add(STOCK_DETAIL3);
+		v.add(STOCK_NAME);
+		return v;
+	}
+	
+	public static Vector<String> stockOptionalList(){
+		Vector<String> v = new Vector<String>();
+		v.add(STOCK_DETAIL1);
+		v.add(STOCK_DETAIL2);
+		v.add(STOCK_DETAIL3);
+		v.add(STOCK_NAME);
 		return v;
 	}
 	
@@ -43,8 +52,8 @@ public class StockUtils {
 	}
 	public static Boolean estaStock(String s) {
 		switch (s) {
-		case "Producto": return true;
-		case "Cantidad" : return true;
+		case STOCK_PRODUCT: return true;
+		case STOCK_QUANTITY : return true;
 		}
 		return false;
 	}
