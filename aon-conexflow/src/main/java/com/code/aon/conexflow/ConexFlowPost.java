@@ -42,6 +42,7 @@ import org.xml.sax.SAXException;
 import com.code.aon.AonVersion;
 import com.code.aon.conexflow.ConexFlow.Query;
 import com.code.aon.conexflow.jooq.DBConsults;
+import com.esferalia.aon.occam.api.model.Domain;
 
 public class ConexFlowPost implements  Serializable {
 	
@@ -61,7 +62,7 @@ public class ConexFlowPost implements  Serializable {
 		return null;
 	}
 	
-	public static ConexFlow execute(ConexFlowConnection connection, String op, Query query, Integer project, Integer domainId, String domainName) {
+	public static ConexFlow execute(ConexFlowConnection connection, String op, Query query, Integer project, Domain domain) {
 		try {
 			byte[] xmlFile = sendPostHttpClient(connection, op, query);
 			ConexFlow conexFlow = com.code.aon.conexflow.XMLUtils.readXml(xmlFile, query);
@@ -69,11 +70,11 @@ public class ConexFlowPost implements  Serializable {
 			/* Guardar Operacion en project_attach (response en xml) */
 			if(conexFlow.getRespuesta().getResultado().equals(RESULT_OK)){
 				if(!op.equals(ConexFlowConstant.VALIDATE_CARD_OP)){
-					DBConsults.insertConexFlowOperation(domainName, domainId, xmlFile, project,op);
+					DBConsults.insertConexFlowOperation(domain, xmlFile, project,op);
 					if(op.equals(ConexFlowConstant.SALE_OP))
-						ConexFlowUtils.setVoucher(domainName, domainId, project, conexFlow.getRespuesta().getVoucher());
+						ConexFlowUtils.setVoucher(domain, project, conexFlow.getRespuesta().getVoucher());
 					if(op.equals(ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP))
-						ConexFlowUtils.setVoucher(domainName, domainId, project, conexFlow);
+						ConexFlowUtils.setVoucher(domain, project, conexFlow);
 				}
 			}
 			

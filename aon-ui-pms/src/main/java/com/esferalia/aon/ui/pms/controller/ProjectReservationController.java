@@ -82,6 +82,7 @@ import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.db.MailAccount;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationDivert;
@@ -1518,7 +1519,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 
 	private boolean conexFlowData(ProjectReservation reservation) {
-		ConexFlowConnection connection = DBConsults.getConection(AonUtil.getDomainName(), reservation.getDomain());
+		ConexFlowConnection connection = DBConsults.getConection(getDomain(reservation));
 		if (connection.getActive()) {
 			ConexFlow conexFlowCreateToken = null;
 			String errorMsg = null;
@@ -1526,7 +1527,7 @@ public class ProjectReservationController extends BasicController implements IPm
 					, connection.getEmpresa().toString(), connection.getCentro().toString(), connection.getTpv().toString()
 					, reservation.getHrCreditCardExpirationMonth() + reservation.getHrCreditCardExpirationYear()
 					, reservation.getCustomer().getId().toString());
-			conexFlowCreateToken = ConexFlowPost.execute(connection,ConexFlowConstant.CREATE_TOKEN_OP, createTokenQuery, reservation.getId(), reservation.getDomain(), AonUtil.getDomainName());
+			conexFlowCreateToken = ConexFlowPost.execute(connection,ConexFlowConstant.CREATE_TOKEN_OP, createTokenQuery, reservation.getId(), getDomain(reservation));
 			if (!conexFlowCreateToken.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) {
 				errorMsg = "Error " + conexFlowCreateToken.getRespuesta().getResultado() + ": " + conexFlowCreateToken.getRespuesta().getDesResultado() + ".";
 			}
@@ -1540,10 +1541,8 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	public void onCreditCardPreauthorizationShow(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		ConexFlow cf = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), 
-				reservation.getDomain(), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
-		ConexFlow cf2 = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), 
-				reservation.getDomain(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+		ConexFlow cf = DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
+		ConexFlow cf2 = DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
 		setCardOperationTo(new CardOperationTo());
 		getCardOperationTo().setCardNumber(cf.getRespuesta().getCF_PAN());
 		if (cf2 != null) {
@@ -1564,17 +1563,17 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	public void onCreditCardPreauthorization(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		ConexFlowConnection connection = DBConsults.getConection(AonUtil.getDomainName(), reservation.getDomain());
+		ConexFlowConnection connection = DBConsults.getConection(getDomain(reservation));
 		if(connection.getActive()){
 			String errorMsg = null;
 			if (reservation.getTotal() >= getCardOperationTo().getOperationAmount()) {
-				ConexFlow cf = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), 
-					reservation.getDomain(), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
+				ConexFlow cf = DBConsults.getConexFlowLastOperation(getDomain(reservation), 
+						reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
 				Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(
 					connection.getEmpresa().toString(), connection.getCentro().toString(), connection.getTpv().toString()
 					, reservation.getCustomer().getId().toString(), cf.getRespuesta().getToken()
 					, getCardOperationTo().getOperationAmount());
-				ConexFlow cf2 = ConexFlowPost.execute(connection, ConexFlowConstant.PREAUTHORIZATION_OP, query, reservation.getId(), reservation.getDomain(), AonUtil.getDomainName());
+				ConexFlow cf2 = ConexFlowPost.execute(connection, ConexFlowConstant.PREAUTHORIZATION_OP, query, reservation.getId(), getDomain(reservation));
 				if(cf2 != null){
 					if (cf2.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) 
 						setShowCreditCardPreauthorizationWindow(false);
@@ -1592,11 +1591,11 @@ public class ProjectReservationController extends BasicController implements IPm
 	
 	public void onCreditCardCancelPreauthorization(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		ConexFlowConnection connection = DBConsults.getConection(AonUtil.getDomainName(), reservation.getDomain());
+		ConexFlowConnection connection = DBConsults.getConection(getDomain(reservation));
 		if(connection.getActive()){
 			String errorMsg = null;
-			ConexFlow cf = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
-			DBConsults.deletePreuthorization(AonUtil.getDomainName(), reservation.getDomain(), reservation.getId());
+			ConexFlow cf = DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+			DBConsults.deletePreuthorization(getDomain(reservation), reservation.getId());
 			
 			Double importe = Double.parseDouble(cf.getRespuesta().getImporte());
 			Query query = ConexFlowUtils.getConexFlowCancelationQuery(connection.getEmpresa().toString()
@@ -1605,7 +1604,7 @@ public class ProjectReservationController extends BasicController implements IPm
 				, importe, cf.getRespuesta().getAutorizacion()
 				, cf.getRespuesta().getRefClient(), cf.getRespuesta().getIdOperacion(), cf.getRespuesta().getFecha());
 		
-			ConexFlow cf2 = ConexFlowPost.execute(connection, ConexFlowConstant.CANCELATION_OP, query, reservation.getId(), reservation.getDomain(), AonUtil.getDomainName());
+			ConexFlow cf2 = ConexFlowPost.execute(connection, ConexFlowConstant.CANCELATION_OP, query, reservation.getId(), getDomain(reservation));
 			if(cf2 != null){
 				if (cf2.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) 
 					setShowCreditCardPreauthorizationWindow(false);
@@ -1618,6 +1617,13 @@ public class ProjectReservationController extends BasicController implements IPm
 				throw new AbortProcessingException(errorMsg);
 			}
 		}
+	}
+	
+	private Domain getDomain(ProjectReservation reservation) {
+		Domain domain = new Domain();
+		domain.setName(AonUtil.getDomainName());
+		domain.setId(reservation.getDomain());
+		return domain;
 	}
 
 }

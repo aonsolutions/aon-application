@@ -1519,19 +1519,59 @@ public class AON {
 		}
 	}
 	
-	public static void insertAttach(Attach attach) {
+	public static void insert(Attach attach) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(attach.getDomainName(), attach.getDomainId());
+			ctx = AONContext.getAONContext(attach.getDomain().getName(), attach.getDomain().getId());
 			
-			if(attach.getAttachType().equals(AttachType.REGISTRY)) getAttachment().insertRattach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.CONTRACT)) getAttachment().insertRattach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.INVOICE)) getAttachment().insertRattach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.ITEM)) getAttachment().insertRattach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.OFFER)) getAttachment().insertRattach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.PAYROLL)) getAttachment().insertRattach(ctx, attach);
+			if(attach.getAttachType().equals(AttachType.REGISTRY)) getAttachment().insertRegistryAttach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.CONTRACT)) getAttachment().insertContractAttach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.INVOICE)) getAttachment().insertInvoiceAttach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.ITEM)) getAttachment().insertItemAttach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.OFFER)) getAttachment().insertOfferAttach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.PAYROLL)) getAttachment().insertPayrollAttach(ctx, attach);
 			else if(attach.getAttachType().equals(AttachType.PROJECT)) getAttachment().insertProjectAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.SEPE)) getAttachment().insertRattach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.SEPE)) getAttachment().insertSepeAttach(ctx, attach);
+			
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static void update(Attach attach){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(attach.getDomain().getName(), attach.getDomain().getId());
+			
+			if(attach.getAttachType().equals(AttachType.REGISTRY)) getAttachment().updateRegistryAttach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.CONTRACT)) getAttachment().updateContractAttach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.INVOICE)) getAttachment().updateInvoiceAttach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.ITEM)) getAttachment().updateItemAttach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.OFFER)) getAttachment().updateOfferAttach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.PAYROLL)) getAttachment().updatePayrollAttach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.PROJECT)) getAttachment().updateProjectAttach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.SEPE)) getAttachment().updateSepeAttach(ctx, attach);
+			
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static void delete(Attach attach,Condition condition){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(attach.getDomain().getName(), attach.getDomain().getId());
+			
+			if(attach.getAttachType().equals(AttachType.REGISTRY)) getAttachment().deleteRegistryAttach(ctx, condition);
+			else if(attach.getAttachType().equals(AttachType.CONTRACT)) getAttachment().deleteContractAttach(ctx, condition);
+			else if(attach.getAttachType().equals(AttachType.INVOICE)) getAttachment().deleteInvoiceAttach(ctx, condition);
+			else if(attach.getAttachType().equals(AttachType.ITEM)) getAttachment().deleteItemAttach(ctx, condition);
+			else if(attach.getAttachType().equals(AttachType.OFFER)) getAttachment().deleteOfferAttach(ctx, condition);
+			else if(attach.getAttachType().equals(AttachType.PAYROLL)) getAttachment().deletePayrollAttach(ctx, condition);
+			else if(attach.getAttachType().equals(AttachType.PROJECT)) getAttachment().deleteProjectAttach(ctx, condition);
+			else if(attach.getAttachType().equals(AttachType.SEPE)) getAttachment().deleteSepeAttach(ctx, condition);
 			
 		} finally {
 			if (ctx != null)

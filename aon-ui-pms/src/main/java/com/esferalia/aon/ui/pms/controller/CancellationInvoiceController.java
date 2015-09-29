@@ -29,6 +29,7 @@ import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.invoicing.CancellationInvoiceTo;
@@ -332,13 +333,13 @@ public class CancellationInvoiceController extends BasicController implements IP
 	
 	
 	public boolean isShowSale(){
-		ConexFlowConnection connection = DBConsults.getConection(AonUtil.getDomainName(), getReservation().getDomain());
+		ConexFlowConnection connection = DBConsults.getConection(getDomain(getReservation()));
 		
 		return connection.getActive() && (isPreauthorization()|| isCreditCardToken()) && !isConfirmPreauthorization() && !isSale();
 	}
 	
 	public boolean isNotShowSale(){
-		ConexFlowConnection connection = DBConsults.getConection(AonUtil.getDomainName(), getReservation().getDomain());
+		ConexFlowConnection connection = DBConsults.getConection(getDomain(getReservation()));
 		
 		return connection.getActive() && (isConfirmPreauthorization() || isSale());
 	}
@@ -360,13 +361,13 @@ public class CancellationInvoiceController extends BasicController implements IP
 		ReservationUtils reservationUtils = new ReservationUtils();
 		reservationUtils.decryptReservationCreditCardData(reservation);
 		setReservation(reservation);
-		ConexFlow cf = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+		ConexFlow cf = DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
 		setPreauthorization(cf != null);
-		ConexFlow cf2 = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
+		ConexFlow cf2 = DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
 		setConfirmPreauthorization(cf2 != null);
-		ConexFlow cf3 = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
+		ConexFlow cf3 = DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
 		setCreditCardToken(cf3 != null);
-		ConexFlow cf4 = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.SALE_OP);
+		ConexFlow cf4 = DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.SALE_OP);
 		setSale(cf4 != null);
 		if(isPreauthorization() && cf.getRespuesta().getImporte() !=  null) setPreauthorizationAmount(Double.parseDouble(cf.getRespuesta().getImporte()));
 		if(isConfirmPreauthorization() && cf.getRespuesta().getImporte() != null) setConfirmPreauthorizationAmount(Double.parseDouble(cf2.getRespuesta().getImporte()));
@@ -375,13 +376,13 @@ public class CancellationInvoiceController extends BasicController implements IP
 	public void onChargeCreditCard(ActionEvent event) {
 		boolean resultOk = false;
 		ProjectReservation reservation = getReservation();
-		ConexFlowConnection connection = DBConsults.getConection(AonUtil.getDomainName(), reservation.getDomain());
+		ConexFlowConnection connection = DBConsults.getConection(getDomain(reservation));
 		if(connection.getActive()){
 			String errorMsg = null;
 			if(getPreauthorizationAmount() <= reservation.getTotal()){
-				ConexFlow cf1 = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
+				ConexFlow cf1 = DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
 				if(cf1 != null){
-					ConexFlow cf2 = DBConsults.getConexFlowLastOperation(AonUtil.getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+					ConexFlow cf2 = DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
 					if(cf2 != null){
 						Double importeOriginal = Double.parseDouble(cf2.getRespuesta().getImporte());
 						Query confirmPreauthorizationQuery = ConexFlowUtils.getConexFlowConfirmPreauthorizationQuery(
@@ -390,7 +391,7 @@ public class CancellationInvoiceController extends BasicController implements IP
 								, getPreauthorizationAmount(), importeOriginal, cf1.getRespuesta().getCF_ExpirationDate(), cf2.getRespuesta().getAutorizacion()
 								, cf2.getRespuesta().getFecha(), cf2.getRespuesta().getIdOperacion());
 						
-						ConexFlow conexFlowConfirmPreauthorization =  ConexFlowPost.execute(connection, ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP, confirmPreauthorizationQuery, reservation.getId(), reservation.getDomain(), AonUtil.getDomainName());
+						ConexFlow conexFlowConfirmPreauthorization =  ConexFlowPost.execute(connection, ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP, confirmPreauthorizationQuery, reservation.getId(), getDomain(reservation));
 						if(conexFlowConfirmPreauthorization != null){
 							resultOk = conexFlowConfirmPreauthorization.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
 							if(resultOk){
@@ -406,7 +407,7 @@ public class CancellationInvoiceController extends BasicController implements IP
 							, connection.getTpv().toString(),  cf1.getRespuesta().getToken()
 							, getPreauthorizationAmount(), reservation.getCustomer().getId().toString());
 				
-						ConexFlow conexFlowCardPayment =  ConexFlowPost.execute(connection, ConexFlowConstant.SALE_OP, cardPaymentQuery, reservation.getId(), reservation.getDomain(), AonUtil.getDomainName());
+						ConexFlow conexFlowCardPayment =  ConexFlowPost.execute(connection, ConexFlowConstant.SALE_OP, cardPaymentQuery, reservation.getId(), getDomain(reservation));
 						if(conexFlowCardPayment != null){
 							if(conexFlowCardPayment.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)){
 								// crear factura ....	
@@ -430,6 +431,12 @@ public class CancellationInvoiceController extends BasicController implements IP
 		}
 	}
 	
+	private Domain getDomain(ProjectReservation reservation) {
+		Domain domain = new Domain();
+		domain.setName(AonUtil.getDomainName());
+		domain.setId(reservation.getDomain());
+		return domain;
+	}
 	
 	/********************************************************/
 

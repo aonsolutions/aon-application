@@ -7,6 +7,7 @@ import com.code.aon.conexflow.ConexFlow;
 import com.code.aon.conexflow.ConexFlowConnection;
 import com.code.aon.conexflow.ConexFlow.Query;
 import com.code.aon.conexflow.ConexFlowPost;
+import com.esferalia.aon.occam.api.model.Domain;
 
 public class ConexFlowThread extends Thread{
 	
@@ -58,10 +59,17 @@ public class ConexFlowThread extends Thread{
 	public void setProjectId(Integer projectId) {
 		this.projectId = projectId;
 	}
+	
+	public Domain getDomain(){
+		Domain domain = new Domain();
+		domain.setName(getDomainName());
+		domain.setId(getDomainId());
+		return domain;
+	}
 
 	@Override
 	public void run() {
-		ConexFlow cf = ConexFlowPost.execute(connection, query.getOperacion(), query, getProjectId(), getDomainId(), getDomainName());
+		ConexFlow cf = ConexFlowPost.execute(connection, query.getOperacion(), query, getProjectId(), getDomain());
 		if(cf != null){
 			if(!cf.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)){
 				LOGGER.error("*Error " + cf.getRespuesta().getResultado() + ": " + cf.getRespuesta().getDesResultado()+".");

@@ -318,8 +318,6 @@ public class ServiceAccountController extends BasicController {
 	
 	
 	public void createAccount(ActionEvent event) throws SQLException {
-		
-		System.out.println("asdgasd");
 		String domain = AonUtil.getDomainName();
 		Connection connection = null;
 		try {
@@ -380,9 +378,7 @@ public class ServiceAccountController extends BasicController {
 	}
 	
 	public void onUpload(ActionEvent event) {
-		System.out.println("onUpload");
 		upload = new ServiceAccount(getClient_id(), getDomain(), getEmail_address(), getSize(), getLimit(), getPublic_key(), getData(),getGoogle_account());
-
 	}
 	
 	public String getBeanName() {

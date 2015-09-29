@@ -232,7 +232,7 @@ public class DBDrive {
 				fileInfo.setFileId(r.value1());
 				fileInfo.setMimetype(r.value2());
 				fileInfo.setTitle(r.value3());
-				fileInfo.setType(r.value4());
+				if(r.value4() != null) fileInfo.setType(r.value4());
 				fileInfo.setCategory(-2);
 				fileInfo.setDomainId(r.value5());
 				try { 

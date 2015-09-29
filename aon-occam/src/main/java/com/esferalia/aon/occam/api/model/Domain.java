@@ -8,6 +8,7 @@ public class Domain implements Serializable {
 	Integer id;
 	String name;
 	Integer parentId;
+	String description;
 	
 	boolean parent;
 	boolean child;
@@ -70,5 +71,15 @@ public class Domain implements Serializable {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	
 
 }

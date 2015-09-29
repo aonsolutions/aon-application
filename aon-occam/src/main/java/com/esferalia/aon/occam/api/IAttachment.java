@@ -8,8 +8,31 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 public interface IAttachment {
 	public Attach getRattach(AONContext ctx, Condition condition);
 	
-	public void insertRattach(AONContext ctx, Attach attach);
-	
+	public void insertContractAttach(AONContext ctx, Attach attach);
+	public void insertItemAttach(AONContext ctx, Attach attach);
+	public void insertInvoiceAttach(AONContext ctx, Attach attach);
+	public void insertOfferAttach(AONContext ctx, Attach attach);
+	public void insertPayrollAttach(AONContext ctx, Attach attach);
 	public void insertProjectAttach(AONContext ctx, Attach attach);
+	public void insertRegistryAttach(AONContext ctx, Attach attach);
+	public void insertSepeAttach(AONContext ctx, Attach attach);
+	
+	public void updateContractAttach(AONContext ctx, Attach attach);
+	public void updateItemAttach(AONContext ctx, Attach attach);
+	public void updateInvoiceAttach(AONContext ctx, Attach attach);
+	public void updateOfferAttach(AONContext ctx, Attach attach);
+	public void updatePayrollAttach(AONContext ctx, Attach attach);
+	public void updateProjectAttach(AONContext ctx, Attach attach);
+	public void updateRegistryAttach(AONContext ctx, Attach attach);
+	public void updateSepeAttach(AONContext ctx, Attach attach);
+	
+	public void deleteContractAttach(AONContext ctx, Condition condition);
+	public void deleteItemAttach(AONContext ctx, Condition condition);
+	public void deleteInvoiceAttach(AONContext ctx, Condition condition);
+	public void deleteOfferAttach(AONContext ctx, Condition condition);
+	public void deletePayrollAttach(AONContext ctx, Condition condition);
+	public void deleteProjectAttach(AONContext ctx, Condition condition);
+	public void deleteRegistryAttach(AONContext ctx, Condition condition);
+	public void deleteSepeAttach(AONContext ctx, Condition condition);
 	
 }

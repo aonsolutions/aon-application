@@ -9,13 +9,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.jooq.AggregateFunction;
 import org.jooq.Field;
 import org.jooq.Identity;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.Record;
-import org.jooq.Table;
-import org.jooq.TableField;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;

@@ -75,14 +75,14 @@ import com.google.gwt.view.client.ProvidesKey;
 			this.mimetype = (byte) rattach.getMimeType().ordinal();
 			this.type = rattach.getType();
 			this.driveId = rattach.getDriveId();
-			this.fileId = rattach.getRattachId();
+			this.fileId = rattach.getId();
 			this.title = rattach.getDescription();
 			this.date = rattach.getDate();
 			this.icon = rattach.getIcon();
 			this.confidential = rattach.getConfidential();
-			this.domain = rattach.getDomainName();
-			this.domainId = rattach.getDomainId();
-			this.domainDescription = rattach.getDomainDescription();
+			this.domain = rattach.getDomain().getName();
+			this.domainId = rattach.getDomain().getId();
+			this.domainDescription = rattach.getDomain().getDescription();
 			this.md5 = rattach.getMd5();
 		}
 		
@@ -313,11 +313,5 @@ import com.google.gwt.view.client.ProvidesKey;
 		public void setMd5(String md5) {
 			this.md5 = md5;
 		}
-
-		
-
-
-		
-
 	}
 

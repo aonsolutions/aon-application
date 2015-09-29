@@ -15,6 +15,7 @@ import com.code.aon.conexflow.jooq.DBConsults;
 import com.code.aon.ui.common.role.BasicRoleManager;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.ProjectReservationService;
@@ -320,11 +321,17 @@ public class ProjectReservationPermission implements Serializable {
 
 	public boolean isCreditCardPreauthorizationAllowed() {
 		boolean roleAllowed = isRoleCommercial() || isRoleFinance();
-		ConexFlowConnection connection = DBConsults.getConection(getDomainName(), reservation.getDomain());
+		ConexFlowConnection connection = DBConsults.getConection(getDomain(reservation));
 		return roleAllowed && connection.getActive() && 
-			DBConsults.getConexFlowLastOperationBool(getDomainName(), reservation.getDomain(), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
+			DBConsults.getConexFlowLastOperationBool(getDomain(reservation), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
 	}
 	
+	private Domain getDomain(ProjectReservation reservation) {
+		Domain domain = new Domain();
+		domain.setName(getDomainName());
+		domain.setId(reservation.getDomain());
+		return domain;
+	}
 
 	/*************************** RESERVATION GUEST *******************************/
 

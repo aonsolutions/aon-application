@@ -18,21 +18,25 @@ import com.code.aon.conexflow.ConexFlow.Respuesta;
 import com.code.aon.conexflow.jooq.DBConsults;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 public class ConexFlowUtils {
 
+	protected static final String VOUCHER = "voucher";
 	//******************* Card Payment
 	
 	protected static ConexFlow getConexFlowCardPaymentQuery() {
+		Domain domain = new Domain();
+		domain.setName(AonUtil.getDomainName());
+		domain.setId(getDomainId());
 		ConexFlow cf = new ConexFlow();
 		Query query = new Query();
 		query.setOperacion(ConexFlowConstant.SALE_OP);
-		query.setEmpresa(DBConsults.getEnterpriseId(AonUtil.getDomainName(), getDomainId()));
+		query.setEmpresa(DBConsults.getEnterpriseId(domain));
 		query.setCentro("");
 		query.setTpv("0001");
 		query.setFecha("");
@@ -148,7 +152,7 @@ public class ConexFlowUtils {
 		return urlParameters;
 	}
 	
-	protected static void setVoucher(String domainName, Integer domainId, Integer project, String voucher) {
+	protected static void setVoucher(Domain domain, Integer project, String voucher) {
 		voucher.replace("&lt;","<");
 		voucher.replace("&gt;",">");
 		File htmlFile = new File("voucher.html");
@@ -157,16 +161,8 @@ public class ConexFlowUtils {
 			AonFileUtils.writeStringToFile(htmlFile, htmlString);
 			InputStream is = new FileInputStream(htmlFile);
 			byte[] b = AonIOUtils.toByteArray(is);
-			Attach attach = new Attach(AttachType.PROJECT);
-			attach.setConfidential(false);
-			attach.setData(b);
-			attach.setDescription("voucher");
-			attach.setDate(new Date());
-			attach.setDomainId(domainId);
-			attach.setDomainName(domainName);
-			attach.setMimeType(MimeType.HTML);
-			attach.setProject(project);
-			AON.insertAttach(attach);
+			Attach attach = Attach.projectAttach(project, domain, MimeType.HTML, VOUCHER, b, false, new Date(), null);
+			AON.insert(attach);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -294,11 +290,11 @@ public class ConexFlowUtils {
 		return urlParameters;
 	}
 	
-	protected static void setVoucher(String domainName, Integer domainId, Integer project, ConexFlow cf) {
+	protected static void setVoucher(Domain domain, Integer project, ConexFlow cf) {
 		Respuesta r = cf.getRespuesta();
 		Query q = cf.getQuery();
 		String voucher = "<html><head></head><body>EMPRESA: "+r.getEmpresa()+" CENTRO: "+r.getCentro()+" TPV: "+r.getTpv()+"<br>OPERAD.: "+r.getTeminal()+"   NO.OPERACION: "+r.getIdOperacion() +"<br>FECHA  : " + r.getFecha() +  "	HORA: " + r.getHora() + "<br>TARJETA:                       CAD: <br>CAPTURA MANUAL / AUTORIZACION:" + q.getAutOriginal() + "<br>"+ r.getDesCA()+"<br>"+r.getDesTipoDoc()+"<br>COM.PE: "+r.getComercio()+" TER.PE: "+r.getTeminal()+"<br>REF.PE: "+r.getReferencia()+"          SES.PE: 050820  <br>*************** V E N T A **************<br><br>TOTAL:          "+ r.getImporte()+ " EUR<br><br>---------- FIRMA DEL TITULAR -----------<br><br><br><br><br>----------------------------------------<br>******** PARA EL ESTABLECIMIENTO *******<br><br></body></html>";
-		setVoucher(domainName, domainId, project, voucher);
+		setVoucher(domain, project, voucher);
 	}
 	
 	//******************* Continue Card Payment with Authentication Request

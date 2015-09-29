@@ -6,6 +6,7 @@ public class ConexFlowConnection {
 	String server;
 	String serverAck;
 	String cfUser;
+	Integer payMethod;
 	Integer empresa;
 	Integer centro;
 	Integer tpv;
@@ -67,6 +68,15 @@ public class ConexFlowConnection {
 		this.active = active;
 	}
 	
+	
+	public Integer getPayMethod() {
+		return payMethod;
+	}
+
+	public void setPayMethod(Integer payMethod) {
+		this.payMethod = payMethod;
+	}
+
 	private void setInfo(String cfUser) {
 		setEmpresa(Integer.parseInt(cfUser.substring(0, 8)));
 		setCentro(Integer.parseInt(cfUser.substring(8, 12)));
