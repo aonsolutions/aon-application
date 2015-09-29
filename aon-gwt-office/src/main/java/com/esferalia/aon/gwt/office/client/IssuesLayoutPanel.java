@@ -14,6 +14,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -33,6 +34,10 @@ public class IssuesLayoutPanel extends Composite {
 	interface Listener {
 
 		void onComment(IssueCommentValue issueCommentValue);
+		
+		void onCloseIssueClickEvent(IssueSelected issue);
+		
+		void onReopenedIssueClickEvent(IssueSelected issue);
 	}
 
 	interface MyStyle extends CssResource {
@@ -73,11 +78,13 @@ public class IssuesLayoutPanel extends Composite {
 	TextArea commentTextArea;
 	@UiField
 	FlowPanel flowIssuesPanel;
-
+	@UiField
+	HorizontalPanel buttonHPanel;
 	@UiField
 	Button commentButton;
-	@UiField
-	Button closeButton;
+	
+	private final static String CLOSE = "Cerrar";
+	private final static String REOPENED = "Abrir";
 
 	private IssueSelected issue;
 	private List<Listener> listeners;
@@ -88,6 +95,13 @@ public class IssuesLayoutPanel extends Composite {
 		this.tabPanel.selectTab(0);
 		this.listeners = new LinkedList<Listener>();
 		this.issue = issue;
+		
+		if (this.issue.getState().equals(IssueValue.Prop.OPEN.value))
+			createCloseButton();
+		else
+			createReopenedButton();
+			
+		
 		init();
 	}
 
@@ -188,6 +202,31 @@ public class IssuesLayoutPanel extends Composite {
 		label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 
 		return label;
-
+	}
+	
+	private void createCloseButton() {
+		Button closeButton = new Button("Cerrar");
+		buttonHPanel.add(closeButton);
+		
+		closeButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				for (Listener listener : listeners)
+					listener.onCloseIssueClickEvent(issue);
+			}
+		});
+	}
+	
+	private void createReopenedButton() {
+		Button reopened = new Button("Abrir");
+		buttonHPanel.add(reopened);
+		
+		reopened.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				for (Listener listener : listeners)
+					listener.onReopenedIssueClickEvent(issue);
+			}
+		});
 	}
 }

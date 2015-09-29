@@ -84,9 +84,8 @@
 								visibleLines="9" width="98%" height="99%" />
 						</g:Tab>
 					</g:TabPanel>
-					<g:HorizontalPanel spacing="10">
-						<g:Button text="Comentar" ui:field="commentButton" />
-						<g:Button ui:field="closeButton" text="Cerrar" />
+					<g:HorizontalPanel spacing="10" ui:field="buttonHPanel">
+						<g:Button text="Comentar" ui:field="commentButton" />						
 					</g:HorizontalPanel>
 
 				</g:VerticalPanel>

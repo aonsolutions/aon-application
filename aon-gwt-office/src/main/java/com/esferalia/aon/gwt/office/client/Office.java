@@ -1,11 +1,10 @@
 package com.esferalia.aon.gwt.office.client;
 
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -72,8 +71,8 @@ public class Office extends Composite implements EntryPoint,
 	private IssueSelected issueSelected;
 	private final GitHub gitHub = new GitHub();
 
-	private Set<IssueSelected> openIssues;
-	private Set<IssueSelected> closedIssues;
+	private List<IssueSelected> openIssues;
+	private List<IssueSelected> closedIssues;
 
 	private Map<Integer, JsIssue> issuesMap;
 
@@ -88,20 +87,14 @@ public class Office extends Composite implements EntryPoint,
 	public void onModuleLoad() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
-		
+
 		this.gitHub.setAccessToken("06a75ef8dfa037f188c2075333ed73574ffd1971");
 		this.dataGrid.addListener(this);
 		this.leftButtonBarMenu.addListener(this);
 
-		this.openIssues = new TreeSet<IssueSelected>();
-		this.closedIssues = new TreeSet<IssueSelected>();
-		this.repositories = new HashMap<Integer, JsRepo>();
-
+		this.openIssues = new LinkedList<IssueSelected>();
+		this.closedIssues = new LinkedList<IssueSelected>();
 		this.issuesMap = new TreeMap<Integer, JsIssue>();
-
-		ListDataProvider<IssueSelected> listIssuesProvider = new ListDataProvider<IssueSelected>();
-		listIssuesProvider.addDataDisplay(dataGrid);
-		this.issues = listIssuesProvider.getList();	
 
 		loadReposList();
 		loadIssuesList();
@@ -183,8 +176,6 @@ public class Office extends Composite implements EntryPoint,
 						GWT.log(caught.getMessage());
 					}
 				});
-
-		showDockOfficePanel();
 	}
 
 	private void loadIssueComments(final JsIssue issue) {
@@ -199,11 +190,16 @@ public class Office extends Composite implements EntryPoint,
 			@Override
 			public void onSuccess(AJSON<JsArray<JsIssueComment>> result) {
 
-				if (issue.getState().equals(IssueValue.Prop.OPEN.value))
+				if (isOpenIssue(issue))
 					addOpenIssue(issue, result.getData());
-
+				else
+					addCloseIssue(issue, result.getData());
 			}
 		});
+	}
+
+	private boolean isOpenIssue(JsIssue issue) {
+		return issue.getState().equals(IssueValue.Prop.OPEN.value);
 	}
 
 	private void createAnIssue(JsRepo repo,
@@ -240,19 +236,55 @@ public class Office extends Composite implements EntryPoint,
 						Window.alert("Refresca el grid");
 					}
 				});
-
 	}
 
 	private void addOpenIssue(JsIssue issue, JsArray<JsIssueComment> comments) {
-
 		IssueSelected issueSelected = new IssueGrid.IssueOpenLoadSelected(issue);
 		issueSelected.setIssueComments(comments);
-		issues.add(issueSelected);
-
+		openIssues.add(issueSelected);
 	}
 
 	private void addCloseIssue(JsIssue issue, JsArray<JsIssueComment> comments) {
+		IssueSelected issueSelected = new IssueGrid.IssueClosedLoadSelected(
+				issue);
+		issueSelected.setIssueComments(comments);
+		closedIssues.add(issueSelected);
+	}
 
+	private void loadOpenIssues() {
+
+		ListDataProvider<IssueSelected> listIssuesProvider = new ListDataProvider<IssueSelected>();
+		listIssuesProvider.addDataDisplay(dataGrid);
+		this.issues = listIssuesProvider.getList();
+		Collections.sort(openIssues, IssueGrid.Comparators.NUMBER);
+
+		for (IssueSelected issue : openIssues)
+			issues.add(issue);
+	}
+
+	private void loadCloseIssues() {
+
+		ListDataProvider<IssueSelected> listIssuesProvider = new ListDataProvider<IssueSelected>();
+		listIssuesProvider.addDataDisplay(dataGrid);
+		this.issues = listIssuesProvider.getList();
+		Collections.sort(closedIssues, IssueGrid.Comparators.NUMBER);
+
+		for (IssueSelected issue : closedIssues)
+			issues.add(issue);
+	}
+	
+	private void loadAllIssues() {
+		List<IssueSelected> allIssues = new LinkedList<IssueSelected>();
+		allIssues.addAll(openIssues);
+		allIssues.addAll(closedIssues);
+		
+		Collections.sort(allIssues, IssueGrid.Comparators.NUMBER);
+		ListDataProvider<IssueSelected> listIssuesProvider = new ListDataProvider<IssueSelected>();
+		listIssuesProvider.addDataDisplay(dataGrid);
+		this.issues = listIssuesProvider.getList();
+		
+		for (IssueSelected issue : allIssues)
+			this.issues.add(issue);
 	}
 
 	private void addLabel(int row, JsLabel label) {
@@ -306,19 +338,20 @@ public class Office extends Composite implements EntryPoint,
 
 	@Override
 	public void onShowOpenIssuesClickEvent(ClickEvent event) {
+		loadOpenIssues();
 		showDockOfficePanel();
 	}
 
 	@Override
 	public void onShowClosedIssuesClickEvent(ClickEvent event) {
-		// TODO Auto-generated method stub
-
+		loadCloseIssues();
+		showDockOfficePanel();
 	}
 
 	@Override
 	public void onShowAllIssuesClickEvent(ClickEvent event) {
-		// TODO Auto-generated method stub
-
+		loadAllIssues();
+		showDockOfficePanel();
 	}
 
 	@Override
@@ -348,6 +381,20 @@ public class Office extends Composite implements EntryPoint,
 	@Override
 	public void onLabelIssueClickEvent(Button button) {
 		// TODO Auto-generated method stub
+
+	}
+
+	// ******************************************************************
+	// *********************** LAYOUT ISSUES ***************************
+	// ******************************************************************
+
+	@Override
+	public void onCloseIssueClickEvent(IssueSelected issue) {
+
+	}
+
+	@Override
+	public void onReopenedIssueClickEvent(IssueSelected issue) {
 
 	}
 

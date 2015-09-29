@@ -12,21 +12,23 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
 		field="aonResources"></ui:with>
 
-	<g:VerticalPanel spacing="5" width="80%">
-		<g:HTMLPanel>
-			<g:TextBox ui:field="title" width="80%" height="20px"/>
-		</g:HTMLPanel>
-		
-		<g:TabPanel ui:field="tabPanel" width="100%" styleName="{style.text-area}">
-			<g:Tab text="Escribir">
-				<g:TextArea ui:field="commentTextArea" characterWidth="10"
-					visibleLines="9" width="98%" height="99%" />
-			</g:Tab>
-		</g:TabPanel>
-		<g:HorizontalPanel spacing="10" ui:field="hPanel" >
-			<g:Button text="Comentar" ui:field="commentButton" />
-			<g:Button ui:field="closeButton" text="Cerrar" />
-		</g:HorizontalPanel>
+	<g:DockLayoutPanel unit="PX" height="100%">
+		<g:center>
+			<g:VerticalPanel spacing="5" width="80%">
+				<g:HTMLPanel>
+					<g:TextBox ui:field="title" width="80%" height="20px" />
+				</g:HTMLPanel>
 
-	</g:VerticalPanel>
+				<g:TabPanel ui:field="tabPanel" width="100%" styleName="{style.text-area}">
+					<g:Tab text="Escribir">
+						<g:TextArea ui:field="commentTextArea" characterWidth="10"
+							visibleLines="9" width="98%" height="99%" />
+					</g:Tab>
+				</g:TabPanel>
+				<g:HorizontalPanel spacing="10" ui:field="hPanel">
+					<g:Button text="Grabar" ui:field="commentButton" />
+				</g:HorizontalPanel>
+			</g:VerticalPanel>
+		</g:center>
+	</g:DockLayoutPanel>
 </ui:UiBinder> 

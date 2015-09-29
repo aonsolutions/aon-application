@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.office.client;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -65,18 +66,16 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 	}
 
 	private static abstract class DefaultAonIssuesSelected implements
-			IssueSelected {
+			IssueSelected, Comparable<IssueSelected> {
 
 		private JsIssue issue;
 		private JsArray<JsIssueComment> comments;
-
 		private DateTimeFormat timeFormat;
 
 		public DefaultAonIssuesSelected(JsIssue issue) {
 			this.timeFormat = DateTimeFormat
 					.getFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-
-			setIssue(issue);			
+			setIssue(issue);
 		}
 
 		private void setIssue(JsIssue issue) {
@@ -106,6 +105,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		@Override
 		public Date getCreateAt() {
 			return timeFormat.parse(issue.getCreatedAt());
+
 		}
 
 		@Override
@@ -169,6 +169,11 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		public String getState() {
 			return "open";
 		}
+
+		@Override
+		public int compareTo(IssueSelected o) {
+			return Comparators.NUMBER.compare(this, o);
+		}
 	}
 
 	public static class IssueClosedLoadSelected extends
@@ -187,6 +192,11 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		public String getState() {
 			return "closed";
 		}
+
+		@Override
+		public int compareTo(IssueSelected o) {
+			return Comparators.NUMBER.compare(this, o);
+		}
 	}
 
 	private static abstract class IconStyleColumn<T extends IssueSelected>
@@ -203,6 +213,17 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		}
 
 		public abstract String getIconStyle(Context context, T object);
+	}
+
+	public static class Comparators {
+
+		public static Comparator<IssueSelected> NUMBER = new Comparator<IssueSelected>() {
+			@Override
+			public int compare(IssueSelected o1, IssueSelected o2) {
+				// TODO Auto-generated method stub
+				return o2.getNumber() - o1.getNumber();
+			}
+		};
 	}
 
 	private class HeaderBuilder extends

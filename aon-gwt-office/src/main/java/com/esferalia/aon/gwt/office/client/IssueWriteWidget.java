@@ -43,8 +43,6 @@ public class IssueWriteWidget extends Composite {
 
 	@UiField
 	Button commentButton;
-	@UiField
-	Button closeButton;
 
 	private List<Listener> listeners;
 
@@ -52,7 +50,6 @@ public class IssueWriteWidget extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 
 		tabPanel.selectTab(0);
-
 		this.listeners = new LinkedList<Listener>();
 	}
 
@@ -73,12 +70,6 @@ public class IssueWriteWidget extends Composite {
 			issueValue.setBody(commentTextArea.getText());
 			addCommentButtonClickListener(issueValue);
 		}
-
-	}
-
-	@UiHandler("closeButton")
-	void onCloseButtonClickEvent(ClickEvent event) {
-
 	}
 	
 	private void addCommentButtonClickListener(IssueValue issueValue) {
