@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.office.client;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +92,7 @@ public class Office extends Composite implements EntryPoint,
 		this.gitHub.setAccessToken("06a75ef8dfa037f188c2075333ed73574ffd1971");
 		this.dataGrid.addListener(this);
 		this.leftButtonBarMenu.addListener(this);
-
+		this.repositories = new HashMap<Integer, JsRepo>();
 		this.openIssues = new LinkedList<IssueSelected>();
 		this.closedIssues = new LinkedList<IssueSelected>();
 		this.issuesMap = new TreeMap<Integer, JsIssue>();
@@ -228,12 +229,15 @@ public class Office extends Composite implements EntryPoint,
 					@Override
 					public void onFailure(Throwable caught) {
 						GWT.log(caught.getMessage());
-
 					}
 
 					@Override
 					public void onSuccess(JsIssueComment result) {
-						Window.alert("Refresca el grid");
+
+						if (issueLayoutPanel == null)
+							Window.alert("Que es Nulo ostias!!");
+						else
+							issueLayoutPanel.addCommentIssue(result);
 					}
 				});
 	}
@@ -272,17 +276,17 @@ public class Office extends Composite implements EntryPoint,
 		for (IssueSelected issue : closedIssues)
 			issues.add(issue);
 	}
-	
+
 	private void loadAllIssues() {
 		List<IssueSelected> allIssues = new LinkedList<IssueSelected>();
 		allIssues.addAll(openIssues);
 		allIssues.addAll(closedIssues);
-		
+
 		Collections.sort(allIssues, IssueGrid.Comparators.NUMBER);
 		ListDataProvider<IssueSelected> listIssuesProvider = new ListDataProvider<IssueSelected>();
 		listIssuesProvider.addDataDisplay(dataGrid);
 		this.issues = listIssuesProvider.getList();
-		
+
 		for (IssueSelected issue : allIssues)
 			this.issues.add(issue);
 	}
@@ -403,9 +407,9 @@ public class Office extends Composite implements EntryPoint,
 	// ******************************************************************
 
 	@Override
-	public void onComment(IssueCommentValue issueCommentValue) {
-		JsIssue jsIssue = issuesMap.get(issueSelected.getId());
-		createIssueComment(this.repo, jsIssue, issueCommentValue);
+	public void onComment(IssueCommentValue issueCommentValue) {		
+			JsIssue jsIssue = issuesMap.get(issueSelected.getId());
+			createIssueComment(this.repo, jsIssue, issueCommentValue);			
 	}
 
 	@Override

@@ -34,9 +34,9 @@ public class IssuesLayoutPanel extends Composite {
 	interface Listener {
 
 		void onComment(IssueCommentValue issueCommentValue);
-		
+
 		void onCloseIssueClickEvent(IssueSelected issue);
-		
+
 		void onReopenedIssueClickEvent(IssueSelected issue);
 	}
 
@@ -82,12 +82,14 @@ public class IssuesLayoutPanel extends Composite {
 	HorizontalPanel buttonHPanel;
 	@UiField
 	Button commentButton;
-	
+
 	private final static String CLOSE = "Cerrar";
 	private final static String REOPENED = "Abrir";
 
 	private IssueSelected issue;
 	private List<Listener> listeners;
+
+	private Integer contador = 1;
 
 	public IssuesLayoutPanel(final IssueSelected issue) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -95,13 +97,12 @@ public class IssuesLayoutPanel extends Composite {
 		this.tabPanel.selectTab(0);
 		this.listeners = new LinkedList<Listener>();
 		this.issue = issue;
-		
+
 		if (this.issue.getState().equals(IssueValue.Prop.OPEN.value))
 			createCloseButton();
 		else
 			createReopenedButton();
-			
-		
+
 		init();
 	}
 
@@ -166,16 +167,14 @@ public class IssuesLayoutPanel extends Composite {
 
 	private void addCommentIssues() {
 
-		for (int x = 0; x < issue.getIssueComments().length(); x++) {
-			IssueReadWidget issueRead = new IssueReadWidget();
-			issueRead.addComment(issue.getIssueComments().get(x), x);
-			flowIssuesPanel.add(issueRead);
-		}
+		for (int x = 0; x < issue.getIssueComments().length(); x++)
+			addCommentIssue(issue.getIssueComments().get(x));
 	}
 
 	public void addCommentIssue(JsIssueComment issueComment) {
 		IssueReadWidget issueRead = new IssueReadWidget();
-		issueRead.addComment(issueComment, 1);
+		issueRead.addComment(issueComment, ++contador);
+		flowIssuesPanel.add(issueRead);
 	}
 
 	private void addLabels() {
@@ -203,11 +202,11 @@ public class IssuesLayoutPanel extends Composite {
 
 		return label;
 	}
-	
+
 	private void createCloseButton() {
-		Button closeButton = new Button("Cerrar");
+		Button closeButton = new Button(CLOSE);
 		buttonHPanel.add(closeButton);
-		
+
 		closeButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -216,11 +215,11 @@ public class IssuesLayoutPanel extends Composite {
 			}
 		});
 	}
-	
+
 	private void createReopenedButton() {
-		Button reopened = new Button("Abrir");
+		Button reopened = new Button(REOPENED);
 		buttonHPanel.add(reopened);
-		
+
 		reopened.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
