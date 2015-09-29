@@ -102,8 +102,8 @@
 
 	<!-- ** AON COMPANY **************************************************** -->
 	<bean class="com.code.aon.company.Company" sqlName="company">
-		<alias names="alias,document,documentCountry,documentType,id,name,nationality,type,EInvoice,active,surcharge,withholding"/>
-		<hibernate names="registry.alias,registry.document,registry.documentCountry,registry.documentType,id,registry.name,registry.nationality,registry.type,EInvoice,active,surcharge,withholding"/>
+		<alias names="alias,document,documentCountry,documentType,domain,id,name,nationality,type,EInvoice,active,surcharge,withholding"/>
+		<hibernate names="registry.alias,registry.document,registry.documentCountry,registry.documentType,domain,id,registry.name,registry.nationality,registry.type,EInvoice,active,surcharge,withholding"/>
 	</bean>
 
 	<bean class="com.code.aon.company.Enterprise" sqlName="enterprise">

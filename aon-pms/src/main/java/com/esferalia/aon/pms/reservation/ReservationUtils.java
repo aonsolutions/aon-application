@@ -639,7 +639,9 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 
 	private Company getCompany() throws ManagerBeanException {
 		IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-		for (ITransferObject ito : companyBean.getList(null, 0, 1)) {
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(companyBean.getFieldName(IEntityAlias.COMPANY_DOMAIN), domain);
+		for (ITransferObject ito : companyBean.getList(criteria, 0, 1)) {
 			return (Company)ito;
 		}
 		return null;
@@ -1244,7 +1246,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		}
 		if (penaltyStr == null) {
 			if (StringUtils.isNotEmpty(reservation.getHotel().getCode())) {
-				for (String profileTmp : obtainCustomerCodes(reservation.getCustomer(), key + "_" + reservation.getHotel().getCode())) {
+				for (String profileTmp : obtainCustomerCodes(reservation.getAgency(), key + "_" + reservation.getHotel().getCode())) {
 					if (profileTmp.contains("|")) {
 						profileTmp = obtainProfileData(profileTmp, date);
 						if (profileTmp != null) {
@@ -1258,7 +1260,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 			}
 		}
 		if (penaltyStr == null) {
-			for (String profileTmp : obtainCustomerCodes(reservation.getCustomer(), key)) {
+			for (String profileTmp : obtainCustomerCodes(reservation.getAgency(), key)) {
 				if (profileTmp.contains("|")) {
 					profileTmp = obtainProfileData(profileTmp, date);
 					if (profileTmp != null) {
