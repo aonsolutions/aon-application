@@ -788,6 +788,7 @@ public class ReservationManager implements IReservationConstants {
 	private void cancelReservation(ProjectReservation reservation) throws ManagerBeanException, ReservationException {
 		Connection connection = null;
 		try {
+			getReservationUtils().setDomain(reservation.getDomain());
 			reservation.getProject().setActive(false);
 			reservation.setStatus(ReservationStatus.CANCELLED);
 			reservation.setModificationUser(CRS);
