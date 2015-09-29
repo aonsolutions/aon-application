@@ -30,16 +30,19 @@ public class GitHub implements GitHubService {
 	private String baseUrl = "https://api.github.com/";
 	private static boolean authorized = false;
 
+	@Override
 	public void setGitHubUrl(String url) {
 		this.baseUrl = url;
 	}
 
+	@Override
 	public void setAccessToken(String accessToken) {
 		this.accessToken = accessToken;
 	}
 
+	@Override
 	public boolean isAuthorized() {
-		return this.authorized;
+		return this.isAuthorized();
 	}
 
 	// ************** USERS ***************

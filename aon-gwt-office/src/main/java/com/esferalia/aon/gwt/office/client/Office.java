@@ -233,11 +233,7 @@ public class Office extends Composite implements EntryPoint,
 
 					@Override
 					public void onSuccess(JsIssueComment result) {
-
-						if (issueLayoutPanel == null)
-							Window.alert("Que es Nulo ostias!!");
-						else
-							issueLayoutPanel.addCommentIssue(result);
+						issueLayoutPanel.addCommentIssue(result);
 					}
 				});
 	}
@@ -246,12 +242,12 @@ public class Office extends Composite implements EntryPoint,
 			com.esferalia.aon.gwt.office.client.values.issues.IssueValue prop) {
 		gitHub.editIssue(repo, issue, prop, new AsyncCallback<JsIssue>() {
 			@Override
-			public void onFailure(Throwable caught) {				
+			public void onFailure(Throwable caught) {
 				GWT.log(caught.getMessage());
 			}
 
 			@Override
-			public void onSuccess(JsIssue result) {			
+			public void onSuccess(JsIssue result) {
 				Window.alert("Recarga el datagrid");
 			}
 		});
@@ -264,14 +260,10 @@ public class Office extends Composite implements EntryPoint,
 	}
 
 	private void addCloseIssue(JsIssue issue, JsArray<JsIssueComment> comments) {
-		Window.alert("1");
 		IssueSelected issueSelected = new IssueGrid.IssueClosedLoadSelected(
 				issue);
-		Window.alert("2");
 		issueSelected.setIssueComments(comments);
-		Window.alert("3");
 		closedIssues.add(issueSelected);
-		Window.alert("4");
 	}
 
 	private void loadOpenIssues() {
@@ -417,7 +409,7 @@ public class Office extends Composite implements EntryPoint,
 		JsIssue jsIssue = issuesMap.get(issue.getId());
 		com.esferalia.aon.gwt.office.client.values.issues.IssueValue value = new com.esferalia.aon.gwt.office.client.values.issues.IssueValue();
 		value.setState(IssueValue.Prop.CLOSE.value);
-		
+
 		editIssue(this.repo, jsIssue, value);
 	}
 
@@ -426,7 +418,7 @@ public class Office extends Composite implements EntryPoint,
 		JsIssue jsIssue = issuesMap.get(issue.getId());
 		com.esferalia.aon.gwt.office.client.values.issues.IssueValue value = new com.esferalia.aon.gwt.office.client.values.issues.IssueValue();
 		value.setState(IssueValue.Prop.OPEN.value);
-		
+
 		editIssue(this.repo, jsIssue, value);
 
 	}

@@ -14,6 +14,12 @@ import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface GitHubService {
+	
+	abstract void setGitHubUrl(String url);
+	
+	abstract void setAccessToken(String accessToken);
+	
+	abstract boolean isAuthorized();
 
 	void getUser(String login, final AsyncCallback<AJSON<JsUser>> callback);
 
@@ -54,5 +60,4 @@ public interface GitHubService {
 
 	void saveLabel(JsRepo repo, JsLabel label, LabelValue prop,
 			final AsyncCallback<JsLabel> callback);
-
 }
