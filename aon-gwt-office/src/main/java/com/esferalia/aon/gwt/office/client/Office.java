@@ -281,8 +281,7 @@ public class Office extends Composite implements EntryPoint,
 
 		ListDataProvider<IssueSelected> listIssuesProvider = new ListDataProvider<IssueSelected>();
 		listIssuesProvider.addDataDisplay(dataGrid);
-		this.issues = listIssuesProvider.getList();
-		Window.alert("Closed: " + closedIssues.size());
+		this.issues = listIssuesProvider.getList();		
 		Collections.sort(closedIssues, IssueGrid.Comparators.NUMBER);
 
 		for (IssueSelected issue : closedIssues)
