@@ -203,12 +203,14 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	FeeInfo fi;
 	Vector<Seller> sellers = new Vector<Seller>();
 	Vector<WorkPlace> workplaces = new Vector<WorkPlace>();
-	
 	Vector<InvoicingGroup> invoicingGroups = new Vector<InvoicingGroup>();
+	
 	public Integer executeExcel3(TemplateInfo templateInfo){
 		ti = templateInfo;
 		long startAll= System.currentTimeMillis();
-		String domain = AonUtil.getDomainName();
+		Domain domain = new Domain();
+		domain.setName(AonUtil.getDomainName());
+		domain.setId(domainId);
 		error = new Error();
 		verror = new Vector<String>();
 		error.setTextError(verror);
@@ -216,39 +218,31 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		Vector<FeeInfo> fees = new Vector<FeeInfo>();
 
 		try {
-			sellers = DBFee.getSellers(domain,domainId);
-			workplaces = DBFee.getWorkplaces(domain,domainId);
-
-			invoicingGroups = DBFee.getInvoicingGroups(domain, domainId);
-			
+			sellers = DBFee.getSellers(domain.getName(),domain.getId());
+			workplaces = DBFee.getWorkplaces(domain.getName(),domain.getId());
+			invoicingGroups = DBFee.getInvoicingGroups(domain.getName(),domain.getId());
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
-		
 		Error error = new Error();
 		if(getOut() == null){
 			error.setError(false);
  			textError =  textError + "*No ha importado ningún archivo.\n";
-
 			verror.add("*No ha importado ningún archivo.");
 			error.setTextError(verror);
 			this.error = error;
 			return -1;
 		}
-		
 		if(!Utils.isExcel(getMimetype())){
 				//El archivo no es un fichero Excel.
 				error.setError(false);
 	 			textError =  textError + "*El archivo importado no es de tipo excel.\n";
-
 				verror.add("*El archivo importado no es de tipo excel.");
 				error.setTextError(verror);
 				this.error = error;
 				return -1;
 		}
-		
 		byte[] data = getOut();
-
 		File aux = new File("/tmp/fee.xls");
 		try {
 			org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
@@ -269,9 +263,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			e.printStackTrace();
 		}
 		HSSFSheet sheet = workbook.getSheetAt(0);
-		
 		rowCount  = sheet.getPhysicalNumberOfRows();
-		
 		Iterator<Row> rowIterator = sheet.iterator();
 
 		/* LAMBDA java 1.8 */
@@ -297,7 +289,6 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 							}	 
 						}
 						else{
-						
 							if(cell.getColumnIndex() !=0){
 								Cell beforeCell = rowAux.getCell(cell.getColumnIndex()-1);
 								if((beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK) && isRequiredFee(ti.getColumns().get(cell.getColumnIndex()-1))){
@@ -313,7 +304,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 							}
 
 							if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre")){
-								fi = checkFee(ti.getColumns().get(cell.getColumnIndex()),fi,cell);
+								fi = checkFee(domain, ti.getColumns().get(cell.getColumnIndex()),fi,cell);
 								if(fi == null){
 									verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto ");
 									textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
@@ -369,7 +360,9 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	public Error insertFee() {
 		long startAll= System.currentTimeMillis();
 		Vector<String> verror = error.getTextError();
-		String domain = AonUtil.getDomainName();
+		Domain domain = new Domain();
+		domain.setName(AonUtil.getDomainName());
+		domain.setId(domainId);
 		Error error = new Error();
 		if(textError.equals("")){
 			error.setError(true);
@@ -380,17 +373,15 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			AuditInfo ai = new AuditInfo();
 			ai.setDate(new Date());
 			ai.setUserId(userId);
-			ai.setUsername(DBConsults.getUsername(domain, domainId, userId));
-			error = DBFee.insertFee(domain,domainId,fees,ai);
+			ai.setUsername(DBConsults.getUsername(domain.getName(),domain.getId(), userId));
+			error = DBFee.insertFee(domain.getName(),domain.getId(),fees,ai);
 		}
 		else{
 			//Alguna de las filas contiene datos erroneos.
 			error.setError(false);
  			error.setTextError(verror);
 		}
-		
-		long timeAll = System.currentTimeMillis() - startAll;
-			
+		long timeAll = System.currentTimeMillis() - startAll;	
 		System.out.println("ALL    " + (timeAll/1000d));
 		return error;
 	}
@@ -407,16 +398,12 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		return feeInfo;
 	}
 	
-	private FeeInfo checkFee(String template,FeeInfo fee, Cell cell) {
+	private FeeInfo checkFee(Domain domain, String template,FeeInfo fee, Cell cell) {
 		Integer type = cell.getCellType();
-		Domain domain = new Domain();
-		domain.setName(AonUtil.getDomainName());
-		domain.setId(domainId);
 		switch (template) {
 		case "Cliente": case "Client":
 			if(type.equals(Cell.CELL_TYPE_STRING) && !cell.getStringCellValue().equals("")){
 				String strAux = cell.getStringCellValue();
-				Boolean b = true;
 				Customer customer = DBFee.getCustomer(domain, strAux);
 				if(customer != null){
 					fee.setClient(cell.getStringCellValue());

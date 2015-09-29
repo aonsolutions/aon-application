@@ -139,9 +139,8 @@ public class DBConsults {
 						e.printStackTrace();
 					}
 					String ver = AonVersion.VERSION;
-					if(ver != null)
-						version = ver.compareTo(aux.getVersion()) == 1;
-					else version = true;
+					version = ver.compareTo(aux.getVersion()) == 1;
+					
 					if(version){
 						DBConsults.deleteDefaultTemplates(ctx, domain, domainId);
 					}
@@ -162,7 +161,7 @@ public class DBConsults {
 						stockTemplate.setColumns(v2);
 						stockTemplate.setDomain(domain);
 						stockTemplate.setDomainId(0);
-						stockTemplate.setName("Est\u00e1ndar");
+						stockTemplate.setName("Est\u00e1ndar-Stock");
 						stockTemplate.setType("Stock");
 						stockTemplate.sethasWarehouse(false);
 						stockTemplate.setIsParent(true);
@@ -194,7 +193,7 @@ public class DBConsults {
 						productTemplate.setColumns(v2);
 						productTemplate.setDomain(domain);
 						productTemplate.setDomainId(0);
-						productTemplate.setName("Est\u00e1ndar");
+						productTemplate.setName("Est\u00e1ndar-Producto");
 						productTemplate.setType("Producto");
 						productTemplate.sethasWarehouse(false);
 						productTemplate.setIsParent(true);
@@ -210,7 +209,7 @@ public class DBConsults {
 						feeTemplate.setColumns(v2);
 						feeTemplate.setDomain(domain);
 						feeTemplate.setDomainId(0);
-						feeTemplate.setName("Est\u00e1ndar");
+						feeTemplate.setName("Est\u00e1ndar-Cuota");
 						feeTemplate.setType("Cuota");
 						feeTemplate.sethasWarehouse(false);
 						feeTemplate.setIsParent(true);
@@ -226,7 +225,7 @@ public class DBConsults {
 						consumptionTemplate.setColumns(v2);
 						consumptionTemplate.setDomain(domain);
 						consumptionTemplate.setDomainId(0);
-						consumptionTemplate.setName("Est\u00e1ndar");
+						consumptionTemplate.setName("Est\u00e1ndar-Consumo");
 						consumptionTemplate.setType("Consumo");
 						consumptionTemplate.sethasWarehouse(false);
 						consumptionTemplate.setIsParent(true);
@@ -242,7 +241,7 @@ public class DBConsults {
 						consumptionTemplate.setColumns(v2);
 						consumptionTemplate.setDomain(domain);
 						consumptionTemplate.setDomainId(0);
-						consumptionTemplate.setName("Est\u00e1ndar");
+						consumptionTemplate.setName("Est\u00e1ndar-Inventario-Cerrado");
 						consumptionTemplate.setType("Inventario Cerrado");
 						consumptionTemplate.sethasWarehouse(false);
 						consumptionTemplate.setIsParent(true);
@@ -258,7 +257,7 @@ public class DBConsults {
 						consumptionTemplate.setColumns(v2);
 						consumptionTemplate.setDomain(domain);
 						consumptionTemplate.setDomainId(0);
-						consumptionTemplate.setName("Est\u00e1ndar");
+						consumptionTemplate.setName("Est\u00e1ndar-Inventario-Valorado");
 						consumptionTemplate.setType("Inventario Valorado");
 						consumptionTemplate.sethasWarehouse(false);
 						consumptionTemplate.setIsParent(true);

@@ -678,7 +678,7 @@ public class TemplatesPage extends Composite{
 					Label label = (Label) flex_table.getWidget(j, 1);
 					v.add(label.getText());
 				}
-				Integer i = index;
+				Integer i = index-1;
 				while(flex_table.isCellPresent(i, 1)){
 					ListBox lbn = (ListBox) flex_table.getWidget(i, 1);
 					if(lbn.getItemText(lbn.getSelectedIndex()) != "-")
