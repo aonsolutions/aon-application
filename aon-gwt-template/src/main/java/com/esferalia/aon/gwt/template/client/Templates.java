@@ -252,7 +252,7 @@ public class Templates extends Composite implements EntryPoint {
 					@Override
 					public void onSuccess(Integer result) {
 							hide();
-							if(result !=-1){
+							//if(result !=-1){
 								pbd = new ProgressBarDialog(result.doubleValue(), 0.86) {
 									
 								};
@@ -289,8 +289,10 @@ public class Templates extends Composite implements EntryPoint {
 
 									}
 								});
-							}					
+							//}	
+							
 					}
+					
 					
 					@Override
 					public void onFailure(Throwable caught) {
