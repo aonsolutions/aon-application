@@ -220,6 +220,12 @@
 										actionListener="#{workPlanning.onInit}"
 										value="#{bundle.pms_workPlanning_module}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="cleanStatus" 
+										action="cleanStatus_search"
+										actionListener="#{cleanStatus.onInit}"
+										value="#{bundle.pms_cleanStatus_module}" />
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 

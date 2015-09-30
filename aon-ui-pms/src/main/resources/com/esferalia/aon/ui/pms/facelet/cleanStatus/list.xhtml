@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	
+	<ui:define name="content">
+	
+		<a4j:region>
+			<h:form>
+				<a4j:poll status="aonStatus" interval="300000"
+					actionListener="#{cleanStatus.onRefresh}" reRender="cleanStatusList" />
+			</h:form>
+		</a4j:region>
+	
+		<aon:form id="cleanStatusList">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{bundle.pms_cleanStatus_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_list}" />
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="cleanStatus-search"
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						value="#{bundle.aon_search}" 
+						action="cleanStatus_search"
+						accesskey="#{bundle.aon_key_search}" />
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panel styleClass="aon-panelGrid-search aon-margin-bottom">
+					<aon:outputText value="#{bundle.aon_module_hotel}:" styleClass="aon-italic" />
+					<aon:outputText value="#{cleanStatus.hotel.workPlace.description}" styleClass="aon-margin-left aon-bold" />
+					
+					<aon:outputText value="#{bundle.pms_floor}:" styleClass="aon-margin-left aon-italic" />
+					<c:forEach items="#{cleanStatus.floorList}" var="floor" varStatus="floorIdx" begin="0" step="1">
+						<aon:commandButton value="#{floor}"
+							styleClass="aon-commandButton"
+							actionListener="#{cleanStatus.onSelectFloor}"
+							reRender="cleanStatusList" >
+							<f:param name="selectedFloorId" value="#{floorIdx.index}"/>
+						</aon:commandButton>
+					</c:forEach>
+				</aon:panel>
+					
+				<aon:div id="cleanStatus-grid">
+					<c:forEach items="#{cleanStatus.roomList}" var="roomTo" varStatus="roomIdx" begin="0" step="1">
+						
+						<c:if test="#{previousRoom.charAt(0) != roomTo.asset.name.charAt(0)}" >
+							<rich:separator/>
+						</c:if>
+					
+						<aon:commandButton value="#{roomTo.asset.name}"
+							rendered="#{!roomTo.active}" disabled="#{true}"
+							styleClass="aon-commandButton"
+							style="margin:2px; width:70px; height:70px;" />
+						<aon:commandButton value="#{roomTo.asset.name}"
+							rendered="#{roomTo.active and roomTo.cleanRoom}"
+							styleClass="aon-commandButton"
+							style="margin:2px; width:70px; height:70px; background:green;"
+							actionListener="#{cleanStatus.onDirtyRoom}"
+							reRender="cleanStatusList" >
+							<f:param name="selectedRoomId" value="#{roomIdx.index}"/>
+						</aon:commandButton>
+						<aon:commandButton value="#{roomTo.asset.name}"
+							rendered="#{roomTo.active and !roomTo.cleanRoom}"
+							styleClass="aon-commandButton"
+							style="margin:2px; width:70px; height:70px; background:red;"
+							actionListener="#{cleanStatus.onCleanRoom}"
+							reRender="cleanStatusList" >
+							<f:param name="selectedRoomId" value="#{roomIdx.index}"/>
+						</aon:commandButton>
+						
+						<c:set var="previousRoom" value="#{roomTo.asset.name}" />
+						
+					</c:forEach>
+				</aon:div>
+					
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>

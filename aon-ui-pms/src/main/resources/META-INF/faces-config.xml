@@ -1119,6 +1119,17 @@
 		</managed-property>						
 	</managed-bean>		
 	
+	<!-- ************* GEVERNESS - CLEAN STATUS ************ -->
+	<managed-bean>
+		<managed-bean-name>cleanStatus</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.CleanStatusController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cleanStatus</value>
+		</managed-property>						
+	</managed-bean>		
+	
 	<!-- ************* BOARD LIST *************************** -->
 	<managed-bean>
 		<managed-bean-name>boardList</managed-bean-name>
@@ -1549,6 +1560,18 @@
 		<navigation-case>
 			<from-outcome>workPlanning_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/workPlanning/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
+	<!-- ============= Governess - Clean Status ============ -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>cleanStatus_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/cleanStatus/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>cleanStatus_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/cleanStatus/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule> 
 	
