@@ -60,6 +60,7 @@ import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.google.gwt.uibinder.elementparsers.IsEmptyParser;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 
@@ -282,7 +283,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 							if(ti.getColumns().size()<= cell.getColumnIndex() || ti.getColumns().get(cell.getColumnIndex()) == null || !ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase(cell.getStringCellValue())){
 								// El archivo no es compatible con la plantilla
 								error.setError(false);
-								verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
+								if(verror.isEmpty()) verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
+								textError= textError +"*El archivo importado no es compatible con la plantilla seleccionada.";
 								error.setTextError(verror);
 								this.error = error;
 								rowCount = -1;
@@ -317,7 +319,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 				if(row.getLastCellNum() != ti.getColumns().size()+1){
 					if(row.getRowNum() == 1){
 						error.setError(false);
-						verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
+						if(verror.isEmpty()) verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
+						textError= textError +"*El archivo importado no es compatible con la plantilla seleccionada.";
 						error.setTextError(verror);
 						this.error = error;
 						rowCount = -1;         		
@@ -703,7 +706,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 								// El archivo no es compatible con la plantilla
 								error.setError(false);
 								textError =  textError + "*El archivo importado no es compatible con la plantilla seleccionada.\n";
-								verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
+								if(verror.isEmpty()) verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
 								error.setTextError(verror);
 								this.error = error;
 								rowCount = -1;
@@ -747,7 +750,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 					if(row.getRowNum() == 1){
 						error.setError(false);
 						textError= textError + "*El archivo importado no es compatible con la plantilla seleccionada. \n ";
-	            		verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
+	            		if(verror.isEmpty()) verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
 	            		error.setTextError(verror);
 	            		this.error = error;
 	            		rowCount = -1;
@@ -957,7 +960,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 								// El archivo no es compatible con la plantilla
 								error.setError(false);
 								textError =  textError + "*El archivo importado no es compatible con la plantilla seleccionada.\n";
-								verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
+								if(verror.isEmpty())verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
 								error.setTextError(verror);
 								this.error = error;
 								rowCount = -1;
@@ -1003,7 +1006,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 					if(row.getRowNum() == 1){
 						error.setError(false);
 						textError= textError + "*El archivo importado no es compatible con la plantilla seleccionada. \n ";
-						verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
+						if(verror.isEmpty())verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
 						error.setTextError(verror);
 						this.error = error;
 						rowCount = -1;
