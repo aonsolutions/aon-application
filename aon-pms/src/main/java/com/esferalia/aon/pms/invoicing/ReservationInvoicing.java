@@ -71,8 +71,10 @@ public class ReservationInvoicing implements IReservationConstants {
 				createInvoiceAddress(invoice, reservationInvoiceTo.getAddress());
 			}
 			updateInvoiceDate(invoice);
-			createInvoiceFinances(invoice, reservationInvoiceTo);
-			recordInvoice(invoice);
+			double financesAmount = createInvoiceFinances(invoice, reservationInvoiceTo);
+			if (invoice.getTotal() == financesAmount) {
+				recordInvoice(invoice);
+			}
 
 			HibernateUtil.getSession(sessionName).flush();
 			HibernateUtil.commitTransaction(sessionName);
@@ -490,11 +492,13 @@ public class ReservationInvoicing implements IReservationConstants {
 		}
 	}
 
-	private void createInvoiceFinances(Invoice invoice, ReservationInvoiceTo reservationInvoiceTo) throws ManagerBeanException {
+	private double createInvoiceFinances(Invoice invoice, ReservationInvoiceTo reservationInvoiceTo) throws ManagerBeanException {
+		double financesAmount = 0;
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		if (!reservationInvoiceTo.isDirectCustomer() && invoice.getTotal() != 0) {
 			FinanceGenerator financeGenerator = new FinanceGenerator();
 			financeGenerator.generateFinances(invoice, invoice.getTotal());
+			financesAmount = invoice.getTotal();
 		} else {
 			for (Finance finance : reservationInvoiceTo.getFinances()) {
 				if (finance.getAmount() > 0) {
@@ -505,9 +509,11 @@ public class ReservationInvoicing implements IReservationConstants {
 					finance.setScope(invoice.getScope());
 					finance.setFinanceStatus(FinanceStatus.PENDING);
 					financeBean.insert(finance);
+					financesAmount = CommonUtil.round(financesAmount + finance.getAmount());
 				}
 			}
 		}
+		return financesAmount;
 	}
 
 	private void recordInvoice(Invoice invoice) throws ManagerBeanException {
