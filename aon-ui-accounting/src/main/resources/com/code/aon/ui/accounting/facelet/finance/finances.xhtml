@@ -31,7 +31,6 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-			
 				<aon:panel style="background-color:#f6f5e3; padding: 0px; margin-bottom: 5px;">
 					<aon:div style="text-align:left; padding: 0px; margin: 0px;">
 						<h:panelGrid columns="2" styleClass="aon-width-all"
@@ -40,25 +39,31 @@
 								<aon:outputText 
 									value="#{accountingFinanceChecker.selectedAccountCode} - #{accountingFinanceChecker.selectedAccountDescription}"
 									style="padding-left: 20px; font-size: 1.2em; font-weight: bold"/>
+								<aon:outputText 
+									value="#{bundle.registry_stat_unpayed_finances}"
+									style="padding-left: 1em; font-size: 1.2em; font-weight: bold"/>
+								<aon:outputText 
+									value="#{accountingFinanceChecker.params.deadline}"
+									style="padding-left: 1em; font-size: 1.2em; font-weight: bold">
+									<f:convertDateTime type="date"
+										pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>
 							</aon:div> 
 						</h:panelGrid>
 					</aon:div>
 				</aon:panel>
-
+			
 				<aon:dataTable id="accountingFinanceCheckerData"
-					value="#{accountingFinanceChecker.strippedModel}" var="to" rows="0"
+					value="#{accountingFinanceChecker.financesModel}" var="to" rows="0"
 					columnClasses="aon-editDataTable-iconColumn,
-								   aon-editDataTable-iconColumn,
-								   aon-editDataTable-iconColumn,
+								   aon-editDataTable-numberColumn aon-width-120,
 								   aon-editDataTable-textColumn aon-width-auto,
 								   aon-editDataTable-numberColumn aon-width-120,
-								   aon-editDataTable-numberColumn aon-width-120,
-								   aon-editDataTable-numberColumn aon-width-120,
-								   aon-editDataTable-numberColumn aon-width-120,
-								   aon-editDataTable-iconColumn">
+								   aon-editDataTable-numberColumn aon-width-120">
 
-			<aon:rowSelector id="accountingFinanceCheckerData-select"
-				toggleOnClick="false"/>
+					<aon:rowSelector id="accountingFinanceCheckerData-select"
+						toggleOnClick="false"/>
 
 					<aon:column>
 						<f:facet name="header">
@@ -70,37 +75,7 @@
 							styleClass="aon-icon-invoice"
 							style="padding-left: 18px;"
 							value="&#160;"
-							action="#{accountingFinanceChecker.strippedStatementShowInvoices}">
-						</aon:commandLink>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="&#160;" />
-						</f:facet>
-						<aon:commandLink id="stripped_finances-search"
-							immediate="#{true}"
-							styleClass="aon-icon-treasury"
-							style="padding-left: 18px;"
-							title="#{bundle.finance_checking}"
-							actionListener="#{accountingFinanceChecker.onStrippedStatementShowFinances}"
-							value="&#160;"
-							action="finance_form">
-						</aon:commandLink>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="&#160;" />
-						</f:facet>
-						<aon:commandLink id="stripped_entries-search"
-							immediate="#{true}"
-							styleClass="aon-icon-accounting"
-							style="padding-left: 18px;"
-							value="&#160;"
-							title="Extracto contable por Num. Documento"
-							actionListener="#{accountingFinanceChecker.onStrippedStatementShowEntries}"
-							action="accountStatement_list">
+							action="#{accountingFinanceChecker.financeShowInvoices}">
 						</aon:commandLink>
 					</aon:column>
 
@@ -110,56 +85,28 @@
 						</f:facet>
 						<aon:outputText value="#{to.documentNumber}"/>
 					</aon:column>
-					
+
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.account_debit}" />
+							<aon:outputText value="#{bundle.aon_holder}" />
 						</f:facet>
-						<aon:outputText value="#{to.debit}">
-							<f:convertNumber pattern="#,##0.00" />
-						</aon:outputText>
+						<aon:outputText value="#{to.registryName}"/>
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.account_credit}" />
+							<aon:outputText value="#{bundle.aon_status} Actual" />
 						</f:facet>
-						<aon:outputText value="#{to.credit}">
-							<f:convertNumber pattern="#,##0.00" />
-						</aon:outputText>
-					</aon:column>
-					
-					<aon:column style="#{to.settled?'':'color:red;'}">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.account_debit_balance}" />
-						</f:facet>
-						<aon:outputText
-							rendered="#{to.debitBalance != 0}" 
-							value="#{to.debitBalance}">
-							<f:convertNumber pattern="#,##0.00" />
-						</aon:outputText>
+						<aon:outputText value="#{to.financeStatusEnum}"/>
 					</aon:column>
 
-					<aon:column style="#{to.settled?'':'color:red;'}">
+					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.account_credit_balance}" />
+							<aon:outputText value="#{bundle.aon_amount}" />
 						</f:facet>
-						<aon:outputText
-							rendered="#{to.creditBalance != 0}" 
-							value="#{to.creditBalance}">
+						<aon:outputText value="#{to.finBalance}">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
-					</aon:column>
-					
-					<aon:column style="#{to.settled?'':'color:red;'}">
-						<f:facet name="header">
-							<aon:outputText value="&#160;" />
-						</f:facet>
-						<aon:outputText 
-							rendered="#{to.settled}" 
-							value="&#160;"  
-							styleClass="aon-icon-checked" 
-							style="padding-left: 18px; margin-top: 10px;"/>	
 					</aon:column>
 				</aon:dataTable>
 			</aon:div>

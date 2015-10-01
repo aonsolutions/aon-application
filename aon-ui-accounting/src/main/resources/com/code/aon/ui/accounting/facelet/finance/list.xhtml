@@ -36,8 +36,8 @@
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:dataTable id="accountingFinanceCheckerData"
-					value="#{accountingFinanceChecker.model}" var="to" rows="0"
-					columnClasses="aon-editDataTable-textColumn aon-width-120,
+					value="#{accountingFinanceChecker.model}" var="to" rows="100"
+					columnClasses="aon-editDataTable-textColumn aon-width-auto,
 								   aon-editDataTable-textColumn aon-width-auto,
 								   aon-editDataTable-numberColumn aon-width-100,
 								   aon-editDataTable-numberColumn aon-width-100,
@@ -58,16 +58,22 @@
 							styleClass="aon-dataTable-link"
 							actionListener="#{accountingFinanceChecker.onAccountStatement}"
 							title="#{bundle.accounting_statement_module}"
-							action="accountStatement_list">
-								<aon:outputText value="#{to.accountCode}" />
+							style="font-size: 0.9em;"
+							action="accountStatement_list"
+							rendered="#{to.accountCode != null}">
+								<aon:outputText value="#{to.fullAccountDescription}" />
 						</aon:commandLink>
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_description}" />
+							<aon:outputText value="#{bundle.aon_holder}" />
 						</f:facet>
-						<aon:outputText value="#{to.accountDescription}" />
+						<aon:div style="font-size: 0.8em;">
+							<aon:outputText value="#{to.abbRegistryName}" />
+							<aon:outputText value=" (#{to.registryId})" />
+						</aon:div>
+						
 					</aon:column>
 
 					<aon:column>
@@ -151,7 +157,7 @@
 							styleClass="aon-dataTable-link"
 							actionListener="#{accountingFinanceChecker.onFinance}"
 							title="#{bundle.finance_checking}"
-							action="finance_form">
+							action="accountingFinanceChecker_finances">
 							<aon:outputText value="#{to.finBalance}">
 								<f:convertNumber pattern="#,##0.00" />
 							</aon:outputText>
@@ -185,6 +191,7 @@
 					</aon:column>
 					
 				</aon:dataTable>
+				<aon:dataScroller for="accountingFinanceCheckerData" showNote="true" />
 			</aon:div>
 		</aon:form>
 	</ui:define>

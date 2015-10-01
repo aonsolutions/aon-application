@@ -1094,6 +1094,10 @@
 			<from-outcome>accountingFinanceChecker_stripped</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/finance/stripped.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>accountingFinanceChecker_finances</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/finance/finances.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 
 	<!-- ****************************************************** -->

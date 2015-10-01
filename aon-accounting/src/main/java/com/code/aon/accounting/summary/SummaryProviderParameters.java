@@ -44,6 +44,8 @@ public class SummaryProviderParameters implements Cloneable, Serializable {
 	private String accountDescription;
 
 	private String accountAlias;
+	
+	private String documentNumber;
 
 	private List<String> accountCostCenters;
 
@@ -118,6 +120,7 @@ public class SummaryProviderParameters implements Cloneable, Serializable {
 		setAccountExpression(null);
 		setAccountDescription(null);
 		setAccountAlias(null);
+		setDocumentNumber(null);
 		setAccountCostCenters(null);
 		setLowerLevelVisible(false);
 		setNoTouchedAccountVisible(false);
@@ -174,6 +177,14 @@ public class SummaryProviderParameters implements Cloneable, Serializable {
 		this.accountAlias = accountAlias;
 	}
 	
+	public String getDocumentNumber() {
+		return documentNumber;
+	}
+	public void setDocumentNumber(String documentNumber) {
+		this.documentNumber = documentNumber;
+	}
+
+
 	public List<String> getAccountCostCenters() {
 		return accountCostCenters;
 	}
@@ -363,6 +374,9 @@ public class SummaryProviderParameters implements Cloneable, Serializable {
 	public boolean isNotEmptyAccountAlias(){
 		return StringUtils.isNotEmpty(getAccountAlias());
 	}
+	public boolean isNotEmptyDocumentNumber(){
+		return StringUtils.isNotEmpty(getDocumentNumber());
+	}
 
 	public boolean isTotalExpensesSummary() {
 		return totalExpensesSummary;
@@ -384,6 +398,7 @@ public class SummaryProviderParameters implements Cloneable, Serializable {
 		SummaryProviderParameters cloned = new SummaryProviderParameters(getDomainName());
 		cloned.setDomainName(getDomainName());
 		cloned.setAccountAlias(getAccountAlias());
+		cloned.setDocumentNumber(getDocumentNumber());
 		if (getAccountCostCenters() != null) {
 			List<String> list = new LinkedList<String>();
 			for (String costCenter : getAccountCostCenters()) {
@@ -437,6 +452,7 @@ public class SummaryProviderParameters implements Cloneable, Serializable {
 	public String getAliasLikeExpression() {
 		return getLikeExpression(getAccountAlias());
 	}
+	
 	public String getLikeExpression(String param) {
 		if (StringUtils.isEmpty(param)) {
 			return PERCENT;

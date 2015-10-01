@@ -50,6 +50,9 @@ public class StatementDetailListener extends ControllerAdapter {
 				}
 			}
 			
+			if (params.isNotEmptyDocumentNumber()) {
+				criteria.addEqualExpression(c.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_DOCUMENT_NUMBER), params.getDocumentNumber());
+			}
 			
 //			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(c.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE), AccountEntryType.OPENING));	
 //			if (params.isExcludeClosingEntry()) {

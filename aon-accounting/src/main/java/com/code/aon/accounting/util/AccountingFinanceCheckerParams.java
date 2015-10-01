@@ -15,6 +15,7 @@ public class AccountingFinanceCheckerParams implements Serializable {
 	private boolean suppliersEnabled;
 	private boolean customersEnabled;
 	private String accountCode;
+	private Integer registryId;
 	
 	public int getDomain() {
 		return domain;
@@ -52,4 +53,11 @@ public class AccountingFinanceCheckerParams implements Serializable {
 	public void setAccountCode(String accountCode) {
 		this.accountCode = accountCode;
 	}
+	public Integer getRegistryId() {
+		return registryId;
+	}
+	public void setRegistryId(Integer registryId) {
+		this.registryId = registryId;
+	}
+	
 }

@@ -342,6 +342,9 @@ public class SummaryProvider implements Serializable {
 			if (params.getSecurityLevel() != null) {
 				buf.append(" AND ae.security_level = " + params.getSecurityLevel().ordinal());
 			}
+			if (params.isNotEmptyDocumentNumber()) {
+				buf.append(" AND aed.document_number = '" + params.getDocumentNumber() + "'");
+			}
 		}
 		buf.append(" WHERE a.entryEnabled = 1");
 		buf.append(" AND " + DomainManager.getSQLWhereClause("a.domain",Account.class));
@@ -407,6 +410,9 @@ public class SummaryProvider implements Serializable {
 		}
 		if (params.getSecurityLevel() != null) {
 			buf.append(" AND ae.security_level = " + params.getSecurityLevel().ordinal());
+		}
+		if (params.isNotEmptyDocumentNumber()) {
+			buf.append(" AND aed.document_number = '" + params.getDocumentNumber() + "'");
 		}
 		if (params.isMonthlyGrouping()) {
 			buf.append(" GROUP BY MONTH(ae.entry_date)");

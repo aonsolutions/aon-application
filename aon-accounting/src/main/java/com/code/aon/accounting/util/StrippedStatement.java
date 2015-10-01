@@ -1,7 +1,7 @@
 package com.code.aon.accounting.util;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.math.BigDecimal;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
@@ -11,63 +11,44 @@ public class StrippedStatement implements Serializable {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String documentNumber;
-	private String concept;
 	private double debit;
 	private double credit;
-	private double financeAmount;
-	private int id;
-	private Date entryDate;
-	private int entryType;
+	private boolean emptyDocument;
 	
 	public String getDocumentNumber() {
 		return documentNumber;
 	}
-	public void setDocumentNumber(String documentNumber) {
+	public StrippedStatement setDocumentNumber(String documentNumber) {
 		this.documentNumber = documentNumber;
-	}
-	public String getConcept() {
-		return concept;
-	}
-	public void setConcept(String concept) {
-		this.concept = concept;
+		return this;
 	}
 	public double getDebit() {
 		return debit;
 	}
-	public void setDebit(double debit) {
+	public StrippedStatement setDebit(double debit) {
 		this.debit = debit;
+		return this;
+	}
+	public StrippedStatement setDebit(BigDecimal debit) {
+		return setDebit(debit==null?0.0:debit.doubleValue());
 	}
 	public double getCredit() {
 		return credit;
 	}
-	public void setCredit(double credit) {
+	public StrippedStatement setCredit(double credit) {
 		this.credit = credit;
+		return this;
 	}
-	public double getFinanceAmount() {
-		return financeAmount;
+	public StrippedStatement setCredit(BigDecimal credit) {
+		return setCredit(credit==null?0.0:credit.doubleValue());
 	}
-	public void setFinanceAmount(double financeAmount) {
-		this.financeAmount = financeAmount;
+	public boolean isEmptyDocument() {
+		return emptyDocument;
 	}
-	public int getId() {
-		return id;
+	public StrippedStatement setEmptyDocument(boolean emptyDocument) {
+		this.emptyDocument = emptyDocument;
+		return this;
 	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public Date getEntryDate() {
-		return entryDate;
-	}
-	public void setEntryDate(Date entryDate) {
-		this.entryDate = entryDate;
-	}
-	public int getEntryType() {
-		return entryType;
-	}
-	public void setEntryType(int entryType) {
-		this.entryType = entryType;
-	}
-	
 	public double getDebitBalance() {
 		double d = CommonUtil.round(getDebit() - getCredit()); 
 		return d >0?d:0;

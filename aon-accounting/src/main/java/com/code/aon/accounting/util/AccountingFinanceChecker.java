@@ -1,228 +1,244 @@
 package com.code.aon.accounting.util;
 
+import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
+import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
+import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
+import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
+import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
+import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
+
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Date;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import com.code.aon.common.AonException;
+import org.jooq.Condition;
+import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.Record2;
+import org.jooq.Select;
+import org.jooq.Table;
+import org.jooq.impl.DSL;
+
 import com.code.aon.AonVersion;
-import com.code.aon.dbutils.DatabaseUtil;
-import com.code.aon.pool.AonConnectionException;
+import com.code.aon.common.AonException;
+import com.code.aon.finance.enumeration.FinanceStatus;
+import com.code.aon.finance.enumeration.FinanceTrackingType;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class AccountingFinanceChecker implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private static final String UNION =  " UNION ";
-	
-	private static final String COMMON_SELECT_1 = 
-		"SELECT a.id,a.code"
-		+	" ,a.description "
-		+	" ,c.registry "
-		+   " ,ROUND( SUM(aed.debit),2) DEBIT"
-		+   " ,ROUND( SUM(aed.credit),2) CREDIT";
+	private static final byte PENDING = (byte) FinanceStatus.PENDING.ordinal();
+	private static final byte BATCHED = (byte) FinanceTrackingType.BATCHED.ordinal();
+	private static final byte PAID = (byte) FinanceTrackingType.PAID.ordinal();
+	private static final byte RETURNED = (byte) FinanceTrackingType.RETURNED.ordinal();
+	private static final byte FRACTIONED = (byte) FinanceTrackingType.FRACTIONED.ordinal();
+	private static final byte SETTLED = (byte) FinanceTrackingType.SETTLED.ordinal();
+	private static final Field<BigDecimal> SUM_AMOUNT = DSL.sum(FINANCE.AMOUNT);
+	private static final Field<Byte> PENDING_FIELD = DSL.val(PENDING);
+	private static final Field<Byte> FINANCE_TRACKING_STATUS_DECODE = DSL.decode()
+			.when(FINANCE_TRACKING.TYPE.eq(BATCHED), PENDING)
+			.when(FINANCE_TRACKING.TYPE.eq(PAID), PAID)
+			.when(FINANCE_TRACKING.TYPE.eq(RETURNED), PENDING)
+			.when(FINANCE_TRACKING.TYPE.eq(FRACTIONED), PENDING)
+			.when(FINANCE_TRACKING.TYPE.eq(SETTLED), PAID)
+	;
 
-	private String CREDITOR_SELECT = COMMON_SELECT_1  
-			 +",IFNULL("
-			 +" (SELECT ROUND(SUM(f.amount),2)"
-		     +" 	FROM finance f"
-		     +"  INNER JOIN invoice i ON f.invoice = i.id and i.issue_date <= ?"
-			 +"  WHERE f.registry = c.registry "
-			 +"  AND  ( f.status IN (0,1) "
-			 +"    OR ( f.status > 1 AND ("
-			 +" 	SELECT ft.type FROM finance_tracking ft "
-			 +" 		WHERE ft.finance = f.id "
-			 +"			AND ft.id > 0 AND ft.tracking_date <= ? "
-			 +" 		ORDER BY ft.id DESC LIMIT 1) NOT IN (1,4) ))),0) FINANCE_AMOUNT"
-			 +" FROM account_entry_detail aed "
-			 +" INNER JOIN account_entry ae ON aed.account_entry = ae.id"
-			 +" INNER JOIN account a ON aed.account = a.id"
-			 +" INNER JOIN creditor c ON a.id = c.account"
-			 +" WHERE aed.domain = ?"
-			 +" AND ae.entry_date <= ?"
-			 +" AND a.code like ?"
-			 +" GROUP BY a.id, a.code , a.description, c.registry"
-			 +" HAVING ABS(ROUND(DEBIT - CREDIT,2)) <> FINANCE_AMOUNT";
-	
-	private String SUPPLIER_SELECT = COMMON_SELECT_1  
-			 +",IFNULL("
-			 +" (SELECT ROUND(SUM(f.amount),2)"
-		     +" 	FROM finance f"
-		     +"  INNER JOIN invoice i ON f.invoice = i.id and i.issue_date <= ?"
-			 +"  WHERE f.registry = c.registry "
-			 +"  AND  ( f.status IN (0,1) "
-			 +"    OR ( f.status > 1 AND ("
-			 +" 	SELECT ft.type FROM finance_tracking ft "
-			 +" 		WHERE ft.finance = f.id "
-			 +"			AND ft.id > 0 AND ft.tracking_date <= ? "
-			 +" 		ORDER BY ft.id DESC LIMIT 1) NOT IN (1,4) ))),0) FINANCE_AMOUNT"
-			 +" FROM account_entry_detail aed "
-			 +" INNER JOIN account_entry ae ON aed.account_entry = ae.id"
-			 +" INNER JOIN account a ON aed.account = a.id"
-			 +" INNER JOIN supplier c ON a.id = c.account"
-			 +" WHERE aed.domain = ?"
-			 +" AND ae.entry_date <= ?"
-			 +" AND a.code like ?"
-			 +" GROUP BY a.id, a.code , a.description, c.registry"
-			 +" HAVING ABS(ROUND(DEBIT - CREDIT,2)) <> FINANCE_AMOUNT";
+	private static Condition getPendingFinanceTrackingCondition(AONContext ctx, java.sql.Date date) {
+		return PENDING_FIELD.eq(
+				DSL.isnull(
+					DSL.field(ctx.getDslContext().select(FINANCE_TRACKING_STATUS_DECODE)
+						.from(FINANCE_TRACKING)
+						.where(FINANCE_TRACKING.FINANCE.eq(FINANCE.ID))
+						.and(FINANCE_TRACKING.TRACKING_DATE.le(date))
+						.orderBy(FINANCE_TRACKING.ID.desc())
+						.limit(1)
+				),PENDING_FIELD));
+	}
 
-	private String CUSTOMER_SELECT = COMMON_SELECT_1   
-			 +",IFNULL("
-			 +" (SELECT ROUND(SUM(f.amount),2)"
-		     +" 	FROM finance f"
-		     +"  INNER JOIN invoice i ON f.invoice = i.id and i.issue_date <= ?"
-			 +"  WHERE f.registry = c.registry "
-			 +"  AND  ( f.status IN (0,1) "
-			 +"    OR ( f.status > 1 AND ("
-			 +" 	SELECT ft.type FROM finance_tracking ft "
-			 +" 		WHERE ft.finance = f.id "
-			 +"			AND ft.id > 0 AND ft.tracking_date <= ? "
-			 +" 		ORDER BY ft.id DESC LIMIT 1) NOT IN (1,4) ))),0) FINANCE_AMOUNT"
-			 +" FROM account_entry_detail aed "
-			 +" INNER JOIN account_entry ae ON aed.account_entry = ae.id"
-			 +" INNER JOIN account a ON aed.account = a.id"
-			 +" INNER JOIN customer c ON a.id = c.account"
-			 +" WHERE aed.domain = ?"
-			 +" AND ae.entry_date <= ?"
-			 +" AND a.code like ?"
-			 +" GROUP BY a.id, a.code , a.description, c.registry"
-			 +" HAVING ABS(ROUND(CREDIT - DEBIT,2)) <> FINANCE_AMOUNT";
-
-	public List<AccountingFinanceCheck> getChecks(Connection conn,AccountingFinanceCheckerParams params) throws AonException {
-		List<AccountingFinanceCheck> list = new LinkedList<AccountingFinanceCheck>();
-		String SELECT = "";
-		if (params.isCreditorsEnabled()) {
-			SELECT = CREDITOR_SELECT;
-		}
-		if (params.isSuppliersEnabled()) {
-			SELECT = SELECT + (SELECT.length()==0?"":UNION) + SUPPLIER_SELECT;
-		}
-		if (params.isCustomersEnabled()) {
-			SELECT = SELECT + (SELECT.length()==0?"":UNION) + CUSTOMER_SELECT;
-		}
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+	public static Collection<AccountingFinanceCheck> getChecks(String domainName,int domainId,AccountingFinanceCheckerParams params) throws AonException {
+		AONContext ctx = null;
 		try {
-			ps = conn.prepareStatement(SELECT);
-			int i = 1;
+			java.sql.Date date = AonDateUtils.toSql( params.getDeadline() );
+			ctx = AONContext.getAONContext(domainName, domainId);
+			final Map<Integer,AccountingFinanceCheck> financeMap = ctx.getDslContext()
+				.select(FINANCE.REGISTRY,FINANCE.RNAME,SUM_AMOUNT)
+				.from(FINANCE)
+				.join(INVOICE).on(FINANCE.INVOICE.eq(INVOICE.ID)).and(INVOICE.ISSUE_DATE.le(date))
+				.where(FINANCE.DOMAIN.eq(ctx.getDomainId()))
+				.and( getPendingFinanceTrackingCondition(ctx, date) )
+				.groupBy(FINANCE.REGISTRY)
+				.fetch()
+				.stream()
+				.map(record -> new AccountingFinanceCheck()
+								.setRegistryId( record.getValue(FINANCE.REGISTRY) )
+								.setRegistryName(record.getValue(FINANCE.RNAME) )
+								.setFinBalance( record.getValue(SUM_AMOUNT) ) )
+				.collect(Collectors.toMap(AccountingFinanceCheck::getRegistryId
+						,check -> check
+						))
+			;
+			Field<BigDecimal> sumDebit = DSL.sum(ACCOUNT_ENTRY_DETAIL.DEBIT); 
+			Field<BigDecimal> sumCredit = DSL.sum(ACCOUNT_ENTRY_DETAIL.CREDIT);
+			
+			
+			Select<Record2<Integer,Integer>> customerAccount = ctx.getDslContext().select(CUSTOMER.REGISTRY,CUSTOMER.ACCOUNT).from(CUSTOMER).where(CUSTOMER.DOMAIN.eq(ctx.getDomainId())); 
+			Select<Record2<Integer,Integer>> creditorAccount = ctx.getDslContext().select(CREDITOR.REGISTRY,CREDITOR.ACCOUNT).from(CREDITOR).where(CREDITOR.DOMAIN.eq(ctx.getDomainId())); 
+			Select<Record2<Integer,Integer>> supplierAccount = ctx.getDslContext().select(SUPPLIER.REGISTRY,SUPPLIER.ACCOUNT).from(SUPPLIER).where(SUPPLIER.DOMAIN.eq(ctx.getDomainId()));
+			
+			Select<Record2<Integer,Integer>> from = null;
+			if (params.isCustomersEnabled()) {
+				from = customerAccount;	
+			}
 			if (params.isCreditorsEnabled()) {
-				ps.setDate(i++, new java.sql.Date(params.getDeadline().getTime()));
-				ps.setDate(i++, new java.sql.Date(params.getDeadline().getTime()));
-				ps.setInt(i++, params.getDomain());
-				ps.setDate(i++, new java.sql.Date(params.getDeadline().getTime()));
-				ps.setString(i++, "410%");
+				from = from==null?creditorAccount:from.union(creditorAccount);
 			}
 			if (params.isSuppliersEnabled()) {
-				ps.setDate(i++, new java.sql.Date(params.getDeadline().getTime()));
-				ps.setDate(i++, new java.sql.Date(params.getDeadline().getTime()));
-				ps.setInt(i++, params.getDomain());
-				ps.setDate(i++, new java.sql.Date(params.getDeadline().getTime()));
-				ps.setString(i++, "400%");
+				from = from==null?supplierAccount:from.union(supplierAccount);
 			}
-			if (params.isCustomersEnabled()) {
-				ps.setDate(i++, new java.sql.Date(params.getDeadline().getTime()));
-				ps.setDate(i++, new java.sql.Date(params.getDeadline().getTime()));
-				ps.setInt(i++, params.getDomain());
-				ps.setDate(i++, new java.sql.Date(params.getDeadline().getTime()));
-				ps.setString(i++, "430%");
-			}
-			rs = ps.executeQuery();
-			while (rs.next()) {
-				AccountingFinanceCheck check = new AccountingFinanceCheck();
-				check.setAccountId( rs.getInt(1) );
-				check.setAccountCode( rs.getString(2) );
-				check.setAccountDescription( rs.getString(3) );
-				check.setRegistryId( rs.getInt(4) );
-				check.setDebit(rs.getDouble(5));
-				check.setCredit(rs.getDouble(6));
-				check.setFinBalance(rs.getDouble(7));
-				list.add(check);
-			}
-			rs.close();
-			ps.close();
-		} catch (SQLException e) {
-			throw new AonException(e.getMessage(),e);
-		} finally {
-			DatabaseUtil.closeQuietly(rs);
-			DatabaseUtil.closeQuietly(ps);
-		}
-		return list;
-	}
-	
-	public List<StrippedStatement> getStrippedStatement(Connection conn, AccountingFinanceCheckerParams params ) throws AonException {
-		String DEFAULT_DOCUMENT = "APUNTES SIN N\u00DAMERO DE DOCUMENTO";
-		String SELECT_STRIPPED_STATEMENT =
-				"SELECT IF(TRIM(aed.document_number) = '','"+DEFAULT_DOCUMENT+"',IFNULL(aed.document_number,'"+DEFAULT_DOCUMENT+"')) DOCUMENT"
-				+ ",ROUND(SUM(aed.debit),2) DEBIT"
-				+ ",ROUND(SUM(aed.credit),2) CREDIT"
-				+ ",IF(ROUND(SUM(aed.debit),2) - ROUND(SUM(aed.credit),2) = 0,1,0) DIFF"
-				+ ",(SELECT ROUND(SUM(f.amount),2)"
-					     +" 	FROM finance f"
-					     +"  INNER JOIN invoice i ON f.invoice = i.id and i.issue_date <= ?"
-						 +"  WHERE f.domain = ?"
-					     + " AND aed.document_number IS NOT NULL " 
-					     + " AND TRIM(aed.document_number) != ''"
-						 + " AND TRIM(f.concept) = TRIM(aed.document_number)"
-						 +"  AND  ( f.status IN (0,1) "
-						 +"    OR ( f.status > 1 AND "
-						 +" 	(SELECT ft.type FROM finance_tracking ft "
-						 +" 		WHERE ft.finance = f.id "
-						 +"			AND ft.id > 0 AND ft.tracking_date <= ? "
-						 +" 		ORDER BY ft.id DESC LIMIT 1) NOT IN (1,2,4)))) FINANCE_AMOUNT "		
-				+" FROM account a"
-				+" INNER JOIN account_entry_detail aed ON aed.account = a.id"
-				+" INNER JOIN account_entry ae ON aed.account_entry = ae.id"
-				+" WHERE a.code = ?"
-				+"  AND aed.domain = ?"
-				+"  AND ae.entry_date <= ?"
-				+" GROUP BY DOCUMENT"
-				+" ORDER BY DOCUMENT DESC";
-		List<StrippedStatement> list = new LinkedList<StrippedStatement>();
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		try {
-			ps = conn.prepareStatement(SELECT_STRIPPED_STATEMENT);
-			ps.setDate(1, new java.sql.Date(params.getDeadline().getTime()));
-			ps.setInt(2, params.getDomain());
-			ps.setDate(3, new java.sql.Date(params.getDeadline().getTime()));
-			ps.setString(4, params.getAccountCode());
-			ps.setInt(5, params.getDomain());
-			ps.setDate(6, new java.sql.Date(params.getDeadline().getTime()));
-			rs = ps.executeQuery();
-			while (rs.next()) {
-				StrippedStatement ss = new StrippedStatement();
-				ss.setDocumentNumber(rs.getString(1));
-				ss.setDebit(rs.getDouble(2));
-				ss.setCredit(rs.getDouble(3));
-				ss.setFinanceAmount(rs.getDouble(5));
-				list.add(ss);
-			}
-			rs.close();
-			ps.close();
-		} catch (SQLException e) {
-			throw new AonException(e.getMessage(),e);
-		} finally {
-			DatabaseUtil.closeQuietly(rs);
-			DatabaseUtil.closeQuietly(ps);
 			
+			Table<Record> REGISTRY_ACCOUNT = 
+					ctx.getDslContext().select()
+					.from( from )
+					.asTable("REGISTRY_ACCOUNT"); 
+			
+			@SuppressWarnings("unchecked")
+			Field<Integer> REGISTRY_ID = (Field<Integer>) REGISTRY_ACCOUNT.field(0);
+			@SuppressWarnings("unchecked")
+			Field<Integer> ACCOUNT_ID = (Field<Integer>) REGISTRY_ACCOUNT.field(1);
+			
+			final Map<Integer,AccountingFinanceCheck> accountingMap = ctx.getDslContext().select(
+					REGISTRY_ID
+					,REGISTRY.NAME
+					,ACCOUNT_ID
+					,ACCOUNT.CODE
+					,ACCOUNT.DESCRIPTION
+					,sumDebit
+					,sumCredit)
+			.from(  ACCOUNT_ENTRY_DETAIL )
+			.join( ACCOUNT_ENTRY).on(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY.eq(ACCOUNT_ENTRY.ID)).and(ACCOUNT_ENTRY.ENTRY_DATE.le(date))
+			.join(REGISTRY_ACCOUNT).on(ACCOUNT_ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
+			.join(ACCOUNT).on(ACCOUNT_ID.eq(ACCOUNT.ID))
+			.join(REGISTRY).on(REGISTRY_ID.eq(REGISTRY.ID))
+			.groupBy(REGISTRY_ID)
+			.having(DSL.round(sumDebit).ne(DSL.round(sumCredit)))
+			.fetch()
+			.stream()
+			.map(record -> new AccountingFinanceCheck()
+							.setRegistryId( record.getValue(REGISTRY_ID) )
+							.setRegistryName( record.getValue(REGISTRY.NAME) )
+							.setAccountId( record.getValue(ACCOUNT_ID) )
+							.setAccountCode( record.getValue(ACCOUNT.CODE) )
+							.setAccountDescription( record.getValue(ACCOUNT.DESCRIPTION) )
+							.setDebit( AonMathUtils.round( record.getValue(sumDebit).doubleValue()))
+							.setCredit( AonMathUtils.round( record.getValue(sumCredit).doubleValue())))
+			.collect( Collectors.toMap(
+					AccountingFinanceCheck::getRegistryId
+					, check -> check
+					))
+			;
+			
+			
+			//TODO.  Merge maps. do it more ..... beauty.
+			financeMap.entrySet()
+			.stream()
+			.forEach( entry -> {
+				if (accountingMap.containsKey(entry.getKey())){
+					accountingMap.get(entry.getKey()).setFinBalance(entry.getValue().getFinBalance());
+				} else {
+					accountingMap.put(entry.getKey(),entry.getValue());
+				}
+				})
+			;
+			LinkedHashMap<String, AccountingFinanceCheck> map = new LinkedHashMap<String, AccountingFinanceCheck>(); 
+			accountingMap.entrySet().stream().forEach(entry -> {
+				AccountingFinanceCheck check = accountingMap.get(entry.getKey());
+				if (check.getDifference() != 0 ) {
+					map.put(check.getAccountCode(), check);
+				}
+			} );
+			return map.values();
+		} finally {
+			if (ctx != null) {
+				ctx.close();
+			}
 		}
-		return list;
 	}
 
-	public static void main(String[] args) throws AonConnectionException, AonException {
-		Connection c = DatabaseUtil.getConnection("sig.esferalia.com");
-		AccountingFinanceCheckerParams params = new AccountingFinanceCheckerParams();
-		params.setCreditorsEnabled(true);
-		params.setCustomersEnabled(true);
-		params.setSuppliersEnabled(true);
-		params.setDeadline(new Date());
-		params.setDomain(1);
-		AccountingFinanceChecker checker = new AccountingFinanceChecker();
-		checker.getChecks(c, params);
+	public static List<StrippedStatement> getStrippedStatement(String domainName, int domainId, AccountingFinanceCheckerParams params ) throws AonException {
+		AONContext ctx = null;
+		try {
+			java.sql.Date date = AonDateUtils.toSql( params.getDeadline() );
+			ctx = AONContext.getAONContext(domainName, domainId);
+			final String DEFAULT_DOCUMENT = "APUNTES SIN N\u00DAMERO DE DOCUMENTO";
+			Field<String> doc = DSL.nvl(DSL.trim(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER),DEFAULT_DOCUMENT);
+			Field<BigDecimal> sumDebit = DSL.sum(ACCOUNT_ENTRY_DETAIL.DEBIT); 
+			Field<BigDecimal> sumCredit = DSL.sum(ACCOUNT_ENTRY_DETAIL.CREDIT);
+			return ctx.getDslContext()
+				.select(doc,sumDebit,sumCredit)
+				.from(ACCOUNT)
+				.join(ACCOUNT_ENTRY_DETAIL).on(ACCOUNT_ENTRY_DETAIL.ACCOUNT.eq(ACCOUNT.ID))
+				.join(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY.eq(ACCOUNT_ENTRY.ID))
+				.where(ACCOUNT.DOMAIN.eq(domainId))
+				.and(ACCOUNT.CODE.eq(params.getAccountCode()))
+				.and(ACCOUNT_ENTRY.ENTRY_DATE.le(date))
+				.groupBy(doc)
+				.having(DSL.round(sumDebit).ne(DSL.round(sumCredit)))
+				.orderBy(doc.desc())
+				.fetch()
+				.stream()
+				.map(record -> new StrippedStatement()
+					.setDocumentNumber(record.getValue(doc))
+					.setDebit(record.getValue(sumDebit))
+					.setCredit(record.getValue(sumCredit))
+					.setEmptyDocument( DEFAULT_DOCUMENT.equals(record.getValue(doc)) ))
+				.collect(Collectors.toCollection(LinkedList::new));
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static List<AccountingFinanceCheck> getFinances(String domainName, int domainId, AccountingFinanceCheckerParams params ) throws AonException {
+		AONContext ctx = null;
+		try {
+			java.sql.Date date = AonDateUtils.toSql( params.getDeadline() );
+			ctx = AONContext.getAONContext(domainName, domainId);
+			return ctx.getDslContext()
+				.select(FINANCE.REGISTRY
+						,FINANCE.RNAME
+						,FINANCE.CONCEPT
+						,FINANCE.STATUS
+						,FINANCE.AMOUNT)
+				.from(FINANCE)
+				.join(INVOICE).on(FINANCE.INVOICE.eq(INVOICE.ID)).and(INVOICE.ISSUE_DATE.le(date))
+				.where(FINANCE.DOMAIN.eq(ctx.getDomainId()))
+				.and( FINANCE.REGISTRY.eq(params.getRegistryId()))
+				.and( getPendingFinanceTrackingCondition(ctx, date) )
+				.orderBy(FINANCE.DUE_DATE)
+				.fetch()
+				.stream()
+				.map(record -> new AccountingFinanceCheck()
+								.setRegistryId( record.getValue(FINANCE.REGISTRY) )
+								.setRegistryName(record.getValue(FINANCE.RNAME) )
+								.setDocumentNumber(record.getValue(FINANCE.CONCEPT) )
+								.setFinanceStatus(record.getValue(FINANCE.STATUS) )
+								.setFinBalance( record.getValue(FINANCE.AMOUNT) ) )
+				.collect(Collectors.toCollection(LinkedList::new ))
+			;
+		} finally {
+			if (ctx != null) ctx.close();
+		}
 	}
 }

@@ -192,6 +192,8 @@ public class AccountEntryDAO {
 	
 	public static LinkedHashMap<String, AccountBalance> fetchBalance(
 			AONContext ctx, AccMiningParameters params) {
+		java.sql.Date start = AonDateUtils.toSql(params.getStartDate()!= null? params.getStartDate() : AonDateUtils.getYearFirstDay(0));
+		java.sql.Date end = AonDateUtils.toSql(params.getEndDate()!= null? params.getEndDate() : AonDateUtils.getYearLastDay(9999));
 		
 		Field<String> accountField = DSL.substring(ACCOUNT.CODE, 1, params.getAccountLevel()); 
 		Field<BigDecimal> sumDebit = DSL.sum(ACCOUNT_ENTRY_DETAIL.DEBIT); 
@@ -203,9 +205,7 @@ public class AccountEntryDAO {
 			.join(ACCOUNT_ENTRY_DETAIL).on(ACCOUNT_ENTRY.ID.equal(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
 			.join(ACCOUNT).on(ACCOUNT_ENTRY_DETAIL.ACCOUNT.equal(ACCOUNT.ID))
 			.where(ACCOUNT_ENTRY.DOMAIN.equal(params.getDomain()))
-			.and(ACCOUNT_ENTRY.ENTRY_DATE.between(
-					 AonDateUtils.toSql( params.getStartDate() )
-					,AonDateUtils.toSql( params.getEndDate())))
+			.and(ACCOUNT_ENTRY.ENTRY_DATE.between(start,end))
 			.and(ACCOUNT_ENTRY.ENTRY_TYPE.ne(AccountEntryType.CLOSING.getValue()) )
 			.groupBy(ACCOUNT_ENTRY.ENTRY_TYPE, accountField)
 			.fetch()

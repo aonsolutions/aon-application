@@ -2,7 +2,6 @@ package com.code.aon.ui.accounting.controller.finance;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.sql.Connection;
 import java.sql.Types;
 import java.util.Date;
 import java.util.LinkedList;
@@ -17,13 +16,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.accounting.util.AccountingFinanceCheck;
 import com.code.aon.accounting.util.AccountingFinanceChecker;
 import com.code.aon.accounting.util.AccountingFinanceCheckerParams;
 import com.code.aon.accounting.util.StrippedStatement;
 import com.code.aon.common.AonException;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -31,10 +30,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
-import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -44,7 +41,6 @@ import com.code.aon.report.poi.IReportExporter;
 import com.code.aon.report.poi.ReportColumnMetadata;
 import com.code.aon.report.poi.ReportMetadata;
 import com.code.aon.ui.accounting.IAccountingConstants;
-import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
 import com.code.aon.ui.accounting.controller.report.StatementController;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.finance.controller.FinanceController;
@@ -58,32 +54,20 @@ public class AccountingFinanceCheckerController implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private AccountingFinanceChecker checker = null;
 	private AccountingFinanceCheckerParams params;
 	private DataModel model;
 	private DataModel strippedModel;
+	private DataModel financesModel;
 	
 	private String selectedAccountCode;
 	private String selectedAccountDescription;
 	
-	private enum StrippedType {
-		ALL,
-		SETTLED,
-		UNSETTLED
-	}
-	private StrippedType strippedType = StrippedType.UNSETTLED;
 	
 	public AccountingFinanceCheckerParams getParams() {
 		return params;
 	}
 	public void setParams(AccountingFinanceCheckerParams params) {
 		this.params = params;
-	}
-	private AccountingFinanceChecker getAccountingFinanceChecker() {
-		if (checker == null) {
-			checker = new AccountingFinanceChecker();
-		}
-		return checker;
 	}
 	
 	public DataModel getModel() {
@@ -92,6 +76,9 @@ public class AccountingFinanceCheckerController implements Serializable {
 
 	public DataModel getStrippedModel() {
 		return strippedModel;
+	}
+	public DataModel getFinancesModel() {
+		return financesModel;
 	}
 	
 
@@ -121,23 +108,16 @@ public class AccountingFinanceCheckerController implements Serializable {
 	}
 	
 	public void onSearch(ActionEvent event ) {
-		Connection c = null;
 		try {
-			c = DatabaseUtil.getConnection(AonUtil.getDomainName());
-			List<AccountingFinanceCheck> list =  getAccountingFinanceChecker().getChecks(c, getParams());
+			LinkedList<AccountingFinanceCheck> list = new LinkedList<AccountingFinanceCheck>();
+			list.addAll(AccountingFinanceChecker.getChecks(AonUtil.getDomainName(),
+					DomainManager.getCurrentDomain(), getParams()));
 			model = new SerializableListDataModel(list);
-		} catch (AonConnectionException e) {
-			String msg = "No se pudo mostrar el resultado. " + e.getMessage();
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
 		} catch (AonException e) {
 			String msg = "No se pudo mostrar el resultado. " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
-		} finally {
-			DatabaseUtil.closeQuietly(c);
 		}
-		
 		
 	}
 	
@@ -186,28 +166,26 @@ public class AccountingFinanceCheckerController implements Serializable {
 	}
 	
 	public void onFinance(ActionEvent event) {
+		AccountingFinanceCheck check = (AccountingFinanceCheck) getModel().getRowData();
+		setSelectedAccountCode( check.getAccountCode() );
+		setSelectedAccountDescription( check.getAccountDescription() );
+		getParams().setAccountCode(check.getAccountCode());
+		getParams().setRegistryId(check.getRegistryId());
+		finance();
+	}
+	public void onFinanceBack(ActionEvent event) {
+		finance();
+	}
+	private void finance() {
 		try {
-			AccountingFinanceCheck check = (AccountingFinanceCheck) getModel().getRowData();
-			FinanceController financeController = (FinanceController) 
-					AonUtil.getRegisteredBean(IFinanceConstants.FINANCE_CONTROLLER_NAME);
-			financeController.setPayment(!check.getAccountCode().startsWith("430"));
-			financeController.onEditSearch(event);
-			Criteria criteria = financeController.getCriteria();
-			criteria.addEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_REGISTRY_ID), check.getRegistryId());
-			
-			financeController.onSearch(event);
-			if (financeController.getModel().getRowCount() > 0) {
-				financeController.getModel().setRowIndex(0);
-				financeController.onSelect(event);
-				financeController.setBackAction("accountingFinanceChecker_list");
-				financeController.setBackActionListener("accountingFinanceChecker.onBack");
-			} else {
-				String msg = "No existen vencimientos pendientes de " + check.getAccountDescription();
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg);
-			}
-			
+			List<AccountingFinanceCheck> list =  AccountingFinanceChecker.getFinances(
+				AonUtil.getDomainName(),DomainManager.getCurrentDomain(), getParams() );
+			financesModel = new SerializableListDataModel(list);
 		} catch (ManagerBeanException e) {
+			String msg = "No se pudo realizar el acceso a vencimientos.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		} catch (AonException e) {
 			String msg = "No se pudo realizar el acceso a vencimientos.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
@@ -278,53 +256,31 @@ public class AccountingFinanceCheckerController implements Serializable {
 		setSelectedAccountCode( check.getAccountCode() );
 		getParams().setAccountCode( check.getAccountCode() );
 		setSelectedAccountDescription( check.getAccountDescription() );
-		strippedType = StrippedType.UNSETTLED;
 		strippedStatement();
 	}
 	
 	private void strippedStatement() {
-		Connection c = null;
 		try {
-			c = DatabaseUtil.getConnection(AonUtil.getDomainName());
-			List<StrippedStatement> list =  getAccountingFinanceChecker().getStrippedStatement(
-					c, getParams() );
-			if (strippedType != StrippedType.ALL) {
-				List<StrippedStatement> newList = new LinkedList<StrippedStatement>();
-				
-				for (StrippedStatement ss : list) {
-					if ( ss.isSettled() && strippedType == StrippedType.SETTLED) {
-						newList.add(ss);
-					} else if ( !ss.isSettled() && strippedType == StrippedType.UNSETTLED) {
-						newList.add(ss);
-					}
-				}
-				list = newList ;
-			}
+			List<StrippedStatement> list =  AccountingFinanceChecker.getStrippedStatement(
+					AonUtil.getDomainName(),DomainManager.getCurrentDomain(), getParams() );
+//			if (strippedType != StrippedType.ALL) {
+//				List<StrippedStatement> newList = new LinkedList<StrippedStatement>();
+//				
+//				for (StrippedStatement ss : list) {
+//					if ( ss.isSettled() && strippedType == StrippedType.SETTLED) {
+//						newList.add(ss);
+//					} else if ( !ss.isSettled() && strippedType == StrippedType.UNSETTLED) {
+//						newList.add(ss);
+//					}
+//				}
+//				list = newList ;
+//			}
 			strippedModel = new SerializableListDataModel(list);					
-			
-		} catch (AonConnectionException e) {
-			String msg = "No se pudo mostrar el resultado. " + e.getMessage();
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
 		} catch (AonException e) {
 			String msg = "No se pudo mostrar el resultado. " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
-		} finally {
-			DatabaseUtil.closeQuietly(c);
 		}
-	}
-	public void onStrippedStatementAll(ActionEvent event) {
-		strippedType = StrippedType.ALL;		
-		strippedStatement();
-	}
-	public void onStrippedStatementSettled(ActionEvent event) {
-		strippedType = StrippedType.SETTLED;		
-		strippedStatement();
-	}
-	public void onStrippedStatementUnsettled(ActionEvent event) {
-		strippedType = StrippedType.UNSETTLED;
-		strippedStatement();
 	}
 	public void onStrippedBack(ActionEvent event) {
 		strippedStatement();
@@ -364,37 +320,58 @@ public class AccountingFinanceCheckerController implements Serializable {
 	public void onStrippedStatementShowEntries(ActionEvent event) {
 		try {
 			StrippedStatement ss = (StrippedStatement) getStrippedModel().getRowData();
-			AccountEntryController controller = (AccountEntryController) 
-					AonUtil.getRegisteredBean(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
-			controller.onEditSearch(event);
-			Criteria criteria = controller.getCriteria();
-			criteria.addEqualExpression("AccountEntry.detail.documentNumber"
-					, ss.getDocumentNumber());
-			controller.onSearch(event);
-			if (controller.getModel().getRowCount() > 0) {
-				controller.getModel().setRowIndex(0);
-				controller.onSelect(event);
-				controller.setBackAction("accountingFinanceChecker_stripped");
-				controller.setBackActionListener("accountingFinanceChecker.onStrippedBack");
+			StatementController c = (StatementController) AonUtil.getRegisteredBean(IAccountingConstants.STATEMENT_CONTROLLER_NAME);
+			c.onReset(event);
+			SummaryProviderParameters spp = new SummaryProviderParameters(AonUtil.getDomainName());
+			spp.setAccountExpression(getSelectedAccountCode());
+			spp.setPeriod(null);
+			spp.setFromDate(null);
+			spp.setToDate(getParams().getDeadline());
+			spp.setSecurityLevel(AonUtil.getRoleManager().isAccountingOperator()?null:SecurityLevel.OFFICIAL);
+			spp.setDocumentNumber( ss.getDocumentNumber() );
+			c.setParams(spp);
+			c.onEditSearch(event);
+			Criteria criteria = c.getCriteria();
+			String alias = c.getFieldName(IEntityAlias.ACCOUNT_CODE);
+			criteria.addExpression(alias, getSelectedAccountCode());
+			alias = c.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED);
+			criteria.addExpression(ExpressionUtilities.getEqualExpression(alias, true));
+			c.onSearch(event);
+			if (c.getModel().getRowCount() > 0) {
+				c.getModel().setRowIndex(0);
+				c.onSelect(event);
+				c.setBackAction("accountingFinanceChecker_stripped");
+				c.setBackActionListener("accountingFinanceChecker.onStrippedBack");
 			} else {
-				String msg = "No existen vencimientos pendientes de " + getSelectedAccountDescription();
+				String msg = "No se encontraron datos.";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
-			
 		} catch (ManagerBeanException e) {
-			String msg = "No se pudo realizar el acceso a apuntes contables.";
+			String msg = "No se pudo realizar el acceso al extracto.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		} catch (ExpressionException e) {
+			String msg = "No se pudo realizar el acceso al extracto.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
 		}
-		
+	}
+	public String financeShowInvoices() {
+		AccountingFinanceCheck check = (AccountingFinanceCheck) getFinancesModel().getRowData();
+		String numDoc = check.getDocumentNumber();
+		return showInvoices(numDoc,"accountingFinanceChecker_finances","accountingFinanceChecker.onFinanceBack"); 
 	}
 	public String strippedStatementShowInvoices() {
+		StrippedStatement ss = (StrippedStatement) getStrippedModel().getRowData();
+		String numDoc = ss.getDocumentNumber();
+		return showInvoices(numDoc,"accountingFinanceChecker_stripped","accountingFinanceChecker.onStrippedBack"); 
+	}
+	
+	private String showInvoices(String numDoc, String backAction, String backActionListener) {
 		try {
 			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 			String invoiceViewer = null;
-			StrippedStatement ss = (StrippedStatement) getStrippedModel().getRowData();
-			String numDoc = ss.getDocumentNumber();
 			String number = StringUtils.substringAfter(numDoc, "/");
 			String series = null;
 			Criteria c = new Criteria();
@@ -436,9 +413,7 @@ public class AccountingFinanceCheckerController implements Serializable {
 					invoiceViewer = IFinanceConstants.UNDEDUCTIBLE_INVOICE_FORM_NAME;
 				}
 				InvoiceController invoiceController = (InvoiceController) AonUtil.getRegisteredBean(invoiceControllerName);
-				invoiceController.onLoad(null, invoice.getId()
-						, "accountingFinanceChecker_stripped"
-						, "accountingFinanceChecker.onStrippedBack");
+				invoiceController.onLoad(null, invoice.getId(), backAction, backActionListener);
 				return invoiceViewer;
 			}
 			String msg = "No se pudo realizar el acceso a facturas.";
@@ -454,4 +429,27 @@ public class AccountingFinanceCheckerController implements Serializable {
 			throw new AbortProcessingException(msg, e);
 		}
 	}
+/*
+	private enum StrippedType {
+		ALL,
+		SETTLED,
+		UNSETTLED
+	}
+	private StrippedType strippedType = StrippedType.UNSETTLED;
+	public void onStrippedStatementAll(ActionEvent event) {
+		strippedType = StrippedType.ALL;		
+		strippedStatement();
+	}
+	public void onStrippedStatementSettled(ActionEvent event) {
+		strippedType = StrippedType.SETTLED;		
+		strippedStatement();
+	}
+	public void onStrippedStatementUnsettled(ActionEvent event) {
+		strippedType = StrippedType.UNSETTLED;
+		strippedStatement();
+	}
+*/
 }
+
+
+
