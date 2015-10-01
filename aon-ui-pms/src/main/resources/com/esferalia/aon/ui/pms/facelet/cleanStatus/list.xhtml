@@ -37,14 +37,23 @@
 				<aon:panel styleClass="aon-panelGrid-search aon-margin-bottom">
 					<aon:outputText value="#{bundle.aon_module_hotel}:" styleClass="aon-italic" />
 					<aon:outputText value="#{cleanStatus.hotel.workPlace.description}" styleClass="aon-margin-left aon-bold" />
+					<!--  
+					<aon:selectOneMenu value="#{cleanStatus.hotel}">
+						<f:selectItem itemLabel="-" value="#{null}" />		
+						<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+						<a4j:support event="onchange" reRender="cleanStatusList" 
+							actionListener="#{cleanStatus.onSearch}" />
+					</aon:selectOneMenu>
+					-->
 					
 					<aon:outputText value="#{bundle.pms_floor}:" styleClass="aon-margin-left aon-italic" />
 					<c:forEach items="#{cleanStatus.floorList}" var="floor" varStatus="floorIdx" begin="0" step="1">
 						<aon:commandButton value="#{floor}"
 							styleClass="aon-commandButton"
+							style="margin:2px; width:50px; height:30px; #{cleanStatus.selectedFloor==floor?'background:gray;color:white;':''}"
 							actionListener="#{cleanStatus.onSelectFloor}"
 							reRender="cleanStatusList" >
-							<f:param name="selectedFloorId" value="#{floorIdx.index}"/>
+							<f:param name="selectedFloorId" value="#{floor}"/>
 						</aon:commandButton>
 					</c:forEach>
 				</aon:panel>
@@ -53,27 +62,35 @@
 					<c:forEach items="#{cleanStatus.roomList}" var="roomTo" varStatus="roomIdx" begin="0" step="1">
 						
 						<c:if test="#{previousRoom.charAt(0) != roomTo.asset.name.charAt(0)}" >
-							<rich:separator/>
+							<aon:div styleClass="aon-margin-top">
+								<aon:div styleClass="aon-form-group-title">
+									<aon:div styleClass="aon-form-group-title-internal">
+										<aon:outputText value="#{bundle.pms_floor} #{roomTo.asset.name.charAt(0)}" />
+									</aon:div>
+								</aon:div>
+							</aon:div>
 						</c:if>
 					
 						<aon:commandButton value="#{roomTo.asset.name}"
-							rendered="#{!roomTo.active}" disabled="#{true}"
+							rendered="#{cleanStatus.roomStatus[roomTo.asset.id]=='BLOCKED'}" disabled="#{true}"
 							styleClass="aon-commandButton"
 							style="margin:2px; width:70px; height:70px;" />
 						<aon:commandButton value="#{roomTo.asset.name}"
-							rendered="#{roomTo.active and roomTo.cleanRoom}"
+							rendered="#{cleanStatus.roomStatus[roomTo.asset.id]!='BLOCKED' and roomTo.busyRoom}" disabled="#{true}"
+							styleClass="aon-commandButton"
+							style="margin:2px; width:70px; height:70px; background:orange;" />
+						<aon:commandButton value="#{roomTo.asset.name}"
+							rendered="#{cleanStatus.roomStatus[roomTo.asset.id]!='BLOCKED' and !roomTo.busyRoom and roomTo.cleanRoom}"
 							styleClass="aon-commandButton"
 							style="margin:2px; width:70px; height:70px; background:green;"
-							actionListener="#{cleanStatus.onDirtyRoom}"
-							reRender="cleanStatusList" >
+							actionListener="#{cleanStatus.onDirtyRoom}" >
 							<f:param name="selectedRoomId" value="#{roomIdx.index}"/>
 						</aon:commandButton>
 						<aon:commandButton value="#{roomTo.asset.name}"
-							rendered="#{roomTo.active and !roomTo.cleanRoom}"
+							rendered="#{cleanStatus.roomStatus[roomTo.asset.id]!='BLOCKED' and !roomTo.busyRoom and !roomTo.cleanRoom}"
 							styleClass="aon-commandButton"
 							style="margin:2px; width:70px; height:70px; background:red;"
-							actionListener="#{cleanStatus.onCleanRoom}"
-							reRender="cleanStatusList" >
+							actionListener="#{cleanStatus.onCleanRoom}" >
 							<f:param name="selectedRoomId" value="#{roomIdx.index}"/>
 						</aon:commandButton>
 						

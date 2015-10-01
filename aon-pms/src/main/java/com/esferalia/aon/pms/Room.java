@@ -50,6 +50,11 @@ public class Room extends RoomDB implements IAsset{
 	public boolean isCleanRoom() throws ManagerBeanException {
 		return AonDateUtils.isSameDay(getLastCleaningDate(), new Date()) && getStatus() == RoomStatus.CLEAN;
 	}
+	
+	@Transient
+	public boolean isBusyRoom() throws ManagerBeanException {
+		return getStatus() == RoomStatus.DO_NOT_DISTURB;
+	}
 
 	@Transient
 	public boolean isUsedRoom() throws ManagerBeanException {
