@@ -709,7 +709,7 @@ public class OfferController extends HeaderObjectController implements ISignatur
 	
 	public void onCopy(ActionEvent event) throws ManagerBeanException {
 		Offer to = getOffer();
-        if ( StringUtils.isBlank(getOfferSeries()) ) {
+        if (StringUtils.isBlank(getOfferSeries())) {
         	setOfferSeries(null);
         }		
         if (getOfferNumber() == 0) {
@@ -717,7 +717,7 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		}		
 		this.getManagerBean().restoreNullSubPOJOs(to);
 		OfferImportManager manager = new OfferImportManager();
-		Offer offer = manager.copyOffer(to, getOfferSeries(), getOfferNumber(), getOfferTarget(), getOfferDate());
+		Offer offer = manager.copyOffer(to, getOfferSeries(), getOfferNumber(), getOfferTarget(), getOfferDate(), !to.getTarget().equals(getOfferTarget()));
 
 		this.onEditSearch(event);
 		this.getCriteria().addEqualExpression(this.getFieldName(IEntityAlias.OFFER_ID), offer.getId());

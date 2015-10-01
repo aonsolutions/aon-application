@@ -56,7 +56,7 @@ public class OfferImportManager {
 		return ++version;
 	}
 
-	public Offer copyOffer(Offer source, String series, int number, Target target, Date date) throws ManagerBeanException {
+	public Offer copyOffer(Offer source, String series, int number, Target target, Date date, boolean targetChanged) throws ManagerBeanException {
 		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
 		Integer sourceId = source.getId();
 		Offer offer = source;
@@ -68,6 +68,17 @@ public class OfferImportManager {
 		offer.setAddress(target.getRegistry().getDefaultAddress());
 		offer.setIssueDate(date);
 		offer.setStatus(OfferStatus.PENDING);
+		if (targetChanged) {
+			offer.setScope(target.getScope());
+			offer.setPayMethod(null);
+			offer.setNumberOfPayments(1);
+			offer.setDaysToFirstPayment(0);
+			offer.setDaysBetweenPayments(0);
+			offer.setPaymentDays("");
+			offer.setBankAccount(null);
+			offer.setBankAlias(null);
+			offer.setBic(null);
+		}
 		offer.setLines(null);
 		offer.setAttachments(null);
 		offer.setTerms(null);
