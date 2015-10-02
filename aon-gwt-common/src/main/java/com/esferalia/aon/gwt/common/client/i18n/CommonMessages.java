@@ -2536,6 +2536,12 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Almac\u00E9n")
 	String warehouseTemplates();
  	
+ 	@DefaultMessage("Hotel")
+	String hotelTemplates();
+ 	
+ 	@DefaultMessage("Seleccionados")
+	String selectedTemplates();
+ 	
  	@DefaultMessage("Listado")
 	String listTemplates();
  	

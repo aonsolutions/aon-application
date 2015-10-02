@@ -1,8 +1,10 @@
 package com.esferalia.aon.gwt.template.client;
 
+import java.util.List;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.template.shared.Error;
+import com.esferalia.aon.gwt.template.shared.Hotel;
 import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
@@ -34,6 +36,8 @@ public interface ITemplate extends RemoteService{
 	public Vector<Warehouse> getWarehouses(Integer domainId);
 	
 	public Vector<Warehouse> getWarehousesToConsumption(Integer domainId);
+	
+	public List<Hotel> getHotelsToConsumption(Integer domainId);
 	
 	public Vector<Series> getSeries(String warehouse);
 	

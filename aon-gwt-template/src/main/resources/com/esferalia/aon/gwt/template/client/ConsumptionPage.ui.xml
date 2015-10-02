@@ -52,7 +52,7 @@
 			<g:DockLayoutPanel unit="EM"
 				styleName="aondockLayoutPanel-template">
 				<!-- Search & Options -->
-				<g:north size="16">
+				<g:north size="30">
 					<g:HTMLPanel styleName="aon-panelGrid-search searchPanel-template">
 						<div class="aon-panelGrid-search-info">
 							<span class="aon-panelGrid-search-info-internal">
@@ -63,27 +63,48 @@
 						</div>
 						<table class="aon-panelGrid">
 							<tr>
-								<td colspan="3">
-									<g:HorizontalPanel ui:field="panel" styleName="{style.padding_left_template}">
-									</g:HorizontalPanel>
+								<td>
+									<span class="aon-panelGrid-search-info-internal2-template">
+										<g:InlineLabel styleName="aon-outputLabel" text="{msg.hotelTemplates}" />
+									</span>
 								</td>
-							</tr>
-							<tr>
+								<td>
+									<g:VerticalPanel ui:field="hotelBoxPanel" >
+									</g:VerticalPanel>
+								</td>
+						
 								<td>
 									<span class="aon-panelGrid-search-info-internal2-template">
 										<g:InlineLabel styleName="aon-outputLabel" text="{msg.warehouseTemplates}" />
 									</span>
 								</td>
 								<td>
-									<g:ListBox ui:field="warehouseListBox" >
-									</g:ListBox>
+									<g:VerticalPanel ui:field="warehouseBoxPanel" >
+									</g:VerticalPanel>
 								</td>
+								
+								<td>
+									<span class="aon-panelGrid-search-info-internal2-template">
+										<g:InlineLabel styleName="aon-outputLabel" text="{msg.selectedTemplates}" />
+									</span>
+								</td>
+								<td>
+									<g:VerticalPanel ui:field="selectedBoxPanel" >
+									</g:VerticalPanel>
+								</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td></td>
+								<td></td>
 								<td>
 									<g:HorizontalPanel>
 										<g:CheckBox ui:field="warehouseCheckBox"></g:CheckBox>
 										<g:InlineLabel text="Seleccionar todos"></g:InlineLabel>
 									</g:HorizontalPanel>
 								</td>
+								<td></td>
+								<td></td>
 							</tr>
 							<tr>
 								<td>
@@ -97,15 +118,17 @@
 							</tr>
 							<tr>
 								<td></td>
-								<td class="aon-search-lookup-button">
-									<g:Button ui:field="pdfButton" text="{msg.listTemplates}" 
-										styleName="aon-icon-commandButton aon-icon-pdf">
-									</g:Button>
-								</td>
-								<td class="aon-search-lookup-button"> 
-									<g:Button ui:field="excelButton" text="{msg.listTemplates}" enabled="false"
-										styleName="aon-icon-commandButton aon-icon-excel">
-									</g:Button>
+								<td>
+									<div class="aon-search-lookup-button" style="display: inline-block;">
+										<g:Button ui:field="pdfButton" text="{msg.listTemplates}" 
+											styleName="aon-icon-commandButton aon-icon-pdf">
+										</g:Button>
+									</div>
+									<div class="aon-search-lookup-button" style="display: inline-block;">
+										<g:Button ui:field="excelButton" text="{msg.listTemplates}" enabled="false"
+											styleName="aon-icon-commandButton aon-icon-excel">
+										</g:Button>
+									</div>
 								</td>
 							</tr>
 						</table>

@@ -1,9 +1,11 @@
 package com.esferalia.aon.gwt.template.client;
 
+import java.util.List;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.template.shared.Department;
 import com.esferalia.aon.gwt.template.shared.Error;
+import com.esferalia.aon.gwt.template.shared.Hotel;
 import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
@@ -69,5 +71,8 @@ public interface ITemplateAsync {
 
 	void getWarehousesToConsumption(Integer domainId,
 			AsyncCallback<Vector<Warehouse>> callback);
+
+	void getHotelsToConsumption(Integer domainId,
+			AsyncCallback<List<Hotel>> callback);
 
 }

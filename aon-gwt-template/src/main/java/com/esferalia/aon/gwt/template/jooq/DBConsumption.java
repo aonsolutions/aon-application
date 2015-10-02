@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
 import static com.esferalia.aon.jooq.tables.WarehouseTransferDetail.WAREHOUSE_TRANSFER_DETAIL;
@@ -32,11 +33,18 @@ import com.esferalia.aon.occam.api.AONContext;
 public class DBConsumption {
 	
 	public static Map<Integer, ConsumptionItem> getConsumption(String domain, Integer domainId
-			, Integer initialId, Integer finalId, Integer warehouseId, Date initialDate, Date finalDate){
+			, Integer initialId, Integer finalId, Integer warehouseId, Date initialDate, Date finalDate, String warehouseName){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
 			
+			Record1<String> result = ctx.getDslContext().select(WORKPLACE.DESCRIPTION)
+			.from(WORKPLACE).join(WAREHOUSE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
+			.where(WAREHOUSE.ID.eq(warehouseId))
+			.limit(1)
+			.fetchOne();
+			 
+			String hotel = result.value1();
 			// INITIAL INVENTORY
 			
 			Result<Record3<Integer, Double, Double>> data = ctx.getDslContext().select(INVENTORY_DETAIL.ITEM,INVENTORY_DETAIL.REAL_QUANTITY, INVENTORY_DETAIL.COST)
@@ -50,7 +58,7 @@ public class DBConsumption {
 				if(record.value1() != null){
 					 if(!map.containsKey(record.value1())){
 						 if(record.value2() != 0){
-							ConsumptionItem ci = getConsumptionItem(ctx, record.value1());
+							ConsumptionItem ci = getConsumptionItem(ctx, record.value1(), warehouseName, hotel);
 						 	ci.setInitialQuantity(record.value2());
 						 	ci.setInitialValue(record.value3());
 						 	map.put(ci.getItemId(), ci);
@@ -72,7 +80,7 @@ public class DBConsumption {
 				if (record.value1() != null) {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
-							ConsumptionItem ci = getConsumptionItem(ctx, record.value1());
+							ConsumptionItem ci = getConsumptionItem(ctx, record.value1(), warehouseName, hotel);
 							ci.setFinalQuantity(record.value2());
 							ci.setFinalValue(record.value3());
 							map.put(ci.getItemId(), ci);
@@ -101,7 +109,7 @@ public class DBConsumption {
 				if (record.value1() != null) {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
-							ConsumptionItem ci = getConsumptionItem(ctx, record.value1());
+							ConsumptionItem ci = getConsumptionItem(ctx, record.value1(), warehouseName, hotel);
 							ci.setValuePAlb(record.value2() * record.value3());
 							ci.setPurchasesAlb(record.value2());
 							ci.setPurchasesValueAlb(record.value3());
@@ -135,7 +143,7 @@ public class DBConsumption {
 				if (record.value1() != null) {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
-							ConsumptionItem ci = getConsumptionItem(ctx, record.value1());
+							ConsumptionItem ci = getConsumptionItem(ctx, record.value1(), warehouseName, hotel);
 							ci.setValuePFac(record.value2() * record.value3());
 							ci.setPurchasesFac(record.value2());
 							ci.setPurchasesValueFac(record.value3());
@@ -167,7 +175,7 @@ public class DBConsumption {
 				if (record.value1() != null) {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
-							ConsumptionItem ci = getConsumptionItem(ctx, record.value1());
+							ConsumptionItem ci = getConsumptionItem(ctx, record.value1(), warehouseName, hotel);
 							ci.setValueSAlb(record.value2() * record.value3());
 							ci.setSalesAlb(record.value2());
 							ci.setSalesValueAlb(record.value3());
@@ -201,7 +209,7 @@ public class DBConsumption {
 				if (record.value1() != null) {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
-							ConsumptionItem ci = getConsumptionItem(ctx, record.value1());
+							ConsumptionItem ci = getConsumptionItem(ctx, record.value1(),  warehouseName, hotel);
 							ci.setValueSFac(record.value2() * record.value3());
 							ci.setSalesFac(record.value2());
 							ci.setSalesValueFac(record.value3());
@@ -234,7 +242,7 @@ public class DBConsumption {
 				if (record.value1() != null) {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
-							ConsumptionItem ci = getConsumptionItem(ctx, record.value1());
+							ConsumptionItem ci = getConsumptionItem(ctx, record.value1(), warehouseName, hotel);
 							ci.setTransfersMinus(record.value2());
 							map.put(ci.getItemId(), ci);
 						}
@@ -262,7 +270,7 @@ public class DBConsumption {
 				if (record.value1() != null) {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
-							ConsumptionItem ci = getConsumptionItem(ctx ,record.value1());
+							ConsumptionItem ci = getConsumptionItem(ctx ,record.value1(), warehouseName, hotel);
 							ci.setTransfersPlus(record.value2());
 							map.put(ci.getItemId(), ci);
 						}
@@ -282,7 +290,7 @@ public class DBConsumption {
 		}
 	}
 
-	public static ConsumptionItem getConsumptionItem(AONContext ctx, Integer itemId){
+	public static ConsumptionItem getConsumptionItem(AONContext ctx, Integer itemId, String warehouseName, String hotel){
 		ConsumptionItem ci = new ConsumptionItem();
 		ci.setItemId(itemId);
 		
@@ -290,6 +298,9 @@ public class DBConsumption {
 			.from(PRODUCT).join(ITEM).on(PRODUCT.ID.equal(ITEM.PRODUCT))
 			.where(ITEM.ID.equal(itemId))
 			.fetchOne();
+		
+		ci.setWarehouseName(warehouseName);
+		ci.setHotel(hotel);
 		
 		ci.setProductCode(data.value1());
 		ci.setProductName(data.value2());

@@ -1489,10 +1489,10 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			setLabel(index+3, ConsumptionUtils.CONSUMPTION_SALES);
 			setLabel(index+4, ConsumptionUtils.CONSUMPTION_FINAL);
 			setLabel(index+5, ConsumptionUtils.CONSUMPTION_TRANSFER);
-			setLabel(index+6, ConsumptionUtils.CONSUMPTION_PRICE);
-			setLabel(index+7, ConsumptionUtils.CONSUMPTION_CONSUMPTION_VALUE);
-			setLabel(index+8, ConsumptionUtils.CONSUMPTION_CONSUMPTION);
-			return index+9;
+			//setLabel(index+6, ConsumptionUtils.CONSUMPTION_PRICE);
+			setLabel(index+6, ConsumptionUtils.CONSUMPTION_CONSUMPTION_VALUE);
+			setLabel(index+7, ConsumptionUtils.CONSUMPTION_CONSUMPTION);
+			return index+8;
 		case CLOSED_INVENTORY:
 			setLabel(index, InventoryUtils.INVENTORY_PRODUCT);
 			setLabel(index+1, InventoryUtils.INVENTORY_CATEGORY);

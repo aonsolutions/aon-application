@@ -1,17 +1,20 @@
 package com.esferalia.aon.gwt.template.client;
 
-import java.util.Vector;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.template.shared.Hotel;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -22,7 +25,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -40,8 +42,11 @@ public class ConsumptionPage extends Composite{
 
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
 	
-	@UiField HorizontalPanel panel;
-	@UiField ListBox warehouseListBox;
+
+	@UiField VerticalPanel hotelBoxPanel;
+	@UiField VerticalPanel warehouseBoxPanel;
+	@UiField VerticalPanel selectedBoxPanel;
+	
 	@UiField CheckBox warehouseCheckBox;
 	@UiField CheckBox detailCheckBox;
 	@UiField Button pdfButton;
@@ -49,15 +54,25 @@ public class ConsumptionPage extends Composite{
 	@UiField Button cleanButton;
 	@UiField Label titleLabel;
 	
+	ListBox hotelBox;
+	ListBox warehouseBox;
+	ListBox selectedBox;
+	
+	Map<String, Boolean> map;
+	Map<String, String> hwMap;
+	
 	Integer domainId;
-	Vector<Warehouse> warehouses, warehouseList;
+	List<Hotel> hotels;
 	TemplateList templateList;
 	Boolean detail = false;
 	
 	public ConsumptionPage(Integer domainId, TemplateList templateList) {
 		titleLabel = new Label();
-		panel = new HorizontalPanel();
-		warehouseListBox = new ListBox();
+
+		hotelBoxPanel = new VerticalPanel();hotelBoxPanel.setSpacing(4);
+		warehouseBoxPanel = new VerticalPanel();warehouseBoxPanel.setSpacing(4);
+		selectedBoxPanel = new VerticalPanel();selectedBoxPanel.setSpacing(4);
+		
 		warehouseCheckBox = new CheckBox();
 		detailCheckBox = new CheckBox();
 		pdfButton = new Button();
@@ -75,27 +90,44 @@ public class ConsumptionPage extends Composite{
 
 	private void init() {
 		titleLabel.setText(AON.MSG.aggregateConsumptionTemplates());
-		panel.add(new VerticalPanel());
-		item.getWarehousesToConsumption(domainId, new AsyncCallback<Vector<Warehouse>>() {
+		map = new HashMap<String, Boolean>();
+		hwMap = new HashMap<String, String>();
+
+		hotelBox = new ListBox();
+		hotelBox.setStyleName("aon-box-width-template");
+		hotelBox.setVisibleItemCount(10);
+		hotelBoxPanel.add(hotelBox);
+		
+		warehouseBox = new ListBox();
+		warehouseBox.setStyleName("aon-box-width-template");
+		warehouseBox.setVisibleItemCount(10);
+		warehouseBoxPanel.add(warehouseBox);
+		
+		selectedBox = new ListBox();
+		selectedBox.setStyleName("aon-box-width-template");
+		selectedBox.setVisibleItemCount(10);
+		selectedBoxPanel.add(selectedBox);
+		
+		item.getHotelsToConsumption(domainId, new AsyncCallback<List<Hotel>>() {
 			
 			@Override
-			public void onSuccess(Vector<Warehouse> result) {
-				warehouseList = result;
-				warehouses = new Vector<Warehouse>();
-				warehouseListBox.addItem("-");
-				for (Warehouse w : result) {
-					warehouseListBox.addItem(w.getName());
+			public void onSuccess(List<Hotel> result) {
+				hotels = result;
+				for(Hotel h : result){
+					hotelBox.addItem(h.getName(), h.getId().toString());
+					map.put(h.getId().toString(), false);
 				}
-	
-				warehouseListBoxChangeHandler();
+				
+				hotelBoxClickHandler();
+				warehouseBoxDoubleClickHandler();
+				selectedBoxDoubleClickHandler();
+				
 				warehouseCheckBoxChangeHandler();
-				detailCheckBoxChangeHandler();
+				detailCheckBoxChangeHandler();				
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				
-			}
+			public void onFailure(Throwable caught) {}
 		});
 	}
 
@@ -116,74 +148,87 @@ public class ConsumptionPage extends Composite{
 		download(EXCEL);
 	}
 	
-	private void warehouseListBoxChangeHandler() {
-		warehouseListBox.addChangeHandler(new ChangeHandler() {
+	private void hotelBoxClickHandler(){
+		hotelBox.addClickHandler(new ClickHandler() {
 			
 			@Override
-			public void onChange(ChangeEvent event) {
-				String wtext = warehouseListBox.getSelectedItemText();
-				if(wtext.equals("-") && warehouses.isEmpty()) excelButton.setEnabled(false);
-				else excelButton.setEnabled(true);
+			public void onClick(ClickEvent event) {
+				Hotel h = null;
+				for (Hotel hotel : hotels) {
+					if(hotelBox.getSelectedValue().equals(hotel.getId().toString()))
+						h = hotel;	
+				}
 				
-				for (Warehouse w : warehouseList) {
-					
-					if(w.getName().equals(wtext)) {
-						warehouses.add(w);
+				if(h != null){
+					warehouseCheckBox.setValue(map.get(h.getId().toString()));
+					while(warehouseBox.getItemCount()>0){
+						warehouseBox.removeItem(0);
+					}
+						
+					for (Warehouse w : h.getWarehouses()) {
+						warehouseBox.addItem(w.getName(), w.getId().toString());
+						hwMap.remove(w.getId().toString());
+						hwMap.put(w.getId().toString(), hotelBox.getSelectedValue());
 					}
 				}
-				HorizontalPanel wTag = closeTagButton(wtext);
-				
-				warehouseListBox.removeItem(warehouseListBox.getSelectedIndex());
-				warehouseListBox.setSelectedIndex(0);
-				
-				VerticalPanel vp = (VerticalPanel) panel.getWidget(panel.getWidgetCount()-1);
-				if(vp.getWidgetCount() < 3){
-					vp.add(wTag);
-				}
-				else{
-					VerticalPanel vpNew = new VerticalPanel();
-					vpNew.add(wTag);
-					panel.add(vpNew);
-				}
-				
-				
-				//panel.add(wTag);
 			}
 		});
 	}
 	
+	private void warehouseBoxDoubleClickHandler(){
+		warehouseBox.addDoubleClickHandler(new DoubleClickHandler() {
+			
+			@Override
+			public void onDoubleClick(DoubleClickEvent event) {
+				activeDownloadButtons();
+				String label = warehouseBox.getSelectedItemText();
+				String value = warehouseBox.getSelectedValue();
+				Boolean hasElement = false;
+				for(Integer index = 0; index < selectedBox.getItemCount(); index++){
+					if(selectedBox.getValue(index).equals(value))
+						hasElement = true;
+				}
+				if(!hasElement) selectedBox.addItem(label, value);	
+			}
+		});
+	}
+	
+	private void selectedBoxDoubleClickHandler(){
+		selectedBox.addDoubleClickHandler(new DoubleClickHandler() {
+			
+			@Override
+			public void onDoubleClick(DoubleClickEvent event) {
+				if(selectedBox.getItemCount() == 1){
+					deactiveDownloadButtons();
+				}
+				map.remove(hwMap.get(selectedBox.getSelectedValue()));
+				warehouseCheckBox.setValue(false);
+				map.put(hwMap.get(selectedBox.getSelectedValue()), false);
+				
+				Integer index = selectedBox.getSelectedIndex();
+				selectedBox.removeItem(index);
+
+			}
+		});
+	}
+
 	private void warehouseCheckBoxChangeHandler(){
 		warehouseCheckBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				if(event.getValue()){
-					for(Integer k = warehouseListBox.getItemCount();k> 0;k--){
-						String name = warehouseListBox.getItemText(k-1);
-						if(!name.equals("-")){
-							HorizontalPanel wTag = closeTagButton(name);
-						
-							warehouseListBox.removeItem(k-1);
-							warehouseListBox.setSelectedIndex(0);
-							
-							VerticalPanel vp = (VerticalPanel) panel.getWidget(panel.getWidgetCount()-1);
-							if(vp.getWidgetCount() < 3){
-								vp.add(wTag);
-							}
-							else{
-								VerticalPanel vpNew = new VerticalPanel();
-								vpNew.add(wTag);
-								panel.add(vpNew);
-							}
-						
-							//panel.add(wTag);
-						}
+				map.remove(hotelBox.getSelectedValue());
+				map.put(hotelBox.getSelectedValue(), event.getValue());
+				for(Integer i = 0; i < warehouseBox.getItemCount(); i++)
+					for(Integer j = 0; j < selectedBox.getItemCount(); j++)
+						if(selectedBox.getValue(j).equals(warehouseBox.getValue(i)))
+							selectedBox.removeItem(j);	
+				
+				if(event.getValue())
+					for(Integer i = 0; i < warehouseBox.getItemCount(); i++){
+						selectedBox.addItem(warehouseBox.getItemText(i),warehouseBox.getValue(i));
+						activeDownloadButtons();
 					}
-				}
-				else{
-					warehouseListBox.setEnabled(true);
-					clean();
-				}
 			}
 		});
 	}
@@ -197,20 +242,7 @@ public class ConsumptionPage extends Composite{
 			}
 		});
 	}
-	
-	HorizontalPanel hpAux;String nameAux;
-	private void closeTagButtonClickHandler(Button closeTagButton, HorizontalPanel hp, String name){
-		hpAux = hp;nameAux = name;
-		closeTagButton.addClickHandler(new ClickHandler() {
-			private HorizontalPanel hp = hpAux;
-			String name = nameAux;
-			@Override
-			public void onClick(ClickEvent event) {
-				hp = new HorizontalPanel();
-				clean(name);
-			}
-		});
-	}
+
 	//------------------------------ Actions
 
 	public void download(String type){
@@ -222,20 +254,15 @@ public class ConsumptionPage extends Composite{
 				size++;
 			}
 		}
-
 		String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_aggregate_consumption/"
             	+ "?id=" + Integer.toString(templateInfo.getId())
             	+ "&domain_id=" + domainId;
 		
-		Integer i = 0;
-		for (Warehouse w : warehouses) {
-			fileDownloadURL = fileDownloadURL + "&warehouse" + i + "=" + w.getName()
-										+"&warehouse_id"+ i +  "=" + w.getId();
-			i++;
+		for (Integer index= 0; index < selectedBox.getItemCount(); index++) {
+			fileDownloadURL = fileDownloadURL +"&warehouse_id"+ index +  "=" + selectedBox.getValue(index);
 		}
-		
-		
-		fileDownloadURL = fileDownloadURL + "&size=" + warehouses.size()
+	
+		fileDownloadURL = fileDownloadURL + "&size=" + selectedBox.getItemCount()
 							+ "&detail=" + detail
 							+ "&file_type="+type;	
 						
@@ -243,62 +270,20 @@ public class ConsumptionPage extends Composite{
 	}
 	
 	private void clean(){
-		for(Integer j = panel.getWidgetCount(); j>0; j--){
-			VerticalPanel vp = (VerticalPanel) panel.getWidget(j-1);
-			for(Integer i = vp.getWidgetCount(); i>0; i--){
-				HorizontalPanel hp = (HorizontalPanel) vp.getWidget(i-1);
-				Label label = (Label) hp.getWidget(1);
-				for(Warehouse w : warehouseList){
-					if(w.getName().equals(label.getText())){
-						warehouseListBox.addItem(label.getText());
-						vp.remove(i-1);						
-					}
-				}
-			}
-		}
-		warehouses.removeAllElements();
+		deactiveDownloadButtons();
 		warehouseCheckBox.setValue(false);
-		//panel.add(new VerticalPanel());
+		while(selectedBox.getItemCount() > 0)
+			selectedBox.removeItem(0);	
 	}
 	
-	private void clean(String name){
-		for(Integer i = 0; i<panel.getWidgetCount(); i++){
-			VerticalPanel vp = (VerticalPanel) panel.getWidget(i);
-			for(Integer j = 0; j<vp.getWidgetCount();j++){
-				HorizontalPanel hp = (HorizontalPanel) vp.getWidget(j);
-				Label label = (Label) hp.getWidget(1);
-				if(label.getText().equals(name)){
-					for(Warehouse w : warehouseList){
-						if(w.getName().equals(name)){
-							warehouseListBox.addItem(label.getText());
-							vp.remove(j);
-							warehouses.remove(w);
-						
-							for(Integer k = i+1; k < panel.getWidgetCount(); k++){
-								VerticalPanel vp1 = (VerticalPanel) panel.getWidget(k-1); 
-								VerticalPanel vp2 = (VerticalPanel) panel.getWidget(k);
-								vp1.add(vp2.getWidget(0));
-							}
-							
-						}
-					}		
-				}
-			}
-		}
-		warehouseCheckBox.setValue(false);
+	private void activeDownloadButtons() {
+		excelButton.setEnabled(true);
+		pdfButton.setEnabled(true);
 	}
 	
-	//------------------------------ Widgets
+	private void deactiveDownloadButtons() {
+		excelButton.setEnabled(false);
+		pdfButton.setEnabled(false);
+	}
 
-	private HorizontalPanel closeTagButton(String name) {
-		HorizontalPanel horizontalPanel = new HorizontalPanel();
-		Button closeTagButton = new Button("");
-		closeTagButton.setStyleName("aon-editDataTable-button aon-icon-close");	
-		Label label = new Label(name);
-		horizontalPanel.add(closeTagButton);
-		horizontalPanel.add(label);
-		closeTagButtonClickHandler(closeTagButton, horizontalPanel, name);
-	
-		return horizontalPanel;
-	}
 }

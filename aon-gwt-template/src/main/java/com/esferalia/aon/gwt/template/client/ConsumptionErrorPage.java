@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.template.client;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
-import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 
@@ -33,15 +32,12 @@ public class ConsumptionErrorPage extends ConsumptionPage{
             	+ "?id=" + Integer.toString(templateInfo.getId())
             	+ "&domain_id=" + domainId;
 		
-		Integer i = 0;
-		for (Warehouse w : warehouses) {
-			fileDownloadURL = fileDownloadURL + "&warehouse" + i + "=" + w.getName()
-										+"&warehouse_id"+ i +  "=" + w.getId();
-			i++;
+		for (Integer index= 0; index < selectedBox.getItemCount(); index++) {
+			fileDownloadURL = fileDownloadURL +"&warehouse_id"+ index +  "=" + selectedBox.getValue(index);
 		}
 		
 		
-		fileDownloadURL = fileDownloadURL + "&size=" + warehouses.size()
+		fileDownloadURL = fileDownloadURL + "&size=" + selectedBox.getItemCount()
 							+ "&detail=" + detail
 							+ "&file_type="+type
 							+ "&only_negative=1";	

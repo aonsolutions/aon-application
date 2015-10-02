@@ -46,5 +46,7 @@ public interface AonGwtTemplateCSS extends CssResource{
 	
 	@ClassName("aon-info-rest-template")
 	String aonInfoRestTemplate();
-		
+
+	@ClassName("aon-box-width-template")
+	String aonBoxWidthTemplate();
 }

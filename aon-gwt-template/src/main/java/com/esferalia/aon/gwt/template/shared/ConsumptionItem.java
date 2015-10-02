@@ -58,7 +58,7 @@ public class ConsumptionItem implements IsSerializable{
 	String detail2;
 	String detail3;
 	
-	
+	String hotel;
 	
 	public Double getValuePAlb() {
 		return valuePAlb;
@@ -299,6 +299,12 @@ public class ConsumptionItem implements IsSerializable{
 	}
 	public void setFinalInventoryName(String finalInventoryName) {
 		this.finalInventoryName = finalInventoryName;
+	}
+	public String getHotel() {
+		return hotel;
+	}
+	public void setHotel(String hotel) {
+		this.hotel = hotel;
 	}
 	
 	

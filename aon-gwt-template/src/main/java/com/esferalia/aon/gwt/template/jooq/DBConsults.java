@@ -2,21 +2,26 @@ package com.esferalia.aon.gwt.template.jooq;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
+import static com.esferalia.aon.jooq.tables.Hotel.HOTEL;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.User.USER;
+import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.io.File;
 import java.util.Vector;
 
 import org.jooq.DSLContext;
 import org.jooq.Record1;
+import org.jooq.Record2;
 import org.jooq.Record4;
 import org.jooq.Result;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.gwt.template.server.Utils;
+import com.esferalia.aon.gwt.template.shared.Hotel;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.occam.api.AONContext;
@@ -221,7 +226,7 @@ public class DBConsults {
 						TemplateInfo consumptionTemplate = new TemplateInfo();
 						v2 = new Vector<String>();
 						v2.add("Producto");v2.add("Nombre");v2.add("Inicial");v2.add("Compras");v2.add("Ventas");
-						v2.add("Traspaso");v2.add("Final");v2.add("Consumo");v2.add("Precio");v2.add("Valor Consumo");
+						v2.add("Traspaso");v2.add("Final");v2.add("Consumo");/*v2.add("Precio");*/v2.add("Valor Consumo");
 						consumptionTemplate.setColumns(v2);
 						consumptionTemplate.setDomain(domain);
 						consumptionTemplate.setDomainId(0);
@@ -417,5 +422,35 @@ public class DBConsults {
 			.where(RATTACH.TYPE.eq((byte)15))
 			.and(RATTACH.DOMAIN.eq(0))
 			.execute();
+	}
+	
+	
+	public static Vector<Hotel> getHotels(String domainName, Integer domainId, Integer userId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			
+			Result<Record2<Integer, String>> result = ctx.getDslContext().select(WORKPLACE.ID, WORKPLACE.DESCRIPTION )
+				.from(HOTEL).join(WORKPLACE).on(HOTEL.WORKPLACE.eq(WORKPLACE.ID))
+				.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(WORKPLACE.SCOPE))
+				.where(WORKPLACE.DOMAIN.eq(domainId))
+				.and(USER_SCOPE.USER_ID.eq(userId))
+				.orderBy(WORKPLACE.DESCRIPTION)
+				.fetch();
+			
+			Vector<Hotel> hs = new Vector<Hotel>();
+			
+			result.stream().forEach(r ->{
+				Hotel h = new Hotel();
+				h.setDomain(domainId);
+				h.setId(r.value1());
+				h.setWorkplaceId(r.value1());
+				h.setName(r.value2());
+				hs.add(h);
+			});
+			return hs;
+		} finally {
+			if (ctx != null) ctx.close();
+		}
 	}
 }

@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -55,12 +56,12 @@ import com.esferalia.aon.gwt.template.jooq.DBProduct;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.shared.ConsumptionItem;
 import com.esferalia.aon.gwt.template.shared.Error;
+import com.esferalia.aon.gwt.template.shared.Hotel;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.Seller;
-import com.google.gwt.uibinder.elementparsers.IsEmptyParser;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 
@@ -156,6 +157,27 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	public Vector<Warehouse> getWarehouses(Integer domainId){
 		String domain = AonUtil.getDomainName();
 		return DBStock.getWarehouse(domain, domainId, userId);
+	}
+	
+	public List<Hotel> getHotelsToConsumption(Integer domainId){
+		String domain = AonUtil.getDomainName();
+		Vector<Hotel> hotels= DBConsults.getHotels(domain, domainId, userId);
+		for (Hotel hotel : hotels) {
+			hotel.setWarehouses(getWarehousesToConsumption(domainId, hotel.getWorkplaceId()));
+		}
+		return hotels;
+	}
+	
+	public Vector<Warehouse> getWarehousesToConsumption(Integer domainId, Integer workplaceId){
+		String domain = AonUtil.getDomainName();
+		Vector<Warehouse> v = DBStock.getWarehouse(domain, domainId, userId, workplaceId);
+		Vector<Warehouse> v2 = new Vector<Warehouse>();
+		for (Warehouse w : v) {
+			ConsumptionItem ci = DBConsumption.getTwoLastInventory(domain, domainId, w.getId());
+			if(ci.getInitialId() != null && ci.getFinalId() != null)
+				v2.add(w);
+		}
+		return v2;
 	}
 	
 	public Vector<Warehouse> getWarehousesToConsumption(Integer domainId){

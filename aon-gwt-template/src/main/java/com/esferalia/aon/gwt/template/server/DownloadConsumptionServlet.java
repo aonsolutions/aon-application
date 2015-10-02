@@ -180,8 +180,8 @@ public class DownloadConsumptionServlet extends HttpServlet {
         }
         Cell celdaf = fila.createCell(columns);
         celdaf.setCellStyle(style);
- 
-        Map<Integer, ConsumptionItem> map = DBConsumption.getConsumption(domain, domainId, initialId, finalId, warehouseId, new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()));
+ String warehouseName="";
+        Map<Integer, ConsumptionItem> map = DBConsumption.getConsumption(domain, domainId, initialId, finalId, warehouseId, new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()), warehouseName);
         Vector<ConsumptionItem> v =  new Vector<ConsumptionItem>(map.values());
         Integer num = 0;
         for(Integer j = 0; j< v.size();j++){
@@ -224,13 +224,11 @@ public class DownloadConsumptionServlet extends HttpServlet {
         			case "Valor Final": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style2);break;
         			case "Traspaso": celda.setCellValue(round(ci.getTransfersPlus()-ci.getTransfersMinus(),2));celda.setCellStyle(style2);break;
         			case "Valor Traspaso": celda.setCellValue(round((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()),2));celda.setCellStyle(style2);break;
-        			case "Precio":/* if(!detail) celda.setCellValue(round(ci.getPrice(),2));
-        						else*/if(ci.getConsumption() != 0) celda.setCellValue(round(consumValue / ci.getConsumption(),2));
+        			/*case "Precio": if(ci.getConsumption() != 0) celda.setCellValue(round(consumValue / ci.getConsumption(),2));
         						else celda.setCellValue(0);
         						celda.setCellStyle(style2);
-        						break; 
-        			case "Valor Consumo": /*if(!detail)celda.setCellValue(round(ci.getPrice()*ci.getConsumption(),2));
-        								else*/ celda.setCellValue(round(consumValue,2));
+        						break;*/ 
+        			case "Valor Consumo": celda.setCellValue(round(consumValue,2));
         								celda.setCellStyle(style2);
         								break;
         			case "Consumo": celda.setCellValue(round(ci.getConsumption(),2));celda.setCellStyle(style2);break;

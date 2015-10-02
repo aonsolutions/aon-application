@@ -15,7 +15,7 @@ public class ConsumptionUtils {
 	public static final String CONSUMPTION_SALES = "Ventas";
 	public static final String CONSUMPTION_FINAL = "Final";
 	public static final String CONSUMPTION_TRANSFER = "Traspaso";
-	public static final String CONSUMPTION_PRICE = "Precio";
+	//public static final String CONSUMPTION_PRICE = "Precio";
 	public static final String CONSUMPTION_CONSUMPTION_VALUE = "Valor Consumo";
 	public static final String CONSUMPTION_CONSUMPTION = "Consumo";
 	
@@ -28,7 +28,7 @@ public class ConsumptionUtils {
 		v.add(CONSUMPTION_SALES);
 		v.add(CONSUMPTION_FINAL);
 		v.add(CONSUMPTION_TRANSFER);
-		v.add(CONSUMPTION_PRICE); // precio del producto
+		//v.add(CONSUMPTION_PRICE); // precio del producto
 		v.add(CONSUMPTION_CONSUMPTION_VALUE);// precio total del consumo
 		v.add(CONSUMPTION_CONSUMPTION);
 		return v;
@@ -63,7 +63,7 @@ public class ConsumptionUtils {
 		case CONSUMPTION_SALES: return true;
 		case CONSUMPTION_FINAL: return true;
 		case CONSUMPTION_TRANSFER: return true;
-		case CONSUMPTION_PRICE: return true; 
+		//case CONSUMPTION_PRICE: return true; 
 		case CONSUMPTION_CONSUMPTION_VALUE: return true;
 		case CONSUMPTION_CONSUMPTION: return true;
 		}
