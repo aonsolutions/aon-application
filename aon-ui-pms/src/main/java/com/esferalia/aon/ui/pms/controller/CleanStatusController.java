@@ -85,18 +85,26 @@ public class CleanStatusController extends BasicController {
 	
 	public void onInit(ActionEvent event){
 		setHotel(null);	
+		setSelectedFloor(null);
+		setRoomList(null);
+		setFloorList(null);
+		setRoomStatus(null);
 	}
 	
 	public void onSearch(ActionEvent event) {
 		setSelectedFloor(null);
 		setRoomList(new LinkedList<Room>());
 		setFloorList(new LinkedList<String>());
-		List<ITransferObject> roomList = getActiveRoomList(null);
+		List<ITransferObject> roomList = getActiveRoomList(getHotel(), null);
 		for (ITransferObject ito : roomList) {
 			Room room = (Room)ito;
 			getRoomList().add(room);
-//			char floor = room.getAsset().getName().replaceAll("[^0-9]", "").charAt(0);
-			String floor = room.getAsset().getName().replaceAll("([^0-9]*[0-9]).*", "$1");
+			String floor = null;
+			if(room.getAsset().getName().matches("[^0-9]*[0-9]+")){
+				floor = room.getAsset().getName().replaceAll("([^0-9]*[0-9]).*", "$1");
+			} else if(room.getAsset().getName().matches("[0-9]*[^0-9]*")){
+				floor = room.getAsset().getName().replaceAll("([0-9]).*([^0-9]*)", "$1$2");
+			}
 			if(!getFloorList().contains(floor)){
 				getFloorList().add(floor);
 			}
@@ -112,22 +120,15 @@ public class CleanStatusController extends BasicController {
 	public void onSelectFloor(ActionEvent event) {
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		Map<String, String> params = ec.getRequestParameterMap();
-		String newFloor = String.valueOf(params.get(FLOOR_IDX));
+		String newFloor = String.valueOf(new Integer(params.get(FLOOR_IDX)));
 		selectedFloor = newFloor.equals(selectedFloor)?null:newFloor;
-		setRoomList(new LinkedList<Room>());
-		for (ITransferObject ito : getActiveRoomList(selectedFloor)) {
-			Room room = (Room)ito;
-			getRoomList().add(room);
-		}
-		setModel(new SerializableListDataModel(getRoomList()));
 	}
 	
-//	private List<ITransferObject> getActiveRoomList(Hotel hotel, String floor) {
-	private List<ITransferObject> getActiveRoomList(String floor) {
+	private List<ITransferObject> getActiveRoomList(Hotel hotel, String floor) {
 		try {
 			IManagerBean roomBean = BeanManager.getManagerBean(Room.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(roomBean.getFieldName(IEntityAlias.ROOM_HOTEL_ID), getHotel()!=null?getHotel().getId():-1);
+			criteria.addEqualExpression(roomBean.getFieldName(IEntityAlias.ROOM_HOTEL_ID), hotel!=null?hotel.getId():-1);
 			criteria.addEqualExpression(roomBean.getFieldName(IEntityAlias.ROOM_ACTIVE), Boolean.TRUE);
 			if (StringUtils.isNotBlank(floor)) {
 				criteria.addExpression(ExpressionUtilities.getLikeExpression(roomBean.getFieldName(IEntityAlias.ROOM_ASSET_NAME), floor+"%"));
@@ -164,19 +165,25 @@ public class CleanStatusController extends BasicController {
 	}
 	
 	public void onCleanRoom(ActionEvent event) throws ManagerBeanException {
-		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		Map<String, String> params = ec.getRequestParameterMap();
-		Room room = getRoomList().get(new Integer(params.get(ROOM_IDX)));
-		room.setStatus(RoomStatus.CLEAN);
-		room.setLastCleaningDate(new Date());
-		BeanManager.getManagerBean(Room.class).update(room);
+		updateRoom(RoomStatus.CLEAN, new Date());
 	}
 
 	public void onDirtyRoom(ActionEvent event) throws ManagerBeanException {
+		updateRoom(RoomStatus.DIRTY, null);
+	}
+
+	public void onBusyRoom(ActionEvent event) throws ManagerBeanException {
+		updateRoom(RoomStatus.DO_NOT_DISTURB, null);
+	}
+	
+	private void updateRoom(RoomStatus status, Date lastCleaningDate) throws ManagerBeanException {
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		Map<String, String> params = ec.getRequestParameterMap();
 		Room room = getRoomList().get(new Integer(params.get(ROOM_IDX)));
-		room.setStatus(RoomStatus.DIRTY);
+		room.setStatus(status);
+		if(lastCleaningDate!=null){
+			room.setLastCleaningDate(lastCleaningDate);
+		}
 		BeanManager.getManagerBean(Room.class).update(room);
 	}
 	
