@@ -96,6 +96,7 @@ public class InvoiceReportServlet extends HttpServlet {
 			action.finalize(resp.getOutputStream());
 			resp.flushBuffer();
 		} catch (Throwable e) {
+			e.printStackTrace();
 			throw new ServletException(e);
 		} 
 	}

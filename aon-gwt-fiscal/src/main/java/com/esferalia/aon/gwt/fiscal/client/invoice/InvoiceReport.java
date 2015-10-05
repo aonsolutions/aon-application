@@ -79,7 +79,7 @@ public class InvoiceReport extends MainEntryPoint {
 	private int domain;
 	private int enterprise;
 
-	@UiField
+	@UiField(provided=true)
 	FormPanel diskForm;
 	@UiField
 	DateBoxEx fromDate;
@@ -98,7 +98,9 @@ public class InvoiceReport extends MainEntryPoint {
 	@Override
 	public void onModuleLoad() {
 		AON.ensureInjected();
-
+		
+		diskForm = new FormPanel("_blank"); 
+		
 		FiscalServiceAsync mod180ServiceRaw = GWT.create(FiscalService.class);
 		fiscalService = new FiscalServiceAsyncDecorator(mod180ServiceRaw);
 
@@ -195,12 +197,16 @@ public class InvoiceReport extends MainEntryPoint {
 
 	@UiHandler("generateFileButton")
 	void onGenerateFileButtonClick(ClickEvent event) {
-		if (fromDate.getValue() != null && toDate.getValue() != null 
-				&& fromDate.getValue().after(toDate.getValue())) {
+		if (fromDate.getValue() == null) {
+			Window.alert("Debe indicar una fecha \"Desde\"");
+		} else if (toDate.getValue() == null) {
+			Window.alert("Debe indicar una fecha \"Hasta\"");
+		} else if (fromDate.getValue().after(toDate.getValue())) {
 			Window.alert("Si indica una fecha \"desde\" mayor que la fecha \"hasta\", no obtendr\u00E1 resultados.");
 		} else {
 			diskForm.setMethod(FormPanel.METHOD_POST);
 			diskForm.setEncoding(FormPanel.ENCODING_URLENCODED);
+			 
 
 			if (entity.getSelectedIndex() == 0) {
 				diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/InvoiceReport");	
