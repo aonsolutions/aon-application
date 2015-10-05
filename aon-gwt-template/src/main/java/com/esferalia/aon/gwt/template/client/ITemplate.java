@@ -64,4 +64,6 @@ public interface ITemplate extends RemoteService{
 	public Integer executeExcelProposal(TemplateInfo templateInfo);
 	
 	public Error insertProposal(Integer proposal, Integer workplace);
+	
+	public Vector<Warehouse> getWarehousesToConsumption(Integer domainId, Integer workplaceId);
 }

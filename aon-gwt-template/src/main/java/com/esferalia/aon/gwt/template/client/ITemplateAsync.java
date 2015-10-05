@@ -75,4 +75,7 @@ public interface ITemplateAsync {
 	void getHotelsToConsumption(Integer domainId,
 			AsyncCallback<List<Hotel>> callback);
 
+	void getWarehousesToConsumption(Integer domainId, Integer workplaceId,
+			AsyncCallback<Vector<Warehouse>> callback);
+
 }

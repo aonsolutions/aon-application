@@ -435,6 +435,7 @@ public class DBConsults {
 				.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(WORKPLACE.SCOPE))
 				.where(WORKPLACE.DOMAIN.eq(domainId))
 				.and(USER_SCOPE.USER_ID.eq(userId))
+				.and(WORKPLACE.ACTIVE.eq((byte)1))
 				.orderBy(WORKPLACE.DESCRIPTION)
 				.fetch();
 			

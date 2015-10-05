@@ -906,6 +906,7 @@ public class DBStock {
 						.from(WAREHOUSE).join(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
 						.where(WAREHOUSE.DOMAIN.eq(domainId))
 						.and(WAREHOUSE.WORKPLACE.eq(workplaceId))
+						.and(WAREHOUSE.ACTIVE.eq((byte) 1))
 						.orderBy(WAREHOUSE.NAME)
 						.fetch();
 			}
@@ -916,6 +917,7 @@ public class DBStock {
 				.where(WAREHOUSE.DOMAIN.eq(domainId))
 				.and(USER_SCOPE.USER_ID.eq(userId))
 				.and(WAREHOUSE.WORKPLACE.eq(workplaceId))
+				.and(WAREHOUSE.ACTIVE.eq((byte) 1))
 				.orderBy(WAREHOUSE.NAME)
 				.fetch();
 			}

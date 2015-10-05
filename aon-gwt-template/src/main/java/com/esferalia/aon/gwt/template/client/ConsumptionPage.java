@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.template.client;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
@@ -148,27 +149,51 @@ public class ConsumptionPage extends Composite{
 		download(EXCEL);
 	}
 	
+	Integer indexAux;
 	private void hotelBoxClickHandler(){
 		hotelBox.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				Hotel h = null;
-				for (Hotel hotel : hotels) {
-					if(hotelBox.getSelectedValue().equals(hotel.getId().toString()))
-						h = hotel;	
+				Integer index = 0;
+				while(index < hotels.size() && !hotelBox.getSelectedValue().equals(hotels.get(index).getId().toString())){
+					index++;
 				}
-				
-				if(h != null){
-					warehouseCheckBox.setValue(map.get(h.getId().toString()));
-					while(warehouseBox.getItemCount()>0){
-						warehouseBox.removeItem(0);
-					}
+				if(index < hotels.size()){
+					Hotel hotel = hotels.get(index);
+					if(hotel.getWarehouses() == null || hotel.getWarehouses().isEmpty()){
+						indexAux = index;
+						item.getWarehousesToConsumption(domainId, hotel.getId(), new AsyncCallback<Vector<Warehouse>>() {
+							Integer index = indexAux;
+							@Override
+							public void onSuccess(Vector<Warehouse> result) {
+								Hotel hotel = hotels.get(index);
+								hotel.setWarehouses(result);
+								warehouseCheckBox.setValue(map.get(hotel.getId().toString()));
+								while(warehouseBox.getItemCount()>0){
+									warehouseBox.removeItem(0);
+								}	
+								for (Warehouse w : hotel.getWarehouses()) {
+									warehouseBox.addItem(w.getName(), w.getId().toString());
+									hwMap.remove(w.getId().toString());
+									hwMap.put(w.getId().toString(), hotelBox.getSelectedValue());
+								}
+							}
 						
-					for (Warehouse w : h.getWarehouses()) {
-						warehouseBox.addItem(w.getName(), w.getId().toString());
-						hwMap.remove(w.getId().toString());
-						hwMap.put(w.getId().toString(), hotelBox.getSelectedValue());
+							@Override
+							public void onFailure(Throwable caught) {}
+						});
+					}
+					else{
+						warehouseCheckBox.setValue(map.get(hotel.getId().toString()));
+						while(warehouseBox.getItemCount()>0){
+							warehouseBox.removeItem(0);
+						}	
+						for (Warehouse w : hotel.getWarehouses()) {
+							warehouseBox.addItem(w.getName(), w.getId().toString());
+							hwMap.remove(w.getId().toString());
+							hwMap.put(w.getId().toString(), hotelBox.getSelectedValue());
+						}
 					}
 				}
 			}

@@ -162,9 +162,9 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	public List<Hotel> getHotelsToConsumption(Integer domainId){
 		String domain = AonUtil.getDomainName();
 		Vector<Hotel> hotels= DBConsults.getHotels(domain, domainId, userId);
-		for (Hotel hotel : hotels) {
+		/*for (Hotel hotel : hotels) {
 			hotel.setWarehouses(getWarehousesToConsumption(domainId, hotel.getWorkplaceId()));
-		}
+		}*/
 		return hotels;
 	}
 	
