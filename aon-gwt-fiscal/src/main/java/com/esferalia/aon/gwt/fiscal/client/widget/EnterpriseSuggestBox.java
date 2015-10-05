@@ -2,11 +2,10 @@ package com.esferalia.aon.gwt.fiscal.client.widget;
 
 import java.util.ArrayList;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
-import com.esferalia.aon.gwt.common.client.css.AonResources;
-import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
@@ -30,8 +29,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class EnterpriseSuggestBox extends ResizeComposite implements
 		HasValue<String>, HasSelectionHandlers<Suggestion> {
 
-	private final AonResources aonResources = GWT.create(AonResources.class);
-
 	interface EnterpriseSuggestBoxBinder extends
 			UiBinder<Widget, EnterpriseSuggestBox> {
 	}
@@ -40,7 +37,7 @@ public class EnterpriseSuggestBox extends ResizeComposite implements
 			.create(EnterpriseSuggestBoxBinder.class);
 
 	private CommonServiceAsync commonService;
-	private final CommonMessages msg = GWT.create(CommonMessages.class);
+	
 
 	Integer enterpriseId;
 	Integer domainId;
@@ -66,7 +63,7 @@ public class EnterpriseSuggestBox extends ResizeComposite implements
 	}
 
 	public EnterpriseSuggestBox() {
-		aonResources.css().ensureInjected();
+		AON.ensureInjected();
 
 		// Create a remote service proxy to talk to the server-side Employees
 		// service.

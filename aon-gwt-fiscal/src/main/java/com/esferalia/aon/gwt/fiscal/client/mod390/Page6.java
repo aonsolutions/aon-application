@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390;
 
-import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
@@ -133,9 +132,6 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 	DoubleTextBox box83;
 	
 	public Page6() {
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		Model390.RESOURCES.css().ensureInjected();
-
 		Widget ui = page6Binder.createAndBindUi(this);
 		initWidget(ui);
 		box74.setEnabled(false);

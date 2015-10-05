@@ -1,9 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.mod140;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonDataGrid;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
-import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
@@ -76,8 +76,7 @@ public class Model140 extends MainEntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		AON_RESOURCES.css().ensureInjected();
+		AON.ensureInjected();
 
 		FiscalServiceAsync mod180ServiceRaw = GWT.create(FiscalService.class);
 		fiscalService = new FiscalServiceAsyncDecorator(mod180ServiceRaw);

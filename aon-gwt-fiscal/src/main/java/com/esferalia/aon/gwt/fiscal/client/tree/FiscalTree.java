@@ -125,8 +125,7 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 
 	@Override
 	public void onModuleLoad() {
-		AON.GWT_RESOURCES.css().ensureInjected();
-		AON.AON_RESOURCES.css().ensureInjected();
+		AON.ensureInjected();
 
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
 		FISCAL_SERVICE = new FiscalServiceAsyncDecorator(fiscalServiceRaw);

@@ -2,16 +2,13 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import java.util.ArrayList;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
-import com.esferalia.aon.gwt.common.client.css.AonResources;
-import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMessages;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
@@ -27,7 +24,6 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -78,11 +74,6 @@ public class Model390 extends MainEntryPoint {
 
 	private Mod390 mod390;
 	private FiscalServiceAsync fiscalService;
-	
-	protected final static CommonMessages MSG = GWT.create(CommonMessages.class);
-	protected final static AonResources RESOURCES = GWT.create(AonResources.class);
-	protected static final FiscalMessages FISCAL_MSG = GWT.create(FiscalMessages.class);
-	protected static final NumberFormat FMT = NumberFormat.getFormat( MSG.decimalPattern(), MSG.currencyCode());
 
 	private static final Integer DEFAULT_YEAR = 2014;
 	
@@ -237,8 +228,7 @@ public class Model390 extends MainEntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		RESOURCES.css().ensureInjected();
+		AON.ensureInjected();
 
 		// Create a remote service proxy to talk to the server-side Employees
 		// service.
@@ -260,7 +250,7 @@ public class Model390 extends MainEntryPoint {
 		model = new NoSelectionModel<Mod390>(MOD390_PROVIDES_KEY);
 		model.addSelectionChangeHandler(new Mod390SelectionHandler());
 		table.setSelectionModel(model);
-		table.setEmptyTableWidget(new HTML(MSG.noData()));
+		table.setEmptyTableWidget(new HTML(AON.MSG.noData()));
 
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = MODEL_390_BINDER.createAndBindUi(this);
@@ -321,7 +311,7 @@ public class Model390 extends MainEntryPoint {
 				return mod390.getEnterpriseName();
 			}
 		};
-		table.addColumn(nameColumn, MSG.name());
+		table.addColumn(nameColumn, AON.MSG.name());
 		table.setColumnWidth(nameColumn, 100, Unit.PCT);
 	}
 
@@ -332,7 +322,7 @@ public class Model390 extends MainEntryPoint {
 				return mod390.getDocument();
 			}
 		};
-		table.addColumn(documentColumn, MSG.document());
+		table.addColumn(documentColumn, AON.MSG.document());
 		table.setColumnWidth(documentColumn, 150, Unit.PX);
 	}
 
@@ -341,12 +331,12 @@ public class Model390 extends MainEntryPoint {
 				new ImageResourceCell()) {
 			@Override
 			public ImageResource getValue(Mod390 mod390) {
-				return mod390.isReplacement() ? RESOURCES.aonIconChecked()
-						: RESOURCES.aonIconCheck();
+				return mod390.isReplacement() ? AON.AON_RESOURCES.aonIconChecked()
+						: AON.AON_RESOURCES.aonIconCheck();
 			}
 		};
-		table.addColumn(replacementColumn, MSG.replacement());
-		replacementColumn.setCellStyleNames(RESOURCES.css()
+		table.addColumn(replacementColumn, AON.MSG.replacement());
+		replacementColumn.setCellStyleNames(AON.AON_RESOURCES.css()
 				.aonDataTableIconColumn());
 		table.setColumnWidth(replacementColumn, 100, Unit.PX);
 	}
@@ -358,8 +348,8 @@ public class Model390 extends MainEntryPoint {
 				return Integer.toString(mod390.getYear());
 			}
 		};
-		table.addColumn(yearColumn, MSG.fiscalYear());
-		yearColumn.setCellStyleNames(RESOURCES.css().aonTextCenter());
+		table.addColumn(yearColumn, AON.MSG.fiscalYear());
+		yearColumn.setCellStyleNames(AON.AON_CSS.aonTextCenter());
 		table.setColumnWidth(yearColumn, 100, Unit.PX);
 	}
 
@@ -368,7 +358,7 @@ public class Model390 extends MainEntryPoint {
 				new ImageResourceCell()) {
 			@Override
 			public ImageResource getValue(Mod390 mod390) {
-				return RESOURCES.aonIconRowSelector();
+				return AON.AON_RESOURCES.aonIconRowSelector();
 			}
 		};
 		table.addColumn(selectorColumn);
@@ -384,7 +374,7 @@ public class Model390 extends MainEntryPoint {
 				@Override
 				public void onSuccess(Mod390 selected) {
 					if (selected == null) {
-						DialogMessages.alertErrorWidget(MSG.unableToFindMod190());
+						DialogMessages.alertErrorWidget(AON.MSG.unableToFindMod190());
 					} else {
 						select(selected);
 						int i = deckPanel.getWidgetIndex(formPanel);
@@ -397,8 +387,7 @@ public class Model390 extends MainEntryPoint {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					DialogMessages.alertErrorWidget(MSG
-							.unableToReadMod190(caught.getMessage()));
+					DialogMessages.alertErrorWidget(AON.MSG.unableToReadMod190(caught.getMessage()));
 				}
 			});
 		}
@@ -460,7 +449,7 @@ public class Model390 extends MainEntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						DialogMessages.alertErrorWidget(MSG.unableToReadMod190(caught.getMessage()));
+						DialogMessages.alertErrorWidget(AON.MSG.unableToReadMod190(caught.getMessage()));
 					}
 				});
 	}
@@ -468,8 +457,8 @@ public class Model390 extends MainEntryPoint {
 	@UiHandler("saveButton")
 	void onAcceptButtonClick(ClickEvent event) {
 		final PopupPanel popup = new PopupPanel(false, true);
-		Label label = new Label(MSG.processing());
-		label.addStyleName(RESOURCES.css().aonTimer());
+		Label label = new Label(AON.MSG.processing());
+		label.addStyleName(AON.AON_CSS.aonTimer());
 		popup.add(label);
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
@@ -489,7 +478,7 @@ public class Model390 extends MainEntryPoint {
 						@Override
 						public void onFailure(Throwable caught) {
 							popup.hide();
-							addErrorMessage(MSG.unableToSaveMod190(caught.getMessage()));
+							addErrorMessage(AON.MSG.unableToSaveMod190(caught.getMessage()));
 						}
 					});
 		} catch (IllegalArgumentException e) {
@@ -500,7 +489,7 @@ public class Model390 extends MainEntryPoint {
 
 	@UiHandler("deleteButton")
 	void onDeleteButtonClick(ClickEvent event) {
-		if (Window.confirm(MSG.confirmDeleteAction())) {
+		if (Window.confirm(AON.MSG.confirmDeleteAction())) {
 			fiscalService.deleteMod390(getCurrentDomainName(),getCurrentDomain(),
 					this.mod390, new AsyncCallback<Void>() {
 				@Override
@@ -512,8 +501,7 @@ public class Model390 extends MainEntryPoint {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					DialogMessages.alertErrorWidget(MSG
-							.unableToDeleteMod190(caught.getMessage()));
+					DialogMessages.alertErrorWidget(AON.MSG.unableToDeleteMod190(caught.getMessage()));
 				}
 			});
 		}
@@ -526,7 +514,7 @@ public class Model390 extends MainEntryPoint {
 		try {
 			numYear = Integer.parseInt( year.getValue() );
 		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException(MSG.unableToParseYear());
+			throw new IllegalArgumentException(AON.MSG.unableToParseYear());
 		}
 		fiscalService.initializeMod390(getCurrentDomainName(),domain, numYear,
 				new AsyncCallback<Mod390>() {
@@ -543,8 +531,7 @@ public class Model390 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				DialogMessages.alertErrorWidget(MSG
-						.unableToReadFiscalParameters(caught
+				DialogMessages.alertErrorWidget(AON.MSG.unableToReadFiscalParameters(caught
 								.getMessage()));
 			}
 		});
@@ -570,7 +557,7 @@ public class Model390 extends MainEntryPoint {
 //			try {
 //				mod390.setYear(Integer.parseInt(year.getValue()));
 //			} catch (NumberFormatException e) {
-//				throw new IllegalArgumentException(MSG.unableToParseYear());
+//				throw new IllegalArgumentException(AON.MSG.unableToParseYear());
 //			}
 			onNewButtonClick(null);
 		};
@@ -580,7 +567,7 @@ public class Model390 extends MainEntryPoint {
 		try {
 			mod390.setYear(Integer.parseInt(year.getValue()));
 		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException(MSG.unableToParseYear());
+			throw new IllegalArgumentException(AON.MSG.unableToParseYear());
 		}
 		mod390.setDomain(domain);
 		mod390.setEnterprise(enterprise);
@@ -772,11 +759,11 @@ public class Model390 extends MainEntryPoint {
 	
 	private void validate(Mod390 m390) {
 		if (m390.getYear() != 2014) {
-			throw new IllegalArgumentException(MSG.requiredField(MSG.fiscalYear()));
+			throw new IllegalArgumentException(AON.MSG.requiredField(AON.MSG.fiscalYear()));
 		}
 		if (!m390.isLegalEntity()) {
 			if (AonStringUtils.isEmpty(m390.getDocument())) {
-				throw new IllegalArgumentException(MSG.requiredField(" Apart. 0: " + MSG.document()));
+				throw new IllegalArgumentException(AON.MSG.requiredField(" Apart. 0: " + AON.MSG.document()));
 			}
 			if (!AonDocumentUtil.isValid(m390.getDocument())) {
 				throw new IllegalArgumentException("El NIF/DNI no es correcto");

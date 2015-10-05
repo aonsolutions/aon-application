@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390;
 
-import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.google.gwt.core.client.GWT;
@@ -20,8 +19,6 @@ public class Page13 extends ResizeComposite implements RequiresResize {
 	Mod390CallBack callback;
 
 	public Page13() {
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-
 		Widget ui = page7Binder.createAndBindUi(this);
 		initWidget(ui);
 	}

@@ -6,14 +6,17 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonValidationUtil;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.HasAllFocusHandlers;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
@@ -21,10 +24,10 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -36,9 +39,11 @@ import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AccountBox extends ResizeComposite implements HasValue<String>, HasSelectionHandlers<Suggestion>{
+public class AccountBox extends ResizeComposite implements HasValue<String>
+	, HasDescription, Focusable, HasSelectionHandlers<Suggestion>, HasAllFocusHandlers {
 	
 	private static final int MIN_CHARACTERS = 3;
+	private static final int MAX_CHARACTERS = 8;
 	private static final String BEGIN_STRONG = "<strong>";
 	private static final String END_STRONG = "</strong>";
 
@@ -86,6 +91,7 @@ public class AccountBox extends ResizeComposite implements HasValue<String>, Has
 	            }
 	        }
 	    }
+	    
 	}
 	
 	public AccountBox(String domainName, int domain) {
@@ -103,7 +109,8 @@ public class AccountBox extends ResizeComposite implements HasValue<String>, Has
 		accountTextBox.setMaxLength(9);
 		description = new InlineLabel();
 		description.addStyleName(AON.AON_CSS.aonMarginLeft() );
-				
+		description.addStyleName(AON.AON_CSS.aonFontSmall());
+		
 		accountTextBox.addValueChangeHandler( new ValueChangeHandler<String>() {
 
 			@Override
@@ -117,9 +124,7 @@ public class AccountBox extends ResizeComposite implements HasValue<String>, Has
 						@Override
 						public void onSuccess(Account result) {
 							AccountSuggestion as = new AccountSuggestion(result, result.getCode(),result.getFullName());
-							if (Window.confirm("Lanzando evento")) {
-								SelectionEvent.fire(account, as );		
-							}
+							SelectionEvent.fire(account, as );		
 						}
 
 						@Override
@@ -179,9 +184,10 @@ public class AccountBox extends ResizeComposite implements HasValue<String>, Has
 		@Override
 		public void requestSuggestions(final Request request,final Callback callback) {
 			suggestionDisplay.hideSuggestions();
-			id = null;
-			description.setText(null);
-			if (AonStringUtils.length(request.getQuery()) >= MIN_CHARACTERS) {
+			if (AonStringUtils.length(request.getQuery()) >= MIN_CHARACTERS
+			 && AonStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
+				id = null;
+				description.setText(null);
 				commonService.getAccounts(AccountBox.this.domainName,AccountBox.this.domain,request.getQuery()
 						,new AsyncCallback<LinkedList<Account>>() {
 	
@@ -258,7 +264,11 @@ public class AccountBox extends ResizeComposite implements HasValue<String>, Has
 	@Override
 	public void setValue(String value) {
 		account.setValue(value);
-		if (value == null || value.length() == 0 || AonValidationUtil.isValidAccount(value)) {
+		if (AonStringUtils.isEmpty(value)) {
+			id = null;
+			description.setText(null);
+		}
+		if (AonStringUtils.isEmpty(value) || AonValidationUtil.isValidAccount(value)) {
 			accountTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );	
 		} else {
 			accountTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );	
@@ -269,5 +279,41 @@ public class AccountBox extends ResizeComposite implements HasValue<String>, Has
 	public void setValue(String value, boolean fireEvents) {
 		account.setValue(value,fireEvents);
 	}
+
+	@Override
+	public String getDescription() {
+		return description.getText();
+	}
+
+	@Override
+	public HandlerRegistration addBlurHandler(BlurHandler handler) {
+		return accountTextBox.addBlurHandler(handler);
+	}
+
+	@Override
+	public HandlerRegistration addFocusHandler(FocusHandler handler) {
+		return accountTextBox.addFocusHandler(handler);
+	}
+
+	@Override
+	public int getTabIndex() {
+		return accountTextBox.getTabIndex();
+	}
+
+	@Override
+	public void setAccessKey(char key) {
+		accountTextBox.setAccessKey(key);
+	}
+
+	@Override
+	public void setFocus(boolean focused) {
+		accountTextBox.setFocus(focused);
+	}
+
+	@Override
+	public void setTabIndex(int index) {
+		accountTextBox.setTabIndex(index);
+	}
+
 	
 }

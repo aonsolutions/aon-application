@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.widget;
 
-import com.esferalia.aon.gwt.common.client.css.AonResources;
-import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
@@ -15,8 +14,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SimplifiedRegimePanel extends ResizeComposite {
-
-	private final AonResources aonResources = GWT.create(AonResources.class);
 
 	interface SimplifiedRegimePanelBinder extends
 			UiBinder<Widget, SimplifiedRegimePanel> {
@@ -78,8 +75,7 @@ public class SimplifiedRegimePanel extends ResizeComposite {
 	
 	
 	public SimplifiedRegimePanel() {
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		aonResources.css().ensureInjected();
+		AON.ensureInjected();
 		
 		Widget ui = panelBinder.createAndBindUi(this);
 		initWidget(ui);

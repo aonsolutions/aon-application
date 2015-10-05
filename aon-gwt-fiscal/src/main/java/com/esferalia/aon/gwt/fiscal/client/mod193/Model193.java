@@ -2,12 +2,10 @@ package com.esferalia.aon.gwt.fiscal.client.mod193;
 
 import java.util.ArrayList;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonCellList;
 import com.esferalia.aon.gwt.common.client.css.AonDataGrid;
-import com.esferalia.aon.gwt.common.client.css.AonResources;
-import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
 import com.esferalia.aon.gwt.common.client.widget.AdministrationListBox;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
@@ -95,7 +93,7 @@ public class Model193 extends MainEntryPoint {
 			if (value.isDirty() || value.isDeleted()) {
 				sb.appendHtmlConstant("'>");
 			}
-			String newLabel = MSG.newPerceptor() + " ("
+			String newLabel = AON.MSG.newPerceptor() + " ("
 					+ (value.getId() * (-1)) + ")";
 			sb.appendEscaped(AonUtil.isEmpty(value.getName()) ? newLabel
 					: value.getName());
@@ -115,8 +113,7 @@ public class Model193 extends MainEntryPoint {
 
 	private Mod193 currentMod193;
 	private FiscalServiceAsync mod193Service;
-	protected final static CommonMessages MSG = GWT.create(CommonMessages.class);
-	protected final static AonResources AON_RESOURCES = GWT.create(AonResources.class);
+	
 	final static DataGrid.Resources DATA_GRID_STYLE = GWT.create(AonDataGrid.class);
 	
 	@UiField
@@ -196,8 +193,7 @@ public class Model193 extends MainEntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		AON_RESOURCES.css().ensureInjected();
+		AON.ensureInjected();
 
 		// Create a remote service proxy to talk to the server-side Employees
 		// service.
@@ -224,7 +220,7 @@ public class Model193 extends MainEntryPoint {
 			
 		});
 		detailList.setSelectionModel(detailModel);
-		detailList.setEmptyListWidget(new HTML(MSG.noData()));
+		detailList.setEmptyListWidget(new HTML(AON.MSG.noData()));
 		
 		dataProvider = new Mod193DetailDataProvider(MOD193_DETAIL_PROVIDES_KEY);
 		dataProvider.addDataDisplay(detailList);
@@ -281,7 +277,7 @@ public class Model193 extends MainEntryPoint {
 				@Override
 				public void onSuccess(Mod193 selected) {
 					if (selected == null) {
-						DialogMessages.alertErrorWidget(MSG.unableToFindMod193());
+						DialogMessages.alertErrorWidget(AON.MSG.unableToFindMod193());
 					} else {
 						select(selected);
 						int i = deckPanel.getWidgetIndex(formPanel);
@@ -294,7 +290,7 @@ public class Model193 extends MainEntryPoint {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					DialogMessages.alertErrorWidget(MSG.unableToReadMod193(caught
+					DialogMessages.alertErrorWidget(AON.MSG.unableToReadMod193(caught
 							.getMessage()));
 				}
 			});
@@ -357,7 +353,7 @@ public class Model193 extends MainEntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						DialogMessages.alertErrorWidget(MSG.unableToReadMod193(caught
+						DialogMessages.alertErrorWidget(AON.MSG.unableToReadMod193(caught
 								.getMessage()));
 					}
 				});
@@ -366,13 +362,13 @@ public class Model193 extends MainEntryPoint {
 	@UiHandler("saveButton")
 	void onAcceptButtonClick(ClickEvent event) {
 		if (AonUtil.isEmpty(year.getValue())) {
-			throw new IllegalArgumentException(MSG.requiredField(MSG
+			throw new IllegalArgumentException(AON.MSG.requiredField(AON.MSG
 					.fiscalYear()));
 		}
 
 		final PopupPanel popup = new PopupPanel(false, true);
-		Label label = new Label(MSG.processing());
-		label.addStyleName(AON_RESOURCES.css().aonTimer());
+		Label label = new Label(AON.MSG.processing());
+		label.addStyleName(AON.AON_CSS.aonTimer());
 		popup.add(label);
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
@@ -391,14 +387,14 @@ public class Model193 extends MainEntryPoint {
 					@Override
 					public void onFailure(Throwable caught) {
 						popup.hide();
-						showErrorMessage(MSG.unableToSaveMod193(caught.getMessage()));
+						showErrorMessage(AON.MSG.unableToSaveMod193(caught.getMessage()));
 					}
 				});
 	}
 
 	@UiHandler("deleteButton")
 	void onDeleteButtonClick(ClickEvent event) {
-		if (Window.confirm(MSG.confirmDeleteAction())) {
+		if (Window.confirm(AON.MSG.confirmDeleteAction())) {
 			mod193Service.deleteMod193(getCurrentDomainName(), getCurrentDomain()
 					,this.currentMod193, new AsyncCallback<Void>() {
 				@Override
@@ -410,7 +406,7 @@ public class Model193 extends MainEntryPoint {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					DialogMessages.alertErrorWidget(MSG.unableToDeleteMod193(caught
+					DialogMessages.alertErrorWidget(AON.MSG.unableToDeleteMod193(caught
 							.getMessage()));
 				}
 			});
@@ -432,7 +428,7 @@ public class Model193 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				DialogMessages.alertErrorWidget(MSG
+				DialogMessages.alertErrorWidget(AON.MSG
 						.unableToReadFiscalParameters(caught
 								.getMessage()));
 			}
@@ -479,7 +475,7 @@ public class Model193 extends MainEntryPoint {
 		try {
 			currentMod193.setYear(Integer.parseInt(year.getValue()));
 		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException(MSG.unableToParseYear());
+			throw new IllegalArgumentException(AON.MSG.unableToParseYear());
 		}
 		currentMod193.setDomain(domain);
 		currentMod193.setEnterprise(enterprise);

@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.mod190;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerTextBox;
@@ -381,8 +382,7 @@ public class Model190Detail2014 extends ResizeComposite {
 			detail.setAccrualYear(accrualYear.getIntValue());
 			detail.setDirty(true);
 		} catch (NumberFormatException e) {
-			accrualYear.addStyleName(Model190.AON_RESOURCES.css()
-					.aonTextBoxError());
+			accrualYear.addStyleName(AON.AON_CSS.aonTextBoxError());
 		}
 	}
 

@@ -11,9 +11,6 @@ import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
-import com.esferalia.aon.gwt.common.client.css.AonResources;
-import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMessages;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.D2DepositTreeObject;
@@ -57,9 +54,6 @@ public class NormalizedMemory extends ResizeComposite {
 
 	private NormalizedMemory normalizedMemory;
 	private FiscalServiceAsync fiscalService;
-	private final static FiscalMessages MSG = GWT.create(FiscalMessages.class);
-	private final static AonResources RESOURCES = GWT.create(AonResources.class);
-
 
 	private D2Deposit2014 d2Deposit2014;
 	
@@ -129,10 +123,8 @@ public class NormalizedMemory extends ResizeComposite {
 	 * @param ft
 	 */
 	public NormalizedMemory(DigitalDepositTreeNode ddtn, FiscalTree ft) {
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
-
-		RESOURCES.css().ensureInjected();
+		AON.ensureInjected();
 		depositType = new Label();
 		saveButton = new Button();
 		importButton = new Button();
@@ -190,10 +182,8 @@ public class NormalizedMemory extends ResizeComposite {
 	 * @param mt
 	 */
 	public NormalizedMemory(Enterprise enterprise,MemoryTemplate mt, DigitalDepositFreeTextTreeNode ddtn) {
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
-
-		RESOURCES.css().ensureInjected();
+		AON.ensureInjected();
 		depositType = new Label();
 		saveButton = new Button();
 		newButton = new Button();	
@@ -242,10 +232,8 @@ public class NormalizedMemory extends ResizeComposite {
 	 * @param e
 	 */
 	public NormalizedMemory(Boolean type, DigitalDepositTreeNode ddtn, FiscalTree ft) {
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
-		
-		RESOURCES.css().ensureInjected();
+		AON.ensureInjected();
 		depositType = new Label();
 		newButton = new Button();
 		importButton = new Button();
@@ -284,10 +272,8 @@ public class NormalizedMemory extends ResizeComposite {
 	 * @param e
 	 */
 	public NormalizedMemory(Boolean type, DigitalDepositFreeTextTreeNode ddtn, Enterprise e) {
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
-
-		RESOURCES.css().ensureInjected();
+		AON.ensureInjected();
 		depositType = new Label();
 		newButton = new Button();
 		importButton = new Button();

@@ -72,7 +72,7 @@ public class EpigraphSelectionPanel extends CustomDialog {
 		setModal(true);
 		setCaption(AON.MSG.activitySelection());
 
-		AON.AON_CSS.ensureInjected();
+		AON.ensureInjected();
 		CellTable.Resources tableStyle = GWT.create(AonCellTable.class);
 
 		table = new CellTable<Epigraph>(1, tableStyle, EPIGRAPH_PROVIDES_KEY);

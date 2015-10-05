@@ -1,8 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.mod180;
 
-import static com.esferalia.aon.gwt.fiscal.client.mod180.Model180.AON_RESOURCES;
-import static com.esferalia.aon.gwt.fiscal.client.mod180.Model180.MSG;
-
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.google.gwt.cell.client.ImageResourceCell;
@@ -44,7 +42,7 @@ public class Model180Table extends CellTable<Mod180> {
 		model = new NoSelectionModel<Mod180>(MOD180_PROVIDES_KEY);
 		model.addSelectionChangeHandler( handler );
 		this.setSelectionModel(model);
-		this.setEmptyTableWidget(new HTML(MSG.noData()));
+		this.setEmptyTableWidget(new HTML(AON.MSG.noData()));
 	}
 
 	private void addSelectorColumn() {
@@ -52,7 +50,7 @@ public class Model180Table extends CellTable<Mod180> {
 				new ImageResourceCell()) {
 			@Override
 			public ImageResource getValue(Mod180 mod180) {
-				return AON_RESOURCES.aonIconRowSelector();
+				return AON.AON_RESOURCES.aonIconRowSelector();
 			}
 		};
 		this.addColumn(selectorColumn);
@@ -66,8 +64,8 @@ public class Model180Table extends CellTable<Mod180> {
 				return Integer.toString(mod180.getYear());
 			}
 		};
-		this.addColumn(yearColumn, MSG.fiscalYear());
-		yearColumn.setCellStyleNames(AON_RESOURCES.css().aonTextCenter());
+		this.addColumn(yearColumn, AON.MSG.fiscalYear());
+		yearColumn.setCellStyleNames(AON.AON_CSS.aonTextCenter());
 		this.setColumnWidth(yearColumn, 100, Unit.PX);
 	}
 	
@@ -76,13 +74,12 @@ public class Model180Table extends CellTable<Mod180> {
 				new ImageResourceCell()) {
 			@Override
 			public ImageResource getValue(Mod180 mod180) {
-				return mod180.isReplacement() ? AON_RESOURCES.aonIconChecked()
-						: AON_RESOURCES.aonIconCheck();
+				return mod180.isReplacement() ? AON.AON_RESOURCES.aonIconChecked()
+						: AON.AON_RESOURCES.aonIconCheck();
 			}
 		};
-		this.addColumn(replacementColumn, MSG.replacement());
-		replacementColumn.setCellStyleNames(AON_RESOURCES.css()
-				.aonDataTableIconColumn());
+		this.addColumn(replacementColumn, AON.MSG.replacement());
+		replacementColumn.setCellStyleNames(AON.AON_CSS.aonDataTableIconColumn());
 		this.setColumnWidth(replacementColumn, 100, Unit.PX);
 	}
 
@@ -93,7 +90,7 @@ public class Model180Table extends CellTable<Mod180> {
 				return mod180.getName();
 			}
 		};
-		this.addColumn(nameColumn, MSG.name());
+		this.addColumn(nameColumn, AON.MSG.name());
 		this.setColumnWidth(nameColumn, 100, Unit.PCT);
 	}
 
@@ -104,7 +101,7 @@ public class Model180Table extends CellTable<Mod180> {
 				return mod180.getDocument();
 			}
 		};
-		this.addColumn(documentColumn, MSG.document());
+		this.addColumn(documentColumn, AON.MSG.document());
 		this.setColumnWidth(documentColumn, 150, Unit.PX);
 	}
 

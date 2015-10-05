@@ -2,12 +2,11 @@ package com.esferalia.aon.gwt.fiscal.client.widget;
 
 import java.util.ArrayList;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
-import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMessages;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
@@ -64,8 +63,6 @@ public class ActivityPanel extends CustomDialog {
 			.create(ActivityPanelBinder.class);
 
 	private FiscalServiceAsync fiscalService;
-	private final CommonMessages MSG = GWT.create(CommonMessages.class);
-	private final FiscalMessages FISCAL_MSG = GWT.create(FiscalMessages.class);
 	
 	private SelectionCallBack callback;
 
@@ -80,9 +77,6 @@ public class ActivityPanel extends CustomDialog {
 	Panel tablePanel;
 	@UiField(provided = true)
 	CellTable<Activity> table;
-
-//	HTML close = new HTML("[X]");
-//	HTML title = new HTML(MSG.activitySelection());
 
 	private Activity selected;
 
@@ -103,7 +97,7 @@ public class ActivityPanel extends CustomDialog {
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
 		setModal(true);
-		setCaption(MSG.activitySelection());
+		setCaption(AON.MSG.activitySelection());
 
 		AON_RESOURCES.css().ensureInjected();
 		CellTable.Resources tableStyle = GWT.create(AonCellTable.class);
@@ -119,7 +113,7 @@ public class ActivityPanel extends CustomDialog {
 		model = new NoSelectionModel<Activity>(ACTIVITY_PROVIDES_KEY);
 		model.addSelectionChangeHandler(new ActivitySelectionHandler());
 		table.setSelectionModel(model);
-		table.setEmptyTableWidget(new HTML(MSG.noData()));
+		table.setEmptyTableWidget(new HTML(AON.MSG.noData()));
 
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
 		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
@@ -129,7 +123,7 @@ public class ActivityPanel extends CustomDialog {
 
 		activityGroup.addItem("-------------", new String());
 		for (ActivityGroup ag : ActivityGroup.values()) {
-			activityGroup.addItem(FISCAL_MSG.activityGroup(ag));
+			activityGroup.addItem(AON.MSG.activityGroup(ag));
 		}
 		descriptionPanel.setVisible(false);
 	}
@@ -189,7 +183,7 @@ public class ActivityPanel extends CustomDialog {
 				return activity.getEpigraph();
 			}
 		};
-		table.addColumn(epigraphColumn, MSG.epigraph());
+		table.addColumn(epigraphColumn, AON.MSG.epigraph());
 		epigraphColumn.setCellStyleNames(AON_RESOURCES.css().aonTextCenter());
 		table.setColumnWidth(epigraphColumn, 100, Unit.PX);
 	}
@@ -201,7 +195,7 @@ public class ActivityPanel extends CustomDialog {
 				return activity.getDescription();
 			}
 		};
-		table.addColumn(descriptionColumn, MSG.fiscalYear());
+		table.addColumn(descriptionColumn, AON.MSG.fiscalYear());
 		descriptionColumn.setCellStyleNames(AON_RESOURCES.css().aonTextLeft());
 		table.setColumnWidth(descriptionColumn, 90, Unit.PCT);
 	}
@@ -235,8 +229,8 @@ public class ActivityPanel extends CustomDialog {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							DialogMessages.alertErrorWidget(MSG
-									.unableToReadMod190(caught.getMessage()));
+							DialogMessages.alertErrorWidget(AON.MSG
+								.unableToReadMod190(caught.getMessage()));
 						}
 					});
 		} else {

@@ -12,20 +12,20 @@
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" styleName="{aonResources.css.aonSelector}">
 		<g:north size="26">
 			<g:FlowPanel height="100%"
-				styleName="aon-finding-title-toolbar aon-width-all">
+				styleName="{aonResources.css.aonFindingTitleToolbar} {aonResources.css.aonWidthAll}">
 				<g:HorizontalPanel>
-					<g:HTMLPanel styleName="aon-finding-title">
-						<g:HTMLPanel styleName="aon-finding-title-internal">
-							<g:Label styleName="aon-outputText" text="{msg.accountEntries}" />
+					<g:HTMLPanel styleName="{aonResources.css.aonFindingTitle}">
+						<g:HTMLPanel styleName="{aonResources.css.aonFindingTitleInternal}">
+							<g:Label text="{msg.accountEntries}" />
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="aon-finding-subtitle">
-						<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-							<g:Label styleName="aon-outputText"></g:Label>
+						<g:HTMLPanel styleName="{aonResources.css.aonFindingSubtitleIternal}">
+							<g:Label></g:Label>
 						</g:HTMLPanel>
 					</g:HTMLPanel>
-					<g:HTMLPanel styleName="aon-finding-toolbar">
-						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+					<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbar}">
+						<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbarItemGroup}">
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 				</g:HorizontalPanel>
@@ -33,17 +33,34 @@
 		</g:north>
 		
 		<g:center>
-			<g:HTMLPanel styleName="aon-scroll-area">
-				<table class="aon-panelGrid aon-width-all">
+			<g:HTMLPanel styleName="{aonResources.css.aonScrollArea}">
+			
+				<aon:DateBoxEx ui:field="entryDate" styleName="{aonResources.css.aonInputText}"/>
+				<hr/>
+				<cell:CellTable ui:field="detailTable"/>
+				<hr/>
+				<table class="{aonResources.css.aonPanelGrid} {aonResources.css.aonWidthAll}">
 					<tr>
-						<td class="aon-panelGrid-odd aon-width-200">
-							<g:InlineLabel text="{msg.account}" />
+						<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonWidthAuto}">
+							<aon:AccountBox ui:field="account" />
 						</td>
-						<td class="aon-panelGrid-even aon-width-auto">
-							<aon:AccountBox ui:field="account"/>
+						<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonWidth200}">
+							<g:TextBox ui:field="concept"
+								maxLength="32" visibleLength="32" 
+								styleName="{aonResources.css.aonInputText}"/>
+						</td>
+						<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonWidth150}">
+							<aon:DoubleBox ui:field="debit"/>
+						</td>
+						<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonWidth150}">
+							<aon:DoubleBox ui:field="credit"/>
+						</td>
+						<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonWidth200}">
+							<aon:AccountBox ui:field="balAccount"/>
 						</td>
 					</tr>
 				</table>
+				<hr/>
 			</g:HTMLPanel>
 		</g:center>
 		

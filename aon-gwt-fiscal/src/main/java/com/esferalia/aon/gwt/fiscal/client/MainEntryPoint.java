@@ -12,6 +12,8 @@ import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
 import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
+import com.google.gwt.user.client.Window;
 
 public class MainEntryPoint implements EntryPoint {
 
@@ -28,7 +30,6 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String FS_MOD184_ENTRY_POINT = "Model184";
 	private static final String FS_MOD390_ENTRY_POINT = "Model390";
 	private static final String FS_MOD200_ENTRY_POINT = "Model200";
-	private static final String FS_MEMORY_ENTRY_POINT = "NormalizedMemory";
 	
 	//	
 	//    ================================================================== FINANCE
@@ -45,38 +46,155 @@ public class MainEntryPoint implements EntryPoint {
 	public void onModuleLoad() {
 		String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);
 		if ( entryPoint.equalsIgnoreCase(FS_FISCAL_PANEL)) {
-			FiscalTree panel = new FiscalTree();
-			panel.onModuleLoad();
+			GWT.runAsync(FiscalTree.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					FiscalTree panel = new FiscalTree();
+					panel.onModuleLoad();
+				}
+				
+			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_MOD140_ENTRY_POINT)) {
-			Model140 model140 = new Model140();
-			model140.onModuleLoad();
+			GWT.runAsync(Model140.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					Model140 model140 = new Model140();
+					model140.onModuleLoad();
+				}
+				
+			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_MOD190_ENTRY_POINT)) {
-			Model190 model190 = new Model190();
-			model190.onModuleLoad();
+			GWT.runAsync(Model190.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					Model190 model190 = new Model190();
+					model190.onModuleLoad();
+				}
+				
+			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_MOD193_ENTRY_POINT)) {
-			Model193 model193 = new Model193();
-			model193.onModuleLoad();
+			GWT.runAsync(Model193.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					Model193 model193 = new Model193();
+					model193.onModuleLoad();
+				}
+				
+			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_MOD180_ENTRY_POINT)) {
-			Model180 model180 = new Model180();
-			model180.onModuleLoad();
+			GWT.runAsync(Model180.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					Model180 model180 = new Model180();
+					model180.onModuleLoad();
+				}
+				
+			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_MOD184_ENTRY_POINT)) {
-			Model184 model184 = new Model184();
-			model184.onModuleLoad();
+			GWT.runAsync(Model184.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					Model184 model184 = new Model184();
+					model184.onModuleLoad();
+				}
+				
+			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_MOD390_ENTRY_POINT)) {
-			Model390 model390 = new Model390();
-			model390.onModuleLoad();
-		} else if ( entryPoint.equalsIgnoreCase(FS_MEMORY_ENTRY_POINT)) {
-			//NormalizedMemory memory = new NormalizedMemory();
-			//memory.onModuleLoad();
+			GWT.runAsync(Model390.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					Model390 model390 = new Model390();
+					model390.onModuleLoad();
+				}
+				
+			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_INVOICE_REPORT_ENTRY_POINT)) {
-			InvoiceReport invoiceReport = new InvoiceReport();
-			invoiceReport.onModuleLoad();
+			GWT.runAsync(InvoiceReport.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					InvoiceReport invoiceReport = new InvoiceReport();
+					invoiceReport.onModuleLoad();
+				}
+				
+			});
 		} else if ( entryPoint.equalsIgnoreCase(ACC_ACCOUNT_ENTRY_ENTRY_POINT)) {
-			AccountEntryModule accountEntryModule = new AccountEntryModule();
-			accountEntryModule.onModuleLoad();
+			GWT.runAsync(AccountEntryModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					AccountEntryModule accountEntryModule = new AccountEntryModule();
+					accountEntryModule.onModuleLoad();
+				}
+				
+			});
 		} else if ( entryPoint.equalsIgnoreCase(ACC_SALARY_ENTRY_ENTRY_POINT)) {
-			SalaryEntryModule salaryEntryModule = new SalaryEntryModule();
-			salaryEntryModule.onModuleLoad();
+			GWT.runAsync(SalaryEntryModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					SalaryEntryModule salaryEntryModule = new SalaryEntryModule();
+					salaryEntryModule.onModuleLoad();
+				}
+				
+			});
 		}
 
 	}

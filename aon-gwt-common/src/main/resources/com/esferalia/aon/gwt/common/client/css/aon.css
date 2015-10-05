@@ -925,7 +925,7 @@ input:disabled + label{
 	background-color: transparent;
 	height: 25px;
 	padding:0 1em;
-	width: auto;
+	width: 100%;
 }
 .aon-finding-toolbar-item-group{
 	padding: 3px 0;

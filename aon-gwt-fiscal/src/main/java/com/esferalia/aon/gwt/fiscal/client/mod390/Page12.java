@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390;
 
-import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CnaePanel;
 import com.esferalia.aon.gwt.common.client.widget.cell.SizableTextInputCell;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
@@ -102,14 +102,11 @@ public class Page12 extends ResizeComposite implements RequiresResize {
 	Button newProrrata;
 	
 	public Page12() {
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		
 		CellTable.Resources tableStyle = GWT.create(ModCellTable.class);
-		
 		table = new CellTable<Prorrata>(50,tableStyle);
 		table.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
 		table.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
-		table.setEmptyTableWidget(new HTML(Model390.MSG.noData()));
+		table.setEmptyTableWidget(new HTML(AON.MSG.noData()));
 		dataProvider = new ListDataProvider<Prorrata>();
 		dataProvider.addDataDisplay(table);
 		addCnaePanelColumn();
@@ -137,7 +134,7 @@ public class Page12 extends ResizeComposite implements RequiresResize {
 		};
 		Column<Prorrata,String> col = new Column<Prorrata,String>(removeButton) {
 		  public String getValue(Prorrata object) {
-		    return Model390.MSG.deleteAction();
+		    return AON.MSG.deleteAction();
 		  }
 		};
 		col.setFieldUpdater(new FieldUpdater<Prorrata, String>() {
@@ -159,7 +156,7 @@ public class Page12 extends ResizeComposite implements RequiresResize {
 		});		
 		table.addColumn(col);
 		table.setColumnWidth(col, 20, Unit.PX);
-		col.setCellStyleNames(Model390.RESOURCES.css().aonTextCenter());
+		col.setCellStyleNames(AON.AON_CSS.aonTextCenter());
 	}
 
 	private void addCnaeColumn() {
@@ -177,7 +174,7 @@ public class Page12 extends ResizeComposite implements RequiresResize {
 		    }
 		});		
 		table.addColumn(col, "C.N.A.E.");
-		col.setCellStyleNames(Model390.RESOURCES.css().aonTextLeft());
+		col.setCellStyleNames(AON.AON_CSS.aonTextLeft());
 	}
 
 	private void addActivityColumn() {
@@ -194,8 +191,8 @@ public class Page12 extends ResizeComposite implements RequiresResize {
 		    	dataProvider.getList().get(index).setActivity(value);
 		    }
 		});		
-		table.addColumn(col, Model390.MSG.activityDescription());
-		col.setCellStyleNames(Model390.RESOURCES.css().aonTextLeft());
+		table.addColumn(col, AON.MSG.activityDescription());
+		col.setCellStyleNames(AON.AON_CSS.aonTextLeft());
 	}
 
 	private void addTypeColumn() {
@@ -212,8 +209,8 @@ public class Page12 extends ResizeComposite implements RequiresResize {
 		    	dataProvider.getList().get(index).setType(value);
 		    }
 		});		
-		table.addColumn(col, Model390.MSG.type() + " E/G");
-		col.setCellStyleNames(Model390.RESOURCES.css().aonTextLeft());
+		table.addColumn(col, AON.MSG.type() + " E/G");
+		col.setCellStyleNames(AON.AON_CSS.aonTextLeft());
 	}
 
 
@@ -236,8 +233,8 @@ public class Page12 extends ResizeComposite implements RequiresResize {
 		    	dataProvider.getList().get(index).setAmount(val);
 		    }
 		});		
-		table.addColumn(col, Model390.MSG.operationsAmount());
-		col.setCellStyleNames(Model390.RESOURCES.css().aonTextRight());
+		table.addColumn(col, AON.MSG.operationsAmount());
+		col.setCellStyleNames(AON.AON_CSS.aonTextRight());
 	}
 
 	private void addAmountWithRightColumn() {
@@ -259,8 +256,8 @@ public class Page12 extends ResizeComposite implements RequiresResize {
 		    	dataProvider.getList().get(index).setAmountWithRight(val);
 		    }
 		});		
-		table.addColumn(col, Model390.MSG.operationsAmountWithRight());
-		col.setCellStyleNames(Model390.RESOURCES.css().aonTextRight());
+		table.addColumn(col, AON.MSG.operationsAmountWithRight());
+		col.setCellStyleNames(AON.AON_CSS.aonTextRight());
 	}
 	
 	private void addPercentColumn() {
@@ -282,8 +279,8 @@ public class Page12 extends ResizeComposite implements RequiresResize {
 		    	dataProvider.getList().get(index).setPercent(val);
 		    }
 		});		
-		table.addColumn(col, Model390.MSG.percent());
-		col.setCellStyleNames(Model390.RESOURCES.css().aonTextRight());
+		table.addColumn(col, AON.MSG.percent());
+		col.setCellStyleNames(AON.AON_CSS.aonTextRight());
 	}
 
 	private void addRemoveColumn() {
@@ -298,12 +295,12 @@ public class Page12 extends ResizeComposite implements RequiresResize {
 		};
 		Column<Prorrata,String> col = new Column<Prorrata,String>(removeButton) {
 		  public String getValue(Prorrata object) {
-		    return Model390.MSG.deleteAction();
+		    return AON.MSG.deleteAction();
 		  }
 		};
 		col.setFieldUpdater(new FieldUpdater<Prorrata, String>() {
 		    public void update(int index, Prorrata lr, String value) {
-		    	if (Window.confirm(Model390.MSG.confirmDeleteAction())) {
+		    	if (Window.confirm(AON.MSG.confirmDeleteAction())) {
 		    		dataProvider.getList().remove(index);
 		    		table.redraw();
 		    	}
@@ -311,7 +308,7 @@ public class Page12 extends ResizeComposite implements RequiresResize {
 		});		
 		table.addColumn(col);
 		table.setColumnWidth(col, 20, Unit.PX);
-		col.setCellStyleNames(Model390.RESOURCES.css().aonTextCenter());
+		col.setCellStyleNames(AON.AON_CSS.aonTextCenter());
 	}
 
 	@UiHandler("newProrrata")

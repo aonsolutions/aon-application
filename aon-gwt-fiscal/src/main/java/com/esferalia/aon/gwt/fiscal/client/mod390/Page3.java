@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390;
 
-import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
@@ -111,11 +110,7 @@ public class Page3 extends ResizeComposite {
 
 	
 	public Page3() {
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		Model390.RESOURCES.css().ensureInjected();
-		
 		activityPanel = new ActivityPanel();
-		
 		Widget ui = page3Binder.createAndBindUi(this);
 		initWidget(ui);
 	}

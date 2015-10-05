@@ -9,7 +9,6 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
@@ -93,8 +92,8 @@ public class SalaryEntryModule extends MainEntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		AON.AON_CSS.ensureInjected();
+		AON.ensureInjected();
+		
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
 		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);

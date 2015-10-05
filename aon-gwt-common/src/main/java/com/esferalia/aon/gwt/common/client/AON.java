@@ -27,11 +27,7 @@ public class AON {
 	public static final AonResources AON_RESOURCES = GWT.create(AonResources.class);
 	public static final AonCSS AON_CSS = GWT.<AonResources> create(AonResources.class).css();
 	public static final GWTResources GWT_RESOURCES = GWT.create(GWTResources.class);
-
-	public static final NumberFormat FMT = NumberFormat.getFormat(MSG.decimalPattern(),MSG.currencyCode());
-	
-	public static AonCalendarCSS Calendar_CSS = GWT.<AonCalendarResources> create(
-			AonCalendarResources.class).calendar();
+	public static AonCalendarCSS Calendar_CSS = GWT.<AonCalendarResources> create(AonCalendarResources.class).calendar();
 	
 	public static void start() {
 		show(CONNECTION_STATUS_START);
@@ -63,6 +59,7 @@ public class AON {
 
 	public static String format(Double d) {
 		return d == null ? null : CURRENCY_FORMAT.format(d);
+		
 	}
 
 	public static final String AON_DATA_TABLE_ROW_EVEN = "aon-dataTable-row-even";
@@ -162,23 +159,24 @@ public class AON {
 	public static final String AON_CALENDAR_MyHOLIDAY_3 = Calendar_CSS.myHoliday_3();
 	public static final String AON_CALENDAR_MyHOLIDAY_4 = Calendar_CSS.myHoliday_4();
 	
-
 	public static final String AON_ICON_ISSUE_CLOSED = "aon-icon-issue-closed";
 	public static final String AON_ICON_ISSUE_OPENED = "aon-icon-issue-opened";
-	
 	public static final String AON_ICON_CALENDAR = "aon-icon-calendar";
 	public static final String AON_ICON_COST = "aon-icon-cost";
-
-	public static final NumberFormat CURRENCY_FORMAT = NumberFormat
-			.getFormat("#,##0.00");
-	public static final DateTimeFormat MONTH_FORMAT = DateTimeFormat
-			.getFormat(PredefinedFormat.YEAR_MONTH_NUM);
-	public static final DateTimeFormat DATE_FORMAT = DateTimeFormat
-			.getFormat("dd/MM/yyyy");
 	public static final String AON_NOWRAP = "aon-nowrap";
+
+	public static final NumberFormat FMT = NumberFormat.getFormat(MSG.decimalPattern(),MSG.currencyCode());
+	public static final NumberFormat CURRENCY_FORMAT = NumberFormat.getFormat("#,##0.00");
+	public static final DateTimeFormat MONTH_FORMAT = DateTimeFormat.getFormat(PredefinedFormat.YEAR_MONTH_NUM);
+	public static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat("dd/MM/yyyy");
 
 	public static double round(Double number) {
 		return (double) Math.round(number * 1000.00) / 1000.00;
+	}
+
+	public static void ensureInjected() {
+		GWT_RESOURCES.css().ensureInjected();
+		AON_CSS.ensureInjected();
 	}
 
 

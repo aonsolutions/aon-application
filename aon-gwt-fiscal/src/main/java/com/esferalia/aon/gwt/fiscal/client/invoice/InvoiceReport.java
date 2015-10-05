@@ -2,11 +2,8 @@ package com.esferalia.aon.gwt.fiscal.client.invoice;
 
 import java.util.Date;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.css.AonDataGrid;
-import com.esferalia.aon.gwt.common.client.css.AonResources;
-import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
@@ -23,7 +20,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -40,10 +36,6 @@ import com.google.gwt.user.datepicker.client.CalendarUtil;
 public class InvoiceReport extends MainEntryPoint {
 
 	static FiscalServiceAsync fiscalService;
-	
-	final static CommonMessages MSG = GWT.create(CommonMessages.class);
-	final static AonResources AON_RESOURCES = GWT.create(AonResources.class);
-	final static DataGrid.Resources DATA_GRID_STYLE = GWT.create(AonDataGrid.class);
 	
 	interface InvoiceReportBinder extends UiBinder<Widget, InvoiceReport> {
 	}
@@ -105,20 +97,19 @@ public class InvoiceReport extends MainEntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		AON_RESOURCES.css().ensureInjected();
+		AON.ensureInjected();
 
 		FiscalServiceAsync mod180ServiceRaw = GWT.create(FiscalService.class);
 		fiscalService = new FiscalServiceAsyncDecorator(mod180ServiceRaw);
 
 		Widget ui = INVOICE_REPORT_BINDER.createAndBindUi(this);
 		
-		entity.addItem( MSG.invoices() );
-		entity.addItem( MSG.offers() );
-		entity.addItem( MSG.purchaseOrders() );
-		entity.addItem( MSG.saleOrders() );
-		entity.addItem( MSG.incomes() );
-		entity.addItem( MSG.deliveries() );
+		entity.addItem( AON.MSG.invoices() );
+		entity.addItem( AON.MSG.offers() );
+		entity.addItem( AON.MSG.purchaseOrders() );
+		entity.addItem( AON.MSG.saleOrders() );
+		entity.addItem( AON.MSG.incomes() );
+		entity.addItem( AON.MSG.deliveries() );
 		
 		entity.setSelectedIndex(0);
 		onChangeEntity(null);

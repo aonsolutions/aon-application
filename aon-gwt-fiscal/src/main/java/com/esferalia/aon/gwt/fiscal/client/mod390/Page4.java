@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import java.util.Date;
 
-import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
@@ -82,9 +81,6 @@ public class Page4 extends ResizeComposite {
 	TextBox notary3;
 
 	public Page4() {
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		Model390.RESOURCES.css().ensureInjected();
-		
 		Widget ui = page4Binder.createAndBindUi(this);
 		initWidget(ui);
 

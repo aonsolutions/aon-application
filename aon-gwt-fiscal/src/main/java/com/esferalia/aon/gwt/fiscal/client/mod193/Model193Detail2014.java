@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod193;
 
 import java.util.Date;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
@@ -288,7 +289,7 @@ public class Model193Detail2014 extends ResizeComposite {
 			detail.setAccrualYear(accrualYear.getIntValue());
 			detail.setDirty(true);
 		} catch (NumberFormatException e) {
-			accrualYear.addStyleName(Model193.AON_RESOURCES.css()
+			accrualYear.addStyleName(AON.AON_RESOURCES.css()
 					.aonTextBoxError());
 		}
 	}

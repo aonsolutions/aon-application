@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.mod180;
 
-import static com.esferalia.aon.gwt.fiscal.client.mod180.Model180.MSG;
-
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerTextBox;
@@ -101,10 +100,10 @@ public class Model180Detail2014 extends ResizeComposite {
 	public Model180Detail2014() {
 		Widget ui = MODEL180_DETAIL_2014_BINDER.createAndBindUi(this);
 		initWidget(ui);
-		location.addItem( MSG.buildingLocationValue(0) );
-		location.addItem( MSG.buildingLocationValue(1) );	
-		location.addItem( MSG.buildingLocationValue(2) );
-		location.addItem( MSG.buildingLocationValue(3) );
+		location.addItem( AON.MSG.buildingLocationValue(0) );
+		location.addItem( AON.MSG.buildingLocationValue(1) );	
+		location.addItem( AON.MSG.buildingLocationValue(2) );
+		location.addItem( AON.MSG.buildingLocationValue(3) );
 	}
 
 	public void setCallback(ICallBack callback) {
