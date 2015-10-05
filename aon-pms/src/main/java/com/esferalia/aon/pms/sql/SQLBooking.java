@@ -43,6 +43,7 @@ public class SQLBooking implements ISQLConstants {
 			" LEFT JOIN asset_activity AS AA ON AA.id = PRRD.asset_activity" +
 			" LEFT JOIN room AS R ON R.asset = AA.asset" +
 			" WHERE PR.project = ?" +
+			" AND (PR.early_check_out = 0 OR PR.start_date < DATE(PR.end_time))" + 
 			" ORDER BY " + RESERVATION + "," + RESERVATION_ROOM + "," + START_DATE;
 
 	public static String SELECT_RESERVATION_ROOM_BOOKING =
@@ -56,6 +57,7 @@ public class SQLBooking implements ISQLConstants {
 			" LEFT JOIN asset_activity AS AA ON AA.id = PRRD.asset_activity" +
 			" LEFT JOIN room AS R ON R.asset = AA.asset" +
 			" WHERE PRR.id = ?" +
+			" AND (PR.early_check_out = 0 OR PR.start_date < DATE(PR.end_time))" + 
 			" ORDER BY " + RESERVATION + "," + RESERVATION_ROOM + "," + START_DATE;
 
 	public static String REGENERATE_CLEAN_BOOKING =
@@ -81,6 +83,7 @@ public class SQLBooking implements ISQLConstants {
 			" AND PR.check_status <> " + ReservationCheckStatus.NO_SHOW_NO_INVOICEABLE.ordinal() +
 			" AND PR.check_status <> " + ReservationCheckStatus.CANCEL_INVOICEABLE.ordinal() + 
 			" AND PR.check_status <> " + ReservationCheckStatus.CANCEL_NO_INVOICEABLE.ordinal() +
+			" AND (PR.early_check_out = 0 OR PR.start_date < DATE(PR.end_time))" + 
 			" AND PR.end_date >= ? AND PR.start_date <= ?" +
 			" AND FIND_IN_SET(IFNULL(R.hotel, PR.hotel), ?)" +
 			" ORDER BY " + RESERVATION_HOTEL + "," + RESERVATION + "," + RESERVATION_ROOM + "," + START_DATE;

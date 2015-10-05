@@ -38,7 +38,7 @@ public class ProjectReservationBeanVetoListener extends ManagerBeanVetoListenerA
     		calculateReservationTotals(reservationUtils, to);
 
         	if (!to.isForceRefreshBooking()) {
-        		to.setForceRefreshBooking(to.isCancelled() || to.isNoShow() || isRefreshBookingNeeded(to));
+        		to.setForceRefreshBooking(to.isEarlyCheckOut() || to.isCancelled() || to.isNoShow() || isRefreshBookingNeeded(to));
         	}
     	} catch (ManagerBeanException ex) {
     		throw new ManagerBeanVetoListenerException(ex.getMessage(), ex);
