@@ -158,7 +158,7 @@ public class ProposalController extends BasicController implements IAuditableCon
 	}
 	
 	public List<SelectItem> getDestinationWarehouses() throws ManagerBeanException {
-		return WarehouseCollectionsController.getWarehouses(getDestinationWorkPlace());
+		return WarehouseCollectionsController.getWarehouses(getDestinationWorkPlace(), true);
 	}
 	
 	public List<SelectItem> getWarehouses() throws ManagerBeanException {

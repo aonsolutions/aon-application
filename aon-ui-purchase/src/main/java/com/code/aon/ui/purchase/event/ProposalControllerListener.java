@@ -54,6 +54,14 @@ public class ProposalControllerListener extends ControllerAdapter {
 	}
 	
 	@Override
+	public void afterBeanSelected(ControllerEvent event) 
+			throws ControllerListenerException {
+		ProposalController proposalController = (ProposalController)getController();
+		proposalController.setDestinationWorkPlace(null);
+		proposalController.setDestinationWarehouse(null);
+	};
+	
+	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
 		ProposalController proposalController = (ProposalController)getController();

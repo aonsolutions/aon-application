@@ -76,13 +76,19 @@ public class WarehouseCollectionsController implements Serializable {
 		}
 		return warehouses;
 	}
+	
+	public static List<Warehouse> getWarehouseList( WorkPlace workPlace ) throws ManagerBeanException {
+		return getWarehouseList( workPlace, false );
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static List<Warehouse> getWarehouseList( WorkPlace workPlace ) throws ManagerBeanException {
+	public static List<Warehouse> getWarehouseList( WorkPlace workPlace, boolean skipScope ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Warehouse.class);
 		Criteria criteria = new Criteria();
-		String ljAlias = StringUtils.replace(bean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_SCOPE_ID), ".scope", "<scope");
-		UserUtils.getInstance().addNullableScopeExpression( criteria, ljAlias );		
+		if(!skipScope){
+			String ljAlias = StringUtils.replace(bean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_SCOPE_ID), ".scope", "<scope");
+			UserUtils.getInstance().addNullableScopeExpression( criteria, ljAlias );		
+		}
 		Expression exp1 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE));
 		if( (workPlace!=null) && (workPlace.getId()!=null) ){
 			Expression exp2 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), workPlace.getId());
@@ -96,8 +102,11 @@ public class WarehouseCollectionsController implements Serializable {
 	}
 
 	public static List<SelectItem> getWarehouses( WorkPlace workPlace ) throws ManagerBeanException {
+		return getWarehouses( workPlace, false);
+	}
+	public static List<SelectItem> getWarehouses( WorkPlace workPlace, boolean skipScope ) throws ManagerBeanException {
 		List<SelectItem> warehouses = new LinkedList<SelectItem>();
-		for( Warehouse warehouse : getWarehouseList(workPlace) ) {
+		for( Warehouse warehouse : getWarehouseList(workPlace, skipScope) ) {
 			SelectItem item = new SelectItem(warehouse, warehouse.getName());
 			warehouses.add(item);			
 		}
