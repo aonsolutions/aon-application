@@ -328,11 +328,23 @@ public class DownloadAggregateConsumptionServlet extends HttpServlet {
 				e1.printStackTrace();
 			}
 			 
-        	 for (int index = 0; index < size; index++){ 
+        	 for (int index = 0; index < size+2; index++){ 
         		 HSSFSheet my_worksheet = libro.getSheetAt(index);
         		 Iterator<Row> rowIterator = my_worksheet.iterator();             
-        		
-        		 PdfPTable my_table = new PdfPTable(columns);
+        		 PdfPTable my_table;
+        		 Integer columnNum;
+        		 if(index == 0){
+        			 my_table = new PdfPTable(8);
+        			 columnNum = 8;
+        		 }
+        		 else if(index == 1){
+        			 my_table = new PdfPTable(16);
+        			 columnNum = 16;
+        		 }
+        		 else{
+        			 my_table = new PdfPTable(columns);
+        			 columnNum = columns;
+        		 }
         		 PdfPCell table_cell;
         		 Integer i = 0;
         		 
@@ -360,13 +372,14 @@ public class DownloadAggregateConsumptionServlet extends HttpServlet {
                                     	if(row.getRowNum() == 1)
                                     		table_cell=new PdfPCell(new Phrase(cell.getStringCellValue(), font1));
                                     	else table_cell=new PdfPCell(new Phrase(cell.getStringCellValue(), font2));
-                                    	if(cell.getColumnIndex() != columns) my_table.addCell(table_cell);
+                                    	if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                     	break;
                                     case Cell.CELL_TYPE_BLANK:
                                     	//Push the data from Excel to PDF Cell
                                         table_cell=new PdfPCell();
                                         //feel free to move the code below to suit to your needs
-                                        if(cell.getColumnIndex() != columns) my_table.addCell(table_cell);
+                                        
+                                        if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                        break;
                                     
                             		case Cell.CELL_TYPE_BOOLEAN:
@@ -376,20 +389,20 @@ public class DownloadAggregateConsumptionServlet extends HttpServlet {
                             			else text = "false";
                                 		table_cell=new PdfPCell(new Phrase(text, font2));
                                 		//feel free to move the code below to suit to your needs
-                                		 if(cell.getColumnIndex() != columns) my_table.addCell(table_cell);
+                                		 if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                 		break;
                             		case Cell.CELL_TYPE_FORMULA:
                             			//Push the data from Excel to PDF Cell
                             			table_cell=new PdfPCell(new Phrase(cell.getCellFormula(), font2));
                                 		//feel free to move the code below to suit to your needs
-                            			 if(cell.getColumnIndex() != columns) my_table.addCell(table_cell);
+                            			 if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                 		break;
                             		case Cell.CELL_TYPE_NUMERIC:
                             			//Push the data from Excel to PDF Cell
                             			Double d = cell.getNumericCellValue();
                             			table_cell=new PdfPCell(new Phrase(d.toString(), font2));
                                 		//feel free to move the code below to suit to your needs
-                            			 if(cell.getColumnIndex() != columns) my_table.addCell(table_cell);
+                            			 if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                 		break;
                             		}	
                             		}
@@ -399,7 +412,7 @@ public class DownloadAggregateConsumptionServlet extends HttpServlet {
             
         		 }
         		 try {
-
+        			 
 
         			 com.itextpdf.text.Font fontPhrase = new com.itextpdf.text.Font();
         			 fontPhrase.setSize(12);
@@ -407,14 +420,19 @@ public class DownloadAggregateConsumptionServlet extends HttpServlet {
             	
         			 com.itextpdf.text.Font fontPhrase2 = new com.itextpdf.text.Font();
         			 fontPhrase.setSize(12);
-            	
-        			
-        			 iText_xls_2_pdf.add(new Paragraph(" "));
-        			 iText_xls_2_pdf.add(new Paragraph("Almacén: " + cis.get(index).getWarehouseName(), fontPhrase));
-        			 iText_xls_2_pdf.add(new Paragraph("Inventario Inicial: " + new Phrase(cis.get(index).getInitialInventoryName(), fontPhrase2), fontPhrase));
-        			 iText_xls_2_pdf.add(new Paragraph("Inventario Final: " + new Phrase(cis.get(index).getFinalInventoryName(), fontPhrase2), fontPhrase));
-        			 iText_xls_2_pdf.add(new Paragraph(" "));
-
+        			 
+        			 if(index<2){
+        				 iText_xls_2_pdf.add(new Paragraph(" "));
+        				 iText_xls_2_pdf.add(new Paragraph("Resumen " + index, fontPhrase));
+        				 iText_xls_2_pdf.add(new Paragraph(" "));
+        			 }
+        			 else{
+        				 iText_xls_2_pdf.add(new Paragraph(" "));
+        			 	iText_xls_2_pdf.add(new Paragraph("Almacén: " + cis.get(index).getWarehouseName(), fontPhrase));
+        			 	iText_xls_2_pdf.add(new Paragraph("Inventario Inicial: " + new Phrase(cis.get(index).getInitialInventoryName(), fontPhrase2), fontPhrase));
+        			 	iText_xls_2_pdf.add(new Paragraph("Inventario Final: " + new Phrase(cis.get(index).getFinalInventoryName(), fontPhrase2), fontPhrase));
+        			 	iText_xls_2_pdf.add(new Paragraph(" "));
+        			 }
         			 iText_xls_2_pdf.add(my_table);
         			 
         			 iText_xls_2_pdf.add(new Paragraph(" "));
