@@ -66,10 +66,7 @@ public class SalesControllerListener extends ControllerAdapter implements ISales
 		try {
 			controller.loadAddresses(((Sales)controller.getTo()).getCustomer().getRegistry().getId());
 			controller.loadProjects(((Sales)controller.getTo()).getCustomer().getRegistry().getId());
-			controller.loadDefaultPayMethod(((Sales)controller.getTo()).getCustomer().getRegistry().getId(), true);
-
-			controller.loadDefaultPayMethod(((Sales)controller.getTo()).getCustomer().getRegistry().getId(), true);
-			
+			controller.loadDefaultPayMethod(((Sales)controller.getTo()).getCustomer().getRegistry(), false);
 			if(((Sales)controller.getTo()).getCarrier()==null){
 				((Sales)controller.getTo()).setCarrier((Carrier) BeanManager.getManagerBean(Carrier.class).createNewTo());
 			}

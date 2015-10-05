@@ -45,18 +45,19 @@ public class UndeductibleInvoiceController extends InvoiceController {
 	}
 	
 	public void creditorData(LookupChangeEvent event) throws ManagerBeanException {
+		Invoice invoice = getInvoice();
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Creditor creditor = (Creditor)event.getNewValue();
 			isBlocked(creditor); // Saca el mensaje de bloqueo.
-			getInvoice().setRegistryName(creditor.getRegistry().getFullName());
-			getInvoice().setRegistryDocument(creditor.getRegistry().getDocument());
-			getInvoice().setRegistryDocumentType(creditor.getRegistry().getDocumentType());
-			getInvoice().setRegistryDocumentCountry(creditor.getRegistry().getDocumentCountry());
-			getInvoice().setRegistry(creditor.getRegistry());
+			invoice.setRegistryName(creditor.getRegistry().getFullName());
+			invoice.setRegistryDocument(creditor.getRegistry().getDocument());
+			invoice.setRegistryDocumentType(creditor.getRegistry().getDocumentType());
+			invoice.setRegistryDocumentCountry(creditor.getRegistry().getDocumentCountry());
+			invoice.setRegistry(creditor.getRegistry());
+			invoice.setScope(creditor.getScope());
 			loadAddresses(creditor.getId());
 			validateInvoice();
 		} else {
-			Invoice invoice = getInvoice();
 			invoice.setRegistryAddress(null);
 			invoice.setProject((Project)BeanManager.getManagerBean(Project.class).createNewTo());
 

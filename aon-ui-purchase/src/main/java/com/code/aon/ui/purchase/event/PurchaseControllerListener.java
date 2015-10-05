@@ -64,7 +64,7 @@ public class PurchaseControllerListener extends ControllerAdapter implements IPu
 		PurchaseController controller = (PurchaseController)event.getController();
 		try {
 			controller.loadAddresses(((Purchase)controller.getTo()).getSupplier().getRegistry().getId());
-			controller.loadDefaultPayMethod(((Purchase)controller.getTo()).getSupplier().getRegistry().getId(), true);
+			controller.loadDefaultPayMethod(((Purchase)controller.getTo()).getSupplier().getRegistry(), false);
 			if(((Purchase)controller.getTo()).getCarrier()==null){
 				((Purchase)controller.getTo()).setCarrier((Carrier) BeanManager.getManagerBean(Carrier.class).createNewTo());
 			}

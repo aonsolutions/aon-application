@@ -71,7 +71,7 @@ public class OfferControllerListener extends ControllerAdapter implements IComme
 		try {
 			controller.loadAddresses(((Offer)controller.getTo()).getTarget().getRegistry().getId());
 			controller.loadProjects(((Offer)controller.getTo()).getTarget().getRegistry().getId());
-			controller.loadDefaultPayMethod(((Offer)controller.getTo()).getTarget().getRegistry().getId(), true);
+			controller.loadDefaultPayMethod(((Offer)controller.getTo()).getTarget().getRegistry(), false);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}

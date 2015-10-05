@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_OUTPUT;
 import static com.code.aon.ui.common.ICommonMessages.CALCULATE_FINANCES_AMOUNT_ERROR_KEY;
 import static com.code.aon.ui.common.ICommonMessages.CALCULATE_INVOICE_QUANTITY_ERROR_KEY;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_DUPLICATE_EXPENSE_INVOICE_WARNING;
@@ -918,17 +917,21 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 					List<ITransferObject> financeList = invoiceFinanceController.getManagerBean().getList(invoiceFinanceController.getCriteria());
 					for (ITransferObject ito : financeList) {
 						Finance finance = (Finance)ito;
-						if (finance.isPending() || finance.isReturned()) {
+						if (finance.isPending()) {
 							Invoice invoice = getInvoice();
 							if (!finance.isAdvance()) {
-								finance.setRegistry(invoice.getRegistry());
-								finance.setRegistryName(invoice.getRegistryName());
-								finance.setRegistryDocument(invoice.getRegistryDocument());
-								finance.setRegistryDocumentType(invoice.getRegistryDocumentType());
-								finance.setRegistryDocumentCountry(invoice.getRegistryDocumentCountry());
-								finance.setConcept(invoice.getDocumentNumber());
-								finance.setSecurityLevel(invoice.getSecurityLevel());
-								invoiceFinanceController.getManagerBean().update(finance);
+								if (!invoice.getRegistry().equals(finance.getRegistry())) {
+									invoiceFinanceController.getManagerBean().remove(finance);
+								} else {
+									finance.setRegistry(invoice.getRegistry());
+									finance.setRegistryName(invoice.getRegistryName());
+									finance.setRegistryDocument(invoice.getRegistryDocument());
+									finance.setRegistryDocumentType(invoice.getRegistryDocumentType());
+									finance.setRegistryDocumentCountry(invoice.getRegistryDocumentCountry());
+									finance.setConcept(invoice.getDocumentNumber());
+									finance.setSecurityLevel(invoice.getSecurityLevel());
+									invoiceFinanceController.getManagerBean().update(finance);
+								}
 							} else if (!invoice.getRegistry().equals(finance.getRegistry())) {
 								invoiceFinanceController.excludeAdvance(finance);
 							}

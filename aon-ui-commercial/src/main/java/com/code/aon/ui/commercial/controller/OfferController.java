@@ -434,10 +434,11 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Target target = (Target)event.getNewValue();
 			getOffer().setTarget(target);
+			getOffer().setScope(target.getScope());
 			loadAddresses(target.getId());
 			loadProjects(target.getId());
 			loadCommercial(target.getId());
-			loadDefaultPayMethod(target.getId(), false);
+			loadDefaultPayMethod(target.getRegistry(), true);
 		} else {
 			setAddresses(null);
 			setProjects(null);
@@ -532,21 +533,14 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		}
 	}
 
-	public void loadDefaultPayMethod(Integer id, boolean forceDefault) throws ManagerBeanException {
-		if (id != null) {
-			Offer offer = getOffer();
-			if (offer.getPayMethod() != null && offer.getPayMethod().getId() != null) {
-				setDefaultPayMethod(false);
+	public void loadDefaultPayMethod(Registry registry, boolean forceReset) throws ManagerBeanException {
+		if (registry != null && registry.getId() != null) {
+			if (forceReset) {
+				resetOfferPayMethod();
+				setDefaultPayMethod(registry.getPayMethod() != null);
 			} else {
-				if (forceDefault) {
-					setDefaultPayMethod(true);
-				} else {
-					IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
-					Criteria criteria = new Criteria();
-					criteria.addEqualExpression(rPayMethodBean.getFieldName(IEntityAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), id);
-					Iterator<ITransferObject> iter = rPayMethodBean.getList(criteria).iterator();
-					setDefaultPayMethod(iter.hasNext());
-				}
+				Offer offer = getOffer();
+				setDefaultPayMethod(offer.getPayMethod() == null || offer.getPayMethod().getId() == null);
 			}
 		}
 	}

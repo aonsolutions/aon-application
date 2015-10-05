@@ -53,8 +53,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
-import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.controller.IAuditableController;
@@ -360,8 +360,9 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 			Supplier supplier = (Supplier)event.getNewValue();
 			isBlocked(supplier);
 			((Purchase)this.getTo()).setSupplier(supplier);
+			((Purchase)this.getTo()).setScope(supplier.getScope());
 			loadAddresses(supplier.getId());
-			loadDefaultPayMethod(supplier.getId(), false);
+			loadDefaultPayMethod(supplier.getRegistry(), true);
 		} else {
 			setAddresses(null);
 		}
@@ -437,20 +438,14 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 		purchaseDetailController.onSearch(null);
 	}
 
-	public void loadDefaultPayMethod(Integer id, boolean forceDefault) throws ManagerBeanException {
-		if (id != null) {
-			if (((Purchase)this.getTo()).getPayMethod() != null && ((Purchase)this.getTo()).getPayMethod().getId() != null) {
-				setDefaultPayMethod(false);
+	public void loadDefaultPayMethod(Registry registry, boolean forceReset) throws ManagerBeanException {
+		if (registry != null && registry.getId() != null) {
+			if (forceReset) {
+				resetPurchasePayMethod();
+				setDefaultPayMethod(registry.getPayMethod() != null);
 			} else {
-				if (forceDefault) {
-					setDefaultPayMethod(true);
-				} else {
-					IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
-					Criteria criteria = new Criteria();
-					criteria.addEqualExpression(rPayMethodBean.getFieldName(IEntityAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), id);
-					Iterator<?> iter = rPayMethodBean.getList(criteria).iterator();
-					setDefaultPayMethod(iter.hasNext());
-				}
+				Purchase purchase = (Purchase)getTo();
+				setDefaultPayMethod(purchase.getPayMethod() == null || purchase.getPayMethod().getId() == null);
 			}
 		}
 	}

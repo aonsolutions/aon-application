@@ -62,7 +62,7 @@ public class IncomeControllerListener extends ControllerAdapter implements IWare
 		try {
 			controller.loadAddresses(income.getSupplier().getRegistry().getId());
 			controller.updateWarehouse();
-			controller.loadDefaultPayMethod(income.getSupplier().getRegistry().getId(), true);
+			controller.loadDefaultPayMethod(income.getSupplier().getRegistry(), false);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}

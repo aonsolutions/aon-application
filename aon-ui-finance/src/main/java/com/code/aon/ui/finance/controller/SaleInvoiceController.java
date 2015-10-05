@@ -144,6 +144,7 @@ public class SaleInvoiceController extends InvoiceController {
 		invoice.setTransaction(customer.getTransaction());
 		invoice.setSurcharge(customer.isSurcharge());
 		invoice.setWithholding(customer.isWithholding() && getCompany().isWithholding());
+		invoice.setScope(customer.getScope());
 		loadAddresses(customer.getId());
 
 		if (isNevv()) {

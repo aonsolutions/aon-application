@@ -38,8 +38,8 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
-import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.bridge.DeliveryManager;
@@ -304,9 +304,10 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 			Customer customer = (Customer)event.getNewValue();
 			isBlocked(customer);
 			((Delivery)this.getTo()).setCustomer(customer);
+			((Delivery)this.getTo()).setScope(customer.getScope());
 			loadAddresses(customer.getId());
 			loadProjects(customer.getId());
-			loadDefaultPayMethod(customer.getId(), false);
+			loadDefaultPayMethod(customer.getRegistry(), true);
 		} else {
 			setAddresses(null);
 			setProjects(null);
@@ -375,20 +376,14 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		getManagerBean().initializePOJO(to);
 	}
 
-	public void loadDefaultPayMethod(Integer id, boolean forceDefault) throws ManagerBeanException {
-		if (id != null) {
-			if (((Delivery)this.getTo()).getPayMethod() != null && ((Delivery)this.getTo()).getPayMethod().getId() != null) {
-				setDefaultPayMethod(false);
+	public void loadDefaultPayMethod(Registry registry, boolean forceReset) throws ManagerBeanException {
+		if (registry != null && registry.getId() != null) {
+			if (forceReset) {
+				resetDeliveryPayMethod();
+				setDefaultPayMethod(registry.getPayMethod() != null);
 			} else {
-				if (forceDefault) {
-					setDefaultPayMethod(true);
-				} else {
-					IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
-					Criteria criteria = new Criteria();
-					criteria.addEqualExpression(rPayMethodBean.getFieldName(IEntityAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), id);
-					Iterator<?> iter = rPayMethodBean.getList(criteria).iterator();
-					setDefaultPayMethod(iter.hasNext());
-				}
+				Delivery delivery = (Delivery)getTo();
+				setDefaultPayMethod(delivery.getPayMethod() == null || delivery.getPayMethod().getId() == null);
 			}
 		}
 	}

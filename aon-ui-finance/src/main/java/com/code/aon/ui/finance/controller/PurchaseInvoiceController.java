@@ -71,6 +71,7 @@ public class PurchaseInvoiceController extends InvoiceController {
 			invoice.setRegistryDocumentType(supplier.getRegistry().getDocumentType());
 			invoice.setRegistryDocumentCountry(supplier.getRegistry().getDocumentCountry());
 			invoice.setRegistry(supplier.getRegistry());
+			invoice.setScope(supplier.getScope());
 			loadAddresses(supplier.getId());
 			validateInvoice();
 		} else {

@@ -73,6 +73,7 @@ public class ExpenseInvoiceController extends InvoiceController {
 		invoice.setRegistry(creditor.getRegistry());
 		invoice.setTransaction(creditor.getTransaction());
 		invoice.setWithholding(creditor.isWithholding());
+		invoice.setScope(creditor.getScope());
 		loadAddresses(creditor.getId());
 
 		if (isNevv()) {

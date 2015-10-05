@@ -66,7 +66,7 @@ public class DeliveryControllerListener extends ControllerAdapter implements IWa
 			controller.loadAddresses(((Delivery)controller.getTo()).getCustomer().getRegistry().getId());
 			controller.loadProjects(((Delivery)controller.getTo()).getCustomer().getRegistry().getId());
 	        controller.setWarehouse(controller.obtainWarehouse((Delivery)controller.getTo()));
-			controller.loadDefaultPayMethod(((Delivery)controller.getTo()).getCustomer().getRegistry().getId(), true);
+			controller.loadDefaultPayMethod(((Delivery)controller.getTo()).getCustomer().getRegistry(), false);
 			
 			if(((Delivery)controller.getTo()).getCarrier()==null){
 				((Delivery)controller.getTo()).setCarrier((Carrier) BeanManager.getManagerBean(Carrier.class).createNewTo());
