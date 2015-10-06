@@ -602,7 +602,7 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 						ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
 						for (ITransferObject ito : getReservationInvoicesToRectify()) {
 				    		Invoice invoiceToRectify = (Invoice)ito;
-					    	if (invoiceToRectify != null) {
+					    	if (invoiceToRectify != null && !invoiceToRectify.isService()) {
 								getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries(invoiceToRectify));
 								getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 								getReservationInvoiceTo().setIssueDate(new Date());
@@ -617,7 +617,6 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 								reservationInvoicing.rectify(invoiceToRectify, getReservationInvoiceTo(), false);
 					    	}
 			    		}
-
 				    	if (getReservationUsedServices().size() > 0 || getEarlyCheckOutPenaltyDays() > 0) {
 				    		getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
 							getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
@@ -626,15 +625,34 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 							reservationInvoicing.invoice(getReservationInvoiceTo(), getReservation());
 				    	}
 
-				    	if (getReservationUsedExtraServices().size() > 0) {
-				    		getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
-							getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
-							getReservationInvoiceTo().setIssueDate(getReservation().getStartDate());
-							getReservationInvoiceTo().setFinances(obtainFinances(getServicesPaymentSummary()));
-							getReservationInvoiceTo().setDirectCustomer(true);
-							getReservationInvoiceTo().setService(true);
-							getReservationInvoiceTo().setServicesIds(obtainReservationExtraServiceDetailsToRectifyIds());
-							reservationInvoicing.invoice(getReservationInvoiceTo(), getReservation());
+				    	if (isPayCheckOut()) {
+				    		for (ITransferObject ito : getReservationInvoicesToRectify()) {
+					    		Invoice invoiceToRectify = (Invoice)ito;
+						    	if (invoiceToRectify != null && invoiceToRectify.isService()) {
+									getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries(invoiceToRectify));
+									getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
+									getReservationInvoiceTo().setIssueDate(new Date());
+	
+									getReservationInvoiceTo().setRegistry(invoiceToRectify.getRegistry());
+									getReservationInvoiceTo().getRegistry().setName(invoiceToRectify.getRegistryName());
+									getReservationInvoiceTo().getRegistry().setDocumentType(invoiceToRectify.getRegistryDocumentType());
+									getReservationInvoiceTo().getRegistry().setDocumentCountry(invoiceToRectify.getRegistryDocumentCountry());
+									getReservationInvoiceTo().getRegistry().setDocument(invoiceToRectify.getRegistryDocument());
+									getReservationInvoiceTo().setAddress(obtainInvoiceAddress(invoiceToRectify));
+		
+									reservationInvoicing.rectify(invoiceToRectify, getReservationInvoiceTo(), false);
+						    	}
+				    		}
+					    	if (getReservationUsedExtraServices().size() > 0) {
+					    		getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
+								getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
+								getReservationInvoiceTo().setIssueDate(getReservation().getStartDate());
+								getReservationInvoiceTo().setFinances(obtainFinances(getServicesPaymentSummary()));
+								getReservationInvoiceTo().setDirectCustomer(true);
+								getReservationInvoiceTo().setService(true);
+								getReservationInvoiceTo().setServicesIds(obtainReservationExtraServiceDetailsToRectifyIds());
+								reservationInvoicing.invoice(getReservationInvoiceTo(), getReservation());
+					    	}
 				    	}
 			    	}
 				}
