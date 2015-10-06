@@ -149,7 +149,7 @@ public class ReservationManager implements IReservationConstants {
 
 	private ProjectReservation modifyReservation(HotelReservationType reservationType, POSType posType, ProjectReservation reservation) throws ReservationException {
 		if (reservation != null) {
-			if (reservation.isActive() || reservation.isBlocked() || reservation.isCancelled()) {
+			if (reservation.isActive() || reservation.isBlocked()) {
 				try {
 					boolean skipModification = (reservation.isSourceRequest() && reservation.isActive());
 					if (!skipModification) {
@@ -169,6 +169,8 @@ public class ReservationManager implements IReservationConstants {
 					throw new ReservationException("Unknown error: " + ex.getMessage(), reservation.getCrsCode(), 1);
 				}
 				return reservation;
+			} else if (reservation.isCancelled()) {
+				throw new ReservationException("Reservation already cancelled, can not be modified", reservation.getCrsCode(), 255);
 			} else {
 				throw new ReservationException("Reservation already invoiced, can not be modified", reservation.getCrsCode(), 255);
 			}

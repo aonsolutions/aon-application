@@ -1108,7 +1108,7 @@
 		</managed-property>				
 	</managed-bean>
 	
-	<!-- ************* GEVERNESS - WORK PLANNING ************ -->
+	<!-- ************* GOVERNESS - WORK PLANNING ************ -->
 	<managed-bean>
 		<managed-bean-name>workPlanning</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.WorkPlanningController</managed-bean-class>
@@ -1119,7 +1119,7 @@
 		</managed-property>						
 	</managed-bean>		
 	
-	<!-- ************* GEVERNESS - CLEAN STATUS ************ -->
+	<!-- ************* GOVERNESS - CLEAN STATUS ************* -->
 	<managed-bean>
 		<managed-bean-name>cleanStatus</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.CleanStatusController</managed-bean-class>
@@ -1563,7 +1563,7 @@
 		</navigation-case>
 	</navigation-rule> 
 	
-	<!-- ============= Governess - Clean Status ============ -->
+	<!-- ============= Governess - Clean Status ============= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>cleanStatus_search</from-outcome>
