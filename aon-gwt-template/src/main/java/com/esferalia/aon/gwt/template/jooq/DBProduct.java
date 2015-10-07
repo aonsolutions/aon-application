@@ -118,6 +118,22 @@ public class DBProduct {
 		return null;
 	}
 	
+	private static Boolean hasProductParent(AONContext ctx, String code, Integer domain){
+		
+		Record1<Byte> heredity = ctx.getDslContext().select(DOMAIN.ENABLEHEREDITY)
+				.from(DOMAIN)
+				.where(DOMAIN.ID.eq(domain))
+				.fetchOne();
+		if(heredity.value1() == 1) return false;
+		
+		Integer count = ctx.getDslContext().selectCount()
+				.from(PRODUCT).join(DOMAIN).on(PRODUCT.DOMAIN.eq(DOMAIN.PARENT))
+				.where(DOMAIN.ID.eq(domain))
+				.and(PRODUCT.CODE.eq(code))
+				.fetchOne(0,int.class);
+		return count > 0;
+	}
+	
 	public static Error insertProducts2(String domain, Integer domainId,Vector<ProductInfo> products, TemplateInfo templateInfo, AuditInfo ai){
 		long start = System.currentTimeMillis();
 		Error error = new Error();
@@ -140,35 +156,44 @@ public class DBProduct {
 			products.stream().forEach(r->{	
 				
 				com.esferalia.aon.occam.api.model.product.Product product  = getProduct(r.getProduct(), templateInfo, domainId, sctx);	
+				
+			
 				if(product != null){
-					if(r.getProductTag() != null){	
-						iproductsTag.addAll(r.getProductTag());
+					if(hasProductParent(sctx, product.getCode(), domainId)){
+						error.setError(false);
+						verror.add("*Fila " + (r.getRow()+1)+": Es un producto heredado.");
+						error.setTextError(verror);
 					}
-					if(r.getItem() != null){	
-						r.getItem().stream().forEach(i ->{
-							com.esferalia.aon.occam.api.model.product.Item item = getItem(i, product.getId(), domainId, sctx);
-							if(item != null){
-								if(!esta(item,uitems)){
-									uitems.add(item);	
+					else{
+						if(r.getProductTag() != null){	
+							iproductsTag.addAll(r.getProductTag());
+						}
+						if(r.getItem() != null){	
+							r.getItem().stream().forEach(i ->{
+								com.esferalia.aon.occam.api.model.product.Item item = getItem(i, product.getId(), domainId, sctx);
+								if(item != null){
+									if(!esta(item,uitems)){
+										uitems.add(item);	
+									}
+									else{
+										error.setError(false);
+										verror.add("*Fila " + (r.getRow()+1)+": El producto está repetido.");
+										error.setTextError(verror);
+									}
 								}
 								else{
-									error.setError(false);
-									verror.add("*Fila " + (r.getRow()+1)+": El producto está repetido.");
-									error.setTextError(verror);
+									i.setProductId(product.getId());
+									i.setCreationUser(ai.getUsername());i.setModificationUser(ai.getUsername());
+									i.setCreationDate(new Timestamp(ai.getDate().getTime()));i.setModificationDate(new Timestamp(ai.getDate().getTime()));
+									iitems.add(i);	
 								}
-							}
-							else{
-								i.setProductId(product.getId());
-								i.setCreationUser(ai.getUsername());i.setModificationUser(ai.getUsername());
-								i.setCreationDate(new Timestamp(ai.getDate().getTime()));i.setModificationDate(new Timestamp(ai.getDate().getTime()));
-								iitems.add(i);	
-							}
-						});
+							});
+						}
+						product.setModificationDate(new Timestamp(ai.getDate().getTime()));
+						product.setModificationUser(ai.getUsername());
+						uproducts.add(product);
+						r.getProduct().setId(product.getId());
 					}
-					product.setModificationDate(new Timestamp(ai.getDate().getTime()));
-					product.setModificationUser(ai.getUsername());
-					uproducts.add(product);
-					r.getProduct().setId(product.getId());
 				}
 				else{
 					com.esferalia.aon.occam.api.model.product.Product product2 = r.getProduct();
@@ -176,36 +201,39 @@ public class DBProduct {
 					product2.setCreationDate(new Timestamp(ai.getDate().getTime()));product2.setModificationDate(new Timestamp(ai.getDate().getTime()));
 					iproducts.add(product2);
 				}
+				
 			});
-			AON.deleteProductTag(ctx, iproductsTag.stream());
-			AON.deleteItem(ctx, uitems.stream());
-			AON.delete(ctx, uproducts.stream());
-			AON.insertWithId(ctx, uproducts.stream());
-			AON.insert(ctx, iproducts.stream());
-			AON.insertItemWithId(ctx, uitems.stream());
 			
-			products.stream().filter(p -> p.getProduct().getId() == null).forEach(r->{	
-				Integer productId = sctx.getDslContext().select(PRODUCT.ID).from(PRODUCT).where(PRODUCT.DOMAIN.eq(domainId)).and(PRODUCT.CODE.eq(r.getProduct().getCode())).fetchOne().value1();
-				System.out.println(r.getProduct().getId());
-				if(r.getProductTag() != null){	
-					r.getProductTag().stream().forEach(pt ->{
-						pt.setProduct(productId);
-						iproductsTag.add(pt);	
-					});
-				}
-				if(r.getItem() != null){	
-					r.getItem().stream().forEach(i ->{
-						i.setProductId(productId);
-						i.setCreationUser(ai.getUsername());i.setModificationUser(ai.getUsername());
-						i.setCreationDate(new Timestamp(ai.getDate().getTime()));i.setModificationDate(new Timestamp(ai.getDate().getTime()));
-						iitems.add(i);	
-					});
-				}
-			});
-			AON.insertProductTag(ctx, iproductsTag.stream());
-			AON.insertItem(ctx, iitems.stream());
-			ctx.activateForeignKeys();
-
+			if(error.getError()){
+				AON.deleteProductTag(ctx, iproductsTag.stream());
+				AON.deleteItem(ctx, uitems.stream());
+				AON.delete(ctx, uproducts.stream());
+				AON.insertWithId(ctx, uproducts.stream());
+				AON.insert(ctx, iproducts.stream());
+				AON.insertItemWithId(ctx, uitems.stream());
+			
+				products.stream().filter(p -> p.getProduct().getId() == null).forEach(r->{	
+					Integer productId = sctx.getDslContext().select(PRODUCT.ID).from(PRODUCT).where(PRODUCT.DOMAIN.eq(domainId)).and(PRODUCT.CODE.eq(r.getProduct().getCode())).fetchOne().value1();
+					System.out.println(r.getProduct().getId());
+					if(r.getProductTag() != null){	
+						r.getProductTag().stream().forEach(pt ->{
+							pt.setProduct(productId);
+							iproductsTag.add(pt);	
+						});
+					}
+					if(r.getItem() != null){	
+						r.getItem().stream().forEach(i ->{
+							i.setProductId(productId);
+							i.setCreationUser(ai.getUsername());i.setModificationUser(ai.getUsername());
+							i.setCreationDate(new Timestamp(ai.getDate().getTime()));i.setModificationDate(new Timestamp(ai.getDate().getTime()));
+							iitems.add(i);	
+						});
+					}
+				});
+				AON.insertProductTag(ctx, iproductsTag.stream());
+				AON.insertItem(ctx, iitems.stream());
+				ctx.activateForeignKeys();
+			}
 		} finally {
 			if (ctx != null) ctx.close();	
 		}
@@ -677,7 +705,11 @@ public class DBProduct {
 			
 			Record3<Integer, String, Double> data = ctx.getDslContext().select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
 					.from(TAX)
-					.where(TAX.DOMAIN.eq(domainId).and(TAX.TAX_TYPE.eq((byte)1)))
+					.where((TAX.DOMAIN.eq(domainId).or(TAX.DOMAIN.in(
+											ctx.getDslContext().select(DOMAIN.PARENT)
+											.from(DOMAIN)
+											.where(DOMAIN.ID.eq(domainId))
+							))).and(TAX.TAX_TYPE.eq((byte)1)))
 					.and(TAX.NAME.eq(name))
 					.fetchOne();
 			

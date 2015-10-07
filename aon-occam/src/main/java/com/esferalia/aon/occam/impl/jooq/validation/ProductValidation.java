@@ -60,7 +60,7 @@ public class ProductValidation {
 		if (count>0) 
 			throw new AonCoreException(AonError.DUPLICATE_PRODUCT_CODE.format(p.getCode()));
 		
-		count = ctx.getDslContext().selectCount()
+		/*count = ctx.getDslContext().selectCount()
 				.from(PRODUCT).join(DOMAIN).on(PRODUCT.DOMAIN.eq(DOMAIN.PARENT))
 				.where(DOMAIN.ID.eq(p.getDomain()))
 				.and(PRODUCT.CODE.eq(p.getCode()))
@@ -89,7 +89,7 @@ public class ProductValidation {
 					.and(PRODUCT.CODE.eq(p.getCode()))
 					.fetchOne().value1();
 			throw new AonCoreException(AonError.DUPLICATE_PRODUCT_CODE_DOMAIN.format(domain));
-		}
+		}*/
 
 	};
 	

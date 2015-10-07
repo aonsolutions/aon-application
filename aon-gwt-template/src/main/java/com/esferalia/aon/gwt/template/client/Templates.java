@@ -169,7 +169,7 @@ public class Templates extends Composite implements EntryPoint {
 					@Override
 					public void onSuccess(Integer result) {
 						hide();
-						//if(result !=-1){
+						if(result !=-1){
 							pbd = new ProgressBarDialog(result.doubleValue(), 0.86) {
 									
 							};
@@ -205,7 +205,37 @@ public class Templates extends Composite implements EntryPoint {
 
 								}
 							});
-						//}
+						}
+						else{
+							item.insertFee(new AsyncCallback<Error>() {
+			
+								@Override
+								public void onSuccess(Error result) {
+									Dialog d2 = new Dialog("Importar Cuotas","Aceptar",true,"Cancelar",false,"importResponse");
+									d2.setError(result);
+									TemplatesDialog popup2 = new TemplatesDialog(d2){
+
+										@Override
+										protected void onAccept() {
+											hide();			
+										}
+										
+										@Override
+										protected void onCancel() {
+											hide();
+										}
+									};
+									popup2.addStyleName("gwt-PopupPanel-template");
+									popup2.setGlassEnabled(true);
+									popup2.show();
+								}
+									
+								@Override
+								public void onFailure(Throwable caught) {
+
+								}
+							});
+						}
 					}
 					
 					@Override
@@ -252,7 +282,9 @@ public class Templates extends Composite implements EntryPoint {
 					@Override
 					public void onSuccess(Integer result) {
 							hide();
-							//if(result !=-1){
+							
+								
+							if(result != null && result !=-1){
 								pbd = new ProgressBarDialog(result.doubleValue(), 0.86) {
 									
 								};
@@ -289,7 +321,36 @@ public class Templates extends Composite implements EntryPoint {
 
 									}
 								});
-							//}	
+							}	
+							else{
+								item.insertProduct(new AsyncCallback<Error>() {
+									@Override
+									public void onSuccess(Error result) {
+										Dialog d2 = new Dialog("Importar Productos","Aceptar",true,"Cancelar",false,"importResponse");
+										d2.setError(result);
+										TemplatesDialog popup2 = new TemplatesDialog(d2){
+
+											@Override
+											protected void onAccept() {
+												hide();			
+											}
+
+											@Override
+											protected void onCancel() {
+												hide();
+											}
+										};
+										popup2.addStyleName("gwt-PopupPanel-template");
+										popup2.setGlassEnabled(true);
+										popup2.show();
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+
+									}
+								});
+							}
 							
 					}
 					

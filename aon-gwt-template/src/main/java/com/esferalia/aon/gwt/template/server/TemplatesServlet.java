@@ -943,7 +943,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		}
 		HSSFSheet sheet = workbook.getSheetAt(0);
 		
-		rowCount  = sheet.getPhysicalNumberOfRows();
+		rowCount  = 1;//sheet.getPhysicalNumberOfRows();
 		
 		Iterator<Row> rowIterator = sheet.iterator();
 
@@ -1404,6 +1404,14 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			}
 		});
 		this.products = products;
+		if(products == null || products.size() <0){
+			error.setError(false);
+			verror.add("*El archivo no es válido.");
+			textError= textError +"*El archivo no es válido.";
+			error.setTextError(verror);
+			this.error = error;
+			rowCount = -1;
+		}
 		if(rowCount != -1) rowCount = products.size();
 		setOut(null);setMimetype(null);
 		return rowCount;
