@@ -299,5 +299,15 @@ public class PageF1D extends PageAbs {
  	
 	DoubleBox dlAux;
 	
-	
+	@Override
+	protected void onEdit(String key, String value) {
+		
+			if(mapDraft.containsKey(key))
+				mapDraft.remove(key);
+			mapDraft.put(key, value);
+			normalizedMemory.getD2Deposit2014().setMapDraft(mapDraft);
+			normalizedMemory.getD2Deposit2014().setModify(true);
+			//normalizedMemory.update();
+		
+	}
 }

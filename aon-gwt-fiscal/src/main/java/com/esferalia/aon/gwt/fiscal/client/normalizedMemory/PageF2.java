@@ -270,6 +270,7 @@ public class PageF2 extends PageAbs {
 				TextBox t = tAux;
 				@Override
 				public void onChange(ChangeEvent event) {
+					t.addStyleName(AON.AON_CSS.aonChanged());
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					onEdit(key2, t.getValue());
@@ -292,8 +293,6 @@ public class PageF2 extends PageAbs {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);	
 					onEdit(key2, event.getValue()?"1":"0");
-								
-					
 				}
 			});
 		}
@@ -332,6 +331,7 @@ public class PageF2 extends PageAbs {
 				DateBox d = dAux;
 				@Override
 				public void onValueChange(ValueChangeEvent<Date> event) {
+					d.addStyleName(AON.AON_CSS.aonChanged());
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					Integer day = d.getValue().getDate();
@@ -419,6 +419,7 @@ public class PageF2 extends PageAbs {
 				ListBox lb = lbAux;
 				@Override
 				public void onChange(ChangeEvent event) {
+					lb.addStyleName(AON.AON_CSS.aonChanged());
 					String value ="";
 					if(key2.equals("8081206")){
 						for(Integer i = 0;i< D2DepositConstants.PROVINCES.length; i++){
@@ -459,7 +460,7 @@ public class PageF2 extends PageAbs {
 				DoubleBox dl = dlAux;
 				@Override
 				public void onChange(ChangeEvent event) {
-
+					dl.addStyleName(AON.AON_CSS.aonChanged());
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
 					onEdit(key2, dl.getValue().toString());
@@ -484,6 +485,18 @@ public class PageF2 extends PageAbs {
 			Cities p = D2DepositConstants.CITIES[i];
 			lb.addItem(p.getName());
 		}
+		
+	}
+	
+	@Override
+	protected void onEdit(String key, String value) {
+		
+			if(mapDraft.containsKey(key))
+				mapDraft.remove(key);
+			mapDraft.put(key, value);
+			normalizedMemory.getD2Deposit2014().setMapDraft(mapDraft);
+			normalizedMemory.getD2Deposit2014().setModify(true);
+			//normalizedMemory.update();
 		
 	}
 

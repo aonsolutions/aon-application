@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.normalizedMemory;
 
 
 import java.util.Date;
+import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -557,10 +558,16 @@ public class Header1 extends PageAbs {
 	private void specialUpdate(String key, String value ){
 		onEdit(key, value);
 	}
-
-
-
-
 	
-	
+	@Override
+	protected void onEdit(String key, String value) {
+		
+			if(mapDraft.containsKey(key))
+				mapDraft.remove(key);
+			mapDraft.put(key, value);
+			normalizedMemory.getD2Deposit2014().setMapDraft(mapDraft);
+			normalizedMemory.getD2Deposit2014().setModify(true);
+			//normalizedMemory.update();
+		
+	}
 }
