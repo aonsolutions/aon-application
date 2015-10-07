@@ -17,7 +17,22 @@
 					actionListener="#{cleanStatus.onRefresh}" reRender="cleanStatusList" />
 			</h:form>
 		</a4j:region>
-	
+		
+		<script type="text/javascript">
+			function showClean(elem) {
+				elem.disabled = true;
+				elem.style.background = 'lightgreen';
+			}
+			function showBusy(elem) {
+				elem.disabled = true;
+				elem.style.background = 'orange';
+			}
+			function showDirty(elem) {
+				elem.disabled = true;
+				elem.style.background = 'brown';
+			}
+		</script>
+		
 		<aon:form id="cleanStatusList">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
@@ -52,10 +67,10 @@
 							<aon:div style="width:60px; background:lightgrey;">
 								<aon:outputText value="BLOQUEADA" />
 							</aon:div>
-							<aon:div style="width:60px; background:red;">
+							<aon:div style="width:60px; background:brown;">
 								<aon:outputText value="SUCIA" />
 							</aon:div>
-							<aon:div style="width:60px; background:green;" >
+							<aon:div style="width:60px; background:lightgreen;" >
 								<aon:outputText value="LIMPIA" />
 							</aon:div>
 							<aon:div style="width:60px; background:orange;" >
@@ -67,18 +82,12 @@
 					
 				<aon:div id="cleanStatus-grid">
 					
-					<!--  
-					<c:set var="currentFloorIdx" value="-1" />
-					-->
 					<c:set var="currentFloorIdx" value="#{(not empty cleanStatus.selectedFloor)?(cleanStatus.selectedFloor):(-1)}" />
 					
-					<c:forEach items="#{cleanStatus.roomList}" var="roomTo" varStatus="roomIdx" begin="0" step="1">
+					<c:forEach items="#{cleanStatus.roomList}" var="roomTo" varStatus="status" begin="0" step="1">
 						
-						<c:if test="#{(currentFloorIdx lt 0) or (not roomTo.asset.name.startsWith(cleanStatus.floorList[currentFloorIdx]))}" >
-							<c:if test="#{empty cleanStatus.selectedFloor}" >
-								<!--  
-								<c:set var="currentFloorIdx" value="#{currentFloorIdx + 1}" />
-								-->
+						<c:if test="#{status.first or (currentFloorIdx lt 0) or (not roomTo.asset.name.startsWith(cleanStatus.floorList[currentFloorIdx]))}" >
+							<c:if test="#{status.first or empty cleanStatus.selectedFloor}">
 								<c:set var="currentFloorIdx" value="#{(not empty cleanStatus.selectedFloor)?(cleanStatus.selectedFloor):(currentFloorIdx + 1)}" />
 								<aon:div styleClass="aon-margin-top">
 									<aon:div styleClass="aon-form-group-title">
@@ -89,34 +98,44 @@
 								</aon:div>
 							</c:if>
 						</c:if>
-					
-						<aon:div style="display:inline;" 
+						
+						<aon:div id="roomStatus-#{status.index}" 
+							style="display:inline-block; margin:2px; width:70px; height:70px;" 
 							rendered="#{empty cleanStatus.selectedFloor or roomTo.asset.name.startsWith(cleanStatus.floorList[currentFloorIdx])}" >
-							<aon:commandButton value="#{roomTo.asset.name}" title="#{bundle.pms_room} #{bundle.pms_blocked}"
-								rendered="#{cleanStatus.roomStatus[roomTo.asset.id]=='BLOCKED'}" disabled="#{true}"
-								styleClass="aon-commandButton"
+							
+							<aon:commandButton value="#{roomTo.asset.name}"
+								title="#{bundle.pms_room} #{bundle.pms_blocked} (#{cleanStatus.blockedRooms[roomTo.asset.id]})"
+								rendered="#{not empty cleanStatus.blockedRooms[roomTo.asset.id]}"
+								disabled="#{true}" styleClass="aon-commandButton"
 								style="margin:2px; width:70px; height:70px;" />
-							<aon:commandButton value="#{roomTo.asset.name}" title="#{bundle.pms_room} sucia"
-								rendered="#{cleanStatus.roomStatus[roomTo.asset.id]!='BLOCKED' and !roomTo.busyRoom and !roomTo.cleanRoom}"
-								styleClass="aon-commandButton"
-								style="margin:2px; width:70px; height:70px; background:red;"
-								actionListener="#{cleanStatus.onCleanRoom}" >
-								<f:param name="selectedRoomId" value="#{roomIdx.index}"/>
+							<aon:commandButton value="#{roomTo.asset.name}"
+								title="#{bundle.pms_room} sucia"
+								rendered="#{empty cleanStatus.blockedRooms[roomTo.asset.id] and !roomTo.busyRoom and !roomTo.cleanRoom}"
+								styleClass="aon-commandButton" 
+								style="margin:2px; width:70px; height:70px; background:brown;"
+								onclick="showClean(this)"
+								actionListener="#{cleanStatus.onSelectRoom}">
+								<f:param name="selectedRoomId" value="#{status.index}" />
 							</aon:commandButton>
-							<aon:commandButton value="#{roomTo.asset.name}" title="#{bundle.pms_room} limpia"
-								rendered="#{cleanStatus.roomStatus[roomTo.asset.id]!='BLOCKED' and !roomTo.busyRoom and roomTo.cleanRoom}"
-								styleClass="aon-commandButton"
-								style="margin:2px; width:70px; height:70px; background:green;"
-								actionListener="#{cleanStatus.onBusyRoom}" >
-								<f:param name="selectedRoomId" value="#{roomIdx.index}"/>
+							<aon:commandButton value="#{roomTo.asset.name}"
+								title="#{bundle.pms_room} limpia"
+								rendered="#{empty cleanStatus.blockedRooms[roomTo.asset.id] and !roomTo.busyRoom and roomTo.cleanRoom}"
+								styleClass="aon-commandButton" 
+								style="margin:2px; width:70px; height:70px; background:lightgreen;"
+								onclick="showBusy(this)"
+								actionListener="#{cleanStatus.onSelectRoom}">
+								<f:param name="selectedRoomId" value="#{status.index}" />
 							</aon:commandButton>
-							<aon:commandButton value="#{roomTo.asset.name}" title="#{bundle.pms_room} ocupada"
-								rendered="#{cleanStatus.roomStatus[roomTo.asset.id]!='BLOCKED' and roomTo.busyRoom}"
-								styleClass="aon-commandButton"
+							<aon:commandButton value="#{roomTo.asset.name}"
+								title="#{bundle.pms_room} ocupada"
+								rendered="#{empty cleanStatus.blockedRooms[roomTo.asset.id] and roomTo.busyRoom}"
+								styleClass="aon-commandButton" 
 								style="margin:2px; width:70px; height:70px; background:orange;"
-								actionListener="#{cleanStatus.onDirtyRoom}" >
-								<f:param name="selectedRoomId" value="#{roomIdx.index}"/>
+								onclick="showDirty(this)"
+								actionListener="#{cleanStatus.onSelectRoom}">
+								<f:param name="selectedRoomId" value="#{status.index}" />
 							</aon:commandButton>
+							
 						</aon:div>
 						
 						<c:set var="previousRoom" value="#{roomTo.asset.name}" />

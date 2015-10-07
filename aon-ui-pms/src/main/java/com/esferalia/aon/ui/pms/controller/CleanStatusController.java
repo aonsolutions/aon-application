@@ -46,7 +46,7 @@ public class CleanStatusController extends BasicController {
 	
 	private List<String> floorList;
 
-	private Map<Integer, ActivityStatus> roomStatus;
+	private Map<Integer, ActivityStatus> blockedRooms;
 	
 	public Hotel getHotel() {
 		return hotel;
@@ -75,11 +75,11 @@ public class CleanStatusController extends BasicController {
 		this.floorList = floorList;
 	}
 	
-	public Map<Integer, ActivityStatus> getRoomStatus() {
-		return roomStatus;
+	public Map<Integer, ActivityStatus> getBlockedRooms() {
+		return blockedRooms;
 	}
-	public void setRoomStatus(Map<Integer, ActivityStatus> roomStatus) {
-		this.roomStatus = roomStatus;
+	public void setBlockedRooms(Map<Integer, ActivityStatus> blockedRooms) {
+		this.blockedRooms = blockedRooms;
 	}
 	
 	
@@ -88,7 +88,7 @@ public class CleanStatusController extends BasicController {
 		setSelectedFloor(null);
 		setRoomList(null);
 		setFloorList(null);
-		setRoomStatus(null);
+		setBlockedRooms(null);
 	}
 	
 	public void onSearch(ActionEvent event) {
@@ -109,10 +109,10 @@ public class CleanStatusController extends BasicController {
 				getFloorList().add(floor);
 			}
 		}
-		roomStatus = new HashMap<>();
-		for (ITransferObject ito : getRoomStatusList(roomList)) {
+		blockedRooms = new HashMap<>();
+		for (ITransferObject ito : getBlockedRoomStatusList(roomList)) {
 			AssetActivity activity = (AssetActivity) ito;
-			roomStatus.put(activity.getAsset().getId(), activity.getStatus());
+			blockedRooms.put(activity.getAsset().getId(), activity.getStatus());
 		}
 		setModel(new SerializableListDataModel(getRoomList()));
 	}
@@ -140,7 +140,7 @@ public class CleanStatusController extends BasicController {
 		}
 	}
 
-	private List<ITransferObject> getRoomStatusList(List<ITransferObject> roomList) {
+	private List<ITransferObject> getBlockedRoomStatusList(List<ITransferObject> roomList) {
 		List<Integer> roomIds = new LinkedList<Integer>();
 		if(roomList!=null && roomList.size()>0) {
 			for(ITransferObject to: roomList) {
@@ -164,25 +164,17 @@ public class CleanStatusController extends BasicController {
 		onSearch(event);
 	}
 	
-	public void onCleanRoom(ActionEvent event) throws ManagerBeanException {
-		updateRoom(RoomStatus.CLEAN, new Date());
-	}
-
-	public void onDirtyRoom(ActionEvent event) throws ManagerBeanException {
-		updateRoom(RoomStatus.DIRTY, null);
-	}
-
-	public void onBusyRoom(ActionEvent event) throws ManagerBeanException {
-		updateRoom(RoomStatus.DO_NOT_DISTURB, null);
-	}
-	
-	private void updateRoom(RoomStatus status, Date lastCleaningDate) throws ManagerBeanException {
+	public void onSelectRoom(ActionEvent event) throws ManagerBeanException {
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		Map<String, String> params = ec.getRequestParameterMap();
 		Room room = getRoomList().get(new Integer(params.get(ROOM_IDX)));
-		room.setStatus(status);
-		if(lastCleaningDate!=null){
-			room.setLastCleaningDate(lastCleaningDate);
+		if(room.getStatus()==RoomStatus.DIRTY){
+			room.setStatus(RoomStatus.CLEAN);
+			room.setLastCleaningDate(new Date());
+		} else if(room.getStatus()==RoomStatus.CLEAN){
+			room.setStatus(RoomStatus.DO_NOT_DISTURB);
+		} else {
+			room.setStatus(RoomStatus.DIRTY);
 		}
 		BeanManager.getManagerBean(Room.class).update(room);
 	}
