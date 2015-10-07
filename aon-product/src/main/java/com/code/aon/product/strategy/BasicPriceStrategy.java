@@ -24,7 +24,9 @@ import com.code.aon.config.TaxDetail;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.product.CatalogueCategory;
 import com.code.aon.product.CatalogueItem;
+import com.code.aon.product.Item;
 import com.code.aon.product.ItemTariff;
+import com.code.aon.product.Product;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
@@ -75,12 +77,14 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 	private double getUnitPrice(ICalculable calc, Date date, ITariffable iTariffable, RegistryMode rMode) {
 		Registry registry = iTariffable.getRegistry();
 		Tariff tariff = iTariffable.getTariff();
+		Item item = calc.getItem();
+		Product product = item.getProduct();
 		try {
-			if (calc.getItem() != null && calc.getItem().getId() != null && iTariffable != null) {
+			if (item != null && item.getId() != null && iTariffable != null) {
 				if (registry != null && registry.getId() != null) {
 					IManagerBean rItemBean = BeanManager.getManagerBean(RegistryItem.class);
 					Criteria criteria = new Criteria();
-					criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID), calc.getItem().getId());
+					criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID), item.getId());
 					criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID), registry.getId());
 					criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_STATUS), RegistryItemStatus.ACTIVE);
 					criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE), rMode);
@@ -120,8 +124,15 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 
 						criteria = new Criteria();
 						criteria.addEqualExpression(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_CATALOGUE_ID), catalogueId);
-						criteria.addEqualExpression(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_ID), calc.getItem().getId());
+						Expression itemExpr = ExpressionUtilities.getEqualExpression(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_ID), item.getId());
+						Expression itemNotNullExpr = ExpressionUtilities.getNotNullExpression(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM));
+						itemExpr = ExpressionUtilities.getAndExpression(itemExpr, itemNotNullExpr);
+						Expression productExpr = ExpressionUtilities.getEqualExpression(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_PRODUCT_ID), product.getId());
+						Expression itemNullExpr = ExpressionUtilities.getNullExpression(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM));
+						productExpr = ExpressionUtilities.getAndExpression(productExpr, itemNullExpr);
+						criteria.addExpression(ExpressionUtilities.getOrExpression(itemExpr, productExpr));
 						criteria.addLessThanOrEqualExpression(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_QUANTITY), calc.getQuantity());
+						criteria.addOrder(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_ID), false);
 						criteria.addOrder(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_QUANTITY), false);
 						Projection prjDiscount = Projection.property(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_DISCOUNT));
 						Projection prjPrice = Projection.property(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_PRICE));
@@ -131,10 +142,10 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 							return (Double)objs[1];
 						}
 
-						if (calc.getItem().getProduct().getCategory() != null && calc.getItem().getProduct().getCategory().getId() != null) {
+						if (product.getCategory() != null && product.getCategory().getId() != null) {
 							criteria = new Criteria();
 							criteria.addEqualExpression(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_CATALOGUE_ID), catalogueId);
-							criteria.addEqualExpression(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_CATEGORY_ID), calc.getItem().getProduct().getCategory().getId());
+							criteria.addEqualExpression(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_CATEGORY_ID), product.getCategory().getId());
 							criteria.addLessThanOrEqualExpression(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_QUANTITY), calc.getQuantity());
 							criteria.addOrder(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_QUANTITY), false);
 							prjDiscount = Projection.property(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_DISCOUNT));
@@ -148,7 +159,7 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 					if (rMode == RegistryMode.CUSTOMER) {
 						IManagerBean itemTariffBean = BeanManager.getManagerBean(ItemTariff.class);
 						criteria = new Criteria();
-						criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_ITEM_ID), calc.getItem().getId());
+						criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_ITEM_ID), item.getId());
 						criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_TARIFF_ID), tariff.getId());
 						Projection prjPrice = Projection.property(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_PRICE));
 						for (Object obj : itemTariffBean.getList(new ProjectionList(prjPrice), criteria)) {

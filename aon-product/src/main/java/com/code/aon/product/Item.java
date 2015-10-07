@@ -121,6 +121,16 @@ public class Item extends ItemDB implements IPriceable, IAuditable {
 		return (sb.length() > 0) ? sb.toString() : "";
 	}
 
+	@Transient
+	public String getFullDetails() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(getDetails());
+		if (getProduct().isSerializable() && StringUtils.isNotEmpty(getSerialNumber())) {
+			sb.append(" #" + getSerialNumber());
+		}
+		return (sb.length() > 0) ? sb.toString() : "";
+	}
+
 	public void setPurchasePrice(double purchasePrice) {
 		super.setPurchasePrice(CommonUtil.round(purchasePrice, 4));
 	}

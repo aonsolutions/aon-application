@@ -3,6 +3,7 @@ package com.code.aon.product;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.annotations.Heritable;
@@ -28,4 +29,13 @@ public class CatalogueItem extends CatalogueItemDB {
 		super.setDiscount( CommonUtil.round(discount));
 	}
 	
+	@Transient
+	public String getItemName() {
+		if (getItem() != null && getItem().getId() != null) {
+			return getItem().getFullName();
+		} else {
+			return getProduct().getName();
+		}
+	}
+
 }

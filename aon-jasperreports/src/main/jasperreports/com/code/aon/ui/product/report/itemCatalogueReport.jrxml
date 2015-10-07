@@ -137,7 +137,7 @@ $F{workplaceDepartment}.getDepartment().getName()]]></textFieldExpression>
 					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{catalogueItem}.getItem().getProduct().getCode()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{catalogueItem}.getProduct().getCode()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-12" mode="Transparent" x="72" y="0" width="483" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -151,7 +151,7 @@ $F{workplaceDepartment}.getDepartment().getName()]]></textFieldExpression>
 					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{catalogueItem}.getItem().getProduct().getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{catalogueItem}.getItemName()]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

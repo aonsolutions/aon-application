@@ -1,6 +1,7 @@
 package com.code.aon.product;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -26,6 +27,8 @@ import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.ProductDB;
 
@@ -116,14 +119,57 @@ public class Product extends ProductDB implements IAuditable {
 
     @Transient
     public int getItemCount() throws ManagerBeanException {
-    	int itemCount = 0;
     	if (getId() != null) {
         	IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
         	Criteria criteria = new Criteria();
         	criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), getId());
-    		itemCount = itemBean.getCount(criteria);
+    		return itemBean.getCount(criteria);
     	}
-    	return itemCount;
+    	return 0;
+    }
+
+    @Transient
+    public List<ITransferObject> getItemList() throws ManagerBeanException {
+    	List<ITransferObject> itemList = new LinkedList<ITransferObject>();
+    	if (getId() != null) {
+        	IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+        	Criteria criteria = new Criteria();
+        	criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), getId());
+        	criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_DETAIL));
+        	criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_DETAIL2));
+        	criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_DETAIL3));
+        	criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER));
+        	itemList = itemBean.getList(criteria);
+    	}
+    	return itemList;
+    }
+
+    @Transient
+    public Item getUniqueItem() throws ManagerBeanException {
+    	if (getId() != null) {
+        	IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+        	Criteria criteria = new Criteria();
+        	criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), getId());
+        	if (itemBean.getCount(criteria) == 1) {
+        		return (Item)itemBean.getList(criteria).get(0);
+        	}
+    	}
+    	return null;
+    }
+
+    @Transient
+    public double getLastItemPrice() throws ManagerBeanException {
+    	if (getId() != null) {
+        	IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+        	Criteria criteria = new Criteria();
+        	criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), getId());
+        	criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_ID), false);
+        	Projection prjPrice = Projection.property(itemBean.getFieldName(IEntityAlias.ITEM_PRICE));
+        	for (Object obj : itemBean.getList(new ProjectionList(prjPrice), criteria)) {
+        		return (Double)obj;
+        	}
+    	}
+    	return 0;
     }
 
     @Transient

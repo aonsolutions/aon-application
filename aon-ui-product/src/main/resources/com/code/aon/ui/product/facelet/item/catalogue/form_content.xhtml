@@ -29,6 +29,15 @@
 			timeZone="#{timeZoneController.timeZoneId}" />
 	</aon:outputText>
 
+	<aon:if test="#{product.to.itemCount > 1}">
+		<aon:outputLabel for="ItemCatalogue_item" value="#{bundle.aon_detail}" />
+		<aon:selectOneMenu id="ItemCatalogue_item"
+			value="#{controller.to.item}">
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{controller.itemList}" />
+		</aon:selectOneMenu>
+	</aon:if>
+
 	<aon:outputLabel for="ItemCatalogue_quantity" value="#{bundle.aon_date_from} #{bundle.aon_quantity}" />
 	<aon:inputText id="ItemCatalogue_quantity"
 		value="#{controller.to.quantity}"

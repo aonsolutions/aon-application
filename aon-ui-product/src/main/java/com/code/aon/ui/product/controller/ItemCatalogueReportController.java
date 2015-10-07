@@ -132,11 +132,11 @@ public class ItemCatalogueReportController extends DataScrollerState implements 
                 " select ci, wd" +
                 " from CatalogueItem as ci, WorkplaceDepartment as wd" +
 				" where ci.catalogue=wd.catalogue" +
-				" and ci.item.status=" + ProductStatus.ACTIVE.ordinal() +
+				" and ci.product.status=" + ProductStatus.ACTIVE.ordinal() +
 				getWorkPlaceClause() + 
 				getDepartmentClause() + 
                 " and " + DomainManager.getSQLWhereClause("ci.domain") +
-                " order by wd.workPlace, wd.department, ci.item.product.code");
+                " order by wd.workPlace, wd.department, ci.product.code");
 		setList(new LinkedList<ItemCatalogueReportController.ItemCalalogueReport>());
 		Iterator<?> iter = query.list().iterator();
 		Date queryDate = new Date();

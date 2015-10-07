@@ -12,7 +12,7 @@
 		<ui:param name="controller" value="#{itemCatalogue}" />
 
 		<ui:define name="columns">
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-300">
 				<f:facet name="header">
 					<aon:outputLabel for="ItemCatalogue_catalogue" value="#{bundle.product_catalogueItem_catalogue}" />
 				</f:facet>
@@ -70,6 +70,25 @@
 					</aon:outputText>
 				</f:facet>
 			</aon:column>
+
+			<aon:if test="#{product.to.itemCount > 1}">
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+					<f:facet name="header">
+						<aon:outputLabel for="ItemCatalogue_item" value="#{bundle.aon_detail}" />
+					</f:facet>
+					<aon:outputText id="ItemCatalogue_item"
+						value="#{to.item.fullDetails}"
+						rendered="#{formList or formEdit}" />
+					<f:facet name="footer">
+						<aon:selectOneMenu id="ItemCatalogue_item-New"
+							value="#{controller.to.item}" 
+							rendered="#{formNew}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{controller.itemList}" />
+						</aon:selectOneMenu>
+					</f:facet>
+				</aon:column>
+			</aon:if>
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 				<f:facet name="header">

@@ -447,6 +447,7 @@ public class ProposalController extends BasicController implements IAuditableCon
 				IManagerBean catalogueItemBean = BeanManager.getManagerBean(CatalogueItem.class);
 				Criteria deptCriteria = new Criteria();
 				deptCriteria.addInExpression(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_CATALOGUE_ID), catalogueIds);
+				deptCriteria.addNotNullExpression(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM));
 				List<Integer> itemIds = new LinkedList<Integer>();
 				for (ITransferObject ito : catalogueItemBean.getList(deptCriteria)) {
 					itemIds.add(((CatalogueItem)ito).getItem().getId());

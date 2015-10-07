@@ -96,6 +96,10 @@
 				<value>#{productControllerListener}</value>
 			</list-entries>
 		</managed-property>		
+		<managed-property>
+			<property-name>optionalListenerClasses</property-name>
+			<value>#{productOptionalListeners}</value>
+		</managed-property>		
 	</managed-bean>
 	
 	<managed-bean>
@@ -451,7 +455,7 @@
 			<property-name>aliasMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>CatalogueItem_item_id</key>
+					<key>CatalogueItem_product_id</key>
                     <value>id</value>
 				</map-entry>
 			</map-entries>
@@ -851,18 +855,18 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>CatalogueItem_catalogue_name</value>
+			<value>CatalogueItem_catalogue_name,CatalogueItem_item_detail,CatalogueItem_item_detail2,CatalogueItem_item_detail3,CatalogueItem_item_serialNumber,CatalogueItem_quantity</value>
 		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>
-			<value>item</value>
+			<value>product</value>
 		</managed-property>
 		<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
 				<map-entry>
 					<key>id</key>
-					<value>item.id</value>
+					<value>product.id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>		
@@ -1231,14 +1235,31 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>CatalogueItem_item_product_code,CatalogueItem_quantity</value>
+			<value>CatalogueItem_product_code,CatalogueItem_item_detail,CatalogueItem_item_detail2,CatalogueItem_item_detail3,CatalogueItem_item_serialNumber,CatalogueItem_quantity</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{catalogueItemControllerListener}</value>
+			</list-entries>
+		</managed-property>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>catalogueItemControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.product.event.CatalogueItemControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ****** CATALOGUE CATEGORY ****** -->
 	<managed-bean>
 		<managed-bean-name>catalogueCategory</managed-bean-name>
@@ -1279,6 +1300,23 @@
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{catalogueCategoryControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>catalogueCategoryControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.product.event.CatalogueCategoryControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
    	<!-- ************* NAVIGATION RULES ***************** -->

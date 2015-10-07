@@ -433,12 +433,17 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 			Criteria criteria = new Criteria();
 			String alias = catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_CATALOGUE_ID);
 			criteria.addEqualExpression(alias, getReservationInvoiceTo().getHotel().getServiceCatalogue().getId());
-			alias = catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_PRODUCT_TYPE);
+			alias = catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_PRODUCT_TYPE);
 			criteria.addEqualExpression(alias, getReservationInvoiceTo().getServiceType());
-			criteria.addOrder(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_PRODUCT_NAME));
+			criteria.addNotNullExpression(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM));
+			criteria.addOrder(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_PRODUCT_NAME));
+			criteria.addOrder(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_DETAIL));
+			criteria.addOrder(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_DETAIL2));
+			criteria.addOrder(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_DETAIL3));
+			criteria.addOrder(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_SERIAL_NUMBER));
 			for (ITransferObject ito : catalogueItemBean.getList(criteria)) {
 				CatalogueItem catalogueItem = (CatalogueItem)ito;
-				SelectItem selectItem = new SelectItem(catalogueItem.getItem(), catalogueItem.getItem().getProduct().getName());
+				SelectItem selectItem = new SelectItem(catalogueItem.getItem(), catalogueItem.getItem().getFullName());
 				servicesList.add(selectItem);
 			}
 		}

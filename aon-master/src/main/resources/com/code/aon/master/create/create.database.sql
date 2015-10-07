@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.29.0
+# Version: 8.31.0
 # Created by: girazu
-# Creation Date: 09/09/2015 11:15
+# Creation Date: 06/10/2015 17:55
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2344,7 +2344,8 @@ CREATE TABLE `catalogue_item` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `catalogue` int(4) NOT NULL COMMENT 'Identificador del Catalogo',
-  `item` int(4) NOT NULL COMMENT 'Identificador del Articulo',
+  `product` int(4) NOT NULL COMMENT 'Identificador del Producto',
+  `item` int(4) default NULL COMMENT 'Identificador del Articulo',
   `quantity` double default '0' COMMENT 'Cantidad a partir de la cual se aplica el precio o descuento',
   `price` double default '0' COMMENT 'Precio del Articulo en el Catalogo',
   `discount` double(6,2) default '0.00' COMMENT 'Descuento del Articulo en el Catalogo',
@@ -2352,9 +2353,11 @@ CREATE TABLE `catalogue_item` (
   KEY `IDX_CATALOGUE_ITEM_CATALOGUE` (`catalogue`),
   KEY `IDX_CATALOGUE_ITEM_ITEM` (`item`),
   KEY `IDX_CATALOGUE_ITEM_DOMAIN` (`domain`),
+  KEY `IDX_CATALOGUE_ITEM_PRODUCT` (`product`),
   CONSTRAINT `FK_CATALOGUE_ITEM_CATALOGUE` FOREIGN KEY (`catalogue`) REFERENCES `catalogue` (`id`),
   CONSTRAINT `FK_CATALOGUE_ITEM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_CATALOGUE_ITEM_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
+  CONSTRAINT `FK_CATALOGUE_ITEM_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
+  CONSTRAINT `FK_CATALOGUE_ITEM_PRODUCT` FOREIGN KEY (`product`) REFERENCES `product` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulos del Catalogo';
 
 #
@@ -7980,7 +7983,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.29.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.31.0');
 
 COMMIT;
 

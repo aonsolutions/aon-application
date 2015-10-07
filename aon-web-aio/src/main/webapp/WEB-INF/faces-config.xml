@@ -224,6 +224,18 @@
 		</list-entries>
 	</managed-bean>
 
+	<!-- ************ PRODUCT LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>productOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.product -->
+			<value>#{itemCatalogueChildListener}</value>
+		</list-entries>
+	</managed-bean>
+
 	<!-- ************ ITEM LISTENERS ******************* -->
 	<managed-bean>
 		<managed-bean-name>itemOptionalListeners</managed-bean-name>
@@ -239,7 +251,6 @@
 			<value>#{itemCustomerChildListener}</value>
 			<value>#{itemSupplierChildListener}</value>
 			<value>#{itemTariffChildListener}</value>
-			<value>#{itemCatalogueChildListener}</value>
 		</list-entries>
 	</managed-bean>
 

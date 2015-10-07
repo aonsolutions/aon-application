@@ -11,8 +11,9 @@
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
-	<field name="item" class="com.code.aon.product.Item"/>
 	<field name="catalogue" class="com.code.aon.config.Catalogue"/>
+	<field name="product" class="com.code.aon.product.Product"/>
+	<field name="itemName" class="java.lang.String"/>
 	<field name="quantity" class="java.lang.Double"/>
 	<field name="price" class="java.lang.Double"/>
 	<field name="discount" class="java.lang.Double"/>
@@ -220,7 +221,7 @@ $R{report_endDate}+": " + (new SimpleDateFormat("dd/MM/yyyy").format($F{catalogu
 					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{item}.getProduct().getCode()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{product}.getCode()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-12" mode="Transparent" x="72" y="0" width="260" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -234,7 +235,7 @@ $R{report_endDate}+": " + (new SimpleDateFormat("dd/MM/yyyy").format($F{catalogu
 					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{item}.getProduct().getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{itemName}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-16" mode="Transparent" x="402" y="0" width="70" height="11" forecolor="#000000" backcolor="#FFFFFF"/>

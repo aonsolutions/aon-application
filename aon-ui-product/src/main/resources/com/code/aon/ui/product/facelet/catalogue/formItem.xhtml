@@ -34,36 +34,54 @@
 			<ui:param name="controller" value="#{catalogueItem}" />
 			<ui:define name="columns">
 	
-				<aon:column alias="CatalogueItem.item.product.code" 
+				<aon:column alias="CatalogueItem.product.code" 
 					styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
-						<aon:outputLabel for="Item_id" value="#{bundle.aon_product}" />
+						<aon:outputLabel for="Product_id" value="#{bundle.aon_product}" />
 					</f:facet>
-					<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" rendered="#{formList}" />
-					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{catalogueItem.to.item}" />
-						<ui:param name="idRequired" value="#{true}" />
-						<ui:param name="skipLabel" value="#{true}" />
-						<ui:param name="lookupInputOnFocus" value="CatalogueItem_quantity" />
-						<ui:param name="lookupRendered" value="#{formEdit}" />
-						<ui:param name="lookupReRender" 
-							value="CatalogueItem_price" />
-						<aon:methodParam name="lookupChangeListener"
-							value="#{catalogueItem.itemData}" type="lookupChangeListener" />
-					</ui:include>						
-					<f:facet name="footer">
-						<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
-							<ui:param name="lookupTo" value="#{catalogueItem.to.item}" />
+					<aon:outputText value="#{to.product.code} - #{to.itemName}" rendered="#{formList}" />
+					<aon:div rendered="#{formEdit}">
+						<ui:include src="/com/code/aon/ui/product/facelet/product/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{catalogueItem.to.product}" />
 							<ui:param name="idRequired" value="#{true}" />
 							<ui:param name="skipLabel" value="#{true}" />
-							<ui:param name="lookupSuffix" value="-New" />
-							<ui:param name="lookupInputOnFocus" value="CatalogueItem_quantity-New" />
-							<ui:param name="lookupRendered" value="#{formNew}" />
+							<ui:param name="lookupInputOnFocus" value="CatalogueItem_quantity" />
 							<ui:param name="lookupReRender" 
-								value="CatalogueItem_price-New" />
+								value="CatalogueItemListDiv" />
 							<aon:methodParam name="lookupChangeListener"
-								value="#{catalogueItem.itemData}" type="lookupChangeListener" />
-						</ui:include>						
+								value="#{catalogueItem.productData}" type="lookupChangeListener" />
+						</ui:include>
+						<aon:div id="CatalogueItemListDiv" styleClass="aon-margin-left" style="display:inline;">
+							<aon:selectOneMenu id="CatalogueItem_item"
+								value="#{catalogueItem.to.item}"
+								rendered="#{catalogueItem.to.product.itemCount > 1}">
+								<f:selectItem itemLabel="-" value="#{null}" />
+								<f:selectItems value="#{catalogueItem.itemList}" />
+							</aon:selectOneMenu>
+						</aon:div>
+					</aon:div>						
+					<f:facet name="footer">
+						<aon:div rendered="#{formNew}">
+							<ui:include src="/com/code/aon/ui/product/facelet/product/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{catalogueItem.to.product}" />
+								<ui:param name="idRequired" value="#{true}" />
+								<ui:param name="skipLabel" value="#{true}" />
+								<ui:param name="lookupSuffix" value="-New" />
+								<ui:param name="lookupInputOnFocus" value="CatalogueItem_quantity-New" />
+								<ui:param name="lookupReRender" 
+									value="CatalogueItemListDiv-New" />
+								<aon:methodParam name="lookupChangeListener"
+									value="#{catalogueItem.productData}" type="lookupChangeListener" />
+							</ui:include>						
+							<aon:div id="CatalogueItemListDiv-New" styleClass="aon-margin-left" style="display:inline;">
+								<aon:selectOneMenu id="CatalogueItem_item-New"
+									value="#{catalogueItem.to.item}"
+									rendered="#{catalogueItem.to.product.itemCount > 1}">
+									<f:selectItem itemLabel="-" value="#{null}" />
+									<f:selectItems value="#{catalogueItem.itemList}" />
+								</aon:selectOneMenu>
+							</aon:div>
+						</aon:div>
 					</f:facet>
 				</aon:column>
 	
