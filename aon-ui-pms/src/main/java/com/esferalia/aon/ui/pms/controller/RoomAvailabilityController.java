@@ -31,6 +31,7 @@ import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.Room;
+import com.esferalia.aon.pms.enumeration.RoomStatus;
 import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
 
@@ -126,6 +127,8 @@ public class RoomAvailabilityController implements Serializable, ISQLConstants {
 				room.setAsset(new Asset());
 				room.getAsset().setId(rs.getInt(ROOM));
 				room.getAsset().setName(rs.getString(ROOM_NUMBER));
+				room.setStatus(RoomStatus.values()[rs.getInt(ROOM_STATUS)]);
+				room.setLastCleaningDate(rs.getDate(ROOM_LAST_CLEANING_DATE));
 				roomList.add(room);
 			}
 			return roomList;
@@ -144,7 +147,7 @@ public class RoomAvailabilityController implements Serializable, ISQLConstants {
 
 	private String getAvailableRoomListSQL() {
 		StringBuffer stmt = new StringBuffer();
-		stmt.append("SELECT R.asset AS " + ROOM + ", A.name AS " + ROOM_NUMBER);
+		stmt.append("SELECT R.asset AS " + ROOM + ", R.status AS " + ROOM_STATUS + ", R.last_cleaning_date AS " + ROOM_LAST_CLEANING_DATE + ", A.name AS " + ROOM_NUMBER);
 		stmt.append(" FROM room AS R");
 		stmt.append(" LEFT JOIN asset AS A ON A.id = R.asset");
 		stmt.append(" LEFT JOIN asset_feature AS AF ON AF.asset = A.id");
