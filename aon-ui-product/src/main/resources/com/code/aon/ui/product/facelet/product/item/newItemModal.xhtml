@@ -26,10 +26,12 @@
 				columnClasses="aon-panelGrid-odd aon-width-150,	aon-panelGrid-even aon-width-450" >
 
 				<ui:include src="/com/code/aon/ui/product/facelet/product/item/formNewContent.xhtml">
+					<ui:param name="controller" value="#{itemController}" />
 					<ui:param name="itemTo" value="#{itemController.to}" />
 				</ui:include>
 
 				<ui:include src="/com/code/aon/ui/product/facelet/product/item/formPrices.xhtml" >
+					<ui:param name="controller" value="#{itemController}" />
 					<ui:param name="itemTo" value="#{itemController.to}" />
 				</ui:include>
 
