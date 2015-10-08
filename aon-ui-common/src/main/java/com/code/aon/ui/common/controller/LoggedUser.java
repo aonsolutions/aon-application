@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Calendar;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -131,8 +132,17 @@ public class LoggedUser implements Serializable {
 	private void updateLastAccess( AuthPrincipal principal ) {
 		AONContext ctx = AONContext.getAONContext(principal.getDomain(), principal.getDomainId());
 		try {
+			// Truncate timestamp due to Mysql round issue.
+			// http://bugs.mysql.com/bug.php?id=68760
+			Timestamp t = getSessionCreatedTimestamp();
+			Calendar c = Calendar.getInstance();
+			c.setTimeInMillis(t.getTime());
+			c.set(Calendar.MILLISECOND, 0);
+			t.setTime(c.getTimeInMillis());
+			// -------------------------------------------
+			
 			ctx.getDslContext().update(USER)
-			.set(USER.LASTACCESS, getSessionCreatedTimestamp() )
+			.set(USER.LASTACCESS, t )
 			.where(USER.ID.eq(principal.getUserId()))
 			.execute();	
 		} catch ( Throwable th ) {
@@ -244,7 +254,14 @@ public class LoggedUser implements Serializable {
 			Timestamp sessionCreated = getSessionCreatedTimestamp();
 			if ( sessionCreated != null ) {
 				Timestamp userLastAccess = getUserLastAccess();
+
+				System.out.println("userLastAccess ..: " + userLastAccess + " -- " + userLastAccess.getTime() );
+				System.out.println("sessionCreated ..: " + sessionCreated + " -- " + sessionCreated.getTime() );
+				System.out.println("Compare " + userLastAccess.compareTo(sessionCreated) );
+
+				
 				return (userLastAccess != null) && (userLastAccess.compareTo(sessionCreated) > 0);
+				
 			}			
 		}
 		return false;
