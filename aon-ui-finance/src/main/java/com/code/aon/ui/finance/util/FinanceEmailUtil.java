@@ -11,8 +11,11 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
+import java.sql.SQLException;
 import java.text.MessageFormat;
 
 import javax.mail.Address;
@@ -33,6 +36,9 @@ import com.code.aon.common.util.AonFile;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.facturae.FACeUtil;
 import com.code.aon.finance.Invoice;
+import com.code.aon.google.apis.DriveUtils;
+import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.finance.SddMandateObject;
@@ -43,12 +49,15 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonMessage;
+import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.api.services.drive.Drive;
 
 public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConstants {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FinanceEmailUtil.class.getName());
+	private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 	
 	private Address[] getEmailAddresses( String[] emails, String name ) throws UnsupportedEncodingException, AddressException {
 		Address[] addresses = new Address[emails.length];
@@ -110,6 +119,10 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 		return getInvoiceFile(attach, invoice);
 	}
 	
+	private AonFile getInvoiceFile( IAttachment attach, Invoice invoice ) throws IOException {
+		return getInvoiceFile(attach, invoice, null, null);
+	}
+
 	private AonFile getInvoiceFile( IAttachment attach, Invoice invoice, String fileName, String extension ) throws IOException {
 		String _fileName = fileName;
 		if ( StringUtils.isEmpty(_fileName) ) {
@@ -125,18 +138,42 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 			_extension = attach.getMimeType().getExtension();	
 		}
 		File file = File.createTempFile( _fileName, "." + _extension );
-		FileUtils.writeByteArrayToFile(file, attach.getData());
+		writeAttachDataToFile(attach, file);
 		AonFile aonFile = new AonFile();
 		aonFile.setFile(file);	
 		aonFile.setFileName( _fileName + "." + _extension );
 		aonFile.setMimeType(attach.getMimeType());
 		return aonFile;
 	}
-	
-	private AonFile getInvoiceFile( IAttachment attach, Invoice invoice ) throws IOException {
-		return getInvoiceFile(attach, invoice, null, null);
+
+	private void writeAttachDataToFile(IAttachment attach, File file) throws IOException {
+		try {
+			DomainGserviceaccount serviceAccount = DBConsults.getServiceAccount(AonUtil.getDomainName(), attach.getDomain());
+			Drive drive = DriveUtils.serviceInitialize(serviceAccount);
+			InputStream input = DriveUtils.downloadFile(drive, DriveUtils.getFile(drive, attach.getDriveId(), attach.getId()));
+			copyInputStreamToFile(input, file);
+		} catch (SQLException ex) {
+			throw new AonCoreException(ex.getMessage());
+		} catch (GeneralSecurityException ex) {
+			throw new AonCoreException(ex.getMessage());
+		}
 	}
-	
+
+    private long copyInputStreamToFile(InputStream input, File file) throws IOException {
+		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+		long count = 0;
+		int bytes = 0;
+
+		FileOutputStream output = new FileOutputStream(file);
+		while (-1 != (bytes = input.read(buffer))) {
+			output.write(buffer, 0, bytes);
+			count += bytes;
+		}
+		output.close();
+		return count;
+    }
+
+	@SuppressWarnings("unchecked")
 	public AonFile getSddMandateReport(SddMandateObject sddMandateObject) throws ReportException, IOException {
 		AonFile aonFile = new AonFile();
 		File file = File.createTempFile( "ssdMandate-temp", "." + MimeType.MIME_PDF.getExtension() );
