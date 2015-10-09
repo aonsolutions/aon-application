@@ -123,9 +123,13 @@ public class ItemPricesManager implements Serializable {
 		return getPrice(vatPercent, retentionPercent, salesPrice, precision);
 	}
 
-	public double getPrice(double vatPercent, double retentionPercent, double salesPrice, int precision) {
+	public double getPrice(double vatPercent, double retentionPercent, double salesPrice, int minPrecision) {
+		return getPrice(vatPercent, retentionPercent, salesPrice, minPrecision, 4);
+	}
+
+	public double getPrice(double vatPercent, double retentionPercent, double salesPrice, int minPrecision, int maxPrecision) {
 		double price = 0;
-		for (int i=precision; i<=4; i++) {
+		for (int i=minPrecision; i<=maxPrecision; i++) {
 			price = CommonUtil.round(salesPrice / (1 + vatPercent / 100 - retentionPercent / 100), i);
 			if (salesPrice == getSalesPrice(vatPercent, retentionPercent, price)) {
 				break;
@@ -147,7 +151,6 @@ public class ItemPricesManager implements Serializable {
 			}
 		}
 		return price;
-		
 	}
 
 	public double getSalesPrice(IPriceable priceable, double price) {

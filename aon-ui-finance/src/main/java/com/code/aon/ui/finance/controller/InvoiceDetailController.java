@@ -156,8 +156,8 @@ public class InvoiceDetailController extends LinesController implements IFinance
 				double salesPrice = pricesManager.getSalesPrice(invoiceDetail.getVatPercent(), invoiceDetail.getRetentionPercent(), invoiceDetail.getPrice());
 				invoiceDetail.setPrice(salesPrice);
 				double totalSalesPrice = getPriceStrategy().getBasePrice(invoiceDetail);
-				invoiceDetail.setPrice(pricesManager.getPrice(invoiceDetail.getVatPercent(), invoiceDetail.getRetentionPercent(), salesPrice, 4));
-				invoiceDetail.setTaxableBase(pricesManager.getPrice(invoiceDetail.getVatPercent(), invoiceDetail.getRetentionPercent(), totalSalesPrice, 4));
+				invoiceDetail.setPrice(pricesManager.getPrice(invoiceDetail.getVatPercent(), invoiceDetail.getRetentionPercent(), salesPrice, 2));
+				invoiceDetail.setTaxableBase(pricesManager.getPrice(invoiceDetail.getVatPercent(), invoiceDetail.getRetentionPercent(), totalSalesPrice, 2));
 			} else {
 				invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
 			}
