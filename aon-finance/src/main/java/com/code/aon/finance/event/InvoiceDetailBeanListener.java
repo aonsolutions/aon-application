@@ -225,6 +225,10 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 						}
 					}
 				}
+
+				if (isQuotaSavedInTax(invoiceDetail)) {
+					quota = CommonUtil.round(base * percentage / 100);
+				}
 			}
 		}
 		invoiceTax.setBase(base);
@@ -253,6 +257,14 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
     		return (TaxDetail)ito;
     	}
 		return null;
+	}
+
+	private boolean isQuotaSavedInTax(InvoiceDetail invoiceDetail) throws ManagerBeanException {
+		IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_INVOICE_DETAIL_INVOICE_ID), invoiceDetail.getInvoice().getId());
+		criteria.addNotEqualExpression(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_QUOTA), Double.valueOf(0));
+		return invoiceTaxBean.getCount(criteria) != 0;
 	}
 
 	private void updateProjectStatus(Project project, ProjectStatus status) throws ManagerBeanException {
