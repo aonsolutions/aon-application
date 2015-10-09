@@ -295,6 +295,7 @@ public class ReservationRequestManager implements IReservationConstants {
 	private String obtainAvailableRoomStayList(HITISMessage message, List<AvailableRoomStay> availableRoomStayList) {
 		String pagingKey = null;
 		if (message.getHeader().getOriginalMessageID().equals(getMessageId())) {
+System.out.println(message.toString());
 			HITISOperationType operation = (HITISOperationType)message.getBody().getHITISOperationAbstract();
 			if (operation.getErrors() != null && operation.getErrors().sizeOfErrorArray() > 0) {
 				for (Errors.Error error : operation.getErrors().getErrorArray()) {
@@ -328,6 +329,10 @@ public class ReservationRequestManager implements IReservationConstants {
 						availableRoomStay.setMealPlan(roomStay.getRoomCodes().getMealPlan());
 						availableRoomStay.setDailyPrice(parseDouble(roomStay.getRateQuotes().getRateQuote().getQuotedRateAmount().getCurrency().getStringValue()));
 						availableRoomStay.setTotalPrice(parseDouble(roomStay.getRateQuotes().getRateQuote().getTotalAmountWithTax().getStringValue()));
+System.out.println("TOTAL AMOUNT: " + roomStay.getRateQuotes().getRateQuote().getTotalAmountWithTax().getStringValue());
+System.out.println("QUOTED AMOUNT: " + roomStay.getRateQuotes().getRateQuote().getQuotedRateAmount().getCurrency().getStringValue());
+System.out.println("TOTAL OFFER AMOUNT: " + roomStay.getRateQuotes().getRateQuote().getTotalOfferAmountWithTax().getStringValue());
+System.out.println("QUOTED OFFER AMOUNT: " + roomStay.getRateQuotes().getRateQuote().getQuotedOfferRateAmount().getCurrency().getStringValue());
 						availableRoomStay.setAvailability(roomStay.getAmount().getDomNode().getFirstChild().getNodeValue());
 						availableRoomStay.setCancelPenalty(obtainPenaltyConditions(cancelPenalty));
 						availableRoomStayList.add(availableRoomStay);
