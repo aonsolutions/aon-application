@@ -52,6 +52,15 @@
 			<value>com.code.aon.project.Project</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Project_reservation</key>
+					<value>0</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
