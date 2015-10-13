@@ -331,6 +331,28 @@
 	<pluginRepositories>
 
 		<pluginRepository>
+			<id>maven2-repository.dev.java.net</id>
+			<url>http://download.java.net/maven/2/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
+
+		<pluginRepository>
+			<id>Codehaus Public</id>
+			<url>https://repository-master.mulesoft.org/nexus/content/groups/public/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
+
+		<pluginRepository>
 			<id>aon</id>
 			<url>http://dev.esferalia.net/maven2_repositories/inhouse</url>
 			<snapshots>
@@ -363,27 +385,6 @@
 			</releases>
 		</pluginRepository>
 
-		<pluginRepository>
-			<id>maven2-repository.dev.java.net</id>
-			<url>http://download.java.net/maven/2/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-		</pluginRepository>
-
-		<pluginRepository>
-			<id>Codehaus Public</id>
-			<url>https://repository-master.mulesoft.org/nexus/content/groups/public/</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-		</pluginRepository>
 
 	</pluginRepositories>
 
