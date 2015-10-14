@@ -780,7 +780,7 @@ public class DriveUtils implements IBlobManager {
 						return true;
 					}
 					if(type.equals("registry")){
-						if(file.getType() == 0 || file.getType() == 15 || file.getType() == 17){
+						if(file.getType() == 0 || file.getType() == 15 || file.getType() == 17 || file.getType() == 18){
 							return false;
 						}
 						return true;
