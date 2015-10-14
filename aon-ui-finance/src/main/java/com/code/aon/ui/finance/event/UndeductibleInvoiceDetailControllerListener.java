@@ -1,12 +1,11 @@
 package com.code.aon.ui.finance.event;
 
-import javax.faces.model.SelectItem;
-
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
+import com.code.aon.ui.finance.controller.UndeductibleInvoiceController;
 import com.code.aon.ui.finance.controller.UndeductibleInvoiceDetailController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -21,24 +20,10 @@ public class UndeductibleInvoiceDetailControllerListener extends InvoiceDetailCo
 
 		UndeductibleInvoiceDetailController controller = (UndeductibleInvoiceDetailController)event.getController();
 		try {
-			controller.loadExpenseItems();
-			if (controller.getExpenseItems().size() > 0) {
-				SelectItem selectItem = (SelectItem)controller.getExpenseItems().get(0);
-				Item item = (Item)selectItem.getValue();
+			Item item = ((UndeductibleInvoiceController)controller.getMasterController()).obtainCreditorLastExpense(((InvoiceDetail)controller.getTo()).getLine());
+			if (item != null) {
 				controller.itemChanged(item);
 			}
-		} catch(ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage(), e);
-		}
-	}
-
-	@Override
-	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		super.afterBeanSelected(event);
-
-		UndeductibleInvoiceDetailController controller = (UndeductibleInvoiceDetailController)event.getController();
-		try {
-			controller.loadExpenseItems();
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}

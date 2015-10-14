@@ -14,6 +14,9 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.product.Item;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
@@ -67,6 +70,21 @@ public class UndeductibleInvoiceController extends InvoiceController {
 
 	private boolean isBlocked(Creditor creditor) {
 		return getRegistryValidationManager().isBlocked(creditor);
+	}
+
+	public Item obtainCreditorLastExpense(int line) throws ManagerBeanException {
+		Invoice invoice = getInvoice();
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_REGISTRY_ID), invoice.getRegistry().getId());
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_TYPE), InvoiceType.UNDEDUCTIBLE);
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE), line);
+		criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ISSUE_DATE), false);
+		criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), false);
+		for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
+			return ((InvoiceDetail)ito).getItem();
+		}
+		return null;
 	}
 
 	@Override
