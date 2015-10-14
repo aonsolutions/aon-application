@@ -31,7 +31,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.util.Region;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.jooq.Condition;
 
 import com.code.aon.google.apis.DriveUtils;
@@ -70,8 +70,8 @@ public class DownloadStockServlet extends HttpServlet {
         String stock = p_request.getParameter("stock");
         
         String barcode = p_request.getParameter("barcode");
-        String provider = p_request.getParameter("provider");
-        String tags = p_request.getParameter("tags");
+        //String provider = p_request.getParameter("provider");
+        //String tags = p_request.getParameter("tags");
         String statuses = p_request.getParameter("statuses");
         String types = p_request.getParameter("types");
         String quantity = p_request.getParameter("quantity");
@@ -144,7 +144,7 @@ public class DownloadStockServlet extends HttpServlet {
 
         Integer columns = aux.getColumns().size();
 
-        hoja.addMergedRegion(new Region(0,(short)0,0,columns.shortValue()));
+        hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()));
         
         Row rowInfo = hoja.createRow(0);
         Row fila = hoja.createRow(1);
@@ -324,7 +324,7 @@ public class DownloadStockServlet extends HttpServlet {
         }
         libro.write(archivo);        
         archivo.close();
-
+        libro.close();
 
         long length = archivoXLS.length();
         FileInputStream fis = new FileInputStream(archivoXLS);
@@ -349,9 +349,6 @@ public class DownloadStockServlet extends HttpServlet {
         fis.close();
         out.flush();
         out.close();
-        
-       //TODO probar --->  libro.close();
-
     }
 	
 	}

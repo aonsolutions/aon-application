@@ -3,8 +3,11 @@ package com.esferalia.aon.gwt.template.client;
 import java.util.List;
 import java.util.Vector;
 
+import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.Hotel;
+import com.esferalia.aon.gwt.template.shared.ProductCategory;
+import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
@@ -66,4 +69,17 @@ public interface ITemplate extends RemoteService{
 	public Error insertProposal(Integer proposal, Integer workplace);
 	
 	public Vector<Warehouse> getWarehousesToConsumption(Integer domainId, Integer workplaceId);
+
+	public List<ProductCategory> getProductCategories(Integer domainId);
+		
+	Error executeExcelEcommerce(Integer domainId, Ecommerce ecommerce,
+			Seller seller, String type,
+			ProductCategory pc);
+	
+	public String generateConsumptionExcel(Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
+			Integer domainId, Integer size, Integer fileId);
+	
+	public Integer excelRowNumber();
+	
+	public List<Seller> getSellerList(Integer domainId);
 }

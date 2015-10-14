@@ -11,7 +11,7 @@ import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Date;
-import java.sql.SQLException;
+import java.util.List;
 import java.util.Vector;
 
 import org.jooq.Condition;
@@ -33,10 +33,10 @@ import com.code.aon.registry.Registry;
 import com.esferalia.aon.gwt.template.server.AuditInfo;
 import com.esferalia.aon.gwt.template.server.FeeInfo;
 import com.esferalia.aon.gwt.template.shared.Error;
+import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.jooq.tables.records.CustomerFeeRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.registry.Seller;
 
 public class DBFee {
 
@@ -224,8 +224,7 @@ public class DBFee {
 	
 	
 	
-	public static Vector<Seller> getSellers(String domain, Integer domainId)
-			throws SQLException {
+	public static List<Seller> getSellers(String domain, Integer domainId){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);

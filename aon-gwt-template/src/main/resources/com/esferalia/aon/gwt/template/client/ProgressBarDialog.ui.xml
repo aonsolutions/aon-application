@@ -6,18 +6,17 @@
 	<ui:Style>
 
 
-
 	</ui:Style>
 	
 	<g:HTMLPanel styleName="form-template">
-
 		<div>
-		<g:HorizontalPanel ui:field="barPanel">
-			
-		</g:HorizontalPanel>
+			<g:SimplePanel ui:field="panel">
+
+			</g:SimplePanel>
 		</div>
-	
-	
+		<div>
+		
+		</div>
 	</g:HTMLPanel>
 
 </ui:UiBinder>

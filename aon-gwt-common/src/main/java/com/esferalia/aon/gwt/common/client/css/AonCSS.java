@@ -486,6 +486,19 @@ public interface AonCSS extends  CssResource {
 	/*
 	 * ProgressBar
 	 */
+	
+	@ClassName("aon-progress-bar-dialog-panel")
+	String aonProgressBarDialogPanel();
+	
+	@ClassName("active")
+	String active();
+	
+	@ClassName("aon-progress-bar-striped")
+	String aonProgressBarStriped();
+	
+	@ClassName("aon-progress-bar")
+	String aonProgressBar();
+	
 	@ClassName("progressbar-text")
 	String progressbarText();
 	

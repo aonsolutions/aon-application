@@ -308,4 +308,16 @@ public class ConsumptionItem implements IsSerializable{
 	}
 	
 	
+	public Double getConsumValue(){
+		Double consumValue = (getInitialValue() * getInitialQuantity()) 
+				+  	(getPurchasesAlb() * getPurchasesValueAlb())
+				+  	(getPurchasesFac() * getPurchasesValueFac())
+				+	((getTransfersPlus() * getPrice()) - (getTransfersMinus() * getPrice()))
+				-	(getSalesAlb() * getSalesValueAlb())
+				-	(getSalesFac() * getSalesValueFac())
+				-	(getFinalQuantity() * getFinalValue());
+		
+		if(consumValue != null) return consumValue;
+		else return 0.0;	
+	}
 }

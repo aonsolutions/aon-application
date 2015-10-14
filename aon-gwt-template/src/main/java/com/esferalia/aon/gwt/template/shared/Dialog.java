@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.template.shared;
 
+import java.util.List;
 import java.util.Vector;
-
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
@@ -21,8 +21,8 @@ public class Dialog implements IsSerializable{
 	String warehouseName;
 	Vector<String> series;
 	Vector<Series> series2;
-
-	
+	List<ProductCategory> categories;
+	List<Seller> sellerList;
 	Boolean closed;
 	public Dialog() {
 	
@@ -146,6 +146,22 @@ public class Dialog implements IsSerializable{
 	
 	public void setClosed(Boolean closed){
 		this.closed = closed;
+	}
+
+	public List<ProductCategory> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(List<ProductCategory> categories) {
+		this.categories = categories;
+	}
+
+	public List<Seller> getSellerList() {
+		return sellerList;
+	}
+
+	public void setSellerList(List<Seller> sellerList) {
+		this.sellerList = sellerList;
 	}
 
 }

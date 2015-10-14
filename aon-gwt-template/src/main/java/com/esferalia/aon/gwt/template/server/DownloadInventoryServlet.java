@@ -21,7 +21,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.util.Region;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
@@ -87,7 +87,7 @@ public class DownloadInventoryServlet extends HttpServlet {
         HSSFSheet hoja = libro.createSheet("Plantilla 1");
         
         Integer columns = aux.getColumns().size();
-        hoja.addMergedRegion(new Region(0,(short)0,0,columns.shortValue()));
+        hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()));
         Row rowInfo = hoja.createRow(0);
         Row fila = hoja.createRow(1);
         
@@ -187,7 +187,7 @@ public class DownloadInventoryServlet extends HttpServlet {
         }
         libro.write(archivo);        
         archivo.close();
-
+        libro.close();
 
         long length = archivoXLS.length();
         FileInputStream fis = new FileInputStream(archivoXLS);

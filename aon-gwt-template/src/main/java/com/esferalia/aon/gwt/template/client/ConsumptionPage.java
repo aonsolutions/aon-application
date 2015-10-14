@@ -37,7 +37,7 @@ public class ConsumptionPage extends Composite{
 	private static final String EXCEL = "excel";
 
 	final ITemplateAsync item = GWT.create(ITemplate.class);
-
+	
 	interface PageBinder extends UiBinder<Widget, ConsumptionPage> {
 	}
 
@@ -108,7 +108,7 @@ public class ConsumptionPage extends Composite{
 		selectedBox.setStyleName("aon-box-width-template");
 		selectedBox.setVisibleItemCount(10);
 		selectedBoxPanel.add(selectedBox);
-		
+		excelButton.setEnabled(true);
 		item.getHotelsToConsumption(domainId, new AsyncCallback<List<Hotel>>() {
 			
 			@Override
@@ -269,29 +269,50 @@ public class ConsumptionPage extends Composite{
 	}
 
 	//------------------------------ Actions
-
+	ProgressBarDialog pbd;
 	public void download(String type){
-		Integer size = 0;
+		Vector<Warehouse> warehouses = new Vector<Warehouse>();
+		for (Integer index= 0; index < selectedBox.getItemCount(); index++) {
+			Warehouse warehouse = new Warehouse();
+			warehouse.setId(Integer.parseInt(selectedBox.getValue(index)));
+			warehouse.setName(selectedBox.getItemText(index));
+			warehouses.add(warehouse);
+		}
 		TemplateInfo templateInfo = null;
 		for (TemplateInfo ti : templateList.getList()) {
-			if(ti.getType().equals("Consumo")){
+			if(ti.getType().equals("Consumo"))
 				templateInfo = ti;
-				size++;
-			}
 		}
-		String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_aggregate_consumption/"
-            	+ "?id=" + Integer.toString(templateInfo.getId())
-            	+ "&domain_id=" + domainId;
+		Integer size = selectedBox.getItemCount();
 		
-		for (Integer index= 0; index < selectedBox.getItemCount(); index++) {
-			fileDownloadURL = fileDownloadURL +"&warehouse_id"+ index +  "=" + selectedBox.getValue(index);
-		}
+		Double time = 20.0;
+		if(type.equals(PDF)) time = time + 5.0;
+		if(detail) time = time + 5.0;
+		pbd = new ProgressBarDialog(size.doubleValue(), time, "Generando Excel...") {
+			
+		};
+
+		pbd.addStyleName("gwt-PopupPanel-template");
+		pbd.setGlassEnabled(true);
+		pbd.show();
+		item.generateConsumptionExcel(warehouses, type, false, detail, domainId,  selectedBox.getItemCount(), templateInfo.getId(),new AsyncCallback<String>() {
 	
-		fileDownloadURL = fileDownloadURL + "&size=" + selectedBox.getItemCount()
-							+ "&detail=" + detail
-							+ "&file_type="+type;	
-						
-		Window.open( fileDownloadURL, "_blank",null);
+			@Override
+			public void onSuccess(String result) {
+				
+				final String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_aggregate_consumption/"
+								+ "?tmpkey="+result;
+				
+				pbd.completed();
+				pbd.hide();
+				
+				Window.open( fileDownloadURL, "_blank",null);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+		
 	}
 	
 	private void clean(){

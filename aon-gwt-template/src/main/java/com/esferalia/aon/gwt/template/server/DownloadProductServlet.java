@@ -33,7 +33,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.util.Region;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.jooq.Condition;
 
 import com.code.aon.google.apis.DriveUtils;
@@ -67,7 +67,7 @@ public class DownloadProductServlet extends HttpServlet {
         String description = p_request.getParameter("description");
         String code = p_request.getParameter("code");
         String category = p_request.getParameter("category");
-        String tags1 = p_request.getParameter("tags");
+        //String tags1 = p_request.getParameter("tags");
         String vat = p_request.getParameter("vat");
         String retention = p_request.getParameter("retention");
         String purchaseAccount = p_request.getParameter("purchaseAccount");
@@ -92,7 +92,7 @@ public class DownloadProductServlet extends HttpServlet {
         String profitPercent = p_request.getParameter("profitPercent");
         String price = p_request.getParameter("price");
         String itemStatuses = p_request.getParameter("itemStatuses");
-        String supplierCode = p_request.getParameter("supplierCode");
+        //String supplierCode = p_request.getParameter("supplierCode");
         
     	String creationUser = p_request.getParameter("creationUser");
     	String creationDate1 = p_request.getParameter("creationDate1");
@@ -165,7 +165,7 @@ public class DownloadProductServlet extends HttpServlet {
         
         Integer columns = aux.getColumns().size();
 
-        hoja.addMergedRegion(new Region(0,(short)0,0,columns.shortValue()));
+        hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()));
         
         Row rowInfo = hoja.createRow(0);
         Row fila = hoja.createRow(1);
@@ -477,7 +477,7 @@ public class DownloadProductServlet extends HttpServlet {
         }
         libro.write(archivo);        
         archivo.close();
-
+        libro.close();
 
         long length = archivoXLS.length();
         FileInputStream fis = new FileInputStream(archivoXLS);

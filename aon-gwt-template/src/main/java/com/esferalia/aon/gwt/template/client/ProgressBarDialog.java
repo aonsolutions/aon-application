@@ -1,34 +1,27 @@
 package com.esferalia.aon.gwt.template.client;
 
-import com.esferalia.aon.gwt.common.client.ProgressBar;
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.AonProgressBar;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class ProgressBarDialog extends CustomDialogB {
 
 	class ProgressBarCallBack extends Timer {
-
-		ProgressBar progressBar = null;
-
-		public ProgressBarCallBack() {
-			progressBar = new ProgressBar(40, ProgressBar.SHOW_TIME_REMAINING
-					+ ProgressBar.SHOW_TEXT);
-			this.progressBar.setText("Importando...");
-			barPanel.clear();
-			barPanel.add(progressBar);
-		}
+		public ProgressBarCallBack() {}
 
 		@Override
 		public void run() {
-			int progress = progressBar.getProgress() + 4;
+			int progress = apb.getProgress() + 1;
 			if (progress > 100)
 				cancel();
-			progressBar.setProgress(progress);
+			else if(progress < 100)	
+				apb.setProgress(progress);
 		}
 	}
 	
@@ -36,20 +29,32 @@ public abstract class ProgressBarDialog extends CustomDialogB {
 		
 	}
 	private static final Binder binder = GWT.create(Binder.class);
-	
 
-	@UiField(provided = true) HorizontalPanel barPanel;
+	@UiField(provided = true) SimplePanel panel;
 	private ProgressBarCallBack progressBarCallback;
-
-	
+	AonProgressBar apb;
 	
 	public ProgressBarDialog(Double d, Double d2) {
-
 		setCaption("Importando...");
 		setWidth("400px");
-		barPanel = new HorizontalPanel();
+		panel = new SimplePanel();
+		apb = new AonProgressBar();
+		panel.add(apb);
+		panel.setStyleName(AON.AON_CSS.aonProgressBarDialogPanel());
 		this.progressBarCallback = new ProgressBarCallBack();
-		evalProgressBar(d*d2);//0.101);
+		evalProgressBar((d*d2)/4);
+		setWidget(binder.createAndBindUi(this));
+	}
+	
+	public ProgressBarDialog(Double d, Double d2, String title) {
+		setCaption(title);
+		setWidth("400px");
+		panel = new SimplePanel();
+		apb = new AonProgressBar();
+		panel.add(apb);
+		panel.setStyleName(AON.AON_CSS.aonProgressBarDialogPanel());
+		this.progressBarCallback = new ProgressBarCallBack();
+		evalProgressBar((d*d2)/4);
 		setWidget(binder.createAndBindUi(this));
 	}
 	
@@ -57,5 +62,9 @@ public abstract class ProgressBarDialog extends CustomDialogB {
 		if(cargaTrabajo.intValue() == 0)
 			progressBarCallback.scheduleRepeating(1);
 		else progressBarCallback.scheduleRepeating(cargaTrabajo.intValue());
+	}
+	
+	public void completed(){
+		apb.setProgress(100);
 	}
 }

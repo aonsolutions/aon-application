@@ -40,16 +40,16 @@ public class AttachmentDAO {
 			.fetchOne();
 	
 		Attach rattach = new Attach();
-
-		if(record.value1() != null) rattach.setData(record.value1());
-		if(record.value2() != null) rattach.setMimeType(MimeType.values()[record.value2()]);
-		if(record.value3() != null) rattach.setType(record.value3());
-		if(record.value4() != null) rattach.setDriveId(record.value4());
-		if(record.value5() != null) rattach.setId(record.value5());
-		if(record.value6() != null) rattach.setDescription(record.value6());
-		if(record.value7() != null) rattach.setDate(record.value7());
-		if(record.value8() != null) rattach.setConfidential(record.value8().equals(1)?true:false);
-
+		if(record != null){
+			if(record.value1() != null) rattach.setData(record.value1());
+			if(record.value2() != null) rattach.setMimeType(MimeType.values()[record.value2()]);
+			if(record.value3() != null) rattach.setType(record.value3());
+			if(record.value4() != null) rattach.setDriveId(record.value4());
+			if(record.value5() != null) rattach.setId(record.value5());
+			if(record.value6() != null) rattach.setDescription(record.value6());
+			if(record.value7() != null) rattach.setDate(record.value7());
+			if(record.value8() != null) rattach.setConfidential(record.value8().equals(1)?true:false);
+		}
 		return rattach;
 	}
 	
@@ -213,23 +213,74 @@ public class AttachmentDAO {
 	//-------------------- UPDATES
 	
 	public static void updateContractAttach(AONContext ctx, Attach attach){
-
+		ctx.getDslContext().update(CONTRACT_ATTACH)
+			.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(attach.getDate().getTime()))
+			.set(CONTRACT_ATTACH.CONTRACT, attach.getAttachModule())
+			.set(CONTRACT_ATTACH.DATA, attach.getData())
+			.set(CONTRACT_ATTACH.DESCRIPTION, attach.getDescription())
+			.set(CONTRACT_ATTACH.DOMAIN, attach.getDomain().getId())
+			.set(CONTRACT_ATTACH.DRIVEID, attach.getDriveId())
+			.set(CONTRACT_ATTACH.MIMETYPE, (byte) attach.getMimeType().ordinal())
+			.set(CONTRACT_ATTACH.SCOPE, attach.getScope())
+			.set(CONTRACT_ATTACH.SECURITY_LEVEL, attach.getConfidential()?(byte)1:(byte)0)
+			.set(CONTRACT_ATTACH.TYPE, (byte) attach.getType())
+		.where(CONTRACT_ATTACH.ID.eq(attach.getId()))
+		.execute();
 	}
 	
 	public static void updateItemAttach(AONContext ctx, Attach attach){
-		
+		ctx.getDslContext().update(IATTACH)
+			.set(IATTACH.DATA,attach.getData())
+			.set(IATTACH.DESCRIPTION, attach.getDescription())
+			.set(IATTACH.DOMAIN, attach.getDomain().getId())
+			.set(IATTACH.DRIVEID, attach.getDriveId())
+			.set(IATTACH.ITEM, attach.getAttachModule())
+			.set(IATTACH.MIMETYPE, (byte) attach.getMimeType().ordinal())
+			.set(IATTACH.TYPE, (byte) attach.getType())
+		.where(IATTACH.ID.eq(attach.getId()))
+		.execute();
 	}
 
 	public static void updateInvoiceAttach(AONContext ctx, Attach attach){
-	
+		ctx.getDslContext().update(INVOICE_ATTACH)
+			.set(INVOICE_ATTACH.ATTACH_DATE, new Date(attach.getDate().getTime()))
+			.set(INVOICE_ATTACH.DATA, attach.getData())
+			.set(INVOICE_ATTACH.DESCRIPTION, attach.getDescription())
+			.set(INVOICE_ATTACH.DOMAIN, attach.getDomain().getId())
+			.set(INVOICE_ATTACH.DRIVEID, attach.getDriveId())
+			.set(INVOICE_ATTACH.INVOICE, attach.getAttachModule())
+			.set(INVOICE_ATTACH.MIMETYPE, (byte) attach.getMimeType().ordinal())
+			.set(INVOICE_ATTACH.TYPE, (byte) attach.getType())
+		.where(INVOICE_ATTACH.ID.eq(attach.getId()))
+		.execute();
 	}
 
 	public static void updateOfferAttach(AONContext ctx, Attach attach){
-	
+		ctx.getDslContext().update(OFFER_ATTACH)
+			.set(OFFER_ATTACH.DATA, attach.getData())
+			.set(OFFER_ATTACH.DESCRIPTION, attach.getDescription())
+			.set(OFFER_ATTACH.DOMAIN, attach.getDomain().getId())
+			.set(OFFER_ATTACH.DRIVEID, attach.getDriveId())
+			.set(OFFER_ATTACH.MIMETYPE, (byte) attach.getMimeType().ordinal())
+			.set(OFFER_ATTACH.OFFER, attach.getAttachModule())
+		.where(OFFER_ATTACH.ID.eq(attach.getId()))
+		.execute();
 	}
 
 	public static void updatePayrollAttach(AONContext ctx, Attach attach){
-	
+		ctx.getDslContext().update(PAYROLL_BATCH_ATTACH)
+			.set(PAYROLL_BATCH_ATTACH.ATTACH_DATE,  new Date(attach.getDate().getTime()))
+			.set(PAYROLL_BATCH_ATTACH.DATA, attach.getData())
+			.set(PAYROLL_BATCH_ATTACH.DESCRIPTION, attach.getDescription())
+			.set(PAYROLL_BATCH_ATTACH.DOMAIN, attach.getDomain().getId())
+			.set(PAYROLL_BATCH_ATTACH.DRIVEID, attach.getDriveId())
+			.set(PAYROLL_BATCH_ATTACH.MIMETYPE, (byte) attach.getMimeType().ordinal())
+			.set(PAYROLL_BATCH_ATTACH.SCOPE, attach.getScope())
+			.set(PAYROLL_BATCH_ATTACH.SOURCE_BATCH, attach.getSourceBatch())
+			.set(PAYROLL_BATCH_ATTACH.SOURCE_TYPE, (byte) attach.getSourceType())
+			.set(PAYROLL_BATCH_ATTACH.TYPE, (byte) attach.getType())
+		.where(PAYROLL_BATCH_ATTACH.ID.eq(attach.getId()))
+		.execute();
 	}
 
 	public static void updateProjectAttach(AONContext ctx, Attach attach){
@@ -247,12 +298,44 @@ public class AttachmentDAO {
 	}
 
 	public static void updateRegistryAttach(AONContext ctx, Attach attach){
-	
+		ctx.getDslContext().update(RATTACH)
+			.set(RATTACH.ATTACH_DATE, new Date(attach.getDate().getTime()))
+			.set(RATTACH.CATEGORY,attach.getCategory())
+			.set(RATTACH.CREATION_DATE, new Timestamp(attach.getCreationDate().getTime()))
+			.set(RATTACH.CREATION_USER, attach.getCreationUser())
+			.set(RATTACH.DATA, attach.getData())
+			.set(RATTACH.DESCRIPTION, attach.getDescription())
+			.set(RATTACH.DOMAIN, attach.getDomain().getId())
+			.set(RATTACH.DPARENT_ID, attach.getDparentId())
+			.set(RATTACH.DRIVE_ID, attach.getDriveId())
+			.set(RATTACH.MIMETYPE, (byte) attach.getMimeType().ordinal())
+			.set(RATTACH.MODIFICATION_DATE, new Timestamp(attach.getModificationDate().getTime()))
+			.set(RATTACH.MODIFICATION_USER, attach.getModificationUser())
+			.set(RATTACH.REGISTRY, attach.getAttachModule())
+			.set(RATTACH.SCOPE, attach.getScope())
+			.set(RATTACH.SECURITY_LEVEL,attach.getConfidential()?(byte)1:(byte)0)
+			.set(RATTACH.TYPE, (byte) attach.getType())
+		.where(RATTACH.ID.eq(attach.getId()))
+		.execute();
 	}
 
 	public static void updateSepeAttach(AONContext ctx, Attach attach){
-	
+		ctx.getDslContext().update(SEPE_BATCH_ATTACH)
+			.set(SEPE_BATCH_ATTACH.ATTACH_DATE, new Date(attach.getDate().getTime()))
+			.set(SEPE_BATCH_ATTACH.DATA, attach.getData())
+			.set(SEPE_BATCH_ATTACH.DESCRIPTION, attach.getDescription())
+			.set(SEPE_BATCH_ATTACH.DOMAIN, attach.getDomain().getId())
+			.set(SEPE_BATCH_ATTACH.DRIVEID, attach.getDriveId()) 	
+			.set(SEPE_BATCH_ATTACH.MIMETYPE, (byte)attach.getMimeType().ordinal())
+			.set(SEPE_BATCH_ATTACH.SCOPE, attach.getScope())
+			.set(SEPE_BATCH_ATTACH.SOURCE_BATCH, attach.getSourceBatch())
+			.set(SEPE_BATCH_ATTACH.SOURCE_TYPE, (byte) attach.getSourceType())
+			.set(SEPE_BATCH_ATTACH.TYPE, (byte) attach.getType())
+		.where(SEPE_BATCH_ATTACH.ID.eq(attach.getId()))
+		.execute();
 	}
+	
+	//-------------------- DELETES
 	
 	public static void deleteContractAttach(AONContext ctx, Condition condition){
 		ctx.getDslContext().delete(CONTRACT_ATTACH).where(condition).execute();

@@ -7,16 +7,28 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<ui:define name="content">
+		<ui:include
+			src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
 		<aon:form id="categoryList">
 
 			<aon:div ajaxRendered="true" layout="none">
-
-				<ui:include
-					src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
-					<ui:param name="toolbarTitle"
+			
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
+				<ui:param name="toolbarTitle"
 						value="#{bundle.aon_categories}" />
-					<ui:param name="controller" value="#{productCategory}" />
-				</ui:include>
+				<ui:param name="controller" value="#{productCategory}" />
+				
+
+				<ui:define name="additionalToolbarContent">
+					
+					<aon:commandLink id="amazon-import" value="#{bundle.aon_import}"
+						onclick="ecommerce()"
+						styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
+					</aon:commandLink>
+				</ui:define>
+			</ui:decorate>
+				
 
 				<aon:div styleClass="aon-scroll-area">
 					<ui:decorate

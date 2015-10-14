@@ -343,6 +343,50 @@ public class DBProduct {
 		}
 	}
 	
+	public static  Vector<com.esferalia.aon.gwt.template.shared.ProductCategory> getCategoriesShared(String domain, Integer domainId)  {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+			
+			Result<Record2<Integer, String>> data = ctx.getDslContext().select(PCATEGORY.ID,PCATEGORY.NAME)
+				.from(PCATEGORY)
+				.where(PCATEGORY.DOMAIN.eq(domainId)).fetch();
+			
+			Result<Record2<Integer, String>> dataSon = ctx.getDslContext().select(PCATEGORY.ID,PCATEGORY.NAME)
+					.from(PCATEGORY).join(DOMAIN).on(PCATEGORY.DOMAIN.eq(DOMAIN.ID))
+					.where(DOMAIN.PARENT.eq(domainId)).fetch();
+			
+			Result<Record2<Integer, String>> dataParent = ctx.getDslContext().select(PCATEGORY.ID,PCATEGORY.NAME)
+					.from(PCATEGORY).join(DOMAIN).on(PCATEGORY.DOMAIN.eq(DOMAIN.PARENT))
+					.where(DOMAIN.ID.eq(domainId)).fetch();
+			
+			Vector<com.esferalia.aon.gwt.template.shared.ProductCategory> v = new Vector<com.esferalia.aon.gwt.template.shared.ProductCategory>();
+			
+			for(Record2<Integer, String> r : data){
+				com.esferalia.aon.gwt.template.shared.ProductCategory pc = new com.esferalia.aon.gwt.template.shared.ProductCategory();
+				pc.setId(r.value1());
+				pc.setName(r.value2());
+				v.add(pc);
+			}
+			for(Record2<Integer, String> r : dataSon){
+				com.esferalia.aon.gwt.template.shared.ProductCategory pc = new com.esferalia.aon.gwt.template.shared.ProductCategory();
+				pc.setId(r.value1());
+				pc.setName(r.value2());
+				v.add(pc);
+			}
+			for(Record2<Integer, String> r : dataParent){
+				com.esferalia.aon.gwt.template.shared.ProductCategory pc = new com.esferalia.aon.gwt.template.shared.ProductCategory();
+				pc.setId(r.value1());
+				pc.setName(r.value2());
+				v.add(pc);
+			}
+			return v;
+			
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
 	public static Vector<ProductInfo> getProducts(String domain,Integer domainId, Condition condition) {
 		AONContext ctx = null;
 		try {

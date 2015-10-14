@@ -1,8 +1,5 @@
 package com.esferalia.aon.gwt.template.client;
 
-
-
-
 import gwtupload.client.IFileInput.FileInputType;
 import gwtupload.client.IUploadStatus.Status;
 import gwtupload.client.IUploader;
@@ -17,12 +14,15 @@ import java.util.Vector;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
 import com.esferalia.aon.gwt.template.shared.Department;
 import com.esferalia.aon.gwt.template.shared.Dialog;
+import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.Error;
+import com.esferalia.aon.gwt.template.shared.ProductCategory;
 import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.esferalia.aon.gwt.template.shared.WorkPlace;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -182,6 +182,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		case "exportConsumption": exportConsumption(dialog.getUrl(),dialog.getTemplateList());break;
 		case "exportInventory": exportInventory(dialog);break;
 		case "exportIncome": exportIncome(dialog);break;
+		case "importEcommerceTemplate": importEcommerce(dialog);break;
 		default:
 			break;
 		}
@@ -232,6 +233,44 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(0, 1, lb);
 		flexTableCss();
 	}
+	
+	private void importEcommerce(Dialog dialog) {
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+		
+		ListBox ecommerceListBox = new ListBox();
+		ecommerceListBox.addItem(Ecommerce.AMAZON.getName(), Ecommerce.AMAZON.getOrdinalStr());
+		flex_table.setWidget(0, 0, new Label("Ecommerce"));
+		flex_table.setWidget(0, 1, ecommerceListBox);
+		
+		ListBox sellerListBox = new ListBox();
+		sellerListBox.addItem("-","-1");
+		for(Seller seller : dialog.getSellerList())
+			sellerListBox.addItem(seller.getRegistryName(), seller.getId().toString());		
+		flex_table.setWidget(1, 0, new Label("Vendedor"));
+		flex_table.setWidget(1, 1, sellerListBox);
+		
+		TextBox typeTextBox = new TextBox();
+		typeTextBox.setStyleName("aon-inputText");
+		flex_table.setWidget(2, 0, new Label("Tipo"));
+		flex_table.setWidget(2, 1, typeTextBox);
+		
+		ListBox categoryListBox = new ListBox();
+		categoryListBox.addItem("-");
+		for(ProductCategory pc : dialog.getCategories())
+			categoryListBox.addItem(pc.getName(), pc.getId().toString());
+		flex_table.setWidget(3, 0, new Label("Categoria"));
+		flex_table.setWidget(3, 1, categoryListBox);
+		
+		SingleUploader upload = newUploader(null, dialog.getUrl(), 1);
+		flex_table.setWidget(4, 0, new Label("Archivo"));
+		flex_table.setWidget(4, 1, upload);
+		
+		flexTableCss();
+	}
+	
 	Dialog dialogAux;
 	private void exportar(Dialog dialog){
 		dialogAux = dialog;

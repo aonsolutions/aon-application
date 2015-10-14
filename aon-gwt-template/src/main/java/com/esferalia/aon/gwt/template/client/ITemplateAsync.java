@@ -4,8 +4,11 @@ import java.util.List;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.template.shared.Department;
+import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.Hotel;
+import com.esferalia.aon.gwt.template.shared.ProductCategory;
+import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
@@ -77,5 +80,20 @@ public interface ITemplateAsync {
 
 	void getWarehousesToConsumption(Integer domainId, Integer workplaceId,
 			AsyncCallback<Vector<Warehouse>> callback);
+
+	void getProductCategories(Integer domainId,
+			AsyncCallback<List<ProductCategory>> callback);
+
+	void generateConsumptionExcel(Vector<Warehouse> warehouses, String type,
+			Boolean onlyNegative, Boolean detail, Integer domainId,
+			Integer size, Integer fileId, AsyncCallback<String> callback);
+
+	void excelRowNumber(AsyncCallback<Integer> callback);
+
+	void executeExcelEcommerce(Integer domainId, Ecommerce ecommerce,
+			Seller seller, String type, ProductCategory pc,
+			AsyncCallback<Error> callback);
+
+	void getSellerList(Integer domainId, AsyncCallback<List<Seller>> callback);
 
 }

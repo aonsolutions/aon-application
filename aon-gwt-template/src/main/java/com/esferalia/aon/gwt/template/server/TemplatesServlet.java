@@ -2,12 +2,12 @@ package com.esferalia.aon.gwt.template.server;
 
 
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
+import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,13 +23,17 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.jooq.Condition;
 
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Series;
@@ -55,14 +59,24 @@ import com.esferalia.aon.gwt.template.jooq.DBFee;
 import com.esferalia.aon.gwt.template.jooq.DBProduct;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.shared.ConsumptionItem;
+import com.esferalia.aon.gwt.template.shared.Ecommerce;
+import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
+import com.esferalia.aon.gwt.template.shared.EcommerceProduct.ProductData;
+import com.esferalia.aon.gwt.template.shared.EcommerceProduct.Template;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.Hotel;
+import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.ibm.icu.util.Calendar;
 
 
 
@@ -224,7 +238,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	//-------------------- IMPORTAR FEE
 	Vector<FeeInfo> fees;
 	FeeInfo fi;
-	Vector<Seller> sellers = new Vector<Seller>();
+	List<Seller> sellers = new Vector<Seller>();
 	Vector<WorkPlace> workplaces = new Vector<WorkPlace>();
 	Vector<InvoicingGroup> invoicingGroups = new Vector<InvoicingGroup>();
 	
@@ -240,13 +254,10 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		textError = "";
 		Vector<FeeInfo> fees = new Vector<FeeInfo>();
 
-		try {
-			sellers = DBFee.getSellers(domain.getName(),domain.getId());
-			workplaces = DBFee.getWorkplaces(domain.getName(),domain.getId());
-			invoicingGroups = DBFee.getInvoicingGroups(domain.getName(),domain.getId());
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		}
+		sellers = DBFee.getSellers(domain.getName(),domain.getId());
+		workplaces = DBFee.getWorkplaces(domain.getName(),domain.getId());
+		invoicingGroups = DBFee.getInvoicingGroups(domain.getName(),domain.getId());
+	
 		Error error = new Error();
 		if(getOut() == null){
 			error.setError(false);
@@ -1414,6 +1425,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		}
 		if(rowCount != -1) rowCount = products.size();
 		setOut(null);setMimetype(null);
+
 		return rowCount;
 	}
 
@@ -1922,4 +1934,186 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	    }
 	    return false;
 	}
+
+	@Override
+	public List<com.esferalia.aon.gwt.template.shared.ProductCategory> getProductCategories(
+			Integer domainId) {
+		return DBProduct.getCategoriesShared(AonUtil.getDomainName(), domainId);
+	}
+	
+	public Error executeExcelEcommerce(Integer domainId, Ecommerce ecommerce, Seller seller, String type, com.esferalia.aon.gwt.template.shared.ProductCategory pc) {
+		Domain d = new Domain();
+		d.setName(AonUtil.getDomainName());
+		d.setId(domainId);
+		
+		Error error = new Error();
+    	if(getOut() == null){
+			error.setError(false);
+			Vector<String> verror = new Vector<String>();
+			verror.add("*No ha importado ningún archivo.");
+			error.setTextError(verror);
+			return error;
+		}
+
+		if(!Utils.isExcel(getMimetype())){
+			//El archivo no es un fichero Excel.
+			error.setError(false);
+			Vector<String> verror = new Vector<String>();
+			verror.add("*El archivo importado no es de tipo excel.");
+			error.setTextError(verror);
+			return error;
+		}
+		
+		byte[] data = getOut();
+		byte[] xml = null;
+		if(ecommerce.equals(Ecommerce.AMAZON)){
+			xml = excelToXml(data, ecommerce.getName(), type, pc.getName());
+		}
+		if(xml != null){
+			
+			Condition condition = RATTACH.DESCRIPTION.eq(type).and(RATTACH.TYPE.eq((byte)18))
+					.and(RATTACH.DPARENT_ID.eq(pc.getId().toString()));
+			Attach attach = AON.getAttach(d.getName(), d.getId(), condition, AttachType.REGISTRY);
+			
+			if(attach != null && attach.getId() != null){
+				attach.setData(xml);
+				attach.setModificationDate(Calendar.getInstance().getTime());
+				attach.setModificationUser(DBConsults.getUsername(d.getName(), d.getId(), userId));
+				AON.update(attach);
+			}
+			else{
+				attach = new Attach(AttachType.REGISTRY);
+				attach.setDescription(type);
+				attach.setData(xml);
+				//attach.setCategory(pc.getId());
+				attach.setDparentId(pc.getId().toString());
+				attach.setConfidential(true);
+				attach.setType((short) 18);// RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES
+				attach.setDate(Calendar.getInstance().getTime());
+			
+				attach.setCreationDate(Calendar.getInstance().getTime());
+				attach.setCreationUser(DBConsults.getUsername(d.getName(), d.getId(), userId));
+		
+				attach.setModificationDate(Calendar.getInstance().getTime());
+				attach.setModificationUser(DBConsults.getUsername(d.getName(), d.getId(), userId));
+				
+				attach.setDomain(d);
+				attach.setMimeType(MimeType.XML);
+				
+				if(seller.getRegistryName().equals("-"))
+					attach.setAttachModule(getCompany(d).getId());
+				else attach.setAttachModule(seller.getId());
+		
+				AON.insert(attach);
+			}
+		}
+		else{
+			error.setError(false);
+			Vector<String> verror = new Vector<String>();
+			verror.add("*El archivo importado no es correcto.");
+			error.setTextError(verror);
+		}
+		return error;
+	}
+	
+	public byte[] excelToXml(byte[] data, String ec, String type, String category){
+		try {
+			File aux = new File("/tmp/fee.xls");
+			FileUtils.writeByteArrayToFile(aux, data);
+			FileInputStream excel = null;
+			excel = new FileInputStream(aux);
+
+			HSSFWorkbook workbook= new HSSFWorkbook(excel);
+		
+			HSSFSheet sheet = workbook.getSheet("Template");
+			sheet.getSheetName();
+			Row row = sheet.getRow(0);
+			Cell cell1 = row.getCell(0);
+			Cell cell2 = row.getCell(1);
+			Template template = new Template();
+			template.setCategory(category);
+			template.setEcommerce(ec);
+			template.setType(type);
+			template.setAmazonTemplateType(cell1.getStringCellValue());
+			template.setAmazonVersion(cell2.getStringCellValue());
+			
+			Row row1 = sheet.getRow(1);
+			Row row2 = sheet.getRow(2);
+
+			ProductData pd = new ProductData();
+			pd.setEcommerce(new ArrayList<EcommerceProduct.ProductData.Ecommerce>());
+			Iterator<Cell> cellIterator1 = row1.cellIterator();
+			Iterator<Cell> cellIterator2 = row2.cellIterator();
+
+			Iterable<Cell> cellIterable1 = () -> cellIterator1;
+			Stream<Cell> cellStream1 = StreamSupport.stream(cellIterable1.spliterator(),false);
+			cellStream1.forEach(cell->{
+				EcommerceProduct.ProductData.Ecommerce ecommerce = new EcommerceProduct.ProductData.Ecommerce();
+				ecommerce.setName(cell.getStringCellValue());
+				pd.getEcommerce().add(ecommerce);
+			});
+			
+			Iterable<Cell> cellIterable2 = () -> cellIterator2;
+			Stream<Cell> cellStream2 = StreamSupport.stream(cellIterable2.spliterator(),false);
+			cellStream2.forEach(cell ->{
+				pd.getEcommerce().get(cell.getColumnIndex()).setCode(cell.getStringCellValue());
+			});
+			workbook.close();
+			EcommerceProduct ep =  new EcommerceProduct();
+			ep.setProductData(pd);
+			ep.setTemplate(template);
+			
+			return XMLUtils.writeXml(ep);
+		} catch (JAXBException | IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public String generateConsumptionExcel(Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
+								Integer domainId, Integer size, Integer fileId) {
+		File file = null;
+		try {
+			file = ConsumptionUtil.generateConsumption(warehouses, type, onlyNegative, detail, domainId, size, fileId);
+		} catch (ServletException | IOException e) {
+			e.printStackTrace();
+		}
+		String key = PasswordGenerator.getPassword(10);
+		HttpServletRequest request = getThreadLocalRequest();
+		request.getSession().setAttribute(key, file);
+		return key;
+	}
+	
+	public Integer excelRowNumber(){
+		if(getOut() != null && Utils.isExcel(getMimetype())){
+			byte[] data = getOut();
+			try{
+				File aux = new File("/tmp/products.xls");
+				org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
+				FileInputStream excel = null;
+				excel = new FileInputStream(aux);	
+				HSSFWorkbook workbook= null;
+				workbook = new HSSFWorkbook(excel);
+				HSSFSheet sheet = workbook.getSheetAt(0);
+				Integer size = sheet.getPhysicalNumberOfRows();
+				workbook.close();
+				return size;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return 1;
+	}
+	
+	public Company getCompany(Domain domain){
+		return AON.getCompanyForDomain(domain.getName(), domain.getId());
+	}
+	
+	public List<Seller> getSellerList(Integer domainId){
+		Domain d = new Domain();
+		d.setName(AonUtil.getDomainName());
+		d.setId(domainId);
+		return DBFee.getSellers(d.getName(), d.getId());
+	}
+	
 }
