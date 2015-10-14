@@ -60,7 +60,7 @@ public class ProposalDetailController extends LinesController implements IPurcha
 	public void onItemChanged(LookupChangeEvent event) throws ManagerBeanException {
 		ProposalDetail proposalDetail = (ProposalDetail) getTo();
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			RegistryItem rItem = getMorePriorityRegistryItem((Item)event.getNewValue());
+			RegistryItem rItem = getHighestPriorityRegistryItem((Item)event.getNewValue());
 			if (rItem!=null && rItem.getId()!=null) {
 				proposalDetail.setPrice(rItem.getPrice());
 				proposalDetail.setSupplier((Supplier)BeanManager.getManagerBean(Supplier.class).get(rItem.getRegistry().getId()));
@@ -68,7 +68,7 @@ public class ProposalDetailController extends LinesController implements IPurcha
 		}
 	}
 	
-	private RegistryItem getMorePriorityRegistryItem(Item item) throws ManagerBeanException {
+	private RegistryItem getHighestPriorityRegistryItem(Item item) throws ManagerBeanException {
 		Proposal proposal = (Proposal) getMasterController().getTo();
 		RegistryItem rItem = null;
 		IManagerBean bean = BeanManager.getManagerBean(RegistryItem.class);
