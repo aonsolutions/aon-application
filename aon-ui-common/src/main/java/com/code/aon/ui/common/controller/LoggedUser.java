@@ -254,14 +254,7 @@ public class LoggedUser implements Serializable {
 			Timestamp sessionCreated = getSessionCreatedTimestamp();
 			if ( sessionCreated != null ) {
 				Timestamp userLastAccess = getUserLastAccess();
-
-				System.out.println("userLastAccess ..: " + userLastAccess + " -- " + userLastAccess.getTime() );
-				System.out.println("sessionCreated ..: " + sessionCreated + " -- " + sessionCreated.getTime() );
-				System.out.println("Compare " + userLastAccess.compareTo(sessionCreated) );
-
-				
 				return (userLastAccess != null) && (userLastAccess.compareTo(sessionCreated) > 0);
-				
 			}			
 		}
 		return false;
