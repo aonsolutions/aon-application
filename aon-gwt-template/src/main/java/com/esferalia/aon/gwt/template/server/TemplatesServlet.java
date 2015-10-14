@@ -19,6 +19,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.Calendar;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -76,7 +77,6 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.ibm.icu.util.Calendar;
 
 
 
