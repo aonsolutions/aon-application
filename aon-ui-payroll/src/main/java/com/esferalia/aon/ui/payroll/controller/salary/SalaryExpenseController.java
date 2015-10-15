@@ -19,7 +19,6 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
@@ -48,6 +47,7 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryExpenseController.class.getName());
 	
 	private boolean showSalaryExpenseWindow;
+	private Enterprise enterprise;
 	private Person person;
 	private boolean groupByPerson;
 	private Month month;
@@ -62,6 +62,14 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 	
 	public Person getPerson() {
 		return person;
+	}
+
+	public Enterprise getEnterprise() {
+		return enterprise;
+	}
+
+	public void setEnterprise(Enterprise enterprise) {
+		this.enterprise = enterprise;
 	}
 
 	public void setPerson(Person person) {
@@ -167,9 +175,6 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 	}
 
 	private Date getStartDate(){
-//		GregorianCalendar cal= new GregorianCalendar();
-//		cal.set(getYear(), getMonth().getValue(), 1);
-//		return cal.getTime();
 		return startDate;
 	}
 	
@@ -178,11 +183,6 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 	}
 
 	private Date getEndDate(){
-//		GregorianCalendar cal= new GregorianCalendar();
-//		cal.set(Calendar.YEAR, getYear());
-//		cal.set(Calendar.MONTH, getMonth().getValue());
-//		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
-//		return cal.getTime();
 		return endDate;
 	}
 	
@@ -198,15 +198,18 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 		this.list = list;
 	}
 	
+	
 	public void loadList() throws ManagerBeanException, SalaryException {
-		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
-		Enterprise e = (Enterprise) controller.getTo();
+		if(enterprise==null){
+			EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
+			enterprise = (Enterprise) controller.getTo();
+		}
 		Criteria criteria = new Criteria();
 		if(isExpenseDraft()){
 			SalaryDraftController draft = 
 				(SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
 			String alias = draft.getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID);
-			draft.getCriteria().addEqualExpression(alias, e.getId());
+			draft.getCriteria().addEqualExpression(alias, enterprise.getId());
 			if(getPerson()!=null && getPerson().getId()!=null){
 				alias = draft.getFieldName(IEntityAlias.SALARY_CONTRACT_PERSON_ID);
 				criteria.addEqualExpression(alias, getPerson().getId());
@@ -230,9 +233,10 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 				}
 			}
 		} else {
+			String alias = null;
 			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
-			String alias = bean.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID);
-			criteria.addEqualExpression(alias, e.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_DOMAIN), enterprise.getDomain());
+			criteria.setSkipDomainFilter(true);
 			if(getPerson()!=null && getPerson().getId()!=null){
 				alias = bean.getFieldName(IEntityAlias.SALARY_CONTRACT_PERSON_ID);
 				criteria.addEqualExpression(alias, getPerson().getId());

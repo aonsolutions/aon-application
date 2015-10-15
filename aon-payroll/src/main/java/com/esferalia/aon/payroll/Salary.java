@@ -27,6 +27,11 @@ import com.esferalia.aon.entity.master.SalaryDB;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.bonus.Bonuses;
+import com.esferalia.aon.salary.bonus.BonusesFactoryContext;
+import com.esferalia.aon.salary.bonus.BonusesFactoryManager;
+import com.esferalia.aon.salary.bonus.IBonusesFactory;
+import com.esferalia.aon.salary.bonus.IBonusesFactoryContext;
 import com.esferalia.aon.salary.cost.Costs;
 import com.esferalia.aon.salary.cost.CostsFactoryContext;
 import com.esferalia.aon.salary.cost.CostsFactoryManager;
@@ -55,6 +60,9 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 		DeductionsFactoryManager dedManager = DeductionsFactoryManager
 				.getInstance();
 		dedManager.addFactory(new SalaryDeductionsFactory());
+		BonusesFactoryManager bonusManager = BonusesFactoryManager
+				.getInstance();
+		bonusManager.addFactory(new SalaryBonusesFactory());
 		CostsFactoryManager costManager = CostsFactoryManager
 				.getInstance();
 		costManager.addFactory(new SalaryCostsFactory());
@@ -76,11 +84,14 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 	// OTHERS
 	private IDeductionsFactoryContext dedContext;
 	private IPaymentsFactoryContext payContext;
+	private IBonusesFactoryContext bonusContext;
 	private ICostsFactoryContext costContext;
 	@Transient
 	private Payments payments;
 	@Transient
 	private Deductions deductions;
+	@Transient
+	private Bonuses bonuses;
 	@Transient
 	private Costs costs;
 
@@ -254,6 +265,31 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 		this.deductions = deductions;
 	}
 
+	// *******************************************************
+	// **************** BONIFICACIONES ***********************
+	// *******************************************************
+	
+	@Transient
+	@Override
+	public Bonuses getBonuses() throws SalaryException {
+		if (bonuses == null) {
+			BonusesFactoryManager manager = BonusesFactoryManager
+					.getInstance();
+			IBonusesFactory factory = manager
+					.getFactory(getBonusesFactoryContext());
+			setBonuses(factory.getBonuses(getBonusesFactoryContext()));
+		}
+		return bonuses;
+	}
+
+	public void setBonuses(Bonuses bonuses) throws SalaryException {
+		this.bonuses = bonuses;
+	}
+	
+	// *******************************************************
+	// ******************** COSTES ***************************
+	// *******************************************************
+
 	@Transient
 	@Override
 	public Costs getEnterpriseCosts() throws SalaryException {
@@ -420,6 +456,16 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 			payContext = pfc;
 		}
 		return payContext;
+	}
+	
+	@Transient
+	public IBonusesFactoryContext getBonusesFactoryContext() {
+		if (bonusContext == null) {
+			BonusesFactoryContext cfc = new BonusesFactoryContext();
+			cfc.setSalaryProxy(this);
+			bonusContext = cfc;
+		}
+		return bonusContext;
 	}
 
 	@Transient

@@ -3,6 +3,7 @@ package com.esferalia.aon.salary;
 import java.util.Collection;
 import java.util.Date;
 
+import com.esferalia.aon.salary.bonus.Bonuses;
 import com.esferalia.aon.salary.cost.Costs;
 import com.esferalia.aon.salary.deduction.Deductions;
 import com.esferalia.aon.salary.deduction.IDeduction;
@@ -46,6 +47,9 @@ public interface ISalary {
 	Deductions getDeductions() throws SalaryException;
 	Double getSocialSecurityContributions();
 	Double getTotalDeduction();
+	
+	//BONIFICACIONES EMPRESA
+	Bonuses getBonuses() throws SalaryException;
 	
 	//COSTES EMPRESA
 	Costs getEnterpriseCosts() throws SalaryException;

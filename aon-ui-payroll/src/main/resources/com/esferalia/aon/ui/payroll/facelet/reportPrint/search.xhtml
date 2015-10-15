@@ -57,7 +57,6 @@
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
 
-<!--  
 					<aon:htmlCommandLink id="salaryExpense-detailed_report-excel" 
 						value="&#160;"
 						actionListener="#{enterprise.onSelectFirst}"
@@ -90,7 +89,6 @@
 						<f:param name="reportKey" value="#{reportPrint.groupByEmployee?'salaryExpenseMonthlyDetailed':'salaryExpenseDetailed'}" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
--->
 						
 				</ui:define>			
 			</ui:decorate>
@@ -211,7 +209,7 @@
 					<aon:outputLabel for="reportPrint_groupOption" value="Agrupar por" />
 					<aon:selectOneMenu id="reportPrint_groupOption" value="#{reportPrint.groupByEmployee}">
 						<f:selectItem itemLabel="Empleados" itemValue="#{true}" />
-						<f:selectItem itemLabel="Centro de trabajo" itemValue="#{false}" />
+						<f:selectItem itemLabel="Periodo" itemValue="#{false}" />
 						<a4j:support event="onchange" reRender="reportPrintSearch" ajaxSingle="#{true}" />
 					</aon:selectOneMenu>		
 					

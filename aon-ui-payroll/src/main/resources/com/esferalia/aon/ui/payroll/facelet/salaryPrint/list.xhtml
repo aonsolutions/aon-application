@@ -105,6 +105,8 @@
 								actionListener="#{enterprise.onSelectFirst}"
 								action="#{report.onExecute}">
 								<f:setPropertyActionListener
+									target="#{salaryExpense.enterprise}" value="#{salaryPrint.enterprise}" />
+								<f:setPropertyActionListener
 									target="#{salaryExpense.startDate}" value="#{salaryPrint.fromDate}" />
 								<f:setPropertyActionListener
 									target="#{salaryExpense.endDate}" value="#{salaryPrint.toDate}" />
