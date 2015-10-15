@@ -206,7 +206,7 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 				.daysStream()
 				.collect(
 						Collectors.summingDouble(day -> ( day
-								.get(DAY_OF_WEEK) == Calendar.SATURDAY) ? 0.00
+								.get(DAY_OF_WEEK) == Calendar.SUNDAY) ? 0.00
 								: 4.00));
 
 		Assert.assertEquals(WORKED_HOURS.getName(), expected,  hours);
@@ -263,7 +263,7 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 				.daysStream()
 				.collect(
 						Collectors.summingDouble(day -> ( 
-								day.get(DAY_OF_WEEK) == Calendar.SATURDAY ||
+								day.get(DAY_OF_WEEK) == Calendar.SUNDAY ||
 								day.get(DAY_OF_WEEK) == Calendar.MONDAY ||
 								day.get(DAY_OF_WEEK) == Calendar.TUESDAY)
 								? 0.00
