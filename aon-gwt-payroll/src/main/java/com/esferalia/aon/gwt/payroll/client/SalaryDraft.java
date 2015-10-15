@@ -559,7 +559,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			TextListBox textListBox = new TextListBox() {
 				@Override
 				public void setValue(String value) {
-					super.setValue(value.replaceAll("^[\"'](.*)[\"']$", "$1"));
+					if ( value != null )
+						super.setValue(value.replaceAll("^[\"'](.*)[\"']$", "$1"));
 				}
 
 			};
