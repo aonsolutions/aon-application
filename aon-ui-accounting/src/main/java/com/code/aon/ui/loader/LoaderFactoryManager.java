@@ -8,12 +8,21 @@ import com.code.aon.ui.loader.factory.AccountEntryDetailLoaderFactory;
 import com.code.aon.ui.loader.factory.AccountEntryLoaderFactory;
 import com.code.aon.ui.loader.factory.AccountInvoiceLoaderFactory;
 import com.code.aon.ui.loader.factory.AccountLoaderFactory;
+import com.code.aon.ui.loader.factory.AmortizationDetailLoaderFactory;
+import com.code.aon.ui.loader.factory.AmortizationLoaderFactory;
+import com.code.aon.ui.loader.factory.AutoConceptLoaderFactory;
+import com.code.aon.ui.loader.factory.CompanyBankLoaderFactory;
+import com.code.aon.ui.loader.factory.CompanyDirStaffFactory;
+import com.code.aon.ui.loader.factory.CompanyLoaderFactory;
 import com.code.aon.ui.loader.factory.CreditorLoaderFactory;
+import com.code.aon.ui.loader.factory.CustomerFeeLoaderFactory;
 import com.code.aon.ui.loader.factory.CustomerLoaderFactory;
 import com.code.aon.ui.loader.factory.FinanceLoaderFactory;
 import com.code.aon.ui.loader.factory.InvoiceDetailLoaderFactory;
 import com.code.aon.ui.loader.factory.InvoiceLoaderFactory;
 import com.code.aon.ui.loader.factory.ItemLoaderFactory;
+import com.code.aon.ui.loader.factory.ModulesDetailLoaderFactory;
+import com.code.aon.ui.loader.factory.ModulesLoaderFactory;
 import com.code.aon.ui.loader.factory.SupplierLoaderFactory;
 import com.code.aon.ui.loader.factory.TargetLoaderFactory;
 import com.code.aon.ui.loader.pojo.ILoadedPojo;
@@ -37,6 +46,15 @@ public class LoaderFactoryManager {
 		factories.add( new AccountInvoiceLoaderFactory(engine));
 		factories.add( new AccountEntryDetailLoaderFactory(engine));
 		factories.add( new AccountEntryLoaderFactory(engine));
+		factories.add( new CompanyLoaderFactory(engine));
+		factories.add( new AmortizationLoaderFactory(engine));
+		factories.add( new AmortizationDetailLoaderFactory(engine));
+		factories.add( new ModulesLoaderFactory(engine));
+		factories.add( new ModulesDetailLoaderFactory(engine));
+		factories.add( new CompanyBankLoaderFactory(engine));
+		factories.add( new CompanyDirStaffFactory(engine));
+		factories.add( new AutoConceptLoaderFactory(engine));
+		factories.add( new CustomerFeeLoaderFactory(engine));				
 	}
 	
 	public List<ILoaderFactory<ILoadedPojo>> getFactories() {

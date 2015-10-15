@@ -24,6 +24,21 @@ public interface ILoaderFactory<E extends ILoadedPojo> {
 
 	String PGC = "PGC";	// Cuentas Contables
 	
+	String EMP = "EMP";	// Datos Generales de la Empresa, Parametros Fiscales y Parametros Contables
+	
+	String AMC = "AMC";	// Fichas de Amortizacion - Cabeceras
+	String AML = "AML";	// Fichas de Amortizacion - Lineas
+	
+	String MOC = "MOC";	// Módulos Fiscal - Cabeceras
+	String MOL = "MOL";	// Módulos Fiscal - Detalle
+	
+	String BAN = "BAN";	// Bancos de la Empresa
+	
+	String REP = "REP";	// Representantes de la Empresa
+	
+	String CON = "CON";	// Conceptos automaticos contabilidad
+	
+	String CUO = "CUO";	// Cuotas	
 	
 	public boolean accept( String key);
 	public boolean accept(Class<? extends ILoadedPojo> clazz);
