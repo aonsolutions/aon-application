@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -120,6 +121,13 @@ public class FANWriter implements Serializable {
 	}
 
 	public FileOutput createFAN(List<EnterpriseCCC> list, LiquidationType liquidationType, Integer year, Month startMonth, Month endMonth ) throws ManagerBeanException {
+		this.year = year;
+		this.startMonth = startMonth; 
+		this.endMonth= endMonth ; 
+		this.liquidationType = liquidationType;
+
+		analizeData(list, liquidationType);
+		
 		try {
 			ETI eti = createETIRecord( isFanTestEnvironmentActive(), list, liquidationType, year, startMonth, endMonth );
 			File file = File.createTempFile("temp", ".FAN");
@@ -135,10 +143,6 @@ public class FANWriter implements Serializable {
 	
 	public ETI createETIRecord(boolean testFile, List<EnterpriseCCC> list, LiquidationType liquidationType, Integer year, Month startMonth, Month endMonth ) throws ManagerBeanException {
 		ETI eti = new ETI();
-		this.year = year;
-		this.startMonth = startMonth; 
-		this.endMonth= endMonth ; 
-		this.liquidationType = liquidationType;
 		this.totalContractSum = 0;
 		
 		String authorizationKey = getAuthorizationKey();
@@ -731,6 +735,9 @@ public class FANWriter implements Serializable {
 						fanFactory.createEDLCd20Segment(bonus.getAmount(), dat);
 					} else if(bonusType==BonusType.HANDICAP){
 						fanFactory.createEDLCd13Segment(bonus.getAmount(), dat);
+						if(datList.size()>1){
+							populateBonusAmount(datList, "CD13");
+						}
 					} else if(bonusType==BonusType.LAW_19_94){
 						fanFactory.createEDLCd12Segment(bonus.getAmount(), dat);
 					} else if(bonusType==BonusType.DISTANCE_FORMATION){
@@ -1298,12 +1305,12 @@ public class FANWriter implements Serializable {
 	
 	private boolean isErePartial(Salary salary, List<ITransferObject> list) {
 		Integer days = getEreDays(salary, list);
-		return (days!=null && days>0 && days<CommonUtil.getDay(getEndDate()));
+		return (days!=null && days>0 && days<30);
 	}
 	
 	private boolean isEreTotal(Salary salary, List<ITransferObject> list) {
 		Integer days = getEreDays(salary, list);
-		return (days!=null && days>0 && days==CommonUtil.getDay(getEndDate()));
+		return (days!=null && days>0 && days==30);
 	}
 	
 	/**
@@ -2233,6 +2240,84 @@ public class FANWriter implements Serializable {
 			diffDays = (int)((Math.floor((to.getTime() - from.getTime()) / MS_PER_DAY + 0.5d) + 1));
 		}
 		return diffDays;
+	}
+	
+	private void analizeData(List<EnterpriseCCC> cccList, LiquidationType liquidationType) throws ManagerBeanException {
+		ArrayList<String> errors = new ArrayList<>();
+		ArrayList<String> cccErrors = new ArrayList<>();
+		
+		for(EnterpriseCCC ccc: cccList){
+			cccErrors = new ArrayList<>();
+			List<ITransferObject> contractList = obtainContracts(ccc, getStartDate(), getEndDate());
+			
+//			******************************
+//			contratos activos > 0
+//			******************************
+			if(contractList==null || contractList.size()==0){
+				cccErrors.add("- No hay contratos activos");
+			}
+			for(ITransferObject _contract: contractList){
+				Contract contract = (Contract) _contract;
+				Salary salary = null;
+				if(liquidationType==LiquidationType.L00){
+					salary = getSalary(contract, SalaryType.SALARY);
+				} else if(liquidationType==LiquidationType.L13){
+					salary = getSalary(contract, SalaryType.SETTLE);
+				}
+				
+//				******************************
+//				nominas > 0
+//				******************************
+				if(salary==null){
+					cccErrors.add("- " + contract.getPerson().getFullName() + " no tiene nómina");
+				} else {
+					
+//					******************************
+//					bonificacion & colectivo peculiaridad cotización
+//					******************************
+					List<ITransferObject> bonusList = getSalaryBonuses(salary);
+					if(bonusList!=null && bonusList.size()>0 && getParticularGroup(contract)==null){
+						cccErrors.add("- " + contract.getPerson().getFullName() + " no tiene definido el colectivo peculiaridad cotización");
+					}
+					
+//					******************************
+//					R. AGRARIO. jornadas reales & cotizacion mensual
+//					******************************
+					if(ccc.getType()==CCCType.AGRICULTURAL){
+						List<ITransferObject> salaryDataList = PayrollUtils.getInstance().getSalaryDataList(salary, true);
+						String jornadas = null;
+						List<ITransferObject> list = salaryDataList;
+						for(ITransferObject to: list){
+							if(((SalaryData) to).getName().equals("JORNADAS_REALES")){
+								jornadas = ((SalaryData) to).getExpression();
+							}
+						}
+						if(jornadas!=null && NumberUtils.isNumber(jornadas)){
+							String o = null;
+							for(ITransferObject to: salaryDataList){
+								if(((SalaryData)to).getName().equals("COTIZACION_MENSUAL")){
+									o = ((SalaryData)to).getExpression();
+								}
+							}
+							if(o==null || new Boolean(o)){
+								cccErrors.add("- " + contract.getPerson().getFullName() + " tiene jornadas reales definidas pero su cotización es mensual.");
+							}
+						}
+					}
+				}
+				
+			}
+			if(cccErrors!=null && cccErrors.size()>0){
+				errors.add("Errores de " + ccc.getActivity().getEnterprise().getRegistry().getFullName() + " (" + ccc.getFullCcc() + "): ");
+				errors.addAll(cccErrors);
+				errors.add(".");
+			}
+		}
+		
+		for(String error: errors){
+			AonUtil.addErrorMessage(error);
+		}
+		
 	}
 	
 	

@@ -1075,9 +1075,17 @@ public class ContractController extends BasicController {
 	}
 	
 	public void onTransformContract(ActionEvent event){
+		Contract contract = (Contract)this.getTo();
+		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+		if(contrataController.getGeneratedFile()==null || contrataController.getGeneratedFile().getData()==null){
+			contrataController.getHandler().initialize(contract);
+			contrataController.onContrataDataShow(event);
+			contrataController.onContrataAccept(event);
+		}
+		
 		ContrataController contrataTransformController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
 		ContrataTransformacionesParams params = (ContrataTransformacionesParams) contrataTransformController.getParams();
-		Contract contract = (Contract)this.getTo();
+		
 		// cerrar el contrato actual
 		try {
 			contract.setEndDate(DateUtils.addDays(params.getFechaInicio(), -1));
@@ -1090,6 +1098,7 @@ public class ContractController extends BasicController {
 			LOGGER.error(msg);
 			throw new AbortProcessingException(msg);
 		}
+		
 		// nuevo contrato para la transformacion 
 		try {
 			Contract newContract = new Contract();
@@ -1126,7 +1135,6 @@ public class ContractController extends BasicController {
 		getContractUtils().insertContractData(contract, getParams());
 		
 		try {
-			ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 			ContractAttachment newContractContrata = new ContractAttachment();
 			newContractContrata.setAttachDate(contract.getSeniorityDate());
 			newContractContrata.setAttachmentType(ContractAttachmentType.SEPE_CONTRACT_FILE);

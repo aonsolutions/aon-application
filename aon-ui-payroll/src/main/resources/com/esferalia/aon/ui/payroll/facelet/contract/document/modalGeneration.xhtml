@@ -91,17 +91,6 @@
 											</aon:div>
 										</aon:if>
 										
-										<!-- CERTIFICADO DE EMPRESA -->
-										<aon:div rendered="#{contractPdf.contract.endDate!=null and contractPdf.contractSuspensionCause==null}">
-											<aon:outputText value="#{bundle.certifica2Batch_suspension_cause}" />
-											<aon:selectOneMenu value="#{contractPdf.contractSuspensionCause}" 
-												reRender="documentGenerationForm"
-												actionListener="#{contractPdf.onSuspensionCauseSelect}">
-												<f:selectItem itemLabel="-" value="#{null}" />
-												<f:selectItems value="#{contractPdf.TLDCAUSSCodeList}" />
-											</aon:selectOneMenu>
-										</aon:div>
-										
 										<aon:if test="#{contractPdf.generationAvailable}">
 											<aon:outputText value="Documentos que se van a generar:"
 												rendered="#{!contractPdf.generatonFinished}"/>
@@ -113,10 +102,24 @@
 												rendered="#{false}"/>
 											<aon:selectManyCheckbox layout="pageDirection"
 												disabled="#{contractPdf.generatonFinished}" 
-												value="#{contractPdf.selectedDocuments}">
+												value="#{contractPdf.selectedDocuments}"
+												reRender="documentGenerationForm" >
 												<f:selectItems value="#{contractPdf.availableDocumentList}"/>
 											</aon:selectManyCheckbox>
 										</aon:if>
+										
+										<!-- CERTIFICADO DE EMPRESA -->
+										<aon:div rendered="#{contractPdf.contract.endDate!=null 
+											and contractPdf.enterpriseCertificateSelected 
+											and !contractPdf.generatonFinished}">
+											<aon:outputText value="#{bundle.certifica2Batch_suspension_cause}" />
+											<aon:selectOneMenu value="#{contractPdf.contractSuspensionCause}" 
+												reRender="documentGenerationForm"
+												actionListener="#{contractPdf.onSuspensionCauseSelect}">
+												<f:selectItem itemLabel="-" value="#{null}" />
+												<f:selectItems value="#{contractPdf.TLDCAUSSCodeList}" />
+											</aon:selectOneMenu>
+										</aon:div>
 										
 									</aon:div>
 									

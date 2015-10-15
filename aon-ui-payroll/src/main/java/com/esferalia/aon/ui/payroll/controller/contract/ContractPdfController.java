@@ -492,7 +492,7 @@ public class ContractPdfController implements Serializable {
 		CertificadosWriter writer = new CertificadosWriter();
 		try {
 			List<CertificadoEmpresa> list = new LinkedList<CertificadoEmpresa>();
-			list.add(writer.createCertificadoEmpresaType(getContract(), getContractSuspensionCause().getCode()));
+			list.add(writer.createCertificadoEmpresaType(getContract(), getContractSuspensionCause()!=null?getContractSuspensionCause().getCode():null));
 			
 			return list;
 		} catch (ManagerBeanException e) {
@@ -693,6 +693,10 @@ public class ContractPdfController implements Serializable {
 				(getContract().getEndDate()!=null && getContractSuspensionCause()!=null);
 	}
 	
+	public boolean isEnterpriseCertificateSelected(){
+		return ArrayUtils.contains(selectedDocuments, ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT);	
+	}
+	
 	public List<SelectItem> getAvailableDocumentList(){
 		ContractController controller =  (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
 //		if(availableDocumentList==null){
@@ -719,8 +723,8 @@ public class ContractPdfController implements Serializable {
 				}
 			}
 			
-			if(getContract().getEndDate()!=null && getContractSuspensionCause()!=null){
-//				suspension_notice_letter
+			if(getContract().getEndDate()!=null){
+//				TODO suspension_notice_letter
 //				item = new SelectItem(ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT, ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT.getName(AonUtil.getCurrentLocale()));
 //				availableDocumentList.add(item);
 				item = new SelectItem(ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT, ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT.getName(AonUtil.getCurrentLocale()));
@@ -750,7 +754,7 @@ public class ContractPdfController implements Serializable {
 	
 	public void selectRequiredDocuments(){
 		ContractController controller =  (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
-		if(getContractSuspensionCause()!=null){
+		if(getContract().getEndDate()!=null && getContract().getEndDate().before(new Date())){
 			selectedDocuments = (ContractAttachmentType[]) ArrayUtils.add(selectedDocuments, ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT);
 		} else if(controller.isExtendedContract()){
 			selectedDocuments = (ContractAttachmentType[]) ArrayUtils.add(selectedDocuments, ContractAttachmentType.EXTENSION_DOC_DRAFT);

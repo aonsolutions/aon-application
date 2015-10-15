@@ -12,7 +12,6 @@ import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.Types;
 import java.util.Date;
@@ -24,10 +23,6 @@ import java.util.Map;
 import javax.faces.event.AbortProcessingException;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.DataFormat;
 import org.jooq.DSLContext;
 import org.jooq.JoinType;
 import org.jooq.Record;
@@ -86,7 +81,7 @@ public class EnterpriseCostProvider implements Serializable {
 			return false;
 		}
 		
-		CustomExcelReportExporter exporter = new CustomExcelReportExporter();
+		ExcelReportExporter exporter = new ExcelReportExporter();
 		
 		// MS EXCEL 97 not support more than 256 columns 
 		if(salaryCount<256){
@@ -96,7 +91,7 @@ public class EnterpriseCostProvider implements Serializable {
 			excelReportByConcept(exporter, conceptColumnMetadata);
 		}
 
-		exporter.startSheet("Trabajadores");
+		exporter.setSheet(exporter.createSheet("Trabajadores"));
 		ReportMetadata contractColumnMetadata = getContractColumnMetadata();
 		exporter.exportHeader(contractColumnMetadata);
 		excelReportByContract(exporter, contractColumnMetadata);
@@ -279,7 +274,7 @@ public class EnterpriseCostProvider implements Serializable {
 		return metadata;
 	}
 
-	public void excelReportByConcept(CustomExcelReportExporter exporter, ReportMetadata metadata) throws IOException, ReportException, AonConnectionException {
+	public void excelReportByConcept(ExcelReportExporter exporter, ReportMetadata metadata) throws IOException, ReportException, AonConnectionException {
 		
 		// ****************************
 		// salary
@@ -347,7 +342,7 @@ public class EnterpriseCostProvider implements Serializable {
 		
 	}
 	
-	private void exportSalaryAllColumns(CustomExcelReportExporter exporter, ReportMetadata metadata, String key, String description) throws ReportException{
+	private void exportSalaryAllColumns(ExcelReportExporter exporter, ReportMetadata metadata, String key, String description) throws ReportException{
 		Double total = 0.0;
 		int column = 0;
 		exporter.startLine();
@@ -368,7 +363,7 @@ public class EnterpriseCostProvider implements Serializable {
 		}
 	}
 	
-	public void excelReportByContract(CustomExcelReportExporter exporter, ReportMetadata metadata) throws IOException, ReportException, AonConnectionException {
+	public void excelReportByContract(ExcelReportExporter exporter, ReportMetadata metadata) throws IOException, ReportException, AonConnectionException {
 		for (Integer salary : salaryList) {
 //			Double itBase = (Double) salaryConceptsMap.get(QuoteConcept.IT_BASE.name()+"_"+ salary);
 //			Double rawCgcBase = (Double) salaryConceptsMap.get(QuoteConcept.RAW_CGC_BASE.name()+"_"+ salary);
@@ -447,10 +442,10 @@ public class EnterpriseCostProvider implements Serializable {
 	}
 	
 	private Double getPercent(Double quote, Double base){
-		if(base<=0){
-			return 0.0;
-		}
 		try {
+			if(base<=0){
+				return 0.0;
+			}
 			return (new Double(quote))*100/(new Double(base));
 		} catch (Exception e) {
 			return null;
@@ -572,47 +567,6 @@ public class EnterpriseCostProvider implements Serializable {
 		return SETTINGS;
 	}
 
-	public class CustomExcelReportExporter extends ExcelReportExporter {
-		
-		public void startSheet(String name){
-			Field workbookField = null;
-			Field sheetField = null;
-			Field columnCountField = null;
-			Field rowCountField = null;
-			Field cellCountField = null;
-			try {
-				// create new sheet in the workbook
-				workbookField = ExcelReportExporter.class.getDeclaredField("workbook");
-				workbookField.setAccessible(true);
-				HSSFWorkbook workbook = (HSSFWorkbook) workbookField.get(this);
-				HSSFSheet sheet = workbook.createSheet(name);
-				
-				// init sheet and context
-				sheetField = ExcelReportExporter.class.getDeclaredField("sheet");
-				sheetField.setAccessible(true);
-				sheetField.set(this, sheet);
-				columnCountField = ExcelReportExporter.class.getDeclaredField("columnCount");
-				columnCountField.setAccessible(true);
-				columnCountField.set(this, 0);
-			    rowCountField = ExcelReportExporter.class.getDeclaredField("rowCount");
-			    rowCountField.setAccessible(true);
-			    rowCountField.set(this, 0);
-			    cellCountField = ExcelReportExporter.class.getDeclaredField("cellCount");
-			    cellCountField.setAccessible(true);
-			    cellCountField.set(this, 0);
-			    
-			} catch (SecurityException e) {
-				LOGGER.error(e.getMessage());
-			} catch (NoSuchFieldException e) {
-				LOGGER.error(e.getMessage());
-			} catch (IllegalArgumentException e) {
-				LOGGER.error(e.getMessage());
-			} catch (IllegalAccessException e) {
-				LOGGER.error(e.getMessage());
-			}
-		}
-		
-	}
 	
 	public enum QuoteConcept {
 		

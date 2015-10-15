@@ -793,7 +793,7 @@ public class QuoteValuesController implements Serializable {
 					+ "\\[(\\d{3}.\\d{2}).?(\\d{3}.\\d{2})\\].?" 
 					+ "\\[Double.MAX_VALUE.?(\\d{3}.\\d{2})\\].*"; 
 			
-			expression = expression.replace("\n",  "").replace("\r",  "").replace("\t",  "");
+			expression = expression.replace("\n",  "").replace("\r",  "").replace("\t",  "").replace(" ",  "");
 			if(expression.matches(BASE_CGC_MIN_REGEX)){
 				Pattern BASE_CGC_MIN_PATTERN = Pattern.compile(BASE_CGC_MIN_REGEX); 
 				Matcher m = BASE_CGC_MIN_PATTERN.matcher(expression);

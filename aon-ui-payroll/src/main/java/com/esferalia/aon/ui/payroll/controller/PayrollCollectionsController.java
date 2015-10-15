@@ -274,7 +274,7 @@ public class PayrollCollectionsController implements Serializable {
 				if( ArrayUtils.contains(ISepeConstants.AVAILABLE_TRANSFORM_CODE_COMMUNICATION, code.getValue()) ){
 					String name = code.getValue() +" - "+ code.getName(locale);
 					if(StringUtils.contains(name,", TRANSFORMACIÓN CONTRATO TEMPORAL")){
-						name = StringUtils.replace(name, "TRANSFORMACIÓN CONTRATO TEMPORAL", "TRANSFORMACIÓN");
+						name = StringUtils.replace(name, ", TRANSFORMACIÓN CONTRATO TEMPORAL", "");
 					}
 					SelectItem item = new SelectItem(code.getValue(), name);
 					contractTransformCodes.add(item);
@@ -543,7 +543,7 @@ public class PayrollCollectionsController implements Serializable {
 		contractAttachTypes = new LinkedList<SelectItem>();
 		ContractAttachmentType[] cat = ContractAttachmentType.values();
 		for (ContractAttachmentType t : cat) {
-			if (paramsController.getDevelopmentMode()
+			if (paramsController.getDevelopmentMode() || AonUtil.getRoleManager().isSysAdmin()
 					|| (!paramsController.getDevelopmentMode() 
 							&& t != ContractAttachmentType.SEPE_CONTRACT_FILE
 							&& t != ContractAttachmentType.SEPE_CONTRACT_COMMUNICATION_ID
@@ -555,6 +555,8 @@ public class PayrollCollectionsController implements Serializable {
 							&& t != ContractAttachmentType.SEPE_CERTIFICADOS_COMMUNICATION_ID
 							&& t != ContractAttachmentType.SEPE_CERTIFICADOS_RESPONSE 
 							&& t != ContractAttachmentType.SEPE_TRANSFORM_FILE 
+							&& t != ContractAttachmentType.SEPE_TRANSFORM_COMMUNICATION_ID 
+							&& t != ContractAttachmentType.SEPE_TRANSFORM_RESPONSE 
 							&& t != ContractAttachmentType.CONTRACT_CLAUSES)) {
 				String name = t.getName(locale);
 				SelectItem item = new SelectItem(t, name);

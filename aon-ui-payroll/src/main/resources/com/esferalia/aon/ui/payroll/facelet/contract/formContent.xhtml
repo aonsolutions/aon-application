@@ -89,7 +89,7 @@
 					rendered="#{!contract.readOnly}" 
 					value="#{contract.params.contractCode}">
 					<f:selectItem itemLabel="-" value="#{null}" />
-					<f:selectItems value="#{payrollCollections.allContractCodes}" />
+					<f:selectItems value="#{payrollCollections.contractCodes}" />
 					<a4j:support event="onchange" reRender="contract_panel" ajaxSingle="#{true}" />
 				</aon:selectOneMenu>
 			</aon:if>
