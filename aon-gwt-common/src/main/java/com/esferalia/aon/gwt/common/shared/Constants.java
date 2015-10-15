@@ -11,6 +11,7 @@ public interface Constants {
 	public static final String EMPLOYEE_TREE_ENTRY_POINT = "EmployeeTree";
 	public static final String ENTERPRISE_SITE_ENTRY_POINT = "EnterpriseSite";
 	public static final String ENTRY_POINT_VAR = "payrollEntryPoint";
+	public static final String MAIN_CRETA_ENTRY_POINT = "MainCreta";
 	
 	public static final String MODULE_ENTRY_POINT = "module";	
 	public static final String DSI_IMPORT_ENTRY_POINT = "DSIImportForm";

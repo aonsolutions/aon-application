@@ -8,7 +8,7 @@ public class CCC implements Serializable, HasId<Integer>{
 
 	private Integer id;
 	private String code;
-	
+	private String geozone;
 	
 	@Override
 	public Integer getId() {
@@ -27,6 +27,13 @@ public class CCC implements Serializable, HasId<Integer>{
 		this.code = code;
 	}
 	
+	public String getGeozone() {
+		return geozone;
+	}
+	
+	public void setGeozone(String geozone) {
+		this.geozone = geozone;
+	}
 	
 	
 }

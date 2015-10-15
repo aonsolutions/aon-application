@@ -25,6 +25,7 @@ public class Enterprise implements Serializable, HasId<Integer>, HasName<String>
 	private List<Workplace> workplaces;
 	
 	public Enterprise() {
+		activities = new LinkedList<Activity>();
 		workplaces = new LinkedList<Workplace>();
 	}
 

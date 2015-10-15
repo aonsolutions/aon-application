@@ -269,6 +269,10 @@ public class CodeMirror extends JavaScriptObject {
 			this.readOnly = readOnly;
 		}-*/;
 
+		public final native void setFoldGutter(boolean foldGutter)/*-{
+			this.foldGutter = foldGutter;
+		}-*/;
+
 		public final native void setLineNumbers(boolean lineNumbers)/*-{
 			this.lineNumbers = lineNumbers;
 		}-*/;
@@ -372,9 +376,9 @@ public class CodeMirror extends JavaScriptObject {
 
 			if (getRightOriginal() != null)
 				getRightOriginal().setHeight(height);
-			
+
 			resizeWrap(height);
-			
+
 			return true;
 		}
 
@@ -483,7 +487,7 @@ public class CodeMirror extends JavaScriptObject {
 	public final native void setHeight(int height) /*-{
 		this.setSize(null, height);
 	}-*/;
-	
+
 	/**
 	 * Get the current editor content. Separate lines with '\n'.
 	 * 

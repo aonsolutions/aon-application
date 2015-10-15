@@ -58,6 +58,10 @@ public class FileEditor extends ResizeComposite {
 		codeArea.setMode(mode);
 	}
 
+	public void setFoldGutter(boolean foldGutter) {
+		codeArea.setFoldGutter(foldGutter);
+	}
+
 	public void setLineNumbers(boolean lineNumbers) {
 		codeArea.setLineNumbers(lineNumbers);
 	}

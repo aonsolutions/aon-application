@@ -34,6 +34,8 @@ public interface Images extends ClientBundle, Tree.Resources {
 
 	ImageResource enterprise();
 	
+	ImageResource enterprises();
+
 	@Source("aon-icon-paste.png")
 	ImageResource aonIconPaste();
 	
@@ -136,6 +138,9 @@ public interface Images extends ClientBundle, Tree.Resources {
 	@Source("aon-icon-calendar.png")
 	ImageResource aon_icon_calendar();
 	
+	@Source("aon-icon-okwarning.png")
+	ImageResource aon_icon_okwarning();
+
 	ImageResource tooltip_top ();
 
 	ImageResource segsocial_small();

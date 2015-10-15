@@ -6,6 +6,7 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,8 +21,10 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
+import com.code.aon.config.Domain;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.controller.ConfigConstants;
@@ -203,6 +206,27 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		return domainSwitcher.getDomainId();
 	}
 
+	protected static Integer[] getChildDomainIDs(Integer domainId) throws ManagerBeanException {
+		IManagerBean beanManager = BeanManager
+				.getManagerBean(Domain.class);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				beanManager.getFieldName(IEntityAlias.DOMAIN_PARENT_ID),
+				domainId );
+
+		List<ITransferObject> tos = beanManager.getList(criteria);
+		
+		if( tos == null || tos.isEmpty() )
+			return new Integer[]{};
+		
+		Integer[] ids = new Integer[tos.size()];
+		for (int i = 0; i < ids.length; i++ ) 
+			ids[i] = ((Domain)tos.get(i)).getId();
+		
+		return ids;
+	}
+
 	/*
 	 * We assume here that one domain one enterprise. 
 	 */
@@ -263,26 +287,35 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		
 	}
 	
-	protected static int [] getEnterpriseIDs() throws ManagerBeanException {
+	protected static Integer [] getEnterpriseIDs() throws ManagerBeanException {
+		
+		List<Integer> ids  = getEnterpriseIDs(getDomainID());
+		
+		for ( Integer child: getChildDomainIDs(getDomainID()) )
+			ids.addAll(getEnterpriseIDs(child));
+		
+		return ids.toArray(new Integer[ids.size()]);
+	}
+	
+	protected static List<Integer> getEnterpriseIDs(Integer domainId) throws ManagerBeanException {
 		
 		IManagerBean beanManager = BeanManager
 				.getManagerBean(com.code.aon.company.Enterprise.class);
 
 		Criteria criteria = new Criteria();
+		criteria.setSkipDomainFilter(true);
 		criteria.addEqualExpression(
 				beanManager.getFieldName(IEntityAlias.ENTERPRISE_DOMAIN),
-				getDomainID() );
-
+				domainId );
+		
 		List<ITransferObject> tos = beanManager.getList(criteria);
 		
-		int ids [] = new int [tos.size()];
-		for (int i = 0 ; i < tos.size(); i++) {
-			ids[i] = ((Enterprise) tos.get(i)).getId();
-		}
+		 List<Integer> ids  = new ArrayList<Integer>(tos.size());
+		 for ( ITransferObject to : tos )
+			ids.add(((Enterprise)to).getId());
 		
 		return ids;
 
 	}
-	
 
 }

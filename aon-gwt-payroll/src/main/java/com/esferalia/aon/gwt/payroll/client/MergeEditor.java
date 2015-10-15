@@ -58,6 +58,10 @@ public class MergeEditor extends ResizeComposite {
 		mergeArea.setMode(mode);
 	}
 
+	public void setFoldGutter(boolean foldGutter) {
+		mergeArea.setFoldGutter(foldGutter);
+	}
+
 	public void setLineNumbers(boolean lineNumbers) {
 		mergeArea.setLineNumbers(lineNumbers);
 	}

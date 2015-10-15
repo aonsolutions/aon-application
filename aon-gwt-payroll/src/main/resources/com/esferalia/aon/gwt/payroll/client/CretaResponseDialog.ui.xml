@@ -5,6 +5,7 @@
 	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
 
 	<ui:Style>
+	
 	.form {
 		padding: 10px;
 	}
@@ -30,7 +31,7 @@
 	}
 	
 	.field {
-		padding: 1px 0.5em;
+		padding: 1px 0.5em;		
 	}
 	
 	.buttons {
@@ -63,10 +64,6 @@
 		padding-left: 16px;
 	}
 	
-	.options-scroll-panel>div {
-		height: 99%;
-	}
-	
 	</ui:Style>
 
 	<ui:import field="com.google.gwt.user.client.ui.FormPanel.*" />
@@ -87,7 +84,7 @@
 				</tr>
 				<tr>
 					<td class="{style.label}">
-						<g:Label text="SDL-Fichero Trabajadores y Tramos" />
+						<g:Label text="Mensajes Recibidos (SILTRA)" />
 					</td>
 					<td class="{style.field}">
 						<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
@@ -97,12 +94,15 @@
 						</g:HorizontalPanel>
 					</td>
 				</tr>
-				<tr style="display:none" >
+				<tr>
+					<td class="{style.field}" colspan="2">&nbsp;</td>
+				</tr>
+				<tr style="display:none;">
 					<td class="{style.label}" colspan="2" >
-						<g:Label text="Selecciona los Trabajadores : " ui:field="selectLabel" />
+						<g:Label text="" ui:field="selectLabel" />
 					</td>
 				</tr>
-				<tr  style="display:none" >
+				<tr>
 					<td class="{style.field} aon-width-all" colspan="2">
 						<cell:DataGrid ui:field="selectDataGrid" />
 					</td>

@@ -58,6 +58,10 @@ public class MergeArea extends HTML {
 		options.setOrig(orig);
 	}
 
+	public void setFoldGutter(boolean foldGutter) {
+		options.setFoldGutter(foldGutter);
+	}
+
 	public void setLineNumbers(boolean lineNumbers) {
 		options.setLineNumbers(lineNumbers);
 	}

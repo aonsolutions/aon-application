@@ -39,6 +39,7 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -536,6 +537,40 @@ public class QuoteCalculatorTestCase {
 		Assert.assertEquals(66.66, quoteCalculator.getEreBase());
 	}
 	
+	@Test
+	public void testQuoteXII() throws AonException {
+
+		Date startDate = AonDateUtils.getMonthFirstDay(new Date());
+		Date endDate = AonDateUtils.getMonthLastDay(startDate);
+		ExpressionContext ctx = getExpressionContext(startDate, endDate);
+		
+		QuoteCalculator quoteCalculator = new QuoteCalculator.GeneralQuote(ctx, startDate, endDate);
+		
+		ContractPayment fixedPayment = new ContractPayment();
+		fixedPayment.setType(PaymentType.CRA_0001);
+		fixedPayment.setSalaryType(SalaryType.SALARY);
+		fixedPayment.setQuoteExpression("10.00");
+		
+		ContractPayment itPayment = new ContractPayment();
+		itPayment.setType(PaymentType.CRA_0001);
+		itPayment.setSalaryType(SalaryType.SALARY);
+		itPayment.setQuoteExpression("200.00");
+
+		ExpressionImpl expression = new ExpressionImpl();
+		expression.setName(CGC_BASE_MIN.getName());
+		expression.setExpression("30000.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)");
+		ctx.addLazyExpression(expression, startDate, endDate);
+		
+		Double quote = quoteCalculator.quote(fixedPayment, startDate, endDate, 10.00);
+		quote = quoteCalculator.quote(itPayment, startDate, startDate, 200.00);
+		
+//		Assert.assertEquals(CGC_BASE.name(), 1000.00, quote);
+		
+		List<ITimedResult<Double>> cgcBases = ctx.eval(CGC_BASE.getName(),startDate, endDate, Double.class);
+		for ( ITimedResult<Double> cgcBase: cgcBases )
+			System.out.println(CGC_BASE.name() + " = " + cgcBase.getValue(cgcBase.getPeriod())+ "[" + cgcBase.getPeriod().getStart() + "..." + cgcBase.getPeriod().getEnd() + "]");
+
+	}
 	// ------------------------------------------------------------------------
 	
 	
