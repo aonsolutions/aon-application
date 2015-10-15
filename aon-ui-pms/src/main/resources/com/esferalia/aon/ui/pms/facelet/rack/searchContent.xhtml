@@ -32,13 +32,13 @@
 					<f:selectItems value="#{searchController.hotelRoomItems}" />
 				</aon:selectOneMenu>
 
-				<aon:outputText for="Room_asset_name"
+				<aon:outputLabel for="Room_asset_name"
 					value="#{bundle.pms_room_number}" />
 				<aon:inputText id="Room_asset_name"
 					value="#{searchController.roomName}"
 					size="3" maxlength="5" />
 
-				<aon:outputText for="Rack_viewerStartDate"
+				<aon:outputLabel for="Rack_viewerStartDate"
 					value="#{bundle.aon_start_date}" />
 				<aon:selectInputDate id="Rack_viewerStartDate"
 					value="#{controller.filterParams.viewerStartDate}"

@@ -34,7 +34,7 @@
 									<aon:panelGrid columns="2" styleClass="aon-width-all"
 										columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
 			
-										<aon:outputText	for="Creditor_id" value="#{bundle.aon_creditor}" />
+										<aon:outputLabel for="Creditor_id" value="#{bundle.aon_creditor}" />
 										<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml">
 											<ui:param name="lookupTo" value="#{prepayment.to.creditor}" />
 											<ui:param name="skipLabel" value="#{true}" />						
@@ -195,7 +195,7 @@
 									<aon:panelGrid columns="2" styleClass="aon-width-all"
 										columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
 
-										<aon:outputText	for="Customer_id" value="#{bundle.aon_customer}" />
+										<aon:outputLabel for="Customer_id" value="#{bundle.aon_customer}" />
 										<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
 											<ui:param name="lookupTo" value="#{prepayment.to.customer}" />
 											<ui:param name="skipLabel" value="#{true}" />						
