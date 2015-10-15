@@ -42,8 +42,7 @@ public class SQLCollections {
 			for (IContractPayment sqlContractPayment : sqlContractPayments) {
 				
 				SimpleSystemPayment systemPayment = 
-					new SimpleSystemPayment(sqlContractPayment);
-				systemPayment.setDomain(rs.getInt(SystemPaymentColumns.DOMAIN));
+					new SimpleSystemPayment(sqlContractPayment, rs.getInt(SystemPaymentColumns.DOMAIN));
 			
 				systemPaymentList.add(systemPayment);
 			}
@@ -62,8 +61,7 @@ public class SQLCollections {
 			for (IContractPayment sqlContractPayment : sqlContractPayments) {
 				
 				SimpleSystemPayment systemPayment = 
-					new SimpleSystemPayment(sqlContractPayment);
-				systemPayment.setDomain(rs.getInt(AgreementPaymentColumns.DOMAIN));
+					new SimpleSystemPayment(sqlContractPayment, rs.getInt(AgreementPaymentColumns.DOMAIN));
 			
 				systemPaymentList.add(systemPayment);
 			}

@@ -8,15 +8,16 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.logical.shared.AttachEvent;
-import com.google.gwt.event.logical.shared.AttachEvent.Handler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LongBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -42,7 +43,15 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 	@UiField
 	Anchor downloadAnchor;
 	
+	@UiField
+	Label selectLabel;
 	
+	@UiField
+	Element previousBasesTR;
+
+	@UiField
+	CheckBox previousBasesCheckBox;
+
 	private Callback callback;
 	
 	public CretaRequestDialog(Callback callback) {
@@ -53,6 +62,7 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 		
 		setWidget(binder.createAndBindUi(this));
 		
+		setVisiblePreviousBases(false);
 		
 		// Full CCC.
 		Column<CCC, String> fullNameColumn = new Column<CCC, String>(
@@ -102,6 +112,10 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 		authLongBox.setValue(authorized);
 	}
 	
+	public boolean previousBases(){
+		return previousBasesCheckBox.getValue();
+	}
+	
 	// ------------------------------------------------------------------------
 	
 	public void download(String fileName,String url){
@@ -109,6 +123,15 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 		downloadAnchor.setTarget(fileName);
 		downloadAnchor.getElement().setAttribute("download", fileName);
 		click(downloadAnchor.getElement());
+		
+	}
+	// ------------------------------------------------------------------------
+	
+	protected void setVisiblePreviousBases(boolean visible){
+		if ( visible )
+			previousBasesTR.getStyle().clearDisplay();
+		else
+			previousBasesTR.getStyle().setDisplay(Display.NONE);
 		
 	}
 	

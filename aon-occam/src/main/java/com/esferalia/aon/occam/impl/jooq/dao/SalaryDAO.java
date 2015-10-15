@@ -447,6 +447,9 @@ public class SalaryDAO {
 					.setEmployeeDocument(employeeDocument)
 					.setEmployeeName(rootRecord.getValue(SALARY.EMPLOYEE_NAME))
 					.setEmployeeSSNumber(rootRecord.getValue(SALARY.SOCIAL_SECURITY_NUMBER))
+					.setEnterpriseDocument(rootRecord.getValue(SALARY.ENTERPRISE_DOCUMENT))
+					.setEnterpriseName(rootRecord.getValue(SALARY.ENTERPRISE_NAME))
+					.setEnterpriseCCC(rootRecord.getValue(SALARY.CCC))
 					;
 					
 					Seq.limitWhile(

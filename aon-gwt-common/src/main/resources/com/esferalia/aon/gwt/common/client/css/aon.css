@@ -693,6 +693,10 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	gwt-image: 'aon_icon_calendar';
 }
 
+@sprite .aon-icon-okwarning {
+	gwt-image: 'aon_icon_okwarning';
+}
+
 @sprite .aon-icon-cost {
         gwt-image: "cost" ;
 }

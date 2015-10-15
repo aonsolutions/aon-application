@@ -368,6 +368,9 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-icon-error")
 	String aonIconError();
 	
+	@ClassName("aon-icon-okwarning")
+	String aonIconOkWarning();
+
 	@ClassName("aon-icon-changed")
 	String aonIconChanged();
 
