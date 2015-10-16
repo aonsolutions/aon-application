@@ -10,11 +10,28 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class DomainPaymentsTestCase {
 
+	public static class SimpleSystemPayment extends AbstractContractPayment<SimpleSystemPayment> implements ISystemPayment{
+		
+		int domain;
+		
+		public int getDomain() {
+			return domain;
+		}
+		
+		public SimpleSystemPayment setDomain(int domain) {
+			this.domain = domain;
+			return this;
+		}
+	
+	}
+	
+	
 	@Test
 	public void testIterator() {
 

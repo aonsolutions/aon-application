@@ -18,8 +18,10 @@ import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.EnterprisesService;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
+import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -38,7 +40,10 @@ import com.esferalia.aon.payroll.sql.SQLConstants.ContractDeductionColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.DeductionConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.DomainColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseActivityColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseCccColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.GeozoneColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
@@ -867,24 +872,35 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+
 	private static List<Enterprise> getEnterprises(Connection connection,
 			int domainId, int offset, int limit) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
 			// @formatter:off
-			stmt = connection.prepareStatement("SELECT * FROM "
-					+ SQLConstants.ENTERPRISE + ", " + SQLConstants.REGISTRY
-					+ ", " + SQLConstants.DOMAIN + " WHERE "
-					+ EnterpriseColumns.REGISTRY + " = "
-					+ SQLConstants.REGISTRY + "." + RegistryColumns.ID
-					+ " AND " + SQLConstants.ENTERPRISE + "."
-					+ EnterpriseColumns.DOMAIN + " = " + SQLConstants.DOMAIN
-					+ "." + DomainColumns.ID + " AND ( " + SQLConstants.DOMAIN
-					+ "." + DomainColumns.ID + " = ? " + " OR "
-					+ SQLConstants.DOMAIN + "." + DomainColumns.PARENT
-					+ " = ? " + ")" + " ORDER BY " + SQLConstants.REGISTRY
-					+ "." + RegistryColumns.NAME + " LIMIT ?, ?");
+			stmt = connection.prepareStatement(
+					"SELECT * FROM "
+					+ SQLConstants.ENTERPRISE 
+					+ ", " + SQLConstants.REGISTRY
+					+ ", " + SQLConstants.DOMAIN 
+					+ ", " + SQLConstants.ENTERPRISE_ACTIVITY 
+					+ ", " + SQLConstants.ENTERPRISE_CCC
+					+ ", " + SQLConstants.GEOZONE
+					
+					+ " WHERE " + EnterpriseColumns.REGISTRY + " = " + SQLConstants.REGISTRY + "." + RegistryColumns.ID
+					+ " AND " + SQLConstants.ENTERPRISE + "." + EnterpriseColumns.DOMAIN + " = " + SQLConstants.DOMAIN + "." + DomainColumns.ID 
+
+					+ " AND " + SQLConstants.ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " = " + SQLConstants.ENTERPRISE_ACTIVITY+ "." + EnterpriseActivityColumns.ENTERPRISE
+					+ " AND " + SQLConstants.ENTERPRISE_ACTIVITY + "." + EnterpriseActivityColumns.ID + " = " + SQLConstants.ENTERPRISE_CCC+ "." + EnterpriseCccColumns.ENTERPRISE_ACTIVITY
+					+ " AND " + SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.GEOZONE + " = " + SQLConstants.GEOZONE+ "." + GeozoneColumns.ID
+
+					+ " AND ( " + SQLConstants.DOMAIN + "." + DomainColumns.ID + " = ? " 
+						+ " OR " + SQLConstants.DOMAIN + "." + DomainColumns.PARENT + " = ? " + ")" 
+					
+					+ " ORDER BY " + SQLConstants.REGISTRY + "." + RegistryColumns.NAME 
+					+ " LIMIT ?, ?"
+					);
 			// @formatter:on
 
 			stmt.setInt(1, domainId);
@@ -893,15 +909,45 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			stmt.setInt(3, offset);
 			stmt.setInt(4, limit);
 
-			rs = stmt.executeQuery();
+			Activity activity = null;
+			Enterprise enterprise = null;
 
+			
+			rs = stmt.executeQuery();
+			
 			List<Enterprise> enterprises = new LinkedList<Enterprise>();
 			while (rs.next()) {
-				Enterprise enterprise = new Enterprise();
-				enterprise.setId(rs.getInt(EnterpriseColumns.REGISTRY)); // Not
-				enterprise.setName(rs.getString(RegistryColumns.NAME));
-				enterprise.setDomain(rs.getInt(EnterpriseColumns.DOMAIN));
-				enterprises.add(enterprise);
+				Integer registry = rs.getInt(SQLConstants.ENTERPRISE +"." + EnterpriseColumns.REGISTRY);
+				
+				if ( enterprise == null || !enterprise.getId().equals(registry) ) {
+					enterprise = new Enterprise();
+					enterprise.setId(registry); // Not
+					enterprise.setName(rs.getString(SQLConstants.REGISTRY +"." + RegistryColumns.NAME));
+					enterprise.setDomain(rs.getInt(SQLConstants.ENTERPRISE +"." + EnterpriseColumns.DOMAIN));
+					enterprises.add(enterprise);
+				}
+				
+				Integer activityId = (Integer) rs.getObject(SQLConstants.ENTERPRISE_ACTIVITY +"."+EnterpriseActivityColumns.ID);
+				if ( activityId == null )
+					continue;
+				
+				if ( activity == null || !activity.getId().equals(activityId) ){
+					activity = new Activity();
+					activity.setId(activityId);
+					activity.setCnae2009(rs.getInt(SQLConstants.ENTERPRISE_ACTIVITY +"."+EnterpriseActivityColumns.CNAE));
+					activity.setDescription(rs.getString(SQLConstants.ENTERPRISE_ACTIVITY +"."+EnterpriseActivityColumns.DESCRIPTION));
+					enterprise.addActivity(activity);
+				}
+				
+				Integer cccId = (Integer) rs.getObject(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.ID);
+				if ( cccId == null )
+					continue;
+
+				CCC ccc = new CCC();
+				ccc.setId( cccId );
+				ccc.setCode(rs.getString(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.CCC));
+				ccc.setGeozone(rs.getString(SQLConstants.GEOZONE +"."+GeozoneColumns.CODE));
+				activity.addCcc(ccc);
 			}
 
 			return enterprises;

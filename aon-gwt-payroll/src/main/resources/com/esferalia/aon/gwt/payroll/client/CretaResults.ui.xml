@@ -5,16 +5,17 @@
 	<ui:Style>
 	</ui:Style>
 
-
-	<g:VerticalPanel styleName="aon-width-all">
-
-		<g:Tree ui:field="errorsTree" styleName="aon-width-all" >
-		</g:Tree>
-
-		<g:Tree ui:field="warningsTree" styleName="aon-width-all">
-		</g:Tree>
-
-	</g:VerticalPanel>
+	<g:ScrollPanel styleName="aon-width-all">
+		<g:VerticalPanel styleName="aon-width-all">
+	
+			<g:Tree ui:field="errorsTree" styleName="aon-width-all" >
+			</g:Tree>
+	
+			<g:Tree ui:field="warningsTree" styleName="aon-width-all">
+			</g:Tree>
+	
+		</g:VerticalPanel>
+	</g:ScrollPanel>
 
 
 </ui:UiBinder>

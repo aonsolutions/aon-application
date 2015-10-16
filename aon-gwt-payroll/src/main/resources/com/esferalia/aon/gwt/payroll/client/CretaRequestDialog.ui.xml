@@ -64,6 +64,9 @@
 		height: 99%;
 	}
 	</ui:Style>
+
+	<ui:import field="com.esferalia.aon.gwt.payroll.shared.CretaService.Parameter.*" />
+
 	<g:HTMLPanel styleName="aon-width-all aon-height-all">
 
 		<table class="aon-width-all {style.form} ">
@@ -83,6 +86,14 @@
 					<aon:MonthListBox styleName="aon-selectOneMenu"
 						ui:field="monthListBox" monthStyles="{style.monthListBox-item}"
 						highLightStyles="aon-bold aon-black aon-icon-accept {style.monthListBox-item}"/>
+				</td>
+			</tr>
+			<tr ui:field="previousBasesTR" >
+				<td class="{style.label}">
+					<g:Label text="Aceptar Bases Anteriores" />
+				</td>
+				<td class="{style.field}" >
+					<g:CheckBox  name="{ACEPTAR_BASES_ANTERIORES.name}" ui:field="previousBasesCheckBox" checked="false"/>
 				</td>
 			</tr>
 			<tr>

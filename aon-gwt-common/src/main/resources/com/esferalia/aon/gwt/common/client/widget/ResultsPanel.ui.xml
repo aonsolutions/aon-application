@@ -35,6 +35,10 @@
 					ui:field="stopButton"></g:Button>
 			</g:FlowPanel>
 		</g:north>
+		<g:center>
+			<g:SimplePanel ui:field="centerPanel">
+			</g:SimplePanel>
+		</g:center>
 	</g:DockLayoutPanel>
 
 </ui:UiBinder>

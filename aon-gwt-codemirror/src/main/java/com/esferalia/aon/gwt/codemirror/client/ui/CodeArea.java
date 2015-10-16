@@ -46,6 +46,11 @@ public class CodeArea extends TextArea {
 		config.setMode(mode);
 	}
 
+	public void setFoldGutter(boolean foldGutter) {
+		config.setFoldGutter(foldGutter);
+	}
+
+
 	public void setLineNumbers(boolean lineNumbers) {
 		config.setLineNumbers(lineNumbers);
 	}

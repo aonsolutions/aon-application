@@ -252,7 +252,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			initFacesContext();
 			Integer userID = getUserID();
-			int registryIDs[] = getEnterpriseIDs();
+			Integer registryIDs[] = getEnterpriseIDs();
 			conn = getConnection();
 			ArrayList<Enterprise> enterprises = new ArrayList<Enterprise>();
 			for (int i = 0; i < registryIDs.length; i++) {
@@ -2820,9 +2820,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		PreparedStatement stmt = null;
 
 		try {
-			String sql = "SELECT * " + " FROM " + ENTERPRISE_ACTIVITY
-					+ " WHERE " + EnterpriseActivityColumns.ENTERPRISE
-					+ " = ? ";
+			//@formatter:off
+			String sql = "SELECT * " 
+					+ " FROM " + ENTERPRISE_ACTIVITY
+					+ "," + ENTERPRISE_CCC
+					+ " WHERE " + ENTERPRISE_ACTIVITY + "." + EnterpriseActivityColumns.ID + " = "
+					+ ENTERPRISE_CCC + "." + EnterpriseCccColumns.ENTERPRISE_ACTIVITY
+					+ " AND "+ EnterpriseActivityColumns.ENTERPRISE + " = ? ";
+			//@formatter:on
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, enterpriseId);

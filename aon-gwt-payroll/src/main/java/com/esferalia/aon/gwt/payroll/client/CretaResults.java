@@ -3,7 +3,8 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.css.images.Images;
-import com.esferalia.aon.gwt.payroll.client.CretaResponseDialog.JsEvent;
+import com.esferalia.aon.gwt.payroll.shared.CretaService;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEvent;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -47,8 +48,8 @@ public class CretaResults extends Composite {
 		warningsTree.addItem(warningsItem);
 	}
 
-	public void addErrors(CretaResponseDialog.JsEvent errors []) {
-		for (JsEvent error : errors)
+	public void addErrors(CretaService.JsEvent errors []) {
+		for (CretaService.JsEvent error : errors)
 			errorsItem.addItem(new TreeItem(
 					imageItemHTML(images._error(), error.getMessage())));
 		errorsItem.setHTML(imageItemHTML(images._error(), "<B>Errores<B> ("+errorsItem.getChildCount() +")"));
@@ -57,8 +58,8 @@ public class CretaResults extends Composite {
 		errorsItem.setState(errorsItem.getChildCount()>0);
 	}
 
-	public void addWarnings(CretaResponseDialog.JsEvent warnings []) {
-		for (JsEvent warning : warnings)
+	public void addWarnings(CretaService.JsEvent warnings []) {
+		for (CretaService.JsEvent warning : warnings)
 			warningsItem.addItem(new TreeItem(
 					imageItemHTML(images.warn(), warning.getMessage())));
 		warningsItem.setHTML(imageItemHTML(images.warn(), "<B>Avisos<B> ("+warningsItem.getChildCount() +")"));

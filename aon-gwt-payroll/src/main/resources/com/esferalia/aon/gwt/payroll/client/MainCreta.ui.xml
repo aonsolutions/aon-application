@@ -1,0 +1,56 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:payroll='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:common='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+
+	<ui:style>
+	
+	.stackHeader {
+	  padding: .7em .5em .7em .6em;
+	  
+	}
+
+	@sprite .enterprisesIcon {
+	     gwt-image: 'enterprisesgroup';
+	     float: left;
+	   }
+	 
+	</ui:style>
+
+	<ui:image field='enterprisesgroup' src='enterprisesgroup.png' />
+
+
+	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
+		<g:west size='275'>
+
+			<g:StackLayoutPanel unit='EM'>
+
+				<g:stack ui:field="enterprisesStack">
+					<g:header size='3'>
+						<div class='{style.stackHeader}'>
+							<div class='{style.enterprisesIcon}' />
+							EMPRESAS
+						</div>
+					</g:header>
+					<payroll:Enterprises ui:field='enterprises' />
+				</g:stack>
+
+			</g:StackLayoutPanel>
+
+		</g:west>
+		<g:center>
+			<g:SimpleLayoutPanel>
+				<common:DetailPanel ui:field='detailPanel'/>
+			</g:SimpleLayoutPanel>
+		</g:center>
+
+		<g:south size="0">
+			<common:MinimizePanel ui:field="footPanel" >
+				<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel"/>
+			</common:MinimizePanel>
+		</g:south>
+
+	</g:SplitLayoutPanel>
+
+</ui:UiBinder>

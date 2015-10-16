@@ -1,6 +1,7 @@
 package net.aonsolutions.tgss.creta.jaxb.bases;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,6 +40,12 @@ public class BasesBuilder {
 		return this;
 	}
 	
+	public BasesBuilder addLiquidaciones(Collection<Liquidacion> liquidaciones){
+		this.liquidaciones.addAll(liquidaciones);
+		
+		return this;
+	}
+
 	public BasesBuilder setAutorizado(int autorizado) {
 		this.autorizado = autorizado;
 		return this;

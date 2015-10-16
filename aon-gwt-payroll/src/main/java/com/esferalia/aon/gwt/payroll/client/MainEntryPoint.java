@@ -50,6 +50,10 @@ public class MainEntryPoint implements EntryPoint {
 				.equalsIgnoreCase(Constants.MAIN_TRASH_ENTRY_POINT)) {
 			MainTrash mainTrash = new MainTrash();
 			mainTrash.onModuleLoad();
+		}else if (entryPoint
+				.equalsIgnoreCase(Constants.MAIN_CRETA_ENTRY_POINT)) {
+			MainCreta mainCreta = new MainCreta();
+			mainCreta.onModuleLoad();
 		}
 
 	}
