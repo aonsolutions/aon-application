@@ -273,7 +273,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>FinanceTracking_trackingDate,FinanceTracking_finance_concept</value>
+			<value>FinanceTracking_trackingDate,FinanceTracking_id</value>
 		</managed-property>				
 		<managed-property>
 			<property-name>listenerClasses</property-name>
