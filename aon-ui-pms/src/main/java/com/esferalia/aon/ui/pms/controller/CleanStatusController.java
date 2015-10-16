@@ -152,6 +152,7 @@ public class CleanStatusController extends BasicController {
 				Criteria criteria = new Criteria();
 				criteria.addInExpression(aaBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID), roomIds);
 				criteria.addEqualExpression(aaBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), new Date());
+				criteria.addNotEqualExpression(aaBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_STATUS), ActivityStatus.BUSY);
 				return aaBean.getList(criteria);
 			} catch (ManagerBeanException e) {
 				throw new AbortProcessingException(e.getMessage(), e);
