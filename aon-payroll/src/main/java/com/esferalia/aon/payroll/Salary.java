@@ -270,7 +270,6 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 	// *******************************************************
 	
 	@Transient
-	@Override
 	public Bonuses getBonuses() throws SalaryException {
 		if (bonuses == null) {
 			BonusesFactoryManager manager = BonusesFactoryManager
