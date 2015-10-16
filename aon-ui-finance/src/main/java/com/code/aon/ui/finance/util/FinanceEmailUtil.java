@@ -138,7 +138,14 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 			_extension = attach.getMimeType().getExtension();	
 		}
 		File file = File.createTempFile( _fileName, "." + _extension );
-		writeAttachDataToFile(attach, file);
+		if (attach.getData() != null) {
+			FileUtils.writeByteArrayToFile(file, attach.getData());
+		} else if (StringUtils.isNotBlank(attach.getDriveId())) {
+			writeAttachDataToFile(attach, file);
+		} else {
+			throw new AonCoreException("No se ha podido generar el Documento de Factura.");
+		}
+
 		AonFile aonFile = new AonFile();
 		aonFile.setFile(file);	
 		aonFile.setFileName( _fileName + "." + _extension );
