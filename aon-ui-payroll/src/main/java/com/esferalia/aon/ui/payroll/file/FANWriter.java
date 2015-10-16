@@ -1554,20 +1554,22 @@ public class FANWriter implements Serializable {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		try {
-			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
-			// TODO 
-			String select = "SELECT sum(expression) FROM contract_bonus";
-			select += " WHERE contract in ( SELECT id FROM contract WHERE enterprise_ccc = " + ccc.getId() + " )";
-			select += " AND start_date <= '" + dateFormatter.format(getStartDate()) + "'"; 
-			select += " AND (end_date IS NULL"; 
-			select += " OR (end_date >= '" + dateFormatter.format(getStartDate()) + "'"; 
-			select += " AND end_date <= '" + dateFormatter.format(getEndDate())+"'))";
-			select += " AND bonus_concept in (";
-			select += " SELECT id FROM bonus_concept WHERE type = " + BonusType.CONTINUOUS_FORMATION.ordinal();
-			select += " );";
-			ps = conn.prepareStatement(select);
-			ResultSet rs = ps.executeQuery();
-			if(rs.next()) return rs.getDouble(1);
+			if(liquidationType!=LiquidationType.L13){
+				conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+				// TODO 
+				String select = "SELECT sum(expression) FROM contract_bonus";
+				select += " WHERE contract in ( SELECT id FROM contract WHERE enterprise_ccc = " + ccc.getId() + " )";
+				select += " AND start_date <= '" + dateFormatter.format(getStartDate()) + "'"; 
+				select += " AND (end_date IS NULL"; 
+				select += " OR (end_date >= '" + dateFormatter.format(getStartDate()) + "'"; 
+				select += " AND end_date <= '" + dateFormatter.format(getEndDate())+"'))";
+				select += " AND bonus_concept in (";
+				select += " SELECT id FROM bonus_concept WHERE type = " + BonusType.CONTINUOUS_FORMATION.ordinal();
+				select += " );";
+				ps = conn.prepareStatement(select);
+				ResultSet rs = ps.executeQuery();
+				if(rs.next()) return rs.getDouble(1);
+			}
 			return 0.0;
 		} finally {
 			DatabaseUtil.closeQuietly(ps);
