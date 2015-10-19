@@ -45,32 +45,28 @@ public class GitHub implements GitHubService {
 		return this.isAuthorized();
 	}
 
-	// ************** USERS ***************
+	// ************** USERS *************** //
 
 	@Override
 	public void getUser(String login, AsyncCallback<AJSON<JsUser>> callback) {
 		get(baseUrl + "users/" + URL.encode(login), callback);
-
 	}
 
 	@Override
 	public void getUser(AsyncCallback<AJSON<JsUser>> callback) {
 		get(baseUrl + "user", callback);
-
 	}
 
-	// *********** REPOSITORIES ***********
+	// *********** REPOSITORIES *********** //
 
 	@Override
 	public void getRepos(AsyncCallback<JSON<JsRepo>> callback) {
 		get(baseUrl + "user/repos", callback);
-
 	}
 
 	@Override
 	public void getRepos(String user, AsyncCallback<JSON<JsRepo>> callback) {
 		get(baseUrl + "users/" + URL.encode(user) + "/repos", callback);
-
 	}
 
 	@Override
@@ -78,57 +74,49 @@ public class GitHub implements GitHubService {
 			AsyncCallback<AJSON<JsRepo>> callback) {
 		get(baseUrl + "repos/" + URL.encode(login) + "/" + URL.encode(name),
 				callback);
-
 	}
 
 	@Override
 	public void saveRepo(JsRepo r, RepoValue prop,
 			AsyncCallback<JsRepo> callback) {
 		post(r.getUrl(), prop, callback);
-
 	}
 
-	// ************** ISSUES **************
+	// ************** ISSUES ************** //
 
 	@Override
 	public void getIssues(String user, String r,
 			AsyncCallback<JSON<JsIssue>> callback) {
 		get(baseUrl + "repos/" + user + "/" + r + "/issues", callback);
-
 	}
 
 	@Override
 	public void getIssues(JsRepo r, AsyncCallback<JSON<JsIssue>> callback) {
 		get(r.getUrl() + "/issues", callback);
-
 	}
 
 	@Override
 	public void createIssue(JsRepo r, IssueValue prop,
 			AsyncCallback<JsIssue> callback) {
 		post(r.getUrl() + "/issues", prop, callback);
-
 	}
 
 	@Override
 	public void editIssue(JsRepo r, JsIssue issue, IssueValue prop,
 			AsyncCallback<JsIssue> callback) {
 
-		if (issue == null) {
+		if (issue == null)
 			createIssue(r, prop, callback);
-		} else {
+		else
 			post(r.getUrl() + "/issues/" + issue.getNumber(), prop, callback);
-		}
-
 	}
 
-	// *************** COMMENTS ******************
+	// *************** COMMENTS ****************** //
 
 	@Override
 	public void getIssueComments(JsRepo r, JsIssue issue,
 			AsyncCallback<JSON<JsIssueComment>> callback) {
 		get(r.getUrl() + "/issues/" + issue.getNumber() + "/comments", callback);
-
 	}
 
 	@Override
@@ -138,19 +126,17 @@ public class GitHub implements GitHubService {
 				callback);
 	}
 
-	// *************** LABELS ******************
+	// *************** LABELS ****************** //
 
 	@Override
 	public void getLabels(JsRepo repo, AsyncCallback<JSON<JsLabel>> callback) {
 		get(repo.getUrl() + "/labels", callback);
-
 	}
 
 	@Override
 	public void createLabel(JsRepo repo, LabelValue prop,
 			AsyncCallback<JsLabel> callback) {
 		post(repo.getUrl() + "/labels", prop, callback);
-
 	}
 
 	@Override
@@ -160,7 +146,6 @@ public class GitHub implements GitHubService {
 			createLabel(repo, prop, callback);
 		else
 			post(repo.getUrl() + "/labels/" + URL.encode(name), prop, callback);
-
 	}
 
 	@Override
@@ -171,10 +156,9 @@ public class GitHub implements GitHubService {
 		else
 			post(repo.getUrl() + "/labels/" + URL.encode(label.getName()),
 					prop, callback);
-
 	}
 
-	// ********* PUBLIC STATIC METHODS ***********
+	// ********* PUBLIC STATIC METHODS *********** //
 
 	private static <T extends JavaScriptObject> AsyncCallback<T> hookCallback(
 			final AsyncCallback<T> callback) {

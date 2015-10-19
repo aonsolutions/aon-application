@@ -67,16 +67,16 @@ public class Office extends Composite implements EntryPoint,
 
 	private JsRepo repo;
 	private List<IssueSelected> issues;
-	private Map<Integer, JsRepo> repositories;
 	private IssuesLayoutPanel issueLayoutPanel;
 	private IssueSelected issueSelected;
 	private final GitHub gitHub = new GitHub();
 
 	private List<IssueSelected> openIssues;
-	private List<IssueSelected> closedIssues;
+	private List<IssueSelected> closedIssues;	
 
 	private Map<Integer, JsIssue> issuesMap;
-
+	private Map<Integer, JsRepo> repositories;
+	
 	public Office() {
 		Widget ui = uiBinder.createAndBindUi(this);
 
@@ -96,9 +96,19 @@ public class Office extends Composite implements EntryPoint,
 		this.openIssues = new LinkedList<IssueSelected>();
 		this.closedIssues = new LinkedList<IssueSelected>();
 		this.issuesMap = new TreeMap<Integer, JsIssue>();
+		
+		ListDataProvider<IssueSelected> openIssuesProvider = new ListDataProvider<IssueSelected>();
+		openIssuesProvider.addDataDisplay(dataGrid);
+		openIssues = openIssuesProvider.getList();
+		
+		ListDataProvider<IssueSelected> closeIssuesProvider = new ListDataProvider<IssueSelected>();
+		closeIssuesProvider.addDataDisplay(dataGrid);
+		closedIssues = openIssuesProvider.getList();	
 
 		loadReposList();
 		loadIssuesList();
+		
+		showDockOfficePanel();
 	}
 
 	@UiHandler("repoListBox")
@@ -111,7 +121,6 @@ public class Office extends Composite implements EntryPoint,
 
 	@Override
 	public void onSelectionChangeHandler(SelectionChangeEvent event) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -216,7 +225,6 @@ public class Office extends Composite implements EntryPoint,
 			@Override
 			public void onSuccess(JsIssue result) {
 				Window.alert("Recarga el dataGrid");
-
 			}
 		});
 	}
@@ -265,23 +273,18 @@ public class Office extends Composite implements EntryPoint,
 		issueSelected.setIssueComments(comments);
 		closedIssues.add(issueSelected);
 	}
-
+	
 	private void loadOpenIssues() {
-
-		ListDataProvider<IssueSelected> listIssuesProvider = new ListDataProvider<IssueSelected>();
-		listIssuesProvider.addDataDisplay(dataGrid);
-		this.issues = listIssuesProvider.getList();
+		issues.clear();
 		Collections.sort(openIssues, IssueGrid.Comparators.NUMBER);
 
 		for (IssueSelected issue : openIssues)
 			issues.add(issue);
 	}
 
-	private void loadCloseIssues() {
 
-		ListDataProvider<IssueSelected> listIssuesProvider = new ListDataProvider<IssueSelected>();
-		listIssuesProvider.addDataDisplay(dataGrid);
-		this.issues = listIssuesProvider.getList();		
+	private void loadCloseIssues() {
+		issues.clear();
 		Collections.sort(closedIssues, IssueGrid.Comparators.NUMBER);
 
 		for (IssueSelected issue : closedIssues)
@@ -289,6 +292,9 @@ public class Office extends Composite implements EntryPoint,
 	}
 
 	private void loadAllIssues() {
+		
+		issues.clear();
+		
 		List<IssueSelected> allIssues = new LinkedList<IssueSelected>();
 		allIssues.addAll(openIssues);
 		allIssues.addAll(closedIssues);
