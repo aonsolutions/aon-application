@@ -350,8 +350,8 @@
 		<hibernate names="id,domain,projectReservationRoom.id,projectReservationRoom.projectReservation.id,projectReservationRoom.projectReservation.hotel.id,assetActivity.id,assetActivity.asset.id,assetActivity.asset.name,assetActivity.date"/>
 	</bean>
 	<bean class="com.esferalia.aon.pms.ProjectReservationService" sqlName="project_reservation_service">
-		<alias names="id,domain,projectReservation_id,serviceIndex,serviceCode,item_id,item_product_code,item_product_composition,description,mealPlan,projectReservationRoom,extra"/>
-		<hibernate names="id,domain,projectReservation.id,serviceIndex,serviceCode,item.id,item.product.code,item.product.composition,description,mealPlan,projectReservationRoom,extra"/>
+		<alias names="id,domain,projectReservation_id,projectReservation_status,serviceIndex,serviceCode,item_id,item_product_id,item_product_code,item_product_composition,description,mealPlan,projectReservationRoom,extra"/>
+		<hibernate names="id,domain,projectReservation.id,projectReservation.status,serviceIndex,serviceCode,item.id,item.product.id,item.product.code,item.product.composition,description,mealPlan,projectReservationRoom,extra"/>
 	</bean>
 	<bean class="com.esferalia.aon.pms.ProjectReservationServiceDetail" sqlName="project_reservation_service_detail">
 		<alias names="id,domain,projectReservationService_id,projectReservationService_item_product_code,projectReservationService_item_product_type,projectReservationService_item_product_vat_id,projectReservationService_projectReservation_id,projectReservationService_projectReservation_hotel_id,projectReservationService_extra,projectReservationRoomDetail,projectReservationRoomDetail_assetActivity_asset_name,projectReservationRoomDetail_id,projectReservationRoomDetail_projectReservationRoom_id,effectiveDate,quantity,price,taxableBase"/>

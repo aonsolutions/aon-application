@@ -65,6 +65,13 @@
 	</bean>
 
 	<bean description="">
+		<pojo>com.code.aon.product.Product</pojo>
+		<vetoListeners>
+	        <vetoListener>com.esferalia.aon.pms.event.ProductBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="">
 		<pojo>com.code.aon.finance.Invoice</pojo>
 		<listeners>
 	        <listener>com.esferalia.aon.pms.event.InvoiceBeanListener</listener>
