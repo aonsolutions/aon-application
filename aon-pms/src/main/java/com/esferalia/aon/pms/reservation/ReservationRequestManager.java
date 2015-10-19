@@ -276,6 +276,7 @@ public class ReservationRequestManager implements IReservationConstants {
 			availableRoomStay.setError(true);
 			availableRoomStay.setErrorMessage(ex.getMessage());
 			availableRoomStayList.add(availableRoomStay);
+			ex.printStackTrace();
 		}
 		return null;
 	}
