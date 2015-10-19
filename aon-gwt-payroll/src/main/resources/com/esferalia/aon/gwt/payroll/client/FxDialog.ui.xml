@@ -101,7 +101,7 @@
 								<g:Label>Funci&oacute;n</g:Label>
 							</g:customCell>
 						</g:row>
-						<g:row class="aon-width-a11 aon-height-all">
+						<g:row styleName="aon-width-a11 aon-height-all">
 							<g:customCell class="aon-width-a11 aon-height-all">
 								<g:ListBox ui:field="functionListBox"
 									visibleItemCount="20"
