@@ -195,7 +195,6 @@ public class ProductDAO {
 	public static void update(AONContext ctx, Product p) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
-			ProductValidation.validate(ctx, p);
 			ctx.getDslContext()
 				.update(PRODUCT)
 					.set(PRODUCT.DOMAIN, p.getDomain())
@@ -294,7 +293,6 @@ public class ProductDAO {
 	public static void updateProductTag(AONContext ctx, ProductTag pt) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
-			ProductValidation.validateProductTag(ctx, pt);
 			ctx.getDslContext()
 				.update(PRODUCT_TAG)
 					.set(PRODUCT_TAG.DOMAIN, pt.getDomain())
@@ -397,7 +395,6 @@ public class ProductDAO {
 	public static void updateItem(AONContext ctx, Item i) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
-			ProductValidation.validateItem(ctx, i);
 			ctx.getDslContext()
 				.update(ITEM)
 					.set(ITEM.DOMAIN, i.getDomain())

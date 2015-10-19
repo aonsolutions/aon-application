@@ -147,12 +147,13 @@ public class DBProduct {
 			
 			Vector<com.esferalia.aon.occam.api.model.product.Product> uproducts = new Vector<com.esferalia.aon.occam.api.model.product.Product>();
 			Vector<com.esferalia.aon.occam.api.model.product.Product> iproducts = new Vector<com.esferalia.aon.occam.api.model.product.Product>();
+			Vector<com.esferalia.aon.occam.api.model.product.ProductTag> uproductsTag = new Vector<com.esferalia.aon.occam.api.model.product.ProductTag>();
 			Vector<com.esferalia.aon.occam.api.model.product.ProductTag> iproductsTag = new Vector<com.esferalia.aon.occam.api.model.product.ProductTag>();
 			Vector<com.esferalia.aon.occam.api.model.product.Item> iitems = new Vector<com.esferalia.aon.occam.api.model.product.Item>();
 			Vector<com.esferalia.aon.occam.api.model.product.Item> uitems = new Vector<com.esferalia.aon.occam.api.model.product.Item>();
 
 			AONContext sctx = ctx;
-			ctx.deactivateForeignKeys();
+			
 			products.stream().forEach(r->{	
 				
 				com.esferalia.aon.occam.api.model.product.Product product  = getProduct(r.getProduct(), templateInfo, domainId, sctx);	
@@ -166,7 +167,15 @@ public class DBProduct {
 					}
 					else{
 						if(r.getProductTag() != null){	
-							iproductsTag.addAll(r.getProductTag());
+							r.getProductTag().stream().forEach(pt->{
+								Result<Record1<Integer>> tag = sctx.getDslContext().select(PRODUCT_TAG.ID)
+										.from(PRODUCT_TAG).where(PRODUCT_TAG.ID.eq(pt.getId()))
+										.fetch();	
+								
+								if(tag != null && tag.isNotEmpty())
+									uproductsTag.add(pt);
+								else iproductsTag.add(pt);
+							});
 						}
 						if(r.getItem() != null){	
 							r.getItem().stream().forEach(i ->{
@@ -205,13 +214,20 @@ public class DBProduct {
 			});
 			
 			if(error.getError()){
-				AON.deleteProductTag(ctx, iproductsTag.stream());
-				AON.deleteItem(ctx, uitems.stream());
-				AON.delete(ctx, uproducts.stream());
-				AON.insertWithId(ctx, uproducts.stream());
-				AON.insert(ctx, iproducts.stream());
-				AON.insertItemWithId(ctx, uitems.stream());
+				uproductsTag.stream().forEach(r -> {
+					AON.updateProductTag(sctx, r);
+				});
+				if(iproductsTag.size() > 0) AON.insertProductTag(sctx, iproductsTag.stream());
 			
+				if(iproducts.size() > 0) AON.insert(ctx, iproducts.stream());
+				
+				uitems.stream().forEach(r->{
+					AON.updateItem(sctx, r);
+				});
+				uproducts.stream().forEach(r->{
+					AON.update(sctx, r);
+				});
+				
 				products.stream().filter(p -> p.getProduct().getId() == null).forEach(r->{	
 					Integer productId = sctx.getDslContext().select(PRODUCT.ID).from(PRODUCT).where(PRODUCT.DOMAIN.eq(domainId)).and(PRODUCT.CODE.eq(r.getProduct().getCode())).fetchOne().value1();
 					System.out.println(r.getProduct().getId());
@@ -230,12 +246,10 @@ public class DBProduct {
 						});
 					}
 				});
-				AON.insertProductTag(ctx, iproductsTag.stream());
-				AON.insertItem(ctx, iitems.stream());
-				ctx.activateForeignKeys();
+				if(iitems.size() > 0) AON.insertItem(ctx, iitems.stream());
 			}
 		} finally {
-			if (ctx != null) ctx.close();	
+			if (ctx != null) ctx.close();
 		}
 		long time = System.currentTimeMillis() - start;
 		System.out.println("time: " + (time/1000d));
