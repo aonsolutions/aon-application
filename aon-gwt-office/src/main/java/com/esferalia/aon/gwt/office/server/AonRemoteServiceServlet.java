@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.payroll.server;
+package com.esferalia.aon.gwt.office.server;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,7 +56,7 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 	}
 	
 	
-	String getEntryPoint(){
+	String getEntryPoint(){		
 		return ((GWT) getSession().getAttribute("gwt")).getEntryPoint();
 	}
 

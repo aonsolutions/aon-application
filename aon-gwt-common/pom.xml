@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.code.aon</groupId>
@@ -9,7 +10,7 @@
 	<artifactId>aon.gwt.common</artifactId>
 	<name>AON GWT COMMON</name>
 	<description>AON GWT COMMON</description>
-	
+
 	<build>
 		<resources>
 			<resource>
@@ -44,6 +45,7 @@
 			<scope>provided</scope>
 			<classifier>sources</classifier>
 		</dependency>
+
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.jaas</artifactId>
@@ -56,6 +58,29 @@
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.rich.components</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.config</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm-attrs</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.master.jooq</artifactId>
@@ -80,14 +105,14 @@
 			<version>7.0.42</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.swinglabs</groupId>
 			<artifactId>pdf-renderer</artifactId>
 			<version>1.0.5</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.artofsolving.jodconverter</groupId>
 			<artifactId>jodconverter-core</artifactId>

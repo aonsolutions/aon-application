@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.payroll.bean;
+package com.esferalia.aon.gwt.common.bean;
 
 import java.io.Serializable;
 

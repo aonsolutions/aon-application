@@ -1,16 +1,17 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <parent>
-    <groupId>com.code.aon</groupId>
-    <artifactId>aon.parent</artifactId>
-    <version>8.32-SNAPSHOT</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.esferalia.aon</groupId>
-  <artifactId>aon.gwt.office</artifactId>
-  <packaging>jar</packaging>
-  <name>AON GWT OFFICE</name>
-  <description>AON GWT OFFICE</description>
-  
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.parent</artifactId>
+		<version>8.32-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.esferalia.aon</groupId>
+	<artifactId>aon.gwt.office</artifactId>
+	<packaging>jar</packaging>
+	<name>AON GWT OFFICE</name>
+	<description>AON GWT OFFICE</description>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -23,8 +24,8 @@
 					<module>com.esferalia.aon.gwt.office.Office</module>
 					<webappDirectory>${project.build.outputDirectory}</webappDirectory>
 					<compileSourcesArtifacts>
-					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.common</compileSourcesArtifact>  
-					  <compileSourcesArtifact>com.esferalia.aon:aon.occam</compileSourcesArtifact>
+						<compileSourcesArtifact>com.esferalia.aon:aon.gwt.common</compileSourcesArtifact>
+						<compileSourcesArtifact>com.esferalia.aon:aon.occam</compileSourcesArtifact>
 					</compileSourcesArtifacts>
 				</configuration>
 				<executions>
@@ -60,7 +61,7 @@
 						<phase>prepare-package</phase>
 						<goals>
 							<goal>replace</goal>
-						</goals>                   
+						</goals>
 					</execution>
 				</executions>
 				<configuration>
@@ -69,15 +70,15 @@
 						<include>**/gwt/clean/clean.css</include>
 					</includes>
 					<regexFlags>
-					    <regexFlag>MULTILINE</regexFlag>
-					    <regexFlag>CASE_INSENSITIVE</regexFlag>
+						<regexFlag>MULTILINE</regexFlag>
+						<regexFlag>CASE_INSENSITIVE</regexFlag>
 					</regexFlags>
 					<replacements>
 						<replacement>
 							<token>^([a-z: \t,]*)\{$</token>
 							<value>/** $1 */
-.disabled-by-aon {</value>
-						</replacement>         
+								.disabled-by-aon {</value>
+						</replacement>
 					</replacements>
 				</configuration>
 			</plugin>
@@ -92,11 +93,54 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.rich.components</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.jaas</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.config</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm-attrs</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.company</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.ui.payroll</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<!--dependency> <groupId>com.code.aon</groupId> <artifactId>aon.ui.resources</artifactId> 
+			<version>${project.version}</version> <scope>compile</scope> </dependency -->
+
+		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.master.jooq</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.occam</artifactId>
@@ -110,7 +154,7 @@
 			<scope>provided</scope>
 			<classifier>sources</classifier>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.gwt.common</artifactId>
@@ -140,29 +184,29 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
-  <profiles>
-    <profile>
-    <id>dev</id>
-    <activation>
-      <property>
-        <name>gwt.working</name>
-        <value>true</value>
-      </property>
-    </activation>
-    <build>
-      <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-            <artifactId>gwt-maven-plugin</artifactId>
-            <configuration>
-              <draftCompile>true</draftCompile>
-					    <module>com.esferalia.aon.gwt.office.Office</module>
-            </configuration>
-        </plugin>
-      </plugins>
-    </build>
-    </profile>
-  </profiles>
-  
-  
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<property>
+					<name>gwt.working</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>gwt-maven-plugin</artifactId>
+						<configuration>
+							<draftCompile>true</draftCompile>
+							<module>com.esferalia.aon.gwt.office.Office</module>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+
 </project>

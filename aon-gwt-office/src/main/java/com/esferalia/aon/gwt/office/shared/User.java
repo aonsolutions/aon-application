@@ -1,9 +1,15 @@
-package com.esferalia.aon.gwt.office.client.models.users;
+package com.esferalia.aon.gwt.office.shared;
+
+import java.io.Serializable;
 
 import com.esferalia.aon.gwt.common.shared.HasId;
 
-public class User implements HasId<Integer> {
+public class User implements Serializable, HasId<Integer> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private Integer domain;
 	private String name;

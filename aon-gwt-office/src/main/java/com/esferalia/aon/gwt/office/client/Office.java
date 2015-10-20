@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
 import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
 import com.esferalia.aon.gwt.office.client.values.IssueValue;
+import com.esferalia.aon.gwt.office.shared.Notice;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
@@ -66,17 +67,18 @@ public class Office extends Composite implements EntryPoint,
 	LeftButtonsMenuBar leftButtonBarMenu;
 
 	private JsRepo repo;
-	private List<IssueSelected> issues;
 	private IssuesLayoutPanel issueLayoutPanel;
 	private IssueSelected issueSelected;
 	private final GitHub gitHub = new GitHub();
 
 	private List<IssueSelected> openIssues;
-	private List<IssueSelected> closedIssues;	
+	private List<IssueSelected> closedIssues;
 
 	private Map<Integer, JsIssue> issuesMap;
 	private Map<Integer, JsRepo> repositories;
-	
+
+	private AonHubServiceAsync aonHubService;
+
 	public Office() {
 		Widget ui = uiBinder.createAndBindUi(this);
 
@@ -96,18 +98,23 @@ public class Office extends Composite implements EntryPoint,
 		this.openIssues = new LinkedList<IssueSelected>();
 		this.closedIssues = new LinkedList<IssueSelected>();
 		this.issuesMap = new TreeMap<Integer, JsIssue>();
-		
+
+		// Create a remote service proxy to talk to the server-side AonHub
+		// service.
+		AonHubServiceAsync aonHubServiceRaw = GWT.create(AonHubService.class);
+		aonHubService = new AonHubServiceAsyncDecorator(aonHubServiceRaw);
+
 		ListDataProvider<IssueSelected> openIssuesProvider = new ListDataProvider<IssueSelected>();
 		openIssuesProvider.addDataDisplay(dataGrid);
 		openIssues = openIssuesProvider.getList();
-		
+
 		ListDataProvider<IssueSelected> closeIssuesProvider = new ListDataProvider<IssueSelected>();
 		closeIssuesProvider.addDataDisplay(dataGrid);
-		closedIssues = openIssuesProvider.getList();	
+		closedIssues = openIssuesProvider.getList();
 
 		loadReposList();
 		loadIssuesList();
-		
+
 		showDockOfficePanel();
 	}
 
@@ -120,8 +127,8 @@ public class Office extends Composite implements EntryPoint,
 	}
 
 	@Override
-	public void onSelectionChangeHandler(SelectionChangeEvent event) {
-
+	public void onSelectionChangeHandler(SelectionChangeEvent event) {	
+		
 	}
 
 	// ******************************************************************
@@ -273,18 +280,17 @@ public class Office extends Composite implements EntryPoint,
 		issueSelected.setIssueComments(comments);
 		closedIssues.add(issueSelected);
 	}
-	
+
 	private void loadOpenIssues() {
-		issues.clear();
+		List<IssueSelected> issues = new LinkedList<IssueSelected>();
 		Collections.sort(openIssues, IssueGrid.Comparators.NUMBER);
 
 		for (IssueSelected issue : openIssues)
 			issues.add(issue);
 	}
 
-
 	private void loadCloseIssues() {
-		issues.clear();
+		List<IssueSelected> issues = new LinkedList<IssueSelected>();
 		Collections.sort(closedIssues, IssueGrid.Comparators.NUMBER);
 
 		for (IssueSelected issue : closedIssues)
@@ -292,9 +298,8 @@ public class Office extends Composite implements EntryPoint,
 	}
 
 	private void loadAllIssues() {
-		
-		issues.clear();
-		
+		List<IssueSelected> issues = new LinkedList<IssueSelected>();
+
 		List<IssueSelected> allIssues = new LinkedList<IssueSelected>();
 		allIssues.addAll(openIssues);
 		allIssues.addAll(closedIssues);
@@ -302,10 +307,10 @@ public class Office extends Composite implements EntryPoint,
 		Collections.sort(allIssues, IssueGrid.Comparators.NUMBER);
 		ListDataProvider<IssueSelected> listIssuesProvider = new ListDataProvider<IssueSelected>();
 		listIssuesProvider.addDataDisplay(dataGrid);
-		this.issues = listIssuesProvider.getList();
+		issues = listIssuesProvider.getList();
 
 		for (IssueSelected issue : allIssues)
-			this.issues.add(issue);
+			issues.add(issue);
 	}
 
 	private void addLabel(int row, JsLabel label) {
