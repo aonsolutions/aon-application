@@ -69,7 +69,7 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 				new TextCell()) {
 			@Override
 			public String getValue(CCC ccc) {
-				return ccc.getCode();
+				return getDescription(ccc);
 			}
 		};
 
@@ -116,6 +116,9 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 		return previousBasesCheckBox.getValue();
 	}
 	
+	public String getDescription(CCC ccc) {
+		return ccc.getCode();
+	}
 	// ------------------------------------------------------------------------
 	
 	public void download(String fileName,String url){
