@@ -2,20 +2,44 @@ package com.esferalia.aon.gwt.common.server;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Domain;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.controller.DomainSwitcher;
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.gwt.common.bean.GWT;
+import com.esferalia.aon.gwt.common.shared.Constants;
+import com.google.gwt.user.server.Base64Utils;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.gwt.user.server.rpc.SerializationPolicy;
 import com.google.gwt.user.server.rpc.SerializationPolicyLoader;
 
 @SuppressWarnings("serial")
 public class AonRemoteServiceServlet extends RemoteServiceServlet {
+	
+	protected Integer getUserID() {
+		HttpServletRequest request = getThreadLocalRequest();
+		return ((AuthPrincipal)request.getUserPrincipal()).getUserId();
+	}
 
 	protected AuthPrincipal getAuthPrincipal() {
 		HttpServletRequest req = this.getThreadLocalRequest();
@@ -31,11 +55,40 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		return getAuthPrincipal().getShortName();
 	}
 
+	protected String getEntryPoint() {
+		return ((GWT) getSession().getAttribute("gwt")).getEntryPoint();
+	}
+	
+	protected HttpSession getSession() {
+		HttpServletRequest request = getThreadLocalRequest();
+		return request.getSession(false);
+	}
+	
+	protected boolean isAtEnterpriseSite() {
+		return Constants.ENTERPRISE_SITE_ENTRY_POINT.equals(getEntryPoint());
+	}
+	
+	protected Integer getParentDomainID() {
+		DomainSwitcher domainSwitcher = (DomainSwitcher)AonUtil
+				.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
+		return domainSwitcher.getParentDomainId();
+	}
 
 	@Override
 	protected SerializationPolicy doGetSerializationPolicy(
 			HttpServletRequest request, String moduleBaseURL, String strongName) {
 		return loadSerializationPolicy(this, request, moduleBaseURL, strongName);
+	}
+	
+	protected void initFacesContext() {
+		ServletContext context = getServletContext();
+		HttpServletRequest request = getThreadLocalRequest();
+		HttpServletResponse response = getThreadLocalResponse();
+		AonServletUtils.initFacesContext(context, request, response);
+	}
+
+	protected void releaseFacesContext() {
+		AonServletUtils.releaseFacesContext();
 	}
 	
 	static SerializationPolicy loadSerializationPolicy(HttpServlet servlet,
@@ -115,8 +168,51 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		}
 	    return serializationPolicy;
 	}
+	
+	protected static void encodeURIComponent(String mime, InputStream is, Writer writer ) 
+	throws IOException {
+		// data:[<MIME-type>][;charset=<encoding>][;base64],<data>
+		writer.write("data:");
+		writer.write(mime);
+		writer.write(";base64,");
+		int read = 0; 
+		byte buffer [] = new byte [3 * 50];
+		while ( ( read = is.read(buffer) ) > 0 ) {
+			byte data [] = Arrays.copyOfRange(buffer, 0, read);
+			
+			String safe = Base64Utils.toBase64(data);
+			String base64 = safe.replace('$', '+');
+			base64 = base64.replace('_', '/');
+			
+			writer.write(base64);
+		}
+	}
 
 	static ClassLoader getResourceLoader() {
 		return Thread.currentThread().getContextClassLoader();
 	}
+	
+	// ------------------------------------------------------------------------
+
+	protected static Integer[] getChildDomainIDs(Integer domainId) throws ManagerBeanException {
+		IManagerBean beanManager = BeanManager
+				.getManagerBean(Domain.class);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				beanManager.getFieldName(IEntityAlias.DOMAIN_PARENT_ID),
+				domainId );
+
+		List<ITransferObject> tos = beanManager.getList(criteria);
+		
+		if( tos == null || tos.isEmpty() )
+			return new Integer[]{};
+		
+		Integer[] ids = new Integer[tos.size()];
+		for (int i = 0; i < ids.length; i++ ) 
+			ids[i] = ((Domain)tos.get(i)).getId();
+		
+		return ids;
+	}
+
 }
