@@ -75,7 +75,8 @@ public class ReservationManager implements IReservationConstants {
 	private IPriceStrategy priceStrategy;
 	private String xmlData;
 	private boolean calculateCommission;
-	private boolean calculateTaxData;
+	private boolean selfBooking;
+	private boolean multipleVat;
 	private Map<String, List<Integer>> roomServicesMap;
 	private Map<String, Integer> successMap;
 
@@ -230,6 +231,7 @@ public class ReservationManager implements IReservationConstants {
 			double agencyCommissionPercent = getReservationUtils().obtainAgencyCommissionPercent(agencyInfo);
 			double agencyCommissionAmount = getReservationUtils().obtainAgencyCommissionAmount(agencyInfo);
 			calculateCommission = agencyCommissionAmount != 0 && getReservationUtils().isAgencyCommission(agency);
+			selfBooking = getReservationUtils().isAgencySelfBooking(agency);
 			String agencyRebate = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT_MODE, null);
 			ProfileInfo companyInfo = findProfileInfo(reservationType.getResGuests().getResGuestArray(), COMPANY_TYPE, SOLRES);
 			Customer company = reservation.getCompany();
@@ -240,17 +242,20 @@ public class ReservationManager implements IReservationConstants {
 			String discountAmount = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT, AMOUNT);
 			String bookingHolder = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), BOOKING_HOLDER, null);
 			String remarks =  findComments(reservationType.getResGlobalInfo());
-			double taxableBase = CommonUtil.round(reservationType.getResGlobalInfo().getTotal().getAmountBeforeTax().doubleValue());
-			double vatQuota = findTaxQuota(reservationType.getResGlobalInfo(), VAT_TAX);
-			double otherTaxQuota = findTaxQuota(reservationType.getResGlobalInfo(), OTHER_TAX);
-			double total = CommonUtil.round(reservationType.getResGlobalInfo().getTotal().getAmountAfterTax().doubleValue());
-			calculateTaxData = (vatQuota == 0);
-			if (!calculateTaxData && CommonUtil.round(taxableBase + vatQuota + otherTaxQuota) != total) {
-				throw new ReservationException("Reservation Total is not correct", reservationCrsCode, 197);
-			}
 			String prepayTransaction = findPrepayInfo(reservationType.getResGlobalInfo(), BANK_TRANSACTION);
 			String prepayPayment = findPrepayInfo(reservationType.getResGlobalInfo(), PAYMENT_TRANSACTION);
-			
+			double taxableBase = CommonUtil.round(reservationType.getResGlobalInfo().getTotal().getAmountBeforeTax().doubleValue());
+			double vatQuota = findTaxQuota(reservationType.getResGlobalInfo(), VAT_TAX);
+			double vatPercent = findTaxPercent(reservationType.getResGlobalInfo(), VAT_TAX);
+			double otherTaxQuota = findTaxQuota(reservationType.getResGlobalInfo(), OTHER_TAX);
+			double total = CommonUtil.round(reservationType.getResGlobalInfo().getTotal().getAmountAfterTax().doubleValue());
+			if (selfBooking && total > 0 && total < 1) {
+				total = 0;
+			}
+			if (taxableBase == total && total > 0 && vatPercent != 0) {
+				throw new ReservationException("Reservation Total is not correct", reservation.getCrsCode(), 197);
+			}
+
 
 			reservation.setHotel(hotel);
 			reservation.setHotelReservation(hotel);
@@ -270,6 +275,7 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setBookingHolder(getReservationUtils().obtainBookingHolder(bookingHolder));
 			reservation.setTaxableBase(taxableBase);
 			reservation.setVatQuota(vatQuota);
+			reservation.setVatPercent(vatPercent);
 			reservation.setOtherTaxQuota(otherTaxQuota);
 			reservation.setTotal(calculateCommission ? CommonUtil.round(total - agencyCommissionAmount) : total);
 			reservation.setRemarks(remarks);
@@ -448,11 +454,17 @@ public class ReservationManager implements IReservationConstants {
 	}
 
 	private void createReservationService(HotelReservationType reservationType, ProjectReservation reservation) throws ManagerBeanException, ReservationException {
-		calculateRealDiscountPercent(reservationType.getServices(), reservation);
+		double agreedPrice = getReservationUtils().getAgreedPriceValue(reservation.getCrsCode());
+		Item agreedPriceItem = (agreedPrice > 0) ? getReservationUtils().obtainBestPriceDiscountItem() : null;
+		double autoDiscount = getReservationUtils().getAutoDiscountValue(reservation.getAgency());
+		Item autoDiscountItem = (autoDiscount > 0) ? getReservationUtils().obtainAutoDiscountItem() : null;
 
+		calculateRealDiscountPercent(reservationType.getServices(), reservation, (agreedPriceItem == null) ? agreedPrice : 0);
+
+		ProjectReservationServiceDetail reservationServiceDetail = null;
 		Date fromDate = DateUtils.truncate(reservation.getStartDate(), Calendar.DATE);
 		Date toDate = DateUtils.truncate(reservation.getEndDate(), Calendar.DATE);
-		double totalTaxableBase = 0;
+		double calculatedTaxableBase = 0;
 		for (int i=0; i<reservationType.getServices().sizeOfServiceArray(); i++) {
 			Service service = reservationType.getServices().getServiceArray(i);
 			Map<Date, List<Double>> pricesMap = getReservationUtils().obtainPricesMap(reservation, service, fromDate, toDate);
@@ -466,8 +478,8 @@ public class ReservationManager implements IReservationConstants {
 						for (Date date=DateUtils.truncate(fromDate, Calendar.DATE); isServiceDateValid(date, toDate); date=DateUtils.addDays(date, 1)) {
 							if (pricesMap.containsKey(date)) {
 								double price = (pricesMap.get(date).size() > j) ? pricesMap.get(date).get(j) : 0;
-								ProjectReservationServiceDetail reservationServiceDetail = insertReservationServiceDetail(reservationService, date, 1, price);
-								totalTaxableBase = CommonUtil.round(totalTaxableBase + reservationServiceDetail.getTaxableBase(), 4);
+								reservationServiceDetail = insertReservationServiceDetail(reservationService, date, 1, price);
+								calculatedTaxableBase = CommonUtil.round(calculatedTaxableBase + reservationServiceDetail.getTaxableBase(), 4);
 							}
 						}
 					}
@@ -478,8 +490,8 @@ public class ReservationManager implements IReservationConstants {
 							Map<Double, Integer> quantityPerPriceMap = getReservationUtils().obtainQuantityPerPriceMap(pricesMap.get(date));
 							for (double price : quantityPerPriceMap.keySet()) {
 								int quantity = quantityPerPriceMap.get(price);
-								ProjectReservationServiceDetail reservationServiceDetail = insertReservationServiceDetail(reservationService, date, quantity, price);
-								totalTaxableBase = CommonUtil.round(totalTaxableBase + reservationServiceDetail.getTaxableBase(), 4);
+								reservationServiceDetail = insertReservationServiceDetail(reservationService, date, quantity, price);
+								calculatedTaxableBase = CommonUtil.round(calculatedTaxableBase + reservationServiceDetail.getTaxableBase(), 4);
 							}
 						}
 					}
@@ -487,29 +499,51 @@ public class ReservationManager implements IReservationConstants {
 			}
 		}
 
-		if (calculateTaxData) {
-			if (reservation.getTotal() >= totalTaxableBase) {
-				reservation.setTaxableBase(totalTaxableBase);
-			} else {
-				throw new ReservationException("Reservation Total is not correct", reservation.getCrsCode(), 197);
+		if (agreedPrice > 0) {
+			if (agreedPriceItem != null) {
+				calculatedTaxableBase = CommonUtil.round(calculatedTaxableBase + createAgreedPriceDiscountService(agreedPriceItem, agreedPrice, reservation), 4);
+			}
+			reservation.setTotal(CommonUtil.round(agreedPrice));
+		}
+		if (autoDiscount > 0 && autoDiscountItem != null) {
+			calculatedTaxableBase = CommonUtil.round(calculatedTaxableBase + createAutoDiscountService(autoDiscountItem, autoDiscount, reservation), 4);
+
+			double autoDiscountTotal = CommonUtil.round(reservation.getTotal() * autoDiscount / 100);
+			reservation.setTotal(CommonUtil.round(reservation.getTotal() - autoDiscountTotal));
+		}
+
+		/** Chequeos de integridad de Bases y Totales. **/
+		if (!multipleVat) {
+			double taxableBase = CommonUtil.round(reservation.getTotal() / (1 + reservation.getVatPercent() / 100), 4);
+			if (taxableBase != calculatedTaxableBase) {
+				double baseDiff = CommonUtil.round(taxableBase - calculatedTaxableBase, 4);
+				/** Errores por redondeos. **/
+				if (Math.abs(baseDiff) <= 0.01) {
+					reservationServiceDetail.setPrice(CommonUtil.round(reservationServiceDetail.getPrice() + baseDiff / reservationServiceDetail.getQuantity(), 4));
+					reservationServiceDetail.setTaxableBase(CommonUtil.round(reservationServiceDetail.getTaxableBase() + baseDiff, 4));
+					BeanManager.getManagerBean(ProjectReservationServiceDetail.class).update(reservationServiceDetail);
+					calculatedTaxableBase = CommonUtil.round(calculatedTaxableBase + baseDiff, 4);
+				} else {
+					throw new ReservationException("Reservation Total is not correct", reservation.getCrsCode(), 197);
+				}
 			}
 		} else {
-			if (reservation.getTaxableBase() != CommonUtil.round(totalTaxableBase)) {
-				throw new ReservationException("Reservation Taxable Base does not match the sum of Services Taxable Bases", reservation.getCrsCode(), 197);
+			double total = getPriceStrategy().getTotalPrice(reservation, reservation.getCustomer());
+			if (total != reservation.getTotal()) {
+				double totalDiff = CommonUtil.round(reservation.getTotal() - total, 2);
+				/** Errores por redondeos. **/
+				if (Math.abs(totalDiff) == 0.01) {
+					reservationServiceDetail.setPrice(CommonUtil.round(reservationServiceDetail.getPrice() + totalDiff / reservationServiceDetail.getQuantity(), 4));
+					reservationServiceDetail.setTaxableBase(CommonUtil.round(reservationServiceDetail.getTaxableBase() + totalDiff, 4));
+					BeanManager.getManagerBean(ProjectReservationServiceDetail.class).update(reservationServiceDetail);
+					calculatedTaxableBase = CommonUtil.round(calculatedTaxableBase + totalDiff, 4);
+				} else {
+					throw new ReservationException("Reservation Total is not correct", reservation.getCrsCode(), 197);
+				}
 			}
 		}
 
-		double agreedPrice = getReservationUtils().getAgreedPriceValue(reservation.getCrsCode());
-		if (agreedPrice > 0) {
-			createAgreedPriceDiscountService(agreedPrice, reservation);
-		}
-
-		double autoDiscount = getReservationUtils().getAutoDiscountValue(reservation.getAgency());
-		if (autoDiscount > 0) {
-			createAutoDiscountService(autoDiscount, reservation);
-		}
-
-		reservation.setTaxableBase(CommonUtil.round(reservation.getTaxableBase()));
+		reservation.setTaxableBase(CommonUtil.round(calculatedTaxableBase));
 		reservation.setVatQuota(CommonUtil.round(reservation.getTotal() - reservation.getTaxableBase() - reservation.getOtherTaxQuota()));
 		reservation = (ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
 	}
@@ -518,10 +552,9 @@ public class ReservationManager implements IReservationConstants {
 		return DateUtils.truncate(checkIn, Calendar.DATE).before(DateUtils.addDays(DateUtils.truncate(new Date(), Calendar.DATE), -1));
 	}
 
-	private void calculateRealDiscountPercent(ServicesType servicesType, ProjectReservation reservation) throws ReservationException {
+	private void calculateRealDiscountPercent(ServicesType servicesType, ProjectReservation reservation, double agreedPrice) throws ReservationException {
 		double discountPercent = 0;
-		if (calculateCommission || reservation.getDiscountAmount() != 0) {
-			double totalDiscount = calculateCommission ? reservation.getAgencyCommissionAmount() : reservation.getDiscountAmount();
+		if (calculateCommission || reservation.getDiscountAmount() != 0 || agreedPrice > 0) {
 			double totalServices = 0;
 			for (int i=0; i<servicesType.sizeOfServiceArray(); i++) {
 				Service service = servicesType.getServiceArray(i);
@@ -533,15 +566,21 @@ public class ReservationManager implements IReservationConstants {
 				}
 			}
 
-			//Tendria que ser cero, pero se admite un error de +- 1 centimo por error de redondeo en los calculos de Idiso al enviar la Reserva.
-			if (Math.abs(CommonUtil.round(totalServices - reservation.getTotal() - totalDiscount)) <= 0.01) {
-				discountPercent = (1 - reservation.getTotal() / totalServices) * 100;
-			} else {
-				if (calculateCommission) {
-					throw new ReservationException("Reservation Commission Amount is not correct", reservation.getCrsCode(), 197);
+			if (calculateCommission || reservation.getDiscountAmount() != 0) {
+				double totalDiscount = calculateCommission ? reservation.getAgencyCommissionAmount() : reservation.getDiscountAmount();
+				/** Tendria que ser cero, pero se admite un error de +- 1 centimo por error de redondeo en los calculos de Idiso al enviar la Reserva.
+					El discountAmount VIENE YA aplicado sobre el Total en el XML, no asi el agencyCommissionAmount (por eso se descuenta previamente del Total) **/
+				if (Math.abs(CommonUtil.round(totalServices - reservation.getTotal() - totalDiscount)) <= 0.01) {
+					discountPercent = (1 - reservation.getTotal() / totalServices) * 100;
 				} else {
-					throw new ReservationException("Reservation Discount Amount is not correct", reservation.getCrsCode(), 197);
+					if (calculateCommission) {
+						throw new ReservationException("Reservation Commission Amount is not correct", reservation.getCrsCode(), 197);
+					} else {
+						throw new ReservationException("Reservation Discount Amount is not correct", reservation.getCrsCode(), 197);
+					}
 				}
+			} else if (agreedPrice > 0) {
+				discountPercent = (1 - agreedPrice / totalServices) * 100;
 			}
 		}
 		reservation.setRealDiscountPercent(discountPercent);
@@ -551,50 +590,38 @@ public class ReservationManager implements IReservationConstants {
 		return !DateUtils.isSameDay(serviceDate, reservationEndDate) && serviceDate.before(reservationEndDate);
 	}
 
-	private void createAgreedPriceDiscountService(double agreedPrice, ProjectReservation reservation) throws ManagerBeanException {
-		Item item = getReservationUtils().obtainBestPriceDiscountItem();
-		if (item != null) {
-			String serviceRPH = "01";
-			for (String key : roomServicesMap.keySet()) {
-				if (Integer.parseInt(key) >= Integer.parseInt(serviceRPH)) {
-					serviceRPH = StringUtils.leftPad(Integer.toString(Integer.parseInt(key) + 1), 2, "0") ;
-				}
+	private double createAgreedPriceDiscountService(Item item, double agreedPrice, ProjectReservation reservation) throws ManagerBeanException {
+		String serviceRPH = "01";
+		for (String key : roomServicesMap.keySet()) {
+			if (Integer.parseInt(key) >= Integer.parseInt(serviceRPH)) {
+				serviceRPH = StringUtils.leftPad(Integer.toString(Integer.parseInt(key) + 1), 2, "0") ;
 			}
-			roomServicesMap.put(serviceRPH, roomServicesMap.get(FIRST_ROOM));
-			String serviceInventaryCode = item.getProduct().getCode();
-			ProjectReservationService reservationService = insertReservationService(reservation, serviceRPH, serviceInventaryCode, item);
-
-			Date date = DateUtils.truncate(reservation.getStartDate(), Calendar.DATE);
-			double total = CommonUtil.round(reservation.getTotal() - agreedPrice);
-			calculateTaxData = true;
-			ProjectReservationServiceDetail reservationServiceDetail = insertReservationServiceDetail(reservationService, date, -1, total);
-
-			reservation.setTaxableBase(CommonUtil.round(reservation.getTaxableBase() - reservationServiceDetail.getPrice()));
-			reservation.setTotal(CommonUtil.round(reservation.getTotal() - total));
 		}
+		roomServicesMap.put(serviceRPH, roomServicesMap.get(FIRST_ROOM));
+		String serviceInventaryCode = item.getProduct().getCode();
+		ProjectReservationService reservationService = insertReservationService(reservation, serviceRPH, serviceInventaryCode, item);
+
+		Date date = DateUtils.truncate(reservation.getStartDate(), Calendar.DATE);
+		double agreedPriceTotal = CommonUtil.round(reservation.getTotal() - agreedPrice);
+		ProjectReservationServiceDetail reservationServiceDetail = insertReservationServiceDetail(reservationService, date, -1, agreedPriceTotal);
+		return reservationServiceDetail.getTaxableBase();
 	}
 
-	private void createAutoDiscountService(double autoDiscount, ProjectReservation reservation) throws ManagerBeanException {
-		Item item = getReservationUtils().obtainAutoDiscountItem();
-		if (item != null) {
-			String serviceRPH = "01";
-			for (String key : roomServicesMap.keySet()) {
-				if (Integer.parseInt(key) >= Integer.parseInt(serviceRPH)) {
-					serviceRPH = StringUtils.leftPad(Integer.toString(Integer.parseInt(key) + 1), 2, "0") ;
-				}
+	private double createAutoDiscountService(Item item, double autoDiscount, ProjectReservation reservation) throws ManagerBeanException {
+		String serviceRPH = "01";
+		for (String key : roomServicesMap.keySet()) {
+			if (Integer.parseInt(key) >= Integer.parseInt(serviceRPH)) {
+				serviceRPH = StringUtils.leftPad(Integer.toString(Integer.parseInt(key) + 1), 2, "0") ;
 			}
-			roomServicesMap.put(serviceRPH, roomServicesMap.get(FIRST_ROOM));
-			String serviceInventaryCode = item.getProduct().getCode();
-			ProjectReservationService reservationService = insertReservationService(reservation, serviceRPH, serviceInventaryCode, item);
-
-			Date date = DateUtils.truncate(reservation.getStartDate(), Calendar.DATE);
-			double total = CommonUtil.round(reservation.getTotal() * autoDiscount / 100);
-			calculateTaxData = true;
-			ProjectReservationServiceDetail reservationServiceDetail = insertReservationServiceDetail(reservationService, date, -1, total);
-
-			reservation.setTaxableBase(CommonUtil.round(reservation.getTaxableBase() - reservationServiceDetail.getPrice()));
-			reservation.setTotal(CommonUtil.round(reservation.getTotal() - total));
 		}
+		roomServicesMap.put(serviceRPH, roomServicesMap.get(FIRST_ROOM));
+		String serviceInventaryCode = item.getProduct().getCode();
+		ProjectReservationService reservationService = insertReservationService(reservation, serviceRPH, serviceInventaryCode, item);
+
+		Date date = DateUtils.truncate(reservation.getStartDate(), Calendar.DATE);
+		double autoDiscountTotal = CommonUtil.round(reservation.getTotal() * autoDiscount / 100);
+		ProjectReservationServiceDetail reservationServiceDetail = insertReservationServiceDetail(reservationService, date, -1, autoDiscountTotal);
+		return reservationServiceDetail.getTaxableBase();
 	}
 
 	private ProjectReservationRoom insertReservationRoom(ProjectReservation reservation, RoomStay stay, int adults, int children) 
@@ -657,18 +684,16 @@ public class ReservationManager implements IReservationConstants {
 
 	private ProjectReservationServiceDetail insertReservationServiceDetail(ProjectReservationService reservationService, Date date, double quantity, double price)
 			throws ManagerBeanException {
-		if (price > 0 && price < 1) {
-			String selfBooking = getReservationUtils().obtainCustomerCode(reservationService.getProjectReservation().getAgency(), SELF_BOOKING);
-			if (selfBooking != null && selfBooking.equalsIgnoreCase(YES)) {
-				price = 0;
-			}
+		if (selfBooking && price > 0 && price < 1) {
+			price = 0;
 		}
-		if (calculateTaxData) {
-			Date taxDate = reservationService.getProjectReservation().getStartDate();
-			double vatPercent = getReservationUtils().getTaxPercentage(reservationService.getItem().getProduct().getVat(), taxDate);
-			price = CommonUtil.round(price / (1 + vatPercent / 100), 4);
+		Date taxDate = reservationService.getProjectReservation().getStartDate();
+		double vatPercent = getReservationUtils().getTaxPercentage(reservationService.getItem().getProduct().getVat(), taxDate);
+		price = CommonUtil.round(price / (1 + vatPercent / 100), 4);
+		if (price != 0 && vatPercent != reservationService.getProjectReservation().getVatPercent()) {
+			multipleVat = true;
 		}
-		
+
 		ProjectReservationServiceDetail reservationServiceDetail = new ProjectReservationServiceDetail();
 		reservationServiceDetail.setProjectReservationService(reservationService);
 		reservationServiceDetail.setDomain(getReservationUtils().getDomain());
@@ -920,6 +945,15 @@ public class ReservationManager implements IReservationConstants {
 			}
 		}
 		return CommonUtil.round(taxQuota);
+	}
+
+	private double findTaxPercent(ResGlobalInfoType resGlobalInfoType, String type) {
+		double taxPercent = 0;
+		if (resGlobalInfoType.getTotal().getTaxes() != null && resGlobalInfoType.getTotal().getTaxes().sizeOfTaxArray() == 1) {
+			TaxType taxType = resGlobalInfoType.getTotal().getTaxes().getTaxArray(0);
+			taxPercent = taxType.getPercent().doubleValue();
+		}
+		return CommonUtil.round(taxPercent);
 	}
 
 	private String findPrepayInfo(ResGlobalInfoType resGlobalInfoType, String guaranteeDescription) {

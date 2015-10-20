@@ -501,7 +501,7 @@ public class ReservationInvoicing implements IReservationConstants {
 			financesAmount = invoice.getTotal();
 		} else {
 			for (Finance finance : reservationInvoiceTo.getFinances()) {
-				if (finance.getAmount() > 0) {
+				if (finance.getAmount() != 0) {
 					finance.setInvoice(invoice);
 					finance.setRegistry(invoice.getRegistry());
 					finance.setPayment(false);

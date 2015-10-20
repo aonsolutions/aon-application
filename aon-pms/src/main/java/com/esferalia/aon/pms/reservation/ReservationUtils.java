@@ -499,9 +499,10 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 	    	criteria.addEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_TAX_ID), tax.getId());
 	    	criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_START_DATE), date);
 	    	criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_END_DATE), date);
-	    	List<ITransferObject> taxDetailList = taxDetailBean.getList(criteria);
-	    	if (taxDetailList.size() > 0) {
-	    		return ((TaxDetail)taxDetailList.get(0)).getValue();
+	    	Projection prjValue = Projection.property(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_VALUE));
+			List<?> resultList = taxDetailBean.getList(new ProjectionList(prjValue), criteria);
+			if (resultList.size() > 0) {
+   				return (Double)resultList.get(0);
 	    	}
 		}
     	return tax.getPercentage();
@@ -579,11 +580,11 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 	}
 
 	public double obtainAgencyCommissionAmount(ProfileInfo agencyInfo) throws ManagerBeanException {
-		double percent = 0;
+		double amount = 0;
 		if (agencyInfo != null && agencyInfo.getProfile().getAgreements().sizeOfCommissionInfoArray() > 0) {
-			percent = agencyInfo.getProfile().getAgreements().getCommissionInfoArray(0).getAmount().doubleValue();
+			amount = agencyInfo.getProfile().getAgreements().getCommissionInfoArray(0).getAmount().doubleValue();
 		}
-		return percent;
+		return amount;
 	}
 
 	public Customer obtainCompany(ProfileInfo companyInfo) throws ManagerBeanException {
@@ -1099,12 +1100,16 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), agency.getRegistry().getId());
 			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), AGENCY_COMMISSION);
-			RegistryAddInfo rAddInfo = null;
-			for (ITransferObject ito : rAddInfoBean.getList(criteria)) {
-				rAddInfo = (RegistryAddInfo)ito;
-				break;
-			}
-			return rAddInfo != null && rAddInfo.getValue().equalsIgnoreCase(YES);
+			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_VALUE), YES);
+			return rAddInfoBean.getCount(criteria) > 0;
+		}
+		return false;
+	}
+
+	public boolean isAgencySelfBooking(Customer agency) throws ManagerBeanException {
+		if (agency != null && agency.getId() != null) {
+			String selfBooking = obtainCustomerCode(agency, SELF_BOOKING);
+			return (selfBooking != null && selfBooking.equalsIgnoreCase(YES));
 		}
 		return false;
 	}
@@ -1114,9 +1119,10 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(requestRoomBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_ROOM_CRS_CODE), crsCode);
 		criteria.addGreaterThanExpression(requestRoomBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_ROOM_AGREED_PRICE), Double.valueOf(0));
-		List<ITransferObject> requestRoomList = requestRoomBean.getList(criteria);
-		if (requestRoomList.size() > 0) {
-			return ((ReservationRequestRoom)requestRoomList.get(0)).getAgreedPrice();
+		Projection prjAgreedPrice = Projection.property(requestRoomBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_ROOM_AGREED_PRICE));
+		List<?> resultList = requestRoomBean.getList(new ProjectionList(prjAgreedPrice), criteria);
+		if (resultList.size() > 0) {
+			return (Double)resultList.get(0);
 		}
 		return 0;
 	}
@@ -1183,9 +1189,10 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 			criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID), agency.getId());
 			criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE), MediaType.EMAIL);
 			criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_ADMINISTRATIVE), Boolean.TRUE);
-			List<ITransferObject> rMediaList = rMediaBean.getList(criteria);
-			if (rMediaList.size() > 0) {
-				return ((RegistryMedia)rMediaList.get(0)).getValue();
+			Projection prjValue = Projection.property(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_VALUE));
+			List<?> resultList = rMediaBean.getList(new ProjectionList(prjValue), criteria);
+			if (resultList.size() > 0) {
+				return (String)resultList.get(0);
 			}
 		}
 		return null;
