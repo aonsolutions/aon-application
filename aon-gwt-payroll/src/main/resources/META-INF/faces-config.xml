@@ -6,7 +6,7 @@
 	<managed-bean>
 		<managed-bean-name>gwt</managed-bean-name>
 		<managed-bean-class>
-			com.esferalia.aon.gwt.payroll.bean.GWT
+			com.esferalia.aon.gwt.common.bean.GWT
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
