@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBasesResult;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsRespuesta;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsTrabajadoresYTramos;
@@ -18,6 +19,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FileUpload;
@@ -115,14 +118,13 @@ public class CretaResponseDialog extends SelectDialog<CretaService.JsFile> {
 		fileUpload.click();
 	}
 
+//	UiHandler("acceptButton")
 	@Override
-	@UiHandler("acceptButton")
 	void onAcceptClick(ClickEvent e) {
-		submit(outFile);
+		send(outFile);
 	}
 
 	@UiHandler("fileUpload")
-
 	void onFileUploadChange(ChangeEvent event) {
 
 		String fileName = fileUpload.getFilename();
@@ -239,13 +241,31 @@ public class CretaResponseDialog extends SelectDialog<CretaService.JsFile> {
 		formPanel.submit();
 	}
 
+	private void send(CretaService.File file) {
+		MainCreta.submit(CretaService.CRETA_URL + "/" + file.name(), getSelectedData(), 
+		
+			new AsyncCallback<CretaService.JsBasesResult>() {
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					//TODO:
+					Window.alert(caught.getMessage());
+				}
+
+				@Override
+				public void onSuccess(JsBasesResult result) {
+					onBases(result);
+				}
+				
+			}
+
+		);
+	}
+
 	// ------------------------------------------------------------------------
 
 	private native void exportSubmitComplete() /*-{
 		var that = this;
-		$wnd.__onBases = $entry(function(result) {
-			that.@com.esferalia.aon.gwt.payroll.client.CretaResponseDialog::onBases(Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsBasesResult;)(result);
-		});
 		$wnd.__onTrabajadoresYTramos = $entry(function(trabajadoresYTramos,
 				respuestas) {
 			that.@com.esferalia.aon.gwt.payroll.client.CretaResponseDialog::onTrabajadoresYTramos([Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsTrabajadoresYTramos;[Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsRespuesta;)(trabajadoresYTramos, respuestas);
