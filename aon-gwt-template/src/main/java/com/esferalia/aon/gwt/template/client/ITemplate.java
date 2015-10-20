@@ -54,7 +54,7 @@ public interface ITemplate extends RemoteService{
 	
 	public Integer executeExcel2(TemplateInfo ti);
 	
-	public Integer executeExcel3(TemplateInfo ti);
+	public Integer executeExcel3(TemplateInfo ti, Boolean ignoreInactiveClient);
 	
 	public Error insertFee();
 	

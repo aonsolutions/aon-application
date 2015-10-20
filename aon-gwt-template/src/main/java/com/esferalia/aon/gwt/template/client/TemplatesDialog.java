@@ -39,10 +39,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FormHandler;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormSubmitEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -241,7 +240,9 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setCellSpacing(0);
 		
 		ListBox ecommerceListBox = new ListBox();
-		ecommerceListBox.addItem(Ecommerce.AMAZON.getName(), Ecommerce.AMAZON.getOrdinalStr());
+		for(Ecommerce ecommerce : Ecommerce.values()){
+			ecommerceListBox.addItem(ecommerce.getName(), ecommerce.getOrdinalStr());
+		}
 		flex_table.setWidget(0, 0, new Label("Ecommerce"));
 		flex_table.setWidget(0, 1, ecommerceListBox);
 		
@@ -614,6 +615,12 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(1, 0, new Label("Archivo"));
 		flex_table.setWidget(1, 1, upload);
 		
+		CheckBox cb = new CheckBox();
+		cb.setValue(true);
+		
+		flex_table.setWidget(2, 0, cb);		
+		flex_table.setWidget(2, 1, new Label("Ignorar clientes inactivos"));
+
 		flexTableCss();
 	}
 	
@@ -1471,15 +1478,12 @@ public abstract class TemplatesDialog extends CustomDialogB {
 				progress = 0;		
 			}
 		});
-        upload.getForm().addFormHandler(new FormHandler() {
+        upload.getForm().addSubmitCompleteHandler(new SubmitCompleteHandler() {
 			
 			@Override
-			public void onSubmitComplete(FormSubmitCompleteEvent event) {
-				upload.getForm().getWidget().getElement().getChild(0).removeFromParent();
+			public void onSubmitComplete(SubmitCompleteEvent event) {
+				upload.getForm().getWidget().getElement().getChild(0).removeFromParent();				
 			}
-			
-			@Override
-			public void onSubmit(FormSubmitEvent event) {}
 		});
         
         return upload;

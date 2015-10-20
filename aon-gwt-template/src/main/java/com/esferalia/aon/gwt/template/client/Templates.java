@@ -92,23 +92,19 @@ public class Templates extends Composite implements EntryPoint {
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {
-
-					}
+					public void onFailure(Throwable caught) {}
 				});
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-
-			}
+			public void onFailure(Throwable caught) {}
 		});
 	}
 
 	Vector<Warehouse> ws;
 	Integer inventory, workplaceId, proposalId, num, inventoryId, domainId;
-	String closedAux, inventoryIdAux, warehouseAux, initialDateAux, finalDateAux, initialIdAux,
-			finalIdAux, onlyNegativeAux, detailAux, w, wAux, incomeId;
+	String closedAux, inventoryIdAux, warehouseAux, warehouse2Aux, initialDateAux, finalDateAux, initialIdAux,
+			finalIdAux, onlyNegativeAux, detailAux, w, wAux, incomeId, seriesAux, commentsAux;
 
 	@Override
 	public void onModuleLoad() {
@@ -134,20 +130,17 @@ public class Templates extends Composite implements EntryPoint {
 			exportConsumptionx(this);
 			exportInventoryx(this);
 			exportIncomex(this);
-			
 		}
 		
 		Widget ui = binder.createAndBindUi(this);
 		
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
-		root.add(ui);
-
-		
+		root.add(ui);	
 	}	
 
 	
 //------------------------------ Utils	
-	
+	Boolean ignoreInactiveClientAux;
 	private void importFee(){
 		Dialog d = new Dialog("Importar Cuotas","Importar",true,"Cancelar",true,"importFee");
 		d.setUrl(GWT.getModuleBaseURL());
@@ -170,84 +163,63 @@ public class Templates extends Composite implements EntryPoint {
 					}
 				}
 				
-				item.executeExcel3(ti, new AsyncCallback<Integer>() {
+				CheckBox cb = (CheckBox) flex_table.getWidget(2, 0);
+				Boolean ignoreInactiveClient = cb.getValue();
+				
+				hide();
+				tiAux = ti;
+				ignoreInactiveClientAux = ignoreInactiveClient;
+				item.excelRowNumber(new AsyncCallback<Integer>() {
+					TemplateInfo ti = tiAux;
+					Boolean ignoreInactiveClient = ignoreInactiveClientAux;
 					@Override
 					public void onSuccess(Integer result) {
 						hide();
-						if(result !=-1){
-							pbd = new ProgressBarDialog(result.doubleValue(), 0.86) {
-									
-							};
-							pbd.addStyleName("gwt-PopupPanel-template");
-							pbd.setGlassEnabled(true);
-							pbd.show();
-							item.insertFee(new AsyncCallback<Error>() {
-									
-								@Override
-								public void onSuccess(Error result) {
-									pbd.completed();
-									pbd.hide();
-									Dialog d2 = new Dialog("Importar Cuotas","Aceptar",true,"Cancelar",false,"importResponse");
-									d2.setError(result);
-									TemplatesDialog popup2 = new TemplatesDialog(d2){
-
-										@Override
-										protected void onAccept() {
-											hide();			
-										}
-										
-										@Override
-										protected void onCancel() {
-											hide();
-										}
-									};
-									popup2.addStyleName("gwt-PopupPanel-template");
-									popup2.setGlassEnabled(true);
-									popup2.show();
-								}
-									
-								@Override
-								public void onFailure(Throwable caught) {
-
-								}
-							});
-						}
-						else{
-							item.insertFee(new AsyncCallback<Error>() {
-			
-								@Override
-								public void onSuccess(Error result) {
-									Dialog d2 = new Dialog("Importar Cuotas","Aceptar",true,"Cancelar",false,"importResponse");
-									d2.setError(result);
-									TemplatesDialog popup2 = new TemplatesDialog(d2){
-
-										@Override
-										protected void onAccept() {
-											hide();			
-										}
-										
-										@Override
-										protected void onCancel() {
-											hide();
-										}
-									};
-									popup2.addStyleName("gwt-PopupPanel-template");
-									popup2.setGlassEnabled(true);
-									popup2.show();
-								}
-									
-								@Override
-								public void onFailure(Throwable caught) {
-
-								}
-							});
-						}
-					}
+						pbd = new ProgressBarDialog(result.doubleValue(), 0.86) {
 					
-					@Override
-					public void onFailure(Throwable caught) {
+						};
+						pbd.addStyleName("gwt-PopupPanel-template");
+						pbd.setGlassEnabled(true);
+						pbd.show();
+						item.executeExcel3(ti, ignoreInactiveClient, new AsyncCallback<Integer>() {
+							@Override
+							public void onSuccess(Integer result) {
+								item.insertFee(new AsyncCallback<Error>() {
+									@Override
+									public void onSuccess(Error result) {
+										pbd.completed();
+										pbd.hide();
+										Dialog d2 = new Dialog("Importar Cuotas","Aceptar",true,"Cancelar",false,"importResponse");
+										d2.setError(result);
+										TemplatesDialog popup2 = new TemplatesDialog(d2){
 
+											@Override
+											protected void onAccept() {
+												hide();			
+											}
+										
+											@Override
+											protected void onCancel() {
+												hide();
+											}
+										};
+										popup2.addStyleName("gwt-PopupPanel-template");
+										popup2.setGlassEnabled(true);
+										popup2.show();
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {}
+								});
+							}	
+					
+							@Override
+							public void onFailure(Throwable caught) {}
+						});
 					}
+			
+					@Override
+					public void onFailure(Throwable caught) {}
 				});
 			}
 		};
@@ -273,7 +245,6 @@ public class Templates extends Composite implements EntryPoint {
 			
 			@Override
 			protected void onAccept() {
-			
 				ListBox lb = (ListBox) flex_table.getWidget(0, 1);
 				String template = lb.getItemText(lb.getSelectedIndex());
 				TemplateInfo ti = new TemplateInfo();
@@ -292,7 +263,6 @@ public class Templates extends Composite implements EntryPoint {
 						pbd = new ProgressBarDialog(result.doubleValue(), 0.46) {
 							
 						};
-
 						pbd.addStyleName("gwt-PopupPanel-template");
 						pbd.setGlassEnabled(true);
 						pbd.show();
@@ -327,9 +297,7 @@ public class Templates extends Composite implements EntryPoint {
 										}
 											
 										@Override
-										public void onFailure(Throwable caught) {
-
-										}
+										public void onFailure(Throwable caught) {}
 									});
 								}	
 							}
@@ -452,89 +420,63 @@ public class Templates extends Composite implements EntryPoint {
 						ti = t;
 					}
 				}
-				item.executeExcel(inventoryId, ti, warehouse,null, "" , "",false,-1,new AsyncCallback<Integer>() {
-					
+				tiAux = ti;warehouseAux = warehouse;
+				item.excelRowNumber(new AsyncCallback<Integer>() {
+					TemplateInfo ti = tiAux;
+					String warehouse = warehouseAux;
 					@Override
 					public void onSuccess(Integer result) {
 						hide();
-					
-					
-						if(result !=-1){
 						pbd = new ProgressBarDialog(result.doubleValue(),0.4) {
 							
 						};
-			
 						pbd.addStyleName("gwt-PopupPanel-template");
 						pbd.setGlassEnabled(true);
-						pbd.show();
-						item.insertStock(new AsyncCallback<Error>() {
-							@Override
-							public void onSuccess(Error result) {
-								pbd.completed();
-								pbd.hide();
-								Dialog d2 = new Dialog("Importar Stock","Aceptar",true,"Cancelar",false,"importResponse");
-								d2.setError(result);
-								TemplatesDialog popup2 = new TemplatesDialog(d2){
-
-									@Override
-									protected void onAccept() {
-										hide();
-										refreshInventoryDetail();
-									
-									}
-
-									@Override
-									protected void onCancel() {
-										hide();
-									}
-								};
-								popup2.addStyleName("gwt-PopupPanel-template");
-								popup2.setGlassEnabled(true);
-								popup2.show();
-							}
+						pbd.show();						
+						item.executeExcel(inventoryId, ti, warehouse,null, "" , "",false,-1,new AsyncCallback<Integer>() {
 							
 							@Override
-							public void onFailure(Throwable caught) {
+							public void onSuccess(Integer result) {
+								item.insertStock(new AsyncCallback<Error>() {
+									@Override
+									public void onSuccess(Error result) {
+										pbd.completed();
+										pbd.hide();
+										Dialog d2 = new Dialog("Importar Stock","Aceptar",true,"Cancelar",false,"importResponse");
+										d2.setError(result);
+										TemplatesDialog popup2 = new TemplatesDialog(d2){
 
+											@Override
+											protected void onAccept() {
+												hide();
+												refreshInventoryDetail();
+											}
+
+											@Override
+											protected void onCancel() {
+												hide();
+											}
+										};
+										popup2.addStyleName("gwt-PopupPanel-template");
+										popup2.setGlassEnabled(true);
+										popup2.show();
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+
+									}
+								});
 							}
+
+							@Override
+							public void onFailure(Throwable caught) {}
 						});
-						}
-						else{
-							item.insertStock(new AsyncCallback<Error>() {
-								@Override
-								public void onSuccess(Error result) {
-									Dialog d2 = new Dialog("Importar Stock","Aceptar",true,"Cancelar",false,"importResponse");
-									d2.setError(result);
-									TemplatesDialog popup2 = new TemplatesDialog(d2){
-
-										@Override
-										protected void onAccept() {
-											hide();			
-										}
-
-										@Override
-										protected void onCancel() {
-											hide();
-										}
-									};
-									popup2.addStyleName("gwt-PopupPanel-template");
-									popup2.setGlassEnabled(true);
-									popup2.show();
-								}
-								
-								@Override
-								public void onFailure(Throwable caught) {
-
-								}
-							});
-						}
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {
-
-					}
-				});
+					public void onFailure(Throwable caught) {}
+				});	
 			}
 		};
 
@@ -583,86 +525,67 @@ public class Templates extends Composite implements EntryPoint {
 						ti = t;
 					}
 				}
-				item.executeExcel(0,ti, warehouse, warehouse2, series, comments,true,number, new AsyncCallback<Integer>() {
-					
+				tiAux = ti;warehouseAux = warehouse;warehouse2Aux = warehouse2;seriesAux= series;
+				commentsAux = comments;
+				item.excelRowNumber(new AsyncCallback<Integer>() {
+					TemplateInfo ti;String warehouse = warehouseAux;String warehouse2 = warehouse2Aux;
+					String series = seriesAux;String comments = commentsAux;
 					@Override
 					public void onSuccess(Integer result) {
-						
 						hide();
-						
-						if(result !=-1){
-							pbd = new ProgressBarDialog(result.doubleValue(),0.101) {
+						pbd = new ProgressBarDialog(result.doubleValue(),0.101) {
 
-							};
-							pbd.addStyleName("gwt-PopupPanel-template");
-							pbd.setGlassEnabled(true);
-							pbd.show();
-							item.insertTransferStock(new AsyncCallback<Error>() {
-								@Override
-								public void onSuccess(Error result) {
-									pbd.completed();
-									pbd.hide();
-									Dialog d2 = new Dialog("Traspaso entre almacenes","Aceptar",true,"Cancelar",false,"importResponse");
-									d2.setError(result);
-									TemplatesDialog popup2 = new TemplatesDialog(d2){
-										
-										@Override
-										protected void onAccept() {
-											hide();
-											refreshTransferStock();
-										}
-
-										@Override
-										protected void onCancel() {
-											hide();
-										}	
-									};
-									popup2.addStyleName("gwt-PopupPanel-template");
-									popup2.setGlassEnabled(true);
-									popup2.show();
-								}
+						};
+						pbd.addStyleName("gwt-PopupPanel-template");
+						pbd.setGlassEnabled(true);
+						pbd.show();	
+						item.executeExcel(0,ti, warehouse, warehouse2, series, comments,true,number, new AsyncCallback<Integer>() {
 							
-								@Override
-								public void onFailure(Throwable caught) {
-
-								}	
-							});
-						}
-						else{
-							item.insertTransferStock(new AsyncCallback<Error>() {
-								@Override
-								public void onSuccess(Error result) {
-									Dialog d2 = new Dialog("Importar Stock","Aceptar",true,"Cancelar",false,"importResponse");
-									d2.setError(result);
-									TemplatesDialog popup2 = new TemplatesDialog(d2){
-
+							@Override
+							public void onSuccess(Integer result) {
+								item.insertTransferStock(new AsyncCallback<Error>() {
 										@Override
-										protected void onAccept() {
-											hide();			
-										}
+										public void onSuccess(Error result) {
+											pbd.completed();
+											pbd.hide();
+											Dialog d2 = new Dialog("Traspaso entre almacenes","Aceptar",true,"Cancelar",false,"importResponse");
+											d2.setError(result);
+											TemplatesDialog popup2 = new TemplatesDialog(d2){
+												
+												@Override
+												protected void onAccept() {
+													hide();
+													refreshTransferStock();
+												}
 
-										@Override
-										protected void onCancel() {
-											hide();
+												@Override
+												protected void onCancel() {
+													hide();
+												}	
+											};
+											popup2.addStyleName("gwt-PopupPanel-template");
+											popup2.setGlassEnabled(true);
+											popup2.show();
 										}
-									};
-									popup2.addStyleName("gwt-PopupPanel-template");
-									popup2.setGlassEnabled(true);
-									popup2.show();
-								}
+									
+										@Override
+										public void onFailure(Throwable caught) {
+
+										}	
+								});
+							}
 								
-								@Override
-								public void onFailure(Throwable caught) {
+							
+							
+							@Override
+							public void onFailure(Throwable caught) {
 
-								}
-							});
-						}
+							}
+						});
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {
-
-					}
+					public void onFailure(Throwable caught) {}
 				});
 			}
 		};
@@ -855,86 +778,64 @@ public class Templates extends Composite implements EntryPoint {
 						ti = t;
 					}
 				}
-				item.executeExcelProposal(ti, new AsyncCallback<Integer>() {
+				tiAux = ti;
+				item.excelRowNumber(new AsyncCallback<Integer>() {
 					
 					@Override
 					public void onSuccess(Integer result) {
-							hide();
-							if(result !=-1){
-								pbd = new ProgressBarDialog(result.doubleValue(), 0.86) {
-									
-								};
-									
-								pbd.addStyleName("gwt-PopupPanel-template");
-								pbd.setGlassEnabled(true);
-								pbd.show();
-								
+						hide();
+						pbd = new ProgressBarDialog(result.doubleValue(), 0.86) {
+							
+						};
+							
+						pbd.addStyleName("gwt-PopupPanel-template");
+						pbd.setGlassEnabled(true);
+						pbd.show();	
+						item.executeExcelProposal(tiAux, new AsyncCallback<Integer>() {
+							
+							@Override
+							public void onSuccess(Integer result) {
 								item.insertProposal(proposalId,workplaceId,new AsyncCallback<Error>() {
-									@Override
-									public void onSuccess(Error result) {
-										pbd.completed();
-										pbd.hide();
-										Dialog d2 = new Dialog("Importar Solicitudes de Compra","Aceptar",true,"Cancelar",false,"importResponse");
-										d2.setError(result);
-										TemplatesDialog popup2 = new TemplatesDialog(d2){
-
 											@Override
-											protected void onAccept() {
-												hide();	
-												refreshProposalDetail();
-											}
+											public void onSuccess(Error result) {
+												pbd.completed();
+												pbd.hide();
+												Dialog d2 = new Dialog("Importar Solicitudes de Compra","Aceptar",true,"Cancelar",false,"importResponse");
+												d2.setError(result);
+												TemplatesDialog popup2 = new TemplatesDialog(d2){
 
+													@Override
+													protected void onAccept() {
+														hide();	
+														refreshProposalDetail();
+													}
+
+													@Override
+													protected void onCancel() {
+														hide();
+													}
+												};
+												popup2.addStyleName("gwt-PopupPanel-template");
+												popup2.setGlassEnabled(true);
+												popup2.show();
+											}
+											
 											@Override
-											protected void onCancel() {
-												hide();
+											public void onFailure(Throwable caught) {
+
 											}
-										};
-										popup2.addStyleName("gwt-PopupPanel-template");
-										popup2.setGlassEnabled(true);
-										popup2.show();
-									}
-									
-									@Override
-									public void onFailure(Throwable caught) {
+										});
+									}		
 
-									}
-								});
-							}		
-							else{
-								item.insertProposal(proposalId,workplaceId,new AsyncCallback<Error>() {
-									@Override
-									public void onSuccess(Error result) {
-										Dialog d2 = new Dialog("Importar Solicitudes de Compra","Aceptar",true,"Cancelar",false,"importResponse");
-										d2.setError(result);
-										TemplatesDialog popup2 = new TemplatesDialog(d2){
+							@Override
+							public void onFailure(Throwable caught) {
 
-											@Override
-											protected void onAccept() {
-												hide();			
-											}
-
-											@Override
-											protected void onCancel() {
-												hide();
-											}
-										};
-										popup2.addStyleName("gwt-PopupPanel-template");
-										popup2.setGlassEnabled(true);
-										popup2.show();
-									}
-									
-									@Override
-									public void onFailure(Throwable caught) {
-
-									}
-								});
 							}
+						});
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {
-
-					}
+					public void onFailure(Throwable caught) {}
 				});
 			}
 		};

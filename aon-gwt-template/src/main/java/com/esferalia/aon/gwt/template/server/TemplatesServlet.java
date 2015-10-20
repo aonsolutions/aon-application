@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,7 +20,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-import java.util.Calendar;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -61,9 +61,6 @@ import com.esferalia.aon.gwt.template.jooq.DBProduct;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.shared.ConsumptionItem;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
-import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
-import com.esferalia.aon.gwt.template.shared.EcommerceProduct.ProductData;
-import com.esferalia.aon.gwt.template.shared.EcommerceProduct.Template;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.Hotel;
 import com.esferalia.aon.gwt.template.shared.Seller;
@@ -75,6 +72,11 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.product.EcommerceProduct;
+import com.esferalia.aon.occam.api.model.product.EcommerceProduct.ProductData;
+import com.esferalia.aon.occam.api.model.product.EcommerceProduct.ProductData.Ecommerce.PresetValues;
+import com.esferalia.aon.occam.api.model.product.EcommerceProduct.Template;
+import com.esferalia.aon.occam.api.model.product.XMLUtils;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -242,7 +244,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	Vector<WorkPlace> workplaces = new Vector<WorkPlace>();
 	Vector<InvoicingGroup> invoicingGroups = new Vector<InvoicingGroup>();
 	
-	public Integer executeExcel3(TemplateInfo templateInfo){
+	public Integer executeExcel3(TemplateInfo templateInfo, Boolean ignoreInactiveClient){
 		ti = templateInfo;
 		long startAll= System.currentTimeMillis();
 		Domain domain = new Domain();
@@ -339,7 +341,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 							}
 
 							if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre")){
-								fi = checkFee(domain, ti.getColumns().get(cell.getColumnIndex()),fi,cell);
+								fi = checkFee(domain, ti.getColumns().get(cell.getColumnIndex()),fi,cell, ignoreInactiveClient);
 								if(fi == null){
 									verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto ");
 									textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
@@ -384,6 +386,11 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		if(rowCount != -1) rowCount = fees.size();
 		System.out.println(rowCount);
 		setOut(null);setMimetype(null);
+		try {
+			workbook.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return rowCount;
 	}
 
@@ -434,13 +441,13 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		return feeInfo;
 	}
 	
-	private FeeInfo checkFee(Domain domain, String template,FeeInfo fee, Cell cell) {
+	private FeeInfo checkFee(Domain domain, String template,FeeInfo fee, Cell cell, Boolean ignoreInactiveCliente) {
 		Integer type = cell.getCellType();
 		switch (template) {
 		case "Cliente": case "Client":
 			if(type.equals(Cell.CELL_TYPE_STRING) && !cell.getStringCellValue().equals("")){
 				String strAux = cell.getStringCellValue();
-				Customer customer = DBFee.getCustomer(domain, strAux);
+				Customer customer = DBFee.getCustomer(domain, strAux, ignoreInactiveCliente);
 				if(customer != null){
 					fee.setClient(cell.getStringCellValue());
 					fee.setClientId(customer.getId());
@@ -818,6 +825,11 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		if(rowCount != -1) rowCount = stock.size();
 		System.out.println(rowCount);
 		setOut(null);setMimetype(null);
+		try {
+			workbook.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return rowCount;
 	}
 	
@@ -1088,6 +1100,11 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		if(rowCount != -1) rowCount = stock.size();
 		System.out.println(rowCount);
 		setOut(null);setMimetype(null);
+		try {
+			workbook.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return rowCount;
 	}
 	public Boolean isRequiredStock(String s){
@@ -1425,7 +1442,11 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		}
 		if(rowCount != -1) rowCount = products.size();
 		setOut(null);setMimetype(null);
-
+		try {
+			workbook.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return rowCount;
 	}
 
@@ -1947,6 +1968,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		d.setId(domainId);
 		
 		Error error = new Error();
+		error.setError(true);
     	if(getOut() == null){
 			error.setError(false);
 			Vector<String> verror = new Vector<String>();
@@ -1954,8 +1976,13 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			error.setTextError(verror);
 			return error;
 		}
-
-		if(!Utils.isExcel(getMimetype())){
+    	byte[] data = getOut();
+		byte[] xml = null;
+		
+    	/*if(getMimetype().equals(MimeType.CSV.getName()) && ecommerce.equals(Ecommerce.EBAY)){
+    		xml = csvToXmlEbay(data, ecommerce.getName(), type, pc.getName());
+    	}
+    	else*/ if(!Utils.isExcel(getMimetype())){
 			//El archivo no es un fichero Excel.
 			error.setError(false);
 			Vector<String> verror = new Vector<String>();
@@ -1963,15 +1990,15 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			error.setTextError(verror);
 			return error;
 		}
-		
-		byte[] data = getOut();
-		byte[] xml = null;
-		if(ecommerce.equals(Ecommerce.AMAZON)){
-			xml = excelToXml(data, ecommerce.getName(), type, pc.getName());
-		}
+
+		if(xml == null && ecommerce.equals(Ecommerce.AMAZON))
+			xml = excelToXmlAmazon(data, ecommerce.getName(), type, pc.getName());
+		/*else if(xml == null && ecommerce.equals(Ecommerce.EBAY))
+			xml = excelToXmlEbay(data, ecommerce.getName(), type, pc.getName());
+		 */
 		if(xml != null){
 			
-			Condition condition = RATTACH.DESCRIPTION.eq(type).and(RATTACH.TYPE.eq((byte)18))
+			Condition condition = RATTACH.DESCRIPTION.eq(ecommerce.getName()+"-"+type).and(RATTACH.TYPE.eq((byte)18))
 					.and(RATTACH.DPARENT_ID.eq(pc.getId().toString()));
 			Attach attach = AON.getAttach(d.getName(), d.getId(), condition, AttachType.REGISTRY);
 			
@@ -1983,7 +2010,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			}
 			else{
 				attach = new Attach(AttachType.REGISTRY);
-				attach.setDescription(type);
+				attach.setDescription(ecommerce.getName()+"-"+type);
 				attach.setData(xml);
 				//attach.setCategory(pc.getId());
 				attach.setDparentId(pc.getId().toString());
@@ -2016,9 +2043,9 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		return error;
 	}
 	
-	public byte[] excelToXml(byte[] data, String ec, String type, String category){
+	public byte[] excelToXmlAmazon(byte[] data, String ec, String type, String category){
 		try {
-			File aux = new File("/tmp/fee.xls");
+			File aux = File.createTempFile("ecommerceTemplate", ".xls");
 			FileUtils.writeByteArrayToFile(aux, data);
 			FileInputStream excel = null;
 			excel = new FileInputStream(aux);
@@ -2026,7 +2053,10 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			HSSFWorkbook workbook= new HSSFWorkbook(excel);
 		
 			HSSFSheet sheet = workbook.getSheet("Template");
-			sheet.getSheetName();
+			if(sheet == null){
+				workbook.close();
+				return null;
+			}
 			Row row = sheet.getRow(0);
 			Cell cell1 = row.getCell(0);
 			Cell cell2 = row.getCell(1);
@@ -2058,11 +2088,127 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			cellStream2.forEach(cell ->{
 				pd.getEcommerce().get(cell.getColumnIndex()).setCode(cell.getStringCellValue());
 			});
+			
+			for(Integer i = 0; i < pd.getEcommerce().size(); i++){
+				Integer j = 3;
+				Row rowx = sheet.getRow(j);
+				Cell cellx = null;
+				if(rowx != null) cellx = rowx.getCell(i);
+				String strx = null;
+				if(cellx != null) strx = cellx.getStringCellValue(); 
+				List<String> list = new ArrayList<String>();
+				while(strx != null && !strx.equals("")){
+					list.add(strx);
+					j++;
+					rowx = sheet.getRow(j);
+					cellx = null;
+					if(rowx != null) cellx = rowx.getCell(i);
+					strx = null;
+					if(cellx != null) strx = cellx.getStringCellValue(); 
+				}
+				PresetValues pv = new PresetValues();
+				pv.setPresetValue(list);
+				pd.getEcommerce().get(i).setPresetValues(pv);
+			}
+			
 			workbook.close();
 			EcommerceProduct ep =  new EcommerceProduct();
 			ep.setProductData(pd);
 			ep.setTemplate(template);
 			
+			return XMLUtils.writeXml(ep);
+		} catch (JAXBException | IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public byte[] excelToXmlEbay(byte[] data, String ec, String type, String category){
+		try {
+			File aux = File.createTempFile("ecommerceTemplate", ".xls");
+			FileUtils.writeByteArrayToFile(aux, data);
+			FileInputStream excel = null;
+			excel = new FileInputStream(aux);
+
+			HSSFWorkbook workbook= new HSSFWorkbook(excel);
+			HSSFSheet sheet = workbook.getSheetAt(0);
+			if(sheet == null){
+				workbook.close();
+				return null;
+			}
+			Row row = sheet.getRow(0);
+			
+			Template template = new Template();
+			template.setCategory(category);
+			template.setEcommerce(ec);
+			template.setType(type);
+
+			ProductData pd = new ProductData();
+			pd.setEcommerce(new ArrayList<EcommerceProduct.ProductData.Ecommerce>());
+			Iterator<Cell> cellIterator = row.cellIterator();
+
+
+			Iterable<Cell> cellIterable = () -> cellIterator;
+			Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
+			cellStream.forEach(cell->{
+				EcommerceProduct.ProductData.Ecommerce ecommerce = new EcommerceProduct.ProductData.Ecommerce();
+				ecommerce.setName(cell.getStringCellValue());
+				ecommerce.setCode(cell.getStringCellValue());
+				pd.getEcommerce().add(ecommerce);
+			});
+			workbook.close();
+			EcommerceProduct ep =  new EcommerceProduct();
+			ep.setProductData(pd);
+			ep.setTemplate(template);
+			return XMLUtils.writeXml(ep);
+		
+		} catch (JAXBException | IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public byte[] csvToXmlEbay(byte[] data, String ec, String type, String category){
+		try {
+			String csvSplitBy = ",";
+			String csvLineSplitBy = "\n";
+			String csv = new String(data, "UTF-8");
+			String[] lineArray = csv.split(csvLineSplitBy);
+			String csvFirstLine = lineArray[0]; 
+			String[] array = csvFirstLine.split(csvSplitBy);
+			ProductData pd = new ProductData();
+			pd.setEcommerce(new ArrayList<EcommerceProduct.ProductData.Ecommerce>());
+			for(String s : array){
+				EcommerceProduct.ProductData.Ecommerce ecommerce = new EcommerceProduct.ProductData.Ecommerce();
+				ecommerce.setName(s);
+				ecommerce.setCode(s);
+				pd.getEcommerce().add(ecommerce);
+			}
+			for(Integer i = 0; i < pd.getEcommerce().size(); i++){
+				Integer j = 1;
+				String csvline = lineArray[j];
+				String[] csvLine = csvline.split(csvSplitBy);
+				String value = csvLine[i];
+				List<String> list = new ArrayList<String>();
+				while(j+1<lineArray.length && value != null && value != ""){
+					list.add(value);
+					j++;
+					csvline = lineArray[j];
+					csvLine = csvline.split(csvSplitBy);
+					if(i < csvLine.length)value = csvLine[i];
+				}
+				PresetValues pv = new PresetValues();
+				pv.setPresetValue(list);
+				pd.getEcommerce().get(i).setPresetValues(pv);
+			}
+			Template template = new Template();
+			template.setCategory(category);
+			template.setEcommerce(ec);
+			template.setType(type);
+			
+			EcommerceProduct ep =  new EcommerceProduct();
+			ep.setProductData(pd);
+			ep.setTemplate(template);
 			return XMLUtils.writeXml(ep);
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();

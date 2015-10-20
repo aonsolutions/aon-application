@@ -91,7 +91,7 @@ public class Utils {
 	static MultiWordSuggestOracle createOracle2(Vector<String> l) {
 		Vector<Suggestion> suggestions = new Vector<SuggestOracle.Suggestion>();
 		
-		for (String string : l) {
+		for (Integer i = 0; i < l.size();i++) {
 			suggestions.add(new Suggestion() {
 				//Sustituye el string en SuggestBox.
 				@Override

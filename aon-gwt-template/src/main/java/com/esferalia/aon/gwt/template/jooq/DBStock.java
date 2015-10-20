@@ -492,19 +492,15 @@ public class DBStock {
 								stockId2 = data3.get(0).value2();
 								
 								//UPDATE source & target
-								stockDeleteIds.add(stockId);
-								stockDeleteIds.add(stockId2);
-								stockUpdateQuery.values(stockId, domainId, itemId, (quantity+s.getQuantity()), ti.getTargetWarehouse().getId());
-								stockUpdateQuery.values(stockId2, domainId, itemId, (quantity2-s.getQuantity()), ti.getSourceWarehouse().getId());
+								updateStock(sctx, stockId, itemId, (quantity+s.getQuantity()), ti.getTargetWarehouse().getId());
+								updateStock(sctx, stockId2, itemId, (quantity2-s.getQuantity()), ti.getSourceWarehouse().getId());
 							}
 							else if(data2.isEmpty() && data3.isNotEmpty()){
 								quantity2 = data3.get(0).value1();
 								stockId2 = data3.get(0).value2(); 
 								
 								//UPDATE source
-								stockDeleteIds.add(stockId2);
-								stockUpdateQuery.values(stockId2, domainId, itemId, (quantity2-s.getQuantity()), ti.getSourceWarehouse().getId());
-								
+								updateStock(sctx, stockId2, itemId, (quantity2-s.getQuantity()), ti.getSourceWarehouse().getId());
 								//INSERT target
 								stockInsertQuery.values(domainId, itemId, s.getQuantity(), ti.getTargetWarehouse().getId());
 							}
@@ -517,8 +513,7 @@ public class DBStock {
 								stockId2 = data3.get(0).value2();
 								
 								//UPDATE source
-								stockDeleteIds.add(stockId2);
-								stockUpdateQuery.values(stockId2, domainId, itemId, (quantity2-s.getQuantity()), ti.getSourceWarehouse().getId());
+								updateStock(sctx, stockId2, itemId, (quantity2-s.getQuantity()),  ti.getSourceWarehouse().getId());
 							}
 
 						}
@@ -530,8 +525,7 @@ public class DBStock {
 								stockId = data2.get(0).value2();
 								
 								//UPDATE target
-								stockDeleteIds.add(stockId);
-								stockUpdateQuery.values(stockId, domainId, itemId, (quantity+s.getQuantity()), ti.getTargetWarehouse().getId());
+								updateStock(sctx, stockId, itemId, (quantity+s.getQuantity()),  ti.getTargetWarehouse().getId());
 							}
 							else{
 								//INSERT target
@@ -550,12 +544,6 @@ public class DBStock {
 	
 			if(error.getError()){
 				ctx.deactivateForeignKeys();
-				if(stockDeleteIds.size() > 0){
-					stockDeleteQuery = ctx.getDslContext().delete(STOCK).where(STOCK.ID.in(stockDeleteIds));
-					stockDeleteQuery.execute();
-					stockUpdateQuery.execute();
-				}	
-				
 				stockInsertQuery.execute();
 				
 				if(transferDeleteIds.size() > 0){
@@ -572,6 +560,14 @@ public class DBStock {
 		}finally {
 			if (ctx != null) ctx.close();	
 		}
+	}
+	
+	public static void updateStock(AONContext ctx, Integer stockId, Integer itemId, Double quantity, Integer warehouseId){
+		ctx.getDslContext().update(STOCK)
+			.set(STOCK.ITEM, itemId)
+			.set(STOCK.QUANTITY, quantity)
+			.set(STOCK.WAREHOUSE, warehouseId)
+			.where(STOCK.ID.eq(stockId)).execute();
 	}
 
 	public static Vector<StockInfo> getStocks(String domain, Integer domainId,Integer wid, Condition c, boolean onlyNonCero) {

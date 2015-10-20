@@ -50,7 +50,8 @@ public interface ITemplateAsync {
 
 	void executeExcel2(TemplateInfo ti, AsyncCallback<Integer> callback);
 
-	void executeExcel3(TemplateInfo ti, AsyncCallback<Integer> callback);
+	void executeExcel3(TemplateInfo ti, Boolean ignoreInactiveClient,
+			AsyncCallback<Integer> callback);
 
 	void insertFee(AsyncCallback<Error> callback);
 

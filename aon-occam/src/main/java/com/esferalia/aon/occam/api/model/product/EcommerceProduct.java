@@ -1,5 +1,6 @@
-package com.esferalia.aon.gwt.template.shared;
+package com.esferalia.aon.occam.api.model.product;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,16 +10,17 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
 
 })
 @XmlRootElement(name = "EcommerceProduct")
-public class EcommerceProduct implements IsSerializable{
+public class EcommerceProduct implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	@XmlElement(name = "Template", required = true)
 	protected EcommerceProduct.Template template;
     @XmlElement(name = "Product", required = true)
@@ -212,6 +214,9 @@ public class EcommerceProduct implements IsSerializable{
     		 protected String name;
     		 @XmlElement(name = "value", required = true)
     		 protected String value;
+    		 @XmlElement(name = "presetValues", required = false)
+    		 protected EcommerceProduct.ProductData.Ecommerce.PresetValues presetValues;
+    		 
     		 
 			public String getCode() {
 				return code;
@@ -230,6 +235,33 @@ public class EcommerceProduct implements IsSerializable{
 			}
 			public void setValue(String value) {
 				this.value = value;
+			}
+			public EcommerceProduct.ProductData.Ecommerce.PresetValues getPresetValues() {
+				return presetValues;
+			}
+			public void setPresetValues(
+					EcommerceProduct.ProductData.Ecommerce.PresetValues presetValues) {
+				this.presetValues = presetValues;
+			}
+
+
+			@XmlAccessorType(XmlAccessType.FIELD)
+	        @XmlType(name = "", propOrder = {
+
+	        })
+	    	public static class PresetValues {
+				 @XmlElement(name = "presetValue", required = true)
+	    		 protected List<String> presetValue;
+
+				public List<String> getPresetValue() {
+					return presetValue;
+				}
+
+				public void setPresetValue(List<String> presetValue) {
+					this.presetValue = presetValue;
+				}
+				 
+				 
 			}
     	}   
     }

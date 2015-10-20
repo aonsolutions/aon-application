@@ -152,17 +152,32 @@ public class DBFee {
 		}
 	}
 	
-	public static Customer getCustomer(Domain domain, String document){
+	public static Customer getCustomer(Domain domain, String document, Boolean ignoreInactiveClient){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId());
-			Result<Record5<Integer, String, String, String, Byte>> result = ctx.getDslContext().select(REGISTRY.ID, REGISTRY.ALIAS,
-												REGISTRY.DOCUMENT, REGISTRY.NAME,
-												CUSTOMER.STATUS)
-					.from(REGISTRY).join(CUSTOMER).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
-					.where(REGISTRY.DOCUMENT.eq(document))
-					.and(REGISTRY.DOMAIN.eq(domain.getId()))
-					.fetch();
+			Result<Record5<Integer, String, String, String, Byte>> result = null;
+			if(ignoreInactiveClient){
+				result = ctx.getDslContext().select(REGISTRY.ID, REGISTRY.ALIAS,
+						REGISTRY.DOCUMENT, REGISTRY.NAME,
+						CUSTOMER.STATUS)
+								.from(REGISTRY).join(CUSTOMER).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+								.where(REGISTRY.DOCUMENT.eq(document))
+								.and(REGISTRY.DOMAIN.eq(domain.getId()))
+								.and(CUSTOMER.STATUS.eq((byte) 0))
+								.fetch();
+			}
+			else{
+				result = ctx.getDslContext().select(REGISTRY.ID, REGISTRY.ALIAS,
+						REGISTRY.DOCUMENT, REGISTRY.NAME,
+						CUSTOMER.STATUS)
+								.from(REGISTRY).join(CUSTOMER).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+								.where(REGISTRY.DOCUMENT.eq(document))
+								.and(REGISTRY.DOMAIN.eq(domain.getId()))
+								.fetch();
+			}
+			
+			
 			
 			if(result.isNotEmpty()){
 				Customer customer = new Customer();

@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.template.server;
+package com.esferalia.aon.occam.api.model.product;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -11,22 +11,20 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 public class XMLUtils {
 
-	public static byte[] writeXml(EcommerceProduct amazonProduct) throws JAXBException, IOException{
+	public static byte[] writeXml(EcommerceProduct ecommerceProduct) throws JAXBException, IOException{
 		JAXBContext ctx = JAXBContext.newInstance(EcommerceProduct.class);
 		
 		Marshaller marshaller = ctx.createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		FileOutputStream fos = new FileOutputStream("/tmp/ecommerceProduct.xml");
 		
-		FileOutputStream fos = new FileOutputStream("/tmp/amazonProduct.xml");
-		
-		marshaller.marshal(amazonProduct, fos);
+		marshaller.marshal(ecommerceProduct, fos);
 		fos.close();
-		FileInputStream fis = new FileInputStream("/tmp/amazonProduct.xml");
+		FileInputStream fis = new FileInputStream("/tmp/ecommerceProduct.xml");
 
 		return AonIOUtils.toByteArray(fis);
 	}
@@ -37,8 +35,8 @@ public class XMLUtils {
 		Unmarshaller unmarshaller = ctx.createUnmarshaller();
 	
 		InputStream input = new ByteArrayInputStream(xmlFile);
-		EcommerceProduct amazonProduct = (EcommerceProduct) unmarshaller.unmarshal(input);
+		EcommerceProduct ecommerceProduct = (EcommerceProduct) unmarshaller.unmarshal(input);
 		
-		return amazonProduct;
+		return ecommerceProduct;
 	}
 }
