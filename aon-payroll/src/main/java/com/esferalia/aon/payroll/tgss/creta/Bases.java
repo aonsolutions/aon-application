@@ -775,8 +775,7 @@ public class Bases {
 			try {
 				xsw.writeComment(String.format("%s [%s]", data.name, data.doc));
 			} catch (XMLStreamException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch ( NullPointerException e ){
 			}
 		}
 
@@ -799,8 +798,6 @@ public class Bases {
 						else
 							xsw.writeComment(String.format("SDL-Cret@ : %d", Long.parseLong(datoCreta.getValor())));
 					} catch (XMLStreamException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
 				}
 				

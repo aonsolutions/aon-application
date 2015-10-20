@@ -5,7 +5,6 @@ import static java.lang.String.format;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.sql.Connection;
@@ -13,15 +12,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -31,8 +26,6 @@ import javax.servlet.http.Part;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
-
-import org.apache.commons.lang.StringEscapeUtils;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
@@ -47,7 +40,6 @@ import com.esferalia.aon.payroll.tgss.creta.Confirmacion;
 import com.esferalia.aon.payroll.tgss.creta.TrabajadoresTramos;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.mchange.lang.CharUtils;
 
 import net.aonsolutions.tgss.creta.jaxb.Dato;
 import net.aonsolutions.tgss.creta.jaxb.DatoSolicitado;
@@ -55,8 +47,6 @@ import net.aonsolutions.tgss.creta.jaxb.Trabajador;
 import net.aonsolutions.tgss.creta.jaxb.Tramo;
 import net.aonsolutions.tgss.creta.jaxb.Utils;
 import net.aonsolutions.tgss.creta.jaxb.bases.TramoBuilder;
-import net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta;
-import net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.Periodo;
 
 @MultipartConfig
 @SuppressWarnings("serial")
@@ -101,7 +91,7 @@ public class CretaServlet extends HttpServlet implements
 
 		Connection connection = getConnection();
 		resp.setContentType("text/html;");
-
+		
 		String nafs[] = req
 				.getParameterValues(CretaService.Parameter.NAFS.name());
 		// String defaults[] = req
@@ -117,10 +107,6 @@ public class CretaServlet extends HttpServlet implements
 
 		PrintWriter os = resp.getWriter();
 
-		os.println("<html>");
-		os.println("<body>");
-		os.println("<script>");
-		os.println("parent.__onBases (");
 		os.println("{");
 
 		List<InputStream> inputStreams = new ArrayList<InputStream>();
@@ -130,7 +116,6 @@ public class CretaServlet extends HttpServlet implements
 		os.printf("\"full_bases\":\"%s\",\r\n",
 				generateBases(connection, true, false, acceptPrevBases, nafs,
 						defaults, inputStreams, pickerBasesCb));
-
 		inputStreams.clear();
 		for (Part part : req.getParts()) {
 			inputStreams.add(part.getInputStream());
@@ -138,16 +123,14 @@ public class CretaServlet extends HttpServlet implements
 		os.printf("\"diff_bases\":\"%s\",\r\n", generateBases(connection, true,
 				true, acceptPrevBases, nafs, defaults, inputStreams));
 
+
 		os.printf("\"errors\":%s,\r\n", toJSON(pickerBasesCb.errors));
 
 		os.printf("\"warnings\":%s,\r\n", toJSON(pickerBasesCb.warnings));
 
 		os.printf("\"messages\":[]\r\n");
 
-		os.println("});");
-		os.println("</script>");
-		os.println("</body>");
-		os.println("</html>");
+		os.println("}");
 
 		os.flush();
 		os.close();

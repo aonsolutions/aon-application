@@ -18,10 +18,13 @@
 			<g:FlowPanel >
 
 				<g:MenuBar >
-					<g:MenuItem text="SILTRA">
+					<g:MenuItem text="SLD-Cret@" enabled="false">
 						<g:MenuBar vertical="true">
 							<g:MenuItem styleName="aon-icon-segsocial-small aon-icon-commandButton" ui:field="msjRecMenuItem"  text="Mensajes Recibidos" />
 							<g:MenuItem styleName="aon-icon-segsocial-small aon-icon-commandButton" ui:field="basesMenuItem"  text="{BASES.getFilename}" enabled="false"/>
+							<g:MenuItem styleName="aon-icon-segsocial-small aon-icon-commandButton" ui:field="trabajadoresYTramosMenuItem"  text="{SOLICITUD_TRABAJADORES_TRAMOS.getFilename}" enabled="false"/>
+							<g:MenuItem styleName="aon-icon-segsocial-small aon-icon-commandButton" ui:field="borradorMenuItem"  text="{SOLICITUD_BORRADOR.getFilename}" enabled="false"/>
+							<g:MenuItem styleName="aon-icon-segsocial-small aon-icon-commandButton" ui:field="confirmacionMenuItem"  text="{SOLICITUD_CONFIRMACION.getFilename}" enabled="false"/>
 						</g:MenuBar>
 					</g:MenuItem>
 				</g:MenuBar>
@@ -30,18 +33,30 @@
 					<g:HorizontalPanel >
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal" >
-								<g:Label styleName="aon-outputText" >Sistema de Liquidaci&oacute; Directa (Proyecto Cret@)</g:Label>
+								<g:Label styleName="aon-outputText" >Sistema de Liquidaci&oacute;n Directa (Proyecto Cret@)</g:Label>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
-						<!--  g:HTMLPanel styleName="aon-finding-subtitle">
-							<g:HTMLPanel styleName="aon-finding-aubtitle-internal" >
-								<g:Label styleName="aon-outputText" text="Seguimiento de Liquidaciones"/> 
-							</g:HTMLPanel>
-						</g:HTMLPanel-->
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
 								<g:Button ui:field='msjRecButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="Mensajes Recibidos" /> 
 								<g:Button ui:field='basesButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="{BASES.getFilename}" enabled="false"/> 
+							</g:HTMLPanel>
+						</g:HorizontalPanel>
+					</g:HorizontalPanel>
+				</g:FlowPanel>				
+
+				<g:FlowPanel styleName="aon-finding-title-toolbar" >
+					<g:HorizontalPanel >
+						<g:HTMLPanel styleName="aon-finding-title">
+							<g:HTMLPanel styleName="aon-finding-title-internal" >
+								<g:Label styleName="aon-outputText" >Solicitudes</g:Label>
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+						<g:HorizontalPanel styleName="aon-finding-toolbar">
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
+								<g:Button ui:field='trabajadoresYTramosButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="{SOLICITUD_TRABAJADORES_TRAMOS.getFilename}" /> 
+								<g:Button ui:field='borradorButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="{SOLICITUD_BORRADOR.getFilename}" /> 
+								<g:Button ui:field='confirmacionButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="{SOLICITUD_CONFIRMACION.getFilename}" /> 
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>

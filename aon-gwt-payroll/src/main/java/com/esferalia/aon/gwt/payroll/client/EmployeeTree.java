@@ -765,14 +765,24 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		public CreateRequestCommand(File file, DetailPanel detailPanel) {
 			super(file, detailPanel);
-			dialog = new CretaRequestDialog(this);
+			dialog = new CretaRequestDialog(this) {
+				@Override
+				public String getDescription(CCC ccc) {
+					return CreateRequestCommand.this.getDescription(ccc);
+				}
+			};
 			setUpDialog(file, dialog);
 		}
 
 		public CreateRequestCommand(File file, DetailPanel detailPanel,
 				FileEditor fileEditor) {
 			super(file, detailPanel, fileEditor);
-			dialog = new CretaRequestDialog(this);
+			dialog = new CretaRequestDialog(this) {
+				@Override
+				public String getDescription(CCC ccc) {
+					return CreateRequestCommand.this.getDescription(ccc);
+				}
+			};
 		}
 
 		// --------------------------------------------------------------------
@@ -799,6 +809,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			return true;
 		}
 
+		// --------------------------------------------------------------------
+		
+		protected abstract String getDescription(CCC ccc);
+		
 		// --------------------------------------------------------------------
 
 		private static void setUpDialog(File file,
@@ -872,10 +886,22 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				return Collections.emptyList();
 			return ccs;
 		}
+	
+		// --------------------------------------------------
+
+		@Override
+		protected String getDescription(CCC ccc) {
+			String province = ccc.getGeozone();
+			Activity activity = workplace.getActivity();
+			return activity.getDescription() + "," + Province.getName(province) + " " + ccc.getCode();
+		}
+
 	}
 
 	public static class EnterpriseCretaRequestCommand
 			extends CreateRequestCommand {
+		
+		private Enterprise enterprise;
 
 		public EnterpriseCretaRequestCommand(File file,
 				DetailPanel detailPanel) {
@@ -889,8 +915,22 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		// --------------------------------------------------------------------
 		public void setEnterprise(Enterprise enterprise) {
-
+			this.enterprise = enterprise;
 			dialog.setData(getCCs(enterprise));
+		}
+
+		// --------------------------------------------------
+
+		@Override
+		protected String getDescription(CCC ccc) {
+			String province = ccc.getGeozone();
+
+			for ( Activity activity: enterprise.getActivities()) 
+				for ( CCC cc : activity.getCccs())
+					if ( ccc.getCode().equals(cc.getCode()) )
+						return activity.getDescription() + ", " + Province.getName(province) + " " + ccc.getCode();
+			
+			return "";
 		}
 
 		protected List<CCC> getCCs(Enterprise enterprise) {

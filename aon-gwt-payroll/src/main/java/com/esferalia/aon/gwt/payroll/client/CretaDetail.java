@@ -6,13 +6,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBasesResult;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsRespuesta;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsTrabajadoresYTramos;
+import com.google.api.client.util.Sleeper;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -25,6 +28,8 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FileUpload;
@@ -46,6 +51,7 @@ public abstract class CretaDetail extends Composite {
 	interface CretaDetailUiBinder extends UiBinder<Widget, CretaDetail> {
 	}
 
+
 	@UiField
 	FormPanel formPanel;
 	@UiField
@@ -61,9 +67,25 @@ public abstract class CretaDetail extends Composite {
 	@UiField
 	MenuItem basesMenuItem;
 
+	@UiField
+	Button trabajadoresYTramosButton;
+	@UiField
+	MenuItem trabajadoresYTramosMenuItem;
+
+	@UiField
+	Button borradorButton;
+	@UiField
+	MenuItem borradorMenuItem;
+
+	@UiField
+	Button confirmacionButton;
+	@UiField
+	MenuItem confirmacionMenuItem;
+
 	@UiField(provided = true)
 	DataGrid<JsFile> dataGrid;
 
+	
 	private PopupPanel popupTooltip;
 	private Timer jsFileToolTipTimer;
 	private MultiSelectionModel<JsFile> selectionModel;
@@ -137,7 +159,7 @@ public abstract class CretaDetail extends Composite {
 				boolean selected = CretaDetail.this.selectionModel
 						.getSelectedSet().size() > 0;
 				CretaDetail.this.basesButton.setEnabled(selected);
-				CretaDetail.this.basesMenuItem.setEnabled(selected);
+				
 			}
 		});
 
@@ -147,6 +169,10 @@ public abstract class CretaDetail extends Composite {
 
 		fileUpload.getElement().setPropertyString("multiple", "multiple");
 
+	}
+	
+	Set<JsFile> getSelected() {
+		return selectionModel.getSelectedSet();
 	}
 
 	// ------------------------------------------------------------- UIHandlers
@@ -163,7 +189,21 @@ public abstract class CretaDetail extends Composite {
 
 	@UiHandler("basesButton")
 	void onClickBasesButton(ClickEvent e) {
+		submitBases();
 	}
+
+	@UiHandler("borradorButton")
+	void onClickBorradorButton(ClickEvent e) {
+	}
+
+	@UiHandler("confirmacionButton")
+	void onClickConfirmacionButton(ClickEvent e) {
+	}
+
+	@UiHandler("trabajadoresYTramosButton")
+	void onClickTrabajadoresYTramosButton(ClickEvent e) {
+	}
+
 	// ------------------------------------------------------------------------
 
 	public void onTrabajadoresYTramos() {
@@ -180,13 +220,11 @@ public abstract class CretaDetail extends Composite {
 			Map<String, JsTrabajadoresYTramos> trabajadoresYTramosMap = MainCreta
 					.add(File.TRABAJADORES_TRAMOS, trabajadoresYTramos);
 
-
 			List<JsTrabajadoresYTramos> filtered = filter(
 					trabajadoresYTramosMap.values());
 			dataGrid.setRowData(filtered);
 
 		} catch (UnsupportedOperationException e) {
-
 
 			respuestasMap = new HashMap<String, JsRespuesta>();
 			for (CretaService.JsRespuesta respuesta : respuestas)
@@ -207,7 +245,9 @@ public abstract class CretaDetail extends Composite {
 		exportSubmitComplete();
 		super.onAttach();
 	}
-
+	
+	protected abstract void onBases(JsBasesResult result);
+	
 	protected abstract String getDescription(String ccc);
 
 	protected abstract <T extends JsFile> List<T> filter(Collection<T> jsFiles);
@@ -247,6 +287,22 @@ public abstract class CretaDetail extends Composite {
 	}
 
 	private void submitBases() {
+		MainCreta.submit(CretaService.CRETA_URL + "/" + CretaService.File.BASES,
+				selectionModel.getSelectedSet(), 
+				new AsyncCallback<CretaService.JsBasesResult>() {
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						Window.alert(caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(JsBasesResult result) {
+						onBases(result);
+					}
+				}
+		);
 	}
 
 	// ------------------------------------------------------------------------

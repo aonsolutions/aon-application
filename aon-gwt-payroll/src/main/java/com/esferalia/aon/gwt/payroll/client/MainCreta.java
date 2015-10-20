@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -20,26 +21,30 @@ import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBasesResult;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsError;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsRespuesta;
-import com.esferalia.aon.gwt.payroll.shared.CretaService.JsTrabajadoresYTramos;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.ErrorDescription;
 import com.esferalia.aon.gwt.payroll.shared.Province;
-import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayUtils;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.storage.client.Storage;
+import com.google.gwt.typedarrays.client.Uint8ArrayNative;
+import com.google.gwt.typedarrays.shared.Uint8Array;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -48,6 +53,8 @@ import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.xhr.client.ReadyStateChangeHandler;
+import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
@@ -318,6 +325,34 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			MainCreta.this.showResultsPanel();
 		}
 	}
+	
+	private abstract class BaseCretaDetail extends CretaDetail {
+		
+		@Override
+		public void onBases(CretaService.JsBasesResult result) {
+
+			MergeEditor mergeEditor = new MergeEditor();
+			mergeEditor.setOrig(result.getBasesFile());
+			mergeEditor.setMode("text/xml");
+			mergeEditor.setFoldGutter(true);
+			mergeEditor.setLineNumbers(true);
+			mergeEditor.setText(result.getChangedBasesFile());
+			mergeEditor.setTitle(CretaService.File.BASES.getFilename());
+			mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+			detailPanel.setWidget(mergeEditor);
+
+			CretaResults cretaResults = new CretaResults();
+			cretaResults.addErrors(result.getErrors());
+			cretaResults.addWarnings(result.getWarnings());
+			resultsPanel.setWidget(cretaResults);
+
+			if (result.getErrors().length > 0
+					|| result.getWarnings().length > 0)
+				showResultsPanel();
+
+			mergeEditor.autoRefresh();
+		}
+	}
 
 	private class MainEnterpriseCretaRequestCommand
 			extends EnterpriseCretaRequestCommand 
@@ -412,7 +447,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 	
-	private class EnterpriseCretaDetail extends CretaDetail {
+	private class EnterpriseCretaDetail extends BaseCretaDetail {
 		
 		private Enterprise enterprise;
 		
@@ -437,6 +472,27 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			this.enterprise = enterprise;
 		}
 		
+		@Override
+		void onClickBorradorButton(ClickEvent e) {
+			onRequestCommand(File.SOLICITUD_BORRADOR);
+		}
+		
+		@Override
+		void onClickConfirmacionButton(ClickEvent e) {
+			onRequestCommand(File.SOLICITUD_CONFIRMACION);
+		}
+		
+		@Override
+		void onClickTrabajadoresYTramosButton(ClickEvent e) {
+			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
+		}
+		
+		protected void onRequestCommand(File file) {
+			MainEnterpriseCretaRequestCommand cmd = new MainEnterpriseCretaRequestCommand(file);
+			cmd.setEnterprise(enterprise);
+			cmd.execute();
+		}
+
 	}
 
 	private class ActivityContextMenu extends ContextMenu {
@@ -475,6 +531,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	private class MainActivityCretaRequestCommand
 			extends EmployeeTree.CreateRequestCommand implements ActivityCommand{
+		
+		private Activity activity;
 
 		public MainActivityCretaRequestCommand(File file) {
 			super(file, MainCreta.this.detailPanel);
@@ -482,13 +540,21 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		
 		// ---------------------------------------------------- ActivityCommand
 		@Override
+		protected String getDescription(CCC ccc) {
+			return  activity.getDescription() + ", " +Province.getName(ccc.getGeozone()) + " " + ccc.getCode();
+		}
+
+		// ---------------------------------------------------- ActivityCommand
+		@Override
 		public void setActivity(Activity activity) {
+			this.activity = activity;
 			dialog.setData(getCCCs(activity));
 		}
 
 		protected List<CCC> getCCCs(Activity activity) {
 			return activity.getCccs();
 		}
+		
 
 	}
 
@@ -524,7 +590,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		
 	}
 
-	private class ActivityCretaDetail extends CretaDetail {
+	private class ActivityCretaDetail extends BaseCretaDetail {
 		
 		private Activity activity;
 		
@@ -548,6 +614,26 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			return MainCreta.getDescription(activity, fullccc);
 		}
 
+		@Override
+		void onClickBorradorButton(ClickEvent e) {
+			onRequestCommand(File.SOLICITUD_BORRADOR);
+		}
+		
+		@Override
+		void onClickConfirmacionButton(ClickEvent e) {
+			onRequestCommand(File.SOLICITUD_CONFIRMACION);
+		}
+		
+		@Override
+		void onClickTrabajadoresYTramosButton(ClickEvent e) {
+			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
+		}
+		
+		protected void onRequestCommand(File file) {
+			MainActivityCretaRequestCommand cmd = new MainActivityCretaRequestCommand(file);
+			cmd.setActivity(activity);
+			cmd.execute();
+		}
 	}
 
 	private class CCCContextMenu extends ContextMenu {
@@ -586,7 +672,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	private class MainCCCCretaRequestCommand
 			extends EmployeeTree.CreateRequestCommand implements CCCCommand {
-
+		
 		public MainCCCCretaRequestCommand(File file) {
 			super(file, MainCreta.this.detailPanel);
 
@@ -595,11 +681,16 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 		
 		@Override
+		protected String getDescription(CCC ccc) {
+			return Province.getName(ccc.getGeozone()) + " " + ccc.getCode();
+		}
+		
+		@Override
 		public void setCCC(CCC ccc) {
 			dialog.setData(Collections.singletonList(ccc));
 			dialog.setSelectedData(Collections.singletonList(ccc));
 		}
-
+		
 	}
 
 	private class  MainCCCCreateResponseCommand extends MainCretaResponseCommand implements CCCCommand {
@@ -632,7 +723,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		
 	}
 
-	private class CCCCretaDetail extends CretaDetail {
+	private class CCCCretaDetail extends BaseCretaDetail {
 		
 		private CCC ccc;
 		
@@ -655,6 +746,28 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		protected String getDescription(String fullccc) {
 			return MainCreta.getDescription(ccc, fullccc);
 		}
+		
+		@Override
+		void onClickBorradorButton(ClickEvent e) {
+			onRequestCommand(File.SOLICITUD_BORRADOR);
+		}
+		
+		@Override
+		void onClickConfirmacionButton(ClickEvent e) {
+			onRequestCommand(File.SOLICITUD_CONFIRMACION);
+		}
+		
+		@Override
+		void onClickTrabajadoresYTramosButton(ClickEvent e) {
+			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
+		}
+		
+		protected void onRequestCommand(File file) {
+			MainCCCCretaRequestCommand cmd = new MainCCCCretaRequestCommand(file);
+			cmd.setCCC(ccc);
+			cmd.execute();
+		}
+		
 
 	}
 
@@ -696,12 +809,32 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	private class EnterprisesCretaRequestCommand
 			extends EmployeeTree.CreateRequestCommand implements EnterprisesCommand{
 
+		private List<Enterprise> enterprises;
+
 		public EnterprisesCretaRequestCommand(File file) {
 			super(file, MainCreta.this.detailPanel);
 		}
 		
+		void setSelected(List<CCC> cccs) {
+			dialog.setSelectedData(cccs);
+		}
+		
+		@Override
+		protected String getDescription(CCC ccc) {
+			String province = ccc.getGeozone();
+			
+			for ( Enterprise enterprise : enterprises )
+				for ( Activity activity: enterprise.getActivities()) 
+					for ( CCC cc : activity.getCccs())
+						if ( ccc.getCode().equals(cc.getCode()) )
+							return enterprise.getName() +" " + activity.getDescription() + ", " + Province.getName(province) + " " + ccc.getCode() ;
+			
+			return ccc.getCode();
+		}
+		
 		@Override
 		public void setEnterprises(List<Enterprise> enterprises) {
+			this.enterprises = enterprises;
 			dialog.setData(getCCCs(enterprises));
 		}
 
@@ -762,9 +895,10 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	
 	
-	private class EnterprisesCretaDetail extends CretaDetail {
+	private class EnterprisesCretaDetail extends BaseCretaDetail {
 		
 		private List<Enterprise> enterprises;
+
 		
 		public void setEnterprises(List<Enterprise> enterprises) {
 			this.enterprises = enterprises;
@@ -788,9 +922,84 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			return MainCreta.getDescription(enterprises, fullccc);
 		}
 		
-
+		@Override
+		void onClickBorradorButton(ClickEvent e) {
+			onRequestCommand(File.SOLICITUD_BORRADOR);
+		}
+		
+		@Override
+		void onClickConfirmacionButton(ClickEvent e) {
+			onRequestCommand(File.SOLICITUD_CONFIRMACION);
+		}
+		
+		@Override
+		void onClickTrabajadoresYTramosButton(ClickEvent e) {
+			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
+		}
+		
+		protected void onRequestCommand(File file) {
+			EnterprisesCretaRequestCommand cmd = new EnterprisesCretaRequestCommand(file);
+			cmd.setEnterprises(enterprises);
+			cmd.execute();
+		}
 	}
+	
+	// ------------------------------------------------------------------------
 
+	protected static void submit(String url, Collection<JsFile> jsFiles, final AsyncCallback<JsBasesResult> cb) {
+		
+		XMLHttpRequest xmlHttpRequest = XMLHttpRequest.create();
+		
+		xmlHttpRequest.setOnReadyStateChange(new ReadyStateChangeHandler() {
+			@Override
+			public void onReadyStateChange(XMLHttpRequest xhr) {
+				try {
+					int state = xhr.getReadyState();
+					if (state != XMLHttpRequest.DONE)
+						return;
+					String json = xhr.getResponseText();
+					JsBasesResult result = eval("(" + json + ")");
+					cb.onSuccess(result);
+				} catch ( Throwable caught ) {
+					cb.onFailure(caught);
+				}
+				
+			}
+		});
+		
+		xmlHttpRequest.open("POST", url );
+		
+		/* enctype is multipart/form-data */
+		String boundary = "---------------------------" + Long.toHexString(System.currentTimeMillis());
+		xmlHttpRequest.setRequestHeader("Content-Type", "multipart/form-data; boundary=" + boundary);
+		
+		StringBuffer requestBuffer = new StringBuffer();
+		
+		for ( JsFile jsFile: jsFiles ) {
+			// We start a new part in our body's request
+			requestBuffer.append("--" + boundary + "\r\n" );
+			// We said it's form data (it could be something else)
+			requestBuffer.append("Content-Disposition: form-data; "
+					// We define the name of the form data
+					+"name=\"" + CretaService.Parameter.FILE +"\"; "
+					// We provide the 'real' name of the file
+					+"filename=\"" +  jsFile.getId() + ".xml" + "\"\r\n");
+			 // We provide the mime type of the file
+			requestBuffer.append("Content-Type: text/xml\r\n");
+			// There is always a blank line between the meta-data and the data
+			requestBuffer.append("\r\n");
+			
+			requestBuffer.append(jsFile.getXML());
+
+			requestBuffer.append("\r\n");
+		}
+		
+		// Once we are done, we "close" the body's request
+		requestBuffer.append("--" + boundary + "--\r\n" );		
+		
+		xmlHttpRequest.send(requestBuffer.toString());
+		
+	}
 
 	// ------------------------------------------------------------------------
 	
@@ -977,7 +1186,21 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	
 	
 	
-
-
 	
+	private static void sendAsBinary(XMLHttpRequest xmlHttpRequest, String sData) {
+		int nBytes = sData.length(); 
+		Uint8Array ui8Data = Uint8ArrayNative.create(nBytes);
+		for ( int i = 0; i < nBytes; i++)
+			ui8Data.set(i, sData.charAt(i) & 0xFF ); 
+		
+		/* send as ArrayBufferView...: */
+		//xmlHttpRequest.send(ui8Data);
+		/* ...or as ArrayBuffer (legacy)...: this.send(ui8Data.buffer); */
+		//xmlHttpRequest.send(ui8Data.buffer());
+	}
+
+	private static native < T extends JavaScriptObject> T eval(String javascript)
+	/*-{
+	   return eval(javascript);
+	}-*/;	
 }
