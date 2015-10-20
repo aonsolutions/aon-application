@@ -42,6 +42,7 @@ import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedObject;
+import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -235,17 +236,39 @@ public abstract class QuoteCalculator {
 
 			return total;
 		}
+		
+		
+		protected List<ITimedResult<Double>> quote(IContractPayment payment, Date start,
+				Date end) throws UndefinedVariablesException, ExpressionException {
+			String quoteExpr = payment.getQuoteExpression();
+			if (quoteExpr == null) {
+				return Collections.emptyList();
+			}
+			return  context.eval(quoteExpr, start,
+					end, Double.class);
+		}
 
 		@Override
 		public Double quote(IContractPayment payment, Date start, Date end,
 				double amount) throws AonException {
+			double total = 0.00;
+			
+			List<ITimedResult<Double>> quotes = quote(payment, start, end);
+			
+			for (ITimedResult<Double> quote : quotes)
+				total += quoteImpl(
+						payment, 
+						quote.getPeriod().getStart(), 
+						quote.getPeriod().getEnd(), 
+						quote.getValue(quote.getPeriod())
+						);
 
-			final double quote = getQuote(payment, start, end, amount);
-
-			// if (quote == 0) {
-			// return 0.00;
-			// }
-
+			return total; 
+		}
+		
+		// --------------------------------------------------------------------
+		protected Double quoteImpl(IContractPayment payment, Date start, Date end,
+				final double quote) {
 			this.cgcBase = null;
 			this.cgpBase = null;
 			
