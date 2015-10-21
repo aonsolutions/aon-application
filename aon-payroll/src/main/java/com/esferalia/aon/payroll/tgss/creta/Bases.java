@@ -13,6 +13,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
+import static com.esferalia.aon.watson.server.AonDateUtils.getDaysBetweenDates;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -492,8 +493,11 @@ public class Bases {
 			DatoBuilder datoBuilder = new DatoBuilder();
 			datoBuilder.setCodigo(datoSolicitado.getCodigo());
 			datoBuilder.setTipo(datoSolicitado.getTipoDato());
-
+			
+			
 			Double total = MVEL.eval(contextData.getExpression(), Double.class);
+			Double interpolated =  total * getDaysOf(tramo) / getDaysOf(contextData);
+			
 			if (total == 0.00 && optional) {
 				System.err.printf(
 						"WARN: %s for %s (%s) [%s-%s-%s...%s-%s-%s] fixed value is zero. Not send because is optional  \r\n",
@@ -509,7 +513,7 @@ public class Bases {
 				return;
 			}
 
-			datoBuilder.setImporteEuros(total);
+			datoBuilder.setImporteEuros(interpolated);
 
 			tramoBuilder.addDato(datoBuilder.create());
 			System.err.printf(
@@ -665,7 +669,7 @@ public class Bases {
 			String ss;
 			String doc;
 			String name;
-			
+
 			public Data(String name, String doc, String ss) {
 				this.ss = ss;
 				this.doc = doc;
@@ -673,15 +677,12 @@ public class Bases {
 			}
 		}
 
-		private static class TrabajadorData extends Data{
+		private static class TrabajadorData extends Data {
 
 			Trabajador<?> trabajadorCreta;
 			net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon;
 
-			public TrabajadorData(
-					String name, 
-					String nif, 
-					String ss,
+			public TrabajadorData(String name, String nif, String ss,
 					Trabajador<?> trabajadorCreta,
 					net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon) {
 				super(name, nif, ss);
@@ -691,15 +692,15 @@ public class Bases {
 		}
 
 		private XMLStreamWriter xsw;
-		
+
 		private Map<String, Data> addedEnterpriseDataMap;
 
 		private Stack<TrabajadorData> skippedTrabajadorList;
 		private Map<String, TrabajadorData> addedTrabajadorDataMap;
-		
+
 		private Tramo<?> tramoCreta;
 		private Trabajador<?> trabajadorCreta;
-		
+
 		public Comments(XMLStreamWriter xsw) {
 			super();
 			this.xsw = xsw;
@@ -715,13 +716,15 @@ public class Bases {
 				beforeMarshalTrabajador(
 						(net.aonsolutions.tgss.creta.jaxb.bases.Trabajador) source);
 			else if (source instanceof net.aonsolutions.tgss.creta.jaxb.bases.Dato)
-				beforeMarshalDato((net.aonsolutions.tgss.creta.jaxb.bases.Dato) source);
+				beforeMarshalDato(
+						(net.aonsolutions.tgss.creta.jaxb.bases.Dato) source);
 			else if (source instanceof net.aonsolutions.tgss.creta.jaxb.bases.CtaCot)
-				beforeMarshalCtaCot((net.aonsolutions.tgss.creta.jaxb.bases.CtaCot) source);
+				beforeMarshalCtaCot(
+						(net.aonsolutions.tgss.creta.jaxb.bases.CtaCot) source);
 			else if (source instanceof net.aonsolutions.tgss.creta.jaxb.bases.Tramo)
-				beforeMarshalTramo((net.aonsolutions.tgss.creta.jaxb.bases.Tramo) source);
-			
-			
+				beforeMarshalTramo(
+						(net.aonsolutions.tgss.creta.jaxb.bases.Tramo) source);
+
 			super.beforeMarshal(source);
 		}
 
@@ -730,19 +733,18 @@ public class Bases {
 				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
 				Trabajador trabajadorCreta, Salary salary) {
 
-			if ( !addedTrabajadorDataMap.containsKey(trabajadorCreta.getNaf()) )
+			if (!addedTrabajadorDataMap.containsKey(trabajadorCreta.getNaf()))
 				addedTrabajadorDataMap.put(trabajadorCreta.getNaf(),
 						new TrabajadorData(salary.getEmployeeName(),
 								salary.getEmployeeDocument(),
-								salary.getEmployeeSSNumber(), trabajadorCreta, trabajadorAon));
-			
-			if ( !addedEnterpriseDataMap.containsKey(salary.getEnterpriseCCC()) )
-				addedEnterpriseDataMap.put(salary.getEnterpriseCCC(), 
+								salary.getEmployeeSSNumber(), trabajadorCreta,
+								trabajadorAon));
+
+			if (!addedEnterpriseDataMap.containsKey(salary.getEnterpriseCCC()))
+				addedEnterpriseDataMap.put(salary.getEnterpriseCCC(),
 						new Data(salary.getEnterpriseName(),
 								salary.getEmployeeDocument(),
-								salary.getEnterpriseCCC()
-								)
-						);
+								salary.getEnterpriseCCC()));
 		};
 
 		@Override
@@ -769,46 +771,52 @@ public class Bases {
 			trabajadorCreta = data.trabajadorCreta;
 		}
 
-		public void beforeMarshalCtaCot(net.aonsolutions.tgss.creta.jaxb.bases.CtaCot ctaCot) {
+		public void beforeMarshalCtaCot(
+				net.aonsolutions.tgss.creta.jaxb.bases.CtaCot ctaCot) {
 			String ccc = ctaCot.getProvincia() + ctaCot.getNumero();
 			Data data = addedEnterpriseDataMap.get(ccc);
 			try {
 				xsw.writeComment(String.format("%s [%s]", data.name, data.doc));
 			} catch (XMLStreamException e) {
-			} catch ( NullPointerException e ){
+			} catch (NullPointerException e) {
 			}
 		}
 
-		public void beforeMarshalDato(net.aonsolutions.tgss.creta.jaxb.bases.Dato datoAon) {
-			for ( Dato datoCreta: tramoCreta.getDatosTramo().getDato()){
-				if ( !datoCreta.getTipoDato().equalsIgnoreCase(datoAon.getTipoDato()))
+		public void beforeMarshalDato(
+				net.aonsolutions.tgss.creta.jaxb.bases.Dato datoAon) {
+			for (Dato datoCreta : tramoCreta.getDatosTramo().getDato()) {
+				if (!datoCreta.getTipoDato()
+						.equalsIgnoreCase(datoAon.getTipoDato()))
 					continue;
-				if ( !datoCreta.getCodigo().equalsIgnoreCase(datoAon.getCodigo()))
+				if (!datoCreta.getCodigo()
+						.equalsIgnoreCase(datoAon.getCodigo()))
 					continue;
-				
-				if (AonStringUtils.isEmpty(datoCreta.getValor()) )
+
+				if (AonStringUtils.isEmpty(datoCreta.getValor()))
 					return;
-				
+
 				try {
 					different(datoAon, datoCreta);
-				} catch ( Different d ) {
+				} catch (Different d) {
 					try {
-						if ( datoCreta.getTipoDato().equalsIgnoreCase("I") )
-							xsw.writeComment(String.format("SDL-Cret@ : %s", datoCreta.getValor()));
+						if (datoCreta.getTipoDato().equalsIgnoreCase("I"))
+							xsw.writeComment(String.format("SDL-Cret@ : %s",
+									datoCreta.getValor()));
 						else
-							xsw.writeComment(String.format("SDL-Cret@ : %d", Long.parseLong(datoCreta.getValor())));
+							xsw.writeComment(String.format("SDL-Cret@ : %d",
+									Long.parseLong(datoCreta.getValor())));
 					} catch (XMLStreamException e) {
 					}
 				}
-				
+
 				return;
 			}
 		}
 
-
-		public void beforeMarshalTramo(net.aonsolutions.tgss.creta.jaxb.bases.Tramo tramoAon) {
-			for( Tramo<?> tramo: trabajadorCreta.getTramos().getTramo() ) {
-				if (compare(tramo, tramoAon) == 0 ) {
+		public void beforeMarshalTramo(
+				net.aonsolutions.tgss.creta.jaxb.bases.Tramo tramoAon) {
+			for (Tramo<?> tramo : trabajadorCreta.getTramos().getTramo()) {
+				if (compare(tramo, tramoAon) == 0) {
 					tramoCreta = tramo;
 					return;
 				}
@@ -957,8 +965,8 @@ public class Bases {
 			boolean found = false;
 
 			for (ContextData data : datas) {
-				if (Period.compare(data.getStartDate(), p.getStart()) > 0
-						|| Period.compare(data.getEndDate(), p.getEnd()) > 0)
+				if (Period.compare(data.getStartDate(), p.getStart()) != 0
+						|| Period.compare(data.getEndDate(), p.getEnd()) != 0)
 					throw new UnMatchedContextVariableException(contextVariable,
 							data);
 
@@ -1298,8 +1306,9 @@ public class Bases {
 				toDate(tramo.getFechaHasta()));
 
 		checkContextVariable(QUOTE_GROUP,
-				tramo.getInformacionAfiliacion().getGrupoCotizacion(), p,
-				salary, cbs);
+				Integer.parseInt(
+						tramo.getInformacionAfiliacion().getGrupoCotizacion()),
+				p, salary, cbs);
 		checkContextVariable(TC2,
 				tramo.getInformacionAfiliacion().getTipoContrato(), p, salary,
 				cbs);
@@ -1328,6 +1337,7 @@ public class Bases {
 
 		try {
 			String salaryValue = get(salary, contextVariable, p);
+
 			if (!StringUtils.equalsIgnoreCase(rigthValue, salaryValue))
 				for (BasesCallback cb : cbs)
 					cb.wrongContextVariable(salary, contextVariable, p,
@@ -1345,6 +1355,34 @@ public class Bases {
 			for (BasesCallback cb : cbs)
 				cb.ambigousContextVariable(salary, contextVariable, p,
 						rigthValue, e.getValues());
+		}
+	}
+
+	private static void checkContextVariable(ContextVariable contextVariable,
+			Integer rigthValue, Period p, Salary salary, BasesCallback... cbs) {
+
+		try {
+			String salaryString = get(salary, contextVariable, p);
+			Integer salaryValue = Integer.parseInt(salaryString);
+
+			if (!rigthValue.equals(salaryValue))
+				for (BasesCallback cb : cbs)
+					cb.wrongContextVariable(salary, contextVariable, p,
+							Integer.toString(rigthValue), salaryString);
+			else
+				for (BasesCallback cb : cbs)
+					cb.rightContextVariable(contextVariable, p,
+							Integer.toString(rigthValue));
+
+		} catch (NoSuchContextVariableException e) {
+			if (rigthValue != null)
+				for (BasesCallback cb : cbs)
+					cb.noSuchContextVariable(salary, contextVariable, p,
+							Integer.toString(rigthValue));
+		} catch (AmbiguousContextVariableException e) {
+			for (BasesCallback cb : cbs)
+				cb.ambigousContextVariable(salary, contextVariable, p,
+						Integer.toString(rigthValue), e.getValues());
 		}
 	}
 
@@ -1518,9 +1556,10 @@ public class Bases {
 								t2.getFechaDesde().getDia()));
 	}
 
-	private static int compare(Tramo t1, net.aonsolutions.tgss.creta.jaxb.bases.Tramo t2) {
-		return toDate(t1.getFechaDesde()).compareTo(toDate(t2.getFechaDesde().getAnho(),
-				t2.getFechaDesde().getMes(),
+	private static int compare(Tramo t1,
+			net.aonsolutions.tgss.creta.jaxb.bases.Tramo t2) {
+		return toDate(t1.getFechaDesde()).compareTo(toDate(
+				t2.getFechaDesde().getAnho(), t2.getFechaDesde().getMes(),
 				t2.getFechaDesde().getDia()));
 	}
 
@@ -1580,10 +1619,10 @@ public class Bases {
 			// net.aonsolutions.tgss.creta.jaxb.DatoSolicitado datoCreta =
 			// datosCreta
 			// .get(i);
-			
-			if ( j >= datosAon.size() )
+
+			if (j >= datosAon.size())
 				throw new Different();
-			
+
 			net.aonsolutions.tgss.creta.jaxb.bases.Dato datoAon = datosAon
 					.get(j);
 
@@ -1633,38 +1672,28 @@ public class Bases {
 
 		throw new SkipExisting();
 	}
-	
-	private static String toString(CtaCot  ctaCot) {
-		return String.format("%s%s%s", 
-				ctaCot.getProvincia(),
-				ctaCot.getRegimen(),
-				ctaCot.getNumero()
-				);
-		
+
+	private static String toString(CtaCot ctaCot) {
+		return String.format("%s%s%s", ctaCot.getProvincia(),
+				ctaCot.getRegimen(), ctaCot.getNumero());
+
 	}
 
-	private static int compare ( Liquidacion l1, net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion l2 ){
-		if ( l2 == null )
+	private static int compare(Liquidacion l1,
+			net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion l2) {
+		if (l2 == null)
 			return l1 == null ? 0 : 1;
-		if ( l1 == null )
+		if (l1 == null)
 			return l2 == null ? 0 : -1;
-		
-		String s1 = String.format("%s%s-%s%s", 
-				l1.getPeriodoDesde().getAnho(),
-				l1.getPeriodoDesde().getMes(),
-				l1.getPeriodoHasta().getAnho(),
-				l1.getPeriodoHasta().getMes()
-				);
-		String s2 = String.format("%s%s-%s%s", 
-				l1.getPeriodoDesde().getAnho(),
-				l2.getPeriodoDesde().getMes(),
-				l2.getPeriodoHasta().getAnho(),
-				l2.getPeriodoHasta().getMes()
-				);
+
+		String s1 = String.format("%s%s-%s%s", l1.getPeriodoDesde().getAnho(),
+				l1.getPeriodoDesde().getMes(), l1.getPeriodoHasta().getAnho(),
+				l1.getPeriodoHasta().getMes());
+		String s2 = String.format("%s%s-%s%s", l1.getPeriodoDesde().getAnho(),
+				l2.getPeriodoDesde().getMes(), l2.getPeriodoHasta().getAnho(),
+				l2.getPeriodoHasta().getMes());
 		return s1.compareTo(s2);
 	}
-	
-	
 
 	// ------------------------------------------------------------------------
 
@@ -2011,21 +2040,23 @@ public class Bases {
 						.unmarshal(
 								net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
 								trabajadoresTramosIs);
-				String ccc = toString(trabajadoresTramos.getLiquidacion().getCcc());
-				net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion = liquidaciones.get(ccc);
-				
-				if ( compare(trabajadoresTramos.getLiquidacion(), liquidacion) <= 0) {
-					continue; 
+				String ccc = toString(
+						trabajadoresTramos.getLiquidacion().getCcc());
+				net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion = liquidaciones
+						.get(ccc);
+
+				if (compare(trabajadoresTramos.getLiquidacion(),
+						liquidacion) <= 0) {
+					continue;
 				}
-				
+
 				autorizados.add(trabajadoresTramos.getAutorizado());
-				
-				liquidacion = liquidacion(
-						trabajadoresTramos, ctx, acceptPrevBases, xsw,
-						callbacks);
-				
+
+				liquidacion = liquidacion(trabajadoresTramos, ctx,
+						acceptPrevBases, xsw, callbacks);
+
 				liquidaciones.put(ccc, liquidacion);
-				
+
 			} catch (JAXBException e) {
 				for (BasesCallback cb : callbacks)
 					cb.wrongTrabajadoresTramosIs(trabajadoresTramosIs, e);
@@ -2070,5 +2101,16 @@ public class Bases {
 			Utils.marshal(bases, xsw);
 
 	}
+	
+	private static int getDaysOf(Tramo<?> tramo) {
+		int hasta = Integer.parseInt(tramo.getFechaHasta().getDia());
+		int desde = Integer.parseInt(tramo.getFechaDesde().getDia());
+		return hasta - desde + 1;
+		
+	}
 
+	private static int getDaysOf(ContextData contextData) {
+		return (int)getDaysBetweenDates(contextData.getStartDate(), contextData.getEndDate()) + 1;
+		
+	}
 }
