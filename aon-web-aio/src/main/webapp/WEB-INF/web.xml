@@ -30,7 +30,7 @@
 		<servlet-name>TestServlet</servlet-name>
 		<url-pattern>/testServlet</url-pattern>
 	</servlet-mapping>
-	
+
 	<!-- -Login Servlet -->
 	<servlet>
 		<servlet-name>LoginServlet</servlet-name>
@@ -70,9 +70,9 @@
 		<servlet-name>LogoServlet</servlet-name>
 		<url-pattern>/aonDocuments/*</url-pattern>
 	</servlet-mapping>
-	
-	
-	<!-- ACCESO TIRANT ASESORES  -->
+
+
+	<!-- ACCESO TIRANT ASESORES -->
 	<servlet>
 		<servlet-name>TirantConnectionServlet</servlet-name>
 		<servlet-class>com.code.aon.aio.servlet.TirantConnectionServlet</servlet-class>
@@ -81,7 +81,18 @@
 		<servlet-name>TirantConnectionServlet</servlet-name>
 		<url-pattern>/TirantConnectionServlet/*</url-pattern>
 	</servlet-mapping>
-	
+
+	<!-- AonHub Notices Servlet -->
+	<servlet>
+		<servlet-name>AonHub Servlet</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.office.server.AonHubServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AonHub Servlet</servlet-name>
+		<url-pattern>/aon_gwt_office/office</url-pattern>
+	</servlet-mapping>
+
+
 
 	<!-- RSS Servlet -->
 	<servlet>
@@ -208,15 +219,13 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>TemplatePreview</servlet-name>
-		<servlet-class>
-			com.code.aon.ui.infoweb.servlet.TemplateImageServlet
-		</servlet-class>
+		<servlet-class>com.code.aon.ui.infoweb.servlet.TemplateImageServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>TemplatePreview</servlet-name>
 		<url-pattern>*.template</url-pattern>
 	</servlet-mapping>
-	
+
 	<!-- Payroll Contract Image Servlet -->
 	<servlet>
 		<servlet-name>ImageServlet</servlet-name>
@@ -236,7 +245,7 @@
 		<servlet-name>OAuth2AmazonServlet</servlet-name>
 		<url-pattern>/amazonoauth2/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>OAuth2AmazonCallbackServlet</servlet-name>
 		<servlet-class>com.code.aon.amazon.apis.servlet.AmazonAuthorizationCodeCallbackServlet</servlet-class>
@@ -245,7 +254,7 @@
 		<servlet-name>OAuth2AmazonCallbackServlet</servlet-name>
 		<url-pattern>/amazonoauth2callback/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>AmazonLoginCallbackServlet</servlet-name>
 		<servlet-class>com.code.aon.amazon.apis.servlet.AmazonLoginCallbackServlet</servlet-class>
@@ -254,9 +263,9 @@
 		<servlet-name>AmazonLoginCallbackServlet</servlet-name>
 		<url-pattern>/amazonLoginPopupClose/*</url-pattern>
 	</servlet-mapping>
-	
-	<!--  Aon GWT Template -->
-	
+
+	<!-- Aon GWT Template -->
+
 	<servlet>
 		<servlet-name>TemplateGwtServlet</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.template.server.TemplatesServlet</servlet-class>
@@ -265,7 +274,7 @@
 		<servlet-name>TemplateGwtServlet</servlet-name>
 		<url-pattern>/aon_gwt_template/gwt_template</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>UploadProducts</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.template.server.UploadProductsServlet</servlet-class>
@@ -274,11 +283,11 @@
 		<servlet-name>UploadProducts</servlet-name>
 		<url-pattern>/aon_gwt_template/gwt_upload</url-pattern>
 	</servlet-mapping>
-	
-	
-	
+
+
+
 	<!-- Aon GWT Document -->
-	
+
 	<servlet>
 		<servlet-name>DocumentGwtServlet</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.document.server.DocumentsServlet</servlet-class>
@@ -287,7 +296,7 @@
 		<servlet-name>DocumentGwtServlet</servlet-name>
 		<url-pattern>/aon_gwt_document/gwt_document</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>UploadFiles</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.document.server.UploadFilesServlet</servlet-class>
@@ -296,7 +305,7 @@
 		<servlet-name>UploadFiles</servlet-name>
 		<url-pattern>/aon_gwt_document/gwt_upload</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>MultipleUploadFiles</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.document.server.MultipleUploadFilesServlet</servlet-class>
@@ -305,7 +314,7 @@
 		<servlet-name>MultipleUploadFiles</servlet-name>
 		<url-pattern>/aon_gwt_document/gwt_multiple_upload</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>DownloadFiles</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.document.server.DownloadFilesServlet</servlet-class>
@@ -314,7 +323,7 @@
 		<servlet-name>DownloadFiles</servlet-name>
 		<url-pattern>/aon_gwt_document/gwt_download/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>PrintFiles</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.document.server.PdfPrintServlet</servlet-class>
@@ -323,7 +332,7 @@
 		<servlet-name>PrintFiles</servlet-name>
 		<url-pattern>/aon_gwt_document/gwt_print/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>openDocument2Image</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.document.server.OpenDocument2ImageServlet</servlet-class>
@@ -332,7 +341,7 @@
 		<servlet-name>openDocument2Image</servlet-name>
 		<url-pattern>/openDocument2Image/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>openDocumentConverter</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.document.server.OpenDocumentConverterServlet</servlet-class>
@@ -341,8 +350,8 @@
 		<servlet-name>openDocumentConverter</servlet-name>
 		<url-pattern>/openDocumentConverter/*</url-pattern>
 	</servlet-mapping>
-	
-	
+
+
 	<!-- SignIn with Google Servlet -->
 	<servlet>
 		<servlet-name>OpenIDAuthServlet</servlet-name>
@@ -352,8 +361,8 @@
 		<servlet-name>OpenIDAuthServlet</servlet-name>
 		<url-pattern>/openid_auth/*</url-pattern>
 	</servlet-mapping>
-	
-	
+
+
 	<servlet>
 		<servlet-name>GoogleLoginCallbackServlet</servlet-name>
 		<servlet-class>com.code.aon.google.apis.servlet.GoogleLoginCallbackServlet</servlet-class>
@@ -362,7 +371,7 @@
 		<servlet-name>GoogleLoginCallbackServlet</servlet-name>
 		<url-pattern>/googleLoginPopupClose/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>GmailServlet</servlet-name>
 		<servlet-class>com.code.aon.google.apis.servlet.GmailServlet</servlet-class>
@@ -371,7 +380,7 @@
 		<servlet-name>GmailServlet</servlet-name>
 		<url-pattern>/googleMail/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>OAuth2Servlet</servlet-name>
 		<servlet-class>com.code.aon.google.apis.servlet.GoogleAuthorizationCodeServlet</servlet-class>
@@ -388,7 +397,7 @@
 		<servlet-name>OAuth2CallbackServlet</servlet-name>
 		<url-pattern>/oauth2callback/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>Common Servlet</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.common.server.CommonServiceImpl</servlet-class>
@@ -401,7 +410,7 @@
 		<servlet-name>Common Servlet</servlet-name>
 		<url-pattern>/aon_gwt_office/Common</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>Fiscal Servlet</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.fiscal.server.FiscalServiceImpl</servlet-class>
@@ -428,7 +437,7 @@
 		<servlet-name>Mod180 File download</servlet-name>
 		<url-pattern>/aon_gwt_fiscal/Model180File</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>Mod180 File Print</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.fiscal.server.Mod180Print</servlet-class>
@@ -446,7 +455,7 @@
 		<servlet-name>Mod190 File download</servlet-name>
 		<url-pattern>/aon_gwt_fiscal/Model190File</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>Mod190 File Print</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.fiscal.server.Mod190Print</servlet-class>
@@ -464,7 +473,7 @@
 		<servlet-name>Mod390 File download</servlet-name>
 		<url-pattern>/aon_gwt_fiscal/Model390File</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>Mod390 File Print</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.fiscal.server.Mod390Print</servlet-class>
@@ -473,7 +482,7 @@
 		<servlet-name>Mod390 File Print</servlet-name>
 		<url-pattern>/aon_gwt_fiscal/Model390Print</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>Mod200 Accounting File</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.fiscal.server.Mod200AccountingFile</servlet-class>
@@ -491,7 +500,7 @@
 		<servlet-name>Mod200 File</servlet-name>
 		<url-pattern>/aon_gwt_fiscal/Model200File</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>Mod200 File Print</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.fiscal.server.Mod200Print</servlet-class>
@@ -500,7 +509,7 @@
 		<servlet-name>Mod200 File Print</servlet-name>
 		<url-pattern>/aon_gwt_fiscal/Model200Print</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>D2 Deposit</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.fiscal.server.normalizedMemory.NormalizedMemoryServlet</servlet-class>
@@ -509,7 +518,7 @@
 		<servlet-name>D2 Deposit</servlet-name>
 		<url-pattern>/aon_gwt_fiscal/gwt_deposit</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>UploadFiscalFile</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.fiscal.server.normalizedMemory.UploadFileServlet</servlet-class>
@@ -543,11 +552,11 @@
 		<param-name>aon.patch.initAction</param-name>
 		<param-value>true</param-value>
 	</context-param>
-	
+
 	<context-param>
 		<param-name>com.code.aon.checkSerialization</param-name>
 		<param-value>false</param-value>
-	</context-param>	
+	</context-param>
 
 	<!-- JSF SUN-RI CONFIGURATION -->
 	<context-param>
@@ -609,14 +618,14 @@
 	</context-param>
 
 	<!-- JSF-FACELETS CONFIGURATION -->
-	<context-param> 
+	<context-param>
 		<description> When a page is requested, what interval 
 			in seconds should the compiler check for changes. If you don't want the compiler 
 			to check for changes once the page is compiled, then use a value of -1. Setting 
 			a low refresh period helps during development to be able to edit pages in 
 			a running application. 
-		</description> 
-		<param-name>facelets.REFRESH_PERIOD</param-name> 
+		</description>
+		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>-1</param-value>
 	</context-param>
 	<context-param>
@@ -718,8 +727,7 @@
 	<!-- DOMAIN MANAGER CONFIGURATION -->
 	<listener>
 		<listener-class>
-			com.code.aon.ui.common.domain.ServletContextDomainListener
-		</listener-class>
+			com.code.aon.ui.common.domain.ServletContextDomainListener</listener-class>
 	</listener>
 
 	<!-- Audit Filter -->
@@ -730,7 +738,7 @@
 	<filter-mapping>
 		<filter-name>AuditFilter</filter-name>
 		<url-pattern>/index.jsp</url-pattern>
-	</filter-mapping> 
+	</filter-mapping>
 
 	<!-- Listener, that enables Audit Sessions per User. -->
 	<listener>
@@ -740,8 +748,7 @@
 	<!-- Bean Loader Listener -->
 	<listener>
 		<listener-class>
-			com.code.aon.ui.common.listener.BeanRegisterContextListener
-		</listener-class>
+			com.code.aon.ui.common.listener.BeanRegisterContextListener</listener-class>
 	</listener>
 
 	<!-- Listener, that does all the startup work (configuration, init). -->
@@ -752,8 +759,7 @@
 	<!-- AON STARTUP CONFIGURATION -->
 	<listener>
 		<listener-class>
-			com.code.aon.ui.audit.session.AonStartupServletContextListener
-		</listener-class>
+			com.code.aon.ui.audit.session.AonStartupServletContextListener</listener-class>
 	</listener>
 
 	<welcome-file-list>
@@ -839,5 +845,5 @@
 	<security-role>
 		<role-name>TaskMonitoring</role-name>
 	</security-role>
-	
+
 </web-app>
