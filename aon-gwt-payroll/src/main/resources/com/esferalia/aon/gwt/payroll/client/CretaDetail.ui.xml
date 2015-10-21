@@ -5,7 +5,12 @@
 >
 
 	<ui:style>
-			
+		@external .aon-finding-title-toolbar;
+		
+		.aon-finding-title-toolbar {
+			height: auto !important;		
+		}
+					
 	</ui:style>
 
 	<ui:import field="com.google.gwt.user.client.ui.FormPanel.*" />
@@ -13,7 +18,7 @@
 	<ui:import field="com.esferalia.aon.gwt.payroll.shared.CretaService.File.*" />
 
 	<g:DockLayoutPanel unit="PX" >
-		<g:north size="72"  >
+		<g:north size="92"  >
 
 			<g:FlowPanel >
 
