@@ -141,6 +141,14 @@ public abstract class CretaDetail extends Composite {
 			}
 
 			@Override
+			void onJsFileDblClick(JsFile jsFile, NativeEvent event) {
+				CretaDetail.this.onJsFileDblClick(jsFile,
+						event.getClientX(), event.getClientY());
+
+			}
+
+
+			@Override
 			String getIconStyle(JsTrabajadoresYTramos jsTrabajadoresYTramos) {
 				return CretaDetail.this.getIconStyle(jsTrabajadoresYTramos);
 			}
@@ -251,6 +259,15 @@ public abstract class CretaDetail extends Composite {
 	protected abstract String getDescription(String ccc);
 
 	protected abstract <T extends JsFile> List<T> filter(Collection<T> jsFiles);
+
+	protected void onJsFileClick(final String key, final int x, final int y) {
+		// NOOP
+	}
+
+	protected void onJsFileDblClick(JsFile jsFile, final int x, final int y) {
+		// NOOP
+	}
+
 	// ------------------------------------------------------------------------
 
 	private void onJsFileOut() {
@@ -276,10 +293,6 @@ public abstract class CretaDetail extends Composite {
 		};
 
 		jsFileToolTipTimer.schedule(1000);
-	}
-
-	private void onJsFileClick(final String key, final int x, final int y) {
-		// NOOP
 	}
 
 	private String getIconStyle(JsTrabajadoresYTramos t) {

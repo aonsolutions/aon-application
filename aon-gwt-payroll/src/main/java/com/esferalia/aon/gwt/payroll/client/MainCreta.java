@@ -281,12 +281,16 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			String code = errors[i].getCode();
 	
 			grid.setText(i + 1, 0, errors[i].getCode());
-			grid.setText(i + 1, 1, errors[i].getMessage());
 	
 			ErrorDescription errorDescription = ErrorDescription.getErrorDescription(code);
 			if (errorDescription != null) {
+				grid.setText(i + 1, 1, errorDescription.getMessage());
 				grid.setText(i + 1, 2, errorDescription.getCause());
 				grid.setText(i + 1, 3, errorDescription.getSolution());
+			}
+			else {
+				grid.setText(i + 1, 1, errors[i].getMessage());
+				
 			}
 	
 		}
@@ -352,6 +356,22 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 			mergeEditor.autoRefresh();
 		}
+		
+		
+		@Override
+		protected void onJsFileDblClick(JsFile jsFile, int x, int y) {
+			FileEditor fileEditor = new FileEditor();
+			fileEditor.setMode("text/xml");
+			fileEditor.setFoldGutter(true);
+			fileEditor.setLineNumbers(true);
+			fileEditor.setTitle(CretaService.File.TRABAJADORES_TRAMOS.getFilename());
+			fileEditor.setFilename(CretaService.File.TRABAJADORES_TRAMOS.getFilename() + ".xml");
+			fileEditor.setText(jsFile.getXML());
+			detailPanel.setWidget(fileEditor);
+			
+			fileEditor.autoRefresh();
+		}
+		
 	}
 
 	private class MainEnterpriseCretaRequestCommand
@@ -976,6 +996,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		StringBuffer requestBuffer = new StringBuffer();
 		
 		for ( JsFile jsFile: jsFiles ) {
+
 			// We start a new part in our body's request
 			requestBuffer.append("--" + boundary + "\r\n" );
 			// We said it's form data (it could be something else)
@@ -984,7 +1005,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					+"name=\"" + CretaService.Parameter.FILE +"\"; "
 					// We provide the 'real' name of the file
 					+"filename=\"" +  jsFile.getId() + ".xml" + "\"\r\n");
-			 // We provide the mime type of the file
+			// We provide the mime type of the file
 			requestBuffer.append("Content-Type: text/xml\r\n");
 			// There is always a blank line between the meta-data and the data
 			requestBuffer.append("\r\n");
