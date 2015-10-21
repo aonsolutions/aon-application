@@ -36,8 +36,8 @@
 			</g:FlowPanel>
 		</g:north>
 		<g:center>
-			<g:SimplePanel ui:field="centerPanel">
-			</g:SimplePanel>
+			<g:SimpleLayoutPanel ui:field="centerPanel">
+			</g:SimpleLayoutPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 
