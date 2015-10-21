@@ -68,26 +68,19 @@ public class ReservationRequestRoomController extends LinesController implements
 	}
 
 	public boolean isAgreedPriceVisible() throws ManagerBeanException {
-		if (isBestPriceDiscountItemDefined()) {
-			if (isAgreedPriceEditable()) {
-				return true;
-			}
-			ReservationRequest request = (ReservationRequest)getMasterController().getTo();
-			IManagerBean requestRoomBean = BeanManager.getManagerBean(ReservationRequestRoom.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(requestRoomBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_ROOM_RESERVATION_REQUEST_ID), request.getId());
-			criteria.addGreaterThanExpression(requestRoomBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_ROOM_AGREED_PRICE), Double.valueOf(0));
-			return requestRoomBean.getCount(criteria) > 0;
+		if (isAgreedPriceEditable()) {
+			return true;
 		}
-		return false;
+		ReservationRequest request = (ReservationRequest)getMasterController().getTo();
+		IManagerBean requestRoomBean = BeanManager.getManagerBean(ReservationRequestRoom.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(requestRoomBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_ROOM_RESERVATION_REQUEST_ID), request.getId());
+		criteria.addGreaterThanExpression(requestRoomBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_ROOM_AGREED_PRICE), Double.valueOf(0));
+		return requestRoomBean.getCount(criteria) > 0;
 	}
 
 	public boolean isAgreedPriceEditable() throws ManagerBeanException {
 		return AonUtil.getRoleManager().isAuditor();
-	}
-
-	private boolean isBestPriceDiscountItemDefined() throws ManagerBeanException {
-		return (getReservationUtils().obtainBestPriceDiscountItem() != null);
 	}
 
 	private boolean isStopSalesDefined(ReservationRequest request) {
