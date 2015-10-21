@@ -1122,7 +1122,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 																	// AON.AON_ICON_SEGSOCIAL_SMALL,
 																	// AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Bases",
-					new WorkplaceCreateResponseCommand(CretaService.File.BASES,
+					cretaResponseCmds [0] = new WorkplaceCreateResponseCommand(CretaService.File.BASES,
 							CretaService.File.TRABAJADORES_TRAMOS,
 							employeeDetail, resultsPanel) {
 						@Override

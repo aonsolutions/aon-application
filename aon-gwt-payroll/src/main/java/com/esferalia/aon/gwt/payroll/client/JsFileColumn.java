@@ -25,6 +25,8 @@ public abstract class JsFileColumn extends Column<JsFile, JsFile> {
 
 			void onJsFileClick(JsFile jsFile, NativeEvent event);
 
+			void onJsFileDblClick(JsFile jsFile, NativeEvent event);
+
 			String getIconStyle(JsTrabajadoresYTramos jsTrabajadoresYTramos);
 
 			String getDescription(JsTrabajadoresYTramos jsTrabajadoresYTramos);
@@ -48,7 +50,7 @@ public abstract class JsFileColumn extends Column<JsFile, JsFile> {
 
 		public JsFileCell() {
 			super(BrowserEvents.MOUSEOVER, BrowserEvents.MOUSEOUT,
-					BrowserEvents.CLICK);
+					BrowserEvents.CLICK, BrowserEvents.DBLCLICK);
 		}
 
 		// ----------------------------------------------------------------
@@ -72,6 +74,8 @@ public abstract class JsFileColumn extends Column<JsFile, JsFile> {
 
 			if (BrowserEvents.CLICK.equals(type))
 				handler.onJsFileClick(jsFile, event);
+			if (BrowserEvents.DBLCLICK.equals(type))
+				handler.onJsFileDblClick(jsFile, event);
 			else if (BrowserEvents.MOUSEOUT.equals(type))
 				handler.onJsFileOut(jsFile, event);
 			else if (BrowserEvents.MOUSEOVER.equals(type))
@@ -108,6 +112,12 @@ public abstract class JsFileColumn extends Column<JsFile, JsFile> {
 					}
 
 					@Override
+					public void onJsFileDblClick(JsFile jsFile,
+							NativeEvent event) {
+						JsFileColumn.this.onJsFileDblClick(jsFile, event);
+					}
+
+					@Override
 					public String getIconStyle(
 							JsTrabajadoresYTramos jsTrabajadoresYTramos) {
 						return JsFileColumn.this
@@ -138,6 +148,8 @@ public abstract class JsFileColumn extends Column<JsFile, JsFile> {
 	abstract void onJsFileOver(JsFile jsFile, NativeEvent event);
 
 	abstract void onJsFileClick(JsFile jsFile, NativeEvent event);
+
+	abstract void onJsFileDblClick(JsFile jsFile, NativeEvent event);
 
 	abstract String getIconStyle(JsTrabajadoresYTramos jsTrabajadoresYTramos);
 

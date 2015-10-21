@@ -435,7 +435,11 @@ public class CretaServlet extends HttpServlet implements
 					salary.getEmployeeName(), salary.getEmployeeDocument(),
 					salary.getEmployeeSSNumber(),
 					// salary.getEnterpriseCCC(),
-					var.getName(), p.getStart(), p.getEnd(), right, wrong)));
+					var.getName(), 
+					//p.getStart(), 
+					//p.getEnd(), 
+					right, 
+					wrong)));
 		}
 
 		@Override
@@ -459,7 +463,10 @@ public class CretaServlet extends HttpServlet implements
 					salary.getEmployeeName(), salary.getEmployeeDocument(),
 					salary.getEmployeeSSNumber(),
 					// salary.getEnterpriseCCC(),
-					var.getName(), p.getStart(), p.getEnd(), right,
+					var.getName(), 
+					p.getStart(), 
+					p.getEnd(), 
+					right,
 					Arrays.stream(wrongs)
 							.map(wrong -> String.format("'%s'", wrong))
 							.collect(Collectors.joining(",")))));
@@ -470,15 +477,21 @@ public class CretaServlet extends HttpServlet implements
 				ContextData contextData, Dato datoSolicitado, Tramo tramo,
 				TramoBuilder tramoBuilder, boolean optional) {
 			errors.add(new Event().setMessage(format(
-					"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecta. Se esperaba (%s/%s/%s..%s/%s/%s)",
+					"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecta. Se esperaba (%7$s/%8$s/%9$s...%10$s/%11$s/%12$s)",
 					// salary.getEnterpriseName(),
-					salary.getEmployeeName(), salary.getEmployeeDocument(),
+					salary.getEmployeeName(), 
+					salary.getEmployeeDocument(),
 					salary.getEmployeeSSNumber(),
 					// salary.getEnterpriseCCC(),
-					var.getName(), contextData.getStartDate(),
-					contextData.getEndDate(), tramo.getFechaDesde().getDia(),
+					var.getName(), 
+					
+					contextData.getStartDate(),
+					contextData.getEndDate(), 
+					
+					tramo.getFechaDesde().getDia(),
 					tramo.getFechaDesde().getMes(),
 					tramo.getFechaDesde().getAnho(),
+					
 					tramo.getFechaHasta().getDia(),
 					tramo.getFechaHasta().getMes(),
 					tramo.getFechaHasta().getAnho())));

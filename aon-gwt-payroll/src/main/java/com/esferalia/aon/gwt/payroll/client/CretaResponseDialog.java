@@ -91,9 +91,12 @@ public class CretaResponseDialog extends SelectDialog<CretaService.JsFile> {
 			@Override
 			void onJsFileClick(JsFile jsFile, NativeEvent event) {
 				CretaResponseDialog.this.onJsFileClick(jsFile.getId(), event.getClientX(), event.getClientY());
-				
 			}
-
+			
+			@Override
+			void onJsFileDblClick(JsFile jsFile, NativeEvent event) {
+			}
+			
 			@Override
 			String getIconStyle(JsTrabajadoresYTramos jsTrabajadoresYTramos) {
 				return CretaResponseDialog.this.getIconStyle(jsTrabajadoresYTramos);
