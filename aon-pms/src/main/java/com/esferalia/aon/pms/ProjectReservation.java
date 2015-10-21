@@ -568,7 +568,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		if (item != null && item.getId() != null) {
 			ReservationUtils reservationUtils = new ReservationUtils(getDomain());
 			double vatPercent = reservationUtils.getTaxPercentage(item.getProduct().getVat(), getStartDate());
-			return CommonUtil.round(CommonUtil.round(getReservationPenaltyTaxableBase(fromDate, toDate)) * (1 + vatPercent / 100));
+			return CommonUtil.round(CommonUtil.round(getPenaltyTaxableBase(item, fromDate, toDate)) * (1 + vatPercent / 100));
 		}
 		return 0;
 	}
@@ -584,6 +584,13 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		ReservationUtils reservationUtils = new ReservationUtils(getDomain());
 		return getPenaltyPrice(reservationUtils.obtainAppParamItem(appParam), fromDate, toDate);
 	}
+
+	@Transient
+	public double getCancellationPenaltyTaxableBase(AppParam appParam, Date fromDate, Date toDate) throws ManagerBeanException {
+		ReservationUtils reservationUtils = new ReservationUtils(getDomain());
+		return getPenaltyTaxableBase(reservationUtils.obtainAppParamItem(appParam), fromDate, toDate);
+	}
+
 
 	/****  A BORRAR EN UN FUTURO  *****/
 
