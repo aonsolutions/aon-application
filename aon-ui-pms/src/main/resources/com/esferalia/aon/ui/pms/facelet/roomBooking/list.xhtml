@@ -70,7 +70,7 @@
 									<aon:outputText value="&#160;" />
 								</rich:column>
 								
-								<rich:column colspan="#{controller.showCancelled ? '7' : '6'}">
+								<rich:column colspan="#{controller.showCancelled ? '8' : '7'}">
 									<aon:outputText value="#{bundle.report_rooms}" />
 								</rich:column>
 								
@@ -116,6 +116,14 @@
 								<aon:outputText value="#{bundle.report_occupation}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomBusy}" />
+						</aon:column>				
+	
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
+							<f:facet name="header">
+								<aon:outputText value="% #{bundle.report_occupation_abbrv}" />
+							</f:facet>
+							<aon:outputText value="#{to.roomBusyPercent}" />
+							<aon:outputText value="%" />
 						</aon:column>				
 	
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">

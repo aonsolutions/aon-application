@@ -484,6 +484,10 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 			this.roomTotal = roomTotal;
 		}
 
+		public Integer getRoomBusyPercent() {
+			return (roomTotal > 0) ? roomBusy * 100 / roomTotal : 0;
+		}
+
 		public Integer getRoomFree() {
 			return roomTotal - roomBusy - roomBlocked;
 		}
