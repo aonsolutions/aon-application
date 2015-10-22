@@ -167,6 +167,40 @@
 							</aon:panelGrid>
 						</aon:if>
 
+						<aon:panelGrid id="group_hotel_config"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-config aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_module_configuration}"/>
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="mailAccount-hotel"
+										action="mailAccount_list-hotel"
+										actionListener="#{mailConfig.onInitMailAccount}"
+										value="#{bundle.webmail_mailAccount_full}" />						
+								</aon:div>
+								<aon:if test="#{aonRole.commercialOperator}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="registryAddInfo-hotel"
+											action="registryAddInfo_search-hotel"
+											actionListener="#{registryAddInfo.onEditSearch}"
+											value="#{bundle.pms_registry_add_info_module}">						
+											<aon:actionListener method="#{registryAddInfo.setCustomerMode}" />
+										</aon:commandLink>
+									</aon:div>
+								</aon:if>
+								<aon:if test="#{aonRole.admin}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="regenerateBooking"
+											action="regenerateBooking"
+											actionListener="#{bookingRegenerator.onEditSearch}"
+											value="#{bundle.pms_regenerate_booking_module}" />
+									</aon:div>
+								</aon:if>
+							</aon:div>
+						</aon:panelGrid>
+
 					</aon:panelGroup>
 
 					<aon:panelGroup>
@@ -285,6 +319,12 @@
 										value="#{bundle.pms_room_booking_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="roomDetailedBooking" 
+										action="roomDetailedBooking_search"
+										actionListener="#{roomDetailedBooking.onInit}"
+										value="#{bundle.pms_room_detailed_booking_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="agencyBooking" 
 										action="agencyBooking_search"
 										actionListener="#{agencyBooking.onInit}"
@@ -308,40 +348,6 @@
 											action="#{person.initialAction}"
 											actionListener="#{person.onEditSearch}"
 											value="#{bundle.report_room_persons}" />
-									</aon:div>
-								</aon:if>
-							</aon:div>
-						</aon:panelGrid>
-
-						<aon:panelGrid id="group_hotel_config"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-config aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_module_configuration}"/>
-							</f:facet>					
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="mailAccount-hotel"
-										action="mailAccount_list-hotel"
-										actionListener="#{mailConfig.onInitMailAccount}"
-										value="#{bundle.webmail_mailAccount_full}" />						
-								</aon:div>
-								<aon:if test="#{aonRole.commercialOperator}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="registryAddInfo-hotel"
-											action="registryAddInfo_search-hotel"
-											actionListener="#{registryAddInfo.onEditSearch}"
-											value="#{bundle.pms_registry_add_info_module}">						
-											<aon:actionListener method="#{registryAddInfo.setCustomerMode}" />
-										</aon:commandLink>
-									</aon:div>
-								</aon:if>
-								<aon:if test="#{aonRole.admin}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="regenerateBooking"
-											action="regenerateBooking"
-											actionListener="#{bookingRegenerator.onEditSearch}"
-											value="#{bundle.pms_regenerate_booking_module}" />
 									</aon:div>
 								</aon:if>
 							</aon:div>

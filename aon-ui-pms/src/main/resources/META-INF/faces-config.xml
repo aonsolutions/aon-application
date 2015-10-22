@@ -1163,6 +1163,17 @@
 		</managed-property>						
 	</managed-bean>
 	
+	<!-- ************* ROOM DETAILED BOOKING **************** -->
+	<managed-bean>
+		<managed-bean-name>roomDetailedBooking</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.RoomDetailedBookingController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>		
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>roomDetailedBooking</value>
+		</managed-property>						
+	</managed-bean>
+	
 	<!-- ************* AGENCY BOOKING *********************** -->
 	<managed-bean>
 		<managed-bean-name>agencyBooking</managed-bean-name>
@@ -1604,6 +1615,18 @@
 		<navigation-case>
 			<from-outcome>roomBooking_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/roomBooking/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
+	<!-- ============= Room Detailed Booking ================ -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>roomDetailedBooking_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/roomDetailedBooking/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>roomDetailedBooking_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/roomDetailedBooking/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule> 
 	

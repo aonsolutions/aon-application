@@ -592,7 +592,6 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 		}
 		stmt.append(" ORDER BY " + DUE_DATE + ", " + REFERENCE_CODE);
 
-System.out.println(stmt.toString());
 		return stmt.toString();
 	}
 

@@ -191,7 +191,6 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 		try {
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			initializeBookingList(connection);
-			initializeAgencyList();
 
 			bookingStmt = connection.prepareStatement(getRoomBookingSQL());
 			SQLUtils.setDate(bookingStmt, 1, getFromDate());
@@ -327,13 +326,10 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 			SQLUtils.closeQuietly(connection);
 		}
 	}
-	
-	private void initializeAgencyList() {
-		agencyList = ArrayUtils.EMPTY_STRING_ARRAY;
-	}
 
 	private void initializeBookingList(Connection connection) throws AonSQLException {
 		setBookingList(new LinkedList<DayBooking>());
+		setAgencyList(ArrayUtils.EMPTY_STRING_ARRAY);
 
 		PreparedStatement totalStmt = null;
 		ResultSet totalRs = null;
@@ -476,7 +472,6 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 		stmt.append(" GROUP BY W.description, PR.start_date, PR.end_date, PR.agency, IG.description");
 		stmt.append(" ORDER BY " + HOTEL + "," + START_DATE + "," + END_DATE + "," + AGENCY + "," + AGENCY_GROUP);
 
-System.out.println(stmt.toString());
 		return stmt.toString();
 	}
 

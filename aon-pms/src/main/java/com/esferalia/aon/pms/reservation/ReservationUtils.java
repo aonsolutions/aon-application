@@ -1325,28 +1325,28 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 
 	public double obtainCancellationPenaltyTaxableBase(ProjectReservation reservation) throws ManagerBeanException {
 		int days = (reservation.getPenaltyDays() != null) ? reservation.getPenaltyDays() : obtainCancellationPenaltyDays(reservation, reservation.getStartDate());
-		return obtainPenaltyTaxableBase(reservation, AppParam.PMS_CANCELLATION_ITEM, days);
+		return obtainPenaltyTaxableBase(reservation, obtainAppParamItem(AppParam.PMS_CANCELLATION_ITEM), days);
 	}
 
 	public double obtainCancellationPenaltyPrice(ProjectReservation reservation) throws ManagerBeanException {
 		int days = (reservation.getPenaltyDays() != null) ? reservation.getPenaltyDays() : obtainCancellationPenaltyDays(reservation, reservation.getStartDate());
-		return obtainPenaltyPrice(reservation, AppParam.PMS_CANCELLATION_ITEM, days);
+		return obtainPenaltyPrice(reservation, obtainAppParamItem(AppParam.PMS_CANCELLATION_ITEM), days);
 	}
 
-	private double obtainPenaltyTaxableBase(ProjectReservation reservation, AppParam penaltyParam, int penaltyDays) throws ManagerBeanException {
+	private double obtainPenaltyTaxableBase(ProjectReservation reservation, Item penaltyItem, int penaltyDays) throws ManagerBeanException {
 		if (penaltyDays < 0) {
-			return reservation.getPenaltyTaxableBase(penaltyParam, reservation.getStartDate(), reservation.getEndDate());
+			return reservation.getPenaltyTaxableBase(penaltyItem, reservation.getStartDate(), reservation.getEndDate());
 		} else if (penaltyDays > 0) {
-			return reservation.getPenaltyTaxableBase(penaltyParam, reservation.getStartDate(), DateUtils.addDays(reservation.getStartDate(), penaltyDays-1));
+			return reservation.getPenaltyTaxableBase(penaltyItem, reservation.getStartDate(), DateUtils.addDays(reservation.getStartDate(), penaltyDays-1));
 		} 
 		return 0;
 	}
 
-	private double obtainPenaltyPrice(ProjectReservation reservation, AppParam penaltyParam, int penaltyDays) throws ManagerBeanException {
+	private double obtainPenaltyPrice(ProjectReservation reservation, Item penaltyItem, int penaltyDays) throws ManagerBeanException {
 		if (penaltyDays < 0) {
-			return reservation.getPenaltyPrice(penaltyParam, reservation.getStartDate(), reservation.getEndDate());
+			return reservation.getPenaltyPrice(penaltyItem, reservation.getStartDate(), reservation.getEndDate());
 		} else if (penaltyDays > 0) {
-			return reservation.getPenaltyPrice(penaltyParam, reservation.getStartDate(), DateUtils.addDays(reservation.getStartDate(), penaltyDays-1));
+			return reservation.getPenaltyPrice(penaltyItem, reservation.getStartDate(), DateUtils.addDays(reservation.getStartDate(), penaltyDays-1));
 		} 
 		return 0;
 	}
