@@ -5,6 +5,12 @@
 >
 
 	<ui:style>
+		@external .aon-finding-title;
+		
+		.aon-finding-title{
+			height: auto !important;		
+		}
+
 		@external .aon-finding-title-toolbar;
 		
 		.aon-finding-title-toolbar {
