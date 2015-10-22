@@ -119,7 +119,8 @@ public class ItemLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		product.setCategory( getLoaderUtils().ensureProductCategory( loaded.getCategoria() ) );
 		product.setCategory( getLoaderUtils().ensureProductCategory( loaded.getCategoria() ) );
 		
-		if ( loaded.getPorcRetencion() != null ) {
+		//if ( loaded.getPorcRetencion() != null ) {
+		if ( loaded.getPorcRetencion() != null && loaded.getPorcRetencion() != 0) {
 			Tax retention = getLoaderUtils().ensureRetention(loaded.getPorcRetencion());
 			product.setRetention(retention);	
 		}

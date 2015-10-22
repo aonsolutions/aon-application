@@ -29,7 +29,7 @@ public class CustomerFeeLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		,new Column(CUO,"fechaDesde"	,3,10	,true	,null)  // Fecha Desde
 		,new Column(CUO,"fechaFactura"	,3,10	,true	,null)  // Fecha Proxima Factura
 		,new Column(CUO,"periodo"		,0,2	,true	,new int[] {0,1,2,3,4,5,6})  // Periodo (0-Sin periodo, 1-Mensual, 2-Bimestral, 3-Trimestral, 4-Cuatrimestral, 5-Semestral, 6-Anual)
-		,new Column(CUO,"item"			,2,8	,true	,null)  // Item (enlace con el item del fichero de carga. Se asume que el fichero de carga tambien trae el item)
+		,new Column(CUO,"item"			,2,15	,true	,null)  // Item (enlace con el item del fichero de carga. Se asume que el fichero de carga tambien trae el item)
 		,new Column(CUO,"descripcion"	,2,1024	,false	,null)  // Descripcion
 		,new Column(CUO,"cantidad"		,1,6	,true	,null)  // Cantidad
 		,new Column(CUO,"precio" 		,1,17	,true	,null)  // Precio
