@@ -99,9 +99,9 @@ public class CretaServlet extends HttpServlet implements
 		String defaults[] = { "51=M", "737=0" };
 		// boolean comments = AonStringUtils.equalsIgnoreCase(
 		// Boolean.toString(true), CretaService.Parameter.COMMENTS.name());
-		boolean acceptPrevBases = AonStringUtils.equalsIgnoreCase("on",
-				req.getParameter(CretaService.Parameter.ACEPTAR_BASES_ANTERIORES
-						.name()));
+//		boolean acceptPrevBases = AonStringUtils.equalsIgnoreCase("on",
+//				req.getParameter(CretaService.Parameter.ACEPTAR_BASES_ANTERIORES
+//						.name()));
 
 		EventsPickerBasesCallback pickerBasesCb = new EventsPickerBasesCallback();
 
@@ -114,14 +114,14 @@ public class CretaServlet extends HttpServlet implements
 			inputStreams.add(part.getInputStream());
 		}
 		os.printf("\"full_bases\":\"%s\",\r\n",
-				generateBases(connection, true, false, acceptPrevBases, nafs,
+				generateBases(connection, true, false, false, nafs,
 						defaults, inputStreams, pickerBasesCb));
 		inputStreams.clear();
 		for (Part part : req.getParts()) {
 			inputStreams.add(part.getInputStream());
 		}
 		os.printf("\"diff_bases\":\"%s\",\r\n", generateBases(connection, true,
-				true, acceptPrevBases, nafs, defaults, inputStreams));
+				true, true, nafs, defaults, inputStreams));
 
 
 		os.printf("\"errors\":%s,\r\n", toJSON(pickerBasesCb.errors));
@@ -430,14 +430,15 @@ public class CretaServlet extends HttpServlet implements
 		public void wrongContextVariable(Salary salary, ContextVariable var,
 				Period p, String right, String wrong) {
 			errors.add(new Event().setMessage(format(
-					"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecta. Se esperaba '%s' y es '%s'",
+					"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecta. Se esperaba '%7$s' y es '%8$s'",
 					// salary.getEnterpriseName(),
-					salary.getEmployeeName(), salary.getEmployeeDocument(),
+					salary.getEmployeeName(), 
+					salary.getEmployeeDocument(),
 					salary.getEmployeeSSNumber(),
 					// salary.getEnterpriseCCC(),
 					var.getName(), 
-					//p.getStart(), 
-					//p.getEnd(), 
+					p.getStart(), 
+					p.getEnd(), 
 					right, 
 					wrong)));
 		}
