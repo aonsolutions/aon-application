@@ -84,7 +84,7 @@
 								</rich:column>
 
 								<rich:column colspan="4">
-									<aon:outputText value="Real" />
+									<aon:outputText value="#{bundle.aon_real}" />
 								</rich:column>
 
 								<c:forEach items="#{agencyBooking.agencyList}" var="agency">
@@ -117,7 +117,7 @@
 
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20" style="background-color:#f2f2f2;">
 							<f:facet name="header">
-								<aon:outputText value="Ocup." />
+								<aon:outputText value="#{bundle.report_occupation_abbrv}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomBusy}" />
 						</aon:column>				
@@ -131,7 +131,7 @@
 
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20" style="background-color:#f2f2f2;">
 							<f:facet name="header">
-								<aon:outputText value="Bloq." />
+								<aon:outputText value="#{bundle.pms_blocked_abbrv}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomBlocked}" />
 						</aon:column>				
@@ -147,7 +147,7 @@
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20"
 								style="#{agencyIdx.odd ? 'background-color:#f2f2f2;' : ''}">
 								<f:facet name="header">
-									<aon:outputText value="Ocup." />
+									<aon:outputText value="#{bundle.report_occupation_abbrv}" />
 								</f:facet>
 								<aon:outputText value="#{to.agencyBookingMap[agency].roomBusy}" />
 							</aon:column>				
@@ -155,7 +155,7 @@
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20"
 								style="#{agencyIdx.odd ? 'background-color:#f2f2f2;' : ''}">
 								<f:facet name="header">
-									<aon:outputText value="Canc." />
+									<aon:outputText value="#{bundle.pms_cancelled_abbrv}" />
 								</f:facet>
 								<aon:outputText style="#{(to.agencyBookingMap[agency].roomCancelled >= 0) ? ('color:red;') : ('')}"
 									value="#{to.agencyBookingMap[agency].roomCancelled}" />

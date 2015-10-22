@@ -90,21 +90,21 @@
 
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20" style="background-color:#f2f2f2;">
 							<f:facet name="header">
-								<aon:outputText value="Ent." />
+								<aon:outputText value="#{bundle.report_checkin_abbrv}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomCheckin}" />
 						</aon:column>				
 
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20" style="background-color:#f2f2f2;">
 							<f:facet name="header">
-								<aon:outputText value="Sal." />
+								<aon:outputText value="#{bundle.report_checkout_abbrv}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomCheckout}" />
 						</aon:column>				
 
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20" style="background-color:#f2f2f2;">
 							<f:facet name="header">
-								<aon:outputText value="Ocup." />
+								<aon:outputText value="#{bundle.report_occupation_abbrv}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomBusy}" />
 						</aon:column>				
@@ -119,7 +119,7 @@
 
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20" style="background-color:#f2f2f2;">
 							<f:facet name="header">
-								<aon:outputText value="Bloq." />
+								<aon:outputText value="#{bundle.pms_blocked_abbrv}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomBlocked}" />
 						</aon:column>				
@@ -135,7 +135,7 @@
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20"
 								style="#{roomTypeIdx.odd ? 'background-color:#f2f2f2;' : ''}">
 								<f:facet name="header">
-									<aon:outputText value="Ent." />
+									<aon:outputText value="#{bundle.report_checkin_abbrv}" />
 								</f:facet>
 								<aon:outputText value="#{to.roomTypeBookingMap[roomType].roomCheckin}" />
 							</aon:column>
@@ -143,7 +143,7 @@
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20"
 								style="#{roomTypeIdx.odd ? 'background-color:#f2f2f2;' : ''}">
 								<f:facet name="header">
-									<aon:outputText value="Sal." />
+									<aon:outputText value="#{bundle.report_checkout_abbrv}" />
 								</f:facet>
 								<aon:outputText value="#{to.roomTypeBookingMap[roomType].roomCheckout}" />
 							</aon:column>
@@ -151,7 +151,7 @@
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20"
 								style="#{roomTypeIdx.odd ? 'background-color:#f2f2f2;' : ''}">
 								<f:facet name="header">
-									<aon:outputText value="Ocup." />
+									<aon:outputText value="#{bundle.report_occupation_abbrv}" />
 								</f:facet>
 								<aon:outputText value="#{to.roomTypeBookingMap[roomType].roomBusy}" />
 							</aon:column>
@@ -168,7 +168,7 @@
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20"
 								style="#{roomTypeIdx.odd ? 'background-color:#f2f2f2;' : ''}">
 								<f:facet name="header">
-									<aon:outputText value="Bloq." />
+									<aon:outputText value="#{bundle.pms_blocked_abbrv}" />
 								</f:facet>
 								<aon:outputText value="#{to.roomTypeBookingMap[roomType].roomBlocked}" />
 							</aon:column>

@@ -1,9 +1,15 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.REAL;
+import static com.code.aon.ui.common.ICommonMessages.DATE;
+import static com.code.aon.ui.common.ICommonMessages.PMS_BLOCKED_ABBRV;
+import static com.code.aon.ui.common.ICommonMessages.PMS_CANCELLED_ABBRV;
 import static com.code.aon.ui.common.ICommonMessages.PMS_DIRECT_CUSTOMER;
+import static com.code.aon.ui.common.ICommonMessages.PMS_FREE;
+import static com.code.aon.ui.common.ICommonMessages.PMS_HOTEL;
+import static com.code.aon.ui.common.ICommonMessages.PMS_OCCUPATION_ABBRV;
+import static com.code.aon.ui.common.ICommonMessages.PMS_TOTAL;
 
-import java.io.IOException;
-import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -52,6 +58,13 @@ import com.esferalia.aon.pms.enumeration.BookingStayType;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
+/*String PMS_CHECKIN_ABBRV = "report_checkin_abbrv";
+String PMS_CHECKOUT_ABBRV = "report_checkout_abbrv";
+String PMS_ALLOTMENT = "pms_allotment";
+String PMS_AVAILABILITY_ABBRV = "pms_availability_abbrv";
+*/
+import java.io.IOException;
+import java.io.Serializable;
 
 public class AgencyBookingController extends DataScrollerState implements ISQLConstants {
 
@@ -568,7 +581,7 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 	    report.addHeaderRow();
 		report.addHeaderCell("", 0, cellStyleBlack);
 		report.addHeaderCell("", 0, cellStyleBlack);
-		report.addHeaderCell("REAL", 0, cellStyleBlack);
+		report.addHeaderCell(AonUtil.getMessage(REAL).toUpperCase(), 0, cellStyleBlack);
 		report.addHeaderCell("", 0, cellStyleBlack);
 		report.addHeaderCell("", 0, cellStyleBlack);
 		report.addHeaderCell("", 0, cellStyleBlack);
@@ -588,15 +601,15 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 		}
 
 		ReportMetadata metadata = new ReportMetadata();
-		metadata.getColumns().add(new ReportColumnMetadata("hotel", Types.VARCHAR, "HOTEL", 30));
-		metadata.getColumns().add(new ReportColumnMetadata("date", Types.DATE, "FECHA", 30));
-		metadata.getColumns().add(new ReportColumnMetadata("roomBusy", Types.INTEGER, "OCUP.", 30));
-		metadata.getColumns().add(new ReportColumnMetadata("roomFree", Types.INTEGER, "LIBRE", 30));
-		metadata.getColumns().add(new ReportColumnMetadata("roomBlocked", Types.INTEGER, "BLOQ.", 30));
-		metadata.getColumns().add(new ReportColumnMetadata("roomTotal", Types.INTEGER, "TOTAL", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("hotel", Types.VARCHAR, AonUtil.getMessage(PMS_HOTEL).toUpperCase(), 30));
+		metadata.getColumns().add(new ReportColumnMetadata("date", Types.DATE, AonUtil.getMessage(DATE).toUpperCase(), 30));
+		metadata.getColumns().add(new ReportColumnMetadata("roomBusy", Types.INTEGER, AonUtil.getMessage(PMS_OCCUPATION_ABBRV).toUpperCase(), 30));
+		metadata.getColumns().add(new ReportColumnMetadata("roomFree", Types.INTEGER, AonUtil.getMessage(PMS_FREE).toUpperCase(), 30));
+		metadata.getColumns().add(new ReportColumnMetadata("roomBlocked", Types.INTEGER, AonUtil.getMessage(PMS_BLOCKED_ABBRV).toUpperCase(), 30));
+		metadata.getColumns().add(new ReportColumnMetadata("roomTotal", Types.INTEGER, AonUtil.getMessage(PMS_TOTAL).toUpperCase(), 30));
 		for (int i=0; i<agencyList.length; i++) {
-			metadata.getColumns().add(new ReportColumnMetadata("agencyBusy", Types.INTEGER, "OCUP.", 30));
-			metadata.getColumns().add(new ReportColumnMetadata("agencyCancelled", Types.INTEGER, "CANC.", 30));
+			metadata.getColumns().add(new ReportColumnMetadata("agencyBusy", Types.INTEGER, AonUtil.getMessage(PMS_OCCUPATION_ABBRV).toUpperCase(), 30));
+			metadata.getColumns().add(new ReportColumnMetadata("agencyCancelled", Types.INTEGER, AonUtil.getMessage(PMS_CANCELLED_ABBRV).toUpperCase(), 30));
 		}
 		return metadata;
 	}

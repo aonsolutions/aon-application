@@ -65,11 +65,11 @@
 								</rich:column>
 
 								<rich:column colspan="4">
-									<aon:outputText value="Real" />
+									<aon:outputText value="#{bundle.aon_real}" />
 								</rich:column>
 
 								<rich:column colspan="4">
-									<aon:outputText value="Potencial" />
+									<aon:outputText value="#{bundle.aon_potential}" />
 								</rich:column>
 
 								<c:forEach items="#{allotmentBooking.agencyList}" var="agency">
@@ -102,7 +102,7 @@
 
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20" style="background-color:#f2f2f2;">
 							<f:facet name="header">
-								<aon:outputText value="Ocup." />
+								<aon:outputText value="#{bundle.report_occupation_abbrv}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomBusy}" />
 						</aon:column>				
@@ -116,7 +116,7 @@
 
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20" style="background-color:#f2f2f2;">
 							<f:facet name="header">
-								<aon:outputText value="Bloq." />
+								<aon:outputText value="#{bundle.pms_blocked_abbrv}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomBlocked}" />
 						</aon:column>				
@@ -130,28 +130,28 @@
 
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
 							<f:facet name="header">
-								<aon:outputText value="Cupo" />
+								<aon:outputText value="#{bundle.pms_allotment}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomAllotment}" />
 						</aon:column>				
 
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
 							<f:facet name="header">
-								<aon:outputText value="Disp." />
+								<aon:outputText value="#{bundle.pms_availability_abbrv}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomAvailable}" />
 						</aon:column>				
 
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
 							<f:facet name="header">
-								<aon:outputText value="Ocup." />
+								<aon:outputText value="#{bundle.report_occupation_abbrv}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomBusyPotential}" />
 						</aon:column>				
 
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
 							<f:facet name="header">
-								<aon:outputText value="Libre" />
+								<aon:outputText value="#{bundle.report_free}" />
 							</f:facet>
 							<aon:outputText style="#{(to.roomFreePotential >= 0) ? ('') : ('color:red;')}"
 								value="#{to.roomFreePotential}" />
@@ -161,7 +161,7 @@
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20"
 								style="#{agencyIdx.even ? 'background-color:#f2f2f2;' : ''}">
  								<f:facet name="header">
-									<aon:outputText value="Cupo" />
+									<aon:outputText value="#{bundle.pms_allotment}" />
 								</f:facet>
 								<aon:outputText value="#{to.agencyBookingMap[agency].roomAllotment}" />
 							</aon:column>				
@@ -169,7 +169,7 @@
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20"
 								style="#{agencyIdx.even ? 'background-color:#f2f2f2;' : ''}">
 								<f:facet name="header">
-									<aon:outputText value="Ocup." />
+									<aon:outputText value="#{bundle.report_occupation_abbrv}" />
 								</f:facet>
 								<aon:outputText value="#{to.agencyBookingMap[agency].roomBusy}"
 									style="#{(to.agencyBookingMap[agency].roomAllotment > to.agencyBookingMap[agency].roomBusy) ? ('') : ('color:forestgreen;')}" />
@@ -192,7 +192,7 @@
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20"
 								style="#{agencyIdx.even ? 'background-color:#f2f2f2;' : ''}">
 								<f:facet name="header">
-									<aon:outputText value="Disp." />
+									<aon:outputText value="#{bundle.pms_availability_abbrv}" />
 								</f:facet>
 								<aon:outputText value="#{to.agencyBookingMap[agency].roomAvailable}"
 									style="#{(to.roomFreePotential >= 0 or to.agencyBookingMap[agency].roomAvailable == 0) ? ('') : ('color:red;')}" />

@@ -90,11 +90,13 @@ public interface ICommonMessages {
 	String PERCENT_PATTERN = "aon_percent_pattern";
 	String POS = "report_pos";	
 	String POSTAL_CODE = "aon_postal_code";
+	String POTENTIAL = "aon_potential";
 	String PRICE_PATTERN = "aon_price_pattern";
 	String PRODUCT = "aon_product";
 	String PROFIT = "aon_profit";
 	String PURCHASES = "aon_purchases";
 	String QUANTITY_PATTERN = "aon_quantity_pattern";
+	String REAL = "aon_real";
 	String REFERENCE = "aon_reference";
 	String REFERENCE_ACTION_TARGET = "aon_reference_action_target";
 	String REFERENCE_OFFER = "aon_reference_offer";
@@ -469,6 +471,16 @@ public interface ICommonMessages {
 	String PMS_REGENERATE_BOOKING_INFO = "pms_regenerate_booking_info";
 	String PMS_REGENERATE_BOOKING_PROCESS_END = "pms_regenerate_booking_process_end";
 	String PMS_REGENERATE_BOOKING_PROCESS_START = "pms_regenerate_booking_process_start";
+	String PMS_HOTEL = "aon_module_hotel";
+	String PMS_CHECKIN_ABBRV = "report_checkin_abbrv";
+	String PMS_CHECKOUT_ABBRV = "report_checkout_abbrv";
+	String PMS_OCCUPATION_ABBRV = "report_occupation_abbrv";
+	String PMS_FREE = "report_free";
+	String PMS_BLOCKED_ABBRV = "pms_blocked_abbrv";
+	String PMS_CANCELLED_ABBRV = "pms_cancelled_abbrv";
+	String PMS_ALLOTMENT = "pms_allotment";
+	String PMS_AVAILABILITY_ABBRV = "pms_availability_abbrv";
+	String PMS_TOTAL = "aon_total";
 
 	String PRODUCT_DOCUMENT_MAX_SIZE_ERROR = "product_document_max_size_error";
 	String PRODUCT_CATALOGUE_DATES_ERROR = "product_catalogue_dates_error";

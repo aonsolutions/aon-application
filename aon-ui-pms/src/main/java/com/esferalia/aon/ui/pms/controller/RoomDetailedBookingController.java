@@ -1,5 +1,14 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.DATE;
+import static com.code.aon.ui.common.ICommonMessages.PMS_BLOCKED_ABBRV;
+import static com.code.aon.ui.common.ICommonMessages.PMS_CHECKIN_ABBRV;
+import static com.code.aon.ui.common.ICommonMessages.PMS_CHECKOUT_ABBRV;
+import static com.code.aon.ui.common.ICommonMessages.PMS_FREE;
+import static com.code.aon.ui.common.ICommonMessages.PMS_HOTEL;
+import static com.code.aon.ui.common.ICommonMessages.PMS_OCCUPATION_ABBRV;
+import static com.code.aon.ui.common.ICommonMessages.PMS_TOTAL;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.sql.Connection;
@@ -409,7 +418,7 @@ public class RoomDetailedBookingController extends DataScrollerState implements 
 	    report.addHeaderRow();
 		report.addHeaderCell("", 0, cellStyleBlack);
 		report.addHeaderCell("", 0, cellStyleBlack);
-		report.addHeaderCell("HOTEL", 0, cellStyleBlack);
+		report.addHeaderCell(AonUtil.getMessage(PMS_HOTEL).toUpperCase(), 0, cellStyleBlack);
 		report.addHeaderCell("", 0, cellStyleBlack);
 		report.addHeaderCell("", 0, cellStyleBlack);
 		report.addHeaderCell("", 0, cellStyleBlack);
@@ -440,21 +449,21 @@ public class RoomDetailedBookingController extends DataScrollerState implements 
 		}
 
 		ReportMetadata metadata = new ReportMetadata();
-		metadata.getColumns().add(new ReportColumnMetadata("hotel", Types.VARCHAR, "HOTEL", 30));
-		metadata.getColumns().add(new ReportColumnMetadata("date", Types.DATE, "FECHA", 30));
-		metadata.getColumns().add(new ReportColumnMetadata("roomCheckin", Types.INTEGER, "ENT.", 30));
-		metadata.getColumns().add(new ReportColumnMetadata("roomCheckout", Types.INTEGER, "SAL.", 30));
-		metadata.getColumns().add(new ReportColumnMetadata("roomBusy", Types.INTEGER, "OCUP.", 30));
-		metadata.getColumns().add(new ReportColumnMetadata("roomFree", Types.INTEGER, "LIBRE", 30));
-		metadata.getColumns().add(new ReportColumnMetadata("roomBlocked", Types.INTEGER, "BLOQ.", 30));
-		metadata.getColumns().add(new ReportColumnMetadata("roomTotal", Types.INTEGER, "TOTAL", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("hotel", Types.VARCHAR, AonUtil.getMessage(PMS_HOTEL).toUpperCase(), 30));
+		metadata.getColumns().add(new ReportColumnMetadata("date", Types.DATE, AonUtil.getMessage(DATE).toUpperCase(), 30));
+		metadata.getColumns().add(new ReportColumnMetadata("roomCheckin", Types.INTEGER, AonUtil.getMessage(PMS_CHECKIN_ABBRV).toUpperCase(), 30));
+		metadata.getColumns().add(new ReportColumnMetadata("roomCheckout", Types.INTEGER, AonUtil.getMessage(PMS_CHECKOUT_ABBRV).toUpperCase(), 30));
+		metadata.getColumns().add(new ReportColumnMetadata("roomBusy", Types.INTEGER, AonUtil.getMessage(PMS_OCCUPATION_ABBRV).toUpperCase(), 30));
+		metadata.getColumns().add(new ReportColumnMetadata("roomFree", Types.INTEGER, AonUtil.getMessage(PMS_FREE).toUpperCase(), 30));
+		metadata.getColumns().add(new ReportColumnMetadata("roomBlocked", Types.INTEGER, AonUtil.getMessage(PMS_BLOCKED_ABBRV).toUpperCase(), 30));
+		metadata.getColumns().add(new ReportColumnMetadata("roomTotal", Types.INTEGER, AonUtil.getMessage(PMS_TOTAL).toUpperCase(), 30));
 		for (int i=0; i<roomTypeList.length; i++) {
-			metadata.getColumns().add(new ReportColumnMetadata("roomTypeCheckin", Types.INTEGER, "ENT.", 30));
-			metadata.getColumns().add(new ReportColumnMetadata("roomTypeCheckout", Types.INTEGER, "SAL.", 30));
-			metadata.getColumns().add(new ReportColumnMetadata("roomTypeBusy", Types.INTEGER, "OCUP.", 30));
-			metadata.getColumns().add(new ReportColumnMetadata("roomTypeFree", Types.INTEGER, "LIBRE", 30));
-			metadata.getColumns().add(new ReportColumnMetadata("roomTypeBlocked", Types.INTEGER, "BLOQ.", 30));
-			metadata.getColumns().add(new ReportColumnMetadata("roomTypeTotal", Types.INTEGER, "TOTAL", 30));
+			metadata.getColumns().add(new ReportColumnMetadata("roomTypeCheckin", Types.INTEGER, AonUtil.getMessage(PMS_CHECKIN_ABBRV).toUpperCase(), 30));
+			metadata.getColumns().add(new ReportColumnMetadata("roomTypeCheckout", Types.INTEGER, AonUtil.getMessage(PMS_CHECKOUT_ABBRV).toUpperCase(), 30));
+			metadata.getColumns().add(new ReportColumnMetadata("roomTypeBusy", Types.INTEGER, AonUtil.getMessage(PMS_OCCUPATION_ABBRV).toUpperCase(), 30));
+			metadata.getColumns().add(new ReportColumnMetadata("roomTypeFree", Types.INTEGER, AonUtil.getMessage(PMS_FREE).toUpperCase(), 30));
+			metadata.getColumns().add(new ReportColumnMetadata("roomTypeBlocked", Types.INTEGER, AonUtil.getMessage(PMS_BLOCKED_ABBRV).toUpperCase(), 30));
+			metadata.getColumns().add(new ReportColumnMetadata("roomTypeTotal", Types.INTEGER, AonUtil.getMessage(PMS_TOTAL).toUpperCase(), 30));
 		}
 		return metadata;
 	}
