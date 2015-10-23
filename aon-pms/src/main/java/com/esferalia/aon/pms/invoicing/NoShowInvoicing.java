@@ -54,7 +54,7 @@ public class NoShowInvoicing {
 			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 			for (Integer reservationId : reservations) {
 				ProjectReservation reservation = (ProjectReservation)reservationBean.get(reservationId);
-				if (invoice(noShowInvoiceTo, reservation) != null) {
+				if (!reservation.isInvoiced() && invoice(noShowInvoiceTo, reservation) != null) {
 					++count;
 				}
 			}

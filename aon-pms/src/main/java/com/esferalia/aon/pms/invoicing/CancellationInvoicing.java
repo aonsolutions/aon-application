@@ -54,7 +54,7 @@ public class CancellationInvoicing {
 			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 			for (Integer reservationId : reservations) {
 				ProjectReservation reservation = (ProjectReservation)reservationBean.get(reservationId);
-				if (invoice(cancellationInvoiceTo, reservation) != null) {
+				if (!reservation.isInvoiced() && invoice(cancellationInvoiceTo, reservation) != null) {
 					++count;
 				}
 			}
