@@ -49,7 +49,7 @@ public class ProductExportGwtController extends AuditableSearchController {
 	private String itemSerialDate1;
 	private String itemSerialDate2;
 	private String barcode;
-	private Integer serialNumber;
+	private String serialNumber;
 	private String detail;
 	private String detail2;
 	private String detail3; 
@@ -67,7 +67,7 @@ public class ProductExportGwtController extends AuditableSearchController {
 		itemSerialDate2 ="";
 		
 		barcode = "";
-		serialNumber = null;
+		serialNumber = "";
 		detail = "";
 		detail2 = "";
 		detail3 = ""; 
@@ -110,11 +110,11 @@ public class ProductExportGwtController extends AuditableSearchController {
 
 	}
 	
-	public Integer getSerialNumber() {
+	public String getSerialNumber() {
 		return serialNumber;
 	}
 
-	public void setSerialNumber(Integer serialNumber) {
+	public void setSerialNumber(String serialNumber) {
 		this.serialNumber = serialNumber;
 	}
 
