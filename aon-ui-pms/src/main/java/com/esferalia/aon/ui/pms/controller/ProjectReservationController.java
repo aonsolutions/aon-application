@@ -98,6 +98,7 @@ import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
 import com.esferalia.aon.pms.reservation.ReservationRequestManager;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
+import com.esferalia.aon.ui.pms.ProjectReservationConexFlow;
 import com.esferalia.aon.ui.pms.ProjectReservationPermission;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
@@ -132,6 +133,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	private CardOperationTo cardOperationTo;
 	private List<Integer> multipleReservation;
 	private DataModel invoiceModel;
+	private ProjectReservationConexFlow reservationConexFlow;
 
 	public ReservationUtils getReservationUtils() {
 		if (reservationUtils == null) {
@@ -326,6 +328,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	public boolean isShowCreditCardWindow() {
 		return showCreditCardWindow;
 	}
+	
 	public void setShowCreditCardWindow(boolean showCreditCardWindow) {
 		this.showCreditCardWindow = showCreditCardWindow;
 	}
@@ -364,6 +367,17 @@ public class ProjectReservationController extends BasicController implements IPm
 		this.invoiceModel = invoiceModel;
 	}
 
+	public ProjectReservationConexFlow getReservationConexFlow() {
+		if (reservationConexFlow == null) {
+			ProjectReservation reservation = (ProjectReservation)this.getTo();
+			reservationConexFlow = new ProjectReservationConexFlow(reservation, getDomain(reservation),getReservationPermission());
+		}
+		return reservationConexFlow;
+	}
+	public void setReservationConexFlow(ProjectReservationConexFlow reservationConexFlow) {
+		this.reservationConexFlow = reservationConexFlow;
+	}
+	
 	public void onLoad(ActionEvent event) throws ManagerBeanException {
 		onEditSearch(event);
 		getCriteria().addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), new Date());
@@ -1464,6 +1478,8 @@ public class ProjectReservationController extends BasicController implements IPm
 	public void onCreditCardShow(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		getReservationUtils().decryptReservationCreditCardData(reservation);
+		setShowCreditCardWindow(true);
+		setReservationConexFlow(null);
 	}
 
 	public List<SelectItem> getCreditCardYears() {
@@ -1491,6 +1507,94 @@ public class ProjectReservationController extends BasicController implements IPm
 			accept(event);
 			if (conexFlowData(reservation)) {
 				setShowCreditCardWindow(false);
+				setReservationConexFlow(null);
+			}
+		}
+	}
+
+	public void onConexflowOperation(ActionEvent event) {
+		System.out.println("CONEXFLOW OPERATION "+ getReservationConexFlow().getConexflowOperation());
+		ProjectReservation reservation = (ProjectReservation)this.getTo();		
+		ConexFlowConnection connection = DBConsults.getConection(getDomain(reservation));
+		if (connection.getActive()) {
+			ConexFlow conexFlow = null;
+			String errorMsg = null;
+			Query query = null;
+			
+			ConexFlow cf = DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
+			String token = cf.getRespuesta().getToken();
+			
+			switch (getReservationConexFlow().getConexflowOperation()) {
+			case ConexFlowConstant.PREAUTHORIZATION_OP:	
+				query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection.getEmpresa().toString()
+						, connection.getCentro().toString(), connection.getTpv().toString()
+						, reservation.getCustomer().getId().toString(), token, getReservationConexFlow().getAmount());
+				conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query, reservation.getId(), getDomain(reservation), false);
+				if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) {
+					errorMsg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
+				}
+				break;
+			case ConexFlowConstant.SALE_OP: 
+				query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection.getEmpresa().toString()
+						, connection.getCentro().toString(), connection.getTpv().toString(), token, getReservationConexFlow().getAmount()
+						, reservation.getCustomer().getId().toString());
+				conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.	SALE_OP, query, reservation.getId(), getDomain(reservation), false);
+				if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) {
+					errorMsg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
+				}
+				break;
+			case ConexFlowConstant.CANCELATION_OP: 
+				ConexFlow cf2 = null;
+				if(getReservationConexFlow().getConexflowOperationCancelation().equals(ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP))
+					cf2 = DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
+				if(getReservationConexFlow().getConexflowOperationCancelation().equals(ConexFlowConstant.PREAUTHORIZATION_OP))
+					cf2 =  DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+				if(getReservationConexFlow().getConexflowOperationCancelation().equals(ConexFlowConstant.SALE_OP))
+					cf2 =  DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.SALE_OP);
+				if(getReservationConexFlow().getConexflowOperationCancelation().equals(ConexFlowConstant.REFUND_OP))
+					cf2 =  DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.REFUND_OP);
+				
+				query = ConexFlowUtils.getConexFlowCancelationQuery(connection.getEmpresa().toString()
+						, connection.getCentro().toString(), connection.getTpv().toString()
+						, cf2.getRespuesta().getOperacion(), getReservationConexFlow().getAmount(),Double.parseDouble(cf2.getRespuesta().getImporte()) 
+						, cf2.getRespuesta().getAutorizacion(), reservation.getCustomer().getId().toString()
+						, cf2.getRespuesta().getIdOperacion(), cf2.getRespuesta().getFecha());
+				conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.	CANCELATION_OP, query, reservation.getId(), getDomain(reservation), false);
+				if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) {
+					errorMsg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
+				}
+				break;
+			case ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP: 
+				ConexFlow cf3 =  DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+				query = ConexFlowUtils.getConexFlowConfirmPreauthorizationQuery(connection.getEmpresa().toString()
+						, connection.getCentro().toString(), connection.getTpv().toString()
+						, reservation.getCustomer().getId().toString(), token, getReservationConexFlow().getAmount()
+						, Double.parseDouble(cf3.getRespuesta().getImporte()), cf3.getRespuesta().getCF_ExpirationDate()
+						, cf3.getRespuesta().getAutorizacion(), cf3.getRespuesta().getFecha()
+						, cf3.getRespuesta().getIdOperacion());
+				conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP, query, reservation.getId(), getDomain(reservation), false);
+				if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) {
+					errorMsg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
+				}
+				break;
+			case ConexFlowConstant.REFUND_OP: 
+				//TODO TENER ENCUENTA EL CARGO O LA CONFIRM PREAUTHO..
+				query = ConexFlowUtils.getConexFlowRefundQuery(connection.getEmpresa().toString()
+						, connection.getCentro().toString(), connection.getTpv().toString()
+						, token, getReservationConexFlow().getAmount().toString(), reservation.getCustomer().getId().toString());
+				conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.REFUND_OP, query, reservation.getId(), getDomain(reservation), false);
+				if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) {
+					errorMsg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
+				}
+				break;
+			default:
+				
+				break;
+			}
+			
+			if (errorMsg != null) {
+				AonUtil.addErrorMessage(errorMsg);
+				throw new AbortProcessingException(errorMsg);
 			}
 		}
 	}
@@ -1530,10 +1634,20 @@ public class ProjectReservationController extends BasicController implements IPm
 					, connection.getEmpresa().toString(), connection.getCentro().toString(), connection.getTpv().toString()
 					, reservation.getHrCreditCardExpirationMonth() + reservation.getHrCreditCardExpirationYear()
 					, reservation.getCustomer().getId().toString());
-			conexFlowCreateToken = ConexFlowPost.execute(connection,ConexFlowConstant.CREATE_TOKEN_OP, createTokenQuery, reservation.getId(), getDomain(reservation));
+			conexFlowCreateToken = ConexFlowPost.execute(connection,ConexFlowConstant.CREATE_TOKEN_OP, createTokenQuery, reservation.getId(), getDomain(reservation), false);
 			if (!conexFlowCreateToken.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) {
 				errorMsg = "Error " + conexFlowCreateToken.getRespuesta().getResultado() + ": " + conexFlowCreateToken.getRespuesta().getDesResultado() + ".";
 			}
+			else{
+				Query q = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery( connection.getEmpresa().toString()
+						, connection.getCentro().toString(), connection.getTpv().toString()
+						, reservation.getCustomer().getId().toString(), conexFlowCreateToken.getRespuesta().getToken(), (Double) 0.01);
+				ConexFlow cf = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, q, reservation.getId(), getDomain(reservation), true);
+				if (!cf.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) {
+					errorMsg = "Error " + cf.getRespuesta().getResultado() + ": " + cf.getRespuesta().getDesResultado() + ".";
+				}
+			}
+			
 			if (errorMsg != null) {
 				AonUtil.addErrorMessage(errorMsg);
 				throw new AbortProcessingException(errorMsg);
@@ -1576,7 +1690,7 @@ public class ProjectReservationController extends BasicController implements IPm
 					connection.getEmpresa().toString(), connection.getCentro().toString(), connection.getTpv().toString()
 					, reservation.getCustomer().getId().toString(), cf.getRespuesta().getToken()
 					, getCardOperationTo().getOperationAmount());
-				ConexFlow cf2 = ConexFlowPost.execute(connection, ConexFlowConstant.PREAUTHORIZATION_OP, query, reservation.getId(), getDomain(reservation));
+				ConexFlow cf2 = ConexFlowPost.execute(connection, ConexFlowConstant.PREAUTHORIZATION_OP, query, reservation.getId(), getDomain(reservation), false);
 				if(cf2 != null){
 					if (cf2.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) 
 						setShowCreditCardPreauthorizationWindow(false);
@@ -1607,7 +1721,7 @@ public class ProjectReservationController extends BasicController implements IPm
 				, importe, cf.getRespuesta().getAutorizacion()
 				, cf.getRespuesta().getRefClient(), cf.getRespuesta().getIdOperacion(), cf.getRespuesta().getFecha());
 		
-			ConexFlow cf2 = ConexFlowPost.execute(connection, ConexFlowConstant.CANCELATION_OP, query, reservation.getId(), getDomain(reservation));
+			ConexFlow cf2 = ConexFlowPost.execute(connection, ConexFlowConstant.CANCELATION_OP, query, reservation.getId(), getDomain(reservation), false);
 			if(cf2 != null){
 				if (cf2.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) 
 					setShowCreditCardPreauthorizationWindow(false);
@@ -1619,6 +1733,22 @@ public class ProjectReservationController extends BasicController implements IPm
 				AonUtil.addErrorMessage(errorMsg);
 				throw new AbortProcessingException(errorMsg);
 			}
+		}
+	}
+
+	
+	public void onConexflowOperationChange(ActionEvent event) {
+		if(getReservationConexFlow().getConexflowOperation().equals(ConexFlowConstant.CANCELATION_OP)){
+			getReservationConexFlow().setShowCancelationOption(true);
+			getReservationConexFlow().setShowRefundOption(false);
+		}
+		else if(getReservationConexFlow().getConexflowOperation().equals(ConexFlowConstant.REFUND_OP)){
+			getReservationConexFlow().setShowCancelationOption(false);
+			getReservationConexFlow().setShowRefundOption(true);
+		}
+		else{
+			getReservationConexFlow().setShowCancelationOption(false);
+			getReservationConexFlow().setShowRefundOption(false);
 		}
 	}
 	

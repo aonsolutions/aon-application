@@ -69,7 +69,7 @@ public class ConexFlowThread extends Thread{
 
 	@Override
 	public void run() {
-		ConexFlow cf = ConexFlowPost.execute(connection, query.getOperacion(), query, getProjectId(), getDomain());
+		ConexFlow cf = ConexFlowPost.execute(connection, query.getOperacion(), query, getProjectId(), getDomain(), false);
 		if(cf != null){
 			if(!cf.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)){
 				LOGGER.error("*Error " + cf.getRespuesta().getResultado() + ": " + cf.getRespuesta().getDesResultado()+".");

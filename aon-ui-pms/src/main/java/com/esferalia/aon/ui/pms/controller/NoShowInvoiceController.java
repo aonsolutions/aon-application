@@ -383,7 +383,7 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 							, getPreauthorizationAmount(), importeOriginal, cf1.getRespuesta().getCF_ExpirationDate(), cf2.getRespuesta().getAutorizacion()
 							, cf2.getRespuesta().getFecha(), cf2.getRespuesta().getIdOperacion());
 						
-						ConexFlow conexFlowConfirmPreauthorization =  ConexFlowPost.execute(connection, ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP, confirmPreauthorizationQuery, reservation.getId(), getDomain(reservation));
+						ConexFlow conexFlowConfirmPreauthorization =  ConexFlowPost.execute(connection, ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP, confirmPreauthorizationQuery, reservation.getId(), getDomain(reservation), false);
 						if(conexFlowConfirmPreauthorization!= null){
 							resultOk = conexFlowConfirmPreauthorization.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
 							if(resultOk){
@@ -399,7 +399,7 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 							, connection.getTpv().toString(), cf1.getRespuesta().getToken()
 							, getPreauthorizationAmount(), reservation.getCustomer().getId().toString());
 				
-						ConexFlow conexFlowCardPayment = ConexFlowPost.execute(connection, ConexFlowConstant.SALE_OP, cardPaymentQuery, reservation.getId(), getDomain(reservation));
+						ConexFlow conexFlowCardPayment = ConexFlowPost.execute(connection, ConexFlowConstant.SALE_OP, cardPaymentQuery, reservation.getId(), getDomain(reservation), false);
 						if(conexFlowCardPayment != null){
 							if(conexFlowCardPayment.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)){
 								// crear factura ....	

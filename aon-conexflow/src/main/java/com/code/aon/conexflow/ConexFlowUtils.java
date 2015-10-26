@@ -329,7 +329,7 @@ public class ConexFlowUtils {
 		return cf;
 	}
 	
-	protected static Query getConexFlowRefundQuery(String empresa, String centro, String tpv, String token, String amount, String cliente) {
+	public static Query getConexFlowRefundQuery(String empresa, String centro, String tpv, String token, String amount, String cliente) {
 		Query query = new Query();
 		query.setOperacion(ConexFlowConstant.REFUND_OP);
 		query.setEmpresa(leftZeros(8, empresa));

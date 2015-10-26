@@ -39,14 +39,17 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.code.aon.AonVersion;
 import com.code.aon.conexflow.ConexFlow.Query;
 import com.code.aon.conexflow.jooq.DBConsults;
 import com.esferalia.aon.occam.api.model.Domain;
 
 public class ConexFlowPost implements  Serializable {
 	
-	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	//private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	private static final String RESULT_OK = "000";
 	private static final String TLS = "TLS";
 	private static final String HTTPS = "https";
@@ -62,20 +65,26 @@ public class ConexFlowPost implements  Serializable {
 		return null;
 	}
 	
-	public static ConexFlow execute(ConexFlowConnection connection, String op, Query query, Integer project, Domain domain) {
+	public static ConexFlow execute(ConexFlowConnection connection, String op, Query query, Integer project, Domain domain, Boolean check) {
 		try {
 			byte[] xmlFile = sendPostHttpClient(connection, op, query);
 			ConexFlow conexFlow = com.code.aon.conexflow.XMLUtils.readXml(xmlFile, query);
-		
+			
 			/* Guardar Operacion en project_attach (response en xml) */
-			if(conexFlow.getRespuesta().getResultado().equals(RESULT_OK)){
+			if(!check && conexFlow.getRespuesta().getResultado().equals(RESULT_OK)){
 				if(!op.equals(ConexFlowConstant.VALIDATE_CARD_OP)){
 					DBConsults.insertConexFlowOperation(domain, xmlFile, project,op);
 					if(op.equals(ConexFlowConstant.SALE_OP))
 						ConexFlowUtils.setVoucher(domain, project, conexFlow.getRespuesta().getVoucher());
 					if(op.equals(ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP))
 						ConexFlowUtils.setVoucher(domain, project, conexFlow);
+					if(op.equals(ConexFlowConstant.CANCELATION_OP)){
+						DBConsults.delete(domain, project, query.getOperacionOriginal());
+					}
 				}
+			}else{
+				if(!conexFlow.getRespuesta().getResultado().equals(RESULT_OK) && op.equals(ConexFlowConstant.PREAUTHORIZATION_OP))
+					DBConsults.insertConexFlowOperation(domain, xmlFile, project,op);
 			}
 			
 			return conexFlow;			
@@ -121,11 +130,11 @@ public class ConexFlowPost implements  Serializable {
 
 		HttpResponse response = client.execute(post);
 		
-		System.out.println("\nSending 'POST' request to URL : " + url);
+		/*System.out.println("\nSending 'POST' request to URL : " + url);
 		System.out.println("Post parameters : " + post.getEntity());
 		System.out.println("Response Code : " + 
                                     response.getStatusLine().getStatusCode());
-		
+		*/
 		BufferedReader rd = new BufferedReader(
                         new InputStreamReader(response.getEntity().getContent()));
 
@@ -141,7 +150,7 @@ public class ConexFlowPost implements  Serializable {
 			result.append(s);
 		}
 		
-		System.out.println(result.toString());
+		//System.out.println(result.toString());
 
 		Document doc = stringToDom(result.toString());
 		return documentToByte(doc);

@@ -88,17 +88,6 @@
 						iconClass="aon-icon-card"
 						actionListener="#{reservation.onCreditCardShow}"
 						reRender="showCreditCardWindow">
-						<f:setPropertyActionListener target="#{reservation.showCreditCardWindow}"
-							value="#{true}" />
-					</aon:menuItem>
-					<aon:menuItem id="reservation-CreditCardPreauthorization"
-						value="#{bundle.pms_preauthorize_card}" immediate="true" 
-						rendered="#{reservation.reservationPermission.creditCardPreauthorizationAllowed}"
-						iconClass="aon-icon-card-auth"
-						actionListener="#{reservation.onCreditCardPreauthorizationShow}"
-						reRender="showCreditCardPreauthorizationWindow">
-						<f:setPropertyActionListener target="#{reservation.showCreditCardPreauthorizationWindow}"
-							value="#{true}" />
 					</aon:menuItem>
 				</ui:define>
 				<ui:define name="beforeSpinToolbarContent">
