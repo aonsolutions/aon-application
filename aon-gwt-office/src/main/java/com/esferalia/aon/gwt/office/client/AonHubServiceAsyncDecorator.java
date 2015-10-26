@@ -1,10 +1,7 @@
 package com.esferalia.aon.gwt.office.client;
 
-import java.util.List;
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
-import com.esferalia.aon.gwt.office.shared.Notice;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -22,10 +19,10 @@ public class AonHubServiceAsyncDecorator implements AonHubServiceAsync {
 	}
 
 	@Override
-	public void getNotices(AsyncCallback<List<Notice>> callback)
+	public void getIssues(AsyncCallback<String> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		aonHubServiceAsync.getNotices(new AsyncCallbackWrapper<List<Notice>>(
+		aonHubServiceAsync.getIssues(new AsyncCallbackWrapper<String>(
 				callback));
 	}
 

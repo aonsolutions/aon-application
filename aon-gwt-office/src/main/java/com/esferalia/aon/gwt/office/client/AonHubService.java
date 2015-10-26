@@ -1,8 +1,5 @@
 package com.esferalia.aon.gwt.office.client;
 
-import java.util.List;
-
-import com.esferalia.aon.gwt.office.shared.Notice;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -13,7 +10,5 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("office")
 public interface AonHubService extends RemoteService {
-	
-	List<Notice> getNotices() throws IllegalArgumentException;
-	
+	String getIssues() throws IllegalArgumentException;
 }

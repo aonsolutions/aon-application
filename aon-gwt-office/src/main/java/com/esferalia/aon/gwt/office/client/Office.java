@@ -18,7 +18,6 @@ import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
 import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
 import com.esferalia.aon.gwt.office.client.values.IssueValue;
-import com.esferalia.aon.gwt.office.shared.Notice;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
@@ -111,6 +110,20 @@ public class Office extends Composite implements EntryPoint,
 		ListDataProvider<IssueSelected> closeIssuesProvider = new ListDataProvider<IssueSelected>();
 		closeIssuesProvider.addDataDisplay(dataGrid);
 		closedIssues = openIssuesProvider.getList();
+		
+		aonHubService.getIssues(new AsyncCallback<String>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("ojo lorito que hay problemas " + caught.getMessage()
+						+ " " + caught.getLocalizedMessage());
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				Window.alert(result.toString());
+			}
+		});
 
 		loadReposList();
 		loadIssuesList();

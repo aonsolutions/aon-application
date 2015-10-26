@@ -1,26 +1,28 @@
 package com.esferalia.aon.gwt.office.server;
 
+import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
+
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.office.client.AonHubService;
-import com.esferalia.aon.gwt.office.shared.Notice;
+import com.esferalia.aon.gwt.office.jooq.JooqNotices;
 
 @SuppressWarnings("serial")
 public class AonHubServiceImpl extends AonRemoteServiceServlet implements
 		AonHubService {
 
 	@Override
-	public List<Notice> getNotices() throws IllegalArgumentException {
+	public String getIssues() throws IllegalArgumentException {
 		Connection conn = null;
 		try {
 			initFacesContext();
-			
-			return null;
-			
-			
+			conn = getConnection();
+			return JooqNotices.getIssues(conn, getParentDomainID(),
+					getDomainID());
+		} catch (SQLException ex) {
+			throw new IllegalArgumentException();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			throw new IllegalArgumentException();
@@ -28,15 +30,11 @@ public class AonHubServiceImpl extends AonRemoteServiceServlet implements
 			if (conn != null) {
 				try {
 					conn.close();
-				} catch (SQLException log) {
-					log.printStackTrace();
+				} catch (SQLException ex) {
+					ex.printStackTrace();
 				}
 			}
-			
+			releaseFacesContext();
 		}
-		
 	}
-	
-	
-
 }

@@ -8,7 +8,7 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class JsIssue extends JavaScriptObject {
-	
+
 	protected JsIssue() {
 	}
 
@@ -74,7 +74,7 @@ public class JsIssue extends JavaScriptObject {
 
 	public final void getCommments(
 			final AsyncCallback<AJSON<JsArray<JsIssueComment>>> callback) {
-		
+
 		final String commentsUrl = getCommentsUrl();
 		GitHub.get(commentsUrl, callback);
 	}
