@@ -1183,6 +1183,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		case "Cantidad": case "Quantity":
 			if(type.equals(Cell.CELL_TYPE_NUMERIC)){
 				Double n = (Double) value;
+				if(n < 0) return null;
 				stock.setQuantity(n);
 			}
 			//else return null;

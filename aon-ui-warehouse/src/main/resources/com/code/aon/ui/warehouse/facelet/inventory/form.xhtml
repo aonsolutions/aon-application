@@ -187,11 +187,15 @@
 							</aon:outputText>
 							<aon:inputText id="InventoryDetail_realQuantity" rendered="#{formEdit}"
 								ajaxSingle="true" reRender="InventoryDetail_costAmount"
-								value="#{controller.to.realQuantity}" required="true" size="10" />
+								value="#{controller.to.realQuantity}" required="true" size="10" >
+								 <f:validateLongRange minimum="0"></f:validateLongRange>	
+							</aon:inputText>
 							<f:facet name="footer">
 								<aon:inputText id="InventoryDetail_realQuantity-New" rendered="#{formNew}"
 									ajaxSingle="true" reRender="InventoryDetail_costAmount-New"
-									value="#{controller.to.realQuantity}" required="true" size="10" />
+									value="#{controller.to.realQuantity}" required="true" size="10">
+									<f:validateLongRange minimum="0"></f:validateLongRange>		
+								</aon:inputText>
 							</f:facet>									
 						</aon:column>
 	
