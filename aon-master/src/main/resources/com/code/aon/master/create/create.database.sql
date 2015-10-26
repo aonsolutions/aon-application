@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.31.0
+# Version: 8.32.1
 # Created by: girazu
-# Creation Date: 06/10/2015 17:55
+# Creation Date: 23/10/2015 10:10
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -1745,7 +1745,7 @@ CREATE TABLE `app_param` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Parametro',
-  `value` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Valor del Parametro',
+  `value` varchar(96) collate latin1_spanish_ci default NULL COMMENT 'Valor del Parametro',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `IDX_APP_PARAM_DOMAIN_NAME` (`domain`,`name`),
   KEY `IDX_APP_PARAM_DOMAIN` (`domain`),
@@ -6121,6 +6121,7 @@ CREATE TABLE `notice` (
   `status` tinyint(2) NOT NULL COMMENT 'Estado del Aviso',
   `type` tinyint(2) NOT NULL COMMENT 'Tipo de Aviso',
   `priority` tinyint(2) NOT NULL COMMENT 'Prioridad del Aviso',
+  `notice` int(4) default NULL COMMENT 'Aviso al que referencia',
   PRIMARY KEY  (`id`),
   KEY `IDX_NOTICE_USER_SENDER` (`sender`),
   KEY `IDX_NOTICE_USER_RECIPIENT` (`recipient`),
@@ -6131,6 +6132,38 @@ CREATE TABLE `notice` (
   CONSTRAINT `FK_NOTICE_USER_SENDER` FOREIGN KEY (`sender`) REFERENCES `user` (`id`),
   CONSTRAINT `FK_NOTICE_WORKGROUP` FOREIGN KEY (`work_group`) REFERENCES `workgroup` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Avisos';
+
+#
+# Structure for the `tag` table : 
+#
+
+CREATE TABLE `tag` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Etiqueta',
+  `type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Etiqueta',
+  `color` varchar(24) collate latin1_spanish_ci default NULL COMMENT 'Color de la Etiqueta',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_TAG_DOMAIN` (`domain`),
+  CONSTRAINT `FK_TAG_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Etiquetas';
+
+#
+# Structure for the `notice_tag` table : 
+#
+
+CREATE TABLE `notice_tag` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `notice` int(4) NOT NULL COMMENT 'Identificador del Aviso',
+  `tag` int(4) NOT NULL COMMENT 'Identificador de la Etiqueta',
+  `start_date` datetime NOT NULL COMMENT 'Fecha y hora de la apertura del Aviso',
+  `end_date` datetime default NULL COMMENT 'Fecha y hora de cierre del Aviso',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_NOTICE_TAG_NOTICE` (`notice`),
+  KEY `IDX_NOTICE_TAG_TAG` (`tag`),
+  CONSTRAINT `FK_NOTICE_TAG_NOTICE` FOREIGN KEY (`notice`) REFERENCES `notice` (`id`),
+  CONSTRAINT `FK_NOTICE_TAG_TAG` FOREIGN KEY (`tag`) REFERENCES `tag` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Avisos y Etiquetas';
 
 #
 # Structure for the `observation` table : 
@@ -6390,20 +6423,6 @@ CREATE TABLE `process_task` (
   CONSTRAINT `FK_PROCESS_TASK_PROCESS_DETAIL` FOREIGN KEY (`process_detail`) REFERENCES `process_detail` (`id`),
   CONSTRAINT `FK_PROCESS_TASK_TASK` FOREIGN KEY (`task`) REFERENCES `task` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Campañas, Actividades y Tareas';
-
-#
-# Structure for the `tag` table : 
-#
-
-CREATE TABLE `tag` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Etiqueta',
-  `type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Etiqueta',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_TAG_DOMAIN` (`domain`),
-  CONSTRAINT `FK_TAG_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Etiquetas';
 
 #
 # Structure for the `product_tag` table : 
@@ -7983,7 +8002,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.31.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.32.1');
 
 COMMIT;
 
