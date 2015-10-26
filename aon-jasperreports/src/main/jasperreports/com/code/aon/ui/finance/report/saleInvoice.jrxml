@@ -110,6 +110,19 @@
 			<line>
 				<reportElement uuid="e7a569b7-5280-4cab-9c5e-482477d16db1" key="line-8" x="553" y="539" width="4" height="1"/>
 			</line>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle" isUsingCache="true" onErrorType="Blank">
+				<reportElement uuid="25bdf0cb-b88b-459d-89a0-71c3e2f2d9d2" key="image-1" positionType="Float" mode="Opaque" x="0" y="0" width="535" height="802" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getBackgroundFile()!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<graphicElement fill="Solid"/>
+				<imageExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getBackgroundFile()]]></imageExpression>
+			</image>
 		</band>
 	</background>
 	<title>

@@ -38,6 +38,7 @@
 				<value>#{companyControllerListener}</value>
 				<value>#{companyLogoControllerListener}</value>
 				<value>#{companySignatureControllerListener}</value>
+				<value>#{companyReportBackgrounfControllerListener}</value>
 				<value>#{companyAppParamControllerListener}</value>
 				<value>#{companySaleInvoiceFooterChildListener}</value>				
 			</list-entries>
@@ -78,6 +79,14 @@
 		<managed-bean-name>companySignatureControllerListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.company.event.CompanySignatureControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>companyReportBackgrounfControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.company.event.CompanyReportBackgroundControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>

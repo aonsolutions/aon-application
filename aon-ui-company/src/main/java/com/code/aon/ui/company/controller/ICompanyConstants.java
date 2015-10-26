@@ -98,4 +98,10 @@ public interface ICompanyConstants {
 	
 	String INVOICE_PRINT_REPORT_KEY = "invoicePrint";	
 	
+	String OFFER_REPORT_KEY = "offer";
+	
+	String DELIVERY_REPORT_KEY = "delivery";
+	
+	String SALES_REPORT_KEY = "sales";
+	
 }

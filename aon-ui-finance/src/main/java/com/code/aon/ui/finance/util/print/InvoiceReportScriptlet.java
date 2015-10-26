@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance.util.print;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -68,6 +69,14 @@ public class InvoiceReportScriptlet extends JRDefaultScriptlet implements Serial
 		} catch (IOException e) {
 			String msg = "ERROR: imposible obtener los datos de la factura al generar su informe";
 			LOGGER.error(msg,e);
+		}
+		return null;
+	}
+	
+	public InputStream getBackgroundFile(){
+		byte[] data = getCompanyController().getSaleInvoiceBackgroundFile().getData();
+		if(data != null && data.length>0){
+			return new ByteArrayInputStream(data);
 		}
 		return null;
 	}
