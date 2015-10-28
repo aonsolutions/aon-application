@@ -330,8 +330,8 @@
 		<hibernate names="id,domain,allotment.id,allotment.hotel.id,allotment.startDate,allotment.endDate,tariff.id,tariff.code"/>
 	</bean>
 	<bean class="com.esferalia.aon.pms.Hotel" sqlName="hotel">
-		<alias names="id,domain,code,scope_id,workPlace_id,workPlace_description,phone,fax,email,web,customer_id,serviceCatalogue_id,active,itemAdvance_id,itemNoshow_id,itemPenalty_id"/>
-		<hibernate names="id,domain,code,scope.id,workPlace.id,workPlace.description,phone,fax,email,web,customer.id,serviceCatalogue.id,active,itemAdvance.id,itemNoshow.id,itemPenalty.id"/>
+		<alias names="id,domain,code,scope_id,workPlace_id,workPlace_description,phone,fax,email,web,customer_id,serviceCatalogue_id,active"/>
+		<hibernate names="id,domain,code,scope.id,workPlace.id,workPlace.description,phone,fax,email,web,customer.id,serviceCatalogue.id,active"/>
 	</bean>
 	<bean class="com.esferalia.aon.pms.ProjectReservation" sqlName="project_reservation">
 		<alias names="id,domain,project_id,hotel_id,hotel_scope_id,hotelReservation_id,hotelReservation_scope_id,code,startDate,startTime,endDate,endTime,seller_id,agency_id,agencyCommissionPercent,agencyCommissionAmount,agencyRebate,company_id,discountPercent,discountAmount,bookingHolder,taxableBase,vatQuota,otherTaxQuota,total,comments,remarks,crs,crsCode,advance,advanceInvoiced,penaltyDays,checkStatus,status,creationUser,creationDate,modificationUser,modificationDate"/>

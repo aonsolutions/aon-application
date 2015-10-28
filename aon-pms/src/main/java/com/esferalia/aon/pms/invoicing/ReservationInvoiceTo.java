@@ -21,7 +21,6 @@ import com.code.aon.registry.Registry;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
-import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class ReservationInvoiceTo implements Serializable {
 	
@@ -41,6 +40,7 @@ public class ReservationInvoiceTo implements Serializable {
 	private ProductType serviceType;
 	private boolean earlyCheckOut;
 	private Date earlyCheckOutDate;
+	private Item penaltyItem;
 	private int penaltyDays;
 	private double penaltyAmount;
 	private PosShift posShift;
@@ -157,6 +157,13 @@ public class ReservationInvoiceTo implements Serializable {
 	}
 	public void setEarlyCheckOutDate(Date earlyCheckOutDate) {
 		this.earlyCheckOutDate = earlyCheckOutDate;
+	}
+
+	public Item getPenaltyItem() {
+		return penaltyItem;
+	}
+	public void setPenaltyItem(Item penaltyItem) {
+		this.penaltyItem = penaltyItem;
 	}
 
 	public int getPenaltyDays() {
@@ -284,8 +291,7 @@ public class ReservationInvoiceTo implements Serializable {
 		}
 
 		public double getTotal() throws ManagerBeanException {
-			ReservationUtils reservationUtils = new ReservationUtils();
-			return CommonUtil.round(taxableBase * (1 + (reservationUtils.getTaxPercentage(item.getProduct().getVat(), to.getIssueDate()) / 100)));
+			return CommonUtil.round(taxableBase * (1 + (item.getProduct().getVat().getDatedPercentage(to.getIssueDate()) / 100)));
 		}
 
 

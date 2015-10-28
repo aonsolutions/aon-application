@@ -12,7 +12,6 @@ import com.code.aon.product.pricing.ItemPricesManager;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.util.DiscountExpression;
 import com.esferalia.aon.entity.master.ProjectReservationServiceDetailDB;
-import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 @Entity
 @Table(name="project_reservation_service_detail")
@@ -42,19 +41,15 @@ public class ProjectReservationServiceDetail extends ProjectReservationServiceDe
 
     @Transient
     public double getSalesPrice() throws ManagerBeanException {
-        ReservationUtils reservationUtils = new ReservationUtils();
-		double vatPercent = reservationUtils.getTaxPercentage(getItem().getProduct().getVat(), getProjectReservationService().getProjectReservation().getStartDate());
-
 		ItemPricesManager pricesManager = new ItemPricesManager();
+		double vatPercent = getItem().getProduct().getVat().getDatedPercentage(getProjectReservationService().getProjectReservation().getStartDate());
 		return pricesManager.getSalesPrice(vatPercent, 0, getPrice());
 	}
 
     @Transient
     public double getTotalPrice() throws ManagerBeanException {
-        ReservationUtils reservationUtils = new ReservationUtils();
-		double vatPercent = reservationUtils.getTaxPercentage(getItem().getProduct().getVat(), getProjectReservationService().getProjectReservation().getStartDate());
-
 		ItemPricesManager pricesManager = new ItemPricesManager();
+		double vatPercent = getItem().getProduct().getVat().getDatedPercentage(getProjectReservationService().getProjectReservation().getStartDate());
 		return pricesManager.getSalesPrice(vatPercent, 0, getTaxableBase());
 	}
 

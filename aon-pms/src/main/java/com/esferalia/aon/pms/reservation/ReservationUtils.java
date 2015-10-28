@@ -37,8 +37,6 @@ import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.TariffAddInfo;
-import com.code.aon.config.Tax;
-import com.code.aon.config.TaxDetail;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.enumeration.CustomerStatus;
@@ -162,57 +160,6 @@ public class ReservationUtils implements IReservationConstants, Serializable {
     	reservationRoom.setForceRefreshBooking(true);
     	BeanManager.getManagerBean(ProjectReservationRoom.class).update(reservationRoom);
     }
-
-    public Map<Integer, Double> getReservationServicesTaxableBasesPerTax(Integer reservationId, Date fromDate, Date toDate) throws ManagerBeanException {
-		Map<Integer, Double> reservationBases = new HashMap<Integer, Double>();
-		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
-		Criteria criteria = new Criteria();
-		String alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID;
-		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), reservationId);
-		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE;
-		criteria.addBetweenExpression(reservationServiceDetailBean.getFieldName(alias), fromDate, toDate);
-		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA;
-		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), false);
-		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ITEM_PRODUCT_VAT_ID;
-		Projection prjVat = Projection.property(reservationServiceDetailBean.getFieldName(alias));
-		Projection prjBase = Projection.property(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_TAXABLE_BASE));
-		for (Object obj : reservationServiceDetailBean.getList(new ProjectionList(prjVat, prjBase), criteria)) {
-			Object[] objs = (Object[])obj;
-			Integer vatId = (Integer)objs[0];
-			double base = (Double)objs[1];
-			if (reservationBases.containsKey(vatId)) {
-				base += reservationBases.get(vatId);
-			}
-			reservationBases.put(vatId, CommonUtil.round(base, 4));
-		}
-		return reservationBases;
-	}
-
-    public Map<Date, Double> getReservationServicesTaxableBasesPerDay(Integer reservationId, Date fromDate, Date toDate, Tax vat) throws ManagerBeanException {
-		Map<Date, Double> reservationBases = new HashMap<Date, Double>();
-		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
-		Criteria criteria = new Criteria();
-		String alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID;
-		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), reservationId);
-		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE;
-		criteria.addBetweenExpression(reservationServiceDetailBean.getFieldName(alias), fromDate, toDate);
-		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ITEM_PRODUCT_VAT_ID;
-		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), vat.getId());
-		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA;
-		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), false);
-		Projection prjDate = Projection.property(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE));
-		Projection prjBase = Projection.property(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_TAXABLE_BASE));
-		for (Object obj : reservationServiceDetailBean.getList(new ProjectionList(prjDate, prjBase), criteria)) {
-			Object[] objs = (Object[])obj;
-			Date date = (Date)objs[0];
-			double base = (Double)objs[1];
-			if (reservationBases.containsKey(date)) {
-				base += reservationBases.get(date);
-			}
-			reservationBases.put(date, CommonUtil.round(base, 4));
-		}
-		return reservationBases;
-	}
 
     public void releaseProjectReservationResources(ProjectReservation reservation, boolean removeService, Date effectiveDate) throws ManagerBeanException {
     	IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
@@ -492,24 +439,8 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		return strategy.getTotalPrice(reservation, customer);
     }
 
-    public double getTaxPercentage(Tax tax, Date date) throws ManagerBeanException {
-		if (date.before(tax.getStartDate())) {
-			IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
-	    	Criteria criteria = new Criteria();
-	    	criteria.addEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_TAX_ID), tax.getId());
-	    	criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_START_DATE), date);
-	    	criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_END_DATE), date);
-	    	Projection prjValue = Projection.property(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_VALUE));
-			List<?> resultList = taxDetailBean.getList(new ProjectionList(prjValue), criteria);
-			if (resultList.size() > 0) {
-   				return (Double)resultList.get(0);
-	    	}
-		}
-    	return tax.getPercentage();
-    }
 
-
-    public Hotel obtainHotel(String hotelCode) throws ManagerBeanException, ReservationException {
+	public Hotel obtainHotel(String hotelCode) throws ManagerBeanException, ReservationException {
 		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_CODE), hotelCode);
@@ -1198,6 +1129,10 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		return null;
 	}
 
+	public Item obtainAdvanceItem() throws ManagerBeanException {
+		return obtainAppParamItem(AppParam.PMS_ADVANCE_ITEM);
+	}
+
 	public Item obtainEarlyCheckOutItem() throws ManagerBeanException {
 		return obtainAppParamItem(AppParam.PMS_EARLY_CHECKOUT_ITEM);
 	}
@@ -1323,30 +1258,12 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		return (NumberUtils.isNumber(penaltyStr)) ? Integer.parseInt(penaltyStr) : null;
 	}
 
-	public double obtainCancellationPenaltyTaxableBase(ProjectReservation reservation) throws ManagerBeanException {
-		int days = (reservation.getPenaltyDays() != null) ? reservation.getPenaltyDays() : obtainCancellationPenaltyDays(reservation, reservation.getStartDate());
-		return obtainPenaltyTaxableBase(reservation, obtainAppParamItem(AppParam.PMS_CANCELLATION_ITEM), days);
-	}
-
 	public double obtainCancellationPenaltyPrice(ProjectReservation reservation) throws ManagerBeanException {
 		int days = (reservation.getPenaltyDays() != null) ? reservation.getPenaltyDays() : obtainCancellationPenaltyDays(reservation, reservation.getStartDate());
-		return obtainPenaltyPrice(reservation, obtainAppParamItem(AppParam.PMS_CANCELLATION_ITEM), days);
-	}
-
-	private double obtainPenaltyTaxableBase(ProjectReservation reservation, Item penaltyItem, int penaltyDays) throws ManagerBeanException {
-		if (penaltyDays < 0) {
-			return reservation.getPenaltyTaxableBase(penaltyItem, reservation.getStartDate(), reservation.getEndDate());
-		} else if (penaltyDays > 0) {
-			return reservation.getPenaltyTaxableBase(penaltyItem, reservation.getStartDate(), DateUtils.addDays(reservation.getStartDate(), penaltyDays-1));
-		} 
-		return 0;
-	}
-
-	private double obtainPenaltyPrice(ProjectReservation reservation, Item penaltyItem, int penaltyDays) throws ManagerBeanException {
-		if (penaltyDays < 0) {
-			return reservation.getPenaltyPrice(penaltyItem, reservation.getStartDate(), reservation.getEndDate());
-		} else if (penaltyDays > 0) {
-			return reservation.getPenaltyPrice(penaltyItem, reservation.getStartDate(), DateUtils.addDays(reservation.getStartDate(), penaltyDays-1));
+		if (days < 0) {
+			return reservation.getCancellationPenaltyPrice(reservation.getStartDate(), reservation.getEndDate());
+		} else if (days > 0) {
+			return reservation.getCancellationPenaltyPrice(reservation.getStartDate(), DateUtils.addDays(reservation.getStartDate(), days-1));
 		} 
 		return 0;
 	}

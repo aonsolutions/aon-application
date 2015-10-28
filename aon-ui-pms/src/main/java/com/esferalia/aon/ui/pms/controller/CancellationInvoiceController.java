@@ -119,6 +119,12 @@ public class CancellationInvoiceController extends BasicController implements IP
 	}
 
 	public void onCancellationInvoiceShow(ActionEvent event) throws ManagerBeanException {
+		if (obtainCancellationItem() == null) {
+			setShowInvoiceWindow(false);
+			String msg = "No se puede Facturar. No esta definido el Producto para Cancelaciones.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 		setCancellationDate(new Date());
 		setCancellationPenalty(null);
 		setCancellationPayMethod(null);

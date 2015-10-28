@@ -235,8 +235,7 @@ public class ProjectReservationServiceController extends LinesController {
 			reservationServiceDetail.setProjectReservationService(reservationService);
 			reservationServiceDetail.setQuantity(getServiceQuantity());
 
-	        ReservationUtils reservationUtils = new ReservationUtils();
-			double vatPercent = reservationUtils.getTaxPercentage(item.getProduct().getVat(), reservationService.getProjectReservation().getDate());
+			double vatPercent = item.getProduct().getVat().getDatedPercentage(reservationService.getProjectReservation().getDate());
 			double price = getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), reservationService.getProjectReservation().getCustomer());
 			setServicePrice(getPricesManager().getSalesPrice(vatPercent, 0, price));
 		}
@@ -252,8 +251,7 @@ public class ProjectReservationServiceController extends LinesController {
 			reservationServiceDetail.setProjectReservationService(reservationService);
 			reservationServiceDetail.setQuantity(getServiceQuantity());
 
-	        ReservationUtils reservationUtils = new ReservationUtils();
-			double vatPercent = reservationUtils.getTaxPercentage(item.getProduct().getVat(), reservationService.getProjectReservation().getDate());
+			double vatPercent = item.getProduct().getVat().getDatedPercentage(reservationService.getProjectReservation().getDate());
 			double price = getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), reservationService.getProjectReservation().getCustomer());
 			setServicePrice(getPricesManager().getSalesPrice(vatPercent, 0, price));
 		} else {
@@ -282,7 +280,7 @@ public class ProjectReservationServiceController extends LinesController {
 
 		ReservationUtils reservationUtils = new ReservationUtils();
 		double quantity = getServiceQuantity();
-		double vatPercent = reservationUtils.getTaxPercentage(reservationService.getItem().getProduct().getVat(), reservationService.getProjectReservation().getDate());
+		double vatPercent = reservationService.getItem().getProduct().getVat().getDatedPercentage(reservationService.getProjectReservation().getDate());
 		double price = getPricesManager().getPrice(vatPercent, 0, getServicePrice(), 4);
 		ProjectReservationRoom reservationRoom = getServiceReservationRoom();
 

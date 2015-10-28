@@ -52,12 +52,13 @@
 					<ui:define name="columns">
 						<aon:column styleClass="aon-editDataTable-iconColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{controller.checkedCount}" />
+								<aon:outputText id="ProjectReservation_checkCount"
+									value="#{controller.checkedCount}" />
 							</f:facet>
 							<aon:selectBooleanCheckbox id="ProjectReservation_check"
 								value="#{controller.rowChecked}"
 								valueChangeListener="#{controller.rowSelected}"
-								reRender="aonContent" />	
+								reRender="ProjectReservation_check,ProjectReservation_checkCount,cancellationInvoiceToolbar" />	
 						</aon:column>
 
 						<aon:column alias="ProjectReservation.hotelReservation.workPlace.description"
@@ -142,7 +143,7 @@
 							<f:facet name="header">
 								<aon:outputText value="AUTO" />
 							</f:facet>
-							<aon:outputText value="#{to.autoNoShowPenaltyPrice}">
+							<aon:outputText value="#{to.autoCancellationPenaltyPrice}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 						</aon:column>
@@ -151,7 +152,7 @@
 							<f:facet name="header">
 								<aon:outputText value="1N" />
 							</f:facet>
-							<aon:outputText value="#{to.firstNightNoShowPenaltyPrice}">
+							<aon:outputText value="#{to.firstNightCancellationPenaltyPrice}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 						</aon:column>
@@ -160,7 +161,7 @@
 							<f:facet name="header">
 								<aon:outputText value="2N" />
 							</f:facet>
-							<aon:outputText value="#{to.firstTwoNightNoShowPenaltyPrice}">
+							<aon:outputText value="#{to.firstTwoNightCancellationPenaltyPrice}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 						</aon:column>

@@ -688,7 +688,7 @@ public class ReservationManager implements IReservationConstants {
 			price = 0;
 		}
 		Date taxDate = reservationService.getProjectReservation().getStartDate();
-		double vatPercent = getReservationUtils().getTaxPercentage(reservationService.getItem().getProduct().getVat(), taxDate);
+		double vatPercent = reservationService.getItem().getProduct().getVat().getDatedPercentage(taxDate);
 		price = CommonUtil.round(price / (1 + vatPercent / 100), 4);
 		if (price != 0 && vatPercent != reservationService.getProjectReservation().getVatPercent()) {
 			multipleVat = true;

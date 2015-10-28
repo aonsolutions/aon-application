@@ -6,6 +6,7 @@ import java.util.Date;
 import com.code.aon.AonVersion;
 import com.code.aon.config.PayMethod;
 import com.code.aon.finance.PosShift;
+import com.code.aon.product.Item;
 import com.code.aon.registry.RegistryBank;
 
 public class AdvanceInvoiceTo implements Serializable {
@@ -15,6 +16,7 @@ public class AdvanceInvoiceTo implements Serializable {
 	private ReservationInvoiceTo reservationInvoiceTo;
 	private boolean guestReservation;
 	private Date issueDate;
+	private Item item;
 	private double percent;
 	private double amount;
 	private PayMethod payMethod;
@@ -41,6 +43,13 @@ public class AdvanceInvoiceTo implements Serializable {
 	}
 	public void setIssueDate(Date issueDate) {
 		this.issueDate = issueDate;
+	}
+
+	public Item getItem() {
+		return item;
+	}
+	public void setItem(Item item) {
+		this.item = item;
 	}
 
 	public double getPercent() {

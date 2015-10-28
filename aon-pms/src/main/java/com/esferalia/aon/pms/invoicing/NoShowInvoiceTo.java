@@ -6,6 +6,7 @@ import java.util.Date;
 import com.code.aon.AonVersion;
 import com.code.aon.config.PayMethod;
 import com.code.aon.finance.PosShift;
+import com.code.aon.product.Item;
 import com.code.aon.registry.RegistryBank;
 
 public class NoShowInvoiceTo implements Serializable {
@@ -14,6 +15,7 @@ public class NoShowInvoiceTo implements Serializable {
 
 	private boolean guestReservation;
 	private Date issueDate;
+	private Item item;
 	private Integer penaltyDays;
 	private PayMethod payMethod;
 	private RegistryBank registryBank;
@@ -33,6 +35,13 @@ public class NoShowInvoiceTo implements Serializable {
 	}
 	public void setIssueDate(Date issueDate) {
 		this.issueDate = issueDate;
+	}
+
+	public Item getItem() {
+		return item;
+	}
+	public void setItem(Item item) {
+		this.item = item;
 	}
 
 	public Integer getPenaltyDays() {

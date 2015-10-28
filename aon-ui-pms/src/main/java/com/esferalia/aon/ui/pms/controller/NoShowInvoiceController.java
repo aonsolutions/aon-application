@@ -14,6 +14,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.conexflow.ConexFlow;
 import com.code.aon.conexflow.ConexFlow.Query;
 import com.code.aon.conexflow.ConexFlowConnection;
@@ -23,6 +24,7 @@ import com.code.aon.conexflow.ConexFlowUtils;
 import com.code.aon.conexflow.jooq.DBConsults;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.product.Item;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.BasicController;
@@ -117,6 +119,12 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 	}
 
 	public void onNoShowInvoiceShow(ActionEvent event) throws ManagerBeanException {
+		if (obtainNoShowItem() == null) {
+			setShowInvoiceWindow(false);
+			String msg = "No se puede Facturar. No esta definido el Producto para No Shows.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 		setNoShowDate(new Date());
 		setNoShowPenalty(null);
 		setNoShowPayMethod(null);
@@ -140,6 +148,7 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 				NoShowInvoiceSearchListener search = (NoShowInvoiceSearchListener)AonUtil.getRegisteredBean(NO_SHOW_INVOICE_SEARCH_LISTENER_NAME);
 				noShowInvoiceTo.setGuestReservation(search.isGuestReservationSearch());
 				noShowInvoiceTo.setIssueDate(getNoShowDate());
+				noShowInvoiceTo.setItem(obtainNoShowItem());
 				noShowInvoiceTo.setPenaltyDays(getNoShowPenalty());
 				noShowInvoiceTo.setPayMethod(getNoShowPayMethod());
 				noShowInvoiceTo.setRegistryBank(getNoShowBank());
@@ -177,6 +186,11 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 			return true;
 		}
 		return false;
+	}
+
+	private Item obtainNoShowItem() throws ManagerBeanException {
+		ReservationUtils reservationUtils = new ReservationUtils(DomainManager.getCurrentDomain());
+		return reservationUtils.obtainNoShowItem();
 	}
 
 	public void onNoShowNoInvoice(ActionEvent event) {

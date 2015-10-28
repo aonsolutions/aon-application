@@ -710,15 +710,6 @@
 		<foreign-key constraint-name="FK_HOTEL_SERVICE_CATALOGUE">
 			<many-to-one property="serviceCatalogue" />
 		</foreign-key>
-		<foreign-key constraint-name="FK_HOTEL_ITEM_ADVANCE">
-			<many-to-one property="itemAdvance" />
-		</foreign-key>
-		<foreign-key constraint-name="FK_HOTEL_ITEM_NO_SHOW">
-			<many-to-one property="itemNoShow" />
-		</foreign-key>
-		<foreign-key constraint-name="FK_HOTEL_ITEM_PENALTY">
-			<many-to-one property="itemPenalty" />
-		</foreign-key>
 	</table>
 
 	<table name="iattach" class="com.esferalia.aon.entity.master.ItemAttachment">

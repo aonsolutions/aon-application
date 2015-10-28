@@ -29,7 +29,6 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
-import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
@@ -38,7 +37,6 @@ import com.code.aon.registry.RegistryBank;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
-import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class AdvanceInvoicing {
 
@@ -62,8 +60,7 @@ public class AdvanceInvoicing {
 	}
 
 	public Invoice invoice(AdvanceInvoiceTo advanceInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
-		Item itemAdvance = reservation.getHotelReservation().getItemAdvance();
-		if (itemAdvance != null && itemAdvance.getId() != null) {
+		if (advanceInvoiceTo.getItem() != null) {
 			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 			boolean mustCloseSession = HibernateUtil.mustCloseSession();
 			String sessionName = HibernateUtil.getSessionFactoryName();
@@ -76,8 +73,9 @@ public class AdvanceInvoicing {
 				Invoice invoice = null;
 				double advanceAmount = getAdvanceAmount(reservation, advanceInvoiceTo.getPercent(), advanceInvoiceTo.getAmount());
 				if (advanceAmount > 0) {
+					advanceInvoiceTo.setAmount(advanceAmount);
 					invoice = createInvoice(advanceInvoiceTo, reservation);
-					advanceAmount = createInvoiceDetails(invoice, reservation, advanceAmount);
+					advanceAmount = createInvoiceDetails(invoice, reservation, advanceInvoiceTo);
 					createInvoiceAddress(invoice, advanceInvoiceTo.getReservationInvoiceTo(), reservation);
 					if (advanceAmount != 0) {
 						createInvoiceFinances(invoice, advanceInvoiceTo, advanceAmount);
@@ -142,16 +140,15 @@ public class AdvanceInvoicing {
 		return (Invoice)invoiceBean.insert(invoice);
 	}
 
-	private double createInvoiceDetails(Invoice invoice, ProjectReservation reservation, double advanceAmount) throws ManagerBeanException {
-		ReservationUtils reservationUtils = new ReservationUtils();
-		double vatPercent = reservationUtils.getTaxPercentage(reservation.getHotelReservation().getItemAdvance().getVat(), invoice.getIssueDate());
-		double taxableBase = CommonUtil.round(advanceAmount / (1 + vatPercent / 100));
+	private double createInvoiceDetails(Invoice invoice, ProjectReservation reservation, AdvanceInvoiceTo advanceInvoiceTo) throws ManagerBeanException {
+		double vatPercent = advanceInvoiceTo.getItem().getVat().getDatedPercentage(invoice.getIssueDate());
+		double taxableBase = CommonUtil.round(advanceInvoiceTo.getAmount() / (1 + vatPercent / 100));
 
 		InvoiceDetail invoiceDetail = new InvoiceDetail();
 		invoiceDetail.setInvoice(invoice);
 		invoiceDetail.setProject(reservation.getProject());
 		invoiceDetail.setLine(1);
-		invoiceDetail.setItem(reservation.getHotelReservation().getItemAdvance());
+		invoiceDetail.setItem(advanceInvoiceTo.getItem());
 		invoiceDetail.setDescription(obtainDetailDescription(reservation.getStartDate(), null, invoiceDetail.getItem().getFullName()));
 		invoiceDetail.setQuantity(1);
 		invoiceDetail.setPrice(taxableBase);
@@ -161,12 +158,12 @@ public class AdvanceInvoicing {
 		invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
 		invoiceDetail.setTaxDataInDetail(true);
 		invoiceDetail.setVatPercent(vatPercent);
-		invoiceDetail.setVatQuota(CommonUtil.round(advanceAmount - taxableBase));
+		invoiceDetail.setVatQuota(CommonUtil.round(advanceInvoiceTo.getAmount() - taxableBase));
 
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		invoiceDetailBean.insert(invoiceDetail);
 
-		return advanceAmount;
+		return advanceInvoiceTo.getAmount();
 	}
 
 	private void createInvoiceAddress(Invoice invoice, ReservationInvoiceTo reservationInvoiceTo, ProjectReservation reservation) 

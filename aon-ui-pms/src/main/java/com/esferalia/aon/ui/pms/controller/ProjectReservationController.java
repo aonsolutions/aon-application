@@ -861,9 +861,10 @@ public class ProjectReservationController extends BasicController implements IPm
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
-			if (reservation.getHotelReservation().getItemAdvance() == null || reservation.getHotelReservation().getItemAdvance().getId() == null) {
+			Item advanceItem = getReservationUtils().obtainAdvanceItem();
+			if (advanceItem == null) {
 				setShowAdvanceInvoiceWindow(false);
-				String msg = "No se puede Facturar. El Hotel no tiene definido un Producto para Anticipos.";
+				String msg = "No se puede Facturar. No esta definido el Producto para Anticipos.";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
@@ -872,6 +873,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			getAdvanceInvoiceTo().setReservationInvoiceTo(getReservationInvoiceTo());
 			getAdvanceInvoiceTo().setGuestReservation(reservation.isGuestHolder());
 			getAdvanceInvoiceTo().setIssueDate(new Date());
+			getAdvanceInvoiceTo().setItem(advanceItem);
 			getAdvanceInvoiceTo().setAmount(reservation.getAdvance());
 			getAdvanceInvoiceTo().setFinanceDate(getAdvanceInvoiceTo().getIssueDate());
 			getAdvanceInvoiceTo().setPosShift(PosUtils.getUserPosShift());

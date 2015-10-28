@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.32.1
+# Version: 8.32.2
 # Created by: girazu
-# Creation Date: 23/10/2015 10:10
+# Creation Date: 27/10/2015 18:00
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -1539,9 +1539,6 @@ CREATE TABLE `hotel` (
   `email` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Email del Hotel',
   `web` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Web del Hotel',
   `service_catalogue` int(4) default NULL COMMENT 'Identificador del Catalogo de Servicios',
-  `item_advance` int(4) default NULL COMMENT 'Identificador del Producto para anticipos',
-  `item_no_show` int(4) default NULL COMMENT 'Identificador del Producto para no-show',
-  `item_penalty` int(4) default NULL COMMENT 'Identificador del Producto para penalizaciones',
   `sheet_changing` tinyint(2) default NULL COMMENT 'Dias entre cambio de sabanas',
   `active` tinyint(1) default '1' COMMENT 'Indica si el Hotel esta activo o no',
   PRIMARY KEY  (`id`),
@@ -1550,13 +1547,7 @@ CREATE TABLE `hotel` (
   KEY `IDX_HOTEL_WORKPLACE` (`workplace`),
   KEY `IDX_HOTEL_DOMAIN` (`domain`),
   KEY `IDX_HOTEL_SERVICE_CATALOGUE` (`service_catalogue`),
-  KEY `IDX_HOTEL_ITEM_ADVANCE` (`item_advance`),
-  KEY `IDX_HOTEL_ITEM_NO_SHOW` (`item_no_show`),
-  KEY `IDX_HOTEL_ITEM_PENALTY` (`item_penalty`),
   CONSTRAINT `FK_HOTEL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_HOTEL_ITEM_ADVANCE` FOREIGN KEY (`item_advance`) REFERENCES `item` (`id`),
-  CONSTRAINT `FK_HOTEL_ITEM_NO_SHOW` FOREIGN KEY (`item_no_show`) REFERENCES `item` (`id`),
-  CONSTRAINT `FK_HOTEL_ITEM_PENALTY` FOREIGN KEY (`item_penalty`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_HOTEL_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
   CONSTRAINT `FK_HOTEL_SERVICE_CATALOGUE` FOREIGN KEY (`service_catalogue`) REFERENCES `catalogue` (`id`),
   CONSTRAINT `FK_HOTEL_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
@@ -8002,7 +7993,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.32.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.32.2');
 
 COMMIT;
 

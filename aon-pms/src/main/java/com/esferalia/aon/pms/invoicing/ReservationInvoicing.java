@@ -284,7 +284,7 @@ public class ReservationInvoicing implements IReservationConstants {
 		int line = 0;
 		double taxableBase = 0;
 
-		ReservationUtils reservationUtils = new ReservationUtils();
+		ReservationUtils reservationUtils = new ReservationUtils(reservation.getDomain());
 		boolean isVatWrong = false;
 		double vatAmount = 0;
 		double advancedAmount = 0;
@@ -330,7 +330,7 @@ public class ReservationInvoicing implements IReservationConstants {
 			if (isVatWrong) {
 				invoiceDetail.setTaxDataInDetail(true);
 				if (vatAmount != 0) {
-					invoiceDetail.setVatPercent(reservationUtils.getTaxPercentage(invoiceDetail.getItem().getProduct().getVat(), invoice.getIssueDate()));
+					invoiceDetail.setVatPercent(invoiceDetail.getItem().getProduct().getVat().getDatedPercentage(invoice.getIssueDate()));
 					double vatQuota = CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceDetail.getVatPercent() / 100);
 					if (isVatWrong && line == reservationServiceDetailList.size()) {
 						vatQuota = vatAmount;
@@ -398,7 +398,7 @@ public class ReservationInvoicing implements IReservationConstants {
 			invoiceDetail.setInvoice(invoice);
 			invoiceDetail.setProject(reservation.getProject());
 			invoiceDetail.setLine(++line);
-			invoiceDetail.setItem(reservation.getHotelReservation().getItemPenalty());
+			invoiceDetail.setItem(reservationInvoiceTo.getPenaltyItem());
 			invoiceDetail.setDescription(obtainPenaltyDetailDescription(reservationInvoiceTo, invoiceDetail.getItem()));
 			invoiceDetail.setQuantity(1);
 			invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
@@ -529,18 +529,7 @@ public class ReservationInvoicing implements IReservationConstants {
 	}
 
 	private String obtainDetailDescription(Date effectiveDate, ProjectReservationRoomDetail reservationRoomDetail, Item item) throws ManagerBeanException {
-		String room = null;
-		if (reservationRoomDetail != null) {
-			IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
-			Criteria criteria = new Criteria();
-			String alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_ID);
-			criteria.addEqualExpression(alias, reservationRoomDetail.getProjectReservationRoom().getId());
-			criteria.addEqualExpression(reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE), effectiveDate);
-			for (ITransferObject ito : reservationRoomDetailBean.getList(criteria)) {
-				room = ((ProjectReservationRoomDetail)ito).getAssetActivity().getAsset().getName();
-				break;
-			}
-		}
+		String room = (reservationRoomDetail != null) ? reservationRoomDetail.getRoomNumber(effectiveDate) : null;
 		return obtainDetailDescription(effectiveDate, room, item.getProduct().getName());
 	}
 

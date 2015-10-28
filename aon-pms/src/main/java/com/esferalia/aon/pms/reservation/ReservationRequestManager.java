@@ -639,7 +639,7 @@ System.out.println(message.toString());
 		reservation.setDiscountPercent(0);
 		reservation.setDiscountAmount(0);
 		reservation.setBookingHolder(requestRoom.getReservationRequest().getBookingHolder());
-		reservation.setVatPercent(getReservationUtils().getTaxPercentage(requestRoom.getItem().getVat(), requestRoom.getReservationRequest().getStartDate()));
+		reservation.setVatPercent(requestRoom.getItem().getVat().getDatedPercentage(requestRoom.getReservationRequest().getStartDate()));
 		reservation.setTotal((requestRoom.getAgreedPrice() == 0) ? CommonUtil.round(requestRoom.getTotalPrice()) : CommonUtil.round(requestRoom.getAgreedPrice()));
 		reservation.setTaxableBase(CommonUtil.round(reservation.getTotal() * (1 - reservation.getVatPercent() / 100)));
 		reservation.setVatQuota(CommonUtil.round(reservation.getTotal() - reservation.getTaxableBase()));

@@ -12,8 +12,10 @@ import org.apache.commons.lang.time.DateUtils;
 import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.product.Item;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.BasicController;
@@ -21,6 +23,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.invoicing.AdvanceInvoiceTo;
 import com.esferalia.aon.pms.invoicing.AdvanceInvoicing;
+import com.esferalia.aon.pms.reservation.ReservationUtils;
 import com.esferalia.aon.ui.pms.event.AdvanceInvoiceSearchListener;
 
 public class AdvanceInvoiceController extends BasicController{
@@ -94,6 +97,12 @@ public class AdvanceInvoiceController extends BasicController{
 	}
 
 	public void onAdvanceInvoiceShow(ActionEvent event) throws ManagerBeanException {
+		if (obtainAdvanceItem() == null) {
+			setShowInvoiceWindow(false);
+			String msg = "No se puede Facturar. No esta definido el Producto para Anticipos.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 		setAdvanceDate(new Date());
 		setPercent(false);
 		setAdvancePercent(0);
@@ -128,6 +137,7 @@ public class AdvanceInvoiceController extends BasicController{
 				AdvanceInvoiceSearchListener search = (AdvanceInvoiceSearchListener) AonUtil.getRegisteredBean(IPmsConstants.ADVANCE_INVOICE_SEARCH_LISTENER_NAME);
 				advanceInvoiceTo.setGuestReservation(search.isGuestReservationSearch());
 				advanceInvoiceTo.setIssueDate(getAdvanceDate());
+				advanceInvoiceTo.setItem(obtainAdvanceItem());
 				advanceInvoiceTo.setPercent(getAdvancePercent());
 				advanceInvoiceTo.setAmount(getAdvanceAmount());
 				advanceInvoiceTo.setPayMethod(getAdvancePayMethod());
@@ -166,6 +176,11 @@ public class AdvanceInvoiceController extends BasicController{
 			return true;
 		}
 		return false;
+	}
+
+	private Item obtainAdvanceItem() throws ManagerBeanException {
+		ReservationUtils reservationUtils = new ReservationUtils(DomainManager.getCurrentDomain());
+		return reservationUtils.obtainAdvanceItem();
 	}
 
 

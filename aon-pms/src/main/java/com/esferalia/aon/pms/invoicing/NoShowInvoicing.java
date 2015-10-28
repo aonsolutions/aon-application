@@ -66,9 +66,8 @@ public class NoShowInvoicing {
 	}
 
 	public Invoice invoice(NoShowInvoiceTo noShowInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
-		Item itemNoShow = reservation.getHotelReservation().getItemNoShow();
 		Integer penaltyDays = (noShowInvoiceTo.getPenaltyDays() != null) ? noShowInvoiceTo.getPenaltyDays() : reservation.getPenaltyDays();
-		if (!reservation.isInvoiced() && itemNoShow != null && itemNoShow.getId() != null && penaltyDays != null) {
+		if (!reservation.isInvoiced() && noShowInvoiceTo.getItem() != null && penaltyDays != null) {
 			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 			boolean mustCloseSession = HibernateUtil.mustCloseSession();
 			String sessionName = HibernateUtil.getSessionFactoryName();
@@ -132,15 +131,17 @@ public class NoShowInvoicing {
 	}
 
 	private double createInvoiceDetails(Invoice invoice, ProjectReservation reservation, NoShowInvoiceTo noShowInvoiceTo) throws ManagerBeanException {
-		ReservationUtils reservationUtils = new ReservationUtils();
+		ReservationUtils reservationUtils = new ReservationUtils(reservation.getDomain());
 
-		double advanceVatPercent = reservationUtils.getTaxPercentage(reservation.getHotelReservation().getItemAdvance().getVat(), invoice.getIssueDate());
 		double advancedAmount = reservation.getAdvancedAmount();
-		double advanceTaxableBase = CommonUtil.round(advancedAmount / (1 + advanceVatPercent / 100), 4);
-		double advanceVatQuota = CommonUtil.round(advancedAmount - CommonUtil.round(advanceTaxableBase));
+		Item advanceItem = (advancedAmount != 0) ? reservationUtils.obtainAdvanceItem() : null;
+		advanceItem = (advancedAmount != 0 && advanceItem == null) ? reservationUtils.obtainDefaultServiceItem() : advanceItem;
+		double advanceVatPercent = (advancedAmount != 0) ? advanceItem.getVat().getDatedPercentage(invoice.getIssueDate()) : 0;
+		double advanceTaxableBase = (advancedAmount != 0) ? CommonUtil.round(advancedAmount / (1 + advanceVatPercent / 100), 4) : 0;
+		double advanceVatQuota = (advancedAmount != 0) ? CommonUtil.round(advancedAmount - CommonUtil.round(advanceTaxableBase)) : 0;
 
-		double penaltyVatPercent = reservationUtils.getTaxPercentage(reservation.getHotelReservation().getItemNoShow().getVat(), invoice.getIssueDate());
 		double penaltyAmount = advancedAmount;
+		double penaltyVatPercent = noShowInvoiceTo.getItem().getVat().getDatedPercentage(invoice.getIssueDate());
 		double penaltyTaxableBase = CommonUtil.round(penaltyAmount / (1 + penaltyVatPercent / 100), 4);
 		if (!noShowInvoiceTo.isKeepAdvance()) {
 			penaltyTaxableBase = getPenaltyTaxableBase(reservation, reservation.getPenaltyDays());
@@ -153,7 +154,7 @@ public class NoShowInvoicing {
 		if (reservation.getPenaltyDays() < 0 || reservation.getPenaltyDays() > 0) {
 			Date fromDate = reservation.getStartDate();
 			Date toDate = (reservation.getPenaltyDays() < 0) ? reservation.getEndDate() : DateUtils.addDays(fromDate, reservation.getPenaltyDays()-1);
-			penaltyTaxableBases = reservation.getReservationTaxableBasesPerDay(fromDate, toDate, reservation.getHotelReservation().getItemNoShow().getVat());
+			penaltyTaxableBases = reservation.getReservationTaxableBasesPerDay(fromDate, toDate, noShowInvoiceTo.getItem().getVat());
 		} else {
 			penaltyTaxableBases.put(reservation.getStartDate(), penaltyTaxableBase);
 		}
@@ -167,7 +168,7 @@ public class NoShowInvoicing {
 				invoiceDetail.setInvoice(invoice);
 				invoiceDetail.setProject(reservation.getProject());
 				invoiceDetail.setLine(++line);
-				invoiceDetail.setItem(reservation.getHotelReservation().getItemNoShow());
+				invoiceDetail.setItem(noShowInvoiceTo.getItem());
 				invoiceDetail.setDescription(obtainDetailDescription(date, null, invoiceDetail.getItem().getFullName()));
 				invoiceDetail.setQuantity(1);
 				invoiceDetail.setPrice(taxableBase);
@@ -191,7 +192,7 @@ public class NoShowInvoicing {
 			invoiceDetail.setInvoice(invoice);
 			invoiceDetail.setProject(reservation.getProject());
 			invoiceDetail.setLine(++line);
-			invoiceDetail.setItem(reservation.getHotelReservation().getItemAdvance());
+			invoiceDetail.setItem(advanceItem);
 			invoiceDetail.setDescription(obtainDetailDescription(reservation.getStartDate(), null, invoiceDetail.getItem().getFullName()));
 			invoiceDetail.setQuantity(-1);
 			invoiceDetail.setPrice(advanceTaxableBase);

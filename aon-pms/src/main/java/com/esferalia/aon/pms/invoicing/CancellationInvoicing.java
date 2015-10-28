@@ -19,7 +19,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Series;
@@ -34,6 +33,7 @@ import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
+import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
@@ -67,7 +67,7 @@ public class CancellationInvoicing {
 
 	public Invoice invoice(CancellationInvoiceTo cancellationInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
 		Integer penaltyDays = (cancellationInvoiceTo.getPenaltyDays() != null) ? cancellationInvoiceTo.getPenaltyDays() : reservation.getPenaltyDays();
-		if (!reservation.isInvoiced() && cancellationInvoiceTo.getItem() != null && cancellationInvoiceTo.getItem().getId() != null && penaltyDays != null) {
+		if (!reservation.isInvoiced() && cancellationInvoiceTo.getItem() != null && penaltyDays != null) {
 			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 			boolean mustCloseSession = HibernateUtil.mustCloseSession();
 			String sessionName = HibernateUtil.getSessionFactoryName();
@@ -131,15 +131,17 @@ public class CancellationInvoicing {
 	}
 
 	private double createInvoiceDetails(Invoice invoice, ProjectReservation reservation, CancellationInvoiceTo cancellationInvoiceTo) throws ManagerBeanException {
-		ReservationUtils reservationUtils = new ReservationUtils();
+		ReservationUtils reservationUtils = new ReservationUtils(reservation.getDomain());
 
-		double advanceVatPercent = reservationUtils.getTaxPercentage(reservation.getHotelReservation().getItemAdvance().getVat(), invoice.getIssueDate());
 		double advancedAmount = reservation.getAdvancedAmount();
-		double advanceTaxableBase = CommonUtil.round(advancedAmount / (1 + advanceVatPercent / 100), 4);
-		double advanceVatQuota = CommonUtil.round(advancedAmount - CommonUtil.round(advanceTaxableBase));
+		Item advanceItem = (advancedAmount != 0) ? reservationUtils.obtainAdvanceItem() : null;
+		advanceItem = (advancedAmount != 0 && advanceItem == null) ? reservationUtils.obtainDefaultServiceItem() : advanceItem;
+		double advanceVatPercent = (advancedAmount != 0) ? advanceItem.getVat().getDatedPercentage(invoice.getIssueDate()) : 0;
+		double advanceTaxableBase = (advancedAmount != 0) ? CommonUtil.round(advancedAmount / (1 + advanceVatPercent / 100), 4) : 0;
+		double advanceVatQuota = (advancedAmount != 0) ? CommonUtil.round(advancedAmount - CommonUtil.round(advanceTaxableBase)) : 0;
 
-		double penaltyVatPercent = reservationUtils.getTaxPercentage(cancellationInvoiceTo.getItem().getVat(), invoice.getIssueDate());
 		double penaltyAmount = advancedAmount;
+		double penaltyVatPercent = cancellationInvoiceTo.getItem().getVat().getDatedPercentage(invoice.getIssueDate());
 		double penaltyTaxableBase = CommonUtil.round(penaltyAmount / (1 + penaltyVatPercent / 100), 4);
 		if (!cancellationInvoiceTo.isKeepAdvance()) {
 			penaltyTaxableBase = getPenaltyTaxableBase(reservation, reservation.getPenaltyDays());
@@ -190,7 +192,7 @@ public class CancellationInvoicing {
 			invoiceDetail.setInvoice(invoice);
 			invoiceDetail.setProject(reservation.getProject());
 			invoiceDetail.setLine(++line);
-			invoiceDetail.setItem(reservation.getHotelReservation().getItemAdvance());
+			invoiceDetail.setItem(advanceItem);
 			invoiceDetail.setDescription(obtainDetailDescription(reservation.getStartDate(), null, invoiceDetail.getItem().getFullName()));
 			invoiceDetail.setQuantity(-1);
 			invoiceDetail.setPrice(advanceTaxableBase);
@@ -338,11 +340,10 @@ public class CancellationInvoicing {
 	}
 
 	private double getPenaltyTaxableBase(ProjectReservation reservation, int penaltyDays) throws ManagerBeanException {
-		AppParam penaltyParam = AppParam.PMS_CANCELLATION_ITEM;
 		if (penaltyDays < 0) {
-			return reservation.getPenaltyTaxableBase(penaltyParam, reservation.getStartDate(), reservation.getEndDate());
+			return reservation.getCancellationPenaltyTaxableBase(reservation.getStartDate(), reservation.getEndDate());
 		} else if (penaltyDays > 0) {
-			return reservation.getPenaltyTaxableBase(penaltyParam, reservation.getStartDate(), DateUtils.addDays(reservation.getStartDate(), penaltyDays-1));
+			return reservation.getCancellationPenaltyTaxableBase(reservation.getStartDate(), DateUtils.addDays(reservation.getStartDate(), penaltyDays-1));
 		} 
 		return 0;
 	}
