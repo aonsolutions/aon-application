@@ -197,6 +197,12 @@ public class PosInvoiceController extends SaleInvoiceController {
 	}
 
 	@Override
+	public void acceptInvoice(ActionEvent event) {
+		super.acceptInvoice(event);
+		FormUtil.getController(getInvoiceDetailControllerName()).onReset(event);
+	}
+
+	@Override
 	public void refresh(ActionEvent event) throws ManagerBeanException {
 		super.refresh(event);
 		FormUtil.getController(getInvoiceDetailControllerName()).onSearch(event);
