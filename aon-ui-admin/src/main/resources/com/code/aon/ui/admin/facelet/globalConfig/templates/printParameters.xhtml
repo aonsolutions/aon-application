@@ -89,7 +89,15 @@
 				
 				<aon:panel id="reportBackgroundGrid">
 					<f:facet name="header">
-						<aon:outputLabel value="#{bundle.company_reports_background}" />
+                        <aon:panelGroup>
+							<aon:outputText value="#{bundle.company_reports_background}" />
+							<aon:div styleClass="aon-margin-left" layout="inline">
+								<aon:outputText value="(Dim: 196 x 276) " />
+								<aon:outputText value="&#160;" styleClass="aon-icon2 aon-icon-info"/>
+								<rich:toolTip styleClass="aon-width-200"
+									value="La imagen se redimensiona a un tamaño de 196 x 276 mm" />
+							</aon:div>
+						</aon:panelGroup>
 					</f:facet>
 					<h:panelGrid columns="2"
 				    	columnClasses="aon-vertical-align-top, aon-vertical-align-top, aon-vertical-align-top, aon-vertical-align-top">
@@ -353,11 +361,11 @@
 				</aon:commandButton>
 			</aon:form>
 		</f:facet>
-		<aon:panel style="overflow:auto; width:550px; height:650px;" >
+		<aon:panel style="overflow:auto; width:580px; height:620px; padding-top:10px;" >
 			<a4j:mediaOutput element="img" mimeType="#{file.mime}"
 				createContent="#{company.createSaleInvoiceBackgroundContent}"
 				value="#{company.saleInvoiceBackgroundFile.key}"
-				cacheable="false" />
+				styleClass="aon-border" cacheable="false" />
 		</aon:panel>
 	</rich:modalPanel>
 
@@ -380,11 +388,11 @@
 				</aon:commandButton>
 			</aon:form>
 		</f:facet>
-		<aon:panel style="overflow:auto; width:550px; height:650px;" >
+		<aon:panel style="overflow:auto; width:580px; height:620px; padding-top:10px;" >
 			<a4j:mediaOutput element="img" mimeType="#{file.mime}"
 				createContent="#{company.createOfferBackgroundContent}"
-				value="#{company.offerBackgroundFile.key}" styleClass="aon-border"
-				cacheable="false" />
+				value="#{company.offerBackgroundFile.key}" 
+				styleClass="aon-border" cacheable="false" />
 		</aon:panel>
 	</rich:modalPanel>
 
@@ -407,7 +415,7 @@
 				</aon:commandButton>
 			</aon:form>
 		</f:facet>
-		<aon:panel style="overflow:auto; width:550px; height:650px;" >
+		<aon:panel style="overflow:auto; width:580px; height:620px; padding-top:10px;" >
 			<a4j:mediaOutput element="img" mimeType="#{file.mime}"
 				createContent="#{company.createDeliveryBackgroundContent}"
 				value="#{company.deliveryBackgroundFile.key}"
@@ -434,11 +442,11 @@
 				</aon:commandButton>
 			</aon:form>
 		</f:facet>
-		<aon:panel style="overflow:auto; width:550px; height:650px;" >
+		<aon:panel style="overflow:auto; width:580px; height:620px; padding-top:10px;" >
 			<a4j:mediaOutput element="img" mimeType="#{file.mime}"
 				createContent="#{company.createSalesBackgroundContent}"
-				value="#{company.salesBackgroundFile.key}" styleClass="aon-border"
-				cacheable="false" />
+				value="#{company.salesBackgroundFile.key}" 
+				styleClass="aon-border" cacheable="false" />
 		</aon:panel>
 	</rich:modalPanel>
 
