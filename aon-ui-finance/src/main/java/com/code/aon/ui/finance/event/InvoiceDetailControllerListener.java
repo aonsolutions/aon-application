@@ -50,6 +50,9 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
 		Invoice invoice = controller.getInvoice();
+		if (invoice.isRecorded()) {
+			throw new ControllerListenerException(AonUtil.getMessage(FINANCE_INVOICE_ALREADY_RECORDED_ERROR));
+		}
 
 		controller.setLongDescription(false);
 		try {
