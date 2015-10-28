@@ -10,7 +10,7 @@
 
 	<aon:panelGroup id="showCreditCardWindow">
 		<aon:if test="#{controller.showCreditCardWindow}">
-			<rich:modalPanel id="creditCardModalPanel" minHeight="240" minWidth="580" 
+			<rich:modalPanel id="creditCardModalPanel" minHeight="280" minWidth="580" 
 				rendered="#{controller.showCreditCardWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
@@ -36,13 +36,6 @@
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div id="creditCardModalToolbar" styleClass="aon-toolbar">
-									<aon:commandButton id="conexflow-accept"
-										styleClass="aon-finding-toolbar-item aon-icon-accept"
-										value="#{bundle.pms_execute_operation}"
-										rendered="#{!reservation.reservationPermission.creditCardEditable}"
-										actionListener="#{controller.onConexflowOperation}"
-										onclick="Richfaces.showModalPanel('waitProccess')"
-										oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 									<aon:commandButton id="creditCard-accept"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										value="#{bundle.aon_save}"
@@ -136,20 +129,20 @@
 											rendered="#{reservation.reservationPermission.creditCardEditable}"	/>
 
 									</aon:panelGrid>
-				
-									<aon:div style="height:10px;"></aon:div>
-									<aon:panelGrid id="menuGrid2" columns="2" dir="true" styleClass="aon-width-all"
+
+									<aon:panelGrid id="menuGrid2" columns="2" dir="true" styleClass="aon-width-all aon-margin-top"
 										columnClasses="aon-panelGrid-odd aon-width-100,aon-panelGrid-even aon-width-auto"
-										rendered="#{controller.reservationConexFlow.conexFlowConnection}">
-										<aon:outputLabel for="ConexflowAmount"
+										rendered="#{reservation.reservationPermission.creditCardOperable and controller.reservationConexFlow.conexFlowActive}">
+
+										<aon:outputLabel for="Conexflow_Amount"
 											value="#{bundle.aon_amount}" />
-										<aon:inputText id="ConexflowAmount" 
+										<aon:inputText id="Conexflow_Amount" 
 											value="#{controller.reservationConexFlow.amount}"
 											required="true" size="10" maxlength="10"/>
 										
 										<aon:outputLabel for="ConexflowOperation"
 											value="#{bundle.aon_operation}" />
-										<aon:div id="ConexflowOperation"  required="true"> 	
+										<aon:div id="ConexflowOperation"  required="true">
 											<aon:selectOneMenu value="#{controller.reservationConexFlow.conexflowOperation}" required="true">
 												<f:selectItem itemDisabled ="#{!controller.reservationConexFlow.showPreauthorization}" itemLabel="#{bundle.pms_preauthorization}" itemValue="P" />
 												<f:selectItem itemDisabled ="#{!controller.reservationConexFlow.showCharge}" itemLabel="#{bundle.pms_conexflow_charge}" itemValue="V" />
@@ -173,7 +166,17 @@
 													<f:selectItem itemDisabled ="#{!controller.reservationConexFlow.confirmPreauthorization}" itemLabel="#{bundle.pms_conexflow_confirm_preauthorization}" itemValue="C" />
 												</aon:selectOneMenu>
 											</aon:if>
+
+											<aon:commandButton id="conexflow-accept"
+												styleClass="aon-commandButton"
+												value="#{bundle.pms_execute_operation}"
+												rendered="#{reservation.reservationPermission.creditCardOperable}"
+												actionListener="#{controller.onConexflowOperation}"
+												onclick="Richfaces.showModalPanel('waitProccess')"
+												oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+
 										</aon:div>
+
 									</aon:panelGrid>
 								</aon:div>
 							</aon:div>

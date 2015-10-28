@@ -5,7 +5,6 @@ import java.io.Serializable;
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.conexflow.ConexFlow;
-import com.code.aon.conexflow.ConexFlowConnection;
 import com.code.aon.conexflow.ConexFlowConstant;
 import com.code.aon.conexflow.jooq.DBConsults;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -14,14 +13,12 @@ import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class ProjectReservationConexFlow implements Serializable {
-	
+
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-	
+
 	private static final String CONEXFLOW_RESULT_OK = "000";
-	
-	
+
 	private ProjectReservation reservation;
-	private ProjectReservationPermission reservationPermission;
 	private String conexflowOperation;
 	private String conexflowOperationCancelation;
 	private String conexflowOperationRefund;
@@ -29,22 +26,12 @@ public class ProjectReservationConexFlow implements Serializable {
 	private Boolean showCancelationOption;
 	private boolean showRefundOption = false;
 	private Domain domain;
-	
-	
-	public ProjectReservationConexFlow(ProjectReservation reservation, Domain domain, ProjectReservationPermission reservationPermission) {
+
+	public ProjectReservationConexFlow(ProjectReservation reservation, Domain domain) {
 		setReservation(reservation);
 		setDomain(domain);
-		setReservationPermission(reservationPermission);
 	}
-	
-	public ProjectReservationPermission getReservationPermission(){
-		return reservationPermission;
-	}
-	
-	public void setReservationPermission(ProjectReservationPermission reservationPermission){
-		this.reservationPermission = reservationPermission;
-	}
-	
+
 	public Domain getDomain(){
 		return domain;
 	}
@@ -67,11 +54,11 @@ public class ProjectReservationConexFlow implements Serializable {
 			setShowCancelationOption(true);
 		return showCancelationOption;
 	}
-	
+
 	public void setShowCancelationOption(boolean value){
 		showCancelationOption = value;
 	}
-	
+
 	public boolean isShowRefundOption() {
 		if(!isShowPreauthorization() && !isShowCharge() && !isShowCancelation()
 				&& !isShowConfirmPreauthorization() && isShowRefund())
@@ -145,15 +132,8 @@ public class ProjectReservationConexFlow implements Serializable {
 		return refund != null && refund.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
 	}
 
-	public boolean isConexFlowConnection(){
-		ConexFlowConnection connection = DBConsults.getConection(getDomain());
-		boolean b= false;
-		try {
-			b = getReservationPermission().isCreditCardEditable();
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		}
-		return !b && connection.getActive();
+	public boolean isConexFlowActive(){
+		return DBConsults.getConection(getDomain()).getActive();
 	}
 	
 	public boolean isShowCharge() {

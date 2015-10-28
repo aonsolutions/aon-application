@@ -9,13 +9,9 @@ import org.apache.commons.lang.time.DateUtils;
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.conexflow.ConexFlowConnection;
-import com.code.aon.conexflow.ConexFlowConstant;
-import com.code.aon.conexflow.jooq.DBConsults;
 import com.code.aon.ui.common.role.BasicRoleManager;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.ProjectReservationService;
@@ -69,10 +65,6 @@ public class ProjectReservationPermission implements Serializable {
 			roleManager = AonUtil.getRoleManager();
 		}
 		return roleManager;
-	}
-
-	private String getDomainName() {
-		return AonUtil.getDomainName();
 	}
 
 	/*************************** GENERIC *******************************/
@@ -310,27 +302,18 @@ public class ProjectReservationPermission implements Serializable {
 	}
 
 	public boolean isCreditCardVisible() throws ManagerBeanException {
-		boolean roleAllowed = isRoleCommercial();
+		boolean roleAllowed = isRoleCommercial() || isRoleFinance();
 		return roleAllowed && reservation.getCreationDate() != null && !reservation.isInvoiced() && !reservation.isNoInvoiceable();
 	}
 
 	public boolean isCreditCardEditable() throws ManagerBeanException {
-		boolean roleAllowed = isRoleCommercial();
+		boolean roleAllowed = isRoleCommercial() || isRoleFinance();
 		return roleAllowed && reservation.getCreationDate() != null && StringUtils.isEmpty(reservation.getCreditCardNumber());
 	}
 
-	public boolean isCreditCardPreauthorizationAllowed() {
-		boolean roleAllowed = isRoleCommercial() || isRoleFinance();
-		ConexFlowConnection connection = DBConsults.getConection(getDomain(reservation));
-		return roleAllowed && connection.getActive() && 
-			DBConsults.getConexFlowLastOperationBool(getDomain(reservation), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
-	}
-	
-	private Domain getDomain(ProjectReservation reservation) {
-		Domain domain = new Domain();
-		domain.setName(getDomainName());
-		domain.setId(reservation.getDomain());
-		return domain;
+	public boolean isCreditCardOperable() throws ManagerBeanException {
+		boolean roleAllowed = isRoleFinance();
+		return roleAllowed && reservation.getCreationDate() != null && StringUtils.isNotEmpty(reservation.getCreditCardNumber());
 	}
 
 	/*************************** RESERVATION GUEST *******************************/

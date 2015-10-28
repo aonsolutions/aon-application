@@ -109,6 +109,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	
 	private ReservationUtils reservationUtils;
 	private ProjectReservationPermission reservationPermission;
+	private ProjectReservationConexFlow reservationConexFlow;
 	private String selectedTab;
 	private String startTime;
 	private String endTime;
@@ -133,7 +134,6 @@ public class ProjectReservationController extends BasicController implements IPm
 	private CardOperationTo cardOperationTo;
 	private List<Integer> multipleReservation;
 	private DataModel invoiceModel;
-	private ProjectReservationConexFlow reservationConexFlow;
 
 	public ReservationUtils getReservationUtils() {
 		if (reservationUtils == null) {
@@ -150,6 +150,17 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 	public void setReservationPermission(ProjectReservationPermission reservationPermission) {
 		this.reservationPermission = reservationPermission;
+	}
+
+	public ProjectReservationConexFlow getReservationConexFlow() {
+		if (reservationConexFlow == null) {
+			ProjectReservation reservation = (ProjectReservation)this.getTo();
+			reservationConexFlow = new ProjectReservationConexFlow(reservation, getDomain(reservation));
+		}
+		return reservationConexFlow;
+	}
+	public void setReservationConexFlow(ProjectReservationConexFlow reservationConexFlow) {
+		this.reservationConexFlow = reservationConexFlow;
 	}
 
 	public String getSelectedTab() {
@@ -328,7 +339,6 @@ public class ProjectReservationController extends BasicController implements IPm
 	public boolean isShowCreditCardWindow() {
 		return showCreditCardWindow;
 	}
-	
 	public void setShowCreditCardWindow(boolean showCreditCardWindow) {
 		this.showCreditCardWindow = showCreditCardWindow;
 	}
@@ -367,17 +377,6 @@ public class ProjectReservationController extends BasicController implements IPm
 		this.invoiceModel = invoiceModel;
 	}
 
-	public ProjectReservationConexFlow getReservationConexFlow() {
-		if (reservationConexFlow == null) {
-			ProjectReservation reservation = (ProjectReservation)this.getTo();
-			reservationConexFlow = new ProjectReservationConexFlow(reservation, getDomain(reservation),getReservationPermission());
-		}
-		return reservationConexFlow;
-	}
-	public void setReservationConexFlow(ProjectReservationConexFlow reservationConexFlow) {
-		this.reservationConexFlow = reservationConexFlow;
-	}
-	
 	public void onLoad(ActionEvent event) throws ManagerBeanException {
 		onEditSearch(event);
 		getCriteria().addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), new Date());
