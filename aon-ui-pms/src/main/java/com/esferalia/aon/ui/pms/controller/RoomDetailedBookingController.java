@@ -36,6 +36,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.CellStyle;
 
 import com.code.aon.AonVersion;
 import com.code.aon.asset.enumeration.ActivityStatus;
@@ -380,20 +381,22 @@ public class RoomDetailedBookingController extends DataScrollerState implements 
 				report.exportColumn(metadata.getColumns().get(2), dayBooking.getRoomCheckin());
 				report.exportColumn(metadata.getColumns().get(3), dayBooking.getRoomCheckout());
 				report.exportColumn(metadata.getColumns().get(4), dayBooking.getRoomBusy());
-				report.exportColumn(metadata.getColumns().get(5), dayBooking.getRoomFree());
-				report.exportColumn(metadata.getColumns().get(6), dayBooking.getRoomBlocked());
-				report.exportColumn(metadata.getColumns().get(7), dayBooking.getRoomTotal());
+				HSSFCell busyCell = (HSSFCell)report.exportColumn(metadata.getColumns().get(5), dayBooking.getRoomBusyPercent().toString() + "%");
+				alignCell(report, busyCell, CellStyle.ALIGN_RIGHT);
+				report.exportColumn(metadata.getColumns().get(6), dayBooking.getRoomFree());
+				report.exportColumn(metadata.getColumns().get(7), dayBooking.getRoomBlocked());
+				report.exportColumn(metadata.getColumns().get(8), dayBooking.getRoomTotal());
 				for (String roomType : roomTypeList) {
 					DayRoomTypeBooking roomTypeBooking = dayBooking.getRoomTypeBookingMap().get(roomType);
-					report.exportColumn(metadata.getColumns().get(8), (roomTypeBooking != null) ? roomTypeBooking.getRoomCheckin() : null);
-					report.exportColumn(metadata.getColumns().get(9), (roomTypeBooking != null) ? roomTypeBooking.getRoomCheckout() : null);
-					report.exportColumn(metadata.getColumns().get(10), (roomTypeBooking != null) ? roomTypeBooking.getRoomBusy() : null);
-					HSSFCell cell = (HSSFCell)report.exportColumn(metadata.getColumns().get(11), (roomTypeBooking != null) ? roomTypeBooking.getRoomFree() : null);
+					report.exportColumn(metadata.getColumns().get(9), (roomTypeBooking != null) ? roomTypeBooking.getRoomCheckin() : null);
+					report.exportColumn(metadata.getColumns().get(10), (roomTypeBooking != null) ? roomTypeBooking.getRoomCheckout() : null);
+					report.exportColumn(metadata.getColumns().get(11), (roomTypeBooking != null) ? roomTypeBooking.getRoomBusy() : null);
+					HSSFCell cell = (HSSFCell)report.exportColumn(metadata.getColumns().get(12), (roomTypeBooking != null) ? roomTypeBooking.getRoomFree() : null);
 					if (roomTypeBooking != null && roomTypeBooking.getRoomFree() < 0) {
 						paintCell(report, cell, HSSFColor.RED.index);
 					}
-					report.exportColumn(metadata.getColumns().get(12), (roomTypeBooking != null) ? roomTypeBooking.getRoomBlocked() : null);
-					report.exportColumn(metadata.getColumns().get(13), (roomTypeBooking != null) ? roomTypeBooking.getRoomTotal() : null);
+					report.exportColumn(metadata.getColumns().get(13), (roomTypeBooking != null) ? roomTypeBooking.getRoomBlocked() : null);
+					report.exportColumn(metadata.getColumns().get(14), (roomTypeBooking != null) ? roomTypeBooking.getRoomTotal() : null);
 				}
 				report.endLine();
 			}
@@ -424,8 +427,9 @@ public class RoomDetailedBookingController extends DataScrollerState implements 
 		report.addHeaderCell("", 0, cellStyleBlack);
 		report.addHeaderCell("", 0, cellStyleBlack);
 		report.addHeaderCell("", 0, cellStyleBlack);
+		report.addHeaderCell("", 0, cellStyleBlack);
 		report.addMergedRegion(0, 0, 0, 1);
-		report.addMergedRegion(0, 0, 2, 7);
+		report.addMergedRegion(0, 0, 2, 8);
 
 		HSSFCellStyle cellStyleBlue = newExcelHeaderStyle(report);
 		cellFont = report.createFont();
@@ -437,7 +441,7 @@ public class RoomDetailedBookingController extends DataScrollerState implements 
 	    cellFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
 		cellFont.setColor(HSSFColor.RED.index);
 	    cellStyleRed.setFont(cellFont);
-		for (int i=0, from=8, to=8; i<roomTypeList.length; i++, from=to) {
+		for (int i=0, from=9, to=9; i<roomTypeList.length; i++, from=to) {
 			report.addHeaderCell(roomTypeList[i], 0, (i<hotelRoomTypesCount) ? cellStyleBlue : cellStyleRed);
 			report.addHeaderCell("", 0, cellStyleBlue);
 			report.addHeaderCell("", 0, cellStyleBlue);
@@ -454,6 +458,7 @@ public class RoomDetailedBookingController extends DataScrollerState implements 
 		metadata.getColumns().add(new ReportColumnMetadata("roomCheckin", Types.INTEGER, AonUtil.getMessage(PMS_CHECKIN_ABBRV).toUpperCase(), 30));
 		metadata.getColumns().add(new ReportColumnMetadata("roomCheckout", Types.INTEGER, AonUtil.getMessage(PMS_CHECKOUT_ABBRV).toUpperCase(), 30));
 		metadata.getColumns().add(new ReportColumnMetadata("roomBusy", Types.INTEGER, AonUtil.getMessage(PMS_OCCUPATION_ABBRV).toUpperCase(), 30));
+		metadata.getColumns().add(new ReportColumnMetadata("roomBusyPercent", Types.VARCHAR, "%" + AonUtil.getMessage(PMS_OCCUPATION_ABBRV).toUpperCase(), 30));
 		metadata.getColumns().add(new ReportColumnMetadata("roomFree", Types.INTEGER, AonUtil.getMessage(PMS_FREE).toUpperCase(), 30));
 		metadata.getColumns().add(new ReportColumnMetadata("roomBlocked", Types.INTEGER, AonUtil.getMessage(PMS_BLOCKED_ABBRV).toUpperCase(), 30));
 		metadata.getColumns().add(new ReportColumnMetadata("roomTotal", Types.INTEGER, AonUtil.getMessage(PMS_TOTAL).toUpperCase(), 30));
@@ -487,6 +492,16 @@ public class RoomDetailedBookingController extends DataScrollerState implements 
 		HSSFFont cellFont = report.createFont();
 	    cellFont.setColor(color);
 	    cellStyle.setFont(cellFont);
+	    cell.setCellStyle(cellStyle);
+	}
+
+	private void alignCell(ExcelReportExporter report, HSSFCell cell, short align) {
+		HSSFCellStyle cellStyle = report.createCellStyle();
+		if (cellStyle == null) {
+			cellStyle = report.createCellStyle();
+		}
+
+	    cellStyle.setAlignment(align);
 	    cell.setCellStyle(cellStyle);
 	}
 
@@ -568,6 +583,10 @@ public class RoomDetailedBookingController extends DataScrollerState implements 
 		}
 		public void setRoomTypeBookingMap(Map<String, DayRoomTypeBooking> roomTypeBookingMap) {
 			this.roomTypeBookingMap = roomTypeBookingMap;
+		}
+
+		public Integer getRoomBusyPercent() {
+			return (roomTotal > 0) ? roomBusy * 100 / roomTotal : 0;
 		}
 
 		public Integer getRoomFree() {

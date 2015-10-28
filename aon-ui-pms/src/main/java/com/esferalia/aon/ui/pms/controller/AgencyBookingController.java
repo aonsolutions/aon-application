@@ -35,6 +35,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.CellStyle;
 
 import com.code.aon.AonVersion;
 import com.code.aon.asset.enumeration.ActivityStatus;
@@ -58,6 +59,7 @@ import com.esferalia.aon.pms.enumeration.BookingStayType;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
+
 /*String PMS_CHECKIN_ABBRV = "report_checkin_abbrv";
 String PMS_CHECKOUT_ABBRV = "report_checkout_abbrv";
 String PMS_ALLOTMENT = "pms_allotment";
@@ -546,14 +548,16 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 				report.exportColumn(metadata.getColumns().get(0), dayBooking.getHotel());
 				report.exportColumn(metadata.getColumns().get(1), dayBooking.getDate());
 				report.exportColumn(metadata.getColumns().get(2), dayBooking.getRoomBusy());
-				report.exportColumn(metadata.getColumns().get(3), dayBooking.getRoomFree());
-				report.exportColumn(metadata.getColumns().get(4), dayBooking.getRoomBlocked());
-				report.exportColumn(metadata.getColumns().get(5), dayBooking.getRoomTotal());
+				HSSFCell busyCell = (HSSFCell)report.exportColumn(metadata.getColumns().get(3), dayBooking.getRoomBusyPercent().toString() + "%");
+				alignCell(report, busyCell, CellStyle.ALIGN_RIGHT);
+				report.exportColumn(metadata.getColumns().get(4), dayBooking.getRoomFree());
+				report.exportColumn(metadata.getColumns().get(5), dayBooking.getRoomBlocked());
+				report.exportColumn(metadata.getColumns().get(6), dayBooking.getRoomTotal());
 				for (String agency : agencyList) {
 					DayAgencyBooking agencyBooking = dayBooking.getAgencyBookingMap().get(agency);
-					report.exportColumn(metadata.getColumns().get(6), (agencyBooking != null) ? agencyBooking.getRoomBusy() : null);
+					report.exportColumn(metadata.getColumns().get(7), (agencyBooking != null) ? agencyBooking.getRoomBusy() : null);
 
-					HSSFCell cancCell = (HSSFCell)report.exportColumn(metadata.getColumns().get(7), (agencyBooking != null) ? agencyBooking.getRoomCancelled() : null);
+					HSSFCell cancCell = (HSSFCell)report.exportColumn(metadata.getColumns().get(8), (agencyBooking != null) ? agencyBooking.getRoomCancelled() : null);
 					if (agencyBooking != null && agencyBooking.getRoomCancelled() > 0) {
 						paintCell(report, cancCell, HSSFColor.RED.index);
 					}
@@ -585,15 +589,16 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 		report.addHeaderCell("", 0, cellStyleBlack);
 		report.addHeaderCell("", 0, cellStyleBlack);
 		report.addHeaderCell("", 0, cellStyleBlack);
+		report.addHeaderCell("", 0, cellStyleBlack);
 		report.addMergedRegion(0, 0, 0, 1);
-		report.addMergedRegion(0, 0, 2, 5);
+		report.addMergedRegion(0, 0, 2, 6);
 
 		HSSFCellStyle cellStyleBlue = newExcelHeaderStyle(report);
 		cellFont = report.createFont();
 	    cellFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
 		cellFont.setColor(HSSFColor.BLUE.index);
 	    cellStyleBlue.setFont(cellFont);
-		for (int i=0, from=6, to=6; i<agencyList.length; i++, from=to) {
+		for (int i=0, from=7, to=7; i<agencyList.length; i++, from=to) {
 			report.addHeaderCell(agencyList[i], 0, cellStyleBlue);
 			report.addHeaderCell("", 0, cellStyleBlue);
 			to = to + 2;
@@ -604,6 +609,7 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 		metadata.getColumns().add(new ReportColumnMetadata("hotel", Types.VARCHAR, AonUtil.getMessage(PMS_HOTEL).toUpperCase(), 30));
 		metadata.getColumns().add(new ReportColumnMetadata("date", Types.DATE, AonUtil.getMessage(DATE).toUpperCase(), 30));
 		metadata.getColumns().add(new ReportColumnMetadata("roomBusy", Types.INTEGER, AonUtil.getMessage(PMS_OCCUPATION_ABBRV).toUpperCase(), 30));
+		metadata.getColumns().add(new ReportColumnMetadata("roomBusyPercent", Types.VARCHAR, "%" + AonUtil.getMessage(PMS_OCCUPATION_ABBRV).toUpperCase(), 30));
 		metadata.getColumns().add(new ReportColumnMetadata("roomFree", Types.INTEGER, AonUtil.getMessage(PMS_FREE).toUpperCase(), 30));
 		metadata.getColumns().add(new ReportColumnMetadata("roomBlocked", Types.INTEGER, AonUtil.getMessage(PMS_BLOCKED_ABBRV).toUpperCase(), 30));
 		metadata.getColumns().add(new ReportColumnMetadata("roomTotal", Types.INTEGER, AonUtil.getMessage(PMS_TOTAL).toUpperCase(), 30));
@@ -633,6 +639,16 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 		HSSFFont cellFont = report.createFont();
 	    cellFont.setColor(color);
 	    cellStyle.setFont(cellFont);
+	    cell.setCellStyle(cellStyle);
+	}
+
+	private void alignCell(ExcelReportExporter report, HSSFCell cell, short align) {
+		HSSFCellStyle cellStyle = report.createCellStyle();
+		if (cellStyle == null) {
+			cellStyle = report.createCellStyle();
+		}
+
+	    cellStyle.setAlignment(align);
 	    cell.setCellStyle(cellStyle);
 	}
 
@@ -696,6 +712,10 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 		}
 		public void setAgencyBookingMap(Map<String, DayAgencyBooking> agencyBookingMap) {
 			this.agencyBookingMap = agencyBookingMap;
+		}
+
+		public Integer getRoomBusyPercent() {
+			return (roomTotal > 0) ? roomBusy * 100 / roomTotal : 0;
 		}
 
 		public Integer getRoomFree() {
