@@ -23,7 +23,7 @@
       </jaxb:bindings>
       <jaxb:bindings node="//xs:element[@name='Liquidacion']">
       	 <jaxb:class/>
-        <inheritance:implements><![CDATA[net.aonsolutions.tgss.creta.jaxb.Liquidacion<LiquidacionMes,CtaCot,Periodo>]]></inheritance:implements> 
+        <inheritance:implements><![CDATA[net.aonsolutions.tgss.creta.jaxb.Liquidacion<LiquidacionMes,CtaCot,Periodo,DatosLiquidacion>]]></inheritance:implements> 
       </jaxb:bindings>
       <jaxb:bindings node="//xs:element[@name='LiquidacionMes']">
       	 <jaxb:class/>
@@ -55,7 +55,11 @@
       </jaxb:bindings>
       <jaxb:bindings node="//xs:element[@name='Dato']">
       	 <jaxb:class/>
-        <inheritance:implements>net.aonsolutions.tgss.creta.jaxb.Dato</inheritance:implements> 
+        <inheritance:implements>net.aonsolutions.tgss.creta.jaxb.DatoSolicitado</inheritance:implements> 
+      </jaxb:bindings>
+      <jaxb:bindings node="//xs:element[@name='DatosLiquidacion']">
+      	 <jaxb:class/>
+        <inheritance:implements>net.aonsolutions.tgss.creta.jaxb.DatosLiquidacion</inheritance:implements> 
       </jaxb:bindings>
     </jaxb:bindings>
 
@@ -71,7 +75,7 @@
       </jaxb:bindings>
       <jaxb:bindings node="//xs:element[@name='Liquidacion']">
       	 <jaxb:class/>
-        <inheritance:implements><![CDATA[net.aonsolutions.tgss.creta.jaxb.Liquidacion<net.aonsolutions.tgss.creta.jaxb.LiquidacionMes,CtaCot,Periodo>]]></inheritance:implements> 
+        <inheritance:implements><![CDATA[net.aonsolutions.tgss.creta.jaxb.Liquidacion<net.aonsolutions.tgss.creta.jaxb.LiquidacionMes,CtaCot,Periodo,net.aonsolutions.tgss.creta.jaxb.DatosLiquidacion>]]></inheritance:implements> 
       </jaxb:bindings>
     </jaxb:bindings>
 
@@ -87,7 +91,7 @@
       </jaxb:bindings>
       <jaxb:bindings node="//xs:element[@name='Liquidacion']">
       	 <jaxb:class/>
-        <inheritance:implements><![CDATA[net.aonsolutions.tgss.creta.jaxb.Liquidacion<net.aonsolutions.tgss.creta.jaxb.LiquidacionMes,CtaCot,Periodo>]]></inheritance:implements> 
+        <inheritance:implements><![CDATA[net.aonsolutions.tgss.creta.jaxb.Liquidacion<net.aonsolutions.tgss.creta.jaxb.LiquidacionMes,CtaCot,Periodo,net.aonsolutions.tgss.creta.jaxb.DatosLiquidacion>]]></inheritance:implements> 
       </jaxb:bindings>
       <jaxb:bindings node="//xs:element[@name='Anho']">
       	<jaxb:javaType name="java.lang.String" />
@@ -106,7 +110,7 @@
       </jaxb:bindings>
       <jaxb:bindings node="//xs:element[@name='Liquidacion']">
       	 <jaxb:class/>
-        <inheritance:implements><![CDATA[net.aonsolutions.tgss.creta.jaxb.Liquidacion<net.aonsolutions.tgss.creta.jaxb.LiquidacionMes,CtaCot,Periodo>]]></inheritance:implements> 
+        <inheritance:implements><![CDATA[net.aonsolutions.tgss.creta.jaxb.Liquidacion<net.aonsolutions.tgss.creta.jaxb.LiquidacionMes,CtaCot,Periodo,net.aonsolutions.tgss.creta.jaxb.DatosLiquidacion>]]></inheritance:implements> 
       </jaxb:bindings>
       <jaxb:bindings node="//xs:element[@name='Anho']">
       	<jaxb:javaType name="java.lang.String" />
@@ -131,7 +135,7 @@
       </jaxb:bindings>
       <jaxb:bindings node="//xs:element[@name='Liquidacion']">
       	 <jaxb:class/>
-        <inheritance:implements><![CDATA[net.aonsolutions.tgss.creta.jaxb.Liquidacion<LiquidacionMes,CtaCot,Periodo>]]></inheritance:implements> 
+        <inheritance:implements><![CDATA[net.aonsolutions.tgss.creta.jaxb.Liquidacion<LiquidacionMes,CtaCot,Periodo,DatosLiquidacion>]]></inheritance:implements> 
       </jaxb:bindings>
       <jaxb:bindings node="//xs:element[@name='LiquidacionMes']">
       	 <jaxb:class/>
@@ -176,6 +180,10 @@
       <jaxb:bindings node="//xs:element[@name='Peculiaridad']">
       	 <jaxb:class/>
         <inheritance:implements>net.aonsolutions.tgss.creta.jaxb.Peculiaridad</inheritance:implements> 
+      </jaxb:bindings>
+      <jaxb:bindings node="//xs:element[@name='DatosLiquidacion']">
+      	 <jaxb:class/>
+        <inheritance:implements>net.aonsolutions.tgss.creta.jaxb.DatosLiquidacion</inheritance:implements> 
       </jaxb:bindings>
     </jaxb:bindings>
 

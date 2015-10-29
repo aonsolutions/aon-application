@@ -23,10 +23,13 @@ public class LiquidacionBuilder {
 	private String cccConcertado;
 	private boolean aceptarBasesAnteriores;
 
+	private List<Dato> datosLiquidacion;
 	private List<LiquidacionMes> liquidacionesMes;
 
 	public LiquidacionBuilder() {
+		datosLiquidacion = new ArrayList<Dato>();
 		liquidacionesMes = new ArrayList<LiquidacionMes>();
+		
 	}
 	
 	
@@ -71,12 +74,22 @@ public class LiquidacionBuilder {
 			liquidacion.setCcc(ctaCotConertado);
 		}
 		
-//		liquidacion.getDatosLiquidacion().setD
+		if ( !datosLiquidacion.isEmpty() ) {
+			liquidacion.setDatosLiquidacion(OBJECT_FACTORY.createDatosLiquidacion());
+			liquidacion.getDatosLiquidacion().getDato().addAll(datosLiquidacion);
+			datosLiquidacion.clear();
+		}
 		
 		liquidacion.getLiquidacionMes().addAll(liquidacionesMes);
 		liquidacionesMes.clear();
 		
 		return liquidacion;
+	}
+	
+	
+	public LiquidacionBuilder addDato ( Dato dato ) {
+		datosLiquidacion.add(dato);
+		return this;
 	}
 	
 	public LiquidacionBuilder addLiquidacionMes(LiquidacionMes liquidacionMes){

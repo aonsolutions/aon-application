@@ -2,7 +2,7 @@ package net.aonsolutions.tgss.creta.jaxb;
 
 import java.util.List;
 
-public interface Liquidacion<L extends LiquidacionMes, C extends CtaCot, P extends Periodo> {
+public interface Liquidacion<L extends LiquidacionMes, C extends CtaCot, P extends Periodo, D extends DatosLiquidacion> {
 	
 	C getCcc();
 	void setCcc(C ccc);
@@ -21,6 +21,9 @@ public interface Liquidacion<L extends LiquidacionMes, C extends CtaCot, P exten
 	P getPeriodoHasta();
 	void setPeriodoHasta(P periodoHasta);
 	
+	default D getDatosLiquidacion(){
+		throw new UnsupportedOperationException();
+	}
 	default List<L> getLiquidacionMes() {
 		throw new UnsupportedOperationException();
 	}
