@@ -75,8 +75,7 @@
 											value="#{bundle.aon_login_user}" />
 										<aon:inputText id="conexFlow_user" 
 												value="#{controller.user}"
-												required="true" size="16" maxlength="16"
-												 onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;">
+												required="true" size="16" maxlength="16">
 											<f:validateLength minimum="16" maximum="16" />
 										</aon:inputText>
 										
