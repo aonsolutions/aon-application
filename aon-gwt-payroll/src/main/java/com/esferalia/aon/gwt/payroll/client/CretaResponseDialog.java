@@ -1,6 +1,10 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.payroll.client.MainCreta.hasTrabajadoresYTramos;
+
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,12 +16,14 @@ import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsRespuesta;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsTrabajadoresYTramos;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -27,10 +33,11 @@ import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.xml.client.XMLParser;
+
+import net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta;
 
 public class CretaResponseDialog extends SelectDialog<CretaService.JsFile> {
-
-	
 
 	// ------------------------------------------------------------------------
 
@@ -69,7 +76,7 @@ public class CretaResponseDialog extends SelectDialog<CretaService.JsFile> {
 		super();
 		this.inFile = inFile;
 		this.outFile = outFile;
-//		exportSubmitComplete();
+		// exportSubmitComplete();
 		this.handler = handler;
 		setWidget(binder.createAndBindUi(this));
 
@@ -85,28 +92,32 @@ public class CretaResponseDialog extends SelectDialog<CretaService.JsFile> {
 
 			@Override
 			void onJsFileOver(JsFile jsFile, NativeEvent event) {
-				CretaResponseDialog.this.onJsFileOver(jsFile.getId(), event.getClientX(), event.getClientY());
+				CretaResponseDialog.this.onJsFileOver(jsFile.getId(),
+						event.getClientX(), event.getClientY());
 			}
 
 			@Override
 			void onJsFileClick(JsFile jsFile, NativeEvent event) {
-				CretaResponseDialog.this.onJsFileClick(jsFile.getId(), event.getClientX(), event.getClientY());
+				CretaResponseDialog.this.onJsFileClick(jsFile.getId(),
+						event.getClientX(), event.getClientY());
 			}
-			
+
 			@Override
 			void onJsFileDblClick(JsFile jsFile, NativeEvent event) {
 			}
-			
+
 			@Override
 			String getIconStyle(JsTrabajadoresYTramos jsTrabajadoresYTramos) {
-				return CretaResponseDialog.this.getIconStyle(jsTrabajadoresYTramos);
+				return CretaResponseDialog.this
+						.getIconStyle(jsTrabajadoresYTramos);
 			}
 
 			@Override
 			String getDescription(JsTrabajadoresYTramos jsTrabajadoresYTramos) {
-				return CretaResponseDialog.this.getDescription(jsTrabajadoresYTramos.getCCC());
+				return CretaResponseDialog.this
+						.getDescription(jsTrabajadoresYTramos.getCCC());
 			}
-			
+
 		}, inFile.getFilename());
 
 		setData(new ArrayList<CretaService.JsFile>(0));
@@ -121,7 +132,7 @@ public class CretaResponseDialog extends SelectDialog<CretaService.JsFile> {
 		fileUpload.click();
 	}
 
-//	UiHandler("acceptButton")
+	// UiHandler("acceptButton")
 	@Override
 	void onAcceptClick(ClickEvent e) {
 		send(outFile);
@@ -152,7 +163,7 @@ public class CretaResponseDialog extends SelectDialog<CretaService.JsFile> {
 		return "";
 	}
 
-	public boolean accept(JsTrabajadoresYTramos t) {
+	public boolean accept(JsFile f) {
 		return true;
 	}
 
@@ -176,9 +187,17 @@ public class CretaResponseDialog extends SelectDialog<CretaService.JsFile> {
 					.add(File.TRABAJADORES_TRAMOS, trabajadoresYTramos);
 
 			List<JsFile> avail = new ArrayList<JsFile>();
-			for (JsTrabajadoresYTramos trabajadorYTramo : trabajadoresYTramosMap.values())
+			for (JsTrabajadoresYTramos trabajadorYTramo : trabajadoresYTramosMap
+					.values())
 				if (accept(trabajadorYTramo))
 					avail.add(trabajadorYTramo);
+
+			for (JsRespuesta respuesta : respuestas)
+				if (!contains(avail, respuesta)
+						&& hasTrabajadoresYTramos(respuesta)
+						&& accept(respuesta))
+					avail.add(respuesta);
+
 			setData(avail);
 
 		} catch (UnsupportedOperationException e) {
@@ -191,6 +210,10 @@ public class CretaResponseDialog extends SelectDialog<CretaService.JsFile> {
 			for (CretaService.JsRespuesta respuesta : respuestas) {
 				respuestasMap.put(respuesta.getCCC() + respuesta.getFrom(),
 						respuesta);
+				if (!contains(avail, respuesta)
+						&& MainCreta.hasTrabajadoresYTramos(respuesta)
+						&& accept(respuesta))
+					avail.add(respuesta);
 			}
 
 			setData(avail);
@@ -198,7 +221,7 @@ public class CretaResponseDialog extends SelectDialog<CretaService.JsFile> {
 
 	}
 	// ------------------------------------------------------------------------
-	
+
 	@Override
 	protected void onAttach() {
 		exportSubmitComplete();
@@ -245,24 +268,30 @@ public class CretaResponseDialog extends SelectDialog<CretaService.JsFile> {
 	}
 
 	private void send(CretaService.File file) {
-		MainCreta.submit(CretaService.CRETA_URL + "/" + file.name(), getSelectedData(), 
-		
-			new AsyncCallback<CretaService.JsBasesResult>() {
-				
-				@Override
-				public void onFailure(Throwable caught) {
-					//TODO:
-					Window.alert(caught.getMessage());
-				}
+		MainCreta.submit(CretaService.CRETA_URL + "/" + file.name(),
+				getDefaults(),
+				getSelectedData(),
 
-				@Override
-				public void onSuccess(JsBasesResult result) {
-					onBases(result);
-				}
-				
+		new AsyncCallback<CretaService.JsBasesResult>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO:
+				Window.alert(caught.getMessage());
 			}
 
+			@Override
+			public void onSuccess(JsBasesResult result) {
+				onBases(result);
+			}
+
+		}
+
 		);
+	}
+
+	private Map<String,String> getDefaults(){
+		return Collections.emptyMap();
 	}
 
 	// ------------------------------------------------------------------------
@@ -277,7 +306,15 @@ public class CretaResponseDialog extends SelectDialog<CretaService.JsFile> {
 
 	// ------------------------------------------------------------------------
 
-	
+	private static boolean contains(List<JsFile> jsFiles, String id) {
+		for (JsFile jsF : jsFiles)
+			if (jsF.getId().equals(id))
+				return true;
+		return false;
+	}
 
+	private static boolean contains(List<JsFile> jsFiles, JsFile jsFile) {
+		return contains(jsFiles, jsFile.getId());
+	}
 
 }

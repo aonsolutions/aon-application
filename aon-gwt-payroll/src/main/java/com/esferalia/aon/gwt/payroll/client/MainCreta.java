@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.code.aon.finance.enumeration.CreditorStatus;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
@@ -22,9 +24,12 @@ import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBasesResult;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEmployee;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsError;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsRespuesta;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsTrabajadoresYTramos;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsUnknownDato;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.ErrorDescription;
 import com.esferalia.aon.gwt.payroll.shared.Province;
@@ -58,16 +63,14 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
-	public static <T extends JsFile> Map<String,T> add(File file, T ts[]){
-		return add(file.name(), ts);
-		
-	}
-
 	public static<T extends JsFile> T []  get(File file, T [] ts){
 		Map<String,T> map = get(file.name());
 		return map.values().toArray(ts);
 	}
 	
+	public static <T extends JsFile> Map<String,T> add(File file, T ts[]){
+		return add(file.name(), ts);
+	}
 
 	static interface Binder extends UiBinder<Widget, MainCreta> {
 	}
@@ -217,6 +220,11 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	}
 	
 	
+	public static boolean hasTrabajadoresYTramos(JsRespuesta jsRespuesta) {
+		JsEmployee jsEmployees [] = jsRespuesta.getEmployees();
+		return jsEmployees != null && jsEmployees.length > 0 ;
+	}
+
 	public static String getIconStyle(JsRespuesta respuesta) {
 		if (respuesta == null)
 			return AON.AON_ICON_ERRORWARNING;
@@ -345,9 +353,16 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
 			detailPanel.setWidget(mergeEditor);
 
-			CretaResults cretaResults = new CretaResults();
+			CretaResults cretaResults = new CretaResults(){
+				@Override
+				protected void onBases(JsBasesResult result) {
+					BaseCretaDetail.this.onBases(result);
+				}
+			};
+			cretaResults.setJsFiles(getSelected());
 			cretaResults.addErrors(result.getErrors());
 			cretaResults.addWarnings(result.getWarnings());
+			cretaResults.addUnknown(result.getUnknown());
 			resultsPanel.setWidget(cretaResults);
 
 			if (result.getErrors().length > 0
@@ -966,7 +981,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	
 	// ------------------------------------------------------------------------
 
-	protected static void submit(String url, Collection<JsFile> jsFiles, final AsyncCallback<JsBasesResult> cb) {
+	protected static void submit(String url, Map<String,String> datas, Collection<JsFile> jsFiles, final AsyncCallback<JsBasesResult> cb) {
 		
 		XMLHttpRequest xmlHttpRequest = XMLHttpRequest.create();
 		
@@ -995,14 +1010,30 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		
 		StringBuffer requestBuffer = new StringBuffer();
 		
-		for ( JsFile jsFile: jsFiles ) {
-
+		for ( Map.Entry<String, String> data: datas.entrySet()) {
 			// We start a new part in our body's request
 			requestBuffer.append("--" + boundary + "\r\n" );
 			// We said it's form data (it could be something else)
 			requestBuffer.append("Content-Disposition: form-data; "
 					// We define the name of the form data
-					+"name=\"" + CretaService.Parameter.FILE +"\"; "
+					+"name=\"" + data.getKey() + "\"\r\n" );
+			// There is always a blank line between the meta-data and the data
+			requestBuffer.append("\r\n");
+
+			requestBuffer.append(data.getValue());
+
+			requestBuffer.append("\r\n");
+			
+		}
+		
+		
+		for ( JsFile jsFile: jsFiles ) {
+			// We start a new part in our body's request
+			requestBuffer.append("--" + boundary + "\r\n" );
+			// We said it's form data (it could be something else)
+			requestBuffer.append("Content-Disposition: form-data; "
+					// We define the name of the form data
+					+"name=\"" + jsFile.getName() +"\"; "
 					// We provide the 'real' name of the file
 					+"filename=\"" +  jsFile.getId() + ".xml" + "\"\r\n");
 			// We provide the mime type of the file
@@ -1023,6 +1054,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	}
 
 	// ------------------------------------------------------------------------
+	
 	
 	private static String getDescription(CCC ccc, String fullccc) {
 		String province = fullccc.substring(4, 6);
@@ -1180,7 +1212,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 	}
 	
-	private static class JsFileComparator<T extends JsFile> implements Comparator<T> {
+	public static class JsFileComparator<T extends JsFile> implements Comparator<T> {
 		
 		public static <T extends JsFile> JsFileComparator<T> newInstace(){
 			return new JsFileComparator<T>();
@@ -1206,8 +1238,6 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	
 	
 	
-	
-	
 	private static void sendAsBinary(XMLHttpRequest xmlHttpRequest, String sData) {
 		int nBytes = sData.length(); 
 		Uint8Array ui8Data = Uint8ArrayNative.create(nBytes);
@@ -1223,5 +1253,9 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	private static native < T extends JavaScriptObject> T eval(String javascript)
 	/*-{
 	   return eval(javascript);
-	}-*/;	
+	}-*/;
+	
+	
+	
+	
 }

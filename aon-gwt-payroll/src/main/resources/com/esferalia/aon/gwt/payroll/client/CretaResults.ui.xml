@@ -3,19 +3,45 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
 
 	<ui:Style>
+	.button-bar {
+		border: none !important;
+		background: none !important;
+	}
+	
+	.button-bar button {
+		float: right;
+		width: 16px;
+		height: 16px;
+		margin-left: 5px;
+		margin-right: 5px;
+	}
+	
+	.button-bar button:first-of-type {
+		margin-right: 15px;
+	}
 	</ui:Style>
 
-	<g:ScrollPanel styleName="aon-width-all">
-		<g:VerticalPanel styleName="aon-width-all">
-	
-			<g:Tree ui:field="errorsTree" styleName="aon-width-all" >
-			</g:Tree>
-	
-			<g:Tree ui:field="warningsTree" styleName="aon-width-all">
-			</g:Tree>
-	
-		</g:VerticalPanel>
-	</g:ScrollPanel>
+	<g:DockLayoutPanel styleName="aon-width-all" ui:field="dockLayoutPanel">
+		<g:north size="26">
+			<g:FlowPanel styleName="{style.button-bar} gwt-MenuBar-horizontal"
+				ui:field="flowPanel">
+				<g:Button styleName="aon-icon-expandAll gwt-MenuItem"
+					ui:field="expandAllButton" />
+				<g:Button styleName="aon-icon-collapseAll gwt-MenuItem"
+					ui:field="collapseAllButton"/>
+				<g:Button styleName="aon-icon-task-start gwt-MenuItem"
+					ui:field="runButton" />
+				<g:Button styleName="aon-icon-delete gwt-MenuItem"
+					ui:field="clearButton" />
+			</g:FlowPanel>
+		</g:north>
+		<g:center>
+			<g:ScrollPanel styleName="aon-width-all">
+				<g:Tree ui:field="eventsTree">
+				</g:Tree>
+			</g:ScrollPanel>
+		</g:center>
+	</g:DockLayoutPanel>
 
 
 </ui:UiBinder>
