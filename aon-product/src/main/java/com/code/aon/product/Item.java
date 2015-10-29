@@ -220,14 +220,18 @@ public class Item extends ItemDB implements IPriceable, IAuditable {
     @Transient
     public boolean isWildCard() throws ManagerBeanException {
     	boolean wildCard = false;
-    	if (getId() != null && getProduct().getId() != null && getProduct().isSerializable()) {
-        	String select = "SELECT MIN(id) wildCard FROM item as item WHERE item.product = " + getProduct().getId();
-        	Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-        	SQLQuery query = session.createSQLQuery(select);
-        	List<?> list = query.addScalar("wildCard", Hibernate.INTEGER).list();
-        	if (!list.isEmpty() && list.get(0) != null) {
-        		wildCard = getId().intValue() == ((Integer)list.get(0)).intValue();
-        	}
+    	if (getProduct().getId() != null && getProduct().isSerializable()) {
+    		if (getId() != null) {
+            	String select = "SELECT MIN(id) wildCard FROM item as item WHERE item.product = " + getProduct().getId();
+            	Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+            	SQLQuery query = session.createSQLQuery(select);
+            	List<?> list = query.addScalar("wildCard", Hibernate.INTEGER).list();
+            	if (!list.isEmpty() && list.get(0) != null) {
+            		wildCard = getId().intValue() == ((Integer)list.get(0)).intValue();
+            	}
+    		} else {
+    			return getProduct().getItemCount() == 0;
+    		}
     	}
     	return wildCard;
     }
