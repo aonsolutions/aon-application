@@ -238,11 +238,16 @@ public class CodeMirror extends JavaScriptObject {
 	public static class Configuration extends JavaScriptObject {
 
 		public static Configuration create() {
-			return JavaScriptObject.createObject().cast();
+			Configuration configuration = JavaScriptObject.createObject().cast();
+			
+			configuration.initGutters();
+			
+			return configuration;
 		}
 
 		protected Configuration() {
 			// TODO Auto-generated constructor stub
+			
 		}
 
 		public final native void setValue(String value)/*-{
@@ -280,6 +285,12 @@ public class CodeMirror extends JavaScriptObject {
 		public final native void setMatchBrackets(boolean matchBrackets)/*-{
 			this.matchBrackets = matchBrackets;
 		}-*/;
+		
+		private final native Configuration initGutters()/*-{
+			this.gutters= ["CodeMirror-linenumbers", "CodeMirror-foldgutter"];
+			return this;
+		}-*/;
+		
 	}
 
 	public static class ModeConfiguration extends JavaScriptObject {

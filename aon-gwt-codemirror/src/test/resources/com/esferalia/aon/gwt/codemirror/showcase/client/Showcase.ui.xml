@@ -47,6 +47,15 @@
 				</g:tab>
 				<g:tab>
 					<g:header size='7'>
+						<b>XML</b>
+						CodeArea
+					</g:header>
+					<aon:CodeArea ui:field='xmlCodeArea' 
+						styleName="{style.width-all} {style.height-all} gwt-TextArea {style.code-area}"
+						lineNumbers="true" matchBrackets="true" mode="text/xml" theme="eclipse" foldGutter="true" />
+				</g:tab>
+				<g:tab>
+					<g:header size='7'>
 						<b>Merge</b>
 						View Demo
 					</g:header>
