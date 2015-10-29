@@ -1,11 +1,15 @@
 package com.esferalia.aon.ui.pms;
 
+import java.io.IOException;
 import java.io.Serializable;
+
+import javax.xml.bind.JAXBException;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.conexflow.ConexFlow;
 import com.code.aon.conexflow.ConexFlowConstant;
+import com.code.aon.conexflow.XMLUtils;
 import com.code.aon.conexflow.jooq.DBConsults;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.pms.ProjectReservation;
@@ -49,9 +53,11 @@ public class ProjectReservationConexFlow implements Serializable {
 	}
 
 	public boolean isShowCancelationOption() {
-		if(showCancelationOption == null) setShowCancelationOption(false);
+		if(!isShowCancelation()) return false;
 		if(showCancelationOption == null && !isShowPreauthorization() && !isShowCharge() && isShowCancelation())
-			setShowCancelationOption(true);
+			return true;
+		if(showCancelationOption == null) setShowCancelationOption(false);
+	
 		return showCancelationOption;
 	}
 
@@ -72,18 +78,32 @@ public class ProjectReservationConexFlow implements Serializable {
 	
 	public Double getAmount() {
 		if(amount != null) return amount;
-		ProjectReservation reservation = getReservation();
-		ReservationCheckStatus rcs = reservation.getCheckStatus();
-		if(rcs.equals(ReservationCheckStatus.CANCEL_INVOICEABLE) || rcs.equals(ReservationCheckStatus.NO_SHOW) || reservation.getAdvance() == 0.0){
-			ReservationUtils reservationUtils = new ReservationUtils(getDomain().getId());
-			try {
-				return (Double) reservationUtils.obtainCancellationPenaltyPrice(getReservation());
-			} catch (ManagerBeanException e) {
-				e.printStackTrace();
-				return 0.0;
+		if(isPreauthorization()){
+			ConexFlow preauthorization = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+			String amountStr = preauthorization.getRespuesta().getImporte();
+			return Double.parseDouble(amountStr);
+		}else if(isCharge()){
+			ConexFlow charge = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.SALE_OP);
+			String amountStr = charge.getRespuesta().getImporte();
+			return Double.parseDouble(amountStr);
+		}else if(isConfirmPreauthorization()){
+			ConexFlow confirmPreauthorization = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
+			String amountStr = confirmPreauthorization.getRespuesta().getImporte();
+			return Double.parseDouble(amountStr);
+		}else{
+			ProjectReservation reservation = getReservation();
+			ReservationCheckStatus rcs = reservation.getCheckStatus();
+			if(rcs.equals(ReservationCheckStatus.CANCEL_INVOICEABLE) || rcs.equals(ReservationCheckStatus.NO_SHOW) || reservation.getAdvance() == 0.0){
+				ReservationUtils reservationUtils = new ReservationUtils(getDomain().getId());
+				try {
+					return (Double) reservationUtils.obtainCancellationPenaltyPrice(getReservation());
+				} catch (ManagerBeanException e) {
+					e.printStackTrace();
+					return 0.0;
+				}
+			} else{
+				return reservation.getAdvance();
 			}
-		} else{
-			return reservation.getAdvance();
 		}
 	}
 
@@ -126,6 +146,12 @@ public class ProjectReservationConexFlow implements Serializable {
 		return preauthorization !=null && preauthorization.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
 	}
 
+	public boolean isCharge() {
+		ProjectReservation reservation = getReservation();
+		ConexFlow charge = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.SALE_OP);
+		return (charge != null && charge.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK));
+	}
+	
 	public boolean isRefund() {
 		ProjectReservation reservation = getReservation();
 		ConexFlow refund = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.REFUND_OP);
@@ -137,9 +163,7 @@ public class ProjectReservationConexFlow implements Serializable {
 	}
 	
 	public boolean isShowCharge() {
-		ProjectReservation reservation =  getReservation();
-		ConexFlow charge = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.SALE_OP);
-		return (charge == null || !charge.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK));
+		return (!isConfirmPreauthorization() && !isCharge());
 	}
 
 	public boolean isShowCancelation() {
@@ -147,34 +171,97 @@ public class ProjectReservationConexFlow implements Serializable {
 	}
 	
 	public boolean isShowConfirmPreauthorization() {
-		ProjectReservation reservation =  getReservation();
-		ConexFlow preauthorization = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
-		ConexFlow confirmPreauthorization = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
-		return (preauthorization != null && preauthorization.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK))
-				&& (confirmPreauthorization == null || !confirmPreauthorization.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK));
+		return isPreauthorization() && !isCharge() && !isConfirmPreauthorization();
 	}
 
 	public boolean isShowPreauthorization() {
-		ProjectReservation reservation =  getReservation();
-		ConexFlow confirmPreauthorization = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
-		
-		return confirmPreauthorization==null || !confirmPreauthorization.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
+		return !isPreauthorization() && !isCharge();
 	}
 
 	public boolean isShowRefund() {
-		ProjectReservation reservation =  getReservation();
-		ConexFlow confirmPreauthorization = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
-		ConexFlow charge = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.SALE_OP);
-		
-		return (confirmPreauthorization != null && confirmPreauthorization.getRespuesta().getResultado().equals("000"))
-				|| (charge !=null && charge.getRespuesta().getResultado().equals("000"));
+		return (isCharge() || isConfirmPreauthorization()) && !isRefund();
 	}
 	
-	public boolean isCharge() {
+	public void onRefund(){
 		ProjectReservation reservation = getReservation();
+		ConexFlow preauthorization = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
 		ConexFlow charge = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.SALE_OP);
-		return (charge != null && charge.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK));
+		ConexFlow confirmPreauthorization = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
+		if(preauthorization != null && preauthorization.getRespuesta().getResultado().equals("000")){
+			preauthorization.getRespuesta().setResultado("XXX");
+			try {
+				DBConsults.insertConexFlowOperation(getDomain(), XMLUtils.writeXml(preauthorization),
+											reservation.getProject().getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+			} catch (JAXBException | IOException e) {
+				e.printStackTrace();
+			}
+		}
+		if(charge != null && charge.getRespuesta().getResultado().equals("000")){
+			charge.getRespuesta().setResultado("XXX");
+			try {
+				DBConsults.insertConexFlowOperation(getDomain(), XMLUtils.writeXml(charge),
+											reservation.getProject().getId(), ConexFlowConstant.SALE_OP);
+			} catch (JAXBException | IOException e) {
+				e.printStackTrace();
+			}
+		}
+		if(confirmPreauthorization != null && confirmPreauthorization.getRespuesta().getResultado().equals("000")){
+			confirmPreauthorization.getRespuesta().setResultado("XXX");
+			try {
+				DBConsults.insertConexFlowOperation(getDomain(), XMLUtils.writeXml(confirmPreauthorization),
+											reservation.getProject().getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
+			} catch (JAXBException | IOException e) {
+				e.printStackTrace();
+			}
+		}
+		showCancelationOption = null;
+		setShowRefundOption(false);
 	}
-
-
+	
+	public void onRefundCancel(){
+		ProjectReservation reservation = getReservation();
+		ConexFlow preauthorization = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+		ConexFlow charge = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.SALE_OP);
+		ConexFlow confirmPreauthorization = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
+		if(preauthorization != null && preauthorization.getRespuesta().getResultado().equals("XXX")){
+			preauthorization.getRespuesta().setResultado("000");
+			try {
+				DBConsults.insertConexFlowOperation(getDomain(), XMLUtils.writeXml(preauthorization),
+											reservation.getProject().getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+			} catch (JAXBException | IOException e) {
+				e.printStackTrace();
+			}
+		}
+		if(charge != null && charge.getRespuesta().getResultado().equals("XXX")){
+			charge.getRespuesta().setResultado("000");
+			try {
+				DBConsults.insertConexFlowOperation(getDomain(), XMLUtils.writeXml(charge),
+											reservation.getProject().getId(), ConexFlowConstant.SALE_OP);
+			} catch (JAXBException | IOException e) {
+				e.printStackTrace();
+			}
+		}
+		if(confirmPreauthorization != null && confirmPreauthorization.getRespuesta().getResultado().equals("XXX")){
+			confirmPreauthorization.getRespuesta().setResultado("000");
+			try {
+				DBConsults.insertConexFlowOperation(getDomain(), XMLUtils.writeXml(confirmPreauthorization),
+											reservation.getProject().getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
+			} catch (JAXBException | IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void onCollect(){
+		ProjectReservation reservation = getReservation();
+		ConexFlow refund = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.REFUND_OP);
+		if(refund != null){
+			DBConsults.delete(getDomain(), reservation.getProject().getId(), ConexFlowConstant.REFUND_OP);
+		}
+		showCancelationOption = null;
+	}
+	
+	public void onCancel(){
+		showCancelationOption = null;
+	}
 }

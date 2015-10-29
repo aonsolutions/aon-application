@@ -66,7 +66,7 @@ public class ConexFlowController extends BasicController {
 			Integer domainId = AonUtil.getAuthPrincipal().getDomainId();
 			ctx = AONContext.getAONContext(domainName, domainId);
 			ApplicationParameter aux1 = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_SERVER_PARAM);
-			return (aux1 != null);
+			return (aux1 != null && aux1.getValue() != null && !aux1.getValue().equals("Null"));
 		}finally {
 			if (ctx != null) ctx.close();
 		}
@@ -116,16 +116,16 @@ public class ConexFlowController extends BasicController {
 			domain.setId(AonUtil.getAuthPrincipal().getDomainId());
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId());
 			ApplicationParameter aux1 = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_SERVER_PARAM);
-			setServer(aux1 != null ? aux1.getValue() : "");			
+			setServer((aux1 != null && !aux1.getValue().equals("Null")) ? aux1.getValue() : "");			
 			ApplicationParameter aux2 = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_SERVER_ACK_PARAM);
-			setServerAck(aux2 != null ? aux2.getValue() : "");
+			setServerAck((aux2 != null && !aux2.getValue().equals("Null")) ? aux2.getValue() : "");
 			ApplicationParameter aux3 = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_USER);
-			setUser(aux3 != null ? aux3.getValue() : "");
+			setUser((aux3 != null && !aux3.getValue().equals("Null")) ? aux3.getValue() : "");
 			//setPayMethods(payMethods(domain));
 			ApplicationParameter aux4 = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_PAYMETHOD);	
 			Integer i;
 			Integer j = 0;
-			if(aux4 != null){
+			if(aux4 != null && !aux4.getValue().equals("Null")){
 				i = Integer.parseInt(aux4.getValue());
 				while(!getPayMethods().get(j).getValue().equals(i)) j++;
 			}
@@ -177,10 +177,11 @@ public class ConexFlowController extends BasicController {
 			setShowConexFlowWindow(true);
 		}
 		else{
-			AppParamUtil.removeParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_SERVER_PARAM);
-			AppParamUtil.removeParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_SERVER_ACK_PARAM);
-			AppParamUtil.removeParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_USER);
-			AppParamUtil.removeParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_PAYMETHOD);
+			String nullString = "Null";
+			AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_SERVER_PARAM, nullString);
+			AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_SERVER_ACK_PARAM, nullString);
+			AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_USER, nullString);
+			AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_PAYMETHOD, nullString);
 		}	
 	}
 	

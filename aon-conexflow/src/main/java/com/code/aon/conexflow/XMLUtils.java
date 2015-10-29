@@ -1,6 +1,7 @@
 package com.code.aon.conexflow;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,11 +24,11 @@ public class XMLUtils {
 		Marshaller marshaller = ctx.createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 		
-		FileOutputStream fos = new FileOutputStream("/tmp/conexFlow.xml");
-		
+		File file = File.createTempFile("conexFlow", ".xml");
+		FileOutputStream fos = new FileOutputStream(file);		
 		marshaller.marshal(conexFlow, fos);
 		fos.close();
-		FileInputStream fis = new FileInputStream("/tmp/conexFLow.xml");
+		FileInputStream fis = new FileInputStream(file);
 
 		return AonIOUtils.toByteArray(fis);
 	}

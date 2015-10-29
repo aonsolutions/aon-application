@@ -416,7 +416,7 @@ public class CancellationInvoiceController extends BasicController implements IP
 						Query cardPaymentQuery = ConexFlowUtils.getConexFlowCardPaymentQuery(
 							connection.getEmpresa().toString(), connection.getCentro().toString()
 							, connection.getTpv().toString(),  cf1.getRespuesta().getToken()
-							, getPreauthorizationAmount(), reservation.getCustomer().getId().toString());
+							, getPreauthorizationAmount(), reservation.getCustomer().getId().toString(), reservation.getCreditCardCvv());
 				
 						ConexFlow conexFlowCardPayment =  ConexFlowPost.execute(connection, ConexFlowConstant.SALE_OP, cardPaymentQuery, reservation.getId(), domain, false);
 						if(conexFlowCardPayment != null){

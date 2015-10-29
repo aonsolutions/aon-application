@@ -1533,16 +1533,16 @@ public class ProjectReservationController extends BasicController implements IPm
 				conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query, reservation.getId(), getDomain(reservation), false);
 				if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) {
 					errorMsg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
-				}
+				} 
 				break;
 			case ConexFlowConstant.SALE_OP: 
 				query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection.getEmpresa().toString()
 						, connection.getCentro().toString(), connection.getTpv().toString(), token, getReservationConexFlow().getAmount()
-						, reservation.getCustomer().getId().toString());
+						, reservation.getCustomer().getId().toString(), reservation.getCreditCardCvv());
 				conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.	SALE_OP, query, reservation.getId(), getDomain(reservation), false);
-				if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) {
+				if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK))
 					errorMsg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
-				}
+				else getReservationConexFlow().onCollect();
 				break;
 			case ConexFlowConstant.CANCELATION_OP: 
 				ConexFlow cf2 = null;
@@ -1561,9 +1561,15 @@ public class ProjectReservationController extends BasicController implements IPm
 						, cf2.getRespuesta().getAutorizacion(), reservation.getCustomer().getId().toString()
 						, cf2.getRespuesta().getIdOperacion(), cf2.getRespuesta().getFecha());
 				conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.	CANCELATION_OP, query, reservation.getId(), getDomain(reservation), false);
-				if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) {
+				
+					
+				if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) 
 					errorMsg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
+				else if(getReservationConexFlow().getConexflowOperationCancelation().equals(ConexFlowConstant.REFUND_OP)){
+					getReservationConexFlow().onRefundCancel();
 				}
+				if(conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK))
+					getReservationConexFlow().onCancel();
 				break;
 			case ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP: 
 				ConexFlow cf3 =  DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
@@ -1574,9 +1580,9 @@ public class ProjectReservationController extends BasicController implements IPm
 						, cf3.getRespuesta().getAutorizacion(), cf3.getRespuesta().getFecha()
 						, cf3.getRespuesta().getIdOperacion());
 				conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP, query, reservation.getId(), getDomain(reservation), false);
-				if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) {
+				if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) 
 					errorMsg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
-				}
+				else getReservationConexFlow().onCollect();
 				break;
 			case ConexFlowConstant.REFUND_OP: 
 				//TODO TENER ENCUENTA EL CARGO O LA CONFIRM PREAUTHO..
@@ -1584,9 +1590,9 @@ public class ProjectReservationController extends BasicController implements IPm
 						, connection.getCentro().toString(), connection.getTpv().toString()
 						, token, getReservationConexFlow().getAmount().toString(), reservation.getCustomer().getId().toString());
 				conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.REFUND_OP, query, reservation.getId(), getDomain(reservation), false);
-				if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) {
+				if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) 
 					errorMsg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
-				}
+				else getReservationConexFlow().onRefund();
 				break;
 			default:
 				

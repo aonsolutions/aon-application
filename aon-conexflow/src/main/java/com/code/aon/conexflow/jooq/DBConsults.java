@@ -161,7 +161,7 @@ public class DBConsults {
 			ApplicationParameter paymethod = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_PAYMETHOD);
 			
 			ConexFlowConnection cfc = new ConexFlowConnection();
-			cfc.setActive(server != null);
+			cfc.setActive(server != null && server.getValue() != null && !server.getValue().equals("Null"));
 			if(cfc.getActive()){
 				cfc.setServer(server.getValue());
 				cfc.setServerAck(serverAck.getValue());

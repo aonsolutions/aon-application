@@ -66,11 +66,12 @@ public class ConexFlowUtils {
 		return cf;
 	}
 	
-	public static Query getConexFlowCardPaymentQuery(String empresa, String centro, String tpv, String token, Double amount, String cliente) {
+	public static Query getConexFlowCardPaymentQuery(String empresa, String centro, String tpv, String token, Double amount, String cliente, String cvv) {
 		Integer eur = amount.intValue();
 		Double cent = (amount - eur.doubleValue()) * 100;
 		
 		Integer importe = (eur * 100) + cent.intValue(); 
+		if(cvv == null) cvv = "";
 		
 		Query query = new Query();
 		query.setOperacion(ConexFlowConstant.SALE_OP);
@@ -330,6 +331,11 @@ public class ConexFlowUtils {
 	}
 	
 	public static Query getConexFlowRefundQuery(String empresa, String centro, String tpv, String token, String amount, String cliente) {
+		Double d = Double.parseDouble(amount);
+		Integer eur = d.intValue();
+		Double cent = (d - eur.doubleValue()) * 100;
+		Integer importe = (eur * 100) + cent.intValue(); 
+		
 		Query query = new Query();
 		query.setOperacion(ConexFlowConstant.REFUND_OP);
 		query.setEmpresa(leftZeros(8, empresa));
@@ -341,7 +347,7 @@ public class ConexFlowUtils {
 		query.setSoporte("K");
 		query.setDocumento(token);
 		query.setFechaCad("");
-		query.setImporte(amount);
+		query.setImporte(importe.toString());
 		query.setMoneda("EUR");
 		query.setRefCliente(leftZeros(20, cliente));
 		query.setInfoAdicionalEntrada("");
