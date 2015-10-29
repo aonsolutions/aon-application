@@ -8,6 +8,10 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class JsIssue extends JavaScriptObject {
+	
+	public static JavaScriptObject create() {
+		return JavaScriptObject.createObject().cast();
+	}
 
 	protected JsIssue() {
 	}
@@ -22,10 +26,6 @@ public class JsIssue extends JavaScriptObject {
 
 	public final native String getUrl() /*-{
 		return this.url;
-	}-*/;
-
-	public final native String getHtmlUrl() /*-{
-		return this.html_url;
 	}-*/;
 
 	public final native String getState() /*-{

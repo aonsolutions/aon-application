@@ -4,6 +4,10 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 
 public class JSON<T extends JavaScriptObject> extends JavaScriptObject {
+	
+	public static JavaScriptObject create() {
+		return JavaScriptObject.createObject().cast();
+	}
 
 	protected JSON(){}
 	

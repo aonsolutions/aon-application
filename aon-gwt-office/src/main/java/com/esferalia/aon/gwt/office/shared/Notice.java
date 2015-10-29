@@ -42,6 +42,11 @@ public class Notice implements Serializable, HasId<Integer> {
 		public String getDescription(int index) {
 			return DESCRIPTIONS.get(index);
 		}
+		
+		
+		public static Type valueOf(int i) {
+			return Type.values()[i];
+		}
 	}
 
 	private Integer id;

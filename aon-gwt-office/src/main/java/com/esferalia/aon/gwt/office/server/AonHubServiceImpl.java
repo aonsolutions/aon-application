@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.office.client.AonHubService;
-import com.esferalia.aon.gwt.office.jooq.JooqNotices;
+import com.esferalia.aon.gwt.office.jooq.JooqAonHub;
 
 @SuppressWarnings("serial")
 public class AonHubServiceImpl extends AonRemoteServiceServlet implements
@@ -19,8 +19,9 @@ public class AonHubServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			initFacesContext();
 			conn = getConnection();
-			return JooqNotices.getIssues(conn, getParentDomainID(),
-					getDomainID());
+			return null;
+//			return JooqAonHub.getIssues(conn, getParentDomainID(),
+//					getDomainID());
 		} catch (SQLException ex) {
 			throw new IllegalArgumentException();
 		} catch (Exception ex) {

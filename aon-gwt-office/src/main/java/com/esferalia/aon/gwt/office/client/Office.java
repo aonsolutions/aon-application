@@ -18,11 +18,20 @@ import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
 import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
 import com.esferalia.aon.gwt.office.client.values.IssueValue;
+import com.google.api.client.http.HttpMethods;
+import com.google.api.client.http.HttpRequest;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -38,6 +47,8 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.xhr.client.ReadyStateChangeHandler;
+import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class Office extends Composite implements EntryPoint,
 		IssueGrid.Listener, LeftButtonsMenuBar.LeftMenuBarListener,
@@ -47,6 +58,8 @@ public class Office extends Composite implements EntryPoint,
 
 	interface OfficeUiBinder extends UiBinder<Widget, Office> {
 	}
+
+	private static final String URL = GWT.getModuleBaseURL() + "OfficeSerlvet";
 
 	@UiField
 	DeckLayoutPanel deckPanel;
@@ -110,20 +123,79 @@ public class Office extends Composite implements EntryPoint,
 		ListDataProvider<IssueSelected> closeIssuesProvider = new ListDataProvider<IssueSelected>();
 		closeIssuesProvider.addDataDisplay(dataGrid);
 		closedIssues = openIssuesProvider.getList();
+
+		// *******************************************
+		// *******************************************
+		// *******************************************
+		// *******************************************
 		
-		aonHubService.getIssues(new AsyncCallback<String>() {
+		try {
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL);
+			try {
+				builder.sendRequest(null, new RequestCallback() {
 
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("ojo lorito que hay problemas " + caught.getMessage()
-						+ " " + caught.getLocalizedMessage());
+					public void onError(Request request, Throwable exception) {
+						Window.alert("On Error: " + exception.getMessage());
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							Window.alert("Estoy aqui: " + response.getText());
+							JsArray<JsIssue> issues = eval(response.getText());
+							Window.alert(issues.toString());
+							
+							for (int x = 0; x < issues.length(); x++)
+								Window.alert(" " + issues.get(x).getId());
+
+						} else {
+							Window.alert("2: " + response.getStatusText());
+						}
+					}
+				});
+			} catch (RequestException e) {
+				Window.alert("Exception: " + e.getMessage());
 			}
 
-			@Override
-			public void onSuccess(String result) {
-				Window.alert(result.toString());
-			}
-		});
+		} catch (Exception ex) {
+			Window.alert(ex.getMessage() + " " + ex.getLocalizedMessage());
+		}
+
+		// *******************************************
+		// *******************************************
+		// *******************************************
+		// *******************************************
+
+//		aonHubService.getIssues(new AsyncCallback<String>() {
+//
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				Window.alert("ojo lorito que hay problemas "
+//						+ caught.getMessage() + " "
+//						+ caught.getLocalizedMessage());
+//			}
+//
+//			@Override
+//			public void onSuccess(String result) {
+//
+//				Window.alert(result);
+//
+//				try {
+//
+//					JsArray<JsIssue> issues = JsonUtils.safeEval(result);
+//					Window.alert(issues.toString());
+//					for (int x = 0; x < issues.length(); x++)
+//						Window.alert(issues.get(x).getTitle());
+//
+//				} catch (IllegalArgumentException ex) {
+//					Window.alert(ex.getMessage());
+//				} catch (Exception ex) {
+//					Window.alert(ex.getMessage() + " "
+//							+ ex.getLocalizedMessage());
+//				}
+//			}
+//		});
 
 		loadReposList();
 		loadIssuesList();
@@ -140,8 +212,8 @@ public class Office extends Composite implements EntryPoint,
 	}
 
 	@Override
-	public void onSelectionChangeHandler(SelectionChangeEvent event) {	
-		
+	public void onSelectionChangeHandler(SelectionChangeEvent event) {
+
 	}
 
 	// ******************************************************************
@@ -461,5 +533,10 @@ public class Office extends Composite implements EntryPoint,
 			com.esferalia.aon.gwt.office.client.values.issues.IssueValue issueValue) {
 		createAnIssue(repo, issueValue);
 	}
+
+	private static native <T extends JavaScriptObject> T eval(String javascript)
+	/*-{
+		return eval(javascript);
+	}-*/;
 
 }
