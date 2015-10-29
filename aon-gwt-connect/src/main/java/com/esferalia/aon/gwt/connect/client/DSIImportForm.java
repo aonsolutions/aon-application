@@ -153,7 +153,7 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 		this.dockPanel.setVisible(false);
 		this.importsPanel = new ResultsPanel();
 		this.loadsPanel = new ResultsPanel();
-		this.loadsPanel.clearFlowPanel();
+		//this.loadsPanel.clearFlowPanel();
 
 		this.initGrid();
 		this.initFileUpload();
