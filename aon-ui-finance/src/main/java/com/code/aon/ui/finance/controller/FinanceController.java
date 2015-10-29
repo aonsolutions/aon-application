@@ -904,7 +904,7 @@ public class FinanceController extends FinanceListController implements IFinance
 			Criteria criteria = new Criteria();
 			ProjectionList projectionList = new ProjectionList(Projection.max(getFieldName(IEntityAlias.FINANCE_ID)));
 			for (Object obj : getManagerBean().getList(projectionList, criteria)) {
-				maxId = (Integer)obj;
+				maxId = (obj != null) ? (Integer)obj : maxId;
 			}
 
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
