@@ -19,6 +19,8 @@
 	<stylesheet src="codemirror/theme/aon.css"/>
 	<!-- stylesheets merge them -->
 	<stylesheet src="codemirror/addon/merge/merge.css"/>
+	<!-- stylesheets fold them -->
+	<stylesheet src="codemirror/addon/fold/foldgutter.css"/>
 
 	<!-- Chart Tools -->
 	<inherits name='com.google.gwt.visualization.Visualization'/>

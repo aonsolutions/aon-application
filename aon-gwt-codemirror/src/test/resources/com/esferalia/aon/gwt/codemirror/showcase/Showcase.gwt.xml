@@ -47,6 +47,9 @@
 	<!-- stylesheets merge them -->
 	<stylesheet src="codemirror/addon/merge/merge.css"/>
 
+	<!-- stylesheets fold them -->
+	<stylesheet src="codemirror/addon/fold/foldgutter.css"/>
+
 	<!-- Specify the app entry point class. -->
 	<entry-point
 		class="com.esferalia.aon.gwt.codemirror.showcase.client.Showcase" />
