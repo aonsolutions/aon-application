@@ -1249,7 +1249,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 			String dueHours = penaltyStr.substring(penaltyStr.indexOf("#") + 1);
 			penaltyStr = "0";
 			if (NumberUtils.isNumber(dueHours)) {
-				Date dueDate = DateUtils.addHours(DateUtils.addHours(reservation.getStartDate(), 23), 0-Integer.parseInt(dueHours));
+				Date dueDate = DateUtils.addHours(DateUtils.truncate(reservation.getStartDate(), Calendar.DATE), 0-Integer.parseInt(dueHours));
 				if (dueDate.before(date)) {
 					penaltyStr = penaltyTmp;
 				}
