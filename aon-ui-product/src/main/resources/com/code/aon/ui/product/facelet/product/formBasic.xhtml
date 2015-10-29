@@ -178,9 +178,20 @@
 	</aon:if>
 
 	<aon:outputLabel for="Product_status" value="#{bundle.aon_status}" />
-	<aon:selectOneRadio id="Product_status" value="#{productTo.status}"
-		disabled="#{fieldDisabled}">
-		<f:selectItems value="#{productCollections.productStatuses}" />
-	</aon:selectOneRadio>
-	 
+	<aon:panelGrid columns="2" columnClasses="aon-width-240, aon-width-auto">
+		<aon:selectOneRadio id="Product_status" value="#{productTo.status}"
+			disabled="#{fieldDisabled}">
+			<f:selectItems value="#{productCollections.productStatuses}" />
+		</aon:selectOneRadio>
+		<aon:if test="#{!controller.nevv and productTo.inventoriable}">
+			<aon:div>
+				<aon:outputLabel styleClass="aon-margin-right aon-bold aon-uppercase"
+					value="#{bundle.product_stock} #{bundle.aon_product}:" />
+				<aon:outputText value="#{productTo.stock}" styleClass="aon-bold">
+					<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
+				</aon:outputText>
+			</aon:div>
+		</aon:if>
+	</aon:panelGrid>
+
 </ui:composition>
