@@ -1,0 +1,45 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client' 
+>
+
+	<ui:Style>
+	.button-bar {
+		border: none !important;
+		background: none !important;
+	}
+	
+	.button-bar button {
+		float: right;
+		width: 16px;
+		height: 16px;
+		margin-left: 5px;
+		margin-right: 5px;
+	}
+	
+	.button-bar button:first-of-type {
+		margin-right: 15px;
+	}
+	</ui:Style>
+
+	<g:DockLayoutPanel styleName="aon-width-all" unit="PX" ui:field="dockLayoutPanel">
+
+		<g:north size="26" >
+			<g:FlowPanel styleName="{style.button-bar} gwt-MenuBar-horizontal" 
+			    ui:field="flowPanel">
+				<!--  g:Button styleName="aon-icon-task-start gwt-MenuItem"
+					ui:field="runButton"></g:Button-->
+				<g:Button styleName="aon-icon-delete gwt-MenuItem"
+					ui:field="clearButton"></g:Button>
+			</g:FlowPanel>
+		</g:north>
+		
+		<g:center>
+			<aon:SalaryResultsGrid ui:field="salaryResultsGrid" />
+		</g:center>
+				
+	</g:DockLayoutPanel>
+
+
+</ui:UiBinder>

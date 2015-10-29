@@ -7,8 +7,6 @@ import static com.esferalia.aon.gwt.payroll.shared.CalculateService.OVERWRITE;
 import static com.esferalia.aon.gwt.payroll.shared.CalculateService.SAVE;
 import static com.esferalia.aon.gwt.payroll.shared.CalculateService.START_DATE;
 import static com.esferalia.aon.gwt.payroll.shared.CalculateService.WORKPLACES;
-import static com.google.gwt.user.client.Event.setEventListener;
-import static com.google.gwt.user.client.Event.sinkEvents;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -19,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.esferalia.aon.gwt.codemirror.client.ui.MergeArea;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -29,8 +26,6 @@ import com.esferalia.aon.gwt.common.client.widget.DetailPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.common.client.widget.ResultsPanel.ClearEvent;
-import com.esferalia.aon.gwt.common.client.widget.ResultsPanel.ClearHandler;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasId;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptEvent;
@@ -40,7 +35,6 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CalculateService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
-import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBasesResult;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
@@ -52,17 +46,8 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.FormElement;
-import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.AttachEvent.Handler;
@@ -79,24 +64,13 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.EventListener;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FileUpload;
-import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
@@ -116,7 +90,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	static final byte OVERWRITE_OPTION = 0x02;
 	static final byte DUPLICATE_OPTION = 0x04;
 
-	private static final int RESULTS_LIMIT = 100;
 
 	static String SHARE_URL = URL.encode(GWT.getModuleBaseURL() + "share");
 	static String CALC_URL = URL.encode(GWT.getModuleBaseURL() + "calculate");
@@ -322,26 +295,23 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	class CalcEnterpriseCommand implements ScheduledCommand, AcceptHandler,
-			AsyncCallback<JsSalaryResult>, SelectionHandler<JsSalaryResult>,
-			ClearHandler, Handler {
+			AsyncCallback<JsSalaryResult>, SelectionHandler<JsSalaryResult>{
 
-		SalaryResultsGrid resultsGrid;
+		SalaryResults results;
 		WorkPlaceCalcDialog calcDialog;
 
 		private HandlerRegistration registration;
 		private ListDataProvider<JsSalaryResult> resultsDataProvider;
 
 		public CalcEnterpriseCommand() {
-			resultsGrid = new SalaryResultsGrid();
+			results = new SalaryResults();
 			calcDialog = new WorkPlaceCalcDialog();
 			calcDialog.addAcceptHandler(this);
 			calcDialog.setWidth(Window.getClientWidth() / 2 + "px");
 
-			resultsGrid.addSelectionHandler(this);
-			resultsGrid.addAttachHandler(this);
-			resultsGrid.setPageSize(RESULTS_LIMIT);
+			results.addSelectionHandler(this);
 			resultsDataProvider = new ListDataProvider<JsSalaryResult>();
-			resultsDataProvider.addDataDisplay(resultsGrid);
+			results.setDataProvider(resultsDataProvider);
 		}
 
 		@Override
@@ -364,7 +334,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 			Set<Workplace> workplaces = calcDialog.getSelectedData();
 
-			resultsPanel.setWidget(resultsGrid);
+			resultsPanel.setWidget(results);
 
 			int optionsBits = 0x00;
 			if (calcDialog.isSaveSelected())
@@ -401,22 +371,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			onSalaryResultSelected(event.getSelectedItem());
 		}
 
-		// ------------------------------------------------------------ Handler
 
-		@Override
-		public void onAttachOrDetach(AttachEvent event) {
-			if (event.isAttached())
-				registration = resultsPanel.addClearHandler(this);
-			else
-				registration.removeHandler();
-		}
-
-		// ------------------------------------------------------- ClearHandler
-
-		@Override
-		public void onClear(ClearEvent event) {
-			clear();
-		}
 
 		// ---------------------------------------------------- Private methods
 
@@ -433,10 +388,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	class CalcEmployeeCommand implements ScheduledCommand, AcceptHandler,
-			CalculateService, SelectionHandler<JsSalaryResult>, ClearHandler,
-			Handler, AsyncCallback<JsSalaryResult> {
+			CalculateService, SelectionHandler<JsSalaryResult>, 
+			AsyncCallback<JsSalaryResult> {
 
-		private SalaryResultsGrid resultsGrid;
+		private SalaryResults results;
 		private CalcDialog<Employee> calcDialog;
 
 		private HandlerRegistration registration;
@@ -447,12 +402,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			calcDialog.addAcceptHandler(this);
 			calcDialog.setWidth(Window.getClientWidth() / 2 + "px");
 
-			resultsGrid = new SalaryResultsGrid();
-			resultsGrid.addAttachHandler(this);
-			resultsGrid.setPageSize(RESULTS_LIMIT);
+			results = new SalaryResults();
+
 			resultsDataProvider = new ListDataProvider<JsSalaryResult>();
-			resultsDataProvider.addDataDisplay(resultsGrid);
-			resultsGrid.addSelectionHandler(this);
+			results.setDataProvider(resultsDataProvider);
+			results.addSelectionHandler(this);
 		}
 
 		@Override
@@ -483,7 +437,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 			Set<Employee> employees = calcDialog.getSelectedData();
 
-			resultsPanel.setWidget(resultsGrid);
+			resultsPanel.setWidget(results);
 
 			int optionsBits = 0x00;
 			if (calcDialog.isSaveSelected())
@@ -501,22 +455,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		}
 
-		// ------------------------------------------------------------ Handler
-
-		@Override
-		public void onAttachOrDetach(AttachEvent event) {
-			if (event.isAttached())
-				registration = resultsPanel.addClearHandler(this);
-			else
-				registration.removeHandler();
-		}
-
-		// ------------------------------------------------------- ClearHandler
-
-		@Override
-		public void onClear(ClearEvent event) {
-			clear();
-		}
 
 		// ----------------------------------------- SelectionHandler<TreeItem>
 		@Override
@@ -674,8 +612,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				}
 				
 				@Override
-				public boolean accept(JsTrabajadoresYTramos t) {
-					return CreateResponseCommand.this.accept(t.getCCC());
+				public boolean accept(JsFile f) {
+					return CreateResponseCommand.this.accept(f.getCCC());
 				}
 			};
 
@@ -705,9 +643,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			mergeEditor.setFilename(file.getFilename() + ".xml");
 			detailPanel.setWidget(mergeEditor);
 
-			CretaResults cretaResults = new CretaResults();
+			CretaResults cretaResults = new CretaResults(){
+				@Override
+				protected void onBases(JsBasesResult result) {
+					CreateResponseCommand.this.onBases(result);
+				}
+			};
 			cretaResults.addErrors(result.getErrors());
 			cretaResults.addWarnings(result.getWarnings());
+			cretaResults.addUnknown(result.getUnknown());
+			cretaResults.setJsFiles(dialog.getSelectedData());
 			resultsPanel.setWidget(cretaResults);
 
 			if (result.getErrors().length > 0
@@ -957,9 +902,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	class CalcWorkplaceCommand implements ScheduledCommand, AcceptHandler,
 			CalculateService, AsyncCallback<JsSalaryResult>,
-			SelectionHandler<JsSalaryResult>, ClearHandler, Handler {
+			SelectionHandler<JsSalaryResult>{
 
-		private SalaryResultsGrid resultsGrid;
+		private SalaryResults results;
 		private CalcDialog<Employee> calcDialog;
 
 		private HandlerRegistration registration;
@@ -970,12 +915,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			calcDialog.addAcceptHandler(this);
 			calcDialog.setWidth(Window.getClientWidth() / 2 + "px");
 
-			resultsGrid = new SalaryResultsGrid();
-			resultsGrid.addAttachHandler(this);
-			resultsGrid.setPageSize(RESULTS_LIMIT);
+			results = new SalaryResults();
 			resultsDataProvider = new ListDataProvider<JsSalaryResult>();
-			resultsDataProvider.addDataDisplay(resultsGrid);
-			resultsGrid.addSelectionHandler(this);
+			results.setDataProvider(resultsDataProvider);
+			results.addSelectionHandler(this);
 
 		}
 
@@ -1012,7 +955,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 			Set<Employee> employees = calcDialog.getSelectedData();
 
-			resultsPanel.setWidget(resultsGrid);
+			resultsPanel.setWidget(results);
 
 			int optionsBits = 0x00;
 			if (calcDialog.isSaveSelected())
@@ -1028,22 +971,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			showResultsPanel(); // TODO: Here or at below 'onReadyStateChange'
 		}
 
-		// ------------------------------------------------------------ Handler
-
-		@Override
-		public void onAttachOrDetach(AttachEvent event) {
-			if (event.isAttached())
-				registration = resultsPanel.addClearHandler(this);
-			else
-				registration.removeHandler();
-		}
-
-		// ------------------------------------------------------- ClearHandler
-
-		@Override
-		public void onClear(ClearEvent event) {
-			clear();
-		}
 
 		// ----------------------------------------- SelectionHandler<TreeItem>
 		@Override
@@ -1716,6 +1643,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		EmployeeTree.this.footTabPanel.add(EmployeeTree.this.resultsPanel, tab);
 		EmployeeTree.this.splitLayoutPanel.setWidgetSize(
 				EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
+	
 	}
 
 	private ITEditor getIt() {

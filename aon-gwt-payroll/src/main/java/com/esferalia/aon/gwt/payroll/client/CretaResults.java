@@ -1,72 +1,273 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.images.Images;
+import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
-import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEvent;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBasesResult;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsUnknownDato;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safecss.shared.SafeStyles;
+import com.google.gwt.safecss.shared.SafeStylesUtils;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates.Template;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CretaResults extends Composite {
+public class CretaResults extends Composite implements RequiresResize{
 
-	interface Binder extends UiBinder<Widget, CretaResults> {
+	static interface Binder extends UiBinder<Widget, CretaResults> {
 
+	}
+
+	static interface Template extends SafeHtmlTemplates {
+
+		@Template("<span style=\"{0}\">{1}</span>")
+		SafeHtml treeItem(SafeStyles style, String message);
+	}
+
+	private class EventsSelectionHandler implements SelectionHandler<TreeItem> {
+
+		@Override
+		public void onSelection(SelectionEvent<TreeItem> event) {
+			// TODO Auto-generated method stub
+		}
+	}
+
+	private class EventsContextMenuHandler implements ContextMenuHandler {
+		@Override
+		public void onContextMenu(ContextMenuEvent event) {
+			// stop the browser from opening the context menu
+			event.preventDefault();
+			event.stopPropagation();
+
+			TreeItem item = CretaResults.this.eventsTree.getSelectedItem();
+			Object userObject = item.getUserObject();
+
+			// TODO : I know that's so ugly and not Object oriented. But
+			// it's much more clear than anything else. I promise
+			// to change ( even improve ) it soon.
+			if ( AonStringUtils.isNotBlank(((JsUnknownDato)userObject).getCode()) ) {
+				onUnknownDatoContextMenu((JsUnknownDato) userObject, event);
+			}
+		}
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
 
+	private static final Template TEMPLATE = GWT.create(Template.class);
+
 	private Images images;
 
 	@UiField
-	Tree errorsTree;
-
+	Tree eventsTree;
+	
 	@UiField
-	Tree warningsTree;
+	DockLayoutPanel dockLayoutPanel;
 
 	private TreeItem errorsItem;
 	private TreeItem warningsItem;
+	
+	private Set<JsFile> jsFiles;
+	private Map<String, String> data ;
 
 	public CretaResults() {
+		
 		images = GWT.create(Images.class);
+		data = new HashMap<String,String>();
 
 		initWidget(binder.createAndBindUi(this));
 
-		errorsItem = new TreeItem(imageItemHTML(images._error(), "<B>Errores</B>"));
-		errorsTree.addItem(errorsItem);
+		// errors
+		errorsItem = new TreeItem(imageItemHTML(images._error(), "ERRORES"));
+		eventsTree.addItem(errorsItem);
 
-		warningsItem = new TreeItem(imageItemHTML(images.warn(), "<B>Avisos</B>"));
-		warningsTree.addItem(warningsItem);
+		warningsItem = new TreeItem(imageItemHTML(images.warn(), "AVISOS"));
+		eventsTree.addItem(warningsItem);
+
+		eventsTree.addSelectionHandler(new EventsSelectionHandler());
+		eventsTree.addDomHandler(new EventsContextMenuHandler(),
+				ContextMenuEvent.getType());
+
+	}
+	
+	public void setJsFiles(Set<JsFile> jsFiles) {
+		this.jsFiles = jsFiles;
 	}
 
-	public void addErrors(CretaService.JsEvent errors []) {
+	public void addErrors(CretaService.JsEvent errors[]) {
 		for (CretaService.JsEvent error : errors)
-			errorsItem.addItem(new TreeItem(
-					imageItemHTML(images._error(), error.getMessage())));
-		errorsItem.setHTML(imageItemHTML(images._error(), "<B>Errores<B> ("+errorsItem.getChildCount() +")"));
+			addError(error);
 
-		errorsItem.setVisible(errorsItem.getChildCount()>0);
-		errorsItem.setState(errorsItem.getChildCount()>0);
+		syncErrors();
 	}
 
-	public void addWarnings(CretaService.JsEvent warnings []) {
+	public void addWarnings(CretaService.JsEvent warnings[]) {
 		for (CretaService.JsEvent warning : warnings)
-			warningsItem.addItem(new TreeItem(
-					imageItemHTML(images.warn(), warning.getMessage())));
-		warningsItem.setHTML(imageItemHTML(images.warn(), "<B>Avisos<B> ("+warningsItem.getChildCount() +")"));
-		
-		warningsItem.setVisible(warningsItem.getChildCount()>0);
-		warningsItem.setState(warningsItem.getChildCount()>0);
+			addWarning(warning);
+
+		syncWarnings();
 	}
+
+	public void addUnknown(CretaService.JsUnknownDato unknowns[]) {
+
+		for (CretaService.JsUnknownDato unknown : unknowns) {
+			if (unknown.isMandatory())
+				addError(unknown);
+			else
+				addWarning(unknown);
+
+		}
+
+		syncErrors();
+		syncWarnings();
+	}
+
+	// ------------------------------------------------------------ @UiHandlers
+
+	@UiHandler("runButton")
+	void onClickRunButton(ClickEvent event ){
+		run();
+	}
+
+	@UiHandler("clearButton")
+	void onClickClearButton(ClickEvent event ){
+		removeAll();
+	}
+
+	@UiHandler("expandAllButton")
+	void onClickExpandAllButton(ClickEvent event ){
+		expandAll();
+	}
+	
+	@UiHandler("collapseAllButton")
+	void onClickCollapseAllButton(ClickEvent event ){
+		collapseAll();
+	}
+	
+	// --------------------------------------------------------- RequiresResize
+	
+	@Override
+	public void onResize() {
+		dockLayoutPanel.onResize();
+	}
+
+	// ------------------------------------------------------------------------
+	
+	protected void onBases(JsBasesResult result) {
+		
+	}
+	
+	protected void fix(JsUnknownDato unknownDato, String value ) {
+		addDefault(unknownDato, value);
+		run();
+	}
+
+	protected void onUnknownDatoContextMenu(JsUnknownDato unknownDato,
+			ContextMenuEvent event) {
+		ContextMenu contextMenu = createContextMenu(unknownDato, this);
+		contextMenu.setPopupPosition(event.getNativeEvent().getClientX(),
+				event.getNativeEvent().getClientY());
+		contextMenu.show();
+	}
+
+	// ------------------------------------------------------------------------
+
+	private void syncErrors() {
+		errorsItem.setHTML(imageItemHTML(images._error(),
+				"ERRORES (" + errorsItem.getChildCount() + ")"));
+		errorsItem.setVisible(errorsItem.getChildCount() > 0);
+		errorsItem.setState(errorsItem.getChildCount() > 0);
+	}
+
+	private void syncWarnings() {
+		warningsItem.setHTML(imageItemHTML(images.warn(),
+				"AVISOS (" + warningsItem.getChildCount() + ")"));
+		warningsItem.setVisible(warningsItem.getChildCount() > 0);
+		warningsItem.setState(warningsItem.getChildCount() > 0);
+	}
+
+	private TreeItem addError(CretaService.JsEvent error) {
+		TreeItem treeItem = new TreeItem(
+				imageItemHTML(images._error(), error.getMessage()));
+		errorsItem.addItem(treeItem);
+		treeItem.setUserObject(error);
+		return treeItem;
+	}
+
+	private TreeItem addWarning(CretaService.JsEvent warning) {
+		TreeItem treeItem = new TreeItem(
+				imageItemHTML(images.warn(), warning.getMessage()));
+		warningsItem.addItem(treeItem);
+		treeItem.setUserObject(warning);
+		return treeItem;
+	}
+	
+	private void addDefault(JsUnknownDato unknownDato, String value){
+		data.put(CretaService.Parameter.DEFAULTS.name(), unknownDato.getCode()+"="+value);
+	}
+	
+	private void expandAll() {
+		errorsItem.setState(true);
+		warningsItem.setState(true);
+	}
+
+	private void collapseAll() {
+		errorsItem.setState(false);
+		warningsItem.setState(false);
+	}
+
+	private void removeAll() {
+		errorsItem.removeItems();
+		syncErrors();
+		warningsItem.removeItems();
+		syncWarnings();
+	}
+	
+	private void run() {
+		MainCreta.submit(CretaService.CRETA_URL + "/" + CretaService.File.BASES, 
+				data, jsFiles, 
+				new AsyncCallback<CretaService.JsBasesResult>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				Window.alert(caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(JsBasesResult result) {
+				CretaResults.this.onBases(result);
+			}
+		});
+	}
+
 	// ------------------------------------------------------------------------
 
 	/**
@@ -77,8 +278,38 @@ public class CretaResults extends Composite {
 		SafeHtmlBuilder builder = new SafeHtmlBuilder();
 		builder.append(AbstractImagePrototype.create(imageProto).getSafeHtml());
 		builder.append(' ');
-		builder.appendHtmlConstant(title);
+		// builder.appendHtmlConstant(title);
+
+		builder.append(TEMPLATE
+				.treeItem(SafeStylesUtils.forFontSize(12, Unit.PX), title));
 		return builder.toSafeHtml();
+	}
+
+	private static ContextMenu createContextMenu(final JsUnknownDato unknownDato, final CretaResults cretaResults) {
+		ContextMenu contextMenu = new ContextMenu();
+
+		contextMenu.addItem("Reparar", new ScheduledCommand() {
+			@Override
+			public void execute() {
+				
+				CustomDialog.showInputDialog(
+						"Introduce el concepto econ\u00F3mico de cotizaci\u00f3n " + unknownDato.getCode(), 
+						"Reparar", new AsyncCallback<String>() {
+							@Override
+							public void onFailure(Throwable caught) {
+								// TODO Auto-generated method stub
+							}
+							@Override
+							public void onSuccess(String result) {
+								cretaResults.fix(unknownDato, result );
+							}
+						});
+
+			}
+
+		}, AON.AON_ICON_ACCEPT, AON.AON_ICON_CMD_BUTTON);
+
+		return contextMenu;
 	}
 
 }

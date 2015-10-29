@@ -12,6 +12,7 @@ public interface CretaService {
 	}
 
 	public static enum File {
+
 		BASES {
 
 			@Override
@@ -136,6 +137,49 @@ public interface CretaService {
 		}-*/;
 	}
 
+	public static class JsCCC extends JavaScriptObject {
+		protected JsCCC() {
+		}
+
+		// ----------------------------------- JSNI (Native JavaScript Methods)
+
+		public final native String getNumber() /*-{
+			return this.number;
+		}-*/;
+
+		public final native String getRegime() /*-{
+			return this.regime;
+		}-*/;
+
+		public final native String getProvince() /*-{
+			return this.province;
+		}-*/;
+
+	}
+
+	public static class JsUnknownDato extends JsEvent {
+		protected JsUnknownDato() {
+		}
+
+		// ----------------------------------- JSNI (Native JavaScript Methods)
+
+		public final native JsCCC getCCC() /*-{
+			return this.ccc;
+		}-*/;
+
+		public final native String getType() /*-{
+			return this.type;
+		}-*/;
+
+		public final native String getCode() /*-{
+			return this.code;
+		}-*/;
+
+		public final native boolean isMandatory() /*-{
+			return this.mandatory;
+		}-*/;
+	}
+
 	public static class JsBasesResult extends JavaScriptObject {
 
 		protected JsBasesResult() {
@@ -171,10 +215,18 @@ public interface CretaService {
 			return this.warnings;
 		}-*/;
 
+		public final native JsUnknownDato[] getUnknown() /*-{
+			return this.unknown;
+		}-*/;
 	}
 
 	public static class JsError extends JavaScriptObject {
 		protected JsError() {
+		}
+		
+		public final String getMessage() {
+			String msg = getMsg();
+			return URL.decodeQueryString(msg);
 		}
 
 		// ----------------------------------- JSNI (Native JavaScript Methods)
@@ -183,14 +235,26 @@ public interface CretaService {
 			return this.code;
 		}-*/;
 
-		public final native String getMessage() /*-{
+		public final native String getMsg() /*-{
 			return this.msg;
 		}-*/;
 
 	}
 
+	public static class JsEmployee extends JavaScriptObject {
+		protected JsEmployee() {
+		}
 
-	public static class JsFile extends JavaScriptObject implements HasId<String> {
+		// ----------------------------------- JSNI (Native JavaScript Methods)
+
+		public final native String getNaf() /*-{
+			return this.naf;
+		}-*/;
+
+	}
+
+	public static class JsFile extends JavaScriptObject
+			implements HasId<String> {
 		protected JsFile() {
 		}
 
@@ -223,6 +287,10 @@ public interface CretaService {
 		public final native String getFile() /*-{
 			return this.file;
 		}-*/;
+
+		public final native String getName() /*-{
+			return this.name;
+		}-*/;
 	}
 
 	public static class JsTrabajadoresYTramos extends JsFile {
@@ -235,14 +303,15 @@ public interface CretaService {
 		protected JsRespuesta() {
 		}
 
-
 		// ----------------------------------- JSNI (Native JavaScript Methods)
-
 
 		public final native JsError[] getErrors() /*-{
 			return this.errors;
 		}-*/;
 
+		public final native JsEmployee[] getEmployees() /*-{
+			return this.employees;
+		}-*/;
 	}
 
 	public static final String CRETA_URL = URL

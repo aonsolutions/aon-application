@@ -159,6 +159,9 @@ public class Enterprises extends ResizeComposite implements
 		
 		for (Enterprise enterprise : enterprises)
 			Enterprises.this.onEnterprise(enterprise, enterprisesItem);
+		
+		enterprisesItem.setState(true, true);
+		tree.setSelectedItem(enterprisesItem);
 	}
 
 	public void clearEnterprise(Enterprise enterprise) {

@@ -1,14 +1,18 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.payroll.client.MainCreta.hasTrabajadoresYTramos;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.esferalia.aon.gwt.payroll.client.MainCreta.JsFileComparator;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBasesResult;
@@ -51,7 +55,6 @@ public abstract class CretaDetail extends Composite {
 	interface CretaDetailUiBinder extends UiBinder<Widget, CretaDetail> {
 	}
 
-
 	@UiField
 	FormPanel formPanel;
 	@UiField
@@ -85,7 +88,6 @@ public abstract class CretaDetail extends Composite {
 	@UiField(provided = true)
 	DataGrid<JsFile> dataGrid;
 
-	
 	private PopupPanel popupTooltip;
 	private Timer jsFileToolTipTimer;
 	private MultiSelectionModel<JsFile> selectionModel;
@@ -142,11 +144,10 @@ public abstract class CretaDetail extends Composite {
 
 			@Override
 			void onJsFileDblClick(JsFile jsFile, NativeEvent event) {
-				CretaDetail.this.onJsFileDblClick(jsFile,
-						event.getClientX(), event.getClientY());
+				CretaDetail.this.onJsFileDblClick(jsFile, event.getClientX(),
+						event.getClientY());
 
 			}
-
 
 			@Override
 			String getIconStyle(JsTrabajadoresYTramos jsTrabajadoresYTramos) {
@@ -167,7 +168,7 @@ public abstract class CretaDetail extends Composite {
 				boolean selected = CretaDetail.this.selectionModel
 						.getSelectedSet().size() > 0;
 				CretaDetail.this.basesButton.setEnabled(selected);
-				
+
 			}
 		});
 
@@ -178,7 +179,7 @@ public abstract class CretaDetail extends Composite {
 		fileUpload.getElement().setPropertyString("multiple", "multiple");
 
 	}
-	
+
 	Set<JsFile> getSelected() {
 		return selectionModel.getSelectedSet();
 	}
@@ -223,13 +224,23 @@ public abstract class CretaDetail extends Composite {
 			CretaService.JsRespuesta respuestas[]) {
 
 		try {
-			respuestasMap = MainCreta.add(File.RESPUESTA, respuestas);
 
 			Map<String, JsTrabajadoresYTramos> trabajadoresYTramosMap = MainCreta
 					.add(File.TRABAJADORES_TRAMOS, trabajadoresYTramos);
 
-			List<JsTrabajadoresYTramos> filtered = filter(
-					trabajadoresYTramosMap.values());
+			List<JsFile> filtered = new ArrayList<JsFile>();
+
+			filtered.addAll(filter(trabajadoresYTramosMap.values()));
+
+			respuestasMap = MainCreta.add(File.RESPUESTA, respuestas);
+
+			for (JsRespuesta jsRespuesta : respuestasMap.values())
+				if (!contains(filtered, jsRespuesta)
+						&& hasTrabajadoresYTramos(jsRespuesta))
+					filtered.addAll(filter(Collections.singleton(jsRespuesta)));
+			
+			Collections.sort(filtered, JsFileComparator.newInstace());
+			
 			dataGrid.setRowData(filtered);
 
 		} catch (UnsupportedOperationException e) {
@@ -253,9 +264,9 @@ public abstract class CretaDetail extends Composite {
 		exportSubmitComplete();
 		super.onAttach();
 	}
-	
+
 	protected abstract void onBases(JsBasesResult result);
-	
+
 	protected abstract String getDescription(String ccc);
 
 	protected abstract <T extends JsFile> List<T> filter(Collection<T> jsFiles);
@@ -301,9 +312,10 @@ public abstract class CretaDetail extends Composite {
 
 	private void submitBases() {
 		MainCreta.submit(CretaService.CRETA_URL + "/" + CretaService.File.BASES,
-				selectionModel.getSelectedSet(), 
+				getDefaults(),
+				selectionModel.getSelectedSet(),
 				new AsyncCallback<CretaService.JsBasesResult>() {
-					
+
 					@Override
 					public void onFailure(Throwable caught) {
 						// TODO Auto-generated method stub
@@ -314,9 +326,13 @@ public abstract class CretaDetail extends Composite {
 					public void onSuccess(JsBasesResult result) {
 						onBases(result);
 					}
-				}
-		);
+				});
 	}
+	
+	private Map<String,String> getDefaults(){
+		return Collections.emptyMap();
+	}
+	
 
 	// ------------------------------------------------------------------------
 
@@ -327,5 +343,18 @@ public abstract class CretaDetail extends Composite {
 			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onTrabajadoresYTramos([Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsTrabajadoresYTramos;[Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsRespuesta;)(trabajadoresYTramos, respuestas);
 		});
 	}-*/;
+
+	// ------------------------------------------------------------------------
+
+	private static boolean contains(List<JsFile> jsFiles, String id) {
+		for (JsFile jsF : jsFiles)
+			if (jsF.getId().equals(id))
+				return true;
+		return false;
+	}
+
+	private static boolean contains(List<JsFile> jsFiles, JsFile jsFile) {
+		return contains(jsFiles, jsFile.getId());
+	}
 
 }
