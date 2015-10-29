@@ -126,36 +126,32 @@ public class OfficeServlet extends HttpServlet {
 			while (iterator.hasNext()) {
 				NoticeRecord notice = iterator.next();
 				Integer id = notice.getValue(NOTICE.ID);
-				Integer userId = notice.getValue(NOTICE.SENDER);
-
+				Integer senderId = notice.getValue(NOTICE.SENDER);
+				Integer assigneeId = notice.getValue(NOTICE.RECIPIENT);
+				
 				osx.println('{');
 
 				osx.printf("\"id\":\"%s\",\r\n", String.valueOf(id));
 				osx.printf("\"date\":\"%s\",\r\n", notice.getValue(NOTICE.DATE));
-				osx.printf("\"date\":\"%s\",\r\n", notice.getValue(NOTICE.DATE));
-				osx.printf("\"user\":\"%s\",\r\n",
-						buildUserSender(conn, domain, userId));
-				osx.printf("\"recipient\":\"%s\",\r\n",
-						notice.getValue(NOTICE.RECIPIENT));
+				osx.printf("\"user\":%s",
+						buildUserSender(conn, domain, senderId));
+				osx.printf("\"assignee\":%s", buildUserAssignee(conn, domain, assigneeId));
 				osx.printf("\"title\":\"%s\",\r\n",
 						notice.getValue(NOTICE.SUBJECT));
-				osx.printf("\"labels\":\"%s\"\r\n",
+				osx.printf("\"labels\":%s",
 						buildNoticeTags(conn, domain, id));
 				osx.printf("\"status\":\"%s\",\r\n",
 						notice.getValue(NOTICE.STATUS));
 				osx.printf("\"priority\":\"%s\"\r\n",
 						notice.getValue(NOTICE.PRIORITY));
-
-				osx.println('}');
-
+				
 				if (iterator.hasNext())
-					osx.println(',');
-				// buffer.append(",\r\n");
-
-				// System.out.println(buffer.toString());
+					osx.println("},");
+				else
+					osx.println('}');
 			}
+
 			osx.println(']');
-			// buffer.append("\r\n]");
 
 			osx.flush();
 			osx.close();
@@ -210,13 +206,17 @@ public class OfficeServlet extends HttpServlet {
 		buffer.append("{\r\n");
 
 		if (userId != null) {
-			buffer.append(String.format("\"id\":\"%s\",",
+			buffer.append(String.format("\"id\":\"%s\",\r\n",
 					String.valueOf(sender.getValue(USER.ID))));
-			buffer.append(String.format("\"login\":\"%s\",",
+			buffer.append(String.format("\"login\":\"%s\"\r\n",
 					sender.getValue(USER.NAME)));
 		}
 
 		buffer.append("},\r\n");
 		return buffer.toString();
+	}
+	
+	private String buildUserAssignee (Connection conn, Integer domain, Integer userId) {
+		return buildUserSender(conn, domain, userId);
 	}
 }

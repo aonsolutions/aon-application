@@ -18,13 +18,10 @@ import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
 import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
 import com.esferalia.aon.gwt.office.client.values.IssueValue;
-import com.google.api.client.http.HttpMethods;
-import com.google.api.client.http.HttpRequest;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.http.client.Request;
@@ -47,8 +44,6 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.xhr.client.ReadyStateChangeHandler;
-import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class Office extends Composite implements EntryPoint,
 		IssueGrid.Listener, LeftButtonsMenuBar.LeftMenuBarListener,
@@ -89,8 +84,6 @@ public class Office extends Composite implements EntryPoint,
 	private Map<Integer, JsIssue> issuesMap;
 	private Map<Integer, JsRepo> repositories;
 
-	private AonHubServiceAsync aonHubService;
-
 	public Office() {
 		Widget ui = uiBinder.createAndBindUi(this);
 
@@ -111,11 +104,6 @@ public class Office extends Composite implements EntryPoint,
 		this.closedIssues = new LinkedList<IssueSelected>();
 		this.issuesMap = new TreeMap<Integer, JsIssue>();
 
-		// Create a remote service proxy to talk to the server-side AonHub
-		// service.
-		AonHubServiceAsync aonHubServiceRaw = GWT.create(AonHubService.class);
-		aonHubService = new AonHubServiceAsyncDecorator(aonHubServiceRaw);
-
 		ListDataProvider<IssueSelected> openIssuesProvider = new ListDataProvider<IssueSelected>();
 		openIssuesProvider.addDataDisplay(dataGrid);
 		openIssues = openIssuesProvider.getList();
@@ -124,81 +112,10 @@ public class Office extends Composite implements EntryPoint,
 		closeIssuesProvider.addDataDisplay(dataGrid);
 		closedIssues = openIssuesProvider.getList();
 
-		// *******************************************
-		// *******************************************
-		// *******************************************
-		// *******************************************
-		
-		try {
-			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
-					URL);
-			try {
-				builder.sendRequest(null, new RequestCallback() {
+		loadNotices();
 
-					public void onError(Request request, Throwable exception) {
-						Window.alert("On Error: " + exception.getMessage());
-					}
-
-					public void onResponseReceived(Request request,
-							Response response) {
-						if (200 == response.getStatusCode()) {
-							Window.alert("Estoy aqui: " + response.getText());
-							JsArray<JsIssue> issues = eval(response.getText());
-							Window.alert(issues.toString());
-							
-							for (int x = 0; x < issues.length(); x++)
-								Window.alert(" " + issues.get(x).getId());
-
-						} else {
-							Window.alert("2: " + response.getStatusText());
-						}
-					}
-				});
-			} catch (RequestException e) {
-				Window.alert("Exception: " + e.getMessage());
-			}
-
-		} catch (Exception ex) {
-			Window.alert(ex.getMessage() + " " + ex.getLocalizedMessage());
-		}
-
-		// *******************************************
-		// *******************************************
-		// *******************************************
-		// *******************************************
-
-//		aonHubService.getIssues(new AsyncCallback<String>() {
-//
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				Window.alert("ojo lorito que hay problemas "
-//						+ caught.getMessage() + " "
-//						+ caught.getLocalizedMessage());
-//			}
-//
-//			@Override
-//			public void onSuccess(String result) {
-//
-//				Window.alert(result);
-//
-//				try {
-//
-//					JsArray<JsIssue> issues = JsonUtils.safeEval(result);
-//					Window.alert(issues.toString());
-//					for (int x = 0; x < issues.length(); x++)
-//						Window.alert(issues.get(x).getTitle());
-//
-//				} catch (IllegalArgumentException ex) {
-//					Window.alert(ex.getMessage());
-//				} catch (Exception ex) {
-//					Window.alert(ex.getMessage() + " "
-//							+ ex.getLocalizedMessage());
-//				}
-//			}
-//		});
-
-		loadReposList();
-		loadIssuesList();
+		// loadReposList();
+		// loadIssuesList();
 
 		showDockOfficePanel();
 	}
@@ -220,84 +137,46 @@ public class Office extends Composite implements EntryPoint,
 	// ********************** PRIVATE METHODS ***************************
 	// ******************************************************************
 
-	private void loadReposList() {
-		gitHub.getRepos("amtzdelagos", new AsyncCallback<JSON<JsRepo>>() {
+	private void loadNotices() {
 
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("Error al obtener los respositorios. " + " "
-						+ caught.getMessage());
-			}
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, URL);
 
-			@Override
-			public void onSuccess(JSON<JsRepo> result) {
-				if (result != null) {
-					for (int z = 0; z < result.getData().length(); z++) {
-						JsRepo repo = result.getData().get(z);
-						Office.this.repositories.put(repo.getId(), repo);
-						Office.this.repoListBox.addItem(repo.getName(),
-								String.valueOf(repo.getId()));
-						Office.this.repo = repo;
+		try {
+			builder.sendRequest(null, new RequestCallback() {
+
+				@Override
+				public void onResponseReceived(Request request,
+						Response response) {
+					if (200 == response.getStatusCode()) {
+						JsArray<JsIssue> issues = eval(response.getText());
+						loadNotices(issues);
+
+					} else {
+						Window.alert(response.getText());
 					}
-
-					repo.getLabels(new AsyncCallback<AJSON<JsArray<JsLabel>>>() {
-
-						@Override
-						public void onFailure(Throwable caught) {
-							GWT.log(caught.getMessage());
-						}
-
-						@Override
-						public void onSuccess(AJSON<JsArray<JsLabel>> result) {
-							for (int x = 0; x < result.getData().length(); x++)
-								addLabel(x, result.getData().get(x));
-						}
-					});
 				}
-			}
-		});
+
+				@Override
+				public void onError(Request request, Throwable exception) {
+					Window.alert("On Error: " + exception.getMessage());
+				}
+			});
+
+		} catch (RequestException ex) {
+			Window.alert("RequestException: " + ex.getMessage());
+		}
 	}
 
-	private void loadIssuesList() {
-		gitHub.getIssues("amtzdelagos", "aon-GwtOffice",
-				new AsyncCallback<JSON<JsIssue>>() {
+	private void loadNotices(JsArray<JsIssue> notices) {
 
-					@Override
-					public void onSuccess(JSON<JsIssue> result) {
+		for (int x = 0; x < notices.length(); x++) {
+			JsIssue issue = notices.get(x);
+			issuesMap.put(issue.getId(), issue);
+			addOpenIssue(issue, null);
+			// loadIssueComments(issue);
+		}
+		changeOpenIssuesText(notices.length());
 
-						for (int x = 0; x < result.getData().length(); x++) {
-							JsIssue issue = result.getData().get(x);
-							issuesMap.put(issue.getId(), issue);
-							loadIssueComments(issue);
-						}
-						changeOpenIssuesText(result.getData().length());
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						GWT.log(caught.getMessage());
-					}
-				});
-	}
-
-	private void loadIssueComments(final JsIssue issue) {
-
-		issue.getCommments(new AsyncCallback<AJSON<JsArray<JsIssueComment>>>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				GWT.log(caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(AJSON<JsArray<JsIssueComment>> result) {
-
-				if (isOpenIssue(issue))
-					addOpenIssue(issue, result.getData());
-				else
-					addCloseIssue(issue, result.getData());
-			}
-		});
 	}
 
 	private boolean isOpenIssue(JsIssue issue) {
@@ -355,7 +234,8 @@ public class Office extends Composite implements EntryPoint,
 
 	private void addOpenIssue(JsIssue issue, JsArray<JsIssueComment> comments) {
 		IssueSelected issueSelected = new IssueGrid.IssueOpenLoadSelected(issue);
-		issueSelected.setIssueComments(comments);
+		if (comments != null)			
+			issueSelected.setIssueComments(comments);
 		openIssues.add(issueSelected);
 	}
 
@@ -539,4 +419,84 @@ public class Office extends Composite implements EntryPoint,
 		return eval(javascript);
 	}-*/;
 
+	// ******************************************************************
+	// *********************** GITHUB METHODS ***************************
+	// ******************************************************************
+
+	private void loadReposList() {
+		gitHub.getRepos("amtzdelagos", new AsyncCallback<JSON<JsRepo>>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Error al obtener los respositorios. " + " "
+						+ caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(JSON<JsRepo> result) {
+				if (result != null) {
+					for (int z = 0; z < result.getData().length(); z++) {
+						JsRepo repo = result.getData().get(z);
+						Office.this.repositories.put(repo.getId(), repo);
+						Office.this.repoListBox.addItem(repo.getName(),
+								String.valueOf(repo.getId()));
+						Office.this.repo = repo;
+					}
+
+					repo.getLabels(new AsyncCallback<AJSON<JsArray<JsLabel>>>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							GWT.log(caught.getMessage());
+						}
+
+						@Override
+						public void onSuccess(AJSON<JsArray<JsLabel>> result) {
+							for (int x = 0; x < result.getData().length(); x++)
+								addLabel(x, result.getData().get(x));
+						}
+					});
+				}
+			}
+		});
+	}
+
+	private void loadIssuesList() {
+		gitHub.getIssues("amtzdelagos", "aon-GwtOffice",
+				new AsyncCallback<JSON<JsIssue>>() {
+					@Override
+					public void onSuccess(JSON<JsIssue> result) {
+
+						for (int x = 0; x < result.getData().length(); x++) {
+							JsIssue issue = result.getData().get(x);
+							issuesMap.put(issue.getId(), issue);
+							loadIssueComments(issue);
+						}
+						changeOpenIssuesText(result.getData().length());
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						GWT.log(caught.getMessage());
+					}
+				});
+	}
+
+	private void loadIssueComments(final JsIssue issue) {
+		issue.getCommments(new AsyncCallback<AJSON<JsArray<JsIssueComment>>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log(caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(AJSON<JsArray<JsIssueComment>> result) {
+
+				if (isOpenIssue(issue))
+					addOpenIssue(issue, result.getData());
+				else
+					addCloseIssue(issue, result.getData());
+			}
+		});
+	}
 }

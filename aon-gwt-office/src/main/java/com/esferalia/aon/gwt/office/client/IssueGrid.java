@@ -104,13 +104,15 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 		@Override
 		public Date getCreateAt() {
-			return timeFormat.parse(issue.getCreatedAt());
+			return new Date();
+			//return timeFormat.parse(issue.getCreatedAt());
 
 		}
 
 		@Override
 		public Date getUpdatedAt() {
-			return timeFormat.parse(issue.getUpdatedAt());
+			return new Date();
+			//return timeFormat.parse(issue.getUpdatedAt());
 		}
 
 		@Override
