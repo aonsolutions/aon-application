@@ -13,7 +13,6 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.common.client.widget.ResultsPanel.ClearEvent;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
@@ -133,7 +132,6 @@ public class SalaryEntryModule extends MainEntryPoint {
 				Window.alert(AON.MSG.registryBankReadError());
 			}
 		});
-		resultsPanel.setFlowPanelVisible(false);
 		checkPeriodEntries( false );
 	}
 	
@@ -211,7 +209,6 @@ public class SalaryEntryModule extends MainEntryPoint {
 			if (errors.getWidgetCount() > 0) {
 				splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
 				resultsPanel.setWidget(errors);
-				resultsPanel.setFlowPanelVisible(true);
 			}
 			Integer rbank = AonNumberUtils.toInteger(banks.getSelectedValue());
 			fiscalService.insertSalaryAccountEntries(getCurrentDomainName(), getCurrentDomain(), 
@@ -237,7 +234,6 @@ public class SalaryEntryModule extends MainEntryPoint {
 							addError(caught.getMessage());
 							splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
 							resultsPanel.setWidget(errors);
-							resultsPanel.setFlowPanelVisible(true);
 						}
 
 					});
@@ -267,13 +263,6 @@ public class SalaryEntryModule extends MainEntryPoint {
 
 	// -------------------------------------------------------------- UiHandler
 
-	@UiHandler("resultsPanel")
-	void onClear(ClearEvent event) {
-		errors = new FlowPanel();
-		resultsPanel.setWidget(errors);
-		resultsPanel.setFlowPanelVisible(false);
-	}
-	
 
 	@UiHandler("footPanel")
 	void onFootMinimize(MinimizeEvent event) {

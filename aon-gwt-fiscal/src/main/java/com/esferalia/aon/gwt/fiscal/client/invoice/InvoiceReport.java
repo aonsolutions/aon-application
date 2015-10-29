@@ -253,7 +253,6 @@ public class InvoiceReport extends MainEntryPoint {
 	}
 	
 	private void cleanErrorMessage() {
-		resultsPanel.clearFlowPanel();
 		closeFootPanel();
 	}
 

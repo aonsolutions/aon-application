@@ -742,7 +742,6 @@ public class Model390 extends MainEntryPoint {
 	}
 	
 	private void cleanErrorMessage() {
-		resultsPanel.clearFlowPanel();
 		closeFootPanel();
 	}
 

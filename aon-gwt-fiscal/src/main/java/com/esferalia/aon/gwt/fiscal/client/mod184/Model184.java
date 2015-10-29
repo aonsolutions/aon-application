@@ -801,7 +801,6 @@ public class Model184 extends MainEntryPoint {
 	}
 	
 	private void cleanErrorMessage() {
-		resultsPanel.clearFlowPanel();
 		closeFootPanel();
 	}
 

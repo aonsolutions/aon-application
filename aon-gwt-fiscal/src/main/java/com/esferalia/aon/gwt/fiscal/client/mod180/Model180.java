@@ -591,7 +591,6 @@ public class Model180 extends MainEntryPoint {
 	}
 	
 	private void cleanErrorMessage() {
-		resultsPanel.clearFlowPanel();
 		closeFootPanel();
 	}
 

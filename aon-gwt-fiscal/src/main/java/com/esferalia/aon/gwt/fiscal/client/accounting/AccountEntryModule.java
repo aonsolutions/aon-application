@@ -159,7 +159,6 @@ public class AccountEntryModule extends MainEntryPoint {
 		
 		setCurrent( new AccountEntryObject() );
 		
-		resultsPanel.setFlowPanelVisible(false);
 	}
 	
 	public static native String getCurrentDomainName()

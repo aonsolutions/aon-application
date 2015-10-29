@@ -129,7 +129,6 @@ public class Model2002013 extends ResizeComposite  {
 		Widget ui = binder.createAndBindUi(this);
 		initWidget(ui);
 		errorPage = new ErrorPage();
-		resultsPanel.setFlowPanelVisible(false);
 		errorPage.addSelectionListener(this);
 		
 		diskForm = new FormPanel("_blank");
@@ -451,7 +450,6 @@ public class Model2002013 extends ResizeComposite  {
 	}
 	
 	private void cleanErrorMessage() {
-		resultsPanel.clearFlowPanel();
 		resultsPanel.setWidget(new SimplePanel());
 		closeFootPanel();
 	}

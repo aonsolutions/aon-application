@@ -144,7 +144,6 @@ public class Model140 extends MainEntryPoint {
 	}
 	
 	private void cleanErrorMessage() {
-		resultsPanel.clearFlowPanel();
 		closeFootPanel();
 	}
 
