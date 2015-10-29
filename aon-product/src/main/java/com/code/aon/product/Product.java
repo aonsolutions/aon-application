@@ -173,10 +173,21 @@ public class Product extends ProductDB implements IAuditable {
     }
 
     @Transient
+    public double getCompositionCount() throws ManagerBeanException {
+    	if (getId() != null) {
+			IManagerBean itemCompositionBean = BeanManager.getManagerBean(ItemComposition.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(itemCompositionBean.getFieldName(IEntityAlias.ITEM_COMPOSITION_ITEM_PRODUCT_ID), getId());
+			return itemCompositionBean.getCount(criteria);
+    	}
+    	return 0;
+    }
+
+    @Transient
     public double getStock() throws ManagerBeanException {
     	double stock = 0;
     	if (getId() != null) {
-        	String select = "SELECT SUM(quantity) quantity FROM stock as stock WHERE stock.item IN (" +
+    		String select = "SELECT SUM(quantity) quantity FROM stock as stock WHERE stock.item IN (" +
         						"SELECT id FROM item as item WHERE item.product = " + getId() + ")";
         	Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
         	SQLQuery query = session.createSQLQuery(select);

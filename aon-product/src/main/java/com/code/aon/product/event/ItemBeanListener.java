@@ -24,7 +24,10 @@ public class ItemBeanListener extends ManagerBeanListenerAdapter {
 		Item item = (Item)event.getTo();
 		if (!item.getProduct().isComposition() && !item.getProduct().isManufactured()) {
 			IManagerBean itemCompositionBean = BeanManager.getManagerBean(ItemComposition.class);
-			for (ItemComposition composition : item.getItemCompositionList()) {
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(itemCompositionBean.getFieldName(IEntityAlias.ITEM_COMPOSITION_ITEM_PRODUCT_ID), item.getProduct().getId());
+			for (ITransferObject ito : itemCompositionBean.getList(criteria)) {
+				ItemComposition composition = (ItemComposition)ito;
 				itemCompositionBean.remove(composition);
 			}
 		}

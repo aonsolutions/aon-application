@@ -487,6 +487,7 @@ public interface ICommonMessages {
 	String PRODUCT_DEFINED_FOR_TARIFF_ERROR = "product_defined_for_tariff_error";
 	String PRODUCT_DEFINED_FOR_CATALOGUE_ERROR = "product_defined_for_catalogue_error";
 	String PRODUCT_NOT_ACTIVE_ITEMS_FOUND_WARNING = "product_not_active_items_found_warning";
+	String PRODUCT_COMPOSITION_REMOVE_INFO = "product_composition_remove_info";
 	String CATALOGUE_DEFINED_FOR_TARIFF_ERROR = "catalogue_defined_for_tariff_error";
 	
 	String PUBLISH_OK = "publisher_publish_ok";

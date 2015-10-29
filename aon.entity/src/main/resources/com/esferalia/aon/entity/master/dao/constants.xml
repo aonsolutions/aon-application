@@ -402,6 +402,11 @@
 		<hibernate names="id,domain,description,barcode,internet,product.id,detail,detail2,detail3,serialNumber,serialDate,price,status,expensesPercent,expensesFixed,profitPercent,purchasePrice,product.name,product.code,product.brand&lt;id,product.brand&lt;name,product.category.id,product.category.name,product.inventoriable,product.composition,product.type,product.serializable,product.lotable" />
 	</bean>
 
+	<bean class="com.code.aon.product.ItemComposition" sqlName="item_composition">
+		<alias names="id,item_id,item_product_id,compositionItem_id,sequence,description,quantity,discountExpression" />
+		<hibernate names="id,item.id,item.product.id,compositionItem.id,sequence,description,quantity,discountExpression" />
+	</bean>
+
 	<bean class="com.code.aon.product.ItemTariff" sqlName="item_tariff">
 		<alias names="id,item_id,price,profitPercent,tariff_id,tariff_name,type" />
 		<hibernate names="id,item.id,price,profitPercent,tariff.id,tariff.name,type" />

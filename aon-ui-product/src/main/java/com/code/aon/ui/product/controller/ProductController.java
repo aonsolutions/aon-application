@@ -1,9 +1,11 @@
 package com.code.aon.ui.product.controller;
 
 import static com.code.aon.common.enumeration.AppParam.AON_PRODUCT_DETAIL_LEVEL;
+import static com.code.aon.ui.common.ICommonMessages.PRODUCT_COMPOSITION_REMOVE_INFO;
 
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
@@ -234,6 +236,32 @@ public class ProductController extends BasicController implements IAuditableCont
 		Product product = (Product) getTo();
 		if (event.getNewValue() != null && (Boolean)event.getNewValue()) {
 			product.setInventoriable(true);
+		}
+	}
+
+	public void onManufacturedChanged(ValueChangeEvent event) {
+		Product product = (Product) getTo();
+		if (event.getNewValue() != null && !(Boolean)event.getNewValue()) {
+			try {
+				if (product.getCompositionCount() > 0) {
+					AonUtil.addInfoMessageFromBundle(PRODUCT_COMPOSITION_REMOVE_INFO);
+				}
+			} catch (ManagerBeanException ex) {
+				throw new AbortProcessingException(ex.getMessage());
+			}
+		}
+	}
+
+	public void onCompositionChanged(ValueChangeEvent event) {
+		Product product = (Product) getTo();
+		if (event.getNewValue() != null && !(Boolean)event.getNewValue()) {
+			try {
+				if (product.getCompositionCount() > 0) {
+					AonUtil.addInfoMessageFromBundle(PRODUCT_COMPOSITION_REMOVE_INFO);
+				}
+			} catch (ManagerBeanException ex) {
+				throw new AbortProcessingException(ex.getMessage());
+			}
 		}
 	}
 

@@ -148,6 +148,7 @@
 						value="#{productTo.manufactured}"
 						disabled="#{fieldDisabled}"
 						rendered="#{!productTo.composition}"
+						valueChangeListener="#{controller.onManufacturedChanged}"
 						ajaxSingle="true" reRender="Product_features" />
 					<aon:outputLabel for="Product_manufactured" styleClass="aon-margin-right aon-italic"
 						value="#{bundle.product_manufactured_product}"
@@ -158,6 +159,7 @@
 					value="#{productTo.composition}"
 					disabled="#{fieldDisabled}"
 					rendered="#{!productTo.inventoriable and !productTo.manufactured}"
+					valueChangeListener="#{controller.onCompositionChanged}"
 					ajaxSingle="true" reRender="Product_serializable_panel,Product_features" />
 				<aon:outputLabel for="Product_composition" styleClass="aon-margin-right aon-italic"
 					value="#{bundle.product_composite_product}"
