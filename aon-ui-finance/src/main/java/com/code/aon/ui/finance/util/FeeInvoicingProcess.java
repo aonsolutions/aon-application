@@ -98,7 +98,7 @@ public class FeeInvoicingProcess implements ILongProcess {
 				String msg =  "Unable to rollback transaction!";
 				LOGGER.error(msg, e);
 			}
-			String msg =  "Error invoicing deliveries. " + e.getMessage();
+			String msg =  "Error invoicing fees. " + e.getMessage();
 			controller.getProgressionState().setProgressionErrorMessage(msg);
 			controller.getProgressionState().setProgressionCurrentValue(IProgression.ERROR_VALUE);
 		} finally {

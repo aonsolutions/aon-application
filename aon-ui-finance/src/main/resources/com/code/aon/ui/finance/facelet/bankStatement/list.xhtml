@@ -53,9 +53,9 @@
 							styleClass="aon-finding-toolbar-item aon-icon-attach-file"
 							rendered="#{!controller.nevv and controller.to == null}"
 							actionListener="#{controller.onAutoCheckSelected}"
-							reRender="#{dataTableId}"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							reRender="#{dataTableId}">
+							<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
+						</aon:commandButton>
 						<aon:htmlCommandLink id="bankStatementList-excel-report"
 							value="&#160;" target="_blank" action="#{bankStatement.onExcelReport}"
 							styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
@@ -781,6 +781,9 @@
 		<ui:include src="/com/code/aon/ui/finance/facelet/bankStatement/modalLink.xhtml">
 			<ui:param name="linkManager" value="#{bankStatement.bankStatementLinkManager}" />
 		</ui:include>
+		<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
+			<ui:param name="logPanelTitle" value="#{bundle.finance_bank_statement_check_auto}" />
+		</ui:include>		
 
 	</ui:define>
 </ui:composition>

@@ -1,5 +1,8 @@
 package com.code.aon.ui.finance.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BANK_STATEMENT_CHECK_AUTO_PROCESS_END;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BANK_STATEMENT_CHECK_AUTO_PROCESS_INFO;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BANK_STATEMENT_CHECK_AUTO_PROCESS_START;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_UNRECORD_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_CHECK_NO_LINE_SELECTED;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_IMPORT_BANK_ACCOUNT_NOT_FOUND;
@@ -52,6 +55,7 @@ import com.code.aon.common.util.AonFile;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.faces.controller.AttachmentUtil;
+import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.finance.BankConcept;
 import com.code.aon.finance.BankStatement;
 import com.code.aon.finance.BankStatementLink;
@@ -726,6 +730,9 @@ public class BankStatementController extends BasicController implements IFinance
 			return;
 		}
 
+		LogPanelController log = LogPanelController.getInstance();
+		log.reset();
+		log.info(AonUtil.getMessage(FINANCE_BANK_STATEMENT_CHECK_AUTO_PROCESS_START));
 		try {
 			for (BankStatement to : getCheckedBankStatement()) {
 				if (to.isPending()) {
@@ -749,16 +756,22 @@ public class BankStatementController extends BasicController implements IFinance
 						findBankStatement(to);
 					}
 				}
+				log.info(AonUtil.getMessage(FINANCE_BANK_STATEMENT_CHECK_AUTO_PROCESS_INFO, to.getDescription(), (!to.isPending()) ? "OK" : "MISS"));
 			}
 
 			onSearch(null);
 			clearCheckedBankStatement();
 		} catch (ManagerBeanException e) {
+			log.error(e.getMessage());
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		} catch (ExpressionException e) {
+			log.error(e.getMessage());
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			log.info(AonUtil.getMessage(FINANCE_BANK_STATEMENT_CHECK_AUTO_PROCESS_END));
+			log.finish();
 		}
 	}
 
@@ -1425,7 +1438,7 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	public void onRecordSelected(ActionEvent event) throws ManagerBeanException {
-		if (getCheckedBankStatement().size() == 0) {
+		if (getCheckedBankStatementSize() == 0) {
 			AonUtil.addWarningMessageFromBundle(FINANCE_CHECK_NO_LINE_SELECTED);
 			return;
 		}
@@ -1496,7 +1509,11 @@ public class BankStatementController extends BasicController implements IFinance
 			if (getErrors().get(statement.getId()) == null) {
 				double statementAmount = (statement.isPayment()) ? (0 - statement.getAmount()) : statement.getAmount();
 				if (statementAmount != CommonUtil.round(linksAmount)) {
-					getErrors().put(statement.getId(), "El Importe de la línea del Extracto no cuadra con la suma de los Detalles del mismo.");
+					String message = "El Importe de la línea del Extracto no cuadra con la suma de los Detalles del mismo.";
+					if (statementAmount == CommonUtil.round(0 - linksAmount)) {
+						message += " Revise si realmente es un Cargo o Abono.";
+					}
+					getErrors().put(statement.getId(), message);
 				} else {
 					AccountEntry entry = null;
 					Account bankAccount = getWriter().obtainPaymentAccount(statement.getRegistryBank(), null);
@@ -1583,7 +1600,7 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	public void onUnrecordSelected(ActionEvent event) throws ManagerBeanException {
-		if (getCheckedBankStatement().size() == 0) {
+		if (getCheckedBankStatementSize() == 0) {
 			AonUtil.addWarningMessageFromBundle(FINANCE_CHECK_NO_LINE_SELECTED);
 			return;
 		}
@@ -1762,6 +1779,10 @@ public class BankStatementController extends BasicController implements IFinance
 	
 	public ArrayList<BankStatement> getCheckedBankStatement() {
 		return bankStatementChecks;
+	}
+	
+	public int getCheckedBankStatementSize() {
+		return getCheckedBankStatement().size();
 	}
 	
 	public void clearCheckedBankStatement() {

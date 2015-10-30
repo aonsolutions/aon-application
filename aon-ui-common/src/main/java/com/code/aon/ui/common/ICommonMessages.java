@@ -395,6 +395,9 @@ public interface ICommonMessages {
 	String FINANCE_SDD_MANDATE = "finance_sddMandate_module";
 	String FINANCE_SDD_MANDATE_LIST_NAME = "sddMandate_list";
 	String FINANCE_ACCOUNT = "finance_account";
+	String FINANCE_BANK_STATEMENT_CHECK_AUTO_PROCESS_START = "finance_bank_statement_check_auto_process_start";
+	String FINANCE_BANK_STATEMENT_CHECK_AUTO_PROCESS_INFO = "finance_bank_statement_check_auto_process_info";
+	String FINANCE_BANK_STATEMENT_CHECK_AUTO_PROCESS_END = "finance_bank_statement_check_auto_process_end";
 	
 	String FISCAL_RESULT = "fiscal_result";
 	
