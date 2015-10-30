@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.finance.server;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
@@ -11,6 +12,8 @@ import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.util.TempFile;
+import org.apache.poi.util.TempFileCreationStrategy;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -39,6 +42,7 @@ public abstract class AbsExcelAction  {
     
 	public void initialize(String name) {
 		workbook = new SXSSFWorkbook(1);
+		
 		
 	    sheet = (SXSSFSheet) workbook.createSheet(name);
 	    dataFormat = workbook.getCreationHelper().createDataFormat();
@@ -134,5 +138,39 @@ public abstract class AbsExcelAction  {
 	}
 
 	protected abstract void headerRow();
+	
+	private static class AONTempFileCreationStrategy implements TempFileCreationStrategy {
+
+        /** The directory where the temporary files will be created (<code>null</code> to use the default directory). */
+        private File dir;
+
+        @Override
+		public File createTempFile(String prefix, String suffix) throws IOException {
+            // Identify and create our temp dir, if needed
+        	
+            if (dir == null || !dir.canWrite()) {
+                dir = new File(System.getProperty("java.io.tmpdir"), "poifiles");
+                dir.mkdir();
+                if (System.getProperty("poi.keep.tmp.files") == null)
+                    dir.deleteOnExit();
+            }
+
+            // Generate a unique new filename 
+            File newFile = File.createTempFile(prefix, suffix, dir);
+
+            // Set the delete on exit flag, unless explicitly disabled
+            if (System.getProperty("poi.keep.tmp.files") == null)
+                newFile.deleteOnExit();
+
+            // All done
+            return newFile;
+		}
+		
+	}
+	
+	static {
+		TempFile.setTempFileCreationStrategy(new AONTempFileCreationStrategy());
+	}
+	
 	 
 }
