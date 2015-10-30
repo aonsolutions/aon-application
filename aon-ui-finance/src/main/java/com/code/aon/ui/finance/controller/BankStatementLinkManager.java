@@ -722,7 +722,7 @@ public class BankStatementLinkManager implements IFinanceConstants, Serializable
 
 		AccountEntryDetail to = (AccountEntryDetail)getEntryDetailModel().getRowData();
 		BankStatementController statementController = (BankStatementController)FormUtil.getController(BANK_STATEMENT_CONTROLLER_NAME);
-		statementController.recordBankStatement(to.getAccountEntry(), getCurrentStatement());
+		statementController.recordBankStatement(null, to.getAccountEntry(), getCurrentStatement());
 	}
 
 	public void onSaveComments(ActionEvent event) throws ManagerBeanException {

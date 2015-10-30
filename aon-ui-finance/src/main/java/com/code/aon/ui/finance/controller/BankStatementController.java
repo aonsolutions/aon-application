@@ -33,7 +33,10 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.ss.usermodel.Font;
+import org.hibernate.Session;
 import org.richfaces.event.UploadEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
@@ -49,6 +52,8 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.AonFile;
@@ -93,6 +98,8 @@ public class BankStatementController extends BasicController implements IFinance
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(BankStatementController.class.getName());
+	
 	private RegistryBank registryBank;
 	private Date operationDate;
 	private BankConcept bankConcept;
@@ -1456,8 +1463,35 @@ public class BankStatementController extends BasicController implements IFinance
 		onRecordBankStatement(to);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void onRecordBankStatement(BankStatement statement) throws ManagerBeanException {
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+			HibernateUtil.beginTransaction(sessionName);
+			
+			recordBankStatement(HibernateUtil.getSession(sessionName), statement);
+
+			HibernateUtil.commitTransaction(sessionName);
+		} catch (Exception e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg, e);
+			}
+			getErrors().put(statement.getId(), e.getMessage());
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void recordBankStatement(Session session, BankStatement statement) throws ManagerBeanException {
 		if (statement.isChecked()) {
 			List<FinanceTracking> financeTrackingList = new LinkedList<FinanceTracking>();
 			List<FinanceBatch> financeBatchList = new LinkedList<FinanceBatch>();
@@ -1589,7 +1623,7 @@ public class BankStatementController extends BasicController implements IFinance
 					}
 
 					if (entry != null) {
-						recordBankStatement(entry, statement);
+						recordBankStatement(session, entry, statement);
 					}
 				}
 			}
@@ -1600,11 +1634,14 @@ public class BankStatementController extends BasicController implements IFinance
 		}
 	}
 
-	public void recordBankStatement(AccountEntry entry, BankStatement statement) throws ManagerBeanException {
+	public void recordBankStatement(Session session, AccountEntry entry, BankStatement statement) throws ManagerBeanException {
 		getWriter().insertAccountEntryBankStatement(entry, statement);
 
 		statement.setSecurityLevel(entry.getSecurityLevel());
 		statement.setStatus(StatementStatus.RECORDED);
+		if (session != null) {
+			statement = (BankStatement)session.merge(statement);
+		}
 		getManagerBean().update(statement);
 	}
 
@@ -1628,6 +1665,33 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	private void onUnrecordBankStatement(BankStatement statement) throws ManagerBeanException {
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+			HibernateUtil.beginTransaction(sessionName);
+			
+			unrecordBankStatement(HibernateUtil.getSession(sessionName), statement);
+
+			HibernateUtil.commitTransaction(sessionName);
+		} catch (Exception e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg, e);
+			}
+			getErrors().put(statement.getId(), e.getMessage());
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
+	}
+
+	private void unrecordBankStatement(Session session, BankStatement statement) throws ManagerBeanException {
 		getErrors().remove(statement.getId());
 		if (statement.isRecorded()) {
 			IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
@@ -1674,19 +1738,22 @@ public class BankStatementController extends BasicController implements IFinance
 					}
 				}
 
-				unrecordBankStatement(statement, true);
+				unrecordBankStatement(session, statement, true);
 			} else {
-				unrecordBankStatement(statement, false);
+				unrecordBankStatement(session, statement, false);
 			}
 		} else {
 			getErrors().put(statement.getId(), "La línea del Extracto no esta Contabilizada. No se puede Descontabilizar.");
 		}
 	}
 
-	public void unrecordBankStatement(BankStatement statement, boolean hasLinks) throws ManagerBeanException {
+	public void unrecordBankStatement(Session session, BankStatement statement, boolean hasLinks) throws ManagerBeanException {
 		getWriter().removeAccountEntryBankStatement(statement, hasLinks);
 
 		statement.setStatus((hasLinks) ? StatementStatus.CHECKED : StatementStatus.PENDING);
+		if (session != null) {
+			statement = (BankStatement)session.merge(statement);
+		}
 		getManagerBean().update(statement);
 	}
 
