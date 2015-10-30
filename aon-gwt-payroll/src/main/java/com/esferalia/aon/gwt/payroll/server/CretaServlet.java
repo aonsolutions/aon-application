@@ -471,11 +471,11 @@ public class CretaServlet extends HttpServlet implements
 			return String.format(
 					"{" 
 							+ "\"message\":\"%s\",\r\n" 
-					+ "\"ccc\":{\r\n" 
-					+ "\"number\":\"%s\",\r\n" 
-					+ "\"regime\":\"%s\",\r\n" 
-					+ "\"province\":\"%s\"\r\n" 
-					+ "},\r\n" 
+//					+ "\"ccc\":{\r\n" 
+//					+ "\"number\":\"%s\",\r\n" 
+//					+ "\"regime\":\"%s\",\r\n" 
+//					+ "\"province\":\"%s\"\r\n" 
+//					+ "},\r\n" 
 //					+ "\"from\":{\r\n" 
 //					+ "\"month\":\"%s\",\r\n" 
 //					+ "\"year\":\"%s\"\r\n" 
@@ -491,9 +491,9 @@ public class CretaServlet extends HttpServlet implements
 					
 					getMessage(),
 
-					liquidacion.getCcc().getNumero(),
-					liquidacion.getCcc().getRegimen(),
-					liquidacion.getCcc().getProvincia(),
+//					liquidacion.getCcc().getNumero(),
+//					liquidacion.getCcc().getRegimen(),
+//					liquidacion.getCcc().getProvincia(),
 					
 //					liquidacion.getPeriodoDesde().getMes(),
 //					liquidacion.getPeriodoDesde().getAnho(),
@@ -549,13 +549,21 @@ public class CretaServlet extends HttpServlet implements
 		@Override
 		public void unknownDato(Salary salary, Tramo tramo,
 				DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
+			
 			boolean mandatory = "B".equalsIgnoreCase(
 					datoSolicitado.getIndicadorObligatoriedad());
-
-			errors.add(new Event().setMessage(String.format(
+			String message = String.format(
 					"Lo sentimos. %s (%s) no está soportado en AON SOLUTIONS",
 					getDescription(datoSolicitado),
-					mandatory ? "Obligatorio" : "Opcional")));
+					mandatory ? "Obligatorio" : "Opcional");
+			
+			UnknownDato event = 
+					new UnknownDato()
+					.setMessage(message)
+					.setDato(datoSolicitado);
+
+			unknown.add(event);
+
 		}
 
 		@Override
@@ -570,13 +578,22 @@ public class CretaServlet extends HttpServlet implements
 		@Override
 		public void wrongContextVariable(Salary salary, ContextVariable var,
 				Period p, String right, String wrong) {
-			errors.add(new Event().setMessage(format(
-					"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecta. Se esperaba '%7$s' y es '%8$s'",
-					// salary.getEnterpriseName(),
-					salary.getEmployeeName(), salary.getEmployeeDocument(),
-					salary.getEmployeeSSNumber(),
-					// salary.getEnterpriseCCC(),
-					var.getName(), p.getStart(), p.getEnd(), right, wrong)));
+			if ( right == null )
+				errors.add(new Event().setMessage(format(
+						"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecta. No se esperaba y es '%7$s'",
+						salary.getEmployeeName(), 
+						salary.getEmployeeDocument(),
+						salary.getEmployeeSSNumber(),
+						var.getName(), 
+						p.getStart(), 
+						p.getEnd(), 
+						wrong)));
+			else 
+				errors.add(new Event().setMessage(format(
+						"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecta. Se esperaba '%7$s' y es '%8$s'",
+						salary.getEmployeeName(), salary.getEmployeeDocument(),
+						salary.getEmployeeSSNumber(),
+						var.getName(), p.getStart(), p.getEnd(), right, wrong)));
 		}
 
 		@Override
@@ -611,7 +628,7 @@ public class CretaServlet extends HttpServlet implements
 				ContextData contextData, Dato datoSolicitado, Tramo tramo,
 				TramoBuilder tramoBuilder, boolean optional) {
 			errors.add(new Event().setMessage(format(
-					"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecta. Se esperaba (%7$s/%8$s/%9$s...%10$s/%11$s/%12$s)",
+					"%s (IPF:%s, NAF:%s) .Tramo para %s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecto se esperaba (%7$s/%8$s/%9$s...%10$s/%11$s/%12$s)",
 					// salary.getEnterpriseName(),
 					salary.getEmployeeName(), salary.getEmployeeDocument(),
 					salary.getEmployeeSSNumber(),
@@ -625,6 +642,7 @@ public class CretaServlet extends HttpServlet implements
 
 			tramo.getFechaHasta().getDia(), tramo.getFechaHasta().getMes(),
 					tramo.getFechaHasta().getAnho())));
+			
 		}
 
 		@Override
