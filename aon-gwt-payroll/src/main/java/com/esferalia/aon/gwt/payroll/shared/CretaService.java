@@ -163,9 +163,9 @@ public interface CretaService {
 
 		// ----------------------------------- JSNI (Native JavaScript Methods)
 
-		public final native JsCCC getCCC() /*-{
-			return this.ccc;
-		}-*/;
+//		public final native JsCCC getCCC() /*-{
+//			return this.ccc;
+//		}-*/;
 
 		public final native String getType() /*-{
 			return this.type;

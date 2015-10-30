@@ -112,11 +112,11 @@ public class Bases {
 				tramoBuilder.addDato(datoBuilder.create());
 			} catch (NoSuchContextVariableException e) {
 				try {
-				for (BasesCallback cb : cbs)
-					cb.noSuchDato(salary, tramo, datoSolicitado, tramoBuilder,
-							true);
+					for (BasesCallback cb : cbs)
+						cb.noSuchDato(salary, tramo, datoSolicitado,
+								tramoBuilder, true);
 				} catch (Cancel c) {
-					
+
 				}
 
 			}
@@ -340,7 +340,8 @@ public class Bases {
 		default void unknownSalary(Salary salary) {
 		};
 
-		default void salaryNotFound(String ccc, Trabajador<?> trabajador, Periodo mes) {
+		default void salaryNotFound(String ccc, Trabajador<?> trabajador,
+				Periodo mes) {
 		};
 
 		default void rightContextVariable(ContextVariable var, Period p,
@@ -530,7 +531,8 @@ public class Bases {
 		public void unMatchedContextVariable(Salary salary, ContextVariable var,
 				ContextData contextData, Dato datoSolicitado, Tramo tramo,
 				TramoBuilder tramoBuilder, boolean optional) {
-
+			
+			
 			if (Arrays.binarySearch(datos, datoSolicitado.getCodigo()) < 0)
 				return;
 
@@ -554,7 +556,7 @@ public class Bases {
 						tramo.getFechaHasta().getDia(),
 						tramo.getFechaHasta().getMes(),
 						tramo.getFechaHasta().getAnho(), total);
-				return;
+				throw new Cancel();
 			}
 
 			datoBuilder.setImporteEuros(interpolated);
@@ -608,9 +610,11 @@ public class Bases {
 		}
 
 		@Override
-		public void salaryNotFound(String ccc, Trabajador trabajador, Periodo mes) {
-			System.err.println(String.format("ERROR : Salary not found for %s (%s/%s)",
-					trabajador.getNaf(), mes.getMes(), mes.getAnho()));
+		public void salaryNotFound(String ccc, Trabajador trabajador,
+				Periodo mes) {
+			System.err.println(
+					String.format("ERROR : Salary not found for %s (%s/%s)",
+							trabajador.getNaf(), mes.getMes(), mes.getAnho()));
 		}
 
 		@Override
@@ -959,10 +963,14 @@ public class Bases {
 					cb.noSuchDato(salary, tramo, datoSolicitado, tramoBuilder,
 							optional);
 			} catch (UnMatchedContextVariableException e) {
-				for (BasesCallback cb : cbs)
-					cb.unMatchedContextVariable(salary, e.getContextVariable(),
-							e.getContextData(), datoSolicitado, tramo,
-							tramoBuilder, optional);
+				try {
+					for (BasesCallback cb : cbs)
+						cb.unMatchedContextVariable(salary, e.getContextVariable(),
+								e.getContextData(), datoSolicitado, tramo,
+								tramoBuilder, optional);
+				} catch ( Cancel c ) {
+					
+				}
 			}
 		}
 
@@ -1006,22 +1014,25 @@ public class Bases {
 						UnMatchedContextVariableException {
 			List<ContextData> datas = salary.getContextData()
 					.get(contextVariable.getName());
-			if (datas == null)
+			if (datas == null || datas.isEmpty())
 				throw new NoSuchContextVariableException(contextVariable);
 
 			double ret = 0.00;
 			boolean found = false;
 
 			for (ContextData data : datas) {
-				if (Period.compare(data.getStartDate(), p.getStart()) != 0
-						|| Period.compare(data.getEndDate(), p.getEnd()) != 0)
-					throw new UnMatchedContextVariableException(contextVariable,
-							data);
 
-				Period intersect = p.intersect(
-						new Period(data.getStartDate(), data.getEndDate()));
+				Period dataPeriod = new Period(data.getStartDate(),
+						data.getEndDate());
+
+				Period intersect = p.intersect(dataPeriod);
 				if (intersect == null)
 					continue;
+
+				if ( data.getStartDate().before(p.getStart()) || 
+						data.getEndDate().after(p.getEnd()))
+					throw new UnMatchedContextVariableException(contextVariable,
+							data);
 
 				found = true;
 				ret += ExpressionContext.eval(data.getExpression(),
@@ -1029,7 +1040,8 @@ public class Bases {
 			}
 
 			if (!found)
-				throw new NoSuchContextVariableException(contextVariable);
+				throw new UnMatchedContextVariableException(contextVariable,
+						datas.get(0));
 
 			return ret;
 		}
@@ -1137,7 +1149,7 @@ public class Bases {
 		// CompositeCContextCretaData -----------------------------------------
 		@Override
 		protected boolean isOptional() {
-			return true;
+			return false;
 		}
 	}
 
@@ -1148,8 +1160,8 @@ public class Bases {
 			put("501", new OptionalCContextCretaData(STRUCTURAL_OVERTIME_BASE));
 			put("502", new OptionalCContextCretaData(
 					NON_STRUCTURAL_OVERTIME_BASE));
-			put("537", new OptionalCContextCretaData(
-					NON_STRUCTURAL_OVERTIME_BASE));
+//			put("537", new OptionalCContextCretaData(
+//					NON_STRUCTURAL_OVERTIME_BASE));
 			put("601", new MandatoryCContextCretaData(CGP_BASE));
 			put("611", new MandatoryCContextCretaData(CGP_BASE));
 
@@ -1172,7 +1184,7 @@ public class Bases {
 			put("509", new MandatoryCompositecContextData(MATERNITY_BASE,
 					ERE_BASE));
 			put("603", new MandatoryCompositecContextData(MATERNITY_BASE,
-					ERE_BASE));
+					ERE_BASE, CGP_BASE));
 			put("613", new MandatoryCompositecContextData(MATERNITY_BASE,
 					ERE_BASE));
 		}

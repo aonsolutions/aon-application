@@ -290,7 +290,7 @@ public class CretaResponseDialog extends SelectDialog<CretaService.JsFile> {
 		);
 	}
 
-	private Map<String,String> getDefaults(){
+	private Map<String,Collection<String>> getDefaults(){
 		return Collections.emptyMap();
 	}
 

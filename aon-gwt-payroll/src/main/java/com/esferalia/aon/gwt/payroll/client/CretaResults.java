@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -83,6 +85,8 @@ public class CretaResults extends Composite implements RequiresResize{
 
 	private static final Template TEMPLATE = GWT.create(Template.class);
 
+	private static Map<String, Collection<String>> DATA = new HashMap<String,Collection<String>>();
+
 	private Images images;
 
 	@UiField
@@ -95,12 +99,11 @@ public class CretaResults extends Composite implements RequiresResize{
 	private TreeItem warningsItem;
 	
 	private Set<JsFile> jsFiles;
-	private Map<String, String> data ;
 
 	public CretaResults() {
 		
 		images = GWT.create(Images.class);
-		data = new HashMap<String,String>();
+//		data = new HashMap<String,String>();
 
 		initWidget(binder.createAndBindUi(this));
 
@@ -180,6 +183,14 @@ public class CretaResults extends Composite implements RequiresResize{
 
 	// ------------------------------------------------------------------------
 	
+	protected void removeAll() {
+		errorsItem.removeItems();
+		syncErrors();
+		warningsItem.removeItems();
+		syncWarnings();
+	}
+	
+
 	protected void onBases(JsBasesResult result) {
 		
 	}
@@ -230,7 +241,11 @@ public class CretaResults extends Composite implements RequiresResize{
 	}
 	
 	private void addDefault(JsUnknownDato unknownDato, String value){
-		data.put(CretaService.Parameter.DEFAULTS.name(), unknownDato.getCode()+"="+value);
+		Collection<String> defaults =  DATA.get(CretaService.Parameter.DEFAULTS.name());
+		if ( defaults == null )
+			DATA.put(CretaService.Parameter.DEFAULTS.name(), defaults = new ArrayList<String>());
+		
+		defaults.add(unknownDato.getCode()+"="+value);
 	}
 	
 	private void expandAll() {
@@ -243,16 +258,9 @@ public class CretaResults extends Composite implements RequiresResize{
 		warningsItem.setState(false);
 	}
 
-	private void removeAll() {
-		errorsItem.removeItems();
-		syncErrors();
-		warningsItem.removeItems();
-		syncWarnings();
-	}
-	
 	private void run() {
 		MainCreta.submit(CretaService.CRETA_URL + "/" + CretaService.File.BASES, 
-				data, jsFiles, 
+				DATA, jsFiles, 
 				new AsyncCallback<CretaService.JsBasesResult>() {
 
 			@Override

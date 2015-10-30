@@ -19,7 +19,6 @@ import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBasesResult;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsRespuesta;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsTrabajadoresYTramos;
-import com.google.api.client.util.Sleeper;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -329,7 +328,7 @@ public abstract class CretaDetail extends Composite {
 				});
 	}
 	
-	private Map<String,String> getDefaults(){
+	private Map<String,Collection<String>> getDefaults(){
 		return Collections.emptyMap();
 	}
 	

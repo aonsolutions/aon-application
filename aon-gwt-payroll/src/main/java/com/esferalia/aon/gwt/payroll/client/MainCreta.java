@@ -340,6 +340,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	
 	private abstract class BaseCretaDetail extends CretaDetail {
 		
+		
+		
 		@Override
 		public void onBases(CretaService.JsBasesResult result) {
 
@@ -352,7 +354,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			mergeEditor.setTitle(CretaService.File.BASES.getFilename());
 			mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
 			detailPanel.setWidget(mergeEditor);
-
+			
 			CretaResults cretaResults = new CretaResults(){
 				@Override
 				protected void onBases(JsBasesResult result) {
@@ -981,7 +983,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	
 	// ------------------------------------------------------------------------
 
-	protected static void submit(String url, Map<String,String> datas, Collection<JsFile> jsFiles, final AsyncCallback<JsBasesResult> cb) {
+	protected static void submit(String url, Map<String,Collection<String>> datas, Collection<JsFile> jsFiles, final AsyncCallback<JsBasesResult> cb) {
 		
 		XMLHttpRequest xmlHttpRequest = XMLHttpRequest.create();
 		
@@ -1010,20 +1012,21 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		
 		StringBuffer requestBuffer = new StringBuffer();
 		
-		for ( Map.Entry<String, String> data: datas.entrySet()) {
-			// We start a new part in our body's request
-			requestBuffer.append("--" + boundary + "\r\n" );
-			// We said it's form data (it could be something else)
-			requestBuffer.append("Content-Disposition: form-data; "
-					// We define the name of the form data
-					+"name=\"" + data.getKey() + "\"\r\n" );
-			// There is always a blank line between the meta-data and the data
-			requestBuffer.append("\r\n");
-
-			requestBuffer.append(data.getValue());
-
-			requestBuffer.append("\r\n");
-			
+		for ( Map.Entry<String, Collection<String>> entry: datas.entrySet()) {
+			for ( String value : entry.getValue() )  {
+				// We start a new part in our body's request
+				requestBuffer.append("--" + boundary + "\r\n" );
+				// We said it's form data (it could be something else)
+				requestBuffer.append("Content-Disposition: form-data; "
+						// We define the name of the form data
+						+"name=\"" + entry.getKey() + "\"\r\n" );
+				// There is always a blank line between the meta-data and the data
+				requestBuffer.append("\r\n");
+	
+				requestBuffer.append(value);
+	
+				requestBuffer.append("\r\n");
+			}
 		}
 		
 		
