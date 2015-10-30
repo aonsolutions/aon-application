@@ -1492,12 +1492,21 @@ public class BankStatementController extends BasicController implements IFinance
 					if (statementLink.getSource() == StatementLinkSource.BANK_CONCEPT) {
 						BankConcept concept = (BankConcept)statementLink.getSourceTo();
 						if (concept.getAccount() != null && concept.getAccount().getId() != null) {
-							accountMap.put(concept.getAccount(), new Double(statementLink.getAmount()));
+							double amount = statementLink.getAmount();
+							if (accountMap.containsKey(concept.getAccount())) {
+								amount = CommonUtil.round(amount + accountMap.get(concept.getAccount()));
+							}
+							accountMap.put(concept.getAccount(), new Double(amount));
 						} else {
 							getErrors().put(statement.getId(), "El Concepto " + concept.getName() + " no tiene Cuenta Contable asociada.");
 						}
 					} else if (statementLink.getSource() == StatementLinkSource.ACCOUNT) {
-						accountMap.put((Account)statementLink.getSourceTo(), new Double(statementLink.getAmount()));
+						Account account = (Account)statementLink.getSourceTo();
+						double amount = statementLink.getAmount();
+						if (accountMap.containsKey(account)) {
+							amount = CommonUtil.round(amount + accountMap.get(account));
+						}
+						accountMap.put(account, new Double(amount));
 					}
 
 					if (statementLink.getLinkedBankStatementLink() != null) {
