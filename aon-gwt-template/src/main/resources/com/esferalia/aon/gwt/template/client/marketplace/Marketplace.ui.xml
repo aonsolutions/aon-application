@@ -1,0 +1,84 @@
+
+<!DOCTYPE html [
+    <!ENTITY nbsp "&#160;"> 
+]>
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:b="http://java.sun.com/jstl/core">
+
+	<ui:style>
+		@external .gwt-SplitLayoutPanel-HDragger;
+		@external .gwt-SplitLayoutPanel-VDragger;
+		@external .gwt-MenuBar-horizontal;
+		@external .searchPanel-template;
+		@external .aon_dataGrid-template;
+		@external .gwt-StackLayoutPanelHeader;
+		
+		.gwt-SplitLayoutPanel-HDragger { 
+			background-color: #FFF  !important;
+  		}
+
+		.gwt-SplitLayoutPanel-VDragger {   
+			background-color: #FFF !important;
+  		}
+  		
+		.gwt-MenuBar-horizontal{
+			border:0px;
+		}
+		
+		.searchPanel-template{
+			left:1px !important;
+			right:1px !important;
+		}
+		
+		.aon_dataGrid-template{
+			left:1px !important;
+			right:1px !important;
+		}
+		
+		.gwt-StackLayoutPanelHeader {
+   			background: none repeat scroll 0% 0% #EBEBEF !important;
+   			border:none !important; 
+   			border-right: 1px solid #bbb !important;
+		}	
+	</ui:style>
+	
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+	
+	
+	<g:SplitLayoutPanel ui:field="splitLayoutPanel" >
+		<g:west size="300">
+			<g:StackLayoutPanel ui:field="stack1"  unit='EM'>
+
+				<g:stack>
+					<g:header size='3'>
+
+						<div class='aon-documental-docs'>
+							Marketplace
+						</div>
+					</g:header>
+			<g:DockLayoutPanel unit='PX'>
+				<g:north size='26'>
+				
+						<g:FlowPanel styleName="gwt-MenuBar-horizontal {aonResources.css.aonNoPrint}">
+							
+						</g:FlowPanel>
+				
+				</g:north>
+			
+				<g:center>
+					<g:ScrollPanel ui:field="sidebar" styleName="{aonResources.css.aonNoPrint}">
+						<g:Tree ui:field="tree"/>
+					</g:ScrollPanel>
+				</g:center>
+			</g:DockLayoutPanel>
+			</g:stack>
+			</g:StackLayoutPanel>
+		</g:west>
+		
+		<g:center>
+			<g:SimpleLayoutPanel ui:field="content"/>
+		</g:center>
+	</g:SplitLayoutPanel>
+</ui:UiBinder>

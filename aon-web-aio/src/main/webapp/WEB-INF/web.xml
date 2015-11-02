@@ -284,7 +284,16 @@
 		<url-pattern>/aon_gwt_template/gwt_upload</url-pattern>
 	</servlet-mapping>
 
+	<!-- Aon GWT Marketplace -->
 
+	<servlet>
+		<servlet-name>MarketplaceGwtServlet</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.template.server.marketplace.MarketplaceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MarketplaceGwtServlet</servlet-name>
+		<url-pattern>/aon_gwt_template/gwt_marketplace</url-pattern>
+	</servlet-mapping>
 
 	<!-- Aon GWT Document -->
 

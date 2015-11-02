@@ -59,8 +59,13 @@ import com.esferalia.aon.gwt.template.jooq.DBConsumption;
 import com.esferalia.aon.gwt.template.jooq.DBFee;
 import com.esferalia.aon.gwt.template.jooq.DBProduct;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
+import com.esferalia.aon.gwt.template.server.marketplace.XMLUtils;
 import com.esferalia.aon.gwt.template.shared.ConsumptionItem;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
+import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
+import com.esferalia.aon.gwt.template.shared.EcommerceProduct.ProductData;
+import com.esferalia.aon.gwt.template.shared.EcommerceProduct.ProductData.Ecommerce.PresetValues;
+import com.esferalia.aon.gwt.template.shared.EcommerceProduct.Template;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.Hotel;
 import com.esferalia.aon.gwt.template.shared.Seller;
@@ -72,11 +77,6 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.product.EcommerceProduct;
-import com.esferalia.aon.occam.api.model.product.EcommerceProduct.ProductData;
-import com.esferalia.aon.occam.api.model.product.EcommerceProduct.ProductData.Ecommerce.PresetValues;
-import com.esferalia.aon.occam.api.model.product.EcommerceProduct.Template;
-import com.esferalia.aon.occam.api.model.product.XMLUtils;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -1980,10 +1980,10 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
     	byte[] data = getOut();
 		byte[] xml = null;
 		
-    	/*if(getMimetype().equals(MimeType.CSV.getName()) && ecommerce.equals(Ecommerce.EBAY)){
+    	if(getMimetype().equals(MimeType.CSV.getName()) && ecommerce.equals(Ecommerce.EBAY)){
     		xml = csvToXmlEbay(data, ecommerce.getName(), type, pc.getName());
     	}
-    	else*/ if(!Utils.isExcel(getMimetype())){
+    	else if(!Utils.isExcel(getMimetype())){
 			//El archivo no es un fichero Excel.
 			error.setError(false);
 			Vector<String> verror = new Vector<String>();
@@ -1994,9 +1994,9 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 
 		if(xml == null && ecommerce.equals(Ecommerce.AMAZON))
 			xml = excelToXmlAmazon(data, ecommerce.getName(), type, pc.getName());
-		/*else if(xml == null && ecommerce.equals(Ecommerce.EBAY))
+		else if(xml == null && ecommerce.equals(Ecommerce.EBAY))
 			xml = excelToXmlEbay(data, ecommerce.getName(), type, pc.getName());
-		 */
+	
 		if(xml != null){
 			
 			Condition condition = RATTACH.DESCRIPTION.eq(ecommerce.getName()+"-"+type).and(RATTACH.TYPE.eq((byte)18))
@@ -2033,6 +2033,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 				else attach.setAttachModule(seller.getId());
 		
 				AON.insert(attach);
+				
 			}
 		}
 		else{
@@ -2185,22 +2186,29 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 				ecommerce.setCode(s);
 				pd.getEcommerce().add(ecommerce);
 			}
-			for(Integer i = 0; i < pd.getEcommerce().size(); i++){
-				Integer j = 1;
-				String csvline = lineArray[j];
-				String[] csvLine = csvline.split(csvSplitBy);
-				String value = csvLine[i];
-				List<String> list = new ArrayList<String>();
-				while(j+1<lineArray.length && value != null && value != ""){
-					list.add(value);
-					j++;
-					csvline = lineArray[j];
-					csvLine = csvline.split(csvSplitBy);
-					if(i < csvLine.length)value = csvLine[i];
+			if(lineArray.length > 1){
+				for(Integer i = 0; i < pd.getEcommerce().size(); i++){
+					Integer j = 1;
+					String csvline = lineArray[j];
+					String[] csvLine = csvline.split(csvSplitBy);
+					if(i<csvLine.length){
+						String value = csvLine[i];
+						List<String> list = new ArrayList<String>();
+						while(j<lineArray.length && value != null && value != ""){
+							list.add(value);
+							j++;
+							if(j<lineArray.length){
+								csvline = lineArray[j];
+								csvLine = csvline.split(csvSplitBy);
+								if(i < csvLine.length) value = csvLine[i];
+							}
+						}
+					
+						PresetValues pv = new PresetValues();
+						pv.setPresetValue(list);
+						pd.getEcommerce().get(i).setPresetValues(pv);
+					}
 				}
-				PresetValues pv = new PresetValues();
-				pv.setPresetValue(list);
-				pd.getEcommerce().get(i).setPresetValues(pv);
 			}
 			Template template = new Template();
 			template.setCategory(category);

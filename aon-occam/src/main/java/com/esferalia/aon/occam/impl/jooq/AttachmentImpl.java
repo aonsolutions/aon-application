@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.List;
+
 import org.jooq.Condition;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -13,6 +15,12 @@ public class AttachmentImpl implements IAttachment{
 	public Attach getRattach(AONContext ctx, Condition condition) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> AttachmentDAO.getRattach(ctx, condition));
+	}
+	
+	@Override
+	public List<Attach> getRattachList(AONContext ctx, Condition condition) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getRattachList(ctx, condition));
 	}
 
 	@Override

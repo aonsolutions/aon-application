@@ -66,7 +66,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	
 	private static final Binder binder = GWT.create(Binder.class);
 
-	@UiField(provided = true) FlexTable flex_table;
+	@UiField(provided = true)
+	protected FlexTable flex_table;
 	@UiField(provided = true) Label label;
 	@UiField Button accept_button;
 	@UiField Button cancel_button;

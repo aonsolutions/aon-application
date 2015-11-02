@@ -1519,6 +1519,29 @@ public class AON {
 		}
 	}
 	
+	public static List<Attach> getAttachList(String domainName, Integer domainId, Condition condition, AttachType attachType) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId);
+			
+			List<Attach> attachList = new ArrayList<Attach>();
+			
+			if(attachType.equals(AttachType.REGISTRY)) attachList = getAttachment().getRattachList(ctx, condition);
+			else if(attachType.equals(AttachType.CONTRACT)) attachList = null;
+			else if(attachType.equals(AttachType.INVOICE)) attachList = null;
+			else if(attachType.equals(AttachType.ITEM)) attachList = null;
+			else if(attachType.equals(AttachType.OFFER)) attachList = null;
+			else if(attachType.equals(AttachType.PAYROLL)) attachList = null;
+			else if(attachType.equals(AttachType.PROJECT)) attachList = null;
+			else if(attachType.equals(AttachType.SEPE)) attachList = null;
+			
+			return attachList;		
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static void insert(Attach attach) {
 		AONContext ctx = null;
 		try {

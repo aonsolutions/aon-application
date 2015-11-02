@@ -8,8 +8,11 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.jooq.DSLContext;
@@ -20,10 +23,13 @@ import org.jooq.Result;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
+import com.esferalia.aon.carrier.enumeration.ShipmentStatus;
 import com.esferalia.aon.gwt.template.server.Utils;
+import com.esferalia.aon.gwt.template.shared.marketplace.AmazonDelivery;
 import com.esferalia.aon.gwt.template.shared.Hotel;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
+import com.esferalia.aon.jooq.tables.records.DeliveryRecord;
 import com.esferalia.aon.occam.api.AONContext;
 
 
@@ -455,5 +461,33 @@ public class DBConsults {
 		}
 	}
 	
-	
+	public static List<AmazonDelivery> getDeliveries(String domainName, Integer domainId){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId);
+			Result<DeliveryRecord> result = ctx.getDslContext().select()
+				.from(DELIVERY)
+				.where(DELIVERY.DOMAIN.eq(domainId))
+				.and(DELIVERY.SHIPPING_STATUS.eq((byte)ShipmentStatus.IN_AGENCY.ordinal()))
+				.fetchInto(DELIVERY);
+			
+			List<AmazonDelivery> list = new ArrayList<AmazonDelivery>();
+			result.stream().forEach(dr ->{
+				AmazonDelivery ad = new AmazonDelivery();
+				ad.setOrderId("");
+				ad.setOrderItemId("");
+				ad.setQuantity(dr.getTotalPackages().intValue());
+				ad.setShipDate(dr.getStatusModificationDate());
+				ad.setShipDateStr(dr.getStatusModificationDate());
+				//ad.setCarrierCode();
+				//ad.setCarrierName();
+				ad.setTrackingNumber(dr.getTrackingNumber());
+				ad.setShipMethod("");
+				list.add(ad);
+			});
+			return list;
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
 }

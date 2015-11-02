@@ -19,13 +19,19 @@
 		</navigation-case>
 	</navigation-rule>
 	
-		<navigation-rule>
+	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_consumption_error_templates</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/template/facelet/consumption_error_templates.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_marketplace</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/template/facelet/marketplace.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 
 </faces-config>
 		

@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.shared.Constants;
+import com.esferalia.aon.gwt.template.client.marketplace.Marketplace;
 import com.esferalia.aon.gwt.template.shared.Dialog;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.Error;
@@ -39,6 +40,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class Templates extends Composite implements EntryPoint {
 
 	private static final String SILENT = "silent";
+	private static final String MARKETPLACE = "marketplace";
 	private static final String CONSUMPTION = "consumption";
 	private static final String CONSUMPTION_ERROR = "consumption_error";
 	private static final String TEMPLATES = "templates";
@@ -80,6 +82,10 @@ public class Templates extends Composite implements EntryPoint {
 								Widget w = new TemplatesPage(template_list, domainId);
 								pagesPanel.add(w);
 							}
+							else if(entryPoint.equals(MARKETPLACE)){
+						   		Marketplace marketplace = new Marketplace(domainId);		
+					 			pagesPanel.add(marketplace);
+							}
 							else if(entryPoint.equals(CONSUMPTION)){
 						   		ConsumptionPage cp = new ConsumptionPage(domainId, template_list);		
 					 			pagesPanel.add(cp);
@@ -88,6 +94,7 @@ public class Templates extends Composite implements EntryPoint {
 								ConsumptionErrorPage cep = new ConsumptionErrorPage(domainId, template_list);
 								pagesPanel.add(cep);
 							}
+							
 						}
 					}
 					
@@ -130,6 +137,7 @@ public class Templates extends Composite implements EntryPoint {
 			exportConsumptionx(this);
 			exportInventoryx(this);
 			exportIncomex(this);
+			exportDeliveryx(this);
 		}
 		
 		Widget ui = binder.createAndBindUi(this);
@@ -1444,12 +1452,23 @@ public class Templates extends Composite implements EntryPoint {
 			@Override
 			public void onFailure(Throwable caught) {}
 		});
-		
 	}
 
 	public static native void exportEcommerce(Templates thiz) /*-{
 		$wnd.ecommerce = function() {
 			thiz.@com.esferalia.aon.gwt.template.client.Templates::ecommerce(*)();
+		}
+	}-*/;
+	
+	public void deliveryx(){		
+		String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_amazon_delivery/"
+            	+ "?domain_id=" + domainId;
+		Window.open( fileDownloadURL, "_blank",null);
+	}
+
+	public static native void exportDeliveryx(Templates thiz) /*-{
+		$wnd.deliveryx = function() {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::deliveryx(*)();
 		}
 	}-*/;
 	

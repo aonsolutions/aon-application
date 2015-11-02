@@ -7,12 +7,20 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
+		<ui:include src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
 		<aon:form id="deliverySearch">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.warehouse_delivery_module}" />
 				<ui:param name="controller" value="#{delivery}" />
-			</ui:include>
+				
+				<ui:define name="additionalToolbarContent">
+						<aon:commandLink id="proposal-import" value="Confirmación de Envíos"
+							onclick="deliveryx()"
+							styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
+						</aon:commandLink>
+				</ui:define>
+			</ui:decorate>
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
