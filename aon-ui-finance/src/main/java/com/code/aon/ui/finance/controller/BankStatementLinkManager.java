@@ -43,6 +43,7 @@ import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.FormUtil;
@@ -224,12 +225,33 @@ public class BankStatementLinkManager implements IFinanceConstants, Serializable
 	}
 
 	public double getCheckedAmount(BankStatement statement) throws ManagerBeanException {
+		double checkedAmount = 0;
 		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
-		Projection projection = Projection.sum(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_AMOUNT));
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), statement.getId());
-		Double amount = (Double)statementLinkBean.getUniqueResult(projection, criteria);
-		return (amount!=null) ? CommonUtil.round(amount.doubleValue()) : 0;
+		Projection prjPayment = Projection.property(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_PAYMENT));
+		Projection prjSource = Projection.property(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_SOURCE));
+		Projection prjSourceId = Projection.property(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_SOURCE_ID));
+		Projection prjAmount = Projection.property(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_AMOUNT));
+		for (Object obj : statementLinkBean.getList(new ProjectionList(prjPayment, prjSource, prjSourceId, prjAmount), criteria)) {
+			Object[] objs = (Object[])obj;
+			boolean payment = ((Boolean)objs[0]).booleanValue();
+			StatementLinkSource source = (StatementLinkSource)objs[1];
+			Integer sourceId = (Integer)objs[2];
+			Double amount = (Double)objs[3];
+			if (source == StatementLinkSource.FINANCE_TRACKING) {
+				IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_ID), sourceId);
+				criteria.addEqualExpression(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_PAYMENT), new Boolean(!payment));
+				if (financeTrackingBean.getCount(criteria) == 1) {
+					amount = CommonUtil.round(0 - amount);
+				}
+			}
+
+			checkedAmount = (amount!=null) ? CommonUtil.round(checkedAmount  + amount.doubleValue()) : 0;
+		}
+		return checkedAmount;
 	}
 
 	public double getPendingAmount() throws ManagerBeanException {
