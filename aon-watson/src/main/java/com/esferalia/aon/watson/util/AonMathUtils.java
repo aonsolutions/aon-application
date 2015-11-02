@@ -116,6 +116,17 @@ public class AonMathUtils {
 	}
 	
 	/**
+	 * Devuleve verdadero si el valor es diferente de cero. 
+	 * 
+	 * @param value
+	 *            el valor a evaluar
+	 * @return boolean verdadero si el valor es diferente de cero.
+	 */
+	public static boolean isNegative(double value) {
+		return round( value ) < 0.0;
+	}
+
+	/**
 	 * Devuelve verdadero si son iguales los valores pasados, redondesdos a dos decimales.
 	 * @param Primer double a comparar.
 	 * @param Segundo double a comparar.
@@ -123,6 +134,40 @@ public class AonMathUtils {
 	 */
 	public static boolean equals(double value1,double value2) {
 		return round(value1) == round(value2);
+	}
+	
+	/**
+	 * Devuleve el tipo primitivo, y cero si el objeto es null. 
+	 * 
+	 * @param value
+	 *            el valor a evaluar
+	 * @return int el tipo primitivo, y cero si el objeto es null..
+	 */
+	public static int toInt(Integer value) {
+		return value == null ?0 :value;
+	}
+
+	/**
+	 * Devuleve el tipo primitivo, y cero si el objeto es null. 
+	 * 
+	 * @param value
+	 *            el valor a evaluar
+	 * @return int el tipo primitivo, y cero si el objeto es null..
+	 */
+	public static double toDouble(Double value) {
+		return value == null ?0 :value;
+	}
+	
+	/**
+	 * Suma y redondea dos valores
+	 * 
+	 * @param value1 primer sumando.
+	 * @param value2 segundo sumando.
+	 * 
+	 * @return double el valor de la suma redondeado.
+	 */
+	public static double sum(double value1, double value2) {
+		return round( value1 + value2);
 	}
 	
 }

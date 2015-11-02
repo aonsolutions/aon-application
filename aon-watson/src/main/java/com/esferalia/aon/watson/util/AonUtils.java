@@ -42,6 +42,10 @@ public class AonUtils {
 		return obj1.equals(obj2);
 	}
 	
+	public static boolean notEquals(final Object obj1, final Object obj2) {
+		return equals(obj1,obj2) == false;
+	}
+
 	/**
 	 * Gets the hash code of an object returning zero when the object is null.
 	 * 

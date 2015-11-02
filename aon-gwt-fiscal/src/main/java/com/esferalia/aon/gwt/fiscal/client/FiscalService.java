@@ -6,6 +6,10 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.AccountEntryParams;
+import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.AccountStatement;
+import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -35,6 +39,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("Fiscal")
 public interface FiscalService extends RemoteService {
+	// ---------------------------------- COMMON
+	Double mathExpression(String expression) throws AonCoreException;
 
 	// ------------------------------------------------------- FISCAL PARAMETERS
 	FiscalParameters getFiscalParameters(String domainName, int domain) throws AonCoreException;
@@ -148,11 +154,24 @@ public interface FiscalService extends RemoteService {
 	Memory saveMemory(Memory memory) throws AonCoreException;
 	void deleteMemory(Memory memory) throws AonCoreException;
 	
+	// -------------------------------- ------------------------------- ACCOUNT PERIOD
+	LinkedList<AccountPeriod> getDomainPeriods(String domainName,int domain) throws AonCoreException;
+
 	// --------------------------------------------------------------- ACCOUNT ENTRIES
+	LinkedList<AccountEntry> getAccountEntries(String domainName,int domain
+			, AccountEntryParams params,int offset, int limit) throws AonCoreException;
+	AccountEntry getAccountEntry(String domainName,int domain, int id) throws AonCoreException;
+	AccountEntry save(String domainName,int domain, AccountEntry ae) throws AonCoreException;
 	LinkedList<AccountEntry> insertSalaryAccountEntries(String domainName,int domain
 			, Date from, Date to,String concept,Integer registryBank) throws AonCoreException;
 	LinkedList<AccountEntry> getSalaryAccountEntries(String domainName,int domain, Date from
 			, Date to) throws AonCoreException;
 	void deleteAccountEntry(String domainName,int domain, Integer id) throws AonCoreException;
 	
+	// --------------------------------------------------------------- ACCOUNT STATEMENT
+	AccountStatementReport getAccountStatement(String domainName,int domain
+			, Integer accountId, Date from, Date to) throws AonCoreException;	
+	LinkedList<AccountStatement> getAccountBalance(String domainName,int domain
+			, Integer accountId, Date from, Date to) throws AonCoreException;
+
 }

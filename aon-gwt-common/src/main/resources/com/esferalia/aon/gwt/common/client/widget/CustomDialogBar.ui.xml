@@ -18,7 +18,7 @@
 			background-position: left top;
 			background-attachment: scroll;
 			margin: 0px;
-			padding: 3px;
+			padding: 1px;
 			height: auto;
 			width: auto;
 		}

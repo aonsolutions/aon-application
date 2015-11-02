@@ -1,47 +1,15 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonUtils;
 
-public class AccountEntryDetail implements Serializable {
+public class AccountEntryDetail implements Serializable, HasAudit {
 
 	
 	private static final long serialVersionUID = -1136927363787696049L;
-
-	public AccountEntryDetail() {
-		
-	}
-	
-//	public AccountEntryDetail( Integer account, String accountCode, String accountDescription, 
-//			String concept,double debit, double credit,
-//			Integer balancingAccount,String balancingAccountCode,
-//			String balancingAccountDescription,String documentNumber) {
-//		setAccount(account);
-//		setAccountCode(accountCode);
-//		setAccountDescription(accountDescription);
-//		setConcept(concept);
-//		setDebit(debit);
-//		setCredit(credit);
-//		setBalancingAccount(account);
-//		setBalancingAccountCode(accountCode);
-//		setBalancingAccountDescription(accountDescription);
-//		setDocumentNumber(documentNumber);
-//	}
-//	
-//	public AccountEntryDetail(Integer id, Integer domain, Integer accountEntry,
-//			Integer account, String accountCode, String accountDescription, 
-//			Integer line, String concept,double debit, double credit,
-//			Integer balancingAccount,String balancingAccountCode,
-//			String balancingAccountDescription,String documentNumber) {
-//		this(account, accountCode, accountDescription, concept,
-//			debit, credit, balancingAccount,balancingAccountCode,
-//			balancingAccountDescription,documentNumber);
-//		setId(id);
-//		setDomain(domain);
-//		setAccountEntry(accountEntry);
-//		setLine(line);
-//	}
 
 	private Integer id;
 	private Integer domain;
@@ -57,12 +25,20 @@ public class AccountEntryDetail implements Serializable {
 	private String balancingAccountCode;
 	private String balancingAccountDescription;
 	private String documentNumber;
-
+	
+	private String creationUser;
+	private Date creationDate;
+	private String modificationUser;
+	private Date modificationDate;
+	
+	private boolean dirty = true;
+	
 	public Integer getId() {
 		return id;
 	}
 
 	public AccountEntryDetail setId(Integer id) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.id , id) );
 		this.id = id;
 		return this;
 	}
@@ -72,6 +48,7 @@ public class AccountEntryDetail implements Serializable {
 	}
 
 	public AccountEntryDetail setDomain(Integer domain) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.domain , domain) );
 		this.domain = domain;
 		return this;
 	}
@@ -81,6 +58,7 @@ public class AccountEntryDetail implements Serializable {
 	}
 
 	public AccountEntryDetail setAccountEntry(Integer accountEntry) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.accountEntry , accountEntry) );
 		this.accountEntry = accountEntry;
 		return this;
 	}
@@ -90,6 +68,7 @@ public class AccountEntryDetail implements Serializable {
 	}
 
 	public AccountEntryDetail setAccount(Integer account) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.account , account) );
 		this.account = account;
 		return this;
 	}
@@ -99,6 +78,7 @@ public class AccountEntryDetail implements Serializable {
 	}
 	
 	public AccountEntryDetail setAccountCode(String accountCode) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.accountCode,accountCode) );
 		this.accountCode = accountCode;
 		return this;
 	}
@@ -108,6 +88,7 @@ public class AccountEntryDetail implements Serializable {
 	}
 
 	public AccountEntryDetail setAccountDescription(String accountDescription) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.accountDescription,accountDescription) );
 		this.accountDescription = accountDescription;
 		return this;
 	}
@@ -117,6 +98,7 @@ public class AccountEntryDetail implements Serializable {
 	}
 
 	public AccountEntryDetail setLine(Integer line) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.line,line) );
 		this.line = line;
 		return this;
 	}
@@ -126,6 +108,7 @@ public class AccountEntryDetail implements Serializable {
 	}
 
 	public AccountEntryDetail setConcept(String concept) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.concept,concept) );
 		this.concept = concept;
 		return this;
 	}
@@ -143,12 +126,13 @@ public class AccountEntryDetail implements Serializable {
 	 * @param debit	El debe
 	 */
 	public AccountEntryDetail setDebit(double debit) {
+		this.setDirty( isDirty()?true:this.debit != debit );
 		if (debit != 0) {
 			if (debit < 0) {
-				this.credit = AonMathUtils.absRounded(debit);
+				setCredit( AonMathUtils.absRounded(debit));
 				debit = 0;
 			} else {
-				this.credit = 0;
+				setCredit( 0 );
 			}
 		}
 		this.debit = AonMathUtils.round(debit);
@@ -168,12 +152,13 @@ public class AccountEntryDetail implements Serializable {
 	 * @param credit El haber
 	 */
 	public AccountEntryDetail setCredit(double credit) {
+		this.setDirty( isDirty()?true:this.credit != credit );
 		if (credit != 0) {
 			if (credit < 0) {
-				this.debit = AonMathUtils.absRounded(credit);
+				setDebit( AonMathUtils.absRounded(credit));
 				credit = 0;
 			} else {
-				this.debit = 0;
+				setDebit( 0 );
 			}
 		}
 		this.credit = AonMathUtils.round(credit);
@@ -185,6 +170,7 @@ public class AccountEntryDetail implements Serializable {
 	}
 
 	public AccountEntryDetail setBalancingAccount(Integer balancingAccount) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.balancingAccount, balancingAccount) );
 		this.balancingAccount = balancingAccount;
 		return this;
 	}
@@ -194,6 +180,7 @@ public class AccountEntryDetail implements Serializable {
 	}
 
 	public AccountEntryDetail setBalancingAccountCode(String balancingAccountCode) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.balancingAccountCode, balancingAccountCode) );
 		this.balancingAccountCode = balancingAccountCode;
 		return this;
 	}
@@ -203,6 +190,7 @@ public class AccountEntryDetail implements Serializable {
 	}
 
 	public AccountEntryDetail setBalancingAccountDescription(String balancingAccountDescription) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.balancingAccountDescription, balancingAccountDescription) );
 		this.balancingAccountDescription = balancingAccountDescription;
 		return this;
 	}
@@ -212,25 +200,78 @@ public class AccountEntryDetail implements Serializable {
 	}
 
 	public AccountEntryDetail setDocumentNumber(String documentNumber) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.documentNumber, documentNumber) );
 		this.documentNumber = documentNumber;
 		return this;
 	}
+	
+	// ---------------------------------------------------------- DIRTY
+	public boolean isDirty() {
+		return dirty;
+	}
+	public AccountEntryDetail setDirty(boolean dirty) {
+		this.dirty = dirty;
+		return this;
+	}
 
-	public void print() {
-		System.out.println("\tid:{"+id+"}"+
-			"domain:{"+domain+"}"+
-			"accountEntry:{"+accountEntry+"}"+
-			"account:{"+account+"}"+
-			"accountCode:{"+accountCode+"}"+
-			"accountDescription:{"+accountDescription+"}"+
-			"line:{"+line+"}"+
-			"concept:{"+concept+"}"+
-			"debit:{"+debit+"}"+
-			"credit:{"+credit+"}"+
-			"balancingAccount:{"+balancingAccount+"}"+
-			"balancingAccountCode:{"+balancingAccountCode+"}"+
-			"balancingAccountDescription:{"+balancingAccountDescription+"}"+
-			"documentNumber:{"+documentNumber+"}");
+	// ---------------------------------------------------------- AUDIT
+	@Override
+	public String getCreationUser() {
+		return creationUser;
+	}
+	public AccountEntryDetail setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+		return this;
+	}
+	@Override
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	public AccountEntryDetail setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+	@Override
+	public String getModificationUser() {
+		return modificationUser;
+	}
+	public AccountEntryDetail setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
+		return this;
+	}
+	@Override
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+	public AccountEntryDetail setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+		return this;
+	}
+
+	public boolean isDeleted() {
+		return (getId() != null && getId() < 0);
+	}
+
+	public static AccountEntryDetail clone(AccountEntryDetail detail) {
+		return new AccountEntryDetail()
+				.setId(detail.id)
+				.setDomain(detail.domain)
+				.setAccountEntry(detail.accountEntry)
+				.setAccount(detail.account)
+				.setAccountCode(detail.accountCode)
+				.setAccountDescription(detail.accountDescription)
+				.setLine(detail.line)
+				.setConcept(detail.concept)
+				.setDebit(detail.debit)
+				.setCredit(detail.credit)
+				.setBalancingAccount(detail.balancingAccount)
+				.setBalancingAccountCode(detail.balancingAccountCode)
+				.setBalancingAccountDescription(detail.balancingAccountDescription)
+				.setDocumentNumber(detail.documentNumber)
+				.setCreationUser(detail.creationUser)
+				.setCreationDate(detail.creationDate)
+				.setModificationUser(detail.modificationUser)
+				.setModificationDate(detail.modificationDate);
 	}
 	
 }

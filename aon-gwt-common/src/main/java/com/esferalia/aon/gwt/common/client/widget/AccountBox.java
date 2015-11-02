@@ -17,6 +17,10 @@ import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasAllFocusHandlers;
+import com.google.gwt.event.dom.client.HasAllKeyHandlers;
+import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
@@ -31,16 +35,15 @@ import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle.MultiWordSuggestion;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
-import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AccountBox extends ResizeComposite implements HasValue<String>
-	, HasDescription, Focusable, HasSelectionHandlers<Suggestion>, HasAllFocusHandlers {
+	, HasDescription, Focusable, HasSelectionHandlers<Account>, HasAllFocusHandlers
+	,HasAllKeyHandlers {
 	
 	private static final int MIN_CHARACTERS = 3;
 	private static final int MAX_CHARACTERS = 8;
@@ -54,10 +57,13 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 	private int domain;
 
 	private Integer id;
+	private String description;
 
 	private SuggestBox account;
 	private TextBox accountTextBox;
-	private InlineLabel description;
+	private InlineLabel descriptionLabel;
+	private boolean required = true;
+	
 	private AccountSuggestionDisplay suggestionDisplay;
 	
 	private static class AccountSuggestionDisplay extends DefaultSuggestionDisplay {
@@ -93,75 +99,110 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 	    }
 	    
 	}
-	
 	public AccountBox(String domainName, int domain) {
+		this(domainName,domain,true);
+	}
+	
+	public AccountBox(String domainName, int domain, boolean showDescription) {
 		this.domainName = domainName;
 		this.domain = domain;
-		
+			
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 		AccountSuggestOracle oracle = new AccountSuggestOracle();
 		accountTextBox = new TextBox();
 		suggestionDisplay =  new AccountSuggestionDisplay();
+		suggestionDisplay.setAnimationEnabled(true);
 		account = new SuggestBox(oracle,accountTextBox,suggestionDisplay);
 		accountTextBox.setStyleName(AON.AON_CSS.aonInputText());
 		accountTextBox.setVisibleLength(9);
 		accountTextBox.setMaxLength(9);
-		description = new InlineLabel();
-		description.addStyleName(AON.AON_CSS.aonMarginLeft() );
-		description.addStyleName(AON.AON_CSS.aonFontSmall());
+		descriptionLabel = new InlineLabel();
+		descriptionLabel.addStyleName(AON.AON_CSS.aonMarginLeft() );
+		descriptionLabel.addStyleName(AON.AON_CSS.aonFontSmall());
+		descriptionLabel.setVisible(showDescription);
 		
 		accountTextBox.addValueChangeHandler( new ValueChangeHandler<String>() {
-
+			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				String newValue = autoComplete(event.getValue());
-				if (AonValidationUtil.isValidAccount(newValue)) {
-					accountTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
-					commonService.getAccount(AccountBox.this.domainName,AccountBox.this.domain,newValue
-							,new AsyncCallback<Account>() {
+				if (AonValidationUtil.isValidAccount(newValue,isRequired())) {
+					if (!isRequired() && AonStringUtils.isEmpty(newValue)) {
+						// No es obligatorio y lo han dejado vacio, por lo que 
+						// hay que borrar lo que haya de antes.
+						reset();
+					} else {
+						accountTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
+						commonService.getAccount(AccountBox.this.domainName,AccountBox.this.domain,newValue
+								,new AsyncCallback<Account>() {
+							@Override
+							public void onSuccess(Account result) {
+								if (result != null) {
+									id = result.getId();
+									description = result.getDescription();
+									descriptionLabel.setText(description);
+									accountTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
+									SelectionEvent.fire(AccountBox.this, result );
+								} else {
+									reset();
+									Window.alert(AON.MSG.accountNotFound());
+									AccountBox.this.setFocus(true);
+								}
+							}
 
-						@Override
-						public void onSuccess(Account result) {
-							AccountSuggestion as = new AccountSuggestion(result, result.getCode(),result.getFullName());
-							SelectionEvent.fire(account, as );		
-						}
+							@Override
+							public void onFailure(Throwable caught) {
+								Window.alert(AON.MSG.accountNotFound());
+							}
+						});
 
-						@Override
-						public void onFailure(Throwable caught) {
-							// TODO manage exception.
-							Window.alert("Cuenta Contable no encontrada");
-						}
-					});
+						
+					}
 				} else {
 					accountTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );	
 				}
 			}
-
 		});
 		
-		addSelectionHandler(new SelectionHandler<Suggestion>() {
-			
+/*		
+		account.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 			@Override
 			public void onSelection(SelectionEvent<Suggestion> event) {
-				
-				Suggestion suggestion = event.getSelectedItem();
-				if (suggestion instanceof AccountSuggestion) {
-					AccountSuggestion as = ((AccountSuggestion) suggestion);
-					id = as.getAccount().getId();
-					description.setText(as.getAccount().getDescription());
-					accountTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
-				}
-				
+				SelectionEvent.fire(AccountBox.this
+						,new Account()
+							.setCode(event.getSelectedItem().getReplacementString()) );
 			}
 		});
+		
+		addSelectionHandler(new SelectionHandler<Account>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<Account> event) {
+			}
+		});
+*/
 		
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(AON.AON_CSS.aonNowrap() );
 		panel.add(account);
-		panel.add(description);
+		panel.add(descriptionLabel);
 		initWidget(panel);
 	}
+	
+	public boolean isRequired() {
+		return required;
+	}
+	public void setRequired(boolean required) {
+		this.required = required;
+	}
+
+	private void reset() {
+		id = null;
+		description = null;
+		descriptionLabel.setText(null);
+	}
+	
 	
 	public Integer getId() {
 		return id;
@@ -186,13 +227,12 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 			suggestionDisplay.hideSuggestions();
 			if (AonStringUtils.length(request.getQuery()) >= MIN_CHARACTERS
 			 && AonStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
-				id = null;
-				description.setText(null);
+				reset();
 				commonService.getAccounts(AccountBox.this.domainName,AccountBox.this.domain,request.getQuery()
 						,new AsyncCallback<LinkedList<Account>>() {
 	
 							public void onFailure(Throwable caught) {
-								Window.alert("Error while getting suggestions.");
+								Window.alert(AON.MSG.unexpectedError( caught.getMessage()));
 								callback.onSuggestionsReady(request, new Response());
 							}
 	
@@ -217,7 +257,7 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 								        bld.appendHtmlConstant(END_STRONG);
 								        bld.appendEscaped(AonStringUtils.substring(ds, (i + AonStringUtils.length(request.getQuery()) )));
 								        bld.appendHtmlConstant("</span>");
-										AccountSuggestion as = new AccountSuggestion(account,account.getCode(), bld.toSafeHtml().asString());
+								        MultiWordSuggestion as = new MultiWordSuggestion(account.getCode(), bld.toSafeHtml().asString());
 										suggestions.add(as);
 									}
 								}
@@ -230,30 +270,14 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 		}
 	}
 	
-	public class AccountSuggestion extends MultiWordSuggestion {
-		private Account account;
-
-		public AccountSuggestion(Account account, String replacementString, String displayString) {
-			super( replacementString, displayString );
-			this.account = account;
-		}
-//		public AccountSuggestion(Account account) {
-//			this(account, account.getCode(), account.getFullName() );
-//			
-//		}
-		public Account getAccount() {
-			return account;
-		}
-	}
-	
 	@Override
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
 		return account.addValueChangeHandler(handler);
 	}
 
 	@Override
-	public HandlerRegistration addSelectionHandler(SelectionHandler<Suggestion> handler) {
-		return account.addSelectionHandler(handler);
+	public HandlerRegistration addSelectionHandler(SelectionHandler<Account> handler) {
+		return super.addHandler(handler, SelectionEvent.getType());
 	}
 
 	@Override
@@ -261,14 +285,20 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 		return account.getValue();
 	}
 
+	public void setValue(Integer id, String code,String description) {
+		this.id = id;
+		this.description = description;
+		this.descriptionLabel.setText(description);
+		setValue(code,false);
+	}
+
 	@Override
 	public void setValue(String value) {
 		account.setValue(value);
 		if (AonStringUtils.isEmpty(value)) {
-			id = null;
-			description.setText(null);
+			reset();
 		}
-		if (AonStringUtils.isEmpty(value) || AonValidationUtil.isValidAccount(value)) {
+		if (AonStringUtils.isEmpty(value) || AonValidationUtil.isValidAccount(value,isRequired())) {
 			accountTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );	
 		} else {
 			accountTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );	
@@ -282,7 +312,7 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 
 	@Override
 	public String getDescription() {
-		return description.getText();
+		return description;	
 	}
 
 	@Override
@@ -313,6 +343,25 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 	@Override
 	public void setTabIndex(int index) {
 		accountTextBox.setTabIndex(index);
+	}
+
+	@Override
+	public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
+		return accountTextBox.addKeyUpHandler(handler);
+	}
+
+	@Override
+	public HandlerRegistration addKeyDownHandler(KeyDownHandler handler) {
+		return accountTextBox.addKeyDownHandler(handler);
+	}
+
+	@Override
+	public HandlerRegistration addKeyPressHandler(KeyPressHandler handler) {
+		return accountTextBox.addKeyPressHandler(handler);
+	}
+
+	public void selectAll() {
+		accountTextBox.selectAll();
 	}
 
 	

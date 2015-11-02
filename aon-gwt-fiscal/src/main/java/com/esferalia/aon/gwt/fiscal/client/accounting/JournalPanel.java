@@ -1,0 +1,303 @@
+package com.esferalia.aon.gwt.fiscal.client.accounting;
+
+import java.util.LinkedList;
+
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.AccountBox;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.fiscal.client.FiscalService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
+import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.AccountEntryParams;
+import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.watson.mutable.MutableInt;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.event.logical.shared.HasSelectionHandlers;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.TextBox;
+
+
+public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelectionHandlers<AccountEntry>{
+
+	static FiscalServiceAsync fiscalService;
+	
+	private String domainName;
+	private int domainId;
+	private User user;
+	
+	final private int limit = 20;
+	final private MutableInt offset = new MutableInt(0);
+
+	private SimpleLayoutPanel northPanel;
+	private ScrollPanel centerPanel;
+	
+	private FlowPanel container;	
+	private DateBoxEx fromDate;
+	private DateBoxEx toDate;
+	private AccountBox account;
+	private DoubleBox debit;
+	private DoubleBox credit;
+	private TextBox concept;
+	private TextBox document;
+	private Button filter;
+	
+	private MutableInt searchEnabled = new MutableInt( 0 ); 
+	
+	private int lastScrollPos = 0;
+	
+	public JournalPanel(String domainName,int domainId) {
+		this(Unit.PX);
+		this.domainName = domainName;
+		this.domainId = domainId;
+	}
+	private JournalPanel(Unit unit) {
+		super(unit);
+		addStyleName(AON.AON_CSS.aonScrollArea());
+		addStyleName(AON.AON_CSS.aonMarginBottom());
+		
+		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
+		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
+		
+		northPanel = new SimpleLayoutPanel();
+		fillNorthPanel();
+		addNorth(northPanel, 90);
+		centerPanel = new ScrollPanel();
+		centerPanel.addStyleName(AON.AON_CSS.aonTextCenter());
+		centerPanel.addStyleName(AON.AON_CSS.aonScrollArea());
+				
+		centerPanel.addStyleName(AON.AON_CSS.aonMarginBottom());
+		container = new FlowPanel();
+		centerPanel.setWidget(container);
+		add(centerPanel);
+		
+		centerPanel.addScrollHandler(new ScrollHandler() {
+
+			public void onScroll(ScrollEvent event) {
+				// ------------------------------------ Ignore scroll up.
+				int oldScrollPos = lastScrollPos;
+				lastScrollPos = centerPanel.getVerticalScrollPosition();
+				if (oldScrollPos >= lastScrollPos) {
+					return;
+				}
+				// -----------------------------------------------------
+				if (isSearchEnabled()) {
+					int maxScrollTop = centerPanel.getWidget().getOffsetHeight() - centerPanel.getOffsetHeight();
+					if (lastScrollPos >= maxScrollTop) {
+						disableSearch();
+						search(offset.getValue());
+					}
+				}
+			}
+		});
+		
+	}
+	public void setUser(User user) {
+		this.user = user;
+	}
+	public boolean isSearchEnabled() {
+		return (searchEnabled.getValue() == 0 );
+	}
+	public void disableSearch() {
+		searchEnabled.setValue(-1);
+	}
+	public void enableSearch() {
+		searchEnabled.setValue(0);
+	}
+
+	private void fillNorthPanel() {
+		fromDate = new DateBoxEx();
+		toDate = new DateBoxEx();
+		account = new AccountBox(domainName,domainId);
+		debit = new DoubleBox();
+		credit = new DoubleBox();
+		concept = new TextBox();
+		concept.setStyleName(AON.AON_CSS.aonInputText());
+		document = new TextBox();
+		document.setStyleName(AON.AON_CSS.aonInputText());
+		filter = new Button();
+		filter.setText(AON.MSG.searchAction());
+		filter.setStyleName(AON.AON_CSS.aonIconCommandButton());
+		filter.addStyleName(AON.AON_CSS.aonIconSearch());
+		filter.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				search();
+			}
+		});
+		
+		FlexTable tab = new FlexTable();
+		tab.setStyleName(AON.AON_CSS.aonPanelGridSearch());
+		tab.addStyleName(AON.AON_CSS.aonWidthAll());
+		
+		tab.getColumnFormatter().setWidth(0, "100px");
+		tab.getColumnFormatter().setWidth(1, "300px");
+		tab.getColumnFormatter().setWidth(2, "100px");
+		tab.getColumnFormatter().setWidth(3, "auto");
+		tab.getColumnFormatter().setWidth(4, "50px");
+		
+		tab.setWidget(0, 0, new Label(AON.MSG.date()));
+		tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonPanelGridOdd());
+		
+		FlowPanel datePanel = new FlowPanel();
+		datePanel.setStyleName(AON.AON_CSS.aonNowrap());
+		InlineLabel from = new InlineLabel(AON.MSG.from());
+		from.setStyleName(AON.AON_CSS.aonItalic());
+		from.addStyleName(AON.AON_CSS.aonMarginRight());
+		datePanel.add(from);
+		datePanel.add(fromDate);
+		InlineLabel to = new InlineLabel(AON.MSG.to());
+		to.setStyleName(AON.AON_CSS.aonItalic());
+		to.addStyleName(AON.AON_CSS.aonMarginRight());
+		to.addStyleName(AON.AON_CSS.aonMarginLeft());
+		datePanel.add(to);
+		datePanel.add(toDate);
+		tab.setWidget(0, 1, datePanel);
+		tab.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonPanelGridEven());
+		
+		tab.setWidget(0, 2, new Label(AON.MSG.account()));
+		tab.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonPanelGridOdd());
+
+		tab.setWidget(0, 3, account);
+		tab.getFlexCellFormatter().setColSpan(0, 3, 3);
+		tab.getCellFormatter().setStyleName(0,3, AON.AON_CSS.aonPanelGridEven());
+		
+		tab.getFlexCellFormatter().setRowSpan(0, 6, 3);
+		tab.getCellFormatter().setStyleName(0,6, AON.AON_CSS.aonPanelGridEven());
+		tab.getCellFormatter().addStyleName(0,6, AON.AON_CSS.aonVerticalAlignMiddle());
+		tab.getCellFormatter().addStyleName(0,6, AON.AON_CSS.aonTextCenter());
+		tab.setWidget(0, 6, filter);
+		
+		tab.setWidget(1, 0, new Label(AON.MSG.amount()));
+		tab.getCellFormatter().setStyleName(1,0, AON.AON_CSS.aonPanelGridOdd());
+
+		FlowPanel amountsPanel = new FlowPanel();
+		amountsPanel.setStyleName(AON.AON_CSS.aonNowrap());
+		InlineLabel deb = new InlineLabel(AON.MSG.debit());
+		deb.setStyleName(AON.AON_CSS.aonItalic());
+		deb.addStyleName(AON.AON_CSS.aonMarginRight());
+		amountsPanel.add(deb);
+		amountsPanel.add(debit);
+		InlineLabel cre= new InlineLabel(AON.MSG.credit());
+		cre.setStyleName(AON.AON_CSS.aonItalic());
+		cre.addStyleName(AON.AON_CSS.aonMarginRight());
+		cre.addStyleName(AON.AON_CSS.aonMarginLeft());
+		amountsPanel.add(cre);
+		amountsPanel.add(credit);
+		tab.setWidget(1, 1, amountsPanel);
+		tab.getCellFormatter().setStyleName(1,1, AON.AON_CSS.aonPanelGridEven());
+		
+		tab.setWidget(1, 2, new Label(AON.MSG.concept()));
+		tab.getCellFormatter().setStyleName(1,2, AON.AON_CSS.aonPanelGridOdd());
+
+		tab.setWidget(1, 3, concept);
+		tab.getCellFormatter().setStyleName(1,3, AON.AON_CSS.aonPanelGridEven());
+
+		tab.setWidget(1, 4, new Label(AON.MSG.document()));
+		tab.getCellFormatter().setStyleName(2,2, AON.AON_CSS.aonPanelGridOdd());
+
+		tab.setWidget(1, 5, document);
+		tab.getCellFormatter().setStyleName(2,3, AON.AON_CSS.aonPanelGridEven());
+		
+		northPanel.setWidget(tab);
+	}
+
+	@Override
+	public HandlerRegistration addSelectionHandler(SelectionHandler<AccountEntry> handler) {
+		return super.addHandler(handler, SelectionEvent.getType());
+	}
+
+	@Override
+	public int getTabIndex() {
+		return fromDate.getTabIndex();
+	}
+
+	@Override
+	public void setAccessKey(char key) {
+		fromDate.setAccessKey(key);;
+	}
+
+	@Override
+	public void setFocus(boolean focused) {
+		fromDate.setFocus(true);
+		fromDate.hideDatePicker();
+		fromDate.getTextBox().selectAll();
+	}
+
+	@Override
+	public void setTabIndex(int index) {
+		fromDate.setTabIndex(index);
+	}
+	
+	private void search() {
+		container.clear();
+		offset.setValue(0);
+		search(offset.getValue());
+	}
+	
+	private void search(final int ofs) {
+		AccountEntryParams params = new AccountEntryParams()
+			.setDomain(AccountEntryModule.getCurrentDomain())
+			.setFrom(fromDate.getValue())
+			.setTo(toDate.getValue())
+			.setAccountId(account.getId())
+			.setAccountCode(account.getValue())
+			.setDebit(debit.getValue())
+			.setCredit(credit.getValue())
+			.setConcept(concept.getValue())
+			.setDocument(document.getValue())
+			.setDocument(document.getValue())
+			.setHasConfidentialityRole(user != null && user.hasConfidentialityRole())
+			;
+		
+		fiscalService.getAccountEntries(domainName,domainId, params, ofs, limit
+				, new AsyncCallback<LinkedList<AccountEntry>>() {
+					
+					@Override
+					public void onSuccess(LinkedList<AccountEntry> result) {
+						for (final AccountEntry entry : result) {
+							final FocusPanel entryPanel = AccountEntryPrinter.print(entry);
+							container.add(entryPanel);
+							entryPanel.addClickHandler(new ClickHandler() {
+								@Override
+								public void onClick(ClickEvent event) {
+									 SelectionEvent.<AccountEntry>fire( JournalPanel.this, entry);
+								}
+							});
+
+						}
+						offset.setValue(ofs + result.size());
+						enableSearch();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						FlowPanel line = new FlowPanel();
+						InlineLabel label = new InlineLabel(AON.MSG.noData());
+						line.add(label);
+						centerPanel.add(line);
+						enableSearch();
+					}
+				});
+	}
+	
+}

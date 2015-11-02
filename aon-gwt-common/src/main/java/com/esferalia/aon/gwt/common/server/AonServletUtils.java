@@ -31,6 +31,11 @@ public class AonServletUtils {
 		return getRequestPrincipal(request).getShortName();
 	}
 	
+	public static String getLoggedUser() {
+		HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
+		return getRequestUser(request);
+	}
+	
 	public static Connection getConnection() throws SQLException {
 		try {
 			HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();

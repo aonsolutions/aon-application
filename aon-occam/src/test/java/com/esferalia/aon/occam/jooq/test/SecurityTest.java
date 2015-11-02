@@ -18,8 +18,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 public class SecurityTest {
 
 	private static AONContext ctx;
-	private static String DOMAIN_NAME = "sig.sig.ecastellano.dev";
-	private static int DOMAIN_ID = 5;
+	private static String DOMAIN_NAME = "mac.ecastellano.dev";
+	private static int DOMAIN_ID = 553;
 	
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
@@ -29,21 +29,44 @@ public class SecurityTest {
 	
 	@Test
 	public void testRoles() throws IOException {
-		User user = SecurityDAO.getUser(ctx, "aperez");
+		User user = SecurityDAO.getUser(ctx, "mac");
 		System.out.println();
-		System.out.println("User aperez");
+		System.out.println("User mac");
 		System.out.println("------------");
 		for (AonRole role : AonRole.values()) {
 			System.out.println(role.getValue() + " ...: " + user.hasRole(role));	
 		}
+		System.out.println("hasAdminRole...:" +user.hasAdminRole());
+		System.out.println("hasGuestRole...:" +user.hasGuestRole());
+		System.out.println("hasConfigRole...:" +user.hasConfigRole());
+		System.out.println("hasAuditorRole...:" +user.hasAuditorRole());
+		System.out.println("hasConfidentialityRole...:" +user.hasConfidentialityRole());
+		System.out.println("hasProductRole...:" +user.hasProductRole());
+		System.out.println("hasCommercialRole...:" +user.hasCommercialRole());
+		System.out.println("hasSaleRole...:" +user.hasSaleRole());
+		System.out.println("hasPurchaseRole...:" +user.hasPurchaseRole());
+		System.out.println("hasWarehouseRole...:" +user.hasWarehouseRole());
+		System.out.println("hasAccountingRole...:" +user.hasAccountingRole());
+		System.out.println("hasFinanceRole...:" +user.hasFinanceRole());
+		System.out.println("hasStatisticsRole...:" +user.hasStatisticsRole());
+		System.out.println("hasTaskMonitoringRole...:" +user.hasTaskMonitoringRole());
+		System.out.println("hasESignatureRole...:" +user.hasESignatureRole());
+		System.out.println("hasSysAdminRole...:" +user.hasSysAdminRole());
+		System.out.println("hasTGCRole...:" +user.hasTGCRole());
+		System.out.println("hasDOCUMENTRole...:" +user.hasDOCUMENTRole());
+		System.out.println("hasDocumentManagerRole...:" +user.hasDocumentManagerRole());
+		System.out.println("hasPayrollRole...:" +user.hasPayrollRole());
+		System.out.println("hasFiscalRole...:" +user.hasFiscalRole());
+		System.out.println("hasAccountingManagerRole...:" +user.hasAccountingManagerRole());
+		
 	}
 		
 	@Test
 	public void testScopes() throws IOException {
-		User user = SecurityDAO.getUser(ctx, "asesor");
+		User user = SecurityDAO.getUser(ctx, "mac");
 		Integer[] scopes = SecurityDAO.getUserScopes(ctx, user.getId());
 		System.out.println();
-		System.out.println("User asesor");
+		System.out.println("User mac");
 		System.out.println("------------");
 		if(scopes != null) {
 			for (Integer scope : scopes) {
@@ -51,10 +74,10 @@ public class SecurityTest {
 			}
 		}
 
-		user = SecurityDAO.getUser(ctx, "aperez");
+		user = SecurityDAO.getUser(ctx, "mac");
 		scopes = SecurityDAO.getUserScopes(ctx, user.getId());
 		System.out.println();
-		System.out.println("User aperez");
+		System.out.println("User mac");
 		System.out.println("------------");
 		for (Integer scope : scopes) {
 			System.out.println("Scope ...: " + scope);	

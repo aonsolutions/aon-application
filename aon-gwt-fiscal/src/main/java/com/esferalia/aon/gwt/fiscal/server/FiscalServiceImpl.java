@@ -5,15 +5,22 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
+import com.esferalia.aon.gwt.fiscal.server.util.AONMVELUtils;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.AccountEntryParams;
+import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.AccountStatement;
+import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -44,6 +51,7 @@ import com.esferalia.aon.occam.api.model.type.Activities.Type7Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.TypeActivity;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.MOD2002014;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.XMLtoMod2002014;
+import com.esferalia.aon.occam.server.accounting.AccountEntryUtils;
 import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002014Import2013;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -55,6 +63,14 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 @WebServlet(name = "Fiscal Servlet", urlPatterns = { "/aon_gwt_fiscal/Fiscal" })
 public class FiscalServiceImpl extends AonRemoteServiceServlet implements FiscalService {
 
+	@Override
+	public Double mathExpression(String expression) throws AonCoreException {
+		try {
+			return AONMVELUtils.mathExpression(expression);
+		} catch ( Throwable t) {
+			throw new AonCoreException(t);
+		}
+	}
 	// ------------------------------------------------------- FISCAL PARAMETERS
 	@Override
 	public FiscalParameters getFiscalParameters(String domainName,int domain) throws AonCoreException {
@@ -547,11 +563,44 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		// TODO
 	}
 	
+	// --------------------------------------------------------------- ACCOUNT PERIOD
+	@Override
+	public LinkedList<AccountPeriod> getDomainPeriods(String domainName,
+			int domain) throws AonCoreException {
+		return AON.getDomainPeriods(domainName, domain, AonServletUtils.getLoggedUser());
+	}
 	// --------------------------------------------------------------- ACCOUNT ENTRIES
+	@Override
+	public LinkedList<AccountEntry> getAccountEntries(String domainName,
+			int domain, final AccountEntryParams params,int offset, int limit) throws AonCoreException {
+		return AON.getAccountEntries(domainName, domain, AonServletUtils.getLoggedUser(),
+				p -> AccountEntryUtils.getFilter(p, params)
+				, offset, limit);
+	}
+
+	@Override
+	public AccountEntry getAccountEntry(String domainName, int domain, int id)
+			throws AonCoreException {
+		LinkedList<AccountEntry> list = AON.getAccountEntries(
+				domainName, domain, AonServletUtils.getLoggedUser(), 
+				p -> p.getIdProperty().eq(id)
+				, 0, 1)
+				;
+		if (list == null || list.isEmpty()) {
+			return null;
+		}
+		return list.getFirst();
+	}
+
+	@Override
+	public AccountEntry save(String domainName, int domain, AccountEntry ae)
+			throws AonCoreException {
+		return AON.save(domainName, domain, AonServletUtils.getLoggedUser(), ae);
+	}
 	@Override
 	public LinkedList<AccountEntry> getSalaryAccountEntries(String domainName,
 			int domain, Date from, Date to ) {
-		return AON.getAccountEntries(domainName, domain,
+		return AON.getAccountEntries(domainName, domain, AonServletUtils.getLoggedUser(), 
 				p -> p.getDomainProperty().eq(domain)
 					.and(p.getEntryDateProperty().between(from, to))
 					.and(p.getEntryTypeProperty().eq((byte) AccountEntryType.SALARY.ordinal()))
@@ -560,19 +609,32 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 
 	@Override
 	public void deleteAccountEntry(String domainName, int domain, Integer id) {
-		AON.delete(domainName, domain, id);
+		AON.deleteAccountEntry(domainName, domain, AonServletUtils.getLoggedUser(), id);
 	}
 
 	@Override
 	public LinkedList<AccountEntry> insertSalaryAccountEntries(
 			String domainName, int domain, Date from, Date to, String concept,
 			Integer registryBank) {
-		List<Integer> ids = AON.insertSalaryEntries(domainName, domain, from, to, concept, registryBank);
+		List<Integer> ids = AON.insertSalaryEntries(domainName, domain,
+				AonServletUtils.getLoggedUser() , from, to, concept, registryBank);
 		final Integer[] arr = ids.toArray(new Integer[ids.size()]);  
-		return AON.getAccountEntries(domainName, domain
+		return AON.getAccountEntries(domainName, domain, AonServletUtils.getLoggedUser()
 				, p -> p.getIdProperty().in(arr)
 						.and(p.getDomainProperty().eq(domain) )
 				, 0, 100);
 	}
-
+	@Override
+	public AccountStatementReport getAccountStatement(String domainName,
+			int domain, Integer accountId, Date from, Date to)
+			throws AonCoreException {
+		return AON.getAccountStatement(domainName,domain,this.getUserLogin(),accountId, from, to);
+	}
+	@Override
+	public LinkedList<AccountStatement> getAccountBalance(String domainName,
+			int domain, Integer accountId, Date from, Date to)
+			throws AonCoreException {
+		return AON.getAccountBalance(domainName,domain,this.getUserLogin(),accountId, from, to)
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
 }

@@ -6,10 +6,13 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
 
 public interface AonResources extends ClientBundle, Images {
-	
+
 	@Source("aon.css")
 	@CssResource.NotStrict
 	AonCSS css();
+	
+	@Source("images/aon-dataTable-header.png")
+	ImageResource aonDataTableHeader();
 	
 	@Source("aonCalendar.css")
 	@CssResource.NotStrict
@@ -40,9 +43,15 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/aon-icon-save.png")
 	ImageResource aonIconSave();
 
+	@Source("images/aon-icon-plus.png")
+	ImageResource aonIconPlus();
+	
 	@Source("images/aon-icon-delete.png")
 	ImageResource aonIconDelete();
-	
+
+	@Source("images/aon-icon-cancel.png")
+	ImageResource aonIconCancel();
+
 	@Source("images/aon-icon-search.png")
 	ImageResource aonIconSearch();
 
@@ -54,7 +63,13 @@ public interface AonResources extends ClientBundle, Images {
 	
 	@Source("images/aon-icon-reset.png")
 	ImageResource aonIconReset();
-	
+
+	@Source("images/aon-icon-audit.png")
+	ImageResource aonIconAudit();
+
+	@Source("images/aon-icon-wizard.png")
+	ImageResource aonIconWizard();
+
 	@Source("images/aon-icon-cleartrash.png")
 	ImageResource aonIconClearTrash();
 
@@ -120,8 +135,14 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/changed.png")
 	ImageResource aonChanged();
 
+	@Source("images/close.png")
+	ImageResource aonIconClose();
+
 	@Source("images/input-warn.png")
 	ImageResource aonInputError();
+
+	@Source("images/input-calc.png")
+	ImageResource aonInputCalc();
 	
 	@Source("images/curly-lt.png")
 	ImageResource aonCurlyLT();
@@ -168,6 +189,15 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/aon-icon-unlock.png")
 	ImageResource aonIconUnlock();
 
+	@Source("images/aon-icon-info.png")
+	ImageResource aonIconInfo();
+
+	@Source("images/aon-icon-warning.png")
+	ImageResource aonIconWarn();
+	
+	@Source("images/aon-icon-exception.png")
+	ImageResource aonIconException();
+
 	@Source("images/aon-registro-mercantil-image.png")
 	ImageResource aonRegistroMercantilImage();
 
@@ -180,7 +210,22 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/aon-content-title-internal.png")
 	ImageResource aonContentTitleInternal();
 
-	// ------------------------------------------------------------------------
+	@Source("images/aon-icon-journal.png")
+	ImageResource aonIconJournal();
+
+	@Source("images/aon-icon-statement.png")
+	ImageResource aonIconStatement();
+
+	@Source("images/aon-icon-euro.png")
+	ImageResource aonIconEuro();
+
+	@Source("images/aon-icon-comment.gif")
+	ImageResource aonIconComment();
+
+	@Source("images/aon-icon-comment-red.gif")
+	ImageResource aonIconCommentRed();
+
+// ------------------------------------------------------------------------
 
 }
 

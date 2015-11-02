@@ -6,6 +6,10 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.AccountEntryParams;
+import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.AccountStatement;
+import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -29,6 +33,9 @@ import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface FiscalServiceAsync {
+	// -------------------------------------------------------------- COMMON
+	void mathExpression(String expression, AsyncCallback<Double> callback);
+	
 	// -------------------------------------------------------------- PARAMS
 	void getFiscalParameters(String domainName,int domain,AsyncCallback<FiscalParameters> callback);
 
@@ -149,7 +156,18 @@ public interface FiscalServiceAsync {
 	void saveMemory(Memory memory, AsyncCallback<Memory> callback);
 	void deleteMemory(Memory memory, AsyncCallback<Void> callback);
 
+	// --------------------------------------------------------------- ACCOUNT PERIOD
+	void getDomainPeriods(String domainName, int domain,
+			AsyncCallback<LinkedList<AccountPeriod>> callback);
+
 	// --------------------------------------------------------------- ACCOUNT ENTRIES
+	void getAccountEntries(String domainName, int domain,
+			AccountEntryParams params,int offset, int limit,
+			AsyncCallback<LinkedList<AccountEntry>> callback);
+	void getAccountEntry(String domainName, int domain, int id,
+			AsyncCallback<AccountEntry> callback);
+	void save(String domainName, int domain, AccountEntry ae,
+			AsyncCallback<AccountEntry> callback);
 	void insertSalaryAccountEntries(String domainName, int domain, Date from,
 			Date to, String concept, Integer registryBank,
 			AsyncCallback<LinkedList<AccountEntry>> callback);
@@ -157,5 +175,16 @@ public interface FiscalServiceAsync {
 			AsyncCallback<LinkedList<AccountEntry>> callback);
 	void deleteAccountEntry(String domainName, int domain, Integer id,
 			AsyncCallback<Void> callback);
+
+	// --------------------------------------------------------------- ACCOUNT STATEMENT
+	void getAccountStatement(String domainName, int domain, 
+			Integer accountId, Date from, Date to,
+			AsyncCallback<AccountStatementReport> callback);
+
+	void getAccountBalance(String domainName, int domain, 
+			Integer accountId, Date from, Date to,
+			AsyncCallback<LinkedList<AccountStatement>> callback);
+
+
 
 }

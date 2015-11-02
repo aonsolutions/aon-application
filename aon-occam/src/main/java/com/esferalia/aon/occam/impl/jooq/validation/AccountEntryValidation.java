@@ -1,7 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.validation;
 
-import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
-
 import java.util.Date;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -18,6 +16,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountEntryValidation {
@@ -42,7 +41,7 @@ public class AccountEntryValidation {
 	 * El periodod del asiento es un dato obligatorio.
 	 */
 	public static BiConsumer<AccountEntry,AONContext> EMPTY_PERIOD = (ae,ctx) -> {
-		if (ae.getAccountPeriod() == null) 
+		if (ae.getPeriod() == null)
 			throw new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_PERIOD.getMessage());
 	};
 	
@@ -63,9 +62,7 @@ public class AccountEntryValidation {
 	 * 		
 	 */
 	public static BiConsumer<AccountEntry,AONContext> ENTRY_PERIOD_CHECK = (ae,ctx) -> {
-		AccountPeriod period = AccountPeriodDAO.fetchOne(ctx,
-				ACCOUNT_PERIOD.ID.equal(ae.getAccountPeriod())
-				.and(ACCOUNT_PERIOD.DOMAIN.equal(ae.getDomain())));
+		AccountPeriod period = AccountPeriodDAO.fetchOne(ctx,ae.getPeriod());
 		// El periodo debe existir y tener el mismo dominio que el asiento.
 		if (period == null) {
 			throw new AonCoreException(AonError.ACCOUNT_ENTRY_WRONG_DOMAIN.format(ae.getDomain()));
@@ -96,6 +93,29 @@ public class AccountEntryValidation {
 		if (period.getStatus() == AccountPeriodStatus.CLOSED
 			&& ae.getEntryType() != AccountEntryType.CLOSING) {
 			throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_CLOSING.format(period.getName()));
+		}
+	};
+
+	/**
+	 * El apunte debe estar cuadrado.
+	 */
+	public static BiConsumer<AccountEntry,AONContext> ENTRY_SETTLED = (ae,ctx) -> {
+		double sumD = 0.0;
+		double sumC = 0.0;
+		boolean empty = true;
+		for (AccountEntryDetail aed : ae.getDetails()) {
+			if (!aed.isDeleted()) {
+				sumD = AonMathUtils.sum(sumD, aed.getDebit());	
+				sumC = AonMathUtils.sum(sumC, aed.getCredit());
+				empty = false;
+			}
+		}
+		if (empty) {
+			throw new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_DETAILS.getMessage());
+		}
+		
+		if (!AonMathUtils.isZero( AonMathUtils.round(sumD - sumC))) {
+			throw new AonCoreException(AonError.ACCOUNT_ENTRY_NO_SETTLED.getMessage());
 		}
 	};
 
@@ -165,6 +185,7 @@ public class AccountEntryValidation {
 			.andThen(EMPTY_PERIOD)
 			.andThen(EMPTY_ENTRY_TYPE)
 			.andThen(ENTRY_PERIOD_CHECK)
+			.andThen(ENTRY_SETTLED)
 			.accept(ae, ctx);
 
 	}

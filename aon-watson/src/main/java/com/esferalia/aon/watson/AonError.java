@@ -63,6 +63,8 @@ public enum AonError implements Serializable{
 	,ACCOUNT_ENTRY_EMPTY_DATE("La fecha del asiento es un dato obligatorio, no puede estar vacia")
 	,ACCOUNT_ENTRY_EMPTY_PERIOD("El ejercicio del asiento es un dato obligatorio, no puede estar vacio")
 	,ACCOUNT_ENTRY_EMPTY_TYPE("El tipo de asiento es un dato obligatorio, no puede estar vacio.")
+	,ACCOUNT_ENTRY_EMPTY_DETAILS("No se puede grabar un asiento contable sin l\u00EDneas.")
+	,ACCOUNT_ENTRY_NO_SETTLED("No se puede grabar un asiento contable descuadrado.")
 	,ACCOUNT_ENTRY_DATE_IN_PERIOD("La Fecha del Asiento no est\u00E1 dentro del periodo asignado al ejercicio {0}")
 	,ACCOUNT_ENTRY_PERIOD_INACTIVE("El Ejercicio {0} est\u00E1 inactivo.")
 	,ACCOUNT_ENTRY_PERIOD_OPERATING("No se permite la introducci\u00F3n o modificaci\u00F3n de asientos en el ejercicio {0}, porque ya se ha realizado el asiento de explotaci\u00F3n.")

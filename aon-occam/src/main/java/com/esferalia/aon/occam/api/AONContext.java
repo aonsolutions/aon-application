@@ -37,20 +37,37 @@ public class AONContext {
 		}
 		return SETTINGS;
 	}
-
+	
+	/**
+	 * @deprecated Usar getAONContext(String domainName, int domainId, <b>String user</b>)
+	 *  para obtener el usuario, desde un servlet (parte cliente), se puede llamar al método
+	 *  <code>AonServletUtils.getLoggedUser()<code>
+	 */
+	@Deprecated
 	public static AONContext getAONContext(String domainName, int domainId) {
 		try {
 			return new AONContext(AonDataSource.getInstance().getConnection(
-					domainName), domainName, domainId);
+					domainName), domainName, domainId, null);
 		} catch (AonConnectionException e) {
 			throw new AonCoreException(e.getMessage(),e);
 		}
 	}
+
+	public static AONContext getAONContext(String domainName, int domainId, String user) {
+		try {
+			return new AONContext(AonDataSource.getInstance().getConnection(
+					domainName), domainName, domainId,user);
+		} catch (AonConnectionException e) {
+			throw new AonCoreException(e.getMessage(),e);
+		}
+	}
+	private ILogger logger;
 	
 	private DSLContext dslContext;
 	private Connection connection;
 	private String domainName;
 	private int domainId;
+	private String user;
 
 	public AONContext(DSLContext dslContext) {
 		this.dslContext = dslContext;
@@ -62,9 +79,10 @@ public class AONContext {
 		
 	}
 
-	private AONContext(Connection connection, String domainName, int domainId) {
+	private AONContext(Connection connection, String domainName, int domainId, String user) {
 		this.domainName = domainName;
 		this.domainId = domainId;
+		this.user = user;
 		this.connection = connection;
 		this.dslContext = DSL.using(connection,getDefaultSettings());
 		
@@ -143,4 +161,37 @@ public class AONContext {
 		}
 	}
 
+	public String getUser() {
+		return user;
+	}
+
+	public ILogger log() {
+		if (logger == null) {
+			// implementacion basico de log. Revisar.
+			logger = new ILogger() {
+
+				@Override
+				public void error(String msg) {
+					System.out.println(ERR + msg);
+				}
+
+				@Override
+				public void warn(String msg) {
+					System.out.println(WAR + msg);
+				}
+
+				@Override
+				public void info(String msg) {
+					System.out.println(INF + msg);
+				}
+
+				@Override
+				public void debug(String msg) {
+					System.out.println(DEB + msg);
+				}
+				
+			};
+		}
+		return logger; 
+	}
 }

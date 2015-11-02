@@ -55,12 +55,21 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-navarra-header-image")
 	String aonNavarraHeaderImage();
 	
+	@ClassName("aon-pointer-events-none")
+	String aonPointerEventsNone();
+
+	@ClassName("aon-pointer-events-auto")
+	String aonPointerEventsAuto();
+
 	@ClassName("aon-scroll-area")
 	String aonScrollArea();
 	
+	@ClassName("aon-height-all")
+	String aonHeightAll();
+
 	@ClassName("aon-width-all")
 	String aonWidthAll();
-	
+
 	@ClassName("aon-width-half")
 	String aonWidthHalf();
 	
@@ -151,6 +160,9 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-dataTable")
 	String aonDataTable();
 	
+	@ClassName("aon-dataTable-header")
+	String aonDataTableHeader();	
+	
 	@ClassName("aon-table-row-link")
 	String aonTableRowLink();
 	
@@ -162,6 +174,12 @@ public interface AonCSS extends  CssResource {
 
 	@ClassName("aon-icon-save")
 	String aonIconSave();
+	
+	@ClassName("aon-icon-cancel")
+	String aonIconCancel();
+	
+	@ClassName("aon-icon-plus")
+	String aonIconPlus();
 
 	@ClassName("aon-icon-delete")
 	String aonIconDelete();
@@ -177,7 +195,13 @@ public interface AonCSS extends  CssResource {
 
 	@ClassName("aon-icon-reset")
 	String aonIconReset();
+
+	@ClassName("aon-icon-audit")
+	String aonIconAudit();
 	
+	@ClassName("aon-icon-wizard")
+	String aonIconWizard();
+
 	@ClassName("aon-icon-lock")
 	String aonIconLock();
 	
@@ -207,12 +231,18 @@ public interface AonCSS extends  CssResource {
 
 	@ClassName("aon-text-underline")
     String aonTextUnderline();
+	
+	@ClassName("aon-text-line-through")
+	String aonTextLineThrough();
 
 	@ClassName("aon-text-left")
     String aonTextLeft();
 
 	@ClassName("aon-text-right")
     String aonTextRight();
+	
+	@ClassName("aon-vertical-align-top")
+	String aonVerticalAlignTop();
 	
 	@ClassName("aon-vertical-align-middle")
     String aonVerticalAlignMiddle();
@@ -228,9 +258,18 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-margin-right")
     String aonMarginRight();
-
+	
+	@ClassName("aon-margin-bottom")
+    String aonMarginBottom();
+	
 	@ClassName("aon-bold")
     String aonBold();
+
+	@ClassName("aon-color-green")
+    String aonColorGreen();
+
+	@ClassName("aon-color-red")
+    String aonColorRed();
 
 	@ClassName("aon-curly-lt")
 	String aonCurlyLT();
@@ -253,6 +292,9 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-border-bottom")
     String aonBorderBottom();
 
+	@ClassName("aon-border-collapse")
+    String aonBorderCollapse();
+
 	@ClassName("aon-border-bottom-important")
     String aonBorderBottomImportant();
 
@@ -263,9 +305,15 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-background-disabled")
     String aonBackgroundDisabled();
 
+	@ClassName("aon-fixed-font")
+	String aonFixedFont();
+	
 	@ClassName("aon-font-small")
     String aonFontSmall();
-	
+
+	@ClassName("aon-font-medium")
+    String aonFontMedium();
+
 	@ClassName("aon-font-big")
 	String aonFontBig();
 	
@@ -374,6 +422,9 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-input-error")
 	String aonInputError();
 	
+	@ClassName("aon-input-calc")
+	String aonInputCalc();
+	
 	@ClassName("aon-input-text-important")
 	String aonInputTextImportant();
 
@@ -403,6 +454,30 @@ public interface AonCSS extends  CssResource {
 
 	@ClassName("aon-clickable")
 	String aonClickable();
+	
+	@ClassName("aon-clickable-block")
+	String aonClickableBlock();
+	
+	@ClassName("aon-clickable-label")
+	String aonClickableLabel();
+	
+	@ClassName("aon-icon-journal-log")
+	String  aonIconJournalLog();
+	
+	@ClassName("aon-icon-journal")
+	String  aonIconJournal();
+
+	@ClassName("aon-icon-statement")
+	String  aonIconStatement();
+
+	@ClassName("aon-icon-euro")
+	String  aonIconEuro();
+
+	@ClassName("aon-icon-comment")
+	String  aonIconComment();
+
+	@ClassName("aon-icon-comment-red")
+	String  aonIconCommentRed();
 	
 	@ClassName("aon-icon-error")
 	String aonIconError();
@@ -437,8 +512,12 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-icon-warn")
 	String aonIconWarn();
 
+	@ClassName("aon-icon-close")
+	String aonIconClose();
+
 	@ClassName("aon-icon-minimize")
 	String aonIconMinimize();
+	
 
 	@ClassName("aon-icon-maximize")
 	String aonIconMaximize();
@@ -469,22 +548,6 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-icon-rowSelector-C")
 	String aonIconRowSelectorAgreement();
-	/*
-	@ClassName("aon-dataTable-cell-highlight")
-	String aonDataTableCellHighlight ();
-
-	@ClassName("aon-dataTable-cell-highlight-top")
-	String aonDataTableCellHighlightTop();
-
-	@ClassName("aon-dataTable-row-current")
-	String aonDataTableRowCurrent ();
-
-	@ClassName("aon-dataTable-row-highlight")
-	String aonDataTableRowHighlight ();
-
-	@ClassName("aon-dataTable-row-highlight-top")
-	String aonDataTableRowHighlightTop ();
-	*/
 	
 	/*
 	 * ProgressBar
@@ -559,13 +622,19 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-fiscal-table")
 	String aonFiscalTable();
-	
+		
+	@ClassName("aon-info-message")
+	String aonInfoMessage();
+
 	@ClassName("aon-info-message-block")
 	String aonInfoMessageBlock();
 
 	@ClassName("aon-warn-message-block")
 	String aonWarnMessageBlock();
-	
+
+	@ClassName("aon-warn-message")
+	String aonWarnMessage();
+
 	@ClassName("aon-tree-icon-node")
 	String aonTreeIconNode();
 	
@@ -620,9 +689,12 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-fiscal-enterprise-suggest")
 	String aonFiscalEnterpriseSuggest();
 	
+	@ClassName("aon-panelGrid-search")
+	String aonPanelGridSearch();
+
 	@ClassName("aon-panelGrid")
 	String aonPanelGrid();
-	
+
 	@ClassName("aon-panelGrid-odd")
 	String aonPanelGridOdd();
 	
@@ -718,5 +790,28 @@ public interface AonCSS extends  CssResource {
 
 	@ClassName("aon-even-background")
 	String aonEvenBackground();
+
+	@ClassName("aon-error-panel")
+	String aonErrorPanel();
+
+	@ClassName("aon-error-panel-error")
+	String aonErrorPanelError();
+
+	@ClassName("aon-error-panel-warn")
+	String aonErrorPanelWarn();
+
+	@ClassName("aon-error-panel-info")
+	String aonErrorPanelInfo();
+
+	@ClassName("aon-confirm-dialog")
+	String aonConfirmDialog();
 	
+	@ClassName("aon-confirm-dialog-msg")
+	String aonConfirmDialogMsg();
+	
+	@ClassName("aon-confirm-dialog-ok-button")
+	String aonConfirmDialogOkButton();
+	
+	@ClassName("aon-confirm-dialog-cancel-button")
+	String aonConfirmDialogCancelButton();
 }

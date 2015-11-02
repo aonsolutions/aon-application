@@ -17,7 +17,12 @@ public class DateBoxEx extends com.google.gwt.user.datepicker.client.DateBox {
 		// TODO i18n
 		public static final String MAIN_PATTERN = "dd/MM/yyyy";
 		
-		private static final String[] EXTRA_PATTERNS = new String[] {"ddMMyy","ddMMyyyy","dd/MM/yy"};
+		private static final DateTimeFormat[] EXTRA_PATTERNS = new DateTimeFormat[3];
+		static {
+			EXTRA_PATTERNS[0] = DateTimeFormat.getFormat("ddMMyy"); 
+			EXTRA_PATTERNS[1] = DateTimeFormat.getFormat("ddMMyyyy"); 
+			EXTRA_PATTERNS[2] = DateTimeFormat.getFormat("dd/MM/yy"); 
+		}
 
 		private final DateTimeFormat dateFormat;
 		
@@ -62,13 +67,14 @@ public class DateBoxEx extends com.google.gwt.user.datepicker.client.DateBox {
 			Date date = null;
 			try {
 				if (dateText.length() > 0) {
-					date = dateFormat.parse(dateText);
+					// TODO Mirar si el año sólo tiene dos dígitos.
+					date = dateFormat.parseStrict(dateText);
 				}
 			} catch (IllegalArgumentException exception) {
 				boolean parsed = false;
-				for (String pattern : EXTRA_PATTERNS) {
+				for (DateTimeFormat format : EXTRA_PATTERNS) {
 					try {
-						date = DateTimeFormat.getFormat(pattern).parse(dateText);
+						date = format.parseStrict(dateText);
 						dateBox.setValue(date,true);
 						parsed = true;
 						break;
@@ -97,6 +103,7 @@ public class DateBoxEx extends com.google.gwt.user.datepicker.client.DateBox {
 
 	public DateBoxEx() {
 		super(new DatePicker(), null, DEFAULT_FORMAT);
+		setStyleName(AON.AON_CSS.aonInputText());
 		setWidth("80px");
 	}
 

@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -16,6 +17,9 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("Common")
 public interface CommonService extends RemoteService {
 
+	// -------------------------------------------------------------- SECURITY
+	User getCurrentUser(String domainName, int domain) throws AonSQLException;
+	
 	// -------------------------------------------------------------- ENTERPRISE
 	ArrayList<Enterprise> getParentEnterprises(String domainName, int domain,
 			String query) throws AonSQLException;

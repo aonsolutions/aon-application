@@ -6,21 +6,33 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.dom.client.ErrorEvent;
+import com.google.gwt.event.dom.client.ErrorHandler;
+import com.google.gwt.event.dom.client.HasErrorHandlers;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.text.shared.Parser;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ValueBox;
 
-public class DoubleBox extends ValueBox<Double> {
+public class DoubleBox extends ValueBox<Double> implements HasErrorHandlers{
 
+	public static interface ExpressionResolver {
+		void resolve(String expression, AsyncCallback<Double> callback);
+	}
+	
+	public static final String EQUAL = AonStringUtils.EQUAL;
 	public static final int VISIBLE_LENGTH = 12;
 	public static final int PRECISION = 2;
 	public static final int MAX_LENGTH = 15;
 	private static final int CHANGE_DISPLAY_MILLIS = 4000;
-	
 	private int precision;
 	
 	private static final Renderer<Double> RENDERER = new AbstractRenderer<Double>() {
@@ -51,7 +63,6 @@ public class DoubleBox extends ValueBox<Double> {
 	public DoubleBox() {
 		this(VISIBLE_LENGTH);
 	}
-	
 	public DoubleBox(int visibleLength) {
 		super(Document.get().createTextInputElement(), RENDERER, PARSER);
 		setPrecision( PRECISION );
@@ -63,16 +74,76 @@ public class DoubleBox extends ValueBox<Double> {
 		addKeyUpHandler(new KeyUpHandler() {
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
-				try {
-					getValueOrThrow();
-					removeStyleName(AON.AON_CSS.aonInputError());
-				} catch (ParseException e) {
-					addStyleName(AON.AON_CSS.aonInputError());
+				if ( !AonStringUtils.startsWith(getText(),EQUAL) ) {
+					removeStyleName(AON.AON_CSS.aonInputCalc());
+					try {
+						getValueOrThrow();
+						removeStyleName(AON.AON_CSS.aonInputError());
+					} catch (ParseException e) {
+						addStyleName(AON.AON_CSS.aonInputError());
+						
+					}
 				}
 			}
 		});
 	}
-
+	
+	public void setResolver(final ExpressionResolver resolver) {
+		addKeyUpHandler(new KeyUpHandler() {
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if ( resolver != null) {
+					if ( AonStringUtils.startsWith(getText(),EQUAL)) {
+						setMaxLength(Integer.MAX_VALUE);
+						addStyleName(AON.AON_CSS.aonInputCalc());	
+						if ( event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+							String exp = AonStringUtils.substringAfter(getText(), DoubleBox.EQUAL);
+							resolver.resolve(exp , new AsyncCallback<Double>() {
+								
+								@Override
+								public void onSuccess(Double result) {
+									setMaxLength(MAX_LENGTH);
+									removeStyleName(AON.AON_CSS.aonInputError());
+									removeStyleName(AON.AON_CSS.aonInputCalc());
+									setValue(result, true, true);
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									setMaxLength(MAX_LENGTH);
+									removeStyleName(AON.AON_CSS.aonInputCalc());
+									addStyleName(AON.AON_CSS.aonInputError());
+									NativeEvent event = Document.get().createErrorEvent();
+									DomEvent.fireNativeEvent(event, DoubleBox.this);
+								}
+							});
+						}
+					}
+				} else {
+					addStyleName(AON.AON_CSS.aonInputError());
+				}
+			}
+		});
+/*
+ 	
+ 		// TODO DIALOGO PARA AÑADIR EXPRESIONES - CODE MIRROR.
+ 	
+  		addClickHandler(new ClickHandler() {
+ 
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				if ( resolver != null) {
+					if ( AonStringUtils.startsWith(getText(),EQUAL)) {
+						Window.alert("DIALOGO DE EXPRESIONES");
+						Code
+					}
+				}
+			}
+		});
+*/
+	}
+	
 	private int getPrecision() {
 		return this.precision;
 	}
@@ -99,4 +170,8 @@ public class DoubleBox extends ValueBox<Double> {
 		}
 	}
 
+	@Override
+	public HandlerRegistration addErrorHandler(ErrorHandler handler) {
+		return addHandler(handler, ErrorEvent.getType());
+	}
 }

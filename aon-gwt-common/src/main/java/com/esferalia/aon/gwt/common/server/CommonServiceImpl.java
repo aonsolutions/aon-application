@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 /**
@@ -21,6 +22,13 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 @WebServlet(name = "Common Servlet", urlPatterns = { "/aon_gwt_fiscal/Common " })
 public class CommonServiceImpl extends AonRemoteServiceServlet implements CommonService {
 
+	// -------------------------------------------------------------- SECURITY
+	@Override
+	public User getCurrentUser(String domainName, int domain)
+			throws AonSQLException {
+		return AON.getUser(domainName,domain,AonServletUtils.getLoggedUser()); 		
+	}
+	// -------------------------------------------------------------- ENTERPRISE
 	@Override
 	public ArrayList<Enterprise> getParentEnterprises(String domainName, int domain,
 			String query) throws AonSQLException {
@@ -55,7 +63,8 @@ public class CommonServiceImpl extends AonRemoteServiceServlet implements Common
 		list.addAll( AON.getAccounts(domainName, domain,
 				p ->  p.getActiveProperty().eq((byte) 1)
 					.and(p.getCodeProperty().like(q)
-					 .or(p.getDescriptionProperty().like(q)))
+					 .or(p.getDescriptionProperty().like(q))
+					 .or(p.getAliasProperty().like(q)))
 				).collect(Collectors.toList()));
 		return list;
 	}

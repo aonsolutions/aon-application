@@ -10,4 +10,7 @@ public enum AccountPeriodStatus implements Serializable {
 	,OPERATING
 	,CLOSED;
 
+	 public boolean isActive() {
+		 return (this == ACTIVE || this == OPENING); 
+	 }
 }

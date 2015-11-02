@@ -159,7 +159,7 @@ public class MinimizePanel extends ResizeComposite implements HasWidgets, Accept
 		MinimizeEvent.fire(this);
 	}
 
-	@UiHandler("minimizeButton")
+	@UiHandler("maximizeButton")
 	void onMaximizeButtonClick(ClickEvent event) {
 		MaximizeEvent.fire(this);
 	}

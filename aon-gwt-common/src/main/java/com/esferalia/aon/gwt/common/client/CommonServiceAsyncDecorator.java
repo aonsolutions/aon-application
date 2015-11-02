@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
@@ -15,6 +16,15 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 
 	public CommonServiceAsyncDecorator(CommonServiceAsync serviceAsync) {
 		this.serviceAsync = serviceAsync;
+	}
+
+	// -------------------------------------------------------------- SECURITY
+	@Override
+	public void getCurrentUser(String domainName, int domain,
+			AsyncCallback<User> callback) {
+		AON.start();
+		serviceAsync.getCurrentUser(domainName, domain,  
+				new AsyncCallbackWrapper<User>(callback));
 	}
 
 	// -------------------------------------------------------------- PARAMS

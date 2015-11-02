@@ -15,6 +15,8 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.AccountStatement;
+import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Bonus;
@@ -75,6 +77,7 @@ import com.esferalia.aon.occam.impl.jooq.ProductImpl;
 import com.esferalia.aon.occam.impl.jooq.SalaryImpl;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
 import com.esferalia.aon.occam.impl.jooq.SystemImpl;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 public class AON {
@@ -137,7 +140,7 @@ public class AON {
 	public static User getUser(String domainName, int domainId, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getSecurity().getUser(ctx, login);
 		} finally {
 			if (ctx != null)
@@ -394,12 +397,12 @@ public class AON {
 		return getAccounting().fetchPeriod(ctx, date);
 	}
 
-	public static AccountPeriod fetchPeriod(AONContext ctx, Integer id) {
-		return getAccounting().fetchPeriod(ctx, id);
+	public static AccountPeriod fetchPeriodByYear(AONContext ctx, int year) {
+		return getAccounting().fetchPeriodByYear(ctx, year);
 	}
 
-	public static AccountPeriod fetchPeriod(AONContext ctx, Condition condition) {
-		return getAccounting().fetchPeriod(ctx, condition);
+	public static AccountPeriod fetchPeriod(AONContext ctx, Integer id) {
+		return getAccounting().fetchPeriod(ctx, id);
 	}
 
 	public static void insert(AONContext ctx, AccountPeriod ap) {
@@ -414,12 +417,37 @@ public class AON {
 		getAccounting().delete(ctx, ap);
 	}
 
-	// ------------------------------ ACCOUNT ENTRY
-	public static LinkedList<AccountEntry> getAccountEntries(String domainName, int domain,
-			AccountEntryFilter filter, int offset, int numberOfRows) {
+	// ------------------------------ ACCOUNT PERIOD
+	public static LinkedList<AccountPeriod> getDomainPeriods(String domainName,
+			int domain, String user) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain,user);
+			return getAccounting().getDomainPeriods(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	// ------------------------------ ACCOUNT ENTRY
+	public static AccountEntry save(String domainName, int domain, String user, AccountEntry ae) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,user);
+			Integer id = getAccounting().save(ctx, ae);
+			AccountEntry saved = getAccounting().getAccountEntry(ctx,id); 
+			return saved;
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<AccountEntry> getAccountEntries(String domainName, int domain
+			, String user, AccountEntryFilter filter, int offset, int numberOfRows) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,user);
 			return getAccountEntries(ctx, filter, offset, numberOfRows)
 					.collect(Collectors.toCollection(LinkedList::new));
 		} finally {
@@ -439,18 +467,10 @@ public class AON {
 		return getAccounting().existsAnyEntry(ctx, period, accountEntryType);
 	}
 
-	public static Integer insert(AONContext ctx, AccountEntry ae) {
-		return getAccounting().insert(ctx, ae);
-	}
-
-	public static void update(AONContext ctx, AccountEntry ae) {
-		getAccounting().update(ctx, ae);
-	}
-
-	public static void delete(String domainName, int domain, Integer id) {
+	public static void deleteAccountEntry(String domainName, int domain, String user,Integer id) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain,user);
 			getAccounting().delete(ctx, id);;
 		} finally {
 			if (ctx != null)
@@ -486,30 +506,10 @@ public class AON {
 	 * @return 
 	 * @return El apunte contable grabado.
 	 */
-	public static List<Integer> insertSalaryEntries(String domainName,int domain
-			, Date from, Date to, String concept, Integer registryBank) {
-		return getAccounting().insertSalaryEntries(domainName,domain , from, to, concept, registryBank);
+	public static List<Integer> insertSalaryEntries(String domainName,int domain, String user,
+			Date from, Date to, String concept, Integer registryBank) {
+		return getAccounting().insertSalaryEntries(domainName,domain,user,from, to, concept, registryBank);
 	}
-//	public static LinkedList<AccountEntry> getSalaryEntries(String domainName,int domain
-//			, Date from, Date to, String concept, Integer registryBank) {
-//		AONContext ctx = null;
-//		try {
-//			ctx = AONContext.getAONContext(domainName, domain);
-//			Company company = getCommon().getCompany(ctx, ctx.getDomainId());
-//			LinkedList<AccountEntry> list = new LinkedList<AccountEntry>();
-//			
-//			List<SalaryAccountEntry> saes = getSalary()
-//					.getSalaryAccountEntries(ctx, company.getId(), from, to, concept, registryBank)
-//					.collect(Collectors.toList());
-//			for (SalaryAccountEntry sae : saes) {
-//				list.add( getAccounting().getAccountEntry(ctx, sae) );
-//			}
-//			return list; 
-//		} finally {
-//			if (ctx != null)
-//				ctx.close();
-//		}
-//	}
 
 	public static Stream<AccountEntry> getSalaryEntries(AONContext ctx
 			, Date from, Date to, String concept, Integer registryBank) {
@@ -517,6 +517,41 @@ public class AON {
 			return getSalary().getSalaryAccountEntries(ctx, company.getId(), from, to, concept, registryBank)
 					.map(sae -> getAccounting().getAccountEntry(ctx, sae));
 	}
+	// ------------------------------ ACCOUNT STATEMENT
+	public static AccountStatementReport getAccountStatement(String domainName,int domain, String user
+			, Integer accountId,Date from, Date to) {
+		AONContext ctx = null;
+		try {
+			AccountStatementReport report = new AccountStatementReport(); 
+			ctx = AONContext.getAONContext(domainName, domain,user);
+			report.setFrom(from);
+			report.setTo(to);
+			report.setAccount( AON.getAccount(ctx, accountId));
+			report.setSummary(getAccounting()
+					.getAccountBalance(ctx, accountId, from, to)
+					.collect(Collectors.toCollection(LinkedList::new)));
+			report.setDetails(getAccounting()
+					.getAccountStatement(ctx, accountId, from, to)
+					.collect(Collectors.toCollection(LinkedList::new)));
+			report = AccountStatementDAO.calculate(report);
+			return  report;
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	public static Stream<AccountStatement> getAccountBalance(String domainName,int domain, String user
+			, Integer accountId,Date from, Date to) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,user);
+			return getAccounting().getAccountBalance(ctx, accountId, from, to); 
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 
 	// ********************************************
 	// ********************************** FISCAL **
@@ -1541,7 +1576,7 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
+
 	public static void insert(Attach attach) {
 		AONContext ctx = null;
 		try {
@@ -1602,5 +1637,4 @@ public class AON {
 		}
 	}
 
-	
 }

@@ -34,4 +34,23 @@ public enum AccountEntryType  implements Serializable {
 	public Byte getValue() {
 		return (byte) ordinal();
 	}
+	
+	public boolean isManual() {
+        return (this == AccountEntryType.MANUAL
+       		|| this == AccountEntryType.EXPENSES
+       		|| this == AccountEntryType.SALARY
+       		|| this == AccountEntryType.SOCIAL_INSURANCE
+       		|| this == AccountEntryType.SOCIAL_INSURANCE_ADJUST
+       		|| this == AccountEntryType.LOAN
+       		|| this == AccountEntryType.LOAN_FEE
+        );
+    }
+	
+	public boolean isInvoice() {
+		return (this == AccountEntryType.SALES_INVOICE
+			|| this == AccountEntryType.PURCHASE_INVOICE
+			|| this == AccountEntryType.EXPENSE_INVOICE
+			|| this == AccountEntryType.INVESTMENT_INVOICE);
+	}
+	
 }

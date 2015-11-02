@@ -25,7 +25,7 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 }
 .aon-number-box{
 	text-align: right;
-	padding-left: 2px;
+	padding-left: 15px;
 	padding-right: 2px;
 }
 .aon-number-box:focus {
@@ -34,6 +34,9 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 
 .aon-scroll-area{	
 	padding: 8px 1.5em 1.5em 1.5em;
+}
+.aon-height-all{
+	height:100%;
 }
 .aon-width-all{
 	width:100%;
@@ -147,6 +150,9 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 .aon-italic {
 	font-style: italic;
 }
+.aon-fixed-font {
+	font-family: Fixed, monospace;
+}
 .aon-cursor-pointer {
   cursor: pointer;
 }
@@ -156,7 +162,12 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
     margin: 1em 0;
     padding: 0 0 0.5em;
 }
-
+.aon-pointer-events-none {
+	pointer-events: none;
+}
+.aon-pointer-events-auto {
+	pointer-events: auto;
+}
 .aon-group-title {
     background-color: #FFFFFF;
     background-image: none;
@@ -182,6 +193,24 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	border:#ccc 1px solid;
 	border-collapse:collapse;
 }
+
+@sprite .aon-dataTable-header {
+  padding: 5px 1em;
+  height: 14.4px;
+  font-weight:bold;
+  font-size:0.8em;
+  text-transform:uppercase;
+  gwt-image: "aonDataTableHeader";
+  background-color: #dadada;
+  background-repeat: repeat-x;
+  background-position: left top;
+  background-attachment: scroll;
+  border-bottom:#fff 1px solid;
+  border-right: 1px solid #C4C0C9;
+  overflow: hidden;
+  width: auto;
+}
+
 
 .aon-dataTable td{
 	padding-top:1px;
@@ -217,17 +246,29 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 .aon-bold {
 	font-weight: bold;
 }
+.aon-color-green {
+	color: green;
+}
+.aon-color-red {
+	color: red;
+}
 .aon-text-center {
 	text-align: center;
 }
 .aon-text-underline {
 	text-decoration: underline;
 }
+.aon-text-line-through {
+	text-decoration: line-through;
+}
 .aon-text-left {
 	text-align: left;
 }
 .aon-text-right {
 	text-align: right;
+}
+.aon-vertical-align-top{
+	vertical-align: top;
 }
 .aon-vertical-align-middle{
 	vertical-align: middle;
@@ -243,6 +284,9 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 }
 .aon-font-small {
 	font-size: 0.8em;
+}
+.aon-font-medium {
+	font-size: 0.9em;
 }
 .aon-font-big {
 	font-size: 1.5em;
@@ -269,6 +313,9 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 }
 .aon-border-top  {
 	border-top: solid #999 1px;
+}
+.aon-border-collapse {
+	border-collapse: collapse;
 }
 .aon-padding2 {
 	padding: 2px;
@@ -376,10 +423,20 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	gwt-image: "aonIconDelete";
 }
 
+@sprite .aon-icon-cancel  {
+	width: auto;
+	gwt-image: "aonIconCancel";
+}
+
 @sprite .aon-icon-save {
 	width: auto;
 	gwt-image: "aonIconSave";
 }
+@sprite .aon-icon-plus {
+	width: auto;
+	gwt-image: "aonIconPlus";
+}
+
 
 @sprite .aon-icon-search {
 	width: auto;
@@ -400,6 +457,16 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 @sprite .aon-icon-reset {
 	width: auto;
 	gwt-image: "aonIconReset";
+}
+
+@sprite .aon-icon-audit {
+	width: auto;
+	gwt-image: "aonIconAudit";
+}
+
+@sprite .aon-icon-wizard {
+	width: auto;
+	gwt-image: "aonIconWizard";
 }
 
 @sprite .aon-icon-moveUp {
@@ -472,7 +539,15 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	color: red !important;
 	width: auto;
 	height: auto;
-	padding-left: 9px !important; 
+	padding-left: 15px !important; 
+}
+@sprite .aon-input-calc {
+	gwt-image: "aonInputCalc" ;
+	background-position: 2px 3px;
+	color: red !important;
+	width: auto;
+	height: auto;
+	padding-left: 15px !important; 
 }
 
 @url imageUrl aonCurlyLT;
@@ -693,6 +768,10 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	background-position: right;
 }
 
+@sprite .aon-icon-close {
+	gwt-image: 'aonIconClose';
+	width: auto;
+}
 
 @sprite .aon-icon-minimize {
 	float: right;
@@ -948,7 +1027,7 @@ input:disabled + label{
 	width:auto;
 	overflow:visible;
 	height: 14px;
-} 
+}
 .aon-finding-toolbar-item-no-icon{
  	color:#000;
  	text-transform:uppercase; 	
@@ -1197,6 +1276,13 @@ input:disabled + label{
 	border: solid gray 1px;
 	text-align: center;
 }
+@sprite .aon-info-message {
+	gwt-image: "aonIconInfo";
+	padding-left: 20px;
+	font-style: italic;
+	margin-top: 3px;
+	width: auto;	
+}
 .aon-warn-message-block {
 	font-size: 1.5em; 
 	color: red; 
@@ -1205,6 +1291,13 @@ input:disabled + label{
 	padding: 10px;
 	border: solid red 1px;
 	text-align: center;
+}
+@sprite .aon-warn-message {
+	gwt-image: "aonIconWarn";
+	padding-left: 20px;
+	font-style: italic;
+	margin-top: 3px;	
+	width: auto;	
 }
 
 .aon-tree-icon-node {
@@ -1240,22 +1333,27 @@ input:disabled + label{
 
 @sprite .aon-icon-point-green {
 	gwt-image: "aonIconPointGreen";
+	width: auto !important;
 }
 	
 @sprite .aon-icon-point-light-green {
 	gwt-image: "aonIconPointLightGreen";
+	width: auto !important;
 }
 	
 @sprite .aon-icon-point-orange {
 	gwt-image: "aonIconPointOrange";
+	width: auto !important;
 }
 	
 @sprite .aon-icon-point-red {
 	gwt-image: "aonIconPointRed";
+	width: auto !important;
 }
 	
 @sprite .aon-icon-point-yellow {
 	gwt-image: "aonIconPointYellow";
+	width: auto !important;
 }
 
 @sprite .aon-icon-loupe {
@@ -1266,9 +1364,40 @@ input:disabled + label{
 }
 @sprite .aon-icon-module {
 	gwt-image: "aonIconModule";
+	width: auto !important;
 }
 @sprite .aon-icon-model {
 	gwt-image: "aonIconModel";
+}
+@sprite .aon-icon-journal-log {
+	width: auto;
+	gwt-image: "aonIconCompanyData";
+	padding-left: 20px; 
+}
+@sprite .aon-icon-journal {
+	width: auto;
+	gwt-image: "aonIconJournal";
+	padding-left: 20px; 
+}
+@sprite .aon-icon-statement {
+	width: auto;
+	gwt-image: "aonIconStatement";
+	padding-left: 20px; 
+}
+@sprite .aon-icon-euro {
+	width: auto;
+	gwt-image: "aonIconEuro";
+	padding-left: 20px; 
+}
+
+@sprite .aon-icon-comment{
+	gwt-image: "aonIconComment";
+	width: auto;
+}
+
+@sprite .aon-icon-comment-red{
+	gwt-image: "aonIconCommentRed";
+	width: auto;
 }
 
 .aon-fiscal-enterprise-suggest {
@@ -1279,6 +1408,15 @@ input:disabled + label{
     padding: 2px 5px;
     width: 400px;
 }
+.aon-panelGrid-search{
+	background-color:#f6f5e3;
+	margin-top:0.5em;
+	padding-bottom:1em;
+	border:#d8d37a 1px solid;
+	}
+.aon-panelGrid-search table{
+	border:0;
+	}
 
 .aon-panelGrid{
 	border-collapse:collapse;
@@ -1405,6 +1543,22 @@ input:disabled + label{
     text-decoration: underline;
 }
 
+.aon-clickable-block {
+	background-color: white;
+	border: solid white 1px;
+	cursor: pointer;
+}
+.aon-clickable-block:hover {
+	background-color: #FFFFD1;
+}
+
+.aon-clickable-label {
+	cursor: pointer;
+}
+.aon-clickable-label:hover {
+	text-decoration: underline;
+}
+
 /* 
 	*********************************************
 	********************************* GWT CLASSES
@@ -1474,6 +1628,7 @@ input:disabled + label{
     font-weight: bold;
     padding: 3px 7px 4px 7px;
     text-transform: uppercase;
+    margin-left: 4px;
 }
 
 .aon-Selector .gwt-MenuBar-vertical {
@@ -1572,6 +1727,7 @@ input:disabled + label{
     overflow: hidden;
     padding: 6px;
 }
+
 
 /* DialogBox */
 .aon-Selector .gwt-DialogBox {
@@ -1704,4 +1860,129 @@ input:disabled + label{
 }
 .aon-even-background {
 	background-color:  #FFFFFF;
+}
+
+.aon-error-panel {
+    background-color: #ffb2b2;
+    border: 1px solid red;
+    margin-bottom: 5px;
+    padding: 8px 10px;
+}
+
+@sprite .aon-error-panel-error {
+	width: auto; 
+	height: auto;
+	gwt-image: "aonIconException";
+	padding-left: 18px !important;
+	font-weight: bold;
+}
+@sprite .aon-error-panel-warn {
+	width: auto; 
+	height: auto;
+	gwt-image: 'warn';
+	padding-left: 18px !important;
+	font-weight: bold;
+	}
+@sprite .aon-error-panel-info {
+	width: auto; 
+	height: auto;
+	gwt-image: "aonIconInfo";
+	padding-left: 18px !important;
+	font-weight: bold;
+}
+
+
+/* TabLayoutPanel */
+.aon-Selector .gwt-TabLayoutPanel {
+	height: 100%;
+	pointer-events: none;
+}
+.aon-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
+    background: transparent none repeat scroll 0 0;
+    padding-left: 5px;
+    padding-top: 6px;
+    pointer-events: none;
+}
+.aon-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelContentContainer {
+    border-color: #EEE;
+    border-style: solid;
+    border-width: 0 1px 1px;
+}
+.aon-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelContent {
+    overflow: hidden;
+    padding: 6px;
+    pointer-events: auto;
+}
+.aon-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
+    background: #CBCBCB none repeat scroll 0 0;
+    border-radius: 3px 3px 0 0;
+    color: black;
+    cursor: pointer;
+    font-weight: normal;
+    margin-left: 4px;
+    padding: 4px 8px;
+    text-align: center;
+    pointer-events: auto;
+}
+.aon-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
+    background: white none repeat scroll 0 0;
+    color: #333;
+    cursor: default;
+    font-weight: bold;
+}
+
+.aon-confirm-dialog  {
+    background: white none repeat scroll 0 0;
+    border: none;
+    padding: 2px;
+}
+.aon-confirm-dialog-msg  {
+	font-size: 1.2em;
+    margin: 1em;
+    text-align: center;	
+}
+
+@sprite .aon-confirm-dialog-ok-button  {
+	gwt-image: "aonIconSave";
+	background-attachment: scroll;
+    background-clip: border-box;
+    background-color: inherit;
+    background-position: 3px 2px;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+    border: 1px solid #aaa;
+    cursor: pointer;
+    font-weight: bold;
+    height: auto;
+    overflow: visible;
+    padding-left: 20px;
+    text-align: left;
+    text-transform: uppercase;
+    width: auto;
+}
+.aon-confirm-dialog-ok-button:hover
+, .aon-confirm-dialog-ok-button:focus{
+	background-color: #FBEDB6; 
+}
+@sprite .aon-confirm-dialog-cancel-button  {
+	gwt-image: "aonIconCancel";
+	background-attachment: scroll;
+    background-clip: border-box;
+    background-color: inherit;
+    background-position: 3px 2px;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+    border: 1px solid #aaa;
+    cursor: pointer;
+    font-weight: bold;
+    height: auto;
+    overflow: visible;
+    padding-left: 20px;
+    text-align: left;
+    text-transform: uppercase;
+    width: auto;
+}
+.aon-confirm-dialog-cancel-button:hover
+, .aon-confirm-dialog-cancel-button:focus{
+	background-color: #FBEDB6; 
 }

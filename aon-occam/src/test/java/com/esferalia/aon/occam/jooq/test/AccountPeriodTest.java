@@ -1,8 +1,6 @@
 package com.esferalia.aon.occam.jooq.test;
 
 
-import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
-
 import java.sql.SQLException;
 
 import org.junit.AfterClass;
@@ -45,9 +43,7 @@ public class AccountPeriodTest {
 
 	@Test(expected=AonCoreException.class)
 	public void testPeriodInitialDateOverlap() {
-		AccountPeriod period = AON.fetchPeriod(ctx,
-				ACCOUNT_PERIOD.NAME.equal("1974").and(ACCOUNT_PERIOD.DOMAIN.equal(ctx.getDomainId()))
-				);
+		AccountPeriod period = AON.fetchPeriodByYear(ctx,1974);
 		if (period == null) {
 			period = new AccountPeriod();
 			period.setName("1974");
@@ -68,10 +64,7 @@ public class AccountPeriodTest {
 
 	@Test(expected=AonCoreException.class)
 	public void testPeriodDeadlineOverlap() {
-		AccountPeriod period = AON.fetchPeriod(ctx,
-				ACCOUNT_PERIOD.NAME.equal("1974")
-				.and(ACCOUNT_PERIOD.DOMAIN.equal(ctx.getDomainId()))
-				);
+		AccountPeriod period = AON.fetchPeriodByYear(ctx,1974);
 		if (period == null) {
 			period = new AccountPeriod();
 			period.setName("1974");

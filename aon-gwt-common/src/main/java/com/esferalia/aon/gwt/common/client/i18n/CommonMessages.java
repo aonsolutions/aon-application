@@ -1,7 +1,11 @@
 package com.esferalia.aon.gwt.common.client.i18n;
 
+import java.util.Date;
+
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKeyGroup;
+import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.ActivityGroup;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -28,9 +32,12 @@ public interface CommonMessages extends Messages {
 
 	// -----------------------------------------------------------Enum Messages
 	@DefaultMessage("----------")
-	@AlternateMessage({ "ALAVA", "Araba/Alava", "BIZKAIA", "Bizkaia",
-			"GIPUZKOA", "Gipuzkoa", "NAVARRA", "Navarra", "COMMON_TERRITORY",
-			"Territorio Com\u00FAn" })
+	@AlternateMessage({
+		 "ALAVA", "Araba/Alava"
+		,"BIZKAIA", "Bizkaia"
+		,"GIPUZKOA", "Gipuzkoa"
+		, "NAVARRA", "Navarra"
+		, "COMMON_TERRITORY", "Territorio Com\u00FAn"})
 	String administrationName(@Select Administration administration);
 
 	@DefaultMessage("----------")
@@ -238,11 +245,23 @@ public interface CommonMessages extends Messages {
 	String callcenterModule();
 	
 	// ---------------------------------------------------------------- Errores
+	@DefaultMessage("La Fecha del Asiento no est\u00E1 dentro del periodo asignado al ejercicio")
+	String accountEntryOutOfRange();
+	
+	@DefaultMessage("El ejericio contable se encuentra en estado \"{0}\". No se permite la modificaci\u00F3n/borrado del asiento.")
+	String periodStatusWarning(String periotStatus);
+
+	@DefaultMessage("No se permite la modificaci\u00F3n/borrado de asientos autom\u00E1ticos.")
+	String automaticEntryWarning();
+
 	@DefaultMessage("No ha sido posible mostrar los datos ({0}) ")
 	String unableToShowData(String message);
 	
 	@DefaultMessage("Valor num\u00E9rico no correcto ({0}) ")
 	String numericValueError(String value);
+	
+	@DefaultMessage("Expresion aritmetica no correcta ({0})")
+	String arithmeticExpressionError(String value);
 
 	@DefaultMessage("No se pudieron leer las declaraciones del modelo 190. Causa: \n {0}")
 	String unableToReadMod190(String cause);
@@ -331,9 +350,30 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Borrar")
 	String deleteAction();
+	
+	@DefaultMessage("Auditor\u00eda")
+	String audit();
+
+	@DefaultMessage("No hay informaci\u00F3n acerca de la creaci\u00F3n")
+	String emptyCreatedBy();
+	
+	@DefaultMessage("Creado por \"{0}\" el dia \"{1,date,medium}\" a las  \"{1,time,medium}\"") 
+	String createdBy(@Select String user,Date date);
+	
+	@DefaultMessage("No hay informaci\u00F3n acerca de la modificaci\u00F3n")
+	String emptyModifiedBy();
+	
+	@DefaultMessage("Modificado por \"{0}\" el dia \"{1,date,medium}\" a las  \"{1,time,medium}\"")
+	String modifiedBy(@Select String user,Date date);
+
+	@DefaultMessage("{0} - {1,date,medium} {1,time,medium}")
+	String auditBy(@Select String user,Date date);
 
 	@DefaultMessage("\u00BFContinuar con el borrado?")
 	String confirmDeleteAction();
+
+	@DefaultMessage("\u00BFDeshacer el borrado?")
+	String confirmRestoreAction();
 
 	@DefaultMessage("Si continua se borrar\u00E1 la declaraci\u00F3n completa. \u00BFContinuar con el borrado?")
 	String confirmDeclarationDeleteAction();
@@ -356,7 +396,10 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Aceptar")
 	String accept();
 
-	@DefaultMessage("Vista previa")
+ 	@DefaultMessage("Ocultar")
+ 	String hide();
+ 	
+ 	@DefaultMessage("Vista previa")
 	String preview();
 
 	@DefaultMessage("C\u00F3digo")
@@ -2029,10 +2072,10 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Importar")
 	String importAction();
 	
-    @DefaultMessage("Se est\u00E1 enviando un archivo al servidor.\n Inténtelo mas tarde.")
+    @DefaultMessage("Se est\u00E1 enviando un archivo al servidor.\n Int\u00E9ntelo mas tarde.")
     String uploaderActiveUpload();
 
-    @DefaultMessage("Este archivo ya fué enviado.")
+    @DefaultMessage("Este archivo ya fu\u00E9 enviado.")
     String uploaderAlreadyDone();
 
     @DefaultMessage("Parece que esta aplicaci\u00F3n est\u00E1 configurada para usar GAE-Blobstore.\nSin embargo el servidor ha retornado un error al crear la URL.\nRecuerda que para utilizar blobstore debes activar la opci\u00F3n de facturaci\u00F3n en GAE.")
@@ -2056,7 +2099,7 @@ public interface CommonMessages extends Messages {
     @DefaultMessage("Ha sido imposible conectar con el servidor de la aplicaci\u00F3n.")
     String uploaderServerUnavailable();
 
-    @DefaultMessage("Se ha sobrepasado el tiempo de espera al enviar el archivo.\n Es posible que su navegador no env\u00EDe correctamente archivos,\n o quiz\u00E1s ocurri\u00F3 un error en el servidor\nPor favor inténtelo mas tarde")
+    @DefaultMessage("Se ha sobrepasado el tiempo de espera al enviar el archivo.\n Es posible que su navegador no env\u00EDe correctamente archivos,\n o quiz\u00E1s ocurri\u00F3 un error en el servidor\nPor favor int\u00E9ntelo mas tarde")
     String uploaderTimeout();
     
     @DefaultMessage("Error uploading the file, the server response has a format which can not be parsed by the application.\n.")
@@ -2547,11 +2590,17 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Listado")
 	String listTemplates();
  	
- 	@DefaultMessage("Apuntes contables")
+ 	@DefaultMessage("Asientos contables")
 	String accountEntries();
  	
  	@DefaultMessage("Cuenta contable")
  	String account();
+ 	
+ 	@DefaultMessage("Cuenta Contable no encontrada")
+ 	String accountNotFound();
+
+ 	@DefaultMessage("Error inesperado: [{0}]")
+ 	String unexpectedError(String msg);
 
  	// ------------------- AON GWT OFFICE
  	
@@ -2591,34 +2640,85 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Etiquetas")
 	String labelsIssues();
 
-    @DefaultMessage("Existen {0} apuntes de n\u00F3minas en el periodo seleccionado. [VER]")
-    @AlternateMessage({"=1", "Existe un apunte de n\u00F3minas en el periodo seleccionado. [VER]"})
+    @DefaultMessage("Existen {0} asientos de n\u00F3minas en el periodo seleccionado. [VER]")
+    @AlternateMessage({"=1", "Existe un asiento de n\u00F3minas en el periodo seleccionado. [VER]"})
     String salaryEntryErrorMsg(@PluralCount int count);
     
-    @DefaultMessage("No se pudo comprobar la existencia de apuntes")
+    @DefaultMessage("No se pudo comprobar la existencia de asientos")
     String accountEntryReadError();
     
     @DefaultMessage("Error al recuperar las cuentas bancarias de la empresa.")
     String registryBankReadError();
 
-	@DefaultMessage("\u00BFDesea continuar con la generaci\u00F3n de apuntes?")
+	@DefaultMessage("\u00BFDesea continuar con la generaci\u00F3n de asientos?")
 	String generateAccountEntry();
 	
-	@DefaultMessage("Apuntes generados")
+	@DefaultMessage("\u00BFDesea cambiar el concepto en todas las l\u00EDneas del asiento?")
+	String changeConcept();
+
+	@DefaultMessage("\u00BFDesea cambiar el n\u00FAmero de documento en todas las l\u00EDneas del asiento?")
+	String changeDocument();
+
+	@DefaultMessage("Asientos generados")
 	String generatedAccountEntries();
 
-	@DefaultMessage("No se gener\u00F3 ning\u00FAn apunte.")
+	@DefaultMessage("No se gener\u00F3 ning\u00FAn asiento.")
 	String noGeneratedAccountEntries();
 
-	@DefaultMessage("----------")
+	@DefaultMessage("Fecha de asiento")
+	String accountEntryDate();
+	
+	@DefaultMessage("N\u00AA de diario")
+	String journal();
+	
+	@DefaultMessage("Libro diario")
+	String journalBook();
+
+    @DefaultMessage("----------")
 	@AlternateMessage({
-			"GROUP1", "Actividades empresariales sujetas al I.A.E.",
-			"GROUP2", "Actividades profesionales sujetas al I.A.E.",
-			"GROUP3", "Actividades art\u00EDsticas sujetas al I.A.E.",
-			"GROUP4", "Arrendadores de locales de negocios",
-			"GROUP5", "Actividades agr\u00EDcolas, ganaderas o pesqueras, no sujetas al I.A.E.",
-			"GROUP6", "Otras actividades no sujetas al I.A.E.", "GROUP7",
-			"Sujetos pasivos sin actividad" })
+		"OPENING", "Apertura",
+		"CLOSING", "Cierre",
+	    "OPERATING", "Explotaci\u00F3n",
+	    "MANUAL", "Manual",
+	    "SALES_INVOICE", "Factura de Venta",
+	    "PURCHASE_INVOICE", "Factura de Compra",
+	    "EXPENSE_INVOICE", "Factura de Gastos",
+	    "INVESTMENT_INVOICE", "Factura de Inversi\u00F3n",
+	    "EXPENSES", "Gastos sin IVA",
+	    "SALARY", "N\u00F3minas",
+	    "TAX", "Impuestos",
+	    "LOAN", "Pr\u00E9stamos",
+	    "LEASING", "Leasing",
+	    "PAYMENT", "Pago",
+	    "COLLECTION", "Cobro",
+	    "STOCK_VARIATION", "Variaci\u00F3n de Existencias",
+	    "AMORTIZATION", "Amortizaci\u00F3n",
+	    "SOCIAL_INSURANCE", "Seg. Social",
+	    "LOAN_FEE", "Cuotas Prestamos",
+	    "LEASING_FEE", "Cuotas Leasing",
+	    "RETURNED_PAYMENT", "Devoluci\u00F3n de Pago",
+	    "RETURNED_COLLECTION", "Devoluci\u00F3n de Cobro",
+	    "SOCIAL_INSURANCE_ADJUST", "Ajuste Seg. Social" })
+    String accountEntryType(@Select AccountEntryType type);
+
+    @DefaultMessage("----------")
+	@AlternateMessage({
+		 "ACTIVE","Activo"
+		,"INACTIVE","Inactivo"
+		,"OPENING","Apertura"
+		,"OPERATING","Explotaci\u00F3n"
+		,"CLOSED","Cerrado"})
+    String accountPeriodStatus(@Select AccountPeriodStatus status);
+
+    @DefaultMessage("----------")
+	@AlternateMessage({
+		"GROUP1", "Actividades empresariales sujetas al I.A.E.",
+		"GROUP2", "Actividades profesionales sujetas al I.A.E.",
+		"GROUP3", "Actividades art\u00EDsticas sujetas al I.A.E.",
+		"GROUP4", "Arrendadores de locales de negocios",
+		"GROUP5", "Actividades agr\u00EDcolas, ganaderas o pesqueras, no sujetas al I.A.E.",
+		"GROUP6", "Otras actividades no sujetas al I.A.E.", 
+		"GROUP7", "Sujetos pasivos sin actividad" })
 	String activityGroup(@Select ActivityGroup activityGroup);
 
 	@DefaultMessage("----------")
@@ -2639,7 +2739,6 @@ public interface CommonMessages extends Messages {
 		,"DEV_014","Modificaci\u00F3n recargo equivalencia"
 		,"DEV_015","Modificaci\u00F3n recargo equivalencia por auto de declaraci\u00F3n de concurso de acreedores"
 		,"DEV_016","Total cuotas IVA y recargo de equivalencia"
-	
 		,"DED_001","IVA deducible en operaciones interiores de bienes y servicios corrientes"
 		,"DED_002","Total bases imponibles y cuotas deducibles en operaciones interiores de bienes y servicios corrientes"
 		,"DED_003","IVA deducible en operaciones intragrupo de bienes y servicios corrientes"
@@ -2667,4 +2766,24 @@ public interface CommonMessages extends Messages {
 		,"DED_025","Resultado r\u00E9gimen general"
 	})
 	String mod390DetailKeyGroup(@Select Mod390DetailKeyGroup group);
+	
+ 	@DefaultMessage("Hist\u00F3rico de sesi\u00F3n")
+	String sessionLog();
+
+ 	@DefaultMessage("Extracto de cuenta")
+	String accountStatetement();
+
+ 	@DefaultMessage("Saldos de cuentas del asiento")
+	String accountBalances();
+ 	
+ 	@DefaultMessage("No ha sido posible encontrar el asiento. Puede que el asiento haya sido borrado.\n \u00BFDesea recurperarlo de todas formas?")
+	String recoverEntry();
+ 	
+ 	@DefaultMessage("No ha sido posible encontrar un ejercicio contable activo.")
+	String noActiveAccountPeriod();
+ 	
+ 	@DefaultMessage("No definido")
+	String undefined();
+	
+
 }

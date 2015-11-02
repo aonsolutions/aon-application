@@ -3,12 +3,17 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
 
 import java.util.Date;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.Record;
 
-import com.esferalia.aon.jooq.tables.records.AccountPeriodRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.accounting.AccountPeriodFilter;
+import com.esferalia.aon.occam.api.model.accounting.AccountPeriodProperties;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountPeriodValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -16,23 +21,51 @@ import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class AccountPeriodDAO {
 
+	public static Stream<AccountPeriod> getPeriods(AONContext ctx, AccountPeriodFilter filter) {
+		ctx.checkRead();
+		return ctx.getDslContext()
+			.select(ACCOUNT_PERIOD.ID,ACCOUNT_PERIOD.DOMAIN,ACCOUNT_PERIOD.NAME,ACCOUNT_PERIOD.INITIATION_DATE
+					,ACCOUNT_PERIOD.DEADLINE,ACCOUNT_PERIOD.STATUS,ACCOUNT_PERIOD.CREATION_USER
+					,ACCOUNT_PERIOD.CREATION_DATE,ACCOUNT_PERIOD.MODIFICATION_USER,ACCOUNT_PERIOD.MODIFICATION_DATE)
+			.from(ACCOUNT_PERIOD)
+			.where(ACCOUNT_PERIOD_PROPERTIES.getConditions(filter))
+			.orderBy(ACCOUNT_PERIOD.INITIATION_DATE.desc())
+			.fetch()
+			.stream()
+			.map(new FullAccountPeriodFiller());
+	}
+	public static AccountPeriod getActivePeriod(AONContext ctx, Date entryDate) {
+		ctx.checkRead();
+		return getPeriods(ctx,
+					p -> p.getDomainProperty().eq(ctx.getDomainId())
+						.and(p.getInitiationDateProperty().le(entryDate) )
+						.and(p.getDeadlineProperty().ge(entryDate) )
+						.and(p.getStatusProperty().in( new Byte[] {0,2,3} )))
+				.findFirst()
+				.orElse(null);
+	}
+	public static Stream<AccountPeriod> getDomainPeriods(AONContext ctx) {
+		ctx.checkRead();
+		return getPeriods(ctx,p -> p.getDomainProperty().eq(ctx.getDomainId()));
+	}
+	
 	public static AccountPeriod fetchOne(AONContext ctx, Date date) {
 		ctx.checkRead();
-		Condition condition = ACCOUNT_PERIOD.DOMAIN.equal(ctx.getDomainId())
-				.and(ACCOUNT_PERIOD.INITIATION_DATE.lessOrEqual(AonDateUtils.toSql(date)))
-				.and(ACCOUNT_PERIOD.DEADLINE.greaterOrEqual(AonDateUtils.toSql(date)) );
-		return fetchOne(ctx,condition);
+		return getPeriods(ctx,
+				p -> p.getDomainProperty().eq(ctx.getDomainId())
+					.and(p.getInitiationDateProperty().le(date) )
+					.and(p.getDeadlineProperty().ge(date) ))
+			.findFirst()
+			.orElse(null);
 	}
 
 	public static AccountPeriod fetchOne(AONContext ctx, Integer id) {
 		ctx.checkRead();
-		return populateRecord(ctx.getDslContext().
-				fetchOne(ACCOUNT_PERIOD,ACCOUNT_PERIOD.ID.equal(id)));
-	}
-
-	public static AccountPeriod fetchOne(AONContext ctx, Condition condition) {
-		ctx.checkRead();
-		return populateRecord(ctx.getDslContext().fetchOne(ACCOUNT_PERIOD, condition));
+		return getPeriods(ctx,
+				p -> p.getDomainProperty().eq(ctx.getDomainId())
+					.and(p.getIdProperty().eq(id) ))
+			.findFirst()
+			.orElse(null);
 	}
 
 	public static AccountPeriod fetchOneByYear(AONContext ctx, int year) {
@@ -41,40 +74,17 @@ public class AccountPeriodDAO {
 		return fetchOne(ctx,date);
 	}
 
-	private static AccountPeriod populateRecord(AccountPeriodRecord record) {
-		if (record == null) return null;
-		AccountPeriod period = new AccountPeriod();
-		return populateRecord(record, period);
-	}
-
-	private static AccountPeriod populateRecord(AccountPeriodRecord record,
-			AccountPeriod period) {
-		period.setId(record.getId());
-		period.setDomain(record.getDomain());
-		period.setName(record.getName());
-		period.setInitiationDate(record.getInitiationDate());
-		period.setDeadline(record.getDeadline());
-		period.setStatus(AccountPeriodStatus.values()[record.getStatus()]);
-		return period;
-	}
-
 	public static void insert(AONContext ctx, AccountPeriod ap) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			AccountPeriodValidation.validatePeriod(ctx, ap);
-			AccountPeriodRecord record = ctx.getDslContext()
-					.insertInto(ACCOUNT_PERIOD)
-					.set(ACCOUNT_PERIOD.DOMAIN, ap.getDomain())
-					.set(ACCOUNT_PERIOD.NAME, ap.getName())
-					.set(ACCOUNT_PERIOD.INITIATION_DATE,
-							AonDateUtils.toSql(ap.getInitiationDate()))
-					.set(ACCOUNT_PERIOD.DEADLINE,
-							AonDateUtils.toSql(ap.getDeadline()))
-					.set(ACCOUNT_PERIOD.STATUS,
-							AonEnumUtils.getByte(ap.getStatus()))
-					.returning()
-					.fetchOne();
-			populateRecord(record, ap);
+			ctx.getDslContext().insertInto(ACCOUNT_PERIOD)
+				.set(ACCOUNT_PERIOD.DOMAIN, ap.getDomain())
+				.set(ACCOUNT_PERIOD.NAME, ap.getName())
+				.set(ACCOUNT_PERIOD.INITIATION_DATE,AonDateUtils.toSql(ap.getInitiationDate()))
+				.set(ACCOUNT_PERIOD.DEADLINE,AonDateUtils.toSql(ap.getDeadline()))
+				.set(ACCOUNT_PERIOD.STATUS,AonEnumUtils.getByte(ap.getStatus()))
+				;
 		});
 	}
 
@@ -82,18 +92,14 @@ public class AccountPeriodDAO {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			AccountPeriodValidation.validatePeriod(ctx, ap);
-			ctx.getDslContext()
-				.update(ACCOUNT_PERIOD)
-					.set(ACCOUNT_PERIOD.DOMAIN, ap.getDomain())
-					.set(ACCOUNT_PERIOD.NAME, ap.getName())
-					.set(ACCOUNT_PERIOD.INITIATION_DATE,
-							AonDateUtils.toSql(ap.getInitiationDate()))
-					.set(ACCOUNT_PERIOD.DEADLINE,
-							AonDateUtils.toSql(ap.getDeadline()))
-					.set(ACCOUNT_PERIOD.STATUS,
-							AonEnumUtils.getByte(ap.getStatus()))
-					.where(ACCOUNT_PERIOD.ID.equal(ap.getId()))
-					.execute();
+			ctx.getDslContext().update(ACCOUNT_PERIOD)
+				.set(ACCOUNT_PERIOD.DOMAIN, ap.getDomain())
+				.set(ACCOUNT_PERIOD.NAME, ap.getName())
+				.set(ACCOUNT_PERIOD.INITIATION_DATE,AonDateUtils.toSql(ap.getInitiationDate()))
+				.set(ACCOUNT_PERIOD.DEADLINE,AonDateUtils.toSql(ap.getDeadline()))
+				.set(ACCOUNT_PERIOD.STATUS,AonEnumUtils.getByte(ap.getStatus()))
+				.where(ACCOUNT_PERIOD.ID.equal(ap.getId()))
+				.execute();
 		});
 	}
 
@@ -106,4 +112,59 @@ public class AccountPeriodDAO {
 		});
 	}
 
+	private static class FullAccountPeriodFiller  implements Function<Record,AccountPeriod> {
+		@Override
+		public AccountPeriod apply(Record record) {
+			return new AccountPeriod()
+				.setId( record.getValue(ACCOUNT_PERIOD.ID) )
+				.setDomain(record.getValue(ACCOUNT_PERIOD.DOMAIN) )
+				.setName(record.getValue(ACCOUNT_PERIOD.NAME) )
+				.setInitiationDate(record.getValue(ACCOUNT_PERIOD.INITIATION_DATE) )
+				.setDeadline(record.getValue(ACCOUNT_PERIOD.DEADLINE) )
+				.setStatus(AccountPeriodStatus.values()[record.getValue(ACCOUNT_PERIOD.STATUS)])
+				.setCreationUser(record.getValue(ACCOUNT_PERIOD.CREATION_USER) )
+				.setCreationDate(record.getValue(ACCOUNT_PERIOD.CREATION_DATE) )
+				.setModificationUser(record.getValue(ACCOUNT_PERIOD.MODIFICATION_USER) )
+				.setModificationDate(record.getValue(ACCOUNT_PERIOD.MODIFICATION_DATE) )
+				;
+		}
+	}
+	// ---------------------------------------------------------- FILTRO
+	private static final AccountPeriodPropertiesDAO ACCOUNT_PERIOD_PROPERTIES = new AccountPeriodPropertiesDAO();
+	private static class AccountPeriodPropertiesDAO implements AccountPeriodProperties {
+
+		private Condition[] getConditions(AccountPeriodFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null)
+				return new Condition[0];
+
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override
+		public Property<Integer> getIdProperty() {
+			return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_PERIOD.ID);
+		}
+
+		@Override
+		public Property<Integer> getDomainProperty() {
+			return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_PERIOD.DOMAIN);
+		}
+
+		@Override
+		public Property<Date> getInitiationDateProperty() {
+			return new FilterDAO.DatePropertyDAO(ACCOUNT_PERIOD.INITIATION_DATE);
+		}
+		
+		@Override
+		public Property<Date> getDeadlineProperty() {
+			return new FilterDAO.DatePropertyDAO(ACCOUNT_PERIOD.DEADLINE);
+		}
+
+		@Override
+		public Property<Byte> getStatusProperty() {
+			return new FilterDAO.PropertyDAO<Byte>(ACCOUNT_PERIOD.STATUS);
+		}
+
+	}
 }

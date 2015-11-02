@@ -15,50 +15,89 @@ public class AccountPeriod implements Serializable {
 	private Date initiationDate;
 	private Date deadline;
 	private AccountPeriodStatus status;
+	private String creationUser;
+	private Date creationDate;
+	private String modificationUser;
+	private Date modificationDate;	
 
 	public Integer getId() {
 		return this.id;
 	}
-	public void setId(Integer id) {
+	public AccountPeriod setId(Integer id) {
 		this.id = id;
+		return this; 
 	}
 
 	public Integer getDomain() {
 		return this.domain;
 	}
-	public void setDomain(Integer domain) {
+	public AccountPeriod setDomain(Integer domain) {
 		this.domain = domain;
+		return this; 
 	}
 
 	public String getName() {
 		return this.name;
 	}
-	public void setName(String name) {
+	public AccountPeriod setName(String name) {
 		this.name = name;
+		return this; 
 	}
 
 	public Date getInitiationDate() {
 		return this.initiationDate;
 	}
-	public void setInitiationDate(Date initiationDate) {
+	public AccountPeriod setInitiationDate(Date initiationDate) {
 		this.initiationDate = initiationDate;
+		return this; 
 	}
 
 	public Date getDeadline() {
 		return this.deadline;
 	}
-	public void setDeadline(Date deadline) {
+	public AccountPeriod setDeadline(Date deadline) {
 		this.deadline = deadline;
+		return this; 
 	}
 
 	public AccountPeriodStatus getStatus() {
 		return this.status;
 	}
-	public void setStatus(AccountPeriodStatus status) {
+	public AccountPeriod setStatus(AccountPeriodStatus status) {
 		this.status = status;
+		return this; 
 	}
+	
+	public String getCreationUser() {
+		return creationUser;
+	}
+	public AccountPeriod setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+		return this;
+	}
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	public AccountPeriod setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+	public String getModificationUser() {
+		return modificationUser;
+	}
+	public AccountPeriod setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
+		return this;
+	}
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+	public AccountPeriod setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+		return this;
+	}
+	
 	public boolean isClosed() {
 		return this.status == AccountPeriodStatus.CLOSED;
 	}
-	
 }

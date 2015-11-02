@@ -2,12 +2,11 @@ package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.jooq.Condition;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -17,6 +16,7 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
 import com.esferalia.aon.watson.AonError;
@@ -54,6 +55,11 @@ public class AccountingImpl implements IAccounting {
 
 	// --------- ACCOUNT PERIOD ------------------------------------------
 	@Override
+	public LinkedList<AccountPeriod> getDomainPeriods(AONContext ctx) {
+		return AccountPeriodDAO.getDomainPeriods(ctx)
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	@Override
 	public AccountPeriod fetchPeriod(AONContext ctx, Date date) {
 		return AccountPeriodDAO.fetchOne(ctx, date);
 	}
@@ -64,8 +70,8 @@ public class AccountingImpl implements IAccounting {
 	}
 
 	@Override
-	public AccountPeriod fetchPeriod(AONContext ctx, Condition condition) {
-		return AccountPeriodDAO.fetchOne(ctx, condition);
+	public AccountPeriod fetchPeriodByYear(AONContext ctx, int year) {
+		return AccountPeriodDAO.fetchOneByYear(ctx, year);
 	}
 
 	@Override
@@ -103,23 +109,21 @@ public class AccountingImpl implements IAccounting {
 	}
 	
 	@Override
+	public AccountEntry getAccountEntry(AONContext ctx, Integer id) {
+		return AccountEntryDAO.getAccountEntry(ctx, id);
+	}
+
+	@Override
 	public boolean existsAnyEntry(AONContext ctx, Integer period,
 			AccountEntryType accountEntryType) {
 		return AccountEntryDAO.existsAnyEntry(ctx, period,accountEntryType);
 	}
 
 	@Override
-	public Integer insert(AONContext ctx, AccountEntry ae) {
+	public Integer save(AONContext ctx, AccountEntry ae) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> AccountEntryDAO.insert(ctx, ae )
+				configuration -> AccountEntryDAO.save(ctx, ae )
 		 );		
-	}
-
-	@Override
-	public void update(AONContext ctx, AccountEntry ae) {
-		ctx.getDslContext().transaction(configuration -> {
-			AccountEntryDAO.update(ctx, ae );
-		} );		
 	}
 
 	@Override
@@ -151,7 +155,7 @@ public class AccountingImpl implements IAccounting {
 		if (sae.getLines() == null || sae.getLines().size() == 0) {
 			throw new AonCoreException(AonError.ACCOUNT_ENTRY_SALARY_NO_LINES.getMessage());
 		}
-		ae.setAccountPeriod(period.getId());
+		ae.setPeriod(period.getId());
 		sae.getLines()
 			.stream()
 			.forEach( line -> {
@@ -179,17 +183,17 @@ public class AccountingImpl implements IAccounting {
 	}
 	
 	@Override
-	public List<Integer> insertSalaryEntries(String domainName, int domain,
+	public List<Integer> insertSalaryEntries(String domainName, int domain, String user,
 			Date from, Date to, String concept, Integer registryBank) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain, user);
 			final AONContext ctxDup = ctx;	
 			Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
 			return ctx.getDslContext().transactionResult( configuration ->
 				SalaryDAO.getSalaryEntries(ctxDup, company.getId(),from, to ,concept, registryBank)
 					.map( sae -> getAccountEntry(ctxDup, sae))
-					.map( ae -> insert(ctxDup, ae))
+					.map( ae -> save(ctxDup, ae))
 					.collect(Collectors.toList())
 			 );		
 		} finally {
@@ -202,6 +206,17 @@ public class AccountingImpl implements IAccounting {
 	public LinkedHashMap<String, AccountBalance>
 		getAccountBalances(AONContext ctx,AccMiningParameters params) throws AonCoreException {
 		return AccountEntryDAO.fetchBalance(ctx, params);		
+	}
+	// 					      STATEMENT
+	@Override
+	public Stream<AccountStatement> getAccountStatement(AONContext ctx,
+			Integer accountId, Date start, Date end) throws AonCoreException {
+		return AccountStatementDAO.statement(ctx, accountId, start, end);		
+	}
+	@Override
+	public Stream<AccountStatement> getAccountBalance(AONContext ctx,
+			Integer accountId, Date start, Date end) throws AonCoreException {
+		return AccountStatementDAO.balance(ctx, accountId, start, end);		
 	}
 
 }

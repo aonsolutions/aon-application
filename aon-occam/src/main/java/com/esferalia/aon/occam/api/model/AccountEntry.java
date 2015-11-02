@@ -1,25 +1,33 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
-public class AccountEntry implements Serializable {
+public class AccountEntry implements Serializable, HasAudit {
 
 	private static final long serialVersionUID = 369125336534396707L;
 
 	private Integer id;
-	private Integer accountPeriod;
+	private Integer period;
+	private String periodName;
+	private AccountPeriodStatus periodStatus;
 	private Integer domain;
 	private Date entryDate;
 	private AccountEntryType entryType;
 	private Integer journal;
 	private SecurityLevel securityLevel;
 	private String comments;
+	
+	private String creationUser;
+	private Date creationDate;
+	private String modificationUser;
+	private Date modificationDate;
+	
 	private LinkedList<AccountEntryDetail> details;
 	
 	public Integer getId() {
@@ -30,14 +38,28 @@ public class AccountEntry implements Serializable {
 		return this;
 	}
 
-	public Integer getAccountPeriod() {
-		return this.accountPeriod;
+	public Integer getPeriod() {
+		return this.period;
 	}
-	public AccountEntry setAccountPeriod(Integer accountPeriod) {
-		this.accountPeriod = accountPeriod;
+	public AccountEntry setPeriod(Integer period) {
+		this.period = period;
 		return this;
 	}
 
+	public String getPeriodName() {
+		return periodName;
+	}
+	public AccountEntry setPeriodName(String periodName) {
+		this.periodName = periodName;
+		return this;
+	}
+	public AccountPeriodStatus getPeriodStatus() {
+		return periodStatus;
+	}
+	public AccountEntry setPeriodStatus(AccountPeriodStatus periodStatus) {
+		this.periodStatus = periodStatus;
+		return this;
+	}
 	public Integer getDomain() {
 		return this.domain;
 	}
@@ -94,8 +116,10 @@ public class AccountEntry implements Serializable {
 		return this;
 	}
 	
-	public Collection<AccountEntryDetail> getDetails() {
-		ensureNotNullCollection();
+	public LinkedList<AccountEntryDetail> getDetails() {
+		if (this.details == null) {
+			this.details = new LinkedList<AccountEntryDetail>();
+		}
 		return details;
 	}
 	public AccountEntry setDetails(LinkedList<AccountEntryDetail> details) {
@@ -103,28 +127,70 @@ public class AccountEntry implements Serializable {
 		return this;
 	}
 	public AccountEntry addDetail( AccountEntryDetail detail) {
-		ensureNotNullCollection();
-		this.details.add(detail);
+		getDetails().add(detail);
 		return this;
 	}
 	
-	private void ensureNotNullCollection() {
-		if (this.details == null) {
-			this.details = new LinkedList<AccountEntryDetail>();
-		}
+	// ---------------------------------------------------------- AUDIT
+	@Override
+	public String getCreationUser() {
+		return creationUser;
 	}
-	
-	public void print() {
-		System.out.println("id:{"+id+"}"+
-			";accountPeriod:{"+ accountPeriod+"}"+
-			";domain:{"+ domain+"}"+
-			";entryDate:{"+ entryDate+"}"+
-			";entryType:{"+ entryType+"}"+
-			";journal:{"+ journal+"}"+
-			";securityLevel:{"+ securityLevel+"}"+
-			";comments:{"+comments+"}");
-		for ( AccountEntryDetail det : getDetails()) {
-			det.print();
-		}
+	public AccountEntry setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+		return this;
 	}
+	@Override
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	public AccountEntry setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+	@Override
+	public String getModificationUser() {
+		return modificationUser;
+	}
+	public AccountEntry setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
+		return this;
+	}
+	@Override
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+	public AccountEntry setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+		return this;
+	}
+
+	public static AccountEntry clone(AccountEntry ori) {
+		LinkedList<AccountEntryDetail> details = ori.details == null
+				?null
+				:new LinkedList<AccountEntryDetail>();
+		if (ori.details != null) {
+			for ( AccountEntryDetail detail : ori.details ) {
+				details.add(AccountEntryDetail.clone(detail));
+			}
+		}
+		return new AccountEntry()
+			.setId(ori.id)
+			.setPeriod(ori.period)
+			.setPeriodName(ori.periodName)
+			.setPeriodStatus(ori.periodStatus)
+			.setDomain(ori.domain)
+			.setEntryDate(ori.entryDate)
+			.setEntryType(ori.entryType)
+			.setJournal(ori.journal)
+			.setSecurityLevel(ori.securityLevel)
+			.setComments(ori.comments)
+			.setCreationUser(ori.creationUser)
+			.setCreationDate(ori.creationDate)
+			.setModificationUser(ori.modificationUser)
+			.setModificationDate(ori.modificationDate)
+			.setDetails(details);
+		
+	}
+
 }

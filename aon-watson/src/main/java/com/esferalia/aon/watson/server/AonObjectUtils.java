@@ -146,18 +146,9 @@ public class AonObjectUtils {
      * @param object1  the first object, may be {@code null}
      * @param object2  the second object, may be {@code null}
      * @return {@code true} if the values of both objects are the same
-     * @deprecated this method has been replaced by {@code java.util.Objects.equals(Object, Object)} in Java 7 and will
-     * be removed from future releases.
      */
-    @Deprecated
-    public static boolean equals(final Object object1, final Object object2) {
-        if (object1 == object2) {
-            return true;
-        }
-        if (object1 == null || object2 == null) {
-            return false;
-        }
-        return object1.equals(object2);
+    public static boolean equals(final Object a, final Object b) {
+            return (a == b) || (a != null && a.equals(b));
     }
 
     /**
