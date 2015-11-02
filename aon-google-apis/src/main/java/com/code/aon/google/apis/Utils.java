@@ -352,10 +352,11 @@ public class Utils{
 				String msg2 = "<div> <b>hola</b>agagas</div>";
 				//String msg = "<div class='aHl'><div class='aRb'><div id=':10m'><table class='cf aU9' cellpadding='0'><tbody><tr><td class='aRi'><div class='aU5'><span class='aRh'>Mar.</span><span class='aRg'>10</span><span class='aRj'>Mar.</span></div></td><td style='width:52%' class='aU4'><div class='aRo'>adgafga</div><div class='aRn'><a class='e' href='http://www.google.com/calendar/render?action=VIEW&amp;eid=cXBpc3JjOHU1bW90c2x0OXYxaWQ4cXB0bmMgYWliYW5lekBhb25zb2x1dGlvbnMuZXM&amp;ctok=YWliYW5lekBhb25zb2x1dGlvbnMuZXM' target='_blank'>Míralo en Google Calendar</a></div><table class='cf aU2'><tbody><tr><td class='aRk'>Cuándo</td><td id=':10p' class='aU6'>mar 10 de Mar 12pm – jue 19 de Mar de 2015 12pm (CET)</td></tr><tr><td class='aRk'>Ubicación</td><td id=':yp' class='aU6'>sgsa</td></tr><tr><td class='aRk'>Participantes</td><td id=':yg' class='aU6'><span class='cD'>procom-glo<wbr>bal4.aiban<wbr>ez.net*</span></td></tr></tbody></table><div class='aRm'><span id=':11t'><div id=':ym' class='T-I J-J5-Ji aQ9 T-I-ax7 T-I-Js-IF L3' role='button' tabindex='0'>Sí</div><div id=':10l' class='T-I J-J5-Ji aQ9 T-I-ax7 T-I-Js-Gs T-I-Js-IF L3' role='button' tabindex='0'>Quizás</div><div id=':x5' class='T-I J-J5-Ji aQ9 T-I-ax7 T-I-Js-Gs L3' role='buttontabindex='0'>No</div></span></div></td><td class='aRc'><div class='aQ3'><div class='aRo'>Agenda</div><div class='aRn'>mar 10 de Mar de 2015</div><table id=':zs' class='cf aU2' style='table-layout:auto'><tbody><tr class='aU0'><td class='aQ5' colspan='2'><i>No hay eventos anteriores.</i></td></tr><tr class='aQ6'><td class='aQ4'>12pm</td><td class='aQ5'>adgafga</td></tr><tr class='aU1'><td class='aQ5' colspan='2'><i>No hay eventos posteriores.</i></td></tr></tbody></table></div></td></tr></tbody></table></div></div></div>";
 				Domain d = DBConsults.getDomain(domain);
-				DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());Gmail service = GmailUtils.serviceInitialize(g);
+				DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());
+				Gmail service = GmailUtils.serviceInitialize(g);
 			
-					MimeMessage emailMessage = GmailUtils.createEmail(email, g.getGoogleAccount(), "Google Calendar", msg);
-					GmailUtils.sendMessage(service, g.getGoogleAccount(), emailMessage);
+				MimeMessage emailMessage = GmailUtils.createEmail(email, g.getGoogleAccount(), "Google Calendar", msg);
+				GmailUtils.sendMessage(service, g.getGoogleAccount(), emailMessage);
 			}
 		}
 	  

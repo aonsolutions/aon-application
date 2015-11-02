@@ -17,9 +17,17 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.PosixParser;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.jooq.DSLContext;
@@ -45,7 +53,9 @@ import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.google.api.client.http.FileContent;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.Drive.Properties;
 import com.google.api.services.drive.model.FileList;
+import com.google.api.services.drive.model.Property;
 
 
 
@@ -67,8 +77,8 @@ public class ServiconveniosSynchronize {
 			URLConnection urlc = url.openConnection();
 			InputStream fis = urlc.getInputStream();
 		*/
-			client.connect(sFTP);
-			client.login(sUser, sPassword);
+			client.connect(server);
+			client.login(user, password);
 
 			File convenios = download(client, "/convenios.csv");
 			
@@ -79,8 +89,6 @@ public class ServiconveniosSynchronize {
 			CSVReader reader = new CSVReader(fileReader,';');
 			Integer nuevos = 0, actualizados = 0;
 			while (reader.hasNext() ) {
-				
-				
 				String[] tokens = reader.readNext();
 				if(tokens != null){
 					String modificationDate = tokens[8];
@@ -161,6 +169,9 @@ public class ServiconveniosSynchronize {
 				//com.google.api.services.drive.model.File fdrive = SearchFiles.searchFile(drive, fileInfo.getDriveId());
 				
 				com.google.api.services.drive.model.File fdrive = null;
+				
+	
+				
 				try {
 					fdrive = DriveUtils.getFile(drive, fileInfo.getDriveId(),fileInfo.getFileId());//TODO error dominio 
 				} catch (IOException | SQLException | GeneralSecurityException e) {
@@ -169,6 +180,20 @@ public class ServiconveniosSynchronize {
 				System.out.println(md5+" - "+fdrive.getMd5Checksum() + fdrive.getId());
 				if(!md5.equals(fdrive.getMd5Checksum())){
 					
+					Boolean hasKey = false;
+					for (Property p : fdrive.getProperties()) {
+						if(p.getKey().equals("fileId"))
+							hasKey = true;
+					}		
+					if(!hasKey){
+						Property p = new Property();
+						p.put("fileId", fileInfo.getFileId());
+						if(fdrive.getProperties()!= null)fdrive.getProperties().add(p);
+						else{
+							List<Property> ps = new ArrayList<Property>();
+							ps.add(p);
+						}
+					}
 					
 					fdrive.setModifiedDate(new DateTime(date.getTime()));
 					//TODO ACTUALIZAR FICHERO EN GOOGLE DRIVE
@@ -216,6 +241,7 @@ public class ServiconveniosSynchronize {
 			
 			Domain d = DBConsults.getDomain(domain, 0);
 			DomainGserviceaccount g = DBConsults.getServiceAccount(domain,d.getId());
+			System.out.println(g.getGoogleAccount());
 			Drive drive = DriveUtils.serviceInitialize(g);
 		
 			FileInfo fi = new FileInfo();
@@ -251,9 +277,9 @@ public class ServiconveniosSynchronize {
 				if (connection != null)
 					connection.close();
 			}
-			
-			
 			FileList fl = SearchFiles.searchFilesProperties(drive, "fileId", Integer.toString(fi.getFileId()));
+			System.out.println( Integer.toString(fi.getFileId()));
+			System.out.println(fl.getItems().size());
 			if(fl.getItems().size()>0){
 				DBDrive.updateDriveId(fl.getItems().get(0), fi.getFileId());
 			}
@@ -269,6 +295,7 @@ public class ServiconveniosSynchronize {
 	}
 
 	public static void main(String[] args) {
+		parse(args);
 		try {
 			ConnectionInfo connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
 			List<String> schemas;
@@ -293,6 +320,77 @@ public class ServiconveniosSynchronize {
 			e1.printStackTrace();
 		}
 		
+	}
+	
+
+	private static String server;
+	private static String user;
+	private static String password;
+	
+	private static boolean parse(String args[])  {
+
+		CommandLineParser parser = new PosixParser();
+		HelpFormatter helpFormatter = new HelpFormatter();
+
+		Options options = new Options();
+
+		OptionBuilder.isRequired(false);
+		OptionBuilder.hasArg(false);
+		OptionBuilder.withLongOpt("help");
+		OptionBuilder.withDescription("print this help.");
+		Option helpOption = OptionBuilder.create('h');
+
+		OptionBuilder.isRequired(false);
+		OptionBuilder.hasArg(true);
+		OptionBuilder.withDescription("Server name of FTP.");
+		OptionBuilder.withLongOpt("server");
+		Option serverOption = OptionBuilder.create("server");
+
+		OptionBuilder.isRequired(false);
+		OptionBuilder.hasArg(true);
+		OptionBuilder.withDescription("Username of FTP.");
+		OptionBuilder.withLongOpt("user");
+		Option userOption = OptionBuilder.create("user");
+		
+		OptionBuilder.isRequired(false);
+		OptionBuilder.hasArg(true);
+		OptionBuilder.withDescription("Password of FTP.");
+		OptionBuilder.withLongOpt("password");
+		Option passwordOption = OptionBuilder.create("password");
+
+		options.addOption(helpOption);
+		options.addOption(serverOption);
+		options.addOption(userOption);
+		options.addOption(passwordOption);
+
+
+		try {
+			CommandLine line = parser.parse(options, args);
+
+			if (line.hasOption(helpOption.getOpt())) {
+				helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX, options, true);
+				return false;
+			}
+
+			server = line.getOptionValue(serverOption.getOpt());
+			if(server == null)
+				server = sFTP;
+			
+			
+			user = line.getOptionValue(userOption.getOpt());
+			if(user == null)
+				user = sUser;
+			
+			password = line.getOptionValue(serverOption.getOpt());
+			if(password == null)
+				password = sPassword;
+			
+		} catch (org.apache.commons.cli.ParseException e) {
+			System.out.print(e.getMessage());
+			helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX, options, true);
+			return false;
+		}
+		return true;
 	}
 	
 	

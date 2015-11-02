@@ -56,7 +56,7 @@ case $1 in
     $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.RemoveFiles "${@:2}"
     ;;
   sc)
-    $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.ServiconveniosSynchronize
+    $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.ServiconveniosSynchronize "${@:2}"
     ;;
   sort)
     $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.SortFiles "${@:2}"
