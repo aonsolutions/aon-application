@@ -322,7 +322,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Finance_dueDate,Finance_invoice_referenceCode</value>
+			<value>Finance_dueDate,Finance_concept</value>
 		</managed-property>				
 		<managed-property>
 			<property-name>listenerClasses</property-name>
