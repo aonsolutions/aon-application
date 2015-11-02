@@ -20,11 +20,13 @@ import com.code.aon.product.ItemAddInfo;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.enumeration.ItemTariffType;
+import com.code.aon.product.enumeration.ProductKind;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProductCollectionsController implements Serializable {
@@ -32,6 +34,7 @@ public class ProductCollectionsController implements Serializable {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<SelectItem> mimeTypes;
+	private List<SelectItem> productKinds;
 	private List<SelectItem> productTypes;
 	private List<SelectItem> productStatuses;
 	private List<SelectItem> itemTariffTypes;
@@ -49,6 +52,24 @@ public class ProductCollectionsController implements Serializable {
 		return mimeTypes;
 	}
 
+	public List<SelectItem> getProductKinds() {
+		if (productKinds == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			productKinds = new LinkedList<SelectItem>();
+			SelectItem item = new SelectItem(ProductKind.SALE_PURCHASE, ProductKind.SALE_PURCHASE.getName(locale));
+			productKinds.add(item);
+			if (AonUtil.getRoleManager().isPurchaseOperator()) {
+				item = new SelectItem(ProductKind.PURCHASE, ProductKind.PURCHASE.getName(locale));
+				productKinds.add(item);
+			}
+			if (AonUtil.getRoleManager().isSaleOperator()) {
+				item = new SelectItem(ProductKind.SALE, ProductKind.SALE.getName(locale));
+				productKinds.add(item);
+			}
+		}
+		return productKinds;
+	}
+	
 	public List<SelectItem> getProductTypes() {
 		if (productTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -56,7 +77,7 @@ public class ProductCollectionsController implements Serializable {
 			for (ProductType type : ProductType.values()) {
 				String name = type.getName(locale);
 				SelectItem item = new SelectItem(type, name);
-				productTypes .add(item);
+				productTypes.add(item);
 			}
 		}
 		return productTypes;
@@ -70,7 +91,7 @@ public class ProductCollectionsController implements Serializable {
 				if (type != ProductType.EXPENSE && type != ProductType.INCREASE) {
 					String name = type.getName(locale);
 					SelectItem item = new SelectItem(type, name);
-					productTypes .add(item);
+					productTypes.add(item);
 				}
 			}
 		}
@@ -97,7 +118,7 @@ public class ProductCollectionsController implements Serializable {
 			for (ItemTariffType type : ItemTariffType.values()) {
 				String name = type.getName(locale);
 				SelectItem item = new SelectItem(type, name);
-				itemTariffTypes .add(item);
+				itemTariffTypes.add(item);
 			}
 		}
 		return itemTariffTypes;

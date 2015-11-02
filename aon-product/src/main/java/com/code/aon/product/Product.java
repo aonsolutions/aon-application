@@ -26,6 +26,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.product.enumeration.ProductKind;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
@@ -42,7 +43,11 @@ public class Product extends ProductDB implements IAuditable {
 	private Set<Item> items = new HashSet<Item>();
 	private Set<ProductTag> tags = new HashSet<ProductTag>();
 
-    @OneToMany(mappedBy="product")
+	public Product() {
+		setKind(ProductKind.SALE_PURCHASE);
+	}
+
+	@OneToMany(mappedBy="product")
 	public Set<Item> getItems() {
 		return this.items;
 	}

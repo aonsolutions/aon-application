@@ -156,7 +156,7 @@
 
 	<table name="app_param" class="com.esferalia.aon.entity.master.ApplicationParameter" />
 	
-	<table name="application_user" >
+	<table name="application_user">
 		<foreign-key constraint-name="FK_APPLICATION_USER_USER">
 			<many-to-one property="user"/>
 		</foreign-key>
@@ -165,7 +165,7 @@
 		</foreign-key>
 	</table>  
 
-	<table name="application_user_profile" >
+	<table name="application_user_profile">
 		<foreign-key constraint-name="FK_APPLICATION_USER_PROFILE_APPLICATION_USER">
 			<many-to-one property="applicationUser"/>
 		</foreign-key>
@@ -421,7 +421,7 @@
 		<column name="status" type="com.code.aon.academy.enumeration.CourseAlumnStatus" />
 	</table>
 	
-	<table name="course_academicskill" class="com.esferalia.aon.entity.master.CourseAcademicSkill" >
+	<table name="course_academicskill" class="com.esferalia.aon.entity.master.CourseAcademicSkill">
 		<column name="weight" type="int" />
 	</table>
 
@@ -507,11 +507,11 @@
 		</foreign-key>		
 	</table>
 
-	<table name="domain_application" >
+	<table name="domain_application">
 		<column name="audit_level" type="com.code.aon.audit.enumeration.AuditLevel"/>	
 	</table>
 
-	<table name="domain_application_module" >
+	<table name="domain_application_module">
 		<column name="module" type="com.code.aon.audit.enumeration.Module"/>	
 	</table>
 
@@ -1095,12 +1095,6 @@
 	
 	<table name="pcategory" class="com.esferalia.aon.entity.master.ProductCategory" />
 	
-	<table name="product_tag" class="com.esferalia.aon.entity.master.ProductTag" >
-		<foreign-key constraint-name="FK_PRODUCT_TAG_PRODUCT">
-			<many-to-one property="product" />
-		</foreign-key>
-	</table>	    
-    
 	<table name="person">
 		<primary-key>
 			<key-column name="registry" property="id" type="java.lang.Integer"/>
@@ -1151,6 +1145,7 @@
 	</table>
 		
 	<table name="product">
+		<column name="kind" type="com.code.aon.product.enumeration.ProductKind"/>
 		<column name="status" type="com.code.aon.product.enumeration.ProductStatus"/>
 		<column name="type" type="com.code.aon.product.enumeration.ProductType"/>
 		<foreign-key constraint-name="FK_PRODUCT_PCATEGORY">
@@ -1170,11 +1165,17 @@
 		</foreign-key>
 	</table>
 	
-	<table name="profile_module_denied" >
+	<table name="product_tag" class="com.esferalia.aon.entity.master.ProductTag">
+		<foreign-key constraint-name="FK_PRODUCT_TAG_PRODUCT">
+			<many-to-one property="product" />
+		</foreign-key>
+	</table>	    
+    
+	<table name="profile_module_denied">
 		<column name="module" type="com.code.aon.audit.enumeration.Module"/>	
 	</table>
 
-	<table name="profile_role" >
+	<table name="profile_role">
 		<foreign-key constraint-name="FK_PROFILE_ROLE_APPLICATION_ROLE">
 			<many-to-one property="applicationRole"/>
 		</foreign-key>
@@ -1259,7 +1260,7 @@
 		<column name="comments" type="text"/>
 	</table>
 	
-	<table name="proposal" >
+	<table name="proposal">
 		<column name="item_return" type="boolean" />
 		<column name="status" type="com.code.aon.purchase.enumeration.ProposalStatus" />
 		<column name="transfer_status" type="com.code.aon.purchase.enumeration.ProposalTransferStatus"/>
@@ -1269,7 +1270,7 @@
 		</foreign-key>
 	</table>
 	
-	<table name="proposal_detail" >
+	<table name="proposal_detail">
 		<column name="status" type="com.code.aon.purchase.enumeration.ProposalDetailStatus" />
 	</table>
 	
@@ -1313,7 +1314,7 @@
 		<column name="data" exclude="true" />
 	</table>
 
-	<table name="rattach_tag" class="com.esferalia.aon.entity.master.RegistryAttachmentTag" >
+	<table name="rattach_tag" class="com.esferalia.aon.entity.master.RegistryAttachmentTag">
 		<foreign-key constraint-name="FK_RATTACH_TAG_RATTACH">
 			<many-to-one property="attachment" />
 		</foreign-key>
@@ -1400,7 +1401,7 @@
 		</foreign-key>
 	</table>
     
-	<table name="rprofile" class="com.esferalia.aon.entity.master.RegistryProfile" >
+	<table name="rprofile" class="com.esferalia.aon.entity.master.RegistryProfile">
 		<column name="value_text" property="text" />
 		<column name="value_date" property="date" />
 		<column name="value_number" property="number" type="java.lang.Double"/>
@@ -1421,11 +1422,11 @@
 	
 	<table name="rsegment" class="com.esferalia.aon.entity.master.RegistrySegment" />
 	
-	<table name="rseller" class="com.esferalia.aon.entity.master.RegistrySeller" >
+	<table name="rseller" class="com.esferalia.aon.entity.master.RegistrySeller">
 		<column name="status" type="com.code.aon.registry.enumeration.RegistrySellerStatus"/>
 	</table>
 	
-	<table name="rsupplier" class="com.esferalia.aon.entity.master.RegistrySupplier" >
+	<table name="rsupplier" class="com.esferalia.aon.entity.master.RegistrySupplier">
 		<column name="number_of_pymnts" property="numberOfPayments" type="int"/>
 		<column name="days_to_first_pymnt" property="daysToFirstPayment" type="int"/>
 		<column name="days_between_pymnts" property="daysBetweenPayments" type="int"/>

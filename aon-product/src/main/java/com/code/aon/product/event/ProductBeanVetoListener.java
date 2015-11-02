@@ -15,6 +15,7 @@ import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.config.Domain;
 import com.code.aon.product.Product;
+import com.code.aon.product.enumeration.ProductKind;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
@@ -39,7 +40,10 @@ public class ProductBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	}
 
 	private void checkProduct(Product product) {
-    	if (product.isSerializable() && !product.isInventoriable()) {
+		if (product.getKind() == null) {
+			product.setKind(ProductKind.SALE_PURCHASE);
+		}
+		if (product.isSerializable() && !product.isInventoriable()) {
     		product.setInventoriable(true);
     	}
     	if (product.isInventoriable() && product.isComposition()) {

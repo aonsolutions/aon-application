@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.32.2
+# Version: 8.32.3
 # Created by: girazu
-# Creation Date: 27/10/2015 18:00
+# Creation Date: 02/11/2015 13:10
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -733,6 +733,7 @@ CREATE TABLE `product` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Producto',
   `code` varchar(15) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo del Producto',
+  `kind` tinyint(2) NOT NULL default '0' COMMENT 'Clase de Producto',
   `brand` int(4) default NULL COMMENT 'Marca Comercial del Producto',
   `category` int(4) default NULL COMMENT 'Categoria del Producto',
   `inventoriable` tinyint(1) default NULL COMMENT 'Indica si el Producto es inventariable',
@@ -5256,6 +5257,10 @@ CREATE TABLE `inventory` (
   `warehouse` int(4) NOT NULL default '0' COMMENT 'Almacen Inventariado',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Inventario',
   `status` tinyint(2) default '0' COMMENT 'Estado del Inventario',
+  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY  (`id`),
   KEY `IDX_INVENTORY_DOMAIN` (`domain`),
   CONSTRAINT `FK_INVENTORY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
@@ -5273,6 +5278,10 @@ CREATE TABLE `inventory_detail` (
   `actual_quantity` double(15,3) default '0.000' COMMENT 'Cantidad actual del Articulo Inventariado',
   `real_quantity` double(15,3) default '0.000' COMMENT 'Cantidad real del Articulo Inventariado',
   `cost` double(15,3) default '0.000' COMMENT 'Coste del Articulo Inventariado',
+  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY  (`id`),
   KEY `IDX_INVENTORY_DETAIL_INVENTORY` (`inventory`),
   KEY `IDX_INVENTORY_DETAIL_ITEM` (`item`),
@@ -7849,6 +7858,10 @@ CREATE TABLE `warehouse_transfer` (
   `inventory` int(4) default NULL COMMENT 'Identificador del Inventario',
   `source` tinyint(2) NOT NULL default '0' COMMENT 'Origen',
   `source_id` int(4) default NULL COMMENT 'Identificador del origen',
+  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `IDX_UNQ_WAREHOUSE_TRANSFER_DOMAIN_SERIES_NUMBER` (`domain`,`series`,`number`),
   KEY `IDX_WAREHOUSE_TRANSFER_ISSUE_TIME` (`issue_time`),
@@ -7872,6 +7885,10 @@ CREATE TABLE `warehouse_transfer_detail` (
   `warehouse_transfer` int(4) NOT NULL COMMENT 'Identificador del Traspaso',
   `item` int(4) NOT NULL COMMENT 'Identificador del Articulo del Detalle de Traspaso',
   `quantity` double(15,3) default NULL COMMENT 'Cantidad del Detalle de Traspaso',
+  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY  (`id`),
   KEY `IDX_WAREHOUSE_TRANSFER_DETAIL_ITEM` (`item`),
   KEY `IDX_WAREHOUSE_TRANSFER_DETAIL_WAREHOUSE_TRANSFER` (`warehouse_transfer`),
@@ -7993,7 +8010,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.32.2');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.32.3');
 
 COMMIT;
 

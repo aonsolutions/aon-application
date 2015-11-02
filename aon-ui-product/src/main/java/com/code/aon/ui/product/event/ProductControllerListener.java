@@ -15,6 +15,7 @@ import com.code.aon.config.Tag;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductTag;
+import com.code.aon.product.enumeration.ProductKind;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
@@ -36,6 +37,7 @@ public class ProductControllerListener extends ControllerAdapter implements IIte
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
     	ProductController controller = (ProductController)event.getController();
     	Product product = (Product)controller.getTo();
+    	product.setKind(ProductKind.SALE_PURCHASE);
     	product.setStatus(ProductStatus.ACTIVE);
     	product.setType(ProductType.COMMERCIAL_PRODUCT);
     	product.setInventoriable(false);
