@@ -2601,45 +2601,7 @@ public interface CommonMessages extends Messages {
 
  	@DefaultMessage("Error inesperado: [{0}]")
  	String unexpectedError(String msg);
-
- 	// ------------------- AON GWT OFFICE
- 	
- 	@DefaultMessage("Notificaciones")
-	String notifications();
- 	
- 	@DefaultMessage("Repositorios")
-	String repositories();
- 	
- 	@DefaultMessage("Search AonHub")
-	String searchAonHub();
- 	
- 	@DefaultMessage("Nuevo")
-	String newIssue();
- 	
- 	@DefaultMessage("Pendientes")
-	String openedIssues();
- 	
- 	@DefaultMessage("Cerrados")
-	String closedIssues();
-
- 	@DefaultMessage("Todos")
-	String allIssues();
-
- 	@DefaultMessage("Eliminados")
-	String deletedIssues();
-
- 	@DefaultMessage("Consultas")
-	String questionIssues();
-
- 	@DefaultMessage("Errores")
-	String errorIssues();
-
- 	@DefaultMessage("FAQs")
-	String faqsIssues();
- 	
- 	@DefaultMessage("Etiquetas")
-	String labelsIssues();
-
+ 
     @DefaultMessage("Existen {0} asientos de n\u00F3minas en el periodo seleccionado. [VER]")
     @AlternateMessage({"=1", "Existe un asiento de n\u00F3minas en el periodo seleccionado. [VER]"})
     String salaryEntryErrorMsg(@PluralCount int count);

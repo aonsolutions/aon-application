@@ -1,13 +1,14 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:c="urn:import:com.esferalia.aon.gwt.common.client.widget">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
+	xmlns:c="urn:import:com.esferalia.aon.gwt.common.client.widget">
 	<ui:style>
 	.text-area textarea {
 		resize: none;
 	}
 	</ui:style>
 
-	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages"
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.AonHubMessages"
 		field="msg"></ui:with>
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
 		field="aonResources"></ui:with>
@@ -20,7 +21,7 @@
 						<tr>
 							<td>
 								<g:InlineLabel styleName="{aonResources.css.aonBold}"
-									text="Remite" />
+									text="{msg.sender}" />
 							</td>
 							<td>
 								<g:SuggestBox ui:field="registrySuggesBox"
@@ -30,7 +31,7 @@
 						<tr>
 							<td>
 								<g:InlineLabel styleName="{aonResources.css.aonBold}"
-									text="Titulo" />
+									text="{msg.title}" />
 
 							</td>
 							<td>
@@ -41,21 +42,15 @@
 						</tr>
 					</table>
 				</g:HTMLPanel>
-				<!--g:HTMLPanel> <g:HorizontalPanel spacing="5"> <g:InlineLabel styleName="{aonResources.css.aonBold}" 
-					text="Remite" /> <g:SuggestBox ui:field="registrySuggesBox" styleName="{aonResources.css.aonInputText}" 
-					width="300px" /> </g:HorizontalPanel> <g:HorizontalPanel spacing="5"> <g:InlineLabel 
-					styleName="{aonResources.css.aonBold}" text="Titulo" /> <g:TextBox ui:field="title" 
-					width="300px" styleName="{aonResources.css.aonInputText}" /> </g:HorizontalPanel> 
-					</g:HTMLPanel -->
 
 				<g:TabPanel ui:field="tabPanel" width="100%" styleName="{style.text-area}">
-					<g:Tab text="Escribir">
+					<g:Tab text="{msg.write}">
 						<g:TextArea ui:field="commentTextArea" characterWidth="10"
 							visibleLines="9" width="98%" height="99%" />
 					</g:Tab>
 				</g:TabPanel>
 				<g:HorizontalPanel spacing="10" ui:field="hPanel">
-					<g:Button text="Grabar" ui:field="commentButton" />
+					<g:Button text="{msg.save}" ui:field="commentButton" />
 				</g:HorizontalPanel>
 			</g:VerticalPanel>
 		</g:center>
@@ -64,13 +59,13 @@
 
 			<g:FlowPanel>
 				<g:VerticalPanel ui:field="vTypePanel" spacing="5">
-					<g:Label text="Tipo Aviso" />
+					<g:Label text="{msg.noticeType}" />
 				</g:VerticalPanel>
 				<g:VerticalPanel ui:field="vPriorityPanel" spacing="5">
-					<g:Label text="Priority" />
+					<g:Label text="{msg.priority}" />
 				</g:VerticalPanel>
 				<g:VerticalPanel ui:field="vLabelsPanel" spacing="5">
-					<g:Label text="Etiquetas" />
+					<g:Label text="{msg.labelsIssues}" />
 				</g:VerticalPanel>
 
 			</g:FlowPanel>
