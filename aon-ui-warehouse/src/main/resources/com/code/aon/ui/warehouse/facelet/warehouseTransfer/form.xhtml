@@ -30,6 +30,8 @@
 				<ui:param name="skipSaveButton" value="#{warehouseTransfer.readOnly}" />
 				<ui:param name="skipRemoveButton" value="#{warehouseTransfer.readOnly}" />				
 				<ui:define name="beforeSpinToolbarContent">
+					<ui:include
+						src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />											
 					<aon:if test="#{!warehouseTransfer.nevv and !warehouseTransfer.readOnly}">
 						<ui:include
 							src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
@@ -105,5 +107,8 @@
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<ui:decorate template="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+			<ui:param name="auditableController" value="#{warehouseTransfer}" />
+		</ui:decorate>
  	</ui:define>
 </ui:composition>

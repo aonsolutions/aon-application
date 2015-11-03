@@ -11,12 +11,13 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.IHeaderObject;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.esferalia.aon.entity.master.WarehouseTransferDB;
 
 @Entity
 @Table(name="warehouse_transfer", uniqueConstraints = @UniqueConstraint(columnNames={"series", "number"}))
-public class WarehouseTransfer extends WarehouseTransferDB implements IHeaderObject {
+public class WarehouseTransfer extends WarehouseTransferDB implements IHeaderObject, IAuditable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	

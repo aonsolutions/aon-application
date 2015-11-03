@@ -5,10 +5,9 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/facelet/templates/aon.ui.content.xhtml">
+
 	<ui:define name="content">
-
 		<aon:form id="inventorySearch">
-
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.warehouse_inventory_closed_module}" />
 				<ui:param name="controller" value="#{inventory}" />
@@ -18,49 +17,7 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:param name="controller" value="#{inventory}" />
 				<ui:define name="searchContent">
-
-						<aon:outputLabel for="Inventory_id" value="#{bundle.aon_id}" />
-						<aon:inputText id="Inventory_id" size="14" valueChangeListener="#{inventory.addExpression}" />
-	
-						<aon:outputLabel for="Inventory_warehouse_id" value="#{bundle.aon_module_warehouse}" />
-						<aon:selectOneMenu id="Inventory_warehouse_id"
-							value="#{warehouseCollections.warehouse}"
-							valueChangeListener="#{inventory.addIdEqualExpression}">
-							<f:selectItem itemLabel="-" value="#{null}"/>
-							<f:selectItems value="#{warehouseCollections.warehouses}" />
-						</aon:selectOneMenu>
-
-						<aon:outputText for="Inventory_status"
-							value="#{bundle.aon_status}"/>
-						<aon:selectOneMenu id="Inventory_status"
-							converter="aon.EnumConverter"
-							valueChangeListener="#{inventory.addExpression}">
-							<f:selectItem itemLabel="-" value="#{null}"/>
-							<f:selectItems value="#{warehouseCollections.inventoryStatuses}"/>
-						</aon:selectOneMenu>				
-
-						<aon:outputLabel for="Inventory_description"
-							value="#{bundle.aon_description}" />
-						<aon:inputText id="Inventory_description" size="64"
-							valueChangeListener="#{inventory.addExpression}" />
-
-						<aon:outputLabel value="#{bundle.aon_date}" />
-						<aon:div>
-							<aon:outputLabel for="Inventory_inventoryDate-From" styleClass="aon-form-date-label"
-								value="#{bundle.aon_date_from}:" />
-							<aon:selectInputDate id="Inventory_inventoryDate-From"
-								valueChangeListener="#{inventory.addGreaterThanOrEqualExpression}"
-								timeZone="#{timeZoneController.timeZone}"
-								popupDateFormat="#{bundle.aon_date_pattern}"/>
-	
-							<aon:outputLabel for="Inventory_inventoryDate-To" styleClass="aon-form-date-label"
-								value="#{bundle.aon_date_to}:" />
-							<aon:selectInputDate id="Inventory_inventoryDate-To"
-								valueChangeListener="#{inventory.addLessThanOrEqualExpression}"
-								timeZone="#{timeZoneController.timeZone}"
-								popupDateFormat="#{bundle.aon_date_pattern}"/>
-						</aon:div>							
-					
+					<ui:include src="/com/code/aon/ui/warehouse/facelet/inventory/searchContent.xhtml" />
 				</ui:define>
 			</ui:decorate>
 		</aon:form>

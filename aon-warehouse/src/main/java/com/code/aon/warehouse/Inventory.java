@@ -10,12 +10,13 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.warehouse.enumeration.InventoryStatus;
 import com.esferalia.aon.entity.master.InventoryDB;
 
 @Entity
 @Table(name="inventory")
-public class Inventory extends InventoryDB {
+public class Inventory extends InventoryDB implements IAuditable {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 

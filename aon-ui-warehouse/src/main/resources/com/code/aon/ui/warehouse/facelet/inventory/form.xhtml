@@ -31,16 +31,29 @@
 				<ui:param name="controller" value="#{inventory}" />
 				<ui:param name="skipSaveButton" value="true" />
 				<ui:param name="skipResetButton" value="true" />
-				
-				<ui:define name="beforeSpinToolbarContent">
-					<ui:include
-							src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
-					<aon:commandButton id="processAdjustment"
+				<ui:param name="showMoreMenu" value="#{!inventory.nevv}" />
+				<ui:define name="moreMenuContent">
+					<aon:menuItem id="processAdjustment"
 						value="#{bundle.warehouse_inventory_process}"
 						rendered="#{!inventory.to.closed}"
-						reRender="showInventoryAdjustmentWindow"
+						iconClass="aon-icon-accept"
 						actionListener="#{inventory.onStartAdjustment}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"/>
+						reRender="showInventoryAdjustmentWindow" />
+					<ui:include	src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
+					<aon:if test="#{!inventory.to.closed}">
+						<aon:menuItem id="stock-import"
+							value="#{bundle.aon_import}"
+							iconClass="aon-icon-import-excel-trans"
+							onclick="stock('#{inventory.to.warehouse.name}','#{inventory.to.id}', window)" />
+					</aon:if>
+					<aon:menuItem id="stock-export"
+						value="#{bundle.account_export}"
+						iconClass="aon-icon-export-excel-trans"
+						onclick="stockx2('#{inventory.to.warehouse.name}','#{inventoryDetail.category.id}','#{inventoryDetail.brand.id}','#{inventoryDetail.code}','#{inventoryDetail.description}','#{inventoryDetail.stock}','#{inventory.to.id}')" />
+
+					<ui:include src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />
+ 				</ui:define>
+				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandLink id="inventory_close-excel-report"
 						value="&#160;" onclick="inventoryx('#{true}','#{inventory.to.id}')" 
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
@@ -63,17 +76,6 @@
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="inventory_valued" />
 					</aon:htmlCommandLink>
-					<aon:if test = "#{inventory.to.closed != 'true'}">
-						<aon:commandLink id="stock-import" value="#{bundle.aon_import}"
-							onclick="stock('#{inventory.to.warehouse.name}','#{inventory.to.id}', window)"
-				
-							styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
-						</aon:commandLink>
-					</aon:if>
-					<aon:commandLink id="stock-export" value="#{bundle.account_export}"
-							onclick="stockx2('#{inventory.to.warehouse.name}','#{inventoryDetail.category.id}','#{inventoryDetail.brand.id}','#{inventoryDetail.code}','#{inventoryDetail.description}','#{inventoryDetail.stock}','#{inventory.to.id}')"
-							styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
-					</aon:commandLink>
 				</ui:define>				
 				
 			</ui:decorate>
@@ -235,6 +237,13 @@
 						</aon:column>
 					
 					</ui:define>
+					<ui:define name="endFormListContent">
+						<aon:div>
+							<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolTipAuditInfo.xhtml">
+								<ui:param name="auditableTO" value="#{to}" />
+							</ui:include>
+						</aon:div>
+					</ui:define>
 				</ui:decorate>
 			</aon:div>
 		</aon:form>
@@ -242,5 +251,8 @@
 		<aon:if test="#{!inventory.to.closed}" >
 			<ui:include src="/com/code/aon/ui/warehouse/facelet/inventory/modalInventoryAdjustment.xhtml" />
 		</aon:if>		
+		<ui:decorate template="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+			<ui:param name="auditableController" value="#{inventory}" />
+		</ui:decorate>
 	</ui:define>
 </ui:composition>					

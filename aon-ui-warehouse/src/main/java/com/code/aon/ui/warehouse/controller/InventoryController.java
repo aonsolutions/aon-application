@@ -24,6 +24,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.ICommonMessages;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -44,25 +45,17 @@ import com.esferalia.aon.entity.IEntityAlias;
  * @since 1.0
  *
  */
-public class InventoryController extends BasicController {
+public class InventoryController extends BasicController implements IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(InventoryController.class.getName());
 	
 	private Warehouse warehouse; 
-
 	private boolean initStock;
-	
 	private boolean showInventoryAdjustmentWindow;
-	
-	public boolean isInitStock() {
-		return initStock;
-	}
-	public void setInitStock(boolean initStock) {
-		this.initStock = initStock;
-	}
-	
+	private boolean showAuditInfoWindow;
+
 	public Warehouse getWarehouse() {
 		return warehouse;
 	}
@@ -70,6 +63,27 @@ public class InventoryController extends BasicController {
 		this.warehouse = warehouse;
 	}
 
+	public boolean isInitStock() {
+		return initStock;
+	}
+	public void setInitStock(boolean initStock) {
+		this.initStock = initStock;
+	}
+	
+	public boolean isShowInventoryAdjustmentWindow() {
+		return showInventoryAdjustmentWindow;
+	}
+	public void setShowInventoryAdjustmentWindow(boolean showInventoryAdjustmentWindow) {
+		this.showInventoryAdjustmentWindow = showInventoryAdjustmentWindow;
+	}
+	
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
+	
 	public void onClosing(ActionEvent event) {
 		dateValidation();
 		try {
@@ -245,14 +259,6 @@ public class InventoryController extends BasicController {
 		} catch ( ManagerBeanException e ) {
 			LOGGER.error(e.getMessage(), e);
 		}
-	}
-	
-	public boolean isShowInventoryAdjustmentWindow() {
-		return showInventoryAdjustmentWindow;
-	}
-
-	public void setShowInventoryAdjustmentWindow(boolean showInventoryAdjustmentWindow) {
-		this.showInventoryAdjustmentWindow = showInventoryAdjustmentWindow;
 	}
 	
 }

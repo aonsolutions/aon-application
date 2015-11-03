@@ -7,16 +7,26 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.WarehouseTransfer;
 
-public class WarehouseTransferController extends HeaderObjectController {
+public class WarehouseTransferController extends HeaderObjectController implements IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+	private boolean showAuditInfoWindow;
+
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
+	
 	@Override
 	public void onReset(ActionEvent event) {
 		super.onReset(event);
