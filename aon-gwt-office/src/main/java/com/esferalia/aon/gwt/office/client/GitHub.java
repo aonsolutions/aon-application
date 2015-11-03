@@ -5,6 +5,7 @@ import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
+import com.esferalia.aon.gwt.office.client.models.repos.JsRegistry;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
@@ -14,6 +15,7 @@ import com.esferalia.aon.gwt.office.client.values.Value;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -45,7 +47,7 @@ public class GitHub implements GitHubService {
 	public boolean isAuthorized() {
 		return this.isAuthorized();
 	}
-
+	
 	// ************** USERS *************** //
 
 	@Override
@@ -110,6 +112,10 @@ public class GitHub implements GitHubService {
 			createIssue(r, prop, callback);
 		else
 			post(r.getUrl() + "/issues/" + issue.getNumber(), prop, callback);
+	}
+	
+	public void saveNotice (String url, IssueValue prop, AsyncCallback<JsIssue> callback) {
+		post(url, prop, callback);
 	}
 
 	// *************** COMMENTS ****************** //
@@ -195,7 +201,7 @@ public class GitHub implements GitHubService {
 		final AsyncCallback<T> hookedCallback = hookCallback(callback);
 		final StringBuilder log = new StringBuilder();
 		log.append("[POST]" + requestUrl + "\n" + requestJson);
-		try {
+		try {			
 			builder.sendRequest(requestJson, new RequestCallback() {
 				@Override
 				public void onResponseReceived(Request request,

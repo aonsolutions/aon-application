@@ -98,10 +98,10 @@ public class IssuesLayoutPanel extends Composite {
 		this.listeners = new LinkedList<Listener>();
 		this.issue = issue;
 
-		if (this.issue.getState().equals(IssueValue.Prop.OPEN.value))
-			createCloseButton();
-		else
-			createReopenedButton();
+//		if (this.issue.getState().equals(IssueValue.Prop.OPEN.value))
+//			createCloseButton();
+//		else
+//			createReopenedButton();
 
 		init();
 	}
@@ -132,7 +132,7 @@ public class IssuesLayoutPanel extends Composite {
 	private void init() {
 		setHeaderTitle();
 		addIssue();
-		addCommentIssues();
+		//addCommentIssues();
 	}
 
 	private void setHeaderTitle() {

@@ -3,10 +3,10 @@ package com.esferalia.aon.gwt.office.jooq;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
 import static com.esferalia.aon.jooq.tables.NoticeTag.NOTICE_TAG;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.jooq.DSLContext;
@@ -16,7 +16,7 @@ import org.jooq.conf.Settings;
 import org.jooq.exception.DataAccessException;
 
 import com.esferalia.aon.jooq.tables.records.NoticeRecord;
-import com.esferalia.aon.jooq.tables.records.TagRecord;
+import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
 
 public class JooqAonHub {
@@ -28,6 +28,14 @@ public class JooqAonHub {
 
 		return dslContext.selectFrom(NOTICE).where(NOTICE.DOMAIN.eq(domain))
 				.fetchInto(NOTICE);
+	}
+
+	protected static List<RegistryRecord> getRegistryNames(
+			DSLContext dslContext, Integer domain) throws DataAccessException,
+			Exception {
+
+		return dslContext.selectFrom(REGISTRY)
+				.where(REGISTRY.DOMAIN.eq(domain)).fetchInto(REGISTRY);
 	}
 
 	private static String getUser(DSLContext dslContext, Integer userId) {
@@ -60,6 +68,10 @@ public class JooqAonHub {
 			ex.printStackTrace();
 			throw new IllegalArgumentException(ex);
 		}
+	}
+
+	protected static void saveNewNotice(DSLContext dslContext, Integer domain) {
+
 	}
 
 	protected static Result<Record> getIssueTags(DSLContext dslContext,
@@ -95,5 +107,4 @@ public class JooqAonHub {
 		}
 		return SETTINGS;
 	}
-
 }

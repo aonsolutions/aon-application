@@ -16,8 +16,37 @@
 		<g:center>
 			<g:VerticalPanel spacing="5" width="80%">
 				<g:HTMLPanel>
-					<g:TextBox ui:field="title" width="80%" height="20px" />
+					<table>
+						<tr>
+							<td>
+								<g:InlineLabel styleName="{aonResources.css.aonBold}"
+									text="Remite" />
+							</td>
+							<td>
+								<g:SuggestBox ui:field="registrySuggesBox"
+									styleName="{aonResources.css.aonInputText}" width="300px" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:InlineLabel styleName="{aonResources.css.aonBold}"
+									text="Titulo" />
+
+							</td>
+							<td>
+								<g:TextBox ui:field="title" width="300px"
+									styleName="{aonResources.css.aonInputText}" />
+
+							</td>
+						</tr>
+					</table>
 				</g:HTMLPanel>
+				<!--g:HTMLPanel> <g:HorizontalPanel spacing="5"> <g:InlineLabel styleName="{aonResources.css.aonBold}" 
+					text="Remite" /> <g:SuggestBox ui:field="registrySuggesBox" styleName="{aonResources.css.aonInputText}" 
+					width="300px" /> </g:HorizontalPanel> <g:HorizontalPanel spacing="5"> <g:InlineLabel 
+					styleName="{aonResources.css.aonBold}" text="Titulo" /> <g:TextBox ui:field="title" 
+					width="300px" styleName="{aonResources.css.aonInputText}" /> </g:HorizontalPanel> 
+					</g:HTMLPanel -->
 
 				<g:TabPanel ui:field="tabPanel" width="100%" styleName="{style.text-area}">
 					<g:Tab text="Escribir">
@@ -30,5 +59,22 @@
 				</g:HorizontalPanel>
 			</g:VerticalPanel>
 		</g:center>
+
+		<g:east size="180">
+
+			<g:FlowPanel>
+				<g:VerticalPanel ui:field="vTypePanel" spacing="5">
+					<g:Label text="Tipo Aviso" />
+				</g:VerticalPanel>
+				<g:VerticalPanel ui:field="vPriorityPanel" spacing="5">
+					<g:Label text="Priority" />
+				</g:VerticalPanel>
+				<g:VerticalPanel ui:field="vLabelsPanel" spacing="5">
+					<g:Label text="Etiquetas" />
+				</g:VerticalPanel>
+
+			</g:FlowPanel>
+
+		</g:east>
 	</g:DockLayoutPanel>
 </ui:UiBinder> 

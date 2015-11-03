@@ -5,12 +5,14 @@ import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
+import com.esferalia.aon.gwt.office.client.models.repos.JsRegistry;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
 import com.esferalia.aon.gwt.office.client.values.LabelValue;
 import com.esferalia.aon.gwt.office.client.values.RepoValue;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface GitHubService {
@@ -20,7 +22,7 @@ public interface GitHubService {
 	abstract void setAccessToken(String accessToken);
 	
 	abstract boolean isAuthorized();
-
+	
 	void getUser(String login, final AsyncCallback<AJSON<JsUser>> callback);
 
 	void getUser(final AsyncCallback<AJSON<JsUser>> callback);

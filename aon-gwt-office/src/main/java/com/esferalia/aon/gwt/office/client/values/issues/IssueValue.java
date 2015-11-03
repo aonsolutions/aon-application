@@ -11,6 +11,8 @@ public class IssueValue extends Value<IssueValue.Prop> {
         Assignee("assignee"),
         State("state"),
         Milestone("milestone"),
+        Type("type"),
+        Priority("priority"),
         Labels("labels")
 		;
         private final String value;
@@ -43,6 +45,14 @@ public class IssueValue extends Value<IssueValue.Prop> {
 
 	public void setMilestone(Integer number) {
 		prop.put(Prop.Milestone, number);
+	}
+	
+	public void setType(String type) {
+		prop.put(Prop.Type, type);
+	}
+	
+	public void setPriority(String priority) {
+		prop.put(Prop.Priority, priority);
 	}
 
 	public void setLabels(String[] labels) {

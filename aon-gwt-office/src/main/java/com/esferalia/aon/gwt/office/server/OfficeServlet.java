@@ -133,10 +133,12 @@ public class OfficeServlet extends HttpServlet {
 
 				osx.printf("\"id\":\"%s\",\r\n", String.valueOf(id));
 				osx.printf("\"date\":\"%s\",\r\n", notice.getValue(NOTICE.DATE));
+				osx.printf("\"number\":\"%s\",\r\n", String.valueOf(id));
 				osx.printf("\"user\":%s",
 						buildUserSender(conn, domain, senderId));
 				osx.printf("\"assignee\":%s", buildUserAssignee(conn, domain, assigneeId));
-				osx.printf("\"title\":\"%s\",\r\n",
+				osx.printf("\"title\":\"%s\",\r\n",	"Titulo " + String.valueOf(id));
+				osx.printf("\"body\":\"%s\",\r\n",
 						notice.getValue(NOTICE.SUBJECT));
 				osx.printf("\"labels\":%s",
 						buildNoticeTags(conn, domain, id));

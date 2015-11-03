@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
+import com.esferalia.aon.gwt.office.client.models.repos.JsRegistry;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
 import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
 import com.esferalia.aon.gwt.office.client.values.IssueValue;
@@ -53,7 +54,7 @@ public class Office extends Composite implements EntryPoint,
 
 	interface OfficeUiBinder extends UiBinder<Widget, Office> {
 	}
-
+	
 	private static final String URL = GWT.getModuleBaseURL() + "OfficeSerlvet";
 
 	@UiField
@@ -81,6 +82,7 @@ public class Office extends Composite implements EntryPoint,
 	private List<IssueSelected> openIssues;
 	private List<IssueSelected> closedIssues;
 
+	private Map<Integer, String> registries;
 	private Map<Integer, JsIssue> issuesMap;
 	private Map<Integer, JsRepo> repositories;
 
@@ -103,7 +105,11 @@ public class Office extends Composite implements EntryPoint,
 		this.openIssues = new LinkedList<IssueSelected>();
 		this.closedIssues = new LinkedList<IssueSelected>();
 		this.issuesMap = new TreeMap<Integer, JsIssue>();
-
+		this.registries = new HashMap<Integer, String>();
+		
+		
+		
+		
 		ListDataProvider<IssueSelected> openIssuesProvider = new ListDataProvider<IssueSelected>();
 		openIssuesProvider.addDataDisplay(dataGrid);
 		openIssues = openIssuesProvider.getList();
@@ -111,6 +117,8 @@ public class Office extends Composite implements EntryPoint,
 		ListDataProvider<IssueSelected> closeIssuesProvider = new ListDataProvider<IssueSelected>();
 		closeIssuesProvider.addDataDisplay(dataGrid);
 		closedIssues = openIssuesProvider.getList();
+		
+		loadRegistries();
 
 		loadNotices();
 
@@ -137,6 +145,41 @@ public class Office extends Composite implements EntryPoint,
 	// ********************** PRIVATE METHODS ***************************
 	// ******************************************************************
 
+	private void loadRegistries () {
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, GWT.getModuleBaseURL() + "GetRegistriesServlet");
+		
+		try {
+			builder.sendRequest(null, new RequestCallback() {
+				
+				@Override
+				public void onResponseReceived(Request request, Response response) {
+					if (200 == response.getStatusCode()) {
+						
+						JsArray<JsRegistry> registries = eval(response.getText());
+						for (int x = 0 ; x < registries.length() ; x++ ) {
+							Integer id = registries.get(x).getId();
+							String name = registries.get(x).getName();
+							Office.this.registries.put(id, name);
+						}
+							
+					}
+					else {
+						Window.alert("Else: " + response.getText());
+					}
+					
+				}
+				
+				@Override
+				public void onError(Request request, Throwable exception) {
+					Window.alert("On Error: " + exception.getMessage());
+					
+				}
+			});
+		} catch (RequestException ex) {
+			Window.alert("RequestException: " + ex.getMessage());
+		}
+	}
+	
 	private void loadNotices() {
 
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, URL);
@@ -165,7 +208,7 @@ public class Office extends Composite implements EntryPoint,
 		} catch (RequestException ex) {
 			Window.alert("RequestException: " + ex.getMessage());
 		}
-	}
+	}	
 
 	private void loadNotices(JsArray<JsIssue> notices) {
 
@@ -321,7 +364,7 @@ public class Office extends Composite implements EntryPoint,
 	@Override
 	public void onNewIssueClickEvent(ClickEvent event) {
 		issueWrite.clear();
-		IssueWriteWidget issueWriteWidget = new IssueWriteWidget();
+		IssueWriteWidget issueWriteWidget = new IssueWriteWidget(Office.this.registries);
 		issueWriteWidget.addListener(this);
 		issueWrite.add(issueWriteWidget);
 		showWriteIssueWritePanel();
@@ -406,12 +449,29 @@ public class Office extends Composite implements EntryPoint,
 	public void onComment(IssueCommentValue issueCommentValue) {
 		JsIssue jsIssue = issuesMap.get(issueSelected.getId());
 		createIssueComment(this.repo, jsIssue, issueCommentValue);
+		
+		
 	}
 
 	@Override
 	public void onCommentButtonClick(
 			com.esferalia.aon.gwt.office.client.values.issues.IssueValue issueValue) {
-		createAnIssue(repo, issueValue);
+		//createAnIssue(repo, issueValue);
+		
+		gitHub.saveNotice(GWT.getModuleBaseURL() + "NewNoticeServlet", issueValue, new AsyncCallback<JsIssue>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Esto no funciona");
+				
+			}
+
+			@Override
+			public void onSuccess(JsIssue result) {
+				Window.alert("Probando nuevo metodo apra guardar issues");
+				
+			}
+		});
 	}
 
 	private static native <T extends JavaScriptObject> T eval(String javascript)
