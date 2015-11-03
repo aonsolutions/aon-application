@@ -60,7 +60,7 @@
 				</aon:outputText>
 				<aon:inputText id="ItemTariff_profit_percent"
 					value="#{controller.to.profitPercent}" rendered="#{formEdit}"
-					disabled="#{controller.to.fixed}"
+					disabled="#{formEdit and controller.to.fixed}"
 					valueChangeListener="#{controller.onProfitChanged}"
 					reRender="ItemTariff_price,ItemTariff_sales_price"
 					focus="ItemTariff_price"
@@ -68,7 +68,7 @@
 				<f:facet name="footer">
 					<aon:inputText id="ItemTariff_profit_percent-New"
 						value="#{controller.to.profitPercent}" rendered="#{formNew}"
-						disabled="#{controller.to.fixed}"
+						disabled="#{formNew and controller.to.fixed}"
 						valueChangeListener="#{controller.onProfitChanged}"
 						reRender="ItemTariff_price-New,ItemTariff_sales_price-New"
 						focus="ItemTariff_price-New"

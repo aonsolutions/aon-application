@@ -46,57 +46,6 @@
 		</aon:selectOneMenu>
 	</aon:if>
 	
-	<aon:outputLabel for="Product_vat" value="#{bundle.aon_vat}" />
-	<aon:div id="Product_vatDiv">
-		<aon:selectOneMenu id="Product_vat" value="#{searchController.vat}"
-			ajaxSingle="true" reRender="Product_vatDiv"
-			focus="Product_retention">
-			<f:selectItem itemLabel="-" itemValue="" />
-			<f:selectItems value="#{configCollections.vatTaxes}" />
-		</aon:selectOneMenu>
-		<aon:if test="#{searchController.vat.id != null}">
-			<aon:outputText styleClass="aon-margin-left aon-italic"
-				value="#{searchController.vat.percentage}">
-				<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
-			</aon:outputText>
-			<aon:outputLabel value="%" />
-		</aon:if>
-	</aon:div>
-	
-	<aon:outputLabel for="Product_retention" value="#{bundle.aon_retention}" />
-	<aon:div id="Product_retentionDiv">
-		<aon:selectOneMenu id="Product_retention" value="#{searchController.retention}"
-			ajaxSingle="true" reRender="Product_retentionDiv">
-			<f:selectItem itemLabel="-" itemValue="" />
-			<f:selectItems value="#{configCollections.retentionTaxes}" />
-		</aon:selectOneMenu>
-		<aon:if test="#{searchController.retention.id != null}">
-			<aon:outputLabel styleClass="aon-margin-left aon-italic"
-				value="#{searchController.retention.percentage}" >
-				<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
-			</aon:outputLabel>
-			<aon:outputLabel value="%" />
-		</aon:if>
-	</aon:div>	
-	
-	<aon:if test="#{aonRole.accountingOperator and aonConfiguration.bean.product.showAccount}">
-		<aon:outputLabel for="Account_id-Sales"
-			value="#{bundle.aon_sales_account}" />
-		<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
-			<ui:param name="lookupTo" value="#{searchController.salesAccount}" />
-			<ui:param name="lookupSuffix" value="-Sales" />
-			<ui:param name="skipNewButton" value="#{true}" />
-		</ui:include>
-		
-		<aon:outputLabel for="Account_id-Purchase"
-			value="#{bundle.aon_purchase_account}" />
-		<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
-			<ui:param name="lookupTo" value="#{searchController.purchaseAccount}" />
-			<ui:param name="lookupSuffix" value="-Purchase" />
-			<ui:param name="skipNewButton" value="#{true}" />
-		</ui:include>
-	</aon:if>	
-	
 	<aon:if test="#{aonConfiguration.bean.product.showSerializable}">
 		<aon:outputLabel for="Product_serializable"
 			value="#{bundle.aon_serializable}" />
@@ -147,13 +96,5 @@
 		value="#{searchController.statuses}">
 		<f:selectItems value="#{productCollections.productStatuses}"/>
 	</aon:selectManyCheckbox>				
-
-	<aon:if test="#{aonConfiguration.bean.product.showType}">
-		<aon:outputLabel for="Product_type" value="#{bundle.aon_type}" />
-		<aon:selectManyCheckbox id="Product_type"
-			value="#{searchController.types}">
-			<f:selectItems value="#{productCollections.commonProductTypes}" />
-		</aon:selectManyCheckbox>
-	</aon:if>	
 
 </ui:composition>

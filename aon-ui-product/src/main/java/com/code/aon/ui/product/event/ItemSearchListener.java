@@ -9,11 +9,15 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
+import com.code.aon.product.enumeration.ProductKind;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ItemSearchListener extends RegistrySearchListener {
@@ -109,6 +113,19 @@ public class ItemSearchListener extends RegistrySearchListener {
 		}
 		if (getCategory() != null && getCategory().getId() != null) {
 			criteria.addEqualExpression(getController().resolveAlias("Item_product_category<id"), getCategory().getId());
+		}
+		if (AonUtil.getRoleManager().isSaleOperator() || AonUtil.getRoleManager().isPurchaseOperator()) {
+			String alias = getController().resolveAlias(IEntityAlias.ITEM_PRODUCT_KIND);
+			Expression kindExpr = ExpressionUtilities.getEqualExpression(alias, ProductKind.SALE_PURCHASE);
+			if (AonUtil.getRoleManager().isPurchaseOperator()) {
+				kindExpr = ExpressionUtilities.getOrExpression(kindExpr,  ExpressionUtilities.getEqualExpression(alias, ProductKind.PURCHASE));
+			}
+			if (AonUtil.getRoleManager().isSaleOperator()) {
+				kindExpr = ExpressionUtilities.getOrExpression(kindExpr,  ExpressionUtilities.getEqualExpression(alias, ProductKind.SALE));
+			}
+			criteria.addExpression(kindExpr);
+		} else {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.ITEM_PRODUCT_KIND), ProductKind.SALE_PURCHASE);
 		}
 		super.completeCriteria(criteria);
 	}

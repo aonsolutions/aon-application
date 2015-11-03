@@ -19,10 +19,13 @@ import com.code.aon.config.Tag;
 import com.code.aon.config.Tax;
 import com.code.aon.config.enumeration.TagType;
 import com.code.aon.product.ProductCategory;
+import com.code.aon.product.enumeration.ProductKind;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
@@ -38,6 +41,7 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	private ProductStatus[] statuses;
 	private ProductStatus[] itemStatuses;
 	private ProductType[] types;
+	private ProductKind[] kinds;
 	private ProductCategory category;
 	private Tax vat;
 	private Tax retention;
@@ -50,7 +54,6 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	public ProductStatus[] getStatuses() {
 		return statuses;
 	}
-
 	public void setStatuses(ProductStatus[] statuses) {
 		ProductExportGwtController.setStatuses(statuses);
 		this.statuses = statuses;
@@ -59,26 +62,30 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	public ProductStatus[] getItemStatuses() {
 		return itemStatuses;
 	}
-
 	public void setItemStatuses(ProductStatus[] itemStatuses) {
 		ProductExportGwtController.setItemStatuses(itemStatuses);
 		this.itemStatuses = itemStatuses;
-		
 	}
 
 	public ProductType[] getTypes() {
 		return types;
 	}
-
 	public void setTypes(ProductType[] types) {
 		ProductExportGwtController.setTypes(types);
 		this.types = types;
 	}
 	
+	public ProductKind[] getKinds() {
+		return kinds;
+	}
+	public void setKinds(ProductKind[] kinds) {
+		ProductExportGwtController.setKinds(kinds);
+		this.kinds = kinds;
+	}
+	
 	public ProductCategory getCategory() {
 		return category;
 	}
-
 	public void setCategory(ProductCategory category) {
 		ProductExportGwtController.setCategory(category);
 		this.category = category;
@@ -87,7 +94,6 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	public Tax getVat() {
 		return vat;
 	}
-
 	public void setVat(Tax vat) {
 		ProductExportGwtController.setVat(vat);
 		this.vat = vat;
@@ -96,7 +102,6 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	public Tax getRetention() {
 		return retention;
 	}
-
 	public void setRetention(Tax retention) {
 		ProductExportGwtController.setRetention(retention);
 		this.retention = retention;
@@ -105,7 +110,6 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	public Account getPurchaseAccount() {
 		return purchaseAccount;
 	}
-
 	public void setPurchaseAccount(Account purchaseAccount) {
 		ProductExportGwtController.setPurchaseAccount(purchaseAccount);
 		this.purchaseAccount = purchaseAccount;
@@ -114,7 +118,6 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	public Account getSalesAccount() {
 		return salesAccount;
 	}
-
 	public void setSalesAccount(Account salesAccount) {
 		ProductExportGwtController.setSalesAccount(salesAccount);
 		this.salesAccount = salesAccount;
@@ -126,16 +129,13 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		}
 		return tags;
 	}
-
 	public void setTags(Tag[] tags) {
 		ProductExportGwtController.setTags(tags);
 		this.tags = tags;
 	}
-
 	public int getTagsSize() {
 		return ArrayUtils.getLength(tags);
 	}
-	
 	public List<Integer> getTagsIds() {
 		List<Integer> ids = new LinkedList<Integer>();
 		for( Tag tag : getTags() ) {
@@ -149,7 +149,6 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	public Supplier getSupplier() {
 		return supplier;
 	}
-
 	public void setSupplier(Supplier supplier) {
 		ProductExportGwtController.setSupplier(supplier);
 		this.supplier = supplier;
@@ -158,7 +157,6 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	public String getSupplierCode() {
 		return supplierCode;
 	}
-
 	public void setSupplierCode(String supplierCode) {
 		ProductExportGwtController.setSupplierCode(supplierCode);
 		this.supplierCode = supplierCode;
@@ -169,6 +167,7 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		setStatuses(new ProductStatus[]{ProductStatus.ACTIVE});
 		setItemStatuses(new ProductStatus[0]);
 		setTypes(new ProductType[0]);
+		setKinds(new ProductKind[0]);
 		setCategory((ProductCategory)BeanManager.getManagerBean(ProductCategory.class).createNewTo());
 		setVat((Tax)BeanManager.getManagerBean(Tax.class).createNewTo());
 		setRetention((Tax)BeanManager.getManagerBean(Tax.class).createNewTo());
@@ -191,6 +190,20 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		if (!ArrayUtils.isEmpty(getTypes())) {
 			String alias = getController().resolveAlias(IEntityAlias.PRODUCT_TYPE);
 			addEnumToCriteria(criteria, alias, getTypes());
+		}
+		if (!ArrayUtils.isEmpty(getKinds())) {
+			String alias = getController().resolveAlias(IEntityAlias.PRODUCT_KIND);
+			addEnumToCriteria(criteria, alias, getKinds());
+		} else {
+			String alias = getController().resolveAlias(IEntityAlias.PRODUCT_KIND);
+			Expression kindExpr = ExpressionUtilities.getEqualExpression(alias, ProductKind.SALE_PURCHASE);
+			if (AonUtil.getRoleManager().isPurchaseOperator()) {
+				kindExpr = ExpressionUtilities.getOrExpression(kindExpr,  ExpressionUtilities.getEqualExpression(alias, ProductKind.PURCHASE));
+			}
+			if (AonUtil.getRoleManager().isSaleOperator()) {
+				kindExpr = ExpressionUtilities.getOrExpression(kindExpr,  ExpressionUtilities.getEqualExpression(alias, ProductKind.SALE));
+			}
+			criteria.addExpression(kindExpr);
 		}
 		if (getCategory() != null && getCategory().getId() != null) {
 			String alias = getController().resolveAlias(IEntityAlias.PRODUCT_PRODUCT_CATEGORY_ID);

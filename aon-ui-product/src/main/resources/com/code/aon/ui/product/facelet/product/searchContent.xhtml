@@ -15,6 +15,12 @@
 			</aon:panelGrid>
 		</aon:panelCollapsible>					
 					
+		<aon:panelCollapsible expanded="false" label="#{bundle.admin_advanced_search}">
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+				<ui:include src="/com/code/aon/ui/product/facelet/product/searchAdvancedContent.xhtml" />
+			</aon:panelGrid>
+		</aon:panelCollapsible>					
+					
 		<aon:panelCollapsible expanded="false" label="#{bundle.aon_detail}" >
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 				<ui:include src="/com/code/aon/ui/product/facelet/product/item/searchContent.xhtml">
