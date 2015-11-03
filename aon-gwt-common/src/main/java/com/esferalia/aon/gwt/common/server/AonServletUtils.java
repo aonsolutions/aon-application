@@ -24,10 +24,15 @@ public class AonServletUtils {
 	public static AuthPrincipal getRequestPrincipal(HttpServletRequest request) {
 		return (AuthPrincipal) request.getUserPrincipal();
 	}
-	public static Integer getRequestDomain(HttpServletRequest request) {
+	public static Integer getRequestDomain(HttpServletRequest request) {		
 		return getRequestPrincipal(request).getDomainId();
 	}
-	public static String getRequestUser(HttpServletRequest request) {
+	
+	public static String getRequestDomainName(HttpServletRequest request) {
+		return getRequestPrincipal(request).getName();
+	}
+	
+	public static String getRequestUser(HttpServletRequest request) {		
 		return getRequestPrincipal(request).getShortName();
 	}
 	
