@@ -396,6 +396,7 @@ public class AccountEntryDAO {
 				.setCreationDate(record.getValue(ACCOUNT_ENTRY.CREATION_DATE))
 				.setModificationUser(record.getValue(ACCOUNT_ENTRY.MODIFICATION_USER))
 				.setModificationDate(record.getValue(ACCOUNT_ENTRY.MODIFICATION_DATE))
+				.setDirty(false)
 				;
 		}
 

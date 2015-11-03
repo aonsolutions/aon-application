@@ -6,9 +6,9 @@
 	<g:AbsolutePanel styleName="{aonResources.css.aonPointerEventsNone}">
 		<g:FlowPanel styleName="{aonResources.css.aonSelector}">
 			<g:Button styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconMaximize} {aonResources.css.aonPointerEventsAuto}"
-				ui:field="maximizeButton"/>
+				tabIndex="9999998" ui:field="maximizeButton"/>
 			<g:Button styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconMinimize} {aonResources.css.aonPointerEventsAuto}"
-				ui:field="minimizeButton"/>
+				tabIndex="9999999" ui:field="minimizeButton"/>
 		</g:FlowPanel>
 		<g:at top='0' left='0' >
 			<g:SimpleLayoutPanel ui:field="contentPanel"  

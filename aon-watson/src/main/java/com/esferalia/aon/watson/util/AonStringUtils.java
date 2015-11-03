@@ -135,6 +135,7 @@ public class AonStringUtils {
 	public static final String DOT = ".";
 	public static final String COMMA = ",";
 	public static final String PERCENT = "%";
+	public static final String ASTERISK = "*";
 	public static final String COLON = ":";
 	public static final String EQUAL = "=";
 	public static final String OPEN_BRACKET = "[";
@@ -197,6 +198,7 @@ public class AonStringUtils {
 	 * </p>
 	 */
 	private static final int PAD_LIMIT = 8192;
+	
 	
 
 	/**

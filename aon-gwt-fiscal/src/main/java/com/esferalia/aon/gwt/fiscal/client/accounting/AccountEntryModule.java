@@ -255,6 +255,7 @@ public class AccountEntryModule extends MainEntryPoint {
 	void onChangeEntryDate(ValueChangeEvent<Date> event) {
 		this.current.getAccountEntry().setEntryDate(event.getValue());
 		checkDate();
+		refreshIdLabel();
 	}
 
 	@UiHandler("period")
@@ -262,11 +263,13 @@ public class AccountEntryModule extends MainEntryPoint {
 		Integer ap = AonNumberUtils.toInteger(period.getSelectedValue());
 		this.current.getAccountEntry().setPeriod(ap);
 		checkDate();
+		refreshIdLabel();
 	}
 
 	@UiHandler("confidential")
 	void onChangeConfidential(ClickEvent event) {
 		this.current.getAccountEntry().setConfidential(confidential.getValue());
+		refreshIdLabel();
 	}
 
 	private void checkDate() {
@@ -279,6 +282,41 @@ public class AccountEntryModule extends MainEntryPoint {
 				errors.hide();
 			}
 		}
+	}
+
+	@UiHandler("commentsButton")
+	public void onComments(ClickEvent event) {
+		if (splitLayoutPanel.getWidgetSize(wizardPanel) == 0) {
+			splitLayoutPanel.setWidgetSize(wizardPanel, 105);
+			splitLayoutPanel.animate(500);
+		} else {
+			splitLayoutPanel.setWidgetSize(wizardPanel, 0);
+			splitLayoutPanel.animate(500);
+		}
+		ScrollPanel root = new ScrollPanel();
+		root.setStyleName(AON.AON_CSS.aonScrollArea());
+
+		FlowPanel commentPanel = new FlowPanel();
+		commentPanel.setStyleName(AON.AON_CSS.aonPanelGridSearch());
+		commentPanel.addStyleName(AON.AON_CSS.aonTextCenter());
+		commentPanel.addStyleName(AON.AON_CSS.aonPadding());
+
+		TextArea comment = new TextArea();
+		comment.addValueChangeHandler(new ValueChangeHandler<String>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				current.getAccountEntry().setComments(event.getValue());
+				styleCommentsButton();
+				refreshIdLabel();
+			}
+		});
+		comment.setText(current.getAccountEntry().getComments());
+		comment.setWidth("80%");
+		comment.setHeight("4em");
+		commentPanel.add(comment);
+
+		root.setWidget(commentPanel);
+		wizardPanel.setWidget(root);
 	}
 
 	private void syncCurrent() {
@@ -309,8 +347,7 @@ public class AccountEntryModule extends MainEntryPoint {
 				
 			}
 		}
-		id.setText(current.isNew() ? AonStringUtils.EMPTY : "("
-				+ current.getAccountEntry().getId() + ")");
+		refreshIdLabel();
 		styleCommentsButton();
 
 		// Populate detail values
@@ -342,10 +379,28 @@ public class AccountEntryModule extends MainEntryPoint {
 				balancePanel.add(account, from, entryDate.getValue());
 			}
 		});
+		tab.addValueChangeHandler(new ValueChangeHandler<AccountEntryDetail>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<AccountEntryDetail> event) {
+				refreshIdLabel();
+			}
+		});
+		
 		tab.paintTable();
 		tableInnerContainer.add(tab);
 		tableContainer.setWidget(tableInnerContainer);
-		tab.setFocus(true);
+	}
+
+	private void refreshIdLabel() {
+		id.setText((current.isNew() ? AonStringUtils.EMPTY : ("(" + current.getAccountEntry().getId() + ") "))
+				+ (current.getAccountEntry().isDirty()?AonStringUtils.ASTERISK:AonStringUtils.EMPTY)
+				);
+		if (current.getAccountEntry().isDirty()) {
+			id.addStyleName(AON.AON_CSS.aonColorRed());
+		} else {
+			id.removeStyleName(AON.AON_CSS.aonColorRed());
+		}
 	}
 
 	private void styleCommentsButton() {
@@ -367,7 +422,7 @@ public class AccountEntryModule extends MainEntryPoint {
 			public void onSuccess(AccountEntry result) {
 				accept.setEnabled(true);
 				current.setAccountEntry(result);
-				addToJournalLog(result);
+				addToSessionLog(result);
 				reset();
 			}
 
@@ -434,7 +489,7 @@ public class AccountEntryModule extends MainEntryPoint {
 						if (current.getAccountEntry().getId() != null) {
 							current.getAccountEntry().setId(
 									current.getAccountEntry().getId() * -1);
-							addToJournalLog(current.getAccountEntry());
+							addToSessionLog(current.getAccountEntry());
 						}
 						remove.setEnabled(true);
 						reset();
@@ -469,49 +524,61 @@ public class AccountEntryModule extends MainEntryPoint {
 
 	@UiHandler("journalPanel")
 	public void onSelectJournalPanel(SelectionEvent<AccountEntry> event) {
-		addToJournalLog(current.getAccountEntry());
 		final AccountEntry entry = event.getSelectedItem();
-		selectEntry(entry);
+		selectEntry(entry.getId());
+	}
+	@UiHandler("statementPanel")
+	public void onSelectStatement(SelectionEvent<Integer> event) {
+		selectEntry(event.getSelectedItem());
 	}
 
 	private void selectEntry(final AccountEntry entry) {
+		if (current.isDirty()) {
+			addToSessionLog(current.getAccountEntry());
+		}
 		waitPopup.center();
+		try {
+			if (entry != null && entry.getId() != null) {
+				current.setAccountEntry(entry);
+				syncCurrent();
+				balancePanel.add(entry);
+			} else {
+				ConfirmDialog cd = new ConfirmDialog();
+				cd.confirm(AON.MSG.recoverEntry(),
+						new ConfirmDialogCallback() {
+	
+							@Override
+							public void onCancel() {
+							}
+	
+							@Override
+							public void onAccept() {
+								entry.setId(null);
+								for (AccountEntryDetail aed : entry
+										.getDetails()) {
+									aed.setId(null);
+								}
+								current.setAccountEntry(entry);
+								syncCurrent();
+							}
+						});
+			}
+		} finally {
+			waitPopup.hide();
+		}
+	}
+	
+	private void selectEntry(final Integer id) {
 		fiscalService.getAccountEntry(getCurrentDomainName(),
-				getCurrentDomain(), entry.getId(),
+				getCurrentDomain(), id,
 				new AsyncCallback<AccountEntry>() {
 					@Override
 					public void onSuccess(AccountEntry result) {
-						if (result != null && result.getId() != null) {
-							current.setAccountEntry(result);
-							syncCurrent();
-							balancePanel.add(result);
-						} else {
-							ConfirmDialog cd = new ConfirmDialog();
-							cd.confirm(AON.MSG.recoverEntry(),
-									new ConfirmDialogCallback() {
-
-										@Override
-										public void onCancel() {
-										}
-
-										@Override
-										public void onAccept() {
-											entry.setId(null);
-											for (AccountEntryDetail aed : entry
-													.getDetails()) {
-												aed.setId(null);
-											}
-											current.setAccountEntry(entry);
-											syncCurrent();
-										}
-									});
-						}
-						waitPopup.hide();
+						selectEntry(result);
 					}
 
 					@Override
 					public void onFailure(Throwable caught) {
-						waitPopup.hide();
 						errors.showError(caught);
 					}
 				});
@@ -531,6 +598,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		}
 		this.current.getAccountEntry().setPeriod(
 				AonNumberUtils.toInteger(period.getSelectedValue()));
+		this.current.getAccountEntry().setDirty(false);
 		syncCurrent();
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 			public void execute() {
@@ -541,14 +609,8 @@ public class AccountEntryModule extends MainEntryPoint {
 		});
 	}
 
-	private void addToJournalLog(AccountEntry entry) {
-//		tabLayout.selectTab(SESSION_LOG_TAB);
+	private void addToSessionLog(AccountEntry entry) {
 		sessionLog.add(entry);
-//		if (splitLayoutPanel.getWidgetSize(footPanel) == 0) {
-//			splitLayoutPanel.setWidgetSize(footPanel,
-//					Window.getClientHeight() / 4);
-//			splitLayoutPanel.animate(500);
-//		}
 	}
 
 	private void showFullStatement(Integer selectedItem) {
@@ -559,41 +621,6 @@ public class AccountEntryModule extends MainEntryPoint {
 
 	public static interface ConfirmDialogCallback {
 		void onAccept();
-
 		void onCancel();
-	}
-
-	@UiHandler("commentsButton")
-	public void onComments(ClickEvent event) {
-		if (splitLayoutPanel.getWidgetSize(wizardPanel) == 0) {
-			splitLayoutPanel.setWidgetSize(wizardPanel, 105);
-			splitLayoutPanel.animate(500);
-		} else {
-			splitLayoutPanel.setWidgetSize(wizardPanel, 0);
-			splitLayoutPanel.animate(500);
-		}
-		ScrollPanel root = new ScrollPanel();
-		root.setStyleName(AON.AON_CSS.aonScrollArea());
-
-		FlowPanel commentPanel = new FlowPanel();
-		commentPanel.setStyleName(AON.AON_CSS.aonPanelGridSearch());
-		commentPanel.addStyleName(AON.AON_CSS.aonTextCenter());
-		commentPanel.addStyleName(AON.AON_CSS.aonPadding());
-
-		TextArea comment = new TextArea();
-		comment.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				current.getAccountEntry().setComments(event.getValue());
-				styleCommentsButton();
-			}
-		});
-		comment.setText(current.getAccountEntry().getComments());
-		comment.setWidth("80%");
-		comment.setHeight("4em");
-		commentPanel.add(comment);
-
-		root.setWidget(commentPanel);
-		wizardPanel.setWidget(root);
 	}
 }

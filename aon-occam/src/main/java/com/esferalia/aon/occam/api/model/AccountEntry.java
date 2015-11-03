@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.util.AonUtils;
 
 public class AccountEntry implements Serializable, HasAudit {
 
@@ -28,12 +29,15 @@ public class AccountEntry implements Serializable, HasAudit {
 	private String modificationUser;
 	private Date modificationDate;
 	
+	private boolean dirty = true;
+	
 	private LinkedList<AccountEntryDetail> details;
 	
 	public Integer getId() {
 		return this.id;
 	}
 	public AccountEntry setId(Integer id) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.id , id) );
 		this.id = id;
 		return this;
 	}
@@ -42,6 +46,7 @@ public class AccountEntry implements Serializable, HasAudit {
 		return this.period;
 	}
 	public AccountEntry setPeriod(Integer period) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.period , period) );
 		this.period = period;
 		return this;
 	}
@@ -64,6 +69,7 @@ public class AccountEntry implements Serializable, HasAudit {
 		return this.domain;
 	}
 	public AccountEntry setDomain(Integer domain) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.domain , domain) );
 		this.domain = domain;
 		return this;
 	}
@@ -72,6 +78,7 @@ public class AccountEntry implements Serializable, HasAudit {
 		return this.entryDate;
 	}
 	public AccountEntry setEntryDate(Date entryDate) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.entryDate , entryDate) );
 		this.entryDate = entryDate;
 		return this;
 	}
@@ -80,6 +87,7 @@ public class AccountEntry implements Serializable, HasAudit {
 		return this.entryType;
 	}
 	public AccountEntry setEntryType(AccountEntryType entryType) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.entryType , entryType) );
 		this.entryType = entryType;
 		return this;
 	}
@@ -88,6 +96,7 @@ public class AccountEntry implements Serializable, HasAudit {
 		return this.journal;
 	}
 	public AccountEntry setJournal(Integer journal) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.journal , journal) );
 		this.journal = journal;
 		return this;
 	}
@@ -96,6 +105,7 @@ public class AccountEntry implements Serializable, HasAudit {
 		return this.securityLevel;
 	}
 	public AccountEntry setSecurityLevel(SecurityLevel securityLevel) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.securityLevel , securityLevel) );
 		this.securityLevel = securityLevel;
 		return this;
 	}
@@ -104,6 +114,7 @@ public class AccountEntry implements Serializable, HasAudit {
 		return this.comments;
 	}
 	public AccountEntry setComments(String comments) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.comments , comments) );
 		this.comments = comments;
 		return this;
 	}
@@ -129,6 +140,21 @@ public class AccountEntry implements Serializable, HasAudit {
 	public AccountEntry addDetail( AccountEntryDetail detail) {
 		getDetails().add(detail);
 		return this;
+	}
+	
+	// ---------------------------------------------------------- DIRTY
+	public boolean isDirty() {
+		return dirty?dirty:areDetailsDirty();
+	}
+	public AccountEntry setDirty(boolean dirty) {
+		this.dirty = dirty;
+		return this;
+	}
+	private boolean areDetailsDirty() {
+		for (AccountEntryDetail aed : getDetails()) {
+			if (aed.isDirty()) return true;
+		}
+		return false;
 	}
 	
 	// ---------------------------------------------------------- AUDIT

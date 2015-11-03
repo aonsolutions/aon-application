@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.ConfirmDialogCallback;
@@ -22,6 +23,7 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
+import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -32,10 +34,12 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 
-public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Focusable, HasSelectionHandlers<Account> {
+public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Focusable
+ , HasSelectionHandlers<Account>, HasValueChangeHandlers<AccountEntryDetail> {
 	
 	private AccountEntryObject entry;
 	private Label sumDebit;
@@ -226,38 +230,54 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 	
 	private void paintActiveRow(int row, final AccountEntryDetail aed) {
 		setWidget(row, COLS.NUM.ordinal(), new Label()  );
-		final DetailAccountBox detailAccountBox = new DetailAccountBox(aed);
-		final ConceptBox conceptBox = new ConceptBox(aed);
+		
+		final AccountBox detailAccountBox = new AccountBox(AccountEntryModule.getCurrentDomainName(),AccountEntryModule.getCurrentDomain());
+		detailAccountBox.setValue(aed.getAccount(), aed.getAccountCode(),aed.getAccountDescription());
+
+		setWidget(row, COLS.ACC.ordinal(), detailAccountBox );
+		
+		final TextBox conceptBox = new TextBox();
+		conceptBox.setVisibleLength(20);
+		conceptBox.setMaxLength(32);
+		conceptBox.setStyleName(AON.AON_CSS.aonInputText());
+		conceptBox.setValue(aed.getConcept());
+		setWidget(row, COLS.CON.ordinal(), conceptBox );
+		
 		final DoubleBox debitBox = new DoubleBox();
 		debitBox.setValue(aed.getDebit());
 		debitBox.setResolver(resolver);
+		setWidget(row, COLS.DEB.ordinal(), debitBox );
+		getFlexCellFormatter().addStyleName(row, COLS.DEB.ordinal(),AON.AON_CSS.aonTextRight());
 		
-		
-		debitBox.addErrorHandler(new ErrorHandler() {
-			@Override
-			public void onError(ErrorEvent event) {
-				NativeEvent event2 = Document.get().createErrorEvent();
-				debitBox.getElement().setAttribute("ERROR", AON.MSG.arithmeticExpressionError(debitBox.getText()));
-				DomEvent.fireNativeEvent(event2, AccountEntryTable.this, debitBox.getElement());
-			}
-		});
 		final DoubleBox creditBox = new DoubleBox();
 		creditBox.setValue(aed.getCredit());
 		creditBox.setResolver(resolver);
-		creditBox.addErrorHandler(new ErrorHandler() {
-			@Override
-			public void onError(ErrorEvent event) {
-				NativeEvent event2 = Document.get().createErrorEvent();
-				creditBox.getElement().setAttribute("ERROR", AON.MSG.arithmeticExpressionError(creditBox.getText()));
-				DomEvent.fireNativeEvent(event2, AccountEntryTable.this, creditBox.getElement());
-			}
-		});
-		final BalancingAccountBox balancingAccountBox = new BalancingAccountBox(aed);
-		balancingAccountBox.setRequired(false);
+		setWidget(row, COLS.CRE.ordinal(), creditBox );
+		getFlexCellFormatter().addStyleName(row, COLS.CRE.ordinal(),AON.AON_CSS.aonTextRight());
 		
+		final AccountBox balancingAccountBox = new AccountBox(AccountEntryModule.getCurrentDomainName()
+				, AccountEntryModule.getCurrentDomain(), false);
+		balancingAccountBox.setValue(aed.getBalancingAccount(), aed.getBalancingAccountCode(),
+				aed.getBalancingAccountDescription());
+		balancingAccountBox.setRequired(false);
+		setWidget(row, COLS.BAL.ordinal(), balancingAccountBox);
+
+		final TextBox documentBox = new TextBox();
+		documentBox.setVisibleLength(20);
+		documentBox.setMaxLength(32);
+		documentBox.setValue(aed.getDocumentNumber());
+		documentBox.setStyleName(AON.AON_CSS.aonInputText());
+		setWidget(row, COLS.DOC.ordinal(), documentBox );
+
+		// -------------------------------------------------------------- EVENTS
+		// ---------------------------------------------------- [DETAIL ACCOUNT]
 		detailAccountBox.addSelectionHandler( new SelectionHandler<Account>() {
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {
+				aed.setAccount(event.getSelectedItem().getId());
+				aed.setAccountCode(event.getSelectedItem().getCode());
+				aed.setAccountDescription(event.getSelectedItem().getDescription());
+				ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
 				conceptBox.setFocus(true);		
 			}
 		});
@@ -267,20 +287,12 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 				SelectionEvent.<Account>fire(AccountEntryTable.this, event.getSelectedItem());	
 			}
 		});
-		balancingAccountBox.addSelectionHandler( new SelectionHandler<Account>() {
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				SelectionEvent.<Account>fire(AccountEntryTable.this, event.getSelectedItem());	
-			}
-		});
-		
-		setWidget(row, COLS.ACC.ordinal(), detailAccountBox );
-		setWidget(row, COLS.CON.ordinal(), conceptBox );
-
+		// ----------------------------------------------------------- [CONCEPT]
 		conceptBox.addValueChangeHandler(new ValueChangeHandler<String>() {
-
+			
 			@Override
 			public void onValueChange(final ValueChangeEvent<String> event) {
+				aed.setConcept(conceptBox.getValue());
 				if (getRowCount() > 3) {
 					ConfirmDialog cd = new ConfirmDialog();
 					cd.confirm(AON.MSG.changeConcept(),new ConfirmDialogCallback() {
@@ -294,8 +306,8 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 						public void onAccept() {
 							for (int i = 1; i < getRowCount() ; i++ ) {
 								Widget w = getWidget( i , COLS.CON.ordinal());
-								if (w instanceof ConceptBox) {
-									ConceptBox cb = (ConceptBox) w;
+								if (w instanceof TextBox) {
+									TextBox cb = (TextBox) w;
 									cb.setValue(event.getValue());
 								}
 							}
@@ -306,10 +318,18 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 						}
 					});
 				}
+				ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
 			}
 		});
-		setWidget(row, COLS.DEB.ordinal(), debitBox );
-		getFlexCellFormatter().addStyleName(row, COLS.DEB.ordinal(),AON.AON_CSS.aonTextRight());
+		// ------------------------------------------------------------- [DEBIT]
+		debitBox.addErrorHandler(new ErrorHandler() {
+			@Override
+			public void onError(ErrorEvent event) {
+				NativeEvent event2 = Document.get().createErrorEvent();
+				debitBox.getElement().setAttribute("ERROR", AON.MSG.arithmeticExpressionError(debitBox.getText()));
+				DomEvent.fireNativeEvent(event2, AccountEntryTable.this, debitBox.getElement());
+			}
+		});
 		debitBox.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
@@ -326,6 +346,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 				aed.setDebit( d );
 				debitBox.setValue(d,false);
 				refreshTotals();
+				ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
 			}
 		});
 		debitBox.addKeyUpHandler(new KeyUpHandler() {
@@ -346,14 +367,19 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 						creditBox.setValue(d);
 					}
 					balancingAccountBox.setFocus(true);
+					ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
 				}
 			}
 		});
-		
-		
-		setWidget(row, COLS.CRE.ordinal(), creditBox );
-		getFlexCellFormatter().addStyleName(row, COLS.CRE.ordinal(),AON.AON_CSS.aonTextRight());
-		
+		// ------------------------------------------------------------ [CREDIT]
+		creditBox.addErrorHandler(new ErrorHandler() {
+			@Override
+			public void onError(ErrorEvent event) {
+				NativeEvent event2 = Document.get().createErrorEvent();
+				creditBox.getElement().setAttribute("ERROR", AON.MSG.arithmeticExpressionError(creditBox.getText()));
+				DomEvent.fireNativeEvent(event2, AccountEntryTable.this, creditBox.getElement());
+			}
+		});
 		creditBox.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
@@ -369,6 +395,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 				aed.setCredit( d );
 				creditBox.setValue(d,false);
 				refreshTotals();
+				ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
 			}
 		});
 		final int curRow = row;
@@ -390,17 +417,27 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 						aed.setCredit(0.0);
 					}
 					balancingAccountBox.setFocus(true);
+					ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
 				}
 			}
 		});
-		
-		setWidget(row, COLS.BAL.ordinal(), balancingAccountBox);
-		final DocumentBox documentBox = new DocumentBox(aed);
-		setWidget(row, COLS.DOC.ordinal(), documentBox );
+		// ------------------------------------------------- [BALANCING ACCOUNT]
+		balancingAccountBox.addSelectionHandler( new SelectionHandler<Account>() {
+			@Override
+			public void onSelection(SelectionEvent<Account> event) {
+				aed.setBalancingAccount(event.getSelectedItem().getId());
+				aed.setBalancingAccountCode(event.getSelectedItem().getCode());
+				aed.setBalancingAccountDescription(event.getSelectedItem().getDescription());
+				ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
+				SelectionEvent.<Account>fire(AccountEntryTable.this, event.getSelectedItem());
+			}
+		});
+		// --------------------------------------------------- [DOCUMENT NUMBER]
 		documentBox.addValueChangeHandler(new ValueChangeHandler<String>() {
 
 			@Override
 			public void onValueChange(final ValueChangeEvent<String> event) {
+				aed.setDocumentNumber(documentBox.getValue());
 				if (getRowCount() > 3) {
 					ConfirmDialog cd = new ConfirmDialog();
 					cd.confirm(AON.MSG.changeDocument(),new ConfirmDialogCallback() {
@@ -414,8 +451,8 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 						public void onAccept() {
 							for (int i = 1; i < getRowCount() ; i++ ) {
 								Widget w = getWidget( i , COLS.DOC.ordinal());
-								if (w instanceof DocumentBox) {
-									DocumentBox db = (DocumentBox) w;
+								if (w instanceof TextBox) {
+									TextBox db = (TextBox) w;
 									db.setValue(event.getValue());
 								}
 							}
@@ -426,9 +463,11 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 						}
 					});
 				}
+				ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
 			}
 		});
 		
+		// --------------------------------------------------- [DETAIL REMOVE]
 		Button removeButton = new Button();
 		removeButton.setStyleName(AON.AON_CSS.aonIconDelete());
 		removeButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
@@ -550,7 +589,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 	@Override
 	public void setFocus(boolean focused) {
 		if (entry.isUpdatable()) {
-			DetailAccountBox ab = (DetailAccountBox) getWidget( getRowCount() - 2, COLS.ACC.ordinal());
+			AccountBox ab = (AccountBox) getWidget( getRowCount() - 2, COLS.ACC.ordinal());
 			ab.setFocus(true);
 			ab.selectAll();
 		}
@@ -565,5 +604,11 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 	@Override
 	public HandlerRegistration addSelectionHandler(SelectionHandler<Account> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
+	}
+
+	@Override
+	public HandlerRegistration addValueChangeHandler(
+			ValueChangeHandler<AccountEntryDetail> handler) {
+		return super.addHandler(handler, ValueChangeEvent.getType());
 	}
 }

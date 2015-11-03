@@ -29,7 +29,8 @@ public class AccountEntryObject {
 			.setDomain(this.domainId)
 			.setEntryDate(date)
 			.setConfidential(false)
-			.setEntryType(AccountEntryType.MANUAL));
+			.setEntryType(AccountEntryType.MANUAL)
+			.setDirty(false));
 	}
 	
 	private static FiscalServiceAsync getFiscalService() {
@@ -121,6 +122,12 @@ public class AccountEntryObject {
 	}
 	public boolean isNew() {
 		return getAccountEntry() == null || getAccountEntry().getId() == null;
+	}
+	public boolean isDirty() {
+		if (getAccountEntry().getId() == null && getAccountEntry().getDetails().size() == 0) {
+			return false;
+		}
+		return getAccountEntry().isDirty();
 	}
 	
 	public void get(Integer id , final AsyncCallback<AccountEntry> callback) {

@@ -14,6 +14,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasAllFocusHandlers;
@@ -38,6 +39,8 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
+import com.google.gwt.user.client.ui.SuggestOracle;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -50,7 +53,6 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 	private static final String BEGIN_STRONG = "<strong>";
 	private static final String END_STRONG = "</strong>";
 
-	
 	private CommonServiceAsync commonService;
 
 	private String domainName;
@@ -122,11 +124,14 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 		descriptionLabel.addStyleName(AON.AON_CSS.aonFontSmall());
 		descriptionLabel.setVisible(showDescription);
 		
-		accountTextBox.addValueChangeHandler( new ValueChangeHandler<String>() {
+		accountTextBox.addBlurHandler( new BlurHandler() {
 			
 			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				String newValue = autoComplete(event.getValue());
+			public void onBlur(BlurEvent event) {
+				if (((DefaultSuggestionDisplay) account.getSuggestionDisplay()).isSuggestionListShowing())
+					return;
+				
+				String newValue = autoComplete(account.getValue());
 				if (AonValidationUtil.isValidAccount(newValue,isRequired())) {
 					if (!isRequired() && AonStringUtils.isEmpty(newValue)) {
 						// No es obligatorio y lo han dejado vacio, por lo que 
@@ -134,6 +139,7 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 						reset();
 					} else {
 						accountTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
+						
 						commonService.getAccount(AccountBox.this.domainName,AccountBox.this.domain,newValue
 								,new AsyncCallback<Account>() {
 							@Override
@@ -143,6 +149,7 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 									description = result.getDescription();
 									descriptionLabel.setText(description);
 									accountTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
+									
 									SelectionEvent.fire(AccountBox.this, result );
 								} else {
 									reset();
@@ -164,24 +171,15 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 				}
 			}
 		});
-		
-/*		
+			
 		account.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 			@Override
 			public void onSelection(SelectionEvent<Suggestion> event) {
-				SelectionEvent.fire(AccountBox.this
-						,new Account()
-							.setCode(event.getSelectedItem().getReplacementString()) );
+				String selected = event.getSelectedItem()
+						.getReplacementString();
+				ValueChangeEvent.fire(account, selected);
 			}
 		});
-		
-		addSelectionHandler(new SelectionHandler<Account>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-			}
-		});
-*/
 		
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(AON.AON_CSS.aonNowrap() );
