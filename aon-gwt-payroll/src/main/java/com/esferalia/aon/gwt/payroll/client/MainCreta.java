@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -9,14 +8,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import com.code.aon.finance.enumeration.CreditorStatus;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DetailPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.payroll.client.EmployeeTree.EnterpriseCretaRequestCommand;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
@@ -28,8 +26,6 @@ import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEmployee;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsError;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsRespuesta;
-import com.esferalia.aon.gwt.payroll.shared.CretaService.JsTrabajadoresYTramos;
-import com.esferalia.aon.gwt.payroll.shared.CretaService.JsUnknownDato;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.ErrorDescription;
 import com.esferalia.aon.gwt.payroll.shared.Province;
@@ -42,14 +38,17 @@ import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.storage.client.Storage;
 import com.google.gwt.typedarrays.client.Uint8ArrayNative;
 import com.google.gwt.typedarrays.shared.Uint8Array;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -121,6 +120,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
 
+		
+		
 		resultsPanel = new ResultsPanel();
 
 		enterprises.addListener(this);
@@ -208,7 +209,24 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		enterprisesContextMenu.show();
 	}
 
+	// ------------------------------------------------------- UiHandler methods
+
+	@UiHandler("footPanel")
+	void onFootMinimize(MinimizeEvent event) {
+		closeFootPanel();
+	}
+
+	@UiHandler("footPanel")
+	void onFootMaximize(MinimizeEvent event) {
+		
+	}
+
 	// ---------------------------------------------------------------- Private
+
+	private void closeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 0);
+	}
+
 
 	private void showResultsPanel() {
 
@@ -262,7 +280,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		return AON.AON_ICON_WARN;
 	}
 
-	public static PopupPanel showjsRespuestaToolTip(JsRespuesta respuesta, final int x,
+	public static PopupPanel showjsRespuestaToolTip(final JsRespuesta respuesta, final int x,
 			final int y) {
 	
 		final DecoratedPopupPanel popupPanel = new DecoratedPopupPanel();
@@ -289,6 +307,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			String code = errors[i].getCode();
 	
 			grid.setText(i + 1, 0, errors[i].getCode());
+			
+			
 	
 			ErrorDescription errorDescription = ErrorDescription.getErrorDescription(code);
 			if (errorDescription != null) {
@@ -300,7 +320,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				grid.setText(i + 1, 1, errors[i].getMessage());
 				
 			}
-	
+			
 		}
 	
 		popupPanel.add(grid);
@@ -376,17 +396,35 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		
 		
 		@Override
-		protected void onJsFileDblClick(JsFile jsFile, int x, int y) {
-			FileEditor fileEditor = new FileEditor();
-			fileEditor.setMode("text/xml");
-			fileEditor.setFoldGutter(true);
-			fileEditor.setLineNumbers(true);
-			fileEditor.setTitle(CretaService.File.TRABAJADORES_TRAMOS.getFilename());
-			fileEditor.setFilename(CretaService.File.TRABAJADORES_TRAMOS.getFilename() + ".xml");
-			fileEditor.setText(jsFile.getXML());
-			detailPanel.setWidget(fileEditor);
+		protected void onJsFileDblClick(int x, int y, JsFile... jsFiles ) {
+			FilesEditor filesEditor = new FilesEditor();
+
 			
-			fileEditor.autoRefresh();
+			for (JsFile jsFile: jsFiles ) {
+
+				FileEditor fileEditor = new FileEditor(false);
+				fileEditor.setMode("text/xml");
+				fileEditor.setFoldGutter(true);
+				fileEditor.setLineNumbers(true);
+				fileEditor.setText(jsFile.getXML());
+
+				try {
+					CretaService.File file = CretaService.File.valueOf(jsFile.getName());
+					filesEditor.add(fileEditor, file.getFilename(), AON.AON_ICON_SEGSOCIAL_SMALL);
+				} catch ( Exception e ){
+					String name = jsFile.getFile().indexOf("TrabajadoresTramos") >= 0 ? 
+							CretaService.File.TRABAJADORES_TRAMOS.getFilename() 
+							:CretaService.File.RESPUESTA.getFilename();
+					filesEditor.add(fileEditor, name,AON.AON_ICON_SEGSOCIAL_SMALL);
+				}
+
+				fileEditor.autoRefresh();
+			}
+			
+			
+//			tabLayoutPanel.setVisible(tabLayoutPanel.getTabWidget(0), true);
+			detailPanel.setWidget(filesEditor);
+			
 		}
 		
 	}
@@ -998,6 +1036,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					JsBasesResult result = eval("(" + json + ")");
 					cb.onSuccess(result);
 				} catch ( Throwable caught ) {
+					String json = xhr.getResponseText();
+					Window.alert(json);
 					cb.onFailure(caught);
 				}
 				
@@ -1053,6 +1093,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		requestBuffer.append("--" + boundary + "--\r\n" );		
 		
 		xmlHttpRequest.send(requestBuffer.toString());
+		
 		
 	}
 
