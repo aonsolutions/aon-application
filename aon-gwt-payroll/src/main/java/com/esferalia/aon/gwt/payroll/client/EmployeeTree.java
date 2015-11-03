@@ -616,7 +616,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					return CreateResponseCommand.this.accept(f.getCCC());
 				}
 			};
-
 		}
 
 		// --------------------------------------------------------------------
@@ -642,7 +641,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			mergeEditor.setTitle(file.getFilename());
 			mergeEditor.setFilename(file.getFilename() + ".xml");
 			detailPanel.setWidget(mergeEditor);
-
+			
 			CretaResults cretaResults = new CretaResults(){
 				@Override
 				protected void onBases(JsBasesResult result) {

@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -130,12 +131,17 @@ public abstract class CretaDetail extends Composite {
 
 			@Override
 			void onJsFileOver(JsFile jsFile, NativeEvent event) {
+				if (CretaDetail.this.jsFileToolTipTimer != null)
+					CretaDetail.this.jsFileToolTipTimer.cancel();
+				
 				CretaDetail.this.onJsFileOver(jsFile.getId(),
 						event.getClientX(), event.getClientY());
 			}
 
 			@Override
 			void onJsFileClick(JsFile jsFile, NativeEvent event) {
+				if (CretaDetail.this.jsFileToolTipTimer != null)
+					CretaDetail.this.jsFileToolTipTimer.cancel();
 				CretaDetail.this.onJsFileClick(jsFile.getId(),
 						event.getClientX(), event.getClientY());
 
@@ -143,8 +149,19 @@ public abstract class CretaDetail extends Composite {
 
 			@Override
 			void onJsFileDblClick(JsFile jsFile, NativeEvent event) {
-				CretaDetail.this.onJsFileDblClick(jsFile, event.getClientX(),
-						event.getClientY());
+				if (CretaDetail.this.jsFileToolTipTimer != null)
+					CretaDetail.this.jsFileToolTipTimer.cancel();
+				if (CretaDetail.this.popupTooltip != null)
+					CretaDetail.this.popupTooltip.hide();
+				
+				List<JsFile> jsFiles = new ArrayList<JsFile>(2);
+				jsFiles.add(jsFile);
+				JsRespuesta jsRespuesta = CretaDetail.this.respuestasMap.get(jsFile.getId());
+				if ( jsRespuesta != null )
+					jsFiles.add(jsRespuesta);
+
+				CretaDetail.this.onJsFileDblClick(event.getClientX(),
+						event.getClientY(), jsFiles.toArray(new JsFile[jsFiles.size()]));
 
 			}
 
@@ -274,7 +291,7 @@ public abstract class CretaDetail extends Composite {
 		// NOOP
 	}
 
-	protected void onJsFileDblClick(JsFile jsFile, final int x, final int y) {
+	protected void onJsFileDblClick(final int x, final int y, JsFile ...jsFile ) {
 		// NOOP
 	}
 
@@ -286,8 +303,6 @@ public abstract class CretaDetail extends Composite {
 	}
 
 	private void onJsFileOver(final String key, final int x, final int y) {
-		if (jsFileToolTipTimer != null)
-			jsFileToolTipTimer.cancel();
 
 		jsFileToolTipTimer = new Timer() {
 
@@ -299,6 +314,7 @@ public abstract class CretaDetail extends Composite {
 
 				CretaDetail.this.popupTooltip = MainCreta
 						.showjsRespuestaToolTip(respuestasMap.get(key), x, y);
+				
 			}
 		};
 

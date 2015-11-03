@@ -14,7 +14,10 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
@@ -37,6 +40,12 @@ public class FileEditor extends ResizeComposite {
 
 	@UiField
 	MenuItem saveMenuItem;
+	
+	@UiField
+	FlowPanel barsFlowPanel;
+
+	@UiField
+	DockLayoutPanel dockLayoutPanel;
 
 	private String filename;
 
@@ -49,7 +58,13 @@ public class FileEditor extends ResizeComposite {
 			}
 		});
 	}
-
+	
+	public FileEditor(boolean showBars) {
+		this();
+		barsFlowPanel.setVisible(false);
+		dockLayoutPanel.setWidgetSize(barsFlowPanel, 0);
+	}
+	
 	public void setTitle(String title) {
 		titleLabel.setText(title);
 	}
@@ -73,7 +88,10 @@ public class FileEditor extends ResizeComposite {
 	public void setFilename(String filename) {
 		this.filename = filename;
 	}
-
+	
+	
+	
+	
 	// -----------------------------------------------------------------------
 
 	public void autoRefresh() {
@@ -92,7 +110,8 @@ public class FileEditor extends ResizeComposite {
 	public void setFocus(boolean focused) {
 		codeArea.setFocus(focused);
 	}
-
+	
+	
 	// -----------------------------------------------------------------------
 
 	@UiHandler("saveButton")
@@ -102,7 +121,7 @@ public class FileEditor extends ResizeComposite {
 
 	// -----------------------------------------------------------------------
 
-	private void save() {
+	protected void save() {
 		Document doc = Document.get();
 		AnchorElement anchor = doc.createAnchorElement();
 		anchor.setAttribute("download", filename); // HTML5

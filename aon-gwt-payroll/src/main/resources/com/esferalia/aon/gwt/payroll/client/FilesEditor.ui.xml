@@ -11,12 +11,12 @@
 		
 			
 	</ui:style>
-	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
+	<g:DockLayoutPanel unit="PX" >
 		<g:north size="72"  >
 
-			<g:FlowPanel ui:field="barsFlowPanel">
+			<g:FlowPanel >
 
-				<g:MenuBar ui:field="menuBar" >
+				<g:MenuBar >
 					<g:MenuItem text="Archivo">
 						<g:MenuBar vertical="true">
 							<g:MenuItem ui:field="saveMenuItem"  text="Guardar" />
@@ -24,8 +24,8 @@
 					</g:MenuItem>
 				</g:MenuBar>
 				
-				<g:FlowPanel styleName="aon-finding-title-toolbar" ui:field="toolBar" >
-					<g:HorizontalPanel >
+				<g:FlowPanel styleName="aon-finding-title-toolbar" >
+					<g:HorizontalPanel  >
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal" >
 								<g:Label styleName="aon-outputText" ui:field="titleLabel">Editor</g:Label>
@@ -36,9 +36,11 @@
 								<g:Label styleName="aon-outputText" text=" "/> 
 							</g:HTMLPanel>
 						</g:HTMLPanel>
-						<g:HorizontalPanel styleName="aon-finding-toolbar">
+						<g:HorizontalPanel styleName="aon-finding-toolbar" >
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
 								<g:Button ui:field='saveButton' styleName='aon-finding-toolbar-item aon-icon-save' text="Guardar" /> 
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" ui:field="customToolBarPanel">
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
@@ -48,7 +50,9 @@
 
 		</g:north>
 		<g:center>
-				<codemirror:CodeArea styleName="{style.editor}" ui:field='codeArea' />
+				<g:TabLayoutPanel ui:field="tabLayoutPanel" barHeight="26" barUnit="PX">
+					<!--  codemirror:CodeArea styleName="{style.editor}" ui:field='codeArea' /-->
+				</g:TabLayoutPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 
