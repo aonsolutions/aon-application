@@ -2950,18 +2950,30 @@ public class SQLContractSalaryCalculatorContext extends
 		return years;
 	}
 
-	private double getSalaryHours() {
-		Number weekHours = getVariable(WEEK_HOURS, Number.class);
-		if (weekHours == null) {
-			throw new ExpressionExceptionWrapper(
-					new UndefinedVariablesException(WEEK_HOURS.getName(),
-							SALARY_HOURS.getName()));
-		}
-		Double salaryDays = getVariable(SALARY_DAYS, Double.class);
 
-		return salaryDays == null ? null : Math.ceil(salaryDays
-				* weekHours.doubleValue() / 7); // TODO : \BF Se redondean las
-												// horas hacia arriba ?
+	private double getWorkedHours(Period p) {
+		Map<Integer, ContextVariable> week_days_hours = 
+				new HashMap<Integer, ContextVariable>(){
+			{
+				put(MONDAY, MONDAY_HOURS);
+				put(TUESDAY, TUESDAY_HOURS);
+				put(WEDNESDAY, WEDNESDAY_HOURS);
+				put(THURSDAY, THURSDAY_HOURS);
+				put(FRIDAY, FRIDAY_HOURS);
+				put(SATURDAY, SATURDAY_HOURS);
+				put(SUNDAY, SUNDAY_HOURS);
+			}
+		};
+		return p.daysStream()
+				.filter(day->contractExpressionContext.containsVariable(week_days_hours.get(day.get(DAY_OF_WEEK)), day.getTime(), day.getTime()))
+				.collect(
+				Collectors.summingDouble(day->contractExpressionContext.getVariable(week_days_hours.get(day.get(DAY_OF_WEEK)), day.getTime(), day.getTime(), Number.class).doubleValue())
+				);
+	}
+
+
+	private double getSalaryHours(Period p) {
+		return getWorkedHours(new Period(contractStartDate, contractEndDate));
 	}
 
 	private boolean isIndefinite() {
@@ -3192,13 +3204,6 @@ public class SQLContractSalaryCalculatorContext extends
 					}
 				});
 
-		this.implicitExpressionContext.putVariable(SALARY_HOURS,
-				new LazyTimedVariable<Double>() {
-					@Override
-					public Double create() {
-						return getSalaryHours();
-					}
-				});
 		this.implicitExpressionContext.putVariable(BONUS_DAYS, bonusDays);
 
 		this.implicitExpressionContext.putVariable(INDEFINITE,
@@ -3440,22 +3445,8 @@ public class SQLContractSalaryCalculatorContext extends
 				};
 				ctx.putVariable(SALARY_DAYS, salaryDays);
 			}
-			
-			if (!containsVariable(WORKED_HOURS, period)) {
-				ITimedVariable<Double> workedHours = new ITimedVariable<Double>() {
-					private Map<Integer, ContextVariable> DAYS = 
-							new HashMap<Integer, ContextVariable>(){
-						{
-							put(MONDAY, MONDAY_HOURS);
-							put(TUESDAY, TUESDAY_HOURS);
-							put(WEDNESDAY, WEDNESDAY_HOURS);
-							put(THURSDAY, THURSDAY_HOURS);
-							put(FRIDAY, FRIDAY_HOURS);
-							put(SATURDAY, SATURDAY_HOURS);
-							put(SUNDAY, SUNDAY_HOURS);
-						}
-					};
-					
+			if (!containsVariable(SALARY_HOURS, period)) {
+				ITimedVariable<Double> salaryHours = new ITimedVariable<Double>() {
 					@Override
 					public Period getPeriod() {
 						return period;
@@ -3463,17 +3454,13 @@ public class SQLContractSalaryCalculatorContext extends
 
 					@Override
 					public Double getValue(Period p) {
-						
-						return p.daysStream()
-								.filter(day->ctx.containsVariable(DAYS.get(day.get(DAY_OF_WEEK)), day.getTime(), day.getTime()))
-								.collect(
-								Collectors.summingDouble(day->ctx.getVariable(DAYS.get(day.get(DAY_OF_WEEK)), day.getTime(), day.getTime(), Number.class).doubleValue())
-								);
+						return getSalaryHours(p);
 					}
 
 				};
-				ctx.putVariable(WORKED_HOURS, workedHours);
+				ctx.putVariable(SALARY_HOURS, salaryHours);
 			}
+			
 		}
 
 		List<Period> quote = contract;
@@ -3606,7 +3593,51 @@ public class SQLContractSalaryCalculatorContext extends
 							userWorkedDays, workedDays);
 			}
 
+			ITimedVariable<Double> workedHours = new ITimedVariable<Double>() {
+				private Map<Integer, ContextVariable> DAYS = 
+						new HashMap<Integer, ContextVariable>(){
+					{
+						put(MONDAY, MONDAY_HOURS);
+						put(TUESDAY, TUESDAY_HOURS);
+						put(WEDNESDAY, WEDNESDAY_HOURS);
+						put(THURSDAY, THURSDAY_HOURS);
+						put(FRIDAY, FRIDAY_HOURS);
+						put(SATURDAY, SATURDAY_HOURS);
+						put(SUNDAY, SUNDAY_HOURS);
+					}
+				};
+				
+				@Override
+				public Period getPeriod() {
+					return period;
+				}
+
+				@Override
+				public Double getValue(Period p) {
+					
+					return p.daysStream()
+							.filter(day->ctx.containsVariable(DAYS.get(day.get(DAY_OF_WEEK)), day.getTime(), day.getTime()))
+							.collect(
+							Collectors.summingDouble(day->ctx.getVariable(DAYS.get(day.get(DAY_OF_WEEK)), day.getTime(), day.getTime(), Number.class).doubleValue())
+							);
+				}
+
+			};
+			
+			ITimedVariable<?> userWorkedHours = getExpressionContext()
+					.getVariable(WORKED_HOURS, period.getStart(),
+							period.getEnd());
+
+			if (userWorkedDays == null) {
+				ctx.putVariable(WORKED_HOURS, workedHours);
+			} else {
+				if (listener != null)
+					listener.onRedefinedImplicit(WORKED_HOURS.getName(),
+							userWorkedHours, workedHours);
+			}
+			
 		}
+		
 	}
 
 
