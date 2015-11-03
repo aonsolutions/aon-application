@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showWorkdayHoursWindow">
+		<aon:if test="#{contract.showWorkdayHoursWindow}">
+			<rich:modalPanel id="workdayHoursPanel" 
+				width="650" height="350"
+				minWidth="650" minHeight="300"
+				showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.sepe_contrata_contract_working_day_duration}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="contract_panel, showWorkdayHoursWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{contract.showWorkdayHoursWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="workdayHoursForm">
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div style="width:100%">
+							<aon:div styleClass="aon-popupWindow-content-internal">
+								<aon:div style="width:99%">
+									
+									<aon:div styleClass="aon-toolbar">
+										<aon:commandButton value="#{bundle.aon_save}" id="workdayHours-accept"
+											rendered="#{not empty contract.workdayManager.weekDayHours}"
+											actionListener="#{contract.workdayManager.onAccept}"
+											styleClass="aon-finding-toolbar-item aon-icon-accept"
+											reRender="workdayHoursForm" />
+										<aon:commandButton value="#{bundle.aon_cancel}" id="workdayHours-cancel" 
+											rendered="#{not empty contract.workdayManager.weekDayHours}"
+											actionListener="#{contract.workdayManager.onInit}"
+											styleClass="aon-finding-toolbar-item aon-icon-cancel"
+											reRender="workdayHoursForm" ajaxSingle="true" />
+										<aon:commandButton value="#{bundle.aon_reset}" id="workdayHours-reset" 
+											rendered="#{empty contract.workdayManager.weekDayHours}"
+											actionListener="#{contract.workdayManager.onReset}"
+											styleClass="aon-finding-toolbar-item aon-icon-reset"
+											focus="monday_hours"
+											reRender="workdayHoursForm" ajaxSingle="true" />
+									</aon:div>
+									
+									<aon:div style="margin-top: 2px;">
+										
+										<aon:panel rendered="#{not empty contract.workdayManager.weekDayHours}" >
+											<f:facet name="header">
+												<aon:outputText value="#{bundle.aon_reset}" />
+											</f:facet>
+											<aon:panelGrid columns="2" styleClass="aon-width-all"
+												columnClasses="aon-panelGrid-odd aon-width-100, aon-panelGrid-even aon-width-auto">
+												<aon:panelGroup>
+													<aon:outputLabel for="workdayHours-from" 
+														value="#{bundle.aon_date_from}" />
+													<aon:outputText value="&#160;" />
+													<aon:outputText value="#{bundle.aon_date}" />
+												</aon:panelGroup>
+												<aon:selectInputDate id="workdayHours-from" 
+													value="#{contract.workdayManager.workdayDate}" required="true"
+													disabled="#{contract.workdayManager.model.rowCount==0}"
+													inputSize="10" renderAsPopup="true" enableManualInput="true"
+													timeZone="#{timeZoneController.timeZone}"
+													popupDateFormat="#{bundle.aon_date_pattern}" />
+											</aon:panelGrid>
+											
+											<aon:panelGrid id="partially-week-day-hours" columns="14" styleClass="aon-width-all">
+												<aon:outputText value="#{bundle.aon_calendar_monday_abr}" />
+												<aon:inputText id="monday_hours" size="2" maxlength="5"
+													reRender="partially-week-day-hours" focus="tuesday_hours"
+													value="#{contract.workdayManager.weekDayHours[0].expression}" >
+													<f:validateDoubleRange minimum="0" maximum="23.59" />
+												</aon:inputText>
+												
+												<aon:outputText value="#{bundle.aon_calendar_tuesday_abr}" />
+												<aon:inputText id="tuesday_hours" size="2" maxlength="5"
+													reRender="partially-week-day-hours" focus="wednesday_hours"
+													value="#{contract.workdayManager.weekDayHours[1].expression}" >
+													<f:validateDoubleRange minimum="0" maximum="23.59" />
+												</aon:inputText>
+												
+												<aon:outputText value="#{bundle.aon_calendar_wednesday_abr}" />
+												<aon:inputText id="wednesday_hours" size="2" maxlength="5"
+													reRender="partially-week-day-hours" focus="thursday_hours"
+													value="#{contract.workdayManager.weekDayHours[2].expression}" >
+													<f:validateDoubleRange minimum="0" maximum="23.59" />
+												</aon:inputText>
+												
+												<aon:outputText value="#{bundle.aon_calendar_thursday_abr}" />
+												<aon:inputText id="thursday_hours" size="2" maxlength="5"
+													reRender="partially-week-day-hours" focus="friday_hours"
+													value="#{contract.workdayManager.weekDayHours[3].expression}" >
+													<f:validateDoubleRange minimum="0" maximum="23.59" />
+												</aon:inputText>
+												
+												<aon:outputText value="#{bundle.aon_calendar_friday_abr}" />
+												<aon:inputText id="friday_hours" size="2" maxlength="5"
+													reRender="partially-week-day-hours" focus="saturday_hours"
+													value="#{contract.workdayManager.weekDayHours[4].expression}" >
+													<f:validateDoubleRange minimum="0" maximum="23.59" />
+												</aon:inputText>
+											
+												<aon:outputText value="#{bundle.aon_calendar_saturday_abr}" />
+												<aon:inputText id="saturday_hours" size="2" maxlength="5"
+													reRender="partially-week-day-hours" focus="sunday_hours"
+													value="#{contract.workdayManager.weekDayHours[5].expression}" >
+													<f:validateDoubleRange minimum="0" maximum="23.59" />
+												</aon:inputText>
+												
+												<aon:outputText value="#{bundle.aon_calendar_sunday_abr}" />
+												<aon:inputText id="sunday_hours" size="2" maxlength="5"
+													reRender="partially-week-day-hours" 
+													value="#{contract.workdayManager.weekDayHours[6].expression}" >
+													<f:validateDoubleRange minimum="0" maximum="23.59" />
+												</aon:inputText>
+											</aon:panelGrid>
+										</aon:panel> 
+										
+										<aon:dataTable var="to" rowKeyVar="toIndex" sortMode="multi"
+											value="#{contract.workdayManager.model}" rows="5" 
+											rendered="#{contract.workdayManager.model.rowCount!=0}">
+									
+											<aon:rowSelector toggleOnClick="#{false}" />
+																			
+											<aon:column styleClass="aon-editDataTable-dateColumn aon-vertical-align-top">
+												<f:facet name="header">
+													<aon:outputText value="#{bundle.aon_date_from}" />
+												</f:facet>
+												<aon:outputText value="#{to[0].startDate}">
+													<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+														timeZone="#{timeZoneController.timeZoneId}" />
+												</aon:outputText>	
+											</aon:column>
+											<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top">
+												<f:facet name="header">
+													<aon:outputText value="#{bundle.aon_date_to}" />
+												</f:facet>
+												<aon:outputText value="#{to[0].endDate}" >
+													<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+														timeZone="#{timeZoneController.timeZoneId}" />
+												</aon:outputText>	
+											</aon:column>
+											<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top">
+												<f:facet name="header">
+													<aon:outputText value="#{bundle.aon_duration}" />
+												</f:facet>
+												<aon:panelGrid columns="14" styleClass="aon-width-all">
+													<aon:outputText value="#{bundle.aon_calendar_monday_abr}" />
+													<aon:div style="width:20px;">
+														<aon:outputText value="#{to[0].expression}" />
+													</aon:div>
+													
+													<aon:outputText value="#{bundle.aon_calendar_tuesday_abr}" />
+													<aon:div style="width:20px;">
+														<aon:outputText value="#{to[1].expression}" />
+													</aon:div>
+													
+													<aon:outputText value="#{bundle.aon_calendar_wednesday_abr}" />
+													<aon:div style="width:20px;">
+														<aon:outputText value="#{to[2].expression}" />
+													</aon:div>
+													
+													<aon:outputText value="#{bundle.aon_calendar_thursday_abr}" />
+													<aon:div style="width:20px;">
+														<aon:outputText value="#{to[3].expression}" />
+													</aon:div>
+													
+													<aon:outputText value="#{bundle.aon_calendar_friday_abr}" />
+													<aon:div style="width:20px;">
+														<aon:outputText value="#{to[4].expression}" />
+													</aon:div>
+													
+													<aon:outputText value="#{bundle.aon_calendar_saturday_abr}" />
+													<aon:div style="width:20px;">
+														<aon:outputText value="#{to[5].expression}" />
+													</aon:div>
+													
+													<aon:outputText value="#{bundle.aon_calendar_sunday_abr}" />
+													<aon:div style="width:20px;">
+														<aon:outputText value="#{to[6].expression}" />
+													</aon:div>
+												</aon:panelGrid>
+											</aon:column>
+											<aon:column styleClass="aon-editDataTable-buttonsColumn aon-vertical-align-top">
+												<f:facet name="header">
+													<aon:outputText value="&#160;" />
+												</f:facet>
+												<aon:commandButton id="workdayHours-remove" 
+													value="&#160;" title="#{bundle.aon_remove}"
+													rendered="#{toIndex==0}"  
+													actionListener="#{contract.workdayManager.onRemove}"
+													styleClass="aon-editDataTable-button aon-icon-delete"
+													reRender="workdayHoursForm" />
+											</aon:column>
+										</aon:dataTable>
+										
+									</aon:div>
+									
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:form>
+				
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+</ui:composition>

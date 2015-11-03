@@ -136,6 +136,19 @@ public class ContractController extends BasicController {
 	private boolean showContractEmbargoWindow;
 	private boolean showContractBonusWindow;
 	private boolean showContractSalaryInfoWindow;
+	private boolean showWorkdayHoursWindow;
+	
+	private WorkdayManager workdayManager;
+	
+	public WorkdayManager getWorkdayManager() {
+		if(workdayManager==null){
+			workdayManager = new WorkdayManager();
+		}
+		return workdayManager;
+	}
+	public void setWorkdayManager(WorkdayManager workdayManager) {
+		this.workdayManager = workdayManager;
+	}
 	
 	public SalaryInfoHandler getSalaryInfoHandler() {
 		return salaryInfoHandler;
@@ -217,6 +230,12 @@ public class ContractController extends BasicController {
 	}
 	public void setShowContractBonusWindow(boolean showContractBonusWindow) {
 		this.showContractBonusWindow = showContractBonusWindow;
+	}
+	public boolean isShowWorkdayHoursWindow() {
+		return showWorkdayHoursWindow;
+	}
+	public void setShowWorkdayHoursWindow(boolean showWorkdayHoursWindow) {
+		this.showWorkdayHoursWindow = showWorkdayHoursWindow;
 	}
 	public Agreement getAgreement() {
 		return agreement;
@@ -2205,4 +2224,267 @@ public class ContractController extends BasicController {
 		
 	}
 	
+	public class WorkdayManager {
+		private Date workdayDate;
+		private ContractData[] weekDayHours;
+		private List<ContractData[]> weekList;
+		
+		public Date getWorkdayDate() {
+			return workdayDate;
+		}
+		public void setWorkdayDate(Date workdayDate) {
+			this.workdayDate = workdayDate;
+		}
+		public ContractData[] getWeekDayHours() {
+			return weekDayHours;
+		}
+		public void setWeekDayHours(ContractData[] weekDayHours) {
+			this.weekDayHours = weekDayHours;
+		}
+		
+		public List<ContractData[]> getWeekList(){
+			if(weekList==null){
+				loadWeekList();
+			}
+			return weekList;
+		}
+		public int getWeekListCount(){
+			return getWeekList()==null?0:getWeekList().size();
+		}
+		public ContractData[] getCurrentWeekDayHours(){
+			List<ContractData[]> list = getWeekList();
+			if(list!=null && list.size()>0){
+				return list.get(0);
+			}
+			return null;
+		}
+		public Double getWeekHours(){
+			Double total = 0.0;
+			ContractData[] weekDayHours = getCurrentWeekDayHours();
+			for(int i=0; i<7; i++){
+				if( weekDayHours[i]!=null && NumberUtils.isNumber(weekDayHours[i].getExpression())){
+					total += Double.parseDouble(weekDayHours[i].getExpression());
+				}
+			}
+			return total;
+		}
+		
+		public void onInit(ActionEvent event){
+			weekDayHours = null;
+			workdayDate = null;
+			weekList = null;
+		}
+			
+		public void onReset(ActionEvent event){
+			weekDayHours = new ContractData[7];
+			for(int i=0; i<7;i++){
+				weekDayHours[i] = new ContractData();
+			}
+			if(weekList==null || weekList.size()==0){
+				setWorkdayDate(((Contract)getTo()).getStartDate());
+			} else {
+				setWorkdayDate(new Date());
+			}
+		}
+		
+		public void onAccept(ActionEvent event) throws ManagerBeanException{
+			
+			checkDate();
+			
+			closePrevious();
+			
+			Double weekHours = 0.0;
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			for(int i=0; i<7;i++){
+				ContractData data = weekDayHours[i];
+				if(data==null)
+					data = new ContractData();
+				if(i==0){
+					data.setName(ContextVariable.MONDAY_HOURS.getName());
+				} else if(i==1){
+					data.setName(ContextVariable.TUESDAY_HOURS.getName());
+				} else if(i==2){
+					data.setName(ContextVariable.WEDNESDAY_HOURS.getName());
+				} else if(i==3){
+					data.setName(ContextVariable.THURSDAY_HOURS.getName());
+				} else if(i==4){
+					data.setName(ContextVariable.FRIDAY_HOURS.getName());
+				} else if(i==5){
+					data.setName(ContextVariable.SATURDAY_HOURS.getName());
+				} else if(i==6){
+					data.setName(ContextVariable.SUNDAY_HOURS.getName());
+				}
+				if(data.getExpression()==null || data.getExpression().equals(""))
+					data.setExpression("0.0");
+				data.setStartDate(getWorkdayDate());
+				data.setContract((Contract) getTo());
+				data.setDomain(((Contract) getTo()).getDomain());
+				bean.insert(data);
+				
+				if(data.getExpression()!=null && NumberUtils.isNumber(data.getExpression())){
+					weekHours += Double.parseDouble(data.getExpression());
+				}
+			}
+			
+			ContractData data = new ContractData();
+			data.setName(ContextVariable.WEEK_HOURS.getName());
+			data.setExpression(weekHours.toString());
+			data.setStartDate(getWorkdayDate());
+			data.setContract((Contract) getTo());
+			data.setDomain(((Contract) getTo()).getDomain());
+			bean.insert(data);
+			
+			onInit(event);
+		}
+		
+		private void checkDate() {
+			Date lastDate = null;
+			if(weekList!=null && weekList.size()>0){
+				ContractData[] week = weekList.get(0);
+				for(ContractData data: week){
+					if(data!=null && data.getId()!=null){
+						lastDate = data.getStartDate();
+					}
+				}
+				if(workdayDate!=null && !workdayDate.after(lastDate)){
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(lastDate);
+					cal.add(Calendar.DAY_OF_MONTH, 1);
+					workdayDate = cal.getTime();
+					AonUtil.addErrorMessage("La fecha se solapa datos anteriores.");
+					throw new AbortProcessingException("La fecha se solapa datos anteriores.");
+				}
+			}
+		}
+		public void onRemove(ActionEvent event) throws ManagerBeanException{
+			openPrevious();
+			
+			Date selectedDate = null;
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			ContractData[] week = weekList.get(0);
+			for(ContractData data: week){
+				if(data!=null && data.getId()!=null){
+					selectedDate = data.getStartDate();
+					bean.remove(data);
+				}
+			}
+			
+			List<ITransferObject> list = getWeekHours(selectedDate);
+			for(ITransferObject to: list){
+				ContractData data = (ContractData) to;
+				if(data!=null && data.getId()!=null){
+					bean.remove(data);
+				}
+			}
+			
+			onInit(event);
+		}
+		
+		private void closePrevious() throws ManagerBeanException {
+			Date selectedDate = null;
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			if(weekList!=null && weekList.size()>0){
+				ContractData[] week = weekList.get(0);
+				for(ContractData data: week){
+					if(data!=null && data.getId()!=null){
+						selectedDate = data.getStartDate();
+						Calendar cal = Calendar.getInstance();
+						cal.setTime(workdayDate);
+						cal.add(Calendar.DAY_OF_MONTH, -1);
+						data.setEndDate(cal.getTime());
+						bean.update(data);
+					}
+				}
+			}
+			
+			List<ITransferObject> list = getWeekHours(selectedDate);
+			for(ITransferObject to: list){
+				ContractData data = (ContractData) to;
+				if(data!=null && data.getId()!=null){
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(workdayDate);
+					cal.add(Calendar.DAY_OF_MONTH, -1);
+					data.setEndDate(cal.getTime());
+					bean.update(data);
+				}
+			}
+		}
+		
+		private void openPrevious() throws ManagerBeanException {
+			Date selectedDate = null;
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			if(weekList!=null && weekList.size()>1){
+				ContractData[] week = weekList.get(1);
+				for(ContractData data: week){
+					if(data!=null && data.getId()!=null){
+						selectedDate = data.getStartDate();
+						data.setEndDate(null);
+						bean.update(data);
+					}
+				}
+			}
+			
+			List<ITransferObject> list = getWeekHours(selectedDate);
+			for(ITransferObject to: list){
+				ContractData data = (ContractData) to;
+				if(data!=null && data.getId()!=null){
+					data.setEndDate(null);
+					bean.update(data);
+				}
+			}
+		}
+		
+		private List<ITransferObject> getWeekHours(Date date) throws ManagerBeanException{
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), ((Contract)getTo()).getId());
+//			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), ((Contract)getTo()).getStartDate());
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), date);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), ContextVariable.WEEK_HOURS.getName());
+//			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE));
+			return bean.getList(criteria);
+		}
+		
+		public DataModel getModel(){
+			return new SerializableListDataModel( getWeekList() );
+		}
+		
+		public void loadWeekList(){
+			try {
+				List<ITransferObject> hoursList = ContractUtils.getContractWorkdayHours((Contract) getTo());
+				weekList = new LinkedList<ContractData[]>();
+				ContractData[] week = null;
+				ContractData previous = null;
+				for(ITransferObject to: hoursList){
+					ContractData data = (ContractData) to;
+					if(previous==null || data.getStartDate().before(previous.getStartDate())){
+						week = new ContractData[7];
+						weekList.add(week);
+					}
+					
+					if(data.getName().equals(ContextVariable.MONDAY_HOURS.getName())){
+						week[0] = data;
+					} else if(data.getName().equals(ContextVariable.TUESDAY_HOURS.getName())){
+						week[1] = data;
+					} else if(data.getName().equals(ContextVariable.WEDNESDAY_HOURS.getName())){
+						week[2] = data;
+					} else if(data.getName().equals(ContextVariable.THURSDAY_HOURS.getName())){
+						week[3] = data;
+					} else if(data.getName().equals(ContextVariable.FRIDAY_HOURS.getName())){
+						week[4] = data;
+					} else if(data.getName().equals(ContextVariable.SATURDAY_HOURS.getName())){
+						week[5] = data;
+					} else if(data.getName().equals(ContextVariable.SUNDAY_HOURS.getName())){
+						week[6] = data;
+					}
+					
+					previous = data;
+				}
+			} catch (ManagerBeanException e) {
+				String msg = "onSearch contract workday hours. (" +e.getMessage() + ")"; 
+				LOGGER.error(msg, e);
+			}
+		}
+		
+	}
 }

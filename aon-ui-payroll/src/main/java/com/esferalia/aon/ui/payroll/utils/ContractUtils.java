@@ -30,6 +30,8 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -1462,6 +1464,26 @@ public class ContractUtils implements Serializable {
 			DatabaseUtil.closeQuietly(conn);
 		}
 		return null;
+	}
+	
+	public static List<ITransferObject> getContractWorkdayHours(Contract contract) throws ManagerBeanException{
+		String[] varList = {ContextVariable.MONDAY_HOURS.getName(),
+				ContextVariable.TUESDAY_HOURS.getName(), ContextVariable.WEDNESDAY_HOURS.getName(),
+				ContextVariable.THURSDAY_HOURS.getName(), ContextVariable.FRIDAY_HOURS.getName(),
+				ContextVariable.SATURDAY_HOURS.getName(), ContextVariable.SUNDAY_HOURS.getName() };
+		
+		IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+		criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), contract.getStartDate());
+		if(contract.getEndDate()!=null){
+			Expression endNull = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
+			Expression endGTstart = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), contract.getStartDate());
+			criteria.addExpression(ExpressionUtilities.getOrExpression(endNull, endGTstart));
+		}
+		criteria.addInExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), varList);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), false);
+		return bean.getList(criteria);
 	}
 	
 	public static String getMonthName(Date date, Locale locale){

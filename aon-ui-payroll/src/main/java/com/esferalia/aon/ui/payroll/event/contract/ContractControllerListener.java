@@ -107,6 +107,8 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.setEnterpriseCCCs(null);
 		controller.setParams(null);
 		controller.setContractUtils(null);
+		controller.setShowWorkdayHoursWindow(false);
+		controller.setWorkdayManager(null);
 		
 		try {
 			Contract contract = (Contract) controller.getTo();
@@ -167,6 +169,8 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.setParams(null);
 		contract.setStartDate(new Date());
 		contract.setSeniorityDate(contract.getStartDate());
+		controller.setShowWorkdayHoursWindow(false);
+		controller.setWorkdayManager(null);
 		try {
 			ApplicationParameter defaultContractCode = params.getParameter(AppParam.PAY_default_contractCode_PAY.getValue());
 			if(defaultContractCode!=null && defaultContractCode.getValue()!=null){
