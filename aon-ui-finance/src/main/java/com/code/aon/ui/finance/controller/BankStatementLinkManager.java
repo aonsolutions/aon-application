@@ -240,10 +240,11 @@ public class BankStatementLinkManager implements IFinanceConstants, Serializable
 			Integer sourceId = (Integer)objs[2];
 			Double amount = (Double)objs[3];
 			if (source == StatementLinkSource.FINANCE_TRACKING) {
+				boolean checkPayment = statement.isReturned() ? payment : !payment;
 				IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 				criteria = new Criteria();
 				criteria.addEqualExpression(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_ID), sourceId);
-				criteria.addEqualExpression(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_PAYMENT), new Boolean(!payment));
+				criteria.addEqualExpression(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_PAYMENT), new Boolean(checkPayment));
 				if (financeTrackingBean.getCount(criteria) == 1) {
 					amount = CommonUtil.round(0 - amount);
 				}
