@@ -443,12 +443,20 @@ td.datePickerMonth,
 }
 
 
-@sprite .gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
+@sprite .gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
 	gwt-image: "tabBar";
 	width: auto;
 	height:auto; 
 	background-repeat: repeat-x;
 } 
+
+@sprite .gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
+	width: auto;
+	height:auto; 
+	gwt-image: "tabBar";
+	background-repeat: repeat-x;
+} 
+
 .gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelContentContainer {
     border: none;
 }
