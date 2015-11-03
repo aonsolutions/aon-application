@@ -26,7 +26,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
@@ -38,6 +40,7 @@ import com.esferalia.aon.payroll.tgss.creta.Bases.BasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Borrador;
 import com.esferalia.aon.payroll.tgss.creta.Calculo;
 import com.esferalia.aon.payroll.tgss.creta.Confirmacion;
+import com.esferalia.aon.payroll.tgss.creta.IndentXMLStreamWriter;
 import com.esferalia.aon.payroll.tgss.creta.TrabajadoresTramos;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -93,7 +96,6 @@ public class CretaServlet extends HttpServlet implements
 	public void visitBases(HttpServletRequest req, HttpServletResponse resp)
 			throws Exception {
 
-		
 		Connection connection = getConnection();
 		resp.setContentType("text/html;");
 
@@ -106,16 +108,18 @@ public class CretaServlet extends HttpServlet implements
 		// boolean acceptPrevBases = AonStringUtils.equalsIgnoreCase("on",
 		// req.getParameter(CretaService.Parameter.ACEPTAR_BASES_ANTERIORES
 		// .name()));
-		
+
 		List<String> defaultsList = new ArrayList<String>();
-		defaultsList.addAll(Arrays.asList( "51=M", "737=0"));
-		
-		String paramDefaults [] = req.getParameterValues(CretaService.Parameter.DEFAULTS.name());
-		if ( paramDefaults != null && paramDefaults.length > 0 )
+		defaultsList.addAll(Arrays.asList("51=M", "737=0"));
+
+		String paramDefaults[] = req
+				.getParameterValues(CretaService.Parameter.DEFAULTS.name());
+		if (paramDefaults != null && paramDefaults.length > 0)
 			defaultsList.addAll(Arrays.asList(paramDefaults));
-		
-		String defaults [] = defaultsList.toArray(new String[defaultsList.size()]);
-		
+
+		String defaults[] = defaultsList
+				.toArray(new String[defaultsList.size()]);
+
 		EventsPickerBasesCallback pickerBasesCb = new EventsPickerBasesCallback();
 
 		PrintWriter os = resp.getWriter();
@@ -126,40 +130,44 @@ public class CretaServlet extends HttpServlet implements
 		List<InputStream> trabajadoresYTramosIss = new ArrayList<InputStream>();
 		for (Part part : req.getParts()) {
 			try {
-				CretaService.File file  = CretaService.File.valueOf(part.getName());
-				if ( file == CretaService.File.TRABAJADORES_TRAMOS )
+				CretaService.File file = CretaService.File
+						.valueOf(part.getName());
+				if (file == CretaService.File.TRABAJADORES_TRAMOS)
 					trabajadoresYTramosIss.add(part.getInputStream());
-				else if ( file == CretaService.File.RESPUESTA )
+				else if (file == CretaService.File.RESPUESTA)
 					respuestasIss.add(part.getInputStream());
-			} catch (IllegalArgumentException e){
-				
+			} catch (IllegalArgumentException e) {
+
 			}
 		}
-		os.printf("\"full_bases\":\"%s\",\r\n", generateBases(connection, true,
-				false, false, nafs, defaults, trabajadoresYTramosIss, respuestasIss, pickerBasesCb));
-		
+		os.printf("\"full_bases\":\"%s\",\r\n",
+				generateBases(connection, true, false, false, nafs, defaults,
+						trabajadoresYTramosIss, respuestasIss, pickerBasesCb));
+
 		respuestasIss.clear();
 		trabajadoresYTramosIss.clear();
 		for (Part part : req.getParts()) {
 			try {
-				CretaService.File file  = CretaService.File.valueOf(part.getName());
-				if ( file == CretaService.File.TRABAJADORES_TRAMOS )
+				CretaService.File file = CretaService.File
+						.valueOf(part.getName());
+				if (file == CretaService.File.TRABAJADORES_TRAMOS)
 					trabajadoresYTramosIss.add(part.getInputStream());
-				else if ( file == CretaService.File.RESPUESTA )
+				else if (file == CretaService.File.RESPUESTA)
 					respuestasIss.add(part.getInputStream());
-			} catch (IllegalArgumentException e){
-				
+			} catch (IllegalArgumentException e) {
+
 			}
 		}
-		os.printf("\"diff_bases\":\"%s\",\r\n", generateBases(connection, true,
-				true, true, nafs, defaults, trabajadoresYTramosIss, respuestasIss));
+		os.printf("\"diff_bases\":\"%s\",\r\n",
+				generateBases(connection, true, true, true, nafs, defaults,
+						trabajadoresYTramosIss, respuestasIss));
 
 		os.printf("\"errors\":%s,\r\n", toJSON(pickerBasesCb.errors));
-		
+
 		os.printf("\"unknown\":%s,\r\n", toJSON(pickerBasesCb.unknown));
 
 		os.printf("\"warnings\":%s,\r\n", toJSON(pickerBasesCb.warnings));
-		
+
 		os.printf("\"messages\":[]\r\n");
 
 		os.println("}");
@@ -317,21 +325,14 @@ public class CretaServlet extends HttpServlet implements
 
 	private static String generateBases(Connection connection, boolean comments,
 			boolean skipExisting, boolean acceptPrevBases, String nafs[],
-			String defaults[], 
-			List<InputStream> trabajadoresYTramosIss,
-			List<InputStream> respuestasIss,
-			BasesCallback... cbs) throws JAXBException, XMLStreamException,
+			String defaults[], List<InputStream> trabajadoresYTramosIss,
+			List<InputStream> respuestasIss, BasesCallback... cbs)
+					throws JAXBException, XMLStreamException,
 					FactoryConfigurationError, IOException {
 
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		Bases.generate(connection, 
-				comments, 
-				skipExisting, 
-				acceptPrevBases,
-				nafs, 
-				defaults, 
-				trabajadoresYTramosIss,
-				respuestasIss, os, cbs);
+		Bases.generate(connection, comments, skipExisting, acceptPrevBases,
+				nafs, defaults, trabajadoresYTramosIss, respuestasIss, os, cbs);
 		os.close();
 		return String.format("%s", URLEncoder.encode(os.toString(), "UTF-8"));
 
@@ -342,11 +343,14 @@ public class CretaServlet extends HttpServlet implements
 	private static <T> String marshall2Json(T t) {
 		try {
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			Utils.marshal(t, os);
+			XMLStreamWriter xsw = new IndentXMLStreamWriter(
+					XMLOutputFactory.newInstance().createXMLStreamWriter(os),
+					"  ");
+			Utils.marshal(t, xsw);
 			os.close();
 			return String.format("%s",
 					URLEncoder.encode(os.toString(), "UTF-8"));
-		} catch (JAXBException | IOException e) {
+		} catch (JAXBException | IOException | XMLStreamException e) {
 		}
 		return "";
 	}
@@ -390,7 +394,7 @@ public class CretaServlet extends HttpServlet implements
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(errs.getError().stream()
 				.map(err -> String.format("{\"code\":\"%s\", \"msg\":\"%s\"}",
-						err.getCodigoErr(),  safeEncode(err.getDescripcion())))
+						err.getCodigoErr(), safeEncode(err.getDescripcion())))
 				.collect(Collectors.joining(",")));
 
 		errs.getError().stream()
@@ -427,7 +431,7 @@ public class CretaServlet extends HttpServlet implements
 		String toJSON();
 	}
 
-	private static class Event< T extends Event<?>> implements JSON {
+	private static class Event<T extends Event<?>> implements JSON {
 
 		private String message;
 
@@ -437,7 +441,7 @@ public class CretaServlet extends HttpServlet implements
 
 		public T setMessage(String message) {
 			this.message = message;
-			return (T)this;
+			return (T) this;
 		}
 
 		// --------------------------------------------------------------- JSON
@@ -448,65 +452,59 @@ public class CretaServlet extends HttpServlet implements
 					message);
 		}
 	}
-	
+
 	private static class UnknownDato extends Event<UnknownDato> {
-		
+
 		private DatoSolicitado dato;
-		private Liquidacion<?,?,?,?> liquidacion;
-		
+		private Liquidacion<?, ?, ?, ?> liquidacion;
+
 		public UnknownDato setDato(DatoSolicitado dato) {
 			this.dato = dato;
 			return this;
 		}
-		
+
 		public UnknownDato setLiquidacion(Liquidacion<?, ?, ?, ?> liquidacion) {
 			this.liquidacion = liquidacion;
 			return this;
 		}
-		
+
 		// --------------------------------------------------------------- JSON
 
 		@Override
 		public String toJSON() {
-			return String.format(
-					"{" 
-							+ "\"message\":\"%s\",\r\n" 
-//					+ "\"ccc\":{\r\n" 
-//					+ "\"number\":\"%s\",\r\n" 
-//					+ "\"regime\":\"%s\",\r\n" 
-//					+ "\"province\":\"%s\"\r\n" 
-//					+ "},\r\n" 
-//					+ "\"from\":{\r\n" 
-//					+ "\"month\":\"%s\",\r\n" 
-//					+ "\"year\":\"%s\"\r\n" 
-//					+ "}," 
-//					+ "\"to\":{\r\n" 
-//					+ "\"month\":\"%s\",\r\n" 
-//					+ "\"year\":\"%s\"\r\n" 
-//					+ "}," 
-					+ "\"type\":\"%s\",\r\n" 
-					+ "\"code\":\"%s\",\r\n" 
-					+ "\"mandatory\":%s\r\n" 
-					+ "}",
-					
-					getMessage(),
+			return String.format("{" + "\"message\":\"%s\",\r\n"
+			// + "\"ccc\":{\r\n"
+			// + "\"number\":\"%s\",\r\n"
+			// + "\"regime\":\"%s\",\r\n"
+			// + "\"province\":\"%s\"\r\n"
+			// + "},\r\n"
+			// + "\"from\":{\r\n"
+			// + "\"month\":\"%s\",\r\n"
+			// + "\"year\":\"%s\"\r\n"
+			// + "},"
+			// + "\"to\":{\r\n"
+			// + "\"month\":\"%s\",\r\n"
+			// + "\"year\":\"%s\"\r\n"
+			// + "},"
+					+ "\"type\":\"%s\",\r\n" + "\"code\":\"%s\",\r\n"
+					+ "\"mandatory\":%s\r\n" + "}",
 
-//					liquidacion.getCcc().getNumero(),
-//					liquidacion.getCcc().getRegimen(),
-//					liquidacion.getCcc().getProvincia(),
-					
-//					liquidacion.getPeriodoDesde().getMes(),
-//					liquidacion.getPeriodoDesde().getAnho(),
-//					
-//					liquidacion.getPeriodoHasta().getMes(),
-//					liquidacion.getPeriodoHasta().getAnho(),
+			getMessage(),
 
-					dato.getTipoDato(),
-					dato.getCodigo(),
-					"B".equals(dato.getIndicadorObligatoriedad())
-					);
+			// liquidacion.getCcc().getNumero(),
+			// liquidacion.getCcc().getRegimen(),
+			// liquidacion.getCcc().getProvincia(),
+
+			// liquidacion.getPeriodoDesde().getMes(),
+			// liquidacion.getPeriodoDesde().getAnho(),
+			//
+			// liquidacion.getPeriodoHasta().getMes(),
+			// liquidacion.getPeriodoHasta().getAnho(),
+
+			dato.getTipoDato(), dato.getCodigo(),
+					"B".equals(dato.getIndicadorObligatoriedad()));
 		}
-		
+
 	}
 
 	private static class EventsPickerBasesCallback implements BasesCallback {
@@ -515,51 +513,47 @@ public class CretaServlet extends HttpServlet implements
 		private List<Event> warnings = new ArrayList<Event>();
 
 		private List<UnknownDato> unknown = new ArrayList<UnknownDato>();
-		
+
 		// ------------------------------------------------------------- Errors
-		
+
 		@Override
 		public void unknownDato(Liquidacion<?, ?, ?, ?> liquidacion,
-				DatoSolicitado datoSolicitado, LiquidacionBuilder liquidacionBuilder) {
+				DatoSolicitado datoSolicitado,
+				LiquidacionBuilder liquidacionBuilder) {
 			boolean mandatory = "B".equalsIgnoreCase(
 					datoSolicitado.getIndicadorObligatoriedad());
 			String message = String.format(
-					
-					"Lo sentimos. %s (%s) no está soportado en AON SOLUTIONS ( Liquidaci\u00F3n %s%s%s).",
-					
-					getDescription(datoSolicitado),
-					
-					mandatory ? "Obligatorio" : "Opcional",
-					
-					liquidacion.getCcc().getProvincia(),
+
+			"Lo sentimos. %s (%s) no está soportado en AON SOLUTIONS ( Liquidaci\u00F3n %s%s%s).",
+
+			getDescription(datoSolicitado),
+
+			mandatory ? "Obligatorio" : "Opcional",
+
+			liquidacion.getCcc().getProvincia(),
 					liquidacion.getCcc().getRegimen(),
 					liquidacion.getCcc().getNumero()
-					
-					);
-			
-			UnknownDato event = 
-					new UnknownDato()
-					.setMessage(message)
-					.setDato(datoSolicitado)
-					.setLiquidacion(liquidacion);
-					
+
+			);
+
+			UnknownDato event = new UnknownDato().setMessage(message)
+					.setDato(datoSolicitado).setLiquidacion(liquidacion);
+
 			unknown.add(event);
 		}
 
 		@Override
 		public void unknownDato(Salary salary, Tramo tramo,
 				DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
-			
+
 			boolean mandatory = "B".equalsIgnoreCase(
 					datoSolicitado.getIndicadorObligatoriedad());
 			String message = String.format(
 					"Lo sentimos. %s (%s) no está soportado en AON SOLUTIONS",
 					getDescription(datoSolicitado),
 					mandatory ? "Obligatorio" : "Opcional");
-			
-			UnknownDato event = 
-					new UnknownDato()
-					.setMessage(message)
+
+			UnknownDato event = new UnknownDato().setMessage(message)
 					.setDato(datoSolicitado);
 
 			unknown.add(event);
@@ -567,33 +561,29 @@ public class CretaServlet extends HttpServlet implements
 		}
 
 		@Override
-		public void salaryNotFound(String ccc, Trabajador<?> trabajador, Periodo mes) {
-			
-			
-			errors.add(new Event().setMessage(
-					format("No se ha encontrado n\u00F3mina del %s del %s para el trabajador (NAF:%s, CCC:%s) ",
-							mes.getMes(), mes.getAnho(), trabajador.getNaf(), ccc  )));
+		public void salaryNotFound(String ccc, Trabajador<?> trabajador,
+				Periodo mes) {
+
+			errors.add(new Event().setMessage(format(
+					"No se ha encontrado n\u00F3mina del %s del %s para el trabajador (NAF:%s, CCC:%s) ",
+					mes.getMes(), mes.getAnho(), trabajador.getNaf(), ccc)));
 		}
 
 		@Override
 		public void wrongContextVariable(Salary salary, ContextVariable var,
 				Period p, String right, String wrong) {
-			if ( right == null )
+			if (right == null)
 				errors.add(new Event().setMessage(format(
 						"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecta. No se esperaba y es '%7$s'",
-						salary.getEmployeeName(), 
-						salary.getEmployeeDocument(),
-						salary.getEmployeeSSNumber(),
-						var.getName(), 
-						p.getStart(), 
-						p.getEnd(), 
-						wrong)));
-			else 
+						salary.getEmployeeName(), salary.getEmployeeDocument(),
+						salary.getEmployeeSSNumber(), var.getName(),
+						p.getStart(), p.getEnd(), wrong)));
+			else
 				errors.add(new Event().setMessage(format(
 						"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecta. Se esperaba '%7$s' y es '%8$s'",
 						salary.getEmployeeName(), salary.getEmployeeDocument(),
-						salary.getEmployeeSSNumber(),
-						var.getName(), p.getStart(), p.getEnd(), right, wrong)));
+						salary.getEmployeeSSNumber(), var.getName(),
+						p.getStart(), p.getEnd(), right, wrong)));
 		}
 
 		@Override
@@ -642,7 +632,7 @@ public class CretaServlet extends HttpServlet implements
 
 			tramo.getFechaHasta().getDia(), tramo.getFechaHasta().getMes(),
 					tramo.getFechaHasta().getAnho())));
-			
+
 		}
 
 		@Override
@@ -715,12 +705,12 @@ public class CretaServlet extends HttpServlet implements
 		buff.append("\r\n]");
 		return buff.toString();
 	}
-	
+
 	private static String safeEncode(String str) {
 		try {
-			return URLEncoder.encode(str, "UTF-8" );
+			return URLEncoder.encode(str, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			return str;
-		}		
+		}
 	}
 }
