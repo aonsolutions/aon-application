@@ -86,13 +86,19 @@
 											timeZone="#{timeZoneController.timeZone}"
 											popupDateFormat="#{bundle.aon_date_pattern}"/>
 										
+										<!--
 										<aon:outputLabel for="ContractEmbargo_amount" value="#{bundle.aon_total} embargo" />
 										<aon:inputText id="ContractEmbargo_amount" required="#{true}"
 											size="20" maxlength="18"
 											value="#{controller.to.amount}" >
 											<f:validateDoubleRange />
 										</aon:inputText>
+										-->
 											
+										<aon:outputLabel for="ContractEmbargo_expression" value="#{bundle.aon_amount}" />
+										<aon:inputText id="ContractEmbargo_expression" size="20" 
+											value="#{controller.to.expression}" />
+										<!-- 
 										<aon:outputLabel for="ContractEmbargo_expression" value="#{bundle.aon_fee}" />
 										<aon:div id="ContractEmbargo_expression-div">
 											<aon:selectOneMenu id="ContractEmbargo_expression"
@@ -112,6 +118,7 @@
 												<f:validateDoubleRange />
 											</aon:inputText>
 										</aon:div>
+										-->
 										
 										<aon:outputLabel for="ContractEmbargo_description" value="#{bundle.aon_description}" />
 										<aon:inputText id="ContractEmbargo_description"

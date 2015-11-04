@@ -663,6 +663,11 @@ public class ContractController extends BasicController {
 		}
 	}
 	
+	public void onShowEmbargoWindow(ActionEvent event){
+		IController controller = FormUtil.getController(IPayrollConstants.CONTRACT_EMBARGO_CONTROLLER);
+		controller.onReset(event);
+	}
+	
 	public void onSelectEmbargo(ActionEvent event){
 		setShowContractEmbargoWindow(true);
 		IController controller = FormUtil.getController(IPayrollConstants.CONTRACT_EMBARGO_CONTROLLER);

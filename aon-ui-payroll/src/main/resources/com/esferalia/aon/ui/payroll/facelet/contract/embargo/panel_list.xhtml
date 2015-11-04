@@ -6,15 +6,17 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" >
 	
-	<aon:panel style="width:920px;">
-		<f:facet name ="header">
-			<aon:outputText value="#{bundle.payroll_salary_embargos_tab}" />
-		</f:facet>
-		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/list.xhtml" >
-			<ui:param name="skipSelectRow" value="#{true}" />
-			<ui:param name="skipResetButton" value="#{true}" />
-			<ui:param name="showDataScroller" value="#{false}" />
-		</ui:include>
-	</aon:panel>
+	<aon:if test="#{contractEmbargo.model.rowCount>0}" >
+		<aon:panel style="width:920px;">
+			<f:facet name ="header">
+				<aon:outputText value="#{bundle.payroll_salary_embargos_tab}" />
+			</f:facet>
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/list.xhtml" >
+				<ui:param name="skipSelectRow" value="#{true}" />
+				<ui:param name="skipResetButton" value="#{true}" />
+				<ui:param name="showDataScroller" value="#{false}" />
+			</ui:include>
+		</aon:panel>
+	</aon:if>
 	
 </ui:composition>

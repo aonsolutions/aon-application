@@ -38,13 +38,14 @@
 		<aon:column 
 			styleClass="aon-editDataTable-numberColumn aon-width-70">
 			<f:facet name="header">
-				<aon:outputLabel for="ContractEmbargo_amount" value="#{bundle.aon_total} embargo" />
+				<aon:outputLabel for="ContractEmbargo_amount" value="#{bundle.aon_amount}" />
 			</f:facet>
 			<aon:outputText value="#{to.amount}" >
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 		</aon:column>
 		
+		<!--  
 		<aon:column 
 			styleClass="aon-editDataTable-numberColumn aon-width-70">
 			<f:facet name="header">
@@ -54,11 +55,12 @@
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 		</aon:column>
+		-->
 			
 		<aon:column 
 			styleClass="aon-editDataTable-textColumn aon-width-auto">
 			<f:facet name="header">
-				<aon:outputLabel for="ContractEmbargo_description" value="#{bundle.aon_description}" />
+				<aon:outputText value="#{bundle.aon_description}" />
 			</f:facet>
 			<aon:outputText value="#{to.description}" />
 		</aon:column>

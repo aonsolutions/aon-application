@@ -219,12 +219,20 @@
 			<aon:if test="#{actionDenied.moduleEnabled['payroll']}">
 				<rich:menuSeparator id="payrollSeparator" />
 				<aon:menuItem id="contract-bonus" 
-					value="#{bundle.sepe_contrata_contract_bonus}"
+					value="#{bundle.payroll_salary_bonus_tab}"
 					reRender="showContractBonusWindow"
 					actionListener="#{contract.onShowBonusWindow}"
 					iconClass="aon-icon-fraction" >
 					<f:setPropertyActionListener
 						target="#{contract.showContractBonusWindow}" value="#{true}" />
+				</aon:menuItem>
+				<aon:menuItem id="contract-embargo" 
+					value="#{bundle.payroll_salary_embargos_tab}"
+					reRender="showContractEmbargoWindow"
+					actionListener="#{contract.onShowEmbargoWindow}"
+					iconClass="aon-icon-settle" >
+					<f:setPropertyActionListener
+						target="#{contract.showContractEmbargoWindow}" value="#{true}" />
 				</aon:menuItem>
 				<aon:menuItem id="contract-salary-info" 
 					value="Datos de cálculo"

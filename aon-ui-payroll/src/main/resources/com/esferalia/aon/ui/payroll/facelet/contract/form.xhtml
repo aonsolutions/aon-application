@@ -90,6 +90,9 @@
 							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/bonus/panel_list.xhtml" >
 								<ui:param name="removeButtonReRender" value="contract-panelTab" />
 							</ui:include>
+							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/panel_list.xhtml" >
+								<ui:param name="removeButtonReRender" value="contract-panelTab" />
+							</ui:include>
 						</aon:panelTab>
 						
 						<aon:if test="#{!contract.params.retaQuote}">
