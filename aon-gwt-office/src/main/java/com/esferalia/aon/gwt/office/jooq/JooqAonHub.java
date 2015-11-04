@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.office.jooq;
 
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
 import static com.esferalia.aon.jooq.tables.NoticeTag.NOTICE_TAG;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
@@ -30,44 +29,11 @@ public class JooqAonHub {
 				.fetchInto(NOTICE);
 	}
 
-	protected static List<RegistryRecord> getRegistryNames(
-			DSLContext dslContext, Integer domain) throws DataAccessException,
-			Exception {
+	protected static List<UserRecord> getUsers(DSLContext dslContext,
+			Integer domain) throws DataAccessException {
 
-		return dslContext.selectFrom(REGISTRY)
-				.where(REGISTRY.DOMAIN.eq(domain)).fetchInto(REGISTRY);
-	}
-
-	private static String getUser(DSLContext dslContext, Integer userId) {
-
-		try {
-
-			Record result = dslContext
-					.select()
-					.from(USER.rightOuterJoin(DOMAIN).on(
-							USER.DOMAIN.eq(DOMAIN.ID)))
-					.where(USER.ID.eq(userId)).fetchOne();
-
-			StringBuffer buffer = new StringBuffer();
-			buffer.append('{');
-			if (result != null) {
-				buffer.append(String.format("\"login\":\"%s\",",
-						String.valueOf(result.getValue(USER.LOGIN))));
-				buffer.append(String.format("\"id\":\"%s\",",
-						result.getValue(USER.ID)));
-				buffer.append(String.format("\"name\":\"%s\",",
-						result.getValue(USER.NAME)));
-				buffer.append(String.format("\"company\":\"%s\"",
-						result.getValue(DOMAIN.DESCRIPTION)));
-			}
-			buffer.append("},");
-
-			return buffer.toString();
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			throw new IllegalArgumentException(ex);
-		}
+		return dslContext.selectFrom(USER).where(USER.DOMAIN.eq(domain))
+				.fetchInto(USER);
 	}
 
 	protected static void saveNewNotice(DSLContext dslContext, Integer domain) {

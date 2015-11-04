@@ -55,7 +55,7 @@ public class NewNoticeServlet extends HttpServlet {
 			conn = AonServletUtils.getConnection();
 			Integer domain = AonServletUtils.getRequestDomain(req);
 			String buffer = doJson(req);
-			
+			System.out.println(buffer.toString());
 			JSONObject json = new JSONObject(buffer.toString());
 			String title = json.getString("title");
 			String body = json.getString("body");

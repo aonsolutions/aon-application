@@ -6,13 +6,16 @@ import com.esferalia.aon.gwt.office.client.values.ValueProp;
 public class IssueValue extends Value<IssueValue.Prop> {
 	
 	public static enum Prop implements ValueProp {
-        Title("title"),
+		Title("title"),
+		Priority("priority"),
+		Sender("sender"),
+		Company("company"),
         Body("body"),
         Assignee("assignee"),
         State("state"),
         Milestone("milestone"),
         Type("type"),
-        Priority("priority"),
+        
         Labels("labels")
 		;
         private final String value;
@@ -29,6 +32,18 @@ public class IssueValue extends Value<IssueValue.Prop> {
 	
 	public void setTitle (String title) {
 		prop.put(Prop.Title, title);
+	}
+	
+	public void setPriority(String priority) {
+		prop.put(Prop.Priority, priority);
+	}
+	
+	public void setSender(String sender) {
+		prop.put(Prop.Sender, sender);
+	}
+	
+	public void setCompany(String company) {
+		prop.put(Prop.Company, company);
 	}
 	
 	public void setBody(String body) {
@@ -49,10 +64,6 @@ public class IssueValue extends Value<IssueValue.Prop> {
 	
 	public void setType(String type) {
 		prop.put(Prop.Type, type);
-	}
-	
-	public void setPriority(String priority) {
-		prop.put(Prop.Priority, priority);
 	}
 
 	public void setLabels(String[] labels) {

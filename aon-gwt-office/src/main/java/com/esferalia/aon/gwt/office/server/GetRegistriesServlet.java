@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.office.server;
 
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,26 +18,34 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jooq.Record;
 import org.jooq.exception.DataAccessException;
-import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.gwt.office.jooq.JooqAonHub;
-import com.esferalia.aon.jooq.tables.records.RegistryRecord;
+import com.esferalia.aon.jooq.tables.Domain;
+import com.esferalia.aon.jooq.tables.records.DomainRecord;
+import com.esferalia.aon.jooq.tables.records.UserRecord;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 
 @MultipartConfig
 @SuppressWarnings("serial")
 @WebServlet(name = "Get Registries Servlet", urlPatterns = { "/aon_gwt_office/GetRegistriesServlet" })
 public class GetRegistriesServlet extends HttpServlet {
 
-	static class JooqGet extends JooqAonHub {
+	static class JooqGet extends DomainDAO {
 
-		public static List<RegistryRecord> getRegistryNames(Connection conn,
-				Integer domain) {
-
+		public static Integer getParent(AONContext aonContext, Integer domain) {
+			DomainRecord domainRecord = getParentDomain(aonContext, domain);
+			return domainRecord.getValue(Domain.DOMAIN.PARENT);
+		}
+		
+		public static List<UserRecord> getUsers (AONContext ctx, Integer parentDomain, Integer domain) {
+			
 			try {
-				return getRegistryNames(DSL.using(conn, getDefaultSettings()),
-						domain);
+				
+				return getUsersWorkings(ctx, parentDomain, domain);
+				
 			} catch (DataAccessException ex) {
 				throw new DataAccessException(ex.getMessage());
 			} catch (Exception ex) {
@@ -65,41 +74,48 @@ public class GetRegistriesServlet extends HttpServlet {
 	}
 
 	private void getRegistries(HttpServletRequest req, HttpServletResponse resp)
-			throws ParseException, SQLException, IOException{
-		
+			throws ParseException, SQLException, IOException {
+
 		PrintWriter osx = null;
 		Connection conn = null;
-		
+
 		try {
 			resp.setContentType("application/json;charset=UTF-8");
 			conn = AonServletUtils.getConnection();
 			Integer domain = AonServletUtils.getRequestDomain(req);
+			String domainName = AonServletUtils.getRequestDomainName(req);
+			String user = AonServletUtils.getRequestUser(req);
+		
+			AONContext ctx = AONContext.getAONContext(domainName, domain, user);
+			
+			Integer parentDomain = JooqGet.getParent(ctx, domain);
+			
 			
 			osx = resp.getWriter();
 			osx.println('[');
 			
-			List<RegistryRecord> result = JooqGet.getRegistryNames(conn, domain);
-			Iterator<RegistryRecord> iterator = result.iterator();
+			List<UserRecord> users = JooqGet.getUsers(ctx, parentDomain, domain);
+			Iterator<UserRecord> iterator = users.iterator();
 			
 			while (iterator.hasNext()) {
-				RegistryRecord registry = iterator.next();
-				Integer id = registry.getValue(REGISTRY.ID);
-				String name = registry.getValue(REGISTRY.NAME);
-				
+				UserRecord record = iterator.next();
+				Integer id = record.getValue(USER.ID);
+				String name = record.getValue(USER.NAME);			
+
 				osx.println('{');
 				osx.printf("\"id\":\"%s\",\r\n", String.valueOf(id));
-				osx.printf("\"name\":\"%s\"\r\n", name);
+				osx.printf("\"name\":\"%s\"\r\n", name);				
 				
 				if (iterator.hasNext())
 					osx.println("},");
 				else
 					osx.println('}');
 			}
-			
+
 			osx.println(']');
 			osx.flush();
 			osx.close();
-			
+
 		} catch (Exception ex) {
 		} finally {
 			if (osx != null)

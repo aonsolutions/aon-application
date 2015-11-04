@@ -16,106 +16,125 @@ public class Notice implements Serializable, HasId<Integer> {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public static enum Type {
-		TICKET("Ticket"), AVISO("Aviso"), NOTA("Nota"), COMMENT("Comentario");
-
-		private String description;
-
-		static Map<Integer, String> DESCRIPTIONS = new HashMap<Integer, String>() {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			{
-				put(0, TICKET.name());
-				put(1, AVISO.name());
-				put(2, NOTA.name());
-				put(3, COMMENT.name());
-			}
-		};
-
-		private Type(String description) {
-			this.description = description;
-		}
-
-		public String getDescription(int index) {
-			return DESCRIPTIONS.get(index);
-		}
-		
-		
-		public static Type valueOf(int i) {
-			return Type.values()[i];
-		}
-	}
-
 	private Integer id;
 	private Integer domain;
 	private Date date;
-	private String subject;
-	private Integer recipient;
-	private Type type;
+	private Integer sender; //Remitente del aviso
+	private String subject; // Asunto o cuerpo del aviso
+	private Integer recipient; // Destinatario del aviso
+	private String source; // Origen del aviso
+	private String company; // Empresa donde trabaja el origen del aviso
+	private Integer status; // Estado del aviso
+	private Integer type; //Tipo de aviso
+	private Integer priority; //Prioridad
+	private Integer notice; //Notice al que referencia **null si es cabecera = titulo
 
 	private List<Notice> comments;
 
 	public Notice() {
 		comments = new LinkedList<Notice>();
 	}
-
+	
+	// ===============SETTERS=================== //
+	
 	public void setId(Integer id) {
 		this.id = id;
 	}
-
-	@Override
-	public Integer getId() {
-		return this.id;
-	}
-
+	
 	public void setDomain(Integer domain) {
 		this.domain = domain;
 	}
-
-	public Integer getDomain() {
-		return this.domain;
-	}
-
+	
 	public void setDate(Date date) {
 		this.date = date;
 	}
-
-	public Date getDate() {
-		return this.date;
+	
+	public void setSender(Integer sender) {
+		this.sender = sender;
 	}
-
+	
 	public void setSubject(String subject) {
 		this.subject = subject;
 	}
-
-	public String getSubject() {
-		return this.subject;
-	}
-
+	
 	public void setRecipient(Integer recipient) {
 		this.recipient = recipient;
 	}
-
+	
+	public void setSource(String source) {
+		this.source = source;
+	}
+	
+	public void setCompany(String company) {
+		this.company = company;
+	}
+	
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	
+	public void setType(Integer type) {
+		this.type = type;
+	}
+	
+	public void setPriority(Integer priority) {
+		this.priority = priority;
+	}
+	
+	public void setNotice(Integer notice) {
+		this.notice = notice;
+	}	
+	
+	// ===============GETTERS=================== //
+	
+	@Override
+	public Integer getId() {		
+		return id;
+	}
+	
+	public Integer getDomain() {
+		return domain;
+	}
+	
+	public Date getDate() {
+		return date;
+	}
+	
+	public Integer getSender() {
+		return sender;
+	}
+	
+	public String getSubject() {
+		return subject;
+	}
+	
 	public Integer getRecipient() {
 		return recipient;
 	}
-
-	public void setType(Type type) {
-		this.type = type;
+	
+	public String getSource() {
+		return source;
 	}
-
-	public Type getType() {
-		return this.type;
+	
+	public String getCompany() {
+		return company;
 	}
-
-	public void addComment(Notice notice) {
-		comments.add(notice);
+	
+	public Integer getStatus() {
+		return status;
 	}
-
-	public List<Notice> getComments() {
-		return comments;
+	
+	public Integer getType() {
+		return type;
 	}
+	
+	public Integer getPriority() {
+		return priority;
+	}
+	
+	public Integer getNotice() {
+		return notice;
+	}
+	
+
 }

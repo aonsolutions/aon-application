@@ -66,6 +66,14 @@ public interface AonHubMessages extends Messages {
  	@DefaultMessage("Priority")
 	String priority();
 
+ 	@DefaultMessage("Usuario")
+ 	String userSender();
+ 	
+ 	@DefaultMessage("Compa\u00F1\u00EDa")
+ 	String company();
+ 	
+ 	@DefaultMessage("Tel\u00E9fono")
+ 	String phone();
 
 
 }

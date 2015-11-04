@@ -29,7 +29,7 @@ public class AonServletUtils {
 	}
 	
 	public static String getRequestDomainName(HttpServletRequest request) {
-		return getRequestPrincipal(request).getName();
+		return getRequestPrincipal(request).getDomain();
 	}
 	
 	public static String getRequestUser(HttpServletRequest request) {		
