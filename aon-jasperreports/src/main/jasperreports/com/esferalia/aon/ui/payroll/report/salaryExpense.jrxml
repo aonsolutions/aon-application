@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryExpense" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="35" bottomMargin="42" isFloatColumnFooter="true" uuid="8d22d66a-4dd1-4590-ad84-0f4617639ba5">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="155"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.data.JRMapArrayDataSource"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
@@ -75,14 +75,14 @@
 	<parameter name="month" class="com.code.aon.common.enumeration.Month">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
+	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
 	<queryString language="hql">
 		<![CDATA[FROM Salary]]>
 	</queryString>
 	<field name="salary" class="com.esferalia.aon.payroll.Salary"/>
 	<variable name="subtotalIrpf" class="java.lang.Double" resetType="Group" resetGroup="workplace" calculation="Sum">
 		<variableExpression><![CDATA[$F{salary}.getDeductions().getIrpf()==null?
-new Double(0.0):$F{salary}.getDeductions().getIrpf().getAmount()
-]]></variableExpression>
+new Double(0.0):$F{salary}.getDeductions().getIrpf().getAmount()]]></variableExpression>
 	</variable>
 	<variable name="subtotalOther" class="java.lang.Double" resetType="Group" resetGroup="workplace" calculation="Sum">
 		<variableExpression><![CDATA[($F{salary}.getDeductions().getAdvancePayment()==null?
@@ -301,6 +301,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 	</title>
 	<pageHeader>
 		<band height="52" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{printHeaders}]]></printWhenExpression>
 			<componentElement>
 				<reportElement uuid="72f39765-dc5c-4ec6-9c5b-74a7bec495c2" key="head_table" x="0" y="0" width="802" height="50"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
@@ -776,6 +777,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></textField
 	</columnFooter>
 	<pageFooter>
 		<band height="14">
+			<printWhenExpression><![CDATA[$P{printHeaders}]]></printWhenExpression>
 			<textField>
 				<reportElement uuid="c62ee294-02f7-4ce9-a12e-c30e25d7a58b" x="0" y="0" width="786" height="14"/>
 				<box leftPadding="2"/>

@@ -38,7 +38,7 @@
 						<f:setPropertyActionListener
 							target="#{salaryExpense.groupByPerson}" value="#{reportPrint.groupByEmployee}" />
 						<f:param name="reportKey" value="#{reportPrint.groupByEmployee?'salaryExpenseMonthlyReport':'salaryExpenseReport'}" />
-						<f:param name="outputFormat" value="XLS" />
+						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="salaryExpense_report" 
 						value="Listado"
@@ -71,7 +71,7 @@
 						<f:setPropertyActionListener
 							target="#{salaryExpense.groupByPerson}" value="#{reportPrint.groupByEmployee}" />
 						<f:param name="reportKey" value="#{reportPrint.groupByEmployee?'salaryExpenseMonthlyDetailed':'salaryExpenseDetailed'}" />
-						<f:param name="outputFormat" value="XLS" />
+						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="salaryExpense-detailed_report" 
 						value="Listado detallado"

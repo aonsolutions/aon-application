@@ -75,6 +75,7 @@
 	<parameter name="month" class="com.code.aon.common.enumeration.Month">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
+	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
 	<queryString language="hql">
 		<![CDATA[FROM Salary]]>
 	</queryString>
@@ -301,6 +302,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 	</title>
 	<pageHeader>
 		<band height="52" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{printHeaders}]]></printWhenExpression>
 			<componentElement>
 				<reportElement uuid="72f39765-dc5c-4ec6-9c5b-74a7bec495c2" key="head_table" x="0" y="0" width="802" height="50"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
@@ -776,6 +778,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></textField
 	</columnFooter>
 	<pageFooter>
 		<band height="14">
+			<printWhenExpression><![CDATA[$P{printHeaders}]]></printWhenExpression>
 			<textField>
 				<reportElement uuid="c62ee294-02f7-4ce9-a12e-c30e25d7a58b" x="0" y="0" width="786" height="14"/>
 				<box leftPadding="2"/>
