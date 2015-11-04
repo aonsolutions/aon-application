@@ -400,13 +400,12 @@ public class Templates extends Composite implements EntryPoint {
 		popup.show();
 	}
 
-	private void importStock(Integer inventory, String warehouse, Vector<Series> series){
+	private void importStock(Integer inventory, String warehouse){
 		inventoryId =  inventory;
 		Dialog d = new Dialog("Importar Stock","Importar",true,"Cancelar",true,"importStock");
 		d.setUrl(GWT.getModuleBaseURL());
 		d.setTemplateList(template_list);
 		d.setWarehouseName(warehouse);
-		d.setSeries2(series);
 		TemplatesDialog popup = new TemplatesDialog(d) {
 			
 			@Override
@@ -1210,21 +1209,7 @@ public class Templates extends Composite implements EntryPoint {
 	}-*/;
 	
 	public void stock(String warehouse, String inventoryId){
-		w = warehouse;
-		inventory = Integer.parseInt(inventoryId);
-		item.getSeries(warehouse, new AsyncCallback<Vector<Series>>() {
-			String warehouse = w;
-			Integer inventoryId = inventory;
-			@Override
-			public void onSuccess(Vector<Series> result) {
-				importStock(inventoryId, warehouse, result);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				
-			}
-		});
+		importStock(Integer.parseInt(inventoryId), warehouse);
 	}
 	
 	public static native void refreshInventoryDetail() /*-{
