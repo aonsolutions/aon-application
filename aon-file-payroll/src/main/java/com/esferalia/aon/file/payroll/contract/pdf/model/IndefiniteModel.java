@@ -527,17 +527,41 @@ public class IndefiniteModel extends AbstractContractModel {
 				} else if(code == ContractCode.C200){
 					setPdfFieldValue(PdfFieldIndefinite.OPT15_TC2_200.getValue(),"true");
 				}
-				// TODO: complete this
-				setPdfFieldValue(PdfFieldIndefinite.OPT15_ONSITE_HOURS_YES.getValue(),"");
-				setPdfFieldValue(PdfFieldIndefinite.OPT15_ONSITE_HOURS_NO.getValue(),"");
-				setPdfFieldValue(PdfFieldIndefinite.OPT15_ONSITE_WEEK_HOURS.getValue(),"");
-				setPdfFieldValue(PdfFieldIndefinite.OPT15_ONSITE_HOURS_DISTRIBUTION.getValue(),"");
-				setPdfFieldValue(PdfFieldIndefinite.OPT15_SALARY_OPT1.getValue(),"");
-				setPdfFieldValue(PdfFieldIndefinite.OPT15_SALARY_OPT2.getValue(),"");
-				setPdfFieldValue(PdfFieldIndefinite.OPT15_SALARY_OPT3.getValue(),"");
-				setPdfFieldValue(PdfFieldIndefinite.OPT15_OVERNIGHT_YES.getValue(),"");
-				setPdfFieldValue(PdfFieldIndefinite.OPT15_OVERNIGHT_NO.getValue(),"");
-				setPdfFieldValue(PdfFieldIndefinite.OPT15_OVERNIGHT_WEEK_DAYS.getValue(),"");
+				String key = getContractInfoMap(contract).get(PdfFieldIndefinite.OPT15_ONSITE_HOURS.toString());
+				if(StringUtils.isNotBlank(key)){
+					if(PdfFieldIndefinite.OPT15_ONSITE_HOURS_YES.toString().equals(key)){
+						setPdfFieldValue(PdfFieldIndefinite.OPT15_ONSITE_HOURS_YES.getValue(), "true");
+					} else if(PdfFieldIndefinite.OPT15_ONSITE_HOURS_NO.toString().equals(key)){
+						setPdfFieldValue(PdfFieldIndefinite.OPT15_ONSITE_HOURS_NO.getValue(), "true");
+					}
+				}
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.OPT15_ONSITE_WEEK_HOURS.toString()))){
+					setPdfFieldValue(PdfFieldIndefinite.OPT15_ONSITE_WEEK_HOURS.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.OPT15_ONSITE_WEEK_HOURS.toString()));
+				}
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.OPT15_ONSITE_HOURS_DISTRIBUTION.toString()))){
+					setPdfFieldValue(PdfFieldIndefinite.OPT15_ONSITE_HOURS_DISTRIBUTION.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.OPT15_ONSITE_HOURS_DISTRIBUTION.toString()));
+				}
+				key = getContractInfoMap(contract).get(PdfFieldIndefinite.OPT15_SALARY.toString());
+				if(StringUtils.isNotBlank(key)){
+					if(PdfFieldIndefinite.OPT15_SALARY_OPT1.toString().equals(key)){
+						setPdfFieldValue(PdfFieldIndefinite.OPT15_SALARY_OPT1.getValue(), "true");
+					} else if(PdfFieldIndefinite.OPT15_SALARY_OPT2.toString().equals(key)){
+						setPdfFieldValue(PdfFieldIndefinite.OPT15_SALARY_OPT2.getValue(), "true");
+					} else if(PdfFieldIndefinite.OPT15_SALARY_OPT3.toString().equals(key)){
+						setPdfFieldValue(PdfFieldIndefinite.OPT15_SALARY_OPT3.getValue(), "true");
+					}
+				}
+				key = getContractInfoMap(contract).get(PdfFieldIndefinite.OPT15_OVERNIGHT.toString());
+				if(StringUtils.isNotBlank(key)){
+					if(PdfFieldIndefinite.OPT15_OVERNIGHT_YES.toString().equals(key)){
+						setPdfFieldValue(PdfFieldIndefinite.OPT15_OVERNIGHT_YES.getValue(), "true");
+					} else if(PdfFieldIndefinite.OPT15_OVERNIGHT_NO.toString().equals(key)){
+						setPdfFieldValue(PdfFieldIndefinite.OPT15_OVERNIGHT_NO.getValue(), "true");
+					}
+				}
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.OPT15_OVERNIGHT_WEEK_DAYS.toString()))){
+					setPdfFieldValue(PdfFieldIndefinite.OPT15_OVERNIGHT_WEEK_DAYS.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.OPT15_OVERNIGHT_WEEK_DAYS.toString()));
+				}
 			} else if(modelOption == ModelOption.INDEFINITE_OPT17){
 				setPdfFieldValue(PdfFieldIndefinite.MAIN_OPT17_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldIndefinite.OPT17_OPTION_CHECK.getValue(),"true");

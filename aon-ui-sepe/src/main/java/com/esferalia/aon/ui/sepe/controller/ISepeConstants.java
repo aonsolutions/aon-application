@@ -91,7 +91,7 @@ public interface ISepeConstants {
 //		ModelOption.INDEFINITE_OPT12,
 //		ModelOption.INDEFINITE_OPT13,
 //		ModelOption.INDEFINITE_OPT14,
-//		ModelOption.INDEFINITE_OPT15,
+		ModelOption.INDEFINITE_OPT15,
 //		ModelOption.INDEFINITE_OPT16,
 		ModelOption.INDEFINITE_OPT17, 
 		ModelOption.LEARNING_OPT1,
