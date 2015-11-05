@@ -104,7 +104,7 @@
 
 		<g:south size="0">
 			<aon:MinimizePanel ui:field="footPanel">
-				<g:TabLayoutPanel barHeight="26" barUnit="PX"
+				<g:TabLayoutPanel addStyleNames="aon-pointer-events-auto" barHeight="26" barUnit="PX"
 					ui:field="footTabPanel" />
 			</aon:MinimizePanel>
 		</g:south>
