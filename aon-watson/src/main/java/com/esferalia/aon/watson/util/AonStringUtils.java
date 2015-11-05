@@ -217,6 +217,11 @@ public class AonStringUtils {
 		super();
 	}
 
+	// SQL like 
+	public static String SQLlike(final String str) {
+		return isEmpty(str)?null:PERCENT + trim(str) + PERCENT;
+	}
+
 	// Empty checks
 	// -----------------------------------------------------------------------
 	/**

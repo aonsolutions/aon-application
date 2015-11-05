@@ -591,7 +591,6 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 		if (entry.isUpdatable()) {
 			AccountBox ab = (AccountBox) getWidget( getRowCount() - 2, COLS.ACC.ordinal());
 			ab.setFocus(true);
-			ab.selectAll();
 		}
 	}
 

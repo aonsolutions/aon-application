@@ -16,19 +16,22 @@ public class AccountPeriodBox extends ListBox {
 		setWidth("60px");
 		periods = new LinkedList<AccountPeriod>();
 		periods.add(new AccountPeriod());
-		AccountPeriodBox.this.addItem( "----","0" );
-		setSelectedIndex(0);
+		AccountPeriodBox.this.addItem( "----","-1" );
 	}
 	
 	public void fill(LinkedList<AccountPeriod> result) {
 		int i = 0;
 		for (AccountPeriod p : result) {
-			AccountPeriodBox.this.addItem( p.getName(), AonNumberUtils.toString(p.getId()) );
+			AccountPeriodBox.this.addItem( p.getName() + (p.isDefaultPeriod()?"*":""), AonNumberUtils.toString(p.getId()) );
 			i++;
 			if (p.getStatus() == AccountPeriodStatus.CLOSED 
 			 || p.getStatus() == AccountPeriodStatus.INACTIVE
 			 || p.getStatus() == AccountPeriodStatus.OPERATING) {
 				getElement().getElementsByTagName("option").getItem(i).setAttribute("disabled", "disabled");	
+			} else {
+				if (p.isDefaultPeriod()) {
+					setSelectedIndex(i);
+				}
 			}
 			periods.add(p);
 		}
@@ -42,14 +45,22 @@ public class AccountPeriodBox extends ListBox {
 	}
 
 	public void select(Integer accountPeriod) {
-		if (accountPeriod != null) {
+		boolean found = false;
+		for (int i = 0 ;  i < getItemCount(); i++) {
+			int a = AonNumberUtils.toInteger( getValue(i) );
+					int b = accountPeriod;
+			if ( a == b) {
+				setSelectedIndex(i);
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
 			for (int i = 0 ;  i < getItemCount(); i++) {
-				int a = AonNumberUtils.toInteger( getValue(i) );
-				int b = accountPeriod;
-				if ( a == b) {
+				if ( periods.get(i).isDefaultPeriod()) {
 					setSelectedIndex(i);
 					break;
-				}
+				}				
 			}
 		}
 	}

@@ -2,12 +2,15 @@ package com.esferalia.aon.occam.server.accounting;
 
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailProperties;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryProperties;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountEntryUtils {
 
-	public static Filter getFilter(AccountEntryProperties p , AccountEntryParams params) {
+	public static Filter getFilter(AccountEntryProperties p,
+			AccountEntryParams params) {
 		Filter prop = p.getDomainProperty().eq(params.getDomain());
 		if (params.getFrom() != null) {
 			prop = prop.and(p.getEntryDateProperty().ge(params.getFrom()));
@@ -16,11 +19,37 @@ public class AccountEntryUtils {
 			prop = prop.and(p.getEntryDateProperty().le(params.getTo()));
 		}
 		if (!params.hasConfidentialityRole()) {
-			prop = prop.and(p.getConfidentialProperty().eq( SecurityLevel.OFFICIAL.value() ));
+			prop = prop.and(p.getConfidentialProperty().eq(
+					SecurityLevel.OFFICIAL.value()));
 		} else {
 			if (params.isConfidential()) {
-				prop = prop.and(p.getConfidentialProperty().eq( SecurityLevel.CONFIDENTIAL.value() ));
+				prop = prop.and(p.getConfidentialProperty().eq(
+						SecurityLevel.CONFIDENTIAL.value()));
 			}
+		}
+		return prop;
+	}
+
+	public static Filter getFilterByLines(AccountEntryDetailProperties p,
+			AccountEntryParams params) {
+		Filter prop = getFilter(p, params);
+
+		if (params.getAccount() != null) {
+			prop = prop.and(p.getAccountProperty().eq(params.getAccount()));
+		}
+		if (AonStringUtils.isNotEmpty(params.getConcept())) {
+			prop = prop.and(p.getConceptProperty().like(
+					AonStringUtils.SQLlike(params.getConcept())));
+		}
+		if (params.getDebit() != null) {
+			prop = prop.and(p.getDebitProperty().eq(params.getDebit()));
+		}
+		if (params.getCredit() != null) {
+			prop = prop.and(p.getDebitProperty().eq(params.getCredit()));
+		}
+		if (AonStringUtils.isNotEmpty(params.getDocument())) {
+			prop = prop.and(p.getDocumentNumber().like(
+					AonStringUtils.SQLlike(params.getDocument())));
 		}
 		return prop;
 	}

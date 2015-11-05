@@ -13,6 +13,7 @@ import org.jooq.Condition;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
@@ -291,6 +292,9 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId);
 			return getAccounting().getAccounts(ctx, filter);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			throw e;
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -430,6 +434,20 @@ public class AON {
 		}
 	}
 	// ------------------------------ ACCOUNT ENTRY
+	public static LinkedList<AccountEntry> getAccountEntries(String domainName,int domain,String user, 
+			final AccountEntryParams params,int offset, int limit) throws AonCoreException {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,user);
+			return getAccounting().getAccountEntries(ctx, params, offset, limit)
+					.collect(Collectors.toCollection(LinkedList::new));
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	
 	public static AccountEntry save(String domainName, int domain, String user, AccountEntry ae) {
 		AONContext ctx = null;
 		try {
@@ -444,11 +462,11 @@ public class AON {
 	}
 	
 	public static LinkedList<AccountEntry> getAccountEntries(String domainName, int domain
-			, String user, AccountEntryFilter filter, int offset, int numberOfRows) {
+			, String user, AccountEntryFilter filter, int offset, int limit) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain,user);
-			return getAccountEntries(ctx, filter, offset, numberOfRows)
+			return getAccountEntries(ctx, filter, offset, limit)
 					.collect(Collectors.toCollection(LinkedList::new));
 		} finally {
 			if (ctx != null)

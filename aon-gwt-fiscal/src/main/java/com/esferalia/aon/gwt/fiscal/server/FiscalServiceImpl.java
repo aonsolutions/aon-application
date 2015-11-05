@@ -51,14 +51,10 @@ import com.esferalia.aon.occam.api.model.type.Activities.Type7Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.TypeActivity;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.MOD2002014;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.XMLtoMod2002014;
-import com.esferalia.aon.occam.server.accounting.AccountEntryUtils;
 import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002014Import2013;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-/**
- * The server side implementation of the RPC service.
- */
 @SuppressWarnings("serial")
 @WebServlet(name = "Fiscal Servlet", urlPatterns = { "/aon_gwt_fiscal/Fiscal" })
 public class FiscalServiceImpl extends AonRemoteServiceServlet implements FiscalService {
@@ -574,8 +570,7 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	public LinkedList<AccountEntry> getAccountEntries(String domainName,
 			int domain, final AccountEntryParams params,int offset, int limit) throws AonCoreException {
 		return AON.getAccountEntries(domainName, domain, AonServletUtils.getLoggedUser(),
-				p -> AccountEntryUtils.getFilter(p, params)
-				, offset, limit);
+				params, offset, limit);
 	}
 
 	@Override

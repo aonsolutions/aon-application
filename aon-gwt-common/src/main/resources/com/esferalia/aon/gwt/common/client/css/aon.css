@@ -231,6 +231,9 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 .aon-margin{
 	margin: 1em;
 }
+.aon-no-margin{
+	margin: 0em !important;
+}
 .aon-margin-top{
 	margin-top: 1em;
 }

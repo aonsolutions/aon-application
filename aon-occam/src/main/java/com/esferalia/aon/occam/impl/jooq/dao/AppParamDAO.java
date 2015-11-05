@@ -6,9 +6,6 @@ import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jooq.Condition;
-
-import com.esferalia.aon.jooq.tables.records.AppParamRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
@@ -28,31 +25,30 @@ public class AppParamDAO {
 	}
 
 	private enum FiscalParamsItem implements Serializable {
-		FS_DEFAULT_YEAR("FS_DEFAULT_YEAR", (params, value) -> params
-				.setDefaultYear(Integer.parseInt(value))), FS_DEFAULT_ADMINISTRATION(
-				"FS_DEFAULT_ADMINISTRATION", (params, value) -> params
-						.setAdministration(Integer.parseInt(value))), FS_ADMINISTRATION_CODE(
-				"FS_ADMINISTRATION_CODE", (params, value) -> params
-						.setAdministrationCode(value)), FS_TAX_REFUND_REGISTRY(
-				"FS_TAX_REFUND_REGISTRY", (params, value) -> params
-						.setTaxRefundRegistry(Boolean.parseBoolean(value))), FS_TAX_REGIME(
-				"FS_TAX_REGIME", (params, value) -> params.setTaxRegime(Integer
-						.parseInt(value))), FS_ADMON_CREDITOR(
-				"FS_ADMON_CREDITOR", (params, value) -> params
-						.setAdmonCreditor(Integer.parseInt(value))), FS_PERM_ADDRESS_CHANGES(
-				"FS_PERM_ADDRESS_CHANGES", (params, value) -> params
-						.setPermAddressChanges(Boolean.parseBoolean(value))), FS_CONCTACT_PERSON(
-				"FS_CONCTACT_PERSON", (params, value) -> params
-						.setContactPerson(value)), FS_CONCTACT_PHONE(
-				"FS_CONCTACT_PHONE", (params, value) -> params
-						.setContactPhone(value)), FS_CONCTACT_CELLULAR(
-				"FS_CONCTACT_CELLULAR", (params, value) -> params
-						.setContactCellular(value)), FS_CONCTACT_MAIL(
-				"FS_CONCTACT_MAIL", (params, value) -> params
-						.setContactMail(value)), FS_MOD303_BY_DIFFERENCE_DISABLED(
-				"FS_MOD303_BY_DIFFERENCE_DISABLED", (params, value) -> params
-						.setMod303ByDifferenceDisabled(Boolean
-								.parseBoolean(value)));
+		 FS_DEFAULT_YEAR("FS_DEFAULT_YEAR", 
+			(params, value) -> params.setDefaultYear(Integer.parseInt(value)))
+		,FS_DEFAULT_ADMINISTRATION("FS_DEFAULT_ADMINISTRATION", 
+			(params, value) -> params.setAdministration(Integer.parseInt(value)))
+		,FS_ADMINISTRATION_CODE("FS_ADMINISTRATION_CODE", 
+			(params, value) -> params.setAdministrationCode(value))
+		,FS_TAX_REFUND_REGISTRY("FS_TAX_REFUND_REGISTRY",
+			(params, value) -> params.setTaxRefundRegistry(Boolean.parseBoolean(value)))
+		,FS_TAX_REGIME("FS_TAX_REGIME", 
+			(params, value) -> params.setTaxRegime(Integer.parseInt(value)))
+		,FS_ADMON_CREDITOR("FS_ADMON_CREDITOR",
+			(params, value) -> params.setAdmonCreditor(Integer.parseInt(value)))
+		,FS_PERM_ADDRESS_CHANGES("FS_PERM_ADDRESS_CHANGES", 
+			(params, value) -> params.setPermAddressChanges(Boolean.parseBoolean(value)))
+		,FS_CONCTACT_PERSON("FS_CONCTACT_PERSON", 
+			(params, value) -> params.setContactPerson(value))
+		,FS_CONCTACT_PHONE("FS_CONCTACT_PHONE", 
+			(params, value) -> params.setContactPhone(value))
+		,FS_CONCTACT_CELLULAR("FS_CONCTACT_CELLULAR",
+			(params, value) -> params.setContactCellular(value))
+		,FS_CONCTACT_MAIL("FS_CONCTACT_MAIL", 
+			(params, value) -> params.setContactMail(value))
+		,FS_MOD303_BY_DIFFERENCE_DISABLED("FS_MOD303_BY_DIFFERENCE_DISABLED", 
+			(params, value) -> params.setMod303ByDifferenceDisabled(Boolean.parseBoolean(value)));
 
 		private String name;
 		private IFiscalParamsFiller filler;
@@ -80,26 +76,28 @@ public class AppParamDAO {
 			}
 		}
 	}
-
+	
 	public static ApplicationParameter fetchOne(AONContext ctx, AppParam param) {
 		ctx.checkRead();
-		Condition condition = APP_PARAM.DOMAIN.equal(ctx.getDomainId()).and(
-				APP_PARAM.NAME.equal(param.getValue()));
-		return populateRecord(ctx.getDslContext()
-				.fetchOne(APP_PARAM, condition));
+		return ctx.getDslContext()
+			.select(APP_PARAM.ID,APP_PARAM.DOMAIN,APP_PARAM.NAME,APP_PARAM.VALUE)
+			.from(APP_PARAM)
+			.where(APP_PARAM.DOMAIN.eq(ctx.getDomainId())
+				.and(APP_PARAM.NAME.eq(param.getValue())))
+			.fetch()
+			.stream()
+			.findFirst()
+			.orElse(null)
+			.map( record -> record==null
+					?null
+					:new ApplicationParameter()
+						.setId(record.getValue(APP_PARAM.ID))
+						.setDomain(record.getValue(APP_PARAM.DOMAIN))
+						.setName(record.getValue(APP_PARAM.NAME))
+						.setValue(record.getValue(APP_PARAM.VALUE))
+			);
 	}
-
-	private static ApplicationParameter populateRecord(AppParamRecord record) {
-		if (record == null)
-			return null;
-
-		ApplicationParameter app = new ApplicationParameter();
-		app.setId(record.getId());
-		app.setDomain(record.getDomain());
-		app.setName(record.getName());
-		app.setValue(record.getValue());
-		return app;
-	}
+	
 
 	public static FiscalParameters getFiscalParameters(AONContext ctx) {
 		FiscalParameters params = new FiscalParameters();

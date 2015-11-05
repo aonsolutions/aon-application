@@ -146,8 +146,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 
 		splitLayoutPanel = new SplitLayoutPanel(4);
-		journalPanel = new JournalPanel(getCurrentDomainName(),
-				getCurrentDomain());
+		journalPanel = new JournalPanel(getCurrentDomainName(), getCurrentDomain());
 
 		Widget ui = BINDER.createAndBindUi(this);
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
@@ -155,6 +154,18 @@ public class AccountEntryModule extends MainEntryPoint {
 		commentsButton.setTabIndex(Integer.MAX_VALUE);
 		root.add(ui);
 		tabLayout.setAnimationDuration(300);
+		tabLayout.selectTab(BALANCES_TAB);
+		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<Integer> event) {
+				if (splitLayoutPanel.getWidgetSize(footPanel) <= 30) {
+					splitLayoutPanel.setWidgetSize(footPanel,
+							Window.getClientHeight() / 4);
+					splitLayoutPanel.animate(500);
+				}
+			}
+		});
 		accept.setAccessKey('G');
 		reset.setAccessKey('N');
 
@@ -242,7 +253,7 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 
 	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
+		splitLayoutPanel.setWidgetSize(footPanel, 30);
 		splitLayoutPanel.animate(500);
 	}
 
@@ -368,7 +379,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		tab.addSelectionHandler(new SelectionHandler<Account>() {
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {
-				if (splitLayoutPanel.getWidgetSize(footPanel) == 0) {
+				if (splitLayoutPanel.getWidgetSize(footPanel) <= 30) {
 					splitLayoutPanel.setWidgetSize(footPanel,
 							Window.getClientHeight() / 4);
 					splitLayoutPanel.animate(500);
@@ -436,7 +447,7 @@ public class AccountEntryModule extends MainEntryPoint {
 
 	@UiHandler("search")
 	public void onSearch(ClickEvent event) {
-		if (splitLayoutPanel.getWidgetSize(footPanel) == 0) {
+		if (splitLayoutPanel.getWidgetSize(footPanel) <= 30) {
 			splitLayoutPanel.setWidgetSize(footPanel,
 					Window.getClientHeight() / 2);
 			splitLayoutPanel.animate(500, new AnimationCallback() {
@@ -458,8 +469,12 @@ public class AccountEntryModule extends MainEntryPoint {
 				}
 			});
 		} else {
-			tabLayout.selectTab(JOURNAL_TAB);
-			journalPanel.setFocus(true);
+			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+				public void execute() {
+					tabLayout.selectTab(JOURNAL_TAB);
+					journalPanel.setFocus(true);
+				}
+			});
 		}
 	}
 

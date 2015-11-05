@@ -23,10 +23,9 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -80,7 +79,7 @@ public class AccountStatementPanel extends DockLayoutPanel implements HasSelecti
 						FlexTable headerTab = new FlexTable();
 						headerTab.setStyleName(AON.AON_CSS.aonWidthAll());
 						headerTab.getColumnFormatter().setWidth(0, "auto");
-						headerTab.getColumnFormatter().setWidth(1, "250px");
+						headerTab.getColumnFormatter().setWidth(1, "300px");
 
 						InlineLabel accountLabel = new InlineLabel(result.getAccount().getFullName());
 						accountLabel.addStyleName(AON.AON_CSS.aonBold());
@@ -89,24 +88,16 @@ public class AccountStatementPanel extends DockLayoutPanel implements HasSelecti
 						headerTab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonTextCenter());
 						
 						FlowPanel headerPanel = new FlowPanel();
+						headerPanel.setStyleName(AON.AON_CSS.aonPanelGridSearch());
+						headerPanel.addStyleName(AON.AON_CSS.aonWidthAll());
+						headerPanel.addStyleName(AON.AON_CSS.aonNopadding());
+						headerPanel.addStyleName(AON.AON_CSS.aonNoMargin());
 						InlineLabel dateFromLabel = new InlineLabel(AON.MSG.from());
 						dateFromLabel.setStyleName(AON.AON_CSS.aonMarginLeft());
 						dateFromLabel.addStyleName(AON.AON_CSS.aonItalic());
 						final DateBoxEx dateFrom = new DateBoxEx();
 						dateFrom.addStyleName(AON.AON_CSS.aonMarginLeft());
 						dateFrom.setValue(result.getFrom());
-						dateFrom.addValueChangeHandler(new ValueChangeHandler<Date>() {
-							
-							@Override
-							public void onValueChange(ValueChangeEvent<Date> event) {
-								if (!dateFrom.getValue().after(result.getTo())) {
-									AccountStatementPanel.this.show(
-										result.getAccount().getId()
-										,dateFrom.getValue()
-										,result.getTo());
-								}
-							}
-						});
 
 						InlineLabel dateToLabel = new InlineLabel(AON.MSG.to());
 						dateToLabel.setStyleName(AON.AON_CSS.aonMarginLeft());
@@ -114,14 +105,18 @@ public class AccountStatementPanel extends DockLayoutPanel implements HasSelecti
 						final DateBoxEx dateTo = new DateBoxEx();
 						dateTo.addStyleName(AON.AON_CSS.aonMarginLeft());
 						dateTo.setValue(result.getTo());
-						dateTo.addValueChangeHandler(new ValueChangeHandler<Date>() {
-							
+						Button filter = new Button();
+						filter.setText(AON.MSG.searchAction());
+						filter.setStyleName(AON.AON_CSS.aonIconCommandButton());
+						filter.addStyleName(AON.AON_CSS.aonIconSearch());
+						filter.addStyleName(AON.AON_CSS.aonMarginLeft());						
+						filter.addClickHandler(new ClickHandler() {
 							@Override
-							public void onValueChange(ValueChangeEvent<Date> event) {
+							public void onClick(ClickEvent event) {
 								if (!dateTo.getValue().before(result.getFrom())) {
 									AccountStatementPanel.this.show(
 										result.getAccount().getId()
-										,result.getFrom()
+										,dateFrom.getValue()
 										,dateTo.getValue());
 								}
 							}
@@ -130,9 +125,13 @@ public class AccountStatementPanel extends DockLayoutPanel implements HasSelecti
 						headerPanel.add(dateFrom);
 						headerPanel.add(dateToLabel);
 						headerPanel.add(dateTo);
+						headerPanel.add(filter);
+
 						headerTab.setWidget(0, 1, headerPanel);
 						headerTab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonTextRight());
 						headerTab.getCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonPaddingRight());
+
+
 						header.add(headerTab);
 						
 						int height = 70 + (14 * result.getSummary().size());

@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public class AccountEntryParams implements Serializable{
 
 	private static final long serialVersionUID = 7399522390660289406L;
@@ -10,14 +12,14 @@ public class AccountEntryParams implements Serializable{
 	private int domain;
 	private Date from;
 	private Date to;
-	private Integer accountId;
-	private String accountCode;
+	private boolean confidential; 
+	private boolean hasConfidentialityRole; 
+	
+	private Integer account;
 	private Double debit;
 	private Double credit;
 	private String concept;
 	private String document;
-	private boolean confidential; 
-	private boolean hasConfidentialityRole; 
 	
 	
 	public int getDomain() {
@@ -41,18 +43,11 @@ public class AccountEntryParams implements Serializable{
 		this.to = to;
 		return this;
 	}
-	public Integer getAccountId() {
-		return accountId;
+	public Integer getAccount() {
+		return account;
 	}
-	public AccountEntryParams setAccountId(Integer accountId) {
-		this.accountId = accountId;
-		return this;
-	}
-	public String getAccountCode() {
-		return accountCode;
-	}
-	public AccountEntryParams setAccountCode(String accountCode) {
-		this.accountCode = accountCode;
+	public AccountEntryParams setAccount(Integer account) {
+		this.account = account;
 		return this;
 	}
 	public Double getDebit() {
@@ -97,5 +92,14 @@ public class AccountEntryParams implements Serializable{
 		this.hasConfidentialityRole = hasConfidentialityRole;
 		return this;
 	}
+	
+	public boolean hasDetailProperties() {
+		return (account != null 
+			|| debit != null 
+			|| credit != null 
+			|| AonStringUtils.isNotEmpty( concept ) 
+			|| AonStringUtils.isNotEmpty( document  ) );
+	}
+	
 	
 }

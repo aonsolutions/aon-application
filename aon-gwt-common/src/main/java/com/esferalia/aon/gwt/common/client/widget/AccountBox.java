@@ -25,17 +25,16 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle.MultiWordSuggestion;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
@@ -48,23 +47,25 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 	, HasDescription, Focusable, HasSelectionHandlers<Account>, HasAllFocusHandlers
 	,HasAllKeyHandlers {
 	
+	protected static final String BEGIN_STRONG = "<strong>";
+	protected static final String END_STRONG = "</strong>";
+	
 	private static final int MIN_CHARACTERS = 3;
 	private static final int MAX_CHARACTERS = 8;
-	private static final String BEGIN_STRONG = "<strong>";
-	private static final String END_STRONG = "</strong>";
 
 	private CommonServiceAsync commonService;
 
-	private String domainName;
-	private int domain;
-
 	private Integer id;
 	private String description;
-
+	
+	private FlowPanel rooPanel; 
 	private SuggestBox account;
 	private TextBox accountTextBox;
 	private InlineLabel descriptionLabel;
 	private boolean required = true;
+	private String domainName;
+	private int domain;
+	
 	
 	private AccountSuggestionDisplay suggestionDisplay;
 	
@@ -99,22 +100,84 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 	            }
 	        }
 	    }
-	    
 	}
-	public AccountBox(String domainName, int domain) {
+	
+	private static class AccountSuggestion extends MultiWordSuggestion {
+		
+		private Account account;
+		
+		private AccountSuggestion(Account account, String replacementString, String displayString) {
+			super( replacementString, displayString );
+			this.account = account;
+		}
+		
+		public Account getAccount() {
+			return account;
+		}
+		
+	}
+	
+	public AccountBox(final String domainName, final int domain) {
 		this(domainName,domain,true);
 	}
 	
-	public AccountBox(String domainName, int domain, boolean showDescription) {
+	public AccountBox(final String domainName, final int domain, boolean showDescription) {
 		this.domainName = domainName;
 		this.domain = domain;
 			
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
-		AccountSuggestOracle oracle = new AccountSuggestOracle();
+		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
+			@Override
+			public void requestSuggestions(final Request request,final Callback callback) {
+				suggestionDisplay.hideSuggestions();
+				if (AonStringUtils.length(request.getQuery()) >= MIN_CHARACTERS
+				 && AonStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
+					reset();
+					commonService.getAccounts(domainName,domain,request.getQuery()
+							,new AsyncCallback<LinkedList<Account>>() {
+		
+								public void onFailure(Throwable caught) {
+									descriptionLabel.setText(AON.MSG.accountNotFound());
+									descriptionLabel.addStyleName(AON.AON_CSS.aonColorRed());
+									callback.onSuggestionsReady(request, new Response());
+								}
+		
+								public void onSuccess(LinkedList<Account> result) {
+									LinkedList<Suggestion> suggestions = new LinkedList<Suggestion>();
+									if (result != null) {
+										
+										for (final Account account : result) {
+											SafeHtmlBuilder bld = new SafeHtmlBuilder();
+											String ds = account.getFullName();
+											int i = AonStringUtils.indexOfIgnoreCase(ds, request.getQuery());
+											bld.appendHtmlConstant("<span class=\"" 
+													+ ((account.getDomain() != domain)
+														?AON.AON_CSS.aonIconPointOrange()
+														:AON.AON_CSS.aonIconPointLightGreen() )
+													+ AonStringUtils.SPACE
+													+ AON.AON_CSS.aonIconPaddingLeft()
+													+ "\" >");
+											bld.appendEscaped(AonStringUtils.substring(ds, 0, i));
+											bld.appendHtmlConstant(BEGIN_STRONG);
+											bld.appendEscaped(AonStringUtils.substring(ds, i, (i + AonStringUtils.length(request.getQuery()) )));
+									        bld.appendHtmlConstant(END_STRONG);
+									        bld.appendEscaped(AonStringUtils.substring(ds, (i + AonStringUtils.length(request.getQuery()) )));
+									        bld.appendHtmlConstant("</span>");
+									        AccountSuggestion as = new AccountSuggestion(account, account.getCode(), bld.toSafeHtml().asString());
+											suggestions.add(as);
+										}
+									}
+									Response resp = new Response(suggestions);
+									callback.onSuggestionsReady(request, resp);
+									
+								}
+							});
+				}
+			}
+		};
 		accountTextBox = new TextBox();
 		suggestionDisplay =  new AccountSuggestionDisplay();
-		suggestionDisplay.setAnimationEnabled(true);
 		account = new SuggestBox(oracle,accountTextBox,suggestionDisplay);
 		accountTextBox.setStyleName(AON.AON_CSS.aonInputText());
 		accountTextBox.setVisibleLength(9);
@@ -125,69 +188,98 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 		descriptionLabel.setVisible(showDescription);
 		
 		accountTextBox.addBlurHandler( new BlurHandler() {
-			
 			@Override
 			public void onBlur(BlurEvent event) {
-				if (((DefaultSuggestionDisplay) account.getSuggestionDisplay()).isSuggestionListShowing())
-					return;
-				
-				String newValue = autoComplete(account.getValue());
-				if (AonValidationUtil.isValidAccount(newValue,isRequired())) {
-					if (!isRequired() && AonStringUtils.isEmpty(newValue)) {
-						// No es obligatorio y lo han dejado vacio, por lo que 
-						// hay que borrar lo que haya de antes.
-						reset();
-					} else {
-						accountTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
-						
-						commonService.getAccount(AccountBox.this.domainName,AccountBox.this.domain,newValue
-								,new AsyncCallback<Account>() {
-							@Override
-							public void onSuccess(Account result) {
-								if (result != null) {
-									id = result.getId();
-									description = result.getDescription();
-									descriptionLabel.setText(description);
-									accountTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
-									
-									SelectionEvent.fire(AccountBox.this, result );
-								} else {
-									reset();
-									Window.alert(AON.MSG.accountNotFound());
-									AccountBox.this.setFocus(true);
-								}
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-								Window.alert(AON.MSG.accountNotFound());
-							}
-						});
-
-						
-					}
-				} else {
-					accountTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );	
-				}
+				autoComplete(account.getValue());
 			}
 		});
 			
 		account.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 			@Override
 			public void onSelection(SelectionEvent<Suggestion> event) {
-				String selected = event.getSelectedItem()
-						.getReplacementString();
-				ValueChangeEvent.fire(account, selected);
+				AccountSuggestion selected = (AccountSuggestion) event.getSelectedItem();
+				select( selected.getAccount() );
 			}
 		});
 		
-		FlowPanel panel = new FlowPanel();
-		panel.addStyleName(AON.AON_CSS.aonNowrap() );
-		panel.add(account);
-		panel.add(descriptionLabel);
-		initWidget(panel);
+		rooPanel = new FlowPanel();
+		rooPanel.addStyleName(AON.AON_CSS.aonNowrap() );
+		rooPanel.add(account);
+		rooPanel.add(descriptionLabel);
+		initWidget(rooPanel);
 	}
 	
+	private void autoComplete(String value) {
+		if (AonStringUtils.isNotBlank(value) && AonStringUtils.contains(value,AonStringUtils.DOT)) {
+			String b = AonStringUtils.trimToEmpty( AonStringUtils.substringBefore(value, AonStringUtils.DOT));
+			String a = AonStringUtils.trimToEmpty(  AonStringUtils.substringAfter(value, AonStringUtils.DOT));
+			String c = AonStringUtils.rightPad(b, (9 - AonStringUtils.length(a)), AonStringUtils.ZERO) + a;
+			suggestionDisplay.hideSuggestions();
+			account.setValue(c,false);
+			select(c);
+		} else {
+			if (id == null && !((DefaultSuggestionDisplay) account.getSuggestionDisplay()).isSuggestionListShowing()) {
+				select(value);
+			}
+		}
+	}
+	private void select(String accountCode) {
+		if (AonValidationUtil.isValidAccount(accountCode,isRequired())) {
+			if (!isRequired() && AonStringUtils.isEmpty(accountCode)) {
+				// No es obligatorio y lo han dejado vacio, por lo que 
+				// hay que borrar lo que haya de antes.
+				reset();
+			} else {
+				accountTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
+				commonService.getAccount(AccountBox.this.domainName,AccountBox.this.domain
+						,accountCode,new AsyncCallback<Account>() {
+					@Override
+					public void onSuccess(Account result) {
+						if (result != null) {
+							select( result );
+						} else {
+							reset();
+							accountTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );
+							descriptionLabel.setText(AON.MSG.accountNotFound());
+							descriptionLabel.addStyleName(AON.AON_CSS.aonColorRed());
+							AccountBox.this.setFocus(true);
+						}
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						accountTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );
+						descriptionLabel.setText(AON.MSG.accountNotFound());
+						descriptionLabel.addStyleName(AON.AON_CSS.aonColorRed());
+					}
+				});
+
+				
+			}
+		} else {
+			reset();
+			accountTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );	
+		}
+		
+	}
+
+	private void select(Account result) {
+		accountTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
+		id = result.getId();
+		description = result.getDescription();
+		descriptionLabel.setText(description);
+		descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
+		SelectionEvent.fire(AccountBox.this, result );
+	}
+	
+	private void reset() {
+		accountTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
+		id = null;
+		description = null;
+		descriptionLabel.setText(null);
+		descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
+	}
+
 	public boolean isRequired() {
 		return required;
 	}
@@ -195,87 +287,8 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 		this.required = required;
 	}
 
-	private void reset() {
-		id = null;
-		description = null;
-		descriptionLabel.setText(null);
-	}
-	
-	
 	public Integer getId() {
 		return id;
-	}
-	
-	private String autoComplete(String value) {
-		if (AonStringUtils.isNotBlank(value) && AonStringUtils.contains(value,AonStringUtils.DOT)) {
-			String b = AonStringUtils.trimToEmpty( AonStringUtils.substringBefore(value, AonStringUtils.DOT));
-			String a = AonStringUtils.trimToEmpty(  AonStringUtils.substringAfter(value, AonStringUtils.DOT));
-			String c = AonStringUtils.rightPad(b, (9 - AonStringUtils.length(a)), AonStringUtils.ZERO) + a;
-			account.setValue(c,false);
-			suggestionDisplay.hideSuggestions();
-			return c;
-		}
-		return value;
-	}
-
-	class AccountSuggestOracle extends MultiWordSuggestOracle {
-
-		@Override
-		public void requestSuggestions(final Request request,final Callback callback) {
-			suggestionDisplay.hideSuggestions();
-			if (AonStringUtils.length(request.getQuery()) >= MIN_CHARACTERS
-			 && AonStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
-				reset();
-				commonService.getAccounts(AccountBox.this.domainName,AccountBox.this.domain,request.getQuery()
-						,new AsyncCallback<LinkedList<Account>>() {
-	
-							public void onFailure(Throwable caught) {
-								Window.alert(AON.MSG.unexpectedError( caught.getMessage()));
-								callback.onSuggestionsReady(request, new Response());
-							}
-	
-							public void onSuccess(LinkedList<Account> result) {
-								LinkedList<Suggestion> suggestions = new LinkedList<Suggestion>();
-								if (result != null) {
-									
-									for (final Account account : result) {
-										SafeHtmlBuilder bld = new SafeHtmlBuilder();
-										String ds = account.getFullName();
-										int i = AonStringUtils.indexOfIgnoreCase(ds, request.getQuery());
-										bld.appendHtmlConstant("<span class=\"" 
-												+ ((account.getDomain() != domain)
-													?AON.AON_CSS.aonIconPointOrange()
-													:AON.AON_CSS.aonIconPointLightGreen() )
-												+ AonStringUtils.SPACE
-												+ AON.AON_CSS.aonIconPaddingLeft()
-												+ "\" >");
-										bld.appendEscaped(AonStringUtils.substring(ds, 0, i));
-										bld.appendHtmlConstant(BEGIN_STRONG);
-										bld.appendEscaped(AonStringUtils.substring(ds, i, (i + AonStringUtils.length(request.getQuery()) )));
-								        bld.appendHtmlConstant(END_STRONG);
-								        bld.appendEscaped(AonStringUtils.substring(ds, (i + AonStringUtils.length(request.getQuery()) )));
-								        bld.appendHtmlConstant("</span>");
-								        MultiWordSuggestion as = new MultiWordSuggestion(account.getCode(), bld.toSafeHtml().asString());
-										suggestions.add(as);
-									}
-								}
-								Response resp = new Response(suggestions);
-								callback.onSuggestionsReady(request, resp);
-								
-							}
-						});
-			}
-		}
-	}
-	
-	@Override
-	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
-		return account.addValueChangeHandler(handler);
-	}
-
-	@Override
-	public HandlerRegistration addSelectionHandler(SelectionHandler<Account> handler) {
-		return super.addHandler(handler, SelectionEvent.getType());
 	}
 
 	@Override
@@ -313,6 +326,7 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 		return description;	
 	}
 
+	// --------------------------------------------------------- HANDLERS
 	@Override
 	public HandlerRegistration addBlurHandler(BlurHandler handler) {
 		return accountTextBox.addBlurHandler(handler);
@@ -335,12 +349,23 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 
 	@Override
 	public void setFocus(boolean focused) {
+		accountTextBox.selectAll();
 		accountTextBox.setFocus(focused);
 	}
 
 	@Override
 	public void setTabIndex(int index) {
 		accountTextBox.setTabIndex(index);
+	}
+
+	@Override
+	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
+		return account.addValueChangeHandler(handler);
+	}
+
+	@Override
+	public HandlerRegistration addSelectionHandler(SelectionHandler<Account> handler) {
+		return super.addHandler(handler, SelectionEvent.getType());
 	}
 
 	@Override
@@ -357,10 +382,4 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 	public HandlerRegistration addKeyPressHandler(KeyPressHandler handler) {
 		return accountTextBox.addKeyPressHandler(handler);
 	}
-
-	public void selectAll() {
-		accountTextBox.selectAll();
-	}
-
-	
 }

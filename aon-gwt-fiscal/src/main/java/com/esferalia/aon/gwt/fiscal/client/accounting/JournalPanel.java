@@ -69,12 +69,10 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 	private int lastScrollPos = 0;
 	
 	public JournalPanel(String domainName,int domainId) {
-		this(Unit.PX);
+		super(Unit.PX);
 		this.domainName = domainName;
 		this.domainId = domainId;
-	}
-	private JournalPanel(Unit unit) {
-		super(unit);
+		
 		addStyleName(AON.AON_CSS.aonScrollArea());
 		addStyleName(AON.AON_CSS.aonMarginBottom());
 		
@@ -130,7 +128,9 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 	private void fillNorthPanel() {
 		fromDate = new DateBoxEx();
 		toDate = new DateBoxEx();
-		account = new AccountBox(domainName,domainId);
+		
+		account = new AccountBox(this.domainName,this.domainId);
+		account.setRequired(false);
 		debit = new DoubleBox();
 		credit = new DoubleBox();
 		concept = new TextBox();
@@ -276,12 +276,10 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 			.setDomain(AccountEntryModule.getCurrentDomain())
 			.setFrom(fromDate.getValue())
 			.setTo(toDate.getValue())
-			.setAccountId(account.getId())
-			.setAccountCode(account.getValue())
+			.setAccount(account.getId())
 			.setDebit(debit.getValue())
 			.setCredit(credit.getValue())
 			.setConcept(concept.getValue())
-			.setDocument(document.getValue())
 			.setDocument(document.getValue())
 			.setHasConfidentialityRole(user != null && user.hasConfidentialityRole())
 			;

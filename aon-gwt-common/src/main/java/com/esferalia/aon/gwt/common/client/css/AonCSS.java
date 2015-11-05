@@ -249,6 +249,9 @@ public interface AonCSS extends  CssResource {
 
 	@ClassName("aon-margin")
     String aonMargin();
+	
+	@ClassName("aon-no-margin")
+    String aonNoMargin();
 
 	@ClassName("aon-margin-top")
     String aonMarginTop();
@@ -814,4 +817,6 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-confirm-dialog-cancel-button")
 	String aonConfirmDialogCancelButton();
+	
 }
+

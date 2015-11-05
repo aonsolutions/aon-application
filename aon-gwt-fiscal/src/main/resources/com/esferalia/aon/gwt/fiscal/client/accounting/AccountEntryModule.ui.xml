@@ -92,7 +92,7 @@
 							<g:ScrollPanel ui:field="tableContainer" styleName="{aonResources.css.aonScrollArea}"/>  
 						</g:center>
 						
-						<g:south size="0">
+						<g:south size="30">
 							<aon:MinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector}">
 								<g:TabLayoutPanel ui:field="tabLayout" barHeight="26" barUnit="PX" width="100%">
 									<g:tab>

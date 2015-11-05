@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.IAccounting;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
+import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
@@ -31,6 +32,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
+import com.esferalia.aon.occam.server.accounting.AccountEntryUtils;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -96,11 +98,18 @@ public class AccountingImpl implements IAccounting {
 	}
 	
 	// --------- ACCOUNT ENTRY -------------------------------------------
-//	@Override
-//	public AccountEntry fetchOneAccountEntry(AONContext ctx,
-//			Condition condition) {
-//		return AccountEntryDAO.fetchOne(ctx, condition);
-//	}
+	@Override
+	public Stream<AccountEntry> getAccountEntries(AONContext ctx,
+			AccountEntryParams params, int offset, int numberOfRows) {
+		return params.hasDetailProperties()
+			? AccountEntryDAO.fetchByLines(ctx,
+					p -> AccountEntryUtils.getFilterByLines(p, params) 
+					,offset,numberOfRows)
+			: AccountEntryDAO.fetch(ctx,
+				p -> AccountEntryUtils.getFilter(p, params) 
+				,offset,numberOfRows)
+			;
+	}
 
 	@Override
 	public Stream<AccountEntry> getAccountEntries(AONContext ctx,

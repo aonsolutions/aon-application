@@ -59,14 +59,12 @@ public class CommonServiceImpl extends AonRemoteServiceServlet implements Common
 		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
 		 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
 			:(query);
-		LinkedList<Account> list = new LinkedList<Account>();
-		list.addAll( AON.getAccounts(domainName, domain,
+		return AON.getAccounts(domainName, domain,
 				p ->  p.getActiveProperty().eq((byte) 1)
 					.and(p.getCodeProperty().like(q)
 					 .or(p.getDescriptionProperty().like(q))
 					 .or(p.getAliasProperty().like(q)))
-				).collect(Collectors.toList()));
-		return list;
+				).collect(Collectors.toCollection(LinkedList::new));
 	}
 
 	@Override

@@ -18,7 +18,8 @@ public class AccountPeriod implements Serializable {
 	private String creationUser;
 	private Date creationDate;
 	private String modificationUser;
-	private Date modificationDate;	
+	private Date modificationDate;
+	private boolean defaultPeriod;
 
 	public Integer getId() {
 		return this.id;
@@ -96,8 +97,13 @@ public class AccountPeriod implements Serializable {
 		this.modificationDate = modificationDate;
 		return this;
 	}
-	
 	public boolean isClosed() {
 		return this.status == AccountPeriodStatus.CLOSED;
+	}
+	public boolean isDefaultPeriod() {
+		return defaultPeriod;
+	}
+	public void setDefaultPeriod(boolean defaultPeriod) {
+		this.defaultPeriod = defaultPeriod;
 	}
 }

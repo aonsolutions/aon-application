@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
@@ -36,6 +37,8 @@ public interface IAccounting {
 
 	// 					ACCOUNT ENTRY
 	public AccountEntry getAccountEntry(AONContext ctx,Integer id);
+	public Stream<AccountEntry> getAccountEntries(AONContext ctx,AccountEntryParams params
+			, int offset, int numberOfRows);
 	public Stream<AccountEntry> getAccountEntries(AONContext ctx,AccountEntryFilter filter
 			, int offset, int numberOfRows);
 	public boolean existsAnyEntry(AONContext ctx,Integer period, AccountEntryType accountEntryType);

@@ -11,40 +11,39 @@ public class ApplicationParameter implements Serializable {
 	private String name;
 	private String value;
 
-	public ApplicationParameter() {
-
-	}
-
 	public Integer getId() {
 		return id;
 	}
-
-	public void setId(Integer id) {
+	public ApplicationParameter setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 
 	public Integer getDomain() {
 		return domain;
 	}
 
-	public void setDomain(Integer domain) {
+	public ApplicationParameter setDomain(Integer domain) {
 		this.domain = domain;
+		return this;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public ApplicationParameter setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	public String getValue() {
 		return value;
 	}
 
-	public void setValue(String value) {
+	public ApplicationParameter setValue(String value) {
 		this.value = value;
+		return this;
 	}
 
 }

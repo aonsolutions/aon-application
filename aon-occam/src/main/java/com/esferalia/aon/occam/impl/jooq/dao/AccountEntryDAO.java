@@ -36,12 +36,16 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailFilter;
+import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailProperties;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryProperties;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountEntryValidation;
+import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
@@ -69,8 +73,7 @@ public class AccountEntryDAO {
 					,ACCOUNT_ENTRY.ENTRY_TYPE,ACCOUNT_ENTRY.JOURNAL,ACCOUNT_ENTRY.SECURITY_LEVEL
 					,ACCOUNT_ENTRY.COMMENTS
 					,ACCOUNT_ENTRY.CREATION_USER,ACCOUNT_ENTRY.CREATION_DATE
-					,ACCOUNT_ENTRY.MODIFICATION_USER,ACCOUNT_ENTRY.MODIFICATION_DATE
-					)
+					,ACCOUNT_ENTRY.MODIFICATION_USER,ACCOUNT_ENTRY.MODIFICATION_DATE)
 				.from(ACCOUNT_ENTRY)
 				.join(ACCOUNT_PERIOD).on(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ACCOUNT_PERIOD.ID))
 				.where(ACCOUNT_ENTRY_PROPERTIES.getConditions(filter))
@@ -79,7 +82,7 @@ public class AccountEntryDAO {
 				.fetch()
 				.stream()
 				.map( new FullAccountEntryFiller() )
-				.peek( ae -> ae.setDetails( ctx.getDslContext()
+				.peek( ae -> ae.setDetails(ctx.getDslContext()
 						.select(ACCOUNT_ENTRY_DETAIL.ID,ACCOUNT_ENTRY_DETAIL.DOMAIN,ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY
 								,ACCOUNT_ENTRY_DETAIL.LINE,ACCOUNT_ENTRY_DETAIL.ACCOUNT,ACCOUNT_ENTRY_DETAIL.CONCEPT
 								,ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,ACCOUNT_ENTRY_DETAIL.DEBIT,ACCOUNT_ENTRY_DETAIL.CREDIT
@@ -96,11 +99,32 @@ public class AccountEntryDAO {
 							.fetch()
 							.stream()
 							.map( new FullAccountEntryDetailFiller() )
-							.collect(Collectors.toCollection(LinkedList::new))
-							)
-							);
+							.collect(Collectors.toCollection(LinkedList::new)))
+					)
+			;
 	}
-	
+
+	public static Stream<AccountEntry> fetchByLines(AONContext ctx
+			, AccountEntryDetailFilter filter
+			, int offset
+			, int numberOfRows) {
+		ctx.checkRead();
+		return  ctx.getDslContext()
+			.selectDistinct(ACCOUNT_ENTRY.ID)
+				.from(ACCOUNT_ENTRY)
+				.join(ACCOUNT_ENTRY_DETAIL).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
+				.where(ACCOUNT_ENTRY_DETAIL_PROPERTIES.getConditions(filter))
+				.orderBy(ACCOUNT_ENTRY.ACCOUNT_PERIOD,ACCOUNT_ENTRY.JOURNAL,ACCOUNT_ENTRY.ENTRY_DATE)
+				.limit(offset,numberOfRows)
+				.fetch()
+				.stream()
+				.map( t-> fetch(ctx,p -> 
+							p.getDomainProperty().eq(ctx.getDomainId())
+							.and(p.getIdProperty().eq(t.getValue(ACCOUNT_ENTRY.ID))), 0, 1)
+							.findFirst().orElse(null) )
+			;
+	}
+		
 	// ------------------------------------------------------------- ESCRITURA
 	public static Integer save(AONContext ctx, AccountEntry ae) {
 		if (ae.getId() == null) {
@@ -236,12 +260,29 @@ public class AccountEntryDAO {
 		ctx.checkWrite();
 		Integer accountPeriodId = null;
 		AccountEntryType type = null;
-		Record record = ctx.getDslContext().select(ACCOUNT_ENTRY.ACCOUNT_PERIOD,ACCOUNT_ENTRY.ENTRY_TYPE)
+		Record record = ctx.getDslContext()
+			.select(ACCOUNT_ENTRY.ACCOUNT_PERIOD,ACCOUNT_ENTRY.ENTRY_TYPE,ACCOUNT_PERIOD.STATUS)
 			.from(ACCOUNT_ENTRY)
+			.join(ACCOUNT_PERIOD).on(ACCOUNT_PERIOD.ID.eq(ACCOUNT_ENTRY.ACCOUNT_PERIOD))
 			.where(ACCOUNT_ENTRY.ID.eq(id))
 			.fetchOne();
+		if (record == null) return;
+		
+		AccountPeriodStatus status = AccountPeriodStatus.values()[record.getValue(ACCOUNT_PERIOD.STATUS)];
 		accountPeriodId = record.getValue(ACCOUNT_ENTRY.ACCOUNT_PERIOD);
+		if (status == null || !status.isActive()) {
+			if (status == AccountPeriodStatus.INACTIVE)
+				throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_INACTIVE.format(accountPeriodId));
+			if (status == AccountPeriodStatus.OPERATING)
+				throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_OPERATING.format(accountPeriodId));
+			if (status == AccountPeriodStatus.CLOSED)
+				throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_CLOSING.format(accountPeriodId));
+		}
 		type = AccountEntryType.values()[record.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)];
+		
+		if (!type.isManual()) {
+			throw new AonCoreException("No se permite el borrado de asientos automáticos");
+		}
 		// Se borran las lineas
 		ctx.getDslContext()
 			.delete(ACCOUNT_ENTRY_DETAIL)
@@ -425,8 +466,8 @@ public class AccountEntryDAO {
 				;
 		}
 	}
-
-	// ---------------------------------------------------------- FILTRO
+	
+	// ---------------------------------------------------------- FILTROS
 	private static final AccountEntryPropertiesDAO ACCOUNT_ENTRY_PROPERTIES = new AccountEntryPropertiesDAO();
 	private static class AccountEntryPropertiesDAO implements AccountEntryProperties {
 
@@ -466,6 +507,44 @@ public class AccountEntryDAO {
 		@Override
 		public Property<Byte> getConfidentialProperty() {
 			return new FilterDAO.PropertyDAO<Byte>(ACCOUNT_ENTRY.SECURITY_LEVEL);
+		}
+	}
+
+	private static final AccountEntryDetailPropertiesDAO ACCOUNT_ENTRY_DETAIL_PROPERTIES 
+		= new AccountEntryDetailPropertiesDAO();
+	private static class AccountEntryDetailPropertiesDAO extends AccountEntryPropertiesDAO implements AccountEntryDetailProperties {
+
+		private Condition[] getConditions(AccountEntryDetailFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null)
+				return new Condition[0];
+
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override
+		public Property<Integer> getAccountProperty() {
+			return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY_DETAIL.ACCOUNT);
+		}
+
+		@Override
+		public Property<String> getConceptProperty() {
+			return new FilterDAO.PropertyDAO<String>(ACCOUNT_ENTRY_DETAIL.CONCEPT);
+		}
+
+		@Override
+		public Property<Double> getDebitProperty() {
+			return new FilterDAO.PropertyDAO<Double>(ACCOUNT_ENTRY_DETAIL.DEBIT);
+		}
+
+		@Override
+		public Property<Double> getCreditProperty() {
+			return new FilterDAO.PropertyDAO<Double>(ACCOUNT_ENTRY_DETAIL.CREDIT);
+		}
+
+		@Override
+		public Property<String> getDocumentNumber() {
+			return new FilterDAO.PropertyDAO<String>(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER);
 		}
 	}
 }

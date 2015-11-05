@@ -7,15 +7,10 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 public interface AccountEntryProperties {
 	
 	Property<Integer> getIdProperty();
-	
 	Property<Integer> getDomainProperty();
-	
 	Property<Integer> getAccountPeriodProperty();
-	
 	Property<Date> getEntryDateProperty();
-	
 	Property<Byte> getEntryTypeProperty();
-
 	Property<Byte> getConfidentialProperty();
 
 }

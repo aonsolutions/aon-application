@@ -11,18 +11,23 @@ import org.jooq.Record;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.accounting.AccountPeriodFilter;
 import com.esferalia.aon.occam.api.model.accounting.AccountPeriodProperties;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountPeriodValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonUtils;
 
 public class AccountPeriodDAO {
 
 	public static Stream<AccountPeriod> getPeriods(AONContext ctx, AccountPeriodFilter filter) {
 		ctx.checkRead();
+		ApplicationParameter ap = AppParamDAO.fetchOne(ctx, AppParam.ACC_DEFAULT_PERIOD);
 		return ctx.getDslContext()
 			.select(ACCOUNT_PERIOD.ID,ACCOUNT_PERIOD.DOMAIN,ACCOUNT_PERIOD.NAME,ACCOUNT_PERIOD.INITIATION_DATE
 					,ACCOUNT_PERIOD.DEADLINE,ACCOUNT_PERIOD.STATUS,ACCOUNT_PERIOD.CREATION_USER
@@ -32,7 +37,11 @@ public class AccountPeriodDAO {
 			.orderBy(ACCOUNT_PERIOD.INITIATION_DATE.desc())
 			.fetch()
 			.stream()
-			.map(new FullAccountPeriodFiller());
+			.map(new FullAccountPeriodFiller())
+			.peek( period -> period.setDefaultPeriod( AonUtils.equals(
+					AonNumberUtils.toInteger( ap.getValue() ),period.getId())) 
+			);
+		
 	}
 	public static AccountPeriod getActivePeriod(AONContext ctx, Date entryDate) {
 		ctx.checkRead();
