@@ -16,6 +16,7 @@ import static java.util.Calendar.MONTH;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,6 +31,7 @@ import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
@@ -43,8 +45,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	// -------------------------------------------------------------------------
 	@Test
-	public void testCretaStandardActiveFullTime() throws ExpressionException, SQLException,
-			SalaryException {
+	public void testCretaStandardActiveFullTime()
+			throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
@@ -74,65 +76,68 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		
+
 		int salaries = calculateAndSave(connection, ctx);
 
-		// Only one salary saved to DB. 
+		// Only one salary saved to DB.
 		Assert.assertEquals(1, salaries);
-		
-		AON.getSalaryData(aonContext, props->
-			props.getContractProperty().eq(contract.getId())
-		)
-		.forEach(salary->{
 
-			// 500 Base de contingencias comunes.
-			List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
-			Assert.assertEquals(1, datas.size());
-			Assert.assertEquals(startDate,datas.get(0).getStartDate());
-			Assert.assertEquals(endDate,datas.get(0).getEndDate());
-			Assert.assertEquals(1750.00,Double.parseDouble(datas.get(0).getExpression()));
-			
-			// 501 Base  de  Horas  Extras  Fuerza Mayor 
-			datas = salary.getContextData().get(STRUCTURAL_OVERTIME_BASE.getName());
-			Assert.assertEquals(1, datas.size());
-			Assert.assertEquals(startDate,datas.get(0).getStartDate());
-			Assert.assertEquals(endDate,datas.get(0).getEndDate());
-			Assert.assertEquals(0.00,Double.parseDouble(datas.get(0).getExpression()));
+		AON.getSalaryData(aonContext,
+				props -> props.getContractProperty().eq(contract.getId()))
+				.forEach(salary -> {
 
-			// 502 Base  de  Horas  Extras  
-			datas = salary.getContextData().get(NON_STRUCTURAL_OVERTIME_BASE.getName());
-			Assert.assertEquals(1, datas.size());
-			Assert.assertEquals(startDate,datas.get(0).getStartDate());
-			Assert.assertEquals(endDate,datas.get(0).getEndDate());
-			Assert.assertEquals(0.00,Double.parseDouble(datas.get(0).getExpression()));
-			
-			// 601 o 611 Base de Accidentes de Trabajo.
-			datas = salary.getContextData().get(CGP_BASE.getName());
-			Assert.assertEquals(1, datas.size());
-			Assert.assertEquals(startDate,datas.get(0).getStartDate());
-			Assert.assertEquals(endDate,datas.get(0).getEndDate());
-			Assert.assertEquals(1750.00,Double.parseDouble(datas.get(0).getExpression()));
+					// 500 Base de contingencias comunes.
+					List<ContextData> datas = salary.getContextData()
+							.get(CGC_BASE.getName());
+					Assert.assertEquals(1, datas.size());
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(endDate, datas.get(0).getEndDate());
+					Assert.assertEquals(1750.00,
+							Double.parseDouble(datas.get(0).getExpression()));
 
-		});
+					// 501 Base de Horas Extras Fuerza Mayor
+					datas = salary.getContextData()
+							.get(STRUCTURAL_OVERTIME_BASE.getName());
+					Assert.assertEquals(1, datas.size());
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(endDate, datas.get(0).getEndDate());
+					Assert.assertEquals(0.00,
+							Double.parseDouble(datas.get(0).getExpression()));
+
+					// 502 Base de Horas Extras
+					datas = salary.getContextData()
+							.get(NON_STRUCTURAL_OVERTIME_BASE.getName());
+					Assert.assertEquals(1, datas.size());
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(endDate, datas.get(0).getEndDate());
+					Assert.assertEquals(0.00,
+							Double.parseDouble(datas.get(0).getExpression()));
+
+					// 601 o 611 Base de Accidentes de Trabajo.
+					datas = salary.getContextData().get(CGP_BASE.getName());
+					Assert.assertEquals(1, datas.size());
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(endDate, datas.get(0).getEndDate());
+					Assert.assertEquals(1750.00,
+							Double.parseDouble(datas.get(0).getExpression()));
+
+				});
 		;
-		
-		
 
 	}
 
 	// -------------------------------------------------------------------------
 	@Test
-	public void testCretaITMaternityFullTimeI() throws ExpressionException, SQLException,
-			SalaryException {
+	public void testCretaITMaternityFullTimeI()
+			throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
-		
-		
+
 		cleanSystemPayments(aonContext);
-		addSSRegimePayment(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), PaymentType.CRA_0004 , 
-				"TRACE('DIAS_MATERNIDAD=%d\r\n',DIAS_MATERNIDAD);0.00", 
-				"DIAS_MATERNIDAD * BASE_REGULADORA" ,
-				"0.00");
+		addSSRegimePayment(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), PaymentType.CRA_0004,
+				"TRACE('DIAS_MATERNIDAD=%d\r\n',DIAS_MATERNIDAD);0.00",
+				"DIAS_MATERNIDAD * BASE_REGULADORA", "0.00");
 		//@formatter:off
 		@SuppressWarnings("serial")
 		ContractRecord contract = newContract(aonContext, 
@@ -166,53 +171,50 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 				null, 
 				null/*1750.00/30*/);
 		//@formatter:on
-		
-		
+
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		
+
 		int salaries = calculateAndSave(connection, ctx);
-		
-		
-		// Only one salary saved to DB. 
+
+		// Only one salary saved to DB.
 		Assert.assertEquals(1, salaries);
-		
-		AON.getSalaryData(aonContext, props->
-			props.getContractProperty().eq(contract.getId())
-		)
-		.forEach(salary->{
 
-			int monthDays = AonDateUtils.getMax(startDate, DAY_OF_MONTH);
-  
-			// 500 Base de contingencias comunes.
-			List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
-			Assert.assertEquals(1, datas.size());
-			
-			Assert.assertEquals(startDate,datas.get(0).getStartDate());
-			Assert.assertEquals(endDate,datas.get(0).getEndDate());
-			Assert.assertEquals(1750.00,Double.parseDouble(datas.get(0).getExpression()), DELTA);
-			
+		AON.getSalaryData(aonContext,
+				props -> props.getContractProperty().eq(contract.getId()))
+				.forEach(salary -> {
 
-		});
+					int monthDays = AonDateUtils.getMax(startDate,
+							DAY_OF_MONTH);
+
+					// 500 Base de contingencias comunes.
+					List<ContextData> datas = salary.getContextData()
+							.get(CGC_BASE.getName());
+					Assert.assertEquals(1, datas.size());
+
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(endDate, datas.get(0).getEndDate());
+					Assert.assertEquals(1750.00,
+							Double.parseDouble(datas.get(0).getExpression()),
+							DELTA);
+
+				});
 		;
-		
-		
 
 	}
 
 	// -------------------------------------------------------------------------
 	@Test
-	public void testCretaITMaternityFullTimeII() throws ExpressionException, SQLException,
-			SalaryException {
+	public void testCretaITMaternityFullTimeII()
+			throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
-		
-		
+
 		cleanSystemPayments(aonContext);
-		addSSRegimePayment(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), PaymentType.CRA_0004 , 
-				"TRACE('DIAS_MATERNIDAD=%d\r\n',DIAS_MATERNIDAD);0.00", 
-				"DIAS_MATERNIDAD * BASE_REGULADORA" ,
-				"0.00");
+		addSSRegimePayment(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), PaymentType.CRA_0004,
+				"TRACE('DIAS_MATERNIDAD=%d\r\n',DIAS_MATERNIDAD);0.00",
+				"DIAS_MATERNIDAD * BASE_REGULADORA", "0.00");
 		//@formatter:off
 		@SuppressWarnings("serial")
 		ContractRecord contract = newContract(aonContext, 
@@ -248,51 +250,47 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 				null, 
 				1755.00 / monthDays);
 		//@formatter:on
-		
-		
+
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		
+
 		int salaries = calculateAndSave(connection, ctx);
-		
-		
-		// Only one salary saved to DB. 
+
+		// Only one salary saved to DB.
 		Assert.assertEquals(1, salaries);
-		
-		AON.getSalaryData(aonContext, props->
-			props.getContractProperty().eq(contract.getId())
-		)
-		.forEach(salary->{
 
-  
-			// 500 Base de contingencias comunes.
-			List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
-			Assert.assertEquals(1, datas.size());
-			
-			Assert.assertEquals(startDate,datas.get(0).getStartDate());
-			Assert.assertEquals(endDate,datas.get(0).getEndDate());
-			Assert.assertEquals(1755.00,Double.parseDouble(datas.get(0).getExpression()), DELTA);
-			
+		AON.getSalaryData(aonContext,
+				props -> props.getContractProperty().eq(contract.getId()))
+				.forEach(salary -> {
 
-		});
+					// 500 Base de contingencias comunes.
+					List<ContextData> datas = salary.getContextData()
+							.get(CGC_BASE.getName());
+					Assert.assertEquals(1, datas.size());
+
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(endDate, datas.get(0).getEndDate());
+					Assert.assertEquals(1755.00,
+							Double.parseDouble(datas.get(0).getExpression()),
+							DELTA);
+
+				});
 		;
-		
-		
 
 	}
+
 	// -------------------------------------------------------------------------
 	@Test
-	public void testCretaITMaternityFullTimeIII() throws ExpressionException, SQLException,
-			SalaryException {
+	public void testCretaITMaternityFullTimeIII()
+			throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
-		
-		
+
 		cleanSystemPayments(aonContext);
-		addSSRegimePayment(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), PaymentType.CRA_0004 , 
-				"TRACE('DIAS_MATERNIDAD=%d\r\n',DIAS_MATERNIDAD);0.00", 
-				"DIAS_MATERNIDAD * BASE_REGULADORA" ,
-				"0.00");
+		addSSRegimePayment(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), PaymentType.CRA_0004,
+				"TRACE('DIAS_MATERNIDAD=%d\r\n',DIAS_MATERNIDAD);0.00",
+				"DIAS_MATERNIDAD * BASE_REGULADORA", "0.00");
 		//@formatter:off
 		@SuppressWarnings("serial")
 		ContractRecord contract = newContract(aonContext, 
@@ -327,55 +325,151 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 				endDate, 
 				null/*1750.00/30*/);
 		//@formatter:on
-		
-		
+
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		
+
 		int salaries = calculateAndSave(connection, ctx);
-		
-		
-		// Only one salary saved to DB. 
+
+		// Only one salary saved to DB.
 		Assert.assertEquals(1, salaries);
-		
-		AON.getSalaryData(aonContext, props->
-			props.getContractProperty().eq(contract.getId())
-		)
-		.forEach(salary->{
 
-			Date endActive = add(startIt, DAY_OF_MONTH,-1);
-			int monthDays = AonDateUtils.getMax(startDate, DAY_OF_MONTH);
-  
-			// 500 Base de contingencias comunes.
-			List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
-			Assert.assertEquals(2, datas.size());
-			
-			Assert.assertEquals(startDate,datas.get(0).getStartDate());
-			Assert.assertEquals(endActive,datas.get(0).getEndDate());
-			Assert.assertEquals(1750.00 * 13 / monthDays,Double.parseDouble(datas.get(0).getExpression()), DELTA);
-			
-			Assert.assertEquals(startIt,datas.get(1).getStartDate());
-			Assert.assertEquals(endDate,datas.get(1).getEndDate());
-			Assert.assertEquals(1750.00 * (monthDays -13)/monthDays,Double.parseDouble(datas.get(1).getExpression()), DELTA);
+		AON.getSalaryData(aonContext,
+				props -> props.getContractProperty().eq(contract.getId()))
+				.forEach(salary -> {
 
-			// 601 o 611 Base de Accidentes de Trabajo.
-			datas = salary.getContextData().get(CGP_BASE.getName());
-			Assert.assertEquals(2, datas.size());
+					Date endActive = add(startIt, DAY_OF_MONTH, -1);
+					int monthDays = AonDateUtils.getMax(startDate,
+							DAY_OF_MONTH);
 
-			Assert.assertEquals(startDate,datas.get(0).getStartDate());
-			Assert.assertEquals(endActive,datas.get(0).getEndDate());
-			Assert.assertEquals(1750.00 * 13 / monthDays,Double.parseDouble(datas.get(0).getExpression()), DELTA);
-			
-			Assert.assertEquals(startIt,datas.get(1).getStartDate());
-			Assert.assertEquals(endDate,datas.get(1).getEndDate());
-			Assert.assertEquals(1750.00 * (monthDays -13)/monthDays,Double.parseDouble(datas.get(1).getExpression()), DELTA);
+					// 500 Base de contingencias comunes.
+					List<ContextData> datas = salary.getContextData()
+							.get(CGC_BASE.getName());
+					Assert.assertEquals(2, datas.size());
 
-		});
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(endActive, datas.get(0).getEndDate());
+					Assert.assertEquals(1750.00 * 13 / monthDays,
+							Double.parseDouble(datas.get(0).getExpression()),
+							DELTA);
+
+					Assert.assertEquals(startIt, datas.get(1).getStartDate());
+					Assert.assertEquals(endDate, datas.get(1).getEndDate());
+					Assert.assertEquals(1750.00 * (monthDays - 13) / monthDays,
+							Double.parseDouble(datas.get(1).getExpression()),
+							DELTA);
+
+					// 601 o 611 Base de Accidentes de Trabajo.
+					datas = salary.getContextData().get(CGP_BASE.getName());
+					Assert.assertEquals(2, datas.size());
+
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(endActive, datas.get(0).getEndDate());
+					Assert.assertEquals(1750.00 * 13 / monthDays,
+							Double.parseDouble(datas.get(0).getExpression()),
+							DELTA);
+
+					Assert.assertEquals(startIt, datas.get(1).getStartDate());
+					Assert.assertEquals(endDate, datas.get(1).getEndDate());
+					Assert.assertEquals(1750.00 * (monthDays - 13) / monthDays,
+							Double.parseDouble(datas.get(1).getExpression()),
+							DELTA);
+
+				});
 		;
-		
-		
 
 	}
+
+	// -------------------------------------------------------------------------
+	@Test
+	public void testCretaChangeTime()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(), String.format("\"%s\"", C100.getValue()));
+					}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {						
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05",
+				"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				},
+				null);
+		//@formatter:on
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		addData(aonContext, contract, add(startDate, DAY_OF_MONTH, 10), null,
+				new HashMap<String, String>() {
+					{
+						put(ContextVariable.OCCUPATION.getName(), "\"g\"");
+					}
+				});
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		int salaries = calculateAndSave(connection, ctx);
+
+		// Only one salary saved to DB.
+		Assert.assertEquals(1, salaries);
+
+		AON.getSalaryData(aonContext,
+				props -> props.getContractProperty().eq(contract.getId()))
+				.forEach(salary -> {
+					Date noOcupationEnd = add(startDate, DAY_OF_MONTH, 9);
+					Date ocupationStart = add(startDate, DAY_OF_MONTH, 10);
+
+					int monthDays = AonDateUtils.get(endDate, DAY_OF_MONTH);
+
+					// 500 Base de contingencias comunes.
+					List<ContextData> datas = salary.getContextData()
+							.get(CGC_BASE.getName());
+					Assert.assertEquals(2, datas.size());
+
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(noOcupationEnd,
+							datas.get(0).getEndDate());
+					Assert.assertEquals(1750.00 * 10 / monthDays,
+							Double.parseDouble(datas.get(0).getExpression()));
+
+					Assert.assertEquals(ocupationStart,
+							datas.get(1).getStartDate());
+					Assert.assertEquals(endDate, datas.get(1).getEndDate());
+					Assert.assertEquals(1750.00 * (monthDays - 10) / monthDays,
+							Double.parseDouble(datas.get(1).getExpression()));
+
+					// 601 o 611 Base de Accidentes de Trabajo.
+					datas = salary.getContextData().get(CGP_BASE.getName());
+					Assert.assertEquals(2, datas.size());
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(noOcupationEnd,
+							datas.get(0).getEndDate());
+					Assert.assertEquals(1750.00 * 10 / monthDays,
+							Double.parseDouble(datas.get(0).getExpression()));
+
+					Assert.assertEquals(ocupationStart,
+							datas.get(1).getStartDate());
+					Assert.assertEquals(endDate, datas.get(1).getEndDate());
+					Assert.assertEquals(1750.00 * (monthDays - 10) / monthDays,
+							Double.parseDouble(datas.get(1).getExpression()));
+
+				});
+		;
+	}
+
 	// -------------------------------------------------------------------------
 
 	private static int calculateAndSave(Connection connection,
