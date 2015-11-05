@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,6 +29,8 @@ import com.esferalia.aon.payroll.sql.SQLConstants.ContractEmbargoColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.DeductionConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryEmbargoColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDeductionColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
@@ -50,7 +53,7 @@ public class SQLSalaryDraft {
 		}
 
 		for (Payment payment : draft.getDraftPayments()) {
-			makeRoom(conn, payment, contract);
+			makeRoomPayment(conn, payment, contract);
 			String expression = payment.getExpression();
 			
 			if ("CONVENIO()".equals(expression)){
@@ -65,7 +68,7 @@ public class SQLSalaryDraft {
 		}
 
 		for (Deduction deduction : draft.getDraftDeductions()) {
-			makeRoom(conn, deduction, contract);
+			makeRoomDeduction(conn, deduction, contract);
 			String expression = deduction.getExpression();
 			if (!"REMOVE()".equals(expression)
 					|| inSystem(conn, deduction, domain, parentDomain)) {
@@ -73,7 +76,7 @@ public class SQLSalaryDraft {
 			}
 		} 
 		for (Deduction embargo : draft.getDraftEmbargos()) {
-			makeRoom(conn, embargo, contract);
+			makeRoomEmbargo(conn, embargo, contract);
 			String expression = embargo.getExpression();
 			if (!"REMOVE()".equals(expression)
 					|| inSystem(conn, embargo, domain, parentDomain)) {
@@ -81,7 +84,7 @@ public class SQLSalaryDraft {
 			}
 		}
 		for (Bonus bonus : draft.getDraftBonuses()) {
-			makeRoom(conn, bonus, contract);
+			makeRoomBonus(conn, bonus, contract);
 			String expression = bonus.getExpression();
 			if (!"REMOVE()".equals(expression)
 					/* Nooo System */) {
@@ -330,7 +333,7 @@ public class SQLSalaryDraft {
 			+ SQLConstants.CONTRACT_PAYMENT + " WHERE "
 			+ ContractPaymentColumns.ID + " = ? ";
 
-	private static void makeRoom(Connection conn, Payment payment,
+	private static void makeRoomPayment(Connection conn, Payment payment,
 			Integer contract) throws SQLException {
 
 		ResultSet rs = null;
@@ -610,7 +613,7 @@ public class SQLSalaryDraft {
 			+ ContractDeductionColumns.DEDUCTION_CONCEPT
 			+ " ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-	private static final String CONTRACT_EMARGO_INSERT = "INSERT INTO "
+	private static final String CONTRACT_EMBARGO_INSERT = "INSERT INTO "
 			+ SQLConstants.CONTRACT_EMBARGO + "( "
 			+ ContractEmbargoColumns.DOMAIN + ", "
 			+ ContractEmbargoColumns.CONTRACT + ", "
@@ -624,11 +627,32 @@ public class SQLSalaryDraft {
 			+ SQLConstants.CONTRACT_DEDUCTION + " WHERE "
 			+ ContractDeductionColumns.ID + " = ? ";
 
+	private static final String CONTRACT_EMBARGO_DELETE_SQL = "DELETE FROM "
+			+ SQLConstants.CONTRACT_EMBARGO + " WHERE "
+			+ ContractEmbargoColumns.ID + " = ? ";
+
 	private static final String CONTRACT_BONUS_DELETE_SQL = "DELETE FROM "
 			+ SQLConstants.CONTRACT_BONUS + " WHERE "
 			+ ContractBonusColumns.ID + " = ? ";
+	
+	
+	//@formatter:off
+	private static final String SALARY_EMBARGO_UPDATE_SQL =
+			" UPDATE"
+			+ " " + SQLConstants.SALARY_EMBARGO 
+			+ " SET " + SalaryEmbargoColumns.CONTRACT_EMBARGO + " = ? "
+			+ " WHERE " + SalaryEmbargoColumns.CONTRACT_EMBARGO + " = ? "
+			+ " AND " + SalaryEmbargoColumns.SALARY + " IN (  "
+			+ " SELECT " + SalaryColumns.ID  
+			+ " FROM " + SQLConstants.SALARY 
+			+ " WHERE " + SalaryColumns.CONTRACT + " = ? " 
+			+ " AND " + SalaryColumns.START_DATE + " >= ? "
+			+ " AND " + SalaryColumns.END_DATE + " <= ? )"
+			;
+			
+	//@formatter:on
 
-	private static void makeRoom(Connection conn, Deduction deduction,
+	private static void makeRoomDeduction(Connection conn, Deduction deduction,
 			Integer contract) throws SQLException {
 
 		ResultSet rs = null;
@@ -706,7 +730,122 @@ public class SQLSalaryDraft {
 		}
 	}
 
-	private static void makeRoom(Connection conn, Bonus bonus,
+	private static void makeRoomEmbargo(Connection conn, Deduction deduction,
+			Integer contract) throws SQLException {
+
+		ResultSet rs = null;
+		Statement checksStmt = null;
+		PreparedStatement queryStmt = null;
+		PreparedStatement insertStmt = null;
+		PreparedStatement deleteStmt = null;
+		PreparedStatement salaryStmt = null;
+		try {
+
+			java.sql.Date endDate = SQLUtils.date2sql(deduction.getEndDate());
+			java.sql.Date startDate = SQLUtils.date2sql(deduction.getStartDate());
+
+			String querySql = "SELECT * " + " FROM "
+					+ SQLConstants.CONTRACT_EMBARGO + " WHERE "
+					+ ContractEmbargoColumns.ID + " = ? ";
+
+			queryStmt = conn.prepareStatement(querySql);
+			queryStmt.setInt(1, deduction.getId());
+
+			checksStmt = conn.createStatement();
+			deleteStmt = conn.prepareStatement(CONTRACT_EMBARGO_DELETE_SQL);
+			insertStmt = conn.prepareStatement(CONTRACT_EMBARGO_INSERT);
+			salaryStmt = conn.prepareStatement(SALARY_EMBARGO_UPDATE_SQL);
+
+			rs = queryStmt.executeQuery();
+			if (rs.next()) {
+				Date sqlStartDate = rs.getDate(ContractEmbargoColumns.START_DATE);
+				Date sqlEndDate = rs.getDate(ContractEmbargoColumns.END_DATE);
+
+				// Be care of primitive values ( int, short... ) that can be
+				// null.
+				// With 'getXXX' methods if the value is SQL NULL, the value
+				// returned is 0.
+				SQLUtils.setInt(insertStmt, 1,
+						rs.getInt(ContractEmbargoColumns.DOMAIN)); // NOT NULL
+				SQLUtils.setInt(insertStmt, 2,
+						rs.getInt(ContractEmbargoColumns.CONTRACT)); // NOT  NULL
+				SQLUtils.setString(insertStmt, 3,
+						rs.getString(ContractEmbargoColumns.DESCRIPTION));
+				SQLUtils.setString(insertStmt, 4,
+						rs.getString(ContractEmbargoColumns.EXPRESSION));
+				SQLUtils.setDate(insertStmt, 5, sqlStartDate);
+				SQLUtils.setDate(insertStmt, 6, sqlEndDate);
+
+
+				SQLUtils.setInt(salaryStmt, 2, rs.getInt(ContractPaymentColumns.ID));
+				SQLUtils.setInt(salaryStmt, 3, rs.getInt(ContractPaymentColumns.CONTRACT));
+				SQLUtils.setDate(salaryStmt, 4, sqlStartDate);
+				SQLUtils.setDate(salaryStmt, 5, sqlEndDate);
+
+				if (Period.compare(startDate, sqlStartDate) > 0) {
+					SQLUtils.setDate(insertStmt, 6, SQLUtils.date2sql(addDay(startDate, -1)));
+					insertStmt.execute();
+					
+					ResultSet generatedKeys = insertStmt.getGeneratedKeys();
+					generatedKeys.next();
+					int contractEmbargoId = generatedKeys.getInt(1);
+					SQLUtils.setInt( salaryStmt, 1, contractEmbargoId);
+					SQLUtils.setDate( salaryStmt, 5, SQLUtils.date2sql(addDay(startDate, -1)));
+					salaryStmt.execute();
+					
+					SQLUtils.setDate(insertStmt, 6, sqlEndDate); // restores original end date for subsequent inserts
+					SQLUtils.setDate(salaryStmt, 5, sqlEndDate);
+				}
+				if (Period.compare(endDate, sqlEndDate) < 0) {
+					SQLUtils.setDate(insertStmt, 5, SQLUtils.date2sql(addDay(endDate, 1)));
+					insertStmt.execute();
+
+					ResultSet generatedKeys = insertStmt.getGeneratedKeys();
+					generatedKeys.next();
+					int contractEmbargoId = generatedKeys.getInt(1);
+					SQLUtils.setInt( salaryStmt, 1, contractEmbargoId);
+					SQLUtils.setDate( salaryStmt, 4, SQLUtils.date2sql(addDay(endDate, 1)));
+					salaryStmt.execute();
+				}
+
+				
+				// clean salaries
+				//salaryStmt.setNull(1, Types.INTEGER);
+				SQLUtils.setInt( salaryStmt, 1, -666);
+				SQLUtils.setDate(salaryStmt, 4, startDate);
+				salaryStmt.setDate(4, startDate);
+				if ( endDate == null )
+					salaryStmt.setString(5, "2666-01-01");
+				else
+					SQLUtils.setDate(salaryStmt, 5, endDate);
+
+				checksStmt.execute("SET FOREIGN_KEY_CHECKS=0;");
+				salaryStmt.execute();
+				checksStmt.execute("SET FOREIGN_KEY_CHECKS=1;");
+
+				// delete old
+				deleteStmt.setInt(1, rs.getInt(ContractPaymentColumns.ID));
+				deleteStmt.execute();
+				
+			}
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (queryStmt != null)
+				queryStmt.close();
+			if (checksStmt != null)
+				checksStmt.close();
+			if (deleteStmt != null)
+				deleteStmt.close();
+			if (insertStmt != null)
+				insertStmt.close();
+			if (salaryStmt != null)
+				salaryStmt.close();
+		}
+	}
+
+	private static void makeRoomBonus(Connection conn, Bonus bonus,
 			Integer contract) throws SQLException {
 
 		ResultSet rs = null;
@@ -850,7 +989,7 @@ public class SQLSalaryDraft {
 			Integer contract, Integer domain) throws SQLException {
 		PreparedStatement insertStmt = null;
 		try {
-			insertStmt = conn.prepareStatement(CONTRACT_EMARGO_INSERT);
+			insertStmt = conn.prepareStatement(CONTRACT_EMBARGO_INSERT);
 
 			SQLUtils.setInt(insertStmt, 1, domain);
 			SQLUtils.setInt(insertStmt, 2, contract);
