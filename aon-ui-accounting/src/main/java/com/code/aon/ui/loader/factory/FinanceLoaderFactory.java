@@ -38,7 +38,7 @@ public class FinanceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		,new Column(VTO,"factura"						,0,6	,false	,null)
 		,new Column(VTO,"pago"							,0,1	,true	,new int[] {0,1})
 		,new Column(VTO,"idTitular"						,0,6	,false	,null)
-		,new Column(VTO,"tipoDocumento"					,4,1	,true	,new int[] {0,1,2,3,4,5})
+		,new Column(VTO,"tipoDocumento"					,4,1	,true	,new int[] {0,1,2,3,4,5,6})
 		,new Column(VTO,"paisDocumento"					,2,2	,true	,null)
 		,new Column(VTO,"documento"						,2,16	,true	,null)
 		,new Column(VTO,"razonSocial"					,2,64	,true	,null)

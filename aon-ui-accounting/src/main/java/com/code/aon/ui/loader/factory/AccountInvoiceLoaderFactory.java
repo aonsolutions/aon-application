@@ -38,7 +38,7 @@ public class AccountInvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		,new Column(FRA_CTB,"idTitular"			,0,6	,false	,null)
 		,new Column(FRA_CTB,"cuenta"			,2,9	,false	,null)
 		,new Column(FRA_CTB,"documento"			,2,16	,true	,null)
-		,new Column(FRA_CTB,"tipoDocumento"		,0,1	,true	,new int[] {0,1,2,3,4,5})
+		,new Column(FRA_CTB,"tipoDocumento"		,0,1	,true	,new int[] {0,1,2,3,4,5,6})
 		,new Column(FRA_CTB,"paisDocumento"		,2,2	,true	,null)
 		,new Column(FRA_CTB,"razonSocial"		,2,128	,true	,null)
 		,new Column(FRA_CTB,"fechaFactura"		,3,10	,true	,null)

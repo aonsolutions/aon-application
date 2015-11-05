@@ -11,6 +11,7 @@ import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.loader.Column;
 import com.code.aon.ui.loader.ILoaderEngine;
@@ -77,8 +78,15 @@ public class AutoConceptLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		LoadedAutoConcept loaded = (LoadedAutoConcept) loadedPojo;
 		IManagerBean bean = BeanManager.getManagerBean(AutoConcept.class);
 		
+		// Los conceptos se crean en el dominio padre, de forma global a todas las empresas
+		// Se asume que la carga de datos que se hará a través de un fichero ZIP y que llamará a la carga
+		// individual de cada dominio, creará las empresas vinculadas al entorno, de igual forma que se hizo
+		// en la carga de sociedades
+		
 		// Si el concepto ya existe, no se hace nada
-		Criteria criteria = new Criteria();            
+		Criteria criteria = new Criteria();
+		criteria.setSkipDomainFilter(true);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AUTO_CONCEPT_DOMAIN), DomainManager.getParentDomain());
         criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AUTO_CONCEPT_DESCRIPTION), loaded.getDescripcion());
         
         List<ITransferObject> list = bean.getList(criteria);
@@ -86,7 +94,8 @@ public class AutoConceptLoaderFactory implements ILoaderFactory<ILoadedPojo>{
         AutoConcept ac = null;
         if (list==null || list.size()==0) {
         	ac = new AutoConcept();
-        	ac.setDescription(loaded.getDescripcion());
+        	ac.setDomain(DomainManager.getParentDomain());  // Los conceptos se graban en el dominio padre siempre
+         	ac.setDescription(loaded.getDescripcion());
     		ac = (AutoConcept) bean.insert(ac);    		
         }
         else {

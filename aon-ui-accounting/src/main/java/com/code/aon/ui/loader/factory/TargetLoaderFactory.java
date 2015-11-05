@@ -31,7 +31,7 @@ public class TargetLoaderFactory extends RegistryLoaderFactory implements ILoade
 			 new Column(CLP,"id"							,0,6	,false	,null)
 			,new Column(CLP,"razonSocial"					,2,64	,true	,null)
 			,new Column(CLP,"alias"							,2,32	,false	,null)
-			,new Column(CLP,"tipoDocumento"					,0,1	,false	,new int[] {0,1,2,3,4,5})
+			,new Column(CLP,"tipoDocumento"					,0,1	,false	,new int[] {0,1,2,3,4,5,6})
 			,new Column(CLP,"paisDocumento"					,2,2	,false	,null)
 			,new Column(CLP,"documento"						,2,16	,false	,null)
 			,new Column(CLP,"nacionalidad"					,2,2	,false	,null)

@@ -47,7 +47,7 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		,new Column(FRA,"idTitular"		,0,6	,true	,null)
 		,new Column(FRA,"cuenta"		,2,9	,true	,null)
 		,new Column(FRA,"documento"		,2,16	,true	,null)
-		,new Column(FRA,"tipoDocumento"	,0,1	,true	,new int[] {0,1,2,3,4,5})
+		,new Column(FRA,"tipoDocumento"	,0,1	,true	,new int[] {0,1,2,3,4,5,6})
 		,new Column(FRA,"paisDocumento"	,2,2	,true	,null)
 		,new Column(FRA,"razonSocial"	,2,128	,true	,null)
 		,new Column(FRA,"fechaFactura"	,3,10	,true	,null)

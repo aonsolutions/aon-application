@@ -30,7 +30,7 @@ public class SupplierLoaderFactory extends RegistryLoaderFactory implements ILoa
 		 new Column(PRO,"id"							,0,6	,false	,null)
 		,new Column(PRO,"razonSocial"					,2,64	,true	,null)
 		,new Column(PRO,"alias"							,2,32	,false	,null)
-		,new Column(PRO,"tipoDocumento"					,4,1	,true	,new int[] {0,1,2,3,4,5})
+		,new Column(PRO,"tipoDocumento"					,4,1	,true	,new int[] {0,1,2,3,4,5,6})
 		,new Column(PRO,"paisDocumento"					,2,2	,true	,null)
 		,new Column(PRO,"documento"						,2,16	,true	,null)
 		,new Column(PRO,"nacionalidad"					,2,2	,true	,null)

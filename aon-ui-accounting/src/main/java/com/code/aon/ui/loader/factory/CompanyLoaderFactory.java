@@ -45,7 +45,7 @@ public class CompanyLoaderFactory extends RegistryLoaderFactory implements ILoad
 			 
 			 new Column(EMP,"razonSocial"		,2,64	,true	,null)
 			,new Column(EMP,"alias"				,2,32	,false	,null)
-			,new Column(EMP,"tipoDocumento"		,0,1	,true	,new int[] {0,1,2,3,4,5})
+			,new Column(EMP,"tipoDocumento"		,0,1	,true	,new int[] {0,1,2,3,4,5,6})
 			,new Column(EMP,"paisDocumento"		,2,2	,true	,null)
 			,new Column(EMP,"documento"			,2,16	,true	,null)
 			,new Column(EMP,"tipoVia"			,2,2	,false	,null)
@@ -82,7 +82,7 @@ public class CompanyLoaderFactory extends RegistryLoaderFactory implements ILoad
 			,new Column(EMP,"tipoPres347"		,2,1	,false	,null) // Tipo Presentacion Modelo 347 (N, Y)
 			,new Column(EMP,"tipoPres390"		,2,1	,false	,null) // Tipo Presentacion Modelo 390 (N, Y)
 			,new Column(EMP,"codigoMunicipio"	,0,5	,false	,null)  // Código municipio
-			,new Column(EMP,"porcentajeIva"		,0,5	,false	,null)  // Porcentaje IVA por defecto
+			,new Column(EMP,"porcentajeIva"		,1,16	,false	,null)  // Porcentaje IVA por defecto
 			,new Column(EMP,"cuentaVentas"		,2,9	,false	,null)  // Cuenta de ventas por defecto
 			,new Column(EMP,"cuentaCompras"		,2,9	,false	,null)  // Cuenta compras por defecto
 			,new Column(EMP,"fechaLimite"		,3,10	,false	,null)  // Fecha limite de operaciones
@@ -215,7 +215,7 @@ public class CompanyLoaderFactory extends RegistryLoaderFactory implements ILoad
 		insertApplicationParameter(domainId,"FS_MODEL_CFG_M347",loaded.getTipoPres347());		
 		insertApplicationParameter(domainId,"FS_MODEL_CFG_M390",loaded.getTipoPres390());
 		
-		if ( loaded.getPorcentajeIva() != null ) {
+		if ( loaded.getPorcentajeIva() != null && loaded.getPorcentajeIva() != 0 ) {
 			Tax vat = getLoaderUtils().ensureVat(loaded.getPorcentajeIva());
 			if (vat.getId() != null)
 				insertApplicationParameter(domainId,"ACC_DEFAULT_VAT_PERCENT", vat.getId().toString() );

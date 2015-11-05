@@ -30,7 +30,7 @@ public class CreditorLoaderFactory extends RegistryLoaderFactory implements ILoa
 			 new Column(ACR,"id"							,0,6	,false	,null)
 			,new Column(ACR,"razonSocial"					,2,64	,true	,null)
 			,new Column(ACR,"alias"							,2,32	,false	,null)
-			,new Column(ACR,"tipoDocumento"					,0,1	,true	,new int[] {0,1,2,3,4,5})
+			,new Column(ACR,"tipoDocumento"					,0,1	,true	,new int[] {0,1,2,3,4,5,6})
 			,new Column(ACR,"paisDocumento"					,2,2	,true	,null)
 			,new Column(ACR,"documento"						,2,16	,true	,null)
 			,new Column(ACR,"nacionalidad"					,2,2	,true	,null)

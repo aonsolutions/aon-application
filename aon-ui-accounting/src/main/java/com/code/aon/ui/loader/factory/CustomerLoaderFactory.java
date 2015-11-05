@@ -30,7 +30,7 @@ public class CustomerLoaderFactory extends RegistryLoaderFactory implements ILoa
 			 new Column(CLI,"id"							,0,6	,false	,null)
 			,new Column(CLI,"razonSocial"					,2,64	,true	,null)
 			,new Column(CLI,"alias"							,2,32	,false	,null)
-			,new Column(CLI,"tipoDocumento"					,0,1	,true	,new int[] {0,1,2,3,4,5})
+			,new Column(CLI,"tipoDocumento"					,0,1	,true	,new int[] {0,1,2,3,4,5,6})
 			,new Column(CLI,"paisDocumento"					,2,2	,true	,null)
 			,new Column(CLI,"documento"						,2,16	,true	,null)
 			,new Column(CLI,"nacionalidad"					,2,2	,true	,null)
