@@ -152,33 +152,50 @@ public class DBFee {
 		}
 	}
 	
-	public static Customer getCustomer(Domain domain, String document, Boolean ignoreInactiveClient){
+	public static Customer getCustomer(Domain domain, String username, String client, Boolean ignoreInactiveClient){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId());
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), username);
 			Result<Record5<Integer, String, String, String, Byte>> result = null;
 			if(ignoreInactiveClient){
 				result = ctx.getDslContext().select(REGISTRY.ID, REGISTRY.ALIAS,
 						REGISTRY.DOCUMENT, REGISTRY.NAME,
 						CUSTOMER.STATUS)
 								.from(REGISTRY).join(CUSTOMER).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
-								.where(REGISTRY.DOCUMENT.eq(document))
+								.where(REGISTRY.DOCUMENT.eq(client))
 								.and(REGISTRY.DOMAIN.eq(domain.getId()))
 								.and(CUSTOMER.STATUS.eq((byte) 0))
 								.fetch();
+				if(result.isEmpty()){
+					result = ctx.getDslContext().select(REGISTRY.ID, REGISTRY.ALIAS,
+							REGISTRY.DOCUMENT, REGISTRY.NAME,
+							CUSTOMER.STATUS)
+									.from(REGISTRY).join(CUSTOMER).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+									.where(REGISTRY.NAME.eq(client))
+									.and(REGISTRY.DOMAIN.eq(domain.getId()))
+									.and(CUSTOMER.STATUS.eq((byte) 0))
+									.fetch();
+				}
 			}
 			else{
 				result = ctx.getDslContext().select(REGISTRY.ID, REGISTRY.ALIAS,
 						REGISTRY.DOCUMENT, REGISTRY.NAME,
 						CUSTOMER.STATUS)
 								.from(REGISTRY).join(CUSTOMER).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
-								.where(REGISTRY.DOCUMENT.eq(document))
+								.where(REGISTRY.DOCUMENT.eq(client))
 								.and(REGISTRY.DOMAIN.eq(domain.getId()))
 								.fetch();
+				if(result.isEmpty()){
+					result = ctx.getDslContext().select(REGISTRY.ID, REGISTRY.ALIAS,
+							REGISTRY.DOCUMENT, REGISTRY.NAME,
+							CUSTOMER.STATUS)
+									.from(REGISTRY).join(CUSTOMER).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+									.where(REGISTRY.NAME.eq(client))
+									.and(REGISTRY.DOMAIN.eq(domain.getId()))
+									.fetch();
+				}
 			}
-			
-			
-			
+
 			if(result.isNotEmpty()){
 				Customer customer = new Customer();
 				Integer index = 0;

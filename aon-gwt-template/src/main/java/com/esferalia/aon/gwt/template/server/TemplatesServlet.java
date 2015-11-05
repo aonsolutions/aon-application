@@ -442,12 +442,13 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	}
 	
 	private FeeInfo checkFee(Domain domain, String template,FeeInfo fee, Cell cell, Boolean ignoreInactiveCliente) {
+		String username = DBConsults.getUsername(domain.getName(), domain.getId(), userId);
 		Integer type = cell.getCellType();
 		switch (template) {
 		case "Cliente": case "Client":
 			if(type.equals(Cell.CELL_TYPE_STRING) && !cell.getStringCellValue().equals("")){
 				String strAux = cell.getStringCellValue();
-				Customer customer = DBFee.getCustomer(domain, strAux, ignoreInactiveCliente);
+				Customer customer = DBFee.getCustomer(domain, username, strAux, ignoreInactiveCliente);
 				if(customer != null){
 					fee.setClient(cell.getStringCellValue());
 					fee.setClientId(customer.getId());
