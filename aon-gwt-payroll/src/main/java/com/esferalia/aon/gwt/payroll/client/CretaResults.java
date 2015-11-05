@@ -296,7 +296,7 @@ public class CretaResults extends Composite implements RequiresResize{
 	private static ContextMenu createContextMenu(final JsUnknownDato unknownDato, final CretaResults cretaResults) {
 		ContextMenu contextMenu = new ContextMenu();
 
-		contextMenu.addItem("Reparar", new ScheduledCommand() {
+		contextMenu.addItem("A\u00F1adir", new ScheduledCommand() {
 			@Override
 			public void execute() {
 				
