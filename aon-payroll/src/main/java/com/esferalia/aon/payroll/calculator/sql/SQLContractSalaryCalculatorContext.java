@@ -3628,7 +3628,7 @@ public class SQLContractSalaryCalculatorContext extends
 					.getVariable(WORKED_HOURS, period.getStart(),
 							period.getEnd());
 
-			if (userWorkedDays == null) {
+			if (userWorkedHours == null) {
 				ctx.putVariable(WORKED_HOURS, workedHours);
 			} else {
 				if (listener != null)
