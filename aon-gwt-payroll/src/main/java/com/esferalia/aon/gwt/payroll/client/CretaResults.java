@@ -302,7 +302,7 @@ public class CretaResults extends Composite implements RequiresResize{
 				
 				CustomDialog.showInputDialog(
 						"Introduce el concepto econ\u00F3mico de cotizaci\u00f3n " + unknownDato.getCode(), 
-						"Reparar", new AsyncCallback<String>() {
+						"A\u00F1adir", new AsyncCallback<String>() {
 							@Override
 							public void onFailure(Throwable caught) {
 								// TODO Auto-generated method stub
