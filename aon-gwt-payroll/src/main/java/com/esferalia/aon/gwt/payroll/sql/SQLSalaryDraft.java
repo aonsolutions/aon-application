@@ -753,8 +753,8 @@ public class SQLSalaryDraft {
 
 			checksStmt = conn.createStatement();
 			deleteStmt = conn.prepareStatement(CONTRACT_EMBARGO_DELETE_SQL);
-			insertStmt = conn.prepareStatement(CONTRACT_EMBARGO_INSERT);
 			salaryStmt = conn.prepareStatement(SALARY_EMBARGO_UPDATE_SQL);
+			insertStmt = conn.prepareStatement(CONTRACT_EMBARGO_INSERT, Statement.RETURN_GENERATED_KEYS);
 
 			rs = queryStmt.executeQuery();
 			if (rs.next()) {
