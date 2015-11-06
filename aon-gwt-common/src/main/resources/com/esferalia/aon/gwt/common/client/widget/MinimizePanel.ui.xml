@@ -3,7 +3,7 @@
 
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
-	<g:AbsolutePanel styleName="{aonResources.css.aonPointerEventsNone}">
+	<g:AbsolutePanel>
 		<g:FlowPanel styleName="{aonResources.css.aonSelector}">
 			<g:Button styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconMaximize} {aonResources.css.aonPointerEventsAuto}"
 				tabIndex="9999998" ui:field="maximizeButton"/>
