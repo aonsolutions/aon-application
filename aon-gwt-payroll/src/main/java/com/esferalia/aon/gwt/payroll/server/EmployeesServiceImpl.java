@@ -188,6 +188,7 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.DeferredException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -948,16 +949,30 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			List<Variable> variables = new LinkedList<Variable>();
 			for (String name : names) {
-				for (ITimedVariable<?> var : ctx.getExpressionContext()
-						.getVariables(name)) {
+				
+				List<ITimedResult<Object>> results  = Collections.emptyList();
+				try {
+					results = ctx.getExpressionContext().eval(name, startDate, endDate);
+				} catch ( DeferredException e ){
+					e.eval(ctx.getExpressionContext());
+					results = ctx.getExpressionContext().eval(name, startDate, endDate);
+				} catch ( Exception  e) {
+					continue;
+				}
+				
+				
+				for (ITimedResult<Object> var : results) {
+					
 					IExpression expression = var instanceof IExpressionVariable<?> ? ((IExpressionVariable<?>) var)
 							.getExpression() : null;
+					
 
 					ContextVariable contextVariable = ContextVariable
 							.getVariableByName(name);
 					try {
-
+						
 						Object value = var.getValue(var.getPeriod());
+						
 						if (value instanceof String || value instanceof Boolean
 								|| value instanceof Number)
 							variables
@@ -987,11 +1002,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 															.ordinal()]
 															: null).create());
 					} catch (ExpressionExceptionWrapper e) {
-
+						e.printStackTrace();
 					}
 
 				}
 			}
+			
+			
 			return variables;
 
 		} catch (SQLException e) {
@@ -2823,10 +2840,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			//@formatter:off
 			String sql = "SELECT * " 
 					+ " FROM " + ENTERPRISE_ACTIVITY
-					+ "," + ENTERPRISE_CCC
-					+ " WHERE " + ENTERPRISE_ACTIVITY + "." + EnterpriseActivityColumns.ID + " = "
-					+ ENTERPRISE_CCC + "." + EnterpriseCccColumns.ENTERPRISE_ACTIVITY
-					+ " AND "+ EnterpriseActivityColumns.ENTERPRISE + " = ? ";
+					+ " WHERE " + EnterpriseActivityColumns.ENTERPRISE + " = ? ";
 			//@formatter:on
 
 			stmt = connection.prepareStatement(sql);
