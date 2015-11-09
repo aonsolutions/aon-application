@@ -79,7 +79,8 @@ public class AppParamDAO {
 	
 	public static ApplicationParameter fetchOne(AONContext ctx, AppParam param) {
 		ctx.checkRead();
-		return ctx.getDslContext()
+		final ApplicationParameter ap = new ApplicationParameter();
+		ctx.getDslContext()
 			.select(APP_PARAM.ID,APP_PARAM.DOMAIN,APP_PARAM.NAME,APP_PARAM.VALUE)
 			.from(APP_PARAM)
 			.where(APP_PARAM.DOMAIN.eq(ctx.getDomainId())
@@ -87,15 +88,13 @@ public class AppParamDAO {
 			.fetch()
 			.stream()
 			.findFirst()
-			.orElse(null)
-			.map( record -> record==null
-					?null
-					:new ApplicationParameter()
-						.setId(record.getValue(APP_PARAM.ID))
-						.setDomain(record.getValue(APP_PARAM.DOMAIN))
-						.setName(record.getValue(APP_PARAM.NAME))
-						.setValue(record.getValue(APP_PARAM.VALUE))
-			);
+			.ifPresent( record  -> ap
+					.setId(record.getValue(APP_PARAM.ID))
+					.setDomain(record.getValue(APP_PARAM.DOMAIN))
+					.setName(record.getValue(APP_PARAM.NAME))
+					.setValue(record.getValue(APP_PARAM.VALUE)) );
+			;
+		return ap.getId() != null ? ap : null;
 	}
 	
 

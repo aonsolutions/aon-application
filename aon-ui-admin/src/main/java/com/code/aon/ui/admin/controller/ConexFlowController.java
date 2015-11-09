@@ -10,6 +10,7 @@ import javax.faces.model.SelectItem;
 
 import org.jooq.Result;
 
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ui.form.BasicController;
@@ -60,9 +61,19 @@ public class ConexFlowController extends BasicController {
 	}
 
 	public boolean getConexFlowAux(){
-		Integer domainId = AonUtil.getAuthPrincipal().getDomainId();
-		com.code.aon.config.ApplicationParameter aux2 = AppParamUtil.getParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_SERVER_PARAM, domainId);
-		return (aux2 != null && aux2.getValue() != null && !aux2.getValue().equals("Null"));
+		AONContext ctx = null;
+		try {
+			String domainName = AonUtil.getDomainName();
+			Integer domainId = DomainManager.getCurrentDomain();
+			ctx = AONContext.getAONContext(domainName, domainId, AonUtil.getRemoteUser());
+			ApplicationParameter aux1 = AppParamDAO.fetchOne(ctx,
+					AppParam.PMS_CONEXFLOW_SERVER_PARAM);
+			return (aux1 != null && aux1.getValue() != null && !aux1.getValue()
+					.equals("Null"));
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
 	}
 	
 	public boolean isConexFlow() {
@@ -107,7 +118,7 @@ public class ConexFlowController extends BasicController {
 			Domain domain = new Domain();
 			domain.setName(AonUtil.getDomainName());
 			domain.setId(AonUtil.getAuthPrincipal().getDomainId());
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId());
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), AonUtil.getRemoteUser());
 			ApplicationParameter aux1 = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_SERVER_PARAM);
 			setServer((aux1 != null && !aux1.getValue().equals("Null")) ? aux1.getValue() : "");			
 			ApplicationParameter aux2 = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_SERVER_ACK_PARAM);
@@ -135,7 +146,7 @@ public class ConexFlowController extends BasicController {
 			domain.setId(AonUtil.getAuthPrincipal().getDomainId());
 			AONContext ctx = null;
 			try {
-				ctx = AONContext.getAONContext(domain.getName(), domain.getId());
+				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), AonUtil.getRemoteUser());
 
 				Result<PayMethodRecord> data = ctx.getDslContext().select()
 														.from(PAY_METHOD)
