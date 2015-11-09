@@ -16,13 +16,14 @@ import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
-import com.esferalia.aon.gwt.office.client.models.users.JsUser;
+import com.esferalia.aon.gwt.office.client.models.users.JsUserWorkgroups;
 import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
 import com.esferalia.aon.gwt.office.client.values.IssueValue;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.http.client.Request;
@@ -71,12 +72,11 @@ public class Office extends Composite implements EntryPoint,
 	@UiField
 	LeftButtonsMenuBar leftButtonBarMenu;
 
-	private JsArray<JsUser> jsArrayUsers;
 	private JsRepo repo;
+	private JsUserWorkgroups userWorkgroups;
 	private IssuesLayoutPanel issueLayoutPanel;
 	private IssueSelected issueSelected;
 	private final GitHub gitHub = new GitHub();
-
 	private List<IssueSelected> openIssues;
 	private List<IssueSelected> closedIssues;
 
@@ -151,7 +151,14 @@ public class Office extends Composite implements EntryPoint,
 				public void onResponseReceived(Request request,
 						Response response) {
 					if (200 == response.getStatusCode()) {
-						jsArrayUsers = eval(response.getText());
+						
+						try {
+							userWorkgroups = JsonUtils.safeEval(response.getText());							
+						} catch (Exception ex) {
+							Window.alert("Exception: " + ex.getMessage());
+						}
+						
+
 					} else {
 						Window.alert("Else: " + response.getText());
 					}
@@ -353,7 +360,7 @@ public class Office extends Composite implements EntryPoint,
 	public void onNewIssueClickEvent(ClickEvent event) {
 		issueWrite.clear();
 		IssueWriteWidget issueWriteWidget = new IssueWriteWidget(
-				Office.this.jsArrayUsers);
+				Office.this.userWorkgroups);
 		issueWriteWidget.addListener(this);
 		issueWrite.add(issueWriteWidget);
 		showWriteIssueWritePanel();

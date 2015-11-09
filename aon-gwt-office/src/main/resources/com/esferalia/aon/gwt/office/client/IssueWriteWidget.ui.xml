@@ -14,23 +14,23 @@
 
 	<g:DockLayoutPanel unit="PX" height="100%">
 		<g:center>
-			<g:VerticalPanel spacing="5" width="100%">
+			<g:VerticalPanel spacing="10" width="100%">
 				<g:HTMLPanel>
 					<table>
 						<tr>
 							<td>
 								<g:InlineLabel styleName="{aonResources.css.aonBold}"
-									text="{msg.title}" />
+									text="{msg.title}" title="{msg.titleNewNotice}" />
 							</td>
 							<td>
-								<g:TextBox ui:field="title" width="300px"
+								<g:TextBox ui:field="titleTextBox" width="300px"
 									styleName="{aonResources.css.aonInputText}" />
 							</td>
 						</tr>
 						<tr>
 							<td>
 								<g:InlineLabel styleName="{aonResources.css.aonBold}"
-									text="{msg.priority}" />
+									text="{msg.priority}" title="{msg.titlePriority}" />
 							</td>
 							<td>
 								<g:HorizontalPanel spacing="5" ui:field="hPriorityPanel" />
@@ -39,7 +39,7 @@
 						<tr>
 							<td>
 								<g:InlineLabel styleName="{aonResources.css.aonBold}"
-									text="{msg.sender}" />
+									text="{msg.sender}" title="{msg.titleRemite}" />
 							</td>
 							<td>
 								<g:SuggestBox ui:field="userSuggesBox"
@@ -49,21 +49,31 @@
 						<tr>
 							<td>
 								<g:InlineLabel styleName="{aonResources.css.aonBold}"
-									text="{msg.company}" />
+									text="{msg.company}" title="{msg.titleCompany}" />
 							</td>
 							<td>
-								<g:TextBox ui:field="registryTextBox" styleName="{aonResources.css.aonInputText}"
+								<g:TextBox ui:field="companyTextBox" styleName="{aonResources.css.aonInputText}"
+									width="300px" readOnly="true" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:InlineLabel styleName="{aonResources.css.aonBold}"
+									text="{msg.phone}" title="{msg.titlePhone}" />
+							</td>
+							<td>
+								<g:TextBox ui:field="phoneTextBox" styleName="{aonResources.css.aonInputText}"
 									width="300px" />
 							</td>
 						</tr>
 						<tr>
 							<td>
 								<g:InlineLabel styleName="{aonResources.css.aonBold}"
-									text="{msg.phone}" />
+									text="{msg.recipient}" title="{msg.titleRecipient}" />
 							</td>
 							<td>
-								<g:TextBox ui:field="phoneTextBox" styleName="{aonResources.css.aonInputText}"
-									width="300px" />
+								<g:SuggestBox ui:field="recipientSuggestBox"
+									styleName="{aonResources.css.aonInputText}" width="300px" />
 							</td>
 						</tr>
 						<tr>
@@ -76,6 +86,17 @@
 									spacing="5" />
 							</td>
 						</tr>
+						<tr>
+							<td>
+								<g:InlineLabel styleName="{aonResources.css.aonBold}"
+									text="{msg.workgroup}" title="{msg.titleWorkgroup}" />
+							</td>
+							<td>
+								<g:SuggestBox ui:field="workgroupSuggestBox"
+									styleName="{aonResources.css.aonInputText}" width="300px" />
+							</td>
+						</tr>
+
 					</table>
 				</g:HTMLPanel>
 

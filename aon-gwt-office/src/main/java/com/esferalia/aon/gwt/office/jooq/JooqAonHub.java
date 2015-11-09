@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.office.jooq;
 
 import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
 import static com.esferalia.aon.jooq.tables.NoticeTag.NOTICE_TAG;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
@@ -15,7 +14,6 @@ import org.jooq.conf.Settings;
 import org.jooq.exception.DataAccessException;
 
 import com.esferalia.aon.jooq.tables.records.NoticeRecord;
-import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
 
 public class JooqAonHub {
@@ -30,11 +28,14 @@ public class JooqAonHub {
 	}
 
 	protected static List<UserRecord> getUsers(DSLContext dslContext,
-			Integer domain) throws DataAccessException {
+			Integer parentDomain, Integer domain) throws DataAccessException {
 
-		return dslContext.selectFrom(USER).where(USER.DOMAIN.eq(domain))
+		return dslContext.selectFrom(USER)
+				.where(USER.DOMAIN.eq(domain).or(USER.DOMAIN.eq(parentDomain)))
 				.fetchInto(USER);
 	}
+	
+	
 
 	protected static void saveNewNotice(DSLContext dslContext, Integer domain) {
 

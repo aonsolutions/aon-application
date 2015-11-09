@@ -7,9 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;
+import com.esferalia.aon.gwt.office.client.models.users.JsUserWorkgroups;
+import com.esferalia.aon.gwt.office.client.models.users.JsWorkGroup;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -67,13 +70,19 @@ public class IssueWriteWidget extends Composite {
 	@UiField
 	TabPanel tabPanel;
 	@UiField
-	TextBox registryTextBox;
+	TextBox companyTextBox;
+	@UiField
+	TextBox phoneTextBox;
+	@UiField(provided = true)
+	SuggestBox recipientSuggestBox;
 	@UiField(provided = true)
 	SuggestBox userSuggesBox;
+	@UiField(provided = true)
+	SuggestBox workgroupSuggestBox;
 	@UiField
 	TextArea commentTextArea;
 	@UiField
-	TextBox title;
+	TextBox titleTextBox;
 	@UiField
 	HorizontalPanel hPanel;
 	@UiField
@@ -88,25 +97,43 @@ public class IssueWriteWidget extends Composite {
 	private String noticeType;
 	private String priority;
 	private String status = "Open";
-	private Integer remite;
-	
-	private MultiWordSuggestOracle names = new MultiWordSuggestOracle();
+	private Integer senderId;
+	private Integer recipientId;
+	private Integer workgroup;
+
+	private MultiWordSuggestOracle senders = new MultiWordSuggestOracle();
+	private MultiWordSuggestOracle recipients = new MultiWordSuggestOracle();
+	private MultiWordSuggestOracle workgroups = new MultiWordSuggestOracle();
+
 	private List<Listener> listeners;
+
 	private JsArray<JsUser> jsArrayUsers;
+	private JsArray<JsWorkGroup> jsArrayWorkgroups;
+
 	private Map<String, String> labels;
 
-	public IssueWriteWidget(JsArray<JsUser> jsArrayUsers) {
-		this.userSuggesBox = new SuggestBox(names);
+	public IssueWriteWidget(JsUserWorkgroups usersWorkgroups) {
+		this.userSuggesBox = new SuggestBox(senders);
+		this.recipientSuggestBox = new SuggestBox(recipients);
+		this.workgroupSuggestBox = new SuggestBox(workgroups);
 
 		initWidget(uiBinder.createAndBindUi(this));
 
 		tabPanel.selectTab(0);
-		this.jsArrayUsers = jsArrayUsers;
+		this.jsArrayUsers = usersWorkgroups.getUsers();
+		this.jsArrayWorkgroups = usersWorkgroups.getWorkGroups();
 
 		for (int x = 0; x < jsArrayUsers.length(); x++) {
-			names.add(jsArrayUsers.get(x).getId() + " - "
+			senders.add(jsArrayUsers.get(x).getId() + " - "
+					+ jsArrayUsers.get(x).getName() + " - "
+					+ jsArrayUsers.get(x).getEnterprise());
+			recipients.add(jsArrayUsers.get(x).getId() + " - "
 					+ jsArrayUsers.get(x).getName());
 		}
+
+		for (int y = 0; y < jsArrayWorkgroups.length(); y++)
+			workgroups.add(jsArrayWorkgroups.get(y).getId() + " - "
+					+ jsArrayWorkgroups.get(y).getDescription());
 
 		this.listeners = new LinkedList<Listener>();
 		this.labels = new HashMap<String, String>();
@@ -123,44 +150,65 @@ public class IssueWriteWidget extends Composite {
 
 	@UiHandler("commentButton")
 	void onCommentButtonClick(ClickEvent event) {
-		if (remite == null) {
-			userSuggesBox.setFocus(true);
-			return;
-		}
 
-		else if (commentTextArea.getText().isEmpty()) {
+		if (commentTextArea.getText().isEmpty()) {
 			commentTextArea.setFocus(true);
 			return;
 
 		} else {
 			IssueValue issueValue = new IssueValue();
-			issueValue.setTitle(title.getText());
+
+			issueValue.setTitle((titleTextBox.getText().isEmpty()) ? ""
+					: titleTextBox.getText());
+			issueValue.setPhone((phoneTextBox.getText().isEmpty()) ? ""
+					: phoneTextBox.getText());
+			issueValue.setCompany((companyTextBox.getText().isEmpty()) ? ""
+					: companyTextBox.getText());		
+
 			issueValue.setBody(commentTextArea.getText());
-			Iterator<String> iterator = labels.keySet().iterator();
-			StringBuffer buffer = new StringBuffer();
-
-			while (iterator.hasNext()) {
-				String label = iterator.next();
-				buffer.append(label);
-
-				if (iterator.hasNext())
-					buffer.append(',');
-			}
-			issueValue.setLabels(buffer.toString().split(","));
+			issueValue.setLabels(getLabels().split(","));
 			issueValue.setType(noticeType);
 			issueValue.setPriority(priority);
 			issueValue.setState(status);
-			addCommentButtonClickListener(issueValue);
 
+			if (senderId != null)
+				issueValue.setSender(senderId);
+
+			if (recipientId != null)
+				issueValue.setRecipient(recipientId);
+			
+			if ( workgroup != null)
+				issueValue.setWorkgroup(workgroup);
+
+			addCommentButtonClickListener(issueValue);
 		}
 	}
 
 	@UiHandler("userSuggesBox")
-	void onSelectedSuggestionBox(SelectionEvent<SuggestOracle.Suggestion> event) {
-		// Integer id = getId(event.getSelectedItem().getReplacementString());
+	void onSelectedUser(SelectionEvent<SuggestOracle.Suggestion> event) {
 
-		// if (id != null)
-		// this.remite = id;
+		String selected = event.getSelectedItem().getReplacementString();
+		String[] cadena = selected.split(" - ");
+		userSuggesBox.setValue(cadena[0] + " - " + cadena[1]);
+		senderId = Integer.parseInt(cadena[0]);
+		companyTextBox.setValue(cadena[2]);
+	}
+
+	@UiHandler("recipientSuggestBox")
+	void onSelectedSRecipient(SelectionEvent<SuggestOracle.Suggestion> event) {
+
+		String selected = event.getSelectedItem().getReplacementString();
+		String[] cadena = selected.split(" - ");
+
+		recipientId = Integer.parseInt(cadena[0]);
+	}
+	
+	@UiHandler("workgroupSuggestBox")
+	void onSelectedWorkgroup(SelectionEvent<SuggestOracle.Suggestion> event) {
+		
+		String selected = event.getSelectedItem().getReplacementString();
+		String[] cadena = selected.split(" - ");
+		workgroup = Integer.parseInt(cadena[0]);
 	}
 
 	@UiHandler("commentTextArea")
@@ -306,6 +354,21 @@ public class IssueWriteWidget extends Composite {
 
 		insertWidgets(vLabelsPanel, bug, fiscal, laboral, soporte, gestion,
 				duplicated);
+	}
+
+	private String getLabels() {
+
+		Iterator<String> iterator = labels.keySet().iterator();
+		StringBuffer buffer = new StringBuffer();
+
+		while (iterator.hasNext()) {
+			String label = iterator.next();
+			buffer.append(label);
+			if (iterator.hasNext())
+				buffer.append(',');
+		}
+
+		return buffer.toString();
 	}
 
 	private void insertWidgets(Panel container, Widget... widgets) {
