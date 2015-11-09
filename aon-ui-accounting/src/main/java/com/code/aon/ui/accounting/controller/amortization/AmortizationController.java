@@ -2,8 +2,6 @@ package com.code.aon.ui.accounting.controller.amortization;
 
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,11 +14,11 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationInvoice;
 import com.code.aon.accounting.amortization.AmortizationManager;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -360,12 +358,6 @@ public class AmortizationController extends BasicController {
 				IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
 				Criteria criteria = new Criteria();
 				Amortization am = (Amortization) getTo();
-				Date startDate = am.getInitialDate();
-				Calendar c = Calendar.getInstance();
-				c.setTime(startDate);
-				c.set(Calendar.DAY_OF_MONTH, 1);
-				c.set(Calendar.MONTH, 0);
-				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), c.getTime());
 				List<InvoiceType> types = new LinkedList<InvoiceType>();
 				types.add(InvoiceType.EXPENSES);
 				types.add(InvoiceType.PURCHASE);
