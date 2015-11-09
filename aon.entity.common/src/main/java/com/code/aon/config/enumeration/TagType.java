@@ -23,7 +23,12 @@ public enum TagType implements IResourceable {
     /**
      * PRODUCT
      */
-    PRODUCT;
+    PRODUCT,
+	
+    /**
+     * NOTICE
+     */
+    NOTICE;
 
     /**
      * Message key prefix. 
