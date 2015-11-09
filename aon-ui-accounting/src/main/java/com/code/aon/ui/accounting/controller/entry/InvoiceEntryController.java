@@ -1108,8 +1108,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry, Serializabl
 	private Invoice insertOrUpdateInvoice(String sessionName) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Invoice invoice = isNevv() ? new Invoice() : getAccountEntryInvoice().getInvoice();
+		invoice = mergeInvoice(invoice);
 		if (isNevv()) {
-			invoice = mergeInvoice(invoice);
 			invoice.setDefaultTaxInfo(false);
 			invoice = (Invoice) invoiceBean.insert(invoice);
 		} else {
@@ -1125,7 +1125,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry, Serializabl
 	private Invoice mergeInvoice(Invoice invoice) throws ManagerBeanException {
 		invoice.setIssueDate(getHeader().getDate());
 		invoice.setTaxDate(getHeader().getTaxDate());
-		if (getHeader().getType().equals(InvoiceType.SALES)) {
+		if (isNevv() && getHeader().getType().equals(InvoiceType.SALES)) {
 			if ( StringUtils.isBlank(getHeader().getSeries()) ) {
 				invoice.setSeries(null);
 			} else {
