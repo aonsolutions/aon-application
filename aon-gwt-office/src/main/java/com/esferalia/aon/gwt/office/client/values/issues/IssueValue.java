@@ -10,12 +10,14 @@ public class IssueValue extends Value<IssueValue.Prop> {
 		Priority("priority"),
 		Sender("sender"),
 		Company("company"),
+		Phone("phone"),
         Body("body"),
         Assignee("assignee"),
+        Recipient("recipient"),
         State("state"),
         Milestone("milestone"),
         Type("type"),
-        
+        Workgroup("workgroup"),
         Labels("labels")
 		;
         private final String value;
@@ -38,12 +40,16 @@ public class IssueValue extends Value<IssueValue.Prop> {
 		prop.put(Prop.Priority, priority);
 	}
 	
-	public void setSender(String sender) {
+	public void setSender(Integer sender) {
 		prop.put(Prop.Sender, sender);
 	}
 	
 	public void setCompany(String company) {
 		prop.put(Prop.Company, company);
+	}
+	
+	public void setPhone(String phone) {
+		prop.put(Prop.Phone, phone);
 	}
 	
 	public void setBody(String body) {
@@ -57,9 +63,17 @@ public class IssueValue extends Value<IssueValue.Prop> {
 	public void setAsignee(String user) {
 		prop.put(Prop.Assignee, user);
 	}
+	
+	public void setRecipient(Integer recipient) {
+		prop.put(Prop.Recipient, recipient);
+	}
 
 	public void setMilestone(Integer number) {
 		prop.put(Prop.Milestone, number);
+	}
+	
+	public void setWorkgroup(Integer workgroup) {
+		prop.put(Prop.Workgroup, workgroup);
 	}
 	
 	public void setType(String type) {

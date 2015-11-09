@@ -9,17 +9,12 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.util.List;
 
-import javax.management.ListenerNotFoundException;
-
-import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.exception.DataAccessException;
 
-import com.esferalia.aon.jooq.tables.User;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
-import com.esferalia.aon.jooq.tables.records.UserRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 
@@ -124,24 +119,5 @@ public class DomainDAO {
 	public static DomainRecord getParentDomain(AONContext ctx, Integer domain) {
 		return ctx.getDslContext().selectFrom(DOMAIN)
 				.where(DOMAIN.ID.eq(domain)).fetchOne();
-	}
-
-	public static List<UserRecord> getUsersWorkings(AONContext ctx,
-			Integer parentDomain, Integer domain) throws DataAccessException,
-			Exception {
-
-		return ctx.getDslContext().selectFrom(USER)
-				.where(USER.DOMAIN.eq(parentDomain).or(USER.DOMAIN.eq(domain)))
-				.fetchInto(USER);
-	}
-
-	public static List<RegistryRecord> getRegistryNames(AONContext ctx,
-			Integer parentDomain, Integer domain) throws DataAccessException,
-			Exception {
-		return ctx
-				.getDslContext()
-				.selectFrom(REGISTRY)
-				.where(REGISTRY.DOMAIN.eq(domain).or(
-						REGISTRY.DOMAIN.eq(parentDomain))).fetchInto(REGISTRY);
 	}
 }

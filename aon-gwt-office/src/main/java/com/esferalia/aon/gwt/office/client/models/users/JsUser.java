@@ -35,4 +35,8 @@ public class JsUser extends JavaScriptObject {
 		return this.name;
 	}-*/;
 
+	public final native String getEnterprise() /*-{
+		return this.enterprise;
+	}-*/;
+
 }

@@ -36,6 +36,10 @@ public class AonServletUtils {
 		return getRequestPrincipal(request).getShortName();
 	}
 	
+	public static Integer getRequestUserId(HttpServletRequest request) {
+		return getRequestPrincipal(request).getUserId();
+	}
+	
 	public static String getLoggedUser() {
 		HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
 		return getRequestUser(request);

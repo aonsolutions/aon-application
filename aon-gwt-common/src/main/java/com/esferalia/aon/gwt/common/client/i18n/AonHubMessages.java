@@ -74,6 +74,31 @@ public interface AonHubMessages extends Messages {
  	
  	@DefaultMessage("Tel\u00E9fono")
  	String phone();
-
-
+ 	
+ 	@DefaultMessage("Destinatario")
+ 	String recipient();
+ 	
+ 	@DefaultMessage("Grupo de trabajo")
+ 	String workgroup();
+ 	
+ 	@DefaultMessage("T\u00EDtulo del nuevo aviso")
+ 	String titleNewNotice();
+ 	
+ 	@DefaultMessage("Prioridad que desea dar al aviso")
+ 	String titlePriority();
+ 	
+ 	@DefaultMessage("Remitente del aviso. Seleccione la persona")
+ 	String titleRemite();
+ 	
+ 	@DefaultMessage("Compa\u00F1\u00EDa donde trabaja el remitente del aviso")
+ 	String titleCompany();
+ 	
+ 	@DefaultMessage("Telefono de contacto")
+ 	String titlePhone();
+ 	
+ 	@DefaultMessage("Recurso asignado en el asunto")
+ 	String titleRecipient();
+ 	
+ 	@DefaultMessage("Grupo de trabajo asignado al aviso")
+ 	String titleWorkgroup();
 }

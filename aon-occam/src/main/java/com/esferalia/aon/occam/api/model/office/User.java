@@ -1,10 +1,10 @@
-package com.esferalia.aon.gwt.office.shared;
+package com.esferalia.aon.occam.api.model.office;
 
 import java.io.Serializable;
 
-import com.esferalia.aon.gwt.common.shared.HasId;
+import com.esferalia.aon.occam.api.model.HasId;
 
-public class User implements Serializable, HasId<Integer> {
+public class User implements Serializable, HasId {
 	
 	/**
 	 * 
