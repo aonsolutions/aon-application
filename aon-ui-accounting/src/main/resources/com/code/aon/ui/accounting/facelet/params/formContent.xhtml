@@ -45,6 +45,7 @@
 					value="#{bundle.aon_sales_account}" />
 				<aon:selectOneMenu id="ACC_default_sales_account"
 					value="#{accAppParams.parameters['ACC_DEFAULT_SALES_ACC'].value}">
+					<f:selectItem itemValue="{null}" itemLabel=" " />					
 					<f:selectItems value="#{accountCollections.salesAccountsIds}" />
 				</aon:selectOneMenu>
 	
@@ -260,6 +261,7 @@
 					value="#{bundle.accounting_def_asset_lost_acc}" />
 				<aon:selectOneMenu id="ACC_default_asset_lost"
 					value="#{accAppParams.parameters['ACC_DEFAULT_ASSET_LOST_ACC'].value}">
+					<f:selectItem itemValue="#{null}" itemLabel=" " />					
 					<f:selectItems value="#{accountCollections.assetLostAccountsIds}" />
 				</aon:selectOneMenu>
 				
@@ -267,6 +269,7 @@
 					value="#{bundle.accounting_def_asset_profit_acc}" />
 				<aon:selectOneMenu id="ACC_default_asset_profit"
 					value="#{accAppParams.parameters['ACC_DEFAULT_ASSET_PROFIT_ACC'].value}">
+					<f:selectItem itemValue="#{null}" itemLabel=" " />					
 					<f:selectItems value="#{accountCollections.assetProfitAccountsIds}" />
 				</aon:selectOneMenu>
 			</aon:panelGrid>
