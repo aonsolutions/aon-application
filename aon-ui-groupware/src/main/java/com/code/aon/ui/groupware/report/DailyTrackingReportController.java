@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -189,12 +188,22 @@ public class DailyTrackingReportController implements ICollectionProvider, Seria
 	private boolean isExcelReport() { 
 		return (DailyTrackingReportType.REPORT == getParams().getReportType());
 	}
-
+	public String getUserWarning() {
+		if (isMonitor() 
+			&& getParams().getWorkGroup() != null 
+			&& getParams().getWorkGroup().getId() != null
+		    && (getParams().getTaskHolder() == null 
+		     || getParams().getTaskHolder().getId() == null)) {
+			return "Ha indicado un grupo de usuarios, pero no se ha indicado un operario";
+		}
+		return "";
+	}
+	
 	public String onReport() {
 		try {
 			String outcome = null;
 			if (!isMonitor()) {
-					getParams().setTaskHolder( getGroupwareUtils().getCurrentTaskHolder() );
+				getParams().setTaskHolder( getGroupwareUtils().getCurrentTaskHolder() );
 			}
 			if (isExcelReport()) {
 				printExcelReport();

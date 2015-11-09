@@ -66,15 +66,18 @@
 							value="#{dailyTrackingReport.params.taskHolder}">
 							<f:selectItem itemLabel="-" value="#{null}"/>
 							<f:selectItems value="#{groupWareCollections.taskHolders}" />
-							<a4j:support event="onchange" reRender="workgroup" ajaxSingle="true" />
+							<a4j:support event="onchange" reRender="workgroup,user" ajaxSingle="true" />
 						</aon:selectOneMenu>
 						<aon:selectOneMenu
 							rendered="#{dailyTrackingReport.params.workGroup != null}"
+							reRender="user"
 							value="#{dailyTrackingReport.params.taskHolder}">
 							<f:selectItem itemLabel="-" value="#{null}"/>
 							<f:selectItems value="#{dailyTrackingReport.taskHolderWorkgroups}" />
-							<a4j:support event="onchange" reRender="workgroup" ajaxSingle="true" />
+							<a4j:support event="onchange" reRender="workgroup,user" ajaxSingle="true" />
 						</aon:selectOneMenu>
+						<aon:outputText style="color:red; margin-left: 5px;"
+							value="#{dailyTrackingReport.userWarning}" />
 					</aon:div>
 
 					<aon:outputLabel value="#{bundle.aon_date}"/>
