@@ -60,16 +60,9 @@ public class ConexFlowController extends BasicController {
 	}
 
 	public boolean getConexFlowAux(){
-		AONContext ctx = null;
-		try {
-			String domainName = AonUtil.getDomainName();
-			Integer domainId = AonUtil.getAuthPrincipal().getDomainId();
-			ctx = AONContext.getAONContext(domainName, domainId);
-			ApplicationParameter aux1 = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_SERVER_PARAM);
-			return (aux1 != null && aux1.getValue() != null && !aux1.getValue().equals("Null"));
-		}finally {
-			if (ctx != null) ctx.close();
-		}
+		Integer domainId = AonUtil.getAuthPrincipal().getDomainId();
+		com.code.aon.config.ApplicationParameter aux2 = AppParamUtil.getParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_SERVER_PARAM, domainId);
+		return (aux2 != null && aux2.getValue() != null && !aux2.getValue().equals("Null"));
 	}
 	
 	public boolean isConexFlow() {
