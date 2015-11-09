@@ -12,7 +12,7 @@ import com.esferalia.aon.entity.master.ItemAlternativeDB;
 @Table(name="item_alternative", uniqueConstraints = @UniqueConstraint(columnNames={"item", "alternative_item"}))
 @Heritable
 public class ItemAlternative extends ItemAlternativeDB {
-	
+
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-	
+
 }

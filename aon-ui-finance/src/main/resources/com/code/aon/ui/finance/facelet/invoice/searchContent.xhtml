@@ -91,6 +91,7 @@
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 				<aon:if test="#{searchController.sales or searchController.purchase}">
 					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+						<ui:param name="lookupBean" value="#{(searchController.sales) ? saleItemLookup : purchaseItemLookup}" />
 						<ui:param name="lookupTo" value="#{searchController.item}" />
 						<ui:param name="skipNewButton" value="#{true}" />
 					</ui:include>

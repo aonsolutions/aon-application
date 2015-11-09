@@ -121,6 +121,7 @@ public class RichLookupBean implements ITemplateController, Serializable {
 	 */
 	public RichLookupBean() {
 		this.controller = new BasicController();
+		this.controller.setLookup(true);
 		setPageLimit(DEFAULT_PAGE_LIMIT);
 	}
 

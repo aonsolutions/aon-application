@@ -7,6 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+		<ui:param name="lookupBean" value="#{(rItemController.commercialType or rItemController.saleType) ? saleItemLookup : purchaseItemLookup}" />
 		<ui:param name="lookupTo" value="#{searchController.item}" />
 		<ui:param name="lookupSuffix" value="-RegistryItem" />
 		<ui:param name="skipNewButton" value="#{true}" />		

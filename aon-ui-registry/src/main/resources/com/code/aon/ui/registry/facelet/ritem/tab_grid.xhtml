@@ -16,6 +16,7 @@
 					<aon:outputText value="#{to.item.product.name} #{to.item.detail}"
 						rendered="#{formList}" />
 					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+						<ui:param name="lookupBean" value="#{(controller.commercialType or controller.saleType) ? saleItemLookup : purchaseItemLookup}" />
 						<ui:param name="lookupTo" value="#{controller.to.item}" />
 						<ui:param name="idRequired" value="#{true}" />
 						<ui:param name="skipLabel" value="#{true}" />
@@ -28,6 +29,7 @@
 					</ui:include>
 					<f:facet name="footer" >
 						<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+							<ui:param name="lookupBean" value="#{(controller.commercialType or controller.saleType) ? saleItemLookup : purchaseItemLookup}" />
 							<ui:param name="lookupTo" value="#{controller.to.item}" />
 							<ui:param name="idRequired" value="#{true}" />
 							<ui:param name="skipLabel" value="#{true}" />

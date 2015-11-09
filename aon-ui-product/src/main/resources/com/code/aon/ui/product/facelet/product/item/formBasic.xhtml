@@ -14,16 +14,16 @@
 			<ui:param name="itemTo" value="#{controller.to}" />
 		</ui:include>
 
-		<aon:outputLabel for="Item_status" value="#{bundle.aon_status}" />
-		<aon:selectOneRadio id="Item_status" value="#{controller.to.status}"
+		<aon:outputLabel for="#{controller.pojoShortName}_status" value="#{bundle.aon_status}" />
+		<aon:selectOneRadio id="#{controller.pojoShortName}_status" value="#{controller.to.status}"
 			disabled="#{controller.to.wildCard}">
 			<f:selectItems value="#{productCollections.productStatuses}" />
 		</aon:selectOneRadio>
 
 		<aon:if test="#{aonConfiguration.bean.product.showEcommerceData}">
-			<aon:selectBooleanCheckbox id="Item_internet" 
+			<aon:selectBooleanCheckbox id="#{controller.pojoShortName}_internet" 
 				value="#{controller.to.internet}" />
-			<aon:outputLabel for="Item_internet" styleClass="aon-margin-right aon-italic"
+			<aon:outputLabel for="#{controller.pojoShortName}_internet" styleClass="aon-margin-right aon-italic"
 				value="#{bundle.product_ecommerce_available}" />
 		</aon:if>
 		

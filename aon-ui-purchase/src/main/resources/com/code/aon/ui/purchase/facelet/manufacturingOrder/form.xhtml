@@ -253,6 +253,7 @@
 								<ui:param name="purchase" value="#{manufacturingOrder}" />
 								<ui:param name="purchaseDetail" value="#{manufacturingOrderDetail}" />
 								<ui:param name="projectLabel" value="#{bundle.aon_project}" />
+								<ui:param name="manufactureOrder" value="#{true}" />
 								<ui:param name="skipSerialNumberButton" value="#{true}" />
 								<ui:param name="skipIncomeLink" value="#{true}" />
 								<ui:param name="itemLookupDisabled" value="#{true}" />
@@ -306,7 +307,7 @@
 		
 		<aon:lookupButtonPopup lookup="#{projectLookup}" />
 		
-		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<aon:lookupButtonPopup lookup="#{saleItemLookup}" />
 		
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		

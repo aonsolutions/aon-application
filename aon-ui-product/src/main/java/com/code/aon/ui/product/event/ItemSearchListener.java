@@ -16,6 +16,7 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.supplier.Supplier;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -29,6 +30,7 @@ public class ItemSearchListener extends RegistrySearchListener {
 	private String supplierCode;
 	private Supplier supplierParam;
 	private Product product;
+	private ProductKind[] kinds;
 	private ProductCategory category;
 	
 	public ProductStatus[] getItemStatuses() {
@@ -71,6 +73,13 @@ public class ItemSearchListener extends RegistrySearchListener {
 		this.product = product;
 	}
 
+	public ProductKind[] getKinds() {
+		return kinds;
+	}
+	public void setKinds(ProductKind[] kinds) {
+		this.kinds = kinds;
+	}
+
 	public ProductCategory getCategory() {
 		return category;
 	}
@@ -92,6 +101,7 @@ public class ItemSearchListener extends RegistrySearchListener {
 		setSupplierCode(null);
 		setSupplierParam((Supplier)supplierBean.createNewTo());
 		setProduct((Product) BeanManager.getManagerBean(Product.class).createNewTo());
+		setKinds(new ProductKind[0]);
 		setCategory((ProductCategory) BeanManager.getManagerBean(ProductCategory.class).createNewTo());
 		super.init();
 	}
@@ -111,21 +121,24 @@ public class ItemSearchListener extends RegistrySearchListener {
 		if (getProduct() != null && getProduct().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.ITEM_PRODUCT_ID), getProduct().getId());
 		}
+		if (getController() instanceof BasicController && !((BasicController)getController()).isLookup()) {
+			if (!ArrayUtils.isEmpty(getKinds())) {
+				String alias = getController().resolveAlias(IEntityAlias.ITEM_PRODUCT_KIND);
+				addEnumToCriteria(criteria, alias, getKinds());
+			} else {
+				String alias = getController().resolveAlias(IEntityAlias.ITEM_PRODUCT_KIND);
+				Expression kindExpr = ExpressionUtilities.getEqualExpression(alias, ProductKind.SALE_PURCHASE);
+				if (AonUtil.getRoleManager().isPurchaseOperator()) {
+					kindExpr = ExpressionUtilities.getOrExpression(kindExpr,  ExpressionUtilities.getEqualExpression(alias, ProductKind.PURCHASE));
+				}
+				if (AonUtil.getRoleManager().isSaleOperator()) {
+					kindExpr = ExpressionUtilities.getOrExpression(kindExpr,  ExpressionUtilities.getEqualExpression(alias, ProductKind.SALE));
+				}
+				criteria.addExpression(kindExpr);
+			}
+		}
 		if (getCategory() != null && getCategory().getId() != null) {
 			criteria.addEqualExpression(getController().resolveAlias("Item_product_category<id"), getCategory().getId());
-		}
-		if (AonUtil.getRoleManager().isSaleOperator() || AonUtil.getRoleManager().isPurchaseOperator()) {
-			String alias = getController().resolveAlias(IEntityAlias.ITEM_PRODUCT_KIND);
-			Expression kindExpr = ExpressionUtilities.getEqualExpression(alias, ProductKind.SALE_PURCHASE);
-			if (AonUtil.getRoleManager().isPurchaseOperator()) {
-				kindExpr = ExpressionUtilities.getOrExpression(kindExpr,  ExpressionUtilities.getEqualExpression(alias, ProductKind.PURCHASE));
-			}
-			if (AonUtil.getRoleManager().isSaleOperator()) {
-				kindExpr = ExpressionUtilities.getOrExpression(kindExpr,  ExpressionUtilities.getEqualExpression(alias, ProductKind.SALE));
-			}
-			criteria.addExpression(kindExpr);
-		} else {
-			criteria.addEqualExpression(getFieldName(IEntityAlias.ITEM_PRODUCT_KIND), ProductKind.SALE_PURCHASE);
 		}
 		super.completeCriteria(criteria);
 	}

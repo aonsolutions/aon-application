@@ -7,6 +7,7 @@
 	<aon:if test="#{!controller.masterItem}">
 		<aon:outputLabel for="Item_id" value="#{bundle.aon_product}" />
 		<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+			<ui:param name="lookupBean" value="#{(controller.commercialType or controller.saleType) ? saleItemLookup : purchaseItemLookup}" />
 			<ui:param name="lookupTo" value="#{controller.to.item}" />
 			<ui:param name="idRequired" value="#{true}" />
 			<ui:param name="skipLabel" value="#{true}" />

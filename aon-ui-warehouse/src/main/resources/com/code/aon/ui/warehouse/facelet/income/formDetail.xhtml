@@ -65,6 +65,7 @@
 					<aon:abbreviateConverter maxWidth="64" />
 				</aon:outputText>
 				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+					<ui:param name="lookupBean" value="#{purchaseItemLookup}" />
 					<ui:param name="lookupTo" value="#{incomeDetail.to.item}" />
 					<ui:param name="idRequired" value="#{true}" />
 					<ui:param name="skipGoToButton" value="#{!aonRole.config}" />
@@ -103,6 +104,7 @@
 				<f:facet name="footer">
 					<aon:div>
 						<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+							<ui:param name="lookupBean" value="#{purchaseItemLookup}" />
 							<ui:param name="lookupTo" value="#{incomeDetail.to.item}" />
 							<ui:param name="idRequired" value="#{true}" />
 							<ui:param name="skipGoToButton" value="#{!aonRole.config}" />

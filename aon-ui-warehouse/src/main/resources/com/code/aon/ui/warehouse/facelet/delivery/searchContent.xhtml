@@ -20,6 +20,7 @@
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 			
 				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+					<ui:param name="lookupBean" value="#{saleItemLookup}" />
 					<ui:param name="lookupTo" value="#{searchController.item}" />
 					<ui:param name="skipNewButton" value="#{true}" />
 				</ui:include>

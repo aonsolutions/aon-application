@@ -148,6 +148,7 @@
 							<aon:outputText value="#{to.item.fullName}" />
 							<f:facet name="footer">
 								<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+									<ui:param name="lookupBean" value="#{allItemLookup}" />
 									<ui:param name="lookupTo" value="#{controller.to.item}" />
 									<ui:param name="idRequired" value="#{true}" />
 									<ui:param name="skipLabel" value="#{true}" />
@@ -247,7 +248,7 @@
 				</ui:decorate>
 			</aon:div>
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<aon:lookupButtonPopup lookup="#{allItemLookup}" />
 		<aon:if test="#{!inventory.to.closed}" >
 			<ui:include src="/com/code/aon/ui/warehouse/facelet/inventory/modalInventoryAdjustment.xhtml" />
 		</aon:if>		

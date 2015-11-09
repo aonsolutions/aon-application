@@ -173,7 +173,7 @@
 		</aon:form>
 		
 		<aon:if test="#{!proposal.nevv}">
-			<aon:lookupButtonPopup lookup="#{itemLookup}" />
+			<aon:lookupButtonPopup lookup="#{purchaseItemLookup}" />
 			<ui:include src="/com/code/aon/ui/purchase/facelet/proposal/modalTransfer.xhtml" />
 			<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
 				<ui:param name="auditableController" value="#{proposal}" />

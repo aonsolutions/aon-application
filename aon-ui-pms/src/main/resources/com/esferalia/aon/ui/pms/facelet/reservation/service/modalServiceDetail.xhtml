@@ -126,6 +126,7 @@
 										<aon:outputText	value="#{controller.to.item.product.code} - #{controller.to.item.product.name}" styleClass="aon-bold"
 											rendered="#{!reservation.reservationPermission.reservationServicesEditable}" />
 										<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+											<ui:param name="lookupBean" value="#{saleItemLookup}" />
 											<ui:param name="lookupTo" value="#{controller.to.item}" />
 											<ui:param name="idRequired" value="#{true}" />
 											<ui:param name="skipLabel" value="#{true}" />

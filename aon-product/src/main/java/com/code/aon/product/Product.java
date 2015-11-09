@@ -72,6 +72,21 @@ public class Product extends ProductDB implements IAuditable {
 	}
 
 	@Transient
+	public boolean isSalePurchase() throws ManagerBeanException {
+		return getKind() == ProductKind.SALE_PURCHASE;
+	}
+
+	@Transient
+	public boolean isPurchase() throws ManagerBeanException {
+		return getKind() == ProductKind.PURCHASE;
+	}
+
+	@Transient
+	public boolean isSale() throws ManagerBeanException {
+		return getKind() == ProductKind.SALE;
+	}
+
+	@Transient
 	public String getTagList() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ProductTag.class);
 		Criteria criteria = new Criteria();

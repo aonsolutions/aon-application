@@ -185,7 +185,7 @@
 			<aon:lookupButtonPopup lookup="#{accountLookup}" />
 		</aon:if>
 		<aon:if test="#{aonConfiguration.bean.supplier.showProduct}">
-			<aon:lookupButtonPopup lookup="#{itemLookup}" />
+			<aon:lookupButtonPopup lookup="#{purchaseItemLookup}" />
 		</aon:if>	
 		<aon:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">
 			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />

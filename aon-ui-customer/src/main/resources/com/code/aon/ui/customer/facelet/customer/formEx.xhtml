@@ -366,7 +366,7 @@
 				<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 			</aon:if>
 			<aon:if test="#{aonConfiguration.bean.customer.showProduct or aonConfiguration.bean.customer.showFinanceFeeData}">
-				<aon:lookupButtonPopup lookup="#{itemLookup}" />
+				<aon:lookupButtonPopup lookup="#{saleItemLookup}" />
 			</aon:if>	
 			<aon:if test="#{aonConfiguration.bean.customer.showSeller or aonConfiguration.bean.customer.showFinanceFeeData}">
 				<aon:lookupButtonPopup lookup="#{sellerLookup}" />

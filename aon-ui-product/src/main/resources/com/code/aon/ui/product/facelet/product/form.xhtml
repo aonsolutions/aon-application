@@ -50,7 +50,7 @@
 							<f:setPropertyActionListener target="#{item.showNewCatalogueWindow}" value="#{true}" />							
 						</aon:menuItem>
 					</aon:if>
-					<aon:if test="#{aonConfiguration.bean.product.showSuppliers}">
+					<aon:if test="#{controller.to.sale or controller.to.salePurchase}">
 						<aon:menuItem id="customer-button"
 							value="#{bundle.customer_finance_checking}"
 							reRender="showNewItemCustomerWindow"
@@ -58,6 +58,8 @@
 							actionListener="#{itemCustomer.onReset}">
 							<f:setPropertyActionListener target="#{item.showNewCustomerWindow}" value="#{true}" />							
 						</aon:menuItem>
+					</aon:if>
+					<aon:if test="#{controller.to.purchase or controller.to.salePurchase}">
 						<aon:menuItem id="supplier-button"
 							value="#{bundle.aon_suppliers}"
 							reRender="showNewItemSupplierWindow"
@@ -212,7 +214,9 @@
 
 		<aon:if test="#{!product.nevv}">
 			<aon:if test="#{aonConfiguration.bean.product.showComposition or aonConfiguration.bean.product.showAlternatives}">
-				<aon:lookupButtonPopup lookup="#{itemLookup}" />
+				<aon:lookupButtonPopup lookup="#{allItemLookup}" />
+				<aon:lookupButtonPopup lookup="#{saleItemLookup}" />
+				<aon:lookupButtonPopup lookup="#{purchaseItemLookup}" />
 			</aon:if>
 			<aon:if test="#{aonConfiguration.bean.product.showSuppliers}">
 				<aon:lookupButtonPopup lookup="#{customerLookup}" />

@@ -23,6 +23,7 @@
 				<ui:define name="searchContent">
 						
 					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+						<ui:param name="lookupBean" value="#{saleItemLookup}" />
 						<ui:param name="lookupTo" value="#{feePrintSearch.item}" />
 						<ui:param name="skipNewButton" value="#{true}" />
 					</ui:include>
@@ -61,7 +62,7 @@
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<aon:lookupButtonPopup lookup="#{saleItemLookup}" />
 	</ui:define>
 	
 </ui:composition>

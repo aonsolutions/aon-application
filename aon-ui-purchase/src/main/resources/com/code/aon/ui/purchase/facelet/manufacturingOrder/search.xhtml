@@ -20,6 +20,7 @@
 				<ui:define name="searchContent">
 					<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/searchContent.xhtml" >
 						<ui:param name="searchController" value="#{manufacturingOrderSearch}" />
+						<ui:param name="manufactureOrder" value="#{true}" />
 						<ui:param name="skipSupplierLookup" value="#{true}" />
 						<ui:param name="skipDocumentType" value="#{true}" />
 						<ui:param name="skipEmailCommunication" value="#{true}" />
@@ -31,7 +32,7 @@
 			
 		</aon:form>
 		
-		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<aon:lookupButtonPopup lookup="#{saleItemLookup}" />
 		<aon:lookupButtonPopup lookup="#{projectLookup}" />
 		<aon:lookupButtonPopup lookup="#{registryLookup}" />
 	</ui:define>

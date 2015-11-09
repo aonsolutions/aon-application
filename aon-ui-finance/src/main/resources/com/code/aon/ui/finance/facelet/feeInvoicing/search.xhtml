@@ -49,6 +49,7 @@
 						</ui:include>
 
 						<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+							<ui:param name="lookupBean" value="#{saleItemLookup}" />
 							<ui:param name="lookupTo" value="#{feeInvoicing.params.item}" />
 							<ui:param name="skipNewButton" value="#{true}" />
 						</ui:include>
@@ -142,7 +143,7 @@
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{invoicingGroupLookup}" />
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
-		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<aon:lookupButtonPopup lookup="#{saleItemLookup}" />
 		<ui:include
 			src="/com/code/aon/ui/resources/facelet/shared/progressBar.xhtml">
 			<ui:param name="progressLabel" value="#{bundle.finance_fee_invoicing_module}" />

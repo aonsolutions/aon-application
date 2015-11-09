@@ -10,39 +10,39 @@
 		<ui:param name="controller" value="#{lookup}"/>
 	</aon:if>
 
-	<aon:outputLabel for="Item_product_code" value="#{bundle.aon_id}" />
-	<aon:inputText id="Item_product_code" size="25"
+	<aon:outputLabel for="#{controller.pojoShortName}_product_code" value="#{bundle.aon_id}" />
+	<aon:inputText id="#{controller.pojoShortName}_product_code" size="25"
 		valueChangeListener="#{controller.addExpression}"
 		onblur="toUpperCase(this);" />
 
-	<aon:outputLabel for="Item_product_name"
+	<aon:outputLabel for="#{controller.pojoShortName}_product_name"
 		value="#{bundle.aon_name}" />
-	<aon:inputText id="Item_product_name" size="50"
+	<aon:inputText id="#{controller.pojoShortName}_product_name" size="50"
 		valueChangeListener="#{controller.addExpression}" />
 
 	<aon:if test="#{aonConfiguration.bean.product.showBarcode}">
-		<aon:outputLabel for="Item_barcode" value="#{bundle.product_barcode}" />
-		<aon:inputText id="Item_barcode" size="25"
+		<aon:outputLabel for="#{controller.pojoShortName}_barcode" value="#{bundle.product_barcode}" />
+		<aon:inputText id="#{controller.pojoShortName}_barcode" size="25"
 			valueChangeListener="#{controller.addExpression}" />
 	</aon:if>
 
 	<aon:if test="#{aonConfiguration.bean.product.showSerializable}">
-		<aon:outputLabel for="Item_serialNumber" value="#{bundle.aon_serial_or_lot_number}" />
-		<aon:inputText id="Item_serialNumber" size="25"
+		<aon:outputLabel for="#{controller.pojoShortName}_serialNumber" value="#{bundle.aon_serial_or_lot_number}" />
+		<aon:inputText id="#{controller.pojoShortName}_serialNumber" size="25"
 			valueChangeListener="#{controller.addExpression}" />
 
 		<aon:outputLabel value="#{bundle.aon_serial_or_lot_date}" />
 		<aon:div>
-			<aon:outputLabel for="Item_serialDate-From" styleClass="aon-form-date-label aon-padding-right" 
+			<aon:outputLabel for="#{controller.pojoShortName}_serialDate-From" styleClass="aon-form-date-label aon-padding-right" 
 				value="#{bundle.aon_date_from}:" />
-			<aon:selectInputDate id="Item_serialDate-From"
+			<aon:selectInputDate id="#{controller.pojoShortName}_serialDate-From"
 				valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 				timeZone="#{timeZoneController.timeZone}"
 				popupDateFormat="#{bundle.aon_date_pattern}" />
 
-			<aon:outputLabel for="Item_serialDate-To" styleClass="aon-form-date-label aon-padding-right"
+			<aon:outputLabel for="#{controller.pojoShortName}_serialDate-To" styleClass="aon-form-date-label aon-padding-right"
 				value="#{bundle.aon_date_to}" />
-			<aon:selectInputDate id="Item_serialDate-To"
+			<aon:selectInputDate id="#{controller.pojoShortName}_serialDate-To"
 				valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 				timeZone="#{timeZoneController.timeZone}"
 				popupDateFormat="#{bundle.aon_date_pattern}" />
@@ -50,21 +50,21 @@
 	</aon:if>
 
 	<aon:if test="#{product.detailLevel &gt; 0}">
-		<aon:outputLabel for="Item_detail"
+		<aon:outputLabel for="#{controller.pojoShortName}_detail"
 			value="#{bundle.aon_detail}" />
-		<aon:inputText id="Item_detail" size="25"
+		<aon:inputText id="#{controller.pojoShortName}_detail" size="25"
 			valueChangeListener="#{controller.addExpression}" />
 	
 		<aon:if test="#{product.detailLevel &gt; 1}">
-			<aon:outputLabel for="Item_detail2"
+			<aon:outputLabel for="#{controller.pojoShortName}_detail2"
 				value="#{bundle.product_detail2}" />
-			<aon:inputText id="Item_detail2" size="25"
+			<aon:inputText id="#{controller.pojoShortName}_detail2" size="25"
 				valueChangeListener="#{controller.addExpression}" />
 
 			<aon:if test="#{product.detailLevel &gt; 2}">
-				<aon:outputLabel for="Item_detail3"
+				<aon:outputLabel for="#{controller.pojoShortName}_detail3"
 					value="#{bundle.product_detail3}" />
-				<aon:inputText id="Item_detail3" size="25"
+				<aon:inputText id="#{controller.pojoShortName}_detail3" size="25"
 					valueChangeListener="#{controller.addExpression}" />
 			</aon:if>
 		</aon:if>
@@ -74,18 +74,18 @@
 		<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
 			<ui:param name="lookupTo" value="#{itemSearch.supplier}" />
 			<ui:param name="skipNewButton" value="#{true}" />
-			<ui:param name="lookupSuffix" value="-Item" />
+			<ui:param name="lookupSuffix" value="-#{controller.pojoShortName}" />
 		</ui:include>	
 
-		<aon:outputLabel for="Item_supplier_code"
+		<aon:outputLabel for="#{controller.pojoShortName}_supplier_code"
 			value="#{bundle.product_item_supplier_code_abbr}" />
-		<aon:inputText id="Item_supplier_code" size="25"
+		<aon:inputText id="#{controller.pojoShortName}_supplier_code" size="25"
 			value="#{itemSearch.supplierCode}"  />
 	</aon:if>
 
-	<aon:outputLabel for="Item_product_category_id"
+	<aon:outputLabel for="#{controller.pojoShortName}_product_category_id"
 		value="#{bundle.aon_category}" />
-	<aon:selectOneMenu id="Item_product_category_id"
+	<aon:selectOneMenu id="#{controller.pojoShortName}_product_category_id"
 		value="#{itemSearch.category}">
 		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{productCollections.categories}" />

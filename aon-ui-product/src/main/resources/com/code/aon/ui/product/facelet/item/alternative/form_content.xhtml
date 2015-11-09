@@ -14,6 +14,7 @@
 
 	<aon:outputLabel for="Item_id_Alternative" value="#{bundle.aon_product}" />
 	<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+		<ui:param name="lookupBean" value="#{(product.to.sale) ? saleItemLookup : (product.to.purchase) ? purchaseItemLookup : allItemLookup}" />
 		<ui:param name="lookupTo" value="#{controller.to.alternativeItem}" />
 		<ui:param name="idRequired" value="#{true}" />
 		<ui:param name="skipLabel" value="#{true}" />

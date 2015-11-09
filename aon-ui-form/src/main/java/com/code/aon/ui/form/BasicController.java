@@ -73,6 +73,8 @@ public class BasicController extends AbstractPojoController implements IControll
 
 	private boolean queryOnStartUP;
 
+	private boolean lookup;
+
 	/** Represent a manager of listeners */
 	private ControllerListenerSupport controllerListenerSupport;
 
@@ -136,6 +138,24 @@ public class BasicController extends AbstractPojoController implements IControll
 	 */
 	public void setQueryOnStartUP(boolean queryOnStartUP) {
 		this.queryOnStartUP = queryOnStartUP;
+	}
+
+	/**
+	 * Return if controller is a lookup
+	 * 
+	 * @return lookup
+	 */
+	public boolean isLookup() {
+		return lookup;
+	}
+
+	/**
+	 * Set if controller is a lookup
+	 * 
+	 * @param lookup
+	 */
+	public void setLookup(boolean lookup) {
+		this.lookup = lookup;
 	}
 
 	/**

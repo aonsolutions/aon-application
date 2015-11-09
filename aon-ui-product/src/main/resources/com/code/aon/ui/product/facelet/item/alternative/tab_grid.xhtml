@@ -35,16 +35,18 @@
 				<aon:outputText value="#{to.alternativeItem.product.code} - #{to.alternativeItem.product.name}"
 					rendered="#{formList}" />
 				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+					<ui:param name="lookupBean" value="#{(product.to.sale) ? saleItemLookup : (product.to.purchase) ? purchaseItemLookup : allItemLookup}" />
 					<ui:param name="lookupTo" value="#{controller.to.alternativeItem}" />
 					<ui:param name="idRequired" value="#{true}" />
 					<ui:param name="skipLabel" value="#{true}" />
 					<ui:param name="lookupRendered" value="#{formEdit}" />
-					<ui:param name="lookupSuffix" value="_Alternative" />
+					<ui:param name="lookupSuffix" value="_Alternative-Edit" />
 					<aon:methodParam name="lookupChangeListener"
 						value="#{controller.onAlternativeItemChanged}" type="lookupChangeListener" />
 				</ui:include>
 				<f:facet name="footer">
 					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+						<ui:param name="lookupBean" value="#{(product.to.sale) ? saleItemLookup : (product.to.purchase) ? purchaseItemLookup : allItemLookup}" />
 						<ui:param name="lookupTo" value="#{controller.to.alternativeItem}" />
 						<ui:param name="idRequired" value="#{true}" />
 						<ui:param name="skipLabel" value="#{true}" />

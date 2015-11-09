@@ -121,6 +121,7 @@
 						<aon:outputLabel for="Item_id" value="#{bundle.aon_product} #{bundle.finance_invoice}"
 							rendered="#{pos.to.invoiceable}" />
 						<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+							<ui:param name="lookupBean" value="#{saleItemLookup}" />
 							<ui:param name="lookupTo" value="#{pos.to.itemInvoice}" />
 							<ui:param name="idRequired" value="#{true}" />
 							<ui:param name="skipLabel" value="#{true}" />
@@ -223,64 +224,10 @@
 						</aon:div>
 					</aon:div>
 				</aon:if>
-
-
-<!--
-					<aon:outputLabel for="Pos_pinPad" value="#{bundle.finance_pos_pin_pad}" />
-					<aon:selectBooleanCheckbox id="Pos_pinPad" value="#{pos.to.pinPad}" >
-						<a4j:support event="onclick" reRender="posPanel" ignoreDumpResponses="true" ajaxSingle="true" />
-					</aon:selectBooleanCheckbox>
-					
-					<aon:if test="#{pos.to.pinPad}">
-						<aon:outputLabel for="Pos_commerce" value="#{bundle.finance_pos_commerce}" />
-						<aon:inputText id="Pos_commerce" value="#{pos.to.commerce}" 
-							size="20" maxlength="20" required="true" />
-
-						<aon:outputLabel for="Pos_terminal" value="#{bundle.finance_pos_terminal}" />
-						<aon:inputText id="Pos_terminal" value="#{pos.to.terminal}" 
-							size="4" maxlength="4" required="true" >
-							<f:validateLongRange minimum="1" maximum="1000" />
-						</aon:inputText>
-
-						<aon:outputLabel for="Pos_signaturePassword" value="#{bundle.finance_pos_signature_password}" />
-						<aon:inputText id="Pos_signaturePassword" value="#{pos.to.signaturePassword}" 
-							size="32" maxlength="32" required="true" />
-
-						<aon:outputLabel for="Pos_portConfiguration" value="#{bundle.finance_pos_port_configuration}" />
-						<aon:selectOneMenu id="Pos_portConfiguration"
-							value="#{pos.to.portConfiguration}">
-							<f:selectItem itemLabel="-" value="#{null}" />
-							<f:selectItem itemLabel="PinPad USB (Ingenico i6280)" itemValue="USB,2816,25216,2,2" />
-							<f:selectItem itemLabel="PinPad USB (Ingenico i6550)" itemValue="USB,2816,25936,2,2" />
-							<f:selectItem itemLabel="COM1" itemValue="COM1:,19200,N,8,1" />
-							<f:selectItem itemLabel="COM2" itemValue="COM2:,19200,N,8,1" />
-							<f:selectItem itemLabel="COM3" itemValue="COM3:,19200,N,8,1" />
-							<f:selectItem itemLabel="COM4" itemValue="COM4:,19200,N,8,1" />
-							<f:selectItem itemLabel="COM5" itemValue="COM5:,19200,N,8,1" />
-							<f:selectItem itemLabel="COM6" itemValue="COM6:,19200,N,8,1" />
-							<f:selectItem itemLabel="COM7" itemValue="COM7:,19200,N,8,1" />
-							<f:selectItem itemLabel="COM8" itemValue="COM8:,19200,N,8,1" />
-							<f:selectItem itemLabel="COM9" itemValue="COM9:,19200,N,8,1" />
-							<f:selectItem itemLabel="COM10" itemValue="COM10:,19200,N,8,1" />
-						</aon:selectOneMenu>
-
-						<aon:outputLabel for="Pos_posVersion" value="#{bundle.finance_pos_version}" />
-						<aon:selectOneMenu id="Pos_posVersion"
-							value="#{pos.to.posVersion}">
-							<f:selectItem itemLabel="-" value="#{null}" />
-							<f:selectItem itemLabel="3.0" itemValue="3.0" />
-							<f:selectItem itemLabel="3.1" itemValue="3.1" />
-							<f:selectItem itemLabel="4.0" itemValue="4.0" />
-							<f:selectItem itemLabel="4.1" itemValue="4.1" />
-							<f:selectItem itemLabel="4.2" itemValue="4.2" />
-						</aon:selectOneMenu>						
-					</aon:if>
-  -->					
-				
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
-		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<aon:lookupButtonPopup lookup="#{saleItemLookup}" />
 		
 	</ui:define>
 </ui:composition>
