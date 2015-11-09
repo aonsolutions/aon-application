@@ -233,6 +233,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
+			criteria.addOrder(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS_TYPE));
 			for (ITransferObject ito : rAddressBean.getList(criteria)) {
 				RegistryAddress address = (RegistryAddress)ito;
 				String addressLabel = address.getFullAddress();
