@@ -46,6 +46,10 @@ public class FiscalMatrix implements Serializable {
 		MODELS.add(new SelectItem(Model.M180));
 		MODELS.add(new SelectItem(Model.M190));
 		MODELS.add(new SelectItem(Model.M200));
+		MODELS.add(new SelectItem(Model.M202));
+		MODELS.add(new SelectItem(Model.M184));
+		MODELS.add(new SelectItem(Model.M193));
+		
 	}
 	private ModelManagerParams params;
 	private List<ModelConfig> list;
