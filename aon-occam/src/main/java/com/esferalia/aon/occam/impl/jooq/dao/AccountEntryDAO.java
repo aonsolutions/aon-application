@@ -153,6 +153,7 @@ public class AccountEntryDAO {
 				.returning(ACCOUNT_ENTRY.ID)
 				.fetchOne();
 		ae.setId(record.getValue(ACCOUNT_ENTRY.ID));
+		ctx.log().info("INSERT ACCOUNT_ENTRY asiento: " + ae.getId());
 		batchInsert(ctx, ae);
 		return record.getValue(ACCOUNT_ENTRY.ID); 
 	}
@@ -180,8 +181,10 @@ public class AccountEntryDAO {
 				.set(ACCOUNT_ENTRY_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			;
 		}
-		if (insertMore != null) 
-			insertMore.execute();
+		if (insertMore != null) {
+			int count = insertMore.execute();
+			ctx.log().info("INSERT ACCOUNT_ENTRY detalles asiento: " + ae.getId() + " ("+count+" filas)");			
+		}
 	}
 
 	public static void update(AONContext ctx, AccountEntry ae) {
@@ -199,6 +202,7 @@ public class AccountEntryDAO {
 			.set(ACCOUNT_ENTRY.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.where(ACCOUNT_ENTRY.ID.equal( ae.getId()))
 			.execute();
+		ctx.log().info("UPDATE ACCOUNT_ENTRY asiento: " + ae.getId());
 		updateDetails(ctx, ae);
 	}
 
@@ -227,7 +231,7 @@ public class AccountEntryDAO {
 							.set(ACCOUNT_ENTRY_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 							.where(ACCOUNT_ENTRY_DETAIL.ID.equal( detail.getId()))
 							.execute();
-						ctx.log().info("UPDATE detalle asiento ("+line+") " + detail.getId());
+						ctx.log().info("UPDATE ACCOUNT_ENTRY_DETAIL ("+line+") " + detail.getId());
 					}
 				} else {
 					ctx.getDslContext().insertInto(ACCOUNT_ENTRY_DETAIL)
@@ -243,7 +247,7 @@ public class AccountEntryDAO {
 						.set(ACCOUNT_ENTRY_DETAIL.CREATION_USER,ctx.getUser())
 						.set(ACCOUNT_ENTRY_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 						.execute();
-					ctx.log().info("INSERT detalle asiento ("+line+")");
+					ctx.log().info("INSERT ACCOUNT_ENTRY_DETAIL ("+line+")");
 				}
 			} else {
 				Integer id = detail.getId() * -1;
@@ -251,62 +255,11 @@ public class AccountEntryDAO {
 					.delete(ACCOUNT_ENTRY_DETAIL)
 					.where(ACCOUNT_ENTRY_DETAIL.ID.equal(id))
 					.execute();
-				ctx.log().info("DELETE detalle asiento ("+line+") " + id);
+				ctx.log().info("DELETE ACCOUNT_ENTRY_DETAIL ("+line+") " + id);
 			}
 		}
 	}
 
-	public static void delete(AONContext ctx, Integer id) {
-		ctx.checkWrite();
-		Integer accountPeriodId = null;
-		AccountEntryType type = null;
-		Record record = ctx.getDslContext()
-			.select(ACCOUNT_ENTRY.ACCOUNT_PERIOD,ACCOUNT_ENTRY.ENTRY_TYPE,ACCOUNT_PERIOD.STATUS)
-			.from(ACCOUNT_ENTRY)
-			.join(ACCOUNT_PERIOD).on(ACCOUNT_PERIOD.ID.eq(ACCOUNT_ENTRY.ACCOUNT_PERIOD))
-			.where(ACCOUNT_ENTRY.ID.eq(id))
-			.fetchOne();
-		if (record == null) return;
-		
-		AccountPeriodStatus status = AccountPeriodStatus.values()[record.getValue(ACCOUNT_PERIOD.STATUS)];
-		accountPeriodId = record.getValue(ACCOUNT_ENTRY.ACCOUNT_PERIOD);
-		if (status == null || !status.isActive()) {
-			if (status == AccountPeriodStatus.INACTIVE)
-				throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_INACTIVE.format(accountPeriodId));
-			if (status == AccountPeriodStatus.OPERATING)
-				throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_OPERATING.format(accountPeriodId));
-			if (status == AccountPeriodStatus.CLOSED)
-				throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_CLOSING.format(accountPeriodId));
-		}
-		type = AccountEntryType.values()[record.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)];
-		
-		if (!type.isManual()) {
-			throw new AonCoreException("No se permite el borrado de asientos automáticos");
-		}
-		// Se borran las lineas
-		ctx.getDslContext()
-			.delete(ACCOUNT_ENTRY_DETAIL)
-			.where(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY.equal(id))
-			.execute();
-		// Se borra la cabecera
-		ctx.getDslContext()
-			.delete(ACCOUNT_ENTRY)
-			.where(ACCOUNT_ENTRY.ID.equal(id))
-			.execute();
-		afterRemove(ctx, type, accountPeriodId);
-	}
-
-	public static boolean existsAnyEntry(AONContext ctx, Integer period, AccountEntryType accountEntryType) {
-		ctx.checkRead();
-		Select<Record> select = ctx.getDslContext()
-				.select()
-				.from(ACCOUNT_ENTRY)
-				.where(ACCOUNT_ENTRY.ACCOUNT_PERIOD.equal(period))
-				.and(ACCOUNT_ENTRY.ENTRY_TYPE.equal( AonEnumUtils.getByte( accountEntryType)));
-		return ctx.getDslContext().fetchCount(select) > 0;
-	}
-	
-	
 	public static LinkedHashMap<String, AccountBalance> fetchBalance(
 			AONContext ctx, AccMiningParameters params) {
 		java.sql.Date start = AonDateUtils.toSql(params.getStartDate()!= null? params.getStartDate() : AonDateUtils.getYearFirstDay(0));
@@ -354,6 +307,54 @@ public class AccountEntryDAO {
 			lastJournal = 0;
 		}
 		accountEntry.setJournal(lastJournal + 1);
+	}
+
+	public static void delete(AONContext ctx, Integer id) {
+		ctx.checkWrite();
+		Integer accountPeriodId = null;
+		AccountEntryType type = null;
+		Record record = ctx.getDslContext()
+			.select(ACCOUNT_ENTRY.ACCOUNT_PERIOD,ACCOUNT_ENTRY.ENTRY_TYPE,ACCOUNT_PERIOD.STATUS)
+			.from(ACCOUNT_ENTRY)
+			.join(ACCOUNT_PERIOD).on(ACCOUNT_PERIOD.ID.eq(ACCOUNT_ENTRY.ACCOUNT_PERIOD))
+			.where(ACCOUNT_ENTRY.ID.eq(id))
+			.fetchOne();
+		if (record == null) return;
+		
+		AccountPeriodStatus status = AccountPeriodStatus.values()[record.getValue(ACCOUNT_PERIOD.STATUS)];
+		accountPeriodId = record.getValue(ACCOUNT_ENTRY.ACCOUNT_PERIOD);
+		if (status == null || !status.isActive()) {
+			if (status == AccountPeriodStatus.INACTIVE)
+				throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_INACTIVE.format(accountPeriodId));
+			if (status == AccountPeriodStatus.OPERATING)
+				throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_OPERATING.format(accountPeriodId));
+			if (status == AccountPeriodStatus.CLOSED)
+				throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_CLOSING.format(accountPeriodId));
+		}
+		type = AccountEntryType.values()[record.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)];
+		
+		beforeRemove(type,id);
+		// Se borran las lineas
+		int count = ctx.getDslContext()
+			.delete(ACCOUNT_ENTRY_DETAIL)
+			.where(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY.equal(id))
+			.execute();
+		ctx.log().info("DELETE ACCOUNT_ENTRY detalles del asiento: " + id + " ("+count+" filas)");
+		// Se borra la cabecera
+		ctx.getDslContext()
+			.delete(ACCOUNT_ENTRY)
+			.where(ACCOUNT_ENTRY.ID.equal(id))
+			.execute();
+		ctx.log().info("DELETE ACCOUNT_ENTRY asiento: " + id);
+		afterRemove(ctx, type, accountPeriodId);
+	}
+
+	private static void beforeRemove(AccountEntryType type, Integer id) {
+		if (!type.isManual()) {
+			throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
+		} else {
+			
+		}
 	}
 
 	private static void afterRemove(AONContext ctx,AccountEntryType removed, Integer periodId) {
@@ -408,6 +409,16 @@ public class AccountEntryDAO {
 			}
 			AccountPeriodDAO.update(ctx,period);
 		}
+	}
+
+	public static boolean existsAnyEntry(AONContext ctx, Integer period, AccountEntryType accountEntryType) {
+		ctx.checkRead();
+		Select<Record> select = ctx.getDslContext()
+				.select()
+				.from(ACCOUNT_ENTRY)
+				.where(ACCOUNT_ENTRY.ACCOUNT_PERIOD.equal(period))
+				.and(ACCOUNT_ENTRY.ENTRY_TYPE.equal( AonEnumUtils.getByte( accountEntryType)));
+		return ctx.getDslContext().fetchCount(select) > 0;
 	}
 
 	private static void putAccountBalance(Map<String, AccountBalance> map,int type, String account,double debit, double credit) {

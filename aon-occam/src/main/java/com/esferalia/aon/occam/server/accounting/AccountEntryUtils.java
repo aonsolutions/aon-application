@@ -18,6 +18,9 @@ public class AccountEntryUtils {
 		if (params.getTo() != null) {
 			prop = prop.and(p.getEntryDateProperty().le(params.getTo()));
 		}
+		if (params.getType() != null) {
+			prop = prop.and(p.getEntryTypeProperty().eq((byte) params.getType().ordinal()));
+		}
 		if (!params.hasConfidentialityRole()) {
 			prop = prop.and(p.getConfidentialProperty().eq(
 					SecurityLevel.OFFICIAL.value()));

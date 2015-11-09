@@ -2662,6 +2662,9 @@ public interface CommonMessages extends Messages {
 	    "RETURNED_COLLECTION", "Devoluci\u00F3n de Cobro",
 	    "SOCIAL_INSURANCE_ADJUST", "Ajuste Seg. Social" })
     String accountEntryType(@Select AccountEntryType type);
+    
+    @DefaultMessage("Tipo asiento")
+    String accountEntryTypeLabel();
 
     @DefaultMessage("----------")
 	@AlternateMessage({

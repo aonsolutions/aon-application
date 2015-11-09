@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountEntryParams implements Serializable{
@@ -12,6 +13,7 @@ public class AccountEntryParams implements Serializable{
 	private int domain;
 	private Date from;
 	private Date to;
+	private AccountEntryType type;
 	private boolean confidential; 
 	private boolean hasConfidentialityRole; 
 	
@@ -38,6 +40,13 @@ public class AccountEntryParams implements Serializable{
 	}
 	public Date getTo() {
 		return to;
+	}
+	public AccountEntryType getType() {
+		return type;
+	}
+	public AccountEntryParams setType(AccountEntryType type) {
+		this.type = type;
+		return this;
 	}
 	public AccountEntryParams setTo(Date to) {
 		this.to = to;

@@ -5,6 +5,8 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.MessageFormat;
+import java.util.Date;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -172,22 +174,23 @@ public class AONContext {
 
 				@Override
 				public void error(String msg) {
-					System.out.println(ERR + msg);
+					System.out.println(MessageFormat.format(ERR,new Date(),AONContext.this.domainId,msg));
 				}
 
 				@Override
 				public void warn(String msg) {
+					System.out.println(MessageFormat.format(WAR,new Date(),AONContext.this.domainId,msg));
 					System.out.println(WAR + msg);
 				}
 
 				@Override
 				public void info(String msg) {
-					System.out.println(INF + msg);
+					System.out.println(MessageFormat.format(INF,new Date(),AONContext.this.domainId,msg));
 				}
 
 				@Override
 				public void debug(String msg) {
-					System.out.println(DEB + msg);
+					System.out.println(MessageFormat.format(DEB,new Date(),AONContext.this.domainId,msg));
 				}
 				
 			};

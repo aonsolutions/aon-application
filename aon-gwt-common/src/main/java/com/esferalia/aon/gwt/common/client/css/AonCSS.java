@@ -517,7 +517,10 @@ public interface AonCSS extends  CssResource {
 
 	@ClassName("aon-icon-close")
 	String aonIconClose();
-
+	
+	@ClassName("aon-widget-close")
+	String aonWidgetClose();
+	
 	@ClassName("aon-icon-minimize")
 	String aonIconMinimize();
 	
@@ -817,6 +820,24 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-confirm-dialog-cancel-button")
 	String aonConfirmDialogCancelButton();
+	
+	@ClassName("aon-postit")
+	String aonPostit();
+	
+	@ClassName("aon-postit-header")
+	String aonPostitHeader();
+	
+	@ClassName("aon-postit-content")
+	String aonPostitContent();
+	
+	@ClassName("aon-toast")
+	String aonToast();
+	
+	@ClassName("aon-toast-header")
+	String aonToastHeader();
+	
+	@ClassName("aon-toast-content")
+	String aonToastContent();
 	
 }
 

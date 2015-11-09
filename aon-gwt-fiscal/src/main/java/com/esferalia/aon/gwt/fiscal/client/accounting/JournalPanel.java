@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountBox;
+import com.esferalia.aon.gwt.common.client.widget.AccountEntryListBox;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
@@ -28,6 +29,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -54,9 +56,13 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 	private SimpleLayoutPanel northPanel;
 	private ScrollPanel centerPanel;
 	
-	private FlowPanel container;	
+	private FlowPanel container;
+	private FlexTable tab;
+	private FlowPanel datePanel; 
 	private DateBoxEx fromDate;
 	private DateBoxEx toDate;
+	private AccountEntryListBox entryListBox;
+	private CheckBox confidential;
 	private AccountBox account;
 	private DoubleBox debit;
 	private DoubleBox credit;
@@ -114,6 +120,9 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 	}
 	public void setUser(User user) {
 		this.user = user;
+		if (datePanel != null && user != null && user.hasConfidentialityRole()) {
+			datePanel.add(confidential);
+		}
 	}
 	public boolean isSearchEnabled() {
 		return (searchEnabled.getValue() == 0 );
@@ -128,7 +137,7 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 	private void fillNorthPanel() {
 		fromDate = new DateBoxEx();
 		toDate = new DateBoxEx();
-		
+		confidential = new CheckBox(AON.MSG.confidential());
 		account = new AccountBox(this.domainName,this.domainId);
 		account.setRequired(false);
 		debit = new DoubleBox();
@@ -148,20 +157,22 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 			}
 		});
 		
-		FlexTable tab = new FlexTable();
+		tab = new FlexTable();
 		tab.setStyleName(AON.AON_CSS.aonPanelGridSearch());
 		tab.addStyleName(AON.AON_CSS.aonWidthAll());
 		
-		tab.getColumnFormatter().setWidth(0, "100px");
-		tab.getColumnFormatter().setWidth(1, "300px");
-		tab.getColumnFormatter().setWidth(2, "100px");
-		tab.getColumnFormatter().setWidth(3, "auto");
-		tab.getColumnFormatter().setWidth(4, "50px");
+		tab.getColumnFormatter().setWidth(0, "60px");
+		tab.getColumnFormatter().setWidth(1, "360px");
+		tab.getColumnFormatter().setWidth(2, "80px");
+		tab.getColumnFormatter().setWidth(3, "175px");
+		tab.getColumnFormatter().setWidth(4, "110px");
+		tab.getColumnFormatter().setWidth(5, "auto");
+		tab.getColumnFormatter().setWidth(6, "50px");
 		
 		tab.setWidget(0, 0, new Label(AON.MSG.date()));
 		tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonPanelGridOdd());
 		
-		FlowPanel datePanel = new FlowPanel();
+		datePanel = new FlowPanel();
 		datePanel.setStyleName(AON.AON_CSS.aonNowrap());
 		InlineLabel from = new InlineLabel(AON.MSG.from());
 		from.setStyleName(AON.AON_CSS.aonItalic());
@@ -177,14 +188,20 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 		tab.setWidget(0, 1, datePanel);
 		tab.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonPanelGridEven());
 		
-		tab.setWidget(0, 2, new Label(AON.MSG.account()));
+		tab.setWidget(0, 2, new Label(AON.MSG.accountEntryTypeLabel()));
 		tab.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonPanelGridOdd());
-
-		tab.setWidget(0, 3, account);
-		tab.getFlexCellFormatter().setColSpan(0, 3, 3);
-		tab.getCellFormatter().setStyleName(0,3, AON.AON_CSS.aonPanelGridEven());
 		
-		tab.getFlexCellFormatter().setRowSpan(0, 6, 3);
+		entryListBox = new AccountEntryListBox();
+		tab.setWidget(0, 3, entryListBox);
+		tab.getCellFormatter().setStyleName(0,3, AON.AON_CSS.aonPanelGridEven());
+
+		tab.setWidget(0, 4, new Label(AON.MSG.account()));
+		tab.getCellFormatter().setStyleName(0,4, AON.AON_CSS.aonPanelGridOdd());
+
+		tab.setWidget(0, 5, account);
+		tab.getCellFormatter().setStyleName(0,5, AON.AON_CSS.aonPanelGridEven());
+		
+		tab.getFlexCellFormatter().setRowSpan(0, 6, 2);
 		tab.getCellFormatter().setStyleName(0,6, AON.AON_CSS.aonPanelGridEven());
 		tab.getCellFormatter().addStyleName(0,6, AON.AON_CSS.aonVerticalAlignMiddle());
 		tab.getCellFormatter().addStyleName(0,6, AON.AON_CSS.aonTextCenter());
@@ -216,10 +233,10 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 		tab.getCellFormatter().setStyleName(1,3, AON.AON_CSS.aonPanelGridEven());
 
 		tab.setWidget(1, 4, new Label(AON.MSG.document()));
-		tab.getCellFormatter().setStyleName(2,2, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().setStyleName(1,4, AON.AON_CSS.aonPanelGridOdd());
 
 		tab.setWidget(1, 5, document);
-		tab.getCellFormatter().setStyleName(2,3, AON.AON_CSS.aonPanelGridEven());
+		tab.getCellFormatter().setStyleName(1,5, AON.AON_CSS.aonPanelGridEven());
 		
 		FocusPanel focusPanel = new FocusPanel();
 		focusPanel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -276,11 +293,13 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 			.setDomain(AccountEntryModule.getCurrentDomain())
 			.setFrom(fromDate.getValue())
 			.setTo(toDate.getValue())
+			.setType(entryListBox.getValue())
 			.setAccount(account.getId())
 			.setDebit(debit.getValue())
 			.setCredit(credit.getValue())
 			.setConcept(concept.getValue())
 			.setDocument(document.getValue())
+			.setConfidential(confidential.getValue())
 			.setHasConfidentialityRole(user != null && user.hasConfidentialityRole())
 			;
 		
@@ -289,18 +308,25 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 					
 					@Override
 					public void onSuccess(LinkedList<AccountEntry> result) {
-						for (final AccountEntry entry : result) {
-							final FocusPanel entryPanel = AccountEntryPrinter.print(entry);
-							container.add(entryPanel);
-							entryPanel.addClickHandler(new ClickHandler() {
-								@Override
-								public void onClick(ClickEvent event) {
-									 SelectionEvent.<AccountEntry>fire( JournalPanel.this, entry);
-								}
-							});
-
+						if (result != null && !result.isEmpty()) {
+							for (final AccountEntry entry : result) {
+								final FocusPanel entryPanel = AccountEntryPrinter.print(entry);
+								container.add(entryPanel);
+								entryPanel.addClickHandler(new ClickHandler() {
+									@Override
+									public void onClick(ClickEvent event) {
+										 SelectionEvent.<AccountEntry>fire( JournalPanel.this, entry);
+									}
+								});
+		
+							}
+							offset.setValue(ofs + result.size());
+						} else {
+							FlowPanel line = new FlowPanel();
+							InlineLabel label = new InlineLabel(AON.MSG.noData());
+							line.add(label);
+							container.add(line);
 						}
-						offset.setValue(ofs + result.size());
 						enableSearch();
 					}
 					
@@ -309,7 +335,7 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 						FlowPanel line = new FlowPanel();
 						InlineLabel label = new InlineLabel(AON.MSG.noData());
 						line.add(label);
-						centerPanel.add(line);
+						container.add(line);
 						enableSearch();
 					}
 				});

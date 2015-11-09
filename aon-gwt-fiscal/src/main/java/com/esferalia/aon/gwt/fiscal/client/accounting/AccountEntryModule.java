@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.AuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
@@ -131,7 +132,7 @@ public class AccountEntryModule extends MainEntryPoint {
 	VerticalPanel tableInnerContainer;
 	ErrorPanel errors;
 	AccountEntryTable tab;
-	final PopupPanel waitPopup = new PopupPanel(false, true);
+	
 	
 	private boolean periodErrorShown;
 	private User user;
@@ -168,12 +169,6 @@ public class AccountEntryModule extends MainEntryPoint {
 		});
 		accept.setAccessKey('G');
 		reset.setAccessKey('N');
-
-		Label label = new Label(AON.MSG.processing());
-		label.addStyleName(AON.AON_CSS.aonTimer());
-		waitPopup.add(label);
-		waitPopup.setGlassEnabled(true);
-
 		fiscalService.getDomainPeriods(getCurrentDomainName(),
 				getCurrentDomain(),
 				new AsyncCallback<LinkedList<AccountPeriod>>() {
@@ -297,21 +292,11 @@ public class AccountEntryModule extends MainEntryPoint {
 
 	@UiHandler("commentsButton")
 	public void onComments(ClickEvent event) {
-		if (splitLayoutPanel.getWidgetSize(wizardPanel) == 0) {
-			splitLayoutPanel.setWidgetSize(wizardPanel, 105);
-			splitLayoutPanel.animate(500);
-		} else {
-			splitLayoutPanel.setWidgetSize(wizardPanel, 0);
-			splitLayoutPanel.animate(500);
-		}
-		ScrollPanel root = new ScrollPanel();
-		root.setStyleName(AON.AON_CSS.aonScrollArea());
-
+		final AonToast toast = new AonToast();
+		
 		FlowPanel commentPanel = new FlowPanel();
-		commentPanel.setStyleName(AON.AON_CSS.aonPanelGridSearch());
+		commentPanel.setStyleName(AON.AON_CSS.aonHeightAll());
 		commentPanel.addStyleName(AON.AON_CSS.aonTextCenter());
-		commentPanel.addStyleName(AON.AON_CSS.aonPadding());
-
 		TextArea comment = new TextArea();
 		comment.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
@@ -319,15 +304,15 @@ public class AccountEntryModule extends MainEntryPoint {
 				current.getAccountEntry().setComments(event.getValue());
 				styleCommentsButton();
 				refreshIdLabel();
+				toast.hide();
 			}
 		});
 		comment.setText(current.getAccountEntry().getComments());
-		comment.setWidth("80%");
-		comment.setHeight("4em");
+		comment.setWidth("90%");
+		comment.setHeight("5em");
 		commentPanel.add(comment);
 
-		root.setWidget(commentPanel);
-		wizardPanel.setWidget(root);
+		toast.show(AON.MSG.comments(), commentPanel);
 	}
 
 	private void syncCurrent() {
@@ -347,6 +332,8 @@ public class AccountEntryModule extends MainEntryPoint {
 		statusMsg.removeStyleName(AON.AON_CSS.aonInfoMessage());
 		
 		remove.setEnabled(current.isUpdatable());
+		accept.setEnabled(current.isUpdatable());
+		
 		if (!current.isUpdatable()) {
 			statusMsg.addStyleName(AON.AON_CSS.aonInfoMessage());
 			if (!current.isPeriodActive()) {
@@ -530,75 +517,90 @@ public class AccountEntryModule extends MainEntryPoint {
 	public void onSelectJournal(SelectionEvent<AccountEntry> event) {
 		final AccountEntry entry = event.getSelectedItem();
 		if (entry.getId() == null) {
-			current.setAccountEntry(entry);
-			syncCurrent();
+			editEntry(entry);
 		} else {
-			selectEntry(entry);
+			selectEntry(entry.getId(),entry);
 		}
 	}
 
 	@UiHandler("journalPanel")
 	public void onSelectJournalPanel(SelectionEvent<AccountEntry> event) {
 		final AccountEntry entry = event.getSelectedItem();
-		selectEntry(entry.getId());
+		selectEntry(entry.getId(),entry);
 	}
 	@UiHandler("statementPanel")
 	public void onSelectStatement(SelectionEvent<Integer> event) {
-		selectEntry(event.getSelectedItem());
+		selectEntry(event.getSelectedItem(),null);
 	}
-
-	private void selectEntry(final AccountEntry entry) {
+	
+	private void editEntry(AccountEntry entry) {
 		if (current.isDirty()) {
 			addToSessionLog(current.getAccountEntry());
 		}
+		current.setAccountEntry(entry);
+		syncCurrent();
+		balancePanel.add(entry);
+	}
+	
+	private void selectEntry(final Integer id,final AccountEntry entry) {
+		final PopupPanel waitPopup = new PopupPanel(false, true);
+		Label label = new Label(AON.MSG.processing());
+		label.addStyleName(AON.AON_CSS.aonTimer());
+		waitPopup.add(label);
+		waitPopup.setGlassEnabled(true);
+		waitPopup.setAnimationEnabled(true);
 		waitPopup.center();
 		try {
-			if (entry != null && entry.getId() != null) {
-				current.setAccountEntry(entry);
-				syncCurrent();
-				balancePanel.add(entry);
-			} else {
-				ConfirmDialog cd = new ConfirmDialog();
-				cd.confirm(AON.MSG.recoverEntry(),
-						new ConfirmDialogCallback() {
-	
+			if (id != null) {
+				fiscalService.getAccountEntry(getCurrentDomainName(),
+						getCurrentDomain(), id ,
+						new AsyncCallback<AccountEntry>() {
 							@Override
-							public void onCancel() {
-							}
-	
-							@Override
-							public void onAccept() {
-								entry.setId(null);
-								for (AccountEntryDetail aed : entry
-										.getDetails()) {
-									aed.setId(null);
+							public void onSuccess(AccountEntry result) {
+								if (result != null) {
+									editEntry(result);
+								} else {
+									if (entry != null) {
+										ConfirmDialog cd = new ConfirmDialog();
+										cd.confirm(AON.MSG.recoverEntry(),
+												new ConfirmDialogCallback() {
+											
+											@Override
+											public void onCancel() {
+											}
+											
+											@Override
+											public void onAccept() {
+												AccountEntry cloned = AccountEntry.clone(entry);
+												cloned.setId(null);
+												cloned.setJournal(null);
+												for (AccountEntryDetail aed : cloned.getDetails()) {
+													aed.setId(null);
+												}
+												current.setAccountEntry(cloned);
+												syncCurrent();
+											}
+										});
+									} else {
+										errors.showError("Asiento no encontrado");		
+									}
 								}
-								current.setAccountEntry(entry);
-								syncCurrent();
+								waitPopup.hide();
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								errors.showError(caught);
+								waitPopup.hide();
 							}
 						});
 			}
 		} finally {
-			waitPopup.hide();
+			if (waitPopup.isShowing()) 
+				waitPopup.hide();
 		}
 	}
 	
-	private void selectEntry(final Integer id) {
-		fiscalService.getAccountEntry(getCurrentDomainName(),
-				getCurrentDomain(), id,
-				new AsyncCallback<AccountEntry>() {
-					@Override
-					public void onSuccess(AccountEntry result) {
-						selectEntry(result);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						errors.showError(caught);
-					}
-				});
-	}
-
 	@UiHandler("balancePanel")
 	public void onSelectBalance(SelectionEvent<Integer> event) {
 		showFullStatement(event.getSelectedItem());
@@ -639,3 +641,13 @@ public class AccountEntryModule extends MainEntryPoint {
 		void onCancel();
 	}
 }
+
+
+//if (splitLayoutPanel.getWidgetSize(wizardPanel) == 0) {
+//splitLayoutPanel.setWidgetSize(wizardPanel, 105);
+//splitLayoutPanel.animate(500);
+//} else {
+//splitLayoutPanel.setWidgetSize(wizardPanel, 0);
+//splitLayoutPanel.animate(500);
+//}
+//wizardPanel.setWidget(root);
