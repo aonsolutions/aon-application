@@ -55,7 +55,7 @@ public class RetentionCollection {
 				stmt.append(" AND i.tax_date >= ?");
 			}
 			if (params.getToInvoiceDate() != null) {
-				stmt.append(" AND i.issue_date <= ?");
+				stmt.append(" AND i.tax_date <= ?");
 			}
 			if (!StringUtils.isEmpty(params.getFromSeries())) {
 				stmt.append(" AND i.series >= ?");
