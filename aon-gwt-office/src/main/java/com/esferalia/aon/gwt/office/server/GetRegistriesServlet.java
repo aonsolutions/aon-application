@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.office.server;
 
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.User.USER;
+import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,6 +11,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -24,28 +26,40 @@ import org.jooq.exception.DataAccessException;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
-import com.esferalia.aon.jooq.tables.records.UserRecord;
+import com.esferalia.aon.jooq.tables.records.WorkgroupRecord;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AonHubDAO;
 
 @MultipartConfig
 @SuppressWarnings("serial")
 @WebServlet(name = "Get Registries Servlet", urlPatterns = { "/aon_gwt_office/GetRegistriesServlet" })
 public class GetRegistriesServlet extends HttpServlet {
 
-	static class JooqGet extends DomainDAO {
+	static class JooqGet extends AonHubDAO {
 
-		public static Integer getParent(AONContext aonContext, Integer domain) {
+		static Integer getParent(AONContext aonContext, Integer domain) {
 			DomainRecord domainRecord = getParentDomain(aonContext, domain);
 			return domainRecord.getValue(Domain.DOMAIN.PARENT);
 		}
-		
-		public static List<UserRecord> getUsers (AONContext ctx, Integer parentDomain, Integer domain) {
-			
+
+		static List<Record> getUsers(AONContext ctx, Integer parentDomain,
+				Integer domain) {
+
 			try {
-				
 				return getUsersWorkings(ctx, parentDomain, domain);
-				
+			} catch (DataAccessException ex) {
+				throw new DataAccessException(ex.getMessage());
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());
+				return null;
+			}
+		}
+
+		static List<WorkgroupRecord> getWorkGroupList(AONContext ctx,
+				Integer parentDomain, Integer domain) {
+
+			try {
+				return getWorkGroups(ctx, parentDomain, domain);
 			} catch (DataAccessException ex) {
 				throw new DataAccessException(ex.getMessage());
 			} catch (Exception ex) {
@@ -85,36 +99,21 @@ public class GetRegistriesServlet extends HttpServlet {
 			Integer domain = AonServletUtils.getRequestDomain(req);
 			String domainName = AonServletUtils.getRequestDomainName(req);
 			String user = AonServletUtils.getRequestUser(req);
-		
+
 			AONContext ctx = AONContext.getAONContext(domainName, domain, user);
-			
+
 			Integer parentDomain = JooqGet.getParent(ctx, domain);
-			
-			
+
 			osx = resp.getWriter();
-			osx.println('[');
 			
-			List<UserRecord> users = JooqGet.getUsers(ctx, parentDomain, domain);
-			Iterator<UserRecord> iterator = users.iterator();
+			osx.println('{');
+			osx.printf("\"users\":%s",
+					buildUsersWorking(ctx, parentDomain, domain));
+			osx.printf("\"workgroups\":%s",
+					buildWorkgroups(ctx, parentDomain, domain));
+			osx.println('}');
 			
-			while (iterator.hasNext()) {
-				UserRecord record = iterator.next();
-				Integer id = record.getValue(USER.ID);
-				String name = record.getValue(USER.NAME);			
-
-				osx.println('{');
-				osx.printf("\"id\":\"%s\",\r\n", String.valueOf(id));
-				osx.printf("\"name\":\"%s\"\r\n", name);				
-				
-				if (iterator.hasNext())
-					osx.println("},");
-				else
-					osx.println('}');
-			}
-
-			osx.println(']');
 			osx.flush();
-			osx.close();
 
 		} catch (Exception ex) {
 		} finally {
@@ -124,4 +123,71 @@ public class GetRegistriesServlet extends HttpServlet {
 				conn.close();
 		}
 	}
+
+	private static String buildUsersWorking(AONContext ctx,
+			Integer parentDomain, Integer domain) {
+
+		List<Record> users = JooqGet.getUsers(ctx, parentDomain, domain);
+
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("[\r\n");
+
+		if (users != null) {
+
+			ListIterator<Record> iterator = users.listIterator();
+			while (iterator.hasNext()) {
+				Record record = iterator.next();
+				Integer id = record.getValue(USER.ID);
+				String name = record.getValue(USER.NAME);
+				String enterprise = record.getValue(REGISTRY.NAME);
+				buffer.append("{\r\n");
+				buffer.append(String.format("\"id\":\"%s\",\r\n",
+						String.valueOf(id)));
+				buffer.append(String.format("\"enterprise\":\"%s\",\r\n",
+						enterprise));
+				buffer.append(String.format("\"name\":\"%s\"\r\n", name));
+
+				buffer.append('}');
+				if (iterator.hasNext())
+					buffer.append(",\r\n");
+			}
+		}
+
+		return buffer.append("],\r\n").toString();
+
+	}
+
+	private static String buildWorkgroups(AONContext ctx, Integer parentDomain,
+			Integer domain) {
+
+		List<WorkgroupRecord> workgroups = JooqGet.getWorkGroupList(ctx,
+				parentDomain, domain);
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("[\r\n");
+
+		if (workgroups != null) {
+
+			ListIterator<WorkgroupRecord> iterator = workgroups.listIterator();
+			while (iterator.hasNext()) {
+				Record record = iterator.next();
+				Integer id = record.getValue(WORKGROUP.ID);
+				String description = record.getValue(WORKGROUP.DESCRIPTION);
+
+				buffer.append("{\r\n");
+				buffer.append(String.format("\"id\":\"%s\",\r\n",
+						String.valueOf(id)));
+				buffer.append(String.format("\"description\":\"%s\"\r\n",
+						description));
+
+				buffer.append('}');
+
+				if (iterator.hasNext())
+					buffer.append(",\r\n");
+			}
+		}
+
+		return buffer.append("]\r\n").toString();
+
+	}
+
 }
