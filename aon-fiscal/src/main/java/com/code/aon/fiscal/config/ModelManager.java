@@ -6,7 +6,9 @@ import static com.esferalia.aon.jooq.tables.FsMod347.FS_MOD347;
 import static com.esferalia.aon.jooq.tables.FsMod349.FS_MOD349;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.FsModel180.FS_MODEL180;
+import static com.esferalia.aon.jooq.tables.FsModel184.FS_MODEL184;
 import static com.esferalia.aon.jooq.tables.FsModel190.FS_MODEL190;
+import static com.esferalia.aon.jooq.tables.FsModel193.FS_MODEL193;
 import static com.esferalia.aon.jooq.tables.FsModel200.FS_MODEL200;
 import static com.esferalia.aon.jooq.tables.FsModel390.FS_MODEL390;
 import static com.esferalia.aon.jooq.tables.FsVat.FS_VAT;
@@ -89,6 +91,8 @@ public class ModelManager {
 			fillModel190(ctx,list,params);
 			fillModel390(ctx,list,params);
 			fillModel200(ctx,list,params);
+			fillModel184(ctx,list,params);
+			fillModel193(ctx,list,params);
 		}
 		return list;
 	}
@@ -261,6 +265,33 @@ public class ModelManager {
 		}
 	}
 
+	private void fillModel184(DSLContext ctx, List<ModelConfig> list,ModelManagerParams params) {
+		if (params.getModel() == null || params.getModel() == Model.M184 ) {
+			Result<Record5<Byte,Integer,Byte,Integer,String>> models = ctx
+					.select(FS_MODEL184.STATUS, FS_MODEL184.YEAR,FS_MODEL184.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
+					.from(FS_MODEL184)
+					.join(DOMAIN).onKey()
+					.where(FS_MODEL184.DOMAIN.equal(params.getMasterDomain()))
+						.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
+					.and(FS_MODEL184.YEAR.equal(params.getYear()))
+					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
+							ctx.select(USER_SCOPE.SCOPE)
+							.from(USER_SCOPE)
+							.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
+							.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
+							)))
+					.orderBy(FS_MODEL184.YEAR)
+					.fetch();
+			for (Record5<Byte,Integer,Byte,Integer,String> mod : models) {
+				String domainName = mod.getValue(DOMAIN.DESCRIPTION);
+				int domainId = mod.getValue(DOMAIN.ID);
+				byte adm = mod.getValue(FS_MODEL184.ADMINISTRATION);
+				byte st = mod.getValue(FS_MODEL184.STATUS);
+				putModelConfig(list,Model.M184,params.getYear(),Period.YEAR,st,adm,domainId,domainName,null,null);
+			}
+		}
+	}
+
 	private void fillModel190(DSLContext ctx, List<ModelConfig> list,ModelManagerParams params) {
 		if (params.getModel() == null || params.getModel() == Model.M190 ) {
 			Result<Record5<Byte, Integer, Byte, Integer, String>> models = ctx
@@ -288,6 +319,33 @@ public class ModelManager {
 		}
 	}
 	
+	private void fillModel193(DSLContext ctx, List<ModelConfig> list,ModelManagerParams params) {
+		if (params.getModel() == null || params.getModel() == Model.M193 ) {
+			Result<Record5<Byte, Integer, Byte, Integer, String>> models = ctx
+					.select(FS_MODEL193.STATUS, FS_MODEL193.YEAR,FS_MODEL193.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
+					.from(FS_MODEL193)
+					.join(DOMAIN).onKey()
+					.where(FS_MODEL193.DOMAIN.equal(params.getMasterDomain()))
+						.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
+					.and(FS_MODEL193.YEAR.equal(params.getYear()))
+					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
+							ctx.select(USER_SCOPE.SCOPE)
+							.from(USER_SCOPE)
+							.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
+							.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
+							)))
+					.orderBy(FS_MODEL193.YEAR)
+					.fetch();
+			for (Record5<Byte, Integer, Byte, Integer, String> mod : models) {
+				String domainName = mod.getValue(DOMAIN.DESCRIPTION);
+				int domainId = mod.getValue(DOMAIN.ID);
+				byte adm = mod.getValue(FS_MODEL193.ADMINISTRATION);
+				byte st = mod.getValue(FS_MODEL193.STATUS);
+				putModelConfig(list,Model.M193,params.getYear(),Period.YEAR,st,adm,domainId,domainName,null,null);
+			}
+		}
+	}
+
 	private void fillModel390(DSLContext ctx, List<ModelConfig> list,ModelManagerParams params) {
 		if (params.getModel() == null || params.getModel() == Model.M390 ) {
 			Result<Record5<Byte, Integer, Byte, Integer, String>> models = ctx

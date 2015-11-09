@@ -234,7 +234,27 @@
 					<f:selectItem itemValue="Y" itemLabel="#{bundle.fiscal_model_yearly}" />
 				</aon:selectOneMenu>
 
+				<aon:outputLabel for="mod193" value="Modelo 193" />
+				<aon:selectOneMenu id="mod193" value="#{fiscalParams.mod193}">
+					<f:selectItem itemValue="N" itemLabel="#{bundle.aon_no}" />
+					<f:selectItem itemValue="Y" itemLabel="#{bundle.fiscal_model_yearly}" />
+				</aon:selectOneMenu>
 
+				<aon:outputLabel for="mod202" value="Modelo 202" />
+				<aon:selectOneMenu id="mod202" value="#{fiscalParams.mod202}">
+					<f:selectItem itemValue="N" itemLabel="#{bundle.aon_no}" />
+					<f:selectItem itemValue="Q" itemLabel="#{bundle.fiscal_model_quaterly}" />
+				</aon:selectOneMenu>
+
+				<aon:outputLabel for="mod184" value="Modelo 184" />
+				<aon:selectOneMenu id="mod184" value="#{fiscalParams.mod184}">
+					<f:selectItem itemValue="N" itemLabel="#{bundle.aon_no}" />
+					<f:selectItem itemValue="Y" itemLabel="#{bundle.fiscal_model_yearly}" />
+				</aon:selectOneMenu>
+				
+				<aon:outputLabel value=""/>
+				<aon:outputLabel value=""/>
+				
 			</aon:panelGrid>
 		</aon:div>
 

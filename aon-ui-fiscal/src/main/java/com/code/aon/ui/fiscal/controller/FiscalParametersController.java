@@ -107,6 +107,9 @@ public class FiscalParametersController implements IFiscalConstants, Serializabl
 						,FS_MODEL_CFG_M180
 						,FS_MODEL_CFG_M190
 						,FS_MODEL_CFG_M200
+						,FS_MODEL_CFG_M202
+						,FS_MODEL_CFG_M184
+						,FS_MODEL_CFG_M193
 						};
 		
 		for (String key : keys) {
@@ -386,6 +389,24 @@ public class FiscalParametersController implements IFiscalConstants, Serializabl
 	}
 	public void setMod200(String config) {
 		getParameters().get(FS_MODEL_CFG_M200).setValue(config);		
+	}
+	public String getMod202() {
+		return getParameters().get(FS_MODEL_CFG_M202).getValue();
+	}
+	public void setMod202(String config) {
+		getParameters().get(FS_MODEL_CFG_M202).setValue(config);		
+	}
+	public String getMod193() {
+		return getParameters().get(FS_MODEL_CFG_M193).getValue();
+	}
+	public void setMod193(String config) {
+		getParameters().get(FS_MODEL_CFG_M193).setValue(config);		
+	}
+	public String getMod184() {
+		return getParameters().get(FS_MODEL_CFG_M184).getValue();
+	}
+	public void setMod184(String config) {
+		getParameters().get(FS_MODEL_CFG_M184).setValue(config);		
 	}
 	
 	public void onAccept(ActionEvent event) {
