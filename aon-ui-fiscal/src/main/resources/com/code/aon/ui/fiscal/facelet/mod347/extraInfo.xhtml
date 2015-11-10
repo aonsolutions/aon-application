@@ -256,7 +256,7 @@
 								<aon:inputText id="mod347_cash_amount" 
 									value="#{mod347Detail.to.cashAmount}"
 									reRender="mod347_cash_year" ajaxSingle="true"
-									disabled="#{!mod347Detail.to.typeC}"
+									disabled="#{mod347Detail.to.cashDisabled}"
 									size="12"/>
 								<aon:div>					
 									<aon:selectBooleanCheckbox id="mod347_vatAccrual" value="#{mod347Detail.to.vatAccrual}" 
@@ -267,7 +267,7 @@
 								<aon:outputLabel for="mod347_cash_year" 
 									value="#{bundle.fiscal_model_347_cash_year}" />
 								<aon:inputText id="mod347_cash_year"
-									disabled="#{!mod347Detail.to.typeC and mod347Detail.to.cashAmount == 0}" 
+									disabled="#{mod347Detail.to.cashDisabled || mod347Detail.to.cashAmount == 0}" 
 									value="#{mod347Detail.to.cashYear}"
 									size="5"/>
 								<aon:div>					
