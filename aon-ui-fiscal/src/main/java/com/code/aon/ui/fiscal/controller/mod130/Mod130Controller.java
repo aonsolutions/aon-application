@@ -17,18 +17,25 @@ import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.common.AonException;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.tax.model.MOD130.MOD130Format;
 import com.code.aon.fiscal.FiscalModel;
+import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
+import com.code.aon.fiscal.enumeration.Mod130Key;
 import com.code.aon.fiscal.mod130.Mod130;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.fiscal.aeat.AeatUtils;
 import com.code.aon.ui.fiscal.controller.FiscalParametersController;
 import com.code.aon.ui.fiscal.controller.model.FiscalModelController;
 import com.code.aon.ui.fiscal.file.MOD130Writer;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class Mod130Controller extends FiscalModelController {
 	
@@ -51,6 +58,27 @@ public class Mod130Controller extends FiscalModelController {
 		FiscalParametersController fiscalParams = (FiscalParametersController) AonUtil.getRegisteredBean( FiscalParametersController.FISCAL_PARAMS_BEAN_NAME);
 		mod130.setPermanentAddressChanges(fiscalParams.isPermanentAddressChanges());
 	}
+	
+	protected void initializeCustomData(FiscalModel fm) {
+		Double percent = null;
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(FiscalModelDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_MODEL_DETAIL_FISCAL_MODEL_ID), fm.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_MODEL_DETAIL_TYPE), Mod130Key.P1.getValue());
+			List<ITransferObject> list = bean.getList(criteria);
+			if (list != null && list.size()>0) {
+				FiscalModelDetail det = (FiscalModelDetail) list.get(0);
+				percent = det.getAmount();
+			}
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+			// NOTHING
+		}
+		FiscalModel fiscalModel = (FiscalModel) getTo();
+		fiscalModel.setParticipationPercent(percent);
+	}
+	
 	
 	public void onCreateDisk(ActionEvent event) {
 		try { 

@@ -689,12 +689,16 @@ public abstract class FiscalModelController extends BasicController implements I
 		for (FiscalModel fm : getPreviousDeclarations()) {
 			if (StringUtils.equals(fm.getDocument(), getPreviousDeclarationDocument())) {
 				initializeData(fm);
-				FiscalModel fiscalModel = (FiscalModel) getTo();
-				fiscalModel.setParticipationPercent(null);
+				initializeCustomData(fm);
 				break;
 			}
 		}
 	}
+	protected void initializeCustomData(FiscalModel fm) {
+		FiscalModel fiscalModel = (FiscalModel) getTo();
+		fiscalModel.setParticipationPercent(null);
+	}
+	
 	@Override
 	public String editModel(Administration administration, int year,Period period) throws ManagerBeanException {
 		onEditSearch(null);
