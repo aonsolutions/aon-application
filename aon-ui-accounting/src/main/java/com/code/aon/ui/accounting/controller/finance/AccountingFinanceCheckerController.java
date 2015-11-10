@@ -34,7 +34,6 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.report.ReportException;
 import com.code.aon.report.poi.ExcelReportExporter;
 import com.code.aon.report.poi.IReportExporter;
@@ -151,8 +150,6 @@ public class AccountingFinanceCheckerController implements Serializable {
 		Criteria criteria = c.getCriteria();
 		String alias = c.getFieldName(IEntityAlias.ACCOUNT_CODE);
 		criteria.addExpression(alias, accountCode + IAccountingConstants.ASTERISK);
-		alias = c.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED);
-		criteria.addExpression(ExpressionUtilities.getEqualExpression(alias, true));
 		c.onSearch(event);
 		if (c.getModel().getRowCount() > 0) {
 			c.getModel().setRowIndex(0);
@@ -334,8 +331,6 @@ public class AccountingFinanceCheckerController implements Serializable {
 			Criteria criteria = c.getCriteria();
 			String alias = c.getFieldName(IEntityAlias.ACCOUNT_CODE);
 			criteria.addExpression(alias, getSelectedAccountCode());
-			alias = c.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED);
-			criteria.addExpression(ExpressionUtilities.getEqualExpression(alias, true));
 			c.onSearch(event);
 			if (c.getModel().getRowCount() > 0) {
 				c.getModel().setRowIndex(0);
