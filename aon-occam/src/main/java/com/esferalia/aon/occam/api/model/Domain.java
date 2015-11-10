@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.type.DomainType;
+
 @SuppressWarnings("serial")
 public class Domain implements Serializable {
 
@@ -9,6 +11,7 @@ public class Domain implements Serializable {
 	String name;
 	Integer parentId;
 	String description;
+	DomainType domainType;
 	
 	boolean parent;
 	boolean child;
@@ -78,6 +81,14 @@ public class Domain implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public DomainType getDomainType() {
+		return domainType;
+	}
+
+	public void setDomainType(DomainType domainType) {
+		this.domainType = domainType;
 	}
 	
 	

@@ -16,10 +16,12 @@ import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.jooq.tables.records.PayMethodRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 
 
@@ -111,7 +113,23 @@ public class ConexFlowController extends BasicController {
 		this.payMethod = payMethod;
 	}
 
-
+	public boolean isHotel(){
+		Integer domainId = DomainManager.getCurrentDomain();
+		String domainName = AonUtil.getDomainName();
+		String user = AonUtil.getRemoteUser();
+		Domain domain = AON.getDomain(domainName, domainId, user);
+		return domain.getDomainType().equals(DomainType.HOTEL);
+	}
+	
+	public boolean isPlayasol(){
+		String domainName = AonUtil.getDomainName();
+		return domainName.contains("playasol");
+	}	
+	
+	public boolean isShowConexflow(){
+		return isPlayasol() && isHotel();
+	}
+	
 	public void onConexFlowShow(){
 		AONContext ctx = null;
 		try {

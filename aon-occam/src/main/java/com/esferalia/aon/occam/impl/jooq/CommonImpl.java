@@ -84,4 +84,9 @@ public class CommonImpl implements ICommon {
 		return DomainDAO.insertDomain(ctx, parentDomain, document, name, messages);
 
 	}
+
+	@Override
+	public Domain getDomain(AONContext ctx, Integer domainId) {
+		return DomainDAO.getDomain(ctx, domainId);
+	}
 }

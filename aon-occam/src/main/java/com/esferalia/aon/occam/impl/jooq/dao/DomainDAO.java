@@ -5,21 +5,41 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.DomainApplication.DOMAIN_APPLICATION;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.util.List;
 
 import org.jooq.Record;
-import org.jooq.exception.DataAccessException;
+import org.jooq.Result;
 
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
-import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.type.DomainType;
 
 public class DomainDAO {
 
+	public static Domain getDomain(AONContext ctx, Integer domainId){
+		Domain domain = null;
+		Result<DomainRecord> domainResult = ctx.getDslContext().select()
+				.from(DOMAIN)
+				.where(DOMAIN.ID.eq(domainId))
+				.fetchInto(DOMAIN);
+		 
+		if(domainResult.isNotEmpty()){
+			DomainRecord domainRecord = domainResult.get(0);
+			domain = new Domain();
+			domain.setActive(domainRecord.getActive() == 1);
+			domain.setChild(domainRecord.getParent() == null);
+			domain.setDescription(domainRecord.getDescription());
+			domain.setDomainType(DomainType.values()[domainRecord.getType()]);
+			domain.setName(domainRecord.getName());
+			domain.setParent(domainRecord.getParent() != null);
+			domain.setParentId(domainRecord.getParent());
+		}
+		return domain;
+	}
+	
 	public static Domain insertDomain(AONContext ctx, Integer parentDomain,
 			String document, String name, List<String> messages) {
 

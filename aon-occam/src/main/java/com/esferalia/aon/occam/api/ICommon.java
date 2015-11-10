@@ -47,6 +47,8 @@ public interface ICommon {
 	// DOMAIN
 	// --------------------------------------------
 	
+	public Domain getDomain(AONContext ctx, Integer domainId);
+	
 	public Domain insertDomain(AONContext ctx, Integer parentDomain,
 			String document, String name, List<String> messages);
 

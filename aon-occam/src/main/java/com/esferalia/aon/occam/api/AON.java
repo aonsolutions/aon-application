@@ -173,7 +173,21 @@ public class AON {
 	// ********************************** COMMON **
 	// ********************************************
 
+	// --------------------- DOMAIN
+	
+	public static Domain getDomain(String domainName, Integer domainId, String user){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getCommon().getDomain(ctx, domainId);
+		} finally {
+			if(ctx != null)
+				ctx.close();
+		}
+	}
+	
 	// --------------------- APPLICATION PARAMETERS
+	
 	public static FiscalParameters getFiscalParameters(String domainName,
 			int domainId) {
 		AONContext ctx = null;
