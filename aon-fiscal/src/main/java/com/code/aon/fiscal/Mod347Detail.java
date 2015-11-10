@@ -107,6 +107,10 @@ public class Mod347Detail extends Mod347DetailDB {
 		return getType() == Mod347Type.G;
 	}
 	@Transient
+	public boolean isCashDisabled() {
+		return (isTypeA() || isTypeD() || isTypeE() || isTypeG());
+	}
+	@Transient
 	public boolean isDocumentValid() {
 		if (getCountry() == Country.ES) {
 			RegistryDocument rd = new RegistryDocument(getDocument());
