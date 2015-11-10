@@ -15,8 +15,6 @@ import org.apache.http.message.BasicNameValuePair;
 
 import com.code.aon.conexflow.ConexFlow.Query;
 import com.code.aon.conexflow.ConexFlow.Respuesta;
-import com.code.aon.conexflow.jooq.DBConsults;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -28,44 +26,7 @@ public class ConexFlowUtils {
 
 	protected static final String VOUCHER = "voucher";
 	//******************* Card Payment
-	
-	protected static ConexFlow getConexFlowCardPaymentQuery() {
-		Domain domain = new Domain();
-		domain.setName(AonUtil.getDomainName());
-		domain.setId(getDomainId());
-		ConexFlow cf = new ConexFlow();
-		Query query = new Query();
-		query.setOperacion(ConexFlowConstant.SALE_OP);
-		query.setEmpresa(DBConsults.getEnterpriseId(domain));
-		query.setCentro("");
-		query.setTpv("0001");
-		query.setFecha("");
-		query.setHora("");
-		query.setSoporte("");
-		query.setDocumento("");
-		query.setFechaCad("");
-		query.setImporte("");
-		query.setMoneda("");
-		query.setPlazos("");
-		query.setSecurityCode("");
-		query.setRefCliente("");
-		query.setInfoAdicionalEntrada("");
-		query.setCF_ReplyURL("");
-		query.setCF_ReplyURLAuth("");
-		query.setFlagAltaToken("");
-		query.setFlagTestSaldo("");
-		query.setObservaciones("");
-		query.setRefTokenCliente("");
-		query.setCentroOriginal("");
-		query.setTpvOriginal("");
-		query.setFechaOriginal("");
-		query.setIdOperacionOriginal("");
-		query.setAutOriginal("");
-		
-		cf.setQuery(query);
-		return cf;
-	}
-	
+
 	public static Query getConexFlowCardPaymentQuery(String empresa, String centro, String tpv, String token, Double amount, String cliente, String cvv) {
 		Integer eur = amount.intValue();
 		Double cent = (amount - eur.doubleValue()) * 100;
@@ -171,40 +132,6 @@ public class ConexFlowUtils {
 	}
 	//******************* Preauthorization Payment
 	
-	protected static ConexFlow getConexFlowPreauthorizationPaymentQuery() {
-		ConexFlow cf = new ConexFlow();
-		Query query = new Query();
-		query.setOperacion(ConexFlowConstant.PREAUTHORIZATION_OP);
-		query.setEmpresa("");
-		query.setCentro("");
-		query.setTpv("0001");
-		query.setFecha("");
-		query.setHora("");
-		query.setSoporte("");
-		query.setDocumento("");
-		query.setFechaCad("");
-		query.setImporte("");
-		query.setMoneda("");
-		query.setPlazos("");
-		query.setSecurityCode("");
-		query.setRefCliente("");
-		query.setInfoAdicionalEntrada("");
-		query.setCF_ReplyURL("");
-		query.setCF_ReplyURLAuth("");
-		query.setFlagAltaToken("");
-		query.setFlagTestSaldo("");
-		query.setObservaciones("");
-		query.setRefTokenCliente("");
-		query.setCentroOriginal("");
-		query.setTpvOriginal("");
-		query.setFechaOriginal("");
-		query.setIdOperacionOriginal("");
-		query.setAutOriginal("");
-		
-		cf.setQuery(query);
-		return cf;
-	}
-	
 	public static Query getConexFlowPreauthorizationPaymentQuery(String empresa, String centro, String tpv, String cliente, String token, Double amount) {
 		Integer eur = amount.intValue();
 		Double cent = (amount - eur.doubleValue()) * 100;
@@ -302,34 +229,6 @@ public class ConexFlowUtils {
 	
 	//******************* Refund
 	
-	protected static ConexFlow getConexFlowRefundQuery() {
-		ConexFlow cf = new ConexFlow();
-		Query query = new Query();
-		query.setOperacion(ConexFlowConstant.REFUND_OP);
-		query.setEmpresa("");
-		query.setCentro("");
-		query.setTpv("0001");
-		query.setFecha("");
-		query.setHora("");
-		query.setOperador("");
-		query.setSoporte("");
-		query.setDocumento("");
-		query.setFechaCad("");
-		query.setImporte("");
-		query.setMoneda("");
-		query.setRefCliente("");
-		query.setInfoAdicionalEntrada("");
-		query.setCF_ReplyURL("");
-		query.setObservaciones("");
-		query.setCentroOriginal("");
-		query.setTpvOriginal("");
-		query.setFechaOriginal("");
-		query.setIdOperacionOriginal("");
-		
-		cf.setQuery(query);
-		return cf;
-	}
-	
 	public static Query getConexFlowRefundQuery(String empresa, String centro, String tpv, String token, String amount, String cliente) {
 		Double d = Double.parseDouble(amount);
 		Integer eur = d.intValue();
@@ -404,29 +303,6 @@ public class ConexFlowUtils {
 	
 	//******************* Get Transaction Information
 	
-	protected static ConexFlow getConexFlowTransactionInfoQuery() {
-		ConexFlow cf = new ConexFlow();
-		Query query = new Query();
-		query.setOperacion(ConexFlowConstant.TRANSACTION_INFO_OP);
-		query.setEmpresa("");
-		query.setCentro("");
-		query.setTpv("0001");
-		query.setFecha("");
-		query.setHora("");
-		query.setOperador("");
-		query.setTipoReferencia("");
-		query.setFechaOriginal("");
-		query.setCentroOriginal("");
-		query.setTpvOriginal("");
-		query.setRefClienteOriginal("");
-		query.setHoraOriginal("");
-		query.setIdOperacionOriginal("");
-		query.setCF_ReplyURL("");
-			
-		cf.setQuery(query);
-		return cf;
-	}
-	
 	protected static List<NameValuePair> getTransactionInfoParameters(Query query){
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.OPERACION_STR.getCode(), query.getOperacion()));
@@ -463,32 +339,6 @@ public class ConexFlowUtils {
 	}
 	
 	//******************* Cancelation
-	
-	protected static ConexFlow getConexFlowCancelationQuery() {
-		ConexFlow cf = new ConexFlow();
-		Query query = new Query();
-		query.setOperacion(ConexFlowConstant.CANCELATION_OP);
-		query.setEmpresa("");
-		query.setCentro("");
-		query.setTpv("0001");
-		query.setFecha("");
-		query.setHora("");
-		query.setOperacionOriginal("");
-		query.setImporte("");
-		query.setImporteOriginal("");
-		query.setAutOriginal("");
-		query.setRefCliente("");
-		query.setInfoAdicionalEntrada("");
-		query.setCF_ReplyURL("");
-		query.setObservaciones("");
-		query.setCentroOriginal("");
-		query.setTpvOriginal("");
-		query.setFechaOriginal("");
-		query.setIdOperacionOriginal("");
-		
-		cf.setQuery(query);
-		return cf;
-	}
 	
 	public static Query getConexFlowCancelationQuery(String empresa, String centro, String tpv, String cancelOperation, Double amount, Double amountOriginal, String autorizacion, String cliente, String operacionId, String fechaOriginal) {
 		Double importeAux = amount * 100;
@@ -561,34 +411,6 @@ public class ConexFlowUtils {
 	}
 	
 	//******************* Confirm Preauthorization
-	
-	protected static ConexFlow getConexFlowConfirmPreauthorizationQuery() {
-		ConexFlow cf = new ConexFlow();
-		Query query = new Query();
-		query.setOperacion(ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
-		query.setEmpresa("");
-		query.setCentro("");
-		query.setTpv("0001");
-		query.setFecha("");
-		query.setHora("");
-		query.setDocumento("");
-		query.setFechaCad("");
-		query.setImporte("");
-		query.setImporteOriginal("");
-		query.setAutOriginal("");
-		query.setMoneda("");
-		query.setRefCliente("");
-		query.setInfoAdicionalEntrada("");
-		query.setCF_ReplyURL("");
-		query.setObservaciones("");
-		query.setCentroOriginal("");
-		query.setTpvOriginal("");
-		query.setFechaOriginal("");
-		query.setIdOperacionOriginal("");
-		
-		cf.setQuery(query);
-		return cf;
-	}
 	
 	public static Query getConexFlowConfirmPreauthorizationQuery(String empresa, String centro, String tpv, String cliente, String token, Double amount, Double amountOriginal, String fechaCad, String autorizacion, String fechaOriginal, String operacionId) {
 		Double importeAux = amount * 100;
@@ -679,28 +501,6 @@ public class ConexFlowUtils {
 	
 	//******************* Voucher Redemption
 	
-	protected static ConexFlow getConexFlowVoucherQuery() {
-		ConexFlow cf = new ConexFlow();
-		Query query = new Query();
-		query.setOperacion(ConexFlowConstant.REDEMPTION_OP);
-		query.setEmpresa("");
-		query.setCentro("");
-		query.setTpv("0001");
-		query.setFecha("");
-		query.setHora("");
-		query.setSoporte("");
-		query.setDocumento("");
-		query.setImporte("");
-		query.setMoneda("");
-		query.setValorDocumento("");
-		query.setRefCliente("");
-		query.setInfoAdicionalEntrada("");
-		query.setCF_ReplyURL("");
-		
-		cf.setQuery(query);
-		return cf;
-	}
-	
 	protected static List<NameValuePair> getVoucherParameters(Query query){
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.OPERACION_STR.getCode(), query.getOperacion()));
@@ -734,27 +534,6 @@ public class ConexFlowUtils {
 	}
 	
 	//******************* Issue of an Electronic Reference
-	
-	protected static ConexFlow getConexFlowIssueQuery() {
-		ConexFlow cf = new ConexFlow();
-		Query query = new Query();
-		query.setOperacion(ConexFlowConstant.ISSUE_OP);
-		query.setEmpresa("");
-		query.setCentro("");
-		query.setTpv("0001");
-		query.setFecha("");
-		query.setHora("");
-		query.setSoporte("");
-		query.setDocumento("");
-		query.setImporte("");
-		query.setMoneda("");
-		query.setRefCliente("");
-		query.setInfoAdicionalEntrada("");
-		query.setCF_ReplyURL("");
-		
-		cf.setQuery(query);
-		return cf;
-	}
 	
 	protected static List<NameValuePair> getIssueParameters(Query query){
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
@@ -837,25 +616,6 @@ public class ConexFlowUtils {
 	
 	//******************* Create Token
 	
-	protected static ConexFlow getConexFlowCreateTokenQuery() {
-		ConexFlow cf = new ConexFlow();
-		Query query = new Query();
-		query.setOperacion(ConexFlowConstant.CREATE_TOKEN_OP);
-		query.setEmpresa("");
-		query.setCentro("");
-		query.setTpv("0001");
-		query.setFecha("");
-		query.setHora("");
-		query.setDocumento("");
-		query.setFechaCad("");
-		query.setRefCliente("");
-		query.setCF_ReplyURL("");
-		query.setRefTokenCliente("");
-		
-		cf.setQuery(query);
-		return cf;
-	}
-	
 	public static Query getConexFlowCreateTokenQuery(String creditCardNumber, String empresa, String centro, String tpv, String fechaCad, String cliente) {
 		Query query = new Query();
 		query.setOperacion(ConexFlowConstant.CREATE_TOKEN_OP);
@@ -904,24 +664,6 @@ public class ConexFlowUtils {
 	
 	//******************* Delete Token
 	
-	protected static ConexFlow getConexFlowDeleteTokenQuery() {
-		ConexFlow cf = new ConexFlow();
-		Query query = new Query();
-		query.setOperacion(ConexFlowConstant.DELETE_TOKEN_OP);
-		query.setEmpresa("");
-		query.setCentro("");
-		query.setTpv("0001");
-		query.setFecha("");
-		query.setHora("");
-		query.setToken("");
-		query.setRefCliente("");
-		query.setCF_ReplyURL("");
-		query.setRefTokenCliente("");
-		
-		cf.setQuery(query);
-		return cf;
-	}
-	
 	protected static List<NameValuePair> getDeleteTokenParameters(Query query){
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.OPERACION_STR.getCode(), query.getOperacion()));
@@ -951,22 +693,6 @@ public class ConexFlowUtils {
 	}
 	
 	//******************* Validate Card Number Check Digit
-	
-	protected static ConexFlow getConexFlowValidateCardQuery() {
-		ConexFlow cf = new ConexFlow();
-		Query query = new Query();
-		query.setOperacion(ConexFlowConstant.VALIDATE_CARD_OP);
-		query.setEmpresa("");
-		query.setCentro("");
-		query.setTpv("0001");
-		query.setFecha("");
-		query.setHora("");
-		query.setDocumento("");
-		query.setRefCliente("");
-	
-		cf.setQuery(query);
-		return cf;
-	}
 	
 	public static Query getConexFlowValidateCardQuery(String creditCardNumber, String empresa, String centro, String tpv, String client) {
 		Query query = new Query();
@@ -1007,34 +733,7 @@ public class ConexFlowUtils {
 		return urlParameters;
 	}
 	
-	//******************* New Card (Validate Card + Create Token) 
-	
-	protected static ConexFlow getConexFlowNewCardQuery() {
-		ConexFlow cf = new ConexFlow();
-		Query query = new Query();
-		query.setOperacion(ConexFlowConstant.VALIDATE_CARD_OP);
-		query.setEmpresa("");
-		query.setCentro("");
-		query.setTpv("0001");
-		query.setFecha("");
-		query.setHora("");
-		query.setDocumento("");
-		query.setFechaCad("");
-		query.setRefCliente("");
-		query.setCF_ReplyURL("");
-		query.setRefTokenCliente("");
-		
-		cf.setQuery(query);
-		return cf;
-	}
-	
 	//******************* Utils
-	
-	public static Integer getDomainId(){
-		/*DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		return ds.getDomainId();*/
-		return 1;
-	}	
 	
 	private static String leftZeros(Integer size, String code){
 		Integer length = code.length();

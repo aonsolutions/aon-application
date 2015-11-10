@@ -123,7 +123,7 @@ public class claveMAC {
 		      String tmp = cad;
 		      
 		      int numeroBloques = cad.length() / 16;
-	//	      System.out.println("Numero de bloques " + numeroBloques);
+		//    System.out.println("Numero de bloques " + numeroBloques);
 		      
 		      for (int i=0;i< numeroBloques ;i++) {
 		//    	  System.out.println("Bloque que meto en la posicion "+  i +" es " + tmp.substring(0,16));
@@ -172,9 +172,7 @@ public class claveMAC {
 	  
 	  
 	public static void main(String[] args) {
-		String text = //"S0000000403215321070920151257001000002830283028304092015123200";
-		//"N000000010001000128082015125700492112354568745812345678901234567890";
-		"N000000010057000011082015092503465892763422331800000000000000000155";
+		String text = "N000000010057000011082015092503465892763422331800000000000000000155";
 		String mac = "";
 		try {
 			mac = claveMAC.dameClaveMAC(text, "193D59719B1B2662", "A8DB8A2EF1223B4E");

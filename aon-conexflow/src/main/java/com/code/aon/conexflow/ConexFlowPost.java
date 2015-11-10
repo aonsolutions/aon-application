@@ -49,11 +49,21 @@ public class ConexFlowPost implements  Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	//private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+
 	private static final String RESULT_OK = "000";
 	private static final String TLS = "TLS";
 	private static final String HTTPS = "https";
 	
+	
+	/**
+	 * Realiza la operación (op) de ConexFlow dada. Se envía una petición POST a
+	 * ConexFlow y devuelve la respuesta correspondiente.
+	 * 
+	 * @param connection, Datos de conexión a ConexFlow.
+	 * @param op, Operación ConexFlow a realizar.
+	 * @param query, Información de la petición.
+	 * @return ConexFlow, Datos de la operación realizada.
+	 */
 	public static ConexFlow execute(ConexFlowConnection connection, String op, Query query) {
 		try {
 			byte[] xmlFile = sendPostHttpClient(connection, op, query);
@@ -65,12 +75,27 @@ public class ConexFlowPost implements  Serializable {
 		return null;
 	}
 	
+	/**
+	 * Realiza la operación (op) de ConexFlow dada. Se envía una petición POST a
+	 * ConexFlow, guarda en base de datos (project_attach) el archivo xml de
+	 * respuesta y devuelve la respuesta correspondiente.
+	 * 
+	 * @param connection, Datos de conexión a ConexFlow.
+	 * @param op, Operación ConexFlow a realizar.
+	 * @param query, Información de la petición.
+	 * @param project, Id de project en base de datos.
+	 * @param domain, Dominio de la empresa.
+	 * @param check, True sii es una preautorización para comprobar la validez
+	 * de la tarjeta a la hora de crear el Token.
+	 * @return ConexFlow, Datos de la operación realizada.
+	 */
 	public static ConexFlow execute(ConexFlowConnection connection, String op, Query query, Integer project, Domain domain, Boolean check) {
 		try {
+			//Enviar petición POST a ConexFlow, devuelve archivo xml con la respuesta.
 			byte[] xmlFile = sendPostHttpClient(connection, op, query);
 			ConexFlow conexFlow = com.code.aon.conexflow.XMLUtils.readXml(xmlFile, query);
 			
-			/* Guardar Operacion en project_attach (response en xml) */
+			//Guardar Operacion en project_attach (response en xml) 
 			if(!check && conexFlow.getRespuesta().getResultado().equals(RESULT_OK)){
 				if(!op.equals(ConexFlowConstant.VALIDATE_CARD_OP)){
 					DBConsults.insertConexFlowOperation(domain, xmlFile, project,op);
@@ -94,6 +119,15 @@ public class ConexFlowPost implements  Serializable {
 		return null;
 	}
 
+	/**
+	 * Envía petición POST a ConexFlow y devuelve archivo xml con la respuesta.
+	 * 
+	 * @param connection, Datos de conexión a ConexFlow.
+	 * @param op, Operación ConexFlow a realizar.
+	 * @param query, Información de la petición.
+	 * @return byte[] archivo xml con la respuesta de la petición.
+	 * @throws Exception
+	 */
 	protected static byte[] sendPostHttpClient(ConexFlowConnection connection, String op, Query query) throws Exception {
 		String url = connection.getServer();
 		
@@ -129,12 +163,6 @@ public class ConexFlowPost implements  Serializable {
 		post.setEntity(new UrlEncodedFormEntity(urlParameters));
 
 		HttpResponse response = client.execute(post);
-		
-		/*System.out.println("\nSending 'POST' request to URL : " + url);
-		System.out.println("Post parameters : " + post.getEntity());
-		System.out.println("Response Code : " + 
-                                    response.getStatusLine().getStatusCode());
-		*/
 		BufferedReader rd = new BufferedReader(
                         new InputStreamReader(response.getEntity().getContent()));
 
@@ -149,9 +177,6 @@ public class ConexFlowPost implements  Serializable {
 			}
 			result.append(s);
 		}
-		
-		//System.out.println(result.toString());
-
 		Document doc = stringToDom(result.toString());
 		return documentToByte(doc);
 	}
@@ -173,10 +198,8 @@ public class ConexFlowPost implements  Serializable {
 	    
 	    transformer.transform(source, result);
 	    byte[] array=baos.toByteArray();
-	    //Init.init();
-	    //XMLUtils.outputDOM(document, baos, true);
 	    
-	    return array ;// baos.toByteArray();
+	    return array ;
 	}
 	
 	private static List<NameValuePair> getParameters(String op, Query query){
@@ -194,23 +217,5 @@ public class ConexFlowPost implements  Serializable {
 		case ConexFlowConstant.TRANSACTION_INFO_OP: return ConexFlowUtils.getTransactionInfoParameters(query);
 		default: return new ArrayList<NameValuePair>();
 		}	
-	}
-	
-	protected static ConexFlow getConexFlowQuery(String op){
-		switch (op) {
-		case ConexFlowConstant.SALE_OP: return ConexFlowUtils.getConexFlowCardPaymentQuery();
-		case ConexFlowConstant.PREAUTHORIZATION_OP: return ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery();
-		case ConexFlowConstant.REFUND_OP: return ConexFlowUtils.getConexFlowRefundQuery();
-		case ConexFlowConstant.CANCELATION_OP: return ConexFlowUtils.getConexFlowCancelationQuery();
-		case ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP: return ConexFlowUtils.getConexFlowConfirmPreauthorizationQuery();
-		case ConexFlowConstant.REDEMPTION_OP: return ConexFlowUtils.getConexFlowVoucherQuery();
-		case ConexFlowConstant.ISSUE_OP: return ConexFlowUtils.getConexFlowIssueQuery();
-		case ConexFlowConstant.CREATE_TOKEN_OP: return ConexFlowUtils.getConexFlowCreateTokenQuery();
-		case ConexFlowConstant.DELETE_TOKEN_OP: return ConexFlowUtils.getConexFlowDeleteTokenQuery();
-		case ConexFlowConstant.VALIDATE_CARD_OP: return ConexFlowUtils.getConexFlowValidateCardQuery();
-		case ConexFlowConstant.TRANSACTION_INFO_OP: return ConexFlowUtils.getConexFlowTransactionInfoQuery();
-		case ConexFlowConstant.NEW_OP: return ConexFlowUtils.getConexFlowNewCardQuery();
-		default: return new ConexFlow();
-		}
 	}
 }
