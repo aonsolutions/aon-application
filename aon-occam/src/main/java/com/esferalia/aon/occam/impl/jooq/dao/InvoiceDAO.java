@@ -15,12 +15,15 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.Record3;
+import org.jooq.Record4;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
@@ -241,4 +244,54 @@ public class InvoiceDAO {
 		
 	}
 	
+	public static InvoiceDetail getLastInvoiceDetail(AONContext ctx, Item item){
+		Record3<java.sql.Date, Double, Integer> data = ctx.getDslContext()
+				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID)
+				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
+				.where(INVOICE_DETAIL.ITEM.eq(item.getId()))
+				.and(INVOICE.TYPE.eq((byte)0))
+				.orderBy(INVOICE.ISSUE_DATE.desc())
+				.limit(1)
+				.fetchOne();
+		
+		InvoiceDetail invoiceDetail = new InvoiceDetail();
+		if(data != null){
+			if(data.value1() != null){
+				Invoice invoice = new Invoice();
+				invoice.setIssueDate(data.value1());
+				invoiceDetail.setInvoice(invoice);
+			}
+			if(data.value2() != null) invoiceDetail.setPrice(data.value2());
+			if(data.value3() != null) invoiceDetail.setId(data.value3());
+		}
+		return invoiceDetail;
+	}
+	
+	public static LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, Item item, Date startDate){
+		java.sql.Date date = new java.sql.Date(startDate.getTime());
+		
+		Result<Record4<java.sql.Date, Double, Integer, String>> data = ctx.getDslContext()
+				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR)
+				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
+				.where(INVOICE_DETAIL.ITEM.eq(item.getId()))
+				.and(INVOICE.TYPE.eq((byte)0))
+				.and(INVOICE.ISSUE_DATE.greaterOrEqual(date))
+				.fetch();
+		
+		LinkedList<InvoiceDetail> list = new LinkedList<InvoiceDetail>();
+		
+		data.stream().forEach(r -> {
+			InvoiceDetail invoiceDetail = new InvoiceDetail();
+			if(r.value1() != null){
+				Invoice invoice = new Invoice();
+				invoice.setIssueDate(r.value1());
+				invoiceDetail.setInvoice(invoice);
+			}
+			if(r.value2() != null) invoiceDetail.setPrice(r.value2());
+			if(r.value3() != null) invoiceDetail.setId(r.value3());
+			invoiceDetail.setDiscountExpression(r.value4() != null ? r.value4() : "0.0");
+			list.add(invoiceDetail);
+		});
+		return list;
+	}
 }

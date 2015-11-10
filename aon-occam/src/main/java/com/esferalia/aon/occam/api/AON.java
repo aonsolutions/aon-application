@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -65,6 +66,8 @@ import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
+import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
 import com.esferalia.aon.occam.impl.jooq.AgreementImpl;
 import com.esferalia.aon.occam.impl.jooq.AttachmentImpl;
@@ -78,6 +81,7 @@ import com.esferalia.aon.occam.impl.jooq.ProductImpl;
 import com.esferalia.aon.occam.impl.jooq.SalaryImpl;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
 import com.esferalia.aon.occam.impl.jooq.SystemImpl;
+import com.esferalia.aon.occam.impl.jooq.WarehouseImpl;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 
@@ -135,6 +139,10 @@ public class AON {
 		return new AttachmentImpl();
 	}
 
+	private static IWarehouse getWarehouse() {
+		return new WarehouseImpl();
+	}
+	
 	// ********************************************
 	// ******************************** SECURITY **
 	// ********************************************
@@ -1442,6 +1450,34 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static InvoiceDetail getLastInvoiceDetail(String domainName,
+			Integer domainId, String user, Item item){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFinance().getLastInvoiceDetail(ctx, item);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<InvoiceDetail> getLastInvoiceDetailList(String domainName,
+			Integer domainId, String user, Item item, String months){
+		Calendar calendar = Calendar.getInstance();	
+		Integer m = Integer.parseInt(months);
+		calendar.add(Calendar.MONTH, -m);
+		
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFinance().getLastInvoiceDetailList(ctx, item, calendar.getTime());
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	// ********************************************
 	// ****************************** MANAGEMENT **
@@ -1655,4 +1691,47 @@ public class AON {
 		}
 	}
 
+	
+	// ********************************************
+	// ******************************* WAREHOUSE **
+	// ********************************************
+
+	public static IncomeDetail getLastIncomeDetail(String domainName,
+			Integer domainId, String user, Item item){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getWarehouse().getLastIncomeDetail(ctx, item);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<IncomeDetail> getLastIncomeDetailList(String domainName,
+			Integer domainId, String user, Item item, String months){
+		Calendar calendar = Calendar.getInstance();
+		Integer m = Integer.parseInt(months);
+		calendar.add(Calendar.MONTH, -m);
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getWarehouse().getLastIncomeDetailList(ctx, item, calendar.getTime());
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<InventoryDetail> getInventoryDetailList(String domainName, Integer domainId,
+			String user, Integer inventoryId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getWarehouse().getInventoryDetailList(ctx, inventoryId);
+		} finally {
+			if (ctx != null) 
+				ctx.close();
+		}
+	}
 }

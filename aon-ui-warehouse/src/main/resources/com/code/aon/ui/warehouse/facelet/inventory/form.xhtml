@@ -24,7 +24,7 @@
 		</aon:form>
 		
 		<aon:form id="inventoryForm">
-
+			<ui:include	src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.warehouse_inventory_closed_module}" />
@@ -38,8 +38,9 @@
 						rendered="#{!inventory.to.closed}"
 						iconClass="aon-icon-accept"
 						actionListener="#{inventory.onStartAdjustment}"
-						reRender="showInventoryAdjustmentWindow" />
-					<ui:include	src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
+						oncomplete="#{rich:element('inventoryDetailRefreshButton')}.click()"
+						reRender="showInventoryAdjustmentWindow"/>
+					
 					<aon:if test="#{!inventory.to.closed}">
 						<aon:menuItem id="stock-import"
 							value="#{bundle.aon_import}"
@@ -190,7 +191,7 @@
 							</aon:outputText>
 							<aon:inputText id="InventoryDetail_realQuantity" rendered="#{formEdit}"
 								ajaxSingle="true" reRender="InventoryDetail_costAmount"
-								value="#{controller.to.realQuantity}" required="true" size="10" >
+								value="#{controller.to.realQuantity}" required="true" size="10">
 								 <f:validateLongRange minimum="0"></f:validateLongRange>	
 							</aon:inputText>
 							<f:facet name="footer">

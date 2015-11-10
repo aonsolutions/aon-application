@@ -111,6 +111,9 @@ public class InventoryDetailController extends LinesController implements IColle
 	}
 
 	public void onAcceptNext(ActionEvent event) {
+		InventoryDetail inventoryDetail = (InventoryDetail) getTo();
+		Double cost  = InventoryController.getCost(inventoryDetail);
+		inventoryDetail.setCost(cost);
 		accept(event);
 		int current = this.model.getRowIndex();
 		int max = this.model.getRowCount();
@@ -184,7 +187,7 @@ public class InventoryDetailController extends LinesController implements IColle
 	public IControllerListener getItemFilter() {
 		if ( this.itemFilter == null ) {
 			this.itemFilter = new ItemFilter();
-		}		
+		}
 		Inventory inventory = (Inventory) getMasterController().getTo();
 		this.itemFilter.setInventory(inventory.getId());
 		return this.itemFilter;
@@ -228,5 +231,4 @@ public class InventoryDetailController extends LinesController implements IColle
 		}
 
 	}
-
 }

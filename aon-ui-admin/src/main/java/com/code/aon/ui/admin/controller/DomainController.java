@@ -137,6 +137,12 @@ public class DomainController extends BasicController {
 	
 	private int productDetailLevel;
 	
+	private Integer productValuationMethod;
+
+	private Integer productAverageMonths;
+	
+	private boolean averageMethod;
+	
 	private BookingInfo bookingInfo;
 	
 	private IControllerListener payerDomainFilter;
@@ -173,6 +179,8 @@ public class DomainController extends BasicController {
 			this.bookingInfo = getBookingInfo(getDomain());
 			initOEM();
 			initProductDetailLevel();
+			initProductValuationMethod();
+			initProductAverageMonths();
 			initHistory(getCompany().getId());
 			updateDocumental();
 			this.currentDomainInfo = DomainInfo.getDomainInfo(getDomain(), bookingInfo);
@@ -277,6 +285,17 @@ public class DomainController extends BasicController {
 		this.productDetailLevel = (value != null) ? value : 0;
 	}
 	
+	private void initProductValuationMethod() {
+		Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_PRODUCT_VALUATION_METHOD);
+		this.productValuationMethod = (value != null) ? value : 0;
+		setAverageMethod(getProductValuationMethod() == 2);
+	}
+	
+	private void initProductAverageMonths() {
+		Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_PRODUCT_AVERAGE_MONTHS);
+		this.productAverageMonths = (value != null) ? value : 1;
+	}
+	
 	private void saveOEMDomain( AppParam appParam, Domain domain) throws ManagerBeanException {
 		String id = null;
 		if ( domain != null && domain.getId() != null ) {
@@ -306,6 +325,22 @@ public class DomainController extends BasicController {
 			AppParamUtil.removeParameter(AppParam.AON_PRODUCT_DETAIL_LEVEL);
 		}
 	}	
+	
+	public void saveProductValuationMethod() {
+		if ( this.productValuationMethod > 0 ) {
+			AppParamUtil.insertParameter(AppParam.AON_PRODUCT_VALUATION_METHOD, this.productValuationMethod );	
+		} else {
+			AppParamUtil.removeParameter(AppParam.AON_PRODUCT_VALUATION_METHOD);
+		}
+	}	
+	
+	public void saveProductAverageMonths() {
+		if ( this.productAverageMonths > 0 ) {
+			AppParamUtil.insertParameter(AppParam.AON_PRODUCT_AVERAGE_MONTHS, this.productAverageMonths );	
+		} else {
+			AppParamUtil.removeParameter(AppParam.AON_PRODUCT_AVERAGE_MONTHS);
+		}
+	}
 	
 	public void domainNameCheck(FacesContext context, UIComponent component, Object value) throws ManagerBeanException {
 		String name = (String) value;
@@ -817,6 +852,30 @@ public class DomainController extends BasicController {
 		this.productDetailLevel = productDetailLevel;
 	}
 	
+	public Integer getProductValuationMethod() {
+		return productValuationMethod;
+	}
+
+	public void setProductValuationMethod(Integer productValuationMethod) {
+		this.productValuationMethod = productValuationMethod;
+	}
+	
+	public boolean isAverageMethod() {
+		return averageMethod;
+	}
+
+	public void setAverageMethod(boolean averageMethod) {
+		this.averageMethod = averageMethod;
+	}
+
+	public Integer getProductAverageMonths() {
+		return productAverageMonths;
+	}
+
+	public void setProductAverageMonths(Integer productAverageMonths) {
+		this.productAverageMonths = productAverageMonths;
+	}
+	
 	public IControllerListener getPayerDomainFilter() {
 		if ( this.payerDomainFilter == null ) {
 			this.payerDomainFilter = new PayerDomainFilter(getDomain(), getParentDomain());
@@ -935,6 +994,10 @@ public class DomainController extends BasicController {
 			}
 		}
 		
+	}
+	
+	public void onValuationMethodChange(ActionEvent event) {
+		setAverageMethod(getProductValuationMethod() == 2);
 	}
 	
 }

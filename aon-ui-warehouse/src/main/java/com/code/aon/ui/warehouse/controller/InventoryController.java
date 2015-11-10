@@ -2,6 +2,7 @@ package com.code.aon.ui.warehouse.controller;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -19,6 +20,9 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -29,6 +33,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.warehouse.util.OccamClassesTransform;
 import com.code.aon.warehouse.Inventory;
 import com.code.aon.warehouse.InventoryDetail;
 import com.code.aon.warehouse.Stock;
@@ -37,6 +42,9 @@ import com.code.aon.warehouse.WarehouseTransfer;
 import com.code.aon.warehouse.WarehouseTransferDetail;
 import com.code.aon.warehouse.enumeration.InventoryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 
 /**
  * Controller for Inventory.
@@ -149,7 +157,16 @@ public class InventoryController extends BasicController implements IAuditableCo
 				inventoryDetail.setItem(item);
 				inventoryDetail.setRealQuantity(total);
 				inventoryDetail.setActualQuantity(total);
-				inventoryDetail.setCost(item.getPurchasePrice());
+				
+				ApplicationParameter ap = AppParamUtil.getParameter(AppParam.AON_PRODUCT_VALUATION_METHOD);
+				switch (ap.getValue()) {
+				case "0": inventoryDetail.setCost(item.getPurchasePrice());System.out.println(inventoryDetail.getCost());break;
+				case "1": inventoryDetail.setCost(getLastPurchasePrice(item));System.out.println(inventoryDetail.getCost());break;
+				case "2": inventoryDetail.setCost(getAveragePurchasePrice(item));System.out.println(inventoryDetail.getCost());break;
+				case "3": inventoryDetail.setCost(getFifoPrice(item, total));System.out.println(inventoryDetail.getCost());break;
+				default: break;
+				}
+				
 				inventoryDetail = (InventoryDetail) inventoryDetailBean.insert(inventoryDetail);
 			}
 			HibernateUtil.commitTransaction(sessionName);
@@ -244,6 +261,30 @@ public class InventoryController extends BasicController implements IAuditableCo
 	}
 	
 	public void onStartAdjustment(ActionEvent event) {
+		Inventory inventory = (Inventory) getTo();
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String user = AonUtil.getRemoteUser();
+		LinkedList<com.esferalia.aon.occam.api.model.warehouse.InventoryDetail> list = 
+				AON.getInventoryDetailList(domainName, domainId, user, inventory.getId());
+		for(com.esferalia.aon.occam.api.model.warehouse.InventoryDetail id : list){
+			InventoryDetail inventoryDetail = OccamClassesTransform.getInventoryDetail(id);
+			Double cost =  getCost(inventoryDetail);
+			inventoryDetail.setCost(cost);
+			inventoryDetail.setInventory(inventory);
+			try {
+				getManagerBean().update(inventoryDetail);
+			} catch (ManagerBeanException e) {
+				e.printStackTrace();
+			}
+		}
+		try {
+			getManagerBean().update(inventory);
+			
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		}
+		
 		setShowInventoryAdjustmentWindow(true);
 		IController controller = FormUtil.getController(IWarehouseConstants.WAREHOUSE_TRANSFER_CONTROLLER_NAME);
 		controller.onReset(event);
@@ -261,4 +302,156 @@ public class InventoryController extends BasicController implements IAuditableCo
 		}
 	}
 	
+	public static Double getCost(InventoryDetail inventoryDetail){
+		ApplicationParameter ap = AppParamUtil.getParameter(AppParam.AON_PRODUCT_VALUATION_METHOD);
+		switch (ap.getValue()) {
+			case "0": return inventoryDetail.getItem().getPurchasePrice();
+			case "1": return getLastPurchasePrice(inventoryDetail.getItem());
+			case "2": return getAveragePurchasePrice(inventoryDetail.getItem());
+			case "3": return getFifoPrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity());	
+			default : return inventoryDetail.getItem().getPurchasePrice(); 
+		}
+
+	}
+	
+	public static Double getLastPurchasePrice(Item item){
+		if(item.getProduct().isInventoriable()) 
+			return item.getPurchasePrice();
+
+		String domainName = AonUtil.getDomainName();
+		String user = AonUtil.getRemoteUser();
+
+		// COMPRAS (Albaranes)
+		IncomeDetail incomeDetail = AON.getLastIncomeDetail(domainName, item.getDomain(), user, OccamClassesTransform.getItem(item));
+		
+		Double price1 = 0.0;
+		Date date1 = new Date();
+		if(incomeDetail.getId() != null){
+			if(incomeDetail.getIncome().getIssueDate() != null) date1 = incomeDetail.getIncome().getIssueDate();
+			if(incomeDetail.getPrice() != null) price1 = incomeDetail.getPrice();
+		}
+			
+		// COMPRAS (Facturas)
+		InvoiceDetail invoiceDetail = AON.getLastInvoiceDetail(domainName, item.getDomain(), user, OccamClassesTransform.getItem(item));
+		Double price2 = 0.0;
+		Date date2 = new Date();
+		if(invoiceDetail.getId() != null){
+			if(invoiceDetail.getInvoice().getIssueDate() != null) 
+				date2 = invoiceDetail.getInvoice().getIssueDate();
+			if(invoiceDetail.getPrice() != null) 
+				price2 = invoiceDetail.getPrice();
+		}
+			
+		if(incomeDetail.getId() == null && invoiceDetail.getId() == null) return item.getPurchasePrice();
+		else if(incomeDetail.getId() == null) return price2;
+		else if(invoiceDetail.getId() == null) return price1;
+		else return date1.compareTo(date2) < 0 ? price1 : price2;
+	}
+	
+	public static Double getAveragePurchasePrice(Item item){
+		if(item.getProduct().isInventoriable()) 
+			return item.getPurchasePrice();
+					
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = item.getDomain();
+		String user = AonUtil.getRemoteUser();
+		
+		ApplicationParameter ap = AppParamUtil.getParameter(AppParam.AON_PRODUCT_AVERAGE_MONTHS);
+
+		LinkedList<InvoiceDetail> invoiceList = AON.getLastInvoiceDetailList(domainName, domainId, user, OccamClassesTransform.getItem(item), ap.getValue());
+		LinkedList<IncomeDetail> incomeList = AON.getLastIncomeDetailList(domainName, domainId, user, OccamClassesTransform.getItem(item), ap.getValue());
+		
+		Double invoiceSum = invoiceList.stream().mapToDouble(x -> x.getPrice() * (1 -(Double.parseDouble(x.getDiscountExpression())/100.0)) * x.getQuantity()).sum();
+		Double incomeSum = incomeList.stream().mapToDouble(x -> x.getPrice() * (1 -(Double.parseDouble(x.getDiscountExpression())/100.0)) * x.getQuantity()).sum();
+		Double sum = invoiceSum + incomeSum;
+		Double invoiceQuantity = invoiceList.stream().mapToDouble(x -> x.getQuantity()).sum();
+		Double incomeQuantity = incomeList.stream().mapToDouble(x -> x.getQuantity()).sum();
+		Double quantity = invoiceQuantity + incomeQuantity;
+		
+		if(quantity == 0) return item.getPurchasePrice();
+		return  sum / quantity;
+	}
+
+	public static Double getFifoPrice(Item item, Double quantity){
+		if(item.getProduct().isInventoriable() || quantity == 0) 
+			return item.getPurchasePrice();
+		
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = item.getDomain();
+		String user = AonUtil.getRemoteUser();
+		
+		LinkedList<InvoiceDetail> invoiceList = AON.getLastInvoiceDetailList(domainName, domainId, user, OccamClassesTransform.getItem(item), "48");
+		LinkedList<IncomeDetail> incomeList = AON.getLastIncomeDetailList(domainName, domainId, user, OccamClassesTransform.getItem(item), "48");
+		
+		LinkedList<Fifo> fifoList = new LinkedList<InventoryController.Fifo>();
+
+		Double q = 0.0;
+		Double qError = 0.0;
+		Integer i = 0;
+		Integer j = 0;
+		while(q < quantity &&  qError == 0.0){
+			
+			InvoiceDetail invoiceDetail = invoiceList.size() > i  ? invoiceList.get(i) : null;
+			IncomeDetail incomeDetail = incomeList.size() > j ? incomeList.get(j) : null;
+			
+			if((invoiceDetail!= null && incomeDetail == null) ||(invoiceDetail!= null &&
+					invoiceDetail.getInvoice().getIssueDate().compareTo(incomeDetail.getIncome().getIssueDate())<= 0)){
+				q = q + invoiceDetail.getQuantity(); 
+				Fifo fifo = new Fifo(invoiceDetail.getPrice(), invoiceDetail.getQuantity(), Double.parseDouble(invoiceDetail.getDiscountExpression()));
+				fifoList.add(fifo);
+				i++;
+			}
+			else if(incomeDetail != null){
+				q = q + incomeDetail.getQuantity(); 
+				Fifo fifo = new Fifo(incomeDetail.getPrice(), incomeDetail.getQuantity(), Double.parseDouble(incomeDetail.getDiscountExpression()));
+				fifoList.add(fifo);
+				j++;
+			}
+			else qError = quantity;
+		}
+		if(qError != 0.0) return item.getPurchasePrice();
+		if(q == quantity){
+			Double fifoPrice = fifoList.stream().mapToDouble(x -> x.getPrice() * x.getQuantity()).sum();
+			return fifoPrice / quantity;
+		}
+		else{
+			Double fifoPrice = fifoList.stream().limit(fifoList.size()-1).mapToDouble(x -> x.getPrice() * (1 -(x.getDiscount()/100.0)) * x.getQuantity()).sum();
+			Double lastFifoPrice = fifoList.getLast().getPrice() * (1 - (fifoList.getLast().getDiscount()/100.0)) * (fifoList.getLast().getQuantity() - (q-quantity));
+			return (fifoPrice + lastFifoPrice) / quantity;
+		}
+	}
+	
+	public static class Fifo {
+		private Double price;
+		private Double quantity;
+		private Double discount;
+	
+		public Fifo(Double price, Double quantity, Double discount) {
+			this.price = price;
+			this.quantity = quantity;
+			this.discount = discount;
+		}
+		
+		public Double getPrice() {
+			return price;
+		}
+		public void setPrice(Double price) {
+			this.price = price;
+		}
+		public Double getQuantity() {
+			return quantity;
+		}
+		public void setQuantity(Double quantity) {
+			this.quantity = quantity;
+		}
+
+		public Double getDiscount() {
+			return discount;
+		}
+
+		public void setDiscount(Double discount) {
+			this.discount = discount;
+		}
+	}
+
 }

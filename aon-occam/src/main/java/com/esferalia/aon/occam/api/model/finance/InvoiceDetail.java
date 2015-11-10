@@ -107,7 +107,7 @@ public class InvoiceDetail implements Serializable {
 		this.quantity = quantity;
 		return this;
 	}
-	public double getPrice() {
+	public Double getPrice() {
 		return price;
 	}
 	public InvoiceDetail setPrice(double price) {
