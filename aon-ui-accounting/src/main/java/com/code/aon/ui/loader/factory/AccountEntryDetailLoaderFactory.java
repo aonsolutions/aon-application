@@ -13,6 +13,7 @@ import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.loader.Column;
 import com.code.aon.ui.loader.ILoaderEngine;
@@ -38,17 +39,30 @@ public class AccountEntryDetailLoaderFactory implements ILoaderFactory<ILoadedPo
 		,new Column(APU,"haber"						,1,16	,true	,null)
 		,new Column(APU,"contrapartida"				,2,9	,false	,null)
 		,new Column(APU,"descripcionContrapartida"	,2,128	,false	,null)
+		,new Column(APU,"enlaceFactura"				,0,1	,false  ,new int[] {0,1})
+		,new Column(APU,"enlaceTipoFactura"			,0,1	,false	,new int[] {0,1,2,3})
+		,new Column(APU,"enlaceSerie"				,2,5	,false	,null)
+		,new Column(APU,"enlaceNumero"				,0,8	,false	,null)
+		 
 	};
 	
 	private LoaderUtils loaderUtils;
 	private Map<String, Column[]> columns;
 	private ILoaderEngine engine;
+	private IManagerBean managerBean;
+	
 	public AccountEntryDetailLoaderFactory() {
 	}
 	public AccountEntryDetailLoaderFactory(ILoaderEngine engine) {
 		this.engine = engine;
 	}
-
+	private IManagerBean getBean() throws ManagerBeanException {
+		if (managerBean == null) {
+			managerBean = BeanManager.getManagerBean(AccountEntryDetail.class);	
+		}
+		return managerBean;
+	}
+	
 	private LoaderUtils getLoaderUtils() {
 		if (loaderUtils == null) {
 			loaderUtils = new LoaderUtils();
@@ -87,14 +101,12 @@ public class AccountEntryDetailLoaderFactory implements ILoaderFactory<ILoadedPo
 
 	@Override
 	public ITransferObject get(Integer id) throws AonException {
-		IManagerBean bean = BeanManager.getManagerBean(AccountEntryDetail.class);
-		return bean.get(id);
+		return getBean().get(id);
 	}
 
 	@Override
 	public Integer insert(LoaderParams params,ILoadedPojo loadedPojo) throws AonException {
 		LoadedAccountEntryDetail loaded = (LoadedAccountEntryDetail) loadedPojo;
-		IManagerBean bean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		AccountEntryDetail detail = new AccountEntryDetail();
 		AccountEntry entry = null;
 		if ( loaded.getEntry() != null) {
@@ -118,7 +130,7 @@ public class AccountEntryDetailLoaderFactory implements ILoaderFactory<ILoadedPo
 			balancingAccount = getLoaderUtils().ensureAccount(loaded.getContrapartida(), loaded.getDescripcionContrapartida());	
 		}
 		detail.setBalancingAccount(balancingAccount);
-		detail = (AccountEntryDetail) bean.insert(detail);
+		detail = (AccountEntryDetail) getBean().insert(detail);
 		return detail.getId();
 	}
 
@@ -126,12 +138,11 @@ public class AccountEntryDetailLoaderFactory implements ILoaderFactory<ILoadedPo
 	@Override
 	public ITransferObject get(LoaderParams params, ILoadedPojo loadedPojo) throws AonException {
 		LoadedAccountEntryDetail loaded = (LoadedAccountEntryDetail) loadedPojo;
-		IManagerBean bean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		Criteria criteria = new Criteria();
 		if (loaded.getEntry() != null) {
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), loaded.getEntry().getId());	
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_CODE), loaded.getCuenta());
-			List<ITransferObject> list = bean.getList(criteria); 
+			criteria.addEqualExpression(getBean().getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), loaded.getEntry().getId());	
+			criteria.addEqualExpression(getBean().getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_CODE), loaded.getCuenta());
+			List<ITransferObject> list = getBean().getList(criteria); 
 			if ( list.size() > 0 ) {
 				return (AccountEntryDetail) list.get(0);
 			}

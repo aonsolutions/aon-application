@@ -19,6 +19,11 @@ public class LoadedAccountEntryDetail implements ILoadedPojo{
 	private Double haber;
 	private String contrapartida;
 	private String descripcionContrapartida;
+	
+	private Integer enlaceFactura;
+	private String enlaceSerie;
+	private Integer enlaceNumero;
+	private Integer enlaceTipoFactura;
 
 	private AccountEntry entry;
 	
@@ -104,6 +109,34 @@ public class LoadedAccountEntryDetail implements ILoadedPojo{
 		this.descripcionContrapartida = descripcionContrapartida;
 	}
 	
+	public Integer getEnlaceFactura() {
+		return enlaceFactura;
+	}
+	public void setEnlaceFactura(Integer enlaceFactura) {
+		this.enlaceFactura = enlaceFactura;
+	}
+
+	public String getEnlaceSerie() {
+		return enlaceSerie;
+	}
+	public void setEnlaceSerie(String enlaceSerie) {
+		this.enlaceSerie = enlaceSerie;
+	}
+
+	public Integer getEnlaceNumero() {
+		return enlaceNumero;
+	}
+	public void setEnlaceNumero(Integer enlaceNumero) {
+		this.enlaceNumero = enlaceNumero;
+	}
+
+	public Integer getEnlaceTipoFactura() {
+		return enlaceTipoFactura;
+	}
+	public void setEnlaceTipoFactura(Integer enlaceTipoFactura) {
+		this.enlaceTipoFactura = enlaceTipoFactura;
+	}
+
 	public AccountEntry getEntry() {
 		return entry;
 	}
@@ -116,6 +149,11 @@ public class LoadedAccountEntryDetail implements ILoadedPojo{
 		loaded.setId(getAsiento());
 		loaded.setFecha(getFechaAsiento());
 		loaded.setTipoAsiento(getTipoAsiento());
+		loaded.setEnlaceFactura(getEnlaceFactura());
+		loaded.setEnlaceSerie(getEnlaceSerie());
+		loaded.setEnlaceNumero(getEnlaceNumero());
+		loaded.setEnlaceTipoFactura(getEnlaceTipoFactura());
+		
 		return loaded;
 	}
 

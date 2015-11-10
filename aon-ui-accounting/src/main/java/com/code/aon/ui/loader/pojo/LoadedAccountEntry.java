@@ -12,6 +12,12 @@ public class LoadedAccountEntry implements ILoadedPojo{
 	private Integer tipoAsiento;
 	private String comentario;
 	
+	private Integer enlaceFactura;
+	private String enlaceSerie;
+	private Integer enlaceNumero;
+	private Integer enlaceTipoFactura;
+	
+	
 	@Override
 	public String getIdentifier() {
 		return id==null?null:id.toString();
@@ -49,6 +55,38 @@ public class LoadedAccountEntry implements ILoadedPojo{
 	}
 	public void setComentario(String comentario) {
 		this.comentario = comentario;
+	}
+
+	public Integer getEnlaceFactura() {
+		return enlaceFactura;
+	}
+
+	public void setEnlaceFactura(Integer enlaceFactura) {
+		this.enlaceFactura = enlaceFactura;
+	}
+
+	public String getEnlaceSerie() {
+		return enlaceSerie;
+	}
+
+	public void setEnlaceSerie(String enlaceSerie) {
+		this.enlaceSerie = enlaceSerie;
+	}
+
+	public Integer getEnlaceNumero() {
+		return enlaceNumero;
+	}
+
+	public void setEnlaceNumero(Integer enlaceNumero) {
+		this.enlaceNumero = enlaceNumero;
+	}
+
+	public Integer getEnlaceTipoFactura() {
+		return enlaceTipoFactura;
+	}
+
+	public void setEnlaceTipoFactura(Integer enlaceTipoFactura) {
+		this.enlaceTipoFactura = enlaceTipoFactura;
 	}
 	
 }
