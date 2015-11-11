@@ -160,7 +160,7 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 	@Override
 	public void createEDLCd29Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, DAT dat, List<ITransferObject> salaryDataList) {
 		
-		String _cgcBase = obtainCgcBaseE(salaryDataList);
+		String _cgcBase = obtainCgcBase(salaryDataList);
 		String _reductionPercent = obtainSeaReduction(salaryDataList);
 		
 		// la cuota de la reduccion se obtiene a aplicando 
@@ -174,16 +174,16 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 		
 	}
 	
-	private String obtainCgcBaseE(List<ITransferObject> salaryDataList){
-		String _reductionPercent = null;
+	private String obtainCgcBase(List<ITransferObject> salaryDataList){
+		String _base = null;
 		List<ITransferObject> list = salaryDataList;
 		for(ITransferObject to: list){
 			SalaryData sa = (SalaryData) to;
-			if(sa.getName().equals("BASE_CGC_E")){
-				_reductionPercent = sa.getExpression();
+			if(sa.getName().equals("BASE_CGC")){
+				_base = sa.getExpression();
 			}
 		}
-		return _reductionPercent;
+		return _base;
 	}
 	private String obtainSeaReduction(List<ITransferObject> salaryDataList){
 		String _reductionPercent = null;
