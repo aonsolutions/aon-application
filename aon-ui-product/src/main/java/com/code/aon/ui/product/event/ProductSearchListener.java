@@ -29,6 +29,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.ControllerSearchListenerEx;
 import com.code.aon.ui.product.controller.ProductExportGwtController;
 import com.code.aon.ui.util.AonUtil;
@@ -191,19 +192,21 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 			String alias = getController().resolveAlias(IEntityAlias.PRODUCT_TYPE);
 			addEnumToCriteria(criteria, alias, getTypes());
 		}
-		if (!ArrayUtils.isEmpty(getKinds())) {
-			String alias = getController().resolveAlias(IEntityAlias.PRODUCT_KIND);
-			addEnumToCriteria(criteria, alias, getKinds());
-		} else {
-			String alias = getController().resolveAlias(IEntityAlias.PRODUCT_KIND);
-			Expression kindExpr = ExpressionUtilities.getEqualExpression(alias, ProductKind.SALE_PURCHASE);
-			if (AonUtil.getRoleManager().isPurchaseOperator()) {
-				kindExpr = ExpressionUtilities.getOrExpression(kindExpr,  ExpressionUtilities.getEqualExpression(alias, ProductKind.PURCHASE));
+		if (getController() instanceof BasicController && !((BasicController)getController()).isLookup()) {
+			if (!ArrayUtils.isEmpty(getKinds())) {
+				String alias = getController().resolveAlias(IEntityAlias.PRODUCT_KIND);
+				addEnumToCriteria(criteria, alias, getKinds());
+			} else {
+				String alias = getController().resolveAlias(IEntityAlias.PRODUCT_KIND);
+				Expression kindExpr = ExpressionUtilities.getEqualExpression(alias, ProductKind.SALE_PURCHASE);
+				if (AonUtil.getRoleManager().isPurchaseOperator()) {
+					kindExpr = ExpressionUtilities.getOrExpression(kindExpr,  ExpressionUtilities.getEqualExpression(alias, ProductKind.PURCHASE));
+				}
+				if (AonUtil.getRoleManager().isSaleOperator()) {
+					kindExpr = ExpressionUtilities.getOrExpression(kindExpr,  ExpressionUtilities.getEqualExpression(alias, ProductKind.SALE));
+				}
+				criteria.addExpression(kindExpr);
 			}
-			if (AonUtil.getRoleManager().isSaleOperator()) {
-				kindExpr = ExpressionUtilities.getOrExpression(kindExpr,  ExpressionUtilities.getEqualExpression(alias, ProductKind.SALE));
-			}
-			criteria.addExpression(kindExpr);
 		}
 		if (getCategory() != null && getCategory().getId() != null) {
 			String alias = getController().resolveAlias(IEntityAlias.PRODUCT_PRODUCT_CATEGORY_ID);

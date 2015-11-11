@@ -166,13 +166,8 @@ public class Product extends ProductDB implements IAuditable {
 
     @Transient
     public Item getUniqueItem() throws ManagerBeanException {
-    	if (getId() != null) {
-        	IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
-        	Criteria criteria = new Criteria();
-        	criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), getId());
-        	if (itemBean.getCount(criteria) == 1) {
-        		return (Item)itemBean.getList(criteria).get(0);
-        	}
+    	if (getItemCount() == 1) {
+    		return (Item)getItemList().get(0);
     	}
     	return null;
     }

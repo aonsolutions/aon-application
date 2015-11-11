@@ -518,10 +518,25 @@ public class ConfigCollectionsController implements Serializable {
     	return addInfos;
     }
 
-	public List<SelectItem> getCatalogues() throws ManagerBeanException {
+	public List<SelectItem> getAllCatalogues() throws ManagerBeanException {
+		return getCatalogues(null);
+	}
+
+	public List<SelectItem> getPurchaseCatalogues() throws ManagerBeanException {
+		return getCatalogues(Boolean.TRUE);
+	}
+
+	public List<SelectItem> getSalesCatalogues() throws ManagerBeanException {
+		return getCatalogues(Boolean.FALSE);
+	}
+
+	private List<SelectItem> getCatalogues(Boolean purchaseType) throws ManagerBeanException {
 		List<SelectItem> catalogues = new LinkedList<SelectItem>();
 		IManagerBean catalogueBean = BeanManager.getManagerBean(Catalogue.class);
 		Criteria criteria = new Criteria();
+		if (purchaseType != null) {
+			criteria.addEqualExpression(catalogueBean.getFieldName(IEntityAlias.CATALOGUE_PURCHASE), purchaseType);
+		}
 		criteria.addOrder(catalogueBean.getFieldName(IEntityAlias.CATALOGUE_NAME));
 		for (ITransferObject ito : catalogueBean.getList(criteria)) {
 			Catalogue catalogue = (Catalogue)ito;

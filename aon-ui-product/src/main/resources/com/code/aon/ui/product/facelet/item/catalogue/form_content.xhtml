@@ -12,7 +12,15 @@
 		valueChangeListener="#{controller.onCatalogueChanged}"
 		reRender="ItemCatalogue_catalogue_startDate,ItemCatalogue_catalogue_endDate"
 		focus="ItemCatalogue_quantity">
-		<f:selectItems value="#{configCollections.catalogues}" />
+		<aon:if test="#{controller.to.product.sale}">
+			<f:selectItems value="#{configCollections.salesCatalogues}" />
+		</aon:if>
+		<aon:if test="#{controller.to.product.purchase}">
+			<f:selectItems value="#{configCollections.purchaseCatalogues}" />
+		</aon:if>
+		<aon:if test="#{!controller.to.product.sale and !controller.to.product.purchase}">
+			<f:selectItems value="#{configCollections.allCatalogues}" />
+		</aon:if>
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="ItemCatalogue_catalogue_startDate" value="#{bundle.aon_date_from}" />

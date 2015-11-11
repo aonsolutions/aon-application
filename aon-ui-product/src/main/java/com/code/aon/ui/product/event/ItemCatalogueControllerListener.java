@@ -13,6 +13,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Catalogue;
 import com.code.aon.product.CatalogueItem;
 import com.code.aon.product.Product;
+import com.code.aon.product.enumeration.ProductKind;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
@@ -33,12 +34,12 @@ public class ItemCatalogueControllerListener extends ControllerAdapter {
     	Product product = (Product)controller.getMasterController().getTo();
     	CatalogueItem catalogueItem = (CatalogueItem)controller.getTo();
     	try {
-            ConfigCollectionsController collections = (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
-        	List<?> catalogues = collections.getCatalogues();
+        	List<?> catalogues = getCatalogues(product.getKind());
         	if (catalogues.size() > 0) {
         		Catalogue catalogue = (Catalogue)((SelectItem)catalogues.get(0)).getValue();
         		catalogueItem.setCatalogue(catalogue);
         	}
+       		catalogueItem.setProduct(product);
        		catalogueItem.setItem(product.getUniqueItem());
     	} catch (ManagerBeanException e) {
             throw new ControllerListenerException(e.getMessage(), e);
@@ -55,6 +56,17 @@ public class ItemCatalogueControllerListener extends ControllerAdapter {
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		CatalogueItem catalogueItem = (CatalogueItem)event.getController().getTo();
 		validateCatalogueItem(catalogueItem);
+	}
+
+	private List<?> getCatalogues(ProductKind kind) throws ManagerBeanException {
+        ConfigCollectionsController collections = (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
+        if (kind == ProductKind.SALE) {
+        	return collections.getSalesCatalogues();
+        } else if (kind == ProductKind.PURCHASE) {
+        	return collections.getPurchaseCatalogues();
+        } else {
+        	return collections.getAllCatalogues();
+        }
 	}
 
 	private void validateCatalogueItem(CatalogueItem catalogueItem) throws ControllerListenerException {

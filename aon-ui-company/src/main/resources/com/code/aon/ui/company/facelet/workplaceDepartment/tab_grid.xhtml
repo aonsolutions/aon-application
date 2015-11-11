@@ -40,13 +40,13 @@
 				<aon:selectOneMenu id="WorkplaceDepartment_catalogue" 
 					value="#{controller.to.catalogue}" required="#{true}" 
 					rendered="#{formEdit}">
-					<f:selectItems value="#{configCollections.catalogues}" />
+					<f:selectItems value="#{configCollections.purchaseCatalogues}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
 					<aon:selectOneMenu id="WorkplaceDepartment_catalogue-New" 
 						value="#{controller.to.catalogue}" required="#{true}" 
 						rendered="#{formNew}">
-						<f:selectItems value="#{configCollections.catalogues}" />
+						<f:selectItems value="#{configCollections.purchaseCatalogues}" />
 					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>

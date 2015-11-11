@@ -121,12 +121,12 @@
 	
 	<!-- ************ PRODUCT LOOKUP ************** -->
 	<managed-bean>
-		<managed-bean-name>productLookup</managed-bean-name>
+		<managed-bean-name>saleProductLookup</managed-bean-name>
 		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>productLookup</value>
+			<value>saleProductLookup</value>
 		</managed-property>
 		<managed-property>
 			<property-name>foreignPojo</property-name>
@@ -138,6 +138,60 @@
 				<map-entry>
 					<key>Product_type</key>
 					<value>!4</value>
+				</map-entry>
+				<map-entry>
+					<key>Product_kind</key>
+					<value>0|2</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Product_code,Product_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>Product_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/product/facelet/product/listBasic.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/product/facelet/product/searchBasicContent.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{productSearch}</value>		
+			</list-entries>
+		</managed-property>		
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>purchaseProductLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>purchaseProductLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.product.Product</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Product_type</key>
+					<value>!4</value>
+				</map-entry>
+				<map-entry>
+					<key>Product_kind</key>
+					<value>0|1</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>		

@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.32.3
+# Version: 8.33.0
 # Created by: girazu
-# Creation Date: 02/11/2015 13:10
+# Creation Date: 10/11/2015 17:50
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -171,6 +171,7 @@ CREATE TABLE `tariff` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `code` varchar(8) collate latin1_spanish_ci default NULL COMMENT 'Codigo de la Tarifa',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Tarifa',
+  `purchase` tinyint(1) NOT NULL default '0' COMMENT 'Indica si se trata de una Tarifa de Compras o Ventas',
   `discount` double(6,2) default '0.00' COMMENT 'Descuento general de la Tarifa',
   PRIMARY KEY  (`id`),
   KEY `IDX_TARIFF_DOMAIN` (`domain`),
@@ -1518,6 +1519,7 @@ CREATE TABLE `catalogue` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Catalogo',
+  `purchase` tinyint(1) NOT NULL default '0' COMMENT 'Indica si se trata de un Catalogo de Compras o Ventas',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio del Catalogo',
   `end_date` date default NULL COMMENT 'Fecha de fin del Catalogo',
   PRIMARY KEY  (`id`),
@@ -8010,7 +8012,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.32.3');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.33.0');
 
 COMMIT;
 
