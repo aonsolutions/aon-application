@@ -28,7 +28,13 @@ public enum TagType implements IResourceable {
     /**
      * NOTICE
      */
-    NOTICE;
+    NOTICE,
+    
+    /**
+     * PRIORITY
+     */
+    PRIORITY;
+
 
     /**
      * Message key prefix. 
