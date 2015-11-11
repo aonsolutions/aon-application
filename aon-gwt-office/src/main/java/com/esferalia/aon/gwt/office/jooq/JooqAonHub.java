@@ -35,12 +35,6 @@ public class JooqAonHub {
 				.fetchInto(USER);
 	}
 	
-	
-
-	protected static void saveNewNotice(DSLContext dslContext, Integer domain) {
-
-	}
-
 	protected static Result<Record> getIssueTags(DSLContext dslContext,
 			Integer domain, Integer noticeId) throws DataAccessException,
 			Exception {
@@ -51,20 +45,6 @@ public class JooqAonHub {
 						NOTICE_TAG.TAG.eq(TAG.ID)))
 				.where(NOTICE_TAG.NOTICE.eq(noticeId)
 						.and(TAG.DOMAIN.eq(domain))).fetch();
-	}
-
-	protected static UserRecord getSender(DSLContext dslContext,
-			Integer domain, Integer userId) throws DataAccessException {
-		// Remitente del aviso. Entiendo que es un usuario único.
-		return dslContext.selectFrom(USER)
-				.where(USER.ID.eq(userId).and(USER.DOMAIN.eq(domain)))
-				.fetchOne();
-	}
-
-	protected static UserRecord getUserAssignee(DSLContext dslContext,
-			Integer domain, Integer userId) throws DataAccessException {
-		// Destinatario del aviso. Entiendo que es un usuario único.
-		return getSender(dslContext, domain, userId);
 	}
 
 	protected static Settings getDefaultSettings() {

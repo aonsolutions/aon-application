@@ -1,10 +1,13 @@
 package com.esferalia.aon.occam.api.model.office;
 
+import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.jooq.tables.records.NoticeRecord;
 import com.esferalia.aon.occam.api.model.HasId;
 
 public class Notice implements Serializable, HasId {
@@ -31,10 +34,10 @@ public class Notice implements Serializable, HasId {
 	
 	private Integer notice; //Notice al que referencia **null si es cabecera = titulo
 
-	private List<Notice> comments;
+	private List<NoticeComment> comments;
 
 	public Notice() {
-		comments = new LinkedList<Notice>();
+		comments = new LinkedList<NoticeComment>();
 	}
 	
 	// ===============SETTERS=================== //
@@ -99,8 +102,8 @@ public class Notice implements Serializable, HasId {
 		this.notice = notice;
 	}
 	
-	public void addNotice(Notice notice) {
-		this.comments.add(notice);
+	public void addNotice(NoticeComment comment) {
+		this.comments.add(comment);
 	}
 	
 	// ===============GETTERS=================== //
@@ -166,7 +169,7 @@ public class Notice implements Serializable, HasId {
 		return notice;
 	}
 	
-	public List<Notice> getComment() {
+	public List<NoticeComment> getComments() {
 		return comments;
 	}
 }

@@ -115,9 +115,13 @@
 		<g:east size="180">
 
 			<g:FlowPanel>
-				<g:VerticalPanel ui:field="vLabelsPanel" spacing="5">
-					<g:Label text="{msg.labelsIssues}" />
-				</g:VerticalPanel>
+				<g:HorizontalPanel ui:field="eastHPanel" spacing="10">
+					<g:Tree ui:field="labelsTree" animationEnabled="true" />
+					<g:Button ui:field="addLabelButton"
+						styleName="aon-editDataTable-button aon-lookupButton-new-disabled aon-aux-right"
+						title="Nueva Etiqueta" />
+				</g:HorizontalPanel>
+
 
 			</g:FlowPanel>
 

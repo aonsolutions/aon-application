@@ -23,11 +23,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.jooq.Record;
 import org.jooq.exception.DataAccessException;
 
+import com.code.aon.config.enumeration.TagType;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.WorkgroupRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.impl.jooq.dao.AonHubDAO;
 
 @MultipartConfig
@@ -65,6 +67,16 @@ public class GetRegistriesServlet extends HttpServlet {
 			} catch (Exception ex) {
 				System.out.println(ex.getMessage());
 				return null;
+			}
+		}
+		
+		static List<Tag> getTagList(AONContext ctx, Integer parentDomain, Integer domain, byte type) {
+			
+			try {
+				return getTags(ctx, parentDomain, domain, type);
+			} catch (DataAccessException ex) {
+				System.out.println(ex.getMessage() + " " + ex.getLocalizedMessage());
+				throw new DataAccessException(ex.getMessage());
 			}
 		}
 	}
@@ -107,6 +119,8 @@ public class GetRegistriesServlet extends HttpServlet {
 			osx = resp.getWriter();
 			
 			osx.println('{');
+			osx.printf("\"tags\":%s",
+					buildTags(ctx, parentDomain, domain));
 			osx.printf("\"users\":%s",
 					buildUsersWorking(ctx, parentDomain, domain));
 			osx.printf("\"workgroups\":%s",
@@ -122,6 +136,39 @@ public class GetRegistriesServlet extends HttpServlet {
 			if (conn != null)
 				conn.close();
 		}
+	}
+	
+	private static String buildTags(AONContext ctx, Integer parentDomain, Integer domain) {
+		
+		byte type = (byte) TagType.NOTICE.ordinal();
+		List<Tag> tags = JooqGet.getTagList(ctx, parentDomain, domain, type);
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("[\r\n");
+
+		if (tags != null) {
+
+			ListIterator<Tag> iterator = tags.listIterator();
+			while (iterator.hasNext()) {
+				Tag tag = iterator.next();
+				Integer id = tag.getId();
+				String name = tag.getName();
+				String color = tag.getColor();
+				
+				buffer.append("{\r\n");
+				buffer.append(String.format("\"id\":\"%s\",\r\n",
+						String.valueOf(id)));
+				buffer.append(String.format("\"name\":\"%s\",\r\n",
+						name));
+				buffer.append(String.format("\"color\":\"%s\"\r\n", color));
+
+				buffer.append('}');
+				if (iterator.hasNext())
+					buffer.append(",\r\n");
+			}
+		}
+
+		return buffer.append("],\r\n").toString();
 	}
 
 	private static String buildUsersWorking(AONContext ctx,

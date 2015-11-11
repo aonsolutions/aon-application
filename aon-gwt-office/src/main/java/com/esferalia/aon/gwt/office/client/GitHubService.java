@@ -56,6 +56,8 @@ public interface GitHubService {
 
 	void createLabel(JsRepo repo, LabelValue prop,
 			final AsyncCallback<JsLabel> callback);
+	
+	void createLabel(String url, LabelValue prop, final AsyncCallback<JsLabel> callback);
 
 	void saveLabel(JsRepo repo, String name, LabelValue prop,
 			final AsyncCallback<JsLabel> callback);

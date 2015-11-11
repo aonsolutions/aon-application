@@ -6,20 +6,26 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.esferalia.aon.gwt.office.client.models.users.JsUserWorkgroups;
 import com.esferalia.aon.gwt.office.client.models.users.JsWorkGroup;
+import com.esferalia.aon.gwt.office.client.values.LabelValue;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
+import com.esferalia.aon.gwt.office.client.values.issues.TagValue;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
@@ -32,7 +38,7 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.Widget;
 
 public class IssueWriteWidget extends Composite {
@@ -54,6 +60,8 @@ public class IssueWriteWidget extends Composite {
 	interface Listener {
 
 		void onCommentButtonClick(IssueValue issueValue);
+		
+		void onCreateNewTag(LabelValue tagValue);
 
 	}
 
@@ -90,9 +98,11 @@ public class IssueWriteWidget extends Composite {
 	@UiField
 	HorizontalPanel hPriorityPanel;
 	@UiField
-	VerticalPanel vLabelsPanel;
-	@UiField
 	Button commentButton;
+	@UiField 
+	Button addLabelButton;
+	@UiField
+	Tree labelsTree;
 
 	private String noticeType;
 	private String priority;
@@ -109,6 +119,7 @@ public class IssueWriteWidget extends Composite {
 
 	private JsArray<JsUser> jsArrayUsers;
 	private JsArray<JsWorkGroup> jsArrayWorkgroups;
+	private JsArray<JsLabel> jsTags;
 
 	private Map<String, String> labels;
 
@@ -122,6 +133,9 @@ public class IssueWriteWidget extends Composite {
 		tabPanel.selectTab(0);
 		this.jsArrayUsers = usersWorkgroups.getUsers();
 		this.jsArrayWorkgroups = usersWorkgroups.getWorkGroups();
+		this.jsTags = usersWorkgroups.getLabels();
+		
+		this.labelsTree.addTextItem("Etiquetas");
 
 		for (int x = 0; x < jsArrayUsers.length(); x++) {
 			senders.add(jsArrayUsers.get(x).getId() + " - "
@@ -134,6 +148,9 @@ public class IssueWriteWidget extends Composite {
 		for (int y = 0; y < jsArrayWorkgroups.length(); y++)
 			workgroups.add(jsArrayWorkgroups.get(y).getId() + " - "
 					+ jsArrayWorkgroups.get(y).getDescription());
+		
+		for ( int z = 0; z < jsTags.length(); z++)
+			addNewCheckBox(jsTags.get(z).getName().toUpperCase());
 
 		this.listeners = new LinkedList<Listener>();
 		this.labels = new HashMap<String, String>();
@@ -146,6 +163,40 @@ public class IssueWriteWidget extends Composite {
 
 	public void removeListener(Listener listener) {
 		listeners.remove(listener);
+	}
+	
+	@UiHandler("addLabelButton")
+	void onAddLabelButtonClick(ClickEvent event) {
+		
+		final TextBox textBox = new TextBox();
+		labelsTree.add(textBox);
+		textBox.setStyleName("aon-inputText");				
+		textBox.selectAll();
+		textBox.setFocus(true);
+		textBox.setWidth("85px");
+		
+		
+		textBox.addKeyDownHandler(new KeyDownHandler() {
+			
+			@Override
+			public void onKeyDown(KeyDownEvent event) {
+				int keyCode = event.getNativeKeyCode();
+				final String name = textBox.getText();
+				
+				if ((keyCode == KeyCodes.KEY_ENTER || keyCode == KeyCodes.KEY_TAB ) && !name.isEmpty()) {
+					removeInTree(textBox);
+					addNewCheckBox(name.toUpperCase());
+					
+					LabelValue tagValue = new LabelValue();
+					tagValue.setName(name.toUpperCase());
+					tagValue.setColor("");
+					addCreateNewTag(tagValue);
+				}
+				else if(keyCode == KeyCodes.KEY_ESCAPE)
+					removeInTree(textBox);
+			}
+		});
+		
 	}
 
 	@UiHandler("commentButton")
@@ -163,7 +214,7 @@ public class IssueWriteWidget extends Composite {
 			issueValue.setPhone((phoneTextBox.getText().isEmpty()) ? ""
 					: phoneTextBox.getText());
 			issueValue.setCompany((companyTextBox.getText().isEmpty()) ? ""
-					: companyTextBox.getText());		
+					: companyTextBox.getText());
 
 			issueValue.setBody(commentTextArea.getText());
 			issueValue.setLabels(getLabels().split(","));
@@ -176,8 +227,8 @@ public class IssueWriteWidget extends Composite {
 
 			if (recipientId != null)
 				issueValue.setRecipient(recipientId);
-			
-			if ( workgroup != null)
+
+			if (workgroup != null)
 				issueValue.setWorkgroup(workgroup);
 
 			addCommentButtonClickListener(issueValue);
@@ -202,17 +253,13 @@ public class IssueWriteWidget extends Composite {
 
 		recipientId = Integer.parseInt(cadena[0]);
 	}
-	
+
 	@UiHandler("workgroupSuggestBox")
 	void onSelectedWorkgroup(SelectionEvent<SuggestOracle.Suggestion> event) {
-		
+
 		String selected = event.getSelectedItem().getReplacementString();
 		String[] cadena = selected.split(" - ");
 		workgroup = Integer.parseInt(cadena[0]);
-	}
-
-	@UiHandler("commentTextArea")
-	void onWriteCommentOnTextArea(ValueChangeEvent<String> event) {
 	}
 
 	private void addCommentButtonClickListener(IssueValue issueValue) {
@@ -220,8 +267,15 @@ public class IssueWriteWidget extends Composite {
 		for (Listener listener : listeners)
 			listener.onCommentButtonClick(issueValue);
 	}
+	
+	private void addCreateNewTag(LabelValue tagValue) {
+		
+		for (Listener listener : listeners)
+			listener.onCreateNewTag(tagValue);
+	}
 
 	private void loadRadioButtons() {
+		
 		RadioButton ticket = new RadioButton(TYPE_NOTICE_GROUP, "Ticket");
 		ticket.setValue(true);
 		noticeType = ticket.getText();
@@ -300,60 +354,6 @@ public class IssueWriteWidget extends Composite {
 
 		insertWidgets(hPriorityPanel, noneRadioButton, lowRadioButton,
 				normalRadioButton, highRadioButton);
-
-		CheckBox bug = new CheckBox("BUG");
-		bug.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				evalCheckBox((CheckBox) event.getSource());
-			}
-		});
-
-		CheckBox fiscal = new CheckBox("FISCAL");
-		fiscal.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				evalCheckBox((CheckBox) event.getSource());
-			}
-		});
-
-		CheckBox laboral = new CheckBox("LABORAL");
-		laboral.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				evalCheckBox((CheckBox) event.getSource());
-			}
-		});
-		CheckBox soporte = new CheckBox("SOPORTE");
-		soporte.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				evalCheckBox((CheckBox) event.getSource());
-			}
-		});
-		CheckBox gestion = new CheckBox("GESTION");
-		gestion.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				evalCheckBox((CheckBox) event.getSource());
-			}
-		});
-		CheckBox duplicated = new CheckBox("DUPLICATED");
-		duplicated.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				evalCheckBox((CheckBox) event.getSource());
-			}
-		});
-
-		insertWidgets(vLabelsPanel, bug, fiscal, laboral, soporte, gestion,
-				duplicated);
 	}
 
 	private String getLabels() {
@@ -390,5 +390,24 @@ public class IssueWriteWidget extends Composite {
 
 	private void setNoticeType(RadioButton radioButton) {
 		this.noticeType = radioButton.getText();
+	}
+	
+	private void removeInTree(Widget widget) {
+		labelsTree.remove(widget);
+	}
+	
+	private void addNewCheckBox (String name) {
+		
+		CheckBox checkBox = new CheckBox(name);
+		checkBox.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				evalCheckBox( (CheckBox) event.getSource() );
+				
+			}
+		});
+		
+		labelsTree.add(checkBox);
 	}
 }

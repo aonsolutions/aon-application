@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
 import com.esferalia.aon.gwt.office.client.models.users.JsUserWorkgroups;
 import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
 import com.esferalia.aon.gwt.office.client.values.IssueValue;
+import com.esferalia.aon.gwt.office.client.values.LabelValue;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -55,7 +56,14 @@ public class Office extends Composite implements EntryPoint,
 	interface OfficeUiBinder extends UiBinder<Widget, Office> {
 	}
 
-	private static final String URL = GWT.getModuleBaseURL() + "OfficeSerlvet";
+	private static final String OFFICE_SERVET_URL = GWT.getModuleBaseURL()
+			+ "OfficeSerlvet";
+	private static final String GET_REGISTRIES_SERVLET_URL = GWT
+			.getModuleBaseURL() + "GetRegistriesServlet";
+	private static final String NEW_NOTICE_SERVLET_URL = GWT.getModuleBaseURL()
+			+ "NewNoticeServlet";
+	private static final String NEW_TAG_SERVLET_URL = GWT.getModuleBaseURL()
+			+ "NewTagServlet";
 
 	@UiField
 	DeckLayoutPanel deckPanel;
@@ -142,7 +150,7 @@ public class Office extends Composite implements EntryPoint,
 
 	private void loadUsersWorking() {
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
-				GWT.getModuleBaseURL() + "GetRegistriesServlet");
+				GET_REGISTRIES_SERVLET_URL);
 
 		try {
 			builder.sendRequest(null, new RequestCallback() {
@@ -151,13 +159,13 @@ public class Office extends Composite implements EntryPoint,
 				public void onResponseReceived(Request request,
 						Response response) {
 					if (200 == response.getStatusCode()) {
-						
+
 						try {
-							userWorkgroups = JsonUtils.safeEval(response.getText());							
+							userWorkgroups = JsonUtils.safeEval(response
+									.getText());
 						} catch (Exception ex) {
 							Window.alert("Exception: " + ex.getMessage());
 						}
-						
 
 					} else {
 						Window.alert("Else: " + response.getText());
@@ -177,7 +185,8 @@ public class Office extends Composite implements EntryPoint,
 
 	private void loadNotices() {
 
-		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, URL);
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+				OFFICE_SERVET_URL);
 
 		try {
 			builder.sendRequest(null, new RequestCallback() {
@@ -453,21 +462,38 @@ public class Office extends Composite implements EntryPoint,
 			com.esferalia.aon.gwt.office.client.values.issues.IssueValue issueValue) {
 		// createAnIssue(repo, issueValue);
 
-		gitHub.saveNotice(GWT.getModuleBaseURL() + "NewNoticeServlet",
-				issueValue, new AsyncCallback<JsIssue>() {
+		gitHub.saveNotice(NEW_NOTICE_SERVLET_URL, issueValue,
+				new AsyncCallback<JsIssue>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						Window.alert("Esto no funciona");
-
+						Window.alert(caught.getMessage() + " "
+								+ caught.getLocalizedMessage());
 					}
 
 					@Override
 					public void onSuccess(JsIssue result) {
-						Window.alert("Probando nuevo metodo apra guardar issues");
-
+						loadNotices();
+						showDockOfficePanel();
 					}
 				});
+	}
+
+	@Override
+	public void onCreateNewTag(LabelValue tagValue) {		
+		gitHub.createLabel(NEW_TAG_SERVLET_URL, tagValue, new AsyncCallback<JsLabel>() {
+			
+			@Override
+			public void onSuccess(JsLabel result) {				
+				System.out.println("Etiqueda insertada correctamente " + result.getName());
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				System.out.println("Etiqueta no creada: " + caught.getMessage());
+				
+			}
+		});
 	}
 
 	private static native <T extends JavaScriptObject> T eval(String javascript)

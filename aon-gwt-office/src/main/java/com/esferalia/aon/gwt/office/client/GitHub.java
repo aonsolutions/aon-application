@@ -145,6 +145,13 @@ public class GitHub implements GitHubService {
 			AsyncCallback<JsLabel> callback) {
 		post(repo.getUrl() + "/labels", prop, callback);
 	}
+	
+	
+	@Override
+	public void createLabel(String url, LabelValue prop,
+			AsyncCallback<JsLabel> callback) {
+		post(url, prop, callback);
+	}
 
 	@Override
 	public void saveLabel(JsRepo repo, String name, LabelValue prop,

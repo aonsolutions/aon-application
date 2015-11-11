@@ -12,6 +12,7 @@ public class Tag implements Serializable, HasId {
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private Integer domain;
+	private byte type;
 	private String name;
 	private String color;
 	
@@ -36,6 +37,14 @@ public class Tag implements Serializable, HasId {
 		return this.domain;
 	}
 	
+	public void setType(byte type) {
+		this.type = type;
+	}
+	
+	public byte getType() {
+		return type;
+	}
+	
 	public void setName (String name) {
 		this.name = name;
 	}
@@ -49,6 +58,6 @@ public class Tag implements Serializable, HasId {
 	}
 	
 	public String getColor () {
-		return this.color;
+		return (this.color != null) ? this.color : "";
 	}
 }
