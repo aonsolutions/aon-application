@@ -30,7 +30,7 @@
 				disabled="#{fieldDisabled}">
 				<f:selectItems value="#{productCollections.commonProductTypes}" />
 			</aon:selectOneMenu>
-			<aon:if test="#{actionDenied.moduleEnabled['hotel']}">
+			<aon:if test="#{customize.snapshotVersion}">
 				<aon:div>
 					<aon:if test="#{aonRole.saleOperator or aonRole.purchaseOperator}">
 						<aon:outputLabel for="#{controller.pojoShortName}_kind" 
