@@ -11,7 +11,7 @@
 		value="#{controller.to.catalogue}" required="true"
 		valueChangeListener="#{controller.onCatalogueChanged}"
 		reRender="TariffCatalogue_catalogue_startDate,TariffCatalogue_catalogue_endDate">
-		<f:selectItems value="#{configCollections.catalogues}" />
+		<f:selectItems value="#{configCollections.salesCatalogues}" />
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="TariffCatalogue_catalogue_startDate" value="#{bundle.aon_date_from}" />

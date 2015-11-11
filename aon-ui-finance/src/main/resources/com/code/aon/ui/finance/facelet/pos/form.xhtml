@@ -163,7 +163,7 @@
 												required="true"
 												valueChangeListener="#{controller.onCatalogueChanged}"
 												reRender="PosCatalogue_catalogue_startDate,PosCatalogue_catalogue_endDate">
-												<f:selectItems value="#{configCollections.catalogues}" />
+												<f:selectItems value="#{configCollections.salesCatalogues}" />
 											</aon:selectOneMenu>
 											<f:facet name="footer">
 												<aon:selectOneMenu id="PosCatalogue_catalogue-New"
@@ -171,7 +171,7 @@
 													required="true"
 													valueChangeListener="#{controller.onCatalogueChanged}"
 													reRender="PosCatalogue_catalogue_startDate-New,PosCatalogue_catalogue_endDate-New">
-													<f:selectItems value="#{configCollections.catalogues}" />
+													<f:selectItems value="#{configCollections.salesCatalogues}" />
 												</aon:selectOneMenu>
 											</f:facet>
 										</aon:column>

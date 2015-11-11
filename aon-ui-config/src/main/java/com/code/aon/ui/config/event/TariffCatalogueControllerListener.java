@@ -30,7 +30,7 @@ public class TariffCatalogueControllerListener extends ControllerAdapter {
 		TariffCatalogue tariffCatalogue = (TariffCatalogue)event.getController().getTo();
     	try {
             ConfigCollectionsController collections = (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
-        	List<?> catalogues = collections.getCatalogues();
+        	List<?> catalogues = collections.getSalesCatalogues();
         	if (catalogues.size() > 0) {
         		Catalogue catalogue = (Catalogue)((SelectItem)catalogues.get(0)).getValue();
         		tariffCatalogue.setCatalogue(catalogue);

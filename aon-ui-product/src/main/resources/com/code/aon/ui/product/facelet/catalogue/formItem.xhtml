@@ -32,6 +32,9 @@
 		<ui:decorate
 			template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 			<ui:param name="controller" value="#{catalogueItem}" />
+			<ui:param name="newSaveButtonReRender" value="CatalogueTypeDiv" />
+			<ui:param name="saveButtonReRender" value="CatalogueTypeDiv" />
+			<ui:param name="removeButtonReRender" value="CatalogueTypeDiv" />
 			<ui:define name="columns">
 	
 				<aon:column alias="CatalogueItem.product.code" 
@@ -42,6 +45,7 @@
 					<aon:outputText value="#{to.product.code} - #{to.itemName}" rendered="#{formList}" />
 					<aon:div rendered="#{formEdit}">
 						<ui:include src="/com/code/aon/ui/product/facelet/product/lookup.xhtml" >
+							<ui:param name="lookupBean" value="#{catalogue.to.purchase ? purchaseProductLookup : saleProductLookup}" />
 							<ui:param name="lookupTo" value="#{catalogueItem.to.product}" />
 							<ui:param name="idRequired" value="#{true}" />
 							<ui:param name="skipLabel" value="#{true}" />
@@ -63,6 +67,7 @@
 					<f:facet name="footer">
 						<aon:div rendered="#{formNew}">
 							<ui:include src="/com/code/aon/ui/product/facelet/product/lookup.xhtml" >
+								<ui:param name="lookupBean" value="#{catalogue.to.purchase ? purchaseProductLookup : saleProductLookup}" />
 								<ui:param name="lookupTo" value="#{catalogueItem.to.product}" />
 								<ui:param name="idRequired" value="#{true}" />
 								<ui:param name="skipLabel" value="#{true}" />
