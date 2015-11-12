@@ -289,7 +289,7 @@ public interface CretaService {
 		}-*/;
 
 		public final native String getName() /*-{
-			return this.name;
+			return this.name ? this.name : 'TRABAJADORES_TRAMOS';
 		}-*/;
 	}
 
