@@ -24,4 +24,6 @@ public interface DeductionTypeVisitor {
 	
 	void visitFogasa(DeductionType deductionType);
 
+	void visitEmbargo(DeductionType deductionType);
+
 }

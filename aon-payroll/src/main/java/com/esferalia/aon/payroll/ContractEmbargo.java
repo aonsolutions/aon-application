@@ -65,7 +65,7 @@ public class ContractEmbargo extends ContractEmbargoDB implements IContractEmbar
 	@Override
 	@Transient
 	public DeductionType getType() {
-		return null;
+		return DeductionType.EMBARGO;
 	}
 
 	@Override

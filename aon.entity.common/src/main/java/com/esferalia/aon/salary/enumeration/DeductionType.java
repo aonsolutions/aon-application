@@ -87,6 +87,13 @@ public enum DeductionType implements IResourceable {
 			visitor.visitFogasa(this);
 		}
 		
+	},
+	EMBARGO(false)
+	{
+		@Override
+		public void accept(DeductionTypeVisitor visitor) {
+			visitor.visitEmbargo(this);
+		}
 	}
 	;
 	
