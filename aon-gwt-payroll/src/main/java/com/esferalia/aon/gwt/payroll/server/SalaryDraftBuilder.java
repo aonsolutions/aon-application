@@ -700,8 +700,11 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 
 	@Override
 	public void onCompileError(IContractBonus bonus, String message) {
-		// TODO Auto-generated method stub
-
+		BonusEvent bonusEvent = new BonusEvent();
+		bonusEvent.setMessage(message);
+		bonusEvent.setType(Event.Type.ERROR);
+		bonusEvent.setBonus(newBonus(bonus));
+		salaryDraft.addBonusEvent(bonusEvent);
 	}
 
 	@Override
