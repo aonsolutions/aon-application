@@ -2968,7 +2968,7 @@ public class SQLContractSalaryCalculatorContext extends
 
 
 	private double getSalaryHours(Period p) {
-		return getWorkedHours(new Period(contractStartDate, contractEndDate));
+		return getWorkedHours(p);
 	}
 
 	private boolean isIndefinite() {
