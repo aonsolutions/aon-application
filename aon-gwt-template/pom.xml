@@ -143,6 +143,13 @@
 		</dependency>
 		
 		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.warehouse</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 			<version>3.11</version>

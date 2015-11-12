@@ -8,8 +8,13 @@ import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 public class SecurityImpl implements ISecurity {
 
 	@Override
-	public User getUser(AONContext ctx,String login) {
+	public User getUser(AONContext ctx, String login) {
 		return SecurityDAO.getUser(ctx, login);
+	}
+	
+	@Override
+	public User getUser(AONContext ctx, Integer userId) {
+		return SecurityDAO.getUser(ctx, userId);
 	}
 
 	@Override

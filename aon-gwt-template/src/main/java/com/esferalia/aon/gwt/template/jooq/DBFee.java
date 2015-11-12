@@ -41,7 +41,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 public class DBFee {
 
 	static Integer domainIdFee;
-	public static Error insertFee(String domain, Integer domainId, Vector<FeeInfo> fees, AuditInfo ai){
+	public static Error insertFee(String domain, Integer domainId, Vector<FeeInfo> fees, AuditInfo ai, String login){
 		Error error = new Error();
 		error.setError(true);
 		Vector<String> verror = new Vector<String>();
@@ -49,7 +49,7 @@ public class DBFee {
 		error.setTextError(verror);
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Vector<String> v = new Vector<String>();
 			InsertValuesStep17<CustomerFeeRecord, Integer, Integer, Integer, Short, Integer, String, Double, Double, String, java.sql.Date, java.sql.Date, java.sql.Date, Short, Byte, Integer, Integer, Integer> customerFeeInsertQuery = ctx.getDslContext().insertInto(CUSTOMER_FEE, CUSTOMER_FEE.DOMAIN, CUSTOMER_FEE.PROJECT, CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE, CUSTOMER_FEE.ITEM, CUSTOMER_FEE.DESCRIPTION, CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.INITIAL_DATE, CUSTOMER_FEE.FINAL_DATE, CUSTOMER_FEE.BILLING_DATE, CUSTOMER_FEE.PERIOD, CUSTOMER_FEE.SECURITY_LEVEL, CUSTOMER_FEE.INVOICING_GROUP, CUSTOMER_FEE.SELLER, CUSTOMER_FEE.WORKPLACE);
@@ -152,10 +152,10 @@ public class DBFee {
 		}
 	}
 	
-	public static Customer getCustomer(Domain domain, String username, String client, Boolean ignoreInactiveClient){
+	public static Customer getCustomer(Domain domain, String login, String client, Boolean ignoreInactiveClient){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), username);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			Result<Record5<Integer, String, String, String, Byte>> result = null;
 			if(ignoreInactiveClient){
 				result = ctx.getDslContext().select(REGISTRY.ID, REGISTRY.ALIAS,
@@ -221,10 +221,10 @@ public class DBFee {
 		}
 	}
 	
-	public static Vector<Customer> getCustomers(String domain,Integer domainId) {
+	public static Vector<Customer> getCustomers(String domain,Integer domainId, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 
 			Result<Record4<Integer, String, String, String>> data = ctx.getDslContext().select(REGISTRY.ID, REGISTRY.ALIAS, REGISTRY.DOCUMENT, REGISTRY.NAME)
 					.from(REGISTRY).join(CUSTOMER).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
@@ -256,10 +256,10 @@ public class DBFee {
 	
 	
 	
-	public static List<Seller> getSellers(String domain, Integer domainId){
+	public static List<Seller> getSellers(String domain, Integer domainId, String login){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 
 			Result<Record4<Integer, String, String, String>> data = ctx.getDslContext().select(REGISTRY.ID,REGISTRY.ALIAS,REGISTRY.NAME, REGISTRY.DOCUMENT)
 					.from(REGISTRY).join(SELLER).on(REGISTRY.ID.eq(SELLER.REGISTRY))
@@ -286,10 +286,10 @@ public class DBFee {
 		}
 	}
 
-	public static Vector<Project> getProjects(String domain,Integer domainId){
+	public static Vector<Project> getProjects(String domain,Integer domainId, String login){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 
 			Result<Record3<Integer, String, String>> data = ctx.getDslContext().select(PROJECT.ID,PROJECT.ALIAS,PROJECT.NAME)
 					.from(PROJECT)
@@ -316,10 +316,10 @@ public class DBFee {
 	}
 
 	
-	public static Project getProject(Domain domain,String str, Integer customer){
+	public static Project getProject(Domain domain,String str, Integer customer, String login){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId());
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 
 			Result<Record3<Integer, String, String>> result = ctx.getDslContext().select(PROJECT.ID,PROJECT.ALIAS,PROJECT.NAME)
 					.from(PROJECT)
@@ -343,10 +343,10 @@ public class DBFee {
 		}
 	}
 
-	public static Vector<WorkPlace> getWorkplaces(String domain,Integer domainId){
+	public static Vector<WorkPlace> getWorkplaces(String domain,Integer domainId, String login){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 
 			Result<Record2<Integer, String>> data = ctx.getDslContext().select(WORKPLACE.ID,WORKPLACE.DESCRIPTION)
 					.from(WORKPLACE)
@@ -372,10 +372,10 @@ public class DBFee {
 		}
 	}
 	
-	public static Vector<InvoicingGroup> getInvoicingGroups(String domain,Integer domainId) {
+	public static Vector<InvoicingGroup> getInvoicingGroups(String domain,Integer domainId, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 
 			Result<Record2<Integer, String>> data = ctx.getDslContext().select(INVOICING_GROUP.ID,INVOICING_GROUP.DESCRIPTION)
 					.from(INVOICING_GROUP)

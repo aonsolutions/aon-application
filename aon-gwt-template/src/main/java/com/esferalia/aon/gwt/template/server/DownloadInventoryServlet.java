@@ -43,7 +43,8 @@ public class DownloadInventoryServlet extends HttpServlet {
         String domain_id = p_request.getParameter("domain_id");
         String closed = p_request.getParameter("closed");
         String inventory_id = p_request.getParameter("inventory");
-        
+        String login = p_request.getParameter("username");
+
         Integer inventoryId = Integer.parseInt(inventory_id);
         Integer domainId = Integer.parseInt(domain_id);
         Boolean close = closed.equals("true");
@@ -53,7 +54,7 @@ public class DownloadInventoryServlet extends HttpServlet {
         
         if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-        	b = DBConsults.getTemplate(domain,domainId, id);
+        	b = DBConsults.getTemplate(domain,domainId, id, login);
         }
         else return;
         
@@ -92,7 +93,7 @@ public class DownloadInventoryServlet extends HttpServlet {
         Row fila = hoja.createRow(1);
         
         
-        info = info + DBInventory.getInventoryName(domain, domainId, inventoryId);
+        info = info + DBInventory.getInventoryName(domain, domainId, inventoryId, login);
         
          
         
@@ -138,7 +139,7 @@ public class DownloadInventoryServlet extends HttpServlet {
         celdaf.setCellStyle(style);
  
         //DBConsumption.getConsumption(domain, domainId, 2, 2, 2, new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()));
-        Vector<InventoryInfo> v =  DBInventory.getInventory(domain, domainId, inventoryId, close);
+        Vector<InventoryInfo> v =  DBInventory.getInventory(domain, domainId, inventoryId, close, login);
         
         for(Integer j = 0; j< v.size();j++){
         	InventoryInfo ii = v.get(j);

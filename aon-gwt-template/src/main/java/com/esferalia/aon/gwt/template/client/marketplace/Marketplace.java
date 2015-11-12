@@ -38,6 +38,7 @@ public class Marketplace extends Composite {
 	SimpleLayoutPanel content;
 	
 	Integer domainId;
+	String login;
 	
 	public Marketplace() {
 		splitLayoutPanel = new SplitLayoutPanel();
@@ -53,6 +54,18 @@ public class Marketplace extends Composite {
 		tree = new Tree();
 		content = new SimpleLayoutPanel();
 		
+		Widget ui = binder.createAndBindUi(this);
+		RootLayoutPanel.get("rootPanel").add(ui);
+		load();
+	}
+	
+	public Marketplace(Integer domainId, String login){
+		setDomainId(domainId);
+		splitLayoutPanel = new SplitLayoutPanel();
+		sidebar = new ScrollPanel();
+		tree = new Tree();
+		content = new SimpleLayoutPanel();
+		this.login = login;
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel.get("rootPanel").add(ui);
 		load();

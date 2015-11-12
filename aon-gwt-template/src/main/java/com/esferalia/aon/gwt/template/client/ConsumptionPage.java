@@ -301,7 +301,8 @@ public class ConsumptionPage extends Composite{
 			public void onSuccess(String result) {
 				
 				final String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_aggregate_consumption/"
-								+ "?tmpkey="+result;
+								+ "?tmpkey="+result
+								+ "&username="+ templateList.getLogin();
 				
 				pbd.completed();
 				pbd.hide();

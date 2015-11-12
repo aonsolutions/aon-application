@@ -43,6 +43,8 @@ import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 
 @WebServlet(name = "DownloadTemplatesStock", urlPatterns = { "/aon_gwt_template/gwt_download_stock/*" })
@@ -78,14 +80,16 @@ public class DownloadStockServlet extends HttpServlet {
         String close_inventory = p_request.getParameter("close");
         String only_non_cero = p_request.getParameter("only_non_cero");
         
+        
         Boolean closeInventory = close_inventory.equals("true");
         Integer domainId = Integer.parseInt(domain_id);
         String domain = AonUtil.getDomainName();
         Integer idFile  = Integer.parseInt(fileId);
         Integer userId = AonUtil.getAuthPrincipal().getUserId();
+        User user = AON.getUser(domain, userId);
         Warehouse w = new Warehouse();
         if(!warehouse.equals("-"))
-        	w = DBStock.getWarehouse(warehouse, domainId, domain, userId);
+        	w = DBStock.getWarehouse(warehouse, domainId, domain, user);
 
         byte[] b = null ;
         
@@ -118,7 +122,7 @@ public class DownloadStockServlet extends HttpServlet {
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-        	b = DBConsults.getTemplate(domain,domainId, id);
+        	b = DBConsults.getTemplate(domain,domainId, id, user.getLogin());
         }
         else return;
         
@@ -288,10 +292,10 @@ public class DownloadStockServlet extends HttpServlet {
         if(closeInventory){
         	String inventory_id = p_request.getParameter("inventory");
         	Integer inventoryId = Integer.parseInt(inventory_id);
-        	v= DBStock.getInventoryClosed(domain, domainId, inventoryId, c2);
+        	v= DBStock.getInventoryClosed(domain, domainId, inventoryId, c2, user.getLogin());
         }
         else
-        	v= DBStock.getStocks(domain,domainId,w.getId(),c,"1".equals(only_non_cero));
+        	v= DBStock.getStocks(domain,domainId,w.getId(),c,"1".equals(only_non_cero), user.getLogin());
 
         for(Integer j = 0; j< v.size();j++){
         	Row row = hoja.createRow(j+2);

@@ -160,10 +160,10 @@ public class InventoryController extends BasicController implements IAuditableCo
 				
 				ApplicationParameter ap = AppParamUtil.getParameter(AppParam.AON_PRODUCT_VALUATION_METHOD);
 				switch (ap.getValue()) {
-				case "0": inventoryDetail.setCost(item.getPurchasePrice());System.out.println(inventoryDetail.getCost());break;
-				case "1": inventoryDetail.setCost(getLastPurchasePrice(item));System.out.println(inventoryDetail.getCost());break;
-				case "2": inventoryDetail.setCost(getAveragePurchasePrice(item));System.out.println(inventoryDetail.getCost());break;
-				case "3": inventoryDetail.setCost(getFifoPrice(item, total));System.out.println(inventoryDetail.getCost());break;
+				case "0": inventoryDetail.setCost(total != 0 ? item.getPurchasePrice() : 0.0);break;
+				case "1": inventoryDetail.setCost(getLastPurchasePrice(item, total, AonUtil.getRemoteUser()));break;
+				case "2": inventoryDetail.setCost(getAveragePurchasePrice(item, total, AonUtil.getRemoteUser()));break;
+				case "3": inventoryDetail.setCost(getFifoPrice(item, total, AonUtil.getRemoteUser()));break;
 				default: break;
 				}
 				
@@ -305,21 +305,21 @@ public class InventoryController extends BasicController implements IAuditableCo
 	public static Double getCost(InventoryDetail inventoryDetail){
 		ApplicationParameter ap = AppParamUtil.getParameter(AppParam.AON_PRODUCT_VALUATION_METHOD);
 		switch (ap.getValue()) {
-			case "0": return inventoryDetail.getItem().getPurchasePrice();
-			case "1": return getLastPurchasePrice(inventoryDetail.getItem());
-			case "2": return getAveragePurchasePrice(inventoryDetail.getItem());
-			case "3": return getFifoPrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity());	
+			case "0": return inventoryDetail.getRealQuantity() != 0 ? inventoryDetail.getItem().getPurchasePrice() : 0.0;
+			case "1": return getLastPurchasePrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser());
+			case "2": return getAveragePurchasePrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser());
+			case "3": return getFifoPrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser());	
 			default : return inventoryDetail.getItem().getPurchasePrice(); 
 		}
 
 	}
 	
-	public static Double getLastPurchasePrice(Item item){
-		if(item.getProduct().isInventoriable()) 
+	public static Double getLastPurchasePrice(Item item, Double quantity, String user){
+		if(quantity == 0) return 0.0;
+		if(item.getProduct().isInventoriable() && item.getProduct().isManufactured()) 
 			return item.getPurchasePrice();
-
+		
 		String domainName = AonUtil.getDomainName();
-		String user = AonUtil.getRemoteUser();
 
 		// COMPRAS (Albaranes)
 		IncomeDetail incomeDetail = AON.getLastIncomeDetail(domainName, item.getDomain(), user, OccamClassesTransform.getItem(item));
@@ -348,13 +348,13 @@ public class InventoryController extends BasicController implements IAuditableCo
 		else return date1.compareTo(date2) < 0 ? price1 : price2;
 	}
 	
-	public static Double getAveragePurchasePrice(Item item){
-		if(item.getProduct().isInventoriable()) 
+	public static Double getAveragePurchasePrice(Item item, Double quantity, String user){
+		if(quantity == 0) return 0.0;
+		if(item.getProduct().isInventoriable() && item.getProduct().isManufactured()) 
 			return item.getPurchasePrice();
 					
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = item.getDomain();
-		String user = AonUtil.getRemoteUser();
 		
 		ApplicationParameter ap = AppParamUtil.getParameter(AppParam.AON_PRODUCT_AVERAGE_MONTHS);
 
@@ -366,19 +366,19 @@ public class InventoryController extends BasicController implements IAuditableCo
 		Double sum = invoiceSum + incomeSum;
 		Double invoiceQuantity = invoiceList.stream().mapToDouble(x -> x.getQuantity()).sum();
 		Double incomeQuantity = incomeList.stream().mapToDouble(x -> x.getQuantity()).sum();
-		Double quantity = invoiceQuantity + incomeQuantity;
+		Double totalQuantity = invoiceQuantity + incomeQuantity;
 		
 		if(quantity == 0) return item.getPurchasePrice();
-		return  sum / quantity;
+		return  sum / totalQuantity;
 	}
 
-	public static Double getFifoPrice(Item item, Double quantity){
-		if(item.getProduct().isInventoriable() || quantity == 0) 
+	public static Double getFifoPrice(Item item, Double quantity, String user){
+		if(quantity == 0) return 0.0; 
+		if((item.getProduct().isInventoriable() && item.getProduct().isManufactured())) 
 			return item.getPurchasePrice();
 		
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = item.getDomain();
-		String user = AonUtil.getRemoteUser();
 		
 		LinkedList<InvoiceDetail> invoiceList = AON.getLastInvoiceDetailList(domainName, domainId, user, OccamClassesTransform.getItem(item), "48");
 		LinkedList<IncomeDetail> incomeList = AON.getLastIncomeDetailList(domainName, domainId, user, OccamClassesTransform.getItem(item), "48");
@@ -395,16 +395,20 @@ public class InventoryController extends BasicController implements IAuditableCo
 			IncomeDetail incomeDetail = incomeList.size() > j ? incomeList.get(j) : null;
 			
 			if((invoiceDetail!= null && incomeDetail == null) ||(invoiceDetail!= null &&
-					invoiceDetail.getInvoice().getIssueDate().compareTo(incomeDetail.getIncome().getIssueDate())<= 0)){
-				q = q + invoiceDetail.getQuantity(); 
-				Fifo fifo = new Fifo(invoiceDetail.getPrice(), invoiceDetail.getQuantity(), Double.parseDouble(invoiceDetail.getDiscountExpression()));
-				fifoList.add(fifo);
-				i++;
+					invoiceDetail.getInvoice().getIssueDate().compareTo(incomeDetail.getIncome().getIssueDate())>= 0)){
+				if(invoiceDetail.getQuantity() > 0){
+					q = q + invoiceDetail.getQuantity(); 
+					Fifo fifo = new Fifo(invoiceDetail.getPrice(), invoiceDetail.getQuantity(), Double.parseDouble(invoiceDetail.getDiscountExpression()));
+					fifoList.add(fifo);
+				}
+				i++;	
 			}
 			else if(incomeDetail != null){
-				q = q + incomeDetail.getQuantity(); 
-				Fifo fifo = new Fifo(incomeDetail.getPrice(), incomeDetail.getQuantity(), Double.parseDouble(incomeDetail.getDiscountExpression()));
-				fifoList.add(fifo);
+				if(incomeDetail.getQuantity() > 0){
+					q = q + incomeDetail.getQuantity(); 
+					Fifo fifo = new Fifo(incomeDetail.getPrice(), incomeDetail.getQuantity(), Double.parseDouble(incomeDetail.getDiscountExpression()));
+					fifoList.add(fifo);
+				}
 				j++;
 			}
 			else qError = quantity;

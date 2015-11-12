@@ -134,7 +134,7 @@ public class DBProduct {
 		return count > 0;
 	}
 	
-	public static Error insertProducts2(String domain, Integer domainId,Vector<ProductInfo> products, TemplateInfo templateInfo, AuditInfo ai){
+	public static Error insertProducts2(String domain, Integer domainId,Vector<ProductInfo> products, TemplateInfo templateInfo, AuditInfo ai, String login){
 		long start = System.currentTimeMillis();
 		Error error = new Error();
 		error.setError(true);
@@ -143,7 +143,7 @@ public class DBProduct {
 		error.setTextError(verror);
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Vector<com.esferalia.aon.occam.api.model.product.Product> uproducts = new Vector<com.esferalia.aon.occam.api.model.product.Product>();
 			Vector<com.esferalia.aon.occam.api.model.product.Product> iproducts = new Vector<com.esferalia.aon.occam.api.model.product.Product>();
@@ -263,10 +263,10 @@ public class DBProduct {
 		return false;
 	}
 	
-	public static ProductCategory getCategory(String domain,Integer domainId, Integer id) {
+	public static ProductCategory getCategory(String domain,Integer domainId, Integer id, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Result<Record5<Integer, String, String, String, String>> data = ctx.getDslContext().select(PCATEGORY.ID,PCATEGORY.NAME,PCATEGORY.DETAIL,PCATEGORY.DETAIL2,PCATEGORY.DETAIL3)
 				.from(PCATEGORY)
@@ -283,10 +283,10 @@ public class DBProduct {
 			if (ctx != null) ctx.close();
 		}	
 	}
-	public static ProductCategory getCategory(String domain,Integer domainId, String name) {
+	public static ProductCategory getCategory(String domain,Integer domainId, String name, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Result<Record5<Integer, String, String, String, String>> data = ctx.getDslContext().select(PCATEGORY.ID,PCATEGORY.NAME,PCATEGORY.DETAIL,PCATEGORY.DETAIL2,PCATEGORY.DETAIL3)
 				.from(PCATEGORY)
@@ -304,10 +304,10 @@ public class DBProduct {
 		}	
 	}
 	
-	public static  Vector<ProductCategory> getCategories(String domain, Integer domainId)  {
+	public static  Vector<ProductCategory> getCategories(String domain, Integer domainId, String login)  {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Result<Record5<Integer, String, String, String, String>> data = ctx.getDslContext().select(PCATEGORY.ID,PCATEGORY.NAME,PCATEGORY.DETAIL,PCATEGORY.DETAIL2,PCATEGORY.DETAIL3)
 				.from(PCATEGORY)
@@ -357,10 +357,10 @@ public class DBProduct {
 		}
 	}
 	
-	public static  Vector<com.esferalia.aon.gwt.template.shared.ProductCategory> getCategoriesShared(String domain, Integer domainId)  {
+	public static  Vector<com.esferalia.aon.gwt.template.shared.ProductCategory> getCategoriesShared(String domain, Integer domainId, String login)  {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Result<Record2<Integer, String>> data = ctx.getDslContext().select(PCATEGORY.ID,PCATEGORY.NAME)
 				.from(PCATEGORY)
@@ -401,10 +401,10 @@ public class DBProduct {
 		}
 	}
 	
-	public static Vector<ProductInfo> getProducts(String domain,Integer domainId, Condition condition) {
+	public static Vector<ProductInfo> getProducts(String domain,Integer domainId, Condition condition, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Result<Record19<String, String, Integer, Integer, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Double, Double, String, String, String, String, String, Integer>>
 				data =	ctx.getDslContext().select(PRODUCT.CODE,PRODUCT.NAME,PRODUCT.CATEGORY
@@ -424,13 +424,13 @@ public class DBProduct {
 				i.setCode(r.value1());
 				i.setName(r.value2());
 				if(r.value3()!=null){
-					ProductCategory c = getCategory(domain,domainId, r.value3());
+					ProductCategory c = getCategory(domain,domainId, r.value3(), login);
 					i.setCategory(c.getName());
 				}
 				else i.setCategory("");
 				
 				if(r.value4()!=null){
-					Brand brand = getBrand(domain,domainId, r.value4());
+					Brand brand = getBrand(domain,domainId, r.value4(), login);
 					i.setBrand(brand.getName());
 				}
 				else i.setBrand("");
@@ -439,7 +439,7 @@ public class DBProduct {
 					i.setType(com.esferalia.aon.occam.api.model.type.ProductType.values()[r.value5()]);
 				}
 				if(r.value6()!=null){
-					com.esferalia.aon.occam.api.model.product.Tax vat = getTax(domain,domainId, r.value6());
+					com.esferalia.aon.occam.api.model.product.Tax vat = getTax(domain,domainId, r.value6(), login);
 					i.setVat(vat);
 				}
 				else{
@@ -448,7 +448,7 @@ public class DBProduct {
 					i.setVat(t);
 				}
 				if(r.value7()!=null){
-					com.esferalia.aon.occam.api.model.product.Tax retention = getTax(domain,domainId, r.value7());
+					com.esferalia.aon.occam.api.model.product.Tax retention = getTax(domain,domainId, r.value7(), login);
 					i.setRetention(retention);
 				}
 				else{
@@ -504,10 +504,10 @@ public class DBProduct {
 		
 	}
 	
-	public static  Vector<ProductTag> getTags(String domain, Integer domainId){
+	public static  Vector<ProductTag> getTags(String domain, Integer domainId, String login){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Result<Record2< Integer, String>> data = ctx.getDslContext().select(TAG.ID,TAG.NAME)
 				.from(TAG)
@@ -555,10 +555,10 @@ public class DBProduct {
 		}
 	}
 	
-	public static  Vector<Brand> getBrands(String domain, Integer domainId) {
+	public static  Vector<Brand> getBrands(String domain, Integer domainId, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Result<Record2<Integer, String>> data = ctx.getDslContext().select(BRAND.ID,BRAND.NAME)
 				.from(BRAND)
@@ -604,10 +604,10 @@ public class DBProduct {
 		}
 	}
 	
-	public static Brand getBrand(String domain,Integer domainId, Integer id) {
+	public static Brand getBrand(String domain,Integer domainId, Integer id, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Result<Record2<Integer, String>> data = ctx.getDslContext().select(BRAND.ID,BRAND.NAME)
 				.from(BRAND)
@@ -623,10 +623,10 @@ public class DBProduct {
 		}	
 	}
 	
-	public static Brand getBrand(String domain,Integer domainId, String name) {
+	public static Brand getBrand(String domain,Integer domainId, String name, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Result<Record2<Integer, String>> data = ctx.getDslContext().select(BRAND.ID,BRAND.NAME)
 				.from(BRAND)
@@ -642,10 +642,10 @@ public class DBProduct {
 		}	
 	}
 	
-	public static com.esferalia.aon.occam.api.model.product.Tax getTax(String domain, Integer domainId, Integer id) {
+	public static com.esferalia.aon.occam.api.model.product.Tax getTax(String domain, Integer domainId, Integer id, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Result<Record3<Integer,String,Double>>  data = ctx.getDslContext().select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
 				.from(TAX)
@@ -662,11 +662,11 @@ public class DBProduct {
 		}	
 	}
 	
-	public static Vector<Tax> getRetentions(String domain, Integer domainId)  {
+	public static Vector<Tax> getRetentions(String domain, Integer domainId, String login)  {
 		Vector<Tax> v = new Vector<Tax>();
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Result<Record3<Integer,String,Double>> data = ctx.getDslContext().select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
 					.from(TAX)
@@ -709,11 +709,11 @@ public class DBProduct {
 		}
 	}
 	
-	public static Vector<Tax> getIVA(String domain, Integer domainId) {
+	public static Vector<Tax> getIVA(String domain, Integer domainId, String login) {
 		Vector<Tax> v = new Vector<Tax>();
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Result<Record3<Integer,String,Double>> data = ctx.getDslContext().select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
 					.from(TAX)
@@ -756,10 +756,10 @@ public class DBProduct {
 		}
 	}
 	
-	public static Tax getIVAName(String domain, Integer domainId, String name) {
+	public static Tax getIVAName(String domain, Integer domainId, String name, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Record3<Integer, String, Double> data = ctx.getDslContext().select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
 					.from(TAX)

@@ -48,7 +48,8 @@ public class DownloadTemplatesServlet extends HttpServlet {
         String driveId = p_request.getParameter("drive_id");
         String fileId = p_request.getParameter("id");
         String name = p_request.getParameter("name");
-        
+        String login = p_request.getParameter("username");
+
         String domain = AonUtil.getDomainName();
         Integer idFile = Integer.parseInt(fileId);
         Integer domainId = null;
@@ -89,7 +90,7 @@ public class DownloadTemplatesServlet extends HttpServlet {
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-            b = DBConsults.getTemplate(domain,domainId, id);
+            b = DBConsults.getTemplate(domain,domainId, id, login);
 
         }
         else return;

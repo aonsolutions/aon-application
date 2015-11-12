@@ -13,6 +13,7 @@ public class TemplateList implements IsSerializable{
 	Vector<TemplateInfo> list;
 	String domain;
 	Integer domainId;
+	String login;
 	
 	public Vector<TemplateInfo> getList() {
 		return list;
@@ -31,6 +32,12 @@ public class TemplateList implements IsSerializable{
 	}
 	public void setDomainId(Integer domainId) {
 		this.domainId = domainId;
+	}
+	public String getLogin() {
+		return login;
+	}
+	public void setLogin(String login) {
+		this.login = login;
 	}
 	 
 	

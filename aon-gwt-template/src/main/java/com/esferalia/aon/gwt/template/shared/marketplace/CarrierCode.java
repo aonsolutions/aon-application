@@ -46,5 +46,13 @@ public enum CarrierCode implements IsSerializable{
 		this.name = name;
 	}
 	
-	
+	public static CarrierCode getValue(String name){
+		CarrierCode[] array = CarrierCode.values();
+		for(Integer i = 0; i < array.length; i++){
+			if(array[i].getName().equalsIgnoreCase(name)){
+				return array[i];
+			}
+		}
+		return OTRO;
+	}
 }

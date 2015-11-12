@@ -50,6 +50,7 @@ public class DownloadConsumptionServlet extends HttpServlet {
         String initial_id = p_request.getParameter("initial_id");
         String final_id = p_request.getParameter("final_id");
         String only_negative = p_request.getParameter("only_negative");
+        String login = p_request.getParameter("username");
         Boolean detail = p_request.getParameter("detail").equalsIgnoreCase("True");
         
         Integer domainId = Integer.parseInt(domain_id);
@@ -80,7 +81,7 @@ public class DownloadConsumptionServlet extends HttpServlet {
 
         if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-        	b = DBConsults.getTemplate(domain,domainId, id);
+        	b = DBConsults.getTemplate(domain,domainId, id, login);
         }
         else return;
         
@@ -137,9 +138,9 @@ public class DownloadConsumptionServlet extends HttpServlet {
         
         
         
-        String info = "Control de Consumo ## "+DBConsumption.getWarehouseName(domain, domainId, warehouseId)+" ## "
-        			+ DBConsumption.getInventoryName(domain, domainId, initialId) +" ## "
-        			+ DBConsumption.getInventoryName(domain, domainId, finalId);
+        String info = "Control de Consumo ## "+DBConsumption.getWarehouseName(domain, domainId, warehouseId, login)+" ## "
+        			+ DBConsumption.getInventoryName(domain, domainId, initialId, login) +" ## "
+        			+ DBConsumption.getInventoryName(domain, domainId, finalId, login);
         
         rowInfo.setHeightInPoints(16);
         fila.setHeightInPoints(16);
@@ -181,7 +182,7 @@ public class DownloadConsumptionServlet extends HttpServlet {
         Cell celdaf = fila.createCell(columns);
         celdaf.setCellStyle(style);
         String warehouseName="";
-        Map<Integer, ConsumptionItem> map = DBConsumption.getConsumption(domain, domainId, initialId, finalId, warehouseId, new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()), warehouseName);
+        Map<Integer, ConsumptionItem> map = DBConsumption.getConsumption(domain, domainId,login, initialId, finalId, warehouseId, new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()), warehouseName);
         Vector<ConsumptionItem> v =  new Vector<ConsumptionItem>(map.values());
         Integer num = 0;
         for(Integer j = 0; j< v.size();j++){

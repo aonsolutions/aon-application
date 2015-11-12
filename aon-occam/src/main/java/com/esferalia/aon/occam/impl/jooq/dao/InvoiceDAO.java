@@ -23,7 +23,7 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record3;
-import org.jooq.Record4;
+import org.jooq.Record5;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
@@ -270,12 +270,14 @@ public class InvoiceDAO {
 	public static LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, Item item, Date startDate){
 		java.sql.Date date = new java.sql.Date(startDate.getTime());
 		
-		Result<Record4<java.sql.Date, Double, Integer, String>> data = ctx.getDslContext()
-				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR)
+		Result<Record5<java.sql.Date, Double, Integer, String, Double>> data = ctx.getDslContext()
+				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR
+						,INVOICE_DETAIL.QUANTITY)
 				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
 				.where(INVOICE_DETAIL.ITEM.eq(item.getId()))
 				.and(INVOICE.TYPE.eq((byte)0))
 				.and(INVOICE.ISSUE_DATE.greaterOrEqual(date))
+				.orderBy(INVOICE.ISSUE_DATE.desc())
 				.fetch();
 		
 		LinkedList<InvoiceDetail> list = new LinkedList<InvoiceDetail>();
@@ -290,6 +292,7 @@ public class InvoiceDAO {
 			if(r.value2() != null) invoiceDetail.setPrice(r.value2());
 			if(r.value3() != null) invoiceDetail.setId(r.value3());
 			invoiceDetail.setDiscountExpression(r.value4() != null ? r.value4() : "0.0");
+			invoiceDetail.setQuantity(r.value5() != null ? r.value5() : 0.0);
 			list.add(invoiceDetail);
 		});
 		return list;

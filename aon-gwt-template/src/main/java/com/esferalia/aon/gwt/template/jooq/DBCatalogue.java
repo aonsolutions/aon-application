@@ -26,17 +26,18 @@ import com.esferalia.aon.gwt.template.server.CatalogueInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.security.User;
 
 
 
 public class DBCatalogue {
 	
-	public static Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Integer domainId,String domain, Integer userId){
+	public static Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Integer domainId,String domain, User user){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, user.getLogin());
 			Result<Record2<Integer, String>> record;
-			if(isParentUser(ctx, userId, domainId)){
+			if(isParentUser(ctx, user.getId(), domainId)){
 				record = ctx.getDslContext().select(WORKPLACE.ID, WORKPLACE.DESCRIPTION)
 						.from(WORKPLACE)
 						.where(WORKPLACE.DOMAIN.eq(domainId))
@@ -49,7 +50,7 @@ public class DBCatalogue {
 					.from(WORKPLACE).join(USER_SCOPE).on(WORKPLACE.SCOPE.eq(USER_SCOPE.SCOPE))
 					.where(WORKPLACE.DOMAIN.eq(domainId))
 					.and(WORKPLACE.ACTIVE.eq((byte)1))
-					.and(USER_SCOPE.USER_ID.eq(userId))
+					.and(USER_SCOPE.USER_ID.eq(user.getId()))
 					.orderBy(WORKPLACE.DESCRIPTION)
 					.fetch();
 			}
@@ -67,10 +68,10 @@ public class DBCatalogue {
 		}
 	}
 	
-	public static Vector<com.esferalia.aon.gwt.template.shared.Department> getDepartments(Integer domainId,String domain, Integer workplace){
+	public static Vector<com.esferalia.aon.gwt.template.shared.Department> getDepartments(Integer domainId,String domain, Integer workplace, String login){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Result<Record2<Integer, String>> record = ctx.getDslContext().selectDistinct(DEPARTMENT.ID, DEPARTMENT.NAME)
 					.from(DEPARTMENT).join(WORKPLACE_DEPARTMENT).on(DEPARTMENT.ID.eq(WORKPLACE_DEPARTMENT.DEPARTMENT))
@@ -92,11 +93,11 @@ public class DBCatalogue {
 		}
 	}
 	
-	public static WorkPlace getWorkplace(String workplace, Integer domainId, String domain) {
+	public static WorkPlace getWorkplace(String workplace, Integer domainId, String domain, String login) {
 		
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Record1<Integer> record = ctx.getDslContext().select(WORKPLACE.ID)
 				.from(WORKPLACE)
@@ -116,11 +117,11 @@ public class DBCatalogue {
 	}
 	
 
-	public static WorkPlace getWorkplace(Integer workplace, Integer domainId, String domain){
+	public static WorkPlace getWorkplace(Integer workplace, Integer domainId, String domain, String login){
 		
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Record2<String,Integer> record = ctx.getDslContext().select(WORKPLACE.DESCRIPTION,WORKPLACE.SCOPE)
 				.from(WORKPLACE)
@@ -143,11 +144,11 @@ public class DBCatalogue {
 		}
 	}
 	
-	public static Department getDepartment(WorkPlace wp, String department, Integer domainId, String domain){
+	public static Department getDepartment(WorkPlace wp, String department, Integer domainId, String domain, String login){
 		
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Record1<Integer> record = ctx.getDslContext().selectDistinct(DEPARTMENT.ID)
 				.from(DEPARTMENT).join(WORKPLACE_DEPARTMENT)
@@ -169,11 +170,11 @@ public class DBCatalogue {
 		}
 	}
 	
-public static Department getDepartment(WorkPlace wp, Integer department, Integer domainId, String domain) {
+public static Department getDepartment(WorkPlace wp, Integer department, Integer domainId, String domain, String login) {
 		
 	AONContext ctx = null;
 	try {
-		ctx = AONContext.getAONContext(domain, domainId);
+		ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Record1<String> record = ctx.getDslContext().selectDistinct(DEPARTMENT.NAME)
 				.from(DEPARTMENT).join(WORKPLACE_DEPARTMENT)
@@ -195,10 +196,10 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 		}
 	}
 	
-	public static Vector<CatalogueInfo> getCatalogues(String domain, Integer domainId, WorkPlace wp, Department dt){
+	public static Vector<CatalogueInfo> getCatalogues(String domain, Integer domainId, WorkPlace wp, Department dt, String login){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Result<Record6<Integer, Integer, Integer, String, String, String>> record = null;
 			if(wp != null && dt != null){
@@ -243,8 +244,8 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 				Vector<CatalogueInfo> cs = new Vector<CatalogueInfo>();
 				record.stream().forEach(r -> {
 					CatalogueInfo c = new CatalogueInfo();
-					WorkPlace w = getWorkplace(r.value2(),domainId, domain);
-					Department d = getDepartment(w, r.value3(), domainId, domain);
+					WorkPlace w = getWorkplace(r.value2(),domainId, domain, login);
+					Department d = getDepartment(w, r.value3(), domainId, domain, login);
 					c.setDepartment(d.getName());
 					c.setWorkplace(w.getDescription());
 					Product p = AON.getProduct(sctx, r.value1());

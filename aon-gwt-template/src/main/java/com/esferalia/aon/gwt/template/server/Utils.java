@@ -24,7 +24,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.code.aon.product.Item;
+import com.code.aon.ui.warehouse.controller.InventoryController;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 
 public class Utils {
 
@@ -386,5 +392,16 @@ public class Utils {
 			return false;
 		}
 		
+	}
+	
+	public static Double getValCost(AONContext ctx, Double quantity, Item item, String login){
+		ApplicationParameter ap = AppParamDAO.fetchOne(ctx, AppParam.AON_PRODUCT_VALUATION_METHOD);
+		switch (ap.getValue()) {
+			case "0": return quantity != 0 ? item.getPurchasePrice() : 0.0;
+			case "1": return InventoryController.getLastPurchasePrice(item, quantity, login);
+			case "2": return InventoryController.getAveragePurchasePrice(item, quantity, login);
+			case "3": return InventoryController.getFifoPrice(item, quantity, login);	
+			default : return quantity != 0 ? item.getPurchasePrice() : 0.0;
+		}
 	}
 }

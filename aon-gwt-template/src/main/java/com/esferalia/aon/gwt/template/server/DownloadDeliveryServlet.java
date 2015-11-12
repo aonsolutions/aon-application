@@ -101,7 +101,8 @@ public class DownloadDeliveryServlet extends HttpServlet {
     	String modificationDate1 = p_request.getParameter("modificationDate1");
     	String modificationDate2 = p_request.getParameter("modificationDate2");
 
-    	
+        String login = p_request.getParameter("username");
+
         
         Integer domainId = Integer.parseInt(domain_id);
         String domain = AonUtil.getDomainName();
@@ -139,7 +140,7 @@ public class DownloadDeliveryServlet extends HttpServlet {
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-        	b = DBConsults.getTemplate(domain,domainId, id);
+        	b = DBConsults.getTemplate(domain,domainId, id, login);
         }
         else return;
         
@@ -431,7 +432,7 @@ public class DownloadDeliveryServlet extends HttpServlet {
         }
         //TODO 
         
-        Vector<ProductInfo> v =  DBProduct.getProducts(domain,domainId,c);
+        Vector<ProductInfo> v =  DBProduct.getProducts(domain,domainId,c, login);
 
         for(Integer j = 0; j< v.size();j++){
         	Row row = hoja.createRow(j+2);

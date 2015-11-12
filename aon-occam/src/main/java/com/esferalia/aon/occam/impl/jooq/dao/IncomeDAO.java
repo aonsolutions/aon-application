@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import org.jooq.Record3;
-import org.jooq.Record4;
+import org.jooq.Record5;
 import org.jooq.Result;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -44,11 +44,13 @@ public class IncomeDAO {
 	public static LinkedList<IncomeDetail> getLastIncomeDetailList(AONContext ctx, Item item, Date startDate){
 		java.sql.Date date = new java.sql.Date(startDate.getTime());
 		
-		Result<Record4<java.sql.Date, Double, Integer, String>> data = ctx.getDslContext()
-				.select(INCOME.ISSUE_TIME, INCOME_DETAIL.PRICE, INCOME_DETAIL.ID, INCOME_DETAIL.DISCOUNT_EXPR)
+		Result<Record5<java.sql.Date, Double, Integer, String, Double>> data = ctx.getDslContext()
+				.select(INCOME.ISSUE_TIME, INCOME_DETAIL.PRICE, INCOME_DETAIL.ID, INCOME_DETAIL.DISCOUNT_EXPR
+						,INCOME_DETAIL.QUANTITY)
 				.from(INCOME).join(INCOME_DETAIL).on(INCOME.ID.equal(INCOME_DETAIL.INCOME))
 				.where(INCOME_DETAIL.ITEM.eq(item.getId()))
 				.and(INCOME.ISSUE_TIME.greaterOrEqual(date))
+				.orderBy(INCOME.ISSUE_TIME.desc())
 				.fetch();
 		
 		LinkedList<IncomeDetail> list = new LinkedList<IncomeDetail>();
@@ -59,6 +61,7 @@ public class IncomeDAO {
 				Income income = new Income();
 				income.setIssueDate(r.value1());
 				incomeDetail.setIncome(income);
+				incomeDetail.setQuantity(r.value5() != null ? r.value5() : 0.0);
 			}
 			if(r.value2() != null) incomeDetail.setPrice(r.value2());
 			if(r.value3() != null) incomeDetail.setId(r.value3());

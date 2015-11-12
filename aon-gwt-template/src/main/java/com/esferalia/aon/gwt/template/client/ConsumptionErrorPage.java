@@ -30,7 +30,8 @@ public class ConsumptionErrorPage extends ConsumptionPage{
 
 		String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_aggregate_consumption/"
             	+ "?id=" + Integer.toString(templateInfo.getId())
-            	+ "&domain_id=" + domainId;
+            	+ "&domain_id=" + domainId
+            	+ "&username="+ templateList.getLogin();
 		
 		for (Integer index= 0; index < selectedBox.getItemCount(); index++) {
 			fileDownloadURL = fileDownloadURL +"&warehouse_id"+ index +  "=" + selectedBox.getValue(index);

@@ -45,13 +45,13 @@ public class ConsumptionUtil {
 	
 
     public static File generateConsumption(Vector<Warehouse> warehouses, String fileType, Boolean onlyNegative,
-    		Boolean detail, Integer domainId,  Integer size, Integer fileId ) throws ServletException, IOException{
+    		Boolean detail, Integer domainId,  Integer size, Integer fileId, String login) throws ServletException, IOException{
 
         String domain = AonUtil.getDomainName();
         Collections.sort(warehouses, (Warehouse s1, Warehouse s2) -> s1.getName().compareTo(s2.getName()));        
         byte[] b = null ;
         
-        b = DBConsults.getTemplate(domain,domainId, fileId);
+        b = DBConsults.getTemplate(domain,domainId, fileId, login);
  
         File f = new File("/tmp/"+"consumo"+".xml"); 
         try {
@@ -106,17 +106,17 @@ public class ConsumptionUtil {
     	
         Map<String, Vector<ConsumptionItem>> allMap = new HashMap<String, Vector<ConsumptionItem>>();
         for(Warehouse w : warehouses){
-        	ConsumptionItem consumptionItem = DBConsumption.getTwoLastInventory(domain, domainId, w.getId());
+        	ConsumptionItem consumptionItem = DBConsumption.getTwoLastInventory(domain, domainId, w.getId(), login);
         	Integer initialId = consumptionItem.getInitialId(), finalId = consumptionItem.getFinalId();
             Date initialDate = consumptionItem.getInitialDate(), finalDate = consumptionItem.getFinalDate();
-            String initialInventoryName = DBConsumption.getInventoryName(domain, domainId, initialId);
-            String finalInventoryName = DBConsumption.getInventoryName(domain, domainId, finalId);
+            String initialInventoryName = DBConsumption.getInventoryName(domain, domainId, initialId, login);
+            String finalInventoryName = DBConsumption.getInventoryName(domain, domainId, finalId, login);
             consumptionItem.setWarehouseId(w.getId());
             consumptionItem.setWarehouseName(w.getName());
             consumptionItem.setInitialInventoryName(initialInventoryName);
             consumptionItem.setFinalInventoryName(finalInventoryName);
         	cisMap.put(w.getId(), consumptionItem);
-        	Map<Integer, ConsumptionItem> map = DBConsumption.getConsumption(domain, domainId, initialId, finalId, w.getId(), new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()), consumptionItem.getWarehouseName());
+        	Map<Integer, ConsumptionItem> map = DBConsumption.getConsumption(domain, domainId, login, initialId, finalId, w.getId(), new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()), consumptionItem.getWarehouseName());
 
         	Vector<ConsumptionItem> v =  new Vector<ConsumptionItem>(map.values());
         	

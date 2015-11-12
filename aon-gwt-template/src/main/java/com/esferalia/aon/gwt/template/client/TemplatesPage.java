@@ -494,7 +494,8 @@ public class TemplatesPage extends Composite{
 		String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download/"
             	+ "?id=" + Integer.toString(object.getId())
             	+ "&drive_id=" +URL.encode(driveId)
-            	+ "&name=" +URL.encode(object.getName());
+            	+ "&name=" +URL.encode(object.getName())
+            	+ "&username="+ template_list.getLogin();
 		Window.open( fileDownloadURL, "_blank",null);
 	}
 	

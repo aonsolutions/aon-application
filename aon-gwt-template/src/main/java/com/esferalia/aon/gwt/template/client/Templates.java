@@ -44,6 +44,7 @@ public class Templates extends Composite implements EntryPoint {
 	private static final String CONSUMPTION = "consumption";
 	private static final String CONSUMPTION_ERROR = "consumption_error";
 	private static final String TEMPLATES = "templates";
+	private static final String DOWNLOAD_AMAZON_DELIVERY = "download_amazon_delivery";
 	
 	final ITemplateAsync item = GWT.create(ITemplate.class);
 
@@ -83,7 +84,7 @@ public class Templates extends Composite implements EntryPoint {
 								pagesPanel.add(w);
 							}
 							else if(entryPoint.equals(MARKETPLACE)){
-						   		Marketplace marketplace = new Marketplace(domainId);		
+						   		Marketplace marketplace = new Marketplace(domainId, template_list.getLogin());		
 					 			pagesPanel.add(marketplace);
 							}
 							else if(entryPoint.equals(CONSUMPTION)){
@@ -93,6 +94,9 @@ public class Templates extends Composite implements EntryPoint {
 							else if(entryPoint.equals(CONSUMPTION_ERROR)){
 								ConsumptionErrorPage cep = new ConsumptionErrorPage(domainId, template_list);
 								pagesPanel.add(cep);
+							}
+							else if(entryPoint.equals(DOWNLOAD_AMAZON_DELIVERY)){
+								deliveryx();
 							}
 							
 						}
@@ -389,7 +393,8 @@ public class Templates extends Composite implements EntryPoint {
 						+ "&creationDate2="+ei.getCreationDate2()
 						+ "&modificationUser="+ei.getModificationUser()
 						+ "&modificationDate1="+ei.getModificationDate1()
-						+ "&modificationDate2="+ei.getModificationDate1();
+						+ "&modificationDate2="+ei.getModificationDate1()
+						+ "&username="+ template_list.getLogin();
 
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();
@@ -658,7 +663,8 @@ public class Templates extends Composite implements EntryPoint {
 						+ "&quantity="+ei.getQuantity()
 						+ "&close="+closeInventory
 						+ "&inventory="+ ei.getInventory()
-						+ "&only_non_cero="+ onlyNonCero;
+						+ "&only_non_cero="+ onlyNonCero
+						+ "&username="+ template_list.getLogin();
 				
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();
@@ -703,7 +709,8 @@ public class Templates extends Composite implements EntryPoint {
 		            	+ "&drive_id=" +URL.encode(driveId)
 		            	+ "&name=" +URL.encode(ti.getName())
 		            	+ "&domain_id=" + domainId
-		            	+ "&warehouse=" + warehouse;
+		            	+ "&warehouse=" + warehouse
+		            	+ "&username="+ template_list.getLogin();
 				
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();
@@ -749,7 +756,8 @@ public class Templates extends Composite implements EntryPoint {
 		            	+ "?&domain_id=" + domainId
 		            	+ "&workplace=" + workplace
 		            	+ "&department="+ department
-		            	+ "&template_id="+ti.getId();
+		            	+ "&template_id="+ti.getId()
+		            	+ "&username="+ template_list.getLogin();
 				
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();
@@ -879,7 +887,8 @@ public class Templates extends Composite implements EntryPoint {
 				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_proposal/"
 		            	+ "?id=" + Integer.toString(ti.getId())
 		            	+ "&domain_id=" + domainId
-		            	+ "&proposal=" + proposalId;
+		            	+ "&proposal=" + proposalId
+		            	+ "&username="+ template_list.getLogin();
 				
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();
@@ -918,7 +927,8 @@ public class Templates extends Composite implements EntryPoint {
 				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_income/"
 		            	+ "?id=" + Integer.toString(ti.getId())
 		            	+ "&domain_id=" + domainId
-		            	+ "&income=" + incomeId;
+		            	+ "&income=" + incomeId
+		            	+ "&username="+ template_list.getLogin();
 				
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();
@@ -986,7 +996,8 @@ public class Templates extends Composite implements EntryPoint {
 		            	+ "&initial_id="+ initialId
 		            	+ "&final_id="+ finalId
 	            		+ "&only_negative="+ onlyNegative
-	            		+ "&detail="+detail;					
+	            		+ "&detail="+detail
+	            		+ "&username="+ template_list.getLogin();					
 				
 				
 					Window.open( fileDownloadURL, "_blank",null);
@@ -1007,7 +1018,8 @@ public class Templates extends Composite implements EntryPoint {
 	            	+ "&initial_id="+ initialId
 	            	+ "&final_id="+ finalId
             		+ "&only_negative="+ onlyNegative
-            		+ "&detail="+detail;
+            		+ "&detail="+detail
+            		+ "&username="+ template_list.getLogin();
 			
 			Window.open( fileDownloadURL, "_blank",null);
 		}
@@ -1061,7 +1073,8 @@ public class Templates extends Composite implements EntryPoint {
 		            	+ "?id=" + Integer.toString(ti.getId())
 		            	+ "&domain_id=" + domainId
 		            	+ "&closed="+closed
-		            	+ "&inventory="+inventoryId;
+		            	+ "&inventory="+inventoryId
+		            	+ "&username="+ template_list.getLogin();
 				
 				
 					Window.open( fileDownloadURL, "_blank",null);
@@ -1077,7 +1090,8 @@ public class Templates extends Composite implements EntryPoint {
 	            	+ "?id=" + Integer.toString(templateInfo.getId())
 	            	+ "&domain_id=" + domainId
 	            	+ "&closed="+closed
-	            	+ "&inventory="+inventoryId;
+	            	+ "&inventory="+inventoryId
+	            	+ "&username="+ template_list.getLogin();
 			
 			Window.open( fileDownloadURL, "_blank",null);
 		}
@@ -1195,6 +1209,7 @@ public class Templates extends Composite implements EntryPoint {
 		ei.setCode(code);ei.setName(name);ei.setCategory(category);ei.setTags(tags);ei.setBrand(brand);ei.setVat(vat);ei.setRetention(retention);ei.setPurchaseAccount(purchaseAccount);ei.setSalesAccount(salesAccount);ei.setSerializable(serializable);ei.setInventoriable(inventoriable);ei.setManufactured(manufactured);ei.setComposition(composition);ei.setStatuses(statuses);ei.setTypes(types);
 		ei.setBarcode(barcode);ei.setSerialNumber(serialNumber);ei.setItemSerialDate1(d1);ei.setItemSerialDate2(d2);ei.setDetail(detail);ei.setDetail2(detail2);ei.setDetail3(detail3);ei.setPurchasePrice(purchasePrice);ei.setProfitPercent(profitPercent);ei.setPrice(price);ei.setInternet(internet);ei.setItemStatuses(itemStatusesStr);ei.setSupplierCode(supplierCode);
 		ei.setCreationUser(creationUser);ei.setCreationDate1(d3); ei.setCreationDate2(d4);  ei.setModificationUser(modificationUser) ; ei.setModificationDate1(d5);ei.setModificationDate2(d6);
+		
 		exportProducts(ei);
 	}
 
@@ -1447,7 +1462,8 @@ public class Templates extends Composite implements EntryPoint {
 	
 	public void deliveryx(){		
 		String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_amazon_delivery/"
-            	+ "?domain_id=" + domainId;
+            	+ "?domain_id=" + domainId
+            	+ "&username="+ template_list.getLogin();
 		Window.open( fileDownloadURL, "_blank",null);
 	}
 

@@ -1,14 +1,13 @@
 package com.esferalia.aon.gwt.template.jooq;
 
+import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Hotel.HOTEL;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,22 +24,23 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.carrier.enumeration.ShipmentStatus;
 import com.esferalia.aon.gwt.template.server.Utils;
-import com.esferalia.aon.gwt.template.shared.marketplace.AmazonDelivery;
 import com.esferalia.aon.gwt.template.shared.Hotel;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
+import com.esferalia.aon.gwt.template.shared.marketplace.AmazonDelivery;
 import com.esferalia.aon.jooq.tables.records.DeliveryRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.security.User;
 
 
 
 
 public class DBConsults {
 	
-	public static TemplateList getTemplates(String domain , Integer domainId){
+	public static TemplateList getTemplates(String domain , Integer domainId, String login){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 				
 				
 				// DOMAIN + DOMAIN SON
@@ -177,7 +177,7 @@ public class DBConsults {
 						stockTemplate.sethasWarehouse(false);
 						stockTemplate.setIsParent(true);
 						stockTemplate.setVersion(AonVersion.VERSION);
-						Integer id = insertTemplate(domain, stockTemplate,Utils.newXmlFileWithVersion(stockTemplate), 0);
+						Integer id = insertTemplate(domain, stockTemplate,Utils.newXmlFileWithVersion(stockTemplate), 0, login);
 						stockTemplate.setId(id);
 						v.add(stockTemplate);
 					
@@ -209,7 +209,7 @@ public class DBConsults {
 						productTemplate.sethasWarehouse(false);
 						productTemplate.setIsParent(true);
 						productTemplate.setVersion(AonVersion.VERSION);
-						id = insertTemplate(domain, productTemplate,Utils.newXmlFileWithVersion(productTemplate), 0);
+						id = insertTemplate(domain, productTemplate,Utils.newXmlFileWithVersion(productTemplate), 0, login);
 						productTemplate.setId(id);
 						v.add(productTemplate);
 						
@@ -225,7 +225,7 @@ public class DBConsults {
 						feeTemplate.sethasWarehouse(false);
 						feeTemplate.setIsParent(true);
 						feeTemplate.setVersion(AonVersion.VERSION);
-						id = insertTemplate(domain, feeTemplate,Utils.newXmlFileWithVersion(feeTemplate), 0);
+						id = insertTemplate(domain, feeTemplate,Utils.newXmlFileWithVersion(feeTemplate), 0, login);
 						feeTemplate.setId(id);
 						v.add(feeTemplate);
 						
@@ -241,7 +241,7 @@ public class DBConsults {
 						consumptionTemplate.sethasWarehouse(false);
 						consumptionTemplate.setIsParent(true);
 						consumptionTemplate.setVersion(AonVersion.VERSION);
-						id = insertTemplate(domain, consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), 0);
+						id = insertTemplate(domain, consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), 0, login);
 						consumptionTemplate.setId(id);
 						v.add(consumptionTemplate);
 						
@@ -257,7 +257,7 @@ public class DBConsults {
 						consumptionTemplate.sethasWarehouse(false);
 						consumptionTemplate.setIsParent(true);
 						consumptionTemplate.setVersion(AonVersion.VERSION);
-						id = insertTemplate(domain, consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), 0);
+						id = insertTemplate(domain, consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), 0, login);
 						consumptionTemplate.setId(id);
 						v.add(inventoryTemplate1);
 						
@@ -273,7 +273,7 @@ public class DBConsults {
 						consumptionTemplate.sethasWarehouse(false);
 						consumptionTemplate.setIsParent(true);
 						consumptionTemplate.setVersion(AonVersion.VERSION);
-						id = insertTemplate(domain, consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), 0);
+						id = insertTemplate(domain, consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), 0, login);
 						consumptionTemplate.setId(id);
 						v.add(inventoryTemplate2);
 					}
@@ -322,10 +322,10 @@ public class DBConsults {
 		
 	}
 
-	public static Integer insertTemplate(String domain, TemplateInfo ti, byte[] b,Integer domainId) {
+	public static Integer insertTemplate(String domain, TemplateInfo ti, byte[] b,Integer domainId, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Integer registry;
 			if(domainId.equals(0)){
@@ -350,10 +350,10 @@ public class DBConsults {
 		}
 	}
 	
-	public static byte[] getTemplate(String domain , Integer domainId, Integer id) {
+	public static byte[] getTemplate(String domain , Integer domainId, Integer id, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			return getXml(ctx.getDslContext(), id);
 			
@@ -372,10 +372,10 @@ public class DBConsults {
 
 	}
 	
-	public static void removeTemplate(String domain,Integer domainId, Integer id){
+	public static void removeTemplate(String domain,Integer domainId, Integer id, String login){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			ctx.getDslContext().delete(RATTACH).where(RATTACH.ID.eq(id)).execute();
 			
@@ -384,39 +384,14 @@ public class DBConsults {
 		}
 	}
 	
-	public static void updateTemplate(String domain,TemplateInfo ti, Integer domainId, byte[] b){
+	public static void updateTemplate(String domain,TemplateInfo ti, Integer domainId, byte[] b, String login){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			ctx.getDslContext().update(RATTACH).set(RATTACH.DESCRIPTION,ti.getName())
 									.set(RATTACH.DATA,b)
 							.where(RATTACH.ID.eq(ti.getId())).execute();
-		} finally {
-			if (ctx != null) ctx.close();
-		}
-	}
-
-	
-	public static String getUsername(String domain,Integer domainId, Integer id){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain, domainId);
-			
-			Record1<String> data = ctx.getDslContext().select(USER.LOGIN)
-				.from(USER)
-				.where(USER.ID.eq(id))
-				.and(USER.DOMAIN.eq(domainId).or(USER.DOMAIN.in(ctx.getDslContext().select(DOMAIN.PARENT)
-																.from(DOMAIN)
-																.where(DOMAIN.ID.eq(domainId)))))
-				
-				.fetchOne();
-			
-			
-			
-			return data.value1();
-			
-			
 		} finally {
 			if (ctx != null) ctx.close();
 		}
@@ -431,16 +406,16 @@ public class DBConsults {
 	}
 	
 	
-	public static Vector<Hotel> getHotels(String domainName, Integer domainId, Integer userId) {
+	public static Vector<Hotel> getHotels(String domainName, Integer domainId, User user) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId, user.getLogin());
 			
 			Result<Record2<Integer, String>> result = ctx.getDslContext().select(WORKPLACE.ID, WORKPLACE.DESCRIPTION )
 				.from(HOTEL).join(WORKPLACE).on(HOTEL.WORKPLACE.eq(WORKPLACE.ID))
 				.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(WORKPLACE.SCOPE))
 				.where(WORKPLACE.DOMAIN.eq(domainId))
-				.and(USER_SCOPE.USER_ID.eq(userId))
+				.and(USER_SCOPE.USER_ID.eq(user.getId()))
 				.and(WORKPLACE.ACTIVE.eq((byte)1))
 				.orderBy(WORKPLACE.DESCRIPTION)
 				.fetch();
@@ -461,10 +436,10 @@ public class DBConsults {
 		}
 	}
 	
-	public static List<AmazonDelivery> getDeliveries(String domainName, Integer domainId){
+	public static List<AmazonDelivery> getDeliveries(String domainName, Integer domainId, String login){
 		AONContext ctx = null;
 		try{
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			Result<DeliveryRecord> result = ctx.getDslContext().select()
 				.from(DELIVERY)
 				.where(DELIVERY.DOMAIN.eq(domainId))

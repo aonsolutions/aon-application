@@ -37,6 +37,7 @@ public class DownloadAmazonDeliveryServlet extends HttpServlet {
 	@Override
     protected void doGet(HttpServletRequest p_request, HttpServletResponse p_response)throws ServletException, IOException{
         String domain_id = p_request.getParameter("domain_id");
+        String login = p_request.getParameter("username");
         Integer domainId = Integer.parseInt(domain_id);
         String domainName = AonUtil.getDomainName();
 
@@ -60,13 +61,13 @@ public class DownloadAmazonDeliveryServlet extends HttpServlet {
         header.createCell(6).setCellValue("tracking-number");
         header.createCell(7).setCellValue("ship-method");
         
-        List<Order> orderDeliveryList = DBMarketplace.getOrderDeliveryList(domainName, domainId);
+        List<Order> orderDeliveryList = DBMarketplace.getOrderDeliveryList(domainName, domainId, login);
         for (Integer i = 1; i<= orderDeliveryList.size(); i++) {
         	AmazonDelivery ad = orderDeliveryList.get(i-1).getAmazonDelivery(); 
         	Row row = hoja.createRow(i);
         	 row.createCell(0).setCellValue(ad.getOrderId());
         	 row.createCell(1).setCellValue(ad.getOrderItemId());
-        	 row.createCell(2).setCellValue(ad.getQuantity());
+        	 if(ad.getQuantity()!= null)row.createCell(2).setCellValue(ad.getQuantity());
         	 row.createCell(3).setCellValue(ad.getShipDateStr());
         	 Cell c4 = row.createCell(4);
         	 if(ad.getCarrierCode() != null && ad.getCarrierCode().getName()!= null)

@@ -77,6 +77,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -105,7 +106,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	HashMap<String, ProductInfo> map = new HashMap<String, ProductInfo>();
 	Integer domainId;
 	String domain;
-	Integer userId;
+	User user;
 	public static byte[] out;
 	static Integer size;
 	private static String mimetype;
@@ -134,6 +135,13 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		size = sizea;
 	}
 	
+	public User getUser(){
+		return user;
+	}
+	public void setUser(User user){
+		this.user = user;
+	}
+	
 	void initFacesContext() {
 		ServletContext context = getServletContext();
 		HttpServletRequest request = getThreadLocalRequest();
@@ -151,7 +159,8 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 			domainId = ds.getDomainId();
 			domain = AonUtil.getDomainName();
-			userId = AonUtil.getAuthPrincipal().getUserId();
+			Integer userId = AonUtil.getAuthPrincipal().getUserId();
+			setUser(AON.getUser(domain, userId));
 		}
 		finally{releaseFacesContext();}
 	}
@@ -162,22 +171,21 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	
 	public TemplateList getTemplates(){
 		String domain = AonUtil.getDomainName();
-
 		TemplateList tl = null;
-		tl = DBConsults.getTemplates(domain, domainId);
+		tl = DBConsults.getTemplates(domain, domainId, getUser().getLogin());
 		tl.setDomainId(domainId);
-	
+		tl.setLogin(getUser().getLogin());
 		return tl;
 	}
 
 	public Vector<Warehouse> getWarehouses(Integer domainId){
 		String domain = AonUtil.getDomainName();
-		return DBStock.getWarehouse(domain, domainId, userId);
+		return DBStock.getWarehouse(domain, domainId, getUser());
 	}
 	
 	public List<Hotel> getHotelsToConsumption(Integer domainId){
 		String domain = AonUtil.getDomainName();
-		Vector<Hotel> hotels= DBConsults.getHotels(domain, domainId, userId);
+		Vector<Hotel> hotels= DBConsults.getHotels(domain, domainId, getUser());
 		/*for (Hotel hotel : hotels) {
 			hotel.setWarehouses(getWarehousesToConsumption(domainId, hotel.getWorkplaceId()));
 		}*/
@@ -186,10 +194,10 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	
 	public Vector<Warehouse> getWarehousesToConsumption(Integer domainId, Integer workplaceId){
 		String domain = AonUtil.getDomainName();
-		Vector<Warehouse> v = DBStock.getWarehouse(domain, domainId, userId, workplaceId);
+		Vector<Warehouse> v = DBStock.getWarehouse(domain, domainId, getUser(), workplaceId);
 		Vector<Warehouse> v2 = new Vector<Warehouse>();
 		for (Warehouse w : v) {
-			ConsumptionItem ci = DBConsumption.getTwoLastInventory(domain, domainId, w.getId());
+			ConsumptionItem ci = DBConsumption.getTwoLastInventory(domain, domainId, w.getId(), getUser().getLogin());
 			if(ci.getInitialId() != null && ci.getFinalId() != null)
 				v2.add(w);
 		}
@@ -198,10 +206,10 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	
 	public Vector<Warehouse> getWarehousesToConsumption(Integer domainId){
 		String domain = AonUtil.getDomainName();
-		Vector<Warehouse> v = DBStock.getWarehouse(domain, domainId, userId);
+		Vector<Warehouse> v = DBStock.getWarehouse(domain, domainId, getUser());
 		Vector<Warehouse> v2 = new Vector<Warehouse>();
 		for (Warehouse w : v) {
-			ConsumptionItem ci = DBConsumption.getTwoLastInventory(domain, domainId, w.getId());
+			ConsumptionItem ci = DBConsumption.getTwoLastInventory(domain, domainId, w.getId(), getUser().getLogin());
 			if(ci.getInitialId() != null && ci.getFinalId() != null)
 				v2.add(w);
 		}
@@ -210,14 +218,14 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	
 	public Vector<Warehouse> getWarehouses(){
 		String domain = AonUtil.getDomainName();
-		return DBStock.getWarehouse(domain, domainId, userId);
+		return DBStock.getWarehouse(domain, domainId, getUser());
 	}
 	
 	public TemplateInfo newTemplate(TemplateInfo ti ){
 		String domain = AonUtil.getDomainName();
 		byte[] b = Utils.newXmlFile(ti);
 		
-		Integer id = DBConsults.insertTemplate(domain, ti, b,domainId);
+		Integer id = DBConsults.insertTemplate(domain, ti, b,domainId, getUser().getLogin());
 		ti.setId(id);
 		ti.setIsParent(false);
 	
@@ -228,14 +236,14 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		String domain = AonUtil.getDomainName();
 		byte[] b = Utils.newXmlFile(ti);
 
-		DBConsults.updateTemplate(domain, ti, domainId, b);
+		DBConsults.updateTemplate(domain, ti, domainId, b, getUser().getLogin());
 	
 		return ti;
 	}
 
 	public void deleteTemplate(TemplateInfo ti){
 		String domain = AonUtil.getDomainName();
-		DBConsults.removeTemplate(domain,domainId, ti.getId());
+		DBConsults.removeTemplate(domain,domainId, ti.getId(), getUser().getLogin());
 	}
 	//-------------------- IMPORTAR FEE
 	Vector<FeeInfo> fees;
@@ -256,9 +264,9 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		textError = "";
 		Vector<FeeInfo> fees = new Vector<FeeInfo>();
 
-		sellers = DBFee.getSellers(domain.getName(),domain.getId());
-		workplaces = DBFee.getWorkplaces(domain.getName(),domain.getId());
-		invoicingGroups = DBFee.getInvoicingGroups(domain.getName(),domain.getId());
+		sellers = DBFee.getSellers(domain.getName(),domain.getId(), getUser().getLogin());
+		workplaces = DBFee.getWorkplaces(domain.getName(),domain.getId(), getUser().getLogin());
+		invoicingGroups = DBFee.getInvoicingGroups(domain.getName(),domain.getId(), getUser().getLogin());
 	
 		Error error = new Error();
 		if(getOut() == null){
@@ -415,9 +423,9 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			//insertar Fee en base de datos.!!
 			AuditInfo ai = new AuditInfo();
 			ai.setDate(new Date());
-			ai.setUserId(userId);
-			ai.setUsername(DBConsults.getUsername(domain.getName(),domain.getId(), userId));
-			error = DBFee.insertFee(domain.getName(),domain.getId(),fees,ai);
+			ai.setUserId(getUser().getId());
+			ai.setUsername(getUser().getLogin());
+			error = DBFee.insertFee(domain.getName(),domain.getId(),fees,ai, getUser().getLogin());
 		}
 		else{
 			//Alguna de las filas contiene datos erroneos.
@@ -442,7 +450,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	}
 	
 	private FeeInfo checkFee(Domain domain, String template,FeeInfo fee, Cell cell, Boolean ignoreInactiveCliente) {
-		String username = DBConsults.getUsername(domain.getName(), domain.getId(), userId);
+		String username = getUser().getLogin();
 		Integer type = cell.getCellType();
 		switch (template) {
 		case "Cliente": case "Client":
@@ -607,7 +615,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		case "Expediente": case "Record":  //BD
 			if(type.equals(Cell.CELL_TYPE_STRING)){
 				String strAux = cell.getStringCellValue();
-				Project project = DBFee.getProject(domain, strAux, fee.getClientId());
+				Project project = DBFee.getProject(domain, strAux, fee.getClientId(), getUser().getLogin());
 				if(project != null){
 					fee.setProject(cell.getStringCellValue());
 					fee.setProjectId(project.getId());
@@ -847,9 +855,9 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		//TODO proposal
 			AuditInfo ai = new AuditInfo();
 			ai.setDate(new Date());
-			ai.setUserId(userId);
-			ai.setUsername(DBConsults.getUsername(domain, domainId, userId));
-			error = DBStock.insertProposal(domain,domainId,stock,proposal,ai,workplace);
+			ai.setUserId(getUser().getId());
+			ai.setUsername(getUser().getLogin());
+			error = DBStock.insertProposal(domain,domainId,stock,proposal,ai,workplace, getUser().getLogin());
 
 	        //insertar STOCK en base de datos.!!
 		}
@@ -900,9 +908,9 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		if (ti.getDomainId().equals(0)) domId = domainId; 
 		else domId = ti.getDomainId();
 		
-		if(!warehouse1.equals("-")) w = DBStock.getWarehouse(warehouse1, domId,domain,userId);
-		if(warehouse2 != null && !warehouse2.equals("-")) 	w2 = DBStock.getWarehouse(warehouse2, domId,domain,userId);
-		s = DBStock.getSeries(domain, domainId, series);
+		if(!warehouse1.equals("-")) w = DBStock.getWarehouse(warehouse1, domId,domain,getUser());
+		if(warehouse2 != null && !warehouse2.equals("-")) 	w2 = DBStock.getWarehouse(warehouse2, domId,domain,getUser());
+		s = DBStock.getSeries(domain, domainId, series, getUser().getLogin());
 
     	//Boolean b = true;
 
@@ -1123,9 +1131,9 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			//String domain = AonUtil.getDomainName();
 			AuditInfo ai = new AuditInfo();
 			ai.setDate(new Date());
-			ai.setUserId(userId);
-			ai.setUsername(DBConsults.getUsername(domain, domainId, userId));
-			error = DBStock.insertStock2(domain,domainId,stock,transferInfo, inventoryId,ai);
+			ai.setUserId(getUser().getId());
+			ai.setUsername(getUser().getLogin());
+			error = DBStock.insertStock2(domain,domainId,stock,transferInfo, inventoryId,ai, getUser().getLogin());
 
 	        //insertar STOCK en base de datos.!!
 		}
@@ -1152,12 +1160,12 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			error.setTextError(verror);
 			AuditInfo ai = new AuditInfo();
 			ai.setDate(new Date());
-			ai.setUserId(userId);
-			ai.setUsername(DBConsults.getUsername(domain, domainId, userId));
+			ai.setUserId(getUser().getId());
+			ai.setUsername(getUser().getLogin());
 			
 			Vector<StockInfo> v = new Vector<StockInfo>();
 			v.addAll(stockMap.values());
-			error = DBStock.insertTransferStock(domain,domainId,v,transferInfo,ai);
+			error = DBStock.insertTransferStock(domain,domainId,v,transferInfo,ai, getUser().getLogin());
 
 	        //insertar STOCK en base de datos.!!
 		}
@@ -1230,9 +1238,9 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	
 	public Vector<com.esferalia.aon.gwt.template.shared.Series> getSeries(String warehouse){
 		String domain = AonUtil.getDomainName();
-		Warehouse w = DBStock.getWarehouse(warehouse, domainId, domain,userId);
-		WorkPlace workplace = DBCatalogue.getWorkplace(w.getWorkplace(), domainId, domain);
-		Vector<Series> series = DBStock.getSeries(w, workplace,domain, domainId);
+		Warehouse w = DBStock.getWarehouse(warehouse, domainId, domain,getUser());
+		WorkPlace workplace = DBCatalogue.getWorkplace(w.getWorkplace(), domainId, domain, getUser().getLogin());
+		Vector<Series> series = DBStock.getSeries(w, workplace,domain, domainId, getUser().getLogin());
 
 		Vector<com.esferalia.aon.gwt.template.shared.Series> seriesCode = new Vector<com.esferalia.aon.gwt.template.shared.Series>();
 		series.parallelStream().forEach(s ->{
@@ -1247,7 +1255,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		String domain = AonUtil.getDomainName();
 		Vector<Series> series = new Vector<Series>();
 
-		series = DBStock.getSeries(domain, domainId);
+		series = DBStock.getSeries(domain, domainId, getUser().getLogin());
 
 		Vector<com.esferalia.aon.gwt.template.shared.Series> seriesCode = new Vector<com.esferalia.aon.gwt.template.shared.Series>();
 		series.parallelStream().forEach(s ->{
@@ -1478,9 +1486,9 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 				Vector<ProductInfo> v = new Vector<ProductInfo>(l);
 				AuditInfo ai = new AuditInfo();
 				ai.setDate(new Date());
-				ai.setUserId(userId);
-				ai.setUsername(DBConsults.getUsername(domain, domainId, userId));
- 				error = DBProduct.insertProducts2(domain, domainId, v, ti,ai);
+				ai.setUserId(getUser().getId());
+				ai.setUsername(getUser().getLogin());
+ 				error = DBProduct.insertProducts2(domain, domainId, v, ti,ai, getUser().getLogin());
 		
 	        //insertar STOCK en base de datos.!!
 		}
@@ -1527,7 +1535,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		case "Categor\u00eda" :
 			if(type.equals(Cell.CELL_TYPE_STRING)){
 				String strAux = (String) value;
-				Vector<ProductCategory> v = DBProduct.getCategories(domain, domainId);
+				Vector<ProductCategory> v = DBProduct.getCategories(domain, domainId, getUser().getLogin());
 				Boolean b = true;
 				for(ProductCategory pc : v){
 					if(strAux.equalsIgnoreCase(pc.getName())){
@@ -1542,7 +1550,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		case "Marca" : 
 			if(type.equals(Cell.CELL_TYPE_STRING)){
 				String strAux = (String) value;
-				Vector<Brand> v =  DBProduct.getBrands(domain, domainId);
+				Vector<Brand> v =  DBProduct.getBrands(domain, domainId, getUser().getLogin());
 				Boolean b = true;
 				for(Brand brand : v){
 					if(strAux.equalsIgnoreCase(brand.getName())){
@@ -1556,7 +1564,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			break; 
 		case "Etiqueta" : 
 			if(type.equals(Cell.CELL_TYPE_STRING)){
-				Vector<ProductTag> tags =  DBProduct.getTags(domain, domainId);
+				Vector<ProductTag> tags =  DBProduct.getTags(domain, domainId, getUser().getLogin());
 
 				Vector<String> strings = tags((String)value);
 				Set<ProductTag> tags2 = new HashSet<ProductTag>();
@@ -1612,7 +1620,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			break; 
 		case "IVA" : 
 			Tax vat = new Tax();
-			Vector<Tax> vats = DBProduct.getIVA(domain, domainId);
+			Vector<Tax> vats = DBProduct.getIVA(domain, domainId, getUser().getLogin());
 
 			switch (type) {
 			case Cell.CELL_TYPE_STRING:
@@ -1646,7 +1654,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			break; 
 		case "IRPF" :
 			Tax retention = new Tax();
-			Vector<Tax> retentions =  DBProduct.getRetentions(domain, domainId);
+			Vector<Tax> retentions =  DBProduct.getRetentions(domain, domainId, getUser().getLogin());
 			switch (type) {
 			case Cell.CELL_TYPE_STRING:
 				String s = (String) value;
@@ -1836,7 +1844,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		p2.setType((byte)ProductType.COMMERCIAL_PRODUCT.ordinal());
 		
 		// IVA (product)
-		Tax vat = DBProduct.getIVAName(domain, domainId,"GENERAL");
+		Tax vat = DBProduct.getIVAName(domain, domainId,"GENERAL", getUser().getLogin());
 		p2.setVat(vat.getId());
 		
 		// IRPF (product)
@@ -1909,11 +1917,11 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	
 	
 	public Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(){
-		return DBCatalogue.getWorkplaces(domainId, domain,userId);
+		return DBCatalogue.getWorkplaces(domainId, domain,getUser());
 	}
 	public Vector<com.esferalia.aon.gwt.template.shared.Department> getDepartments(String workplace){
-		WorkPlace w = DBCatalogue.getWorkplace(workplace, domainId, domain);
-		return DBCatalogue.getDepartments(domainId, domain, w.getId());
+		WorkPlace w = DBCatalogue.getWorkplace(workplace, domainId, domain, getUser().getLogin());
+		return DBCatalogue.getDepartments(domainId, domain, w.getId(), getUser().getLogin());
 	}
 	
 	/**
@@ -1961,7 +1969,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 	@Override
 	public List<com.esferalia.aon.gwt.template.shared.ProductCategory> getProductCategories(
 			Integer domainId) {
-		return DBProduct.getCategoriesShared(AonUtil.getDomainName(), domainId);
+		return DBProduct.getCategoriesShared(AonUtil.getDomainName(), domainId, getUser().getLogin());
 	}
 	
 	public Error executeExcelEcommerce(Integer domainId, Ecommerce ecommerce, Seller seller, String type, com.esferalia.aon.gwt.template.shared.ProductCategory pc) {
@@ -2007,7 +2015,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 			if(attach != null && attach.getId() != null){
 				attach.setData(xml);
 				attach.setModificationDate(Calendar.getInstance().getTime());
-				attach.setModificationUser(DBConsults.getUsername(d.getName(), d.getId(), userId));
+				attach.setModificationUser(getUser().getLogin());
 				AON.update(attach);
 			}
 			else{
@@ -2021,10 +2029,10 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 				attach.setDate(Calendar.getInstance().getTime());
 			
 				attach.setCreationDate(Calendar.getInstance().getTime());
-				attach.setCreationUser(DBConsults.getUsername(d.getName(), d.getId(), userId));
+				attach.setCreationUser(getUser().getLogin());
 		
 				attach.setModificationDate(Calendar.getInstance().getTime());
-				attach.setModificationUser(DBConsults.getUsername(d.getName(), d.getId(), userId));
+				attach.setModificationUser(getUser().getLogin());
 				
 				attach.setDomain(d);
 				attach.setMimeType(MimeType.XML);
@@ -2230,7 +2238,7 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 								Integer domainId, Integer size, Integer fileId) {
 		File file = null;
 		try {
-			file = ConsumptionUtil.generateConsumption(warehouses, type, onlyNegative, detail, domainId, size, fileId);
+			file = ConsumptionUtil.generateConsumption(warehouses, type, onlyNegative, detail, domainId, size, fileId, getUser().getLogin());
 		} catch (ServletException | IOException e) {
 			e.printStackTrace();
 		}
@@ -2269,7 +2277,6 @@ public class TemplatesServlet extends RemoteServiceServlet implements ITemplate{
 		Domain d = new Domain();
 		d.setName(AonUtil.getDomainName());
 		d.setId(domainId);
-		return DBFee.getSellers(d.getName(), d.getId());
+		return DBFee.getSellers(d.getName(), d.getId(), getUser().getLogin());
 	}
-	
 }

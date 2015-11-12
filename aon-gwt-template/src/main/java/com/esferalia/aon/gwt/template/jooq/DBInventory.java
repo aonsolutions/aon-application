@@ -18,10 +18,10 @@ import com.esferalia.aon.occam.api.AONContext;
 
 public class DBInventory {
 	
-	public static Vector<InventoryInfo> getInventory(String domain, Integer domainId, Integer inventoryId, Boolean close){
+	public static Vector<InventoryInfo> getInventory(String domain, Integer domainId, Integer inventoryId, Boolean close, String login){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			// INITIAL INVENTORY
 			Result<Record8<Double, Double, String, String, String, String, String, Integer>> data ;
@@ -64,7 +64,7 @@ public class DBInventory {
 				if(record.value5() != null) ii.setDetail3(record.value5());
 				if(record.value6() != null) ii.setProductCode(record.value6());
 				if(record.value7() != null) ii.setProductName(record.value7());
-				if(record.value8() != null) ii.setProductCategory(DBProduct.getCategory(domain, domainId, record.value8()).getName());
+				if(record.value8() != null) ii.setProductCategory(DBProduct.getCategory(domain, domainId, record.value8(), login).getName());
 				
 				v.add(ii);
 			} 
@@ -76,11 +76,11 @@ public class DBInventory {
 		}
 	}
 
-	public static String getInventoryName(String domain, Integer domainId, Integer inventoryId){
+	public static String getInventoryName(String domain, Integer domainId, Integer inventoryId, String login){
 		
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Record1<String> data = ctx.getDslContext().select(INVENTORY.DESCRIPTION)
 				.from(INVENTORY)

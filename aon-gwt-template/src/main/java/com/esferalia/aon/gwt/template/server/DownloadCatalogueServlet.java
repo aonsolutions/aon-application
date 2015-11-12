@@ -45,23 +45,24 @@ public class DownloadCatalogueServlet extends HttpServlet {
         String workplace = p_request.getParameter("workplace");
         String department = p_request.getParameter("department");
         String template_id = p_request.getParameter("template_id");
+        String login = p_request.getParameter("username");
         Integer domainId = Integer.parseInt(domain_id);
         String domain = AonUtil.getDomainName();
 
         WorkPlace wp = null;
         if(!workplace.equals("-"))
-        		wp = DBCatalogue.getWorkplace(workplace, domainId, domain);
+        		wp = DBCatalogue.getWorkplace(workplace, domainId, domain, login);
 
         
         Department dt = null;
         if(!department.equals("-"))
-        	dt = DBCatalogue.getDepartment(wp, department, domainId, domain);
+        	dt = DBCatalogue.getDepartment(wp, department, domainId, domain, login);
 
         byte[] b = null ;
         
         if(template_id!=""){
         	Integer id = Integer.parseInt(template_id);
-        	b = DBConsults.getTemplate(domain,domainId, id);
+        	b = DBConsults.getTemplate(domain,domainId, id, login);
         }
         else return;
         
@@ -155,7 +156,7 @@ public class DownloadCatalogueServlet extends HttpServlet {
         */
 
         
-        Vector<CatalogueInfo> v = DBCatalogue.getCatalogues(domain, domainId, wp, dt);
+        Vector<CatalogueInfo> v = DBCatalogue.getCatalogues(domain, domainId, wp, dt, login);
 
         for(Integer j = 0; j< v.size();j++){
         	Row row = hoja.createRow(j+2);

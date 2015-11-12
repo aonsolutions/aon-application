@@ -44,7 +44,8 @@ public class DownloadIncomeServlet extends HttpServlet {
 			String fileId = p_request.getParameter("id");
 	        String domain_id = p_request.getParameter("domain_id");
 	        String income_id = p_request.getParameter("income");
-	        
+	        String login = p_request.getParameter("username");
+
 	        Integer incomeId = Integer.parseInt(income_id);
 	        Integer domainId = Integer.parseInt(domain_id);
 	        String domain = AonUtil.getDomainName();
@@ -54,7 +55,7 @@ public class DownloadIncomeServlet extends HttpServlet {
 
 	        if(fileId!=""){
 	        	Integer id = Integer.parseInt(fileId);
-	        	b = DBConsults.getTemplate(domain,domainId, id);
+	        	b = DBConsults.getTemplate(domain,domainId, id, login);
 	        }
 	        else return;
 	        
@@ -136,7 +137,7 @@ public class DownloadIncomeServlet extends HttpServlet {
 	        		hoja.setDefaultColumnStyle(i, style3);
 	        	else hoja.setDefaultColumnStyle(i, style2);
 	        }*/
-	        Vector<StockInfo> v = DBStock.getIncome(domain, domainId, incomeId);
+	        Vector<StockInfo> v = DBStock.getIncome(domain, domainId, incomeId, login);
 	        
 	        for(Integer j = 0; j< v.size();j++){
 	        	Row row = hoja.createRow(j+2);
