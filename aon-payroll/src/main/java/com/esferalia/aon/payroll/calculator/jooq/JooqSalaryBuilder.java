@@ -343,6 +343,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
 				.set(SALARY_EMBARGO.CONTRACT_EMBARGO, id)
 				.set(SALARY_EMBARGO.DESCRIPTION, description);
 
+		putContext(context);
 	}
 
 	@Override
