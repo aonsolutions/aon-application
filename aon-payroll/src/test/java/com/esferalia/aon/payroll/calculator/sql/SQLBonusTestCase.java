@@ -81,6 +81,11 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 			new HashMap<String,String>(){
 			{
 				put(ContextVariable.TC2.getName(), "'330'");
+				put(ContextVariable.MONDAY_HOURS.getName(),"8");
+				put(ContextVariable.TUESDAY_HOURS.getName(),"8");
+				put(ContextVariable.WEDNESDAY_HOURS.getName(),"8");
+				put(ContextVariable.THURSDAY_HOURS.getName(),"8");
+				put(ContextVariable.FRIDAY_HOURS.getName(),"8");
 			}
 			},
 			new String[] { 
@@ -324,6 +329,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				getLastDayOfMonth(add(getToday(), MONTH, 1)), contract));
 		Assert.assertEquals((1500.00) * 23.60 / 100,
 				salary.getTotalEnterprise(), DELTA);
+		
 
 		addData(aonContext, contract, getToday(), null,
 				new HashMap<String, String>() {
@@ -341,11 +347,13 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				System.out.println(message);
 			}
 		});
-
-		salary = calculator.calculate(getContractSalaryCalculatorContext(
+		
+		ISQLContractSalaryCalculatorContext ctx =getContractSalaryCalculatorContext(
 				connection, getFirstDayOfMonth(getToday()),
 				getLastDayOfMonth(getToday()), getLastDayOfMonth(getToday()),
-				contract));
+				contract);
+		salary = calculator.calculate(ctx);
+
 		Assert.assertEquals((750.00 - 250.00) * workDays / monthDays * 23.60
 				/ 100, salary.getTotalEnterprise(), DELTA);
 

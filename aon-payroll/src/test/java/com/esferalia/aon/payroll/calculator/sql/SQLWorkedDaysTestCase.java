@@ -212,7 +212,7 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 					}
 				});
 
-		testWorkedDays(contract, 0.5, null);
+		testWorkedDays(contract, 4.0/40.00, null);
 	}
 
 	@Test
@@ -299,7 +299,10 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 				new HashMap<String, String>() {
 					private static final long serialVersionUID = 1L;
 
-					{
+					{						put(MONDAY_HOURS.getName(), format("%d", 0));
+					put(FRIDAY_HOURS.getName(), format("%d", 0));
+					put(WEDNESDAY_HOURS.getName(), format("%d", 4));
+
 						put(ContextVariable.WEEK_HOURS.getName(),
 								format("%d", 10));
 					}
@@ -422,6 +425,11 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 						put(TC2.getName(),
 								format("\"%s\"", random(PARTIAL_TIME)
 										.getValue()));
+						put(MONDAY_HOURS.getName(), format("%d", 8));
+						put(TUESDAY_HOURS.getName(), format("%d", 8));
+						put(WEDNESDAY_HOURS.getName(), format("%d", 8));
+						put(THURSDAY_HOURS.getName(), format("%d", 8));
+						put(FRIDAY_HOURS.getName(), format("%d", 8));
 					}
 				});
 
@@ -470,33 +478,38 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 						put(TC2.getName(),
 								format("\"%s\"", random(PARTIAL_TIME)
 										.getValue()));
+						put(MONDAY_HOURS.getName(), format("%d", 8));
+						put(TUESDAY_HOURS.getName(), format("%d", 8));
+						put(WEDNESDAY_HOURS.getName(), format("%d", 8));
+						put(THURSDAY_HOURS.getName(), format("%d", 8));
+						put(FRIDAY_HOURS.getName(), format("%d", 8));
 					}
 				});
 
-		Date monday = add(start, DAY_OF_MONTH, 5);
-		Date sunday = add(monday, DAY_OF_MONTH, 6);
+		Date _6day = add(start, DAY_OF_MONTH, 5);
+		Date _11day = add(_6day, DAY_OF_MONTH, 6);
 
-		addData(aonContext, contract, monday, sunday,
+		addData(aonContext, contract, _6day, _11day,
 				new HashMap<String, String>() {
 					{
 						put(WEEK_HOURS.getName(), "10.00");
 					}
 				});
 
-		Date mondayI = add(sunday, DAY_OF_MONTH, 2);
-		Date sundayI = add(mondayI, DAY_OF_MONTH, 6);
-
-		addData(aonContext, contract, mondayI, sundayI,
+		Date _15day = add(_11day, DAY_OF_MONTH, 2);
+		Date _22dayI = add(_15day, DAY_OF_MONTH, 6);
+		
+		addData(aonContext, contract, _15day, _22dayI,
 				new HashMap<String, String>() {
 					{
 						put(WEEK_HOURS.getName(), "20.00");
 					}
 				});
-
+		
 		Date end = getLastDayOfMonth(start);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, start, end, end, contract);
-
+		
 		List<ITimedResult<Double>> workDays = ctx.getExpressionContext().eval(
 				"DIAS_TRABAJADOS", start, end, Double.class);
 		Assert.assertEquals(5, workDays.size());
@@ -506,22 +519,22 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 				workDays.get(0).getPeriod());
 
 		Assert.assertEquals(7d / 4d, workDays.get(1).getValue());
-		Assert.assertEquals(new Period(monday, sunday), workDays.get(1)
+		Assert.assertEquals(new Period(_6day, _11day), workDays.get(1)
 				.getPeriod());
 
 		Assert.assertEquals(1.00, workDays.get(2).getValue());
 		Assert.assertEquals(
-				new Period(add(sunday, DAY_OF_MONTH, 1), add(sunday,
+				new Period(add(_11day, DAY_OF_MONTH, 1), add(_11day,
 						DAY_OF_MONTH, 1)), workDays.get(2).getPeriod());
 
 		Assert.assertEquals(7d / 2d, workDays.get(3).getValue());
-		Assert.assertEquals(new Period(mondayI, sundayI), workDays.get(3)
+		Assert.assertEquals(new Period(_15day, _22dayI), workDays.get(3)
 				.getPeriod());
 
 		Assert.assertEquals(
-				(double) get(end, DAY_OF_MONTH) - get(sundayI, DAY_OF_MONTH),
+				(double) get(end, DAY_OF_MONTH) - get(_22dayI, DAY_OF_MONTH),
 				workDays.get(4).getValue());
-		Assert.assertEquals(new Period(add(sundayI, DAY_OF_MONTH, 1), end),
+		Assert.assertEquals(new Period(add(_22dayI, DAY_OF_MONTH, 1), end),
 				workDays.get(4).getPeriod());
 
 	}
@@ -542,6 +555,11 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 						put(TC2.getName(),
 								format("\"%s\"", random(PARTIAL_TIME)
 										.getValue()));
+						put(MONDAY_HOURS.getName(), format("%d", 8));
+						put(TUESDAY_HOURS.getName(), format("%d", 8));
+						put(WEDNESDAY_HOURS.getName(), format("%d", 8));
+						put(THURSDAY_HOURS.getName(), format("%d", 8));
+						put(FRIDAY_HOURS.getName(), format("%d", 8));
 					}
 				});
 
@@ -787,8 +805,12 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		ctx = new SQLContractSalaryCalculatorContext(connection, start, end,
 				end, criteria);
 		ctx.next();
-		assertEquals(ctx, (double) (get(end, DAY_OF_MONTH) * coefficient),
-				start, end, monthdays);
+		if ( monthdays != null )
+			assertEquals(ctx, Math.min((double) (get(end, DAY_OF_MONTH) * coefficient), monthdays),
+					start, end, monthdays);
+		else
+			assertEquals(ctx, (double) (get(end, DAY_OF_MONTH) * coefficient),
+					start, end, monthdays);
 
 		// Extras. First year, almost all the times will be partial.
 		start = getFirstDayOfYear(contractStart);

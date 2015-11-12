@@ -12,6 +12,7 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractDeduction.CONTRACT_DEDUCTION;
+import static com.esferalia.aon.jooq.tables.ContractEmbargo.CONTRACT_EMBARGO;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
@@ -68,6 +69,7 @@ import com.esferalia.aon.jooq.tables.AgreementLevelData;
 import com.esferalia.aon.jooq.tables.AgreementPayment;
 import com.esferalia.aon.jooq.tables.BonusConcept;
 import com.esferalia.aon.jooq.tables.ContractBonus;
+import com.esferalia.aon.jooq.tables.ContractEmbargo;
 import com.esferalia.aon.jooq.tables.SystemPayment;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
@@ -75,6 +77,8 @@ import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.BonusConceptRecord;
+import com.esferalia.aon.jooq.tables.records.ContractBonusRecord;
+import com.esferalia.aon.jooq.tables.records.ContractEmbargoRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
@@ -87,6 +91,7 @@ import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.EmbargableType;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.enumeration.BonusType;
@@ -826,6 +831,13 @@ public abstract class AbstractSQLTestCase {
 			ContractRecord contract, Date startDate, Date endDate,
 			Map<String, String> datas) {
 		for (Map.Entry<String, String> data : datas.entrySet()) {
+			
+			aonContext.getDslContext().delete(CONTRACT_DATA)
+			.where(CONTRACT_DATA.CONTRACT.eq(contract.getId()))
+			.and(CONTRACT_DATA.NAME.eq(data.getKey()))
+			.and(CONTRACT_DATA.START_DATE.eq(startDate))
+			.execute();
+
 			aonContext.getDslContext().insertInto(CONTRACT_DATA)
 					.set(CONTRACT_DATA.DOMAIN, contract.getDomain())
 					.set(CONTRACT_DATA.CONTRACT, contract.getId())
@@ -1013,6 +1025,21 @@ public abstract class AbstractSQLTestCase {
 
 	}
 
+	public static ContractEmbargoRecord addEmbargo(AONContext aonContext,
+			ContractRecord contract, String expression ) {
+		return aonContext
+				.getDslContext()
+				.insertInto(CONTRACT_EMBARGO)
+				.set(CONTRACT_EMBARGO.DOMAIN, contract.getDomain())
+				.set(CONTRACT_EMBARGO.CONTRACT, contract.getId())
+				.set(CONTRACT_EMBARGO.START_DATE, contract.getStartDate())
+				.set(CONTRACT_EMBARGO.END_DATE, contract.getEndDate())
+				.set(CONTRACT_EMBARGO.EXPRESSION, expression)
+				.returning()
+				.fetchOne();
+
+	}
+
 	public static final BonusConceptRecord addBonusConcept(
 			AONContext aonContext, BonusType type, String expression) {
 		DomainRecord domain = newDomain(aonContext);
@@ -1034,16 +1061,18 @@ public abstract class AbstractSQLTestCase {
 								: expression).returning().fetchOne();
 	}
 
-	public static final void addBonus(AONContext aonContext,
+	public static final ContractBonusRecord addBonus(AONContext aonContext,
 			ContractRecord contract, BonusConceptRecord concept,
 			String expression) {
-		aonContext.getDslContext().insertInto(CONTRACT_BONUS)
+		return aonContext.getDslContext().insertInto(CONTRACT_BONUS)
 				.set(CONTRACT_BONUS.DOMAIN, contract.getDomain())
 				.set(CONTRACT_BONUS.BONUS_CONCEPT, concept.getId())
 				.set(CONTRACT_BONUS.CONTRACT, contract.getId())
 				.set(CONTRACT_BONUS.START_DATE, contract.getStartDate())
 				.set(CONTRACT_BONUS.END_DATE, contract.getEndDate())
-				.set(CONTRACT_BONUS.EXPRESSION, expression).execute();
+				.set(CONTRACT_BONUS.EXPRESSION, expression)
+				.returning()
+				.fetchOne();
 
 	}
 
