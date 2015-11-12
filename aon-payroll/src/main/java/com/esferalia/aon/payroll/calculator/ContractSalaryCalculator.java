@@ -836,7 +836,9 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 					onCheckError(contractBonus, e.getMessage());
 				}catch (RemoveException | RemoveVariableError e) {
 					onRemove(contractBonus);
-				} 
+				} catch (CompileException e) {
+					onCompileError(contractBonus, e.getMessage());
+				}
 			}
 
 		} catch (UndefinedVariablesException e) {
@@ -1112,6 +1114,12 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			for (int i = 0; i < variableNames.length; i++) {
 				listener.onInvalidData(deduction, variableNames[i], message);
 			}
+		}
+	}
+
+	private void onCompileError(IContractBonus bonus, String message) {
+		if (listener != null) {
+			listener.onCompileError(bonus, message);
 		}
 	}
 
