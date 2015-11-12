@@ -50,7 +50,7 @@ public class SQLContractEmbargo
 
 	@Override
 	public DeductionType getType() {
-		return DeductionType.OTHER;
+		return DeductionType.EMBARGO;
 	}
 
 
@@ -76,7 +76,8 @@ public class SQLContractEmbargo
 
 	@Override
 	public String getName() {
-		throw new UnsupportedOperationException();
+		return null;
+		//throw new UnsupportedOperationException();
 	}
 
 
@@ -88,7 +89,8 @@ public class SQLContractEmbargo
 
 	@Override
 	public boolean isReadOnly() {
-		throw new UnsupportedOperationException();
+		return false;
+		//throw new UnsupportedOperationException();
 	}
 
 
