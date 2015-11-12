@@ -23,7 +23,7 @@
 				elem.disabled = true;
 				elem.style.background = 'lightgreen';
 			}
-			function showBusy(elem) {
+			function showDoNotDisturb(elem) {
 				elem.disabled = true;
 				elem.style.background = 'orange';
 			}
@@ -63,18 +63,25 @@
 					</c:forEach>
 					
 					<aon:div style="font-size:0.7em; font-weight:bold; text-align:center; float:right;">
-						<h:panelGrid columns="2">
-							<aon:div style="width:60px; background:lightgrey;">
+						<h:panelGrid columns="3">
+							<aon:div style="width:60px; background:LightGrey;">
 								<aon:outputText value="BLOQUEADA" />
 							</aon:div>
-							<aon:div style="width:60px; background:brown;">
-								<aon:outputText value="SUCIA" />
-							</aon:div>
-							<aon:div style="width:60px; background:lightgreen;" >
+							<aon:div style="width:60px; background:LightGreen;" >
 								<aon:outputText value="LIMPIA" />
 							</aon:div>
-							<aon:div style="width:60px; background:orange;" >
-								<aon:outputText value="OCUPADA" />
+							<aon:div style="width:60px; background:Orange;" >
+								<aon:outputText value="NO MOLESTAR" />
+							</aon:div>
+							
+							<aon:div style="width:60px; background:Red;">
+								<aon:outputText value="CHECKOUT" />
+							</aon:div>
+							<aon:div style="width:60px; background:Brown;">
+								<aon:outputText value="SUCIA" />
+							</aon:div>
+							<aon:div style="width:60px; background:BurlyWood;">
+								<aon:outputText value="MNTO." />
 							</aon:div>
 						</h:panelGrid>
 					</aon:div>
@@ -108,33 +115,65 @@
 								rendered="#{not empty cleanStatus.blockedRooms[roomTo.asset.id]}"
 								disabled="#{true}" styleClass="aon-commandButton"
 								style="margin:2px; width:70px; height:70px;" />
-							<aon:commandButton value="#{roomTo.asset.name}"
-								title="#{bundle.pms_room} sucia"
-								rendered="#{empty cleanStatus.blockedRooms[roomTo.asset.id] and !roomTo.busyRoom and !roomTo.cleanRoom}"
-								styleClass="aon-commandButton" 
-								style="margin:2px; width:70px; height:70px; background:brown;"
-								onclick="showClean(this)"
-								actionListener="#{cleanStatus.onSelectRoom}">
-								<f:param name="selectedRoomId" value="#{status.index}" />
-							</aon:commandButton>
-							<aon:commandButton value="#{roomTo.asset.name}"
-								title="#{bundle.pms_room} limpia"
-								rendered="#{empty cleanStatus.blockedRooms[roomTo.asset.id] and !roomTo.busyRoom and roomTo.cleanRoom}"
-								styleClass="aon-commandButton" 
-								style="margin:2px; width:70px; height:70px; background:lightgreen;"
-								onclick="showBusy(this)"
-								actionListener="#{cleanStatus.onSelectRoom}">
-								<f:param name="selectedRoomId" value="#{status.index}" />
-							</aon:commandButton>
-							<aon:commandButton value="#{roomTo.asset.name}"
-								title="#{bundle.pms_room} ocupada"
-								rendered="#{empty cleanStatus.blockedRooms[roomTo.asset.id] and roomTo.busyRoom}"
-								styleClass="aon-commandButton" 
-								style="margin:2px; width:70px; height:70px; background:orange;"
-								onclick="showDirty(this)"
-								actionListener="#{cleanStatus.onSelectRoom}">
-								<f:param name="selectedRoomId" value="#{status.index}" />
-							</aon:commandButton>
+								
+							<aon:div rendered="#{empty cleanStatus.blockedRooms[roomTo.asset.id]}" >
+								<!-- CLEAN -->
+								<aon:commandButton value="#{roomTo.asset.name}"
+									title="#{bundle.pms_room} limpia (#{roomTo.lastCleaningDate})"
+									rendered="#{roomTo.status=='CLEAN' 
+										and (roomTo.todayLastCleaningDate or empty cleanStatus.busyRooms[roomTo.asset.id])}"
+									styleClass="aon-commandButton" 
+									style="margin:2px; width:70px; height:70px; background:LightGreen;"
+									onclick="showDoNotDisturb(this)"
+									actionListener="#{cleanStatus.onSelectRoom}">
+									<f:param name="selectedRoomId" value="#{status.index}" />
+								</aon:commandButton>
+								<!-- DO NOT DISTURB -->
+								<aon:commandButton value="#{roomTo.asset.name}"
+									title="#{bundle.pms_room} ocupada (#{roomTo.lastCleaningDate})"
+									rendered="#{roomTo.status=='DO_NOT_DISTURB' and roomTo.todayLastCleaningDate}"
+									styleClass="aon-commandButton" 
+									style="margin:2px; width:70px; height:70px; background:Orange;"
+									onclick="showDirty(this)"
+									actionListener="#{cleanStatus.onSelectRoom}">
+									<f:param name="selectedRoomId" value="#{status.index}" />
+								</aon:commandButton>
+								<aon:div rendered="#{!(roomTo.todayLastCleaningDate and roomTo.status=='CLEAN')
+									 and !(roomTo.todayLastCleaningDate and roomTo.status=='DO_NOT_DISTURB')}" >
+									<!-- DIRTY AND BUSY -->
+									<aon:commandButton value="#{roomTo.asset.name}"
+										title="#{bundle.pms_room} sucia por mantenimiento"
+										rendered="#{empty cleanStatus.checkoutRooms[roomTo.asset.id]
+											and (empty cleanStatus.busyRooms[roomTo.asset.id] and roomTo.status!='CLEAN')}"
+										styleClass="aon-commandButton" 
+										style="margin:2px; width:70px; height:70px; background:BurlyWood;"
+										onclick="showClean(this)"
+										actionListener="#{cleanStatus.onSelectRoom}">
+										<f:param name="selectedRoomId" value="#{status.index}" />
+									</aon:commandButton>
+									<!-- DIRTY AND IDLE -->
+									<aon:commandButton value="#{roomTo.asset.name}"
+										title="#{bundle.pms_room} sucia por ocupacion"
+										rendered="#{empty cleanStatus.checkoutRooms[roomTo.asset.id]
+											and (not empty cleanStatus.busyRooms[roomTo.asset.id] and roomTo.status!='CLEAN')}"
+										styleClass="aon-commandButton" 
+										style="margin:2px; width:70px; height:70px; background:Brown;"
+										onclick="showClean(this)"
+										actionListener="#{cleanStatus.onSelectRoom}">
+										<f:param name="selectedRoomId" value="#{status.index}" />
+									</aon:commandButton>
+									<!-- CHECKOUT -->
+									<aon:commandButton value="#{roomTo.asset.name}"
+										title="#{bundle.pms_room} sucia por checkout"
+										rendered="#{not empty cleanStatus.checkoutRooms[roomTo.asset.id]}"
+										styleClass="aon-commandButton" 
+										style="margin:2px; width:70px; height:70px; background:Red;"
+										onclick="showClean(this)"
+										actionListener="#{cleanStatus.onSelectRoom}">
+										<f:param name="selectedRoomId" value="#{status.index}" />
+									</aon:commandButton>
+								</aon:div>
+							</aon:div>
 							
 						</aon:div>
 						

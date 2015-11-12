@@ -13,6 +13,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.asset.AssetActivity;
@@ -25,8 +26,10 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
+import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.enumeration.RoomStatus;
 
@@ -38,6 +41,8 @@ public class CleanStatusController extends BasicController {
 	
 	private final String FLOOR_IDX = "selectedFloorId";
 	
+	private Date searchDate;
+
 	private Hotel hotel;
 	
 	private String selectedFloor;
@@ -47,6 +52,11 @@ public class CleanStatusController extends BasicController {
 	private List<String> floorList;
 
 	private Map<Integer, ActivityStatus> blockedRooms;
+	
+	private Map<Integer, ActivityStatus> busyRooms;
+	
+	private Map<Integer, ActivityStatus> checkoutRooms;
+
 	
 	public Hotel getHotel() {
 		return hotel;
@@ -82,19 +92,45 @@ public class CleanStatusController extends BasicController {
 		this.blockedRooms = blockedRooms;
 	}
 	
+	public Map<Integer, ActivityStatus> getBusyRooms() {
+		return busyRooms;
+	}
+	public void setBusyRooms(Map<Integer, ActivityStatus> busyRooms) {
+		this.busyRooms = busyRooms;
+	}
 	
-	public void onInit(ActionEvent event){
-		setHotel(null);	
+	public Map<Integer, ActivityStatus> getCheckoutRooms() {
+		return checkoutRooms;
+	}
+	public void setCheckoutRooms(Map<Integer, ActivityStatus> checkoutRooms) {
+		this.checkoutRooms = checkoutRooms;
+	}
+	
+	
+	
+	public void onInit(ActionEvent event) throws ManagerBeanException{
+		searchDate = new Date();
+		setHotel(null);
+		clearData();
+		
+		PmsCollectionsController collections = (PmsCollectionsController) AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
+		if(collections.getCurrentUserHotelList()!=null && collections.getCurrentUserHotelList().size()==1){
+			setHotel((Hotel) collections.getCurrentUserHotelList().get(0));
+			onSearch(event);
+		}
+	}
+	
+	private void clearData(){
+		setRoomList(new LinkedList<Room>());
+		setFloorList(new LinkedList<String>());
 		setSelectedFloor(null);
-		setRoomList(null);
-		setFloorList(null);
-		setBlockedRooms(null);
+		blockedRooms = new HashMap<>();
+		busyRooms = new HashMap<>();
+		checkoutRooms = new HashMap<>();
 	}
 	
 	public void onSearch(ActionEvent event) {
-		setSelectedFloor(null);
-		setRoomList(new LinkedList<Room>());
-		setFloorList(new LinkedList<String>());
+		clearData();
 		List<ITransferObject> roomList = getActiveRoomList(getHotel(), null);
 		for (ITransferObject ito : roomList) {
 			Room room = (Room)ito;
@@ -109,11 +145,24 @@ public class CleanStatusController extends BasicController {
 				getFloorList().add(floor);
 			}
 		}
-		blockedRooms = new HashMap<>();
-		for (ITransferObject ito : getBlockedRoomStatusList(roomList)) {
+		
+		List<ITransferObject> roomActivityList = getRoomActivityList(roomList);
+		for (ITransferObject ito : roomActivityList) {
 			AssetActivity activity = (AssetActivity) ito;
-			blockedRooms.put(activity.getAsset().getId(), activity.getStatus());
+			if(DateUtils.isSameDay(searchDate, activity.getDate())){
+				if(activity.getStatus() != ActivityStatus.BUSY){
+					blockedRooms.put(activity.getAsset().getId(), activity.getStatus());
+				} else {
+					busyRooms.put(activity.getAsset().getId(), activity.getStatus());
+				}
+			}
 		}
+		for (ITransferObject ito : getCheckoutActivityList()) {
+			ProjectReservationRoomDetail projectReservationRoomDetail = (ProjectReservationRoomDetail) ito;
+			AssetActivity activity = projectReservationRoomDetail.getAssetActivity();
+			checkoutRooms.put(activity.getAsset().getId(), activity.getStatus());
+		}
+		
 		setModel(new SerializableListDataModel(getRoomList()));
 	}
 	
@@ -140,7 +189,7 @@ public class CleanStatusController extends BasicController {
 		}
 	}
 
-	private List<ITransferObject> getBlockedRoomStatusList(List<ITransferObject> roomList) {
+	private List<ITransferObject> getRoomActivityList(List<ITransferObject> roomList) {
 		List<Integer> roomIds = new LinkedList<Integer>();
 		if(roomList!=null && roomList.size()>0) {
 			for(ITransferObject to: roomList) {
@@ -151,9 +200,26 @@ public class CleanStatusController extends BasicController {
 				IManagerBean aaBean = BeanManager.getManagerBean(AssetActivity.class);
 				Criteria criteria = new Criteria();
 				criteria.addInExpression(aaBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID), roomIds);
-				criteria.addEqualExpression(aaBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), new Date());
-				criteria.addNotEqualExpression(aaBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_STATUS), ActivityStatus.BUSY);
+				criteria.addEqualExpression(aaBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), searchDate);
 				return aaBean.getList(criteria);
+			} catch (ManagerBeanException e) {
+				throw new AbortProcessingException(e.getMessage(), e);
+			}
+		}
+		return Collections.emptyList();
+	}
+	
+	private List<ITransferObject> getCheckoutActivityList() {
+		if(getHotel()!=null && getHotel().getId()!=null) {
+			try {
+				IManagerBean prrdBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
+				Criteria criteria = new Criteria();
+				String alias = prrdBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_HOTEL_ID);
+				criteria.addEqualExpression(alias, getHotel().getId());
+//				TODO: alias = prrdBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_END_DATE);
+				alias = "ProjectReservationRoomDetail.projectReservationRoom.projectReservation.endDate";
+				criteria.addEqualExpression(alias, searchDate);
+				return prrdBean.getList(criteria);
 			} catch (ManagerBeanException e) {
 				throw new AbortProcessingException(e.getMessage(), e);
 			}
