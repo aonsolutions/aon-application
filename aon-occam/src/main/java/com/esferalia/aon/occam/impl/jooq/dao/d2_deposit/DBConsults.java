@@ -102,7 +102,8 @@ public class DBConsults {
 					.join(REGISTRY)
 					.on(REGISTRY.ID.eq(RATTACH.REGISTRY))
 					.where(RATTACH.TYPE.eq((byte) 17).and(
-							RATTACH.DOMAIN.eq(domainId))).limit(1).fetchOne();
+							RATTACH.DOMAIN.eq(domainId))).
+					orderBy(RATTACH.ID).limit(1).fetchOne();
 			
 			byte[] data;
 			if (record != null) {
@@ -181,7 +182,8 @@ public class DBConsults {
 					.on(REGISTRY.ID.eq(RATTACH.REGISTRY))
 					.where(RATTACH.TYPE.eq((byte) 17).and(
 							RATTACH.DOMAIN.eq(domainId)))
-							.and(RATTACH.ATTACH_DATE.eq(newAttachDate(year))).limit(1).fetchOne();
+							.and(RATTACH.ATTACH_DATE.eq(newAttachDate(year)))
+							.orderBy(RATTACH.ID).limit(1).fetchOne();
 
 			File f = new File("/tmp/DEPOSITO.xml");
 			byte[] data;
@@ -230,7 +232,8 @@ public class DBConsults {
 					.getDslContext()
 					.select(RATTACH.ID, RATTACH.DESCRIPTION, RATTACH.MIMETYPE,
 							RATTACH.DRIVE_ID, RATTACH.DATA).from(RATTACH)
-					.where(RATTACH.ID.eq(id)).limit(1).fetchOne();
+					.where(RATTACH.ID.eq(id))
+					.orderBy(RATTACH.ID).limit(1).fetchOne();
 
 			File f = new File("/tmp/DEPOSITO.xml");
 			byte[] data;
