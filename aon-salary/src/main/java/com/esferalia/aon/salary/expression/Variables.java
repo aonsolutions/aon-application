@@ -90,9 +90,14 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 
 		@Override
 		public Object get(Object key) {
-			ITimedVariable<?> var = Variables.this.getVariable((String) key,
+			ITimedVariable<?> var = Variables.this.getVariable(key.toString(),
 					period);
-			read.put((String) key, var);
+			
+			read.put(key.toString(), var);
+			
+			if ( var instanceof ITimedResult<?>) 
+				read.putAll(((ITimedResult<?>)var).getContext() );
+			
 			return var != null ? var.getValue(period) : null;
 		}
 
@@ -143,6 +148,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		public void cleanRead() {
 			read.clear();
 		}
+		
 
 		public Map<String, ITimedVariable<?>> getRead() {
 			return new HashMap<String, ITimedVariable<?>>(read);
@@ -193,6 +199,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 			read.put(key, var);
 			return mapper.apply(value);
 		}
+		
 	}
 
 	public Variables() {

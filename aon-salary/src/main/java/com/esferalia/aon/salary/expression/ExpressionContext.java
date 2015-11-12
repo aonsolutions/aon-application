@@ -409,6 +409,10 @@ public class ExpressionContext {
 		return (T) variables.get(name.toString(), new Period(start, end));
 	}
 
+	public <T> T readVariable(Object name, Date start, Date end, Class<T> toType) {
+		return (T) getCurrentBindings().get(name);
+	}
+
 	public void add(ExpressionContext ctx) {
 		variables.putAll(ctx.variables);
 	}

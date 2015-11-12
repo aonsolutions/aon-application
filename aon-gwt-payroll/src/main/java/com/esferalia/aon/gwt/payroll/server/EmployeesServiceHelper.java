@@ -756,8 +756,8 @@ public class EmployeesServiceHelper {
 		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
 				draft, ctx);
 
-		draftCtx.next();
 		draftCtx.setListener(listener);
+		draftCtx.next();
 
 		return draftCtx;
 	}

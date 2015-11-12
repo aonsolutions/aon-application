@@ -60,8 +60,8 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.payment.IPayment;
 
-public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
-		ContractSalaryCalculator.IListener,
+public class SalaryDraftBuilder
+		implements ISalaryBuilder<ISalary>, ContractSalaryCalculator.IListener,
 		IContractSalaryCalculatorContext.IListener {
 
 	private SalaryDraft salaryDraft;
@@ -387,7 +387,8 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 	}
 
 	@Override
-	public void addData(String name, ITimedVariable<?> datas) {
+	public void addData(String name, ITimedVariable<?> var) {
+		addVariable(name, var);
 	}
 
 	@Override
@@ -476,8 +477,9 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 	}
 
 	@Override
-	public void addDeduction(Double amount, String description,
-			Date start, Date end,IDeduction ideduction, Map<String, ITimedVariable<?>> context) {
+	public void addDeduction(Double amount, String description, Date start,
+			Date end, IDeduction ideduction,
+			Map<String, ITimedVariable<?>> context) {
 		addContext(context);
 
 		IContractDeduction contractDeduction = (IContractDeduction) ideduction;
@@ -498,13 +500,13 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 		else
 			salaryDraft.addDeduction(deduction);
 
-
 	}
 
 	@Override
 	public void addZeroDeduction(Date start, Date end, IDeduction deduction,
 			Map<String, ITimedVariable<?>> context) {
-		addDeduction(0.00, deduction.getDescription(), start, end, deduction, context);
+		addDeduction(0.00, deduction.getDescription(), start, end, deduction,
+				context);
 	}
 
 	@Override
@@ -635,8 +637,8 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 	}
 
 	@Override
-	public void onInvalidData(IContractDeduction deduction,
-			String variableName, String message) {
+	public void onInvalidData(IContractDeduction deduction, String variableName,
+			String message) {
 		// TODO Auto-generated method stub
 
 	}
@@ -700,8 +702,11 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 
 	@Override
 	public void onCompileError(IContractBonus bonus, String message) {
-		// TODO Auto-generated method stub
-
+		BonusEvent bonusEvent = new BonusEvent();
+		bonusEvent.setMessage(message);
+		bonusEvent.setType(Event.Type.ERROR);
+		bonusEvent.setBonus(newBonus(bonus));
+		salaryDraft.addBonusEvent(bonusEvent);
 	}
 
 	@Override
@@ -735,11 +740,11 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 	@Override
 	public void onRedefinedImplicit(String name, ITimedVariable<?> redefined,
 			ITimedVariable<?> implicit) {
-		// salaryDraft
-		// .addWarning(String
-		// .format("La variable del sistema '%s' con valor '%s' esta redefinida con el valor '%s'",
-		// name, implicit.getValue(implicit.getPeriod()),
-		// redefined.getValue(redefined.getPeriod())));
+		salaryDraft.addWarning(String.format(
+				"La variable del sistema '%s' con valor '%s' esta redefinida con el valor '%s'",
+				name, 
+				implicit.getValue(implicit.getPeriod()),
+				redefined.getValue(redefined.getPeriod())));
 	}
 
 	@Override
@@ -759,34 +764,38 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 		for (Entry<String, ITimedVariable<?>> entry : context.entrySet()) {
 
 			String name = entry.getKey();
-
 			ITimedVariable<?> var = entry.getValue();
-
-			ContextVariable contextVariable = ContextVariable
-					.getVariableByName(entry.getKey());
-			if (contextVariable != null && contextVariable.isInternal()) {
-				continue;
-			}
-
-			Period period = var.getPeriod();
-			Object value = var.getValue(period);
-
-			if (value instanceof MethodStub)
-				continue;
-
-			if (var instanceof IExpressionVariable<?> && !isPayment(name)) {
-				IExpressionVariable<?> exprVar = (IExpressionVariable<?>) var;
-				IExpression expr = exprVar.getExpression();
-				Scope scope = getScope(expr.getScope());
-				salaryDraft.addVariable(entry.getKey(), value,
-						period.getStart(), period.getEnd(), scope,
-						expr.getExpression(), defined.get(name));
-				addContext(exprVar.getContext());
-			} else {
-				salaryDraft.addVariable(entry.getKey(), value,
-						period.getStart(), period.getEnd());
-			}
+			addVariable(name, var);
 		}
+	}
+
+	private void addVariable(String name, ITimedVariable<?> var) {
+
+		ContextVariable contextVariable = ContextVariable
+				.getVariableByName(name);
+		if (contextVariable != null && contextVariable.isInternal()) {
+			return;
+		}
+
+		Period period = var.getPeriod();
+		Object value = var.getValue(period);
+
+		if (value instanceof MethodStub)
+			return;
+
+		if (var instanceof IExpressionVariable<?> && !isPayment(name)) {
+			IExpressionVariable<?> exprVar = (IExpressionVariable<?>) var;
+			IExpression expr = exprVar.getExpression();
+			Scope scope = getScope(expr.getScope());
+			salaryDraft.addVariable(name, value, period.getStart(),
+					period.getEnd(), scope, expr.getExpression(),
+					defined.get(name));
+			addContext(exprVar.getContext());
+		} else {
+			salaryDraft.addVariable(name, value, period.getStart(),
+					period.getEnd());
+		}
+
 	}
 
 	private Deduction newDeduction(IContractDeduction contractDeduction) {
@@ -938,7 +947,8 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 			if (!StringUtils.equals(name, dbPayment.getName())) {
 				continue;
 			}
-			if (StringUtils.isBlank(name) && !equals(type, dbPayment.getType())) {
+			if (StringUtils.isBlank(name)
+					&& !equals(type, dbPayment.getType())) {
 				continue;
 			}
 			nameMatchDbItems.add(dbPayment);
@@ -979,22 +989,19 @@ public class SalaryDraftBuilder implements ISalaryBuilder<ISalary>,
 
 		return type1.ordinal() == type2.ordinal();
 	}
-	
 
 	private static boolean isImplicit(String name) {
 		ContextVariable var = ContextVariable.getVariableByName(name);
 		if (var != null)
 			return true;
-		
-		
+
 		// TODO : Very, very ugly...
-		return name.matches(String.format("%s_\\d+_\\d+",
-				ContextVariable.COMMON_DISEASE_DAYS))
+		return name
+				.matches(String.format("%s_\\d+_\\d+",
+						ContextVariable.COMMON_DISEASE_DAYS))
 				|| name.matches(String.format("%s_\\d+_\\d+",
 						ContextVariable.OCCUPATIONAL_DISEASE_DAYS));
-		
+
 	}
-	
-	
 
 }
