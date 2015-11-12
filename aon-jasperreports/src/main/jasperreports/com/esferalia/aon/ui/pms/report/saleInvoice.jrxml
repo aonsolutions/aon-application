@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="201"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -56,6 +56,8 @@
 		<field name="taxableBase" class="java.lang.Double"/>
 		<field name="invoiceDetail" class="com.code.aon.finance.InvoiceDetail"/>
 	</subDataset>
+	<scriptlet name="invoiceReportScriptlet" class="com.code.aon.ui.finance.util.print.InvoiceReportScriptlet"/>
+	<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
@@ -186,6 +188,19 @@
 			<line>
 				<reportElement uuid="85147e9f-7b02-4282-a88c-f1178f69dcda" key="line-8" x="553" y="539" width="4" height="1"/>
 			</line>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle" isUsingCache="true" onErrorType="Blank">
+				<reportElement uuid="d8c13a81-b376-46f2-a605-88f825ac1cd9" key="image-1" positionType="Float" mode="Opaque" x="0" y="0" width="535" height="802" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getBackgroundFile()!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<graphicElement fill="Solid"/>
+				<imageExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getBackgroundFile()]]></imageExpression>
+			</image>
 		</band>
 	</background>
 	<title>
