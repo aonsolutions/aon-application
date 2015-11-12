@@ -16,7 +16,6 @@ import com.esferalia.aon.file.payroll.fan.data.DAT;
 import com.esferalia.aon.file.payroll.fan.data.EDL;
 import com.esferalia.aon.file.payroll.fan.data.EDT;
 import com.esferalia.aon.file.payroll.fan.data.EMP;
-import com.esferalia.aon.file.payroll.fan.data.TRA;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryData;
 
@@ -130,8 +129,12 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 		if(_realDays!=null && !"".equals(_realDays)){
 			return Double.valueOf(_realDays).intValue();
 		} else {
+			Date contractStart = salary.getContract().getStartDate();
 			Date contractEnd = salary.getContract().getEndDate();
-			return (contractEnd!=null && contractEnd.before(endDate)) ? CommonUtil.getDay(contractEnd) : 30;
+			Date start = startDate.before(contractStart)?contractStart:startDate;
+			Date end = (contractEnd!=null && endDate.after(contractEnd))?contractEnd:endDate;
+			int availableDays = (int) getAvailableDays(start, end);
+			return (contractEnd!=null && contractEnd.before(endDate)) ? availableDays : 30;
 		}
 		
 	}
@@ -230,6 +233,26 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 	// ELEMENTO CALCULADO TOTALES
 	// ****************************
 	// ****************************
+	
+	/**
+	 * 01 Contingencias Comunes
+	 * 
+	 * @param cgcTotalEnterprise
+	 * @param cgcTotalEmployee
+	 * @param emp
+	 */
+	// TODO
+//	@Override
+//	public void createEDTCa01Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, EMP emp) {
+//		super.createEDTCa01Segment(cgcTotalEnterprise, cgcTotalEmployee, emp);
+//		
+//		// La cuota ya tiene el descuento de la reduccion SEA incluida desde el calculo
+//		// pero se debe indicar la cuota integra
+//		
+//		EDT edtCd29 = emp.getEdtSegment("EDTCD29");
+//		EDT edtCa01 = emp.getEdtSegment("EDTCA01");
+//		edtCa01.setImporte(edtCa01.getImporte() + edtCd29.getImporte());
+//	}
 	
 	/**
 	13

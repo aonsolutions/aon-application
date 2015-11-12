@@ -2279,7 +2279,11 @@ public class FANWriter implements Serializable {
 //					******************************
 					List<ITransferObject> bonusList = getSalaryBonuses(salary);
 					if(bonusList!=null && bonusList.size()>0 && getParticularGroup(contract)==null){
-						cccErrors.add("- " + contract.getPerson().getFullName() + " no tiene definido el colectivo peculiaridad cotización");
+						SalaryBonus bonus = (SalaryBonus) bonusList.get(0);
+						BonusType bonusType = obtainBonusType(bonus);
+						if(bonusType!=BonusType.CONTINUOUS_FORMATION){
+							cccErrors.add("- " + contract.getPerson().getFullName() + " no tiene definido el colectivo peculiaridad cotización");
+						}
 					}
 					
 //					******************************
