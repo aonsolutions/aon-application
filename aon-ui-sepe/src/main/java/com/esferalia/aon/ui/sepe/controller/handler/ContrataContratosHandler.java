@@ -491,7 +491,7 @@ public class ContrataContratosHandler implements IContrataHandler, Serializable 
 	}
 	public Boolean getShowApoyoEmprendedoresPanel(){
 		// TODO
-		return getContractCode()==ContractCode.C150;
+		return getContractCode()==ContractCode.C150 || getContractCode()==ContractCode.C430 || getContractCode()==ContractCode.C530;
 	}
 	public Boolean getShowMayor52Panel(){
 		// Datos comunes a todos los contratos

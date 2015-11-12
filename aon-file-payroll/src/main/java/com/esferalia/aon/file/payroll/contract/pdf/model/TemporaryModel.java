@@ -410,15 +410,19 @@ public class TemporaryModel extends AbstractContractModel {
 			} else if(modelOption == ModelOption.TEMPORARY_OPT4){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT4_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT4_OPTION_CHECK.getValue(),"true");
+				// TODO
 			} else if(modelOption == ModelOption.TEMPORARY_OPT5){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT5_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT5_OPTION_CHECK.getValue(),"true");
+				// TODO
 			} else if(modelOption == ModelOption.TEMPORARY_OPT6){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT6_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT6_OPTION_CHECK.getValue(),"true");
+				// TODO
 			} else if(modelOption == ModelOption.TEMPORARY_OPT7){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT7_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT7_OPTION_CHECK.getValue(),"true");
+				// TODO
 			} else if(modelOption == ModelOption.TEMPORARY_OPT8){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT8_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT8_OPTION_CHECK.getValue(),"true");
@@ -428,6 +432,7 @@ public class TemporaryModel extends AbstractContractModel {
 			} else if(modelOption == ModelOption.TEMPORARY_OPT9){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT9_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT9_OPTION_CHECK.getValue(),"true");
+				// TODO
 			} else if(modelOption == ModelOption.TEMPORARY_OPT10){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT10_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT10_OPTION_CHECK.getValue(),"true");
@@ -615,6 +620,49 @@ public class TemporaryModel extends AbstractContractModel {
 			} else if(modelOption == ModelOption.TEMPORARY_OPT13){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT13_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT13_OPTION_CHECK.getValue(),"true");
+				Boolean isBonused = contrata.getColectivoBonificacion()!=null && contrata.getColectivoBonificacion().getCode()!=null;
+				if(code == ContractCode.C430){
+					setPdfFieldValue(PdfFieldTemporary.OPT13_FULL_TIME.getValue(),"true");
+					if( isBonused ){
+						setPdfFieldValue(PdfFieldTemporary.OPT13_TC2_430_BONUS.getValue(),"true");
+					} else {
+						setPdfFieldValue(PdfFieldTemporary.OPT13_TC2_430_NO_BONUS.getValue(),"true");
+					}
+				} else if(code == ContractCode.C530){
+					setPdfFieldValue(PdfFieldTemporary.OPT13_PARTIALLY_TIME.getValue(),"true");
+					if( isBonused ){
+						setPdfFieldValue(PdfFieldTemporary.OPT13_TC2_530_BONUS.getValue(),"true");
+					} else {
+						setPdfFieldValue(PdfFieldTemporary.OPT13_TC2_530_NO_BONUS.getValue(),"true");
+					}
+				}
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldTemporary.OPT13_DISABILITY_ISSUED_BY.toString()))){
+					setPdfFieldValue(PdfFieldTemporary.OPT13_DISABILITY_ISSUED_BY.getValue(), getContractInfoMap(contract).get(PdfFieldTemporary.OPT13_DISABILITY_ISSUED_BY.toString()));
+				}
+				String key = getContractInfoMap(contract).get(PdfFieldTemporary.OPT13_DISABILITY.toString());
+				if(StringUtils.isNotBlank(key)){
+					if(PdfFieldTemporary.OPT13_DISABILITY_MAN_LT_45.toString().equals(key)){
+						setPdfFieldValue(PdfFieldTemporary.OPT13_DISABILITY_MAN_LT_45.getValue(), "true");
+					} else if(PdfFieldTemporary.OPT13_DISABILITY_MAN_GT_45.toString().equals(key)){
+						setPdfFieldValue(PdfFieldTemporary.OPT13_DISABILITY_MAN_GT_45.getValue(), "true");
+					} else if(PdfFieldTemporary.OPT13_DISABILITY_WOMAN_LT_45.toString().equals(key)){
+						setPdfFieldValue(PdfFieldTemporary.OPT13_DISABILITY_WOMAN_LT_45.getValue(), "true");
+					} else if(PdfFieldTemporary.OPT13_DISABILITY_WOMAN_GT_45.toString().equals(key)){
+						setPdfFieldValue(PdfFieldTemporary.OPT13_DISABILITY_WOMAN_GT_45.getValue(), "true");
+					}
+				}
+				key = getContractInfoMap(contract).get(PdfFieldTemporary.OPT13_SEVERE_DISABILITY.toString());
+				if(StringUtils.isNotBlank(key)){
+					if(PdfFieldTemporary.OPT13_SEVERE_DISABILITY_MAN_LT_45.toString().equals(key)){
+						setPdfFieldValue(PdfFieldTemporary.OPT13_SEVERE_DISABILITY_MAN_LT_45.getValue(), "true");
+					} else if(PdfFieldTemporary.OPT13_SEVERE_DISABILITY_MAN_GT_45.toString().equals(key)){
+						setPdfFieldValue(PdfFieldTemporary.OPT13_SEVERE_DISABILITY_MAN_GT_45.getValue(), "true");
+					} else if(PdfFieldTemporary.OPT13_SEVERE_DISABILITY_WOMAN_LT_45.toString().equals(key)){
+						setPdfFieldValue(PdfFieldTemporary.OPT13_SEVERE_DISABILITY_WOMAN_LT_45.getValue(), "true");
+					} else if(PdfFieldTemporary.OPT13_SEVERE_DISABILITY_WOMAN_GT_45.toString().equals(key)){
+						setPdfFieldValue(PdfFieldTemporary.OPT13_SEVERE_DISABILITY_WOMAN_GT_45.getValue(), "true");
+					}
+				}
 			} else if(modelOption == ModelOption.TEMPORARY_OPT14){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT14_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT14_OPTION_CHECK.getValue(),"true");
@@ -680,15 +728,19 @@ public class TemporaryModel extends AbstractContractModel {
 			} else if(modelOption == ModelOption.TEMPORARY_OPT15){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT15_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT15_OPTION_CHECK.getValue(),"true");
+				// TODO
 			} else if(modelOption == ModelOption.TEMPORARY_OPT16){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT16_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT16_OPTION_CHECK.getValue(),"true");
+				// TODO
 			} else if(modelOption == ModelOption.TEMPORARY_OPT17){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT17_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT17_OPTION_CHECK.getValue(),"true");
+				// TODO
 			} else if(modelOption == ModelOption.TEMPORARY_OPT18){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT18_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT18_OPTION_CHECK.getValue(),"true");
+				// TODO
 			}
 			
 		} catch (IOException e) {

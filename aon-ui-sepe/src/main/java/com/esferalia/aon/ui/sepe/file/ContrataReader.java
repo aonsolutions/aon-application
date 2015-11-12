@@ -850,11 +850,9 @@ public class ContrataReader {
 	private void completeDatosBonificacion(DATOSBONIFICACIONTYPE datos, ContrataContratoParams params) {
 		if(datos != null){
 			IContratoType c = (IContratoType) contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().get(0);
-			params.setDisabilityData(true);
-			if( c.getDATOSGENERALESCONTRATO().getINDDISCAPACIDAD()!=null ){
-				if( !c.getDATOSGENERALESCONTRATO().getINDDISCAPACIDAD().equals(TEJINDIS.TEJINDIS_C.getCode()) ){
-					params.setColectivoBonificacion(TELCOLBO.getEnumByValue(datos.getCODIGOCOLECTIVOBONIF()));
-				}
+			params.setApoyoEmprendedoresData(true);
+			if( datos.getCODIGOCOLECTIVOBONIF()!=null ){
+				params.setColectivoBonificacion(TELCOLBO.getEnumByValue(datos.getCODIGOCOLECTIVOBONIF()));	
 			}
 			if(datos.getINDICEMPLEADAUTONOMO()!=null){
 				if(datos.getINDICEMPLEADAUTONOMO().equals("1")){
