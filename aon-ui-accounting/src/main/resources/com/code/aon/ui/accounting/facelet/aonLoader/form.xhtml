@@ -20,19 +20,48 @@
 				<ui:param name="toolbarDescription" value="#{bundle.aon_form}" />
 
 				<ui:define name="toolbarContent">
+					<aon:if test="#{aonLoader.customLoaderEnabled}">
+						<aon:selectOneMenu value="#{aonLoader.selectedCustomLoader}" >
+							<f:selectItem itemLabel="Standard" itemValue="#{null}" />
+							<f:selectItems value="#{aonLoader.customLoaderTypes}" />
+							<a4j:support event="onchange" reRender="aonLoaderForm" actionListener="#{aonLoader.onClear}" />
+						</aon:selectOneMenu>
+					</aon:if>
 					<aon:commandButton id="execute"
 						value="#{bundle.aon_loader_load}"
 						actionListener="#{aonLoader.onShowPanel}"
 						rendered="#{aonLoader.aonFile.size > 0}"
 						reRender="showLoadMessageWindow"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"/>
-
-					<aon:htmlCommandLink  id="help" target="_blank" 
-						value="#{bundle.aon_help}"
-						actionListener="#{aonLoader.onHelp}"
-						styleClass="aon-finding-toolbar-item aon-icon-menu-help"/>
+					<aon:if test="#{empty aonLoader.selectedCustomLoader}">
+						<aon:htmlCommandLink  id="help" target="_blank" 
+							value="#{bundle.aon_help}"
+							actionListener="#{aonLoader.onHelp}"
+							styleClass="aon-finding-toolbar-item aon-icon-menu-help"/>
+					</aon:if>
 				</ui:define>
 			</ui:decorate>
+			
+			<aon:if test="#{aonRole.sysAdmin}">
+				<aon:panel style="width:90%; margin:10px;">
+					<f:facet name="header">
+						<aon:outputText value="Carga de datos personalizada" />
+					</f:facet>
+					<aon:panelGrid  columns="2" style="padding:10px;">
+						<aon:outputText value="OPPIDUM" />
+						<aon:commandButton value="No habilitado" title="#{bundle.aon_enable}"
+							rendered="#{!aonLoader.oppidumLoaderEnabled}"
+							reRender="aonLoaderForm"
+							styleClass="aon-finding-toolbar-item aon-noborder aon-icon-check"
+							actionListener="#{aonLoader.onEnableOppidum}" />
+						<aon:commandButton value="Habilitado" title="#{bundle.aon_enable}"
+							rendered="#{aonLoader.oppidumLoaderEnabled}"
+							reRender="aonLoaderForm"
+							styleClass="aon-finding-toolbar-item aon-noborder aon-icon-checked"
+							actionListener="#{aonLoader.onDisableOppidum}" />
+					</aon:panelGrid>
+				</aon:panel>
+			</aon:if>
 
 			<aon:panelGrid columns="2" style="width:90%; margin:10px;">
 				<aon:outputLabel for="attach_file" value="#{bundle.aon_fileupload_element}" />

@@ -3,11 +3,14 @@ package com.code.aon.ui.loader.controller;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Session;
@@ -19,11 +22,14 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ui.loader.Loader;
 import com.code.aon.ui.loader.LoaderParams;
+import com.code.aon.ui.loader.custom.OppidumSalesLoader;
 
 public class AonLoaderController implements Serializable {
 	
@@ -70,49 +76,67 @@ public class AonLoaderController implements Serializable {
 	}
 
 	public void onStart(ActionEvent event ) {
+		onClear(event);
+		
+		loadCustomLoader();
+	}
+	
+	public void onClear(ActionEvent event ) {
 		setAonFile(null);
 		setParams(new LoaderParams());
 		
 		setLoadPressed(false);
 		setProgressionPanelVisible(false);
+		
 	}
 	
 	public void onLoad(ActionEvent event ) {
-		LogPanelController logger = LogPanelController.getInstance();
-		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
-		boolean mustCloseSession = HibernateUtil.mustCloseSession();
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
-		Session session = HibernateUtil.getSession(sessionName);
-		Loader loader = new Loader(params);
-		try {
-			HibernateUtil.setBeginTransaction(false);
-			HibernateUtil.setCloseSession(false);
-			HibernateUtil.beginTransaction(sessionName);
-			byte[] data = getAonFile().getData();
-			ByteArrayInputStream input = new ByteArrayInputStream(data);
-			loader.loadMetadata(input);
-			input = new ByteArrayInputStream(data);
-			loader.validate(input);
-			input = new ByteArrayInputStream(data);
-			loader.load(input,session);
-			HibernateUtil.commitTransaction(sessionName);
-		} catch (Exception e) {
-			String msg = "Error durante la carga de datos. ";
-			logger.error(msg  + e.getMessage());
-			try {
-				HibernateUtil.rollbackTransaction(sessionName);
-				logger.info("Se deshacen las inserciones realizadas.");
-			} catch (DAOException daoe) {
-				LOGGER.error("Unable to rollback transaction!", e);
+		if(isCustomLoaderEnabled()){
+			if(isOppidumLoaderEnabled()){
+				OppidumSalesLoader loader = new OppidumSalesLoader();
+				
+				byte[] data = getAonFile().getData();
+				ByteArrayInputStream input = new ByteArrayInputStream(data);
+				
+				loader.load(input);
 			}
-			LOGGER.error(msg, e);
-			logger.finish();			
-		} finally {
-			HibernateUtil.closeSession(sessionName);
-			HibernateUtil.setCloseSession(mustCloseSession);
-			HibernateUtil.setBeginTransaction(mustBeginTransaction);
-	        loader.setFactoryManager(null);
-	        setLoadPressed(false);
+		} else {
+			LogPanelController logger = LogPanelController.getInstance();
+			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+			boolean mustCloseSession = HibernateUtil.mustCloseSession();
+			String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+			Session session = HibernateUtil.getSession(sessionName);
+			Loader loader = new Loader(params);
+			try {
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+				HibernateUtil.beginTransaction(sessionName);
+				byte[] data = getAonFile().getData();
+				ByteArrayInputStream input = new ByteArrayInputStream(data);
+				loader.loadMetadata(input);
+				input = new ByteArrayInputStream(data);
+				loader.validate(input);
+				input = new ByteArrayInputStream(data);
+				loader.load(input,session);
+				HibernateUtil.commitTransaction(sessionName);
+			} catch (Exception e) {
+				String msg = "Error durante la carga de datos. ";
+				logger.error(msg  + e.getMessage());
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+					logger.info("Se deshacen las inserciones realizadas.");
+				} catch (DAOException daoe) {
+					LOGGER.error("Unable to rollback transaction!", e);
+				}
+				LOGGER.error(msg, e);
+				logger.finish();			
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+				HibernateUtil.setCloseSession(mustCloseSession);
+				HibernateUtil.setBeginTransaction(mustBeginTransaction);
+				loader.setFactoryManager(null);
+				setLoadPressed(false);
+			}
 		}
 	}
 	
@@ -141,5 +165,69 @@ public class AonLoaderController implements Serializable {
 			e.printStackTrace();
 			throw new AbortProcessingException(e.getMessage());
 		}
+	}
+	
+	/*
+	 * CUSTOM LOADER
+	 */
+	
+	private CustomLoadType selectedCustomLoader;
+	
+	public CustomLoadType getSelectedCustomLoader() {
+		return selectedCustomLoader;
+	}
+	public void setSelectedCustomLoader(CustomLoadType selectedCustomLoader) {
+		this.selectedCustomLoader = selectedCustomLoader;
+	}
+	
+	public List<SelectItem> getCustomLoaderTypes() {
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		for (CustomLoadType type : CustomLoadType.values()) {
+			SelectItem item = new SelectItem(type, type.name());
+			list.add(item);
+		}
+		return list;
+	}
+	
+	private void loadCustomLoader(){
+		selectedCustomLoader = null;
+		ApplicationParameter param = AppParamUtil.getParameter("CUSTOM_LOADER");
+		if(param != null){
+			if(param.getValue().equals(CustomLoadType.APPIDUM.name())){
+				selectedCustomLoader = CustomLoadType.APPIDUM;
+			}
+		}
+	}
+	
+	public boolean isCustomLoaderEnabled(){
+		ApplicationParameter param = AppParamUtil.getParameter("CUSTOM_LOADER");
+		return param != null && param.getValue().equals(CustomLoadType.APPIDUM.name());
+	}
+	
+	public boolean isOppidumLoaderEnabled(){
+		ApplicationParameter param = AppParamUtil.getParameter("CUSTOM_LOADER");
+		return param != null && param.getValue().equals(CustomLoadType.APPIDUM.name());
+	}
+	
+	public void onEnableOppidum(ActionEvent event) {
+		ApplicationParameter param = AppParamUtil.getParameter("CUSTOM_LOADER");
+		if(param == null){
+			param = new ApplicationParameter("CUSTOM_LOADER", "");
+		}
+		param.setValue(CustomLoadType.APPIDUM.name());
+		AppParamUtil.insertParameter(param);
+		loadCustomLoader();
+	}
+	public void onDisableOppidum(ActionEvent event) {
+		ApplicationParameter param = AppParamUtil.getParameter("CUSTOM_LOADER");
+		if(param != null){
+			param.setValue(null);
+			AppParamUtil.insertParameter(param);
+		}
+		loadCustomLoader();
+	}
+	
+	public enum CustomLoadType {
+		APPIDUM;
 	}
 }
