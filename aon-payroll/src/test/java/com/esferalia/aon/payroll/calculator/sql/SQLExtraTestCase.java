@@ -39,7 +39,7 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 
 public class SQLExtraTestCase extends AbstractSQLTestCase {
 
-	private static final double DELTA = 0.000001;
+	private static final double DELTA = 0.0000001;
 
 	@Test
 	public void testDuplicatePaymentsI() throws ExpressionException,
@@ -890,6 +890,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 						put(ContextVariable.MONDAY_HOURS.getName(),"0");
 						put(ContextVariable.TUESDAY_HOURS.getName(),"0");
 						put(ContextVariable.WEDNESDAY_HOURS.getName(),"0");
+						put(ContextVariable.THURSDAY_HOURS.getName(),"8");
+						put(ContextVariable.FRIDAY_HOURS.getName(),"8");
 					}
 				}
 				,new String[] {}

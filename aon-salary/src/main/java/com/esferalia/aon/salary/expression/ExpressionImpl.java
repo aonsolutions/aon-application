@@ -10,24 +10,27 @@ public class ExpressionImpl implements IExpression {
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
+	public ExpressionImpl setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	@Override
 	public ExpressionScope getScope() {
 		return scope;
 	}
-	public void setScope(ExpressionScope scope) {
+	public ExpressionImpl setScope(ExpressionScope scope) {
 		this.scope = scope;
+		return this;
 	}
 
 	@Override
 	public String getExpression() {
 		return expression;
 	}
-	public void setExpression(String expression) {
+	public ExpressionImpl setExpression(String expression) {
 		this.expression = expression;
+		return this;
 	}
 	
 	@Override

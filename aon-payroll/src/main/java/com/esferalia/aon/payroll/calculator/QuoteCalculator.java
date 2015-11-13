@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -42,6 +43,7 @@ import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedObject;
+import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -87,12 +89,23 @@ public abstract class QuoteCalculator {
 		return nonStructuralBase;
 	}
 
+	public Double qu0te(IContractPayment payment, Date start, Date end,
+			double amount) throws AonException {
+
+		double quote = 0;
+		for (ITimedResult<Double> result : quote(payment, start, end, amount))
+			quote += result.getValue();
+
+		return quote;
+
+	}
+
 	public abstract Double getEreBase() throws AonException;
 
 	public abstract Double getMaternityBase() throws AonException;
 
-	public abstract Double quote(IContractPayment payment, Date start,
-			Date end, double amount) throws AonException;
+	public abstract List<ITimedResult<Double>> quote(IContractPayment payment,
+			Date start, Date end, double amount) throws AonException;
 
 	public static class NonQuote extends QuoteCalculator {
 		private NonQuote() {
@@ -139,9 +152,9 @@ public abstract class QuoteCalculator {
 		}
 
 		@Override
-		public Double quote(IContractPayment payment, Date start, Date end,
-				double amount) throws AonException {
-			return null; // No cotiza...
+		public List<ITimedResult<Double>> quote(IContractPayment payment,
+				Date start, Date end, double amount) throws AonException {
+			return Collections.emptyList(); // No cotiza...
 		}
 
 		@Override
@@ -184,8 +197,8 @@ public abstract class QuoteCalculator {
 		@Override
 		public Double getCgcBase() throws AonException {
 			if (cgcBase == null) {
-//				cgcBase = getLimitedCgcBase(rawCgcBase, context, salaryStart,
-//						salaryEnd);
+				// cgcBase = getLimitedCgcBase(rawCgcBase, context, salaryStart,
+				// salaryEnd);
 				cgcBase = getSum(CGC_BASE, context, salaryStart, salaryEnd);
 			}
 			return cgcBase;
@@ -196,8 +209,8 @@ public abstract class QuoteCalculator {
 			if (cgpBase == null) {
 				Double rawCgpBase = rawCgcBase + structuralBase
 						+ nonStructuralBase;
-//				cgpBase = getLimitedCgpBase(rawCgpBase, context, salaryStart,
-//						salaryEnd);
+				// cgpBase = getLimitedCgpBase(rawCgpBase, context, salaryStart,
+				// salaryEnd);
 				cgpBase = getSum(CGP_BASE, context, salaryStart, salaryEnd);
 			}
 			return cgpBase;
@@ -211,8 +224,8 @@ public abstract class QuoteCalculator {
 
 		@Override
 		public Double getMaternityBase() throws AonException {
-			return bases.containsKey(MATERNITY.getName()) ? bases.get(MATERNITY
-					.getName()) : 0.00;
+			return bases.containsKey(MATERNITY.getName())
+					? bases.get(MATERNITY.getName()) : 0.00;
 		}
 
 		protected double getQuote(IContractPayment payment, Date start,
@@ -236,69 +249,83 @@ public abstract class QuoteCalculator {
 
 			return total;
 		}
-		
-		
-		protected List<ITimedResult<Double>> quote(IContractPayment payment, Date start,
-				Date end) throws UndefinedVariablesException, ExpressionException {
+
+		protected List<ITimedResult<Double>> quote(IContractPayment payment,
+				Date start, Date end) throws UndefinedVariablesException,
+						ExpressionException {
 			String quoteExpr = payment.getQuoteExpression();
 			if (quoteExpr == null) {
 				return Collections.emptyList();
 			}
-			return  context.eval(quoteExpr, start,
-					end, Double.class);
+			return context.eval(quoteExpr, start, end, Double.class);
 		}
 
 		@Override
-		public Double quote(IContractPayment payment, Date start, Date end,
-				double amount) throws AonException {
-			double total = 0.00;
-			
-			List<ITimedResult<Double>> quotes = quote(payment, start, end);
-			
-			for (ITimedResult<Double> quote : quotes)
-				total += quoteImpl(
-						payment, 
-						quote.getPeriod().getStart(), 
-						quote.getPeriod().getEnd(), 
-						quote.getValue(quote.getPeriod())
-						);
+		public List<ITimedResult<Double>> quote(IContractPayment payment,
+				Date start, Date end, double amount) throws AonException {
 
-			return total; 
+			List<ITimedResult<Double>> quoteResults = quote(payment, start, end);
+
+			List<ITimedResult<Double>> quotesImpl = new ArrayList<ITimedResult<Double>>(
+					quoteResults.size());
+
+			for (ITimedResult<Double> quoteResult : quoteResults) {
+				double quote = quoteResult.getValue(quoteResult.getPeriod());
+				
+
+				quotesImpl.add(new TimedResult<Double>(quote,
+						quoteResult.getPeriod(), quoteResult.getContext()));
+				
+				List<ITimedResult<Double>> limitsResults = quoteImpl(payment,
+						quoteResult.getPeriod().getStart(),
+						quoteResult.getPeriod().getEnd(),
+						quoteResult.getValue(quoteResult.getPeriod()));
+				// TODO: ???
+				for ( ITimedResult<Double> limitResult: limitsResults )
+					quotesImpl.add(new TimedResult<Double>(0.00,
+							limitResult.getPeriod(), limitResult.getContext()));
+			}
+
+			return quotesImpl;
 		}
-		
+
 		// --------------------------------------------------------------------
-		protected Double quoteImpl(IContractPayment payment, Date start, Date end,
-				final double quote) {
+		protected List<ITimedResult<Double>> quoteImpl(IContractPayment payment, Date start,
+				Date end, final double quote) {
 			this.cgcBase = null;
 			this.cgpBase = null;
-			
 
+			List<ITimedResult<Double>> quotesImpl = new ArrayList<ITimedResult<Double>>();
+			
 			String name = payment.getName();
-			
-			
+
 			if (!StringUtils.isBlank(name)) {
 				bases.put(name, quote);
 				add(String.format("BASE_%s", name), quote, context, start, end);
-				
+
 				if (AonStringUtils.equals(MATERNITY.getName(), name)
-						|| AonStringUtils.equals(ERE.getName(), name)){
-					
-					if ( context.containsVariable(CGC_BASE.getName(), start, end) )
-						limit(CGC_BASE.getName(), CGC_BASE_RAW.getName(),
+						|| AonStringUtils.equals(ERE.getName(), name)) {
+
+					if (context.containsVariable(CGC_BASE.getName(), start,
+							end))
+						quotesImpl.addAll(limit(CGC_BASE.getName(), CGC_BASE_RAW.getName(),
 								CGC_BASE_MIN.getName(), CGC_BASE_MAX.getName(),
-								context, start, end, MATERNITY_BASE.getName(), ERE_BASE.getName());
-					if ( context.containsVariable(CGP_BASE.getName(), start, end) )
-						limit(CGP_BASE.getName(),  CGP_BASE_RAW.getName(),
+								context, start, end, MATERNITY_BASE.getName(),
+								ERE_BASE.getName()));
+					if (context.containsVariable(CGP_BASE.getName(), start,
+							end))
+						quotesImpl.addAll(limit(CGP_BASE.getName(), CGP_BASE_RAW.getName(),
 								CGP_BASE_MIN.getName(), CGP_BASE_MAX.getName(),
-								context, start, end, MATERNITY_BASE.getName(), ERE_BASE.getName());
-						
-					return quote;
+								context, start, end, MATERNITY_BASE.getName(),
+								ERE_BASE.getName()));
+
+					return quotesImpl;
 				}
 
 			}
 
 			PaymentType paymentType = payment.getType();
-			if ( paymentType == null )
+			if (paymentType == null)
 				paymentType = PaymentType.CRA_0001;
 
 			paymentType.accept(new PaymentTypeVisitor() {
@@ -308,7 +335,8 @@ public abstract class QuoteCalculator {
 					add(CGC_BASE_RAW.getName(), quote, context, start, end);
 					limit(CGC_BASE.getName(), CGC_BASE_RAW.getName(),
 							CGC_BASE_MIN.getName(), CGC_BASE_MAX.getName(),
-							context, start, end, MATERNITY_BASE.getName(), ERE_BASE.getName());
+							context, start, end, MATERNITY_BASE.getName(),
+							ERE_BASE.getName());
 					GeneralQuote.this.rawCgcBase += quote;
 				}
 
@@ -331,16 +359,17 @@ public abstract class QuoteCalculator {
 					add(CGC_BASE_RAW.getName(), quote, context, start, end);
 					limit(CGC_BASE.getName(), CGC_BASE_RAW.getName(),
 							CGC_BASE_MIN.getName(), CGC_BASE_MAX.getName(),
-							context, start, end, MATERNITY_BASE.getName(), ERE_BASE.getName());
+							context, start, end, MATERNITY_BASE.getName(),
+							ERE_BASE.getName());
 					GeneralQuote.this.rawCgcBase += quote;
 				}
 
 			});
 
 			add(CGP_BASE_RAW.getName(), quote, context, start, end);
-			limit(CGP_BASE.getName(),  CGP_BASE_RAW.getName(),
-					CGP_BASE_MIN.getName(), CGP_BASE_MAX.getName(),
-					context, start, end, MATERNITY_BASE.getName(), ERE_BASE.getName());
+			quotesImpl.addAll(limit(CGP_BASE.getName(), CGP_BASE_RAW.getName(),
+					CGP_BASE_MIN.getName(), CGP_BASE_MAX.getName(), context,
+					start, end, MATERNITY_BASE.getName(), ERE_BASE.getName()));
 
 			SalaryType salaryType = payment.getSalaryType();
 			salaryType.accept(new SalaryTypeVisitor<Object>() {
@@ -372,16 +401,16 @@ public abstract class QuoteCalculator {
 				}
 			});
 
-			return quote;
+			return quotesImpl;
 		}
 
-		protected void limit(String limitName, String rawName,
-				String minExpression, String maxExpression, ExpressionContext ctx,
-				Date start, Date end, String ...others) {
-			QuoteCalculator.limit(limitName, rawName, minExpression, maxExpression, ctx, start, end, others);
+		protected List<ITimedResult<Double>> limit(String limitName, String rawName,
+				String minExpression, String maxExpression,
+				ExpressionContext ctx, Date start, Date end, String... others) {
+			return QuoteCalculator.limit(limitName, rawName, minExpression,
+					maxExpression, ctx, start, end, others);
 		}
 
-		
 	}
 
 	public static class UnlimitedQuote extends GeneralQuote {
@@ -401,19 +430,21 @@ public abstract class QuoteCalculator {
 					+ getNonStructuralBase();
 		}
 
-		protected void limit(String limitName, String rawName,
-				String minExpression, String maxExpression, ExpressionContext ctx,
-				Date start, Date end, String ...others) {
+		protected List<ITimedResult<Double>> limit(String limitName, String rawName, 
+				String minExpression, String maxExpression,
+				ExpressionContext ctx, Date start, Date end, String... others) {
 
 			List<ITimedVariable<Double>> raws = ctx.getVariables(rawName, start,
 					end);
-			
+
 			for (ITimedVariable<Double> raw : raws) {
 				Period rawPeriod = raw.getPeriod();
 				Double rawValue = raw.getValue(raw.getPeriod());
-				ctx.putVariable(limitName, new TimedObject<Double>(
-						rawValue, rawPeriod));
+				ctx.putVariable(limitName,
+						new TimedObject<Double>(rawValue, rawPeriod));
 			}
+			
+			return Collections.emptyList();
 		}
 	}
 
@@ -493,18 +524,20 @@ public abstract class QuoteCalculator {
 		}
 
 		@Override
-		public Double quote(IContractPayment payment, Date start, Date end,
-				double amount) throws AonException {
-			double quote = 0.00;
+		public List<ITimedResult<Double>> quote(IContractPayment payment,
+				Date start, Date end, double amount) throws AonException {
+			List<ITimedResult<Double>> quotes = new ArrayList<ITimedResult<Double>>();
+
 			for (GeneralQuote calculator : calculators) {
 				Period intersect = CompositeGeneralQuote.intersect(calculator,
 						start, end);
 				if (intersect != null) {
-					quote += calculator.quote(payment, intersect.getStart(),
-							intersect.getEnd(), amount);
+					quotes.addAll(calculator.quote(payment,
+							intersect.getStart(), intersect.getEnd(), amount));
 				}
 			}
-			return quote;
+
+			return quotes;
 		}
 
 		private static Period intersect(GeneralQuote calculator, Date start,
@@ -580,42 +613,36 @@ public abstract class QuoteCalculator {
 
 	protected double getSum(ContextVariable contextVariable,
 			ExpressionContext ctx, Date start, Date end)
-			throws ExpressionException {
+					throws ExpressionException {
 		Double total = 0.00;
-		
-		List<ITimedVariable<Double>> vars = ctx.getVariables(contextVariable, start, end);
-		for ( ITimedVariable<Double> var : vars  ){
+
+		List<ITimedVariable<Double>> vars = ctx.getVariables(contextVariable,
+				start, end);
+		for (ITimedVariable<Double> var : vars) {
 			try {
 				total += var.getValue(var.getPeriod());
-			} catch ( Exception e ) {
+			} catch (Exception e) {
 			}
 		}
-		
+
 		return total;
 	}
 
-
-
-	private static Double getLimit(String expression,
+	private static List<ITimedResult<Double>> getLimit(String expression,
 			ExpressionContext expressionContext, Date start, Date end)
-			throws ExpressionException {
+					throws ExpressionException {
 
 		if (expression == null)
-			return null;
+			return Collections.emptyList();
 
 		List<ITimedResult<Double>> limits = null;
 		limits = expressionContext.eval(expression, start, end, Double.class);
 
 		if (limits == null || limits.size() == 0) {
-			return null;
+			return Collections.emptyList();
 		}
 
-		Double limit = 0.00;
-		for (ITimedResult<Double> result : limits) {
-			limit += result.getValue();
-		}
-
-		return limit;
+		return limits;
 	}
 
 	private static void add(String name, Double value, ExpressionContext ctx,
@@ -635,8 +662,8 @@ public abstract class QuoteCalculator {
 			Double oldValue = var.getValue(period);
 			long days = AonDateUtils.getDaysBetweenDates(period.getStart(),
 					period.getEnd()) + 1;
-			ctx.putVariable(name, new TimedObject<Double>(oldValue
-					+ (valueDay * days), period));
+			ctx.putVariable(name, new TimedObject<Double>(
+					oldValue + (valueDay * days), period));
 		}
 
 		List<Period> nullPeriods = Period.sub(new Period(start, end),
@@ -644,78 +671,97 @@ public abstract class QuoteCalculator {
 		for (Period period : nullPeriods) {
 			long days = AonDateUtils.getDaysBetweenDates(period.getStart(),
 					period.getEnd()) + 1;
-			ctx.putVariable(name, new TimedObject<Double>(valueDay * days,
-					period));
+			ctx.putVariable(name,
+					new TimedObject<Double>(valueDay * days, period));
 		}
 
 	}
 
-	private static void limit(String limitName, String rawName,
+	private static List<ITimedResult<Double>> limit(String limitName, String rawName,
 			String minExpression, String maxExpression, ExpressionContext ctx,
-			Date start, Date end, String ...others) {
+			Date start, Date end, String... others) {
 
+		List<ITimedResult<Double>> results = new ArrayList<ITimedResult<Double>>();
+		
+		
 		List<ITimedVariable<Double>> raws = ctx.getVariables(rawName, start,
 				end);
-		
+
 		for (ITimedVariable<Double> raw : raws) {
 			Period rawPeriod = raw.getPeriod();
 			Double rawValue = raw.getValue(raw.getPeriod());
-			
+
 			Double othersValue = 0.00;
-			for ( String other: others )
-				othersValue += sum(other, rawPeriod, ctx );
-			
+			for (String other : others)
+				othersValue += sum(other, rawPeriod, ctx);
+
 			try {
-				Double minValue = getLimit(minExpression, ctx,
-						rawPeriod.getStart(), rawPeriod.getEnd());
+				List<ITimedResult<Double>> minValues = getLimit(minExpression,
+						ctx, rawPeriod.getStart(), rawPeriod.getEnd());
+
+				double minValue = 0.00;
+				for ( ITimedResult<Double> minResult: minValues ) {
+					results.add(minResult);
+					minValue += minResult.getValue();
+				}
 				
 				minValue -= othersValue;
-				
-				if ( rawValue <= minValue) {
-					ctx.putVariable(limitName, new TimedObject<Double>(
-							minValue , rawPeriod));
-					return;
-				}
-			} catch ( Exception e ){
-			}
-				
-			try{
-				Double maxValue = getLimit(maxExpression, ctx,
-						rawPeriod.getStart(), rawPeriod.getEnd());
 
-				maxValue -= othersValue;
+				if (rawValue <= minValue) {
+					ctx.putVariable(limitName,
+							new TimedObject<Double>(minValue, rawPeriod));
+					continue;
+				}
 				
-				ctx.putVariable(
-						limitName,
-						new TimedObject<Double>(Math
-								.min(rawValue, maxValue), rawPeriod));
-				return;
+				
 			} catch (Exception e) {
 			}
-			ctx.putVariable(limitName, new TimedObject<Double>(
-					rawValue, rawPeriod));
+
+			try {
+				List<ITimedResult<Double>> maxValues = getLimit(maxExpression,
+						ctx, rawPeriod.getStart(), rawPeriod.getEnd());
+
+				double maxValue = 0.00;
+				for ( ITimedResult<Double> maxResult: maxValues ) {
+					results.add(maxResult);
+					maxValue += maxResult.getValue();
+				}
+
+				maxValue -= othersValue;
+
+				ctx.putVariable(limitName, new TimedObject<Double>(
+						Math.min(rawValue, maxValue), rawPeriod));
+				continue;
+			} catch (Exception e) {
+			}
+			ctx.putVariable(limitName,
+					new TimedObject<Double>(rawValue, rawPeriod));
 		}
+		
+		return results;
 
 	}
-	
+
 	private static Double sum(String name, Period p, ExpressionContext ctx) {
 		Double sum = 0.00;
-		
+
 		List<ITimedVariable<Double>> vars = getVariables(name, p, ctx);
-		
+
 		for (ITimedVariable<Double> var : vars) {
 			Period intersect = var.getPeriod().intersect(p);
-			sum += var.getValue(var.getPeriod()) * days(intersect) / days(var.getPeriod());
+			sum += var.getValue(var.getPeriod()) * days(intersect)
+					/ days(var.getPeriod());
 		}
 
 		return sum;
 	}
-	
+
 	private static long days(Period p) {
 		return CommonUtil.getDaysBetweenDates(p.getStart(), p.getEnd()) + 1;
 	}
 
-	private static  <T> List<ITimedVariable<T>> getVariables(String name, Period p, ExpressionContext ctx) {
+	private static <T> List<ITimedVariable<T>> getVariables(String name,
+			Period p, ExpressionContext ctx) {
 		List<ITimedVariable<Object>> variables = ctx.getVariables(name);
 		if (variables == null)
 			return Collections.emptyList();
@@ -723,13 +769,12 @@ public abstract class QuoteCalculator {
 		List<ITimedVariable<T>> ret = new ArrayList<ITimedVariable<T>>();
 
 		for (ITimedVariable<?> var : variables) {
-			if ( var.getPeriod().intersects(p))
+			if (var.getPeriod().intersects(p))
 				ret.add((ITimedVariable<T>) var);
 		}
 
 		return ret;
 
 	}
-	
 
 }

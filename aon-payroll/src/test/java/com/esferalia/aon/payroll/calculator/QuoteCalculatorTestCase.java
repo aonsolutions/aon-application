@@ -561,8 +561,8 @@ public class QuoteCalculatorTestCase {
 		expression.setExpression("30000.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)");
 		ctx.addLazyExpression(expression, startDate, endDate);
 		
-		Double quote = quoteCalculator.quote(fixedPayment, startDate, endDate, 10.00);
-		quote = quoteCalculator.quote(itPayment, startDate, startDate, 200.00);
+		Double quote = quoteCalculator.qu0te(fixedPayment, startDate, endDate, 10.00);
+		quote = quoteCalculator.qu0te(itPayment, startDate, startDate, 200.00);
 		
 //		Assert.assertEquals(CGC_BASE.name(), 1000.00, quote);
 		

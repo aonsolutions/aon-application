@@ -2952,22 +2952,17 @@ public class SQLContractSalaryCalculatorContext extends
 
 
 	private double getWorkedHours(Period p) {
-		Map<Integer, ContextVariable> week_days_hours = 
-				new HashMap<Integer, ContextVariable>(){
-			{
-				put(MONDAY, MONDAY_HOURS);
-				put(TUESDAY, TUESDAY_HOURS);
-				put(WEDNESDAY, WEDNESDAY_HOURS);
-				put(THURSDAY, THURSDAY_HOURS);
-				put(FRIDAY, FRIDAY_HOURS);
-				put(SATURDAY, SATURDAY_HOURS);
-				put(SUNDAY, SUNDAY_HOURS);
-			}
-		};
+		
+		p.daysStream()
+		.filter(day-> !contractExpressionContext.containsVariable(getDayHours(day), day.getTime(), day.getTime()))
+		.forEach(day->onUndefinedData(new ExpressionImpl().setName(getDayHours(day).getName()).setScope(ExpressionScope.SYSTEM), 
+				null, day.getTime(), day.getTime(), getDayHours(day).getName()));
+		
+		
 		return p.daysStream()
-				.filter(day->contractExpressionContext.containsVariable(week_days_hours.get(day.get(DAY_OF_WEEK)), day.getTime(), day.getTime()))
+				.filter(day->contractExpressionContext.containsVariable(getDayHours(day), day.getTime(), day.getTime()))
 				.collect(
-				Collectors.summingDouble(day->contractExpressionContext.getVariable(week_days_hours.get(day.get(DAY_OF_WEEK)), day.getTime(), day.getTime(), Number.class).doubleValue())
+				Collectors.summingDouble(day->contractExpressionContext.readVariable(getDayHours(day), day.getTime(), day.getTime(), Number.class).doubleValue())
 				);
 	}
 
@@ -3618,7 +3613,7 @@ public class SQLContractSalaryCalculatorContext extends
 					return p.daysStream()
 							.filter(day->ctx.containsVariable(DAYS.get(day.get(DAY_OF_WEEK)), day.getTime(), day.getTime()))
 							.collect(
-							Collectors.summingDouble(day->ctx.getVariable(DAYS.get(day.get(DAY_OF_WEEK)), day.getTime(), day.getTime(), Number.class).doubleValue())
+							Collectors.summingDouble(day->ctx.readVariable(DAYS.get(day.get(DAY_OF_WEEK)), day.getTime(), day.getTime(), Number.class).doubleValue())
 							);
 				}
 
@@ -3655,35 +3650,46 @@ public class SQLContractSalaryCalculatorContext extends
 				.filter(periods -> periods != null && !periods.isEmpty())
 				.reduce(contract, (a, b) -> Period.intersect(a, b));
 
+		class WeekHours implements ITimedVariable<Double> {
+			
+			Period period;
+			
+			public WeekHours(Period period) {
+				this.period = period;
+			}
+			
+			@Override
+			public Period getPeriod() {
+				return period;
+			}
+
+			@Override
+			public Double getValue(Period p) {
+				return Arrays
+						.stream(WEEK_DAYS)
+						.collect(
+								Collectors
+										.summingDouble((var -> getCurrentBindings()
+												.get(var,
+														obj -> ((Number) obj)
+																.doubleValue(),
+														0.00))));
+			}
+
+		}
+		
 		for (Period period : intersects) {
-			ITimedVariable<Double> weeks_hours = new ITimedVariable<Double>() {
-				@Override
-				public Period getPeriod() {
-					return period;
-				}
-
-				@Override
-				public Double getValue(Period p) {
-					return Arrays
-							.stream(WEEK_DAYS)
-							.collect(
-									Collectors
-											.summingDouble((var -> getCurrentBindings()
-													.get(var,
-															obj -> ((Number) obj)
-																	.doubleValue(),
-															Arrays.asList(
-																	SATURDAY_HOURS,
-																	SUNDAY_HOURS)
-																	.contains(
-																			var) ? 0.00
-																	: DEFAULT_DAY_HOURS))));
-				}
-
-			};
-
- 			ctx.putVariable(WEEK_HOURS, weeks_hours);
-
+			ctx.putVariable(WEEK_HOURS, new WeekHours(period));
+		}
+		
+		for (Period period : ctx.getPeriods(WEEK_HOURS) ) {
+			
+			ITimedVariable<?> userWeekHours = getExpressionContext()
+					.getVariable(WEEK_HOURS, period.getStart(),
+							period.getEnd());
+			if (listener != null)
+				listener.onRedefinedImplicit(WEEK_HOURS.getName(),
+						userWeekHours, new WeekHours(period));
 		}
 
 	}
@@ -4225,6 +4231,26 @@ public class SQLContractSalaryCalculatorContext extends
 		return calendar.getTime();
 	}
 
+	protected static ContextVariable getDayHours( Calendar calendar ){
+		return getDayOfWeekHours(calendar.get(Calendar.DAY_OF_WEEK));
+	}
+
+	protected static ContextVariable getDayOfWeekHours( int dayOfWeek ){
+		Map<Integer, ContextVariable> week_days_hours = 
+				new HashMap<Integer, ContextVariable>(){
+			{
+				put(MONDAY, MONDAY_HOURS);
+				put(TUESDAY, TUESDAY_HOURS);
+				put(WEDNESDAY, WEDNESDAY_HOURS);
+				put(THURSDAY, THURSDAY_HOURS);
+				put(FRIDAY, FRIDAY_HOURS);
+				put(SATURDAY, SATURDAY_HOURS);
+				put(SUNDAY, SUNDAY_HOURS);
+			}
+			};
+		return week_days_hours.get(dayOfWeek);
+		
+	}
 	@Override
 	public Date getDate(String tableLabel, String columnLabel) {
 		try {

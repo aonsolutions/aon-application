@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
@@ -48,6 +49,7 @@ import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -476,16 +478,6 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			expressionContext.setVariable(IRPF_BASE,
 					taxCalculator.getIrpfBase(), irpfDate, irpfDate);
 
-//			try {
-//				Double cgcBase = quoteCalculator.getCgcBase();
-//				Double ereBase = quoteCalculator.getEreBase();
-//				Double maternityBase = quoteCalculator.getMaternityBase();
-//				if (cgcBase != null && maternityBase != null && ereBase != null)
-//					expressionContext.setVariable(CGC_BASE, cgcBase
-//							- maternityBase - ereBase, start, end);
-//			} catch (UndefinedVariablesException e) {
-//				onInvalidData(e.getVariableNames());
-//			}
 
 			for (UndefPayment undefTotalPayment : undefTotalPayments) {
 				try {
@@ -909,8 +901,18 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 						resultEnd);
 				
 				
-				Double quote = quoteCalculator.quote(contractPayment,
+//				Double quote = quoteCalculator.qu0te(contractPayment,
+//						resultStart, resultEnd, resultValue);
+				
+				// Here we add 'all' variables involved in quote. 
+				double quote = 0.00;
+				List<ITimedResult<Double>> quoteResults = quoteCalculator.quote(contractPayment,
 						resultStart, resultEnd, resultValue);
+				for ( ITimedResult<Double> quoteResult : quoteResults ) {
+					for ( Entry<String,ITimedVariable<?>> entry: quoteResult.getContext().entrySet() ) 
+						salaryBuilder.addData(entry.getKey(), entry.getValue());
+					quote += quoteResult.getValue();
+				}
 
 				try {
 					Double tax = taxCalculator.tax(contractPayment,

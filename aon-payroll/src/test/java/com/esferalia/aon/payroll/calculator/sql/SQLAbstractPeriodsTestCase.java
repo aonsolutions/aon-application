@@ -586,6 +586,11 @@ public abstract class SQLAbstractPeriodsTestCase extends AbstractSQLTestCase {
 				new HashMap<String, String>() {
 					{
 						put(TC2.getName(), C200.getValue());
+						put(ContextVariable.MONDAY_HOURS.getName(),"8");
+						put(ContextVariable.TUESDAY_HOURS.getName(),"8");
+						put(ContextVariable.WEDNESDAY_HOURS.getName(),"8");
+						put(ContextVariable.THURSDAY_HOURS.getName(),"8");
+						put(ContextVariable.FRIDAY_HOURS.getName(),"8");
 					}
 				});
 
