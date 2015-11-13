@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.office.client.values;
 public class LabelValue extends Value<LabelValue.Prop> {
 
 	public static enum Prop implements ValueProp {
-		URL("url"), NAME("name"), COLOR("color");
+		URL("url"), NAME("name"), COLOR("color"), TYPE("type");
 
 		private final String value;
 
@@ -27,5 +27,9 @@ public class LabelValue extends Value<LabelValue.Prop> {
 	
 	public void setUrl(String url) {
 		prop.put(Prop.URL, url);
+	}
+	
+	public void setType(String type) {
+		prop.put(Prop.TYPE, type);
 	}
 }

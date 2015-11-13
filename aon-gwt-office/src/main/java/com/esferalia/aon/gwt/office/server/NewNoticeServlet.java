@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jooq.exception.DataAccessException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.code.aon.config.enumeration.TagType;
@@ -94,6 +95,11 @@ public class NewNoticeServlet extends HttpServlet {
 			if (!json.isNull("company"))
 				notice.setCompany(json.getString("company"));
 
+			JSONArray labels = json.getJSONArray("labels");
+			for (int x = 0; x < labels.length(); x++) {
+				
+			}
+			
 			Integer sender = userId;
 			if (!json.isNull("sender"))
 				sender = json.getInt("sender");

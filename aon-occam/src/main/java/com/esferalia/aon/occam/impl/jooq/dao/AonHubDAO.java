@@ -3,17 +3,21 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.jooq.InsertSetMoreStep;
 import org.jooq.Record;
+import org.jooq.Result;
 import org.jooq.exception.DataAccessException;
 
+import com.esferalia.aon.jooq.tables.Rmedia;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.NoticeRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
@@ -21,10 +25,12 @@ import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
 import com.esferalia.aon.jooq.tables.records.WorkgroupRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.office.Identification;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NoticeComment;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.office.User;
+import com.sun.xml.bind.v2.model.runtime.RuntimeElementInfo;
 
 public class AonHubDAO {
 
@@ -32,16 +38,16 @@ public class AonHubDAO {
 			Integer domain) throws DataAccessException, Exception {
 
 		List<Notice> notices = new LinkedList<Notice>();
-		
+
 		try {
 			List<NoticeRecord> recordList = ctx
 					.getDslContext()
 					.selectFrom(NOTICE)
 					.where(NOTICE.DOMAIN.eq(parentDomain).or(
 							NOTICE.DOMAIN.eq(domain)))
-					.and(NOTICE.STATUS.eq((byte) 2)).and(NOTICE.NOTICE_.isNull())
-					.fetchInto(NOTICE);
-			
+					.and(NOTICE.STATUS.eq((byte) 2))
+					.and(NOTICE.NOTICE_.isNull()).fetchInto(NOTICE);
+
 			for (NoticeRecord record : recordList) {
 				Notice notice = new Notice();
 				Integer noticeId = record.getValue(NOTICE.ID);
@@ -51,46 +57,35 @@ public class AonHubDAO {
 				notice.setSender(record.getValue(NOTICE.SENDER));
 				notice.setTitle(record.getValue(NOTICE.SUBJECT));
 
-				NoticeRecord object = getTitleSubject(ctx,
-						notice, noticeId);
-				
-				if ( object == null ) {
+				NoticeRecord object = getTitleSubject(ctx, notice, noticeId);
+
+				if (object == null) {
 					notice.setBody(record.getValue(NOTICE.SUBJECT));
 					notice.setNotice(record.getValue(NOTICE.ID));
-				}
-				else {
+				} else {
 					notice.setBody(object.getValue(NOTICE.SUBJECT));
 					notice.setNotice(object.getValue(NOTICE.ID));
 				}
 
-				notice.setRecipient(record
-						.getValue(NOTICE.RECIPIENT));
+				notice.setRecipient(record.getValue(NOTICE.RECIPIENT));
 				notice.setPhone(record.getValue(NOTICE.PHONE));
 				notice.setSource(record.getValue(NOTICE.SOURCE));
-				notice.setCompany(record
-						.getValue(NOTICE.COMPANY));
-				notice.setStatus(record.getValue(NOTICE.STATUS)
-						.intValue());
-				notice.setWorkgroup(record
-						.getValue(NOTICE.WORK_GROUP));
-				notice.setType(record.getValue(NOTICE.TYPE)
-						.intValue());
-				notice.setPriority(record.getValue(
-						NOTICE.PRIORITY).intValue());
+				notice.setCompany(record.getValue(NOTICE.COMPANY));
+				notice.setStatus(record.getValue(NOTICE.STATUS).intValue());
+				notice.setWorkgroup(record.getValue(NOTICE.WORK_GROUP));
+				notice.setType(record.getValue(NOTICE.TYPE).intValue());
+				notice.setPriority(record.getValue(NOTICE.PRIORITY).intValue());
 
-				loadComments(ctx, notice.getComments(),
-						noticeId);
+				loadComments(ctx, notice.getComments(), noticeId);
 
 				notices.add(notice);
 			}
-			
+
 		} catch (Exception ex) {
-			System.out.println(ex.getMessage() + " " + ex.getLocalizedMessage());
+			System.out
+					.println(ex.getMessage() + " " + ex.getLocalizedMessage());
 		}
-
-
 		return notices;
-
 	}
 
 	private static NoticeRecord getTitleSubject(AONContext ctx, Notice notice,
@@ -168,41 +163,39 @@ public class AonHubDAO {
 				.where(WORKGROUP.DOMAIN.eq(parentDomain).or(
 						WORKGROUP.DOMAIN.eq(domain))).fetchInto(WORKGROUP);
 	}
-	
-	public static List<Tag> getTags(AONContext ctx, Integer parentDomain, Integer domain, byte type) {
-		
+
+	public static List<Tag> getTags(AONContext ctx, Integer parentDomain,
+			Integer domain, byte type) {
+
 		List<TagRecord> tagsRecord = ctx.getDslContext().selectFrom(TAG)
 				.where(TAG.DOMAIN.eq(parentDomain).or(TAG.DOMAIN.eq(domain)))
-				.and(TAG.TYPE.eq(type))
-				.fetchInto(TAG);
-		
+				.and(TAG.TYPE.eq(type)).fetchInto(TAG);
+
 		List<Tag> tags = new LinkedList<Tag>();
-		
+
 		if (tagsRecord != null) {
-			
+
 			for (TagRecord record : tagsRecord) {
 				Tag tag = new Tag();
 				tag.setId(record.getValue(TAG.ID));
 				tag.setDomain(record.getValue(TAG.DOMAIN));
 				tag.setName(record.getValue(TAG.NAME));
 				tag.setColor(record.getValue(TAG.COLOR));
-				
+
 				tags.add(tag);
 			}
 		}
-		
+
 		return tags;
 	}
 
-	public static void insertNewTag(AONContext ctx, Tag tag) throws DataAccessException {
-		
-		ctx.getDslContext().insertInto(TAG)
-		.set(TAG.DOMAIN, tag.getDomain())
-		.set(TAG.NAME, tag.getName())
-		.set(TAG.TYPE, tag.getType())
-		.set(TAG.COLOR, tag.getColor())
-		.execute();
-		
+	public static void insertNewTag(AONContext ctx, Tag tag)
+			throws DataAccessException {
+
+		ctx.getDslContext().insertInto(TAG).set(TAG.DOMAIN, tag.getDomain())
+				.set(TAG.NAME, tag.getName()).set(TAG.TYPE, tag.getType())
+				.set(TAG.COLOR, tag.getColor()).execute();
+
 	}
 
 	public static void insertNewNotice(AONContext ctx, Notice notice)
@@ -252,6 +245,19 @@ public class AonHubDAO {
 				.execute();
 	}
 
+	public static String getUserName(AONContext ctx, Integer userId) {
+
+		return ctx.getDslContext().selectFrom(USER).where(USER.ID.eq(userId))
+				.fetchOne().getValue(USER.NAME);
+	}
+
+	public static String getEnterprise(AONContext ctx, Integer domain) {
+
+		return ctx.getDslContext().selectFrom(REGISTRY)
+				.where(REGISTRY.DOMAIN.eq(domain)).fetchOne()
+				.getValue(REGISTRY.NAME);
+	}
+
 	public static List<RegistryRecord> getRegistryNames(AONContext ctx,
 			Integer parentDomain, Integer domain) throws DataAccessException,
 			Exception {
@@ -260,6 +266,36 @@ public class AonHubDAO {
 				.selectFrom(REGISTRY)
 				.where(REGISTRY.DOMAIN.eq(domain).or(
 						REGISTRY.DOMAIN.eq(parentDomain))).fetchInto(REGISTRY);
+	}
+
+	public static List<Identification> getLoginsToIdentification(
+			AONContext ctx, Integer domain) throws DataAccessException,
+			Exception {
+
+		Result<Record> result = ctx
+				.getDslContext()
+				.select()
+				.from(REGISTRY.rightOuterJoin(RMEDIA).on(
+						REGISTRY.DOMAIN.eq(RMEDIA.DOMAIN)))
+				.where(REGISTRY.DOMAIN.eq(domain)).fetch();
+
+		List<Identification> idents = new LinkedList<Identification>();
+
+		if (result != null) {
+
+			ListIterator<Record> iterator = result.listIterator();
+			while (iterator.hasNext()) {
+				Record record = iterator.next();
+				Identification ident = new Identification();
+				ident.setId(record.getValue(REGISTRY.ID));
+				ident.setName(record.getValue(REGISTRY.NAME));
+				ident.setDocument(record.getValue(REGISTRY.DOCUMENT));
+				ident.setAlias(record.getValue(REGISTRY.ALIAS));
+				ident.setValue(record.getValue(RMEDIA.VALUE));
+				idents.add(ident);
+			}
+		}
+		return idents;
 	}
 
 	public static DomainRecord getParentDomain(AONContext ctx, Integer domain) {

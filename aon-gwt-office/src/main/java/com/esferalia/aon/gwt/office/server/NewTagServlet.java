@@ -67,7 +67,12 @@ public class NewTagServlet extends HttpServlet {
 
 			Tag tag = new Tag();
 			tag.setDomain(domain);
-			tag.setType((byte) TagType.NOTICE.ordinal());
+			
+			if (json.getString("type").compareTo("priority") == 0)
+				tag.setType((byte) TagType.PRIORITY.ordinal());
+			else
+				tag.setType((byte) TagType.NOTICE.ordinal());
+			
 			tag.setName(json.getString("name"));
 			tag.setColor(json.getString("color"));
 

@@ -17,5 +17,5 @@ public class JsLabel extends JavaScriptObject {
 
 	public final native String getName() /*-{
 		return this.name;
-	}-*/;
+	}-*/;	
 }

@@ -6,10 +6,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
-import com.esferalia.aon.gwt.office.client.models.users.JsUser;
+import com.esferalia.aon.gwt.office.client.models.users.JsIdentification;
 import com.esferalia.aon.gwt.office.client.models.users.JsUserWorkgroups;
-import com.esferalia.aon.gwt.office.client.models.users.JsWorkGroup;
 import com.esferalia.aon.gwt.office.client.values.LabelValue;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
 import com.google.gwt.core.client.GWT;
@@ -40,24 +40,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class IssueWriteWidget extends Composite {
 
-	enum Priority {
-		Ninguna("None"), Baja("Low"), Normal("Normal"), Alta("High");
-
-		private String description;
-
-		private Priority(String description) {
-			this.description = description;
-		}
-
-		public String getDescription() {
-			return description;
-		}
-	}
-
 	interface Listener {
 
 		void onCommentButtonClick(IssueValue issueValue);
-		
+
 		void onCreateNewTag(LabelValue tagValue);
 
 	}
@@ -69,21 +55,21 @@ public class IssueWriteWidget extends Composite {
 			UiBinder<Widget, IssueWriteWidget> {
 	}
 
-	private static final String TYPE_NOTICE_GROUP = "typeNotice";
 	private static final String PRIORITY_GROUP = "priorityGroup";
+	private final static String TYPE_NOTICE_GROUP = "typeNotice";
 
 	@UiField
 	TabPanel tabPanel;
 	@UiField
 	TextBox companyTextBox;
 	@UiField
+	TextBox remiteTextBox;
+	@UiField
 	TextBox phoneTextBox;
 	@UiField(provided = true)
+	SuggestBox loginSuggestBox;
+	@UiField(provided = true)
 	SuggestBox recipientSuggestBox;
-	@UiField(provided = true)
-	SuggestBox userSuggesBox;
-	@UiField(provided = true)
-	SuggestBox workgroupSuggestBox;
 	@UiField
 	TextArea commentTextArea;
 	@UiField
@@ -93,65 +79,75 @@ public class IssueWriteWidget extends Composite {
 	@UiField
 	HorizontalPanel hTypePanel;
 	@UiField
-	HorizontalPanel hPriorityPanel;
-	@UiField
 	Button commentButton;
-	@UiField 
+	@UiField
 	Button addLabelButton;
+
+	@UiField
+	Tree priorityTree;
 	@UiField
 	Tree labelsTree;
 
 	private String noticeType;
 	private String priority;
 	private String status = "Open";
-	private Integer senderId;
+	private Integer loggin;
 	private Integer recipientId;
 	private Integer workgroup;
 
-	private MultiWordSuggestOracle senders = new MultiWordSuggestOracle();
+	private MultiWordSuggestOracle logins = new MultiWordSuggestOracle();
 	private MultiWordSuggestOracle recipients = new MultiWordSuggestOracle();
-	private MultiWordSuggestOracle workgroups = new MultiWordSuggestOracle();
 
 	private List<Listener> listeners;
-
-	private JsArray<JsUser> jsArrayUsers;
-	private JsArray<JsWorkGroup> jsArrayWorkgroups;
-	private JsArray<JsLabel> jsTags;
+	private List<String> labelNamesList;
 
 	private Map<String, String> labels;
+	
+	private JsArray<JsIdentification> idents;
 
 	public IssueWriteWidget(JsUserWorkgroups usersWorkgroups) {
-		this.userSuggesBox = new SuggestBox(senders);
+		this.loginSuggestBox = new SuggestBox(logins);
 		this.recipientSuggestBox = new SuggestBox(recipients);
-		this.workgroupSuggestBox = new SuggestBox(workgroups);
 
 		initWidget(uiBinder.createAndBindUi(this));
 
 		tabPanel.selectTab(0);
-		this.jsArrayUsers = usersWorkgroups.getUsers();
-		this.jsArrayWorkgroups = usersWorkgroups.getWorkGroups();
-		this.jsTags = usersWorkgroups.getLabels();
-		
+
+		this.labelNamesList = new LinkedList<String>();
+
 		this.labelsTree.addTextItem("Etiquetas");
-
-		for (int x = 0; x < jsArrayUsers.length(); x++) {
-			senders.add(jsArrayUsers.get(x).getId() + " - "
-					+ jsArrayUsers.get(x).getName() + " - "
-					+ jsArrayUsers.get(x).getEnterprise());
-			recipients.add(jsArrayUsers.get(x).getId() + " - "
-					+ jsArrayUsers.get(x).getName());
-		}
-
-		for (int y = 0; y < jsArrayWorkgroups.length(); y++)
-			workgroups.add(jsArrayWorkgroups.get(y).getId() + " - "
-					+ jsArrayWorkgroups.get(y).getDescription());
-		
-		for ( int z = 0; z < jsTags.length(); z++)
-			addNewCheckBox(jsTags.get(z).getName().toUpperCase());
-
+		this.priorityTree.addTextItem("Prioridad");
 		this.listeners = new LinkedList<Listener>();
 		this.labels = new HashMap<String, String>();
+		
+		this.remiteTextBox.setValue(usersWorkgroups.getUser());
+		this.companyTextBox.setValue(usersWorkgroups.getEnterprise());
+		
+		this.idents = usersWorkgroups.getIdentificacions();
+		
+		insertLoggins(idents);
+		insertPriorityTags(usersWorkgroups.getPriorities());
+		insertLabelTags(usersWorkgroups.getLabels());
+
 		loadRadioButtons();
+	}
+
+	private void insertPriorityTags(JsArray<JsLabel> jsPriorities) {
+
+		for (int z = 0; z < jsPriorities.length(); z++)
+			addNewRadioButton(jsPriorities.get(z).getName());
+	}
+
+	private void insertLabelTags(JsArray<JsLabel> jsLabelTags) {
+
+		for (int u = 0; u < jsLabelTags.length(); u++)
+			addNewCheckBox(jsLabelTags.get(u).getName());
+	}
+	
+	private void insertLoggins (JsArray<JsIdentification> jsIdents) {
+		
+		for (int x = 0 ; x < jsIdents.length() ; x++) 
+			logins.add(jsIdents.get(x).getValue());
 	}
 
 	public void addListener(Listener listener) {
@@ -161,39 +157,71 @@ public class IssueWriteWidget extends Composite {
 	public void removeListener(Listener listener) {
 		listeners.remove(listener);
 	}
-	
-	@UiHandler("addLabelButton")
-	void onAddLabelButtonClick(ClickEvent event) {
-		
+
+	@UiHandler("addPriorityButton")
+	void onAddPriorityButtonClick(ClickEvent event) {
+
 		final TextBox textBox = new TextBox();
-		labelsTree.add(textBox);
-		textBox.setStyleName("aon-inputText");				
+		priorityTree.add(textBox);
+		textBox.setStyleName(AON.AON_CSS.aonInputText());
 		textBox.selectAll();
 		textBox.setFocus(true);
 		textBox.setWidth("85px");
-		
-		
+
 		textBox.addKeyDownHandler(new KeyDownHandler() {
-			
+
 			@Override
 			public void onKeyDown(KeyDownEvent event) {
 				int keyCode = event.getNativeKeyCode();
 				final String name = textBox.getText();
-				
-				if ((keyCode == KeyCodes.KEY_ENTER || keyCode == KeyCodes.KEY_TAB ) && !name.isEmpty()) {
-					removeInTree(textBox);
+
+				if ((keyCode == KeyCodes.KEY_ENTER || keyCode == KeyCodes.KEY_TAB)
+						&& !name.isEmpty()) {
+					removeInTree(priorityTree, textBox);
+					addNewRadioButton(name.toUpperCase());
+
+					LabelValue priorityValue = new LabelValue();
+					priorityValue.setName(name.toUpperCase());
+					priorityValue.setColor("");
+					priorityValue.setType("priority");
+					addCreateNewTag(priorityValue);
+				} else if (keyCode == KeyCodes.KEY_ESCAPE)
+					removeInTree(priorityTree, textBox);
+			}
+		});
+	}
+
+	@UiHandler("addLabelButton")
+	void onAddLabelButtonClick(ClickEvent event) {
+
+		final TextBox textBox = new TextBox();
+		labelsTree.add(textBox);
+		textBox.setStyleName(AON.AON_CSS.aonInputText());
+		textBox.selectAll();
+		textBox.setFocus(true);
+		textBox.setWidth("85px");
+
+		textBox.addKeyDownHandler(new KeyDownHandler() {
+
+			@Override
+			public void onKeyDown(KeyDownEvent event) {
+				int keyCode = event.getNativeKeyCode();
+				final String name = textBox.getText();
+
+				if ((keyCode == KeyCodes.KEY_ENTER || keyCode == KeyCodes.KEY_TAB)
+						&& !name.isEmpty()) {
+					removeInTree(labelsTree, textBox);
 					addNewCheckBox(name.toUpperCase());
-					
+
 					LabelValue tagValue = new LabelValue();
 					tagValue.setName(name.toUpperCase());
 					tagValue.setColor("");
+					tagValue.setType("label");
 					addCreateNewTag(tagValue);
-				}
-				else if(keyCode == KeyCodes.KEY_ESCAPE)
-					removeInTree(textBox);
+				} else if (keyCode == KeyCodes.KEY_ESCAPE)
+					removeInTree(labelsTree, textBox);
 			}
 		});
-		
 	}
 
 	@UiHandler("commentButton")
@@ -219,27 +247,18 @@ public class IssueWriteWidget extends Composite {
 			issueValue.setPriority(priority);
 			issueValue.setState(status);
 
-			if (senderId != null)
-				issueValue.setSender(senderId);
-
 			if (recipientId != null)
 				issueValue.setRecipient(recipientId);
-
-			if (workgroup != null)
-				issueValue.setWorkgroup(workgroup);
 
 			addCommentButtonClickListener(issueValue);
 		}
 	}
-
-	@UiHandler("userSuggesBox")
-	void onSelectedUser(SelectionEvent<SuggestOracle.Suggestion> event) {
-
+	
+	@UiHandler("loginSuggestBox")
+	void onSelectedLoggin(SelectionEvent<SuggestOracle.Suggestion> event) {
+		
 		String selected = event.getSelectedItem().getReplacementString();
-		String[] cadena = selected.split(" - ");
-		userSuggesBox.setValue(cadena[0] + " - " + cadena[1]);
-		senderId = Integer.parseInt(cadena[0]);
-		companyTextBox.setValue(cadena[2]);
+		loggin = getLogginId(selected);
 	}
 
 	@UiHandler("recipientSuggestBox")
@@ -251,30 +270,29 @@ public class IssueWriteWidget extends Composite {
 		recipientId = Integer.parseInt(cadena[0]);
 	}
 
-	@UiHandler("workgroupSuggestBox")
-	void onSelectedWorkgroup(SelectionEvent<SuggestOracle.Suggestion> event) {
-
-		String selected = event.getSelectedItem().getReplacementString();
-		String[] cadena = selected.split(" - ");
-		workgroup = Integer.parseInt(cadena[0]);
-	}
-
 	private void addCommentButtonClickListener(IssueValue issueValue) {
 
 		for (Listener listener : listeners)
 			listener.onCommentButtonClick(issueValue);
 	}
-	
+
 	private void addCreateNewTag(LabelValue tagValue) {
-		
+
 		for (Listener listener : listeners)
 			listener.onCreateNewTag(tagValue);
 	}
 
 	private void loadRadioButtons() {
-		
+
 		RadioButton ticket = new RadioButton(TYPE_NOTICE_GROUP, "Ticket");
 		ticket.setValue(true);
+		ticket.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				setNoticeType((RadioButton) event.getSource());
+			}
+		});
 		noticeType = ticket.getText();
 
 		RadioButton aviso = new RadioButton(TYPE_NOTICE_GROUP, "Aviso");
@@ -285,6 +303,7 @@ public class IssueWriteWidget extends Composite {
 				setNoticeType((RadioButton) event.getSource());
 			}
 		});
+		aviso.setEnabled(false);
 
 		RadioButton nota = new RadioButton(TYPE_NOTICE_GROUP, "Nota");
 		nota.addClickHandler(new ClickHandler() {
@@ -294,6 +313,7 @@ public class IssueWriteWidget extends Composite {
 				setNoticeType((RadioButton) event.getSource());
 			}
 		});
+		nota.setEnabled(false);
 
 		RadioButton comment = new RadioButton(TYPE_NOTICE_GROUP, "Comment");
 		comment.addClickHandler(new ClickHandler() {
@@ -303,54 +323,18 @@ public class IssueWriteWidget extends Composite {
 				setNoticeType((RadioButton) event.getSource());
 			}
 		});
+		comment.setEnabled(false);
 
 		insertWidgets(hTypePanel, ticket, aviso, nota, comment);
-
-		RadioButton noneRadioButton = new RadioButton(PRIORITY_GROUP,
-				Priority.Ninguna.name());
-		noneRadioButton.setValue(true);
-		priority = noneRadioButton.getText();
-
-		noneRadioButton.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				setPriority(Priority.Ninguna.getDescription());
-			}
-		});
-
-		RadioButton lowRadioButton = new RadioButton(PRIORITY_GROUP,
-				Priority.Baja.name());
-		lowRadioButton.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				setPriority(Priority.Baja.getDescription());
-			}
-		});
-
-		RadioButton normalRadioButton = new RadioButton(PRIORITY_GROUP,
-				Priority.Normal.name());
-		normalRadioButton.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				setPriority(Priority.Normal.getDescription());
-			}
-		});
-
-		RadioButton highRadioButton = new RadioButton(PRIORITY_GROUP,
-				Priority.Alta.name());
-		highRadioButton.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				setPriority(Priority.Alta.getDescription());
-			}
-		});
-
-		insertWidgets(hPriorityPanel, noneRadioButton, lowRadioButton,
-				normalRadioButton, highRadioButton);
+	}
+	
+	private Integer getLogginId (String value) {
+		
+		for (int x = 0; x < idents.length(); x++) {
+			if (idents.get(x).getValue().compareTo(value) == 0)
+				return idents.get(x).getId();
+		}
+		return null; //nunca llega aqui porque la clave siempre va a existir
 	}
 
 	private String getLabels() {
@@ -388,23 +372,35 @@ public class IssueWriteWidget extends Composite {
 	private void setNoticeType(RadioButton radioButton) {
 		this.noticeType = radioButton.getText();
 	}
-	
-	private void removeInTree(Widget widget) {
-		labelsTree.remove(widget);
+
+	private void removeInTree(Tree tree, Widget widget) {
+		tree.remove(widget);
 	}
-	
-	private void addNewCheckBox (String name) {
-		
-		CheckBox checkBox = new CheckBox(name);
-		checkBox.addClickHandler(new ClickHandler() {
-			
+
+	private void addNewRadioButton(final String name) {
+		RadioButton radioButton = new RadioButton(PRIORITY_GROUP, name);
+		radioButton.addClickHandler(new ClickHandler() {
+
 			@Override
 			public void onClick(ClickEvent event) {
-				evalCheckBox( (CheckBox) event.getSource() );
-				
+				setPriority(name);
 			}
 		});
-		
+		priorityTree.add(radioButton);
+	}
+
+	private void addNewCheckBox(String name) {
+
+		CheckBox checkBox = new CheckBox(name);
+		checkBox.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				evalCheckBox((CheckBox) event.getSource());
+
+			}
+		});
+
 		labelsTree.add(checkBox);
 	}
 }

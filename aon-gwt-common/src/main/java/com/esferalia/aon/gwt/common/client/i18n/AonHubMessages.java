@@ -12,6 +12,9 @@ public interface AonHubMessages extends Messages {
 	// º --> \u00AA ª --> \u00BA
 	// ¿ --> \u00BF
 	
+	@DefaultMessage("Identificaci\u00F3n")
+	String login();
+	
 	@DefaultMessage("Notificaciones")
 	String notifications();
  	
@@ -72,8 +75,8 @@ public interface AonHubMessages extends Messages {
  	@DefaultMessage("Compa\u00F1\u00EDa")
  	String company();
  	
- 	@DefaultMessage("Tel\u00E9fono")
- 	String phone();
+ 	@DefaultMessage("Contacto")
+ 	String contact();
  	
  	@DefaultMessage("Destinatario")
  	String recipient();

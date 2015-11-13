@@ -20,6 +20,16 @@
 						<tr>
 							<td>
 								<g:InlineLabel styleName="{aonResources.css.aonBold}"
+									text="{msg.login}" />
+							</td>
+							<td>
+								<g:SuggestBox ui:field="loginSuggestBox" width="300px"
+									styleName="{aonResources.css.aonInputText}" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:InlineLabel styleName="{aonResources.css.aonBold}"
 									text="{msg.title}" title="{msg.titleNewNotice}" />
 							</td>
 							<td>
@@ -30,10 +40,11 @@
 						<tr>
 							<td>
 								<g:InlineLabel styleName="{aonResources.css.aonBold}"
-									text="{msg.priority}" title="{msg.titlePriority}" />
+									text="{msg.noticeType}" />
 							</td>
 							<td>
-								<g:HorizontalPanel spacing="5" ui:field="hPriorityPanel" />
+								<g:HorizontalPanel ui:field="hTypePanel"
+									spacing="5" />
 							</td>
 						</tr>
 						<tr>
@@ -42,8 +53,8 @@
 									text="{msg.sender}" title="{msg.titleRemite}" />
 							</td>
 							<td>
-								<g:SuggestBox ui:field="userSuggesBox"
-									styleName="{aonResources.css.aonInputText}" width="300px" />
+								<g:TextBox ui:field="remiteTextBox" styleName="{aonResources.css.aonInputText}"
+									width="300px" readOnly="true" />
 							</td>
 						</tr>
 						<tr>
@@ -59,7 +70,7 @@
 						<tr>
 							<td>
 								<g:InlineLabel styleName="{aonResources.css.aonBold}"
-									text="{msg.phone}" title="{msg.titlePhone}" />
+									text="{msg.contact}" title="{msg.titlePhone}" />
 							</td>
 							<td>
 								<g:TextBox ui:field="phoneTextBox" styleName="{aonResources.css.aonInputText}"
@@ -76,27 +87,6 @@
 									styleName="{aonResources.css.aonInputText}" width="300px" />
 							</td>
 						</tr>
-						<tr>
-							<td>
-								<g:InlineLabel styleName="{aonResources.css.aonBold}"
-									text="{msg.noticeType}" />
-							</td>
-							<td>
-								<g:HorizontalPanel ui:field="hTypePanel"
-									spacing="5" />
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<g:InlineLabel styleName="{aonResources.css.aonBold}"
-									text="{msg.workgroup}" title="{msg.titleWorkgroup}" />
-							</td>
-							<td>
-								<g:SuggestBox ui:field="workgroupSuggestBox"
-									styleName="{aonResources.css.aonInputText}" width="300px" />
-							</td>
-						</tr>
-
 					</table>
 				</g:HTMLPanel>
 
@@ -113,18 +103,22 @@
 		</g:center>
 
 		<g:east size="180">
-
 			<g:FlowPanel>
-				<g:HorizontalPanel ui:field="eastHPanel" spacing="10">
-					<g:Tree ui:field="labelsTree" animationEnabled="true" />
-					<g:Button ui:field="addLabelButton"
-						styleName="aon-editDataTable-button aon-lookupButton-new-disabled aon-aux-right"
-						title="Nueva Etiqueta" />
-				</g:HorizontalPanel>
-
-
+				<g:VerticalPanel spacing="15">
+					<g:HorizontalPanel spacing="10">
+						<g:Tree ui:field="priorityTree" animationEnabled="true" />
+						<g:Button ui:field="addPriorityButton"
+							styleName="aon-editDataTable-button aon-lookupButton-new-disabled aon-aux-right"
+							title="Nueva Etiqueta" />
+					</g:HorizontalPanel>
+					<g:HorizontalPanel spacing="10">
+						<g:Tree ui:field="labelsTree" animationEnabled="true" />
+						<g:Button ui:field="addLabelButton"
+							styleName="aon-editDataTable-button aon-lookupButton-new-disabled aon-aux-right"
+							title="Nueva Etiqueta" />
+					</g:HorizontalPanel>
+				</g:VerticalPanel>
 			</g:FlowPanel>
-
 		</g:east>
 	</g:DockLayoutPanel>
 </ui:UiBinder> 

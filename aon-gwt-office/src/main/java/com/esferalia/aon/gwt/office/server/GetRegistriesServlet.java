@@ -9,7 +9,6 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -29,6 +28,7 @@ import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.WorkgroupRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.office.Identification;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.impl.jooq.dao.AonHubDAO;
 
@@ -44,40 +44,39 @@ public class GetRegistriesServlet extends HttpServlet {
 			return domainRecord.getValue(Domain.DOMAIN.PARENT);
 		}
 
-		static List<Record> getUsers(AONContext ctx, Integer parentDomain,
-				Integer domain) {
+		static String getUserInfo(AONContext ctx, Integer userId)
+				throws DataAccessException, Exception {
 
-			try {
-				return getUsersWorkings(ctx, parentDomain, domain);
-			} catch (DataAccessException ex) {
-				throw new DataAccessException(ex.getMessage());
-			} catch (Exception ex) {
-				System.out.println(ex.getMessage());
-				return null;
-			}
+			return getUserName(ctx, userId);
+		}
+
+		static List<Identification> getIdentUsers(AONContext ctx, Integer domain)
+				throws DataAccessException, Exception {
+
+			return getLoginsToIdentification(ctx, domain);
+
+		}
+
+		static String getEnterpriseName(AONContext ctx, Integer domain)
+				throws DataAccessException, Exception {
+			return getEnterprise(ctx, domain);
+		}
+
+		static List<Record> getUsers(AONContext ctx, Integer parentDomain,
+				Integer domain) throws DataAccessException, Exception {
+			return getUsersWorkings(ctx, parentDomain, domain);
 		}
 
 		static List<WorkgroupRecord> getWorkGroupList(AONContext ctx,
-				Integer parentDomain, Integer domain) {
-
-			try {
-				return getWorkGroups(ctx, parentDomain, domain);
-			} catch (DataAccessException ex) {
-				throw new DataAccessException(ex.getMessage());
-			} catch (Exception ex) {
-				System.out.println(ex.getMessage());
-				return null;
-			}
+				Integer parentDomain, Integer domain)
+				throws DataAccessException, Exception {
+			return getWorkGroups(ctx, parentDomain, domain);
 		}
-		
-		static List<Tag> getTagList(AONContext ctx, Integer parentDomain, Integer domain, byte type) {
-			
-			try {
-				return getTags(ctx, parentDomain, domain, type);
-			} catch (DataAccessException ex) {
-				System.out.println(ex.getMessage() + " " + ex.getLocalizedMessage());
-				throw new DataAccessException(ex.getMessage());
-			}
+
+		static List<Tag> getTagList(AONContext ctx, Integer parentDomain,
+				Integer domain, byte type) throws DataAccessException,
+				Exception {
+			return getTags(ctx, parentDomain, domain, type);
 		}
 	}
 
@@ -111,24 +110,39 @@ public class GetRegistriesServlet extends HttpServlet {
 			Integer domain = AonServletUtils.getRequestDomain(req);
 			String domainName = AonServletUtils.getRequestDomainName(req);
 			String user = AonServletUtils.getRequestUser(req);
+			Integer userId = AonServletUtils.getRequestUserId(req);
 
 			AONContext ctx = AONContext.getAONContext(domainName, domain, user);
 
 			Integer parentDomain = JooqGet.getParent(ctx, domain);
 
 			osx = resp.getWriter();
-			
+
 			osx.println('{');
-			osx.printf("\"tags\":%s",
-					buildTags(ctx, parentDomain, domain));
+			osx.printf("\"user\":\"%s\",\r\n", getUserName(ctx, userId));
+			osx.printf("\"enterprise\":\"%s\",\r\n",
+					getEnterpriseName(ctx, domain));
+			osx.printf(
+					"\"identifications\":%s", buildIdentificationUsers(ctx, domain));
+			
+			osx.printf(
+					"\"priorities\":%s",
+					buildTags(ctx, parentDomain, domain,
+							(byte) TagType.PRIORITY.ordinal()));
+			osx.printf(
+					"\"tags\":%s",
+					buildTags(ctx, parentDomain, domain,
+							(byte) TagType.NOTICE.ordinal()));
 			osx.printf("\"users\":%s",
 					buildUsersWorking(ctx, parentDomain, domain));
-			osx.printf("\"workgroups\":%s",
-					buildWorkgroups(ctx, parentDomain, domain));
+			// osx.printf("\"workgroups\":%s",
+			// buildWorkgroups(ctx, parentDomain, domain));
 			osx.println('}');
-			
+
 			osx.flush();
 
+		} catch (DataAccessException ex) {
+			throw new DataAccessException(ex.getLocalizedMessage());
 		} catch (Exception ex) {
 		} finally {
 			if (osx != null)
@@ -137,12 +151,12 @@ public class GetRegistriesServlet extends HttpServlet {
 				conn.close();
 		}
 	}
-	
-	private static String buildTags(AONContext ctx, Integer parentDomain, Integer domain) {
-		
-		byte type = (byte) TagType.NOTICE.ordinal();
+
+	private static String buildTags(AONContext ctx, Integer parentDomain,
+			Integer domain, byte type) throws DataAccessException, Exception {
+
 		List<Tag> tags = JooqGet.getTagList(ctx, parentDomain, domain, type);
-		
+
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("[\r\n");
 
@@ -154,12 +168,11 @@ public class GetRegistriesServlet extends HttpServlet {
 				Integer id = tag.getId();
 				String name = tag.getName();
 				String color = tag.getColor();
-				
+
 				buffer.append("{\r\n");
 				buffer.append(String.format("\"id\":\"%s\",\r\n",
 						String.valueOf(id)));
-				buffer.append(String.format("\"name\":\"%s\",\r\n",
-						name));
+				buffer.append(String.format("\"name\":\"%s\",\r\n", name));
 				buffer.append(String.format("\"color\":\"%s\"\r\n", color));
 
 				buffer.append('}');
@@ -171,8 +184,21 @@ public class GetRegistriesServlet extends HttpServlet {
 		return buffer.append("],\r\n").toString();
 	}
 
+	private static String getUserName(AONContext ctx, Integer userId)
+			throws DataAccessException, Exception {
+		return JooqGet.getUserInfo(ctx, userId);
+	}
+
+	private static String getEnterpriseName(AONContext ctx, Integer domain)
+			throws DataAccessException, Exception {
+
+		return JooqGet.getEnterpriseName(ctx, domain);
+
+	}
+
 	private static String buildUsersWorking(AONContext ctx,
-			Integer parentDomain, Integer domain) {
+			Integer parentDomain, Integer domain) throws DataAccessException,
+			Exception {
 
 		List<Record> users = JooqGet.getUsers(ctx, parentDomain, domain);
 
@@ -200,12 +226,48 @@ public class GetRegistriesServlet extends HttpServlet {
 			}
 		}
 
+		return buffer.append("]\r\n").toString();
+	}
+
+	private static String buildIdentificationUsers(AONContext ctx,
+			Integer domain) throws DataAccessException, Exception {
+		
+		List<Identification> idents = JooqGet.getIdentUsers(ctx, domain);
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("[\r\n");
+
+		if (idents != null) {
+
+			ListIterator<Identification> iterator = idents.listIterator();
+			while (iterator.hasNext()) {
+				Identification ident = iterator.next();
+
+				buffer.append("{\r\n");
+				buffer.append(String.format("\"id\":\"%s\",\r\n",
+						ident.getId()));
+				buffer.append(String.format("\"name\":\"%s\",\r\n",
+						ident.getName()));
+				buffer.append(String.format("\"document\":\"%s\",\r\n",
+						ident.getDocument()));
+				buffer.append(String.format("\"alias\":\"%s\",\r\n",
+						ident.getAlias()));
+				buffer.append(String.format("\"value\":\"%s\"\r\n",
+						ident.getValue()));
+
+				buffer.append('}');
+
+				if (iterator.hasNext())
+					buffer.append(",\r\n");
+			}
+		}
+
 		return buffer.append("],\r\n").toString();
+ 
 
 	}
 
 	private static String buildWorkgroups(AONContext ctx, Integer parentDomain,
-			Integer domain) {
+			Integer domain) throws DataAccessException, Exception {
 
 		List<WorkgroupRecord> workgroups = JooqGet.getWorkGroupList(ctx,
 				parentDomain, domain);
@@ -234,7 +296,6 @@ public class GetRegistriesServlet extends HttpServlet {
 		}
 
 		return buffer.append("]\r\n").toString();
-
 	}
 
 }
