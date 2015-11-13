@@ -121,7 +121,7 @@ public abstract class AbsExcelAction  {
 	protected Cell addCell(Double number) {
 		Cell cell = row.createCell(cellCount++);
 		cell.setCellStyle(decimalStyle);
-		cell.setCellValue(number);
+		cell.setCellValue(number!=null?number:0.0);
 		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 		return cell;
 	}

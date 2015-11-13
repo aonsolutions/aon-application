@@ -116,9 +116,15 @@ public class InvoiceExcelAction extends AbsExcelAction implements Consumer<Invoi
 	    CellUtil.createCell(row, cellCount, "Importe", headerCellStyle);
 	    sheet.setColumnWidth(cellCount++, 14*256);		    
 	    
-	    CellUtil.createCell(row, cellCount, "Pr. Neto", headerCellStyle);
+	    CellUtil.createCell(row, cellCount, "Pr. Unit.", headerCellStyle);
 	    sheet.setColumnWidth(cellCount++, 10*256);		    
 	    
+	    CellUtil.createCell(row, cellCount, "Pr. Coste", headerCellStyle);
+	    sheet.setColumnWidth(cellCount++, 10*256);
+	    
+	    CellUtil.createCell(row, cellCount, "Pr. Base", headerCellStyle);
+	    sheet.setColumnWidth(cellCount++, 10*256);		    
+
 	    CellUtil.createCell(row, cellCount, "Ámbito", headerCellStyle);
 	    sheet.setColumnWidth(cellCount++, 20*256);		    
 
@@ -172,6 +178,10 @@ public class InvoiceExcelAction extends AbsExcelAction implements Consumer<Invoi
 		addCell( detail.getQuantity()==0.0
 				?0.0
 				:AonMathUtils.round( detail.getTaxableBase() / detail.getQuantity()) );
+
+		addCell( detail.getItem()!= null ? detail.getItem().getPurchasePrice()  : null );
+		addCell( detail.getItem()!= null ? detail.getItem().getPrice()  : null );
+		
 		addCell( detail.getInvoice().getScope());
 		addCell( detail.getWorkPlace() );
 		addCell( detail.getProject() );

@@ -136,6 +136,8 @@ public class InvoiceDAO {
 				,ITEM.DETAIL2
 				,ITEM.DETAIL3
 				,ITEM.DESCRIPTION
+				,ITEM.PURCHASE_PRICE
+				,ITEM.PRICE
 				
 				,INVOICE_DETAIL.DESCRIPTION
 				,INVOICE_DETAIL.QUANTITY
@@ -232,6 +234,8 @@ public class InvoiceDAO {
 						.setDetail(record.getValue( ITEM.DETAIL ))
 						.setDetail2(record.getValue( ITEM.DETAIL2 ))
 						.setDetail3(record.getValue( ITEM.DETAIL3 ))
+						.setPurchasePrice(record.getValue( ITEM.PURCHASE_PRICE ))
+						.setPrice(record.getValue( ITEM.PRICE ))
 						.setDescription(record.getValue( ITEM.DESCRIPTION )))
 				.setSeller((record.getValue(INVOICE_DETAIL.SELLER) == null)
 					? null

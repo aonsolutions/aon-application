@@ -42,6 +42,7 @@ public class ProductDAO {
 			.select(TAG.NAME)
 			.from(TAG)
 			.where(TAG.DOMAIN.equal(ctx.getDomainId()))
+			.and(TAG.TYPE.eq( (byte) 1 ))
 			.fetch()
 			.stream()
 			.forEach( record -> list.add(record.getValue(TAG.NAME) ));
@@ -57,6 +58,7 @@ public class ProductDAO {
 			.join(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.equal(PRODUCT.ID))
 			.join(TAG).on(TAG.ID.equal(PRODUCT_TAG.TAG))
 			.where(PRODUCT.DOMAIN.equal(ctx.getDomainId()))
+			.and(TAG.TYPE.eq( (byte) 1 ))
 			.fetch()
 			.stream()
 			.forEach( record -> {
