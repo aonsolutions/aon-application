@@ -29,13 +29,13 @@
 					<aon:div id="CatalogueTypeDiv">
 						<aon:selectOneMenu id="Catalogue_purchase"
 							value="#{catalogue.to.purchase}"
-							rendered="#{catalogue.nevv or (catalogueItem.rowCount == 0 and catalogueCategory.rowCount == 0)}">
+							rendered="#{catalogue.nevv}">
 							<f:selectItem itemLabel="#{bundle.aon_sales}" itemValue="#{false}" />
 							<f:selectItem itemLabel="#{bundle.aon_purchases}" itemValue="#{true}" />
 						</aon:selectOneMenu>
 						<aon:outputText styleClass="aon-bold"
 							value="#{catalogue.to.purchase ? bundle.aon_purchases : bundle.aon_sales}"
-							rendered="#{!catalogue.nevv and (catalogueItem.rowCount != 0 or catalogueCategory.rowCount != 0)}" />
+							rendered="#{!catalogue.nevv}" />
 					</aon:div>
 
 					<aon:outputLabel for="Catalogue_startDate" value="#{bundle.aon_start_date}" />

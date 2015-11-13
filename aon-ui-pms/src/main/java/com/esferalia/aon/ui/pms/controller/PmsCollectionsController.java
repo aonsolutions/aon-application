@@ -296,6 +296,7 @@ public class PmsCollectionsController implements Serializable {
 		List<SelectItem> tariffs = new LinkedList<SelectItem>();
 		IManagerBean tariffBean = BeanManager.getManagerBean(Tariff.class);
 		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(tariffBean.getFieldName(IEntityAlias.TARIFF_PURCHASE), Boolean.FALSE);
 		criteria.addOrder(tariffBean.getFieldName(IEntityAlias.TARIFF_CODE));
 		for (ITransferObject ito : tariffBean.getList(criteria)) {
 			Tariff tariff = (Tariff)ito;

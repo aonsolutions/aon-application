@@ -11,7 +11,12 @@
 		value="#{controller.to.catalogue}" required="true"
 		valueChangeListener="#{controller.onCatalogueChanged}"
 		reRender="TariffCatalogue_catalogue_startDate,TariffCatalogue_catalogue_endDate">
-		<f:selectItems value="#{configCollections.salesCatalogues}" />
+		<aon:if test="#{!controller.to.tariff.purchase}">
+			<f:selectItems value="#{configCollections.salesCatalogues}" />
+		</aon:if>
+		<aon:if test="#{controller.to.tariff.purchase}">
+			<f:selectItems value="#{configCollections.purchaseCatalogues}" />
+		</aon:if>
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="TariffCatalogue_catalogue_startDate" value="#{bundle.aon_date_from}" />

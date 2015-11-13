@@ -11,10 +11,12 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Catalogue;
+import com.code.aon.config.Tariff;
 import com.code.aon.config.TariffCatalogue;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.controller.TariffCatalogueController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -27,14 +29,17 @@ public class TariffCatalogueControllerListener extends ControllerAdapter {
 
     @Override
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		TariffCatalogue tariffCatalogue = (TariffCatalogue)event.getController().getTo();
+		TariffCatalogueController controller = (TariffCatalogueController)event.getController();
+    	Tariff tariff = (Tariff)controller.getMasterController().getTo();
+    	TariffCatalogue tariffCatalogue = (TariffCatalogue)controller.getTo();
     	try {
             ConfigCollectionsController collections = (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
-        	List<?> catalogues = collections.getSalesCatalogues();
+        	List<?> catalogues = (tariff.isPurchase()) ? collections.getPurchaseCatalogues() : collections.getSalesCatalogues();
         	if (catalogues.size() > 0) {
         		Catalogue catalogue = (Catalogue)((SelectItem)catalogues.get(0)).getValue();
         		tariffCatalogue.setCatalogue(catalogue);
         	}
+       		tariffCatalogue.setTariff(tariff);
         } catch (ManagerBeanException e) {
             throw new ControllerListenerException(e.getMessage(), e);
         }

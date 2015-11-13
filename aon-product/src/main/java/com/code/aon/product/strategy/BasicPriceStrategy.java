@@ -156,15 +156,13 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 						}
 					}
 
-					if (rMode == RegistryMode.CUSTOMER) {
-						IManagerBean itemTariffBean = BeanManager.getManagerBean(ItemTariff.class);
-						criteria = new Criteria();
-						criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_ITEM_ID), item.getId());
-						criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_TARIFF_ID), tariff.getId());
-						Projection prjPrice = Projection.property(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_PRICE));
-						for (Object obj : itemTariffBean.getList(new ProjectionList(prjPrice), criteria)) {
-							return (Double)obj;
-						}
+					IManagerBean itemTariffBean = BeanManager.getManagerBean(ItemTariff.class);
+					criteria = new Criteria();
+					criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_ITEM_ID), item.getId());
+					criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_TARIFF_ID), tariff.getId());
+					Projection prjPrice = Projection.property(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_PRICE));
+					for (Object obj : itemTariffBean.getList(new ProjectionList(prjPrice), criteria)) {
+						return (Double)obj;
 					}
 
 					calc.getDiscountExpression().setDiscountExpr(Double.toString(tariff.getDiscount()));

@@ -854,6 +854,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 				IManagerBean tariffBean = BeanManager.getManagerBean(Tariff.class);
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(tariffBean.getFieldName(IEntityAlias.TARIFF_CODE), tariffCode);
+				criteria.addEqualExpression(tariffBean.getFieldName(IEntityAlias.TARIFF_PURCHASE), Boolean.FALSE);
 				criteria.addEqualExpression(tariffBean.getFieldName(IEntityAlias.TARIFF_DOMAIN), domain);
 				List<ITransferObject> tariffList = tariffBean.getList(criteria);
 				if (tariffList.size() > 0) {

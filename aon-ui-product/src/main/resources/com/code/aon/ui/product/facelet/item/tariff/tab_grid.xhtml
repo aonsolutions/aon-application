@@ -23,104 +23,131 @@
 					<aon:selectOneMenu id="ItemTariff_tariff-New"
 						value="#{controller.to.tariff}" rendered="#{formNew}"
 						required="true">
-						<f:selectItems value="#{configCollections.tariffs}" />
+						<aon:if test="#{!controller.to.item.product.purchase}">
+							<f:selectItems value="#{configCollections.salesTariffs}" />
+						</aon:if>
+						<aon:if test="#{controller.to.item.product.purchase}">
+							<f:selectItems value="#{configCollections.purchaseTariffs}" />
+						</aon:if>
 					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
-				<f:facet name="header">
-					<aon:outputLabel for="ItemTariff_type" value="#{bundle.product_tariff_type}" />
-				</f:facet>
-				<aon:outputText value="#{to.type}"
-					rendered="#{formList}" />
-				<aon:selectOneMenu id="ItemTariff_type"
-					value="#{controller.to.type}" rendered="#{formEdit}"
-					valueChangeListener="#{controller.onTariffTypeChanged}"
-					reRender="ItemTariff_profit_percent,ItemTariff_price,ItemTariff_sales_price">
-					<f:selectItems value="#{productCollections.itemTariffTypes}" />
-				</aon:selectOneMenu>
-				<f:facet name="footer">
-					<aon:selectOneMenu id="ItemTariff_type-New"
-						value="#{controller.to.type}" rendered="#{formNew}"
+			<aon:if test="#{!itemTariff.masterController.to.product.purchase}">
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+					<f:facet name="header">
+						<aon:outputLabel for="ItemTariff_type" value="#{bundle.product_tariff_type}" />
+					</f:facet>
+					<aon:outputText value="#{to.type}"
+						rendered="#{formList}" />
+					<aon:selectOneMenu id="ItemTariff_type"
+						value="#{controller.to.type}" rendered="#{formEdit}"
 						valueChangeListener="#{controller.onTariffTypeChanged}"
-						reRender="ItemTariff_profit_percent-New,ItemTariff_price-New,ItemTariff_sales_price-New">
+						reRender="ItemTariff_profit_percent,ItemTariff_price,ItemTariff_sales_price">
 						<f:selectItems value="#{productCollections.itemTariffTypes}" />
 					</aon:selectOneMenu>
-				</f:facet>
-			</aon:column>
+					<f:facet name="footer">
+						<aon:selectOneMenu id="ItemTariff_type-New"
+							value="#{controller.to.type}" rendered="#{formNew}"
+							valueChangeListener="#{controller.onTariffTypeChanged}"
+							reRender="ItemTariff_profit_percent-New,ItemTariff_price-New,ItemTariff_sales_price-New">
+							<f:selectItems value="#{productCollections.itemTariffTypes}" />
+						</aon:selectOneMenu>
+					</f:facet>
+				</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
-				<f:facet name="header">
-					<aon:outputLabel for="ItemTariff_profit_percent" value="#{bundle.aon_percentage}" />
-				</f:facet>
-				<aon:outputText value="#{to.profitPercent}"
-					rendered="#{formList}">
-					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-				</aon:outputText>
-				<aon:inputText id="ItemTariff_profit_percent"
-					value="#{controller.to.profitPercent}" rendered="#{formEdit}"
-					disabled="#{formEdit and controller.to.fixed}"
-					valueChangeListener="#{controller.onProfitChanged}"
-					reRender="ItemTariff_price,ItemTariff_sales_price"
-					focus="ItemTariff_price"
-					required="true" size="5" />
-				<f:facet name="footer">
-					<aon:inputText id="ItemTariff_profit_percent-New"
-						value="#{controller.to.profitPercent}" rendered="#{formNew}"
-						disabled="#{formNew and controller.to.fixed}"
+				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+					<f:facet name="header">
+						<aon:outputLabel for="ItemTariff_profit_percent" value="#{bundle.aon_percentage}" />
+					</f:facet>
+					<aon:outputText value="#{to.profitPercent}"
+						rendered="#{formList}">
+						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+					</aon:outputText>
+					<aon:inputText id="ItemTariff_profit_percent"
+						value="#{controller.to.profitPercent}" rendered="#{formEdit}"
+						disabled="#{formEdit and controller.to.fixed}"
 						valueChangeListener="#{controller.onProfitChanged}"
-						reRender="ItemTariff_price-New,ItemTariff_sales_price-New"
-						focus="ItemTariff_price-New"
+						reRender="ItemTariff_price,ItemTariff_sales_price"
+						focus="ItemTariff_price"
 						required="true" size="5" />
-				</f:facet>
-			</aon:column>
+					<f:facet name="footer">
+						<aon:inputText id="ItemTariff_profit_percent-New"
+							value="#{controller.to.profitPercent}" rendered="#{formNew}"
+							disabled="#{formNew and controller.to.fixed}"
+							valueChangeListener="#{controller.onProfitChanged}"
+							reRender="ItemTariff_price-New,ItemTariff_sales_price-New"
+							focus="ItemTariff_price-New"
+							required="true" size="5" />
+					</f:facet>
+				</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
-				<f:facet name="header">
-					<aon:outputLabel for="ItemTariff_price" value="#{bundle.product_sales_base_price}" />
-				</f:facet>
-				<aon:outputText value="#{to.price}"
-					rendered="#{formList}">
-					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-				</aon:outputText>
-				<aon:inputText id="ItemTariff_price"
-					value="#{controller.to.price}" rendered="#{formEdit}"
-					valueChangeListener="#{controller.onPriceChanged}" 
-					reRender="ItemTariff_profit_percent,ItemTariff_sales_price"
-					focus="ItemTariff_sales_price"
-					required="true" size="5" />
-				<f:facet name="footer">
-					<aon:inputText id="ItemTariff_price-New"
-						value="#{controller.to.price}" rendered="#{formNew}"
+				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+					<f:facet name="header">
+						<aon:outputLabel for="ItemTariff_price" value="#{bundle.product_sales_base_price}" />
+					</f:facet>
+					<aon:outputText value="#{to.price}"
+						rendered="#{formList}">
+						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+					</aon:outputText>
+					<aon:inputText id="ItemTariff_price"
+						value="#{controller.to.price}" rendered="#{formEdit}"
 						valueChangeListener="#{controller.onPriceChanged}" 
-						reRender="ItemTariff_profit_percent-New,ItemTariff_sales_price-New"
-						focus="ItemTariff_sales_price-New"
+						reRender="ItemTariff_profit_percent,ItemTariff_sales_price"
+						focus="ItemTariff_sales_price"
 						required="true" size="5" />
-				</f:facet>
-			</aon:column>
+					<f:facet name="footer">
+						<aon:inputText id="ItemTariff_price-New"
+							value="#{controller.to.price}" rendered="#{formNew}"
+							valueChangeListener="#{controller.onPriceChanged}" 
+							reRender="ItemTariff_profit_percent-New,ItemTariff_sales_price-New"
+							focus="ItemTariff_sales_price-New"
+							required="true" size="5" />
+					</f:facet>
+				</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
-				<f:facet name="header">
-					<aon:outputLabel for="ItemTariff_sales_price" value="#{bundle.aon_sales_price}" />
-				</f:facet>
-				<aon:outputText value="#{to.salesPrice}"
-					rendered="#{formList}">
-					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-				</aon:outputText>
-				<aon:inputText id="ItemTariff_sales_price"
-					value="#{controller.to.salesPrice}" rendered="#{formEdit}"
-					valueChangeListener="#{controller.onSalesPriceChanged}" 
-					reRender="ItemTariff_profit_percent,ItemTariff_price"
-					required="true" size="5" />
-				<f:facet name="footer">
-					<aon:inputText id="ItemTariff_sales_price-New"
-						value="#{controller.to.salesPrice}" rendered="#{formNew}"
+				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+					<f:facet name="header">
+						<aon:outputLabel for="ItemTariff_sales_price" value="#{bundle.aon_sales_price}" />
+					</f:facet>
+					<aon:outputText value="#{to.salesPrice}"
+						rendered="#{formList}">
+						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+					</aon:outputText>
+					<aon:inputText id="ItemTariff_sales_price"
+						value="#{controller.to.salesPrice}" rendered="#{formEdit}"
 						valueChangeListener="#{controller.onSalesPriceChanged}" 
-						reRender="ItemTariff_profit_percent-New,ItemTariff_price-New"
+						reRender="ItemTariff_profit_percent,ItemTariff_price"
 						required="true" size="5" />
-				</f:facet>
-			</aon:column>
+					<f:facet name="footer">
+						<aon:inputText id="ItemTariff_sales_price-New"
+							value="#{controller.to.salesPrice}" rendered="#{formNew}"
+							valueChangeListener="#{controller.onSalesPriceChanged}" 
+							reRender="ItemTariff_profit_percent-New,ItemTariff_price-New"
+							required="true" size="5" />
+					</f:facet>
+				</aon:column>
+			</aon:if>
+
+			<aon:if test="#{itemTariff.masterController.to.product.purchase}">
+				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+					<f:facet name="header">
+						<aon:outputLabel for="ItemTariff_price" value="#{bundle.product_supplier_price}" />
+					</f:facet>
+					<aon:outputText value="#{to.price}"
+						rendered="#{formList}">
+						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+					</aon:outputText>
+					<aon:inputText id="ItemTariff_price"
+						value="#{controller.to.price}" rendered="#{formEdit}"
+						required="true" size="5" />
+					<f:facet name="footer">
+						<aon:inputText id="ItemTariff_price-New"
+							value="#{controller.to.price}" rendered="#{formNew}"
+							required="true" size="5" />
+					</f:facet>
+				</aon:column>
+			</aon:if>
 
 		</ui:define>
 	</ui:decorate>

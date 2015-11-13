@@ -24,7 +24,12 @@
 					required="true"
 					valueChangeListener="#{controller.onCatalogueChanged}"
 					reRender="TariffCatalogue_catalogue_startDate,TariffCatalogue_catalogue_endDate">
-					<f:selectItems value="#{configCollections.salesCatalogues}" />
+					<aon:if test="#{controller.to != null and !controller.to.tariff.purchase}">
+						<f:selectItems value="#{configCollections.salesCatalogues}" />
+					</aon:if>
+					<aon:if test="#{controller.to != null and controller.to.tariff.purchase}">
+						<f:selectItems value="#{configCollections.purchaseCatalogues}" />
+					</aon:if>
 				</aon:selectOneMenu>
 				<f:facet name="footer">
 					<aon:selectOneMenu id="TariffCatalogue_catalogue-New"
@@ -32,7 +37,12 @@
 						required="true"
 						valueChangeListener="#{controller.onCatalogueChanged}"
 						reRender="TariffCatalogue_catalogue_startDate-New,TariffCatalogue_catalogue_endDate-New">
-						<f:selectItems value="#{configCollections.salesCatalogues}" />
+						<aon:if test="#{controller.to != null and !controller.to.tariff.purchase}">
+							<f:selectItems value="#{configCollections.salesCatalogues}" />
+						</aon:if>
+						<aon:if test="#{controller.to != null and controller.to.tariff.purchase}">
+							<f:selectItems value="#{configCollections.purchaseCatalogues}" />
+						</aon:if>
 					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>

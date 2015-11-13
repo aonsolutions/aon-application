@@ -52,7 +52,7 @@ public class CatalogueControllerListener extends ControllerAdapter {
 		try {
 			IManagerBean tariffCatalogueBean = BeanManager.getManagerBean(TariffCatalogue.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(tariffCatalogueBean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_CATALOGUE_ID),catalogue.getId());
+			criteria.addEqualExpression(tariffCatalogueBean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_CATALOGUE_ID), catalogue.getId());
 			for (ITransferObject ito : tariffCatalogueBean.getList(criteria)) {
 				TariffCatalogue tariffCatalogue = (TariffCatalogue)ito;
 				tariffCatalogueBean.remove(tariffCatalogue);

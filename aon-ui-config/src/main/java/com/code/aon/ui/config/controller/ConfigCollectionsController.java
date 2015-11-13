@@ -437,10 +437,25 @@ public class ConfigCollectionsController implements Serializable {
 	public void setTariff( Tariff tariff ) {
 	}
 	
-	public List<SelectItem> getTariffs() throws ManagerBeanException {
+	public List<SelectItem> getAllTariffs() throws ManagerBeanException {
+		return getTariffs(null);
+	}
+
+	public List<SelectItem> getPurchaseTariffs() throws ManagerBeanException {
+		return getTariffs(Boolean.TRUE);
+	}
+
+	public List<SelectItem> getSalesTariffs() throws ManagerBeanException {
+		return getTariffs(Boolean.FALSE);
+	}
+
+	public List<SelectItem> getTariffs(Boolean purchaseType) throws ManagerBeanException {
 		List<SelectItem> tariffs = new LinkedList<SelectItem>();
 		IManagerBean tariffBean = BeanManager.getManagerBean(Tariff.class);
 		Criteria criteria = new Criteria();
+		if (purchaseType != null) {
+			criteria.addEqualExpression(tariffBean.getFieldName(IEntityAlias.TARIFF_PURCHASE), purchaseType);
+		}
 		criteria.addOrder(tariffBean.getFieldName(IEntityAlias.TARIFF_NAME));
 		for (ITransferObject ito : tariffBean.getList(criteria)) {
 			Tariff tariff = (Tariff)ito;
