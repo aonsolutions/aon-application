@@ -34,6 +34,7 @@ import com.esferalia.aon.gwt.template.server.AuditInfo;
 import com.esferalia.aon.gwt.template.server.ProductInfo;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
+import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -759,24 +760,35 @@ public class DBProduct {
 	public static Tax getIVAName(String domain, Integer domainId, String name, String login) {
 		AONContext ctx = null;
 		try {
+			
 			ctx = AONContext.getAONContext(domain, domainId, login);
 			
-			Record3<Integer, String, Double> data = ctx.getDslContext().select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
-					.from(TAX)
-					.where((TAX.DOMAIN.eq(domainId).or(TAX.DOMAIN.in(
-											ctx.getDslContext().select(DOMAIN.PARENT)
-											.from(DOMAIN)
-											.where(DOMAIN.ID.eq(domainId))
-							))).and(TAX.TAX_TYPE.eq((byte)1)))
-					.and(TAX.NAME.eq(name))
-					.fetchOne();
+			Result<DomainRecord> result = ctx.getDslContext().select().from(DOMAIN).where(DOMAIN.ID.eq(domainId)).limit(1).fetchInto(DOMAIN); 
+			DomainRecord dr = result.get(0);
 			
+			 Result<Record3<Integer, String, Double>> data = ctx.getDslContext().select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
+					.from(TAX)
+					.where(TAX.DOMAIN.eq(domainId))
+					.and(TAX.TAX_TYPE.eq((byte)1))
+					.and(TAX.NAME.eq(name))
+					.limit(1)
+					.fetch();
 
-				Tax tax = new Tax();
-				tax.setId(data.value1());
-				tax.setName(data.value2());
-				tax.setPercentage(data.value3());
-
+			if(data.isEmpty() && dr.getEnableheredity() != 0){
+				data = ctx.getDslContext().select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
+						.from(TAX)
+						.where(TAX.DOMAIN.eq(dr.getParent()))
+						.and(TAX.TAX_TYPE.eq((byte)1))
+						.and(TAX.NAME.eq(name))
+						.limit(1)
+						.fetch();	
+			}
+			Tax tax = new Tax();
+			if(data.isNotEmpty()){
+				tax.setId(data.get(0).value1());
+				tax.setName(data.get(0).value2());
+				tax.setPercentage(data.get(0).value3());
+			}
 			return tax;			
 		}finally {
 			if (ctx != null) ctx.close();
