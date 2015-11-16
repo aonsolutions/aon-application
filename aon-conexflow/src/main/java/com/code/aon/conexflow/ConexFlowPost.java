@@ -159,7 +159,7 @@ public class ConexFlowPost implements  Serializable {
 
 	    HttpPost post = new HttpPost(url);
 
-		List<NameValuePair> urlParameters = getParameters(op, query);
+		List<NameValuePair> urlParameters = getParameters(op, query, connection);
 		post.setEntity(new UrlEncodedFormEntity(urlParameters));
 
 		HttpResponse response = client.execute(post);
@@ -202,19 +202,19 @@ public class ConexFlowPost implements  Serializable {
 	    return array ;
 	}
 	
-	private static List<NameValuePair> getParameters(String op, Query query){
+	private static List<NameValuePair> getParameters(String op, Query query, ConexFlowConnection cfc){
 		switch (op) {
-		case ConexFlowConstant.SALE_OP: return ConexFlowUtils.getCardPaymentParameters(query);
-		case ConexFlowConstant.PREAUTHORIZATION_OP: return ConexFlowUtils.getPreauthorizationPaymentParameters(query);
-		case ConexFlowConstant.REFUND_OP: return ConexFlowUtils.getRefundParameters(query);
-		case ConexFlowConstant.CANCELATION_OP: return ConexFlowUtils.getCancelationParameters(query);
-		case ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP: return ConexFlowUtils.getConfirmPreauthorizationParameters(query);
-		case ConexFlowConstant.REDEMPTION_OP: return ConexFlowUtils.getVoucherParameters(query);
-		case ConexFlowConstant.ISSUE_OP: return ConexFlowUtils.getIssueParameters(query);
-		case ConexFlowConstant.CREATE_TOKEN_OP: return ConexFlowUtils.getCreateTokenParameters(query);
-		case ConexFlowConstant.DELETE_TOKEN_OP: return ConexFlowUtils.getDeleteTokenParameters(query);
-		case ConexFlowConstant.VALIDATE_CARD_OP: return ConexFlowUtils.getValidateCardParameters(query);
-		case ConexFlowConstant.TRANSACTION_INFO_OP: return ConexFlowUtils.getTransactionInfoParameters(query);
+		case ConexFlowConstant.SALE_OP: return ConexFlowUtils.getCardPaymentParameters(query, cfc);
+		case ConexFlowConstant.PREAUTHORIZATION_OP: return ConexFlowUtils.getPreauthorizationPaymentParameters(query, cfc);
+		case ConexFlowConstant.REFUND_OP: return ConexFlowUtils.getRefundParameters(query, cfc);
+		case ConexFlowConstant.CANCELATION_OP: return ConexFlowUtils.getCancelationParameters(query, cfc);
+		case ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP: return ConexFlowUtils.getConfirmPreauthorizationParameters(query, cfc);
+		case ConexFlowConstant.REDEMPTION_OP: return ConexFlowUtils.getVoucherParameters(query, cfc);
+		case ConexFlowConstant.ISSUE_OP: return ConexFlowUtils.getIssueParameters(query, cfc);
+		case ConexFlowConstant.CREATE_TOKEN_OP: return ConexFlowUtils.getCreateTokenParameters(query, cfc);
+		case ConexFlowConstant.DELETE_TOKEN_OP: return ConexFlowUtils.getDeleteTokenParameters(query, cfc);
+		case ConexFlowConstant.VALIDATE_CARD_OP: return ConexFlowUtils.getValidateCardParameters(query, cfc);
+		case ConexFlowConstant.TRANSACTION_INFO_OP: return ConexFlowUtils.getTransactionInfoParameters(query, cfc);
 		default: return new ArrayList<NameValuePair>();
 		}	
 	}

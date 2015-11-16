@@ -158,15 +158,17 @@ public class DBConsults {
 			ApplicationParameter server = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_SERVER_PARAM);
 			ApplicationParameter serverAck = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_SERVER_ACK_PARAM);
 			ApplicationParameter user = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_USER);
-			ApplicationParameter paymethod = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_PAYMETHOD);
-			
+			ApplicationParameter keyA = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_KEY_A);
+			ApplicationParameter keyB = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_KEY_B);
+
 			ConexFlowConnection cfc = new ConexFlowConnection();
 			cfc.setActive(server != null && server.getValue() != null && !server.getValue().equals("Null"));
 			if(cfc.getActive()){
 				cfc.setServer(server.getValue());
 				cfc.setServerAck(serverAck.getValue());
 				cfc.setCfUser(user.getValue());
-				cfc.setPayMethod(Integer.parseInt(paymethod.getValue()));
+				cfc.setKeyA(keyA.getValue());
+				cfc.setKeyB(keyB.getValue());
 			}
 			return cfc;
 		}finally {

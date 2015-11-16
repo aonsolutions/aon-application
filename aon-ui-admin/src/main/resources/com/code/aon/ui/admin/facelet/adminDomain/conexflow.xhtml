@@ -79,13 +79,19 @@
 											<f:validateLength minimum="16" maximum="16" />
 										</aon:inputText>
 										
-										<aon:outputLabel for="conexFlow_payMethod"
-											value="#{bundle.finance_payMethod}" />
-										<aon:selectOneMenu id="conexFlow_payMethod" 
-												value="#{conexflow.payMethod}"
-												required="true">
-											<f:selectItems value="#{conexflow.payMethods}" />
-										</aon:selectOneMenu>
+										<aon:outputLabel for="conexFlow_keyA" value="Clave A" />
+										<aon:inputText id="conexFlow_keyA"
+												value="#{controller.keyA}"
+												required="true" size="16" maxlength="16">
+										</aon:inputText>
+								
+										<aon:outputLabel for="conexFlow_keyB" value="Clave B" />
+										<aon:inputText id="conexFlow_keyB" 
+												value="#{controller.keyB}"
+												required="true" size="16" maxlength="16">
+										</aon:inputText>
+										
+										
 									
 									</aon:panelGrid>
 								</aon:div>

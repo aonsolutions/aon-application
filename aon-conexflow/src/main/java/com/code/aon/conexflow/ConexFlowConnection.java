@@ -6,10 +6,11 @@ public class ConexFlowConnection {
 	String server;
 	String serverAck;
 	String cfUser;
-	Integer payMethod;
 	Integer empresa;
 	Integer centro;
 	Integer tpv;
+	String keyA;
+	String keyB;
 	
 	public String getServer() {
 		return server;
@@ -67,14 +68,21 @@ public class ConexFlowConnection {
 	public void setActive(Boolean active) {
 		this.active = active;
 	}
-	
-	
-	public Integer getPayMethod() {
-		return payMethod;
+
+	public String getKeyA() {
+		return keyA;
 	}
 
-	public void setPayMethod(Integer payMethod) {
-		this.payMethod = payMethod;
+	public void setKeyA(String keyA) {
+		this.keyA = keyA;
+	}
+
+	public String getKeyB() {
+		return keyB;
+	}
+
+	public void setKeyB(String keyB) {
+		this.keyB = keyB;
 	}
 
 	private void setInfo(String cfUser) {

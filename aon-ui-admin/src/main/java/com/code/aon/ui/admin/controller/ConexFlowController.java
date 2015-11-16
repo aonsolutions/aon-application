@@ -1,21 +1,11 @@
 package com.code.aon.ui.admin.controller;
 
-import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
-
-import java.util.List;
-import java.util.Vector;
-
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
-
-import org.jooq.Result;
 
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.jooq.tables.records.PayMethodRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
@@ -37,8 +27,9 @@ public class ConexFlowController extends BasicController {
 	String server;
 	String serverAck;
 	String user;
+	String keyA;
+	String keyB;
 	boolean conexFlow;
-	Integer payMethod;
 	
 	public ConexFlowController() {
 		conexFlow = getConexFlowAux();
@@ -60,6 +51,22 @@ public class ConexFlowController extends BasicController {
 	public void setServerAck(String serverAck) {
 		if(serverAck == null) serverAck = "";
 		this.serverAck = serverAck;
+	}
+	
+	public String getKeyA() {
+		return keyA;
+	}
+
+	public void setKeyA(String keyA) {
+		this.keyA = keyA;
+	}
+
+	public String getKeyB() {
+		return keyB;
+	}
+
+	public void setKeyB(String keyB) {
+		this.keyB = keyB;
 	}
 
 	public boolean getConexFlowAux(){
@@ -102,16 +109,6 @@ public class ConexFlowController extends BasicController {
 		if(user == null) user = "";
 		this.user = user;
 	}
-	
-	
-
-	public Integer getPayMethod() {
-		return payMethod;
-	}
-
-	public void setPayMethod(Integer payMethod) {
-		this.payMethod = payMethod;
-	}
 
 	public boolean isHotel(){
 		Integer domainId = DomainManager.getCurrentDomain();
@@ -143,53 +140,25 @@ public class ConexFlowController extends BasicController {
 			setServerAck((aux2 != null && !aux2.getValue().equals("Null")) ? aux2.getValue() : "");
 			ApplicationParameter aux3 = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_USER);
 			setUser((aux3 != null && !aux3.getValue().equals("Null")) ? aux3.getValue() : "");
-			//setPayMethods(payMethods(domain));
-			ApplicationParameter aux4 = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_PAYMETHOD);	
-			Integer i;
-			Integer j = 0;
-			if(aux4 != null && !aux4.getValue().equals("Null")){
-				i = Integer.parseInt(aux4.getValue());
-				while(!getPayMethods().get(j).getValue().equals(i)) j++;
-			}
-			setPayMethod((Integer)getPayMethods().get(j).getValue());
+			
+			ApplicationParameter aux4 = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_KEY_A);
+			setKeyA((aux4 != null && !aux4.getValue().equals("Null")) ? aux4.getValue() : "");
+			ApplicationParameter aux5 = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_KEY_B);
+			setKeyB((aux5 != null && !aux5.getValue().equals("Null")) ? aux5.getValue() : "");
+
 		}finally {
 			if (ctx != null) ctx.close();
 		}
 	}
 	
-	public List<SelectItem> getPayMethods() {
-	
-			Domain domain = new Domain();
-			domain.setName(AonUtil.getDomainName());
-			domain.setId(AonUtil.getAuthPrincipal().getDomainId());
-			AONContext ctx = null;
-			try {
-				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), AonUtil.getRemoteUser());
-
-				Result<PayMethodRecord> data = ctx.getDslContext().select()
-														.from(PAY_METHOD)
-														.where(PAY_METHOD.DOMAIN.eq(domain.getId()))
-														.and(PAY_METHOD.TYPE.eq((byte) PayMethodType.CREDIT_CARD.ordinal())
-																.or(PAY_METHOD.TYPE.eq((byte) PayMethodType.DEBIT_CARD.ordinal())))
-														.fetchInto(PAY_METHOD);
-		
-				List<SelectItem> list = new Vector<SelectItem>();
-				for (PayMethodRecord paymethod : data) {
-					SelectItem si = new SelectItem(paymethod.getId(), paymethod.getName());
-					list.add(si);
-				}
-				return list;
-			}finally {
-				if (ctx != null) ctx.close();
-			}
-		
-	}
 	
 	public void onSaveConexFlow(ActionEvent event){
 		AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_SERVER_PARAM, getServer());
 		AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_SERVER_ACK_PARAM, getServerAck());
 		AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_USER, getUser());
-		AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_PAYMETHOD, getPayMethod().toString());
+		AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_KEY_A, "");
+		AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_KEY_B, "");
+
 	}
 	
 	public void onChangeConexFlowStatus(ActionEvent event) {
@@ -203,7 +172,8 @@ public class ConexFlowController extends BasicController {
 			AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_SERVER_PARAM, nullString);
 			AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_SERVER_ACK_PARAM, nullString);
 			AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_USER, nullString);
-			AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_PAYMETHOD, nullString);
+			AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_KEY_A, nullString);
+			AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_KEY_B, nullString);
 		}	
 	}
 	

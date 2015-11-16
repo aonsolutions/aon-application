@@ -65,7 +65,7 @@ public class ConexFlowUtils {
 		return query;
 	}
 	
-	protected static List<NameValuePair> getCardPaymentParameters(Query query){
+	protected static List<NameValuePair> getCardPaymentParameters(Query query, ConexFlowConnection cfc){
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.OPERACION_STR.getCode(), query.getOperacion()));
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.EMPRESA_STR.getCode(), query.getEmpresa()));
@@ -106,7 +106,7 @@ public class ConexFlowUtils {
 	
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, ConexFlowEnum.CONEXFLOW_MAC_KEYA.getCode(), ConexFlowEnum.CONEXFLOW_MAC_KEYB.getCode())));
+					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -169,7 +169,7 @@ public class ConexFlowUtils {
 		return query;
 	}
 	
-	protected static List<NameValuePair> getPreauthorizationPaymentParameters(Query query){
+	protected static List<NameValuePair> getPreauthorizationPaymentParameters(Query query, ConexFlowConnection cfc){
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.OPERACION_STR.getCode(), query.getOperacion()));
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.EMPRESA_STR.getCode(), query.getEmpresa()));
@@ -210,7 +210,7 @@ public class ConexFlowUtils {
 	
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, ConexFlowEnum.CONEXFLOW_MAC_KEYA.getCode(), ConexFlowEnum.CONEXFLOW_MAC_KEYB.getCode())));
+					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -260,7 +260,7 @@ public class ConexFlowUtils {
 		return query;
 	}
 	
-	protected static List<NameValuePair> getRefundParameters(Query query){
+	protected static List<NameValuePair> getRefundParameters(Query query, ConexFlowConnection cfc){
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.OPERACION_STR.getCode(), query.getOperacion()));
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.EMPRESA_STR.getCode(), query.getEmpresa()));
@@ -293,7 +293,7 @@ public class ConexFlowUtils {
 	
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, ConexFlowEnum.CONEXFLOW_MAC_KEYA.getCode(), ConexFlowEnum.CONEXFLOW_MAC_KEYB.getCode())));
+					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -303,7 +303,7 @@ public class ConexFlowUtils {
 	
 	//******************* Get Transaction Information
 	
-	protected static List<NameValuePair> getTransactionInfoParameters(Query query){
+	protected static List<NameValuePair> getTransactionInfoParameters(Query query, ConexFlowConnection cfc){
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.OPERACION_STR.getCode(), query.getOperacion()));
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.EMPRESA_STR.getCode(), query.getEmpresa()));
@@ -330,7 +330,7 @@ public class ConexFlowUtils {
 	
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, ConexFlowEnum.CONEXFLOW_MAC_KEYA.getCode(), ConexFlowEnum.CONEXFLOW_MAC_KEYB.getCode())));
+					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -372,7 +372,7 @@ public class ConexFlowUtils {
 		return query;
 	}
 	
-	protected static List<NameValuePair> getCancelationParameters(Query query){
+	protected static List<NameValuePair> getCancelationParameters(Query query, ConexFlowConnection cfc){
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.OPERACION_STR.getCode(), query.getOperacion()));
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.EMPRESA_STR.getCode(), query.getEmpresa()));
@@ -402,7 +402,7 @@ public class ConexFlowUtils {
 	
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, ConexFlowEnum.CONEXFLOW_MAC_KEYA.getCode(), ConexFlowEnum.CONEXFLOW_MAC_KEYB.getCode())));
+					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -447,7 +447,7 @@ public class ConexFlowUtils {
 		return query;
 	}
 	
-	protected static List<NameValuePair> getConfirmPreauthorizationParameters(Query query){
+	protected static List<NameValuePair> getConfirmPreauthorizationParameters(Query query, ConexFlowConnection cfc){
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.OPERACION_STR.getCode(), query.getOperacion()));
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.EMPRESA_STR.getCode(), query.getEmpresa()));
@@ -487,7 +487,7 @@ public class ConexFlowUtils {
 	
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena2, ConexFlowEnum.CONEXFLOW_MAC_KEYA.getCode(), ConexFlowEnum.CONEXFLOW_MAC_KEYB.getCode())));
+					, claveMAC.dameClaveMAC(cadena2, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -501,7 +501,7 @@ public class ConexFlowUtils {
 	
 	//******************* Voucher Redemption
 	
-	protected static List<NameValuePair> getVoucherParameters(Query query){
+	protected static List<NameValuePair> getVoucherParameters(Query query, ConexFlowConnection cfc){
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.OPERACION_STR.getCode(), query.getOperacion()));
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.EMPRESA_STR.getCode(), query.getEmpresa()));
@@ -525,7 +525,7 @@ public class ConexFlowUtils {
 
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, ConexFlowEnum.CONEXFLOW_MAC_KEYA.getCode(), ConexFlowEnum.CONEXFLOW_MAC_KEYB.getCode())));
+					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -535,7 +535,7 @@ public class ConexFlowUtils {
 	
 	//******************* Issue of an Electronic Reference
 	
-	protected static List<NameValuePair> getIssueParameters(Query query){
+	protected static List<NameValuePair> getIssueParameters(Query query, ConexFlowConnection cfc){
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.OPERACION_STR.getCode(), query.getOperacion()));
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.EMPRESA_STR.getCode(), query.getEmpresa()));
@@ -558,7 +558,7 @@ public class ConexFlowUtils {
 
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, ConexFlowEnum.CONEXFLOW_MAC_KEYA.getCode(), ConexFlowEnum.CONEXFLOW_MAC_KEYB.getCode())));
+					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -586,7 +586,7 @@ public class ConexFlowUtils {
 		return cf;
 	}
 	
-	protected static List<NameValuePair> getACKParameters(Query query){
+	protected static List<NameValuePair> getACKParameters(Query query, ConexFlowConnection cfc){
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.OPERACION_STR.getCode(), query.getOperacion()));
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.EMPRESA_STR.getCode(), query.getEmpresa()));
@@ -606,7 +606,7 @@ public class ConexFlowUtils {
 
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, ConexFlowEnum.CONEXFLOW_MAC_KEYA.getCode(), ConexFlowEnum.CONEXFLOW_MAC_KEYB.getCode())));
+					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -633,7 +633,7 @@ public class ConexFlowUtils {
 		return query;
 	}
 	
-	protected static List<NameValuePair> getCreateTokenParameters(Query query){
+	protected static List<NameValuePair> getCreateTokenParameters(Query query, ConexFlowConnection cfc){
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.OPERACION_STR.getCode(), query.getOperacion()));
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.EMPRESA_STR.getCode(), query.getEmpresa()));
@@ -654,7 +654,7 @@ public class ConexFlowUtils {
 
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, ConexFlowEnum.CONEXFLOW_MAC_KEYA.getCode(), ConexFlowEnum.CONEXFLOW_MAC_KEYB.getCode())));
+					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -664,7 +664,7 @@ public class ConexFlowUtils {
 	
 	//******************* Delete Token
 	
-	protected static List<NameValuePair> getDeleteTokenParameters(Query query){
+	protected static List<NameValuePair> getDeleteTokenParameters(Query query, ConexFlowConnection cfc){
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.OPERACION_STR.getCode(), query.getOperacion()));
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.EMPRESA_STR.getCode(), query.getEmpresa()));
@@ -684,7 +684,7 @@ public class ConexFlowUtils {
 				query.getRefTokenCliente();
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, ConexFlowEnum.CONEXFLOW_MAC_KEYA.getCode(), ConexFlowEnum.CONEXFLOW_MAC_KEYB.getCode())));
+					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -708,7 +708,7 @@ public class ConexFlowUtils {
 		return query;
 	}
 	
-	protected static List<NameValuePair> getValidateCardParameters(Query query){
+	protected static List<NameValuePair> getValidateCardParameters(Query query, ConexFlowConnection cfc){
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.OPERACION_STR.getCode(), query.getOperacion()));
 		urlParameters.add(new BasicNameValuePair(ConexFlowEnum.EMPRESA_STR.getCode(), query.getEmpresa()));
@@ -725,7 +725,7 @@ public class ConexFlowUtils {
 				query.getDocumento() + query.getRefCliente();
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, ConexFlowEnum.CONEXFLOW_MAC_KEYA.getCode(), ConexFlowEnum.CONEXFLOW_MAC_KEYB.getCode())));
+					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
