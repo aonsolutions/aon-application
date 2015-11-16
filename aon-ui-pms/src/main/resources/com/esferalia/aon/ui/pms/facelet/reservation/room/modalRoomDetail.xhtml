@@ -201,7 +201,7 @@
 											<a4j:repeat value="#{roomAvailability.availableRoomList}" var="availableRoom"
 												rendered="#{roomAvailability.availableRoomCount > 0}">
 												<aon:commandLink styleClass="aon-dataTable-link-noicon aon-bold aon-nowrap"
-													style="background-color: #{availableRoom.cleanRoom?'lightgreen':''};"
+													style="background-color: #{availableRoom.status=='CLEAN'?'lightgreen':''};"
 													value="#{availableRoom.asset.name}" immediate="true"
 													actionListener="#{controller.onAssignReservationRoom}">
 													<f:param name="availableRoom" value="#{availableRoom.asset.id}"/>
