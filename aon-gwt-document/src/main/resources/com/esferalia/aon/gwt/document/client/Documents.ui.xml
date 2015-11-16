@@ -197,7 +197,7 @@ background-color:#D4CFC7;
 									<g:Label styleName="aon-outputText" text=" " />
 								</g:HTMLPanel>
 							</g:HTMLPanel>
-							<g:HorizontalPanel  ui:field="ftoolbar" styleName="aon-finding-toolbar">
+							<g:HorizontalPanel  ui:field="ftoolbar" width="301px" styleName="aon-finding-toolbar">
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 									<g:Label ui:field="sConvenios" visible="false" styleName='aon-finding-toolbar-item aon-icon-serviconvenios'
 										text="ServiConvenios" />

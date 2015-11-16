@@ -16,7 +16,7 @@
 							<g:Label styleName="aon-outputText" text=" " />
 						</g:HTMLPanel>
 					</g:HTMLPanel>
-					<g:HorizontalPanel  styleName="aon-finding-toolbar">
+					<g:HorizontalPanel width="220px" styleName="aon-finding-toolbar">
 						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 							<g:Button ui:field="new_button" visible="true" styleName='aon-finding-toolbar-item aon-icon-new'
 								text="Nuevo" />
