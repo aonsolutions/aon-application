@@ -175,7 +175,9 @@ public class claveMAC {
 		String text = "N000000010057000011082015092503465892763422331800000000000000000155";
 		String mac = "";
 		try {
-			mac = claveMAC.dameClaveMAC(text, "193D59719B1B2662", "A8DB8A2EF1223B4E");
+			//Claves de prueba --> 193D59719B1B2662 A8DB8A2EF1223B4E
+			//Claves de produccion --> 76BD80DE8054E28A 47E3C3722D99B1BC
+			mac = claveMAC.dameClaveMAC(text, "76BD80DE8054E28A", "47E3C3722D99B1BC");
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
