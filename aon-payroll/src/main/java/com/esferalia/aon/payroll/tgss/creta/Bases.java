@@ -1036,7 +1036,7 @@ public class Bases {
 
 				found = true;
 				ret += ExpressionContext.eval(data.getExpression(),
-						Double.class) * days(intersect) / days(p);
+						Double.class) * days(intersect) / days(dataPeriod);
 			}
 
 			if (!found)
