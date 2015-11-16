@@ -3,9 +3,9 @@ package com.esferalia.aon.gwt.fiscal.client.stats;
 import java.util.LinkedHashMap;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.fiscal.client.StatsService;
-import com.esferalia.aon.gwt.fiscal.client.StatsServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.StatsServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.StatService;
+import com.esferalia.aon.gwt.fiscal.client.StatServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.StatServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -22,21 +22,22 @@ import com.google.gwt.visualization.client.visualizations.corechart.Series.Type;
 
 public class YearInvoiceTypeComboChart {
 
-	static StatsServiceAsync statsService;
+	static StatServiceAsync statService;
+	
 
-	private static StatsServiceAsync getStatsService() {
-		if (statsService == null) {
-			StatsServiceAsync serviceRaw = GWT.create(StatsService.class);
-			statsService = new StatsServiceAsyncDecorator(serviceRaw);
+	private static StatServiceAsync getStatService() {
+		if (statService == null) {
+			StatServiceAsync serviceRaw = GWT.create(StatService.class);
+			statService = new StatServiceAsyncDecorator(serviceRaw);
 		}
-		return statsService;
+		return statService;
 	}
 
 	public static void getChart(final StatParams params
 			, final int width
 			, final int height
 			, final AsyncCallback<ResizableComboChart> callback) {
-		getStatsService().getYearInvoiceTypeData(params, 
+		getStatService().getYearInvoiceTypeData(params, 
 				new AsyncCallback<StatData<Integer, InvoiceType, Double>>() {
 
 					@Override
@@ -59,7 +60,7 @@ public class YearInvoiceTypeComboChart {
 						AxisOptions haxis = AxisOptions.create();
 						haxis.setTitle(AON.MSG.year());
 						options.setHAxisOptions(haxis);
-						final DataTable dataTable = getDataTable(result);
+						final DataTable dataTable = getDataTable(options,result);
 						final ResizableComboChart chart = new ResizableComboChart(dataTable, options);
 						chart.setStyleName(AON.AON_CSS.aonWidthAll());
 						chart.addStyleName(AON.AON_CSS.aonHeightAll());
@@ -74,20 +75,21 @@ public class YearInvoiceTypeComboChart {
 				});
 	}
 
-	private static DataTable getDataTable(StatData<Integer, InvoiceType, Double> result) {
+	private static DataTable getDataTable(Options options, StatData<Integer, InvoiceType, Double> result) {
 		DataTable dataTable = DataTable.create();
-		dataTable.addColumn(ColumnType.NUMBER, AON.MSG.year());
+		dataTable.addColumn(ColumnType.STRING, AON.MSG.year());
 		LinkedHashMap<InvoiceType,Integer> colMap = new LinkedHashMap<InvoiceType,Integer>();
 		int rowIndex = 0;
 		int colIndex = 0;
 		for (Integer year : result.getMap().keySet() ) {
 			rowIndex = dataTable.addRow();
-			dataTable.setValue(rowIndex, 0, year);
+			dataTable.setValue(rowIndex, 0, AON.FMT_INT.format(year));
 			LinkedHashMap<InvoiceType, Double> map = result.getMap().get(year);
+			
 			for (InvoiceType type : map.keySet() ) {
 				if (!colMap.containsKey(type)) {
 					colMap.put(type, colMap.size()+1 );
-					dataTable.addColumn(ColumnType.NUMBER,type.getDescription());	
+					dataTable.addColumn(ColumnType.NUMBER,type.getDescription());
 				} 
 				colIndex = colMap.get(type); 
 				double d = AonMathUtils.round(map.get(type));	
@@ -95,6 +97,7 @@ public class YearInvoiceTypeComboChart {
 				dataTable.setFormattedValue(rowIndex, colIndex, AON.FMT.format(d));
 			}
 		}
+		
 		return dataTable;
 	}
 	

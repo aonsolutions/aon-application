@@ -1,12 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.client.stats;
 
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.visualizations.corechart.ComboChart;
 
-public class ResizableComboChart extends ComboChart implements RequiresResize
-	, HasYearClickHandler {
+public class ResizableComboChart extends ComboChart implements RequiresResize {
 
 	protected Options options;
 	protected AbstractDataTable data;
@@ -24,9 +22,4 @@ public class ResizableComboChart extends ComboChart implements RequiresResize
 		draw(data, options);
 	}
 
-	@Override
-	public HandlerRegistration addYearClickHandler(YearClickHandler handler) {
-		return addHandler(handler, YearClickEvent.getType());
-	}
-	
 }

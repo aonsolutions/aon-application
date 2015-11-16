@@ -18,7 +18,7 @@ public class ResizableTable extends Table implements RequiresResize {
 	@Override
 	public void onResize() {
 		options.setWidth(getParent().getOffsetWidth() + "px");
-		options.setHeight(getParent().getOffsetHeight() + "px");
+//		options.setHeight(getParent().getOffsetHeight() + "px");
 		draw(data, options);
 	}
 }

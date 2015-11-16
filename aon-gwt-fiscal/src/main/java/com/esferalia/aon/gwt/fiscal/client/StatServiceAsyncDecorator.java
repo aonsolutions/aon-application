@@ -7,28 +7,35 @@ import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class StatsServiceAsyncDecorator implements StatsServiceAsync {
+public class StatServiceAsyncDecorator implements StatServiceAsync {
 
-	private StatsServiceAsync fsa;
+	private StatServiceAsync fsa;
 
-	public StatsServiceAsyncDecorator(StatsServiceAsync statsServiceAsync) {
+	public StatServiceAsyncDecorator(StatServiceAsync statsServiceAsync) {
 		this.fsa = statsServiceAsync;
+	}
+
+	@Override
+	public void createStatParams(String domainName, int domain, AsyncCallback<StatParams> callback) {
+		AON.start();
+		fsa.createStatParams(domainName, domain
+			, new AsyncCallbackWrapper<StatParams>(callback));
 	}
 
 	@Override
 	public void getYearInvoiceTypeData(StatParams params,
 			AsyncCallback<StatData<Integer, InvoiceType, Double>> callback) {
 		AON.start();
-		fsa.getYearInvoiceTypeData(params, new AsyncCallbackWrapper<StatData<Integer, InvoiceType, Double>>(
-				callback));
+		fsa.getYearInvoiceTypeData(params
+			, new AsyncCallbackWrapper<StatData<Integer, InvoiceType, Double>>(callback));
 	}
 
 	@Override
 	public void getMonthInvoiceTypeData(StatParams params,
 			AsyncCallback<StatData<Integer, InvoiceType, Double>> callback) {
 		AON.start();
-		fsa.getMonthInvoiceTypeData(params, new AsyncCallbackWrapper<StatData<Integer, InvoiceType, Double>>(
-				callback));
+		fsa.getMonthInvoiceTypeData(params
+			, new AsyncCallbackWrapper<StatData<Integer, InvoiceType, Double>>(callback));
 	}
 
 }

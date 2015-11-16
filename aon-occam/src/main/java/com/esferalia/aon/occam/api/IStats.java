@@ -6,6 +6,8 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 
 public interface IStats {
 
+	StatParams createStatParams(AONContext ctx);
+
 	StatData<Integer, InvoiceType, Double> getYearInvoiceTypeData(
 			AONContext ctx, StatParams params);
 

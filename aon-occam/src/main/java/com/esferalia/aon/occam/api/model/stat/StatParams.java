@@ -2,8 +2,9 @@ package com.esferalia.aon.occam.api.model.stat;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 
 public class StatParams implements Serializable {
@@ -12,48 +13,47 @@ public class StatParams implements Serializable {
 	
 	private String domainName;
 	private int domain;
-	private HashSet<InvoiceType> invoiceTypes;
-	private Integer year;
+	private String user;
+	
+	private LinkedList<SelectableEnum<InvoiceType>> invoiceTypes;
 	private Date from;
 	private Date to;
-	
-	public HashSet<InvoiceType> getInvoiceTypes() {
-		return invoiceTypes;
-	}
-	public StatParams setInvoiceType(HashSet<InvoiceType> invoiceTypes) {
-		this.invoiceTypes = invoiceTypes;
-		return this;
-	}
-	public StatParams addInvoiceType(InvoiceType invoiceType) {
-		if (this.invoiceTypes == null) {
-			this.invoiceTypes = new HashSet<InvoiceType>();
-		}
-		if (!getInvoiceTypes().contains(invoiceType)) {
-			getInvoiceTypes().add(invoiceType);
-		}
-		return this;
-	}
-	public StatParams removeInvoiceType(InvoiceType type) {
-		if (this.invoiceTypes != null && getInvoiceTypes().contains(type)) {
-			getInvoiceTypes().remove(type);
-		}
-		return this;
-	}
 
+	private LinkedList<ProductCategory> productCategories;
+	
+	public StatParams(){
+		
+	}
+	
+	public StatParams(String domainName,int domain,String user){
+		this.domainName = domainName;
+		this.domain = domain;
+		this.user = user;
+	}
 	public String getDomainName() {
 		return domainName;
-	}
-	public StatParams setDomainName(String domainName) {
-		this.domainName = domainName;
-		return this;
 	}
 	public int getDomain() {
 		return domain;
 	}
-	public StatParams setDomain(int domain) {
-		this.domain = domain;
+	public String getUser() {
+		return user;
+	}
+	public LinkedList<SelectableEnum<InvoiceType>> getInvoiceTypes() {
+		return invoiceTypes;
+	}
+	public StatParams setInvoiceTypes(LinkedList<SelectableEnum<InvoiceType>> invoiceTypes) {
+		this.invoiceTypes = invoiceTypes;
 		return this;
 	}
+	public LinkedList<ProductCategory> getProductCategories() {
+		return productCategories;
+	}
+	public StatParams setProductCategories(LinkedList<ProductCategory> productCategories) {
+		this.productCategories = productCategories;
+		return this;
+	}
+
 	public Date getFrom() {
 		return from;
 	}
@@ -66,13 +66,6 @@ public class StatParams implements Serializable {
 	}
 	public StatParams setTo(Date to) {
 		this.to = to;
-		return this;
-	}
-	public Integer getYear() {
-		return year;
-	}
-	public StatParams setYear(Integer year) {
-		this.year = year;
 		return this;
 	}
 	

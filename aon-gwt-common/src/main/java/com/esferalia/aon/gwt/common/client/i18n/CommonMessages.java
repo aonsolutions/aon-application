@@ -2776,7 +2776,11 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Facturaci\u00F3n anual")
 	String yearInvoicing();
 	
- 	@DefaultMessage("Facturaci\u00F3n mensual del a\u00F1o {0}")
-	String monthInvoicing(int year);
+ 	@DefaultMessage("Facturaci\u00F3n mensual")
+	String monthInvoicing();
+
+ 	@DefaultMessage("Categor\u00EDas de productos")
+	String productCategories();
+	
 
 }

@@ -3,9 +3,9 @@ package com.esferalia.aon.gwt.fiscal.client.stats;
 import java.util.LinkedHashMap;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.fiscal.client.StatsService;
-import com.esferalia.aon.gwt.fiscal.client.StatsServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.StatsServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.StatService;
+import com.esferalia.aon.gwt.fiscal.client.StatServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.StatServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -23,21 +23,21 @@ import com.google.gwt.visualization.client.visualizations.corechart.Series.Type;
 
 public class MonthInvoiceTypeComboChart {
 
-	static StatsServiceAsync statsService;
+	static StatServiceAsync statService;
 
-	private static StatsServiceAsync getStatsService() {
-		if (statsService == null) {
-			StatsServiceAsync serviceRaw = GWT.create(StatsService.class);
-			statsService = new StatsServiceAsyncDecorator(serviceRaw);
+	private static StatServiceAsync getStatService() {
+		if (statService == null) {
+			StatServiceAsync serviceRaw = GWT.create(StatService.class);
+			statService = new StatServiceAsyncDecorator(serviceRaw);
 		}
-		return statsService;
+		return statService;
 	}
 
 	public static void getChart(final StatParams params
 			, final int width
 			, final int height
 			, final AsyncCallback<ResizableComboChart> callback) {
-		getStatsService().getMonthInvoiceTypeData(params, 
+		getStatService().getMonthInvoiceTypeData(params, 
 				new AsyncCallback<StatData<Integer, InvoiceType, Double>>() {
 
 					@Override
@@ -50,7 +50,7 @@ public class MonthInvoiceTypeComboChart {
 						options.set("animation", animation);
 						options.setWidth(width);
 						options.setHeight(height);
-						options.setTitle(AON.MSG.monthInvoicing( params.getYear()));
+						options.setTitle(AON.MSG.monthInvoicing());
 						options.setSeriesType(Type.BARS);
 						
 						AxisOptions vaxis = AxisOptions.create();

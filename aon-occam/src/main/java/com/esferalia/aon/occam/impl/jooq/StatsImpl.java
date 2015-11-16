@@ -10,6 +10,11 @@ import com.esferalia.aon.occam.impl.jooq.dao.StatsDAO;
 public class StatsImpl implements IStats {
 
 	@Override
+	public StatParams createStatParams(AONContext ctx) {
+		return StatsDAO.createStatParams(ctx);
+	}
+
+	@Override
 	public StatData<Integer,InvoiceType,Double> getYearInvoiceTypeData(
 			AONContext ctx,StatParams params) {
 		return StatsDAO.getYearInvoiceTypeData(ctx, params);
@@ -20,5 +25,6 @@ public class StatsImpl implements IStats {
 			AONContext ctx, StatParams params) {
 		return StatsDAO.getMonthInvoiceTypeData(ctx, params);
 	}
+
 
 }

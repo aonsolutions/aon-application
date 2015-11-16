@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.ProductTag.PRODUCT_TAG;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
@@ -8,11 +9,10 @@ import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Vector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.InsertValuesStep20;
@@ -29,29 +29,45 @@ import com.esferalia.aon.jooq.tables.records.ProductTagRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
 
 
 public class ProductDAO {
 	
-	public static List<String> getProductTags(AONContext ctx) {
+	public static LinkedList<ProductCategory> getProductCategories(AONContext ctx) {
 		ctx.checkRead();
-		final List<String> list = new LinkedList<String>();
-		ctx.getDslContext()
+		return ctx.getDslContext()
+			.select(PCATEGORY.ID,PCATEGORY.DOMAIN,PCATEGORY.NAME)
+			.from(PCATEGORY)
+			.where(DAOUtilities.getHeritableDomainCondition(ctx, PCATEGORY.DOMAIN,ctx.getDomainId()))
+			.fetch()
+			.stream()
+			.map( record -> new ProductCategory()
+					.setId( record.getValue(PCATEGORY.ID))
+					.setDomain( record.getValue(PCATEGORY.DOMAIN))
+					.setName( record.getValue(PCATEGORY.NAME))
+				)
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+
+	public static LinkedList<String> getProductTags(AONContext ctx) {
+		ctx.checkRead();
+		return ctx.getDslContext()
 			.select(TAG.NAME)
 			.from(TAG)
 			.where(TAG.DOMAIN.equal(ctx.getDomainId()))
 			.and(TAG.TYPE.eq( (byte) 1 ))
 			.fetch()
 			.stream()
-			.forEach( record -> list.add(record.getValue(TAG.NAME) ));
-		return list; 
+			.map( record -> record.getValue(TAG.NAME) )
+			.collect(Collectors.toCollection(LinkedList::new));
 	}
 
-	public static Map<Integer,String[]> getProductTagMap(AONContext ctx) {
+	public static LinkedHashMap<Integer,String[]> getProductTagMap(AONContext ctx) {
 		ctx.checkRead();
-		final Map<Integer,String[]> map = new HashMap<Integer, String[]>();
+		final LinkedHashMap<Integer,String[]> map = new LinkedHashMap<Integer, String[]>();
 		ctx.getDslContext()
 			.select(PRODUCT.ID,TAG.NAME)
 			.from(PRODUCT)

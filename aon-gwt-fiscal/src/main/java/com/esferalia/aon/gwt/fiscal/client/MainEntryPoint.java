@@ -9,7 +9,7 @@ import com.esferalia.aon.gwt.fiscal.client.mod184.Model184;
 import com.esferalia.aon.gwt.fiscal.client.mod190.Model190;
 import com.esferalia.aon.gwt.fiscal.client.mod193.Model193;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
-import com.esferalia.aon.gwt.fiscal.client.stats.StatsControlPanel;
+import com.esferalia.aon.gwt.fiscal.client.stats.StatControlPanel;
 import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -211,7 +211,7 @@ public class MainEntryPoint implements EntryPoint {
 //
 //				@Override
 //				public void onSuccess() {
-					new StatsControlPanel().onModuleLoad();
+					new StatControlPanel().onModuleLoad();
 //				}
 //				
 //			});

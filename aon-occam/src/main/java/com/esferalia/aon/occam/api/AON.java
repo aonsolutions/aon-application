@@ -1773,6 +1773,17 @@ public class AON {
 		}
 	}
 	// ------------------------------------------------------------------- STATS
+	public static StatParams createStatParams(String domainName, int domain, String user) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName,domain, user);
+			return getStats().createStatParams(ctx);
+		} finally {
+			if (ctx != null) 
+				ctx.close();
+		}
+	}
+
 	public static StatData<Integer, InvoiceType, Double> getYearInvoiceTypeData(
 			StatParams params, String user) {
 		AONContext ctx = null;
@@ -1797,4 +1808,5 @@ public class AON {
 				ctx.close();
 		}
 	}
+
 }
