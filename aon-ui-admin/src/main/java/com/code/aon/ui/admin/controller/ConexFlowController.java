@@ -156,8 +156,8 @@ public class ConexFlowController extends BasicController {
 		AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_SERVER_PARAM, getServer());
 		AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_SERVER_ACK_PARAM, getServerAck());
 		AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_USER, getUser());
-		AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_KEY_A, "");
-		AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_KEY_B, "");
+		AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_KEY_A, getKeyA());
+		AppParamUtil.insertParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_KEY_B, getKeyB());
 
 	}
 	
