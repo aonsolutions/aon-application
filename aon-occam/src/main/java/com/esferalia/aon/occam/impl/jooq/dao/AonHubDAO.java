@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
+import static com.esferalia.aon.jooq.tables.NoticeTag.NOTICE_TAG;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
@@ -17,7 +18,7 @@ import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.exception.DataAccessException;
 
-import com.esferalia.aon.jooq.tables.Rmedia;
+import com.esferalia.aon.jooq.tables.NoticeTag;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.NoticeRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
@@ -30,12 +31,12 @@ import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NoticeComment;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.office.User;
-import com.sun.xml.bind.v2.model.runtime.RuntimeElementInfo;
 
 public class AonHubDAO {
 
 	public static List<Notice> getOpenIssues(AONContext ctx, int parentDomain,
-			Integer domain) throws DataAccessException, Exception {
+			Integer domain, byte openIndex, byte reopenIndex, byte tagOrdinal,
+			byte priorityOrdinal) throws DataAccessException, Exception {
 
 		List<Notice> notices = new LinkedList<Notice>();
 
@@ -45,7 +46,8 @@ public class AonHubDAO {
 					.selectFrom(NOTICE)
 					.where(NOTICE.DOMAIN.eq(parentDomain).or(
 							NOTICE.DOMAIN.eq(domain)))
-					.and(NOTICE.STATUS.eq((byte) 2))
+					.and(NOTICE.STATUS.eq(openIndex).or(
+							NOTICE.STATUS.equal(reopenIndex)))
 					.and(NOTICE.NOTICE_.isNull()).fetchInto(NOTICE);
 
 			for (NoticeRecord record : recordList) {
@@ -68,13 +70,28 @@ public class AonHubDAO {
 				}
 
 				notice.setRecipient(record.getValue(NOTICE.RECIPIENT));
-				notice.setPhone(record.getValue(NOTICE.PHONE));
+				notice.setContact(record.getValue(NOTICE.PHONE));
 				notice.setSource(record.getValue(NOTICE.SOURCE));
 				notice.setCompany(record.getValue(NOTICE.COMPANY));
 				notice.setStatus(record.getValue(NOTICE.STATUS).intValue());
 				notice.setWorkgroup(record.getValue(NOTICE.WORK_GROUP));
 				notice.setType(record.getValue(NOTICE.TYPE).intValue());
-				notice.setPriority(record.getValue(NOTICE.PRIORITY).intValue());
+				
+				try {
+					String priorityName = ctx.getDslContext()
+							.selectFrom(TAG.rightOuterJoin(NOTICE_TAG).on(TAG.ID.eq(NOTICE_TAG.TAG)))
+							.where(TAG.TYPE.eq(priorityOrdinal)
+									.and(TAG.DOMAIN.eq(record.getValue(NOTICE.DOMAIN)))
+									.and(NOTICE_TAG.NOTICE.eq(record.getValue(NOTICE.ID)))
+									.and(NOTICE_TAG.START_DATE.eq(record.getValue(NOTICE.DATE))))
+									.fetchOne().getValue(TAG.NAME);
+					
+					notice.setPriority(priorityName);
+
+				} catch ( Exception ex) {
+					System.out.println( ex.getMessage() + " " + ex.getLocalizedMessage());
+				}
+				
 
 				loadComments(ctx, notice.getComments(), noticeId);
 
@@ -211,10 +228,11 @@ public class AonHubDAO {
 				.set(NOTICE.SUBJECT, notice.getTitle())
 				.set(NOTICE.PHONE, notice.getPhone())
 				.set(NOTICE.COMPANY, notice.getCompany())
+				.set(NOTICE.SOURCE, notice.getSource())
 				.set(NOTICE.STATUS, notice.getStatus().byteValue())
 				.set(NOTICE.SENDER, notice.getSender())
 				.set(NOTICE.TYPE, notice.getType().byteValue())
-				.set(NOTICE.PRIORITY, notice.getPriority().byteValue());
+				.set(NOTICE.PRIORITY, (byte) 0);
 
 		if (notice.getRecipient() != null)
 			noticeRecord = noticeRecord.set(NOTICE.RECIPIENT,
@@ -235,6 +253,7 @@ public class AonHubDAO {
 						newNoticeRecord.getValue(NOTICE.RECIPIENT))
 				.set(NOTICE.PHONE, newNoticeRecord.getValue(NOTICE.PHONE))
 				.set(NOTICE.COMPANY, newNoticeRecord.getValue(NOTICE.COMPANY))
+				.set(NOTICE.SOURCE, newNoticeRecord.getValue(NOTICE.SOURCE))
 				.set(NOTICE.STATUS, newNoticeRecord.getValue(NOTICE.STATUS))
 				.set(NOTICE.TYPE, newNoticeRecord.getValue(NOTICE.TYPE))
 				.set(NOTICE.PRIORITY, newNoticeRecord.getValue(NOTICE.PRIORITY))
@@ -243,6 +262,42 @@ public class AonHubDAO {
 				.set(NOTICE.DATE, newNoticeRecord.getValue(NOTICE.DATE))
 				.set(NOTICE.NOTICE_, newNoticeRecord.getValue(NOTICE.ID))
 				.execute();
+
+		if (notice.getPriority() != null) {
+			Integer priority = ctx
+					.getDslContext()
+					.selectFrom(TAG)
+					.where(TAG.DOMAIN.eq(notice.getDomain())
+							.and(TAG.NAME.eq(notice.getPriority()))
+							.and(TAG.TYPE.eq(notice.getPriorityOrdinal())))
+					.fetchOne().getValue(TAG.ID);
+
+			ctx.getDslContext()
+					.insertInto(NOTICE_TAG)
+					.set(NOTICE_TAG.NOTICE, newNoticeRecord.getValue(NOTICE.ID))
+					.set(NOTICE_TAG.TAG, priority)
+					.set(NOTICE_TAG.START_DATE,
+							newNoticeRecord.getValue(NOTICE.DATE)).execute();
+		}
+
+		for (String label : notice.getTags()) {
+
+			Integer labelId = ctx
+					.getDslContext()
+					.selectFrom(TAG)
+					.where(TAG.DOMAIN.eq(notice.getDomain())
+							.and(TAG.NAME.eq(label))
+							.and(TAG.TYPE.eq(notice.getTagOrdinal())))
+					.fetchOne().getValue(TAG.ID);
+
+			ctx.getDslContext()
+					.insertInto(NOTICE_TAG)
+					.set(NOTICE_TAG.NOTICE, newNoticeRecord.getValue(NOTICE.ID))
+					.set(NOTICE_TAG.TAG, labelId)
+					.set(NOTICE_TAG.START_DATE,
+							newNoticeRecord.getValue(NOTICE.DATE)).execute();
+		}
+
 	}
 
 	public static String getUserName(AONContext ctx, Integer userId) {

@@ -123,10 +123,6 @@ public class Office extends Composite implements EntryPoint,
 		showDockOfficePanel();
 	}
 
-	@UiHandler("dataGrid")
-	void gridOnAttachEvent(AttachEvent event) {
-	}
-
 	@Override
 	public void onSelectionChangeHandler(SelectionChangeEvent event) {
 
@@ -351,13 +347,11 @@ public class Office extends Composite implements EntryPoint,
 
 	@Override
 	public void onSelectionTitle(IssueSelected issue) {
-
 		this.issuesPanel.clear();
 		this.issueSelected = issue;
 		this.issueLayoutPanel = new IssuesLayoutPanel(issue);
 		this.issueLayoutPanel.addListener(this);
 		this.issuesPanel.add(issueLayoutPanel);
-
 		showIssueLayoutPanel();
 	}
 

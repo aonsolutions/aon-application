@@ -20,9 +20,9 @@ import com.code.aon.groupware.enumeration.NoticeStatus;
 import com.code.aon.groupware.enumeration.NoticeType;
 import com.code.aon.groupware.enumeration.Priority;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.gwt.office.jooq.JooqAonHub;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.office.Notice;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.impl.jooq.dao.AonHubDAO;
 
 @MultipartConfig
@@ -31,6 +31,10 @@ import com.esferalia.aon.occam.impl.jooq.dao.AonHubDAO;
 public class NewNoticeServlet extends HttpServlet {
 
 	static class JooqSave extends AonHubDAO {
+		
+		static void getTagId (AONContext ctx, Integer domain, String name) {
+			
+		}
 
 		public static void save(AONContext ctx, Notice notice) {
 
@@ -82,6 +86,9 @@ public class NewNoticeServlet extends HttpServlet {
 			Notice notice = new Notice();
 			notice.setDomain(domain);
 			notice.setDate(new Date());
+			notice.setTagOrdinal( (byte) TagType.NOTICE.ordinal());
+			notice.setPriorityOrdinal( (byte) TagType.PRIORITY.ordinal());
+			
 
 			if (!json.isNull("title"))
 				notice.setTitle(json.getString("title"));
@@ -90,15 +97,17 @@ public class NewNoticeServlet extends HttpServlet {
 				notice.setTitle(json.getString("body"));
 
 			if (!json.isNull("phone"))
-				notice.setPhone(json.getString("phone"));
+				notice.setContact(json.getString("phone"));
 
 			if (!json.isNull("company"))
 				notice.setCompany(json.getString("company"));
-
+			
 			JSONArray labels = json.getJSONArray("labels");
-			for (int x = 0; x < labels.length(); x++) {
-				
-			}
+			for (int x = 0; x < labels.length(); x++)
+				notice.addTag(labels.getString(x));
+			
+			if (!json.isNull("source"))
+				notice.setSource(json.getString("source"));
 			
 			Integer sender = userId;
 			if (!json.isNull("sender"))
@@ -115,12 +124,9 @@ public class NewNoticeServlet extends HttpServlet {
 						json.getString("type").toUpperCase()).ordinal();
 				notice.setType(type);
 			}
-
-			if (!json.isNull("priority")) {
-				Integer priority = Priority.valueOf(
-						json.getString("priority").toUpperCase()).ordinal();
-				notice.setPriority(priority);
-			}
+			
+			if (!json.isNull("priority"))
+				notice.setPriority(json.getString("priority"));
 
 			if (!json.isNull("state")) {
 				Integer status = NoticeStatus.valueOf(

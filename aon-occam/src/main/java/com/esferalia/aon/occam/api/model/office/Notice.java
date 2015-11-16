@@ -1,16 +1,14 @@
 package com.esferalia.aon.occam.api.model.office;
 
-import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.esferalia.aon.jooq.tables.records.NoticeRecord;
 import com.esferalia.aon.occam.api.model.HasId;
 
 public class Notice implements Serializable, HasId {
+	
 
 	/**
 	 * 
@@ -24,19 +22,24 @@ public class Notice implements Serializable, HasId {
 	private String title; // Asunto del aviso
 	private String body; //Cuerpo del aviso
 	private Integer recipient; // Destinatario del aviso
-	private String phone;
+	private String contact; //Modo de contacto
 	private String source; // Origen del aviso
 	private String company; // Empresa donde trabaja el origen del aviso
 	private Integer status; // Estado del aviso
-	private Integer workgroup;
+	private Integer workgroup; // Grupo de trabajo al que va dirigido el aviso
 	private Integer type; //Tipo de aviso
-	private Integer priority; //Prioridad
+	private String priority; //Prioridad
+	
+	private byte tagOrdinal;
+	private byte priorityOrdinal;
 	
 	private Integer notice; //Notice al que referencia **null si es cabecera = titulo
 
+	private List<String> tags;
 	private List<NoticeComment> comments;
 
 	public Notice() {
+		tags = new LinkedList<String>();
 		comments = new LinkedList<NoticeComment>();
 	}
 	
@@ -70,8 +73,8 @@ public class Notice implements Serializable, HasId {
 		this.recipient = recipient;
 	}
 	
-	public void setPhone(String phone) {
-		this.phone = phone;
+	public void setContact(String contact) {
+		this.contact = contact;
 	}
 	
 	public void setSource(String source) {
@@ -94,7 +97,7 @@ public class Notice implements Serializable, HasId {
 		this.type = type;
 	}
 	
-	public void setPriority(Integer priority) {
+	public void setPriority(String priority) {
 		this.priority = priority;
 	}
 	
@@ -102,8 +105,20 @@ public class Notice implements Serializable, HasId {
 		this.notice = notice;
 	}
 	
+	public void addTag (String tag) {
+		this.tags.add(tag);
+	}
+	
 	public void addNotice(NoticeComment comment) {
 		this.comments.add(comment);
+	}
+	
+	public void setTagOrdinal(byte tagOrdinal) {
+		this.tagOrdinal = tagOrdinal;
+	}
+	
+	public void setPriorityOrdinal(byte priorityOrdinal) {
+		this.priorityOrdinal = priorityOrdinal;
 	}
 	
 	// ===============GETTERS=================== //
@@ -138,7 +153,7 @@ public class Notice implements Serializable, HasId {
 	}
 	
 	public String getPhone() {
-		return (phone != null) ? phone : "";
+		return (contact != null) ? contact : "";
 	}
 	
 	public String getSource() {
@@ -161,7 +176,7 @@ public class Notice implements Serializable, HasId {
 		return type;
 	}
 	
-	public Integer getPriority() {
+	public String getPriority() {
 		return priority;
 	}
 	
@@ -169,7 +184,19 @@ public class Notice implements Serializable, HasId {
 		return notice;
 	}
 	
+	public List<String> getTags() {
+		return tags;		
+	}
+	
 	public List<NoticeComment> getComments() {
 		return comments;
+	}
+	
+	public byte getTagOrdinal() {
+		return tagOrdinal;
+	}
+	
+	public byte getPriorityOrdinal() {
+		return priorityOrdinal;
 	}
 }

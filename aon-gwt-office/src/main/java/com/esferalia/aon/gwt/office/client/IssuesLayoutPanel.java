@@ -139,25 +139,25 @@ public class IssuesLayoutPanel extends Composite {
 		titleLabel.setText(issue.getTitle());
 		numberIssueLabel.setText("#" + issue.getNumber());
 
-		if (issue.getState().equals(IssueValue.Prop.OPEN.value)) {
-			stateLabel.setText(IssueValue.Prop.OPEN.value);
-			stateLabel.addStyleName(style.stateOpen());
-			stateLabel.addStyleName(AON.AON_ICON_ISSUE_OPENED);
-		} else {
-			stateLabel.setText(IssueValue.Prop.CLOSE.value);
-			stateLabel.addStyleName(style.stateClose());
-			stateLabel.addStyleName(AON.AON_ICON_ISSUE_CLOSED);
-		}
+//		if (issue.getState().equals(IssueValue.Prop.OPEN.value)) {
+//			stateLabel.setText(IssueValue.Prop.OPEN.value);
+//			stateLabel.addStyleName(style.stateOpen());
+//			stateLabel.addStyleName(AON.AON_ICON_ISSUE_OPENED);
+//		} else {
+//			stateLabel.setText(IssueValue.Prop.CLOSE.value);
+//			stateLabel.addStyleName(style.stateClose());
+//			stateLabel.addStyleName(AON.AON_ICON_ISSUE_CLOSED);
+//		}
 
 		userCreateLabel.setText(issue.getUser().getLogin());
 
-		int days = DateUtils.getDaysBetween(issue.getCreateAt(), (new Date()));
+//		int days = DateUtils.getDaysBetween(issue.getCreateAt(), (new Date()));
+//
+//		whenCreateLabel.setText("Abierto hace " + days + " d\u00EDas - "
+//				+ issue.getComments() + " comentarios");
 
-		whenCreateLabel.setText("Abierto hace " + days + " d\u00EDas - "
-				+ issue.getComments() + " comentarios");
-
-		if (issue.getLabels().length() > 0)
-			addLabels();
+//		if (issue.getLabels().length() > 0)
+//			addLabels();
 	}
 
 	private void addIssue() {

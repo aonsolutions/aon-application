@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.i18n.AonHubMessages;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.users.JsIdentification;
+import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.esferalia.aon.gwt.office.client.models.users.JsUserWorkgroups;
 import com.esferalia.aon.gwt.office.client.values.LabelValue;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
@@ -60,24 +62,29 @@ public class IssueWriteWidget extends Composite {
 
 	@UiField
 	TabPanel tabPanel;
+
+	@UiField
+	HorizontalPanel hPanel;
+	@UiField
+	HorizontalPanel hTypePanel;
+
+	@UiField
+	TextArea commentTextArea;
+
 	@UiField
 	TextBox companyTextBox;
 	@UiField
 	TextBox remiteTextBox;
 	@UiField
 	TextBox phoneTextBox;
+	@UiField
+	TextBox titleTextBox;
+
 	@UiField(provided = true)
 	SuggestBox loginSuggestBox;
 	@UiField(provided = true)
 	SuggestBox recipientSuggestBox;
-	@UiField
-	TextArea commentTextArea;
-	@UiField
-	TextBox titleTextBox;
-	@UiField
-	HorizontalPanel hPanel;
-	@UiField
-	HorizontalPanel hTypePanel;
+
 	@UiField
 	Button commentButton;
 	@UiField
@@ -90,8 +97,7 @@ public class IssueWriteWidget extends Composite {
 
 	private String noticeType;
 	private String priority;
-	private String status = "Open";
-	private Integer loggin;
+	private String status = "Open";	
 	private Integer recipientId;
 	private Integer workgroup;
 
@@ -99,7 +105,6 @@ public class IssueWriteWidget extends Composite {
 	private MultiWordSuggestOracle recipients = new MultiWordSuggestOracle();
 
 	private List<Listener> listeners;
-	private List<String> labelNamesList;
 
 	private Map<String, String> labels;
 	
@@ -112,8 +117,6 @@ public class IssueWriteWidget extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 
 		tabPanel.selectTab(0);
-
-		this.labelNamesList = new LinkedList<String>();
 
 		this.labelsTree.addTextItem("Etiquetas");
 		this.priorityTree.addTextItem("Prioridad");
@@ -128,6 +131,7 @@ public class IssueWriteWidget extends Composite {
 		insertLoggins(idents);
 		insertPriorityTags(usersWorkgroups.getPriorities());
 		insertLabelTags(usersWorkgroups.getLabels());
+		insertRecipientUsers(usersWorkgroups.getUsers());
 
 		loadRadioButtons();
 	}
@@ -148,6 +152,12 @@ public class IssueWriteWidget extends Composite {
 		
 		for (int x = 0 ; x < jsIdents.length() ; x++) 
 			logins.add(jsIdents.get(x).getValue());
+	}
+	
+	private void insertRecipientUsers (JsArray<JsUser> jsRecipients) {
+		
+		for ( int j = 0; j < jsRecipients.length() ; j++)
+			recipients.add(jsRecipients.get(j).getId() + " - " + jsRecipients.get(j).getName());
 	}
 
 	public void addListener(Listener listener) {
@@ -239,8 +249,9 @@ public class IssueWriteWidget extends Composite {
 			issueValue.setPhone((phoneTextBox.getText().isEmpty()) ? ""
 					: phoneTextBox.getText());
 			issueValue.setCompany((companyTextBox.getText().isEmpty()) ? ""
-					: companyTextBox.getText());
-
+					: companyTextBox.getText());	
+			
+			issueValue.setSource( loginSuggestBox.getText() ); //Identificacion varchar
 			issueValue.setBody(commentTextArea.getText());
 			issueValue.setLabels(getLabels().split(","));
 			issueValue.setType(noticeType);
@@ -252,13 +263,6 @@ public class IssueWriteWidget extends Composite {
 
 			addCommentButtonClickListener(issueValue);
 		}
-	}
-	
-	@UiHandler("loginSuggestBox")
-	void onSelectedLoggin(SelectionEvent<SuggestOracle.Suggestion> event) {
-		
-		String selected = event.getSelectedItem().getReplacementString();
-		loggin = getLogginId(selected);
 	}
 
 	@UiHandler("recipientSuggestBox")
@@ -327,25 +331,16 @@ public class IssueWriteWidget extends Composite {
 
 		insertWidgets(hTypePanel, ticket, aviso, nota, comment);
 	}
-	
-	private Integer getLogginId (String value) {
-		
-		for (int x = 0; x < idents.length(); x++) {
-			if (idents.get(x).getValue().compareTo(value) == 0)
-				return idents.get(x).getId();
-		}
-		return null; //nunca llega aqui porque la clave siempre va a existir
-	}
 
 	private String getLabels() {
-
-		Iterator<String> iterator = labels.keySet().iterator();
-		StringBuffer buffer = new StringBuffer();
-
-		while (iterator.hasNext()) {
-			String label = iterator.next();
-			buffer.append(label);
-			if (iterator.hasNext())
+		
+		Iterator<String> iter = labels.keySet().iterator();
+		StringBuffer buffer = new StringBuffer();	
+		
+		while (iter.hasNext()) {
+			String id = iter.next();
+			buffer.append(id);
+			if(iter.hasNext())
 				buffer.append(',');
 		}
 
@@ -358,11 +353,11 @@ public class IssueWriteWidget extends Composite {
 			container.add(widget);
 	}
 
-	private void evalCheckBox(CheckBox object) {
-		if (object.getValue())
-			labels.put(object.getText(), object.getText());
+	private void evalCheckBox(CheckBox checkBox) {
+		if (checkBox.getValue())
+			labels.put(checkBox.getText(), checkBox.getText());
 		else
-			labels.remove(object.getText());
+			labels.remove(checkBox.getText());
 	}
 
 	private void setPriority(String priority) {
@@ -389,7 +384,7 @@ public class IssueWriteWidget extends Composite {
 		priorityTree.add(radioButton);
 	}
 
-	private void addNewCheckBox(String name) {
+	private void addNewCheckBox(final String name) {
 
 		CheckBox checkBox = new CheckBox(name);
 		checkBox.addClickHandler(new ClickHandler() {
@@ -401,6 +396,6 @@ public class IssueWriteWidget extends Composite {
 			}
 		});
 
-		labelsTree.add(checkBox);
+		labelsTree.add(checkBox);		
 	}
 }
