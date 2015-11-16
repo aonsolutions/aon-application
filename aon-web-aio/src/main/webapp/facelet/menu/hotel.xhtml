@@ -92,7 +92,7 @@
 							</aon:div>
 						</aon:panelGrid>
 						
-						<aon:if test="#{aonRole.config}">
+						<aon:if test="#{aonRole.config or aonRole.auditor}">
 							<aon:panelGrid id="group_hotel_room"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-room aon-direct-access-panel">
