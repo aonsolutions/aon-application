@@ -202,6 +202,9 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-icon-wizard")
 	String aonIconWizard();
 
+	@ClassName("aon-icon-excel")
+	String aonIconExcel();
+
 	@ClassName("aon-icon-lock")
 	String aonIconLock();
 	

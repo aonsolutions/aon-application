@@ -174,6 +174,13 @@
    		</dependency>
 		
 		<dependency>
+			<groupId>com.google.gwt.google-apis</groupId>
+			<artifactId>gwt-visualization</artifactId>
+			<version>1.1.2</version>
+		    <scope>compile</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>${jasperReportsArtifact}</artifactId>
 			<version>${jasperReportsVersion}</version>

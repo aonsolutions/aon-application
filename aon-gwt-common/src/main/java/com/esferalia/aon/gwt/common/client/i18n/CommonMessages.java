@@ -33,6 +33,26 @@ public interface CommonMessages extends Messages {
 	// -----------------------------------------------------------Enum Messages
 	@DefaultMessage("----------")
 	@AlternateMessage({
+		 "0",  "Enero"
+		,"1",  "Febrero"
+		,"2",  "Marzo"
+		,"3",  "Abril"
+		,"4",  "Mayo"
+		,"5",  "Junio"
+		,"6",  "Julio"
+		,"7",  "Agosto"
+		,"8",  "Septiembre"
+		,"9",  "Octubre"
+		,"10", "Noviembre"
+		,"11", "Diciembre"
+		})
+	String month(@Select int month);
+
+	@DefaultMessage("Meses")
+	String months();
+
+	@DefaultMessage("----------")
+	@AlternateMessage({
 		 "ALAVA", "Araba/Alava"
 		,"BIZKAIA", "Bizkaia"
 		,"GIPUZKOA", "Gipuzkoa"
@@ -1279,6 +1299,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("P\u00E9rdidas y Ganancias")
 	String profitAndLoss();
+
+	@DefaultMessage("Beneficio")
+	String profit();
 
 	@DefaultMessage("Domicilio fiscal")
 	String fiscalAddress();
@@ -2750,5 +2773,10 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("No definido")
 	String undefined();
 	
+ 	@DefaultMessage("Facturaci\u00F3n anual")
+	String yearInvoicing();
+	
+ 	@DefaultMessage("Facturaci\u00F3n mensual del a\u00F1o {0}")
+	String monthInvoicing(int year);
 
 }

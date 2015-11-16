@@ -66,8 +66,11 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.stat.StatData;
+import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
@@ -82,6 +85,7 @@ import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
 import com.esferalia.aon.occam.impl.jooq.ProductImpl;
 import com.esferalia.aon.occam.impl.jooq.SalaryImpl;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
+import com.esferalia.aon.occam.impl.jooq.StatsImpl;
 import com.esferalia.aon.occam.impl.jooq.SystemImpl;
 import com.esferalia.aon.occam.impl.jooq.WarehouseImpl;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
@@ -145,6 +149,9 @@ public class AON {
 		return new WarehouseImpl();
 	}
 	
+	private static IStats getStats() {
+		return new StatsImpl();
+	}
 	// ********************************************
 	// ******************************** SECURITY **
 	// ********************************************
@@ -1760,6 +1767,31 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getWarehouse().getInventoryDetailList(ctx, inventoryId);
+		} finally {
+			if (ctx != null) 
+				ctx.close();
+		}
+	}
+	// ------------------------------------------------------------------- STATS
+	public static StatData<Integer, InvoiceType, Double> getYearInvoiceTypeData(
+			StatParams params, String user) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(params.getDomainName()
+					,params.getDomain(), user);
+			return getStats().getYearInvoiceTypeData(ctx, params);
+		} finally {
+			if (ctx != null) 
+				ctx.close();
+		}
+	}
+	public static StatData<Integer, InvoiceType, Double> getMonthInvoiceTypeData(
+			StatParams params, String user) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(params.getDomainName()
+					,params.getDomain(), user);
+			return getStats().getMonthInvoiceTypeData(ctx, params);
 		} finally {
 			if (ctx != null) 
 				ctx.close();

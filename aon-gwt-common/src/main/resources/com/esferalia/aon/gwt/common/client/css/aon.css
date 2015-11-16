@@ -472,6 +472,11 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	gwt-image: "aonIconWizard";
 }
 
+@sprite .aon-icon-excel {
+	width: auto;
+	gwt-image: "aonIconExcel";
+}
+
 @sprite .aon-icon-moveUp {
 	width: auto;
 	gwt-image: "aonIconMoveUp";
