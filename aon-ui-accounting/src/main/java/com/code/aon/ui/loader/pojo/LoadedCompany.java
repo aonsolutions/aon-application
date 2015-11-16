@@ -11,7 +11,8 @@ public class LoadedCompany extends LoadedRegistry{
 	public Integer devMensual;
 	public Integer recc;
 	public Integer re;
-	public Integer retencion;	
+	public Integer retencion;
+	public Integer pagosPrestamos;
 	public String tipoPres111;
 	public String tipoPres115;
 	public String tipoPres123;
@@ -77,6 +78,15 @@ public class LoadedCompany extends LoadedRegistry{
 	}
 	public void setCodAdmon(Integer codAdmon) {
 		this.codAdmon = codAdmon;
+	}
+	public Integer getPagosPrestamos() {
+		return pagosPrestamos;
+	}
+	public String getPagosPrestamosStr() {
+		return (pagosPrestamos==null?"0":pagosPrestamos.toString());
+	}
+	public void setPagosPrestamos(Integer pagosPrestamos) {
+		this.pagosPrestamos = pagosPrestamos;
 	}
 	public String getTipoPres111() {
 		return tipoPres111;

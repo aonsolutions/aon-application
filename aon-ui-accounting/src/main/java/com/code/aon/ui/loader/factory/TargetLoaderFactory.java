@@ -40,7 +40,7 @@ public class TargetLoaderFactory extends RegistryLoaderFactory implements ILoade
 			,new Column(CLP,"retencion"						,0,1	,false	,new int[] {0,1})
 			,new Column(CLP,"tipoVia"						,2,2	,false	,null)
 			,new Column(CLP,"direccion"						,2,128	,false	,null)
-			,new Column(CLP,"numero"						,0,6	,false	,null)
+			,new Column(CLP,"numero"						,2,6	,false	,null)
 			,new Column(CLP,"direccion2"					,2,128	,false	,null)
 			,new Column(CLP,"direccion3"					,2,128	,false	,null)
 			,new Column(CLP,"cp"							,2,16	,false	,null)

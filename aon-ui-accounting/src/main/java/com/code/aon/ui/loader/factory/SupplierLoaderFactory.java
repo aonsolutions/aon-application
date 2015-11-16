@@ -41,7 +41,7 @@ public class SupplierLoaderFactory extends RegistryLoaderFactory implements ILoa
 		,new Column(PRO,"regimenAgrario"				,0,1	,false	,new int[] {0,1})
 		,new Column(PRO,"tipoVia"						,2,2	,false	,null)
 		,new Column(PRO,"direccion"						,2,128	,false	,null)
-		,new Column(PRO,"numero"						,0,6	,false	,null)
+		,new Column(PRO,"numero"						,2,6	,false	,null)
 		,new Column(PRO,"direccion2"					,2,128	,false	,null)
 		,new Column(PRO,"direccion3"					,2,128	,false	,null)
 		,new Column(PRO,"cp"							,2,16	,false	,null)

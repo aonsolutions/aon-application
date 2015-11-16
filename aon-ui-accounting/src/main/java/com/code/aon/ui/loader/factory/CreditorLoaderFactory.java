@@ -40,7 +40,7 @@ public class CreditorLoaderFactory extends RegistryLoaderFactory implements ILoa
 			,new Column(ACR,"criterioCaja"					,0,1	,false	,new int[] {0,1})
 			,new Column(ACR,"tipoVia"						,2,2	,false	,null)
 			,new Column(ACR,"direccion"						,2,128	,false	,null)
-			,new Column(ACR,"numero"						,0,6	,false	,null)
+			,new Column(ACR,"numero"						,2,6	,false	,null)
 			,new Column(ACR,"direccion2"					,2,128	,false	,null)
 			,new Column(ACR,"direccion3"					,2,128	,false	,null)
 			,new Column(ACR,"cp"							,2,16	,false	,null)

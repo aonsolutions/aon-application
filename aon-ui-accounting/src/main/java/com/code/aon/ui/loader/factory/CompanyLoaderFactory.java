@@ -50,7 +50,7 @@ public class CompanyLoaderFactory extends RegistryLoaderFactory implements ILoad
 			,new Column(EMP,"documento"			,2,16	,true	,null)
 			,new Column(EMP,"tipoVia"			,2,2	,false	,null)
 			,new Column(EMP,"direccion"			,2,128	,false	,null)
-			,new Column(EMP,"numero"			,0,6	,false	,null)
+			,new Column(EMP,"numero"			,2,6	,false	,null)
 			,new Column(EMP,"direccion2"		,2,128	,false	,null)
 			,new Column(EMP,"direccion3"		,2,128	,false	,null)
 			,new Column(EMP,"cp"				,2,16	,false	,null)
@@ -69,6 +69,7 @@ public class CompanyLoaderFactory extends RegistryLoaderFactory implements ILoad
 			,new Column(EMP,"recc"				,0,1	,false	,new int[] {0,1})  	  // Régimen Especial del Criterio de Caja
             ,new Column(EMP,"re"				,0,1	,false	,new int[] {0,1})     // Régimen Especial del Recargo de Equivalencia 
 			,new Column(EMP,"retencion"			,0,1	,false	,new int[] {0,1})     // Retención IRPF en Factura de Venta
+			,new Column(EMP,"pagosPrestamos"    ,0,1	,false	,new int[] {0,1})     // Mod 130, 131, dedica pagos prestamos para compra o rehabilitacion vivienda habitual
 			,new Column(EMP,"tipoPres111"		,2,1	,false	,null) // Tipo Presentacion Modelo 111 (N, M, Q)
 			,new Column(EMP,"tipoPres115"		,2,1	,false	,null) // Tipo Presentacion Modelo 115 (N, M, Q)
 			,new Column(EMP,"tipoPres123"		,2,1	,false	,null) // Tipo Presentacion Modelo 123 (N, M, Q)
@@ -200,6 +201,7 @@ public class CompanyLoaderFactory extends RegistryLoaderFactory implements ILoad
 		insertApplicationParameter(domainId,"FS_TAX_REFUND_REGISTRY",loaded.getDevMensualStr());  // Inscrito en el registro de devolucion mensual (0,1)
 		insertApplicationParameter(domainId,"FS_DEFAULT_ADMINISTRATION", "4"); 		             // Administración por defecto Territorio Común (4)
 		insertApplicationParameter(domainId,"FS_ADMINISTRATION_CODE",loaded.getCodAdmonStr());    // Código Administración
+		insertApplicationParameter(domainId,"FS_PERM_ADDRESS_CHANGES",loaded.getPagosPrestamosStr()); // Mod. 130 o 131 Pagos de prestamos para rehabilitación vivienda habitual  
 		insertApplicationParameter(domainId,"FS_CONCTACT_PERSON",loaded.getNombreContacto());     // Nombre persona de contacto
 		insertApplicationParameter(domainId,"FS_CONCTACT_PHONE",loaded.getTelefonoContacto());    // Teléfono persona de contacto		
 		insertApplicationParameter(domainId,"FS_MODEL_CFG_M111",loaded.getTipoPres111());
@@ -265,7 +267,8 @@ public class CompanyLoaderFactory extends RegistryLoaderFactory implements ILoad
         }
         else {
         	address = (RegistryAddress) list.get(0);
-        }		
+        }	
+        
 		address.setRegistry(registry);
 		if (StringUtils.isNotBlank(loaded.getTipoVia())) {
 			StreetType streetType = null;
@@ -273,7 +276,8 @@ public class CompanyLoaderFactory extends RegistryLoaderFactory implements ILoad
 				streetType = StreetType.valueOf(loaded.getTipoVia());
 				address.setStreetType(streetType);
 			} catch (Throwable t) {
-				// Nada.
+				// Si la sigla es erronea, no se graba nada
+				address.setStreetType(null);
 			}
 		}		
 		address.setAddress(loaded.getDireccion());
@@ -289,8 +293,10 @@ public class CompanyLoaderFactory extends RegistryLoaderFactory implements ILoad
 				address.setGeozone(geozone);
 			}
 		} catch (Exception e) {
-			// Se pone para evitar que se pare el proceso, si no esta indicado el codigo de provincia
-			// o si la provincia es erronea			
+			// Si no está indicado el codigo de provincia o es erroneo, o la provincia es erronea (no es exactamente como esta definida en AON)
+			// se pone la provincia a continuacion de la ciudad, en el campo de la ciudad
+			if (StringUtils.isNotBlank(loaded.getNombreProvincia()))
+				address.setCity(loaded.getCiudad()+" ("+loaded.getNombreProvincia()+")");
 		}
 		
 		if (StringUtils.isNotBlank(loaded.getCodigoMunicipio()))

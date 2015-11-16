@@ -41,7 +41,7 @@ public class CustomerLoaderFactory extends RegistryLoaderFactory implements ILoa
 			,new Column(CLI,"facturarAlbaranesAgrupados"	,0,1	,false	,new int[] {0,1})
 			,new Column(CLI,"tipoVia"						,2,2	,false	,null)
 			,new Column(CLI,"direccion"						,2,128	,false	,null)
-			,new Column(CLI,"numero"						,0,6	,false	,null)
+			,new Column(CLI,"numero"						,2,6	,false	,null)
 			,new Column(CLI,"direccion2"					,2,128	,false	,null)
 			,new Column(CLI,"direccion3"					,2,128	,false	,null)
 			,new Column(CLI,"cp"							,2,16	,false	,null)
