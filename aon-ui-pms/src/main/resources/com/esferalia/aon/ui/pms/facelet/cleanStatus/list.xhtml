@@ -21,15 +21,15 @@
 		<script type="text/javascript">
 			function showClean(elem) {
 				elem.disabled = true;
-				elem.style.background = 'lightgreen';
+				elem.style.background = 'LightGreen';
 			}
 			function showDoNotDisturb(elem) {
 				elem.disabled = true;
-				elem.style.background = 'orange';
+				elem.style.background = 'Orange';
 			}
 			function showDirty(elem) {
 				elem.disabled = true;
-				elem.style.background = 'brown';
+				elem.style.background = 'Salmon';
 			}
 		</script>
 		
@@ -38,6 +38,16 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.pms_cleanStatus_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_list}" />
+				
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="reservation-Refresh"
+						rendered="#{not empty cleanStatus.hotel}"
+						value="#{bundle.webmail_refresh}" immediate="#{true}"
+						styleClass="aon-finding-toolbar-item aon-icon-refresh"
+						actionListener="#{cleanStatus.onRefresh}"
+						reRender="aonContent" />
+				</ui:define>
+				
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
@@ -77,11 +87,8 @@
 							<aon:div style="width:60px; background:Red;">
 								<aon:outputText value="CHECKOUT" />
 							</aon:div>
-							<aon:div style="width:60px; background:Brown;">
+							<aon:div style="width:60px; background:Salmon;">
 								<aon:outputText value="SUCIA" />
-							</aon:div>
-							<aon:div style="width:60px; background:BurlyWood;">
-								<aon:outputText value="MNTO." />
 							</aon:div>
 						</h:panelGrid>
 					</aon:div>
@@ -117,6 +124,7 @@
 								style="margin:2px; width:70px; height:70px;" />
 								
 							<aon:div rendered="#{empty cleanStatus.blockedRooms[roomTo.asset.id]}" >
+								
 								<!-- CLEAN -->
 								<aon:commandButton value="#{roomTo.asset.name}"
 									title="#{bundle.pms_room} limpia (#{roomTo.lastCleaningDate})"
@@ -128,6 +136,7 @@
 									actionListener="#{cleanStatus.onSelectRoom}">
 									<f:param name="selectedRoomId" value="#{status.index}" />
 								</aon:commandButton>
+								
 								<!-- DO NOT DISTURB -->
 								<aon:commandButton value="#{roomTo.asset.name}"
 									title="#{bundle.pms_room} ocupada (#{roomTo.lastCleaningDate})"
@@ -138,26 +147,16 @@
 									actionListener="#{cleanStatus.onSelectRoom}">
 									<f:param name="selectedRoomId" value="#{status.index}" />
 								</aon:commandButton>
-								<aon:div rendered="#{!(roomTo.todayLastCleaningDate and roomTo.status=='CLEAN')
-									 and !(roomTo.todayLastCleaningDate and roomTo.status=='DO_NOT_DISTURB')}" >
-									<!-- DIRTY AND BUSY -->
+								
+								<!-- DIRTY or CHECKOUT -->
+								<aon:div rendered="#{!(roomTo.todayLastCleaningDate 
+									and (roomTo.status=='CLEAN' or roomTo.status=='DO_NOT_DISTURB'))}" >
+									<!-- DIRTY -->
 									<aon:commandButton value="#{roomTo.asset.name}"
-										title="#{bundle.pms_room} sucia por mantenimiento"
-										rendered="#{empty cleanStatus.checkoutRooms[roomTo.asset.id]
-											and (empty cleanStatus.busyRooms[roomTo.asset.id] and roomTo.status!='CLEAN')}"
+										title="#{bundle.pms_room} sucia"
+										rendered="#{empty cleanStatus.checkoutRooms[roomTo.asset.id] and roomTo.status!='CLEAN'}"
 										styleClass="aon-commandButton" 
-										style="margin:2px; width:70px; height:70px; background:BurlyWood;"
-										onclick="showClean(this)"
-										actionListener="#{cleanStatus.onSelectRoom}">
-										<f:param name="selectedRoomId" value="#{status.index}" />
-									</aon:commandButton>
-									<!-- DIRTY AND IDLE -->
-									<aon:commandButton value="#{roomTo.asset.name}"
-										title="#{bundle.pms_room} sucia por ocupacion"
-										rendered="#{empty cleanStatus.checkoutRooms[roomTo.asset.id]
-											and (not empty cleanStatus.busyRooms[roomTo.asset.id] and roomTo.status!='CLEAN')}"
-										styleClass="aon-commandButton" 
-										style="margin:2px; width:70px; height:70px; background:Brown;"
+										style="margin:2px; width:70px; height:70px; background:Salmon;"
 										onclick="showClean(this)"
 										actionListener="#{cleanStatus.onSelectRoom}">
 										<f:param name="selectedRoomId" value="#{status.index}" />
@@ -173,6 +172,7 @@
 										<f:param name="selectedRoomId" value="#{status.index}" />
 									</aon:commandButton>
 								</aon:div>
+								
 							</aon:div>
 							
 						</aon:div>
