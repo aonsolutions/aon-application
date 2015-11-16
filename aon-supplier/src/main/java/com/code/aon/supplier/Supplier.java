@@ -72,9 +72,4 @@ public class Supplier extends SupplierDB implements IRegistry, ITaxInfo, IScopab
 		return (getTransaction() == InvoiceTransactionType.INTRACOMMUNITY || getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY);
 	}
 
-	@Transient
-	public Tariff getTariff() {
-		return null;
-	}
-
 }

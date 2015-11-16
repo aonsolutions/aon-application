@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.33.0
+# Version: 8.33.1
 # Created by: girazu
-# Creation Date: 10/11/2015 17:50
+# Creation Date: 13/11/2015 14:00
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2662,6 +2662,7 @@ CREATE TABLE `commercial_term` (
 CREATE TABLE `supplier` (
   `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Proveedor',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `tariff` int(4) default NULL COMMENT 'Tarifa asociada al Proveedor',
   `withholding` tinyint(1) default '0' COMMENT 'Indica si el Proveedor aplica retencion de impuestos',
   `withholding_farmer` tinyint(1) default '0' COMMENT 'Indica si el Proveedor pertenece al Regimen Especial de Agricultura y Pesca',
   `vat_accrual_payment` tinyint(1) default '0' COMMENT 'Indica si el Proveedor esta acogido al Regimen Especial de Criterio de Caja',
@@ -2678,10 +2679,12 @@ CREATE TABLE `supplier` (
   KEY `IDX_SUPPLIER_SCOPE` (`scope`),
   KEY `IDX_SUPPLIER_DOMAIN` (`domain`),
   KEY `IDX_SUPPLIER_ACCOUNT` (`account`),
+  KEY `IDX_SUPPLIER_TARIFF` (`tariff`),
   CONSTRAINT `FK_SUPPLIER_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
   CONSTRAINT `FK_SUPPLIER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_SUPPLIER_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
-  CONSTRAINT `FK_SUPPLIER_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
+  CONSTRAINT `FK_SUPPLIER_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
+  CONSTRAINT `FK_SUPPLIER_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Proveedores';
 
 #
@@ -8012,7 +8015,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.33.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.33.1');
 
 COMMIT;
 

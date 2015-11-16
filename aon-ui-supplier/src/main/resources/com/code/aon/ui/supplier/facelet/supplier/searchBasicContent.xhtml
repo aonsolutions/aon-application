@@ -15,6 +15,17 @@
 		<ui:param name="includeRegistryScope" value="#{true}"/>
 	</ui:include>	
 		
+	<aon:if test="#{aonConfiguration.bean.supplier.showTariff}">
+		<aon:outputLabel for="Supplier_tariff_id"
+			value="#{bundle.report_tariff}" />
+		<aon:selectOneMenu id="Supplier_tariff_id"
+			value="#{configCollections.tariff}"
+			valueChangeListener="#{controller.addIdEqualExpression}">
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{configCollections.purchaseTariffs}" />
+		</aon:selectOneMenu>
+	</aon:if>
+	
 	<aon:outputText value="#{bundle.aon_status}"/>
 	<aon:selectManyCheckbox value="#{supplierSearch.supplierStatuses}">
 		<f:selectItems value="#{supplierCollections.supplierStatuses}"/>

@@ -55,6 +55,16 @@
 						columns="2" style="width: 100%;"
 						columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even aon-width-auto">
 						
+						<aon:if test="#{aonConfiguration.bean.supplier.showTariff}">
+							<aon:outputLabel for="Supplier_tariff_id"
+								value="#{bundle.report_tariff}" />
+							<aon:selectOneMenu id="Supplier_tariff_id"
+								value="#{supplier.to.tariff}">
+								<f:selectItem itemLabel="-" value="#{null}" />
+								<f:selectItems value="#{configCollections.purchaseTariffs}" />
+							</aon:selectOneMenu>
+						</aon:if>
+
 						<aon:outputText value="#{bundle.aon_invoice_sales2}" />
 						<aon:div>
 							<aon:selectBooleanCheckbox id="Supplier_purchaseValuated"

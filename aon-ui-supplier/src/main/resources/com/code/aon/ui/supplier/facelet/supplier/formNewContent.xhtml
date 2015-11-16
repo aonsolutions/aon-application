@@ -14,6 +14,16 @@
 
 		<ui:include	src="/com/code/aon/ui/supplier/facelet/supplier/formContent.xhtml" />
 	
+		<aon:if test="#{aonConfiguration.bean.supplier.showTariff}">
+			<aon:outputLabel for="Supplier_tariff_id"
+				value="#{bundle.report_tariff}" />
+			<aon:selectOneMenu id="Supplier_tariff_id"
+				value="#{controller.to.tariff}">
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{configCollections.purchaseTariffs}" />
+			</aon:selectOneMenu>
+		</aon:if>
+
 		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
 			<ui:param name="controllerLookupListener" value="#{supplierForm}"/>
 		</ui:include>

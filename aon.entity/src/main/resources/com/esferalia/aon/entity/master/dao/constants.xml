@@ -470,8 +470,8 @@
 	
 	<!-- ** AON SUPPLIER   **************************************************** -->
 	<bean class="com.code.aon.supplier.Supplier" sqlName="supplier">
-		<alias names="id,registry_alias,registry_document,registry_id,registry_name,registry_type,scope_id,status,withholding,withholdingFarmer,transaction,purchaseValuated,account,account_id,account_code" />
-		<hibernate names="id,registry.alias,registry.document,registry.id,registry.name,registry.type,scope.id,status,withholding,withholdingFarmer,transaction,purchaseValuated,account,account.id,account.code" />
+		<alias names="id,registry_alias,registry_document,registry_id,registry_name,registry_type,scope_id,status,withholding,withholdingFarmer,transaction,purchaseValuated,account,account_id,account_code,tariff_id" />
+		<hibernate names="id,registry.alias,registry.document,registry.id,registry.name,registry.type,scope.id,status,withholding,withholdingFarmer,transaction,purchaseValuated,account,account.id,account.code,tariff.id" />
 	</bean>
 	
 	<!-- ** AON TAS   **************************************************** -->

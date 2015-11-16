@@ -199,6 +199,7 @@
 			showFinanceData="true" 
 			showTaxInfoData="true"
 			showAccount="true"
+			showTariff="true"
 			showSegment="true"
 			showAddInfo="true"
 			showProduct="true"
