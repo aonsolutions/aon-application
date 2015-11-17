@@ -32,6 +32,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.VisualizationUtils;
+import com.google.gwt.visualization.client.visualizations.Table;
 import com.google.gwt.visualization.client.visualizations.Table.Options;
 import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
 
@@ -84,27 +85,27 @@ public class StatControlPanel extends MainEntryPoint {
 		back.setEnabled(false);
 		excel.setEnabled(false);
 		
-		statService.createStatParams(getCurrentDomainName(), getCurrentDomain()
-				, new AsyncCallback<StatParams>() {
+		VisualizationUtils.loadVisualizationApi( new Runnable() {
 			
 			@Override
-			public void onSuccess(StatParams result) {
-				params = result;
-				filllWestPanel();
-				VisualizationUtils.loadVisualizationApi(new Runnable() {
+			public void run() {
+				statService.createStatParams(getCurrentDomainName(), getCurrentDomain()
+						, new AsyncCallback<StatParams>() {
 					
 					@Override
-					public void run() {
+					public void onSuccess(StatParams result) {
+						params = result;
+						filllWestPanel();
 						drawYearsByTypeComboChart();
 					}
-				}, CoreChart.PACKAGE);
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+					}
+				});
 			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getMessage());
-			}
-		});
+		}, CoreChart.PACKAGE, Table.PACKAGE );
 		
 
 
@@ -202,7 +203,6 @@ public class StatControlPanel extends MainEntryPoint {
 				options.setWidth(south.getOffsetWidth() + "px");
 //				options.setHeight(south.getOffsetHeight()  + "px");
 				final ResizableTable table = new ResizableTable(result.data, options);
-				
 				table.setStyleName(AON.AON_CSS.aonWidthAll());
 //				table.setStyleName(AON.AON_CSS.aonHeightAll());
 				south.setWidget(table);
