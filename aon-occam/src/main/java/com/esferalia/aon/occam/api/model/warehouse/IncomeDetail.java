@@ -27,83 +27,97 @@ public class IncomeDetail implements Serializable {
 	private String creationUser;
 	private Date modificationDate;
 	private String modificationUser;
+	
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public IncomeDetail setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	public int getDomain() {
 		return domain;
 	}
-	public void setDomain(int domain) {
+	public IncomeDetail setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
 	public Income getIncome() {
 		return income;
 	}
-	public void setIncome(Income income) {
+	public IncomeDetail setIncome(Income income) {
 		this.income = income;
+		return this;
 	}
 	public Project getProject() {
 		return project;
 	}
-	public void setProject(Project project) {
+	public IncomeDetail setProject(Project project) {
 		this.project = project;
+		return this;
 	}
 	public short getLine() {
 		return line;
 	}
-	public void setLine(short line) {
+	public IncomeDetail setLine(short line) {
 		this.line = line;
+		return this;
 	}
 	public Item getItem() {
 		return item;
 	}
-	public void setItem(Item item) {
+	public IncomeDetail setItem(Item item) {
 		this.item = item;
+		return this;
 	}
 	public String getDescription() {
 		return description;
 	}
-	public void setDescription(String description) {
+	public IncomeDetail setDescription(String description) {
 		this.description = description;
+		return this;
 	}
 	public Double getPrice() {
 		return price;
 	}
-	public void setPrice(double price) {
+	public IncomeDetail setPrice(double price) {
 		this.price = price;
+		return this;
 	}
 	public String getDiscountExpression() {
 		return discountExpression;
 	}
-	public void setDiscountExpression(String discountExpression) {
+	public IncomeDetail setDiscountExpression(String discountExpression) {
 		this.discountExpression = discountExpression;
+		return this;
 	}
 	public Date getCreationDate() {
 		return creationDate;
 	}
-	public void setCreationDate(Date creationDate) {
+	public IncomeDetail setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
+		return this;
 	}
 	public String getCreationUser() {
 		return creationUser;
 	}
-	public void setCreationUser(String creationUser) {
+	public IncomeDetail setCreationUser(String creationUser) {
 		this.creationUser = creationUser;
+		return this;
 	}
 	public Date getModificationDate() {
 		return modificationDate;
 	}
-	public void setModificationDate(Date modificationDate) {
+	public IncomeDetail setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+		return this;
 	}
 	public String getModificationUser() {
 		return modificationUser;
 	}
-	public void setModificationUser(String modificationUser) {
+	public IncomeDetail setModificationUser(String modificationUser) {
 		this.modificationUser = modificationUser;
+		return this;
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
@@ -111,20 +125,23 @@ public class IncomeDetail implements Serializable {
 	public double getQuantity() {
 		return quantity;
 	}
-	public void setQuantity(double quantity) {
+	public IncomeDetail setQuantity(double quantity) {
 		this.quantity = quantity;
+		return this;
 	}
 	public Integer getPurchaseDetail() {
 		return purchaseDetail;
 	}
-	public void setPurchaseDetail(Integer purchaseDetail) {
+	public IncomeDetail setPurchaseDetail(Integer purchaseDetail) {
 		this.purchaseDetail = purchaseDetail;
+		return this;
 	}
 	public Integer getWarehouse() {
 		return warehouse;
 	}
-	public void setWarehouse(Integer warehouse) {
+	public IncomeDetail setWarehouse(Integer warehouse) {
 		this.warehouse = warehouse;
+		return this;
 	}
 	
 	

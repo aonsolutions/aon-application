@@ -56,6 +56,7 @@ import com.esferalia.aon.jooq.tables.records.StockRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferDetailRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
 
 public class DBStock {
@@ -203,7 +204,7 @@ public class DBStock {
 		
 	}
 	
-	public static Error insertProposal(String domain, Integer domainId,Vector<StockInfo> stock,Integer proposal, AuditInfo ai, Integer workplace, String login){
+	public static Error insertProposal(Domain domain,Vector<StockInfo> stock,Integer proposal, AuditInfo ai, Integer workplace, String login){
 		Error error = new Error();
 		error.setError(true);
 		Vector<String> verror = new Vector<String>();
@@ -212,7 +213,7 @@ public class DBStock {
 		Vector<String> v = new Vector<String>();
 		AONContext ctx = null;
 		try{
-			ctx = AONContext.getAONContext(domain, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			InsertValuesStep13<ProposalDetailRecord, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp, String, Timestamp> proposalInsertQuery = ctx.getDslContext().insertInto(PROPOSAL_DETAIL, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.CREATION_USER, PROPOSAL_DETAIL.CREATION_DATE, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE);
 			InsertValuesStep12<ProposalDetailRecord, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp> proposalUpdateQuery = ctx.getDslContext().insertInto(PROPOSAL_DETAIL, PROPOSAL_DETAIL.ID, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE);
 			
@@ -225,13 +226,13 @@ public class DBStock {
 				if(code != null){
 					Result<Record2<Integer, Double>> data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE)
 						.from(ITEM)
-						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domainId)).fetch();
+						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domain.getId())).fetch();
 					if(data.isEmpty()){
 
 						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
-										.and(PRODUCT.DOMAIN.eq(domainId)).fetch();
+										.and(PRODUCT.DOMAIN.eq(domain.getId())).fetch();
 					}
 					if(data.size()>1){
 						Condition detail = ITEM.DETAIL.eq(s.getDetail());
@@ -252,7 +253,7 @@ public class DBStock {
 									.and(detail)
 									.and(detail2)
 									.and(detail3)
-									.and(PRODUCT.DOMAIN.eq(domainId)).fetch();
+									.and(PRODUCT.DOMAIN.eq(domain.getId())).fetch();
 					}
 				/*	Record1<Integer> data = sctx.getDslContext().select(PRODUCT.ID)
 						.from(PRODUCT)
@@ -267,13 +268,13 @@ public class DBStock {
 					if(!data.isEmpty()){
 						ProposalInfo pi = new ProposalInfo();
 						pi.setQuantity(s.getQuantity());
-						pi.setDomain(domainId);
+						pi.setDomain(domain.getId());
 						pi.setProposal(proposal);
 						pi.setItem(data.get(0).value1());
 						pi.setStatus((byte) 0); 
 						pi.setDescription("");
 						pi.setDiscount((double) 0);
-						Double[] supplier = getSupplier(sctx, workplace, domainId,pi.getItem());
+						Double[] supplier = getSupplier(sctx, workplace, domain.getId(),pi.getItem());
 				
 						if (supplier[0] != -1){
 							pi.setPrice(supplier[1]);
@@ -870,15 +871,15 @@ public class DBStock {
 		}
 	}
 	
-	public static Vector<Warehouse> getWarehouse(String domain,Integer domainId, User user){
+	public static Vector<Warehouse> getWarehouse(Domain domain, User user){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId, user.getLogin());
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			Result<Record3< Integer, String,Integer>> data ;
-			if(DBCatalogue.isParentUser(ctx, user.getId(), domainId)){
+			if(DBCatalogue.isParentUser(ctx, user.getId(), domain.getId())){
 				data = ctx.getDslContext().select(WAREHOUSE.ID,WAREHOUSE.NAME,WAREHOUSE.WORKPLACE)
 						.from(WAREHOUSE).join(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
-						.where(WAREHOUSE.DOMAIN.eq(domainId))
+						.where(WAREHOUSE.DOMAIN.eq(domain.getId()))
 						.orderBy(WAREHOUSE.NAME)
 						.fetch();
 			}
@@ -886,7 +887,7 @@ public class DBStock {
 			data = ctx.getDslContext().select(WAREHOUSE.ID,WAREHOUSE.NAME,WAREHOUSE.WORKPLACE)
 				.from(WAREHOUSE).join(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
 				.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(WORKPLACE.SCOPE))
-				.where(WAREHOUSE.DOMAIN.eq(domainId))
+				.where(WAREHOUSE.DOMAIN.eq(domain.getId()))
 				.and(USER_SCOPE.USER_ID.eq(user.getId()))
 				.orderBy(WAREHOUSE.NAME)
 				.fetch();
@@ -895,7 +896,7 @@ public class DBStock {
 			
 			for(Record3<Integer, String,Integer> r : data){
 				Warehouse w = new Warehouse();
-				w.setDomainId(domainId);
+				w.setDomainId(domain.getId());
 				w.setId(r.value1());
 				w.setName(r.value2());
 				w.setWorkplace(0);//
@@ -908,15 +909,15 @@ public class DBStock {
 		}
 	}
 	
-	public static Vector<Warehouse> getWarehouse(String domain,Integer domainId, User user, Integer workplaceId){
+	public static Vector<Warehouse> getWarehouse(Domain domain, User user, Integer workplaceId){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId, user.getLogin());
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			Result<Record3< Integer, String,Integer>> data ;
-			if(DBCatalogue.isParentUser(ctx, user.getId(), domainId)){
+			if(DBCatalogue.isParentUser(ctx, user.getId(), domain.getId())){
 				data = ctx.getDslContext().select(WAREHOUSE.ID,WAREHOUSE.NAME,WAREHOUSE.WORKPLACE)
 						.from(WAREHOUSE).join(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
-						.where(WAREHOUSE.DOMAIN.eq(domainId))
+						.where(WAREHOUSE.DOMAIN.eq(domain.getId()))
 						.and(WAREHOUSE.WORKPLACE.eq(workplaceId))
 						.and(WAREHOUSE.ACTIVE.eq((byte) 1))
 						.orderBy(WAREHOUSE.NAME)
@@ -926,7 +927,7 @@ public class DBStock {
 			data = ctx.getDslContext().select(WAREHOUSE.ID,WAREHOUSE.NAME,WAREHOUSE.WORKPLACE)
 				.from(WAREHOUSE).join(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
 				.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(WORKPLACE.SCOPE))
-				.where(WAREHOUSE.DOMAIN.eq(domainId))
+				.where(WAREHOUSE.DOMAIN.eq(domain.getId()))
 				.and(USER_SCOPE.USER_ID.eq(user.getId()))
 				.and(WAREHOUSE.WORKPLACE.eq(workplaceId))
 				.and(WAREHOUSE.ACTIVE.eq((byte) 1))
@@ -937,7 +938,7 @@ public class DBStock {
 			
 			for(Record3<Integer, String,Integer> r : data){
 				Warehouse w = new Warehouse();
-				w.setDomainId(domainId);
+				w.setDomainId(domain.getId());
 				w.setId(r.value1());
 				w.setName(r.value2());
 				w.setWorkplace(0);//

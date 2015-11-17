@@ -30,6 +30,7 @@ import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.marketplace.AmazonDelivery;
 import com.esferalia.aon.jooq.tables.records.DeliveryRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
 
 
@@ -37,10 +38,10 @@ import com.esferalia.aon.occam.api.model.security.User;
 
 public class DBConsults {
 	
-	public static TemplateList getTemplates(String domain , Integer domainId, String login){
+	public static TemplateList getTemplates(Domain domain, String login){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 				
 				
 				// DOMAIN + DOMAIN SON
@@ -48,7 +49,7 @@ public class DBConsults {
 						.select(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.DRIVE_ID)
 						.from(RATTACH).join(DOMAIN).on(DOMAIN.ID.eq(RATTACH.DOMAIN))
-						.where(RATTACH.TYPE.eq((byte)15).and(RATTACH.DOMAIN.eq(domainId).or(DOMAIN.PARENT.eq(domainId))))
+						.where(RATTACH.TYPE.eq((byte)15).and(RATTACH.DOMAIN.eq(domain.getId()).or(DOMAIN.PARENT.eq(domain.getId()))))
 						.fetch();
 				
 				// DOMAIN PARENT
@@ -56,7 +57,7 @@ public class DBConsults {
 						.select(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.DRIVE_ID)
 						.from(RATTACH).join(DOMAIN).on(DOMAIN.PARENT.eq(RATTACH.DOMAIN))
-						.where(RATTACH.TYPE.eq((byte)15).and(DOMAIN.ID.eq(domainId)))
+						.where(RATTACH.TYPE.eq((byte)15).and(DOMAIN.ID.eq(domain.getId())))
 						.fetch();
 				
 				//default
@@ -99,7 +100,7 @@ public class DBConsults {
 					ti.setColumns(aux.getColumns());
 					ti.setType(aux.getType());
 					ti.setIsParent(false);
-					ti.setDomainId(domainId);
+					ti.setDomainId(domain.getId());
 					v.add(ti);
 				});
 				
@@ -153,7 +154,7 @@ public class DBConsults {
 					version = ver.compareTo(aux.getVersion()) == 1;
 					
 					if(version){
-						DBConsults.deleteDefaultTemplates(ctx, domain, domainId);
+						DBConsults.deleteDefaultTemplates(ctx, domain.getName(), domain.getId());
 					}
 				}
 				if(recordDefault.isEmpty() || version){
@@ -170,14 +171,15 @@ public class DBConsults {
 						v2.add("Producto");v2.add("Nombre");v2.add("Cantidad");
 						v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
 						stockTemplate.setColumns(v2);
-						stockTemplate.setDomain(domain);
+						stockTemplate.setDomain(domain.getName());
 						stockTemplate.setDomainId(0);
 						stockTemplate.setName("Est\u00e1ndar-Stock");
 						stockTemplate.setType("Stock");
 						stockTemplate.sethasWarehouse(false);
 						stockTemplate.setIsParent(true);
 						stockTemplate.setVersion(AonVersion.VERSION);
-						Integer id = insertTemplate(domain, stockTemplate,Utils.newXmlFileWithVersion(stockTemplate), 0, login);
+						Integer id = insertTemplate(new Domain().setId(0).setName(domain.getName()),
+								stockTemplate,Utils.newXmlFileWithVersion(stockTemplate), login);
 						stockTemplate.setId(id);
 						v.add(stockTemplate);
 					
@@ -202,14 +204,15 @@ public class DBConsults {
 						v2.add("Nombre");v2.add("Código");v2.add("Precio Coste");v2.add("Precio Venta Base");
 						v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
 						productTemplate.setColumns(v2);
-						productTemplate.setDomain(domain);
+						productTemplate.setDomain(domain.getName());
 						productTemplate.setDomainId(0);
 						productTemplate.setName("Est\u00e1ndar-Producto");
 						productTemplate.setType("Producto");
 						productTemplate.sethasWarehouse(false);
 						productTemplate.setIsParent(true);
 						productTemplate.setVersion(AonVersion.VERSION);
-						id = insertTemplate(domain, productTemplate,Utils.newXmlFileWithVersion(productTemplate), 0, login);
+						id = insertTemplate(new Domain().setId(0).setName(domain.getName()),
+								productTemplate,Utils.newXmlFileWithVersion(productTemplate), login);
 						productTemplate.setId(id);
 						v.add(productTemplate);
 						
@@ -218,14 +221,15 @@ public class DBConsults {
 						v2.add("Cliente");v2.add("Producto");v2.add("Cantidad");v2.add("Precio");v2.add("Descuento");
 						v2.add("Fecha Inicio");v2.add("Fecha Facturaci\u00f3n");v2.add("Centro de Trabajo");
 						feeTemplate.setColumns(v2);
-						feeTemplate.setDomain(domain);
+						feeTemplate.setDomain(domain.getName());
 						feeTemplate.setDomainId(0);
 						feeTemplate.setName("Est\u00e1ndar-Cuota");
 						feeTemplate.setType("Cuota");
 						feeTemplate.sethasWarehouse(false);
 						feeTemplate.setIsParent(true);
 						feeTemplate.setVersion(AonVersion.VERSION);
-						id = insertTemplate(domain, feeTemplate,Utils.newXmlFileWithVersion(feeTemplate), 0, login);
+						id = insertTemplate(new Domain().setId(0).setName(domain.getName()),
+								feeTemplate,Utils.newXmlFileWithVersion(feeTemplate), login);
 						feeTemplate.setId(id);
 						v.add(feeTemplate);
 						
@@ -234,14 +238,15 @@ public class DBConsults {
 						v2.add("Producto");v2.add("Nombre");v2.add("Inicial");v2.add("Compras");v2.add("Ventas");
 						v2.add("Traspaso");v2.add("Final");v2.add("Consumo");/*v2.add("Precio");*/v2.add("Valor Consumo");
 						consumptionTemplate.setColumns(v2);
-						consumptionTemplate.setDomain(domain);
+						consumptionTemplate.setDomain(domain.getName());
 						consumptionTemplate.setDomainId(0);
 						consumptionTemplate.setName("Est\u00e1ndar-Consumo");
 						consumptionTemplate.setType("Consumo");
 						consumptionTemplate.sethasWarehouse(false);
 						consumptionTemplate.setIsParent(true);
 						consumptionTemplate.setVersion(AonVersion.VERSION);
-						id = insertTemplate(domain, consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), 0, login);
+						id = insertTemplate(new Domain().setId(0).setName(domain.getName()),
+								consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), login);
 						consumptionTemplate.setId(id);
 						v.add(consumptionTemplate);
 						
@@ -250,14 +255,15 @@ public class DBConsults {
 						v2.add("Producto");v2.add("Nombre");v2.add("Categor\u00eda");v2.add("Recuento");
 						v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
 						consumptionTemplate.setColumns(v2);
-						consumptionTemplate.setDomain(domain);
+						consumptionTemplate.setDomain(domain.getName());
 						consumptionTemplate.setDomainId(0);
 						consumptionTemplate.setName("Est\u00e1ndar-Inventario-Cerrado");
 						consumptionTemplate.setType("Inventario Cerrado");
 						consumptionTemplate.sethasWarehouse(false);
 						consumptionTemplate.setIsParent(true);
 						consumptionTemplate.setVersion(AonVersion.VERSION);
-						id = insertTemplate(domain, consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), 0, login);
+						id = insertTemplate(new Domain().setId(0).setName(domain.getName()),
+								consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), login);
 						consumptionTemplate.setId(id);
 						v.add(inventoryTemplate1);
 						
@@ -266,14 +272,15 @@ public class DBConsults {
 						v2.add("Producto");v2.add("Nombre");v2.add("Categor\u00eda");v2.add("Inventario");v2.add("Coste");
 						v2.add("Total");v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
 						consumptionTemplate.setColumns(v2);
-						consumptionTemplate.setDomain(domain);
+						consumptionTemplate.setDomain(domain.getName());
 						consumptionTemplate.setDomainId(0);
 						consumptionTemplate.setName("Est\u00e1ndar-Inventario-Valorado");
 						consumptionTemplate.setType("Inventario Valorado");
 						consumptionTemplate.sethasWarehouse(false);
 						consumptionTemplate.setIsParent(true);
 						consumptionTemplate.setVersion(AonVersion.VERSION);
-						id = insertTemplate(domain, consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), 0, login);
+						id = insertTemplate(new Domain().setId(0).setName(domain.getName()),
+								consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), login);
 						consumptionTemplate.setId(id);
 						v.add(inventoryTemplate2);
 					}
@@ -322,28 +329,28 @@ public class DBConsults {
 		
 	}
 
-	public static Integer insertTemplate(String domain, TemplateInfo ti, byte[] b,Integer domainId, String login) {
+	public static Integer insertTemplate(Domain domain, TemplateInfo ti, byte[] b, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
 			Integer registry;
-			if(domainId.equals(0)){
+			if(domain.getId().equals(0)){
 				Result<Record1<Integer>> reg = ctx.getDslContext().select(REGISTRY.ID)
 						.from(REGISTRY)
-						.where(REGISTRY.DOMAIN.eq(domainId)).fetch();
+						.where(REGISTRY.DOMAIN.eq(domain.getId())).fetch();
 				registry = reg.get(0).value1();
 			}
 			else{
 				Result<Record1<Integer>> reg = ctx.getDslContext().select(ENTERPRISE.REGISTRY)
 						.from(ENTERPRISE.join(DOMAIN).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID)))
-						.where(DOMAIN.ID.eq(domainId)).fetch();
+						.where(DOMAIN.ID.eq(domain.getId())).fetch();
 				registry = reg.get(0).value1();
 			}
 			
 
 			return ctx.getDslContext().insertInto(RATTACH,RATTACH.REGISTRY,RATTACH.DOMAIN,RATTACH.CATEGORY,RATTACH.MIMETYPE,RATTACH.DESCRIPTION,RATTACH.TYPE,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.ATTACH_DATE,RATTACH.DATA,RATTACH.DRIVE_ID,RATTACH.DPARENT_ID)
-						.values(registry,domainId,null,(byte) MimeType.MIME_XML.ordinal(),ti.getName(),(byte) 15,null,(byte)0,null,b,null,null).returning(RATTACH.ID).fetchOne().getId();
+						.values(registry,domain.getId(),null,(byte) MimeType.MIME_XML.ordinal(),ti.getName(),(byte) 15,null,(byte)0,null,b,null,null).returning(RATTACH.ID).fetchOne().getId();
 	
 		} finally {
 			if (ctx != null) ctx.close();
@@ -372,10 +379,10 @@ public class DBConsults {
 
 	}
 	
-	public static void removeTemplate(String domain,Integer domainId, Integer id, String login){
+	public static void removeTemplate(Domain domain, Integer id, String login){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
 			ctx.getDslContext().delete(RATTACH).where(RATTACH.ID.eq(id)).execute();
 			
@@ -384,10 +391,10 @@ public class DBConsults {
 		}
 	}
 	
-	public static void updateTemplate(String domain,TemplateInfo ti, Integer domainId, byte[] b, String login){
+	public static void updateTemplate(Domain domain,TemplateInfo ti, byte[] b, String login){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
 			ctx.getDslContext().update(RATTACH).set(RATTACH.DESCRIPTION,ti.getName())
 									.set(RATTACH.DATA,b)
@@ -406,15 +413,15 @@ public class DBConsults {
 	}
 	
 	
-	public static Vector<Hotel> getHotels(String domainName, Integer domainId, User user) {
+	public static Vector<Hotel> getHotels(Domain domain, User user) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user.getLogin());
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			
 			Result<Record2<Integer, String>> result = ctx.getDslContext().select(WORKPLACE.ID, WORKPLACE.DESCRIPTION )
 				.from(HOTEL).join(WORKPLACE).on(HOTEL.WORKPLACE.eq(WORKPLACE.ID))
 				.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(WORKPLACE.SCOPE))
-				.where(WORKPLACE.DOMAIN.eq(domainId))
+				.where(WORKPLACE.DOMAIN.eq(domain.getId()))
 				.and(USER_SCOPE.USER_ID.eq(user.getId()))
 				.and(WORKPLACE.ACTIVE.eq((byte)1))
 				.orderBy(WORKPLACE.DESCRIPTION)
@@ -424,7 +431,7 @@ public class DBConsults {
 			
 			result.stream().forEach(r ->{
 				Hotel h = new Hotel();
-				h.setDomain(domainId);
+				h.setDomain(domain.getId());
 				h.setId(r.value1());
 				h.setWorkplaceId(r.value1());
 				h.setName(r.value2());

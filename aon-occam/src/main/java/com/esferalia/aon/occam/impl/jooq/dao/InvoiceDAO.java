@@ -17,13 +17,12 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.Record3;
-import org.jooq.Record5;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
@@ -39,6 +38,7 @@ import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class InvoiceDAO {
@@ -249,56 +249,40 @@ public class InvoiceDAO {
 	}
 	
 	public static InvoiceDetail getLastInvoiceDetail(AONContext ctx, Item item){
-		Record3<java.sql.Date, Double, Integer> data = ctx.getDslContext()
-				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID)
+		return ctx.getDslContext()
+				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
+						INVOICE_DETAIL.QUANTITY)
 				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
 				.where(INVOICE_DETAIL.ITEM.eq(item.getId()))
-				.and(INVOICE.TYPE.eq((byte)0))
+				.and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
 				.orderBy(INVOICE.ISSUE_DATE.desc())
-				.limit(1)
-				.fetchOne();
-		
-		InvoiceDetail invoiceDetail = new InvoiceDetail();
-		if(data != null){
-			if(data.value1() != null){
-				Invoice invoice = new Invoice();
-				invoice.setIssueDate(data.value1());
-				invoiceDetail.setInvoice(invoice);
-			}
-			if(data.value2() != null) invoiceDetail.setPrice(data.value2());
-			if(data.value3() != null) invoiceDetail.setId(data.value3());
-		}
-		return invoiceDetail;
+				.limit(1).fetch().stream().map(new InvoiceDetailFiller())
+				.collect(Collectors.toCollection(LinkedList::new)).getFirst();
 	}
 	
-	public static LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, Item item, Date startDate){
-		java.sql.Date date = new java.sql.Date(startDate.getTime());
-		
-		Result<Record5<java.sql.Date, Double, Integer, String, Double>> data = ctx.getDslContext()
-				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR
-						,INVOICE_DETAIL.QUANTITY)
+	public static LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, Item item, Date startDate) {
+		return ctx.getDslContext()
+				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
+						INVOICE_DETAIL.QUANTITY)
 				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
-				.where(INVOICE_DETAIL.ITEM.eq(item.getId()))
-				.and(INVOICE.TYPE.eq((byte)0))
-				.and(INVOICE.ISSUE_DATE.greaterOrEqual(date))
+				.where(INVOICE_DETAIL.ITEM.eq(item.getId())).and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
+				.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toSql(startDate)))
 				.orderBy(INVOICE.ISSUE_DATE.desc())
-				.fetch();
-		
-		LinkedList<InvoiceDetail> list = new LinkedList<InvoiceDetail>();
-		
-		data.stream().forEach(r -> {
-			InvoiceDetail invoiceDetail = new InvoiceDetail();
-			if(r.value1() != null){
-				Invoice invoice = new Invoice();
-				invoice.setIssueDate(r.value1());
-				invoiceDetail.setInvoice(invoice);
-			}
-			if(r.value2() != null) invoiceDetail.setPrice(r.value2());
-			if(r.value3() != null) invoiceDetail.setId(r.value3());
-			invoiceDetail.setDiscountExpression(r.value4() != null ? r.value4() : "0.0");
-			invoiceDetail.setQuantity(r.value5() != null ? r.value5() : 0.0);
-			list.add(invoiceDetail);
-		});
-		return list;
+				.fetch().stream().map(new InvoiceDetailFiller())
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+
+	private static class InvoiceDetailFiller implements Function<Record, InvoiceDetail> {
+
+		@Override
+		public InvoiceDetail apply(Record r) {
+			return new InvoiceDetail().setInvoice(new Invoice().setIssueDate(r.getValue(INVOICE.ISSUE_DATE)))
+					.setPrice(r.getValue(INVOICE_DETAIL.PRICE)).setId(r.getValue(INVOICE_DETAIL.ID))
+					.setDiscountExpression(r.getValue(INVOICE_DETAIL.DISCOUNT_EXPR) != null
+							? r.getValue(INVOICE_DETAIL.DISCOUNT_EXPR) : "0.0")
+					.setQuantity(
+							r.getValue(INVOICE_DETAIL.QUANTITY) != null ? r.getValue(INVOICE_DETAIL.QUANTITY) : 0.0);
+		}
+
 	}
 }

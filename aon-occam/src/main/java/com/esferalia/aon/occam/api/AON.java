@@ -12,8 +12,6 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 
-import com.code.aon.pool.AonConnectionException;
-import com.code.aon.pool.AonDataSource;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
@@ -166,21 +164,6 @@ public class AON {
 		}
 	}
 	
-	public static User getUser(String domainName, Integer userId){
-		AONContext ctx = null;
-		try {
-			ctx = new AONContext(AonDataSource.getInstance().getConnection(domainName));
-			return getSecurity().getUser(ctx, userId);
-		} catch (AonConnectionException e) {
-			e.printStackTrace();
-			return null;
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-
 	public static Integer[] getUserScopes(String domainName, int domainId,
 			Integer userId) {
 		AONContext ctx = null;

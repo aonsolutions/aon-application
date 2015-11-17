@@ -23,38 +23,44 @@ public class Inventory implements Serializable {
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public Inventory setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	public int getDomain() {
 		return domain;
 	}
-	public void setDomain(int domain) {
+	public Inventory setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
 	public Date getCreationDate() {
 		return creationDate;
 	}
-	public void setCreationDate(Date creationDate) {
+	public Inventory setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
+		return this;
 	}
 	public String getCreationUser() {
 		return creationUser;
 	}
-	public void setCreationUser(String creationUser) {
+	public Inventory setCreationUser(String creationUser) {
 		this.creationUser = creationUser;
+		return this;
 	}
 	public Date getModificationDate() {
 		return modificationDate;
 	}
-	public void setModificationDate(Date modificationDate) {
+	public Inventory setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+		return this;
 	}
 	public String getModificationUser() {
 		return modificationUser;
 	}
-	public void setModificationUser(String modificationUser) {
+	public Inventory setModificationUser(String modificationUser) {
 		this.modificationUser = modificationUser;
+		return this;
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
@@ -62,26 +68,30 @@ public class Inventory implements Serializable {
 	public Date getInventoryDate() {
 		return inventoryDate;
 	}
-	public void setInventoryDate(Date inventoryDate) {
+	public Inventory setInventoryDate(Date inventoryDate) {
 		this.inventoryDate = inventoryDate;
+		return this;
 	}
 	public Integer getWarehouse() {
 		return warehouse;
 	}
-	public void setWarehouse(Integer warehouse) {
+	public Inventory setWarehouse(Integer warehouse) {
 		this.warehouse = warehouse;
+		return this;
 	}
 	public String getDescription() {
 		return description;
 	}
-	public void setDescription(String description) {
+	public Inventory setDescription(String description) {
 		this.description = description;
+		return this;
 	}
 	public Integer getStatus() {
 		return status;
 	}
-	public void setStatus(Integer status) {
+	public Inventory setStatus(Integer status) {
 		this.status = status;
+		return this;
 	}
 	
 }

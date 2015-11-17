@@ -256,14 +256,14 @@ public class DBFee {
 	
 	
 	
-	public static List<Seller> getSellers(String domain, Integer domainId, String login){
+	public static List<Seller> getSellers(Domain domain,  String login){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 
 			Result<Record4<Integer, String, String, String>> data = ctx.getDslContext().select(REGISTRY.ID,REGISTRY.ALIAS,REGISTRY.NAME, REGISTRY.DOCUMENT)
 					.from(REGISTRY).join(SELLER).on(REGISTRY.ID.eq(SELLER.REGISTRY))
-					.where(SELLER.DOMAIN.eq(domainId))
+					.where(SELLER.DOMAIN.eq(domain.getId()))
 					.fetch();
 			
 	
@@ -343,14 +343,14 @@ public class DBFee {
 		}
 	}
 
-	public static Vector<WorkPlace> getWorkplaces(String domain,Integer domainId, String login){
+	public static Vector<WorkPlace> getWorkplaces(Domain domain, String login){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 
 			Result<Record2<Integer, String>> data = ctx.getDslContext().select(WORKPLACE.ID,WORKPLACE.DESCRIPTION)
 					.from(WORKPLACE)
-					.where(WORKPLACE.DOMAIN.eq(domainId))
+					.where(WORKPLACE.DOMAIN.eq(domain.getId()))
 					.fetch();
 			
 	
@@ -372,14 +372,14 @@ public class DBFee {
 		}
 	}
 	
-	public static Vector<InvoicingGroup> getInvoicingGroups(String domain,Integer domainId, String login) {
+	public static Vector<InvoicingGroup> getInvoicingGroups(Domain domain, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 
 			Result<Record2<Integer, String>> data = ctx.getDslContext().select(INVOICING_GROUP.ID,INVOICING_GROUP.DESCRIPTION)
 					.from(INVOICING_GROUP)
-					.where(INVOICING_GROUP.DOMAIN.eq(domainId))
+					.where(INVOICING_GROUP.DOMAIN.eq(domain.getId()))
 					.fetch();
 			
 	

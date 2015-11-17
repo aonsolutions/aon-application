@@ -12,9 +12,9 @@ public abstract class TreeNodeTypes<T> {
 		}
 	};
 	
-	public static TreeNodeTypes<Integer> ORDERS = new TreeNodeTypes<Integer>() {
+	public static TreeNodeTypes<Ecommerce> ORDERS = new TreeNodeTypes<Ecommerce>() {
 		@Override
-		public TreeNode<Integer> getInstance() {
+		public TreeNode<Ecommerce> getInstance() {
 			return new OrdersTreeNode();
 		}
 	};

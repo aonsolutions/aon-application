@@ -30,6 +30,7 @@ import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBConsumption;
 import com.esferalia.aon.gwt.template.shared.ConsumptionItem;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 @WebServlet(name = "DownloadTemplatesConsumption", urlPatterns = { "/aon_gwt_template/gwt_download_consumption/*" })
 public class DownloadConsumptionServlet extends HttpServlet {
@@ -64,7 +65,7 @@ public class DownloadConsumptionServlet extends HttpServlet {
         
         boolean onlyNegative = "1".equals(only_negative);
       
-        Date initialDate = new Date(initialDate2);
+        Date initialDate = AonDateUtils.addDays(new Date(initialDate2), 1);
         Date finalDate = new Date(finalDate2);
       /* if(!initial_date.equals("null") && !initial_date.equals("") && !initial_date.equals("undefined")){	
         	SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");

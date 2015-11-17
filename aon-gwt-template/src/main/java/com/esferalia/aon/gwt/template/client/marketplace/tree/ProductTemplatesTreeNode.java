@@ -39,7 +39,7 @@ public class ProductTemplatesTreeNode extends TreeNode<Integer>{
 	public TreeNode<Integer> render(HasTreeItems parent, Integer domainId) {
 		InlineLabel label = new InlineLabel();
     	label.setText("Plantillas de Productos"); 
-    	label.addStyleName("aon-icon-registradores");
+    	label.addStyleName("aon-icon-excel");
     	label.addStyleName(AON.AON_CSS.aonTreeIconNode() );
     	setTreeObject(domainId);
     	setDomainId(domainId);

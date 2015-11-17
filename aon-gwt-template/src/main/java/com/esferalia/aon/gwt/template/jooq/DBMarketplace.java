@@ -11,10 +11,12 @@ import java.util.Date;
 import java.util.List;
 
 import org.jooq.Condition;
+import org.jooq.Record1;
 import org.jooq.Record8;
 import org.jooq.Result;
 
 import com.esferalia.aon.carrier.enumeration.ShipmentStatus;
+import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.server.marketplace.XMLUtils;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
 import com.esferalia.aon.gwt.template.shared.marketplace.AmazonDelivery;
@@ -63,6 +65,11 @@ public class DBMarketplace {
 				order.setSerie(record.getSeries());
 				order.setNumber(record.getNumber());
 				order.setOrderId(record.getPurchaseReference());
+				String CustomerName = getCustomer(domainName, domainId, login, record.getCustomer());
+				order.setCustomerName(CustomerName);
+				order.setDate(record.getIssueDate());
+				String dateStr = Utils.getDateStr(record.getIssueDate());
+				order.setDateStr(dateStr);
 				orderList.add(order);
 			});
 			return orderList;
@@ -101,7 +108,8 @@ public class DBMarketplace {
 				ad.setOrderItemId("");
 				//ad.setQuantity(record.value5() != null?record.value5().intValue():0);
 				ad.setShipDate(record.value6() != null?record.value6():new Date()); 
-				ad.setShipDateStr(record.value6() != null?record.value6():new Date());
+				String dateStr = Utils.getDateStr(record.value6() != null?record.value6():new Date());
+				ad.setShipDateStr(dateStr);
 				if(record.value8() != null){
 					AONContext sctx = AONContext.getAONContext(domainName, domainId, login);
 					Result<RegistryRecord> registryRecord = sctx.getDslContext().select().from(REGISTRY).where(REGISTRY.ID.eq(record.value8())).fetchInto(REGISTRY);
@@ -116,6 +124,23 @@ public class DBMarketplace {
 			});
 			return orderList;
 			
+		}finally{
+			if(ctx != null)
+				ctx.close();
+		}
+	}
+	
+	
+	public static String getCustomer(String domainName, Integer domainId, String login, Integer customerId){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			Record1<String> record = ctx.getDslContext().select(REGISTRY.NAME)
+			.from(REGISTRY)
+			.where(REGISTRY.ID.eq(customerId))
+			.limit(1).fetchOne();
+			
+			return record.value1() != null ? record.value1() : "";
 		}finally{
 			if(ctx != null)
 				ctx.close();

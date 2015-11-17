@@ -65,7 +65,7 @@ public class Marketplace extends Composite {
 		sidebar = new ScrollPanel();
 		tree = new Tree();
 		content = new SimpleLayoutPanel();
-		this.login = login;
+		setLogin(login);
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel.get("rootPanel").add(ui);
 		load();
@@ -73,12 +73,12 @@ public class Marketplace extends Composite {
 	
 	private void load() {
 		TreeNode<Ecommerce> amazon = TreeNodeTypes.ECOMMERCE.getInstance().render(tree, Ecommerce.AMAZON);
-		TreeNodeTypes.ORDERS.getInstance().render(amazon, getDomainId());
-		TreeNodeTypes.PRODUCTS.getInstance().render(amazon, getDomainId());
-		
-		TreeNode<Ecommerce> ebay = TreeNodeTypes.ECOMMERCE.getInstance().render(tree, Ecommerce.EBAY);
-		TreeNodeTypes.ORDERS.getInstance().render(ebay, getDomainId());
-		TreeNodeTypes.PRODUCTS.getInstance().render(ebay, getDomainId());
+		TreeNodeTypes.ORDERS.getInstance().render(amazon, Ecommerce.AMAZON);
+		//TreeNodeTypes.PRODUCTS.getInstance().render(amazon, getDomainId());
+
+		//TreeNode<Ecommerce> ebay = TreeNodeTypes.ECOMMERCE.getInstance().render(tree, Ecommerce.EBAY);
+		//TreeNodeTypes.ORDERS.getInstance().render(ebay, Ecommerce.EBAY);
+		//TreeNodeTypes.PRODUCTS.getInstance().render(ebay, getDomainId());
 		
 		TreeNodeTypes.PRODUCT_TEMPLATES.getInstance().render(tree, getDomainId());
 	}
@@ -106,4 +106,10 @@ public class Marketplace extends Composite {
 		this.domainId = domainId;
 	}
 	
+	public String getLogin(){
+		return login;
+	}
+	public void setLogin(String login){
+		this.login = login;
+	}
 }

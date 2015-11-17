@@ -26,44 +26,51 @@ public class InventoryDetail implements Serializable {
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public InventoryDetail setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	public int getDomain() {
 		return domain;
 	}
-	public void setDomain(int domain) {
+	public InventoryDetail setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
 	public Item getItem() {
 		return item;
 	}
-	public void setItem(Item item) {
+	public InventoryDetail setItem(Item item) {
 		this.item = item;
+		return this;
 	}
 	public Date getCreationDate() {
 		return creationDate;
 	}
-	public void setCreationDate(Date creationDate) {
+	public InventoryDetail setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
+		return this;
 	}
 	public String getCreationUser() {
 		return creationUser;
 	}
-	public void setCreationUser(String creationUser) {
+	public InventoryDetail setCreationUser(String creationUser) {
 		this.creationUser = creationUser;
+		return this;
 	}
 	public Date getModificationDate() {
 		return modificationDate;
 	}
-	public void setModificationDate(Date modificationDate) {
+	public InventoryDetail setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+		return this;
 	}
 	public String getModificationUser() {
 		return modificationUser;
 	}
-	public void setModificationUser(String modificationUser) {
+	public InventoryDetail setModificationUser(String modificationUser) {
 		this.modificationUser = modificationUser;
+		return this;
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
@@ -71,26 +78,30 @@ public class InventoryDetail implements Serializable {
 	public Inventory getInventory() {
 		return inventory;
 	}
-	public void setInventory(Inventory inventory) {
+	public InventoryDetail setInventory(Inventory inventory) {
 		this.inventory = inventory;
+		return this;
 	}
 	public Double getActualQuantity() {
 		return actualQuantity;
 	}
-	public void setActualQuantity(Double actualQuantity) {
+	public InventoryDetail setActualQuantity(Double actualQuantity) {
 		this.actualQuantity = actualQuantity;
+		return this;
 	}
 	public Double getCost() {
 		return cost;
 	}
-	public void setCost(Double cost) {
+	public InventoryDetail setCost(Double cost) {
 		this.cost = cost;
+		return this;
 	}
 	public Double getRealQuantity() {
 		return realQuantity;
 	}
-	public void setRealQuantity(Double realQuantity) {
+	public InventoryDetail setRealQuantity(Double realQuantity) {
 		this.realQuantity = realQuantity;
+		return this;
 	}
 	
 

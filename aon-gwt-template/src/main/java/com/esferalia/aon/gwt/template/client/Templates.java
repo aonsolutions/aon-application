@@ -1466,7 +1466,7 @@ public class Templates extends Composite implements EntryPoint {
             	+ "&username="+ template_list.getLogin();
 		Window.open( fileDownloadURL, "_blank",null);
 	}
-
+	
 	public static native void exportDeliveryx(Templates thiz) /*-{
 		$wnd.deliveryx = function() {
 			thiz.@com.esferalia.aon.gwt.template.client.Templates::deliveryx(*)();

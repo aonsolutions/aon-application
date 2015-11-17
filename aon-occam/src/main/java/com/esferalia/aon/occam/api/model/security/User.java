@@ -19,38 +19,44 @@ public class User implements Serializable {
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public User setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	public int getDomain() {
 		return domain;
 	}
-	public void setDomain(int domain) {
+	public User setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
+	public User setName(String name) {
 		this.name = name;
+		return this;
 	}
 	public String getLogin() {
 		return login;
 	}
-	public void setLogin(String login) {
+	public User setLogin(String login) {
 		this.login = login;
+		return this;
 	}
 	public boolean isActive() {
 		return active;
 	}
-	public void setActive(boolean active) {
+	public User setActive(boolean active) {
 		this.active = active;
+		return this;
 	}
 	public AonRole[] getUserRoles() {
 		return userRoles;
 	}
-	public void setRoles(AonRole[] userRoles) {
+	public User setRoles(AonRole[] userRoles) {
 		this.userRoles = userRoles;
+		return this;
 	}
 	public boolean hasAdminRole() {
 		return hasRole(AonRole.ADMIN);  

@@ -1,47 +1,33 @@
 package com.esferalia.aon.gwt.template.server.marketplace;
 
 import java.text.Collator;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.template.client.marketplace.IMarketplace;
 import com.esferalia.aon.gwt.template.jooq.DBMarketplace;
+import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.esferalia.aon.gwt.template.shared.marketplace.Order;
 
 
-public class MarketplaceImpl extends RemoteServiceServlet implements IMarketplace{
+public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketplace{
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(MarketplaceImpl.class.getName());
 	
 	private static final long serialVersionUID = 6871016881549113129L;
-
-	void initFacesContext() {
-		ServletContext context = getServletContext();
-		HttpServletRequest request = getThreadLocalRequest();
-		HttpServletResponse response = getThreadLocalResponse();
-		AonServletUtils.initFacesContext(context, request, response);
-	}
-
-	void releaseFacesContext() {
-		AonServletUtils.releaseFacesContext();
-	}
-	
 
 	public List<EcommerceProduct> getProductTemplatesList(Integer domainId){
 		String domainName = AonUtil.getDomainName();
 		return DBMarketplace.getProductTemplatesList(domainName, domainId);
+	}
+	
+	public List<Order> getAmazonOrdersList(Integer domainId, String login){
+		String domainName = AonUtil.getDomainName();
+		return DBMarketplace.getOrderList(domainName, domainId, login);
 	}
 	
 	public Vector<EcommerceProduct> searchNameTemplate(String searchStr, Vector<EcommerceProduct> templates){
@@ -104,5 +90,9 @@ public class MarketplaceImpl extends RemoteServiceServlet implements IMarketplac
 	    		return true;  
 	    }
 	    return false;
+	}
+	
+	public String getDateStr(Date date){
+		return Utils.getDateStr(date);
 	}
 }

@@ -43,7 +43,6 @@ import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 
@@ -79,14 +78,14 @@ public class DownloadStockServlet extends HttpServlet {
         String quantity = p_request.getParameter("quantity");
         String close_inventory = p_request.getParameter("close");
         String only_non_cero = p_request.getParameter("only_non_cero");
-        
+        String login = p_request.getParameter("username");
         
         Boolean closeInventory = close_inventory.equals("true");
         Integer domainId = Integer.parseInt(domain_id);
         String domain = AonUtil.getDomainName();
         Integer idFile  = Integer.parseInt(fileId);
         Integer userId = AonUtil.getAuthPrincipal().getUserId();
-        User user = AON.getUser(domain, userId);
+        User user = new User().setId(userId).setLogin(login); // TODO 
         Warehouse w = new Warehouse();
         if(!warehouse.equals("-"))
         	w = DBStock.getWarehouse(warehouse, domainId, domain, user);

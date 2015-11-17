@@ -1,8 +1,11 @@
 package com.esferalia.aon.gwt.template.shared.marketplace;
 
-import java.util.Calendar;
 import java.util.Date;
 
+import com.esferalia.aon.gwt.template.client.marketplace.IMarketplace;
+import com.esferalia.aon.gwt.template.client.marketplace.IMarketplaceAsync;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class AmazonDelivery implements IsSerializable{
@@ -79,19 +82,18 @@ public class AmazonDelivery implements IsSerializable{
 	}
 	
 	public void setShipDateStr(Date date) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
-		Integer month = cal.get(Calendar.MONTH)+1;
-		String mes = month.toString();
-		if(month< 10) mes = "0"+ month;
-		Integer day = cal.get(Calendar.DAY_OF_MONTH);
-		String dia = day.toString();
-		if(day < 10) dia = "0" + day;
-		String str = cal.get(Calendar.YEAR) + "-"
-				+ mes + "-"
-				+ dia;
-		
-		this.shipDateStr = str;
+		IMarketplaceAsync impl = GWT.create(IMarketplace.class);
+		impl.getDateStr(date, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				shipDateStr = result;				
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+
 	}
 	
 }

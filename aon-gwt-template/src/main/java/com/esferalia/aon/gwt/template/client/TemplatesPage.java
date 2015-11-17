@@ -162,11 +162,11 @@ public class TemplatesPage extends Composite{
 	}
 	
 	@UiField(provided = true) DataGrid<TemplateInfo> dataGrid; 
+	
 	@UiField Button new_button;
-	@UiField Button import_button;
-	@UiField Button export_button;
 	@UiField Button edit_button;
 	@UiField Button delete_button;
+	
 	@UiField(provided = true) TextBox nameSearchBox;
 	@UiField(provided = true) TextBox typeSearchBox;
 	@UiField Button nameSearchButton;
@@ -181,12 +181,11 @@ public class TemplatesPage extends Composite{
 	public TemplatesPage(TemplateList template_list, Integer domainId) {
 		this.domainId = domainId;
 		this.template_list = template_list;
-
+		
 		new_button = new Button();
-		import_button  = new Button();
-		export_button = new Button();
 		edit_button = new Button();
 		delete_button = new Button();
+		
 		nameSearchButton = new Button();
 		typeSearchButton = new Button();
 		nameSearchBox = new TextBox();
@@ -703,50 +702,6 @@ public class TemplatesPage extends Composite{
 					}
 				});
 			}
-		};
-		popup.addStyleName("gwt-PopupPanel-template");
-		popup.setGlassEnabled(true);
-		popup.show();
-	}
-	
-	@UiHandler("import_button")
-	void importButton(ClickEvent event){
-		Dialog d = new Dialog("Importar","Importar",true,"Cancelar",true,"import");
-		d.setTemplateList(template_list);
-		popup = new TemplatesDialog(d) {
-
-			@Override
-			protected void onAccept() {
-				hide();
-			}
-
-			@Override
-			protected void onCancel() {
-				hide();
-			}
-			
-		};
-		popup.addStyleName("gwt-PopupPanel-template");
-		popup.setGlassEnabled(true);
-		popup.show();
-	}
-	
-	@UiHandler("export_button")
-	void exportButton(ClickEvent event){
-		Dialog d = new Dialog("Exportar","Exportar",true,"Cancelar",true,"export");
-		d.setTemplateList(template_list);
-		popup = new TemplatesDialog(d) {
-
-			@Override
-			protected void onAccept() {
-				hide();
-			}
-
-			@Override
-			protected void onCancel() {
-				hide();
-			}
-			
 		};
 		popup.addStyleName("gwt-PopupPanel-template");
 		popup.setGlassEnabled(true);

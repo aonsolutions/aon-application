@@ -25,6 +25,7 @@ import com.code.aon.config.Scope;
 import com.esferalia.aon.gwt.template.server.CatalogueInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.security.User;
 
@@ -32,15 +33,15 @@ import com.esferalia.aon.occam.api.model.security.User;
 
 public class DBCatalogue {
 	
-	public static Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Integer domainId,String domain, User user){
+	public static Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Domain domain, User user){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId, user.getLogin());
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			Result<Record2<Integer, String>> record;
-			if(isParentUser(ctx, user.getId(), domainId)){
+			if(isParentUser(ctx, user.getId(), domain.getId())){
 				record = ctx.getDslContext().select(WORKPLACE.ID, WORKPLACE.DESCRIPTION)
 						.from(WORKPLACE)
-						.where(WORKPLACE.DOMAIN.eq(domainId))
+						.where(WORKPLACE.DOMAIN.eq(domain.getId()))
 						.and(WORKPLACE.ACTIVE.eq((byte)1))
 						.orderBy(WORKPLACE.DESCRIPTION)
 						.fetch();				
@@ -48,7 +49,7 @@ public class DBCatalogue {
 			else{
 				record = ctx.getDslContext().select(WORKPLACE.ID, WORKPLACE.DESCRIPTION)
 					.from(WORKPLACE).join(USER_SCOPE).on(WORKPLACE.SCOPE.eq(USER_SCOPE.SCOPE))
-					.where(WORKPLACE.DOMAIN.eq(domainId))
+					.where(WORKPLACE.DOMAIN.eq(domain.getId()))
 					.and(WORKPLACE.ACTIVE.eq((byte)1))
 					.and(USER_SCOPE.USER_ID.eq(user.getId()))
 					.orderBy(WORKPLACE.DESCRIPTION)

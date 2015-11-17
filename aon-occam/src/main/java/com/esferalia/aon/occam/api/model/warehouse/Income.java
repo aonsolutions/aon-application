@@ -40,134 +40,156 @@ public class Income implements Serializable {
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public Income setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	public int getDomain() {
 		return domain;
 	}
-	public void setDomain(int domain) {
+	public Income setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
 	public Project getProject() {
 		return project;
 	}
-	public void setProject(Project project) {
+	public Income setProject(Project project) {
 		this.project = project;
+		return this;
 	}
 	public String getReferenceCode() {
 		return referenceCode;
 	}
-	public void setReferenceCode(String referenceCode) {
+	public Income setReferenceCode(String referenceCode) {
 		this.referenceCode = referenceCode;
+		return this;
 	}
 	public Integer getAddress() {
 		return address;
 	}
-	public void setAddress(Integer address) {
+	public Income setAddress(Integer address) {
 		this.address = address;
+		return this;
 	}
 	public Date getIssueDate() {
 		return issueDate;
 	}
-	public void setIssueDate(Date issueDate) {
+	public Income setIssueDate(Date issueDate) {
 		this.issueDate = issueDate;
+		return this;
 	}
 	public Integer getPayMethod() {
 		return payMethod;
 	}
-	public void setPayMethod(Integer payMethod) {
+	public Income setPayMethod(Integer payMethod) {
 		this.payMethod = payMethod;
+		return this;
 	}
 	public Integer getSecurityLevel() {
 		return securityLevel;
 	}
-	public void setSecurityLevel(Integer securityLevel) {
+	public Income setSecurityLevel(Integer securityLevel) {
 		this.securityLevel = securityLevel;
+		return this;
 	}
 	public String getComments() {
 		return comments;
 	}
-	public void setComments(String comments) {
+	public Income setComments(String comments) {
 		this.comments = comments;
+		return this;
 	}
 	public String getRemarks() {
 		return remarks;
 	}
-	public void setRemarks(String remarks) {
+	public Income setRemarks(String remarks) {
 		this.remarks = remarks;
+		return this;
 	}
 	public Integer getScope() {
 		return scope;
 	}
-	public void setScope(Integer scope) {
+	public Income setScope(Integer scope) {
 		this.scope = scope;
+		return this;
 	}
 	public Integer getNumberOfPymnts() {
 		return numberOfPymnts;
 	}
-	public void setNumberOfPymnts(Integer numberOfPymnts) {
+	public Income setNumberOfPymnts(Integer numberOfPymnts) {
 		this.numberOfPymnts = numberOfPymnts;
+		return this;
 	}
 	public Integer getDaysToFirstPymnt() {
 		return daysToFirstPymnt;
 	}
-	public void setDaysToFirstPymnt(Integer daysToFirstPymnt) {
+	public Income setDaysToFirstPymnt(Integer daysToFirstPymnt) {
 		this.daysToFirstPymnt = daysToFirstPymnt;
+		return this;
 	}
 	public Integer getDaysBetweenPymnt() {
 		return daysBetweenPymnt;
 	}
-	public void setDaysBetweenPymnt(Integer daysBetweenPymnt) {
+	public Income setDaysBetweenPymnt(Integer daysBetweenPymnt) {
 		this.daysBetweenPymnt = daysBetweenPymnt;
+		return this;
 	}
 	public String getPymntDays() {
 		return pymntDays;
 	}
-	public void setPymntDays(String pymntDays) {
+	public Income setPymntDays(String pymntDays) {
 		this.pymntDays = pymntDays;
+		return this;
 	}
 	public String getBankAccount() {
 		return bankAccount;
 	}
-	public void setBankAccount(String bankAccount) {
+	public Income setBankAccount(String bankAccount) {
 		this.bankAccount = bankAccount;
+		return this;
 	}
 	public String getBankAlias() {
 		return bankAlias;
 	}
-	public void setBankAlias(String bankAlias) {
+	public Income setBankAlias(String bankAlias) {
 		this.bankAlias = bankAlias;
+		return this;
 	}
 	public String getBic() {
 		return bic;
 	}
-	public void setBic(String bic) {
+	public Income setBic(String bic) {
 		this.bic = bic;
+		return this;
 	}
 	public Date getCreationDate() {
 		return creationDate;
 	}
-	public void setCreationDate(Date creationDate) {
+	public Income setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
+		return this;
 	}
 	public String getCreationUser() {
 		return creationUser;
 	}
-	public void setCreationUser(String creationUser) {
+	public Income setCreationUser(String creationUser) {
 		this.creationUser = creationUser;
+		return this;
 	}
 	public Date getModificationDate() {
 		return modificationDate;
 	}
-	public void setModificationDate(Date modificationDate) {
+	public Income setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+		return this;
 	}
 	public String getModificationUser() {
 		return modificationUser;
 	}
-	public void setModificationUser(String modificationUser) {
+	public Income setModificationUser(String modificationUser) {
 		this.modificationUser = modificationUser;
+		return this;
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
@@ -175,20 +197,23 @@ public class Income implements Serializable {
 	public Integer getSupplier() {
 		return supplier;
 	}
-	public void setSupplier(Integer supplier) {
+	public Income setSupplier(Integer supplier) {
 		this.supplier = supplier;
+		return this;
 	}
 	public IncomeStatus getStatus() {
 		return status;
 	}
-	public void setStatus(IncomeStatus status) {
+	public Income setStatus(IncomeStatus status) {
 		this.status = status;
+		return this;
 	}
 	public Integer getWorkplace() {
 		return workplace;
 	}
-	public void setWorkplace(Integer workplace) {
+	public Income setWorkplace(Integer workplace) {
 		this.workplace = workplace;
+		return this;
 	}
 
 	

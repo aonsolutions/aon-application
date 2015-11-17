@@ -26,6 +26,7 @@ import org.xml.sax.SAXException;
 
 import com.code.aon.product.Item;
 import com.code.aon.ui.warehouse.controller.InventoryController;
+import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
@@ -403,5 +404,17 @@ public class Utils {
 			case "3": return InventoryController.getFifoPrice(item, quantity, login);	
 			default : return quantity != 0 ? item.getPurchasePrice() : 0.0;
 		}
+	}
+	
+	public static String getDateStr(Date date){
+		Integer month = DateUtil.getMonth(date);
+		Integer year = DateUtil.getYear(date);
+		Integer day = DateUtil.getDay(date);
+	
+		String mes = month.toString();
+		if(month< 10) mes = "0"+ month;
+		String dia = day.toString();
+		if(day < 10) dia = "0" + day;
+		return year + "-" + mes + "-" + dia;
 	}
 }

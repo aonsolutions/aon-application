@@ -3124,12 +3124,19 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	background:transparent url(images/aon-icon/aon-icon-option.png) scroll left center no-repeat;	
  }
  
-.aon-google-drive{
-	background:transparent url(images/aon-icon-big/aon-google-drive.png) scroll left center no-repeat;	
- }
-        .aon-documental-docs{
-	background:transparent url(images/aon-icon-big/aon-documental-docs.png) scroll left center no-repeat;	
- }
+	.aon-google-drive{
+		background:transparent url(images/aon-icon-big/aon-google-drive.png) scroll left center no-repeat;	
+ 	}
+ 	
+    .aon-documental-docs{
+		background:transparent url(images/aon-icon-big/aon-documental-docs.png) scroll left center no-repeat;	
+ 	}
+ 	
+ 	.aon-icon-big-marketplace{
+		background:transparent url(images/aon-icon-big/aon-icon-big-marketplace.png) scroll left center no-repeat;	
+ 	}
+ 	
+ 	
  	.aon-gwt-tags-popup{
  		padding-top: 5px;
  	}

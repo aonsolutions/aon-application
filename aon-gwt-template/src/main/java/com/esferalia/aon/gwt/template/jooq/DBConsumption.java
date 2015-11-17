@@ -11,10 +11,10 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
-import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
 import static com.esferalia.aon.jooq.tables.WarehouseTransferDetail.WAREHOUSE_TRANSFER_DETAIL;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -29,6 +29,7 @@ import org.jooq.Result;
 
 import com.esferalia.aon.gwt.template.shared.ConsumptionItem;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Domain;
 
 public class DBConsumption {
 	
@@ -371,14 +372,14 @@ public class DBConsumption {
 		}
 	}
 	
-	public static ConsumptionItem getTwoLastInventory(String domain, Integer domainId, Integer warehouseId, String login) {
+	public static ConsumptionItem getTwoLastInventory(Domain domain, Integer warehouseId, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
 			Result<Record3<Integer, String, Date>> data = ctx.getDslContext().select(INVENTORY.ID,INVENTORY.DESCRIPTION, INVENTORY.INVENTORY_DATE)
 				.from(INVENTORY)
-				.where(INVENTORY.DOMAIN.eq(domainId))
+				.where(INVENTORY.DOMAIN.eq(domain.getId()))
 				.and(INVENTORY.WAREHOUSE.eq(warehouseId))
 				.orderBy(INVENTORY.INVENTORY_DATE.desc()).limit(2)
 				.fetch();
