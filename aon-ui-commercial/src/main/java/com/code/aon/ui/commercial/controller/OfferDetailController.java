@@ -14,7 +14,6 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.AonVersion;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
-import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -67,16 +66,6 @@ public class OfferDetailController extends LinesController implements ICommercia
 
 	public void onShortDescription(ActionEvent event) {
 		setLongDescription(false);
-	}
-
-	public boolean isPending() throws ManagerBeanException {
-		if (getModel().isRowAvailable()) {
-			OfferDetail offerDetail = (OfferDetail)this.getModel().getRowData();
-			if (offerDetail.getStatus() != null) {
-				return offerDetail.getStatus().equals(OfferDetailStatus.PENDING);
-			}
-		}
-		return false;
 	}
 
 	public void onItemChanged(LookupChangeEvent event) {

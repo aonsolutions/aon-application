@@ -28,7 +28,7 @@
 			<aon:commandLink id="#{dataTableId}-selectButton"
 				styleClass="aon-table-row-link" value="&#160;"
 				immediate="true" ajaxSingle="true" requestDelay="100"
-				rendered="#{offerDetail.pending}"
+				rendered="#{to.pending}"
 				actionListener="#{offerDetail.onSelect}"
 				onkeyup="#{dataTableId}KeyUp(this)"
 				onfocus="#{dataTableId}SelectRow(this)"
@@ -239,10 +239,10 @@
 				<f:facet name="header">
 					<aon:outputLabel value="INFO" />
 				</f:facet>
-				<aon:commandLink id="offerDetailSourceLink" immediate="true"
+				<aon:commandLink id="offerDetailSalesLink" immediate="true"
 					styleClass="aon-button-goto" style="padding-right: 20px;"
 					value="&#160;" title="#{bundle.aon_go}" 
-					rendered="#{!controller.pending and to.item != null and to.item.id != null}" 
+					rendered="#{to.onSale and to.item != null and to.item.id != null}" 
 					actionListener="#{controller.onLoadSales}"
 					action="sales_form"
 					reRender="aonContent">

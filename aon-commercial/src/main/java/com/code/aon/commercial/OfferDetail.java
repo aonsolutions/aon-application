@@ -5,6 +5,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.AonVersion;
+import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.WorkPlace;
@@ -19,6 +20,21 @@ public class OfferDetail extends OfferDetailDB implements ICalculable, IAuditabl
 
 	public void setPrice(double price) {
 		super.setPrice( CommonUtil.round(price, 4) );
+	}
+
+	@Transient
+	public boolean isPending() {
+		return getStatus() == OfferDetailStatus.PENDING;
+	}
+
+	@Transient
+	public boolean isOnSale() {
+		return getStatus() == OfferDetailStatus.ON_SALE;
+	}
+
+	@Transient
+	public boolean isOnInvoice() {
+		return getStatus() == OfferDetailStatus.ON_INVOICE;
 	}
 
 	@Transient
