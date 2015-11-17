@@ -24,7 +24,7 @@ public class ProductTemplatesTreeNode extends TreeNode<Integer>{
 
 			@Override
 			public void onSuccess(List<EcommerceProduct> result) {
-				ProductTemplates pt = new ProductTemplates(result, getDomainId());
+				ProductTemplates pt = new ProductTemplates(result, getDomainId(),m.getLogin());
 				m.setContent(pt);
 			}
 		});

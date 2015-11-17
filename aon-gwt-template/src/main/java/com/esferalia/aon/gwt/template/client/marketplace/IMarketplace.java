@@ -21,4 +21,6 @@ public interface IMarketplace extends RemoteService{
 	public Vector<EcommerceProduct> searchTypeTemplate(String searchStr, Vector<EcommerceProduct> templates);
 
 	public String getDateStr(Date date);
+
+	public void deleteTemplate(String description);
 }

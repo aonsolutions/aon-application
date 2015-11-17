@@ -24,6 +24,7 @@ public class Dialog implements IsSerializable{
 	List<ProductCategory> categories;
 	List<Seller> sellerList;
 	Boolean closed;
+	EcommerceProduct ecommerceProduct;
 	public Dialog() {
 	
 	}
@@ -163,5 +164,15 @@ public class Dialog implements IsSerializable{
 	public void setSellerList(List<Seller> sellerList) {
 		this.sellerList = sellerList;
 	}
+
+	public EcommerceProduct getEcommerceProduct() {
+		return ecommerceProduct;
+	}
+
+	public void setEcommerceProduct(EcommerceProduct ecommerceProduct) {
+		this.ecommerceProduct = ecommerceProduct;
+	}
+	
+	
 
 }

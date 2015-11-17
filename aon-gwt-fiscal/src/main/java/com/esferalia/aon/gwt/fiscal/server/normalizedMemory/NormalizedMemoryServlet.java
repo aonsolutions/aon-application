@@ -37,6 +37,7 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.server.OpenDocument2ImageServlet;
 import com.esferalia.aon.gwt.common.shared.FileInfo;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
@@ -740,9 +741,9 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		
 		public String viewer(Integer domainId, MemoryFiles mf){
 			String domainName = AonUtil.getDomainName();
-			
+			String login = AonServletUtils.getLoggedUser();
 			Condition condition = RATTACH.ID.eq(mf.getId());
-			Attach rattach = AON.getAttach(domainName, domainId, condition, AttachType.REGISTRY);
+			Attach rattach = AON.getAttach(domainName, domainId, login, condition, AttachType.REGISTRY);
 			rattach.setMd5(AonFileUtils.getMD5Checksum(rattach.getData()));
 			FileInfo doc = new FileInfo(rattach);
 			return getAsHTML(doc, DEFAULT_ZOOM);

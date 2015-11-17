@@ -176,4 +176,60 @@ public class AttachmentImpl implements IAttachment{
 			AttachmentDAO.deleteSepeAttach(ctx, condition);
 		} );
 	}
+	
+	@Override
+	public void deleteContractAttach(AONContext ctx, Integer attachId) {
+		ctx.getDslContext().transaction(configuration -> {
+			AttachmentDAO.deleteContractAttach(ctx, attachId);
+		} );
+	}
+
+	@Override
+	public void deleteItemAttach(AONContext ctx, Integer attachId) {
+		ctx.getDslContext().transaction(configuration -> {
+			AttachmentDAO.deleteItemAttach(ctx, attachId);
+		} );
+	}
+
+	@Override
+	public void deleteInvoiceAttach(AONContext ctx, Integer attachId) {
+		ctx.getDslContext().transaction(configuration -> {
+			AttachmentDAO.deleteInvoiceAttach(ctx, attachId);
+		} );
+	}
+
+	@Override
+	public void deleteOfferAttach(AONContext ctx, Integer attachId) {
+		ctx.getDslContext().transaction(configuration -> {
+			AttachmentDAO.deleteOfferAttach(ctx, attachId);
+		} );
+	}
+
+	@Override
+	public void deletePayrollAttach(AONContext ctx, Integer attachId) {
+		ctx.getDslContext().transaction(configuration -> {
+			AttachmentDAO.deletePayrollAttach(ctx, attachId);
+		} );
+	}
+
+	@Override
+	public void deleteProjectAttach(AONContext ctx, Integer attachId) {
+		ctx.getDslContext().transaction(configuration -> {
+			AttachmentDAO.deleteProjectAttach(ctx, attachId);
+		} );
+	}
+
+	@Override
+	public void deleteRegistryAttach(AONContext ctx, Integer attachId) {
+		ctx.getDslContext().transaction(configuration -> {
+			AttachmentDAO.deleteRegistryAttach(ctx, attachId);
+		} );
+	}
+
+	@Override
+	public void deleteSepeAttach(AONContext ctx, Integer attachId) {
+		ctx.getDslContext().transaction(configuration -> {
+			AttachmentDAO.deleteSepeAttach(ctx, attachId);
+		} );
+	}
 }

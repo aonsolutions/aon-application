@@ -38,4 +38,13 @@ public interface IAttachment {
 	public void deleteRegistryAttach(AONContext ctx, Condition condition);
 	public void deleteSepeAttach(AONContext ctx, Condition condition);
 	
+	public void deleteContractAttach(AONContext ctx, Integer attachId);
+	public void deleteItemAttach(AONContext ctx, Integer attachId);
+	public void deleteInvoiceAttach(AONContext ctx, Integer attachId);
+	public void deleteOfferAttach(AONContext ctx, Integer attachId);
+	public void deletePayrollAttach(AONContext ctx, Integer attachId);
+	public void deleteProjectAttach(AONContext ctx, Integer attachId);
+	public void deleteRegistryAttach(AONContext ctx, Integer attachId);
+	public void deleteSepeAttach(AONContext ctx, Integer attachId);
+	
 }

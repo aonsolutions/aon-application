@@ -44,6 +44,15 @@
 											actionListener="#{salesImporter.onInitAmazonItemReturn}"
 											value="#{bundle.sales_amazon_sales_return_integration}"/>
 									</aon:div>
+									
+									<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="prueba-marketplace-PRUEBA"
+												action="gwt_marketplace">
+												<aon:outputText  styleClass="aon-icon-new-text" 
+														style="margin-left: 5px; padding-left: 20px;" 
+														value="Marketplace" />
+											</aon:commandLink>
+									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
 						</aon:if>					

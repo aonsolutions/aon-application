@@ -41,6 +41,11 @@
    			border:none !important; 
    			border-right: 1px solid #bbb !important;
 		}	
+		
+		.marketplace-position{
+			padding-left:30px;
+			padding-top:5px;
+		}
 	</ui:style>
 	
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
@@ -54,7 +59,7 @@
 				<g:stack>
 					<g:header size='3'>
 
-						<div class='aon-icon-big-marketplace'>
+						<div class='aon-icon-big-marketplace {style.marketplace-position}'>
 							Marketplace
 						</div>
 					</g:header>

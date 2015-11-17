@@ -25,5 +25,7 @@ public interface IMarketplaceAsync {
 	void getAmazonOrdersList(Integer domainId, String login, AsyncCallback<List<Order>> callback);
 
 	void getDateStr(Date date, AsyncCallback<String> callback);
+
+	void deleteTemplate(String description, AsyncCallback<Void> callback);
 	
 }

@@ -398,4 +398,36 @@ public class AttachmentDAO {
 		ctx.getDslContext().delete(SEPE_BATCH_ATTACH).where(condition).execute();
 	}
 	
+	public static void deleteContractAttach(AONContext ctx, Integer attachId){
+		ctx.getDslContext().delete(CONTRACT_ATTACH).where(CONTRACT_ATTACH.ID.eq(attachId)).execute();
+	}
+	
+	public static void deleteItemAttach(AONContext ctx, Integer attachId){
+		ctx.getDslContext().delete(IATTACH).where(IATTACH.ID.eq(attachId)).execute();
+	}
+
+	public static void deleteInvoiceAttach(AONContext ctx, Integer attachId){
+		ctx.getDslContext().delete(INVOICE_ATTACH).where(INVOICE_ATTACH.ID.eq(attachId)).execute();
+	}
+
+	public static void deleteOfferAttach(AONContext ctx, Integer attachId){
+		ctx.getDslContext().delete(OFFER_ATTACH).where(OFFER_ATTACH.ID.eq(attachId)).execute();
+	}
+
+	public static void deletePayrollAttach(AONContext ctx, Integer attachId){
+		ctx.getDslContext().delete(PAYROLL_BATCH_ATTACH).where(PAYROLL_BATCH_ATTACH.ID.eq(attachId)).execute();
+	}
+
+	public static void deleteProjectAttach(AONContext ctx, Integer attachId){
+		ctx.getDslContext().delete(PROJECT_ATTACH).where(PROJECT_ATTACH.ID.eq(attachId)).execute();
+	}
+
+	public static void deleteRegistryAttach(AONContext ctx, Integer attachId){
+		ctx.getDslContext().delete(RATTACH).where(RATTACH.ID.eq(attachId)).execute();
+	}
+
+	public static void deleteSepeAttach(AONContext ctx, Integer attachId){
+		ctx.getDslContext().delete(SEPE_BATCH_ATTACH).where(SEPE_BATCH_ATTACH.ID.eq(attachId)).execute();
+	}
+	
 }

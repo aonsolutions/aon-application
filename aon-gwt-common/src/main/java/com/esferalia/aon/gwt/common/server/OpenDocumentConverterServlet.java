@@ -73,8 +73,9 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 
 			MimeType mimeType = MimeType.getByExtension(extension);
 						
+			String login = AonServletUtils.getLoggedUser();
 			Condition condition = RATTACH.ID.eq(id);
-			Attach rattach = AON.getAttach(domainName, domainId, condition, AttachType.REGISTRY);
+			Attach rattach = AON.getAttach(domainName, domainId, login, condition, AttachType.REGISTRY);
 			
 			resp.setContentType(mimeType.getName());
 			OutputStream os = resp.getOutputStream();

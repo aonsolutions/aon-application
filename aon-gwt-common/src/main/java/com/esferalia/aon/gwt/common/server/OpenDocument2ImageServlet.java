@@ -131,9 +131,9 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 		MimeType mimetype = MimeType.values()[doc.getMimetype()];
 		
 		//ViewerUtils.RAttach rattach1 = ViewerUtils.getRAttach(doc.getFileId());
-		
+		String login = AonServletUtils.getLoggedUser();
 		Condition condition = RATTACH.ID.eq(doc.getFileId());
-		Attach rattach = AON.getAttach(doc.getDomain(), doc.getDomainId(), condition,AttachType.REGISTRY);
+		Attach rattach = AON.getAttach(doc.getDomain(), doc.getDomainId(), login, condition,AttachType.REGISTRY);
 		
 		b = rattach.getData();
 		if (mimetype ==null) mimetype = rattach.getMimeType();

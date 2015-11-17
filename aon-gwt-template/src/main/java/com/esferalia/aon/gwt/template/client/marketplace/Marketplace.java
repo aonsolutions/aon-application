@@ -73,7 +73,9 @@ public class Marketplace extends Composite {
 	
 	private void load() {
 		TreeNode<Ecommerce> amazon = TreeNodeTypes.ECOMMERCE.getInstance().render(tree, Ecommerce.AMAZON);
-		TreeNodeTypes.ORDERS.getInstance().render(amazon, Ecommerce.AMAZON);
+		amazon.setState(true);
+		TreeNode<Ecommerce> amazonOrders = TreeNodeTypes.ORDERS.getInstance().render(amazon, Ecommerce.AMAZON);
+		amazonOrders.select(this);
 		//TreeNodeTypes.PRODUCTS.getInstance().render(amazon, getDomainId());
 
 		//TreeNode<Ecommerce> ebay = TreeNodeTypes.ECOMMERCE.getInstance().render(tree, Ecommerce.EBAY);

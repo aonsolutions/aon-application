@@ -50,7 +50,6 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -102,17 +101,17 @@ public class ProductTemplates  extends ResizeComposite{
 			};
 		};
 		
-		ScheduledCommand downloadCommand = new ScheduledCommand() {
+		/*ScheduledCommand downloadCommand = new ScheduledCommand() {
 			public void execute() {	
 				EcommerceProduct object;
 				object= dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
 				download(object);
 			};
-		};
+		};*/
 		
 		private MenuItem editItem;
 		private MenuItem removeItem;
-		private MenuItem downloadItem;
+		//private MenuItem downloadItem;
 		private Integer heigth;
 		private Integer width;
 
@@ -141,11 +140,11 @@ public class ProductTemplates  extends ResizeComposite{
 			removeItem = addItem("Borrar", removeCommand,
 				AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
 			removeItem.setEnabled(true);
-			addSeparator();
+			/*addSeparator();
 			downloadItem = addItem("Descargar",downloadCommand,
 				"aon-icon-google-drive-excel",AON.AON_ICON_CMD_BUTTON);
 			downloadItem.setEnabled(true);
-			
+			*/
 		}
 
 		@Override
@@ -165,12 +164,14 @@ public class ProductTemplates  extends ResizeComposite{
 	
 	List<EcommerceProduct> templateList;
 	Integer domainId;
+	String login;
 	ProgressBarDialog pbd;
 
 	
-	public ProductTemplates(List<EcommerceProduct> templateList, Integer domainId) {
+	public ProductTemplates(List<EcommerceProduct> templateList, Integer domainId, String login) {
 		setTemplateList(templateList);
 		setDomainId(domainId);
+		setLogin(login);
 		
 		dataGrid = new DataGrid<EcommerceProduct>(Integer.MAX_VALUE, resources); 
 		new_button = new Button();
@@ -248,7 +249,19 @@ public class ProductTemplates  extends ResizeComposite{
 			
 			@Override
 			public void onSuccess(List<Seller> result) {
-				importEcommerce(result);				
+				importEcommerce(result, null);				
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+	}
+	public void ecommerce(final EcommerceProduct object){
+		item.getSellerList(getDomainId(), new AsyncCallback<List<Seller>>() {
+			
+			@Override
+			public void onSuccess(List<Seller> result) {
+				importEcommerce(result, object);				
 			}
 			
 			@Override
@@ -256,15 +269,21 @@ public class ProductTemplates  extends ResizeComposite{
 		});
 	}
 	
-	private void importEcommerce(final List<Seller> sellerList) {
+	private void importEcommerce(final List<Seller> sellerList,final EcommerceProduct object) {
 		item.getProductCategories(getDomainId(), new AsyncCallback<List<ProductCategory>>() {
 			
 			@Override
 			public void onSuccess(List<ProductCategory> result) {
-				Dialog d = new Dialog("Importar Plantilla Ecommerce","Importar",true,"Cancelar",true,"importEcommerceTemplate");
+				Dialog d;
+				if(object != null)
+					d = new Dialog("Editar Plantilla Ecommerce", "Editar", true, "Cancelar", true, "editEcommerceTemplate");
+				else
+					d = new Dialog("Importar Plantilla Ecommerce","Importar",true,"Cancelar",true,"importEcommerceTemplate");
+				
 				d.setUrl(GWT.getModuleBaseURL());
 				d.setCategories(result);
 				d.setSellerList(sellerList);
+				d.setEcommerceProduct(object);
 				TemplatesDialog popup = new TemplatesDialog(d) {
 					
 					@Override
@@ -352,17 +371,48 @@ public class ProductTemplates  extends ResizeComposite{
 		delete(object);
 	}	
 	
-	private void delete(EcommerceProduct object){
-		Window.alert("delete");
+	private void delete(final EcommerceProduct object){
+		Dialog d = new Dialog("Eliminar Plantilla Ecommerce","Borrar",true,"Cancelar",true,"deleteEcommerce");
+		d.setEcommerceProduct(object);
+		TemplatesDialog popup = new TemplatesDialog(d) {
+			
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+				hide();
+				String description = object.getTemplate().getEcommerce() + "-"
+						+ object.getTemplate().getType();
+				impl.deleteTemplate(description, new AsyncCallback<Void>() {
+			
+					@Override
+					public void onSuccess(Void result) {
+						getTemplateList().remove(object);
+						addDataDisplay(dataGrid);
+						dataGrid.redraw();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+			}
+	
+		};
+		popup.addStyleName("gwt-PopupPanel-template");
+		popup.setGlassEnabled(true);
+		popup.show();
 	}
 
 	private void edit(EcommerceProduct object){
-		Window.alert("edit");
+		ecommerce(object);
 	}
 	
-	private void download(EcommerceProduct object){
+	/*private void download(EcommerceProduct object){
 		Window.alert("download");
-	}
+	}*/
 	
 	//------------------------------ SearchBox Utils
 	
@@ -527,10 +577,10 @@ public class ProductTemplates  extends ResizeComposite{
 				public void render(
 						com.google.gwt.cell.client.Cell.Context context,
 						EcommerceProduct value, SafeHtmlBuilder sb) {
-					if (text.equals("download")) {
+					/*if (text.equals("download")) {
 						sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-google-drive-excel\" tabindex=\"-1\">");
 						sb.appendHtmlConstant("</button>");
-					}
+					}*/
 					if (text.equals("edit")) {
 						sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-edit\" tabindex=\"-1\">");
 						sb.appendHtmlConstant("</button>");
@@ -584,7 +634,7 @@ public class ProductTemplates  extends ResizeComposite{
 			}
 		}));
 
-		cells.add(new ActionHasCell("download",
+		/*cells.add(new ActionHasCell("download",
 				new Delegate<EcommerceProduct>() {
 
 					@Override
@@ -593,7 +643,7 @@ public class ProductTemplates  extends ResizeComposite{
 						download(object);
 					}
 				}));
-
+		 */
 		CompositeCell<EcommerceProduct> cell = new CompositeCell<EcommerceProduct>(
 				cells);
 		/** Name Column **/
@@ -656,18 +706,17 @@ public class ProductTemplates  extends ResizeComposite{
 		dataGrid.addColumn(typeColumn, "Tipo");
 		dataGrid.setColumnWidth(typeColumn, 20, Unit.PCT);
 
-		/** Download Column **/
-		Column<EcommerceProduct, EcommerceProduct> downloadColumn = new Column<EcommerceProduct, EcommerceProduct>(
-				cell) {
+		/** ACTION Column **/
+		Column<EcommerceProduct, EcommerceProduct> actionColumn = new Column<EcommerceProduct, EcommerceProduct>(cell) {
 
 			@Override
 			public EcommerceProduct getValue(EcommerceProduct object) {
 				return object;
 			}
 		};
-		downloadColumn.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-		dataGrid.addColumn(downloadColumn, "Acciones");
-		dataGrid.setColumnWidth(downloadColumn, 10, Unit.PCT);
+		actionColumn.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
+		dataGrid.addColumn(actionColumn, "Acciones");
+		dataGrid.setColumnWidth(actionColumn, 10, Unit.PCT);
 	}
 
 	
@@ -688,4 +737,13 @@ public class ProductTemplates  extends ResizeComposite{
 	public void setDomainId(Integer domainId){
 		this.domainId = domainId;
 	}
+
+	public String getLogin() {
+		return login;
+	}
+
+	public void setLogin(String login) {
+		this.login = login;
+	}
+	
 }

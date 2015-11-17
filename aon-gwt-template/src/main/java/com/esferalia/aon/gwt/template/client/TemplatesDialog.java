@@ -1,14 +1,5 @@
 package com.esferalia.aon.gwt.template.client;
 
-import gwtupload.client.IFileInput.FileInputType;
-import gwtupload.client.IUploadStatus.Status;
-import gwtupload.client.IUploader;
-import gwtupload.client.IUploader.OnCancelUploaderHandler;
-import gwtupload.client.IUploader.OnFinishUploaderHandler;
-import gwtupload.client.IUploader.OnStartUploaderHandler;
-import gwtupload.client.IUploader.OnStatusChangedHandler;
-import gwtupload.client.SingleUploader;
-
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
@@ -49,6 +40,15 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import gwtupload.client.IFileInput.FileInputType;
+import gwtupload.client.IUploadStatus.Status;
+import gwtupload.client.IUploader;
+import gwtupload.client.IUploader.OnCancelUploaderHandler;
+import gwtupload.client.IUploader.OnFinishUploaderHandler;
+import gwtupload.client.IUploader.OnStartUploaderHandler;
+import gwtupload.client.IUploader.OnStatusChangedHandler;
+import gwtupload.client.SingleUploader;
 
 public abstract class TemplatesDialog extends CustomDialogB {
 	
@@ -167,6 +167,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		case "import": importar(dialog);break;
 		case "export": exportar(dialog);break;
 		case "delete": deleteTemplate(dialog.getTemplateInfo().getName());break;
+		case "deleteEcommerce": deleteTemplate(dialog.getEcommerceProduct().getTemplate().getType());break;
 		case "importProduct": importProduct(dialog.getUrl(),dialog.getTemplateList());break;
 		case "importStock": importStock(dialog);break;
 		case "importTransferStock": importTransferStock(dialog);break;
@@ -183,6 +184,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		case "exportInventory": exportInventory(dialog);break;
 		case "exportIncome": exportIncome(dialog);break;
 		case "importEcommerceTemplate": importEcommerce(dialog);break;
+		case "editEcommerceTemplate": editEcommerce(dialog);break;
 		default:
 			break;
 		}
@@ -255,6 +257,46 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(1, 1, sellerListBox);
 		
 		TextBox typeTextBox = new TextBox();
+		typeTextBox.setStyleName("aon-inputText");
+		flex_table.setWidget(2, 0, new Label("Tipo"));
+		flex_table.setWidget(2, 1, typeTextBox);
+		
+		ListBox categoryListBox = new ListBox();
+		categoryListBox.addItem("-");
+		for(ProductCategory pc : dialog.getCategories())
+			categoryListBox.addItem(pc.getName(), pc.getId().toString());
+		flex_table.setWidget(3, 0, new Label("Categoria"));
+		flex_table.setWidget(3, 1, categoryListBox);
+		
+		SingleUploader upload = newUploader(null, dialog.getUrl(), 1);
+		flex_table.setWidget(4, 0, new Label("Archivo"));
+		flex_table.setWidget(4, 1, upload);
+		
+		flexTableCss();
+	}
+	
+	private void editEcommerce(Dialog dialog) {
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+		
+		ListBox ecommerceListBox = new ListBox();
+		ecommerceListBox.addItem(dialog.getEcommerceProduct().getTemplate().getEcommerce());
+		ecommerceListBox.setEnabled(false);
+		flex_table.setWidget(0, 0, new Label("Ecommerce"));
+		flex_table.setWidget(0, 1, ecommerceListBox);
+		
+		ListBox sellerListBox = new ListBox();
+		sellerListBox.addItem("-","-1");
+		for(Seller seller : dialog.getSellerList())
+			sellerListBox.addItem(seller.getRegistryName(), seller.getId().toString());		
+		flex_table.setWidget(1, 0, new Label("Vendedor"));
+		flex_table.setWidget(1, 1, sellerListBox);
+		
+		TextBox typeTextBox = new TextBox();
+		typeTextBox.setText(dialog.getEcommerceProduct().getTemplate().getType());
+		typeTextBox.setEnabled(false);
 		typeTextBox.setStyleName("aon-inputText");
 		flex_table.setWidget(2, 0, new Label("Tipo"));
 		flex_table.setWidget(2, 1, typeTextBox);

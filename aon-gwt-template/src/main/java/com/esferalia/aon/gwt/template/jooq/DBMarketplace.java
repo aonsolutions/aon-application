@@ -15,6 +15,7 @@ import org.jooq.Record1;
 import org.jooq.Record8;
 import org.jooq.Result;
 
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.carrier.enumeration.ShipmentStatus;
 import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.server.marketplace.XMLUtils;
@@ -26,8 +27,10 @@ import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.SalesRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.security.User;
 
 
 
@@ -145,5 +148,11 @@ public class DBMarketplace {
 			if(ctx != null)
 				ctx.close();
 		}
+	}
+	
+	public static void deleteTemplate(Domain domain, User user, String description){
+		Condition condition = RATTACH.DESCRIPTION.eq(description).and(RATTACH.TYPE.eq((byte) RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.ordinal()));
+		Attach attach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), condition, AttachType.REGISTRY);
+		AON.delete(domain.getName(), domain.getId(), user.getLogin(), attach);
 	}
 }

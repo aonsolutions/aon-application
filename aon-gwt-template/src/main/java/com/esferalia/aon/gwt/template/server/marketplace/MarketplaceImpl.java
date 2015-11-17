@@ -13,6 +13,8 @@ import com.esferalia.aon.gwt.template.jooq.DBMarketplace;
 import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
 import com.esferalia.aon.gwt.template.shared.marketplace.Order;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.User;
 
 
 public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketplace{
@@ -20,6 +22,34 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 	
 	private static final long serialVersionUID = 6871016881549113129L;
 
+	User user;
+	Domain domain;
+	
+	
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public Domain getDomain() {
+		return domain;
+	}
+
+	public void setDomain(Domain domain) {
+		this.domain = domain;
+	}
+
+	public void setInfo(){
+		setUser(new User()
+				.setId(getUserID())
+				.setLogin(getUserLogin()));
+		setDomain(new Domain()
+				.setId(getDomainID())
+				.setName( AonUtil.getDomainName()));
+	}
 	public List<EcommerceProduct> getProductTemplatesList(Integer domainId){
 		String domainName = AonUtil.getDomainName();
 		return DBMarketplace.getProductTemplatesList(domainName, domainId);
@@ -49,6 +79,12 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 		}
 		return vector;
 	}
+	
+	public void deleteTemplate(String description){
+		setInfo();
+		DBMarketplace.deleteTemplate(getDomain(), getUser(), description);
+	}
+	
 	
 	/**
 	 * <p>

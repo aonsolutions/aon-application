@@ -220,7 +220,7 @@ public class AmazonOrders  extends ResizeComposite{
 					}
 				});
 		dataGrid.getColumnSortList().push(orderColumn);
-		dataGrid.addColumn(orderColumn, "Nº Pedido");
+		dataGrid.addColumn(orderColumn, "N\u00BA Pedido");
 		dataGrid.setColumnWidth(orderColumn, 15, Unit.PCT);
 
 		/** Customer Column **/

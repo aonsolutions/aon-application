@@ -1978,7 +1978,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			
 			Condition condition = RATTACH.DESCRIPTION.eq(ecommerce.getName()+"-"+type).and(RATTACH.TYPE.eq((byte)18))
 					.and(RATTACH.DPARENT_ID.eq(pc.getId().toString()));
-			Attach attach = AON.getAttach(d.getName(), d.getId(), condition, AttachType.REGISTRY);
+			Attach attach = AON.getAttach(d.getName(), d.getId(), getUser().getLogin(), condition, AttachType.REGISTRY);
 			
 			if(attach != null && attach.getId() != null){
 				attach.setData(xml);
