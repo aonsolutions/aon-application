@@ -29,16 +29,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
+import com.code.aon.account.Account;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.loader.Loader;
 import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.loader.controller.AonLoaderController;
@@ -60,6 +65,7 @@ public class OppidumSalesLoader implements Serializable {
 	private final String INVOICE_VAT_PERCENT = "%_iva";
 	private final String INVOICE_VAT_BASE = "Base_Iva";
 	private final String INVOICE_VAT_AMOUNT = "Importe_Iva";
+	private final String INVOICE_IEE_BASE = "Importe_Iee";
 	private final String INVOICE_TOTAL = "Total Final";
 	
 	private final String[] SUPPORTED_COLUMNS = {
@@ -70,6 +76,7 @@ public class OppidumSalesLoader implements Serializable {
 			INVOICE_VAT_PERCENT,
 			INVOICE_VAT_BASE,
 			INVOICE_VAT_AMOUNT,
+			INVOICE_IEE_BASE,
 			INVOICE_TOTAL
 	};
 	
@@ -85,6 +92,26 @@ public class OppidumSalesLoader implements Serializable {
 	
 	
 //	Hay que restar el importe de la columna AL de la base imponible y insertar una línea con la cuenta 473000560  e importe restado.
+	
+	
+	
+//	Carga de Facturas de Venta:
+//
+//		430* => Cuenta Cliente (EXCEL.Total_Factura)
+//		Base 1 = Columna EXCEL.AL
+//		Cuota IVA1 = Columan EXCEL.AL * 0.21 Redondeado a dos decimales
+//		Cuenta_explotación1 = 473????
+//		Base 2 = Base Imponible - Base 1
+//		Cuota IVA 2 = Cuota Iva - Cuota IVA1
+//		Cuenta_explotación2 = 700000001
+//
+//
+//		Carga de Facturas de Compra:
+//
+//		400* => Cuenta Proveedor(EXCEL.Total_Factura)
+//		Base 1 = EXCEL.Base Imponible
+//		Cuota IVA 2 = EXCEL.Base_Imponible
+//		Cuenta_explotación2 = 600000001
 	
 	
 	public void load(InputStream file){
@@ -112,7 +139,10 @@ public class OppidumSalesLoader implements Serializable {
 //	        PrintWriter out = new PrintWriter(
 //					new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream("out.txt")), "UTF-8"));
 	        
-	        writer.println("1;FRACTB|id|serie|numero|cuenta|documento|tipoDocumento|paisDocumento|razonSocial|fechaFactura|tipo|baseImponible1|iva1|cuotaIVA1|totalFactura|cuentaExplotacion");
+	        writer.println("1;FRACTB|id|serie|numero|cuenta|documento|tipoDocumento|paisDocumento|razonSocial|fechaFactura|tipo|baseImponible1|iva1|cuotaIVA1|baseImponible2|iva2|cuotaIVA2|totalFactura|cuentaExplotacion");
+	        
+	        String maxAccountCode = obtainMaxAccountCode();
+	        int emptyAccountCount = 0;
 	        
         	int i=1;
         	while(rowIterator.hasNext()){
@@ -120,6 +150,11 @@ public class OppidumSalesLoader implements Serializable {
         		String customerDocument = row.getCell(headers.indexOf(CUSTOMER_DOCUMENT)).getStringCellValue();
         		String customerName = row.getCell(headers.indexOf(CUSTOMER_NAME)).getStringCellValue();
         		String account = validateCustomer(customerDocument, customerName);
+        		
+        		if(account==null || StringUtils.isBlank(account)){
+        			emptyAccountCount++;
+        			account = String.valueOf(Integer.valueOf(maxAccountCode)+emptyAccountCount);
+        		}
         		
         		if(account!=null && StringUtils.isNotBlank(account)){
         			
@@ -131,8 +166,16 @@ public class OppidumSalesLoader implements Serializable {
         			double vatBase = row.getCell(headers.indexOf(INVOICE_VAT_BASE)).getNumericCellValue();
         			double vatAmount = row.getCell(headers.indexOf(INVOICE_VAT_AMOUNT)).getNumericCellValue();
         			double invoiceTotal = row.getCell(headers.indexOf(INVOICE_TOTAL)).getNumericCellValue();
+        			
+        			double ieeBase = row.getCell(headers.indexOf(INVOICE_IEE_BASE)).getNumericCellValue();
+        			double ieeAmount = ieeBase * 0.21;
+        			vatBase -= ieeBase;
+        			vatAmount -= ieeAmount; 
         
-					writer.println("FRACTB|"+i+"|"+serie+"|"+num+"|"+account+"|"+customerDocument+"|1|ES|"+customerName+"|"+invoiceDate+"|1|"+vatBase+"|"+vatPercent+"|"+vatAmount+"|"+invoiceTotal+"|700000000");
+					writer.println("FRACTB|"+i+"|"+serie+"|"+num+"|"+account+"|"+customerDocument+"|1|ES|"+customerName+"|"+invoiceDate+"|1|"
+							+CommonUtil.round(vatBase)+"|"+CommonUtil.round(vatPercent)+"|"+CommonUtil.round(vatAmount)+"|"
+							+CommonUtil.round(ieeBase)+"|"+CommonUtil.round(vatPercent)+"|"+CommonUtil.round(ieeAmount)+"|"
+							+invoiceTotal+"|700000000");
 					
         			logPanel.info("Factura procesada: " + invoiceNumber);		
         			i++;
@@ -235,6 +278,21 @@ public class OppidumSalesLoader implements Serializable {
 			}
 		}
 		return account;
+	}
+
+	private String obtainMaxAccountCode() throws ManagerBeanException {
+		String code = null;
+		IManagerBean bean = BeanManager.getManagerBean(Account.class);
+		Criteria c = new Criteria();
+		c.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE), Boolean.TRUE);
+		c.addExpression(ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.ACCOUNT_CODE), "430%"));
+		ProjectionList pl = new ProjectionList();
+		pl.add(Projection.max(bean.getFieldName(IEntityAlias.ACCOUNT_CODE)));
+		List<?> list = bean.getList(pl, c);
+		if (list != null && list.size() > 0 && list.get(0) != null) {
+			code = (String) list.get(0);	
+		}
+		return code;
 	}
 	
 	private final Pattern invoiceNumberPattern = Pattern.compile("(\\d{4})-\\d{1}-(\\d+)[-A-Za-z]");
