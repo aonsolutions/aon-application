@@ -106,6 +106,16 @@
 		valueChangeListener="#{controller.addExpression}"
 		size="10" />
 
+	<aon:if test="#{!searchController.sales}">
+		<aon:outputLabel for="Invoice_investment"
+			value="#{bundle.accounting_investment}" />
+		<aon:selectOneRadio id="Invoice_investment"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+		</aon:selectOneRadio>				
+	</aon:if>
+
 	<aon:if test="#{aonRole.confidentiality}">
 		<aon:outputLabel for="Invoice_securityLevel"
 			value="#{bundle.aon_confidential}" />
