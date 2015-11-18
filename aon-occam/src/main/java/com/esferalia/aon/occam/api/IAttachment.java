@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.jooq.Condition;
 
+import com.esferalia.aon.occam.api.model.AttachFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 
 
 public interface IAttachment {
 	public Attach getRattach(AONContext ctx, Condition condition);
+	public Attach getRattach(AONContext ctx, AttachFilter filter);
 	public List<Attach> getRattachList(AONContext ctx, Condition condition);
 	
 	public void insertContractAttach(AONContext ctx, Attach attach);

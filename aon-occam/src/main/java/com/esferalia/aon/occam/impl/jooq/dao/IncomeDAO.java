@@ -20,26 +20,53 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 public class IncomeDAO {
 	
 	
-	public static IncomeDetail getLastIncomeDetail(AONContext ctx, Item item){
+	public static IncomeDetail getLastIncomeDetail(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId){
 		
 		return ctx.getDslContext()
 				.select(INCOME.ISSUE_TIME, INCOME_DETAIL.PRICE, INCOME_DETAIL.ID, INCOME_DETAIL.DISCOUNT_EXPR
 						,INCOME_DETAIL.QUANTITY)
 				.from(INCOME).join(INCOME_DETAIL).on(INCOME.ID.equal(INCOME_DETAIL.INCOME))
 				.where(INCOME_DETAIL.ITEM.eq(item.getId()))
+				.and(INCOME.WORKPLACE.eq(workplaceId))
+				.and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
 				.orderBy(INCOME.ISSUE_TIME.desc())
 				.limit(1).fetch().stream().map(new IncomeDetailFiller())
 				.collect(Collectors.toCollection(LinkedList::new)).getFirst();
 	}
 	
-	public static LinkedList<IncomeDetail> getLastIncomeDetailList(AONContext ctx, Item item, Date startDate){
+	public static LinkedList<IncomeDetail> getLastIncomeDetailList(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId){
 		return ctx.getDslContext()
 				.select(INCOME.ISSUE_TIME, INCOME_DETAIL.PRICE, INCOME_DETAIL.ID, INCOME_DETAIL.DISCOUNT_EXPR
 						,INCOME_DETAIL.QUANTITY)
 				.from(INCOME).join(INCOME_DETAIL).on(INCOME.ID.equal(INCOME_DETAIL.INCOME))
 				.where(INCOME_DETAIL.ITEM.eq(item.getId()))
+				.and(INCOME.WORKPLACE.eq(workplaceId)).and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
 				.and(INCOME.ISSUE_TIME.greaterOrEqual(AonDateUtils.toSql(startDate)))
-				.orderBy(INCOME.ISSUE_TIME.desc())
+				.and(INCOME_DETAIL.ID.notIn(ctx.getDslContext().select(INVOICE_DETAIL.SOURCE_ID)
+						.from(INVOICE_DETAIL)															
+						.where(INVOICE_DETAIL.SOURCE.eq((byte)4))
+						.and(INVOICE_DETAIL.WORKPLACE.eq(workplaceId))
+						.and(INVOICE_DETAIL.WAREHOUSE.isNull())))
+				.orderBy(INCOME.ISSUE_TIME.desc()
+						,INCOME_DETAIL.ID.desc())
+				.fetch().stream().map(new IncomeDetailFiller())
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<IncomeDetail> getIncomeDetailList(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId){
+		return ctx.getDslContext()
+				.select(INCOME.ISSUE_TIME, INCOME_DETAIL.PRICE, INCOME_DETAIL.ID, INCOME_DETAIL.DISCOUNT_EXPR
+						,INCOME_DETAIL.QUANTITY)
+				.from(INCOME).join(INCOME_DETAIL).on(INCOME.ID.equal(INCOME_DETAIL.INCOME))
+				.where(INCOME_DETAIL.ITEM.eq(item.getId()))
+				.and(INCOME.WORKPLACE.eq(workplaceId)).and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
+				.and(INCOME_DETAIL.ID.notIn(ctx.getDslContext().select(INVOICE_DETAIL.SOURCE_ID)
+															.from(INVOICE_DETAIL)															
+															.where(INVOICE_DETAIL.SOURCE.eq((byte)4))
+															.and(INVOICE_DETAIL.WORKPLACE.eq(workplaceId))
+															.and(INVOICE_DETAIL.WAREHOUSE.isNull())))
+				.orderBy(INCOME.ISSUE_TIME.desc()
+						,INCOME_DETAIL.ID.desc())
 				.fetch().stream().map(new IncomeDetailFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
 	}

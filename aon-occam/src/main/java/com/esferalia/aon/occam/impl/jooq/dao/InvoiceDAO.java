@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
@@ -248,26 +249,71 @@ public class InvoiceDAO {
 		
 	}
 	
-	public static InvoiceDetail getLastInvoiceDetail(AONContext ctx, Item item){
+	public static InvoiceDetail getLastInvoiceDetail(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId){
 		return ctx.getDslContext()
 				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
 						INVOICE_DETAIL.QUANTITY)
 				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
 				.where(INVOICE_DETAIL.ITEM.eq(item.getId()))
 				.and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
+				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
+				.and(INVOICE_DETAIL.WORKPLACE.eq(workplaceId))
 				.orderBy(INVOICE.ISSUE_DATE.desc())
 				.limit(1).fetch().stream().map(new InvoiceDetailFiller())
 				.collect(Collectors.toCollection(LinkedList::new)).getFirst();
 	}
 	
-	public static LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, Item item, Date startDate) {
+	public static LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId) {
 		return ctx.getDslContext()
 				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
 						INVOICE_DETAIL.QUANTITY)
 				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
 				.where(INVOICE_DETAIL.ITEM.eq(item.getId())).and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
+				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
+				.and(INVOICE_DETAIL.WORKPLACE.eq(workplaceId))
 				.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toSql(startDate)))
-				.orderBy(INVOICE.ISSUE_DATE.desc())
+				
+				.union(ctx.getDslContext()
+						.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
+								INVOICE_DETAIL.QUANTITY)
+						.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
+							.join(INCOME_DETAIL).on(INCOME_DETAIL.ID.eq(INVOICE_DETAIL.SOURCE_ID))
+						.where(INVOICE_DETAIL.SOURCE.eq((byte) 4))
+						.and(INVOICE_DETAIL.ITEM.eq(item.getId()))
+						.and(INVOICE_DETAIL.WORKPLACE.eq(workplaceId))
+						.and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
+						.and(INVOICE_DETAIL.WAREHOUSE.isNull())
+						.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toSql(startDate))))
+				
+				.orderBy(INVOICE.ISSUE_DATE.desc()
+						,INVOICE_DETAIL.ID.desc())
+				.fetch().stream().map(new InvoiceDetailFiller())
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<InvoiceDetail> getInvoiceDetailList(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId) {
+		return ctx.getDslContext()
+				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
+						INVOICE_DETAIL.QUANTITY)
+				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
+				.where(INVOICE_DETAIL.ITEM.eq(item.getId())).and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
+				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
+				.and(INVOICE_DETAIL.WORKPLACE.eq(workplaceId))
+				
+				.union(ctx.getDslContext()
+						.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
+								INVOICE_DETAIL.QUANTITY)
+						.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
+							.join(INCOME_DETAIL).on(INCOME_DETAIL.ID.eq(INVOICE_DETAIL.SOURCE_ID))
+						.where(INVOICE_DETAIL.SOURCE.eq((byte) 4))
+						.and(INVOICE_DETAIL.ITEM.eq(item.getId()))
+						.and(INVOICE_DETAIL.WORKPLACE.eq(workplaceId))
+						.and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
+						.and(INVOICE_DETAIL.WAREHOUSE.isNull()))
+				
+				
+				.orderBy(INVOICE.ISSUE_DATE.desc()
+						,INVOICE_DETAIL.ID.desc())
 				.fetch().stream().map(new InvoiceDetailFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
 	}

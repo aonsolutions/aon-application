@@ -16,8 +16,9 @@ public interface IFinance {
 	// 	***********************************************
 	Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx,InvoiceFilter filter);
 
-	InvoiceDetail getLastInvoiceDetail(AONContext ctx, Item item);
+	InvoiceDetail getLastInvoiceDetail(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId);
 	
-	LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, Item item, Date startDate);
+	LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId);
 
+	LinkedList<InvoiceDetail> getInvoiceDetailList(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId);
 }

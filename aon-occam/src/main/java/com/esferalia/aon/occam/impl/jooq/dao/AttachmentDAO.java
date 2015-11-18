@@ -13,7 +13,10 @@ import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.jooq.Condition;
 import org.jooq.Record7;
@@ -22,14 +25,44 @@ import org.jooq.Result;
 
 import com.esferalia.aon.jooq.tables.records.RattachRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.AttachFilter;
+import com.esferalia.aon.occam.api.model.AttachProperties;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
 
-
 public class AttachmentDAO {
-
+	private static final RattachPropertiesDAO RATTACH_PROPERTIES = new RattachPropertiesDAO();
+	
+	private static class RattachPropertiesDAO implements AttachProperties {
+		private Condition[] getConditions(AttachFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH.DOMAIN);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(RATTACH.DESCRIPTION);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(RATTACH.TYPE);}
+		@Override public Property<Date> getAttachDateProperty() {return new FilterDAO.PropertyDAO<Date>(RATTACH.ATTACH_DATE);}
+		@Override public Property<Integer> getCategoryProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH.CATEGORY);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(RATTACH.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(RATTACH.CREATION_USER);}
+		@Override public Property<byte[]> getDataProperty() {return new FilterDAO.PropertyDAO<byte[]>(RATTACH.DATA);}
+		@Override public Property<String> getDparentIdProperty() {return new FilterDAO.PropertyDAO<String>(RATTACH.DPARENT_ID);}
+		@Override public Property<String> getDriveIdProperty() {return new FilterDAO.PropertyDAO<String>(RATTACH.DRIVE_ID);}
+		@Override public Property<Byte> getMimeTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(RATTACH.MIMETYPE);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(RATTACH.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(RATTACH.MODIFICATION_USER);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH.REGISTRY);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH.SCOPE);}
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(RATTACH.SECURITY_LEVEL);}
+	}
+	
 	//-------------------- GETS 
 	
 	public static Attach getRattach(AONContext ctx, Condition condition){	
@@ -43,6 +76,7 @@ public class AttachmentDAO {
 	
 		Attach rattach = new Attach();
 		if(record != null){
+			
 			if(record.value1() != null) rattach.setData(record.value1());
 			if(record.value2() != null) rattach.setMimeType(MimeType.values()[record.value2()]);
 			if(record.value3() != null) rattach.setType(record.value3());
@@ -53,6 +87,13 @@ public class AttachmentDAO {
 			if(record.value8() != null) rattach.setConfidential(record.value8().equals(1)?true:false);
 		}
 		return rattach;
+	}
+	
+	public static Attach getRattach(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+				.select().from(RATTACH).where(RATTACH_PROPERTIES.getConditions(filter))
+				.limit(1).fetchInto(RATTACH).stream().map(new FullRattachFiller())
+				.collect(Collectors.toCollection(LinkedList::new)).getFirst();
 	}
 	
 	public static List<Attach> getRattachList(AONContext ctx, Condition condition){	
@@ -430,4 +471,29 @@ public class AttachmentDAO {
 		ctx.getDslContext().delete(SEPE_BATCH_ATTACH).where(SEPE_BATCH_ATTACH.ID.eq(attachId)).execute();
 	}
 	
+	private static class FullRattachFiller implements Function<RattachRecord, Attach> {
+		
+		@Override
+		public Attach apply(RattachRecord r) {
+			return new Attach().setAttachModule(r.getRegistry())
+							.setAttachType(AttachType.REGISTRY)
+							.setCategory(r.getCategory())
+							.setConfidential(r.getSecurityLevel().equals(1))
+							.setCreationDate(r.getCreationDate())
+							.setCreationUser(r.getCreationUser())
+							.setData(r.getData())
+							.setDate(r.getAttachDate())
+							.setDescription(r.getDescription())
+							.setDomain(new Domain().setId(r.getDomain()))
+							.setDparentId(r.getDparentId())
+							.setDriveId(r.getDriveId())
+							.setId(r.getId())
+							.setMimeType(MimeType.values()[r.getMimetype()])
+							.setModificationDate(r.getModificationDate())
+							.setModificationUser(r.getModificationUser())
+							.setScope(r.getScope())
+							.setType(RegistryAttachmentType.values()[r.getType()].value());			
+		}
+
+	}
 }

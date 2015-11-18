@@ -6,6 +6,7 @@ import org.jooq.Condition;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IAttachment;
+import com.esferalia.aon.occam.api.model.AttachFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 
@@ -15,6 +16,12 @@ public class AttachmentImpl implements IAttachment{
 	public Attach getRattach(AONContext ctx, Condition condition) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> AttachmentDAO.getRattach(ctx, condition));
+	}
+	
+	@Override
+	public Attach getRattach(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getRattach(ctx, filter));
 	}
 	
 	@Override

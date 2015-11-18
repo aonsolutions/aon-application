@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.AttachFilter;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.BonusFilter;
 import com.esferalia.aon.occam.api.model.Company;
@@ -1473,11 +1474,12 @@ public class AON {
 	}
 	
 	public static InvoiceDetail getLastInvoiceDetail(String domainName,
-			Integer domainId, String user, Item item){
+			Integer domainId, String user, Item item, Integer workplaceId,
+			Integer warehouseId){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getFinance().getLastInvoiceDetail(ctx, item);
+			return getFinance().getLastInvoiceDetail(ctx, item, workplaceId, warehouseId);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1485,7 +1487,8 @@ public class AON {
 	}
 	
 	public static LinkedList<InvoiceDetail> getLastInvoiceDetailList(String domainName,
-			Integer domainId, String user, Item item, String months){
+			Integer domainId, String user, Item item, String months, Integer workplaceId,
+			Integer warehouseId){
 		Calendar calendar = Calendar.getInstance();	
 		Integer m = Integer.parseInt(months);
 		calendar.add(Calendar.MONTH, -m);
@@ -1493,7 +1496,19 @@ public class AON {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getFinance().getLastInvoiceDetailList(ctx, item, calendar.getTime());
+			return getFinance().getLastInvoiceDetailList(ctx, item, calendar.getTime(), workplaceId, warehouseId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<InvoiceDetail> getInvoiceDetailList(String domainName,
+			Integer domainId, String user, Item item, Integer workplaceId, Integer warehouseId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFinance().getInvoiceDetailList(ctx, item, workplaceId, warehouseId);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1629,6 +1644,29 @@ public class AON {
 		}
 	}
 	
+	public static Attach getAttach(String domainName, Integer domainId, String login, AttachFilter filter, AttachType attachType) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			
+			Attach attach = new Attach();
+			
+			if(attachType.equals(AttachType.REGISTRY)) attach = getAttachment().getRattach(ctx, filter);
+			else if(attachType.equals(AttachType.CONTRACT)) attach = null;
+			else if(attachType.equals(AttachType.INVOICE)) attach = null;
+			else if(attachType.equals(AttachType.ITEM)) attach = null;
+			else if(attachType.equals(AttachType.OFFER)) attach = null;
+			else if(attachType.equals(AttachType.PAYROLL)) attach = null;
+			else if(attachType.equals(AttachType.PROJECT)) attach = null;
+			else if(attachType.equals(AttachType.SEPE)) attach = null;
+			
+			return attach;		
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static List<Attach> getAttachList(String domainName, Integer domainId, Condition condition, AttachType attachType) {
 		AONContext ctx = null;
 		try {
@@ -1738,11 +1776,12 @@ public class AON {
 	// ********************************************
 
 	public static IncomeDetail getLastIncomeDetail(String domainName,
-			Integer domainId, String user, Item item){
+			Integer domainId, String user, Item item, Integer workplaceId,
+			Integer warehouseId){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getWarehouse().getLastIncomeDetail(ctx, item);
+			return getWarehouse().getLastIncomeDetail(ctx, item, workplaceId, warehouseId);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1750,14 +1789,28 @@ public class AON {
 	}
 	
 	public static LinkedList<IncomeDetail> getLastIncomeDetailList(String domainName,
-			Integer domainId, String user, Item item, String months){
+			Integer domainId, String user, Item item, String months, Integer workplaceId,
+			Integer warehouseId){
 		Calendar calendar = Calendar.getInstance();
 		Integer m = Integer.parseInt(months);
 		calendar.add(Calendar.MONTH, -m);
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getWarehouse().getLastIncomeDetailList(ctx, item, calendar.getTime());
+			return getWarehouse().getLastIncomeDetailList(ctx, item, calendar.getTime(),
+					workplaceId, warehouseId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<IncomeDetail> getIncomeDetailList(String domainName,
+			Integer domainId, String user, Item item, Integer workplaceId, Integer warehouseId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getWarehouse().getIncomeDetailList(ctx, item, workplaceId, warehouseId);
 		} finally {
 			if (ctx != null)
 				ctx.close();

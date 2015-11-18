@@ -19,12 +19,18 @@ public class FinanceImpl implements IFinance {
 	}
 
 	@Override
-	public InvoiceDetail getLastInvoiceDetail(AONContext ctx, Item item) {
-		return InvoiceDAO.getLastInvoiceDetail(ctx, item);
+	public InvoiceDetail getLastInvoiceDetail(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId) {
+		return InvoiceDAO.getLastInvoiceDetail(ctx, item, workplaceId, warehouseId);
 	}
 	
 	@Override
-	public LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, Item item, Date startDate) {
-		return InvoiceDAO.getLastInvoiceDetailList(ctx, item, startDate);
+	public LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId) {
+		return InvoiceDAO.getLastInvoiceDetailList(ctx, item, startDate, workplaceId, warehouseId);
+	}
+
+	@Override
+	public LinkedList<InvoiceDetail> getInvoiceDetailList(AONContext ctx, Item item, Integer workplaceId,
+			Integer warehouseId) {
+		return InvoiceDAO.getInvoiceDetailList(ctx, item, workplaceId, warehouseId);
 	}
 }

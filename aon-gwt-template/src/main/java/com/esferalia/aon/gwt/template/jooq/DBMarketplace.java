@@ -151,8 +151,10 @@ public class DBMarketplace {
 	}
 	
 	public static void deleteTemplate(Domain domain, User user, String description){
-		Condition condition = RATTACH.DESCRIPTION.eq(description).and(RATTACH.TYPE.eq((byte) RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.ordinal()));
-		Attach attach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), condition, AttachType.REGISTRY);
+		Attach attach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(),
+				filter -> filter.getDescriptionProperty().eq(description)
+				.and(filter.getTypeProperty().eq(((byte) RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.ordinal())))
+				, AttachType.REGISTRY);		
 		AON.delete(domain.getName(), domain.getId(), user.getLogin(), attach);
 	}
 }

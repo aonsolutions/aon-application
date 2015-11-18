@@ -14,9 +14,11 @@ public interface IWarehouse {
 	// 	*********************************** INCOME ***
 	// 	***********************************************
 
-	IncomeDetail getLastIncomeDetail(AONContext ctx, Item item);
+	IncomeDetail getLastIncomeDetail(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId);
 	
-	LinkedList<IncomeDetail> getLastIncomeDetailList(AONContext ctx, Item item, Date startDate);
+	LinkedList<IncomeDetail> getLastIncomeDetailList(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId);
+	
+	LinkedList<IncomeDetail> getIncomeDetailList(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId);
 	
 	LinkedList<InventoryDetail> getInventoryDetailList(AONContext ctx, Integer inventoryId);
 }

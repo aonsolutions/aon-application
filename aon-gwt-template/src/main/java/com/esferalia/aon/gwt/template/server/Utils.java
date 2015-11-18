@@ -395,13 +395,13 @@ public class Utils {
 		
 	}
 	
-	public static Double getValCost(AONContext ctx, Double quantity, Item item, String login){
+	public static Double getValCost(AONContext ctx, Double quantity, Item item, String login, Integer workplaceId, Integer warehouseId){
 		ApplicationParameter ap = AppParamDAO.fetchOne(ctx, AppParam.AON_PRODUCT_VALUATION_METHOD);
 		switch (ap.getValue()) {
 			case "0": return quantity != 0 ? item.getPurchasePrice() : 0.0;
-			case "1": return InventoryController.getLastPurchasePrice(item, quantity, login);
-			case "2": return InventoryController.getAveragePurchasePrice(item, quantity, login);
-			case "3": return InventoryController.getFifoPrice(item, quantity, login);	
+			case "1": return InventoryController.getLastPurchasePrice(item, quantity, login, workplaceId, warehouseId);
+			case "2": return InventoryController.getAveragePurchasePrice(item, quantity, login, workplaceId, warehouseId);
+			case "3": return InventoryController.getFifoPrice(item, quantity, login, workplaceId, warehouseId);	
 			default : return quantity != 0 ? item.getPurchasePrice() : 0.0;
 		}
 	}

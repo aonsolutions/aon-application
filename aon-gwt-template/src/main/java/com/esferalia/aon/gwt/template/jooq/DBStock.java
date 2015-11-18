@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.template.jooq;
 
 import static com.esferalia.aon.jooq.tables.CatalogueItem.CATALOGUE_ITEM;
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
+import static com.esferalia.aon.jooq.tables.Inventory.INVENTORY;
 import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
@@ -143,7 +144,14 @@ public class DBStock {
 						product.setInventoriable(data.get(0).value5() != 0);
 						item.setProduct(product);
 						item.setDomain(domainId);
-						Double cost = Utils.getValCost(sctx, s.getQuantity(), item, login);
+						
+						Record2<Integer,Integer> data3 = sctx.getDslContext().select(WAREHOUSE.ID, WAREHOUSE.WORKPLACE)
+								.from(INVENTORY).join(WAREHOUSE).on(WAREHOUSE.ID.eq(INVENTORY.WAREHOUSE))
+								.where(INVENTORY.ID.eq(inventoryId))
+								.limit(1).fetchOne();
+						Integer warehouseId = data3.getValue(WAREHOUSE.ID);
+						Integer workplaceId = data3.getValue(WAREHOUSE.WORKPLACE); 
+						Double cost = Utils.getValCost(sctx, s.getQuantity(), item, login, workplaceId, warehouseId);
 						if(data2.isNotEmpty()){
 							itemIds = itemIds + ","+itemId;
 							inventoryquery = inventoryquery + " when item = " + itemId + " then " + s.getQuantity();

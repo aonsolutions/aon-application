@@ -139,7 +139,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					}
 					else if(FeeUtils.feeCheck(dialog,flex_table) || StockUtils.stockCheck(dialog,flex_table) || ProductUtils.productCheck(dialog,flex_table) 
 							|| ConsumptionUtils.consumptionCheck(dialog, flex_table)|| InventoryUtils.inventoryCheck(dialog, flex_table) 
-							|| dialog.getType().equals("delete") || dialog.getType().contains("import") || dialog.getType().contains("export")){
+							|| dialog.getType().equals("delete") ||  dialog.getType().equals("deleteEcommerce") || dialog.getType().contains("import") 
+							|| dialog.getType().contains("export")){
 						onAccept();
 					}
 					else {

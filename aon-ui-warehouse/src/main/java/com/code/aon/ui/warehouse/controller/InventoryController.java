@@ -157,16 +157,8 @@ public class InventoryController extends BasicController implements IAuditableCo
 				inventoryDetail.setItem(item);
 				inventoryDetail.setRealQuantity(total);
 				inventoryDetail.setActualQuantity(total);
-				
-				ApplicationParameter ap = AppParamUtil.getParameter(AppParam.AON_PRODUCT_VALUATION_METHOD);
-				switch (ap.getValue()) {
-				case "0": inventoryDetail.setCost(total != 0 ? item.getPurchasePrice() : 0.0);break;
-				case "1": inventoryDetail.setCost(getLastPurchasePrice(item, total, AonUtil.getRemoteUser()));break;
-				case "2": inventoryDetail.setCost(getAveragePurchasePrice(item, total, AonUtil.getRemoteUser()));break;
-				case "3": inventoryDetail.setCost(getFifoPrice(item, total, AonUtil.getRemoteUser()));break;
-				default: break;
-				}
-				
+				inventoryDetail.setCost(getCost(inventoryDetail, inventory.getWarehouse().getWorkPlace().getId()
+						, inventory.getWarehouse().getId()));
 				inventoryDetail = (InventoryDetail) inventoryDetailBean.insert(inventoryDetail);
 			}
 			HibernateUtil.commitTransaction(sessionName);
@@ -269,7 +261,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 				AON.getInventoryDetailList(domainName, domainId, user, inventory.getId());
 		for(com.esferalia.aon.occam.api.model.warehouse.InventoryDetail id : list){
 			InventoryDetail inventoryDetail = OccamClassesTransform.getInventoryDetail(id);
-			Double cost =  getCost(inventoryDetail);
+			Double cost =  getCost(inventoryDetail, inventory.getWarehouse().getWorkPlace().getId(), inventory.getWarehouse().getId());
 			inventoryDetail.setCost(cost);
 			inventoryDetail.setInventory(inventory);
 			try {
@@ -302,19 +294,19 @@ public class InventoryController extends BasicController implements IAuditableCo
 		}
 	}
 	
-	public static Double getCost(InventoryDetail inventoryDetail){
+	public static Double getCost(InventoryDetail inventoryDetail, Integer workplaceId, Integer warehouseId){
 		ApplicationParameter ap = AppParamUtil.getParameter(AppParam.AON_PRODUCT_VALUATION_METHOD);
 		switch (ap.getValue()) {
 			case "0": return inventoryDetail.getRealQuantity() != 0 ? inventoryDetail.getItem().getPurchasePrice() : 0.0;
-			case "1": return getLastPurchasePrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser());
-			case "2": return getAveragePurchasePrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser());
-			case "3": return getFifoPrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser());	
+			case "1": return getLastPurchasePrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser(), workplaceId,warehouseId);
+			case "2": return getAveragePurchasePrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser(), workplaceId,warehouseId);
+			case "3": return getFifoPrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser(), workplaceId,warehouseId);	
 			default : return inventoryDetail.getItem().getPurchasePrice(); 
 		}
 
 	}
 	
-	public static Double getLastPurchasePrice(Item item, Double quantity, String user){
+	public static Double getLastPurchasePrice(Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId){
 		if(quantity == 0) return 0.0;
 		if(item.getProduct().isInventoriable() && item.getProduct().isManufactured()) 
 			return item.getPurchasePrice();
@@ -322,8 +314,8 @@ public class InventoryController extends BasicController implements IAuditableCo
 		String domainName = AonUtil.getDomainName();
 
 		// COMPRAS (Albaranes)
-		IncomeDetail incomeDetail = AON.getLastIncomeDetail(domainName, item.getDomain(), user, OccamClassesTransform.getItem(item));
-		
+		IncomeDetail incomeDetail = AON.getLastIncomeDetail(domainName, item.getDomain(), user, OccamClassesTransform.getItem(item), workplaceId, warehouseId);
+	
 		Double price1 = 0.0;
 		Date date1 = new Date();
 		if(incomeDetail.getId() != null){
@@ -332,7 +324,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 		}
 			
 		// COMPRAS (Facturas)
-		InvoiceDetail invoiceDetail = AON.getLastInvoiceDetail(domainName, item.getDomain(), user, OccamClassesTransform.getItem(item));
+		InvoiceDetail invoiceDetail = AON.getLastInvoiceDetail(domainName, item.getDomain(), user, OccamClassesTransform.getItem(item), workplaceId, warehouseId);
 		Double price2 = 0.0;
 		Date date2 = new Date();
 		if(invoiceDetail.getId() != null){
@@ -348,7 +340,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 		else return date1.compareTo(date2) < 0 ? price1 : price2;
 	}
 	
-	public static Double getAveragePurchasePrice(Item item, Double quantity, String user){
+	public static Double getAveragePurchasePrice(Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId){
 		if(quantity == 0) return 0.0;
 		if(item.getProduct().isInventoriable() && item.getProduct().isManufactured()) 
 			return item.getPurchasePrice();
@@ -358,30 +350,29 @@ public class InventoryController extends BasicController implements IAuditableCo
 		
 		ApplicationParameter ap = AppParamUtil.getParameter(AppParam.AON_PRODUCT_AVERAGE_MONTHS);
 
-		LinkedList<InvoiceDetail> invoiceList = AON.getLastInvoiceDetailList(domainName, domainId, user, OccamClassesTransform.getItem(item), ap.getValue());
-		LinkedList<IncomeDetail> incomeList = AON.getLastIncomeDetailList(domainName, domainId, user, OccamClassesTransform.getItem(item), ap.getValue());
+		LinkedList<InvoiceDetail> invoiceList = AON.getLastInvoiceDetailList(domainName, domainId, user, OccamClassesTransform.getItem(item), ap.getValue(), workplaceId, warehouseId);
+		LinkedList<IncomeDetail> incomeList = AON.getLastIncomeDetailList(domainName, domainId, user, OccamClassesTransform.getItem(item), ap.getValue(), workplaceId, warehouseId);
 		
-		Double invoiceSum = invoiceList.stream().mapToDouble(x -> x.getPrice() * (1 -(Double.parseDouble(x.getDiscountExpression())/100.0)) * x.getQuantity()).sum();
-		Double incomeSum = incomeList.stream().mapToDouble(x -> x.getPrice() * (1 -(Double.parseDouble(x.getDiscountExpression())/100.0)) * x.getQuantity()).sum();
+		Double invoiceSum = invoiceList.stream().mapToDouble(x -> x.getPrice() * (1 -(Double.parseDouble(x.getDiscountExpression())/100.0)) * Math.abs(x.getQuantity())).sum();
+		Double incomeSum = incomeList.stream().mapToDouble(x -> x.getPrice() * (1 -(Double.parseDouble(x.getDiscountExpression())/100.0)) * Math.abs(x.getQuantity())).sum();
 		Double sum = invoiceSum + incomeSum;
-		Double invoiceQuantity = invoiceList.stream().mapToDouble(x -> x.getQuantity()).sum();
-		Double incomeQuantity = incomeList.stream().mapToDouble(x -> x.getQuantity()).sum();
+		Double invoiceQuantity = invoiceList.stream().mapToDouble(x -> Math.abs(x.getQuantity())).sum();
+		Double incomeQuantity = incomeList.stream().mapToDouble(x -> Math.abs(x.getQuantity())).sum();
 		Double totalQuantity = invoiceQuantity + incomeQuantity;
 		
-		if(quantity == 0) return item.getPurchasePrice();
+		if(totalQuantity == 0) return item.getPurchasePrice();
 		return  sum / totalQuantity;
 	}
 
-	public static Double getFifoPrice(Item item, Double quantity, String user){
+	public static Double getFifoPrice(Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId){
 		if(quantity == 0) return 0.0; 
 		if((item.getProduct().isInventoriable() && item.getProduct().isManufactured())) 
 			return item.getPurchasePrice();
 		
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = item.getDomain();
-		
-		LinkedList<InvoiceDetail> invoiceList = AON.getLastInvoiceDetailList(domainName, domainId, user, OccamClassesTransform.getItem(item), "48");
-		LinkedList<IncomeDetail> incomeList = AON.getLastIncomeDetailList(domainName, domainId, user, OccamClassesTransform.getItem(item), "48");
+		LinkedList<InvoiceDetail> invoiceList = AON.getInvoiceDetailList(domainName, domainId, user, OccamClassesTransform.getItem(item), workplaceId, warehouseId);
+		LinkedList<IncomeDetail> incomeList = AON.getIncomeDetailList(domainName, domainId, user, OccamClassesTransform.getItem(item), workplaceId, warehouseId);
 		
 		LinkedList<Fifo> fifoList = new LinkedList<InventoryController.Fifo>();
 

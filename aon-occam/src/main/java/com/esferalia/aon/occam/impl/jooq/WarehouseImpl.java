@@ -14,13 +14,18 @@ import com.esferalia.aon.occam.impl.jooq.dao.InventoryDAO;
 public class WarehouseImpl implements IWarehouse {
 
 	@Override
-	public IncomeDetail getLastIncomeDetail(AONContext ctx, Item item) {
-		return IncomeDAO.getLastIncomeDetail(ctx, item);
+	public IncomeDetail getLastIncomeDetail(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId) {
+		return IncomeDAO.getLastIncomeDetail(ctx, item, workplaceId, warehouseId);
 	}
 	
 	@Override
-	public LinkedList<IncomeDetail> getLastIncomeDetailList(AONContext ctx, Item item, Date startDate) {
-		return IncomeDAO.getLastIncomeDetailList(ctx, item, startDate);
+	public LinkedList<IncomeDetail> getLastIncomeDetailList(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId) {
+		return IncomeDAO.getLastIncomeDetailList(ctx, item, startDate, workplaceId, warehouseId);
+	}
+	
+	@Override
+	public LinkedList<IncomeDetail> getIncomeDetailList(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId) {
+		return IncomeDAO.getIncomeDetailList(ctx, item, workplaceId, warehouseId);
 	}
 
 	@Override
