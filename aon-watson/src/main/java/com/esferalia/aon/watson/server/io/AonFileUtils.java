@@ -184,7 +184,7 @@ public class AonFileUtils {
      * @throws java.io.UnsupportedEncodingException if the encoding is not supported by the VM
      * @since Commons IO 1.1
      */
-    public static void writeLines(File file, String encoding, Collection lines) throws IOException {
+    public static void writeLines(File file, String encoding, Collection<?> lines) throws IOException {
         writeLines(file, encoding, lines, null);
     }
 
@@ -198,7 +198,7 @@ public class AonFileUtils {
      * @throws IOException in case of an I/O error
      * @since Commons IO 1.3
      */
-    public static void writeLines(File file, Collection lines) throws IOException {
+    public static void writeLines(File file, Collection<?> lines) throws IOException {
         writeLines(file, null, lines, null);
     }
 
@@ -218,7 +218,7 @@ public class AonFileUtils {
      * @throws java.io.UnsupportedEncodingException if the encoding is not supported by the VM
      * @since Commons IO 1.1
      */
-    public static void writeLines(File file, String encoding, Collection lines, String lineEnding) throws IOException {
+    public static void writeLines(File file, String encoding, Collection<?> lines, String lineEnding) throws IOException {
         OutputStream out = null;
         try {
             out = openOutputStream(file);
@@ -239,7 +239,7 @@ public class AonFileUtils {
      * @throws IOException in case of an I/O error
      * @since Commons IO 1.3
      */
-    public static void writeLines(File file, Collection lines, String lineEnding) throws IOException {
+    public static void writeLines(File file, Collection<?> lines, String lineEnding) throws IOException {
         writeLines(file, null, lines, lineEnding);
     }
     
@@ -273,4 +273,91 @@ public class AonFileUtils {
 		md5 = AonDigestUtils.md5Hex(AonArrayUtils.nullToEmpty(data));
 		return md5;
 	}
+
+    /**
+     * Deletes a directory recursively. 
+     *
+     * @param directory  directory to delete
+     * @throws IOException in case deletion is unsuccessful
+     */
+    public static void deleteDirectory(File directory) throws IOException {
+        if (!directory.exists()) {
+            return;
+        }
+
+        cleanDirectory(directory);
+        if (!directory.delete()) {
+            String message =
+                "Unable to delete directory " + directory + ".";
+            throw new IOException(message);
+        }
+    }
+
+    /**
+     * Cleans a directory without deleting it.
+     *
+     * @param directory directory to clean
+     * @throws IOException in case cleaning is unsuccessful
+     */
+    public static void cleanDirectory(File directory) throws IOException {
+        if (!directory.exists()) {
+            String message = directory + " does not exist";
+            throw new IllegalArgumentException(message);
+        }
+
+        if (!directory.isDirectory()) {
+            String message = directory + " is not a directory";
+            throw new IllegalArgumentException(message);
+        }
+
+        File[] files = directory.listFiles();
+        if (files == null) {  // null if security restricted
+            throw new IOException("Failed to list contents of " + directory);
+        }
+
+        IOException exception = null;
+        for (int i = 0; i < files.length; i++) {
+            File file = files[i];
+            try {
+                forceDelete(file);
+            } catch (IOException ioe) {
+                exception = ioe;
+            }
+        }
+
+        if (null != exception) {
+            throw exception;
+        }
+    }
+
+    /**
+     * Deletes a file. If file is a directory, delete it and all sub-directories.
+     * <p>
+     * The difference between File.delete() and this method are:
+     * <ul>
+     * <li>A directory to be deleted does not have to be empty.</li>
+     * <li>You get exceptions when a file or directory cannot be deleted.
+     *      (java.io.File methods returns a boolean)</li>
+     * </ul>
+     *
+     * @param file  file or directory to delete, must not be <code>null</code>
+     * @throws NullPointerException if the directory is <code>null</code>
+     * @throws FileNotFoundException if the file was not found
+     * @throws IOException in case deletion is unsuccessful
+     */
+    public static void forceDelete(File file) throws IOException {
+        if (file.isDirectory()) {
+            deleteDirectory(file);
+        } else {
+            boolean filePresent = file.exists();
+            if (!file.delete()) {
+                if (!filePresent){
+                    throw new FileNotFoundException("File does not exist: " + file);
+                }
+                String message =
+                    "Unable to delete file: " + file;
+                throw new IOException(message);
+            }
+        }
+    }
 }
