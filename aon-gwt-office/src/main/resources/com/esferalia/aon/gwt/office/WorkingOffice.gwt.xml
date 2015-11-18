@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module rename-to='aon_gwt_payroll' >
+<module rename-to='aon_gwt_office' >
 
 	<inherits name='com.esferalia.aon.gwt.office.Office' />
 
