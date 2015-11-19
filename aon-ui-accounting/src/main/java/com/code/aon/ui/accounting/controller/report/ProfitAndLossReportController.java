@@ -417,11 +417,17 @@ public class ProfitAndLossReportController implements ICollectionProvider, Seria
 		AccountCollectionsController acc = (AccountCollectionsController) 
 				AonUtil.getRegisteredBean(IAccountConstants.ACCOUNT_COLLECTIONS_CONTROLLER_NAME);
 		List<SelectItem> cc = acc.getCostCenters();
+		List<String> selected = getParameters().getAccountCostCenters();
 		if (cc != null && cc.size() > 0) {
 			List<String> costCenters = new LinkedList<String>();
-			costCenters.add(AccountUtil.NO_COST_CENTER_ACCOUNT);
+			if (selected == null || !selected.contains(AccountUtil.NO_COST_CENTER_ACCOUNT)) {
+				costCenters.add(AccountUtil.NO_COST_CENTER_ACCOUNT);
+			}
 			for (SelectItem si : cc) {
-				costCenters.add( (String) si.getValue() );	
+				String value = (String) si.getValue();
+				if (selected == null || !selected.contains(value)) {
+					costCenters.add( value );
+				}
 			}
 			return costCenters;
 		}
