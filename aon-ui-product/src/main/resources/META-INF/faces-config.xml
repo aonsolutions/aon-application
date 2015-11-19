@@ -107,17 +107,18 @@
 		<managed-bean-class>com.code.aon.ui.product.event.ProductSearchListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
-		<managed-bean>
-		<managed-bean-name>productExport</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.product.controller.ProductExportGwtController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
-	
+
 	<managed-bean>
 		<managed-bean-name>productControllerListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.product.event.ProductControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>productExport</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.product.controller.ProductExportGwtController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
 	
 	<!-- ************ PRODUCT LOOKUP ************** -->
 	<managed-bean>

@@ -84,6 +84,14 @@
 			</aon:panelCollapsible>
 		</aon:if>
 						
+		<aon:if test="#{aonConfiguration.bean.customer.showAddInfo}">	
+			<aon:panelCollapsible expanded="false" label="#{bundle.aon_addInfo}">
+				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">
+					<ui:include src="/com/code/aon/ui/registry/facelet/raddinfo/searchContent.xhtml" />					
+				</aon:panelGrid>
+			</aon:panelCollapsible>
+		</aon:if>		
+				
 		<ui:include src="/com/code/aon/ui/common/facelet/auditable/searchContent.xhtml" />
 						
 	</aon:div>

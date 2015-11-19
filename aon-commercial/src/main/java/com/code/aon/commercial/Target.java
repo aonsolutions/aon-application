@@ -21,6 +21,7 @@ import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.ITariffable;
 import com.code.aon.registry.ITaxInfo;
+import com.code.aon.registry.RegistryAddInfo;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryItem;
 import com.code.aon.registry.RegistryProfile;
@@ -39,6 +40,7 @@ public class Target extends TargetDB implements IRegistry, ITaxInfo, IScopable, 
 	private Set<ProjectCommercial> projects = new HashSet<ProjectCommercial>();
 	private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
 	private Set<RegistryProfile> profiles = new HashSet<RegistryProfile>();
+	private Set<RegistryAddInfo> addInfos = new HashSet<RegistryAddInfo>();
 
 	public Target() {
     	setTransaction(InvoiceTransactionType.NATIONAL);
@@ -60,7 +62,6 @@ public class Target extends TargetDB implements IRegistry, ITaxInfo, IScopable, 
 	public Set<RegistryItem> getItems() {
 		return items;
 	}
-
 	public void setItems(Set<RegistryItem> items) {
 		this.items = items;
 	}
@@ -69,7 +70,6 @@ public class Target extends TargetDB implements IRegistry, ITaxInfo, IScopable, 
 	public Set<RegistrySeller> getSellers() {
 		return sellers;
 	}
-
 	public void setSellers(Set<RegistrySeller> sellers) {
 		this.sellers = sellers;
 	}
@@ -78,7 +78,6 @@ public class Target extends TargetDB implements IRegistry, ITaxInfo, IScopable, 
 	public Set<ProjectCommercial> getProjects() {
 		return projects;
 	}
-
 	public void setProjects(Set<ProjectCommercial> projects) {
 		this.projects = projects;
 	}
@@ -87,7 +86,6 @@ public class Target extends TargetDB implements IRegistry, ITaxInfo, IScopable, 
 	public Set<RegistryAttachment> getDocuments() {
 		return documents;
 	}
-	
 	public void setDocuments(Set<RegistryAttachment> documents) {
 		this.documents = documents;
 	}	
@@ -96,11 +94,18 @@ public class Target extends TargetDB implements IRegistry, ITaxInfo, IScopable, 
 	public Set<RegistryProfile> getProfiles() {
 		return profiles;
 	}
-
 	public void setProfiles(Set<RegistryProfile> profiles) {
 		this.profiles = profiles;
 	}
 	
+	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
+	public Set<RegistryAddInfo> getAddInfos() {
+		return addInfos;
+	}
+	public void setAddInfos(Set<RegistryAddInfo> addInfos) {
+		this.addInfos = addInfos;
+	}	
+
 	@Transient
 	public boolean isWithholdingFarmer() {
 		return false;

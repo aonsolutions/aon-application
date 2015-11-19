@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:outputText value="#{bundle.aon_date}" />
+	<aon:div>
+		<aon:outputLabel for="#{controller.pojoShortName}_addInfos_valueDate-From"
+			styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="#{controller.pojoShortName}_addInfos_valueDate-From"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+
+		<aon:outputLabel for="#{controller.pojoShortName}_addInfos_valueDate-To"
+			styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="#{controller.pojoShortName}_addInfos_valueDate-To"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+	</aon:div>					
+
+	<aon:outputText for="#{controller.pojoShortName}_addInfos_attribute"
+		value="#{bundle.aon_parameter}" />
+	<aon:inputText id="#{controller.pojoShortName}_addInfos_attribute"
+		valueChangeListener="#{controller.addExpression}" size="25" />
+
+	<aon:outputText for="#{controller.pojoShortName}_addInfos_value"
+		value="#{bundle.aon_value}" />
+	<aon:inputText id="#{controller.pojoShortName}_addInfos_value"
+		valueChangeListener="#{controller.addExpression}" size="25" />
+
+</ui:composition>

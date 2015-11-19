@@ -21,6 +21,7 @@ import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.ITariffable;
 import com.code.aon.registry.ITaxInfo;
+import com.code.aon.registry.RegistryAddInfo;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryItem;
 import com.code.aon.registry.RegistryProfile;
@@ -37,6 +38,7 @@ public class Customer extends CustomerDB implements IRegistry, ITaxInfo, IScopab
 	private Set<RegistryItem> items = new HashSet<RegistryItem>();
 	private Set<RegistrySeller> sellers = new HashSet<RegistrySeller>();
 	private Set<RegistryProfile> profiles = new HashSet<RegistryProfile>();    
+	private Set<RegistryAddInfo> addInfos = new HashSet<RegistryAddInfo>();    
 
     public Customer() {
     	setTransaction(InvoiceTransactionType.NATIONAL);
@@ -59,7 +61,6 @@ public class Customer extends CustomerDB implements IRegistry, ITaxInfo, IScopab
 	public Set<RegistryItem> getItems() {
 		return items;
 	}
-
 	public void setItems(Set<RegistryItem> items) {
 		this.items = items;
 	}
@@ -68,7 +69,6 @@ public class Customer extends CustomerDB implements IRegistry, ITaxInfo, IScopab
 	public Set<RegistrySeller> getSellers() {
 		return sellers;
 	}
-
 	public void setSellers(Set<RegistrySeller> sellers) {
 		this.sellers = sellers;
 	}
@@ -77,9 +77,16 @@ public class Customer extends CustomerDB implements IRegistry, ITaxInfo, IScopab
 	public Set<RegistryProfile> getProfiles() {
 		return profiles;
 	}
-
 	public void setProfiles(Set<RegistryProfile> profiles) {
 		this.profiles = profiles;
+	}	
+
+	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
+	public Set<RegistryAddInfo> getAddInfos() {
+		return addInfos;
+	}
+	public void setAddInfos(Set<RegistryAddInfo> addInfos) {
+		this.addInfos = addInfos;
 	}	
 
     @Transient

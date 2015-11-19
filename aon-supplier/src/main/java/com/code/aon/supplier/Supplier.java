@@ -11,15 +11,15 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Where;
 
-import com.code.aon.account.IAccount;
 import com.code.aon.AonVersion;
+import com.code.aon.account.IAccount;
 import com.code.aon.common.audit.IAuditable;
 import com.code.aon.config.IScopable;
-import com.code.aon.config.Tariff;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.ITariffable;
 import com.code.aon.registry.ITaxInfo;
+import com.code.aon.registry.RegistryAddInfo;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryItem;
 import com.code.aon.supplier.enumeration.SupplierStatus;
@@ -33,6 +33,7 @@ public class Supplier extends SupplierDB implements IRegistry, ITaxInfo, IScopab
 
 	private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
 	private Set<RegistryItem> items = new HashSet<RegistryItem>();
+	private Set<RegistryAddInfo> addInfos = new HashSet<RegistryAddInfo>();
 
 	public Supplier() {
     	setTransaction(InvoiceTransactionType.NATIONAL);
@@ -52,10 +53,17 @@ public class Supplier extends SupplierDB implements IRegistry, ITaxInfo, IScopab
 	public Set<RegistryItem> getItems() {
 		return items;
 	}
-
 	public void setItems(Set<RegistryItem> items) {
 		this.items = items;
 	}
+
+	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
+	public Set<RegistryAddInfo> getAddInfos() {
+		return addInfos;
+	}
+	public void setAddInfos(Set<RegistryAddInfo> addInfos) {
+		this.addInfos = addInfos;
+	}	
 
 	@Transient
 	public boolean isSurcharge() {

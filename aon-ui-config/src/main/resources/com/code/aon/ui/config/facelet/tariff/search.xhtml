@@ -17,25 +17,9 @@
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{tariff}" />
 				<ui:define name="searchContent">
-					
-					<aon:outputLabel for="Tariff_code"
-						value="#{bundle.aon_id}" />
-					<aon:inputText id="Tariff_code" size="32"
-						valueChangeListener="#{controller.addExpression}" />
-
-					<aon:outputLabel for="Tariff_name"
-						value="#{bundle.aon_description}" />
-					<aon:inputText id="Tariff_name" size="32"
-						valueChangeListener="#{controller.addExpression}" />
-					
-					<aon:outputLabel for="tariff_purchase"
-						value="#{bundle.aon_type}" />
-					<aon:selectOneRadio id="Tariff_purchase"
-						valueChangeListener="#{controller.addExpression}">
-						<f:selectItem itemLabel="#{bundle.aon_sales}" itemValue="#{false}" />
-						<f:selectItem itemLabel="#{bundle.aon_purchases}" itemValue="#{true}" />
-					</aon:selectOneRadio>
-
+					<ui:include src="/com/code/aon/ui/config/facelet/tariff/searchContent.xhtml">
+						<ui:param name="searchController" value="#{tariffSearch}" />
+					</ui:include>
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
