@@ -48,12 +48,15 @@
 					<aon:outputLabel for="AccountEntry_accountPeriod"
 						value="#{bundle.aon_financial_year}" />
 					<aon:div>
-						<aon:selectOneMenu id="AccountEntry_accountPeriod"
+						<aon:selectOneMenu id="AccountEntry_accountPeriod" 
 							value="#{salaryEntry.entry.period}">
 							<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
-							<a4j:support event="onchange" ajaxSingle="true"
+<!-- 							
+							<a4j:support event="onchange" 
 								actionListener="#{salaryEntry.onRefresh}" 
-								reRender="entryContainer,save"/>
+								reRender="entryContainer,save"
+								focus="date"/>
+ -->
 						</aon:selectOneMenu>
 
 						<aon:if test="#{aonRole.confidentiality}">
@@ -64,21 +67,23 @@
 								value="#{bundle.aon_confidential}" />
 						</aon:if>
 					</aon:div>
-					<aon:outputText value="&#160;" />
+					<aon:outputText value="&#160;CCC" />
 
 					<aon:outputLabel for="date" value="#{bundle.aon_date}" />
 					<aon:selectInputDate id="date" required="true"
-						value="#{salaryEntry.entry.date}"
+						value="#{salaryEntry.entry.date}" 
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}">
-						<a4j:support ajaxSingle="true" event="oninputchange"
+<!-- 							
+						<a4j:support event="oninputchange"
 							actionListener="#{salaryEntry.onRefresh}"
 							reRender="entryContainer,save"
-							/>
-						<a4j:support ajaxSingle="true" event="onchanged"
+							focus="Account_concept"/>
+						<a4j:support event="onchanged"
 							actionListener="#{salaryEntry.onRefresh}"
 							reRender="entryContainer,save"
-							/>
+							focus="Account_concept"/>
+ -->
 					</aon:selectInputDate>
 					<aon:outputText value="&#160;" />
 					
@@ -95,9 +100,10 @@
 						buttonDisabledStyle="display:none;"
 						buttonInactiveStyle="display:none;"
 						buttonStyle="display:none;">
-						<a4j:support event="onchange" ajaxSingle="true"
+						<a4j:support event="onchange" 
 							actionListener="#{salaryEntry.onRefresh}" 
-							reRender="entryContainer,save" />
+							reRender="entryContainer,save" 
+							focus="Account_gross_salary_monetary"/>
 					</rich:comboBox>
 					<aon:outputText value="&#160;" />
 
@@ -107,9 +113,10 @@
 						styleClass="aon-inputText aon-margin-right"
 						value="#{salaryEntry.entry.grossSalaryMonetary}" size="15"
 						>
-						<a4j:support event="onchange" ajaxSingle="true"
+						<a4j:support event="onchange" 
 							actionListener="#{salaryEntry.onRefresh}" 
-							reRender="entryContainer,save" />
+							reRender="entryContainer,save"
+							focus="Account_gross_salary_in_kind"/>
 					</aon:inputText>
 					<aon:div>
 						<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
@@ -138,9 +145,10 @@
 						styleClass="aon-inputText aon-margin-right"
 						value="#{salaryEntry.entry.grossSalaryInKind}" size="15"
 						>
-						<a4j:support event="onchange" ajaxSingle="true"
+						<a4j:support event="onchange" 
 							actionListener="#{salaryEntry.onRefresh}" 
-							reRender="entryContainer,save" />
+							reRender="entryContainer,save" 
+							focus="Account_Allowance"/>
 					</aon:inputText>
 					<aon:div>
 						<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
@@ -169,9 +177,10 @@
 						styleClass="aon-inputText aon-margin-right"
 						value="#{salaryEntry.entry.allowance}" size="15"
 						>
-						<a4j:support event="onchange" ajaxSingle="true"
+						<a4j:support event="onchange" 
 							actionListener="#{salaryEntry.onRefresh}" 
-							reRender="entryContainer,save" />
+							reRender="entryContainer,save"
+							focus="Account_Compensation"/>
 					</aon:inputText>
 					<aon:div>
 						<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
@@ -200,9 +209,10 @@
 						styleClass="aon-inputText aon-margin-right"
 						value="#{salaryEntry.entry.compensation}" size="15"
 						>
-						<a4j:support event="onchange" ajaxSingle="true"
+						<a4j:support event="onchange" 
 							actionListener="#{salaryEntry.onRefresh}" 
-							reRender="entryContainer,save" />
+							reRender="entryContainer,save"
+							focus="Account_retention"/>
 					</aon:inputText>
 					<aon:div>
 						<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
@@ -239,9 +249,10 @@
 						styleClass="aon-inputText aon-margin-right"
 						value="#{salaryEntry.entry.retention}" size="15"
 						>
-						<a4j:support event="onchange" ajaxSingle="true"
+						<a4j:support event="onchange" 
 							actionListener="#{salaryEntry.onRefresh}" 
-							reRender="entryContainer,save" />
+							reRender="entryContainer,save"
+							focus="Account_retention_in_kind"/>
 					</aon:inputText>
 					<aon:div>
 						<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
@@ -271,9 +282,10 @@
 						styleClass="aon-inputText aon-margin-right"
 						value="#{salaryEntry.entry.retentionInKind}" size="15"
 						>
-						<a4j:support event="onchange" ajaxSingle="true"
+						<a4j:support event="onchange" 
 							actionListener="#{salaryEntry.onRefresh}" 
-							reRender="entryContainer,save" />
+							reRender="entryContainer,save"
+							focus="Account_employee_social_insurance1"/>
 					</aon:inputText>
 					<aon:div>
 						<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
@@ -310,9 +322,10 @@
 							styleClass="aon-inputText aon-margin-right"
 							value="#{salaryEntry.entry.employeeSocialInsurance1}" size="10"
 							>
-							<a4j:support event="onchange" ajaxSingle="true"
+							<a4j:support event="onchange" 
 								actionListener="#{salaryEntry.onRefresh}" 
-								reRender="entryContainer,save" />
+								reRender="entryContainer,save"
+								focus="Account_employee_social_insurance2"/>
 						</aon:inputText>
 	
 						<aon:outputText value="+" style="font-size: 1.2em; font-weight: bold;" styleClass="aon-margin-right"/>	
@@ -320,9 +333,10 @@
 							styleClass="aon-inputText aon-margin-right"
 							value="#{salaryEntry.entry.employeeSocialInsurance2}" size="10"
 							>
-							<a4j:support event="onchange" ajaxSingle="true"
+							<a4j:support event="onchange" 
 								actionListener="#{salaryEntry.onRefresh}" 
-								reRender="entryContainer,save" />
+								reRender="entryContainer,save"
+								focus="Account_employee_social_insurance3"/>
 						</aon:inputText>
 
 						<aon:outputText value="+" style="font-size: 1.2em; font-weight: bold;" styleClass="aon-margin-right"/>	
@@ -330,9 +344,10 @@
 							styleClass="aon-inputText aon-margin-right"
 							value="#{salaryEntry.entry.employeeSocialInsurance3}" size="10"
 							>
-							<a4j:support event="onchange" ajaxSingle="true"
+							<a4j:support event="onchange" 
 								actionListener="#{salaryEntry.onRefresh}" 
-								reRender="entryContainer,save" />
+								reRender="entryContainer,save"
+								focus="Account_employee_social_insurance4"/>
 						</aon:inputText>
 
 						<aon:outputText value="+" style="font-size: 1.2em; font-weight: bold;" styleClass="aon-margin-right"/>	
@@ -340,9 +355,10 @@
 							styleClass="aon-inputText aon-margin-right"
 							value="#{salaryEntry.entry.employeeSocialInsurance4}" size="10"
 							>
-							<a4j:support event="onchange" ajaxSingle="true"
+							<a4j:support event="onchange" 
 								actionListener="#{salaryEntry.onRefresh}" 
-								reRender="entryContainer,save" />
+								reRender="entryContainer,save"
+								focus="Account_registryBank"/>
 						</aon:inputText>
 					</aon:div>
 							
@@ -379,10 +395,10 @@
 							value="#{salaryEntry.entry.registryBank}">
 							<f:selectItem itemLabel="#{bundle.accounting_pending_salary}" value="#{null}" />
 							<f:selectItems value="#{companyCollections.activeCompanyBanks}" />
-							<a4j:support event="onchange" ajaxSingle="true" 
+							<a4j:support event="onchange"  
 								reRender="entryContainer,save"
-								actionListener="#{salaryEntry.onChangeBank}" 
-								/>
+								actionListener="#{salaryEntry.onChangeBank}"
+								focus="Account_company_social_insurance"/>
 						</aon:selectOneMenu>
 					</aon:div>
 
@@ -391,7 +407,7 @@
 					<aon:inputText id="Account_company_social_insurance" required="true"
 						styleClass="aon-inputText aon-margin-right"
 						value="#{salaryEntry.entry.companySocialInsurance}" size="15">
-						<a4j:support event="onchange" ajaxSingle="true"
+						<a4j:support event="onchange" 
 							actionListener="#{salaryEntry.onRefresh}" 
 							reRender="entryContainer,save"/>
 					</aon:inputText>

@@ -248,8 +248,7 @@ public class SalaryEntryController implements Serializable {
 				this.navigationKey = "accountEntry_form";
 				IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 				AccountEntry entry = getAccountEntry();
-				entry = (AccountEntry) HibernateUtil.getSession(sessionName).merge(entry);
-				entry = (AccountEntry) entryBean.update(entry);
+				entry = (AccountEntry) entryBean.insert(entry);
 				List<AccountEntryDetail> details = getAccountEntryDetails(entry);
 				insertEntryDetails(details);
 				loadAccountEntryController(entry);
