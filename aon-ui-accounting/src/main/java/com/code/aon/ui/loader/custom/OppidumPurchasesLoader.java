@@ -19,10 +19,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.POIXMLDocument;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -42,51 +39,49 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.customer.Customer;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.loader.Loader;
 import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.loader.controller.AonLoaderController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
+public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactory {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(OppidumSalesLoader.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(OppidumPurchasesLoader.class.getName());
 	
 	private Workbook workbook;
 	private int rowOffset;
-	private final Pattern invoiceNumberPattern = Pattern.compile("(\\d{4})-\\d{1}-(\\d+)[-A-Za-z]");
+	private final Pattern invoiceNumberPattern = Pattern.compile("(\\d{4})(\\d+)");
 	private Matcher matcher = null;
 	private ArrayList<String> headers;
 	private Map<String, String> customerAccount = new HashMap<>();
 	
-	private final String CUSTOMER_DOCUMENT = "Nif_RazonSocial";
-	private final String CUSTOMER_NAME = "Nombre_RazonSocial";
-	private final String INVOICE_DOCUMENT = "Factura ML";
-	private final String INVOICE_DATE = "Fecha_Facturacion";
-	private final String INVOICE_VAT_PERCENT = "%_iva";
-	private final String INVOICE_VAT_BASE = "Base_Iva";
-	private final String INVOICE_VAT_AMOUNT = "Importe_Iva";
-	private final String INVOICE_IEE_BASE = "Importe_Iee";
-	private final String INVOICE_TOTAL = "Total Final";
+//	private final String SUPPLIER_DOCUMENT = "Nif_RazonSocial";
+	private final String SUPPLIER_NAME = "Nombre";
+	private final String INVOICE_DOCUMENT = "NumeroFactura";
+	private final String INVOICE_DATE = "FechaFactura";
+	private final String INVOICE_VAT_PERCENT = "PorcentIVA";
+	private final String INVOICE_VAT_BASE = "BaseImpIVA";
+	private final String INVOICE_VAT_AMOUNT = "ImporteIVA";
+	private final String INVOICE_TOTAL = "ImporteTotal";
 	
 	private final String[] SUPPORTED_COLUMNS = {
-			CUSTOMER_DOCUMENT,
-			CUSTOMER_NAME,
+//			CUSTOMER_DOCUMENT,
+			SUPPLIER_NAME,
 			INVOICE_DOCUMENT,
 			INVOICE_DATE,
 			INVOICE_VAT_PERCENT,
 			INVOICE_VAT_BASE,
 			INVOICE_VAT_AMOUNT,
-			INVOICE_IEE_BASE,
 			INVOICE_TOTAL
 	};
 	
@@ -94,22 +89,18 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 	public void load(InputStream file){
 		LogPanelController logPanel = LogPanelController.getInstance();
 		logPanel.info("Inicio de la carga de datos.");
-		logPanel.info("Fichero de ventas detectado.");
+		logPanel.info("Fichero de compras detectado.");
 		try {
-//	    	XSSFWorkbook workbook = new XSSFWorkbook(file);
 	    	Sheet sheet = workbook.getSheetAt(0);
-
-//	        int offset = prepareSheet(sheet);
 	        
 	        Iterator<Row> rowIterator = sheet.iterator();
 	        Row row = null;
 	        
-//	        for(int i=0; i<offset || i==0; i++){
 	        for(int i=0; i<rowOffset || i==0; i++){
 	        	row = rowIterator.next();
 	        }
 	        
-	        File defaultImportFile = File.createTempFile("oppidum-sales-data", ".tmp");
+	        File defaultImportFile = File.createTempFile("oppidum-purchase-data", ".tmp");
 	        PrintWriter writer = new PrintWriter(defaultImportFile);
 	        
 	        writer.print("1;FRACTB|");
@@ -127,10 +118,6 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 	        writer.print("iva1|");
 	        writer.print("cuotaIVA1|");
 	        writer.print("cuentaExplotacion|");
-	        writer.print("baseImponible2|");
-	        writer.print("iva2|");
-	        writer.print("cuotaIVA2|");
-	        writer.print("cuentaExplotacion2|");
 	        writer.print("totalFactura");
 	        writer.println();
 	        
@@ -140,15 +127,16 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
         	int lineCount=1;
         	while(rowIterator.hasNext()){
         		
-        		String customerDocument = row.getCell(headers.indexOf(CUSTOMER_DOCUMENT)).getStringCellValue();
-        		String customerName = row.getCell(headers.indexOf(CUSTOMER_NAME)).getStringCellValue();
-        		String account = obtainCustomerAccount(customerDocument, customerName);
+//        		String supplierDocument = row.getCell(headers.indexOf(SUPPLIER_DOCUMENT)).getStringCellValue();
+        		String supplierDocument = "";
+        		String supplierName = row.getCell(headers.indexOf(SUPPLIER_NAME)).getStringCellValue();
+        		String account = obtainSupplierAccount(supplierDocument, supplierName);
         		
         		if(account==null || StringUtils.isBlank(account)){
         			emptyAccountCount++;
         			account = String.valueOf(Integer.valueOf(maxAccountCode)+emptyAccountCount);
-        			customerAccount.put(customerDocument, account);
-        			logPanel.warn("El cliente " + customerDocument + " no tiene cuenta asignada. Se le asigna la siguiente libre");
+        			customerAccount.put(supplierDocument, account);
+        			logPanel.warn("El cliente " + supplierDocument + " no tiene cuenta asignada. Se le asigna la siguiente libre");
         		}
         		
         		if(account!=null && StringUtils.isNotBlank(account)){
@@ -162,30 +150,21 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
         			double vatAmount = row.getCell(headers.indexOf(INVOICE_VAT_AMOUNT)).getNumericCellValue();
         			double invoiceTotal = row.getCell(headers.indexOf(INVOICE_TOTAL)).getNumericCellValue();
         			
-        			double ieeBase = row.getCell(headers.indexOf(INVOICE_IEE_BASE)).getNumericCellValue();
-        			double ieeAmount = ieeBase * 0.21;
-        			vatBase -= ieeBase;
-        			vatAmount -= ieeAmount; 
-        
         			writer.print("FRACTB|");
         			writer.print(lineCount+"|");
         			writer.print(serie+"|");
         			writer.print(num+"|");
         			writer.print(account+"|");
-        			writer.print(customerDocument+"|");
+        			writer.print(supplierDocument+"|");
         			writer.print("1|");
         			writer.print("ES|");
-        			writer.print(customerName+"|");
+        			writer.print(supplierName+"|");
         			writer.print(invoiceDate+"|");
-        			writer.print("1|");
+        			writer.print("0|");
         			writer.print(CommonUtil.round(vatBase)+"|");
 					writer.print(CommonUtil.round(vatPercent)+"|");
 					writer.print(CommonUtil.round(vatAmount)+"|");
-					writer.print("700000000|");
-					writer.print(CommonUtil.round(ieeBase)+"|");
-					writer.print(CommonUtil.round(vatPercent)+"|");
-					writer.print(CommonUtil.round(ieeAmount)+"|");
-					writer.print("473000560|");
+					writer.print("600000000|");
 					writer.print(invoiceTotal);
         			writer.println();
 					
@@ -220,8 +199,6 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 	    	
 	    }
 	}
-	
-	
 	
 	@Override
 	public boolean accept(byte[] data){
@@ -259,61 +236,28 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 		return false;
 	}
 	
-	
-//	private int prepareSheet(XSSFSheet sheet) {
-//        Iterator<Row> rowIterator = sheet.iterator();
-//        Row row = rowIterator.next();
-//        Iterator<Cell> cellIterator = null;
-//        headers = new ArrayList<>();
-//
-//        int rowIndex=1;
-//        for(int i=0; i<5 && !headers.containsAll(Arrays.asList(SUPPORTED_COLUMNS)); i++){
-//        	cellIterator = row.cellIterator();
-//        	headers.clear();
-//        	while(cellIterator.hasNext()){
-//        		Cell cell = cellIterator.next();
-//        		if(cell.getCellType() == Cell.CELL_TYPE_STRING){
-//        			headers.add(cell.getStringCellValue());
-//        		}
-//        	}
-//        	row = rowIterator.next();
-//        	rowIndex++;
-//        }
-//        
-//        if(!headers.containsAll(Arrays.asList(SUPPORTED_COLUMNS))){
-//        	LogPanelController logPanel = LogPanelController.getInstance();
-//        	logPanel.error("No se han encontrado cabeceras de columnas aceptadas entre las 5 primeras filas.");
-//        	logPanel.error("Proceso abortado.");
-//        	LOGGER.error("El formato del fichero no es correcto.");
-//        	throw new AbortProcessingException("El formato del fichero no es correcto");
-//        }
-//        
-//        return rowIndex;
-//	}
-	
-
-	private String obtainCustomerAccount(String customerDocument, String customerName) throws ManagerBeanException {
-		customerDocument = StringUtils.trim(customerDocument);
+	private String obtainSupplierAccount(String supplierDocument, String supplierName) throws ManagerBeanException {
+		supplierName = StringUtils.trim(supplierName);
 		String account = null;
-		if(customerAccount!=null && customerAccount.containsKey(customerDocument)){
-			account = customerAccount.get(customerDocument);
+		if(customerAccount!=null && customerAccount.containsKey(supplierName)){
+			account = customerAccount.get(supplierName);
 		} else {
-			if(StringUtils.isNotBlank(customerDocument)){
+			if(StringUtils.isNotBlank(supplierName)){
 				LogPanelController logPanel = LogPanelController.getInstance();
-				IManagerBean bean = BeanManager.getManagerBean(Customer.class);
+				IManagerBean bean = BeanManager.getManagerBean(Supplier.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CUSTOMER_REGISTRY_DOCUMENT), customerDocument);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SUPPLIER_REGISTRY_NAME), supplierName);
 				List<ITransferObject> list = bean.getList(criteria);
 				if(list==null || list.size()==0){
-					logPanel.warn("Se procede a crear un nuevo cliente " + customerName + " (" + customerDocument +")" );
+					logPanel.warn("Se procede a crear un nuevo cliente " + supplierName + " (" + supplierDocument +")" );
 				} else if(list!=null && list.size()==1){
-					Customer customer = (Customer) list.get(0);
-					if(customer.getAccount()!=null && StringUtils.isNotBlank(customer.getAccount().getCode())){
-						account = customer.getAccount().getCode();
-						customerAccount.put(customerDocument, account);
+					Supplier supplier = (Supplier) list.get(0);
+					if(supplier.getAccount()!=null && StringUtils.isNotBlank(supplier.getAccount().getCode())){
+						account = supplier.getAccount().getCode();
+						customerAccount.put(supplierName, account);
 					}
 				} else {
-					logPanel.error("Existen varios registros de cliente con el documento " + customerDocument);
+					logPanel.error("Existen varios registros de cliente con el documento " + supplierDocument);
 				}
 			}
 		}
@@ -408,10 +352,11 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 	public static void main(String[] args) {
     	try {
     		OppidumSalesLoader loader = new OppidumSalesLoader();
-			FileInputStream file = new FileInputStream(new File("/home/eagirrezabal/Descargas/ventas_reduced.xls"));
+			FileInputStream file = new FileInputStream(new File("/home/eagirrezabal/Descargas/compras_reduced.xlsx"));
 			loader.load(file);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}	    
 	}
+	
 }

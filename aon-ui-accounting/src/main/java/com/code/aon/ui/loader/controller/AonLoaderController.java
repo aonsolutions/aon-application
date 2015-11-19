@@ -29,7 +29,8 @@ import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ui.loader.Loader;
 import com.code.aon.ui.loader.LoaderParams;
-import com.code.aon.ui.loader.custom.OppidumSalesLoader;
+import com.code.aon.ui.loader.custom.CustomLoaderFactoryManager;
+import com.code.aon.ui.loader.custom.ICustomLoaderFactory;
 
 public class AonLoaderController implements Serializable {
 	
@@ -93,12 +94,15 @@ public class AonLoaderController implements Serializable {
 	public void onLoad(ActionEvent event ) {
 		if(isCustomLoaderEnabled()){
 			if(isOppidumLoaderEnabled()){
-				OppidumSalesLoader loader = new OppidumSalesLoader();
-				
 				byte[] data = getAonFile().getData();
-				ByteArrayInputStream input = new ByteArrayInputStream(data);
-				
-				loader.load(input);
+				ICustomLoaderFactory loader = CustomLoaderFactoryManager.getFactory(data);
+				if(loader != null){
+					loader.load(new ByteArrayInputStream(data));
+				} else {
+					LogPanelController logPanel = LogPanelController.getInstance();
+		        	logPanel.error("No se existen cargadores que acepten el fichero.");
+		        	logPanel.error("Proceso abortado.");
+				}
 			}
 		} else {
 			LogPanelController logger = LogPanelController.getInstance();
@@ -193,20 +197,20 @@ public class AonLoaderController implements Serializable {
 		selectedCustomLoader = null;
 		ApplicationParameter param = AppParamUtil.getParameter("CUSTOM_LOADER");
 		if(param != null){
-			if(param.getValue().equals(CustomLoadType.APPIDUM.name())){
-				selectedCustomLoader = CustomLoadType.APPIDUM;
+			if(param.getValue().equals(CustomLoadType.OPPIDUM.name())){
+				selectedCustomLoader = CustomLoadType.OPPIDUM;
 			}
 		}
 	}
 	
 	public boolean isCustomLoaderEnabled(){
 		ApplicationParameter param = AppParamUtil.getParameter("CUSTOM_LOADER");
-		return param != null && param.getValue().equals(CustomLoadType.APPIDUM.name());
+		return param != null && param.getValue().equals(CustomLoadType.OPPIDUM.name());
 	}
 	
 	public boolean isOppidumLoaderEnabled(){
 		ApplicationParameter param = AppParamUtil.getParameter("CUSTOM_LOADER");
-		return param != null && param.getValue().equals(CustomLoadType.APPIDUM.name());
+		return param != null && param.getValue().equals(CustomLoadType.OPPIDUM.name());
 	}
 	
 	public void onEnableOppidum(ActionEvent event) {
@@ -214,7 +218,7 @@ public class AonLoaderController implements Serializable {
 		if(param == null){
 			param = new ApplicationParameter("CUSTOM_LOADER", "");
 		}
-		param.setValue(CustomLoadType.APPIDUM.name());
+		param.setValue(CustomLoadType.OPPIDUM.name());
 		AppParamUtil.insertParameter(param);
 		loadCustomLoader();
 	}
@@ -228,6 +232,6 @@ public class AonLoaderController implements Serializable {
 	}
 	
 	public enum CustomLoadType {
-		APPIDUM;
+		OPPIDUM;
 	}
 }
