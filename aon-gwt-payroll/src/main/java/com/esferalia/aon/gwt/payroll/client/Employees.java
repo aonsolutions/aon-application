@@ -1597,7 +1597,7 @@ public class Employees extends ResizeComposite implements
 
 		TreeItem enterpriseItem = tree.getItem(0);
 		int childCount = enterpriseItem.getChildCount();
-		int workplacesOffset = getWorkplacesOffset();
+		int workplacesOffset = getWorkplacesOffset(enterpriseItem);
 		for (int i = workplacesOffset; i < childCount; i++) {
 			TreeItem workplaceItem = enterpriseItem.getChild(i);
 			boolean inViewport = elementInViewport(workplaceItem.getElement());
@@ -1612,13 +1612,12 @@ public class Employees extends ResizeComposite implements
 	}
 
 	private void changeVisibleWorkplaces() {
-		Window.alert("changeVisibleWorkplaces");
 		TreeItem enterpriseItem = tree.getItem(0);
 		int childCount = enterpriseItem.getChildCount();
-		int workplacesOffset = getWorkplacesOffset();
+		int workplacesOffset = getWorkplacesOffset(enterpriseItem);
 		for (int j = workplacesOffset; j < childCount; j++) {
 			TreeItem workplaceItem = enterpriseItem.getChild(j);
-			Workplace workplace = (Workplace) enterpriseItem.getUserObject();
+			Workplace workplace = (Workplace) workplaceItem.getUserObject();
 			workplaceItem.setVisible(isWorkPlaceVisible(workplace));
 		}
 
@@ -1628,12 +1627,12 @@ public class Employees extends ResizeComposite implements
 		return workplace.isActive() || inactive;
 	}
 
-	private int getWorkplacesOffset() {
-		int itemCount = tree.getItemCount();
+	private int getWorkplacesOffset(TreeItem rootItem) {
+		int itemCount = rootItem.getChildCount();
 
 		for (int i = 0; i < itemCount; i++) {
-			TreeItem treeItem = tree.getItem(i);
-			Object userObject = treeItem.getUserObject();
+			TreeItem childItem = rootItem.getChild(i);
+			Object userObject = childItem.getUserObject();
 			if (userObject instanceof Workplace)
 				return i;
 		}
@@ -1665,7 +1664,7 @@ public class Employees extends ResizeComposite implements
 
 		TreeItem enterpriseItem = tree.getItem(0);
 		int childCount = enterpriseItem.getChildCount();
-		int workplacesOffset = getWorkplacesOffset();
+		int workplacesOffset = getWorkplacesOffset(enterpriseItem);
 		for (int i = workplacesOffset; i < childCount; i++) {
 			TreeItem workplaceItem = enterpriseItem.getChild(i);
 			int workplaceItems = workplaceItem.getChildCount();
