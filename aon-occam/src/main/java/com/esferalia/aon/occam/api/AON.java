@@ -1620,31 +1620,9 @@ public class AON {
 	// ********************************************
 	// ****************************** ATTACHMENT **
 	// ********************************************
-
-	public static Attach getAttach(String domainName, Integer domainId, String login, Condition condition, AttachType attachType) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			
-			Attach attach = new Attach();
-			
-			if(attachType.equals(AttachType.REGISTRY)) attach = getAttachment().getRattach(ctx, condition);
-			else if(attachType.equals(AttachType.CONTRACT)) attach = null;
-			else if(attachType.equals(AttachType.INVOICE)) attach = null;
-			else if(attachType.equals(AttachType.ITEM)) attach = null;
-			else if(attachType.equals(AttachType.OFFER)) attach = null;
-			else if(attachType.equals(AttachType.PAYROLL)) attach = null;
-			else if(attachType.equals(AttachType.PROJECT)) attach = null;
-			else if(attachType.equals(AttachType.SEPE)) attach = null;
-			
-			return attach;		
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
 	
-	public static Attach getAttach(String domainName, Integer domainId, String login, AttachFilter filter, AttachType attachType) {
+	public static Attach getAttach(String domainName, Integer domainId, String login,
+			AttachFilter filter, AttachType attachType) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -1667,14 +1645,15 @@ public class AON {
 		}
 	}
 	
-	public static List<Attach> getAttachList(String domainName, Integer domainId, Condition condition, AttachType attachType) {
+	public static LinkedList<Attach> getAttachList(String domainName, Integer domainId, String login,
+			AttachFilter filter, AttachType attachType) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			
-			List<Attach> attachList = new ArrayList<Attach>();
+			LinkedList<Attach> attachList = new LinkedList<Attach>();
 			
-			if(attachType.equals(AttachType.REGISTRY)) attachList = getAttachment().getRattachList(ctx, condition);
+			if(attachType.equals(AttachType.REGISTRY)) attachList = getAttachment().getRattachList(ctx, filter);
 			else if(attachType.equals(AttachType.CONTRACT)) attachList = null;
 			else if(attachType.equals(AttachType.INVOICE)) attachList = null;
 			else if(attachType.equals(AttachType.ITEM)) attachList = null;
@@ -1690,20 +1669,20 @@ public class AON {
 		}
 	}
 
-	public static void insert(Attach attach) {
+	public static Integer insert(Attach attach) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(attach.getDomain().getName(), attach.getDomain().getId());
 			
-			if(attach.getAttachType().equals(AttachType.REGISTRY)) getAttachment().insertRegistryAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.CONTRACT)) getAttachment().insertContractAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.INVOICE)) getAttachment().insertInvoiceAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.ITEM)) getAttachment().insertItemAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.OFFER)) getAttachment().insertOfferAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.PAYROLL)) getAttachment().insertPayrollAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.PROJECT)) getAttachment().insertProjectAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.SEPE)) getAttachment().insertSepeAttach(ctx, attach);
-			
+			if(attach.getAttachType().equals(AttachType.REGISTRY)) return getAttachment().insertRegistryAttach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.CONTRACT)) return getAttachment().insertContractAttach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.INVOICE)) return getAttachment().insertInvoiceAttach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.ITEM)) return getAttachment().insertItemAttach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.OFFER)) return getAttachment().insertOfferAttach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.PAYROLL)) return getAttachment().insertPayrollAttach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.PROJECT)) return getAttachment().insertProjectAttach(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.SEPE)) return getAttachment().insertSepeAttach(ctx, attach);
+			return null;
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1730,46 +1709,26 @@ public class AON {
 		}
 	}
 	
-	public static void delete(Attach attach,Condition condition){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(attach.getDomain().getName(), attach.getDomain().getId());
-			
-			if(attach.getAttachType().equals(AttachType.REGISTRY)) getAttachment().deleteRegistryAttach(ctx, condition);
-			else if(attach.getAttachType().equals(AttachType.CONTRACT)) getAttachment().deleteContractAttach(ctx, condition);
-			else if(attach.getAttachType().equals(AttachType.INVOICE)) getAttachment().deleteInvoiceAttach(ctx, condition);
-			else if(attach.getAttachType().equals(AttachType.ITEM)) getAttachment().deleteItemAttach(ctx, condition);
-			else if(attach.getAttachType().equals(AttachType.OFFER)) getAttachment().deleteOfferAttach(ctx, condition);
-			else if(attach.getAttachType().equals(AttachType.PAYROLL)) getAttachment().deletePayrollAttach(ctx, condition);
-			else if(attach.getAttachType().equals(AttachType.PROJECT)) getAttachment().deleteProjectAttach(ctx, condition);
-			else if(attach.getAttachType().equals(AttachType.SEPE)) getAttachment().deleteSepeAttach(ctx, condition);
-			
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static void delete(String domainName, Integer domainId, String login, Attach attach){
+	public static void delete(String domainName, Integer domainId, String login,
+			AttachFilter filter, AttachType attachType){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			
-			if(attach.getAttachType().equals(AttachType.REGISTRY)) getAttachment().deleteRegistryAttach(ctx, attach.getId());
-			else if(attach.getAttachType().equals(AttachType.CONTRACT)) getAttachment().deleteContractAttach(ctx, attach.getId());
-			else if(attach.getAttachType().equals(AttachType.INVOICE)) getAttachment().deleteInvoiceAttach(ctx, attach.getId());
-			else if(attach.getAttachType().equals(AttachType.ITEM)) getAttachment().deleteItemAttach(ctx, attach.getId());
-			else if(attach.getAttachType().equals(AttachType.OFFER)) getAttachment().deleteOfferAttach(ctx, attach.getId());
-			else if(attach.getAttachType().equals(AttachType.PAYROLL)) getAttachment().deletePayrollAttach(ctx, attach.getId());
-			else if(attach.getAttachType().equals(AttachType.PROJECT)) getAttachment().deleteProjectAttach(ctx, attach.getId());
-			else if(attach.getAttachType().equals(AttachType.SEPE)) getAttachment().deleteSepeAttach(ctx, attach.getId());
+			if(attachType.equals(AttachType.REGISTRY)) getAttachment().deleteRegistryAttach(ctx, filter);
+			else if(attachType.equals(AttachType.CONTRACT)) getAttachment().deleteContractAttach(ctx, filter);
+			else if(attachType.equals(AttachType.INVOICE)) getAttachment().deleteInvoiceAttach(ctx, filter);
+			else if(attachType.equals(AttachType.ITEM)) getAttachment().deleteItemAttach(ctx, filter);
+			else if(attachType.equals(AttachType.OFFER)) getAttachment().deleteOfferAttach(ctx, filter);
+			else if(attachType.equals(AttachType.PAYROLL)) getAttachment().deletePayrollAttach(ctx, filter);
+			else if(attachType.equals(AttachType.PROJECT)) getAttachment().deleteProjectAttach(ctx, filter);
+			else if(attachType.equals(AttachType.SEPE)) getAttachment().deleteSepeAttach(ctx, filter);
 			
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
-
 	
 	// ********************************************
 	// ******************************* WAREHOUSE **

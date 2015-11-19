@@ -52,7 +52,7 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 	}
 	public List<EcommerceProduct> getProductTemplatesList(Integer domainId){
 		String domainName = AonUtil.getDomainName();
-		return DBMarketplace.getProductTemplatesList(domainName, domainId);
+		return DBMarketplace.getProductTemplatesList(domainName, domainId, getUser());
 	}
 	
 	public List<Order> getAmazonOrdersList(Integer domainId, String login){

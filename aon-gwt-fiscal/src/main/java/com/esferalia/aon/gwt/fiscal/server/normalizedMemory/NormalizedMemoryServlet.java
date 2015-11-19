@@ -28,7 +28,6 @@ import java.util.zip.ZipInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
-import org.jooq.Condition;
 import org.jooq.Record1;
 import org.jooq.Record3;
 import org.jooq.Result;
@@ -742,8 +741,9 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		public String viewer(Integer domainId, MemoryFiles mf){
 			String domainName = AonUtil.getDomainName();
 			String login = AonServletUtils.getLoggedUser();
-			Condition condition = RATTACH.ID.eq(mf.getId());
-			Attach rattach = AON.getAttach(domainName, domainId, login, condition, AttachType.REGISTRY);
+			Attach rattach = AON.getAttach(domainName, domainId, login, 
+					filter -> filter.getIdProperty().eq(mf.getId())
+					, AttachType.REGISTRY);
 			rattach.setMd5(AonFileUtils.getMD5Checksum(rattach.getData()));
 			FileInfo doc = new FileInfo(rattach);
 			return getAsHTML(doc, DEFAULT_ZOOM);

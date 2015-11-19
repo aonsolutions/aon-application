@@ -1,16 +1,15 @@
 package com.esferalia.aon.gwt.template.jooq;
 
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
-import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Sales.SALES;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
-import org.jooq.Condition;
 import org.jooq.Record1;
 import org.jooq.Record8;
 import org.jooq.Result;
@@ -36,9 +35,11 @@ import com.esferalia.aon.occam.api.model.security.User;
 
 public class DBMarketplace {
 
-	public static List<EcommerceProduct> getProductTemplatesList(String domainName, Integer domainId){
-		Condition condition = RATTACH.DOMAIN.eq(domainId).and(RATTACH.TYPE.eq((byte) 18));
-		List<Attach> attachList = AON.getAttachList(domainName, domainId, condition, AttachType.REGISTRY);
+	public static List<EcommerceProduct> getProductTemplatesList(String domainName, Integer domainId, User user){
+		LinkedList<Attach> attachList = AON.getAttachList(domainName, domainId, user.getLogin(),
+				filter -> filter.getDomainProperty().eq(domainId)
+				.and(filter.getTypeProperty().eq(((byte) RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.ordinal())))
+				, AttachType.REGISTRY);
 		List<EcommerceProduct> list = new ArrayList<EcommerceProduct>();
 		attachList.stream().forEach(attach->{
 			try {
@@ -151,10 +152,10 @@ public class DBMarketplace {
 	}
 	
 	public static void deleteTemplate(Domain domain, User user, String description){
-		Attach attach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(),
+		AON.delete(domain.getName(), domain.getId(), user.getLogin(), 
 				filter -> filter.getDescriptionProperty().eq(description)
-				.and(filter.getTypeProperty().eq(((byte) RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.ordinal())))
-				, AttachType.REGISTRY);		
-		AON.delete(domain.getName(), domain.getId(), user.getLogin(), attach);
+				.and(filter.getTypeProperty().eq(((byte) RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.ordinal()))
+				.and(filter.getDomainProperty().eq(domain.getId())))
+				, AttachType.REGISTRY);	
 	}
 }

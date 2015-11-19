@@ -1,26 +1,23 @@
 package com.esferalia.aon.occam.api;
 
-import java.util.List;
-
-import org.jooq.Condition;
+import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.AttachFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 
 
 public interface IAttachment {
-	public Attach getRattach(AONContext ctx, Condition condition);
 	public Attach getRattach(AONContext ctx, AttachFilter filter);
-	public List<Attach> getRattachList(AONContext ctx, Condition condition);
+	public LinkedList<Attach> getRattachList(AONContext ctx, AttachFilter filter);
 	
-	public void insertContractAttach(AONContext ctx, Attach attach);
-	public void insertItemAttach(AONContext ctx, Attach attach);
-	public void insertInvoiceAttach(AONContext ctx, Attach attach);
-	public void insertOfferAttach(AONContext ctx, Attach attach);
-	public void insertPayrollAttach(AONContext ctx, Attach attach);
-	public void insertProjectAttach(AONContext ctx, Attach attach);
-	public void insertRegistryAttach(AONContext ctx, Attach attach);
-	public void insertSepeAttach(AONContext ctx, Attach attach);
+	public Integer insertContractAttach(AONContext ctx, Attach attach);
+	public Integer insertItemAttach(AONContext ctx, Attach attach);
+	public Integer insertInvoiceAttach(AONContext ctx, Attach attach);
+	public Integer insertOfferAttach(AONContext ctx, Attach attach);
+	public Integer insertPayrollAttach(AONContext ctx, Attach attach);
+	public Integer insertProjectAttach(AONContext ctx, Attach attach);
+	public Integer insertRegistryAttach(AONContext ctx, Attach attach);
+	public Integer insertSepeAttach(AONContext ctx, Attach attach);
 	
 	public void updateContractAttach(AONContext ctx, Attach attach);
 	public void updateItemAttach(AONContext ctx, Attach attach);
@@ -31,22 +28,12 @@ public interface IAttachment {
 	public void updateRegistryAttach(AONContext ctx, Attach attach);
 	public void updateSepeAttach(AONContext ctx, Attach attach);
 	
-	public void deleteContractAttach(AONContext ctx, Condition condition);
-	public void deleteItemAttach(AONContext ctx, Condition condition);
-	public void deleteInvoiceAttach(AONContext ctx, Condition condition);
-	public void deleteOfferAttach(AONContext ctx, Condition condition);
-	public void deletePayrollAttach(AONContext ctx, Condition condition);
-	public void deleteProjectAttach(AONContext ctx, Condition condition);
-	public void deleteRegistryAttach(AONContext ctx, Condition condition);
-	public void deleteSepeAttach(AONContext ctx, Condition condition);
-	
-	public void deleteContractAttach(AONContext ctx, Integer attachId);
-	public void deleteItemAttach(AONContext ctx, Integer attachId);
-	public void deleteInvoiceAttach(AONContext ctx, Integer attachId);
-	public void deleteOfferAttach(AONContext ctx, Integer attachId);
-	public void deletePayrollAttach(AONContext ctx, Integer attachId);
-	public void deleteProjectAttach(AONContext ctx, Integer attachId);
-	public void deleteRegistryAttach(AONContext ctx, Integer attachId);
-	public void deleteSepeAttach(AONContext ctx, Integer attachId);
-	
+	public void deleteContractAttach(AONContext ctx, AttachFilter filter);
+	public void deleteItemAttach(AONContext ctx, AttachFilter filter);
+	public void deleteInvoiceAttach(AONContext ctx, AttachFilter filter);
+	public void deleteOfferAttach(AONContext ctx, AttachFilter filter);
+	public void deletePayrollAttach(AONContext ctx, AttachFilter filter);
+	public void deleteProjectAttach(AONContext ctx, AttachFilter filter);
+	public void deleteRegistryAttach(AONContext ctx, AttachFilter filter);
+	public void deleteSepeAttach(AONContext ctx, AttachFilter filter);
 }

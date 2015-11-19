@@ -12,16 +12,21 @@ public interface AttachProperties {
 	Property<String> getDescriptionProperty();
 	Property<Byte> getTypeProperty();
 	Property<Date> getAttachDateProperty();
+	Property<Timestamp> getAttachDateTimeStampProperty();
 	Property<Integer> getCategoryProperty();
-	Property<Timestamp> getCreationDateProperty();
+	Property<Date> getAttachCreationDateProperty();
+	Property<Timestamp> getCreationDateTimeStampProperty();
 	Property<String> getCreationUserProperty();
 	Property<byte[]> getDataProperty();
 	Property<String> getDparentIdProperty();
 	Property<String> getDriveIdProperty();
 	Property<Byte> getMimeTypeProperty();
-	Property<Timestamp> getModificationDateProperty();
+	Property<Date> getAttachModificationDateProperty();
+	Property<Timestamp> getModificationDateTimeStampProperty();
 	Property<String> getModificationUserProperty();
-	Property<Integer> getRegistryProperty();
+	Property<Integer> getAttachModuleProperty();
 	Property<Integer> getScopeProperty();
-	Property<Byte> getSecurityLevelProperty();	
+	Property<Byte> getSecurityLevelProperty();
+	Property<Integer> getSourceBatchProperty();
+	Property<Byte> getSourceTypeProperty();
 }

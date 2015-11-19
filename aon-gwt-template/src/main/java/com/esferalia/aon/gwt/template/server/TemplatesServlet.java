@@ -1,8 +1,6 @@
 package com.esferalia.aon.gwt.template.server;
 
 
-import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -31,7 +29,6 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.jooq.Condition;
 
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Series;
@@ -46,6 +43,7 @@ import com.code.aon.product.ProductTag;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.project.Project;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.template.client.ITemplate;
@@ -1975,10 +1973,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			xml = excelToXmlEbay(data, ecommerce.getName(), type, pc.getName());
 	
 		if(xml != null){
-			
-			Condition condition = RATTACH.DESCRIPTION.eq(ecommerce.getName()+"-"+type).and(RATTACH.TYPE.eq((byte)18))
-					.and(RATTACH.DPARENT_ID.eq(pc.getId().toString()));
-			Attach attach = AON.getAttach(d.getName(), d.getId(), getUser().getLogin(), condition, AttachType.REGISTRY);
+			Attach attach = AON.getAttach(d.getName(), d.getId(), getUser().getLogin(), 
+					filter -> filter.getDescriptionProperty().eq(ecommerce.getName()+"-"+type)
+					.and(filter.getTypeProperty().eq(((byte) RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.ordinal())))
+					, AttachType.REGISTRY);
 			
 			if(attach != null && attach.getId() != null){
 				attach.setData(xml);

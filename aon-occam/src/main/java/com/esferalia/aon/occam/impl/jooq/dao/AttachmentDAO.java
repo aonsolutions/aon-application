@@ -12,23 +12,17 @@ import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
 
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.jooq.Condition;
 import org.jooq.Record7;
-import org.jooq.Record8;
-import org.jooq.Result;
 
 import com.esferalia.aon.jooq.tables.records.RattachRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AttachFilter;
-import com.esferalia.aon.occam.api.model.AttachProperties;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
@@ -36,59 +30,18 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 
 
 public class AttachmentDAO {
-	private static final RattachPropertiesDAO RATTACH_PROPERTIES = new RattachPropertiesDAO();
 	
-	private static class RattachPropertiesDAO implements AttachProperties {
-		private Condition[] getConditions(AttachFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) return new Condition[0];
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH.DOMAIN);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(RATTACH.DESCRIPTION);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(RATTACH.TYPE);}
-		@Override public Property<Date> getAttachDateProperty() {return new FilterDAO.PropertyDAO<Date>(RATTACH.ATTACH_DATE);}
-		@Override public Property<Integer> getCategoryProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH.CATEGORY);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(RATTACH.CREATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(RATTACH.CREATION_USER);}
-		@Override public Property<byte[]> getDataProperty() {return new FilterDAO.PropertyDAO<byte[]>(RATTACH.DATA);}
-		@Override public Property<String> getDparentIdProperty() {return new FilterDAO.PropertyDAO<String>(RATTACH.DPARENT_ID);}
-		@Override public Property<String> getDriveIdProperty() {return new FilterDAO.PropertyDAO<String>(RATTACH.DRIVE_ID);}
-		@Override public Property<Byte> getMimeTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(RATTACH.MIMETYPE);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(RATTACH.MODIFICATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(RATTACH.MODIFICATION_USER);}
-		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH.REGISTRY);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH.SCOPE);}
-		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(RATTACH.SECURITY_LEVEL);}
-	}
+	private static final AttachPropertiesDAO.RattachPropertiesDAO RATTACH_PROPERTIES = new AttachPropertiesDAO.RattachPropertiesDAO();
+	private static final AttachPropertiesDAO.ContractAttachPropertiesDAO CONTRACT_ATTACH_PROPERTIES = new AttachPropertiesDAO.ContractAttachPropertiesDAO();
+	private static final AttachPropertiesDAO.IattachPropertiesDAO IATTACH_PROPERTIES = new AttachPropertiesDAO.IattachPropertiesDAO();
+	private static final AttachPropertiesDAO.InvoiceAttachPropertiesDAO INVOICE_ATTACH_PROPERTIES = new AttachPropertiesDAO.InvoiceAttachPropertiesDAO();
+	private static final AttachPropertiesDAO.OfferAttachPropertiesDAO OFFER_ATTACH_PROPERTIES = new AttachPropertiesDAO.OfferAttachPropertiesDAO();
+	private static final AttachPropertiesDAO.PayrollAttachPropertiesDAO PAYROLL_ATTACH_PROPERTIES = new AttachPropertiesDAO.PayrollAttachPropertiesDAO();
+	private static final AttachPropertiesDAO.ProjectAttachPropertiesDAO PROJECT_ATTACH_PROPERTIES = new AttachPropertiesDAO.ProjectAttachPropertiesDAO();
+	private static final AttachPropertiesDAO.SepeAttachPropertiesDAO SEPE_ATTACH_PROPERTIES = new AttachPropertiesDAO.SepeAttachPropertiesDAO();
 	
 	//-------------------- GETS 
-	
-	public static Attach getRattach(AONContext ctx, Condition condition){	
-		Record8<byte[], Byte, Byte, String, Integer, String, java.sql.Date, Byte> record = ctx.getDslContext()
-			.select(RATTACH.DATA, RATTACH.MIMETYPE, RATTACH.TYPE, RATTACH.DRIVE_ID,
-					RATTACH.ID, RATTACH.DESCRIPTION, RATTACH.ATTACH_DATE,
-					RATTACH.SECURITY_LEVEL)
-			.from(RATTACH)
-			.where(condition)
-			.fetchOne();
-	
-		Attach rattach = new Attach();
-		if(record != null){
-			
-			if(record.value1() != null) rattach.setData(record.value1());
-			if(record.value2() != null) rattach.setMimeType(MimeType.values()[record.value2()]);
-			if(record.value3() != null) rattach.setType(record.value3());
-			if(record.value4() != null) rattach.setDriveId(record.value4());
-			if(record.value5() != null) rattach.setId(record.value5());
-			if(record.value6() != null) rattach.setDescription(record.value6());
-			if(record.value7() != null) rattach.setDate(record.value7());
-			if(record.value8() != null) rattach.setConfidential(record.value8().equals(1)?true:false);
-		}
-		return rattach;
-	}
-	
+
 	public static Attach getRattach(AONContext ctx, AttachFilter filter){	
 		return ctx.getDslContext()
 				.select().from(RATTACH).where(RATTACH_PROPERTIES.getConditions(filter))
@@ -96,55 +49,11 @@ public class AttachmentDAO {
 				.collect(Collectors.toCollection(LinkedList::new)).getFirst();
 	}
 	
-	public static List<Attach> getRattachList(AONContext ctx, Condition condition){	
-		Result<Record8<byte[], Byte, Byte, String, Integer, String, Date, Byte>> result = ctx.getDslContext()
-			.select(RATTACH.DATA, RATTACH.MIMETYPE, RATTACH.TYPE, RATTACH.DRIVE_ID,
-					RATTACH.ID, RATTACH.DESCRIPTION, RATTACH.ATTACH_DATE,
-					RATTACH.SECURITY_LEVEL)
-			.from(RATTACH)
-			.where(condition)
-			.fetch();
-		
-		List<Attach> rattachList = new ArrayList<Attach>();
-		result.stream().forEach(record ->{
-			Attach rattach = new Attach();
-			if(record != null){
-				if(record.value1() != null) rattach.setData(record.value1());
-				if(record.value2() != null) rattach.setMimeType(MimeType.values()[record.value2()]);
-				if(record.value3() != null) rattach.setType(record.value3());
-				if(record.value4() != null) rattach.setDriveId(record.value4());
-				if(record.value5() != null) rattach.setId(record.value5());
-				if(record.value6() != null) rattach.setDescription(record.value6());
-				if(record.value7() != null) rattach.setDate(record.value7());
-				if(record.value8() != null) rattach.setConfidential(record.value8().equals(1)?true:false);
-			}
-			rattachList.add(rattach);
-		});
-		
-		return rattachList;
-	}
-	
-	public static Attach getRattachXXX(AONContext ctx, Condition condition){	
-		Result<RattachRecord> rattachRecord = ctx.getDslContext().select()
-					.from(RATTACH)
-					.where(condition)
-					.fetchInto(RATTACH);
-	
-		Attach rattach = new Attach();
-		
-		if(rattachRecord.size() == 1){
-			RattachRecord record = rattachRecord.get(1);
-			rattach.setAttachType(AttachType.REGISTRY);
-			rattach.setData(record.getData());
-			rattach.setMimeType(MimeType.values()[record.getMimetype()]);
-			rattach.setType(record.getType());
-			rattach.setDriveId(record.getDriveId());
-			rattach.setId(record.getId());
-			rattach.setDescription(record.getDescription());
-			rattach.setDate(record.getAttachDate());
-			rattach.setConfidential(record.getSecurityLevel().equals(1)?true:false);
-		}
-		return rattach;
+	public static LinkedList<Attach> getRattachList(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+			.select().from(RATTACH).where(RATTACH_PROPERTIES.getConditions(filter))
+			.fetchInto(RATTACH).stream().map(new FullRattachFiller())
+			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static Attach getRattachWithoutData(AONContext ctx, Condition condition){
@@ -167,13 +76,13 @@ public class AttachmentDAO {
 		if(record.value7() != null) rattach.setConfidential(record.value7().equals(1)?true:false);
 
 		return rattach;
-	}	
+	}	 
 	
 	//-------------------- INSERTS 
 	
-	public static void insertContractAttach(AONContext ctx, Attach attach){
+	public static Integer insertContractAttach(AONContext ctx, Attach attach){
 		ctx.checkWrite();
-		ctx.getDslContext().insertInto(CONTRACT_ATTACH, CONTRACT_ATTACH.ATTACH_DATE,
+		return ctx.getDslContext().insertInto(CONTRACT_ATTACH, CONTRACT_ATTACH.ATTACH_DATE,
 				CONTRACT_ATTACH.CONTRACT, CONTRACT_ATTACH.DATA, CONTRACT_ATTACH.DESCRIPTION,
 				CONTRACT_ATTACH.DOMAIN, CONTRACT_ATTACH.DRIVEID, CONTRACT_ATTACH.MIMETYPE,
 				CONTRACT_ATTACH.SCOPE, CONTRACT_ATTACH.SECURITY_LEVEL, CONTRACT_ATTACH.TYPE)
@@ -181,46 +90,46 @@ public class AttachmentDAO {
 				attach.getData(), attach.getDescription(), attach.getDomain().getId(),
 				attach.getDriveId(), (byte) attach.getMimeType().ordinal(),attach.getScope(),
 				attach.getConfidential()?(byte)1:(byte)0, (byte) attach.getType())
-		.execute();
+		.returning(CONTRACT_ATTACH.ID).fetchOne().getId();
 	}
 	
-	public static void insertItemAttach(AONContext ctx, Attach attach){
+	public static Integer insertItemAttach(AONContext ctx, Attach attach){
 		ctx.checkWrite();
-		ctx.getDslContext().insertInto(IATTACH, IATTACH.DATA, IATTACH.DESCRIPTION,
+		return ctx.getDslContext().insertInto(IATTACH, IATTACH.DATA, IATTACH.DESCRIPTION,
 				IATTACH.DOMAIN, IATTACH.DRIVEID, IATTACH.ITEM, IATTACH.MIMETYPE,
 				IATTACH.TYPE)
 		.values(attach.getData(), attach.getDescription(), attach.getDomain().getId(),
 				attach.getDriveId(), attach.getAttachModule(),
 				(byte) attach.getMimeType().ordinal(), (byte) attach.getType())
-		.execute();
+		.returning(IATTACH.ID).fetchOne().getId();
 	}
 	
-	public static void insertInvoiceAttach(AONContext ctx, Attach attach){
+	public static Integer insertInvoiceAttach(AONContext ctx, Attach attach){
 		ctx.checkWrite();
-		ctx.getDslContext().insertInto(INVOICE_ATTACH, INVOICE_ATTACH.ATTACH_DATE,
+		return ctx.getDslContext().insertInto(INVOICE_ATTACH, INVOICE_ATTACH.ATTACH_DATE,
 				INVOICE_ATTACH.DATA, INVOICE_ATTACH.DESCRIPTION, INVOICE_ATTACH.DOMAIN,
 				INVOICE_ATTACH.DRIVEID, INVOICE_ATTACH.INVOICE, INVOICE_ATTACH.MIMETYPE,
 				INVOICE_ATTACH.TYPE)
 		.values(new Date(attach.getDate().getTime()), attach.getData(), attach.getDescription(),
 				attach.getDomain().getId(), attach.getDriveId(), attach.getAttachModule(),
 				(byte) attach.getMimeType().ordinal(), (byte) attach.getType())
-		.execute();
+		.returning(INVOICE_ATTACH.ID).fetchOne().getId();
 	}
 	
-	public static void insertOfferAttach(AONContext ctx, Attach attach){
+	public static Integer insertOfferAttach(AONContext ctx, Attach attach){
 		ctx.checkWrite();
-		ctx.getDslContext().insertInto(OFFER_ATTACH, OFFER_ATTACH.DATA, OFFER_ATTACH.DESCRIPTION,
+		return ctx.getDslContext().insertInto(OFFER_ATTACH, OFFER_ATTACH.DATA, OFFER_ATTACH.DESCRIPTION,
 				OFFER_ATTACH.DOMAIN, OFFER_ATTACH.DRIVEID, OFFER_ATTACH.MIMETYPE,
 				OFFER_ATTACH.OFFER)
 		.values(attach.getData(), attach.getDescription(), attach.getDomain().getId(),
 				attach.getDriveId(), (byte) attach.getMimeType().ordinal(),
 				attach.getAttachModule())
-		.execute();
+		.returning(OFFER_ATTACH.ID).fetchOne().getId();
 	}
 	
-	public static void insertPayrollAttach(AONContext ctx, Attach attach){
+	public static Integer insertPayrollAttach(AONContext ctx, Attach attach){
 		ctx.checkWrite();
-		ctx.getDslContext().insertInto(PAYROLL_BATCH_ATTACH, PAYROLL_BATCH_ATTACH.ATTACH_DATE,
+		return ctx.getDslContext().insertInto(PAYROLL_BATCH_ATTACH, PAYROLL_BATCH_ATTACH.ATTACH_DATE,
 				PAYROLL_BATCH_ATTACH.DATA, PAYROLL_BATCH_ATTACH.DESCRIPTION,
 				PAYROLL_BATCH_ATTACH.DOMAIN, PAYROLL_BATCH_ATTACH.DRIVEID,
 				PAYROLL_BATCH_ATTACH.MIMETYPE, PAYROLL_BATCH_ATTACH.SCOPE,
@@ -230,12 +139,12 @@ public class AttachmentDAO {
 				attach.getDomain().getId(), attach.getDriveId(), (byte) attach.getMimeType().ordinal(),
 				attach.getScope(), attach.getSourceBatch(), (byte) attach.getSourceType(),
 				(byte) attach.getType())
-		.execute();
+		.returning(PAYROLL_BATCH_ATTACH.ID).fetchOne().getId();
 	}
 	
-	public static void insertProjectAttach(AONContext ctx, Attach attach){
+	public static Integer insertProjectAttach(AONContext ctx, Attach attach){
 		ctx.checkWrite();
-		ctx.getDslContext().insertInto(PROJECT_ATTACH, PROJECT_ATTACH.ATTACH_DATE, 
+		return ctx.getDslContext().insertInto(PROJECT_ATTACH, PROJECT_ATTACH.ATTACH_DATE, 
 				PROJECT_ATTACH.DATA, PROJECT_ATTACH.DESCRIPTION, 
 				PROJECT_ATTACH.DOMAIN, PROJECT_ATTACH.DRIVEID, 
 				PROJECT_ATTACH.MIMETYPE, PROJECT_ATTACH.PROJECT, 
@@ -244,12 +153,12 @@ public class AttachmentDAO {
 				attach.getDescription(), attach.getDomain().getId(), 
 				attach.getDriveId(), (byte)attach.getMimeType().ordinal(),
 				attach.getAttachModule(), attach.getConfidential()?(byte)1:(byte)0)
-		.execute();
+		.returning(PROJECT_ATTACH.ID).fetchOne().getId();
 	}
 	
-	public static void insertRegistryAttach(AONContext ctx, Attach attach){
+	public static Integer insertRegistryAttach(AONContext ctx, Attach attach){
 		ctx.checkWrite();
-		ctx.getDslContext().insertInto(RATTACH, RATTACH.ATTACH_DATE,
+		return ctx.getDslContext().insertInto(RATTACH, RATTACH.ATTACH_DATE,
 				RATTACH.CATEGORY, RATTACH.CREATION_DATE, RATTACH.CREATION_USER,
 				RATTACH.DATA, RATTACH.DESCRIPTION, RATTACH.DOMAIN,
 				RATTACH.DPARENT_ID, RATTACH.DRIVE_ID, RATTACH.MIMETYPE,
@@ -263,12 +172,12 @@ public class AttachmentDAO {
 				new Timestamp(attach.getModificationDate().getTime()),attach.getModificationUser(),
 				attach.getAttachModule(), attach.getScope(),
 				attach.getConfidential()?(byte)1:(byte)0, (byte) attach.getType())
-		.execute();
+		.returning(RATTACH.ID).fetchOne().getId();
 	}
 	
-	public static void insertSepeAttach(AONContext ctx, Attach attach){
+	public static Integer insertSepeAttach(AONContext ctx, Attach attach){
 		ctx.checkWrite();
-		ctx.getDslContext().insertInto(SEPE_BATCH_ATTACH, SEPE_BATCH_ATTACH.ATTACH_DATE,
+		return ctx.getDslContext().insertInto(SEPE_BATCH_ATTACH, SEPE_BATCH_ATTACH.ATTACH_DATE,
 				SEPE_BATCH_ATTACH.DATA, SEPE_BATCH_ATTACH.DESCRIPTION, SEPE_BATCH_ATTACH.DOMAIN,
 				SEPE_BATCH_ATTACH.DRIVEID, SEPE_BATCH_ATTACH.MIMETYPE,SEPE_BATCH_ATTACH.SCOPE,
 				SEPE_BATCH_ATTACH.SOURCE_BATCH, SEPE_BATCH_ATTACH.SOURCE_TYPE,
@@ -277,7 +186,7 @@ public class AttachmentDAO {
 				attach.getDomain().getId(), attach.getDriveId(), (byte) attach.getMimeType().ordinal(),
 				attach.getScope(), attach.getSourceBatch(), (byte) attach.getSourceType(),
 				(byte) attach.getType())
-		.execute();
+		.returning(SEPE_BATCH_ATTACH.ID).fetchOne().getId();
 	}
 	
 	//-------------------- UPDATES
@@ -407,70 +316,38 @@ public class AttachmentDAO {
 	
 	//-------------------- DELETES
 	
-	public static void deleteContractAttach(AONContext ctx, Condition condition){
-		ctx.getDslContext().delete(CONTRACT_ATTACH).where(condition).execute();
+	public static void deleteContractAttach(AONContext ctx, AttachFilter filter){
+		ctx.getDslContext().delete(CONTRACT_ATTACH).where(CONTRACT_ATTACH_PROPERTIES.getConditions(filter)).execute();
 	}
 	
-	public static void deleteItemAttach(AONContext ctx, Condition condition){
-		ctx.getDslContext().delete(IATTACH).where(condition).execute();
+	public static void deleteItemAttach(AONContext ctx, AttachFilter filter){
+		ctx.getDslContext().delete(IATTACH).where(IATTACH_PROPERTIES.getConditions(filter)).execute();
 	}
 
-	public static void deleteInvoiceAttach(AONContext ctx, Condition condition){
-		ctx.getDslContext().delete(INVOICE_ATTACH).where(condition).execute();
+	public static void deleteInvoiceAttach(AONContext ctx, AttachFilter filter){
+		ctx.getDslContext().delete(INVOICE_ATTACH).where(INVOICE_ATTACH_PROPERTIES.getConditions(filter)).execute();
 	}
 
-	public static void deleteOfferAttach(AONContext ctx, Condition condition){
-		ctx.getDslContext().delete(OFFER_ATTACH).where(condition).execute();
+	public static void deleteOfferAttach(AONContext ctx, AttachFilter filter){
+		ctx.getDslContext().delete(OFFER_ATTACH).where(OFFER_ATTACH_PROPERTIES.getConditions(filter)).execute();
 	}
 
-	public static void deletePayrollAttach(AONContext ctx, Condition condition){
-		ctx.getDslContext().delete(PAYROLL_BATCH_ATTACH).where(condition).execute();
+	public static void deletePayrollAttach(AONContext ctx, AttachFilter filter){
+		ctx.getDslContext().delete(PAYROLL_BATCH_ATTACH).where(PAYROLL_ATTACH_PROPERTIES.getConditions(filter)).execute();
 	}
 
-	public static void deleteProjectAttach(AONContext ctx, Condition condition){
-		ctx.getDslContext().delete(PROJECT_ATTACH).where(condition).execute();
+	public static void deleteProjectAttach(AONContext ctx, AttachFilter filter){
+		ctx.getDslContext().delete(PROJECT_ATTACH).where(PROJECT_ATTACH_PROPERTIES.getConditions(filter)).execute();
 	}
 
-	public static void deleteRegistryAttach(AONContext ctx, Condition condition){
-		ctx.getDslContext().delete(RATTACH).where(condition).execute();
+	public static void deleteRegistryAttach(AONContext ctx, AttachFilter filter){
+		ctx.getDslContext().delete(RATTACH).where(RATTACH_PROPERTIES.getConditions(filter)).execute();
 	}
 
-	public static void deleteSepeAttach(AONContext ctx, Condition condition){
-		ctx.getDslContext().delete(SEPE_BATCH_ATTACH).where(condition).execute();
-	}
-	
-	public static void deleteContractAttach(AONContext ctx, Integer attachId){
-		ctx.getDslContext().delete(CONTRACT_ATTACH).where(CONTRACT_ATTACH.ID.eq(attachId)).execute();
-	}
-	
-	public static void deleteItemAttach(AONContext ctx, Integer attachId){
-		ctx.getDslContext().delete(IATTACH).where(IATTACH.ID.eq(attachId)).execute();
+	public static void deleteSepeAttach(AONContext ctx, AttachFilter filter){
+		ctx.getDslContext().delete(SEPE_BATCH_ATTACH).where(SEPE_ATTACH_PROPERTIES.getConditions(filter)).execute();
 	}
 
-	public static void deleteInvoiceAttach(AONContext ctx, Integer attachId){
-		ctx.getDslContext().delete(INVOICE_ATTACH).where(INVOICE_ATTACH.ID.eq(attachId)).execute();
-	}
-
-	public static void deleteOfferAttach(AONContext ctx, Integer attachId){
-		ctx.getDslContext().delete(OFFER_ATTACH).where(OFFER_ATTACH.ID.eq(attachId)).execute();
-	}
-
-	public static void deletePayrollAttach(AONContext ctx, Integer attachId){
-		ctx.getDslContext().delete(PAYROLL_BATCH_ATTACH).where(PAYROLL_BATCH_ATTACH.ID.eq(attachId)).execute();
-	}
-
-	public static void deleteProjectAttach(AONContext ctx, Integer attachId){
-		ctx.getDslContext().delete(PROJECT_ATTACH).where(PROJECT_ATTACH.ID.eq(attachId)).execute();
-	}
-
-	public static void deleteRegistryAttach(AONContext ctx, Integer attachId){
-		ctx.getDslContext().delete(RATTACH).where(RATTACH.ID.eq(attachId)).execute();
-	}
-
-	public static void deleteSepeAttach(AONContext ctx, Integer attachId){
-		ctx.getDslContext().delete(SEPE_BATCH_ATTACH).where(SEPE_BATCH_ATTACH.ID.eq(attachId)).execute();
-	}
-	
 	private static class FullRattachFiller implements Function<RattachRecord, Attach> {
 		
 		@Override
