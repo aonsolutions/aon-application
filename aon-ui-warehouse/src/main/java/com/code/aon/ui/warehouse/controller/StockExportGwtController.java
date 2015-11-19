@@ -20,7 +20,7 @@ public class StockExportGwtController extends BasicController {
 	
 	
 	Warehouse warehouse;
-	Integer quantity;
+	String quantity;
 	String code;
 	String name;
 	String barcode;
@@ -134,11 +134,11 @@ public class StockExportGwtController extends BasicController {
 		return "";
 	}
 
-	public Integer getQuantity() {
+	public String getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(Integer quantity) {
+	public void setQuantity(String quantity) {
 		this.quantity = quantity;
 	}
 

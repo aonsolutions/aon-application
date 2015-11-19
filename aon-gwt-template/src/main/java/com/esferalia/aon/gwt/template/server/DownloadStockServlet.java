@@ -230,9 +230,65 @@ public class DownloadStockServlet extends HttpServlet {
         	c = c.and(STOCK.QUANTITY.greaterThan(0.0));
         	c2 = c2.and(INVENTORY_DETAIL.REAL_QUANTITY.greaterThan(0.0));
         	}
-        if(!quantity.equals("null") && !quantity.equals("") && !quantity.equals("undefined")){
-        	c = c.and(STOCK.QUANTITY.eq(Double.parseDouble(quantity)));
-        	c2 = c2.and(INVENTORY_DETAIL.REAL_QUANTITY.eq(Double.parseDouble(quantity)));
+        if(!quantity.equals("") && !quantity.equals("undefined")){
+        	
+        	if(quantity.contains("=")){
+        		c = c.and(STOCK.QUANTITY.eq(Double.parseDouble(quantity.substring(1))));
+            	c2 = c2.and(INVENTORY_DETAIL.REAL_QUANTITY.eq(Double.parseDouble(quantity.substring(1))));
+        	}
+        	else if(quantity.contains(">")){
+        		c = c.and(STOCK.QUANTITY.greaterThan(Double.parseDouble(quantity.substring(1))));
+            	c2 = c2.and(INVENTORY_DETAIL.REAL_QUANTITY.greaterThan(Double.parseDouble(quantity.substring(1))));
+        	}
+        	else if(quantity.contains(">=")){
+        		c = c.and(STOCK.QUANTITY.greaterOrEqual(Double.parseDouble(quantity.substring(2))));
+            	c2 = c2.and(INVENTORY_DETAIL.REAL_QUANTITY.eq(Double.parseDouble(quantity.substring(2))));
+        	}
+        	else if(quantity.contains("<")){
+        		c = c.and(STOCK.QUANTITY.lessThan(Double.parseDouble(quantity.substring(1))));
+            	c2 = c2.and(INVENTORY_DETAIL.REAL_QUANTITY.lessThan(Double.parseDouble(quantity.substring(1))));
+        	}
+        	else if(quantity.contains("<=")){
+        		c = c.and(STOCK.QUANTITY.lessOrEqual(Double.parseDouble(quantity.substring(2))));
+            	c2 = c2.and(INVENTORY_DETAIL.REAL_QUANTITY.lessOrEqual(Double.parseDouble(quantity.substring(2))));
+        	}
+        	else if(quantity.contains("!")){
+        		c = c.and(STOCK.QUANTITY.ne(Double.parseDouble(quantity.substring(1))));
+            	c2 = c2.and(INVENTORY_DETAIL.REAL_QUANTITY.ne(Double.parseDouble(quantity.substring(1))));
+        	}
+        	else if(quantity.contains(":")){
+        		Integer pos = quantity.indexOf(":");
+        		Double qA = Double.parseDouble(quantity.substring(0,pos));
+        		Double qB = Double.parseDouble(quantity.substring(pos+1));
+        		c = c.and(STOCK.QUANTITY.between(qA, qB));
+            	c2 = c2.and(INVENTORY_DETAIL.REAL_QUANTITY.between(qA, qB));
+        	}
+        	else if(quantity.contains("|")){
+        		Integer pos = quantity.indexOf("|");
+        		Double qA = Double.parseDouble(quantity.substring(0,pos));
+        		Double qB = Double.parseDouble(quantity.substring(pos+1));
+        		c = c.and(STOCK.QUANTITY.eq(qA).or(STOCK.QUANTITY.eq(qB)));
+            	c2 = c2.and(INVENTORY_DETAIL.REAL_QUANTITY.eq(qA).or(INVENTORY_DETAIL.REAL_QUANTITY.eq(qB)));
+        	}
+        	else if(quantity.contains("&")){
+        		Integer pos = quantity.indexOf("&");
+        		Double qA = Double.parseDouble(quantity.substring(0,pos));
+        		Double qB = Double.parseDouble(quantity.substring(pos+1));
+        		c = c.and(STOCK.QUANTITY.eq(qA).and(STOCK.QUANTITY.eq(qB)));
+            	c2 = c2.and(INVENTORY_DETAIL.REAL_QUANTITY.eq(qA).and(INVENTORY_DETAIL.REAL_QUANTITY.eq(qB)));
+        	}
+        	else if(quantity.equalsIgnoreCase("null")){
+            	c = c.and(STOCK.QUANTITY.isNull());
+                c2 = c2.and(INVENTORY_DETAIL.REAL_QUANTITY.isNull());
+        	}
+        	else if(quantity.equalsIgnoreCase("not null")){
+            	c = c.and(STOCK.QUANTITY.isNotNull());
+                c2 = c2.and(INVENTORY_DETAIL.REAL_QUANTITY.isNotNull());
+        	}
+        	else{
+        		c = c.and(STOCK.QUANTITY.eq(Double.parseDouble(quantity)));
+        		c2 = c2.and(INVENTORY_DETAIL.REAL_QUANTITY.eq(Double.parseDouble(quantity)));
+        	}
         }
         if(!types.equals("null") && !types.equals("") && !types.equals("undefined")){
         	String s= types.substring(1) ;
