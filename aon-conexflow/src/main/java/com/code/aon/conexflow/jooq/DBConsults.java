@@ -32,12 +32,14 @@ import com.code.aon.customer.Customer;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.Registry;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.jooq.tables.records.ProjectReservationRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
@@ -228,20 +230,27 @@ public class DBConsults {
 	//-------------------- DELETES
 	
 	public static void deletePreuthorization(Domain domain, Integer projectId) {
-		Attach attach = Attach.projectAttach(projectId, domain, MimeType.XML, "CONEXFLOW-P", null, true, null, null);
-		Condition condition = PROJECT_ATTACH.PROJECT.eq(projectId).and(PROJECT_ATTACH.DESCRIPTION.eq("CONEXFLOW-P"));
-		AON.delete(attach, condition);
+		String login = AonUtil.getRemoteUser()!= null ? AonUtil.getRemoteUser() : "";
+		AON.delete(domain.getName(), domain.getId(), login, 
+			filter -> filter.getAttachModuleProperty().eq(projectId)
+					.and(filter.getDescriptionProperty().eq("CONEXFLOW-P"))
+			, AttachType.PROJECT);
 	}
 	
-	public static void deletePreuthorization(Domain domain, Integer projectId, Attach attach) {
-		Condition condition = PROJECT_ATTACH.PROJECT.eq(projectId).and(PROJECT_ATTACH.DESCRIPTION.eq("CONEXFLOW-P"));
-		AON.delete(attach, condition);
+	public static void deletePreuthorization(Domain domain, Integer projectId, Attach attach) {		
+		String login = AonUtil.getRemoteUser()!= null ? AonUtil.getRemoteUser() : "";
+		AON.delete(domain.getName(), domain.getId(), login,
+			filter -> filter.getAttachModuleProperty().eq(projectId)
+					.and(filter.getDescriptionProperty().eq("CONEXFLOW-P"))
+			, AttachType.PROJECT);
 	}
 	
 	public static void delete(Domain domain, Integer projectId, String op) {
-		Attach attach = Attach.projectAttach(projectId, domain, MimeType.XML, "CONEXFLOW-"+op, null, true, null, null);
-		Condition condition = PROJECT_ATTACH.PROJECT.eq(projectId).and(PROJECT_ATTACH.DESCRIPTION.eq("CONEXFLOW-"+op));
-		AON.delete(attach, condition);
+		String login = AonUtil.getRemoteUser()!= null ? AonUtil.getRemoteUser() : "";
+		AON.delete(domain.getName(), domain.getId(), login,
+				filter -> filter.getAttachModuleProperty().eq(projectId)
+						.and(filter.getDescriptionProperty().eq("CONEXFLOW-"+op))
+				, AttachType.PROJECT);
 	}
 	
 	
