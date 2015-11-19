@@ -10,7 +10,7 @@
 		<aon:form id="roomSearch">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.report_rooms}" />
-				<ui:param name="skipResetButton" value="#{!aonRole.admin}" />
+				<ui:param name="skipResetButton" value="#{!aonRole.config and !aonRole.auditor}" />
 				<ui:param name="controller" value="#{room}" />
 			</ui:include>
 

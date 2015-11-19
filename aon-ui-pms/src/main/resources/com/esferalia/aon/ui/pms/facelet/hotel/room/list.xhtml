@@ -10,7 +10,7 @@
 		<aon:form id="roomList">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.report_rooms}" />
-				<ui:param name="skipResetButton" value="#{!aonRole.admin}" />
+				<ui:param name="skipResetButton" value="#{!aonRole.config and !aonRole.auditor}" />
 				<ui:param name="controller" value="#{room}" />
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="room-selectAll"
