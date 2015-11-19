@@ -48,7 +48,7 @@
 					<aon:outputLabel for="AccountEntry_accountPeriod"
 						value="#{bundle.aon_financial_year}" />
 					<aon:div>
-						<aon:selectOneMenu id="AccountEntry_accountPeriod" 
+						<aon:selectOneMenu id="AccountEntry_accountPeriod"
 							value="#{salaryEntry.entry.period}">
 							<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
 <!-- 							
@@ -67,7 +67,7 @@
 								value="#{bundle.aon_confidential}" />
 						</aon:if>
 					</aon:div>
-					<aon:outputText value="&#160;CCC" />
+					<aon:outputText value="&#160;" />
 
 					<aon:outputLabel for="date" value="#{bundle.aon_date}" />
 					<aon:selectInputDate id="date" required="true"
