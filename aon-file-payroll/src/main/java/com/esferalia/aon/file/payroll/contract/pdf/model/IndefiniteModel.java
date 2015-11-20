@@ -213,9 +213,15 @@ public class IndefiniteModel extends AbstractContractModel {
 				// do nothing
 			}
 			try {
-				setPdfFieldValue(PdfFieldIndefinite.LEGAL_REPRESENTATIVE_NAME.getValue(),"");
-				setPdfFieldValue(PdfFieldIndefinite.LEGAL_REPRESENTATIVE_NIF.getValue(),"");
-				setPdfFieldValue(PdfFieldIndefinite.LEGAL_REPRESENTATIVE_CHARGE.getValue(),"");
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.LEGAL_REPRESENTATIVE_NAME.toString()))){
+					setPdfFieldValue(PdfFieldIndefinite.LEGAL_REPRESENTATIVE_NAME.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.LEGAL_REPRESENTATIVE_NAME.toString()));
+				}
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.LEGAL_REPRESENTATIVE_NIF.toString()))){
+					setPdfFieldValue(PdfFieldIndefinite.LEGAL_REPRESENTATIVE_NIF.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.LEGAL_REPRESENTATIVE_NIF.toString()));
+				}
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.LEGAL_REPRESENTATIVE_CHARGE.toString()))){
+					setPdfFieldValue(PdfFieldIndefinite.LEGAL_REPRESENTATIVE_CHARGE.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.LEGAL_REPRESENTATIVE_CHARGE.toString()));
+				}
 			} catch (StringIndexOutOfBoundsException aie) {
 				// do nothing
 			} catch (NullPointerException npe) {

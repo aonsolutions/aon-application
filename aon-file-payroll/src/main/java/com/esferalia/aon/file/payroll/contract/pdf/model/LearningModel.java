@@ -223,9 +223,15 @@ public class LearningModel extends AbstractContractModel {
 				// do nothing
 			}
 			try {
-				setPdfFieldValue(PdfFieldLearning.LEGAL_REPRESENTATIVE_NAME.getValue(),"");
-				setPdfFieldValue(PdfFieldLearning.LEGAL_REPRESENTATIVE_NIF.getValue(),"");
-				setPdfFieldValue(PdfFieldLearning.LEGAL_REPRESENTATIVE_CHARGE.getValue(),"");
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldLearning.LEGAL_REPRESENTATIVE_NAME.toString()))){
+					setPdfFieldValue(PdfFieldLearning.LEGAL_REPRESENTATIVE_NAME.getValue(), getContractInfoMap(contract).get(PdfFieldLearning.LEGAL_REPRESENTATIVE_NAME.toString()));
+				}
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldLearning.LEGAL_REPRESENTATIVE_NIF.toString()))){
+					setPdfFieldValue(PdfFieldLearning.LEGAL_REPRESENTATIVE_NIF.getValue(), getContractInfoMap(contract).get(PdfFieldLearning.LEGAL_REPRESENTATIVE_NIF.toString()));
+				}
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldLearning.LEGAL_REPRESENTATIVE_CHARGE.toString()))){
+					setPdfFieldValue(PdfFieldLearning.LEGAL_REPRESENTATIVE_CHARGE.getValue(), getContractInfoMap(contract).get(PdfFieldLearning.LEGAL_REPRESENTATIVE_CHARGE.toString()));
+				}
 			} catch (StringIndexOutOfBoundsException aie) {
 				// do nothing
 			} catch (NullPointerException npe) {
