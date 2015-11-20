@@ -10,6 +10,5 @@ public interface IMessageContainer {
 	
 	void setCurrentIndex(int currentIndex);
 	
-	DataModel getModel() throws ManagerBeanException;
-	
+	DataModel getModel() throws ManagerBeanException;	
 }
