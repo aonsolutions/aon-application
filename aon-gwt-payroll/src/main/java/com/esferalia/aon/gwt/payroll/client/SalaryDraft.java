@@ -4045,8 +4045,21 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	private Label getLabel(Variable variable) {
-		String text = variable.getName();
-		Label label = new Label(text);
+		StringBuffer text = new StringBuffer( variable.getName() );
+		
+		
+		try {
+			Date startDate = variable.getStartDate();
+			Date endDate = variable.getEndDate();
+			if ( !startDate.equals(salaryDraftObject.getStartDate()) 
+					|| !endDate.equals(salaryDraftObject.getEndDate())){
+					DateTimeFormat format = DateTimeFormat.getFormat("dd/MM");
+					text.append(" ( " + format.format(startDate) + " - " + format.format(endDate) + " )");
+			}
+		} catch ( Exception e ) {
+		}
+		
+		Label label = new Label(text.toString());
 
 		label.setStyleName(style.cellLabel());
 		if (variable instanceof UndefinedVariable) {

@@ -299,7 +299,8 @@ public class SalaryDraft extends SalaryPreview {
 		var.setEndDate(endDate);
 		var.setScope(Scope.SYSTEM);
 		var.setImplicit(true);
-		if (!context.contains(var))
+		if ( findVariable(name,startDate, endDate) == null )
+		//if (!context.contains(var))
 			context.add(var);
 		return this;
 	}
@@ -323,8 +324,28 @@ public class SalaryDraft extends SalaryPreview {
 		var.setImplicit(false);
 		var.setDefined(defined);
 		var.expression = expression;
-		if (!context.contains(var))
+		if ( findVariable(name,startDate, endDate) == null )
+		//if (!context.contains(var))
 			context.add(var);
+		
+			
+	}
+	
+	public Variable findVariable(String name, Date startDate, Date endDate) {
+		for ( Variable var : context) {
+			if ( !var.getName().equals(name) ) 
+				continue;
+			
+			// TODO : var.getStartDate().equals(startDate) 
+			if ( var.getStartDate().after(endDate) ) 
+				continue;
+			// TODO : var.getEndDate().equals(endtDate) 
+			if ( var.getEndDate().before(startDate) ) 
+				continue;
+			
+			return var;
+		}
+		return null;
 	}
 
 	public void addUndefinedVariable(UndefinedVariable var) {
