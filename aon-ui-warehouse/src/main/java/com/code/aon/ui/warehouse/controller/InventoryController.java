@@ -145,6 +145,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 	                " where stock.item=item.id " +
 	                " and stock.warehouse=" + warehouse.getId() +
 	                " and " + DomainManager.getSQLWhereClause("stock.domain") +
+	                " and (item.product.serializable = 0 or item.serialNumber is not null) " +
 	                " group by item.id " +
 	                " order by item.detail");
 			Iterator<?> iter = q.list().iterator();
