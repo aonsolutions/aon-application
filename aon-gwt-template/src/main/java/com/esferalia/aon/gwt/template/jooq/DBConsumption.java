@@ -21,10 +21,11 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record3;
-import org.jooq.Record6;
+import org.jooq.Record8;
 import org.jooq.Result;
 
 import com.esferalia.aon.gwt.template.shared.ConsumptionItem;
@@ -295,20 +296,23 @@ public class DBConsumption {
 		ConsumptionItem ci = new ConsumptionItem();
 		ci.setItemId(itemId);
 		
-		Record6<String, String, Double, String, String, String> data = ctx.getDslContext().select(PRODUCT.CODE, PRODUCT.NAME, ITEM.PRICE, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3)	
+		Record8<String, String, Double, String, String, String, Byte, String> data = ctx.getDslContext().select(PRODUCT.CODE, PRODUCT.NAME, ITEM.PRICE, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3
+					, PRODUCT.SERIALIZABLE, ITEM.SERIAL_NUMBER)	
 			.from(PRODUCT).join(ITEM).on(PRODUCT.ID.equal(ITEM.PRODUCT))
 			.where(ITEM.ID.equal(itemId))
 			.fetchOne();
 		
 		ci.setWarehouseName(warehouseName);
 		ci.setHotel(hotel);
-		
-		ci.setProductCode(data.value1());
-		ci.setProductName(data.value2());
-		ci.setPrice(data.value3());
-		ci.setDetail(data.value4());
-		ci.setDetail2(data.value5());
-		ci.setDetail3(data.value6());		
+		String name = getFullName(data.getValue(PRODUCT.NAME), data.getValue(ITEM.DETAIL),
+				data.getValue(ITEM.DETAIL2), data.getValue(ITEM.DETAIL3),
+				data.getValue(PRODUCT.SERIALIZABLE).equals(1),data.getValue(ITEM.SERIAL_NUMBER));
+		ci.setProductCode(data.getValue(PRODUCT.CODE));
+		ci.setProductName(name);
+		ci.setPrice(data.getValue(ITEM.PRICE));
+		ci.setDetail(data.getValue(ITEM.DETAIL));
+		ci.setDetail2(data.getValue(ITEM.DETAIL2));
+		ci.setDetail3(data.getValue(ITEM.DETAIL3));		
 
 		ci.setInitialQuantity(0.0);
 		ci.setPurchasesAlb(0.0);
@@ -399,5 +403,42 @@ public class DBConsumption {
 			if (ctx != null) ctx.close();
 		}
 	}
+	
+	private static String getFullName(String name, String detail, String detail2, String detail3,
+			Boolean serializable, String serialNumber) {
+		String details = getDetails(detail, detail2, detail3);
+		StringBuffer sb = new StringBuffer();
+		if (StringUtils.isNotEmpty(name)) {
+			sb.append(name);
+		}
+		if (StringUtils.isNotEmpty(details)) {
+			sb.append(" [" + details + "]");
+		}
+		if (serializable && StringUtils.isNotEmpty(serialNumber)) {
+			sb.append(" #" + serialNumber);
+		}
+		return (sb.length() > 0) ? sb.toString() : "";
+	}
+	
+	private static String getDetails(String detail, String detail2, String detail3) {
+		StringBuffer sb = new StringBuffer();
+		if (StringUtils.isNotEmpty(detail)) {
+			sb.append(detail);
+		}
+		if (StringUtils.isNotEmpty(detail2)) {
+			if (sb.length() > 0) {
+				sb.append(" / ");
+			}
+			sb.append(detail2);
+		}
+		if (StringUtils.isNotEmpty(detail3)) {
+			if (sb.length() > 0) {
+				sb.append(" / ");
+			}
+			sb.append(detail3);
+		}
+		return (sb.length() > 0) ? sb.toString() : "";
+	}
+	
 	
 }
