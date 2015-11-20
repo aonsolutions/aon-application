@@ -381,11 +381,11 @@
 								valueChangeListener="#{finance.onRegistryBankChanged}"
 								disabled="#{!finance.pending and !finance.returned}">
 								<f:selectItem itemLabel="-" value="#{null}" />
-								<aon:if test="#{!finance.nevv}">
-									<f:selectItems value="#{finance.allBanks}" />
-								</aon:if>
-								<aon:if test="#{finance.nevv}">
+								<aon:if test="#{finance.nevv or finance.registryBank.id == null or finance.registryBank.active}">
 									<f:selectItems value="#{finance.activeBanks}" />
+								</aon:if>
+								<aon:if test="#{!finance.nevv and finance.registryBank.id != null and !finance.registryBank.active}">
+									<f:selectItems value="#{finance.allBanks}" />
 								</aon:if>
 							</aon:selectOneMenu>
 							<aon:commandLink id="bankAccount_show_manualInput" ajaxSingle="true"

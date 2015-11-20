@@ -127,7 +127,7 @@
 											styleClass="aon-editDataTable-button aon-lookupButton-new" />
 									</aon:panelGroup>
 									<aon:commandLink id="bankAccount_hide_manualInput" ajaxSingle="true"
-										rendered="#{controller.showBankManualInput and controller.allBanksCount>0}"  
+										rendered="#{controller.showBankManualInput and controller.activeBanksCount>0}"  
 										reRender="InvoiceFinance_bankAccount_panel"
 										styleClass="aon-icon-edit-end aon-margin-left" style="padding-right: 20px;padding-top: 0px;"
 										value="&#160;" title="#{bundle.aon_key_cancel_line_description}" >
@@ -156,7 +156,12 @@
 										value="#{controller.registryBank}"
 										valueChangeListener="#{controller.onRBankChanged}">
 										<f:selectItem value="#{null}" />
-										<f:selectItems value="#{controller.allBanks}" />
+										<aon:if test="#{controller.registryBank.id == null or controller.registryBank.active}">
+											<f:selectItems value="#{controller.activeBanks}" />
+										</aon:if>
+										<aon:if test="#{controller.registryBank.id != null and !controller.registryBank.active}">
+											<f:selectItems value="#{controller.allBanks}" />
+										</aon:if>
 									</aon:selectOneMenu>
 									<aon:commandLink id="bankAccount_show_manualInput" ajaxSingle="true"
 										rendered="#{!controller.showBankManualInput}"  

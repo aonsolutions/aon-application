@@ -50,7 +50,12 @@
 				<aon:selectOneMenu id="RegistryPayMethod_bank"
 					rendered="#{formEdit}" value="#{controller.to.registryBank}">
 					<f:selectItem value="#{null}" />
-					<f:selectItems value="#{controller.allBanks}" />
+					<aon:if test="#{controller.to.registryBank.id == null or controller.to.registryBank.active}">
+						<f:selectItems value="#{controller.activeBanks}" />
+					</aon:if>
+					<aon:if test="#{controller.to.registryBank.id != null and !controller.to.registryBank.active}">
+						<f:selectItems value="#{controller.allBanks}" />
+					</aon:if>
 				</aon:selectOneMenu>					
 				<f:facet name="footer">
 					<aon:selectOneMenu id="RegistryPayMethod_bank-New"

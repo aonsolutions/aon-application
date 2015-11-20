@@ -142,10 +142,10 @@
 													valueChangeListener="#{prepayment.onRBankChanged}"
 													reRender="Prepayment_registryBank" ajaxSingle="true">
 													<f:selectItem value="#{null}" />
-													<aon:if test="#{prepayment.nevv}">
+													<aon:if test="#{prepayment.nevv or prepayment.registryBank.id == null or prepayment.registryBank.active}">
 														<f:selectItems value="#{prepayment.activeBanks}" />
 													</aon:if>
-													<aon:if test="#{!prepayment.nevv}">
+													<aon:if test="#{!prepayment.nevv and prepayment.registryBank.id != null and !prepayment.registryBank.active}">
 														<f:selectItems value="#{prepayment.allBanks}" />
 													</aon:if>
 												</aon:selectOneMenu>

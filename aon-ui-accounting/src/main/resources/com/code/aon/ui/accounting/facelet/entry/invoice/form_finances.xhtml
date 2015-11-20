@@ -114,7 +114,7 @@
 								<ui:param name="bankCodeChangeReRender" value="AccountFinance_bankAlias,AccountFinance_bic" />
 							</ui:include>
 							<aon:commandLink id="bankAccount_hide_manualInput" ajaxSingle="true"
-								rendered="#{invoiceEntry.showBankManualInput and invoiceEntry.allBanksCount>0}"  
+								rendered="#{invoiceEntry.showBankManualInput and invoiceEntry.activeBanksCount>0}"  
 								reRender="AccountFinance_bankAccount_panel"
 								styleClass="aon-icon-edit-end aon-margin-left" style="padding-right: 20px;padding-top: 0px;"
 								value="&#160;" title="#{bundle.aon_key_cancel_line_description}" >
@@ -143,7 +143,12 @@
 								value="#{invoiceEntry.currentBank}"
 								valueChangeListener="#{invoiceEntry.onRBankChanged}">
 								<f:selectItem value="#{null}" />
-								<f:selectItems value="#{invoiceEntry.allBanks}" />
+								<aon:if test="#{invoiceEntry.currentBank.id == null or invoiceEntry.currentBank.active}">
+									<f:selectItems value="#{invoiceEntry.activeBanks}" />
+								</aon:if>
+								<aon:if test="#{invoiceEntry.currentBank.id != null and !invoiceEntry.currentBank.active}">
+									<f:selectItems value="#{invoiceEntry.allBanks}" />
+								</aon:if>
 							</aon:selectOneMenu>
 							<aon:commandLink id="bankAccount_show_manualInput" ajaxSingle="true"
 								rendered="#{!invoiceEntry.showBankManualInput}"  
@@ -165,7 +170,7 @@
 									<ui:param name="bankCodeChangeReRender" value="AccountFinance_bankAlias-New,AccountFinance_bic-New" />
 								</ui:include>
 								<aon:commandLink id="bankAccount_hide_manualInput-New" ajaxSingle="true"
-									rendered="#{invoiceEntry.showBankManualInput and invoiceEntry.allBanksCount>0}"  
+									rendered="#{invoiceEntry.showBankManualInput and invoiceEntry.activeBanksCount>0}"  
 									reRender="AccountFinance_bankAccount_panel-New"
 									styleClass="aon-icon-edit-end aon-margin-left" style="padding-right: 20px;padding-top: 0px;"
 									value="&#160;" title="#{bundle.aon_key_cancel_line_description}" >
@@ -194,7 +199,7 @@
 									value="#{invoiceEntry.currentBank}"
 									valueChangeListener="#{invoiceEntry.onRBankChanged}">
 									<f:selectItem value="#{null}" />
-									<f:selectItems value="#{invoiceEntry.allBanks}" />
+									<f:selectItems value="#{invoiceEntry.activeBanks}" />
 								</aon:selectOneMenu>
 								<aon:commandLink id="bankAccount_show_manualInput-New" ajaxSingle="true"
 									rendered="#{!invoiceEntry.showBankManualInput}"  
