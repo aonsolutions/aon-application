@@ -707,7 +707,7 @@ public class Employees extends ResizeComposite implements
 
 		Workplace workplace = (Workplace) workplaceItem.getUserObject();
 
-		int offset = workplaceItem.getChildCount() - getEmployeesOffset();
+		int offset = workplaceItem.getChildCount() - getEmployeesOffset(workplaceItem);
 
 		employeesService.getEmployees(workplace.getId(), getFromDate(),
 				namePattern, offset, limit,
@@ -862,7 +862,7 @@ public class Employees extends ResizeComposite implements
 						}
 					});
 		}
-		if (workplaceItem.getChildCount() > getEmployeesOffset()) {
+		if (workplaceItem.getChildCount() > getEmployeesOffset(workplaceItem)) {
 			return;
 		} // end-if: Employees of this workplace already loaded .
 
@@ -1476,7 +1476,7 @@ public class Employees extends ResizeComposite implements
 									inactive = !inactive;
 
 									changeVisibleWorkplaces();
-									formerMenuItem.setStyleName(
+									inactiveMenuItem.setStyleName(
 											"aon-MenuItemCheckYes", inactive);
 									popup.hide();
 								} catch (Throwable t) {
@@ -1642,8 +1642,18 @@ public class Employees extends ResizeComposite implements
 		// return extended ? 3 : 2;
 	}
 
-	private int getEmployeesOffset() {
-		return extended ? 7 : 5;
+	private int getEmployeesOffset(TreeItem workplaceItem) {
+		
+		for (int i = 0; i < workplaceItem.getChildCount(); i++) {
+			TreeItem childItem = workplaceItem.getChild(i);
+			Object userObject = childItem.getUserObject();
+			if (userObject instanceof Employee)
+				return i;
+		}
+
+		return workplaceItem.getChildCount();
+
+//		return extended ? 7 : 5;
 	}
 
 	/**
@@ -1654,7 +1664,7 @@ public class Employees extends ResizeComposite implements
 	 */
 	private void removeEmployeeItems(TreeItem workplaceItem) {
 		int childCount = workplaceItem.getChildCount();
-		int employeesOffset = getEmployeesOffset();
+		int employeesOffset = getEmployeesOffset(workplaceItem);
 		for (int i = childCount - 1; i >= employeesOffset; i--) {
 			workplaceItem.getChild(i).remove();
 		}
@@ -1668,7 +1678,7 @@ public class Employees extends ResizeComposite implements
 		for (int i = workplacesOffset; i < childCount; i++) {
 			TreeItem workplaceItem = enterpriseItem.getChild(i);
 			int workplaceItems = workplaceItem.getChildCount();
-			int employeesOffset = getEmployeesOffset();
+			int employeesOffset = getEmployeesOffset(workplaceItem);
 			for (int j = employeesOffset; j < workplaceItems; j++) {
 				TreeItem employeeItem = workplaceItem.getChild(j);
 				Employee employee = (Employee) employeeItem.getUserObject();
