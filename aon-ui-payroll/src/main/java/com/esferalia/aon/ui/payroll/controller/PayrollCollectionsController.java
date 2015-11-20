@@ -261,6 +261,8 @@ public class PayrollCollectionsController implements Serializable {
 					contractCodes.add(item);
 				}
 			}
+			// CONTRATOS NO NORMALIZADOS
+			contractCodes.add(new SelectItem("000", "BECARIOS"));
 		}
 		return contractCodes;
 	}

@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1479,7 +1481,31 @@ public class ContrataContratosWriter implements IContrataWriter{
 		datos.setHORASANUALESTIEMPOCOMPLETO(params.getHorasAnualesTiempoCompleto());
 		String duracionconvenio = (params.getHorasConvenio()==null?"":completeLength(params.getHorasConvenio(), 4, "0", false))+(params.getMinutosConvenio()==null?"":completeLength(params.getMinutosConvenio(), 2, "0", false));
 		String duracionformacion = (params.getHorasFormacion()==null?"":completeLength(params.getHorasFormacion(), 4, "0", false))+(params.getMinutosFormacion()==null?"":completeLength(params.getMinutosFormacion(), 2, "0", false));
-		String duracionjornada = SEPEUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.WEEK_HOURS.getName());
+		
+		
+		Map<String, String> map = SEPEUtils.getInstance().getContractDataMap(getContract());
+		
+		String monday = map.get(ContextVariable.MONDAY_HOURS.toString());
+		String tuesday = map.get(ContextVariable.TUESDAY_HOURS.toString());
+		String thursday = map.get(ContextVariable.THURSDAY_HOURS.toString());
+		String wednesday = map.get(ContextVariable.WEDNESDAY_HOURS.toString());
+		String friday = map.get(ContextVariable.FRIDAY_HOURS.toString());
+		String saturday = map.get(ContextVariable.SATURDAY_HOURS.toString());
+		String sunday = map.get(ContextVariable.SUNDAY_HOURS.toString());
+		double weekHours = 0.0;
+		if(StringUtils.isNotBlank(monday) || StringUtils.isNotBlank(tuesday) || StringUtils.isNotBlank(thursday) 
+				|| StringUtils.isNotBlank(wednesday) || StringUtils.isNotBlank(friday) 
+				|| StringUtils.isNotBlank(saturday) || StringUtils.isNotBlank(sunday)){
+			weekHours += NumberUtils.isNumber(monday)?new Double(monday):0.0;
+			weekHours += NumberUtils.isNumber(tuesday)?new Double(tuesday):0.0;
+			weekHours += NumberUtils.isNumber(thursday)?new Double(thursday):0.0;
+			weekHours += NumberUtils.isNumber(wednesday)?new Double(wednesday):0.0;
+			weekHours += NumberUtils.isNumber(friday)?new Double(friday):0.0;
+			weekHours += NumberUtils.isNumber(saturday)?new Double(saturday):0.0;
+			weekHours += NumberUtils.isNumber(sunday)?new Double(sunday):0.0;
+		}
+		
+		String duracionjornada = String.valueOf(weekHours);
 		duracionjornada = (duracionjornada==null?"":completeLength(getHours(duracionjornada), 4, "0", false)+(completeLength(getMinutes(duracionjornada), 2, "0", false)));
 		if(StringUtils.isBlank(duracionjornada)){
 			duracionjornada = (params.getHorasJornada()==null?"":completeLength(params.getHorasJornada(), 4, "0", false))+(params.getMinutosJornada()==null?"":completeLength(params.getMinutosJornada(), 2, "0", false));

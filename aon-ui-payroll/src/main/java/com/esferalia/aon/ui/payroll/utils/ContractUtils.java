@@ -445,20 +445,6 @@ public class ContractUtils implements Serializable {
 			String msg = "Error al grabar las horas del contrato. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
 		}
-		try {
-			if(params.getWeekHours()!=null){
-				data = new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.WEEK_HOURS.getName() );
-				data.setExpression(params.getWeekHours().toString());
-				bean.insert(data);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar las horas semanales del contrato (" +e.getMessage() + ")";
-			AonUtil.addErrorMessage(msg);
-		}
 		
 	}
 	

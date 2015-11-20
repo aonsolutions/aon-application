@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
@@ -108,10 +110,13 @@ public class PracticeModel extends AbstractContractModel {
 			 * Contract ccc fields
 			 */
 			if(contract.getEnterpriseCCC()!=null){
-				setPdfFieldValue(PdfFieldPractice.CCC_REG1.getValue(),contract.getEnterpriseCCC().getQuoteRegimeCode().substring(0, 1));
-				setPdfFieldValue(PdfFieldPractice.CCC_REG2.getValue(),contract.getEnterpriseCCC().getQuoteRegimeCode().substring(1, 2));
-				setPdfFieldValue(PdfFieldPractice.CCC_REG3.getValue(),contract.getEnterpriseCCC().getQuoteRegimeCode().substring(2, 3));
-				setPdfFieldValue(PdfFieldPractice.CCC_REG4.getValue(),contract.getEnterpriseCCC().getQuoteRegimeCode().substring(3, 4));
+				String quoteRegime = contract.getEnterpriseCCC().getQuoteRegimeCode();
+				if(StringUtils.isNotBlank(quoteRegime) && quoteRegime.length()>=4){
+					setPdfFieldValue(PdfFieldPractice.CCC_REG1.getValue(),quoteRegime.substring(0, 1));
+					setPdfFieldValue(PdfFieldPractice.CCC_REG2.getValue(),quoteRegime.substring(1, 2));
+					setPdfFieldValue(PdfFieldPractice.CCC_REG3.getValue(),quoteRegime.substring(2, 3));
+					setPdfFieldValue(PdfFieldPractice.CCC_REG4.getValue(),quoteRegime.substring(3, 4));
+				}
 				if(contract.getEnterpriseCCC().getCcc().length()==11){
 					setPdfFieldValue(PdfFieldPractice.CCC_PROV1.getValue(),contract.getEnterpriseCCC().getCcc().substring(0, 1));
 					setPdfFieldValue(PdfFieldPractice.CCC_PROV2.getValue(),contract.getEnterpriseCCC().getCcc().substring(1, 2));
@@ -255,6 +260,29 @@ public class PracticeModel extends AbstractContractModel {
 			/*
 			 * # Contract page 2
 			 */
+			
+			Map<String, String> map = getContractDataMap(contract);
+			
+			String monday = map.get(ContextVariable.MONDAY_HOURS.toString());
+			String tuesday = map.get(ContextVariable.TUESDAY_HOURS.toString());
+			String thursday = map.get(ContextVariable.THURSDAY_HOURS.toString());
+			String wednesday = map.get(ContextVariable.WEDNESDAY_HOURS.toString());
+			String friday = map.get(ContextVariable.FRIDAY_HOURS.toString());
+			String saturday = map.get(ContextVariable.SATURDAY_HOURS.toString());
+			String sunday = map.get(ContextVariable.SUNDAY_HOURS.toString());
+			double weekHours = 0.0;
+			if(StringUtils.isNotBlank(monday) || StringUtils.isNotBlank(tuesday) || StringUtils.isNotBlank(thursday) 
+					|| StringUtils.isNotBlank(wednesday) || StringUtils.isNotBlank(friday) 
+					|| StringUtils.isNotBlank(saturday) || StringUtils.isNotBlank(sunday)){
+				weekHours += NumberUtils.isNumber(monday)?new Double(monday):0.0;
+				weekHours += NumberUtils.isNumber(tuesday)?new Double(tuesday):0.0;
+				weekHours += NumberUtils.isNumber(thursday)?new Double(thursday):0.0;
+				weekHours += NumberUtils.isNumber(wednesday)?new Double(wednesday):0.0;
+				weekHours += NumberUtils.isNumber(friday)?new Double(friday):0.0;
+				weekHours += NumberUtils.isNumber(saturday)?new Double(saturday):0.0;
+				weekHours += NumberUtils.isNumber(sunday)?new Double(sunday):0.0;
+			}
+			
 			if(code.getValue().startsWith("1") || code.getValue().startsWith("4")){
 				setPdfFieldValue(PdfFieldPractice.FULL_TIME.getValue(), "true");
 				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldPractice.FULL_TIME_WEEK_HOURS.toString()))){
@@ -268,8 +296,8 @@ public class PracticeModel extends AbstractContractModel {
 				}
 			} else if(code.getValue().startsWith("2") || code.getValue().startsWith("5")){
 				setPdfFieldValue(PdfFieldPractice.PARTIALLY_TIME.getValue(), "true");
-				if(StringUtils.isNotBlank(getContractDataMap(contract).get(ContextVariable.WEEK_HOURS.toString()))){
-					setPdfFieldValue(PdfFieldPractice.PARTIALLY_TIME_HOURS.getValue(), getContractDataMap(contract).get(ContextVariable.WEEK_HOURS.toString()));
+				if(weekHours>0){
+					setPdfFieldValue(PdfFieldPractice.PARTIALLY_TIME_HOURS.getValue(), String.valueOf(weekHours));
 					setPdfFieldValue(PdfFieldPractice.PARTIALLY_TIME_WEEKLY.getValue(), "true");
 				} else if(contrata!=null){
 					if(contrata.getHorasJornada()!=null){

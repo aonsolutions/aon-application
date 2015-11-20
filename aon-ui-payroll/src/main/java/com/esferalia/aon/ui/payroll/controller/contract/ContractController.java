@@ -2229,7 +2229,10 @@ public class ContractController extends BasicController {
 		
 	}
 	
-	public class WorkdayManager {
+	public class WorkdayManager implements Serializable {
+		
+		private static final long serialVersionUID = 1L;
+		
 		private Date workdayDate;
 		private ContractData[] weekDayHours;
 		private List<ContractData[]> weekList;
@@ -2331,14 +2334,6 @@ public class ContractController extends BasicController {
 				}
 			}
 			
-			ContractData data = new ContractData();
-			data.setName(ContextVariable.WEEK_HOURS.getName());
-			data.setExpression(weekHours.toString());
-			data.setStartDate(getWorkdayDate());
-			data.setContract((Contract) getTo());
-			data.setDomain(((Contract) getTo()).getDomain());
-			bean.insert(data);
-			
 			onInit(event);
 		}
 		
@@ -2364,19 +2359,9 @@ public class ContractController extends BasicController {
 		public void onRemove(ActionEvent event) throws ManagerBeanException{
 			openPrevious();
 			
-			Date selectedDate = null;
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			ContractData[] week = weekList.get(0);
 			for(ContractData data: week){
-				if(data!=null && data.getId()!=null){
-					selectedDate = data.getStartDate();
-					bean.remove(data);
-				}
-			}
-			
-			List<ITransferObject> list = getWeekHours(selectedDate);
-			for(ITransferObject to: list){
-				ContractData data = (ContractData) to;
 				if(data!=null && data.getId()!=null){
 					bean.remove(data);
 				}
@@ -2386,13 +2371,11 @@ public class ContractController extends BasicController {
 		}
 		
 		private void closePrevious() throws ManagerBeanException {
-			Date selectedDate = null;
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			if(weekList!=null && weekList.size()>0){
 				ContractData[] week = weekList.get(0);
 				for(ContractData data: week){
 					if(data!=null && data.getId()!=null){
-						selectedDate = data.getStartDate();
 						Calendar cal = Calendar.getInstance();
 						cal.setTime(workdayDate);
 						cal.add(Calendar.DAY_OF_MONTH, -1);
@@ -2401,53 +2384,20 @@ public class ContractController extends BasicController {
 					}
 				}
 			}
-			
-			List<ITransferObject> list = getWeekHours(selectedDate);
-			for(ITransferObject to: list){
-				ContractData data = (ContractData) to;
-				if(data!=null && data.getId()!=null){
-					Calendar cal = Calendar.getInstance();
-					cal.setTime(workdayDate);
-					cal.add(Calendar.DAY_OF_MONTH, -1);
-					data.setEndDate(cal.getTime());
-					bean.update(data);
-				}
-			}
 		}
 		
 		private void openPrevious() throws ManagerBeanException {
-			Date selectedDate = null;
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			if(weekList!=null && weekList.size()>1){
 				ContractData[] week = weekList.get(1);
 				for(ContractData data: week){
 					if(data!=null && data.getId()!=null){
-						selectedDate = data.getStartDate();
 						data.setEndDate(null);
 						bean.update(data);
 					}
 				}
 			}
 			
-			List<ITransferObject> list = getWeekHours(selectedDate);
-			for(ITransferObject to: list){
-				ContractData data = (ContractData) to;
-				if(data!=null && data.getId()!=null){
-					data.setEndDate(null);
-					bean.update(data);
-				}
-			}
-		}
-		
-		private List<ITransferObject> getWeekHours(Date date) throws ManagerBeanException{
-			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), ((Contract)getTo()).getId());
-//			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), ((Contract)getTo()).getStartDate());
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), date);
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), ContextVariable.WEEK_HOURS.getName());
-//			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE));
-			return bean.getList(criteria);
 		}
 		
 		public DataModel getModel(){

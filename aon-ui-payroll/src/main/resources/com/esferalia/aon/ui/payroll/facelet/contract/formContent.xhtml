@@ -418,6 +418,18 @@
 					</aon:commandButton>
 					
 					<aon:if test="#{contract.workdayManager.weekListCount>0}">
+					
+						<aon:div style="display:inline;"
+							rendered="#{contract.workdayManager.currentWeekDayHours[0].startDate != contract.to.startDate}">
+							<aon:outputText value="(" />
+							<aon:outputText value="#{bundle.aon_date_from}:" />
+							<aon:outputText value="#{contract.workdayManager.currentWeekDayHours[0].startDate}" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+							<aon:outputText value=")" styleClass="aon-margin-right" />
+						</aon:div>
+						
 						<aon:outputText value="#{bundle.aon_calendar_monday_abr}:" />
 						<aon:outputText value="#{contract.workdayManager.currentWeekDayHours[0].expression}" />
 						
