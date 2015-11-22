@@ -3687,9 +3687,9 @@ public class SQLContractSalaryCalculatorContext extends
 			ITimedVariable<?> userWeekHours = getExpressionContext()
 					.getVariable(WEEK_HOURS, period.getStart(),
 							period.getEnd());
-			if (listener != null)
-				listener.onRedefinedImplicit(WEEK_HOURS.getName(),
-						userWeekHours, new WeekHours(period));
+//			if (listener != null)
+//				listener.onRedefinedImplicit(WEEK_HOURS.getName(),
+//						userWeekHours, new WeekHours(period));
 		}
 
 	}
