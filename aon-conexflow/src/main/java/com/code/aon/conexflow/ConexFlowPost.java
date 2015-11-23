@@ -100,7 +100,7 @@ public class ConexFlowPost implements  Serializable {
 				if(!op.equals(ConexFlowConstant.VALIDATE_CARD_OP)){
 					DBConsults.insertConexFlowOperation(domain, xmlFile, project,op);
 					if(op.equals(ConexFlowConstant.SALE_OP))
-						ConexFlowUtils.setVoucher(domain, project, conexFlow.getRespuesta().getVoucher());
+						ConexFlowUtils.setVoucher(domain, project, conexFlow);
 					if(op.equals(ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP))
 						ConexFlowUtils.setVoucher(domain, project, conexFlow);
 					if(op.equals(ConexFlowConstant.CANCELATION_OP)){

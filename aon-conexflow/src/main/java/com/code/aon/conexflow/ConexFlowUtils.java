@@ -15,6 +15,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 import com.code.aon.conexflow.ConexFlow.Query;
 import com.code.aon.conexflow.ConexFlow.Respuesta;
+import com.code.aon.conexflow.jooq.DBConsults;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -219,9 +220,20 @@ public class ConexFlowUtils {
 	}
 	
 	protected static void setVoucher(Domain domain, Integer project, ConexFlow cf) {
+
 		Respuesta r = cf.getRespuesta();
 		Query q = cf.getQuery();
-		String voucher = "<html><head></head><body>EMPRESA: "+r.getEmpresa()+" CENTRO: "+r.getCentro()+" TPV: "+r.getTpv()+"<br>OPERAD.: "+r.getTeminal()+"   NO.OPERACION: "+r.getIdOperacion() +"<br>FECHA  : " + r.getFecha() +  "	HORA: " + r.getHora() + "<br>TARJETA:                       CAD: <br>CAPTURA MANUAL / AUTORIZACION:" + q.getAutOriginal() + "<br>"+ r.getDesCA()+"<br>"+r.getDesTipoDoc()+"<br>COM.PE: "+r.getComercio()+" TER.PE: "+r.getTeminal()+"<br>REF.PE: "+r.getReferencia()+"          SES.PE: 050820  <br>*************** V E N T A **************<br><br>TOTAL:          "+ r.getImporte()+ " EUR<br><br>---------- FIRMA DEL TITULAR -----------<br><br><br><br><br>----------------------------------------<br>******** PARA EL ESTABLECIMIENTO *******<br><br></body></html>";
+		String aut;
+		if(cf.getRespuesta().getOperacion().equals(ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP))
+			aut = q.getAutOriginal();
+		else aut = r.getAutorizacion();
+		String voucher = "<html><head></head><body>EMPRESA: "+r.getEmpresa()+" CENTRO: "+r.getCentro()+" TPV: "+r.getTpv()+
+				"<br>OPERAD.: "+r.getTeminal()+"   NO.OPERACION: "+r.getIdOperacion() +"<br>FECHA  : " + r.getFecha() +
+				"	HORA: " + r.getHora() + "<br>TARJETA:"+ DBConsults.getCreditCardNumber(domain, project)+"<br>CAD:"+
+				DBConsults.getCreditCardFechCad(domain, project) +"<br>CAPTURA MANUAL / AUTORIZACION:" + aut +"<br>"+
+				r.getDesCA()+"<br>"+r.getDesTipoDoc()+"<br>COM.PE: "+r.getComercio()+" TER.PE: "+r.getTeminal()+"<br>REF.PE: "+
+				r.getReferencia()+"          SES.PE: 050820  <br>*************** V E N T A **************<br><br>TOTAL:          "+
+				r.getImporte()+ " EUR<br><br>---------- FIRMA DEL TITULAR -----------<br><br><br><br><br>----------------------------------------<br>******** PARA EL ESTABLECIMIENTO *******<br><br></body></html>";
 		setVoucher(domain, project, voucher);
 	}
 	

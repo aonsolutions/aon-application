@@ -41,56 +41,63 @@ public class Domain implements Serializable {
 		return parentId;
 	}
 
-	public void setParentId(Integer parentId) {
+	public Domain setParentId(Integer parentId) {
 		this.parentId = parentId;
-	}
+		return this;
+	}	
 
 	public boolean isParent() {
 		return parent;
 	}
 
-	public void setParent(boolean parent) {
+	public Domain setParent(boolean parent) {
 		this.parent = parent;
+		return this;
 	}
 
 	public boolean isChild() {
 		return child;
 	}
 
-	public void setChild(boolean child) {
+	public Domain setChild(boolean child) {
 		this.child = child;
+		return this;
 	}
 
 	public boolean isStandalone() {
 		return standalone;
 	}
 
-	public void setStandalone(boolean standalone) {
+	public Domain setStandalone(boolean standalone) {
 		this.standalone = standalone;
+		return this;
 	}
 
 	public boolean isActive() {
 		return active;
 	}
 
-	public void setActive(boolean active) {
+	public Domain setActive(boolean active) {
 		this.active = active;
+		return this;
 	}
 
 	public String getDescription() {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public Domain setDescription(String description) {
 		this.description = description;
+		return this;
 	}
 
 	public DomainType getDomainType() {
 		return domainType;
 	}
 
-	public void setDomainType(DomainType domainType) {
+	public Domain setDomainType(DomainType domainType) {
 		this.domainType = domainType;
+		return this;
 	}
 	
 	

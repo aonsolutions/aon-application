@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.Condition;
-
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
@@ -64,6 +62,7 @@ import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
+import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
@@ -71,6 +70,7 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
 import com.esferalia.aon.occam.impl.jooq.AgreementImpl;
@@ -82,6 +82,7 @@ import com.esferalia.aon.occam.impl.jooq.FiscalImpl;
 import com.esferalia.aon.occam.impl.jooq.GroupwareImpl;
 import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
 import com.esferalia.aon.occam.impl.jooq.ProductImpl;
+import com.esferalia.aon.occam.impl.jooq.ProjectImpl;
 import com.esferalia.aon.occam.impl.jooq.SalaryImpl;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
 import com.esferalia.aon.occam.impl.jooq.StatsImpl;
@@ -151,6 +152,11 @@ public class AON {
 	private static IStats getStats() {
 		return new StatsImpl();
 	}
+	
+	private static IProject getProject(){
+		return new ProjectImpl();
+	}
+	
 	// ********************************************
 	// ******************************** SECURITY **
 	// ********************************************
@@ -1811,6 +1817,7 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
 	public static StatData<Integer, InvoiceType, Double> getMonthInvoiceTypeData(
 			StatParams params, String user) {
 		AONContext ctx = null;
@@ -1824,4 +1831,46 @@ public class AON {
 		}
 	}
 
+	// ********************************************
+	// ********************************* Project **
+	// ********************************************
+	
+	public static ProjectReservation getProjectReservation(String domainName, Integer domainId, String login, Integer projectId){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getProject().getProjectReservation(ctx, projectId);
+		} finally {
+			if(ctx != null)
+				ctx.close();
+		}
+	}
+	
+	// ********************************************
+	// ******************************* Warehouse **
+	// ********************************************
+	
+	public static void deleteWarehouseTransfer(String domainName, Integer domainId, String login,
+			Integer inventoryId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			//getWarehouse().deleteWarehouseTransfer(ctx, inventoryId);
+		} finally {
+			if(ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static void updateInventory(String domainName, Integer domainId, String login,
+			Inventory inventory){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			//getWarehouse().updateInventory(ctx, inventory);
+		} finally {
+			if(ctx != null)
+				ctx.close();
+		}
+	}
 }

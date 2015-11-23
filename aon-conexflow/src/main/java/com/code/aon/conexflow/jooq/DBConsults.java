@@ -11,18 +11,20 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
-import org.jooq.Condition;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Result;
 
+import com.code.aon.common.util.CryptoUtil;
 import com.code.aon.conexflow.ConexFlow;
 import com.code.aon.conexflow.ConexFlow.Query;
 import com.code.aon.conexflow.ConexFlowConnection;
@@ -40,12 +42,14 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
+import org.apache.commons.lang.StringUtils;
 
 public class DBConsults {
 
@@ -331,8 +335,21 @@ public class DBConsults {
 		return result.value1();
 	}
 	
+	public static String getCreditCardNumber(Domain domain, Integer project){
+		com.esferalia.aon.occam.api.model.project.ProjectReservation pr = getProjectReservation(domain, new User().setLogin(""), project);
+		String key = getCryptoKey(pr);
+		return getSecureCreditCardNumber(CryptoUtil.decrypt(key, pr.getCreditCardNumber()));
+	}
 	
+	public static String getCreditCardFechCad(Domain domain, Integer project){
+		com.esferalia.aon.occam.api.model.project.ProjectReservation pr = getProjectReservation(domain, new User().setLogin(""), project);
+		String key = getCryptoKey(pr);
+		return CryptoUtil.decrypt(key,pr.getCreditCardExpirationMonth()) + "/" + CryptoUtil.decrypt(key,pr.getCreditCardExpirationYear());
+	}
 	
+	public static com.esferalia.aon.occam.api.model.project.ProjectReservation getProjectReservation(Domain domain, User user, Integer projectId){
+		return AON.getProjectReservation(domain.getName(), domain.getId(), user.getLogin(), projectId);
+	}
 	
 	public static ProjectReservation newProjectReservation(AONContext ctx, ProjectReservationRecord pr){
 		ProjectReservation reservation = new ProjectReservation();
@@ -356,5 +373,19 @@ public class DBConsults {
 		reservation.setPenaltyDays(pr.getPenaltyDays());
 		reservation.setDomain(pr.getDomain());
 		return reservation;
+	}
+	
+	private static String getCryptoKey(com.esferalia.aon.occam.api.model.project.ProjectReservation reservation) {
+		DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+		return formatter.format(reservation.getCreationDate());
+	}
+	
+	public static String getSecureCreditCardNumber(String cardNumber) {
+		int length = (cardNumber != null) ? cardNumber.length() : 0;
+		StringBuffer value = new StringBuffer();
+		value.append(StringUtils.substring(cardNumber, 0, 4));
+		value.append(StringUtils.repeat("*", length-8));
+		value.append(StringUtils.substring(cardNumber, -4, length));
+		return value.toString();
 	}
 }
