@@ -147,7 +147,7 @@ public class CompanyBankLoaderFactory implements ILoaderFactory<ILoadedPojo>{
     }
     
     // Se le pasa el IBAN completo y devuelve un objeto BankAccount con el contenido del IBAN
-    private BankAccount ensureBankAccount(String iban, ILoaderEngine engine) {
+    private BankAccount ensureBankAccount(String iban, ILoaderEngine engine) throws AonException {
     	
     	// Si esta vacio o es nulo, devuelve nulo
 		if (StringUtils.isBlank(iban)) {
@@ -171,7 +171,9 @@ public class CompanyBankLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			bankAccount.setBban7(StringUtils.substring(ccc, 28, 32));
 			bankAccount.setBban8(StringUtils.substring(ccc, 32, 34));
 			if (!bankAccount.isValidIban()) {
-				engine.log("IBAN incorrecto ("+iban+")");				
+				String msg = "IBAN incorrecto ("+iban+")";
+				engine.log(msg);
+				throw new AonException(msg);
 			}
 		} else {
 			bankAccount.setCountry(Country.ES);
@@ -181,7 +183,9 @@ public class CompanyBankLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			bankAccount.setBban4(StringUtils.substring(ccc, 12, 16));
 			bankAccount.setBban5(StringUtils.substring(ccc, 16, 20));
 			if (!bankAccount.isValidBban()) {
-				engine.log("IBAN incorrecto ("+iban+")");
+				String msg = "IBAN incorrecto ("+iban+")";
+				engine.log(msg);
+				throw new AonException(msg);
 			}
 			bankAccount.setCheck(bankAccount.calculateIbanControlDigit());
 		}

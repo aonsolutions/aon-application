@@ -12,6 +12,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.jooq.Record1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +28,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Application;
 import com.code.aon.jaas.auth.AuthPrincipal;
@@ -166,14 +168,19 @@ public class AuditManager implements IAuditConstants {
 	private static AuditLevel getAuditLevel( Integer applicationId, int domain ) {
 		AuditLevel level = AuditLevel.NONE;
 		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), domain);
-		try {
-			byte value = ctx.getDslContext()
-					.select(DOMAIN_APPLICATION.AUDIT_LEVEL)
-					.from(DOMAIN_APPLICATION)
-					.where(DOMAIN_APPLICATION.APPLICATION.eq(applicationId).and(
-							DOMAIN_APPLICATION.DOMAIN.eq(domain)))
-					.fetchOne(0, Byte.class);
-			level = AuditLevel.values()[value];
+		try { 
+			Record1<Byte> value = ctx.getDslContext()
+				.select(DOMAIN_APPLICATION.AUDIT_LEVEL)
+				.from(DOMAIN_APPLICATION)
+				.where(DOMAIN_APPLICATION.APPLICATION.eq(applicationId))
+				.and(DOMAIN_APPLICATION.DOMAIN.eq(domain))
+				.fetch()
+				.stream()
+				.findFirst()
+				.orElse(null);
+			if (value != null) {
+				level = AuditLevel.values()[value.getValue(DOMAIN_APPLICATION.AUDIT_LEVEL)];
+			}
 		} catch ( Throwable th ) {
 			LOGGER.error(th.getMessage(), th);
 		} finally {
@@ -259,7 +266,7 @@ public class AuditManager implements IAuditConstants {
 		AONContext ctx = null;
 		AuthPrincipal principal = getAuthPrincipal(httpSession);
 		if ( principal != null ) {
-			ctx = AONContext.getAONContext(principal.getDomain(), domainId);
+			ctx = AONContext.getAONContext(principal.getDomain(), domainId,principal.getShortName());
 		}
 		return ctx;
 	}

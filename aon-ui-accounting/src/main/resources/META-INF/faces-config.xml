@@ -722,11 +722,20 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
-	<!--  **** INVOICE LOADER **** -->
+	<!--  **** AON LOADER **** -->
 	<managed-bean>
 		<managed-bean-name>aonLoader</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.loader.controller.AonLoaderController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!--  **** AON LOADER **** -->
+	<managed-bean>
+		<managed-bean-name>aonZipLoader</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.loader.controller.AonZipLoaderController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
@@ -1060,11 +1069,19 @@
 		</navigation-case>
 	</navigation-rule>
 
-	<!--  **** INVOICE LOADER **** -->
+	<!--  **** AON LOADER **** -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>aonLoader_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/aonLoader/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!--  **** AON ZIP LOADER **** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>aonZipLoader_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/aonLoader/zipform.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

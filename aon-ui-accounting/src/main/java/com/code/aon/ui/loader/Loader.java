@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import com.code.aon.common.AonException;
+import com.code.aon.common.ILogger;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.faces.controller.LogPanelController;
@@ -62,14 +63,20 @@ public class Loader implements ILoaderEngine {
 	private LoaderParams params;
 	private LoaderFactoryManager factoryManager;
 	private Map<String, Map<String, Integer>> ids;
+	private ILogger logger;
 	
 	private String encoding = "ISO-8859-1";
 	private String sep = "|";
 	private Map<String, Column[]> columns;
 	
-	public Loader(LoaderParams params) {
+	public Loader(LoaderParams params,ILogger logger) {
 		this.params = params;
 		this.factoryManager = new LoaderFactoryManager(this);
+		this.logger = logger;
+	}
+	
+	public Loader(LoaderParams params) {
+		this(params, LogPanelController.getInstance());
 	}
 	
 	public LoaderFactoryManager getFactoryManager() {
@@ -166,7 +173,6 @@ public class Loader implements ILoaderEngine {
 	}
 	
 	public void log( String msg  ) {
-		LogPanelController logger = LogPanelController.getInstance();
 		logger.info(msg);
 	}
 	
@@ -202,7 +208,7 @@ public class Loader implements ILoaderEngine {
 	
 	private void raiseException(int i, String message) throws AonException {
 		String msg = "Línea " + i +": " + message;
-		log("ERROR: " + msg);
+		logger.error(msg);
 		throw new AonException(msg);
 	}
 	
@@ -385,6 +391,7 @@ public class Loader implements ILoaderEngine {
 			log("Carga de datos finalizada!");
 			log(" " + errors + " errores, " + warnings + " avisos");
 		} catch (IOException e) {
+			e.printStackTrace();
 			log(e.getMessage());
 			raiseException(0, "Se produjo un error de entrada/salida");
 		} catch (Throwable e) {

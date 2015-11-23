@@ -90,6 +90,12 @@
     </dependency>
     <dependency>
       <groupId>com.code.aon</groupId>
+      <artifactId>aon.ui.admin</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.code.aon</groupId>
       <artifactId>aon.ui.account</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>

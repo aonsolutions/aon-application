@@ -40,7 +40,7 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher, Seriali
 		Integer oldDomainId = this.domainId;
 		fireBeforeDomainChanged(oldDomainId, domainId);
 		this.domainId = domainId;
-		initializeDomain();
+		fillDomain();
 		fireAfterDomainChanged(oldDomainId, domainId);
 	}
 	
@@ -103,7 +103,7 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher, Seriali
 		}
 	}
 
-	private void initializeDomain() {
+	private void fillDomain() {
 		this.parentDomainId = null;
 		domainManagementAvailable = false;
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(DOMAIN_CLASS_NAME);
@@ -124,7 +124,7 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher, Seriali
 			enableHeredity = (Boolean) arr[3];
 			type = (Integer) arr[4];
 		}
-		HibernateUtil.closeSession(sessionFactoryName);
+		HibernateUtil.closeSession(sessionFactoryName,false);
 	}
 	
 }

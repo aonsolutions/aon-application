@@ -6,8 +6,8 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 
-import com.code.aon.accounting.Period;
 import com.code.aon.AonVersion;
+import com.code.aon.accounting.Period;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Scope;
@@ -25,6 +25,8 @@ public class LoaderParams implements Serializable {
 	private Long bytesRead;
 	private boolean documentValidable;
 	private boolean forceRegistryInsert;
+	private boolean ignoreExistingDomains;
+	private String password;
 	
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	private static final SimpleDateFormat TIME_FORMATTER = new SimpleDateFormat("hh:mm:ss");
@@ -102,6 +104,18 @@ public class LoaderParams implements Serializable {
 	}
 	public void setForceRegistryInsert(boolean forceRegistryInsert) {
 		this.forceRegistryInsert = forceRegistryInsert;
+	}
+	public boolean isIgnoreExistingDomains() {
+		return ignoreExistingDomains;
+	}
+	public void setIgnoreExistingDomains(boolean ignoreExistingDomains) {
+		this.ignoreExistingDomains = ignoreExistingDomains;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
 	}
 	
 }

@@ -241,7 +241,7 @@ public class NewDomainController implements Serializable {
 		setDomainSuffix(value);
 	}
 	
-	private boolean existsDomainName( String name ) throws ManagerBeanException {
+	protected boolean existsDomainName( String name ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 		Criteria criteria = new Criteria();
 		criteria.setSkipDomainFilter(true);
@@ -304,7 +304,7 @@ public class NewDomainController implements Serializable {
 		}
 	}
 	
-	private void copyCustomizeId( Domain newDomain ) {
+	protected void copyCustomizeId( Domain newDomain ) {
 		String idValue = AppParamUtil.getValue(AppParam.AON_CUSTOMIZE_HERITABLE_ID);
 		if (! StringUtils.isEmpty(idValue) ) {
 			ApplicationParameter ap1 = new ApplicationParameter(AppParam.AON_CUSTOMIZE_ID.getValue(), idValue);
@@ -316,7 +316,7 @@ public class NewDomainController implements Serializable {
 		}		
 	}
 	
-	private void insertScript( Integer domain, String domainName, String scriptPath ) throws AonSQLException, AonException, IOException {
+	protected void insertScript( Integer domain, String domainName, String scriptPath ) throws AonSQLException, AonException, IOException {
 		Connection connection = null;
 		try {			
 			URL script = VersionManager.getScript(scriptPath);
@@ -333,7 +333,7 @@ public class NewDomainController implements Serializable {
 		}
 	}		
 
-	private Domain createDomain(String name) throws ManagerBeanException {
+	protected Domain createDomain(String name) throws ManagerBeanException {
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();		
 		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 		Domain domain = new Domain();
@@ -425,7 +425,7 @@ public class NewDomainController implements Serializable {
 		}
 	}
 	
-	private void saveHistory( Domain domain ) throws ManagerBeanException, IOException, WebmailException {
+	protected void saveHistory( Domain domain ) throws ManagerBeanException, IOException, WebmailException {
 		if ( domain != null ) {
 			BookingInfo bookingInfo = DomainController.getBookingInfo(domain);
 			DomainInfo di = DomainInfo.getDomainInfo(domain, bookingInfo);
@@ -443,7 +443,7 @@ public class NewDomainController implements Serializable {
 		}
 	}
 	
-	private void validateExpirationDate() {
+	protected void validateExpirationDate() {
 		if ( isActiveExpirationDate() && (getExpirationDate() != null) ) {
 			Date today = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
 			if ( getExpirationDate().compareTo(today) <= 0 ) {
@@ -466,7 +466,7 @@ public class NewDomainController implements Serializable {
 		return enterpriseScope;
 	}
 	
-	private void addCompany( Domain domain ) {
+	protected void addCompany( Domain domain ) {
 		try {
 			Company company = new Company();
 			company.setActive(true);

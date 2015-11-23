@@ -40,6 +40,7 @@ public interface IAccountingConstants {
 	String BALANCE_SHEET_CONTROLLER = "balanceSheet";
 	String FISCAL_PARAMETERS_CONTROLLER = "fiscalParams";
 	String PROFIT_AND_LOSS_CONTROLLER_NAME = "profitAndLossReport";
+	String AON_LOADER_CONTROLLER = "aonLoader";
 	
 	// NAVIGATION KEYS
 	String ACCOUNT_ENTRY_FORM_NAVKEY = "accountEntry_form";
@@ -58,5 +59,6 @@ public interface IAccountingConstants {
 	// OTHERS
 	String ACCUMULATED_ACCOUNT_PREFIX = "Amortización Acumulada ";
 	String ALLOCATION_ACCOUNT_PREFIX = "Amortización ";
-	
+
+
 }
