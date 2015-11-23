@@ -32,7 +32,7 @@ public class DashboardDocs implements Serializable {
 		this.category = category;
 		this.num = num;
 		this.size = size;
-		this.categoryAbr= category.substring(0, 3);
+		this.categoryAbr= category.substring(0, category.length() > 3 ? 3 : category.length());
 		
 	}
 	
