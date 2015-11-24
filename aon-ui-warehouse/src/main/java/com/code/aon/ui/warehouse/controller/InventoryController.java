@@ -331,6 +331,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 			LOGGER.error(e.getMessage(), e);
 		}	
 		setShowInventoryAdjustmentWindow(false);
+		initializeModel();
 	}
 	
 	public static Double getCost(InventoryDetail inventoryDetail, Integer workplaceId, Integer warehouseId){
