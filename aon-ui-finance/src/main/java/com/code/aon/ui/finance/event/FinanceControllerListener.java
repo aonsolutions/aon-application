@@ -23,7 +23,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.config.BankAccount;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
@@ -54,6 +53,7 @@ public class FinanceControllerListener extends ControllerAdapter {
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		FinanceController controller = (FinanceController)event.getController();
 		controller.setPurchase(false);
+		controller.setRegistryBank(null);
 		controller.setShowBankManualInput(false);
 		controller.setFinanceGroup(false);
 		Finance finance = (Finance)controller.getTo();
@@ -72,21 +72,20 @@ public class FinanceControllerListener extends ControllerAdapter {
 		Finance finance = (Finance)controller.getTo(); 
 		controller.setPayment(finance.isPayment());
 		controller.setPayroll(finance.isPayroll());
-		controller.setRegistryBank(null);
 		try {
+			RegistryBank rBank = null;
 			if (StringUtils.isNotEmpty(finance.getBankAccount().getBban())) {
 				for (SelectItem item : controller.getAllBanks()) {
-					RegistryBank rBank = (RegistryBank)item.getValue();
-					BankAccount bankAccount = rBank.getBankAccount();
-					if (bankAccount!= null) {
-						if (StringUtils.equals(finance.getBankAccount().getIban(), bankAccount.getIban())) {
-							controller.setRegistryBank(rBank);
-							controller.setShowBankManualInput(false);
+					RegistryBank tmpRBank = (RegistryBank)item.getValue();
+					if (StringUtils.equals(finance.getBankAccount().getIban(), tmpRBank.getBankAccount().getIban())) {
+						rBank = tmpRBank;
+						if (StringUtils.equals(finance.getBankAlias(), tmpRBank.getAlias())) {
 							break;
 						}
 					}
 				}
 			}
+			controller.setRegistryBank(rBank);
 			controller.setShowBankManualInput(controller.getRegistryBank() == null && !StringUtils.isEmpty(finance.getBankAccount().getBban()));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);

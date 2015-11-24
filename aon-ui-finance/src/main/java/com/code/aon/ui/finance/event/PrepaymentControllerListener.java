@@ -77,16 +77,19 @@ public class PrepaymentControllerListener extends ControllerAdapter {
 		Prepayment prepayment = (Prepayment)controller.getTo();
 		try {
 			String bankAccount = (prepayment.getFinance().getBankAccount() != null) ? prepayment.getFinance().getBankAccount().getIban() : null;
-			controller.setRegistryBank(null);
+			RegistryBank rBank = null;
 			if (StringUtils.isNotEmpty(bankAccount)) {
 				for (SelectItem selectItem : controller.getAllBanks()) {
-					RegistryBank rBank = (RegistryBank)selectItem.getValue();
-					if (bankAccount.equals(rBank.getBankAccount().getIban())) {
-						controller.setRegistryBank(rBank);
-						break;
+					RegistryBank tmpRBank = (RegistryBank)selectItem.getValue();
+					if (StringUtils.equals(bankAccount, tmpRBank.getBankAccount().getIban())) {
+						rBank = tmpRBank;
+						if (StringUtils.equals(prepayment.getFinance().getBankAlias(), tmpRBank.getAlias())) {
+							break;
+						}
 					}
 				}
 			}
+			controller.setRegistryBank(rBank);
 			controller.setShowBankManualInput(controller.getRegistryBank() == null && StringUtils.isNotEmpty(bankAccount));
 
 			if (prepayment.isCollectFee()) {

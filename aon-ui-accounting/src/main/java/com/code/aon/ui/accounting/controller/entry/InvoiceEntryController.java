@@ -278,28 +278,21 @@ public class InvoiceEntryController implements ISpecialAccountEntry, Serializabl
 	}
 	private void initializeCurrentBank(Finance currentFinance) {
 		try {
-			if (currentFinance == null) {
-				setCurrentBank(null);
-			} else {
-				String ccc1 = currentFinance.getBankAccount().getIban();
-				List<SelectItem> banks = getAllBanks();
-				boolean found = false;
-				for (SelectItem item : banks) {
-					RegistryBank rBank = (RegistryBank) item.getValue();
-					BankAccount ba = rBank.getBankAccount();
-					if (ba != null) {
-						String ccc2 = ba.getIban();
-						if (StringUtils.equals(ccc1, ccc2)) {
-							setCurrentBank(rBank);
-							found = true;
-							break;
+			RegistryBank rBank = null;
+			if (currentFinance != null) {
+				if (StringUtils.isNotEmpty(currentFinance.getBankAccount().getBban())) {
+					for (SelectItem selectItem : getAllBanks()) {
+						RegistryBank tmpRBank = (RegistryBank)selectItem.getValue();
+						if (StringUtils.equals(currentFinance.getBankAccount().getIban(), tmpRBank.getBankAccount().getIban())) {
+							rBank = tmpRBank;
+							if (StringUtils.equals(currentFinance.getBankAlias(), tmpRBank.getAlias())) {
+								break;
+							}
 						}
 					}
 				}
-				if (!found) {
-					setCurrentBank(null);
-				}
 			}
+			setCurrentBank(rBank);
 		} catch (ManagerBeanException e) {
 			setCurrentBank(null);
 		}
