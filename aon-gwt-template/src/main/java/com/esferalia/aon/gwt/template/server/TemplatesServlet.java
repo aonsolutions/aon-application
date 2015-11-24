@@ -146,7 +146,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	public void initAux(){
 		setUser(new User()
 					.setId(getUserID())
-					.setLogin(getUserLogin()));
+					.setLogin(getUserLogin())
+					.setDomain(getUserDomainID()));
 		setDomain(new Domain()
 					.setId(getDomainID())
 					.setName( AonUtil.getDomainName()));
@@ -1516,6 +1517,18 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		case "Marca" : 
 			if(type.equals(Cell.CELL_TYPE_STRING)){
 				String strAux = (String) value;
+				Vector<Brand> v =  DBProduct.getBrands(domain, getDomain().getId(), getUser().getLogin());
+				Boolean b = true;
+				for(Brand brand : v){
+					if(strAux.equalsIgnoreCase(brand.getName())){
+						product.getProduct().setBrand(brand.getId());
+						b= false;
+					}
+				}
+				if(b) return null;
+			}
+			else if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+				String strAux = value.toString();
 				Vector<Brand> v =  DBProduct.getBrands(domain, getDomain().getId(), getUser().getLogin());
 				Boolean b = true;
 				for(Brand brand : v){

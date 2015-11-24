@@ -38,6 +38,7 @@ import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
@@ -84,12 +85,11 @@ public class DownloadStockServlet extends HttpServlet {
         Integer domainId = Integer.parseInt(domain_id);
         String domain = AonUtil.getDomainName();
         Integer idFile  = Integer.parseInt(fileId);
-        Integer userId = AonUtil.getAuthPrincipal().getUserId();
+        Integer userId = AonServletUtils.getRequestUserId(p_request);
         User user = new User().setId(userId).setLogin(login); // TODO 
         Warehouse w = new Warehouse();
         if(!warehouse.equals("-"))
         	w = DBStock.getWarehouse(warehouse, domainId, domain, user);
-
         byte[] b = null ;
         
         if (driveId != ""){

@@ -21,35 +21,20 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 
 	
 	private static final long serialVersionUID = 6871016881549113129L;
-
-	User user;
-	Domain domain;
-	
 	
 	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
+		return new User()
+				.setId(getUserID())
+				.setLogin(getUserLogin())
+				.setDomain(getUserDomainID());
 	}
 
 	public Domain getDomain() {
-		return domain;
-	}
-
-	public void setDomain(Domain domain) {
-		this.domain = domain;
-	}
-
-	public void setInfo(){
-		setUser(new User()
-				.setId(getUserID())
-				.setLogin(getUserLogin()));
-		setDomain(new Domain()
+		return new Domain()
 				.setId(getDomainID())
-				.setName( AonUtil.getDomainName()));
+				.setName( AonUtil.getDomainName());
 	}
+
 	public List<EcommerceProduct> getProductTemplatesList(Integer domainId){
 		String domainName = AonUtil.getDomainName();
 		return DBMarketplace.getProductTemplatesList(domainName, domainId, getUser());
@@ -81,10 +66,8 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 	}
 	
 	public void deleteTemplate(String description){
-		setInfo();
 		DBMarketplace.deleteTemplate(getDomain(), getUser(), description);
 	}
-	
 	
 	/**
 	 * <p>

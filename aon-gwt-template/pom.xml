@@ -69,14 +69,6 @@
 
 
 	<dependencies>
-
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.google.apis</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-servlet</artifactId>
@@ -96,6 +88,7 @@
 			<artifactId>aon.gwt.common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.gwt.common</artifactId>
@@ -103,12 +96,14 @@
 			<scope>compile</scope>
 			<classifier>sources</classifier>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.occam</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.occam</artifactId>
@@ -117,31 +112,6 @@
 			<classifier>sources</classifier>
 		</dependency>
 
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.common</artifactId>
-			<version>${project.version}</version>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>asm</groupId>
-					<artifactId>asm</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>asm</groupId>
-					<artifactId>asm-attrs</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		
-	
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.company</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.warehouse</artifactId>
