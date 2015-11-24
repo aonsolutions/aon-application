@@ -47,66 +47,14 @@
 						</aon:selectOneMenu>
 					</aon:div>
 					
-					<aon:outputText 
-						value="#{bundle.payroll_contractLeave_bases}" />
-					<aon:div id="ContractLeave_bases_div">
-						<aon:outputLabel for="ContractLeave_dailyCgcBase"
-							title="#{bundle.payroll_contractLeave_dailyCgc_description}" 
-							value="#{bundle.payroll_contractLeave_dailyCgc}:" 
-							styleClass="aon-italic" />
-						<aon:inputText id="ContractLeave_dailyCgcBase" 
-							required="#{true}"
-							value="#{contractLeave.to.dailyCgcBase}" 
-							size="5" >
-							<f:validateDoubleRange />
-						</aon:inputText>
-						
-						<aon:outputLabel for="ContractLeave_dailyCgpBase" 
-							title="#{bundle.payroll_contractLeave_dailyCgp_description}"  
-							value="#{bundle.payroll_contractLeave_dailyCgp}:"  
-							styleClass="aon-italic aon-margin-left" />
-						<aon:inputText id="ContractLeave_dailyCgpBase" 
-							required="#{true}"
-							value="#{contractLeave.to.dailyCgpBase}" 
-							size="5" >
-							<f:validateDoubleRange />
-						</aon:inputText>
-						
-						<aon:outputLabel for="ContractLeave_dailyRegBase" 
-							title="#{bundle.payroll_contractLeave_dailyReg_description}"  
-							value="#{bundle.payroll_contractLeave_dailyReg}:"  
-							styleClass="aon-italic aon-margin-left" />
-						<aon:inputText id="ContractLeave_dailyRegBase" 
-							required="#{true}"
-							value="#{contractLeave.to.dailyRegBase}" 
-							size="5" >
-							<f:validateDoubleRange />
-						</aon:inputText>
-						
-						<aon:div rendered="#{!contractLeave.nevv}" style="display:inline;">
-							<aon:outputText value="#{bundle.payroll_leaveBatch_leave_days}: "  
-								styleClass="aon-italic aon-bold aon-margin-left" />
-							<aon:outputText value="#{contractLeave.itDays}" 
-								styleClass="aon-bold" />
-							<aon:outputText value=" (a "
-								rendered="#{empty contractLeave.to.endDate}" />
-							<aon:outputText value="#{contractLeave.todayDate}"
-								rendered="#{empty contractLeave.to.endDate}" >
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>	
-							<aon:outputText value=")"
-								rendered="#{empty contractLeave.to.endDate}" />
-						</aon:div>
-						
-					</aon:div>
-					
+				</aon:panelGrid>
+				<aon:panelGrid columns="2" style="width:100%;" id="leaveDescriptionPanel"
+					columnClasses="aon-panelGrid-odd aon-width-140, aon-panelGrid-even aon-width-auto">
 					<aon:outputLabel for="ContractLeave_description"
 						value="#{bundle.aon_remark}" />
 					<aon:inputText id="ContractLeave_description"
 						size="60" maxlength="64"
 						value="#{contractLeave.to.description}" />	
-					
 				</aon:panelGrid>
 				
 				<aon:panel>

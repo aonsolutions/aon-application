@@ -170,29 +170,20 @@ public class ContractLeaveController extends BasicController {
 		return this.contractFilter;
 	}
 	
+	@Deprecated
 	public void onContractChange(LookupChangeEvent event){
-		if(event.getNewValue()!=null){
-			calculateBases( (ContractLeave) this.getTo(), (Contract)event.getNewValue() );
-		} else {
-			ContractLeave leave = (ContractLeave) this.getTo();
-			leave.setDailyCgcBase( null );
-			leave.setDailyCgpBase( null );
-			leave.setDailyRegBase( null );
-		}
+		// nothing to do
 	}
+	@Deprecated
 	public void onStartDateChange(ActionEvent event){
-		ContractLeave leave = (ContractLeave) this.getTo();
-		if(leave!=null){
-			calculateBases( leave, leave.getContract() );
-		}
+		// nothing to do
 	}
+	@Deprecated
 	public void onReloadBases(ActionEvent event){
-		ContractLeave leave = (ContractLeave) this.getTo();
-		if(leave!=null){
-			calculateBases( leave, leave.getContract() );
-		}
+		// nothing to do
 	}
 	
+	@Deprecated
 	public void calculateBases(ContractLeave leave, Contract contract) {
 		// TODO obtener las bases del trabajador, 
 //		las de la nomina del mes anterior dividido por 30, si el trabajador tiene salario mensual; 30, 31 ó 28, 29 si tiene salario diario)
