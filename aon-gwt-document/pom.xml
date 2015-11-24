@@ -140,8 +140,6 @@
 			<artifactId>aon.pool</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<!--dependency> <groupId>com.smartgwt</groupId> <artifactId>smartgwt</artifactId> 
-			<version>2.4</version> </dependency -->
 
 		<dependency>
 			<groupId>commons-fileupload</groupId>

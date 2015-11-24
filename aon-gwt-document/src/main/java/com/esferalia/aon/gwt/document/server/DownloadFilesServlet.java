@@ -28,7 +28,10 @@ import com.code.aon.google.apis.jooq.DBDrive;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.google.apis.controller.GoogleDriveController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.document.jooq.DBConsults;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 
 public class DownloadFilesServlet extends HttpServlet {
@@ -46,8 +49,9 @@ public class DownloadFilesServlet extends HttpServlet {
         String isDrive = p_request.getParameter("isdrive");
         String multiple = p_request.getParameter("ismultiple");
         String domainId =  p_request.getParameter("domain_id");
-
+        
         String domain = AonUtil.getDomainName();
+        String login = AonServletUtils.getLoggedUser();
         Integer idFile = Integer.parseInt(fileId);
         Integer domainID = 0;
         if(domainId.equals("null") || domainId.equals("undefined")){
@@ -98,13 +102,9 @@ public class DownloadFilesServlet extends HttpServlet {
         						.InputStreamToByte(in);
         				fi2.setData(b);
         			} else if ((Integer) fi2.getFileId() != null) {
-        				try {
-        					com.code.aon.google.apis.FileInfo fi3 = DBConsults
-        							.getDataAndName(fi2.getFileId(), domain);
-        					fi2.setData(fi3.getData());
-        				} catch (SQLException e) {
-        					e.printStackTrace();
-        				}
+        				com.code.aon.google.apis.FileInfo fi3 = DBConsults
+        						.getDataAndName(new Domain().setName(domain),new User().setLogin(login) ,fi2.getFileId());
+        				fi2.setData(fi3.getData());
         			}
 
         			zos.putNextEntry(new ZipEntry(fi2.getTitle()
@@ -164,12 +164,7 @@ public class DownloadFilesServlet extends HttpServlet {
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-            try {
-				fi = DBConsults.getDataAndName(id,domain);
-			} catch (SQLException e) {
-				// TODO Bloque catch generado automáticamente
-				e.printStackTrace();
-			}
+			fi = DBConsults.getDataAndName(new Domain().setName(domain), new User().setLogin(login), id);
         }
         else return;
         

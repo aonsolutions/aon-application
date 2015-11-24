@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.document.shared;
 
 import java.util.Vector;
 
+import com.esferalia.aon.occam.api.model.Domain;
+
 import gwtupload.client.SingleUploader;
 
 

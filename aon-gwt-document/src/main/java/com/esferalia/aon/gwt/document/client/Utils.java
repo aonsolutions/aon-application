@@ -1,41 +1,11 @@
 package com.esferalia.aon.gwt.document.client;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.util.Enumeration;
 import java.util.Vector;
 
-import javax.activation.DataHandler;
-import javax.mail.Address;
-import javax.mail.BodyPart;
-import javax.mail.Flags;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Message.RecipientType;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMultipart;
-
-import org.apache.commons.lang.StringUtils;
-
-import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.common.util.AonFile;
-import com.code.aon.webmail.IMailAccount;
-import com.code.aon.webmail.ISignature;
-import com.code.aon.webmail.WebmailException;
-import com.code.aon.webmail.WebmailUtil;
-import com.code.aon.webmail.bean.AonMessage;
-import com.code.aon.webmail.bean.AonMessageUtils;
-import com.code.aon.webmail.bean.AonServer;
-import com.code.aon.webmail.enumeration.ConnectionSecurity;
-import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.esferalia.aon.gwt.document.shared.Contact;
 import com.esferalia.aon.gwt.document.shared.ContactList;
 import com.esferalia.aon.gwt.document.shared.MailAccount;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle;
@@ -114,10 +84,10 @@ public class Utils {
 	    }
 	  }
 
-	static AonSuggestOracle createOracle(Vector<com.esferalia.aon.gwt.document.shared.Domain> vector) {
+	static AonSuggestOracle createOracle(Vector<Domain> vector) {
 		AonSuggestOracle oracleSons = new AonSuggestOracle();
 
-		for (com.esferalia.aon.gwt.document.shared.Domain d : vector) {
+		for (Domain d : vector) {
 			oracleSons.add(d.getDescription()+" ( "+d.getName()+")");
 		}
 		return oracleSons;

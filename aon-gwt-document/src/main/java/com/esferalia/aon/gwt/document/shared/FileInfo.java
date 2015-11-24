@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.document.shared;
 
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Vector;
 
@@ -9,8 +10,14 @@ import com.google.gwt.view.client.ProvidesKey;
 
 
 
-	public class FileInfo implements IsSerializable{
+	public class FileInfo implements IsSerializable, Serializable{
 		
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public static final ProvidesKey<FileInfo> PROVIDES_KEY = new ProvidesKey<FileInfo>() {
 			@Override
 			public Object getKey(FileInfo fileInfo) {

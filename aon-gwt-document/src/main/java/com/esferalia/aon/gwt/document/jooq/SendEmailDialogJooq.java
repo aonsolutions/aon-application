@@ -3,36 +3,29 @@ package com.esferalia.aon.gwt.document.jooq;
 import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Signature.SIGNATURE;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Vector;
 
-import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.Record4;
 import org.jooq.Result;
-import org.jooq.impl.DSL;
 
-import com.code.aon.google.apis.DatabaseSync;
-import com.code.aon.google.apis.jooq.JooqSettings;
 import com.esferalia.aon.gwt.document.shared.MailAccount;
 import com.esferalia.aon.gwt.document.shared.MailAccountList;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.User;
 
 
 public class SendEmailDialogJooq {
 	
-	public static MailAccountList getMailAccounts(String domain,Integer user_id,Integer domainId) throws SQLException{
-		Connection connection = null;
+	public static MailAccountList getMailAccounts(Domain domain,User user,Integer domainId) {
+		AONContext ctx = null;
 		try {
-			
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-
-			Result<Record4<Integer, String, String,Integer>> data = dslContext
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+			Result<Record4<Integer, String, String,Integer>> data = ctx.getDslContext()
 					.select(MAIL_ACCOUNT.ID,MAIL_ACCOUNT.NAME,MAIL_ACCOUNT.EMAIL,MAIL_ACCOUNT.SIGNATURE)
 					.from(MAIL_ACCOUNT)
-					.where((MAIL_ACCOUNT.USER_ID.isNull().or(MAIL_ACCOUNT.USER_ID.eq(user_id))).and(MAIL_ACCOUNT.DOMAIN.eq(domainId))).fetch();
+					.where((MAIL_ACCOUNT.USER_ID.isNull().or(MAIL_ACCOUNT.USER_ID.eq(user.getId()))).and(MAIL_ACCOUNT.DOMAIN.eq(domainId))).fetch();
 			
 			Vector<MailAccount> list = new Vector<MailAccount>();
 			for (Record4<Integer, String, String,Integer> record : data) {
@@ -41,7 +34,7 @@ public class SendEmailDialogJooq {
 				ma.setName(record.value2());
 				ma.setEmail(record.value3());
 				if(record.value4()!=null)
-					ma.setSignature(getSignature(domain,record.value4()));
+					ma.setSignature(getSignature(domain, user, record.getValue(MAIL_ACCOUNT.SIGNATURE)));
 				else ma.setSignature("");
 				list.add(ma);
 			}
@@ -50,21 +43,17 @@ public class SendEmailDialogJooq {
 			return mal;
 			
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 		
 	}
 	
-	public static String getSignature(String domain, Integer id) throws SQLException {
-		Connection connection = null;
+	public static String getSignature(Domain domain, User user, Integer id){
+		AONContext ctx = null;
 		try {
-			
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-
-			Record1<String> data = dslContext
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+			Record1<String> data = ctx.getDslContext()
 					.select(SIGNATURE.SIGNATURE_)
 					.from(SIGNATURE)
 					.where(SIGNATURE.ID.eq(id)).fetchOne();
@@ -72,8 +61,8 @@ public class SendEmailDialogJooq {
 			return data.value1();
 			
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 }

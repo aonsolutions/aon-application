@@ -29,6 +29,9 @@ import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 
 public class PdfPrintServlet extends HttpServlet{
@@ -49,6 +52,7 @@ public class PdfPrintServlet extends HttpServlet{
         String domainId = p_request.getParameter("domain_id");
         Integer domainID = Integer.parseInt(domainId);
         String domain = AonUtil.getDomainName();
+        String login = AonServletUtils.getLoggedUser();
         Integer m = Integer.parseInt(mtype);
         MimeType mt = MimeType.values()[m];
         Integer idFile = Integer.parseInt(fileId);
@@ -85,12 +89,7 @@ public class PdfPrintServlet extends HttpServlet{
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-            try {
-				fi = com.esferalia.aon.gwt.document.jooq.DBConsults.getDataAndName(id,domain);
-			} catch (SQLException e) {
-				// TODO Bloque catch generado automáticamente
-				e.printStackTrace();
-			}
+			fi = com.esferalia.aon.gwt.document.jooq.DBConsults.getDataAndName(new Domain().setName(domain), new User().setLogin(login),id);
         }
         else return;
         File file ;

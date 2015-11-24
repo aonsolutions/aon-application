@@ -7,7 +7,6 @@ import java.util.Vector;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.ContactList;
 import com.esferalia.aon.gwt.document.shared.Document;
-import com.esferalia.aon.gwt.document.shared.Domain;
 import com.esferalia.aon.gwt.document.shared.Emessage;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.FilterUtil;
@@ -18,29 +17,28 @@ import com.esferalia.aon.gwt.document.shared.MailAccountList;
 import com.esferalia.aon.gwt.document.shared.SearchInfo;
 import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("gwt_document")
 public interface IDocument extends RemoteService{
 
-	public Document getAllFiles(Integer domainId);
+	public Document getAllFiles(Domain domain);
 
-	public Vector<FileInfo> getServiConveniosFiles();
+	public Vector<FileInfo> getServiConveniosFiles(Domain domain);
 	
 	public Vector<FileInfo> searchFile(String searchStr, Vector<FileInfo> files);
 	
-	//public Vector<FileInfo> searchFile(SearchInfo si, Vector<FileInfo> files);
-
 	public FilterUtil searchFile2(SearchInfo si, Vector<FileInfo> files);
 	
-	public Lists getLists(Integer domainId);
+	public Lists getLists(Domain domain);
 	
-	public Vector<Domain> getSons(Integer domainId);
+	public Vector<Domain> getSons(Domain domain);
 	
-	public void removeFile(Vector<FileInfo> fvector, Integer domainId);
+	public void removeFile(Domain domain, Vector<FileInfo> fvector);
 	
-	public Vector<FileInfo> editFile(FileInfo fi, Vector<FileInfo> fvector, Integer domainId);
+	public Vector<FileInfo> editFile(Domain domain, FileInfo fi, Vector<FileInfo> fvector);
 	
 	public Boolean newFile(FileInfo fi);
 
@@ -50,14 +48,15 @@ public interface IDocument extends RemoteService{
 	
 	public Vector<TreeDriveInfo> myDrive(String id);
 	
-	public Vector<FileInfo> insertFile(FileInfo fi, Integer domainId);
+	public Vector<FileInfo> insertFile(Domain domain, FileInfo fi);
 	
-	public void share(String email,Vector<FileInfo> fvector, Integer domainId); 
+	public void share(Domain domain, String email,Vector<FileInfo> fvector); 
 	
 	public Vector<FileInfo> eSearchFile(Vector<FileInfo> v,String s);
 
 	public Vector<FileInfo> searchFile(SearchInfo si, Vector<FileInfo> files,
 			Vector<FileInfo> allFiles);
+	
 	public String getAsHTML(FileInfo doc, int zoom);
 	
 	public TreeMap<String, List<FileInfo>> drive(TreeMap<String, List<FileInfo>> folders,String id);
@@ -74,37 +73,37 @@ public interface IDocument extends RemoteService{
 	
 	public void shareMydrive(String email, Vector<FileInfo> fvector);
 	
-	public Init initAux();
+	public Init initAux(Domain domain);
 	
-	public Tag newTag(String name, Integer domainId);
+	public Tag newTag(Domain domain, String name);
 
-	public void editTag(String name, Integer tagId);
+	public void editTag(Domain domain, String name, Integer tagId);
 
-	public void deleteTag(Integer tagId);
+	public void deleteTag(Domain domain, Integer tagId);
 
-	public Category newCategory(String name, Integer domainId);
+	public Category newCategory(Domain domain, String name);
 
-	public void editCategory(String name, Integer categoryId);
+	public void editCategory(Domain domain, String name, Integer categoryId);
 
-	public void deleteCategory(Integer categoryId);
+	public void deleteCategory(Domain domain, Integer categoryId);
 
-	public MailAccountList getMailAccounts(Integer domainId);
+	public MailAccountList getMailAccounts(Domain domain);
 	
-	public void sendEmail(MailAccount ma, Emessage em);
+	public void sendEmail(Domain domain, MailAccount ma, Emessage em);
 	
-	public void sendGmail(MailAccount ma, Emessage em, Integer domainId);
+	public void sendGmail(Domain domain, MailAccount ma, Emessage em);
 	
-	public  ContactList getContacts(Integer domainId);
+	public  ContactList getContacts(Domain domain);
 	
 	public void downloadMultiple(Vector<FileInfo> fvector);
 	
-	public Vector<FileInfo> insertFileMultiple(FileInfo fi, Integer domainId);
+	public Vector<FileInfo> insertFileMultiple(Domain domain, FileInfo fi);
 	
 	public String copyLink(FileInfo doc,String l);
 	
-	public Boolean checkDomain(Document document, String type, Integer domainId);
+	public Boolean checkDomain(Domain domain, Document document, String type);
 	
-	public void selectedMenu(Integer domainId);
+	public void selectedMenu(Domain domain);
 	
 	public void clearOuts();
 }

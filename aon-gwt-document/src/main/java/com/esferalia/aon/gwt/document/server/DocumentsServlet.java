@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.document.server;
 
-import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
+
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 
 import java.io.ByteArrayInputStream;
@@ -54,7 +54,6 @@ import com.code.aon.google.apis.drive.ShareFiles;
 import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
-import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.google.apis.controller.GoogleDriveController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
@@ -65,6 +64,7 @@ import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.WebmailUtil;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonServer;
+import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.document.client.IDocument;
 import com.esferalia.aon.gwt.document.client.Utils;
@@ -73,7 +73,6 @@ import com.esferalia.aon.gwt.document.jooq.SendEmailDialogJooq;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.ContactList;
 import com.esferalia.aon.gwt.document.shared.Document;
-import com.esferalia.aon.gwt.document.shared.Domain;
 import com.esferalia.aon.gwt.document.shared.Emessage;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.FilterUtil;
@@ -85,6 +84,8 @@ import com.esferalia.aon.gwt.document.shared.SearchInfo;
 import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.Tags;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
@@ -97,12 +98,11 @@ import com.google.api.services.drive.model.Permission;
 import com.google.api.services.drive.model.Property;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.urlshortener.Urlshortener;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
 
 
-public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
+public class DocumentsServlet extends AonRemoteServiceServlet implements IDocument{
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(DocumentsServlet.class.getName());
@@ -112,7 +112,9 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	private static InputStream file;
 	private static String mimetype;
 	public static Boolean serviconvenios;
-	
+	public static byte[] out;
+	Boolean confidential;
+	Map<Integer, SelectedMenuController> smc = new HashMap<Integer, SelectedMenuController>();
 	
 	public static Boolean getServiconvenios() {
 		return serviconvenios;
@@ -137,8 +139,16 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	public static void setFile(InputStream file2) {
 		file = file2;
 	}
+	
+	public User getUser(){
+		return new User()
+				.setId(getUserID())
+				.setLogin(getUserLogin())
+				.setDomain(getUserDomainID());
+	}
 
-	void initFacesContext() {
+
+	protected void initFacesContext() {
 		setServiconvenios(GoogleDriveController.serviconvenios);
 		ServletContext context = getServletContext();
 		HttpServletRequest request = getThreadLocalRequest();
@@ -146,67 +156,44 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		AonServletUtils.initFacesContext(context, request, response);
 	}
 
-	void releaseFacesContext() {
+	protected void releaseFacesContext() {
 		AonServletUtils.releaseFacesContext();
 	}
-	Boolean confidential;
-
-	Map<Integer, SelectedMenuController> smc = new HashMap<Integer, SelectedMenuController>();
-	public Init initAux(){
+	
+	public Init initAux(Domain domain){
 		try{
 			initFacesContext();
 			Vector<Boolean> v = new Vector<Boolean>();
 			Init init = new Init();
-			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-			init.setDomainId(ds.getDomainId());
-			smc.put(ds.getDomainId(),(SelectedMenuController) AonUtil.getRegisteredBean(IRichConstants.SELECTED_MENU_CONTROLLER_NAME));		
+			init.setDomainId(domain.getId());
+			smc.put(domain.getId(),(SelectedMenuController) AonUtil.getRegisteredBean(IRichConstants.SELECTED_MENU_CONTROLLER_NAME));		
 			confidential = AonUtil.getRoleManager().isConfidentiality();
 			Boolean documentManager = AonUtil.getRoleManager().isDocumentManager();
 			v.add(documentManager);
 			v.add(confidential);
 			init.setVector(v);
 			return init;
-		}
-		finally{releaseFacesContext();}
+		}finally{releaseFacesContext();}
 	}
 	
-	public Document getAllFiles(Integer domainId){
-		
-	/*DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		Integer domainId2 = ds.getDomainId();
-	*/	
-		
-		String domain = AonUtil.getDomainName();
-		Integer userDomainId = AonUtil.getAuthPrincipal().getUserDomainId();
-		Integer user_id=AonUtil.getAuthPrincipal().getUserId();
+	public Document getAllFiles(Domain domain){
 		Document docs = new Document();
-		try {
-			String domainUrl = DBConsults.getDomain(domain, domainId);
-			docs  = DBConsults.getAllRattach(domain,domainUrl,user_id, confidential,domainId, userDomainId);
-			if(serviconvenios != null && getServiconvenios())
-				docs.setServiconvenios(DBConsults.getServiConvenios(domain));
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		//docs.setFiles(DBConsults.getFilesGwt());
-		docs.setDomain(domain);
+		
+		String domainUrl = DBConsults.getDomain(domain, getUser());
+		docs  = DBConsults.getAllRattach(domain, getUser(), domainUrl, confidential, getUser().getDomain());
+		if(serviconvenios != null && getServiconvenios())
+			docs.setServiconvenios(DBConsults.getServiConvenios(domain, getUser()));
+		
+		docs.setDomain(domain.getName());
 		docs.setIsServiconvenios(getServiconvenios());
-		//setServiconvenios(false);
 		return docs;
 	}
 	
-	public Vector<FileInfo> getServiConveniosFiles(){
-	
-		String domain = AonUtil.getDomainName();
-		Vector<FileInfo> v = new Vector<FileInfo>();
-		try {
-			v= DBConsults.getServiConvenios(domain);
-			
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return v;
+	public Vector<FileInfo> getServiConveniosFiles(Domain domain){
+		System.out.println("DOMAIN ID --> "+domain.getId());
+		System.out.println("DOMAIN NAME --> "+domain.getName());
+		System.out.println("");
+		return DBConsults.getServiConvenios(domain, getUser());
 	}
 	
 	Vector<String> types;
@@ -220,15 +207,13 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		return vector;
 	}
 	
-	public Vector<FileInfo> searchFile(String searchStr, Vector<FileInfo> files){
-		
+	public Vector<FileInfo> searchFile(String searchStr, Vector<FileInfo> files){	
 		Vector<FileInfo> vector = new Vector<FileInfo>();
 		for (FileInfo fileInfo : files){
 			if(containsIgnoreCase2(fileInfo.getTitle(), searchStr)){
 				vector.add(fileInfo);
 			}
 		}
-		
 		return vector;
 	}
 	
@@ -242,23 +227,17 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 				vector.add(fileInfo);
 			}
 		}
-		
-		
 		return vector;
-		
 	}
 	
 	public FilterUtil searchFile2(SearchInfo si, Vector<FileInfo> files){
-
 		Vector<FileInfo> vector = new Vector<FileInfo>();
 		for (FileInfo fileInfo : files) {
 			if(filter(si, fileInfo)){
 				vector.add(fileInfo);
 			}
 		}
-		
 		return new FilterUtil(vector,si.getCategory()!=null?si.getCategory():"",si.getTag()!=null?si.getTag().get(0):"");
-		
 	}
 	
 	public Boolean filter(SearchInfo si,FileInfo fi){
@@ -306,7 +285,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 				return false;
 		}
 		if(si.getScope()!=null){
-			if(!si.getScope().equals(fi.getScope().getName())){
+			if(fi.getScope() == null || !si.getScope().equals(fi.getScope().getName())){
 				return false;
 			}
 		}
@@ -316,69 +295,42 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		}
 		return true;
 	}
-	Integer domainId;
-	public Vector<Domain> getSons(Integer domainId){
-		
-		String domain = AonUtil.getDomainName();
-		
+
+	public Vector<Domain> getSons(Domain domain){		
 		Vector<Domain> vector = new Vector<Domain>();
-		try {
-			String domainUrl= DBConsults.getDomain(domain, domainId);
-			vector = DBConsults.getSons(domainUrl);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		Domain d = new Domain();
-		d.setName(domain);
-		d.setDescription("");
-		vector.add(d);
+		
+		String domainUrl= DBConsults.getDomain(domain, getUser());
+		vector = DBConsults.getSons(domain.setName(domainUrl), getUser());
+		
+		vector.add(domain.setDescription(""));
 		return vector;
-		
-		
-		
 	}
 	
-	public Lists getLists(Integer domainId){
-		/*initFacesContext();
-		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		Integer domainId = ds.getDomainId();*/
-		String domain = AonUtil.getDomainName();
-		Integer user_id=AonUtil.getAuthPrincipal().getUserId();
-		Integer userDomainId = AonUtil.getAuthPrincipal().getUserDomainId();
-
+	public Lists getLists(Domain domain){
 		Lists lists= new Lists();
 		
-		try {
-			domain = DBConsults.getDomain(domain, domainId);
-			String domainZero = DBConsults.getDomain(domain, 0);
-			lists.setCategoryListDomainZero(DBConsults.getCategoryList(domainZero));
-			lists.setCategoryList(DBConsults.getCategoryList(domain));
-			lists.setCategoryListSon(DBConsults.getCategoryListSon(domain));
-			lists.setScopeList(DBConsults.getScopeList(domain,domainId,user_id,userDomainId));
-			lists.setScopeListSon(DBConsults.getScopeListSon(domain,domainId,user_id,userDomainId));
-			lists.setTagListDomainZero(DBConsults.getTagList(domainZero));
-			lists.setTagList(DBConsults.getTagList(domain));
-			lists.setTagListSon(DBConsults.getTagListSon(domain));
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		
+		String currentDomain = DBConsults.getDomain(domain, getUser());
+		String domainZero = DBConsults.getDomain(new Domain().setName(currentDomain).setId(0), getUser());
+		lists.setCategoryListDomainZero(DBConsults.getCategoryList(new Domain().setName(domainZero).setId(domain.getId()), getUser()));
+		lists.setCategoryList(DBConsults.getCategoryList(new Domain().setName(currentDomain).setId(domain.getId()), getUser()));
+		lists.setCategoryListSon(DBConsults.getCategoryListSon(new Domain().setName(currentDomain).setId(domain.getId()), getUser()));
+		lists.setScopeList(DBConsults.getScopeList(new Domain().setName(currentDomain).setId(domain.getId()), getUser()));
+		lists.setScopeListSon(DBConsults.getScopeListSon(new Domain().setName(currentDomain).setId(domain.getId()), getUser()));
+		lists.setTagListDomainZero(DBConsults.getTagList(new Domain().setName(domainZero).setId(domain.getId()), getUser()));
+		lists.setTagList(DBConsults.getTagList(new Domain().setName(currentDomain).setId(domain.getId()), getUser()));
+		lists.setTagListSon(DBConsults.getTagListSon(new Domain().setName(currentDomain).setId(domain.getId()), getUser()));
 		return lists;
 	}
 	
-	public void removeFile(Vector<FileInfo> fvector, Integer domainId){
-		
-		String domain = AonUtil.getDomainName();
+	public void removeFile(Domain domain, Vector<FileInfo> fvector){
 		for(FileInfo fi : fvector){
 			try {
-				DBConsults.removeFile(domain, fi.getFileId());
+				DBConsults.removeFile(domain, getUser(), fi.getFileId());
 				if(fi.getDriveId()!=null){
-					DomainGserviceaccount g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain,domainId);
+					DomainGserviceaccount g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain.getName(),domain.getId());
 					Drive d = DriveUtils.serviceInitialize(g);
 					d.files().delete(fi.getDriveId()).execute();
 				}
-			
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} catch (KeyStoreException e) {
@@ -389,23 +341,22 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 				e.printStackTrace();
 			}
 		}
-
 	}
-	public static byte[] out;
 	
 	public static Vector<FileInfo> getOuts(HttpServletRequest request){
 		Vector<FileInfo> outs = (Vector<FileInfo>) request.getSession().getAttribute("documentalDataOuts");
 		if(outs == null){
 			outs = new Vector<FileInfo>();
-			request.getSession().putValue("documentalDataOuts", new Vector<FileInfo>());
+			request.getSession().setAttribute("documentalDataOuts", new Vector<FileInfo>());
 		}
 		return outs;
 	}
+	
 	public static void clearOuts(Vector<FileInfo> outs, HttpServletRequest request){
 		if(outs == null)
-			request.getSession().putValue("documentalDataOuts", new Vector<FileInfo>());
+			request.getSession().setAttribute("documentalDataOuts", new Vector<FileInfo>());
 		else
-			request.getSession().putValue("documentalDataOuts", outs);
+			request.getSession().setAttribute("documentalDataOuts", outs);
 	}
 	
 	public void clearOuts(){
@@ -418,7 +369,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			outs = new Vector<FileInfo>();
 		}
 		outs.add(fi);
-		request.getSession().putValue("documentalDataOuts", outs);
+		request.getSession().setAttribute("documentalDataOuts", outs);
 	}
 	
 	public static byte[] getOut() {
@@ -439,10 +390,9 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			return true;
 		}
 		return false;
-
 	}
 	
-	public Vector<FileInfo> insertFile(FileInfo fi,Integer  domainId2) {
+	public Vector<FileInfo> insertFile(Domain domain, FileInfo fi) {
 		Vector<FileInfo> files = getOuts(getThreadLocalRequest());
 		Vector<FileInfo> vector = new Vector<FileInfo>();
 
@@ -457,12 +407,10 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			 * AonUtil.getRegisteredBean(DOMAIN_SWITCHER); Integer domainId2 =
 			 * ds.getDomainId();
 			 */
-			String domain = AonUtil.getDomainName();
-			try {
-				domain = DBConsults.getDomain(domain, domainId2);
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+			String currentDomain = domain.getName();
+			
+			currentDomain = DBConsults.getDomain(domain, getUser());
+		
 
 			// Integer registry = AdminUtil.getCompanyId(fi.getDomainId());
 			com.code.aon.google.apis.FileInfo fileInfo = new com.code.aon.google.apis.FileInfo();
@@ -501,41 +449,40 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			fileInfo.setSecurityLevel(conf);
 			//f.setConfidential(fi.getConfidential());
 			if (!fi.getDomain().equals("")) {
-				domain = fi.getDomain();
+				currentDomain = fi.getDomain();
 			}
 
 			try {
-				Integer domainId = DBConsults.getDomainId(domain, domain);
-				fileInfo.setDomainId(domainId);
+				fileInfo.setDomainId(domain.getId());
 				//f.setDomain(domain);
 				//f.setDomainId(domainId);
 				fileInfo.setSize((Integer) f.getSize());
 				//f.setSizeStr(FileUtils.byteCountToDisplaySize(f.getSize()!=null?f.getSize():0));
-				Integer id = DBConsults.insertFile(domain, fileInfo);
+				Integer id = DBConsults.insertFile(new Domain().setId(domain.getId()).setName(currentDomain), getUser(),fileInfo);
 				//f.setTags(fi.getTags());
-				DBConsults.insertTagsFile(id, fi.getTags(), domain, domainId);
+				DBConsults.insertTagsFile(new Domain().setId(domain.getId()).setName(currentDomain), getUser(), id, fi.getTags());
 				byte[] b = f.getData();// .toByteArray();
 				fileInfo.setFileId(id);
 				fileInfo.setData(b);
-				DomainGserviceaccount g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain, domainId);
+				DomainGserviceaccount g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(currentDomain, domain.getId());
 				if (g.getClientId() != null) {
 					Drive d = DriveUtils.serviceInitialize(g);
 					String[] types = { RegistryAttachmentType.CORPORATE_IDENTITY
 							.toString() };// TODO
 					DriveUtils.types = types;
-					fileInfo.setDomain(domain);
-					DriveUtils.sync2(d, fileInfo, domain);
+					fileInfo.setDomain(currentDomain);
+					DriveUtils.sync2(d, fileInfo, currentDomain);
 				} else
-					DBConsults.insertFileData(domain, id, b);
+					DBConsults.insertFileData(domain, getUser(), id, b);
 				// insertFile(d, fileInfo,b);//DriveUtils.insertFile(d,
 				// fileInfo, new Vector<ParentReference>(), new
 				// Vector<String>(), domain);
 				
-				FileInfo fil = DBConsults.getFile(domain, id);
+				FileInfo fil = DBConsults.getFile(new Domain().setName(currentDomain).setId(domain.getId()),getUser(), id);
 				if (fil.getDomain() == null)
-					fil.setDomain(domain);
+					fil.setDomain(currentDomain);
 				if(fil.getDomainId() == null)
-					fil.setDomainId(domainId);
+					fil.setDomainId(domain.getId());
 				vector.add(fil);
 				
 			} catch (SQLException e) {
@@ -559,13 +506,9 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	
 	public Boolean check(){
 		return getMimetype()==null;//.equals("application/octet-stream");
-			
-		
 	}
 	
-	public Vector<FileInfo> editFile(FileInfo fi,Vector<FileInfo> fvector, Integer domainId){
-		String domain = AonUtil.getDomainName();
-		//Integer registry = AdminUtil.getCompanyId(fi.getDomainId());
+	public Vector<FileInfo> editFile(Domain domain, FileInfo fi,Vector<FileInfo> fvector){
 		com.code.aon.google.apis.FileInfo fileInfo = new com.code.aon.google.apis.FileInfo();
 		if(fvector != null){
 			for(FileInfo f : fvector){
@@ -613,21 +556,15 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 				}
 				else tags = f.getTags();
 				
-				try {
-					String user = DBConsults.getUserLogin(domain);
-					f.setModificationUser(user);
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				}
+				f.setModificationUser(getUser().getLogin());
+	
 				Calendar cal = Calendar.getInstance();
 				String dateStr = cal.get(Calendar.DATE)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.YEAR);
 				f.setModificationDateStr(dateStr);
 				
-				try {
-					DBConsults.updateFile(domain, fileInfo,tags,domainId);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+				
+				DBConsults.updateFile(domain, getUser(), fileInfo,tags);
+				
 				
 			}
 		}else{
@@ -654,34 +591,30 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			if(fi.getScope() != null)fileInfo.setScopeId(fi.getScope().getId());
 			Byte conf;if(fi.getConfidential())conf=1; else conf=0;
 			fileInfo.setSecurityLevel(conf);
-			
-			try {
-				String user = DBConsults.getUserLogin(domain);
-				fi.setModificationUser(user);
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+		
+			fi.setModificationUser(getUser().getLogin());
+		
 			Calendar cal = Calendar.getInstance();
 			String dateStr = cal.get(Calendar.DATE)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.YEAR);
 			fi.setModificationDateStr(dateStr);
 			
 			try {
-				DBConsults.updateFile(domain, fileInfo,fi.getTags(),domainId);
+				DBConsults.updateFile(domain, getUser(), fileInfo,fi.getTags());
 				
 				if(getMimetype()!=null){
 					//InputStream file = getFile();
 					byte[] b = getOut();//.toByteArray();
 					fileInfo.setData(b);
-					DomainGserviceaccount g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain,domainId);
+					DomainGserviceaccount g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain.getName(),domain.getId());
 					if(g.getClientId()!=null){
 						Drive d = DriveUtils.serviceInitialize(g);
 						String[] types = { RegistryAttachmentType.CORPORATE_IDENTITY
 								.toString() };// TODO
 						DriveUtils.types = types;
-						DriveUtils.sync2(d, fileInfo, domain);
+						DriveUtils.sync2(d, fileInfo, domain.getName());
 					}
 					else{
-						DBConsults.insertFileData(domain, fileInfo.getFileId(), b );
+						DBConsults.insertFileData(domain, getUser(), fileInfo.getFileId(), b );
 					}
 				}
 			} catch (SQLException e) {
@@ -700,9 +633,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			fvector = new Vector<FileInfo>();
 			fvector.add(fi);
 		}
-
 		return fvector;
-		
 	}
 	
 	//-------------------- My Drive
@@ -853,8 +784,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			fi.setDriveId(f.getId());
 			tdi.setParent(fi);
 			tdi.setSons(myDrive(fi.getDriveId()));
-
-		}
+		 }
 		}
 		 return v;
 	
@@ -894,7 +824,6 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	}
 	
 	public void shareMydrive(String email, Vector<FileInfo> fvector){
-
 		Drive drive = GoogleDriveController.dconnection;
 		for(FileInfo f: fvector){
 			try {
@@ -905,12 +834,11 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		}
 	}
 	
-	public void share(String email, Vector<FileInfo> fvector, Integer domainId) {
-		String domain = AonUtil.getDomainName();
+	public void share(Domain domain, String email, Vector<FileInfo> fvector) {
 		DomainGserviceaccount g;
 		Drive d = null;
 		try {
-			g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain, domainId);
+			g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain.getName(), domain.getId());
 			d = DriveUtils.serviceInitialize(g);
 		} catch (SQLException | IOException | GeneralSecurityException e1) {
 			e1.printStackTrace();
@@ -926,10 +854,9 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			else{
 				//TODO  dbn badago! Drive-ra igo ta banatu!
 			}
-			
 		}
-		
 	}
+	
 	public Vector<FileInfo> eSearchFile(Vector<FileInfo> v,String str) {
 		Vector<FileInfo> aux = new Vector<FileInfo>();//=  filesGwt.stream().filter(d -> d.getDomain().equalsIgnoreCase(domain));
 		v.stream().forEach(f -> {
@@ -1302,9 +1229,6 @@ private abstract static class Document2HtmlConverter implements IDocument2HtmlCo
 			}
 		}
 	}
-	
-
-
 
 	abstract void transform(InputStream is, OutputStream os) throws Exception;
 	
@@ -1323,17 +1247,14 @@ public static void setSize(Integer sizea) {
 
 //-------------------- Administrar tags & categories
 
-public Tag newTag(String name, Integer domainId) {
-	initAux();
-	String domain = AonUtil.getDomainName();
+public Tag newTag(Domain domain, String name) {
+	initAux(domain);
 	Integer id = null;
 	String dom = "";
-	try {
-		dom = DBConsults.getDomain(domain, domainId);
-		id = DBConsults.newTag(domain,domainId,name);
-	} catch (SQLException e) {
-		e.printStackTrace();
-	}
+	
+	dom = DBConsults.getDomain(domain, getUser());
+	id = DBConsults.newTag(domain, getUser(),name);
+
 	Tag t = new Tag();
 	t.setId(id);
 	t.setIsParent(false);
@@ -1344,38 +1265,22 @@ public Tag newTag(String name, Integer domainId) {
 	return t;
 }
 
-public void editTag(String name, Integer id) {
-	initAux();
-	String domain = AonUtil.getDomainName();
-	try {
-		DBConsults.editTag(domain,name,id);
-	} catch (SQLException e) {
-		e.printStackTrace();
-	}
-
+public void editTag(Domain domain, String name, Integer id) {
+	initAux(domain);
+	DBConsults.editTag(domain, getUser(),name,id);
 }
 
-public void deleteTag(Integer tagId) {
-	initAux();
-	String domain = AonUtil.getDomainName();
-	try {
-		DBConsults.deleteTag(domain,tagId);
-	} catch (SQLException e) {
-		e.printStackTrace();
-	}
+public void deleteTag(Domain domain, Integer tagId) {
+	initAux(domain);
+	DBConsults.deleteTag(domain,getUser(),tagId);
 }
 
-public Category newCategory(String name, Integer domainId) {
-	initAux();
-	String domain = AonUtil.getDomainName();
+public Category newCategory(Domain domain, String name) {
+	initAux(domain);
 	Integer id = null;
 	String dom ="";
-	try {
-		dom = DBConsults.getDomain(domain, domainId);
-		id = DBConsults.newCategory(domain,domainId,name);
-	} catch (SQLException e) {
-		e.printStackTrace();
-	}
+	dom = DBConsults.getDomain(domain, getUser());
+	id = DBConsults.newCategory(domain,getUser(),name);
 	Category c = new Category();
 	c.setDomain(dom);
 	c.setId(id);
@@ -1385,48 +1290,27 @@ public Category newCategory(String name, Integer domainId) {
 	return c;
 }
 
-public void editCategory(String name, Integer id) {
-	initAux();
-	String domain = AonUtil.getDomainName();
-	try {
-		DBConsults.editCategory(domain,name,id);
-	} catch (SQLException e) {
-		e.printStackTrace();
-	}
-
+public void editCategory(Domain domain, String name, Integer id) {
+	initAux(domain);
+	DBConsults.editCategory(domain, getUser(),name,id);
 }
 
-public void deleteCategory(Integer categoryId) {
-	initAux();
-	String domain = AonUtil.getDomainName();
-	try {
-		DBConsults.deleteCategory(domain,categoryId);
-	} catch (SQLException e) {
-		e.printStackTrace();
-	}
+public void deleteCategory(Domain domain, Integer categoryId) {
+	initAux(domain);
+	DBConsults.deleteCategory(domain, getUser(), categoryId);
 }
 
 //-------------------- Enviar Email
 
-public MailAccountList getMailAccounts(Integer domainId) {
-	String domain = AonUtil.getDomainName();
-	Integer user_id=AonUtil.getAuthPrincipal().getUserId();
-	Integer userDomainId = AonUtil.getAuthPrincipal().getUserDomainId();
-	
+public MailAccountList getMailAccounts(Domain domain) {
 	MailAccountList mal = new MailAccountList();
-	try {
-		mal = SendEmailDialogJooq.getMailAccounts(domain, user_id,userDomainId);
-	} catch (SQLException e) {
-		e.printStackTrace();
-	}
-	mal.setContactList(getContacts(domainId));
+	mal = SendEmailDialogJooq.getMailAccounts(domain, getUser(), getUser().getDomain());
+	mal.setContactList(getContacts(domain));
 	return mal;
 }
 
-	public void sendEmail(MailAccount ma, Emessage em) {
-		// IMailAccount ima = Utils.getIMailAccount(ma);
-		String domain = AonUtil.getDomainName();
-			try {
+	public void sendEmail(Domain domain, MailAccount ma, Emessage em) {
+		try {
 				initFacesContext();
 				MailConfigController mcg = (MailConfigController) AonUtil
 						.getRegisteredBean(IWebMailConstants.BEAN_MAIL_CONFIG);
@@ -1480,13 +1364,9 @@ public MailAccountList getMailAccounts(Integer domainId) {
 									.InputStreamToByte(in);
 							fi.setData(b);
 						} else if ((Integer) fi.getFileId() != null) {
-							try {
-								com.code.aon.google.apis.FileInfo fi2 = DBConsults
-										.getDataAndName(fi.getFileId(), domain);
-								fi.setData(fi2.getData());
-							} catch (SQLException e) {
-								e.printStackTrace();
-							}
+							com.code.aon.google.apis.FileInfo fi2 = DBConsults
+									.getDataAndName(domain, getUser(), fi.getFileId());
+							fi.setData(fi2.getData());
 						}
 
 						zos.putNextEntry(new ZipEntry(fi.getTitle()
@@ -1543,8 +1423,7 @@ public MailAccountList getMailAccounts(Integer domainId) {
 
 	}
 	
-	public void sendGmail(MailAccount ma, Emessage em, Integer domainId) {
-		String domain = AonUtil.getDomainName();
+	public void sendGmail(Domain domain, MailAccount ma, Emessage em) {
 		Gmail gmail = GoogleDriveController.uconnection.getGmail();
 
 		Vector<FileInfo> files = getOuts(getThreadLocalRequest());
@@ -1561,7 +1440,7 @@ public MailAccountList getMailAccounts(Integer domainId) {
 					} else {
 						DomainGserviceaccount g;
 						try {
-							g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain, domainId);
+							g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain.getName(), domain.getId());
 							d = DriveUtils.serviceInitialize(g);
 						} catch (SQLException e) {
 							e.printStackTrace();
@@ -1582,13 +1461,9 @@ public MailAccountList getMailAccounts(Integer domainId) {
 							.InputStreamToByte(in);
 					fi.setData(b);
 				} else if ((Integer) fi.getFileId() != null) {
-					try {
-						com.code.aon.google.apis.FileInfo fi2 = DBConsults
-								.getDataAndName(fi.getFileId(), domain);
-						fi.setData(fi2.getData());
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
+					com.code.aon.google.apis.FileInfo fi2 = DBConsults
+							.getDataAndName(domain, getUser(), fi.getFileId());
+					fi.setData(fi2.getData());
 				}
 
 				zos.putNextEntry(new ZipEntry(fi.getTitle()
@@ -1646,20 +1521,8 @@ public MailAccountList getMailAccounts(Integer domainId) {
 
 	}
 
-public  ContactList getContacts(Integer domainId) {	
-	String domain = AonUtil.getDomainName();
-	Integer user_id=AonUtil.getAuthPrincipal().getUserId();
-	Integer userDomainId = AonUtil.getAuthPrincipal().getUserDomainId();
-
-	ContactList cl = new ContactList();
-	try {
-		cl = DBConsults.getContacts(user_id, domain, userDomainId, domainId);
-	} catch (AonConnectionException e) {
-		e.printStackTrace();
-	} catch (SQLException e) {
-		e.printStackTrace();
-	}
-	return cl;
+public  ContactList getContacts(Domain domain) {	
+	return DBConsults.getContacts(domain, getUser());
 }
 
 public static Vector<FileInfo> down;
@@ -1677,20 +1540,15 @@ public static void setDown(Vector<FileInfo> down) {
 	DocumentsServlet.down = down;
 }
 
-public Vector<FileInfo> insertFileMultiple(FileInfo fi, Integer domainId2) {
+public Vector<FileInfo> insertFileMultiple(Domain domain, FileInfo fi) {
 	Vector<FileInfo> files = getOuts(getThreadLocalRequest());
 	for(FileInfo f : files){
 	Date date = null;
 	if (fi.getDate() != null)
 		date = new Date(fi.getDate().getTime());
 
+	String currentDomain= DBConsults.getDomain(domain, getUser());
 
-	String domain = AonUtil.getDomainName();
-	try {
-		domain= DBConsults.getDomain(domain, domainId2);
-	} catch (SQLException e1) {
-		e1.printStackTrace();
-	}
 	// Integer registry = AdminUtil.getCompanyId(fi.getDomainId());
 	com.code.aon.google.apis.FileInfo fileInfo = new com.code.aon.google.apis.FileInfo();
 	fileInfo.setAonType("registry");
@@ -1726,33 +1584,32 @@ public Vector<FileInfo> insertFileMultiple(FileInfo fi, Integer domainId2) {
 	fileInfo.setSecurityLevel(conf);
 	f.setConfidential(fi.getConfidential());
 	if (!fi.getDomain().equals("")){
-		domain = fi.getDomain();
+		currentDomain = fi.getDomain();
 	
 	}
-	f.setDomain(domain);
+	f.setDomain(currentDomain);
 		
 	try {
-		Integer domainId = DBConsults.getDomainId(domain, domain);
-		fileInfo.setDomainId(domainId);
+		fileInfo.setDomainId(domain.getId());
 		fileInfo.setSize(f.getSize());
-		Integer id = DBConsults.insertFile(domain, fileInfo);
+		Integer id = DBConsults.insertFile(domain, getUser(), fileInfo);
 		f.setFileId(id);
-		DBConsults.insertTagsFile(id, fi.getTags(), domain, domainId);
+		DBConsults.insertTagsFile(new Domain().setName(currentDomain).setId(domain.getId()), getUser(),id, fi.getTags());
 		byte[] b = f.getData();//.toByteArray();
 		fileInfo.setFileId(id);
 		fileInfo.setData(b);
-		DomainGserviceaccount g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain,domainId);
+		DomainGserviceaccount g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(currentDomain,domain.getId());
 		if (g.getClientId()!=null){
 			Drive d = DriveUtils.serviceInitialize(g);
 			String[] types = { RegistryAttachmentType.CORPORATE_IDENTITY.toString() };// TODO
 			DriveUtils.types = types;
-			fileInfo.setDomain(domain);
-			DriveUtils.sync2(d, fileInfo, domain);
+			fileInfo.setDomain(currentDomain);
+			DriveUtils.sync2(d, fileInfo, currentDomain);
 		}
-		else DBConsults.insertFileData(domain, id, b );
+		else DBConsults.insertFileData(domain, getUser(), id, b );
 		//insertFile(d, fileInfo,b);//DriveUtils.insertFile(d, fileInfo, new Vector<ParentReference>(), new Vector<String>(), domain);
-		fi = DBConsults.getFile(domain, id);
-		if(fi.getDomain()==null) fi.setDomain(domain);
+		fi = DBConsults.getFile(new Domain().setName(currentDomain).setId(domain.getId()), getUser(), id);
+		if(fi.getDomain()==null) fi.setDomain(currentDomain);
 
 	} catch (SQLException e) {
 		LOGGER.error(e.getMessage());
@@ -1814,20 +1671,21 @@ public Vector<FileInfo> insertFileMultiple(FileInfo fi, Integer domainId2) {
 	    return false;
 	}
 	
-	public Boolean checkDomain(Vector<FileInfo> vector, Integer domainId){
-		String domain = AonUtil.getDomainName();
+	public Boolean checkDomain(Domain domain, Vector<FileInfo> vector){
 		Integer domainID = null;
 		try {
-			domainID = com.code.aon.google.apis.jooq.DBConsults.getDomain(domain).getId();
+			domainID = com.code.aon.google.apis.jooq.DBConsults.getDomain(domain.getName()).getId();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		for (FileInfo fileInfo : vector) {
 			Integer fdomainId = fileInfo.getDomainId();
 			String fdomain = fileInfo.getDomain();
-			if((fdomainId != null && fdomainId != 0 && domainID != null) && fdomainId != domainId && fdomainId != domainID && !domain.equals(fdomain)){
-				if(!isParent(fdomainId, domainId) && !isParent(domainId, fdomainId)
-					&& !isParent(fdomainId, domainID) && !isParent(domainID, fdomainId)){
+			if((fdomainId != null && fdomainId != 0 && domainID != null) && fdomainId != domain.getId() && fdomainId != domainID && !domain.equals(fdomain)){
+				if(!isParent(new Domain().setId(fdomainId).setName(domain.getName()), domain.getId()) 
+						&& !isParent(domain, fdomainId)
+						&& !isParent(new Domain().setId(fdomainId).setName(domain.getName()), domainID) 
+						&& !isParent(new Domain().setId(domainID).setName(domain.getName()), fdomainId)){
 					return false;
 				}
 			}
@@ -1835,34 +1693,17 @@ public Vector<FileInfo> insertFileMultiple(FileInfo fi, Integer domainId2) {
 		return true;
 	}
 	
-	public Boolean checkDomain(Document document, String type,Integer domainId){
-		/*Boolean bool1 = checkDomain(document.getEfiles(), domainId);
-		Boolean bool2 = checkDomain(document.getFiles(), domainId);
-		Boolean bool3 = checkDomain(document.getFilter(), domainId);
-		System.out.println("Domain Error in "+type+": Efiles "+ !bool1 +", files "+!bool2+", filter "+!bool3);
-		if(!bool1 || !bool2 || !bool3){
-			LOGGER.error("Domain Error in "+type+": Efiles "+ !bool1 +", files "+!bool2+", filter "+!bool3);
-		}
-		System.out.println(bool1 || bool2 || bool3);*/
+	public Boolean checkDomain(Domain domain, Document document, String type){
 		return true;
 	}
 	
-	public Boolean isParent(Integer domain, Integer parent){
-		String dom = AonUtil.getDomainName();
-		Integer par = null;
-		try {
-			par = DBConsults.getDomainParent(dom, domain);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		if(par != null){
-			return par == parent;
-		}
-		return false;
+	public Boolean isParent(Domain domain, Integer parent){
+		Integer par = DBConsults.getDomainParent(domain, getUser());
+		return par != null && par == parent;
 	}
 	
-	public void selectedMenu(Integer domainId){
+	public void selectedMenu(Domain domain){
 		System.out.println(smc.size());
-		smc.get(domainId).setLastMenuAction(null);
+		smc.get(domain.getId()).setLastMenuAction(null);
 	}
 }

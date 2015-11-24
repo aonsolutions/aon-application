@@ -9,12 +9,9 @@ import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
-import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Vector;
@@ -30,28 +27,27 @@ import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record7;
 import org.jooq.Result;
-import org.jooq.impl.DSL;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.google.apis.DatabaseSync;
-import com.code.aon.google.apis.jooq.JooqSettings;
-import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.CategoryList;
 import com.esferalia.aon.gwt.document.shared.Contact;
 import com.esferalia.aon.gwt.document.shared.ContactList;
 import com.esferalia.aon.gwt.document.shared.Document;
-import com.esferalia.aon.gwt.document.shared.Domain;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.Scope;
 import com.esferalia.aon.gwt.document.shared.ScopeList;
 import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.TagList;
 import com.esferalia.aon.gwt.document.shared.Tags;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.security.User;
 
 public class DBConsults {
 	private static Vector<FileInfo> filesGwt;
@@ -75,25 +71,18 @@ public class DBConsults {
 		}
 		return false;
 	}
-	public static Document getAllRattach(String domain,String domain2,Integer user_id, Boolean confidential, Integer domainId,Integer userDomainId) throws SQLException {
-		Connection connection = null;
-		try {
+	public static Document getAllRattach(Domain domain,User user, String domain2, Boolean confidential,Integer userDomainId){
+		AONContext ctx = null;
+		try {				
+			domain1=domain.getName();
+			atype="all";
+			filesGwt = new Vector<FileInfo>();
+			vaux = new Vector<FileInfo>();
 			
-
-			//if ((domain1==null || domain1!=domain)||(atype == null || atype != "all")) {
-				
-				domain1=domain;
-				atype="all";
-				filesGwt = new Vector<FileInfo>();
-				vaux = new Vector<FileInfo>();
-				connection = DatabaseSync.getConnection(domain);
-
-				DSLContext dslContext = DSL.using(connection,
-						JooqSettings.getDefaultSettings());
-				
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());	
 				Condition c;
 
-				if(userDomainId!= domainId){
+				if(userDomainId != domain.getId()){
 
 					c=(RATTACH.SCOPE.isNotNull().or(RATTACH.SCOPE.isNull()));
 					
@@ -103,7 +92,8 @@ public class DBConsults {
 				
 				Byte sh = (byte)RegistryAttachmentType.CORPORATE_IDENTITY.ordinal();//5;
 				//rattach domain + parent domain + scope not null
-				Result<Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp>> username = dslContext
+				Result<Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp>> username = 
+						ctx.getDslContext()
 						.selectDistinct(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.TYPE,
 								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DPARENT_ID,DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,DOMAIN.PARENT,
@@ -112,15 +102,16 @@ public class DBConsults {
 						.join(DOMAIN)
 						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
 						.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(RATTACH.SCOPE))
-						.where(USER_SCOPE.USER_ID.eq(user_id).and(RATTACH.TYPE.eq(sh).and(
-								RATTACH.DOMAIN.eq(domainId).or(
-								RATTACH.DOMAIN.eq(dslContext.select(DOMAIN.PARENT)
+						.where(USER_SCOPE.USER_ID.eq(user.getId()).and(RATTACH.TYPE.eq(sh).and(
+								RATTACH.DOMAIN.eq(domain.getId()).or(
+								RATTACH.DOMAIN.eq(ctx.getDslContext().select(DOMAIN.PARENT)
 														.from(DOMAIN)
-														.where(DOMAIN.ID.eq(domainId)))))))
+														.where(DOMAIN.ID.eq(domain.getId())))))))
 						.fetch();
 				
 				//rattach scope null parent
-				Result<Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp>> result1 = dslContext
+				Result<Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp>> result1 = 
+						ctx.getDslContext()
 						.select(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.TYPE,
 								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DPARENT_ID,DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,DOMAIN.PARENT,
@@ -128,13 +119,14 @@ public class DBConsults {
 						.from(RATTACH)
 						.join(DOMAIN)
 						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
-						.where(RATTACH.TYPE.eq(sh).and((RATTACH.SCOPE.isNull().and(RATTACH.DOMAIN.eq(dslContext.select(DOMAIN.PARENT)
+						.where(RATTACH.TYPE.eq(sh).and((RATTACH.SCOPE.isNull().and(RATTACH.DOMAIN.eq(ctx.getDslContext().select(DOMAIN.PARENT)
 										.from(DOMAIN)
-										.where(DOMAIN.ID.eq(domainId)))))))
+										.where(DOMAIN.ID.eq(domain.getId())))))))
 						.fetch();
 				
 				//rattach scope null 
-				Result<Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp>> result = dslContext
+				Result<Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp>> result = 
+						ctx.getDslContext()
 						.selectDistinct(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.TYPE,
 								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DPARENT_ID,DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,DOMAIN.PARENT,
@@ -142,11 +134,12 @@ public class DBConsults {
 						.from(RATTACH)
 						.join(DOMAIN)
 						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
-						.where(RATTACH.TYPE.eq(sh).and((c.and(RATTACH.DOMAIN.eq(domainId)))))
+						.where(RATTACH.TYPE.eq(sh).and((c.and(RATTACH.DOMAIN.eq(domain.getId())))))
 						.fetch();
 
 				// sons domain
-				Result<Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp>> result2 = dslContext
+				Result<Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp>> result2 = 
+						ctx.getDslContext()
 						.selectDistinct(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.TYPE,
 								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DPARENT_ID,DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,DOMAIN.PARENT,
@@ -154,13 +147,13 @@ public class DBConsults {
 						.from(RATTACH)
 						.join(DOMAIN)
 						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
-						.where(RATTACH.TYPE.eq(sh).and(DOMAIN.PARENT.eq(dslContext.select(DOMAIN.ID)
+						.where(RATTACH.TYPE.eq(sh).and(DOMAIN.PARENT.eq(ctx.getDslContext().select(DOMAIN.ID)
 										.from(DOMAIN)
-										.where(DOMAIN.ID.eq(domainId)))))
+										.where(DOMAIN.ID.eq(domain.getId())))))
 						.fetch();
 				
 				for (Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp> record : username) {
-					FileInfo fi = newFileInfo(dslContext,domain,domain2,record);
+					FileInfo fi = newFileInfo(ctx, domain, user,domain2,record);
 					
 					if (!fi.getConfidential() || (confidential && fi.getConfidential())){
 						filesGwt.add(fi);
@@ -171,8 +164,8 @@ public class DBConsults {
 					}
 				}
 				for (Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp> record : result) {
-					FileInfo fi = newFileInfo(dslContext,domain,domain2,record);
-					if (!esta(fi,user_id,dslContext)&&(!fi.getConfidential() || (confidential && fi.getConfidential()))){
+					FileInfo fi = newFileInfo(ctx, domain, user, domain2,record);
+					if (!esta(fi,user.getId(),ctx.getDslContext())&&(!fi.getConfidential() || (confidential && fi.getConfidential()))){
 						filesGwt.add(fi);
 						if(fi.getDomain().equalsIgnoreCase(domain2) || fi.getIsParent())
 							if(domain.equals(domain2))
@@ -181,7 +174,7 @@ public class DBConsults {
 					}
 				}
 				for (Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp> record : result1) {
-					FileInfo fi = newFileInfo(dslContext,domain,domain2,record);
+					FileInfo fi = newFileInfo(ctx, domain, user, domain2,record);
 					if (!fi.getConfidential() || (confidential && fi.getConfidential())){
 						filesGwt.add(fi);
 						if(fi.getDomain().equalsIgnoreCase(domain2) || fi.getIsParent())
@@ -192,7 +185,7 @@ public class DBConsults {
 					}
 				}
 				for (Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp> record : result2) {
-					FileInfo fi = newFileInfo(dslContext,domain,domain2,record);
+					FileInfo fi = newFileInfo(ctx, domain, user, domain2, record);
 					
 					if (!fi.getConfidential() || (confidential && fi.getConfidential())){
 						filesGwt.add(fi);
@@ -215,12 +208,12 @@ public class DBConsults {
 			return document;
 			
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 	
-	private static FileInfo newFileInfo(DSLContext dslContext, String domain, String domain2, Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp> record) throws SQLException {
+	private static FileInfo newFileInfo(AONContext ctx, Domain domain, User user, String domain2, Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp> record){
 		FileInfo fi = new FileInfo();
 		fi.setAonType("registry");
 		if (record.value1() != null) {
@@ -250,10 +243,10 @@ public class DBConsults {
 		if (record.value7() != null) {
 			fi.setCategory(record.value7());
 		}
-		Tags tags = getTags(domain , fi.getFileId());
+		Tags tags = getTags(domain, user, fi.getFileId());
 	
 		if(record.value7() != null) {
-			Result<Record1<String>> a = dslContext.select(CATEGORY.NAME).from(CATEGORY).where(CATEGORY.ID.eq((record.value7()))).fetch();
+			Result<Record1<String>> a = ctx.getDslContext().select(CATEGORY.NAME).from(CATEGORY).where(CATEGORY.ID.eq((record.value7()))).fetch();
 			a.stream().forEach(r-> {
 				fi.setCategoryStr(r.value1());
 			});
@@ -264,7 +257,7 @@ public class DBConsults {
 		fi.setTags(tags.getTags().getList());
 		if(tags.getTagsStr()!=null)fi.setTagsStr(tags.getTagsStr()); else fi.setTagsStr("-");
 		if(record.value8()!=null) {
-			Scope s = getScope(domain,record.value8());
+			Scope s = getScope(domain, user, record.value8());
 			fi.setScope(s);
 		}
 		if(record.value9()!=null){
@@ -312,14 +305,12 @@ public class DBConsults {
 		return fi;
 	}
 
-	public static Scope getScope(String domain , Integer id) throws SQLException{
-		Connection connection = null;
+	public static Scope getScope(Domain domain, User user, Integer id){
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-			Result<Record1<String>> data= dslContext
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+			
+			Result<Record1<String>> data= ctx.getDslContext()
 					.select(SCOPE.DESCRIPTION)
 					.from(SCOPE)
 					.where(SCOPE.ID.eq(id)).fetch();
@@ -329,15 +320,15 @@ public class DBConsults {
 				if(record.value1() != null){
 					s.setName(record.value1());
 					s.setId(id);
-					s.setDomain(domain);
+					s.setDomain(domain.getName());
 				}
 			}
 	
 			return s;
 			
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 		
 	}
@@ -380,14 +371,11 @@ public class DBConsults {
 			return "aon-icon-google-drive-unknown";
 	}
 
-	private static Tags getTags(String domain,int fileId) throws SQLException {
-		Connection connection = null;
+	private static Tags getTags(Domain domain, User user,int fileId) {
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-			Result<Record3<String, Integer, Integer>> data= dslContext
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+			Result<Record3<String, Integer, Integer>> data= ctx.getDslContext()
 					.select(TAG.NAME,TAG.ID,TAG.DOMAIN)
 					.from(RATTACH_TAG).join(TAG).on(TAG.ID.eq(RATTACH_TAG.TAG))
 					.where(RATTACH_TAG.RATTACH.eq(fileId)).fetch();
@@ -406,7 +394,7 @@ public class DBConsults {
 					tag.setId(record.value2());
 				}
 				if(record.value3()!= null){
-					tag.setDomain(getDomain(domain,record.value3()));
+					tag.setDomain(getDomain(domain.setId(record.getValue(TAG.DOMAIN)), user));
 				}
 				ts.add(tag);
 			}
@@ -418,32 +406,29 @@ public class DBConsults {
 			return tags;
 			
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 	
-	public static ScopeList getScopeList(String domain,Integer domainId, Integer user_id, Integer userDomainId) throws SQLException{
-		Connection connection = null;
+	public static ScopeList getScopeList(Domain domain, User user){
+		AONContext ctx = null;
 		try {
 			ScopeList sl = new ScopeList();
 			
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-		
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+					
 			Result<Record2<String, Integer>> scope;
-			if(userDomainId.equals(domainId)){
-				scope = dslContext.select(SCOPE.DESCRIPTION, SCOPE.ID)
+			if(user.getDomain().equals(domain.getId())){
+				scope = ctx.getDslContext().select(SCOPE.DESCRIPTION, SCOPE.ID)
 					.from(SCOPE).join(USER_SCOPE)
 					.on(USER_SCOPE.SCOPE.eq(SCOPE.ID))
-					.where(SCOPE.DOMAIN.eq(domainId).and(USER_SCOPE.USER_ID.eq(user_id))).fetch();
+					.where(SCOPE.DOMAIN.eq(domain.getId()).and(USER_SCOPE.USER_ID.eq(user.getId()))).fetch();
 			}
 			else{
-				scope = dslContext.select(SCOPE.DESCRIPTION, SCOPE.ID)
+				scope = ctx.getDslContext().select(SCOPE.DESCRIPTION, SCOPE.ID)
 						.from(SCOPE)
-						.where(SCOPE.DOMAIN.eq(domainId)).fetch();
+						.where(SCOPE.DOMAIN.eq(domain.getId())).fetch();
 			}
 			Vector<Scope> vector = new Vector<Scope>();
 			for (Record2<String, Integer> record : scope) {
@@ -457,11 +442,11 @@ public class DBConsults {
 				vector.add(s);
 			}
 			
-			Result<Record2<String, Integer>> scopeParent = dslContext.select(SCOPE.DESCRIPTION, SCOPE.ID)
+			Result<Record2<String, Integer>> scopeParent = ctx.getDslContext().select(SCOPE.DESCRIPTION, SCOPE.ID)
 					.from(SCOPE).join(DOMAIN)
 					.on(SCOPE.DOMAIN.eq(DOMAIN.PARENT)).join(USER_SCOPE)
 					.on(USER_SCOPE.SCOPE.eq(SCOPE.ID))
-					.where(DOMAIN.ID.eq(domainId).and(USER_SCOPE.USER_ID.eq(user_id))).fetch();
+					.where(DOMAIN.ID.eq(domain.getId()).and(USER_SCOPE.USER_ID.eq(user.getId()))).fetch();
 			
 			for (Record2<String, Integer> record : scopeParent) {
 				Scope s = new Scope();
@@ -479,60 +464,55 @@ public class DBConsults {
 
 			return sl;
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 	
-	public static ScopeList getScopeListSon(String domain,Integer domainId, Integer user_id, Integer userDomainId) throws SQLException{
-		Connection connection = null;
+	public static ScopeList getScopeListSon(Domain domain, User user){
+		AONContext ctx = null;
 		try {
 			ScopeList sl = new ScopeList();
 			
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-		Result<Record3<String, Integer, String>> scopeSon = dslContext.select(SCOPE.DESCRIPTION,SCOPE.ID,DOMAIN.NAME)
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+			
+			Result<Record3<String, Integer, String>> scopeSon = ctx.getDslContext().select(SCOPE.DESCRIPTION,SCOPE.ID,DOMAIN.NAME)
 				.from(SCOPE).join(DOMAIN)
 				.on(SCOPE.DOMAIN.eq(DOMAIN.ID))
-				.where(DOMAIN.PARENT.eq(domainId)).orderBy(SCOPE.DESCRIPTION).fetch();
-		Vector<Scope> vector = new Vector<Scope>();
-		for (Record3<String, Integer, String> record : scopeSon) {
-			Scope s = new Scope();
-			if (record.value1() != null)
-				s.setName(record.value1());
-			if (record.value2() !=null)
-				s.setId(record.value2());
-			s.setIsParent(false);
-			s.setIsSon(true);
-			if(record.value3() !=null) 
-				s.setDomain(record.value3());
-			long i = vector.stream().filter(cat -> cat.getName().equals(s.getName())).count();
-			if(i==0) vector.add(s);			
+				.where(DOMAIN.PARENT.eq(domain.getId())).orderBy(SCOPE.DESCRIPTION).fetch();
+			Vector<Scope> vector = new Vector<Scope>();
+			for (Record3<String, Integer, String> record : scopeSon) {
+				Scope s = new Scope();
+				if (record.value1() != null)
+					s.setName(record.value1());
+				if (record.value2() !=null)
+					s.setId(record.value2());
+				s.setIsParent(false);
+				s.setIsSon(true);
+				if(record.value3() !=null) 
+					s.setDomain(record.value3());
+				long i = vector.stream().filter(cat -> cat.getName().equals(s.getName())).count();
+				if(i==0) vector.add(s);			
+			}
+			sl.setList(vector);
+			return sl;
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
-		sl.setList(vector);
-		return sl;
-	} finally {
-		if (connection != null)
-			connection.close();
-	}
 	}
 	
-	public static TagList getTagList(String domain) throws SQLException{
-		Connection connection = null;
+	public static TagList getTagList(Domain domain, User user){
+		AONContext ctx = null;
 		try {
 			TagList tl = new TagList();
 			
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-
-			Result<Record2<String, Integer>> tag = dslContext.select(TAG.NAME, TAG.ID)
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+			
+			Result<Record2<String, Integer>> tag = ctx.getDslContext().select(TAG.NAME, TAG.ID)
 					.from(TAG).join(DOMAIN)
 					.on(TAG.DOMAIN.eq(DOMAIN.ID))
-					.where(DOMAIN.NAME.eq(domain).and(TAG.TYPE.eq((byte)0))).orderBy(TAG.NAME).fetch();
+					.where(DOMAIN.NAME.eq(domain.getName()).and(TAG.TYPE.eq((byte)0))).orderBy(TAG.NAME).fetch();
 			
 			Vector<Tag> vector = new Vector<Tag>();
 			for (Record2<String, Integer> record : tag) {
@@ -546,10 +526,10 @@ public class DBConsults {
 				vector.add(t);
 			}
 			
-			Result<Record2<String, Integer>> tagParent = dslContext.select(TAG.NAME, TAG.ID)
+			Result<Record2<String, Integer>> tagParent = ctx.getDslContext().select(TAG.NAME, TAG.ID)
 					.from(TAG).join(DOMAIN)
 					.on(TAG.DOMAIN.eq(DOMAIN.PARENT))
-					.where(DOMAIN.NAME.eq(domain).and(TAG.TYPE.eq((byte)0))).orderBy(TAG.NAME).fetch();
+					.where(DOMAIN.NAME.eq(domain.getName()).and(TAG.TYPE.eq((byte)0))).orderBy(TAG.NAME).fetch();
 			
 			for (Record2<String, Integer> record : tagParent) {
 				Tag t = new Tag();
@@ -567,26 +547,24 @@ public class DBConsults {
 
 			return tl;
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 	
-	public static TagList getTagListSon(String domain) throws SQLException{
-		Connection connection = null;
+	public static TagList getTagListSon(Domain domain, User user) {
+		AONContext ctx = null;
 		try {
 			TagList tl = new TagList();
 			
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-		Result<Record3<String, Integer, String>> tagSon = dslContext.select(TAG.NAME,TAG.ID,DOMAIN.NAME)
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+			
+			Result<Record3<String, Integer, String>> tagSon = ctx.getDslContext().select(TAG.NAME,TAG.ID,DOMAIN.NAME)
 				.from(TAG).join(DOMAIN)
 				.on(TAG.DOMAIN.eq(DOMAIN.ID))
-				.where(DOMAIN.PARENT.eq(dslContext.select(DOMAIN.ID)
+				.where(DOMAIN.PARENT.eq(ctx.getDslContext().select(DOMAIN.ID)
 						.from(DOMAIN)
-						.where(DOMAIN.NAME.eq(domain))).and(TAG.TYPE.eq((byte)0))).orderBy(TAG.NAME).fetch();
+						.where(DOMAIN.NAME.eq(domain.getName()))).and(TAG.TYPE.eq((byte)0))).orderBy(TAG.NAME).fetch();
 		Vector<Tag> vector = new Vector<Tag>();
 		for (Record3<String, Integer, String> record : tagSon) {
 			Tag t = new Tag();
@@ -605,25 +583,22 @@ public class DBConsults {
 		tl.setList(vector);
 		return tl;
 	} finally {
-		if (connection != null)
-			connection.close();
+		if (ctx != null)
+			ctx.close();
 	}
 	}
 	
-	public static CategoryList getCategoryList(String domain) throws SQLException{
-		Connection connection = null;
+	public static CategoryList getCategoryList(Domain domain, User user){
+		AONContext ctx = null;
 		try {
 			CategoryList cl = new CategoryList();
 			
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-
-			Result<Record2<String, Integer>> category = dslContext.select(CATEGORY.NAME,CATEGORY.ID)
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+			
+			Result<Record2<String, Integer>> category = ctx.getDslContext().select(CATEGORY.NAME,CATEGORY.ID)
 					.from(CATEGORY).join(DOMAIN)
 					.on(CATEGORY.DOMAIN.eq(DOMAIN.ID))
-					.where(DOMAIN.NAME.eq(domain).and(CATEGORY.TYPE.eq((byte)0))).orderBy(CATEGORY.NAME).fetch();
+					.where(DOMAIN.NAME.eq(domain.getName()).and(CATEGORY.TYPE.eq((byte)0))).orderBy(CATEGORY.NAME).fetch();
 			Vector<Category> vector = new Vector<Category>();
 			for (Record2<String, Integer> record : category) {
 				Category c = new Category();
@@ -636,10 +611,10 @@ public class DBConsults {
 				vector.add(c);
 			}
 						
-			Result<Record2<String, Integer>> categoryParent = dslContext.select(CATEGORY.NAME,CATEGORY.ID)
+			Result<Record2<String, Integer>> categoryParent = ctx.getDslContext().select(CATEGORY.NAME,CATEGORY.ID)
 					.from(CATEGORY).join(DOMAIN)
 					.on(CATEGORY.DOMAIN.eq(DOMAIN.PARENT))
-					.where(DOMAIN.NAME.eq(domain).and(CATEGORY.TYPE.eq((byte)0))).orderBy(CATEGORY.NAME).fetch();
+					.where(DOMAIN.NAME.eq(domain.getName()).and(CATEGORY.TYPE.eq((byte)0))).orderBy(CATEGORY.NAME).fetch();
 			for (Record2<String, Integer> record : categoryParent) {
 				Category c = new Category();
 				if (record.value1() != null)
@@ -655,63 +630,60 @@ public class DBConsults {
 			cl.setList(vector);
 			return cl;
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 
-	public static CategoryList getCategoryListSon(String domain) throws SQLException{
-		Connection connection = null;
+	public static CategoryList getCategoryListSon(Domain domain, User user) {
+		AONContext ctx = null;
 		try {
 			CategoryList cl = new CategoryList();
 			
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-		Result<Record3<String, Integer, String>> categorySon = dslContext.select(CATEGORY.NAME,CATEGORY.ID,DOMAIN.NAME)
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+			
+			Result<Record3<String, Integer, String>> categorySon = ctx.getDslContext().select(CATEGORY.NAME,CATEGORY.ID,DOMAIN.NAME)
 				.from(CATEGORY).join(DOMAIN)
 				.on(CATEGORY.DOMAIN.eq(DOMAIN.ID))
-				.where(DOMAIN.PARENT.eq(dslContext.select(DOMAIN.ID)
+				.where(DOMAIN.PARENT.eq(ctx.getDslContext().select(DOMAIN.ID)
 						.from(DOMAIN)
-						.where(DOMAIN.NAME.eq(domain))).and(CATEGORY.TYPE.eq((byte)0))).orderBy(CATEGORY.NAME).fetch();
-		Vector<Category> vector = new Vector<Category>();
-		for (Record3<String, Integer, String> record : categorySon) {
-			Category c = new Category();
-			if (record.value1() != null)
-				c.setName(record.value1());
-			if (record.value2() !=null)
-				c.setId(record.value2());
-			c.setIsParent(false);
-			c.setIsSon(true);
-			if(record.value3() !=null) 
-				c.setDomain(record.value3());
-			long i = vector.stream().filter(cat -> cat.getName().equals(c.getName())).count();
-			if(i==0) vector.add(c);			
+						.where(DOMAIN.NAME.eq(domain.getName()))).and(CATEGORY.TYPE.eq((byte)0))).orderBy(CATEGORY.NAME).fetch();
+			Vector<Category> vector = new Vector<Category>();
+			for (Record3<String, Integer, String> record : categorySon) {
+				Category c = new Category();
+				if (record.value1() != null)
+					c.setName(record.value1());
+				if (record.value2() !=null)
+					c.setId(record.value2());
+				c.setIsParent(false);
+				c.setIsSon(true);
+				if(record.value3() !=null) 
+					c.setDomain(record.value3());
+				long i = vector.stream().filter(cat -> cat.getName().equals(c.getName())).count();
+				if(i==0) vector.add(c);			
+			}
+			cl.setList(vector);
+			return cl;
+		} finally {
+			if (ctx != null)
+			ctx.close();
 		}
-		cl.setList(vector);
-		return cl;
-	} finally {
-		if (connection != null)
-			connection.close();
-	}
 	}
 	
-	public static Vector<FileInfo> getServiConvenios(String domain) throws SQLException{
-		Connection connection = null;
+	public static Vector<FileInfo> getServiConvenios(Domain domain, User user){
+		AONContext ctx = null;
 		try {
 			Vector<FileInfo> vector = new Vector<FileInfo>();
 
-			if ((domain1==null || domain1!=domain)||(atype == null || atype != "serviConvenios") ) {
-				domain1=domain;
+			if ((domain1==null || domain1!=domain.getName())||(atype == null || atype != "serviConvenios") ) {
+				domain1=domain.getName();
 				atype= "serviConvenios";
 				filesGwt = new Vector<FileInfo>();
-				connection = DatabaseSync.getConnection(domain);
-
-				DSLContext dslContext = DSL.using(connection,
-						JooqSettings.getDefaultSettings());
-
-				Result<Record7<Integer, String, Byte, Byte, Date, String, Integer>> username = dslContext
+				
+				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+				
+				Result<Record7<Integer, String, Byte, Byte, Date, String, Integer>> username = 
+						ctx.getDslContext()
 						.select(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.TYPE,
 								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY)
@@ -748,10 +720,10 @@ public class DBConsults {
 					if (record.value7() != null) {
 						fi.setCategory(record.value7());
 					}
-					Tags tags = getTags(domain , fi.getFileId());
+					Tags tags = getTags(domain, user, fi.getFileId());
 					fi.setSize(0);
 					fi.setSizeStr(FileUtils.byteCountToDisplaySize(fi.getSize()!=null?fi.getSize():0));
-					if(record.value7() != null) fi.setCategoryStr(dslContext.select(CATEGORY.NAME).from(CATEGORY).where(CATEGORY.ID.eq((record.value7()))).fetch().get(0).value1());
+					if(record.value7() != null) fi.setCategoryStr(ctx.getDslContext().select(CATEGORY.NAME).from(CATEGORY).where(CATEGORY.ID.eq((record.value7()))).fetch().get(0).value1());
 					else fi.setCategoryStr("-");
 					
 					fi.setIcon(getmType(fi));
@@ -768,25 +740,23 @@ public class DBConsults {
 			return vector;
 			
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 
 	
-	public static Vector<Domain> getSons(String domain) throws SQLException{
-		Connection connection = null;
+	public static Vector<Domain> getSons(Domain domain, User user) {
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-
-			Result<Record2<String, String>> sons = dslContext
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+			
+			Result<Record2<String, String>> sons = ctx.getDslContext()
 					.select(DOMAIN.NAME,DOMAIN.DESCRIPTION)
 					.from(DOMAIN)
-					.where(DOMAIN.PARENT.eq(dslContext.select(DOMAIN.ID)
+					.where(DOMAIN.PARENT.eq(ctx.getDslContext().select(DOMAIN.ID)
 												.from(DOMAIN)
-												.where(DOMAIN.NAME.eq(domain))))
+												.where(DOMAIN.NAME.eq(domain.getName()))))
 					.fetch();
 			
 			Vector<Domain> vector = new Vector<Domain>();
@@ -800,10 +770,9 @@ public class DBConsults {
 			return vector;
 			
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
-		
 	}
 	
 	
@@ -817,117 +786,98 @@ public class DBConsults {
 		DBConsults.filesGwt = filesGwt;
 	}
 
-	public static void removeFile(String domain,Integer id) throws SQLException{
-		Connection connection = null;
+	public static void removeFile(Domain domain, User user, Integer id){
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-			dslContext.delete(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(id)).execute();
-			dslContext.delete(RATTACH).where(RATTACH.ID.eq(id)).execute();
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+			ctx.getDslContext().delete(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(id)).execute();
+			AON.delete(domain.getName(), domain.getId(), user.getLogin(),
+					filter -> filter.getIdProperty().eq(id)
+					,AttachType.REGISTRY);
 			
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 	
-	public static Integer getDomainId(String domain,String dom) throws SQLException{
-		Connection connection = null;
+	public static Integer getDomainId(Domain domain, User user, String dom){
+		AONContext ctx = null;
 		try {
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-
-			Result<Record1<Integer>> data = dslContext
+			Result<Record1<Integer>> data = ctx.getDslContext()
 					.select(DOMAIN.ID).from(DOMAIN).where(DOMAIN.NAME.eq(dom)).fetch();
 			
 			return data.get(0).value1();
 			
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 		
 	}
 	
-	public static String getDomain(String domain,Integer id) throws SQLException{
-		Connection connection = null;
+	public static String getDomain(Domain domain, User user) {
+		AONContext ctx = null;
 		try {
-			
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-
-			Record1<String> data = dslContext
-					.select(DOMAIN.NAME).from(DOMAIN).where(DOMAIN.ID.eq(id)).fetchOne();
-			
-			return data.value1();
-			
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin()); 
+			Record1<String> data = ctx.getDslContext()
+					.select(DOMAIN.NAME).from(DOMAIN).where(DOMAIN.ID.eq(domain.getId())).fetchOne();
+			return data.getValue(DOMAIN.NAME);
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 		
 	}
 	
-	public static Integer getDomainParent(String domain,Integer id) throws SQLException{
-		Connection connection = null;
+	public static Integer getDomainParent(Domain domain, User user){
+		AONContext ctx = null;
 		try {
-			
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 
-			Record1<Integer> data = dslContext
-					.select(DOMAIN.PARENT).from(DOMAIN).where(DOMAIN.ID.eq(id)).fetchOne();
+			Record1<Integer> data = ctx.getDslContext()
+					.select(DOMAIN.PARENT).from(DOMAIN).where(DOMAIN.ID.eq(domain.getId())).fetchOne();
 			if(data.value1()!= null)
 				return data.value1();
 			else return null;
 			
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 		
 	}
 	
-	public static Integer insertFile(String domain,com.code.aon.google.apis.FileInfo fi) throws SQLException{
-		Connection connection = null;
+	public static Integer insertFile(Domain domain,User user, com.code.aon.google.apis.FileInfo fi){
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			
-			
-			Result<Record1<Integer>> reg = dslContext.select(ENTERPRISE.REGISTRY)
+			Result<Record1<Integer>> reg = ctx.getDslContext().select(ENTERPRISE.REGISTRY)
 				.from(ENTERPRISE.join(DOMAIN).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID)))
-				.where(DOMAIN.NAME.eq(domain)).fetch();
+				.where(DOMAIN.NAME.eq(domain.getName())).fetch();
 			
-			Integer userId = AonUtil.getAuthPrincipal().getUserId();
-			Record1<String> user = dslContext.select(USER.LOGIN).from(USER).where(USER.ID.eq(userId)).fetchOne();
 			long currentDate = new java.util.Date().getTime();
 			
-			return dslContext.insertInto(RATTACH,RATTACH.REGISTRY,RATTACH.DOMAIN,RATTACH.CATEGORY,RATTACH.MIMETYPE,RATTACH.DESCRIPTION,RATTACH.TYPE,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.ATTACH_DATE,RATTACH.DATA,RATTACH.DRIVE_ID,RATTACH.DPARENT_ID, RATTACH.CREATION_USER, RATTACH.CREATION_DATE, RATTACH.MODIFICATION_USER, RATTACH.MODIFICATION_DATE)
+			return ctx.getDslContext().insertInto(RATTACH,RATTACH.REGISTRY,RATTACH.DOMAIN,RATTACH.CATEGORY,RATTACH.MIMETYPE,RATTACH.DESCRIPTION,RATTACH.TYPE,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.ATTACH_DATE,RATTACH.DATA,RATTACH.DRIVE_ID,RATTACH.DPARENT_ID, RATTACH.CREATION_USER, RATTACH.CREATION_DATE, RATTACH.MODIFICATION_USER, RATTACH.MODIFICATION_DATE)
 						.values(reg.get(0).value1(),fi.getDomainId(),fi.getCategory(),fi.getMimetype(),fi.getTitle(),(byte)fi.getType(),fi.getScopeId(),fi.getSecurityLevel(),fi.getDateSql(),null,null,fi.getSize().toString()
-								,user.value1(),new Timestamp(currentDate),user.value1(),new Timestamp(currentDate)).returning(RATTACH.ID).fetchOne().getId();
+								,user.getLogin(),new Timestamp(currentDate),user.getLogin(),new Timestamp(currentDate)).returning(RATTACH.ID).fetchOne().getId();
 	
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 	
-	public static FileInfo getFile(String domain,Integer id) throws SQLException{
-		Connection connection = null;
+	public static FileInfo getFile(Domain domain, User user,Integer id){
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-			
-			Result<Record15<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, Integer, String, String, Timestamp, String, Timestamp>> record = dslContext
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+			final AONContext sctx = ctx;
+			Result<Record15<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, Integer, String, String, Timestamp, String, Timestamp>> record = 
+					ctx.getDslContext()
 					.select(RATTACH.ID, RATTACH.DESCRIPTION,
 							RATTACH.MIMETYPE, RATTACH.TYPE,
 							RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DATA.length(),RATTACH.DPARENT_ID,
@@ -955,7 +905,7 @@ public class DBConsults {
 					fi.setCategory(r.value7());
 				Tags tags=null;
 				try {
-					tags = getTags(domain , fi.getFileId());
+					tags = getTags(domain,user, fi.getFileId());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -967,14 +917,14 @@ public class DBConsults {
 					fi.setDateStr(aux); 
 				}
 				else fi.setDateStr("-");
-				if(r.value7() != null) fi.setCategoryStr(dslContext.select(CATEGORY.NAME).from(CATEGORY).where(CATEGORY.ID.eq((r.value7()))).fetch().get(0).value1());
+				if(r.value7() != null) fi.setCategoryStr(sctx.getDslContext().select(CATEGORY.NAME).from(CATEGORY).where(CATEGORY.ID.eq((r.value7()))).fetch().get(0).value1());
 				else fi.setCategoryStr("-");
 				fi.setTags(tags.getTags().getList());
 				if(tags.getTagsStr()!=null)fi.setTagsStr(tags.getTagsStr()); else fi.setTagsStr("-");
 				if(r.value8()!=null) {
 					Scope s = null;
 					try {
-						s = getScope(domain,record.get(0).value8());
+						s = getScope(domain, user, record.get(0).value8());
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -1014,93 +964,81 @@ public class DBConsults {
 			});
 			return fi;
 		}finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 	
-	public static void insertFileData(String domain,Integer id, byte[] a) throws SQLException{
-		Connection connection = null;
+	public static void insertFileData(Domain domain, User user, Integer id, byte[] a){
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-			
-			Integer userId = AonUtil.getAuthPrincipal().getUserId();
-			Record1<String> user = dslContext.select(USER.LOGIN).from(USER).where(USER.ID.eq(userId)).fetchOne();
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+		
 			long currentDate = new java.util.Date().getTime();
 			
-			dslContext.update(RATTACH).set(RATTACH.DATA,a)
-						.set(RATTACH.MODIFICATION_USER, user.value1())
+			ctx.getDslContext().update(RATTACH).set(RATTACH.DATA,a)
+						.set(RATTACH.MODIFICATION_USER, user.getLogin())
 						.set(RATTACH.MODIFICATION_DATE, new Timestamp(currentDate))
 						.where(RATTACH.ID.eq(id))
 						.execute();
 			
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 	
-	public static void insertTagsFile(Integer id, Vector<Tag> tags, String domain,Integer dom) throws SQLException {
-		Connection connection = null;
+	public static void insertTagsFile(Domain domain, User user, Integer id, Vector<Tag> tags) {
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			for (Tag tag : tags) {
-				dslContext.insertInto(RATTACH_TAG,RATTACH_TAG.DOMAIN,RATTACH_TAG.RATTACH,RATTACH_TAG.TAG)
-				.values(dom,id,tag.getId()).returning(RATTACH.ID).execute();
+				ctx.getDslContext().insertInto(RATTACH_TAG,RATTACH_TAG.DOMAIN,RATTACH_TAG.RATTACH,RATTACH_TAG.TAG)
+				.values(domain.getId(),id,tag.getId()).returning(RATTACH.ID).execute();
 			}
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 	
-	public static void updateFile(String domain,com.code.aon.google.apis.FileInfo fi,Vector<Tag> tags, Integer domainId) throws SQLException{
-		Connection connection = null;
+	public static void updateFile(Domain domain,User user, com.code.aon.google.apis.FileInfo fi,Vector<Tag> tags) {
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			
-			
-			dslContext.delete(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(fi.getFileId())).execute();
+			ctx.getDslContext().delete(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(fi.getFileId())).execute();
 
 			for (Tag tag : tags) {
-				dslContext.insertInto(RATTACH_TAG,RATTACH_TAG.DOMAIN,RATTACH_TAG.RATTACH,RATTACH_TAG.TAG)
-				.values(domainId,fi.getFileId(),tag.getId()).execute();
+				ctx.getDslContext().insertInto(RATTACH_TAG,RATTACH_TAG.DOMAIN,RATTACH_TAG.RATTACH,RATTACH_TAG.TAG)
+				.values(domain.getId(),fi.getFileId(),tag.getId()).execute();
 			}
 			
-			Integer userId = AonUtil.getAuthPrincipal().getUserId();
-			Record1<String> user = dslContext.select(USER.LOGIN).from(USER).where(USER.ID.eq(userId)).fetchOne();
 			long currentDate = new java.util.Date().getTime();
 			
 			
-			dslContext.update(RATTACH).set(RATTACH.CATEGORY,fi.getCategory())
+			ctx.getDslContext().update(RATTACH).set(RATTACH.CATEGORY,fi.getCategory())
 									.set(RATTACH.MIMETYPE,fi.getMimetype())
 									.set(RATTACH.DESCRIPTION,fi.getTitle())
 									.set(RATTACH.SCOPE,fi.getScopeId())
 									.set(RATTACH.SECURITY_LEVEL,fi.getSecurityLevel())
 									.set(RATTACH.ATTACH_DATE,fi.getDateSql())
-									.set(RATTACH.MODIFICATION_USER, user.value1())
+									.set(RATTACH.MODIFICATION_USER, user.getLogin())
 									.set(RATTACH.MODIFICATION_DATE, new Timestamp(currentDate))
 							.where(RATTACH.ID.eq(fi.getFileId())).execute();
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 	
-	public static com.code.aon.google.apis.FileInfo getDataAndName(Integer id, String domain) throws SQLException{
-		Connection connection = null;
+	public static com.code.aon.google.apis.FileInfo getDataAndName(Domain domain, User user, Integer rattachId) {
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-			Result<Record2<byte[], String>> data = dslContext.select(RATTACH.DATA,RATTACH.DESCRIPTION)
-					.from(RATTACH).where(RATTACH.ID.eq(id)).fetch();
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+			
+			Result<Record2<byte[], String>> data = ctx.getDslContext().select(RATTACH.DATA,RATTACH.DESCRIPTION)
+					.from(RATTACH).where(RATTACH.ID.eq(rattachId)).fetch();
 			com.code.aon.google.apis.FileInfo fi = new com.code.aon.google.apis.FileInfo();
 			for (Record2<byte[], String> record : data) {
 				//InputStream is =  new ByteArrayInputStream(record.value1());
@@ -1110,129 +1048,109 @@ public class DBConsults {
 			return fi;
 			
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 			
 	}
 	
-	public static Integer newTag(String domain, Integer domainId,String name) throws SQLException {
-		Connection connection = null;
+	public static Integer newTag(Domain domain, User user,String name) {
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 		
-			return dslContext.insertInto(TAG,TAG.DOMAIN,TAG.NAME,TAG.TYPE)
-				.values(domainId,name,(byte)0).returning(TAG.ID).fetchOne().getId();
+			return ctx.getDslContext().insertInto(TAG,TAG.DOMAIN,TAG.NAME,TAG.TYPE)
+				.values(domain.getId(),name,(byte)0).returning(TAG.ID).fetchOne().getId();
 			
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}	
 	}
 
-	public static void editTag(String domain, String name,Integer id) throws SQLException {
-		Connection connection = null;
+	public static void editTag(Domain domain, User user, String name,Integer id) {
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-			
-			dslContext.update(TAG).set(TAG.NAME,name)
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+			ctx.getDslContext().update(TAG).set(TAG.NAME,name)
 							.where(TAG.ID.eq(id)).execute();
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}	
 	}
 
-	public static void deleteTag(String domain, Integer tagId) throws SQLException {
-		Connection connection = null;
+	public static void deleteTag(Domain domain, User user, Integer tagId){
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			
-			dslContext.delete(RATTACH_TAG).where(RATTACH_TAG.TAG.eq(tagId)).execute();
-			dslContext.delete(TAG).where(TAG.ID.eq(tagId)).execute();
+			ctx.getDslContext().delete(RATTACH_TAG).where(RATTACH_TAG.TAG.eq(tagId)).execute();
+			ctx.getDslContext().delete(TAG).where(TAG.ID.eq(tagId)).execute();
 			
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}	
 	}
 
-	public static Integer newCategory(String domain, Integer domainId, String name) throws SQLException {
-		Connection connection = null;
+	public static Integer newCategory(Domain domain, User user, String name) {
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-		
-			return dslContext.insertInto(CATEGORY,CATEGORY.DOMAIN,CATEGORY.NAME,CATEGORY.TYPE)
-				.values(domainId,name,(byte)0).returning(CATEGORY.ID).fetchOne().getId();
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+			return ctx.getDslContext().insertInto(CATEGORY,CATEGORY.DOMAIN,CATEGORY.NAME,CATEGORY.TYPE)
+				.values(domain.getId(),name,(byte)0).returning(CATEGORY.ID).fetchOne().getId();
 			
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}		
 	}
 
-	public static void editCategory(String domain, String name,Integer id) throws SQLException {
-		Connection connection = null;
+	public static void editCategory(Domain domain, User user, String name,Integer id){
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			
-			dslContext.update(CATEGORY).set(CATEGORY.NAME,name)
+			ctx.getDslContext().update(CATEGORY).set(CATEGORY.NAME,name)
 							.where(CATEGORY.ID.eq(id)).execute();
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}	
 	}
 
-	public static void deleteCategory(String domain, Integer categoryId) throws SQLException {
-		Connection connection = null;
+	public static void deleteCategory(Domain domain, User user, Integer categoryId) {
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-
-			Integer userId = AonUtil.getAuthPrincipal().getUserId();
-			Record1<String> user = dslContext.select(USER.LOGIN).from(USER).where(USER.ID.eq(userId)).fetchOne();
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+			
 			long currentDate = new java.util.Date().getTime();
 			
 			String sql = "UPDATE rattach SET category = NULL WHERE category = "+categoryId+";";
-			dslContext.fetch(sql);
+			ctx.getDslContext().fetch(sql);
 			
-			dslContext.update(RATTACH)
-					.set(RATTACH.MODIFICATION_USER, user.value1())
+			ctx.getDslContext().update(RATTACH)
+					.set(RATTACH.MODIFICATION_USER, user.getLogin())
 					.set(RATTACH.MODIFICATION_DATE, new Timestamp(currentDate))
 					.where(RATTACH.CATEGORY.eq(categoryId))
 					.execute();
 			
-			dslContext.delete(CATEGORY).where(CATEGORY.ID.eq(categoryId)).execute();
+			ctx.getDslContext().delete(CATEGORY).where(CATEGORY.ID.eq(categoryId)).execute();
 			
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}	
 	}
 	
-	public static com.code.aon.registry.RegistryAttachment getRegistryAttachment(int id, String domain)
-			throws AonConnectionException, SQLException {
-		Connection connection = null;
+	public static com.code.aon.registry.RegistryAttachment getRegistryAttachment(Domain domain,User user, int id) {
+		AONContext ctx = null;
 		try {
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-
-			Record16<Date, Integer, Timestamp, String, String, Integer, String, String, Integer, Byte, Timestamp, String, Integer, Integer, Byte, Byte> rattach = dslContext.select(RATTACH.ATTACH_DATE, RATTACH.CATEGORY,
+			Record16<Date, Integer, Timestamp, String, String, Integer, String, String, Integer, Byte, Timestamp, String, Integer, Integer, Byte, Byte> rattach = 
+					ctx.getDslContext().select(RATTACH.ATTACH_DATE, RATTACH.CATEGORY,
 															RATTACH.CREATION_DATE, RATTACH.CREATION_USER, RATTACH.DESCRIPTION, 
 															RATTACH.DOMAIN, RATTACH.DPARENT_ID, RATTACH.DRIVE_ID, RATTACH.ID, 
 															RATTACH.MIMETYPE, RATTACH.MODIFICATION_DATE, RATTACH.MODIFICATION_USER, 
@@ -1265,25 +1183,22 @@ public class DBConsults {
 			
 			return attach;
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 
 	}
-	public static ContactList getContacts(int user_id, String domain,Integer userDomainId, Integer domainId)
-			throws AonConnectionException, SQLException {
-		Connection connection = null;
+	public static ContactList getContacts(Domain domain, User user){
+		AONContext ctx = null;
 		try {
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			DSLContext dslContext = ctx.getDslContext();
 
 			Result<Record3<Integer, String, String>> result = dslContext.select(CONTACT.ID, CONTACT.DISPLAYNAME, CONTACT_DATA.EMAIL)
 														.from(CONTACT).join(CONTACT_DATA).on(CONTACT.CONTACT_DATA.eq(CONTACT_DATA.ID))
-														.where(CONTACT.USER_ID.eq(user_id).and(CONTACT.DOMAIN.eq(userDomainId)
-																								.or(CONTACT.DOMAIN.eq(domainId)))).fetch();
+														.where(CONTACT.USER_ID.eq(user.getId()).and(CONTACT.DOMAIN.eq(user.getDomain())
+																								.or(CONTACT.DOMAIN.eq(domain.getId())))).fetch();
 			
 			Vector<Contact> v = new Vector<Contact>();
 			result.stream().forEach(r->{
@@ -1291,7 +1206,7 @@ public class DBConsults {
 				c.setId(r.value1());
 				c.setDisplayName(r.value2());
 				c.setEmail(r.value3());
-				c.setUser_id(user_id);
+				c.setUser_id(user.getId());
 				v.add(c);
 			});
 			ContactList cl = new ContactList();
@@ -1300,28 +1215,9 @@ public class DBConsults {
 			
 		
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 
 	}
-	
-	public static String getUserLogin(String domain) throws SQLException {
-		Connection connection = null;
-		try {
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-			Integer userId = AonUtil.getAuthPrincipal().getUserId();
-			Record1<String> user = dslContext.select(USER.LOGIN).from(USER).where(USER.ID.eq(userId)).fetchOne();
-
-			return user.value1();
-		} finally {
-			if (connection != null)
-				connection.close();
-		}
-
-	}
-	
 }

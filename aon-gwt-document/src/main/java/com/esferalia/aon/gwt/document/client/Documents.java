@@ -1,11 +1,6 @@
 package com.esferalia.aon.gwt.document.client;
 
 import static com.esferalia.aon.gwt.common.client.AONEntryPoint.getParameter;
-import gwtupload.client.IUploader;
-import gwtupload.client.IUploader.OnCancelUploaderHandler;
-import gwtupload.client.IUploader.OnFinishUploaderHandler;
-import gwtupload.client.MultiUploader;
-import gwtupload.client.SingleUploader;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -26,7 +21,6 @@ import com.esferalia.aon.gwt.document.shared.CategoryList;
 import com.esferalia.aon.gwt.document.shared.Dialog;
 import com.esferalia.aon.gwt.document.shared.DisclosureImages;
 import com.esferalia.aon.gwt.document.shared.Document;
-import com.esferalia.aon.gwt.document.shared.Domain;
 import com.esferalia.aon.gwt.document.shared.Emessage;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.FilterUtil;
@@ -38,6 +32,7 @@ import com.esferalia.aon.gwt.document.shared.SearchInfo;
 import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.TagList;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
@@ -78,9 +73,7 @@ import com.google.gwt.user.cellview.client.AbstractPager;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
-//import com.esferalia.aon.gwt.document.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid;
-//import com.esferalia.aon.gwt.document.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardPagingPolicy.KeyboardPagingPolicy;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
@@ -122,6 +115,12 @@ import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SelectionModel;
 //import org.eclipse.jetty.webapp.WebInfConfiguration;
+
+import gwtupload.client.IUploader;
+import gwtupload.client.IUploader.OnCancelUploaderHandler;
+import gwtupload.client.IUploader.OnFinishUploaderHandler;
+import gwtupload.client.MultiUploader;
+import gwtupload.client.SingleUploader;
 
 
 public class Documents extends Composite implements EntryPoint {
@@ -597,13 +596,9 @@ public class Documents extends Composite implements EntryPoint {
 				event.preventDefault();
 				event.stopPropagation();
 				//FileInfo object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
-				
 			}
-
 		};
-
 		dataGrid.addDomHandler(contextMenuHandler, ContextMenuEvent.getType());
-		
 	}
 	
 	Document docs = new Document();
@@ -624,8 +619,6 @@ public class Documents extends Composite implements EntryPoint {
 	interface Binder extends UiBinder<Widget, Documents> {
 
 	}
-	
-	
 
 	private static final Binder binder = GWT.create(Binder.class);
 	/*
@@ -707,7 +700,6 @@ public class Documents extends Composite implements EntryPoint {
 	Boolean confidentialUser;
 	Vector<FileInfo> selFiles;
 	ShowMorePager showMorePager;
-	Integer initDomainId;
 	private void init() {
 		if(!Boolean.parseBoolean(getParameter(GWT.getModuleName(), SILENT))){
 			pop = new PopupPanel();
@@ -715,10 +707,9 @@ public class Documents extends Composite implements EntryPoint {
 			pop.setPopupPosition(25, 5);
 			pop.show();
 		}
-		idoc.initAux(new AsyncCallback<Init>() {
+		idoc.initAux(getDomain(),new AsyncCallback<Init>() {
 			@Override
 			public void onSuccess(Init result) {
-				initDomainId = result.getDomainId();
 				documentManager = result.getVector().get(0);
 				confidentialUser = result.getVector().get(1);
 				if(!documentManager){
@@ -726,13 +717,13 @@ public class Documents extends Composite implements EntryPoint {
 				}
 				getSons();
 				if(docs.getEfiles()==null||docs.getEfiles().isEmpty()){
-					idoc.getAllFiles(initDomainId,new AsyncCallback<Document>() {
+					idoc.getAllFiles(getDomain(),new AsyncCallback<Document>() {
 					
 					@Override
 					public void onSuccess(Document result) {
 						docs = result;
 						
-						idoc.getLists(initDomainId,new AsyncCallback<Lists>() {
+						idoc.getLists(getDomain(),new AsyncCallback<Lists>() {
 
 							@Override
 							public void onFailure(Throwable caught) {}
@@ -784,7 +775,15 @@ public class Documents extends Composite implements EntryPoint {
 
 	}
 	
-	
+	public static native String getCurrentDomainName()
+	/*-{
+		return $wnd.getCurrentDomainName();
+	}-*/;
+
+	public static native int getCurrentDomain()
+	/*-{
+		return $wnd.getCurrentDomain();
+	}-*/;
 	
 	@Override
 	public void onModuleLoad() {
@@ -855,7 +854,7 @@ public class Documents extends Composite implements EntryPoint {
 						delFile.setVisible(false);
 						optionFile.setVisible(false);
 
-						idoc.checkDomain(docs,"searchFile2",initDomainId, new AsyncCallback<Boolean>() {
+						idoc.checkDomain(getDomain(),docs,"searchFile2", new AsyncCallback<Boolean>() {
 							
 							@Override
 							public void onSuccess(Boolean result) {
@@ -938,7 +937,7 @@ public class Documents extends Composite implements EntryPoint {
 						delFile.setVisible(false);
 						optionFile.setVisible(false);
 						
-						idoc.checkDomain(docs,"searchFile2",initDomainId, new AsyncCallback<Boolean>() {
+						idoc.checkDomain(getDomain(), docs,"searchFile2", new AsyncCallback<Boolean>() {
 							
 							@Override
 							public void onSuccess(Boolean result) {
@@ -1246,11 +1245,10 @@ public class Documents extends Composite implements EntryPoint {
 		dataGrid.addColumnSortHandler(sortHandler);
 		
 		final SelectionModel<FileInfo> selectionModel = new MultiSelectionModel<FileInfo>(FileInfo.PROVIDES_KEY);
- 		//final SingleSelectionModel<FileInfo> selectionModel = new SingleSelectionModel<FileInfo>(
-			//	FileInfo.PROVIDES_KEY);
+ 		//final SingleSelectionModel<FileInfo> selectionModel = new SingleSelectionModel<FileInfo>(FileInfo.PROVIDES_KEY);
 		dataGrid.setSelectionModel(selectionModel,
 				DefaultSelectionEventManager.<FileInfo> createCheckboxManager());
-		dataGrid.setSelectionModel(selectionModel);
+		//dataGrid.setSelectionModel(selectionModel);
 		
 		initTableColumns(selectionModel, sortHandler);
 		
@@ -1448,18 +1446,12 @@ public class Documents extends Composite implements EntryPoint {
             		else fileInfo.setTagsStr(str.substring(0,str.length()-2));
             		fileInfo.setTags(tags);
             		
-            		/*Window.alert(fileInfo.getAonType()+"/n"
-            				+Integer.toString(fileInfo.getCategory())+"/n" 
-            				+fileInfo.getConf().toString()+"/n"
-            				+fileInfo.getDate()+"/n"
-            				+fileInfo.getScope().toString()+"/n"
-            				);*/
             		Vector<FileInfo> fvector = null;
             		if(multiple) fvector = selFiles;
             		fiAux = fileInfo;
             		vectorAux = fvector;
             		
-            		idoc.checkDomain(docs, "editFile",initDomainId, new AsyncCallback<Boolean>() {
+            		idoc.checkDomain(getDomain(),docs, "editFile", new AsyncCallback<Boolean>() {
 						FileInfo fileInfo = fiAux;
 						Vector<FileInfo> fvector = vectorAux;
 						@Override
@@ -1468,7 +1460,7 @@ public class Documents extends Composite implements EntryPoint {
 								reload();
 							}
 							else{
-								idoc.editFile(fileInfo,fvector,initDomainId,new AsyncCallback<Vector<FileInfo>>() {
+								idoc.editFile(getDomain(), fileInfo,fvector,new AsyncCallback<Vector<FileInfo>>() {
 									@Override
 									public void onSuccess(Vector<FileInfo> result) {
 										vertical = new VerticalPanel();
@@ -1677,7 +1669,7 @@ public class Documents extends Composite implements EntryPoint {
 					else fvector.add(getFileInfo());
 					
 					vectorAux = fvector;
-					idoc.checkDomain(docs,"removeFile", initDomainId,new AsyncCallback<Boolean>() {
+					idoc.checkDomain(getDomain(), docs,"removeFile",new AsyncCallback<Boolean>() {
 						Vector<FileInfo> fvector = vectorAux;
 						@Override
 						public void onSuccess(Boolean result) {
@@ -1685,7 +1677,7 @@ public class Documents extends Composite implements EntryPoint {
 								reload();
 							}
 							else{
-								idoc.removeFile(fvector, initDomainId,new AsyncCallback<Void>() {
+								idoc.removeFile(getDomain(),fvector,new AsyncCallback<Void>() {
 									Boolean multiple = mult;
 									@Override
 									public void onFailure(Throwable caught) {}
@@ -1790,7 +1782,7 @@ public class Documents extends Composite implements EntryPoint {
 	
 	public Vector<Domain> getSons() {
 		if(sons==null){
-		idoc.getSons(initDomainId,new AsyncCallback<Vector<Domain>>() {
+		idoc.getSons(getDomain(),new AsyncCallback<Vector<Domain>>() {
 			
 			@Override
 			public void onSuccess(Vector<Domain> result) {
@@ -1964,7 +1956,7 @@ public class Documents extends Composite implements EntryPoint {
 					public void onSuccess(Boolean result) {
 						if(result){
 							hide();
-							idoc.checkDomain(docs, "insertFile",initDomainId, new AsyncCallback<Boolean>() {
+							idoc.checkDomain(getDomain(), docs, "insertFile", new AsyncCallback<Boolean>() {
 								
 								@Override
 								public void onSuccess(Boolean result) {
@@ -1972,7 +1964,7 @@ public class Documents extends Composite implements EntryPoint {
 										reload();
 									}
 									else{
-									idoc.insertFile(finsert,initDomainId, new AsyncCallback<Vector<FileInfo>>() {
+									idoc.insertFile(getDomain(),finsert, new AsyncCallback<Vector<FileInfo>>() {
 
 										@Override
 										public void onFailure(Throwable caught) {}
@@ -2378,7 +2370,7 @@ public class Documents extends Composite implements EntryPoint {
 					@Override
 					public void onSuccess(Boolean result) {
 						if(result){
-							idoc.checkDomain(docs,"insertFile",initDomainId, new AsyncCallback<Boolean>() {
+							idoc.checkDomain(getDomain(),docs,"insertFile", new AsyncCallback<Boolean>() {
 								
 								@Override
 								public void onSuccess(Boolean result) {
@@ -2388,7 +2380,7 @@ public class Documents extends Composite implements EntryPoint {
 									else{
 										
 								
-									idoc.insertFile(finsert,initDomainId, new AsyncCallback<Vector<FileInfo>>() {
+									idoc.insertFile(getDomain(),finsert, new AsyncCallback<Vector<FileInfo>>() {
 
 										@Override
 										public void onFailure(Throwable caught) {}
@@ -2551,7 +2543,7 @@ public class Documents extends Composite implements EntryPoint {
 		delFile.setVisible(false);
 		optionFile.setVisible(false);
 		
- 		idoc.checkDomain(docs, "searchFile",initDomainId,new AsyncCallback<Boolean>(){
+ 		idoc.checkDomain(getDomain(), docs, "searchFile",new AsyncCallback<Boolean>(){
 			
 			@Override
 			public void onSuccess(Boolean result) {
@@ -2598,7 +2590,7 @@ public class Documents extends Composite implements EntryPoint {
 		html.setVisible(false);
 		filterButton.setVisible(false);
 		
-		idoc.checkDomain(docs,"esearchFile",initDomainId, new AsyncCallback<Boolean>() {
+		idoc.checkDomain(getDomain(), docs,"esearchFile", new AsyncCallback<Boolean>() {
 			
 			@Override
 			public void onSuccess(Boolean result) {
@@ -2672,7 +2664,7 @@ public class Documents extends Composite implements EntryPoint {
 							delFile.setVisible(false);
 							optionFile.setVisible(false);
 							
-							idoc.checkDomain(docs, "searchFile2",initDomainId, new AsyncCallback<Boolean>() {
+							idoc.checkDomain(getDomain(), docs, "searchFile2", new AsyncCallback<Boolean>() {
 								
 								@Override
 								public void onSuccess(Boolean result) {
@@ -2753,7 +2745,7 @@ public class Documents extends Composite implements EntryPoint {
 						editFile.setVisible(false);
 						delFile.setVisible(false);
 						optionFile.setVisible(false);
-						idoc.checkDomain(docs,"searchFile2", initDomainId,new AsyncCallback<Boolean>() {
+						idoc.checkDomain(getDomain(),docs,"searchFile2",new AsyncCallback<Boolean>() {
 							
 							@Override
 							public void onSuccess(Boolean result) {
@@ -2844,7 +2836,7 @@ public class Documents extends Composite implements EntryPoint {
 		html.setVisible(false);
 		filterButton.setVisible(false);
 		
-		idoc.checkDomain(docs,"allFiles",initDomainId, new AsyncCallback<Boolean>() {
+		idoc.checkDomain(getDomain(),docs,"allFiles", new AsyncCallback<Boolean>() {
 			
 			@Override
 			public void onSuccess(Boolean result) {
@@ -2854,7 +2846,7 @@ public class Documents extends Composite implements EntryPoint {
 				else{
 					if(docs.getEfiles()==null ){
 					
-						idoc.getAllFiles(initDomainId, new AsyncCallback<Document>() {
+						idoc.getAllFiles(getDomain(), new AsyncCallback<Document>() {
 					
 							@Override
 							public void onSuccess(Document result) {
@@ -2919,7 +2911,7 @@ public class Documents extends Composite implements EntryPoint {
 		html.setVisible(false);
 		filterButton.setVisible(false);
 		if(docs.getServiconvenios().isEmpty()){
-			idoc.getServiConveniosFiles(new AsyncCallback<Vector<FileInfo>>() {
+			idoc.getServiConveniosFiles(getDomain(),new AsyncCallback<Vector<FileInfo>>() {
 			
 			@Override
 			public void onSuccess(Vector<FileInfo> result) {
@@ -3394,7 +3386,7 @@ public class Documents extends Composite implements EntryPoint {
 					vaux = docs.getEfiles();
 				siAux = si;
 				vAux = vaux;
-				idoc.checkDomain(docs,"searchFile",initDomainId, new AsyncCallback<Boolean>() {
+				idoc.checkDomain(getDomain(), docs,"searchFile", new AsyncCallback<Boolean>() {
 					SearchInfo si = siAux;
 					Vector<FileInfo> vaux = vAux;
 					@Override
@@ -3489,7 +3481,7 @@ public class Documents extends Composite implements EntryPoint {
 						public void onFailure(Throwable caught) {}
 					});
 				}
-				else idoc.share(tb.getText(), fvector,initDomainId, new AsyncCallback<Void>() {
+				else idoc.share(getDomain(), tb.getText(), fvector, new AsyncCallback<Void>() {
 					@Override
 					public void onSuccess(Void result) {}
 					@Override
@@ -3677,7 +3669,7 @@ public class Documents extends Composite implements EntryPoint {
 	}
 	@UiHandler("filterButton")
 	void close(ClickEvent event){
-		idoc.checkDomain(docs,"filterButton",initDomainId, new AsyncCallback<Boolean>() {
+		idoc.checkDomain(getDomain(), docs,"filterButton", new AsyncCallback<Boolean>() {
 			
 			@Override
 			public void onSuccess(Boolean result) {
@@ -3824,7 +3816,7 @@ public class Documents extends Composite implements EntryPoint {
 		reset();
 	}
 	private void reset() {
-		idoc.checkDomain(docs,"reset",initDomainId, new AsyncCallback<Boolean>() {
+		idoc.checkDomain(getDomain(), docs,"reset", new AsyncCallback<Boolean>() {
 			
 			@Override
 			public void onSuccess(Boolean result) {
@@ -4092,7 +4084,7 @@ public class Documents extends Composite implements EntryPoint {
 					VerticalPanel v = (VerticalPanel) epanel.getContent();
 					TextBox t =  (TextBox) v.getWidget(v.getWidgetCount() - 1);
 					tagname = t.getText();
-					idoc.newTag(tagname,initDomainId, new AsyncCallback<Tag>() {
+					idoc.newTag(getDomain(), tagname, new AsyncCallback<Tag>() {
 						@Override
 						public void onSuccess(Tag result) {
 							lists.getTagList().getList().add(result);
@@ -4123,7 +4115,7 @@ public class Documents extends Composite implements EntryPoint {
 										delFile.setVisible(false);
 										optionFile.setVisible(false);
 										
-										idoc.checkDomain(docs,"searchFile2",initDomainId, new AsyncCallback<Boolean>() {
+										idoc.checkDomain(getDomain(), docs,"searchFile2", new AsyncCallback<Boolean>() {
 											
 											@Override
 											public void onSuccess(Boolean result) {
@@ -4217,7 +4209,7 @@ public class Documents extends Composite implements EntryPoint {
 					VerticalPanel v = (VerticalPanel) dpanel.getContent();
 					TextBox t =  (TextBox) v.getWidget(v.getWidgetCount() - 1);
 					catname = t.getText();
-					idoc.newCategory(catname, initDomainId,new AsyncCallback<Category>() {
+					idoc.newCategory(getDomain(), catname,new AsyncCallback<Category>() {
 						@Override
 						public void onSuccess(Category result) {
 							lists.getCategoryList().getList().add(result);
@@ -4248,7 +4240,7 @@ public class Documents extends Composite implements EntryPoint {
 										delFile.setVisible(false);
 										optionFile.setVisible(false);
 																					
-										idoc.checkDomain(docs, "searchFile2",initDomainId,new AsyncCallback<Boolean>() {
+										idoc.checkDomain(getDomain(), docs, "searchFile2",new AsyncCallback<Boolean>() {
 											
 											@Override
 											public void onSuccess(Boolean result) {
@@ -4333,7 +4325,7 @@ public class Documents extends Composite implements EntryPoint {
 				TextBox tb = (TextBox)grid.getWidget(0, 1);
 				tag.setName(tb.getText());
 				newName= tb.getText();
-				idoc.checkDomain(docs,"editTag",initDomainId, new AsyncCallback<Boolean>() {
+				idoc.checkDomain(getDomain(), docs,"editTag", new AsyncCallback<Boolean>() {
 					
 					@Override
 					public void onSuccess(Boolean result) {
@@ -4341,7 +4333,7 @@ public class Documents extends Composite implements EntryPoint {
 							reload();
 						}
 						else{
-							idoc.editTag(tag.getName(),tag.getId(), new AsyncCallback<Void>() {
+							idoc.editTag(getDomain(), tag.getName(),tag.getId(), new AsyncCallback<Void>() {
 								@Override
 								public void onSuccess(Void result) {
 						
@@ -4485,7 +4477,7 @@ public class Documents extends Composite implements EntryPoint {
 				tagList.setList(v);
 				lists.setTagListSon(tagList);
 				
-				idoc.deleteTag(tag.getId(), new AsyncCallback<Void>() {
+				idoc.deleteTag(getDomain(), tag.getId(), new AsyncCallback<Void>() {
 						
 						@Override
 						public void onSuccess(Void result) {
@@ -4573,7 +4565,7 @@ public class Documents extends Composite implements EntryPoint {
 				TextBox tb = (TextBox)grid.getWidget(0, 1);
 				cat.setName(tb.getText());
 				newName= tb.getText();
-				idoc.checkDomain(docs,"editCategory",initDomainId, new AsyncCallback<Boolean>() {
+				idoc.checkDomain(getDomain(), docs,"editCategory", new AsyncCallback<Boolean>() {
 					
 					@Override
 					public void onSuccess(Boolean result) {
@@ -4581,7 +4573,7 @@ public class Documents extends Composite implements EntryPoint {
 							reload();
 						}
 						else{
-							idoc.editCategory(cat.getName(),cat.getId(), new AsyncCallback<Void>() {
+							idoc.editCategory(getDomain(), cat.getName(),cat.getId(), new AsyncCallback<Void>() {
 								@Override
 								public void onSuccess(Void result) {
 									VerticalPanel v = (VerticalPanel) dpanel.getContent();
@@ -4658,7 +4650,7 @@ public class Documents extends Composite implements EntryPoint {
 				categoryList = new CategoryList();
 				categoryList.setList(v);
 				lists.setCategoryListSon(categoryList);
-				idoc.checkDomain(docs,"deleteCategory",initDomainId, new AsyncCallback<Boolean>() {
+				idoc.checkDomain(getDomain(), docs,"deleteCategory", new AsyncCallback<Boolean>() {
 					
 					@Override
 					public void onSuccess(Boolean result) {
@@ -4667,7 +4659,7 @@ public class Documents extends Composite implements EntryPoint {
 							reload();
 						}
 						else{
-							idoc.deleteCategory(cat.getId(),new AsyncCallback<Void>() {
+							idoc.deleteCategory(getDomain(), cat.getId(),new AsyncCallback<Void>() {
 							
 								@Override
 								public void onSuccess(Void result) {
@@ -4730,7 +4722,7 @@ public class Documents extends Composite implements EntryPoint {
 	
 	@UiHandler("loteButton")
 	void lote(ClickEvent event) {
-		idoc.checkDomain(docs,"loteButton",initDomainId, new AsyncCallback<Boolean>() {
+		idoc.checkDomain(getDomain(), docs,"loteButton", new AsyncCallback<Boolean>() {
 			
 			@Override
 			public void onSuccess(Boolean result) {
@@ -4777,7 +4769,7 @@ public class Documents extends Composite implements EntryPoint {
 	
 	@UiHandler("clean")
 	void cleanLote(ClickEvent event) {
-		idoc.checkDomain(docs, "clean",initDomainId, new AsyncCallback<Boolean>() {
+		idoc.checkDomain(getDomain(), docs, "clean", new AsyncCallback<Boolean>() {
 			
 			@Override
 			public void onSuccess(Boolean result) {
@@ -4803,7 +4795,7 @@ public class Documents extends Composite implements EntryPoint {
 	
 	@UiHandler("send")
 	void sendLote(ClickEvent event) {
-		idoc.getMailAccounts(initDomainId, new AsyncCallback<MailAccountList>() {
+		idoc.getMailAccounts(getDomain(), new AsyncCallback<MailAccountList>() {
 			
 			@Override
 			public void onSuccess(MailAccountList result) {
@@ -4831,7 +4823,7 @@ public class Documents extends Composite implements EntryPoint {
 						
 						em.setFiles(lote);
 						if(s.equals("mail"))
-						idoc.sendEmail(ma, em, new AsyncCallback<Void>() {
+						idoc.sendEmail(getDomain(), ma, em, new AsyncCallback<Void>() {
 							
 							@Override
 							public void onSuccess(Void result) {}
@@ -4841,7 +4833,7 @@ public class Documents extends Composite implements EntryPoint {
 						});
 						
 						else if(s.equals("gmail"))
-						idoc.sendGmail(ma, em, initDomainId,new AsyncCallback<Void>() {
+						idoc.sendGmail(getDomain(), ma, em, new AsyncCallback<Void>() {
 							
 							@Override
 							public void onSuccess(Void result) {}
@@ -4897,7 +4889,7 @@ public class Documents extends Composite implements EntryPoint {
 		pop.setStyleName("aon-outputConnectionStatus-start");
 		pop.setPopupPosition(25, 5);
 		pop.show();
-		idoc.getAllFiles(initDomainId,new AsyncCallback<Document>() {
+		idoc.getAllFiles(getDomain(),new AsyncCallback<Document>() {
 			
 			@Override
 			public void onSuccess(Document result) {
@@ -4935,7 +4927,7 @@ public class Documents extends Composite implements EntryPoint {
 	}-*/;
 	
 	public void selectedMenu(){
-		idoc.selectedMenu(initDomainId, new AsyncCallback<Void>() {
+		idoc.selectedMenu(getDomain(), new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {}
@@ -4946,6 +4938,8 @@ public class Documents extends Composite implements EntryPoint {
 	}
 	
 	
-	
+	private Domain getDomain(){
+		return new Domain().setId(getCurrentDomain()).setName(getCurrentDomainName());
+	}
 	
 }

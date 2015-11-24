@@ -41,6 +41,11 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		return ((AuthPrincipal)request.getUserPrincipal()).getUserId();
 	}
 
+	protected Integer getUserDomainID() {
+		HttpServletRequest request = getThreadLocalRequest();
+		return ((AuthPrincipal)request.getUserPrincipal()).getUserDomainId();
+	}
+	
 	protected AuthPrincipal getAuthPrincipal() {
 		HttpServletRequest req = this.getThreadLocalRequest();
 		AuthPrincipal authPrincipal = (AuthPrincipal) req.getUserPrincipal();
