@@ -297,16 +297,15 @@ public class InventoryController extends BasicController implements IAuditableCo
 	
 	public static Double getCost(InventoryDetail inventoryDetail, Integer workplaceId, Integer warehouseId){
 		ApplicationParameter ap = AppParamUtil.getParameter(AppParam.AON_PRODUCT_VALUATION_METHOD);
-		switch (ap.getValue()) {
+		switch (ap.getValue() != null ? ap.getValue() : "0") {
 			case "0": return inventoryDetail.getRealQuantity() != 0 ? inventoryDetail.getItem().getPurchasePrice() : 0.0;
 			case "1": return getLastPurchasePrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser(), workplaceId,warehouseId);
 			case "2": return getAveragePurchasePrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser(), workplaceId,warehouseId);
 			case "3": return getFifoPrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser(), workplaceId,warehouseId);	
 			default : return inventoryDetail.getItem().getPurchasePrice(); 
 		}
-
 	}
-	
+
 	public static Double getLastPurchasePrice(Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId){
 		if(quantity == 0) return 0.0;
 		if(item.getProduct().isInventoriable() && item.getProduct().isManufactured()) 
