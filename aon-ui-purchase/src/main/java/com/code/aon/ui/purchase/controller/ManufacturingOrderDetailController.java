@@ -573,7 +573,10 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 
 	
 	
-	public static class TransferPurchaseDetail {
+	public static class TransferPurchaseDetail implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private PurchaseDetail detail;
 		private double totalQuantity;
 		private List<TransferConposition> compositionList;
@@ -597,7 +600,10 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 		}
 	}
 	
-	public static class TransferConposition {
+	public static class TransferConposition implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private ItemComposition composition;
 		private double totalQuantity;
 		public ItemComposition getComposition() {

@@ -62,7 +62,8 @@
 					action="#{report.onExecute}"
 					actionListener="#{registryStat.onInvoicePdf}"
 					styleClass="aon-icon-pdf">
-					<f:param name="reportKey" value="invoicePrint" />
+					<f:setPropertyActionListener target="#{report.reportKey}"
+						value="#{company.invoicePrintTemplateValue}" />
 				</aon:htmlCommandLink>
 			</aon:column>
 			

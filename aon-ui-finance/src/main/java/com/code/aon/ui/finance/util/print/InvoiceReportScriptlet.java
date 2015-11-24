@@ -111,7 +111,9 @@ public class InvoiceReportScriptlet extends JRDefaultScriptlet implements Serial
 	
 	public String getInvoiceFooterText() {
 		try {
-			return (String) getParameterValue(INVOICE_FOOTER_TEXT);
+			if(getCompanyController().isPrintSaleInvoiceFooter()){
+				return (String) getParameterValue(INVOICE_FOOTER_TEXT);
+			}
 		} catch (JRScriptletException e) {
 			LOGGER.error( e.getMessage(), e);
 		}
