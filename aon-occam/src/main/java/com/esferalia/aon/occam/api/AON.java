@@ -1855,7 +1855,7 @@ public class AON {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			//getWarehouse().deleteWarehouseTransfer(ctx, inventoryId);
+			getWarehouse().deleteWarehouseTransfer(ctx, inventoryId);
 		} finally {
 			if(ctx != null)
 				ctx.close();
@@ -1867,10 +1867,33 @@ public class AON {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			//getWarehouse().updateInventory(ctx, inventory);
+			getWarehouse().updateInventory(ctx, inventory);
 		} finally {
-			if(ctx != null)
-				ctx.close();
+			if(ctx != null) ctx.close();
 		}
+	}
+	
+	public static LinkedList<Inventory> getTwoLastInventory(String domainName, Integer domainId, String login,
+			Integer warehouseId) {
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getTwoLastInventory(ctx, warehouseId);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static void deleteInventory(String domainName, Integer domainId, String login,
+			Integer inventoryId){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getWarehouse().deleteInventory(ctx, inventoryId);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+		
+		
 	}
 }

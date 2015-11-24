@@ -1,12 +1,16 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
+import static com.esferalia.aon.jooq.tables.Inventory.INVENTORY;
 
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.jooq.tables.records.InventoryDetailRecord;
+import com.esferalia.aon.jooq.tables.records.InventoryRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
@@ -25,6 +29,44 @@ public class InventoryDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	public static LinkedList<Inventory> getTwoLastInventory(AONContext ctx, Integer warehouseId){
+		return ctx.getDslContext()
+				.select()
+				.from(INVENTORY)
+				.where(INVENTORY.WAREHOUSE.eq(warehouseId))
+				.orderBy(INVENTORY.INVENTORY_DATE.desc())
+				.limit(2)
+				.fetchInto(INVENTORY)
+				.stream().map(new FullInventoryFiller())
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static void updateInventory(AONContext ctx, Inventory inventory){
+		ctx.getDslContext().update(INVENTORY)
+		.set(INVENTORY.CREATION_DATE, inventory.getCreationDate() != null ?
+				new Timestamp(inventory.getCreationDate().getTime()) : null)
+		.set(INVENTORY.CREATION_USER, inventory.getCreationUser())
+		.set(INVENTORY.DESCRIPTION, inventory.getDescription())
+		.set(INVENTORY.DOMAIN, inventory.getDomain())
+		.set(INVENTORY.INVENTORY_DATE, inventory.getInventoryDate() != null ?
+				new Date(inventory.getInventoryDate().getTime()) : null)
+		.set(INVENTORY.MODIFICATION_DATE, inventory.getModificationDate() != null ? 
+				new Timestamp(inventory.getModificationDate().getTime()) : null)
+		.set(INVENTORY.MODIFICATION_USER, inventory.getModificationUser())
+		.set(INVENTORY.STATUS, inventory.getStatus().byteValue())
+		.set(INVENTORY.WAREHOUSE, inventory.getWarehouse())
+		.where(INVENTORY.ID.eq(inventory.getId()))
+		.execute();
+	}
+	
+	public static void deleteInventory(AONContext ctx, Integer inventoryId){
+		deleteInventoryDetail(ctx, inventoryId);
+		ctx.getDslContext().delete(INVENTORY).where(INVENTORY.ID.eq(inventoryId)).execute();
+	}
+	
+	public static void deleteInventoryDetail(AONContext ctx, Integer inventoryId){
+		ctx.getDslContext().delete(INVENTORY_DETAIL).where(INVENTORY_DETAIL.INVENTORY.eq(inventoryId)).execute();
+	}
 	
 	private static class InventoryDetailFiller implements Function<InventoryDetailRecord, InventoryDetail> {
 		
@@ -41,6 +83,24 @@ public class InventoryDAO {
 					.setModificationDate(r.getModificationDate())
 					.setModificationUser(r.getModificationUser())
 					.setRealQuantity(r.getRealQuantity());
+		}
+
+	}
+	
+	private static class FullInventoryFiller implements Function<InventoryRecord, Inventory> {
+		
+		@Override
+		public Inventory apply(InventoryRecord r) {
+			return new Inventory().setId(r.getId())
+					.setCreationDate(r.getCreationDate())
+					.setCreationUser(r.getCreationUser())
+					.setDescription(r.getDescription())
+					.setDomain(r.getDomain())
+					.setInventoryDate(r.getInventoryDate())
+					.setModificationDate(r.getModificationDate())
+					.setModificationUser(r.getModificationUser())
+					.setStatus(r.getStatus().intValue())
+					.setWarehouse(r.getWarehouse());
 		}
 
 	}

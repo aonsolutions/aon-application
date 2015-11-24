@@ -41,6 +41,15 @@
 						oncomplete="#{rich:element('inventoryDetailRefreshButton')}.click()"
 						reRender="showInventoryAdjustmentWindow"/>
 					
+					<aon:if test="#{aonRole.accountingManager}">
+						<aon:menuItem id="inventory-revert"
+							value="Revertir Cierre"
+							rendered="#{inventory.showRevert}"
+							iconClass="aon-icon-task-liberate"
+							actionListener="#{inventory.onRevert}"
+						 />
+					</aon:if>
+					
 					<aon:if test="#{!inventory.to.closed}">
 						<aon:menuItem id="stock-import"
 							value="#{bundle.aon_import}"
@@ -51,7 +60,7 @@
 						value="#{bundle.account_export}"
 						iconClass="aon-icon-export-excel-trans"
 						onclick="stockx2('#{inventory.to.warehouse.name}','#{inventoryDetail.category.id}','#{inventoryDetail.brand.id}','#{inventoryDetail.code}','#{inventoryDetail.description}','#{inventoryDetail.stock}','#{inventory.to.id}')" />
-
+		
 					<ui:include src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />
  				</ui:define>
 				<ui:define name="beforeSpinToolbarContent">

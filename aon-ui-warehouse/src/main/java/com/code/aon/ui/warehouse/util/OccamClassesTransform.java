@@ -82,4 +82,18 @@ public class OccamClassesTransform {
 		return inventoryDetail;
 	}
 	
+	public static com.esferalia.aon.occam.api.model.warehouse.Inventory getInventory(Inventory inventory){
+		com.esferalia.aon.occam.api.model.warehouse.Inventory i = new com.esferalia.aon.occam.api.model.warehouse.Inventory();
+		i.setCreationDate(inventory.getCreationDate());
+		i.setCreationUser(inventory.getCreationUser());
+		i.setDescription(inventory.getDescription());
+		i.setDomain(inventory.getDomain());
+		i.setId(inventory.getId());
+		i.setInventoryDate(inventory.getInventoryDate());
+		i.setModificationDate(inventory.getModificationDate());
+		i.setModificationUser(inventory.getModificationUser());
+		i.setStatus(inventory.getStatus().ordinal());
+		i.setWarehouse(inventory.getWarehouse() != null ? inventory.getWarehouse().getId() : null);
+		return i;
+	}
 }

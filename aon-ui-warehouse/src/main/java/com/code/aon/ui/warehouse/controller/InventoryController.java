@@ -283,6 +283,18 @@ public class InventoryController extends BasicController implements IAuditableCo
 		controller.onReset(event);
 	}
 	
+	public boolean isShowRevert(){
+		Inventory inventory = (Inventory) getTo();
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String user = AonUtil.getRemoteUser();
+	
+		LinkedList<com.esferalia.aon.occam.api.model.warehouse.Inventory> list =  AON.getTwoLastInventory(domainName, domainId, user, inventory.getWarehouse().getId());
+		
+		return (inventory.isClosed() && list.getFirst().getId().equals(inventory.getId())) 
+				|| (inventory.isClosed() && list.getLast().getId().equals(inventory.getId()) &&
+						InventoryStatus.values()[list.getFirst().getStatus()].equals(InventoryStatus.OPEN));
+	}
 	public void onAdjustment(ActionEvent event) {
 		Inventory inventory = (Inventory) getTo();
 		try {
@@ -293,6 +305,32 @@ public class InventoryController extends BasicController implements IAuditableCo
 		} catch ( ManagerBeanException e ) {
 			LOGGER.error(e.getMessage(), e);
 		}
+	}
+	
+	public void onRevert(ActionEvent event) {
+		Inventory inventory = (Inventory) getTo();
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String user = AonUtil.getRemoteUser();
+	
+		AON.deleteWarehouseTransfer(domainName, domainId, user, inventory.getId());
+		
+		
+		//AON.updateInventory(domainName, domainId, user,
+			//	OccamClassesTransform.getInventory(inventory));
+		LinkedList<com.esferalia.aon.occam.api.model.warehouse.Inventory> list =  AON.getTwoLastInventory(domainName, domainId, user, inventory.getWarehouse().getId());
+		
+		if(list.getLast().getId().equals(inventory.getId()) &&
+			InventoryStatus.values()[list.getFirst().getStatus()].equals(InventoryStatus.OPEN)) {
+			AON.deleteInventory(domainName, domainId, user, list.getFirst().getId());
+		}
+		try {
+			inventory.setStatus(InventoryStatus.OPEN);
+			getManagerBean().update(inventory);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}	
+		setShowInventoryAdjustmentWindow(false);
 	}
 	
 	public static Double getCost(InventoryDetail inventoryDetail, Integer workplaceId, Integer warehouseId){
