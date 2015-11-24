@@ -18,12 +18,6 @@ public class CustomLoaderFactoryManager implements Serializable {
 		factories.add( new OppidumPurchasesLoader());
 	}
 	
-	public CustomLoaderFactoryManager() {
-//		factories = new LinkedList<ICustomLoaderFactory>();
-//		factories.add( new OppidumSalesLoader());
-//		factories.add( new OppidumPurchasesLoader());
-	}
-	
 	public static List<ICustomLoaderFactory> getFactories() {
 		return factories;
 	}

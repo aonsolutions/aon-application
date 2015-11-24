@@ -8,8 +8,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -17,15 +20,17 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.faces.event.AbortProcessingException;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,24 +63,27 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(OppidumPurchasesLoader.class.getName());
 	
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	private SimpleDateFormat excelFormat = new SimpleDateFormat("dd/MM/yyyy");
+	
 	private Workbook workbook;
 	private int rowOffset;
-	private final Pattern invoiceNumberPattern = Pattern.compile("(\\d{4})(\\d+)");
+	private final Pattern invoiceNumberPattern = Pattern.compile("(\\d{1})\\.(\\d+)E\\.{0,1}(\\d{1,2})");
 	private Matcher matcher = null;
 	private ArrayList<String> headers;
-	private Map<String, String> customerAccount = new HashMap<>();
+	private Map<String, String> supplierAccount = new HashMap<>();
 	
-//	private final String SUPPLIER_DOCUMENT = "Nif_RazonSocial";
+	private final String SUPPLIER_DOCUMENT = "CIFEmisora";
 	private final String SUPPLIER_NAME = "Nombre";
 	private final String INVOICE_DOCUMENT = "NumeroFactura";
 	private final String INVOICE_DATE = "FechaFactura";
 	private final String INVOICE_VAT_PERCENT = "PorcentIVA";
 	private final String INVOICE_VAT_BASE = "BaseImpIVA";
 	private final String INVOICE_VAT_AMOUNT = "ImporteIVA";
-	private final String INVOICE_TOTAL = "ImporteTotal";
+	private final String INVOICE_TOTAL = "ImporteTotalFact";
 	
 	private final String[] SUPPORTED_COLUMNS = {
-//			CUSTOMER_DOCUMENT,
+			SUPPLIER_DOCUMENT,
 			SUPPLIER_NAME,
 			INVOICE_DOCUMENT,
 			INVOICE_DATE,
@@ -89,7 +97,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	public void load(InputStream file){
 		LogPanelController logPanel = LogPanelController.getInstance();
 		logPanel.info("Inicio de la carga de datos.");
-		logPanel.info("Fichero de compras detectado.");
+		logPanel.info("Fichero de COMPRAS detectado.");
 		try {
 	    	Sheet sheet = workbook.getSheetAt(0);
 	        
@@ -105,8 +113,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	        
 	        writer.print("1;FRACTB|");
 	        writer.print("id|");
-	        writer.print("serie|");
-	        writer.print("numero|");
+	        writer.print("referencia|");
 	        writer.print("cuenta|");
 	        writer.print("documento|");
 	        writer.print("tipoDocumento|");
@@ -127,39 +134,35 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
         	int lineCount=1;
         	while(rowIterator.hasNext()){
         		
-//        		String supplierDocument = row.getCell(headers.indexOf(SUPPLIER_DOCUMENT)).getStringCellValue();
-        		String supplierDocument = "";
-        		String supplierName = row.getCell(headers.indexOf(SUPPLIER_NAME)).getStringCellValue();
+        		String supplierDocument = getStringCellValue(row.getCell(headers.indexOf(SUPPLIER_DOCUMENT)));
+        		String supplierName = getStringCellValue(row.getCell(headers.indexOf(SUPPLIER_NAME)));
         		String account = obtainSupplierAccount(supplierDocument, supplierName);
         		
         		if(account==null || StringUtils.isBlank(account)){
         			emptyAccountCount++;
         			account = String.valueOf(Integer.valueOf(maxAccountCode)+emptyAccountCount);
-        			customerAccount.put(supplierDocument, account);
-        			logPanel.warn("El cliente " + supplierDocument + " no tiene cuenta asignada. Se le asigna la siguiente libre");
+        			supplierAccount.put(supplierDocument, account);
+        			logPanel.warn("El proveedor " + supplierName + " ("+supplierDocument+")" + " no tiene cuenta asignada. Se le asigna la siguiente libre");
         		}
         		
         		if(account!=null && StringUtils.isNotBlank(account)){
         			
-        			String invoiceNumber = row.getCell(headers.indexOf(INVOICE_DOCUMENT)).getStringCellValue();
-        			String serie = obtainInvoiceSeries(invoiceNumber);
-        			String num = obtainInvoiceNumber(invoiceNumber);
-        			String invoiceDate = row.getCell(headers.indexOf(INVOICE_DATE)).getStringCellValue();
-        			double vatPercent = row.getCell(headers.indexOf(INVOICE_VAT_PERCENT)).getNumericCellValue();
-        			double vatBase = row.getCell(headers.indexOf(INVOICE_VAT_BASE)).getNumericCellValue();
-        			double vatAmount = row.getCell(headers.indexOf(INVOICE_VAT_AMOUNT)).getNumericCellValue();
-        			double invoiceTotal = row.getCell(headers.indexOf(INVOICE_TOTAL)).getNumericCellValue();
+        			String invoiceNumber = getStringCellValue(row.getCell(headers.indexOf(INVOICE_DOCUMENT)));
+        			Date invoiceDate = getDateCellValue(row.getCell(headers.indexOf(INVOICE_DATE)));
+        			double vatPercent = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_VAT_PERCENT)));
+        			double vatBase = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_VAT_BASE)));
+        			double vatAmount = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_VAT_AMOUNT)));
+        			double invoiceTotal = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_TOTAL)));
         			
         			writer.print("FRACTB|");
         			writer.print(lineCount+"|");
-        			writer.print(serie+"|");
-        			writer.print(num+"|");
+        			writer.print(getFormatInvoiceNumber(invoiceNumber)+"|");
         			writer.print(account+"|");
         			writer.print(supplierDocument+"|");
         			writer.print("1|");
         			writer.print("ES|");
         			writer.print(supplierName+"|");
-        			writer.print(invoiceDate+"|");
+        			writer.print(dateFormat.format(invoiceDate)+"|");
         			writer.print("0|");
         			writer.print(CommonUtil.round(vatBase)+"|");
 					writer.print(CommonUtil.round(vatPercent)+"|");
@@ -168,7 +171,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 					writer.print(invoiceTotal);
         			writer.println();
 					
-        			logPanel.info("Factura procesada: " + invoiceNumber);		
+        			logPanel.info("Factura procesada: " + getFormatInvoiceNumber(invoiceNumber));		
         			lineCount++;
         		}
         		
@@ -200,6 +203,40 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	    }
 	}
 	
+	private String getStringCellValue(Cell cell) {
+		if(cell!=null && cell.getCellType()==Cell.CELL_TYPE_STRING){
+			return cell.getStringCellValue();
+		} else if(cell!=null && cell.getCellType()==Cell.CELL_TYPE_NUMERIC){
+			return String.valueOf(cell.getNumericCellValue());
+		}
+		return "";
+	}
+	
+	private Double getNumericCellValue(Cell cell) {
+		if(cell!=null && cell.getCellType()==Cell.CELL_TYPE_STRING){
+			if(NumberUtils.isNumber(cell.getStringCellValue())){
+				return Double.parseDouble(cell.getStringCellValue());
+			}
+		} else if(cell!=null && cell.getCellType()==Cell.CELL_TYPE_NUMERIC){
+			return cell.getNumericCellValue();
+		}
+		return 0.0;
+	}
+	
+	private Date getDateCellValue(Cell cell) {
+		if(cell!=null && cell.getCellType()==Cell.CELL_TYPE_STRING){
+			try {
+				return excelFormat.parse(cell.getStringCellValue());
+			} catch (ParseException e) {
+				LOGGER.error(e.getMessage());
+				throw new AbortProcessingException(e.getMessage());
+			}
+		} else if(cell!=null && cell.getCellType()==Cell.CELL_TYPE_NUMERIC){
+			return cell.getDateCellValue();
+		}
+		return null;
+	}
+
 	@Override
 	public boolean accept(byte[] data){
 		try {
@@ -208,18 +245,15 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 			
 			Iterator<Row> rowIterator = sheet.iterator();
 			Row row = rowIterator.next();
-			Iterator<Cell> cellIterator = null;
 			headers = new ArrayList<>();
 			
 			rowOffset=1;
 			for(int i=0; i<5 && !headers.containsAll(Arrays.asList(SUPPORTED_COLUMNS)); i++){
-				cellIterator = row.cellIterator();
 				headers.clear();
-				while(cellIterator.hasNext()){
-					Cell cell = cellIterator.next();
-					if(cell.getCellType() == Cell.CELL_TYPE_STRING){
-						headers.add(cell.getStringCellValue());
-					}
+				for(int col=0;col<row.getLastCellNum();col++){
+					Cell cell = row.getCell(col);
+					String name = getStringCellValue(cell);
+					headers.add(StringUtils.isBlank(name)?"empty":name);
 				}
 				row = rowIterator.next();
 				rowOffset++;
@@ -237,27 +271,27 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	}
 	
 	private String obtainSupplierAccount(String supplierDocument, String supplierName) throws ManagerBeanException {
-		supplierName = StringUtils.trim(supplierName);
+		supplierDocument = StringUtils.trim(supplierDocument);
 		String account = null;
-		if(customerAccount!=null && customerAccount.containsKey(supplierName)){
-			account = customerAccount.get(supplierName);
+		if(supplierAccount!=null && supplierAccount.containsKey(supplierDocument)){
+			account = supplierAccount.get(supplierDocument);
 		} else {
-			if(StringUtils.isNotBlank(supplierName)){
+			if(StringUtils.isNotBlank(supplierDocument)){
 				LogPanelController logPanel = LogPanelController.getInstance();
 				IManagerBean bean = BeanManager.getManagerBean(Supplier.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SUPPLIER_REGISTRY_NAME), supplierName);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SUPPLIER_REGISTRY_NAME), supplierDocument);
 				List<ITransferObject> list = bean.getList(criteria);
 				if(list==null || list.size()==0){
-					logPanel.warn("Se procede a crear un nuevo cliente " + supplierName + " (" + supplierDocument +")" );
+					logPanel.warn("Se procede a crear un nuevo proveedor " + supplierName + " (" + supplierDocument +")" );
 				} else if(list!=null && list.size()==1){
 					Supplier supplier = (Supplier) list.get(0);
 					if(supplier.getAccount()!=null && StringUtils.isNotBlank(supplier.getAccount().getCode())){
 						account = supplier.getAccount().getCode();
-						customerAccount.put(supplierName, account);
+						supplierAccount.put(supplierDocument, account);
 					}
 				} else {
-					logPanel.error("Existen varios registros de cliente con el documento " + supplierDocument);
+					logPanel.error("Existen varios registros de proveedor con el documento " + supplierDocument);
 				}
 			}
 		}
@@ -279,28 +313,17 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 		return code;
 	}
 	
-	private String obtainInvoiceSeries(String value){
-		matcher = invoiceNumberPattern.matcher(value);
-		String match;
-		while (matcher.find()) {
-			match = matcher.group(1);
-			if (match != null) {
-				return match;
-			}
-		}
-		return "";
-	}
-
-	private String obtainInvoiceNumber(String value){
-		matcher = invoiceNumberPattern.matcher(value);
-		String match;
+	private String getFormatInvoiceNumber(String bankAccount) {
+		matcher = invoiceNumberPattern.matcher(bankAccount);
+		String match = null;
 		while (matcher.find()) {
 			match = matcher.group(2);
-			if (match != null) {
-				return match;
+			while(match.length()<Integer.parseInt(matcher.group(3))){
+				match += 0;
 			}
+			match = matcher.group(1) + match;
 		}
-		return "";
+		return match!=null?match:bankAccount;
 	}
 	
 	private void callAonLoader(byte[] data, LoaderParams params){
