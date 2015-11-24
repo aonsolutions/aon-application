@@ -97,6 +97,7 @@
 											rendered="#{!prepayment.paymentReadOnly}"
 											valueChangeListener="#{prepayment.onPayMethodChanged}"
 											reRender="Prepayment_finance_bankAccount_div" ajaxSingle="true">
+											<f:selectItem itemLabel=" - " itemValue="#{null}" />
 											<f:selectItems value="#{configCollections.payMethods}" />
 										</aon:selectOneMenu>
 										<aon:outputText	value="#{prepayment.to.finance.payMethod.name}"

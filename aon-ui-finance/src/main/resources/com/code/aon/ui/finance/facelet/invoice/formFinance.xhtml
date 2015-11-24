@@ -89,6 +89,7 @@
 								rendered="#{formEdit}"
 								valueChangeListener="#{controller.onPayMethodChanged}"
 								reRender="InvoiceFinance_bankAccount_panel">
+								<f:selectItem itemLabel=" - " itemValue="#{null}" />
 								<f:selectItems value="#{configCollections.payMethods}" />
 							</aon:selectOneMenu>
 							<f:facet name="footer">
@@ -97,6 +98,7 @@
 									rendered="#{formNew}"
 									valueChangeListener="#{controller.onPayMethodChanged}"
 									reRender="InvoiceFinance_bankAccount_panel-New">
+									<f:selectItem itemLabel=" - " itemValue="#{null}" />
 									<f:selectItems value="#{configCollections.payMethods}" />
 								</aon:selectOneMenu>
 							</f:facet>

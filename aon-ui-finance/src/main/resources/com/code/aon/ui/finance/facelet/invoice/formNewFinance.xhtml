@@ -36,6 +36,7 @@
 		rendered="#{invoiceController.financeGenerationMode == 1}"
 		valueChangeListener="#{financeController.onPayMethodChanged}"
 		reRender="InvoiceFinance_bankAccount_div" ajaxSingle="true">
+		<f:selectItem itemLabel=" - " itemValue="#{null}" />
 		<f:selectItems value="#{configCollections.payMethods}" />
 	</aon:selectOneMenu>
 
