@@ -58,8 +58,6 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 
 		private Map<String, ITimedVariable<?>> read = new HashMap<String, ITimedVariable<?>>();
 
-		private Map<String, ITimedVariable<?>> redefined = new HashMap<String, ITimedVariable<?>>();
-
 		public PeriodMap(Period period) {
 			this.period = period;
 		}
@@ -154,14 +152,6 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 			return new HashMap<String, ITimedVariable<?>>(read);
 		}
 		
-		public void cleanRedefined() {
-			redefined.clear();
-		}
-		
-		public Map<String, ITimedVariable<?>> getRedefined() {
-			return new HashMap<String, ITimedVariable<?>>(redefined);
-		}
-
 		public <T> T get(Object key, Function<Object,T> mapper, T def) {
 			return get(key.toString(), mapper, def);	
 		}
@@ -353,7 +343,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 
 		List<ITimedVariable<?>> values = vars.get(var);
 		if (values == null) {
-			return null;
+			return Collections.emptyList();
 		}
 
 		List<Period> periods = new LinkedList<Period>();
@@ -446,12 +436,16 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		ITimedVariable<?> ret = null;
 
 		for (ITimedVariable<?> var : values) {
-			if (var.getPeriod().intersects(p)) {
+			Period intersect = var.getPeriod().intersect(p);
+			if ( intersect == null )
+				continue;
+			if ( var.getPeriod().equals(intersect) )
 				ret = var;
-			}
+			else 
+				ret = new WrapTimedVariable(intersect,var);
 		}
-
-		return ret;
+		
+		return  ret;
 
 	}
 
