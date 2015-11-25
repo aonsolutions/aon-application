@@ -134,6 +134,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	private CardOperationTo cardOperationTo;
 	private List<Integer> multipleReservation;
 	private DataModel invoiceModel;
+	private boolean showNotifyWindow;
 
 	public ReservationUtils getReservationUtils() {
 		if (reservationUtils == null) {
@@ -375,6 +376,13 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 	public void setInvoiceModel(DataModel invoiceModel) {
 		this.invoiceModel = invoiceModel;
+	}
+
+	public boolean isShowNotifyWindow() {
+		return showNotifyWindow;
+	}
+	public void setShowNotifyWindow(boolean showNotifyWindow) {
+		this.showNotifyWindow = showNotifyWindow;
 	}
 
 	public void onLoad(ActionEvent event) throws ManagerBeanException {
@@ -1604,6 +1612,7 @@ public class ProjectReservationController extends BasicController implements IPm
 				throw new AbortProcessingException(errorMsg);
 			}
 		}
+		setShowNotifyWindow(true);
 	}
 
 	private boolean validateCreditCard(String creditCardNumber) {

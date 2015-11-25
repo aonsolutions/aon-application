@@ -22,6 +22,7 @@
 					<aon:form>
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
+							actionListener="#{reservation.refreshEntireReservation}"
 							reRender="showCreditCardWindow" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
@@ -55,6 +56,7 @@
 									<aon:commandButton id="creditCard-cancel" immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel"
 										value="#{bundle.aon_back}"
+										actionListener="#{reservation.refreshEntireReservation}"
 										reRender="showCreditCardWindow">
 										<f:setPropertyActionListener
 											target="#{controller.showCreditCardWindow}"
@@ -196,7 +198,7 @@
 												actionListener="#{controller.onConexflowOperation}"
 												onclick="Richfaces.showModalPanel('waitProccess')"
 												oncomplete="Richfaces.hideModalPanel('waitProccess')"
-												reRender="menuGrid2"/>
+												reRender="menuGrid2,showNotifyWindow"/>
 										
 
 										</aon:div>
@@ -211,5 +213,7 @@
 			</rich:modalPanel>
 		</aon:if>
 	</aon:panelGroup>
-
+	<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/creditCard/modalNotify.xhtml">
+			<ui:param name="controller" value="#{reservation}" />
+	</ui:include>
 </ui:composition>
