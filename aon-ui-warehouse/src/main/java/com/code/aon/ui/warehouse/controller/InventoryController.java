@@ -63,7 +63,9 @@ public class InventoryController extends BasicController implements IAuditableCo
 	private boolean initStock;
 	private boolean showInventoryAdjustmentWindow;
 	private boolean showAuditInfoWindow;
-
+	private boolean showConfirmWindow;
+	private String text;
+	
 	public Warehouse getWarehouse() {
 		return warehouse;
 	}
@@ -85,6 +87,13 @@ public class InventoryController extends BasicController implements IAuditableCo
 		this.showInventoryAdjustmentWindow = showInventoryAdjustmentWindow;
 	}
 	
+	public boolean isShowConfirmWindow() {
+		return showConfirmWindow;
+	}
+	public void setShowConfirmWindow(boolean showConfirmWindow) {
+		this.showConfirmWindow = showConfirmWindow;
+	}
+	
 	public boolean isShowAuditInfoWindow() {
 		return showAuditInfoWindow;
 	}
@@ -92,6 +101,12 @@ public class InventoryController extends BasicController implements IAuditableCo
 		this.showAuditInfoWindow = showAuditInfoWindow;
 	}
 	
+	public String getText() {
+		return text;
+	}
+	public void setText(String text) {
+		this.text = text;
+	}
 	public void onClosing(ActionEvent event) {
 		dateValidation();
 		try {
@@ -307,31 +322,44 @@ public class InventoryController extends BasicController implements IAuditableCo
 		}
 	}
 	
-	public void onRevert(ActionEvent event) {
-		Inventory inventory = (Inventory) getTo();
-		String domainName = AonUtil.getDomainName();
-		Integer domainId = DomainManager.getCurrentDomain();
-		String user = AonUtil.getRemoteUser();
+	public void onStartRevert(ActionEvent event){
+		setText("Estás seguro de revertir el cierre de inventario.");
+		setShowConfirmWindow(true);
+	}
 	
-		AON.deleteWarehouseTransfer(domainName, domainId, user, inventory.getId());
+	public void onRevert(ActionEvent event) {
+		String s = "Inventario abierto, Traspasos asociados eliminados y Stock actualizado";
+		if(!s.equals(getText())){
+			Inventory inventory = (Inventory) getTo();
+			String domainName = AonUtil.getDomainName();
+			Integer domainId = DomainManager.getCurrentDomain();
+			String user = AonUtil.getRemoteUser();
+	
+			AON.deleteWarehouseTransfer(domainName, domainId, user, inventory.getId());
 		
 		
-		//AON.updateInventory(domainName, domainId, user,
+			//AON.updateInventory(domainName, domainId, user,
 			//	OccamClassesTransform.getInventory(inventory));
-		LinkedList<com.esferalia.aon.occam.api.model.warehouse.Inventory> list =  AON.getTwoLastInventory(domainName, domainId, user, inventory.getWarehouse().getId());
+			LinkedList<com.esferalia.aon.occam.api.model.warehouse.Inventory> list =  AON.getTwoLastInventory(domainName, domainId, user, inventory.getWarehouse().getId());
 		
-		if(list.getLast().getId().equals(inventory.getId()) &&
-			InventoryStatus.values()[list.getFirst().getStatus()].equals(InventoryStatus.OPEN)) {
-			AON.deleteInventory(domainName, domainId, user, list.getFirst().getId());
+			if(list.getLast().getId().equals(inventory.getId()) &&
+				InventoryStatus.values()[list.getFirst().getStatus()].equals(InventoryStatus.OPEN)) {
+				AON.deleteInventory(domainName, domainId, user, list.getFirst().getId());
+			}
+			try {
+				inventory.setStatus(InventoryStatus.OPEN);
+				getManagerBean().update(inventory);
+			} catch (ManagerBeanException e) {
+				LOGGER.error(e.getMessage(), e);
+			}	
+			setShowInventoryAdjustmentWindow(false);
+			setText(s);
 		}
-		try {
-			inventory.setStatus(InventoryStatus.OPEN);
-			getManagerBean().update(inventory);
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
-		}	
-		setShowInventoryAdjustmentWindow(false);
-		initializeModel();
+		else{
+			setShowInventoryAdjustmentWindow(false);
+			setShowConfirmWindow(false);
+			initializeModel();
+		}
 	}
 	
 	public static Double getCost(InventoryDetail inventoryDetail, Integer workplaceId, Integer warehouseId){

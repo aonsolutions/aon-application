@@ -43,11 +43,11 @@
 					
 					<aon:if test="#{aonRole.accountingManager}">
 						<aon:menuItem id="inventory-revert"
-							value="Revertir Cierre"
+							value="#{bundle.warehouse_inventory_revert}"
 							rendered="#{inventory.showRevert}"
 							iconClass="aon-icon-task-liberate"
-							actionListener="#{inventory.onRevert}"
-						 />
+							actionListener="#{inventory.onStartRevert}"
+							reRender="showConfirmWindow" />
 					</aon:if>
 					
 					<aon:if test="#{!inventory.to.closed}">
@@ -265,5 +265,8 @@
 		<ui:decorate template="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
 			<ui:param name="auditableController" value="#{inventory}" />
 		</ui:decorate>
+		<ui:include src="/com/code/aon/ui/warehouse/facelet/inventory/modalConfirm.xhtml">
+			<ui:param name="controller" value="#{inventory}" />
+		</ui:include>
 	</ui:define>
 </ui:composition>					
