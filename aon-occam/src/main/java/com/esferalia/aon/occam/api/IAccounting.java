@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
+import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
@@ -53,9 +54,8 @@ public interface IAccounting {
 		getAccountBalances(AONContext ctx,AccMiningParameters params) throws AonCoreException;
 
 	// 					      STATEMENT
-	public Stream<AccountStatement> getAccountStatement(AONContext ctx,Integer accountId
-			, Date start, Date end) throws AonCoreException;
-	public Stream<AccountStatement> getAccountBalance(AONContext ctx,Integer accountId
-			, Date start, Date end) throws AonCoreException;
-
+	public Stream<AccountStatement> getAccountBalance(AONContext ctx, AccountStatementParams params) 
+			throws AonCoreException;
+	public Stream<AccountStatement> getAccountStatement(AONContext ctx, AccountStatementParams params)
+			throws AonCoreException;
 }

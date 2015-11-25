@@ -4,7 +4,6 @@ import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.Connection;
@@ -21,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.jooq.DSLContext;
 import org.jooq.Record8;
@@ -39,7 +37,6 @@ import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.accounting.util.AccountingUtil;
-import com.code.aon.accounting.util.Balance;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
@@ -55,7 +52,6 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.report.ReportException;
 import com.code.aon.report.poi.ExcelReportExporter;
 import com.code.aon.ui.accounting.IAccountingConstants;
-import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
@@ -260,40 +256,6 @@ public class TrialBalanceController extends DataScrollerState implements ICollec
 		} catch (ExpressionException e) {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
-	}
-
-	private void showAccountEntry(Balance balance,AccountEntryType type) {
-		try {
-			AccountEntryController entryController = (AccountEntryController) FormUtil
-					.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
-			Criteria criteria = new Criteria();
-			if (balance.getAccountEntry() != null) {
-				criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IEntityAlias.ACCOUNT_ENTRY_ID), balance.getAccountEntry());
-			} else {
-				criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENTRY_DATE), balance.getFromDate());
-			}
-			if (type != null) {
-				criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IEntityAlias.ACCOUNT_ENTRY_TYPE), type);
-			}
-			if (getParameters().getSecurityLevel() != null) {
-				criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IEntityAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), getParameters().getSecurityLevel());
-			}
-			entryController.setCriteria(criteria);
-			entryController.onSearch(null);
-			entryController.getModel().setRowIndex(0);
-			entryController.onSelect(null);
-			entryController.setBackAction(IAccountingConstants.ACCOUNT_STMT_LIST_NAVKEY);
-		} catch (ManagerBeanException e) {
-			String msg = "Error al cargar el apunte.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-	}
-
-	public void onAccountEntry(ActionEvent event) {
-		StatementController c = (StatementController) AonUtil.getRegisteredBean(IAccountingConstants.STATEMENT_CONTROLLER_NAME);
-		Balance balance = (Balance) c.getDetailModel().getRowData();
-		showAccountEntry(balance,null);
 	}
 
 	@Override

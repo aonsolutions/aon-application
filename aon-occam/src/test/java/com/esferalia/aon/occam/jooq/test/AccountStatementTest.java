@@ -1,17 +1,13 @@
 package com.esferalia.aon.occam.jooq.test;
 
-import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.code.aon.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -20,7 +16,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountStatementTest {
 	
-	private static AONContext ctx;
 	private static String DOMAIN_NAME = "macayc-mac.ecastellano.dev";
 	private static int DOMAIN_ID = 536;
 	private static String USER = "mac";
@@ -28,20 +23,14 @@ public class AccountStatementTest {
 	private static final SimpleDateFormat FMT = new SimpleDateFormat("dd/MM/yyyy");
 	private static final DecimalFormat DEC = new DecimalFormat("#,##0.00");
 
-	@BeforeClass
-	public static void beforeClass() throws ClassNotFoundException,
-			SQLException, AonConnectionException {
-		Class.forName(org.gjt.mm.mysql.Driver.class.getName());
-		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID, USER);
-	}
-
 	// ACCOUNT ENTRY
 	@Test
 	public void testStatement() {
-		Integer account = 603888;
-		Date from = AonDateUtils.getDate(2015, 0, 1); 
-		Date to = AonDateUtils.getDate(2015, 8, 10); 
-		AccountStatementReport report = AON.getAccountStatement(DOMAIN_NAME, DOMAIN_ID, USER, account, from, to);
+		AccountStatementParams params = new AccountStatementParams()
+				.setAccount(604530)
+				.setFromDate( AonDateUtils.getDate(2015, 0, 1))
+				.setToDate( AonDateUtils.getDate(2015, 10, 25)); 
+		AccountStatementReport report = AON.getAccountStatement(DOMAIN_NAME, DOMAIN_ID, USER, params);
 		
 		System.out.println( AonStringUtils.repeat('=', 145));
 		System.out.println( AonStringUtils.center(report.getAccount().getFullName(), 145));
@@ -91,10 +80,11 @@ public class AccountStatementTest {
 	@Test
 	@Ignore
 	public void testBalance() {
-		Integer account = 603888;
-		Date from = AonDateUtils.getDate(2015, 0, 1); 
-		Date to = AonDateUtils.getDate(2015, 5, 31); 
-		AON.getAccountBalance(DOMAIN_NAME, DOMAIN_ID, USER, account, from, to)
+		AccountStatementParams params = new AccountStatementParams()
+				.setAccount(603888)
+				.setFromDate( AonDateUtils.getDate(2015, 0, 1))
+				.setToDate( AonDateUtils.getDate(2015, 5, 31)); 
+		AON.getAccountBalance(DOMAIN_NAME, DOMAIN_ID, USER, params )
 		.forEach( st -> {
 		System.out.println(
 			 AonStringUtils.repeat(AonStringUtils.SPACE, 8)

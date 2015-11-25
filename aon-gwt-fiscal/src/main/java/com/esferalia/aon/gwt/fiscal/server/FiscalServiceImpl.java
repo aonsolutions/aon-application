@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
+import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
@@ -621,15 +622,13 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	}
 	@Override
 	public AccountStatementReport getAccountStatement(String domainName,
-			int domain, Integer accountId, Date from, Date to)
-			throws AonCoreException {
-		return AON.getAccountStatement(domainName,domain,this.getUserLogin(),accountId, from, to);
+			int domain, AccountStatementParams params) throws AonCoreException {
+		return AON.getAccountStatement(domainName,domain,this.getUserLogin(),params);
 	}
 	@Override
 	public LinkedList<AccountStatement> getAccountBalance(String domainName,
-			int domain, Integer accountId, Date from, Date to)
-			throws AonCoreException {
-		return AON.getAccountBalance(domainName,domain,this.getUserLogin(),accountId, from, to)
+			int domain, AccountStatementParams params) throws AonCoreException {
+		return AON.getAccountBalance(domainName,domain,this.getUserLogin(),params)
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 }

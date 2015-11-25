@@ -590,81 +590,9 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>statementAccount</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{statementAccountEntryDetailListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>statementAccountEntryDetailListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>statementDetail</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>AccountEntryDetail_account_id</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>statementDetail</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.accounting.AccountEntryDetail</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>false</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
 			<value>statement</value>
 		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>account.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>AccountEntryDetail_accountEntry_entryDate,AccountEntryDetail_id</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{statementDetailFilterListener}</value>
-			</list-entries>
-		</managed-property>
 	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>statementDetailFilterListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.accounting.event.StatementDetailListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
 	<!-- ********** ACCOUNT CHANGE CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>accountChange</managed-bean-name>

@@ -112,13 +112,14 @@
 	<!--  EXTRACTO DE CUENTA -->
 	<report id="statement" description="Account Statement">
 		<template path="/com/code/aon/ui/accounting/report/statement.jasper"/>
-		<collection provider="#{statement}"/>
+		<collection provider="#{statement.detail}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
+			<param id="account" value="#{statement.getAccount}" />
 			<param id="previousBalance" value="#{statement.getPreviousBalance}" />
 			<param id="periodBalance" value="#{statement.getPeriodBalance}" />
-			<param id="params" value="#{trialBalance.getParameters}" />
+			<param id="params" value="#{statement.getParams}" />
 		</params>
 	</report>
 

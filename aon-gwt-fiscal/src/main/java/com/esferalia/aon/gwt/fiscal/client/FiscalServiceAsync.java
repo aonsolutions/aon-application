@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
+import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
@@ -178,11 +179,11 @@ public interface FiscalServiceAsync {
 
 	// --------------------------------------------------------------- ACCOUNT STATEMENT
 	void getAccountStatement(String domainName, int domain, 
-			Integer accountId, Date from, Date to,
+			AccountStatementParams params,
 			AsyncCallback<AccountStatementReport> callback);
 
 	void getAccountBalance(String domainName, int domain, 
-			Integer accountId, Date from, Date to,
+			AccountStatementParams params,
 			AsyncCallback<LinkedList<AccountStatement>> callback);
 
 

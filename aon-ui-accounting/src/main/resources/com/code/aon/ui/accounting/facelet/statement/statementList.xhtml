@@ -207,7 +207,7 @@
 									immediate="true" 
 									styleClass="aon-dataTable-link"
 									title="#{bundle.accounting_lookup_account_entry}"
-									actionListener="#{trialBalance.onAccountEntry}"
+									actionListener="#{statement.onAccountEntry}"
 									action="accountEntry_form">
 									<aon:outputText value="#{to.accountEntry}" />
 								</aon:commandLink>
@@ -217,7 +217,13 @@
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.aon_date}" />
 								</f:facet>
+								<!-- 
 								<aon:outputText value="#{to.fromDate}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>
+								 -->
+								<aon:outputText value="#{to.entryDate}">
 									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:outputText>
@@ -249,7 +255,7 @@
 									<f:convertNumber pattern="#,##0.00" />
 								</aon:outputText>
 							</aon:column>
-	
+<!-- 	
 							<aon:column
 								styleClass="aon-editDataTable-numberColumn aon-width-100">
 								<f:facet name="header">
@@ -273,7 +279,32 @@
 									<f:convertNumber pattern="#,##0.00" />
 								</aon:outputText>
 							</aon:column>
+ -->
+ 	
+							<aon:column
+								styleClass="aon-editDataTable-numberColumn aon-width-100">
+								<f:facet name="header">
+									<aon:outputText
+										value="#{bundle.account_debit_balance}" />
+								</f:facet>
+								<aon:outputText value="#{to.debitBalance}"
+									rendered="#{to.debitBalance != 0}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</aon:column>
 	
+							<aon:column
+								styleClass="aon-editDataTable-numberColumn aon-width-100">
+								<f:facet name="header">
+									<aon:outputText
+										value="#{bundle.account_credit_balance}" />
+								</f:facet>
+								<aon:outputText value="#{to.unpaidBalance}"
+									rendered="#{to.unpaidBalance != 0}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</aon:column>
+
 							<aon:column styleClass="aon-width-100">
 								<f:facet name="header">
 									<aon:outputText

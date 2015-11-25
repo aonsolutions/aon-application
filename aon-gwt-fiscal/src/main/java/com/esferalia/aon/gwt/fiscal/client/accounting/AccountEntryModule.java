@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -633,7 +634,11 @@ public class AccountEntryModule extends MainEntryPoint {
 	private void showFullStatement(Integer selectedItem) {
 		tabLayout.selectTab(STATEMENT_TAB);
 		Date from = DateUtils.getFirstDayOfYear(entryDate.getValue());
-		statementPanel.show(selectedItem, from, entryDate.getValue());
+		statementPanel.show(
+			new AccountStatementParams()
+				.setAccount(selectedItem)
+				.setFromDate(from)
+				.setToDate(entryDate.getValue()));
 	}
 
 	public static interface ConfirmDialogCallback {

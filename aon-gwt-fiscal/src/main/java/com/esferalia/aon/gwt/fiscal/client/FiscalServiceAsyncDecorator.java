@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
+import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
@@ -784,24 +785,22 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 	// STATEMENT
 	@Override
 	public void getAccountStatement(String domainName, int domain,
-			Integer accountId, Date from, Date to,
+			AccountStatementParams params,
 			AsyncCallback<AccountStatementReport> callback) {
 		AON.start();
-		fsa.getAccountStatement(domainName, domain, accountId, from, to,
+		fsa.getAccountStatement(domainName, domain, params,
 				new AsyncCallbackWrapper<AccountStatementReport>(callback));
 	}
 
 	@Override
 	public void getAccountBalance(String domainName, int domain,
-			Integer accountId, Date from, Date to,
+			AccountStatementParams params,
 			AsyncCallback<LinkedList<AccountStatement>> callback) {
 		AON.start();
 		fsa.getAccountBalance(
 				domainName,
 				domain,
-				accountId,
-				from,
-				to,
+				params,
 				new AsyncCallbackWrapper<LinkedList<AccountStatement>>(callback));
 	}
 

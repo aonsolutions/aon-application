@@ -1,13 +1,12 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting;
 
-import java.util.Date;
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.AccountStatement;
+import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -58,7 +57,7 @@ public class AccountStatementPanel extends DockLayoutPanel implements HasSelecti
 		this(Unit.PX);
 	}
 	
-	public void show( Integer accountId, Date from, Date to) {
+	public void show( AccountStatementParams params) {
 		final FlowPanel header = new FlowPanel("pre");
 		header.setStyleName(AON.AON_CSS.aonFixedFont());
 		header.addStyleName(AON.AON_CSS.aonFontMedium());
@@ -71,8 +70,8 @@ public class AccountStatementPanel extends DockLayoutPanel implements HasSelecti
 		panel.addStyleName(AON.AON_CSS.aonBorderBottom());
 		
 		fiscalService.getAccountStatement(AccountEntryModule.getCurrentDomainName(),
-				AccountEntryModule.getCurrentDomain(),
-				accountId, from, to,  new AsyncCallback<AccountStatementReport>() {
+				AccountEntryModule.getCurrentDomain(),params
+				,  new AsyncCallback<AccountStatementReport>() {
 					
 					@Override
 					public void onSuccess(final AccountStatementReport result) {
@@ -115,9 +114,11 @@ public class AccountStatementPanel extends DockLayoutPanel implements HasSelecti
 							public void onClick(ClickEvent event) {
 								if (!dateTo.getValue().before(result.getFrom())) {
 									AccountStatementPanel.this.show(
-										result.getAccount().getId()
-										,dateFrom.getValue()
-										,dateTo.getValue());
+											new AccountStatementParams()
+											.setAccount( result.getAccount().getId())
+											.setFromDate( dateFrom.getValue() )
+											.setToDate( dateTo.getValue())
+											);
 								}
 							}
 						});

@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
+import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
@@ -573,19 +574,19 @@ public class AON {
 	}
 	// ------------------------------ ACCOUNT STATEMENT
 	public static AccountStatementReport getAccountStatement(String domainName,int domain, String user
-			, Integer accountId,Date from, Date to) {
+			, AccountStatementParams params) {
 		AONContext ctx = null;
 		try {
 			AccountStatementReport report = new AccountStatementReport(); 
 			ctx = AONContext.getAONContext(domainName, domain,user);
-			report.setFrom(from);
-			report.setTo(to);
-			report.setAccount( AON.getAccount(ctx, accountId));
+			report.setFrom(params.getFromDate());
+			report.setTo(params.getToDate());
+			report.setAccount( AON.getAccount(ctx, params.getAccount()));
 			report.setSummary(getAccounting()
-					.getAccountBalance(ctx, accountId, from, to)
+					.getAccountBalance(ctx, params)
 					.collect(Collectors.toCollection(LinkedList::new)));
 			report.setDetails(getAccounting()
-					.getAccountStatement(ctx, accountId, from, to)
+					.getAccountStatement(ctx, params)
 					.collect(Collectors.toCollection(LinkedList::new)));
 			report = AccountStatementDAO.calculate(report);
 			return  report;
@@ -595,11 +596,11 @@ public class AON {
 		}
 	}
 	public static Stream<AccountStatement> getAccountBalance(String domainName,int domain, String user
-			, Integer accountId,Date from, Date to) {
+			, AccountStatementParams params) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain,user);
-			return getAccounting().getAccountBalance(ctx, accountId, from, to); 
+			return getAccounting().getAccountBalance(ctx, params); 
 		} finally {
 			if (ctx != null)
 				ctx.close();

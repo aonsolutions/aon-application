@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
@@ -175,5 +176,27 @@ public class AccountPeriodDAO {
 			return new FilterDAO.PropertyDAO<Byte>(ACCOUNT_PERIOD.STATUS);
 		}
 
+	}
+	public static Date getMinDate(AONContext ctx) {
+		return  ctx.getDslContext()
+			.select( DSL.min(ACCOUNT_PERIOD.INITIATION_DATE) )
+			.from(ACCOUNT_PERIOD)
+			.where(ACCOUNT_PERIOD.DOMAIN.eq(ctx.getDomainId()))
+			.fetch()
+			.stream()
+			.map( rec -> rec.getValue(DSL.min(ACCOUNT_PERIOD.INITIATION_DATE)))
+			.findFirst()
+			.orElse( AonDateUtils.toSql(AonDateUtils.getYearFirstDay(new Date())));
+	}
+	public static Date getMaxDate(AONContext ctx) {
+		return  ctx.getDslContext()
+			.select( DSL.max(ACCOUNT_PERIOD.DEADLINE) )
+			.from(ACCOUNT_PERIOD)
+			.where(ACCOUNT_PERIOD.DOMAIN.eq(ctx.getDomainId()))
+			.fetch()
+			.stream()
+			.map( rec -> rec.getValue(DSL.max(ACCOUNT_PERIOD.DEADLINE)))
+			.findFirst()
+			.orElse( AonDateUtils.toSql(AonDateUtils.getYearLastDay(new Date())));
 	}
 }

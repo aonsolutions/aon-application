@@ -1,44 +1,42 @@
 package com.code.aon.ui.accounting.controller.report;
 
 import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 
-import org.apache.commons.lang.time.DateUtils;
-
-import com.code.aon.account.Account;
-import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.summary.Summary;
-import com.code.aon.accounting.summary.SummaryProvider;
-import com.code.aon.accounting.summary.SummaryProviderParameters;
-import com.code.aon.accounting.util.AccountingUtil;
-import com.code.aon.accounting.util.Balance;
 import com.code.aon.AonVersion;
+import com.code.aon.account.Account;
+import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.summary.SummaryProviderParameters;
+import com.code.aon.accounting.util.Balance;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.CommonUtil;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ui.accounting.IAccountingConstants;
+import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.AccountStatement;
+import com.esferalia.aon.occam.api.model.AccountStatementParams;
+import com.esferalia.aon.occam.api.model.AccountStatementReport;
 
 public class StatementController extends BasicController {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private static final String STATEMENT_DETAIL_CONTROLLER_NAME = "statementDetail";
-
-	private SummaryProvider sp = new SummaryProvider();
-
 	private Balance previousBalance;
 	private Balance periodBalance;
 
-	private List<Balance> detail;
+	private List<AccountStatement> detail;
 	private DataScrollerState detailState;
 	
 	private SummaryProviderParameters params;
@@ -80,10 +78,7 @@ public class StatementController extends BasicController {
 
 	private void refresh() {
 		try {
-			IController c = FormUtil.getController(STATEMENT_DETAIL_CONTROLLER_NAME);
-			c.onSearch(null);
 			initialize();
-			initializeAmounts();
 			transformDetailModel();
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException("No se pudo actualizar la página."+e.getMessage(), e);
@@ -97,12 +92,12 @@ public class StatementController extends BasicController {
 		setDetail(null);
 	}
 
-	public List<Balance> getDetail() {
+	public List<AccountStatement> getDetail() {
 		return detail;
 	}
 
-	public void setDetail(List<Balance> detail) {
-		this.detail = detail;
+	public void setDetail(List<AccountStatement> details) {
+		this.detail = details;
 	}
 
 	public DataModel getDetailModel() {
@@ -122,77 +117,50 @@ public class StatementController extends BasicController {
 	}
 
 	private void transformDetailModel() throws ManagerBeanException {
-		IController c = FormUtil.getController(STATEMENT_DETAIL_CONTROLLER_NAME);
-		DataModel model = c.getModel();
-		Balance previous = getPreviousBalance();
-		setDetail(new LinkedList<Balance>());
-		for (int i = 0; i < model.getRowCount(); i++) {
-			model.setRowIndex(i);
-			AccountEntryDetail d = (AccountEntryDetail) model.getRowData();
-			Balance balance = new Balance();
-			balance.setAccountEntry(d.getAccountEntry().getId());
-			balance.setAccount(d.getAccount().getCode());
-			balance.setDescription(d.getAccount().getDescription());
-			balance.setFromDate(d.getAccountEntry().getEntryDate());
-			balance.setDebit(d.getDebit());
-			balance.setCredit(d.getCredit());
-			balance.setConcept(d.getConcept());
-			balance.setDocumentNumber(d.getDocumentNumber());
-			balance.setBalancingAccount(d.getBalancingAccount() == null ? null : d.getBalancingAccount().getCode());
-			balance.setBalancingAccountDescription(d.getBalancingAccount() == null ? null : d.getBalancingAccount().getDescription());
-			if (previous != null) {
-				balance.dragBalance(previous);
-			} else {
-				double b = CommonUtil.round(d.getDebit() - d.getCredit());
-				if (b > 0) {
-					balance.setUnpaidBalance(b);
-				} else {
-					balance.setCreditBalance(CommonUtil.round(b * (-1)));
-				}
-			}
-			detail.add(balance);
-			previous = balance;
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String user = AonUtil.getAuthPrincipal().getShortName();
+		AccountStatementParams params = new AccountStatementParams();
+		SecurityLevel se = getParams().getSecurityLevel();
+		if (se != null) {
+			com.esferalia.aon.occam.api.model.type.SecurityLevel securityLevel =
+					com.esferalia.aon.occam.api.model.type.SecurityLevel.values()[se.ordinal()];
+			params.setSecurityLevel( securityLevel );
 		}
+		params.setAccount(getAccount().getId());
+		params.setFromDate(getParams().getFromDate());
+		params.setToDate(getParams().getToDate());
+		if (getParams().getPeriod() != null && getParams().getPeriod().getId() != null) {
+			//params.setOpeningEntriesExcluded(getParams().isExcludeOpeningEntry() );
+			params.setOperatingEntriesExcluded(getParams().isExcludeOperatingEntry() );
+			params.setClosingEntriesExcluded(getParams().isExcludeClosingEntry() );
+		}
+		if (getParams().isNotEmptyDocumentNumber()) {
+			params.setDocumentNumber(getParams().getDocumentNumber() );
+		}
+		AccountStatementReport asr = AON.getAccountStatement(domainName, domainId, user, params);
+		for (AccountStatement as : asr.getSummary()) {
+			if (as.getType() == 0) {
+				Balance balance = new Balance();
+				balance.setFromDate(null);
+				balance.setToDate(asr.getFrom());
+				balance.setUnpaidBalance(as.getDebitBalance());
+				balance.setCreditBalance(as.getUnpaidBalance());
+				setPreviousBalance(balance);
+			} else if (as.getType() == 1) {
+				Balance balance = new Balance();
+				balance.setFromDate(asr.getFrom());
+				balance.setToDate(asr.getTo());
+				balance.setUnpaidBalance(as.getDebitBalance());
+				balance.setCreditBalance(as.getUnpaidBalance());
+				setPeriodBalance(balance);
+			}
+		}
+		setDetail(asr.getDetails());
 		setDetailModel(new SerializableListDataModel(getDetail()));
 	}
 
-	private void initializeAmounts() throws ManagerBeanException {
-		try {
-			Account account = getAccount();
-			AccountingUtil accountingUtil = new AccountingUtil();
-			Date from = params.getFromDate()==null?params.isPeriodNull()?accountingUtil.getFirstPeriodInitialDate():params.getPeriod().getInitiationDate():params.getFromDate();
-			SummaryProviderParameters clonedParams = params.clone();
-			clonedParams.setFromDate(from);
-			clonedParams.setAccountExpression(account.getCode());
-			
-			Summary summary = sp.getUniqueSummary(clonedParams);
-			double initialDebit = summary.getInitialDebit();
-			double initialCredit = summary.getInitialCredit();
-			if ( CommonUtil.round(initialDebit - initialCredit, 2) != 0.0) {
-				setPreviousBalance( new Balance() );
-				getPreviousBalance().setAccount(summary.getCode());
-				getPreviousBalance().setDescription(summary.getDescription());
-				getPreviousBalance().setToDate(DateUtils.addDays(from, -1));
-				getPreviousBalance().set(initialDebit,initialCredit);	
-			}
-			
-			
-			setPeriodBalance( new Balance() );
-			getPeriodBalance().setAccount(summary.getCode());
-			getPeriodBalance().setDescription(summary.getDescription());
-			getPeriodBalance().setFromDate(from);
-			getPeriodBalance().setToDate(params.getToDate());
-			getPeriodBalance().set(summary.getDebit(),summary.getCredit());
-			if (isPreviousBalancePresent()) {
-				getPeriodBalance().dragBalance(getPreviousBalance());
-			}
-			
-		} catch (CloneNotSupportedException e) {
-			throw new ManagerBeanException(e.getMessage(),e);
-		}
-	}
-
-	private Account getAccount() {
+	public Account getAccount() {
 		return (Account) getTo();
 	}
 
@@ -205,4 +173,40 @@ public class StatementController extends BasicController {
 	public boolean isPreviousBalancePresent() {
 		return getPreviousBalance() != null;
 	}
+	
+	public void onAccountEntry(ActionEvent event) {
+		StatementController c = (StatementController) AonUtil.getRegisteredBean(IAccountingConstants.STATEMENT_CONTROLLER_NAME);
+		AccountStatement balance = (AccountStatement) c.getDetailModel().getRowData();
+		showAccountEntry(balance,null);
+	}
+	
+	private void showAccountEntry(AccountStatement balance,AccountEntryType type) {
+		try {
+			AccountEntryController entryController = (AccountEntryController) FormUtil
+					.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
+			Criteria criteria = new Criteria();
+			if (balance.getAccountEntry() != null) {
+				criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IEntityAlias.ACCOUNT_ENTRY_ID), balance.getAccountEntry());
+			} else {
+				criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENTRY_DATE), balance.getEntryDate());
+			}
+			if (type != null) {
+				criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IEntityAlias.ACCOUNT_ENTRY_TYPE), type);
+			}
+			if (getParams().getSecurityLevel() != null) {
+				criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IEntityAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), getParams().getSecurityLevel());
+			}
+			entryController.setCriteria(criteria);
+			entryController.onSearch(null);
+			entryController.getModel().setRowIndex(0);
+			entryController.onSelect(null);
+			entryController.setBackAction(IAccountingConstants.ACCOUNT_STMT_LIST_NAVKEY);
+		} catch (ManagerBeanException e) {
+			String msg = "Error al cargar el apunte.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+	
+	
 }

@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
+import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
@@ -170,8 +171,8 @@ public interface FiscalService extends RemoteService {
 	
 	// --------------------------------------------------------------- ACCOUNT STATEMENT
 	AccountStatementReport getAccountStatement(String domainName,int domain
-			, Integer accountId, Date from, Date to) throws AonCoreException;	
+			, AccountStatementParams params) throws AonCoreException;	
 	LinkedList<AccountStatement> getAccountBalance(String domainName,int domain
-			, Integer accountId, Date from, Date to) throws AonCoreException;
+			, AccountStatementParams params) throws AonCoreException;
 
 }

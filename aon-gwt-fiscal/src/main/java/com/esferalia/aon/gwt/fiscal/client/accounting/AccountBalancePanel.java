@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountStatement;
+import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -106,10 +107,14 @@ public class AccountBalancePanel extends DockLayoutPanel implements HasSelection
 					SelectionEvent.<Integer>fire(AccountBalancePanel.this, id);
 				}
 			});
+			AccountStatementParams params = new AccountStatementParams();
+			params.setAccount(account.getId());
+			params.setFromDate(from);
+			params.setToDate(to);
 			
 			fiscalService.getAccountBalance(AccountEntryModule.getCurrentDomainName(),
-					AccountEntryModule.getCurrentDomain(),
-					account.getId(), from, to,  new AsyncCallback<LinkedList<AccountStatement>>() {
+					AccountEntryModule.getCurrentDomain(), params,  
+					new AsyncCallback<LinkedList<AccountStatement>>() {
 						
 						@Override
 						public void onSuccess(LinkedList<AccountStatement> result) {
