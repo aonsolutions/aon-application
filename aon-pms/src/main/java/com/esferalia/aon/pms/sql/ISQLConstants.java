@@ -37,7 +37,7 @@ public interface ISQLConstants {
 	String COMMENTS = "comments";
 	String TOTAL = "total";
 	String ROOM = "room";
-	String ROOM_STATUS = "status";
+	String ROOM_STATUS = "roomStatus";
 	String ROOM_LAST_CLEANING_DATE = "lastCleaningDate";
 	String ROOM_NUMBER = "roomNumber";
 	String ROOM_CODE = "roomCode";

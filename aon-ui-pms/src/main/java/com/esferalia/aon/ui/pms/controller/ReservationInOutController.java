@@ -31,6 +31,7 @@ import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
+import com.esferalia.aon.pms.enumeration.RoomStatus;
 import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
 
@@ -161,6 +162,7 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 				reservationIO.setRoomCode(reservationIORs.getString(ROOM_CODE));
 				reservationIO.setRoomType(reservationIORs.getString(ROOM_TYPE));
 				reservationIO.setRoomNumber(reservationIORs.getString(ROOM_NUMBER));
+				reservationIO.setRoomStatus(reservationIORs.getObject(ROOM_STATUS) != null ? RoomStatus.values()[reservationIORs.getInt(ROOM_STATUS)] : null);
 				reservationIO.setRoomCount(reservationIORs.getInt(ROOMS));
 				reservationIO.setMealPlan(reservationIORs.getString(MEAL_PLAN));
 
@@ -206,6 +208,11 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		stmt.append("     WHERE PRRD.project_reservation_room = B.project_reservation_room AND PRRD.asset_activity = AA.id");
 		stmt.append("     AND AA.date = IF (B.stay_type = 0, B.stay_date, DATE_SUB(B.stay_date, INTERVAL 1 DAY))");
 		stmt.append("     AND AA.asset = A.id LIMIT 1) AS " + ROOM_NUMBER);
+		stmt.append(", (SELECT IF(B.stay_date = CURRENT_DATE AND B.stay_type = 0, IF(DATE(R.last_cleaning_date) = CURRENT_DATE, R.status, 1), NULL) ");
+		stmt.append("     FROM project_reservation_room_detail AS PRRD, asset_activity AS AA, room AS R");
+		stmt.append("     WHERE PRRD.project_reservation_room = B.project_reservation_room AND PRRD.asset_activity = AA.id");
+		stmt.append("     AND AA.date = IF (B.stay_type = 0, B.stay_date, DATE_SUB(B.stay_date, INTERVAL 1 DAY))");
+		stmt.append("     AND AA.asset = R.asset LIMIT 1) AS " + ROOM_STATUS);
 		stmt.append(", (SELECT COUNT(*) FROM room AS R");
 		stmt.append("     WHERE R.hotel = PR.hotel");
 		stmt.append("     AND R.item = I.id");
@@ -320,6 +327,7 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		private String roomCode;
 		private String roomType;
 		private String roomNumber;
+		private RoomStatus roomStatus;
 		private int roomCount;
 		private String mealPlan;
 		
@@ -488,6 +496,13 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 			this.roomNumber = roomNumber;
 		}
 
+		public RoomStatus getRoomStatus() {
+			return roomStatus;
+		}
+		public void setRoomStatus(RoomStatus roomStatus) {
+			this.roomStatus = roomStatus;
+		}
+
 		public int getRoomCount() {
 			return roomCount;
 		}
@@ -541,6 +556,16 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		}
 		public boolean isMyDivert() {
 			return (isDiverted() && getHotel().equals(controller.getHotel().getId()));
+		}
+
+		public boolean isRoomClean() {
+			return getRoomStatus() == RoomStatus.CLEAN;
+		}
+		public boolean isRoomDirty() {
+			return getRoomStatus() == RoomStatus.DIRTY;
+		}
+		public boolean isRoomOccupied() {
+			return getRoomStatus() == RoomStatus.DO_NOT_DISTURB;
 		}
 
 		public boolean isNoRooms() {

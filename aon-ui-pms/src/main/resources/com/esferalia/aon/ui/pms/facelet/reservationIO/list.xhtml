@@ -132,15 +132,18 @@
 								<aon:outputText value="#{to.comments}" /> 
 							</rich:toolTip>
 						</aon:column>
-	
+
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-30">
 							<f:facet name="header">
 								<aon:outputLabel value="#{bundle.aon_number_abr}" />
 							</f:facet>
-							<aon:outputText value="#{to.roomNumber}" 
-								style="#{(to.diverted) ? ((!to.myDivert) ? ('color:red;') : ('color:forestgreen;')) : ''}" />
+							<aon:outputText value="#{to.roomNumber}"  
+								style="#{(to.roomDirty or (to.diverted and !to.myDivert)) ? ('color:red;') : 
+											((to.roomOccupied ) ? ('color:orange;') : ((to.roomClean or to.myDivert) ? ('color:forestgreen;') : ''))}"
+								title="#{(to.roomDirty) ? (bundle.pms_room_dirty) : 
+											((to.roomOccupied) ? (bundle.pms_room_occupied) : ((to.roomClean) ? (bundle.pms_room_clean) : ''))}" />
 						</aon:column>
-	
+
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-30">
 							<f:facet name="header">
 								<aon:outputLabel value="#{bundle.aon_type}" />
