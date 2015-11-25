@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.template.client;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
@@ -50,7 +51,7 @@ public interface ITemplate extends RemoteService{
 	
 	public Integer executeExcel(Integer inventory,TemplateInfo ti, String warehouse,String warehouse2, String series, String comments, Boolean istransfer,Integer number);
 
-	public Error insertProduct();
+	public Error insertProduct(String value);
 	
 	public Integer executeExcel2(TemplateInfo ti);
 	
@@ -82,4 +83,6 @@ public interface ITemplate extends RemoteService{
 	public Integer excelRowNumber();
 	
 	public List<Seller> getSellerList(Integer domainId);
+	
+	public LinkedList<String> getProductRoles();
 }

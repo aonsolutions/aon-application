@@ -46,6 +46,9 @@ import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBProduct;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.google.api.services.drive.Drive;
 
 @WebServlet(name = "DownloadTemplatesProduct", urlPatterns = { "/aon_gwt_template/gwt_download_product/*" })
@@ -103,10 +106,13 @@ public class DownloadProductServlet extends HttpServlet {
 
         String login = p_request.getParameter("username");
 
+        //getuser roles
         
         Integer domainId = Integer.parseInt(domain_id);
-        String domain = AonUtil.getDomainName();
+        String domainName = AonUtil.getDomainName();
         Integer idFile = Integer.parseInt(fileId);
+        
+        User user = AON.getUser(domainName, domainId, login);
         
         byte[] b = null ;
         
@@ -115,7 +121,7 @@ public class DownloadProductServlet extends HttpServlet {
         	
         	DomainGserviceaccount g = null;
 			try {
-				g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain,domainId);
+				g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domainName,domainId);
 				d = DriveUtils.serviceInitialize(g);
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -140,7 +146,7 @@ public class DownloadProductServlet extends HttpServlet {
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-        	b = DBConsults.getTemplate(domain,domainId, id, login);
+        	b = DBConsults.getTemplate(domainName,domainId, id, login);
         }
         else return;
         
@@ -235,7 +241,16 @@ public class DownloadProductServlet extends HttpServlet {
         	c = c.and(PRODUCT.CODE.like("%"+code+"%"));
         if(!description.equals("null") && !description.equals("") && !description.equals("undefined"))
         	c = c.and(PRODUCT.NAME.like("%"+description+"%"));
-
+        
+        Condition roleCondition = PRODUCT.KIND.eq((byte) 0);
+        for (AonRole role : user.getUserRoles()) {
+			if(role.equals(AonRole.PURCHASE))
+				roleCondition = roleCondition.or(PRODUCT.KIND.eq((byte) 1));
+			if(role.equals(AonRole.SALE))
+				roleCondition = roleCondition.or(PRODUCT.KIND.eq((byte) 2));
+		}
+        c = c.and(roleCondition);
+        
         if(!types.equals("null") && !types.equals("") && !types.equals("undefined")){
         	String s= types.substring(1) ;
         	while(s !=""){
@@ -433,7 +448,7 @@ public class DownloadProductServlet extends HttpServlet {
         }
         //TODO 
         
-        Vector<ProductInfo> v =  DBProduct.getProducts(domain,domainId,c, login);
+        Vector<ProductInfo> v =  DBProduct.getProducts(domainName,domainId,c, login);
 
         for(Integer j = 0; j< v.size();j++){
         	Row row = hoja.createRow(j+2);

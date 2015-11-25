@@ -17,7 +17,7 @@ import java.util.Vector;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
-import org.jooq.Record12;
+import org.jooq.Record13;
 import org.jooq.Record19;
 import org.jooq.Record2;
 import org.jooq.Record3;
@@ -73,7 +73,7 @@ public class DBProduct {
 	}
 	
 	private static com.esferalia.aon.occam.api.model.product.Product getProduct(com.esferalia.aon.occam.api.model.product.Product p, TemplateInfo ti, Integer domainId, AONContext ctx){
-		Record12<Integer, Integer, Integer, Byte, Byte, Integer, Integer, Byte, Byte, Byte, String, Timestamp> data = ctx.getDslContext().select(PRODUCT.ID, PRODUCT.BRAND, PRODUCT.CATEGORY,PRODUCT.INVENTORIABLE,PRODUCT.STATUS, PRODUCT.VAT, PRODUCT.RETENTION,PRODUCT.TYPE, PRODUCT.COMPOSITION, PRODUCT.COMPOSITION_PRICE, PRODUCT.CREATION_USER, PRODUCT.CREATION_DATE)
+		Record13<Integer, Integer, Integer, Byte, Byte, Integer, Integer, Byte, Byte, Byte, String, Timestamp, Byte> data = ctx.getDslContext().select(PRODUCT.ID, PRODUCT.BRAND, PRODUCT.CATEGORY,PRODUCT.INVENTORIABLE,PRODUCT.STATUS, PRODUCT.VAT, PRODUCT.RETENTION,PRODUCT.TYPE, PRODUCT.COMPOSITION, PRODUCT.COMPOSITION_PRICE, PRODUCT.CREATION_USER, PRODUCT.CREATION_DATE, PRODUCT.KIND)
 				.from(PRODUCT)
 				.where(PRODUCT.CODE.eq(p.getCode()).and(PRODUCT.DOMAIN.eq(domainId))).fetchOne();
 		if(data != null){
@@ -114,6 +114,7 @@ public class DBProduct {
 			else product.setCompositionPrice(data.value10() ==1);		 
 			product.setCreationUser(data.value11());
 			product.setCreationDate(data.value12());
+			product.setKind(data.getValue(PRODUCT.KIND));
 			return product;	
 		}
 		return null;
@@ -135,7 +136,7 @@ public class DBProduct {
 		return count > 0;
 	}
 	
-	public static Error insertProducts2(String domain, Integer domainId,Vector<ProductInfo> products, TemplateInfo templateInfo, AuditInfo ai, String login){
+	public static Error insertProducts2(String domain, Integer domainId,Vector<ProductInfo> products, TemplateInfo templateInfo, AuditInfo ai, String login, String kind){
 		long start = System.currentTimeMillis();
 		Error error = new Error();
 		error.setError(true);
@@ -158,12 +159,16 @@ public class DBProduct {
 			products.stream().forEach(r->{	
 				
 				com.esferalia.aon.occam.api.model.product.Product product  = getProduct(r.getProduct(), templateInfo, domainId, sctx);	
-				
-			
 				if(product != null){
+					
 					if(hasProductParent(sctx, product.getCode(), domainId)){
 						error.setError(false);
 						verror.add("*Fila " + (r.getRow()+1)+": Es un producto heredado.");
+						error.setTextError(verror);
+					}
+					else if(!product.getKind().equals(0) && !product.getKind().equals(Byte.parseByte(kind)) ){
+						error.setError(false);
+						verror.add("*Fila " + (r.getRow()+1)+": Tipo de producto erroneo.");
 						error.setTextError(verror);
 					}
 					else{
@@ -207,6 +212,7 @@ public class DBProduct {
 				}
 				else{
 					com.esferalia.aon.occam.api.model.product.Product product2 = r.getProduct();
+					product2.setKind(Byte.parseByte(kind));
 					product2.setCreationUser(ai.getUsername());product2.setModificationUser(ai.getUsername());
 					product2.setCreationDate(new Timestamp(ai.getDate().getTime()));product2.setModificationDate(new Timestamp(ai.getDate().getTime()));
 					iproducts.add(product2);

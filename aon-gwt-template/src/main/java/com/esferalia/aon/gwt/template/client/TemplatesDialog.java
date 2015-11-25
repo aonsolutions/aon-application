@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.template.client;
 
+import java.util.LinkedList;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
@@ -636,6 +637,27 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		SingleUploader upload = newUploader(null, url, 1);
 		flex_table.setWidget(1, 0, new Label("Archivo"));
 		flex_table.setWidget(1, 1, upload);
+		
+		item.getProductRoles(new AsyncCallback<LinkedList<String>>() {
+			
+			@Override
+			public void onSuccess(LinkedList<String> result) {
+				ListBox lb2 = new ListBox();
+				lb2.addItem("Compra-Venta", "0");
+				for (String role : result) {
+					if(role.equals("Compra"))
+						lb2.addItem("Compra" , "1");
+					if(role.equals("Venta"))
+						lb2.addItem("Venta" , "2");
+				}
+				flex_table.setWidget(2, 0, new Label("Tipo"));
+				flex_table.setWidget(2, 1, lb2);				
+				flexTableCss();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
 		
 		flexTableCss();
 	}

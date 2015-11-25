@@ -29,6 +29,7 @@ public class Product implements Serializable{
 	Date creationDate;
 	String modificationUser;
 	Date modificationDate;
+	Byte kind;
 	
 	public Integer getId() {
 		return id;
@@ -194,6 +195,12 @@ public class Product implements Serializable{
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+	public Byte getKind() {
+		return kind;
+	}
+	public void setKind(Byte kind) {
+		this.kind = kind;
 	}
 	
 	

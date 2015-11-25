@@ -266,6 +266,10 @@ public class Templates extends Composite implements EntryPoint {
 						ti = t;
 					}
 				}
+				
+				ListBox lb2 = (ListBox) flex_table.getWidget(2, 1);
+				final String value = lb2.getSelectedValue();
+				
 				tiAux = ti;
 				item.excelRowNumber(new AsyncCallback<Integer>() {
 					TemplateInfo ti = tiAux;
@@ -284,7 +288,7 @@ public class Templates extends Composite implements EntryPoint {
 							@Override
 							public void onSuccess(Integer result) {
 								if(result != null && result !=-1){
-									item.insertProduct(new AsyncCallback<Error>() {
+									item.insertProduct(value, new AsyncCallback<Error>() {
 										@Override
 										public void onSuccess(Error result) {
 											pbd.completed();

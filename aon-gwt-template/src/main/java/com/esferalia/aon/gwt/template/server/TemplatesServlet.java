@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -72,6 +73,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
 
@@ -1438,7 +1440,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return s.equals("Nombre") || s.equals("C\u00f3digo") || s.equals("Precio Coste") || s.equals("Precio Venta Base");
 	}
 	
-	public Error insertProduct() {
+	public Error insertProduct(String kind) {
 		long startAll= System.currentTimeMillis();
 		String domain = AonUtil.getDomainName();
 		Error error = new Error();
@@ -1455,7 +1457,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				ai.setDate(new Date());
 				ai.setUserId(getUser().getId());
 				ai.setUsername(getUser().getLogin());
- 				error = DBProduct.insertProducts2(domain, getDomain().getId(), v, ti,ai, getUser().getLogin());
+ 				error = DBProduct.insertProducts2(domain, getDomain().getId(), v, ti,ai, getUser().getLogin(), kind);
 		
 	        //insertar STOCK en base de datos.!!
 		}
@@ -2257,5 +2259,17 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		d.setName(AonUtil.getDomainName());
 		d.setId(domainId);
 		return DBFee.getSellers(d, getUser().getLogin());
+	}
+	
+	public LinkedList<String> getProductRoles() {
+		User user = AON.getUser(getDomain().getName(), getDomain().getId(), getUser().getLogin());
+		LinkedList<String> list = new LinkedList<String>();
+		for (AonRole role : user.getUserRoles()) {
+			if(role.equals(AonRole.PURCHASE))
+				list.add("Compra");
+			if(role.equals(AonRole.SALE))
+				list.add("Venta");
+		}
+		return list;
 	}
 }

@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.template.client;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
@@ -46,7 +47,7 @@ public interface ITemplateAsync {
 			String warehouse2, String series, String comments,
 			Boolean istransfer, Integer number, AsyncCallback<Integer> callback);
 
-	void insertProduct(AsyncCallback<Error> callback);
+	void insertProduct(String value, AsyncCallback<Error> callback);
 
 	void executeExcel2(TemplateInfo ti, AsyncCallback<Integer> callback);
 
@@ -96,5 +97,7 @@ public interface ITemplateAsync {
 			AsyncCallback<Error> callback);
 
 	void getSellerList(Integer domainId, AsyncCallback<List<Seller>> callback);
+
+	void getProductRoles(AsyncCallback<LinkedList<String>> callback);
 
 }
