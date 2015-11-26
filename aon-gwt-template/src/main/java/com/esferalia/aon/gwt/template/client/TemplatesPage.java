@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.template.shared.Dialog;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.ActionCell.Delegate;
 import com.google.gwt.cell.client.Cell;
@@ -176,10 +177,8 @@ public class TemplatesPage extends Composite{
 	ListBox list_box = new ListBox();
 	TemplateList template_list;
 	TemplatesDialog popup;
-	Integer domainId;
 	
-	public TemplatesPage(TemplateList template_list, Integer domainId) {
-		this.domainId = domainId;
+	public TemplatesPage(TemplateList template_list) {
 		this.template_list = template_list;
 		
 		new_button = new Button();
@@ -535,7 +534,7 @@ public class TemplatesPage extends Composite{
 				}
 				ti2.setColumns(v);
 				ti =  ti2;
-				item.editTemplate(ti2, new AsyncCallback<TemplateInfo>() {
+				item.editTemplate(getDomain(), ti2, new AsyncCallback<TemplateInfo>() {
 					@Override
 					public void onSuccess(TemplateInfo result) { 
 						Integer index = dataGrid.getKeyboardSelectedRow();
@@ -569,7 +568,7 @@ public class TemplatesPage extends Composite{
 			@Override
 			protected void onAccept() {
 				hide();
-				item.deleteTemplate(ti, new AsyncCallback<Void>() {
+				item.deleteTemplate(getDomain(), ti, new AsyncCallback<Void>() {
 					TemplateInfo templateInfo = ti;
 					@Override
 					public void onSuccess(Void result) {
@@ -689,7 +688,7 @@ public class TemplatesPage extends Composite{
 					i++;
 				}
 				ti.setColumns(v);
-				item.newTemplate(ti, new AsyncCallback<TemplateInfo>() {
+				item.newTemplate(getDomain(), ti, new AsyncCallback<TemplateInfo>() {
 					@Override
 					public void onSuccess(TemplateInfo result) {
 						template_list.getList().add(result);
@@ -721,5 +720,10 @@ public class TemplatesPage extends Composite{
 		object= dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
 		delete(object);
 	}	
+	
+	
+	private Domain getDomain() {
+		return new Domain().setId(JsTemplates.getCurrentDomain()).setName(JsTemplates.getCurrentDomainName());
+	}
 }
 

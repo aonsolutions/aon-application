@@ -1,9 +1,11 @@
 package com.esferalia.aon.gwt.template.client.marketplace;
 
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.template.client.JsTemplates;
 import com.esferalia.aon.gwt.template.client.marketplace.tree.TreeNode;
 import com.esferalia.aon.gwt.template.client.marketplace.tree.TreeNodeTypes;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -37,18 +39,9 @@ public class Marketplace extends Composite {
 	@UiField
 	SimpleLayoutPanel content;
 	
-	Integer domainId;
 	String login;
 	
-	public Marketplace() {
-		splitLayoutPanel = new SplitLayoutPanel();
-		sidebar = new ScrollPanel();
-		tree = new Tree();
-		content = new SimpleLayoutPanel();
-	}
-	
-	public Marketplace(Integer domainId){
-		setDomainId(domainId);
+	public Marketplace(){
 		splitLayoutPanel = new SplitLayoutPanel();
 		sidebar = new ScrollPanel();
 		tree = new Tree();
@@ -59,8 +52,7 @@ public class Marketplace extends Composite {
 		load();
 	}
 	
-	public Marketplace(Integer domainId, String login){
-		setDomainId(domainId);
+	public Marketplace(String login){
 		splitLayoutPanel = new SplitLayoutPanel();
 		sidebar = new ScrollPanel();
 		tree = new Tree();
@@ -82,7 +74,7 @@ public class Marketplace extends Composite {
 		//TreeNodeTypes.ORDERS.getInstance().render(ebay, Ecommerce.EBAY);
 		//TreeNodeTypes.PRODUCTS.getInstance().render(ebay, getDomainId());
 		
-		TreeNodeTypes.PRODUCT_TEMPLATES.getInstance().render(tree, getDomainId());
+		TreeNodeTypes.PRODUCT_TEMPLATES.getInstance().render(tree, getDomain().getId());
 	}
 	
 	public void setContent(Widget widget) {
@@ -100,18 +92,15 @@ public class Marketplace extends Composite {
 		return impl;
 	}
 
-	public Integer getDomainId(){
-		return domainId;
-	}
-	
-	public void setDomainId(Integer domainId){
-		this.domainId = domainId;
-	}
-	
 	public String getLogin(){
 		return login;
 	}
 	public void setLogin(String login){
 		this.login = login;
 	}
+
+	private Domain getDomain() {
+		return new Domain().setId(JsTemplates.getCurrentDomain()).setName(JsTemplates.getCurrentDomainName());
+	}
+	
 }

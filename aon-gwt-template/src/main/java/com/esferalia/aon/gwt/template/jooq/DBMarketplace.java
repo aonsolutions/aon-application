@@ -35,9 +35,9 @@ import com.esferalia.aon.occam.api.model.security.User;
 
 public class DBMarketplace {
 
-	public static List<EcommerceProduct> getProductTemplatesList(String domainName, Integer domainId, User user){
-		LinkedList<Attach> attachList = AON.getAttachList(domainName, domainId, user.getLogin(),
-				filter -> filter.getDomainProperty().eq(domainId)
+	public static List<EcommerceProduct> getProductTemplatesList(Domain domain, User user){
+		LinkedList<Attach> attachList = AON.getAttachList(domain.getName(), domain.getId(), user.getLogin(),
+				filter -> filter.getDomainProperty().eq(domain.getId())
 				.and(filter.getTypeProperty().eq(((byte) RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.ordinal())))
 				, AttachType.REGISTRY);
 		List<EcommerceProduct> list = new ArrayList<EcommerceProduct>();
@@ -52,13 +52,13 @@ public class DBMarketplace {
 		return list;
 	}
 	
-	public static List<Order> getOrderList(String domainName, Integer domainId, String login){
+	public static List<Order> getOrderList(Domain domain, String login){
 		AONContext ctx = null;
 		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			Result<SalesRecord> result = ctx.getDslContext().select()
 										.from(SALES)
-										.where(SALES.DOMAIN.eq(domainId))
+										.where(SALES.DOMAIN.eq(domain.getId()))
 											.and(SALES.PURCHASE_REFERENCE.isNotNull())
 										.fetchInto(SALES);
 			
@@ -69,7 +69,7 @@ public class DBMarketplace {
 				order.setSerie(record.getSeries());
 				order.setNumber(record.getNumber());
 				order.setOrderId(record.getPurchaseReference());
-				String CustomerName = getCustomer(domainName, domainId, login, record.getCustomer());
+				String CustomerName = getCustomer(domain, login, record.getCustomer());
 				order.setCustomerName(CustomerName);
 				order.setDate(record.getIssueDate());
 				String dateStr = Utils.getDateStr(record.getIssueDate());
@@ -135,10 +135,10 @@ public class DBMarketplace {
 	}
 	
 	
-	public static String getCustomer(String domainName, Integer domainId, String login, Integer customerId){
+	public static String getCustomer(Domain domain, String login, Integer customerId){
 		AONContext ctx = null;
 		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			Record1<String> record = ctx.getDslContext().select(REGISTRY.NAME)
 			.from(REGISTRY)
 			.where(REGISTRY.ID.eq(customerId))

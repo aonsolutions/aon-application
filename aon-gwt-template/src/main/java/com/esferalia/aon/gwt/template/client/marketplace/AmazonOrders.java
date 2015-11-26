@@ -7,8 +7,10 @@ import java.util.Vector;
 
 import com.esferalia.aon.gwt.template.client.ITemplate;
 import com.esferalia.aon.gwt.template.client.ITemplateAsync;
+import com.esferalia.aon.gwt.template.client.JsTemplates;
 import com.esferalia.aon.gwt.template.client.ProgressBarDialog;
 import com.esferalia.aon.gwt.template.shared.marketplace.Order;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
@@ -62,14 +64,12 @@ public class AmazonOrders  extends ResizeComposite{
 	@UiField Button deliveryButton;
 	
 	List<Order> orderList;
-	Integer domainId;
 	String login;
 	ProgressBarDialog pbd;
 
 	
-	public AmazonOrders(List<Order> orderList, Integer domainId, String login) {
+	public AmazonOrders(List<Order> orderList, String login) {
 		setOrderList(orderList);
-		setDomainId(domainId);
 		setLogin(login);
 		
 		dataGrid = new DataGrid<Order>(Integer.MAX_VALUE, resources); 
@@ -90,7 +90,7 @@ public class AmazonOrders  extends ResizeComposite{
 	@UiHandler("deliveryButton")
 	void newButton(ClickEvent event){
 		String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_amazon_delivery/"
-	           	+ "?domain_id=" + domainId
+	           	+ "?domain_id=" + getDomain().getId()
 	           	+ "&username="+ getLogin();
 		Window.open( fileDownloadURL, "_blank",null);
 		
@@ -271,19 +271,15 @@ public class AmazonOrders  extends ResizeComposite{
 		this.orderList = orderList;
 	}
 	
-	public Integer getDomainId(){
-		return domainId;
-	}
-	
-	public void setDomainId(Integer domainId){
-		this.domainId = domainId;
-	}
-	
 	public String getLogin(){
 		return login;
 	}
 	
 	public void setLogin(String login){
 		this.login = login;
+	}
+	
+	private Domain getDomain() {
+		return new Domain().setId(JsTemplates.getCurrentDomain()).setName(JsTemplates.getCurrentDomainName());
 	}
 }

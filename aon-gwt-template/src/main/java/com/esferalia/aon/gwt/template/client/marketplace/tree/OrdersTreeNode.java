@@ -3,10 +3,12 @@ package com.esferalia.aon.gwt.template.client.marketplace.tree;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.template.client.JsTemplates;
 import com.esferalia.aon.gwt.template.client.marketplace.AmazonOrders;
 import com.esferalia.aon.gwt.template.client.marketplace.Marketplace;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.marketplace.Order;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasTreeItems;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -14,19 +16,17 @@ import com.google.gwt.user.client.ui.InlineLabel;
 public class OrdersTreeNode extends TreeNode<Ecommerce>{
 
 	Marketplace m;
-	Integer domainId;
 	Ecommerce ecommerce;
 	
 	@Override
 	public void select(Marketplace marketplace) {
-		setDomainId(marketplace.getDomainId());
 		m= marketplace;
 		//if(getEcommerce().equals(Ecommerce.AMAZON)){
-			marketplace.getImpl().getAmazonOrdersList(getDomainId(), m.getLogin(),new AsyncCallback<List<Order>>() {
+			marketplace.getImpl().getAmazonOrdersList(getDomain(), m.getLogin(),new AsyncCallback<List<Order>>() {
 			
 				@Override
 				public void onSuccess(List<Order> result) {
-					AmazonOrders ao = new AmazonOrders(result, getDomainId(), m.getLogin());
+					AmazonOrders ao = new AmazonOrders(result, m.getLogin());
 					m.setContent(ao);
 				}
 			
@@ -53,14 +53,6 @@ public class OrdersTreeNode extends TreeNode<Ecommerce>{
     	return this;
 	}
 
-	public Integer getDomainId() {
-		return domainId;
-	}
-
-	public void setDomainId(Integer domainId) {
-		this.domainId = domainId;
-	}
-
 	public Ecommerce getEcommerce(){
 		return ecommerce;
 	}
@@ -69,4 +61,7 @@ public class OrdersTreeNode extends TreeNode<Ecommerce>{
 		
 	}
 
+	private Domain getDomain() {
+		return new Domain().setId(JsTemplates.getCurrentDomain()).setName(JsTemplates.getCurrentDomainName());
+	}
 }

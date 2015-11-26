@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -22,67 +23,64 @@ public interface ITemplate extends RemoteService{
 
 	public void initAux();
 	
-	public TemplateList getTemplates();
+	public TemplateList getTemplates(Domain domain);
 	
-	public TemplateInfo newTemplate(TemplateInfo ti );
+	public TemplateInfo newTemplate(Domain domain, TemplateInfo ti );
 	
-	public TemplateInfo editTemplate(TemplateInfo ti);
+	public TemplateInfo editTemplate(Domain domain, TemplateInfo ti);
 	
-	public void deleteTemplate(TemplateInfo ti);
+	public void deleteTemplate(Domain domain, TemplateInfo ti);
 	
-
 	public Vector<TemplateInfo> searchTypeTemplate(String searchStr, Vector<TemplateInfo> templates);
 	
 	public Vector<TemplateInfo> searchNameTemplate(String searchStr, Vector<TemplateInfo> templates);
 	
-	public Vector<Warehouse> getWarehouses();
+	public Vector<Warehouse> getWarehouses(Domain domain);
 	
-	public Vector<Warehouse> getWarehouses(Integer domainId);
+	public Vector<Warehouse> getWarehousesToConsumption(Domain domain);
 	
-	public Vector<Warehouse> getWarehousesToConsumption(Integer domainId);
+	public List<Hotel> getHotelsToConsumption(Domain domain);
 	
-	public List<Hotel> getHotelsToConsumption(Integer domainId);
+	public Vector<Series> getSeries(Domain domain, String warehouse);
 	
-	public Vector<Series> getSeries(String warehouse);
+	public Vector<Series> getSeries(Domain domain);
 	
-	public Vector<Series> getSeries();
+	public Error insertStock(Domain domain);
 	
-	public Error insertStock();
-	
-	public Integer executeExcel(Integer inventory,TemplateInfo ti, String warehouse,String warehouse2, String series, String comments, Boolean istransfer,Integer number);
+	public Integer executeExcel(Domain domain, Integer inventory,TemplateInfo ti, String warehouse,String warehouse2, String series, String comments, Boolean istransfer,Integer number);
 
-	public Error insertProduct(String value);
+	public Error insertProduct(Domain domain, String value);
 	
-	public Integer executeExcel2(TemplateInfo ti);
+	public Integer executeExcel2(Domain domain, TemplateInfo ti);
 	
-	public Integer executeExcel3(TemplateInfo ti, Boolean ignoreInactiveClient);
+	public Integer executeExcel3(Domain domain, TemplateInfo ti, Boolean ignoreInactiveClient);
 	
-	public Error insertFee();
+	public Error insertFee(Domain domain);
 	
-	public Error insertTransferStock();
+	public Error insertTransferStock(Domain domain);
 
-	public Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces();
+	public Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Domain domain);
 	
-	public Vector<com.esferalia.aon.gwt.template.shared.Department> getDepartments(String workplace);
+	public Vector<com.esferalia.aon.gwt.template.shared.Department> getDepartments(Domain domain, String workplace);
 	
 	public Integer executeExcelProposal(TemplateInfo templateInfo);
 	
-	public Error insertProposal(Integer proposal, Integer workplace);
+	public Error insertProposal(Domain domain, Integer proposal, Integer workplace);
 	
-	public Vector<Warehouse> getWarehousesToConsumption(Integer domainId, Integer workplaceId);
+	public Vector<Warehouse> getWarehousesToConsumption(Domain domain, Integer workplaceId);
 
-	public List<ProductCategory> getProductCategories(Integer domainId);
+	public List<ProductCategory> getProductCategories(Domain domain);
 		
-	Error executeExcelEcommerce(Integer domainId, Ecommerce ecommerce,
+	Error executeExcelEcommerce(Domain domain, Ecommerce ecommerce,
 			Seller seller, String type,
 			ProductCategory pc);
 	
-	public String generateConsumptionExcel(Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
-			Integer domainId, Integer size, Integer fileId);
+	public String generateConsumptionExcel(Domain domain,Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
+			Integer size, Integer fileId);
 	
 	public Integer excelRowNumber();
 	
-	public List<Seller> getSellerList(Integer domainId);
+	public List<Seller> getSellerList(Domain domain);
 	
-	public LinkedList<String> getProductRoles();
+	public LinkedList<String> getProductRoles(Domain domain);
 }

@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.ContextMenu;
 import com.esferalia.aon.gwt.template.client.ITemplate;
 import com.esferalia.aon.gwt.template.client.ITemplateAsync;
+import com.esferalia.aon.gwt.template.client.JsTemplates;
 import com.esferalia.aon.gwt.template.client.ProgressBarDialog;
 import com.esferalia.aon.gwt.template.client.TemplatesDialog;
 import com.esferalia.aon.gwt.template.client.Utils;
@@ -19,6 +20,7 @@ import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.ProductCategory;
 import com.esferalia.aon.gwt.template.shared.Seller;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.ActionCell.Delegate;
 import com.google.gwt.cell.client.Cell;
@@ -163,14 +165,12 @@ public class ProductTemplates  extends ResizeComposite{
 	@UiField Button typeSearchButton;
 	
 	List<EcommerceProduct> templateList;
-	Integer domainId;
 	String login;
 	ProgressBarDialog pbd;
 
 	
-	public ProductTemplates(List<EcommerceProduct> templateList, Integer domainId, String login) {
+	public ProductTemplates(List<EcommerceProduct> templateList, String login) {
 		setTemplateList(templateList);
-		setDomainId(domainId);
 		setLogin(login);
 		
 		dataGrid = new DataGrid<EcommerceProduct>(Integer.MAX_VALUE, resources); 
@@ -245,7 +245,7 @@ public class ProductTemplates  extends ResizeComposite{
 		ecommerce();
 	}
 	public void ecommerce(){
-		item.getSellerList(getDomainId(), new AsyncCallback<List<Seller>>() {
+		item.getSellerList(getDomain(), new AsyncCallback<List<Seller>>() {
 			
 			@Override
 			public void onSuccess(List<Seller> result) {
@@ -257,7 +257,7 @@ public class ProductTemplates  extends ResizeComposite{
 		});
 	}
 	public void ecommerce(final EcommerceProduct object){
-		item.getSellerList(getDomainId(), new AsyncCallback<List<Seller>>() {
+		item.getSellerList(getDomain(), new AsyncCallback<List<Seller>>() {
 			
 			@Override
 			public void onSuccess(List<Seller> result) {
@@ -270,7 +270,7 @@ public class ProductTemplates  extends ResizeComposite{
 	}
 	
 	private void importEcommerce(final List<Seller> sellerList,final EcommerceProduct object) {
-		item.getProductCategories(getDomainId(), new AsyncCallback<List<ProductCategory>>() {
+		item.getProductCategories(getDomain(), new AsyncCallback<List<ProductCategory>>() {
 			
 			@Override
 			public void onSuccess(List<ProductCategory> result) {
@@ -317,7 +317,7 @@ public class ProductTemplates  extends ResizeComposite{
 						pc.setName(categoryListBox.getSelectedItemText());
 						pc.setId(Integer.parseInt(categoryListBox.getSelectedValue()));
 						
-						item.executeExcelEcommerce(domainId, ecommerce, seller, type, pc, new AsyncCallback<Error>() {
+						item.executeExcelEcommerce(getDomain(), ecommerce, seller, type, pc, new AsyncCallback<Error>() {
 							@Override
 							public void onSuccess(Error result) {
 								if(result.getError()){
@@ -386,7 +386,7 @@ public class ProductTemplates  extends ResizeComposite{
 				hide();
 				String description = object.getTemplate().getEcommerce() + "-"
 						+ object.getTemplate().getType();
-				impl.deleteTemplate(description, new AsyncCallback<Void>() {
+				impl.deleteTemplate(getDomain(), description, new AsyncCallback<Void>() {
 			
 					@Override
 					public void onSuccess(Void result) {
@@ -457,7 +457,7 @@ public class ProductTemplates  extends ResizeComposite{
 	//------------------------------ DataGrid Utils
 
 	private void refreshDataGrid(){
-		impl.getProductTemplatesList(getDomainId(), new AsyncCallback<List<EcommerceProduct>>() {
+		impl.getProductTemplatesList(getDomain(), new AsyncCallback<List<EcommerceProduct>>() {
 			
 			@Override
 			public void onSuccess(List<EcommerceProduct> result) {
@@ -729,14 +729,6 @@ public class ProductTemplates  extends ResizeComposite{
 	public void setTemplateList(List<EcommerceProduct> templateList){
 		this.templateList = templateList;
 	}
-	
-	public Integer getDomainId(){
-		return domainId;
-	}
-	
-	public void setDomainId(Integer domainId){
-		this.domainId = domainId;
-	}
 
 	public String getLogin() {
 		return login;
@@ -744,6 +736,11 @@ public class ProductTemplates  extends ResizeComposite{
 
 	public void setLogin(String login) {
 		this.login = login;
+	}
+	
+	
+	private Domain getDomain() {
+		return new Domain().setId(JsTemplates.getCurrentDomain()).setName(JsTemplates.getCurrentDomainName());
 	}
 	
 }

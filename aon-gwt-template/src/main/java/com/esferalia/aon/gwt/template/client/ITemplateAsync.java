@@ -15,20 +15,21 @@ import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.esferalia.aon.gwt.template.shared.WorkPlace;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
 public interface ITemplateAsync {
 
-	void newTemplate(TemplateInfo ti, AsyncCallback<TemplateInfo> callback);
+	void newTemplate(Domain domain, TemplateInfo ti, AsyncCallback<TemplateInfo> callback);
 
-	void getTemplates(AsyncCallback<TemplateList> callback);
+	void getTemplates(Domain domain, AsyncCallback<TemplateList> callback);
 
 	void initAux(AsyncCallback<Void> callback);
 
-	void editTemplate(TemplateInfo ti, AsyncCallback<TemplateInfo> callback);
+	void editTemplate(Domain domain, TemplateInfo ti, AsyncCallback<TemplateInfo> callback);
 
-	void deleteTemplate(TemplateInfo ti, AsyncCallback<Void> callback);
+	void deleteTemplate(Domain domain, TemplateInfo ti, AsyncCallback<Void> callback);
 
 
 	void searchTypeTemplate(String searchStr, Vector<TemplateInfo> templates,
@@ -37,67 +38,55 @@ public interface ITemplateAsync {
 	void searchNameTemplate(String searchStr, Vector<TemplateInfo> templates,
 			AsyncCallback<Vector<TemplateInfo>> callback);
 
-	void insertStock(AsyncCallback<Error> callback);
+	void insertStock(Domain domain, AsyncCallback<Error> callback);
 
-	void getWarehouses(AsyncCallback<Vector<Warehouse>> callback);
+	void getWarehouses(Domain domain, AsyncCallback<Vector<Warehouse>> callback);
 
-	void getSeries(String warehouse, AsyncCallback<Vector<Series>> callback);
+	void getSeries(Domain domain, String warehouse, AsyncCallback<Vector<Series>> callback);
 
-	void executeExcel(Integer inventory, TemplateInfo ti, String warehouse,
-			String warehouse2, String series, String comments,
-			Boolean istransfer, Integer number, AsyncCallback<Integer> callback);
+	void executeExcel(Domain domain, Integer inventory, TemplateInfo ti, String warehouse, String warehouse2,
+			String series, String comments, Boolean istransfer, Integer number, AsyncCallback<Integer> callback);
 
-	void insertProduct(String value, AsyncCallback<Error> callback);
+	void insertProduct(Domain domain, String value, AsyncCallback<Error> callback);
 
-	void executeExcel2(TemplateInfo ti, AsyncCallback<Integer> callback);
+	void executeExcel2(Domain domain, TemplateInfo ti, AsyncCallback<Integer> callback);
 
-	void executeExcel3(TemplateInfo ti, Boolean ignoreInactiveClient,
-			AsyncCallback<Integer> callback);
+	void executeExcel3(Domain domain, TemplateInfo ti, Boolean ignoreInactiveClient, AsyncCallback<Integer> callback);
 
-	void insertFee(AsyncCallback<Error> callback);
+	void insertFee(Domain domain, AsyncCallback<Error> callback);
 
-	void insertTransferStock(AsyncCallback<Error> callback);
+	void insertTransferStock(Domain domain, AsyncCallback<Error> callback);
 
-	void getWorkplaces(AsyncCallback<Vector<WorkPlace>> callback);
+	void getWorkplaces(Domain domain, AsyncCallback<Vector<WorkPlace>> callback);
 
-	void getDepartments(String workplace,
-			AsyncCallback<Vector<Department>> callback);
+	void getDepartments(Domain domain, String workplace, AsyncCallback<Vector<Department>> callback);
 
 	void executeExcelProposal(TemplateInfo templateInfo,
 			AsyncCallback<Integer> callback);
 
-	void insertProposal(Integer proposal, Integer workplace,
-			AsyncCallback<Error> callback);
+	void insertProposal(Domain domain, Integer proposal, Integer workplace, AsyncCallback<Error> callback);
 
-	void getSeries(AsyncCallback<Vector<Series>> callback);
+	void getSeries(Domain domain, AsyncCallback<Vector<Series>> callback);
 
-	void getWarehouses(Integer domainId,
+	void getWarehousesToConsumption(Domain domain, AsyncCallback<Vector<Warehouse>> callback);
+
+	void getHotelsToConsumption(Domain domain, AsyncCallback<List<Hotel>> callback);
+
+	void getWarehousesToConsumption(Domain domain, Integer workplaceId,
 			AsyncCallback<Vector<Warehouse>> callback);
 
-	void getWarehousesToConsumption(Integer domainId,
-			AsyncCallback<Vector<Warehouse>> callback);
+	void getProductCategories(Domain domain, AsyncCallback<List<ProductCategory>> callback);
 
-	void getHotelsToConsumption(Integer domainId,
-			AsyncCallback<List<Hotel>> callback);
-
-	void getWarehousesToConsumption(Integer domainId, Integer workplaceId,
-			AsyncCallback<Vector<Warehouse>> callback);
-
-	void getProductCategories(Integer domainId,
-			AsyncCallback<List<ProductCategory>> callback);
-
-	void generateConsumptionExcel(Vector<Warehouse> warehouses, String type,
-			Boolean onlyNegative, Boolean detail, Integer domainId,
-			Integer size, Integer fileId, AsyncCallback<String> callback);
+	void generateConsumptionExcel(Domain domain, Vector<Warehouse> warehouses, String type, Boolean onlyNegative,
+			Boolean detail, Integer size, Integer fileId, AsyncCallback<String> callback);
 
 	void excelRowNumber(AsyncCallback<Integer> callback);
 
-	void executeExcelEcommerce(Integer domainId, Ecommerce ecommerce,
-			Seller seller, String type, ProductCategory pc,
+	void executeExcelEcommerce(Domain domain, Ecommerce ecommerce, Seller seller, String type, ProductCategory pc,
 			AsyncCallback<Error> callback);
 
-	void getSellerList(Integer domainId, AsyncCallback<List<Seller>> callback);
+	void getSellerList(Domain domain, AsyncCallback<List<Seller>> callback);
 
-	void getProductRoles(AsyncCallback<LinkedList<String>> callback);
+	void getProductRoles(Domain domain, AsyncCallback<LinkedList<String>> callback);
 
 }

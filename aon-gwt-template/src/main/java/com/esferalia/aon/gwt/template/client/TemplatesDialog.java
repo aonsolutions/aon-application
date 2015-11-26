@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.esferalia.aon.gwt.template.shared.WorkPlace;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -214,7 +215,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 				ListBox lb = (ListBox) flex_table.getWidget(0, 1);
 				switch (lb.getSelectedItemText()) {
 				case "Producto": importProduct(dialog.getUrl(),dialog.getTemplateList());break;
-				case "Stock": item.getWarehouses(new AsyncCallback<Vector<Warehouse>>() {
+				case "Stock": item.getWarehouses(getDomain(), new AsyncCallback<Vector<Warehouse>>() {
 					
 					@Override
 					public void onSuccess(Vector<Warehouse> result) {
@@ -470,7 +471,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(0, 0, new Label("Plantilla"));
 		flex_table.setWidget(0, 1, lb0);
 		
-		item.getWorkplaces(new AsyncCallback<Vector<WorkPlace>>() {
+		item.getWorkplaces(getDomain(), new AsyncCallback<Vector<WorkPlace>>() {
 			
 			@Override
 			public void onSuccess(Vector<WorkPlace> result) {
@@ -485,7 +486,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					ListBox lb = lbaux;
 					@Override
 					public void onChange(ChangeEvent event) {
-						item.getDepartments(lb.getItemText(lb.getSelectedIndex()), new AsyncCallback<Vector<Department>>() {
+						item.getDepartments(getDomain(), lb.getItemText(lb.getSelectedIndex()), new AsyncCallback<Vector<Department>>() {
 							
 							@Override
 							public void onSuccess(Vector<Department> result) {
@@ -638,7 +639,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(1, 0, new Label("Archivo"));
 		flex_table.setWidget(1, 1, upload);
 		
-		item.getProductRoles(new AsyncCallback<LinkedList<String>>() {
+		item.getProductRoles(getDomain(), new AsyncCallback<LinkedList<String>>() {
 			
 			@Override
 			public void onSuccess(LinkedList<String> result) {
@@ -756,7 +757,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			public void onChange(ChangeEvent event) {
 				ListBox lb = (ListBox)flex_table.getWidget(1, 1);
 				if(!lb.getSelectedItemText().equals("-")){
-				item.getSeries(lb.getSelectedItemText(), new AsyncCallback<Vector<Series>>() {
+				item.getSeries(getDomain(), lb.getSelectedItemText(), new AsyncCallback<Vector<Series>>() {
 					
 					@Override
 					public void onSuccess(Vector<Series> result) {
@@ -768,7 +769,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 							
 							series = new Vector<Series>();
 							series.addAll(result);
-							item.getSeries(w2, new AsyncCallback<Vector<Series>>() {
+							item.getSeries(getDomain(), w2, new AsyncCallback<Vector<Series>>() {
 								Vector<Series> series2 = series;
 								@Override
 								public void onSuccess(Vector<Series> result) {
@@ -824,7 +825,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			@Override
 			public void onChange(ChangeEvent event) {
 				ListBox lb = (ListBox)flex_table.getWidget(2, 1);
-				item.getSeries(lb.getSelectedItemText(), new AsyncCallback<Vector<Series>>() {
+				item.getSeries(getDomain(), lb.getSelectedItemText(), new AsyncCallback<Vector<Series>>() {
 					
 					@Override
 					public void onSuccess(Vector<Series> result) {
@@ -835,7 +836,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 						if(!w2.equals("-")){
 							series = new Vector<Series>();
 							series.addAll(result);
-							item.getSeries(w2, new AsyncCallback<Vector<Series>>() {
+							item.getSeries(getDomain(), w2, new AsyncCallback<Vector<Series>>() {
 								Vector<Series> series2 = series;
 								@Override
 								public void onSuccess(Vector<Series> result) {
@@ -1632,5 +1633,9 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.getCellFormatter().setStyleName(index, 2,
 				"aon-panelGrid-aux");	
 		column++;
+	}
+	
+	private Domain getDomain() {
+		return new Domain().setId(JsTemplates.getCurrentDomain()).setName(JsTemplates.getCurrentDomainName());
 	}
 }

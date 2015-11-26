@@ -3,9 +3,11 @@ package com.esferalia.aon.gwt.template.client.marketplace.tree;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.template.client.JsTemplates;
 import com.esferalia.aon.gwt.template.client.marketplace.Marketplace;
 import com.esferalia.aon.gwt.template.client.marketplace.ProductTemplates;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasTreeItems;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -13,18 +15,17 @@ import com.google.gwt.user.client.ui.InlineLabel;
 public class ProductTemplatesTreeNode extends TreeNode<Integer>{
 	
 	Marketplace m;
-	Integer domainId;
 	
 	@Override
 	public void select(Marketplace marketplace) {
 		m= marketplace;
-		marketplace.getImpl().getProductTemplatesList(getDomainId(), new AsyncCallback<List<EcommerceProduct>>() {
+		marketplace.getImpl().getProductTemplatesList(getDomain(),  new AsyncCallback<List<EcommerceProduct>>() {
 			@Override
 			public void onFailure(Throwable caught) {}
 
 			@Override
 			public void onSuccess(List<EcommerceProduct> result) {
-				ProductTemplates pt = new ProductTemplates(result, getDomainId(),m.getLogin());
+				ProductTemplates pt = new ProductTemplates(result,m.getLogin());
 				m.setContent(pt);
 			}
 		});
@@ -42,20 +43,12 @@ public class ProductTemplatesTreeNode extends TreeNode<Integer>{
     	label.addStyleName("aon-icon-excel");
     	label.addStyleName(AON.AON_CSS.aonTreeIconNode() );
     	setTreeObject(domainId);
-    	setDomainId(domainId);
     	setWidget(label);
     	parent.addItem(this);
     	return this;
 	}
 
-	public Integer getDomainId() {
-		return domainId;
+	private Domain getDomain() {
+		return new Domain().setId(JsTemplates.getCurrentDomain()).setName(JsTemplates.getCurrentDomainName());
 	}
-
-	public void setDomainId(Integer domainId) {
-		this.domainId = domainId;
-	}
-	
-	
-
 }

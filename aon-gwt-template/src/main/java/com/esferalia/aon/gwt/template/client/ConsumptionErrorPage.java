@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.template.client;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 
@@ -10,8 +11,8 @@ public class ConsumptionErrorPage extends ConsumptionPage{
 
 	final ITemplateAsync item = GWT.create(ITemplate.class);
 
-	public ConsumptionErrorPage(Integer domainId, TemplateList templateList) {
-		super(domainId, templateList);
+	public ConsumptionErrorPage(TemplateList templateList) {
+		super(templateList);
 		titleLabel.setText(AON.MSG.aggregateCountErrorTemplates());
 	}
 
@@ -30,7 +31,7 @@ public class ConsumptionErrorPage extends ConsumptionPage{
 
 		String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_aggregate_consumption/"
             	+ "?id=" + Integer.toString(templateInfo.getId())
-            	+ "&domain_id=" + domainId
+            	+ "&domain_id=" + getDomain().getId()
             	+ "&username="+ templateList.getLogin();
 		
 		for (Integer index= 0; index < selectedBox.getItemCount(); index++) {
@@ -44,5 +45,9 @@ public class ConsumptionErrorPage extends ConsumptionPage{
 							+ "&only_negative=1";	
 						
 		Window.open( fileDownloadURL, "_blank",null);
+	}
+	
+	private Domain getDomain() {
+		return new Domain().setId(JsTemplates.getCurrentDomain()).setName(JsTemplates.getCurrentDomainName());
 	}
 }

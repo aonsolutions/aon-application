@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.template.shared.Hotel;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -62,12 +63,11 @@ public class ConsumptionPage extends Composite{
 	Map<String, Boolean> map;
 	Map<String, String> hwMap;
 	
-	Integer domainId;
 	List<Hotel> hotels;
 	TemplateList templateList;
 	Boolean detail = false;
 	
-	public ConsumptionPage(Integer domainId, TemplateList templateList) {
+	public ConsumptionPage(TemplateList templateList) {
 		titleLabel = new Label();
 
 		hotelBoxPanel = new VerticalPanel();hotelBoxPanel.setSpacing(4);
@@ -81,7 +81,6 @@ public class ConsumptionPage extends Composite{
 		cleanButton = new Button();
 		
 		this.templateList = templateList;
-		this.domainId = domainId;
 		
 		Widget ui = pageBinder.createAndBindUi(this);
 		RootLayoutPanel.get("rootPanel").add(ui);
@@ -109,7 +108,7 @@ public class ConsumptionPage extends Composite{
 		selectedBox.setVisibleItemCount(10);
 		selectedBoxPanel.add(selectedBox);
 		excelButton.setEnabled(true);
-		item.getHotelsToConsumption(domainId, new AsyncCallback<List<Hotel>>() {
+		item.getHotelsToConsumption(getDomain(), new AsyncCallback<List<Hotel>>() {
 			
 			@Override
 			public void onSuccess(List<Hotel> result) {
@@ -163,7 +162,7 @@ public class ConsumptionPage extends Composite{
 					Hotel hotel = hotels.get(index);
 					if(hotel.getWarehouses() == null || hotel.getWarehouses().isEmpty()){
 						indexAux = index;
-						item.getWarehousesToConsumption(domainId, hotel.getId(), new AsyncCallback<Vector<Warehouse>>() {
+						item.getWarehousesToConsumption(getDomain(), hotel.getId(), new AsyncCallback<Vector<Warehouse>>() {
 							Integer index = indexAux;
 							@Override
 							public void onSuccess(Vector<Warehouse> result) {
@@ -295,7 +294,7 @@ public class ConsumptionPage extends Composite{
 		pbd.addStyleName("gwt-PopupPanel-template");
 		pbd.setGlassEnabled(true);
 		pbd.show();
-		item.generateConsumptionExcel(warehouses, type, false, detail, domainId,  selectedBox.getItemCount(), templateInfo.getId(),new AsyncCallback<String>() {
+		item.generateConsumptionExcel(getDomain(), warehouses, type, false, detail,  selectedBox.getItemCount(), templateInfo.getId(),new AsyncCallback<String>() {
 	
 			@Override
 			public void onSuccess(String result) {
@@ -331,6 +330,10 @@ public class ConsumptionPage extends Composite{
 	private void deactiveDownloadButtons() {
 		excelButton.setEnabled(false);
 		pdfButton.setEnabled(false);
+	}
+	
+	private Domain getDomain() {
+		return new Domain().setId(JsTemplates.getCurrentDomain()).setName(JsTemplates.getCurrentDomainName());
 	}
 
 }

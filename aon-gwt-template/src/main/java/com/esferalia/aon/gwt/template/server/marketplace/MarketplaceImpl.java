@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.template.client.marketplace.IMarketplace;
 import com.esferalia.aon.gwt.template.jooq.DBMarketplace;
@@ -29,20 +28,12 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 				.setDomain(getUserDomainID());
 	}
 
-	public Domain getDomain() {
-		return new Domain()
-				.setId(getDomainID())
-				.setName( AonUtil.getDomainName());
-	}
-
-	public List<EcommerceProduct> getProductTemplatesList(Integer domainId){
-		String domainName = AonUtil.getDomainName();
-		return DBMarketplace.getProductTemplatesList(domainName, domainId, getUser());
+	public List<EcommerceProduct> getProductTemplatesList(Domain domain){
+		return DBMarketplace.getProductTemplatesList(domain, getUser());
 	}
 	
-	public List<Order> getAmazonOrdersList(Integer domainId, String login){
-		String domainName = AonUtil.getDomainName();
-		return DBMarketplace.getOrderList(domainName, domainId, login);
+	public List<Order> getAmazonOrdersList(Domain domain, String login){
+		return DBMarketplace.getOrderList(domain, login);
 	}
 	
 	public Vector<EcommerceProduct> searchNameTemplate(String searchStr, Vector<EcommerceProduct> templates){
@@ -65,8 +56,8 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 		return vector;
 	}
 	
-	public void deleteTemplate(String description){
-		DBMarketplace.deleteTemplate(getDomain(), getUser(), description);
+	public void deleteTemplate(Domain domain, String description){
+		DBMarketplace.deleteTemplate(domain, getUser(), description);
 	}
 	
 	/**

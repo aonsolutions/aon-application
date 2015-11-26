@@ -6,15 +6,16 @@ import java.util.Vector;
 
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
 import com.esferalia.aon.gwt.template.shared.marketplace.Order;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("gwt_marketplace")
 public interface IMarketplace extends RemoteService{
 
-	List<EcommerceProduct> getProductTemplatesList(Integer domainId);
+	List<EcommerceProduct> getProductTemplatesList(Domain domain);
 	
-	List<Order> getAmazonOrdersList(Integer domainId, String login);
+	List<Order> getAmazonOrdersList(Domain domain, String login);
 	
 	public Vector<EcommerceProduct> searchNameTemplate(String searchStr, Vector<EcommerceProduct> templates);
 
@@ -22,5 +23,5 @@ public interface IMarketplace extends RemoteService{
 
 	public String getDateStr(Date date);
 
-	public void deleteTemplate(String description);
+	public void deleteTemplate(Domain domain, String description);
 }
