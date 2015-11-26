@@ -809,7 +809,9 @@ public class ContractController extends BasicController {
 				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 				for(ITransferObject to: cccList){
 					EnterpriseCCC ccc = (EnterpriseCCC) to;
-					String name = ccc.getType().getName(locale) +" ("+ ccc.getFullCcc()+")";
+					String name = ccc.getType().getName(locale) +" (";
+					name += ccc.getActivity().getType().getCode();
+					name += ccc.getCcc() + ")";
 					SelectItem item = new SelectItem(ccc, name);
 					getEnterpriseCCCs().add(item);
 				}

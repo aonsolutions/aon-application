@@ -53,7 +53,9 @@ public class EnterpriseCertificate extends AbstractEnterpriseCertificate {
 				
 				// ENTERPRISE
 				setPdfFieldValue(EnterpriseCertificateField.ENTERPRISE_NAME.getValue(),contract.getWorkPlace().getEnterprise().getRegistry().getFullName());
-				setPdfFieldValue(EnterpriseCertificateField.ENTERPRISE_REGIME_CODE.getValue(),contract.getEnterpriseCCC().getActivity().getQuoteRegimeCode());
+				if(contract.getEnterpriseCCC()!=null && contract.getEnterpriseCCC().getActivity().getType().getCode()!=null){
+					setPdfFieldValue(EnterpriseCertificateField.ENTERPRISE_REGIME_CODE.getValue(),contract.getEnterpriseCCC().getActivity().getType().getCode());
+				}
 				setPdfFieldValue(EnterpriseCertificateField.ENTERPRISE_REGIME_NAME.getValue(),contract.getEnterpriseCCC().getActivity().getType().getName(getLocale()));
 				setPdfFieldValue(EnterpriseCertificateField.ENTERPRISE_CCC.getValue(),contract.getEnterpriseCCC().getCcc());
 				setPdfFieldValue(EnterpriseCertificateField.ENTERPRISE_SOCIAL_ADDRESS.getValue(),contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getFullAddress());

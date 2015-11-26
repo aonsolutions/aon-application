@@ -83,7 +83,7 @@ public class CRAWriter {
 			endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			for (EnterpriseCCC ccc: cccs) {
-				DDE dde = createDDERecord(year, month, ccc.getFullCcc());
+				DDE dde = createDDERecord(year, month, ccc.getActivity().getType().getCode()+ccc.getCcc());
 				Result<Record3<Byte, Double, Integer>> record = getSalaryPaymentSelect(connection, ccc, startCal.getTime(), endCal.getTime() );
 				TRB trb = null;
 				for (Record3<Byte, Double, Integer> step : record) {
@@ -105,7 +105,7 @@ public class CRAWriter {
 				if(dde.getTrbList()!=null && !dde.getTrbList().isEmpty()){
 					eti.getDdeList().add(dde);
 				} else {
-					AonUtil.addErrorMessage("No hay datos para la cuenta de cotización: " + ccc.getFullCcc());
+					AonUtil.addErrorMessage("No hay datos para la cuenta de cotización: " + ccc.getActivity().getType().getCode()+ccc.getCcc());
 				}
 			}
 			return eti;

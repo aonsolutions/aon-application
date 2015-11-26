@@ -99,10 +99,12 @@ public class InternshipModel extends AbstractInternshipModel {
 			 * Contract ccc fields
 			 */
 			if(contract.getEnterpriseCCC()!=null){
-				setPdfFieldValue(PdfFieldPractice.CCC_REG1.getValue(),contract.getEnterpriseCCC().getQuoteRegimeCode().substring(0, 1));
-				setPdfFieldValue(PdfFieldPractice.CCC_REG2.getValue(),contract.getEnterpriseCCC().getQuoteRegimeCode().substring(1, 2));
-				setPdfFieldValue(PdfFieldPractice.CCC_REG3.getValue(),contract.getEnterpriseCCC().getQuoteRegimeCode().substring(2, 3));
-				setPdfFieldValue(PdfFieldPractice.CCC_REG4.getValue(),contract.getEnterpriseCCC().getQuoteRegimeCode().substring(3, 4));
+				if(contract.getEnterpriseCCC().getActivity().getType().getCode()!=null){
+					setPdfFieldValue(PdfFieldPractice.CCC_REG1.getValue(),contract.getEnterpriseCCC().getActivity().getType().getCode().substring(0, 1));
+					setPdfFieldValue(PdfFieldPractice.CCC_REG2.getValue(),contract.getEnterpriseCCC().getActivity().getType().getCode().substring(1, 2));
+					setPdfFieldValue(PdfFieldPractice.CCC_REG3.getValue(),contract.getEnterpriseCCC().getActivity().getType().getCode().substring(2, 3));
+					setPdfFieldValue(PdfFieldPractice.CCC_REG4.getValue(),contract.getEnterpriseCCC().getActivity().getType().getCode().substring(3, 4));
+				}
 				if(contract.getEnterpriseCCC().getCcc().length()==11){
 					setPdfFieldValue(PdfFieldPractice.CCC_PROV1.getValue(),contract.getEnterpriseCCC().getCcc().substring(0, 1));
 					setPdfFieldValue(PdfFieldPractice.CCC_PROV2.getValue(),contract.getEnterpriseCCC().getCcc().substring(1, 2));

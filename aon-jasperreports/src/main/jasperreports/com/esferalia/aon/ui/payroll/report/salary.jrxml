@@ -156,7 +156,8 @@
 				<textField isBlankWhenNull="true">
 					<reportElement uuid="0700ea05-100f-4e07-bb60-b63aab92c3ea" style="label" x="49" y="54" width="227" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[$F{salary}.getContract().getEnterpriseCCC().getFullCcc()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getContract().getEnterpriseCCC().getActivity().getType().getCode()+
+$F{salary}.getContract().getEnterpriseCCC().getCcc()]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>

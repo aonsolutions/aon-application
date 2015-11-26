@@ -258,7 +258,7 @@ public class AFIWriter implements Serializable {
 		I=IDC
 		*/
 		fab.setIndicadorImpresion(WHITESPACE_1);
-		if(contract.getEnterpriseCCC().getActivity().getQuoteRegimeCode().equals("0911")
+		if(contract.getEnterpriseCCC().getActivity().getType().getCode().equals("0911")
 				|| contract.getEnterpriseCCC().getActivity().getType()==SSRegimeType.SEA_WORKERS){
 			fab.setCategoriaProfesional(null);	// TODO
 		}
@@ -322,7 +322,7 @@ public class AFIWriter implements Serializable {
 			List<ITransferObject> cccList = bean.getList(criteria);
 			if ( !cccList.isEmpty() ) {
 				EnterpriseCCC ccc = (EnterpriseCCC) cccList.get(0);	
-				return ccc.getFullCcc();	
+				return ccc.getActivity().getType().getCode()+ccc.getCcc();	
 			}
 		} catch (ManagerBeanException e) {
 			// NADA

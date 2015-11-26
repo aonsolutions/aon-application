@@ -69,7 +69,8 @@
 				<aon:div rendered="#{readOnly}" >
 					<aon:outputText value="#{contract.to.enterpriseCCC.type}" />
 					<aon:outputText value=" - " />
-					<aon:outputText  value="#{contract.to.enterpriseCCC.fullCcc}"/>
+					<aon:outputText  value="#{contract.to.enterpriseCCC.activity.type.code}"/>
+					<aon:outputText  value="#{contract.to.enterpriseCCC.ccc}"/>
 				</aon:div>
 			</aon:div>
 		</aon:if>

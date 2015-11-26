@@ -233,7 +233,7 @@ public class CertificadosWriter implements Serializable {
 		EMPRESATYPE o = new EMPRESATYPE();
 		if(ccc!=null){
 			o.setCIFNIF(ccc.getActivity().getEnterprise().getRegistry().getDocument());
-			o.setCCC(ccc.getActivity().getQuoteRegimeCode() + ccc.getCcc());
+			o.setCCC(ccc.getActivity().getType().getCode()+ccc.getCcc());
 		}
 		return o;
 	}

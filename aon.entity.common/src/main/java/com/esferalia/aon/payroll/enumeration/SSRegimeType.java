@@ -7,56 +7,56 @@ import com.code.aon.common.enumeration.IResourceable;
 
 public enum SSRegimeType implements IResourceable{
 	
-	GENERAL
+	GENERAL("0111")
 	{
 		@Override
 		public <E> E accept(SSRegimeTypeVisitor<E> visitor) {
 			return visitor.visitGeneralRegime(this);
 		}
 	},
-	AGRICULTURAL
+	AGRICULTURAL("0163")
 	{
 		@Override
 		public <E> E accept(SSRegimeTypeVisitor<E> visitor) {
 			return visitor.visitAgriculturalRegime(this);
 		}
 	},
-	DOMESTIC_EMPLOYEES
+	DOMESTIC_EMPLOYEES("0138")
 	{
 		@Override
 		public <E> E accept(SSRegimeTypeVisitor<E> visitor) {
 			return visitor.visitDomesticEmployeesRegime(this);
 		}
 	},
-	SELF_EMPLOYED
+	SELF_EMPLOYED("0521")
 	{
 		@Override
 		public <E> E accept(SSRegimeTypeVisitor<E> visitor) {
 			return visitor.visitSelfEmployedRegime(this);
 		}
 	},
-	COAL_MINING
+	COAL_MINING("0911")
 	{
 		@Override
 		public <E> E accept(SSRegimeTypeVisitor<E> visitor) {
 			return visitor.visitCoalMiningRegime(this);
 		}
 	},
-	SEA_WORKERS
+	SEA_WORKERS("0800")
 	{
 		@Override
 		public <E> E accept(SSRegimeTypeVisitor<E> visitor) {
 			return visitor.visitSeaWorkersRegime(this);
 		}
 	},
-	STUDENT_INSURANCE
+	STUDENT_INSURANCE("1911")
 	{
 		@Override
 		public <E> E accept(SSRegimeTypeVisitor<E> visitor) {
 			return visitor.visitStudentInsuranceRegime(this);
 		}
 	},
-	ARTIST
+	ARTIST("0112")
 	{
 		@Override
 		public <E> E accept(SSRegimeTypeVisitor<E> visitor) {
@@ -86,6 +86,18 @@ public enum SSRegimeType implements IResourceable{
 	public String getName(Locale locale) {
 		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale);
 		return bundle.getString(MSG_KEY_PREFIX + toString());
+	}
+	
+	private String code;
+	
+	private SSRegimeType(){
+	}
+	private SSRegimeType(String code){
+		this.code = code;
+	}
+	
+	public String getCode(){
+		return code;
 	}
 
 }

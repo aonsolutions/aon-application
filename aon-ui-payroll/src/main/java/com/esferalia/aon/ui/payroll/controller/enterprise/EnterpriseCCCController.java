@@ -33,8 +33,10 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.enumeration.CCCType;
+import com.esferalia.aon.payroll.util.PayrollUtils;
 
 public class EnterpriseCCCController extends LinesController {
 	
@@ -75,6 +77,24 @@ public class EnterpriseCCCController extends LinesController {
 			cccTypes.add(item);			
 		}
 		return cccTypes;
+	}
+	
+	public String getQuoteRegimeCode() throws ManagerBeanException{
+		if(this.getModel().isRowAvailable()){
+			return ((EnterpriseCCC) this.getModel().getRowData()).getActivity().getType().getCode();
+		} else if(this.isNevv()){
+			return ((EnterpriseActivity) this.getMasterController().getTo()).getType().getCode();
+		}
+		return null; 
+	}
+	
+	public boolean isValidSSNumber() throws ManagerBeanException{
+		if(this.getModel().isRowAvailable()){
+			return PayrollUtils.getInstance().isValidSSNumber((EnterpriseCCC) this.getModel().getRowData());
+		} else if(this.getTo()!=null){
+			return PayrollUtils.getInstance().isValidSSNumber((EnterpriseCCC) this.getTo());
+		}
+		return false; 
 	}
 	
 	public void onChangeCcc(ActionEvent event){

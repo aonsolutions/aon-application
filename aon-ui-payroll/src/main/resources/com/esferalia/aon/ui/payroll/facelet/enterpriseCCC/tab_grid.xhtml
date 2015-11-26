@@ -49,21 +49,21 @@
 					<aon:outputLabel for="EnterpriseCCC_ccc" value="#{bundle.aon_value}" />
 				</f:facet>
 				<aon:panelGroup rendered="#{formList}">
-					<aon:outputText value="#{to.quoteRegimeCode}" />
+					<aon:outputText value="#{controller.quoteRegimeCode}" />
 					<aon:outputText value="#{to.ccc}" />
 					<aon:outputText 
-						rendered="#{to.validSSNumber}"
+						rendered="#{controller.validSSNumber}"
 						styleClass="aon-icon-predetermine"
 						style="padding-left: 15px;"
 						value="&#160;" />
 					<aon:outputText 
-						rendered="#{not empty to.ccc and !to.validSSNumber}"
+						rendered="#{not empty to.ccc and !controller.validSSNumber}"
 						styleClass="aon-icon-exception"
 						style="padding-left: 15px;"
 						value="&#160;" />
 				</aon:panelGroup>
 				<aon:panelGroup id="EnterpriseCCC_SSNumberPanel" rendered="#{formEdit}">
-					<aon:outputText value="#{to.quoteRegimeCode}" />
+					<aon:outputText value="#{controller.quoteRegimeCode}" />
 					<aon:inputText id="EnterpriseCCC_ccc" value="#{to.ccc}"
 						required="true" maxlength="11" size="12" >
 						<f:validateLength minimum="1" maximum="11" />
@@ -73,19 +73,19 @@
 							ajaxSingle="true" />
 					</aon:inputText>
 					<aon:outputText 
-						rendered="#{to.validSSNumber}"
+						rendered="#{controller.validSSNumber}"
 						styleClass="aon-icon-predetermine"
 						style="padding-left: 15px;"
 						value="&#160;" />
 					<aon:outputText 
-						rendered="#{not empty to.ccc and !to.validSSNumber}"
+						rendered="#{not empty to.ccc and !controller.validSSNumber}"
 						styleClass="aon-icon-exception"
 						style="padding-left: 15px;"
 						value="&#160;" />
 				</aon:panelGroup>
 				<f:facet name="footer">
 					<aon:panelGroup id="EnterpriseCCC_SSNumberPanel-New" rendered="#{formNew}">
-						<aon:outputText value="#{controller.to.quoteRegimeCode}" />
+						<aon:outputText value="#{controller.quoteRegimeCode}" />
 						<aon:inputText id="EnterpriseCCC_ccc-New" value="#{controller.to.ccc}"
 							required="true" maxlength="11" size="12" >
 							<f:validateLength minimum="1" maximum="11" />
@@ -95,12 +95,12 @@
 								ajaxSingle="true" />
 						</aon:inputText>
 						<aon:outputText 
-							rendered="#{controller.to.validSSNumber}"
+							rendered="#{controller.validSSNumber}"
 							styleClass="aon-icon-predetermine"
 							style="padding-left: 15px;"
 							value="&#160;" />
 						<aon:outputText 
-							rendered="#{not empty controller.to.ccc and !controller.to.validSSNumber}"
+							rendered="#{not empty controller.to.ccc and !controller.validSSNumber}"
 							styleClass="aon-icon-exception"
 							style="padding-left: 15px;"
 							value="&#160;" />

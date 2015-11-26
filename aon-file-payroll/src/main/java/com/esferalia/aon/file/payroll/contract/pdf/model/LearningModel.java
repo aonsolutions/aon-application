@@ -120,12 +120,14 @@ public class LearningModel extends AbstractContractModel {
 			 * Contract ccc fields
 			 */
 			if(contract.getEnterpriseCCC()!=null){
-				String quoteRegime = contract.getEnterpriseCCC().getQuoteRegimeCode();
-				if(StringUtils.isNotBlank(quoteRegime) && quoteRegime.length()>=4){
-					setPdfFieldValue(PdfFieldLearning.CCC_REG1.getValue(),quoteRegime.substring(0, 1));
-					setPdfFieldValue(PdfFieldLearning.CCC_REG2.getValue(),quoteRegime.substring(1, 2));
-					setPdfFieldValue(PdfFieldLearning.CCC_REG3.getValue(),quoteRegime.substring(2, 3));
-					setPdfFieldValue(PdfFieldLearning.CCC_REG4.getValue(),quoteRegime.substring(3, 4));
+				if(contract.getEnterpriseCCC().getActivity().getType().getCode()!=null){
+					String quoteRegime = contract.getEnterpriseCCC().getActivity().getType().getCode();
+					if(StringUtils.isNotBlank(quoteRegime) && quoteRegime.length()>=4){
+						setPdfFieldValue(PdfFieldLearning.CCC_REG1.getValue(),quoteRegime.substring(0, 1));
+						setPdfFieldValue(PdfFieldLearning.CCC_REG2.getValue(),quoteRegime.substring(1, 2));
+						setPdfFieldValue(PdfFieldLearning.CCC_REG3.getValue(),quoteRegime.substring(2, 3));
+						setPdfFieldValue(PdfFieldLearning.CCC_REG4.getValue(),quoteRegime.substring(3, 4));
+					}
 				}
 				if(contract.getEnterpriseCCC().getCcc().length()==11){
 					setPdfFieldValue(PdfFieldLearning.CCC_PROV1.getValue(),contract.getEnterpriseCCC().getCcc().substring(0, 1));

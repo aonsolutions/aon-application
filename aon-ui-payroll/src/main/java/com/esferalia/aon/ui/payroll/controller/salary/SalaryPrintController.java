@@ -507,7 +507,9 @@ public class SalaryPrintController extends BasicController implements ICollectio
 				for (ITransferObject to : list) {
 					EnterpriseCCC enterpriseCCC = (EnterpriseCCC)to;
 					Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-					String label = enterpriseCCC.getType().getName(locale) +" ("+ enterpriseCCC.getFullCcc()+")";
+					String label = enterpriseCCC.getType().getName(locale) +" (";
+					label += enterpriseCCC.getActivity().getType().getCode();
+					label += enterpriseCCC.getCcc() + ")";
 					availableCCCs.add(new SelectItem(enterpriseCCC, label));
 				}
 				this.showCCCs = true;
