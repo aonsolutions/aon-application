@@ -3517,7 +3517,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					contract.setEnterpriseCCC(enterpriseCCC);
 				} else {
 					contract.setEnterpriseCCC(enterpriseCCC);
-					salary.setCcc(enterpriseCCC.getFullCcc());
+					salary.setCcc(enterpriseCCC.getActivity().getType().getCode()+enterpriseCCC.getCcc());
 					EnterpriseActivity enterpriseActivity = enterpriseCCC
 							.getActivity();
 					enterprise = enterpriseActivity.getEnterprise();
