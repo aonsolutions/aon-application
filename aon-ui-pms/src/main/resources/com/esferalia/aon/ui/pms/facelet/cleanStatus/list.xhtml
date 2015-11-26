@@ -129,7 +129,8 @@
 								<aon:commandButton value="#{roomTo.asset.name}"
 									title="#{bundle.pms_room} limpia (#{roomTo.lastCleaningDate})"
 									rendered="#{roomTo.status=='CLEAN' 
-										and (roomTo.todayLastCleaningDate or empty cleanStatus.busyRooms[roomTo.asset.id])}"
+										and (roomTo.todayLastCleaningDate 
+											or (empty cleanStatus.busyRooms[roomTo.asset.id] and empty cleanStatus.checkoutRooms[roomTo.asset.id]))}"
 									styleClass="aon-commandButton" 
 									style="margin:2px; width:70px; height:70px; background:LightGreen;"
 									onclick="showDoNotDisturb(this)"
@@ -149,12 +150,13 @@
 								</aon:commandButton>
 								
 								<!-- DIRTY or CHECKOUT -->
-								<aon:div rendered="#{!(roomTo.todayLastCleaningDate 
-									and (roomTo.status=='CLEAN' or roomTo.status=='DO_NOT_DISTURB'))}" >
+								<aon:div rendered="#{!(roomTo.todayLastCleaningDate and roomTo.status=='CLEAN')
+									 and !(roomTo.todayLastCleaningDate and roomTo.status=='DO_NOT_DISTURB')}" >
 									<!-- DIRTY -->
 									<aon:commandButton value="#{roomTo.asset.name}"
 										title="#{bundle.pms_room} sucia"
-										rendered="#{empty cleanStatus.checkoutRooms[roomTo.asset.id] and roomTo.status!='CLEAN'}"
+										rendered="#{empty cleanStatus.checkoutRooms[roomTo.asset.id] 
+											and not empty cleanStatus.busyRooms[roomTo.asset.id]}"
 										styleClass="aon-commandButton" 
 										style="margin:2px; width:70px; height:70px; background:Salmon;"
 										onclick="showClean(this)"

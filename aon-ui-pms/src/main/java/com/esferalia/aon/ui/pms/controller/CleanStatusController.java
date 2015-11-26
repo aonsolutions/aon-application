@@ -218,6 +218,8 @@ public class CleanStatusController extends BasicController {
 				criteria.addEqualExpression(alias, getHotel().getId());
 				alias = prrdBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_END_DATE);
 				criteria.addEqualExpression(alias, searchDate);
+				alias = prrdBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE);
+				criteria.addEqualExpression(alias, DateUtils.addDays(searchDate, -1));
 				return prrdBean.getList(criteria);
 			} catch (ManagerBeanException e) {
 				throw new AbortProcessingException(e.getMessage(), e);
