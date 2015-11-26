@@ -1,17 +1,18 @@
 package com.esferalia.aon.gwt.template.jooq;
 
+import static com.esferalia.aon.jooq.tables.Catalogue.CATALOGUE;
 import static com.esferalia.aon.jooq.tables.CatalogueItem.CATALOGUE_ITEM;
 import static com.esferalia.aon.jooq.tables.Department.DEPARTMENT;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
+import static com.esferalia.aon.jooq.tables.User.USER;
+import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPARTMENT;
-import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
-import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
-import static com.esferalia.aon.jooq.tables.User.USER;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
-
+import java.sql.Date;
 import java.util.Vector;
 
 import org.jooq.Record1;
@@ -201,11 +202,12 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId, login);
-			
+			Date today = new Date(new java.util.Date().getTime());
 			Result<Record6<Integer, Integer, Integer, String, String, String>> record = null;
 			if(wp != null && dt != null){
 				record = ctx.getDslContext().selectDistinct(ITEM.PRODUCT, WORKPLACE_DEPARTMENT.WORKPLACE, WORKPLACE_DEPARTMENT.DEPARTMENT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3)
-				.from(CATALOGUE_ITEM).join(ITEM).on(ITEM.ID.eq(CATALOGUE_ITEM.ITEM))
+				.from(CATALOGUE).join(CATALOGUE_ITEM).on(CATALOGUE.ID.eq(CATALOGUE_ITEM.CATALOGUE))
+				.join(ITEM).on(ITEM.ID.eq(CATALOGUE_ITEM.ITEM))
 				.join(WORKPLACE_DEPARTMENT).on(WORKPLACE_DEPARTMENT.CATALOGUE.eq(CATALOGUE_ITEM.CATALOGUE))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.join(RITEM).on(RITEM.ITEM.eq(ITEM.ID))
@@ -214,12 +216,17 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 				.and(CATALOGUE_ITEM.DOMAIN.eq(domainId))
 				.and(PRODUCT.STATUS.eq((byte)0))
 				.and(RITEM.WORKPLACE.eq(wp.getId()).or(RITEM.WORKPLACE.isNull()))
+				.and(WORKPLACE_DEPARTMENT.ACTIVE.eq((byte)0))
+				.and(CATALOGUE.PURCHASE.eq((byte) 1))
+				.and(CATALOGUE.START_DATE.lessThan(today))
+				.and(CATALOGUE.END_DATE.greaterThan(today).or(CATALOGUE.END_DATE.isNull()))
 				.orderBy(PRODUCT.NAME)
 				.fetch();
 			}
 			else if(wp != null && dt == null){
 				record = ctx.getDslContext().select(ITEM.PRODUCT, WORKPLACE_DEPARTMENT.WORKPLACE, WORKPLACE_DEPARTMENT.DEPARTMENT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3)
-				.from(CATALOGUE_ITEM).join(ITEM).on(ITEM.ID.eq(CATALOGUE_ITEM.ITEM))
+				.from(CATALOGUE).join(CATALOGUE_ITEM).on(CATALOGUE.ID.eq(CATALOGUE_ITEM.CATALOGUE))
+				.join(ITEM).on(ITEM.ID.eq(CATALOGUE_ITEM.ITEM))
 				.join(WORKPLACE_DEPARTMENT).on(WORKPLACE_DEPARTMENT.CATALOGUE.eq(CATALOGUE_ITEM.CATALOGUE))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.join(RITEM).on(RITEM.ITEM.eq(ITEM.ID))
@@ -227,16 +234,25 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 				.and(CATALOGUE_ITEM.DOMAIN.eq(domainId))
 				.and(PRODUCT.STATUS.eq((byte)0))
 				.and(RITEM.WORKPLACE.eq(wp.getId()).or(RITEM.WORKPLACE.isNull()))
+				.and(WORKPLACE_DEPARTMENT.ACTIVE.eq((byte)0))
+				.and(CATALOGUE.PURCHASE.eq((byte) 1))
+				.and(CATALOGUE.START_DATE.lessThan(today))
+				.and(CATALOGUE.END_DATE.greaterThan(today).or(CATALOGUE.END_DATE.isNull()))
 				.orderBy(PRODUCT.NAME)
 				.fetch();
 			}
 			else if(wp == null && dt == null){
 				record = ctx.getDslContext().select(ITEM.PRODUCT, WORKPLACE_DEPARTMENT.WORKPLACE, WORKPLACE_DEPARTMENT.DEPARTMENT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3)
-				.from(CATALOGUE_ITEM).join(ITEM).on(ITEM.ID.eq(CATALOGUE_ITEM.ITEM))
+				.from(CATALOGUE).join(CATALOGUE_ITEM).on(CATALOGUE.ID.eq(CATALOGUE_ITEM.CATALOGUE))
+				.join(ITEM).on(ITEM.ID.eq(CATALOGUE_ITEM.ITEM))
 				.join(WORKPLACE_DEPARTMENT).on(WORKPLACE_DEPARTMENT.CATALOGUE.eq(CATALOGUE_ITEM.CATALOGUE))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.where(CATALOGUE_ITEM.DOMAIN.eq(domainId))
 				.and(PRODUCT.STATUS.eq((byte)0))
+				.and(WORKPLACE_DEPARTMENT.ACTIVE.eq((byte)0))
+				.and(CATALOGUE.PURCHASE.eq((byte) 1))
+				.and(CATALOGUE.START_DATE.lessThan(today))
+				.and(CATALOGUE.END_DATE.greaterThan(today).or(CATALOGUE.END_DATE.isNull()))
 				.orderBy(PRODUCT.NAME)
 				.fetch();
 			}
