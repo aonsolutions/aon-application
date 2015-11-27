@@ -728,8 +728,8 @@ public class SalaryDraftBuilder
 		UndefinedVariable undefVar = new UndefinedVariable();
 
 		undefVar.setName(variableName);
-		undefVar.setEndDate(start);
-		undefVar.setStartDate(end);
+		undefVar.setEndDate(end);
+		undefVar.setStartDate(start);
 		undefVar.setImplicit(isImplicit(variableName));
 		undefVar.setScope(getScope(expression.getScope()));
 
