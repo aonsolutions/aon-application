@@ -348,8 +348,13 @@ public class SalaryDraft extends SalaryPreview {
 		return null;
 	}
 
+	public Variable findVariable(Variable var) {
+		return findVariable(var.getName(),var.getStartDate(), var.getEndDate());
+	}
+
 	public void addUndefinedVariable(UndefinedVariable var) {
-		if (!context.contains(var))
+		if ( findVariable(var) == null )
+//		if (!context.contains(var))
 			context.add(var);
 	}
 
