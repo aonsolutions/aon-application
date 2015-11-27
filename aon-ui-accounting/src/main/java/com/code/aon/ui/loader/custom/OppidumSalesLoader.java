@@ -86,11 +86,22 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 	private final String INVOICE_TOTAL = "Total Final";
 	private final String INVOICE_BANK_ACCOUNT = "Domiciliacion Bancaria";
 	
+	private final String INVOICE_BASE_TERMINO_POTENCIA = "Termino_Potencia";
+	private final String INVOICE_BASE_EXCESOS_POTENCIA = "Excesos_Potencia";
+	private final String INVOICE_BASE_ALQUILER = "Alquiler";
+	private final String INVOICE_BASE_GASTOS_GESTION_COBRO = "Gastos_Gestion_Cobro";
+	
 	private final String[] SUPPORTED_COLUMNS = {
 			CUSTOMER_DOCUMENT,
 			CUSTOMER_NAME,
 			INVOICE_DOCUMENT,
 			INVOICE_DATE,
+			
+			INVOICE_BASE_TERMINO_POTENCIA,
+			INVOICE_BASE_EXCESOS_POTENCIA,
+			INVOICE_BASE_ALQUILER,
+			INVOICE_BASE_GASTOS_GESTION_COBRO,
+			
 			INVOICE_VAT_PERCENT,
 			INVOICE_VAT_BASE,
 			INVOICE_VAT_AMOUNT,
@@ -127,14 +138,27 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 	        writer.print("razonSocial|");
 	        writer.print("fechaFactura|");
 	        writer.print("tipo|");
+	        // 1
 	        writer.print("baseImponible1|");
 	        writer.print("iva1|");
 	        writer.print("cuotaIVA1|");
 	        writer.print("cuentaExplotacion|");
+	        // 2
 	        writer.print("baseImponible2|");
 	        writer.print("iva2|");
 	        writer.print("cuotaIVA2|");
 	        writer.print("cuentaExplotacion2|");
+	        // 3
+	        writer.print("baseImponible3|");
+	        writer.print("iva3|");
+	        writer.print("cuotaIVA3|");
+	        writer.print("cuentaExplotacion3|");
+	        // 4
+	        writer.print("baseImponible4|");
+	        writer.print("iva4|");
+	        writer.print("cuotaIVA4|");
+	        writer.print("cuentaExplotacion4|");
+	        
 	        writer.print("totalFactura|");
 	        writer.print("cuentaBanco");
 	        writer.println();
@@ -168,40 +192,61 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
         			double vatAmount = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_VAT_AMOUNT)));
         			double invoiceTotal = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_TOTAL)));
         			
-        			double ieeBase = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_IEE_BASE)));
-        			double ieeAmount = ieeBase * 0.21;
-        			vatBase -= ieeBase;
-        			vatAmount -= ieeAmount; 
-        
+        			double baseTerminoPotencia = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_BASE_TERMINO_POTENCIA)));
+        			double baseExcesosPotencia = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_BASE_EXCESOS_POTENCIA)));
+        			double baseAlquiler = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_BASE_ALQUILER)));
+        			double baseGastosGestionCobro = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_BASE_GASTOS_GESTION_COBRO)));
+        			
+        			vatBase -= (baseTerminoPotencia + baseExcesosPotencia 
+        					+ baseAlquiler 
+        					+ baseGastosGestionCobro);
+        			vatAmount -= (CommonUtil.round((baseTerminoPotencia + baseExcesosPotencia) * vatPercent / 100) 
+        					+ CommonUtil.round(baseAlquiler * vatPercent / 100)
+        					+ CommonUtil.round(baseGastosGestionCobro * vatPercent / 100));
+        			
         			writer.print("FRACTB|");
-        			writer.print(lineCount+"|");
-        			writer.print(serie+"|");
-        			writer.print(num+"|");
-        			writer.print(account+"|");
-        			writer.print(customerDocument+"|");
+        			writer.print(lineCount + "|");
+        			writer.print(serie + "|");
+        			writer.print(num + "|");
+        			writer.print(account + "|");
+        			writer.print(customerDocument + "|");
         			writer.print("1|");
         			writer.print("ES|");
-        			writer.print(customerName+"|");
-        			writer.print(dateFormat.format(invoiceDate)+"|");
+        			writer.print(customerName + "|");
+        			writer.print(dateFormat.format(invoiceDate) + "|");
         			writer.print("1|");
-        			writer.print(CommonUtil.round(vatBase)+"|");
-					writer.print(CommonUtil.round(vatPercent)+"|");
-					writer.print(CommonUtil.round(vatAmount)+"|");
-					writer.print("700000000|");
-					writer.print(CommonUtil.round(ieeBase)+"|");
-					writer.print(CommonUtil.round(vatPercent)+"|");
-					writer.print(CommonUtil.round(ieeAmount)+"|");
-					writer.print("473000560|");
-					writer.print(invoiceTotal+"|");
+        			// 1
+					writer.print(CommonUtil.round(vatBase) + "|");
+					writer.print(CommonUtil.round(vatPercent) + "|");
+					writer.print(CommonUtil.round(vatAmount) + "|");
+					writer.print("700000001|");
+					// 2
+					writer.print(CommonUtil.round(baseTerminoPotencia + baseExcesosPotencia) + "|");
+					writer.print(CommonUtil.round(vatPercent) + "|");
+					writer.print(CommonUtil.round((baseTerminoPotencia + baseExcesosPotencia) * vatPercent / 100) + "|");
+					writer.print("700000002|");
+					// 3
+					writer.print(CommonUtil.round(baseAlquiler) + "|");
+					writer.print(CommonUtil.round(vatPercent) + "|");
+					writer.print(CommonUtil.round(baseAlquiler * vatPercent / 100) + "|");
+					writer.print("700000003|");
+					// 4
+					writer.print(CommonUtil.round(baseGastosGestionCobro) + "|");
+					writer.print(CommonUtil.round(vatPercent) + "|");
+					writer.print(CommonUtil.round(baseGastosGestionCobro * vatPercent / 100) + "|");
+					writer.print("769000000|");
+					
+					writer.print(invoiceTotal + "|");
 					writer.print(getFormatBankAccount(bankAccount));
         			writer.println();
-					
-        			logPanel.info("Factura procesada: " + invoiceNumber);		
+							
         			lineCount++;
         		}
         		
         		row = rowIterator.next();
         	}
+        	
+        	logPanel.info("Total facturas a procesar:" + lineCount);
         	
         	writer.flush();
         	

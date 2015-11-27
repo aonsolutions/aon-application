@@ -1,35 +1,42 @@
 package com.code.aon.ui.loader.custom;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.util.AonFile;
 
 public class CustomLoaderFactoryManager implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private static List<ICustomLoaderFactory> factories;
+	private final static String SALES = "SALES";
+	private final static String PURCHASE = "PURCHASE";
+	
+	private static Map<String, ICustomLoaderFactory> oppidumFactories;
 	
 	static {
-		factories = new LinkedList<ICustomLoaderFactory>();
-		factories.add( new OppidumSalesLoader());
-		factories.add( new OppidumPurchasesLoader());
+		oppidumFactories = new HashMap<String, ICustomLoaderFactory>();
+		oppidumFactories.put(SALES, new OppidumSalesLoader());
+		oppidumFactories.put(PURCHASE, new OppidumPurchasesLoader());
 	}
-	
-	public static List<ICustomLoaderFactory> getFactories() {
-		return factories;
-	}
-	
-
-	public static ICustomLoaderFactory getFactory( byte[] data ) {
-		for (ICustomLoaderFactory f : getFactories()) {
-			if (f.accept(data)) {
-				return f;
+		
+	public static ICustomLoaderFactory getFactory( AonFile aonFile ) {
+		ICustomLoaderFactory acceptedFactory = null;
+		if(aonFile.getFileName().matches(".*[vV][eE][nN][tT][aA][sS].*")){
+			acceptedFactory = oppidumFactories.get(SALES);
+		} else if(aonFile.getFileName().matches(".*[cC][oO][mM][pP][rR][aA][sS].*")){
+			acceptedFactory = oppidumFactories.get(PURCHASE);
+		}
+		if(!acceptedFactory.accept(aonFile.getData())) {
+			for (ICustomLoaderFactory fact : oppidumFactories.values()) {
+				if (fact.accept(aonFile.getData())) {
+					acceptedFactory = fact;
+				}
 			}
 		}
-		return null;
+		return acceptedFactory;
 	}
 	
 }

@@ -94,10 +94,9 @@ public class AonLoaderController implements Serializable {
 	public void onLoad(ActionEvent event ) {
 		if(isCustomLoaderEnabled()){
 			if(isOppidumLoaderEnabled()){
-				byte[] data = getAonFile().getData();
-				ICustomLoaderFactory loader = CustomLoaderFactoryManager.getFactory(data);
+				ICustomLoaderFactory loader = CustomLoaderFactoryManager.getFactory(getAonFile());
 				if(loader != null){
-					loader.load(new ByteArrayInputStream(data));
+					loader.load(new ByteArrayInputStream(getAonFile().getData()));
 				} else {
 					LogPanelController logPanel = LogPanelController.getInstance();
 		        	logPanel.error("No se existen cargadores que acepten el fichero.");

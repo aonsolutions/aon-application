@@ -155,28 +155,29 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
         			double invoiceTotal = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_TOTAL)));
         			
         			writer.print("FRACTB|");
-        			writer.print(lineCount+"|");
-        			writer.print(getFormatInvoiceNumber(invoiceNumber)+"|");
-        			writer.print(account+"|");
-        			writer.print(supplierDocument+"|");
+        			writer.print(lineCount + "|");
+        			writer.print(getFormatInvoiceNumber(invoiceNumber) + "|");
+        			writer.print(account + "|");
+        			writer.print(supplierDocument + "|");
         			writer.print("1|");
         			writer.print("ES|");
-        			writer.print(supplierName+"|");
-        			writer.print(dateFormat.format(invoiceDate)+"|");
+        			writer.print(supplierName + "|");
+        			writer.print(dateFormat.format(invoiceDate) + "|");
         			writer.print("0|");
-        			writer.print(CommonUtil.round(vatBase)+"|");
-					writer.print(CommonUtil.round(vatPercent)+"|");
-					writer.print(CommonUtil.round(vatAmount)+"|");
+        			writer.print(CommonUtil.round(vatBase) + "|");
+					writer.print(CommonUtil.round(vatPercent) + "|");
+					writer.print(CommonUtil.round(vatAmount) + "|");
 					writer.print("600000000|");
 					writer.print(invoiceTotal);
         			writer.println();
-					
-        			logPanel.info("Factura procesada: " + getFormatInvoiceNumber(invoiceNumber));		
+							
         			lineCount++;
         		}
         		
         		row = rowIterator.next();
         	}
+        	
+        	logPanel.info("Total facturas a procesar:" + lineCount);
         	
         	writer.flush();
         	
@@ -313,8 +314,8 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 		return code;
 	}
 	
-	private String getFormatInvoiceNumber(String bankAccount) {
-		matcher = invoiceNumberPattern.matcher(bankAccount);
+	private String getFormatInvoiceNumber(String value) {
+		matcher = invoiceNumberPattern.matcher(value);
 		String match = null;
 		while (matcher.find()) {
 			match = matcher.group(2);
@@ -323,7 +324,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 			}
 			match = matcher.group(1) + match;
 		}
-		return match!=null?match:bankAccount;
+		return match!=null?match:value;
 	}
 	
 	private void callAonLoader(byte[] data, LoaderParams params){
