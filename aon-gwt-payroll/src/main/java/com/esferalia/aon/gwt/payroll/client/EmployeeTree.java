@@ -90,7 +90,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	static final byte OVERWRITE_OPTION = 0x02;
 	static final byte DUPLICATE_OPTION = 0x04;
 
-
 	static String SHARE_URL = URL.encode(GWT.getModuleBaseURL() + "share");
 	static String CALC_URL = URL.encode(GWT.getModuleBaseURL() + "calculate");
 	static DateTimeFormat DATE_FORMAT = DateTimeFormat
@@ -295,7 +294,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	class CalcEnterpriseCommand implements ScheduledCommand, AcceptHandler,
-			AsyncCallback<JsSalaryResult>, SelectionHandler<JsSalaryResult>{
+			AsyncCallback<JsSalaryResult>, SelectionHandler<JsSalaryResult> {
 
 		SalaryResults results;
 		WorkPlaceCalcDialog calcDialog;
@@ -371,8 +370,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			onSalaryResultSelected(event.getSelectedItem());
 		}
 
-
-
 		// ---------------------------------------------------- Private methods
 
 		private void clear() {
@@ -387,9 +384,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	}
 
-	class CalcEmployeeCommand implements ScheduledCommand, AcceptHandler,
-			CalculateService, SelectionHandler<JsSalaryResult>, 
-			AsyncCallback<JsSalaryResult> {
+	class CalcEmployeeCommand
+			implements ScheduledCommand, AcceptHandler, CalculateService,
+			SelectionHandler<JsSalaryResult>, AsyncCallback<JsSalaryResult> {
 
 		private SalaryResults results;
 		private CalcDialog<Employee> calcDialog;
@@ -454,7 +451,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			showResultsPanel(); // TODO: Here or at below 'onReadyStateChange'
 
 		}
-
 
 		// ----------------------------------------- SelectionHandler<TreeItem>
 		@Override
@@ -610,7 +606,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				public String getDescription(String ccc) {
 					return CreateResponseCommand.this.getDescription(ccc);
 				}
-				
+
 				@Override
 				public boolean accept(JsFile f) {
 					return CreateResponseCommand.this.accept(f.getCCC());
@@ -637,12 +633,17 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			mergeEditor.setMode("text/xml");
 			mergeEditor.setFoldGutter(true);
 			mergeEditor.setLineNumbers(true);
-			mergeEditor.setText(result.getChangedBasesFile());
+			try {
+				mergeEditor.setText(result.getChangedBasesFile());
+			} catch (NullPointerException e) {
+				mergeEditor.setShowDifferences(false);
+				mergeEditor.setText(result.getDraftRequestFile());
+			}	
 			mergeEditor.setTitle(file.getFilename());
 			mergeEditor.setFilename(file.getFilename() + ".xml");
 			detailPanel.setWidget(mergeEditor);
-			
-			CretaResults cretaResults = new CretaResults(){
+
+			CretaResults cretaResults = new CretaResults() {
 				@Override
 				protected void onBases(JsBasesResult result) {
 					CreateResponseCommand.this.onBases(result);
@@ -668,17 +669,18 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		protected abstract String getDescription(String ccc);
 	}
-	
-	public static abstract class WorkplaceCreateResponseCommand extends CreateResponseCommand {
-		
+
+	public static abstract class WorkplaceCreateResponseCommand
+			extends CreateResponseCommand {
+
 		public WorkplaceCreateResponseCommand(File outFile, File inFile,
 				DetailPanel detailPanel, ResultsPanel resultsPanel) {
 			super(outFile, inFile, detailPanel, resultsPanel);
 		}
 
 		private Workplace workplace;
-		
-		protected void setWorkplace(Workplace workplace){
+
+		protected void setWorkplace(Workplace workplace) {
 			this.workplace = workplace;
 		}
 
@@ -688,18 +690,17 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			Activity activity = workplace.getActivity();
 			return activity.getDescription() + "," + Province.getName(province);
 		}
-		
+
 		@Override
 		protected boolean accept(String fullCcc) {
 			Activity activity = workplace.getActivity();
-			for ( CCC ccc: activity.getCccs() )
-				if ( fullCcc.endsWith(ccc.getCode())) 
+			for (CCC ccc : activity.getCccs())
+				if (fullCcc.endsWith(ccc.getCode()))
 					return true;
-			
+
 			return false;
 		}
-		
-		
+
 	}
 
 	public static abstract class CreateRequestCommand extends CretaCommand
@@ -754,9 +755,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 
 		// --------------------------------------------------------------------
-		
+
 		protected abstract String getDescription(CCC ccc);
-		
+
 		// --------------------------------------------------------------------
 
 		private static void setUpDialog(File file,
@@ -766,7 +767,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				@Override
 				public void visitBases(Void t, Void l) throws RuntimeException {
 				}
-				
+
 				@Override
 				public void visitRespuesta(Void t, Void l)
 						throws RuntimeException {
@@ -804,8 +805,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 
 	}
-	
-	
 
 	class WorkplaceCreateRequestCommand extends CreateRequestCommand {
 
@@ -830,21 +829,22 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				return Collections.emptyList();
 			return ccs;
 		}
-	
+
 		// --------------------------------------------------
 
 		@Override
 		protected String getDescription(CCC ccc) {
 			String province = ccc.getGeozone();
 			Activity activity = workplace.getActivity();
-			return activity.getDescription() + "," + Province.getName(province) + " " + ccc.getCode();
+			return activity.getDescription() + "," + Province.getName(province)
+					+ " " + ccc.getCode();
 		}
 
 	}
 
 	public static class EnterpriseCretaRequestCommand
 			extends CreateRequestCommand {
-		
+
 		private Enterprise enterprise;
 
 		public EnterpriseCretaRequestCommand(File file,
@@ -869,11 +869,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		protected String getDescription(CCC ccc) {
 			String province = ccc.getGeozone();
 
-			for ( Activity activity: enterprise.getActivities()) 
-				for ( CCC cc : activity.getCccs())
-					if ( ccc.getCode().equals(cc.getCode()) )
-						return activity.getDescription() + ", " + Province.getName(province) + " " + ccc.getCode();
-			
+			for (Activity activity : enterprise.getActivities())
+				for (CCC cc : activity.getCccs())
+					if (ccc.getCode().equals(cc.getCode()))
+						return activity.getDescription() + ", "
+								+ Province.getName(province) + " "
+								+ ccc.getCode();
+
 			return "";
 		}
 
@@ -899,9 +901,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 	}
 
-	class CalcWorkplaceCommand implements ScheduledCommand, AcceptHandler,
-			CalculateService, AsyncCallback<JsSalaryResult>,
-			SelectionHandler<JsSalaryResult>{
+	class CalcWorkplaceCommand
+			implements ScheduledCommand, AcceptHandler, CalculateService,
+			AsyncCallback<JsSalaryResult>, SelectionHandler<JsSalaryResult> {
 
 		private SalaryResults results;
 		private CalcDialog<Employee> calcDialog;
@@ -970,7 +972,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			showResultsPanel(); // TODO: Here or at below 'onReadyStateChange'
 		}
 
-
 		// ----------------------------------------- SelectionHandler<TreeItem>
 		@Override
 		public void onSelection(SelectionEvent<JsSalaryResult> event) {
@@ -1010,7 +1011,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		PasteEmployeeCommand pasteCmd;
 
 		WorkplaceCreateRequestCommand cretaRequestCmds[] = new WorkplaceCreateRequestCommand[4];
-		WorkplaceCreateResponseCommand cretaResponseCmds [] =  new WorkplaceCreateResponseCommand[1];
+		WorkplaceCreateResponseCommand cretaResponseCmds[] = new WorkplaceCreateResponseCommand[1];
 
 		public WorkplaceContextMenu() {
 
@@ -1042,13 +1043,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 							CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS,
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			// addItem("SLD-Fichero de Solicitud de C\u00E1lculo", // cretaRequestCmds[1]
-																	// = new
-																	// WorkplaceCreateRequestCommand(CretaService.File.CALCULOS),//
-																	// AON.AON_ICON_SEGSOCIAL_SMALL,
-																	// AON.AON_ICON_CMD_BUTTON);
+			// addItem("SLD-Fichero de Solicitud de C\u00E1lculo", //
+			// cretaRequestCmds[1]
+			// = new
+			// WorkplaceCreateRequestCommand(CretaService.File.CALCULOS),//
+			// AON.AON_ICON_SEGSOCIAL_SMALL,
+			// AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Bases",
-					cretaResponseCmds [0] = new WorkplaceCreateResponseCommand(CretaService.File.BASES,
+					cretaResponseCmds[0] = new WorkplaceCreateResponseCommand(
+							CretaService.File.BASES,
 							CretaService.File.TRABAJADORES_TRAMOS,
 							employeeDetail, resultsPanel) {
 						@Override
@@ -1078,7 +1081,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			for (WorkplaceCreateResponseCommand cmd : cretaResponseCmds)
 				if (cmd != null)
 					cmd.setWorkplace(workplace);
-			
+
 		}
 
 		public void pasteContract() {
@@ -1642,7 +1645,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		EmployeeTree.this.footTabPanel.add(EmployeeTree.this.resultsPanel, tab);
 		EmployeeTree.this.splitLayoutPanel.setWidgetSize(
 				EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
-	
+
 	}
 
 	private ITEditor getIt() {

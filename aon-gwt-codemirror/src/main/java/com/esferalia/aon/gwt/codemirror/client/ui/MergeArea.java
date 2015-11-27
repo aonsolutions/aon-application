@@ -92,13 +92,22 @@ public class MergeArea extends HTML {
 	
 	// ----------------------------------------------------- MergeView Delegate
 
+	public void setValue(String value) {
+		if ( mergeView == null )
+			options.setValue(value);
+		else 
+			mergeView.getEditor().setValue(value);
+	}
+	
+
 	public String getValue(){
 		return mergeView.getEditor().getValue();
 	}
 
-	public void setValue(String value) {
-		options.setValue(value);
+	public String getOrig() {
+		return mergeView.getRightOriginal().getValue();
 	}
+	
 	
 	// ---------------------------------------------------------- HTML Override
 	

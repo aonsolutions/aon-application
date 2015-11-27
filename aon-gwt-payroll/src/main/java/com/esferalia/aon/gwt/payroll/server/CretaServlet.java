@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -37,6 +38,7 @@ import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.tgss.creta.Bases;
 import com.esferalia.aon.payroll.tgss.creta.Bases.BasesCallback;
+import com.esferalia.aon.payroll.tgss.creta.Bases.EmptyBasesException;
 import com.esferalia.aon.payroll.tgss.creta.Borrador;
 import com.esferalia.aon.payroll.tgss.creta.Calculo;
 import com.esferalia.aon.payroll.tgss.creta.Confirmacion;
@@ -140,9 +142,14 @@ public class CretaServlet extends HttpServlet implements
 
 			}
 		}
-		os.printf("\"full_bases\":\"%s\",\r\n",
-				generateBases(connection, true, false, false, nafs, defaults,
-						trabajadoresYTramosIss, respuestasIss, pickerBasesCb));
+
+		try {
+			os.printf("\"full_bases\":\"%s\",\r\n",
+					generateBases(connection, true, false, false, nafs,
+							defaults, trabajadoresYTramosIss, respuestasIss,
+							pickerBasesCb));
+		} catch (EmptyBasesException e) {
+		}
 
 		respuestasIss.clear();
 		trabajadoresYTramosIss.clear();
@@ -158,9 +165,27 @@ public class CretaServlet extends HttpServlet implements
 
 			}
 		}
-		os.printf("\"diff_bases\":\"%s\",\r\n",
-				generateBases(connection, true, true, true, nafs, defaults,
-						trabajadoresYTramosIss, respuestasIss));
+
+		NoDiffsBasesCallback noDiffsBasesCb = new NoDiffsBasesCallback() {
+			@Override
+			public void noDiffs(
+					net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
+				super.noDiffs(liquidacion);
+				pickerBasesCb.noDiffs(liquidacion);
+			}
+		};
+		try {
+			os.printf("\"diff_bases\":\"%s\",\r\n",
+					generateBases(connection, true, true, true, nafs, defaults,
+							trabajadoresYTramosIss, respuestasIss,
+							noDiffsBasesCb));
+		} catch (EmptyBasesException e) {
+			os.printf("\"draft_request\":\"%s\",\r\n", generateBorrador(
+					e.getAutorizado(), noDiffsBasesCb.getMeses(),
+					noDiffsBasesCb.getAnhos(), noDiffsBasesCb.getTipos(),
+					noDiffsBasesCb.getAceptarBasesAnteriores(),
+					noDiffsBasesCb.getCCCs()));
+		}
 
 		os.printf("\"errors\":%s,\r\n", toJSON(pickerBasesCb.errors));
 
@@ -312,8 +337,8 @@ public class CretaServlet extends HttpServlet implements
 	private static String generateBases(Connection connection, boolean comments,
 			boolean skipExisting, boolean acceptPrevBases, String nafs[],
 			String defaults[], InputStream is, BasesCallback... cbs)
-					throws JAXBException, XMLStreamException,
-					FactoryConfigurationError, IOException {
+					throws EmptyBasesException, JAXBException,
+					XMLStreamException, FactoryConfigurationError, IOException {
 
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		Bases.generate(connection, comments, skipExisting, acceptPrevBases,
@@ -327,17 +352,71 @@ public class CretaServlet extends HttpServlet implements
 			boolean skipExisting, boolean acceptPrevBases, String nafs[],
 			String defaults[], List<InputStream> trabajadoresYTramosIss,
 			List<InputStream> respuestasIss, BasesCallback... cbs)
-					throws JAXBException, XMLStreamException,
-					FactoryConfigurationError, IOException {
+					throws EmptyBasesException, JAXBException,
+					XMLStreamException, FactoryConfigurationError, IOException {
 
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		Bases.generate(connection, comments, skipExisting, acceptPrevBases,
 				nafs, defaults, trabajadoresYTramosIss, respuestasIss, os, cbs);
 		os.close();
+
 		return String.format("%s", URLEncoder.encode(os.toString(), "UTF-8"));
 
 	}
 
+	private static String generateBorrador(String autorizado, String meses[],
+			String anhos[], String tipos[], Boolean aceptarBasesAnteriores[],
+			String cccs[]) throws JAXBException, IOException,
+					XMLStreamException, FactoryConfigurationError {
+
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		XMLStreamWriter xsw = new IndentXMLStreamWriter(
+				XMLOutputFactory.newInstance().createXMLStreamWriter(os),
+				"  ") {
+
+			@Override
+			public void writeStartElement(String prefix, String localName,
+					String namespaceURI) throws XMLStreamException {
+				if (localName.equalsIgnoreCase("Liquidacion"))
+					beforeLiquidacion();
+				else if (localName.equalsIgnoreCase("AceptarBasesAnteriores"))
+					beforeAceptarBasesAnteriores();
+				super.writeStartElement(prefix, localName, namespaceURI);
+			}
+
+			public void beforeLiquidacion() throws XMLStreamException {
+				super.writeComment(
+						"\r\nNo es necesario comunicar nada nuevo respecto\r\n"
+								+ "a la informaci\u00F3n del mes anterior.\r\n");
+			}
+
+			public void beforeAceptarBasesAnteriores()
+					throws XMLStreamException {
+				super.writeComment(
+						"\r\nSi se utiliza como v\u00EDa de inicio, el usuario\r\n"
+								+ "deber\u00E1 solicitar la recuperaci\u00F3n de las bases\r\n"
+								+ "del mes anterior v\u00E1lidas a efectos de c\u00E1lculo.\r\n");
+			}
+
+		};
+
+		//@formatter:off
+		Borrador.generate(
+				autorizado, 
+				meses, 
+				anhos, 
+				tipos, 
+				aceptarBasesAnteriores, 
+				cccs, 
+				xsw
+		);
+		//@formatter:on
+
+		os.close();
+
+		return String.format("%s", URLEncoder.encode(os.toString(), "UTF-8"));
+
+	}
 	// ------------------------------------------------------------------------
 
 	private static <T> String marshall2Json(T t) {
@@ -472,37 +551,85 @@ public class CretaServlet extends HttpServlet implements
 
 		@Override
 		public String toJSON() {
-			return String.format("{" + "\"message\":\"%s\",\r\n"
-			// + "\"ccc\":{\r\n"
-			// + "\"number\":\"%s\",\r\n"
-			// + "\"regime\":\"%s\",\r\n"
-			// + "\"province\":\"%s\"\r\n"
-			// + "},\r\n"
-			// + "\"from\":{\r\n"
-			// + "\"month\":\"%s\",\r\n"
-			// + "\"year\":\"%s\"\r\n"
-			// + "},"
-			// + "\"to\":{\r\n"
-			// + "\"month\":\"%s\",\r\n"
-			// + "\"year\":\"%s\"\r\n"
-			// + "},"
-					+ "\"type\":\"%s\",\r\n" + "\"code\":\"%s\",\r\n"
-					+ "\"mandatory\":%s\r\n" + "}",
-
-			getMessage(),
-
-			// liquidacion.getCcc().getNumero(),
-			// liquidacion.getCcc().getRegimen(),
-			// liquidacion.getCcc().getProvincia(),
-
-			// liquidacion.getPeriodoDesde().getMes(),
-			// liquidacion.getPeriodoDesde().getAnho(),
-			//
-			// liquidacion.getPeriodoHasta().getMes(),
-			// liquidacion.getPeriodoHasta().getAnho(),
-
-			dato.getTipoDato(), dato.getCodigo(),
+			return String.format(
+					"{" + "\"message\":\"%s\",\r\n" + "\"type\":\"%s\",\r\n"
+							+ "\"code\":\"%s\",\r\n" + "\"mandatory\":%s\r\n"
+							+ "}",
+					getMessage(), dato.getTipoDato(), dato.getCodigo(),
 					"B".equals(dato.getIndicadorObligatoriedad()));
+		}
+
+	}
+
+	private static class NoDiffs extends Event<NoDiffs> {
+		private net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion;
+
+		public NoDiffs setLiquidacion(
+				net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
+			this.liquidacion = liquidacion;
+			return this;
+		}
+
+		// --------------------------------------------------------------- JSON
+
+		@Override
+		public String toJSON() {
+			return String.format("{" + "\"message\":\"%s\",\r\n" + "}",
+					getMessage());
+		}
+	}
+
+	private static class NoDiffsBasesCallback implements BasesCallback {
+
+		List<net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion> liquidaciones = new ArrayList<net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion>();
+
+		@Override
+		public void noDiffs(
+				net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
+			liquidaciones.add(liquidacion);
+		}
+
+		// --------------------------------------------------------------------
+
+		String[] getCCCs() {
+			//@formatter:off
+			return liquidaciones.stream()
+			.map(l->l.getCcc())
+			.map(ccc->ccc.getRegimen()+ccc.getProvincia()+ccc.getNumero())
+			.toArray(String[]::new);
+			//@formatter:on
+		}
+
+		String[] getTipos() {
+			//@formatter:off
+			return liquidaciones.stream()
+			.map(l->l.getTipo())
+			.toArray(String[]::new);
+			//@formatter:on
+		}
+
+		String[] getMeses() {
+			//@formatter:off
+			return liquidaciones.stream()
+			.map(l->l.getPeriodoDesde().getMes())
+			.toArray(String[]::new);
+			//@formatter:on
+		}
+
+		String[] getAnhos() {
+			//@formatter:off
+			return liquidaciones.stream()
+			.map(l->l.getPeriodoDesde().getAnho())
+			.toArray(String[]::new);
+			//@formatter:on
+		}
+
+		Boolean[] getAceptarBasesAnteriores() {
+			//@formatter:off
+			return liquidaciones.stream()
+			.map(l->"S".equalsIgnoreCase(l.getAceptarBasesAnteriores()))
+			.toArray(Boolean[]::new);
+			//@formatter:on
 		}
 
 	}
@@ -524,13 +651,13 @@ public class CretaServlet extends HttpServlet implements
 					datoSolicitado.getIndicadorObligatoriedad());
 			String message = String.format(
 
-			"Lo sentimos. %s (%s) no está soportado en AON SOLUTIONS ( Liquidaci\u00F3n %s%s%s).",
+					"Lo sentimos. %s (%s) no está soportado en AON SOLUTIONS ( Liquidaci\u00F3n %s%s%s).",
 
-			getDescription(datoSolicitado),
+					getDescription(datoSolicitado),
 
-			mandatory ? "Obligatorio" : "Opcional",
+					mandatory ? "Obligatorio" : "Opcional",
 
-			liquidacion.getCcc().getProvincia(),
+					liquidacion.getCcc().getProvincia(),
 					liquidacion.getCcc().getRegimen(),
 					liquidacion.getCcc().getNumero()
 
@@ -625,12 +752,14 @@ public class CretaServlet extends HttpServlet implements
 					// salary.getEnterpriseCCC(),
 					var.getName(),
 
-			contextData.getStartDate(), contextData.getEndDate(),
+					contextData.getStartDate(), contextData.getEndDate(),
 
-			tramo.getFechaDesde().getDia(), tramo.getFechaDesde().getMes(),
+					tramo.getFechaDesde().getDia(),
+					tramo.getFechaDesde().getMes(),
 					tramo.getFechaDesde().getAnho(),
 
-			tramo.getFechaHasta().getDia(), tramo.getFechaHasta().getMes(),
+					tramo.getFechaHasta().getDia(),
+					tramo.getFechaHasta().getMes(),
 					tramo.getFechaHasta().getAnho())));
 
 		}
@@ -668,6 +797,18 @@ public class CretaServlet extends HttpServlet implements
 					salary.getEmployeeSSNumber()
 			// salary.getEnterpriseCCC()))
 			)));
+		}
+
+		@Override
+		public void noDiffs(
+				net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
+			warnings.add(new NoDiffs()
+					.setMessage(
+							format("No es necesario comunicar nada nuevo respecto a la información del mes anterior (%s%s%s).",
+									liquidacion.getCcc().getProvincia(),
+									liquidacion.getCcc().getRegimen(),
+									liquidacion.getCcc().getNumero()))
+					.setLiquidacion(liquidacion));
 		}
 
 		// ----------------------------------------------------- Private Static
