@@ -18,11 +18,9 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
 
-import java.text.Collator;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -30,7 +28,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.function.BiConsumer;
 
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
@@ -40,7 +37,6 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.calculator.TaxCalculator.NotNowException;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
@@ -49,6 +45,7 @@ import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.DeferredExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
@@ -909,8 +906,13 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 				List<ITimedResult<Double>> quoteResults = quoteCalculator.quote(contractPayment,
 						resultStart, resultEnd, resultValue);
 				for ( ITimedResult<Double> quoteResult : quoteResults ) {
-					for ( Entry<String,ITimedVariable<?>> entry: quoteResult.getContext().entrySet() ) 
-						salaryBuilder.addData(entry.getKey(), entry.getValue());
+					try {
+						for ( Entry<String,ITimedVariable<?>> entry: quoteResult.getContext().entrySet() ) 
+								salaryBuilder.addData(entry.getKey(), entry.getValue());
+					} catch ( ExpressionExceptionWrapper  e) {
+						if ( e.getCause() instanceof UndefinedVariablesException )
+							onInvalidData(((UndefinedVariablesException)e.getCause()).getVariableNames() );
+					}
 					quote += quoteResult.getValue();
 				}
 

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -37,6 +38,7 @@ import com.esferalia.aon.salary.enumeration.PaymentTypeVisitor;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedResult;
@@ -106,7 +108,38 @@ public abstract class QuoteCalculator {
 
 	public abstract List<ITimedResult<Double>> quote(IContractPayment payment,
 			Date start, Date end, double amount) throws AonException;
+	
+	
+	private static class ZeroTimedResult implements ITimedResult<Double>{
+		
+		private ITimedResult<?> result;
+		
+		public ZeroTimedResult(ITimedResult<?> result) {
+			this.result = result;
+		}
+		
+		@Override
+		public Double getValue() {
+			return  0.00;
+		}
 
+		@Override
+		public Period getPeriod() {
+			return result.getPeriod();
+		}
+
+		@Override
+		public Double getValue(Period period) {
+			return 0.00;
+		}
+
+		@Override
+		public Map<String, ITimedVariable<?>> getContext() {
+			return result.getContext();
+		}
+		
+	}
+	
 	public static class NonQuote extends QuoteCalculator {
 		private NonQuote() {
 		}
@@ -280,10 +313,15 @@ public abstract class QuoteCalculator {
 						quoteResult.getPeriod().getStart(),
 						quoteResult.getPeriod().getEnd(),
 						quoteResult.getValue(quoteResult.getPeriod()));
+
 				// TODO: ???
-				for ( ITimedResult<Double> limitResult: limitsResults )
-					quotesImpl.add(new TimedResult<Double>(0.00,
-							limitResult.getPeriod(), limitResult.getContext()));
+				for ( ITimedResult<Double> limitResult: limitsResults ){
+					try {
+						limitResult.getContext();
+					} catch (ExpressionExceptionWrapper e) {
+					}
+					quotesImpl.add(new ZeroTimedResult(limitResult));
+				}
 			}
 
 			return quotesImpl;
@@ -333,10 +371,10 @@ public abstract class QuoteCalculator {
 				@Override
 				public void visitOther(PaymentType type) {
 					add(CGC_BASE_RAW.getName(), quote, context, start, end);
-					limit(CGC_BASE.getName(), CGC_BASE_RAW.getName(),
+					quotesImpl.addAll(limit(CGC_BASE.getName(), CGC_BASE_RAW.getName(),
 							CGC_BASE_MIN.getName(), CGC_BASE_MAX.getName(),
 							context, start, end, MATERNITY_BASE.getName(),
-							ERE_BASE.getName());
+							ERE_BASE.getName()));
 					GeneralQuote.this.rawCgcBase += quote;
 				}
 
@@ -357,10 +395,10 @@ public abstract class QuoteCalculator {
 				@Override
 				public void visitSalaryInKind(PaymentType paymentType) {
 					add(CGC_BASE_RAW.getName(), quote, context, start, end);
-					limit(CGC_BASE.getName(), CGC_BASE_RAW.getName(),
+					quotesImpl.addAll(limit(CGC_BASE.getName(), CGC_BASE_RAW.getName(),
 							CGC_BASE_MIN.getName(), CGC_BASE_MAX.getName(),
 							context, start, end, MATERNITY_BASE.getName(),
-							ERE_BASE.getName());
+							ERE_BASE.getName()));
 					GeneralQuote.this.rawCgcBase += quote;
 				}
 
@@ -637,11 +675,14 @@ public abstract class QuoteCalculator {
 
 		List<ITimedResult<Double>> limits = null;
 		limits = expressionContext.eval(expression, start, end, Double.class);
+		
 
 		if (limits == null || limits.size() == 0) {
 			return Collections.emptyList();
 		}
-
+		
+		
+		
 		return limits;
 	}
 
@@ -714,7 +755,15 @@ public abstract class QuoteCalculator {
 				}
 				
 				
+			} catch (UndefinedVariablesException e) {
+				results.add(new TimedResult<Double>(0.00, new Period(start, end),null){
+					@Override
+					public Map<String, ITimedVariable<?>> getContext() {
+						throw new ExpressionExceptionWrapper(e);
+					}
+				});
 			} catch (Exception e) {
+				
 			}
 
 			try {
@@ -732,6 +781,13 @@ public abstract class QuoteCalculator {
 				ctx.putVariable(limitName, new TimedObject<Double>(
 						Math.min(rawValue, maxValue), rawPeriod));
 				continue;
+			} catch (UndefinedVariablesException e) {
+				results.add(new TimedResult<Double>(0.00, new Period(start, end),null){
+					@Override
+					public Map<String, ITimedVariable<?>> getContext() {
+						throw new ExpressionExceptionWrapper(e);
+					}
+				});
 			} catch (Exception e) {
 			}
 			ctx.putVariable(limitName,
@@ -777,4 +833,25 @@ public abstract class QuoteCalculator {
 
 	}
 
+	private static HashMap<String, ITimedVariable<?>> getUndefinedContext(UndefinedVariablesException e ) {
+		
+		HashMap<String, ITimedVariable<?>> context = new HashMap<String, ITimedVariable<?>>();
+		
+		for( String name : e.getVariableNames() )
+			context.put(name, new ITimedVariable<Void>() {
+				private UndefinedVariablesException e = new UndefinedVariablesException(name);
+				
+				@Override
+				public Period getPeriod() {
+					throw new ExpressionExceptionWrapper(e);
+				}
+				
+				@Override
+				public Void getValue(Period period) {
+					throw new ExpressionExceptionWrapper(e);
+				}
+			});
+		
+		return context;
+	}
 }
