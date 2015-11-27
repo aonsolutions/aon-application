@@ -34,11 +34,11 @@ import com.esferalia.aon.occam.api.model.Domain;
 
 public class DBConsumption {
 	
-	public static Map<Integer, ConsumptionItem> getConsumption(String domain, Integer domainId, String login
+	public static Map<Integer, ConsumptionItem> getConsumption(Domain domain, String login
 			, Integer initialId, Integer finalId, Integer warehouseId, Date initialDate, Date finalDate, String warehouseName){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
 			Record1<String> result = ctx.getDslContext().select(WORKPLACE.DESCRIPTION)
 			.from(WORKPLACE).join(WAREHOUSE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
@@ -342,11 +342,11 @@ public class DBConsumption {
 	}
 	
 	
-	public static String getWarehouseName(String domain, Integer domainId, Integer warehouseId, String login){
+	public static String getWarehouseName(Domain domain, Integer warehouseId, String login){
 		
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
 			Record1<String> data = ctx.getDslContext().select(WAREHOUSE.NAME)
 				.from(WAREHOUSE)
@@ -359,11 +359,11 @@ public class DBConsumption {
 		}
 	}
 	
-	public static String getInventoryName(String domain, Integer domainId, Integer inventoryId, String login){
+	public static String getInventoryName(Domain domain, Integer inventoryId, String login){
 		if(inventoryId == null) return "";
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
 			Record1<String> data = ctx.getDslContext().select(INVENTORY.DESCRIPTION)
 				.from(INVENTORY)

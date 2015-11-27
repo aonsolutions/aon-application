@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record4;
@@ -29,8 +28,10 @@ import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.marketplace.AmazonDelivery;
 import com.esferalia.aon.jooq.tables.records.DeliveryRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
 
 
@@ -38,10 +39,10 @@ import com.esferalia.aon.occam.api.model.security.User;
 
 public class DBConsults {
 	
-	public static TemplateList getTemplates(Domain domain, String login){
+	public static TemplateList getTemplates(Domain domain, User user){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 				
 				
 				// DOMAIN + DOMAIN SON
@@ -69,7 +70,6 @@ public class DBConsults {
 						.fetch();
 				
 				Vector<TemplateInfo> v = new Vector<TemplateInfo>();
-				AONContext sctx = ctx;
 				record.stream().forEach(r -> {
 					TemplateInfo ti = new TemplateInfo();
 					ti.setId(r.value1());
@@ -83,7 +83,7 @@ public class DBConsults {
 					}
 					else{
 						f = new File("/tmp/"+ti.getName()+".xml"); 
-						byte[] b = getXml(sctx.getDslContext(),ti.getId());
+						byte[] b = getXml(domain, user, ti.getId());
 						try {
 							org.apache.commons.io.FileUtils.writeByteArrayToFile(f,b);
 						} catch (Exception e) {
@@ -117,7 +117,7 @@ public class DBConsults {
 					}
 					else{
 						f = new File("/tmp/"+ti.getName()+".xml"); 
-						byte[] b = getXml(sctx.getDslContext(),ti.getId());
+						byte[] b = getXml(domain, user, ti.getId());
 						try {
 							org.apache.commons.io.FileUtils.writeByteArrayToFile(f,b);
 						} catch (Exception e) {
@@ -138,7 +138,7 @@ public class DBConsults {
 				Boolean version = false;
 				if(recordDefault.isNotEmpty()){
 					File f = new File("/tmp/"+recordDefault.get(0).value2()+".xml"); 
-					byte[] b = getXml(sctx.getDslContext(),recordDefault.get(0).value1());
+					byte[] b = getXml(domain, user, recordDefault.get(0).value1());
 					try {
 						org.apache.commons.io.FileUtils.writeByteArrayToFile(f,b);
 					} catch (Exception e) {
@@ -154,7 +154,7 @@ public class DBConsults {
 					version = ver.compareTo(aux.getVersion()) == 1;
 					
 					if(version){
-						DBConsults.deleteDefaultTemplates(ctx, domain.getName(), domain.getId());
+						DBConsults.deleteDefaultTemplates(ctx);
 					}
 				}
 				if(recordDefault.isEmpty() || version){
@@ -179,7 +179,7 @@ public class DBConsults {
 						stockTemplate.setIsParent(true);
 						stockTemplate.setVersion(AonVersion.VERSION);
 						Integer id = insertTemplate(new Domain().setId(0).setName(domain.getName()),
-								stockTemplate,Utils.newXmlFileWithVersion(stockTemplate), login);
+								stockTemplate,Utils.newXmlFileWithVersion(stockTemplate), user.getLogin());
 						stockTemplate.setId(id);
 						v.add(stockTemplate);
 					
@@ -212,7 +212,7 @@ public class DBConsults {
 						productTemplate.setIsParent(true);
 						productTemplate.setVersion(AonVersion.VERSION);
 						id = insertTemplate(new Domain().setId(0).setName(domain.getName()),
-								productTemplate,Utils.newXmlFileWithVersion(productTemplate), login);
+								productTemplate,Utils.newXmlFileWithVersion(productTemplate), user.getLogin());
 						productTemplate.setId(id);
 						v.add(productTemplate);
 						
@@ -229,7 +229,7 @@ public class DBConsults {
 						feeTemplate.setIsParent(true);
 						feeTemplate.setVersion(AonVersion.VERSION);
 						id = insertTemplate(new Domain().setId(0).setName(domain.getName()),
-								feeTemplate,Utils.newXmlFileWithVersion(feeTemplate), login);
+								feeTemplate,Utils.newXmlFileWithVersion(feeTemplate), user.getLogin());
 						feeTemplate.setId(id);
 						v.add(feeTemplate);
 						
@@ -246,7 +246,7 @@ public class DBConsults {
 						consumptionTemplate.setIsParent(true);
 						consumptionTemplate.setVersion(AonVersion.VERSION);
 						id = insertTemplate(new Domain().setId(0).setName(domain.getName()),
-								consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), login);
+								consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), user.getLogin());
 						consumptionTemplate.setId(id);
 						v.add(consumptionTemplate);
 						
@@ -263,7 +263,7 @@ public class DBConsults {
 						consumptionTemplate.setIsParent(true);
 						consumptionTemplate.setVersion(AonVersion.VERSION);
 						id = insertTemplate(new Domain().setId(0).setName(domain.getName()),
-								consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), login);
+								consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), user.getLogin());
 						consumptionTemplate.setId(id);
 						v.add(inventoryTemplate1);
 						
@@ -280,7 +280,7 @@ public class DBConsults {
 						consumptionTemplate.setIsParent(true);
 						consumptionTemplate.setVersion(AonVersion.VERSION);
 						id = insertTemplate(new Domain().setId(0).setName(domain.getName()),
-								consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), login);
+								consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), user.getLogin());
 						consumptionTemplate.setId(id);
 						v.add(inventoryTemplate2);
 					}
@@ -299,7 +299,7 @@ public class DBConsults {
 					}
 					else{
 						f = new File("/tmp/"+ti.getName()+".xml"); 
-						byte[] b = getXml(sctx.getDslContext(),ti.getId());
+						byte[] b = getXml(domain, user, ti.getId());
 						try {
 							org.apache.commons.io.FileUtils.writeByteArrayToFile(f,b);
 						} catch (Exception e) {
@@ -357,38 +357,18 @@ public class DBConsults {
 		}
 	}
 	
-	public static byte[] getTemplate(String domain , Integer domainId, Integer id, String login) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
-			
-			return getXml(ctx.getDslContext(), id);
-			
-		}finally {
-			if (ctx != null) ctx.close();
-		}
+	public static byte[] getTemplate(Domain domain, User user, Integer attachId) {
+		return getXml(domain, user, attachId);
 	}
 	
-	public static byte[] getXml(DSLContext dslContext, Integer id){
-	
-			return dslContext
-					.select(RATTACH.DATA)
-					.from(RATTACH)
-					.where(RATTACH.ID.eq(id))
-					.fetchOne().value1();
-
+	public static byte[] getXml(Domain domain, User user, Integer attachId){
+		return AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), 
+				filter -> filter.getIdProperty().eq(attachId), AttachType.REGISTRY).getData();
 	}
 	
-	public static void removeTemplate(Domain domain, Integer id, String login){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
-			
-			ctx.getDslContext().delete(RATTACH).where(RATTACH.ID.eq(id)).execute();
-			
-		} finally {
-			if (ctx != null) ctx.close();
-		}
+	public static void removeTemplate(Domain domain, User user, Integer attachId){
+		AON.delete(domain.getName(), domain.getId(), user.getLogin(),
+				filter -> filter.getIdProperty().eq(attachId), AttachType.REGISTRY);
 	}
 	
 	public static void updateTemplate(Domain domain,TemplateInfo ti, byte[] b, String login){
@@ -404,7 +384,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static void deleteDefaultTemplates(AONContext ctx, String domain, Integer domainId){
+	public static void deleteDefaultTemplates(AONContext ctx){
 		ctx.getDslContext()
 			.delete(RATTACH)
 			.where(RATTACH.TYPE.eq((byte)15))
@@ -443,13 +423,13 @@ public class DBConsults {
 		}
 	}
 	
-	public static List<AmazonDelivery> getDeliveries(String domainName, Integer domainId, String login){
+	public static List<AmazonDelivery> getDeliveries(Domain domain, String login){
 		AONContext ctx = null;
 		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			Result<DeliveryRecord> result = ctx.getDslContext().select()
 				.from(DELIVERY)
-				.where(DELIVERY.DOMAIN.eq(domainId))
+				.where(DELIVERY.DOMAIN.eq(domain.getId()))
 				.and(DELIVERY.SHIPPING_STATUS.eq((byte)ShipmentStatus.IN_AGENCY.ordinal()))
 				.fetchInto(DELIVERY);
 			

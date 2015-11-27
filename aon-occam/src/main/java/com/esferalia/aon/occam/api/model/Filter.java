@@ -21,6 +21,5 @@ public interface Filter {
 	public Filter or(Filter filter);
 	public Filter and(Filter filter);
 	public Filter not(Filter filter);
-	
-	
+
 }

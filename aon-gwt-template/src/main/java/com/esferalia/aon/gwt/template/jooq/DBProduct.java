@@ -37,11 +37,13 @@ import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.product.Item;
 
 public class DBProduct {
 
-	private static com.esferalia.aon.occam.api.model.product.Item getItem(com.esferalia.aon.occam.api.model.product.Item i,Integer productId, Integer domainId, AONContext ctx){
+	private static Item getItem(Item i,Integer productId, Integer domainId, AONContext ctx){
 		Result<Record7<Integer, String, String, String, String, String, Timestamp>> data = ctx.getDslContext().select(ITEM.ID,ITEM.BARCODE,ITEM.DETAIL,ITEM.DETAIL2,ITEM.DETAIL3,ITEM.CREATION_USER,ITEM.CREATION_DATE)
 				.from(ITEM)
 				.where(ITEM.PRODUCT.eq(productId)).fetch();
@@ -72,14 +74,14 @@ public class DBProduct {
 		return null;
 	}
 	
-	private static com.esferalia.aon.occam.api.model.product.Product getProduct(com.esferalia.aon.occam.api.model.product.Product p, TemplateInfo ti, Integer domainId, AONContext ctx){
+	private static Product getProduct(Product p, TemplateInfo ti, Integer domainId, AONContext ctx){
 		Record13<Integer, Integer, Integer, Byte, Byte, Integer, Integer, Byte, Byte, Byte, String, Timestamp, Byte> data = ctx.getDslContext().select(PRODUCT.ID, PRODUCT.BRAND, PRODUCT.CATEGORY,PRODUCT.INVENTORIABLE,PRODUCT.STATUS, PRODUCT.VAT, PRODUCT.RETENTION,PRODUCT.TYPE, PRODUCT.COMPOSITION, PRODUCT.COMPOSITION_PRICE, PRODUCT.CREATION_USER, PRODUCT.CREATION_DATE, PRODUCT.KIND)
 				.from(PRODUCT)
 				.where(PRODUCT.CODE.eq(p.getCode()).and(PRODUCT.DOMAIN.eq(domainId))).fetchOne();
 		if(data != null){
-			com.esferalia.aon.occam.api.model.product.Product product = new com.esferalia.aon.occam.api.model.product.Product();
+			Product product = new Product();
 			
-			product.setId(data.value1());
+			product.setId(data.getValue(PRODUCT.ID));
 			product.setDomain(domainId);
 			product.setName(p.getName());
 			product.setCode(p.getCode());
@@ -136,7 +138,7 @@ public class DBProduct {
 		return count > 0;
 	}
 	
-	public static Error insertProducts2(String domain, Integer domainId,Vector<ProductInfo> products, TemplateInfo templateInfo, AuditInfo ai, String login, String kind){
+	public static Error insertProducts2(Domain domain, Vector<ProductInfo> products, TemplateInfo templateInfo, AuditInfo ai, String login, String kind){
 		long start = System.currentTimeMillis();
 		Error error = new Error();
 		error.setError(true);
@@ -145,7 +147,7 @@ public class DBProduct {
 		error.setTextError(verror);
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
 			Vector<com.esferalia.aon.occam.api.model.product.Product> uproducts = new Vector<com.esferalia.aon.occam.api.model.product.Product>();
 			Vector<com.esferalia.aon.occam.api.model.product.Product> iproducts = new Vector<com.esferalia.aon.occam.api.model.product.Product>();
@@ -158,10 +160,10 @@ public class DBProduct {
 			
 			products.stream().forEach(r->{	
 				
-				com.esferalia.aon.occam.api.model.product.Product product  = getProduct(r.getProduct(), templateInfo, domainId, sctx);	
+				com.esferalia.aon.occam.api.model.product.Product product  = getProduct(r.getProduct(), templateInfo, domain.getId(), sctx);	
 				if(product != null){
 					
-					if(hasProductParent(sctx, product.getCode(), domainId)){
+					if(hasProductParent(sctx, product.getCode(), domain.getId())){
 						error.setError(false);
 						verror.add("*Fila " + (r.getRow()+1)+": Es un producto heredado.");
 						error.setTextError(verror);
@@ -185,7 +187,7 @@ public class DBProduct {
 						}
 						if(r.getItem() != null){	
 							r.getItem().stream().forEach(i ->{
-								com.esferalia.aon.occam.api.model.product.Item item = getItem(i, product.getId(), domainId, sctx);
+								com.esferalia.aon.occam.api.model.product.Item item = getItem(i, product.getId(), domain.getId(), sctx);
 								if(item != null){
 									if(!esta(item,uitems)){
 										uitems.add(item);	
@@ -236,7 +238,7 @@ public class DBProduct {
 				});
 				
 				products.stream().filter(p -> p.getProduct().getId() == null).forEach(r->{	
-					Integer productId = sctx.getDslContext().select(PRODUCT.ID).from(PRODUCT).where(PRODUCT.DOMAIN.eq(domainId)).and(PRODUCT.CODE.eq(r.getProduct().getCode())).fetchOne().value1();
+					Integer productId = sctx.getDslContext().select(PRODUCT.ID).from(PRODUCT).where(PRODUCT.DOMAIN.eq(domain.getId())).and(PRODUCT.CODE.eq(r.getProduct().getCode())).fetchOne().value1();
 					System.out.println(r.getProduct().getId());
 					if(r.getProductTag() != null){	
 						r.getProductTag().stream().forEach(pt ->{

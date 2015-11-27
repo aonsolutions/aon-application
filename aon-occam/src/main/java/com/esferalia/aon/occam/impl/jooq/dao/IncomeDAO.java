@@ -31,7 +31,7 @@ public class IncomeDAO {
 				.and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
 				.orderBy(INCOME.ISSUE_TIME.desc())
 				.limit(1).fetch().stream().map(new IncomeDetailFiller())
-				.collect(Collectors.toCollection(LinkedList::new)).getFirst();
+				.findFirst().orElse(null);
 	}
 	
 	public static LinkedList<IncomeDetail> getLastIncomeDetailList(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId){

@@ -1,0 +1,80 @@
+package com.esferalia.aon.occam.api.model;
+
+public class Workplace {
+	
+	private Byte active;
+	private Integer address;
+	private Integer customer;
+	private String description;
+	private Integer domain;
+	private Byte economicagreement;
+	private Integer enterprise;
+	private Integer id;
+	private Integer scope;
+	
+	public Byte getActive() {
+		return active;
+	}
+	public Workplace setActive(Byte active) {
+		this.active = active;
+		return this;
+	}
+	public Integer getAddress() {
+		return address;
+	}
+	public Workplace setAddress(Integer address) {
+		this.address = address;
+		return this;
+	}
+	public Integer getCustomer() {
+		return customer;
+	}
+	public Workplace setCustomer(Integer customer) {
+		this.customer = customer;
+		return this;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public Workplace setDescription(String description) {
+		this.description = description;
+		return this;
+	}
+	public Integer getDomain() {
+		return domain;
+	}
+	public Workplace setDomain(Integer domain) {
+		this.domain = domain;
+		return this;
+	}
+	public Byte getEconomicagreement() {
+		return economicagreement;
+	}
+	public Workplace setEconomicagreement(Byte economicagreement) {
+		this.economicagreement = economicagreement;
+		return this;
+	}
+	public Integer getEnterprise() {
+		return enterprise;
+	}
+	public Workplace setEnterprise(Integer enterprise) {
+		this.enterprise = enterprise;
+		return this;
+	}
+	public Integer getId() {
+		return id;
+	}
+	public Workplace setId(Integer id) {
+		this.id = id;
+		return this;
+	}
+	public Integer getScope() {
+		return scope;
+	}
+	public Workplace setScope(Integer scope) {
+		this.scope = scope;
+		return this;
+	}
+	
+	
+}

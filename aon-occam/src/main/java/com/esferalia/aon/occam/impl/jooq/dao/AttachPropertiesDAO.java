@@ -16,8 +16,8 @@ import java.sql.Timestamp;
 import org.jooq.Condition;
 
 import com.esferalia.aon.occam.api.model.AttachFilter;
-import com.esferalia.aon.occam.api.model.AttachProperties;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
 
 public class AttachPropertiesDAO {
 

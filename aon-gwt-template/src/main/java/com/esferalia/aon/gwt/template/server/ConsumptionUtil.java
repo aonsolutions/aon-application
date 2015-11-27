@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.template.shared.ConsumptionItem;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -52,8 +53,8 @@ public class ConsumptionUtil {
     	Domain domain = new Domain().setName(AonUtil.getDomainName()).setId(domainId);
         Collections.sort(warehouses, (Warehouse s1, Warehouse s2) -> s1.getName().compareTo(s2.getName()));        
         byte[] b = null ;
-        
-        b = DBConsults.getTemplate(domain.getName(),domain.getId(), fileId, login);
+        User user = new User().setLogin(login);
+        b = DBConsults.getTemplate(domain, user, fileId);
  
         File f = new File("/tmp/"+"consumo"+".xml"); 
         try {
@@ -111,14 +112,14 @@ public class ConsumptionUtil {
         	ConsumptionItem consumptionItem = DBConsumption.getTwoLastInventory(domain, w.getId(), login);
         	Integer initialId = consumptionItem.getInitialId(), finalId = consumptionItem.getFinalId();
             Date initialDate = AonDateUtils.addDays(consumptionItem.getInitialDate(), 1), finalDate = consumptionItem.getFinalDate();
-            String initialInventoryName = DBConsumption.getInventoryName(domain.getName(), domainId, initialId, login);
-            String finalInventoryName = DBConsumption.getInventoryName(domain.getName(), domainId, finalId, login);
+            String initialInventoryName = DBConsumption.getInventoryName(domain, initialId, login);
+            String finalInventoryName = DBConsumption.getInventoryName(domain, finalId, login);
             consumptionItem.setWarehouseId(w.getId());
             consumptionItem.setWarehouseName(w.getName());
             consumptionItem.setInitialInventoryName(initialInventoryName);
             consumptionItem.setFinalInventoryName(finalInventoryName);
         	cisMap.put(w.getId(), consumptionItem);
-        	Map<Integer, ConsumptionItem> map = DBConsumption.getConsumption(domain.getName(), domainId, login, initialId, finalId, w.getId(), new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()), consumptionItem.getWarehouseName());
+        	Map<Integer, ConsumptionItem> map = DBConsumption.getConsumption(domain, login, initialId, finalId, w.getId(), new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()), consumptionItem.getWarehouseName());
 
         	Vector<ConsumptionItem> v =  new Vector<ConsumptionItem>(map.values());
         	

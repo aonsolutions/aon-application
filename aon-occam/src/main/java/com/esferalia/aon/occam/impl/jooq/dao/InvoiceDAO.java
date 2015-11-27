@@ -260,7 +260,7 @@ public class InvoiceDAO {
 				.and(INVOICE_DETAIL.WORKPLACE.eq(workplaceId))
 				.orderBy(INVOICE.ISSUE_DATE.desc())
 				.limit(1).fetch().stream().map(new InvoiceDetailFiller())
-				.collect(Collectors.toCollection(LinkedList::new)).getFirst();
+				.findFirst().orElse(null);
 	}
 	
 	public static LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId) {

@@ -1,9 +1,16 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.LinkedList;
+
+import com.esferalia.aon.occam.api.model.ProjectFilter;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
+import com.esferalia.aon.occam.api.model.registry.Project;
 
 public interface IProject {
-
+	
+	public Project getProject(AONContext ctx, ProjectFilter filter);
+	public LinkedList<Project> getProjectList(AONContext ctx, ProjectFilter filter);
+	
 	public ProjectReservation getProjectReservation(AONContext ctx, Integer projectId);
 
 }

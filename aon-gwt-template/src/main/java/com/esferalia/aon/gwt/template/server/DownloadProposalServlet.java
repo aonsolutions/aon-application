@@ -29,6 +29,8 @@ import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.User;
 
 @WebServlet(name = "DownloadTemplatesProposal", urlPatterns = { "/aon_gwt_template/gwt_download_proposal/*" })
 public class DownloadProposalServlet extends HttpServlet {
@@ -45,17 +47,17 @@ public class DownloadProposalServlet extends HttpServlet {
         String domain_id = p_request.getParameter("domain_id");
         String proposal_id = p_request.getParameter("proposal");
         String login = p_request.getParameter("username");
-
+        User user = new User().setLogin(login);
         Integer proposalId = Integer.parseInt(proposal_id);
         Integer domainId = Integer.parseInt(domain_id);
-        String domain = AonUtil.getDomainName();
-
+        String domainName = AonUtil.getDomainName();
+        Domain domain = new Domain().setId(domainId).setName(domainName);
         byte[] b = null ;
         
 
         if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-        	b = DBConsults.getTemplate(domain,domainId, id, login);
+        	b = DBConsults.getTemplate(domain, user, id);
         }
         else return;
         
@@ -137,7 +139,7 @@ public class DownloadProposalServlet extends HttpServlet {
         		hoja.setDefaultColumnStyle(i, style3);
         	else hoja.setDefaultColumnStyle(i, style2);
         }*/
-        Vector<StockInfo> v = DBStock.getProposal(domain, domainId, proposalId, login);
+        Vector<StockInfo> v = DBStock.getProposal(domain, proposalId, login);
         
         for(Integer j = 0; j< v.size();j++){
         	Row row = hoja.createRow(j+2);

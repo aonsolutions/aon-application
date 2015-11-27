@@ -33,6 +33,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 
 @WebServlet(name = "DownloadTemplates", urlPatterns = { "/aon_gwt_template/gwt_download/*" })
@@ -49,15 +50,17 @@ public class DownloadTemplatesServlet extends HttpServlet {
         String fileId = p_request.getParameter("id");
         String name = p_request.getParameter("name");
         String login = p_request.getParameter("username");
-
-        String domain = AonUtil.getDomainName();
+        User user = new User().setLogin(login);
+        String domainName = AonUtil.getDomainName();
         Integer idFile = Integer.parseInt(fileId);
         Integer domainId = null;
 		try {
-			domainId = com.code.aon.google.apis.jooq.DBConsults.getDomain(domain).getId();
+			domainId = com.code.aon.google.apis.jooq.DBConsults.getDomain(domainName).getId();
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
+		com.esferalia.aon.occam.api.model.Domain domain = new com.esferalia.aon.occam.api.model.Domain()
+				.setId(domainId).setName(domainName);
         byte[] b = null ;
         
         if (driveId != ""){
@@ -65,8 +68,8 @@ public class DownloadTemplatesServlet extends HttpServlet {
         	
         	DomainGserviceaccount g = null;
 			try {
-				Domain dom = com.code.aon.google.apis.jooq.DBConsults.getDomain(domain);
-				g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain,dom.getId());
+				Domain dom = com.code.aon.google.apis.jooq.DBConsults.getDomain(domainName);
+				g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domainName,dom.getId());
 				d = DriveUtils.serviceInitialize(g);
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -90,7 +93,7 @@ public class DownloadTemplatesServlet extends HttpServlet {
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-            b = DBConsults.getTemplate(domain,domainId, id, login);
+            b = DBConsults.getTemplate(domain, user, id);
 
         }
         else return;

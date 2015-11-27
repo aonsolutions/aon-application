@@ -34,115 +34,134 @@ public class Project implements Serializable {
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public Project setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	public int getDomain() {
 		return domain;
 	}
-	public void setDomain(int domain) {
+	public Project setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
 	public Integer getProjectTypeId() {
 		return projectTypeId;
 	}
-	public void setProjectTypeId(Integer projectTypeId) {
+	public Project setProjectTypeId(Integer projectTypeId) {
 		this.projectTypeId = projectTypeId;
+		return this;
 	}
 	public Integer getProjectTypeName() {
 		return projectTypeName;
 	}
-	public void setProjectTypeName(Integer projectTypeName) {
+	public Project setProjectTypeName(Integer projectTypeName) {
 		this.projectTypeName = projectTypeName;
+		return this;
 	}
 	public DocumentType getRegistryDocumentType() {
 		return registryDocumentType;
 	}
-	public void setRegistryDocumentType(DocumentType registryDocumentType) {
+	public Project setRegistryDocumentType(DocumentType registryDocumentType) {
 		this.registryDocumentType = registryDocumentType;
+		return this;
 	}
 	public Country getRegistryDocumentCountry() {
 		return registryDocumentCountry;
 	}
-	public void setRegistryDocumentCountry(Country registryDocumentCountry) {
+	public Project setRegistryDocumentCountry(Country registryDocumentCountry) {
 		this.registryDocumentCountry = registryDocumentCountry;
+		return this;
 	}
 	public String getRegistryDocument() {
 		return registryDocument;
 	}
-	public void setRegistryDocument(String registryDocument) {
+	public Project setRegistryDocument(String registryDocument) {
 		this.registryDocument = registryDocument;
+		return this;
 	}
 	public String getRegistryName() {
 		return registryName;
 	}
-	public void setRegistryName(String registryName) {
+	public Project setRegistryName(String registryName) {
 		this.registryName = registryName;
+		return this;
 	}
 	public String getRegistryAlias() {
 		return registryAlias;
 	}
-	public void setRegistryAlias(String registryAlias) {
+	public Project setRegistryAlias(String registryAlias) {
 		this.registryAlias = registryAlias;
+		return this;
 	}
 	public boolean isRegistryNaturalPerson() {
 		return registryNaturalPerson;
 	}
-	public void setRegistryNaturalPerson(boolean registryNaturalPerson) {
+	public Project setRegistryNaturalPerson(boolean registryNaturalPerson) {
 		this.registryNaturalPerson = registryNaturalPerson;
+		return this;
 	}
 	public Country getRegistryNationality() {
 		return registryNationality;
 	}
-	public void setRegistryNationality(Country registryNationality) {
+	public Project setRegistryNationality(Country registryNationality) {
 		this.registryNationality = registryNationality;
+		return this;
 	}
 	public boolean isRegistryConfidential() {
 		return registryConfidential;
 	}
-	public void setRegistryConfidential(boolean registryConfidential) {
+	public Project setRegistryConfidential(boolean registryConfidential) {
 		this.registryConfidential = registryConfidential;
+		return this;
 	}
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
+	public Project setName(String name) {
 		this.name = name;
+		return this;
 	}
 	public String getAlias() {
 		return alias;
 	}
-	public void setAlias(String alias) {
+	public Project setAlias(String alias) {
 		this.alias = alias;
+		return this;
 	}
 	public Date getDate() {
 		return date;
 	}
-	public void setDate(Date date) {
+	public Project setDate(Date date) {
 		this.date = date;
+		return this;
 	}
 	public boolean isTas() {
 		return tas;
 	}
-	public void setTas(boolean tas) {
+	public Project setTas(boolean tas) {
 		this.tas = tas;
+		return this;
 	}
 	public boolean isCommercial() {
 		return commercial;
 	}
-	public void setCommercial(boolean commercial) {
+	public Project setCommercial(boolean commercial) {
 		this.commercial = commercial;
+		return this;
 	}
 	public boolean isReservation() {
 		return reservation;
 	}
-	public void setReservation(boolean reservation) {
+	public Project setReservation(boolean reservation) {
 		this.reservation = reservation;
+		return this;
 	}
 	public boolean isActive() {
 		return active;
 	}
-	public void setActive(boolean active) {
+	public Project setActive(boolean active) {
 		this.active = active;
+		return this;
 	}
 }

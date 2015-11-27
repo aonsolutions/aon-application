@@ -31,7 +31,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
-import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Series;
 import com.code.aon.config.Tax;
 import com.code.aon.config.enumeration.TaxType;
@@ -43,7 +42,6 @@ import com.code.aon.product.ProductCategory;
 import com.code.aon.product.ProductTag;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
-import com.code.aon.project.Project;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.template.client.ITemplate;
@@ -69,6 +67,7 @@ import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -98,7 +97,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	static final String YEARLY = BillingPeriod.YEARLY.getName(new Locale("es_ES"));
 	
 	HashMap<String, ProductInfo> map = new HashMap<String, ProductInfo>();
-	User user;
 	public static byte[] out;
 	static Integer size;
 	private static String mimetype;
@@ -128,22 +126,19 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 	
 	public User getUser(){
-		return user;
+		return new User()
+				.setId(getUserID())
+				.setLogin(getUserLogin())
+				.setDomain(getUserDomainID());
 	}
-	public void setUser(User user){
-		this.user = user;
-	}
-	
+
 	public void initAux(){
-		setUser(new User()
-					.setId(getUserID())
-					.setLogin(getUserLogin())
-					.setDomain(getUserDomainID()));
+	
 	}
 	
 	public TemplateList getTemplates(Domain domain){
 		TemplateList tl = null;
-		tl = DBConsults.getTemplates(domain, getUser().getLogin());
+		tl = DBConsults.getTemplates(domain, getUser());
 		tl.setDomainId(domain.getId());
 		tl.setLogin(getUser().getLogin());
 		return tl;
@@ -195,13 +190,13 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 
 	public void deleteTemplate(Domain domain, TemplateInfo ti){
-		DBConsults.removeTemplate(domain, ti.getId(), getUser().getLogin());
+		DBConsults.removeTemplate(domain,getUser(), ti.getId());
 	}
 	//-------------------- IMPORTAR FEE
 	Vector<FeeInfo> fees;
 	FeeInfo fi;
 	List<Seller> sellers = new Vector<Seller>();
-	Vector<WorkPlace> workplaces = new Vector<WorkPlace>();
+	LinkedList<Workplace> workplaces = new LinkedList<Workplace>();
 	Vector<InvoicingGroup> invoicingGroups = new Vector<InvoicingGroup>();
 	
 	public Integer executeExcel3(final Domain domain, TemplateInfo templateInfo, Boolean ignoreInactiveClient){
@@ -214,7 +209,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		Vector<FeeInfo> fees = new Vector<FeeInfo>();
 
 		sellers = DBFee.getSellers(domain, getUser().getLogin());
-		workplaces = DBFee.getWorkplaces(domain, getUser().getLogin());
+		workplaces = DBFee.getWorkplaceList(domain, getUser());
 		invoicingGroups = DBFee.getInvoicingGroups(domain, getUser().getLogin());
 	
 		Error error = new Error();
@@ -371,7 +366,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			ai.setDate(new Date());
 			ai.setUserId(getUser().getId());
 			ai.setUsername(getUser().getLogin());
-			error = DBFee.insertFee(domain.getName(),domain.getId(),fees,ai, getUser().getLogin());
+			error = DBFee.insertFee(domain,fees,ai, getUser().getLogin());
 		}
 		else{
 			//Alguna de las filas contiene datos erroneos.
@@ -506,7 +501,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			if(type.equals(Cell.CELL_TYPE_STRING)){
 				String strAux = cell.getStringCellValue();
 				Boolean b = true;
-				for(WorkPlace s : workplaces){
+				for(Workplace s : workplaces){
 					if(strAux.equalsIgnoreCase(s.getDescription())){
 						fee.setWorkplace(cell.getStringCellValue());
 						fee.setWorkplaceId(s.getId());
@@ -561,7 +556,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		case "Expediente": case "Record":  //BD
 			if(type.equals(Cell.CELL_TYPE_STRING)){
 				String strAux = cell.getStringCellValue();
-				Project project = DBFee.getProject(domain, strAux, fee.getClientId(), getUser().getLogin());
+				com.esferalia.aon.occam.api.model.registry.Project project = DBFee.getProject(domain, strAux, fee.getClientId(), getUser().getLogin());
 				if(project != null){
 					fee.setProject(cell.getStringCellValue());
 					fee.setProjectId(project.getId());
@@ -852,9 +847,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		if (ti.getDomainId().equals(0)) domId = domain.getId(); 
 		else domId = ti.getDomainId();
 		
-		if(!warehouse1.equals("-")) w = DBStock.getWarehouse(warehouse1, domId,domain.getName(),getUser());
-		if(warehouse2 != null && !warehouse2.equals("-")) 	w2 = DBStock.getWarehouse(warehouse2, domId,domain.getName(),getUser());
-		s = DBStock.getSeries(domain.getName(), domain.getId(), series, getUser().getLogin());
+		if(!warehouse1.equals("-")) w = DBStock.getWarehouse(new Domain().setId(domId).setName(domain.getName()), getUser(), warehouse1);
+		if(warehouse2 != null && !warehouse2.equals("-")) 	w2 = DBStock.getWarehouse(new Domain().setId(domId).setName(domain.getName()), getUser(), warehouse2);
+		s = DBStock.getSeries(domain, series, getUser().getLogin());
 
     	//Boolean b = true;
 
@@ -1095,7 +1090,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			
 			Vector<StockInfo> v = new Vector<StockInfo>();
 			v.addAll(stockMap.values());
-			error = DBStock.insertTransferStock(domain.getName(), domain.getId(),v,transferInfo,ai, getUser().getLogin());
+			error = DBStock.insertTransferStock(domain,v,transferInfo,ai, getUser().getLogin());
 
 	        //insertar STOCK en base de datos.!!
 		}
@@ -1154,9 +1149,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 	
 	public Vector<com.esferalia.aon.gwt.template.shared.Series> getSeries(Domain domain, String warehouse){
-		Warehouse w = DBStock.getWarehouse(warehouse, domain.getId(), domain.getName(),getUser());
-		WorkPlace workplace = DBCatalogue.getWorkplace(w.getWorkplace(), domain.getId(), domain.getName(), getUser().getLogin());
-		Vector<Series> series = DBStock.getSeries(w, workplace,domain.getName(), domain.getId(), getUser().getLogin());
+		Warehouse w = DBStock.getWarehouse(domain, getUser(),warehouse);
+		Workplace workplace = DBCatalogue.getWorkplace(domain, getUser(), w.getWorkplace());
+		Vector<Series> series = DBStock.getSeries(domain,w, workplace,getUser().getLogin());
 
 		Vector<com.esferalia.aon.gwt.template.shared.Series> seriesCode = new Vector<com.esferalia.aon.gwt.template.shared.Series>();
 		series.parallelStream().forEach(s ->{
@@ -1169,7 +1164,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 	public Vector<com.esferalia.aon.gwt.template.shared.Series> getSeries(Domain domain){
 		Vector<Series> series = new Vector<Series>();
-		series = DBStock.getSeries(domain.getName(), domain.getId(), getUser().getLogin());
+		series = DBStock.getSeries(domain, getUser().getLogin());
 		Vector<com.esferalia.aon.gwt.template.shared.Series> seriesCode = new Vector<com.esferalia.aon.gwt.template.shared.Series>();
 		series.parallelStream().forEach(s ->{
 			com.esferalia.aon.gwt.template.shared.Series serie = new com.esferalia.aon.gwt.template.shared.Series();
@@ -1398,7 +1393,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			ai.setDate(new Date());
 			ai.setUserId(getUser().getId());
 			ai.setUsername(getUser().getLogin());
- 			error = DBProduct.insertProducts2(domain.getName(), domain.getId(), v, ti,ai, getUser().getLogin(), kind);
+ 			error = DBProduct.insertProducts2(domain, v, ti,ai, getUser().getLogin(), kind);
 		}
 		else{
 			//Alguna de las filas contiene datos erroneos.
@@ -1837,9 +1832,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	public Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Domain domain){
 		return DBCatalogue.getWorkplaces(domain,getUser());
 	}
-	public Vector<com.esferalia.aon.gwt.template.shared.Department> getDepartments(Domain domain, String workplace){
-		WorkPlace w = DBCatalogue.getWorkplace(workplace, domain.getId(), domain.getName(), getUser().getLogin());
-		return DBCatalogue.getDepartments(domain.getId(), domain.getName(), w.getId(), getUser().getLogin());
+	public Vector<com.esferalia.aon.gwt.template.shared.Department> getDepartments(Domain domain, String workplaceDescription){
+		Workplace w = DBCatalogue.getWorkplace(domain, getUser(), workplaceDescription);
+		return DBCatalogue.getDepartments(domain, w.getId(), getUser().getLogin());
 	}
 	
 	/**

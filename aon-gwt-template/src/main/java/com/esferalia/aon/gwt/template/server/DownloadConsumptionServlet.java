@@ -30,6 +30,8 @@ import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBConsumption;
 import com.esferalia.aon.gwt.template.shared.ConsumptionItem;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 @WebServlet(name = "DownloadTemplatesConsumption", urlPatterns = { "/aon_gwt_template/gwt_download_consumption/*" })
@@ -53,13 +55,13 @@ public class DownloadConsumptionServlet extends HttpServlet {
         String only_negative = p_request.getParameter("only_negative");
         String login = p_request.getParameter("username");
         Boolean detail = p_request.getParameter("detail").equalsIgnoreCase("True");
-        
+        User user = new User().setLogin(login);
         Integer domainId = Integer.parseInt(domain_id);
         Integer warehouseId = Integer.parseInt(warehouse);
         Integer initialId = Integer.parseInt(initial_id);
         Integer finalId = Integer.parseInt(final_id);
-        String domain = AonUtil.getDomainName();
-        
+        String domainName = AonUtil.getDomainName();
+        Domain domain = new Domain().setId(domainId).setName(domainName);
         Long finalDate2 = Long.parseLong(final_date);
         Long initialDate2 = Long.parseLong(initial_date);
         
@@ -82,7 +84,7 @@ public class DownloadConsumptionServlet extends HttpServlet {
 
         if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-        	b = DBConsults.getTemplate(domain,domainId, id, login);
+        	b = DBConsults.getTemplate(domain, user, id);
         }
         else return;
         
@@ -139,9 +141,9 @@ public class DownloadConsumptionServlet extends HttpServlet {
         
         
         
-        String info = "Control de Consumo ## "+DBConsumption.getWarehouseName(domain, domainId, warehouseId, login)+" ## "
-        			+ DBConsumption.getInventoryName(domain, domainId, initialId, login) +" ## "
-        			+ DBConsumption.getInventoryName(domain, domainId, finalId, login);
+        String info = "Control de Consumo ## "+DBConsumption.getWarehouseName(domain, warehouseId, login)+" ## "
+        			+ DBConsumption.getInventoryName(domain, initialId, login) +" ## "
+        			+ DBConsumption.getInventoryName(domain, finalId, login);
         
         rowInfo.setHeightInPoints(16);
         fila.setHeightInPoints(16);
@@ -183,7 +185,7 @@ public class DownloadConsumptionServlet extends HttpServlet {
         Cell celdaf = fila.createCell(columns);
         celdaf.setCellStyle(style);
         String warehouseName="";
-        Map<Integer, ConsumptionItem> map = DBConsumption.getConsumption(domain, domainId,login, initialId, finalId, warehouseId, new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()), warehouseName);
+        Map<Integer, ConsumptionItem> map = DBConsumption.getConsumption(domain,login, initialId, finalId, warehouseId, new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()), warehouseName);
         Vector<ConsumptionItem> v =  new Vector<ConsumptionItem>(map.values());
         Integer num = 0;
         for(Integer j = 0; j< v.size();j++){

@@ -25,12 +25,14 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.code.aon.company.Department;
-import com.code.aon.company.WorkPlace;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.template.jooq.DBCatalogue;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.security.User;
 
 @WebServlet(name = "DownloadTemplatesCatalogue", urlPatterns = { "/aon_gwt_template/gwt_download_catalogue/*" })
 public class DownloadCatalogueServlet extends HttpServlet {
@@ -46,23 +48,23 @@ public class DownloadCatalogueServlet extends HttpServlet {
         String department = p_request.getParameter("department");
         String template_id = p_request.getParameter("template_id");
         String login = p_request.getParameter("username");
+        User user = new User().setLogin(login);
         Integer domainId = Integer.parseInt(domain_id);
-        String domain = AonUtil.getDomainName();
-
-        WorkPlace wp = null;
+        String domainName = AonUtil.getDomainName();
+        Domain domain = new Domain().setName(domainName).setId(domainId);
+        Workplace wp = null;
         if(!workplace.equals("-"))
-        		wp = DBCatalogue.getWorkplace(workplace, domainId, domain, login);
-
+        		wp = DBCatalogue.getWorkplace(domain, new User().setLogin(login), workplace);
         
         Department dt = null;
         if(!department.equals("-"))
-        	dt = DBCatalogue.getDepartment(wp, department, domainId, domain, login);
+        	dt = DBCatalogue.getDepartment(domain, wp, department, login);
 
         byte[] b = null ;
         
         if(template_id!=""){
         	Integer id = Integer.parseInt(template_id);
-        	b = DBConsults.getTemplate(domain,domainId, id, login);
+        	b = DBConsults.getTemplate(domain, user, id);
         }
         else return;
         
@@ -156,7 +158,7 @@ public class DownloadCatalogueServlet extends HttpServlet {
         */
 
         
-        Vector<CatalogueInfo> v = DBCatalogue.getCatalogues(domain, domainId, wp, dt, login);
+        Vector<CatalogueInfo> v = DBCatalogue.getCatalogues(domain, wp, dt, login);
 
         for(Integer j = 0; j< v.size();j++){
         	Row row = hoja.createRow(j+2);

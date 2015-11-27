@@ -46,7 +46,7 @@ public class AttachmentDAO {
 		return ctx.getDslContext()
 				.select().from(RATTACH).where(RATTACH_PROPERTIES.getConditions(filter))
 				.limit(1).fetchInto(RATTACH).stream().map(new FullRattachFiller())
-				.collect(Collectors.toCollection(LinkedList::new)).getFirst();
+				.findFirst().orElse(null);
 	}
 	
 	public static LinkedList<Attach> getRattachList(AONContext ctx, AttachFilter filter){	

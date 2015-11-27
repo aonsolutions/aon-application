@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,11 +13,14 @@ import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 
 public class CommonImpl implements ICommon {
 
@@ -65,6 +69,18 @@ public class CommonImpl implements ICommon {
 		return CompanyDAO.getCompany(ctx, domain);
 	}
 
+	// ------------------ WORKPLACE
+	
+	public Workplace getWorkplace(AONContext ctx, WorkplaceFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			WorkplaceDAO.getWorkplace(ctx, filter));
+	}
+	
+	public LinkedList<Workplace> getWorkplaceList(AONContext ctx, WorkplaceFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			WorkplaceDAO.getWorkplaceList(ctx, filter));
+	}
+	
 	// ------------------ PRODUCT
 	@Override
 	public List<String> getProductTags(AONContext ctx) {

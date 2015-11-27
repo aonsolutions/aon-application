@@ -84,15 +84,15 @@ public class DBMarketplace {
 		}
 	}
 	
-	public static List<Order> getOrderDeliveryList(String domainName, Integer domainId, String login){
+	public static List<Order> getOrderDeliveryList(Domain domain, String login){
 		AONContext ctx = null;
 		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			Result<Record8<Integer, String, Integer, String, Double, Timestamp, String, Integer>> result = 
 								ctx.getDslContext().select(SALES.ID, SALES.SERIES, SALES.NUMBER, SALES.PURCHASE_REFERENCE,
 												DELIVERY.TOTAL_PACKAGES, DELIVERY.STATUS_MODIFICATION_DATE, DELIVERY.TRACKING_NUMBER, DELIVERY.CARRIER)
 								.from(SALES).join(DELIVERY).on(SALES.SERIES.eq(DELIVERY.SERIES).and(SALES.NUMBER.eq(DELIVERY.NUMBER)))
-								.where(SALES.DOMAIN.eq(domainId))
+								.where(SALES.DOMAIN.eq(domain.getId()))
 									.and(SALES.PURCHASE_REFERENCE.isNotNull())
 									.and(DELIVERY.SHIPPING_STATUS.eq((byte)ShipmentStatus.IN_AGENCY.ordinal()))
 								.fetch();
@@ -115,7 +115,7 @@ public class DBMarketplace {
 				String dateStr = Utils.getDateStr(record.value6() != null?record.value6():new Date());
 				ad.setShipDateStr(dateStr);
 				if(record.value8() != null){
-					AONContext sctx = AONContext.getAONContext(domainName, domainId, login);
+					AONContext sctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 					Result<RegistryRecord> registryRecord = sctx.getDslContext().select().from(REGISTRY).where(REGISTRY.ID.eq(record.value8())).fetchInto(REGISTRY);
 					CarrierCode cc = CarrierCode.getValue(registryRecord.get(0).getName());
 					ad.setCarrierCode(cc);

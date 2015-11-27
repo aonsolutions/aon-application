@@ -47,6 +47,7 @@ import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBProduct;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.google.api.services.drive.Drive;
@@ -110,6 +111,7 @@ public class DownloadProductServlet extends HttpServlet {
         
         Integer domainId = Integer.parseInt(domain_id);
         String domainName = AonUtil.getDomainName();
+        Domain domain = new Domain().setId(domainId).setName(domainName);
         Integer idFile = Integer.parseInt(fileId);
         
         User user = AON.getUser(domainName, domainId, login);
@@ -146,7 +148,7 @@ public class DownloadProductServlet extends HttpServlet {
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-        	b = DBConsults.getTemplate(domainName,domainId, id, login);
+        	b = DBConsults.getTemplate(domain, user, id);
         }
         else return;
         

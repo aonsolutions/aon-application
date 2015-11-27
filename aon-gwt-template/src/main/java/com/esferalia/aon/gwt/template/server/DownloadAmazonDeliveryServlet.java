@@ -23,6 +23,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.template.jooq.DBMarketplace;
 import com.esferalia.aon.gwt.template.shared.marketplace.AmazonDelivery;
 import com.esferalia.aon.gwt.template.shared.marketplace.Order;
+import com.esferalia.aon.occam.api.model.Domain;
 
 @WebServlet(name = "DownloadAmazonDelivery", urlPatterns = { "/aon_gwt_template/gwt_download_amazon_delivery/*" })
 public class DownloadAmazonDeliveryServlet extends HttpServlet {
@@ -40,7 +41,7 @@ public class DownloadAmazonDeliveryServlet extends HttpServlet {
         String login = p_request.getParameter("username");
         Integer domainId = Integer.parseInt(domain_id);
         String domainName = AonUtil.getDomainName();
-
+        Domain domain = new Domain().setId(domainId).setName(domainName); 
         File archivoXLS = new File("AmazonDelivery-"+ domainId  +".xls" );
         if(archivoXLS.exists()) archivoXLS.delete();
         archivoXLS.createNewFile();        
@@ -61,7 +62,7 @@ public class DownloadAmazonDeliveryServlet extends HttpServlet {
         header.createCell(6).setCellValue("tracking-number");
         header.createCell(7).setCellValue("ship-method");
         
-        List<Order> orderDeliveryList = DBMarketplace.getOrderDeliveryList(domainName, domainId, login);
+        List<Order> orderDeliveryList = DBMarketplace.getOrderDeliveryList(domain, login);
         for (Integer i = 1; i<= orderDeliveryList.size(); i++) {
         	AmazonDelivery ad = orderDeliveryList.get(i-1).getAmazonDelivery(); 
         	Row row = hoja.createRow(i);

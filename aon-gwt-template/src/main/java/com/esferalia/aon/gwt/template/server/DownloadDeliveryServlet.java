@@ -46,6 +46,8 @@ import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBProduct;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 
 @WebServlet(name = "DownloadTemplatesDelivery", urlPatterns = { "/aon_gwt_template/gwt_download_delivery/*" })
@@ -102,10 +104,11 @@ public class DownloadDeliveryServlet extends HttpServlet {
     	String modificationDate2 = p_request.getParameter("modificationDate2");
 
         String login = p_request.getParameter("username");
-
+        User user = new User().setLogin(login);
         
         Integer domainId = Integer.parseInt(domain_id);
-        String domain = AonUtil.getDomainName();
+        String domainName = AonUtil.getDomainName();
+        Domain domain = new Domain().setId(domainId).setName(domainName);
         Integer idFile = Integer.parseInt(fileId);
         
         byte[] b = null ;
@@ -115,7 +118,7 @@ public class DownloadDeliveryServlet extends HttpServlet {
         	
         	DomainGserviceaccount g = null;
 			try {
-				g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain,domainId);
+				g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domainName,domainId);
 				d = DriveUtils.serviceInitialize(g);
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -140,7 +143,7 @@ public class DownloadDeliveryServlet extends HttpServlet {
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-        	b = DBConsults.getTemplate(domain,domainId, id, login);
+        	b = DBConsults.getTemplate(domain, user, id);
         }
         else return;
         
@@ -432,7 +435,7 @@ public class DownloadDeliveryServlet extends HttpServlet {
         }
         //TODO 
         
-        Vector<ProductInfo> v =  DBProduct.getProducts(domain,domainId,c, login);
+        Vector<ProductInfo> v =  DBProduct.getProducts(domainName,domainId,c, login);
 
         for(Integer j = 0; j< v.size();j++){
         	Row row = hoja.createRow(j+2);

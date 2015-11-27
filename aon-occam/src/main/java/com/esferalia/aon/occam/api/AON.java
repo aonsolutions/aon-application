@@ -28,8 +28,11 @@ import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.ProjectFilter;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
+import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
@@ -64,6 +67,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
@@ -276,6 +280,30 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+	
+	// ------------------------------------ WORKPLACE
+	
+	public static Workplace getWorkplace(String domainName, Integer domainId, String login,
+			WorkplaceFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().getWorkplace(ctx, filter);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static LinkedList<Workplace> getWorkplaceList(String domainName, Integer domainId, String login,
+			WorkplaceFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().getWorkplaceList(ctx, filter);
+		} finally {
+			if(ctx != null) ctx.close();
 		}
 	}
 
@@ -1835,6 +1863,28 @@ public class AON {
 	// ********************************************
 	// ********************************* Project **
 	// ********************************************
+	
+	public static Project getProject(String domainName, Integer domainId, String login,
+			ProjectFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getProject().getProject(ctx, filter);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static LinkedList<Project> getProjectList(String domainName, Integer domainId, String login,
+			ProjectFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getProject().getProjectList(ctx, filter);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
 	
 	public static ProjectReservation getProjectReservation(String domainName, Integer domainId, String login, Integer projectId){
 		AONContext ctx = null;

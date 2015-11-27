@@ -44,6 +44,7 @@ import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 
@@ -83,13 +84,14 @@ public class DownloadStockServlet extends HttpServlet {
         
         Boolean closeInventory = close_inventory.equals("true");
         Integer domainId = Integer.parseInt(domain_id);
-        String domain = AonUtil.getDomainName();
+        String domainName = AonUtil.getDomainName();
+        Domain domain = new Domain().setId(domainId).setName(domainName);
         Integer idFile  = Integer.parseInt(fileId);
         Integer userId = AonServletUtils.getRequestUserId(p_request);
         User user = new User().setId(userId).setLogin(login); // TODO 
         Warehouse w = new Warehouse();
         if(!warehouse.equals("-"))
-        	w = DBStock.getWarehouse(warehouse, domainId, domain, user);
+        	w = DBStock.getWarehouse(domain, user, warehouse);
         byte[] b = null ;
         
         if (driveId != ""){
@@ -97,7 +99,7 @@ public class DownloadStockServlet extends HttpServlet {
         	
         	DomainGserviceaccount g = null;
 			try {
-				g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain,domainId);
+				g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domainName,domainId);
 				d = DriveUtils.serviceInitialize(g);
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -121,7 +123,7 @@ public class DownloadStockServlet extends HttpServlet {
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-        	b = DBConsults.getTemplate(domain,domainId, id, user.getLogin());
+        	b = DBConsults.getTemplate(domain, user, id);
         }
         else return;
         
@@ -347,10 +349,10 @@ public class DownloadStockServlet extends HttpServlet {
         if(closeInventory){
         	String inventory_id = p_request.getParameter("inventory");
         	Integer inventoryId = Integer.parseInt(inventory_id);
-        	v= DBStock.getInventoryClosed(domain, domainId, inventoryId, c2, user.getLogin());
+        	v= DBStock.getInventoryClosed(domain, inventoryId, c2, user.getLogin());
         }
         else
-        	v= DBStock.getStocks(domain,domainId,w.getId(),c,"1".equals(only_non_cero), user.getLogin());
+        	v= DBStock.getStocks(domain,w.getId(),c,"1".equals(only_non_cero), user.getLogin());
 
         for(Integer j = 0; j< v.size();j++){
         	Row row = hoja.createRow(j+2);

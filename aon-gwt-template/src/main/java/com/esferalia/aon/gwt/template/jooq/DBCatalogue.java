@@ -3,11 +3,9 @@ package com.esferalia.aon.gwt.template.jooq;
 import static com.esferalia.aon.jooq.tables.Catalogue.CATALOGUE;
 import static com.esferalia.aon.jooq.tables.CatalogueItem.CATALOGUE_ITEM;
 import static com.esferalia.aon.jooq.tables.Department.DEPARTMENT;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
-import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPARTMENT;
@@ -21,12 +19,11 @@ import org.jooq.Record6;
 import org.jooq.Result;
 
 import com.code.aon.company.Department;
-import com.code.aon.company.WorkPlace;
-import com.code.aon.config.Scope;
 import com.esferalia.aon.gwt.template.server.CatalogueInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.security.User;
 
@@ -39,7 +36,8 @@ public class DBCatalogue {
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			Result<Record2<Integer, String>> record;
-			if(isParentUser(ctx, user.getId(), domain.getId())){
+			
+			if(isParentUser(domain, user)){
 				record = ctx.getDslContext().select(WORKPLACE.ID, WORKPLACE.DESCRIPTION)
 						.from(WORKPLACE)
 						.where(WORKPLACE.DOMAIN.eq(domain.getId()))
@@ -70,14 +68,14 @@ public class DBCatalogue {
 		}
 	}
 	
-	public static Vector<com.esferalia.aon.gwt.template.shared.Department> getDepartments(Integer domainId,String domain, Integer workplace, String login){
+	public static Vector<com.esferalia.aon.gwt.template.shared.Department> getDepartments(Domain domain, Integer workplace, String login){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
 			Result<Record2<Integer, String>> record = ctx.getDslContext().selectDistinct(DEPARTMENT.ID, DEPARTMENT.NAME)
 					.from(DEPARTMENT).join(WORKPLACE_DEPARTMENT).on(DEPARTMENT.ID.eq(WORKPLACE_DEPARTMENT.DEPARTMENT))
-					.where(DEPARTMENT.DOMAIN.eq(domainId))
+					.where(DEPARTMENT.DOMAIN.eq(domain.getId()))
 					.and(WORKPLACE_DEPARTMENT.WORKPLACE.eq(workplace))
 					.fetch();
 			
@@ -95,67 +93,26 @@ public class DBCatalogue {
 		}
 	}
 	
-	public static WorkPlace getWorkplace(String workplace, Integer domainId, String domain, String login) {
-		
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
-			
-			Record1<Integer> record = ctx.getDslContext().select(WORKPLACE.ID)
-				.from(WORKPLACE)
-				.where(WORKPLACE.DOMAIN.eq(domainId))
-				.and(WORKPLACE.DESCRIPTION.eq(workplace))
-				.fetchOne();
-			if(record.value1() != null){
-				WorkPlace w = new WorkPlace();
-				w.setId(record.value1());
-				w.setDescription(workplace);
-				return w;
-			}
-			return null;
-		} finally{
-			if (ctx != null) ctx.close();
-		}
+	public static Workplace getWorkplace(Domain domain, User user, String workplaceDescription) {
+		return AON.getWorkplace(domain.getName(), domain.getId(), user.getLogin(),
+				filter -> filter.getDescriptionProperty().eq(workplaceDescription));
 	}
 	
-
-	public static WorkPlace getWorkplace(Integer workplace, Integer domainId, String domain, String login){
-		
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
-			
-			Record2<String,Integer> record = ctx.getDslContext().select(WORKPLACE.DESCRIPTION,WORKPLACE.SCOPE)
-				.from(WORKPLACE)
-				.where(WORKPLACE.DOMAIN.eq(domainId))
-				.and(WORKPLACE.ID.eq(workplace))
-				.fetchOne();
-			
-			if(record != null && record.value1() != null){
-				WorkPlace w = new WorkPlace();
-				w.setId(workplace);
-				w.setDescription(record.value1());
-				Scope s = new Scope();
-				s.setId(record.value2());
-				w.setScope(s);
-				return w;
-			}
-			return null;
-		} finally{
-			if (ctx != null) ctx.close();
-		}
+	public static Workplace getWorkplace(Domain domain, User user, Integer workplaceId){
+		return AON.getWorkplace(domain.getName(), domain.getId(), user.getLogin(),
+				filter -> filter.getIdProperty().eq(workplaceId));
 	}
 	
-	public static Department getDepartment(WorkPlace wp, String department, Integer domainId, String domain, String login){
+	public static Department getDepartment(Domain domain, Workplace wp, String department, String login){
 		
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
 			Record1<Integer> record = ctx.getDslContext().selectDistinct(DEPARTMENT.ID)
 				.from(DEPARTMENT).join(WORKPLACE_DEPARTMENT)
 				.on(WORKPLACE_DEPARTMENT.DEPARTMENT.eq(DEPARTMENT.ID))
-				.where(DEPARTMENT.DOMAIN.eq(domainId))
+				.where(DEPARTMENT.DOMAIN.eq(domain.getId()))
 				.and(DEPARTMENT.NAME.eq(department))
 				.and(WORKPLACE_DEPARTMENT.WORKPLACE.eq(wp.getId()))
 				.fetchOne();
@@ -172,19 +129,18 @@ public class DBCatalogue {
 		}
 	}
 	
-public static Department getDepartment(WorkPlace wp, Integer department, Integer domainId, String domain, String login) {
-		
-	AONContext ctx = null;
-	try {
-		ctx = AONContext.getAONContext(domain, domainId, login);
+	public static Department getDepartment(Domain domain, Workplace wp, Integer department, String login) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
 			Record1<String> record = ctx.getDslContext().selectDistinct(DEPARTMENT.NAME)
-				.from(DEPARTMENT).join(WORKPLACE_DEPARTMENT)
-				.on(WORKPLACE_DEPARTMENT.DEPARTMENT.eq(DEPARTMENT.ID))
-				.where(DEPARTMENT.DOMAIN.eq(domainId))
-				.and(DEPARTMENT.ID.eq(department))
-				.and(WORKPLACE_DEPARTMENT.WORKPLACE.eq(wp.getId()))
-				.fetchOne();
+					.from(DEPARTMENT).join(WORKPLACE_DEPARTMENT)
+					.on(WORKPLACE_DEPARTMENT.DEPARTMENT.eq(DEPARTMENT.ID))
+					.where(DEPARTMENT.DOMAIN.eq(domain.getId()))
+					.and(DEPARTMENT.ID.eq(department))
+					.and(WORKPLACE_DEPARTMENT.WORKPLACE.eq(wp.getId()))
+					.fetchOne();
 			
 			if(record.value1() != null){
 				Department d = new Department();
@@ -198,10 +154,10 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 		}
 	}
 	
-	public static Vector<CatalogueInfo> getCatalogues(String domain, Integer domainId, WorkPlace wp, Department dt, String login){
+	public static Vector<CatalogueInfo> getCatalogues(Domain domain, Workplace wp, Department dt, String login){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			Date today = new Date(new java.util.Date().getTime());
 			Result<Record6<Integer, Integer, Integer, String, String, String>> record = null;
 			if(wp != null && dt != null){
@@ -213,7 +169,7 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 				.join(RITEM).on(RITEM.ITEM.eq(ITEM.ID))
 				.where(WORKPLACE_DEPARTMENT.WORKPLACE.eq(wp.getId()))
 				.and(WORKPLACE_DEPARTMENT.DEPARTMENT.eq(dt.getId()))
-				.and(CATALOGUE_ITEM.DOMAIN.eq(domainId))
+				.and(CATALOGUE_ITEM.DOMAIN.eq(domain.getId()))
 				.and(PRODUCT.STATUS.eq((byte)0))
 				.and(RITEM.WORKPLACE.eq(wp.getId()).or(RITEM.WORKPLACE.isNull()))
 				.and(WORKPLACE_DEPARTMENT.ACTIVE.eq((byte)0))
@@ -231,7 +187,7 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.join(RITEM).on(RITEM.ITEM.eq(ITEM.ID))
 				.where(WORKPLACE_DEPARTMENT.WORKPLACE.eq(wp.getId()))
-				.and(CATALOGUE_ITEM.DOMAIN.eq(domainId))
+				.and(CATALOGUE_ITEM.DOMAIN.eq(domain.getId()))
 				.and(PRODUCT.STATUS.eq((byte)0))
 				.and(RITEM.WORKPLACE.eq(wp.getId()).or(RITEM.WORKPLACE.isNull()))
 				.and(WORKPLACE_DEPARTMENT.ACTIVE.eq((byte)0))
@@ -247,7 +203,7 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 				.join(ITEM).on(ITEM.ID.eq(CATALOGUE_ITEM.ITEM))
 				.join(WORKPLACE_DEPARTMENT).on(WORKPLACE_DEPARTMENT.CATALOGUE.eq(CATALOGUE_ITEM.CATALOGUE))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
-				.where(CATALOGUE_ITEM.DOMAIN.eq(domainId))
+				.where(CATALOGUE_ITEM.DOMAIN.eq(domain.getId()))
 				.and(PRODUCT.STATUS.eq((byte)0))
 				.and(WORKPLACE_DEPARTMENT.ACTIVE.eq((byte)0))
 				.and(CATALOGUE.PURCHASE.eq((byte) 1))
@@ -261,8 +217,8 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 				Vector<CatalogueInfo> cs = new Vector<CatalogueInfo>();
 				record.stream().forEach(r -> {
 					CatalogueInfo c = new CatalogueInfo();
-					WorkPlace w = getWorkplace(r.value2(),domainId, domain, login);
-					Department d = getDepartment(w, r.value3(), domainId, domain, login);
+					Workplace w = getWorkplace(domain, new User().setLogin(login), r.value2());
+					Department d = getDepartment(domain, w, r.value3(), login);
 					c.setDepartment(d.getName());
 					c.setWorkplace(w.getDescription());
 					Product p = AON.getProduct(sctx, r.value1());
@@ -284,26 +240,12 @@ public static Department getDepartment(WorkPlace wp, Integer department, Integer
 		}
 	}
 	
-	public  static  Boolean isParentUser(AONContext ctx, Integer userId, Integer domainId) {
-				
-				Record1<Integer> record = ctx.getDslContext().selectDistinct(USER.DOMAIN)
-					.from(USER)
-					.where(USER.ID.eq(userId))
-					.fetchOne();
-				
-				Integer userDomain = record.value1();
-				
-				if(userDomain != domainId){
-					Record1<Integer> record1 =	ctx.getDslContext().select(DOMAIN.PARENT)
-					.from(DOMAIN)
-					.where(DOMAIN.ID.eq(domainId))
-					.fetchOne();
-					
-					Integer parentDomain =  record1.value1();
-					
-					return parentDomain == userDomain;
-				}
-				else return false;
+	public static Boolean isParentUser(Domain domain, User user) {
+		if(user.getDomain() == null){
+			user = AON.getUser(domain.getName(), domain.getId(), user.getLogin());
+		}
+		Domain domainAux = AON.getDomain(domain.getName(), domain.getId(), user.getLogin());
+		return domainAux.getParentId() == user.getDomain();
 	}
 	
 }

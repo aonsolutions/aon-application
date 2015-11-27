@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,8 @@ import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 
 public interface ICommon {
@@ -36,6 +39,13 @@ public interface ICommon {
 
 	public ArrayList<CompanyBank> getCompanyBanks(AONContext ctx);
 
+	// --------------------------------------------
+	// WORKPLACE
+	// --------------------------------------------
+	
+	public Workplace getWorkplace(AONContext ctx, WorkplaceFilter filter);
+	public LinkedList<Workplace> getWorkplaceList(AONContext ctx, WorkplaceFilter filter);
+	
 	// --------------------------------------------
 	// PRODUCT
 	// --------------------------------------------

@@ -5,12 +5,12 @@ import static com.esferalia.aon.jooq.tables.CustomerFee.CUSTOMER_FEE;
 import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
-import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
@@ -18,30 +18,31 @@ import org.jooq.Condition;
 import org.jooq.InsertValuesStep17;
 import org.jooq.Record1;
 import org.jooq.Record2;
-import org.jooq.Record3;
 import org.jooq.Record4;
 import org.jooq.Record5;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
-import com.code.aon.company.WorkPlace;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.InvoicingGroup;
 import com.code.aon.customer.enumeration.CustomerStatus;
-import com.code.aon.project.Project;
 import com.code.aon.registry.Registry;
 import com.esferalia.aon.gwt.template.server.AuditInfo;
 import com.esferalia.aon.gwt.template.server.FeeInfo;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.jooq.tables.records.CustomerFeeRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.security.User;
 
 public class DBFee {
 
 	static Integer domainIdFee;
-	public static Error insertFee(String domain, Integer domainId, Vector<FeeInfo> fees, AuditInfo ai, String login){
+	public static Error insertFee(Domain domain, Vector<FeeInfo> fees, AuditInfo ai, String login){
 		Error error = new Error();
 		error.setError(true);
 		Vector<String> verror = new Vector<String>();
@@ -49,12 +50,12 @@ public class DBFee {
 		error.setTextError(verror);
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
 			Vector<String> v = new Vector<String>();
 			InsertValuesStep17<CustomerFeeRecord, Integer, Integer, Integer, Short, Integer, String, Double, Double, String, java.sql.Date, java.sql.Date, java.sql.Date, Short, Byte, Integer, Integer, Integer> customerFeeInsertQuery = ctx.getDslContext().insertInto(CUSTOMER_FEE, CUSTOMER_FEE.DOMAIN, CUSTOMER_FEE.PROJECT, CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE, CUSTOMER_FEE.ITEM, CUSTOMER_FEE.DESCRIPTION, CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.INITIAL_DATE, CUSTOMER_FEE.FINAL_DATE, CUSTOMER_FEE.BILLING_DATE, CUSTOMER_FEE.PERIOD, CUSTOMER_FEE.SECURITY_LEVEL, CUSTOMER_FEE.INVOICING_GROUP, CUSTOMER_FEE.SELLER, CUSTOMER_FEE.WORKPLACE);
 			
-			domainIdFee = domainId;
+			domainIdFee = domain.getId();
 			AONContext sctx = ctx;
 			fees.stream().forEach(s ->{	
 				if(s.getProduct() != null){
@@ -107,7 +108,7 @@ public class DBFee {
 						if(s.getLine() == null){
 							Result<Record1<Short>> n = sctx.getDslContext().select(DSL.max(CUSTOMER_FEE.LINE))
 								.from(CUSTOMER_FEE)
-								.where(CUSTOMER_FEE.DOMAIN.eq(domainId).and(CUSTOMER_FEE.CUSTOMER.eq(s.getClientId()))).fetch();
+								.where(CUSTOMER_FEE.DOMAIN.eq(domain.getId()).and(CUSTOMER_FEE.CUSTOMER.eq(s.getClientId()))).fetch();
 							
 							if(n.isEmpty() || n.get(0).value1()==null) line = 1;
 							else line = n.get(0).value1(); //get max number (domain, customer)
@@ -117,13 +118,13 @@ public class DBFee {
 
 							line = s.getLine().shortValue();
 							sctx.getDslContext().update(CUSTOMER_FEE).set(CUSTOMER_FEE.LINE, CUSTOMER_FEE.LINE.add(1))
-									.where(CUSTOMER_FEE.DOMAIN.eq(domainId)).and(CUSTOMER_FEE.CUSTOMER.eq(s.getClientId()))
+									.where(CUSTOMER_FEE.DOMAIN.eq(domain.getId())).and(CUSTOMER_FEE.CUSTOMER.eq(s.getClientId()))
 									.and(CUSTOMER_FEE.LINE.greaterThan(line));
 							
 						}
 						Integer w = sctx.getDslContext().select(WORKPLACE.ID)
 								.from(WORKPLACE)
-								.where(WORKPLACE.DOMAIN.eq(domainId)).limit(1).fetchOne().value1();
+								.where(WORKPLACE.DOMAIN.eq(domain.getId())).limit(1).fetchOne().value1();
 						if(s.getWorkplaceId() == null) s.setWorkplaceId(w);
 						Short period = s.getPeriod().shortValue();
 						
@@ -221,14 +222,14 @@ public class DBFee {
 		}
 	}
 	
-	public static Vector<Customer> getCustomers(String domain,Integer domainId, String login) {
+	public static Vector<Customer> getCustomers(Domain domain, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 
 			Result<Record4<Integer, String, String, String>> data = ctx.getDslContext().select(REGISTRY.ID, REGISTRY.ALIAS, REGISTRY.DOCUMENT, REGISTRY.NAME)
 					.from(REGISTRY).join(CUSTOMER).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
-					.where(CUSTOMER.DOMAIN.eq(domainId))
+					.where(CUSTOMER.DOMAIN.eq(domain.getId()))
 					.fetch();
 			
 	
@@ -286,90 +287,21 @@ public class DBFee {
 		}
 	}
 
-	public static Vector<Project> getProjects(String domain,Integer domainId, String login){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
-
-			Result<Record3<Integer, String, String>> data = ctx.getDslContext().select(PROJECT.ID,PROJECT.ALIAS,PROJECT.NAME)
-					.from(PROJECT)
-					.where(PROJECT.DOMAIN.eq(domainId))
-					.fetch();
-			
-	
-
-			Vector<Project> v = new Vector<Project>();
-
-			for (Record3<Integer, String, String> r : data) {
-				Project project = new Project();
-				project.setId(r.value1());
-				project.setAlias(r.value2());
-				project.setName(r.value3());
-				v.add(project);
-			}
-
-			return v;
-
-		} finally {
-			if (ctx != null) ctx.close();
-		}
+	public static LinkedList<Project> getProjectList(Domain domain, String login){
+		return AON.getProjectList(domain.getName(), domain.getId(), login,
+				filter -> filter.getDomainProperty().eq(domain.getId()));
 	}
-
 	
-	public static Project getProject(Domain domain,String str, Integer customer, String login){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
-
-			Result<Record3<Integer, String, String>> result = ctx.getDslContext().select(PROJECT.ID,PROJECT.ALIAS,PROJECT.NAME)
-					.from(PROJECT)
-					.where(PROJECT.DOMAIN.eq(domain.getId()))
-					.and(PROJECT.REGISTRY.eq(customer))
-					.and(PROJECT.ALIAS.eq(str).or(PROJECT.NAME.eq(str)))
-					.fetch();
-			
-			if(result.isNotEmpty()){
-				Project project = new Project();
-				Integer index = 0;
-				project.setId(result.get(index).value1());
-				project.setAlias(result.get(index).value2());
-				project.setName(result.get(index).value3());
-			
-				return project;
-			}
-			return null;
-		} finally {
-			if (ctx != null) ctx.close();
-		}
+	public static com.esferalia.aon.occam.api.model.registry.Project getProject(Domain domain,String str, Integer customer, String login){
+		return AON.getProject(domain.getName(), domain.getId(), login,
+				filter -> filter.getDomainProperty().eq(domain.getId())
+				.and(filter.getRegistryProperty().eq(customer))
+				.and(filter.getAliasProperty().eq(str).or(filter.getNameProperty().eq(str))));
 	}
-
-	public static Vector<WorkPlace> getWorkplaces(Domain domain, String login){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
-
-			Result<Record2<Integer, String>> data = ctx.getDslContext().select(WORKPLACE.ID,WORKPLACE.DESCRIPTION)
-					.from(WORKPLACE)
-					.where(WORKPLACE.DOMAIN.eq(domain.getId()))
-					.fetch();
-			
 	
-
-			Vector<WorkPlace> v = new Vector<WorkPlace>();
-
-			for (Record2<Integer, String> r : data) {
-				WorkPlace workplace = new WorkPlace();
-				workplace.setId(r.value1());
-				workplace.setDescription(r.value2());
-
-				v.add(workplace);
-			}
-
-			return v;
-
-		} finally {
-			if (ctx != null) ctx.close();
-		}
+	public static LinkedList<Workplace> getWorkplaceList(Domain domain, User user){
+		return AON.getWorkplaceList(domain.getName(), domain.getId(), user.getLogin(),
+				filter -> filter.getDomainProperty().eq(domain.getId()));
 	}
 	
 	public static Vector<InvoicingGroup> getInvoicingGroups(Domain domain, String login) {
@@ -381,8 +313,6 @@ public class DBFee {
 					.from(INVOICING_GROUP)
 					.where(INVOICING_GROUP.DOMAIN.eq(domain.getId()))
 					.fetch();
-			
-	
 
 			Vector<InvoicingGroup> v = new Vector<InvoicingGroup>();
 
