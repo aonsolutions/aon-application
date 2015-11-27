@@ -327,7 +327,8 @@ public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
 	}
 	@Override
 	public void addData(String name, ITimedVariable<?> data) {
-		addVariable(name, data);
+		if ( filter(name, data))
+			addVariable(name, data);
 	}
 
 	@Override
