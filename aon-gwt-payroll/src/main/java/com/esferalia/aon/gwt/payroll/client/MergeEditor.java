@@ -30,9 +30,6 @@ public class MergeEditor extends ResizeComposite {
 	Label titleLabel;
 
 	@UiField
-	Button saveButton;
-
-	@UiField
 	MergeArea mergeArea;
 
 	@UiField
@@ -79,6 +76,9 @@ public class MergeEditor extends ResizeComposite {
 	}
 	
 	
+	public void setShowDifferences(boolean showDifferences ){
+		mergeArea.setShowDifferences(showDifferences);
+	}
 
 	// -----------------------------------------------------------------------
 
@@ -109,6 +109,11 @@ public class MergeEditor extends ResizeComposite {
 		save();
 	}
 
+	@UiHandler("copyButton")
+	void onCopyClick(ClickEvent event) {
+		copy();
+	}
+
 	// -----------------------------------------------------------------------
 
 	private void save() {
@@ -124,6 +129,10 @@ public class MergeEditor extends ResizeComposite {
 		clickElement(anchor);
 		anchor.removeFromParent();
 		;
+	}
+
+	private void copy() {
+		mergeArea.setValue(mergeArea.getOrig());
 	}
 
 	public static native void clickElement(Element elem) /*-{

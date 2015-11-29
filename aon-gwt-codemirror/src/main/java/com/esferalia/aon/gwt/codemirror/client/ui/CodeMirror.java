@@ -365,6 +365,10 @@ public class CodeMirror extends JavaScriptObject {
 			this.wrap.style.height = height + "px";
 		}-*/;
 
+		public final native CodeMirror setShowDifferences(boolean showDifferences) /*-{
+			return this.setShowDifferences(showDifferences);
+		}-*/;
+
 		public final boolean refresh() {
 			if (getEditor() != null)
 				getEditor().refresh();

@@ -4,8 +4,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.time.Month;
-import java.util.UUID;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -16,7 +14,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 public class Utils {
 
-
+	
 	// -----------------------------------------------------------------------
 
 	public static <T> void marshal(T t, Writer writer) throws JAXBException {
@@ -27,9 +25,9 @@ public class Utils {
 		newMarshaller(t.getClass()).marshal(t, os);
 	}
 
-	public static <T> void marshal(T t, OutputStream os, Listener listener) throws JAXBException {
+	public static <T> void marshal(T t, OutputStream os, Listener ...listeners) throws JAXBException {
 		Marshaller marshaller = newMarshaller(t.getClass());
-		marshaller.setListener(listener);
+		marshaller.setListener(new CompositeListener(listeners));
 		marshaller.marshal(t, os);
 	}
 
@@ -37,9 +35,9 @@ public class Utils {
 		newMarshaller(t.getClass()).marshal(t, xsw);
 	}
 
-	public static <T> void marshal(T t, XMLStreamWriter xsw, Listener listener) throws JAXBException {
+	public static <T> void marshal(T t, XMLStreamWriter xsw, Listener ...listeners) throws JAXBException {
 		Marshaller marshaller = newMarshaller(t.getClass());
-		marshaller.setListener(listener);
+		marshaller.setListener(new CompositeListener(listeners));
 		marshaller.marshal(t, xsw);
 	}
 	// -----------------------------------------------------------------------
@@ -74,6 +72,29 @@ public class Utils {
 	private static JAXBContext newJAXBContext(Class classToBeBound)
 			throws JAXBException {
 		return JAXBContext.newInstance(classToBeBound);
+	}
+	
+	// -------------------------------------------------------------------------
+	
+	private static class CompositeListener extends Listener {
+		
+		private Listener [] listeners;
+		
+		public CompositeListener(Listener ...listeners) {
+			this.listeners = listeners;
+		}
+		
+		@Override
+		public void afterMarshal(Object source) {
+			for ( Listener  listener: listeners )
+				listener.afterMarshal(source);
+		}
+		
+		@Override
+		public void beforeMarshal(Object source) {
+			for ( Listener  listener: listeners )
+				listener.beforeMarshal(source);
+		}
 	}
 
 }

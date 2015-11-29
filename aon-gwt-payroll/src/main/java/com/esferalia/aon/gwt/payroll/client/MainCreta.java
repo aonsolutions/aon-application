@@ -370,7 +370,12 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			mergeEditor.setMode("text/xml");
 			mergeEditor.setFoldGutter(true);
 			mergeEditor.setLineNumbers(true);
-			mergeEditor.setText(result.getChangedBasesFile());
+			try {
+				mergeEditor.setText(result.getChangedBasesFile());
+			} catch (NullPointerException e) {
+				mergeEditor.setShowDifferences(false);
+				mergeEditor.setText(result.getDraftRequestFile());
+			}	
 			mergeEditor.setTitle(CretaService.File.BASES.getFilename());
 			mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
 			detailPanel.setWidget(mergeEditor);

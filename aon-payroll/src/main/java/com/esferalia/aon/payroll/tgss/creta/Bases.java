@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -89,6 +90,22 @@ import net.aonsolutions.tgss.creta.jaxb.bases.TrabajadorBuilder;
 import net.aonsolutions.tgss.creta.jaxb.bases.TramoBuilder;
 
 public class Bases {
+
+	@SuppressWarnings("serial")
+	public static class EmptyBasesException extends  Exception {
+		
+		String autorizado;
+		
+		public String getAutorizado() {
+			return autorizado;
+		}
+		
+		public EmptyBasesException setAutorizado(String autorizado) {
+			this.autorizado = autorizado;
+			return this;
+		}
+		
+	}
 
 	private static class MonthlySalaryCretaData implements CretaData {
 		@Override
@@ -327,6 +344,11 @@ public class Bases {
 
 	public static interface BasesCallback {
 
+		default void noDiffs(
+				net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
+
+		}
+
 		default void trabajadorAdded(
 				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
 				Trabajador trabajadorCreta, Salary salary) {
@@ -391,6 +413,7 @@ public class Bases {
 				Exception e) {
 
 		};
+
 	}
 
 	@SuppressWarnings("serial")
@@ -531,8 +554,7 @@ public class Bases {
 		public void unMatchedContextVariable(Salary salary, ContextVariable var,
 				ContextData contextData, Dato datoSolicitado, Tramo tramo,
 				TramoBuilder tramoBuilder, boolean optional) {
-			
-			
+
 			if (Arrays.binarySearch(datos, datoSolicitado.getCodigo()) < 0)
 				return;
 
@@ -965,11 +987,11 @@ public class Bases {
 			} catch (UnMatchedContextVariableException e) {
 				try {
 					for (BasesCallback cb : cbs)
-						cb.unMatchedContextVariable(salary, e.getContextVariable(),
-								e.getContextData(), datoSolicitado, tramo,
-								tramoBuilder, optional);
-				} catch ( Cancel c ) {
-					
+						cb.unMatchedContextVariable(salary,
+								e.getContextVariable(), e.getContextData(),
+								datoSolicitado, tramo, tramoBuilder, optional);
+				} catch (Cancel c) {
+
 				}
 			}
 		}
@@ -1029,8 +1051,8 @@ public class Bases {
 				if (intersect == null)
 					continue;
 
-				if ( data.getStartDate().before(p.getStart()) || 
-						data.getEndDate().after(p.getEnd()))
+				if (data.getStartDate().before(p.getStart())
+						|| data.getEndDate().after(p.getEnd()))
 					throw new UnMatchedContextVariableException(contextVariable,
 							data);
 
@@ -1160,8 +1182,8 @@ public class Bases {
 			put("501", new OptionalCContextCretaData(STRUCTURAL_OVERTIME_BASE));
 			put("502", new OptionalCContextCretaData(
 					NON_STRUCTURAL_OVERTIME_BASE));
-//			put("537", new OptionalCContextCretaData(
-//					NON_STRUCTURAL_OVERTIME_BASE));
+			// put("537", new OptionalCContextCretaData(
+			// NON_STRUCTURAL_OVERTIME_BASE));
 			put("601", new MandatoryCContextCretaData(CGP_BASE));
 			put("611", new MandatoryCContextCretaData(CGP_BASE));
 
@@ -1886,7 +1908,7 @@ public class Bases {
 	//
 
 	@SuppressWarnings("static-access")
-	public static void main(String[] args) throws JAXBException, SQLException,
+	public static void main(String[] args) throws EmptyBasesException, JAXBException, SQLException,
 			ClassNotFoundException, IOException, XMLStreamException,
 			FactoryConfigurationError, TransformerConfigurationException,
 			TransformerFactoryConfigurationError {
@@ -2013,7 +2035,7 @@ public class Bases {
 			boolean skipExisting, boolean acceptPrevBases, String nafs[],
 			String defaultsValues[], InputStream trabajadoresTramosIs,
 			InputStream respuestaIs, OutputStream os, BasesCallback... cbs)
-					throws JAXBException, XMLStreamException,
+					throws EmptyBasesException, JAXBException, XMLStreamException,
 					FactoryConfigurationError, IOException {
 		//@formatter:off
 		generate(connection, 
@@ -2033,7 +2055,7 @@ public class Bases {
 			boolean skipExisting, boolean acceptPrevBases, String nafs[],
 			String defaultsValues[], List<File> trabajadoresTramosFiles,
 			List<File> respuestaFiles, OutputStream os, BasesCallback... cbs)
-					throws JAXBException, XMLStreamException,
+					throws EmptyBasesException, JAXBException, XMLStreamException,
 					FactoryConfigurationError, IOException {
 		List<InputStream> trabajadoresTramosIsList = new ArrayList<InputStream>();
 		for (File trabajadoresTramosFile : trabajadoresTramosFiles)
@@ -2046,14 +2068,14 @@ public class Bases {
 
 		//@formatter:off
 		generate(connection, 
-				comments, 
-				skipExisting, 
+				comments,
+				skipExisting,
 				acceptPrevBases, 
 				nafs,
-				defaultsValues, 
+				defaultsValues,
 				trabajadoresTramosIsList,
 				respuestaIsList,
-				os, 
+				os,
 				cbs);
 		//@formatter:on
 	}
@@ -2063,7 +2085,7 @@ public class Bases {
 			String defaultsValues[],
 			Collection<InputStream> trabajadoresTramosIss,
 			Collection<InputStream> respuestaIss, OutputStream os,
-			BasesCallback... cbs) throws JAXBException, XMLStreamException,
+			BasesCallback... cbs) throws EmptyBasesException, JAXBException, XMLStreamException,
 					FactoryConfigurationError, IOException {
 		AONContext ctx = new AONContext(connection);
 
@@ -2135,7 +2157,16 @@ public class Bases {
 				liquidacion = liquidacion(trabajadoresTramos, ctx,
 						acceptPrevBases, xsw, callbacks);
 
-				liquidaciones.put(ccc, liquidacion);
+				boolean noTrabajadores = liquidacion.getLiquidacionMes().stream()
+				.map(l->l.getTrabajadores())
+				.allMatch(t-> t == null || t.getTrabajador().isEmpty() );
+				
+				if ( noTrabajadores )
+					for ( BasesCallback cb: cbs)
+						cb.noDiffs(liquidacion);
+				else
+					liquidaciones.put(ccc, liquidacion);
+				
 
 			} catch (JAXBException e) {
 				for (BasesCallback cb : callbacks)
@@ -2163,15 +2194,23 @@ public class Bases {
 			}
 			respuestaIs.close();
 		}
+		
+		String autorizado = null;
 
 		if (autorizados.size() > 1) {
 			// TODO
 		} else if (autorizados.isEmpty()) {
 			// TODO
 		} else {
-			builder.setAutorizado(autorizados.stream().findFirst().get());
+			autorizado = autorizados.stream().findFirst().get();
+			builder.setAutorizado(autorizado);
 		}
-
+		
+		
+		if ( liquidaciones.isEmpty() )
+			throw new  EmptyBasesException()
+			.setAutorizado(autorizado);
+		
 		builder.addLiquidaciones(liquidaciones.values());
 		net.aonsolutions.tgss.creta.jaxb.bases.Bases bases = builder.create();
 

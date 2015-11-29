@@ -197,6 +197,12 @@ public interface CretaService {
 
 		}
 
+		public final String getDraftRequestFile() {
+			String draft = getDraftRequest();
+			return URL.decodeQueryString(draft);
+
+		}
+
 		// ----------------------------------- JSNI (Native JavaScript Methods)
 
 		public final native String getFullBases() /*-{
@@ -205,6 +211,10 @@ public interface CretaService {
 
 		public final native String getDiffBases() /*-{
 			return this.diff_bases;
+		}-*/;
+
+		public final native String getDraftRequest() /*-{
+			return this.draft_request;
 		}-*/;
 
 		public final native JsEvent[] getErrors() /*-{
