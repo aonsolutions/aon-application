@@ -62,6 +62,7 @@ import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
@@ -83,8 +84,9 @@ public class EmployeesServiceHelper {
 	 */
 	public static void calculate(Connection connection, AgreementDraft draft,
 			Integer domainId, Integer parentDomainId) throws SQLException {
-		SortedSet<Date> datesWithChanges = parentDomainId == null ? SQLAgreementDraft
-				.getDatesWithChanges(connection, draft.getId(), domainId)
+		SortedSet<Date> datesWithChanges = parentDomainId == null
+				? SQLAgreementDraft.getDatesWithChanges(connection,
+						draft.getId(), domainId)
 				: SQLAgreementDraft.getDatesWithChanges(connection,
 						draft.getId(), domainId, parentDomainId);
 
@@ -177,9 +179,8 @@ public class EmployeesServiceHelper {
 		agreementData.setId(0);
 		allLevels.add(agreementData);
 
-		SalaryTable dbSalaryTable = SQLAgreementDraft.getSalaryTable(
-				connection, draft.getId(), draft.getStartDate(),
-				draft.getEndDate());
+		SalaryTable dbSalaryTable = SQLAgreementDraft.getSalaryTable(connection,
+				draft.getId(), draft.getStartDate(), draft.getEndDate());
 		SalaryTable allSalaryTable = new SalaryTable(dbSalaryTable);
 		allSalaryTable.putAll(draft.getDraftSalaryTable());
 
@@ -204,20 +205,19 @@ public class EmployeesServiceHelper {
 	public static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSalaryCalculatorContext(
 			final Connection conn, final SalaryDraft draft,
 			IContractSalaryCalculatorContext.IListener listener)
-			throws ExpressionException, SQLException {
+					throws ExpressionException, SQLException {
 		return getSalaryCalculatorContextImpl(conn, draft, listener);
 	}
 
 	public static List<Bonus> getAvailableBonuses(Connection conn,
-			int employeeId, Integer... domains) throws IllegalArgumentException {
+			int employeeId, Integer... domains)
+					throws IllegalArgumentException {
 		try {
 			List<Bonus> availableBonuses = new ArrayList<Bonus>();
-			AON.getAvailableBonuses(
-					new AONContext(conn),
-					props -> {
-						return props.getDomainProperty().in(domains);
-//								.and(props.getIsUnknowProperty().eq(true));
-					}).map(b -> {
+			AON.getAvailableBonuses(new AONContext(conn), props -> {
+				return props.getDomainProperty().in(domains);
+				// .and(props.getIsUnknowProperty().eq(true));
+			}).map(b -> {
 				Bonus bonus = new Bonus();
 				bonus.setId(b.getId());
 				bonus.setExpression(b.getExpression());
@@ -326,10 +326,9 @@ public class EmployeesServiceHelper {
 		if (payment.getId() < 0)
 			return true;
 
-		return parents
-				.stream()
-				.filter(parent -> parent.getConceptId().equals(
-						payment.getConceptId())
+		return parents.stream()
+				.filter(parent -> parent.getConceptId()
+						.equals(payment.getConceptId())
 						&& parent.getDomain().equals(payment.getDomain()))
 				.findAny().isPresent();
 	}
@@ -340,7 +339,8 @@ public class EmployeesServiceHelper {
 		try {
 			// try to resolve some variables. Here we go.
 			SQLSystemExpressionContextFactory systemCtxFactory = new SQLSystemExpressionContextFactory(
-					conn, start, end, ISQLContractSalaryCalculatorContext.NEWER);
+					conn, start, end,
+					ISQLContractSalaryCalculatorContext.NEWER);
 
 			Supplier<ExpressionContext> systemCtxSupplier = () -> systemCtxFactory
 					.create(new CCCContextKey(null, null));
@@ -381,8 +381,8 @@ public class EmployeesServiceHelper {
 		while (errors < vars.size()) {
 			Variable var = vars.pop();
 			try {
-				List<ITimedResult<Object>> results = ctx.eval(
-						var.getExpression(), start, end);
+				List<ITimedResult<Object>> results = ctx
+						.eval(var.getExpression(), start, end);
 				errors = 0;
 				for (ITimedResult<Object> result : results) {
 					var.setValue(result.getValue());
@@ -435,18 +435,19 @@ public class EmployeesServiceHelper {
 	private static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSalaryCalculatorContextImpl(
 			final Connection conn, final SalaryDraft draft,
 			IContractSalaryCalculatorContext.IListener listener)
-			throws ExpressionException, SQLException {
+					throws ExpressionException, SQLException {
 
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(tableCol(CONTRACT, ContractColumns.ID),
 				draft.getEmployee().getId());
 
-		class SalaryCalculatorContextImpl extends
-				SQLContractSalaryCalculatorContext {
+		class SalaryCalculatorContextImpl
+				extends SQLContractSalaryCalculatorContext {
 
 			public SalaryCalculatorContextImpl(Connection connection,
 					Date startDate, Date endDate, Date issueDate,
-					Criteria criteria) throws SQLException, ExpressionException {
+					Criteria criteria)
+							throws SQLException, ExpressionException {
 				super(connection, startDate, endDate, issueDate, criteria);
 			}
 
@@ -524,11 +525,11 @@ public class EmployeesServiceHelper {
 						}
 
 						@Override
-						public Object liquid(double liquid, Date start, Date end)
-								throws ExpressionException, SQLException,
-								SalaryException {
-							throw new InterruptedException(
-									String.format("Lo sentimos. La funci\u00F3n BRUTO es incompatible con la funci\u00F3n NETO. Elija una de las dos. :-("));
+						public Object liquid(double liquid, Date start,
+								Date end) throws ExpressionException,
+										SQLException, SalaryException {
+							throw new InterruptedException(String.format(
+									"Lo sentimos. La funci\u00F3n BRUTO es incompatible con la funci\u00F3n NETO. Elija una de las dos. :-("));
 						}
 
 						@Override
@@ -577,13 +578,17 @@ public class EmployeesServiceHelper {
 							return Collections.emptyList();
 						}
 
+						@Override
+						protected void onRedefinedImplicit(String name,
+								ITimedVariable<?> redefined,
+								ITimedVariable<?> implicit) {
+						}
 					};
 					SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
 							draft, sqlContractSalaryCalculatorCtx);
 
-					sqlDraftSalaryCalculatorCtx
-							.setListener(SalaryCalculatorContextImpl.this
-									.getListener());
+					sqlDraftSalaryCalculatorCtx.setListener(
+							SalaryCalculatorContextImpl.this.getListener());
 
 					sqlDraftSalaryCalculatorCtx.next();
 					return sqlDraftSalaryCalculatorCtx;
@@ -606,8 +611,9 @@ public class EmployeesServiceHelper {
 							conn, startDate, endDate, issueDate, criteria) {
 
 						@Override
-						public Object liquid(double liquid, Date start, Date end)
-								throws ExpressionException, SQLException {
+						public Object liquid(double liquid, Date start,
+								Date end) throws ExpressionException,
+										SQLException {
 							return solve;
 						}
 
@@ -615,8 +621,8 @@ public class EmployeesServiceHelper {
 						public Object gross(double gross, Date start, Date end)
 								throws ExpressionException, SQLException,
 								SalaryException {
-							throw new InterruptedException(
-									String.format("Lo sentimos. La funci\u00F3n NETO es incompatible con la funci\u00F3n BRUTO. Elija una de las dos. :-("));
+							throw new InterruptedException(String.format(
+									"Lo sentimos. La funci\u00F3n NETO es incompatible con la funci\u00F3n BRUTO. Elija una de las dos. :-("));
 						}
 
 						@Override
@@ -658,8 +664,8 @@ public class EmployeesServiceHelper {
 									@Override
 									public Object liquid(double _liquid,
 											Date start, Date end)
-											throws ExpressionException,
-											SQLException {
+													throws ExpressionException,
+													SQLException {
 										return solve * (_liquid / liquid);
 									}
 
@@ -705,13 +711,18 @@ public class EmployeesServiceHelper {
 							}
 						}
 
+						@Override
+						protected void onRedefinedImplicit(String name,
+								ITimedVariable<?> redefined,
+								ITimedVariable<?> implicit) {
+						}
+
 					};
 					SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
 							draft, sqlContractSalaryCalculatorCtx);
 
-					sqlDraftSalaryCalculatorCtx
-							.setListener(SalaryCalculatorContextImpl.this
-									.getListener());
+					sqlDraftSalaryCalculatorCtx.setListener(
+							SalaryCalculatorContextImpl.this.getListener());
 
 					sqlDraftSalaryCalculatorCtx.next();
 					return sqlDraftSalaryCalculatorCtx;
@@ -769,19 +780,20 @@ public class EmployeesServiceHelper {
 	public static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getExtraCalculatorContextImpl(
 			final Connection conn, final SalaryDraft draft,
 			IContractSalaryCalculatorContext.IListener listener)
-			throws ExpressionException, SQLException {
-	
+					throws ExpressionException, SQLException {
+
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(EmployeesServiceImpl.tableCol(CONTRACT, ContractColumns.ID),
+		criteria.addEqualExpression(
+				EmployeesServiceImpl.tableCol(CONTRACT, ContractColumns.ID),
 				draft.getEmployee().getId());
-	
+
 		SQLContractSalaryCalculatorContext ctx = new SQLContractExtraCalculatorContext(
 				conn, draft.getStartDate(), draft.getEndDate(),
 				draft.getIssueDate(), draft.getIssueDate(), criteria);
-	
+
 		ctx.setListener(listener);
 		ctx.next();
-	
+
 		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
 				draft, ctx);
 		draftCtx.setListener(listener);
