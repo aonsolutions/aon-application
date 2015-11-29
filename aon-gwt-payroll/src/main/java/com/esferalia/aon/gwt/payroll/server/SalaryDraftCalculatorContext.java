@@ -127,7 +127,6 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 	}
 
 	static class DraftEmbargo extends ContractEmbargo {
-
 	}
 
 	private static class DraftCompositePayments extends CompositePayments
@@ -254,7 +253,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 
 	private SalaryDraft draft;
 
-	private IListener listener;
+//	private IListener listener;
 
 	public SalaryDraftCalculatorContext(SalaryDraft draft, T ctx)
 			throws ExpressionException {
