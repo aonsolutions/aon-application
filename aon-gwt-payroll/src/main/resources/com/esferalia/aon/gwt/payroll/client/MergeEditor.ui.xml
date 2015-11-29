@@ -40,6 +40,9 @@
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
 								<g:Button ui:field='saveButton' styleName='aon-finding-toolbar-item aon-icon-save' text="Guardar" /> 
 							</g:HTMLPanel>
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
+								<g:Button ui:field='copyButton' styleName='aon-finding-toolbar-item aon-icon-transfer' text="Copiar" /> 
+							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
 				</g:FlowPanel>				
