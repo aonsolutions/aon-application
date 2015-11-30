@@ -148,45 +148,48 @@ public class CretaServlet extends HttpServlet implements
 					generateBases(connection, true, false, false, nafs,
 							defaults, trabajadoresYTramosIss, respuestasIss,
 							pickerBasesCb));
-		} catch (EmptyBasesException e) {
-		}
+			
+			respuestasIss.clear();
+			trabajadoresYTramosIss.clear();
+			for (Part part : req.getParts()) {
+				try {
+					CretaService.File file = CretaService.File
+							.valueOf(part.getName());
+					if (file == CretaService.File.TRABAJADORES_TRAMOS)
+						trabajadoresYTramosIss.add(part.getInputStream());
+					else if (file == CretaService.File.RESPUESTA)
+						respuestasIss.add(part.getInputStream());
+				} catch (IllegalArgumentException e) {
 
-		respuestasIss.clear();
-		trabajadoresYTramosIss.clear();
-		for (Part part : req.getParts()) {
+				}
+			}
+
+			NoDiffsBasesCallback noDiffsBasesCb = new NoDiffsBasesCallback() {
+				@Override
+				public void noDiffs(
+						net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
+					super.noDiffs(liquidacion);
+					pickerBasesCb.noDiffs(liquidacion);
+				}
+			};
 			try {
-				CretaService.File file = CretaService.File
-						.valueOf(part.getName());
-				if (file == CretaService.File.TRABAJADORES_TRAMOS)
-					trabajadoresYTramosIss.add(part.getInputStream());
-				else if (file == CretaService.File.RESPUESTA)
-					respuestasIss.add(part.getInputStream());
-			} catch (IllegalArgumentException e) {
-
+				os.printf("\"diff_bases\":\"%s\",\r\n",
+						generateBases(connection, true, true, true, nafs, defaults,
+								trabajadoresYTramosIss, respuestasIss,
+								noDiffsBasesCb));
+			} catch (EmptyBasesException e) {
+				os.printf("\"draft_request\":\"%s\",\r\n", generateBorrador(
+						e.getAutorizado(), noDiffsBasesCb.getMeses(),
+						noDiffsBasesCb.getAnhos(), noDiffsBasesCb.getTipos(),
+						noDiffsBasesCb.getAceptarBasesAnteriores(),
+						noDiffsBasesCb.getCCCs()));
 			}
-		}
 
-		NoDiffsBasesCallback noDiffsBasesCb = new NoDiffsBasesCallback() {
-			@Override
-			public void noDiffs(
-					net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
-				super.noDiffs(liquidacion);
-				pickerBasesCb.noDiffs(liquidacion);
-			}
-		};
-		try {
-			os.printf("\"diff_bases\":\"%s\",\r\n",
-					generateBases(connection, true, true, true, nafs, defaults,
-							trabajadoresYTramosIss, respuestasIss,
-							noDiffsBasesCb));
 		} catch (EmptyBasesException e) {
-			os.printf("\"draft_request\":\"%s\",\r\n", generateBorrador(
-					e.getAutorizado(), noDiffsBasesCb.getMeses(),
-					noDiffsBasesCb.getAnhos(), noDiffsBasesCb.getTipos(),
-					noDiffsBasesCb.getAceptarBasesAnteriores(),
-					noDiffsBasesCb.getCCCs()));
+			os.printf("\"full_bases\":\"\",\r\n");
+			os.printf("\"diff_bases\":\"\",\r\n");
 		}
-
+		
 		os.printf("\"errors\":%s,\r\n", toJSON(pickerBasesCb.errors));
 
 		os.printf("\"unknown\":%s,\r\n", toJSON(pickerBasesCb.unknown));
