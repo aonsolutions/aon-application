@@ -3699,7 +3699,18 @@ public class SQLContractSalaryCalculatorContext
 		if (agreementHours == null)
 			throw new ExpressionExceptionWrapper(
 					new UndefinedContextVariablesException(var));
-		return ((Number) agreementHours.getValue(p)).doubleValue();
+		try {
+			return ((Number) agreementHours.getValue(p)).doubleValue();
+		} catch ( ExpressionExceptionWrapper e ){
+		}
+		
+		try {
+			return ctx.eval(var.getName(), p.getStart(), p.getEnd(), Double.class)
+			.stream()
+			.collect(Collectors.summingDouble(r->r.getValue()));
+		}catch ( ExpressionException e ) {
+			throw new ExpressionExceptionWrapper(e);
+		}
 	}
 
 	/*
