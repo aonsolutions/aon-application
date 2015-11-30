@@ -23,6 +23,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
@@ -41,6 +43,8 @@ public class CleanStatusController extends BasicController {
 	
 	private final String FLOOR_IDX = "selectedFloorId";
 	
+	private final String ROOM_STATUS = "selectedRoomStatus";
+	
 	private Date searchDate;
 
 	private Hotel hotel;
@@ -56,7 +60,7 @@ public class CleanStatusController extends BasicController {
 	private Map<Integer, ActivityStatus> busyRooms;
 	
 	private Map<Integer, ActivityStatus> checkoutRooms;
-
+	
 	
 	public Hotel getHotel() {
 		return hotel;
@@ -162,6 +166,13 @@ public class CleanStatusController extends BasicController {
 			AssetActivity activity = projectReservationRoomDetail.getAssetActivity();
 			checkoutRooms.put(activity.getAsset().getId(), activity.getStatus());
 		}
+		for (Object o : getPartialCheckoutActivityList()) {
+			Object[] obj = (Object[]) o;
+			Date date = (Date)obj[0];
+			if(DateUtils.isSameDay(DateUtils.addDays(searchDate, -1), (date))){
+				checkoutRooms.put((Integer) obj[1], ActivityStatus.BUSY);
+			}
+		}
 		
 		setModel(new SerializableListDataModel(getRoomList()));
 	}
@@ -172,6 +183,29 @@ public class CleanStatusController extends BasicController {
 		String newFloor = String.valueOf(new Integer(params.get(FLOOR_IDX)));
 		selectedFloor = newFloor.equals(selectedFloor)?null:newFloor;
 	}
+	
+	public void onRefresh(ActionEvent event) {
+		onSearch(event);
+	}
+	
+	public void onSelectRoom(ActionEvent event) throws ManagerBeanException {
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+		Map<String, String> params = ec.getRequestParameterMap();
+		Room room = getRoomList().get(new Integer(params.get(ROOM_IDX)));
+		String status = params.get(ROOM_STATUS);
+		if(RoomStatus.valueOf(status)==RoomStatus.DIRTY){
+			room.setStatus(RoomStatus.CLEAN);
+			room.setLastCleaningDate(new Date());
+		} else if(RoomStatus.valueOf(status)==RoomStatus.CLEAN){
+			room.setStatus(RoomStatus.DO_NOT_DISTURB);
+			room.setLastCleaningDate(new Date());
+		} else {
+			room.setStatus(RoomStatus.DIRTY);
+		}
+		BeanManager.getManagerBean(Room.class).update(room);
+	}
+	
+	
 	
 	private List<ITransferObject> getActiveRoomList(Hotel hotel, String floor) {
 		try {
@@ -188,7 +222,7 @@ public class CleanStatusController extends BasicController {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}
-
+	
 	private List<ITransferObject> getRoomActivityList(List<ITransferObject> roomList) {
 		List<Integer> roomIds = new LinkedList<Integer>();
 		if(roomList!=null && roomList.size()>0) {
@@ -228,23 +262,30 @@ public class CleanStatusController extends BasicController {
 		return Collections.emptyList();
 	}
 	
-	public void onRefresh(ActionEvent event) {
-		onSearch(event);
-	}
-	
-	public void onSelectRoom(ActionEvent event) throws ManagerBeanException {
-		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		Map<String, String> params = ec.getRequestParameterMap();
-		Room room = getRoomList().get(new Integer(params.get(ROOM_IDX)));
-		if(room.getStatus()==RoomStatus.DIRTY){
-			room.setStatus(RoomStatus.CLEAN);
-			room.setLastCleaningDate(new Date());
-		} else if(room.getStatus()==RoomStatus.CLEAN){
-			room.setStatus(RoomStatus.DO_NOT_DISTURB);
-		} else {
-			room.setStatus(RoomStatus.DIRTY);
+	private List<Object> getPartialCheckoutActivityList() {
+		if(getHotel()!=null && getHotel().getId()!=null) {
+			try {
+				IManagerBean prrdBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
+				Criteria criteria = new Criteria();
+				String alias = prrdBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_HOTEL_ID);
+				criteria.addEqualExpression(alias, getHotel().getId());
+				alias = prrdBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_START_DATE);
+				criteria.addLessThanOrEqualExpression(alias, searchDate);
+				alias = prrdBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_END_DATE);
+				criteria.addGreaterThanExpression(alias, searchDate);
+				
+				Projection projection1 = Projection.max(prrdBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE));
+				Projection projection2 = Projection.group(prrdBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_ASSET_ID));
+				ProjectionList pList = new ProjectionList();
+				pList.add(projection1);
+				pList.add(projection2);
+				List<Object> list = prrdBean.getList(pList, criteria);
+				return list;
+			} catch (ManagerBeanException e) {
+				throw new AbortProcessingException(e.getMessage(), e);
+			}
 		}
-		BeanManager.getManagerBean(Room.class).update(room);
+		return Collections.emptyList();
 	}
 	
 }
