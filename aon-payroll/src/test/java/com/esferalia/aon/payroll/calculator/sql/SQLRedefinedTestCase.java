@@ -31,6 +31,125 @@ public class SQLRedefinedTestCase extends AbstractSQLTestCase {
 	private static final double DELTA = 0.000001;
 
 	@Test
+	public void testIrpfNo()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:off
+		ContractRecord contract = newContract(aonContext,  
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+					{
+					}
+				}, new String[] { 
+						"NETO(3000.00) * DIAS_TRABAJADOS / DIAS_MES" ,
+						}
+				, new String[] {
+						"TRACE('IRPF = %f\r\n', PORCENTAJE_IRPF) ; PORCENTAJE_IRPF" 
+				}, 
+				null);
+		//@formatter:on
+
+		class MyListener implements  IListener {
+
+			private int count = 0; 
+			
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+			}
+
+			@Override
+			public void onRedefinedImplicit(String name,
+					ITimedVariable<?> redefined, ITimedVariable<?> implicit) {
+				System.out.printf(
+						"La variable del sistema '%s' con valor '%f' esta redefinida con el valor '%f'.\r\n",
+						name, implicit.getValue(implicit.getPeriod()),
+						redefined.getValue(redefined.getPeriod()));
+				Assert.assertEquals(0.0,
+						implicit.getValue(implicit.getPeriod()));
+				Assert.assertEquals(10.0,
+						redefined.getValue(redefined.getPeriod()));
+				
+				count++;
+			}
+
+		};
+		
+		MyListener myListener = new MyListener();
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract, myListener);
+
+		new ContractSalaryCalculator<Salary>(new SalaryBuilder())
+				.calculate(ctx);
+		
+		 Assert.assertEquals(0, myListener.count);  
+	}
+
+	@Test
+	public void testSistema()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:off
+		ContractRecord contract = newContract(aonContext,  
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+					{
+						put("PORCENTAJE_IRPF", "SISTEMA('PORCENTAJE_IRPF')");
+						put("PORCENTAJE_CGC", " SISTEMA ( 'PORCENTAJE_CGC'   )  ");
+						put("PORCENTAJE_FP", " SISTEMA ( \"PORCENTAJE_FP\"   ) ; ");
+					}
+				}, new String[] { 
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+						}
+				, new String[] {
+						"TRACE('IRPF = %f\r\n', PORCENTAJE_IRPF) ; PORCENTAJE_IRPF" ,
+						"TRACE('CGC = %f\r\n', PORCENTAJE_CGC) ; PORCENTAJE_CGC",
+						"TRACE('FP = %f\r\n', PORCENTAJE_FP) ; PORCENTAJE_FP"
+				}, 
+				null);
+		//@formatter:on
+
+		class MyListener implements  IListener {
+
+			private int count = 0; 
+			
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+			}
+
+			@Override
+			public void onRedefinedImplicit(String name,
+					ITimedVariable<?> redefined, ITimedVariable<?> implicit) {
+				System.out.printf(
+						"La variable del sistema '%s' con valor '%f' esta redefinida con el valor '%f'.\r\n",
+						name, implicit.getValue(implicit.getPeriod()),
+						redefined.getValue(redefined.getPeriod()));
+				
+				count++;
+			}
+
+		};
+		
+		MyListener myListener = new MyListener();
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract, myListener);
+
+		new ContractSalaryCalculator<Salary>(new SalaryBuilder())
+				.calculate(ctx);
+		
+		 Assert.assertEquals(0, myListener.count);  
+	}
+
+	@Test
 	public void testLiquid()
 			throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();
@@ -47,7 +166,7 @@ public class SQLRedefinedTestCase extends AbstractSQLTestCase {
 						"NETO(100.00) * DIAS_TRABAJADOS / DIAS_MES" ,
 						}
 				, new String[] {
-						"TRACE('IRPF = %f\r\n', PORCENTAJE_IRPF) ; PROCENTAJE_IRPF" 
+						"TRACE('IRPF = %f\r\n', PORCENTAJE_IRPF) ; PORCENTAJE_IRPF" 
 				}, 
 				null);
 		//@formatter:on
@@ -111,7 +230,7 @@ public class SQLRedefinedTestCase extends AbstractSQLTestCase {
 						"BRUTO(100.00) * DIAS_TRABAJADOS / DIAS_MES" ,
 						}
 				, new String[] {
-						"TRACE('IRPF = %f\r\n', PORCENTAJE_IRPF) ; PROCENTAJE_IRPF" 
+						"TRACE('IRPF = %f\r\n', PORCENTAJE_IRPF) ; PORCENTAJE_IRPF" 
 				}, 
 				null);
 		//@formatter:on
