@@ -442,7 +442,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 			if ( var.getPeriod().equals(intersect) )
 				ret = var;
 			else 
-				ret = new WrapTimedVariable(intersect,var);
+				ret = wrapVariable(intersect,var);//new WrapTimedVariable(intersect,var);
 		}
 		
 		return  ret;
@@ -548,7 +548,15 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		calendar.add(Calendar.DAY_OF_MONTH, days);
 		return calendar.getTime();
 	}
-
+	
+	private static ITimedVariable wrapVariable(Period period,
+			ITimedVariable<?> timedVariable) {
+		return timedVariable instanceof IExpressionVariable<?> ?
+				new WrapExpressionVariable<>(period, (IExpressionVariable<?>)timedVariable):
+				new WrapTimedVariable<>(period, timedVariable);
+	}
+	
+	
 	private static class WrapTimedVariable<T> implements ITimedVariable<T> {
 
 		private Period period;
@@ -577,4 +585,41 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 
 	}
 
+	private static class WrapExpressionVariable<T> implements IExpressionVariable<T> {
+
+		private Period period;
+		private IExpressionVariable<? extends T> expressionVariable;
+
+		public WrapExpressionVariable(Period period,
+				IExpressionVariable<? extends T> timedVariable) {
+			this.period = period;
+			this.expressionVariable = timedVariable;
+		}
+
+		public WrapExpressionVariable(Date start, Date end,
+				IExpressionVariable<? extends T> timedVariable) {
+			this(new Period(start, end), timedVariable);
+		}
+
+		@Override
+		public Period getPeriod() {
+			return period;
+		}
+
+		@Override
+		public T getValue(Period period) {
+			return expressionVariable.getValue(period);
+		}
+		
+		
+		@Override
+		public Map<String, ITimedVariable<?>> getContext() {
+			return expressionVariable.getContext();
+		}
+		
+		@Override
+		public IExpression getExpression() {
+			return expressionVariable.getExpression();
+		}
+	}
 }
