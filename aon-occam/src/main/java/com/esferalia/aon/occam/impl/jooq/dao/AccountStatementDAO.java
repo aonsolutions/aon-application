@@ -195,8 +195,8 @@ public class AccountStatementDAO {
 		report.getDetails()
 			.stream()
 			.forEach( as -> {
-				double db = debitBalance.getValue() - creditBalance.getValue() + as.getDebit() - as.getCredit();
-				double ub = creditBalance.getValue() - debitBalance.getValue() - as.getDebit() + as.getCredit();
+				double db = AonMathUtils.round(debitBalance.getValue() - creditBalance.getValue() + as.getDebit() - as.getCredit());
+				double ub = AonMathUtils.round(creditBalance.getValue() - debitBalance.getValue() - as.getDebit() + as.getCredit());
 				db = AonMathUtils.isNegative(db)?0.0:db;
 				ub = AonMathUtils.isNegative(ub)?0.0:ub;
 				debitBalance.setValue( db );
