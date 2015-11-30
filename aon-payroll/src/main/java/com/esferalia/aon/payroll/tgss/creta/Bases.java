@@ -1782,6 +1782,12 @@ public class Bases {
 
 	}
 
+	private static String toString(net.aonsolutions.tgss.creta.jaxb.bases.CtaCot ctaCot) {
+		return String.format("%s%s%s", ctaCot.getProvincia(),
+				ctaCot.getRegimen(), ctaCot.getNumero());
+
+	}
+
 	private static int compare(Liquidacion l1,
 			net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion l2) {
 		if (l2 == null)
@@ -2187,8 +2193,12 @@ public class Bases {
 
 				autorizados.add(respuesta.getAutorizado());
 
-				builder.addLiquidaciones(liquidaciones(respuesta, ctx,
-						acceptPrevBases, xsw, callbacks));
+				liquidaciones(respuesta, ctx,
+						acceptPrevBases, xsw, callbacks)
+				.stream()
+				.forEach(l->liquidaciones.put(toString(l.getCcc()), l));
+				;
+				
 			} catch (JAXBException e) {
 				for (BasesCallback cb : callbacks)
 					cb.wrongTrabajadoresTramosIs(respuestaIs, e);
