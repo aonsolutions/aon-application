@@ -112,7 +112,7 @@
 	<!--  EXTRACTO DE CUENTA -->
 	<report id="statement" description="Account Statement">
 		<template path="/com/code/aon/ui/accounting/report/statement.jasper"/>
-		<collection provider="#{statement.detail}"/>
+		<collection provider="#{statement}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
