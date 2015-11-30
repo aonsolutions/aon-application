@@ -105,7 +105,7 @@ public class StatementController extends BasicController {
 	}
 
 	public void setDetailModel(DataModel detailModel) {
-		setDetailState(new DataScrollerState(detailModel, "statementDetail"));
+		setDetailState(new DataScrollerState(detailModel, "statement"));
 	}
 	
 	public DataScrollerState getDetailState() {

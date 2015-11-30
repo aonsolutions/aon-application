@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 5.1.0  -->
-<!-- 2015-11-24T18:35:10 -->
+<!-- 2015-11-30T12:52:45 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="statement" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="cc7d2d8b-33a0-431e-b7c1-691b006a2bcd">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -484,7 +484,7 @@
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField-9" x="259" y="0" width="50" height="11" uuid="c1e76878-d71c-4be1-a72b-53908a22192e">
-					<printWhenExpression><![CDATA[new Boolean($F{credit}.doubleValue() != 0)]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{credit} != 0]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -499,7 +499,7 @@
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField-10" x="209" y="0" width="50" height="11" uuid="ffb99d77-e815-4a3e-93ac-f581c1d8f238">
-					<printWhenExpression><![CDATA[new Boolean($F{debit}.doubleValue() != 0)]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{debit} != 0]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -553,7 +553,7 @@
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField-28" x="309" y="0" width="50" height="11" uuid="6c44caf0-4bee-4d6a-a8bb-c65d058f219c">
-					<printWhenExpression><![CDATA[new Boolean($F{unpaidBalance}.doubleValue() != 0)]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{debitBalance} != 0]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -568,7 +568,7 @@
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField-29" x="359" y="0" width="50" height="11" uuid="fb621d06-39be-48de-8063-13d4a0d5826e">
-					<printWhenExpression><![CDATA[new Boolean($F{debitBalance}.doubleValue() != 0)]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{unpaidBalance} != 0]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
