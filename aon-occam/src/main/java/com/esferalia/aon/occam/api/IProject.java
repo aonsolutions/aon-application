@@ -10,6 +10,7 @@ public interface IProject {
 	
 	public Project getProject(AONContext ctx, ProjectFilter filter);
 	public LinkedList<Project> getProjectList(AONContext ctx, ProjectFilter filter);
+	public Integer insertProject(AONContext ctx, Project project);
 	
 	public ProjectReservation getProjectReservation(AONContext ctx, Integer projectId);
 

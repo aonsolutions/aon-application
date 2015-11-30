@@ -15,6 +15,7 @@ public class Project implements Serializable {
 	private Integer projectTypeId;
 	private Integer projectTypeName;
 	
+	private Integer registryId;
 	private DocumentType registryDocumentType;
 	private Country registryDocumentCountry;
 	private String registryDocument;
@@ -164,4 +165,12 @@ public class Project implements Serializable {
 		this.active = active;
 		return this;
 	}
+	public Integer getRegistryId() {
+		return registryId;
+	}
+	public Project setRegistryId(Integer registryId) {
+		this.registryId = registryId;
+		return this; 
+	}
+	
 }

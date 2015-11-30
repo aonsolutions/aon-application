@@ -35,7 +35,6 @@ import com.code.aon.config.Series;
 import com.code.aon.config.Tax;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.customer.Customer;
-import com.code.aon.customer.InvoicingGroup;
 import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.product.Brand;
 import com.code.aon.product.ProductCategory;
@@ -70,6 +69,8 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -197,7 +198,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	FeeInfo fi;
 	List<Seller> sellers = new Vector<Seller>();
 	LinkedList<Workplace> workplaces = new LinkedList<Workplace>();
-	Vector<InvoicingGroup> invoicingGroups = new Vector<InvoicingGroup>();
+	LinkedList<InvoicingGroup> invoicingGroupList = new LinkedList<InvoicingGroup>();
 	
 	public Integer executeExcel3(final Domain domain, TemplateInfo templateInfo, Boolean ignoreInactiveClient){
 		ti = templateInfo;
@@ -210,7 +211,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 
 		sellers = DBFee.getSellers(domain, getUser().getLogin());
 		workplaces = DBFee.getWorkplaceList(domain, getUser());
-		invoicingGroups = DBFee.getInvoicingGroups(domain, getUser().getLogin());
+		invoicingGroupList = DBFee.getInvoicingGroupList(domain, getUser());
 	
 		Error error = new Error();
 		if(getOut() == null){
@@ -516,7 +517,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			if(type.equals(Cell.CELL_TYPE_STRING)){
 				String strAux = cell.getStringCellValue();
 				Boolean b = true;
-				for(InvoicingGroup s : invoicingGroups){
+				for(InvoicingGroup s : invoicingGroupList){
 					if(strAux.equalsIgnoreCase(s.getDescription())){
 						fee.setBillingGroup(s.getId());
 						b= false;
@@ -556,12 +557,12 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		case "Expediente": case "Record":  //BD
 			if(type.equals(Cell.CELL_TYPE_STRING)){
 				String strAux = cell.getStringCellValue();
-				com.esferalia.aon.occam.api.model.registry.Project project = DBFee.getProject(domain, strAux, fee.getClientId(), getUser().getLogin());
-				if(project != null){
-					fee.setProject(cell.getStringCellValue());
-					fee.setProjectId(project.getId());
+				Project project = DBFee.getProject(domain, strAux, fee.getClientId(), getUser().getLogin());
+				if(project == null){
+					project = new Project().setId(DBFee.insertProject(domain, getUser(), strAux, fee.getClientId()));
 				}
-				else return null;
+				fee.setProject(cell.getStringCellValue());
+				fee.setProjectId(project.getId());	
 			}
 			else return null;
 			break;

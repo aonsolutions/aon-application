@@ -60,4 +60,16 @@ public interface Properties {
 		Property<Integer> getSourceBatchProperty();
 		Property<Byte> getSourceTypeProperty();
 	}
+	
+	public interface InvoicingGroupProperties {
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getCreationUserProperty();
+		Property<Integer> getCustomerProperty();
+		Property<Byte> getCustomerGroupedProperty();
+		Property<String> getDescriptionProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getIdProperty();
+		Property<Timestamp> getModificationDateProperty();
+		Property<String> getModificationUserProperty();
+	}
 }

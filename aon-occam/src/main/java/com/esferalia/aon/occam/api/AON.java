@@ -43,6 +43,8 @@ import com.esferalia.aon.occam.api.model.callcenter.IssueComment;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
+import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
@@ -1550,6 +1552,17 @@ public class AON {
 		}
 	}
 
+	public static LinkedList<InvoicingGroup> getInvoicingGroupList(String domainName, Integer domainId, String login
+			, InvoicingGroupFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFinance().getInvoicingGroupList(ctx, filter);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	// ********************************************
 	// ****************************** MANAGEMENT **
 	// ********************************************
@@ -1886,7 +1899,19 @@ public class AON {
 		}
 	}
 	
-	public static ProjectReservation getProjectReservation(String domainName, Integer domainId, String login, Integer projectId){
+	public static Integer insertProject(String domainName, Integer domainId, String login,
+			Project project){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getProject().insertProject(ctx, project);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static ProjectReservation getProjectReservation(String domainName, Integer domainId, String login,
+			Integer projectId){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);

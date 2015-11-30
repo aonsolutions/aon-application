@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.template.jooq;
 
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.CustomerFee.CUSTOMER_FEE;
-import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
@@ -17,14 +16,12 @@ import java.util.Vector;
 import org.jooq.Condition;
 import org.jooq.InsertValuesStep17;
 import org.jooq.Record1;
-import org.jooq.Record2;
 import org.jooq.Record4;
 import org.jooq.Record5;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
 import com.code.aon.customer.Customer;
-import com.code.aon.customer.InvoicingGroup;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.registry.Registry;
 import com.esferalia.aon.gwt.template.server.AuditInfo;
@@ -36,6 +33,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.security.User;
 
@@ -292,11 +290,19 @@ public class DBFee {
 				filter -> filter.getDomainProperty().eq(domain.getId()));
 	}
 	
-	public static com.esferalia.aon.occam.api.model.registry.Project getProject(Domain domain,String str, Integer customer, String login){
+	public static Project getProject(Domain domain,String str, Integer customer, String login){
 		return AON.getProject(domain.getName(), domain.getId(), login,
 				filter -> filter.getDomainProperty().eq(domain.getId())
 				.and(filter.getRegistryProperty().eq(customer))
 				.and(filter.getAliasProperty().eq(str).or(filter.getNameProperty().eq(str))));
+	}
+	
+	public static Integer insertProject(Domain domain, User user, String name, Integer customer){
+		Project project = getProjectDefault()
+				.setDomain(domain.getId())
+				.setName(name)
+				.setRegistryId(customer);
+		return AON.insertProject(domain.getName(), domain.getId(), user.getLogin(), project);
 	}
 	
 	public static LinkedList<Workplace> getWorkplaceList(Domain domain, User user){
@@ -304,30 +310,22 @@ public class DBFee {
 				filter -> filter.getDomainProperty().eq(domain.getId()));
 	}
 	
-	public static Vector<InvoicingGroup> getInvoicingGroups(Domain domain, String login) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
-
-			Result<Record2<Integer, String>> data = ctx.getDslContext().select(INVOICING_GROUP.ID,INVOICING_GROUP.DESCRIPTION)
-					.from(INVOICING_GROUP)
-					.where(INVOICING_GROUP.DOMAIN.eq(domain.getId()))
-					.fetch();
-
-			Vector<InvoicingGroup> v = new Vector<InvoicingGroup>();
-
-			for (Record2<Integer, String> r : data) {
-				InvoicingGroup ig = new InvoicingGroup();
-				ig.setId(r.value1());
-				ig.setDescription(r.value2());
-
-				v.add(ig);
-			}
-
-			return v;
-
-		} finally {
-			if (ctx != null) ctx.close();
-		}
+	public static LinkedList<InvoicingGroup> getInvoicingGroupList(Domain domain, User user){
+		return AON.getInvoicingGroupList(domain.getName(), domain.getId(), user.getLogin(),
+				filter -> filter.getDomainProperty().eq(domain.getId()));
+	}
+	
+	
+	private static Project getProjectDefault() {
+		return new Project()
+				.setActive(true)
+				.setAlias("")
+				.setCommercial(false)
+				.setDate(new java.util.Date())
+				.setDomain(0)
+				.setName("")
+				.setRegistryId(0)
+				.setReservation(false)
+				.setTas(false);
 	}
 }

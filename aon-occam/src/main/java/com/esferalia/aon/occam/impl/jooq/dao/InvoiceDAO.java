@@ -1,9 +1,10 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
-import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
+import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
@@ -15,6 +16,7 @@ import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.io.OutputStream;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Function;
@@ -28,12 +30,16 @@ import org.jooq.Result;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Registry;
+import com.esferalia.aon.jooq.tables.records.InvoicingGroupRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Properties.InvoicingGroupProperties;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
+import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -54,41 +60,33 @@ public class InvoiceDAO {
 
 			return new Condition[] { filterDAO.getCondition() };
 		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE.ID);}
+		@Override public Property<Integer> getDomainProperty(){return new FilterDAO.PropertyDAO<Integer>(INVOICE.DOMAIN);}
+		@Override public Property<Date> getStartIssueDateProperty() {return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);}
+		@Override public Property<Date> getEndIssueDateProperty() {return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.TYPE);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE.SCOPE);}
+		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.SECURITY_LEVEL);}
+	}
+	
+	private static final InvoicingGroupPropertiesDAO INVOICING_GROUP_PROPERTIES = new InvoicingGroupPropertiesDAO();
+	private static class InvoicingGroupPropertiesDAO implements InvoicingGroupProperties {
 
-		@Override
-		public Property<Integer> getIdProperty() {
-			return new FilterDAO.PropertyDAO<Integer>(INVOICE.ID);
+		private Condition[] getConditions(InvoicingGroupFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null)
+				return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
 		}
-
-		@Override
-		public Property<Integer> getDomainProperty() {
-			return new FilterDAO.PropertyDAO<Integer>(INVOICE.DOMAIN);
-		}
-
-		@Override
-		public Property<Date> getStartIssueDateProperty() {
-			return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);
-		}
-
-		@Override
-		public Property<Date> getEndIssueDateProperty() {
-			return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);
-		}
-
-		@Override
-		public Property<Byte> getTypeProperty() {
-			return new FilterDAO.PropertyDAO<Byte>(INVOICE.TYPE);
-		}
-
-		@Override
-		public Property<Integer> getScopeProperty() {
-			return new FilterDAO.PropertyDAO<Integer>(INVOICE.SCOPE);
-		}
-
-		@Override
-		public Property<Byte> getConfidentialProperty() {
-			return new FilterDAO.PropertyDAO<Byte>(INVOICE.SECURITY_LEVEL);
-		}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(INVOICING_GROUP.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(INVOICING_GROUP.CREATION_USER);}
+		@Override public Property<Integer> getCustomerProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICING_GROUP.CUSTOMER);}
+		@Override public Property<Byte> getCustomerGroupedProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICING_GROUP.CUSTOMER_GROUPED);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(INVOICING_GROUP.DESCRIPTION);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICING_GROUP.DOMAIN);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICING_GROUP.ID);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(INVOICING_GROUP.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(INVOICING_GROUP.MODIFICATION_USER);}
 	}
 
 	private static final Registry SELLER_ALIAS = REGISTRY.as("seller");
@@ -318,6 +316,13 @@ public class InvoiceDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 
+	public static LinkedList<InvoicingGroup> getInvoicingGroupList(AONContext ctx, InvoicingGroupFilter filter){
+		return ctx.getDslContext().select(INVOICING_GROUP.ID,INVOICING_GROUP.DESCRIPTION)
+				.from(INVOICING_GROUP).where(INVOICING_GROUP_PROPERTIES.getConditions(filter))
+				.fetchInto(INVOICING_GROUP).stream().map(new FullInvoicingGroupFiller())
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 	private static class InvoiceDetailFiller implements Function<Record, InvoiceDetail> {
 
 		@Override
@@ -330,5 +335,20 @@ public class InvoiceDAO {
 							r.getValue(INVOICE_DETAIL.QUANTITY) != null ? r.getValue(INVOICE_DETAIL.QUANTITY) : 0.0);
 		}
 
+	}
+	
+	private static class FullInvoicingGroupFiller implements Function<InvoicingGroupRecord, InvoicingGroup> {
+		@Override
+		public InvoicingGroup apply(InvoicingGroupRecord r) {
+			return new InvoicingGroup()
+					.setCreationDate(r.getCreationDate())
+					.setCreationUser(r.getCreationUser())
+					.setCustomer(r.getCustomer())
+					.setCustomerGrouped(r.getCustomerGrouped())
+					.setDomain(r.getDomain())
+					.setId(r.getId())
+					.setModificationDate(r.getModificationDate())
+					.setModificationUser(r.getModificationUser());			
+		}
 	}
 }

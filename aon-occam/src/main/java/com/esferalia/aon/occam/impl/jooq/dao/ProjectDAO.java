@@ -62,6 +62,17 @@ public class ProjectDAO {
 				.findFirst().orElse(null);
 	}
 
+	public static Integer insertProject(AONContext ctx, Project project){
+
+		return ctx.getDslContext().insertInto(PROJECT, PROJECT.ACTIVE, PROJECT.ALIAS,
+					PROJECT.COMMERCIAL, PROJECT.DATE, PROJECT.DOMAIN, PROJECT.NAME, PROJECT.PROJECT_TYPE,
+					PROJECT.REGISTRY, PROJECT.RESERVATION, PROJECT.TAS)
+				.values(project.isActive()?(byte)1:(byte)0, project.getAlias(), project.isCommercial()?(byte)1:(byte)0,
+						new Date(project.getDate().getTime()), project.getDomain(), project.getName(), project.getProjectTypeId(),
+						project.getRegistryId(), project.isReservation()?(byte)1:(byte)0, project.isTas()?(byte)1:(byte)0)
+				.returning(PROJECT.ID).fetchOne().getId();
+	}
+	
 	private static class FullProjectReservationFiller implements Function<ProjectReservationRecord, ProjectReservation> {
 		
 		@Override

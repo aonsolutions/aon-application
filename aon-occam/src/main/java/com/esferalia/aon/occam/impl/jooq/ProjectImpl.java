@@ -25,6 +25,12 @@ public class ProjectImpl implements IProject{
 				configuration -> ProjectDAO.getProjectList(ctx, filter));
 	}
 	
+	@Override
+	public Integer insertProject(AONContext ctx, Project project) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> ProjectDAO.insertProject(ctx, project));
+	}
+	
 	// ------------------------------------- PROJECT RESERVATION
 	
 	@Override
