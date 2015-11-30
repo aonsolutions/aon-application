@@ -869,10 +869,10 @@ public class AON {
 	}
 
 	// ----------------------------------MODELO 180
-	public static ArrayList<Mod180> getMod180s(String domainName, int domainId) {
+	public static LinkedList<Mod180> getMod180s(String domainName, int domainId, String user) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getFiscal().getMod180s(ctx, domainId);
 		} finally {
 			if (ctx != null)

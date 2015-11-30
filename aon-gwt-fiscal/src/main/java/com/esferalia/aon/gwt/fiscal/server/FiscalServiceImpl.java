@@ -252,8 +252,8 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	}
 
 	@Override
-	public ArrayList<Mod180> getMod180s(String domainName, int domain) {
-		return AON.getMod180s(domainName, domain);
+	public LinkedList<Mod180> getMod180s(String domainName, int domain) {
+		return AON.getMod180s(domainName, domain, AonServletUtils.getLoggedUser());
 	}
 
 	@Override

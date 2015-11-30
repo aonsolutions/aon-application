@@ -7,6 +7,10 @@ public enum WithholdingType {
 	,MOVABLE_CAPITAL 	/** CAPITAL MOBILIARIO */
 	,FARMER 			/** AGRICULTOR */
 	,TRANSPORT_OPERATOR	/** TRANSPORTISTAS Y ASIMILADOS */
-	;	
+	;
+
+	public byte value() {
+		return (byte) ordinal();
+	}	
 
 }

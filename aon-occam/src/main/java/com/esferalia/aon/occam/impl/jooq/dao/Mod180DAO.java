@@ -10,21 +10,24 @@ import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.LinkedList;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.jooq.Field;
-import org.jooq.Result;
+import org.jooq.Record;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.records.FsModel180DetailRecord;
 import com.esferalia.aon.jooq.tables.records.FsModel180Record;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -34,64 +37,41 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class Mod180DAO {
 	
 	private static Logger LOGGER = Logger.getLogger(Mod180DAO.class.getName());
+	private static byte ZERO_BYTE = 0;
+	private static byte ONE_BYTE = 1;
+	
 
-	public static ArrayList<Mod180> getByDomain(AONContext ctx, int domain) {
+	public static LinkedList<Mod180> getByDomain(AONContext ctx, int domain) {
 		ctx.checkRead();
-		ArrayList<Mod180> list = new ArrayList<Mod180>();
-		ctx.getDslContext().select(FS_MODEL180.fields())
+		return  ctx.getDslContext()
+			.select(FS_MODEL180.fields())
 			.from(FS_MODEL180)
 			.join(DOMAIN).on(FS_MODEL180.DOMAIN.equal(DOMAIN.ID))
 			.where(FS_MODEL180.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
 			.orderBy(FS_MODEL180.YEAR.desc()
 					,FS_MODEL180.NAME.asc()
 					,FS_MODEL180.REPLACEMENT.asc())
-			.fetchInto(FsModel180Record.class )
+			.fetch()
 			.stream()
-			.forEach( record -> {
-				Mod180 mod180 = new Mod180();
-				populate( record, mod180);
-				ArrayList<Mod180Detail> details = getDetails(ctx, mod180.getId());
-				mod180.setDetails( details );
-				list.add(mod180);
-			});
-		return list;
+			.map(new Mod180Filler())
+			.peek( mod180 -> mod180.setDetails( getDetails(ctx, mod180.getId()) ))
+			.collect(Collectors.toCollection(LinkedList::new));
 	}
 
 	public static Mod180 getById(AONContext ctx, int id) {
 		ctx.checkRead();
-		Mod180 mod180 = new Mod180();
-		ctx.getDslContext().selectFrom(FS_MODEL180)
-		.where(FS_MODEL180.ID.equal(id))
-		.fetch()
-		.stream()
-		.forEach( record -> {
-			populate(record, mod180);
-			ArrayList<Mod180Detail> details = getDetails(ctx, mod180.getId());
-			mod180.setDetails( details );
-		});
-		if ( mod180.getId() != null ) {
-			return mod180;
-		}
-		return null;
-	}
-	
-	private static void populate(FsModel180Record record, Mod180 mod180) {
-		mod180.setId(record.getValue(FS_MODEL180.ID));
-		mod180.setDomain(record.getValue(FS_MODEL180.DOMAIN));
-		mod180.setEnterprise(record.getValue(FS_MODEL180.ENTERPRISE));
-		mod180.setYear(record.getValue(FS_MODEL180.YEAR));
-		mod180.setAdministration( (int) record.getValue(FS_MODEL180.ADMINISTRATION));
-		mod180.setReplacement( record.getValue(FS_MODEL180.REPLACEMENT)==1 );
-		mod180.setDocument(record.getValue(FS_MODEL180.DOCUMENT));
-		mod180.setName(record.getValue(FS_MODEL180.NAME));
-		mod180.setContactPerson(record.getValue(FS_MODEL180.CONTACT_PERSON));
-		mod180.setContactPhone(record.getValue(FS_MODEL180.CONTACT_PHONE));
-		mod180.setReceipt(record.getValue(FS_MODEL180.RECEIPT));
-		mod180.setReplacedReceipt(record.getValue(FS_MODEL180.REPLACED_RECEIPT));
-		mod180.setReceiverCountTotal( record.getValue(FS_MODEL180.RECEIVER_COUNT_TOTAL));
-		mod180.setReceiptTotal(record.getValue(FS_MODEL180.RECEIPT_TOTAL));
-		mod180.setRetentionTotal(record.getValue(FS_MODEL180.RETENTION_TOTAL));
-		mod180.setComments(record.getValue(FS_MODEL180.COMMENTS));
+		return ctx.getDslContext()
+			.select(FS_MODEL180.fields())
+			.from(FS_MODEL180)
+			.join(DOMAIN).on(FS_MODEL180.DOMAIN.equal(DOMAIN.ID))
+			.where(FS_MODEL180.DOMAIN.equal(ctx.getDomainId()).or(DOMAIN.PARENT.equal(ctx.getDomainId())))
+			.and(FS_MODEL180.ID.equal(id))
+			.fetch()
+			.stream()
+			.map(new Mod180Filler())
+			.peek( mod180 -> mod180.setDetails( getDetails(ctx, mod180.getId()) ))
+			.findFirst()
+			.orElse(null);
 	}
 	
 	public static Mod180 save(AONContext ctx, Mod180 mod180) {
@@ -116,14 +96,14 @@ public class Mod180DAO {
 			.set(FS_MODEL180.DOMAIN,mod180.getDomain())
 			.set(FS_MODEL180.ENTERPRISE,mod180.getEnterprise())
 			.set(FS_MODEL180.YEAR,mod180.getYear())
-			.set(FS_MODEL180.ADMINISTRATION,(byte) mod180.getAdministration())
-			.set(FS_MODEL180.STATUS,(byte) 0)
+			.set(FS_MODEL180.ADMINISTRATION, (byte) mod180.getAdministration())
+			.set(FS_MODEL180.STATUS, ZERO_BYTE )
 			.set(FS_MODEL180.SECURITY_LEVEL,AonEnumUtils.getByte(mod180.isConfidential()) ) 
 			.set(FS_MODEL180.DOCUMENT,mod180.getDocument())
 			.set(FS_MODEL180.NAME,mod180.getName())
 			.set(FS_MODEL180.CONTACT_PERSON,mod180.getContactPerson())
 			.set(FS_MODEL180.CONTACT_PHONE,mod180.getContactPhone())
-			.set(FS_MODEL180.COMPLEMENTARY, (byte) 0)
+			.set(FS_MODEL180.COMPLEMENTARY, ZERO_BYTE )
 			.set(FS_MODEL180.REPLACEMENT,AonEnumUtils.getByte(mod180.isReplacement()))
 			.set(FS_MODEL180.COMMENTS,mod180.getComments())
 			.set(FS_MODEL180.RECEIPT,mod180.getReceipt())
@@ -142,13 +122,13 @@ public class Mod180DAO {
 		ctx.getDslContext().update(FS_MODEL180)
 			.set(FS_MODEL180.YEAR,mod180.getYear())
 			.set(FS_MODEL180.ADMINISTRATION,(byte) mod180.getAdministration())
-			.set(FS_MODEL180.STATUS,(byte) 0)
+			.set(FS_MODEL180.STATUS,ZERO_BYTE)
 			.set(FS_MODEL180.SECURITY_LEVEL,AonEnumUtils.getByte(mod180.isConfidential()) ) 
 			.set(FS_MODEL180.DOCUMENT,mod180.getDocument())
 			.set(FS_MODEL180.NAME,mod180.getName())
 			.set(FS_MODEL180.CONTACT_PERSON,mod180.getContactPerson())
 			.set(FS_MODEL180.CONTACT_PHONE,mod180.getContactPhone())
-			.set(FS_MODEL180.COMPLEMENTARY, (byte) 0)
+			.set(FS_MODEL180.COMPLEMENTARY, ZERO_BYTE)
 			.set(FS_MODEL180.REPLACEMENT,AonEnumUtils.getByte(mod180.isReplacement()))
 			.set(FS_MODEL180.COMMENTS,mod180.getComments())
 			.set(FS_MODEL180.RECEIPT,mod180.getReceipt())
@@ -164,7 +144,7 @@ public class Mod180DAO {
 	public static void delete(AONContext ctx, Mod180 mod180) {
 		ctx.checkWrite();
 		deleteDetails(ctx, mod180);
-		LOGGER.log(Level.INFO, "DELETING DECLARATION(" + mod180.getId() + ")");
+		LOGGER.log(Level.INFO, "DELETING DECLARATION (" + mod180.getId() + ")");
 		ctx.getDslContext().delete(FS_MODEL180)
 			.where(FS_MODEL180.ID.equal(mod180.getId()))
 			.execute();
@@ -173,69 +153,73 @@ public class Mod180DAO {
 	private static void validate(AONContext ctx, Mod180 mod180) {
 		if (mod180.isReplacement()) {
 			// Se comprueba que exista la declaración ssustituida.
-			if (ctx.getDslContext().selectOne()
+			if (!ctx.getDslContext().selectOne()
 					.from(FS_MODEL180)
 					.where(FS_MODEL180.YEAR.equal(mod180.getYear())
 					.and(FS_MODEL180.ENTERPRISE.equal(mod180.getEnterprise()))
-					.and(FS_MODEL180.RECEIPT.equal(mod180.getReplacedReceipt()))).fetchCount() == 0) 
+					.and(FS_MODEL180.RECEIPT.equal(mod180.getReplacedReceipt())))
+					.fetch()
+					.stream()
+					.findFirst()
+					.isPresent()) 
 				throw new AonCoreException(
 						AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage());
 
-			// Se comprueba que no exista una declaraci?n sustitutiva.
+			// Se comprueba que no exista una declaración sustitutiva.
 			if (ctx.getDslContext().selectOne()
-					.from(FS_MODEL180)
-					.where(FS_MODEL180.YEAR.equal(mod180.getYear())
-					.and(FS_MODEL180.ENTERPRISE.equal(mod180.getEnterprise()))
-					.and(FS_MODEL180.REPLACEMENT.equal((byte) 1))					
-					.and(FS_MODEL180.REPLACED_RECEIPT.equal(mod180.getReplacedReceipt()))).fetchCount() > 0 )
+				.from(FS_MODEL180)
+				.where(FS_MODEL180.YEAR.equal(mod180.getYear())
+				.and(FS_MODEL180.ENTERPRISE.equal(mod180.getEnterprise()))
+				.and(FS_MODEL180.REPLACEMENT.equal( ONE_BYTE ))					
+				.and(FS_MODEL180.REPLACED_RECEIPT.equal(mod180.getReplacedReceipt())))
+				.fetch()
+				.stream()
+				.findFirst()
+				.isPresent()) 
 				throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_REPLACED.getMessage());
 		} else {
-			// Se comprueba que no exista ya una declaraci?n.
+			// Se comprueba que no exista ya una declaración.
 			if (ctx.getDslContext().selectOne()
-					.from(FS_MODEL180)
-					.where(FS_MODEL180.YEAR.equal(mod180.getYear())
-					.and(FS_MODEL180.ENTERPRISE.equal(mod180.getEnterprise()))
-					.and(FS_MODEL180.REPLACEMENT.equal((byte) 0))).fetchCount() > 0 ) 
+				.from(FS_MODEL180)
+				.where(FS_MODEL180.YEAR.equal(mod180.getYear())
+				.and(FS_MODEL180.ENTERPRISE.equal(mod180.getEnterprise()))
+				.and(FS_MODEL180.REPLACEMENT.equal(ZERO_BYTE)))
+				.fetch()
+				.stream()
+				.findFirst()
+				.isPresent()) 
 				throw new AonCoreException(
 						AonError.FISCAL_DECLARATION_ALREADY_EXISTS.getMessage());
 		}
 	}
-	//		DETAIL
 	
 	public static Mod180Detail getDetail(AONContext ctx, int id) {
 		ctx.checkRead();
-		FsModel180DetailRecord record = ctx.getDslContext()
-			.selectFrom(FS_MODEL180_DETAIL)
+		return ctx.getDslContext()
+			.select(FS_MODEL180_DETAIL.fields())
+			.from(FS_MODEL180_DETAIL)
 			.where(FS_MODEL180_DETAIL.ID.equal(id))
-			.fetchOne();
-		Mod180Detail detail = null;
-		if (record != null) {
-			detail = new Mod180Detail();
-			populateDetail(record, detail);
-		}
-		return detail;
+			.fetch()
+			.stream()
+			.map( new Mod180DetailFiller())
+			.findFirst()
+			.orElse(null);
 	}
 
-	public static ArrayList<Mod180Detail> getDetails(AONContext ctx, int mod180) {
+	public static LinkedList<Mod180Detail> getDetails(AONContext ctx, int mod180) {
 		ctx.checkRead();
-		Result<FsModel180DetailRecord> records = ctx.getDslContext()
+		return ctx.getDslContext()
 			.selectFrom(FS_MODEL180_DETAIL)
 			.where(FS_MODEL180_DETAIL.FS_MODEL180.equal(mod180))
-			.fetch();
-		ArrayList<Mod180Detail> list = new ArrayList<>();
-		Mod180Detail detail = null;
-		for (FsModel180DetailRecord record : records) {
-			detail = new Mod180Detail();
-			populateDetail(record, detail);
-			list.add(detail);
-		}
-		return list;
+			.fetch()
+			.stream()
+			.map( new Mod180DetailFiller() )
+			.collect(Collectors.toCollection(LinkedList::new));
 	}
-
+/*
 	private static void populateDetail(FsModel180DetailRecord record, Mod180Detail detail) {
 		detail.setId(record.getId());
-		detail.setDocument(record.getDocument());
-		detail.setName(record.getName());
+		detail.setDocument(record.getDocument());		detail.setName(record.getName());
 		detail.setRepresentativeDocument(record.getRepresentativeDocument());
 		detail.setProvince(record.getProvince());
 		detail.setInKind(record.getInkind()==1);
@@ -263,7 +247,7 @@ public class Mod180DAO {
 		detail.setZip(record.getZip());
 		
 	}
-
+*/
 	public static void saveDetail(AONContext ctx, Mod180 mod180, Mod180Detail detail){
 		ctx.checkWrite();
 		if (detail.getId() == null || detail.getId() < 0) {
@@ -293,7 +277,7 @@ public class Mod180DAO {
 			.set(FS_MODEL180_DETAIL.NAME,AonStringUtils.substring(detail.getName(), 0, 40))
 			.set(FS_MODEL180_DETAIL.REPRESENTATIVE_DOCUMENT,AonStringUtils.substring(detail.getRepresentativeDocument(), 0, 9))
 			.set(FS_MODEL180_DETAIL.PROVINCE,detail.getProvince())
-			.set(FS_MODEL180_DETAIL.INKIND,(byte) (detail.isInKind()?1:0))
+			.set(FS_MODEL180_DETAIL.INKIND, AonEnumUtils.getByte( detail.isInKind()))
 			.set(FS_MODEL180_DETAIL.PERCEPTION,detail.getPerception())
 			.set(FS_MODEL180_DETAIL.PERCENTAGE,detail.getPercent())
 			.set(FS_MODEL180_DETAIL.RETENTION,detail.getRetention())
@@ -326,7 +310,7 @@ public class Mod180DAO {
 			.set(FS_MODEL180_DETAIL.NAME,AonStringUtils.substring(detail.getName(), 0, 40))
 			.set(FS_MODEL180_DETAIL.REPRESENTATIVE_DOCUMENT,AonStringUtils.substring(detail.getRepresentativeDocument(), 0, 9))
 			.set(FS_MODEL180_DETAIL.PROVINCE,detail.getProvince())
-			.set(FS_MODEL180_DETAIL.INKIND,(byte) (detail.isInKind()?1:0))
+			.set(FS_MODEL180_DETAIL.INKIND,AonEnumUtils.getByte( detail.isInKind()))
 			.set(FS_MODEL180_DETAIL.PERCEPTION,detail.getPerception())
 			.set(FS_MODEL180_DETAIL.PERCENTAGE,detail.getPercent())
 			.set(FS_MODEL180_DETAIL.RETENTION,detail.getRetention())
@@ -367,9 +351,9 @@ public class Mod180DAO {
 			.execute();
 	}
 
-	private static void insertDetailsFromInvoice(AONContext ctx , Mod180 mod180) {
-		Date firstDay = AonDateUtils.getYearFirstDay(mod180.getYear());
-		Date lastDay = AonDateUtils.getYearLastDay(mod180.getYear());
+	private static void insertDetailsFromInvoice(AONContext ctx , final Mod180 mod180) {
+		java.sql.Date firstDay = AonDateUtils.toSql(AonDateUtils.getYearFirstDay(mod180.getYear()));
+		java.sql.Date lastDay = AonDateUtils.toSql(AonDateUtils.getYearLastDay(mod180.getYear()));
 
 		Field<Integer> minRegistry = DSL.min(INVOICE.REGISTRY).as(INVOICE.REGISTRY.getName());
 		Field<BigDecimal> sumBase = DSL.sum(INVOICE_TAX.BASE).as(INVOICE_TAX.BASE.getName());
@@ -378,52 +362,33 @@ public class Mod180DAO {
 		Field<BigDecimal> quotaOp = DSL.sum(DSL.decode()
 				.when(INVOICE_TAX.QUOTA.notEqual(0.0), INVOICE_TAX.QUOTA)
 				.when(INVOICE_TAX.QUOTA.equal(0.0), invoiceTaxSum));
-		ctx.getDslContext().select(
-			INVOICE.RDOCUMENT
-			,INVOICE.RNAME
-			,minRegistry
-			,sumBase
-			,quotaOp
-			,maxPercent)
+		
+		ctx.getDslContext().select(INVOICE.RDOCUMENT,INVOICE.RNAME,minRegistry,sumBase,quotaOp,maxPercent)
 		.from(INVOICE)
 		.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
 		.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
 		.where(INVOICE.DOMAIN.equal(mod180.getDomain()))
-			.and(INVOICE.TYPE.notEqual((byte) 1))				// No Ventas
-			.and(INVOICE_TAX.TAX_TYPE.equal((byte) 2))			// IRPF
-			.and(INVOICE_TAX.WITHHOLDING_TYPE.equal((byte) 1))	// IRPF de Alquiler
-			.and(INVOICE.ISSUE_DATE.between(AonDateUtils.toSql(firstDay), AonDateUtils.toSql(lastDay)))
+			.and(INVOICE.TYPE.notEqual( InvoiceType.SALES.value() )) // No Ventas
+			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.RETENTION.value() )) // IRPF
+			.and(INVOICE_TAX.WITHHOLDING_TYPE.equal( WithholdingType.RENTING.value() ))	// IRPF de Alquiler
+			.and(INVOICE.ISSUE_DATE.between(firstDay, lastDay))
 		.groupBy(INVOICE.RDOCUMENT,INVOICE.RNAME)
 		.fetch()
 		.stream()
-		.forEach(record -> {
-			Mod180Detail detail = new Mod180Detail();
-			detail.setDomain(mod180.getDomain());
-			detail.setMod180(mod180.getId());
-			detail.setDocument(record.getValue(INVOICE.RDOCUMENT));
-			detail.setName(record.getValue(INVOICE.RNAME));
-			detail.setInKind(false);
-			detail.setPerception(record.getValue(sumBase).doubleValue());
-			detail.setRetention(record.getValue(quotaOp).doubleValue());
-			detail.setPercent(record.getValue(maxPercent));
-			ctx.getDslContext()
-				.select(GEOZONE.CODE)
-				.from(RADDRESS)
-				.join(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
-				.where(RADDRESS.REGISTRY.equal(record.getValue(minRegistry)))
-				.and(RADDRESS.TYPE.equal((byte) 0))		// Dirección principal.
-				.limit(1)
-				.fetch()
-				.stream()
-				.forEach(province -> {
-					try {
-						detail.setProvince(Integer.parseInt(province.getValue(GEOZONE.CODE)));
-					} catch (NumberFormatException e) {
-						// nothing. Si la clave no es numero, no es provincia válida.
-					}
-				});
-			insertDetail(ctx,detail);
-		});
+		.map(rec ->	{ 
+			Mod180Detail detail = new Mod180Detail()
+				.setDomain(mod180.getDomain())
+				.setMod180(mod180.getId())
+				.setDocument(rec.getValue(INVOICE.RDOCUMENT))
+				.setName(rec.getValue(INVOICE.RNAME))
+				.setInKind(false)
+				.setPerception(rec.getValue(sumBase).doubleValue())
+				.setRetention(rec.getValue(quotaOp).doubleValue())
+				.setPercent(rec.getValue(maxPercent))
+				.setProvince( getRegistryMainAddressProvince(ctx, rec.getValue(minRegistry)) );
+			return detail;
+		})
+		.forEach(detail -> insertDetail(ctx,detail));
 	}
 
 	public static Mod180 initialize(AONContext ctx, int year) {
@@ -441,7 +406,84 @@ public class Mod180DAO {
 				FS_MODEL180.CONTACT_PERSON.getDataType().length()));
 		mod180.setContactPhone(AonStringUtils.left(params.getContactPhone(),
 				FS_MODEL180.CONTACT_PHONE.getDataType().length()));
-		mod180.setDetails(new ArrayList<Mod180Detail>());
+		mod180.setReceipt("1800000000001");
+		mod180.setDetails(new LinkedList<Mod180Detail>());
 		return mod180;
+	}
+	
+	private static class Mod180Filler implements Function<Record, Mod180> {
+
+		@Override
+		public Mod180 apply(Record record) {
+			return new Mod180() 
+				.setId(record.getValue(FS_MODEL180.ID))
+				.setDomain(record.getValue(FS_MODEL180.DOMAIN))
+				.setEnterprise(record.getValue(FS_MODEL180.ENTERPRISE))
+				.setYear(record.getValue(FS_MODEL180.YEAR))
+				.setAdministration( (int) record.getValue(FS_MODEL180.ADMINISTRATION))
+				.setReplacement( record.getValue(FS_MODEL180.REPLACEMENT)==1 )
+				.setDocument(record.getValue(FS_MODEL180.DOCUMENT))
+				.setName(record.getValue(FS_MODEL180.NAME))
+				.setContactPerson(record.getValue(FS_MODEL180.CONTACT_PERSON))
+				.setContactPhone(record.getValue(FS_MODEL180.CONTACT_PHONE))
+				.setReceipt(record.getValue(FS_MODEL180.RECEIPT))
+				.setReplacedReceipt(record.getValue(FS_MODEL180.REPLACED_RECEIPT))
+				.setReceiverCountTotal( record.getValue(FS_MODEL180.RECEIVER_COUNT_TOTAL))
+				.setReceiptTotal(record.getValue(FS_MODEL180.RECEIPT_TOTAL))
+				.setRetentionTotal(record.getValue(FS_MODEL180.RETENTION_TOTAL))
+				.setComments(record.getValue(FS_MODEL180.COMMENTS))
+				;
+		}
+	}
+
+	private static class Mod180DetailFiller implements Function<Record, Mod180Detail> {
+
+		@Override
+		public Mod180Detail apply(Record record) {
+			return new Mod180Detail()
+				.setId(record.getValue(FS_MODEL180_DETAIL.ID))
+				.setDocument(record.getValue(FS_MODEL180_DETAIL.DOCUMENT))
+				.setName(record.getValue(FS_MODEL180_DETAIL.NAME))
+				.setRepresentativeDocument(record.getValue(FS_MODEL180_DETAIL.REPRESENTATIVE_DOCUMENT))
+				.setProvince(record.getValue(FS_MODEL180_DETAIL.PROVINCE))
+				.setInKind(record.getValue(FS_MODEL180_DETAIL.INKIND)==1)
+				.setPerception(record.getValue(FS_MODEL180_DETAIL.PERCEPTION))
+				.setRetention(record.getValue(FS_MODEL180_DETAIL.RETENTION))
+				.setPercent(record.getValue(FS_MODEL180_DETAIL.PERCENTAGE))
+				.setAccrualYear(record.getValue(FS_MODEL180_DETAIL.ACCRUAL_YEAR))
+				.setLocation(record.getValue(FS_MODEL180_DETAIL.LOCATION))
+				.setCadasdralReference(record.getValue(FS_MODEL180_DETAIL.CADASDRAL_REFERENCE))
+				.setStreetType(record.getValue(FS_MODEL180_DETAIL.STREET_TYPE))
+				.setStreetName(record.getValue(FS_MODEL180_DETAIL.STREET_NAME))
+				.setNumberType(record.getValue(FS_MODEL180_DETAIL.NUMBER_TYPE))
+				.setNumber(record.getValue(FS_MODEL180_DETAIL.NUMBER))
+				.setNumberSuffix(record.getValue(FS_MODEL180_DETAIL.NUMBER_SUFFIX))
+				.setBlock(record.getValue(FS_MODEL180_DETAIL.BLOCK))
+				.setHall(record.getValue(FS_MODEL180_DETAIL.HALL))
+				.setStair(record.getValue(FS_MODEL180_DETAIL.STAIR))
+				.setFloor(record.getValue(FS_MODEL180_DETAIL.FLOOR))
+				.setDoor(record.getValue(FS_MODEL180_DETAIL.DOOR))
+				.setComplement(record.getValue(FS_MODEL180_DETAIL.COMPLEMENT))
+				.setCity(record.getValue(FS_MODEL180_DETAIL.CITY))
+				.setTown(record.getValue(FS_MODEL180_DETAIL.TOWN))
+				.setTownCode(record.getValue(FS_MODEL180_DETAIL.TOWN_CODE))
+				.setProvinceCode(record.getValue(FS_MODEL180_DETAIL.PROVINCE_CODE))
+				.setZip(record.getValue(FS_MODEL180_DETAIL.ZIP));
+		}
+	}
+
+	private static Integer getRegistryMainAddressProvince(AONContext ctx, Integer registry) {
+		return ctx.getDslContext()
+			.select(GEOZONE.CODE)
+			.from(RADDRESS)
+			.join(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
+			.where(RADDRESS.REGISTRY.equal(registry))
+			.and(RADDRESS.TYPE.equal( ZERO_BYTE ))		// Dirección principal.
+			.limit(1)
+			.fetch()
+			.stream()
+			.mapToInt(rec -> Integer.parseInt(rec.getValue(GEOZONE.CODE) ))
+			.findFirst()
+			.orElse(0);
 	}
 }

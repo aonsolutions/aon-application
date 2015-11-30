@@ -43,7 +43,7 @@ public interface IFiscal {
 	public LinkedList<FiscalModel> getModels(AONContext ctx, int domainId);
 	
 	// 				   		  MOD180
-	public ArrayList<Mod180> getMod180s(AONContext ctx,int domain);
+	public LinkedList<Mod180> getMod180s(AONContext ctx,int domain);
 	public Mod180 getMod180(AONContext ctx,Integer id);
 	public Mod180 initializeMod180(AONContext ctx, int year);
 	public Mod180 saveMod180(AONContext ctx,Mod180 mod180);

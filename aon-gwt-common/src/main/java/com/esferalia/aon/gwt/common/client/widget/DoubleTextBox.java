@@ -14,6 +14,12 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.TextBox;
 
+/**
+ * @author ecastellano
+ * @deprecated use DoubleBox
+ *
+ */
+@Deprecated 
 public class DoubleTextBox extends TextBox {
 	private static int DEFAULT_CHANGE_DISPLAY_MILLIS = 4000;
 

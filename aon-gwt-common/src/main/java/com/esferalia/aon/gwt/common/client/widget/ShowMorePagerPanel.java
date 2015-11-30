@@ -11,6 +11,7 @@ import com.google.gwt.view.client.HasRows;
  * A scrolling pager that automatically increases the range every time the
  * scroll bar reaches the bottom.
  */
+@Deprecated
 public class ShowMorePagerPanel extends AbstractPager {
 
   /**

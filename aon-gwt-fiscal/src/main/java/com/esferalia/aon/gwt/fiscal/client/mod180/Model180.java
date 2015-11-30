@@ -1,51 +1,40 @@
 package com.esferalia.aon.gwt.fiscal.client.mod180;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.css.AonCellList;
-import com.esferalia.aon.gwt.common.client.css.AonDataGrid;
-import com.esferalia.aon.gwt.common.client.css.AonResources;
-import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
-import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
 import com.esferalia.aon.gwt.common.client.widget.AdministrationListBox;
+import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.common.client.widget.ShowMorePagerPanel;
-import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
-import com.esferalia.aon.gwt.fiscal.client.mod180.Model180Detail2014.ICallBack;
 import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
-import com.google.gwt.cell.client.AbstractCell;
-import com.google.gwt.cell.client.Cell;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.cellview.client.DataGrid;
-import com.google.gwt.user.cellview.client.HasKeyboardPagingPolicy.KeyboardPagingPolicy;
-import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVisibility;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
@@ -54,37 +43,22 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
-import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.AsyncDataProvider;
-import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent.Handler;
-import com.google.gwt.view.client.SingleSelectionModel;
 
 public class Model180 extends MainEntryPoint {
 
-	public static final ProvidesKey<Mod180Detail> MOD180_DETAIL_PROVIDES_KEY = new ProvidesKey<Mod180Detail>() {
-		@Override
-		public Object getKey(Mod180Detail mod190Detail) {
-			return mod190Detail == null ? null : mod190Detail.getId();
-		}
-	};
 
 	static interface IModel180Detail extends HasVisibility {
 		public void populatePerceptor(Mod180Detail perceptor);
 	}
 
-	static FiscalServiceAsync mod180Service;
-	
-	final static DataGrid.Resources DATA_GRID_STYLE = GWT.create(AonDataGrid.class);
+	static FiscalServiceAsync fiscalService;
 	
 	interface Model180Binder extends UiBinder<Widget, Model180> {
 	}
-
 	private static final Model180Binder MODEL_180_BINDER = GWT
 			.create(Model180Binder.class);
 
@@ -93,11 +67,11 @@ public class Model180 extends MainEntryPoint {
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
 	@UiField
+	SimplePanel headerPanel;
+	@UiField
 	DeckLayoutPanel deckPanel;
 	@UiField
 	Panel listPanel;
-	@UiField
-	Panel perceptorHeaderPanel;
 	@UiField
 	DockLayoutPanel formPanel;
 	@UiField
@@ -110,16 +84,9 @@ public class Model180 extends MainEntryPoint {
 	@UiField(provided = true)
 	Model180Table table;
 
-	// private NoSelectionModel<Mod180> model;
-	private Mod180DetailDataProvider dataProvider;
-	private CellList<Mod180Detail> detailList;
-	private SingleSelectionModel<Mod180Detail> detailModel;
-
 	private int domain;
 	private int enterprise;
 
-	@UiField
-	ShowMorePagerPanel pagerPanel;
 	@UiField
 	Model180Detail2014 perceptorPanel;
 
@@ -132,8 +99,6 @@ public class Model180 extends MainEntryPoint {
 	@UiField
 	Button cancelButton;
 	@UiField
-	Button newDetailButton;
-	@UiField
 	Button generateFileButton;
 	@UiField
 	Button printButton;
@@ -141,7 +106,7 @@ public class Model180 extends MainEntryPoint {
 	Button printMod180Button;
 
 	@UiField
-	TextBox year;
+	IntegerBox year;
 	@UiField
 	AdministrationListBox administration;
 	@UiField
@@ -150,8 +115,6 @@ public class Model180 extends MainEntryPoint {
 	CheckBox confidential;
 	@UiField
 	EnterpriseSuggestBox enterpriseSuggest;
-	@UiField
-	TextArea comments;
 	@UiField
 	TextBox contactPhone;
 	@UiField
@@ -173,50 +136,12 @@ public class Model180 extends MainEntryPoint {
 	public void onModuleLoad() {
 		AON.ensureInjected();
 
-		// Create a remote service proxy to talk to the server-side Employees
-		// service.
 		FiscalServiceAsync mod180ServiceRaw = GWT.create(FiscalService.class);
-		mod180Service = new FiscalServiceAsyncDecorator(mod180ServiceRaw);
+		fiscalService = new FiscalServiceAsyncDecorator(mod180ServiceRaw);
 
 		table = new Model180Table(new Mod180SelectionHandler());
 
-		Mod180DetailCell mod180DetailCell = new Mod180DetailCell();
-		CellList.Resources cellListStyle = GWT.create(AonCellList.class);
-		detailList = new CellList<Mod180Detail>(mod180DetailCell,cellListStyle, MOD180_DETAIL_PROVIDES_KEY);
-		detailList.setStylePrimaryName(DATA_GRID_STYLE.dataGridStyle().dataGridWidget());
-		detailList.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
-		detailList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
-
-		// Add a selection model so we can select cells.
-		detailModel = new SingleSelectionModel<Mod180Detail>(MOD180_DETAIL_PROVIDES_KEY);
-		detailModel.addSelectionChangeHandler(new Handler() {
-			
-			@Override
-			public void onSelectionChange(SelectionChangeEvent event) {
-				final Mod180Detail selected = detailModel.getSelectedObject();
-				perceptorPanel.setDetail(selected);
-			}
-			
-		});
-
-		detailList.setSelectionModel(detailModel);
-		detailList.setEmptyListWidget(new HTML(AON.MSG.noData()));
-
-		dataProvider = new Mod180DetailDataProvider(MOD180_DETAIL_PROVIDES_KEY);
-		dataProvider.addDataDisplay(detailList);
-		detailList.setVisible(true);
-
 		Widget ui = MODEL_180_BINDER.createAndBindUi(this);
-		perceptorPanel.setCallback(new ICallBack() {
-
-			@Override
-			public void redrawList(Mod180Detail detail) {
-				detailList.redraw();
-			}
-		});
-
-		pagerPanel.setDisplay(detailList);
-		pagerPanel.setIncrementSize(0);
 
 		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
 		
@@ -236,9 +161,8 @@ public class Model180 extends MainEntryPoint {
 		// displayed.
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
-
-		// http://code.google.com/p/google-web-toolkit/issues/detail?id=6889
-		deckPanel.onResize();
+//		// http://code.google.com/p/google-web-toolkit/issues/detail?id=6889
+//		deckPanel.onResize();
 	}
 
 	public static native String getCurrentDomainName()
@@ -251,17 +175,90 @@ public class Model180 extends MainEntryPoint {
 		return $wnd.getCurrentDomain();
 	}-*/;
 
+	protected void paintHeaderTable() {
+		headerPanel.clear();
+		headerPanel.setStyleName(AON.AON_CSS.aonWidthAll());
+		
+		FlexTable headerTable = new FlexTable();
+		headerTable.setStyleName(AON.AON_CSS.aonFiscalModelTable());
+		
+		Label image = new Label("");
+		image.setStyleName(getAdministrationImage());
+		
+		headerTable.setWidget(0, 0, image);
+		headerTable.getFlexCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderImage());
+		headerTable.getFlexCellFormatter().setRowSpan(0, 0, 2);
+		
+		headerTable.setWidget(0, 1, new Label(AON.MSG.fiscalModelDescriptionlong(FiscalModelType.M180)));
+		headerTable.getFlexCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
+		headerTable.getFlexCellFormatter().addStyleName(0, 1, getAdministrationBG());
+		headerTable.getFlexCellFormatter().setRowSpan(0, 1, 2);
+		
+		headerTable.setWidget(0, 2, new Label(FiscalModelType.M180.getName()));
+		headerTable.getFlexCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonFiscalModelTableHeaderModel());
+		headerTable.getFlexCellFormatter().addStyleName(0, 2, getAdministrationBG());
+		
+		headerTable.setWidget(1, 0, new Label(""+currentMod180.getYear()));
+		headerTable.getFlexCellFormatter().setStyleName(1, 0, AON.AON_CSS.aonFiscalModelTableHeaderModel());
+		headerTable.getFlexCellFormatter().addStyleName(1, 0, getAdministrationBG());
+		
+		headerPanel.setWidget(headerTable);
+	}
+	
+	public String getAdministrationBG() {
+		int admon = (currentMod180 == null 
+				?Administration.COMMON_TERRITORY.ordinal()
+				:currentMod180.getAdministration());
+		if (admon == Administration.ALAVA.ordinal()) {
+			return AON.AON_CSS.aonFiscalArabaBg();
+		} else if (admon == Administration.BIZKAIA.ordinal()) {
+			return AON.AON_CSS.aonFiscalBizkaiaBg();
+		} else if (admon == Administration.GIPUZKOA.ordinal()) {
+			return AON.AON_CSS.aonFiscalGipuzkoaBg();
+		} else if (admon == Administration.NAVARRA.ordinal()) {
+			return AON.AON_CSS.aonFiscalNavarraBg();
+		} else {
+			return AON.AON_CSS.aonFiscalAeatBg();
+		}
+	}
+	public String getAdministrationImage() {
+		int adm = (currentMod180 == null 
+				?Administration.COMMON_TERRITORY.ordinal()
+				:currentMod180.getAdministration());
+		if (adm == Administration.ALAVA.ordinal()) {
+			return AON.AON_CSS.aonArabaHeaderImage();
+		} else if (adm == Administration.BIZKAIA.ordinal()) {
+			return AON.AON_CSS.aonBizkaiaHeaderImage();
+		} else if (adm == Administration.GIPUZKOA.ordinal()) {
+			return AON.AON_CSS.aonGipuzkoaHeaderImage();
+		} else if (adm == Administration.NAVARRA.ordinal()) {
+			return AON.AON_CSS.aonNavarraHeaderImage();
+		} else {
+			return AON.AON_CSS.aonAeatHeaderImage();
+		}
+	}
+	
+	@UiHandler("year")
+	void onYearChanged(ChangeEvent event) {
+		currentMod180.setYear(year.getValue());
+		paintHeaderTable();	
+	}
+	@UiHandler("administration")
+	void onAdministrationChanged(ChangeEvent event) {
+		currentMod180.setAdministration(administration.getSelectedIndex());		
+		paintHeaderTable();	
+	}
+	
 	class Mod180SelectionHandler implements SelectionChangeEvent.Handler {
 		@Override
 		public void onSelectionChange(SelectionChangeEvent event) {
 			Mod180 sel = table.getSelected();
-			mod180Service.getMod180(getCurrentDomainName(), getCurrentDomain(),
+			fiscalService.getMod180(getCurrentDomainName(), getCurrentDomain(),
 					sel.getId(), new AsyncCallback<Mod180>() {
 						@Override
 						public void onSuccess(Mod180 selected) {
 							if (selected == null) {
-								DialogMessages.alertErrorWidget(AON.MSG
-										.unableToFindMod180());
+								showErrorMessage(AON.MSG.unableToFindMod180());
 							} else {
 								select(selected);
 								int i = deckPanel.getWidgetIndex(formPanel);
@@ -274,50 +271,18 @@ public class Model180 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							DialogMessages.alertErrorWidget(AON.MSG
-									.unableToReadMod180(caught.getMessage()));
+							showErrorMessage(AON.MSG.unableToReadMod180(caught.getMessage()));
 						}
 					});
 		}
 	}
 
-	static class Mod180DetailCell extends AbstractCell<Mod180Detail> {
-		@Override
-		public void render(Cell.Context context, Mod180Detail value,
-				SafeHtmlBuilder sb) {
-			if (value == null) {
-				return;
-			}
-			if (value.isDirty() || value.isDeleted()) {
-				sb.appendHtmlConstant("<div style='");
-			}
-			if (value.isDirty()) {
-				sb.appendHtmlConstant("font-style: italic; font-weight:bold;");
-			}
-			if (value.isDeleted()) {
-				sb.appendHtmlConstant("text-decoration:line-through");
-			}
-			if (value.isDirty() || value.isDeleted()) {
-				sb.appendHtmlConstant("'>");
-			}
-			String newLabel = AON.MSG.newPerceptor() + " ("
-					+ (value.getId() * (-1)) + ")";
-			sb.appendEscaped(AonUtil.isEmpty(value.getName()) ? newLabel
-					: value.getName());
-
-			if (value.isDirty() || value.isDeleted()) {
-				sb.appendHtmlConstant("</div>");
-			}
-		}
-	}
-
 	private void select(Mod180 selected) {
 		currentMod180 = selected;
-		year.setValue(Integer.toString(currentMod180.getYear()));
+		year.setValue(currentMod180.getYear());
 		administration.setSelectedIndex(currentMod180.getAdministration());
 		replacement.setValue(currentMod180.isReplacement());
 		confidential.setValue(currentMod180.isConfidential());
-		comments.setValue(currentMod180.getComments());
 		enterpriseSuggest.setValue(currentMod180.getDocument(), currentMod180.getName());
 		contactPhone.setValue(currentMod180.getContactPhone());
 		contactPerson.setValue(currentMod180.getContactPerson());
@@ -334,19 +299,18 @@ public class Model180 extends MainEntryPoint {
 		printButton.setVisible(currentMod180.getId() != null);
 		printMod180Button.setVisible(currentMod180.getId() != null);
 
-		pagerPanel.setVisible(currentMod180.getId() != null);
 		perceptorPanel.setVisible(currentMod180.getId() != null);
-		perceptorHeaderPanel.setVisible(currentMod180.getId() != null);
 		replacementPanel.setVisible(currentMod180.isReplacement());
-		detailList.setVisibleRangeAndClearData(detailList.getVisibleRange(),true);
+		perceptorPanel.setMod180(currentMod180);
+		paintHeaderTable();		
 	}
 
 	@UiHandler("table")
 	void onTableRangeChange(RangeChangeEvent event) {
-		mod180Service.getMod180s(getCurrentDomainName(), getCurrentDomain(),
-				new AsyncCallback<ArrayList<Mod180>>() {
+		fiscalService.getMod180s(getCurrentDomainName(), getCurrentDomain(),
+				new AsyncCallback<LinkedList<Mod180>>() {
 					@Override
-					public void onSuccess(ArrayList<Mod180> result) {
+					public void onSuccess(LinkedList<Mod180> result) {
 						if (result == null || result.size() == 0) {
 							onNewButtonClick(null);
 						} else {
@@ -365,7 +329,7 @@ public class Model180 extends MainEntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						DialogMessages.alertErrorWidget(AON.MSG
+						showErrorMessage(AON.MSG
 								.unableToReadMod180(caught.getMessage()));
 					}
 				});
@@ -373,7 +337,7 @@ public class Model180 extends MainEntryPoint {
 
 	@UiHandler("saveButton")
 	void onAcceptButtonClick(ClickEvent event) {
-		if (AonUtil.isEmpty(year.getValue())) {
+		if (year.getValue() == 0) {
 			throw new IllegalArgumentException(AON.MSG.requiredField(AON.MSG.fiscalYear()));
 		}
 
@@ -386,7 +350,7 @@ public class Model180 extends MainEntryPoint {
 		popup.center();
 
 		populateMod180();
-		mod180Service.saveMod180(getCurrentDomainName(), getCurrentDomain(),
+		fiscalService.saveMod180(getCurrentDomainName(), getCurrentDomain(),
 				this.currentMod180, new AsyncCallback<Mod180>() {
 					@Override
 					public void onSuccess(Mod180 result) {
@@ -406,7 +370,7 @@ public class Model180 extends MainEntryPoint {
 	@UiHandler("deleteButton")
 	void onDeleteButtonClick(ClickEvent event) {
 		if (Window.confirm(AON.MSG.confirmDeclarationDeleteAction())) {
-			mod180Service.deleteMod180(getCurrentDomainName(),
+			fiscalService.deleteMod180(getCurrentDomainName(),
 					getCurrentDomain(), this.currentMod180, new AsyncCallback<Void>() {
 						@Override
 						public void onSuccess(Void result) {
@@ -416,8 +380,7 @@ public class Model180 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							DialogMessages.alertErrorWidget(AON.MSG
-									.unableToDeleteMod180(caught.getMessage()));
+							showErrorMessage(AON.MSG.unableToDeleteMod180(caught.getMessage()));
 						}
 					});
 		}
@@ -426,21 +389,19 @@ public class Model180 extends MainEntryPoint {
 	@UiHandler("newButton")
 	void onNewButtonClick(ClickEvent event) {
 		cleanErrorMessage();
-		mod180Service.initializeMod180(getCurrentDomainName(),getCurrentDomain(), 2014,
+		fiscalService.initializeMod180(getCurrentDomainName(),getCurrentDomain(), 2015,
 				new AsyncCallback<Mod180>() {
 					@Override
 					public void onSuccess(Mod180 m180) {
-						detailList.setVisibleRangeAndClearData(detailList.getVisibleRange(),true);
 						select(m180);
 						int i = deckPanel.getWidgetIndex(formPanel);
 						deckPanel.showWidget(i);
+						perceptorPanel.setMod180(m180);
 					}
 
 					@Override
 					public void onFailure(Throwable caught) {
-						DialogMessages.alertErrorWidget(AON.MSG
-								.unableToReadFiscalParameters(caught
-										.getMessage()));
+						showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
 					}
 				});
 	}
@@ -448,30 +409,10 @@ public class Model180 extends MainEntryPoint {
 	@UiHandler("cancelButton")
 	void onCancelButtonClick(ClickEvent event) {
 		cleanErrorMessage();
-		detailList.setVisibleRangeAndClearData(detailList.getVisibleRange(),true);
+		perceptorPanel.setMod180(null);
 		int i = deckPanel.getWidgetIndex(listPanel);
 		deckPanel.showWidget(i);
 		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
-	}
-
-	@UiHandler("newDetailButton")
-	void onNewDetailButtonClick(ClickEvent event) {
-		int newKey = (currentMod180.getDetails().size() + 1) * (-1);
-		final Mod180Detail perceptor = new Mod180Detail();
-		perceptor.setId(newKey);
-		currentMod180.getDetails().add(perceptor);
-		perceptorPanel.setDetail(perceptor);
-		detailList.setRowCount(detailList.getRowCount() + 1);
-		detailList.setPageSize(detailList.getRowCount());
-		selectInList(currentMod180.getDetails().size() - 1);
-		detailList.redraw();
-	}
-
-	private void selectInList(int i) {
-		detailModel.setSelected(currentMod180.getDetails().get(i),true);
-		detailList.getRowElement(i).scrollIntoView();
-		pagerPanel.scrollToLeft();
-		
 	}
 
 	@UiHandler("enterpriseSuggest")
@@ -486,45 +427,18 @@ public class Model180 extends MainEntryPoint {
 	}
 
 	private void populateMod180() {
-		try {
-			currentMod180.setYear(Integer.parseInt(year.getValue()));
-		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException(AON.MSG.unableToParseYear());
-		}
+		currentMod180.setYear(year.getValue());
 		currentMod180.setDomain(domain);
 		currentMod180.setEnterprise(enterprise);
 		currentMod180.setAdministration(administration.getSelectedIndex());
 		currentMod180.setReplacement(replacement.getValue());
 		currentMod180.setConfidential(confidential.getValue());
-		currentMod180.setComments(comments.getValue());
 		currentMod180.setDocument(enterpriseSuggest.getValue());
 		currentMod180.setName(enterpriseSuggest.getName().getValue());
 		currentMod180.setContactPhone(contactPhone.getValue());
 		currentMod180.setContactPerson(contactPerson.getValue());
 		currentMod180.setReceipt(receipt.getValue());
 		currentMod180.setReplacedReceipt(replacedReceipt.getValue());
-	}
-
-	class Mod180DetailDataProvider extends AsyncDataProvider<Mod180Detail> {
-
-		public Mod180DetailDataProvider(ProvidesKey<Mod180Detail> detailProvidesKey) {
-			super(detailProvidesKey);
-		}
-
-		@Override
-		protected void onRangeChanged(HasData<Mod180Detail> display) {
-			if (currentMod180 != null && currentMod180.getId() != null) {
-				if (currentMod180.getDetails().size() == 0) {
-					onNewDetailButtonClick(null);					
-				} else {
-					updateRowCount(currentMod180.getDetails().size(), true);
-					updateRowData(0, currentMod180.getDetails());
-					detailList.setPageSize(currentMod180.getDetails().size());
-					selectInList(0);
-					perceptorPanel.setDetail(detailModel.getSelectedObject());
-				}
-			}
-		}
 	}
 
 	// -------------------------------------------------------------- UiHandler
@@ -570,16 +484,21 @@ public class Model180 extends MainEntryPoint {
 	void onFootMinimize(MinimizeEvent event) {
 		closeFootPanel();
 	}
+
 	@UiHandler("footPanel")
-	void onFootMaximize(MinimizeEvent event) {
+	void onFootMaximize(MaximizeEvent event) {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2);
+		splitLayoutPanel.animate(500);
 	}
 
 	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
+		splitLayoutPanel.setWidgetSize(footPanel, 30);
+		splitLayoutPanel.animate(500);
 	}
 
-	private void maximizeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
+	private void openFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+		splitLayoutPanel.animate(500);
 	}
 	
 	private void showResultsPanel() {
@@ -618,4 +537,5 @@ public class Model180 extends MainEntryPoint {
 		diskForm.submit();
 		
 	}
+	
 }

@@ -5,5 +5,9 @@ public enum TaxType {
 	UNKNOWN,
     VAT,
     RETENTION;
+
+	public byte value() {
+		return (byte) ordinal();
+	}
 	
 }

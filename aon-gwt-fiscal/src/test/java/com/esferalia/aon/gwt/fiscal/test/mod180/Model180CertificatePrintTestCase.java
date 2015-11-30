@@ -5,17 +5,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.ResourceBundle;
-
-import net.sf.jasperreports.engine.JRException;
 
 import org.apache.commons.io.FileUtils;
 
 import com.esferalia.aon.gwt.fiscal.server.Mod180CertificatePrint;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
+
+import net.sf.jasperreports.engine.JRException;
 
 
 
@@ -61,7 +61,7 @@ public class Model180CertificatePrintTestCase {
 		mod180.setReceiverCountTotal(0);
 		mod180.setReceiptTotal(0.0);
 		mod180.setRetentionTotal(0.0);
-		mod180.setDetails(new ArrayList<>());
+		mod180.setDetails(new LinkedList<Mod180Detail>());
 		Mod180Detail detail = new Mod180Detail();
 		detail.setMod180(0);
 		detail.setName(null);

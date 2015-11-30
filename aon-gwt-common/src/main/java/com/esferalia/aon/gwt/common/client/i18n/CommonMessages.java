@@ -146,7 +146,7 @@ public interface CommonMessages extends Messages {
 		,"M349"		,"Mod. 349"
 		,"M390"		,"Mod. 390"
 		,"M390_HF"	,"Mod. 390 Hac. For."
-		,"M180"		,"Mod. 180"
+		,"M180"		,"Declaraci\u00F3n Informativa. Retenciones e ingresos a cuenta. Rendimientos procedentes del arrendamiento de inmuebles urbanos. Resumen anual."
 		,"M184"		,"Mod. 184"
 		,"M190"		,"Mod. 190"
 		,"M193"		,"Mod. 193"

@@ -139,6 +139,9 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-width-200")
 	String aonWidth200();
 	
+	@ClassName("aon-width-300")
+	String aonWidth300();
+	
 	@ClassName("aon-icon-button")
 	String aonIconButton();
 

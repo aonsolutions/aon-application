@@ -28,7 +28,6 @@ import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.gwt.fiscal.server.file.MOD180Writer;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
-import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
@@ -124,8 +123,8 @@ public class Mod180Print extends HttpServlet {
 
 		DataInputStream input = new DataInputStream(connection.getInputStream());
 		
-		resp.setContentType(MimeType.PDF.getName());
-		resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".pdf\";");
+//		resp.setContentType(MimeType.PDF.getName());
+//		resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".pdf\";");
 		AonIOUtils.copy(input, resp.getOutputStream());
 		resp.flushBuffer();
 		connection.disconnect();

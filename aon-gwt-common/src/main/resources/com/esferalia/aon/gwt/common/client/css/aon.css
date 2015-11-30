@@ -391,18 +391,28 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 }
 @sprite .aon-aeat-header-image  {
 	gwt-image: "aonAeatHeaderImage";
+	background-position:   center;
+	width: auto;
 }
 @sprite .aon-araba-header-image  {
 	gwt-image: "aonArabaHeaderImage";
+	background-position:   center;
+	width: auto;
 }
 @sprite .aon-bizkaia-header-image  {
 	gwt-image: "aonBizkaiaHeaderImage";
+	background-position:   center;
+	width: auto;
 }
 @sprite .aon-gipuzkoa-header-image  {
 	gwt-image: "aonGipuzkoaHeaderImage";
+	background-position:   center;
+	width: auto;
 }
 @sprite .aon-navarra-header-image  {
 	gwt-image: "aonNavarraHeaderImage";
+	background-position:   center;
+	width: auto;
 }
 
 @sprite .aon-list-data {

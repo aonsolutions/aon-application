@@ -11,6 +11,12 @@ import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.TextBox;
 
+/**
+ * @author ecastellano
+ * @deprecated use IntegerBox
+ *
+ */
+@Deprecated 
 public class IntegerTextBox extends TextBox {
 
 	private static final AonResources AON_RESOURCES = GWT.create(AonResources.class);

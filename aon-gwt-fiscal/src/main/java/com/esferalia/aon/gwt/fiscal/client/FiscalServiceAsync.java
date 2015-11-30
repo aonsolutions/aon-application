@@ -83,7 +83,7 @@ public interface FiscalServiceAsync {
 	// ---------------------------------------------------------------MODELO 180
 	void deleteMod180(String domainName, int domain, Mod180 mod180,AsyncCallback<Void> callback);
 	void saveMod180(String domainName, int domain, Mod180 mod180, AsyncCallback<Mod180> callback);
-	void getMod180s(String domainName, int domain, AsyncCallback<ArrayList<Mod180>> callback);
+	void getMod180s(String domainName, int domain, AsyncCallback<LinkedList<Mod180>> callback);
 	void getMod180(String domainName, int domain, Integer id, AsyncCallback<Mod180> callback);
 	void getMod180Detail(String domainName, int domain, Integer id, AsyncCallback<Mod180Detail> callback);
 	void initializeMod180(String domainName, Integer domain, Integer year,AsyncCallback<Mod180> callback);
