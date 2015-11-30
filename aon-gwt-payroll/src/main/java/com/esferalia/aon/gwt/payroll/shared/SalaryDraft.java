@@ -337,10 +337,10 @@ public class SalaryDraft extends SalaryPreview {
 				continue;
 			
 			// TODO : var.getStartDate().equals(startDate) 
-			if ( var.getStartDate().after(endDate) ) 
+			if ( endDate != null && var.getStartDate().after(endDate) ) 
 				continue;
 			// TODO : var.getEndDate().equals(endtDate) 
-			if ( var.getEndDate().before(startDate) ) 
+			if ( var.getEndDate() != null && var.getEndDate().before(startDate) ) 
 				continue;
 			
 			return var;
