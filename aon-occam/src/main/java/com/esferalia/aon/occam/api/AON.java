@@ -940,10 +940,10 @@ public class AON {
 	}
 
 	// ----------------------------------MODELO 190
-	public static ArrayList<Mod190> getMod190s(String domainName, int domainId) {
+	public static LinkedList<Mod190> getMod190s(String domainName, int domainId, String user) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getFiscal().getMod190s(ctx, domainId);
 		} finally {
 			if (ctx != null)
@@ -951,10 +951,10 @@ public class AON {
 		}
 	}
 
-	public static Mod190 getMod190(String domainName, int domainId, Integer id) {
+	public static Mod190 getMod190(String domainName, int domainId, String user, Integer id) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getFiscal().getMod190(ctx, id);
 		} finally {
 			if (ctx != null)
@@ -962,11 +962,10 @@ public class AON {
 		}
 	}
 
-	public static Mod190 initializeMod190(String domainName, int domainId,
-			Integer year) {
+	public static Mod190 initializeMod190(String domainName, int domainId, String user, Integer year) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getFiscal().initializeMod190(ctx, year);
 		} finally {
 			if (ctx != null)
@@ -974,11 +973,10 @@ public class AON {
 		}
 	}
 
-	public static Mod190 saveMod190(String domainName, int domainId,
-			Mod190 mod190) {
+	public static Mod190 saveMod190(String domainName, int domainId, String user, Mod190 mod190) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getFiscal().saveMod190(ctx, mod190);
 		} finally {
 			if (ctx != null)
@@ -986,11 +984,10 @@ public class AON {
 		}
 	}
 
-	public static void deleteMod190(String domainName, int domainId,
-			Mod190 mod190) {
+	public static void deleteMod190(String domainName, int domainId, String user,Mod190 mod190) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId, user);
 			getFiscal().deleteMod190(ctx, mod190);
 		} finally {
 			if (ctx != null)
@@ -998,11 +995,10 @@ public class AON {
 		}
 	}
 
-	public static Mod190Detail getMod190Detail(String domainName, int domainId,
-			Integer id) {
+	public static Mod190Detail getMod190Detail(String domainName, int domainId, String user, Integer id) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getFiscal().getMod190Detail(ctx, id);
 		} finally {
 			if (ctx != null)

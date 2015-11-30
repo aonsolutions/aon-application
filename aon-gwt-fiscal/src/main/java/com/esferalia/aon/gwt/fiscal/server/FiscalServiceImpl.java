@@ -184,33 +184,33 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	// ---------------------------------------------------------------MODELO 190
 	@Override
 	public Mod190 initializeMod190(String domainName, Integer domain,Integer year) {
-		return AON.initializeMod190(domainName, domain, year);
+		return AON.initializeMod190(domainName, domain, AonServletUtils.getLoggedUser(), year);
 	}
 	
 	@Override
-	public ArrayList<Mod190> getMod190s(String domainName, int domain) {
-		return AON.getMod190s(domainName, domain);
+	public LinkedList<Mod190> getMod190s(String domainName, int domain) {
+		return AON.getMod190s(domainName, domain, AonServletUtils.getLoggedUser());
 	}
 
 	@Override
 	public void deleteMod190(String domainName, int domain, Mod190 mod190) {
-		AON.deleteMod190(domainName, domain, mod190);
+		AON.deleteMod190(domainName, domain, AonServletUtils.getLoggedUser(), mod190);
 	}
 
 	@Override
 	public Mod190 saveMod190(String domainName, int domain,Mod190 mod190) {
-		return AON.saveMod190(domainName, domain, mod190);
+		return AON.saveMod190(domainName, domain, AonServletUtils.getLoggedUser(), mod190);
 	}
 
 
 	@Override
 	public Mod190 getMod190(String domainName, int domain, Integer id) {
-		return AON.getMod190(domainName, domain, id);
+		return AON.getMod190(domainName, domain, AonServletUtils.getLoggedUser(), id);
 	}
 
 	@Override
 	public Mod190Detail getMod190Detail(String domainName, int domain, Integer id) {
-		return AON.getMod190Detail(domainName, domain, id);
+		return AON.getMod190Detail(domainName, domain, AonServletUtils.getLoggedUser(), id);
 	}
 
 	// ---------------------------------------------------------------MODELO 193

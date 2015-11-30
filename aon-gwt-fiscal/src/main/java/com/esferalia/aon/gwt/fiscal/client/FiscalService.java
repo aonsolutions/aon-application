@@ -72,7 +72,7 @@ public interface FiscalService extends RemoteService {
 	// ---------------------------------------------------------------MODELO 190
 	void deleteMod190(String domainName, int domain,Mod190 mod190) throws AonCoreException;
 	Mod190 saveMod190(String domainName, int domain,Mod190 mod190) throws AonCoreException;
-	ArrayList<Mod190> getMod190s(String domainName, int domain) throws AonCoreException;
+	LinkedList<Mod190> getMod190s(String domainName, int domain) throws AonCoreException;
 	Mod190 getMod190(String domainName, int domain,Integer id) throws AonCoreException;
 	Mod190Detail getMod190Detail(String domainName, int domain,Integer id) throws AonCoreException;
 	Mod190 initializeMod190(String domainName, Integer domain, Integer year);

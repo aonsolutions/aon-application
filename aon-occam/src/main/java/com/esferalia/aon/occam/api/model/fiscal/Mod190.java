@@ -1,11 +1,12 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.LinkedList;
 
-@SuppressWarnings("serial")
 public class Mod190 implements Serializable {
 
+	private static final long serialVersionUID = -853765073923154482L;
+	
 	private Integer id;
 	private int domain;
 	private int enterprise;
@@ -24,153 +25,171 @@ public class Mod190 implements Serializable {
 	private double receiptTotal;
 	private double retentionTotal;
 	
-	private ArrayList<Mod190Detail> details;
+	private LinkedList<Mod190Detail> details;
 
 	public Integer getId() { 
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public Mod190 setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 
 	public int getDomain() {
 		return domain;
 	}
 
-	public void setDomain(int domain) {
+	public Mod190 setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
 
 	public int getEnterprise() {
 		return enterprise;
 	}
 
-	public void setEnterprise(int enterprise) {
+	public Mod190 setEnterprise(int enterprise) {
 		this.enterprise = enterprise;
+		return this;
 	}
 
 	public int getYear() {
 		return year;
 	}
 
-	public void setYear(int year) {
+	public Mod190 setYear(int year) {
 		this.year = year;
+		return this;
 	}
 
 	public byte getAdministration() {
 		return administration;
 	}
 
-	public void setAdministration(byte administration) {
+	public Mod190 setAdministration(byte administration) {
 		this.administration = administration;
+		return this;
 	}
 
 	public boolean isConfidential() {
 		return confidential;
 	}
 
-	public void setConfidential(boolean confidential) {
+	public Mod190 setConfidential(boolean confidential) {
 		this.confidential = confidential;
+		return this;
 	}
 
 	public boolean isReplacement() {
 		return replacement;
 	}
 
-	public void setReplacement(boolean replacement) {
+	public Mod190 setReplacement(boolean replacement) {
 		this.replacement = replacement;
+		return this;
 	}
 	
 	public String getReceipt() {
 		return receipt;
 	}
 
-	public void setReceipt(String receipt) {
+	public Mod190 setReceipt(String receipt) {
 		this.receipt = receipt;
+		return this;
 	}
 
 	public String getReplacedReceipt() {
 		return replacedReceipt;
 	}
 
-	public void setReplacedReceipt(String replacedReceipt) {
+	public Mod190 setReplacedReceipt(String replacedReceipt) {
 		this.replacedReceipt = replacedReceipt;
+		return this;
 	}
 
 	public String getComments() {
 		return comments;
 	}
 
-	public void setComments(String comments) {
+	public Mod190 setComments(String comments) {
 		this.comments = comments;
+		return this;
 	}
 
 	public String getDocument() {
 		return document;
 	}
 
-	public void setDocument(String document) {
+	public Mod190 setDocument(String document) {
 		this.document = document;
+		return this;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public Mod190 setName(String name) {
 		this.name = name;
+		return this;
 	}
 	
 	public String getContactPerson() {
 		return contactPerson;
 	}
 
-	public void setContactPerson(String contactPerson) {
+	public Mod190 setContactPerson(String contactPerson) {
 		this.contactPerson = contactPerson;
+		return this;
 	}
 
 	public String getContactPhone() {
 		return contactPhone;
 	}
 
-	public void setContactPhone(String contactPhone) {
+	public Mod190 setContactPhone(String contactPhone) {
 		this.contactPhone = contactPhone;
+		return this;
 	}
 
 	public int getReceiverCountTotal() {
 		return receiverCountTotal;
 	}
 
-	public void setReceiverCountTotal(int receiverCountTotal) {
+	public Mod190 setReceiverCountTotal(int receiverCountTotal) {
 		this.receiverCountTotal = receiverCountTotal;
+		return this;
 	}
 
 	public double getReceiptTotal() {
 		return receiptTotal;
 	}
 
-	public void setReceiptTotal(double receiptTotal) {
+	public Mod190 setReceiptTotal(double receiptTotal) {
 		this.receiptTotal = receiptTotal;
+		return this;
 	}
 
 	public double getRetentionTotal() {
 		return retentionTotal;
 	}
 
-	public void setRetentionTotal(double retentionTotal) {
+	public Mod190 setRetentionTotal(double retentionTotal) {
 		this.retentionTotal = retentionTotal;
+		return this;
 	}
 
-	public ArrayList<Mod190Detail> getDetails() {
+	public LinkedList<Mod190Detail> getDetails() {
 		if (details == null) {
-			details = new ArrayList<Mod190Detail>();
+			details = new LinkedList<Mod190Detail>();
 		}
 		return details;
 	}
 
-	public void setDetails(ArrayList<Mod190Detail> details) {
+	public Mod190 setDetails(LinkedList<Mod190Detail> details) {
 		this.details = details;
+		return this;
 	}
 
 }

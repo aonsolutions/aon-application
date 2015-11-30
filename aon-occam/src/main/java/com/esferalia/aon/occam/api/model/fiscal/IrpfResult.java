@@ -2,9 +2,10 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
 
-@SuppressWarnings("serial")
 public class IrpfResult implements Serializable {
 
+	private static final long serialVersionUID = 5204896474187895711L;
+	
 	private double applicableReduction;
 	private double deducibleExpense;
 	private double compensatoryPension;
@@ -43,171 +44,199 @@ public class IrpfResult implements Serializable {
 	public double getApplicableReduction() {
 		return applicableReduction;
 	}
-	public void setApplicableReduction(double applicableReduction) {
+	public IrpfResult setApplicableReduction(double applicableReduction) {
 		this.applicableReduction = applicableReduction;
+		return this;
 	}
 	public double getDeducibleExpense() {
 		return deducibleExpense;
 	}
-	public void setDeducibleExpense(double deducibleExpense) {
+	public IrpfResult setDeducibleExpense(double deducibleExpense) {
 		this.deducibleExpense = deducibleExpense;
+		return this;
 	}
 	public double getCompensatoryPension() {
 		return compensatoryPension;
 	}
-	public void setCompensatoryPension(double compensatoryPension) {
+	public IrpfResult setCompensatoryPension(double compensatoryPension) {
 		this.compensatoryPension = compensatoryPension;
+		return this;
 	}
 	public double getFoodAnnuality() {
 		return foodAnnuality;
 	}
-	public void setFoodAnnuality(double foodAnnuality) {
+	public IrpfResult setFoodAnnuality(double foodAnnuality) {
 		this.foodAnnuality = foodAnnuality;
+		return this;
 	}
 	public boolean isHomeLoanCommunnication() {
 		return homeLoanCommunnication;
 	}
-	public void setHomeLoanCommunnication(boolean homeLoanCommunnication) {
+	public IrpfResult setHomeLoanCommunnication(boolean homeLoanCommunnication) {
 		this.homeLoanCommunnication = homeLoanCommunnication;
+		return this;
 	}
 	public byte getLessThan3Descendent() {
 		return lessThan3Descendent;
 	}
-	public void setLessThan3Descendent(byte lessThan3Descendent) {
+	public IrpfResult setLessThan3Descendent(byte lessThan3Descendent) {
 		this.lessThan3Descendent = lessThan3Descendent;
+		return this;
 	}
 	public byte getLessThan3DescendentRatio() {
 		return lessThan3DescendentRatio;
 	}
-	public void setLessThan3DescendentRatio(byte lessThan3DescendentRatio) {
+	public IrpfResult setLessThan3DescendentRatio(byte lessThan3DescendentRatio) {
 		this.lessThan3DescendentRatio = lessThan3DescendentRatio;
+		return this;
 	}
 	public byte getOtherDescendent() {
 		return otherDescendent;
 	}
-	public void setOtherDescendent(byte otherDescendent) {
+	public IrpfResult setOtherDescendent(byte otherDescendent) {
 		this.otherDescendent = otherDescendent;
+		return this;
 	}
 	public byte getOtherDescendentRatio() {
 		return otherDescendentRatio;
 	}
-	public void setOtherDescendentRatio(byte otherDescendentRatio) {
+	public IrpfResult setOtherDescendentRatio(byte otherDescendentRatio) {
 		this.otherDescendentRatio = otherDescendentRatio;
+		return this;
 	}
 	public byte getDisabilityDescendent33() {
 		return disabilityDescendent33;
 	}
-	public void setDisabilityDescendent33(byte disabilityDescendent33) {
+	public IrpfResult setDisabilityDescendent33(byte disabilityDescendent33) {
 		this.disabilityDescendent33 = disabilityDescendent33;
+		return this;
 	}
 	public byte getDisabilityDescendent33Ratio() {
 		return disabilityDescendent33Ratio;
 	}
-	public void setDisabilityDescendent33Ratio(byte disabilityDescendent33Ratio) {
+	public IrpfResult setDisabilityDescendent33Ratio(byte disabilityDescendent33Ratio) {
 		this.disabilityDescendent33Ratio = disabilityDescendent33Ratio;
+		return this;
 	}
 	public byte getDisabilityDescendentDependence() {
 		return disabilityDescendentDependence;
 	}
-	public void setDisabilityDescendentDependence(byte disabilityDescendentDependence) {
+	public IrpfResult setDisabilityDescendentDependence(byte disabilityDescendentDependence) {
 		this.disabilityDescendentDependence = disabilityDescendentDependence;
+		return this;
 	}
 	public byte getDisabilityDescendentDependenceRatio() {
 		return disabilityDescendentDependenceRatio;
 	}
-	public void setDisabilityDescendentDependenceRatio(
+	public IrpfResult setDisabilityDescendentDependenceRatio(
 			byte disabilityDescendentDependenceRatio) {
 		this.disabilityDescendentDependenceRatio = disabilityDescendentDependenceRatio;
+		return this;
 	}
 	public byte getDisabilityDescendent65() {
 		return disabilityDescendent65;
 	}
-	public void setDisabilityDescendent65(byte disabilityDescendent65) {
+	public IrpfResult setDisabilityDescendent65(byte disabilityDescendent65) {
 		this.disabilityDescendent65 = disabilityDescendent65;
+		return this;
 	}
 	public byte getDisabilityDescendent65Ratio() {
 		return disabilityDescendent65Ratio;
 	}
-	public void setDisabilityDescendent65Ratio(byte disabilityDescendent65Ratio) {
+	public IrpfResult setDisabilityDescendent65Ratio(byte disabilityDescendent65Ratio) {
 		this.disabilityDescendent65Ratio = disabilityDescendent65Ratio;
+		return this;
 	}
 	public byte getLessThan75Ascendant() {
 		return lessThan75Ascendant;
 	}
-	public void setLessThan75Ascendant(byte lessThan75Ascendant) {
+	public IrpfResult setLessThan75Ascendant(byte lessThan75Ascendant) {
 		this.lessThan75Ascendant = lessThan75Ascendant;
+		return this;
 	}
 	public byte getLessThan75AscendantRatio() {
 		return lessThan75AscendantRatio;
 	}
-	public void setLessThan75AscendantRatio(byte lessThan75AscendantRatio) {
+	public IrpfResult setLessThan75AscendantRatio(byte lessThan75AscendantRatio) {
 		this.lessThan75AscendantRatio = lessThan75AscendantRatio;
+		return this;
 	}
 	public byte getAscendant() {
 		return ascendant;
 	}
-	public void setAscendant(byte ascendant) {
+	public IrpfResult setAscendant(byte ascendant) {
 		this.ascendant = ascendant;
+		return this;
 	}
 	public byte getAscendantRatio() {
 		return ascendantRatio;
 	}
-	public void setAscendantRatio(byte ascendantRatio) {
+	public IrpfResult setAscendantRatio(byte ascendantRatio) {
 		this.ascendantRatio = ascendantRatio;
+		return this;
 	}
 	public byte getDisabilityAscendant33() {
 		return disabilityAscendant33;
 	}
-	public void setDisabilityAscendant33(byte disabilityAscendant33) {
+	public IrpfResult setDisabilityAscendant33(byte disabilityAscendant33) {
 		this.disabilityAscendant33 = disabilityAscendant33;
+		return this;
 	}
 	public byte getDisabilityAscendant33Ratio() {
 		return disabilityAscendant33Ratio;
 	}
-	public void setDisabilityAscendant33Ratio(byte disabilityAscendant33Ratio) {
+	public IrpfResult setDisabilityAscendant33Ratio(byte disabilityAscendant33Ratio) {
 		this.disabilityAscendant33Ratio = disabilityAscendant33Ratio;
+		return this;
 	}
 	public byte getDisabilityAscendantDependence() {
 		return disabilityAscendantDependence;
 	}
-	public void setDisabilityAscendantDependence(byte disabilityAscendantDependence) {
+	public IrpfResult setDisabilityAscendantDependence(byte disabilityAscendantDependence) {
 		this.disabilityAscendantDependence = disabilityAscendantDependence;
+		return this;
 	}
 	public byte getDisabilityAscendantDependenceRatio() {
 		return disabilityAscendantDependenceRatio;
 	}
-	public void setDisabilityAscendantDependenceRatio(
+	public IrpfResult setDisabilityAscendantDependenceRatio(
 			byte disabilityAscendantDependenceRatio) {
 		this.disabilityAscendantDependenceRatio = disabilityAscendantDependenceRatio;
+		return this;
 	}
 	public byte getDisabilityAscendant65() {
 		return disabilityAscendant65;
 	}
-	public void setDisabilityAscendant65(byte disabilityAscendant65) {
+	public IrpfResult setDisabilityAscendant65(byte disabilityAscendant65) {
 		this.disabilityAscendant65 = disabilityAscendant65;
+		return this;
 	}
 	public byte getDisabilityAscendant65Ratio() {
 		return disabilityAscendant65Ratio;
 	}
-	public void setDisabilityAscendant65Ratio(byte disabilityAscendant65Ratio) {
+	public IrpfResult setDisabilityAscendant65Ratio(byte disabilityAscendant65Ratio) {
 		this.disabilityAscendant65Ratio = disabilityAscendant65Ratio;
+		return this;
 	}
 	public byte getFirstChildCalculation() {
 		return firstChildCalculation;
 	}
-	public void setFirstChildCalculation(byte firstChildCalculation) {
+	public IrpfResult setFirstChildCalculation(byte firstChildCalculation) {
 		this.firstChildCalculation = firstChildCalculation;
+		return this;
 	}
 	public byte getSecondChildCalculation() {
 		return secondChildCalculation;
 	}
-	public void setSecondChildCalculation(byte secondChildCalculation) {
+	public IrpfResult setSecondChildCalculation(byte secondChildCalculation) {
 		this.secondChildCalculation = secondChildCalculation;
+		return this;
 	}
 	public byte getThirdChildCalculation() {
 		return thirdChildCalculation;
 	}
-	public void setThirdChildCalculation(byte thirdChildCalculation) {
+	public IrpfResult setThirdChildCalculation(byte thirdChildCalculation) {
 		this.thirdChildCalculation = thirdChildCalculation;
+		return this;
 	}
 }

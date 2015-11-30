@@ -202,10 +202,10 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 
 	@Override
 	public void getMod190s(String domainName, int domain,
-			AsyncCallback<ArrayList<Mod190>> callback) {
+			AsyncCallback<LinkedList<Mod190>> callback) {
 		AON.start();
 		fsa.getMod190s(domainName, domain,
-				new AsyncCallbackWrapper<ArrayList<Mod190>>(callback));
+				new AsyncCallbackWrapper<LinkedList<Mod190>>(callback));
 	}
 
 	@Override

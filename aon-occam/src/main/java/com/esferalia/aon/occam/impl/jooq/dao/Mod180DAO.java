@@ -216,38 +216,7 @@ public class Mod180DAO {
 			.map( new Mod180DetailFiller() )
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
-/*
-	private static void populateDetail(FsModel180DetailRecord record, Mod180Detail detail) {
-		detail.setId(record.getId());
-		detail.setDocument(record.getDocument());		detail.setName(record.getName());
-		detail.setRepresentativeDocument(record.getRepresentativeDocument());
-		detail.setProvince(record.getProvince());
-		detail.setInKind(record.getInkind()==1);
-		detail.setPerception(record.getPerception());
-		detail.setRetention(record.getRetention());
-		detail.setPercent(record.getPercentage());
-		detail.setAccrualYear(record.getAccrualYear());
-		detail.setLocation(record.getLocation());
-		detail.setCadasdralReference(record.getCadasdralReference());
-		detail.setStreetType(record.getStreetType());
-		detail.setStreetName(record.getStreetName());
-		detail.setNumberType(record.getNumberType());
-		detail.setNumber(record.getNumber());
-		detail.setNumberSuffix(record.getNumberSuffix());
-		detail.setBlock(record.getBlock());
-		detail.setHall(record.getHall());
-		detail.setStair(record.getStair());
-		detail.setFloor(record.getFloor());
-		detail.setDoor(record.getDoor());
-		detail.setComplement(record.getComplement());
-		detail.setCity(record.getCity());
-		detail.setTown(record.getTown());
-		detail.setTownCode(record.getTownCode());
-		detail.setProvinceCode(record.getProvinceCode());
-		detail.setZip(record.getZip());
-		
-	}
-*/
+
 	public static void saveDetail(AONContext ctx, Mod180 mod180, Mod180Detail detail){
 		ctx.checkWrite();
 		if (detail.getId() == null || detail.getId() < 0) {

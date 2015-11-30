@@ -51,7 +51,7 @@ public interface IFiscal {
 	public Mod180Detail getMod180Detail(AONContext ctx,Integer id);
 	
 	// 				   		  MOD190
-	public ArrayList<Mod190> getMod190s(AONContext ctx,int domain);
+	public LinkedList<Mod190> getMod190s(AONContext ctx,int domain);
 	public Mod190 getMod190(AONContext ctx,Integer id);
 	public Mod190 initializeMod190(AONContext ctx, int year);
 	public Mod190 saveMod190(AONContext ctx,Mod190 mod190);

@@ -21,8 +21,8 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class MOD190Writer {
 
-	public FileOutput createMOD190(String domainName,Integer domainId, Integer mod190, int year,
-			Byte administration) throws AonSQLException {
+	public FileOutput createMOD190(String domainName,Integer domainId,String user
+			, Integer mod190, int year, Byte administration) throws AonSQLException {
 		try {
 			MOD190Format format = MOD190Format.obtainFormat(year, administration);
 			if (format == null) {
@@ -32,7 +32,7 @@ public class MOD190Writer {
 								+ " en la administraci\u00F3n "
 								+ administration);
 			}
-			Deponent deponent = getDeponent(domainName,domainId, mod190, format);
+			Deponent deponent = getDeponent(domainName,domainId,user, mod190, format);
 			
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
@@ -52,9 +52,9 @@ public class MOD190Writer {
 		}
 	}
 
-	private Deponent getDeponent(String domainName, int domainId, Integer id,
-			MOD190Format format) throws AonSQLException {
-		Mod190 mod190 = AON.getMod190(domainName,domainId, id);
+	private Deponent getDeponent(String domainName, int domainId,String user
+			, Integer id, MOD190Format format) throws AonSQLException {
+		Mod190 mod190 = AON.getMod190(domainName,domainId,user, id);
 		Deponent deponent = new Deponent();
 		deponent.setYear(mod190.getYear());
 		deponent.setDocument(mod190.getDocument());

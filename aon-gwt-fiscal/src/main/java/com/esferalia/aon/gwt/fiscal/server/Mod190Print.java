@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.file.format.output.FileOutput;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.fiscal.server.file.MOD190Writer;
 import com.esferalia.aon.occam.api.AON;
@@ -56,10 +57,11 @@ public class Mod190Print extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("mod190"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			Mod190 mod190 = AON.getMod190(domainName, domainId, id);
+			String user = AonServletUtils.getLoggedUser();
+			Mod190 mod190 = AON.getMod190(domainName, domainId, user,id);
 
-			FileOutput fileoutput = writer.createMOD190(domainName, domainId,
-					id, mod190.getYear(), mod190.getAdministration());
+			FileOutput fileoutput = writer.createMOD190(domainName, domainId, user 
+					,id, mod190.getYear(), mod190.getAdministration());
 			commit(conn);
 
 			String s = mod190.getName();

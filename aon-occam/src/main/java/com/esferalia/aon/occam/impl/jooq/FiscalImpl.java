@@ -142,7 +142,7 @@ public class FiscalImpl implements IFiscal {
 
 	// ----------------------------------------------------------- [MODELO 190]
 	@Override
-	public ArrayList<Mod190> getMod190s(AONContext ctx, int domain) {
+	public LinkedList<Mod190> getMod190s(AONContext ctx, int domain) {
 		return Mod190DAO.getByDomain(ctx, domain);
 	}
 
