@@ -63,6 +63,7 @@
 			<aon:div id="enterpriseCCCs">
 				<aon:selectOneMenu id="enterpriseCCClist" required="true"
 					rendered="#{!readOnly}"
+					reRender="contract_panel"
 					value="#{contract.to.enterpriseCCC}" >
 					<f:selectItems value="#{contract.enterpriseCCCs}" />
 				</aon:selectOneMenu>
@@ -256,7 +257,7 @@
 				</aon:panelGroup>
 			</aon:panelGrid>
 		
-			<aon:if test="#{!contract.params.retaQuote and !contract.internship}">
+			<aon:if test="#{!contract.params.retaQuote}">
 				<aon:outputLabel for="quote_group"
 					value="#{bundle.payroll_contract_quote_group}" />
 				<aon:selectOneMenu id="quote_group"
@@ -294,10 +295,10 @@
 			</aon:if>
 			
 			<aon:outputLabel for="workingWeekHours"
-				rendered="#{contract.partiallyTimeContract}"
+				rendered="#{contract.partiallyTimeContract or contract.internship}"
 				value="#{bundle.sepe_contrata_contract_working_day_duration}" />
 			<aon:div id="partially-week-day-hours" 
-				rendered="#{contract.partiallyTimeContract}">
+				rendered="#{contract.partiallyTimeContract or contract.internship}">
 					
 					<!--  
 					<aon:inputText id="workingWeekHours"

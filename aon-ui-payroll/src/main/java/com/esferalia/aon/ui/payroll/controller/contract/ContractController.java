@@ -829,8 +829,7 @@ public class ContractController extends BasicController {
 	}
 	
 	private boolean isInternship(Contract contract) {
-		return (contract.getEnterpriseCCC()!=null && contract.getEnterpriseCCC().getType()==CCCType.FELLOWS)
-				&& getParams()!=null 
+		return getParams()!=null 
 				&& ( getParams().getContractCode()==null 
 				|| (getParams().getContractCode()!=null && getParams().getContractCode().equals("000")));
 	}
