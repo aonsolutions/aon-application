@@ -18,6 +18,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -41,7 +42,6 @@ import com.code.aon.product.ProductCategory;
 import com.code.aon.product.ProductTag;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
-import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.template.client.ITemplate;
 import com.esferalia.aon.gwt.template.jooq.DBCatalogue;
@@ -69,6 +69,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -2196,5 +2197,13 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				list.add("Venta");
 		}
 		return list;
+	}
+	
+	public LinkedList<String> getTypeList(Domain domain){
+		return AON.getAttachList(domain.getName(), domain.getId(), getUser().getLogin(), 
+				filter -> filter.getDomainProperty().eq(domain.getId())
+				.and(filter.getTypeProperty().eq(RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value())),
+				AttachType.REGISTRY).stream().map(r -> r.getDescription())
+				.collect(Collectors.toCollection(LinkedList::new));
 	}
 }

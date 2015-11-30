@@ -1,42 +1,16 @@
-package com.code.aon.product.enumeration;
+package com.esferalia.aon.occam.api.model.attachment;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import com.code.aon.common.enumeration.IResourceable;
+public enum AttachmentType {
 
-/**
- * Enumeration to identify different product types.
- * 
- * @author Consulting & Development. Joseba Urkiri - 26-sep-2006
- * @since 1.0
- * @version 1.0
- *  
- */
-public enum AttachmentType implements IResourceable {
-	
-	/**
-     * thumbnail
-     */
 	THUMBNAIL,
-	
-    /**
-     * image
-     */
     IMAGE,
-
-	/**
-     * document
-     */
 	DOCUMENT,
-   
-	/**
-     * Amazon Product
-     */
 	AMAZON_PRODUCT;
-   
 	
-    /**
+	/**
      * Message key prefix. 
      */
     private static final String MSG_KEY_PREFIX = "aon_enum_attachment_type_";
@@ -51,8 +25,13 @@ public enum AttachmentType implements IResourceable {
      * @return String a <code>String</code>.
      */
     public String getName(Locale locale) {
+    	String BASE_NAME = "com.code.aon.common.i18n.enum";
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
+    
+	public byte value() {
+		return (byte) this.ordinal();
+	}
 
 }

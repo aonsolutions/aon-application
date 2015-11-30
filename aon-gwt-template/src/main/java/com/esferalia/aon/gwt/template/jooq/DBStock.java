@@ -384,8 +384,7 @@ public class DBStock {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
-			
-			 
+
 			DeleteConditionStep<StockRecord> stockDeleteQuery;
 			DeleteConditionStep<WarehouseTransferDetailRecord> transferDeleteQuery;
 			InsertValuesStep4<StockRecord, Integer, Integer, Double, Integer> stockInsertQuery = ctx.getDslContext().insertInto(STOCK, STOCK.DOMAIN, STOCK.ITEM, STOCK.QUANTITY, STOCK.WAREHOUSE);
@@ -396,36 +395,6 @@ public class DBStock {
 			Vector<Integer> stockDeleteIds = new Vector<Integer>();
 			Vector<Integer> transferDeleteIds = new Vector<Integer>();
 			
-			/*Date d = new Date();
-			Timestamp t = new Timestamp(d.getTime());
-			
-			Condition series;
-			String scode;
-			
-			if(ti.getSeries() == null || ti.getSeries().getCode() == "-") {
-				series = WAREHOUSE_TRANSFER.SERIES.isNull();
-				scode = null;
-			}
-			else {
-				series = WAREHOUSE_TRANSFER.SERIES.eq(ti.getSeries().getCode());
-				scode = ti.getSeries().getCode();
-			}
-			Result<Record1<Integer>> n = ctx.getDslContext().select(DSL.max(WAREHOUSE_TRANSFER.NUMBER))
-				.from(WAREHOUSE_TRANSFER)
-				.where(WAREHOUSE_TRANSFER.DOMAIN.eq(domainId).and(series)).fetch();
-			
-			Integer max;
-			if(n.isEmpty() || n.get(0).value1()==null) max = 0;
-			else max = n.get(0).value1(); //get max number (domain, serie)
-			Integer next = max+1;
-			
-			Integer source = null, target = null;
-			if(ti.getSourceWarehouse() != null) source = ti.getSourceWarehouse().getId();
-			if(ti.getTargetWarehouse() != null) target = ti.getTargetWarehouse().getId();
-			
-			Integer transferId = ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER,WAREHOUSE_TRANSFER.DOMAIN, WAREHOUSE_TRANSFER.SERIES,WAREHOUSE_TRANSFER.NUMBER, WAREHOUSE_TRANSFER.COMMENTS, WAREHOUSE_TRANSFER.ISSUE_TIME, WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE, WAREHOUSE_TRANSFER.TARGET_WAREHOUSE)
-					.values(domainId,scode,next,ti.getComments(),t,source,target).returning(WAREHOUSE_TRANSFER.ID).fetchOne().getId();
-			*/
 			Integer transferId;
 			if(ti.getSeries().getCode() != null){
 				transferId = ctx.getDslContext().select(WAREHOUSE_TRANSFER.ID)
@@ -618,7 +587,7 @@ public class DBStock {
 				
 			Vector<StockInfo> v = new Vector<StockInfo>();
 			for (Record5<Integer, Integer, Integer, Double, Integer> d : data) {
-				Item i = getItem(ctx.getDslContext(),domain.getName(),d.value2());
+				Item i = getItem(ctx,domain.getName(),d.value2());
 				if ( (d.value4() == 0) && ((i.getStatus() == ProductStatus.DISCONTINUED) || (!i.getProduct().isInventoriable()) ) ) {
 					ctx.getDslContext().delete(STOCK).where(STOCK.ID.equal(d.value1()));
 				} else if ( !onlyNonCero || (d.value4() != 0) ) {
@@ -697,9 +666,8 @@ public class DBStock {
 		
 	}
 	
-	public static Item getItem(DSLContext dslContext, String domain, Integer id ){
-		
-		Result<Record6<String, String, String, String, Integer, Byte>> data = dslContext.select(ITEM.BARCODE, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, ITEM.PRODUCT, ITEM.STATUS)
+	public static Item getItem(AONContext ctx, String domain, Integer id ){
+		Result<Record6<String, String, String, String, Integer, Byte>> data = ctx.getDslContext().select(ITEM.BARCODE, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, ITEM.PRODUCT, ITEM.STATUS)
 			.from(ITEM)
 			.where(ITEM.ID.eq(id)).fetch();
 		
@@ -711,7 +679,7 @@ public class DBStock {
 		else i.setDetail2("");
 		if(data.get(0).value4() != null) i.setDetail3(data.get(0).value4());
 		else i.setDetail3("");
-		Product p = getProduct(dslContext, data.get(0).value5());
+		Product p = getProduct(ctx, data.get(0).value5());
 		i.setProduct(p);
 		if(data.get(0).value6() != null) i.setStatus( ProductStatus.values()[data.get(0).value6()] );
 		
@@ -720,9 +688,8 @@ public class DBStock {
 	}
 	
 
-	public static Product getProduct(DSLContext dslContext, Integer id ){
-		
-		Result<Record3<String,String,Byte>> data = dslContext.select(PRODUCT.CODE,PRODUCT.NAME,PRODUCT.INVENTORIABLE)
+	public static Product getProduct(AONContext ctx, Integer id ){		
+		Result<Record3<String,String,Byte>> data = ctx.getDslContext().select(PRODUCT.CODE,PRODUCT.NAME,PRODUCT.INVENTORIABLE)
 			.from(PRODUCT)
 			.where(PRODUCT.ID.eq(id)).fetch();
 		

@@ -4,6 +4,7 @@ package com.esferalia.aon.gwt.template.client;
 
 import static com.esferalia.aon.gwt.common.client.AONEntryPoint.getParameter;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
@@ -115,7 +116,7 @@ public class Templates extends Composite implements EntryPoint {
 	Integer inventory, workplaceId, proposalId, num, inventoryId;
 	String closedAux, inventoryIdAux, warehouseAux, warehouse2Aux, initialDateAux, finalDateAux, initialIdAux,
 			finalIdAux, onlyNegativeAux, detailAux, w, wAux, incomeId, seriesAux, commentsAux;
-
+	
 	@Override
 	public void onModuleLoad() {
 		
@@ -125,6 +126,7 @@ public class Templates extends Composite implements EntryPoint {
 		boolean silent = Boolean.parseBoolean(getParameter(GWT.getModuleName(), SILENT));
 		if (silent){
 			exportEcommerce(this);
+			exportEcommercex(this);
 			exportProduct(this);
 			exportStock(this);
 			exportTransferStock(this);
@@ -1100,6 +1102,43 @@ public class Templates extends Composite implements EntryPoint {
 		}
 	}
 	
+	private void exportEcommerce(){
+		item.getTypeList(getDomain(), new AsyncCallback<LinkedList<String>>() {
+			
+			@Override
+			public void onSuccess(LinkedList<String> result) {
+				Dialog d = new Dialog("Exportar Productos Ecommerce","Exportar",true,"Cancelar",true,"exportEcommerce");
+				d.setUrl(GWT.getModuleBaseURL());
+				d.setTypeList(result);
+				TemplatesDialog popup = new TemplatesDialog(d) {
+					
+					@Override
+					protected void onCancel() {
+						hide();
+					}
+					
+					@Override
+					protected void onAccept() {
+						hide();
+						ListBox listBox = (ListBox) flex_table.getWidget(0, 1);
+						
+						String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_amazon_product/"
+				            	+ "?domain_id=" + getDomain().getId()
+				            	+ "&username="+ template_list.getLogin()
+				            	+ "&description=" + listBox.getSelectedItemText();
+						Window.open( fileDownloadURL, "_blank",null);
+					}
+				};
+				popup.addStyleName("gwt-PopupPanel-template");
+				popup.setGlassEnabled(true);
+				popup.show();			
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+	}
+	
 	private void importEcommerce(final List<Seller> sellerList) {
 		item.getProductCategories(getDomain(), new AsyncCallback<List<ProductCategory>>() {
 			
@@ -1460,6 +1499,17 @@ public class Templates extends Composite implements EntryPoint {
 	public static native void exportEcommerce(Templates thiz) /*-{
 		$wnd.ecommerce = function() {
 			thiz.@com.esferalia.aon.gwt.template.client.Templates::ecommerce(*)();
+		}
+	}-*/;
+	
+	public void ecommercex(){
+		
+		exportEcommerce();
+	}
+	
+	public static native void exportEcommercex(Templates thiz) /*-{
+		$wnd.ecommerce = function() {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::ecommercex(*)();
 		}
 	}-*/;
 	

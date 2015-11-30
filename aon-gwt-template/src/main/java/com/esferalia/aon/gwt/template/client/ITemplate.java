@@ -83,4 +83,6 @@ public interface ITemplate extends RemoteService{
 	public List<Seller> getSellerList(Domain domain);
 	
 	public LinkedList<String> getProductRoles(Domain domain);
+	
+	public LinkedList<String> getTypeList(Domain domain);
 }

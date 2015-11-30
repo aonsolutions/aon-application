@@ -1,8 +1,5 @@
 package com.esferalia.aon.gwt.template.client;
 
-
-
-
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;

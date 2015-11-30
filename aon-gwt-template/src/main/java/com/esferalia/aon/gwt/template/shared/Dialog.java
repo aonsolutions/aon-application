@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.template.shared;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
@@ -25,6 +26,8 @@ public class Dialog implements IsSerializable{
 	List<Seller> sellerList;
 	Boolean closed;
 	EcommerceProduct ecommerceProduct;
+	LinkedList<String> typeList;
+	
 	public Dialog() {
 	
 	}
@@ -171,6 +174,14 @@ public class Dialog implements IsSerializable{
 
 	public void setEcommerceProduct(EcommerceProduct ecommerceProduct) {
 		this.ecommerceProduct = ecommerceProduct;
+	}
+
+	public LinkedList<String> getTypeList() {
+		return typeList;
+	}
+
+	public void setTypeList(LinkedList<String> typeList) {
+		this.typeList = typeList;
 	}
 	
 	

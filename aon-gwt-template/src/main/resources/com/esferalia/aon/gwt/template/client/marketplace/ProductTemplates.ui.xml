@@ -29,6 +29,10 @@
 							<g:Button ui:field="delete_button" visible="false" styleName='aon-finding-toolbar-item aon-icon-delete'
 								text="Borrar" />
 						</g:HTMLPanel>
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+							<g:Button ui:field="export_button" visible="true" styleName='aon-finding-toolbar-item aon-icon-export-excel-trans'
+								text="Exportar" />
+						</g:HTMLPanel>
 					</g:HorizontalPanel>		
 				</g:HorizontalPanel>
 			</g:FlowPanel>

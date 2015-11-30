@@ -52,6 +52,7 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -159,6 +160,7 @@ public class ProductTemplates  extends ResizeComposite{
 	@UiField Button new_button;
 	@UiField Button edit_button;
 	@UiField Button delete_button;
+	@UiField Button export_button;
 	@UiField(provided = true) TextBox nameSearchBox;
 	@UiField(provided = true) TextBox typeSearchBox;
 	@UiField Button nameSearchButton;
@@ -177,6 +179,7 @@ public class ProductTemplates  extends ResizeComposite{
 		new_button = new Button();
 		edit_button = new Button();
 		delete_button = new Button();
+		export_button = new Button();
 		nameSearchBox = new TextBox();
 		typeSearchBox = new TextBox();
 		nameSearchButton = new Button();
@@ -357,6 +360,50 @@ public class ProductTemplates  extends ResizeComposite{
 			public void onFailure(Throwable caught) {}
 		});
 	}
+	
+	@UiHandler("export_button")
+	void exportButton(ClickEvent event){
+		exportEcommerce();
+	}
+	
+	private void exportEcommerce(){
+		item.getTypeList(getDomain(), new AsyncCallback<LinkedList<String>>() {
+			
+			@Override
+			public void onSuccess(LinkedList<String> result) {
+				Dialog d = new Dialog("Exportar Productos Ecommerce","Exportar",true,"Cancelar",true,"exportEcommerce");
+				d.setUrl(GWT.getModuleBaseURL());
+				d.setTypeList(result);
+				TemplatesDialog popup = new TemplatesDialog(d) {
+					
+					@Override
+					protected void onCancel() {
+						hide();
+					}
+					
+					@Override
+					protected void onAccept() {
+						hide();
+						ListBox listBox = (ListBox) flex_table.getWidget(0, 1);
+						
+						String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_amazon_product/"
+				            	+ "?domain_id=" + getDomain().getId()
+				            	+ "&username="+ getLogin()
+				            	+ "&description=" + listBox.getSelectedItemText();
+						Window.open( fileDownloadURL, "_blank",null);
+					}
+				};
+				popup.addStyleName("gwt-PopupPanel-template");
+				popup.setGlassEnabled(true);
+				popup.show();			
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+	}
+	
+	
 	@UiHandler("edit_button")
 	void editButton(ClickEvent event){
 		EcommerceProduct object;

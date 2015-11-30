@@ -89,4 +89,6 @@ public interface ITemplateAsync {
 
 	void getProductRoles(Domain domain, AsyncCallback<LinkedList<String>> callback);
 
+	void getTypeList(Domain domain, AsyncCallback<LinkedList<String>> callback);
+
 }

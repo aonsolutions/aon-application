@@ -188,6 +188,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		case "exportIncome": exportIncome(dialog);break;
 		case "importEcommerceTemplate": importEcommerce(dialog);break;
 		case "editEcommerceTemplate": editEcommerce(dialog);break;
+		case "exportEcommerce":exportEcommerce(dialog);break;
 		default:
 			break;
 		}
@@ -275,6 +276,22 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(4, 0, new Label("Archivo"));
 		flex_table.setWidget(4, 1, upload);
 		
+		flexTableCss();
+	}
+	
+	private void exportEcommerce(Dialog dialog) {
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+		
+		ListBox typeListBox = new ListBox();
+		typeListBox.addItem("-","-1");
+		for(String type : dialog.getTypeList())
+			typeListBox.addItem(type, type);		
+		flex_table.setWidget(0, 0, new Label("Tipo"));
+		flex_table.setWidget(0, 1, typeListBox);
+
 		flexTableCss();
 	}
 	
