@@ -74,6 +74,9 @@ public class EnterpriseCCCController extends LinesController {
 		for( CCCType cccType : CCCType.values() ) {
 			String name = cccType.getName(locale);
 			SelectItem item = new SelectItem(cccType, name);
+			if(cccType==CCCType.LEARNING){
+				item.setDisabled(Boolean.TRUE);
+			}
 			cccTypes.add(item);			
 		}
 		return cccTypes;

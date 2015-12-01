@@ -162,6 +162,52 @@ private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	/** 
 	 *  ------------------------------------------------------------------------
 	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+	 * T25.java
+	 *  ------------------------------------------------------------------------
+	 */ 
+	private List<SelectItem> T25CodeList;
+
+	public List<SelectItem> getT25CodeList() {
+		if (T25CodeList == null) {
+			T25CodeList = new LinkedList<SelectItem>();
+			T25[] el = T25.values();
+			for (T25 obj : el) {
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					T25CodeList.add(item);
+				}
+			}
+		}
+		return T25CodeList;
+	}
+
+	/** 
+	 *  ------------------------------------------------------------------------
+	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+	 * T26.java
+	 *  ------------------------------------------------------------------------
+	 */ 
+	private List<SelectItem> T26CodeList;
+
+	public List<SelectItem> getT26CodeList() {
+		if (T26CodeList == null) {
+			T26CodeList = new LinkedList<SelectItem>();
+			T26[] el = T26.values();
+			for (T26 obj : el) {
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					T26CodeList.add(item);
+				}
+			}
+		}
+		return T26CodeList;
+	}
+
+	/** 
+	 *  ------------------------------------------------------------------------
+	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
 	 * T33.java
 	 *  ------------------------------------------------------------------------
 	 */ 
@@ -364,6 +410,29 @@ private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 			}
 		}
 		return T50CodeList;
+	}
+
+	/** 
+	 *  ------------------------------------------------------------------------
+	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+	 * T52.java
+	 *  ------------------------------------------------------------------------
+	 */ 
+	private List<SelectItem> T52CodeList;
+
+	public List<SelectItem> getT52CodeList() {
+		if (T52CodeList == null) {
+			T52CodeList = new LinkedList<SelectItem>();
+			T52[] el = T52.values();
+			for (T52 obj : el) {
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					T52CodeList.add(item);
+				}
+			}
+		}
+		return T52CodeList;
 	}
 
 	/** 

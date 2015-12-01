@@ -69,6 +69,7 @@ import com.esferalia.aon.payroll.enumeration.ss.T55;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseParamsController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController.ContractParams;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractController.TRL;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 
@@ -368,6 +369,29 @@ public class ContractUtils implements Serializable {
 		
 	}
 	
+	public void insertCooperativePartnerContractData(Contract contract, ContractParams params) {
+		IManagerBean bean;
+		ContractData data;
+		try {
+			bean = BeanManager.getManagerBean(ContractData.class);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible grabar los datos de contrato. (" +e.getMessage() + ")";
+			throw new AbortProcessingException(msg,e);
+		}
+		try {
+			data = new ContractData();
+			data.setContract(contract);
+			data.setStartDate(contract.getStartDate());
+			data.setEndDate(contract.getEndDate());
+			data.setName( "PORCENTAJE_FOGASA" );
+			data.setExpression("0");
+			bean.insert(data);
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el tipo de jornada. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
+	}
+	
 	public void insertPartialTimeContractData(Contract contract, ContractParams params) {
 		IManagerBean bean;
 		ContractData data;
@@ -465,6 +489,21 @@ public class ContractUtils implements Serializable {
 				info.setStartDate(contract.getStartDate());
 				info.setEndDate(contract.getEndDate());
 				info.setName( ContractVariable.SELF_EMPLOYED.getValue() );
+				info.setExpression(Boolean.TRUE.toString());
+				bean.insert(info);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el centro de formacion. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
+		
+		try {
+			if(params.getTrl()==TRL.COOPERATIVE_PARTNER){
+				info = new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(contract.getStartDate());
+				info.setEndDate(contract.getEndDate());
+				info.setName( ContractVariable.COOPERATIVE_PARTNER.getValue() );
 				info.setExpression(Boolean.TRUE.toString());
 				bean.insert(info);
 			}
@@ -1161,8 +1200,16 @@ public class ContractUtils implements Serializable {
 	public void loadContractInfo(Contract contract, ContractParams params) throws ManagerBeanException {
 		Map<String, String> map = getContractInfoMap(contract);
 		if(map.get(ContractVariable.SELF_EMPLOYED.getValue())!=null){
-			params.setRetaQuote(new Boolean(map.get(ContractVariable.SELF_EMPLOYED.getValue())));
-		} 
+			if(new Boolean(map.get(ContractVariable.SELF_EMPLOYED.getValue()))){
+				params.setTrl(TRL.RETA);
+			}
+		}
+		if(map.get(ContractVariable.COOPERATIVE_PARTNER.getValue())!=null){
+			if(new Boolean(map.get(ContractVariable.COOPERATIVE_PARTNER.getValue()))){
+				params.setTrl(TRL.COOPERATIVE_PARTNER);
+			}
+		}
+			
 		if(map.get(ContractVariable.CONTRACT_MODEL_OPTION.getValue())!=null){
 			String ordinal = (map.get(ContractVariable.CONTRACT_MODEL_OPTION.getValue()));
 			params.setContractModelOption(ModelOption.valueOf(ordinal));

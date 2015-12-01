@@ -162,15 +162,20 @@ public class ContractController extends BasicController {
 			String value = getContractUtils().getInfoCurrentValue(contract, ContractVariable.SELF_EMPLOYED.getValue());
 			return new Boolean( value );
 		} catch (ManagerBeanException e) {
-			// nothing
+			LOGGER.error(e.getMessage());
 		}
 		return false;
 	}
 	public boolean isRowContractInternship() {
+		Contract contract = null;
+		String code = null;
 		try {
-			return isInternship( (Contract) getModel().getRowData() );
-		} catch (ManagerBeanException e) {
-			// nothing
+			contract = (Contract) getModel().getRowData();
+			code = getContractUtils().getDataCurrentValue(contract, ContextVariable.TC2.getName());
+			return contract.getEnterpriseCCC()!=null && contract.getEnterpriseCCC().getType()==CCCType.FELLOWS 
+					&& code!=null && code.equals("000");
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
 		}
 		return false;
 	}
@@ -182,7 +187,7 @@ public class ContractController extends BasicController {
 			ContractCode contractCode = ContractCode.getContractCodeByValue(code);
 			return contractCode!=null?code + " - " + contractCode.getName(FacesContext.getCurrentInstance().getViewRoot().getLocale()):"";
 		} catch (ManagerBeanException e) {
-			// nothing
+			LOGGER.error(e.getMessage());
 		}
 		return null;
 	}
@@ -339,7 +344,7 @@ public class ContractController extends BasicController {
 			contractCode = this.getParams().getContractCode();
 		}
 		return (getParams().isRetaQuote() && getParams().isRetaPartialTime())
-				||  (contractCode!=null && !StringUtils.startsWith(contractCode, "1") && !StringUtils.startsWith(contractCode, "4") && !isInternship()) ;
+				||  (contractCode!=null && !StringUtils.startsWith(contractCode, "1") && !StringUtils.startsWith(contractCode, "4")) ;
 	}
 	
 	public boolean isExtensibleContract(){
@@ -829,9 +834,10 @@ public class ContractController extends BasicController {
 	}
 	
 	private boolean isInternship(Contract contract) {
-		return getParams()!=null 
+		return (contract.getEnterpriseCCC()!=null && contract.getEnterpriseCCC().getType()==CCCType.FELLOWS)
+				&& getParams()!=null 
 				&& ( getParams().getContractCode()==null 
-				|| (getParams().getContractCode()!=null && getParams().getContractCode().equals("000")));
+					|| (getParams().getContractCode()!=null && getParams().getContractCode().equals("000")));
 	}
 	
 	public void loadWorkplaceAgreement(ActionEvent event){
@@ -1926,6 +1932,7 @@ public class ContractController extends BasicController {
 		
 		private boolean retaQuote;
 		private boolean retaPartialTime;
+		private TRL trl;
 		private ContractOption contractOption;
 		private ContractType contractType;
 		private ContractModelCode contractModelCode;
@@ -2153,15 +2160,24 @@ public class ContractController extends BasicController {
 		public boolean isRetaQuote() {
 			return retaQuote;
 		}
-		public void setRetaQuote(boolean retaQuote) {
-			this.retaQuote = retaQuote;
-		}
 		
 		public boolean isRetaPartialTime() {
 			return retaPartialTime;
 		}
 		public void setRetaPartialTime(boolean retaPartialTime) {
 			this.retaPartialTime = retaPartialTime;
+		}
+		public boolean isCooperativePartnerQuote() {
+			return trl!=null && trl==TRL.COOPERATIVE_PARTNER;
+		}
+		public TRL getTrl() {
+			return trl;
+		}
+		public void setTrl(TRL trl) {
+			this.trl = trl;
+			if(trl==TRL.RETA){
+				retaQuote = true;
+			}
 		}
 		public Double getWeekHours() {
 			return weekHours;
@@ -2228,6 +2244,11 @@ public class ContractController extends BasicController {
 			return null;
 		}
 		
+	}
+	
+	public enum TRL{
+		RETA,
+		COOPERATIVE_PARTNER;
 	}
 	
 	public class WorkdayManager implements Serializable {

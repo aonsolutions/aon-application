@@ -40,6 +40,7 @@ public class ContractInfo extends ContractInfoDB implements IExpression, IAudita
 	public enum ContractVariable implements IStringEnum {
 	
 		SELF_EMPLOYED("RETA"),
+		COOPERATIVE_PARTNER("SOCIO_COOP"),
 		
 		TRAINING_CENTER("CENTRO_FORMATIVO"),
 		TRAINING_COURSE("CURSO_FORMATIVO"),

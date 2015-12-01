@@ -24,19 +24,20 @@ import org.apache.commons.lang.time.DateUtils;
 public enum T58 implements IPayrollTablesEnum {
 
 	T58_A( "a", "Personal en trabajos exclusivos de oficina", null, null ),
-	T58_B( "b", "Tipo de cotización para todos los trabajadores que deban desplazarse habitualmente durante su jornada laboral, siempre por razón de la ocupación o la actividad económina no corresponda un tipo superior. Representantes Comercio. - Solo para liquidaciones complementarias anteriores al 2010.", null, null ),
-	T58_C( "c", "Trabajadores en periodo de baja por incapacidad temporal y otras situaciones con suspensión de la relación laboral con obligación decotizar. - Solo para liquidaciones complementarias anteriores al 2010", null, null ),
+	T58_B_2010( "b_2010", "Tipo de cotización para todos los trabajadores que deban desplazarse habitualmente  durante  su  jornada  laboral,  siempre  por  razón  de  la ocupación o la actividad económica no corresponda un tipo superior. - Solo para liquidaciones complementarias anteriores al 2010.", "-", "20101231" ),
+	T58_B( "b", "Representantes Comercio.", null, null ),
+	T58_C( "c", "Trabajadores  en  periodo  de  baja  por  incapacidad  temporal  y  otras situaciones  con  suspensión  de  la  relación  laboral  con obligación  de cotizar. - Solo para liquidaciones complementarias anteriores al 2010", "-", "20101231" ),
 	T58_D( "d", "Personal de oficios en instalaciones y reparaciones en edificios, obras y trabajos de construcción en general.", null, null ),
-	T58_E( "e", "Conductores de vehículo automóvil de transporte de pasajeros en general (taxis, automóviles, autobuses, etc) y de transporte de mercancías que tengan una capacidad de carga útil no superior a 3,5 Tm. - Solo para liquidaciones complementarias anteriores al 2013", null, null ),
-	T58_F( "f", "Conductores de vehículo automóvil de transporte de mercancías que tengan una capacidad de carga útil superior a 3,5 Tm.", null, null ),
-	T58_G( "g", "Personal de limpieza en general. Limpieza de edificios y de todo tipo de establecimientos. Limpieza de calles.", null, null ),
+	T58_E( "e", "Conductores  de  vehículo  automóvil  de  transporte  de  pasajeros  en general   (taxis,   automóviles,   autobuses,   etc)   y   de transporte de mercancías que tengan un a capacidad de carga útil no superior a 3,5 Tm. - Solo para liquidaciones complementarias anteriores al 2013", "-", "20131231" ),
+	T58_F( "f", "Conductores  de  vehículo  automóvil  de  transporte  de  mercancías  que tengan una capacidad de carga útil superior a 3,5 Tm.", null, null ),
+	T58_G( "g", "Personal  de  limpieza  en  general. Limpieza  de  edificios  y  de  todo  tipo de establecimientos. Limpieza de calles.", null, null ),
 	T58_H( "h", "Vigilantes, guardas, guardas jurados y personal de seguridad.", null, null ),
-	T58_I( "i", "Personal de vuelo. - Solo para liquidaciones complementarias anteriores al 2008.", null, null ),
+	T58_I( "i", "Personal de vuelo. - Solo para liquidaciones complementarias anteriores al 2008.", "-", "20081231" ),
 	T58_V( "v", "Grupo segundo de cotización al Régimen Especial del Mar.", null, null ),
 	T58_W( "w", "Grupo tercero de cotización al Régimen Especial del Mar.", null, null ),
 	T58_X( "x", "Carga y descarga", " estiba y desestiba.", null ),
 	T58_Y( "y", "Trabajos habituales en interior de minas.", null, null ),
-	T58_Z( "z", "Dependientes. Cajeros. - Solo para liquidaciones complementarias anteriores al 2010.", null, null ),
+	T58_Z( "z", "Dependientes. Cajeros. - Solo para liquidaciones complementarias anteriores al 2010.", "-", "20101231" ),
 	;
 	public static final String TABLE_NAME = "T58";
 	public static final String TABLE_DESCRIPTION = "T58.txt";
