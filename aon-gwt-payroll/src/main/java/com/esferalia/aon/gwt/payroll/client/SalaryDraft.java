@@ -54,6 +54,7 @@ import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.O
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.RowLabelStyle;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.Timeline;
 import com.esferalia.aon.gwt.visualization.client.visualizations.Tooltip;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -220,7 +221,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			"BRUTO", "GTZDO", "_OLD",// functions
 			"GET_VARIABLE", "SI", "MAX", "MIN", "ABS", // functions
 
-			"ANTICIPO_ATRASOS", PORCENTAJE_IRPF, //
+			"ANTICIPO_ATRASOS", PORCENTAJE_IRPF, PORCENTAJE_DESMPL, "PORCENTAJE_DESMPL_E",//
 
 			"BASE_CGC", "BASE_CGP", "BASE_CGC_E", "BASE_CGP_E", // internals
 			"BASE_ESTR", "BASE_NESTR", "TOTAL_DEVENGADO", // internals
@@ -4456,6 +4457,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		switch (deduction.getType()) {
 		case IRPF:
 			return newIrpfPercentBox(deduction, percent);
+		case UNEMPLOYMENT:
+			return newPercentBox("PORCENTAJE_" + deduction.getName(), deduction, percent);
 		default:
 			return newPercentLabel(deduction, percent,
 					getPercentVariable(deduction.getType()));
@@ -4562,6 +4565,87 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		}
 
 		return irpfPercentPanel;
+	}
+
+	private Widget newPercentBox(
+			final String variable, 
+			final Deduction deduction,
+			final Double percent) {
+
+		final TextBox percentTexTBox = new ExpressionBox();
+
+		class PercentHandler
+				implements FocusHandler, BlurHandler, ChangeHandler {
+
+			// -------------------------------------------------- Focus Handler
+			@Override
+			public void onFocus(FocusEvent event) {
+				Variable percentVariable = SalaryDraft.this
+						.getContextVariable(variable);
+				if (percentVariable != null)
+					percentTexTBox.setText(percentVariable.getExpression());
+				else
+					percentTexTBox.setText(String.valueOf(
+							NumberUtils.isValid(percent) ? 0.00 : percent));
+			}
+
+			// --------------------------------------------------- Blur Handler
+
+			@Override
+			public void onBlur(BlurEvent event) {
+				percentTexTBox.setText(formatPercent(
+						NumberUtils.isNotValid(percent) ? 0.00 : percent));
+			}
+
+			// ------------------------------------------------- Change Handler
+			@Override
+			public void onChange(ChangeEvent event) {
+
+				StringVariable var = SalaryDraft.this
+						.newStringVariable(variable);
+				String value = percentTexTBox.getValue();
+				
+				var.setExpression(StringUtils.isEmpty(value)
+						? "REMOVE_VARIABLE()" : value);
+
+				salaryDraftObject.addDraftVariable(var);
+				salaryDraftObject.calculate(SalaryDraft.this);
+			}
+
+			// ----------------------------------------------------------------
+
+		}
+		;
+		percentTexTBox.setVisibleLength(5);
+		percentTexTBox.setText(formatPercent(
+				NumberUtils.isNotValid(percent) ? 0.00 : percent));
+		PercentHandler irpfPercentHandler = new PercentHandler();
+		percentTexTBox.addBlurHandler(irpfPercentHandler);
+		percentTexTBox.addFocusHandler(irpfPercentHandler);
+		percentTexTBox.addChangeHandler(irpfPercentHandler);
+
+		Panel percentPanel = new HorizontalPanel();
+		percentPanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
+		percentPanel.add(percentTexTBox);
+		Variable percentVar = getContextVariable(variable);
+
+		if (percentVar == null) {
+			percentVar = newStringVariable(variable);
+			return percentPanel;
+		}
+
+//		if (isSystemVariable(percentVar)) {
+//			Button button = getSystemVarButton(percentVar,AON.AON_ICON_SEGSOCIAL_SMALL);
+//			button.setEnabled(false);
+//			percentPanel.add(button);
+//		} else {
+//			Button systemButton = getSystemVarButton(percentVar,
+//					AON.AON_ICON_CONFIG);
+//			systemButton.setTabIndex(Short.MAX_VALUE);
+//			percentPanel.add(systemButton);
+//		}
+
+		return percentPanel;
 	}
 
 	private void calculate() {
