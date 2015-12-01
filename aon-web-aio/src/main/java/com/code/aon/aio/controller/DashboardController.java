@@ -90,6 +90,7 @@ import com.code.aon.ui.fiscal.controller.IFiscalModelController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.google.sql.AbstractSQL.Domain;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
@@ -1048,7 +1049,7 @@ public class DashboardController implements Serializable {
 			}
 			
 			DashboardDocs a = categories.get(-1);
-			if (a != null && a.getsize()>0){
+			if (a != null && a.getsize()>=0){
 				types.add(a);	
 				free= free - a.getsize();
 			}
@@ -1135,7 +1136,6 @@ public class DashboardController implements Serializable {
 						.from(RATTACH)
 						.where(getAttachmentCondition()).fetch();
 				
-				int aux = 0;
 				for (Record3<Integer, Integer, String> record : data) {
 					Integer categoryId = (record.value1() != null) ? record.value1() : -1;
 					if(map.containsKey(categoryId)){
@@ -1262,13 +1262,16 @@ public class DashboardController implements Serializable {
 	}
 	
 	private Condition getAttachmentCondition() throws SQLException {
-		String domain = AonUtil.getDomainName();
-		Integer domainId = getDomainId(domain);
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		List<Integer> domains = new LinkedList<Integer>();
-		domains.add(ds.getDomainId());
-		if ( ds.isChildDomain() && domainId.equals(ds.getDomainId())) {
-			domains.add(ds.getParentDomainId());
+
+		com.esferalia.aon.occam.api.model.Domain domain = AON.getDomain(domainName, domainId, login);
+		LinkedList<Integer> domains = new LinkedList<>();
+		domains.add(domain.getId());
+		if(domain.isEnableHeredity()){
+			domains.add(domain.getParentId());
 		}
 		Condition condition = RATTACH.DOMAIN.in(domains);
 		if ( !AonUtil.getRoleManager().isConfidentiality() ) {
@@ -1287,6 +1290,7 @@ public class DashboardController implements Serializable {
 			condition = condition.and(scopeCondition);
 		}
 		condition = condition.and(RATTACH.TYPE.eq((byte)RegistryAttachmentType.CORPORATE_IDENTITY.ordinal()));
+		
 		return condition;
 	}
 	

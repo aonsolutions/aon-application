@@ -29,6 +29,7 @@ public class DomainDAO {
 		if(domainResult.isNotEmpty()){
 			DomainRecord domainRecord = domainResult.get(0);
 			domain = new Domain();
+			domain.setId(domainId);
 			domain.setActive(domainRecord.getActive() == 1);
 			domain.setChild(domainRecord.getParent() == null);
 			domain.setDescription(domainRecord.getDescription());
@@ -36,6 +37,7 @@ public class DomainDAO {
 			domain.setName(domainRecord.getName());
 			domain.setParent(domainRecord.getParent() != null);
 			domain.setParentId(domainRecord.getParent());
+			domain.setEnableHeredity(domainRecord.getEnableheredity() == 1);
 		}
 		return domain;
 	}
