@@ -3772,7 +3772,7 @@ public class SQLContractSalaryCalculatorContext
 					List<ITimedResult<Object>> results = ctx.addExpression(expr,
 							start, end);
 
-					onRedefinedImplicit(ctx, expr.getName(), implicit, results);
+					onRedefinedImplicit(ctx, expr.getName(), expr.getExpression(), implicit, results);
 
 				} catch (UndefinedVariablesException e) {
 					failed.add(new TimedObject<IExpression>(expr,
@@ -3794,7 +3794,7 @@ public class SQLContractSalaryCalculatorContext
 					List<ITimedResult<Object>> results = ctx.addExpression(expr,
 							period.getStart(), period.getEnd());
 
-					onRedefinedImplicit(ctx, expr.getName(), implicit, results);
+					onRedefinedImplicit(ctx, expr.getName(), expr.getExpression(), implicit, results);
 
 				} catch (UndefinedVariablesException e) {
 					onUndefinedData(timedExpr.getValue(), e.getMessage(),
@@ -3812,7 +3812,7 @@ public class SQLContractSalaryCalculatorContext
 		}
 	}
 
-	private void onRedefinedImplicit(ExpressionContext ctx, String name,
+	private void onRedefinedImplicit(ExpressionContext ctx, String name, String expr,
 			ITimedVariable<?> implicit, List<ITimedResult<Object>> results) {
 		if (listener == null)
 			return;
@@ -3822,10 +3822,17 @@ public class SQLContractSalaryCalculatorContext
 			return;
 		if (implicit == null)
 			return;
+		
 		if (implicit instanceof IExpressionVariable<?>
 				&& ((IExpressionVariable<?>) implicit).getExpression()
 						.getScope().compareTo(ExpressionScope.AGREEMENT) >= 0)
 			return;
+		
+		
+		if ( isSystem(name, expr) ) 
+			return ;
+		
+		
 		onRedefinedImplicit(name, results.get(0), implicit);
 	}
 
@@ -3846,8 +3853,10 @@ public class SQLContractSalaryCalculatorContext
 
 	protected void onRedefinedImplicit(String name, ITimedVariable<?> redefined,
 			ITimedVariable<?> implicit) {
-		if (listener != null)
-			listener.onRedefinedImplicit(name, redefined, implicit);
+		if (listener == null)
+			return;
+		
+		listener.onRedefinedImplicit(name, redefined, implicit);
 	}
 
 	private void loadPersonData(ExpressionContext ctx) throws SQLException {
@@ -4269,6 +4278,10 @@ public class SQLContractSalaryCalculatorContext
 		};
 		return week_days_hours.get(dayOfWeek);
 
+	}
+	
+	protected static boolean isSystem(String name, String expr) {
+		return AonStringUtils.isNotEmpty(expr) && expr.matches("\\s*SISTEMA\\s*\\(\\s*['\"]"+ name +"['\"]\\s*\\)\\s*;*\\s*");
 	}
 
 	@Override
