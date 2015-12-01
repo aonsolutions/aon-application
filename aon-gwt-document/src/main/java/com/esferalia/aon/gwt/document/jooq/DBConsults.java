@@ -71,7 +71,7 @@ public class DBConsults {
 		}
 		return false;
 	}
-	public static Document getAllRattach(Domain domain,User user, String domain2, Boolean confidential,Integer userDomainId){
+	public static Document getAllRattach(Domain domain,User user, String domain2, Boolean confidential){
 		AONContext ctx = null;
 		try {				
 			domain1=domain.getName();
@@ -82,7 +82,7 @@ public class DBConsults {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());	
 				Condition c;
 
-				if(userDomainId != domain.getId()){
+				if(user.getDomain() != domain.getId()){
 
 					c=(RATTACH.SCOPE.isNotNull().or(RATTACH.SCOPE.isNull()));
 					
@@ -106,7 +106,8 @@ public class DBConsults {
 								RATTACH.DOMAIN.eq(domain.getId()).or(
 								RATTACH.DOMAIN.eq(ctx.getDslContext().select(DOMAIN.PARENT)
 														.from(DOMAIN)
-														.where(DOMAIN.ID.eq(domain.getId())))))))
+														.where(DOMAIN.ID.eq(domain.getId()))
+														.and(DOMAIN.ENABLEHEREDITY.eq((byte)1)))))))
 						.fetch();
 				
 				//rattach scope null parent
@@ -121,7 +122,8 @@ public class DBConsults {
 						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
 						.where(RATTACH.TYPE.eq(sh).and((RATTACH.SCOPE.isNull().and(RATTACH.DOMAIN.eq(ctx.getDslContext().select(DOMAIN.PARENT)
 										.from(DOMAIN)
-										.where(DOMAIN.ID.eq(domain.getId())))))))
+										.where(DOMAIN.ID.eq(domain.getId()))
+										.and(DOMAIN.ENABLEHEREDITY.eq((byte)1)))))))
 						.fetch();
 				
 				//rattach scope null 
@@ -158,7 +160,7 @@ public class DBConsults {
 					if (!fi.getConfidential() || (confidential && fi.getConfidential())){
 						filesGwt.add(fi);
 						if(fi.getDomain().equalsIgnoreCase(domain2) || fi.getIsParent())
-							if(domain.equals(domain2))
+							if(domain.getName().equals(domain2))
 								vaux.add(fi);
 							else if(!fi.getIsParent()) vaux.add(fi);
 					}
@@ -168,7 +170,7 @@ public class DBConsults {
 					if (!esta(fi,user.getId(),ctx.getDslContext())&&(!fi.getConfidential() || (confidential && fi.getConfidential()))){
 						filesGwt.add(fi);
 						if(fi.getDomain().equalsIgnoreCase(domain2) || fi.getIsParent())
-							if(domain.equals(domain2))
+							if(domain.getName().equals(domain2))
 								vaux.add(fi);
 							else if(!fi.getIsParent()) vaux.add(fi);
 					}
@@ -178,7 +180,7 @@ public class DBConsults {
 					if (!fi.getConfidential() || (confidential && fi.getConfidential())){
 						filesGwt.add(fi);
 						if(fi.getDomain().equalsIgnoreCase(domain2) || fi.getIsParent())
-							if(domain.equals(domain2))
+							if(domain.getName().equals(domain2))
 								vaux.add(fi);
 							else if(!fi.getIsParent()) 
 								vaux.add(fi);
@@ -190,7 +192,7 @@ public class DBConsults {
 					if (!fi.getConfidential() || (confidential && fi.getConfidential())){
 						filesGwt.add(fi);
 						if(fi.getDomain().equalsIgnoreCase(domain2) || fi.getIsParent())
-							if(domain.equals(domain2))
+							if(domain.getName().equals(domain2))
 								vaux.add(fi);
 							else if(!fi.getIsParent()) vaux.add(fi);
 					}
@@ -276,11 +278,11 @@ public class DBConsults {
 		
 		fi.setIcon(getmType(fi));
 		if(record.value11()!=null)
-			fi.setDomainId(record.value11());
+			fi.setDomainId(record.getValue(DOMAIN.ID));
 		if(record.value12()!=null)
-			fi.setDomain(record.value12());
+			fi.setDomain(record.getValue(DOMAIN.NAME));
 		if(record.value13()!=null)
-			fi.setDomainDescription(record.value13());
+			fi.setDomainDescription(record.getValue(DOMAIN.DESCRIPTION));
 		if(record.value14()==null)
 			if(!fi.getDomain().equals(domain2))
 				fi.setIsParent(true);
