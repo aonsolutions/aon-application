@@ -26,6 +26,7 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
+import com.esferalia.aon.payroll.enumeration.VariableType;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
@@ -173,8 +174,8 @@ public class AgreementDraftObject {
 
 		private Level level;
 
-		public UndoableLevelCategoryEdit(Level level,
-				Set<String> oldCategories, Set<String> newCategories) {
+		public UndoableLevelCategoryEdit(Level level, Set<String> oldCategories,
+				Set<String> newCategories) {
 			super(oldCategories, newCategories);
 			this.level = level;
 		}
@@ -190,12 +191,12 @@ public class AgreementDraftObject {
 		}
 
 	}
-	
+
 	private Date draftEndDate;
 	private Date draftStartDate;
 
 	private Integer draftDomain;
-	
+
 	private int nextDraftLevelId = 0;
 	private int nextDraftExtraId = 0;
 	private int nextDraftPaymentId = 0;
@@ -204,10 +205,9 @@ public class AgreementDraftObject {
 	private AgreementDraft oldAgreementDraft;
 	private UndoManager<Undoable> undoManager;
 	private EmployeesServiceAsync employeesServiceAsync;
-	
-	
 
-	public AgreementDraftObject(Integer draftDomain, AgreementDraft agreementDraft,
+	public AgreementDraftObject(Integer draftDomain,
+			AgreementDraft agreementDraft,
 			EmployeesServiceAsync employeesServiceAsync) {
 		this.oldAgreementDraft = null;
 		this.agreementDraft = agreementDraft;
@@ -217,11 +217,11 @@ public class AgreementDraftObject {
 		this.draftDomain = draftDomain;
 	}
 
-	public boolean isMine(){
+	public boolean isMine() {
 		return NumberUtils.equals(draftDomain, agreementDraft.getDomain());
 	}
 
-	public boolean isMine(Payment payment){
+	public boolean isMine(Payment payment) {
 		return NumberUtils.equals(draftDomain, payment.getDomain());
 	}
 
@@ -245,7 +245,7 @@ public class AgreementDraftObject {
 		return payment;
 
 	}
-	
+
 	public Integer getDraftDomain() {
 		return draftDomain;
 	}
@@ -253,7 +253,7 @@ public class AgreementDraftObject {
 	public void setDraftDomain(Integer draftDomain) {
 		this.draftDomain = draftDomain;
 	}
-	
+
 	public Date getDraftEndDate() {
 		if (draftEndDate == null)
 			return agreementDraft.getEndDate();
@@ -281,7 +281,6 @@ public class AgreementDraftObject {
 		this.draftStartDate = draftStartDate;
 		this.draftEndDate = draftEndDate;
 	}
-	
 
 	// ------------------------------------------
 	// AgreeementDraft delegates
@@ -329,24 +328,32 @@ public class AgreementDraftObject {
 
 	public Set<String> getVariables() {
 		Set<String> vars = new HashSet<String>();
-		for ( String var: agreementDraft.getVariables())
-		if ( shownVariables.contains(var))
+		for (String var : agreementDraft.getVariables())
+			if (shownVariables.contains(var))
+				vars.add(var);
+		for (String var : getImplicitVariables())
+			if (shownVariables.contains(var))
 				vars.add(var);
 		return vars;
 	}
 
 	public Set<String> getHiddenVariables() {
 		Set<String> hidden = new HashSet<String>();
-		for ( String var: agreementDraft.getVariables())
-		if ( !shownVariables.contains(var))
+		for (String var : agreementDraft.getVariables())
+			if (!shownVariables.contains(var))
 				hidden.add(var);
+
+		for (String var : getImplicitVariables())
+			if (!shownVariables.contains(var))
+				hidden.add(var);
+
 		return hidden;
 	}
-	
+
 	public void hideVariable(String variable) {
 		shownVariables.remove(variable);
 	}
-	
+
 	public void showVariable(String variable) {
 		shownVariables.add(variable);
 	}
@@ -480,7 +487,7 @@ public class AgreementDraftObject {
 						agreementDraft = savedAgreementDraft;
 						undoManager.discardAll();
 						agreementDraft.clearDrafts();
-						
+
 						calculate(callback);
 
 					}
@@ -555,7 +562,8 @@ public class AgreementDraftObject {
 	// ------------------------------------------------------------------------
 
 	Set<Level> getChangedLevels() {
-		if (oldAgreementDraft == null || oldAgreementDraft.getLevels().isEmpty())
+		if (oldAgreementDraft == null
+				|| oldAgreementDraft.getLevels().isEmpty())
 			return Collections.emptySet();
 
 		Set<Level> changed = new HashSet<Level>();
@@ -575,7 +583,8 @@ public class AgreementDraftObject {
 		if (oldAgreementDraft == null
 				|| oldAgreementDraft.getVariables().isEmpty())
 			return Collections.emptySet();
-		Set<String> changed = new HashSet<String>(agreementDraft.getVariables());
+		Set<String> changed = new HashSet<String>(
+				agreementDraft.getVariables());
 		changed.removeAll(oldAgreementDraft.getVariables());
 		return changed;
 	}
@@ -603,18 +612,23 @@ public class AgreementDraftObject {
 				});
 	}
 
-	private void syncShowVariables(AgreementDraft agreementDraft, ContextDescriptor systemContext) {
+	private void syncShowVariables(AgreementDraft agreementDraft,
+			ContextDescriptor systemContext) {
 		Set<String> systemVars = systemContext.getVariables();
 		SalaryTable salaryTable = agreementDraft.getSalaryTable();
-		for (String var : agreementDraft.getVariables())
+		for (String var : agreementDraft.getVariables()) {
+			if (isHiddenByDefault(var))
+				continue;
 			if (salaryTable.contains(var) || !systemVars.contains(var))
 				shownVariables.add(var);
+		}
 	}
 
-	private void syncSalaryTable(AgreementDraft agreementDraft, ContextDescriptor systemContext) {
+	private void syncSalaryTable(AgreementDraft agreementDraft,
+			ContextDescriptor systemContext) {
 		SalaryTable salaryTable = agreementDraft.getSalaryTable();
-		for ( String name : systemContext.getVariables() ){
-			if ( !salaryTable.contains(0, name) ) { 
+		for (String name : systemContext.getVariables()) {
+			if (!salaryTable.contains(0, name)) {
 				VariableDescriptor descriptor = systemContext.get(name);
 				StringVariable var = new StringVariable();
 				var.setName(name);
@@ -627,14 +641,14 @@ public class AgreementDraftObject {
 			}
 		}
 	}
-	
+
 	private AgreementDraft newAgreementDraft(AgreementDraft src,
 			List<Variable> vars) {
 		AgreementDraft draft = new AgreementDraft();
 
 		draft.setId(src.getId());
 		draft.setDomain(src.getDomain());
-		
+
 		draft.setStartDate(src.getStartDate());
 		draft.setEndDate(src.getEndDate());
 
@@ -660,7 +674,7 @@ public class AgreementDraftObject {
 		}
 		return categories;
 	}
-
+	
 	// -------------------------------------------------------------------------
 	private static Variable getVariable(String name, List<Variable> list) {
 		for (Variable var : list)
@@ -703,8 +717,8 @@ public class AgreementDraftObject {
 
 		setStartAndEndDates(draftStartDate, draftEndDate,
 				draft.getDraftPayments());
-		setStartAndEndDates(draftStartDate, draftEndDate, draft
-				.getDraftSalaryTable().getAllVariables());
+		setStartAndEndDates(draftStartDate, draftEndDate,
+				draft.getDraftSalaryTable().getAllVariables());
 
 		setDateDrafts(draftStartDate, draftEndDate, draft);
 	}
@@ -724,7 +738,8 @@ public class AgreementDraftObject {
 			if (draft.isDraftPayment(payment))
 				continue;
 			if (DateUtils.compare(payment.getStartDate(), draftStartDate) <= 0
-					&& DateUtils.compare(payment.getEndDate(), draftEndDate) >= 0)
+					&& DateUtils.compare(payment.getEndDate(),
+							draftEndDate) >= 0)
 				continue;
 
 			payment.setStartDate(draftStartDate);
@@ -744,7 +759,8 @@ public class AgreementDraftObject {
 				continue;
 
 			if (DateUtils.compare(variable.getStartDate(), draftStartDate) <= 0
-					&& DateUtils.compare(variable.getEndDate(), draftEndDate) >= 0)
+					&& DateUtils.compare(variable.getEndDate(),
+							draftEndDate) >= 0)
 				continue;
 
 			variable.setStartDate(draftStartDate);
@@ -753,6 +769,104 @@ public class AgreementDraftObject {
 			draft.addDraftVariable(level, variable);
 		}
 	}
-	
 
+	private static boolean isHiddenByDefault(String var) {
+		return new HashSet<String>() {
+			{
+				add("EDAD");
+				add("SEXO");
+				add("HOMBRE");
+				add("MUJER");
+				add("MAYOR_65");
+
+				// DIAS
+				add("DIAS_AÑO");
+				add("DIAS_MES");
+				add("DIAS_NATURALES_MES");
+				add("DIAS_VACACIONES");
+				add("DIAS_VACACIONES_NO_DISFRUTADOS");
+				add("DIAS_TRABAJADOS");
+				add("DIAS_SEMANA");
+				add("DIAS_CANONTRATO");
+				add("DIAS_NOMINA");
+				add("DIAS_PAGA");
+				add("DIAS_BONIFICACION");
+				add("DIAS_COTIZADOS");
+				add("DIAS_EFECTIVOS");
+				add("DIAS_IT");
+				add("DIAS_ESPECIALES");
+				add("DIAS_PATERNIDAD");
+				add("DIAS_MATERNIDAD");
+				add("DIAS_ENFERMEDAD_COMUN");
+				add("DIAS_ENFERMEDAD_PROFESIONAL");
+				add("NUM_PAGAS");
+				add("DIAS_REALES");
+				add("DIAS_HUELGA");
+				add("DIAS_ERE");
+
+				// FINIQUITO ?
+				add("DIAS_INDEMNIZACION");
+				add("CAUSA_INDEMNIZACION");
+				add("AÑOS_TRABAJADOS");
+
+				add("MESES_NOMINA");
+				add("MESES_PAGA");
+				add("SEMANAS_TRABAJADAS");
+				add("SEMANAS_NOMINA");
+				add("SEMANAS_PAGA");
+
+				// HORAS
+				add("HORAS_SEMANA");
+				add("HORAS_NOMINA");
+				add("HORAS_LUNES");
+				add("HORAS_MARTES");
+				add("HORAS_MIERCOLES");
+				add("HORAS_JUEVES");
+				add("HORAS_VIERNES");
+				add("HORAS_SABADO");
+				add("HORAS_DOMINGO");
+				add("HORAS_CONVENIO");
+				add("HORAS_TRABAJADAS");
+				add("HORAS_EXTRAS");
+
+				// STUFF
+				add("TC2");
+				add("CNO");
+				add("IPREM");
+				add("CATEGORIA");
+				add("INDEFINIDO");
+				add("OCUPACION");
+				add("GARANTIZADO");
+				add("IRREGULAR");
+				add("TIEMPO_COMPLETO");
+				add("PORCENTAJE_IRPF");
+				add("GRUPO_COTIZACION");
+				add("EXENTO_IPREM");
+				add("XIPREM");
+				add("TARIFA_IT");
+				add("TARIFA_IMS");
+				add("CONTRATO_CORTA_DURACION");
+				add("AÑOS_ANTIGUEDAD");
+				add("COLECT_PECULIAR_COTIZACION");
+				add("COD_FIN_CONTRATO");
+				add("DESC_FIN_CONTRATO");
+				add("COEFICIENTE_PARCIALIDAD");
+				add("COEFICIENTE_ERE");
+				add("COEFICIENTE_HUELGA");
+
+				add("ASIMILADO_REGIMEN_GRAL");
+				add("INGRESO_AC_EMPRESA");
+
+			}
+		}.contains(var);
+	}
+
+	private static Set<String> getImplicitVariables() {
+		return new HashSet<String>() {
+			{
+				// HORAS
+				add("HORAS_CONVENIO");
+			}
+		};
+	}
 }
