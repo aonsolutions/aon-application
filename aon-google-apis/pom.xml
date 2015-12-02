@@ -69,7 +69,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-
 		<!-- Google -->
 		<dependency>
 			<groupId>com.google.api-client</groupId>
@@ -96,32 +95,35 @@
       		<artifactId>google-api-services-urlshortener</artifactId>
       		<version>v1-rev39-1.19.1</version>
     	</dependency>
+    	
+    	<!-- Google Drive API-->
 		<dependency>
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-drive</artifactId>
-			<version>v2-rev102-1.17.0-rc</version>
+			<version>v2-rev194-1.21.0</version>
 		</dependency>
+		
+		<!-- Gmail API -->
 		<dependency>
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-gmail</artifactId>
-			<version>v1-rev4-1.18.0-rc</version>
+			<version>v1-rev34-1.21.0</version>
 		</dependency>
+		
+		<!-- Google Task API -->
 		<dependency>
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-tasks</artifactId>
-			<version>v1-rev17-1.15.0-rc</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.apis</groupId>
-			<artifactId>google-api-services-identitytoolkit</artifactId>
-			<version>v3-rev153-1.16.0-rc</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.apis</groupId>
-			<artifactId>google-api-services-plus</artifactId>
-			<version>v1-rev123-1.18.0-rc</version>
+			<version>v1-rev41-1.21.0</version>
 		</dependency>
 
+		<!-- Google Oauth2 API -->
+		<dependency>
+			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-oauth2</artifactId>
+			<version>v2-rev98-1.21.0</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
@@ -139,11 +141,7 @@
 			<version>1.1</version>
 		</dependency-->
 
-		<dependency>
-			<groupId>com.google.apis</groupId>
-			<artifactId>google-api-services-oauth2</artifactId>
-			<version>v2-rev47-1.16.0-rc</version>
-		</dependency>
+
 
 		<dependency>
 			<groupId>com.google.code.gson</groupId>

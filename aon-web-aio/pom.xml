@@ -375,6 +375,20 @@
     </dependency>
     
     <dependency>
+    	<groupId>com.code.aon</groupId>
+    	<artifactId>aon.oauth2</artifactId>
+    	<version>${project.version}</version>
+    	<scope>compile</scope>
+    	 <exclusions>
+        <exclusion>
+          <groupId>javax.servlet</groupId>
+          <artifactId>servlet-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    
+    
+    <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.conexflow</artifactId>
       <version>${project.version}</version>
