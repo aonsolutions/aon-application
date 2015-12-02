@@ -73,6 +73,15 @@
 
 						<rich:menuSeparator id="actionMenuSeparator" />
 
+						<aon:if test="#{companyCollections.companyActivitiesCount > 1}">
+							<aon:menuItem id="activities"
+								value="#{bundle.aon_activity}"
+								iconClass="aon-icon-activity"
+								reRender="showActivityWindow">
+								<f:setPropertyActionListener target="#{expenseInvoice.showActivityWindow}" 
+									value="#{true}" />							
+							</aon:menuItem>
+						</aon:if>
 						<aon:menuItem id="projects"
 							value="#{bundle.aon_project}"
 							iconClass="aon-icon-statistics"
@@ -133,12 +142,10 @@
 				<aon:if test="#{!expenseInvoice.nevv}">
 					<aon:panelGrid id="dataTable" columns="4"
 						styleClass="aon-width-all aon-margin-bottom"
-						columnClasses="aon-panelGrid-odd aon-width-140,
-							aon-panelGrid-even aon-width-500,
-							aon-panelGrid-odd aon-width-100,
-							aon-panelGrid-even aon-width-auto">
+						columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even aon-width-500,
+							aon-panelGrid-odd aon-width-100,aon-panelGrid-even aon-width-auto">
 
-						<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/formContent.xhtml">
+						<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/formBasicContent.xhtml">
 							<ui:param name="invoiceController" value="#{expenseInvoice}" />
 							<ui:param name="addressController" value="#{expenseInvoiceAddress}" />
 							<ui:param name="detailController" value="#{expenseInvoiceDetail}" />
@@ -148,72 +155,17 @@
 					</aon:panelGrid>
 
 					<aon:div styleClass="aon-margin-top">
-						<aon:div id="InvoiceProject">
-							<aon:panelGrid columns="2" styleClass="aon-width-all"
-								rendered="#{(expenseInvoice.nevv and expenseInvoice.to.registry.id != null and projectCollections.activeProjectsCount > 0) 
-												or expenseInvoice.savedProject.id != null}"
-								columnClasses="aon-panelGrid-odd aon-width-140,
-									aon-panelGrid-even aon-width-auto">
-		
-								<aon:if test="#{!aonConfiguration.bean.invoice.showTasData}">
-									<aon:outputLabel for="Project_id"
-										value="#{bundle.aon_project}" />
-								</aon:if>
-								<aon:if test="#{aonConfiguration.bean.invoice.showTasData}">
-									<aon:outputLabel for="Project_id"
-										value="#{bundle.tas_project_tas}" />
-								</aon:if>
-								<aon:div>
-									<aon:div rendered="#{!expenseInvoice.readOnly}">
-										<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml">
-											<ui:param name="lookupTo" value="#{expenseInvoice.to.project}" />
-											<ui:param name="skipLabel" value="#{true}" />
-											<ui:param name="skipGoToButton" value="#{true}" />
-										</ui:include>
-									</aon:div>
-									<aon:outputText styleClass="aon-bold"
-										value="#{expenseInvoice.to.project.name}" 
-										rendered="#{expenseInvoice.readOnly}" />
-								</aon:div>
-		
-							</aon:panelGrid>
-						</aon:div>
-
 						<aon:panelGrid columns="2" styleClass="aon-width-all"
 							columnClasses="aon-panelGrid-odd aon-width-140,
 								aon-panelGrid-even aon-width-auto">
 
-							<aon:div rendered="#{!empty expenseInvoice.to.comments or expenseInvoice.to.vatAccrualPayment}">
-								<aon:outputLabel for="Invoice_comments"
-									value="#{bundle.aon_comment}" />
-								<aon:div>
-									<aon:outputLabel styleClass="aon-form-date-label"
-										value="(#{bundle.aon_comment_description})" />
-								</aon:div>
-							</aon:div>
-							<aon:div rendered="#{!empty expenseInvoice.to.comments or expenseInvoice.to.vatAccrualPayment}">
-								<aon:inputTextarea id="Invoice_comments" cols="145" rows="2"
-									value="#{expenseInvoice.to.comments}"
-									rendered="#{!empty expenseInvoice.to.comments}"
-									disabled="#{expenseInvoice.readOnly}" />
-								<aon:div rendered="#{expenseInvoice.to.vatAccrualPayment}">
-									<aon:outputText styleClass="aon-bold aon-label-info"
-										 value="#{bundle.finance_invoice_vat_accrual_payment_message}" />
-								</aon:div>
-							</aon:div>
-	
-							<aon:div rendered="#{!empty expenseInvoice.to.remarks}">
-								<aon:outputLabel for="Invoice_remarks"
-									value="#{bundle.aon_remark}" />
-								<aon:div>
-									<aon:outputLabel styleClass="aon-form-date-label"
-										value="(#{bundle.aon_remark_description})" />
-								</aon:div>
-							</aon:div>
-							<aon:inputTextarea id="Invoice_remarks" cols="145" rows="2"
-								value="#{expenseInvoice.to.remarks}"
-								rendered="#{!empty expenseInvoice.to.remarks}"
-								disabled="#{expenseInvoice.readOnly}" />
+							<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formData2Content.xhtml">
+								<ui:param name="invoiceController" value="#{expenseInvoice}" />
+								<ui:param name="addressController" value="#{expenseInvoiceAddress}" />
+								<ui:param name="detailController" value="#{expenseInvoiceDetail}" />
+								<ui:param name="financeController" value="#{expenseInvoiceFinance}" />
+								<ui:param name="formName" value="expenseInvoiceForm" />
+							</ui:include>
 
 						</aon:panelGrid>
 					</aon:div>
@@ -246,6 +198,9 @@
 			<ui:param name="invoiceController" value="#{expenseInvoice}" />
 			<ui:param name="invoiceAddress" value="#{expenseInvoiceAddress}" />
 			<ui:param name="addressReRender" value="InvoiceAddress" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalActivity.xhtml">
+			<ui:param name="invoiceController" value="#{expenseInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/project/facelet/project/modalProject.xhtml">
 			<ui:param name="controller" value="#{expenseInvoice}" />

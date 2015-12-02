@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.33.1
+# Version: 8.35.0
 # Created by: girazu
-# Creation Date: 13/11/2015 14:00
+# Creation Date: 26/11/2015 12:05
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -173,6 +173,7 @@ CREATE TABLE `tariff` (
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Tarifa',
   `purchase` tinyint(1) NOT NULL default '0' COMMENT 'Indica si se trata de una Tarifa de Compras o Ventas',
   `discount` double(6,2) default '0.00' COMMENT 'Descuento general de la Tarifa',
+  `active` tinyint(1) NOT NULL default '1' COMMENT 'Indica si la Tarifa esta activa o no',
   PRIMARY KEY  (`id`),
   KEY `IDX_TARIFF_DOMAIN` (`domain`),
   CONSTRAINT `FK_TARIFF_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
@@ -655,6 +656,52 @@ CREATE TABLE `account_entry_fbatch` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Asientos Contables y Remesas';
 
 #
+# Structure for the `cnae` table : 
+#
+
+CREATE TABLE `cnae` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `code` varchar(5) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo del CNAE',
+  `title` varchar(255) collate latin1_spanish_ci NOT NULL COMMENT 'Titulo del CNAE',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='CNAE';
+
+#
+# Structure for the `cnae2009` table : 
+#
+
+CREATE TABLE `cnae2009` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `code` varchar(4) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo del CNAE',
+  `title` varchar(255) collate latin1_spanish_ci NOT NULL COMMENT 'Titulo del CNAE',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='CNAE 2009. Clasificación Nacional de Actividades Económicas ';
+
+#
+# Structure for the `enterprise_activity` table : 
+#
+
+CREATE TABLE `enterprise_activity` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Actividad de la Empresa',
+  `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
+  `cnae` int(4) default NULL COMMENT 'Identificador del CNAE',
+  `type` tinyint(2) NOT NULL COMMENT 'Tipo de Actividad de la Empresa',
+  `cnae2009` int(4) default NULL COMMENT 'Identificador del CNAE 2009',
+  `principal` tinyint(1) NOT NULL default '0' COMMENT 'Indica si es la Actividad principal',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_ENTERPRISE_ACTIVITY_ENTERPRISE` (`enterprise`),
+  KEY `IDX_ENTERPRISE_ACTIVITY_CNAE` (`cnae`),
+  KEY `IDX_ENTERPRISE_ACTIVITY_CNAE2009` (`cnae2009`),
+  KEY `IDX_ENTERPRISE_ACTIVITY_DOMAIN` (`domain`),
+  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_CNAE` FOREIGN KEY (`cnae`) REFERENCES `cnae` (`id`),
+  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_CNAE2009` FOREIGN KEY (`cnae2009`) REFERENCES `cnae2009` (`id`),
+  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades de Empresas';
+
+#
 # Structure for the `department` table : 
 #
 
@@ -947,6 +994,7 @@ CREATE TABLE `seller` (
 CREATE TABLE `invoice` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Factura',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `activity` int(4) default NULL COMMENT 'Identificador de la Actividad',
   `project` int(4) default NULL COMMENT 'Identificador del Proyecto',
   `series` char(5) collate latin1_spanish_ci default NULL COMMENT 'Serie de la Factura',
   `number` int(4) NOT NULL default '0' COMMENT 'Numero de la Factura',
@@ -999,6 +1047,8 @@ CREATE TABLE `invoice` (
   KEY `IDX_INVOICE_SELLER` (`seller`),
   KEY `IDX_INVOICE_POS_SHIFT` (`pos_shift`),
   KEY `IDX_INVOICE_REFERENCE_CODE` (`reference_code`),
+  KEY `IDX_INVOICE_ACTIVITY` (`activity`),
+  CONSTRAINT `FK_INVOICE_ACTIVITY` FOREIGN KEY (`activity`) REFERENCES `enterprise_activity` (`id`),
   CONSTRAINT `FK_INVOICE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_INVOICE_INVOICE` FOREIGN KEY (`rectification_invoice`) REFERENCES `invoice` (`id`),
   CONSTRAINT `FK_INVOICE_POS_SHIFT` FOREIGN KEY (`pos_shift`) REFERENCES `pos_shift` (`id`),
@@ -2431,51 +2481,6 @@ CREATE TABLE `certifica2_batch` (
   CONSTRAINT `FK_CERTIFICA2_BATCH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_CERTIFICA2_BATCH_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas de certificados de empresa';
-
-#
-# Structure for the `cnae` table : 
-#
-
-CREATE TABLE `cnae` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `code` varchar(5) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo del CNAE',
-  `title` varchar(255) collate latin1_spanish_ci NOT NULL COMMENT 'Titulo del CNAE',
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='CNAE';
-
-#
-# Structure for the `cnae2009` table : 
-#
-
-CREATE TABLE `cnae2009` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `code` varchar(4) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo del CNAE',
-  `title` varchar(255) collate latin1_spanish_ci NOT NULL COMMENT 'Titulo del CNAE',
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='CNAE 2009. Clasificación Nacional de Actividades Económicas ';
-
-#
-# Structure for the `enterprise_activity` table : 
-#
-
-CREATE TABLE `enterprise_activity` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Actividad de la Empresa',
-  `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
-  `cnae` int(4) default NULL COMMENT 'Identificador del CNAE',
-  `type` tinyint(2) NOT NULL COMMENT 'Tipo de Actividad de la Empresa',
-  `cnae2009` int(4) default NULL COMMENT 'Identificador del CNAE 2009',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_ENTERPRISE_ACTIVITY_ENTERPRISE` (`enterprise`),
-  KEY `IDX_ENTERPRISE_ACTIVITY_CNAE` (`cnae`),
-  KEY `IDX_ENTERPRISE_ACTIVITY_CNAE2009` (`cnae2009`),
-  KEY `IDX_ENTERPRISE_ACTIVITY_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_CNAE` FOREIGN KEY (`cnae`) REFERENCES `cnae` (`id`),
-  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_CNAE2009` FOREIGN KEY (`cnae2009`) REFERENCES `cnae2009` (`id`),
-  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades de Empresas';
 
 #
 # Structure for the `enterprise_ccc` table : 
@@ -5619,6 +5624,7 @@ CREATE TABLE `irpf_result` (
 CREATE TABLE `item_addinfo` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `product` int(4) NOT NULL COMMENT 'Identificador del Producto',
   `item` int(4) NOT NULL COMMENT 'Identificador de Articulo',
   `attribute` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Atributo adicional',
   `value` varchar(128) collate latin1_spanish_ci NOT NULL COMMENT 'Valor del atributo adicional',
@@ -5626,8 +5632,10 @@ CREATE TABLE `item_addinfo` (
   PRIMARY KEY  (`id`),
   KEY `IDX_ITEM_ADDINFO_DOMAIN` (`domain`),
   KEY `IDX_ITEM_ADDINFO_ITEM` (`item`),
+  KEY `IDX_ITEM_ADDINFO_PRODUCT` (`product`),
   CONSTRAINT `FK_ITEM_ADDINFO_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_ITEM_ADDINFO_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
+  CONSTRAINT `FK_ITEM_ADDINFO_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
+  CONSTRAINT `FK_ITEM_ADDINFO_PRODUCT` FOREIGN KEY (`product`) REFERENCES `product` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Informacion adicional del Articulo';
 
 #
@@ -8015,7 +8023,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.33.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.35.0');
 
 COMMIT;
 

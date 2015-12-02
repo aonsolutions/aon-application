@@ -22,7 +22,11 @@ public class Tariff extends TariffDB {
     private Set<TariffCatalogue> catalogues = new HashSet<TariffCatalogue>();
     private Set<TariffAddInfo> addInfos = new HashSet<TariffAddInfo>();
 
-	@OneToMany(mappedBy = "tariff", cascade={CascadeType.REMOVE})
+	public Tariff() {
+		setActive(true);
+	}
+
+    @OneToMany(mappedBy = "tariff", cascade={CascadeType.REMOVE})
 	public Set<TariffCatalogue> getCatalogues() {
 		return catalogues;
 	}

@@ -10,6 +10,7 @@ import javax.persistence.Table;
 
 import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.EnterpriseActivityDB;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 
 @Entity
 @Table(name="enterprise_activity")
@@ -18,7 +19,11 @@ public class EnterpriseActivity extends EnterpriseActivityDB {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Set<EnterpriseCCC> cccs = new HashSet<EnterpriseCCC>();
-	
+
+	public EnterpriseActivity() {
+		setType(SSRegimeType.GENERAL);
+	}
+
 	@OneToMany(mappedBy = "activity", cascade={CascadeType.REMOVE})
 	public Set<EnterpriseCCC> getCccs() {
 		return cccs;

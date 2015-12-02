@@ -35,6 +35,7 @@ import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.EnterpriseActivity;
 
 public class CompanyCollectionsController implements Serializable {
 	
@@ -339,5 +340,38 @@ public class CompanyCollectionsController implements Serializable {
 		return BeanManager.getManagerBean(Department.class).getCount(null);
 	}
 	
+	public List<SelectItem> getCompanyActivities() throws ManagerBeanException {
+		List<SelectItem> activities = new LinkedList<SelectItem>();
+    	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+    	Iterator<?> iterator = companyBean.getList(null).iterator();
+    	if (iterator.hasNext()) {
+    		Company company = (Company)iterator.next();
+			IManagerBean activityBean = BeanManager.getManagerBean(EnterpriseActivity.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), company.getId());
+			criteria.addOrder(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_PRINCIPAL), Boolean.FALSE);
+			criteria.addOrder(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_DESCRIPTION));
+			for (ITransferObject ito : activityBean.getList(criteria)) {
+				EnterpriseActivity activity = (EnterpriseActivity)ito;
+				SelectItem item = new SelectItem(activity, activity.getDescription());
+				activities.add(item);
+			}
+    	}
+		return activities;
+	}
+
+	public int getCompanyActivitiesCount() throws ManagerBeanException {
+    	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+    	Iterator<?> iterator = companyBean.getList(null).iterator();
+    	if (iterator.hasNext()) {
+    		Company company = (Company)iterator.next();
+			IManagerBean activityBean = BeanManager.getManagerBean(EnterpriseActivity.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), company.getId());
+			return activityBean.getCount(criteria);
+    	}
+		return 0;
+	}
+
 }
 

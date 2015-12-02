@@ -233,6 +233,9 @@ color:#000;
 .aon-width-600{
 	width:600px;
 }	
+.aon-width-700{
+	width:700px;
+}	
 
 /************  REGIONES DE CONTENIDO *****************/
 /* tama�o inicial de la aplicacion*/
@@ -574,6 +577,9 @@ color:#000;
  }
  .aon-icon-copy{
 	background:transparent url(images/aon-icon/aon-icon-copy.png) scroll left center no-repeat;	
+ }
+ .aon-icon-activity{
+	background:transparent url(images/aon-icon/aon-icon-activity.png) scroll left center no-repeat;	
  }
  .aon-icon-project-ok{
 	background:transparent url(images/aon-icon/aon-icon-project-ok.png) scroll left center no-repeat;	

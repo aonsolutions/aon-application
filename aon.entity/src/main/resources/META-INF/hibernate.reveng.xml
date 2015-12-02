@@ -754,6 +754,9 @@
 		<column name="comments" type="text"/>
 		<column name="remarks" type="text"/>
 		<column name="transaction" type="com.code.aon.config.enumeration.InvoiceTransactionType" />
+		<foreign-key constraint-name="FK_INVOICE_ACTIVITY">
+			<many-to-one property="activity"/>
+		</foreign-key>
 		<foreign-key constraint-name="FK_INVOICE_INVOICE">
 			<many-to-one property="rectificationInvoice"/>
 		</foreign-key>

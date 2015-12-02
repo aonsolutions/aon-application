@@ -30,7 +30,7 @@ public class ProjectCollectionsController implements Serializable {
 		IManagerBean bean = BeanManager.getManagerBean(Project.class);
 		Criteria criteria = new Criteria();
 		if (registryId != null) {
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID),registryId);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID), registryId);
 		}
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_ACTIVE), true);
 		criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_NAME));
@@ -43,11 +43,21 @@ public class ProjectCollectionsController implements Serializable {
 		return projects;
 	}
 
-	public int getActiveProjectsCount() throws ManagerBeanException {
+	public int getProjectsCount(Integer registryId) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Project.class);
+		Criteria criteria = new Criteria();
+		if (registryId != null) {
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID), registryId);
+		}
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_ACTIVE), true);
+		return bean.getCount(criteria);
+	}
+
+	public boolean isActiveProjects() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Project.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_ACTIVE), true);
-		return bean.getCount(criteria);
+		return bean.getList(criteria, 0, 1) != null;
 	}
 
 	public List<SelectItem> getActivityTypes(Integer projectTypeId) throws ManagerBeanException {
@@ -55,7 +65,7 @@ public class ProjectCollectionsController implements Serializable {
 		Criteria criteria = new Criteria();
 		Expression expr1 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.ACTIVITY_TYPE_PROJECT_TYPE_ID)); 
 		if (projectTypeId != null) {
-			Expression expr2 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.ACTIVITY_TYPE_PROJECT_TYPE_ID),projectTypeId);
+			Expression expr2 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.ACTIVITY_TYPE_PROJECT_TYPE_ID), projectTypeId);
 			criteria.addOrExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 		} else {
 			criteria.addExpression(expr1);

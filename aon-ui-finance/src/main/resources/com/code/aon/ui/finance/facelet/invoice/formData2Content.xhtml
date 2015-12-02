@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:if test="#{invoiceController.nevv and aonRole.accountingOperator}">
+		<aon:outputLabel for="Invoice_taxDate" 
+			value="#{bundle.finance_tax_date}" />
+		<aon:selectInputDate id="Invoice_taxDate"
+			value="#{invoiceController.to.taxDate}" required="true" 
+			disabled="#{invoiceController.readOnly}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"
+			inputStyle="#{invoiceController.taxDateEquals?'':'background-color: #ff865e;'}">
+			<a4j:support event="oninputchange"
+				reRender="Invoice_taxDate" ajaxSingle="true" />
+			<a4j:support event="onchanged"
+				reRender="Invoice_taxDate" ajaxSingle="true" />
+		</aon:selectInputDate>
+	</aon:if>
+
+	<aon:if test="#{(invoiceController.nevv and companyCollections.companyActivitiesCount > 1) or invoiceController.to.activity.id != null}">
+		<aon:outputLabel for="Invoice_activity"
+			value="#{bundle.aon_activity}" />
+		<aon:div>
+			<aon:selectOneMenu id="Invoice_activity" required="true"
+				value="#{invoiceController.to.activity}" ajaxSingle="true"
+				rendered="#{!invoiceController.readOnly}">
+				<f:selectItems value="#{companyCollections.companyActivities}" />
+			</aon:selectOneMenu>
+			<aon:outputText styleClass="aon-bold"
+				value="#{invoiceController.to.activity.description}" 
+				rendered="#{invoiceController.readOnly}" />
+		</aon:div>
+	</aon:if>
+
+	<aon:if test="#{(invoiceController.nevv and projectCollections.activeProjects) or invoiceController.savedProject.id != null}">
+		<aon:if test="#{!aonConfiguration.bean.invoice.showTasData}">
+			<aon:outputLabel for="Project_id"
+				value="#{bundle.aon_project}" />
+		</aon:if>
+		<aon:if test="#{aonConfiguration.bean.invoice.showTasData}">
+			<aon:outputLabel for="Project_id"
+				value="#{bundle.tas_project_tas}" />
+		</aon:if>
+		<aon:div>
+			<aon:div rendered="#{!invoiceController.readOnly}">
+				<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml">
+					<ui:param name="lookupTo" value="#{invoiceController.to.project}" />
+					<ui:param name="skipLabel" value="#{true}" />
+					<ui:param name="skipGoToButton" value="#{true}" />
+				</ui:include>
+			</aon:div>
+			<aon:outputText styleClass="aon-bold"
+				value="#{invoiceController.to.project.name}" 
+				rendered="#{invoiceController.readOnly}" />
+		</aon:div>
+	</aon:if>
+
+	<aon:if test="#{(invoiceController.nevv and invoiceController.to.sales) or !empty invoiceController.to.comments or invoiceController.to.vatAccrualPayment}">
+		<aon:div>
+			<aon:outputLabel for="Invoice_comments"
+				value="#{bundle.aon_comment}" />
+			<aon:div>
+				<aon:outputLabel styleClass="aon-form-date-label"
+					value="(#{bundle.aon_comment_description})" />
+			</aon:div>
+		</aon:div>
+		<aon:div>
+			<aon:inputTextarea id="Invoice_comments" 
+				cols="#{invoiceController.nevv ? '84' : '145'}" rows="#{invoiceController.nevv ? '4' : '3'}"
+				value="#{invoiceController.to.comments}" ajaxSingle="true"
+				rendered="#{invoiceController.nevv or !empty invoiceController.to.comments}"
+				disabled="#{invoiceController.readOnly}" />
+			<aon:div rendered="#{invoiceController.to.vatAccrualPayment}">
+				<aon:outputText styleClass="aon-bold aon-label-info"
+					 value="#{bundle.finance_invoice_vat_accrual_payment_message}" />
+			</aon:div>
+		</aon:div>
+	</aon:if>
+	<aon:if test="#{(invoiceController.nevv and !invoiceController.to.sales) or !empty invoiceController.to.remarks}">
+		<aon:div>
+			<aon:outputLabel for="Invoice_remarks"
+				value="#{bundle.aon_remark}" />
+			<aon:div>
+				<aon:outputLabel styleClass="aon-form-date-label"
+					value="(#{bundle.aon_remark_description})" />
+			</aon:div>
+		</aon:div>
+		<aon:inputTextarea id="Invoice_remarks"
+			cols="#{invoiceController.nevv ? '84' : '145'}" rows="#{invoiceController.nevv ? '4' : '3'}"
+			value="#{invoiceController.to.remarks}" ajaxSingle="true"
+			rendered="#{invoiceController.nevv or !empty invoiceController.to.remarks}"
+			disabled="#{invoiceController.readOnly}" />
+	</aon:if>
+
+</ui:composition>

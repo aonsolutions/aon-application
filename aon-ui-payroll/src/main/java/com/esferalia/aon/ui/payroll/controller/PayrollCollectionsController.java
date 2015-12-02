@@ -70,7 +70,7 @@ public class PayrollCollectionsController implements Serializable {
 	private final int NAME_LENGHT_80 = 80;	
 	private final int NAME_LENGHT_100 = 100;	
 
-		private List<SelectItem> contractDurations;
+	private List<SelectItem> contractDurations;
 	private List<SelectItem> contractWorkingDays;
 	private List<SelectItem> contractCalendarEventTypes;
 	private List<SelectItem> paymentTypes;
@@ -854,6 +854,5 @@ public class PayrollCollectionsController implements Serializable {
 		}
 		return salaryTemplates;
 	}
-	
-		
+
 }

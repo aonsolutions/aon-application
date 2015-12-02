@@ -130,27 +130,28 @@
 		</ui:include>
 	</aon:if>
 
-	<aon:outputLabel for="Invoice_taxDate" 
-		value="#{bundle.finance_tax_date}"
-		rendered="#{!invoiceController.nevv}" />
-	<aon:div rendered="#{!invoiceController.nevv}">
-		<aon:if test="#{aonRole.accountingOperator}">
-			<aon:selectInputDate id="Invoice_taxDate"
-				value="#{invoiceController.to.taxDate}" required="true" 
-				disabled="#{invoiceController.readOnly}"
-				timeZone="#{timeZoneController.timeZone}"
-				popupDateFormat="#{bundle.aon_date_pattern}"
-				inputStyle="#{invoiceController.taxDateEquals?'':'background-color: #ff865e;'}">
-				<a4j:support event="oninputchange"
-					reRender="Invoice_taxDate" ajaxSingle="true" />
-				<a4j:support event="onchanged"
-					reRender="Invoice_taxDate" ajaxSingle="true" />
-			</aon:selectInputDate>
-		</aon:if>
-		<aon:if test="#{!aonRole.accountingOperator}">
-			<aon:outputText value="#{invoiceController.to.taxDate}" />
-		</aon:if>
-	</aon:div>
+	<aon:if test="#{!invoiceController.nevv}">
+		<aon:outputLabel for="Invoice_taxDate" 
+			value="#{bundle.finance_tax_date}" />
+		<aon:div>
+			<aon:if test="#{aonRole.accountingOperator}">
+				<aon:selectInputDate id="Invoice_taxDate"
+					value="#{invoiceController.to.taxDate}" required="true" 
+					disabled="#{invoiceController.readOnly}"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}"
+					inputStyle="#{invoiceController.taxDateEquals?'':'background-color: #ff865e;'}">
+					<a4j:support event="oninputchange"
+						reRender="Invoice_taxDate" ajaxSingle="true" />
+					<a4j:support event="onchanged"
+						reRender="Invoice_taxDate" ajaxSingle="true" />
+				</aon:selectInputDate>
+			</aon:if>
+			<aon:if test="#{!aonRole.accountingOperator}">
+				<aon:outputText value="#{invoiceController.to.taxDate}" />
+			</aon:if>
+		</aon:div>
+	</aon:if>
 
 	<aon:outputLabel for="Invoice_registry_document"
 		value="#{bundle.aon_company_document}" />
@@ -171,7 +172,7 @@
 			<f:selectItems value="#{commonCollections.countryCodes}" />
 		</aon:selectOneMenu>
 		<aon:inputText id="Invoice_registry_document" 
-			style="margin-left: 3px;" 
+			style="margin-left: 3px;"
 			value="#{invoiceController.to.registryDocument}" size="16" maxlength="16"
 			disabled="#{invoiceController.readOnly}"
 			reRender="Invoice_registry_document_icon" ajaxSingle="true" 

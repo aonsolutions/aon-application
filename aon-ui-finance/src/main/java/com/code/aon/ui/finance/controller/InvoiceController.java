@@ -116,6 +116,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private List<SelectItem> projects;
 	private boolean showRegistryDataWindow;
 	private boolean showInvoiceAddressWindow;
+	private boolean showActivityWindow;
 	private Project savedProject;
 	private boolean showProjectLookup;
 	private boolean showProjectWindow;
@@ -286,7 +287,9 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		this.projects = new LinkedList<SelectItem>();
 		if (registryId != null) {
 			ProjectCollectionsController projectColls = (ProjectCollectionsController)AonUtil.getRegisteredBean(IProjectConstants.PROJECT_COLLECTIONS_CONTROLLER_NAME);
-			projects.addAll(projectColls.getProjects(registryId));
+			if (projectColls.getProjectsCount(registryId) <= 20) {
+				projects.addAll(projectColls.getProjects(registryId));
+			}
 		}
 	}
 
@@ -312,6 +315,14 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		if (to == null) {
 			addressController.onReset(event);
 		}
+	}
+
+	public boolean isShowActivityWindow() {
+		return showActivityWindow;
+	}
+
+	public void setShowActivityWindow(boolean value) {
+		this.showActivityWindow = value;
 	}
 
 	public Project getSavedProject() {

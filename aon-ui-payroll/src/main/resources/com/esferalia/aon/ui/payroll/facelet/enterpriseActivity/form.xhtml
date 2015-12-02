@@ -31,41 +31,50 @@
 				maxlength="32" value="#{enterpriseActivity.to.description}"
 				required="true" />
 		
-			<aon:outputLabel for="EnterpriseActivity_quoteRegime"
-				value="#{bundle.payroll_activity_quoteRegime}" />
-			<aon:if test="#{enterpriseActivity.nevv}">
+			<aon:if test="#{actionDenied.manager.renderPayrollConfig}">
+				<aon:outputLabel for="EnterpriseActivity_quoteRegime"
+					value="#{bundle.payroll_activity_quoteRegime}" />
 				<aon:selectOneMenu id="EnterpriseActivity_quoteRegime" required="true"
-					value="#{enterpriseActivity.to.type}">
+					value="#{enterpriseActivity.to.type}"
+					rendered="#{enterpriseActivity.nevv}">
 					<f:selectItems value="#{payrollCollections.availableSsRegimes}" />
 				</aon:selectOneMenu>
-			</aon:if>
-			<aon:if test="#{!enterpriseActivity.nevv}">
-				<aon:selectOneMenu id="EnterpriseActivity_quoteRegime" required="true"
-					disabled="#{true}"
-					value="#{enterpriseActivity.to.type}">
-					<f:selectItems value="#{payrollCollections.ssRegimes}" />
-				</aon:selectOneMenu>
+				<aon:outputText value="#{enterpriseActivity.to.type}" styleClass="aon-bold"
+					rendered="#{!enterpriseActivity.nevv}" />
 			</aon:if>
 			
 			<ui:include src="/com/code/aon/ui/config/facelet/cnae2009/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{enterpriseActivity.to.cnae2009}" />
 				<ui:param name="idRequired" value="#{true}" />
 			</ui:include>				
+
+			<aon:outputLabel for="EnterpriseActivity_principal"
+				value="#{bundle.aon_activity_principal}" />
+			<aon:selectOneRadio id="EnterpriseActivity_principal" required="true"
+				value="#{enterpriseActivity.to.principal}">
+				<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
+				<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
+			</aon:selectOneRadio>
+			
 		</aon:panelGrid>
 		
-		<aon:div>
-			<aon:div styleClass="aon-form-group" rendered="#{!enterpriseActivity.nevv}">
-				<aon:div styleClass="aon-form-group-title">
-					<aon:div styleClass="aon-form-group-title-internal">
-						<aon:outputLabel for="enterpriseCCCData" value="#{bundle.company_enterprise_ccc}" />
+		<aon:if test="#{actionDenied.manager.renderPayrollConfig}">
+
+			<aon:div>
+				<aon:div styleClass="aon-form-group" rendered="#{!enterpriseActivity.nevv}">
+					<aon:div styleClass="aon-form-group-title">
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputLabel for="enterpriseCCCData" value="#{bundle.company_enterprise_ccc}" />
+						</aon:div>
 					</aon:div>
+					
+					<ui:include	src="/com/esferalia/aon/ui/payroll/facelet/enterpriseCCC/tab_grid.xhtml" >
+						<ui:param name="controller" value="#{enterpriseCCC}" />
+					</ui:include>
 				</aon:div>
-				
-				<ui:include	src="/com/esferalia/aon/ui/payroll/facelet/enterpriseCCC/tab_grid.xhtml" >
-					<ui:param name="controller" value="#{enterpriseCCC}" />
-				</ui:include>
 			</aon:div>
-		</aon:div>
+		
+		</aon:if>
 	</aon:div>
 
 </ui:composition>

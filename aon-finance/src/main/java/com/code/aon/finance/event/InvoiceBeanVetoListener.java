@@ -41,6 +41,7 @@ import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
 import com.code.aon.supplier.Supplier;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.EnterpriseActivity;
 
 public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	
@@ -49,7 +50,8 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Invoice invoice = (Invoice) evt.getTo();
-		checkInvoice(invoice);
+		Company company = getCompany();
+		checkInvoice(invoice, company);
 		if (invoice.isSales()) {
 			checkNumber(invoice);
 			String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0");
@@ -72,6 +74,9 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				criteria.addEqualExpression("invoice.type", InvoiceType.UNDEDUCTIBLE.ordinal());
 				invoice.setNumber(SeriesNumberUtil.obtainNumber(invoice.getSeries(), "Invoice", criteria));
 			}
+		}
+		if (invoice.getActivity() == null || invoice.getActivity().getId() == null) {
+			invoice.setActivity(obtainPrincipalActivity(company));
 		}
 		if (invoice.getSecurityLevel() == null) {
 			invoice.setSecurityLevel(SecurityLevel.OFFICIAL);
@@ -97,7 +102,8 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Invoice invoice = (Invoice) evt.getTo();
 		if (invoice.isUpdateEnabled()) {
-			checkInvoice(invoice);
+			Company company = getCompany();
+			checkInvoice(invoice, company);
 			if (invoice.isSales()) {
 				checkNumber(invoice);
 				String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0");
@@ -135,7 +141,19 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		}
 	}
 
-	private void checkInvoice(Invoice invoice) throws ManagerBeanVetoListenerException {
+	private Company getCompany() throws ManagerBeanVetoListenerException {
+		try {
+			IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+			for (ITransferObject ito : companyBean.getList(null, 0, 1)) {
+				return (Company)ito;
+			}
+		} catch (ManagerBeanException e) {
+			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
+		}
+		return null;
+	}
+
+	private void checkInvoice(Invoice invoice, Company company) throws ManagerBeanVetoListenerException {
 		checkLimitDate(invoice);
 		checkInvoiceYear(invoice);
 		if (StringUtils.isEmpty(invoice.getRegistryName())) {
@@ -145,7 +163,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			invoice.setRegistryDocument(invoice.getRegistry().getDocument());
 		}
 		if (invoice.isDefaultTaxInfo()) {
-			fillDefaultTaxInfo(invoice);
+			fillDefaultTaxInfo(invoice, company);
 		}
 	}
 
@@ -225,6 +243,22 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
         return false;
 	}
 
+	private EnterpriseActivity obtainPrincipalActivity(Company company) throws ManagerBeanVetoListenerException {
+		try {
+			IManagerBean activityBean = BeanManager.getManagerBean(EnterpriseActivity.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), company.getId());
+			criteria.addOrder(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_PRINCIPAL), Boolean.FALSE);
+			criteria.addOrder(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_DESCRIPTION));
+			for (ITransferObject ito : activityBean.getList(criteria)) {
+				return (EnterpriseActivity)ito;
+			}
+		} catch (ManagerBeanException e) {
+			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
+		}
+		return null;
+	}
+
 	private Scope obtainInvoiceScope(InvoiceType type, Registry registry) throws ManagerBeanVetoListenerException {
 		try {
 			IManagerBean bean;
@@ -242,9 +276,8 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		}
 	}
 
-	private void fillDefaultTaxInfo(Invoice invoice) throws ManagerBeanVetoListenerException {
+	private void fillDefaultTaxInfo(Invoice invoice, Company company) throws ManagerBeanVetoListenerException {
 		try {
-			Company company = getCompany();
 			IManagerBean bean;
 			if (invoice.isSales()) {
 				bean = BeanManager.getManagerBean(Customer.class);
@@ -263,14 +296,6 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
 		}
-	}
-
-	private Company getCompany() throws ManagerBeanException {
-		IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-		for (ITransferObject ito : companyBean.getList(null, 0, 1)) {
-			return (Company)ito;
-		}
-		return null;
 	}
 
 	private boolean isVatAccrualPaymentAvailable(Invoice invoice) {

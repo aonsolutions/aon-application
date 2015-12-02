@@ -65,7 +65,7 @@ public class InvoiceFinanceControllerListener extends ControllerAdapter {
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		finance.setSecurityLevel(invoice.getSecurityLevel());
 		try {
-			finance.setAmount(invoiceController.getPendingAmount());
+			finance.setAmount(!invoiceController.isNevv() ? invoiceController.getPendingAmount() : 0);
 
 			RegistryPayMethod rPayMethod = finance.getRegistry().getPayMethod();
 			finance.setPayMethod((rPayMethod==null) ? new PayMethod() : rPayMethod.getPayment());

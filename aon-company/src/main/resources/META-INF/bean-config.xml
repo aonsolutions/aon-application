@@ -14,6 +14,13 @@
 	</bean>
 
 	<bean description="">
+		<pojo>com.esferalia.aon.payroll.EnterpriseActivity</pojo>
+		<listeners>
+	        <listener>com.code.aon.company.event.EnterpriseActivityBeanListener</listener>
+		</listeners>
+	</bean>
+
+	<bean description="">
 		<pojo>com.code.aon.company.WorkPlace</pojo>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.company.event.WorkPlaceBeanVetoListener</vetoListener>

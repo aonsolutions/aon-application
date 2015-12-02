@@ -130,35 +130,10 @@
 
 	<aon:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
 		<aon:outputLabel for="InvoiceDetail_workPlace" value="#{bundle.purchase_workplace}" />
-		<aon:selectOneMenu id="InvoiceDetail_workPlace"
+		<aon:selectOneMenu id="InvoiceDetail_workPlace" required="true"
 			value="#{detailController.to.workPlace}" ajaxSingle="true">
 			<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 		</aon:selectOneMenu>
-	</aon:if>
-
-	<aon:if test="#{invoiceController.to.sales}">
-		<aon:div>
-			<aon:outputLabel for="Invoice_comments"
-				value="#{bundle.aon_comment}" />
-			<aon:div>
-				<aon:outputLabel styleClass="aon-form-date-label"
-					value="(#{bundle.aon_comment_description})" />
-			</aon:div>
-		</aon:div>
-		<aon:inputTextarea id="Invoice_comments" cols="85" rows="4"
-			value="#{invoiceController.to.comments}" ajaxSingle="true" />
-	</aon:if>
-	<aon:if test="#{!invoiceController.to.sales}">
-		<aon:div>
-			<aon:outputLabel for="Invoice_remarks"
-				value="#{bundle.aon_remark}" />
-			<aon:div>
-				<aon:outputLabel styleClass="aon-form-date-label"
-					value="(#{bundle.aon_remark_description})" />
-			</aon:div>
-		</aon:div>
-		<aon:inputTextarea id="Invoice_remarks" cols="85" rows="4"
-			value="#{invoiceController.to.remarks}" ajaxSingle="true" />
 	</aon:if>
 
 </ui:composition>
