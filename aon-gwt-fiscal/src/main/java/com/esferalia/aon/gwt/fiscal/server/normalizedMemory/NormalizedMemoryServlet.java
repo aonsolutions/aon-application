@@ -34,10 +34,10 @@ import org.jooq.Result;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.server.OpenDocument2ImageServlet;
+import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.common.shared.FileInfo;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.D2DepositTreeObject;
@@ -100,8 +100,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 
 	public Map<String, String> getSchema(String cif,
 			Integer domainId, Boolean textMode, Integer year) {
-		String domain = AonUtil.getDomainName();
 		HttpServletRequest request = getThreadLocalRequest();
+		String domain = AonServletUtils.getRequestDomainName(request);
 		// String cif = DBConsults.getCIF(domain, domainId);
 		Esquema schema = null;
 		if(textMode)
@@ -152,7 +152,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 	}
 
 	public Boolean isDigitalDeposit(Integer domainId, Integer year) {
-		String domain = AonUtil.getDomainName();
+		HttpServletRequest request = getThreadLocalRequest();
+		String domain = AonServletUtils.getRequestDomainName(request);
 		return DBConsults.isDigitalDeposit(domain, domainId, year);
 	}
 
@@ -170,8 +171,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 	}
 
 	public void saveDeposit(String cif, Integer domainId, Boolean textMode, Integer year) {
-		String domain = AonUtil.getDomainName();
 		HttpServletRequest request = getThreadLocalRequest();
+		String domain = AonServletUtils.getRequestDomainName(request);
 		Esquema schema = (Esquema) request.getSession().getAttribute(
 				D2_DEPOSIT_SCHEMA + cif);
 
@@ -188,8 +189,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 	}
 	
 	public void saveDeposit(String cif, Integer domainId, D2Deposit2014 d2Deposit2014, Boolean textMode) {
-		String domain = AonUtil.getDomainName();
 		HttpServletRequest request = getThreadLocalRequest();
+		String domain = AonServletUtils.getRequestDomainName(request);
 		Esquema schema = DBConsults.getDeposit(domain, domainId, d2Deposit2014.getYear(), this.getUserLogin());
 		schema = D2Deposit2014ToSchema(schema, d2Deposit2014);
 		try {
@@ -224,7 +225,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 	}
 	
 	public Vector<MemoryTemplate> getDigitalDepositTemplates(Integer domainId) {
-		String domain = AonUtil.getDomainName();
+		HttpServletRequest request = getThreadLocalRequest();
+		String domain = AonServletUtils.getRequestDomainName(request);
 
 		return getDepositText(domain, domainId);
 
@@ -282,7 +284,9 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 	}
 
 	public MemoryTemplate createTextMemory(Integer domainId, String name) {
-		String domain = AonUtil.getDomainName();
+		HttpServletRequest request = getThreadLocalRequest();
+		String domain  = AonServletUtils.getRequestDomainName(request);
+
 		MemoryTemplate mt = new MemoryTemplate();
 
 		byte[] data = Utils.CreateXml("", name);
@@ -296,7 +300,9 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 	}
 	
 	public Map<String, String> updateTexts(MemoryTemplate mt, Integer domainId, String cif, Map<String, String> map) {
-		String domain = AonUtil.getDomainName();
+		HttpServletRequest request = getThreadLocalRequest();
+		String domain = AonServletUtils.getRequestDomainName(request);
+
 		Esquema schema = DBConsults.getDeposit(domain, domainId, mt.getId()
 				.toString());
 		
@@ -394,7 +400,9 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 	}
 
 	public Integer getParentDomain(Integer domainId) {
-		String domain = AonUtil.getDomainName();
+		HttpServletRequest request = getThreadLocalRequest();
+		String domain = AonServletUtils.getRequestDomainName(request);
+
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
@@ -411,7 +419,9 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 	}
 
 	public String getDomainName(Integer domainId) {
-		String domain = AonUtil.getDomainName();
+		HttpServletRequest request = getThreadLocalRequest();
+		String domain = AonServletUtils.getRequestDomainName(request);
+
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
@@ -542,7 +552,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 	}
 
 	public void delete(Integer domainId, String document, Integer year) {
-		String domain = AonUtil.getDomainName();
+		HttpServletRequest request = getThreadLocalRequest();
+		String domain = AonServletUtils.getRequestDomainName(request);
 		clearSession(document);
 		DBConsults.deleteDeposit(domain, domainId, year);
 		
@@ -555,7 +566,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 	}
 
 	public void deleteFreeText(Integer domainId, Integer rattachId) {
-		String domain = AonUtil.getDomainName();
+		HttpServletRequest request = getThreadLocalRequest();
+		String domain = AonServletUtils.getRequestDomainName(request);
 		clearSession(rattachId.toString());
 		
 		DBConsults.deleteText(domain, domainId, rattachId);
@@ -563,7 +575,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 	
 	public Map<String, String> createD2Deposit(Integer domainId, Integer id, String name,
 			String type,Integer year) {
-		String domainName = AonUtil.getDomainName();
+		HttpServletRequest request = getThreadLocalRequest();
+		String domainName = AonServletUtils.getRequestDomainName(request);
 		Enterprise enterprise = AON.getEnterprise(domainName, domainId, id);
 		byte[] b = Utils.CreateXml(enterprise, name, type, domainName, year);
 		DBConsults.insertDeposit(domainName, b, domainId, year, this.getUserLogin());
@@ -616,7 +629,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 	}
 	
 	public Vector<MemoryFiles> getMemoryFiles(Integer domainId){
-		String domain = AonUtil.getDomainName();
+		HttpServletRequest request = getThreadLocalRequest();
+		String domain  = AonServletUtils.getRequestDomainName(request);
 
 		Vector<MemoryFiles> ms = new Vector<MemoryFiles>();
 		
@@ -684,19 +698,22 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 	}
 	
 	public void deleteMemoryFile(Integer domainId, Integer id){
-		String domain = AonUtil.getDomainName();
+		HttpServletRequest request = getThreadLocalRequest();
+		String domain  = AonServletUtils.getRequestDomainName(request);
 		DBConsults.deleteMemoryFile(domain, domainId, id);
 		
 	}
 	
 	public void deleteMemoryFile(Integer domainId, String name){
-		String domain = AonUtil.getDomainName();
+		HttpServletRequest request = getThreadLocalRequest();
+		String domain  = AonServletUtils.getRequestDomainName(request);
 		DBConsults.deleteMemoryFile(domain, domainId, name);
 		
 	}
 	
 	public MemoryFiles insertMemoryFile(Integer domainId, MemoryFiles mf){
-		String domain = AonUtil.getDomainName(); 
+		HttpServletRequest request = getThreadLocalRequest();
+		String domain  = AonServletUtils.getRequestDomainName(request);
 		byte[] b = getFile(domainId);
 		byte  m = (byte) MimeType.get(getMimeType(domainId)).ordinal();
 		if(mf.getBool()){			
@@ -710,7 +727,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 	}
 	
 	public void updateSchemaMemory(Boolean bool, Integer domainId, String key, Integer year){
-		String domain = AonUtil.getDomainName();
+		HttpServletRequest request = getThreadLocalRequest();
+		String domain  = AonServletUtils.getRequestDomainName(request);
 		Esquema schema = DBConsults.getDeposit(domain, domainId, year, this.getUserLogin());
 		if(D2DepositFooterKey.PR8080805.getCode().equals(key))
 			schema.getCabecera().setMemoriaNormalizada(!bool);
@@ -739,7 +757,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		private static final int DEFAULT_ZOOM = 130;
 		
 		public String viewer(Integer domainId, MemoryFiles mf){
-			String domainName = AonUtil.getDomainName();
+			HttpServletRequest request = getThreadLocalRequest();
+			String domainName = AonServletUtils.getRequestDomainName(request);
 			String login = AonServletUtils.getLoggedUser();
 			Attach rattach = AON.getAttach(domainName, domainId, login, 
 					filter -> filter.getIdProperty().eq(mf.getId())

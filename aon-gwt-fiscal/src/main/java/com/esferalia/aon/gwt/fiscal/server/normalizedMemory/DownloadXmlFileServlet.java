@@ -3,16 +3,12 @@ package com.esferalia.aon.gwt.fiscal.server.normalizedMemory;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -22,13 +18,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FilenameUtils;
-
-import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
-import com.esferalia.aon.watson.server.io.AonFileUtils;
-import com.google.gwt.user.client.rpc.SerializationException;
 
 @WebServlet(name = "DownloadXml", urlPatterns = { "/aon_gwt_fiscal/gwt_download_deposit/*" })
 public class DownloadXmlFileServlet extends HttpServlet {
@@ -49,8 +41,8 @@ public class DownloadXmlFileServlet extends HttpServlet {
 
 		String domain_id = p_request.getParameter("domain_id");
 		Integer domainId = Integer.parseInt(domain_id);
-		String domain = AonUtil.getDomainName();
-
+		String domain = AonServletUtils.getRequestDomainName(p_request);
+		
 		File f = DBConsults.getXmlFile(domain, domainId);
 		ZipOutputStream zos = null;
 		try {

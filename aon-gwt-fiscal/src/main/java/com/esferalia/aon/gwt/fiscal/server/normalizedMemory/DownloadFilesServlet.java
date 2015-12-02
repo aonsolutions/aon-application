@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
 
 
@@ -30,7 +30,7 @@ public class DownloadFilesServlet extends HttpServlet {
         String fileId = p_request.getParameter("file_id");
         String domainId =  p_request.getParameter("domain_id");
         String name = p_request.getParameter("name");
-        String domain = AonUtil.getDomainName();
+        String domain = AonServletUtils.getRequestDomainName(p_request);
         Integer idFile = Integer.parseInt(fileId);
         Integer idDomain = Integer.parseInt(domainId);
         

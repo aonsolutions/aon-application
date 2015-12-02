@@ -14,10 +14,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 import com.code.aon.pool.AonConnectionException;
+import com.code.aon.pool.AonDataSource;
 
 public class AonServletUtils {
 	
@@ -52,7 +52,7 @@ public class AonServletUtils {
 				AuthPrincipal principal = (AuthPrincipal) request.getUserPrincipal();
 				if ( principal != null ) {
 					String domainName = principal.getDomain();
-					Connection connection = DatabaseUtil.getConnection(domainName);
+					Connection connection = AonDataSource.getInstance().getConnection(domainName);
 					return connection;
 				}
 			}

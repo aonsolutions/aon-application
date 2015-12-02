@@ -7,7 +7,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
@@ -15,17 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.Domain;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ui.config.controller.ConfigConstants;
-import com.code.aon.ui.config.controller.DomainSwitcher;
-import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.common.bean.GWT;
 import com.esferalia.aon.gwt.common.shared.Constants;
 import com.google.gwt.user.server.Base64Utils;
@@ -73,11 +62,11 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		return Constants.ENTERPRISE_SITE_ENTRY_POINT.equals(getEntryPoint());
 	}
 	
-	protected Integer getParentDomainID() {
-		DomainSwitcher domainSwitcher = (DomainSwitcher)AonUtil
-				.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
-		return domainSwitcher.getParentDomainId();
-	}
+//	protected Integer getParentDomainID() {
+//		DomainSwitcher domainSwitcher = (DomainSwitcher)AonUtil
+//				.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
+//		return domainSwitcher.getParentDomainId();
+//	}
 
 	@Override
 	protected SerializationPolicy doGetSerializationPolicy(
@@ -195,29 +184,6 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 
 	static ClassLoader getResourceLoader() {
 		return Thread.currentThread().getContextClassLoader();
-	}
-	
-	// ------------------------------------------------------------------------
-
-	protected static Integer[] getChildDomainIDs(Integer domainId) throws ManagerBeanException {
-		IManagerBean beanManager = BeanManager
-				.getManagerBean(Domain.class);
-		
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(
-				beanManager.getFieldName(IEntityAlias.DOMAIN_PARENT_ID),
-				domainId );
-
-		List<ITransferObject> tos = beanManager.getList(criteria);
-		
-		if( tos == null || tos.isEmpty() )
-			return new Integer[]{};
-		
-		Integer[] ids = new Integer[tos.size()];
-		for (int i = 0; i < ids.length; i++ ) 
-			ids[i] = ((Domain)tos.get(i)).getId();
-		
-		return ids;
 	}
 
 }

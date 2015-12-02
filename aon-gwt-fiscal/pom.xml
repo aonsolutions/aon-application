@@ -166,12 +166,12 @@
 			<version>1.0.1</version>
 		</dependency>
 		
+<!-- 
 		<dependency>
       		<groupId>com.code.aon</groupId>
       		<artifactId>aon.ui.config</artifactId>
     		<version>${project.version}</version>
     		<scope>compile</scope>
-<!-- 
     		<exclusions>
 				<exclusion>
 					<groupId>asm</groupId>
@@ -182,8 +182,8 @@
 					<artifactId>asm-attrs</artifactId>
 				</exclusion>
 			</exclusions>
- -->
    		</dependency>
+ -->
 		
 		<dependency>
 			<groupId>com.google.gwt.google-apis</groupId>

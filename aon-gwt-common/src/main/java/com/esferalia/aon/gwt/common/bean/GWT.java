@@ -2,12 +2,10 @@ package com.esferalia.aon.gwt.common.bean;
 
 import java.io.Serializable;
 
-import com.code.aon.AonVersion;
-
 public class GWT implements Serializable {
 	
-	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-
+	private static final long serialVersionUID = 4970259845694805821L;
+	
 	private String entryPoint;
 	
 	
