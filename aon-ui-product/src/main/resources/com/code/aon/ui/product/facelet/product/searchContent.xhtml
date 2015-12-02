@@ -29,6 +29,41 @@
 			</aon:panelGrid>
 		</aon:panelCollapsible>
 				
+		<aon:if test="#{aonConfiguration.bean.product.showAddInfo}">	
+			<aon:panelCollapsible expanded="false" label="#{bundle.aon_addInfo}">
+				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">
+	
+					<aon:outputText value="#{bundle.aon_date}" />
+					<aon:div>
+						<aon:outputLabel for="Product_addInfos_valueDate-From"
+							styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_from}:" />
+						<aon:selectInputDate id="Product_addInfos_valueDate-From"
+							valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+				
+						<aon:outputLabel for="Product_addInfos_valueDate-To"
+							styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_to}:" />
+						<aon:selectInputDate id="Product_addInfos_valueDate-To"
+							valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+					</aon:div>					
+	
+					<aon:outputText for="Product_addInfos_attribute"
+						value="#{bundle.aon_parameter}" />
+					<aon:inputText id="Product_addInfos_attribute"
+						valueChangeListener="#{controller.addExpression}" size="25" />
+	
+					<aon:outputText for="Product_addInfos_value"
+						value="#{bundle.aon_value}" />
+					<aon:inputText id="Product_addInfos_value"
+						valueChangeListener="#{controller.addExpression}" size="25" />
+	
+				</aon:panelGrid>
+			</aon:panelCollapsible>
+		</aon:if>		
+				
 		<ui:include src="/com/code/aon/ui/common/facelet/auditable/searchContent.xhtml" >
 			<ui:param name="valueController" value="#{productExport}" />
 		</ui:include>

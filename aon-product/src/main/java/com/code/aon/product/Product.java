@@ -42,6 +42,7 @@ public class Product extends ProductDB implements IAuditable {
 
 	private Set<Item> items = new HashSet<Item>();
 	private Set<ProductTag> tags = new HashSet<ProductTag>();
+	private Set<ItemAddInfo> addInfos = new HashSet<ItemAddInfo>();    
 
 	public Product() {
 		setKind(ProductKind.SALE_PURCHASE);
@@ -51,24 +52,29 @@ public class Product extends ProductDB implements IAuditable {
 	public Set<Item> getItems() {
 		return this.items;
 	}
-	
-	public void setItems( Set<Item> items ) {
+	public void setItems(Set<Item> items) {
 		this.items = items;
 	}
-	
 	@Transient
 	public void addItems(Item item) {
-		item.setProduct( this );
-		this.items.add( item );
+		item.setProduct(this);
+		this.items.add(item);
 	}
 
 	@OneToMany(mappedBy = "product", cascade={CascadeType.REMOVE})
 	public Set<ProductTag> getTags() {
 		return this.tags;
 	}
-
-	public void setTags( Set<ProductTag> tags ) {
+	public void setTags(Set<ProductTag> tags) {
 		this.tags = tags;
+	}
+
+	@OneToMany(mappedBy="product")
+	public Set<ItemAddInfo> getAddInfos() {
+		return this.addInfos;
+	}
+	public void setAddInfos(Set<ItemAddInfo> addInfos) {
+		this.addInfos = addInfos;
 	}
 
 	@Transient
