@@ -166,6 +166,16 @@ public class ContractController extends BasicController {
 		}
 		return false;
 	}
+	public boolean isRowCooperativePartnerQuote() {
+		try {
+			Contract contract = (Contract) getModel().getRowData();
+			String value = getContractUtils().getInfoCurrentValue(contract, ContractVariable.COOPERATIVE_PARTNER.getValue());
+			return new Boolean( value );
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage());
+		}
+		return false;
+	}
 	public boolean isRowContractInternship() {
 		Contract contract = null;
 		String code = null;
@@ -1409,6 +1419,7 @@ public class ContractController extends BasicController {
 		// PECULIAR QUOTE PERCENT VALUES
 		private Map<String, ContractData> peculiarQuoteMap;
 		private Map<String, Boolean> checkedQuoteMap;
+		private TRL trl;
 		
 		public SalaryInfoHandler(Contract contract){
 			this.contract = contract;
@@ -1427,6 +1438,12 @@ public class ContractController extends BasicController {
 		}
 		public void setCheckedQuoteMap(Map<String, Boolean> checkedQuoteMap) {
 			this.checkedQuoteMap = checkedQuoteMap;
+		}
+		public TRL getTrl() {
+			return trl;
+		}
+		public void setTrl(TRL trl) {
+			this.trl = trl;
 		}
 		public Integer getFilterYear() {
 			return filterYear;
@@ -1648,6 +1665,7 @@ public class ContractController extends BasicController {
 			setSelectedDeduction(null);
 			dataTracking = null;
 			paymentTracking = null;
+			trl = null;
 			loadContractData(contract);
 			loadPayments(contract);
 			loadDeductions(contract);
@@ -1780,6 +1798,12 @@ public class ContractController extends BasicController {
 			SEPEUtils utils = SEPEUtils.getInstance();
 			Map<String, ContractData> map = utils.getContractDataMap(contract, contract.getStartDate(), contract.getEndDate());
 
+			if(utils.getContractInfoMap(contract).containsKey(ContractVariable.COOPERATIVE_PARTNER.getValue())){
+				this.setTrl(TRL.COOPERATIVE_PARTNER);
+			} else {
+				this.setTrl(null);
+			}
+
 //			TRABAJADOR
 			if(map.containsKey("PORCENTAJE_DESMPL")){
 				peculiarQuoteMap.put("PORCENTAJE_DESMPL", map.get("PORCENTAJE_DESMPL"));
@@ -1897,10 +1921,30 @@ public class ContractController extends BasicController {
 			}
 		}
 		
+		public void onChangeTrl(ActionEvent event){
+			for(String key: checkedQuoteMap.keySet()){
+				checkedQuoteMap.put(key, Boolean.FALSE);
+			}
+			if(getTrl()==null){
+			} else if(getTrl()==TRL.COOPERATIVE_PARTNER){
+				if(peculiarQuoteMap.containsKey("PORCENTAJE_FOGASA")){
+					ContractData data = peculiarQuoteMap.get("PORCENTAJE_FOGASA");
+					data.setExpression("0");
+					peculiarQuoteMap.put("PORCENTAJE_FOGASA", data);
+				} else {
+					ContractData data = new ContractData();
+					data.setName("PORCENTAJE_FOGASA");
+					data.setExpression("0");
+					peculiarQuoteMap.put("PORCENTAJE_FOGASA", data);
+				}
+				checkedQuoteMap.put("PORCENTAJE_FOGASA", Boolean.TRUE);
+			}
+		}
+		
 		public void onAcceptPeculiarQuote(ActionEvent event){
-			for(String key: peculiarQuoteMap.keySet()){
-				try {
-					IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+				for(String key: peculiarQuoteMap.keySet()){
 					ContractData data = peculiarQuoteMap.get(key);
 					if( checkedQuoteMap.containsKey(key) && checkedQuoteMap.get(key) && StringUtils.isNotBlank(data.getExpression()) ){
 						data.setContract(contract);
@@ -1912,10 +1956,29 @@ public class ContractController extends BasicController {
 							bean.remove(data);
 						}
 					}
-				} catch (ManagerBeanException e) {
-					String msg = "Error al grabar el grupo de cotizacion. (" +e.getMessage() + ")";
-					AonUtil.addErrorMessage(msg);
 				}
+			} catch (ManagerBeanException e) {
+				String msg = "Error al grabar los porcentajes de cotizacion. (" +e.getMessage() + ")";
+				AonUtil.addErrorMessage(msg);
+			}
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
+				SEPEUtils utils = SEPEUtils.getInstance();
+				ContractInfo info = utils.getContractInfoMap(contract, null, null).get(ContractVariable.COOPERATIVE_PARTNER.getValue());
+				if(getTrl()==null){
+					if(info!=null){
+					bean.remove(info);
+					}
+				} else if(getTrl()==TRL.COOPERATIVE_PARTNER){
+					if(info==null || info.getId()==null){
+						ContractUtils.getInstance().enableCooperativePartner(contract);
+					}
+				}
+				ContractController controller = ((ContractController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER));
+				controller.getContractUtils().loadContractInfo((Contract) controller.getTo(), controller.getParams());
+			} catch (ManagerBeanException e) {
+				String msg = "Error al grabar los porcentajes de cotizacion. (" +e.getMessage() + ")";
+				AonUtil.addErrorMessage(msg);
 			}
 		}
 	}
@@ -1930,7 +1993,6 @@ public class ContractController extends BasicController {
 		private ContractInfo sepeStatusInfo;
 		private ContractInfo ssStatusInfo;
 		
-		private boolean retaQuote;
 		private boolean retaPartialTime;
 		private TRL trl;
 		private ContractOption contractOption;
@@ -2158,7 +2220,7 @@ public class ContractController extends BasicController {
 			this.bonusModel = bonusModel;
 		}
 		public boolean isRetaQuote() {
-			return retaQuote;
+			return trl!=null && trl==TRL.RETA;
 		}
 		
 		public boolean isRetaPartialTime() {
@@ -2175,9 +2237,6 @@ public class ContractController extends BasicController {
 		}
 		public void setTrl(TRL trl) {
 			this.trl = trl;
-			if(trl==TRL.RETA){
-				retaQuote = true;
-			}
 		}
 		public Double getWeekHours() {
 			return weekHours;

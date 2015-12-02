@@ -203,7 +203,7 @@ public class ContractControllerListener extends ControllerAdapter{
 				infoController.loadContractFields((Contract) this.getController().getTo(), true);
 				updateContractDocumentFields();
 				if(controller.getParams().getTrl()==TRL.COOPERATIVE_PARTNER){
-					utils.insertCooperativePartnerContractData((Contract) controller.getTo(), controller.getParams());
+					utils.insertCooperativePartnerContractData((Contract) controller.getTo());
 				}
 			} else {
 				utils.insertRetaContractData((Contract) controller.getTo(), controller.getParams());

@@ -19,19 +19,10 @@
 				<ui:param name="lookupDisabled" value="#{false}" />
 			</ui:include>
 			
-			<!--  
-			<aon:outputLabel for="contract-retaQuote" 
-				value="#{bundle.payroll_contract_reta_quote}" />
-			<aon:selectBooleanCheckbox id="contract-retaQuote"
-				value="#{contract.params.retaQuote}" >
-				<a4j:support event="onclick" reRender="contract_panel" ajaxSingle="#{true}" />
-			</aon:selectBooleanCheckbox>
-			-->
-				
 			<aon:outputLabel for="contract-trl" value="T.R.L."
-				title="Tipo de relaci&oacute;n laboral" />
+				title="Tipo de relación laboral" />
 			<aon:selectOneMenu id="contract-trl" value="#{contract.params.trl}" >
-				<f:selectItem itemLabel="Com&uacute;n" itemValue="#{null}" />
+				<f:selectItem itemLabel="Común" itemValue="#{null}" />
 				<f:selectItem itemLabel="RETA" itemValue="#{'RETA'}" />
 				<f:selectItem itemLabel="SOCIOS COOP." itemValue="#{'COOPERATIVE_PARTNER'}" />
 				<a4j:support event="onchange" reRender="contract_panel" ajaxSingle="#{true}" />
@@ -87,19 +78,14 @@
 			</aon:div>
 		</aon:if>
 		
+		<aon:if test="#{contract.params.cooperativePartnerQuote}" >
+			<aon:outputText value="&#160;"/>
+			<aon:outputText value="Socio cooperativista"/>
+		</aon:if>
+			
 		<aon:outputLabel for="Contract_contractCode"
 			value="#{bundle.payroll_contract_contract_type}" />
 		<aon:div rendered="#{!contract.params.retaQuote}">
-			<aon:div rendered="#{contract.params.cooperativePartnerQuote}">
-				<aon:outputText value="Socio cooperativista" />
-			</aon:div>
-			<aon:div rendered="#{contract.extendedContract}">
-				<aon:outputText value="Contrato prorrogado" />
-				<aon:commandButton value="&#160;" title="Eliminar prórroga"
-					styleClass="aon-finding-toolbar-item aon-icon-rubber aon-finding-toolbar-item-no-border aon-margin-left"
-					actionListener="#{contract.onUndoContractExtension}" 
-					reRender="contractForm" ajaxSingle="true" />
-			</aon:div>
 			<aon:if test="#{contract.nevv}" >
 				<aon:selectOneMenu id="Contract_contractCode" required="true"
 					rendered="#{!contract.readOnly}" 
@@ -150,6 +136,16 @@
 		</aon:div>
 		<aon:div rendered="#{contract.params.retaQuote}">
 			<aon:outputText value="#{bundle.payroll_contract_reta}" />
+		</aon:div>
+		
+		<aon:outputText value="&#160;" 
+			rendered="#{contract.extendedContract}" />
+		<aon:div rendered="#{contract.extendedContract}">
+			<aon:outputText value="Contrato prorrogado" />
+			<aon:commandButton value="&#160;" title="Eliminar prórroga"
+				styleClass="aon-finding-toolbar-item aon-icon-rubber aon-finding-toolbar-item-no-border aon-margin-left"
+				actionListener="#{contract.onUndoContractExtension}" 
+				reRender="contractForm" ajaxSingle="true" />
 		</aon:div>
 		
 		<aon:if test="#{!contract.params.retaQuote}">

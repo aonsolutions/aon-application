@@ -25,9 +25,11 @@
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.payroll_contract_contract_type}" />
 			</f:facet>
+			<aon:outputText value="[COOP.] "
+				rendered="#{contract.rowCooperativePartnerQuote}" />
 			<aon:outputText value="#{contract.rowContractCode}"
 				rendered="#{!contract.rowContractRetaQuote}" />
-			<aon:outputText value="#{bundle.payroll_contract_reta}"
+			<aon:outputText value="[RETA] #{bundle.payroll_contract_reta}"
 				rendered="#{contract.rowContractRetaQuote}" />
 			<aon:outputText value="Becario"
 				rendered="#{contract.rowContractInternship}" />

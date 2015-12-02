@@ -369,7 +369,7 @@ public class ContractUtils implements Serializable {
 		
 	}
 	
-	public void insertCooperativePartnerContractData(Contract contract, ContractParams params) {
+	public void insertCooperativePartnerContractData(Contract contract) {
 		IManagerBean bean;
 		ContractData data;
 		try {
@@ -623,6 +623,15 @@ public class ContractUtils implements Serializable {
 		info.setExpression( expression );
 		bean.insert(info);
 	}
+	
+	public void enableCooperativePartner(Contract contract){
+		 try {
+			 insertContractInfo(contract, ContractVariable.COOPERATIVE_PARTNER.getValue(), Boolean.TRUE.toString(), contract.getStartDate(), contract.getEndDate());
+		 } catch (ManagerBeanException e) {
+			 String msg = "Error al grabar el centro de formacion. (" +e.getMessage() + ")";
+			 AonUtil.addErrorMessage(msg);
+		 }
+	 }
 	
 	public void updateContractData(Contract contract, String name, String value) throws ControllerListenerException {
 		IManagerBean bean;
@@ -1203,11 +1212,12 @@ public class ContractUtils implements Serializable {
 			if(new Boolean(map.get(ContractVariable.SELF_EMPLOYED.getValue()))){
 				params.setTrl(TRL.RETA);
 			}
-		}
-		if(map.get(ContractVariable.COOPERATIVE_PARTNER.getValue())!=null){
+		} else if(map.get(ContractVariable.COOPERATIVE_PARTNER.getValue())!=null){
 			if(new Boolean(map.get(ContractVariable.COOPERATIVE_PARTNER.getValue()))){
 				params.setTrl(TRL.COOPERATIVE_PARTNER);
 			}
+		} else {
+			params.setTrl(null);
 		}
 			
 		if(map.get(ContractVariable.CONTRACT_MODEL_OPTION.getValue())!=null){
