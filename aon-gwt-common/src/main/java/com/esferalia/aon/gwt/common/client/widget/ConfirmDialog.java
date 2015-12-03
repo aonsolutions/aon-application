@@ -1,8 +1,7 @@
-package com.esferalia.aon.gwt.fiscal.client.accounting;
+package com.esferalia.aon.gwt.common.client.widget;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.ConfirmDialogCallback;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -20,6 +19,11 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
 public class ConfirmDialog extends CustomDialog {
     
+	public static interface ConfirmDialogCallback {
+		void onAccept();
+		void onCancel();
+	}
+
 	private SimpleLayoutPanel root;
 	
 	public ConfirmDialog() {

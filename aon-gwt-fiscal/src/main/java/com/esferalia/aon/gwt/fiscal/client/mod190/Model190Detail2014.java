@@ -2,30 +2,53 @@ package com.esferalia.aon.gwt.fiscal.client.mod190;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
-import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
-import com.esferalia.aon.gwt.common.client.widget.IntegerTextBox;
+import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfResult;
+import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.type.Mod190Key;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.cellview.client.HasKeyboardPagingPolicy.KeyboardPagingPolicy;
+import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.AsyncDataProvider;
+import com.google.gwt.view.client.HasData;
+import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SelectionChangeEvent.Handler;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 public class Model190Detail2014 extends ResizeComposite {
 
+	public static final ProvidesKey<Mod190Detail> MOD190_DETAIL_PROVIDES_KEY = new ProvidesKey<Mod190Detail>() {
+		@Override
+		public Object getKey(Mod190Detail det) {
+			return det == null ?null: det.getId() == null? det.getTempId(): det.getId();
+		}
+	};
+	
 	interface Model190Detail2013Binder extends
 			UiBinder<Widget, Model190Detail2014> {
 	}
@@ -94,9 +117,10 @@ public class Model190Detail2014 extends ResizeComposite {
 		}
 	}
 
-	Mod190Detail detail;
-	private ICallBack callback;
-
+	private Mod190 currentMod190;
+	private Mod190DetailDataProvider dataProvider;
+	private SingleSelectionModel<Mod190Detail> detailModel;
+	
 	@UiField
 	Panel additionalDataPanel;
 
@@ -104,7 +128,12 @@ public class Model190Detail2014 extends ResizeComposite {
 	Button deleteDetailButton;
 	@UiField
 	Button restoreDeletedButton;
+	@UiField
+	Button newDetailButton;
 
+	@UiField(provided=true)
+	CellList<Mod190Detail> detailList;
+	
 	@UiField
 	DocumentTextBox receiverDocument;
 	@UiField
@@ -112,7 +141,7 @@ public class Model190Detail2014 extends ResizeComposite {
 	@UiField
 	TextBox fullName;
 	@UiField
-	IntegerTextBox accrualYear;
+	IntegerBox accrualYear;
 	@UiField
 	ProvinceListBox province;
 	@UiField
@@ -122,17 +151,17 @@ public class Model190Detail2014 extends ResizeComposite {
 	@UiField(provided = true)
 	ListBox subkey;
 	@UiField
-	DoubleTextBox perception;
+	DoubleBox perception;
 	@UiField
-	DoubleTextBox retention;
+	DoubleBox retention;
 	@UiField
-	DoubleTextBox inKindPerception;
+	DoubleBox inKindPerception;
 	@UiField
-	DoubleTextBox inKindDeposit;
+	DoubleBox inKindDeposit;
 	@UiField
-	DoubleTextBox inKindOutputDeposit;
+	DoubleBox inKindOutputDeposit;
 	@UiField
-	IntegerTextBox birthYear;
+	IntegerBox birthYear;
 	@UiField
 	ListBox familySituation;
 	@UiField
@@ -148,22 +177,22 @@ public class Model190Detail2014 extends ResizeComposite {
 	@UiField
 	CheckBox homeLoanCommunnication;
 	@UiField
-	DoubleTextBox applicableReduction;
+	DoubleBox applicableReduction;
 	@UiField
-	DoubleTextBox deducibleExpense;
+	DoubleBox deducibleExpense;
 	@UiField
-	DoubleTextBox compensatoryPension;
+	DoubleBox compensatoryPension;
 	@UiField
-	DoubleTextBox foodAnnuality;
+	DoubleBox foodAnnuality;
 
 	@UiField
-	IntegerTextBox lessThan3Descendent;
+	IntegerBox lessThan3Descendent;
 	@UiField
-	IntegerTextBox lessThan3DescendentRatio;
+	IntegerBox lessThan3DescendentRatio;
 	@UiField
-	IntegerTextBox otherDescendent;
+	IntegerBox otherDescendent;
 	@UiField
-	IntegerTextBox otherDescendentRatio;
+	IntegerBox otherDescendentRatio;
 	@UiField
 	ListBox firstChildCalculation;
 	@UiField
@@ -172,44 +201,64 @@ public class Model190Detail2014 extends ResizeComposite {
 	ListBox thirdChildCalculation;
 
 	@UiField
-	IntegerTextBox disabilityDescendent33;
+	IntegerBox disabilityDescendent33;
 	@UiField
-	IntegerTextBox disabilityDescendent33Ratio;
+	IntegerBox disabilityDescendent33Ratio;
 	@UiField
-	IntegerTextBox disabilityDescendentDependence;
+	IntegerBox disabilityDescendentDependence;
 	@UiField
-	IntegerTextBox disabilityDescendentDependenceRatio;
+	IntegerBox disabilityDescendentDependenceRatio;
 	@UiField
-	IntegerTextBox disabilityDescendent65;
+	IntegerBox disabilityDescendent65;
 	@UiField
-	IntegerTextBox disabilityDescendent65Ratio;
+	IntegerBox disabilityDescendent65Ratio;
 	@UiField
-	IntegerTextBox lessThan75Ascendant;
+	IntegerBox lessThan75Ascendant;
 	@UiField
-	IntegerTextBox lessThan75AscendantRatio;
+	IntegerBox lessThan75AscendantRatio;
 	@UiField
-	IntegerTextBox ascendant;
+	IntegerBox ascendant;
 	@UiField
-	IntegerTextBox ascendantRatio;
+	IntegerBox ascendantRatio;
 	@UiField
-	IntegerTextBox disabilityAscendant33;
+	IntegerBox disabilityAscendant33;
 	@UiField
-	IntegerTextBox disabilityAscendant33Ratio;
+	IntegerBox disabilityAscendant33Ratio;
 	@UiField
-	IntegerTextBox disabilityAscendantDependence;
+	IntegerBox disabilityAscendantDependence;
 	@UiField
-	IntegerTextBox disabilityAscendantDependenceRatio;
+	IntegerBox disabilityAscendantDependenceRatio;
 	@UiField
-	IntegerTextBox disabilityAscendant65;
+	IntegerBox disabilityAscendant65;
 	@UiField
-	IntegerTextBox disabilityAscendant65Ratio;
+	IntegerBox disabilityAscendant65Ratio;
 
 	public Model190Detail2014() {
 		key = new KeyListBox();
 		
+		Mod190DetailCell mod190DetailCell = new Mod190DetailCell();
+		detailList = new CellList<Mod190Detail>(mod190DetailCell, MOD190_DETAIL_PROVIDES_KEY);
+		detailList.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
+		detailList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
+
+		// Add a selection model so we can select cells.
+		detailModel = new SingleSelectionModel<Mod190Detail>(MOD190_DETAIL_PROVIDES_KEY);
+		detailModel.addSelectionChangeHandler(new Handler() {
+			@Override
+			public void onSelectionChange(SelectionChangeEvent event) {
+				selectDetail();
+			}
+			
+		});
+		detailList.setSelectionModel(detailModel);
+		detailList.setEmptyListWidget(new HTML(AON.MSG.noData()));
+		
+		dataProvider = new Mod190DetailDataProvider(MOD190_DETAIL_PROVIDES_KEY);
+		dataProvider.addDataDisplay(detailList);
+		detailList.setVisible(true);
+
 		Widget ui = MODEL190_DETAIL_2013_BINDER.createAndBindUi(this);
 		initWidget(ui);
-
 
 		familySituation.addItem("-");
 		familySituation.addItem("1");
@@ -240,26 +289,28 @@ public class Model190Detail2014 extends ResizeComposite {
 		thirdChildCalculation.addItem("2");
 	}
 
-	public void setCallback(ICallBack callback) {
-		this.callback = callback;
+	public void setMod190(Mod190 mod190) {
+		this.currentMod190 = mod190;
+		detailList.setVisibleRangeAndClearData(detailList.getVisibleRange(),true);
 	}
+	private Mod190Detail getDetail() {
+		return detailModel.getSelectedObject();
+	}
+	
+	public void selectDetail() {
+		receiverDocument.setValue(getDetail().getDocument());
+		representativeDocument.setValue(getDetail().getRepresentativeDocument());
+		fullName.setValue(getDetail().getName());
+		accrualYear.setValue(getDetail().getAccrualYear());
+		province.setSelectedIndex(getDetail().getProvince());
+		key.setValue(getDetail().getKey(), getDetail().getSubKey());
+		perception.setValue(getDetail().getPerception());
+		retention.setValue(getDetail().getRetention());
+		inKindPerception.setValue(getDetail().getInKindPerception());
+		inKindDeposit.setValue(getDetail().getInKindDeposit());
+		inKindOutputDeposit.setValue(getDetail().getInKindOutputDeposit());
 
-	public void setDetail(Mod190Detail detail) {
-		this.detail = detail;
-
-		receiverDocument.setValue(detail.getDocument());
-		representativeDocument.setValue(detail.getRepresentativeDocument());
-		fullName.setValue(detail.getName());
-		accrualYear.setValue(detail.getAccrualYear());
-		province.setSelectedIndex(detail.getProvince());
-		key.setValue(detail.getKey(), detail.getSubKey());
-		perception.setValue(detail.getPerception());
-		retention.setValue(detail.getRetention());
-		inKindPerception.setValue(detail.getInKindPerception());
-		inKindDeposit.setValue(detail.getInKindDeposit());
-		inKindOutputDeposit.setValue(detail.getInKindOutputDeposit());
-
-		IrpfData irpfData = detail.getIrpfData();
+		IrpfData irpfData = getDetail().getIrpfData();
 		if (irpfData != null) {
 			ceutaMelilla.setValue(irpfData.isCeutaMelilla());
 			birthYear.setValue(irpfData.getBirthYear());
@@ -270,7 +321,7 @@ public class Model190Detail2014 extends ResizeComposite {
 			workActivityExtension.setValue(irpfData.isWorkActivityExtension());
 			geographicMobility.setValue(irpfData.isGeographicMobility());
 		}
-		IrpfResult irpfResult = detail.getIrpfResult();
+		IrpfResult irpfResult = getDetail().getIrpfResult();
 		if (irpfResult != null) {
 			applicableReduction.setValue(irpfResult.getApplicableReduction());
 			deducibleExpense.setValue(irpfResult.getDeducibleExpense());
@@ -319,8 +370,8 @@ public class Model190Detail2014 extends ResizeComposite {
 			disabilityAscendant65Ratio.setValue(irpfResult
 					.getDisabilityAscendant65Ratio());
 		}
-		restoreDeletedButton.setVisible(detail.isDeleted());
-		deleteDetailButton.setVisible(!detail.isDeleted());
+		restoreDeletedButton.setVisible(getDetail().isDeleted());
+		deleteDetailButton.setVisible(!getDetail().isDeleted());
 		enableOrDisableAdditionalDataPanel();
 	}
 
@@ -328,59 +379,58 @@ public class Model190Detail2014 extends ResizeComposite {
 		Mod190Key keyEnum = Mod190Key.values()[key.getSelectedIndex()];
 		String subk = ((key.getSubkey().getSelectedIndex() == -1) ? null : key
 				.getSubkey().getValue(key.getSubkey().getSelectedIndex()));
-		if (Mod190Key.A == keyEnum 
-				|| Mod190Key.C == keyEnum
-				|| Mod190Key.D == keyEnum
+		additionalDataPanel.setVisible( 
+				    Mod190Key.A == keyEnum 
+				||  Mod190Key.C == keyEnum
+				||  Mod190Key.D == keyEnum
 				|| (Mod190Key.E == keyEnum && "01".equals(subk))
 				|| (Mod190Key.B == keyEnum && "01".equals(subk))
-				|| (Mod190Key.B == keyEnum && "02".equals(subk))) {
-			additionalDataPanel.setVisible(true);
-		} else {
-			additionalDataPanel.setVisible(false);
-		}
+				|| (Mod190Key.B == keyEnum && "02".equals(subk)))
+				;
 	}
 
 	@UiHandler("deleteDetailButton")
 	void onDeleteDetailButtonClick(ClickEvent event) {
-		detail.setDeleted(true);
+		getDetail().setDeleted(true);
 		restoreDeletedButton.setVisible(true);
 		deleteDetailButton.setVisible(false);
-		callback.redrawList(detail);
+		detailList.redraw();
 	}
 
 	@UiHandler("restoreDeletedButton")
 	void onRestoreDeletedButtonClick(ClickEvent event) {
-		detail.setDeleted(false);
-		if (!detail.isDirty()) {
+		getDetail().setDeleted(false);
+		if (!getDetail().isDirty()) {
 			restoreDeletedButton.setVisible(false);
 			deleteDetailButton.setVisible(true);
-			callback.redrawList(detail);
+			detailList.redraw();
 		}
 	};
 
 	@UiHandler("receiverDocument")
 	void onChangeReceiverDocument(ChangeEvent event) {
-		detail.setDocument(receiverDocument.getValue());
-		detail.setDirty(true);
+		getDetail().setDocument(receiverDocument.getValue());
+		markAsDirty();
 	}
 
 	@UiHandler("representativeDocument")
 	void onChangeRepresentativeDocument(ChangeEvent event) {
-		detail.setRepresentativeDocument(representativeDocument.getValue());
-		detail.setDirty(true);
+		getDetail().setRepresentativeDocument(representativeDocument.getValue());
+		markAsDirty();
 	}
 
 	@UiHandler("fullName")
 	void onChangeFullName(ChangeEvent event) {
-		detail.setName(fullName.getValue());
-		detail.setDirty(true);
+		getDetail().setName(fullName.getValue());
+		markAsDirty();
+		detailList.redraw();
 	}
 
 	@UiHandler("accrualYear")
 	void onChangeAccrualYear(ChangeEvent event) {
 		try {
-			detail.setAccrualYear(accrualYear.getIntValue());
-			detail.setDirty(true);
+			getDetail().setAccrualYear(accrualYear.getValue());
+			markAsDirty();
 		} catch (NumberFormatException e) {
 			accrualYear.addStyleName(AON.AON_CSS.aonTextBoxError());
 		}
@@ -388,20 +438,20 @@ public class Model190Detail2014 extends ResizeComposite {
 
 	@UiHandler("province")
 	void onChangeProvince(ChangeEvent event) {
-		detail.setProvince(province.getSelectedIndex());
-		detail.setDirty(true);
+		getDetail().setProvince(province.getSelectedIndex());
+		markAsDirty();
 	}
 
 	@UiHandler("ceutaMelilla")
 	void onChangeCeutaMelilla(ClickEvent event) {
-		detail.getIrpfData().setCeutaMelilla(ceutaMelilla.getValue());
-		detail.setDirty(true);
+		getDetail().getIrpfData().setCeutaMelilla(ceutaMelilla.getValue());
+		markAsDirty();
 	}
 
 	@UiHandler("key")
 	void onChangeKey(ChangeEvent event) {
-		detail.setKey(Mod190Key.values()[key.getSelectedIndex()].getValue());
-		detail.setDirty(true);
+		getDetail().setKey(Mod190Key.values()[key.getSelectedIndex()].getValue());
+		markAsDirty();
 		enableOrDisableAdditionalDataPanel();
 	}
 
@@ -409,278 +459,357 @@ public class Model190Detail2014 extends ResizeComposite {
 	void onChangeSubkey(ChangeEvent event) {
 		String subk = ((key.getSubkey().getSelectedIndex() == -1) ? null : key
 				.getSubkey().getValue(key.getSubkey().getSelectedIndex()));
-		detail.setSubKey(subk);
-		detail.setDirty(true);
+		getDetail().setSubKey(subk);
+		markAsDirty();
 		enableOrDisableAdditionalDataPanel();
 	}
 
 	@UiHandler("perception")
 	void onChangePerception(ChangeEvent event) {
-		detail.setPerception(perception.getDoubleValue());
-		detail.setDirty(true);
+		getDetail().setPerception(perception.getValue());
+		markAsDirty();
 	}
 
 	@UiHandler("retention")
 	void onChangeRetention(ChangeEvent event) {
-		detail.setRetention(retention.getDoubleValue());
-		detail.setDirty(true);
+		getDetail().setRetention(retention.getValue());
+		markAsDirty();
 	}
 
 	@UiHandler("inKindPerception")
 	void onChangeValuation(ChangeEvent event) {
-		detail.setInKindPerception(inKindPerception.getDoubleValue());
-		detail.setDirty(true);
+		getDetail().setInKindPerception(inKindPerception.getValue());
+		markAsDirty();
 	}
 
 	@UiHandler("inKindDeposit")
 	void onChangeInKindDeposit(ChangeEvent event) {
-		detail.setInKindDeposit(inKindDeposit.getDoubleValue());
-		detail.setDirty(true);
+		getDetail().setInKindDeposit(inKindDeposit.getValue());
+		markAsDirty();
 	}
 
 	@UiHandler("inKindOutputDeposit")
 	void onChangeInKindOutputDeposit(ChangeEvent event) {
-		detail.setInKindOutputDeposit(inKindOutputDeposit.getDoubleValue());
-		detail.setDirty(true);
+		getDetail().setInKindOutputDeposit(inKindOutputDeposit.getValue());
+		markAsDirty();
 	}
 
 	@UiHandler("birthYear")
 	void onChangeBirthYear(ChangeEvent event) {
-		detail.getIrpfData().setBirthYear(birthYear.getIntValue());
-		detail.setDirty(true);
+		getDetail().getIrpfData().setBirthYear(birthYear.getValue());
+		markAsDirty();
 	}
 
 	@UiHandler("familySituation")
 	void onChangeFamilySituation(ChangeEvent event) {
-		detail.getIrpfData().setFamilySituation(
+		getDetail().getIrpfData().setFamilySituation(
 				(byte) familySituation.getSelectedIndex());
-		detail.setDirty(true);
+		markAsDirty();
 	}
 
 	@UiHandler("spouseDocument")
 	void onChangeSpouseDocument(ChangeEvent event) {
-		detail.getIrpfData().setSpouseDocument(spouseDocument.getValue());
-		detail.setDirty(true);
+		getDetail().getIrpfData().setSpouseDocument(spouseDocument.getValue());
+		markAsDirty();
 	}
 
 	@UiHandler("disability")
 	void onChangeDisability(ChangeEvent event) {
-		detail.getIrpfData()
+		getDetail().getIrpfData()
 				.setDisability((byte) disability.getSelectedIndex());
-		detail.setDirty(true);
+		markAsDirty();
 	}
 
 	@UiHandler("contract")
 	void onChangeContract(ChangeEvent event) {
-		detail.getIrpfData().setContract((byte) contract.getSelectedIndex());
-		detail.setDirty(true);
+		getDetail().getIrpfData().setContract((byte) contract.getSelectedIndex());
+		markAsDirty();
 	}
 
 	@UiHandler("workActivityExtension")
 	void onChangeWorkActivityExtension(ClickEvent event) {
-		detail.getIrpfData().setWorkActivityExtension(
+		getDetail().getIrpfData().setWorkActivityExtension(
 				workActivityExtension.getValue());
-		detail.setDirty(true);
+		markAsDirty();
 	}
 
 	@UiHandler("geographicMobility")
 	void onChangeGeographicMobility(ClickEvent event) {
-		detail.getIrpfData().setGeographicMobility(
+		getDetail().getIrpfData().setGeographicMobility(
 				geographicMobility.getValue());
-		detail.setDirty(true);
+		markAsDirty();
 	}
 
 	@UiHandler("homeLoanCommunnication")
 	void onChangeHomeLoanCommunnication(ClickEvent event) {
-		detail.getIrpfResult().setHomeLoanCommunnication(
+		getDetail().getIrpfResult().setHomeLoanCommunnication(
 				homeLoanCommunnication.getValue());
-		detail.setDirty(true);
+		markAsDirty();
 	}
 
 	@UiHandler("applicableReduction")
 	void onChangeApplicableReduction(ChangeEvent event) {
-		detail.getIrpfResult().setApplicableReduction(
-				applicableReduction.getDoubleValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setApplicableReduction(
+				applicableReduction.getValue());
+		markAsDirty();
 	}
 
 	@UiHandler("deducibleExpense")
 	void onChangeDeducibleExpense(ChangeEvent event) {
-		detail.getIrpfResult().setDeducibleExpense(
-				deducibleExpense.getDoubleValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setDeducibleExpense(
+				deducibleExpense.getValue());
+		markAsDirty();
 	}
 
 	@UiHandler("compensatoryPension")
 	void onChangeCompensatoryPension(ChangeEvent event) {
-		detail.getIrpfResult().setCompensatoryPension(
-				compensatoryPension.getDoubleValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setCompensatoryPension(
+				compensatoryPension.getValue());
+		markAsDirty();
 	}
 
 	@UiHandler("foodAnnuality")
 	void onChangeFoodAnnuality(ChangeEvent event) {
-		detail.getIrpfResult().setFoodAnnuality(foodAnnuality.getDoubleValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setFoodAnnuality(foodAnnuality.getValue());
+		markAsDirty();
 	}
 
 	@UiHandler("lessThan3Descendent")
 	void onChangeLessThan3Descendent(ChangeEvent event) {
-		detail.getIrpfResult().setLessThan3Descendent(
-				(byte) lessThan3Descendent.getIntValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setLessThan3Descendent(
+				AonNumberUtils.toByte( lessThan3Descendent.getValue()));
+		markAsDirty();
 	}
 
 	@UiHandler("lessThan3DescendentRatio")
 	void onChangeLessThan3DescendentRatio(ChangeEvent event) {
-		detail.getIrpfResult().setLessThan3DescendentRatio(
-				(byte) lessThan3DescendentRatio.getIntValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setLessThan3DescendentRatio(
+				AonNumberUtils.toByte( lessThan3DescendentRatio.getValue()));
+		markAsDirty();
 	}
 
 	@UiHandler("otherDescendent")
 	void onChangeOtherDescendent(ChangeEvent event) {
-		detail.getIrpfResult().setOtherDescendent(
-				(byte) otherDescendent.getIntValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setOtherDescendent(
+				AonNumberUtils.toByte( otherDescendent.getValue()));
+		markAsDirty();
 	}
 
 	@UiHandler("otherDescendentRatio")
 	void onChangeOtherDescendentRatio(ChangeEvent event) {
-		detail.getIrpfResult().setOtherDescendentRatio(
-				(byte) otherDescendentRatio.getIntValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setOtherDescendentRatio(
+				AonNumberUtils.toByte( otherDescendentRatio.getValue()));
+		markAsDirty();
 	}
 
 	@UiHandler("firstChildCalculation")
 	void onChangeFirstChildCalculation(ChangeEvent event) {
-		detail.getIrpfResult().setFirstChildCalculation(
-				(byte) firstChildCalculation.getSelectedIndex());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setFirstChildCalculation(
+				AonNumberUtils.toByte( firstChildCalculation.getSelectedIndex()));
+		markAsDirty();
 	}
 
 	@UiHandler("secondChildCalculation")
 	void onChangeSecondChildCalculation(ChangeEvent event) {
-		detail.getIrpfResult().setSecondChildCalculation(
-				(byte) secondChildCalculation.getSelectedIndex());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setSecondChildCalculation(
+				AonNumberUtils.toByte( secondChildCalculation.getSelectedIndex()));
+		markAsDirty();
 	}
 
 	@UiHandler("thirdChildCalculation")
 	void onChangeThirdChildCalculation(ChangeEvent event) {
-		detail.getIrpfResult().setThirdChildCalculation(
-				(byte) thirdChildCalculation.getSelectedIndex());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setThirdChildCalculation(
+				AonNumberUtils.toByte( thirdChildCalculation.getSelectedIndex()));
+		markAsDirty();
 	}
 
 	@UiHandler("disabilityDescendent33")
 	void onChangeDisabilityDescendent33(ChangeEvent event) {
-		detail.getIrpfResult().setDisabilityDescendent33(
-				(byte) disabilityDescendent33.getIntValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setDisabilityDescendent33(
+				AonNumberUtils.toByte( disabilityDescendent33.getValue()));
+		markAsDirty();
 	}
 
 	@UiHandler("disabilityDescendent33Ratio")
 	void onChangeDisabilityDescendent33Ratio(ChangeEvent event) {
-		detail.getIrpfResult().setDisabilityDescendent33Ratio(
-				(byte) disabilityDescendent33Ratio.getIntValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setDisabilityDescendent33Ratio(
+				AonNumberUtils.toByte( disabilityDescendent33Ratio.getValue()));
+		markAsDirty();
 	}
 
 	@UiHandler("disabilityDescendentDependence")
 	void onChangeDisabilityDescendentDependence(ChangeEvent event) {
-		detail.getIrpfResult().setDisabilityDescendentDependence(
-				(byte) disabilityDescendentDependence.getIntValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setDisabilityDescendentDependence(
+				AonNumberUtils.toByte( disabilityDescendentDependence.getValue()));
+		markAsDirty();
 	}
 
 	@UiHandler("disabilityDescendentDependenceRatio")
 	void onChangeDisabilityDescendentDependenceRatio(ChangeEvent event) {
-		detail.getIrpfResult().setDisabilityDescendentDependenceRatio(
-				(byte) disabilityDescendentDependenceRatio.getIntValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setDisabilityDescendentDependenceRatio(
+				AonNumberUtils.toByte( disabilityDescendentDependenceRatio.getValue()));
+		markAsDirty();
 	}
 
 	@UiHandler("disabilityDescendent65")
 	void onChangeDisabilityDescendent65(ChangeEvent event) {
-		detail.getIrpfResult().setDisabilityDescendent65(
-				(byte) disabilityDescendent65.getIntValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setDisabilityDescendent65(
+				AonNumberUtils.toByte( disabilityDescendent65.getValue()));
+		markAsDirty();
 	}
 
 	@UiHandler("disabilityDescendent65Ratio")
 	void onChangeDisabilityDescendent65Ratio(ChangeEvent event) {
-		detail.getIrpfResult().setDisabilityDescendent65Ratio(
-				(byte) disabilityDescendent65Ratio.getIntValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setDisabilityDescendent65Ratio(
+				AonNumberUtils.toByte( disabilityDescendent65Ratio.getValue()));
+		markAsDirty();
 	}
 
 	@UiHandler("lessThan75Ascendant")
 	void onChangeLessThan75Ascendant(ChangeEvent event) {
-		detail.getIrpfResult().setLessThan75Ascendant(
-				(byte) lessThan75Ascendant.getIntValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setLessThan75Ascendant(
+				AonNumberUtils.toByte( lessThan75Ascendant.getValue()));
+		markAsDirty();
 	}
 
 	@UiHandler("lessThan75AscendantRatio")
 	void onChangeLessThan75AscendantRatio(ChangeEvent event) {
-		detail.getIrpfResult().setLessThan75AscendantRatio(
-				(byte) lessThan75AscendantRatio.getIntValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setLessThan75AscendantRatio(
+				AonNumberUtils.toByte( lessThan75AscendantRatio.getValue()));
+		markAsDirty();
 	}
 
 	@UiHandler("ascendant")
 	void onChangeAscendant(ChangeEvent event) {
-		detail.getIrpfResult().setAscendant((byte) ascendant.getIntValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setAscendant(AonNumberUtils.toByte( ascendant.getValue()));
+		markAsDirty();
 	}
 
 	@UiHandler("ascendantRatio")
 	void onChangeAscendantRatio(ChangeEvent event) {
-		detail.getIrpfResult().setAscendantRatio((byte) ascendantRatio.getIntValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setAscendantRatio(AonNumberUtils.toByte( ascendantRatio.getValue()));
+		markAsDirty();
 	}
 
 	@UiHandler("disabilityAscendant33")
 	void onChangeDisabilityAscendant33(ChangeEvent event) {
-		detail.getIrpfResult().setDisabilityAscendant33(
-				(byte) disabilityAscendant33.getIntValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setDisabilityAscendant33(
+				AonNumberUtils.toByte( disabilityAscendant33.getValue()));
+		markAsDirty();
 	}
 
 	@UiHandler("disabilityAscendant33Ratio")
 	void onChangeDisabilityAscendant33Ratio(ChangeEvent event) {
-		detail.getIrpfResult().setDisabilityAscendant33Ratio(
-				(byte) disabilityAscendant33Ratio.getIntValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setDisabilityAscendant33Ratio(
+				AonNumberUtils.toByte( disabilityAscendant33Ratio.getValue()));
+		markAsDirty();
 	}
 
 	@UiHandler("disabilityAscendantDependence")
 	void onChangeDisabilityAscendantDependence(ChangeEvent event) {
-		detail.getIrpfResult().setDisabilityAscendantDependence(
-				(byte) disabilityAscendantDependence.getIntValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setDisabilityAscendantDependence(
+				AonNumberUtils.toByte( disabilityAscendantDependence.getValue()));
+		markAsDirty();
 	}
 
 	@UiHandler("disabilityAscendantDependenceRatio")
 	void onChangeDisabilityAscendantDependenceRatio(ChangeEvent event) {
-		detail.getIrpfResult().setDisabilityAscendantDependenceRatio(
-				(byte) disabilityAscendantDependenceRatio.getIntValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setDisabilityAscendantDependenceRatio(
+				AonNumberUtils.toByte( disabilityAscendantDependenceRatio.getValue()));
+		markAsDirty();
 	}
 
 	@UiHandler("disabilityAscendant65")
 	void onChangeDisabilityAscendant65(ChangeEvent event) {
-		detail.getIrpfResult().setDisabilityAscendant65(
-				(byte) disabilityAscendant65.getIntValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setDisabilityAscendant65(
+				AonNumberUtils.toByte( disabilityAscendant65.getValue()));
+		markAsDirty();
 	}
 
 	@UiHandler("disabilityAscendant65Ratio")
 	void onChangeDisabilityAscendant65Ratio(ChangeEvent event) {
-		detail.getIrpfResult().setDisabilityAscendant65Ratio(
-				(byte) disabilityAscendant65Ratio.getIntValue());
-		detail.setDirty(true);
+		getDetail().getIrpfResult().setDisabilityAscendant65Ratio(
+				AonNumberUtils.toByte( disabilityAscendant65Ratio.getValue()));
+		markAsDirty();
 	}
 
+	static class Mod190DetailCell extends AbstractCell<Mod190Detail> {
+		@Override
+		public void render(Cell.Context context, Mod190Detail value,
+				SafeHtmlBuilder sb) {
+			if (value == null) {
+				return;
+			}
+			sb.appendHtmlConstant("<div style='");
+			if (value.isDirty()) {
+				sb.appendHtmlConstant("font-weight:bold;");
+			}
+			if (value.isDeleted()) {
+				sb.appendHtmlConstant("text-decoration:line-through");
+			}
+			sb.appendHtmlConstant("' class='");
+			sb.appendHtmlConstant( AON.AON_CSS.aonLinkListItem());
+			sb.appendHtmlConstant("'>");
+			sb.appendEscaped(AonStringUtils.isEmpty(value.getName()) ?  AON.MSG.newPerceptor() : value.getName());
+			if (value.isDirty()) {
+				sb.appendEscaped(" *");
+			}
+			sb.appendHtmlConstant("</div>");
+		}
+	}
+
+	@UiHandler("newDetailButton")
+	void onNewDetailButtonClick(ClickEvent event) {
+		newPerceptor();
+	}
+	
+	private void newPerceptor(){
+		currentMod190.getDetails().add(
+			new Mod190Detail()
+				.setKey("A")
+				.setIrpfData(new IrpfData())
+				.setIrpfResult(new IrpfResult())
+				.setDirty(true)
+				.setTempId((currentMod190.getDetails().size() + 1)  * (-1))
+			);
+		detailList.setRowCount(detailList.getRowCount() + 1);
+		detailList.setPageSize(detailList.getRowCount());
+		detailList.redraw();
+		selectInList(currentMod190.getDetails().size() - 1);
+		selectDetail();
+	}
+	private void markAsDirty() {
+		if (!getDetail().isDirty()) {
+			getDetail().setDirty(true);
+			detailList.redraw();		
+		}
+	}
+	
+	private void selectInList(int i) {
+		detailModel.setSelected(currentMod190.getDetails().get(i),true);
+		detailList.getRowElement(i).scrollIntoView();
+	}
+	
+	class Mod190DetailDataProvider extends AsyncDataProvider<Mod190Detail> {
+
+		public Mod190DetailDataProvider(
+				ProvidesKey<Mod190Detail> detailProvidesKey) {
+			super(detailProvidesKey);
+		}
+
+		@Override
+		protected void onRangeChanged(HasData<Mod190Detail> display) {
+			if (currentMod190 != null && currentMod190.getId() != null) {
+				if (currentMod190.getDetails().size() == 0) {
+					onNewDetailButtonClick(null);					
+				} else {
+					updateRowCount(currentMod190.getDetails().size(), true);
+					updateRowData(0, currentMod190.getDetails());
+					detailList.setPageSize(currentMod190.getDetails().size());
+					selectInList(0);
+					selectDetail();
+				}
+			}
+		}
+	}
 }

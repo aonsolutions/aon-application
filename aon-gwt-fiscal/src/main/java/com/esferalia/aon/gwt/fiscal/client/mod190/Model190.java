@@ -1,51 +1,42 @@
 package com.esferalia.aon.gwt.fiscal.client.mod190;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.css.AonCellList;
-import com.esferalia.aon.gwt.common.client.css.AonDataGrid;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
 import com.esferalia.aon.gwt.common.client.widget.AdministrationListBox;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.common.client.widget.ShowMorePagerPanel;
-import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
-import com.esferalia.aon.gwt.fiscal.client.mod190.Model190Detail2014.ICallBack;
 import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
-import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
-import com.esferalia.aon.occam.api.model.fiscal.IrpfResult;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
-import com.google.gwt.cell.client.AbstractCell;
-import com.google.gwt.cell.client.Cell;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.cellview.client.DataGrid;
-import com.google.gwt.user.cellview.client.HasKeyboardPagingPolicy.KeyboardPagingPolicy;
-import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVisibility;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
@@ -54,57 +45,14 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
-import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.AsyncDataProvider;
-import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent.Handler;
-import com.google.gwt.view.client.SingleSelectionModel;
 
 public class Model190 extends MainEntryPoint {
 
-	public static final ProvidesKey<Mod190Detail> MOD190_DETAIL_PROVIDES_KEY = new ProvidesKey<Mod190Detail>() {
-		@Override
-		public Object getKey(Mod190Detail mod190Detail) {
-			return mod190Detail == null ? null : mod190Detail.getId();
-		}
-	};
-
 	interface Model190Binder extends UiBinder<Widget, Model190> {
-	}
-
-	static class Mod190DetailCell extends AbstractCell<Mod190Detail> {
-		@Override
-		public void render(Cell.Context context, Mod190Detail value,
-				SafeHtmlBuilder sb) {
-			if (value == null) {
-				return;
-			}
-			if (value.isDirty() || value.isDeleted()) {
-				sb.appendHtmlConstant("<div style='");
-			}
-			if (value.isDirty()) {
-				sb.appendHtmlConstant("font-style: italic; font-weight:bold;");
-			}
-			if (value.isDeleted()) {
-				sb.appendHtmlConstant("text-decoration:line-through");
-			}
-			if (value.isDirty() || value.isDeleted()) {
-				sb.appendHtmlConstant("'>");
-			}
-			String newLabel = AON.MSG.newPerceptor() + " ("
-					+ (value.getId() * (-1)) + ")";
-			sb.appendEscaped(AonUtil.isEmpty(value.getName()) ? newLabel
-					: value.getName());
-
-			if (value.isDirty() || value.isDeleted()) {
-				sb.appendHtmlConstant("</div>");
-			}
-		}
 	}
 
 	static interface IModel190Detail extends HasVisibility {
@@ -117,16 +65,14 @@ public class Model190 extends MainEntryPoint {
 	private Mod190 currentMod190;
 	private FiscalServiceAsync mod190Service;
 	
-	final static DataGrid.Resources DATA_GRID_STYLE = GWT.create(AonDataGrid.class);
-	
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
+	@UiField
+	SimplePanel headerPanel;
 	@UiField
 	DeckLayoutPanel deckPanel;
 	@UiField
 	Panel listPanel;
-	@UiField
-	Panel perceptorHeaderPanel;
 	@UiField
 	DockLayoutPanel formPanel;
 	@UiField
@@ -139,15 +85,9 @@ public class Model190 extends MainEntryPoint {
 	@UiField(provided = true)
 	Model190Table table;
 
-	private Mod190DetailDataProvider dataProvider;
-	private CellList<Mod190Detail> detailList;
-	private SingleSelectionModel<Mod190Detail> detailModel;
-
 	private int domain;
 	private int enterprise;
 
-	@UiField
-	ShowMorePagerPanel pagerPanel;
 	@UiField
 	Model190Detail2014 perceptorPanel;
 
@@ -160,8 +100,6 @@ public class Model190 extends MainEntryPoint {
 	@UiField
 	Button cancelButton;
 	@UiField
-	Button newDetailButton;
-	@UiField
 	Button generateFileButton;
 	@UiField
 	Button printButton;
@@ -169,7 +107,7 @@ public class Model190 extends MainEntryPoint {
 	Button printMod190Button;
 	
 	@UiField
-	TextBox year;
+	IntegerBox year;
 	@UiField
 	AdministrationListBox administration;
 	@UiField
@@ -178,8 +116,6 @@ public class Model190 extends MainEntryPoint {
 	CheckBox confidential;
 	@UiField
 	EnterpriseSuggestBox enterpriseSuggest;
-	@UiField
-	TextArea comments;
 	@UiField
 	TextBox contactPhone;
 	@UiField
@@ -207,40 +143,7 @@ public class Model190 extends MainEntryPoint {
 		
 		table = new Model190Table(new Mod190SelectionHandler());
 
-		Mod190DetailCell mod190DetailCell = new Mod190DetailCell();
-		CellList.Resources cellListStyle = GWT.create(AonCellList.class);
-		detailList = new CellList<Mod190Detail>(mod190DetailCell,cellListStyle, MOD190_DETAIL_PROVIDES_KEY);
-		detailList.setStylePrimaryName(DATA_GRID_STYLE.dataGridStyle().dataGridWidget());
-		detailList.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
-		detailList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
-
-		// Add a selection model so we can select cells.
-		detailModel = new SingleSelectionModel<Mod190Detail>(MOD190_DETAIL_PROVIDES_KEY);
-		detailModel.addSelectionChangeHandler(new Handler() {
-			@Override
-			public void onSelectionChange(SelectionChangeEvent event) {
-				final Mod190Detail selected = detailModel.getSelectedObject();
-				perceptorPanel.setDetail(selected);
-			}
-			
-		});
-		detailList.setSelectionModel(detailModel);
-		detailList.setEmptyListWidget(new HTML(AON.MSG.noData()));
-		
-		dataProvider = new Mod190DetailDataProvider(MOD190_DETAIL_PROVIDES_KEY);
-		dataProvider.addDataDisplay(detailList);
-		detailList.setVisible(true);
-
 		Widget ui = MODEL_190_BINDER.createAndBindUi(this);
-		perceptorPanel.setCallback(new ICallBack() {
-
-			@Override
-			public void redrawList(Mod190Detail detail) {
-				detailList.redraw();
-			}
-		});
-		pagerPanel.setDisplay(detailList);
-		pagerPanel.setIncrementSize(0);
 
 		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
 
@@ -258,9 +161,6 @@ public class Model190 extends MainEntryPoint {
 		
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
-
-		// http://code.google.com/p/google-web-toolkit/issues/detail?id=6889
-		deckPanel.onResize();
 	}
 
 	public static native String getCurrentDomainName()
@@ -295,8 +195,7 @@ public class Model190 extends MainEntryPoint {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					DialogMessages.alertErrorWidget(AON.MSG.unableToReadMod190(caught
-							.getMessage()));
+					showErrorMessage(AON.MSG.unableToReadMod190(caught.getMessage()));
 				}
 			});
 		}
@@ -304,11 +203,10 @@ public class Model190 extends MainEntryPoint {
 
 	private void select(Mod190 selected) {
 		currentMod190 = selected;
-		year.setValue(Integer.toString(currentMod190.getYear()));
+		year.setValue( currentMod190.getYear());
 		administration.setSelectedIndex(currentMod190.getAdministration());
 		replacement.setValue(currentMod190.isReplacement());
 		confidential.setValue(currentMod190.isConfidential());
-		comments.setValue(currentMod190.getComments());
 		enterpriseSuggest.setValue(currentMod190.getDocument(), currentMod190.getName());
 		contactPhone.setValue(currentMod190.getContactPhone());
 		contactPerson.setValue(currentMod190.getContactPerson());
@@ -317,9 +215,7 @@ public class Model190 extends MainEntryPoint {
 		domain = currentMod190.getDomain();
 		enterprise = currentMod190.getEnterprise();
 		replacementPanel.setVisible(currentMod190.isReplacement());
-		pagerPanel.setVisible(currentMod190.getId() != null);
 		perceptorPanel.setVisible(currentMod190.getId() != null);
-		perceptorHeaderPanel.setVisible(currentMod190.getId() != null);
 		// Toolbar states
 		deleteButton.setVisible(currentMod190.getId() != null);
 		newButton.setVisible(currentMod190.getId() != null);
@@ -328,8 +224,8 @@ public class Model190 extends MainEntryPoint {
 		generateFileButton.setVisible(currentMod190.getId() != null);
 		printButton.setVisible(currentMod190.getId() != null);
 		printMod190Button.setVisible(currentMod190.getId() != null);
-
-		detailList.setVisibleRangeAndClearData(detailList.getVisibleRange(),true);
+		perceptorPanel.setMod190(currentMod190);
+		paintHeaderTable();		
 	}
 
 	@UiHandler("table")
@@ -360,17 +256,15 @@ public class Model190 extends MainEntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						DialogMessages.alertErrorWidget(AON.MSG.unableToReadMod190(caught
-								.getMessage()));
+						showErrorMessage(AON.MSG.unableToReadMod190(caught.getMessage()));
 					}
 				});
 	}
 
 	@UiHandler("saveButton")
 	void onAcceptButtonClick(ClickEvent event) {
-		if (AonUtil.isEmpty(year.getValue())) {
-			throw new IllegalArgumentException(AON.MSG.requiredField(AON.MSG
-					.fiscalYear()));
+		if (year.getValue() == 0) {
+			throw new IllegalArgumentException(AON.MSG.requiredField(AON.MSG.fiscalYear()));
 		}
 
 		final PopupPanel popup = new PopupPanel(false, true);
@@ -401,29 +295,38 @@ public class Model190 extends MainEntryPoint {
 
 	@UiHandler("deleteButton")
 	void onDeleteButtonClick(ClickEvent event) {
-		if (Window.confirm(AON.MSG.confirmDeleteAction())) {
-			mod190Service.deleteMod190(getCurrentDomainName(), getCurrentDomain()
-					,this.currentMod190, new AsyncCallback<Void>() {
-				@Override
-				public void onSuccess(Void result) {
-					select(new Mod190());
-					table.setVisibleRangeAndClearData(table.getVisibleRange(),
-							true);
-				}
+		deleteButton.setEnabled(false);
+		ConfirmDialog cd = new ConfirmDialog();
+		cd.confirm(AON.MSG.confirmDeclarationDeleteAction(), new ConfirmDialogCallback() {
 
-				@Override
-				public void onFailure(Throwable caught) {
-					DialogMessages.alertErrorWidget(AON.MSG.unableToDeleteMod190(caught
-							.getMessage()));
-				}
-			});
-		}
+			@Override
+			public void onAccept() {
+				mod190Service.deleteMod190(getCurrentDomainName(), getCurrentDomain()
+						,currentMod190, new AsyncCallback<Void>() {
+					@Override
+					public void onSuccess(Void result) {
+						select(new Mod190());
+						table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
+						deleteButton.setEnabled(true);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorMessage(AON.MSG.unableToDeleteMod190(caught.getMessage()));
+					}
+				});
+			}
+
+			@Override
+			public void onCancel() {
+				deleteButton.setEnabled(true);
+			}
+		});
 	}
 
 	@UiHandler("newButton")
 	void onNewButtonClick(ClickEvent event) {
 		cleanErrorMessage();
-		detailList.setVisibleRangeAndClearData(detailList.getVisibleRange(),true);
 		mod190Service.initializeMod190(getCurrentDomainName(), getCurrentDomain(),2014 ,
 				new AsyncCallback<Mod190>() {
 			@Override
@@ -431,6 +334,7 @@ public class Model190 extends MainEntryPoint {
 				select(m190);
 				int i = deckPanel.getWidgetIndex(formPanel);
 				deckPanel.showWidget(i);
+				perceptorPanel.setMod190(m190);
 			}
 
 			@Override
@@ -442,30 +346,24 @@ public class Model190 extends MainEntryPoint {
 		});
 	}
 
+	@UiHandler("year")
+	void onYearChanged(ChangeEvent event) {
+		currentMod190.setYear(year.getValue());
+		paintHeaderTable();	
+	}
+	@UiHandler("administration")
+	void onAdministrationChanged(ChangeEvent event) {
+		currentMod190.setAdministration((byte) administration.getSelectedIndex());		
+		paintHeaderTable();	
+	}
+	
 	@UiHandler("cancelButton")
 	void onCancelButtonClick(ClickEvent event) {
 		cleanErrorMessage();
-		detailList.setVisibleRangeAndClearData(detailList.getVisibleRange(),
-				true);
+		perceptorPanel.setMod190(null);
 		int i = deckPanel.getWidgetIndex(listPanel);
 		deckPanel.showWidget(i);
 		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
-	}
-
-	@UiHandler("newDetailButton")
-	void onNewDetailButtonClick(ClickEvent event) {
-		int newKey = (currentMod190.getDetails().size() + 1) * (-1);
-		final Mod190Detail perceptor = new Mod190Detail();
-		perceptor.setId(newKey);
-		perceptor.setKey("A");
-		perceptor.setIrpfData(new IrpfData());
-		perceptor.setIrpfResult(new IrpfResult());
-		currentMod190.getDetails().add(perceptor);
-		perceptorPanel.setDetail(perceptor);
-		detailList.setRowCount(detailList.getRowCount() + 1);
-		detailList.setPageSize(detailList.getRowCount());
-		selectInList(currentMod190.getDetails().size() - 1);
-		detailList.redraw();
 	}
 
 	@UiHandler("enterpriseSuggest")
@@ -480,17 +378,12 @@ public class Model190 extends MainEntryPoint {
 	}
 
 	private void populateMod190() {
-		try {
-			currentMod190.setYear(Integer.parseInt(year.getValue()));
-		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException(AON.MSG.unableToParseYear());
-		}
+		currentMod190.setYear(year.getValue());
 		currentMod190.setDomain(domain);
 		currentMod190.setEnterprise(enterprise);
 		currentMod190.setAdministration((byte) administration.getSelectedIndex());
 		currentMod190.setReplacement(replacement.getValue());
 		currentMod190.setConfidential(confidential.getValue());
-		currentMod190.setComments(comments.getValue());
 		currentMod190.setDocument(enterpriseSuggest.getValue());
 		currentMod190.setName(enterpriseSuggest.getName().getValue());
 		currentMod190.setContactPhone(contactPhone.getValue());
@@ -499,34 +392,6 @@ public class Model190 extends MainEntryPoint {
 		currentMod190.setReplacedReceipt(replacedReceipt.getValue());
 	}
 
-	private void selectInList(int i) {
-		detailModel.setSelected(currentMod190.getDetails().get(i),true);
-		detailList.getRowElement(i).scrollIntoView();
-		pagerPanel.scrollToLeft();
-	}
-
-	class Mod190DetailDataProvider extends AsyncDataProvider<Mod190Detail> {
-
-		public Mod190DetailDataProvider(
-				ProvidesKey<Mod190Detail> detailProvidesKey) {
-			super(detailProvidesKey);
-		}
-
-		@Override
-		protected void onRangeChanged(HasData<Mod190Detail> display) {
-			if (currentMod190 != null && currentMod190.getId() != null) {
-				if (currentMod190.getDetails().size() == 0) {
-					onNewDetailButtonClick(null);					
-				} else {
-					updateRowCount(currentMod190.getDetails().size(), true);
-					updateRowData(0, currentMod190.getDetails());
-					detailList.setPageSize(currentMod190.getDetails().size());
-					selectInList(0);
-					perceptorPanel.setDetail(detailModel.getSelectedObject());
-				}
-			}
-		}
-	}
 
 	@UiHandler("replacement")
 	void onChangeReplacement(ClickEvent event) {
@@ -620,5 +485,66 @@ public class Model190 extends MainEntryPoint {
 		
 	}
 	
+	protected void paintHeaderTable() {
+		headerPanel.clear();
+		headerPanel.setStyleName(AON.AON_CSS.aonWidthAll());
+		
+		FlexTable headerTable = new FlexTable();
+		headerTable.setStyleName(AON.AON_CSS.aonFiscalModelTable());
+		
+		Label image = new Label("");
+		image.setStyleName(getAdministrationImage());
+		
+		headerTable.setWidget(0, 0, image);
+		headerTable.getFlexCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderImage());
+		headerTable.getFlexCellFormatter().setRowSpan(0, 0, 2);
+		
+		headerTable.setWidget(0, 1, new Label(AON.MSG.fiscalModelDescriptionlong(FiscalModelType.M190)));
+		headerTable.getFlexCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
+		headerTable.getFlexCellFormatter().addStyleName(0, 1, getAdministrationBG());
+		headerTable.getFlexCellFormatter().setRowSpan(0, 1, 2);
+		
+		headerTable.setWidget(0, 2, new Label(FiscalModelType.M190.getName()));
+		headerTable.getFlexCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonFiscalModelTableHeaderModel());
+		headerTable.getFlexCellFormatter().addStyleName(0, 2, getAdministrationBG());
+		
+		headerTable.setWidget(1, 0, new Label(""+currentMod190.getYear()));
+		headerTable.getFlexCellFormatter().setStyleName(1, 0, AON.AON_CSS.aonFiscalModelTableHeaderModel());
+		headerTable.getFlexCellFormatter().addStyleName(1, 0, getAdministrationBG());
+		
+		headerPanel.setWidget(headerTable);
+	}
+	public String getAdministrationBG() {
+		int admon = (currentMod190 == null 
+				?Administration.COMMON_TERRITORY.ordinal()
+				:currentMod190.getAdministration());
+		if (admon == Administration.ALAVA.ordinal()) {
+			return AON.AON_CSS.aonFiscalArabaBg();
+		} else if (admon == Administration.BIZKAIA.ordinal()) {
+			return AON.AON_CSS.aonFiscalBizkaiaBg();
+		} else if (admon == Administration.GIPUZKOA.ordinal()) {
+			return AON.AON_CSS.aonFiscalGipuzkoaBg();
+		} else if (admon == Administration.NAVARRA.ordinal()) {
+			return AON.AON_CSS.aonFiscalNavarraBg();
+		} else {
+			return AON.AON_CSS.aonFiscalAeatBg();
+		}
+	}
+	public String getAdministrationImage() {
+		int adm = (currentMod190 == null 
+				?Administration.COMMON_TERRITORY.ordinal()
+				:currentMod190.getAdministration());
+		if (adm == Administration.ALAVA.ordinal()) {
+			return AON.AON_CSS.aonArabaHeaderImage();
+		} else if (adm == Administration.BIZKAIA.ordinal()) {
+			return AON.AON_CSS.aonBizkaiaHeaderImage();
+		} else if (adm == Administration.GIPUZKOA.ordinal()) {
+			return AON.AON_CSS.aonGipuzkoaHeaderImage();
+		} else if (adm == Administration.NAVARRA.ordinal()) {
+			return AON.AON_CSS.aonNavarraHeaderImage();
+		} else {
+			return AON.AON_CSS.aonAeatHeaderImage();
+		}
+	}
 
 }

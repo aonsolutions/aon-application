@@ -4,6 +4,7 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.CellList.Style;
 
+@Deprecated
 public interface AonCellList extends CellList.Resources {
 
 	@Override

@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod190;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -35,6 +36,7 @@ public class Model190Table extends CellTable<Mod190> {
 
 		addSelectorColumn();
 		addYearColumn();
+		addAdministrationColumn();
 		addReplacementColumn();
 		addDocumentColumn();
 		addNameColumn();
@@ -55,6 +57,28 @@ public class Model190Table extends CellTable<Mod190> {
 		};
 		this.addColumn(selectorColumn);
 		this.setColumnWidth(selectorColumn, 20, Unit.PX);
+	}
+
+	private void addAdministrationColumn() {
+		final Column<Mod190, ImageResource> iconColumn = new Column<Mod190, ImageResource>(
+				new ImageResourceCell()) {
+			@Override
+			public ImageResource getValue(Mod190 mod190) {
+				Administration adm = Administration.values()[mod190.getAdministration()]; 
+				if (adm ==Administration.ALAVA) {
+					return AON.AON_RESOURCES.aonIconAraba();	
+				} else if (adm ==Administration.BIZKAIA) {
+					return AON.AON_RESOURCES.aonIconBizkaia();
+				} else if (adm ==Administration.GIPUZKOA) {
+					return AON.AON_RESOURCES.aonIconGipuzkoa();
+				} else if (adm ==Administration.NAVARRA) {
+					return AON.AON_RESOURCES.aonIconNavarra();
+				} 
+				return AON.AON_RESOURCES.aonAeat();
+			}
+		};
+		this.addColumn(iconColumn);
+		this.setColumnWidth(iconColumn, 20, Unit.PX);
 	}
 
 	private void addYearColumn() {

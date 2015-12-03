@@ -12,8 +12,6 @@ import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.function.Function;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.jooq.Field;
@@ -36,7 +34,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod180DAO {
 	
-	private static Logger LOGGER = Logger.getLogger(Mod180DAO.class.getName());
 	private static byte ZERO_BYTE = 0;
 	private static byte ONE_BYTE = 1;
 	
@@ -77,11 +74,9 @@ public class Mod180DAO {
 	public static Mod180 save(AONContext ctx, Mod180 mod180) {
 		ctx.checkWrite();
 		if (mod180.getId() == null) {
-			LOGGER.log(Level.INFO, "INSERTING Mod180");
 			mod180 = insert(ctx, mod180); 
 			 
 		} else {
-			LOGGER.log(Level.INFO, "UPDATING Mod180");
 			mod180 = update(ctx, mod180);
 		}
 		for (Mod180Detail detail : mod180.getDetails()) {
@@ -144,7 +139,6 @@ public class Mod180DAO {
 	public static void delete(AONContext ctx, Mod180 mod180) {
 		ctx.checkWrite();
 		deleteDetails(ctx, mod180);
-		LOGGER.log(Level.INFO, "DELETING DECLARATION (" + mod180.getId() + ")");
 		ctx.getDslContext().delete(FS_MODEL180)
 			.where(FS_MODEL180.ID.equal(mod180.getId()))
 			.execute();
@@ -219,26 +213,22 @@ public class Mod180DAO {
 
 	public static void saveDetail(AONContext ctx, Mod180 mod180, Mod180Detail detail){
 		ctx.checkWrite();
-		if (detail.getId() == null || detail.getId() < 0) {
+		if (detail.getId() == null) {
 			if (!detail.isDeleted()) {
 				detail.setDomain(mod180.getDomain());
 				detail.setMod180(mod180.getId());
 				insertDetail(ctx, detail);
-				LOGGER.log(Level.INFO, "INSERTING Mod180Detail");
 			}
 		} else {
 			if (detail.isDeleted()) {
 				deleteDetail(ctx, detail);
-				LOGGER.log(Level.INFO, "DELETING Mod180Detail");
 			} else {
 				updateDetail(ctx, detail);
-				LOGGER.log(Level.INFO, "UPDATING Mod180Detail");
 			}
 		}
 	}
 	
 	private static void insertDetail(AONContext ctx, Mod180Detail detail) {
-		LOGGER.log(Level.INFO, "INSERTING RECEIVERS BY MOD180 (" + detail.getDocument() + " )");
 		ctx.getDslContext().insertInto(FS_MODEL180_DETAIL)
 			.set(FS_MODEL180_DETAIL.DOMAIN,detail.getDomain())
 			.set(FS_MODEL180_DETAIL.FS_MODEL180,detail.getMod180())
@@ -273,7 +263,6 @@ public class Mod180DAO {
 	}
 
 	private static void updateDetail(AONContext ctx, Mod180Detail detail) {
-		LOGGER.log(Level.INFO, "UPDATING RECEIVERS BY MOD180 (" + detail.getDocument() + " )");
 		ctx.getDslContext().update(FS_MODEL180_DETAIL)
 			.set(FS_MODEL180_DETAIL.DOCUMENT,AonStringUtils.substring(detail.getDocument(), 0, 9))
 			.set(FS_MODEL180_DETAIL.NAME,AonStringUtils.substring(detail.getName(), 0, 40))
@@ -307,14 +296,12 @@ public class Mod180DAO {
 	}
 	
 	private static void deleteDetail(AONContext ctx, Mod180Detail detail) {
-		LOGGER.log(Level.INFO, "DELETING RECEIVERS BY ID (" + detail.getDocument() + " )");
 		ctx.getDslContext().delete(FS_MODEL180_DETAIL)
 			.where(FS_MODEL180_DETAIL.ID.equal(detail.getId()))
 			.execute();
 	}
 
 	private static void deleteDetails(AONContext ctx, Mod180 mod180) {
-		LOGGER.log(Level.INFO, "DELETING RECEIVERS BY MOD180 (" + mod180.getId() + " )");
 		ctx.getDslContext().delete(FS_MODEL180_DETAIL)
 			.where(FS_MODEL180_DETAIL.FS_MODEL180.equal(mod180.getId()))
 			.execute();

@@ -61,4 +61,8 @@ public class IntegerBox extends ValueBox<Integer> {
 			}
 		});
 	}
+	
+	public void setValue(Byte value) {
+		super.setValue(value==null?null:value.intValue());
+	}
 }

@@ -40,6 +40,7 @@ public class Mod180Detail implements Serializable {
 
 	private boolean dirty;
 	private boolean deleted;
+	private int tempId;	
 
 	public Integer getId() {
 		return id;
@@ -329,4 +330,13 @@ public class Mod180Detail implements Serializable {
 		return this;
 	}
 
+	public int getTempId() {
+		return tempId;
+	}
+
+	public Mod180Detail setTempId(int tempId) {
+		this.tempId = tempId;
+		return this;
+	}
+	
 }

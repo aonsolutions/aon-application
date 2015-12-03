@@ -2,9 +2,10 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
 
-@SuppressWarnings("serial")
 public class Mod190Detail implements Serializable {
 
+	private static final long serialVersionUID = 7374076019343100903L;
+	
 	private Integer id;
 	private String name;
 	private int domain;
@@ -23,6 +24,7 @@ public class Mod190Detail implements Serializable {
 	private double inKindOutputDeposit;
 	private int accrualYear;
 
+	private int tempId;
 	private IrpfData irpfData;
 	private IrpfResult irpfResult;
 
@@ -198,4 +200,14 @@ public class Mod190Detail implements Serializable {
 		this.deleted = deleted;
 		return this;
 	}
+
+	public int getTempId() {
+		return tempId;
+	}
+
+	public Mod190Detail setTempId(int tempId) {
+		this.tempId = tempId;
+		return this;
+	}
+	
 }

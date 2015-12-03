@@ -148,7 +148,7 @@ public interface CommonMessages extends Messages {
 		,"M390_HF"	,"Mod. 390 Hac. For."
 		,"M180"		,"Declaraci\u00F3n Informativa. Retenciones e ingresos a cuenta. Rendimientos procedentes del arrendamiento de inmuebles urbanos. Resumen anual."
 		,"M184"		,"Mod. 184"
-		,"M190"		,"Mod. 190"
+		,"M190"		,"Declaraci\u00F3n Informativa. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades econ\u00F3micas, premios y determinadas ganancias patrimoniales e imputaciones de rentas"
 		,"M193"		,"Mod. 193"
 		,"M310"		,"IVA. Autoliquidaci\u00F3n. R\u00E9gimen Simplificado"
 		,"M311"		,"IVA. Autoliquidaci\u00F3n Final. R\u00E9gimen Simplificado"
@@ -395,7 +395,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("\u00BFDeshacer el borrado?")
 	String confirmRestoreAction();
 
-	@DefaultMessage("Si continua se borrar\u00E1 la declaraci\u00F3n completa. \u00BFContinuar con el borrado?")
+	@DefaultMessage("Si continua se borrar\u00E1 la declaraci\u00F3n completa.\n \u00BFContinuar con el borrado?")
 	String confirmDeclarationDeleteAction();
 
 	@DefaultMessage("Restaurar")

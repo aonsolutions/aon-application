@@ -4,6 +4,13 @@ package com.esferalia.aon.watson.util;
 
 public class AonNumberUtils {
 
+	public static byte toByte(Integer i) {
+		if (i != null) {
+			return i.byteValue();
+		}
+		return 0;
+	}
+
 	public static Integer toInteger(String value) {
 		if (!AonStringUtils.isBlank(value)) {
 			return Integer.parseInt(value);

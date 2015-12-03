@@ -74,6 +74,9 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 .aon-width-80{
 	width:80px;
 }
+.aon-width-90{
+	width:90px;
+}
 .aon-width-100{
 	width:100px;
 }	
@@ -316,6 +319,9 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 }
 .aon-border-top  {
 	border-top: solid #999 1px;
+}
+.aon-border-right   {
+	border-right: #999 1px solid;
 }
 .aon-border-collapse {
 	border-collapse: collapse;
@@ -1821,7 +1827,7 @@ input:disabled + label{
 
 .aon-fiscal-model-table-header-title {
     color: white;
-    font-size: 2em;
+    font-size: 1.5em;
     text-align: center;
     width: auto;
 }

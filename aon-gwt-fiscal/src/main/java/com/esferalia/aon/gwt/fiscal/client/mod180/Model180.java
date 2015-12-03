@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.AdministrationListBox;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
@@ -369,21 +371,33 @@ public class Model180 extends MainEntryPoint {
 
 	@UiHandler("deleteButton")
 	void onDeleteButtonClick(ClickEvent event) {
-		if (Window.confirm(AON.MSG.confirmDeclarationDeleteAction())) {
-			fiscalService.deleteMod180(getCurrentDomainName(),
-					getCurrentDomain(), this.currentMod180, new AsyncCallback<Void>() {
-						@Override
-						public void onSuccess(Void result) {
-							select(new Mod180());
-							table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
-						}
+		deleteButton.setEnabled(false);
+		ConfirmDialog cd = new ConfirmDialog();
+		cd.confirm(AON.MSG.confirmDeclarationDeleteAction(), new ConfirmDialogCallback() {
 
-						@Override
-						public void onFailure(Throwable caught) {
-							showErrorMessage(AON.MSG.unableToDeleteMod180(caught.getMessage()));
-						}
-					});
-		}
+			@Override
+			public void onAccept() {
+				fiscalService.deleteMod180(getCurrentDomainName(),
+						getCurrentDomain(), currentMod180, new AsyncCallback<Void>() {
+					@Override
+					public void onSuccess(Void result) {
+						select(new Mod180());
+						table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
+						deleteButton.setEnabled(true);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorMessage(AON.MSG.unableToDeleteMod180(caught.getMessage()));
+					}
+				});
+			}
+
+			@Override
+			public void onCancel() {
+				deleteButton.setEnabled(true);
+			}
+		});
 	}
 
 	@UiHandler("newButton")

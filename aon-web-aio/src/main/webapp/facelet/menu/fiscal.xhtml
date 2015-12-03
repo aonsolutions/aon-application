@@ -184,8 +184,9 @@
 											<aon:commandLink id="gwt_mod190"
 												action="gwt_mod190"
 												title="#{bundle.fiscal_model_190_module}">
-												<aon:outputText styleClass="aon-fiscal-link-box" value="190" />
-												<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_190_module}" />
+												<aon:outputText styleClass="aon-fiscal-link-box" value="190" style="background-color: yellow;"/>
+												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+													style="margin-left: 5px; padding-left: 20px;" value="#{bundle.fiscal_model_190_module}" />
 											</aon:commandLink>
 
 											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">

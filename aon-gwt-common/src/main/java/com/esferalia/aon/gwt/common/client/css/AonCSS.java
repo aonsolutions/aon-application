@@ -102,7 +102,10 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-width-80")
 	String aonWidth80();
-	
+
+	@ClassName("aon-width-90")
+	String aonWidth90();
+
 	@ClassName("aon-width-100")
 	String aonWidth100();
 	
@@ -298,6 +301,9 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-border-top")
     String aonBorderTop();
 	
+	@ClassName("aon-border-right")
+    String aonBorderRight();
+
 	@ClassName("aon-border-bottom")
     String aonBorderBottom();
 

@@ -8,47 +8,31 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 	
 	<g:DockLayoutPanel>
-		<g:north size="26">
-			<g:FlowPanel height="100%" styleName="{aonResources.css.aonFindingTitleToolbar} {aonResources.css.aonWidthAll}">
-				<g:HorizontalPanel>
-					<g:HTMLPanel styleName="{aonResources.css.aonFindingTitle}">
-						<g:HTMLPanel styleName="{aonResources.css.aonFindingTitleInternal}">
-							<g:Label text="{msg.receiverList}" />
-						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<g:HTMLPanel>
-						<g:HTMLPanel styleName="{aonResources.css.aonFindingSubtitleIternal}">
-							<g:Label/>
-						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbar}">
-						<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbarItemGroup}">
-							<g:Button ui:field="newDetailButton" text="{msg.newPerceptor}"
-								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconReset}"/>
-							<g:Button ui:field="deleteDetailButton" text="{msg.deleteAction}" 
-								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconDelete}"/>
-							<g:Button ui:field="restoreDeletedButton" text="{msg.restoreAction}"
-								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconRedo}"/>
-						</g:HTMLPanel>
-					</g:HTMLPanel>
-				</g:HorizontalPanel>
-			</g:FlowPanel>
-		</g:north>
 		<g:west size="300">
-			<g:ScrollPanel ui:field="detailListPanel" styleName="{aonResources.css.aonScrollArea}">
-				<cell:CellList ui:field="detailList" />
-			</g:ScrollPanel>
-				 <!-- 
-			<g:SimpleLayoutPanel styleName="{aonResources.css.aonPadding}">
-				<aon:ShowMorePagerPanel styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonHeightAll}" 
-					ui:field="pagerPanel" />
-			</g:SimpleLayoutPanel>
-				-->
+			<g:DockLayoutPanel>
+				<g:north size="20">
+					<g:FlowPanel height="100%" styleName="{aonResources.css.aonTextRight} {aonResources.css.aonWidthAll}">
+						<g:FlowPanel styleName="{aonResources.css.aonMarginLeft} {aonResources.css.aonBorderBottom} {aonResources.css.aonPadding2}">
+							<g:Button ui:field="deleteDetailButton" title="{msg.deleteAction}" 
+								styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconDelete}  {aonResources.css.aonMarginRight}"/>
+							<g:Button ui:field="restoreDeletedButton" title="{msg.restoreAction}"
+								styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconRedo} {aonResources.css.aonMarginRight}"/>
+							<g:Button ui:field="newDetailButton" title="{msg.newPerceptor}"
+								styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconReset}  {aonResources.css.aonMarginRight}"/>
+						</g:FlowPanel>
+					</g:FlowPanel>
+				</g:north>
+				<g:center>
+					<g:ScrollPanel ui:field="detailListPanel" styleName="{aonResources.css.aonScrollArea} {aonResources.css.aonBorderRight}">
+						<cell:CellList ui:field="detailList" />
+					</g:ScrollPanel>
+				</g:center>
+			</g:DockLayoutPanel>
 		</g:west>
 		<g:center>
 			<g:ScrollPanel styleName="{aonResources.css.aonWidthAll}">
 				<g:FlowPanel styleName="{aonResources.css.aonScrollArea}">
-				<g:HTMLPanel styleName="{aonResources.css.aonMarginTop}">
+				<g:HTMLPanel>
 					<table class="{aonResources.css.aonWidthAll} {aonResources.css.aonNowrap}">
 						<tr>
 							<td class="{aonResources.css.aonBorderBottom} {aonResources.css.aonBold}" colspan="4">

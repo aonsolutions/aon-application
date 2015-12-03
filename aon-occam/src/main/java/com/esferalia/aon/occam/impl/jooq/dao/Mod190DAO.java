@@ -244,10 +244,9 @@ public class Mod190DAO {
 		batch.execute();
 	}
 
-	public static void saveDetail(AONContext ctx, Mod190 mod190,
-			Mod190Detail detail) {
+	public static void saveDetail(AONContext ctx, Mod190 mod190, Mod190Detail detail) {
 		ctx.checkWrite();
-		if (detail.getId() == null || detail.getId() < 0) {
+		if (detail.getId() == null) {
 			if (!detail.isDeleted()) {
 				detail.setDomain(mod190.getDomain());
 				detail.setMod190(mod190.getId());
@@ -848,8 +847,7 @@ public class Mod190DAO {
 		mod190.setEnterprise(params.getCompany());
 		mod190.setDomain(ctx.getDomainId());
 		mod190.setDocument(params.getDocument());
-		mod190.setName(AonStringUtils.left(params.getName(), FS_MODEL190.NAME
-				.getDataType().length()));
+		mod190.setName(AonStringUtils.left(params.getName(), FS_MODEL190.NAME.getDataType().length()));
 		mod190.setYear(year);
 		mod190.setAdministration((byte) (params.getAdministration()!=null?params.getAdministration():4));
 		mod190.setContactPerson(AonStringUtils.left(params.getContactPerson(),

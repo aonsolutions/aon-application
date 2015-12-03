@@ -42,8 +42,8 @@ public class Model180Detail2014 extends ResizeComposite {
 
 	public static final ProvidesKey<Mod180Detail> MOD180_DETAIL_PROVIDES_KEY = new ProvidesKey<Mod180Detail>() {
 		@Override
-		public Object getKey(Mod180Detail mod190Detail) {
-			return mod190Detail == null ? null : mod190Detail.getId();
+		public Object getKey(Mod180Detail det) {
+			return det == null ?null: det.getId() == null? det.getTempId(): det.getId();
 		}
 	};
 
@@ -67,8 +67,6 @@ public class Model180Detail2014 extends ResizeComposite {
 	CellList<Mod180Detail> detailList;
 	@UiField
 	ScrollPanel detailListPanel;
-//	@UiField
-//	ShowMorePagerPanel pagerPanel;
 
 	@UiField
 	DocumentTextBox receiverDocument;
@@ -153,9 +151,6 @@ public class Model180Detail2014 extends ResizeComposite {
 		Widget ui = MODEL180_DETAIL_2014_BINDER.createAndBindUi(this);
 		initWidget(ui);
 
-//		pagerPanel.setDisplay(detailList);
-//		pagerPanel.setIncrementSize(0);
-		
 		location.addItem( AON.MSG.buildingLocationValue(0) );
 		location.addItem( AON.MSG.buildingLocationValue(1) );	
 		location.addItem( AON.MSG.buildingLocationValue(2) );
@@ -238,6 +233,7 @@ public class Model180Detail2014 extends ResizeComposite {
 	void onChangeFullName(ChangeEvent event) {
 		getDetail().setName(fullName.getValue());
 		markAsDirty();
+		detailList.redraw();
 	}
 
 	@UiHandler("accrualYear")
@@ -401,14 +397,15 @@ public class Model180Detail2014 extends ResizeComposite {
 	}
 	
 	private void newPerceptor(){
-		int newKey = (currentMod180.getDetails().size() + 1) * (-1);
-		final Mod180Detail perceptor = new Mod180Detail();
-		perceptor.setId(newKey);
-		currentMod180.getDetails().add(perceptor);
+		currentMod180.getDetails().add(
+			new Mod180Detail()
+			.setDirty(true)
+			.setTempId((currentMod180.getDetails().size() * (-1)))
+		);
 		detailList.setRowCount(detailList.getRowCount() + 1);
 		detailList.setPageSize(detailList.getRowCount());
-		selectInList(currentMod180.getDetails().size() - 1);
 		detailList.redraw();
+		selectInList(currentMod180.getDetails().size() - 1);
 		selectDetail();		
 	}
 	
@@ -442,8 +439,10 @@ public class Model180Detail2014 extends ResizeComposite {
 		}
 	}
 	private void markAsDirty() {
-		getDetail().setDirty(true);
-		detailList.redraw();		
+		if (!getDetail().isDirty()) {
+			getDetail().setDirty(true);
+			detailList.redraw();		
+		}
 	}
 
 	static class Mod180DetailCell extends AbstractCell<Mod180Detail> {
@@ -463,8 +462,10 @@ public class Model180Detail2014 extends ResizeComposite {
 			sb.appendHtmlConstant("' class='");
 			sb.appendHtmlConstant( AON.AON_CSS.aonLinkListItem());
 			sb.appendHtmlConstant("'>");
-			String newLabel = AON.MSG.newPerceptor() + " (" + (value.getId() * (-1)) + ")";
-			sb.appendEscaped(AonStringUtils.isEmpty(value.getName()) ? newLabel : value.getName());
+			sb.appendEscaped(AonStringUtils.isEmpty(value.getName()) ?  AON.MSG.newPerceptor() : value.getName());
+			if (value.isDirty()) {
+				sb.appendEscaped(" *");
+			}
 			sb.appendHtmlConstant("</div>");
 		}
 	}
