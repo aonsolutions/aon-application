@@ -71,10 +71,6 @@ public class InvoiceControllerListener extends ControllerAdapter {
 
 		invoiceController.setSavedProject(invoice.getProject());
 		invoiceController.setShowProjectLookup(true);
-		if (!invoice.isExpense() && (invoice.getPosShift() == null || invoice.getPosShift().getId() == null)) {
-			IController invoiceDetailController = FormUtil.getController(invoiceController.getInvoiceDetailControllerName());
-			invoiceDetailController.onReset(null);
-		}
 	}
 
 	@Override

@@ -128,6 +128,14 @@
 			required="true" size="5" />
 	</aon:if>
 
+	<aon:if test="#{invoiceController.to.undeductible}">
+		<aon:outputLabel for="InvoiceDetail_taxableBase" value="#{bundle.aon_amount}" />
+		<aon:inputText id="InvoiceDetail_taxableBase"
+			value="#{detailController.to.taxableBase}" ajaxSingle="true" 
+			valueChangeListener="#{detailController.onTaxableBaseChanged}"
+			required="true" size="5" />
+	</aon:if>
+
 	<aon:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
 		<aon:outputLabel for="InvoiceDetail_workPlace" value="#{bundle.purchase_workplace}" />
 		<aon:selectOneMenu id="InvoiceDetail_workPlace" required="true"

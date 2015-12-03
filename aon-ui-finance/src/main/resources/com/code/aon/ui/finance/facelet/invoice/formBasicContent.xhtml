@@ -43,7 +43,7 @@
 				</aon:if>
 			</aon:div>
 			<aon:div>
-				<aon:if test="#{invoiceController.to.purchase or invoiceController.to.expense}">
+				<aon:if test="#{!invoiceController.to.sales}">
 					<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formInvestment.xhtml">
 						<ui:param name="invoiceController" value="#{invoiceController}" />
 					</ui:include>
@@ -63,22 +63,19 @@
 				</aon:if>
 
 				<aon:if test="#{company.EInvoice}">
-					<aon:outputText value="&#160;"
-						title="#{bundle.sign_signed}"
-						styleClass="aon-icon aon-icon-signed" 
+					<aon:outputText styleClass="aon-icon aon-icon-signed"
+						value="&#160;" title="#{bundle.sign_signed}"
 						rendered="#{!invoiceController.nevv and invoiceController.to.signed}" />
 				</aon:if>						
 
 				<aon:outputText value="#{invoiceController.to.status}"
 					rendered="#{!invoiceController.nevv}" />
 				<aon:if test="#{aonRole.accountingOperator and invoiceController.recorded and invoiceController.backAction != 'accountEntry_form'}">
-					<aon:commandLink immediate="true"
-							styleClass="aon-button-goto"
-							style="margin-left: 5px; padding-left: 17px;" 
-							actionListener="#{invoiceController.onViewAccountEntry}" 
-							action="accountEntry_form"
-							title="#{bundle.account_account_entry}: #{invoiceController.accountEntryId}"
-							alt="#{bundle.account_account_entry}: #{invoiceController.accountEntryId}" />
+					<aon:commandLink id="Invoice_accountEntry-view" immediate="true"
+						styleClass="aon-button-goto" style="margin-left: 5px; padding-left: 17px;"
+						title="#{bundle.account_account_entry}: #{invoiceController.accountEntryId}"
+						actionListener="#{invoiceController.onViewAccountEntry}" 
+						action="accountEntry_form" />
 				</aon:if>
 			</aon:div>
 		</aon:panelGrid>
@@ -114,7 +111,7 @@
 				value="#{invoiceController.onCustomerChanged}" type="lookupChangeListener" />
 		</ui:include>
 	</aon:if>
-	<aon:if test="#{invoiceController.to.expense}">
+	<aon:if test="#{invoiceController.to.expense or invoiceController.to.undeductible}">
 		<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml">
 			<ui:param name="lookupTo" value="#{invoiceController.to.registry}" />
 			<ui:param name="lookupForRegistry" value="#{true}" />

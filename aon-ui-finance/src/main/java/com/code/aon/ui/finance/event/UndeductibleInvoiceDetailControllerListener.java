@@ -31,6 +31,8 @@ public class UndeductibleInvoiceDetailControllerListener extends InvoiceDetailCo
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		super.beforeBeanAdded(event);
+
 		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
 		invoiceDetail.setQuantity(1);
 		invoiceDetail.setPrice(invoiceDetail.getTaxableBase());
@@ -39,6 +41,8 @@ public class UndeductibleInvoiceDetailControllerListener extends InvoiceDetailCo
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		super.beforeBeanUpdated(event);
+
 		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
 		invoiceDetail.setQuantity(1);
 		invoiceDetail.setPrice(invoiceDetail.getTaxableBase());
