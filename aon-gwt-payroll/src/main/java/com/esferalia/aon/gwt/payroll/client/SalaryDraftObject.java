@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Result;
@@ -242,17 +243,18 @@ public class SalaryDraftObject implements IContextProvider {
 						employeesServiceAsync.calculateSalaryDraft(salaryDraft,
 								new AsyncCallback<SalaryDraft>() {
 
-									@Override
-									public void onSuccess(SalaryDraft result) {
-										SalaryDraftObject.this.salaryDraft = result;
-										callback.onCalculateSucces(SalaryDraftObject.this);
-									}
+							@Override
+							public void onSuccess(SalaryDraft result) {
+								SalaryDraftObject.this.salaryDraft = result;
+								callback.onCalculateSucces(
+										SalaryDraftObject.this);
+							}
 
-									@Override
-									public void onFailure(Throwable caught) {
-										callback.onCalculateFailure(caught);
-									}
-								});
+							@Override
+							public void onFailure(Throwable caught) {
+								callback.onCalculateFailure(caught);
+							}
+						});
 
 					}
 
@@ -314,6 +316,26 @@ public class SalaryDraftObject implements IContextProvider {
 				});
 	}
 
+	public void saveITData(final CalculateCallback callback) {
+		
+		// TODO: Save only data relative to this employee.
+
+		dataObject.save(new ITDataObject.CallculateCallback() {
+			
+			@Override
+			public void onCalculateSuccess(ITDataObject object) {
+				dataObject = object;
+				callback.onCalculateSucces(SalaryDraftObject.this);
+			}
+			
+			@Override
+			public void onCalculateFailure(Throwable throwable) {
+				callback.onCalculateFailure(throwable);
+			}
+		});
+
+	}
+
 	public void redo() {
 		undoManager.redo();
 	}
@@ -349,8 +371,8 @@ public class SalaryDraftObject implements IContextProvider {
 	}
 
 	public void download(String mime, AsyncCallback<String> callback) {
-		employeesServiceAsync
-				.getSalaryDraftReceipt(salaryDraft, mime, callback);
+		employeesServiceAsync.getSalaryDraftReceipt(salaryDraft, mime,
+				callback);
 	}
 
 	public void downloadIrpf(String mime, AsyncCallback<String> callback) {
@@ -574,9 +596,8 @@ public class SalaryDraftObject implements IContextProvider {
 	}
 
 	public boolean hasDrafts() {
-		return salaryDraft.hasDrafts()
-				|| !isDraftPeriodSet(getDraftStartDate(), getDraftEndDate(),
-						salaryDraft);
+		return salaryDraft.hasDrafts() || !isDraftPeriodSet(getDraftStartDate(),
+				getDraftEndDate(), salaryDraft);
 	}
 
 	public List<Variable> getDrafContext() {
