@@ -874,6 +874,13 @@ public class SalaryDraftBuilder
 					return (CompositePayment) payment;
 
 				CompositePayment composite = new CompositePayment();
+				
+				composite.setConceptId(payment.getConceptId());
+				composite.setDescription(payment.getDescription());
+				composite.setExpression(payment.getExpression());
+				composite.setIrpfExpression(payment.getIrpfExpression());
+				composite.setQuoteExpression(payment.getQuoteExpression());
+
 				composite.addChild(payment);
 				payments.set(i, composite);
 				return composite;

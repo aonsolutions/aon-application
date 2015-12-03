@@ -9,9 +9,21 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 
 public class CompositePayment extends Payment {
 
+	private static final Date UNSET_DATE = new Date(); 
+	private static final String UNSET_STRING = new String(); 
+	private static final Integer UNSET_INTEGER = new Integer(1); 
+	
 	private LinkedList<Payment> childs;
 
 	public CompositePayment() {
+		
+		endDate = UNSET_DATE;
+		startDate = UNSET_DATE;
+		conceptId = UNSET_INTEGER;
+		expression = UNSET_STRING;
+		irpfExpression = UNSET_STRING;
+		quoteExpression = UNSET_STRING;
+		
 		childs = new LinkedList<Payment>();
 	}
 
@@ -24,9 +36,10 @@ public class CompositePayment extends Payment {
 	}
 
 	// ------------------------------------------------------------------------
-
+	
+	
 	@Override
-	public Double getAmount() {
+	public Double getAmount() {		
 		Double totalAmount = null;
 		for (Payment child : childs)
 			if (child.amount != null)
@@ -36,7 +49,7 @@ public class CompositePayment extends Payment {
 	}
 
 	@Override
-	public Double getDbAmount() {
+	public Double getDbAmount() {		
 		Double totalDbAmount = null;
 		for (Payment child : childs)
 			if (child.dbAmount != null)
@@ -46,7 +59,7 @@ public class CompositePayment extends Payment {
 	}
 
 	@Override
-	public Double getIrpf() {
+	public Double getIrpf() {		
 		Double totalIrpf = null;
 		for (Payment child : childs)
 			if (child.irpf != null)
@@ -67,6 +80,10 @@ public class CompositePayment extends Payment {
 
 	@Override
 	public Date getEndDate() {
+		
+		if ( endDate != UNSET_DATE )
+			return endDate;
+		
 		Date end = new Date(0); // January 1, 1970, 00:00:00
 		for (Payment child : childs)
 			end = DateUtils.after(end, child.endDate);
@@ -75,6 +92,9 @@ public class CompositePayment extends Payment {
 
 	@Override
 	public Date getStartDate() {
+		if ( startDate != UNSET_DATE )
+			return startDate;
+
 		Date start = null;
 		for (Payment child : childs)
 			start = DateUtils.before(start, child.startDate);
@@ -113,31 +133,48 @@ public class CompositePayment extends Payment {
 
 	@Override
 	public Integer getConceptId() {
+		if ( conceptId != UNSET_INTEGER )
+			return conceptId;
+
 		return childs.isEmpty() ? null : childs.peek().conceptId;
 	}
 
 	@Override
 	public String getDescription() {
+		if ( description != UNSET_STRING )
+			return description;
+		
 		return childs.isEmpty() ? null : childs.peek().description;
 	}
 
 	@Override
 	public String getExpression() {
+		if ( expression != UNSET_STRING )
+			return expression;
 		return childs.isEmpty() ? null : childs.peek().expression;
 	}
 
 	@Override
 	public String getIrpfExpression() {
+		if ( irpfExpression != UNSET_STRING )
+			return irpfExpression;
+		
 		return childs.isEmpty() ? null : childs.peek().irpfExpression;
 	}
 
 	@Override
 	public String getQuoteExpression() {
+		if ( quoteExpression != UNSET_STRING )
+			return quoteExpression;
+
 		return childs.isEmpty() ? null : childs.peek().quoteExpression;
 	}
 
 	@Override
 	public com.esferalia.aon.gwt.payroll.shared.Salary.Type getSalaryType() {
+		if ( salaryType != null )
+			return salaryType;
+
 		return childs.isEmpty() ? null : childs.peek().salaryType;
 
 	}
