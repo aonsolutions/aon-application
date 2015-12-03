@@ -161,6 +161,13 @@ public class CleanStatusController extends BasicController {
 				}
 			}
 		}
+		for (Object o : getReservationFirstDayActivityList()) {
+			Object[] obj = (Object[]) o;
+			Date date = (Date)obj[0];
+			if(DateUtils.isSameDay(searchDate, (date))){
+				busyRooms.remove((Integer) obj[1]);
+			}
+		}
 		for (ITransferObject ito : getCheckoutActivityList()) {
 			ProjectReservationRoomDetail projectReservationRoomDetail = (ProjectReservationRoomDetail) ito;
 			AssetActivity activity = projectReservationRoomDetail.getAssetActivity();
@@ -275,6 +282,32 @@ public class CleanStatusController extends BasicController {
 				criteria.addGreaterThanExpression(alias, searchDate);
 				
 				Projection projection1 = Projection.max(prrdBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE));
+				Projection projection2 = Projection.group(prrdBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_ASSET_ID));
+				ProjectionList pList = new ProjectionList();
+				pList.add(projection1);
+				pList.add(projection2);
+				List<Object> list = prrdBean.getList(pList, criteria);
+				return list;
+			} catch (ManagerBeanException e) {
+				throw new AbortProcessingException(e.getMessage(), e);
+			}
+		}
+		return Collections.emptyList();
+	}
+	
+	private List<Object> getReservationFirstDayActivityList() {
+		if(getHotel()!=null && getHotel().getId()!=null) {
+			try {
+				IManagerBean prrdBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
+				Criteria criteria = new Criteria();
+				String alias = prrdBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_HOTEL_ID);
+				criteria.addEqualExpression(alias, getHotel().getId());
+				alias = prrdBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_START_DATE);
+				criteria.addLessThanOrEqualExpression(alias, searchDate);
+				alias = prrdBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_END_DATE);
+				criteria.addGreaterThanExpression(alias, searchDate);
+				
+				Projection projection1 = Projection.min(prrdBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE));
 				Projection projection2 = Projection.group(prrdBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_ASSET_ID));
 				ProjectionList pList = new ProjectionList();
 				pList.add(projection1);
