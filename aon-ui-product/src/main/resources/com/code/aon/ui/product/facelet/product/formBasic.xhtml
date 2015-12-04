@@ -151,7 +151,7 @@
 				<aon:selectBooleanCheckbox id="#{controller.pojoShortName}_inventoriable"
 					value="#{productTo.inventoriable}"
 					rendered="#{!productTo.composition}"
-					disabled="#{fieldDisabled or productTo.serializable or productTo.stock > 0}"
+					disabled="#{fieldDisabled or productTo.serializable or productTo.stock != 0}"
 					ajaxSingle="true" reRender="#{controller.pojoShortName}_features" />
 				<aon:outputLabel for="#{controller.pojoShortName}_inventoriable" styleClass="aon-margin-right aon-italic"
 					value="#{bundle.product_inventoriable}"
