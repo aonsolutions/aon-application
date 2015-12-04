@@ -1013,11 +1013,25 @@ public class CompanyParentController extends BasicController implements ICompany
 		return ((Company) getTo()).isEInvoice();
 	}
 
+	public boolean isSurcharge() {
+		if(this.getTo() == null){
+			this.onLoad(false);
+		}
+		return ((Company) getTo()).isSurcharge();
+	}
+
 	public boolean isWithholding() {
 		if(this.getTo() == null){
 			this.onLoad(false);
 		}
 		return ((Company) getTo()).isWithholding();
+	}
+
+	public boolean isWithholdingFarmer() {
+		if(this.getTo() == null){
+			this.onLoad(false);
+		}
+		return ((Company) getTo()).isWithholdingFarmer();
 	}
 
 	public void onChangeDocument(ActionEvent event) {

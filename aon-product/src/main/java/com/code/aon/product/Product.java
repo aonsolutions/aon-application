@@ -27,6 +27,7 @@ import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.product.enumeration.ProductKind;
+import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
@@ -141,6 +142,11 @@ public class Product extends ProductDB implements IAuditable {
 	@Transient
 	public boolean isWithholding() {
 		return (getRetention() != null && getRetention().getId() != null);
+	}
+
+	@Transient
+	public boolean isPrepayment() {
+		return (getType() == ProductType.PREPAYMENT);
 	}
 
     @Transient

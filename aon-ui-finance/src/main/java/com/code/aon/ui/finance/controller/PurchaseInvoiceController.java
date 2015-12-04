@@ -17,13 +17,16 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.config.BankAccount;
+import com.code.aon.config.PayMethod;
+import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.IncomeInvoicingManager;
 import com.code.aon.finance.enumeration.InvoiceSource;
-import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.FormUtil;
@@ -61,25 +64,46 @@ public class PurchaseInvoiceController extends InvoiceController {
 		return vm;
 	}
 
-	public void supplierData(LookupChangeEvent event) throws ManagerBeanException {
-		Invoice invoice = getInvoice();
+	public void onSupplierChanged(LookupChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Supplier supplier = (Supplier)event.getNewValue();
-			isBlocked(supplier);
-			invoice.setRegistryName(supplier.getRegistry().getFullName());
-			invoice.setRegistryDocument(supplier.getRegistry().getDocument());
-			invoice.setRegistryDocumentType(supplier.getRegistry().getDocumentType());
-			invoice.setRegistryDocumentCountry(supplier.getRegistry().getDocumentCountry());
-			invoice.setRegistry(supplier.getRegistry());
-			invoice.setScope(supplier.getScope());
-			loadAddresses(supplier.getId());
-			validateInvoice();
+			supplierChanged(supplier);
 		} else {
+			Invoice invoice = getInvoice();
 			invoice.setRegistryAddress(null);
-			invoice.setProject((Project)BeanManager.getManagerBean(Project.class).createNewTo());
 
 			setAddresses(null);	
 		}
+	}
+
+	public void supplierChanged(Supplier supplier) throws ManagerBeanException {
+		isBlocked(supplier);
+		Invoice invoice = getInvoice();
+		invoice.setRegistryName(supplier.getRegistry().getFullName());
+		invoice.setRegistryDocument(supplier.getRegistry().getDocument());
+		invoice.setRegistryDocumentType(supplier.getRegistry().getDocumentType());
+		invoice.setRegistryDocumentCountry(supplier.getRegistry().getDocumentCountry());
+		invoice.setRegistry(supplier.getRegistry());
+		invoice.setTransaction(supplier.getTransaction());
+		invoice.setSurcharge(!invoice.isVatFree() && getCompanyController().isSurcharge());
+		invoice.setWithholding(supplier.isWithholding());
+		invoice.setWithholdingFarmer(supplier.isWithholdingFarmer());
+		invoice.setScope(supplier.getScope());
+		loadAddresses(supplier.getId());
+
+		if (isNevv()) {
+			InvoiceFinanceController financeController = (InvoiceFinanceController)FormUtil.getController(getInvoiceFinanceControllerName());
+			Finance finance = (Finance)financeController.getTo();
+			RegistryPayMethod rPayMethod = supplier.getRegistry().getPayMethod();
+			finance.setPayMethod((rPayMethod==null) ? new PayMethod() : rPayMethod.getPayment());
+			finance.setBankAccount((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? new BankAccount() : rPayMethod.getBankAccount());
+			finance.setBankAlias((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? null : rPayMethod.getBankAlias());
+			finance.setBic((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? null : rPayMethod.getBic());
+
+			financeController.setRegistryBank((rPayMethod==null) ? null : rPayMethod.getRegistryBank());
+			financeController.setShowBankManualInput(false);
+		}
+		validateInvoice();
 	}
 
 	private boolean isBlocked(Supplier supplier) {

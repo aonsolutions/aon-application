@@ -141,15 +141,18 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		return (!isIncreaseDetail()) ? taxableBase : CommonUtil.round(calculable.getPrice() - taxableBase);
 	}
 
+	public double getTotal() {
+		InvoiceDetail invoiceDetail = (InvoiceDetail)getTo();
+		return CommonUtil.round(getTaxableBase() + getVatQuota(invoiceDetail) + getSurchargeQuota(invoiceDetail) - getRetentionQuota(invoiceDetail));
+	}
+
 	public void fillTaxDataInDetail(boolean workWithSalesPrice, boolean includeQuotas) {
 		Invoice invoice = getInvoice();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)getTo();
 		if (invoiceDetail.getItem() != null && invoiceDetail.getItem().getId() != null) {
-			Registry registry = invoice.getRegistry();
-			Tax vat = invoiceDetail.getItem().getProduct().getVat();
-			Tax retention = (invoice.isWithholding()) ? invoiceDetail.getItem().getProduct().getRetention() : null;
-			invoiceDetail.setVatPercent((vat!=null && vat.getId()!=null) ? getTaxPercent(registry, vat, invoice.getIssueDate(), false) : 0);
-			invoiceDetail.setRetentionPercent((retention!=null && retention.getId()!=null) ? getTaxPercent(registry, retention, invoice.getIssueDate(), false) : 0);
+			invoiceDetail.setVatPercent(!invoice.isVatFree() ? getVatPercent() : 0);
+			invoiceDetail.setSurchargePercent(invoice.isSurcharge() ? getSurchargePercent() : 0);
+			invoiceDetail.setRetentionPercent(!invoice.isRetentionFree() ? getRetentionPercent() : 0);
 
 			if (workWithSalesPrice) {
 				ItemPricesManager pricesManager = new ItemPricesManager();
@@ -164,6 +167,7 @@ public class InvoiceDetailController extends LinesController implements IFinance
 
 			if (includeQuotas) {
 				invoiceDetail.setVatQuota(getVatQuota(invoiceDetail));
+				invoiceDetail.setSurchargeQuota(getSurchargeQuota(invoiceDetail));
 				invoiceDetail.setRetentionQuota(getRetentionQuota(invoiceDetail));
 			}
 		}
@@ -230,8 +234,16 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		return getQuota(invoiceDetail.getTaxableBase(), invoiceDetail.getVatPercent());
 	}
 
+	public double getSurchargeQuota(InvoiceDetail invoiceDetail) {
+		return getQuota(invoiceDetail.getTaxableBase(), invoiceDetail.getSurchargePercent());
+	}
+
 	public double getRetentionQuota(InvoiceDetail invoiceDetail) {
-		return getQuota(invoiceDetail.getTaxableBase(), invoiceDetail.getRetentionPercent());
+		double base = invoiceDetail.getTaxableBase();
+		if (getInvoice().isWithholdingFarmer()) {
+			base = CommonUtil.round(base + invoiceDetail.getVatQuota() + invoiceDetail.getSurchargeQuota());
+		}
+		return getQuota(base, invoiceDetail.getRetentionPercent());
 	}
 
 	public double getQuota(double base, double percent) {

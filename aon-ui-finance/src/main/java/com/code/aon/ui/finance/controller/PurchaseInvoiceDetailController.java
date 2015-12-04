@@ -20,7 +20,7 @@ public class PurchaseInvoiceDetailController extends InvoiceDetailController {
 			Item item = (Item)event.getNewValue();
 			itemChanged(item);
 		}
-	}	
+	}
 
 	public void itemChanged(Item item) {
 		Invoice invoice = (Invoice)getMasterController().getTo();
@@ -30,6 +30,7 @@ public class PurchaseInvoiceDetailController extends InvoiceDetailController {
 		if (invoiceDetail.getQuantity() == 0) {
 			invoiceDetail.setQuantity(1);
 		}
+
 		Supplier supplier = null;
 		if (invoice.getRegistry() != null && invoice.getRegistry().getId() != null) {
 			try {
@@ -38,10 +39,50 @@ public class PurchaseInvoiceDetailController extends InvoiceDetailController {
 			}
 		}
 		invoiceDetail.setPrice(getPriceStrategy().getUnitPurchasePrice(invoiceDetail, invoice.getIssueDate(), supplier));
+		fillTaxDataInDetail(false, true);
 	}	
 
 	public void onQuantityChanged(ValueChangeEvent event) {
-		//Implementar cuando se creen Tarifas de Compra para Proveedores, mientras tanto no se utiliza.
+		quantityChanged((event.getNewValue() != null && !event.getNewValue().toString().equals("")) ? (Double)event.getNewValue() : 0);
+		fillTaxDataInDetail(false, true);
+	}
+
+	public void quantityChanged(double quantity) {
+		Invoice invoice = (Invoice)getMasterController().getTo();
+		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
+		invoiceDetail.setQuantity(quantity);
+		if (invoiceDetail.getItem() != null && invoiceDetail.getItem().getId() != null) {
+			Supplier supplier = null;
+			if (invoice.getRegistry() != null && invoice.getRegistry().getId() != null) {
+				try {
+					supplier = (Supplier)BeanManager.getManagerBean(Supplier.class).get(invoice.getRegistry().getId());
+				} catch (ManagerBeanException e) {
+				}
+			}
+			invoiceDetail.setPrice(getPriceStrategy().getUnitPurchasePrice(invoiceDetail, invoice.getIssueDate(), supplier));
+		} else {
+			invoiceDetail.setPrice(0);
+		}
+	}
+
+	public void onPriceChanged(ValueChangeEvent event) {
+		priceChanged((event.getNewValue() != null && !event.getNewValue().toString().equals("")) ? (Double)event.getNewValue() : 0);
+		fillTaxDataInDetail(false, true);
+	}
+
+	public void priceChanged(double price) {
+		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
+		invoiceDetail.setPrice(price);
+	}
+
+	public void onDiscountChanged(ValueChangeEvent event) {
+		discountChanged((event.getNewValue() != null && !event.getNewValue().toString().equals("")) ? event.getNewValue().toString() : "0");
+		fillTaxDataInDetail(false, true);
+	}
+
+	public void discountChanged(String discount) {
+		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
+		invoiceDetail.getDiscountExpression().setDiscountExpr(discount);
 	}
 
 }

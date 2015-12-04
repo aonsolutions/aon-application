@@ -10,7 +10,7 @@
 	<aon:outputLabel for="#{invoiceController.to.sales ? ('Invoice_number') : ('Invoice_referenceCode')}"
 		value="#{bundle.aon_invoice_number}" />
 	<aon:div>
-		<aon:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
+		<aon:panelGrid columns="2" columnClasses="aon-width-180,aon-width-auto">
 			<aon:div id="InvoiceReferenceCodeDiv">
 				<aon:if test="#{invoiceController.to.sales}">
 					<ui:decorate template="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
@@ -109,6 +109,21 @@
 				value="#{invoiceController.to.registry != null and invoiceController.to.registry.id != null}" />
 			<aon:methodParam name="lookupChangeListener"
 				value="#{invoiceController.onCustomerChanged}" type="lookupChangeListener" />
+		</ui:include>
+	</aon:if>
+	<aon:if test="#{invoiceController.to.purchase}">
+		<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
+			<ui:param name="lookupTo" value="#{invoiceController.to.registry}" />
+			<ui:param name="lookupForRegistry" value="#{true}" />
+			<ui:param name="lookupInputNameValue" value="#{invoiceController.to.registryName}" />
+			<ui:param name="lookupDisabled" value="#{invoiceController.registryReadOnly or !financeController.allPending}" />
+			<ui:param name="lookupInputNameDisabled" value="#{invoiceController.readOnly or !financeController.allPending}" />
+			<ui:param name="lookupReRender" value="#{formName}" />
+			<ui:param name="idRequired" value="#{true}" />						
+			<ui:param name="skipSuggestText" 
+				value="#{invoiceController.to.registry != null and invoiceController.to.registry.id != null}" />
+			<aon:methodParam name="lookupChangeListener"
+				value="#{invoiceController.onSupplierChanged}" type="lookupChangeListener" />
 		</ui:include>
 	</aon:if>
 	<aon:if test="#{invoiceController.to.expense or invoiceController.to.undeductible}">

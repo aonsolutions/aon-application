@@ -23,7 +23,7 @@
 		</aon:selectInputDate>
 	</aon:if>
 
-	<aon:if test="#{(invoiceController.nevv and companyCollections.companyActivitiesCount > 1) or invoiceController.to.activity.id != null}">
+	<aon:if test="#{companyCollections.companyActivitiesCount > 1}">
 		<aon:outputLabel for="Invoice_activity"
 			value="#{bundle.aon_activity}" />
 		<aon:div>

@@ -78,16 +78,125 @@
 		</aon:panelGroup>
 	</aon:div>
 
+	<aon:if test="#{invoiceController.to.purchase}">
+		<aon:outputLabel for="InvoiceDetail_quantity" value="#{bundle.aon_quantity}" />
+		<aon:panelGrid columns="5" columnClasses="aon-width-110,aon-width-40,aon-width-70,aon-width-40,aon-width-70 aon-text-right">
+			<aon:inputText id="InvoiceDetail_quantity"
+				value="#{detailController.to.quantity}"
+				valueChangeListener="#{detailController.onQuantityChanged}"
+				reRender="#{formName}" ajaxSingle="true"
+				required="true" size="5" focus="InvoiceDetail_price" />
+			<aon:div rendered="#{invoiceController.to.surcharge and detailController.to.item.id != null and !detailController.to.item.product.prepayment}">
+				<aon:outputText styleClass="aon-italic" 
+					value="#{bundle.aon_surcharge}" />
+			</aon:div>
+			<aon:div rendered="#{invoiceController.to.surcharge and detailController.to.item.id != null and !detailController.to.item.product.prepayment}">
+				<aon:outputText styleClass="aon-margin-left aon-italic aon-bold" 
+					value="#{detailController.to.surchargePercent}">
+					<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
+				</aon:outputText>
+				<aon:outputText styleClass="aon-italic" 
+					value="%" />
+			</aon:div>
+			<aon:div rendered="#{invoiceController.to.surcharge and detailController.to.item.id != null and !detailController.to.item.product.prepayment}">
+				<aon:outputText styleClass="aon-italic" 
+					value="#{bundle.aon_fee}:" />
+			</aon:div>
+			<aon:div rendered="#{invoiceController.to.surcharge and detailController.to.item.id != null and !detailController.to.item.product.prepayment}">
+				<aon:outputText styleClass="aon-padding-right aon-italic aon-bold" 
+					value="#{detailController.to.surchargeQuota}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+		</aon:panelGrid>
+
+		<aon:outputLabel for="InvoiceDetail_price" value="#{bundle.aon_price}" />
+		<aon:panelGrid columns="5" columnClasses="aon-width-110,aon-width-40,aon-width-70,aon-width-40,aon-width-70 aon-text-right">
+			<aon:inputText id="InvoiceDetail_price"
+				value="#{detailController.to.price}"
+				valueChangeListener="#{detailController.onPriceChanged}"
+				reRender="#{formName}" ajaxSingle="true"
+				required="true" size="5" />
+			<aon:div rendered="#{!invoiceController.to.vatFree and detailController.to.item.id != null and !detailController.to.item.product.prepayment}">
+				<aon:outputText styleClass="aon-italic" 
+					value="#{bundle.aon_vat}" />
+			</aon:div>
+			<aon:div rendered="#{!invoiceController.to.vatFree and detailController.to.item.id != null and !detailController.to.item.product.prepayment}">
+				<aon:outputText styleClass="aon-margin-left aon-italic aon-bold" 
+					value="#{detailController.to.vatPercent}">
+					<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
+				</aon:outputText>
+				<aon:outputText styleClass="aon-italic" 
+					value="%" />
+			</aon:div>
+			<aon:div rendered="#{!invoiceController.to.vatFree and detailController.to.item.id != null and !detailController.to.item.product.prepayment}">
+				<aon:outputText styleClass="aon-italic" 
+					value="#{bundle.aon_fee}:" />
+			</aon:div>
+			<aon:div rendered="#{!invoiceController.to.vatFree and detailController.to.item.id != null and !detailController.to.item.product.prepayment}">
+				<aon:outputText styleClass="aon-padding-right aon-italic aon-bold" 
+					value="#{detailController.to.vatQuota}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+		</aon:panelGrid>
+
+		<aon:outputLabel for="InvoiceDetail_discount" value="#{bundle.aon_discount}" />
+		<aon:panelGrid columns="5" columnClasses="aon-width-110,aon-width-40,aon-width-70,aon-width-40,aon-width-70 aon-text-right">
+			<aon:inputText id="InvoiceDetail_discount"
+				value="#{detailController.to.discountExpression.discountExpr}"
+				valueChangeListener="#{detailController.onDiscountChanged}"
+				reRender="#{formName}" ajaxSingle="true"
+				required="true" size="5" />
+			<aon:div rendered="#{!invoiceController.to.retentionFree and invoiceController.to.withholding and detailController.to.item.retention.id != null}">
+				<aon:outputText styleClass="aon-italic" 
+					value="#{bundle.aon_retention}" />
+			</aon:div>
+			<aon:div rendered="#{!invoiceController.to.retentionFree and invoiceController.to.withholding and detailController.to.item.retention.id != null}">
+				<aon:outputText styleClass="aon-margin-left aon-italic aon-bold" 
+					value="#{detailController.to.retentionPercent}">
+					<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
+				</aon:outputText>
+				<aon:outputText styleClass="aon-italic" 
+					value="%" />
+			</aon:div>
+			<aon:div rendered="#{!invoiceController.to.retentionFree and invoiceController.to.withholding and detailController.to.item.retention.id != null}">
+				<aon:outputText styleClass="aon-italic" 
+					value="#{bundle.aon_fee}:" />
+			</aon:div>
+			<aon:div rendered="#{!invoiceController.to.retentionFree and invoiceController.to.withholding and detailController.to.item.retention.id != null}">
+				<aon:outputText styleClass="aon-padding-right aon-italic aon-bold" 
+					value="#{detailController.to.retentionQuota}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+		</aon:panelGrid>
+
+		<aon:outputLabel for="InvoiceDetail_amount" value="#{bundle.aon_amount}" />
+		<aon:panelGrid columns="3" columnClasses="aon-width-110,aon-width-150,aon-width-70 aon-text-right">
+			<aon:outputText id="InvoiceDetail_amount" styleClass="aon-bold"
+				value="#{detailController.taxableBase}">
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText styleClass="aon-italic"
+				value="#{bundle.aon_total} #{bundle.aon_tax_included}:" />
+			<aon:outputText styleClass="aon-padding-right aon-italic aon-bold" 
+				value="#{detailController.total}">
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+		</aon:panelGrid>
+	</aon:if>
+
 	<aon:if test="#{invoiceController.to.expense}">
 		<aon:outputLabel for="InvoiceDetail_taxableBase" value="#{bundle.aon_taxable_base}" />
 		<aon:inputText id="InvoiceDetail_taxableBase"
 			value="#{detailController.to.taxableBase}"
 			valueChangeListener="#{detailController.onTaxableBaseChanged}"
-			reRender="invoiceDetailTaxQuota,InvoiceDetail_total" ajaxSingle="true" 
+			reRender="InvoiceDetailTaxQuota,InvoiceDetail_total" ajaxSingle="true" 
 			required="true" size="5" focus="InvoiceDetail_vatQuota" />
 
 		<aon:outputLabel for="InvoiceDetail_vatQuota" value="#{bundle.aon_vat}" />
-		<aon:div id="invoiceDetailTaxQuota">
+		<aon:div id="InvoiceDetailTaxQuota">
 			<aon:inputText id="InvoiceDetail_vatQuota"
 				value="#{detailController.to.vatQuota}"
 				disabled="#{detailController.to.item.vat.percentage == 0}"
@@ -124,7 +233,7 @@
 		<aon:inputText id="InvoiceDetail_total"
 			value="#{detailController.toInvoiceDetailTotal}"
 			valueChangeListener="#{detailController.onTotalChanged}"
-			reRender="InvoiceDetail_taxableBase,invoiceDetailTaxQuota" ajaxSingle="true"  
+			reRender="InvoiceDetail_taxableBase,InvoiceDetailTaxQuota" ajaxSingle="true"  
 			required="true" size="5" />
 	</aon:if>
 

@@ -57,7 +57,10 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 	}
 
 	public double getUnitPurchasePrice(ICalculable calc, Date date, ITariffable iTariffable) {
-		double purchasePrice = getUnitPrice(calc, date, iTariffable, RegistryMode.SUPPLIER);
+		double purchasePrice = 0;
+		if (iTariffable != null) {
+			purchasePrice = getUnitPrice(calc, date, iTariffable, RegistryMode.SUPPLIER);
+		}
 		return (purchasePrice > 0) ? purchasePrice : getUnitPurchasePrice(calc);
 	}
 
@@ -70,7 +73,10 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 	}
 
 	public double getUnitPrice(ICalculable calc, Date date, ITariffable iTariffable) {
-		double price = getUnitPrice(calc, date, iTariffable, RegistryMode.CUSTOMER);
+		double price = 0;
+		if (iTariffable != null) {
+			price = getUnitPrice(calc, date, iTariffable, RegistryMode.CUSTOMER);
+		}
 		return (price > 0) ? price : getUnitPrice(calc);
 	}
 
