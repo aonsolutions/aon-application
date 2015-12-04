@@ -231,6 +231,9 @@
 			<ui:param name="invoiceAddress" value="#{purchaseInvoiceAddress}" />
 			<ui:param name="addressReRender" value="InvoiceAddress" />
 		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalActivity.xhtml">
+			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
+		</ui:include>
 		<ui:include src="/com/code/aon/ui/project/facelet/project/modalProject.xhtml">
 			<ui:param name="controller" value="#{purchaseInvoice}" />
 			<ui:param name="parentReRender" value="purchaseInvoiceForm" />
