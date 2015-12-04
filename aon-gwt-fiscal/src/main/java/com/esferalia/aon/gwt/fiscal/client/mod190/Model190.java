@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
@@ -312,6 +313,7 @@ public class Model190 extends MainEntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
+						deleteButton.setEnabled(true);
 						showErrorMessage(AON.MSG.unableToDeleteMod190(caught.getMessage()));
 					}
 				});
@@ -339,9 +341,7 @@ public class Model190 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				DialogMessages.alertErrorWidget(AON.MSG
-						.unableToReadFiscalParameters(caught
-								.getMessage()));
+				DialogMessages.alertErrorWidget(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
 			}
 		});
 	}
@@ -428,24 +428,25 @@ public class Model190 extends MainEntryPoint {
 		diskForm.submit();
 	}
 
-	//*****************************************************************************
-	//*****************************************************************************
-	//*****************************************************************************
-	//*****************************************************************************
 	@UiHandler("footPanel")
 	void onFootMinimize(MinimizeEvent event) {
 		closeFootPanel();
 	}
+
 	@UiHandler("footPanel")
-	void onFootMaximize(MinimizeEvent event) {
+	void onFootMaximize(MaximizeEvent event) {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2);
+		splitLayoutPanel.animate(500);
 	}
 
 	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
+		splitLayoutPanel.setWidgetSize(footPanel, 30);
+		splitLayoutPanel.animate(500);
 	}
 
-	private void maximizeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
+	private void openFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+		splitLayoutPanel.animate(500);
 	}
 	
 	private void showResultsPanel() {

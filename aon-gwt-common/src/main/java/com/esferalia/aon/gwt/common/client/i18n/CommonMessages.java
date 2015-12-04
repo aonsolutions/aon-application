@@ -149,7 +149,7 @@ public interface CommonMessages extends Messages {
 		,"M180"		,"Declaraci\u00F3n Informativa. Retenciones e ingresos a cuenta. Rendimientos procedentes del arrendamiento de inmuebles urbanos. Resumen anual."
 		,"M184"		,"Mod. 184"
 		,"M190"		,"Declaraci\u00F3n Informativa. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades econ\u00F3micas, premios y determinadas ganancias patrimoniales e imputaciones de rentas"
-		,"M193"		,"Mod. 193"
+		,"M193"		,"Declaraci\u00F3n Informativa. Retenciones e ingresos a cuenta del IRPF sobre determinados rendimientos del capital mobiliario, del IS e IRNR sobre determinadas rentas."
 		,"M310"		,"IVA. Autoliquidaci\u00F3n. R\u00E9gimen Simplificado"
 		,"M311"		,"IVA. Autoliquidaci\u00F3n Final. R\u00E9gimen Simplificado"
 		,"M200"		,"Declaraci\u00F3n-liquidaci\u00F3n del Impuesto sobre Sociedades."

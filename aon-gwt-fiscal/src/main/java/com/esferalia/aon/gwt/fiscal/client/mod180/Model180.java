@@ -388,6 +388,7 @@ public class Model180 extends MainEntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
+						deleteButton.setEnabled(true);
 						showErrorMessage(AON.MSG.unableToDeleteMod180(caught.getMessage()));
 					}
 				});

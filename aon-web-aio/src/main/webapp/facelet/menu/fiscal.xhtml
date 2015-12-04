@@ -147,10 +147,11 @@
 												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
 													style="margin-left: 5px; padding-left: 20px;" value="#{bundle.fiscal_model_180_module}"/>
 											</aon:commandLink>
-
+<!-- 
 											<aon:if test="#{domainSwitcher.domainManagementAvailable}">
 												<aon:outputText value="&#160;"/>
 											</aon:if>
+ -->
 
 											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 												<aon:commandLink id="mod130" 
@@ -162,14 +163,13 @@
 												</aon:commandLink>
 											</aon:if>
 
-											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-												<aon:commandLink id="gwt_mod184"
-													action="gwt_mod184"
-													title="#{bundle.fiscal_model_184_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box" value="184"/>
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_184_module}" />
-												</aon:commandLink>
-											</aon:if>
+											<aon:commandLink id="gwt_mod184"
+												action="gwt_mod184"
+												title="#{bundle.fiscal_model_184_module}">
+												<aon:outputText styleClass="aon-fiscal-link-box" value="184"/>
+												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+													style="margin-left: 5px; padding-left: 20px;" value="#{bundle.fiscal_model_184_module}" />
+											</aon:commandLink>
 
 											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 												<aon:commandLink id="mod131" 
@@ -201,8 +201,9 @@
 											<aon:commandLink id="gwt_mod193"
 												action="gwt_mod193"
 												title="#{bundle.fiscal_model_193_module}">
-												<aon:outputText styleClass="aon-fiscal-link-box" value="193" />
-												<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_193_module}" />
+												<aon:outputText styleClass="aon-fiscal-link-box" value="193" style="background-color: yellow;"/>
+												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+													style="margin-left: 5px; padding-left: 20px;" value="#{bundle.fiscal_model_193_module}" />
 											</aon:commandLink>
 
 											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">

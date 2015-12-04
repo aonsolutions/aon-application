@@ -56,10 +56,6 @@ public class Model190Detail2014 extends ResizeComposite {
 	private static Model190Detail2013Binder MODEL190_DETAIL_2013_BINDER = GWT
 			.create(Model190Detail2013Binder.class);
 
-	static interface ICallBack {
-		void redrawList(Mod190Detail detail);
-	}
-
 	public class KeyListBox extends ListBox {
 
 		public KeyListBox() {
@@ -140,6 +136,7 @@ public class Model190Detail2014 extends ResizeComposite {
 	DocumentTextBox representativeDocument;
 	@UiField
 	TextBox fullName;
+	
 	@UiField
 	IntegerBox accrualYear;
 	@UiField
@@ -241,7 +238,6 @@ public class Model190Detail2014 extends ResizeComposite {
 		detailList.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
 		detailList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
 
-		// Add a selection model so we can select cells.
 		detailModel = new SingleSelectionModel<Mod190Detail>(MOD190_DETAIL_PROVIDES_KEY);
 		detailModel.addSelectionChangeHandler(new Handler() {
 			@Override
