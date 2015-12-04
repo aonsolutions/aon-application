@@ -1508,7 +1508,7 @@ public class Templates extends Composite implements EntryPoint {
 	}
 	
 	public static native void exportEcommercex(Templates thiz) /*-{
-		$wnd.ecommerce = function() {
+		$wnd.ecommercex = function() {
 			thiz.@com.esferalia.aon.gwt.template.client.Templates::ecommercex(*)();
 		}
 	}-*/;
