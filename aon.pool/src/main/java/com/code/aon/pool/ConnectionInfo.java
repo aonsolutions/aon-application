@@ -249,6 +249,44 @@ public class ConnectionInfo {
 			closeQuietly(c);
 		}
 	}
+	
+	public Map<String, Integer> getDomainMap() throws AonConnectionException {
+		Connection c = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		PreparedStatement ps1 = null;
+		ResultSet rs1 = null;
+		try {
+			c = getMetadataConnection();
+			ps = c.prepareStatement(SELECT_SCHEMAS,
+					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			rs = ps.executeQuery();
+			Map<String, Integer> map = new Hashtable<String, Integer>();
+			while (rs.next()) {
+				String schema = rs.getString(1);
+				String select = "SELECT name, id FROM `" + schema + "`.domain";
+				ps1 = c.prepareStatement(select, ResultSet.TYPE_FORWARD_ONLY,
+						ResultSet.CONCUR_READ_ONLY);
+				rs1 = ps1.executeQuery();
+				while (rs1.next()) {
+					String domain = rs1.getString(1);
+					Integer id = rs1.getInt(2);
+					map.put(domain, id);
+				}
+				rs1.close();
+				ps1.close();
+			}
+			return map;
+		} catch (SQLException e) {
+			throw new AonConnectionException(e.getMessage(),e);
+		} finally {
+			closeQuietly(rs1);
+			closeQuietly(ps1);
+			closeQuietly(rs);
+			closeQuietly(ps);
+			closeQuietly(c);
+		}
+	}
 
 	public String getDomainDatabase(String domainName) throws AonConnectionException {
 		Connection c = null;
