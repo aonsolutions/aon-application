@@ -167,7 +167,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
         			writer.print(CommonUtil.round(vatBase) + "|");
 					writer.print(CommonUtil.round(vatPercent) + "|");
 					writer.print(CommonUtil.round(vatAmount) + "|");
-					writer.print("600000000|");
+					writer.print("600000001|");
 					writer.print(invoiceTotal);
         			writer.println();
 							
