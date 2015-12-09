@@ -68,6 +68,13 @@
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.oauth2</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
 		<!-- Google -->
 		<dependency>
@@ -122,6 +129,13 @@
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-oauth2</artifactId>
 			<version>v2-rev98-1.21.0</version>
+		</dependency>
+		
+		<!-- Google Contacts API -->
+		<dependency>
+			<groupId>com.google.api.client</groupId>
+			<artifactId>google-api-data-contacts-v3</artifactId>
+			<version>1.0.10-alpha</version>
 		</dependency>
 		
 		<dependency>
