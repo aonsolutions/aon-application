@@ -1,5 +1,10 @@
 package com.esferalia.aon.gwt.common.shared;
 
+/**
+ * @author ecastellano
+ * @Deprecated use com.esferalia.aon.watson.util.AonNumberUtils
+ */
+@Deprecated
 public class NumberUtils {
 
 	public static boolean isValid(Double number) {

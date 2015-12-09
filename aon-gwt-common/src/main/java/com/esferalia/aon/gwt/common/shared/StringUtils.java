@@ -4,6 +4,11 @@ import java.util.Arrays;
 import java.util.Collection;
 
 
+/**
+ * @author ecastellano
+ * @Deprecated use com.esferalia.aon.watson.util.AonStringUtils
+ */
+@Deprecated
 public class StringUtils {
 
 	public static boolean isEmpty(String str) {

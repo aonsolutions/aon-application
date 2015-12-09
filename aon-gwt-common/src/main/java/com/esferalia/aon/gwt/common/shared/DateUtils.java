@@ -4,6 +4,11 @@ import java.util.Date;
 
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
+/**
+ * @author ecastellano
+ * @Deprecated use com.esferalia.aon.watson.util.AonDateUtils 
+ */
+@Deprecated
 public class DateUtils {
 	
 	

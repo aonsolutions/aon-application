@@ -4,8 +4,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import com.esferalia.aon.gwt.common.shared.AonUtil;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
+/**
+ * @author ecastellano
+ * @Deprecated use com.esferalia.aon.watson.server.AonDateUtils 
+ */
+@Deprecated
 public class DateUtil {
 	
 	public static int getYear() {
@@ -79,7 +84,7 @@ public class DateUtil {
 		c1.setTime(from);
 		c2.setTime(to);
 		double r = (double) (c2.getTimeInMillis() - c1.getTimeInMillis()) / (double) (24 * 3600 * 1000);
-		r = AonUtil.round(r, 0);
+		r = AonMathUtils.round(r, 0);
 		return (long) r;
 	}
 

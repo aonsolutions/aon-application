@@ -3,6 +3,11 @@ package com.esferalia.aon.gwt.common.shared;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+/**
+ * @author ecastellano
+ * @Deprecated Use AON-WATSON suitable method (AonStringUtils, AonMathUtils, AonNumberUtils ...)
+ */
+@Deprecated
 public class AonUtil {
 	
 	public static final int INDEX_NOT_FOUND = -1;
