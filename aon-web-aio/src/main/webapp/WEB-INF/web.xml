@@ -239,7 +239,7 @@
 	<!-- SignIn with Amazon Servlet -->
 	<servlet>
 		<servlet-name>OAuth2AmazonServlet</servlet-name>
-		<servlet-class>com.code.aon.amazon.apis.servlet.AmazonAuthorizationCodeServlet</servlet-class>
+		<servlet-class>com.code.aon.oauth2.amazon.AmazonAuthorizationCodeServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>OAuth2AmazonServlet</servlet-name>
@@ -248,7 +248,7 @@
 
 	<servlet>
 		<servlet-name>OAuth2AmazonCallbackServlet</servlet-name>
-		<servlet-class>com.code.aon.amazon.apis.servlet.AmazonAuthorizationCodeCallbackServlet</servlet-class>
+		<servlet-class>com.code.aon.oauth2.amazon.AmazonAuthorizationCodeCallbackServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>OAuth2AmazonCallbackServlet</servlet-name>
@@ -257,7 +257,7 @@
 
 	<servlet>
 		<servlet-name>AmazonLoginCallbackServlet</servlet-name>
-		<servlet-class>com.code.aon.amazon.apis.servlet.AmazonLoginCallbackServlet</servlet-class>
+		<servlet-class>com.code.aon.oauth2.amazon.AmazonLoginCallbackServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>AmazonLoginCallbackServlet</servlet-name>
@@ -374,7 +374,7 @@
 
 	<servlet>
 		<servlet-name>GoogleLoginCallbackServlet</servlet-name>
-		<servlet-class>com.code.aon.google.apis.servlet.GoogleLoginCallbackServlet</servlet-class>
+		<servlet-class>com.code.aon.oauth2.google.GoogleLoginCallbackServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>GoogleLoginCallbackServlet</servlet-name>
@@ -392,7 +392,7 @@
 
 	<servlet>
 		<servlet-name>OAuth2Servlet</servlet-name>
-		<servlet-class>com.code.aon.google.apis.servlet.GoogleAuthorizationCodeServlet</servlet-class>
+		<servlet-class>com.code.aon.oauth2.google.GoogleAuthorizationCodeServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>OAuth2Servlet</servlet-name>
@@ -400,7 +400,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>OAuth2CallbackServlet</servlet-name>
-		<servlet-class>com.code.aon.google.apis.servlet.GoogleAuthorizationCodeCallbackServlet</servlet-class>
+		<servlet-class>com.code.aon.oauth2.google.GoogleAuthorizationCodeCallbackServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>OAuth2CallbackServlet</servlet-name>
