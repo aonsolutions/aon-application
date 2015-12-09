@@ -16,7 +16,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
-import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
@@ -174,7 +173,7 @@ public class FiscalImpl implements IFiscal {
 	
 	// ----------------------------------------------------------- [MODELO 193]
 	@Override
-	public ArrayList<Mod193> getMod193s(AONContext ctx, int domain) {
+	public LinkedList<Mod193> getMod193s(AONContext ctx, int domain) {
 		return Mod193DAO.getByDomain(ctx, domain);
 	}
 
@@ -199,13 +198,9 @@ public class FiscalImpl implements IFiscal {
 				configuration -> Mod193DAO.delete(ctx, mod193));
 	}
 
-	@Override
-	public Mod193Detail getMod193Detail(AONContext ctx, Integer id) {
-		return Mod193DAO.getDetail(ctx, id);
-	}
 	// ----------------------------------------------------------- [MODELO 184]
 	@Override
-	public ArrayList<Mod184> getMod184s(AONContext ctx, int domain) {
+	public LinkedList<Mod184> getMod184s(AONContext ctx, int domain) {
 		return Mod184DAO.getByDomain(ctx, domain);
 	}
 

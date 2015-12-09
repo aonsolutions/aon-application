@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.file.format.output.FileOutput;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.fiscal.server.file.MOD193Writer;
 import com.esferalia.aon.occam.api.AON;
@@ -41,9 +42,9 @@ public class Mod193File extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("mod193"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			Mod193 mod193 = AON.getMod193(domainName, domainId, id);
+			Mod193 mod193 = AON.getMod193(domainName, domainId,AonServletUtils.getLoggedUser(), id);
 
-			FileOutput fileoutput = writer.createMOD193(domainName,domainId, id,
+			FileOutput fileoutput = writer.createMOD193(domainName,domainId, AonServletUtils.getLoggedUser(),id,
 					mod193.getYear(), mod193.getAdministration());
 			commit(conn);
 			

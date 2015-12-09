@@ -23,7 +23,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
-import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
@@ -91,16 +90,15 @@ public interface FiscalServiceAsync {
 	// ---------------------------------------------------------------MODELO 184
 	void deleteMod184(String domainName, int domain,Mod184 mod184, AsyncCallback<Void> callback);
 	void saveMod184(String domainName, int domain,Mod184 mod184, AsyncCallback<Mod184> callback);
-	void getMod184s(String domainName, int domain, AsyncCallback<ArrayList<Mod184>> callback);
+	void getMod184s(String domainName, int domain, AsyncCallback<LinkedList<Mod184>> callback);
 	void getMod184(String domainName, int domain,Integer id, AsyncCallback<Mod184> callback);
 	void initializeMod184(String domainName, Integer domain, Integer year,AsyncCallback<Mod184> callback);
 
 	// ---------------------------------------------------------------MODELO 193
 	void deleteMod193(String domainName, int domain,Mod193 mod193, AsyncCallback<Void> callback);
 	void saveMod193(String domainName, int domain,Mod193 mod193, AsyncCallback<Mod193> callback);
-	void getMod193s(String domainName, int domain, AsyncCallback<ArrayList<Mod193>> callback);
+	void getMod193s(String domainName, int domain, AsyncCallback<LinkedList<Mod193>> callback);
 	void getMod193(String domainName, int domain,Integer id, AsyncCallback<Mod193> callback);
-	void getMod193Detail(String domainName, int domain,Integer id, AsyncCallback<Mod193Detail> callback);
 	void initializeMod193(String domainName, Integer domain, Integer year,AsyncCallback<Mod193> callback);
 
 	// ---------------------------------------------------------------MODELO 390

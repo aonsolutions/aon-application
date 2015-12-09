@@ -18,13 +18,13 @@ public class Mod180Test {
 
 	@Test(expected=NullPointerException.class)
 	public void testGetByIdNull() throws IOException {
-		Mod180 mod180 = AON.getMod180(DOMAIN_NAME, DOMAIN_ID, 97987987);
+		Mod180 mod180 = AON.getMod180(DOMAIN_NAME, DOMAIN_ID,USER, 97987987);
 		mod180.getId(); // NullPointer
 	}
 		
 	@Test
 	public void testGetById() throws IOException {
-		Mod180 mod180 = AON.getMod180(DOMAIN_NAME, DOMAIN_ID, 36);
+		Mod180 mod180 = AON.getMod180(DOMAIN_NAME, DOMAIN_ID, USER, 36);
 		mod180.getId(); // Not NullPointer
 	}
 }

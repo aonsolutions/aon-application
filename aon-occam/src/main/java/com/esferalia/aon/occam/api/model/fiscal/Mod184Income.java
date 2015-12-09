@@ -37,192 +37,216 @@ public class Mod184Income implements Serializable {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public Mod184Income setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 
 	public int getDomain() {
 		return domain;
 	}
 
-	public void setDomain(int domain) {
+	public Mod184Income setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
 
 	public int getMod184() {
 		return mod184;
 	}
 
-	public void setMod184(int mod184) {
+	public Mod184Income setMod184(int mod184) {
 		this.mod184 = mod184;
+		return this;
 	}
 	
 	public String getKey() {
 		return key;
 	}
 
-	public void setKey(String key) {
+	public Mod184Income setKey(String key) {
 		this.key = key;
+		return this;
 	}
 
 	public String getSubKey() {
 		return subKey;
 	}
 
-	public void setSubKey(String subKey) {
+	public Mod184Income setSubKey(String subKey) {
 		this.subKey = subKey;
+		return this;
 	}
 
 	public String getCountry() {
 		return country;
 	}
 
-	public void setCountry(String country) {
+	public Mod184Income setCountry(String country) {
 		this.country = country;
+		return this;
 	}
 
 	public byte getRegime() {
 		return regime;
 	}
 
-	public void setRegime(byte regime) {
+	public Mod184Income setRegime(byte regime) {
 		this.regime = regime;
+		return this;
 	}
 
 	public byte getActivityType() {
 		return activityType;
 	}
 
-	public void setActivityType(byte activityType) {
+	public Mod184Income setActivityType(byte activityType) {
 		this.activityType = activityType;
+		return this;
 	}
 
 	public Integer getEpigraph() {
 		return epigraph;
 	}
 
-	public void setEpigraph(Integer epigraph) {
+	public Mod184Income setEpigraph(Integer epigraph) {
 		this.epigraph = epigraph;
+		return this;
 	}
 
 	public String getGranteeDocument() {
 		return granteeDocument;
 	}
 
-	public void setGranteeDocument(String granteeDocument) {
+	public Mod184Income setGranteeDocument(String granteeDocument) {
 		this.granteeDocument = granteeDocument;
+		return this;
 	}
 
 	public String getGranteeName() {
 		return granteeName;
 	}
 
-	public void setGranteeName(String granteeName) {
+	public Mod184Income setGranteeName(String granteeName) {
 		this.granteeName = granteeName;
+		return this;
 	}
 
 	public Date getAdqDate() {
 		return adqDate;
 	}
 
-	public void setAdqDate(Date adqDate) {
+	public Mod184Income setAdqDate(Date adqDate) {
 		this.adqDate = adqDate;
+		return this;
 	}
 
 	public double getIncrease() {
 		return increase;
 	}
 
-	public void setIncrease(double increase) {
+	public Mod184Income setIncrease(double increase) {
 		this.increase = increase;
+		return this;
 	}
 
 	public double getDecrease() {
 		return decrease;
 	}
 
-	public void setDecrease(double decrease) {
+	public Mod184Income setDecrease(double decrease) {
 		this.decrease = decrease;
+		return this;
 	}
 
 	public double getAccountingResult() {
 		return accountingResult;
 	}
 
-	public void setAccountingResult(double accountingResult) {
+	public Mod184Income setAccountingResult(double accountingResult) {
 		this.accountingResult = accountingResult;
+		return this;
 	}
 
 	public double getExpenses() {
 		return expenses;
 	}
 
-	public void setExpenses(double expenses) {
+	public Mod184Income setExpenses(double expenses) {
 		this.expenses = expenses;
+		return this;
 	}
 
 	public double getNetYield() {
 		return netYield;
 	}
 
-	public void setNetYield(double netYield) {
+	public Mod184Income setNetYield(double netYield) {
 		this.netYield = netYield;
+		return this;
 	}
 
 	public double getReductionPercent() {
 		return reductionPercent;
 	}
 
-	public void setReductionPercent(double reductionPercent) {
+	public Mod184Income setReductionPercent(double reductionPercent) {
 		this.reductionPercent = reductionPercent;
+		return this;
 	}
 
 	public double getDeductionRightRent() {
 		return deductionRightRent;
 	}
 
-	public void setDeductionRightRent(double deductionRightRent) {
+	public Mod184Income setDeductionRightRent(double deductionRightRent) {
 		this.deductionRightRent = deductionRightRent;
+		return this;
 	}
 
 	public double getResult() {
 		return result;
 	}
 
-	public void setResult(double result) {
+	public Mod184Income setResult(double result) {
 		this.result = result;
+		return this;
 	}
 
 	public double getDeductionBase() {
 		return deductionBase;
 	}
 
-	public void setDeductionBase(double deductionBase) {
+	public Mod184Income setDeductionBase(double deductionBase) {
 		this.deductionBase = deductionBase;
+		return this;
 	}
 
 	public double getRetention() {
 		return retention;
 	}
 
-	public void setRetention(double retention) {
+	public Mod184Income setRetention(double retention) {
 		this.retention = retention;
+		return this;
 	}
 
 	public boolean isDirty() {
 		return dirty;
 	}
 
-	public void setDirty(boolean dirty) {
+	public Mod184Income setDirty(boolean dirty) {
 		this.dirty = dirty;
+		return this;
 	}
 
 	public boolean isDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(boolean deleted) {
+	public Mod184Income setDeleted(boolean deleted) {
 		this.deleted = deleted;
+		return this;
 	}
 
 }

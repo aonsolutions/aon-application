@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.file.format.output.FileOutput;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.fiscal.server.file.MOD180Writer;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
@@ -29,8 +30,8 @@ public class Mod180File extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("mod180"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			Mod180 mod180 = AON.getMod180(domainName, domainId, id);
-			FileOutput fileoutput = writer.createMOD180(domainName, domainId,
+			Mod180 mod180 = AON.getMod180(domainName, domainId,AonServletUtils.getLoggedUser(), id);
+			FileOutput fileoutput = writer.createMOD180(domainName, domainId,AonServletUtils.getLoggedUser(),
 					id, mod180.getYear(), mod180.getAdministration());
 
 			String s = mod180.getName();

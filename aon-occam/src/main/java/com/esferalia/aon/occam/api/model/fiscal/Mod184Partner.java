@@ -2,9 +2,10 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
 
-@SuppressWarnings("serial")
 public class Mod184Partner implements Serializable {
 
+	private static final long serialVersionUID = -7095816615909233361L;
+	
 	private Integer id;
 	private int domain;
 	private int mod184;
@@ -30,152 +31,171 @@ public class Mod184Partner implements Serializable {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public Mod184Partner setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public Mod184Partner setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	public int getDomain() {
 		return domain;
 	}
 
-	public void setDomain(int domain) {
+	public Mod184Partner setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
 
 	public int getMod184() {
 		return mod184;
 	}
 
-	public void setMod184(int mod184) {
+	public Mod184Partner setMod184(int mod184) {
 		this.mod184 = mod184;
+		return this;
 	}
 
 	public String getDocument() {
 		return document;
 	}
 
-	public void setDocument(String document) {
+	public Mod184Partner setDocument(String document) {
 		this.document = document;
+		return this;
 	}
 
 	public String getRepresentativeDocument() {
 		return representativeDocument;
 	}
 
-	public void setRepresentativeDocument(String representativeDocument) {
+	public Mod184Partner setRepresentativeDocument(String representativeDocument) {
 		this.representativeDocument = representativeDocument;
+		return this;
 	}
 
 	public int getProvince() {
 		return province;
 	}
 
-	public void setProvince(int province) {
+	public Mod184Partner setProvince(int province) {
 		this.province = province;
+		return this;
 	}
 
 	public String getCountry() {
 		return country;
 	}
 
-	public void setCountry(String country) {
+	public Mod184Partner setCountry(String country) {
 		this.country = country;
+		return this;
 	}
 
 	public byte getPartType() {
 		return partType;
 	}
 
-	public void setPartType(byte partType) {
+	public Mod184Partner setPartType(byte partType) {
 		this.partType = partType;
+		return this;
 	}
 
 	public boolean isMemberEndOfYear() {
 		return memberEndOfYear;
 	}
 
-	public void setMemberEndOfYear(boolean memberEndOfYear) {
+	public Mod184Partner setMemberEndOfYear(boolean memberEndOfYear) {
 		this.memberEndOfYear = memberEndOfYear;
+		return this;
 	}
 
 	public Integer getMemberDays() {
 		return memberDays;
 	}
 
-	public void setMemberDays(Integer memberDays) {
+	public Mod184Partner setMemberDays(Integer memberDays) {
 		this.memberDays = memberDays;
+		return this;
 	}
 
 	public double getPartPercent() {
 		return partPercent;
 	}
 
-	public void setPartPercent(double partPercent) {
+	public Mod184Partner setPartPercent(double partPercent) {
 		this.partPercent = partPercent;
+		return this;
 	}
 
 	public String getKey() {
 		return key;
 	}
 
-	public void setKey(String key) {
+	public Mod184Partner setKey(String key) {
 		this.key = key;
+		return this;
 	}
 
 	public String getSubKey() {
 		return subKey;
 	}
 
-	public void setSubKey(String subKey) {
+	public Mod184Partner setSubKey(String subKey) {
 		this.subKey = subKey;
+		return this;
 	}
 
 	public double getAmount() {
 		return amount;
 	}
 
-	public void setAmount(double amount) {
+	public Mod184Partner setAmount(double amount) {
 		this.amount = amount;
+		return this;
 	}
 
 	public double getReduction() {
 		return reduction;
 	}
 
-	public void setReduction(double reduction) {
+	public Mod184Partner setReduction(double reduction) {
 		this.reduction = reduction;
+		return this;
 	}
 
 	public String getAddress() {
 		return address;
 	}
 
-	public void setAddress(String address) {
+	public Mod184Partner setAddress(String address) {
 		this.address = address;
+		return this;
 	}
 
 	public boolean isDirty() {
 		return dirty;
 	}
 
-	public void setDirty(boolean dirty) {
+	public Mod184Partner setDirty(boolean dirty) {
 		this.dirty = dirty;
+		return this;
 	}
 
 	public boolean isDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(boolean deleted) {
+	public Mod184Partner setDeleted(boolean deleted) {
 		this.deleted = deleted;
+		return this;
 	}
 
 }

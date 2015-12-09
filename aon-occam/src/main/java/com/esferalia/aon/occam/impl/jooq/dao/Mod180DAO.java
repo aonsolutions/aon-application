@@ -331,8 +331,7 @@ public class Mod180DAO {
 		.groupBy(INVOICE.RDOCUMENT,INVOICE.RNAME)
 		.fetch()
 		.stream()
-		.map(rec ->	{ 
-			Mod180Detail detail = new Mod180Detail()
+		.map(rec ->	new Mod180Detail()
 				.setDomain(mod180.getDomain())
 				.setMod180(mod180.getId())
 				.setDocument(rec.getValue(INVOICE.RDOCUMENT))
@@ -341,9 +340,7 @@ public class Mod180DAO {
 				.setPerception(rec.getValue(sumBase).doubleValue())
 				.setRetention(rec.getValue(quotaOp).doubleValue())
 				.setPercent(rec.getValue(maxPercent))
-				.setProvince( getRegistryMainAddressProvince(ctx, rec.getValue(minRegistry)) );
-			return detail;
-		})
+				.setProvince( getRegistryMainAddressProvince(ctx, rec.getValue(minRegistry)) ))
 		.forEach(detail -> insertDetail(ctx,detail));
 	}
 

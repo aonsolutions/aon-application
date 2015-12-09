@@ -25,7 +25,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
-import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
@@ -251,10 +250,10 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 
 	@Override
 	public void getMod193s(String domainName, int domain,
-			AsyncCallback<ArrayList<Mod193>> callback) {
+			AsyncCallback<LinkedList<Mod193>> callback) {
 		AON.start();
 		fsa.getMod193s(domainName, domain,
-				new AsyncCallbackWrapper<ArrayList<Mod193>>(callback));
+				new AsyncCallbackWrapper<LinkedList<Mod193>>(callback));
 	}
 
 	@Override
@@ -271,14 +270,6 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fsa.getMod193(domainName, domain, id, new AsyncCallbackWrapper<Mod193>(
 				callback));
-	}
-
-	@Override
-	public void getMod193Detail(String domainName, int domain, Integer id,
-			AsyncCallback<Mod193Detail> callback) {
-		AON.start();
-		fsa.getMod193Detail(domainName, domain, id,
-				new AsyncCallbackWrapper<Mod193Detail>(callback));
 	}
 
 	// ---------------------------------------------------------------MODELO 180
@@ -349,10 +340,10 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 
 	@Override
 	public void getMod184s(String domainName, int domain,
-			AsyncCallback<ArrayList<Mod184>> callback) {
+			AsyncCallback<LinkedList<Mod184>> callback) {
 		AON.start();
 		fsa.getMod184s(domainName, domain,
-				new AsyncCallbackWrapper<ArrayList<Mod184>>(callback));
+				new AsyncCallbackWrapper<LinkedList<Mod184>>(callback));
 	}
 
 	@Override

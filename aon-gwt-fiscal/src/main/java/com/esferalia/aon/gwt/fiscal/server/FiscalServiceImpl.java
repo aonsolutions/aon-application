@@ -34,7 +34,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
-import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
@@ -216,39 +215,34 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	// ---------------------------------------------------------------MODELO 193
 	@Override
 	public Mod193 initializeMod193(String domainName, Integer domain,Integer year) {
-		return AON.initializeMod193(domainName, domain, year);
+		return AON.initializeMod193(domainName, domain, AonServletUtils.getLoggedUser(), year);
 	}
 	
 	@Override
-	public ArrayList<Mod193> getMod193s(String domainName, int domain) {
-		return AON.getMod193s(domainName, domain);
+	public LinkedList<Mod193> getMod193s(String domainName, int domain) {
+		return AON.getMod193s(domainName, domain, AonServletUtils.getLoggedUser());
 	}
 
 	@Override
 	public void deleteMod193(String domainName, int domain, Mod193 mod193) {
-		AON.deleteMod193(domainName, domain, mod193);
+		AON.deleteMod193(domainName, domain, AonServletUtils.getLoggedUser(), mod193);
 	}
 
 	@Override
 	public Mod193 saveMod193(String domainName, int domain,Mod193 mod193) {
-		return AON.saveMod193(domainName, domain, mod193);
+		return AON.saveMod193(domainName, domain, AonServletUtils.getLoggedUser(), mod193);
 	}
 
 
 	@Override
 	public Mod193 getMod193(String domainName, int domain, Integer id) {
-		return AON.getMod193(domainName, domain, id);
-	}
-
-	@Override
-	public Mod193Detail getMod193Detail(String domainName, int domain, Integer id) {
-		return AON.getMod193Detail(domainName, domain, id);
+		return AON.getMod193(domainName, domain, AonServletUtils.getLoggedUser(), id);
 	}
 
 	// ---------------------------------------------------------------MODELO 180
 	@Override
 	public Mod180 initializeMod180(String domainName, Integer domain,Integer year) {
-		return AON.initializeMod180(domainName, domain, year);
+		return AON.initializeMod180(domainName, domain, AonServletUtils.getLoggedUser(), year);
 	}
 
 	@Override
@@ -258,50 +252,50 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 
 	@Override
 	public void deleteMod180(String domainName, int domain, Mod180 mod180){
-		AON.deleteMod180(domainName, domain, mod180);
+		AON.deleteMod180(domainName, domain, AonServletUtils.getLoggedUser(), mod180);
 	}
 
 	@Override
 	public Mod180 saveMod180(String domainName, int domain,Mod180 mod180) {
-		return AON.saveMod180(domainName, domain, mod180);
+		return AON.saveMod180(domainName, domain, AonServletUtils.getLoggedUser(), mod180);
 	}
 
 
 	@Override
 	public Mod180 getMod180(String domainName, int domain, Integer id) {
-		return AON.getMod180(domainName, domain, id);
+		return AON.getMod180(domainName, domain, AonServletUtils.getLoggedUser(), id);
 	}
 
 	@Override
 	public Mod180Detail getMod180Detail(String domainName, int domain, Integer id) {
-		return AON.getMod180Detail(domainName, domain, id);
+		return AON.getMod180Detail(domainName, domain, AonServletUtils.getLoggedUser(), id);
 	}
 
 	// ---------------------------------------------------------------MODELO 184
 	@Override
 	public Mod184 initializeMod184(String domainName, Integer domain,Integer year) {
-		return AON.initializeMod184(domainName, domain, year);
+		return AON.initializeMod184(domainName, domain, AonServletUtils.getLoggedUser(), year);
 	}
 	
 	@Override
-	public ArrayList<Mod184> getMod184s(String domainName, int domain) {
-		return AON.getMod184s(domainName, domain);
+	public LinkedList<Mod184> getMod184s(String domainName, int domain) {
+		return AON.getMod184s(domainName, domain, AonServletUtils.getLoggedUser());
 	}
 
 	@Override
 	public void deleteMod184(String domainName, int domain, Mod184 mod184) {
-		AON.deleteMod184(domainName, domain, mod184);
+		AON.deleteMod184(domainName, domain, AonServletUtils.getLoggedUser(), mod184);
 	}
 
 	@Override
 	public Mod184 saveMod184(String domainName, int domain,Mod184 mod184) {
-		return AON.saveMod184(domainName, domain, mod184);
+		return AON.saveMod184(domainName, domain, AonServletUtils.getLoggedUser(), mod184);
 	}
 
 
 	@Override
 	public Mod184 getMod184(String domainName, int domain, Integer id) {
-		return AON.getMod184(domainName, domain, id);
+		return AON.getMod184(domainName, domain, AonServletUtils.getLoggedUser(), id);
 	}
 
 	// ---------------------------------------------------------------MODELO 390

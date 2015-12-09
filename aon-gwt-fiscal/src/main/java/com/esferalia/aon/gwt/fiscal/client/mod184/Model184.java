@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.mod184;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
@@ -503,9 +503,9 @@ public class Model184 extends MainEntryPoint {
 	@UiHandler("table")
 	void onTableRangeChange(RangeChangeEvent event) {
 		mod184Service.getMod184s(getCurrentDomainName(), getCurrentDomain(),
-				new AsyncCallback<ArrayList<Mod184>>() {
+				new AsyncCallback<LinkedList<Mod184>>() {
 					@Override
-					public void onSuccess(ArrayList<Mod184> result) {
+					public void onSuccess(LinkedList<Mod184> result) {
 						if (result == null || result.size() == 0) {
 							onNewButtonClick(null);
 						} else {

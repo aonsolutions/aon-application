@@ -27,6 +27,7 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
@@ -53,7 +54,7 @@ public class Mod180CertificatePrint extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("mod180"));
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String domainName = req.getParameter("domainName");
-			Mod180 mod180 = AON.getMod180(domainName, domainId, id);
+			Mod180 mod180 = AON.getMod180(domainName, domainId, AonServletUtils.getLoggedUser(),id);
 
 			commit(conn);
 

@@ -5,8 +5,9 @@ import java.util.Date;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-@SuppressWarnings("serial")
 public class Mod193Detail implements Serializable {
+	
+	private static final long serialVersionUID = -8179709468567724824L;
 	
 	public static final String DETAIL_TYPE = "P";
 	public static final String EXPENSE_TYPE = "G";
@@ -50,15 +51,17 @@ public class Mod193Detail implements Serializable {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public Mod193Detail setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 
 	public String getType() {
 		return type;
 	}
-	public void setType(String type) {
+	public Mod193Detail setType(String type) {
 		this.type = type;
+		return this;
 	}
 	public boolean isExpense() {
 		return AonStringUtils.equals( EXPENSE_TYPE, getType() );
@@ -67,247 +70,278 @@ public class Mod193Detail implements Serializable {
 		return name;
 	}
 
-	public void setName(String name) {
+	public Mod193Detail setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	public int getDomain() {
 		return domain;
 	}
 
-	public void setDomain(int domain) {
+	public Mod193Detail setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
 
 	public int getMod193() {
 		return mod193;
 	}
 
-	public void setMod193(int mod193) {
+	public Mod193Detail setMod193(int mod193) {
 		this.mod193 = mod193;
+		return this;
 	}
 
 	public String getDocument() {
 		return document;
 	}
 
-	public void setDocument(String document) {
+	public Mod193Detail setDocument(String document) {
 		this.document = document;
+		return this;
 	}
 
 	public String getRepresentativeDocument() {
 		return representativeDocument;
 	}
 
-	public void setRepresentativeDocument(String representativeDocument) {
+	public Mod193Detail setRepresentativeDocument(String representativeDocument) {
 		this.representativeDocument = representativeDocument;
+		return this;
 	}
 	
 	public boolean isIntermediaryPayment() {
 		return intermediaryPayment;
 	}
 
-	public void setIntermediaryPayment(boolean intermediaryPayment) {
+	public Mod193Detail setIntermediaryPayment(boolean intermediaryPayment) {
 		this.intermediaryPayment = intermediaryPayment;
+		return this;
 	}
 
 	public int getProvince() {
 		return province;
 	}
 
-	public void setProvince(int province) {
+	public Mod193Detail setProvince(int province) {
 		this.province = province;
+		return this;
 	}
 
 	public byte getKeyCode() {
 		return keyCode;
 	}
 
-	public void setKeyCode(byte keyCode) {
+	public Mod193Detail setKeyCode(byte keyCode) {
 		this.keyCode = keyCode;
+		return this;
 	}
 
 	public String getIssuingCode() {
 		return issuingCode;
 	}
 
-	public void setIssuingCode(String issuingCode) {
+	public Mod193Detail setIssuingCode(String issuingCode) {
 		this.issuingCode = issuingCode;
+		return this;
 	}
 
 	public String getKey() {
 		return key;
 	}
 
-	public void setKey(String key) {
+	public Mod193Detail setKey(String key) {
 		this.key = key;
+		return this;
 	}
 
 	public String getNature() {
 		return nature;
 	}
 
-	public void setNature(String nature) {
+	public Mod193Detail setNature(String nature) {
 		this.nature = nature;
+		return this;
 	}
 
 	public byte getPayment() {
 		return payment;
 	}
 
-	public void setPayment(byte payment) {
+	public Mod193Detail setPayment(byte payment) {
 		this.payment = payment;
+		return this;
 	}
 
 	public String getCodeType() {
 		return codeType;
 	}
 
-	public void setCodeType(String codeType) {
+	public Mod193Detail setCodeType(String codeType) {
 		this.codeType = codeType;
+		return this;
 	}
 
 	public double getLenderAmount() {
 		return lenderAmount;
 	}
 
-	public void setLenderAmount(double lenderAmount) {
+	public Mod193Detail setLenderAmount(double lenderAmount) {
 		this.lenderAmount = lenderAmount;
+		return this;
 	}
 
 	public String getAccountCode() {
 		return accountCode;
 	}
 
-	public void setAccountCode(String accountCode) {
+	public Mod193Detail setAccountCode(String accountCode) {
 		this.accountCode = accountCode;
+		return this;
 	}
 
 	public boolean isPending() {
 		return pending;
 	}
 
-	public void setPending(boolean pending) {
+	public Mod193Detail setPending(boolean pending) {
 		this.pending = pending;
+		return this;
 	}
 
 	public int getAccrualYear() {
 		return accrualYear;
 	}
 
-	public void setAccrualYear(int accrualYear) {
+	public Mod193Detail setAccrualYear(int accrualYear) {
 		this.accrualYear = accrualYear;
+		return this;
 	}
 
 	public boolean isInKind() {
 		return inKind;
 	}
 
-	public void setInKind(boolean inKind) {
+	public Mod193Detail setInKind(boolean inKind) {
 		this.inKind = inKind;
+		return this;
 	}
 
 	public double getPerception() {
 		return perception;
 	}
 
-	public void setPerception(double perception) {
+	public Mod193Detail setPerception(double perception) {
 		this.perception = perception;
+		return this;
 	}
 
 	public double getReduction() {
 		return reduction;
 	}
 
-	public void setReduction(double reduction) {
+	public Mod193Detail setReduction(double reduction) {
 		this.reduction = reduction;
+		return this;
 	}
 
 	public double getRetentionBase() {
 		return retentionBase;
 	}
 
-	public void setRetentionBase(double retentionBase) {
+	public Mod193Detail setRetentionBase(double retentionBase) {
 		this.retentionBase = retentionBase;
+		return this;
 	}
 
 	public double getPercent() {
 		return percent;
 	}
 
-	public void setPercent(double percent) {
+	public Mod193Detail setPercent(double percent) {
 		this.percent = percent;
+		return this;
 	}
 
 	public double getRetention() {
 		return retention;
 	}
 
-	public void setRetention(double retention) {
+	public Mod193Detail setRetention(double retention) {
 		this.retention = retention;
+		return this;
 	}
 
 	public boolean isDeponentNature() {
 		return deponentNature;
 	}
 
-	public void setDeponentNature(boolean deponentNature) {
+	public Mod193Detail setDeponentNature(boolean deponentNature) {
 		this.deponentNature = deponentNature;
+		return this;
 	}
 
 	public Date getLoanStartDate() {
 		return loanStartDate;
 	}
 
-	public void setLoanStartDate(Date loanStartDate) {
+	public Mod193Detail setLoanStartDate(Date loanStartDate) {
 		this.loanStartDate = loanStartDate;
+		return this;
 	}
 
 	public Date getLoanDueDate() {
 		return loanDueDate;
 	}
 
-	public void setLoanDueDate(Date loanDueDate) {
+	public Mod193Detail setLoanDueDate(Date loanDueDate) {
 		this.loanDueDate = loanDueDate;
+		return this;
 	}
 
 	public double getCompensation() {
 		return compensation;
 	}
 
-	public void setCompensation(double compensation) {
+	public Mod193Detail setCompensation(double compensation) {
 		this.compensation = compensation;
+		return this;
 	}
 
 	public double getGuarantee() {
 		return guarantee;
 	}
 
-	public void setGuarantee(double guarantee) {
+	public Mod193Detail setGuarantee(double guarantee) {
 		this.guarantee = guarantee;
+		return this;
 	}
 	
 	public double getExpenses() {
 		return expenses;
 	}
 
-	public void setExpenses(double expenses) {
+	public Mod193Detail setExpenses(double expenses) {
 		this.expenses = expenses;
+		return this;
 	}
 
 	public boolean isDirty() {
 		return dirty;
 	}
 
-	public void setDirty(boolean dirty) {
+	public Mod193Detail setDirty(boolean dirty) {
 		this.dirty = dirty;
+		return this;
 	}
 
 	public boolean isDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(boolean deleted) {
+	public Mod193Detail setDeleted(boolean deleted) {
 		this.deleted = deleted;
+		return this;
 	}
 }

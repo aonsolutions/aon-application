@@ -26,8 +26,8 @@ public class MOD193Writer {
 	
 	private static DateFormat DATE_FORMAT  = new SimpleDateFormat("yyyyMMdd");  
 
-	public FileOutput createMOD193(String domainName,Integer domainId, Integer mod193, int year,
-			Byte administration) throws AonSQLException {
+	public FileOutput createMOD193(String domainName,Integer domainId, String user,
+			Integer mod193, int year, Byte administration) throws AonSQLException {
 		try {
 			MOD193Format format = MOD193Format.obtainFormat(year, administration);
 			if (format == null) {
@@ -37,7 +37,7 @@ public class MOD193Writer {
 								+ " en la administraci\u00F3n "
 								+ administration);
 			}
-			Deponent deponent = getDeponent(domainName,domainId, mod193, format);
+			Deponent deponent = getDeponent(domainName,domainId, user, mod193, format);
 			
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
@@ -70,9 +70,9 @@ public class MOD193Writer {
 //		return f;
 //	}
 
-	private Deponent getDeponent(String domainName, int domainId, Integer id,
-			MOD193Format format) throws AonSQLException {
-		Mod193 mod193 = AON.getMod193(domainName,domainId, id);
+	private Deponent getDeponent(String domainName, int domainId, String user
+			, Integer id, MOD193Format format) throws AonSQLException {
+		Mod193 mod193 = AON.getMod193(domainName,domainId,user, id);
 		Deponent deponent = new Deponent();
 		deponent.setYear(mod193.getYear());
 		deponent.setDocument(mod193.getDocument());

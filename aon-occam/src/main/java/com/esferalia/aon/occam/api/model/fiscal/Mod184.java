@@ -1,10 +1,11 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.LinkedList;
 
-@SuppressWarnings("serial")
 public class Mod184 implements Serializable {
+
+	private static final long serialVersionUID = 7849527072278585773L;
 
 	private Integer id;
 	private int domain;
@@ -20,7 +21,7 @@ public class Mod184 implements Serializable {
 	private String name;
 	private String contactPerson;
 	private String contactPhone;
-	
+
 	private int partnerTotal;
 	private String entityType;
 	private String mainActivity;
@@ -30,234 +31,260 @@ public class Mod184 implements Serializable {
 	private double residentPercent;
 	private boolean taxIS;
 	private double netSalesAmount;
-	
+
 	private String lrDocument;
 	private String lrName;
-	
-	
-	private ArrayList<Mod184Income> incomes;
-	private ArrayList<Mod184Partner> partners;
 
-	public Integer getId() { 
+	private LinkedList<Mod184Income> incomes;
+	private LinkedList<Mod184Partner> partners;
+
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public Mod184 setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 
 	public int getDomain() {
 		return domain;
 	}
 
-	public void setDomain(int domain) {
+	public Mod184 setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
 
 	public int getEnterprise() {
 		return enterprise;
 	}
 
-	public void setEnterprise(int enterprise) {
+	public Mod184 setEnterprise(int enterprise) {
 		this.enterprise = enterprise;
+		return this;
 	}
 
 	public int getYear() {
 		return year;
 	}
 
-	public void setYear(int year) {
+	public Mod184 setYear(int year) {
 		this.year = year;
+		return this;
 	}
 
 	public byte getAdministration() {
 		return administration;
 	}
 
-	public void setAdministration(byte administration) {
+	public Mod184 setAdministration(byte administration) {
 		this.administration = administration;
+		return this;
 	}
 
 	public boolean isConfidential() {
 		return confidential;
 	}
 
-	public void setConfidential(boolean confidential) {
+	public Mod184 setConfidential(boolean confidential) {
 		this.confidential = confidential;
+		return this;
 	}
 
 	public boolean isReplacement() {
 		return replacement;
 	}
 
-	public void setReplacement(boolean replacement) {
+	public Mod184 setReplacement(boolean replacement) {
 		this.replacement = replacement;
+		return this;
 	}
-	
+
 	public String getReceipt() {
 		return receipt;
 	}
 
-	public void setReceipt(String receipt) {
+	public Mod184 setReceipt(String receipt) {
 		this.receipt = receipt;
+		return this;
 	}
 
 	public String getReplacedReceipt() {
 		return replacedReceipt;
 	}
 
-	public void setReplacedReceipt(String replacedReceipt) {
+	public Mod184 setReplacedReceipt(String replacedReceipt) {
 		this.replacedReceipt = replacedReceipt;
+		return this;
 	}
 
 	public String getComments() {
 		return comments;
 	}
 
-	public void setComments(String comments) {
+	public Mod184 setComments(String comments) {
 		this.comments = comments;
+		return this;
 	}
 
 	public String getDocument() {
 		return document;
 	}
 
-	public void setDocument(String document) {
+	public Mod184 setDocument(String document) {
 		this.document = document;
+		return this;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public Mod184 setName(String name) {
 		this.name = name;
+		return this;
 	}
-	
+
 	public String getContactPerson() {
 		return contactPerson;
 	}
 
-	public void setContactPerson(String contactPerson) {
+	public Mod184 setContactPerson(String contactPerson) {
 		this.contactPerson = contactPerson;
+		return this;
 	}
 
 	public String getContactPhone() {
 		return contactPhone;
 	}
 
-	public void setContactPhone(String contactPhone) {
+	public Mod184 setContactPhone(String contactPhone) {
 		this.contactPhone = contactPhone;
+		return this;
 	}
 
 	public int getPartnerTotal() {
 		return partnerTotal;
 	}
 
-	public void setPartnerTotal(int partnerTotal) {
+	public Mod184 setPartnerTotal(int partnerTotal) {
 		this.partnerTotal = partnerTotal;
+		return this;
 	}
 
 	public String getEntityType() {
 		return entityType;
 	}
 
-	public void setEntityType(String entityType) {
+	public Mod184 setEntityType(String entityType) {
 		this.entityType = entityType;
+		return this;
 	}
 
 	public String getMainActivity() {
 		return mainActivity;
 	}
 
-	public void setMainActivity(String mainActivity) {
+	public Mod184 setMainActivity(String mainActivity) {
 		this.mainActivity = mainActivity;
+		return this;
 	}
 
 	public String getForeignEntityType() {
 		return foreignEntityType;
 	}
 
-	public void setForeignEntityType(String foreignEntityType) {
+	public Mod184 setForeignEntityType(String foreignEntityType) {
 		this.foreignEntityType = foreignEntityType;
+		return this;
 	}
 
 	public String getForeignObject() {
 		return foreignObject;
 	}
 
-	public void setForeignObject(String foreignObject) {
+	public Mod184 setForeignObject(String foreignObject) {
 		this.foreignObject = foreignObject;
+		return this;
 	}
 
 	public String getCountry() {
 		return country;
 	}
 
-	public void setCountry(String country) {
+	public Mod184 setCountry(String country) {
 		this.country = country;
+		return this;
 	}
 
 	public double getResidentPercent() {
 		return residentPercent;
 	}
 
-	public void setResidentPercent(double residentPercent) {
+	public Mod184 setResidentPercent(double residentPercent) {
 		this.residentPercent = residentPercent;
+		return this;
 	}
 
 	public boolean isTaxIS() {
 		return taxIS;
 	}
 
-	public void setTaxIS(boolean taxIS) {
+	public Mod184 setTaxIS(boolean taxIS) {
 		this.taxIS = taxIS;
+		return this;
 	}
 
 	public double getNetSalesAmount() {
 		return netSalesAmount;
 	}
 
-	public void setNetSalesAmount(double netSalesAmount) {
+	public Mod184 setNetSalesAmount(double netSalesAmount) {
 		this.netSalesAmount = netSalesAmount;
+		return this;
 	}
 
 	public String getLrDocument() {
 		return lrDocument;
 	}
 
-	public void setLrDocument(String lrDocument) {
+	public Mod184 setLrDocument(String lrDocument) {
 		this.lrDocument = lrDocument;
+		return this;
 	}
 
 	public String getLrName() {
 		return lrName;
 	}
 
-	public void setLrName(String lrName) {
+	public Mod184 setLrName(String lrName) {
 		this.lrName = lrName;
+		return this;
 	}
 
-	public ArrayList<Mod184Income> getIncomes() {
+	public LinkedList<Mod184Income> getIncomes() {
 		if (incomes == null) {
-			incomes = new ArrayList<Mod184Income>();
+			incomes = new LinkedList<Mod184Income>();
 		}
 		return incomes;
 	}
 
-	public void setIncomes(ArrayList<Mod184Income> incomes) {
+	public Mod184 setIncomes(LinkedList<Mod184Income> incomes) {
 		this.incomes = incomes;
+		return this;
 	}
 
-	public ArrayList<Mod184Partner> getPartners() {
+	public LinkedList<Mod184Partner> getPartners() {
 		if (partners == null) {
-			partners = new ArrayList<Mod184Partner>();
+			partners = new LinkedList<Mod184Partner>();
 		}
 		return partners;
 	}
 
-	public void setPartners(ArrayList<Mod184Partner> partners) {
+	public Mod184 setPartners(LinkedList<Mod184Partner> partners) {
 		this.partners = partners;
+		return this;
 	}
 
 }

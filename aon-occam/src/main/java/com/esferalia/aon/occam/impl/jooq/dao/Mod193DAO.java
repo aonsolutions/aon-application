@@ -10,22 +10,25 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.LinkedList;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.jooq.BatchBindStep;
 import org.jooq.Field;
-import org.jooq.Result;
+import org.jooq.Record;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.records.FsModel193DetailRecord;
 import com.esferalia.aon.jooq.tables.records.FsModel193Record;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -33,6 +36,43 @@ import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod193DAO {
+
+	private static byte ZERO_BYTE = 0;
+	private static byte ONE_BYTE = 1;
+
+	public static LinkedList<Mod193> getByDomain(AONContext ctx, int domain) {
+		ctx.checkRead();
+		return  ctx.getDslContext()
+			.select(FS_MODEL193.fields())
+			.from(FS_MODEL193)
+			.join(DOMAIN).on(FS_MODEL193.DOMAIN.equal(DOMAIN.ID))
+			.where(FS_MODEL193.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
+			.orderBy(FS_MODEL193.YEAR.desc()
+					,FS_MODEL193.NAME.asc()
+					,FS_MODEL193.REPLACEMENT.asc())
+			.fetch()
+			.stream()
+			.map(new Mod193Filler())
+			.peek( mod193 -> mod193.setDetails( getDetails(ctx, mod193.getId()) ))
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+
+	public static Mod193 getById(AONContext ctx, int id) {
+		ctx.checkRead();
+		return ctx.getDslContext()
+			.select(FS_MODEL193.fields())
+			.from(FS_MODEL193)
+			.join(DOMAIN).on(FS_MODEL193.DOMAIN.equal(DOMAIN.ID))
+			.where(FS_MODEL193.DOMAIN.equal(ctx.getDomainId()).or(DOMAIN.PARENT.equal(ctx.getDomainId())))
+			.and(FS_MODEL193.ID.equal(id))
+			.fetch()
+			.stream()
+			.map(new Mod193Filler())
+			.peek( mod193 -> mod193.setDetails( getDetails(ctx, mod193.getId()) ))
+			.peek( mod193 -> mod193.setExpenses( getExpenses(ctx, mod193.getId()) ))
+			.findFirst()
+			.orElse(null);
+	}
 
 	public static Mod193 save(AONContext ctx, Mod193 mod193) {
 		ctx.checkWrite();
@@ -275,35 +315,43 @@ public class Mod193DAO {
 	private static void validate(AONContext ctx, Mod193 mod193) {
 		if (mod193.isReplacement()) {
 			// Se comprueba que exista la declaración ssustituida.
-			if (ctx.getDslContext()
-				.selectOne()
-				.from(FS_MODEL193)
-				.where(FS_MODEL193.YEAR
-				.equal(mod193.getYear())
-				.and(FS_MODEL193.ENTERPRISE.equal(mod193.getEnterprise()))
-				.and(FS_MODEL193.RECEIPT.equal(mod193.getReplacedReceipt()))).fetchCount() == 0)
-				throw new AonCoreException(AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage());
-
-			// Se comprueba que no exista una declaraci?n sustitutiva.
-			if (ctx.getDslContext()
-					.selectOne()
+			if (!ctx.getDslContext().selectOne()
 					.from(FS_MODEL193)
 					.where(FS_MODEL193.YEAR.equal(mod193.getYear())
 					.and(FS_MODEL193.ENTERPRISE.equal(mod193.getEnterprise()))
-					.and(FS_MODEL193.REPLACEMENT.equal((byte) 1))
-					.and(FS_MODEL193.REPLACED_RECEIPT.equal(mod193.getReplacedReceipt()))).fetchCount() > 0)
+					.and(FS_MODEL193.RECEIPT.equal(mod193.getReplacedReceipt())))
+					.fetch()
+					.stream()
+					.findFirst()
+					.isPresent()) 
+				throw new AonCoreException(
+						AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage());
+
+			// Se comprueba que no exista una declaración sustitutiva.
+			if (ctx.getDslContext().selectOne()
+				.from(FS_MODEL193)
+				.where(FS_MODEL193.YEAR.equal(mod193.getYear())
+				.and(FS_MODEL193.ENTERPRISE.equal(mod193.getEnterprise()))
+				.and(FS_MODEL193.REPLACEMENT.equal( ONE_BYTE ))					
+				.and(FS_MODEL193.REPLACED_RECEIPT.equal(mod193.getReplacedReceipt())))
+				.fetch()
+				.stream()
+				.findFirst()
+				.isPresent()) 
 				throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_REPLACED.getMessage());
 		} else {
-			// Se comprueba que no exista ya una declaraci?n.
-			if (ctx.getDslContext()
-					.selectOne()
-					.from(FS_MODEL193)
-					.where(FS_MODEL193.YEAR
-					.equal(mod193.getYear())
-					.and(FS_MODEL193.ENTERPRISE.equal(mod193.getEnterprise()))
-					.and(FS_MODEL193.REPLACEMENT.equal((byte) 0)))
-					.fetchCount() > 0)
-				throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_EXISTS.getMessage());
+			// Se comprueba que no exista ya una declaración.
+			if (ctx.getDslContext().selectOne()
+				.from(FS_MODEL193)
+				.where(FS_MODEL193.YEAR.equal(mod193.getYear())
+				.and(FS_MODEL193.ENTERPRISE.equal(mod193.getEnterprise()))
+				.and(FS_MODEL193.REPLACEMENT.equal(ZERO_BYTE)))
+				.fetch()
+				.stream()
+				.findFirst()
+				.isPresent()) 
+				throw new AonCoreException(
+						AonError.FISCAL_DECLARATION_ALREADY_EXISTS.getMessage());
 		}
 	}
 
@@ -327,199 +375,130 @@ public class Mod193DAO {
 			.execute();
 	}
 
-	public static ArrayList<Mod193> getByDomain(AONContext ctx, int domain) {
-		ctx.checkRead();
-		ArrayList<Mod193> list = new ArrayList<Mod193>();
-		ctx.getDslContext()
-				.select(FS_MODEL193.fields())
-				.from(FS_MODEL193)
-				.join(DOMAIN)
-				.on(FS_MODEL193.DOMAIN.equal(DOMAIN.ID))
-				.where(FS_MODEL193.DOMAIN.equal(domain)
-				.or(DOMAIN.PARENT.equal(domain)))
-				.orderBy(FS_MODEL193.YEAR.desc(), FS_MODEL193.NAME.asc(),FS_MODEL193.REPLACEMENT.asc())
-				.fetchInto(FsModel193Record.class)
-				.stream()
-				.forEach(
-						record -> {
-							Mod193 mod193 = new Mod193();
-							populate(record, mod193);
-							fillDetails(ctx,mod193);
-							list.add(mod193);
-						});
-		return list;
-	}
+	private static class Mod193Filler implements Function<Record, Mod193> {
 
-	public static Mod193 getById(AONContext ctx, int id) {
-		ctx.checkRead();
-		Mod193 mod193 = new Mod193();
-		ctx.getDslContext()
-				.selectFrom(FS_MODEL193)
-				.where(FS_MODEL193.ID.equal(id))
-				.fetch()
-				.stream()
-				.forEach(
-						record -> {
-							populate(record, mod193);
-							fillDetails(ctx,mod193);
-						});
-		if (mod193.getId() != null) {
-			return mod193;
+		@Override
+		public Mod193 apply(Record record) {
+			return new Mod193()
+				.setId(record.getValue(FS_MODEL193.ID))
+				.setDomain(record.getValue(FS_MODEL193.DOMAIN))
+				.setEnterprise(record.getValue(FS_MODEL193.ENTERPRISE))
+				.setYear(record.getValue(FS_MODEL193.YEAR))
+				.setAdministration(record.getValue(FS_MODEL193.ADMINISTRATION))
+				.setReplacement(record.getValue(FS_MODEL193.REPLACEMENT) == 1)
+				.setDocument(record.getValue(FS_MODEL193.DOCUMENT))
+				.setName(record.getValue(FS_MODEL193.NAME))
+				.setContactPerson(record.getValue(FS_MODEL193.CONTACT_PERSON))
+				.setContactPhone(record.getValue(FS_MODEL193.CONTACT_PHONE))
+				.setReceipt(record.getValue(FS_MODEL193.RECEIPT))
+				.setReplacedReceipt(record.getValue(FS_MODEL193.REPLACED_RECEIPT))
+				.setReceiverCountTotal(record.getValue(FS_MODEL193.RECEIVER_COUNT_TOTAL))
+				.setRetentionBaseTotal(record.getValue(FS_MODEL193.RETENTION_BASE_TOTAL))
+				.setRetentionTotal(record.getValue(FS_MODEL193.RETENTION_TOTAL))
+				.setDepositRetentionTotal(record.getValue(FS_MODEL193.DEPOSIT_RETENTION_TOTAL))
+				.setExpensesTotal(record.getValue(FS_MODEL193.EXPENSES_TOTAL))
+				.setComments(record.getValue(FS_MODEL193.COMMENTS));
+			
 		}
-		return null;
 	}
-
- private static void populate(FsModel193Record record, Mod193 mod193) {
-		mod193.setId(record.getValue(FS_MODEL193.ID));
-		mod193.setDomain(record.getValue(FS_MODEL193.DOMAIN));
-		mod193.setEnterprise(record.getValue(FS_MODEL193.ENTERPRISE));
-		mod193.setYear(record.getValue(FS_MODEL193.YEAR));
-		mod193.setAdministration(record.getValue(FS_MODEL193.ADMINISTRATION));
-		mod193.setReplacement(record.getValue(FS_MODEL193.REPLACEMENT) == 1);
-		mod193.setDocument(record.getValue(FS_MODEL193.DOCUMENT));
-		mod193.setName(record.getValue(FS_MODEL193.NAME));
-		mod193.setContactPerson(record.getValue(FS_MODEL193.CONTACT_PERSON));
-		mod193.setContactPhone(record.getValue(FS_MODEL193.CONTACT_PHONE));
-		mod193.setReceipt(record.getValue(FS_MODEL193.RECEIPT));
-		mod193.setReplacedReceipt(record.getValue(FS_MODEL193.REPLACED_RECEIPT));
-		mod193.setReceiverCountTotal(record.getValue(FS_MODEL193.RECEIVER_COUNT_TOTAL));
-		mod193.setRetentionBaseTotal(record.getValue(FS_MODEL193.RETENTION_BASE_TOTAL));
-		mod193.setRetentionTotal(record.getValue(FS_MODEL193.RETENTION_TOTAL));
-		mod193.setDepositRetentionTotal(record.getValue(FS_MODEL193.DEPOSIT_RETENTION_TOTAL));
-		mod193.setExpensesTotal(record.getValue(FS_MODEL193.EXPENSES_TOTAL));
-		mod193.setComments(record.getValue(FS_MODEL193.COMMENTS));
-	}
-
-	public static Mod193Detail getDetail(AONContext ctx, int id) {
-		FsModel193DetailRecord record = ctx.getDslContext()
-				.selectFrom(FS_MODEL193_DETAIL)
-				.where(FS_MODEL193_DETAIL.ID.equal(id)).fetchOne();
+		
+					
+	public static LinkedList<Mod193Detail> getDetails(AONContext ctx, int mod193) {
 		ctx.checkRead();
-		Mod193Detail detail = null;
-		if (record != null) {
-			detail = new Mod193Detail();
-			populateDetail(record, detail);
-		}
-		return detail;
+		return ctx.getDslContext()
+			.selectFrom(FS_MODEL193_DETAIL)
+			.where(FS_MODEL193_DETAIL.FS_MODEL193.eq(mod193))
+			.and(FS_MODEL193_DETAIL.TYPE.eq(Mod193Detail.DETAIL_TYPE))
+			.fetch()
+			.stream()
+			.map( new Mod193DetailFiller() )
+			.collect(Collectors.toCollection(LinkedList::new));
 	}
 
-	public static void fillDetails(AONContext ctx, Mod193 mod193) {
-		Result<FsModel193DetailRecord> records = ctx.getDslContext()
-				.selectFrom(FS_MODEL193_DETAIL)
-				.where(FS_MODEL193_DETAIL.FS_MODEL193.equal(mod193.getId())).fetch();
+	public static LinkedList<Mod193Detail> getExpenses(AONContext ctx, int mod193) {
 		ctx.checkRead();
-		Mod193Detail detail = null;
-		for (FsModel193DetailRecord record : records) {
-			detail = new Mod193Detail();
-			populateDetail(record, detail);
-			if (detail.isExpense()) {
-				mod193.getExpenses().add(detail);	
-			} else {
-				mod193.getDetails().add(detail);
-			}
+		return ctx.getDslContext()
+			.selectFrom(FS_MODEL193_DETAIL)
+			.where(FS_MODEL193_DETAIL.FS_MODEL193.eq(mod193))
+			.and(FS_MODEL193_DETAIL.TYPE.eq(Mod193Detail.EXPENSE_TYPE))
+			.fetch()
+			.stream()
+			.map( new Mod193DetailFiller() )
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+
+	private static class Mod193DetailFiller implements Function<Record, Mod193Detail> {
+
+		@Override
+		public Mod193Detail apply(Record record) {
+			return new Mod193Detail()
+				.setId(record.getValue(FS_MODEL193_DETAIL.ID))
+				.setType(record.getValue(FS_MODEL193_DETAIL.TYPE))
+				.setDocument(record.getValue(FS_MODEL193_DETAIL.DOCUMENT))
+				.setName(record.getValue(FS_MODEL193_DETAIL.NAME))
+				.setRepresentativeDocument(record.getValue(FS_MODEL193_DETAIL.REPRESENTATIVE_DOCUMENT))
+				.setIntermediaryPayment(AonEnumUtils.getBoolean( record.getValue(FS_MODEL193_DETAIL.INTERMEDIARY_PAYMENT)))
+				.setProvince(record.getValue(FS_MODEL193_DETAIL.PROVINCE))
+				.setKeyCode(record.getValue(FS_MODEL193_DETAIL.KEY_CODE))
+				.setIssuingCode(record.getValue(FS_MODEL193_DETAIL.ISSUING_CODE))
+				.setKey(record.getValue(FS_MODEL193_DETAIL.KEY))
+				.setNature(record.getValue(FS_MODEL193_DETAIL.NATURE))
+				.setPayment(record.getValue(FS_MODEL193_DETAIL.PAYMENT))
+				.setCodeType(record.getValue(FS_MODEL193_DETAIL.CODE_TYPE))
+				.setLenderAmount(record.getValue(FS_MODEL193_DETAIL.LENDER_AMOUNT))
+				.setAccountCode(record.getValue(FS_MODEL193_DETAIL.ACCOUNT_CODE))
+				.setPending(AonEnumUtils.getBoolean( record.getValue(FS_MODEL193_DETAIL.PENDING)))
+				.setAccrualYear(record.getValue(FS_MODEL193_DETAIL.ACCRUAL_YEAR))
+				.setInKind(AonEnumUtils.getBoolean( record.getValue(FS_MODEL193_DETAIL.IN_KIND)))
+				.setPerception(record.getValue(FS_MODEL193_DETAIL.PERCEPTION))
+				.setReduction(record.getValue(FS_MODEL193_DETAIL.REDUCTION))
+				.setRetentionBase(record.getValue(FS_MODEL193_DETAIL.RETENTION_BASE))
+				.setPercent(record.getValue(FS_MODEL193_DETAIL.PERCENT))
+				.setRetention(record.getValue(FS_MODEL193_DETAIL.RETENTION))
+				.setDeponentNature(AonEnumUtils.getBoolean( record.getValue(FS_MODEL193_DETAIL.DEPONENT_NATURE)))
+				.setLoanStartDate(record.getValue(FS_MODEL193_DETAIL.LOAN_START_DATE))
+				.setLoanDueDate(record.getValue(FS_MODEL193_DETAIL.LOAN_DUE_DATE))
+				.setCompensation(record.getValue(FS_MODEL193_DETAIL.COMPENSATION))
+				.setGuarantee(record.getValue(FS_MODEL193_DETAIL.GUARANTEE))
+				.setExpenses(record.getValue(FS_MODEL193_DETAIL.EXPENSES));
 		}
 	}
 
-	private static void populateDetail(FsModel193DetailRecord record,Mod193Detail detail) {
-		detail.setId(record.getId());
-		detail.setType(record.getType());
-		detail.setDocument(record.getDocument());
-		detail.setName(record.getName());
-		detail.setRepresentativeDocument(record.getRepresentativeDocument());
-		detail.setIntermediaryPayment(AonEnumUtils.getBoolean( record.getIntermediaryPayment()));
-		detail.setProvince(record.getProvince());
-		detail.setKeyCode(record.getKeyCode());
-		detail.setIssuingCode(record.getIssuingCode());
-		detail.setKey(record.getKey());
-		detail.setNature(record.getNature());
-		detail.setPayment(record.getPayment());
-		detail.setCodeType(record.getCodeType());
-		detail.setLenderAmount(record.getLenderAmount());
-		detail.setAccountCode(record.getAccountCode());
-		detail.setPending(AonEnumUtils.getBoolean( record.getPending()));
-		detail.setAccrualYear(record.getAccrualYear());
-		detail.setInKind(AonEnumUtils.getBoolean( record.getInKind()));
-		detail.setPerception(record.getPerception());
-		detail.setReduction(record.getReduction());
-		detail.setRetentionBase(record.getRetentionBase());
-		detail.setPercent(record.getPercent());
-		detail.setRetention(record.getRetention());
-		detail.setDeponentNature(AonEnumUtils.getBoolean( record.getDeponentNature()));
-		detail.setLoanStartDate(record.getLoanStartDate());
-		detail.setLoanDueDate(record.getLoanDueDate());
-		detail.setCompensation(record.getCompensation());
-		detail.setGuarantee(record.getGuarantee());
-		detail.setExpenses(record.getExpenses());
-	}
+	private static void insertDetailsFromInvoice(AONContext ctx,final Mod193 mod193) {
+		java.sql.Date firstDay = AonDateUtils.toSql(AonDateUtils.getYearFirstDay(mod193.getYear()));
+		java.sql.Date lastDay = AonDateUtils.toSql(AonDateUtils.getYearLastDay(mod193.getYear()));
 
-	private static void insertDetailsFromInvoice(AONContext ctx, Mod193 mod193) {
-		Date firstDay = AonDateUtils.getYearFirstDay(mod193.getYear());
-		Date lastDay = AonDateUtils.getYearLastDay(mod193.getYear());
-
-		Field<Integer> minRegistry = DSL.min(INVOICE.REGISTRY).as(
-				INVOICE.REGISTRY.getName());
-		Field<BigDecimal> sumBase = DSL.sum(INVOICE_TAX.BASE).as(
-				INVOICE_TAX.BASE.getName());
-		Field<Double> invoiceTaxSum = DSL.round(
-				(INVOICE_TAX.BASE.mul(INVOICE_TAX.PERCENTAGE)).div(100), 2);
+		Field<Integer> minRegistry = DSL.min(INVOICE.REGISTRY).as(INVOICE.REGISTRY.getName());
+		Field<BigDecimal> sumBase = DSL.sum(INVOICE_TAX.BASE).as(INVOICE_TAX.BASE.getName());
+		Field<Double> invoiceTaxSum = DSL.round((INVOICE_TAX.BASE.mul(INVOICE_TAX.PERCENTAGE)).div(100), 2);
 		Field<BigDecimal> quotaOp = DSL.sum(DSL.decode()
 				.when(INVOICE_TAX.QUOTA.notEqual(0.0), INVOICE_TAX.QUOTA)
 				.when(INVOICE_TAX.QUOTA.equal(0.0), invoiceTaxSum)
 				.as(INVOICE_TAX.QUOTA.getName()));
 		ctx.getDslContext()
-				.select(INVOICE.RDOCUMENT
-						,INVOICE.RNAME,
-						minRegistry
-						,sumBase
-						,quotaOp)
-				.from(INVOICE)
-				.join(INVOICE_DETAIL)
-				.on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
-				.join(INVOICE_TAX)
-				.on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
-				.where(INVOICE.DOMAIN.equal(mod193.getDomain()))
-				.and(INVOICE.TYPE.notEqual((byte) 1)) 					// No Ventas
-				.and(INVOICE_TAX.TAX_TYPE.equal((byte) 2))				// IRPF
-				.and(INVOICE_TAX.WITHHOLDING_TYPE.equal((byte) 2))		// IRPF de Capital Mobiliario
-				.and(INVOICE.ISSUE_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
-				.groupBy(INVOICE.RDOCUMENT, INVOICE.RNAME,INVOICE_TAX.WITHHOLDING_TYPE)
-				.fetch()
-				.stream()
-				.forEach(
-						record -> {
-							Mod193Detail detail = new Mod193Detail();
-							detail.setDomain(mod193.getDomain());
-							detail.setType(Mod193Detail.DETAIL_TYPE);
-							detail.setMod193(mod193.getId());
-							detail.setDocument(record.getValue(INVOICE.RDOCUMENT));
-							detail.setName(record.getValue(INVOICE.RNAME));
-							detail.setKey("A");
-							detail.setPerception(record.getValue(sumBase).doubleValue());
-							detail.setRetention(record.getValue(quotaOp).doubleValue());
-							ctx.getDslContext()
-									.select(GEOZONE.CODE)
-									.from(RADDRESS)
-									.join(GEOZONE)
-									.on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
-									.where(RADDRESS.REGISTRY.equal(record
-											.getValue(minRegistry)))
-									.and(RADDRESS.TYPE.equal((byte) 0))
-									// Direcci?n principal.
-									.limit(1)
-									.fetch()
-									.stream()
-									.forEach(
-											province -> {
-												try {
-													detail.setProvince(Integer.parseInt(province
-															.getValue(GEOZONE.CODE)));
-												} catch (NumberFormatException e) {
-													// nothing. If not a number,
-													// not a valid province.
-												}
-											});
-							mod193.getDetails().add(detail);
-						});
+			.select(INVOICE.RDOCUMENT,INVOICE.RNAME,minRegistry,sumBase,quotaOp)
+			.from(INVOICE)
+			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+			.where(INVOICE.DOMAIN.equal(mod193.getDomain()))
+			.and(INVOICE.TYPE.notEqual( InvoiceType.SALES.value() )) // No Ventas
+			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.RETENTION.value() )) // IRPF
+			.and(INVOICE_TAX.WITHHOLDING_TYPE.equal( WithholdingType.MOVABLE_CAPITAL.value() ))	// IRPF de Capital Mobiliario
+			.and(INVOICE.ISSUE_DATE.between(firstDay,lastDay))
+			.groupBy(INVOICE.RDOCUMENT, INVOICE.RNAME,INVOICE_TAX.WITHHOLDING_TYPE)
+			.fetch()
+			.stream()
+			.map(record -> new Mod193Detail()
+					.setDomain(mod193.getDomain())
+					.setType(Mod193Detail.DETAIL_TYPE)
+					.setMod193(mod193.getId())
+					.setDocument(record.getValue(INVOICE.RDOCUMENT))
+					.setName(record.getValue(INVOICE.RNAME))
+					.setKey("A")
+					.setPerception(record.getValue(sumBase).doubleValue())
+					.setRetention(record.getValue(quotaOp).doubleValue())
+					.setProvince( getRegistryMainAddressProvince(ctx, record.getValue(minRegistry)) ))
+			.forEach(detail -> insertDetail(ctx,detail));
 	}
 
 	public static Mod193 initialize(AONContext ctx, int year) {
@@ -536,4 +515,18 @@ public class Mod193DAO {
 		return mod193;
 	}
 
+	private static Integer getRegistryMainAddressProvince(AONContext ctx, Integer registry) {
+		return ctx.getDslContext()
+			.select(GEOZONE.CODE)
+			.from(RADDRESS)
+			.join(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
+			.where(RADDRESS.REGISTRY.equal(registry))
+			.and(RADDRESS.TYPE.equal( ZERO_BYTE ))		// Dirección principal.
+			.limit(1)
+			.fetch()
+			.stream()
+			.mapToInt(rec -> Integer.parseInt(rec.getValue(GEOZONE.CODE) ))
+			.findFirst()
+			.orElse(0);
+	}
 }

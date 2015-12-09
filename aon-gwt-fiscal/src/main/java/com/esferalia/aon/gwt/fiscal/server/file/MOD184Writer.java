@@ -26,8 +26,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class MOD184Writer {
 	private static DateFormat DATE_FORMAT  = new SimpleDateFormat("yyyyMMdd");
 	
-	public FileOutput createMOD184(String domainName, int domainId, Integer mod184, int year,
-			Integer administration) throws AonSQLException {
+	public FileOutput createMOD184(String domainName, int domainId,String user,
+			Integer mod184, int year, Integer administration) throws AonSQLException {
 		try {
 			MOD184Format format = MOD184Format.obtainFormat(year, administration);
 			if (format == null) {
@@ -37,7 +37,7 @@ public class MOD184Writer {
 								+ " en la administraci\u00F3n "
 								+ administration);
 			}
-			Deponent deponent = getDeponent(domainName,domainId, mod184, format);
+			Deponent deponent = getDeponent(domainName,domainId, user, mod184, format);
 			
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
@@ -67,9 +67,9 @@ public class MOD184Writer {
 		}
 	}
 
-	private Deponent getDeponent(String domainName, int domainId, Integer id,
-			MOD184Format format) throws AonSQLException {
-		Mod184 mod184 = AON.getMod184(domainName,domainId, id);
+	private Deponent getDeponent(String domainName, int domainId, String user, 
+			Integer id, MOD184Format format) throws AonSQLException {
+		Mod184 mod184 = AON.getMod184(domainName,domainId, user, id);
 		Deponent deponent = new Deponent();
 		deponent.setYear(mod184.getYear());
 		deponent.setDocument(mod184.getDocument());
