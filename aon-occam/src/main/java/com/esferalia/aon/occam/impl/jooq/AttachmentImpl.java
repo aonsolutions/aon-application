@@ -6,22 +6,143 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IAttachment;
 import com.esferalia.aon.occam.api.model.AttachFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachQueryProperties;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 
 public class AttachmentImpl implements IAttachment{
 	
 	@Override
-	public Attach getRattach(AONContext ctx, AttachFilter filter) {
+	public Attach getRegistryAttach(AONContext ctx, AttachFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> AttachmentDAO.getRattach(ctx, filter));
+				configuration -> AttachmentDAO.getRegistryAttach(ctx, filter));
 	}
 	
 	@Override
-	public LinkedList<Attach> getRattachList(AONContext ctx, AttachFilter filter) {
+	public Attach getContractAttach(AONContext ctx, AttachFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> AttachmentDAO.getRattachList(ctx, filter));
+				configuration -> AttachmentDAO.getContractAttach(ctx, filter));
 	}
+	
+	@Override
+	public Attach getInvoiceAttach(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getInvoiceAttach(ctx, filter));
+	}
+	
+	@Override
+	public Attach getItemAttach(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getItemAttach(ctx, filter));
+	}
+	
+	@Override
+	public Attach getOfferAttach(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getOfferAttach(ctx, filter));
+	}
+	
+	@Override
+	public Attach getPayrollAttach(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getPayrollAttach(ctx, filter));
+	}
+	
+	@Override
+	public Attach getProjectAttach(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getProjectAttach(ctx, filter));
+	}
+	
+	@Override
+	public Attach getSepeAttach(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getSepeAttach(ctx, filter));
+	}
+	
+	@Override
+	public LinkedList<Attach> getRegistryAttachList(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getRegistryAttachList(ctx, filter));
+	}
+	@Override
+	public LinkedList<Attach> getContractAttachList(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getContractAttachList(ctx, filter));
+	}
+	@Override
+	public LinkedList<Attach> getInvoiceAttachList(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getInvoiceAttachList(ctx, filter));
+	}
+	@Override
+	public LinkedList<Attach> getItemAttachList(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getItemAttachList(ctx, filter));
+	}
+	@Override
+	public LinkedList<Attach> getOfferAttachList(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getOfferAttachList(ctx, filter));
+	}
+	@Override
+	public LinkedList<Attach> getPayrollAttachList(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getPayrollAttachList(ctx, filter));
+	}
+	@Override
+	public LinkedList<Attach> getProjectAttachList(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getProjectAttachList(ctx, filter));
+	}
+	@Override
+	public LinkedList<Attach> getSepeAttachList(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getSepeAttachList(ctx, filter));
+	}
+	
 
+	@Override
+	public LinkedList<Attach> getRegistryAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getRegistryAttachList(ctx, filter, aqp));
+	}
+	@Override
+	public LinkedList<Attach> getContractAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getContractAttachList(ctx, filter, aqp));
+	}
+	@Override
+	public LinkedList<Attach> getInvoiceAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getInvoiceAttachList(ctx, filter, aqp));
+	}
+	@Override
+	public LinkedList<Attach> getItemAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getItemAttachList(ctx, filter, aqp));
+	}
+	@Override
+	public LinkedList<Attach> getOfferAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getOfferAttachList(ctx, filter, aqp));
+	}
+	@Override
+	public LinkedList<Attach> getPayrollAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getPayrollAttachList(ctx, filter, aqp));
+	}
+	@Override
+	public LinkedList<Attach> getProjectAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getProjectAttachList(ctx, filter, aqp));
+	}
+	@Override
+	public LinkedList<Attach> getSepeAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getSepeAttachList(ctx, filter, aqp));
+	}
+	
+	
 	@Override
 	public Integer insertContractAttach(AONContext ctx, Attach attach) {
 		return ctx.getDslContext().transactionResult(configuration -> 
@@ -70,24 +191,37 @@ public class AttachmentImpl implements IAttachment{
 			AttachmentDAO.insertSepeAttach(ctx, attach));
 	}
 
+	
+	//-------------------- FULL UPDATE
+	
 	@Override
 	public void updateContractAttach(AONContext ctx, Attach attach) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateContractAttach(ctx, attach));
 	}
 
 	@Override
 	public void updateItemAttach(AONContext ctx, Attach attach) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateItemAttach(ctx, attach));
 	}
 
 	@Override
 	public void updateInvoiceAttach(AONContext ctx, Attach attach) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateInvoiceAttach(ctx, attach));
 	}
 
 	@Override
 	public void updateOfferAttach(AONContext ctx, Attach attach) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateOfferAttach(ctx, attach));
 	}
 
 	@Override
 	public void updatePayrollAttach(AONContext ctx, Attach attach) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updatePayrollAttach(ctx, attach));
 	}
 
 	@Override
@@ -98,12 +232,68 @@ public class AttachmentImpl implements IAttachment{
 
 	@Override
 	public void updateRegistryAttach(AONContext ctx, Attach attach) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateRegistryAttach(ctx, attach));
 	}
 
 	@Override
 	public void updateSepeAttach(AONContext ctx, Attach attach) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateSepeAttach(ctx, attach));
 	}
 
+	//-------------------- DATA UPDATE
+	
+	@Override
+	public void updateContractAttachData(AONContext ctx, Attach attach) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateContractAttachData(ctx, attach));
+	}
+
+	@Override
+	public void updateItemAttachData(AONContext ctx, Attach attach) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateItemAttachData(ctx, attach));
+	}
+
+	@Override
+	public void updateInvoiceAttachData(AONContext ctx, Attach attach) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateInvoiceAttachData(ctx, attach));
+	}
+
+	@Override
+	public void updateOfferAttachData(AONContext ctx, Attach attach) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateOfferAttachData(ctx, attach));
+	}
+
+	@Override
+	public void updatePayrollAttachData(AONContext ctx, Attach attach) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updatePayrollAttachData(ctx, attach));
+	}
+
+	@Override
+	public void updateProjectAttachData(AONContext ctx, Attach attach) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateProjectAttachData(ctx, attach));
+	}
+
+	@Override
+	public void updateRegistryAttachData(AONContext ctx, Attach attach) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateRegistryAttachData(ctx, attach));
+	}
+
+	@Override
+	public void updateSepeAttachData(AONContext ctx, Attach attach) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateSepeAttachData(ctx, attach));
+	}
+	
+	//-------------------- DELETES
+	
 	@Override
 	public void deleteContractAttach(AONContext ctx, AttachFilter filter) {
 		ctx.getDslContext().transaction(configuration -> {
@@ -157,6 +347,13 @@ public class AttachmentImpl implements IAttachment{
 	public void deleteSepeAttach(AONContext ctx, AttachFilter filter) {
 		ctx.getDslContext().transaction(configuration -> {
 			AttachmentDAO.deleteSepeAttach(ctx, filter);
+		} );
+	}
+	
+	@Override
+	public void deleteRegistryAttachTag(AONContext ctx, Integer rattachId) {
+		ctx.getDslContext().transaction(configuration -> {
+			AttachmentDAO.deleteRegistryAttachTag(ctx, rattachId);
 		} );
 	}
 }

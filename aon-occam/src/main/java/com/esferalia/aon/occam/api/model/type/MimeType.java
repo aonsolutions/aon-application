@@ -85,5 +85,9 @@ public enum MimeType implements Serializable {
     public String[] getAliases() {
 		return aliases;
 	}
+    
+    public Byte value(){
+    	return (byte) this.ordinal();
+    }
 
 }

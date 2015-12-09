@@ -1,6 +1,9 @@
 package com.esferalia.aon.occam.api.model;
 
-public class Workplace {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class Workplace implements Serializable {
 	
 	private Byte active;
 	private Integer address;

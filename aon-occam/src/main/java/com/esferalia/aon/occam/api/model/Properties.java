@@ -72,4 +72,43 @@ public interface Properties {
 		Property<Timestamp> getModificationDateProperty();
 		Property<String> getModificationUserProperty();
 	}
+	
+	public interface CommercialTrackingProperties {
+		Property<Integer> getActivityProperty();
+		Property<Byte> getAlldayProperty();
+		Property<String> getCommentsProperty();
+		Property<Timestamp> getDateProperty();
+		Property<Integer> getDomainProperty();
+		Property<Timestamp> getEndDateProperty();
+		Property<String> getEventIdProperty();
+		Property<Integer> getIdProperty();
+		Property<String> getLocationProperty();
+		Property<Integer> getNextCommercialTrackingProperty();
+		Property<Integer> getOfferProperty();
+		Property<Integer> getProjectCommercialProperty();
+		Property<Integer> getSellerProperty();
+		Property<Byte> getStatusProperty();
+	}
+	
+	public interface CommercialActivityProperties {
+		Property<Integer> getDomainProperty();
+		Property<Integer> getIdProperty();
+		Property<String> getNameProperty();
+		Property<Integer> getProbabilityProperty();
+		Property<Integer> getSurveyProperty();
+	}
+	
+	public interface DomainGserviceaccountProperties {
+		Property<String> getClientIdProperty();
+		Property<byte[]> getClientSecretProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getEmailAddressProperty();
+		Property<String> getGoogleAccountProperty();
+		Property<Double> getLimitProperty();
+		Property<byte[]> getPrivateKeyProperty();
+		Property<String> getPublicKeyProperty();
+		Property<Double> getSizeProperty();			
+	}
+	
+	
 }

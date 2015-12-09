@@ -11,6 +11,8 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.Workplace;
@@ -105,4 +107,46 @@ public class CommonImpl implements ICommon {
 	public Domain getDomain(AONContext ctx, Integer domainId) {
 		return DomainDAO.getDomain(ctx, domainId);
 	}
+
+	@Override
+	public DomainGserviceaccount getDomainGserviceaccount(AONContext ctx) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> DomainDAO.getDomainGserviceaccount(ctx));
+	}
+	
+	@Override
+	public LinkedList<DomainGserviceaccount> getDomainGserviceaccountList(AONContext ctx) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> DomainDAO.getDomainGserviceaccountList(ctx));
+	}
+	
+	@Override
+	public DomainGserviceaccount getDomainGserviceaccount(AONContext ctx, DomainGserviceaccountFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> DomainDAO.getDomainGserviceaccount(ctx, filter));
+	}
+	
+	@Override
+	public void updateDomainGserviceaccount(AONContext ctx, String googleAccount) {
+		ctx.getDslContext().transaction(
+			configuration -> DomainDAO.updateDomainGserviceaccount(ctx, googleAccount));
+	}
+	
+	@Override
+	public void updateDomainGserviceaccount(AONContext ctx, DomainGserviceaccount dgsa) {
+		ctx.getDslContext().transaction(
+			configuration -> DomainDAO.updateDomainGserviceaccount(ctx, dgsa));
+	}
+	
+	@Override
+	public void deleteDomainGserviceaccount(AONContext ctx) {
+		ctx.getDslContext().transaction(
+			configuration -> DomainDAO.deleteDomainGserviceaccount(ctx));
+	}
+	@Override
+	public void insertDomainGserviceaccount(AONContext ctx, DomainGserviceaccount dgsa){
+		ctx.getDslContext().transaction(
+			configuration -> DomainDAO.insertDomainGserviceaccount(ctx, dgsa));
+	}
+	
 }

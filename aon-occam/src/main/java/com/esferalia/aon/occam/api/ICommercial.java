@@ -1,0 +1,20 @@
+package com.esferalia.aon.occam.api;
+
+import java.util.LinkedList;
+
+import com.esferalia.aon.occam.api.model.CommercialActivity;
+import com.esferalia.aon.occam.api.model.CommercialActivityFilter;
+import com.esferalia.aon.occam.api.model.CommercialTracking;
+import com.esferalia.aon.occam.api.model.CommercialTrackingFilter;
+
+public interface ICommercial {
+	public CommercialTracking getCommercialTracking(AONContext ctx, CommercialTrackingFilter filter);
+	public LinkedList<CommercialTracking> getCommercialTrackingList(AONContext ctx, CommercialTrackingFilter filter);
+
+	public void updateEventId(AONContext ctx, Integer ctId, String eventId);
+	
+	public CommercialActivity getCommercialActivity(AONContext ctx, CommercialActivityFilter filter);
+	public LinkedList<CommercialActivity> getCommercialActivityList(AONContext ctx, CommercialActivityFilter filter);
+
+	
+}

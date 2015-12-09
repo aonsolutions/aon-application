@@ -23,9 +23,15 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.AttachFilter;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.BonusFilter;
+import com.esferalia.aon.occam.api.model.CommercialActivity;
+import com.esferalia.aon.occam.api.model.CommercialActivityFilter;
+import com.esferalia.aon.occam.api.model.CommercialTracking;
+import com.esferalia.aon.occam.api.model.CommercialTrackingFilter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
@@ -37,6 +43,7 @@ import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachQueryProperties;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.callcenter.Issue;
 import com.esferalia.aon.occam.api.model.callcenter.IssueComment;
@@ -69,6 +76,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
+import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.stat.StatData;
@@ -82,6 +90,7 @@ import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
 import com.esferalia.aon.occam.impl.jooq.AgreementImpl;
 import com.esferalia.aon.occam.impl.jooq.AttachmentImpl;
+import com.esferalia.aon.occam.impl.jooq.CommercialImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
 import com.esferalia.aon.occam.impl.jooq.FeeImpl;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
@@ -90,6 +99,7 @@ import com.esferalia.aon.occam.impl.jooq.GroupwareImpl;
 import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
 import com.esferalia.aon.occam.impl.jooq.ProductImpl;
 import com.esferalia.aon.occam.impl.jooq.ProjectImpl;
+import com.esferalia.aon.occam.impl.jooq.RegistryImpl;
 import com.esferalia.aon.occam.impl.jooq.SalaryImpl;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
 import com.esferalia.aon.occam.impl.jooq.StatsImpl;
@@ -164,6 +174,14 @@ public class AON {
 		return new ProjectImpl();
 	}
 	
+	private static IRegistry getRegistry(){
+		return new RegistryImpl();
+	}
+	
+	private static ICommercial getCommercial(){
+		return new CommercialImpl();
+	}
+	
 	// ********************************************
 	// ******************************** SECURITY **
 	// ********************************************
@@ -204,6 +222,80 @@ public class AON {
 		} finally {
 			if(ctx != null)
 				ctx.close();
+		}
+	}
+	
+	public static DomainGserviceaccount getDomainGserviceaccount(String domainName, Integer domainId, String login){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().getDomainGserviceaccount(ctx);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static LinkedList<DomainGserviceaccount> getDomainGserviceaccountList(String domainName, Integer domainId, String login){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().getDomainGserviceaccountList(ctx);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static DomainGserviceaccount getDomainGserviceaccount(String domainName, Integer domainId, String login, 
+			DomainGserviceaccountFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().getDomainGserviceaccount(ctx, filter);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static void updateDomainGserviceaccount(String domainName, Integer domainId, String login, 
+			String googleAccount){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getCommon().updateDomainGserviceaccount(ctx, googleAccount);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static void updateDomainGserviceaccount(String domainName, Integer domainId, String login,
+			DomainGserviceaccount dgsa){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getCommon().updateDomainGserviceaccount(ctx, dgsa);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static void deleteDomainGserviceaccount(String domainName, Integer domainId, String login){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getCommon().deleteDomainGserviceaccount(ctx);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static void insertDomainGserviceaccount(String domainName, Integer domainId, String login,
+			DomainGserviceaccount dgsa){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getCommon().insertDomainGserviceaccount(ctx, dgsa);
+		} finally{
+			if(ctx != null) ctx.close();
 		}
 	}
 	
@@ -1659,14 +1751,14 @@ public class AON {
 			
 			Attach attach = new Attach();
 			
-			if(attachType.equals(AttachType.REGISTRY)) attach = getAttachment().getRattach(ctx, filter);
-			else if(attachType.equals(AttachType.CONTRACT)) attach = null;
-			else if(attachType.equals(AttachType.INVOICE)) attach = null;
-			else if(attachType.equals(AttachType.ITEM)) attach = null;
-			else if(attachType.equals(AttachType.OFFER)) attach = null;
-			else if(attachType.equals(AttachType.PAYROLL)) attach = null;
-			else if(attachType.equals(AttachType.PROJECT)) attach = null;
-			else if(attachType.equals(AttachType.SEPE)) attach = null;
+			if(attachType.equals(AttachType.REGISTRY)) attach = getAttachment().getRegistryAttach(ctx, filter);
+			else if(attachType.equals(AttachType.CONTRACT)) attach = getAttachment().getContractAttach(ctx, filter);
+			else if(attachType.equals(AttachType.INVOICE)) attach =  getAttachment().getInvoiceAttach(ctx, filter);
+			else if(attachType.equals(AttachType.ITEM)) attach =  getAttachment().getItemAttach(ctx, filter);
+			else if(attachType.equals(AttachType.OFFER)) attach =  getAttachment().getOfferAttach(ctx, filter);
+			else if(attachType.equals(AttachType.PAYROLL)) attach =  getAttachment().getPayrollAttach(ctx, filter);
+			else if(attachType.equals(AttachType.PROJECT)) attach =  getAttachment().getProjectAttach(ctx, filter);
+			else if(attachType.equals(AttachType.SEPE)) attach =  getAttachment().getSepeAttach(ctx, filter);
 			
 			return attach;		
 		} finally {
@@ -1683,14 +1775,38 @@ public class AON {
 			
 			LinkedList<Attach> attachList = new LinkedList<Attach>();
 			
-			if(attachType.equals(AttachType.REGISTRY)) attachList = getAttachment().getRattachList(ctx, filter);
-			else if(attachType.equals(AttachType.CONTRACT)) attachList = null;
-			else if(attachType.equals(AttachType.INVOICE)) attachList = null;
-			else if(attachType.equals(AttachType.ITEM)) attachList = null;
-			else if(attachType.equals(AttachType.OFFER)) attachList = null;
-			else if(attachType.equals(AttachType.PAYROLL)) attachList = null;
-			else if(attachType.equals(AttachType.PROJECT)) attachList = null;
-			else if(attachType.equals(AttachType.SEPE)) attachList = null;
+			if(attachType.equals(AttachType.REGISTRY)) attachList = getAttachment().getRegistryAttachList(ctx, filter);
+			else if(attachType.equals(AttachType.CONTRACT)) attachList = getAttachment().getContractAttachList(ctx, filter);
+			else if(attachType.equals(AttachType.INVOICE)) attachList = getAttachment().getInvoiceAttachList(ctx, filter);
+			else if(attachType.equals(AttachType.ITEM)) attachList = getAttachment().getItemAttachList(ctx, filter);
+			else if(attachType.equals(AttachType.OFFER)) attachList = getAttachment().getOfferAttachList(ctx, filter);
+			else if(attachType.equals(AttachType.PAYROLL)) attachList = getAttachment().getPayrollAttachList(ctx, filter);
+			else if(attachType.equals(AttachType.PROJECT)) attachList = getAttachment().getProjectAttachList(ctx, filter);
+			else if(attachType.equals(AttachType.SEPE)) attachList = getAttachment().getSepeAttachList(ctx, filter);
+			
+			return attachList;		
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<Attach> getAttachList(String domainName, Integer domainId, String login,
+			AttachFilter filter, AttachType attachType, AttachQueryProperties aqp) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			
+			LinkedList<Attach> attachList = new LinkedList<Attach>();
+			
+			if(attachType.equals(AttachType.REGISTRY)) attachList = getAttachment().getRegistryAttachList(ctx, filter, aqp);
+			else if(attachType.equals(AttachType.CONTRACT)) attachList = getAttachment().getContractAttachList(ctx, filter, aqp);
+			else if(attachType.equals(AttachType.INVOICE)) attachList = getAttachment().getInvoiceAttachList(ctx, filter, aqp);
+			else if(attachType.equals(AttachType.ITEM)) attachList = getAttachment().getItemAttachList(ctx, filter, aqp);
+			else if(attachType.equals(AttachType.OFFER)) attachList = getAttachment().getOfferAttachList(ctx, filter, aqp);
+			else if(attachType.equals(AttachType.PAYROLL)) attachList = getAttachment().getPayrollAttachList(ctx, filter, aqp);
+			else if(attachType.equals(AttachType.PROJECT)) attachList = getAttachment().getProjectAttachList(ctx, filter, aqp);
+			else if(attachType.equals(AttachType.SEPE)) attachList = getAttachment().getSepeAttachList(ctx, filter, aqp);
 			
 			return attachList;		
 		} finally {
@@ -1739,6 +1855,27 @@ public class AON {
 		}
 	}
 	
+	public static void updateAttachData(String domainName, Integer domainId, String login, 
+			Attach attach){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(attach.getDomain().getName(), attach.getDomain().getId(), login);
+			
+			if(attach.getAttachType().equals(AttachType.REGISTRY)) getAttachment().updateRegistryAttachData(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.CONTRACT)) getAttachment().updateContractAttachData(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.INVOICE)) getAttachment().updateInvoiceAttachData(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.ITEM)) getAttachment().updateItemAttachData(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.OFFER)) getAttachment().updateOfferAttachData(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.PAYROLL)) getAttachment().updatePayrollAttachData(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.PROJECT)) getAttachment().updateProjectAttachData(ctx, attach);
+			else if(attach.getAttachType().equals(AttachType.SEPE)) getAttachment().updateSepeAttachData(ctx, attach);
+			
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static void delete(String domainName, Integer domainId, String login,
 			AttachFilter filter, AttachType attachType){
 		AONContext ctx = null;
@@ -1757,6 +1894,17 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+	
+	public static void deleteRegistryAttachTag(String domainName, Integer domainId, String login,
+			Integer rattachId){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getAttachment().deleteRegistryAttachTag(ctx, rattachId);
+		} finally{
+			if(ctx != null) ctx.close();
 		}
 	}
 	
@@ -1951,7 +2099,96 @@ public class AON {
 		} finally{
 			if(ctx != null) ctx.close();
 		}
-		
-		
 	}
+	
+	// ********************************************
+	// ******************************** Registry **
+	// ********************************************
+
+	public static Category getCategory(String domainName, Integer domainId, String login, 
+			Integer categoryId){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getCategory(ctx, categoryId);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static LinkedList<Category> getCategoryList(String domainName, Integer domainId, String login){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getCategoryList(ctx);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	// ********************************************
+	// ****************************** Commercial **
+	// ********************************************
+	
+	//-------------------- COMMERCIAL TRACKING
+	
+	public static CommercialTracking getCommercialTracking(String domainName, Integer domainId, String login,
+			CommercialTrackingFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommercial().getCommercialTracking(ctx, filter);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static LinkedList<CommercialTracking> getCommercialTrackingList(String domainName, Integer domainId, String login,
+			CommercialTrackingFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommercial().getCommercialTrackingList(ctx, filter);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static void updateEventId(String domainName, Integer domainId, String login,
+			Integer ctId, String eventId){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getCommercial().updateEventId(ctx, ctId, eventId);
+		} finally{
+			if(ctx != null) ctx.close();
+		}	
+	}
+	
+	//-------------------- COMMERCIAL ACTIVITY
+	
+	public static CommercialActivity getCommercialActivity(String domainName, Integer domainId, String login,
+			CommercialActivityFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommercial().getCommercialActivity(ctx, filter);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static LinkedList<CommercialActivity> getCommercialActivityList(String domainName, Integer domainId, String login,
+			CommercialActivityFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommercial().getCommercialActivityList(ctx, filter);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+
+	
+	
 }

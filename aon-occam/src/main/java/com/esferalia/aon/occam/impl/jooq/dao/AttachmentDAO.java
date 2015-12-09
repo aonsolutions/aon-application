@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.OfferAttach.OFFER_ATTACH;
 import static com.esferalia.aon.jooq.tables.PayrollBatchAttach.PAYROLL_BATCH_ATTACH;
 import static com.esferalia.aon.jooq.tables.ProjectAttach.PROJECT_ATTACH;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
+import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
 
 import java.sql.Date;
@@ -19,13 +20,20 @@ import java.util.stream.Collectors;
 import org.jooq.Condition;
 import org.jooq.Record7;
 
+import com.esferalia.aon.jooq.tables.records.ContractAttachRecord;
+import com.esferalia.aon.jooq.tables.records.IattachRecord;
+import com.esferalia.aon.jooq.tables.records.InvoiceAttachRecord;
+import com.esferalia.aon.jooq.tables.records.OfferAttachRecord;
+import com.esferalia.aon.jooq.tables.records.PayrollBatchAttachRecord;
+import com.esferalia.aon.jooq.tables.records.ProjectAttachRecord;
 import com.esferalia.aon.jooq.tables.records.RattachRecord;
+import com.esferalia.aon.jooq.tables.records.SepeBatchAttachRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AttachFilter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachQueryProperties;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
 
@@ -42,19 +50,191 @@ public class AttachmentDAO {
 	
 	//-------------------- GETS 
 
-	public static Attach getRattach(AONContext ctx, AttachFilter filter){	
+	public static Attach getRegistryAttach(AONContext ctx, AttachFilter filter){	
 		return ctx.getDslContext()
 				.select().from(RATTACH).where(RATTACH_PROPERTIES.getConditions(filter))
 				.limit(1).fetchInto(RATTACH).stream().map(new FullRattachFiller())
 				.findFirst().orElse(null);
 	}
 	
-	public static LinkedList<Attach> getRattachList(AONContext ctx, AttachFilter filter){	
+	public static Attach getContractAttach(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+				.select().from(CONTRACT_ATTACH).where(CONTRACT_ATTACH_PROPERTIES.getConditions(filter))
+				.limit(1).fetchInto(CONTRACT_ATTACH).stream().map(new FullContractAttachFiller())
+				.findFirst().orElse(null);
+	}
+	
+	public static Attach getInvoiceAttach(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+				.select().from(INVOICE_ATTACH).where(INVOICE_ATTACH_PROPERTIES.getConditions(filter))
+				.limit(1).fetchInto(INVOICE_ATTACH).stream().map(new FullInvoiceAttachFiller())
+				.findFirst().orElse(null);
+	}
+	
+	public static Attach getItemAttach(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+				.select().from(IATTACH).where(IATTACH_PROPERTIES.getConditions(filter))
+				.limit(1).fetchInto(IATTACH).stream().map(new FullItemAttachFiller())
+				.findFirst().orElse(null);
+	}
+	
+	public static Attach getOfferAttach(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+				.select().from(OFFER_ATTACH).where(OFFER_ATTACH_PROPERTIES.getConditions(filter))
+				.limit(1).fetchInto(OFFER_ATTACH).stream().map(new FullOfferAttachFiller())
+				.findFirst().orElse(null);
+	}
+	
+	public static Attach getPayrollAttach(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+				.select().from(PAYROLL_BATCH_ATTACH).where(PAYROLL_ATTACH_PROPERTIES.getConditions(filter))
+				.limit(1).fetchInto(PAYROLL_BATCH_ATTACH).stream().map(new FullPayrollAttachFiller())
+				.findFirst().orElse(null);
+	}
+	
+	public static Attach getProjectAttach(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+				.select().from(PROJECT_ATTACH).where(PROJECT_ATTACH_PROPERTIES.getConditions(filter))
+				.limit(1).fetchInto(PROJECT_ATTACH).stream().map(new FullProjectAttachFiller())
+				.findFirst().orElse(null);
+	}
+	
+	public static Attach getSepeAttach(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+				.select().from(SEPE_BATCH_ATTACH).where(SEPE_ATTACH_PROPERTIES.getConditions(filter))
+				.limit(1).fetchInto(SEPE_BATCH_ATTACH).stream().map(new FullSepeAttachFiller())
+				.findFirst().orElse(null);
+	}
+	
+	public static LinkedList<Attach> getRegistryAttachList(AONContext ctx, AttachFilter filter){	
 		return ctx.getDslContext()
 			.select().from(RATTACH).where(RATTACH_PROPERTIES.getConditions(filter))
 			.fetchInto(RATTACH).stream().map(new FullRattachFiller())
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
+	
+	public static LinkedList<Attach> getContractAttachList(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+			.select().from(CONTRACT_ATTACH).where(CONTRACT_ATTACH_PROPERTIES.getConditions(filter))
+			.fetchInto(CONTRACT_ATTACH).stream().map(new FullContractAttachFiller())
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<Attach> getInvoiceAttachList(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+			.select().from(INVOICE_ATTACH).where(INVOICE_ATTACH_PROPERTIES.getConditions(filter))
+			.fetchInto(INVOICE_ATTACH).stream().map(new FullInvoiceAttachFiller())
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<Attach> getItemAttachList(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+			.select().from(IATTACH).where(IATTACH_PROPERTIES.getConditions(filter))
+			.fetchInto(IATTACH).stream().map(new FullItemAttachFiller())
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<Attach> getOfferAttachList(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+			.select().from(OFFER_ATTACH).where(OFFER_ATTACH_PROPERTIES.getConditions(filter))
+			.fetchInto(OFFER_ATTACH).stream().map(new FullOfferAttachFiller())
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<Attach> getPayrollAttachList(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+			.select().from(PAYROLL_BATCH_ATTACH).where(PAYROLL_ATTACH_PROPERTIES.getConditions(filter))
+			.fetchInto(PAYROLL_BATCH_ATTACH).stream().map(new FullPayrollAttachFiller())
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<Attach> getProjectAttachList(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+			.select().from(PROJECT_ATTACH).where(PROJECT_ATTACH_PROPERTIES.getConditions(filter))
+			.fetchInto(PROJECT_ATTACH).stream().map(new FullProjectAttachFiller())
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<Attach> getSepeAttachList(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+			.select().from(SEPE_BATCH_ATTACH).where(SEPE_ATTACH_PROPERTIES.getConditions(filter))
+			.fetchInto(SEPE_BATCH_ATTACH).stream().map(new FullSepeAttachFiller())
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	
+	public static LinkedList<Attach> getRegistryAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp){	
+		return ctx.getDslContext()
+			.select().from(RATTACH).where(RATTACH_PROPERTIES.getConditions(filter))
+			.orderBy(RATTACH.ID)
+			.limit(aqp.getLimit())
+			.fetchInto(RATTACH).stream().map(new FullRattachFiller())
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<Attach> getContractAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp){	
+		return ctx.getDslContext()
+			.select().from(CONTRACT_ATTACH).where(CONTRACT_ATTACH_PROPERTIES.getConditions(filter))
+			.orderBy(CONTRACT_ATTACH.ID)
+			.limit(aqp.getLimit())
+			.fetchInto(CONTRACT_ATTACH).stream().map(new FullContractAttachFiller())
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<Attach> getInvoiceAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp){	
+		return ctx.getDslContext()
+			.select().from(INVOICE_ATTACH).where(INVOICE_ATTACH_PROPERTIES.getConditions(filter))
+			.orderBy(INVOICE_ATTACH.ID)
+			.limit(aqp.getLimit())
+			.fetchInto(INVOICE_ATTACH).stream().map(new FullInvoiceAttachFiller())
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<Attach> getItemAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp){	
+		return ctx.getDslContext()
+			.select().from(IATTACH).where(IATTACH_PROPERTIES.getConditions(filter))
+			.orderBy(IATTACH.ID)
+			.limit(aqp.getLimit())
+			.fetchInto(IATTACH).stream().map(new FullItemAttachFiller())
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<Attach> getOfferAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp){	
+		return ctx.getDslContext()
+			.select().from(OFFER_ATTACH).where(OFFER_ATTACH_PROPERTIES.getConditions(filter))
+			.orderBy(OFFER_ATTACH.ID)
+			.limit(aqp.getLimit())
+			.fetchInto(OFFER_ATTACH).stream().map(new FullOfferAttachFiller())
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<Attach> getPayrollAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp){	
+		return ctx.getDslContext()
+			.select().from(PAYROLL_BATCH_ATTACH).where(PAYROLL_ATTACH_PROPERTIES.getConditions(filter))
+			.orderBy(PAYROLL_BATCH_ATTACH.ID)
+			.limit(aqp.getLimit())
+			.fetchInto(PAYROLL_BATCH_ATTACH).stream().map(new FullPayrollAttachFiller())
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<Attach> getProjectAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp){	
+		return ctx.getDslContext()
+			.select().from(PROJECT_ATTACH).where(PROJECT_ATTACH_PROPERTIES.getConditions(filter))
+			.orderBy(PROJECT_ATTACH.ID)
+			.limit(aqp.getLimit())
+			.fetchInto(PROJECT_ATTACH).stream().map(new FullProjectAttachFiller())
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<Attach> getSepeAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp){	
+		return ctx.getDslContext()
+			.select().from(SEPE_BATCH_ATTACH).where(SEPE_ATTACH_PROPERTIES.getConditions(filter))
+			.orderBy(SEPE_BATCH_ATTACH.ID)
+			.limit(aqp.getLimit())
+			.fetchInto(SEPE_BATCH_ATTACH).stream().map(new FullSepeAttachFiller())
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 	
 	public static Attach getRattachWithoutData(AONContext ctx, Condition condition){
 		Record7< Byte, Byte, String, Integer, String, java.sql.Date, Byte> record = ctx.getDslContext()
@@ -189,7 +369,7 @@ public class AttachmentDAO {
 		.returning(SEPE_BATCH_ATTACH.ID).fetchOne().getId();
 	}
 	
-	//-------------------- UPDATES
+	//-------------------- FULL UPDATE
 	
 	public static void updateContractAttach(AONContext ctx, Attach attach){
 		ctx.getDslContext().update(CONTRACT_ATTACH)
@@ -313,6 +493,65 @@ public class AttachmentDAO {
 		.where(SEPE_BATCH_ATTACH.ID.eq(attach.getId()))
 		.execute();
 	}
+
+	//-------------------- DATA UPDATE
+	
+		public static void updateContractAttachData(AONContext ctx, Attach attach){
+			ctx.getDslContext().update(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.DATA, attach.getData())
+			.where(CONTRACT_ATTACH.ID.eq(attach.getId()))
+			.execute();
+		}
+		
+		public static void updateItemAttachData(AONContext ctx, Attach attach){
+			ctx.getDslContext().update(IATTACH)
+				.set(IATTACH.DATA,attach.getData())
+			.where(IATTACH.ID.eq(attach.getId()))
+			.execute();
+		}
+
+		public static void updateInvoiceAttachData(AONContext ctx, Attach attach){
+			ctx.getDslContext().update(INVOICE_ATTACH)
+				.set(INVOICE_ATTACH.DATA, attach.getData())
+			.where(INVOICE_ATTACH.ID.eq(attach.getId()))
+			.execute();
+		}
+
+		public static void updateOfferAttachData(AONContext ctx, Attach attach){
+			ctx.getDslContext().update(OFFER_ATTACH)
+				.set(OFFER_ATTACH.DATA, attach.getData())
+			.where(OFFER_ATTACH.ID.eq(attach.getId()))
+			.execute();
+		}
+
+		public static void updatePayrollAttachData(AONContext ctx, Attach attach){
+			ctx.getDslContext().update(PAYROLL_BATCH_ATTACH)
+				.set(PAYROLL_BATCH_ATTACH.DATA, attach.getData())
+			.where(PAYROLL_BATCH_ATTACH.ID.eq(attach.getId()))
+			.execute();
+		}
+
+		public static void updateProjectAttachData(AONContext ctx, Attach attach){
+			ctx.getDslContext().update(PROJECT_ATTACH)
+					.set(PROJECT_ATTACH.DATA, attach.getData())
+			.where(PROJECT_ATTACH.ID.eq(attach.getId()))
+			.execute();
+		}
+
+		public static void updateRegistryAttachData(AONContext ctx, Attach attach){
+			ctx.getDslContext().update(RATTACH)
+				.set(RATTACH.DATA, attach.getData())
+			.where(RATTACH.ID.eq(attach.getId()))
+			.execute();
+		}
+
+		public static void updateSepeAttachData(AONContext ctx, Attach attach){
+			ctx.getDslContext().update(SEPE_BATCH_ATTACH)
+				.set(SEPE_BATCH_ATTACH.DATA, attach.getData())
+			.where(SEPE_BATCH_ATTACH.ID.eq(attach.getId()))
+			.execute();
+		}
+
 	
 	//-------------------- DELETES
 	
@@ -347,9 +586,12 @@ public class AttachmentDAO {
 	public static void deleteSepeAttach(AONContext ctx, AttachFilter filter){
 		ctx.getDslContext().delete(SEPE_BATCH_ATTACH).where(SEPE_ATTACH_PROPERTIES.getConditions(filter)).execute();
 	}
+	
+	public static void deleteRegistryAttachTag(AONContext ctx, Integer rattachId){
+		ctx.getDslContext().delete(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(rattachId)).execute();
+	}
 
 	private static class FullRattachFiller implements Function<RattachRecord, Attach> {
-		
 		@Override
 		public Attach apply(RattachRecord r) {
 			return new Attach().setAttachModule(r.getRegistry())
@@ -369,8 +611,126 @@ public class AttachmentDAO {
 							.setModificationDate(r.getModificationDate())
 							.setModificationUser(r.getModificationUser())
 							.setScope(r.getScope())
-							.setType(RegistryAttachmentType.values()[r.getType()].value());			
+							.setType(r.getType());			
 		}
-
 	}
+	
+	private static class FullContractAttachFiller implements Function<ContractAttachRecord, Attach> {
+		@Override
+		public Attach apply(ContractAttachRecord r) {
+			return new Attach().setAttachModule(r.getContract())
+							.setAttachType(AttachType.CONTRACT)
+							.setConfidential(r.getSecurityLevel() == 1)
+							.setData(r.getData())
+							.setDate(r.getAttachDate())
+							.setDescription(r.getDescription())
+							.setDomain(new Domain().setId(r.getDomain()))
+							.setDriveId(r.getDriveid())
+							.setId(r.getId())
+							.setMimeType(MimeType.values()[r.getMimetype()])
+							.setScope(r.getScope())
+							.setType(r.getType());
+		}
+	}
+	
+	private static class FullInvoiceAttachFiller implements Function<InvoiceAttachRecord, Attach> {
+		@Override
+		public Attach apply(InvoiceAttachRecord r) {
+			return new Attach().setAttachModule(r.getInvoice())
+							.setAttachType(AttachType.INVOICE)
+							.setData(r.getData())
+							.setDate(r.getAttachDate())
+							.setDescription(r.getDescription())
+							.setDomain(new Domain().setId(r.getDomain()))
+							.setDriveId(r.getDriveid())
+							.setId(r.getId())
+							.setMimeType(MimeType.values()[r.getMimetype()])
+							.setType(r.getType());		
+		}
+	}
+	
+	private static class FullItemAttachFiller implements Function<IattachRecord, Attach> {
+		@Override
+		public Attach apply(IattachRecord r) {
+			return new Attach().setAttachModule(r.getItem())
+							.setAttachType(AttachType.ITEM)
+							.setData(r.getData())
+							.setDescription(r.getDescription())
+							.setDomain(new Domain().setId(r.getDomain()))
+							.setDriveId(r.getDriveid())
+							.setId(r.getId())
+							.setMimeType(MimeType.values()[r.getMimetype()])
+							.setType(r.getType());		
+		}
+	}
+	
+	private static class FullOfferAttachFiller implements Function<OfferAttachRecord, Attach> {
+		@Override
+		public Attach apply(OfferAttachRecord r) {
+			return new Attach().setAttachModule(r.getOffer())
+							.setAttachType(AttachType.OFFER)
+							.setData(r.getData())
+							.setDescription(r.getDescription())
+							.setDomain(new Domain().setId(r.getDomain()))
+							.setDriveId(r.getDriveid())
+							.setId(r.getId())
+							.setMimeType(MimeType.values()[r.getMimetype()]);		
+		}
+	}
+	
+	private static class FullPayrollAttachFiller implements Function<PayrollBatchAttachRecord, Attach> {
+		@Override
+		public Attach apply(PayrollBatchAttachRecord r) {
+			return new Attach().setAttachType(AttachType.PAYROLL)
+							.setData(r.getData())
+							.setDate(r.getAttachDate())
+							.setDescription(r.getDescription())
+							.setDomain(new Domain().setId(r.getDomain()))
+							.setDriveId(r.getDriveid())
+							.setId(r.getId())
+							.setMimeType(MimeType.values()[r.getMimetype()])
+							.setScope(r.getScope())
+							.setSourceBatch(r.getSourceBatch())
+							.setSourceType(r.getSourceType())
+							.setType(r.getType());		
+		}
+	}
+	
+	private static class FullProjectAttachFiller implements Function<ProjectAttachRecord, Attach> {
+		@Override
+		public Attach apply(ProjectAttachRecord r) {
+			return new Attach().setAttachModule(r.getProject())
+							.setAttachType(AttachType.PROJECT)
+							.setConfidential(r.getSecurityLevel() == 1)
+							.setData(r.getData())
+							.setDate(r.getAttachDate())
+							.setDescription(r.getDescription())
+							.setDomain(new Domain().setId(r.getDomain()))
+							.setDriveId(r.getDriveid())
+							.setId(r.getId())
+							.setMimeType(MimeType.values()[r.getMimetype()]);	
+		}
+	}
+	
+	private static class FullSepeAttachFiller implements Function<SepeBatchAttachRecord, Attach> {
+		@Override
+		public Attach apply(SepeBatchAttachRecord r) {
+			return new Attach().setAttachType(AttachType.SEPE)
+							.setData(r.getData())
+							.setDate(r.getAttachDate())
+							.setDescription(r.getDescription())
+							.setDomain(new Domain().setId(r.getDomain()))
+							.setDriveId(r.getDriveid())
+							.setId(r.getId())
+							.setMimeType(MimeType.values()[r.getMimetype()])
+							.setScope(r.getScope())
+							.setSourceBatch(r.getSourceBatch())
+							.setSourceType(r.getSourceType());		
+		}
+	}
+	
+	
+	
+	
+	
 }
