@@ -8,7 +8,6 @@ import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
-import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.type.Mod193Key;
@@ -32,6 +31,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
@@ -128,6 +128,8 @@ public class Model193Detail2014 extends ResizeComposite {
 
 	@UiField(provided=true)
 	CellList<Mod193Detail> detailList;
+	@UiField
+	ScrollPanel detailListPanel;
 
 	@UiField
 	CheckBox pending;
@@ -448,26 +450,21 @@ public class Model193Detail2014 extends ResizeComposite {
 			if (value == null) {
 				return;
 			}
-			if (value.isDirty() || value.isDeleted()) {
-				sb.appendHtmlConstant("<div style='");
-			}
+			sb.appendHtmlConstant("<div style='");
 			if (value.isDirty()) {
-				sb.appendHtmlConstant("font-style: italic; font-weight:bold;");
+				sb.appendHtmlConstant("font-weight:bold;");
 			}
 			if (value.isDeleted()) {
 				sb.appendHtmlConstant("text-decoration:line-through");
 			}
-			if (value.isDirty() || value.isDeleted()) {
-				sb.appendHtmlConstant("'>");
+			sb.appendHtmlConstant("' class='");
+			sb.appendHtmlConstant( AON.AON_CSS.aonLinkListItem());
+			sb.appendHtmlConstant("'>");
+			sb.appendEscaped(AonStringUtils.isEmpty(value.getName()) ?  AON.MSG.newPerceptor() : value.getName());
+			if (value.isDirty()) {
+				sb.appendEscaped(" *");
 			}
-			String newLabel = AON.MSG.newPerceptor() + " ("
-					+ (value.getId() * (-1)) + ")";
-			sb.appendEscaped(AonUtil.isEmpty(value.getName()) ? newLabel
-					: value.getName());
-
-			if (value.isDirty() || value.isDeleted()) {
-				sb.appendHtmlConstant("</div>");
-			}
+			sb.appendHtmlConstant("</div>");
 		}
 	}
 	
@@ -500,6 +497,7 @@ public class Model193Detail2014 extends ResizeComposite {
 	private void selectInList(int i) {
 		detailModel.setSelected(currentMod193.getDetails().get(i),true);
 		detailList.getRowElement(i).scrollIntoView();
+		detailListPanel.scrollToLeft();
 	}
 	
 	class Mod193DetailDataProvider extends AsyncDataProvider<Mod193Detail> {
@@ -513,7 +511,7 @@ public class Model193Detail2014 extends ResizeComposite {
 		protected void onRangeChanged(HasData<Mod193Detail> display) {
 			if (currentMod193 != null && currentMod193.getId() != null) {
 				if (currentMod193.getDetails().size() == 0) {
-					onNewDetailButtonClick(null);					
+					newPerceptor();					
 				} else {
 					updateRowCount(currentMod193.getDetails().size(), true);
 					updateRowData(0, currentMod193.getDetails());

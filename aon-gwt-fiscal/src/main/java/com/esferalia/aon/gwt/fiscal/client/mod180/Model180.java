@@ -159,12 +159,8 @@ public class Model180 extends MainEntryPoint {
 		formFlowPanel.add(domainNameHidden);
 		formContainer.add(diskForm);
 		
-		// Add the outer panel to the RootLayoutPanel, so that it will be
-		// displayed.
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
-//		// http://code.google.com/p/google-web-toolkit/issues/detail?id=6889
-//		deckPanel.onResize();
 	}
 
 	public static native String getCurrentDomainName()

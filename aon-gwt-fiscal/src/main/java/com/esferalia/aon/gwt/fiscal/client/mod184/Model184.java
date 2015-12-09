@@ -4,53 +4,42 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.css.AonCellList;
-import com.esferalia.aon.gwt.common.client.css.AonDataGrid;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
 import com.esferalia.aon.gwt.common.client.widget.AdministrationListBox;
 import com.esferalia.aon.gwt.common.client.widget.CountryListBox;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
-import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
+import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.common.client.widget.ShowMorePagerPanel;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
-import com.esferalia.aon.gwt.fiscal.client.mod184.Model184Income2014.IIncomeCallBack;
-import com.esferalia.aon.gwt.fiscal.client.mod184.Model184Partner2014.IPartnerCallBack;
 import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
-import com.esferalia.aon.occam.api.model.fiscal.Mod184Income;
-import com.esferalia.aon.occam.api.model.fiscal.Mod184Partner;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.cell.client.AbstractCell;
-import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.cellview.client.DataGrid;
-import com.google.gwt.user.cellview.client.HasKeyboardPagingPolicy.KeyboardPagingPolicy;
-import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasVisibility;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -60,40 +49,14 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.AsyncDataProvider;
-import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent.Handler;
-import com.google.gwt.view.client.SingleSelectionModel;
 
 public class Model184 extends MainEntryPoint {
 
-	public static final ProvidesKey<Mod184Income> MOD184_INCOME_PROVIDES_KEY = new ProvidesKey<Mod184Income>() {
-		@Override
-		public Object getKey(Mod184Income mod184Income) {
-			return mod184Income == null ? null : mod184Income.getId();
-		}
-	};
-
-	public static final ProvidesKey<Mod184Partner> MOD184_PARTNER_PROVIDES_KEY = new ProvidesKey<Mod184Partner>() {
-		@Override
-		public Object getKey(Mod184Partner mod184Partner) {
-			return mod184Partner == null ? null : mod184Partner.getId();
-		}
-	};
-
-	static interface IModel184Detail extends HasVisibility {
-		public void populatePerceptor(Mod184Income income);
-	}
-
-	static FiscalServiceAsync mod184Service;
-	
-	final static DataGrid.Resources DATA_GRID_STYLE = GWT.create(AonDataGrid.class);
+	static FiscalServiceAsync fiscalService;
 	
 	interface Model184Binder extends UiBinder<Widget, Model184> {
 	}
@@ -106,11 +69,11 @@ public class Model184 extends MainEntryPoint {
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
 	@UiField
+	SimplePanel headerPanel;
+	@UiField
 	DeckLayoutPanel deckPanel;
 	@UiField
 	Panel listPanel;
-	@UiField
-	TabLayoutPanel tabPanel;
 	@UiField
 	DockLayoutPanel formPanel;
 	@UiField
@@ -119,28 +82,18 @@ public class Model184 extends MainEntryPoint {
 	MinimizePanel footPanel;
 	@UiField
 	Panel formContainer;
+	
+	@UiField
+	TabLayoutPanel tabPanel;
 
 	@UiField(provided = true)
 	Model184Table table;
-
-	private Mod184IncomeDataProvider incomesDataProvider;
-	private CellList<Mod184Income> incomesList;
-	private SingleSelectionModel<Mod184Income> incomesModel;
-
-	private Mod184PartnerDataProvider partnersDataProvider;
-	private CellList<Mod184Partner> partnersList;
-	private SingleSelectionModel<Mod184Partner> partnersModel;
 
 	private int domain;
 	private int enterprise;
 
 	@UiField
-	ShowMorePagerPanel incomesPagerPanel;
-	@UiField
 	Model184Income2014 incomesPanel;
-
-	@UiField
-	ShowMorePagerPanel partnersPagerPanel;
 	@UiField
 	Model184Partner2014 partnersPanel;
 
@@ -153,14 +106,12 @@ public class Model184 extends MainEntryPoint {
 	@UiField
 	Button cancelButton;
 	@UiField
-	Button newIncomeButton;
-	@UiField
 	Button generateFileButton;
 	@UiField
 	Button printButton;
 
 	@UiField
-	TextBox year;
+	IntegerBox year;
 	@UiField
 	AdministrationListBox administration;
 	@UiField
@@ -169,8 +120,6 @@ public class Model184 extends MainEntryPoint {
 	CheckBox confidential;
 	@UiField
 	EnterpriseSuggestBox enterpriseSuggest;
-	@UiField
-	TextArea comments;
 	@UiField
 	TextBox contactPhone;
 	@UiField
@@ -191,11 +140,11 @@ public class Model184 extends MainEntryPoint {
 	@UiField
 	CountryListBox country;
 	@UiField
-	DoubleTextBox residentPercent;
+	DoubleBox residentPercent;
 	@UiField
 	CheckBox taxIS;
 	@UiField
-	DoubleTextBox netSalesAmount;
+	DoubleBox netSalesAmount;
 	@UiField
 	DocumentTextBox lrDocument;
 	@UiField
@@ -216,70 +165,12 @@ public class Model184 extends MainEntryPoint {
 		// Create a remote service proxy to talk to the server-side Employees
 		// service.
 		FiscalServiceAsync mod184ServiceRaw = GWT.create(FiscalService.class);
-		mod184Service = new FiscalServiceAsyncDecorator(mod184ServiceRaw);
+		fiscalService = new FiscalServiceAsyncDecorator(mod184ServiceRaw);
 
 		table = new Model184Table(new Mod184SelectionHandler());
 
-		Mod184IncomeCell mod184IncomeCell = new Mod184IncomeCell();
-		CellList.Resources cellListStyle = GWT.create(AonCellList.class);
-		incomesList = new CellList<Mod184Income>(mod184IncomeCell,cellListStyle, MOD184_INCOME_PROVIDES_KEY);
-		incomesList.setStylePrimaryName(DATA_GRID_STYLE.dataGridStyle().dataGridWidget());
-		incomesList.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
-		incomesList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
-		incomesModel = new SingleSelectionModel<Mod184Income>(MOD184_INCOME_PROVIDES_KEY);
-		incomesModel.addSelectionChangeHandler(new Handler() {
-			@Override
-			public void onSelectionChange(SelectionChangeEvent event) {
-				final Mod184Income selected = incomesModel.getSelectedObject();
-				incomesPanel.setIncome(selected);
-			}
-		});
-		incomesList.setSelectionModel(incomesModel);
-		incomesList.setEmptyListWidget(new HTML(AON.MSG.noData()));
-		incomesDataProvider = new Mod184IncomeDataProvider(MOD184_INCOME_PROVIDES_KEY);
-		incomesDataProvider.addDataDisplay(incomesList);
-		incomesList.setVisible(true);
-
-		Mod184PartnerCell mod184PartnerCell = new Mod184PartnerCell();
-		partnersList = new CellList<Mod184Partner>(mod184PartnerCell,cellListStyle, MOD184_PARTNER_PROVIDES_KEY);
-		partnersList.setStylePrimaryName(DATA_GRID_STYLE.dataGridStyle().dataGridWidget());
-		partnersList.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
-		partnersList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
-		partnersModel = new SingleSelectionModel<Mod184Partner>(MOD184_PARTNER_PROVIDES_KEY);
-		partnersModel.addSelectionChangeHandler(new Handler() {
-			@Override
-			public void onSelectionChange(SelectionChangeEvent event) {
-				final Mod184Partner selected = partnersModel.getSelectedObject();
-				partnersPanel.setPartner(selected);
-			}
-		});
-		partnersList.setSelectionModel(partnersModel);
-		partnersList.setEmptyListWidget(new HTML(AON.MSG.noData()));
-		partnersDataProvider = new Mod184PartnerDataProvider(MOD184_PARTNER_PROVIDES_KEY);
-		partnersDataProvider.addDataDisplay(partnersList);
-		partnersList.setVisible(true);
-
 		Widget ui = MODEL_184_BINDER.createAndBindUi(this);
-		incomesPanel.setCallback(new IIncomeCallBack() {
-			@Override
-			public void redrawList(Mod184Income income) {
-				incomesList.redraw();
-			}
-		});
-
-		partnersPanel.setCallback(new IPartnerCallBack() {
-			@Override
-			public void redrawList(Mod184Partner partner) {
-				partnersList.redraw();
-			}
-		});
 		
-		incomesPagerPanel.setDisplay(incomesList);
-		incomesPagerPanel.setIncrementSize(0);
-
-		partnersPagerPanel.setDisplay(partnersList);
-		partnersPagerPanel.setIncrementSize(0);
-
 		tabPanel.addStyleName(AON.AON_CSS.aonScrollArea());
 		
 		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
@@ -296,8 +187,6 @@ public class Model184 extends MainEntryPoint {
 		formFlowPanel.add(domainNameHidden);
 		formContainer.add(diskForm);
 		
-		// Add the outer panel to the RootLayoutPanel, so that it will be
-		// displayed.
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
 		
@@ -307,10 +196,10 @@ public class Model184 extends MainEntryPoint {
 			public void onSelection(SelectionEvent<Integer> event) {
 				int tabIdx = event.getSelectedItem();
 				if (tabIdx == 1) {
-					incomesList.redraw();
+					incomesPanel.setMod184(currentMod184);
 				}
 				if (tabIdx == 2) {
-					partnersList.redraw();
+					partnersPanel.setMod184(currentMod184);
 				}
 			}
 			
@@ -357,12 +246,76 @@ public class Model184 extends MainEntryPoint {
 	/*-{
 		return $wnd.getCurrentDomain();
 	}-*/;
+	
+	protected void paintHeaderTable() {
+		headerPanel.clear();
+		headerPanel.setStyleName(AON.AON_CSS.aonWidthAll());
+		
+		FlexTable headerTable = new FlexTable();
+		headerTable.setStyleName(AON.AON_CSS.aonFiscalModelTable());
+		
+		Label image = new Label("");
+		image.setStyleName(getAdministrationImage());
+		
+		headerTable.setWidget(0, 0, image);
+		headerTable.getFlexCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderImage());
+		headerTable.getFlexCellFormatter().setRowSpan(0, 0, 2);
+		
+		headerTable.setWidget(0, 1, new Label(AON.MSG.fiscalModelDescriptionlong(FiscalModelType.M184)));
+		headerTable.getFlexCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
+		headerTable.getFlexCellFormatter().addStyleName(0, 1, getAdministrationBG());
+		headerTable.getFlexCellFormatter().setRowSpan(0, 1, 2);
+		
+		headerTable.setWidget(0, 2, new Label(FiscalModelType.M184.getName()));
+		headerTable.getFlexCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonFiscalModelTableHeaderModel());
+		headerTable.getFlexCellFormatter().addStyleName(0, 2, getAdministrationBG());
+		
+		headerTable.setWidget(1, 0, new Label(""+currentMod184.getYear()));
+		headerTable.getFlexCellFormatter().setStyleName(1, 0, AON.AON_CSS.aonFiscalModelTableHeaderModel());
+		headerTable.getFlexCellFormatter().addStyleName(1, 0, getAdministrationBG());
+		
+		headerPanel.setWidget(headerTable);
+	}
+	
+	public String getAdministrationBG() {
+		int admon = (currentMod184 == null 
+				?Administration.COMMON_TERRITORY.ordinal()
+				:currentMod184.getAdministration());
+		if (admon == Administration.ALAVA.ordinal()) {
+			return AON.AON_CSS.aonFiscalArabaBg();
+		} else if (admon == Administration.BIZKAIA.ordinal()) {
+			return AON.AON_CSS.aonFiscalBizkaiaBg();
+		} else if (admon == Administration.GIPUZKOA.ordinal()) {
+			return AON.AON_CSS.aonFiscalGipuzkoaBg();
+		} else if (admon == Administration.NAVARRA.ordinal()) {
+			return AON.AON_CSS.aonFiscalNavarraBg();
+		} else {
+			return AON.AON_CSS.aonFiscalAeatBg();
+		}
+	}
+	public String getAdministrationImage() {
+		int adm = (currentMod184 == null 
+				?Administration.COMMON_TERRITORY.ordinal()
+				:currentMod184.getAdministration());
+		if (adm == Administration.ALAVA.ordinal()) {
+			return AON.AON_CSS.aonArabaHeaderImage();
+		} else if (adm == Administration.BIZKAIA.ordinal()) {
+			return AON.AON_CSS.aonBizkaiaHeaderImage();
+		} else if (adm == Administration.GIPUZKOA.ordinal()) {
+			return AON.AON_CSS.aonGipuzkoaHeaderImage();
+		} else if (adm == Administration.NAVARRA.ordinal()) {
+			return AON.AON_CSS.aonNavarraHeaderImage();
+		} else {
+			return AON.AON_CSS.aonAeatHeaderImage();
+		}
+	}
 
+	
 	class Mod184SelectionHandler implements SelectionChangeEvent.Handler {
 		@Override
 		public void onSelectionChange(SelectionChangeEvent event) {
 			Mod184 sel = table.getSelected();
-			mod184Service.getMod184(getCurrentDomainName(), getCurrentDomain(),
+			fiscalService.getMod184(getCurrentDomainName(), getCurrentDomain(),
 					sel.getId(), new AsyncCallback<Mod184>() {
 						@Override
 						public void onSuccess(Mod184 selected) {
@@ -387,71 +340,12 @@ public class Model184 extends MainEntryPoint {
 		}
 	}
 
-	static class Mod184IncomeCell extends AbstractCell<Mod184Income> {
-		@Override
-		public void render(Cell.Context context, Mod184Income value,
-				SafeHtmlBuilder sb) {
-			if (value == null) {
-				return;
-			}
-			if (value.isDirty() || value.isDeleted()) {
-				sb.appendHtmlConstant("<div style='");
-			}
-			if (value.isDirty()) {
-				sb.appendHtmlConstant("font-style: italic; font-weight:bold;");
-			}
-			if (value.isDeleted()) {
-				sb.appendHtmlConstant("text-decoration:line-through");
-			}
-			if (value.isDirty() || value.isDeleted()) {
-				sb.appendHtmlConstant("'>");
-			}
-			String newLabel = AON.MSG.newIncome() + " (" + (value.getId() * (-1)) + ")";
-			sb.appendEscaped(AonStringUtils.isBlank(value.getKey()) 
-					? newLabel
-					: value.getKey() + (AonStringUtils.isBlank(value.getSubKey())?"":("-" + value.getSubKey())));
-
-			if (value.isDirty() || value.isDeleted()) {
-				sb.appendHtmlConstant("</div>");
-			}
-		}
-	}
-
-	static class Mod184PartnerCell extends AbstractCell<Mod184Partner> {
-		@Override
-		public void render(Cell.Context context, Mod184Partner value,
-				SafeHtmlBuilder sb) {
-			if (value == null) {
-				return;
-			}
-			if (value.isDirty() || value.isDeleted()) {
-				sb.appendHtmlConstant("<div style='");
-			}
-			if (value.isDirty()) {
-				sb.appendHtmlConstant("font-style: italic; font-weight:bold;");
-			}
-			if (value.isDeleted()) {
-				sb.appendHtmlConstant("text-decoration:line-through");
-			}
-			if (value.isDirty() || value.isDeleted()) {
-				sb.appendHtmlConstant("'>");
-			}
-			String newLabel = AON.MSG.newIncome() + " (" + (value.getId() * (-1)) + ")";
-			sb.appendEscaped(AonStringUtils.isBlank(value.getName()) ? newLabel: value.getName());
-			
-			if (value.isDirty() || value.isDeleted()) {
-				sb.appendHtmlConstant("</div>");
-			}
-		}
-	}
-
 	private void select(Mod184 selected) {
 		currentMod184 = selected;
-		year.setValue(Integer.toString(currentMod184.getYear()));
+		year.setValue(currentMod184.getYear());
 		administration.setSelectedIndex(currentMod184.getAdministration());
 		replacement.setValue(currentMod184.isReplacement());
 		confidential.setValue(currentMod184.isConfidential());
-		comments.setValue(currentMod184.getComments());
 		enterpriseSuggest.setValue(currentMod184.getDocument(), currentMod184.getName());
 		contactPhone.setValue(currentMod184.getContactPhone());
 		contactPerson.setValue(currentMod184.getContactPerson());
@@ -486,23 +380,18 @@ public class Model184 extends MainEntryPoint {
 		generateFileButton.setVisible(currentMod184.getId() != null);
 		printButton.setVisible(currentMod184.getId() != null);
 
-		incomesPagerPanel.setVisible(currentMod184.getId() != null);
-		partnersPagerPanel.setVisible(currentMod184.getId() != null);
-		
 		incomesPanel.setVisible(currentMod184.getId() != null);
 		partnersPanel.setVisible(currentMod184.getId() != null);
-		
 		tabPanel.setVisible(currentMod184.getId() != null);
-		
 		replacementPanel.setVisible(currentMod184.isReplacement());
-		
-		incomesList.setVisibleRangeAndClearData(incomesList.getVisibleRange(),true);
-		partnersList.setVisibleRangeAndClearData(partnersList.getVisibleRange(),true);
+		incomesPanel.setMod184(currentMod184);
+		partnersPanel.setMod184(currentMod184);
+		paintHeaderTable();		
 	}
 
 	@UiHandler("table")
 	void onTableRangeChange(RangeChangeEvent event) {
-		mod184Service.getMod184s(getCurrentDomainName(), getCurrentDomain(),
+		fiscalService.getMod184s(getCurrentDomainName(), getCurrentDomain(),
 				new AsyncCallback<LinkedList<Mod184>>() {
 					@Override
 					public void onSuccess(LinkedList<Mod184> result) {
@@ -531,7 +420,7 @@ public class Model184 extends MainEntryPoint {
 
 	@UiHandler("saveButton")
 	void onAcceptButtonClick(ClickEvent event) {
-		if (AonStringUtils.isBlank(year.getValue())) {
+		if (year.getValue() == 0) {
 			throw new IllegalArgumentException(AON.MSG.requiredField(AON.MSG.fiscalYear()));
 		}
 
@@ -544,7 +433,7 @@ public class Model184 extends MainEntryPoint {
 		popup.center();
 
 		populateMod184();
-		mod184Service.saveMod184(getCurrentDomainName(), getCurrentDomain(),
+		fiscalService.saveMod184(getCurrentDomainName(), getCurrentDomain(),
 				this.currentMod184, new AsyncCallback<Mod184>() {
 					@Override
 					public void onSuccess(Mod184 result) {
@@ -564,7 +453,7 @@ public class Model184 extends MainEntryPoint {
 	@UiHandler("deleteButton")
 	void onDeleteButtonClick(ClickEvent event) {
 		if (Window.confirm(AON.MSG.confirmDeclarationDeleteAction())) {
-			mod184Service.deleteMod184(getCurrentDomainName(),
+			fiscalService.deleteMod184(getCurrentDomainName(),
 					getCurrentDomain(), this.currentMod184, new AsyncCallback<Void>() {
 						@Override
 						public void onSuccess(Void result) {
@@ -584,11 +473,10 @@ public class Model184 extends MainEntryPoint {
 	@UiHandler("newButton")
 	void onNewButtonClick(ClickEvent event) {
 		cleanErrorMessage();
-		mod184Service.initializeMod184(getCurrentDomainName(),getCurrentDomain(), 2014,
+		fiscalService.initializeMod184(getCurrentDomainName(),getCurrentDomain(), 2014,
 				new AsyncCallback<Mod184>() {
 					@Override
 					public void onSuccess(Mod184 m184) {
-						incomesList.setVisibleRangeAndClearData(incomesList.getVisibleRange(),true);
 						select(m184);
 						int i = deckPanel.getWidgetIndex(formPanel);
 						deckPanel.showWidget(i);
@@ -606,47 +494,11 @@ public class Model184 extends MainEntryPoint {
 	@UiHandler("cancelButton")
 	void onCancelButtonClick(ClickEvent event) {
 		cleanErrorMessage();
-		incomesList.setVisibleRangeAndClearData(incomesList.getVisibleRange(),true);
+		incomesPanel.setMod184(null);
+		partnersPanel.setMod184(null);
 		int i = deckPanel.getWidgetIndex(listPanel);
 		deckPanel.showWidget(i);
 		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
-	}
-
-	@UiHandler("newIncomeButton")
-	void onNewIncomeButtonClick(ClickEvent event) {
-		int newKey = (currentMod184.getIncomes().size() + 1) * (-1);
-		final Mod184Income income = new Mod184Income();
-		income.setId(newKey);
-		currentMod184.getIncomes().add(income);
-		incomesPanel.setIncome(income);
-		incomesList.setRowCount(incomesList.getRowCount() + 1);
-		incomesList.setPageSize(incomesList.getRowCount());
-		selectIncomeInList(currentMod184.getIncomes().size() - 1);
-		incomesList.redraw();
-	}
-
-	@UiHandler("newPartnerButton")
-	void onNewPartnerButtonClick(ClickEvent event) {
-		int newKey = (currentMod184.getPartners().size() + 1) * (-1);
-		final Mod184Partner partner = new Mod184Partner();
-		partner.setId(newKey);
-		currentMod184.getPartners().add(partner);
-		partnersPanel.setPartner(partner);
-		partnersList.setRowCount(partnersList.getRowCount() + 1);
-		partnersList.setPageSize(partnersList.getRowCount());
-		selectPartnerInList(currentMod184.getPartners().size() - 1);
-		partnersList.redraw();
-	}
-
-	private void selectIncomeInList(int i) {
-		incomesModel.setSelected(currentMod184.getIncomes().get(i),true);
-		incomesList.getRowElement(i).scrollIntoView();
-		incomesPagerPanel.scrollToLeft();
-	}
-	private void selectPartnerInList(int i) {
-		partnersModel.setSelected(currentMod184.getPartners().get(i),true);
-		partnersList.getRowElement(i).scrollIntoView();
-		partnersPagerPanel.scrollToLeft();
 	}
 
 	@UiHandler("enterpriseSuggest")
@@ -661,17 +513,12 @@ public class Model184 extends MainEntryPoint {
 	}
 
 	private void populateMod184() {
-		try {
-			currentMod184.setYear(Integer.parseInt(year.getValue()));
-		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException(AON.MSG.unableToParseYear());
-		}
+		currentMod184.setYear(year.getValue());
 		currentMod184.setDomain(domain);
 		currentMod184.setEnterprise(enterprise);
 		currentMod184.setAdministration((byte)administration.getSelectedIndex());
 		currentMod184.setReplacement(replacement.getValue());
 		currentMod184.setConfidential(confidential.getValue());
-		currentMod184.setComments(comments.getValue());
 		currentMod184.setDocument(enterpriseSuggest.getValue());
 		currentMod184.setName(enterpriseSuggest.getName().getValue());
 		currentMod184.setContactPhone(contactPhone.getValue());
@@ -685,56 +532,12 @@ public class Model184 extends MainEntryPoint {
 		currentMod184.setForeignObject(foreignObject.getValue( foreignObject.getSelectedIndex() ));
 		
 		currentMod184.setCountry(country.getValue(country.getSelectedIndex()));
-		currentMod184.setResidentPercent(residentPercent.getDoubleValue());
+		currentMod184.setResidentPercent(residentPercent.getValue());
 		currentMod184.setTaxIS(taxIS.getValue());
-		currentMod184.setNetSalesAmount(netSalesAmount.getDoubleValue());
+		currentMod184.setNetSalesAmount(netSalesAmount.getValue());
 		currentMod184.setLrDocument(lrDocument.getValue());
 		currentMod184.setLrName(lrName.getValue());
 		
-	}
-
-	class Mod184IncomeDataProvider extends AsyncDataProvider<Mod184Income> {
-
-		public Mod184IncomeDataProvider(ProvidesKey<Mod184Income> detailProvidesKey) {
-			super(detailProvidesKey);
-		}
-
-		@Override
-		protected void onRangeChanged(HasData<Mod184Income> display) {
-			if (currentMod184 != null && currentMod184.getId() != null) {
-				if (currentMod184.getIncomes().size() == 0) {
-					onNewIncomeButtonClick(null);					
-				} else {
-					updateRowCount(currentMod184.getIncomes().size(), true);
-					updateRowData(0, currentMod184.getIncomes());
-					incomesList.setPageSize(currentMod184.getIncomes().size());
-					selectIncomeInList(0);
-					incomesPanel.setIncome(incomesModel.getSelectedObject());
-				}
-			}
-		}
-	}
-
-	class Mod184PartnerDataProvider extends AsyncDataProvider<Mod184Partner> {
-
-		public Mod184PartnerDataProvider(ProvidesKey<Mod184Partner> detailProvidesKey) {
-			super(detailProvidesKey);
-		}
-
-		@Override
-		protected void onRangeChanged(HasData<Mod184Partner> display) {
-			if (currentMod184 != null && currentMod184.getId() != null) {
-				if (currentMod184.getPartners().size() == 0) {
-					onNewPartnerButtonClick(null);					
-				} else {
-					updateRowCount(currentMod184.getPartners().size(), true);
-					updateRowData(0, currentMod184.getPartners());
-					partnersList.setPageSize(currentMod184.getPartners().size());
-					selectPartnerInList(0);
-					partnersPanel.setPartner(partnersModel.getSelectedObject());
-				}
-			}
-		}
 	}
 
 	// -------------------------------------------------------------- UiHandler
@@ -780,16 +583,21 @@ public class Model184 extends MainEntryPoint {
 	void onFootMinimize(MinimizeEvent event) {
 		closeFootPanel();
 	}
+
 	@UiHandler("footPanel")
-	void onFootMaximize(MinimizeEvent event) {
+	void onFootMaximize(MaximizeEvent event) {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2);
+		splitLayoutPanel.animate(500);
 	}
 
 	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
+		splitLayoutPanel.setWidgetSize(footPanel, 30);
+		splitLayoutPanel.animate(500);
 	}
 
-	private void maximizeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
+	private void openFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+		splitLayoutPanel.animate(500);
 	}
 	
 	private void showResultsPanel() {
@@ -818,5 +626,4 @@ public class Model184 extends MainEntryPoint {
 		panel.add(label);
 		resultsPanel.setWidget(panel);
 	}
-
 }

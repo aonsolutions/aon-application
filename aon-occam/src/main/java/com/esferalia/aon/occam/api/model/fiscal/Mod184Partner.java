@@ -26,6 +26,7 @@ public class Mod184Partner implements Serializable {
 
 	private boolean dirty;
 	private boolean deleted;
+	private int tempId;	
 
 	public Integer getId() {
 		return id;
@@ -198,4 +199,12 @@ public class Mod184Partner implements Serializable {
 		return this;
 	}
 
+	public int getTempId() {
+		return tempId;
+	}
+
+	public Mod184Partner setTempId(int tempId) {
+		this.tempId = tempId;
+		return this;
+	}
 }

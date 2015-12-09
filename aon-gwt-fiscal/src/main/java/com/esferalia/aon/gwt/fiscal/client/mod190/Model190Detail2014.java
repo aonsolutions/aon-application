@@ -797,7 +797,7 @@ public class Model190Detail2014 extends ResizeComposite {
 		protected void onRangeChanged(HasData<Mod190Detail> display) {
 			if (currentMod190 != null && currentMod190.getId() != null) {
 				if (currentMod190.getDetails().size() == 0) {
-					onNewDetailButtonClick(null);					
+					newPerceptor();					
 				} else {
 					updateRowCount(currentMod190.getDetails().size(), true);
 					updateRowData(0, currentMod190.getDetails());

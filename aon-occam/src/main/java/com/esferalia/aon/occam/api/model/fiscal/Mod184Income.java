@@ -15,7 +15,7 @@ public class Mod184Income implements Serializable {
 	private String country;
 	private byte regime;
 	private byte activityType;
-	private int epigraph;
+	private Integer epigraph;
 	private String granteeDocument;
 	private String granteeName;
 	private Date adqDate;
@@ -32,6 +32,7 @@ public class Mod184Income implements Serializable {
 
 	private boolean dirty;
 	private boolean deleted;
+	private int tempId;	
 
 	public Integer getId() {
 		return id;
@@ -249,4 +250,14 @@ public class Mod184Income implements Serializable {
 		return this;
 	}
 
+	public int getTempId() {
+		return tempId;
+	}
+
+	public Mod184Income setTempId(int tempId) {
+		this.tempId = tempId;
+		return this;
+	}
+
+	
 }

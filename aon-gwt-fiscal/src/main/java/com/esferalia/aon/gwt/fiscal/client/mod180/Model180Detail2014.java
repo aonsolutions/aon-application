@@ -413,8 +413,6 @@ public class Model180Detail2014 extends ResizeComposite {
 		detailModel.setSelected(currentMod180.getDetails().get(i),true);
 		detailList.getRowElement(i).scrollIntoView();
 		detailListPanel.scrollToLeft();
-//		pagerPanel.scrollToLeft();
-		
 	}
 
 	class Mod180DetailDataProvider extends AsyncDataProvider<Mod180Detail> {

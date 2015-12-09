@@ -147,7 +147,7 @@ public interface CommonMessages extends Messages {
 		,"M390"		,"Mod. 390"
 		,"M390_HF"	,"Mod. 390 Hac. For."
 		,"M180"		,"Declaraci\u00F3n Informativa. Retenciones e ingresos a cuenta. Rendimientos procedentes del arrendamiento de inmuebles urbanos. Resumen anual."
-		,"M184"		,"Mod. 184"
+		,"M184"		,"Declaraci\u00F3n Informativa. Entidades en r\u00E9gimen de atribuci\u00F3n de rentas."
 		,"M190"		,"Declaraci\u00F3n Informativa. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades econ\u00F3micas, premios y determinadas ganancias patrimoniales e imputaciones de rentas"
 		,"M193"		,"Declaraci\u00F3n Informativa. Retenciones e ingresos a cuenta del IRPF sobre determinados rendimientos del capital mobiliario, del IS e IRNR sobre determinadas rentas."
 		,"M310"		,"IVA. Autoliquidaci\u00F3n. R\u00E9gimen Simplificado"

@@ -25,7 +25,7 @@
 				</g:north>
 				<g:center>
 					<g:ScrollPanel ui:field="detailListPanel" styleName="{aonResources.css.aonScrollArea} {aonResources.css.aonBorderRight}">
-						<cell:CellList ui:field="detailList" />
+						<cell:CellList ui:field="detailList" styleName="{aonResources.css.aonWidthAll}"/>
 					</g:ScrollPanel>
 				</g:center>
 			</g:DockLayoutPanel>
