@@ -5,6 +5,7 @@ import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_ALREADY_REC
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.RectificationType;
@@ -35,6 +36,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 			invoice.setRectificationType(RectificationType.NONE);
 			invoice.setSecurityLevel(SecurityLevel.OFFICIAL);
 			invoice.setTaxDate(invoice.getIssueDate());
+			invoice.setTransaction(InvoiceTransactionType.NATIONAL);
 
 			invoiceController.initSeries();
 			invoiceController.loadAddresses(null);

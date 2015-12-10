@@ -19,6 +19,11 @@ public class PurchaseInvoiceDetailController extends InvoiceDetailController {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
 			itemChanged(item);
+		} else {
+			InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
+			invoiceDetail.setQuantity(0);
+			invoiceDetail.setPrice(0);
+			invoiceDetail.getDiscountExpression().setDiscountExpr("0.0");
 		}
 	}
 
@@ -76,7 +81,7 @@ public class PurchaseInvoiceDetailController extends InvoiceDetailController {
 	}
 
 	public void onDiscountChanged(ValueChangeEvent event) {
-		discountChanged((event.getNewValue() != null && !event.getNewValue().toString().equals("")) ? event.getNewValue().toString() : "0");
+		discountChanged((event.getNewValue() != null && !event.getNewValue().toString().equals("")) ? event.getNewValue().toString() : "0.0");
 		fillTaxDataInDetail(false, true);
 	}
 

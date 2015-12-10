@@ -17,7 +17,6 @@
 			<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
 				<ui:param name="lookupBean" value="#{(invoiceController.to.sales) ? saleItemLookup : purchaseItemLookup}" />
 				<ui:param name="lookupTo" value="#{detailController.to.item}" />
-				<ui:param name="idRequired" value="#{true}" />
 				<ui:param name="skipLabel" value="#{true}" />
 				<ui:param name="skipSuggestText" value="#{detailController.to.item != null and detailController.to.item.id != null}" />
 				<ui:param name="lookupInputOnFocus" value="InvoiceDetail_description" />
@@ -60,7 +59,8 @@
 				value="#{detailController.to.description}"
 				cols="60" rows="#{!detailController.longDescription?1:5}"
 				disabled="#{!detailController.longDescription}"
-				rendered="#{detailController.to.item != null and detailController.to.item.id != null}">
+				rendered="#{detailController.to.item != null and detailController.to.item.id != null}"
+				ajaxSingle="true">
 				<f:validateLength maximum="1024" />
 			</aon:inputTextarea>
 			<aon:commandLink id="InvoiceDetail_description_short" immediate="true"
@@ -80,11 +80,13 @@
 
 	<aon:if test="#{invoiceController.to.sales or invoiceController.to.purchase}">
 		<aon:outputLabel for="InvoiceDetail_quantity" value="#{bundle.aon_quantity}" />
-		<aon:panelGrid columns="5" columnClasses="aon-width-110,aon-width-40,aon-width-70,aon-width-40,aon-width-70 aon-text-right">
+		<aon:panelGrid id="InvoiceDetail_quantity-Grid" columns="5" 
+			columnClasses="aon-width-110,aon-width-40,aon-width-70,aon-width-40,aon-width-70 aon-text-right">
 			<aon:inputText id="InvoiceDetail_quantity"
 				value="#{detailController.to.quantity}"
+				disabled="#{detailController.to.item.id == null}"
 				valueChangeListener="#{detailController.onQuantityChanged}"
-				reRender="#{formName}" ajaxSingle="true"
+				reRender="InvoiceDetail_quantity-Grid,InvoiceDetail_price-Grid,InvoiceDetail_discount-Grid,InvoiceDetail_amount-Grid" ajaxSingle="true"
 				required="true" size="5" focus="InvoiceDetail_price" />
 			<aon:div rendered="#{invoiceController.to.surcharge and detailController.to.item.id != null and !detailController.to.item.product.prepayment}">
 				<aon:outputText styleClass="aon-italic" 
@@ -111,12 +113,14 @@
 		</aon:panelGrid>
 
 		<aon:outputLabel for="InvoiceDetail_price" value="#{bundle.aon_price}" />
-		<aon:panelGrid columns="5" columnClasses="aon-width-110,aon-width-40,aon-width-70,aon-width-40,aon-width-70 aon-text-right">
+		<aon:panelGrid id="InvoiceDetail_price-Grid" columns="5" 
+			columnClasses="aon-width-110,aon-width-40,aon-width-70,aon-width-40,aon-width-70 aon-text-right">
 			<aon:inputText id="InvoiceDetail_price"
 				value="#{detailController.to.price}"
+				disabled="#{detailController.to.item.id == null}"
 				valueChangeListener="#{detailController.onPriceChanged}"
-				reRender="#{formName}" ajaxSingle="true"
-				required="true" size="5" />
+				reRender="InvoiceDetail_quantity-Grid,InvoiceDetail_price-Grid,InvoiceDetail_discount-Grid,InvoiceDetail_amount-Grid" ajaxSingle="true"
+				required="true" size="5" focus="InvoiceDetail_discount" />
 			<aon:div rendered="#{!invoiceController.to.vatFree and detailController.to.item.id != null and !detailController.to.item.product.prepayment}">
 				<aon:outputText styleClass="aon-italic" 
 					value="#{bundle.aon_vat}" />
@@ -142,11 +146,13 @@
 		</aon:panelGrid>
 
 		<aon:outputLabel for="InvoiceDetail_discount" value="#{bundle.aon_discount}" />
-		<aon:panelGrid columns="5" columnClasses="aon-width-110,aon-width-40,aon-width-70,aon-width-40,aon-width-70 aon-text-right">
+		<aon:panelGrid id="InvoiceDetail_discount-Grid" columns="5" 
+			columnClasses="aon-width-110,aon-width-40,aon-width-70,aon-width-40,aon-width-70 aon-text-right">
 			<aon:inputText id="InvoiceDetail_discount"
 				value="#{detailController.to.discountExpression.discountExpr}"
+				disabled="#{detailController.to.item.id == null}"
 				valueChangeListener="#{detailController.onDiscountChanged}"
-				reRender="#{formName}" ajaxSingle="true"
+				reRender="InvoiceDetail_quantity-Grid,InvoiceDetail_price-Grid,InvoiceDetail_discount-Grid,InvoiceDetail_amount-Grid" ajaxSingle="true"
 				required="true" size="5" />
 			<aon:div rendered="#{!invoiceController.to.retentionFree and invoiceController.to.withholding and detailController.to.item.retention.id != null}">
 				<aon:outputText styleClass="aon-italic" 
@@ -173,7 +179,8 @@
 		</aon:panelGrid>
 
 		<aon:outputLabel for="InvoiceDetail_amount" value="#{bundle.aon_amount}" />
-		<aon:panelGrid columns="3" columnClasses="aon-width-110,aon-width-150,aon-width-70 aon-text-right">
+		<aon:panelGrid id="InvoiceDetail_amount-Grid" columns="3" 
+			columnClasses="aon-width-110,aon-width-150,aon-width-70 aon-text-right">
 			<aon:outputText id="InvoiceDetail_amount" styleClass="aon-bold"
 				value="#{detailController.taxableBase}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />

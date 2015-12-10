@@ -9,7 +9,7 @@
 	<aon:div styleClass="aon-width-700">
 		<aon:div styleClass="aon-group">
 			<aon:div styleClass="aon-group-title">
-				<aon:outputText value="#{bundle.aon_basic_data}"/>
+				<aon:outputText value="#{bundle.finance_invoice_data}"/>
 			</aon:div>
 			<aon:div styleClass="aon-group-body"> 
 				<aon:div styleClass="aon-group-body-internal">
@@ -23,6 +23,21 @@
 							<ui:param name="financeController" value="#{financeController}" />
 							<ui:param name="formName" value="#{formName}" />
 						</ui:include>
+
+					</aon:panelGrid>
+
+				</aon:div>
+			</aon:div>
+		</aon:div>
+
+		<aon:div styleClass="aon-group">
+			<aon:div styleClass="aon-group-title">
+				<aon:outputText value="#{bundle.finance_invoice_lines}"/>
+			</aon:div>
+			<aon:div styleClass="aon-group-body"> 
+				<aon:div styleClass="aon-group-body-internal">
+
+					<aon:panelGrid columns="2" columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even aon-width-500">
 
 						<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formNewDetail.xhtml">
 							<ui:param name="invoiceController" value="#{invoiceController}" />
