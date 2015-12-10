@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.client.mod140;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.css.AonDataGrid;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
@@ -18,7 +17,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -36,7 +34,6 @@ public class Model140 extends MainEntryPoint {
 	
 	final static CommonMessages MSG = GWT.create(CommonMessages.class);
 	final static AonResources AON_RESOURCES = GWT.create(AonResources.class);
-	final static DataGrid.Resources DATA_GRID_STYLE = GWT.create(AonDataGrid.class);
 	
 	interface Model140Binder extends UiBinder<Widget, Model140> {
 	}
