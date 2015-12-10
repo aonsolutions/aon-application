@@ -22,7 +22,9 @@ public enum InvoiceExportType implements IResourceable {
 	
 	GLASOF(ICommonMessages.FINANCE_INVOICE_EXPORT_GLASOF),
 	
-	CONTA_PLUS(ICommonMessages.FINANCE_INVOICE_EXPORT_CONTA_PLUS);
+	CONTA_PLUS(ICommonMessages.FINANCE_INVOICE_EXPORT_CONTA_PLUS),
+	
+	DIAMACON(ICommonMessages.FINANCE_INVOICE_EXPORT_DIAMACON);
 
 	private String label;
 	

@@ -351,6 +351,7 @@ public interface ICommonMessages {
 	String FINANCE_INVOICE_EXPORT_GEYCE = "finance_invoice_export_geyce";
 	String FINANCE_INVOICE_EXPORT_A3 = "finance_invoice_export_a3";
 	String FINANCE_INVOICE_EXPORT_APLIFISA = "finance_invoice_export_aplifisa";
+	String FINANCE_INVOICE_EXPORT_DIAMACON = "finance_invoice_export_diamacon";
 	String FINANCE_INVOICE_EXPORT_LOGIC_WIN = "finance_invoice_export_logic_win";
 	String FINANCE_INVOICE_EXPORT_EXCEL = "finance_invoice_export_excel";
 	String FINANCE_INVOICE_EXPORT_DSI_GESTION = "finance_invoice_export_dsi_gestion";

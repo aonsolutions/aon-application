@@ -44,6 +44,7 @@ import com.code.aon.ui.finance.A3Writer;
 import com.code.aon.ui.finance.AplifisaWriter;
 import com.code.aon.ui.finance.BasicExporter;
 import com.code.aon.ui.finance.ContaPlusWriter;
+import com.code.aon.ui.finance.DiamaconWriter;
 import com.code.aon.ui.finance.DsiWriter;
 import com.code.aon.ui.finance.ExcelWriter;
 import com.code.aon.ui.finance.GeyceWriter;
@@ -138,6 +139,9 @@ public class ExporterController implements Serializable {
 				break;
 			case CONTA_PLUS:				
 				exporter = new ContaPlusWriter(this.configuration);
+				break;
+			case DIAMACON:				
+				exporter = new DiamaconWriter(this.configuration);
 				break;
 		}
 		this.fileName = exporter.getFileName();

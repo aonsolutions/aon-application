@@ -196,6 +196,7 @@ public class InvoiceExportConfiguration implements Serializable {
 				case DSI_GESTION:
 				case GLASOF:
 				case CONTA_PLUS:
+				case DIAMACON:
 					return true;
 			}
 		}
