@@ -10,27 +10,29 @@
 	<aon:outputLabel for="#{invoiceController.to.sales ? ('Invoice_number') : ('Invoice_referenceCode')}"
 		value="#{bundle.aon_invoice_number}" />
 	<aon:div>
-		<aon:panelGrid columns="2" columnClasses="aon-width-180,aon-width-auto">
-			<aon:div id="InvoiceReferenceCodeDiv">
-				<aon:if test="#{invoiceController.to.sales}">
-					<ui:decorate template="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
-						<ui:param name="controller" value="#{invoiceController}" />
-						<ui:param name="skipSeriesLabel" value="#{true}" />
-						<ui:param name="seriesChangedReRender" value="Invoice_securityLevel" />
-						<ui:param name="sfc_seriesValid" value="#{invoiceController.seriesValid}" />
-						<ui:param name="sfc_editable" value="#{!invoiceController.readOnly and financeController.allPending}" />								
-						<ui:define name="additionalSeriesContent">
-							<aon:commandButton id="invoiceNextNumber"
-								title="#{bundle.finance_invoice_find_next_number}"
-								styleClass="aon-icon-commandButton aon-icon-ambito"
-								rendered="#{sfc_editable}" value="&#160;"
-								actionListener="#{invoiceController.onFindNextFreeNumber}"
-								reRender="Invoice_number" ajaxSingle="true" process="Invoice_number">
-							</aon:commandButton>															
-						</ui:define>
-					</ui:decorate>
-				</aon:if>
-				<aon:if test="#{!invoiceController.to.sales}">
+		<aon:panelGrid columns="2" columnClasses="aon-width-220,aon-width-auto">
+			<aon:if test="#{invoiceController.to.sales}">
+				<ui:decorate template="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
+					<ui:param name="controller" value="#{invoiceController}" />
+					<ui:param name="sfc_div" value="InvoiceReferenceCodeDiv" />
+					<ui:param name="skipSeriesLabel" value="#{true}" />
+					<ui:param name="seriesChangedReRender" value="Invoice_securityLevel" />
+					<ui:param name="sfc_seriesValid" value="#{invoiceController.seriesValid}" />
+					<ui:param name="sfc_editable" value="#{!invoiceController.readOnly and financeController.allPending}" />								
+					<ui:param name="sfc_numberReset" value="#{invoiceController.nevv}" />								
+					<ui:define name="additionalSeriesContent">
+						<aon:commandButton id="Invoice_NextNumber" immediate="#{true}"
+							title="#{bundle.finance_invoice_find_next_number}"
+							styleClass="aon-icon-commandButton aon-icon-ambito"
+							rendered="#{sfc_editable}" value="&#160;"
+							actionListener="#{invoiceController.onFindNextFreeNumber}"
+							reRender="Invoice_number" ajaxSingle="true" process="Invoice_number">
+						</aon:commandButton>															
+					</ui:define>
+				</ui:decorate>
+			</aon:if>
+			<aon:if test="#{!invoiceController.to.sales}">
+				<aon:div id="InvoiceReferenceCodeDiv">
 					<aon:inputText id="Invoice_referenceCode" 
 						value="#{invoiceController.to.referenceCode}" 
 						required="true" size="25" maxlength="32"
@@ -40,8 +42,8 @@
 					<aon:outputText styleClass="aon-bold"
 						value="#{invoiceController.to.referenceCode}"
 						rendered="#{invoiceController.readOnly or !financeController.allPending}" />
-				</aon:if>
-			</aon:div>
+				</aon:div>
+			</aon:if>
 			<aon:div>
 				<aon:if test="#{!invoiceController.to.sales}">
 					<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formInvestment.xhtml">

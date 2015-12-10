@@ -78,7 +78,7 @@
 		</aon:panelGroup>
 	</aon:div>
 
-	<aon:if test="#{invoiceController.to.purchase}">
+	<aon:if test="#{invoiceController.to.sales or invoiceController.to.purchase}">
 		<aon:outputLabel for="InvoiceDetail_quantity" value="#{bundle.aon_quantity}" />
 		<aon:panelGrid columns="5" columnClasses="aon-width-110,aon-width-40,aon-width-70,aon-width-40,aon-width-70 aon-text-right">
 			<aon:inputText id="InvoiceDetail_quantity"

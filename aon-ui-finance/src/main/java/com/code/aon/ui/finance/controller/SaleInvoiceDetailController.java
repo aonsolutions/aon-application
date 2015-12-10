@@ -32,6 +32,7 @@ public class SaleInvoiceDetailController extends InvoiceDetailController {
 		if (invoiceDetail.getQuantity() == 0) {
 			invoiceDetail.setQuantity(1);
 		}
+
 		Customer customer = null;
 		if (invoice.getRegistry() != null && invoice.getRegistry().getId() != null) {
 			try {
@@ -43,10 +44,12 @@ public class SaleInvoiceDetailController extends InvoiceDetailController {
 			invoiceDetail.getDiscountExpression().setDiscountExpr(Double.toString(item.getProfitPercent()));
 		}
 		invoiceDetail.setPrice(getPriceStrategy().getUnitPrice(invoiceDetail, invoice.getIssueDate(), customer));
+		fillTaxDataInDetail(false, true);
 	}	
 
 	public void onQuantityChanged(ValueChangeEvent event) {
 		quantityChanged((event.getNewValue() != null && !event.getNewValue().toString().equals("")) ? (Double)event.getNewValue() : 0);
+		fillTaxDataInDetail(false, true);
 	}
 
 	public void quantityChanged(double quantity) {
@@ -67,8 +70,19 @@ public class SaleInvoiceDetailController extends InvoiceDetailController {
 		}
 	}
 
+	public void onPriceChanged(ValueChangeEvent event) {
+		priceChanged((event.getNewValue() != null && !event.getNewValue().toString().equals("")) ? (Double)event.getNewValue() : 0);
+		fillTaxDataInDetail(false, true);
+	}
+
+	public void priceChanged(double price) {
+		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
+		invoiceDetail.setPrice(price);
+	}
+
 	public void onDiscountChanged(ValueChangeEvent event) {
 		discountChanged((event.getNewValue() != null && !event.getNewValue().toString().equals("")) ? event.getNewValue().toString() : "0");
+		fillTaxDataInDetail(false, true);
 	}
 
 	public void discountChanged(String discount) {

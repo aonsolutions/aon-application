@@ -47,13 +47,35 @@
 			<aon:outputLabel for="Project_id"
 				value="#{bundle.tas_project_tas}" />
 		</aon:if>
-		<aon:div>
-			<aon:div rendered="#{!invoiceController.readOnly}">
+		<aon:div id="InvoiceProject">
+			<aon:div rendered="#{invoiceController.nevv and !invoiceController.showProjectLookup and invoiceController.projectListEnabled}">
+				<aon:selectOneMenu id="Project_id-List" 
+					value="#{invoiceController.to.project}">
+					<f:selectItem value="#{null}" />
+					<f:selectItems value="#{invoiceController.projects}" />
+				</aon:selectOneMenu>
+				<aon:commandLink id="Project_showLookup" immediate="true"
+					value="&#160;" title="#{bundle.aon_lookup}"
+					styleClass="aon-icon-lookup" style="margin-left: 5px; padding-right: 12px;"
+					reRender="InvoiceProject">
+					<f:setPropertyActionListener target="#{invoiceController.showProjectLookup}"
+						value="#{true}" />							
+				</aon:commandLink>
+			</aon:div>
+			<aon:div rendered="#{!invoiceController.readOnly and (invoiceController.showProjectLookup or !invoiceController.projectListEnabled)}">
 				<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml">
 					<ui:param name="lookupTo" value="#{invoiceController.to.project}" />
 					<ui:param name="skipLabel" value="#{true}" />
 					<ui:param name="skipGoToButton" value="#{true}" />
 				</ui:include>
+				<aon:commandLink id="Project_showList" immediate="true"
+					value="&#160;" title="#{bundle.aon_list}"
+					styleClass="aon-icon-drop-down" style="margin-left: 5px; padding-right: 12px;"
+					rendered="#{invoiceController.nevv and invoiceController.projectListEnabled}"
+					reRender="InvoiceProject">
+					<f:setPropertyActionListener target="#{invoiceController.showProjectLookup}"
+						value="#{false}" />							
+				</aon:commandLink>
 			</aon:div>
 			<aon:outputText styleClass="aon-bold"
 				value="#{invoiceController.to.project.name}" 
@@ -61,7 +83,30 @@
 		</aon:div>
 	</aon:if>
 
-	<aon:if test="#{(invoiceController.nevv and invoiceController.to.sales) or !empty invoiceController.to.comments or invoiceController.to.vatAccrualPayment}">
+	<aon:if test="#{invoiceController.to.sales and (invoiceController.nevv or invoiceController.to.seller.id != null)}">
+		<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
+			<ui:param name="lookupTo" value="#{invoiceController.to.seller}" />
+			<ui:param name="lookupRendered" value="#{!invoiceController.readOnly}" />
+			<aon:methodParam name="lookupChangeListener"
+				value="#{invoiceController.onSellerChanged}" type="lookupChangeListener" />
+		</ui:include>
+		<aon:outputText styleClass="aon-bold"
+			value="#{invoiceController.to.seller.fullName}" 
+			rendered="#{invoiceController.readOnly}" />
+	</aon:if>
+
+	<aon:if test="#{invoiceController.to.posShift.id != null}">
+		<aon:outputLabel value="#{bundle.aon_module_pos}" />
+		<aon:div styleClass="aon-bold">
+			<aon:outputText value="#{invoiceController.to.posShift.pos.name}" />
+			<aon:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
+				<aon:outputText value=" (#{invoiceController.to.posShift.pos.workPlace.description})" />
+			</aon:if>
+		</aon:div>
+	</aon:if>
+
+	<aon:if test="#{(invoiceController.nevv and invoiceController.to.sales) or !empty invoiceController.to.comments or invoiceController.to.vatAccrualPayment 
+					 or invoiceController.rectifier or invoiceController.rectified}">
 		<aon:div>
 			<aon:outputLabel for="Invoice_comments"
 				value="#{bundle.aon_comment}" />
@@ -79,6 +124,18 @@
 			<aon:div rendered="#{invoiceController.to.vatAccrualPayment}">
 				<aon:outputText styleClass="aon-bold aon-label-info"
 					 value="#{bundle.finance_invoice_vat_accrual_payment_message}" />
+			</aon:div>
+			<aon:div rendered="#{invoiceController.rectifier}">
+				<aon:outputFormat styleClass="aon-bold aon-label-error"
+					 value="#{bundle.finance_invoice_rectifier_message2}">
+					<f:param value="#{invoiceController.to.rectificationInvoice.referenceCode}" />
+				</aon:outputFormat>
+			</aon:div>
+			<aon:div rendered="#{invoiceController.rectified}">
+				<aon:outputFormat styleClass="aon-bold aon-label-error"
+					 value="#{bundle.finance_invoice_rectified_message2}">
+					<f:param value="#{invoiceController.to.rectificationInvoicesString}" />
+				</aon:outputFormat>
 			</aon:div>
 		</aon:div>
 	</aon:if>

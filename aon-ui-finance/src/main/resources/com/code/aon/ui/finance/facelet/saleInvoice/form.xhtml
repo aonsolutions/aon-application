@@ -169,338 +169,46 @@
 			</aon:div>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="dataTable" columns="4"
-					styleClass="aon-width-all aon-margin-bottom"
-					columnClasses="aon-panelGrid-odd aon-width-140,
-						aon-panelGrid-even aon-width-500,
-						aon-panelGrid-odd aon-width-100,
-						aon-panelGrid-even aon-width-auto">
+				<aon:if test="#{saleInvoice.nevv}">
+					<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formNewContent.xhtml">
+						<ui:param name="invoiceController" value="#{saleInvoice}" />
+						<ui:param name="addressController" value="#{saleInvoiceAddress}" />
+						<ui:param name="detailController" value="#{saleInvoiceDetail}" />
+						<ui:param name="financeController" value="#{saleInvoiceFinance}" />
+						<ui:param name="formName" value="saleInvoiceForm" />
+					</ui:include>
+				</aon:if>			
+				<aon:if test="#{!saleInvoice.nevv}">
+					<aon:panelGrid id="dataTable" columns="4"
+						styleClass="aon-width-all aon-margin-bottom"
+						columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even aon-width-500,
+							aon-panelGrid-odd aon-width-100,aon-panelGrid-even aon-width-auto">
 
-					<aon:outputLabel for="Invoice_number"
-						value="#{bundle.aon_invoice_number}" />
-					<aon:div>
-						<aon:panelGrid columns="2" columnClasses="aon-width-200, aon-width-auto">
-							<ui:decorate template="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
-								<ui:param name="controller" value="#{saleInvoice}" />
-								<ui:param name="sfc_div" value="InvoiceReferenceCodeDiv" />
-								<ui:param name="skipSeriesLabel" value="#{true}" />
-								<ui:param name="seriesChangedReRender" value="Invoice_securityLevel" />
-								<ui:param name="sfc_seriesValid" value="#{saleInvoice.seriesValid}" />
-								<ui:param name="sfc_editable" value="#{!saleInvoice.readOnly and saleInvoiceFinance.allPending}" />
-								<ui:param name="sfc_numberReset" value="#{saleInvoice.nevv}" />								
-								<ui:define name="additionalSeriesContent">
-									<aon:commandButton id="invoiceNextNumber" immediate="#{true}"
-										title="#{bundle.finance_invoice_find_next_number}"
-										styleClass="aon-icon-commandButton aon-icon-ambito"
-										rendered="#{sfc_editable}" value="&#160;"
-										actionListener="#{saleInvoice.onFindNextFreeNumber}"
-										reRender="Invoice_number" ajaxSingle="true">
-									</aon:commandButton>															
-								</ui:define>
-							</ui:decorate>
-							<aon:div>
-								<aon:if test="#{aonRole.confidentiality}">
-									<aon:selectBooleanCheckbox id="Invoice_securityLevel"
-										value="#{saleInvoice.to.confidential}"
-										rendered="#{!saleInvoice.readOnly and saleInvoiceFinance.allPending}" />
-									<aon:outputText styleClass="aon-italic aon-margin-right"
-										value="#{bundle.aon_confidential}"
-										rendered="#{!saleInvoice.readOnly and saleInvoiceFinance.allPending}" />
-									<aon:outputText styleClass="aon-icon aon-icon-confidential" 
-										value="&#160;" title="#{bundle.aon_confidential}"
-										rendered="#{(saleInvoice.readOnly or !saleInvoiceFinance.allPending) and saleInvoice.to.confidential}" />
-								</aon:if>
+						<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/formBasicContent.xhtml">
+							<ui:param name="invoiceController" value="#{saleInvoice}" />
+							<ui:param name="addressController" value="#{saleInvoiceAddress}" />
+							<ui:param name="detailController" value="#{saleInvoiceDetail}" />
+							<ui:param name="financeController" value="#{saleInvoiceFinance}" />
+							<ui:param name="formName" value="saleInvoiceForm" />
+						</ui:include>
+					</aon:panelGrid>
 
-								<aon:if test="#{company.EInvoice}">
-									<aon:outputText value="&#160;"
-										rendered="#{!saleInvoice.nevv and saleInvoice.to.signed}"
-										title="#{bundle.sign_signed}"
-										styleClass="aon-icon aon-icon-signed" />
-								</aon:if>						
+					<aon:div styleClass="aon-margin-top">
+						<aon:panelGrid columns="2" styleClass="aon-width-all"
+							columnClasses="aon-panelGrid-odd aon-width-140,
+								aon-panelGrid-even aon-width-auto">
 
-								<aon:outputText value="#{saleInvoice.to.status}" rendered="#{saleInvoice.recorded}"/>
-								<aon:if test="#{aonRole.accountingOperator and saleInvoice.recorded and saleInvoice.backAction != 'accountEntry_form'}">
-									<aon:commandLink immediate="true"
-											styleClass="aon-button-goto"
-											style="margin-left: 5px; padding-left: 17px;" 
-											actionListener="#{saleInvoice.onViewAccountEntry}" 
-											action="accountEntry_form"
-											title="#{bundle.account_account_entry}: #{saleInvoice.accountEntryId}"
-											alt="#{bundle.account_account_entry}: #{saleInvoice.accountEntryId}" />
-								</aon:if>
-							</aon:div>
+							<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formCommonContent.xhtml">
+								<ui:param name="invoiceController" value="#{saleInvoice}" />
+								<ui:param name="addressController" value="#{saleInvoiceAddress}" />
+								<ui:param name="detailController" value="#{saleInvoiceDetail}" />
+								<ui:param name="financeController" value="#{saleInvoiceFinance}" />
+								<ui:param name="formName" value="saleInvoiceForm" />
+							</ui:include>
+
 						</aon:panelGrid>
 					</aon:div>
-
-					<aon:outputLabel for="Invoice_issueDate"
-						value="#{bundle.aon_date}" />
-					<aon:div>
-						<aon:selectInputDate id="Invoice_issueDate"
-							value="#{saleInvoice.to.issueDate}" required="true"
-							disabled="#{saleInvoice.readOnly}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}">
-							<a4j:support ajaxSingle="true" event="oninputchange"
-								actionListener="#{saleInvoice.onDateChanged}"
-								reRender="Invoice_taxDate" />
-							<a4j:support ajaxSingle="true" event="onchanged"
-								actionListener="#{saleInvoice.onDateChanged}"
-								reRender="Invoice_taxDate" />
-						</aon:selectInputDate>
-					</aon:div>
-
-					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
-						<ui:param name="lookupTo" value="#{saleInvoice.to.registry}" />
-						<ui:param name="lookupForRegistry" value="#{true}" />
-						<ui:param name="lookupInputNameValue" value="#{saleInvoice.to.registryName}" />
-						<ui:param name="lookupDisabled" value="#{saleInvoice.registryReadOnly or !saleInvoiceFinance.allPending}" />
-						<ui:param name="lookupInputNameDisabled" value="#{saleInvoice.readOnly or !saleInvoiceFinance.allPending}" />
-						<ui:param name="lookupReRender" value="Customer_lookup_document,InvoiceAddress,InvoiceProject" />
-						<ui:param name="idRequired" value="#{true}" />						
-						<ui:param name="skipSuggestText" 
-							value="#{saleInvoice.to.registry != null and saleInvoice.to.registry.id != null}" />
-						<aon:methodParam name="lookupChangeListener"
-							value="#{saleInvoice.onCustomerChanged}" type="lookupChangeListener" />
-					</ui:include>
-					
-					<aon:outputLabel for="Invoice_taxDate" 
-						value="#{bundle.finance_tax_date}" />
-					<aon:if test="#{aonRole.accountingOperator}">
-						<aon:selectInputDate id="Invoice_taxDate"
-							value="#{saleInvoice.to.taxDate}" required="true" 
-							disabled="#{saleInvoice.readOnly}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"
-							inputStyle="#{saleInvoice.taxDateEquals?'':'background-color: #ff865e;'}">
-							<a4j:support ajaxSingle="true" event="oninputchange"
-								reRender="Invoice_taxDate" />
-							<a4j:support ajaxSingle="true" event="onchanged"
-								reRender="Invoice_taxDate" />
-						</aon:selectInputDate>
-					</aon:if>
-					<aon:if test="#{!aonRole.accountingOperator}">
-						<aon:outputText value="#{saleInvoice.to.taxDate}" />
-					</aon:if>
-
-					<aon:outputLabel for="Customer_registry_document"
-						value="#{bundle.aon_company_document}" />
-					<aon:panelGroup id="Customer_lookup_document">
-						<aon:selectOneMenu id="Customer_registry_document_type"
-							disabled="#{saleInvoice.readOnly}" 
-							value="#{saleInvoice.to.registryDocumentType}" 
-							reRender="Customer_document_icon">
-							<f:selectItems value="#{registryCollections.documentTypes}" />
-						</aon:selectOneMenu>
-						<aon:outputText styleClass="aon-margin-left aon-italic"
-							value="#{bundle.aon_country}" />
-						<aon:selectOneMenu id="Customer_registry_document_country"
-							styleClass="aon-margin-left" disabled="#{saleInvoice.readOnly}"
-							value="#{saleInvoice.to.registryDocumentCountry}"
-							reRender="Customer_document_icon">
-							<f:selectItems value="#{commonCollections.countryCodes}" />
-						</aon:selectOneMenu>
-						<aon:inputText id="Customer_registry_document" 
-							style="margin-left: 3px;" disabled="#{saleInvoice.readOnly}"
-							value="#{saleInvoice.to.registryDocument}" size="16" maxlength="16"
-							reRender="Customer_document_icon" 
-							onblur="toUpperCase(this);">
-							<f:validateLength minimum="1" maximum="16" />
- 						</aon:inputText>
-						<aon:panelGroup id="Customer_document_icon">
-							<aon:outputText 
-								rendered="#{!saleInvoice.to.registryDocumentValidable}"
-								styleClass="aon-icon-question"
-								style="padding-left: 15px;"
-								value="&#160;" />
-							<aon:outputText 
-								rendered="#{saleInvoice.to.registryDocumentValidable and saleInvoice.to.validRegistryDocument}"
-								styleClass="aon-icon-predetermine"
-								style="padding-left: 15px;"
-								value="&#160;" />
-							<aon:outputText 
-								rendered="#{saleInvoice.to.registryDocumentValidable and !saleInvoice.to.validRegistryDocument}"
-								styleClass="aon-icon-exception"
-								style="padding-left: 15px;"
-								value="&#160;" />
-	 					</aon:panelGroup>
- 					</aon:panelGroup>
- 					
- 					<aon:outputLabel value="#{bundle.aon_document_number}" />
-					<aon:outputText styleClass="aon-bold"
-						value="#{saleInvoice.to.documentNumber}" />
-
-					<aon:outputLabel for="Invoice_registryAddress_id"
-						value="#{bundle.aon_address}" />
-					<aon:div id="InvoiceAddress">
-						<aon:selectOneMenu id="Invoice_registryAddress_id"
-							rendered="#{!saleInvoice.readOnly and saleInvoiceAddress.to.id == null and saleInvoice.addressCount > 0}"
-							value="#{saleInvoice.to.registryAddress}">
-							<f:selectItems value="#{saleInvoice.addresses}" />
-						</aon:selectOneMenu>
-						<aon:outputLabel styleClass="aon-italic"
-							value="#{bundle.registry_no_address_available}"
-							rendered="#{saleInvoiceAddress.to.id == null and ((saleInvoice.readOnly and saleInvoice.to.registryAddress.id == null) or (!saleInvoice.readOnly and saleInvoice.addressCount == 0))}" />
-						<aon:outputText styleClass="aon-bold"
-							value="#{saleInvoice.address}" 
-							rendered="#{saleInvoiceAddress.to.id != null or (saleInvoice.readOnly and saleInvoice.to.registryAddress.id != null)}">
-							<aon:abbreviateConverter maxWidth="30" />
-						</aon:outputText>
-						<aon:outputText styleClass="aon-margin-left aon-bold"
-							value="#{saleInvoice.location}"
-							rendered="#{saleInvoiceAddress.to.id != null or (saleInvoice.readOnly and saleInvoice.to.registryAddress.id != null)}">
-							<aon:abbreviateConverter maxWidth="25" />
-						</aon:outputText>
-						<aon:div layout="inline" styleClass="aon-margin-left">
-							<aon:commandButton id="invoiceAddressButton"
-								value="#{bundle.registry_address_other}"
-								styleClass="aon-icon-commandButton aon-icon-go aon-bold aon-italic"
-								rendered="#{!saleInvoice.nevv and !saleInvoice.readOnly}"
-								actionListener="#{saleInvoice.onInvoiceAddressShow}"
-								reRender="showInvoiceAddressWindow">
-								<f:setPropertyActionListener target="#{saleInvoice.showInvoiceAddressWindow}"
-									value="#{true}" />								
-							</aon:commandButton>
-						</aon:div>
-					</aon:div>
-
-					<aon:outputLabel for="Invoice_total" 
-						value="#{bundle.aon_total}" />
-					<aon:div>
-						<aon:outputText id="Invoice_total" styleClass="aon-bold"
-							value="#{saleInvoice.toInvoiceTotalPrice}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-						<aon:outputLabel styleClass="aon-margin-left aon-italic"
-							value="(#{bundle.aon_tax_included})" />
-					</aon:div>
-				</aon:panelGrid>
-
-				<aon:div id="InvoiceProject">
-					<aon:panelGrid columns="2" styleClass="aon-width-all"
-						rendered="#{(saleInvoice.nevv and saleInvoice.to.registry.id != null and projectCollections.activeProjects) 
-										or saleInvoice.savedProject.id != null}"
-						columnClasses="aon-panelGrid-odd aon-width-140,
-							aon-panelGrid-even aon-width-auto">
-
-						<aon:if test="#{!aonConfiguration.bean.invoice.showTasData}">
-							<aon:outputLabel for="Project_id"
-								value="#{bundle.aon_project}" />
-						</aon:if>
-						<aon:if test="#{aonConfiguration.bean.invoice.showTasData}">
-							<aon:outputLabel for="Project_id"
-								value="#{bundle.tas_project_tas}" />
-						</aon:if>
-						<aon:div>
-							<aon:div rendered="#{saleInvoice.nevv and !saleInvoice.showProjectLookup and saleInvoice.projectListEnabled}">
-								<aon:selectOneMenu id="Project_id-list" 
-									value="#{saleInvoice.to.project}">
-									<f:selectItem value="#{null}" />
-									<f:selectItems value="#{saleInvoice.projects}" />
-								</aon:selectOneMenu>
-								<aon:commandLink id="Project_lookup" immediate="true"
-									value="&#160;" title="#{bundle.aon_lookup}"
-									styleClass="aon-icon-lookup" style="margin-left: 5px; padding-right: 12px;"
-									reRender="InvoiceProject">
-									<f:setPropertyActionListener target="#{saleInvoice.showProjectLookup}"
-										value="#{true}" />							
-								</aon:commandLink>
-							</aon:div>
-							<aon:div rendered="#{!saleInvoice.readOnly and (saleInvoice.showProjectLookup or !saleInvoice.projectListEnabled)}">
-								<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml">
-									<ui:param name="lookupTo" value="#{saleInvoice.to.project}" />
-									<ui:param name="skipLabel" value="#{true}" />
-									<ui:param name="skipGoToButton" value="#{true}" />
-								</ui:include>
-								<aon:commandLink id="Project_list" immediate="true"
-									value="&#160;" title="#{bundle.aon_list}"
-									styleClass="aon-icon-drop-down" style="margin-left: 5px; padding-right: 12px;"
-									rendered="#{saleInvoice.nevv and saleInvoice.projectListEnabled}"
-									reRender="InvoiceProject">
-									<f:setPropertyActionListener target="#{saleInvoice.showProjectLookup}"
-										value="#{false}" />							
-								</aon:commandLink>
-							</aon:div>
-							<aon:outputText styleClass="aon-bold"
-								value="#{saleInvoice.to.project.name}" 
-								rendered="#{saleInvoice.readOnly}" />
-						</aon:div>
-
-					</aon:panelGrid>
-				</aon:div>
-
-				<aon:panelGrid columns="4" styleClass="aon-width-all"
-					rendered="#{saleInvoice.to.seller.id != null or saleInvoice.to.posShift.id != null}"
-					columnClasses="aon-panelGrid-odd aon-width-140,
-						aon-panelGrid-even aon-width-500,
-						aon-panelGrid-odd aon-width-100,
-						aon-panelGrid-even aon-width-auto">
-
-					<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
-						<ui:param name="lookupTo" value="#{saleInvoice.to.seller}" />
-						<ui:param name="lookupDisabled" value="#{saleInvoice.readOnly}" />
-						<aon:methodParam name="lookupChangeListener"
-							value="#{saleInvoice.onSellerChanged}" type="lookupChangeListener" />
-					</ui:include>
-
-					<aon:outputLabel value="#{bundle.aon_module_pos}" />
-					<aon:div styleClass="aon-bold">
-						<aon:outputText value="#{saleInvoice.to.posShift.pos.name}" />
-						<aon:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
-							<aon:outputText value=" (#{saleInvoice.to.posShift.pos.workPlace.description})" />
-						</aon:if>
-					</aon:div>
-
-				</aon:panelGrid>
-
-				<aon:panelGrid columns="2" styleClass="aon-width-all"
-					columnClasses="aon-panelGrid-odd aon-width-140,
-						aon-panelGrid-even aon-width-auto">
-
-					<aon:div rendered="#{!empty saleInvoice.to.comments or saleInvoice.to.vatAccrualPayment or saleInvoice.rectifier or saleInvoice.rectified}">
-						<aon:outputLabel for="Invoice_comments"
-							value="#{bundle.aon_comment}" />
-						<aon:div>
-							<aon:outputLabel styleClass="aon-form-date-label"
-								value="(#{bundle.aon_comment_description})" />
-						</aon:div>
-					</aon:div>
-					<aon:div rendered="#{!empty saleInvoice.to.comments or saleInvoice.to.vatAccrualPayment or saleInvoice.rectifier or saleInvoice.rectified}">
-						<aon:inputTextarea id="Invoice_comments" cols="145" rows="2"
-							value="#{saleInvoice.to.comments}"
-							rendered="#{!empty saleInvoice.to.comments}"
-							disabled="#{saleInvoice.readOnly}" />
-						<aon:div rendered="#{saleInvoice.to.vatAccrualPayment}">
-							<aon:outputText styleClass="aon-bold aon-label-info"
-								 value="#{bundle.finance_invoice_vat_accrual_payment_message}" />
-						</aon:div>
-						<aon:div rendered="#{saleInvoice.rectifier}">
-							<aon:outputFormat styleClass="aon-bold aon-label-error"
-								 value="#{bundle.finance_invoice_rectifier_message2}">
-								<f:param value="#{saleInvoice.to.rectificationInvoice.referenceCode}" />
-							</aon:outputFormat>
-						</aon:div>
-						<aon:div rendered="#{saleInvoice.rectified}">
-							<aon:outputFormat styleClass="aon-bold aon-label-error"
-								 value="#{bundle.finance_invoice_rectified_message2}">
-								<f:param value="#{saleInvoice.to.rectificationInvoicesString}" />
-							</aon:outputFormat>
-						</aon:div>
-					</aon:div>
-
-					<aon:div rendered="#{!empty saleInvoice.to.remarks}">
-						<aon:outputLabel for="Invoice_remarks"
-							value="#{bundle.aon_remark}" />
-						<aon:div>
-							<aon:outputLabel styleClass="aon-form-date-label"
-								value="(#{bundle.aon_remark_description})" />
-						</aon:div>
-					</aon:div>
-					<aon:inputTextarea id="Invoice_remarks" cols="145" rows="2"
-						value="#{saleInvoice.to.remarks}"
-						rendered="#{!empty saleInvoice.to.remarks}"
-						disabled="#{saleInvoice.readOnly}" />
-
-				</aon:panelGrid>
+				</aon:if>
 
 				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/formDetail.xhtml">
 					<ui:param name="invoiceController" value="#{saleInvoice}" />
@@ -532,6 +240,9 @@
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 			<ui:param name="invoiceAddress" value="#{saleInvoiceAddress}" />
 			<ui:param name="addressReRender" value="InvoiceAddress" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalActivity.xhtml">
+			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/project/facelet/project/modalProject.xhtml">
 			<ui:param name="controller" value="#{saleInvoice}" />

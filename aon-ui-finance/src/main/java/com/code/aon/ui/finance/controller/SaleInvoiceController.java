@@ -15,7 +15,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.company.Company;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.SeriesUtil;
@@ -92,6 +91,13 @@ public class SaleInvoiceController extends InvoiceController {
 		this.showDeliveryFilterWindow = showDeliveryFilterWindow;
 	}
 
+	@Override
+	public void accept(ActionEvent event) {
+		String series = getInvoice().getSeries();
+		super.accept(event);
+		getInvoice().setSeries(series);
+	}
+
 	public boolean isSeriesValid() throws ManagerBeanException {
 		String seriesCode = getInvoice().getSeries();
 		return (StringUtils.isEmpty(seriesCode)) ? true : seriesCode.equals(SeriesUtil.ensureInvoiceSeries(seriesCode));
@@ -142,8 +148,9 @@ public class SaleInvoiceController extends InvoiceController {
 		invoice.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry());
 		invoice.setRegistry(customer.getRegistry());
 		invoice.setTransaction(customer.getTransaction());
-		invoice.setSurcharge(customer.isSurcharge());
-		invoice.setWithholding(customer.isWithholding() && getCompany().isWithholding());
+		invoice.setSurcharge(!invoice.isVatFree() && customer.isSurcharge());
+		invoice.setWithholding(customer.isWithholding() && getCompanyController().isWithholding());
+		invoice.setWithholdingFarmer(customer.isWithholding() && getCompanyController().isWithholdingFarmer());
 		invoice.setScope(customer.getScope());
 		loadAddresses(customer.getId());
 
@@ -152,28 +159,19 @@ public class SaleInvoiceController extends InvoiceController {
 
 			InvoiceFinanceController financeController = (InvoiceFinanceController)FormUtil.getController(getInvoiceFinanceControllerName());
 			Finance finance = (Finance)financeController.getTo();
-			if (finance != null) {
-				RegistryPayMethod rPayMethod = customer.getRegistry().getPayMethod();
-				finance.setPayMethod((rPayMethod==null) ? new PayMethod() : rPayMethod.getPayment());
-				finance.setBankAccount((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? new BankAccount() : rPayMethod.getBankAccount());
-				finance.setBankAlias((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? null : rPayMethod.getBankAlias());
-				finance.setBic((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? null : rPayMethod.getBic());
+			RegistryPayMethod rPayMethod = customer.getRegistry().getPayMethod();
+			finance.setPayMethod((rPayMethod==null) ? new PayMethod() : rPayMethod.getPayment());
+			finance.setBankAccount((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? new BankAccount() : rPayMethod.getBankAccount());
+			finance.setBankAlias((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? null : rPayMethod.getBankAlias());
+			finance.setBic((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? null : rPayMethod.getBic());
 
-				financeController.setRegistryBank((rPayMethod==null) ? null : rPayMethod.getRegistryBank());
-				financeController.setShowBankManualInput(false);
-			}
+			financeController.setRegistryBank((rPayMethod==null) ? null : rPayMethod.getRegistryBank());
+			financeController.setShowBankManualInput(false);
 		}
 	}
 
 	private boolean isBlocked(Customer customer) {
 		return getRegistryValidationManager().isBlocked(customer);
-	}
-
-	private Company getCompany() throws ManagerBeanException {
-		for (ITransferObject ito : BeanManager.getManagerBean(Company.class).getList(null, 0, 1)) {
-			return (Company)ito;
-		}
-		return null;
 	}
 
 	public void onSellerChanged(LookupChangeEvent event) {
@@ -277,13 +275,6 @@ public class SaleInvoiceController extends InvoiceController {
 		SignerController signer = super.getSignerController();
 		signer.setReportKey(getCompanyController().getSaleInvoiceTemplateValue());
 		return signer;
-	}
-
-	@Override
-	public void accept(ActionEvent event) {
-		String series = getInvoice().getSeries();
-		super.accept(event);
-		getInvoice().setSeries(series);
 	}
 
 }

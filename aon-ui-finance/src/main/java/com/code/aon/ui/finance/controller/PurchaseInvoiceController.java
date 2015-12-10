@@ -64,6 +64,33 @@ public class PurchaseInvoiceController extends InvoiceController {
 		return vm;
 	}
 
+	public IncomeTransferManager getIncomeTransferManager() {
+		if (incomeTransferManager == null) {
+			incomeTransferManager = new IncomeTransferManager(); 
+		}
+		return incomeTransferManager;
+	}
+
+	public void setIncomeTransferManager(IncomeTransferManager incomeTransferManager) {
+		this.incomeTransferManager = incomeTransferManager;
+	}
+
+	public boolean isShowIncomeTransferWindow() {
+		return showIncomeTransferWindow;
+	}
+
+	public void setShowIncomeTransferWindow(boolean value) {
+		this.showIncomeTransferWindow = value;
+	}
+
+	public boolean isShowIncomeFilterWindow() {
+		return showIncomeFilterWindow;
+	}
+
+	public void setShowIncomeFilterWindow(boolean showIncomeFilterWindow) {
+		this.showIncomeFilterWindow = showIncomeFilterWindow;
+	}
+
 	public void onSupplierChanged(LookupChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Supplier supplier = (Supplier)event.getNewValue();
@@ -108,33 +135,6 @@ public class PurchaseInvoiceController extends InvoiceController {
 
 	private boolean isBlocked(Supplier supplier) {
 		return getRegistryValidationManager().isBlocked(supplier);
-	}
-
-	public IncomeTransferManager getIncomeTransferManager() {
-		if (incomeTransferManager == null) {
-			incomeTransferManager = new IncomeTransferManager(); 
-		}
-		return incomeTransferManager;
-	}
-
-	public void setIncomeTransferManager(IncomeTransferManager incomeTransferManager) {
-		this.incomeTransferManager = incomeTransferManager;
-	}
-
-	public boolean isShowIncomeTransferWindow() {
-		return showIncomeTransferWindow;
-	}
-
-	public void setShowIncomeTransferWindow(boolean value) {
-		this.showIncomeTransferWindow = value;
-	}
-
-	public boolean isShowIncomeFilterWindow() {
-		return showIncomeFilterWindow;
-	}
-
-	public void setShowIncomeFilterWindow(boolean showIncomeFilterWindow) {
-		this.showIncomeFilterWindow = showIncomeFilterWindow;
 	}
 
 	public void onIncomeTransferShow(ActionEvent event) throws ManagerBeanException {
