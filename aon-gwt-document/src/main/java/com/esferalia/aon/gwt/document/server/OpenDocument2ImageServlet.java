@@ -34,7 +34,11 @@ import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.google.apis.controller.GoogleDriveController;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
+import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.google.api.services.drive.Drive;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfStamper;
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
 
@@ -160,7 +164,17 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 			byte[] bytes) throws IOException {
 
 		if (mimeType == MimeType.MIME_PDF) {
-			return ByteBuffer.wrap(bytes);
+		
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			PdfReader reader = new PdfReader(bytes);
+			PdfStamper stamper;
+			try {
+				stamper = new PdfStamper(reader, os, '4');
+				stamper.close();
+			} catch (DocumentException e) {
+				e.printStackTrace();
+			}
+			return ByteBuffer.wrap(os.toByteArray());
 		}
 
 		String tmpDir = System.getProperty("java.io.tmpdir");
