@@ -172,7 +172,7 @@ public class FANWriter implements Serializable {
 	
 	private EMP createEMPrecord(EnterpriseCCC ccc) throws  ManagerBeanException {
 		EMP emp = new EMP();
-		emp.setCodigoCuentaCotizacionSeguridadSocial(ccc.getActivity().getType().getCode()+ccc.getCcc());
+		emp.setCodigoCuentaCotizacionSeguridadSocial(PayrollUtils.getInstance().getRegimeCode(ccc)+ccc.getCcc());
 		
 		DocumentType docType = ccc.getActivity().getEnterprise().getRegistry().getDocumentType();
     	if(docType==DocumentType.NIF){
@@ -194,7 +194,7 @@ public class FANWriter implements Serializable {
     	
     	emp.setCalificador(WHITESPACE_2);
     	EnterpriseCCC mainCcc = obtainMainCCC(ccc);
-		emp.setCodigoCuentaCotizacionPrincipal(mainCcc.getActivity().getType().getCode()+mainCcc.getCcc());
+		emp.setCodigoCuentaCotizacionPrincipal(PayrollUtils.getInstance().getRegimeCode(mainCcc)+mainCcc.getCcc());
 		emp.setAnio(year);
 		emp.setDesdeMes(startMonth.ordinal()+1);
 		emp.setHastaMes(endMonth.ordinal()+1);
@@ -2324,7 +2324,7 @@ public class FANWriter implements Serializable {
 					
 				}
 				if(cccErrors!=null && cccErrors.size()>0){
-					errors.add("Errores de " + ccc.getActivity().getEnterprise().getRegistry().getFullName() + " (" + ccc.getActivity().getType().getCode()+ccc.getCcc() + "): ");
+					errors.add("Errores de " + ccc.getActivity().getEnterprise().getRegistry().getFullName() + " (" + PayrollUtils.getInstance().getRegimeCode(ccc)+ccc.getCcc() + "): ");
 					errors.addAll(cccErrors);
 					errors.add(".");
 				}

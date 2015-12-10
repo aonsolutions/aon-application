@@ -12,6 +12,7 @@ import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentEx
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;
+import com.esferalia.aon.payroll.util.PayrollUtils;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.COTIZACIONTYPE;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.CUENTACOTIZACIONTYPE;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.CertificadoEmpresa;
@@ -53,8 +54,8 @@ public class EnterpriseCertificate extends AbstractEnterpriseCertificate {
 				
 				// ENTERPRISE
 				setPdfFieldValue(EnterpriseCertificateField.ENTERPRISE_NAME.getValue(),contract.getWorkPlace().getEnterprise().getRegistry().getFullName());
-				if(contract.getEnterpriseCCC()!=null && contract.getEnterpriseCCC().getActivity().getType().getCode()!=null){
-					setPdfFieldValue(EnterpriseCertificateField.ENTERPRISE_REGIME_CODE.getValue(),contract.getEnterpriseCCC().getActivity().getType().getCode());
+				if(contract.getEnterpriseCCC()!=null && PayrollUtils.getInstance().getRegimeCode(contract.getEnterpriseCCC())!=null){
+					setPdfFieldValue(EnterpriseCertificateField.ENTERPRISE_REGIME_CODE.getValue(),PayrollUtils.getInstance().getRegimeCode(contract.getEnterpriseCCC()));
 				}
 				setPdfFieldValue(EnterpriseCertificateField.ENTERPRISE_REGIME_NAME.getValue(),contract.getEnterpriseCCC().getActivity().getType().getName(getLocale()));
 				setPdfFieldValue(EnterpriseCertificateField.ENTERPRISE_CCC.getValue(),contract.getEnterpriseCCC().getCcc());

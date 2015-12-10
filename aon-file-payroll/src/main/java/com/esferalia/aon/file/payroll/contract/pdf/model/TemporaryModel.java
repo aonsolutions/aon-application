@@ -26,6 +26,7 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.contrata.TEIINTER;
 import com.esferalia.aon.payroll.enumeration.contrata.TEQPTIEM;
 import com.esferalia.aon.payroll.enumeration.contrata.TETPGMEM;
+import com.esferalia.aon.payroll.util.PayrollUtils;
 import com.lowagie.text.pdf.PdfReader;
 
 
@@ -110,8 +111,8 @@ public class TemporaryModel extends AbstractContractModel {
 			 * Contract ccc fields
 			 */
 			if(contract.getEnterpriseCCC()!=null){
-				if(contract.getEnterpriseCCC().getActivity().getType().getCode()!=null){
-					String quoteRegime = contract.getEnterpriseCCC().getActivity().getType().getCode();
+				if(PayrollUtils.getInstance().getRegimeCode(contract.getEnterpriseCCC())!=null){
+					String quoteRegime = PayrollUtils.getInstance().getRegimeCode(contract.getEnterpriseCCC());
 					if(StringUtils.isNotBlank(quoteRegime) && quoteRegime.length()>=4){
 						setPdfFieldValue(PdfFieldTemporary.CCC_REG1.getValue(),quoteRegime.substring(0, 1));
 						setPdfFieldValue(PdfFieldTemporary.CCC_REG2.getValue(),quoteRegime.substring(1, 2));

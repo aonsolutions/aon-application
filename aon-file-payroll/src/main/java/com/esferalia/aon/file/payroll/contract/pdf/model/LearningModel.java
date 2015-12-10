@@ -36,6 +36,7 @@ import com.esferalia.aon.payroll.TrainingCourse;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.TrainingModality;
+import com.esferalia.aon.payroll.util.PayrollUtils;
 import com.lowagie.text.pdf.PdfReader;
 
 
@@ -120,8 +121,8 @@ public class LearningModel extends AbstractContractModel {
 			 * Contract ccc fields
 			 */
 			if(contract.getEnterpriseCCC()!=null){
-				if(contract.getEnterpriseCCC().getActivity().getType().getCode()!=null){
-					String quoteRegime = contract.getEnterpriseCCC().getActivity().getType().getCode();
+				if(PayrollUtils.getInstance().getRegimeCode(contract.getEnterpriseCCC())!=null){
+					String quoteRegime = PayrollUtils.getInstance().getRegimeCode(contract.getEnterpriseCCC());
 					if(StringUtils.isNotBlank(quoteRegime) && quoteRegime.length()>=4){
 						setPdfFieldValue(PdfFieldLearning.CCC_REG1.getValue(),quoteRegime.substring(0, 1));
 						setPdfFieldValue(PdfFieldLearning.CCC_REG2.getValue(),quoteRegime.substring(1, 2));

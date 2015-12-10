@@ -3,6 +3,8 @@ package com.esferalia.aon.payroll.util;
 import org.apache.commons.lang.StringUtils;
 
 import com.esferalia.aon.payroll.EnterpriseCCC;
+import com.esferalia.aon.payroll.enumeration.CCCType;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.ss.T54;
 import com.esferalia.aon.salary.enumeration.BonusType;
 
@@ -31,6 +33,14 @@ public class PayrollUtils {
 		}
 		
 		return null;
+	}
+	
+	public String getRegimeCode(EnterpriseCCC ccc){
+		if(ccc.getType()==CCCType.AGRICULTURAL){
+			return SSRegimeType.AGRICULTURAL.getCode();
+		} else {
+			return ccc.getActivity().getType().getCode();
+		}
 	}
 	
 	public boolean isValidSSNumber(EnterpriseCCC ccc){

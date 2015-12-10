@@ -42,6 +42,7 @@ import com.esferalia.aon.file.payroll.cra.data.ETI;
 import com.esferalia.aon.file.payroll.cra.data.TRB;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseCCC;
+import com.esferalia.aon.payroll.util.PayrollUtils;
 
 public class CRAWriter {
 	
@@ -83,7 +84,7 @@ public class CRAWriter {
 			endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			for (EnterpriseCCC ccc: cccs) {
-				DDE dde = createDDERecord(year, month, ccc.getActivity().getType().getCode()+ccc.getCcc());
+				DDE dde = createDDERecord(year, month, PayrollUtils.getInstance().getRegimeCode(ccc)+ccc.getCcc());
 				Result<Record3<Byte, Double, Integer>> record = getSalaryPaymentSelect(connection, ccc, startCal.getTime(), endCal.getTime() );
 				TRB trb = null;
 				for (Record3<Byte, Double, Integer> step : record) {
@@ -105,7 +106,7 @@ public class CRAWriter {
 				if(dde.getTrbList()!=null && !dde.getTrbList().isEmpty()){
 					eti.getDdeList().add(dde);
 				} else {
-					AonUtil.addErrorMessage("No hay datos para la cuenta de cotización: " + ccc.getActivity().getType().getCode()+ccc.getCcc());
+					AonUtil.addErrorMessage("No hay datos para la cuenta de cotización: " + PayrollUtils.getInstance().getRegimeCode(ccc)+ccc.getCcc());
 				}
 			}
 			return eti;

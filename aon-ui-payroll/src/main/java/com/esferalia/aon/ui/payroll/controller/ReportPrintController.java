@@ -308,7 +308,7 @@ public class ReportPrintController implements Serializable, ICollectionProvider 
 					EnterpriseCCC enterpriseCCC = (EnterpriseCCC)to;
 					Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 					String label = enterpriseCCC.getType().getName(locale) +" (";
-					label += enterpriseCCC.getActivity().getType().getCode();
+					label += PayrollUtils.getInstance().getRegimeCode(enterpriseCCC);
 					label += enterpriseCCC.getCcc() + ")";
 					availableCCCs.add(new SelectItem(enterpriseCCC, label));
 				}

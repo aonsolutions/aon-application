@@ -27,6 +27,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.FanBatch;
 import com.esferalia.aon.payroll.FanBatchDetail;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -87,6 +88,15 @@ public class FanListController extends BasicController {
 
 	public void setGeozone(GeoZone geozone) {
 		this.geozone = geozone;
+	}
+	
+	public String getFullQuoteRegime() throws ManagerBeanException {
+		if (this.getModel().isRowAvailable()) {
+			return PayrollUtils.getInstance().getRegimeCode(
+					(EnterpriseCCC) this.getModel().getRowData())
+					+ ((EnterpriseCCC) this.getModel().getRowData()).getCcc();
+		}
+		return null;
 	}
 
 	public void init(){

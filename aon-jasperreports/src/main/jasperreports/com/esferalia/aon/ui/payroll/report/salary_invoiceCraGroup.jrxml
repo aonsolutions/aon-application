@@ -296,8 +296,7 @@
 					<rightPen lineWidth="0.5" lineColor="#000000"/>
 				</box>
 				<textElement/>
-				<textFieldExpression><![CDATA[$F{salary}.getContract().getEnterpriseCCC().getActivity().getType().getCode()+
-$F{salary}.getContract().getEnterpriseCCC().getCcc()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{salary}.getContract().getFullQuoteRegime()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="c09f0b34-8da5-4c74-b787-ce936894df98" style="title" x="281" y="39" width="274" height="11"/>

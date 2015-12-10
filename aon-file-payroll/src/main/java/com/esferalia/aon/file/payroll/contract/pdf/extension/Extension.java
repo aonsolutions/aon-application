@@ -22,6 +22,7 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryDirStaff;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.file.payroll.contract.pdf.PdfFieldPractice;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
 import com.esferalia.aon.file.payroll.contrata.ContrataProrrogaParams;
@@ -32,6 +33,7 @@ import com.esferalia.aon.payroll.ContractInfo;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.payroll.util.PayrollUtils;
 import com.lowagie.text.pdf.PdfReader;
 
 
@@ -154,11 +156,12 @@ public class Extension extends AbstractContractExtension {
 			 * Contract ccc fields
 			 */
 			if(contract.getEnterpriseCCC()!=null){
-				if(contract.getEnterpriseCCC().getActivity().getType().getCode()!=null){
-					setPdfFieldValue(CCC_REG1,contract.getEnterpriseCCC().getActivity().getType().getCode().substring(0, 1));
-					setPdfFieldValue(CCC_REG2,contract.getEnterpriseCCC().getActivity().getType().getCode().substring(1, 2));
-					setPdfFieldValue(CCC_REG3,contract.getEnterpriseCCC().getActivity().getType().getCode().substring(2, 3));
-					setPdfFieldValue(CCC_REG4,contract.getEnterpriseCCC().getActivity().getType().getCode().substring(3, 4));
+				String regimeCode = PayrollUtils.getInstance().getRegimeCode(contract.getEnterpriseCCC());
+				if(regimeCode!=null){
+					setPdfFieldValue(CCC_REG1,regimeCode.substring(0, 1));
+					setPdfFieldValue(CCC_REG2,regimeCode.substring(1, 2));
+					setPdfFieldValue(CCC_REG3,regimeCode.substring(2, 3));
+					setPdfFieldValue(CCC_REG4,regimeCode.substring(3, 4));
 				}
 				if(contract.getEnterpriseCCC().getCcc().length()==11){
 					setPdfFieldValue(CCC_PROV1,contract.getEnterpriseCCC().getCcc().substring(0, 1));

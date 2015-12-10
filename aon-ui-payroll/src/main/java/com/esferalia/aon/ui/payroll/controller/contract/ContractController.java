@@ -825,7 +825,7 @@ public class ContractController extends BasicController {
 				for(ITransferObject to: cccList){
 					EnterpriseCCC ccc = (EnterpriseCCC) to;
 					String name = ccc.getType().getName(locale) +" (";
-					name += ccc.getActivity().getType().getCode();
+					name += PayrollUtils.getInstance().getRegimeCode(ccc);
 					name += ccc.getCcc() + ")";
 					SelectItem item = new SelectItem(ccc, name);
 					getEnterpriseCCCs().add(item);

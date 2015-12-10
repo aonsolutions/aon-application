@@ -29,6 +29,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.CraBatch;
 import com.esferalia.aon.payroll.CraBatchDetail;
+import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
@@ -87,6 +88,15 @@ public class CraListController extends BasicController {
 
 	public void setGeozone(GeoZone geozone) {
 		this.geozone = geozone;
+	}
+	
+	public String getFullQuoteRegime() throws ManagerBeanException {
+		if (this.getModel().isRowAvailable()) {
+			return PayrollUtils.getInstance().getRegimeCode(
+					(EnterpriseCCC) this.getModel().getRowData())
+					+ ((EnterpriseCCC) this.getModel().getRowData()).getCcc();
+		}
+		return null;
 	}
 
 	public void init(){

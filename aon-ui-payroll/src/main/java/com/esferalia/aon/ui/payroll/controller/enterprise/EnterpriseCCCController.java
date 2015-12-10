@@ -84,7 +84,7 @@ public class EnterpriseCCCController extends LinesController {
 	
 	public String getQuoteRegimeCode() throws ManagerBeanException{
 		if(this.getModel().isRowAvailable()){
-			return ((EnterpriseCCC) this.getModel().getRowData()).getActivity().getType().getCode();
+			return PayrollUtils.getInstance().getRegimeCode(((EnterpriseCCC) this.getModel().getRowData()));
 		} else if(this.isNevv()){
 			return ((EnterpriseActivity) this.getMasterController().getTo()).getType().getCode();
 		}

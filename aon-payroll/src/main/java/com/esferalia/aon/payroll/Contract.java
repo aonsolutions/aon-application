@@ -26,6 +26,7 @@ import com.esferalia.aon.entity.master.ContractDB;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
+import com.esferalia.aon.payroll.util.PayrollUtils;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -73,6 +74,11 @@ public class Contract extends ContractDB {
 	@Transient
 	public boolean isSeniorityDateDifferent() {
 		return !DateUtils.isSameDay(getStartDate(), getSeniorityDate());
+	}
+	
+	@Transient
+	public String getFullQuoteRegime() {
+		return PayrollUtils.getInstance().getRegimeCode(this.getEnterpriseCCC()) + this.getEnterpriseCCC().getCcc();
 	}
 	
 	@Transient

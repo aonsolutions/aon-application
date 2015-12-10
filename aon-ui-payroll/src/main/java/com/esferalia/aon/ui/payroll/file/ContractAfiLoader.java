@@ -180,7 +180,7 @@ public class ContractAfiLoader implements IContractLoader, Serializable {
 						errors++;
 						logInfo("Se omiten los contratos incluidos de la cuenta de cotizacion " + cccValue);
 					} else {
-						if( !ccc.getActivity().getType().getCode().equals(quoteRegimeValue) ){
+						if( !PayrollUtils.getInstance().getRegimeCode(ccc).equals(quoteRegimeValue) ){
 							logError("Regimen incorrecto para la actividad" + ccc.getActivity().getDescription()+" ["+enterprise.getRegistry().getFullName()+"]");
 							errors++;
 						}

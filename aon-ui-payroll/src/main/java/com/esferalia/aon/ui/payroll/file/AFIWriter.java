@@ -49,6 +49,7 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.ss.T21;
 import com.esferalia.aon.payroll.enumeration.ss.T7;
+import com.esferalia.aon.payroll.util.PayrollUtils;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class AFIWriter implements Serializable {
@@ -258,7 +259,7 @@ public class AFIWriter implements Serializable {
 		I=IDC
 		*/
 		fab.setIndicadorImpresion(WHITESPACE_1);
-		if(contract.getEnterpriseCCC().getActivity().getType().getCode().equals("0911")
+		if(PayrollUtils.getInstance().getRegimeCode(contract.getEnterpriseCCC()).equals("0911")
 				|| contract.getEnterpriseCCC().getActivity().getType()==SSRegimeType.SEA_WORKERS){
 			fab.setCategoriaProfesional(null);	// TODO
 		}
@@ -322,7 +323,7 @@ public class AFIWriter implements Serializable {
 			List<ITransferObject> cccList = bean.getList(criteria);
 			if ( !cccList.isEmpty() ) {
 				EnterpriseCCC ccc = (EnterpriseCCC) cccList.get(0);	
-				return ccc.getActivity().getType().getCode()+ccc.getCcc();	
+				return PayrollUtils.getInstance().getRegimeCode(ccc)+ccc.getCcc();	
 			}
 		} catch (ManagerBeanException e) {
 			// NADA

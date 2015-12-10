@@ -46,6 +46,7 @@ import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;
+import com.esferalia.aon.payroll.util.PayrollUtils;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.Period;
@@ -233,7 +234,7 @@ public class CertificadosWriter implements Serializable {
 		EMPRESATYPE o = new EMPRESATYPE();
 		if(ccc!=null){
 			o.setCIFNIF(ccc.getActivity().getEnterprise().getRegistry().getDocument());
-			o.setCCC(ccc.getActivity().getType().getCode()+ccc.getCcc());
+			o.setCCC(PayrollUtils.getInstance().getRegimeCode(ccc)+ccc.getCcc());
 		}
 		return o;
 	}
