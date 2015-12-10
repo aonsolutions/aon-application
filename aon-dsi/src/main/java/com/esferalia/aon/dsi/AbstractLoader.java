@@ -63,6 +63,16 @@ public abstract class AbstractLoader {
 		//@formatter:on
 	}
 
+	protected <R extends Record> Integer getAnyId(Identity<R, Integer> identity,
+			Condition... conditions) {
+		//@formatter:off
+		return aonContext.select(identity.getField())
+				.from(identity.getTable())
+				.where(conditions)
+				.fetchAny(identity.getField());
+		//@formatter:on
+	}
+
 	protected <R extends Record> InsertSetStep<R> get(
 			InsertSetMoreStep<R> insertSetMoreStep, Table<R> table) {
 

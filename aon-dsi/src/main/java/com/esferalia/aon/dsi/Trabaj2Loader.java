@@ -390,12 +390,17 @@ public class Trabaj2Loader extends AbstractLoader implements
 		// telephone
 		String telef = trabaj.getF20telef();
 		if (!isBlank(telef)) {
-			int telephoneId = getRMediaId(trabaj, registry,
-					MediaType.FIXED_PHONE);
+			
+//			int telephoneId = getRMediaId(trabaj, registry,
+//					MediaType.FIXED_PHONE);
+			
+//			int telephoneId = next(RMEDIA.getIdentity());
+			
 			//@formatter:off
 			InsertSetStep<RmediaRecord> insertSetStepRmedia= getRmediaInsertSetStep();
+			
 			insertSetMoreStepRmedia = insertSetStepRmedia
-					.set(RMEDIA.ID, telephoneId)
+//					.set(RMEDIA.ID, telephoneId)
 					.set(RMEDIA.REGISTRY, registry)
 					.set(RMEDIA.DOMAIN, domain)
 					.set(RMEDIA.MEDIA, enum2Byte(MediaType.FIXED_PHONE))

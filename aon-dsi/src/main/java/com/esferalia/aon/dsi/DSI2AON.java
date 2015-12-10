@@ -13,6 +13,7 @@ import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.TransactionalRunnable;
 import org.jooq.conf.Settings;
+import org.jooq.exception.DetachedException;
 import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultConfiguration;
 
@@ -33,7 +34,7 @@ public class DSI2AON {
 
 	}
 
-	private static class RollBackException extends Exception {
+	protected static class RollBackException extends Exception {
 
 	}
 
@@ -116,15 +117,12 @@ public class DSI2AON {
 	private boolean commit;
 	private boolean replace;
 
-	private Connection aonConn;
-
 	private DSLContext dsiContext;
 	private DSLContext aonContext;
 
 	private Listeners listeners;
-
+	
 	public DSI2AON(Connection dsiConn, Connection aonConn) {
-		this.aonConn = aonConn;
 		Settings settings = new Settings();
 		settings.setRenderSchema(false);
 		this.dsiContext = DSL.using(dsiConn, settings);
@@ -143,6 +141,12 @@ public class DSI2AON {
 		// DSL.using(aonConn, SQLDialect.MYSQL, settings);
 		listeners = new Listeners();
 
+	}
+
+	public DSI2AON(DSLContext dsiContext, DSLContext aonContext) {
+		listeners = new Listeners();
+		this.aonContext = aonContext;
+		this.dsiContext = dsiContext;
 	}
 
 	public DSI2AON setFrom(Date from) {
@@ -188,65 +192,9 @@ public class DSI2AON {
 
 				@Override
 				public void run(Configuration configuration) throws Exception {
-
-					//@formatter:off
-					CconceLoader cconceLoader = 
-						new CconceLoader(dsiContext,aonContext)
-						.setReplace(replace)
-						.setListener(listeners);
-					//@formatter:on
-					// TODO: conditions ?
-					cconceLoader.load(parentDomain);
-
-					ConvenLoader convenLoader = new ConvenLoader(dsiContext,
-							aonContext);
-					// TODO: conditions ?
-					convenLoader.loadConven(parentDomain, cconceLoader);
-
-					//@formatter:off
-					EmpresLoader empresLoader = 
-							new EmpresLoader(dsiContext,aonContext)
-							.setReplace(replace)
-							.setListener(listeners);
-					//@formatter:on
-					empresLoader.loadEmpres(parentDomain, domainSuffix, owner,
-							convenLoader, conditions);
-					//@formatter:off
-					Trabaj2Loader trabaj2Loader = 
-							new Trabaj2Loader(dsiContext,aonContext)
-							.setFrom(from)
-							.setReplace(replace)
-							.setListener(listeners);
-					//@formatter:on
-					trabaj2Loader.loadTrabj2(empresLoader, conditions);
-
-					NominaLoader nominaLoader = new NominaLoader(dsiContext,
-							aonContext).setReplace(replace);
-					nominaLoader.loadNominc(trabaj2Loader, conditions);
-
-					UserLoader userLoader = new UserLoader(dsiContext,
-							aonContext);
-					int domainApplication = userLoader.loadModules(
-							parentDomain, Module.CONFIGURATION, Module.PAYROLL);
-					userLoader.loadUser(parentDomain, domainApplication,
-							"admin", "Administrador");
-
-					cconceLoader.execute();
-					convenLoader.execute();
-					//userLoader.execute();
-					empresLoader.execute();
-					trabaj2Loader.execute();
-					nominaLoader.execute();
-
-					// Rolls back the outer transaction
-					if (!commit) {
-						listeners.onRollbacked();
-						throw new RollBackException();
-					}
-
-					// Implicit commit executed here
-					listeners.onCommited();
+					runImpl(parentDomain, domainSuffix, owner, conditions);
 				}
+
 			});
 		} catch (RuntimeException e) {
 			try {
@@ -260,17 +208,81 @@ public class DSI2AON {
 
 	}
 
+	// ------------------------------------------------------------------------
+
+	protected void runImpl(final Integer parentDomain, final String domainSuffix, final String owner,
+			final Condition... conditions) throws AonSQLException, RollBackException {
+		//@formatter:off
+		CconceLoader cconceLoader = 
+			new CconceLoader(dsiContext,aonContext)
+			.setReplace(replace)
+			.setListener(listeners);
+		//@formatter:on
+		// TODO: conditions ?
+		cconceLoader.load(parentDomain);
+
+		ConvenLoader convenLoader = new ConvenLoader(dsiContext,
+				aonContext);
+		// TODO: conditions ?
+		convenLoader.loadConven(parentDomain, cconceLoader);
+
+		//@formatter:off
+		EmpresLoader empresLoader = 
+				new EmpresLoader(dsiContext,aonContext)
+				.setReplace(replace)
+				.setListener(listeners);
+		//@formatter:on
+		empresLoader.loadEmpres(parentDomain, domainSuffix, owner,
+				convenLoader, conditions);
+		//@formatter:off
+		Trabaj2Loader trabaj2Loader = 
+				new Trabaj2Loader(dsiContext,aonContext)
+				.setFrom(from)
+				.setReplace(replace)
+				.setListener(listeners);
+		//@formatter:on
+		trabaj2Loader.loadTrabj2(empresLoader, conditions);
+
+		NominaLoader nominaLoader = new NominaLoader(dsiContext,
+				aonContext).setReplace(replace);
+		nominaLoader.loadNominc(trabaj2Loader, conditions);
+
+		UserLoader userLoader = new UserLoader(dsiContext,
+				aonContext);
+		int domainApplication = userLoader.loadModules(
+				parentDomain, Module.CONFIGURATION, Module.PAYROLL);
+		userLoader.loadUser(parentDomain, domainApplication,
+				"admin", "Administrador");
+
+		cconceLoader.execute();
+		convenLoader.execute();
+		//userLoader.execute();
+		empresLoader.execute();
+		trabaj2Loader.execute();
+		nominaLoader.execute();
+
+		// Rolls back the outer transaction
+		if (!commit) {
+			listeners.onRollbacked();
+			throw new RollBackException();
+		}
+
+		// Implicit commit executed here
+		listeners.onCommited();
+	}
+
+	// ------------------------------------------------------------------------
+
 	private int getDomain(String name) {
-		return aonContext.select(DOMAIN.ID).from(DOMAIN)
-				.where(DOMAIN.NAME.eq(name)).fetchOne(DOMAIN.ID);
+		return aonContext.select(DOMAIN.ID)
+				.from(DOMAIN)
+				.where(DOMAIN.NAME.eq(name))
+				.fetchOne(DOMAIN.ID);
 	}
 
 	private String getSuffix(String domain) {
 		return String.format("-%s", domain);
 	}
 
-	// ------------------------------------------------------------------------
-	public static void main(String[] args) throws ClassNotFoundException {
 
-	}
 }

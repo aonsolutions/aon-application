@@ -30,6 +30,7 @@ import org.jooq.InsertSetStep;
 import org.jooq.Param;
 import org.jooq.Query;
 import org.jooq.Record;
+import org.jooq.exception.InvalidResultException;
 
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.dbutils.AonSQLException;
@@ -149,12 +150,19 @@ public class EmpresLoader extends AbstractLoader implements
 
 		while (empresCursor.hasNext()) {
 			FnempresRecord empres = empresCursor.fetchOneInto(FNEMPRES);
-
+			Integer scope = null;
+			
+			try {
 			//@formatter:off
-			Integer scope = getId(SCOPE.getIdentity(), 
+			scope = getId(SCOPE.getIdentity(), 
 					SCOPE.DOMAIN.eq(parentDomain));
 			//@formatter:on
-
+			} catch ( InvalidResultException e){
+				//TODO: More than one SCOPE
+				scope = getAnyId(SCOPE.getIdentity(), 
+						SCOPE.DOMAIN.eq(parentDomain));
+			}
+			
 			String key = empres.getF20sscod() + empres.getF20ssnum();
 
 			Pair<WorkplaceRecord, RegistryRecord> pair = getWorkplace(empres);
