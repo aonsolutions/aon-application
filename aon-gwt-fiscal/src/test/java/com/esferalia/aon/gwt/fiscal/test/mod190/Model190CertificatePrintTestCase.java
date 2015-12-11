@@ -11,7 +11,7 @@ import net.sf.jasperreports.engine.JRException;
 
 import org.apache.commons.io.FileUtils;
 
-import com.esferalia.aon.gwt.fiscal.server.Mod10TPrint;
+import com.esferalia.aon.gwt.fiscal.server.Mod190CertificatePrint;
 import com.esferalia.aon.occam.api.model.fiscal.RetentionCertificate;
 
 
@@ -24,18 +24,18 @@ public class Model190CertificatePrintTestCase {
 
 	public static void main(String[] args) {
 		
-		Mod10TPrint mod190Print = new Mod10TPrint();
+		Mod190CertificatePrint print = new Mod190CertificatePrint();
 		
 		try {
 			Map<String, RetentionCertificate> employeeCertificates = new HashMap<String, RetentionCertificate>();
 			employeeCertificates.put("", getTestEmployeeCertificates());
-			byte[] employeeData = mod190Print.createReport(new FileInputStream(TESTING_TEMPLATE_EMPLOYEE), employeeCertificates.values());
-			FileUtils.writeByteArrayToFile(File.createTempFile("certificate10T",".pdf"), employeeData);
+			byte[] employeeData = print.createReport(new FileInputStream(TESTING_TEMPLATE_EMPLOYEE), employeeCertificates.values());
+			FileUtils.writeByteArrayToFile(File.createTempFile("certificado_mod190",".pdf"), employeeData);
 			
 			Map<String, RetentionCertificate> professionalCertificates = new HashMap<String, RetentionCertificate>();
 			professionalCertificates.put("", getTestProfessionalCertificates());
-			byte[] professionalData = mod190Print.createReport(new FileInputStream(TESTING_TEMPLATE_PROFESSIONAL), professionalCertificates.values());
-			FileUtils.writeByteArrayToFile(File.createTempFile("certificate10T_prof",".pdf"), professionalData);
+			byte[] professionalData = print.createReport(new FileInputStream(TESTING_TEMPLATE_PROFESSIONAL), professionalCertificates.values());
+			FileUtils.writeByteArrayToFile(File.createTempFile("certificado_mod190_prof",".pdf"), professionalData);
 			
 		} catch (JRException e) {
 			System.out.println(e.getMessage());
