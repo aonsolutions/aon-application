@@ -1028,6 +1028,7 @@ input:disabled + label{
 	background-color: transparent;
 	padding-left:1.5em;
 	width: auto;
+	height: auto;
  }
 @sprite .aon-finding-title-internal{	
 	font-weight:bold;
