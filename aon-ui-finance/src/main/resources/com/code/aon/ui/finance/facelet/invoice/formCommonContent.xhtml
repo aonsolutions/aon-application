@@ -83,7 +83,7 @@
 		</aon:div>
 	</aon:if>
 
-	<aon:if test="#{invoiceController.to.sales and (invoiceController.nevv or invoiceController.to.seller.id != null)}">
+	<aon:if test="#{invoiceController.to.sales and ((invoiceController.nevv and sellerCollections.sellerCount > 0) or invoiceController.to.seller.id != null)}">
 		<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
 			<ui:param name="lookupTo" value="#{invoiceController.to.seller}" />
 			<ui:param name="lookupRendered" value="#{!invoiceController.readOnly}" />

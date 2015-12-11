@@ -9,7 +9,14 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ql.Criteria;
+import com.code.aon.seller.Seller;
 import com.code.aon.seller.enumeration.SellerStatus;
+import com.code.aon.ui.config.util.UserUtils;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class SellerCollectionsController implements Serializable {
 	
@@ -28,6 +35,14 @@ public class SellerCollectionsController implements Serializable {
 			}
 		}
 		return sellerStatuses;
+	}
+
+	public int getSellerCount() throws ManagerBeanException {
+		IManagerBean sellerBean = BeanManager.getManagerBean(Seller.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(sellerBean.getFieldName(IEntityAlias.SELLER_STATUS), SellerStatus.ACTIVE);
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, sellerBean.getFieldName(IEntityAlias.SELLER_SCOPE_ID));
+		return sellerBean.getCount(criteria);
 	}
 
 }
