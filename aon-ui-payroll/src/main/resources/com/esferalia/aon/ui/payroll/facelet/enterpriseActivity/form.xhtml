@@ -23,40 +23,10 @@
 	</ui:include>
 
 	<aon:div styleClass="aon-scroll-area">	
-		<aon:panelGrid id="dataTable" columns="2" >
-	
-			<aon:outputLabel for="EnterpriseActivity_description"
-				value="#{bundle.aon_description}" />
-			<aon:inputText id="EnterpriseActivity_description" size="32"
-				maxlength="32" value="#{enterpriseActivity.to.description}"
-				required="true" />
-		
-			<aon:if test="#{actionDenied.manager.renderPayrollConfig}">
-				<aon:outputLabel for="EnterpriseActivity_quoteRegime"
-					value="#{bundle.payroll_activity_quoteRegime}" />
-				<aon:selectOneMenu id="EnterpriseActivity_quoteRegime" required="true"
-					value="#{enterpriseActivity.to.type}"
-					rendered="#{enterpriseActivity.nevv}">
-					<f:selectItems value="#{payrollCollections.availableSsRegimes}" />
-				</aon:selectOneMenu>
-				<aon:outputText value="#{enterpriseActivity.to.type}" styleClass="aon-bold"
-					rendered="#{!enterpriseActivity.nevv}" />
-			</aon:if>
 			
-			<ui:include src="/com/code/aon/ui/config/facelet/cnae2009/lookup.xhtml" >
-				<ui:param name="lookupTo" value="#{enterpriseActivity.to.cnae2009}" />
-				<ui:param name="idRequired" value="#{true}" />
-			</ui:include>				
-
-			<aon:outputLabel for="EnterpriseActivity_principal"
-				value="#{bundle.aon_activity_principal}" />
-			<aon:selectOneRadio id="EnterpriseActivity_principal" required="true"
-				value="#{enterpriseActivity.to.principal}">
-				<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
-				<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
-			</aon:selectOneRadio>
-			
-		</aon:panelGrid>
+		<ui:include	src="/com/esferalia/aon/ui/payroll/facelet/enterpriseActivity/form_content.xhtml" >
+			<ui:param name="controller" value="#{enterpriseActivity}" />
+		</ui:include>
 		
 		<aon:if test="#{actionDenied.manager.renderPayrollConfig}">
 
