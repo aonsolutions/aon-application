@@ -39,6 +39,7 @@ Dumping structure and contents of AON databases and domains.
 
   -a, --admin       write database admin domain info
   -c, --create      write database creation info
+  -d, --domain      write domain(s) info
   -d, --defaults    write database defaults info
   -v, --verbose     verbose mode
       --help        display this help and exit
@@ -89,6 +90,10 @@ function getDatabases() {
 }
 
 
+function getDomains() {
+        mysql -h `getHostName` -u `getOption 'user'` --password=`getOption 'password'` $1 -sNe "SELECT name FROM domain" 
+}
+
 function getDatabase(){
 	>&2 echo "  Selection    Database"
 	>&2 echo "-----------------------------------------------"
@@ -103,6 +108,43 @@ function getDatabase(){
 	database=${databases[$((selection-1))]}
 }
 
+function getDomain(){
+	>&2 echo "  Selection    Domain"
+	>&2 echo "-----------------------------------------------"
+	domains=(`getDomains $1`)
+
+	for i in ${!domains[@]}
+	do
+		>&2 echo "  "$((i+1))"           "${domains[$i]};
+	done;
+	>&2 echo -n "Type selection number (1-${#domains[@]}) or domain name and press [ENTER]: "
+	read selection
+	while [[  "1" == "1" ]]; do 
+		if [[ -z "$selection" ]]; then 
+			>&2 echo -n "Domain CAN NOT be blank"
+		elif [[ "$selection" =~ ^[0-9]+$ ]]; then 
+			if [[ $selection -ge 1 && $selection -le ${#domains[@]} ]]; then
+				domain=${domains[$((selection-1))]}		
+				return
+			fi
+			>&2 echo -n "Selection CAN NOT be $selection"
+		else
+			for i in ${!domains[@]}
+			do
+				if [[ "${domains[$i]}" == "$selection" ]]; then
+					domain=$selection		
+					return
+				fi
+			done;			
+			>&2 echo -n "Domain $selection NOT FOUND"
+		fi
+		>&2 echo -n ", type selection number (1-${#domains[@]}) or domain name and press [ENTER]: "
+		read selection;
+	done	
+
+	
+}
+
 function getAdminDomain() {
 	mysql -h `getHostName` -u `getOption 'user'` --password=`getOption 'password'` $1 -sNe "SELECT id FROM domain WHERE type = 5"
 }
@@ -111,9 +153,22 @@ function getDomainInfo() {
 	mysql -h `getHostName` -u `getOption 'user'` --password=`getOption 'password'` $1 -sNe "SELECT CONCAT(description,' (', name, ')')  FROM domain WHERE id = $2"
 }
 
+function getDomainId() {
+	mysql -h `getHostName` -u `getOption 'user'` --password=`getOption 'password'` $1 -sNe "SELECT id FROM domain WHERE name = '$2'"
+}
+
+function getChildDomainsIds() {
+	mysql -h `getHostName` -u `getOption 'user'` --password=`getOption 'password'` $1 -sNe "SELECT id FROM domain WHERE parent = $2"
+}
+
 function create(){
 	getDatabase
-        mysqldump -h `getHostName` -u `getOption 'user'` --password=`getOption 'password'`  --databases $database  -d
+
+	>&2 echo -n "Type new name for '$database' and press [ENTER]: "
+	read name;
+
+        mysqldump -h `getHostName` -u `getOption 'user'` --password=`getOption 'password'`  --databases $database  -d \
+	| sed -e "s/"$database"/"$name"/g"
 }
 
 function getDomainTables() {
@@ -144,9 +199,7 @@ function getSysDomainTables() {
         mysql -h `getHostName` -u `getOption 'user'` --password=`getOption 'password'` $1 -sNe "SHOW TABLES" | \
         while read table; do
 		[[ "$table" =~ ^(system_.*) ]] && echo $table && continue 
-		[[ "$table" =~ ^(.*_concept) ]] && echo $table && continue 
-#                [[ "1" == "$(mysql -h `getHostName` -u `getOption 'user'` --password=`getOption 'password'` $1 -sNe "SELECT 1 FROM $table #WHERE domain < 0 LIMIT 1" 2>/dev/null)" ]] && echo $table;
-		
+		[[ "$table" =~ ^(.*_concept) ]] && echo $table && continue 		
         done
 }
 
@@ -162,23 +215,52 @@ function defaults(){
 	getSysDomainTables $database  | xargs \
         mysqldump -h `getHostName` -u `getOption 'user'` --password=`getOption 'password'`  $database  -t --where="domain <=0 " \
 	| tee >(logTableDump "where domain <= 0")
-	
+	git add -p filename.x.
 }
 
 function admin(){
 	getDatabase
 	domain=`getAdminDomain $database`
-
+	
 	>&2 echo -n "Type new name for "`getDomainInfo $database $domain`" and press [ENTER]: "
 	read name;
+	while [[ -z "$name" ]]; do 
+		>&2 echo -n "Name CAN NOT be blank, type new name and press [ENTER]: "
+		read name;
+	done
 	
 	users=(`getUsers $database $domain`)
+	rm_users=()
+	cp_users=()
+	passwords=()
 	for i in ${!users[@]}
 	do
+		>&2 echo -n "Do you want to add user '"${users[$i]}"' [y/n]: ";
+		read -n 1 add
+		while [[ ! "$add" =~ [yYnN] ]]; do 
+			>&2 echo
+			>&2 echo -n "Please answer y or n : ";
+			read -n 1 add
+		done
+		if [[ "$add" =~ [nN] ]]; then 
+			>&2 echo
+			rm_users+=(${users[$i]})
+			continue
+		fi
+				
+		>&2 echo
 		>&2 echo -n "Type new password for '"${users[$i]}"' and press [ENTER]: ";
 		read password
-		passwords[$i]=`encrypt $password`
+		cp_users+=(${users[$i]})
+		passwords+=(`encrypt $password`)
 	done;
+
+	>&2 echo -n "Type new owner for "`getDomainInfo $database $domain`" and press [ENTER]: "
+	read owner;
+	while [[ -z "$owner" ]]; do 
+		>&2 echo -n "Owner CAN NOT be blank, type new name and press [ENTER]: "
+		read owner;
+	done
 
 	>&2 echo -e "\tDumping data for admin domain '"`getDomainInfo $database $domain`"'  for database '$database'"
         mysqldump -h `getHostName` -u `getOption 'user'` --password=`getOption 'password'`  $database  -t --where="id = $domain" domain | tee >(logTableDump "where id=$domain")
@@ -190,25 +272,96 @@ function admin(){
 	echo "-- Updating passwords for users"
 	echo "--"
 	echo ""
-	for i in ${!users[@]}
+	for i in ${!cp_users[@]}
 	do
-		echo "UPDATE user SET password='${passwords[$i]}' WHERE domain=$domain AND login='${users[$i]}';"
+		echo "UPDATE \`user\` SET \`password\`='${passwords[$i]}' WHERE \`domain\`=$domain AND \`login\`='${cp_users[$i]}';"
 	done;
 	echo ""
 	
 	echo ""
 	echo "--"
-	echo "-- Updating name of domain "
+	echo "-- Deleting users"
 	echo "--"
 	echo ""
-	echo "UPDATE domain SET name='$name' WHERE domain=$domain;"
+	for i in ${!rm_users[@]}
+	do
+		echo "DELETE FROM \`application_user_profile\` WHERE \`application_user\` IN ( SELECT \`id\` FROM  \`application_user\` WHERE \`user_id\` IN ( SELECT \`id\` FROM \`user\` WHERE \`login\`='${rm_users[$i]}' ));"
+		echo "DELETE FROM \`application_user\` WHERE \`user_id\` IN ( SELECT \`id\` FROM \`user\` WHERE \`login\`='${rm_users[$i]}' );"
+		echo "DELETE FROM \`user_workgroup\` WHERE \`user_id\` IN ( SELECT \`id\` FROM \`user\` WHERE \`login\`='${rm_users[$i]}' );"
+		echo "DELETE FROM \`user\` WHERE \`domain\`=$domain AND \`login\`='${rm_users[$i]}';"
+	done;
+	echo ""
+
+	echo ""
+	echo "--"
+	echo "-- Updating name, suffix, owner, users and dates of domain "
+	echo "--"
+	echo ""
+	echo -n "UPDATE \`domain\`"
+	echo -n " SET \`name\`='$name'";
+	echo -n ", \`owner\`='$owner'"	
+	echo -n ", \`subDomainSuffix\`=NULL"	
+	echo -n ", \`creation_user\`=NULL"
+	echo -n ", \`creation_date\`=NOW()"
+	echo -n ", \`lastAccess_user\`=NULL"
+	echo -n ", \`lastAccess_date\`=NULL"
+	echo -n ", \`modification_user\`=NULL"
+	echo -n ", \`modification_date\`=NULL"
+	echo " WHERE \`id\`=$domain;"
 	echo ""
 	
+	echo ""
+	echo "--"
+	echo "-- Clean personal data ( document... ) from registry "
+	echo "--"
+	echo ""
+	echo -n "UPDATE \`registry\`"
+	echo -n " SET \`name\`=NULL";
+	echo -n ", \`alias\`=NULL"	
+	echo -n ", \`type\`=NULL"	
+	echo -n ", \`document\`=NULL"	
+	echo -n ", \`document_type\`=NULL"	
+	echo -n ", \`document_country\`=NULL"	
+	echo -n ", \`nationality\`=NULL"	
+	echo " WHERE \`domain\`=$domain;"
+	echo ""
+	echo ""
+	echo "DELETE FROM \`rmedia\` WHERE \`domain\`=$domain;"
+	echo ""
+	echo "DELETE FROM \`raddress\` WHERE \`domain\`=$domain;"
+	echo ""
 }
 
+function domain(){
+	getDatabase
+	getDomain $database
+
+	ignoreTables=(`getNoDomainTables $database`)
+	
+	ignoreOption="--ignore-table=$database.domain"
+	for i in ${!ignoreTables[@]}
+	do
+		ignoreOption+=" --ignore-table=$database.${ignoreTables[$i]}"
+	done	
+		
+	domainId=`getDomainId $database $domain` 
+	childDomainsIds=(`getChildDomainsIds $database $domainId`)
+
+	domains=$domainId
+	for i in ${!childDomainsIds[@]}
+	do
+		domains+=", "${childDomainsIds[i]}
+	done	
+	
+	mysqldump -t  -h `getHostName` -u `getOption 'user'` --password=`getOption 'password'`  $database  domain --where="id IN ( $domains )";
+
+	mysqldump -t  -h `getHostName` -u `getOption 'user'` --password=`getOption 'password'`  $database $ignoreOption --where="domain IN ( $domains )";
+
+}
 
 case $1 in
 --admin) admin;;
+--domain) domain;;
 --create) create;;
 --defaults) defaults;;
 --version) exec echo "$version";;
