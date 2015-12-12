@@ -338,7 +338,7 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 			headers = new ArrayList<>();
 			
 			rowOffset=1;
-			for(int i=0; i<5 && !headers.containsAll(Arrays.asList(SUPPORTED_COLUMNS)); i++){
+			for(int i=0; i<5 && rowIterator.hasNext() && !headers.containsAll(Arrays.asList(SUPPORTED_COLUMNS)); i++){
 				headers.clear();
 				for(int col=0;col<row.getLastCellNum();col++){
 					Cell cell = row.getCell(col);

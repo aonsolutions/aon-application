@@ -29,7 +29,7 @@ public class CustomLoaderFactoryManager implements Serializable {
 		} else if(aonFile.getFileName().matches(".*[cC][oO][mM][pP][rR][aA][sS].*")){
 			acceptedFactory = oppidumFactories.get(PURCHASE);
 		}
-		if(!acceptedFactory.accept(aonFile.getData())) {
+		if(acceptedFactory==null || !acceptedFactory.accept(aonFile.getData())) {
 			for (ICustomLoaderFactory fact : oppidumFactories.values()) {
 				if (fact.accept(aonFile.getData())) {
 					acceptedFactory = fact;

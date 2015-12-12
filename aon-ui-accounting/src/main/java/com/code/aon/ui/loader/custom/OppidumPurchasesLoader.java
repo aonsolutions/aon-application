@@ -39,7 +39,6 @@ import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
@@ -50,7 +49,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.loader.Loader;
 import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.loader.controller.AonLoaderController;
@@ -75,6 +73,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	
 	private final String SUPPLIER_DOCUMENT = "CIFEmisora";
 	private final String SUPPLIER_NAME = "Nombre";
+	private final String SUPPLIER_CODE = "CodigoEmisora";
 	private final String INVOICE_DOCUMENT = "NumeroFactura";
 	private final String INVOICE_DATE = "FechaFactura";
 	private final String INVOICE_VAT_PERCENT = "PorcentIVA";
@@ -85,6 +84,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	private final String[] SUPPORTED_COLUMNS = {
 			SUPPLIER_DOCUMENT,
 			SUPPLIER_NAME,
+			SUPPLIER_CODE,
 			INVOICE_DOCUMENT,
 			INVOICE_DATE,
 			INVOICE_VAT_PERCENT,
@@ -136,7 +136,13 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
         		
         		String supplierDocument = getStringCellValue(row.getCell(headers.indexOf(SUPPLIER_DOCUMENT)));
         		String supplierName = getStringCellValue(row.getCell(headers.indexOf(SUPPLIER_NAME)));
-        		String account = obtainSupplierAccount(supplierDocument, supplierName);
+        		
+        		String supplierCode = getStringCellValue(row.getCell(headers.indexOf(SUPPLIER_CODE)));
+        		
+        		String account = null;
+        		if(StringUtils.isNotBlank(supplierCode) && NumberUtils.isNumber(supplierCode)){
+        			account = String.valueOf( 400000000 + Integer.parseInt(supplierCode) );
+        		}
         		
         		if(account==null || StringUtils.isBlank(account)){
         			emptyAccountCount++;
@@ -249,7 +255,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 			headers = new ArrayList<>();
 			
 			rowOffset=1;
-			for(int i=0; i<5 && !headers.containsAll(Arrays.asList(SUPPORTED_COLUMNS)); i++){
+			for(int i=0; i<5 && rowIterator.hasNext()  && !headers.containsAll(Arrays.asList(SUPPORTED_COLUMNS)); i++){
 				headers.clear();
 				for(int col=0;col<row.getLastCellNum();col++){
 					Cell cell = row.getCell(col);
@@ -271,40 +277,12 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 		return false;
 	}
 	
-	private String obtainSupplierAccount(String supplierDocument, String supplierName) throws ManagerBeanException {
-		supplierDocument = StringUtils.trim(supplierDocument);
-		String account = null;
-		if(supplierAccount!=null && supplierAccount.containsKey(supplierDocument)){
-			account = supplierAccount.get(supplierDocument);
-		} else {
-			if(StringUtils.isNotBlank(supplierDocument)){
-				LogPanelController logPanel = LogPanelController.getInstance();
-				IManagerBean bean = BeanManager.getManagerBean(Supplier.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SUPPLIER_REGISTRY_NAME), supplierDocument);
-				List<ITransferObject> list = bean.getList(criteria);
-				if(list==null || list.size()==0){
-					logPanel.warn("Se procede a crear un nuevo proveedor " + supplierName + " (" + supplierDocument +")" );
-				} else if(list!=null && list.size()==1){
-					Supplier supplier = (Supplier) list.get(0);
-					if(supplier.getAccount()!=null && StringUtils.isNotBlank(supplier.getAccount().getCode())){
-						account = supplier.getAccount().getCode();
-						supplierAccount.put(supplierDocument, account);
-					}
-				} else {
-					logPanel.error("Existen varios registros de proveedor con el documento " + supplierDocument);
-				}
-			}
-		}
-		return account;
-	}
-
 	private String obtainMaxAccountCode() throws ManagerBeanException {
 		String code = null;
 		IManagerBean bean = BeanManager.getManagerBean(Account.class);
 		Criteria c = new Criteria();
 		c.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE), Boolean.TRUE);
-		c.addExpression(ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.ACCOUNT_CODE), "430%"));
+		c.addExpression(ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.ACCOUNT_CODE), "400%"));
 		ProjectionList pl = new ProjectionList();
 		pl.add(Projection.max(bean.getFieldName(IEntityAlias.ACCOUNT_CODE)));
 		List<?> list = bean.getList(pl, c);
