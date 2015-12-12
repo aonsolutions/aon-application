@@ -141,7 +141,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
         		
         		String account = null;
         		if(StringUtils.isNotBlank(supplierCode) && NumberUtils.isNumber(supplierCode)){
-        			account = String.valueOf( 400000000 + Integer.parseInt(supplierCode) );
+        			account = String.valueOf( 400000000 + Double.valueOf(supplierCode).intValue() );
         		}
         		
         		if(account==null || StringUtils.isBlank(account)){
