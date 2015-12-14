@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema targetNamespace="http://www.icac.meh.es/es/fr/gaap/pgc07/modelo-abreviado/2009-01-01" xmlns:pgc07abreviado="http://www.icac.meh.es/es/fr/gaap/pgc07/modelo-abreviado/2009-01-01" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:xl="http://www.xbrl.org/2003/XLink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:xlink="http://www.w3.org/1999/xlink">
-
-  <xsd:import namespace="http://www.icac.meh.es/es/fr/gaap/pgc07/cuentas/abreviado/2009-01-01" schemaLocation="pgc07-abreviado.xsd"/>
-  <xsd:import namespace="http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloAbreviado/2009-01-01" schemaLocation="pgc07-abreviado-memoria.xsd"/>
-
- </xsd:schema>
