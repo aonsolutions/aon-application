@@ -159,14 +159,16 @@ public class SaleInvoiceController extends InvoiceController {
 
 			InvoiceFinanceController financeController = (InvoiceFinanceController)FormUtil.getController(getInvoiceFinanceControllerName());
 			Finance finance = (Finance)financeController.getTo();
-			RegistryPayMethod rPayMethod = customer.getRegistry().getPayMethod();
-			finance.setPayMethod((rPayMethod==null) ? new PayMethod() : rPayMethod.getPayment());
-			finance.setBankAccount((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? new BankAccount() : rPayMethod.getBankAccount());
-			finance.setBankAlias((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? null : rPayMethod.getBankAlias());
-			finance.setBic((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? null : rPayMethod.getBic());
+			if (finance != null) {
+				RegistryPayMethod rPayMethod = customer.getRegistry().getPayMethod();
+				finance.setPayMethod((rPayMethod==null) ? new PayMethod() : rPayMethod.getPayment());
+				finance.setBankAccount((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? new BankAccount() : rPayMethod.getBankAccount());
+				finance.setBankAlias((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? null : rPayMethod.getBankAlias());
+				finance.setBic((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? null : rPayMethod.getBic());
 
-			financeController.setRegistryBank((rPayMethod==null) ? null : rPayMethod.getRegistryBank());
-			financeController.setShowBankManualInput(false);
+				financeController.setRegistryBank((rPayMethod==null) ? null : rPayMethod.getRegistryBank());
+				financeController.setShowBankManualInput(false);
+			}
 		}
 	}
 
