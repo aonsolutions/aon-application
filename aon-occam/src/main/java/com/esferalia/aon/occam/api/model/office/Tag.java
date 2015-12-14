@@ -20,8 +20,9 @@ public class Tag implements Serializable, HasId {
 		
 	}
 	
-	public void setId (Integer id) {
+	public Tag setId (Integer id) {
 		this.id = id;
+		return this;
 	}
 	
 	@Override
@@ -29,32 +30,36 @@ public class Tag implements Serializable, HasId {
 		return id;
 	}
 
-	public void setDomain (Integer domain) {
+	public Tag setDomain (Integer domain) {
 		this.domain = domain;
+		return this;
 	}
 	
 	public Integer getDomain () {
 		return this.domain;
 	}
 	
-	public void setType(byte type) {
+	public Tag setType(byte type) {
 		this.type = type;
+		return this;
 	}
 	
 	public byte getType() {
 		return type;
 	}
 	
-	public void setName (String name) {
+	public Tag setName (String name) {
 		this.name = name;
+		return this;
 	}
 	
 	public String getName () {
 		return this.name;
 	}
 	
-	public void setColor (String color) {
+	public Tag setColor (String color) {
 		this.color = color;
+		return this;
 	}
 	
 	public String getColor () {

@@ -369,6 +369,12 @@ public class AttachmentDAO {
 		.returning(SEPE_BATCH_ATTACH.ID).fetchOne().getId();
 	}
 	
+	public static Integer insertRegistryAttachTag(AONContext ctx, Integer rattachId, Integer tagId){
+		ctx.checkWrite();
+		return ctx.getDslContext().insertInto(RATTACH_TAG, RATTACH_TAG.DOMAIN, RATTACH_TAG.RATTACH, RATTACH_TAG.TAG)
+				.values(ctx.getDomainId(), rattachId, tagId).returning(RATTACH_TAG.ID).fetchOne().getId();
+	}
+	
 	//-------------------- FULL UPDATE
 	
 	public static void updateContractAttach(AONContext ctx, Attach attach){
@@ -551,7 +557,6 @@ public class AttachmentDAO {
 			.where(SEPE_BATCH_ATTACH.ID.eq(attach.getId()))
 			.execute();
 		}
-
 	
 	//-------------------- DELETES
 	

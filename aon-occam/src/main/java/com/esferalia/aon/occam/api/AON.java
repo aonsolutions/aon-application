@@ -63,7 +63,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
-import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
@@ -72,6 +71,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
@@ -97,6 +97,7 @@ import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
 import com.esferalia.aon.occam.impl.jooq.FiscalImpl;
 import com.esferalia.aon.occam.impl.jooq.GroupwareImpl;
 import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
+import com.esferalia.aon.occam.impl.jooq.MarketplaceImpl;
 import com.esferalia.aon.occam.impl.jooq.ProductImpl;
 import com.esferalia.aon.occam.impl.jooq.ProjectImpl;
 import com.esferalia.aon.occam.impl.jooq.RegistryImpl;
@@ -180,6 +181,10 @@ public class AON {
 	
 	private static ICommercial getCommercial(){
 		return new CommercialImpl();
+	}
+
+	private static IMarketplace getMarketplace(){
+		return new MarketplaceImpl();
 	}
 	
 	// ********************************************
@@ -1897,6 +1902,17 @@ public class AON {
 		}
 	}
 	
+	public static Integer insertRegistryAttachTag(String domainName, Integer domainId, String login,
+			Integer rattachId, Integer tagId){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getAttachment().insertRegistryAttachTag(ctx, rattachId, tagId);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	public static void deleteRegistryAttachTag(String domainName, Integer domainId, String login,
 			Integer rattachId){
 		AONContext ctx = null;
@@ -2189,6 +2205,18 @@ public class AON {
 		}
 	}
 
+	// ********************************************
+	// ***************************** Marketplace **
+	// ********************************************
 	
+	public static LinkedList<Tag> getMatketplaceTagList(String domainName, Integer domainId, String login){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getMarketplace().getMarketplaceTagList(ctx);
+		} finally {
+			if(ctx != null) ctx.close();			
+		}
+	}
 	
 }

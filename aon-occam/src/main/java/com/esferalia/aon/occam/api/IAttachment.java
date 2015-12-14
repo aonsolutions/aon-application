@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.occam.api.model.AttachFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachQueryProperties;
+import com.esferalia.aon.occam.api.model.office.Tag;
 
 
 public interface IAttachment {
@@ -71,5 +72,6 @@ public interface IAttachment {
 	public void deleteRegistryAttach(AONContext ctx, AttachFilter filter);
 	public void deleteSepeAttach(AONContext ctx, AttachFilter filter);
 	
+	public Integer insertRegistryAttachTag(AONContext ctx, Integer rattachId, Integer tagId);
 	public void deleteRegistryAttachTag(AONContext ctx, Integer rattachId);
 }

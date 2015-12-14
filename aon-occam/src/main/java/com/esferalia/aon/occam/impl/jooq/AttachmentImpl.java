@@ -351,9 +351,15 @@ public class AttachmentImpl implements IAttachment{
 	}
 	
 	@Override
+	public Integer insertRegistryAttachTag(AONContext ctx, Integer rattachId, Integer tagId){
+		return ctx.getDslContext().transactionResult(configuration -> 
+			AttachmentDAO.insertRegistryAttachTag(ctx, rattachId, tagId));
+	}
+
+	@Override
 	public void deleteRegistryAttachTag(AONContext ctx, Integer rattachId) {
 		ctx.getDslContext().transaction(configuration -> {
 			AttachmentDAO.deleteRegistryAttachTag(ctx, rattachId);
 		} );
-	}
+	}	
 }

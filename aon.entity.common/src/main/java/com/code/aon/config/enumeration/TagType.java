@@ -33,8 +33,12 @@ public enum TagType implements IResourceable {
     /**
      * PRIORITY
      */
-    PRIORITY;
-
+    PRIORITY,
+	
+	/**
+	 * MARKETPLACE 
+	 */
+	MARKETPLACE;
 
     /**
      * Message key prefix. 
