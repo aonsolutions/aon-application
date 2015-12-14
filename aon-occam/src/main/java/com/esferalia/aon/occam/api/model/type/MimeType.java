@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.type;
 import java.io.Serializable;
 
 import com.esferalia.aon.watson.util.AonArrayUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public enum MimeType implements Serializable {
@@ -57,6 +58,23 @@ public enum MimeType implements Serializable {
 	}
 	
 	
+	public static MimeType get(String type) {
+    	for( MimeType mt : MimeType.values() ) {
+    		if (mt.getName().equals(type) ) {
+    			return mt;
+    		} else {    			
+    			if ( mt.getAliases() != null ) {
+    				
+    				for( String alias : mt.getAliases() ) {
+    					if  (AonStringUtils.equals(alias, type)) {
+    		    			return mt;
+    					}
+    				}
+    			}
+    		}
+    	}
+    	return null;
+	}
 	
     /**
      * Return the MIME type.

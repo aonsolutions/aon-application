@@ -1,3 +1,4 @@
+/*
 package com.esferalia.aon.gwt.fiscal.server.file;
 
 import java.io.ByteArrayOutputStream;
@@ -19,6 +20,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+@Deprecated
 public class MOD180Writer {
 
 	public FileOutput createMOD180(String domainName, int domainId,String user
@@ -133,3 +135,4 @@ public class MOD180Writer {
 		deponent.setC003(c003);
 	}
 }
+*/

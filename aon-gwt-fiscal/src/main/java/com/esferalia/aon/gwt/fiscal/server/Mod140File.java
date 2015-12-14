@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.fiscal.Mod140Context;
@@ -48,7 +49,7 @@ public class Mod140File extends HttpServlet {
 				toDate = DATE_FORMAT.parse(toDateParam);
 			}
 					
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId, AonServletUtils.getLoggedUser());
 			Company company = CompanyDAO.getCompany(ctx, domainId);
 
 			Mod140Context m140ctx = new Mod140Context();

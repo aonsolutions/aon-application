@@ -1,3 +1,4 @@
+/*
 package com.esferalia.aon.gwt.fiscal.server.file;
 
 import java.io.ByteArrayOutputStream;
@@ -23,7 +24,9 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod184Income;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184Partner;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+@Deprecated
 public class MOD184Writer {
+	
 	private static DateFormat DATE_FORMAT  = new SimpleDateFormat("yyyyMMdd");
 	
 	public FileOutput createMOD184(String domainName, int domainId,String user,
@@ -166,3 +169,4 @@ public class MOD184Writer {
 		deponent.setPartnerTotal(deponent.getPartners().size());
 	}
 }
+*/

@@ -32,12 +32,9 @@ import org.jooq.Record1;
 import org.jooq.Record3;
 import org.jooq.Result;
 
-import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.server.OpenDocument2ImageServlet;
-import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.common.shared.FileInfo;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.D2DepositTreeObject;
@@ -50,12 +47,14 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2Compute;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2MVELContext;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
@@ -65,8 +64,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves.Clave;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002013toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002014toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Utils;
-import com.esferalia.aon.payroll.sql.SQLConstants;
-import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -796,23 +793,26 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		
 		public static final Map<MimeType, IDocument2HtmlConverter> DOC2HTML_CONVERTERS = 
 				new HashMap<MimeType, IDocument2HtmlConverter>(){
-			{
-				put(MimeType.MIME_PDF, OpenDocument2HtmlConverter.INSTANCE );
-				put(MimeType.MIME_MS_WORD, OpenDocument2HtmlConverter.INSTANCE );
-				put(MimeType.MIME_MS_WORD_2007, OpenDocument2HtmlConverter.INSTANCE );
-				put(MimeType.MIME_MS_EXCEL, OpenDocument2HtmlConverter.INSTANCE );
-				put(MimeType.MIME_MS_EXCEL_2007, OpenDocument2HtmlConverter.INSTANCE );
-				put(MimeType.MIME_MS_POWER_POINT, OpenDocument2HtmlConverter.INSTANCE );
-				put(MimeType.MIME_MS_POWER_POINT_2007, OpenDocument2HtmlConverter.INSTANCE );
-				put(MimeType.MIME_HTML, Noop2HtmlConverter.INSTANCE );
-				put(MimeType.MIME_TXT, Noop2HtmlConverter.INSTANCE );
+			
+			private static final long serialVersionUID = -5485478770888354370L;
 
-				put(MimeType.MIME_BMP, Image2HtmlConverter.INSTANCE );
-				put(MimeType.MIME_JPEG, Image2HtmlConverter.INSTANCE );
-				put(MimeType.MIME_PNG, Image2HtmlConverter.INSTANCE );
-				put(MimeType.MIME_GIF, Image2HtmlConverter.INSTANCE );
+			{
+				put(MimeType.PDF, OpenDocument2HtmlConverter.INSTANCE );
+				put(MimeType.MS_WORD, OpenDocument2HtmlConverter.INSTANCE );
+				put(MimeType.MS_WORD_2007, OpenDocument2HtmlConverter.INSTANCE );
+				put(MimeType.MS_EXCEL, OpenDocument2HtmlConverter.INSTANCE );
+				put(MimeType.MS_EXCEL_2007, OpenDocument2HtmlConverter.INSTANCE );
+				put(MimeType.MS_POWER_POINT, OpenDocument2HtmlConverter.INSTANCE );
+				put(MimeType.MS_POWER_POINT_2007, OpenDocument2HtmlConverter.INSTANCE );
+				put(MimeType.HTML, Noop2HtmlConverter.INSTANCE );
+				put(MimeType.TXT, Noop2HtmlConverter.INSTANCE );
+
+				put(MimeType.BMP, Image2HtmlConverter.INSTANCE );
+				put(MimeType.JPEG, Image2HtmlConverter.INSTANCE );
+				put(MimeType.PNG, Image2HtmlConverter.INSTANCE );
+				put(MimeType.GIF, Image2HtmlConverter.INSTANCE );
 				
-				put(MimeType.MIME_ZIP, Zip2HtmlConverter.INSTANCE);
+				put(MimeType.ZIP, Zip2HtmlConverter.INSTANCE);
 			}
 		};
 		
@@ -927,10 +927,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 			PreparedStatement stmt = null;
 			try {
 				conn = getConnection();
-				stmt = conn.prepareStatement(
-						"SELECT " + RattachColumns.DATA
-						+ " FROM " + SQLConstants.RATTACH + " WHERE "
-						+ RattachColumns.ID + "= ? ");
+				stmt = conn.prepareStatement("SELECT data FROM rattach WHERE id = ? ");
 
 				stmt.setInt(1, doc.getFileId());
 				
@@ -939,8 +936,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 				if (!rs.next()) {
 					throw new IllegalArgumentException();
 				}
-
-				InputStream is = rs.getBinaryStream(RattachColumns.DATA);
+				InputStream is = rs.getBinaryStream("data");
 				transform(is, os);
 			}
 			catch (Exception e ) {

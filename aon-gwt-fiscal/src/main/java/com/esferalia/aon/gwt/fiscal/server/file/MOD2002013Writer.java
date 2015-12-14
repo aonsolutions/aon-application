@@ -1,3 +1,4 @@
+/*
 package com.esferalia.aon.gwt.fiscal.server.file;
 
 import java.io.ByteArrayOutputStream;
@@ -13,6 +14,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002013File;
 
+@Deprecated
 public class MOD2002013Writer {
 	
 	public FileOutput createMOD200(Mod2002013 mod200) throws AonSQLException {
@@ -55,5 +57,5 @@ public class MOD2002013Writer {
 		}
 		return f;
 	}
-
 }
+ */

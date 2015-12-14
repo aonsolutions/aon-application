@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
 
 

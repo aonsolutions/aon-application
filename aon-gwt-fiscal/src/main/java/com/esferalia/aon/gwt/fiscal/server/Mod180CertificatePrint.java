@@ -1,15 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.commit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.disableAutoCommit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoCommit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.ResourceBundle;
@@ -20,20 +13,19 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.fiscal.Mod180;
+import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
+
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRReport;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.fiscal.Mod180;
-import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
-import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.watson.server.AonDatabaseUtil;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod180 Certificate Print", urlPatterns = { "/aon_gwt_fiscal/Model180CertificatePrint" })
@@ -47,16 +39,11 @@ public class Mod180CertificatePrint extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		Connection conn = null;
 		try {
-			conn = getConnection();
-			disableAutoCommit(conn);
 			int id = Integer.parseInt(req.getParameter("mod180"));
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String domainName = req.getParameter("domainName");
 			Mod180 mod180 = AON.getMod180(domainName, domainId, AonServletUtils.getLoggedUser(),id);
-
-			commit(conn);
 
 			byte[] data = null;
 			if(mod180!=null){
@@ -94,11 +81,7 @@ public class Mod180CertificatePrint extends HttpServlet {
 			
 			resp.flushBuffer();
 		} catch (Throwable e) {
-			rollback(conn);
 			throw new ServletException(e);
-		} finally {
-			enableAutoCommit(conn);
-			AonDatabaseUtil.closeQuietly(conn);
 		}
 	}
 	

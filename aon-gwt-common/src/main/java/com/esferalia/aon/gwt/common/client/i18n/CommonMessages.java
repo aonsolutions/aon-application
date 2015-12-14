@@ -1804,10 +1804,10 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Fecha adquisici\u00F3n acci\u00F3n/participaci\u00F3n")
 	String adqDate();
 	
-	@DefaultMessage("Ajustes: Aumentos")
+	@DefaultMessage("Valor liquidativo / Ajustes: Aumentos")
 	String adjustIncrease();
 	
-	@DefaultMessage("Ajustes: Disminuciones")
+	@DefaultMessage("Valor adquisici\u00F3n / Ajustes: Disminuciones") 
 	String adjustDecrease();
 	
 	@DefaultMessage("Resultado contable")

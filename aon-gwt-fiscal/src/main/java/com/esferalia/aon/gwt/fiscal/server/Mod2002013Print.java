@@ -1,67 +1,45 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.code.aon.file.format.output.FileOutput;
-import com.esferalia.aon.gwt.fiscal.server.file.MOD2002013Writer;
-import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
-
-@SuppressWarnings("serial")
-@WebServlet(name = "Mod200 - 2013 Print", urlPatterns = { "/aon_gwt_fiscal/Model2002013Print" })
+//@WebServlet(name = "Mod200 - 2013 Print", urlPatterns = { "/aon_gwt_fiscal/Model2002013Print" })
 public class Mod2002013Print extends HttpServlet {
+
+	private static final long serialVersionUID = 6413086920045017220L;
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		try {
-			int id = Integer.parseInt(req.getParameter("modId"));
-			String domainName = req.getParameter("domainName");
-			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			Mod2002013 mod200 = AON.getMod2002013ById(domainName,domainId,id);
-			MOD2002013Writer writer = new MOD2002013Writer();
-			FileOutput fileoutput = writer.createMOD200(mod200);
-			String s = mod200.getEnterpriseName();
-			StringBuilder sb = new StringBuilder();
-			if (!Character.isJavaIdentifierStart(s.charAt(0))) {
-				sb.append("_");
-			}
-			for (char c : s.toCharArray()) {
-				if (Character.isJavaIdentifierPart(c)) {
-					sb.append(c);
-				}
-			}
-			String fileName = "Mod200" + "_" + mod200.getYear() + "_" + sb.toString();
-			downloadPDF(req, resp, fileName, fileoutput.getContent());
-		} catch (Throwable e) {
-			throw new ServletException(e);
-		}
-
+//		try {
+//			int id = Integer.parseInt(req.getParameter("modId"));
+//			String domainName = req.getParameter("domainName");
+//			int domainId = Integer.parseInt(req.getParameter("domainId"));
+//			Mod2002013 mod200 = AON.getMod2002013ById(domainName,domainId,id);
+//			MOD2002013Writer writer = new MOD2002013Writer();
+//			FileOutput fileoutput = writer.createMOD200(mod200);
+//			String s = mod200.getEnterpriseName();
+//			StringBuilder sb = new StringBuilder();
+//			if (!Character.isJavaIdentifierStart(s.charAt(0))) {
+//				sb.append("_");
+//			}
+//			for (char c : s.toCharArray()) {
+//				if (Character.isJavaIdentifierPart(c)) {
+//					sb.append(c);
+//				}
+//			}
+//			String fileName = "Mod200" + "_" + mod200.getYear() + "_" + sb.toString();
+//			downloadPDF(req, resp, fileName, fileoutput.getContent());
+//		} catch (Throwable e) {
+//			throw new ServletException(e);
+//		}
+//
 	}
-
+/*
 	private void downloadPDF(HttpServletRequest req, HttpServletResponse resp,
 			String fileName, byte[] content) throws IOException, KeyManagementException, NoSuchAlgorithmException {
 		String fileString = new String(content);
@@ -139,4 +117,5 @@ public class Mod2002013Print extends HttpServlet {
 			return null;
 		}
 	}
+*/
 }

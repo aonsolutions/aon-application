@@ -1,14 +1,12 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.commit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.disableAutoCommit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoCommit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
-
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.KeyManagementException;
@@ -16,7 +14,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.sql.Connection;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -31,13 +28,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.gwt.common.shared.AonSQLException;
-import com.esferalia.aon.gwt.fiscal.server.file.MOD193Writer;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
-import com.esferalia.aon.watson.server.AonDatabaseUtil;
+import com.esferalia.aon.occam.server.fiscal.format.mod193.Mod193Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
@@ -48,19 +42,21 @@ public class Mod193Print extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		Connection conn = null;
 		try {
-			conn = getConnection();
-			disableAutoCommit(conn);
-			MOD193Writer writer = new MOD193Writer();
 			int id = Integer.parseInt(req.getParameter("mod193"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			Mod193 mod193 = AON.getMod193(domainName, domainId, AonServletUtils.getLoggedUser(),id);
 
-			FileOutput fileoutput = writer.createMOD193(domainName, domainId,AonServletUtils.getLoggedUser(),
-					id, mod193.getYear(), mod193.getAdministration());
-			commit(conn);
+			ByteArrayOutputStream output = new ByteArrayOutputStream();
+			OutputStreamWriter wr = null;
+			try {
+				wr = new OutputStreamWriter(output,"ISO-8859-1");
+			} catch (UnsupportedEncodingException e) {
+				wr = new OutputStreamWriter(output);
+			}
+			PrintWriter writer = new PrintWriter(wr);
+			Mod193Writer.fillWriter(mod193, writer);
 
 			String s = mod193.getName();
 			StringBuilder sb = new StringBuilder();
@@ -76,17 +72,10 @@ public class Mod193Print extends HttpServlet {
 			String fileName = "Mod193" + "_" + mod193.getYear() + "_"
 					+ sb.toString();
 
-			downloadPDF(req, resp, fileName, fileoutput.getContent());
+			downloadPDF(req, resp, fileName, output.toByteArray());
 
-		} catch (AonSQLException e) {
-			rollback(conn);
-			throw new ServletException(e);
 		} catch (Throwable e) {
-			rollback(conn);
 			throw new ServletException(e);
-		} finally {
-			enableAutoCommit(conn);
-			AonDatabaseUtil.closeQuietly(conn);
 		}
 
 	}

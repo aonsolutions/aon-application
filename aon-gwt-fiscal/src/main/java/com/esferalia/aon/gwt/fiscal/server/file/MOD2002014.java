@@ -1,3 +1,4 @@
+/*
 package com.esferalia.aon.gwt.fiscal.server.file;
 
 import java.io.FileNotFoundException;
@@ -14,6 +15,7 @@ import com.code.aon.file.format.model.Fd0Exception;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014.BalanceType;
 import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002014File;
 
+@Deprecated
 public class MOD2002014  extends AbstractFileFiller{
 
 	private Mod2002014File mod200File;
@@ -88,5 +90,5 @@ public class MOD2002014  extends AbstractFileFiller{
 		return true;
 	}
 
-	
 }
+ */	

@@ -18,6 +18,8 @@ import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod200Reader;
 @WebServlet(name = "Mod200 - 2013 BOE Upload ", urlPatterns = { "/aon_gwt_fiscal/Mod2002013BOEUpload" })
 public class Mod2002013BOEUpload extends UploadAction {
 
+	private static final long serialVersionUID = -3856855479554642408L;
+
 	@Override
 	public void checkRequest(HttpServletRequest request) {
 		maxSize = 10485760;

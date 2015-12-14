@@ -1,7 +1,10 @@
+/*
 package com.esferalia.aon.gwt.fiscal.server.file;
+
 
 import com.esferalia.aon.occam.api.model.type.Administration;
 
+@Deprecated
 public enum MOD200Format {
 
 	AEAT_2014(2014,Administration.COMMON_TERRITORY, new String[]{
@@ -79,3 +82,4 @@ public enum MOD200Format {
 	}
 	
 }
+*/

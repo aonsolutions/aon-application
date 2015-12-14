@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AonFiscalFileUtils {
@@ -83,6 +84,9 @@ public class AonFiscalFileUtils {
 //		if (value == null) return zeros(size);
 //		return text( (value < 0 ? 'N' : '0') + unsigned(value,(size - 1),precision), size);
 //	}
+	public static String unsigned(String value, int size, int precision) {
+		return unsigned(AonNumberUtils.todouble(value), size, precision);
+	}
 
 	public static String unsigned(double value, int size) {
 		return unsigned(value, size, 2);		

@@ -1,3 +1,4 @@
+/*
 package com.esferalia.aon.gwt.fiscal.server.file;
 
 import java.io.ByteArrayOutputStream;
@@ -22,6 +23,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
+@Deprecated
 public class MOD193Writer {
 	
 	private static DateFormat DATE_FORMAT  = new SimpleDateFormat("yyyyMMdd");  
@@ -148,3 +150,4 @@ public class MOD193Writer {
 		}
 	}
 }
+*/

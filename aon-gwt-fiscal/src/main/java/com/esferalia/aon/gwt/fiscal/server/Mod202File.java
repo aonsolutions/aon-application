@@ -1,14 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.commit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.disableAutoCommit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoCommit;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
-
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.sql.Connection;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,7 +13,6 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.server.fiscal.format.mod202.Mod202Writer;
-import com.esferalia.aon.watson.server.AonDatabaseUtil;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod202 File download", urlPatterns = { "/aon_gwt_fiscal/Model202File" })
@@ -30,11 +22,7 @@ public class Mod202File extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		Connection conn = null;
 		try {
-			conn = getConnection();
-			disableAutoCommit(conn);
-			//  
 			int id = Integer.parseInt(req.getParameter("modId"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
@@ -61,13 +49,8 @@ public class Mod202File extends HttpServlet {
 			Mod202Writer.fill(writer, mod202);
 			resp.flushBuffer();
 			
-			commit(conn);
 		} catch (Throwable e) {
-			rollback(conn);
 			throw new ServletException(e);
-		} finally {
-			enableAutoCommit(conn);
-			AonDatabaseUtil.closeQuietly(conn);
 		}
 
 	}
