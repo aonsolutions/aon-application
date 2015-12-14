@@ -30,20 +30,18 @@
 				disabled="#{fieldDisabled}">
 				<f:selectItems value="#{productCollections.commonProductTypes}" />
 			</aon:selectOneMenu>
-			<aon:if test="#{customize.snapshotVersion}">
-				<aon:div>
-					<aon:if test="#{aonRole.saleOperator or aonRole.purchaseOperator}">
-						<aon:outputLabel for="#{controller.pojoShortName}_kind" 
-							styleClass="aon-margin-right aon-italic"
-							value="#{bundle.aon_kind}" />
-						<aon:selectOneMenu id="#{controller.pojoShortName}_kind" styleClass="aon-margin-right"
-							value="#{productTo.kind}" required="true"
-							disabled="#{fieldDisabled}">
-							<f:selectItems value="#{productCollections.productKinds}" />
-						</aon:selectOneMenu>
-					</aon:if>
-				</aon:div>
-			</aon:if>
+			<aon:div>
+				<aon:if test="#{aonRole.saleOperator or aonRole.purchaseOperator}">
+					<aon:outputLabel for="#{controller.pojoShortName}_kind" 
+						styleClass="aon-margin-right aon-italic"
+						value="#{bundle.aon_kind}" />
+					<aon:selectOneMenu id="#{controller.pojoShortName}_kind" styleClass="aon-margin-right"
+						value="#{productTo.kind}" required="true"
+						disabled="#{fieldDisabled}">
+						<f:selectItems value="#{productCollections.productKinds}" />
+					</aon:selectOneMenu>
+				</aon:if>
+			</aon:div>
 		</aon:panelGrid>
 	</aon:if>
 
