@@ -76,7 +76,7 @@ public class AttachmentTest {
 	public void testInsert() {
 		Date now = new Date();
 		getAttachList().stream().forEach(attach ->{
-			attach.setId(AON.insert(attach));
+			attach.setId(AON.insert(DOMAIN_NAME, DOMAIN_ID, LOGIN, attach));
 			System.out.println("Insert File -- ID: "+ attach.getId());
 		});
 		System.out.println( (((new Date()).getTime() - now.getTime() )) + " Ms. ");
@@ -100,7 +100,7 @@ public class AttachmentTest {
 	public void testUpdate() {
 		Date now = new Date();
 		getAttachList().stream().forEach(attach ->{
-			AON.update(attach);
+			AON.update(DOMAIN_NAME, DOMAIN_ID, LOGIN, attach);
 			System.out.println("Update File -- ID: "+ attach.getId());
 		});
 		System.out.println( (((new Date()).getTime() - now.getTime() )) + " Ms. ");
