@@ -91,7 +91,7 @@
 				value="#{invoiceController.onSellerChanged}" type="lookupChangeListener" />
 		</ui:include>
 		<aon:outputText styleClass="aon-bold"
-			value="#{invoiceController.to.seller.fullName}" 
+			value="#{invoiceController.to.seller.registry.fullName}" 
 			rendered="#{invoiceController.readOnly}" />
 	</aon:if>
 
