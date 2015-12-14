@@ -3230,6 +3230,7 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
  	}
  	
 	.aon-chart-table-header-cell{
+		position: inherit !important;
  		padding: 1px !important;
 		font-weight: bold;
 		border: 1px solid #EEE;
