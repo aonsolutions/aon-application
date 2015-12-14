@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -73,7 +74,7 @@ public interface ITemplate extends RemoteService{
 		
 	Error executeExcelEcommerce(Domain domain, Ecommerce ecommerce,
 			Seller seller, String type,
-			ProductCategory pc);
+			Tag tag);
 	
 	public String generateConsumptionExcel(Domain domain,Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
 			Integer size, Integer fileId);

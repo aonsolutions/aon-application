@@ -1,6 +1,6 @@
 # run-parts
-#00 02 * * * root drive.sh sync | tee /etc/logs/out.log | mail aonsolutions@gmail.com;;
+#00 02 * * * root aon-google-drive.sh sync | tee /etc/logs/out.log | mail aonsolutions@gmail.com;;
 
-#00 04 * * * root calendar.sh sync | tee /etc/logs/out.log | mail aibanez@aonsolutions.es;;
+#00 04 * * * root aon-google-calendar.sh  sync | tee /etc/logs/out.log | mail aibanez@aonsolutions.es;;
 
 00 01 * * wed root aon-google-drive.sh sc | tee /etc/logs/out.log | mail aio@aonsolutions.net;;

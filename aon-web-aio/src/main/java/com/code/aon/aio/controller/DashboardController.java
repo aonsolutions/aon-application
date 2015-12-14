@@ -1,6 +1,5 @@
 package com.code.aon.aio.controller;
 
-import static com.code.aon.google.apis.jooq.DBConsults.getCategoryName;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
@@ -45,7 +44,6 @@ import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record6;
-import org.jooq.Record8;
 import org.jooq.Record9;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
@@ -70,11 +68,8 @@ import com.code.aon.fiscal.config.Model;
 import com.code.aon.fiscal.config.ModelConfig;
 import com.code.aon.fiscal.config.ModelManager;
 import com.code.aon.fiscal.enumeration.Period;
-import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.jooq.DBConsults;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
-import com.code.aon.google.apis.jooq.JooqSettings;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.accounting.check.AonCheckException;
@@ -89,8 +84,11 @@ import com.code.aon.ui.fiscal.controller.FiscalParametersController;
 import com.code.aon.ui.fiscal.controller.IFiscalModelController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
@@ -105,8 +103,6 @@ public class DashboardController implements Serializable {
 			.getLogger(DashboardController.class);
 
 	private static final String WHERE = " WHERE ";
-
-	//private static final String Month = null;
 
 	private List<DashboardMessage> messages;
 	private DashboardEntry[] periodEntriesCount;
@@ -923,37 +919,6 @@ public class DashboardController implements Serializable {
 	 * @throws IOException 
 	 * @throws KeyStoreException **********************************/ 
 	
-	
-	/*public Vector<DashboardDocs> getTypesDrive() throws AonConnectionException, SQLException, KeyStoreException, IOException, GeneralSecurityException{
-		String domain = "novus.aibanez.net";//AonUtil.getDomainName();
-		DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
-		Drive drive = DriveUtils.serviceInitialize(g);
-		Integer aux = RegistryAttachmentType.values().length;
-		Vector<DashboardDocs> docs = new Vector<DashboardDocs>();
-		for (int i = 0; i<aux; i++){
-			String type = RegistryAttachmentType.values()[i].toString();
-			FileList fl = SearchFiles.searchFilesProperties(drive, "type", type);
-			
-			DashboardDocs dc = new DashboardDocs();
-			dc.settype(type);
-			dc.setnum(fl.getItems().size());
-			dc.setsize(getSize(fl));
-			
-			docs.add(dc);
-		}
-		
-		return docs;
-	}
-	
-	private long getSize(FileList fl) {
-		long size=0;
-		for (File f : fl.getItems()) {
-			size = size + f.getFileSize();	
-		}
-		return size;
-
-	}*/
-	
 	// esta en DBConsults
 	public  Vector<DashboardDocs> getTypes() throws AonConnectionException,
 	SQLException {
@@ -996,38 +961,32 @@ public class DashboardController implements Serializable {
 	}
 	
 	public static Result<Record3<Integer, String, String>> getCategoryAux(
-			String domain, Integer domainId) throws AonConnectionException, SQLException {
-		Connection connection = null;
+			String domainName, Integer domainId) {
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		AONContext ctx = null;
 		try {
-
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-
-			Result<Record3<Integer, String, String>> category = dslContext
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			Result<Record3<Integer, String, String>> category = ctx.getDslContext()
 					.select(CATEGORY.ID, CATEGORY.NAME, CATEGORY.DESCRIPTION)
 					.from(CATEGORY)
 					.join(DOMAIN)
 					.on(CATEGORY.DOMAIN.eq(DOMAIN.ID))
 					.where(DOMAIN.ID
 							.eq(domainId)
-							.or(DOMAIN.ID.in(dslContext.select(DOMAIN.PARENT)
+							.or(DOMAIN.ID.in(ctx.getDslContext().select(DOMAIN.PARENT)
 									.from(DOMAIN).where(DOMAIN.ID.eq(domainId)))))
 					.fetch();
 
 			return category;
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 
 	}
 	
-	public   Vector<DashboardDocs> getTypesCat() throws AonConnectionException,
-	SQLException {
+	public   Vector<DashboardDocs> getTypesCat() {
 		if (types == null){
-		
 			types= new Vector<DashboardDocs>();
 			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 			Integer domainId = ds.getDomainId();
@@ -1058,38 +1017,31 @@ public class DashboardController implements Serializable {
 		return types;
 	}
 	
-	public   DashboardDocs getTypesCatBD(Integer category) throws AonConnectionException,
-	SQLException {
-		String domain = AonUtil.getDomainName();
-		Integer key = DomainManager.getCurrentDomain();
-
-		Connection connection = null;
+	public   DashboardDocs getTypesCatBD(Integer category){
+		Domain domain = getDomain();
+		com.esferalia.aon.occam.api.model.security.User user = getUser();
+		
+		AONContext ctx = null;
 		try {
-			
-			connection = DatabaseSync.getConnection(domain);
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin()); 
 
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-			
 			DashboardDocs a=null;
 			Result<Record3<Integer, String, String>> data ;
 			if (category == 100){
-				data =  dslContext
+				data =  ctx.getDslContext()
 						.select(RATTACH.CATEGORY,RATTACH.DPARENT_ID,RATTACH.DRIVE_ID)
 						.from(RATTACH)
-						.where(RATTACH.CATEGORY.isNull().and(RATTACH.DOMAIN.eq(key))).fetch();
+						.where(RATTACH.CATEGORY.isNull().and(RATTACH.DOMAIN.eq(domain.getId()))).fetch();
 				a = new DashboardDocs("Otros",0,0,0);
 
 			}
 			else{
-				data =  dslContext
+				data =  ctx.getDslContext()
 						.select(RATTACH.CATEGORY,RATTACH.DPARENT_ID,RATTACH.DRIVE_ID)
 						.from(RATTACH)
-						.where(RATTACH.CATEGORY.eq(category).and(RATTACH.DOMAIN.eq(key))).fetch();
-				Result<Record1<String>> categoryName = DBConsults.getCategoryName(category, domain);
-				for (Record1<String> record1 : categoryName) {
-					a = new DashboardDocs(record1.value1(),0,0,0);
-				}
+						.where(RATTACH.CATEGORY.eq(category).and(RATTACH.DOMAIN.eq(domain.getId()))).fetch();
+				Category c = DBConsults.getCategory(getDomain(), getUser(), category);
+				a = new DashboardDocs(c.getName(),0,0,0);
 			}
 			
 			long aux = 0;
@@ -1108,30 +1060,25 @@ public class DashboardController implements Serializable {
 		
 			return a;
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 	
 	HashMap<Integer, DashboardDocs> categories;
-	public void getTypesCatBD2() throws AonConnectionException,
-	SQLException {
-		String domain = AonUtil.getDomainName();
+	public void getTypesCatBD2() {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
 
-		Connection connection = null;
+		AONContext ctx = null;
 		try {
-			
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-			
-			
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			Result<Record3<Integer, Integer, String>> data ;
 			
 			HashMap<Integer, DashboardDocs> map = new HashMap<Integer, DashboardDocs>();
 	
-				data =  dslContext
+				data =  ctx.getDslContext()
 						.select(RATTACH.CATEGORY,RATTACH.DATA.length(),RATTACH.DRIVE_ID)
 						.from(RATTACH)
 						.where(getAttachmentCondition()).fetch();
@@ -1145,12 +1092,9 @@ public class DashboardController implements Serializable {
 						if (record.value3()!=null) map.get(categoryId).setmediaDrive(map.get(categoryId).getmediaDrive()+1,map.get(categoryId).getnum());
 					}	
 					else{
-						Result<Record1<String>> categoryName = DBConsults.getCategoryName(categoryId, domain);
+						Category c = DBConsults.getCategory(getDomain(), getUser(), categoryId);
 						DashboardDocs a;
-						String category = null;
-						for (Record1<String> record1 : categoryName) {
-							category = record1.value1();
-						}
+						String category = c != null ? c.getName() : "Otros";
 						long size = (record.value2() != null) ? record.value2().longValue() : 0;
 						if (category != null)
 							a= new DashboardDocs(category, 1, size, 0);
@@ -1163,41 +1107,36 @@ public class DashboardController implements Serializable {
 		
 			categories =  map;
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 	
 	
-	public  DashboardDocs getTypesBD(byte type) throws AonConnectionException,
-	SQLException {
+	public  DashboardDocs getTypesBD(byte type){
 		Locale locale = AonUtil.getCurrentLocale();
-		String domain = AonUtil.getDomainName();
-		Integer key = DomainManager.getCurrentDomain();
-
-		Connection connection = null;
+		Domain domain = getDomain();
+		com.esferalia.aon.occam.api.model.security.User user = getUser();
+		
+		AONContext ctx = null;
 		try {
-			
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin()); 
 			
 			DashboardDocs a=null;
 			Result<Record3<Byte, String,String>> data ;
 			if (type == 100){
-				data =  dslContext
+				data =  ctx.getDslContext()
 						.selectDistinct(RATTACH.TYPE,RATTACH.DPARENT_ID,RATTACH.DRIVE_ID)
 						.from(RATTACH).join(DOMAIN).on(DOMAIN.ID.eq(RATTACH.DOMAIN))
-						.where(RATTACH.TYPE.isNull().and(DOMAIN.NAME.eq(domain).or(RATTACH.DOMAIN.eq(key)))).fetch();
+						.where(RATTACH.TYPE.isNull().and(DOMAIN.NAME.eq(domain.getName()).or(RATTACH.DOMAIN.eq(domain.getId())))).fetch();
 				a = new DashboardDocs("Otros",0,0);
 
 			}
 			else{
-				data =  dslContext
+				data =  ctx.getDslContext()
 						.selectDistinct(RATTACH.TYPE,RATTACH.DPARENT_ID,RATTACH.DRIVE_ID)
 						.from(RATTACH).join(DOMAIN).on(DOMAIN.ID.eq(RATTACH.DOMAIN))
-						.where(RATTACH.TYPE.eq(type).and(DOMAIN.NAME.eq(domain).or(RATTACH.DOMAIN.eq(key)))).fetch();
+						.where(RATTACH.TYPE.eq(type).and(DOMAIN.NAME.eq(domain.getName()).or(RATTACH.DOMAIN.eq(domain.getId())))).fetch();
 				String typeName = RegistryAttachmentType.values()[type].getName(locale);
 				a = new DashboardDocs(typeName,0,0);
 
@@ -1216,52 +1155,31 @@ public class DashboardController implements Serializable {
 		
 			return a;
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 	
-	private List<Integer> getCurrentUserScopeIds() throws SQLException {
+	private List<Integer> getCurrentUserScopeIds() {
 		User user = UserUtils.getInstance().getLoggedUser();
-		String domain = AonUtil.getDomainName();
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
 		List<Integer> scopes = null;
-		Connection connection = null;
+		AONContext ctx = null;
 		try {
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection, JooqSettings.getDefaultSettings());
-
-			scopes = dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE)
+			ctx = AONContext.getAONContext(domainName, domainId, user.getLogin());
+			scopes = ctx.getDslContext().select(USER_SCOPE.SCOPE).from(USER_SCOPE)
 					.where(USER_SCOPE.USER_ID.eq(user.getId()))
 					.fetch(USER_SCOPE.SCOPE);
 
 		} finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 		return scopes;
 	}
 	
-	private Integer getDomainId(String domain) throws SQLException {
-		Connection connection = null;
-		Integer id;
-		try {
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection, JooqSettings.getDefaultSettings());
-			
-			id = dslContext.select(DOMAIN.ID).from(DOMAIN)
-					.where(DOMAIN.NAME.eq(domain))
-					.fetchOne(DOMAIN.ID);
-
-		} finally {
-			if (connection != null)
-				connection.close();
-		}
-		return id;
-	}
-	
-	private Condition getAttachmentCondition() throws SQLException {
+	private Condition getAttachmentCondition() {
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
@@ -1306,22 +1224,18 @@ public class DashboardController implements Serializable {
 	SQLException, KeyStoreException, IOException, GeneralSecurityException {
 		if (recentFiles == null) {
 			Locale locale = AonUtil.getCurrentLocale();
-			String domain = AonUtil.getDomainName();
-			Domain d = DBConsults.getDomain(domain);
-			DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());
+			Domain domain = getDomain();
+			com.esferalia.aon.occam.api.model.security.User user = getUser();
+			
+			DomainGserviceaccount g = DBConsults.getServiceAccount(domain, user);
 			Drive drive = null;
 			if (g.getClientId()!= null) drive = DriveUtils.serviceInitialize(g);
-			Integer key = DomainManager.getCurrentDomain();
-			Connection connection = null;
+			AONContext ctx = null;
 			try {
-				
-				connection = DatabaseSync.getConnection(domain);
-				
-				DSLContext dslContext = DSL.using(connection,
-						JooqSettings.getDefaultSettings());
-				
+				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin()); 
+
 				Result<Record9<Byte, Integer, String, java.sql.Date, String, Integer, String, Byte, Integer>> data ;
-				data =  dslContext
+				data =  ctx.getDslContext()
 						.selectDistinct(RATTACH.TYPE,RATTACH.CATEGORY,RATTACH.DESCRIPTION,RATTACH.ATTACH_DATE,RATTACH.DRIVE_ID, RATTACH.DATA.length(),RATTACH.DPARENT_ID,RATTACH.MIMETYPE,RATTACH.ID)
 						.from(RATTACH)
 						.where(getAttachmentCondition())					
@@ -1341,16 +1255,11 @@ public class DashboardController implements Serializable {
 						if (!typeName.equals("Logo")
 								&& !typeName.equals("Firma")) {
 							drc.setname(record.value3());
-							String category = null;
-							Result<Record1<String>> categoryName;
+							String category = "otros";
 							if (record.value2() != null) {
-								categoryName = getCategoryName(record.value2(),
-										domain);
-								for (Record1<String> record1 : categoryName) {
-									category = record1.value1();
-								}
-							} else
-								category = "otros";
+								Category c = DBConsults.getCategory(getDomain(), getUser(), record.value2());
+								category = c.getName();
+							} 
 							drc.setcategory(category);
 
 							String driveId = record.value5();
@@ -1386,37 +1295,33 @@ public class DashboardController implements Serializable {
 						return recentFiles;
 				}
 			} finally {
-				if (connection != null)
-					connection.close();
+				if (ctx != null)
+					ctx.close();
 			}
 		}
 		return recentFiles;
 	}
 	
-	public Integer getFileSize(String domain, Integer id) throws SQLException {
-		Connection connection = null;
+	public Integer getFileSize(String domainName, Integer id){
+		Domain domain = getDomain(domainName);
+		com.esferalia.aon.occam.api.model.security.User user = getUser();
+		AONContext ctx = null;
 		try {
-			
-			connection = DatabaseSync.getConnection(domain);
-			
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-			
-		Result<Record1<Integer>> data ;
-		data =  dslContext
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin()); 
+			Result<Record1<Integer>> data ;
+			data =  ctx.getDslContext()
 				.selectDistinct(RATTACH.DATA.length())
 				.from(RATTACH)
 				.where(RATTACH.ID.eq(id)).fetch();
 		
-		
-		Integer size = null;
-		for (Record1<Integer> record : data) {
-			size = record.value1(); 
-		}
-		return size;
+			Integer size = null;
+			for (Record1<Integer> record : data) {
+				size = record.value1(); 
+			}
+			return size;
 		}finally {
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 	
@@ -1456,10 +1361,10 @@ public class DashboardController implements Serializable {
 		
 		return list;
 	}
-	public  void sizes() throws SQLException{
+	public  void sizes() {
 		String domain = AonUtil.getDomainName();
-		Domain d = DBConsults.getDomain(domain);
-		DomainGserviceaccount dg = DBConsults.getServiceAccount(domain, d.getId());
+		Integer domainId = DomainManager.getCurrentDomain();
+		DomainGserviceaccount dg = DBConsults.getServiceAccount(domain, domainId);
 		if(dg != null){
 			if(dg.getSize()!= null) occupied = dg.getSize();
 			else occupied = 0.0;
@@ -1642,24 +1547,19 @@ public class DashboardController implements Serializable {
 	
 	public   Map<Integer, HashMap<String, DashboardPayrollPortal>> getPayrollBD() throws SQLException {
 		Locale locale = AonUtil.getCurrentLocale();
-		String domain = AonUtil.getDomainName();
-		Integer key = DomainManager.getCurrentDomain();
-		Connection connection = null;
+		Domain domain = getDomain();
+		com.esferalia.aon.occam.api.model.security.User user = getUser();
+		AONContext ctx = null;
 		try {
-			
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-			
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());			
 			//Result<Record6<java.sql.Date, Double, Double, Double, Double, Double>> data ;
 
 			
  			Result<Record6<java.sql.Date, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> data ;
 
-			data =  dslContext.select(SALARY.CHARGE_DATE,DSL.sum(SALARY.TOTAL_LIQUID),DSL.sum(SALARY.TOTAL_DEDUCTION),DSL.sum(SALARY.TOTAL_IRPF),DSL.sum(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS),DSL.sum(SALARY.TOTAL_ENTERPRISE))
+			data =  ctx.getDslContext().select(SALARY.CHARGE_DATE,DSL.sum(SALARY.TOTAL_LIQUID),DSL.sum(SALARY.TOTAL_DEDUCTION),DSL.sum(SALARY.TOTAL_IRPF),DSL.sum(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS),DSL.sum(SALARY.TOTAL_ENTERPRISE))
 					.from(SALARY)
-					.where(SALARY.DOMAIN.eq(key))
+					.where(SALARY.DOMAIN.eq(domain.getId()))
 					.groupBy(SALARY.CHARGE_DATE).fetch();
 			
 			/*data=dslContext.select(SALARY.CHARGE_DATE,SALARY.TOTAL_LIQUID,SALARY.TOTAL_DEDUCTION,SALARY.TOTAL_IRPF,SALARY.SOCIAL_SECURITY_CONTRIBUTIONS,SALARY.TOTAL_ENTERPRISE)
@@ -1725,8 +1625,8 @@ public class DashboardController implements Serializable {
 			return map;
 		}
 		finally{
-			if (connection != null)
-				connection.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 	private  void view(DashboardPayrollPortal d) {
@@ -1773,4 +1673,23 @@ public class DashboardController implements Serializable {
 	} 
 	
 	
+	
+	private Domain getDomain(){
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		return new Domain().setName(domainName).setId(domainId);
+	}
+	
+	private Domain getDomain(String domainName){
+		Integer domainId = DomainManager.getCurrentDomain();
+		return new Domain().setName(domainName).setId(domainId);
+	}
+	
+	private com.esferalia.aon.occam.api.model.security.User getUser(){
+		User user =  UserUtils.getInstance().getLoggedUser();
+		return new com.esferalia.aon.occam.api.model.security.User()
+				.setId(user.getId())
+				.setLogin(user.getLogin())
+				.setDomain(user.getDomain());
+	}
 }

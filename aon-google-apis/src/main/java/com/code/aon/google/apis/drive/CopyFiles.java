@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.IOUtils;
 
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.GenericUrl;
@@ -48,6 +49,15 @@ public class CopyFiles {
 	private static InputStream PRIVATE_KEY;
 	private static String pkeyPath;
 	private static String ids[] = null;
+	private static String login;
+	
+	public static String getLogin(){
+		return login;
+	}
+	
+	public static User getUser(){
+		return new User().setLogin(getLogin());
+	}
 	
 	public static void setPrivateKey() throws IOException{
 		 //PRIVATE_KEY = Files.readAllBytes(Paths.get("novus.p12"));/home/aibanez/Descargas/AON SOLUTIONS-52faf5279077.p12
@@ -251,6 +261,12 @@ public class CopyFiles {
 
 		Options options = new Options();
 
+		OptionBuilder.isRequired(true);
+		OptionBuilder.hasArg(true);
+		OptionBuilder.withDescription("Username of application");
+		OptionBuilder.withLongOpt("username");
+		Option loginOption = OptionBuilder.create('u');
+		
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(false);
 		OptionBuilder.withLongOpt("help");
@@ -285,7 +301,8 @@ public class CopyFiles {
 		OptionBuilder.withValueSeparator(',');
 		OptionBuilder.withLongOpt("id");
 		Option idsOption = OptionBuilder.create("id");
-
+		
+		options.addOption(loginOption);
 		options.addOption(helpOption);
 		options.addOption(clientOption);
 		options.addOption(accountOption);
@@ -306,7 +323,7 @@ public class CopyFiles {
 			pkeyPath = line.getOptionValue(pkeyOption.getOpt(),"");
 			
 			ids = line.getOptionValues(idsOption.getOpt());
-			
+			login = line.getOptionValue(loginOption.getOpt());
 
 
 		} catch (ParseException e) {

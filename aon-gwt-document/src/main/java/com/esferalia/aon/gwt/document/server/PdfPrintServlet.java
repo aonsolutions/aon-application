@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
-import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -27,10 +26,10 @@ import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBConsults;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 
@@ -51,8 +50,10 @@ public class PdfPrintServlet extends HttpServlet{
         String mtype = p_request.getParameter("mimetype");
         String domainId = p_request.getParameter("domain_id");
         Integer domainID = Integer.parseInt(domainId);
-        String domain = AonUtil.getDomainName();
+        String domainName = AonUtil.getDomainName();
+        Domain domain = new Domain().setName(domainName).setId(domainID);
         String login = AonServletUtils.getLoggedUser();
+        User user = new User().setLogin(login);
         Integer m = Integer.parseInt(mtype);
         MimeType mt = MimeType.values()[m];
         Integer idFile = Integer.parseInt(fileId);
@@ -62,10 +63,8 @@ public class PdfPrintServlet extends HttpServlet{
 			DomainGserviceaccount g = null;
 			Drive d = null;
 			try {
-				g = DBConsults.getServiceAccount(domain,domainID);
+				g = DBConsults.getServiceAccount(domain,user);
 				d = DriveUtils.serviceInitialize(g);
-			} catch (SQLException e) {
-				e.printStackTrace();
 			} catch (KeyStoreException e) {
 				e.printStackTrace();
 			} catch (GeneralSecurityException e) {
@@ -74,10 +73,10 @@ public class PdfPrintServlet extends HttpServlet{
 			
 			com.google.api.services.drive.model.File f = null;
 			try {
-				f = DriveUtils.getFile(d, driveId,idFile );
+				f = DriveUtils.getFile(d, domain, user, driveId,idFile );
 				if(f.getDescription().equals("OLDRIVE"))
 					d = DriveUtils.serviceInitializeOld(g);
-			} catch (SQLException | GeneralSecurityException e) {
+			} catch (GeneralSecurityException e) {
 				e.printStackTrace();
 			}
 
@@ -89,7 +88,7 @@ public class PdfPrintServlet extends HttpServlet{
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-			fi = com.esferalia.aon.gwt.document.jooq.DBConsults.getDataAndName(new Domain().setName(domain), new User().setLogin(login),id);
+			fi = com.esferalia.aon.gwt.document.jooq.DBConsults.getDataAndName(domain, user, id);
         }
         else return;
         File file ;

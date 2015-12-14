@@ -1820,10 +1820,11 @@ public class AON {
 		}
 	}
 
-	public static Integer insert(Attach attach) {
+	public static Integer insert(String domainName, Integer domainId, String login,
+			Attach attach) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(attach.getDomain().getName(), attach.getDomain().getId());
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			
 			if(attach.getAttachType().equals(AttachType.REGISTRY)) return getAttachment().insertRegistryAttach(ctx, attach);
 			else if(attach.getAttachType().equals(AttachType.CONTRACT)) return getAttachment().insertContractAttach(ctx, attach);
@@ -1840,10 +1841,11 @@ public class AON {
 		}
 	}
 	
-	public static void update(Attach attach){
+	public static void update(String domainName, Integer domainId, String login,
+			Attach attach){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(attach.getDomain().getName(), attach.getDomain().getId());
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			
 			if(attach.getAttachType().equals(AttachType.REGISTRY)) getAttachment().updateRegistryAttach(ctx, attach);
 			else if(attach.getAttachType().equals(AttachType.CONTRACT)) getAttachment().updateContractAttach(ctx, attach);

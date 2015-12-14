@@ -227,7 +227,6 @@ public class Documents extends Composite implements EntryPoint {
 				FileInfo object;
 				if(selFiles.size() == 1) object = selFiles.get(0);
 				else object= dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
-				
 				getAsHTMl(object,dataGrid.getKeyboardSelectedRow(),selFiles.size()>1 ? selFiles : dataProvider.getList() );
 			};
 		};		
@@ -3744,7 +3743,7 @@ public class Documents extends Composite implements EntryPoint {
 				showLoad();
 				removeOldIcon(icon);
 				setTitle(viewerFileInfo.getTitle(), viewerFileInfo.getIcon());
-				idoc.getAsHTML(viewerFileInfo, DEFAULT_ZOOM , new AsyncCallback<String>() {
+				idoc.getAsHTML(getDomain(), viewerFileInfo, DEFAULT_ZOOM , new AsyncCallback<String>() {
 					@Override
 					public void onSuccess(String result) {
 						hideLoad();
@@ -3760,7 +3759,7 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			protected void onZoomPlus(int zoom) {					
 				showLoad();
-				idoc.getAsHTML(viewerFileInfo, zoom , new AsyncCallback<String>() {
+				idoc.getAsHTML(getDomain(), viewerFileInfo, zoom , new AsyncCallback<String>() {
 					@Override
 					public void onSuccess(String result) {
 						hideLoad();
@@ -3775,7 +3774,7 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			protected void onZoomMinus(int zoom) {	
 				showLoad();
-				idoc.getAsHTML(viewerFileInfo, zoom , new AsyncCallback<String>() {
+				idoc.getAsHTML(getDomain(), viewerFileInfo, zoom , new AsyncCallback<String>() {
 					@Override
 					public void onSuccess(String result) {
 						hideLoad();
@@ -3797,7 +3796,7 @@ public class Documents extends Composite implements EntryPoint {
 		viewer.show();
 		viewer.showLoad();
 		
-		idoc.getAsHTML(fileInfo, DEFAULT_ZOOM , new AsyncCallback<String>() {
+		idoc.getAsHTML(getDomain(), fileInfo, DEFAULT_ZOOM , new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
 				viewer.hideLoad();

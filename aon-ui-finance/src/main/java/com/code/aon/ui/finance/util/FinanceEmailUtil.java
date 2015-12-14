@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
-import java.sql.SQLException;
 import java.text.MessageFormat;
 
 import javax.mail.Address;
@@ -38,7 +37,6 @@ import com.code.aon.facturae.FACeUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.jooq.DBConsults;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.finance.SddMandateObject;
@@ -49,6 +47,9 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonMessage;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.api.services.drive.Drive;
 
@@ -155,12 +156,12 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 
 	private void writeAttachDataToFile(IAttachment attach, File file) throws IOException {
 		try {
-			DomainGserviceaccount serviceAccount = DBConsults.getServiceAccount(AonUtil.getDomainName(), attach.getDomain());
+			Domain domain = new Domain().setName(AonUtil.getDomainName()).setId(attach.getDomain());
+			User user = new User().setLogin(AonUtil.getRemoteUser() != null ? AonUtil.getRemoteUser() : "");
+			DomainGserviceaccount serviceAccount = DBConsults.getServiceAccount(domain, user);
 			Drive drive = DriveUtils.serviceInitialize(serviceAccount);
-			InputStream input = DriveUtils.downloadFile(drive, DriveUtils.getFile(drive, attach.getDriveId(), attach.getId()));
+			InputStream input = DriveUtils.downloadFile(drive, DriveUtils.getFile(drive, domain, user, attach.getDriveId(), attach.getId()));
 			copyInputStreamToFile(input, file);
-		} catch (SQLException ex) {
-			throw new AonCoreException(ex.getMessage());
 		} catch (GeneralSecurityException ex) {
 			throw new AonCoreException(ex.getMessage());
 		}

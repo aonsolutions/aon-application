@@ -3,6 +3,8 @@ package com.code.aon.google.apis;
 import java.util.Date;
 import java.util.Vector;
 
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+
 public class FileInfo{
 	
 	static enum AonType {
@@ -35,8 +37,7 @@ public class FileInfo{
 	}
 	
 	
-	
-
+	private AttachType attachType;
 	private String aonType;
 	private short type;
 	private byte [] data;
@@ -86,6 +87,14 @@ public class FileInfo{
 	}
 	
 	
+
+	public AttachType getAttachType() {
+		return attachType;
+	}
+
+	public void setAttachType(AttachType attachType) {
+		this.attachType = attachType;
+	}
 
 	public Vector<String> getTags() {
 		return tags;
@@ -139,8 +148,9 @@ public class FileInfo{
 		return data;
 	}
 
-	public void setData(byte[] data) {
+	public FileInfo setData(byte[] data) {
 		this.data = data;
+		return this;
 	}
 
 	public String getDriveId() {

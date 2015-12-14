@@ -1,33 +1,27 @@
 package com.code.aon.ui.admin.controller;
 
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.DomainGserviceaccount.DOMAIN_GSERVICEACCOUNT;
-
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.Vector;
 
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.io.FileUtils;
-import org.jooq.DSLContext;
-import org.jooq.Record1;
-import org.jooq.Record8;
-import org.jooq.Result;
-import org.jooq.impl.DSL;
 import org.richfaces.event.UploadEvent;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.faces.controller.AttachmentUtil;
-import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBConsults;
-import com.code.aon.google.apis.jooq.JooqSettings;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.google.sql.AbstractSQL.Domain;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.type.DomainType;
 
 public class ServiceAccountController extends BasicController {
 
@@ -45,14 +39,10 @@ public class ServiceAccountController extends BasicController {
 	byte[] data;
 	
 	public Boolean getConsole(){
-		String domain = AonUtil.getDomainName();
-		Domain d = new Domain();
-		try {
-			d = DBConsults.getDomain(domain);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return d.getId()!= null && d.getType()==5;
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		Domain domain = AON.getDomain(domainName, domainId, AonUtil.getRemoteUser());		
+		return domain.getId()!= null && domain.getDomainType().equals(DomainType.ADMIN);
 	}	
 	
 	public void initialize2(ActionEvent event){
@@ -67,65 +57,11 @@ public class ServiceAccountController extends BasicController {
 		
 	}
 	
-	private ServiceAccount getSAccount() throws SQLException{
-		String domain = AonUtil.getDomainName();
-		Connection connection = null;
-		try {
-
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-
-			Result<Record8<String, String, Double, Double, String, String, byte[], String>> data;
-			data = dslContext
-					.selectDistinct(DOMAIN_GSERVICEACCOUNT.CLIENT_ID, DOMAIN_GSERVICEACCOUNT.EMAIL_ADDRESS,
-							DOMAIN_GSERVICEACCOUNT.SIZE, DOMAIN_GSERVICEACCOUNT.LIMIT, 
-							DOMAIN.NAME ,DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY,
-							DOMAIN_GSERVICEACCOUNT.PRIVATE_KEY, DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT)
-					.from(DOMAIN_GSERVICEACCOUNT).join(DOMAIN)
-					.on(DOMAIN.ID.eq(DOMAIN_GSERVICEACCOUNT.DOMAIN))
-					.where(DOMAIN_GSERVICEACCOUNT.CLIENT_ID.eq(client_id))
-					.fetch();
-			ServiceAccount aux = new ServiceAccount();
-			for (Record8<String, String, Double, Double, String, String, byte[], String> record : data) {
-				ServiceAccount sa = new ServiceAccount("", "", "", "", "",
-						"", null, "");
-				if (record.value1() != null){
-					sa.setClient_id(record.value1());
-				}
-				if (record.value5() != null)
-					sa.setDomain(record.value5());
-				if (record.value2() != null)
-					sa.setEmail_address(record.value2());
-				if (record.value3() != null){
-					sa.setSize(record.value3().longValue());
-					sa.setSizestr(record.value3().longValue());
-				}
-				if (record.value4() != null){
-					sa.setLimit(record.value4().longValue());
-					sa.setLimitstr(record.value4().longValue());
-				}
-				if (record.value6() != null){
-					sa.setPublic_key(record.value6());
-				}
-				if (record.value7() != null){
-					sa.setData(record.value7());
-				}
-				if(record.value8() != null){
-					sa.setGoogle_account(record.value8());
-				}
-				else sa.setGoogle_account("-");
-				aux = sa;
-				
-			}
-			return aux;
-		} finally {
-			if (connection != null)
-				connection.close();
-		}
-		
-		
+	private ServiceAccount getSAccount(){
+		DomainGserviceaccount sa = AON.getDomainGserviceaccount(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "",
+				f-> f.getClientIdProperty().eq(client_id));
+		Domain domain = AON.getDomain(AonUtil.getDomainName(), sa.getDomainId(), "");
+		return new ServiceAccount(sa.getClientId(), domain.getName(), sa.getEmailAddress(), sa.getSize().toString(), sa.getLimit().toString(), sa.getPublicKey(), sa.getPrivateKey(), sa.getGoogleAccount());
 	}
 	
 	public String getAux_client_id() throws SQLException {
@@ -155,154 +91,36 @@ public class ServiceAccountController extends BasicController {
 		return clients;
 	}
 	
-	public Vector<ServiceAccount> getAccounts() throws SQLException {
-	
-			vector = new Vector<ServiceAccount>();
-
-			String domain = AonUtil.getDomainName();
-			Connection connection = null;
-			try {
-
-				connection = DatabaseSync.getConnection(domain);
-
-				DSLContext dslContext = DSL.using(connection,
-						JooqSettings.getDefaultSettings());
-
-				Result<Record8<String, String, Double, Double, String, String, byte[], String>> data;
-				data = dslContext
-						.selectDistinct(DOMAIN_GSERVICEACCOUNT.CLIENT_ID,
-								DOMAIN_GSERVICEACCOUNT.EMAIL_ADDRESS,
-								DOMAIN_GSERVICEACCOUNT.SIZE,
-								DOMAIN_GSERVICEACCOUNT.LIMIT, DOMAIN.NAME,DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY,DOMAIN_GSERVICEACCOUNT.PRIVATE_KEY
-								,DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT)
-						.from(DOMAIN_GSERVICEACCOUNT).join(DOMAIN)
-						.on(DOMAIN.ID.eq(DOMAIN_GSERVICEACCOUNT.DOMAIN))
-						.fetch();
-				//int i=0;
-				for (Record8<String, String, Double, Double, String, String, byte[], String> record : data) {
-					ServiceAccount sa = new ServiceAccount("", "", "", "", "",
-							"", null, "");
-					if (record.value1() != null){
-						sa.setClient_id(record.value1());
-					}
-					if (record.value5() != null)
-						sa.setDomain(record.value5());
-					if (record.value2() != null)
-						sa.setEmail_address(record.value2());
-					if (record.value3() != null){
-						sa.setSize(record.value3().longValue());
-						sa.setSizestr(record.value3().longValue());
-					}
-					if (record.value4() != null){
-						sa.setLimit(record.value4().longValue());
-						sa.setLimitstr(record.value4().longValue());
-					}
-					if (record.value6() != null){
-						sa.setPublic_key(record.value6());
-					}
-					if (record.value7() != null){
-						sa.setData(record.value7());
-					}
-					if(record.value8() != null){
-						sa.setGoogle_account(record.value8());
-					}
-					vector.add(sa);
-					
-				}
-				return vector;
-			} finally {
-				if (connection != null)
-					connection.close();
-			}
-	}
-
-	public Integer getDomainId(String dominio) throws SQLException {
-
-		String domain = AonUtil.getDomainName();
-		Connection connection = null;
-		try {
-
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-
-			Result<Record1<Integer>> data;
-			data = dslContext
-					.select(DOMAIN.ID).from(DOMAIN).where(DOMAIN.NAME.eq(dominio)).fetch();
-			Integer id = null;
-			for (Record1<Integer> record : data) {
-				if(record.value1()!= null) id = record.value1();
-			}
-			return id;
-		} finally {
-			if (connection != null)
-				connection.close();
+	public Vector<ServiceAccount> getAccounts(){
+		LinkedList<DomainGserviceaccount> dgsa =  AON.getDomainGserviceaccountList(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
+		vector = new Vector<ServiceAccount>();
+		
+		for (DomainGserviceaccount sa : dgsa) {
+			Domain domain = AON.getDomain(AonUtil.getDomainName(), sa.getDomainId(), "");
+			vector.add(new ServiceAccount(sa.getClientId(), domain.getName(), sa.getEmailAddress(), sa.getSize().toString(), sa.getLimit().toString(), sa.getPublicKey(), sa.getPrivateKey(), sa.getGoogleAccount()));
 		}
+		return vector;
 	}
+
+	
 	
 	
 	public void updateAccount(ActionEvent event) throws SQLException {
-
-		String domain = AonUtil.getDomainName();
-		Connection connection = null;
-		try {
-			Integer domain_id = getDomainId(getDomain());
-			connection = DatabaseSync.getConnection(domain);
-
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-
-			
-			if(getData() != null)
-				dslContext.update(DOMAIN_GSERVICEACCOUNT)
-					.set(DOMAIN_GSERVICEACCOUNT.DOMAIN, domain_id)
-					.set(DOMAIN_GSERVICEACCOUNT.EMAIL_ADDRESS, getEmail_address())
-					.set(DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY, getPublic_key())
-					.set(DOMAIN_GSERVICEACCOUNT.PRIVATE_KEY, getData())
-					.set(DOMAIN_GSERVICEACCOUNT.LIMIT, (double) Integer.parseInt(getLimit()))
-					.set(DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT, getGoogle_account())
-					.where(DOMAIN_GSERVICEACCOUNT.DOMAIN.eq(domain_id))
-					.execute();
-			else{
-				dslContext.update(DOMAIN_GSERVICEACCOUNT)
-					.set(DOMAIN_GSERVICEACCOUNT.DOMAIN, domain_id)
-					.set(DOMAIN_GSERVICEACCOUNT.EMAIL_ADDRESS, getEmail_address())
-					.set(DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY, getPublic_key())
-					.set(DOMAIN_GSERVICEACCOUNT.LIMIT, (double) Integer.parseInt(getLimit()))
-					.set(DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT, getGoogle_account())
-					.where(DOMAIN_GSERVICEACCOUNT.DOMAIN.eq(domain_id))
-					.execute();
-			}
-		} finally {
-			if (connection != null)
-				connection.close();
-		}
+		Integer domainId = DBConsults.getDomainId(getDomain(), DomainManager.getCurrentDomain(), "");
+		DomainGserviceaccount dgsa = new DomainGserviceaccount()
+				.setDomainId(domainId)
+				.setEmailAddress(getEmail_address())
+				.setPrivateKey(getData())
+				.setPublicKey(getPublic_key())
+				.setLimit(Double.parseDouble(getLimit()))
+				.setGoogleAccount(getGoogle_account());
+		AON.updateDomainGserviceaccount(getDomain(), domainId, "", dgsa);
 	}
 	
 	public void deleteAccount(ActionEvent event) throws SQLException {
-
-		String domain = AonUtil.getDomainName();
-		Connection connection = null;
-		try {
-			Integer domain_id = getDomainId(getDomain());
-			connection = DatabaseSync.getConnection(domain);
-
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-
-			dslContext.delete(DOMAIN_GSERVICEACCOUNT).where(DOMAIN_GSERVICEACCOUNT.DOMAIN.eq(domain_id)).execute();
-
-		} finally {
-			if (connection != null)
-				connection.close();
-		}
+		Integer domainId = DBConsults.getDomainId(getDomain(), DomainManager.getCurrentDomain(), "");
+		AON.deleteDomainGserviceaccount(getDomain(), domainId, "");
 	}
-
 	
 	public void auxiliar() throws SQLException{
 		ServiceAccount sa = getSAccount();
@@ -318,31 +136,16 @@ public class ServiceAccountController extends BasicController {
 	
 	
 	public void createAccount(ActionEvent event) throws SQLException {
-		String domain = AonUtil.getDomainName();
-		Connection connection = null;
-		try {
-
-			Integer domain_id = getDomainId(getDomain());
-			connection = DatabaseSync.getConnection(domain);
-
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-
-			dslContext
-					.insertInto(DOMAIN_GSERVICEACCOUNT,
-							DOMAIN_GSERVICEACCOUNT.CLIENT_ID,
-							DOMAIN_GSERVICEACCOUNT.DOMAIN,
-							DOMAIN_GSERVICEACCOUNT.EMAIL_ADDRESS,
-							DOMAIN_GSERVICEACCOUNT.LIMIT,
-							DOMAIN_GSERVICEACCOUNT.PRIVATE_KEY,
-							DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY,
-							DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT)
-					.values(getClient_id(), domain_id, getEmail_address(), (double) Integer.parseInt(getLimit()),
-							getData(),getPublic_key(),getGoogle_account()).execute();
-		} finally {
-			if (connection != null)
-				connection.close();
-		}
+		Integer domainId = DBConsults.getDomainId(getDomain(), DomainManager.getCurrentDomain(), "");
+		DomainGserviceaccount dgsa = new DomainGserviceaccount()
+				.setClientId(getClient_id())
+				.setDomainId(domainId)
+				.setEmailAddress(getEmail_address())
+				.setPrivateKey(getData())
+				.setPublicKey(getPublic_key())
+				.setLimit(Double.parseDouble(getLimit()))
+				.setGoogleAccount(getGoogle_account());
+		AON.insertDomainGserviceaccount(getDomain(), domainId, "", dgsa);
 	}
 
 	public static void main(String[] args) throws SQLException {

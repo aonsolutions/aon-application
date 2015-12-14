@@ -13,18 +13,20 @@ import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.shared.Constants;
+import com.esferalia.aon.gwt.template.client.marketplace.IMarketplace;
+import com.esferalia.aon.gwt.template.client.marketplace.IMarketplaceAsync;
 import com.esferalia.aon.gwt.template.client.marketplace.Marketplace;
 import com.esferalia.aon.gwt.template.shared.Dialog;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.ExportInfo;
-import com.esferalia.aon.gwt.template.shared.ProductCategory;
 import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
@@ -49,6 +51,7 @@ public class Templates extends Composite implements EntryPoint {
 	private static final String DOWNLOAD_AMAZON_DELIVERY = "download_amazon_delivery";
 	
 	final ITemplateAsync item = GWT.create(ITemplate.class);
+	final IMarketplaceAsync mpimpl = GWT.create(IMarketplace.class);
 
 	interface Binder extends UiBinder<Widget, Templates> {
 
@@ -1140,14 +1143,14 @@ public class Templates extends Composite implements EntryPoint {
 	}
 	
 	private void importEcommerce(final List<Seller> sellerList) {
-		item.getProductCategories(getDomain(), new AsyncCallback<List<ProductCategory>>() {
+		mpimpl.getMarketplaceTagList(getDomain(), new AsyncCallback<LinkedList<Tag>>() {
 			
 			@Override
-			public void onSuccess(List<ProductCategory> result) {
-				Dialog d = new Dialog("Importar Plantilla Ecommerce","Importar",true,"Cancelar",true,"importEcommerceTemplate");
-				d.setUrl(GWT.getModuleBaseURL());
-				d.setCategories(result);
-				d.setSellerList(sellerList);
+			public void onSuccess(LinkedList<Tag> result) {
+				Dialog d = new Dialog("Importar Plantilla Ecommerce","Importar",true,"Cancelar",true,"importEcommerceTemplate")
+						.setUrl(GWT.getModuleBaseURL())
+						.setTagList(result)
+						.setSellerList(sellerList);
 				TemplatesDialog popup = new TemplatesDialog(d) {
 					
 					@Override
@@ -1176,12 +1179,12 @@ public class Templates extends Composite implements EntryPoint {
 						TextBox typeTextBox = (TextBox) flex_table.getWidget(2, 1);
 						String type = typeTextBox.getText();
 						
-						ListBox categoryListBox = (ListBox) flex_table.getWidget(3, 1);
-						ProductCategory pc = new ProductCategory();
-						pc.setName(categoryListBox.getSelectedItemText());
-						pc.setId(Integer.parseInt(categoryListBox.getSelectedValue()));
+						ListBox tagListBox = (ListBox) flex_table.getWidget(3, 1);
+						Tag tag = new Tag()
+								.setName(tagListBox.getSelectedItemText())
+								.setId(Integer.parseInt(tagListBox.getSelectedValue()));
 						
-						item.executeExcelEcommerce(getDomain(), ecommerce, seller, type, pc, new AsyncCallback<Error>() {
+						item.executeExcelEcommerce(getDomain(), ecommerce, seller, type, tag, new AsyncCallback<Error>() {
 							@Override
 							public void onSuccess(Error result) {
 								pbd.hide();

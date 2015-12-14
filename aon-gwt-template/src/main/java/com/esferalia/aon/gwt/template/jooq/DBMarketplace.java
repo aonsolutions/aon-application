@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.User;
 
 
@@ -157,5 +158,9 @@ public class DBMarketplace {
 				.and(filter.getTypeProperty().eq(((byte) RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.ordinal()))
 				.and(filter.getDomainProperty().eq(domain.getId())))
 				, AttachType.REGISTRY);	
+	}
+	
+	public static LinkedList<Tag> getMarketplaceTagList(Domain domain, User user){
+		return AON.getMatketplaceTagList(domain.getName(), domain.getId(), user.getLogin());
 	}
 }

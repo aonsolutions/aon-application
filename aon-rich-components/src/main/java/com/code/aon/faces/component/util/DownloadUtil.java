@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -30,8 +29,10 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.MimeResolver;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.jooq.DBConsults;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 
@@ -60,11 +61,13 @@ public class DownloadUtil {
 		if (attach.getDriveId() != null) {
 			InputStream in = null;
 			try {
-				String domain = AonUtil.getDomainName();
+				String domainName = AonUtil.getDomainName();
+				Domain domain = new Domain().setName(domainName).setId(attach.getDomain());
+				User user = new User().setLogin(AonUtil.getRemoteUser() != null ? AonUtil.getRemoteUser() : "");
 				DomainGserviceaccount googleAccount = DBConsults
-						.getServiceAccount(domain,attach.getDomain());
+						.getServiceAccount(domain,user);
 				Drive drive = DriveUtils.serviceInitialize(googleAccount);
-				File file = DriveUtils.getFile(drive, attach.getDriveId(),attach.getId());
+				File file = DriveUtils.getFile(drive, domain, user, attach.getDriveId(),attach.getId());
 				if(file.getDescription().equals("OLDRIVE"))
 					drive = DriveUtils.serviceInitializeOld(googleAccount);
 				in = DriveUtils.downloadFile(drive, file);
@@ -74,8 +77,6 @@ public class DownloadUtil {
 			} catch (IOException e) {
 				LOGGER.error(e.getMessage()); 
 			} catch (GeneralSecurityException e) {
-				LOGGER.error(e.getMessage()); 
-			} catch (SQLException e) {
 				LOGGER.error(e.getMessage()); 
 			} finally {
 				IOUtils.closeQuietly(in);

@@ -1,19 +1,10 @@
 package com.code.aon.google.apis;
 
 
-import static com.code.aon.google.apis.DatabaseSync.getActivity;
-import static com.code.aon.google.apis.DatabaseSync.getCommercialTrackingAll;
-import static com.code.aon.google.apis.DatabaseSync.getCommercialTrackingKey;
-import static com.code.aon.google.apis.DatabaseSync.getDomain;
-import static com.code.aon.google.apis.DatabaseSync.getDomain1;
-import static com.code.aon.google.apis.DatabaseSync.getDomains;
-import static com.code.aon.google.apis.DatabaseSync.getEnterpriseEmail;
-import static com.code.aon.google.apis.DatabaseSync.getPotencialClient;
-import static com.code.aon.google.apis.DatabaseSync.getProject;
-import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getHttpTransport;
-import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getJsonFactory;
-import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getPrincipalShortName;
-import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.newFlow;
+//import static com.code.aon.oauth2.google.GoogleAuthorizationServletUtils.getHttpTransport;
+//import static com.code.aon.oauth2.google.GoogleAuthorizationServletUtils.getJsonFactory;
+//import static com.code.aon.oauth2.google.GoogleAuthorizationServletUtils.getPrincipalShortName;
+//import static com.code.aon.oauth2.google.GoogleAuthorizationServletUtils.newFlow;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -32,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.mail.MessagingException;
 import javax.naming.NamingException;
@@ -43,14 +32,16 @@ import javax.servlet.http.HttpServletRequest;
 import com.code.aon.google.apis.drive.SearchFiles;
 import com.code.aon.google.apis.jooq.DBCalendar;
 import com.code.aon.google.apis.jooq.DBConsults;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
+import com.code.aon.google.apis.jooq.DBSync;
 import com.code.aon.pool.AonConnectionException;
-import com.esferalia.aon.google.sql.AbstractSQL.CommercialActivity;
-import com.esferalia.aon.google.sql.AbstractSQL.CommercialTracking;
-import com.esferalia.aon.google.sql.AbstractSQL.Domain;
-import com.esferalia.aon.google.sql.AbstractSQL.Project;
-import com.esferalia.aon.google.sql.AbstractSQL.Registry;
-import com.google.api.client.auth.oauth2.Credential;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.CommercialActivity;
+import com.esferalia.aon.occam.api.model.CommercialTracking;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -75,69 +66,7 @@ import com.google.api.services.calendar.model.Events;
  */
 public class CalendarUtils {
 	
-	/**
-	 * @class View, escribe por pantalla calendarios y eventos
-	 * @author aibanez
-	 */
-	static class View {
 
-		static void header(String name) {
-			System.out.println();
-			System.out.println("============== " + name + " ==============");
-			System.out.println();
-		}
-
-		static void display(CalendarList feed) {
-			if (feed.getItems() != null) {
-				for (CalendarListEntry entry : feed.getItems()) {
-					System.out.println();
-					System.out
-							.println("-----------------------------------------------");
-					display(entry);
-				}
-			}
-		}
-
-		static void display(Events feed) {
-			if (feed.getItems() != null) {
-				for (Event entry : feed.getItems()) {
-					System.out.println();
-					System.out
-							.println("-----------------------------------------------");
-					display(entry);
-				}
-			}
-		}
-
-		static void display(CalendarListEntry entry) {
-			System.out.println("ID: " + entry.getId());
-			System.out.println("Summary: " + entry.getSummary());
-			if (entry.getDescription() != null) {
-				System.out.println("Description: " + entry.getDescription());
-			}
-		}
-
-		static void display(Calendar entry) {
-			System.out.println("ID: " + entry.getId());
-			System.out.println("Summary: " + entry.getSummary());
-			if (entry.getDescription() != null) {
-				System.out.println("Description: " + entry.getDescription());
-			}
-		}
-
-		static void display(Event event) {
-			System.out.println("ID: " + event.getId());
-			System.out.println("Summary: " + event.getSummary());
-			System.out.println("AonId: "+event.getExtendedProperties().getPrivate().get("aonId"));
-			if (event.getStart() != null) {
-				System.out.println("Start Time: " + event.getStart());
-			}
-			if (event.getEnd() != null) {
-				System.out.println("End Time: " + event.getEnd());
-			}
-		}
-	}
-	
 	/**
 	 * @class Quicksort, implementación del algoritmo de ordanación
 	 * rápida, Quicksort. Distinguiendo entre calendarios y eventos.
@@ -223,9 +152,8 @@ public class CalendarUtils {
 		}
 	}
 
-	private static Credential credential;	
+	//private static Credential credential;	
 	private static com.google.api.services.calendar.Calendar client;	
-	private static Pattern GMAIL = Pattern.compile("(\\b[A-Z0-9\\._%+-]+@gmail.com)", Pattern.CASE_INSENSITIVE);
 	
 	/**
 	 * initialize(HttpServletRequest req), Inicializa las variables globales
@@ -238,14 +166,16 @@ public class CalendarUtils {
 	 */
 	public static void initialize(HttpServletRequest req) throws IOException,
 			ServletException {
-		credential = newFlow().loadCredential(getPrincipalShortName(req));
-		client = new com.google.api.services.calendar.Calendar.Builder(
-				getHttpTransport(), getJsonFactory(), credential)
-				.setApplicationName("AON SOLUTIONS").build();
+		/*
+		 * credential = newFlow().loadCredential(getPrincipalShortName(req));
+		 * client = new com.google.api.services.calendar.Calendar.Builder(
+		 * 		getHttpTransport(), getJsonFactory(), credential)
+		 * 		.setApplicationName("AON SOLUTIONS").build();
+		*/
 	}
 	
 	
-	public static com.google.api.services.calendar.Calendar serviceInitialize(DomainGserviceaccount g) throws KeyStoreException, IOException, GeneralSecurityException, SQLException{
+	public static com.google.api.services.calendar.Calendar serviceInitialize(DomainGserviceaccount g) throws IOException, GeneralSecurityException{
 		final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 		final JsonFactory JSON_FACTORY = new JacksonFactory();
 		final String SERVICE_ACCOUNT_ID = g.getEmailAddress();
@@ -284,30 +214,14 @@ public class CalendarUtils {
 	
 	//------------------------------------------- CALENDARS
 	
-	
-	//getEvents(aux.getId(), calendar)
 	public static CalendarList getCalendars(com.google.api.services.calendar.Calendar calendar) throws IOException{
-		
 		return calendar.calendarList().list().execute();
 	}
 	
 	public static Events getEvents(String calId,com.google.api.services.calendar.Calendar calendar) throws IOException{
-		
 		return calendar.events().list(calId).execute();
 	}
 	
-	
-	/**
-	 * showCalendars(), Muestra por pantalla todos los calendarios que el usuario
-	 *  conectado a la cuenta de google tiene en Google Calendar.
-	 * @throws IOException
-	 * @throws ServletException
-	 */
-	public static void showCalendars() throws IOException, ServletException {
-		View.header("Show Calendars");
-		CalendarList feed = client.calendarList().list().execute();
-		View.display(feed);
-	}
 	
 	/**
 	 * getCalendars(), Devuelve la lista de todos los calendarios, de Google
@@ -358,8 +272,7 @@ public class CalendarUtils {
 	 * @throws AonConnectionException 
 	 * @throws NamingException 
 	 */
-	public static Calendar addCalendar(Calendar entry, String email) throws IOException, SQLException, AonConnectionException, NamingException{
-		View.header("Add Calendar");
+	public static Calendar addCalendar(Calendar entry, String email) throws IOException, NamingException{
 		Calendar result = client.calendars().insert(entry).execute();
 		
 		if (email!= null && Utils.isGmail(email)){
@@ -373,7 +286,6 @@ public class CalendarUtils {
 			System.out.println(createdRule.getId());
 			
 		}	
-		View.display(result);
 		return result;
 	}
 	
@@ -387,17 +299,8 @@ public class CalendarUtils {
 	 * @throws IOException
 	 * @throws NamingException 
 	 */
-	public static Calendar newCalendar(String key) throws SQLException, AonConnectionException, IOException, NamingException{
-		
-		Domain company = getDomain1(key);
-		String email= getEnterpriseEmail(company.getId(),key);
-		Calendar entry = new Calendar();
-		entry.setSummary(company.getName());
-		entry.setDescription(company.getDescription());
-		return addCalendar(entry, email);
-	}
-	public static Calendar newCalendar(Domain domain) throws SQLException, AonConnectionException, IOException, NamingException{
-		String email= getEnterpriseEmail(domain.getId(),domain.getName());
+	public static Calendar newCalendar(Domain domain, User user) throws IOException, NamingException{
+		String email= DBCalendar.getEnterpriseEmail(domain, user);
 		Calendar entry = new Calendar();
 		entry.setSummary(domain.getName());
 		entry.setDescription(domain.getDescription());
@@ -413,10 +316,8 @@ public class CalendarUtils {
 	 * @throws IOException
 	 */
 	public static Calendar updateCalendar(Calendar calendar) throws IOException {
-		View.header("Update Calendar");
 		Calendar result = client.calendars().patch(calendar.getId(), calendar)
 				.execute();
-		View.display(result);
 		return result;
 	}
 	
@@ -427,7 +328,6 @@ public class CalendarUtils {
 	 * @throws IOException
 	 */
 	public static void removeCalendar(String calendarId) throws IOException {
-		View.header("Delete Calendar");
 		client.calendars().delete(calendarId).execute();
 	}
 	
@@ -443,7 +343,6 @@ public class CalendarUtils {
 	 * @throws NamingException 
 	 */
 	public static Calendar modifyCalendar(Calendar entry,String  email) throws IOException, SQLException, AonConnectionException, NamingException{
-
 		Calendar result=updateCalendar(entry);
 		if (email!= null && Utils.isGmail(email)){
 			AclRule rule = new AclRule();
@@ -455,7 +354,6 @@ public class CalendarUtils {
 			AclRule createdRule = client.acl().insert(result.getId(), rule).execute();
 			System.out.println(createdRule.getId());
 		}	
-		View.display(result);
 		return result;
 	}
 	
@@ -470,30 +368,17 @@ public class CalendarUtils {
 	 * @throws IOException
 	 * @throws NamingException 
 	 */
-	public static Calendar modifyCommercialCalendar(CalendarListEntry calendar, Domain company, String key) throws SQLException, AonConnectionException, IOException, NamingException{
-		String email= getEnterpriseEmail(company.getId(),key);	
-		Calendar entry = new Calendar();
-		entry.setSummary(company.getName());
-		entry.setDescription(company.getDescription());
-		entry.setId(calendar.getId());
+	public static Calendar modifyCommercialCalendar( Domain domain, User user, CalendarListEntry calendar, String key) throws SQLException, AonConnectionException, IOException, NamingException{
+		String email= DBCalendar.getEnterpriseEmail(domain, user);	
+		Calendar entry = new Calendar()
+				.setSummary(domain.getName())
+				.setDescription(domain.getDescription())
+				.setId(calendar.getId());
 		return modifyCalendar(entry, email);
 	}
 	
 	
 	//------------------------------------------- EVENTS
-	
-	/**
-	 * showEvents(String calendarId), Muestra por pantalla todos los eventos 
-	 * del calendario indicado de Google Calendar.
-	 * @param calendarId, Identificador del calendario de Google Calendar.
-	 * @throws IOException
-	 */
-	public static void showEvents(String calendarId) throws IOException {
-		View.header("Show Events");
-		Events feed = client.events().list(calendarId).execute();
-
-		View.display(feed);
-	}
 
 	/**
 	 * newEvent(CommercialTracking commercialTracking,String domainC), Crea un 
@@ -504,27 +389,27 @@ public class CalendarUtils {
 	 * @throws SQLException
 	 * @throws AonConnectionException 
 	 */
-	public static Event newEvent(CommercialTracking commercialTracking, String key) throws SQLException, AonConnectionException {
+	public static Event newEvent(Domain domain, User user, CommercialTracking commercialTracking){
 		Event event = new Event();
 		
 		event.setColorId("9");
 		
 		//SUMMARY
-		Project project = getProject(commercialTracking,key);
+		Project project = DBCalendar.getProject(domain, user, commercialTracking);
 		event.setSummary(project.getName());
 		
 		// DESCRIPTION/COMMENTS
-		CommercialActivity commercialActivity=getActivity(commercialTracking,key);
-		Registry registry= getPotencialClient(commercialTracking,key);
+		CommercialActivity commercialActivity= DBCalendar.getActivity(domain, user, commercialTracking);
+		Registry registry= DBCalendar.getPotencialClient(domain, user, commercialTracking);
 		String description ="Actividad: "+commercialActivity.getName() 
 				+"\nCliente Potencial: "+ registry.getName() + ", "+ registry.getNationality()
 				+"\nComentarios: "+commercialTracking.getComments()
-				+"\nComercial: "+DBConsults.getUserName(key,commercialTracking.getSeller());
+				+"\nComercial: "+DBConsults.getUserName(domain, user,commercialTracking.getSeller());
 		event.setDescription(description);
 		
 		// ATTENDEES
-		Vector<String> emails = DBCalendar.getSellerEmails(commercialTracking,key);
-		String email = DBCalendar.getSellerEmail(commercialTracking, key);
+		Vector<String> emails = DBCalendar.getSellerEmails(domain, user, commercialTracking);
+		String email = DBCalendar.getSellerEmail(domain, user, commercialTracking);
 		
 		try {
 			if(email == null ){
@@ -536,7 +421,7 @@ public class CalendarUtils {
 							email = s;
 					}	
 				}
-				if(!email.equals(""))DBCalendar.setSellerEmail(commercialTracking, key, email);
+				if(!email.equals(""))DBCalendar.setSellerEmail(domain, user, commercialTracking, email);
 			}
 			if(email !=null && email!= ""){
 				EventAttendee eventAttendee = new EventAttendee();
@@ -597,23 +482,16 @@ public class CalendarUtils {
 	 * @throws IOException
 	 * @throws AonConnectionException 
 	 */
-	public static Event addEvent(String calendarId, Event event, String domain, CommercialTracking ct)
-			throws IOException, AonConnectionException {
-		View.header("Add Event");
-		View.display(event);
+	public static Event addEvent(Domain domain, User user, String calendarId, Event event, CommercialTracking ct) throws IOException {
 		Event result = client.events().insert(calendarId, event).setSendNotifications(false)
 				.execute();
-		
-		// Enviar notificación gmail api
 		try {
-			Utils.sendNotification(domain,result, ct);
-		} catch (SQLException | GeneralSecurityException | MessagingException | NamingException e) {
+			Utils.sendNotification(domain, user, result, ct);
+		} catch ( GeneralSecurityException | MessagingException | NamingException e) {
 			e.printStackTrace();
 		}
 		
-		View.display(result);
 		return result;
-		
 	}
 	
 
@@ -626,7 +504,6 @@ public class CalendarUtils {
 	 */
 	public static void updateEvent(String calendarId, Event event)
 			throws IOException {
-		View.header("Update Event");
 		client.events().update(calendarId, event.getId(), event)
 				.execute();
 	}
@@ -640,13 +517,11 @@ public class CalendarUtils {
 	 */
 	public static void removeEvent(String calendarId, String eventId)
 			throws IOException {
-		View.header("Delete Event");
 		client.events().delete(calendarId, eventId).execute();
 	}
 	
 	public static void removeEvent(com.google.api.services.calendar.Calendar calendar,String calendarId, String eventId)
 			throws IOException {
-		View.header("Delete Event");
 		calendar.events().delete(calendarId, eventId).execute();
 	}
 	
@@ -692,8 +567,8 @@ public class CalendarUtils {
 	 * @throws IOException
 	 * @throws AonConnectionException 
 	 */
-	public static void modifyEvent(String eventId, CommercialTracking eventBD, String id,String key) throws SQLException, IOException, AonConnectionException {
-		Event aux = newEvent(eventBD,key);
+	public static void modifyEvent(Domain domain, User user, String eventId, CommercialTracking eventBD, String id) throws IOException{
+		Event aux = newEvent(domain, user, eventBD);
 		aux.setId(eventId);
 		updateEvent(id, aux);
 	}
@@ -701,119 +576,87 @@ public class CalendarUtils {
 	
 	//------------------------------------------- UTILS
 	
-public static void synchronize(String key) throws IOException, SQLException, AonConnectionException, KeyStoreException, GeneralSecurityException, NamingException {
-		
-				Vector<CommercialTracking> eventsBD= getCommercialTrackingKey(key);// Obtiene todos los eventos(CommercialTracking) de la BD
-				Domain d = DBConsults.getDomain(key);
-				DomainGserviceaccount g = DBConsults.getServiceAccount(key, d.getId());
-						//DatabaseSync.getServiceAccount(key);
-				if(g.getClientId()!=null){
-					serviceInitialize(g);
-					CalendarList calendars = Quicksort.calendarsSort(getCalendars());		
-					int aux=searchCalendars(calendars,key,calendars.getItems().size());
-					String calendarId;
-					if (aux==-1){
-						Calendar calendar = newCalendar(key);
-						calendarId= calendar.getId();
-					}
-					else calendarId = calendars.getItems().get(aux).getId();
+	public static void synchronize(Domain domain, User user) throws IOException, GeneralSecurityException, NamingException {
+		LinkedList<CommercialTracking> eventsBD= DBCalendar.getCommercialTrackingList(domain, user);// Obtiene todos los eventos(CommercialTracking) de la BD
+		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, user);
+		if(g.getClientId()!=null){
+			serviceInitialize(g);
+			CalendarList calendars = Quicksort.calendarsSort(getCalendars());		
+			int aux=searchCalendars(calendars,domain.getName(),calendars.getItems().size());
+			String calendarId;
+			if (aux==-1){
+				Calendar calendar = newCalendar(domain, user);
+				calendarId= calendar.getId();
+			}
+			else calendarId = calendars.getItems().get(aux).getId();
 					
-					if (eventsBD !=null && eventsBD.size()>0 ){
-						for (CommercialTracking ct : eventsBD) {
-							if (isRegular(ct)){
-								if (ct.getEventId() == null){
-									Event event=addEvent(calendarId,newEvent(ct,key),key,ct);
-									DatabaseSync.setEventId(event.getId(),ct.getId(),key);// añadir el id del evento a la base de datos!!!
-								}
-								else{
-									modifyEvent(ct.getEventId(), ct,calendarId,key);
-								}				
-							}
+			if (eventsBD !=null && eventsBD.size()>0 ){
+				for (CommercialTracking ct : eventsBD) {
+					if (isRegular(ct)){
+						if (ct.getEventId() == null){
+							Event event=addEvent(domain, user, calendarId,newEvent(domain, user, ct),ct);
+							DBCalendar.updateEventId(domain, user, ct.getId(), event.getId());// añadir el id del evento a la base de datos!!!
 						}
-					}	
-
-				}						
-			
-		
+						else{
+							modifyEvent(domain, user, ct.getEventId(), ct,calendarId);
+						}				
+					}
+				}
+			}	
+		}								
 	}
 	
 	
-	/**
-	 * synchronize(String domainC), Sincronización con la base da datos, crea 
-	 * un calendario para cada empresa (si no esta creado) y añade todos los eventos
-	 * de la base de datos para cada calendario. 
-	 * @param domainC, Dominio para la conexión con la base de datos.
-	 * @throws IOException
-	 * @throws SQLException
-	 * @throws AonConnectionException 
-	 * @throws GeneralSecurityException 
-	 * @throws KeyStoreException 
-	 * @throws NamingException 
-	 */
-	public static void synchronize() throws IOException, SQLException, AonConnectionException, KeyStoreException, GeneralSecurityException, NamingException {
-		Map<String, String> domains=getDomains();//obtiene todos los dominios de la BD
+	// CREA CALENDARIOS PARA TODOS LOS DOMINIOS.
+	public static void synchronize() throws IOException, GeneralSecurityException, NamingException{
+		// Obtiene todos los dominios de la BD.
+		Map<String, String> domains = DBSync.initializeDomains();
+		Map<String, Integer> domainMap = DBSync.initializeDomainMap();
+		User user = new User().setLogin(""); //TODO GET USER
 		
 		// Ordena los dominios por orden alfabetico.
 		List<String> list = new ArrayList<String>(domains.keySet());
 		Collections.sort(list, (String s1, String s2) -> s1.compareTo(s2));
 		
-		for (String key : list) { // recorre todos los dominios de la BD
-			Vector<Domain> companies = getDomain(key);//Obtiene todos los dominios del dominio padre
-			Map<Integer,Vector<CommercialTracking>> map= getCommercialTrackingAll(key);// Obtiene todos los eventos(CommercialTracking) de la BD
-			for(int j=0;j<companies.size();j++){
-				Domain d = DBConsults.getDomain(key);
-				DomainGserviceaccount g = DBConsults.getServiceAccount(key, d.getId());
-						//DatabaseSync.getServiceAccount(companies.get(j).getName());
-				System.out.println(companies.get(j).getName()+" : "+g.getClientId());
-				if(g.getClientId()!=null){
-					serviceInitialize(g);
-					CalendarList calendars = Quicksort.calendarsSort(getCalendars());		
-					Vector<CommercialTracking> eventsBD = map.get(companies.get(j).getId());
-					if (eventsBD !=null && eventsBD.size()>0 ){
-
-						int aux=searchCalendars(calendars,companies.get(j).getName(),calendars.getItems().size());
-						if (aux==-1){
-							Calendar calendar = newCalendar(key);				
-							int k=0;
-							while( k<eventsBD.size()){		
-								CommercialTracking commercialTracking = eventsBD.get(k);
-								System.out.println("		"+commercialTracking.getId());
-								System.out.println(commercialTracking.getDate()+" - "+commercialTracking.getEndDate()+" - "+ commercialTracking.getAllDay());
-								Event event=addEvent(calendar.getId(),newEvent(commercialTracking,key),key,commercialTracking);
-								
-								System.out.println(event.getId()+" "+ commercialTracking.getId());
-								
-								k++;
+		// Recorre todos los dominios de la BD.
+		for (String domainName : list){
+			Domain domain = AON.getDomain(domainName, domainMap.get(domainName), user.getLogin());
+			DomainGserviceaccount g = DBConsults.getServiceAccount(domain, user);
+			if(g.getClientId() != null){
+				serviceInitialize(g);
+				CalendarList calendars = Quicksort.calendarsSort(getCalendars());		
+				int aux=searchCalendars(calendars,domain.getName(),calendars.getItems().size());
+				String calendarId;
+				if (aux==-1){
+					Calendar calendar = newCalendar(domain, user);
+					calendarId= calendar.getId();
+				}
+				else calendarId = calendars.getItems().get(aux).getId();
+				
+				LinkedList<CommercialTracking> eventsBD = DBCalendar.getCommercialTrackingList(domain, user);
+				
+				if (eventsBD !=null && eventsBD.size()>0 ){
+					for (CommercialTracking ct : eventsBD) {
+						if (isRegular(ct)){
+							if (ct.getEventId() == null){
+								Event event=addEvent(domain, user, calendarId,newEvent(domain, user, ct),ct);
+								DBCalendar.updateEventId(domain, user,ct.getId(), event.getId());// añadir el id del evento a la base de datos!!!
 							}
+							else{
+								modifyEvent(domain, user, ct.getEventId(), ct,calendarId);
+							}				
 						}
-						else{
-							modifyCommercialCalendar(calendars.getItems().get(aux),companies.get(j),key);
-							Events events = Quicksort.eventsSort(getEvents(calendars.getItems().get(aux).getId()));
-							int k=0;
-							while(k<eventsBD.size()){		
-								CommercialTracking commercialTracking = eventsBD.get(k);
-								int aux2 = searchEvents(events, commercialTracking.getId(), events.getItems().size());
-								if (aux2 == -1) {
-									addEvent(calendars.getItems().get(aux).getId(),newEvent(commercialTracking,key),key,commercialTracking);
-								}
-								else{
-									modifyEvent(events.getItems().get(aux2).getId(), commercialTracking,calendars.getItems().get(aux).getId(),key);
-								}
-							}
-						}
-					}	
-
-				}						
-			}
+					}
+				}	
+			} 
 		}
 	}
 	
-	
-	
-	
-public static void synchronize2() throws IOException, SQLException, AonConnectionException, KeyStoreException, GeneralSecurityException, NamingException {
-		
-		Map<String, String> domains=getDomains();//obtiene todos los dominios de la BD
+	// CREA CALENDARIOS PARA TODOS LOS DOMINIOS PADRE.
+	public static void synchronize2(User user) throws IOException, KeyStoreException, GeneralSecurityException, NamingException {
+		Map<String, String> domains= DBSync.initializeDomains();//obtiene todos los dominios de la BD
+		Map<String, Integer> domainMap = DBSync.initializeDomainMap();
+
 		Hashtable<String,String> schemas = new Hashtable<String, String>();
 		
 		for (String key : domains.keySet()) { // recorre todos los dominios de la BD	
@@ -823,41 +666,39 @@ public static void synchronize2() throws IOException, SQLException, AonConnectio
 		}
 		Vector<String> domains2 = new Vector<String>();
 		for (String sch : schemas.keySet()){
-			domains2.addAll(DBConsults.getParentName(schemas.get(sch)));
+			Domain d = AON.getDomain(schemas.get(sch),domainMap.get(schemas.get(sch)), user.getLogin());
+			domains2.addAll(DBConsults.getParentName(d, user));
 		}
 		for(String key : domains2) { // recorre todos los dominios de la BD
-				Vector<CommercialTracking> eventsBD= getCommercialTrackingKey(key);// Obtiene todos los eventos(CommercialTracking) de la BD
-				Domain d = DBConsults.getDomain(key);
-				DomainGserviceaccount g = DBConsults.getServiceAccount(key, d.getId());
-						//DatabaseSync.getServiceAccount(key);
-				if(g.getClientId()!=null){
-					serviceInitialize(g);
-					CalendarList calendars = Quicksort.calendarsSort(getCalendars());		
-					int aux=searchCalendars(calendars,key,calendars.getItems().size());
-					String calendarId;
-					if (aux==-1){
-						Calendar calendar = newCalendar(key);
-						calendarId= calendar.getId();
-					}
-					else calendarId = calendars.getItems().get(aux).getId();
+			Domain d = AON.getDomain(key, domainMap.get(key), user.getLogin());
+			LinkedList<CommercialTracking> eventsBD= DBCalendar.getCommercialTrackingList(d, user);// Obtiene todos los eventos(CommercialTracking) de la BD
+			DomainGserviceaccount g = DBConsults.getServiceAccount(key, d.getId());
+			if(g.getClientId()!=null){
+				serviceInitialize(g);
+				CalendarList calendars = Quicksort.calendarsSort(getCalendars());		
+				int aux=searchCalendars(calendars,key,calendars.getItems().size());
+				String calendarId;
+				if (aux==-1){
+					Calendar calendar = newCalendar(d,user);
+					calendarId= calendar.getId();
+				}
+				else calendarId = calendars.getItems().get(aux).getId();
 					
-					if (eventsBD !=null && eventsBD.size()>0 ){
-						for (CommercialTracking ct : eventsBD) {
-							if (isRegular(ct)){
-								if (ct.getEventId() == null){
-									Event event=addEvent(calendarId,newEvent(ct,key),key,ct);
-									DatabaseSync.setEventId(event.getId(),ct.getId(),key);// añadir el id del evento a la base de datos!!!
-								}
-								else{
-									modifyEvent(ct.getEventId(), ct,calendarId,key);
-								}				
+				if (eventsBD !=null && eventsBD.size()>0 ){
+					for (CommercialTracking ct : eventsBD) {
+						if (isRegular(ct)){
+							if (ct.getEventId() == null){
+								Event event=addEvent(d, user, calendarId,newEvent(d, user, ct),ct);
+								DBCalendar.updateEventId(d, user, ct.getId(), event.getId());// añadir el id del evento a la base de datos!!!
 							}
+							else{
+								modifyEvent(d, user, ct.getEventId(), ct,calendarId);
+							}				
 						}
-					}	
-
-				}						
-			}
-		
+					}
+				}	
+			}						
+		}	
 	}
 	
 	
@@ -886,10 +727,10 @@ public static void synchronize2() throws IOException, SQLException, AonConnectio
 	}
 	
 	public static boolean isRegular(CommercialTracking c){
-		System.out.println(c.getId()+" : "+c.getDate()+" - "+c.getEndDate()+" - "+c.getAllDay());
+		System.out.println(c.getId()+" : "+c.getDate()+" - "+c.getEndDate()+" - "+c.getAllday());
 		
-		if(c.getDate()!=null && (c.getEndDate()!= null || c.getAllDay())){
-			return (c.getAllDay() || c.getDate().before(c.getEndDate()) );
+		if(c.getDate()!=null && (c.getEndDate()!= null || c.getAllday())){
+			return (c.getAllday() || c.getDate().before(c.getEndDate()) );
 		}
 		return false;
 	}
@@ -916,63 +757,10 @@ public static void synchronize2() throws IOException, SQLException, AonConnectio
 		return a;
 	}
 	
-	/**
-	 * isGmail(String email), Comprueba si el email introducido corresponde a
-	 * Gmail o no.
-	 * @param email, cuenta de correo electronico.
-	 * @return true sii es un email de Gmail.
-	 */
-	private static boolean isGmail(String email){
-		Matcher matcher = GMAIL.matcher(email);
-		boolean isGMail = matcher.find();
-		//System.out.println(matcher.group(1));
-		return isGMail;
-	}
-	
-	
 	//------------------------------------------- MAIN
 	
-	/**
-	 * main(String[] args), programa principal, que se conecta a Google desde
-	 * una cuenta de servicio, para luego crear todos los calendarios y eventos
-	 * de la BD.
-	 * @param args
-	 * @throws GeneralSecurityException
-	 * @throws IOException
-	 * @throws ServletException
-	 * @throws SQLException
-	 * @throws AonConnectionException 
-	 * @throws NamingException 
-	 */
 	public static void main(String[] args) throws GeneralSecurityException,
 			IOException, ServletException, SQLException, AonConnectionException, NamingException {
-		String domain = "procom-global4.aibanez.net";
-	//	synchronize(domain);
- /*ELIMINAR TODOS LOS CALENDARIOS!
-		DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
-		serviceInitialize(g);
-		showCalendars();
-		CalendarList calendars = getCalendars();
-		int a=0;
-		while(!calendars.isEmpty()){
-			Events events = getEvents(calendars.getItems().get(a).getId());
-			if (events.getItems().size()!= 0 ){
-				for(int b = 0; b< events.getItems().size();b++){
-					removeEvent(calendars.getItems().get(a).getId(), events.getItems().get(b).getId());
-				}
-			}
-			
-			removeCalendar(calendars.getItems().get(a).getId());
-			a++;
-		}
 	
-		*/
-	
-		//synchronize2();
 	}
-
-
-
-
-
 }

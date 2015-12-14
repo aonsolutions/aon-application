@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.esferalia.aon.gwt.template.shared.WorkPlace;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
@@ -82,7 +83,7 @@ public interface ITemplateAsync {
 
 	void excelRowNumber(AsyncCallback<Integer> callback);
 
-	void executeExcelEcommerce(Domain domain, Ecommerce ecommerce, Seller seller, String type, ProductCategory pc,
+	void executeExcelEcommerce(Domain domain, Ecommerce ecommerce, Seller seller, String type, Tag tag,
 			AsyncCallback<Error> callback);
 
 	void getSellerList(Domain domain, AsyncCallback<List<Seller>> callback);

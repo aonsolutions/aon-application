@@ -1,7 +1,12 @@
 package com.code.aon.google.apis.rattach;
 
+import static org.apache.commons.cli.HelpFormatter.DEFAULT_SYNTAX_PREFIX;
+
 import java.sql.SQLException;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -14,47 +19,56 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
-import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.DBSync;
 import com.code.aon.pool.AonConnectionException;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.User;
 
 public class UpSize {
+	
+	public static Map<String, Integer> initializeDomainMap(){
+		Map<String, Integer> map  = new HashMap<String, Integer>();
+		try {
+			map =  DBSync.getDomainMap();
+		} catch (AonConnectionException e) {
+			e.printStackTrace();
+		}
+		return map;
+	}
+	
 	public static void main(String[] args) throws AonConnectionException, SQLException  {
-		
 		parse(args);
-		
+		Map<String, Integer> domainMap = initializeDomainMap();
 		if( domains[0].equals("all")){
-			Map<String, String> domains1=DatabaseSync.getDomains();
-			Hashtable<String,String> schemas = new Hashtable<String, String>();
+			// Obtiene todos los dominios de la BD.
+			Map<String, String> domains = DBSync.getDomains();
 			
-			for (String key : domains1.keySet()) { // recorre todos los dominios de la BD	
-				if (!esta(schemas,domains1.get(key))){
-					schemas.put(domains1.get(key), key);
-				}
-			}
-			Vector<String> domains2 = new Vector<String>();
-			for (String sch : schemas.keySet()){
-				domains2.addAll(DBConsults.getParentName(schemas.get(sch)));
-			}
+			// Ordena los dominios por orden alfabetico.
+			List<String> list = new ArrayList<String>(domains.keySet());
+			Collections.sort(list, (String s1, String s2) -> s1.compareTo(s2));
 			
-			for (String key : domains2) { // recorre todos los dominios de la BD	
-
-				Vector<FileInfo> v = DBConsults.getRattach(key);
+			// Recorre todos los dominios de la BD.
+			for (String domainName : list){
+				Domain domain = AON.getDomain(domainName, domainMap.get(domainName), getLogin());
+				Vector<FileInfo> v = DBConsults.getRattach(domain, getUser());
 				for (FileInfo fileInfo : v) {
 					if(fileInfo.getDriveId()==null){
-						DBConsults.upsize(key,fileInfo.getFileId(),fileInfo.getSize());
+						DBConsults.upsize(domain, getUser(), fileInfo.getFileId(),fileInfo.getSize());
 					}
 				}
 			}
 		}
 		else{
-			for (String domain : domains) {
-				Vector<FileInfo> v = DBConsults.getRattach(domain);
+			for (String domainName : domains) {
+				Domain domain = AON.getDomain(domainName, domainMap.get(domainName), getLogin());
+				Vector<FileInfo> v = DBConsults.getRattach(domain, getUser());
 				for (FileInfo fileInfo : v) {
 					System.out.println(fileInfo.getDriveId());
 					if(fileInfo.getDriveId()==null){
-						DBConsults.upsize(domain,fileInfo.getFileId(),fileInfo.getSize());
+						DBConsults.upsize(domain, getUser(), fileInfo.getFileId(),fileInfo.getSize());
 					}
 				}
 			}
@@ -71,8 +85,17 @@ public class UpSize {
 	}
 	
 	private static String domains[] = {"all"};
-
-	private static void parse(String  args []) {
+	private static String login;
+	
+	private static String getLogin(){
+		return login;
+	}
+	
+	private static User getUser(){
+		return new User().setLogin(getLogin());
+	}
+	
+	private static boolean parse(String  args []) {
 		CommandLineParser parser = new PosixParser();
 		HelpFormatter helpFormatter = new HelpFormatter();
 		
@@ -80,8 +103,15 @@ public class UpSize {
 		
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(false);
-		OptionBuilder.withDescription("imprime esta ayuda.");
-		Option helpOption = OptionBuilder.create("help");
+		OptionBuilder.withLongOpt("help");
+		OptionBuilder.withDescription("print this help.");
+		Option helpOption = OptionBuilder.create('h');
+		
+		OptionBuilder.isRequired(true);
+		OptionBuilder.hasArg(true);
+		OptionBuilder.withDescription("Username of application");
+		OptionBuilder.withLongOpt("username");
+		Option loginOption = OptionBuilder.create("u");
 		
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(true);
@@ -91,16 +121,26 @@ public class UpSize {
 		
 		options.addOption(helpOption);
 		options.addOption(domainOption);
-
+		options.addOption(loginOption);
 		
 		try {
 			CommandLine line = parser.parse(options, args);
+			
+			if (line.hasOption(helpOption.getOpt())) {
+				helpFormatter.printHelp(DEFAULT_SYNTAX_PREFIX, options, true);
+				return false;
+			}
+			
+			login = line.getOptionValue(loginOption.getOpt());
+			
 			String[] domainsaux = line.getOptionValues("d");
-			if(domainsaux!=null){ domains = domainsaux;}
+			if(domainsaux!=null){domains = domainsaux;}
 		} catch (ParseException e) {
 			helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX,
 					options, true);
+			return false;
 		}
+		return true;
 	}
 
 }

@@ -6,6 +6,7 @@ import java.security.KeyStoreException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,12 +19,14 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
-import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.jooq.DBConsults;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
+import com.code.aon.google.apis.jooq.DBSync;
 import com.code.aon.pool.AonConnectionException;
-import com.esferalia.aon.google.sql.AbstractSQL.Domain;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
@@ -46,12 +49,11 @@ public class ShareFiles {
 		}
     }
     
-    private static void act(String domain) throws IOException, SQLException, KeyStoreException, GeneralSecurityException {
+    private static void act(Domain domain) throws IOException, SQLException, KeyStoreException, GeneralSecurityException {
     	
-    	Domain d = DBConsults.getDomain(domain);
-    	DomainGserviceaccount g = DBConsults.getServiceAccount(domain,d.getId());
+    	DomainGserviceaccount g = DBConsults.getServiceAccount(domain,getUser());
 		Drive drive = DriveUtils.serviceInitialize(g);
-		View.domain(domain);
+		View.domain(domain.getName());
     	
     	if (action.equals("all")){
 			shareAll(drive);
@@ -71,21 +73,25 @@ public class ShareFiles {
     
     public static void main(String[] args) throws IOException, KeyStoreException, SQLException, GeneralSecurityException, AonConnectionException {
 		parse(args);
+		Map<String, Integer> domainMap = initializeDomainMap();
 		if(emails.length != 0){
 			if( domains[0].equals("all")){
 				// Obtiene todos los dominios de la BD.
-				Map<String, String> domains1=DatabaseSync.getDomains();
+				Map<String, String> domains1=DBSync.getDomains();
 				
 				// Ordena los dominios por orden alfabetico.
 				List<String> list = new ArrayList<String>(domains1.keySet());
 				Collections.sort(list, (String s1, String s2) -> s1.compareTo(s2));
 				
 				// Recorre todos los dominios de la BD.
-				for (String key : list) 
-					act(key);
+				for (String domainName : list) {
+					Domain domain = AON.getDomain(domainName, domainMap.get(domainName), getUser().getLogin());
+					act(domain);
+				}
 			}
 			else{
-				for (String domain : domains) {
+				for (String domainName : domains) {
+					Domain domain = AON.getDomain(domainName, domainMap.get(domainName), getUser().getLogin());
 					act(domain);
 				}
 			}
@@ -93,21 +99,44 @@ public class ShareFiles {
 		}
 		else View.error4();
     }
-		
+    
+    
+    public static Map<String, Integer> initializeDomainMap(){
+		Map<String, Integer> map  = new HashMap<String, Integer>();
+		try {
+			map =  DBSync.getDomainMap();
+		} catch (AonConnectionException e) {
+			e.printStackTrace();
+		}
+		return map;
+	}
 	
 	public static String types [] = {"all"};
 	private static String domains[] = {"all"};
 	private static String action = "all";
 	private static String value ;
-	private static String out = "normally";
-	private static String categories [] = {"all"};
 	private static String emails [];
+	private static String login;
+	
+	public static String getLogin(){
+		return login;
+	}
+	
+	public static User getUser(){
+		return new User().setLogin(getLogin());
+	}
 	
 	private static void parse(String  args []) {
 		CommandLineParser parser = new PosixParser();
 		HelpFormatter helpFormatter = new HelpFormatter();
 		
 		Options options = new Options();
+		
+		OptionBuilder.isRequired(true);
+		OptionBuilder.hasArg(true);
+		OptionBuilder.withDescription("Username of application");
+		OptionBuilder.withLongOpt("username");
+		Option loginOption = OptionBuilder.create('u');
 		
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(false);
@@ -138,18 +167,6 @@ public class ShareFiles {
 		OptionBuilder.withValueSeparator(',');		
 		Option valueOption = OptionBuilder.create("v");
 		
-		OptionBuilder.isRequired(false);
-		OptionBuilder.hasArg(true);
-		OptionBuilder.withDescription("Tipo de salida al aplicar el comando. Ej: normally");
-		OptionBuilder.withValueSeparator(',');		
-		Option outOption = OptionBuilder.create("o");
-
-		OptionBuilder.isRequired(false);
-		OptionBuilder.hasArg(true);
-		OptionBuilder.withDescription("Categoria a la que pertenece el archivo que se quiere tratar. Ej: otros, LABORAL, ...");
-		OptionBuilder.withValueSeparator(',');
-		Option categoriesOption = OptionBuilder.create("c");
-
 		OptionBuilder.isRequired(true);
 		OptionBuilder.hasArg(true);
 		OptionBuilder.withDescription("Emails con los que se quiere compartir un archivo.");
@@ -157,13 +174,12 @@ public class ShareFiles {
 		Option emailsOption = OptionBuilder.create("e");
 		
 		options.addOption(helpOption);
-		options.addOption(outOption);
 		options.addOption(domainOption);
 		options.addOption(typeOption);
 		options.addOption(valueOption);
 		options.addOption(actionOption);
-		options.addOption(categoriesOption);
 		options.addOption(emailsOption);
+		options.addOption(loginOption);
 		
 		
 		try {
@@ -177,12 +193,11 @@ public class ShareFiles {
 			if(actionaux!=null){ action = actionaux;}
 			String valueaux= line.getOptionValue("v");
 			if(valueaux!=null){ value = valueaux;}
-			String outaux = line.getOptionValue("o");
-			if(outaux!=null) out = outaux; 
-			String[] categoriesaux = line.getOptionValues("a");
-			if(categoriesaux!=null){ categories = categoriesaux;}
 			String[] emailsaux = line.getOptionValues("e");
 			if(emailsaux!=null){ emails = emailsaux;}
+			
+			login = line.getOptionValue(loginOption.getOpt());
+			
 		} catch (ParseException e) {
 			helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX,
 					options, true);

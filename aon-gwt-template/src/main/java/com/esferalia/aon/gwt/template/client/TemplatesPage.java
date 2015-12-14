@@ -490,7 +490,8 @@ public class TemplatesPage extends Composite{
             	+ "?id=" + Integer.toString(object.getId())
             	+ "&drive_id=" +URL.encode(driveId)
             	+ "&name=" +URL.encode(object.getName())
-            	+ "&username="+ template_list.getLogin();
+            	+ "&username="+ template_list.getLogin()
+            	+ "&domain_id="+ getDomain().getId();
 		Window.open( fileDownloadURL, "_blank",null);
 	}
 	

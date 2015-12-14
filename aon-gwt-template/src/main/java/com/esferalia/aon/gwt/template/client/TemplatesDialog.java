@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.esferalia.aon.gwt.template.shared.WorkPlace;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -265,13 +266,13 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(2, 0, new Label("Tipo"));
 		flex_table.setWidget(2, 1, typeTextBox);
 		
-		ListBox categoryListBox = new ListBox();
-		categoryListBox.addItem("-");
-		for(ProductCategory pc : dialog.getCategories())
-			categoryListBox.addItem(pc.getName(), pc.getId().toString());
-		flex_table.setWidget(3, 0, new Label("Categoria"));
-		flex_table.setWidget(3, 1, categoryListBox);
-		
+		ListBox tagListBox = new ListBox();
+		tagListBox.addItem("-");
+		for(Tag tag : dialog.getTagList())
+			tagListBox.addItem(tag.getName(), tag.getId().toString());
+		flex_table.setWidget(3, 0, new Label("Etiqueta"));
+		flex_table.setWidget(3, 1, tagListBox);
+
 		SingleUploader upload = newUploader(null, dialog.getUrl(), 1);
 		flex_table.setWidget(4, 0, new Label("Archivo"));
 		flex_table.setWidget(4, 1, upload);

@@ -5,7 +5,6 @@ import static com.code.aon.common.enumeration.SecurityLevel.CONFIDENTIAL;
 import static com.code.aon.registry.enumeration.RegistryAttachmentType.DOCUMENT;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.getSalaryReport;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.DomainGserviceaccount.DOMAIN_GSERVICEACCOUNT;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
@@ -23,7 +22,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
@@ -34,7 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jooq.DSLContext;
-import org.jooq.InsertSetStep;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
@@ -43,13 +40,10 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.google.apis.DriveUtils;
-import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.RelationalExpression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.MediaType;
-import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
@@ -58,9 +52,6 @@ import com.esferalia.aon.google.sql.AbstractSQL.Rattach;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.ShareService;
-import com.esferalia.aon.jooq.tables.Domain;
-import com.esferalia.aon.jooq.tables.DomainGserviceaccount;
-import com.esferalia.aon.jooq.tables.Rmedia;
 import com.esferalia.aon.jooq.tables.records.DomainGserviceaccountRecord;
 import com.esferalia.aon.jooq.tables.records.RattachRecord;
 import com.esferalia.aon.payroll.Salary;
@@ -142,7 +133,7 @@ public class ShareServlet extends HttpServlet implements ShareService {
 				}
 					
 				
-				com.code.aon.google.apis.jooq.DomainGserviceaccount domainGserviceaccount = 
+				com.esferalia.aon.occam.api.model.DomainGserviceaccount domainGserviceaccount = 
 						getDomainGserviceaccount(dslContext, salary.getDomain());
 				
 				reportManager.setCollectionProvider(new SalaryProvider(salary
@@ -159,10 +150,6 @@ public class ShareServlet extends HttpServlet implements ShareService {
 							os);
 					connection.commit();
 				} catch (KeyStoreException e) {
-					doJson(salary, data.length, null, e.getLocalizedMessage(),
-							os);
-					connection.rollback();
-				} catch (AonConnectionException e) {
 					doJson(salary, data.length, null, e.getLocalizedMessage(),
 							os);
 					connection.rollback();
@@ -435,10 +422,10 @@ public class ShareServlet extends HttpServlet implements ShareService {
 		return ret;
 	}
 	
-	private static com.code.aon.google.apis.jooq.DomainGserviceaccount getDomainGserviceaccount(DSLContext dslContext, int domain) {
+	private static com.esferalia.aon.occam.api.model.DomainGserviceaccount getDomainGserviceaccount(DSLContext dslContext, int domain) {
 		DomainGserviceaccountRecord record =
 				dslContext.selectFrom(DOMAIN_GSERVICEACCOUNT).where(DOMAIN_GSERVICEACCOUNT.DOMAIN.eq(domain)).fetchOne();
-		com.code.aon.google.apis.jooq.DomainGserviceaccount domainGserviceaccount = new  com.code.aon.google.apis.jooq.DomainGserviceaccount();
+		com.esferalia.aon.occam.api.model.DomainGserviceaccount domainGserviceaccount = new  com.esferalia.aon.occam.api.model.DomainGserviceaccount();
 		
 		domainGserviceaccount.setClientId(record.getClientId());
 		domainGserviceaccount.setPublicKey(record.getPublicKey());

@@ -8,9 +8,7 @@ import java.io.InputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
 import java.security.PrivateKey;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.Vector;
@@ -27,7 +25,8 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -42,11 +41,8 @@ import com.google.api.services.gmail.model.Message;
 public class GmailUtils {
 
 	
-	public static Gmail serviceInitialize(DomainGserviceaccount g) throws KeyStoreException, IOException, GeneralSecurityException, SQLException{
-		
-		
-		
-		
+	public static Gmail serviceInitialize(DomainGserviceaccount g) 
+			throws IOException, GeneralSecurityException{
 		final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 		final JsonFactory JSON_FACTORY = new JacksonFactory();
 		final String SERVICE_ACCOUNT_ID = g.getEmailAddress();
@@ -62,7 +58,7 @@ public class GmailUtils {
 				.setJsonFactory(JSON_FACTORY)
 				.setServiceAccountId(SERVICE_ACCOUNT_ID)
 				.setServiceAccountScopes(
-						Arrays.asList(GmailScopes.GMAIL_COMPOSE , GmailScopes.GMAIL_MODIFY, GmailScopes.GMAIL_READONLY,GmailScopes.MAIL_GOOGLE_COM))
+						Arrays.asList(GmailScopes.MAIL_GOOGLE_COM))
 				.setServiceAccountPrivateKey(serviceAccountPrivateKey)
 				.setServiceAccountUser(googleAccount)
 				.build();
@@ -72,7 +68,7 @@ public class GmailUtils {
 				.setJsonFactory(JSON_FACTORY)
 				.setServiceAccountId(SERVICE_ACCOUNT_ID)
 				.setServiceAccountScopes(
-						Arrays.asList(GmailScopes.GMAIL_COMPOSE , GmailScopes.GMAIL_MODIFY, GmailScopes.GMAIL_READONLY,GmailScopes.MAIL_GOOGLE_COM))
+						Arrays.asList(GmailScopes.MAIL_GOOGLE_COM))
 				.setServiceAccountPrivateKey(serviceAccountPrivateKey)
 				.build();
 	
@@ -131,7 +127,7 @@ public class GmailUtils {
 	   * @throws MessagingException
 	   */
 	  public static MimeMessage createEmail(String to, String from, String subject,
-	      String bodyText) throws MessagingException {
+			  String bodyText) throws MessagingException {
 	    Properties props = new Properties();
 	    Session session = Session.getDefaultInstance(props, null);
 
@@ -158,7 +154,8 @@ public class GmailUtils {
 	   * @throws MessagingException
 	   */
 	  public static MimeMessage createEmailWithAttachment(String to, String from, String subject,
-	      String bodyText, String fileDir, String filename) throws MessagingException, IOException {
+	      String bodyText, String fileDir, String filename) 
+	    		  throws MessagingException, IOException {
 	    Properties props = new Properties();
 	    Session session = Session.getDefaultInstance(props, null);
 
@@ -195,7 +192,8 @@ public class GmailUtils {
 	  }
 	  
 	  public static MimeMessage createEmailWithAttachments(String to, String from, String subject,
-		      String bodyText, Vector<BodyPart> bodyParts) throws MessagingException, IOException {
+		      String bodyText, Vector<BodyPart> bodyParts) 
+		    		  throws MessagingException, IOException {
 		    Properties props = new Properties();
 		    Session session = Session.getDefaultInstance(props, null);
 
@@ -225,16 +223,22 @@ public class GmailUtils {
 		    return email;
 		  }
 	  
-	  public static void send(Gmail gmail, String to, String subject, String body) throws SQLException, KeyStoreException, IOException, GeneralSecurityException, MessagingException{
-		 	
-		  
+	  public static void send(Gmail gmail, String to, String subject, String body) 
+			  throws IOException, MessagingException{
 			MimeMessage m =createEmail(to, "me", subject, body);		  
-	
 			sendMessage(gmail,"me", m);
-		  
 	  }
-	  public static void main(String[] args) throws MessagingException, KeyStoreException, IOException, GeneralSecurityException, SQLException {
-		  	
+	  
+	  public static void main(String[] args) 
+			  throws MessagingException, IOException, GeneralSecurityException {
+		  String domainName = "energilandia.aibanez.net";
+		  Integer domainId = 534;
+		  String login = "roberto";
+		  System.out.println(login + " - " + domainId + " - " + domainName);
+		  DomainGserviceaccount  g = AON.getDomainGserviceaccount(domainName, domainId, login);
+		  Gmail gmail = serviceInitialize(g);
+		  System.out.println(g);
+		  send(gmail, "aibanez@aonsolutions.es", "PRUEBA", "PRUEBA");
 	  }
 
 }

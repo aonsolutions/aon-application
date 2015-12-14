@@ -1,20 +1,22 @@
 package com.code.aon.google.apis;
 
-import static com.code.aon.google.apis.DatabaseSync.getProjectTask;
-import static com.code.aon.google.apis.DatabaseSync.getTask;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.TimeZone;
-import java.util.Vector;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.google.apis.jooq.DBTask;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.google.sql.AbstractSQL.Project;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.tasks.model.Task;
 import com.google.api.services.tasks.model.TaskList;
@@ -349,21 +351,24 @@ public class TaskUtils {
 	 * @throws IOException
 	 */
 	public static void synchronize(com.google.api.services.tasks.Tasks client) throws SQLException, AonConnectionException, IOException{
-		String domain= AonUtil.getDomainName();
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
 		String username=AonUtil.getAuthPrincipal().getShortName();
+		Domain domain = AON.getDomain(domainName, domainId, username);		
+		User user = new User().setLogin(username);
 
-		Vector<com.esferalia.aon.google.sql.AbstractSQL.Task> tasksBD = getTask(domain, username);
+		LinkedList<com.esferalia.aon.google.sql.AbstractSQL.Task> taskBDList = DBTask.getTask(domain, user);
 		TaskList taskList = null;
-		for(int i= 0; i<tasksBD.size();i++){
-			Project project = getProjectTask(domain,tasksBD.get(i).getId());
-			com.esferalia.aon.google.sql.AbstractSQL.Task taskBD=tasksBD.get(i);
+		for(int i= 0; i<taskBDList.size();i++){
+			Project project = DBTask.getProjectTask(domain, user, taskBDList.get(i));
+			com.esferalia.aon.google.sql.AbstractSQL.Task taskBD=taskBDList.get(i);
 			if (taskBD.getGtasklistId() == null){
 				taskList = addTaskList(newTaskList(project),client);
 				
 				System.out.println("------------------new TaskList ----------------");
 				System.out.println("ID: "+taskList.getId());
 				System.out.println("Title: "+taskList.getTitle());
-				DatabaseSync.addTaskListId(taskList.getId(),taskBD.getId(),domain);
+				DBTask.addTaskListId(domain, user, taskList.getId(),taskBD.getId());
 			}
 			else{
 				taskList = getTaskList(client,taskBD.getGtasklistId());
@@ -375,7 +380,7 @@ public class TaskUtils {
 				System.out.println("------------------new Task ----------------");
 				System.out.println("ID: "+t.getId());
 				System.out.println("Title: "+t.getTitle());
-				DatabaseSync.addTaskId(t.getId(), taskBD.getId(), domain);
+				DBTask.addTaskId(domain, user, t.getId(), taskBD.getId());
 				System.out.println("holaa");
 			}
 			else{

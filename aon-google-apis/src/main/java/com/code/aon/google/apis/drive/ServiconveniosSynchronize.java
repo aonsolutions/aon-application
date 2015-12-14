@@ -12,14 +12,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -30,30 +30,29 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.Result;
-import org.jooq.impl.DSL;
 import org.jooq.tools.csv.CSVReader;
 
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DBDrive;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
-import com.code.aon.google.apis.jooq.JooqSettings;
+import com.code.aon.google.apis.jooq.DBSync;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.pool.ConnectionInfo;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
-import com.esferalia.aon.google.sql.AbstractSQL.Domain;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.google.api.client.http.FileContent;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.Drive.Properties;
 import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Property;
 
@@ -67,16 +66,8 @@ public class ServiconveniosSynchronize {
 	static String sUser = "serviconvenios";
 	static String sPassword = "aon2014SC";
 
-	public static void sync(String domain) throws AonConnectionException{
-		
+	public static void sync(Domain domain) throws AonConnectionException{
 		try {
-			
-			/*String client = "ftp://" + sUser + ":" + sPassword + "@" + sFTP;
-			
-			URL url = new URL(client + "/convenios.csv" + ";type=i");
-			URLConnection urlc = url.openConnection();
-			InputStream fis = urlc.getInputStream();
-		*/
 			client.connect(server);
 			client.login(user, password);
 
@@ -99,12 +90,7 @@ public class ServiconveniosSynchronize {
 				
 					String idStr = fileName.substring(4, 8);
 					Integer id = -Integer.parseInt(idStr);
-					FileInfo fi = null;
-					try {
-						fi = DBDrive.getServiConvenio(domain, id);
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
+					FileInfo fi = DBDrive.getServiConvenio(domain, getUser(), id);
 					if(fi != null && fi.getFileId() != null) {
 						update(fi, modificationDate, fileName, domain, tag1, tag2);
 						actualizados++;
@@ -137,7 +123,8 @@ public class ServiconveniosSynchronize {
 	}
 	
 	
-	public static void update(FileInfo fileInfo, String modificationDate, String fileName, String domain, String tag1, String tag2){
+	public static void update(FileInfo fileInfo, String modificationDate, String fileName, Domain domain, String tag1, String tag2){
+		Domain domainAux = new Domain().setName(domain.getName()).setId(0);
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		Date date = null;
 		try {
@@ -147,34 +134,25 @@ public class ServiconveniosSynchronize {
 		}
 		if(date != null && (fileInfo.getModificationDate() == null || date.after(fileInfo.getModificationDate()))){
 			Drive drive = null;  
-			Integer domainId = 0;
 			try {
-				DomainGserviceaccount g = DBConsults.getServiceAccount(domain,domainId);
+				DomainGserviceaccount g = DBConsults.getServiceAccount(domainAux, getUser());
 				if(g.getGoogleAccount() == null){
 					String googleAccount = "aio@aonsolutions.net";
-					DBConsults.updateGoogleAccount(domain, domainId, googleAccount);
+					DBConsults.updateGoogleAccount(domainAux, getUser(), googleAccount);
 					g.setGoogleAccount(googleAccount);
 				}
 				drive = DriveUtils.serviceInitialize(g);
-				/*String client2 = "ftp://" + sUser + ":" + sPassword + "@" + sFTP;
-				URL url = new URL(client2 + "/"+fileName.substring(0,12).toLowerCase() + ";type=i");
-				System.out.println(url.toString());
-				URLConnection urlc = url.openConnection();
-				InputStream fis = urlc.getInputStream();
-				*/
+			
 				File file = download(client, "/"+fileName.substring(0,12).toLowerCase());
 				FileInputStream fis2 = new FileInputStream(file);
 
 				String md5 = AonFileUtils.getMD5Checksum(fis2);
-				//com.google.api.services.drive.model.File fdrive = SearchFiles.searchFile(drive, fileInfo.getDriveId());
 				
 				com.google.api.services.drive.model.File fdrive = null;
 				
-	
-				
 				try {
-					fdrive = DriveUtils.getFile(drive, fileInfo.getDriveId(),fileInfo.getFileId());//TODO error dominio 
-				} catch (IOException | SQLException | GeneralSecurityException e) {
+					fdrive = DriveUtils.getFile(drive, domainAux, getUser(), fileInfo.getDriveId(),fileInfo.getFileId());//TODO error dominio 
+				} catch (IOException | GeneralSecurityException e) {
 					e.printStackTrace();
 				}
 				System.out.println(md5+" - "+fdrive.getMd5Checksum() + fdrive.getId());
@@ -204,33 +182,25 @@ public class ServiconveniosSynchronize {
 						.update(fileInfo.getDriveId(), fdrive, mediaContent)
 						.execute();
 				}
-				DBDrive.updateSCModificationDate(domain, domainId, fileInfo, date);
+				DBDrive.updateSCModificationDate(domainAux, getUser(), fileInfo, date);
 				
-			} catch (IOException | SQLException | GeneralSecurityException e1) {
+			} catch (IOException | GeneralSecurityException e1) {
 				e1.printStackTrace();
 			}
 		}	
-		try {
-			Long l1 = fileInfo.getTags().stream().filter(tag -> tag.equals(tag1)).count();		
-			if(l1 == 0)
-				DBDrive.setSCTag(domain, fileInfo, tag1);
-			Long l2 = fileInfo.getTags().stream().filter(tag -> tag.equals(tag2)).count();		
-			if(l2 == 0)
-				DBDrive.setSCTag(domain, fileInfo, tag2);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		
+		Long l1 = fileInfo.getTags().stream().filter(tag -> tag.equals(tag1)).count();		
+		if(l1 == 0)
+			DBDrive.setSCTag(domainAux, getUser(), fileInfo, tag1);
+		Long l2 = fileInfo.getTags().stream().filter(tag -> tag.equals(tag2)).count();		
+		if(l2 == 0)
+			DBDrive.setSCTag(domainAux, getUser(), fileInfo, tag2);
+		
 	}
 	
-	public static void newFile(String modificationDate,String fileName,String description,String domain, String tag1, String tag2, Integer id){
+	public static void newFile(String modificationDate,String fileName,String description,Domain domain, String tag1, String tag2, Integer id){
 		try {
-			
-			/*String client2 = "ftp://" + sUser + ":" + sPassword + "@" + sFTP;
-			URL url = new URL(client2 + "/"+fileName + ";type=i");
-			URLConnection urlc = url.openConnection();
-			InputStream fis = urlc.getInputStream();
-			*/
-			
+			Domain domainAux = new Domain().setName(domain.getName()).setId(0);
 			File file = download(client, "/"+fileName);
 			FileInputStream fis2 = new FileInputStream(file);
 
@@ -238,9 +208,8 @@ public class ServiconveniosSynchronize {
 			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 			
 			Date date = formatter.parse(modificationDate);
-			
-			Domain d = DBConsults.getDomain(domain, 0);
-			DomainGserviceaccount g = DBConsults.getServiceAccount(domain,d.getId());
+		
+			DomainGserviceaccount g = DBConsults.getServiceAccount(domain,getUser());
 			System.out.println(g.getGoogleAccount());
 			Drive drive = DriveUtils.serviceInitialize(g);
 		
@@ -257,25 +226,22 @@ public class ServiconveniosSynchronize {
 			fi.setSize(size.intValue());
 			fi.setData(Utils.InputStreamToByte(fis2));
 			
-			
-			Connection connection = null;
+			AONContext ctx = null;
 			try {
-				connection = DatabaseSync.getConnection(domain);
-				DSLContext dslContext = DSL.using(connection,
-						JooqSettings.getDefaultSettings());
+				ctx = AONContext.getAONContext(domainAux.getName(), domainAux.getId(), tag2);
 			
-				Result<Record1<Integer>> reg = dslContext.select(REGISTRY.ID)
+				Result<Record1<Integer>> reg = ctx.getDslContext().select(REGISTRY.ID)
 					.from(REGISTRY)
 					.where(REGISTRY.DOMAIN.eq(0)).fetch();
 
-				dslContext.insertInto(RATTACH,RATTACH.ID,RATTACH.REGISTRY,RATTACH.DOMAIN,RATTACH.CATEGORY,RATTACH.MIMETYPE,RATTACH.DESCRIPTION,RATTACH.TYPE,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.ATTACH_DATE,RATTACH.DATA,RATTACH.DRIVE_ID,RATTACH.DPARENT_ID, RATTACH.MODIFICATION_DATE)
+				ctx.getDslContext().insertInto(RATTACH,RATTACH.ID,RATTACH.REGISTRY,RATTACH.DOMAIN,RATTACH.CATEGORY,RATTACH.MIMETYPE,RATTACH.DESCRIPTION,RATTACH.TYPE,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.ATTACH_DATE,RATTACH.DATA,RATTACH.DRIVE_ID,RATTACH.DPARENT_ID, RATTACH.MODIFICATION_DATE)
 							.values(fi.getFileId(),reg.get(0).value1(),fi.getDomainId(),fi.getCategory(),fi.getMimetype(),fi.getTitle().substring(0, 64),(byte)fi.getType(),fi.getScopeId(),fi.getSecurityLevel(),fi.getDateSql(),null,null,fi.getSize().toString(),new Timestamp(date.getTime())).execute();
 		
-				DBDrive.setSCTag(domain, fi, tag1);
-				DBDrive.setSCTag(domain, fi, tag2);
+				DBDrive.setSCTag(domain, getUser(), fi, tag1);
+				DBDrive.setSCTag(domain, getUser(), fi, tag2);
 			} finally {
-				if (connection != null)
-					connection.close();
+				if (ctx != null)
+					ctx.close();
 			}
 			FileList fl = SearchFiles.searchFilesProperties(drive, "fileId", Integer.toString(fi.getFileId()));
 			System.out.println( Integer.toString(fi.getFileId()));
@@ -287,7 +253,7 @@ public class ServiconveniosSynchronize {
 				String[] types = { RegistryAttachmentType.CORPORATE_IDENTITY
 						.toString() };
 				DriveUtils.types = types;
-				DriveUtils.sync2(drive, fi, d.getName());
+				DriveUtils.sync2(drive, domainAux, getUser(), fi);
 			}
 		} catch (Exception e) {
 		}
@@ -296,11 +262,10 @@ public class ServiconveniosSynchronize {
 
 	public static void main(String[] args) {
 		parse(args);
+		Map<String, Integer> domainMap = initializeDomainMap();
 		try {
 			ConnectionInfo connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
 			List<String> schemas;
-			
-			
 			schemas = connectionInfo.getSchemas();
 			System.out.println("NÚMERO DE SCHEMAS: "+ schemas.size());
 			schemas.stream().forEach(s -> {
@@ -309,8 +274,10 @@ public class ServiconveniosSynchronize {
 					List<String> domains = connectionInfo.getSchemaDomains(s);
 					System.out.println(">> NÚMERO DE DOMINIOS: "+ domains.size());
 					if(domains.size()!=0){
+						
 						System.out.println(">> DOMINIO: "+domains.get(0));
-						sync(domains.get(0));
+						Domain domain = AON.getDomain(domains.get(0), domainMap.get(domains.get(0)), getUser().getLogin());
+						sync(domain);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -322,10 +289,28 @@ public class ServiconveniosSynchronize {
 		
 	}
 	
-
+	public static Map<String, Integer> initializeDomainMap(){
+		Map<String, Integer> map  = new HashMap<String, Integer>();
+		try {
+			map =  DBSync.getDomainMap();
+		} catch (AonConnectionException e) {
+			e.printStackTrace();
+		}
+		return map;
+	}
+	
 	private static String server;
 	private static String user;
 	private static String password;
+	private static String login;
+	
+	public static String getLogin(){
+		return login;
+	}
+	
+	public static User getUser(){
+		return new User().setLogin(getLogin());
+	}
 	
 	private static boolean parse(String args[])  {
 
@@ -334,6 +319,12 @@ public class ServiconveniosSynchronize {
 
 		Options options = new Options();
 
+		OptionBuilder.isRequired(true);
+		OptionBuilder.hasArg(true);
+		OptionBuilder.withDescription("Username of application");
+		OptionBuilder.withLongOpt("username");
+		Option loginOption = OptionBuilder.create('u');
+		
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(false);
 		OptionBuilder.withLongOpt("help");
@@ -362,7 +353,7 @@ public class ServiconveniosSynchronize {
 		options.addOption(serverOption);
 		options.addOption(userOption);
 		options.addOption(passwordOption);
-
+		options.addOption(loginOption);
 
 		try {
 			CommandLine line = parser.parse(options, args);
@@ -384,6 +375,8 @@ public class ServiconveniosSynchronize {
 			password = line.getOptionValue(serverOption.getOpt());
 			if(password == null)
 				password = sPassword;
+			
+			login = line.getOptionValue(loginOption.getOpt());
 			
 		} catch (org.apache.commons.cli.ParseException e) {
 			System.out.print(e.getMessage());

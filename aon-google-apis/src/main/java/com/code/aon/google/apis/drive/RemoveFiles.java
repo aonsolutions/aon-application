@@ -8,8 +8,8 @@ import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -19,26 +19,20 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.commons.io.IOUtils;
 
+import com.code.aon.google.apis.jooq.DBSync;
+import com.code.aon.pool.AonConnectionException;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.api.client.http.ByteArrayContent;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.DateTime;
 import com.google.api.client.util.SecurityUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
-import com.google.api.services.drive.model.About;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
-import com.google.api.services.drive.model.ParentReference;
-import com.google.api.services.drive.model.Property;
-import com.google.api.services.drive.model.PropertyList;
 
 public class RemoveFiles {
 	
@@ -46,9 +40,29 @@ public class RemoveFiles {
 	//static byte[] PRIVATE_KEY;
 	private static InputStream PRIVATE_KEY;
 	private static String pkeyPath;
+	private static String login;
+	
+	public static String getLogin(){
+		return login;
+	}
+	
+	public static User getUser(){
+		return new User().setLogin(getLogin());
+	}
+	
 	public static void setPrivateKey() throws IOException{
 		 //PRIVATE_KEY = Files.readAllBytes(Paths.get("novus.p12"));/home/aibanez/Descargas/AON SOLUTIONS-52faf5279077.p12
 		PRIVATE_KEY = new FileInputStream(pkeyPath);
+	}
+	
+	public static Map<String, Integer> initializeDomainMap(){
+		Map<String, Integer> map  = new HashMap<String, Integer>();
+		try {
+			map =  DBSync.getDomainMap();
+		} catch (AonConnectionException e) {
+			e.printStackTrace();
+		}
+		return map;
 	}
 		
 	public static Drive oldService() throws KeyStoreException, IOException, GeneralSecurityException{
@@ -101,6 +115,12 @@ public class RemoveFiles {
 
 		Options options = new Options();
 
+		OptionBuilder.isRequired(true);
+		OptionBuilder.hasArg(true);
+		OptionBuilder.withDescription("Username of application");
+		OptionBuilder.withLongOpt("username");
+		Option loginOption = OptionBuilder.create('u');
+		
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(false);
 		OptionBuilder.withLongOpt("help");
@@ -121,6 +141,7 @@ public class RemoveFiles {
 		OptionBuilder.withLongOpt("pkey");
 		Option pkeyOption = OptionBuilder.create("pkey");
 
+		options.addOption(loginOption);
 		options.addOption(helpOption);
 		options.addOption(clientOption);
 		options.addOption(pkeyOption);

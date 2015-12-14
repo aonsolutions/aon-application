@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
-import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -28,11 +27,11 @@ import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 
@@ -50,17 +49,12 @@ public class DownloadTemplatesServlet extends HttpServlet {
         String fileId = p_request.getParameter("id");
         String name = p_request.getParameter("name");
         String login = p_request.getParameter("username");
+        String domain_id = p_request.getParameter("domain_id");
         User user = new User().setLogin(login);
         String domainName = AonUtil.getDomainName();
+        Integer domainId = Integer.parseInt(domain_id);
+        Domain domain = new Domain().setName(domainName).setId(domainId);
         Integer idFile = Integer.parseInt(fileId);
-        Integer domainId = null;
-		try {
-			domainId = com.code.aon.google.apis.jooq.DBConsults.getDomain(domainName).getId();
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		}
-		com.esferalia.aon.occam.api.model.Domain domain = new com.esferalia.aon.occam.api.model.Domain()
-				.setId(domainId).setName(domainName);
         byte[] b = null ;
         
         if (driveId != ""){
@@ -68,11 +62,9 @@ public class DownloadTemplatesServlet extends HttpServlet {
         	
         	DomainGserviceaccount g = null;
 			try {
-				Domain dom = com.code.aon.google.apis.jooq.DBConsults.getDomain(domainName);
-				g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domainName,dom.getId());
+				g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain, user);
 				d = DriveUtils.serviceInitialize(g);
-			} catch (SQLException e) {
-				e.printStackTrace();
+			
 			} catch (KeyStoreException e) {
 				e.printStackTrace();
 			} catch (GeneralSecurityException e) {
@@ -81,10 +73,10 @@ public class DownloadTemplatesServlet extends HttpServlet {
         	
 			com.google.api.services.drive.model.File f = null;
 			try {
-				f = DriveUtils.getFile(d, driveId, idFile);
+				f = DriveUtils.getFile(d, domain, user, driveId, idFile);
 				if(f.getDescription().equals("OLDRIVE"))
 					d = DriveUtils.serviceInitializeOld(g);
-			} catch (SQLException | GeneralSecurityException e) {
+			} catch (GeneralSecurityException e) {
 				e.printStackTrace();
 			}
 			InputStream in = DriveUtils.downloadFile(d, f);

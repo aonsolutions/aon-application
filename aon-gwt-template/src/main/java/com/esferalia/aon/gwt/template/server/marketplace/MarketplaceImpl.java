@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.template.server.marketplace;
 
 import java.text.Collator;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
@@ -13,6 +14,7 @@ import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
 import com.esferalia.aon.gwt.template.shared.marketplace.Order;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.User;
 
 
@@ -59,6 +61,11 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 	public void deleteTemplate(Domain domain, String description){
 		DBMarketplace.deleteTemplate(domain, getUser(), description);
 	}
+	
+	public LinkedList<Tag> getMarketplaceTagList(Domain domain){
+		return DBMarketplace.getMarketplaceTagList(domain, getUser());
+	}
+	
 	
 	/**
 	 * <p>

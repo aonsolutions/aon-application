@@ -5,8 +5,6 @@ import static com.code.aon.ui.registry.controller.IRegistryConstants.BATCH_DOCUM
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
-import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,7 +24,6 @@ import com.code.aon.config.Domain;
 import com.code.aon.config.Scope;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.jooq.DBConsults;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Category;
 import com.code.aon.registry.RegistryAttachment;
@@ -39,6 +36,8 @@ import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.registry.controller.event.DomainLoookupListener;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 
@@ -158,14 +157,17 @@ public class CorporateIdentityController extends RegistryAttachController implem
 		return initialAction;
 	}	
 	
-	public String getDownloadURL() throws ManagerBeanException, IOException, SQLException, KeyStoreException, GeneralSecurityException {
+	public String getDownloadURL() throws ManagerBeanException, IOException, GeneralSecurityException {
 		String url = null;
 		RegistryAttachment ra = (RegistryAttachment) getTo();
 		if ( (ra.getDriveId() != null) && (ra.getMD5() == null) ) {
-			String domain = AonUtil.getDomainName();
-			DomainGserviceaccount d = DBConsults.getServiceAccount(domain,ra.getDomain());
+			String domainName = AonUtil.getDomainName();
+			com.esferalia.aon.occam.api.model.Domain domain = new com.esferalia.aon.occam.api.model.Domain()
+					.setName(domainName).setId(ra.getDomain());
+			User user = new User().setLogin(AonUtil.getRemoteUser() != null ? AonUtil.getRemoteUser() : "");
+			DomainGserviceaccount d = DBConsults.getServiceAccount(domain, user);
 			Drive drive = DriveUtils.serviceInitialize(d);
-			File f = DriveUtils.getFile(drive,ra.getDriveId(),ra.getId());
+			File f = DriveUtils.getFile(drive, domain, user, ra.getDriveId(),ra.getId());
 			if ( "OLDRIVE".equals(f.getDescription()) ) {
 				drive = DriveUtils.serviceInitializeOld(d);	
 			}

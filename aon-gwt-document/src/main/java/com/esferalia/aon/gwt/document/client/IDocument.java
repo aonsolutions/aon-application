@@ -57,7 +57,7 @@ public interface IDocument extends RemoteService{
 	public Vector<FileInfo> searchFile(SearchInfo si, Vector<FileInfo> files,
 			Vector<FileInfo> allFiles);
 	
-	public String getAsHTML(FileInfo doc, int zoom);
+	public String getAsHTML(Domain domain, FileInfo doc, int zoom);
 	
 	public TreeMap<String, List<FileInfo>> drive(TreeMap<String, List<FileInfo>> folders,String id);
 	

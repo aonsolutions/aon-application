@@ -26,14 +26,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBConsults;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.google.apis.controller.GoogleDriveController;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.google.api.services.drive.Drive;
 import com.lowagie.text.DocumentException;
@@ -118,6 +121,7 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 		}
 	}
 
+
 	protected static PDFFile getPDFFile(FileInfo doc) throws SQLException,
 			IOException, KeyStoreException, GeneralSecurityException {
 
@@ -130,8 +134,9 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 		return pdfFile;
 	}
 
-	private static ByteBuffer getPdfByeBuffer(FileInfo doc) throws SQLException,
-			IOException, KeyStoreException, GeneralSecurityException {
+	private static ByteBuffer getPdfByeBuffer(FileInfo doc) throws IOException, GeneralSecurityException {
+		Domain domain = new Domain().setName(doc.getDomain()).setId(doc.getDomainId());
+		User user = new User().setLogin("");
 		byte[] b = null;
 		MimeType mimetype = MimeType.values()[doc.getMimetype()];
 		if(doc.getDriveId()!= null){
@@ -144,7 +149,7 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
         		g = DBConsults.getServiceAccount(doc.getDomain(),doc.getDomainId());
         		d = DriveUtils.serviceInitialize(g);
         	}
-			com.google.api.services.drive.model.File f = DriveUtils.getFile(d, doc.getDriveId(),doc.getFileId());
+			com.google.api.services.drive.model.File f = DriveUtils.getFile(d, domain, user, doc.getDriveId(),doc.getFileId());
 			if(f.getDescription() != null && f.getDescription().equals("OLDRIVE"))
 				d = DriveUtils.serviceInitializeOld(g);
 			InputStream in = DriveUtils.downloadFile(d, f);
@@ -152,19 +157,18 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 			
 		}
 		else {
-			ViewerUtils.RAttach rattach = ViewerUtils.getRAttach(doc.getFileId());
-			b = rattach.bytes;
-			if (mimetype ==null) mimetype = rattach.mimeType;
-		}
+			Attach rattach = ViewerUtils.getRAttach(domain, user, doc.getFileId());
+			b = rattach.getData();
+			if (mimetype ==null) mimetype = rattach.getMimeType();
+		}		
 
 		return getPdfByeBuffer(doc.getMd5(), mimetype, b);
 	}
 
 	private static ByteBuffer getPdfByeBuffer(String md5, MimeType mimeType,
 			byte[] bytes) throws IOException {
-
-		if (mimeType == MimeType.MIME_PDF) {
 		
+		if (mimeType == MimeType.PDF) {
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			PdfReader reader = new PdfReader(bytes);
 			PdfStamper stamper;
@@ -176,9 +180,7 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 			}
 			return ByteBuffer.wrap(os.toByteArray());
 		}
-
 		String tmpDir = System.getProperty("java.io.tmpdir");
-
 		File inputFile = new File(tmpDir, md5 + "." + mimeType.getExtension());
 
 		FileOutputStream inputFileOs = new FileOutputStream(inputFile);
@@ -186,7 +188,7 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 		inputFileOs.close();
 
 		File outputFile = new File(tmpDir, md5 + "."
-				+ MimeType.MIME_PDF.getExtension());
+				+ MimeType.PDF.getExtension());
 
 		convert(inputFile, outputFile);
 
@@ -239,8 +241,6 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 		ImageIO.write(bufferedImage, format, os);
 
 	}
-	
-	
 
 	/**
 	 * Sets HTTP headers on the response which tell the browser to cache the

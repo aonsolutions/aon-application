@@ -1,10 +1,15 @@
 package com.code.aon.google.apis.calendar;
 
+import static org.apache.commons.cli.HelpFormatter.DEFAULT_SYNTAX_PREFIX;
+
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.SQLException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import javax.naming.NamingException;
 
@@ -20,9 +25,12 @@ import org.apache.commons.cli.PosixParser;
 import com.code.aon.google.apis.CalendarUtils;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBConsults;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
+import com.code.aon.google.apis.jooq.DBSync;
 import com.code.aon.pool.AonConnectionException;
-import com.esferalia.aon.google.sql.AbstractSQL.Domain;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.AclRule;
 import com.google.api.services.calendar.model.AclRule.Scope;
@@ -31,16 +39,16 @@ import com.google.api.services.calendar.model.Events;
 
 public class shareEvents {
 
-	public static void act(String domain) throws IOException, NamingException, NumberFormatException, KeyStoreException, GeneralSecurityException, SQLException, AonConnectionException {
+	public static void act(Domain domain, User user) throws IOException, NamingException, NumberFormatException, KeyStoreException, GeneralSecurityException, SQLException, AonConnectionException {
 		// TODO Apéndice de método generado automáticamente
-		Domain d = DBConsults.getDomain(domain);
-		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());		Calendar calendar = CalendarUtils.serviceInitialize(g);
-		View.domain(domain);
+		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, user);
+		Calendar calendar = CalendarUtils.serviceInitialize(g);
+		View.domain(domain.getName());
 		for (String email : emails) {
 			SearchEvents.commercial = commercial;
 			SearchEvents.values = values;
 			SearchEvents.action = action;
-			Events events = SearchEvents.act(domain);
+			Events events = SearchEvents.act(domain, user);
 			for (Event e : events.getItems()) {
 				if (email!= null && Utils.isGmail(email)){
 					AclRule rule = new AclRule();
@@ -49,7 +57,7 @@ public class shareEvents {
 					scope.setValue(email);
 					rule.setRole("reader");
 					rule.setScope(scope);
-					AclRule createdRule = calendar.acl().insert(e.getId(), rule).execute();
+					calendar.acl().insert(e.getId(), rule).execute();
 				}
 			}
 			
@@ -58,22 +66,26 @@ public class shareEvents {
 	
 	public static void main(String[] args) throws NumberFormatException, KeyStoreException, IOException, NamingException, GeneralSecurityException, SQLException, AonConnectionException {
 		parse(args);
-
+		Map<String, Integer> domainMap = DBSync.initializeDomainMap();
 		if( domains[0].equals("all")){
+			// Obtiene todos los dominios de la BD.
+			Map<String, String> domains = DBSync.initializeDomains();
 			
-			//Map<String, String> domains1=DatabaseSync.getDomains();
-			Vector<String> domains2 = DBConsults.getParentName("novus.aibanez.net");//**CAMBIAR!!!
+			// Ordena los dominios por orden alfabetico.
+			List<String> list = new ArrayList<String>(domains.keySet());
+			Collections.sort(list, (String s1, String s2) -> s1.compareTo(s2));
 			
-			for (String key : domains2) {
-				act(key);
+			// Recorre todos los dominios de la BD.
+			for (String domainName : list){
+				Domain domain = AON.getDomain(domainName, domainMap.get(domainName), getUser().getLogin());
+				act(domain, getUser());
 			}
-			//for (String key : domains1.keySet()) { // recorre todos los dominios de la BD	
-				//act(key);
-			//}
+			
 		}
 		else{
-			for (String domain : domains) {
-				act(domain);
+			for (String domainName : domains) {
+				Domain domain = AON.getDomain(domainName, domainMap.get(domainName), getUser().getLogin());
+				act(domain, getUser());
 			}
 		}
 		
@@ -84,13 +96,27 @@ public class shareEvents {
 	private static String emails[];
 	private static String action = "all";
 	private static String values[] ;
-	private static String out = "normally";
+	private static String login;
 	
-	private static void parse(String  args []) {
+	private static String getLogin(){
+		return login;
+	}
+
+	private static User getUser(){
+		return new User().setLogin(getLogin());
+	}
+	
+	private static boolean parse(String  args []) {
 		CommandLineParser parser = new PosixParser();
 		HelpFormatter helpFormatter = new HelpFormatter();
 		
 		Options options = new Options();
+		
+		OptionBuilder.isRequired(true);
+		OptionBuilder.hasArg(true);
+		OptionBuilder.withDescription("Username of application");
+		OptionBuilder.withLongOpt("username");
+		Option loginOption = OptionBuilder.create('u');
 		
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(false);
@@ -118,12 +144,6 @@ public class shareEvents {
 		
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(true);
-		OptionBuilder.withDescription("Tipo de salida al aplicar el comando. Ej: normally");
-		OptionBuilder.withValueSeparator(',');		
-		Option outOption = OptionBuilder.create("o");
-		
-		OptionBuilder.isRequired(false);
-		OptionBuilder.hasArg(true);
 		OptionBuilder.withDescription("Comercial al que pertenece el evento.");
 		OptionBuilder.withValueSeparator(',');		
 		Option commercialOption = OptionBuilder.create("c");
@@ -134,8 +154,8 @@ public class shareEvents {
 		OptionBuilder.withValueSeparator(',');		
 		Option emailOption = OptionBuilder.create("e");
 		
+		options.addOption(loginOption);
 		options.addOption(helpOption);
-		options.addOption(outOption);
 		options.addOption(domainOption);
 		options.addOption(valueOption);
 		options.addOption(actionOption);
@@ -145,6 +165,12 @@ public class shareEvents {
 		try {
 			CommandLine line = parser.parse(options, args);
 			
+			if (line.hasOption(helpOption.getOpt())) {
+				helpFormatter.printHelp(DEFAULT_SYNTAX_PREFIX, options, true);
+				return false;
+			}
+			
+			login = line.getOptionValue(loginOption.getOpt());
 			
 			String[] domainsaux = line.getOptionValues("d");
 			if(domainsaux!=null){ domains = domainsaux;}
@@ -152,8 +178,6 @@ public class shareEvents {
 			if(actionaux!=null){ action = actionaux;}
 			String[] valuesaux= line.getOptionValues("v");
 			if(valuesaux!=null){ values = valuesaux;}
-			String outaux = line.getOptionValue("o");
-			if(outaux!=null) out = outaux; 
 			String commercialaux = line.getOptionValue("c");
 			if(commercialaux!=null) commercial = commercialaux;
 			String[] emailsaux = line.getOptionValues("e");
@@ -161,6 +185,8 @@ public class shareEvents {
 		} catch (ParseException e) {
 			helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX,
 					options, true);
+			return false;
 		}
+		return true;
 	}
 }

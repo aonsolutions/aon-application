@@ -4,9 +4,9 @@ import static org.apache.commons.cli.HelpFormatter.DEFAULT_SYNTAX_PREFIX;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
-import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import org.apache.commons.cli.CommandLine;
@@ -22,8 +22,13 @@ import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DBDrive;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
-import com.esferalia.aon.google.sql.AbstractSQL.Domain;
+import com.code.aon.google.apis.jooq.DBSync;
+import com.code.aon.pool.AonConnectionException;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.About;
 import com.google.api.services.drive.model.File;
@@ -34,7 +39,16 @@ import com.google.api.services.drive.model.Property;
 public class SortFiles {
 	
 	private static String domain;
+	private static String login;
+	
+	public static String getLogin(){
+		return login;
+	}
 
+	public static User getUser(){
+		return new User().setLogin(getLogin());
+	}
+	
 	private static File createFolder(Drive drive, String title, String parent) throws IOException{
 		File folder = new File();
 		folder.setParents(Arrays.asList(new ParentReference().setId(parent)));
@@ -44,13 +58,23 @@ public class SortFiles {
 		return folder;
 	}
 
-	public static void main(String[] args) throws KeyStoreException,
-			IOException, GeneralSecurityException, SQLException {
+	 public static Map<String, Integer> initializeDomainMap(){
+		Map<String, Integer> map  = new HashMap<String, Integer>();
+		try {
+			map =  DBSync.getDomainMap();
+		} catch (AonConnectionException e) {
+			e.printStackTrace();
+		}
+		return map;
+	}
+	
+	public static void main(String[] args) throws IOException, GeneralSecurityException {
 		parse(args);
+		
 		if (!domain.equals("")) {
-			Domain d = DBConsults.getDomain(domain);
-			DomainGserviceaccount g = DBConsults.getServiceAccount(domain,
-					d.getId());
+			Map<String, Integer> domainMap = initializeDomainMap();
+			Domain domainAux = AON.getDomain(domain, domainMap.get(domain), getUser().getLogin());
+			DomainGserviceaccount g = DBConsults.getServiceAccount(domainAux, getUser());
 			Drive drive = DriveUtils.serviceInitialize(g);
 
 			FileList domainFolders = SearchFiles.searchFilesTitleEqual(drive,
@@ -64,14 +88,14 @@ public class SortFiles {
 				domainFolder = createFolder(drive, domain, rootId);
 
 				Vector<FileInfo> attachs = new Vector<FileInfo>();
-				attachs.addAll(DBDrive.getDriveContractAttach(domain, d.getId()));
-				attachs.addAll(DBDrive.getDriveIAttach(domain, d.getId()));
-				attachs.addAll(DBDrive.getDriveInvoiceAttach(domain, d.getId()));
-				attachs.addAll(DBDrive.getDriveOfferAttach(domain, d.getId()));
-				attachs.addAll(DBDrive.getDrivePayrollAttach(domain, d.getId()));
-				attachs.addAll(DBDrive.getDriveProjectAttach(domain, d.getId()));
-				attachs.addAll(DBDrive.getDriveRAttach(domain, d.getId()));
-				attachs.addAll(DBDrive.getDriveSepeAttach(domain, d.getId()));
+				attachs.addAll(DBDrive.getDriveAttach(domainAux, getUser(), AttachType.CONTRACT));
+				attachs.addAll(DBDrive.getDriveAttach(domainAux, getUser(), AttachType.ITEM));
+				attachs.addAll(DBDrive.getDriveAttach(domainAux, getUser(), AttachType.INVOICE));
+				attachs.addAll(DBDrive.getDriveAttach(domainAux, getUser(), AttachType.OFFER));
+				attachs.addAll(DBDrive.getDriveAttach(domainAux, getUser(), AttachType.PAYROLL));
+				attachs.addAll(DBDrive.getDriveAttach(domainAux, getUser(), AttachType.PROJECT));
+				attachs.addAll(DBDrive.getDriveAttach(domainAux, getUser(), AttachType.REGISTRY));
+				attachs.addAll(DBDrive.getDriveAttach(domainAux, getUser(), AttachType.SEPE));
 				
 				for (FileInfo fileInfo : attachs) {
 
@@ -85,8 +109,7 @@ public class SortFiles {
 						typeFolder = createFolder(drive, fileInfo.getAonType(),
 								domainFolder.getId());
 
-					File file = DriveUtils.getFile(drive,
-							fileInfo.getDriveId(), fileInfo.getFileId());
+					File file = DriveUtils.getFile(drive, domainAux, getUser(), fileInfo);
 					for (ParentReference parent : file.getParents()) {
 						drive.parents().delete(file.getId(), parent.getId())
 								.execute();
@@ -111,6 +134,12 @@ public class SortFiles {
 
 		Options options = new Options();
 
+		OptionBuilder.isRequired(true);
+		OptionBuilder.hasArg(true);
+		OptionBuilder.withDescription("Username of application");
+		OptionBuilder.withLongOpt("username");
+		Option loginOption = OptionBuilder.create('u');
+		
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(false);
 		OptionBuilder.withLongOpt("help");
@@ -126,7 +155,7 @@ public class SortFiles {
 
 		options.addOption(helpOption);				
 		options.addOption(domainOption);
-
+		options.addOption(loginOption);
 
 		try {
 			CommandLine line = parser.parse(options, args);
@@ -138,7 +167,7 @@ public class SortFiles {
 
 			domain = line.getOptionValue(domainOption.getOpt(), "");
 
-			
+			login = line.getOptionValue(loginOption.getOpt());
 
 
 		} catch (ParseException e) {

@@ -1,12 +1,12 @@
 package com.code.aon.google.apis.calendar;
 
-import static com.code.aon.google.apis.DatabaseSync.getDomains;
+import static org.apache.commons.cli.HelpFormatter.DEFAULT_SYNTAX_PREFIX;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
-import java.sql.SQLException;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -21,9 +21,11 @@ import org.apache.commons.cli.PosixParser;
 
 import com.code.aon.google.apis.CalendarUtils;
 import com.code.aon.google.apis.jooq.DBConsults;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
-import com.code.aon.pool.AonConnectionException;
-import com.esferalia.aon.google.sql.AbstractSQL.Domain;
+import com.code.aon.google.apis.jooq.DBSync;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.CalendarListEntry;
@@ -41,7 +43,7 @@ public class SearchEvents {
 	}
 	
 	
-	public static Events searchAll(Calendar calendar,String domain) throws IOException, NumberFormatException, AonConnectionException, SQLException{
+	public static Events searchAll(Calendar calendar,Domain domain, User user) throws IOException{
 		CalendarList cl = CalendarUtils.getCalendars(calendar); 
 		Events events = new Events();
 		events.setItems(new Vector<Event>());
@@ -50,7 +52,7 @@ public class SearchEvents {
 			Events es = CalendarUtils.getEvents(aux.getId(), calendar);
 			for (Event e : es.getItems()) {
 				System.out.println(e.getExtendedProperties().getPrivate().get("AonId"));
-				if(commercial.equals("all")|| (e.getExtendedProperties().getPrivate().get("AonId")!= null && esta(DBConsults.getCommercial(domain,Integer.valueOf(e.getExtendedProperties().getPrivate().get("AonId")))))){	
+				if(commercial.equals("all")|| (e.getExtendedProperties().getPrivate().get("AonId")!= null && esta(DBConsults.getCommercial(domain, user, Integer.valueOf(e.getExtendedProperties().getPrivate().get("AonId")))))){	
 					events.getItems().add(e);
 					if(out.equals("normally")){
 						View.event(e);
@@ -64,7 +66,7 @@ public class SearchEvents {
 		return events;
 	}
 	
-	public static Events searchId(Calendar calendar, String domain) throws IOException, NumberFormatException, AonConnectionException, SQLException{
+	public static Events searchId(Calendar calendar, Domain domain, User user) throws IOException{
 		CalendarList cl = CalendarUtils.getCalendars();
 		String calendarId = null;
 		Events events = new Events();
@@ -78,7 +80,7 @@ public class SearchEvents {
 		if ( calendarId != null){
 			for (String s : values) {
 				Event e = calendar.events().get(calendarId, s).execute();
-				if(commercial.equals("all")|| (e.getExtendedProperties().getPrivate().get("AonId")!= null && esta(DBConsults.getCommercial(domain,Integer.valueOf(e.getExtendedProperties().getPrivate().get("AonId")))))){	
+				if(commercial.equals("all")|| (e.getExtendedProperties().getPrivate().get("AonId")!= null && esta(DBConsults.getCommercial(domain, user, Integer.valueOf(e.getExtendedProperties().getPrivate().get("AonId")))))){	
 					
 					events.getItems().add(e);
 					if(out.equals("normally")){
@@ -92,58 +94,45 @@ public class SearchEvents {
 		}
 		return events;
 	}
-	public static Events act(String domain) throws IOException, KeyStoreException, GeneralSecurityException, SQLException, NumberFormatException, AonConnectionException {
-		Domain d = DBConsults.getDomain(domain);
-		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());
+	public static Events act(Domain domain, User user) throws IOException, GeneralSecurityException {
+		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, user);
 		Calendar calendar = CalendarUtils.serviceInitialize(g);
-		View.domain(domain);
+		View.domain(domain.getName());
 		Events events = null;
 		if (action.equals("all")){
-			events = searchAll(calendar,domain);
+			events = searchAll(calendar,domain, user);
 		}
 		else if( action.equals("id")){
-			events = searchId(calendar, domain);
+			events = searchId(calendar, domain, user);
 		}
 		
 		return events;
 	}
 	
-	private static boolean esta(Map<String,String> schemas, String schema) {
-		for (String sch : schemas.keySet()) {
-			if (sch.equals(schema)){
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public static void main(String[] args) throws IOException, AonConnectionException, SQLException, KeyStoreException, GeneralSecurityException {
+	public static void main(String[] args) throws IOException, GeneralSecurityException {
 		parse(args);
+		Map<String, Integer> domainMap = DBSync.initializeDomainMap();
 		if( domains[0].equals("all")){
-			Map<String, String> domains=getDomains();//obtiene todos los dominios de la BD
-			Hashtable<String,String> schemas = new Hashtable<String, String>();
+			// Obtiene todos los dominios de la BD.
+			Map<String, String> domains = DBSync.initializeDomains();
 			
-			for (String key : domains.keySet()) { // recorre todos los dominios de la BD	
-				if (!esta(schemas,domains.get(key))){
-					schemas.put(domains.get(key), key);
-				}
-			}
-			Vector<String> domains2 = new Vector<String>();
-			for (String sch : schemas.keySet()){
-				domains2.addAll(DBConsults.getParentName(schemas.get(sch)));
-			}
+			// Ordena los dominios por orden alfabetico.
+			List<String> list = new ArrayList<String>(domains.keySet());
+			Collections.sort(list, (String s1, String s2) -> s1.compareTo(s2));
 			
-			
-			for (String key : domains2) {
-				act(key);
+			// Recorre todos los dominios de la BD.
+			for (String domainName : list){
+				Domain domain = AON.getDomain(domainName, domainMap.get(domainName), getUser().getLogin());
+				act(domain, getUser());
 			}
 			//for (String key : domains1.keySet()) { // recorre todos los dominios de la BD	
 				//act(key);
 			//}
 		}
 		else{
-			for (String domain : domains) {
-				act(domain);
+			for (String domainName : domains) {
+				Domain domain = AON.getDomain(domainName, domainMap.get(domainName), getUser().getLogin());
+				act(domain, getUser());
 			}
 		}
 
@@ -157,11 +146,27 @@ public class SearchEvents {
 	public static String values[] ;
 	public static String out = "normally";
 	
-	private static void parse(String  args []) {
+	private static String login;
+	
+	private static String getLogin(){
+		return login;
+	}
+	
+	private static User getUser(){
+		return new User().setLogin(getLogin());
+	}	
+	
+	private static boolean parse(String  args []) {
 		CommandLineParser parser = new PosixParser();
 		HelpFormatter helpFormatter = new HelpFormatter();
 		
 		Options options = new Options();
+		
+		OptionBuilder.isRequired(true);
+		OptionBuilder.hasArg(true);
+		OptionBuilder.withDescription("Username of application");
+		OptionBuilder.withLongOpt("username");
+		Option loginOption = OptionBuilder.create('u');
 		
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(false);
@@ -212,10 +217,17 @@ public class SearchEvents {
 		options.addOption(actionOption);
 		options.addOption(commercialOption);
 		options.addOption(emailOption);
+		options.addOption(loginOption);
 
 		try {
 			CommandLine line = parser.parse(options, args);
+
+			if (line.hasOption(helpOption.getOpt())) {
+				helpFormatter.printHelp(DEFAULT_SYNTAX_PREFIX, options, true);
+				return false;
+			}
 			
+			login = line.getOptionValue(loginOption.getOpt());
 			
 			String[] domainsaux = line.getOptionValues("d");
 			if(domainsaux!=null){ domains = domainsaux;}
@@ -232,6 +244,8 @@ public class SearchEvents {
 		} catch (ParseException e) {
 			helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX,
 					options, true);
+			return false;
 		}
+		return true;
 	}
 }

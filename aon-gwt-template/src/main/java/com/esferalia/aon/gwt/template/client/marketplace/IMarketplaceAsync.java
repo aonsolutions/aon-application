@@ -1,12 +1,14 @@
 package com.esferalia.aon.gwt.template.client.marketplace;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
 import com.esferalia.aon.gwt.template.shared.marketplace.Order;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
@@ -28,5 +30,7 @@ public interface IMarketplaceAsync {
 	void getDateStr(Date date, AsyncCallback<String> callback);
 
 	void deleteTemplate(Domain domain, String description, AsyncCallback<Void> callback);
+
+	void getMarketplaceTagList(Domain domain, AsyncCallback<LinkedList<Tag>> callback);
 	
 }

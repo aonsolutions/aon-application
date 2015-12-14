@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.SQLException;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -17,12 +19,14 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
-import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.jooq.DBConsults;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
+import com.code.aon.google.apis.jooq.DBSync;
 import com.code.aon.pool.AonConnectionException;
-import com.esferalia.aon.google.sql.AbstractSQL.Domain;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
@@ -186,27 +190,25 @@ public class SearchFiles {
 		return drive.files().get(id).execute();
 	}
 	
-	private static void act(String domain) throws SQLException, KeyStoreException, IOException, GeneralSecurityException{
-
-		Domain d = DBConsults.getDomain(domain);
-		DomainGserviceaccount g = DBConsults.getServiceAccount(domain,d.getId());
+	private static void act(Domain domain) throws IOException, GeneralSecurityException{
+		DomainGserviceaccount g = DBConsults.getServiceAccount(domain,getUser());
 		if(g.getClientId()!=null){
 			Drive drive = DriveUtils.serviceInitialize(g);
 
 			FileList fl = new FileList();
-			View.domain(domain);
+			View.domain(domain.getName());
 
 			if(action.equals("title")){
-				fl = searchFilesTitleAndTypes(drive, value, domain);
+				fl = searchFilesTitleAndTypes(drive, value, domain.getName());
 			}
 			else if(action.equals("fulltext")){
-				fl = searchFilesFulltextAndTypes(drive, value, domain);
+				fl = searchFilesFulltextAndTypes(drive, value, domain.getName());
 			}
 			else if(action.equals("mimetype")){
-				fl = searchFilesMimetypeAndTypes(drive, value, domain);
+				fl = searchFilesMimetypeAndTypes(drive, value, domain.getName());
 			}
 			else if(action.equals("all")){
-				fl = searchFilesAllAndTypes(drive, domain);
+				fl = searchFilesAllAndTypes(drive, domain.getName());
 			}
 			else if(action.equals("id")){
 				File f = searchFile(drive, value);
@@ -229,29 +231,37 @@ public class SearchFiles {
 	
 	public static void main(String[] args) throws IOException, SQLException, KeyStoreException, GeneralSecurityException, AonConnectionException {
 		parse(args);
+		Map<String, Integer> domainMap = initializeDomainMap();
 		if( domains[0].equals("all")){
-			Map<String, String> domains1=DatabaseSync.getDomains();
-			Hashtable<String,String> schemas = new Hashtable<String, String>();
+			// Obtiene todos los dominios de la BD.
+			Map<String, String> domains = DBSync.getDomains();
 			
-			for (String key : domains1.keySet()) { // recorre todos los dominios de la BD	
-				if (!esta(schemas,domains1.get(key))){
-					schemas.put(domains1.get(key), key);
-				}
-			}
-			Vector<String> domains2 = new Vector<String>();
-			for (String sch : schemas.keySet()){
-				domains2.addAll(DBConsults.getParentName(schemas.get(sch)));
-			}
+			// Ordena los dominios por orden alfabetico.
+			List<String> list = new ArrayList<String>(domains.keySet());
+			Collections.sort(list, (String s1, String s2) -> s1.compareTo(s2));
 			
-			for (String key : domains2) { // recorre todos los dominios de la BD	
-				act(key);
-			}
-		}
-		else{
-			for (String domain : domains) {
+			// Recorre todos los dominios de la BD.
+			for (String domainName : list){
+				Domain domain = AON.getDomain(domainName, domainMap.get(domainName), getLogin());
 				act(domain);
 			}
 		}
+		else{
+			for (String domainName : domains) {
+				Domain domain = AON.getDomain(domainName, domainMap.get(domainName), getLogin());
+				act(domain);
+			}
+		}
+	}
+	
+	public static Map<String, Integer> initializeDomainMap(){
+		Map<String, Integer> map  = new HashMap<String, Integer>();
+		try {
+			map =  DBSync.getDomainMap();
+		} catch (AonConnectionException e) {
+			e.printStackTrace();
+		}
+		return map;
 	}
 	
 	public static boolean esta(Map<String,String> schemas, String schema) {
@@ -268,12 +278,27 @@ public class SearchFiles {
 	private static String action = "all";
 	private static String value ;
 	private static String out = "normally";
+	private static String login;
+	
+	public static String getLogin(){
+		return login;
+	}
+	
+	public static User getUser(){
+		return new User().setLogin(getLogin());
+	}
 	
 	private static void parse(String  args []) {
 		CommandLineParser parser = new PosixParser();
 		HelpFormatter helpFormatter = new HelpFormatter();
 		
 		Options options = new Options();
+		
+		OptionBuilder.isRequired(true);
+		OptionBuilder.hasArg(true);
+		OptionBuilder.withDescription("Username of application");
+		OptionBuilder.withLongOpt("username");
+		Option loginOption = OptionBuilder.create('u');
 		
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(false);
@@ -309,10 +334,8 @@ public class SearchFiles {
 		OptionBuilder.withDescription("Tipo de salida al aplicar el comando. Ej: normally");
 		OptionBuilder.withValueSeparator(',');		
 		Option outOption = OptionBuilder.create("o");
-
-
-
 		
+		options.addOption(loginOption);
 		options.addOption(helpOption);
 		options.addOption(outOption);
 		options.addOption(domainOption);
@@ -333,6 +356,7 @@ public class SearchFiles {
 			if(valueaux!=null){ value = valueaux;}
 			String outaux = line.getOptionValue("o");
 			if(outaux!=null) out = outaux; 
+			login = line.getOptionValue(loginOption.getOpt());
 		} catch (ParseException e) {
 			helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX,
 					options, true);

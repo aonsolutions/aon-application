@@ -125,7 +125,7 @@ public class ConexFlowUtils {
 			InputStream is = new FileInputStream(htmlFile);
 			byte[] b = AonIOUtils.toByteArray(is);
 			Attach attach = Attach.projectAttach(project, domain, MimeType.HTML, VOUCHER, b, false, new Date(), null);
-			AON.insert(attach);
+			AON.insert(domain.getName(), domain.getId(), "",attach);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

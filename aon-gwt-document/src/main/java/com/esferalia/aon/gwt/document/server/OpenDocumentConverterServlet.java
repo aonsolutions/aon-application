@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
-import java.sql.SQLException;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -22,13 +21,17 @@ import org.artofsolving.jodconverter.document.DocumentFormatRegistry;
 import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
 import org.artofsolving.jodconverter.office.OfficeManager;
 
-import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBConsults;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.google.api.services.drive.Drive;
 
 public class OpenDocumentConverterServlet extends HttpServlet {
@@ -55,8 +58,6 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		try {
-
 			String requestURI = req.getRequestURI();
 			String extension = AonServletUtils.getExtn(requestURI);
 			String md5 = AonServletUtils.getWithoutExtn(requestURI);
@@ -67,21 +68,23 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 				 id = Integer.parseInt(req.getParameter("id"));
 
 			MimeType mimeType = MimeType.getByExtension(extension);
-			
-			ViewerUtils.RAttach rattach = ViewerUtils.getRAttach(id);
+			String domainName = AonUtil.getDomainName();
+			Integer domainId = DomainManager.getCurrentDomain();
+			Domain domain = new Domain().setName(domainName).setId(domainId);
+			User user = new User().setLogin("");
+			Attach rattach = ViewerUtils.getRAttach(domain, user, id);
 			
 			resp.setContentType(mimeType.getName());
 			OutputStream os = resp.getOutputStream();
 
-			if ( rattach.mimeType == mimeType ) {
+			if ( rattach.getMimeType() == mimeType ) {
 				byte[] b = null;
-				if(rattach.driveId != null){
-					String domain = AonUtil.getDomainName();
-					DomainGserviceaccount g = DBConsults.getServiceAccount(domain, rattach.domainId);
+				if(rattach.getDriveId() != null){
+					DomainGserviceaccount g = DBConsults.getServiceAccount(domain, user);
 					Drive d;
 					try {
 						d = DriveUtils.serviceInitialize(g);
-						com.google.api.services.drive.model.File f = DriveUtils.getFile(d, rattach.driveId,null);
+						com.google.api.services.drive.model.File f = DriveUtils.getFile(d, domain, user, rattach.getDriveId(),null);
 						if(f.getDescription() != null && f.getDescription().equals("OLDRIVE"))
 							d = DriveUtils.serviceInitializeOld(g);
 						InputStream in = DriveUtils.downloadFile(d, f);
@@ -92,15 +95,15 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 						e.printStackTrace();
 					}	
 				}
-				else b = rattach.bytes;
+				else b = rattach.getData();
 				os.write(b);
 			} else { 
 				String tmpDir = System.getProperty("java.io.tmpdir");
 				File inputFile = 
-						new File(tmpDir, md5 + "." + rattach.mimeType.getExtension() ); 
+						new File(tmpDir, md5 + "." + rattach.getMimeType().getExtension() ); 
 				FileOutputStream inputFileOs = 
 						new FileOutputStream(inputFile);
-				inputFileOs.write(rattach.bytes);
+				inputFileOs.write(rattach.getData());
 				inputFileOs.close();
 				
 				File outputFile = 
@@ -116,10 +119,6 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 			}
 			
 			os.flush();
-			
-		} catch (SQLException e) {
-			throw new ServletException(e);
-		} 
 	}
 	
 

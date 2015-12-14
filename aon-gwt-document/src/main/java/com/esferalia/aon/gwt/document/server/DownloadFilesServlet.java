@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
-import java.sql.SQLException;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -25,12 +24,12 @@ import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBDrive;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.google.apis.controller.GoogleDriveController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.document.jooq.DBConsults;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 
@@ -49,19 +48,18 @@ public class DownloadFilesServlet extends HttpServlet {
         String isDrive = p_request.getParameter("isdrive");
         String multiple = p_request.getParameter("ismultiple");
         String domainId =  p_request.getParameter("domain_id");
-        
-        String domain = AonUtil.getDomainName();
+        String domainName = AonUtil.getDomainName();
         String login = AonServletUtils.getLoggedUser();
         Integer idFile = Integer.parseInt(fileId);
         Integer domainID = 0;
+        Domain domain = new Domain().setName(domainName).setId(domainID);
         if(domainId.equals("null") || domainId.equals("undefined")){
-        	try {
-				domainID = DBDrive.getRAttachDomainID(domain, idFile);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+        	domainID = DBDrive.getRAttachDomainID(domain, idFile);
         }
         else domainID = Integer.parseInt(domainId);
+       domain.setId(domainID);
+       User user = new User().setLogin(login);
+
         Integer m = Integer.parseInt(mtype);
         String mimetype = MimeType.values()[m].getName();
         FileInfo fi=null;
@@ -79,10 +77,8 @@ public class DownloadFilesServlet extends HttpServlet {
         					d = GoogleDriveController.dconnection;
         				} else {
         					try {
-        						g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain, domainID);
+        						g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain, user);
         						d = DriveUtils.serviceInitialize(g);
-        					} catch (SQLException e) {
-        						e.printStackTrace();
         					} catch (KeyStoreException e) {
         						e.printStackTrace();
         					} catch (GeneralSecurityException e) {
@@ -91,10 +87,10 @@ public class DownloadFilesServlet extends HttpServlet {
         				}
         				com.google.api.services.drive.model.File f = null;
 						try {
-							f = DriveUtils.getFile(d, fi2.getDriveId(), fi2.getFileId());
+							f = DriveUtils.getFile(d, domain, user, fi2.getDriveId(), fi2.getFileId());
 							if(f.getDescription().equals("OLDRIVE"))
 								d = DriveUtils.serviceInitializeOld(g);
-						} catch (SQLException | GeneralSecurityException e) {
+						} catch (GeneralSecurityException e) {
 							e.printStackTrace();
 						}
         				InputStream in = DriveUtils.downloadFile(d, f);
@@ -103,7 +99,7 @@ public class DownloadFilesServlet extends HttpServlet {
         				fi2.setData(b);
         			} else if ((Integer) fi2.getFileId() != null) {
         				com.code.aon.google.apis.FileInfo fi3 = DBConsults
-        						.getDataAndName(new Domain().setName(domain),new User().setLogin(login) ,fi2.getFileId());
+        						.getDataAndName(domain, user,fi2.getFileId());
         				fi2.setData(fi3.getData());
         			}
 
@@ -136,10 +132,8 @@ public class DownloadFilesServlet extends HttpServlet {
         	}
         	else{
 				try {
-					g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain, domainID);
+					g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain, user);
 					d = DriveUtils.serviceInitialize(g);
-				} catch (SQLException e) {
-					e.printStackTrace();
 				} catch (KeyStoreException e) {
 					e.printStackTrace();
 				} catch (GeneralSecurityException e) {
@@ -148,10 +142,10 @@ public class DownloadFilesServlet extends HttpServlet {
         	}
 			com.google.api.services.drive.model.File f = null;
 			try {
-				f = DriveUtils.getFile(d, driveId, idFile);
+				f = DriveUtils.getFile(d, domain, user, driveId, idFile);
 				if(f.getDescription().equals("OLDRIVE"))
 					d = DriveUtils.serviceInitializeOld(g);
-			} catch (SQLException | GeneralSecurityException e) {
+			} catch (GeneralSecurityException e) {
 				e.printStackTrace();
 			}
 
@@ -164,7 +158,7 @@ public class DownloadFilesServlet extends HttpServlet {
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-			fi = DBConsults.getDataAndName(new Domain().setName(domain), new User().setLogin(login), id);
+			fi = DBConsults.getDataAndName(domain, user, id);
         }
         else return;
         

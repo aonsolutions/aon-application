@@ -25,15 +25,16 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.AonVersion;
 import com.code.aon.common.BasicAttachment;
 import com.code.aon.common.IAttachment;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.faces.component.util.DownloadUtil;
-import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.jooq.DBConsults;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.google.sql.AbstractSQL.Domain;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 
@@ -81,11 +82,13 @@ public class CompanyDocumentServlet extends HttpServlet {
 		File f = null;
 		byte[] data = null;
 		try {
-			Domain d = DBConsults.getDomain(domainName);
-			DomainGserviceaccount g = DBConsults.getServiceAccount(domainName,d.getId());
+			Integer domainId = DomainManager.getCurrentDomain();
+			Domain domain = new Domain().setName(domainName).setId(domainId);
+			User user = new User().setLogin("");
+			DomainGserviceaccount g = DBConsults.getServiceAccount(domain, user);
 			
 			drive = DriveUtils.serviceInitialize(g);
-			f = DriveUtils.getFile(drive, driveId, null);
+			f = DriveUtils.getFile(drive, domain, user, driveId, null);
 			if(f.getDescription().equals("OLDRIVE"))
 				drive = DriveUtils.serviceInitializeOld(g);
 		} catch (Throwable e) {

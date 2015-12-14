@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.Vector;
 
@@ -36,7 +35,6 @@ import org.jooq.Condition;
 
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.server.DateUtil;
@@ -45,6 +43,7 @@ import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 
@@ -101,8 +100,6 @@ public class DownloadStockServlet extends HttpServlet {
 			try {
 				g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domainName,domainId);
 				d = DriveUtils.serviceInitialize(g);
-			} catch (SQLException e) {
-				e.printStackTrace();
 			} catch (KeyStoreException e) {
 				e.printStackTrace();
 			} catch (GeneralSecurityException e) {
@@ -111,10 +108,10 @@ public class DownloadStockServlet extends HttpServlet {
         	
 			com.google.api.services.drive.model.File f = null;
 			try {
-				f = DriveUtils.getFile(d, driveId, idFile);
+				f = DriveUtils.getFile(d, domain, user, driveId, idFile);
 				if(f.getDescription().equals("OLDRIVE"))
 					d = DriveUtils.serviceInitializeOld(g);
-			} catch (SQLException | GeneralSecurityException e) {
+			} catch (GeneralSecurityException e) {
 				e.printStackTrace();
 			}
 			InputStream in = DriveUtils.downloadFile(d, f);

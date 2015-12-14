@@ -1,20 +1,15 @@
 package com.code.aon.google.apis.drive;
 
-import static com.code.aon.google.apis.DatabaseSync.getDomains;
 import static org.apache.commons.cli.HelpFormatter.DEFAULT_SYNTAX_PREFIX;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-
-import javax.naming.NamingException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -31,10 +26,14 @@ import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DBDrive;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
+import com.code.aon.google.apis.jooq.DBSync;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
-import com.esferalia.aon.google.sql.AbstractSQL.Domain;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 
 public class SynchronizeFiles2 {
@@ -44,11 +43,20 @@ public class SynchronizeFiles2 {
 
 	static int numero = 0;
 
-	private static void synchronizeSF(String domain) throws SQLException, IOException, GeneralSecurityException{
-		Domain d = DBConsults.getDomain(domain);
-		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());
+	public static Map<String, Integer> initializeDomainMap(){
+		Map<String, Integer> map  = new HashMap<String, Integer>();
+		try {
+			map =  DBSync.getDomainMap();
+		} catch (AonConnectionException e) {
+			e.printStackTrace();
+		}
+		return map;
+	}
+	
+	private static void synchronizeSF(Domain domain) throws  IOException, GeneralSecurityException{
+		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, getUser());
 		if(g.getClientId() == null)
-			LOGGER.info("No service account found for domain: '{}'", domain);
+			LOGGER.info("No service account found for domain: '{}'", domain.getName());
 		else{
 			Drive drive = null;
 			try {
@@ -62,7 +70,7 @@ public class SynchronizeFiles2 {
 						e1.getMessage());
 				throw e1;			
 			}
-			LOGGER.info("Connected to Drive: {}, {}.", domain,g.getEmailAddress());
+			LOGGER.info("Connected to Drive: {}, {}.", domain.getName(),g.getEmailAddress());
 			
 			HashMap<String, String> map = new HashMap<String, String>();
 			Vector<RegistryAttachmentType> rats = new Vector<RegistryAttachmentType>();
@@ -80,9 +88,9 @@ public class SynchronizeFiles2 {
 				Integer size = 10;
 				Integer firstId = 0;
 				while(size == 10){
-					Vector<FileInfo> v = DBDrive.getRAttachLimit(d.getName(), d.getId(),rats, firstId);
+					Vector<FileInfo> v = DBDrive.getRegistryAttachLimit(domain, getUser(), rats, firstId);
 					System.out.println(v.size());
-					if(v.size() != 0) sync(drive, d.getName(), v);
+					if(v.size() != 0) sync(drive, domain, v);
 					if (numero >= num) return;
 					size = v.size();
 					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
@@ -92,8 +100,8 @@ public class SynchronizeFiles2 {
 				Integer size = 10;
 				Integer firstId = 0;
 				while(size == 10){
-					Vector<FileInfo> v = DBDrive.getContractAttachLimit(d.getName(), d.getId(), firstId);
-					if(v.size() != 0) sync(drive, d.getName(), v);
+					Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.CONTRACT, firstId);
+					if(v.size() != 0) sync(drive, domain, v);
 					if (numero >= num) return;
 					size = v.size();
 					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
@@ -103,8 +111,8 @@ public class SynchronizeFiles2 {
 				Integer size = 10;
 				Integer firstId = 0;
 				while(size == 10){
-					Vector<FileInfo> v = DBDrive.getIAttachLimit(d.getName(), d.getId(), firstId);
-					if(v.size() != 0) sync(drive, d.getName(), v);
+					Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.ITEM, firstId);
+					if(v.size() != 0) sync(drive, domain, v);
 					if (numero >= num) return;
 					size = v.size();
 					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
@@ -114,8 +122,8 @@ public class SynchronizeFiles2 {
 				Integer size = 10;
 				Integer firstId = 0;
 				while(size == 10){
-					Vector<FileInfo> v = DBDrive.getInvoiceAttachLimit(d.getName(), d.getId(), firstId);
-					if(v.size() != 0) sync(drive, d.getName(), v);
+					Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.INVOICE, firstId);
+					if(v.size() != 0) sync(drive, domain, v);
 					if (numero >= num) return;
 					size = v.size();
 					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
@@ -125,8 +133,8 @@ public class SynchronizeFiles2 {
 				Integer size = 10;
 				Integer firstId = 0;
 				while(size == 10){
-					Vector<FileInfo> v = DBDrive.getOfferAttachLimit(d.getName(), d.getId(), firstId);
-					if(v.size() != 0) sync(drive, d.getName(), v);
+					Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.OFFER, firstId);
+					if(v.size() != 0) sync(drive, domain, v);
 					if (numero >= num) return;
 					size = v.size();
 					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
@@ -136,8 +144,8 @@ public class SynchronizeFiles2 {
 				Integer size = 10;
 				Integer firstId = 0;
 				while(size == 10){
-					Vector<FileInfo> v = DBDrive.getPayrollAttachLimit(d.getName(), d.getId(), firstId);
-					if(v.size() != 0) sync(drive, d.getName(), v);
+					Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.PAYROLL, firstId);
+					if(v.size() != 0) sync(drive, domain, v);
 					if (numero >= num) return;
 					size = v.size();
 					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
@@ -147,8 +155,8 @@ public class SynchronizeFiles2 {
 				Integer size = 10;
 				Integer firstId = 0;
 				while(size == 10){
-					Vector<FileInfo> v = DBDrive.getProjectAttachLimit(d.getName(), d.getId(), firstId);
-					if(v.size() != 0) sync(drive, d.getName(), v);
+					Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.PROJECT, firstId);
+					if(v.size() != 0) sync(drive, domain, v);
 					if (numero >= num) return;
 					size = v.size();
 					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
@@ -158,23 +166,23 @@ public class SynchronizeFiles2 {
 				Integer size = 10;
 				Integer firstId = 0;
 				while(size == 10){
-					Vector<FileInfo> v = DBDrive.getSepeAttachLimit(d.getName(), d.getId(), firstId);
-					if(v.size() != 0) sync(drive, d.getName(), v);
+					Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.SEPE, firstId);
+					if(v.size() != 0) sync(drive, domain, v);
 					if (numero >= num) return;
 					size = v.size();
 					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
 				}
 			}
 			if(numero == 0){
-				LOGGER.info("No documents/files found for domain: '{}'", domain);
+				LOGGER.info("No documents/files found for domain: '{}'", domain.getName());
 			}
 		}
 	}
 
-	public static void sync(Drive drive,String domain,Vector<FileInfo> vector){
+	public static void sync(Drive drive, Domain domain, Vector<FileInfo> vector){
 		vector.stream().forEach(f->{
 			try {
-				if (DriveUtils.sync2(drive, f, domain)) {
+				if (DriveUtils.sync2(drive, domain, getUser(), f)) {
 					numero++;
 				}
 				if (numero >= num) return;
@@ -182,23 +190,22 @@ public class SynchronizeFiles2 {
 		});
 	}
 	
-	public static void synchronizeSF() throws IOException, SQLException,
-			AonConnectionException, KeyStoreException, 
-			GeneralSecurityException, NamingException {
+	public static void synchronizeSF(Map<String, Integer> domainMap) throws IOException, GeneralSecurityException{
 		// Obtiene todos los dominios de la BD.
-		Map<String, String> domains = getDomains();
+		Map<String, String> domains = DBSync.initializeDomains();
 		
 		// Ordena los dominios por orden alfabetico.
 		List<String> list = new ArrayList<String>(domains.keySet());
 		Collections.sort(list, (String s1, String s2) -> s1.compareTo(s2));
 		
 		// Recorre todos los dominios de la BD.
-		for (String key : list)
-			synchronizeSF(key);
+		for (String domainName : list){
+			Domain domain = AON.getDomain(domainName, domainMap.get(domainName), getLogin());
+			synchronizeSF(domain);
+		}
 	}	
 	
-	public static void main(String[] args) throws IOException, SQLException,
-			AonConnectionException, GeneralSecurityException, NamingException {
+	public static void main(String[] args) throws AonConnectionException, IOException, GeneralSecurityException{
 
 		if (!parse(args))
 			return;
@@ -216,12 +223,14 @@ public class SynchronizeFiles2 {
 		DriveUtils.types = types;
 		DriveUtils.domains = domains;
 		DriveUtils.dryRun = dryRun;
-
+		
+		Map<String, Integer> domainMap = initializeDomainMap();
 		if (domains == null || domains.length == 0 || domains[0].equals("ALL")) {
-			synchronizeSF();
+			synchronizeSF(domainMap);
 		} else {
-			for (String string : domains) {
-				synchronizeSF(string);
+			for (String domainName : domains) {
+				Domain domain = AON.getDomain(domainName, domainMap.get(domainName), getLogin()); 
+				synchronizeSF(domain);
 			}
 		}
 	}
@@ -230,7 +239,16 @@ public class SynchronizeFiles2 {
 	private static String domains[];
 	private static Integer num;
 	private static boolean dryRun;
-
+	private static String login; // username
+	
+	public static String getLogin(){
+		return login;
+	}
+	
+	public static User getUser(){
+		return new User().setLogin(getLogin());
+	}
+	
 	private static boolean parse(String args[]) {
 
 		CommandLineParser parser = new PosixParser();
@@ -238,6 +256,12 @@ public class SynchronizeFiles2 {
 
 		Options options = new Options();
 
+		OptionBuilder.isRequired(true);
+		OptionBuilder.hasArg(true);
+		OptionBuilder.withDescription("Username of application");
+		OptionBuilder.withLongOpt("username");
+		Option loginOption = OptionBuilder.create('u');
+		
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(false);
 		OptionBuilder.withLongOpt("help");
@@ -273,6 +297,7 @@ public class SynchronizeFiles2 {
 		OptionBuilder.withLongOpt("count");
 		Option countOption = OptionBuilder.create('c');
 
+		options.addOption(loginOption);
 		options.addOption(helpOption);
 		options.addOption(domainOption);
 		options.addOption(typeOption);
@@ -286,7 +311,9 @@ public class SynchronizeFiles2 {
 				helpFormatter.printHelp(DEFAULT_SYNTAX_PREFIX, options, true);
 				return false;
 			}
-
+			
+			login = line.getOptionValue(loginOption.getOpt());
+			
 			num = Integer.valueOf(line.getOptionValue(countOption.getOpt(),
 					String.valueOf(Integer.MAX_VALUE)));
 

@@ -1,9 +1,12 @@
 package com.code.aon.google.apis.calendar;
 
+import static org.apache.commons.cli.HelpFormatter.DEFAULT_SYNTAX_PREFIX;
+
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.SQLException;
+import java.util.Map;
 
 import javax.naming.NamingException;
 
@@ -17,7 +20,11 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
 import com.code.aon.google.apis.CalendarUtils;
+import com.code.aon.google.apis.jooq.DBSync;
 import com.code.aon.pool.AonConnectionException;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.User;
 
 public class SynchronizeEvents {
 
@@ -25,32 +32,42 @@ public class SynchronizeEvents {
 	
 	public static void main(String[] args) throws KeyStoreException, IOException, SQLException, AonConnectionException, GeneralSecurityException, NamingException {
 		parse(args);		
-		
-		if (domains==null || domains.length==0 || domains[0].equals("TODOS")){
-			CalendarUtils.synchronize2();
+		Map<String, Integer> domainMap = DBSync.initializeDomainMap();
+ 		if (domains==null || domains.length==0 || domains[0].equals("TODOS")){
+			CalendarUtils.synchronize2(getUser());
 		}
 		else{
-			for (String string : domains) {
-				CalendarUtils.synchronize(string);
+			for (String domainName : domains) {
+				Domain domain = AON.getDomain(domainName, domainMap.get(domainName), getUser().getLogin());
+				CalendarUtils.synchronize(domain, getUser());
 			}
 		}
-	
 	}
 
 	
 
 	private static String domains[];
-	private static String commercial;
-	private static String emails[];
-	private static String action = "all";
-	private static String values[] ;
-	private static String out = "normally";
+	private static String login;
 	
-	private static void parse(String  args []) {
+	private static String getLogin(){
+		return login;
+	}
+	
+	private static User getUser(){
+		return new User().setLogin(getLogin());
+	}
+	
+	private static boolean parse(String  args []) {
 		CommandLineParser parser = new PosixParser();
 		HelpFormatter helpFormatter = new HelpFormatter();
 		
 		Options options = new Options();
+		
+		OptionBuilder.isRequired(true);
+		OptionBuilder.hasArg(true);
+		OptionBuilder.withDescription("Username of application");
+		OptionBuilder.withLongOpt("username");
+		Option loginOption = OptionBuilder.create('u');
 		
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(false);
@@ -64,63 +81,30 @@ public class SynchronizeEvents {
 		OptionBuilder.withValueSeparator(',');		
 		Option domainOption = OptionBuilder.create("d");
 		
-		OptionBuilder.isRequired(false);
-		OptionBuilder.hasArg(true);
-		OptionBuilder.withDescription("Tipo de acción que se va aplicar. ");
-		OptionBuilder.withValueSeparator(',');		
-		Option actionOption = OptionBuilder.create("a");
 		
-		OptionBuilder.isRequired(false);
-		OptionBuilder.hasArg(true);
-		OptionBuilder.withDescription("Valor que acompaña al tipo de acción a aplicar. ");
-		OptionBuilder.withValueSeparator(',');		
-		Option valueOption = OptionBuilder.create("v");
-		
-		OptionBuilder.isRequired(false);
-		OptionBuilder.hasArg(true);
-		OptionBuilder.withDescription("Tipo de salida al aplicar el comando. Ej: normally");
-		OptionBuilder.withValueSeparator(',');		
-		Option outOption = OptionBuilder.create("o");
-		
-		OptionBuilder.isRequired(false);
-		OptionBuilder.hasArg(true);
-		OptionBuilder.withDescription("Comercial al que pertenece el evento.");
-		OptionBuilder.withValueSeparator(',');		
-		Option commercialOption = OptionBuilder.create("c");
-
-		OptionBuilder.isRequired(false);
-		OptionBuilder.hasArg(true);
-		OptionBuilder.withDescription("Emails con los que se quiere compartir un archivo o documento.");
-		OptionBuilder.withValueSeparator(',');		
-		Option emailOption = OptionBuilder.create("e");
 		
 		options.addOption(helpOption);
-		options.addOption(outOption);
 		options.addOption(domainOption);
-		options.addOption(valueOption);
-		options.addOption(actionOption);
-		options.addOption(commercialOption);
-		options.addOption(emailOption);
+		options.addOption(loginOption);
 
 		try {
 			CommandLine line = parser.parse(options, args);
+		
+			if (line.hasOption(helpOption.getOpt())) {
+				helpFormatter.printHelp(DEFAULT_SYNTAX_PREFIX, options, true);
+				return false;
+			}
 			
+			login = line.getOptionValue(loginOption.getOpt());
 			
 			String[] domainsaux = line.getOptionValues("d");
 			if(domainsaux!=null){ domains = domainsaux;}
-			String actionaux = line.getOptionValue("a");
-			if(actionaux!=null){ action = actionaux;}
-			String[] valuesaux= line.getOptionValues("v");
-			if(valuesaux!=null){ values = valuesaux;}
-			String outaux = line.getOptionValue("o");
-			if(outaux!=null) out = outaux; 
-			String commercialaux = line.getOptionValue("c");
-			if(commercialaux!=null) commercial = commercialaux;
-			String[] emailsaux = line.getOptionValues("e");
-			if(emailsaux!=null) emails = emailsaux;
+			
 		} catch (ParseException e) {
 			helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX,
 					options, true);
+			return false;
 		}
+		return true;
 	}
 }

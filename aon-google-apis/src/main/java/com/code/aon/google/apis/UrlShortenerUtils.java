@@ -8,7 +8,7 @@ import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.util.Arrays;
 
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;

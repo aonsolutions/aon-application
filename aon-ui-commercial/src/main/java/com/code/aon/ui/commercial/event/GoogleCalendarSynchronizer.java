@@ -3,17 +3,13 @@ package com.code.aon.ui.commercial.event	;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.sql.SQLException;
 
 import javax.naming.NamingException;
 
 import com.code.aon.AonVersion;
-import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.google.apis.CalendarUtils;
-import com.code.aon.google.apis.DatabaseSync;
+import com.code.aon.google.apis.jooq.DBCalendar;
 import com.code.aon.google.apis.jooq.DBConsults;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
-import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.commercial.controller.CommercialTrackingController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
@@ -21,7 +17,10 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.google.sql.AbstractSQL.Domain;
+import com.esferalia.aon.occam.api.model.CommercialTracking;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.calendar.model.Calendar;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.Events;
@@ -44,6 +43,7 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 			try {
 				CommercialTracking tracking = getCommercialTracking(event);
 				Domain company = DBConsults.getDomain(domain,tracking.getDomain());
+				User user = new User().setLogin(AonUtil.getRemoteUser() != null ? AonUtil.getRemoteUser() : "");
 				DomainGserviceaccount g = DBConsults.getServiceAccount(domain, company.getId());
 				if (g.getClientId() != null){
 					CalendarUtils.serviceInitialize(g);
@@ -52,13 +52,8 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 					int i=CalendarUtils.searchCalendars(calendars, company.getName(), calendars.getItems().size() );
 					Events events=CalendarUtils.Quicksort.eventsSort(CalendarUtils.getEvents(calendars.getItems().get(i).getId()));
 					int j=CalendarUtils.searchEvents(events, tracking.getId(), events.getItems().size());
-					CalendarUtils.modifyEvent(events.getItems().get(j).getId(),DatabaseSync.getCommercialTrackingOne(tracking.getId(), domain), calendars.getItems().get(i).getId(),domain);
+					CalendarUtils.modifyEvent(company, user, events.getItems().get(j).getId(), DBCalendar.getCommercialTrackingOne(company, user, tracking.getId()), calendars.getItems().get(i).getId());
 				}
-				
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} catch (AonConnectionException e) {
-				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (GeneralSecurityException e) {
@@ -86,7 +81,7 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 		@Override
 		public void run() {
 			try {
-				
+				User user = new User().setLogin(AonUtil.getRemoteUser() != null ? AonUtil.getRemoteUser() : "");
 				CommercialTracking tracking = getCommercialTracking(event);
 				Domain company = DBConsults.getDomain(domain,tracking.getDomain());
 				DomainGserviceaccount g = DBConsults.getServiceAccount(domain, company.getId());
@@ -95,20 +90,16 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 
 					CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
 					int i=CalendarUtils.searchCalendars(calendars, company.getName(), calendars.getItems().size() );
-					com.esferalia.aon.google.sql.AbstractSQL.CommercialTracking ct = DatabaseSync.getCommercialTrackingOne(tracking.getId(), domain);
+					CommercialTracking ct =  DBCalendar.getCommercialTrackingOne(company, user, tracking.getId());
 					if(i==-1){
-						Calendar calendar =CalendarUtils.newCalendar(company);
-						CalendarUtils.addEvent(calendar.getId(), CalendarUtils.newEvent(ct,domain),domain,ct);
+						Calendar calendar = CalendarUtils.newCalendar(company, user);
+						CalendarUtils.addEvent(company, user, calendar.getId(), CalendarUtils.newEvent(company, user, ct),ct);
 
 					}
 					else{
-						CalendarUtils.addEvent(calendars.getItems().get(i).getId(), CalendarUtils.newEvent(ct,domain),domain,ct);
+						CalendarUtils.addEvent(company, user, calendars.getItems().get(i).getId(), CalendarUtils.newEvent(company, user, ct),ct);
 					}
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} catch (AonConnectionException e) {
-				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (GeneralSecurityException e) {
@@ -148,8 +139,6 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 					int j=CalendarUtils.searchEvents(events, tracking.getId(), events.getItems().size());
 					CalendarUtils.removeEvent(calendars.getItems().get(i).getId(), events.getItems().get(j).getId());
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (GeneralSecurityException e) {
@@ -204,8 +193,22 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 	// --------------------------------------------------------- Private methods
 
 	private CommercialTracking getCommercialTracking(ControllerEvent event) {
-		return (CommercialTracking) ((CommercialTrackingController) event
+		com.code.aon.commercial.CommercialTracking ct = (com.code.aon.commercial.CommercialTracking) ((CommercialTrackingController) event
 				.getController()).getTo();
-
+		return new CommercialTracking()
+				.setActivity(ct.getActivity() != null ? ct.getActivity().getId() : null)
+				.setAllday(ct.isAllDay())
+				.setComments(ct.getComments())
+				.setDate(ct.getDate())
+				.setDomain(ct.getDomain())
+				.setEndDate(ct.getEndDate())
+				.setEventId(ct.getEventId())
+				.setId(ct.getId())
+				.setLocation(ct.getLocation())
+				.setNextCommercialTracking(ct.getNext() != null ? ct.getNext().getId() : null)
+				.setOffer(ct.getOffer() != null ? ct.getOffer().getId() : null)
+				.setProjectCommercial(ct.getProject() != null ? ct.getProject().getId() : null)
+				.setSeller(ct.getSeller() != null ? ct.getSeller().getId() : null)
+				.setStatus((byte)ct.getStatus().ordinal());
 	}
 }

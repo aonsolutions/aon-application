@@ -6,8 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Hashtable;
@@ -27,11 +25,11 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.google.apis.jooq.DBCalendar;
 import com.code.aon.google.apis.jooq.DBConsults;
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
-import com.code.aon.pool.AonConnectionException;
-import com.esferalia.aon.google.sql.AbstractSQL.CommercialTracking;
-import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.esferalia.aon.google.sql.AbstractSQL.Rattach;
+import com.esferalia.aon.occam.api.model.CommercialTracking;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.gmail.Gmail;
 
@@ -271,25 +269,25 @@ public class Utils{
 			return month2;
 		}
 		
-		public static void sendNotification(String domain,Event event, CommercialTracking ct) throws SQLException, KeyStoreException, IOException, GeneralSecurityException, MessagingException, AonConnectionException, NamingException{
-			Vector<String> emails = DBCalendar.getSellerEmails(ct ,domain);
-			String email = DBCalendar.getSellerEmail(ct, domain);
+		public static void sendNotification(Domain domain, User user, Event event, CommercialTracking ct) throws IOException, GeneralSecurityException, MessagingException, NamingException{
+			Vector<String> emails = DBCalendar.getSellerEmails(domain, user, ct);
+			String email = DBCalendar.getSellerEmail(domain, user, ct);
 			if(email != null){
 				String emls = "";
 				for(String e : emails){
 					if(!e.equals(email) && Utils.isGmail(e)){
-						String url = domain+ "/googleMail/"
+						String url = domain.getName()+ "/googleMail/"
 		                	+ "?registry=" + Integer.toString(ct.getSeller())
 		                	+ "&email=" + email
-		                	+ "&domain=" +domain
+		                	+ "&domain=" +domain.getName()
 		                	+ "&type=" + e;
 						emls = emls +"<p style=\"color: #888;padding-left:10px;\">"+e+" <a href=\""+url+"\"> cambiar </a></p>";
 					}
 				}
-				String url2 =  domain+ "/googleMail/"
+				String url2 =  domain.getName()+ "/googleMail/"
 						+ "?registry=" + Integer.toString(ct.getSeller())
 						+ "&email=" + email
-						+ "&domain=" + domain
+						+ "&domain=" + domain.getName()
 						+ "&type=" + "baja";
 				Date dt = new Date(event.getStart().getDateTime().getValue());
 				Integer day2 = dt.getDay();
@@ -340,7 +338,7 @@ public class Utils{
 				+"<p></p><table><tbody>"
 					+"<tr><td style=\"background-color: #F6F6F6;color: #888;border: 1px solid #CCC;font-family: Arial,sans-serif;font-size: 11px;  \">"
 						+"<p style=\"color: #888;padding-left:5px;\">Invitación de <a href=\"https://www.google.com/calendar/\" target=\"_blank\">Google Calendar</a></p>"
-						+"<p style=\"color: #888;padding-left:5px;\">Recibes este mensaje de correo electrónico en la dirección <a href=\"mailto:"+email+"\" target=\"_blank\">"+email+"</a> de la cuenta porque estás suscrito para recibir invitaciones del calendario "+domain+".</p>"
+						+"<p style=\"color: #888;padding-left:5px;\">Recibes este mensaje de correo electrónico en la dirección <a href=\"mailto:"+email+"\" target=\"_blank\">"+email+"</a> de la cuenta porque estás suscrito para recibir invitaciones del calendario "+domain.getName()+".</p>"
 						+"<p style=\"color: #888;padding-left:5px;\">Si deseas cambiar el correo electrónico con el que compartir los eventos comerciales de la aplicación elige una de las presentadas a continuación.Si no dispones de ninguno añade uno nuevo en la aplicación con el atributo comercial activo. </p>"
 						+emls
 						+"<p style=\"color: #888;padding-left:5px;\">Si deseas dejar de recibir estas notificaciones, pulsa <a href=\""+url2+"\" target=\"_blank\"> aquí</a>  para date de baja en servicio de Google Calendar de la aplciación.</p>"
@@ -351,8 +349,7 @@ public class Utils{
 			
 				String msg2 = "<div> <b>hola</b>agagas</div>";
 				//String msg = "<div class='aHl'><div class='aRb'><div id=':10m'><table class='cf aU9' cellpadding='0'><tbody><tr><td class='aRi'><div class='aU5'><span class='aRh'>Mar.</span><span class='aRg'>10</span><span class='aRj'>Mar.</span></div></td><td style='width:52%' class='aU4'><div class='aRo'>adgafga</div><div class='aRn'><a class='e' href='http://www.google.com/calendar/render?action=VIEW&amp;eid=cXBpc3JjOHU1bW90c2x0OXYxaWQ4cXB0bmMgYWliYW5lekBhb25zb2x1dGlvbnMuZXM&amp;ctok=YWliYW5lekBhb25zb2x1dGlvbnMuZXM' target='_blank'>Míralo en Google Calendar</a></div><table class='cf aU2'><tbody><tr><td class='aRk'>Cuándo</td><td id=':10p' class='aU6'>mar 10 de Mar 12pm – jue 19 de Mar de 2015 12pm (CET)</td></tr><tr><td class='aRk'>Ubicación</td><td id=':yp' class='aU6'>sgsa</td></tr><tr><td class='aRk'>Participantes</td><td id=':yg' class='aU6'><span class='cD'>procom-glo<wbr>bal4.aiban<wbr>ez.net*</span></td></tr></tbody></table><div class='aRm'><span id=':11t'><div id=':ym' class='T-I J-J5-Ji aQ9 T-I-ax7 T-I-Js-IF L3' role='button' tabindex='0'>Sí</div><div id=':10l' class='T-I J-J5-Ji aQ9 T-I-ax7 T-I-Js-Gs T-I-Js-IF L3' role='button' tabindex='0'>Quizás</div><div id=':x5' class='T-I J-J5-Ji aQ9 T-I-ax7 T-I-Js-Gs L3' role='buttontabindex='0'>No</div></span></div></td><td class='aRc'><div class='aQ3'><div class='aRo'>Agenda</div><div class='aRn'>mar 10 de Mar de 2015</div><table id=':zs' class='cf aU2' style='table-layout:auto'><tbody><tr class='aU0'><td class='aQ5' colspan='2'><i>No hay eventos anteriores.</i></td></tr><tr class='aQ6'><td class='aQ4'>12pm</td><td class='aQ5'>adgafga</td></tr><tr class='aU1'><td class='aQ5' colspan='2'><i>No hay eventos posteriores.</i></td></tr></tbody></table></div></td></tr></tbody></table></div></div></div>";
-				Domain d = DBConsults.getDomain(domain);
-				DomainGserviceaccount g = DBConsults.getServiceAccount(domain, d.getId());
+				DomainGserviceaccount g = DBConsults.getServiceAccount(domain, new User().setLogin(""));
 				Gmail service = GmailUtils.serviceInitialize(g);
 			
 				MimeMessage emailMessage = GmailUtils.createEmail(email, g.getGoogleAccount(), "Google Calendar", msg);

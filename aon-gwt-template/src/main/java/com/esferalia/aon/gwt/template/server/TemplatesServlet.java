@@ -71,6 +71,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonRole;
@@ -1886,7 +1887,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return DBProduct.getCategoriesShared(domain.getName(), domain.getId(), getUser().getLogin());
 	}
 	
-	public Error executeExcelEcommerce(Domain domain, Ecommerce ecommerce, Seller seller, String type, com.esferalia.aon.gwt.template.shared.ProductCategory pc) {
+	public Error executeExcelEcommerce(Domain domain, Ecommerce ecommerce, Seller seller, String type, Tag tag) {
 		Error error = new Error();
 		error.setError(true);
     	if(getOut() == null){
@@ -1900,7 +1901,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		byte[] xml = null;
 		
     	if(getMimetype().equals(MimeType.CSV.getName()) && ecommerce.equals(Ecommerce.EBAY)){
-    		xml = csvToXmlEbay(data, ecommerce.getName(), type, pc.getName());
+    		xml = csvToXmlEbay(data, ecommerce.getName(), type, tag.getName());
     	}
     	else if(!Utils.isExcel(getMimetype())){
 			//El archivo no es un fichero Excel.
@@ -1912,9 +1913,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		}
 
 		if(xml == null && ecommerce.equals(Ecommerce.AMAZON))
-			xml = excelToXmlAmazon(data, ecommerce.getName(), type, pc.getName());
+			xml = excelToXmlAmazon(data, ecommerce.getName(), type, tag.getName());
 		else if(xml == null && ecommerce.equals(Ecommerce.EBAY))
-			xml = excelToXmlEbay(data, ecommerce.getName(), type, pc.getName());
+			xml = excelToXmlEbay(data, ecommerce.getName(), type, tag.getName());
 	
 		if(xml != null){
 			Attach attach = AON.getAttach(domain.getName(), domain.getId(), getUser().getLogin(), 
@@ -1926,16 +1927,15 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				attach.setData(xml);
 				attach.setModificationDate(Calendar.getInstance().getTime());
 				attach.setModificationUser(getUser().getLogin());
-				AON.update(attach);
+				AON.update(domain.getName(), domain.getId(), getUser().getLogin(), attach);
 			}
 			else{
 				attach = new Attach(AttachType.REGISTRY);
 				attach.setDescription(ecommerce.getName()+"-"+type);
 				attach.setData(xml);
-				//attach.setCategory(pc.getId());
-				attach.setDparentId(pc.getId().toString());
+
 				attach.setConfidential(true);
-				attach.setType((short) 18);// RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES
+				attach.setType(RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value());
 				attach.setDate(Calendar.getInstance().getTime());
 			
 				attach.setCreationDate(Calendar.getInstance().getTime());
@@ -1951,8 +1951,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					attach.setAttachModule(getCompany(domain).getId());
 				else attach.setAttachModule(seller.getId());
 		
-				AON.insert(attach);
-				
+				AON.insert(domain.getName(), domain.getId(), getUser().getLogin(), attach);
+				AON.insertRegistryAttachTag(domain.getName(), domain.getId(), getUser().getLogin(),
+						attach.getId(), tag.getId());
 			}
 		}
 		else{

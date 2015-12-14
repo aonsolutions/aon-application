@@ -2,7 +2,7 @@ package com.code.aon.google.apis;
 
 import java.util.Vector;
 
-import com.code.aon.google.apis.jooq.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 
 public class DriveData {
 

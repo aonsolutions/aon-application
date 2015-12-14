@@ -396,7 +396,7 @@ public class DBConsults {
 					tag.setId(record.value2());
 				}
 				if(record.value3()!= null){
-					tag.setDomain(getDomain(domain.setId(record.getValue(TAG.DOMAIN)), user));
+					tag.setDomain(getDomainName(domain.setId(record.getValue(TAG.DOMAIN)), user));
 				}
 				ts.add(tag);
 			}
@@ -756,9 +756,7 @@ public class DBConsults {
 			Result<Record2<String, String>> sons = ctx.getDslContext()
 					.select(DOMAIN.NAME,DOMAIN.DESCRIPTION)
 					.from(DOMAIN)
-					.where(DOMAIN.PARENT.eq(ctx.getDslContext().select(DOMAIN.ID)
-												.from(DOMAIN)
-												.where(DOMAIN.NAME.eq(domain.getName()))))
+					.where(DOMAIN.PARENT.eq(domain.getId()))
 					.fetch();
 			
 			Vector<Domain> vector = new Vector<Domain>();
@@ -788,19 +786,16 @@ public class DBConsults {
 		DBConsults.filesGwt = filesGwt;
 	}
 
-	public static void removeFile(Domain domain, User user, Integer id){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
-			ctx.getDslContext().delete(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(id)).execute();
-			AON.delete(domain.getName(), domain.getId(), user.getLogin(),
-					filter -> filter.getIdProperty().eq(id)
-					,AttachType.REGISTRY);
-			
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+	public static void removeFile(Domain domain, User user, Integer attachId){
+		AON.deleteRegistryAttachTag(domain.getName(), domain.getId(), user.getLogin(),
+				attachId);
+		AON.delete(domain.getName(), domain.getId(), user.getLogin(),
+				filter -> filter.getIdProperty().eq(attachId)
+				,AttachType.REGISTRY);
+	}
+	
+	public static Domain getDomain(Domain domain, User user){
+		return AON.getDomain(domain.getName(), domain.getId(), user.getLogin());
 	}
 	
 	public static Integer getDomainId(Domain domain, User user, String dom){
@@ -820,7 +815,7 @@ public class DBConsults {
 		
 	}
 	
-	public static String getDomain(Domain domain, User user) {
+	public static String getDomainName(Domain domain, User user) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin()); 
@@ -831,7 +826,6 @@ public class DBConsults {
 			if (ctx != null)
 				ctx.close();
 		}
-		
 	}
 	
 	public static Integer getDomainParent(Domain domain, User user){
@@ -990,17 +984,9 @@ public class DBConsults {
 		}
 	}
 	
-	public static void insertTagsFile(Domain domain, User user, Integer id, Vector<Tag> tags) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
-			for (Tag tag : tags) {
-				ctx.getDslContext().insertInto(RATTACH_TAG,RATTACH_TAG.DOMAIN,RATTACH_TAG.RATTACH,RATTACH_TAG.TAG)
-				.values(domain.getId(),id,tag.getId()).returning(RATTACH.ID).execute();
-			}
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static void insertTagsFile(Domain domain, User user, Integer attachId, Vector<Tag> tags) {
+		for(Tag tag : tags){
+			AON.insertRegistryAttachTag(domain.getName(), domain.getId(), user.getLogin(), attachId, tag.getId());	
 		}
 	}
 	
@@ -1009,11 +995,9 @@ public class DBConsults {
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			
-			ctx.getDslContext().delete(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(fi.getFileId())).execute();
-
+			AON.deleteRegistryAttachTag(domain.getName(), domain.getId(), user.getLogin(), fi.getFileId());
 			for (Tag tag : tags) {
-				ctx.getDslContext().insertInto(RATTACH_TAG,RATTACH_TAG.DOMAIN,RATTACH_TAG.RATTACH,RATTACH_TAG.TAG)
-				.values(domain.getId(),fi.getFileId(),tag.getId()).execute();
+				AON.insertRegistryAttachTag(domain.getName(), domain.getId(), user.getLogin(), fi.getFileId(), tag.getId());
 			}
 			
 			long currentDate = new java.util.Date().getTime();
