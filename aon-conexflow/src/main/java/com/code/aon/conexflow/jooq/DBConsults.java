@@ -223,12 +223,12 @@ public class DBConsults {
 		Integer id = getConexFlowLastOperationId(domain, project,op);
 		Attach attach = Attach.projectAttach(project, domain, MimeType.XML, "CONEXFLOW-"+op, xmlFile, true, currentDate, null);
 		if(id != null ){
-			attach.setId(id);AON.update(attach);
+			attach.setId(id);AON.update(domain.getName(), domain.getId(), "", attach);
 			if(op.equals(ConexFlowConstant.CREATE_TOKEN_OP)){
 				deletePreuthorization(domain, project);
 			}
 		}
-		if(id == null) AON.insert(attach);
+		if(id == null) AON.insert(domain.getName(), domain.getId(), "", attach);
 	}
 	
 	//-------------------- DELETES
