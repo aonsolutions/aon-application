@@ -25,7 +25,6 @@ import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
@@ -64,8 +63,8 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String requestURI = req.getRequestURI();
-		String extension = AonServletUtils.getExtn(requestURI);
-		String md5 = AonServletUtils.getWithoutExtn(requestURI);
+		String extension = getExtn(requestURI);
+		String md5 = getWithoutExtn(requestURI);
 		Map<String, String[]> params = req.getParameterMap();
 		Integer id = null;
 		String domainName = "";
@@ -78,7 +77,7 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 			domainId = Integer.parseInt(req.getParameter("domainId"));
 		MimeType mimeType = MimeType.getByExtension(extension);
 		Domain domain = new Domain().setName(domainName).setId(domainId);
-		User user = new User().setLogin(AonServletUtils.getLoggedUser());
+		User user = new User().setLogin(getLoggedUser());
 		final Integer attachId = id;
 		Attach rattach = AON.getAttach(domainName, domainId, user.getLogin(), 
 				filter -> filter.getIdProperty().eq(attachId)
@@ -184,5 +183,9 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 	
 	public static String getExtn(String path) {
 		return path.substring(path.lastIndexOf('.') + 1);
+	}
+	
+	public static String getWithoutExtn(String path) {
+		return getFileName(path);
 	}
 }

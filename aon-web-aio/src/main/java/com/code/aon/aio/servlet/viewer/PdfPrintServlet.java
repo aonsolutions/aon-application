@@ -27,7 +27,6 @@ import com.code.aon.google.apis.FileInfo;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -52,7 +51,7 @@ public class PdfPrintServlet extends HttpServlet{
         Integer domainID = Integer.parseInt(domainId);
         String domainName = AonUtil.getDomainName();
         Domain domain = new Domain().setName(domainName).setId(domainID);
-        String login = AonServletUtils.getLoggedUser();
+        String login = AonUtil.getRemoteUser();
         User user = new User().setLogin(login);
         Integer m = Integer.parseInt(mtype);
         MimeType mt = MimeType.values()[m];

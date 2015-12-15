@@ -31,7 +31,6 @@ import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.ui.google.apis.controller.GoogleDriveController;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
@@ -69,17 +68,17 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 			String jsonData = req.getParameter("details");  
 			JSONObject jsonRequest = new JSONObject(jsonData);
 			
-			FileInfo fileInfo = new FileInfo();
-			fileInfo.setMd5(jsonRequest.getString("md5"));
-			fileInfo.setDomain(jsonRequest.getString("domainName"));
-			fileInfo.setDomainId(jsonRequest.getInt("domainId"));
-			fileInfo.setMimetype((byte) jsonRequest.getInt("mimetype"));
+			Attach attach = new Attach()
+					.setMd5(jsonRequest.getString("md5"))
+					.setDomain(new Domain().setName(jsonRequest.getString("domainName"))
+							.setId(jsonRequest.getInt("domainId")))
+					.setMimeType(MimeType.values()[(byte) jsonRequest.getInt("mimetype")])
+					.setId(jsonRequest.getInt("fileId"))
+					.setIsDrive(jsonRequest.getBoolean("isDrive"));
 			if(!jsonRequest.getString("driveId").equals("null"))
-				fileInfo.setDriveId(jsonRequest.getString("driveId"));
-			fileInfo.setIsDrive(jsonRequest.getBoolean("isDrive"));
-			fileInfo.setFileId(jsonRequest.getInt("fileId"));
+				attach.setDriveId(jsonRequest.getString("driveId"));
 			
-			PDFFile pdfFile = getPDFFile(fileInfo);
+			PDFFile pdfFile = getPDFFile(attach);
 			Integer page = pdfFile.getNumPages();
 		
 			resp.setContentType("application/json");
@@ -121,12 +120,12 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 			 id = Integer.parseInt(req.getParameter("id"));
 		
 		resp.setContentType(String.format("image/%s", format));
-		FileInfo fi = new FileInfo();
-		fi.setFileId(id);
-		fi.setMd5(rattach);
+		Attach attach = new Attach();
+		attach.setId(id);
+		attach.setMd5(rattach);
 		PDFFile pdfFile;
 		try {
-			pdfFile = getPDFFile(fi);
+			pdfFile = getPDFFile(attach);
 			pdf2Image(pdfFile, os, page, format, zoom);
 		} catch (GeneralSecurityException e) {
 			e.printStackTrace();
@@ -136,47 +135,47 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 	}
 
 
-	protected static PDFFile getPDFFile(FileInfo doc) throws IOException, GeneralSecurityException{
-		PDFFile pdfFile = PDFS.get(doc.getMd5());
+	protected static PDFFile getPDFFile(Attach attach) throws IOException, GeneralSecurityException{
+		PDFFile pdfFile = PDFS.get(attach.getMd5());
 		if (pdfFile == null) {
-			ByteBuffer byteBuffer = getPdfByeBuffer(doc);
+			ByteBuffer byteBuffer = getPdfByeBuffer(attach);
 			pdfFile = new PDFFile(byteBuffer);
-			PDFS.put(doc.getMd5(), pdfFile);
+			PDFS.put(attach.getMd5(), pdfFile);
 		}
 		return pdfFile;
 	}
 
-	private static ByteBuffer getPdfByeBuffer(FileInfo doc) throws IOException, GeneralSecurityException {
-		Domain domain = new Domain().setName(doc.getDomain()).setId(doc.getDomainId());
+	private static ByteBuffer getPdfByeBuffer(Attach attach) throws IOException, GeneralSecurityException {
+		Domain domain = attach.getDomain();
 		String login = ""; //AonServletUtils.getLoggedUser();
 		User user = new User().setLogin(login);
 		
 		byte[] b = null;
-		MimeType mimetype = MimeType.values()[doc.getMimetype()];
-		if(doc.getDriveId()!= null){
+		MimeType mimetype = attach.getMimeType();
+		if(attach.getDriveId()!= null){
         	Drive d = null;
         	DomainGserviceaccount g = null;
-        	if(doc.getIsDrive()){
+        	if(attach.getIsDrive()){
         		d = GoogleDriveController.dconnection;
         	}
         	else{
         		g = DBConsults.getServiceAccount(domain, user);
         		d = DriveUtils.serviceInitialize(g);
         	}
-			com.google.api.services.drive.model.File f = DriveUtils.getFile(d, domain, user, doc.getDriveId(),doc.getFileId());
+			com.google.api.services.drive.model.File f = DriveUtils.getFile(d, domain, user, attach.getDriveId(), attach.getId());
 			if(f.getDescription() != null && f.getDescription().equals("OLDRIVE"))
 				d = DriveUtils.serviceInitializeOld(g);
 			InputStream in = DriveUtils.downloadFile(d, f);
 			b = Utils.InputStreamToByte(in);
 		}
 		else {
-			Attach rattach =  AON.getAttach(doc.getDomain(), doc.getDomainId(), login, 
-					filter -> filter.getIdProperty().eq(doc.getFileId())
+			Attach rattach =  AON.getAttach(domain.getName(), domain.getId(), login, 
+					filter -> filter.getIdProperty().eq(attach.getId())
 					,AttachType.REGISTRY);
 			b = rattach.getData();
 			if (mimetype ==null) mimetype = rattach.getMimeType();
 		}		
-		return getPdfByeBuffer(doc.getMd5(), mimetype, b);
+		return getPdfByeBuffer(attach.getMd5(), mimetype, b);
 	}
 
 	private static ByteBuffer getPdfByeBuffer(String md5, MimeType mimeType,

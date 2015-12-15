@@ -39,6 +39,7 @@ public class Attach {
 	//---------- Auxiliar
 	private String icon;
 	private String md5;
+	private Boolean isDrive;
 	
 	//--------------------- Constructors
 	
@@ -236,6 +237,13 @@ public class Attach {
 		return this;
 	}
 	
+	public Boolean getIsDrive() {
+		return isDrive;
+	}
+	public Attach setIsDrive(Boolean isDrive) {
+		this.isDrive = isDrive;
+		return this;
+	}
 	public static Attach projectAttach(Integer project, Domain domain, com.esferalia.aon.occam.api.model.type.MimeType mimetype, String description,
 			byte[] data, Boolean confidential, Date date, String driveId){
 		Attach attach = new Attach(AttachType.PROJECT);
