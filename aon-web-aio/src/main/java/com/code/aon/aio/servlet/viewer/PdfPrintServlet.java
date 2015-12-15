@@ -23,12 +23,14 @@ import org.artofsolving.jodconverter.office.OfficeManager;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.google.apis.DriveUtils;
-import com.code.aon.google.apis.FileInfo;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 
@@ -57,7 +59,7 @@ public class PdfPrintServlet extends HttpServlet{
         MimeType mt = MimeType.values()[m];
         Integer idFile = Integer.parseInt(fileId);
         String mimetype = MimeType.values()[m].getName();
-        FileInfo fi=null;
+        Attach fi = null;
         if (driveId != ""){
 			DomainGserviceaccount g = null;
 			Drive d = null;
@@ -80,19 +82,21 @@ public class PdfPrintServlet extends HttpServlet{
 			}
 
 			InputStream in = DriveUtils.downloadFile(d, f);
-			fi = new FileInfo();
+			fi = new Attach();
 			byte[] b = Utils.InputStreamToByte(in);
 		    fi.setData(b);
-		    fi.setTitle(f.getTitle());
+		    fi.setDescription(f.getTitle());
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-			fi = com.esferalia.aon.gwt.document.jooq.DBConsults.getDataAndName(domain, user, id);
+			fi = AON.getAttach(domain.getName(), domain.getId(), login, 
+					f -> f.getIdProperty().eq(id)
+					, AttachType.REGISTRY);
         }
         else return;
         File file ;
 		if (isOffice(mt)) {
-			file  = getPdfByeBuffer(fi.getFileId(),mt,fi.getData());
+			file  = getPdfByeBuffer(fi.getId(),mt,fi.getData());
 			mimetype = MimeType.MIME_PDF.getName();
 		}
 		else file=Utils.InputStreamToFile(fi) ; /* however you choose to go about resolvingfilename */

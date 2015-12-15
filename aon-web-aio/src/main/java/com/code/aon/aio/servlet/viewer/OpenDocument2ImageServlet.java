@@ -30,7 +30,6 @@ import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.ui.google.apis.controller.GoogleDriveController;
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
@@ -104,8 +103,8 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String requestURI = req.getRequestURI();
-		String ext = AonServletUtils.getExtn(requestURI);
-		String rattach = AonServletUtils.getWithoutExtn(requestURI);
+		String ext = getExtn(requestURI);
+		String rattach = getWithoutExtn(requestURI);
 		String format = ext != null ? ext : DEFAULT_FORMAT;
 
 		OutputStream os = resp.getOutputStream();

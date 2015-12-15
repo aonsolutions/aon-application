@@ -29,6 +29,7 @@ import com.esferalia.aon.google.sql.AbstractSQL.Rattach;
 import com.esferalia.aon.occam.api.model.CommercialTracking;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.gmail.Gmail;
@@ -76,7 +77,6 @@ public class Utils{
 		if(!aux.isDirectory())
 		org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
 		return aux;
-		
 	}
 	
 	public static File InputStreamToFile(FileInfo fileInfo) throws IOException{
@@ -95,6 +95,16 @@ public class Utils{
 		
 		return aux;
 		
+	}
+	
+	public static File InputStreamToFile(Attach attach) throws IOException{
+		System.out.println(attach.getData());
+		byte[] data = attach.getData();
+		File aux = new File("/tmp/"+ attach.getDescription());		
+		if(!aux.isDirectory())
+			//Apache commons
+			org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
+		return aux;
 	}
 	
 	public static byte[] InputStreamToByte(InputStream file) throws IOException{
