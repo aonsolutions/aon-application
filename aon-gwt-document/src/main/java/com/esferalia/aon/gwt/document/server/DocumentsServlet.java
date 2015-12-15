@@ -1,11 +1,13 @@
 package com.esferalia.aon.gwt.document.server;
 
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
@@ -13,6 +15,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.Date;
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +35,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,8 +103,6 @@ import com.google.api.services.drive.model.Permission;
 import com.google.api.services.drive.model.Property;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.urlshortener.Urlshortener;
-import com.sun.pdfview.PDFFile;
-import com.sun.pdfview.PDFPage;
 
 
 public class DocumentsServlet extends AonRemoteServiceServlet implements IDocument{
@@ -841,6 +851,9 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 	
 	//-------------------- Visualizar Archivo
 
+	private static final String ZOOM_PARAM = "zoom";
+	private static final String PAGE_PARAM = "page";
+
 	public String getAsHTML(Domain domain, FileInfo doc, int zoom) {
 		doc = setmd5(domain, doc);
 	
@@ -1073,8 +1086,35 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		public void transform(FileInfo doc, OutputStream os, int zoom) throws Exception {
 
 			PrintStream printStream = new PrintStream(os);
+			
+			JSONObject json = new JSONObject();
+			json.put("md5", doc.getMd5())
+				.put("domainName", doc.getDomain())
+				.put("domainId", doc.getDomainId())
+				.put("mimetype", doc.getMimetype())
+				.put("driveId", doc.getDriveId())
+				.put("isDrive", doc.getIsDrive())
+				.put("fileId", doc.getFileId());
+			
+			JSONObject jsonResponse = sendPostHttpClient(json);
+			Integer page = (Integer) jsonResponse.get("page");
+			for(Integer i = 1; i<= page; i++){
+				double width = jsonResponse.getDouble("width"+i) * zoom / 100;
+				double height = jsonResponse.getDouble("height"+i) * zoom / 100;
+				
+				printStream.printf("<div class='page' style='width:%dpx;height:%dpx;'   ><img src='openDocument2Image/%s.png?%s=%d&%s=%d&id=%d'></img> </div>",
+						(long)width,
+						(long)height,
+						doc.getMd5(),
+						PAGE_PARAM, i,
+						ZOOM_PARAM, zoom,
+						doc.getFileId());
+			}
+			
+			
 			/*** pdf-renderer ***/
 			
+			/*
 		 	PDFFile pdfFile = OpenDocument2ImageServlet.getPDFFile(doc);
 			 
 			
@@ -1095,7 +1135,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 						OpenDocument2ImageServlet.ZOOM_PARAM,
 						zoom,
 						doc.getFileId());
-			}
+			}*/
 			
 			/*** pdfbox ***/
 			/*
@@ -1175,6 +1215,44 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		size = sizea;
 	}
 
+	protected static JSONObject sendPostHttpClient(JSONObject json) {
+		try{
+			String url = "http://"+AonUtil.getDomainName()+"/aon-aio/openDocument2Image/";
+			HttpClientBuilder base = HttpClientBuilder.create();
+			HttpClient client = base.build();
+			HttpPost post = new HttpPost(url);
+			List<NameValuePair> urlParameters =  new ArrayList<NameValuePair>();
+			urlParameters.add(new BasicNameValuePair("details", json.toString()));
+			post.setEntity(new UrlEncodedFormEntity(urlParameters));
+			HttpResponse response = client.execute(post);
+			InputStream is = response.getEntity().getContent();
+			String jsonData = convertStreamToString(is);
+			return new JSONObject(jsonData);
+		} catch (IOException | JSONException e){
+			e.printStackTrace();
+		}
+		return new JSONObject();
+	}
+	
+	private static String convertStreamToString(InputStream is) {
+	    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+	    StringBuilder sb = new StringBuilder();
+	    String line = null;
+	    try {
+	        while ((line = reader.readLine()) != null) {
+	            sb.append(line + "\n");
+	        }
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            is.close();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    return sb.toString();
+	}
 //-------------------- Administrar tags & categories
 
 public Tag newTag(Domain domain, String name) {

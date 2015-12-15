@@ -4,9 +4,11 @@ import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.math.BigInteger;
@@ -16,6 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -28,13 +31,21 @@ import java.util.zip.ZipInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
 import org.jooq.Record1;
 import org.jooq.Record3;
 import org.jooq.Result;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.gwt.common.server.OpenDocument2ImageServlet;
 import com.esferalia.aon.gwt.common.shared.FileInfo;
 import com.esferalia.aon.gwt.fiscal.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.D2DepositTreeObject;
@@ -67,8 +78,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Utils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.sun.pdfview.PDFFile;
-import com.sun.pdfview.PDFPage;
 
 
 public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
@@ -752,6 +761,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 	
 	//-------------------- Visualizar Archivo
 		private static final int DEFAULT_ZOOM = 130;
+		private static final String ZOOM_PARAM = "zoom";
+		private static final String PAGE_PARAM = "page";
 		
 		public String viewer(Integer domainId, MemoryFiles mf){
 			HttpServletRequest request = getThreadLocalRequest();
@@ -762,19 +773,17 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 					, AttachType.REGISTRY);
 			rattach.setMd5(AonFileUtils.getMD5Checksum(rattach.getData()));
 			FileInfo doc = new FileInfo(rattach);
-			return getAsHTML(doc, DEFAULT_ZOOM);
+			if(doc.getDomain() ==  null) doc.setDomain(domainName);
+			return getAsHTML(domainName, doc, DEFAULT_ZOOM);
 		}
 	
-		public String getAsHTML(FileInfo doc, int zoom) {
-
-		
-			
+		public String getAsHTML(String domainName, FileInfo doc, int zoom) {
 			IDocument2HtmlConverter converter = 
 					getDocument2HtmlConverter(doc);
 			try {
 				ByteArrayOutputStream os = 
 						new ByteArrayOutputStream();
-				converter.transform(doc, os, zoom);
+				converter.transform(domainName, doc, os, zoom);
 				os.flush();
 				return os.toString();
 			} catch (Exception e) {
@@ -818,7 +827,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		
 		
 		private static interface IDocument2HtmlConverter {
-			void transform(FileInfo doc, OutputStream os, int zoom) throws Exception;
+			void transform(String domainName, FileInfo doc, OutputStream os, int zoom) throws Exception;
 
 		}
 
@@ -826,7 +835,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 			private static IDocument2HtmlConverter INSTANCE = new Zip2HtmlConverter();
 			
 			@Override
-			public void transform(FileInfo doc, OutputStream os, int zoom)
+			public void transform(String domainName, FileInfo doc, OutputStream os, int zoom)
 					throws Exception {
 				
 				PrintStream printStream = new PrintStream(os);
@@ -857,11 +866,33 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 			private static  IDocument2HtmlConverter INSTANCE = new OpenDocument2HtmlConverter();
 
 			@Override
-			public void transform(FileInfo doc, OutputStream os, int zoom) throws Exception {
-				
+			public void transform(String domainName, FileInfo doc, OutputStream os, int zoom) throws Exception {
 				PrintStream printStream = new PrintStream(os);
+				JSONObject json = new JSONObject();
+				json.put("md5", doc.getMd5())
+					.put("domainName", doc.getDomain())
+					.put("domainId", doc.getDomainId())
+					.put("mimetype", doc.getMimetype())
+					.put("driveId", doc.getDriveId() != null ? doc.getDriveId() : "null")
+					.put("isDrive", doc.getIsDrive())
+					.put("fileId", doc.getFileId());
 				
-				PDFFile pdfFile = OpenDocument2ImageServlet.getPDFFile(doc);
+				JSONObject jsonResponse = sendPostHttpClient(domainName, json);
+				Integer page = jsonResponse.getInt("page");
+				for(Integer i = 1; i<= page; i++){
+					double width = jsonResponse.getDouble("width"+i) * zoom / 100;
+					double height = jsonResponse.getDouble("height"+i) * zoom / 100;
+					
+					printStream.printf("<div class='page' style='width:%dpx;height:%dpx;'   ><img src='openDocument2Image/%s.png?%s=%d&%s=%d&id=%d'></img> </div>",
+							(long)width,
+							(long)height,
+							doc.getMd5(),
+							PAGE_PARAM, i,
+							ZOOM_PARAM, zoom,
+							doc.getFileId());
+				}
+				
+				/*PDFFile pdfFile = OpenDocument2ImageServlet.getPDFFile(doc);
 				
 				for (int page = 1; page <= pdfFile.getNumPages(); page++) {
 					
@@ -880,7 +911,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 							OpenDocument2ImageServlet.ZOOM_PARAM,
 							zoom,
 							doc.getFileId());
-				}		
+				}*/		
 			}
 
 		}
@@ -888,7 +919,6 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 	private static class Noop2HtmlConverter  extends  Document2HtmlConverter  {
 		
 		private static  IDocument2HtmlConverter INSTANCE = new Noop2HtmlConverter();
-		
 		
 		@Override
 		void transform(InputStream is, OutputStream os) throws Exception {
@@ -904,7 +934,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		private static  IDocument2HtmlConverter INSTANCE = new Image2HtmlConverter();
 
 		@Override
-		public void transform(FileInfo doc, OutputStream os, int zoom) throws Exception {
+		public void transform(String domainName, FileInfo doc, OutputStream os, int zoom) throws Exception {
 			
 			PrintStream printStream = new PrintStream(os);
 			
@@ -920,7 +950,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 	}
 	private abstract static class Document2HtmlConverter implements IDocument2HtmlConverter{
 		@Override
-		public void transform(FileInfo doc, OutputStream os, int zoom) throws Exception {
+		public void transform(String domainName, FileInfo doc, OutputStream os, int zoom) throws Exception {
 			Connection conn = null;
 
 			ResultSet rs = null;
@@ -970,5 +1000,43 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		abstract void transform(InputStream is, OutputStream os) throws Exception;
 		
 	}
-
+	
+	protected static JSONObject sendPostHttpClient(String domainName, JSONObject json) {
+		try{
+			String url = "http://"+domainName+"/aon-aio/openDocument2Image/";
+			HttpClientBuilder base = HttpClientBuilder.create();
+			HttpClient client = base.build();
+			HttpPost post = new HttpPost(url);
+			List<NameValuePair> urlParameters =  new ArrayList<NameValuePair>();
+			urlParameters.add(new BasicNameValuePair("details", json.toString()));
+			post.setEntity(new UrlEncodedFormEntity(urlParameters));
+			HttpResponse response = client.execute(post);
+			InputStream is = response.getEntity().getContent();
+			String jsonData = convertStreamToString(is);
+			return new JSONObject(jsonData);
+		} catch (IOException | JSONException e){
+			e.printStackTrace();
+		}
+		return new JSONObject();
+	}
+	
+	private static String convertStreamToString(InputStream is) {
+	    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+	    StringBuilder sb = new StringBuilder();
+	    String line = null;
+	    try {
+	        while ((line = reader.readLine()) != null) {
+	            sb.append(line + "\n");
+	        }
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            is.close();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    return sb.toString();
+	}
 }

@@ -1,5 +1,4 @@
-package com.esferalia.aon.gwt.document.server;
-
+package com.code.aon.aio.servlet.viewer;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -10,14 +9,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.RandomAccessFile;
-import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,15 +23,20 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.ui.google.apis.controller.GoogleDriveController;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
@@ -51,6 +53,7 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
 	static final int DEFAULT_ZOOM = 130;
 	static final String DEFAULT_FORMAT = "png";
 
@@ -61,70 +64,79 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 	private static Map<String, PDFFile> PDFS = new HashMap<String, PDFFile>();
 	
 	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		try {
+			String jsonData = req.getParameter("details");  
+			JSONObject jsonRequest = new JSONObject(jsonData);
+			
+			FileInfo fileInfo = new FileInfo();
+			fileInfo.setMd5(jsonRequest.getString("md5"));
+			fileInfo.setDomain(jsonRequest.getString("domainName"));
+			fileInfo.setDomainId(jsonRequest.getInt("domainId"));
+			fileInfo.setMimetype((byte) jsonRequest.getInt("mimetype"));
+			if(!jsonRequest.getString("driveId").equals("null"))
+				fileInfo.setDriveId(jsonRequest.getString("driveId"));
+			fileInfo.setIsDrive(jsonRequest.getBoolean("isDrive"));
+			fileInfo.setFileId(jsonRequest.getInt("fileId"));
+			
+			PDFFile pdfFile = getPDFFile(fileInfo);
+			Integer page = pdfFile.getNumPages();
+		
+			resp.setContentType("application/json");
+			PrintWriter out = resp.getWriter();
+			JSONObject json = new JSONObject();
+		
+			json.put("page", page);
+			for(Integer i = 1; i<= page ; i++){
+				PDFPage pdfPage = pdfFile.getPage(i);
+				json.put("width"+i, pdfPage.getBBox().getWidth());
+				json.put("height"+i, pdfPage.getBBox().getHeight());
+			}
+			out.print(json.toString());
+			out.flush();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (GeneralSecurityException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		String requestURI = req.getRequestURI();
+		String ext = AonServletUtils.getExtn(requestURI);
+		String rattach = AonServletUtils.getWithoutExtn(requestURI);
+		String format = ext != null ? ext : DEFAULT_FORMAT;
 
+		OutputStream os = resp.getOutputStream();
+
+		Map<String, String[]> params = req.getParameterMap();
+		int page = params.containsKey(PAGE_PARAM) ? Integer.parseInt(params
+				.get(PAGE_PARAM)[0]) : 1;
+		int zoom = params.containsKey(ZOOM_PARAM) ? Integer.parseInt(params
+				.get(ZOOM_PARAM)[0]) : DEFAULT_ZOOM;
+		Integer id = null;
+		if(params.containsKey("id"))
+			 id = Integer.parseInt(req.getParameter("id"));
+		
+		resp.setContentType(String.format("image/%s", format));
+		FileInfo fi = new FileInfo();
+		fi.setFileId(id);
+		fi.setMd5(rattach);
+		PDFFile pdfFile;
 		try {
-			
-			/*ClassLoader loader = _getResourceLoader(req);
-			String resourcePath = getResourcePath(req);
-
-			URL url = loader.getResource(resourcePath);
-			
-			// Make sure the resource is available
-			if (url == null) {
-				resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-				return;
-			}
-
-			// Stream the resource contents to the servlet response
-			URLConnection connection = url.openConnection();
-			connection.setDoInput(true);
-			connection.setDoOutput(false);
-
-			_setHeaders(connection, resp);
-			*/
-			
-			String requestURI = req.getRequestURI();
-			String ext = AonServletUtils.getExtn(requestURI);
-			String rattach = AonServletUtils.getWithoutExtn(requestURI);
-
-			//int rattachId = Integer.parseInt(rattach);
-			String format = ext != null ? ext : DEFAULT_FORMAT;
-
-			OutputStream os = resp.getOutputStream();
-
-			Map<String, String[]> params = req.getParameterMap();
-			int page = params.containsKey(PAGE_PARAM) ? Integer.parseInt(params
-					.get(PAGE_PARAM)[0]) : 1;
-			int zoom = params.containsKey(ZOOM_PARAM) ? Integer.parseInt(params
-					.get(ZOOM_PARAM)[0]) : DEFAULT_ZOOM;
-			Integer id = null;
-			if(params.containsKey("id"))
-				 id = Integer.parseInt(req.getParameter("id"));
-			
-			resp.setContentType(String.format("image/%s", format));
-			FileInfo fi = new FileInfo();
-			fi.setFileId(id);
-			fi.setMd5(rattach);
-			PDFFile pdfFile = getPDFFile(fi);
-			
+			pdfFile = getPDFFile(fi);
 			pdf2Image(pdfFile, os, page, format, zoom);
-			os.flush();
-
-		} catch (SQLException e) {
-			throw new ServletException(e);
-		} catch (KeyStoreException e) {
-			e.printStackTrace();
 		} catch (GeneralSecurityException e) {
 			e.printStackTrace();
 		}
+		os.flush();
+		
 	}
 
 
-	protected static PDFFile getPDFFile(FileInfo doc) throws SQLException,
-			IOException, KeyStoreException, GeneralSecurityException {
-
+	protected static PDFFile getPDFFile(FileInfo doc) throws IOException, GeneralSecurityException{
 		PDFFile pdfFile = PDFS.get(doc.getMd5());
 		if (pdfFile == null) {
 			ByteBuffer byteBuffer = getPdfByeBuffer(doc);
@@ -136,7 +148,9 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 
 	private static ByteBuffer getPdfByeBuffer(FileInfo doc) throws IOException, GeneralSecurityException {
 		Domain domain = new Domain().setName(doc.getDomain()).setId(doc.getDomainId());
-		User user = new User().setLogin("");
+		String login = ""; //AonServletUtils.getLoggedUser();
+		User user = new User().setLogin(login);
+		
 		byte[] b = null;
 		MimeType mimetype = MimeType.values()[doc.getMimetype()];
 		if(doc.getDriveId()!= null){
@@ -146,7 +160,7 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
         		d = GoogleDriveController.dconnection;
         	}
         	else{
-        		g = DBConsults.getServiceAccount(doc.getDomain(),doc.getDomainId());
+        		g = DBConsults.getServiceAccount(domain, user);
         		d = DriveUtils.serviceInitialize(g);
         	}
 			com.google.api.services.drive.model.File f = DriveUtils.getFile(d, domain, user, doc.getDriveId(),doc.getFileId());
@@ -154,50 +168,54 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 				d = DriveUtils.serviceInitializeOld(g);
 			InputStream in = DriveUtils.downloadFile(d, f);
 			b = Utils.InputStreamToByte(in);
-			
 		}
 		else {
-			Attach rattach = ViewerUtils.getRAttach(domain, user, doc.getFileId());
+			Attach rattach =  AON.getAttach(doc.getDomain(), doc.getDomainId(), login, 
+					filter -> filter.getIdProperty().eq(doc.getFileId())
+					,AttachType.REGISTRY);
 			b = rattach.getData();
 			if (mimetype ==null) mimetype = rattach.getMimeType();
 		}		
-
 		return getPdfByeBuffer(doc.getMd5(), mimetype, b);
 	}
 
 	private static ByteBuffer getPdfByeBuffer(String md5, MimeType mimeType,
 			byte[] bytes) throws IOException {
-		
-		if (mimeType == MimeType.PDF) {
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			PdfReader reader = new PdfReader(bytes);
-			PdfStamper stamper;
-			try {
-				stamper = new PdfStamper(reader, os, '4');
-				stamper.close();
-			} catch (DocumentException e) {
-				e.printStackTrace();
+		RandomAccessFile randomAccessFile  = null;
+		try{
+			if (mimeType == MimeType.PDF) {
+				ByteArrayOutputStream os = new ByteArrayOutputStream();
+				PdfReader reader = new PdfReader(bytes);
+				PdfStamper stamper;
+				try {
+					stamper = new PdfStamper(reader, os, '4');
+					stamper.close();
+				} catch (DocumentException e) {
+					e.printStackTrace();
+				}
+				return ByteBuffer.wrap(os.toByteArray());
 			}
-			return ByteBuffer.wrap(os.toByteArray());
-		}
-		String tmpDir = System.getProperty("java.io.tmpdir");
-		File inputFile = new File(tmpDir, md5 + "." + mimeType.getExtension());
+			String tmpDir = System.getProperty("java.io.tmpdir");
+			File inputFile = new File(tmpDir, md5 + "." + mimeType.getExtension());
 
-		FileOutputStream inputFileOs = new FileOutputStream(inputFile);
-		inputFileOs.write(bytes);
-		inputFileOs.close();
+			FileOutputStream inputFileOs = new FileOutputStream(inputFile);
+			inputFileOs.write(bytes);
+			inputFileOs.close();
 
-		File outputFile = new File(tmpDir, md5 + "."
+			File outputFile = new File(tmpDir, md5 + "."
 				+ MimeType.PDF.getExtension());
 
-		convert(inputFile, outputFile);
+			convert(inputFile, outputFile);
 
-		RandomAccessFile randomAccessFile = new RandomAccessFile(outputFile,
+			randomAccessFile = new RandomAccessFile(outputFile,
 				"r");
 
-		FileChannel fileChannel = randomAccessFile.getChannel();
+			FileChannel fileChannel = randomAccessFile.getChannel();
 
-		return fileChannel.map(MapMode.READ_ONLY, 0, randomAccessFile.length());
+			return fileChannel.map(MapMode.READ_ONLY, 0, randomAccessFile.length());
+		}finally{
+			if(randomAccessFile != null) randomAccessFile.close();
+		}
 	}
 
 	private static void pdf2Image(PDFFile pdffile, OutputStream os, int page,
@@ -239,33 +257,10 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 		bufImageGraphics.drawImage(image, 0, 0, null);
 		
 		ImageIO.write(bufferedImage, format, os);
-
 	}
 
-	/**
-	 * Sets HTTP headers on the response which tell the browser to cache the
-	 * resource indefinitely.
-	 */
-	private void _setHeaders(URLConnection connection, HttpServletResponse resp) {
-		int contentLength = connection.getContentLength();
-		if (contentLength >= 0)
-			resp.setContentLength(contentLength);
-
-		long lastModified = connection.getLastModified();
-		if (lastModified > 0)
-			resp.setDateHeader("Last-Modified", lastModified);
-
-		resp.setHeader("Cache-Control", "Public");
-		
-		long currentTime = System.currentTimeMillis();
-
-		resp.setDateHeader("Expires", currentTime + ONE_YEAR_MILLIS);
-	}
-
-	
 	public static final long ONE_YEAR_MILLIS = 31363200000L;
 	
-
 	protected String getResourcePath(HttpServletRequest req) {
 		String path = req.getServletPath();
 		String info = req.getPathInfo();
@@ -273,9 +268,5 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 			path = path.substring(1);
 		}
 		return path + info;
-	}
-
-	private ClassLoader _getResourceLoader(HttpServletRequest req) {
-		return Thread.currentThread().getContextClassLoader();
 	}
 }
