@@ -1,0 +1,217 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:fiscal='urn:import:com.esferalia.aon.gwt.fiscal.client.widget'
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	<g:HTMLPanel styleName="{aonResources.css.aonMarginTop}">
+		<table class="{aonResources.css.aonWidthAll}">
+			<tr>
+				<td class="{aonResources.css.aonPageHeader}">
+					<g:Label text="{msg.stadisticalData}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<table class="{aonResources.css.aonWidthAll} {aonResources.css.aonDataTable}">
+						<colgroup>
+							<col style="width: 20px;" />
+							<col style="width: 50px;" class="{aonResources.css.aonTextCenter}" />
+							<col style="width: 100px;" class="{aonResources.css.aonTextCenter}" />
+							<col style="width: auto;" />
+							<col style="width: 20px;" />
+						</colgroup>
+						<tr>
+							<td class="{aonResources.css.aonBorderBottom}" colspan="5">
+								<g:InlineLabel text="{msg.activities}" styleName="{aonResources.css.aonBold}" />
+								<g:InlineLabel text="{msg.activitiesNote}" styleName="{aonResources.css.aonMarginLeft}"/>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="5">
+								<g:Label text="{msg.mainActivity}" />
+							</td>
+						</tr>
+						<tr>
+							<td></td>
+							<td>
+								<g:Label text="{msg.epigraph}" />
+							</td>
+							<td>
+								<g:Label text="{msg.key}" />
+							</td>
+							<td>
+								<g:Label text="{msg.description}" />
+							</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>
+								<g:Button ui:field='mainActivityButton'
+									styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonTableRowLink}" />
+							</td>
+							<td>
+								<g:Label ui:field='mainActivityEpigraph' />
+							</td>
+							<td>
+								<g:Label ui:field='mainActivityKey' />
+							</td>
+							<td>
+								<g:Label ui:field='mainActivityDescription' />
+							</td>
+							<td>
+								<g:Button ui:field='mainActivityDeleteButton'
+									styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconDelete}" />
+							</td>
+						</tr>
+			
+						<tr>
+							<td colspan="5">
+								&nbsp;
+							</td>
+						</tr>
+						
+						<tr>
+							<td colspan="5">
+								<g:Label text="{msg.otherActivities}" />
+							</td>
+						</tr>
+			
+						<tr style="font-weight: bold;">
+							<td>
+								<g:Button ui:field='activity1Button'
+									styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonTableRowLink}" />
+							</td>
+							<td>
+								<g:Label ui:field='activity1Epigraph' />
+							</td>
+							<td>
+								<g:Label ui:field='activity1Key' />
+							</td>
+							<td>
+								<g:Label ui:field='activity1Description' />
+							</td>
+							<td>
+								<g:Button ui:field='activity1DeleteButton'
+									styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconDelete}" />
+							</td>
+						</tr>
+			
+						<tr style="font-weight: bold;">
+							<td>
+								<g:Button ui:field='activity2Button'
+									styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonTableRowLink}" />
+							</td>
+							<td>
+								<g:Label ui:field='activity2Epigraph' />
+							</td>
+							<td>
+								<g:Label ui:field='activity2Key' />
+							</td>
+							<td>
+								<g:Label ui:field='activity2Description' />
+							</td>
+							<td>
+								<g:Button ui:field='activity2DeleteButton'
+									styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconDelete}" />
+							</td>
+						</tr>
+			
+						<tr style="font-weight: bold;">
+							<td>
+								<g:Button ui:field='activity3Button'
+									styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonTableRowLink}" />
+							</td>
+							<td>
+								<g:Label ui:field='activity3Epigraph' />
+							</td>
+							<td>
+								<g:Label ui:field='activity3Key' />
+							</td>
+							<td>
+								<g:Label ui:field='activity3Description' />
+							</td>
+							<td>
+								<g:Button ui:field='activity3DeleteButton'
+									styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconDelete}" />
+							</td>
+						</tr>
+			
+						<tr style="font-weight: bold;">
+							<td>
+								<g:Button ui:field='activity4Button'
+									styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonTableRowLink}" />
+							</td>
+							<td>
+								<g:Label ui:field='activity4Epigraph' />
+							</td>
+							<td>
+								<g:Label ui:field='activity4Key' />
+							</td>
+							<td>
+								<g:Label ui:field='activity4Description' />
+							</td>
+							<td>
+								<g:Button ui:field='activity4DeleteButton'
+									styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconDelete}" />
+							</td>
+						</tr>
+			
+						<tr style="font-weight: bold;">
+							<td>
+								<g:Button ui:field='activity5Button'
+									styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonTableRowLink}" />
+							</td>
+							<td>
+								<g:Label ui:field='activity5Epigraph' />
+							</td>
+							<td>
+								<g:Label ui:field='activity5Key' />
+							</td>
+							<td>
+								<g:Label ui:field='activity5Description' />
+							</td>
+							<td>
+								<g:Button ui:field='activity5DeleteButton'
+									styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconDelete}" />
+							</td>
+						</tr>
+						<tr>
+							<td colspan="5">
+								&nbsp;
+							</td>
+						</tr>
+						<tr>
+							<td colspan="5">
+								<g:CheckBox ui:field="mod347" text="{msg.mod347Check}" />
+							</td>
+						</tr>
+						<tr>
+							<td colspan="5">
+								&nbsp;
+							</td>
+						</tr>
+					</table>					
+				</td>
+			</tr>
+			<tr>
+				<td class="{aonResources.css.aonPageHeader}">
+					<g:Label text="{msg.mergedDeclarationLabel}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:InlineLabel text="{msg.document}" styleName="{aonResources.css.aonInnerLabel}"/>
+					<aon:DocumentTextBox ui:field="mergedDeclarationDocument"/>
+					<g:InlineLabel text="{msg.companyName}" styleName="{aonResources.css.aonInnerLabel}"/>
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="mergedDeclarationName" 
+						styleName="{aonResources.css.aonInputText}"/>
+				</td>
+			</tr>
+		</table>
+	</g:HTMLPanel>
+</ui:UiBinder>

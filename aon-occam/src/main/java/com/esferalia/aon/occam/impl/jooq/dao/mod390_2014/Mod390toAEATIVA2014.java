@@ -8,14 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Address;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.FarmerRegimeActivity;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKey;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Prorrata;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.SimpliedRegimeActivity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Activity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Address;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.FarmerRegimeActivity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390DetailKey;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Prorrata;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.SimpliedRegimeActivity;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.Administraciones;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.DatEstadisticos;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2014.AEATIVA2014.DatIdent;
@@ -90,7 +90,7 @@ public class Mod390toAEATIVA2014 {
 
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 
-	public static AEATIVA2014 getAEATIVA2014(Mod390 mod390) {
+	public static AEATIVA2014 getAEATIVA2014(Mod3902014 mod390) {
 		AEATIVA2014 iva = new AEATIVA2014();
 		TipoDoc tipoDoc = new TipoDoc();
 		tipoDoc.setCodModelo("390");
@@ -179,7 +179,7 @@ public class Mod390toAEATIVA2014 {
 		return iva;
 	}
 
-	private static RegSimplificado getRegSimplificado(Mod390 mod390) {
+	private static RegSimplificado getRegSimplificado(Mod3902014 mod390) {
 		RegSimplificado reg = null;
 		boolean something = false;
 		if (mod390.getSimpRegime1() != null && AonStringUtils.isNotBlank( mod390.getSimpRegime1().getEpigrafe())) {
@@ -348,7 +348,7 @@ public class Mod390toAEATIVA2014 {
 		return new BigDecimal(Double.toString(d)).setScale(scale,RoundingMode.HALF_UP);
 	}
 
-	private static Devengo getDevengo(Mod390 mod390) {
+	private static Devengo getDevengo(Mod3902014 mod390) {
 		Devengo devengo = new Devengo();
 		devengo.setEjercicio(mod390.getYear());
 		
@@ -416,7 +416,7 @@ public class Mod390toAEATIVA2014 {
 		return devengo;
 	}
 	
-	private static DatEstadisticos getStatisticalData(Mod390 mod390) {
+	private static DatEstadisticos getStatisticalData(Mod3902014 mod390) {
 		DatEstadisticos datEstadisticos = new DatEstadisticos();
 		
 		if (mod390.getMainActivity() != null) {
@@ -454,7 +454,7 @@ public class Mod390toAEATIVA2014 {
 		return datEstadisticos;
 	}
 
-	private static ArrayList<TipoRepresentanteJuridica> getRepresentanteJuridica(Mod390 mod390) {
+	private static ArrayList<TipoRepresentanteJuridica> getRepresentanteJuridica(Mod3902014 mod390) {
 		ArrayList<TipoRepresentanteJuridica> list = new ArrayList<TipoRepresentanteJuridica>();
 		LegalRepresentative[] lrs = new LegalRepresentative[] {
 			mod390.getLegalRepr1(),	
@@ -478,7 +478,7 @@ public class Mod390toAEATIVA2014 {
 		return list;
 	}
 
-	private static TipoRepresentanteFisica getRepresentanteFisica(Mod390 mod390) {
+	private static TipoRepresentanteFisica getRepresentanteFisica(Mod3902014 mod390) {
 		Address address = mod390.getAddress();
 		TipoRepresentanteFisica trf = null;
 		if (address != null) {
@@ -537,7 +537,7 @@ public class Mod390toAEATIVA2014 {
 		return trf;
 	}
 
-	private static RegGeneral getRegGeneral(Mod390 mod390) {
+	private static RegGeneral getRegGeneral(Mod3902014 mod390) {
 		RegGeneral regGeneral = new RegGeneral();
 		BaseImponibleyCuota bases = getBaseImponibleyCuota(mod390);
 		regGeneral.setBaseImponibleyCuota(bases);
@@ -547,7 +547,7 @@ public class Mod390toAEATIVA2014 {
 		return regGeneral;
 	}
 	
-	private static String getResRegGeneral(Mod390 mod390) {
+	private static String getResRegGeneral(Mod3902014 mod390) {
 		Mod390Detail detail = getKey(mod390,Mod390DetailKey.K37);
 		String total = null;
 		if (detail != null) {
@@ -557,7 +557,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static Deducciones getDeducciones(Mod390 mod390) {
+	private static Deducciones getDeducciones(Mod3902014 mod390) {
 		Deducciones deducciones = new Deducciones();
 		deducciones.setOpInterioresBienesServiciosCorrientes(getOpInterioresBienesServiciosCorrientes(mod390));
 		deducciones.setOpIntragrupoCorrientes(getOpIntragrupoCorrientes(mod390));
@@ -576,7 +576,7 @@ public class Mod390toAEATIVA2014 {
 		return deducciones;
 	}
 
-	private static BigDecimal getSumDeducciones(Mod390 mod390) {
+	private static BigDecimal getSumDeducciones(Mod3902014 mod390) {
 		BigDecimal op = null;
 		Mod390Detail detail = getKey(mod390,Mod390DetailKey.K36);
 		if (detail != null) {
@@ -586,7 +586,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static BigDecimal getRegularizPorcProrrata(Mod390 mod390) {
+	private static BigDecimal getRegularizPorcProrrata(Mod3902014 mod390) {
 		BigDecimal op = null;
 		Mod390Detail detail = getKey(mod390,Mod390DetailKey.K35);
 		if (detail != null) {
@@ -596,7 +596,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static BigDecimal getRegularizInversiones(Mod390 mod390) {
+	private static BigDecimal getRegularizInversiones(Mod3902014 mod390) {
 		BigDecimal op = null;
 		Mod390Detail detail = getKey(mod390,Mod390DetailKey.K34);
 		if (detail != null) {
@@ -606,7 +606,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static RectifDeducciones getRectifDeducciones(Mod390 mod390) {
+	private static RectifDeducciones getRectifDeducciones(Mod3902014 mod390) {
 		TipoBaseImponibleYCuota tipo = getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K33));
 		if (tipo != null) {
 			RectifDeducciones op = new RectifDeducciones();
@@ -617,7 +617,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static ComRegAgricGanadPesca getComRegAgricGanadPesca(Mod390 mod390) {
+	private static ComRegAgricGanadPesca getComRegAgricGanadPesca(Mod3902014 mod390) {
 		TipoBaseImponibleYCuota tipo = getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K32));
 		if (tipo != null) {
 			ComRegAgricGanadPesca op = new ComRegAgricGanadPesca();
@@ -628,7 +628,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static AdqIntracomunitariasServicios getAdqIntracomunitariasServicios(Mod390 mod390) {
+	private static AdqIntracomunitariasServicios getAdqIntracomunitariasServicios(Mod3902014 mod390) {
 		AdqIntracomunitariasServicios op = new AdqIntracomunitariasServicios();
 		op.setTipo4(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K30_04)));
 		op.setTipo7(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K30_07)));
@@ -642,7 +642,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static AdqIntracomunitariasBienesInversion getAdqIntracomunitariasBienesInversion(Mod390 mod390) {
+	private static AdqIntracomunitariasBienesInversion getAdqIntracomunitariasBienesInversion(Mod3902014 mod390) {
 		AdqIntracomunitariasBienesInversion op = new AdqIntracomunitariasBienesInversion();
 		op.setTipo4(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K28_04)));
 		op.setTipo7(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K28_07)));
@@ -656,7 +656,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static AdqIntracomunitariasBienesCorrientes getAdqIntracomunitariasBienesCorrientes(Mod390 mod390) {
+	private static AdqIntracomunitariasBienesCorrientes getAdqIntracomunitariasBienesCorrientes(Mod3902014 mod390) {
 		AdqIntracomunitariasBienesCorrientes op = new AdqIntracomunitariasBienesCorrientes();
 		op.setTipo4(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K26_04)));
 		op.setTipo7(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K26_07)));
@@ -670,7 +670,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static ImportacionesBienesInversion getImportacionesBienesInversion(Mod390 mod390) {
+	private static ImportacionesBienesInversion getImportacionesBienesInversion(Mod3902014 mod390) {
 		ImportacionesBienesInversion op = new ImportacionesBienesInversion();
 		op.setTipo4(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K24_04)));
 		op.setTipo7(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K24_07)));
@@ -684,7 +684,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static ImportacionesBienesCorrientes getImportacionesBienesCorrientes(Mod390 mod390) {
+	private static ImportacionesBienesCorrientes getImportacionesBienesCorrientes(Mod3902014 mod390) {
 		ImportacionesBienesCorrientes op = new ImportacionesBienesCorrientes();
 		op.setTipo4(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K22_04)));
 		op.setTipo7(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K22_07)));
@@ -698,7 +698,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static OpIntragrupoBienesInversion getOpIntragrupoBienesInversion(Mod390 mod390) {
+	private static OpIntragrupoBienesInversion getOpIntragrupoBienesInversion(Mod3902014 mod390) {
 		OpIntragrupoBienesInversion op = new OpIntragrupoBienesInversion();
 		op.setTipo4(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K20_04)));
 		op.setTipo7(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K20_07)));
@@ -712,7 +712,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static OpInterioresBienesInversion getOpInterioresBienesInversion(Mod390 mod390) {
+	private static OpInterioresBienesInversion getOpInterioresBienesInversion(Mod3902014 mod390) {
 		OpInterioresBienesInversion op = new OpInterioresBienesInversion();
 		op.setTipo4(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K18_04)));
 		op.setTipo7(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K18_07)));
@@ -726,7 +726,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static OpIntragrupoCorrientes getOpIntragrupoCorrientes(Mod390 mod390) {
+	private static OpIntragrupoCorrientes getOpIntragrupoCorrientes(Mod3902014 mod390) {
 		OpIntragrupoCorrientes op = new OpIntragrupoCorrientes();
 		op.setTipo4(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K16_04)));
 		op.setTipo7(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K16_07)));
@@ -740,7 +740,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static OpInterioresBienesServiciosCorrientes getOpInterioresBienesServiciosCorrientes(Mod390 mod390) {
+	private static OpInterioresBienesServiciosCorrientes getOpInterioresBienesServiciosCorrientes(Mod3902014 mod390) {
 		OpInterioresBienesServiciosCorrientes op = new OpInterioresBienesServiciosCorrientes();
 		op.setTipo4(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K14_04)));
 		op.setTipo7(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K14_07)));
@@ -754,7 +754,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static BaseImponibleyCuota getBaseImponibleyCuota(Mod390 mod390) {
+	private static BaseImponibleyCuota getBaseImponibleyCuota(Mod3902014 mod390) {
 		BaseImponibleyCuota b = new BaseImponibleyCuota();
 		b.setRegOrdinario(getRegOrdinario(mod390));
 		b.setRegCriterioCaja(getRegCriterioCaja(mod390));
@@ -775,7 +775,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static BigDecimal getTotalCuotasIVA(Mod390 mod390) {
+	private static BigDecimal getTotalCuotasIVA(Mod3902014 mod390) {
 		Mod390Detail detail = getKey(mod390,Mod390DetailKey.K13);
 		BigDecimal totalCuotasIVA = null; 
 		if (detail != null) {
@@ -785,7 +785,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static ModRecargoEquivalenciaConcursoAcreedores getModRecargoEquivalenciaConcursoAcreedores(Mod390 mod390) {
+	private static ModRecargoEquivalenciaConcursoAcreedores getModRecargoEquivalenciaConcursoAcreedores(Mod3902014 mod390) {
 		TipoBaseImponibleYCuota tipo = getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K12));
 		if (tipo != null) {
 			ModRecargoEquivalenciaConcursoAcreedores modRecargoEquivalenciaConcursoAcreedores = new ModRecargoEquivalenciaConcursoAcreedores();
@@ -796,7 +796,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static ModRecargoEquivalencia getModRecargoEquivalencia(Mod390 mod390) {
+	private static ModRecargoEquivalencia getModRecargoEquivalencia(Mod3902014 mod390) {
 		TipoBaseImponibleYCuota tipo = getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K11));
 		if (tipo != null) {
 			ModRecargoEquivalencia modRecargoEquivalencia = new ModRecargoEquivalencia();
@@ -807,7 +807,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static RecargoEquivalencia getRecargoEquivalencia(Mod390 mod390) {
+	private static RecargoEquivalencia getRecargoEquivalencia(Mod3902014 mod390) {
 		RecargoEquivalencia recargoEquivalencia = new RecargoEquivalencia();
 		recargoEquivalencia.setTipo05(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K10_05)));
 		recargoEquivalencia.setTipo14(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K10_14)));
@@ -817,7 +817,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static TotalBasesyCuotasIVA getTotalBasesyCuotasIVA(Mod390 mod390) {
+	private static TotalBasesyCuotasIVA getTotalBasesyCuotasIVA(Mod3902014 mod390) {
 		TotalBasesyCuotasIVA totalBasesyCuotasIVA = new TotalBasesyCuotasIVA();
 		totalBasesyCuotasIVA.setTipoX(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K09)));
 		return totalBasesyCuotasIVA;
@@ -825,7 +825,7 @@ public class Mod390toAEATIVA2014 {
 
 
 	private static ModBasesyCuotasConcursoAcreedores getModBasesyCuotasConcursoAcreedores(
-			Mod390 mod390) {
+			Mod3902014 mod390) {
 		TipoBaseImponibleYCuota tipo = getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K08));
 		if (tipo != null) {
 			ModBasesyCuotasConcursoAcreedores modBases = new ModBasesyCuotasConcursoAcreedores();
@@ -836,7 +836,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static ModBasesyCuotas getModBasesyCuotas(Mod390 mod390) {
+	private static ModBasesyCuotas getModBasesyCuotas(Mod3902014 mod390) {
 		TipoBaseImponibleYCuota tipo = getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K07));
 		if (tipo != null) {
 			ModBasesyCuotas modBasesyCuotas = new ModBasesyCuotas();
@@ -847,14 +847,14 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static IVAdevengadoInversionSP getIVAdevengadoInversionSP(Mod390 mod390) {
+	private static IVAdevengadoInversionSP getIVAdevengadoInversionSP(Mod3902014 mod390) {
 		IVAdevengadoInversionSP iVAdevengadoInversionSP = new IVAdevengadoInversionSP();
 		iVAdevengadoInversionSP.setTipoX(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K06)));
 		return iVAdevengadoInversionSP;
 	}
 
 
-	private static AdqIntracomServicios getAdqIntracomServicios(Mod390 mod390) {
+	private static AdqIntracomServicios getAdqIntracomServicios(Mod3902014 mod390) {
 		AdqIntracomServicios adqIntracomServicios = new AdqIntracomServicios();
 		adqIntracomServicios.setTipo4(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K05_04)));
 		adqIntracomServicios.setTipo10(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K05_10)));
@@ -863,7 +863,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static AdqIntracomBienes getAdqIntracomBienes(Mod390 mod390) {
+	private static AdqIntracomBienes getAdqIntracomBienes(Mod3902014 mod390) {
 		AdqIntracomBienes adqIntracomBienes = new AdqIntracomBienes();
 		adqIntracomBienes.setTipo4(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K04_04)));
 		adqIntracomBienes.setTipo10(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K04_10)));
@@ -872,14 +872,14 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static RegAgViajes getRegAgViajes(Mod390 mod390) {
+	private static RegAgViajes getRegAgViajes(Mod3902014 mod390) {
 		RegAgViajes regAgViajes = new RegAgViajes();
 		regAgViajes.setTipo21(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K03_21)));
 		return regAgViajes;
 	}
 
 
-	private static RegBienesUsados getRegBienesUsados(Mod390 mod390) {
+	private static RegBienesUsados getRegBienesUsados(Mod3902014 mod390) {
 		RegBienesUsados regBienesUsados = new RegBienesUsados();
 		regBienesUsados.setTipo4(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K02_04)));
 		regBienesUsados.setTipo10(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K02_10)));
@@ -888,7 +888,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static OpIntragrupo getOpIntragrupo(Mod390 mod390) {
+	private static OpIntragrupo getOpIntragrupo(Mod3902014 mod390) {
 		OpIntragrupo opIntragrupo = new OpIntragrupo();
 		opIntragrupo.setTipo4(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K01_04)));
 		opIntragrupo.setTipo10(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K01_10)));
@@ -897,7 +897,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static RegOrdinario getRegOrdinario(Mod390 mod390) {
+	private static RegOrdinario getRegOrdinario(Mod3902014 mod390) {
 		RegOrdinario regOrdinario = new RegOrdinario();
 		regOrdinario.setTipo4(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K00_04)));
 		regOrdinario.setTipo10(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K00_10)));
@@ -905,7 +905,7 @@ public class Mod390toAEATIVA2014 {
 		return regOrdinario;
 	}
 
-	private static RegCriterioCaja getRegCriterioCaja(Mod390 mod390) {
+	private static RegCriterioCaja getRegCriterioCaja(Mod3902014 mod390) {
 		RegCriterioCaja regCriterioCaja = new RegCriterioCaja();
 		regCriterioCaja.setTipo4(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K40_04)));
 		regCriterioCaja.setTipo10(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K40_10)));
@@ -913,7 +913,7 @@ public class Mod390toAEATIVA2014 {
 		return regCriterioCaja;
 	}
 
-	private static Mod390Detail getKey(Mod390 mod390, Mod390DetailKey key) {
+	private static Mod390Detail getKey(Mod3902014 mod390, Mod390DetailKey key) {
 		if (mod390 != null && mod390.getGeneralRegime() != null) {
 			return mod390.getGeneralRegime().get(key);
 		}
@@ -932,7 +932,7 @@ public class Mod390toAEATIVA2014 {
 		return tipo;
 	}
 
-	private static Administraciones getAdministraciones(Mod390 mod390) {
+	private static Administraciones getAdministraciones(Mod3902014 mod390) {
 		if (mod390.getBox87() > 0.0 && mod390.getBox87() < 100.0) {
 			Administraciones adm = new Administraciones();
 			adm.setComun(ensureBigDecimal(mod390.getBox87()));
@@ -960,7 +960,7 @@ public class Mod390toAEATIVA2014 {
 	}
 
 
-	private static LiqAnual getLiqAnual(Mod390 mod390) {
+	private static LiqAnual getLiqAnual(Mod3902014 mod390) {
 		LiqAnual liq = new LiqAnual();
 		liq.setSumResultados(ensureBigDecimal(mod390.getBox84()) );
 		if (mod390.getBox85() > 0) {
@@ -970,7 +970,7 @@ public class Mod390toAEATIVA2014 {
         return liq;
 	}
 
-	private static ResLiquidaciones getResLiquidaciones(Mod390 mod390) {
+	private static ResLiquidaciones getResLiquidaciones(Mod3902014 mod390) {
 		ResLiquidaciones res = new ResLiquidaciones();
         
 		PerNoRegGrupos perNoRegGrupos = new PerNoRegGrupos();
@@ -1004,7 +1004,7 @@ public class Mod390toAEATIVA2014 {
 		return res;
 	}
 
-	private static VolOperaciones getVolOperaciones(Mod390 mod390) {
+	private static VolOperaciones getVolOperaciones(Mod3902014 mod390) {
 		VolOperaciones vol = new VolOperaciones();
 		if (mod390.getBox99()>0) {
 			vol.setOpRegGeneral(ensureBigDecimal(mod390.getBox99()));
@@ -1052,7 +1052,7 @@ public class Mod390toAEATIVA2014 {
 		return vol;
 	}
 
-	private static OpEspecificas getOpEspecificas(Mod390 mod390) {
+	private static OpEspecificas getOpEspecificas(Mod3902014 mod390) {
 		OpEspecificas op = new OpEspecificas();
 		if (mod390.getBox230()>0) {
 			op.setAdqInterioresExentas(ensureBigDecimal(mod390.getBox230()));

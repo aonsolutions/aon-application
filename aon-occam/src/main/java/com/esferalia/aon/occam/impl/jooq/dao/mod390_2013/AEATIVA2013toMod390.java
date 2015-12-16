@@ -9,13 +9,13 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Address;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.FarmerRegimeActivity;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKey;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.SimpliedRegimeActivity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Activity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Address;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.FarmerRegimeActivity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390DetailKey;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.SimpliedRegimeActivity;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2013.AEATIVA2013.Administraciones;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2013.AEATIVA2013.DatEstadisticos;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2013.AEATIVA2013.DatEstadisticos.Otras;
@@ -41,7 +41,7 @@ public class AEATIVA2013toMod390 {
 
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 
-	public static void populate(Mod390 mod390, AEATIVA2013 iva)
+	public static void populate(Mod3902014 mod390, AEATIVA2013 iva)
 			throws ParseException {
 		DatIdent datIdent = iva.getDatIdent();
 		if (!mod390.isLegalEntity()) {
@@ -701,7 +701,7 @@ public class AEATIVA2013toMod390 {
 		return sra;
 	}
 
-	private static void put(Mod390 mod390, Mod390DetailKey key,
+	private static void put(Mod3902014 mod390, Mod390DetailKey key,
 			TipoBaseImponibleYCuota tipo) {
 		if (tipo != null) {
 			Mod390Detail detail = new Mod390Detail();
@@ -718,7 +718,7 @@ public class AEATIVA2013toMod390 {
 
 	}
 
-	private static void put(Mod390 mod390, Mod390DetailKey key, BigDecimal quota) {
+	private static void put(Mod3902014 mod390, Mod390DetailKey key, BigDecimal quota) {
 		if (quota != null) {
 			Mod390Detail detail = new Mod390Detail();
 			detail.setKey(key);

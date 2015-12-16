@@ -64,8 +64,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
@@ -1493,7 +1493,7 @@ public class AON {
 	}
 
 	// ----------------------------------MODELO 390
-	public static ArrayList<Mod390> getMod390s(String domainName, int domainId) {
+	public static ArrayList<Mod3902014> getMod390s(String domainName, int domainId) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId);
@@ -1504,7 +1504,7 @@ public class AON {
 		}
 	}
 
-	public static Mod390 getMod390(String domainName, int domainId, int id) {
+	public static Mod3902014 getMod390(String domainName, int domainId, int id) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId);
@@ -1526,7 +1526,7 @@ public class AON {
 		}
 	}
 
-	public static Mod390 initializeMod390(String domainName, int domainId,
+	public static Mod3902014 initializeMod390(String domainName, int domainId,
 			Integer year) {
 		AONContext ctx = null;
 		try {
@@ -1538,8 +1538,8 @@ public class AON {
 		}
 	}
 
-	public static Mod390 saveMod390(String domainName, int domainId,
-			Mod390 mod390) {
+	public static Mod3902014 saveMod390(String domainName, int domainId,
+			Mod3902014 mod390) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId);
@@ -1551,7 +1551,7 @@ public class AON {
 	}
 
 	public static void deleteMod390(String domainName, int domainId,
-			Mod390 mod390) {
+			Mod3902014 mod390) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId);
@@ -1563,7 +1563,7 @@ public class AON {
 	}
 
 	public static ArrayList<Mod390Detail> getMod390Details(String domainName,
-			Integer domainId, Mod390 mod390) {
+			Integer domainId, Mod3902014 mod390) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId);

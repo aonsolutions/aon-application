@@ -13,7 +13,7 @@ import org.junit.Test;
 import com.code.aon.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 
 
 public class Mod390Test {
@@ -30,12 +30,12 @@ public class Mod390Test {
 	}
 	@Test
 	public void testByDomains() {
-		ArrayList<Mod390> list = AON.getMod390s(DOMAIN_NAME, DOMAIN_ID);
+		ArrayList<Mod3902014> list = AON.getMod390s(DOMAIN_NAME, DOMAIN_ID);
 		System.out.println( list.size() );
 	}
 	@Test
 	public void testById() {
-		Mod390 mod390 = AON.getMod390(DOMAIN_NAME, DOMAIN_ID, 125);
+		Mod3902014 mod390 = AON.getMod390(DOMAIN_NAME, DOMAIN_ID, 125);
 		Assert.assertEquals( 125, (int) mod390.getId());
 	}
 		

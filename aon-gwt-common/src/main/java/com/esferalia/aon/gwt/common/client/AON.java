@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.common.client;
 import com.esferalia.aon.gwt.common.client.css.AonCSS;
 import com.esferalia.aon.gwt.common.client.css.AonCalendarCSS;
 import com.esferalia.aon.gwt.common.client.css.AonCalendarResources;
+import com.esferalia.aon.gwt.common.client.css.AonCellTable;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
@@ -11,6 +12,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.i18n.client.NumberFormat;
 
 public class AON {
@@ -27,6 +29,7 @@ public class AON {
 	public static final AonResources AON_RESOURCES = GWT.create(AonResources.class);
 	public static final AonCSS AON_CSS = GWT.<AonResources> create(AonResources.class).css();
 	public static final GWTResources GWT_RESOURCES = GWT.create(GWTResources.class);
+	public static final CellTable.Resources AON_CELL_TABLE_STYLE = GWT.create(AonCellTable.class);
 	public static AonCalendarCSS Calendar_CSS = GWT.<AonCalendarResources> create(AonCalendarResources.class).calendar();
 	
 	public static void start() {

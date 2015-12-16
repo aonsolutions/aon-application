@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.common.client.i18n;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKeyGroup;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390DetailKeyGroup;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.ActivityGroup;
@@ -144,7 +144,7 @@ public interface CommonMessages extends Messages {
 		,"M340"		,"Mod. 340"
 		,"M347"		,"Mod. 347"
 		,"M349"		,"Mod. 349"
-		,"M390"		,"Mod. 390"
+		,"M390"		,"IVA. Declaraci\u00F3n Resumen Anual."
 		,"M390_HF"	,"Mod. 390 Hac. For."
 		,"M180"		,"Declaraci\u00F3n Informativa. Retenciones e ingresos a cuenta. Rendimientos procedentes del arrendamiento de inmuebles urbanos. Resumen anual."
 		,"M184"		,"Declaraci\u00F3n Informativa. Entidades en r\u00E9gimen de atribuci\u00F3n de rentas."
@@ -679,7 +679,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Territorio Com\u00FAn")
 	String commonTerritory();
 
-	@DefaultMessage("\u00C1lava")
+	@DefaultMessage("Araba/\u00C1lava")
 	String alava();
 
 	@DefaultMessage("Gipuzkoa")

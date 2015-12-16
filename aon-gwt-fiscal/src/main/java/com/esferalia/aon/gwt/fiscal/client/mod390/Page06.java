@@ -1,16 +1,15 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390;
 
-import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
-import com.esferalia.aon.gwt.common.shared.AonUtil;
+import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
-import com.esferalia.aon.gwt.fiscal.client.widget.SimplifiedRegimePanel;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.FarmerRegimeActivity;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.SimpliedRegimeActivity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.FarmerRegimeActivity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.SimpliedRegimeActivity;
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -19,12 +18,11 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Page6 extends ResizeComposite implements RequiresResize {
+public class Page06 extends ResizeComposite implements RequiresResize {
 
-	interface Page6Binder extends UiBinder<Widget, Page6> {
+	interface Page6Binder extends UiBinder<Widget, Page06> {
 	}
-	private static final NumberFormat FMT_4DEC = NumberFormat.getFormat("#0.0000");
-	
+
 	private static final Page6Binder page6Binder = GWT
 			.create(Page6Binder.class);
 
@@ -39,99 +37,105 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 	@UiField
 	TextBox f01A;
 	@UiField
-	DoubleTextBox f01B;
+	DoubleBox f01B;
+	@UiField(provided=true)
+	DoubleBox f01C;
 	@UiField
-	DoubleTextBox f01C;
+	DoubleBox f01D;
 	@UiField
-	DoubleTextBox f01D;
+	DoubleBox f01E;
 	@UiField
-	DoubleTextBox f01E;
-	@UiField
-	DoubleTextBox f01K;
+	DoubleBox f01K;
 	
 	@UiField
 	TextBox f02A;
 	@UiField
-	DoubleTextBox f02B;
+	DoubleBox f02B;
+	@UiField(provided=true)
+	DoubleBox f02C;
 	@UiField
-	DoubleTextBox f02C;
+	DoubleBox f02D;
 	@UiField
-	DoubleTextBox f02D;
+	DoubleBox f02E;
 	@UiField
-	DoubleTextBox f02E;
-	@UiField
-	DoubleTextBox f02K;
+	DoubleBox f02K;
 
 	@UiField
 	TextBox f03A;
 	@UiField
-	DoubleTextBox f03B;
+	DoubleBox f03B;
+	@UiField(provided=true)
+	DoubleBox f03C;
 	@UiField
-	DoubleTextBox f03C;
+	DoubleBox f03D;
 	@UiField
-	DoubleTextBox f03D;
+	DoubleBox f03E;
 	@UiField
-	DoubleTextBox f03E;
-	@UiField
-	DoubleTextBox f03K;
+	DoubleBox f03K;
 
 	@UiField
 	TextBox f04A;
 	@UiField
-	DoubleTextBox f04B;
+	DoubleBox f04B;
+	@UiField(provided=true)
+	DoubleBox f04C;
 	@UiField
-	DoubleTextBox f04C;
+	DoubleBox f04D;
 	@UiField
-	DoubleTextBox f04D;
+	DoubleBox f04E;
 	@UiField
-	DoubleTextBox f04E;
-	@UiField
-	DoubleTextBox f04K;
+	DoubleBox f04K;
 
 	@UiField
 	TextBox f05A;
 	@UiField
-	DoubleTextBox f05B;
+	DoubleBox f05B;
+	@UiField(provided=true)
+	DoubleBox f05C;
 	@UiField
-	DoubleTextBox f05C;
+	DoubleBox f05D;
 	@UiField
-	DoubleTextBox f05D;
+	DoubleBox f05E;
 	@UiField
-	DoubleTextBox f05E;
-	@UiField
-	DoubleTextBox f05K;
+	DoubleBox f05K;
 
 	@UiField
-	DoubleTextBox box74;
+	DoubleBox box74;
 	
 	@UiField
-	DoubleTextBox box75;
+	DoubleBox box75;
 
 	@UiField
-	DoubleTextBox box76;
+	DoubleBox box76;
 	
 	@UiField
-	DoubleTextBox box77;
+	DoubleBox box77;
 	
 	@UiField
-	DoubleTextBox box78;
+	DoubleBox box78;
 	
 	@UiField
-	DoubleTextBox box79;
+	DoubleBox box79;
 	
 	@UiField
-	DoubleTextBox box80;
+	DoubleBox box80;
 	
 	@UiField
-	DoubleTextBox box81;
+	DoubleBox box81;
 	
 	@UiField
-	DoubleTextBox box82;
+	DoubleBox box82;
 
 	@UiField
-	DoubleTextBox box83;
+	DoubleBox box83;
 	
-	public Page6() {
+	public Page06() {
+		f01C = new DoubleBox(DoubleBox.VISIBLE_LENGTH, 4);
+		f02C = new DoubleBox(DoubleBox.VISIBLE_LENGTH, 4);
+		f03C = new DoubleBox(DoubleBox.VISIBLE_LENGTH, 4);
+		f04C = new DoubleBox(DoubleBox.VISIBLE_LENGTH, 4);
+		f05C = new DoubleBox(DoubleBox.VISIBLE_LENGTH, 4);
+		
 		Widget ui = page6Binder.createAndBindUi(this);
 		initWidget(ui);
 		box74.setEnabled(false);
@@ -152,7 +156,7 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 		f05C.setVisibleLength(5);
 	}
 
-	public void setValue(Mod390 m390) {
+	public void setValue(Mod3902014 m390) {
 		SimpliedRegimeActivity regime = m390.getSimpRegime1();
 		if (regime != null) {
 			activity1.setValue(regime);
@@ -225,27 +229,27 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 	}
 
 	void refresh() {
-		box74.setValue(AonUtil.round(activity1.getBoxJ() + activity2.getBoxJ()));
-		box75.setValue(AonUtil.round(f01K.getDoubleValue()
-				+ f02K.getDoubleValue()
-				+ f03K.getDoubleValue()				
-				+ f04K.getDoubleValue()				
-				+ f05K.getDoubleValue()				
+		box74.setValue(AonMathUtils.round(activity1.getBoxJ() + activity2.getBoxJ()));
+		box75.setValue(AonMathUtils.round(f01K.getValue()
+				+ f02K.getValue()
+				+ f03K.getValue()				
+				+ f04K.getValue()				
+				+ f05K.getValue()				
 				));
-		box79.setValue(AonUtil.round(
-				box74.getDoubleValue() +
-				box75.getDoubleValue() +
-				box76.getDoubleValue() +
-				box77.getDoubleValue() +
-				box78.getDoubleValue()
+		box79.setValue(AonMathUtils.round(
+				box74.getValue() +
+				box75.getValue() +
+				box76.getValue() +
+				box77.getValue() +
+				box78.getValue()
 				));
-		box82.setValue(AonUtil.round(
-				box80.getDoubleValue() +
-				box81.getDoubleValue() 
+		box82.setValue(AonMathUtils.round(
+				box80.getValue() +
+				box81.getValue() 
 				));
-		box83.setValue(AonUtil.round(
-				box79.getDoubleValue() -
-				box82.getDoubleValue() 
+		box83.setValue(AonMathUtils.round(
+				box79.getValue() -
+				box82.getValue() 
 				));
 	}
 	
@@ -279,76 +283,76 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 	}
 		
 		
-	public void populate(Mod390 mod390) {
+	public void populate(Mod3902014 mod390) {
 		SimpliedRegimeActivity regime = activity1.populate();
 		mod390.setSimpRegime1((regime != null)?regime:null);
 		regime = activity2.populate();
 		mod390.setSimpRegime2((regime != null)?regime:null);
 		FarmerRegimeActivity farmer = null;
-		if (!AonUtil.isEmpty(f01A.getValue()) ) {
+		if (!AonStringUtils.isEmpty(f01A.getValue()) ) {
 			farmer = new FarmerRegimeActivity();
 			farmer.setCodigo(f01A.getValue());
-			farmer.setIncomes(f01B.getDoubleValue());
-			farmer.setQuotaIndex(f01C.getDoubleValue(FMT_4DEC));
-			farmer.setAccrualQuota(f01D.getDoubleValue());
-			farmer.setInputQuotas(f01E.getDoubleValue());
-			farmer.setQuota(f01K.getDoubleValue());
+			farmer.setIncomes(f01B.getValue());
+			farmer.setQuotaIndex(f01C.getValue());
+			farmer.setAccrualQuota(f01D.getValue());
+			farmer.setInputQuotas(f01E.getValue());
+			farmer.setQuota(f01K.getValue());
 			mod390.setFarmerRegime1(farmer);
 		}
-		if (!AonUtil.isEmpty(f02A.getValue()) ) {
+		if (!AonStringUtils.isEmpty(f02A.getValue()) ) {
 			farmer = new FarmerRegimeActivity();
 			farmer.setCodigo(f02A.getValue());
-			farmer.setIncomes(f02B.getDoubleValue());
-			farmer.setQuotaIndex(f02C.getDoubleValue(FMT_4DEC));
-			farmer.setAccrualQuota(f02D.getDoubleValue());
-			farmer.setInputQuotas(f02E.getDoubleValue());
-			farmer.setQuota(f02K.getDoubleValue());
+			farmer.setIncomes(f02B.getValue());
+			farmer.setQuotaIndex(f02C.getValue());
+			farmer.setAccrualQuota(f02D.getValue());
+			farmer.setInputQuotas(f02E.getValue());
+			farmer.setQuota(f02K.getValue());
 			mod390.setFarmerRegime2(farmer);
 		}
-		if (!AonUtil.isEmpty(f03A.getValue()) ) {
+		if (!AonStringUtils.isEmpty(f03A.getValue()) ) {
 			farmer = new FarmerRegimeActivity();
 			farmer.setCodigo(f03A.getValue());
-			farmer.setIncomes(f03B.getDoubleValue());
-			farmer.setQuotaIndex(f03C.getDoubleValue(FMT_4DEC));
-			farmer.setAccrualQuota(f03D.getDoubleValue());
-			farmer.setInputQuotas(f03E.getDoubleValue());
-			farmer.setQuota(f03K.getDoubleValue());
+			farmer.setIncomes(f03B.getValue());
+			farmer.setQuotaIndex(f03C.getValue());
+			farmer.setAccrualQuota(f03D.getValue());
+			farmer.setInputQuotas(f03E.getValue());
+			farmer.setQuota(f03K.getValue());
 			mod390.setFarmerRegime3(farmer);
 		}
-		if (!AonUtil.isEmpty(f04A.getValue()) ) {
+		if (!AonStringUtils.isEmpty(f04A.getValue()) ) {
 			farmer = new FarmerRegimeActivity();
 			farmer.setCodigo(f04A.getValue());
-			farmer.setIncomes(f04B.getDoubleValue());
-			farmer.setQuotaIndex(f04C.getDoubleValue(FMT_4DEC));
-			farmer.setAccrualQuota(f04D.getDoubleValue());
-			farmer.setInputQuotas(f04E.getDoubleValue());
-			farmer.setQuota(f04K.getDoubleValue());
+			farmer.setIncomes(f04B.getValue());
+			farmer.setQuotaIndex(f04C.getValue());
+			farmer.setAccrualQuota(f04D.getValue());
+			farmer.setInputQuotas(f04E.getValue());
+			farmer.setQuota(f04K.getValue());
 			mod390.setFarmerRegime4(farmer);
 		}
-		if (!AonUtil.isEmpty(f05A.getValue()) ) {
+		if (!AonStringUtils.isEmpty(f05A.getValue()) ) {
 			farmer = new FarmerRegimeActivity();
 			farmer.setCodigo(f05A.getValue());
-			farmer.setIncomes(f05B.getDoubleValue());
-			farmer.setQuotaIndex(f05C.getDoubleValue(FMT_4DEC));
-			farmer.setAccrualQuota(f05D.getDoubleValue());
-			farmer.setInputQuotas(f05E.getDoubleValue());
-			farmer.setQuota(f05K.getDoubleValue());
+			farmer.setIncomes(f05B.getValue());
+			farmer.setQuotaIndex(f05C.getValue());
+			farmer.setAccrualQuota(f05D.getValue());
+			farmer.setInputQuotas(f05E.getValue());
+			farmer.setQuota(f05K.getValue());
 			mod390.setFarmerRegime5(farmer);
 		}
-		mod390.setBox74(box74.getDoubleValue());
-		mod390.setBox75(box75.getDoubleValue());
-		mod390.setBox76(box76.getDoubleValue());
-		mod390.setBox77(box77.getDoubleValue());
-		mod390.setBox78(box78.getDoubleValue());
-		mod390.setBox79(box79.getDoubleValue());
-		mod390.setBox80(box80.getDoubleValue());
-		mod390.setBox81(box81.getDoubleValue());
-		mod390.setBox82(box82.getDoubleValue());
-		mod390.setBox83(box83.getDoubleValue());
+		mod390.setBox74(box74.getValue());
+		mod390.setBox75(box75.getValue());
+		mod390.setBox76(box76.getValue());
+		mod390.setBox77(box77.getValue());
+		mod390.setBox78(box78.getValue());
+		mod390.setBox79(box79.getValue());
+		mod390.setBox80(box80.getValue());
+		mod390.setBox81(box81.getValue());
+		mod390.setBox82(box82.getValue());
+		mod390.setBox83(box83.getValue());
 	}
 
 	public double getBox83() {
-		return box83.getDoubleValue();
+		return box83.getValue();
 	}
 
 	SimplifiedRegimePanel getActivity1() {
@@ -362,7 +366,7 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 		if (f==0) {
 			f01A.setValue(farmer.getCodigo());
 			f01B.setValue(farmer.getIncomes());
-			f01C.setValue(farmer.getQuotaIndex(),FMT_4DEC);
+			f01C.setValue(farmer.getQuotaIndex());
 			f01D.setValue(farmer.getAccrualQuota());
 			f01E.setValue(farmer.getInputQuotas());
 			f01K.setValue(farmer.getQuota());
@@ -370,7 +374,7 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 		if (f==1) {
 			f02A.setValue(farmer.getCodigo());
 			f02B.setValue(farmer.getIncomes());
-			f02C.setValue(farmer.getQuotaIndex(),FMT_4DEC);
+			f02C.setValue(farmer.getQuotaIndex());
 			f02D.setValue(farmer.getAccrualQuota());
 			f02E.setValue(farmer.getInputQuotas());
 			f02K.setValue(farmer.getQuota());
@@ -378,7 +382,7 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 		if (f==2) {
 			f03A.setValue(farmer.getCodigo());
 			f03B.setValue(farmer.getIncomes());
-			f03C.setValue(farmer.getQuotaIndex(),FMT_4DEC);
+			f03C.setValue(farmer.getQuotaIndex());
 			f03D.setValue(farmer.getAccrualQuota());
 			f03E.setValue(farmer.getInputQuotas());
 			f03K.setValue(farmer.getQuota());
@@ -386,7 +390,7 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 		if (f==3) {
 			f04A.setValue(farmer.getCodigo());
 			f04B.setValue(farmer.getIncomes());
-			f04C.setValue(farmer.getQuotaIndex(),FMT_4DEC);
+			f04C.setValue(farmer.getQuotaIndex());
 			f04D.setValue(farmer.getAccrualQuota());
 			f04E.setValue(farmer.getInputQuotas());
 			f04K.setValue(farmer.getQuota());
@@ -394,7 +398,7 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 		if (f==4) {
 			f05A.setValue(farmer.getCodigo());
 			f05B.setValue(farmer.getIncomes());
-			f05C.setValue(farmer.getQuotaIndex(),FMT_4DEC);
+			f05C.setValue(farmer.getQuotaIndex());
 			f05D.setValue(farmer.getAccrualQuota());
 			f05E.setValue(farmer.getInputQuotas());
 			f05K.setValue(farmer.getQuota());

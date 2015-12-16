@@ -9,12 +9,12 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.cell.SizableTextInputCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabCheckboxCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabSelectionCell;
-import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002013TreeObject;
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
@@ -218,7 +218,7 @@ public class Page02 extends PageAbs {
 		    public void update(int index, CompanyParticipation cp, String value) {
 		    	Province p = null;
 		    	Country c = null;
-		    	if (AonUtil.isNotEmpty(value)) {
+		    	if (AonStringUtils.isNotEmpty(value)) {
 		    		int idx = options.indexOf(value);
 		    		if (idx < (Province.values().length)) {
 		    			p = Province.values()[idx];	

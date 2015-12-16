@@ -4,9 +4,9 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
-import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.ValidationMessage2014;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
@@ -107,10 +107,10 @@ public class ErrorPage extends ResizeComposite {
 	}
 	public void addErrorMsg(Throwable t) {
 		String msg = (t.getCause() != null)?t.getCause().getMessage():t.getMessage();
-		if (AonUtil.isEmpty(msg)) {
+		if (AonStringUtils.isEmpty(msg)) {
 			msg = t.getMessage();
 		}
-		if (AonUtil.isEmpty(msg)) {
+		if (AonStringUtils.isEmpty(msg)) {
 			msg = "Se ha producido un error inesperado. ";
 					
 		}

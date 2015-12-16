@@ -17,8 +17,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
@@ -227,7 +227,7 @@ public class FiscalImpl implements IFiscal {
 
 	// ----------------------------------------------------------- [MODELO 390]
 	@Override
-	public ArrayList<Mod390> getMod390s(AONContext ctx, int domain) {
+	public ArrayList<Mod3902014> getMod390s(AONContext ctx, int domain) {
 		try {
 			return Mod390DAO.getByDomain(ctx, domain);
 		} catch (Throwable t) {
@@ -237,7 +237,7 @@ public class FiscalImpl implements IFiscal {
 	}
 
 	@Override
-	public Mod390 getMod390(AONContext ctx, Integer id) {
+	public Mod3902014 getMod390(AONContext ctx, Integer id) {
 		try {
 			return Mod390DAO.getById(ctx, id);
 		} catch (Throwable t) {
@@ -252,7 +252,7 @@ public class FiscalImpl implements IFiscal {
 	}
 	
 	@Override
-	public Mod390 initializeMod390(AONContext ctx, int year) {
+	public Mod3902014 initializeMod390(AONContext ctx, int year) {
 		try {
 			return Mod390DAO.initialize(ctx, year);
 		} catch (Throwable t) {
@@ -262,19 +262,19 @@ public class FiscalImpl implements IFiscal {
 	}
 
 	@Override
-	public Mod390 saveMod390(AONContext ctx, Mod390 mod390) {
+	public Mod3902014 saveMod390(AONContext ctx, Mod3902014 mod390) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod390DAO.save(ctx, mod390));
 	}
 
 	@Override
-	public void deleteMod390(AONContext ctx, Mod390 mod390) {
+	public void deleteMod390(AONContext ctx, Mod3902014 mod390) {
 		ctx.getDslContext().transaction(
 				configuration -> Mod390DAO.delete(ctx, mod390));
 	}
 
 	@Override
-	public ArrayList<Mod390Detail> getMod390Details(AONContext ctx, Mod390 mod390) {
+	public ArrayList<Mod390Detail> getMod390Details(AONContext ctx, Mod3902014 mod390) {
 		try {
 			return Mod390DAO.getMod390Details(ctx, mod390);
 		} catch (Throwable t) {

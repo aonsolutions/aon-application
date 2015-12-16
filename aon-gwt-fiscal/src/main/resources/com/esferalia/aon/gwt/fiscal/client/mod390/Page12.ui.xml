@@ -7,10 +7,13 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
-	<g:HTMLPanel>
-		<g:Label text="{msg.prorrata}" styleName="{aonResources.css.aonPageHeader}"/>
-
-		<table class="aon-width-all aon-margin-bottom">
+	<g:HTMLPanel styleName="{aonResources.css.aonMarginTop}">
+		<table class="{aonResources.css.aonWidthAll}">
+			<tr>
+				<td class="{aonResources.css.aonPageHeader}">
+					<g:Label text="{msg.prorrata}"/>
+				</td>
+			</tr>
 			<tr>
 				<td>
 					<cell:CellTable ui:field="table"/>
@@ -25,10 +28,5 @@
 				</td>
 			</tr>
 		</table>
-
-		<aon:CnaePanel ui:field="cnaePanel" />
 	</g:HTMLPanel>
-
-	
-
 </ui:UiBinder>

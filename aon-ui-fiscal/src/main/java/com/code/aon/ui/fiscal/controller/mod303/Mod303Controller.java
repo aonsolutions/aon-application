@@ -36,7 +36,7 @@ import com.code.aon.ui.fiscal.aeat.AeatUtils;
 import com.code.aon.ui.fiscal.controller.model.FiscalModelController;
 import com.code.aon.ui.fiscal.file.MOD303Writer;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Activity;
 import com.esferalia.aon.occam.api.model.type.Activities.Type1Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type2Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type3Activities;

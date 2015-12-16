@@ -5,15 +5,13 @@ import java.text.ParseException;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.fiscal.client.widget.ModCellTable;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014.BalanceType;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -143,7 +141,6 @@ public class Page07 extends PageAbs {
 	
 	protected void initializeTable() {
 		table.setCellSpacing(0);
-		CellTable.Resources tableStyle = GWT.create(ModCellTable.class);
 		Label label = null;
 		int tableCol = 0;
 		for (int col = 0; col < Page7Column.values().length; col++) {
@@ -156,7 +153,6 @@ public class Page07 extends PageAbs {
 				label = new Label(Page7Column.values()[col].getName());
 				table.setWidget(0, tableCol, label);
 				table.getColumnFormatter().setWidth(tableCol, (col == 0)?"150px":"100px");
-				table.getFlexCellFormatter().addStyleName(0, tableCol, tableStyle.cellTableStyle().cellTableHeader());
 				table.getFlexCellFormatter().addStyleName(0, tableCol, AON.AON_CSS.aonTextCenter());
 				++tableCol;
 			}

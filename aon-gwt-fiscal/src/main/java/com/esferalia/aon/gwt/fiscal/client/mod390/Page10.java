@@ -1,8 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390;
 
-import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
+import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -22,54 +22,54 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 	private static final Page7Binder page7Binder = GWT
 			.create(Page7Binder.class);
 
-	private Mod390 mod390;
+	private Mod3902014 mod390;
 
 	Mod390CallBack callback;
 	
 	@UiField
-	DoubleTextBox box99;
+	DoubleBox box99;
 	
 	@UiField
-	DoubleTextBox box653;
+	DoubleBox box653;
 
 	@UiField
-	DoubleTextBox box103;
+	DoubleBox box103;
 	
 	@UiField
-	DoubleTextBox box104;
+	DoubleBox box104;
 	
 	@UiField
-	DoubleTextBox box105;
+	DoubleBox box105;
 	
 	@UiField
-	DoubleTextBox box110;
+	DoubleBox box110;
 	
 	@UiField
-	DoubleTextBox box112;
+	DoubleBox box112;
 	
 	@UiField
-	DoubleTextBox box100;
+	DoubleBox box100;
 	
 	@UiField
-	DoubleTextBox box101;
+	DoubleBox box101;
 	
 	@UiField
-	DoubleTextBox box102;
+	DoubleBox box102;
 	
 	@UiField
-	DoubleTextBox box227;
+	DoubleBox box227;
 	
 	@UiField
-	DoubleTextBox box228;
+	DoubleBox box228;
 	
 	@UiField
-	DoubleTextBox box106;
+	DoubleBox box106;
 	
 	@UiField
-	DoubleTextBox box107;
+	DoubleBox box107;
 	
 	@UiField
-	DoubleTextBox box108;
+	DoubleBox box108;
 	
 	public Page10() {
 		Widget ui = page7Binder.createAndBindUi(this);
@@ -77,7 +77,7 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 		box108.setEnabled(false);
 	}
 
-	public void setValue(Mod390 m390) {
+	public void setValue(Mod3902014 m390) {
 		this.mod390 = m390;
 		box99.setValue(this.mod390.getBox99());
 		box653.setValue(this.mod390.getBox653());
@@ -96,22 +96,22 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 		box108.setValue(this.mod390.getBox108());
 	}
 
-	public void populate(Mod390 mod390) {
-		mod390.setBox99(box99.getDoubleValue());
-		mod390.setBox653(box653.getDoubleValue());
-		mod390.setBox103(box103.getDoubleValue());
-		mod390.setBox104(box104.getDoubleValue());
-		mod390.setBox105(box105.getDoubleValue());
-		mod390.setBox110(box110.getDoubleValue());
-		mod390.setBox112(box112.getDoubleValue());
-		mod390.setBox100(box100.getDoubleValue());
-		mod390.setBox101(box101.getDoubleValue());
-		mod390.setBox102(box102.getDoubleValue());
-		mod390.setBox227(box227.getDoubleValue());
-		mod390.setBox228(box228.getDoubleValue());
-		mod390.setBox106(box106.getDoubleValue());
-		mod390.setBox107(box107.getDoubleValue());
-		mod390.setBox108(box108.getDoubleValue());
+	public void populate(Mod3902014 mod390) {
+		mod390.setBox99(box99.getValue());
+		mod390.setBox653(box653.getValue());
+		mod390.setBox103(box103.getValue());
+		mod390.setBox104(box104.getValue());
+		mod390.setBox105(box105.getValue());
+		mod390.setBox110(box110.getValue());
+		mod390.setBox112(box112.getValue());
+		mod390.setBox100(box100.getValue());
+		mod390.setBox101(box101.getValue());
+		mod390.setBox102(box102.getValue());
+		mod390.setBox227(box227.getValue());
+		mod390.setBox228(box228.getValue());
+		mod390.setBox106(box106.getValue());
+		mod390.setBox107(box107.getValue());
+		mod390.setBox108(box108.getValue());
 	}
 	
 	@UiHandler("box99")
@@ -119,7 +119,7 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
-				mod390.setBox99(box99.getDoubleValue());
+				mod390.setBox99(box99.getValue());
 				callback.calculateAndRefresh();
 			}
 		});
@@ -130,7 +130,7 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
-				mod390.setBox653(box653.getDoubleValue());
+				mod390.setBox653(box653.getValue());
 				callback.calculateAndRefresh();
 			}
 		});
@@ -141,7 +141,7 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
-				mod390.setBox103(box103.getDoubleValue());
+				mod390.setBox103(box103.getValue());
 				callback.calculateAndRefresh();
 			}
 		});
@@ -152,7 +152,7 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
-				mod390.setBox104(box104.getDoubleValue());
+				mod390.setBox104(box104.getValue());
 				callback.calculateAndRefresh();
 			}
 		});
@@ -163,7 +163,7 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
-				mod390.setBox105(box105.getDoubleValue());
+				mod390.setBox105(box105.getValue());
 				callback.calculateAndRefresh();
 			}
 		});
@@ -174,7 +174,7 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
-				mod390.setBox110(box110.getDoubleValue());
+				mod390.setBox110(box110.getValue());
 				callback.calculateAndRefresh();
 			}
 		});
@@ -185,7 +185,7 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
-				mod390.setBox112(box112.getDoubleValue());
+				mod390.setBox112(box112.getValue());
 				callback.calculateAndRefresh();
 			}
 		});
@@ -196,7 +196,7 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
-				mod390.setBox100(box100.getDoubleValue());
+				mod390.setBox100(box100.getValue());
 				callback.calculateAndRefresh();
 			}
 		});
@@ -207,7 +207,7 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
-				mod390.setBox101(box101.getDoubleValue());
+				mod390.setBox101(box101.getValue());
 				callback.calculateAndRefresh();
 			}
 		});
@@ -218,7 +218,7 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
-				mod390.setBox102(box102.getDoubleValue());
+				mod390.setBox102(box102.getValue());
 				callback.calculateAndRefresh();
 			}
 		});
@@ -229,7 +229,7 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
-				mod390.setBox227(box227.getDoubleValue());
+				mod390.setBox227(box227.getValue());
 				callback.calculateAndRefresh();
 			}
 		});
@@ -240,7 +240,7 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
-				mod390.setBox228(box228.getDoubleValue());
+				mod390.setBox228(box228.getValue());
 				callback.calculateAndRefresh();
 			}
 		});
@@ -251,7 +251,7 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
-				mod390.setBox106(box106.getDoubleValue());
+				mod390.setBox106(box106.getValue());
 				callback.calculateAndRefresh();
 			}
 		});
@@ -262,7 +262,7 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
-				mod390.setBox107(box107.getDoubleValue());
+				mod390.setBox107(box107.getValue());
 				callback.calculateAndRefresh();
 			}
 		});

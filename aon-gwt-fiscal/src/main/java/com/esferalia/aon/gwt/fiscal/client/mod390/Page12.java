@@ -4,9 +4,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CnaePanel;
 import com.esferalia.aon.gwt.common.client.widget.cell.SizableTextInputCell;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
-import com.esferalia.aon.gwt.fiscal.client.widget.ModCellTable;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Prorrata;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Prorrata;
 import com.esferalia.aon.occam.api.model.type.CNAE;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;
@@ -89,10 +88,9 @@ public class Page12 extends ResizeComposite implements RequiresResize {
 			.create(Page7Binder.class);
 
 	Mod390CallBack callback;
-	Mod390 mod390;
+	Mod3902014 mod390;
 	
-	@UiField
-	CnaePanel cnaePanel;
+	private CnaePanel cnaePanel;
 	
 	private ListDataProvider<Prorrata> dataProvider;
 	@UiField(provided = true)
@@ -102,8 +100,9 @@ public class Page12 extends ResizeComposite implements RequiresResize {
 	Button newProrrata;
 	
 	public Page12() {
-		CellTable.Resources tableStyle = GWT.create(ModCellTable.class);
-		table = new CellTable<Prorrata>(50,tableStyle);
+		cnaePanel = new CnaePanel();
+
+		table = new CellTable<Prorrata>(50, AON.AON_CELL_TABLE_STYLE);
 		table.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
 		table.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 		table.setEmptyTableWidget(new HTML(AON.MSG.noData()));
@@ -317,14 +316,14 @@ public class Page12 extends ResizeComposite implements RequiresResize {
 		table.redraw();		    		
 	}
 	
-	public void setValue(Mod390 m390) {
+	public void setValue(Mod3902014 m390) {
 		this.mod390 = m390;
 		dataProvider = new ListDataProvider<Prorrata>(this.mod390.getProrratas());
 		dataProvider.addDataDisplay(table);
 		table.redraw();
 	}
 
-	public void populate(Mod390 mod390) {
+	public void populate(Mod3902014 mod390) {
 		// Nothing
 	}
 	

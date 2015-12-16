@@ -1,14 +1,14 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Map;
+import java.util.ArrayList;
 
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
-public class Mod390 implements Serializable {
+public class Mod3902014 implements Serializable {
 
 	private static final String LEGAL_ENTITY_PATTERN = "^[0-9|X|Y|Z].*";
 
@@ -887,7 +887,7 @@ public class Mod390 implements Serializable {
 	private double box656;
 	private double box657;
 	
-	private ArrayList<Prorrata> prorratas = new ArrayList<Mod390.Prorrata>();
+	private ArrayList<Prorrata> prorratas = new ArrayList<Mod3902014.Prorrata>();
 	
 	public Integer getId() {
 		return id;

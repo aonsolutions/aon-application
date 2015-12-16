@@ -24,9 +24,9 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Activity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
@@ -99,12 +99,12 @@ public interface FiscalService extends RemoteService {
 	Mod184 initializeMod184(String domainName, Integer domain, Integer year);
 
 	// ---------------------------------------------------------------MODELO 390
-	Mod390 getMod390(String domainName, Integer domain,Integer id) throws AonCoreException;
-	ArrayList<Mod390> getMod390s(String domainName, Integer domain) throws AonCoreException;
-	Mod390 saveMod390(String domainName, Integer domain,Mod390 mod390) throws AonCoreException;
-	void deleteMod390(String domainName, Integer domain,Mod390 mod390) throws AonCoreException;
-	ArrayList<Mod390Detail> getMod390Details(String domainName, Integer domain,Mod390 mod390) throws AonCoreException;
-	Mod390 initializeMod390(String domainName, Integer domain, Integer year);
+	Mod3902014 getMod390(String domainName, Integer domain,Integer id) throws AonCoreException;
+	ArrayList<Mod3902014> getMod390s(String domainName, Integer domain) throws AonCoreException;
+	Mod3902014 saveMod390(String domainName, Integer domain,Mod3902014 mod390) throws AonCoreException;
+	void deleteMod390(String domainName, Integer domain,Mod3902014 mod390) throws AonCoreException;
+	ArrayList<Mod390Detail> getMod390Details(String domainName, Integer domain,Mod3902014 mod390) throws AonCoreException;
+	Mod3902014 initializeMod390(String domainName, Integer domain, Integer year);
 
 	// ---------------------------------------------------------------MODELO 131
 	Mod131 getMod131(String domainName, int domain, int id) throws AonCoreException;

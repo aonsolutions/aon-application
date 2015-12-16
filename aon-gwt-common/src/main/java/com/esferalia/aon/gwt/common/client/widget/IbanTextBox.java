@@ -2,8 +2,8 @@ package com.esferalia.aon.gwt.common.client.widget;
 
 
 import com.esferalia.aon.gwt.common.client.css.AonResources;
-import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.occam.api.model.IIbanContainer;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionHandler;
@@ -60,12 +60,12 @@ public class IbanTextBox extends SimplePanel implements HasSelectionHandlers<Sug
 	}
 	
 	public void setValue(String value) {
-		iban1.setValue( AonUtil.substring(value, 0,4));
-		iban2.setValue( AonUtil.substring(value, 4,8));
-		iban3.setValue( AonUtil.substring(value, 8,12));
-		iban4.setValue( AonUtil.substring(value, 12,16));
-		iban5.setValue( AonUtil.substring(value, 16,20));
-		iban6.setValue( AonUtil.substring(value, 20,24));
+		iban1.setValue( AonStringUtils.substring(value, 0,4));
+		iban2.setValue( AonStringUtils.substring(value, 4,8));
+		iban3.setValue( AonStringUtils.substring(value, 8,12));
+		iban4.setValue( AonStringUtils.substring(value, 12,16));
+		iban5.setValue( AonStringUtils.substring(value, 16,20));
+		iban6.setValue( AonStringUtils.substring(value, 20,24));
 	}
 	
 	@Override

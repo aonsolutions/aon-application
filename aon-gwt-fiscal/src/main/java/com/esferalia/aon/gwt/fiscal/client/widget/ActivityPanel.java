@@ -10,7 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Activity;
 import com.esferalia.aon.occam.api.model.type.ActivityGroup;
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.core.client.GWT;

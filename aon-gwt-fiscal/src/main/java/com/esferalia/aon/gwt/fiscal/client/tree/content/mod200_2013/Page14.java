@@ -6,13 +6,14 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox;
-import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002013TreeObject;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002013TreeObject.IMod200ChangeListener;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.DoubleVariable2013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -168,7 +169,7 @@ public class Page14 extends PageAbs {
 		ibanP.setValue(null);
 		zeroQuota.setValue(false);
 		zeroQuota.setEnabled(false);
-		if (AonUtil.isEmpty(mod200.getResultType())) {
+		if (AonStringUtils.isEmpty(mod200.getResultType())) {
 			payPanel.setVisible(true);
 			zeroPanel.setVisible(true);
 			devPanel.setVisible(true);
@@ -200,20 +201,20 @@ public class Page14 extends PageAbs {
 		
 		DoubleVariable2013 dv =  mod200Object.getMod200().getVariable(Mod2002013Key.BN621);
 		Double value = dv==null?0.0:dv.getValue();
-		if (AonUtil.round(value) == 0.0) {
-			mod200Object.getMod200().setAmount(AonUtil.round(value));
+		if (AonMathUtils.round(value) == 0.0) {
+			mod200Object.getMod200().setAmount(AonMathUtils.round(value));
 			mod200Object.getMod200().setResultType("C");
 			mod200Object.getMod200().setDevType(null);	
 			mod200Object.getMod200().setPayType(null);
 			mod200Object.getMod200().setIban(null);
-		} else if (AonUtil.round(value) < 0.0) {
-			mod200Object.getMod200().setAmount(AonUtil.round(value * -1));
+		} else if (AonMathUtils.round(value) < 0.0) {
+			mod200Object.getMod200().setAmount(AonMathUtils.round(value * -1));
 			mod200Object.getMod200().setResultType("D");
 			mod200Object.getMod200().setDevType(devTypeR.getValue()?"R":"D");
 			mod200Object.getMod200().setPayType(null);
 			mod200Object.getMod200().setIban(ibanD.getValue());
 		} else {
-			mod200Object.getMod200().setAmount(AonUtil.round(value));
+			mod200Object.getMod200().setAmount(AonMathUtils.round(value));
 			mod200Object.getMod200().setResultType("I");
 			mod200Object.getMod200().setDevType(null);
 			mod200Object.getMod200().setPayType(payTypeE.getValue()?"H":"U");

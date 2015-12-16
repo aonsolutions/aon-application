@@ -1,12 +1,12 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
-import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
 import com.esferalia.aon.gwt.fiscal.client.widget.ActivityPanel;
 import com.esferalia.aon.gwt.fiscal.client.widget.ActivityPanel.SelectionCallBack;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Activity;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -19,10 +19,10 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Page3 extends ResizeComposite {
+public class Page03 extends ResizeComposite {
 
 	interface Page3Binder extends
-			UiBinder<Widget, Page3> {
+			UiBinder<Widget, Page03> {
 	}
 
 	private static final Page3Binder page3Binder = GWT
@@ -96,7 +96,6 @@ public class Page3 extends ResizeComposite {
 	@UiField
 	Label activity5Epigraph;
 	
-	@UiField(provided=true)
 	ActivityPanel activityPanel;
 	
 	@UiField
@@ -109,7 +108,7 @@ public class Page3 extends ResizeComposite {
 	TextBox mergedDeclarationName;
 
 	
-	public Page3() {
+	public Page03() {
 		activityPanel = new ActivityPanel();
 		Widget ui = page3Binder.createAndBindUi(this);
 		initWidget(ui);
@@ -260,7 +259,7 @@ public class Page3 extends ResizeComposite {
 		activity5Epigraph.setText(null);
 	}
 
-	public void setValue(Mod390 m390) {
+	public void setValue(Mod3902014 m390) {
 		if (m390.getMainActivity() != null) {
 			mainActivityDescription.setText(m390.getMainActivity().getDescription());	
 			mainActivityKey.setText(m390.getMainActivity().getKey());
@@ -320,8 +319,8 @@ public class Page3 extends ResizeComposite {
 		mergedDeclarationName.setValue(m390.getMergedDeclarationName());
 	}
 
-	public void populate(Mod390 mod390) {
-		if (!AonUtil.isEmpty( mainActivityKey.getText() ) ) {
+	public void populate(Mod3902014 mod390) {
+		if (!AonStringUtils.isEmpty( mainActivityKey.getText() ) ) {
 			Activity mainActivity = new Activity();
 			mainActivity.setKey(mainActivityKey.getText());
 			mainActivity.setDescription(mainActivityDescription.getText());
@@ -331,7 +330,7 @@ public class Page3 extends ResizeComposite {
 			mod390.setMainActivity(null);
 		}
 		
-		if (!AonUtil.isEmpty( activity1Key.getText() ) ) {
+		if (!AonStringUtils.isEmpty( activity1Key.getText() ) ) {
 			Activity activity1 = new Activity();	
 			activity1.setKey(activity1Key.getText());
 			activity1.setDescription(activity1Description.getText());
@@ -341,7 +340,7 @@ public class Page3 extends ResizeComposite {
 			mod390.setActivity1(null);
 		}
 		
-		if (!AonUtil.isEmpty( activity2Key.getText() ) ) {
+		if (!AonStringUtils.isEmpty( activity2Key.getText() ) ) {
 			Activity activity2 = new Activity();	
 			activity2.setKey(activity2Key.getText());
 			activity2.setDescription(activity2Description.getText());
@@ -351,7 +350,7 @@ public class Page3 extends ResizeComposite {
 			mod390.setActivity2(null);
 		}
 		
-		if (!AonUtil.isEmpty( activity3Key.getText() ) ) {
+		if (!AonStringUtils.isEmpty( activity3Key.getText() ) ) {
 			Activity activity3 = new Activity();	
 			activity3.setKey(activity3Key.getText());
 			activity3.setDescription(activity3Description.getText());
@@ -361,7 +360,7 @@ public class Page3 extends ResizeComposite {
 			mod390.setActivity3(null);
 		}
 		
-		if (!AonUtil.isEmpty( activity4Key.getText() ) ) {
+		if (!AonStringUtils.isEmpty( activity4Key.getText() ) ) {
 			Activity activity4 = new Activity();	
 			activity4.setKey(activity4Key.getText());
 			activity4.setDescription(activity4Description.getText());
@@ -371,7 +370,7 @@ public class Page3 extends ResizeComposite {
 			mod390.setActivity4(null);
 		}
 		
-		if (!AonUtil.isEmpty( activity5Key.getText() ) ) {
+		if (!AonStringUtils.isEmpty( activity5Key.getText() ) ) {
 			Activity activity5 = new Activity();	
 			activity5.setKey(activity5Key.getText());
 			activity5.setDescription(activity5Description.getText());

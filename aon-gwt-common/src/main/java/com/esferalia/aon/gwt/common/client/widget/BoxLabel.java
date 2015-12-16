@@ -1,7 +1,8 @@
 package com.esferalia.aon.gwt.common.client.widget;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.shared.AonUtil;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.Label;
 
 public class BoxLabel extends Label {
@@ -17,6 +18,9 @@ public class BoxLabel extends Label {
 		super(text);
 		this.setStyleName(AON.AON_CSS.aonFiscalBox());
 	}
+	public BoxLabel(int number) {
+		this(AonNumberUtils.toString(number));
+	}
 	
 	public void removeErrorState() {
 		removeStyleName(AON.AON_CSS.aonFiscalBoxError());
@@ -31,7 +35,7 @@ public class BoxLabel extends Label {
 	@Override
 	public void setText(String text) {
 		if (text != null && text.length() < TEXT_SIZE) {
-			text = AonUtil.leftPad(text, TEXT_SIZE, '0');
+			text = AonStringUtils.leftPad(text, TEXT_SIZE, '0');
 		}
 		super.setText(text);
 	}

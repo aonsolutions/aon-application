@@ -1,10 +1,10 @@
-package com.esferalia.aon.gwt.fiscal.client.widget;
+package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
-import com.esferalia.aon.gwt.common.shared.AonUtil;
+import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.SimpliedRegimeActivity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.SimpliedRegimeActivity;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -28,50 +28,50 @@ public class SimplifiedRegimePanel extends ResizeComposite {
 	@UiField
     TextBox epigrafe;
 	@UiField
-    DoubleTextBox unit1;
+    DoubleBox unit1;
 	@UiField
-    DoubleTextBox amount1;
+    DoubleBox amount1;
 	@UiField
-    DoubleTextBox unit2;
+    DoubleBox unit2;
 	@UiField
-    DoubleTextBox amount2;
+    DoubleBox amount2;
 	@UiField
-    DoubleTextBox unit3;
+    DoubleBox unit3;
 	@UiField
-    DoubleTextBox amount3;
+    DoubleBox amount3;
 	@UiField
-    DoubleTextBox unit4;
+    DoubleBox unit4;
 	@UiField
-    DoubleTextBox amount4;
+    DoubleBox amount4;
 	@UiField
-    DoubleTextBox unit5;
+    DoubleBox unit5;
 	@UiField
-    DoubleTextBox amount5;
+    DoubleBox amount5;
 	@UiField
-    DoubleTextBox unit6;
+    DoubleBox unit6;
 	@UiField
-    DoubleTextBox amount6;
+    DoubleBox amount6;
 	@UiField
-    DoubleTextBox unit7;
+    DoubleBox unit7;
 	@UiField
-    DoubleTextBox amount7;
+    DoubleBox amount7;
 	
 	@UiField
-    DoubleTextBox boxC;
+    DoubleBox boxC;
 	@UiField
-    DoubleTextBox boxD;
+    DoubleBox boxD;
 	@UiField
-	DoubleTextBox boxE;
+	DoubleBox boxE;
 	@UiField
-	DoubleTextBox boxF;
+	DoubleBox boxF;
 	@UiField
-	DoubleTextBox boxG;
+	DoubleBox boxG;
 	@UiField
-	DoubleTextBox boxH;
+	DoubleBox boxH;
 	@UiField
-	DoubleTextBox boxI;
+	DoubleBox boxI;
 	@UiField
-	DoubleTextBox boxJ;
+	DoubleBox boxJ;
 	
 	
 	public SimplifiedRegimePanel() {
@@ -138,31 +138,31 @@ public class SimplifiedRegimePanel extends ResizeComposite {
 
 	public SimpliedRegimeActivity populate() {
 		SimpliedRegimeActivity reg = null;
-		if (!AonUtil.isEmpty(epigrafe.getValue())) {
+		if (!AonStringUtils.isEmpty(epigrafe.getValue())) {
 			reg = new SimpliedRegimeActivity();
 		    reg.setEpigrafe(epigrafe.getValue());
-		    reg.setUnit1(unit1.getDoubleValue());
-		    reg.setAmount1(amount1.getDoubleValue());
-		    reg.setUnit2(unit2.getDoubleValue());
-		    reg.setAmount2(amount2.getDoubleValue());
-		    reg.setUnit3(unit3.getDoubleValue());
-		    reg.setAmount3(amount3.getDoubleValue());
-		    reg.setUnit4(unit4.getDoubleValue());
-		    reg.setAmount4(amount4.getDoubleValue());
-		    reg.setUnit5(unit5.getDoubleValue());
-		    reg.setAmount5(amount5.getDoubleValue());
-		    reg.setUnit6(unit6.getDoubleValue());
-		    reg.setAmount6(amount6.getDoubleValue());
-		    reg.setUnit7(unit7.getDoubleValue());
-		    reg.setAmount7(amount7.getDoubleValue());
-		    reg.setBoxC(boxC.getDoubleValue());
-		    reg.setBoxD(boxD.getDoubleValue());
-			reg.setBoxE(boxE.getDoubleValue());
-			reg.setBoxF(boxF.getDoubleValue());
-			reg.setBoxG(boxG.getDoubleValue());
-			reg.setBoxH(boxH.getDoubleValue());
-			reg.setBoxI(boxI.getDoubleValue());
-			reg.setBoxJ(boxJ.getDoubleValue());
+		    reg.setUnit1(unit1.getValue());
+		    reg.setAmount1(amount1.getValue());
+		    reg.setUnit2(unit2.getValue());
+		    reg.setAmount2(amount2.getValue());
+		    reg.setUnit3(unit3.getValue());
+		    reg.setAmount3(amount3.getValue());
+		    reg.setUnit4(unit4.getValue());
+		    reg.setAmount4(amount4.getValue());
+		    reg.setUnit5(unit5.getValue());
+		    reg.setAmount5(amount5.getValue());
+		    reg.setUnit6(unit6.getValue());
+		    reg.setAmount6(amount6.getValue());
+		    reg.setUnit7(unit7.getValue());
+		    reg.setAmount7(amount7.getValue());
+		    reg.setBoxC(boxC.getValue());
+		    reg.setBoxD(boxD.getValue());
+			reg.setBoxE(boxE.getValue());
+			reg.setBoxF(boxF.getValue());
+			reg.setBoxG(boxG.getValue());
+			reg.setBoxH(boxH.getValue());
+			reg.setBoxI(boxI.getValue());
+			reg.setBoxJ(boxJ.getValue());
 		}
 		return reg;
 	}
@@ -170,31 +170,31 @@ public class SimplifiedRegimePanel extends ResizeComposite {
 
 	public void empty() {
 	    epigrafe.setValue(null);
-	    unit1.setValue(null);
-	    amount1.setValue(null);
-	    unit2.setValue(null);
-	    amount2.setValue(null);
-	    unit3.setValue(null);
-	    amount3.setValue(null);
-	    unit4.setValue(null);
-	    amount4.setValue(null);
-	    unit5.setValue(null);
-	    amount5.setValue(null);
-	    unit6.setValue(null);
-	    amount6.setValue(null);
-	    unit7.setValue(null);
-	    amount7.setValue(null);
-	    boxC.setValue(null);
-	    boxD.setValue(null);
-		boxE.setValue(null);
-		boxF.setValue(null);
-		boxG.setValue(null);
-		boxH.setValue(null);
-		boxI.setValue(null);
-		boxJ.setValue(null);
+	    unit1.setValue(0.0);
+	    amount1.setValue(0.0);
+	    unit2.setValue(0.0);
+	    amount2.setValue(0.0);
+	    unit3.setValue(0.0);
+	    amount3.setValue(0.0);
+	    unit4.setValue(0.0);
+	    amount4.setValue(0.0);
+	    unit5.setValue(0.0);
+	    amount5.setValue(0.0);
+	    unit6.setValue(0.0);
+	    amount6.setValue(0.0);
+	    unit7.setValue(0.0);
+	    amount7.setValue(0.0);
+	    boxC.setValue(0.0);
+	    boxD.setValue(0.0);
+		boxE.setValue(0.0);
+		boxF.setValue(0.0);
+		boxG.setValue(0.0);
+		boxH.setValue(0.0);
+		boxI.setValue(0.0);
+		boxJ.setValue(0.0);
 	}
 	
 	public double getBoxJ() {
-		return boxJ.getDoubleValue();
+		return boxJ.getValue();
 	}
 }

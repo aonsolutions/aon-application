@@ -24,9 +24,9 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Activity;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Activity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
@@ -102,12 +102,12 @@ public interface FiscalServiceAsync {
 	void initializeMod193(String domainName, Integer domain, Integer year,AsyncCallback<Mod193> callback);
 
 	// ---------------------------------------------------------------MODELO 390
-	void getMod390(String domainName, Integer domain,Integer id, AsyncCallback<Mod390> callback);
-	void getMod390s(String domainName, Integer domain, AsyncCallback<ArrayList<Mod390>> callback);
-	void saveMod390(String domainName, Integer domain, Mod390 mod390, AsyncCallback<Mod390> callback);
-	void deleteMod390(String domainName, Integer domain, Mod390 mod390, AsyncCallback<Void> callback);
-	void getMod390Details(String domainName, Integer domain, Mod390 mod390,AsyncCallback<ArrayList<Mod390Detail>> callback);
-	void initializeMod390(String domainName, Integer domain, Integer year, AsyncCallback<Mod390> callback);
+	void getMod390(String domainName, Integer domain,Integer id, AsyncCallback<Mod3902014> callback);
+	void getMod390s(String domainName, Integer domain, AsyncCallback<ArrayList<Mod3902014>> callback);
+	void saveMod390(String domainName, Integer domain, Mod3902014 mod390, AsyncCallback<Mod3902014> callback);
+	void deleteMod390(String domainName, Integer domain, Mod3902014 mod390, AsyncCallback<Void> callback);
+	void getMod390Details(String domainName, Integer domain, Mod3902014 mod390,AsyncCallback<ArrayList<Mod390Detail>> callback);
+	void initializeMod390(String domainName, Integer domain, Integer year, AsyncCallback<Mod3902014> callback);
 
 	// ---------------------------------------------------------------MODELO 131
 	void getMod131(String domainName, int domain, int id,AsyncCallback<Mod131> callback);

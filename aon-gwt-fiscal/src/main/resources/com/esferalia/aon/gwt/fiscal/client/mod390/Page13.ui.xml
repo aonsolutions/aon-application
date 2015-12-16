@@ -6,12 +6,20 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
-	<g:FlowPanel>
-		<g:Label text="{msg.difActivitiesRegime}" styleName="{aonResources.css.aonPageHeader}"/>
-
-		<g:Label 
-			text="No implementado." 
-			styleName="{aonResources.css.aonWarnMessageBlock}"/>
-	</g:FlowPanel>
-	
+	<g:HTMLPanel styleName="{aonResources.css.aonMarginTop}">
+		<table class="{aonResources.css.aonWidthAll}">
+			<tr>
+				<td class="{aonResources.css.aonPageHeader}">
+					<g:Label text="{msg.difActivitiesRegime}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label 
+						text="No implementado." 
+						styleName="{aonResources.css.aonWarnMessageBlock}"/>
+				</td>
+			</tr>
+		</table>
+	</g:HTMLPanel>
 </ui:UiBinder>

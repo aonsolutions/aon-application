@@ -5,11 +5,11 @@ import java.util.Date;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
-import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Address;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Address;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -17,10 +17,10 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Page4 extends ResizeComposite {
+public class Page04 extends ResizeComposite {
 
 	interface Page4Binder extends
-			UiBinder<Widget, Page4> {
+			UiBinder<Widget, Page04> {
 	}
 
 	private static final Page4Binder page4Binder = GWT
@@ -80,13 +80,13 @@ public class Page4 extends ResizeComposite {
 	@UiField
 	TextBox notary3;
 
-	public Page4() {
+	public Page04() {
 		Widget ui = page4Binder.createAndBindUi(this);
 		initWidget(ui);
 
 	}
 
-	public void setValue(Mod390 m390) {
+	public void setValue(Mod3902014 m390) {
 		if (m390.getAddress() != null) {
 			rdocument.setValue(m390.getAddress().getRdocument());
 			rname.setValue(m390.getAddress().getRname());
@@ -155,7 +155,7 @@ public class Page4 extends ResizeComposite {
 		}
 	}
 
-	public void populate(Mod390 mod390) {
+	public void populate(Mod3902014 mod390) {
 		Address address = new Address();
 		address.setRdocument(rdocument.getValue());
 		address.setRname(rname.getValue());
@@ -171,31 +171,28 @@ public class Page4 extends ResizeComposite {
 		address.setRzip(rzip.getValue());
 		mod390.setAddress(address);
 		
-		if (!AonUtil.isEmpty( document1.getValue() ) ) {
+		if (!AonStringUtils.isEmpty( document1.getValue() ) ) {
 			LegalRepresentative legalRepr = new LegalRepresentative();
 			legalRepr.setDocument(document1.getValue());
 			legalRepr.setName(name1.getValue());
 			legalRepr.setNotary(notary1.getValue());
-//			legalRepr.setNotaryDate(notaryDate1.format());
 			legalRepr.setNotaryDate(notaryDate1.getValue());
 			mod390.setLegalRepr1(legalRepr);
 			
 		}
-		if (!AonUtil.isEmpty( document2.getValue() ) ) {
+		if (!AonStringUtils.isEmpty( document2.getValue() ) ) {
 			LegalRepresentative legalRepr = new LegalRepresentative();
 			legalRepr.setDocument(document2.getValue());
 			legalRepr.setName(name2.getValue());
 			legalRepr.setNotary(notary2.getValue());
-//			legalRepr.setNotaryDate(notaryDate2.format());
 			legalRepr.setNotaryDate(notaryDate2.getValue());
 			mod390.setLegalRepr2(legalRepr);
 		}
-		if (!AonUtil.isEmpty( document3.getValue() ) ) {
+		if (!AonStringUtils.isEmpty( document3.getValue() ) ) {
 			LegalRepresentative legalRepr = new LegalRepresentative();
 			legalRepr.setDocument(document3.getValue());
 			legalRepr.setName(name3.getValue());
 			legalRepr.setNotary(notary3.getValue());
-//			legalRepr.setNotaryDate(notaryDate3.format());
 			legalRepr.setNotaryDate(notaryDate3.getValue());
 			mod390.setLegalRepr3(legalRepr);
 		}

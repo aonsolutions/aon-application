@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Page0 extends ResizeComposite {
+public class Page00 extends ResizeComposite {
 
 	Mod390CallBack callback;
 	
@@ -69,19 +69,19 @@ public class Page0 extends ResizeComposite {
 	CheckBox accrualRegimeTarget;
 	
 	interface Page1Binder extends
-			UiBinder<Widget, Page0> {
+			UiBinder<Widget, Page00> {
 	}
 
 	private static final Page1Binder page1Binder = GWT
 			.create(Page1Binder.class);
 
-	public Page0() {
+	public Page00() {
 		Widget ui = page1Binder.createAndBindUi(this);
 		initWidget(ui);
 		document.setEnabled(false);
 	}
 
-	public void setValue(Mod390 m390) {
+	public void setValue(Mod3902014 m390) {
 		document.setValue(m390.getDocument());
 		name.setValue(m390.getName());
 		replacement.setValue(m390.isReplacement());
@@ -123,7 +123,7 @@ public class Page0 extends ResizeComposite {
 		onClickSpecialGroupRegime(null);
 	}
 
-	public void populate(Mod390 mod390) {
+	public void populate(Mod3902014 mod390) {
 		mod390.setName(name.getValue());
 		mod390.setFirstSurname(firstSurname.getValue());
 		mod390.setSecondSurname(secondSurname.getValue());

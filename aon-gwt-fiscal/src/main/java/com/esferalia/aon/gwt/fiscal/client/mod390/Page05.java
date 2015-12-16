@@ -3,18 +3,16 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 import java.util.EnumMap;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
-import com.esferalia.aon.gwt.common.shared.AonUtil;
+import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
+import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390Detail;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKey;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390.Mod390DetailKeyGroup;
-import com.google.gwt.core.client.GWT;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390DetailKey;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390DetailKeyGroup;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -22,34 +20,27 @@ import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.Widget;
 
-public class Page5 extends ResizeComposite implements RequiresResize {
-
-	interface Page5Binder extends UiBinder<Widget, Page5> {
-	}
-
-	private static final Page5Binder page5Binder = GWT
-			.create(Page5Binder.class);
+public class Page05 extends ResizeComposite implements RequiresResize {
 
 	public static class Mod390DetailFields {
 		private Mod390Detail detail;
-		private DoubleTextBox taxableBase;
-		private DoubleTextBox quota;
+		private DoubleBox taxableBase;
+		private DoubleBox quota;
 		
 		protected Mod390DetailFields(Mod390Detail detail) {
 			this.detail = detail;
-			taxableBase = new DoubleTextBox();
-			quota = new DoubleTextBox();
+			taxableBase = new DoubleBox();
+			quota = new DoubleBox();
 		}
-		public DoubleTextBox getTaxableBase() {
+		public DoubleBox getTaxableBase() {
 			return taxableBase;
 		}
 		public void setTaxableBase(double value) {
 			this.taxableBase.setValue(value);
 			detail.setTaxableBase(value);
 		}
-		public DoubleTextBox getQuota() {
+		public DoubleBox getQuota() {
 			return quota;
 		}
 		public void setQuota(double value) {
@@ -64,22 +55,22 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 		}
 	} 
 	
-	@UiField(provided = true)
-	FlexTable table;
+	private FlexTable table;
 	
 	Mod390CallBack callback;
 	
-	private Mod390 mod390;
+	private Mod3902014 mod390;
 	
 	private EnumMap<Mod390DetailKey, Mod390DetailFields> map; 
 					
-	public Page5() {
+	public Page05() {
+		FlowPanel container = new FlowPanel();
 		table = new FlexTable();
-		Widget ui = page5Binder.createAndBindUi(this);
-		initWidget(ui);
+		container.add(table);
+		initWidget(container);
 	}
 
-	public void setValue(Mod390 m390) {
+	public void setValue(Mod3902014 m390) {
 		this.mod390 = m390;
 		initializeMap();
 		refreshMap(m390,null);
@@ -97,7 +88,7 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 		}
 	}
 
-	public void refreshMap(Mod390 mod390, Mod390DetailKey eventSource) {
+	public void refreshMap(Mod3902014 mod390, Mod390DetailKey eventSource) {
 		if (mod390.getGeneralRegime() != null) {
 			for (Mod390DetailKey key : mod390.getGeneralRegime().keySet()) {
 				Mod390Detail detail = mod390.getGeneralRegime().get(key);
@@ -114,7 +105,7 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 			}
 		}
 	}
-	public void populate(Mod390 mod390) {
+	public void populate(Mod3902014 mod390) {
 		for (Mod390DetailKey key : map.keySet()) {
 			Mod390DetailFields f = map.get(key);
 			mod390.getGeneralRegime().put(key, f.getDetail());
@@ -127,20 +118,29 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 		}
 		
 		table.setWidth("100%");
+		table.setStyleName(AON.AON_CSS.aonMarginTop());
+		table.addStyleName(AON.AON_CSS.aonMarginBottom());
 		table.setCellSpacing(0);
 		ColumnFormatter cf = table.getColumnFormatter();
 		cf.setWidth(0, "auto");
+		cf.addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
+		cf.addStyleName(0, AON.AON_CSS.aonPaddingRight() );
 		cf.setWidth(1, "40px");
+		cf.setStyleName(1, AON.AON_CSS.aonTextCenter());
 		cf.setWidth(2, "140px");
 		cf.setWidth(3, "60px");
 		cf.setWidth(4, "40px");
+		cf.setStyleName(4, AON.AON_CSS.aonTextCenter());
 		cf.setWidth(5, "20px");
-		
-		
+
 		FlexCellFormatter fmt = table.getFlexCellFormatter();
 		
+		
+		fmt.setColSpan(0, 0, 6);
+		fmt.addStyleName(0, 0,AON.AON_CSS.aonPageHeader());
+		table.setWidget(0, 0, new Label(AON.MSG.generalRegimeOperations()));
 
-		int x = 0;
+		int x = 1;
 		int y = 0;
 		int z = 1;
 		int rowspan = 0;
@@ -149,23 +149,20 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 		if (map != null) {
 			for (Mod390DetailKeyGroup group: Mod390DetailKeyGroup.values() ) {
 				if (group == Mod390DetailKeyGroup.DEV_001) {
-					table.setWidget(x, y, new Label("."));
-					x++;
 					Label l = new Label(AON.MSG.outputVat());
 					fmt.setColSpan(x, y, 7);
-					fmt.addStyleName(x, y, AON.AON_CSS.aonPageHeader());
+					fmt.addStyleName(x, y, AON.AON_CSS.aonBold());
+					fmt.addStyleName(x, y, AON.AON_CSS.aonBorderBottom());
 					table.setWidget(x, y, l);
 					x++;
 				} else if (group == Mod390DetailKeyGroup.DED_001) {
-					table.setWidget(x, y, new Label("."));
-					x++;
 					Label l = new Label(AON.MSG.inputVat());
 					fmt.setColSpan(x, y, 7);
-					fmt.addStyleName(x, y, AON.AON_CSS.aonPageHeader());
+					fmt.addStyleName(x, y, AON.AON_CSS.aonBold());
+					fmt.addStyleName(x, y, AON.AON_CSS.aonBorderBottom());
 					table.setWidget(x, y, l);
 					x++;
 				}
-				// <g:Label text="{msg.generalRegimeOperations}" styleName="{aonResources.css.aonPageHeader}"/>
 
 				rowspan = 0;
 				showBorder = false;
@@ -180,16 +177,12 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 					z = 1;
 					oddRow = !oddRow;
 					fmt.setRowSpan(x, y, rowspan);
-					fmt.addStyleName(x, y,AON.AON_CSS.aonVerticalAlignMiddle() );
-					fmt.addStyleName(x, y,AON.AON_CSS.aonPaddingLeft() );
-					fmt.addStyleName(x, y,AON.AON_CSS.aonPaddingRight() );
 					FlowPanel p0 = new FlowPanel();
 					Label l0 = new Label(label);
 					p0.add(l0);
 					p0.setHeight("100%");
 					if (rowspan > 1) {
 						fmt.setHeight(x, y, (rowspan * 20) + "px;");
-						p0.addStyleName(AON.AON_CSS.aonVerticalAlignMiddle() );
 						p0.addStyleName(AON.AON_CSS.aonCurlyLT() );
 					}
 					fmt.addStyleName(x, y,AON.AON_CSS.aonBorderBottomImportant() );
@@ -204,14 +197,7 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 							
 							// Taxable Base Box
 							if ( key.hasTaxableBaseAvailable() ) {
-								FlowPanel p = new FlowPanel();
-								p.addStyleName(AON.AON_CSS.aonTextCenter() );
-								p.addStyleName(AON.AON_CSS.aonSimpleBorder() );
-								p.addStyleName(AON.AON_CSS.aonFontSmall() );
-								p.addStyleName(AON.AON_CSS.aonPadding2() );
-								p.addStyleName(AON.AON_CSS.aonBackgroundDisabled() );
-								p.add(new Label(Integer.toString(det.getTaxableBaseBox())));
-								table.setWidget(x, y, p);
+								table.setWidget(x, y, new BoxLabel(det.getTaxableBaseBox()));
 							}
 							if (showBorder) {
 								fmt.addStyleName(x, y,AON.AON_CSS.aonBorderBottom());	
@@ -220,27 +206,22 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 							
 							// Taxable Base 
 							if ( key.hasTaxableBaseAvailable() ) {
-								fields.getTaxableBase().addStyleName(AON.AON_CSS.aonInputTextImportant());
 								fields.getTaxableBase().setReadOnly(key.isReadonly());
 								final double percent = det.getPercent();
 									fields.getTaxableBase().addChangeHandler(new ChangeHandler() {
 										@Override
 										public void onChange(ChangeEvent event) {
-											if (fields.getTaxableBase().isValidValue()) {
-												fields.getDetail().setTaxableBase(fields.getTaxableBase().getDoubleValue());
+												fields.getDetail().setTaxableBase(fields.getTaxableBase().getValue());
 												if  (percent != 0.0 && fields.getDetail().getQuota() == 0) {
-													fields.setQuota( AonUtil.round( fields.getTaxableBase().getDoubleValue() * percent / 100) );
+													fields.setQuota( AonMathUtils.round( fields.getTaxableBase().getValue() * percent / 100) );
 												}
 											callback.calculateAndRefresh();
 											refreshMap(mod390,fields.detail.getKey());
 										}
-									}
 								});
 								fields.getTaxableBase().setValue(det.getTaxableBase());
 								table.setWidget(x, y, fields.getTaxableBase());
 							}
-							
-							fmt.addStyleName(x, y ,AON.AON_CSS.aonTextRight());
 							if (showBorder) {
 								fmt.addStyleName(x, y,AON.AON_CSS.aonBorderBottom());	
 							}
@@ -260,36 +241,26 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 							++y;
 							
 							// Quota Box 
-							FlowPanel p2 = new FlowPanel();
-							p2.addStyleName(AON.AON_CSS.aonTextCenter() );
-							p2.addStyleName(AON.AON_CSS.aonSimpleBorder() );
-							p2.addStyleName(AON.AON_CSS.aonFontSmall() );
-							p2.addStyleName(AON.AON_CSS.aonPadding2() );			
-							p2.addStyleName(AON.AON_CSS.aonBackgroundDisabled() );
-							p2.add(new Label(Integer.toString(det.getBox())));
-							table.setWidget(x, y, p2);
 							if (showBorder) {
 								fmt.addStyleName(x, y,AON.AON_CSS.aonBorderBottom());	
 							}
+							table.setWidget(x, y, new BoxLabel(det.getBox()));
+
 							++y;
 						
 							// Quota  
-							fields.getQuota().addStyleName(AON.AON_CSS.aonInputTextImportant());
 							fields.getQuota().setValue(det.getQuota());
 							fields.getQuota().setReadOnly(key.isReadonly());
 							fields.getQuota().addChangeHandler(new ChangeHandler() {
 								
 								@Override
 								public void onChange(ChangeEvent event) {
-									if (fields.getQuota().isValidValue()) {
-										fields.getDetail().setQuota(fields.getQuota().getDoubleValue());
-										callback.calculateAndRefresh();
-										refreshMap(mod390,fields.detail.getKey());
-									}
+									fields.getDetail().setQuota(fields.getQuota().getValue());
+									callback.calculateAndRefresh();
+									refreshMap(mod390,fields.detail.getKey());
 								}
 							});
 							table.setWidget(x, y, fields.getQuota());
-							fmt.addStyleName(x, y ,AON.AON_CSS.aonTextRight());
 							if (showBorder) {
 								fmt.addStyleName(x, y,AON.AON_CSS.aonBorderBottom());	
 							}

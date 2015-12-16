@@ -61,11 +61,14 @@ public class DoubleBox extends ValueBox<Double> implements HasErrorHandlers{
 	};
 	
 	public DoubleBox() {
-		this(VISIBLE_LENGTH);
+		this(VISIBLE_LENGTH, PRECISION );
 	}
 	public DoubleBox(int visibleLength) {
+		this(visibleLength, PRECISION );
+	}
+	public DoubleBox(int visibleLength, int precision) {
 		super(Document.get().createTextInputElement(), RENDERER, PARSER);
-		setPrecision( PRECISION );
+		setPrecision( precision );
 		setVisibleLength(visibleLength);
 		setMaxLength(MAX_LENGTH);
 		setStyleName(AON.AON_CSS.aonInputText());

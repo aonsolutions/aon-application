@@ -350,54 +350,50 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 .aon-textBox-error {
 	border: 1px solid red !important;
 }
+
 .aon-link-panel {
 	padding: 0px 0px 1.5em 1.5em;
 }
 .aon-link-container {
-	width: 98%;
+	width: 100%;
 	height: 100%;
-	margin-left: 3px;
-	margin-top: 5px;
+	margin-top: 10px;
 }
 .aon-link-item{
-	background-color: #DDDDDD;
-	cursor: pointer;
-    margin-bottom: 2px;
-    padding: 3px 0;
+    background-color: #3a85c3;
+    border-bottom: 1px solid white;
+    color: white;
+    cursor: pointer;
+    padding: 2px 0;
 }
 .aon-link-item:hover{
-	background-color: #BBBBBB;
+	background-color: #c4dbed;
+	color: black;
 }
 .aon-link-item-selected {
-    margin-bottom: 2px;
-    padding: 3px 0;
-	background-color: #BBBBBB;
+    background-color: #c4dbed;
+    color: black;
 }
-.aon-link-number{
-	border-top: solid #CCC .5px;
-	border-left: solid #BBB 2px;
-	border-bottom: solid #BBB 2px;
-	width: 20px;
-	margin-left: 10px;
-	text-align: center;
-}
-.aon-link-description{
-	text-align: right;
-	font-size: 1.1em;
-	padding-right: 20px;
-	padding-left: 5px;
-}
-@sprite .aon-link-list-item{
-	gwt-image: "aonListData";
-    color: #000000;
+.aon-link-list-item {
     font-size: 0.9em;
     height: auto;
     overflow: hidden;
-    padding-left: 15px;
-    padding-right: 20px;
+    padding-left: 8px;
+    padding-right: 10px;
     text-transform: uppercase;
-    width: auto;
+    width: auto;	
 }
+
+.aon-page-header {
+	background-color: #3a85c3;
+	color: white;
+	font-weight: bold;
+	padding-left: 20px;
+	margin-bottom: 10px;
+	text-transform: uppercase;
+}
+
+
 @sprite .aon-aeat-header-image  {
 	gwt-image: "aonAeatHeaderImage";
 	background-position:   center;
@@ -583,6 +579,8 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
     border-width:1px 15px 1px 0px;
     border-image: imageUrl 0 250 0 0;
     padding-right: 10px;
+    display: flex;
+    padding-right: 10px;    
 }
 @sprite .aon-icon-aeat{
 	gwt-image: "aonAeat";
@@ -662,15 +660,6 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	width:auto;
    	overflow:visible;
    	cursor:pointer;   	
-}
-
-.aon-page-header {
-	background-color: #999;
-	color: white;
-	font-weight: bold;
-	font-size: 1.1em;
-	padding-left: 25px;
-	margin-bottom: 10px;
 }
 
 .aon-value-changed {
@@ -915,7 +904,7 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 .aon-fiscal-box {
     border: 0.5px solid #BBBBBB;
     color: #BBBBBB;
-    font-family: monospace Courier !important;
+    font-family: Fixed, monospace !important;
     font-size: 0.9em;
     padding: 2px 2px 2px 3px;
     text-align: center;

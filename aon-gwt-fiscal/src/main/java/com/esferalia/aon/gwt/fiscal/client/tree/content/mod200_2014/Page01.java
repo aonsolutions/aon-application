@@ -10,13 +10,12 @@ import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.cell.SizableTextInputCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabCheckboxCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabSelectionCell;
-import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002014TreeObject;
-import com.esferalia.aon.gwt.fiscal.client.widget.ModCellTable;
 import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Secretary;
 import com.esferalia.aon.occam.api.model.type.Province;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
@@ -76,9 +75,7 @@ public class Page01 extends PageAbs {
 
 	public Page01() {
 
-		CellTable.Resources tableStyle = GWT.create(ModCellTable.class);
-		
-		table1 = new CellTable<LegalRepresentative>(50,tableStyle);
+		table1 = new CellTable<LegalRepresentative>(50);
 		table1.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
 		table1.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 		table1.setEmptyTableWidget(new HTML(AON.MSG.noData()));
@@ -90,7 +87,7 @@ public class Page01 extends PageAbs {
 		addLegalNotaryDateColumn();
 		addLegalRemoveColumn();
 
-		table2 = new CellTable<CompanyAdministrator>(50,tableStyle);
+		table2 = new CellTable<CompanyAdministrator>(50);
 		table2.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
 		table2.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 		table2.setEmptyTableWidget(new HTML(AON.MSG.noData()));
@@ -210,10 +207,10 @@ public class Page01 extends PageAbs {
 		};
 		col.setFieldUpdater(new FieldUpdater<LegalRepresentative, String>() {
 		    public void update(int index, LegalRepresentative lr, String value) {
-		    	if (!AonUtil.isEmpty(value)) {
+		    	if (!AonStringUtils.isEmpty(value)) {
 		    		if (value.length() > 20) {
 		    			Window.alert("Este dato admite 20 caracteres de longitud");
-		    			value = AonUtil.substring(value, 0, 19);
+		    			value = AonStringUtils.substring(value, 0, 19);
 		    		}
 		    	}
 		    	dataProvider1.getList().get(index).setNotary(value);
@@ -238,7 +235,7 @@ public class Page01 extends PageAbs {
 		col.setFieldUpdater(new FieldUpdater<LegalRepresentative, String>() {
 		    public void update(int index, LegalRepresentative lr, String value) {
 		    	Date notaryDate = null;
-		    	if (AonUtil.isNotEmpty(value)) {
+		    	if (AonStringUtils.isNotEmpty(value)) {
 		    		try {
 		    			notaryDate = format.parse(value);
 		    		} catch (IllegalArgumentException ex) {
@@ -379,7 +376,7 @@ public class Page01 extends PageAbs {
 		col.setFieldUpdater(new FieldUpdater<CompanyAdministrator, String>() {
 		    public void update(int index, CompanyAdministrator ca, String value) {
 		    	Province p = null;
-		    	if (AonUtil.isNotEmpty(value)) {
+		    	if (AonStringUtils.isNotEmpty(value)) {
 		    		p = Province.values()[options.indexOf(value)]; 
 		    	}
 		    	dataProvider2.getList().get(index).setProvince(p==null?0:p.ordinal());

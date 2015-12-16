@@ -416,12 +416,6 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-link-item-selected")
 	String aonLinkItemSelected();
 	
-	@ClassName("aon-link-number")
-	String aonLinkNumber();
-	
-	@ClassName("aon-link-description")
-	String aonLinkDescription();
-	
 	@ClassName("aon-link-list-item")
 	String aonLinkListItem();
 

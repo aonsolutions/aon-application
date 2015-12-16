@@ -11,40 +11,42 @@
 	
 	<g:DockLayoutPanel>
 		<g:north size="26">
-			<g:FlowPanel ui:field="toolbarPanel" height="100%" 
+			<g:HTMLPanel height="100%" 
 				styleName="{aonResources.css.aonFindingTitleToolbar} {aonResources.css.aonWidthAll}">
-				<g:HorizontalPanel>
-					<g:HTMLPanel styleName="{aonResources.css.aonFindingTitle}">
-						<g:HTMLPanel styleName="{aonResources.css.aonFindingTitleInternal}">
-							<g:Label text="{msg.mod193}" />
-						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<g:HTMLPanel>
-						<g:HTMLPanel styleName="{aonResources.css.aonFindingSubtitleIternal}">
-							<g:Label/>
-						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbar}">
-						<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbarItemGroup}">
-							<g:Button ui:field="newButton" text="{msg.newAction}" 
-								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconReset}"/>
-							<g:Button ui:field="saveButton"  text="{msg.saveAction}" 
-								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconSave}"/>
-							<g:Button ui:field="cancelButton" text="{msg.cancelAction}" 
-								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconCancel}" />
-							<g:Button ui:field="deleteButton" text="{msg.deleteAction}" 
-								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconDelete}" />
-							<g:Button ui:field="printButton" text="{msg.printViaAeat}"
-								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconPdfPreview}" />
-							<g:Button ui:field="generateFileButton" text="{msg.generateFile}"
-								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconAeat}"  />
-							<g:Anchor ui:field="download" visible="false"/>							
-							<g:FlowPanel ui:field="formContainer">
+				<table cellpadding="0" cellspacing="0" class="{aonResources.css.aonWidthAll}">				
+					<tr>
+						<td class="{aonResources.css.aonFindingTitle}">
+							<g:FlowPanel styleName="{aonResources.css.aonFindingTitleInternal}">
+								<g:Label text="{msg.mod193}" />
 							</g:FlowPanel>
-						</g:HTMLPanel>
-					</g:HTMLPanel>
-				</g:HorizontalPanel>
-			</g:FlowPanel>
+						</td>
+						<td>
+							<g:HTMLPanel styleName="{aonResources.css.aonFindingSubtitleIternal}">
+								<g:Label/>
+							</g:HTMLPanel>
+						</td>
+						<td class="{aonResources.css.aonFindingToolbar}">
+							<g:FlowPanel styleName="{aonResources.css.aonFindingToolbarItemGroup}">
+								<g:Button ui:field="newButton" text="{msg.newAction}" 
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconReset}"/>
+								<g:Button ui:field="saveButton"  text="{msg.saveAction}" 
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconSave}"/>
+								<g:Button ui:field="cancelButton" text="{msg.cancelAction}" 
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconCancel}" />
+								<g:Button ui:field="deleteButton" text="{msg.deleteAction}" 
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconDelete}" />
+								<g:Button ui:field="printButton" text="{msg.printViaAeat}"
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconPdfPreview}" />
+								<g:Button ui:field="generateFileButton" text="{msg.generateFile}"
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconAeat}"  />
+								<g:Anchor ui:field="download" visible="false"/>							
+								<g:FlowPanel ui:field="formContainer">
+								</g:FlowPanel>
+							</g:FlowPanel>
+						</td>
+					</tr>
+				</table>
+			</g:HTMLPanel>
 		</g:north>
 		
 		<g:center>

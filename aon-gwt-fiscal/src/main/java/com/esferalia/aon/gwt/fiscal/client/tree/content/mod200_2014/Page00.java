@@ -14,7 +14,6 @@ import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002014TreeObject;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002014TreeObject.IMod200ChangeListener;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.DoubleVariable2014;
@@ -23,6 +22,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014.BalanceTy
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -221,12 +221,12 @@ public class Page00 extends PageAbs {
 		for (Mod2002014Key key : CHARACTERS_KEYS) {
 			DoubleVariable2014 sv = this.mod200Object.getMod200().getKeysMap().get(key);
 			if (sv != null && inputs.containsKey( key )) {
-				inputs.get( key ).setValue( AonUtil.equals(sv.getValue() , 1.0) );
+				inputs.get( key ).setValue( AonMathUtils.equals(sv.getValue() , 1.0) );
 			}
 		}
 		cnaeLabel.setText(null);
 		cnae.setValue(this.mod200Object.getMod200().getCnae());
-		if (!AonUtil.isEmpty(this.mod200Object.getMod200().getCnae())) {
+		if (!AonStringUtils.isEmpty(this.mod200Object.getMod200().getCnae())) {
 			CNAE2009 cnae = CNAE2009.valueOfCode(this.mod200Object.getMod200().getCnae());
 			cnaeLabel.setText(cnae==null?null:cnae.getDescription());	
 		}
@@ -236,7 +236,7 @@ public class Page00 extends PageAbs {
 			public void mod200Changed(Mod2002014 mod200) {
 				DoubleVariable2014 sv = mod200.getVariable(Mod2002014Key.C0027);
 				if (sv != null && inputs.containsKey( Mod2002014Key.C0027 )) {
-					inputs.get( Mod2002014Key.C0027 ).setValue( AonUtil.equals(sv.getValue() , 1.0) );
+					inputs.get( Mod2002014Key.C0027 ).setValue( AonMathUtils.equals(sv.getValue() , 1.0) );
 				}
 			}
 		});
