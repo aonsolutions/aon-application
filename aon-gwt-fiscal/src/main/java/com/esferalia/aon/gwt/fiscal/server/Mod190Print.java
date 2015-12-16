@@ -12,8 +12,6 @@ import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -21,7 +19,6 @@ import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -31,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
-import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.server.fiscal.format.mod190.Mod190Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
@@ -90,7 +86,7 @@ public class Mod190Print extends HttpServlet {
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
 
 		String urlParameters = 
-				"HID=INV3190A" + 
+				"HID=INV5190A" + 
 				"&IDI=ES" + 
 				"&FIC="	+ encodedFile + 
 				"&RUT=" + 
@@ -135,28 +131,9 @@ public class Mod190Print extends HttpServlet {
 
 		DataInputStream input = new DataInputStream(connection.getInputStream());
 		
-		resp.setContentType(MimeType.PDF.getName());
-		resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".pdf\";");
 		AonIOUtils.copy(input, resp.getOutputStream());
 		resp.flushBuffer();
 		connection.disconnect();
 	}
 
-	private static class DefaultTrustManager implements X509TrustManager {
-
-		@Override
-		public void checkClientTrusted(X509Certificate[] arg0, String arg1)
-				throws CertificateException {
-		}
-
-		@Override
-		public void checkServerTrusted(X509Certificate[] arg0, String arg1)
-				throws CertificateException {
-		}
-
-		@Override
-		public X509Certificate[] getAcceptedIssuers() {
-			return null;
-		}
-	}
 }

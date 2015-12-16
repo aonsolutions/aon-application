@@ -62,7 +62,9 @@ public class Mod184Writer {
 		   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(inc.getCountry(),2))
 		   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getRegime(),1,0))
 		   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getActivityType(),1,0))
-		   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getEpigraph(),4,0))
+		   ,(wr, mod184,prt,inc) -> {
+					   wr.append(AonFiscalFileUtils.unsigned(inc.getEpigraph(),4));		   
+				   }
 		   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(inc.getGranteeDocument(),9))
 		   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(inc.getGranteeName(),20))
 		   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.dateZero(inc.getAdqDate()))
@@ -92,7 +94,7 @@ public class Mod184Writer {
 		   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(prt.getCountry(),2))
 		   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(prt.getPartType(),1,0))
 		   ,(wr, mod184,prt,inc) -> wr.append(prt.isMemberEndOfYear()?"X":"")
-		   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(prt.getMemberDays(),3,0))
+		   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(prt.getMemberDays(),3))
 		   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(prt.getPartPercent(),7,4))
 		   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(prt.getKey(),1))
 		   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(prt.getSubKey(),2,0))
