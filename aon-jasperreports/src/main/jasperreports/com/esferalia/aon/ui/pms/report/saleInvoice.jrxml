@@ -2493,7 +2493,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{address}.getGeozone().getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{address}.getGeozone()!=null && $F{address}.getGeozone().getId()!=null) ? $F{address}.getGeozone().getName() : $F{address}.getProvince()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="892c5af2-2324-4fbf-92b0-5cd8afe332b1" key="textField-36" x="273" y="46" width="246" height="15"/>
