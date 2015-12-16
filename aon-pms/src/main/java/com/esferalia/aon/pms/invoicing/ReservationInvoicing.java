@@ -473,8 +473,8 @@ public class ReservationInvoicing implements IReservationConstants {
 		} else {
 			invoiceAddress.setStreetType(address.getStreetType()); 
 			invoiceAddress.setAddress(address.getAddress());
-			invoiceAddress.setAddress2(address.getAddress2());
 			invoiceAddress.setNumber(address.getNumber()); 
+			invoiceAddress.setAddress2(address.getAddress2());
 			invoiceAddress.setZip(address.getZip()); 
 			invoiceAddress.setCity(address.getCity()); 
 			invoiceAddress.setProvince(address.getProvince()); 

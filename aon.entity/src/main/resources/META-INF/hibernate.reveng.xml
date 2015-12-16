@@ -1242,6 +1242,7 @@
 		<column name="guest_index" type="int"/>
 		<column name="document_type" type="com.code.aon.registry.enumeration.DocumentType" property="documentType"/>
 		<column name="document_country" type="com.code.aon.common.enumeration.Country" property="documentCountry"/>
+		<column name="country" type="com.code.aon.common.enumeration.Country" property="country"/>
 	</table>
 	
 	<table name="project_reservation_room">
@@ -1358,6 +1359,7 @@
 	
 	<table name="reservation_request_guest">
 		<column name="guest_index" type="int"/>
+		<column name="country" type="com.code.aon.common.enumeration.Country" property="country"/>
 	</table>
 	
 	<table name="reservation_request_room">

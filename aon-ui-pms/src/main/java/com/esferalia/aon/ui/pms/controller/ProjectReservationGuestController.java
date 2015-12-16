@@ -57,7 +57,7 @@ public class ProjectReservationGuestController extends LinesController {
 			RegistryMedia email = person.getRegistry().getEmail();
 			RegistryMedia phone = person.getRegistry().getCellular();
 			RegistryAddress address = person.getRegistry().getDefaultAddress();
-			String country = (address!=null && address.getGeozone()!= null) ? address.getGeozone().getGeoZoneCountry().getCode() : null;
+			Country country = (address!=null && address.getGeozone()!=null) ? Country.obtainCountry(address.getGeozone().getGeoZoneCountry().getCode()) : null;
 
 			reservationGuest.setName(person.getName());
 			reservationGuest.setSurname(person.getFirstSurname());
@@ -71,7 +71,7 @@ public class ProjectReservationGuestController extends LinesController {
 			reservationGuest.setZip((address!=null) ? address.getZip() : null);
 			reservationGuest.setCity((address!=null) ? address.getCity() : null);
 			reservationGuest.setProvince((address!=null) ? StringUtils.substring(address.getAddress3(), 0, 64) : null);
-			reservationGuest.setCountry((country!=null) ? country : reservationGuest.getDocumentCountry().getValue());
+			reservationGuest.setCountry(country);
 			reservationGuest.setPerson(person);
 		} else {
 			reservationGuest.setPerson(null);

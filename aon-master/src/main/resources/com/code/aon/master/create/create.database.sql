@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.35.0
+# Version: 8.36.0
 # Created by: girazu
-# Creation Date: 26/11/2015 12:05
+# Creation Date: 11/12/2015 13:20
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -6937,6 +6937,8 @@ CREATE TABLE `reservation_request_guest` (
   `email` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Email',
   `phone` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Telefono',
   `address` varchar(256) collate latin1_spanish_ci default NULL COMMENT 'Direccion',
+  `number` varchar(12) collate latin1_spanish_ci default NULL COMMENT 'Numero',
+  `address2` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Segunda parte de la Direccion',
   `zip` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Codigo postal',
   `city` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Ciudad',
   `province` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Provincia',
@@ -8023,7 +8025,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.35.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.36.0');
 
 COMMIT;
 

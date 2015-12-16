@@ -33,6 +33,7 @@ public class ProjectReservationGuestControllerListener extends ControllerAdapter
 		ProjectReservationGuest to = (ProjectReservationGuest)controller.getTo();
 		to.setProjectReservation((ProjectReservation)controller.getMasterController().getTo());
 		to.setDocumentCountry(Country.ES);
+		to.setCountry(Country.ES);
 	}
 
 	@Override

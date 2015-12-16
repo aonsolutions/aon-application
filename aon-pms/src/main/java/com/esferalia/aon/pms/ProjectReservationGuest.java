@@ -112,7 +112,7 @@ public class ProjectReservationGuest extends ProjectReservationGuestDB implement
     	fullAddress += StringUtils.isEmpty(getZip()) ? "" : getZip() + " - ";
     	fullAddress += StringUtils.isEmpty(getCity()) ? "" : getCity() + " ";
     	fullAddress += StringUtils.isEmpty(getProvince()) ? "" : "(" + getProvince() + ") ";
-    	fullAddress += StringUtils.isEmpty(getCountry()) ? "" : getCountry();
+    	fullAddress += getCountry() == null ? "" : getCountry().getValue();
     	return fullAddress;
 	}
 	

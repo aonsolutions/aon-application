@@ -1124,6 +1124,8 @@ public class ProjectReservationController extends BasicController implements IPm
 		getReservationInvoiceTo().getRegistry().setDocument(reservationGuest.getDocument());
 
 		getReservationInvoiceTo().getAddress().setAddress(StringUtils.abbreviate(reservationGuest.getAddress(), 45));
+		getReservationInvoiceTo().getAddress().setNumber(StringUtils.abbreviate(reservationGuest.getNumber(), 12));
+		getReservationInvoiceTo().getAddress().setAddress2(StringUtils.abbreviate(reservationGuest.getAddress2(), 45));
 		getReservationInvoiceTo().getAddress().setZip(StringUtils.abbreviate(reservationGuest.getZip(), 16));
 		getReservationInvoiceTo().getAddress().setCity(StringUtils.abbreviate(reservationGuest.getCity(), 45));
 		getReservationInvoiceTo().getAddress().setProvince(StringUtils.abbreviate(reservationGuest.getProvince(), 45));

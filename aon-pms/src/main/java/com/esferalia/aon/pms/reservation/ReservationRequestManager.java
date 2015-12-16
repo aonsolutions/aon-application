@@ -468,7 +468,7 @@ System.out.println(message.toString());
 		}
 		if (StringUtils.isNotEmpty(requestGuest.getAddress())) {
 			custProfile.getCustomer().addNewCustAddress().addNewAddress();
-			custProfile.getCustomer().getCustAddressArray(0).getAddress().addNewStreetNmbr().setStringValue(requestGuest.getAddress());
+			custProfile.getCustomer().getCustAddressArray(0).getAddress().addNewStreetNmbr().setStringValue(requestGuest.getStreetNumber());
 			if (StringUtils.isNotEmpty(requestGuest.getCity())) {
 				custProfile.getCustomer().getCustAddressArray(0).getAddress().addNewCityName().setStringValue(requestGuest.getCity());
 				if (StringUtils.isNotEmpty(requestGuest.getZip())) {
@@ -478,8 +478,8 @@ System.out.println(message.toString());
 			if (StringUtils.isNotEmpty(requestGuest.getProvince())) {
 				custProfile.getCustomer().getCustAddressArray(0).getAddress().addNewStateProv().setStringValue(requestGuest.getProvince());
 			}
-			if (StringUtils.isNotEmpty(requestGuest.getCountry())) {
-				custProfile.getCustomer().getCustAddressArray(0).getAddress().addNewCountryName().setStringValue(requestGuest.getCountry());
+			if (requestGuest.getCountry() != null) {
+				custProfile.getCustomer().getCustAddressArray(0).getAddress().addNewCountryName().setStringValue(requestGuest.getCountry().getValue());
 			}
 		}
 		if (request.isCompanyHolder() || request.isAgencyHolder()) {
@@ -689,6 +689,8 @@ System.out.println(message.toString());
 			reservationGuest.setEmail(requestGuest.getEmail());
 			reservationGuest.setPhone(requestGuest.getPhone());
 			reservationGuest.setAddress(requestGuest.getAddress());
+			reservationGuest.setNumber(requestGuest.getNumber());
+			reservationGuest.setAddress2(requestGuest.getAddress2());
 			reservationGuest.setZip(requestGuest.getZip());
 			reservationGuest.setCity(requestGuest.getCity());
 			reservationGuest.setProvince(requestGuest.getProvince());

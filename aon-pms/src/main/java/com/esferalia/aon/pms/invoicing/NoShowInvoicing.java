@@ -231,6 +231,8 @@ public class NoShowInvoicing {
 			ProjectReservationGuest reservationGuest = obtainMainGuest(reservation);
 			address = new InvoiceAddress();
 			address.setAddress(StringUtils.abbreviate(reservationGuest.getAddress(), 45));
+			address.setNumber(StringUtils.abbreviate(reservationGuest.getNumber(), 12));
+			address.setAddress2(StringUtils.abbreviate(reservationGuest.getAddress2(), 45));
 			address.setZip(StringUtils.abbreviate(reservationGuest.getZip(), 16));
 			address.setCity(StringUtils.abbreviate(reservationGuest.getCity(), 45));
 			address.setProvince(StringUtils.abbreviate(reservationGuest.getProvince(), 45));
@@ -243,10 +245,11 @@ public class NoShowInvoicing {
 			invoiceAddress.setInvoice(invoice);
 			invoiceAddress.setStreetType(address.getStreetType()); 
 			invoiceAddress.setAddress(address.getAddress());
+			invoiceAddress.setNumber(address.getNumber());
 			invoiceAddress.setAddress2(address.getAddress2());
-			invoiceAddress.setNumber(address.getNumber()); 
 			invoiceAddress.setZip(address.getZip()); 
 			invoiceAddress.setCity(address.getCity()); 
+			invoiceAddress.setProvince(address.getProvince()); 
 			invoiceAddress.setGeozone(address.getGeozone()); 
 
 			IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);

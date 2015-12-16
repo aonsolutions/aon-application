@@ -26,11 +26,21 @@ public class ReservationRequestGuest extends ReservationRequestGuestDB implement
     @Transient
 	public String getFullAddress() {
     	String fullAddress = StringUtils.isEmpty(getAddress()) ? "" : getAddress() + " ";
+    	fullAddress += StringUtils.isEmpty(getNumber()) ? "" : getNumber() + " ";
+    	fullAddress += StringUtils.isEmpty(getAddress2()) ? "" : getAddress2() + " ";
     	fullAddress += StringUtils.isEmpty(getZip()) ? "" : getZip() + " - ";
     	fullAddress += StringUtils.isEmpty(getCity()) ? "" : getCity() + " ";
     	fullAddress += StringUtils.isEmpty(getProvince()) ? "" : "(" + getProvince() + ") ";
-    	fullAddress += StringUtils.isEmpty(getCountry()) ? "" : getCountry();
+    	fullAddress += getCountry() == null ? "" : getCountry().getValue();
     	return fullAddress;
 	}
-	
+
+    @Transient
+	public String getStreetNumber() {
+    	String fullAddress = StringUtils.isEmpty(getAddress()) ? "" : getAddress() + " ";
+    	fullAddress += StringUtils.isEmpty(getNumber()) ? "" : getNumber() + " ";
+    	fullAddress += StringUtils.isEmpty(getAddress2()) ? "" : getAddress2();
+    	return fullAddress;
+	}
+
 }

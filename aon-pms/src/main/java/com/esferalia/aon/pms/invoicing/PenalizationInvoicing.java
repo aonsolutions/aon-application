@@ -80,7 +80,7 @@ public class PenalizationInvoicing implements IReservationConstants {
 		invoice.setRegistryDocumentType(reservationInvoiceTo.getRegistry().getDocumentType());
 		invoice.setRegistryDocumentCountry(reservationInvoiceTo.getRegistry().getDocumentCountry());
 		invoice.setRegistryName(reservationInvoiceTo.getRegistry().getName());
-		invoice.setRegistryAddress(null);
+		invoice.setRegistryAddress(!reservationInvoiceTo.isDirectCustomer() ? reservationInvoiceTo.getRegistry().getDefaultAddress() : null);
 		invoice.setIssueDate(reservationInvoiceTo.getIssueDate());
 		invoice.setSecurityLevel(SecurityLevel.OFFICIAL);
 		invoice.setStatus(InvoiceStatus.PENDING);

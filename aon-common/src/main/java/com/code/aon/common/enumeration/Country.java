@@ -305,7 +305,7 @@ public enum Country implements IResourceable, IStringEnum {
 				|| this == Country.SK || this == Country.RO
 				|| this == Country.SE || this == Country.ES;
     }
-    
+
 	public static Country valueOfIso3(String iso3) {
 		for (Country country : values()) {
 			if (iso3.equals(country.getIso3())) {
@@ -313,6 +313,18 @@ public enum Country implements IResourceable, IStringEnum {
 			}
 		}
 		return null;
+	}
+
+	public static Country obtainCountry(String value) {
+		Country country = null;
+		if (value.length() == 2) {
+			try {
+				country = Country.valueOf(value);
+			} catch (Exception ex) {}
+		} else if (value.length() == 3) {
+			country = Country.valueOfIso3(value);
+		}
+		return country;
 	}
 
 }

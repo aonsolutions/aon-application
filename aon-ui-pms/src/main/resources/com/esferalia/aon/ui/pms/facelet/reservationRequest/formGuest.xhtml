@@ -27,11 +27,21 @@
 		rendered="#{reservationRequest.to.active}" />
 
 	<aon:outputLabel for="ReservationRequestGuest_address" value="#{bundle.aon_address}"/>
-	<aon:outputText	value="#{reservationRequest.requestGuest.address}" styleClass="aon-bold"
+	<aon:outputText	value="#{reservationRequest.requestGuest.fullAddress}" styleClass="aon-bold"
 		rendered="#{!reservationRequest.to.active}" />
-	<aon:inputText id="ReservationRequestGuest_address"
-		value="#{reservationRequest.requestGuest.address}" size="50" maxlength="256"
-		rendered="#{reservationRequest.to.active}" />
+	<aon:div>
+		<aon:inputText id="ReservationRequestGuest_address"
+			value="#{reservationRequest.requestGuest.address}" size="30" maxlength="256"
+			rendered="#{reservationRequest.to.active}" />
+		<aon:outputLabel for="ReservationRequestGuest_number" value="#{bundle.aon_number_abr}" styleClass="aon-italic aon-margin-left aon-margin-right" />
+		<aon:inputText id="ReservationRequestGuest_number" style="margin-left:0.7em;"
+			value="#{reservationRequest.requestGuest.number}" size="2" maxlength="12"
+			rendered="#{reservationRequest.to.active}" />
+		<aon:outputLabel for="ReservationRequestGuest_address2" value="#{bundle.fiscal_streetFloor}" styleClass="aon-italic aon-margin-left aon-margin-right" />
+		<aon:inputText id="ReservationRequestGuest_address2"
+			value="#{reservationRequest.requestGuest.address2}" size="4" maxlength="25"
+			rendered="#{reservationRequest.to.active}" />
+	</aon:div>
 
 	<aon:outputLabel for="ReservationRequestGuest_city" value="#{bundle.aon_city}"/>
 	<aon:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto" rendered="#{!reservationRequest.to.active}">
