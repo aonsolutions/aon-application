@@ -12,6 +12,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Country;
+import com.code.aon.geozone.GeoZone;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
@@ -35,6 +36,9 @@ public class ProjectReservationGuestController extends LinesController {
 		ProjectReservationGuest reservationGuest = (ProjectReservationGuest)getTo();
 		reservationGuest.setDocumentCountry((Country)event.getNewValue());
 		obtainPersonData(reservationGuest);
+		if (reservationGuest.getCountry() == null || reservationGuest.getCountry() == (Country)event.getOldValue()) {
+			reservationGuest.setCountry(reservationGuest.getDocumentCountry());
+		}
 	}
 
 	public void onDocumentChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -57,7 +61,7 @@ public class ProjectReservationGuestController extends LinesController {
 			RegistryMedia email = person.getRegistry().getEmail();
 			RegistryMedia phone = person.getRegistry().getCellular();
 			RegistryAddress address = person.getRegistry().getDefaultAddress();
-			Country country = (address!=null && address.getGeozone()!=null) ? Country.obtainCountry(address.getGeozone().getGeoZoneCountry().getCode()) : null;
+			GeoZone geoZone = (address!=null && address.getGeozone()!=null && address.getGeozone().getId()!=null) ? address.getGeozone() : null;
 
 			reservationGuest.setName(person.getName());
 			reservationGuest.setSurname(person.getFirstSurname());
@@ -70,8 +74,8 @@ public class ProjectReservationGuestController extends LinesController {
 			reservationGuest.setAddress2((address!=null) ? address.getAddress2() : null);
 			reservationGuest.setZip((address!=null) ? address.getZip() : null);
 			reservationGuest.setCity((address!=null) ? address.getCity() : null);
-			reservationGuest.setProvince((address!=null) ? StringUtils.substring(address.getAddress3(), 0, 64) : null);
-			reservationGuest.setCountry(country);
+			reservationGuest.setProvince((address!=null) ? ((geoZone!=null) ? geoZone.getName() : StringUtils.substring(address.getAddress3(), 0, 64)) : null);
+			reservationGuest.setCountry((geoZone!=null) ? Country.obtainCountry(address.getGeozone().getGeoZoneCountry().getCode()) : null);
 			reservationGuest.setPerson(person);
 		} else {
 			reservationGuest.setPerson(null);

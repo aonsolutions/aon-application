@@ -6,9 +6,13 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Country;
+import com.code.aon.geozone.GeoZone;
 import com.code.aon.person.Person;
+import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
@@ -18,6 +22,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.ui.pms.controller.ProjectReservationController;
@@ -34,6 +39,15 @@ public class ProjectReservationGuestControllerListener extends ControllerAdapter
 		to.setProjectReservation((ProjectReservation)controller.getMasterController().getTo());
 		to.setDocumentCountry(Country.ES);
 		to.setCountry(Country.ES);
+	}
+
+	@Override
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		ProjectReservationGuestController controller = (ProjectReservationGuestController)event.getController();
+		ProjectReservationGuest to = (ProjectReservationGuest)controller.getTo();
+		if (to.getCountry() == null) {
+			to.setCountry(to.getDocumentCountry());
+		}
 	}
 
 	@Override
@@ -143,7 +157,8 @@ public class ProjectReservationGuestControllerListener extends ControllerAdapter
 			address.setAddress2(reservationGuest.getAddress2());
 			address.setZip(reservationGuest.getZip());
 			address.setCity(reservationGuest.getCity());
-			address.setAddress3(reservationGuest.getProvince());
+			address.setGeozone(obtainGeoZone(reservationGuest.getProvince()));
+			address.setAddress3((address.getGeozone()==null) ? reservationGuest.getProvince() : null);
 			BeanManager.getManagerBean(RegistryAddress.class).insert(address);
 		}
 	}
@@ -197,7 +212,8 @@ public class ProjectReservationGuestControllerListener extends ControllerAdapter
 				address.setAddress2(reservationGuest.getAddress2());
 				address.setZip(reservationGuest.getZip());
 				address.setCity(reservationGuest.getCity());
-				address.setAddress3(reservationGuest.getProvince());
+				address.setGeozone(obtainGeoZone(reservationGuest.getProvince()));
+				address.setAddress3((address.getGeozone()==null) ? reservationGuest.getProvince() : null);
 				BeanManager.getManagerBean(RegistryAddress.class).insert(address);
 			} else {
 				address.setAddress(reservationGuest.getAddress());
@@ -205,10 +221,22 @@ public class ProjectReservationGuestControllerListener extends ControllerAdapter
 				address.setAddress2(reservationGuest.getAddress2());
 				address.setZip(reservationGuest.getZip());
 				address.setCity(reservationGuest.getCity());
-				address.setAddress3(reservationGuest.getProvince());
+				address.setGeozone(obtainGeoZone(reservationGuest.getProvince()));
+				address.setAddress3((address.getGeozone()==null) ? reservationGuest.getProvince() : null);
 				BeanManager.getManagerBean(RegistryAddress.class).update(address);
 			}
 		}
+	}
+
+	private GeoZone obtainGeoZone(String geoZoneName) throws ManagerBeanException {
+		IManagerBean geoZoneBean = BeanManager.getManagerBean(GeoZone.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(geoZoneBean.getFieldName(IEntityAlias.GEO_ZONE_NAME), geoZoneName);
+		criteria.addEqualExpression(geoZoneBean.getFieldName(IEntityAlias.GEO_ZONE_SYSTEM), Boolean.TRUE);
+		for (ITransferObject ito : geoZoneBean.getList(criteria)) {
+			return (GeoZone)ito;
+		}
+		return null;
 	}
 
 }

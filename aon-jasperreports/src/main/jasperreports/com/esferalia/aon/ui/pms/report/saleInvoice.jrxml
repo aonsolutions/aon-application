@@ -2506,7 +2506,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{address}.getZip()==null?"":$F{address}.getZip() + " ") + ($F{address}.getCity()==null?"":$F{address}.getCity())]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{address}.getZip()==null?"":($F{address}.getZip() + " ")) + ($F{address}.getCity()==null?"":$F{address}.getCity())]]></textFieldExpression>
 			</textField>
 			<componentElement>
 				<reportElement uuid="45b24861-14bf-4428-8172-e95604b357a3" key="finances" positionType="Float" x="182" y="234" width="245" height="29"/>

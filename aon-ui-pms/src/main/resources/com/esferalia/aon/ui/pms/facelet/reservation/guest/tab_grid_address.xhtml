@@ -26,8 +26,15 @@
 				value="#{controller.to.city}" size="25" maxlength="64" ajaxSingle="true" />
 
 			<aon:outputLabel for="ProjectReservationGuest_province" value="#{bundle.aon_state}" />
-			<aon:inputText id="ProjectReservationGuest_province#{suffix}" styleClass="aon-form-input-text"
-				value="#{controller.to.province}" size="25" maxlength="64" ajaxSingle="true" />
+			<aon:inputText id="ProjectReservationGuest_province-Input#{suffix}" styleClass="aon-form-input-text"
+				value="#{controller.to.province}" size="25" maxlength="64" ajaxSingle="true"
+				rendered="#{controller.to.country != 'ES'}" />
+			<aon:selectOneMenu id="ProjectReservationGuest_province-List#{suffix}" styleClass="aon-width-180 aon-form-input-text"
+				value="#{controller.to.province}" ajaxSingle="true"
+				rendered="#{controller.to.country == 'ES'}">
+				<f:selectItem itemLabel="-" value="#{null}" />		
+				<f:selectItems value="#{geozoneCollections.systemGeoTrees}" />
+			</aon:selectOneMenu>
 
 			<aon:outputLabel for="ProjectReservationGuest_zip" value="#{bundle.aon_postal_code_abbrv}" />
 			<aon:div>
@@ -35,7 +42,8 @@
 					value="#{controller.to.zip}" size="9" maxlength="16" ajaxSingle="true" />
 				<aon:outputLabel for="ProjectReservationGuest_country" value="#{bundle.aon_country}" styleClass="aon-italic aon-margin-left" />
 				<aon:selectOneMenu id="ProjectReservationGuest_country#{suffix}" styleClass="aon-margin-left aon-form-input-text"
-					value="#{controller.to.country}" ajaxSingle="true">
+					value="#{controller.to.country}" ajaxSingle="true"
+					reRender="GuestAddressDiv#{suffix}">
 					<f:selectItems value="#{commonCollections.countryCodes}" />
 				</aon:selectOneMenu>
 			</aon:div>

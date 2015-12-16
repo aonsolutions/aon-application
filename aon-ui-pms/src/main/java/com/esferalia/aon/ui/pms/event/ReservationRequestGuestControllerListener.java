@@ -3,6 +3,7 @@ package com.esferalia.aon.ui.pms.event;
 import com.code.aon.AonVersion;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -17,6 +18,20 @@ public class ReservationRequestGuestControllerListener extends ControllerAdapter
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
+	@Override
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		ReservationRequestGuest to = (ReservationRequestGuest)event.getController().getTo();
+		to.setCountry(Country.ES);
+	}
+
+	@Override
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		ReservationRequestGuest to = (ReservationRequestGuest)event.getController().getTo();
+		if (to.getCountry() == null) {
+			to.setCountry(Country.ES);
+		}
+	}
+
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		ReservationRequestGuestController controller = (ReservationRequestGuestController)event.getController();

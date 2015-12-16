@@ -13,6 +13,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -163,6 +164,7 @@ public class ReservationRequestControllerListener extends ControllerAdapter impl
 	}
 
 	private ReservationRequestGuest obtainRequestGuest(ReservationRequest request) throws ControllerListenerException {
+		ReservationRequestGuest requestGuest = new ReservationRequestGuest();
 		if (request.getId() != null) {
 			try {
 				IManagerBean requestGuestBean = BeanManager.getManagerBean(ReservationRequestGuest.class);
@@ -170,14 +172,17 @@ public class ReservationRequestControllerListener extends ControllerAdapter impl
 				criteria.addEqualExpression(requestGuestBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_GUEST_RESERVATION_REQUEST_ID), request.getId());
 				criteria.addOrder(requestGuestBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_GUEST_GUEST_INDEX));
 				for (ITransferObject ito : requestGuestBean.getList(criteria)) {
-					ReservationRequestGuest requestGuest = (ReservationRequestGuest)ito;
-					return requestGuest;
+					requestGuest = (ReservationRequestGuest)ito;
+					break;
 				}
 			} catch (ManagerBeanException ex) {
 				throw new ControllerListenerException(ex.getMessage(), ex);
 			}
 		}
-		return new ReservationRequestGuest();
+		if (requestGuest.getCountry() == null) {
+			requestGuest.setCountry(Country.ES);
+		}
+		return requestGuest;
 	}
 
 }
