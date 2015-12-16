@@ -596,6 +596,10 @@
 					<key>id</key>
 					<value>item.id</value>
 				</map-entry>
+				<map-entry>
+					<key>product</key>
+					<value>item.product</value>
+				</map-entry>
 			</map-entries>
 		</managed-property>		
 	</managed-bean>
