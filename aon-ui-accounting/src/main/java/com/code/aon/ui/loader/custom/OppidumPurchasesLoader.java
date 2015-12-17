@@ -81,6 +81,12 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	private final String INVOICE_VAT_AMOUNT = "ImporteIVA";
 	private final String INVOICE_TOTAL = "ImporteTotalFact";
 	
+	private final String INVOICE_BASE_ENERG_ACT = "ImporteTotalEnergAct";
+	private final String INVOICE_BASE_ENERG_REACT = "ImporteTotalEnergReact";
+	private final String INVOICE_BASE_TERM_POT = "ImporteTotalTermPot";
+	private final String INVOICE_BASE_EXCESOS = "ImporteTotalExcesos";
+	private final String INVOICE_BASE_ALQUILERES = "ImporteAlquileres";
+	
 	private final String[] SUPPORTED_COLUMNS = {
 			SUPPLIER_DOCUMENT,
 			SUPPLIER_NAME,
@@ -90,7 +96,13 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 			INVOICE_VAT_PERCENT,
 			INVOICE_VAT_BASE,
 			INVOICE_VAT_AMOUNT,
-			INVOICE_TOTAL
+			INVOICE_TOTAL,
+			
+			INVOICE_BASE_ENERG_ACT,
+			INVOICE_BASE_ENERG_REACT,
+			INVOICE_BASE_TERM_POT,
+			INVOICE_BASE_EXCESOS,
+			INVOICE_BASE_ALQUILERES
 	};
 	
 	@Override
@@ -121,10 +133,23 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	        writer.print("razonSocial|");
 	        writer.print("fechaFactura|");
 	        writer.print("tipo|");
+	        
+	        // 1
 	        writer.print("baseImponible1|");
 	        writer.print("iva1|");
 	        writer.print("cuotaIVA1|");
 	        writer.print("cuentaExplotacion|");
+	        // 2
+	        writer.print("baseImponible2|");
+	        writer.print("iva2|");
+	        writer.print("cuotaIVA2|");
+	        writer.print("cuentaExplotacion2|");
+	        // 3
+	        writer.print("baseImponible3|");
+	        writer.print("iva3|");
+	        writer.print("cuotaIVA3|");
+	        writer.print("cuentaExplotacion3|");
+	        
 	        writer.print("totalFactura");
 	        writer.println();
 	        
@@ -160,6 +185,16 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
         			double vatAmount = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_VAT_AMOUNT)));
         			double invoiceTotal = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_TOTAL)));
         			
+        			double baseTerminoPotencia = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_BASE_TERM_POT)));
+        			double baseExcesos = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_BASE_EXCESOS)));
+        			double baseAlquileres = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_BASE_ALQUILERES)));
+        			
+        			vatBase -= (baseTerminoPotencia + baseExcesos 
+        					+ baseAlquileres);
+        			vatAmount -= (CommonUtil.round((baseTerminoPotencia + baseExcesos) * vatPercent / 100) 
+        					+ CommonUtil.round(baseAlquileres * vatPercent / 100));
+        			
+        			
         			writer.print("FRACTB|");
         			writer.print(lineCount + "|");
         			writer.print(getFormatInvoiceNumber(invoiceNumber) + "|");
@@ -170,10 +205,23 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
         			writer.print(supplierName + "|");
         			writer.print(dateFormat.format(invoiceDate) + "|");
         			writer.print("0|");
+        			
+        			// 1
         			writer.print(CommonUtil.round(vatBase) + "|");
 					writer.print(CommonUtil.round(vatPercent) + "|");
 					writer.print(CommonUtil.round(vatAmount) + "|");
 					writer.print("600000001|");
+					// 2
+					writer.print(CommonUtil.round(baseTerminoPotencia + baseExcesos) + "|");
+					writer.print(CommonUtil.round(vatPercent) + "|");
+					writer.print(CommonUtil.round((baseTerminoPotencia + baseExcesos) * vatPercent / 100) + "|");
+					writer.print("600000002|");
+					// 3
+					writer.print(CommonUtil.round(baseAlquileres) + "|");
+					writer.print(CommonUtil.round(vatPercent) + "|");
+					writer.print(CommonUtil.round(baseAlquileres * vatPercent / 100) + "|");
+					writer.print("600000003|");
+					
 					writer.print(invoiceTotal);
         			writer.println();
 							
@@ -251,18 +299,18 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 			Sheet sheet = workbook.getSheetAt(0);
 			
 			Iterator<Row> rowIterator = sheet.iterator();
-			Row row = rowIterator.next();
+			Row row = null;
 			headers = new ArrayList<>();
 			
 			rowOffset=1;
 			for(int i=0; i<5 && rowIterator.hasNext()  && !headers.containsAll(Arrays.asList(SUPPORTED_COLUMNS)); i++){
+				row = rowIterator.next();
 				headers.clear();
 				for(int col=0;col<row.getLastCellNum();col++){
 					Cell cell = row.getCell(col);
 					String name = getStringCellValue(cell);
 					headers.add(StringUtils.isBlank(name)?"empty":name);
 				}
-				row = rowIterator.next();
 				rowOffset++;
 			}
 			

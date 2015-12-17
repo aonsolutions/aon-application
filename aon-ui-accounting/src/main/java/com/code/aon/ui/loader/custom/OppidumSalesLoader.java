@@ -334,18 +334,18 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 			Sheet sheet = workbook.getSheetAt(0);
 			
 			Iterator<Row> rowIterator = sheet.iterator();
-			Row row = rowIterator.next();
+			Row row = null;
 			headers = new ArrayList<>();
 			
 			rowOffset=1;
 			for(int i=0; i<5 && rowIterator.hasNext() && !headers.containsAll(Arrays.asList(SUPPORTED_COLUMNS)); i++){
+				row = rowIterator.next();
 				headers.clear();
 				for(int col=0;col<row.getLastCellNum();col++){
 					Cell cell = row.getCell(col);
 					String name = getStringCellValue(cell);
 					headers.add(StringUtils.isBlank(name)?"empty":name);
 				}
-				row = rowIterator.next();
 				rowOffset++;
 			}
 			
