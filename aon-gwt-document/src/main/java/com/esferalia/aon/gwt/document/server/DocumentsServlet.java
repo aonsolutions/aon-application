@@ -1092,7 +1092,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 				.put("domainName", doc.getDomain())
 				.put("domainId", doc.getDomainId())
 				.put("mimetype", doc.getMimetype())
-				.put("driveId", doc.getDriveId())
+				.put("driveId", doc.getDriveId() != null ? doc.getDriveId() : "null")
 				.put("isDrive", doc.getIsDrive())
 				.put("fileId", doc.getFileId());
 			
