@@ -234,11 +234,12 @@ public class DBConsults {
 	//-------------------- DELETES
 	
 	public static void deletePreuthorization(Domain domain, Integer projectId) {
+		Integer preId = getConexFlowLastOperationId(domain, projectId, ConexFlowConstant.PREAUTHORIZATION_OP);
 		String login = AonUtil.getRemoteUser()!= null ? AonUtil.getRemoteUser() : "";
-		AON.delete(domain.getName(), domain.getId(), login, 
-			filter -> filter.getAttachModuleProperty().eq(projectId)
-					.and(filter.getDescriptionProperty().eq("CONEXFLOW-P"))
-			, AttachType.PROJECT);
+		if(preId != null)
+			AON.delete(domain.getName(), domain.getId(), login, 
+					filter -> filter.getIdProperty().eq(preId)
+					, AttachType.PROJECT);
 	}
 	
 	public static void deletePreuthorization(Domain domain, Integer projectId, Attach attach) {		

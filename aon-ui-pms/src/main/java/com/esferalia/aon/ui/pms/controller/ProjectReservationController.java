@@ -1663,6 +1663,18 @@ public class ProjectReservationController extends BasicController implements IPm
 				ConexFlow cf = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, q, reservation.getId(), getDomain(reservation), true);
 				if (!cf.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) {
 					errorMsg = "Error " + cf.getRespuesta().getResultado() + ": " + cf.getRespuesta().getDesResultado() + ".";
+				} else{
+					Query query = ConexFlowUtils.getConexFlowCancelationQuery(connection.getEmpresa().toString()
+							, connection.getCentro().toString(), connection.getTpv().toString()
+							, ConexFlowConstant.PREAUTHORIZATION_OP, (Double) 0.01
+							, (Double) 0.01, cf.getRespuesta().getAutorizacion()
+							, cf.getRespuesta().getRefClient(), cf.getRespuesta().getIdOperacion(), cf.getRespuesta().getFecha());
+					ConexFlow cf2 = ConexFlowPost.execute(connection, ConexFlowConstant.CANCELATION_OP, query,  reservation.getId(), getDomain(reservation), true);
+					if(cf2 != null){
+						if (!cf2.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) 
+							errorMsg = "Error " + cf2.getRespuesta().getResultado() + ": " + cf2.getRespuesta().getDesResultado() + ".";
+					}
+					else errorMsg = "Los datos de conexión a conexFlow son incorrectos.";	
 				}
 			}
 			
