@@ -79,29 +79,28 @@ public class Templates extends Composite implements EntryPoint {
 					@Override
 					public void onSuccess(TemplateList result) {
 						template_list = result;						
-						Boolean silent = Boolean.parseBoolean(getParameter(GWT.getModuleName(), SILENT));
-						if(!silent){
-							String entryPoint = getParameter(GWT.getModuleName(), Constants.ENTRY_POINT_PARAM);
-							if(entryPoint.equals(TEMPLATES)){
-								Widget w = new TemplatesPage(template_list);
-								pagesPanel.add(w);
-							}
-							else if(entryPoint.equals(MARKETPLACE)){
-						   		Marketplace marketplace = new Marketplace(template_list.getLogin());		
-					 			pagesPanel.add(marketplace);
-							}
-							else if(entryPoint.equals(CONSUMPTION)){
-						   		ConsumptionPage cp = new ConsumptionPage(template_list);		
-					 			pagesPanel.add(cp);
-							}
-							else if(entryPoint.equals(CONSUMPTION_ERROR)){
-								ConsumptionErrorPage cep = new ConsumptionErrorPage(template_list);
-								pagesPanel.add(cep);
-							}
-							else if(entryPoint.equals(DOWNLOAD_AMAZON_DELIVERY)){
-								deliveryx();
-							}
-							
+						String entryPoint = getParameter(GWT.getModuleName(), Constants.ENTRY_POINT_PARAM);
+						if(entryPoint.equals(TEMPLATES)){
+							Widget w = new TemplatesPage(template_list);
+							pagesPanel.add(w);
+						}
+						else if(entryPoint.equals(SILENT)){
+							//NOTHING
+						}
+						else if(entryPoint.equals(MARKETPLACE)){
+							Marketplace marketplace = new Marketplace(template_list.getLogin());		
+					 		pagesPanel.add(marketplace);
+						}
+						else if(entryPoint.equals(CONSUMPTION)){
+							ConsumptionPage cp = new ConsumptionPage(template_list);		
+					 		pagesPanel.add(cp);
+						}
+						else if(entryPoint.equals(CONSUMPTION_ERROR)){
+							ConsumptionErrorPage cep = new ConsumptionErrorPage(template_list);
+							pagesPanel.add(cep);
+						}
+						else if(entryPoint.equals(DOWNLOAD_AMAZON_DELIVERY)){
+							deliveryx();
 						}
 					}
 					
@@ -126,8 +125,8 @@ public class Templates extends Composite implements EntryPoint {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
-		boolean silent = Boolean.parseBoolean(getParameter(GWT.getModuleName(), SILENT));
-		if (silent){
+		String entryPoint = getParameter(GWT.getModuleName(), Constants.ENTRY_POINT_PARAM);
+		if (entryPoint.equals(SILENT)){
 			exportEcommerce(this);
 			exportEcommercex(this);
 			exportProduct(this);
