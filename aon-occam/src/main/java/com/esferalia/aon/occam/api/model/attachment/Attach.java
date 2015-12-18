@@ -1,11 +1,13 @@
 package com.esferalia.aon.occam.api.model.attachment;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
-public class Attach {
+@SuppressWarnings("serial")
+public class Attach implements Serializable {
 	
 	AttachType attachType;
 	private Integer attachModule;

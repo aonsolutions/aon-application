@@ -1,6 +1,10 @@
 package com.esferalia.aon.gwt.template.jooq;
 
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
+import static com.esferalia.aon.jooq.tables.Iattach.IATTACH;
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Sales.SALES;
 
@@ -19,9 +23,14 @@ import com.esferalia.aon.carrier.enumeration.ShipmentStatus;
 import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.server.marketplace.XMLUtils;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
+import com.esferalia.aon.gwt.template.shared.Product;
+import com.esferalia.aon.gwt.template.shared.RegistryAttachTag;
 import com.esferalia.aon.gwt.template.shared.marketplace.AmazonDelivery;
 import com.esferalia.aon.gwt.template.shared.marketplace.CarrierCode;
 import com.esferalia.aon.gwt.template.shared.marketplace.Order;
+import com.esferalia.aon.jooq.tables.records.IattachRecord;
+import com.esferalia.aon.jooq.tables.records.ProductRecord;
+import com.esferalia.aon.jooq.tables.records.RattachTagRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.SalesRecord;
 import com.esferalia.aon.occam.api.AON;
@@ -162,5 +171,79 @@ public class DBMarketplace {
 	
 	public static LinkedList<Tag> getMarketplaceTagList(Domain domain, User user){
 		return AON.getMatketplaceTagList(domain.getName(), domain.getId(), user.getLogin());
+	}
+	
+	public static List<Product> getProductList(Domain domain, String login, Integer category){
+		AONContext ctx = null;
+		try {			
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
+			Result<ProductRecord> result = ctx.getDslContext().select()
+										.from(PRODUCT)
+										.where(PRODUCT.DOMAIN.eq(domain.getId()))
+											.and(category!=null?PRODUCT.CATEGORY.equal(category):PRODUCT.CATEGORY.isNotNull())
+										.fetchInto(PRODUCT);
+			List<Product> list = new ArrayList<Product>();
+			result.stream().forEach(record ->{
+				Product product = new Product();
+				product.setId(record.getId());
+				product.setCode(record.getCode());
+				product.setName(record.getName());
+				list.add(product);
+			});
+			return list;
+			
+		} finally {
+			if(ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static List<RegistryAttachTag> getAttachTemplateTagList(Domain domain, String login, List<Integer> pTagList) {
+		AONContext ctx = null;
+		try {			
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
+			Result<RattachTagRecord> result = ctx.getDslContext().select()
+					.from(RATTACH_TAG)
+					.where(RATTACH_TAG.DOMAIN.eq(domain.getId()))
+					.and(pTagList!=null?RATTACH_TAG.TAG.in(pTagList):RATTACH_TAG.TAG.isNotNull())
+					.fetchInto(RATTACH_TAG);
+			List<RegistryAttachTag> list = new ArrayList<RegistryAttachTag>();
+			result.stream().forEach(record ->{
+				RegistryAttachTag rat = new RegistryAttachTag();
+				rat.setId(record.getId());
+				rat.setTag(record.getTag());
+				rat.setRattach(record.getRattach());
+				list.add(rat);
+			});
+			return list;
+			
+		} finally {
+			if(ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Attach getItemTemplateAttach(Domain domain, String login, String templateName, Product product) {
+		AONContext ctx = null;
+		try {			
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
+			Result<IattachRecord> result = ctx.getDslContext().select()
+					.from(IATTACH).leftOuterJoin(ITEM).on(IATTACH.ITEM.equal(ITEM.ID))
+					.where(IATTACH.DOMAIN.eq(domain.getId()))
+					.and(IATTACH.DESCRIPTION.equal(templateName))
+					.and(ITEM.ID.equal(product.getId()))
+					.fetchInto(IATTACH);
+			Attach attach = null;
+			if(result.isNotEmpty()){
+				attach = new Attach();
+				IattachRecord record = result.get(0);
+				attach.setId(record.getId());
+				attach.setData(record.getData());
+			}
+			return attach;
+		} finally {
+			if(ctx != null)
+				ctx.close();
+		}
 	}
 }

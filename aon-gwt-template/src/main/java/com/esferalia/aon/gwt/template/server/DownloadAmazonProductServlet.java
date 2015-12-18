@@ -43,7 +43,7 @@ public class DownloadAmazonProductServlet extends HttpServlet{
         String domainName = AonUtil.getDomainName();
         
 		LinkedList<Attach> iattachList = AON.getAttachList(domainName, domainId, login,
-				filter -> filter.getTypeProperty().eq(AttachmentType.AMAZON_PRODUCT.value())
+				filter -> filter.getTypeProperty().eq(AttachmentType.ECOMMERCE_PRODUCT.value())
 				.and(filter.getDescriptionProperty().eq(description))
 				.and(filter.getDomainProperty().eq(domainId)),
 				AttachType.ITEM);

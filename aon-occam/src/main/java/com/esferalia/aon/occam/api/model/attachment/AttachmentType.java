@@ -8,7 +8,7 @@ public enum AttachmentType {
 	THUMBNAIL,
     IMAGE,
 	DOCUMENT,
-	AMAZON_PRODUCT;
+	ECOMMERCE_PRODUCT;
 	
 	/**
      * Message key prefix. 

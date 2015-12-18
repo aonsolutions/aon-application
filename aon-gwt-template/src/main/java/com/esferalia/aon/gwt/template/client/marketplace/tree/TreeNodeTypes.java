@@ -33,5 +33,12 @@ public abstract class TreeNodeTypes<T> {
 		}
 	};
 	
+	public static TreeNodeTypes<Integer> PRODUCT_TEMPLATE_VALUES = new TreeNodeTypes<Integer>() {
+		@Override
+		public TreeNode<Integer> getInstance() {
+			return new ProductTemplateValuesTreeNode();
+		}
+	};
+	
 	public abstract TreeNode<T> getInstance();
 }

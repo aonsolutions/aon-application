@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.template.server.marketplace;
 
+import java.io.IOException;
 import java.text.Collator;
 import java.util.Date;
 import java.util.LinkedList;
@@ -7,15 +8,25 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
+import javax.xml.bind.JAXBException;
+
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.template.client.marketplace.IMarketplace;
 import com.esferalia.aon.gwt.template.jooq.DBMarketplace;
 import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
+import com.esferalia.aon.gwt.template.shared.Product;
+import com.esferalia.aon.gwt.template.shared.RegistryAttachTag;
 import com.esferalia.aon.gwt.template.shared.marketplace.Order;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.AttachmentType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 
 
 public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketplace{
@@ -66,6 +77,101 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 		return DBMarketplace.getMarketplaceTagList(domain, getUser());
 	}
 	
+	public List<Product> getProductList(Domain domain, String login, Integer category){
+		return DBMarketplace.getProductList(domain, login, category);
+	}
+	
+	public Vector<Product> searchProductByName(String searchStr, Vector<Product> list){
+		Vector<Product> vector = new Vector<Product>();
+		for (Product p : list) {
+			if(containsIgnoreCase2(p.getName(), searchStr)){
+				vector.add(p);
+			}
+		}
+		return vector;
+	}
+	
+	public List<RegistryAttachTag> getAttachTemplateTagList(Domain domain, String login, List<Integer> pTagList){
+		return DBMarketplace.getAttachTemplateTagList(domain, login, pTagList);
+	}
+	
+	public List<Attach> obtainEcommerceProductTemplates(Domain domain, Product product){
+		List<Attach> list = AON.getAttachList(domain.getName()
+				, domain.getId()
+				, getUserLogin()
+				, filter -> filter.getTypeProperty().eq(RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value())
+				, AttachType.REGISTRY);
+		return list;
+	}
+	
+	public Attach obtainEcommerceProductAttach(Domain domain, Product product, String templateName){
+		return DBMarketplace.getItemTemplateAttach(domain, getUserLogin(), templateName, product);
+	}
+
+	public EcommerceProduct obtainEcommerceProductValues(Domain domain, Attach attach, Product product){
+		EcommerceProduct ecommerceProduct = null;
+		if(attach!=null){
+			try {
+				ecommerceProduct = XMLUtils.readXml(attach.getData());
+				ecommerceProduct.setProduct(new EcommerceProduct.Product());
+				ecommerceProduct.getProduct().setId(product.getId().toString());
+				ecommerceProduct.getProduct().setCode(product.getCode());
+				ecommerceProduct.getProduct().setName(product.getName());
+			} catch (JAXBException e) {
+				ecommerceProduct = null;
+			}
+		}
+		return ecommerceProduct;
+	}
+	
+	public EcommerceProduct obtainEcommerceProductValues(Domain domain, Product product, String templateName){
+		// Obtiene la plantilla especifica del producto
+		Attach attach = obtainEcommerceProductAttach(domain, product, templateName);
+		// Obtiene la plantilla generica 
+		if(attach==null){
+			attach = AON.getAttach(domain.getName()
+					, domain.getId()
+					, getUserLogin()
+					, filter -> filter.getTypeProperty().eq(RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value())
+					.and(filter.getDescriptionProperty().eq(templateName))
+					, AttachType.REGISTRY);
+		}
+		
+		return obtainEcommerceProductValues(domain, attach, product);
+	}
+	
+	public Boolean insertEcommerceProductValues(Domain domain, String login, String templateName, EcommerceProduct ecommerceProduct, Attach attach){
+		
+		byte[] data = null;
+		try {
+			data = XMLUtils.writeXml(ecommerceProduct);
+		} catch (JAXBException e) {
+			data = null;
+		} catch (IOException e) {
+			data = null;
+		}
+
+		if(data!=null){
+			if(attach==null || attach.getId()==null){
+				attach = new Attach();
+			}
+			attach.setDomain(domain);
+			attach.setMimeType(MimeType.XML);
+			attach.setDescription(templateName);
+			attach.setAttachType(AttachType.ITEM);
+			attach.setAttachModule(Integer.parseInt(ecommerceProduct.getProduct().getId()));
+			attach.setType(AttachmentType.ECOMMERCE_PRODUCT.value());
+			attach.setConfidential(false);
+			attach.setData(data);
+			if(attach==null || attach.getId()==null){
+				AON.insert(domain.getName(), domain.getId(), login, attach);
+			} else {
+				AON.update(domain.getName(), domain.getId(), login, attach);
+			}
+			return true;
+		}
+		return false;
+	}
 	
 	/**
 	 * <p>

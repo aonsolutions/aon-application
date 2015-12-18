@@ -75,6 +75,10 @@ public class Marketplace extends Composite {
 		//TreeNodeTypes.PRODUCTS.getInstance().render(ebay, getDomainId());
 		
 		TreeNodeTypes.PRODUCT_TEMPLATES.getInstance().render(tree, getDomain().getId());
+		
+		final TreeNode<Integer> productTemplateValues = TreeNodeTypes.PRODUCT_TEMPLATE_VALUES.getInstance().render(tree, null);
+		productTemplateValues.setState(true);
+		
 	}
 	
 	public void setContent(Widget widget) {

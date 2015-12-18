@@ -1,0 +1,35 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' 
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:b="http://java.sun.com/jstl/core">
+
+	<ui:Style>
+		.espacio{
+			top:0.5em !important;
+		}
+		.margin-top{
+			margin-top:10px !important;
+		}
+	</ui:Style>
+	
+	<g:HTMLPanel styleName="form-document">
+		
+		<div class="aon-toolbar">
+			<g:Button ui:field="acceptButton" text="Aceptar" visible="true" 
+				styleName='aon-finding-toolbar-item aon-icon-accept' />
+			<g:Button ui:field="cancelButton" text="Cancelar" visible="true" 
+				styleName='aon-finding-toolbar-item aon-icon-cancel' />
+		</div>
+		
+		<div>
+			<g:FlexTable ui:field="templatesGrid" />
+		</div>
+
+		<div class='{style.margin-top}'>
+			<g:ScrollPanel ui:field="scrollPanel" height="300px">
+				<g:FlexTable ui:field="valuesGrid" />
+			</g:ScrollPanel>
+		</div>
+	
+	</g:HTMLPanel>
+	
+</ui:UiBinder>

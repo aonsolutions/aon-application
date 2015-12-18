@@ -6,8 +6,11 @@ import java.util.List;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
+import com.esferalia.aon.gwt.template.shared.Product;
+import com.esferalia.aon.gwt.template.shared.RegistryAttachTag;
 import com.esferalia.aon.gwt.template.shared.marketplace.Order;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -28,4 +31,20 @@ public interface IMarketplace extends RemoteService{
 	public void deleteTemplate(Domain domain, String description);
 	
 	public LinkedList<Tag> getMarketplaceTagList(Domain domain);
+	
+	List<Product> getProductList(Domain domain, String login, Integer category);
+	
+	public Vector<Product> searchProductByName(String searchStr, Vector<Product> list);
+	
+	List<RegistryAttachTag> getAttachTemplateTagList(Domain domain, String login, List<Integer> pTagList);
+	
+	public List<Attach> obtainEcommerceProductTemplates(Domain domain, Product product);
+	
+	public Attach obtainEcommerceProductAttach(Domain domain, Product product, String templateName);
+
+	public EcommerceProduct obtainEcommerceProductValues(Domain domain, Attach attach, Product product);
+	
+	public EcommerceProduct obtainEcommerceProductValues(Domain domain, Product product, String templateName);
+	
+	public Boolean insertEcommerceProductValues(Domain domain, String login, String templateName, EcommerceProduct eProduct, Attach iattach);
 }
