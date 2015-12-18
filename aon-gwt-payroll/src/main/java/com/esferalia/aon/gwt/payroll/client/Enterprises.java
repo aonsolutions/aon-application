@@ -1,10 +1,13 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import com.esferalia.aon.gwt.common.client.css.images.Images;
-import com.esferalia.aon.gwt.common.client.widget.OptionsToolbar;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
@@ -238,7 +241,35 @@ public class Enterprises extends ResizeComposite implements
 				&& (elLeft + elWidth) > windowLeft;
 
 	}
+	
+	public Enterprise getEnterprise(Workplace workplace) {
+		for ( Enterprise enterprise : getEnterprises() ){ 
+			if ( enterprise.getWorkplaces().contains(workplace) ){
+				return enterprise;
+			}
+		}
+		throw new NoSuchElementException();
+	}
 
+	public Enterprise getEnterprise(Activity activity) {
+		for ( Enterprise enterprise : getEnterprises() ){ 
+			if ( enterprise.getActivities().contains(activity) ){
+				return enterprise;
+			}
+		}
+		throw new NoSuchElementException();
+	}
+
+	public Enterprise getEnterprise(CCC ccc) {
+		for ( Enterprise enterprise : getEnterprises() ){ 
+			for (Activity activity : enterprise.getActivities()){
+				if ( activity.getCccs().contains(ccc)) {
+					return enterprise;
+				}
+			}
+		}
+		throw new NoSuchElementException();
+	}
 	// ------------------------------------------------------------------------
 
 
@@ -323,7 +354,23 @@ public class Enterprises extends ResizeComposite implements
 	private boolean isWorkPlaceVisible(Workplace workplace) {
 		return workplace.isActive() || inactive;
 	}
+	
+	
+	private Collection<Enterprise> getEnterprises( ) {
+		List<Enterprise> enterprises = new ArrayList<Enterprise>();
+		for ( int i = 0; i < tree.getItemCount(); i++)
+			enterprises.addAll(getEnterprises(tree.getItem(i)));
+		return enterprises;
+	}
 
+	private Collection<Enterprise> getEnterprises(TreeItem treeItem) {
+		Object userObject = treeItem.getUserObject();
+		if ( userObject instanceof Enterprise )
+			return Collections.singleton((Enterprise)userObject);
 
-
+		List<Enterprise> enterprises = new ArrayList<Enterprise>();
+		for ( int i = 0; i < treeItem.getChildCount(); i++)
+			enterprises.addAll(getEnterprises(treeItem.getChild(i)));
+		return enterprises;
+	}
 }

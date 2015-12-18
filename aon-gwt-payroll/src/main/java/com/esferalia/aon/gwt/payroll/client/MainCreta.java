@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import org.apache.velocity.runtime.parser.node.GetExecutor;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -17,7 +20,9 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.payroll.client.EmployeeTree.EnterpriseCretaRequestCommand;
+import com.esferalia.aon.gwt.payroll.client.EmployeeTree.EnterpriseDBACommand;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
+import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
@@ -26,9 +31,12 @@ import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEmployee;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsError;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsRespuesta;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.Parameter;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.ErrorDescription;
+import com.esferalia.aon.gwt.payroll.shared.HttpException;
 import com.esferalia.aon.gwt.payroll.shared.Province;
+import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -62,12 +70,12 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
-	public static<T extends JsFile> T []  get(File file, T [] ts){
-		Map<String,T> map = get(file.name());
+	public static <T extends JsFile> T[] get(File file, T[] ts) {
+		Map<String, T> map = get(file.name());
 		return map.values().toArray(ts);
 	}
-	
-	public static <T extends JsFile> Map<String,T> add(File file, T ts[]){
+
+	public static <T extends JsFile> Map<String, T> add(File file, T ts[]) {
 		return add(file.name(), ts);
 	}
 
@@ -90,7 +98,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	DetailPanel detailPanel;
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
-	
+
 	private CCCCretaDetail cccCretaDetail;
 	private ActivityCretaDetail activityCretaDetail;
 	private EnterpriseCretaDetail enterpriseCretaDetail;
@@ -120,12 +128,10 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
 
-		
-		
 		resultsPanel = new ResultsPanel();
 
 		enterprises.addListener(this);
-		
+
 		cccCretaDetail = new CCCCretaDetail();
 		activityCretaDetail = new ActivityCretaDetail();
 		enterpriseCretaDetail = new EnterpriseCretaDetail();
@@ -154,7 +160,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		enterpriseCretaDetail.onTrabajadoresYTramos();
 		detailPanel.setWidget(enterpriseCretaDetail);
 	}
-	
+
 	@Override
 	public void onEnterprisesSelected(List<Enterprise> enterprises) {
 		enterprisesCretaDetail.setEnterprises(enterprises);
@@ -218,7 +224,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	@UiHandler("footPanel")
 	void onFootMaximize(MinimizeEvent event) {
-		
+
 	}
 
 	// ---------------------------------------------------------------- Private
@@ -226,7 +232,6 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	private void closeFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, 0);
 	}
-
 
 	private void showResultsPanel() {
 
@@ -236,22 +241,22 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		footTabPanel.add(resultsPanel, tab);
 		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
 	}
-	
-	
+
 	public static boolean hasTrabajadoresYTramos(JsRespuesta jsRespuesta) {
-		JsEmployee jsEmployees [] = jsRespuesta.getEmployees();
-		return jsEmployees != null && jsEmployees.length > 0 ;
+		JsEmployee jsEmployees[] = jsRespuesta.getEmployees();
+		return jsEmployees != null && jsEmployees.length > 0;
 	}
 
 	public static String getIconStyle(JsRespuesta respuesta) {
 		if (respuesta == null)
 			return AON.AON_ICON_ERRORWARNING;
-	
+
 		JsError jsErros[] = respuesta.getErrors();
-	
+
 		byte icon = 0x0; // 00000000
 		for (JsError jsError : jsErros) {
-			ErrorDescription error = ErrorDescription.getErrorDescription(jsError.getCode());
+			ErrorDescription error = ErrorDescription
+					.getErrorDescription(jsError.getCode());
 			if (error == null)
 				icon |= 0x03b;
 			else
@@ -259,40 +264,42 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					public Byte visitError(ErrorDescription error) {
 						return 0x01b;
 					}
-	
-					public Byte visitWarning(ErrorDescription.WarningDescription error) {
+
+					public Byte visitWarning(
+							ErrorDescription.WarningDescription error) {
 						return 0x02b;
 					}
-	
-					public Byte visitSuccess(ErrorDescription.SuccessDescription error) {
+
+					public Byte visitSuccess(
+							ErrorDescription.SuccessDescription error) {
 						return 0x04b;
 					}
 				});
 		}
-	
+
 		if ((icon & 0x01b) == 0x01b)
 			return AON.AON_ICON_EXCEPTION;
 		if ((icon & 0x02b) == 0x02b)
 			return AON.AON_ICON_OKWARNING;
 		if ((icon & 0x04b) == 0x04b)
 			return AON.AON_ICON_OK;
-	
+
 		return AON.AON_ICON_WARN;
 	}
 
-	public static PopupPanel showjsRespuestaToolTip(final JsRespuesta respuesta, final int x,
-			final int y) {
-	
+	public static PopupPanel showjsRespuestaToolTip(final JsRespuesta respuesta,
+			final int x, final int y) {
+
 		final DecoratedPopupPanel popupPanel = new DecoratedPopupPanel();
 		popupPanel.setAutoHideEnabled(true);
 		popupPanel.getElement().getStyle().setZIndex(70);
-	
+
 		JsError errors[] = respuesta.getErrors();
-	
+
 		Grid grid = new Grid(errors.length + 1, 4);
 		grid.setBorderWidth(1);
 		grid.getElement().getStyle().setProperty("borderCollapse", "collapse");
-	
+
 		// Header
 		grid.setText(0, 0, "CODIGO");
 		grid.setText(0, 1, "MENSAJE");
@@ -302,29 +309,27 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			grid.getCellFormatter().addStyleName(0, col, AON.AON_BOLD);
 			grid.getCellFormatter().addStyleName(0, col, AON.AON_TEXT_CENTER);
 		}
-	
+
 		for (int i = 0; i < errors.length; i++) {
 			String code = errors[i].getCode();
-	
+
 			grid.setText(i + 1, 0, errors[i].getCode());
-			
-			
-	
-			ErrorDescription errorDescription = ErrorDescription.getErrorDescription(code);
+
+			ErrorDescription errorDescription = ErrorDescription
+					.getErrorDescription(code);
 			if (errorDescription != null) {
 				grid.setText(i + 1, 1, errorDescription.getMessage());
 				grid.setText(i + 1, 2, errorDescription.getCause());
 				grid.setText(i + 1, 3, errorDescription.getSolution());
-			}
-			else {
+			} else {
 				grid.setText(i + 1, 1, errors[i].getMessage());
-				
+
 			}
-			
+
 		}
-	
+
 		popupPanel.add(grid);
-	
+
 		popupPanel.setPopupPositionAndShow(new PositionCallback() {
 			@Override
 			public void setPosition(int offsetWidth, int offsetHeight) {
@@ -333,7 +338,6 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		});
 		return popupPanel;
 	}
-
 
 	private static interface EnterpriseCommand extends ScheduledCommand {
 		void setEnterprise(Enterprise enterprise);
@@ -357,11 +361,9 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			MainCreta.this.showResultsPanel();
 		}
 	}
-	
+
 	private abstract class BaseCretaDetail extends CretaDetail {
-		
-		
-		
+
 		@Override
 		public void onBases(CretaService.JsBasesResult result) {
 
@@ -375,12 +377,13 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			} catch (NullPointerException e) {
 				mergeEditor.setShowDifferences(false);
 				mergeEditor.setText(result.getDraftRequestFile());
-			}	
+			}
 			mergeEditor.setTitle(CretaService.File.BASES.getFilename());
-			mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+			mergeEditor.setFilename(
+					CretaService.File.BASES.getFilename() + ".xml");
 			detailPanel.setWidget(mergeEditor);
-			
-			CretaResults cretaResults = new CretaResults(){
+
+			CretaResults cretaResults = new CretaResults() {
 				@Override
 				protected void onBases(JsBasesResult result) {
 					BaseCretaDetail.this.onBases(result);
@@ -398,14 +401,12 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 			mergeEditor.autoRefresh();
 		}
-		
-		
+
 		@Override
-		protected void onJsFileDblClick(int x, int y, JsFile... jsFiles ) {
+		protected void onJsFileDblClick(int x, int y, JsFile... jsFiles) {
 			FilesEditor filesEditor = new FilesEditor();
 
-			
-			for (JsFile jsFile: jsFiles ) {
+			for (JsFile jsFile : jsFiles) {
 
 				FileEditor fileEditor = new FileEditor(false);
 				fileEditor.setMode("text/xml");
@@ -414,40 +415,57 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				fileEditor.setText(jsFile.getXML());
 
 				try {
-					CretaService.File file = CretaService.File.valueOf(jsFile.getName());
-					filesEditor.add(fileEditor, file.getFilename(), AON.AON_ICON_SEGSOCIAL_SMALL);
-				} catch ( Exception e ){
-					String name = jsFile.getFile().indexOf("TrabajadoresTramos") >= 0 ? 
-							CretaService.File.TRABAJADORES_TRAMOS.getFilename() 
-							:CretaService.File.RESPUESTA.getFilename();
-					filesEditor.add(fileEditor, name,AON.AON_ICON_SEGSOCIAL_SMALL);
+					CretaService.File file = CretaService.File
+							.valueOf(jsFile.getName());
+					filesEditor.add(fileEditor, file.getFilename(),
+							AON.AON_ICON_SEGSOCIAL_SMALL);
+				} catch (Exception e) {
+					String name = jsFile.getFile()
+							.indexOf("TrabajadoresTramos") >= 0
+									? CretaService.File.TRABAJADORES_TRAMOS
+											.getFilename()
+									: CretaService.File.RESPUESTA.getFilename();
+					filesEditor.add(fileEditor, name,
+							AON.AON_ICON_SEGSOCIAL_SMALL);
 				}
 
 				fileEditor.autoRefresh();
 			}
-			
-			
-//			tabLayoutPanel.setVisible(tabLayoutPanel.getTabWidget(0), true);
+
+			// tabLayoutPanel.setVisible(tabLayoutPanel.getTabWidget(0), true);
 			detailPanel.setWidget(filesEditor);
-			
+
 		}
-		
+
 	}
 
 	private class MainEnterpriseCretaRequestCommand
-			extends EnterpriseCretaRequestCommand 
-			implements EnterpriseCommand{
+			extends EnterpriseCretaRequestCommand implements EnterpriseCommand {
 
 		public MainEnterpriseCretaRequestCommand(File file) {
 			super(file, MainCreta.this.detailPanel);
 		}
 
 		@Override
-		protected List<CCC> getCCs(Enterprise enterprise) {
-			List<CCC> cccs = new LinkedList<CCC>();
-			for (Activity activity : enterprise.getActivities())
-				cccs.addAll(activity.getCccs());
-			return cccs;
+		public void setEnterprise(Enterprise enterprise) {
+			this.enterprise = enterprise;
+			dialog.setData(getCCs(enterprise));
+		}
+
+	}
+
+	private class MainEnterpriseDBACommand extends EnterpriseDBACommand
+			implements EnterpriseCommand {
+
+		public MainEnterpriseDBACommand() {
+			super(MainCreta.this.detailPanel);
+		}
+
+		@Override
+		public void setEnterprise(Enterprise enterprise) {
+			this.enterpr1se = enterprise;
+			setData(getCCs(enterprise));
+			setBankAccounts(enterprise.getBankAccounts());
 		}
 
 	}
@@ -463,24 +481,23 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		protected void showResultsPanel() {
 			MainCreta.this.showResultsPanel();
 		}
-		
-		
+
 	}
-	
-	private class  MainEnterpriseCreateResponseCommand extends MainCretaResponseCommand implements EnterpriseCommand {
-		
+
+	private class MainEnterpriseCreateResponseCommand
+			extends MainCretaResponseCommand implements EnterpriseCommand {
+
 		private Enterprise enterprise;
 
 		public MainEnterpriseCreateResponseCommand(File outFile, File inFile) {
 			super(outFile, inFile);
 		}
 
-		
 		@Override
 		protected String getDescription(String fullccc) {
 			return MainCreta.getDescription(enterprise, fullccc);
 		}
-		
+
 		@Override
 		protected boolean accept(String fullccc) {
 			return MainCreta.accept(enterprise, fullccc);
@@ -492,13 +509,12 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		public void setEnterprise(Enterprise enterprise) {
 			this.enterprise = enterprise;
 		}
-		
-		
+
 	}
-	
+
 	private class EnterpriseContextMenu extends ContextMenu {
 
-		EnterpriseCommand enterpriseCommands[] = new EnterpriseCommand[3];
+		EnterpriseCommand enterpriseCommands[] = new EnterpriseCommand[4];
 
 		public EnterpriseContextMenu() {
 
@@ -507,11 +523,15 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 							CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Bases",
-					enterpriseCommands[1] =new MainEnterpriseCreateResponseCommand(File.BASES, File.TRABAJADORES_TRAMOS),
+					enterpriseCommands[1] = new MainEnterpriseCreateResponseCommand(
+							File.BASES, File.TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n",
 					enterpriseCommands[2] = new MainEnterpriseCretaRequestCommand(
 							CretaService.File.SOLICITUD_CONFIRMACION),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Comunicaci\u00FAn de Datos Bancarios",
+					enterpriseCommands[3] = new MainEnterpriseDBACommand(),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME,
@@ -526,20 +546,19 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 
 	}
-	
+
 	private class EnterpriseCretaDetail extends BaseCretaDetail {
-		
+
 		private Enterprise enterprise;
-		
-		
+
 		@Override
 		protected <T extends JsFile> List<T> filter(Collection<T> jsFiles) {
 			List<T> filtered = new ArrayList<T>();
-			
+
 			for (T jsFile : jsFiles)
-				if ( MainCreta.accept(enterprise, jsFile.getCCC()) )
+				if (MainCreta.accept(enterprise, jsFile.getCCC()))
 					filtered.add(jsFile);
-			
+
 			return filtered;
 		}
 
@@ -551,24 +570,25 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		public void setEnterprise(Enterprise enterprise) {
 			this.enterprise = enterprise;
 		}
-		
+
 		@Override
 		void onClickBorradorButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_BORRADOR);
 		}
-		
+
 		@Override
 		void onClickConfirmacionButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_CONFIRMACION);
 		}
-		
+
 		@Override
 		void onClickTrabajadoresYTramosButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
 		}
-		
+
 		protected void onRequestCommand(File file) {
-			MainEnterpriseCretaRequestCommand cmd = new MainEnterpriseCretaRequestCommand(file);
+			MainEnterpriseCretaRequestCommand cmd = new MainEnterpriseCretaRequestCommand(
+					file);
 			cmd.setEnterprise(enterprise);
 			cmd.execute();
 		}
@@ -577,7 +597,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	private class ActivityContextMenu extends ContextMenu {
 
-		ActivityCommand activityCommands[] = new ActivityCommand[4];
+		ActivityCommand activityCommands[] = new ActivityCommand[5];
 
 		public ActivityContextMenu() {
 
@@ -586,7 +606,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 							CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Bases",
-					activityCommands[1] = new MainActivityCreateResponseCommand(File.BASES, File.TRABAJADORES_TRAMOS),
+					activityCommands[1] = new MainActivityCreateResponseCommand(
+							File.BASES, File.TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Borrador",
 					activityCommands[2] = new MainActivityCretaRequestCommand(
@@ -596,11 +617,14 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					activityCommands[3] = new MainActivityCretaRequestCommand(
 							CretaService.File.SOLICITUD_CONFIRMACION),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Comunicaci\u00FAn de Datos Bancarios",
+					activityCommands[4] = new MainActivityDBACommand(),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME,
 					AON.AON_ICON_CMD_BUTTON);
 		}
-		
+
 		public void setActivity(Activity activity) {
 			for (ActivityCommand cmd : activityCommands)
 				if (cmd != null)
@@ -609,19 +633,20 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 
-	private class MainActivityCretaRequestCommand
-			extends EmployeeTree.CreateRequestCommand implements ActivityCommand{
-		
+	private class MainActivityCretaRequestCommand extends
+			EmployeeTree.CreateRequestCommand implements ActivityCommand {
+
 		private Activity activity;
 
 		public MainActivityCretaRequestCommand(File file) {
 			super(file, MainCreta.this.detailPanel);
 		}
-		
+
 		// ---------------------------------------------------- ActivityCommand
 		@Override
 		protected String getDescription(CCC ccc) {
-			return  activity.getDescription() + ", " +Province.getName(ccc.getGeozone()) + " " + ccc.getCode();
+			return activity.getDescription() + ", "
+					+ Province.getName(ccc.getGeozone()) + " " + ccc.getCode();
 		}
 
 		// ---------------------------------------------------- ActivityCommand
@@ -634,30 +659,59 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		protected List<CCC> getCCCs(Activity activity) {
 			return activity.getCccs();
 		}
-		
 
 	}
 
-	private class  MainActivityCreateResponseCommand extends MainCretaResponseCommand implements ActivityCommand {
-		
+	private class MainActivityDBACommand extends EmployeeTree.DBACommand
+			implements ActivityCommand {
+
+		private Activity activity;
+
+		public MainActivityDBACommand() {
+			super(MainCreta.this.detailPanel);
+		}
+
+		// --------------------------------------------------------------------
+		@Override
+		protected String getDescription(CCC ccc) {
+			return activity.getDescription() + ", "
+					+ Province.getName(ccc.getGeozone()) + " " + ccc.getCode();
+		}
+
+		// ---------------------------------------------------- ActivityCommand
+		@Override
+		public void setActivity(Activity activity) {
+			this.activity = activity;
+			setData(getCCCs(activity));
+			setBankAccounts(getBankAccounts(activity));
+		}
+
+		protected List<CCC> getCCCs(Activity activity) {
+			return activity.getCccs();
+		}
+
+	}
+
+	private class MainActivityCreateResponseCommand
+			extends MainCretaResponseCommand implements ActivityCommand {
+
 		private Activity activity;
 
 		public MainActivityCreateResponseCommand(File outFile, File inFile) {
 			super(outFile, inFile);
 		}
 
-		
 		@Override
 		protected String getDescription(String fullccc) {
-			return activity.getDescription() ;
+			return activity.getDescription();
 		}
-		
+
 		@Override
 		protected boolean accept(String fullccc) {
-			for ( CCC ccc : activity.getCccs())
-				if ( fullccc.endsWith(ccc.getCode()) )
+			for (CCC ccc : activity.getCccs())
+				if (fullccc.endsWith(ccc.getCode()))
 					return true;
-			
+
 			return false;
 		}
 		// ---------------------------------------------------- ActivityCommand
@@ -666,29 +720,28 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		public void setActivity(Activity activity) {
 			this.activity = activity;
 		}
-		
-		
+
 	}
 
 	private class ActivityCretaDetail extends BaseCretaDetail {
-		
+
 		private Activity activity;
-		
+
 		public void setActivity(Activity enterprise) {
 			this.activity = enterprise;
 		}
-		
+
 		@Override
 		protected <T extends JsFile> List<T> filter(Collection<T> jsFiles) {
 			List<T> filtered = new ArrayList<T>();
-			
+
 			for (T jsFile : jsFiles)
-				if ( MainCreta.accept(activity, jsFile.getCCC()) )
+				if (MainCreta.accept(activity, jsFile.getCCC()))
 					filtered.add(jsFile);
-			
+
 			return filtered;
 		}
-		
+
 		@Override
 		protected String getDescription(String fullccc) {
 			return MainCreta.getDescription(activity, fullccc);
@@ -698,19 +751,20 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		void onClickBorradorButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_BORRADOR);
 		}
-		
+
 		@Override
 		void onClickConfirmacionButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_CONFIRMACION);
 		}
-		
+
 		@Override
 		void onClickTrabajadoresYTramosButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
 		}
-		
+
 		protected void onRequestCommand(File file) {
-			MainActivityCretaRequestCommand cmd = new MainActivityCretaRequestCommand(file);
+			MainActivityCretaRequestCommand cmd = new MainActivityCretaRequestCommand(
+					file);
 			cmd.setActivity(activity);
 			cmd.execute();
 		}
@@ -718,7 +772,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	private class CCCContextMenu extends ContextMenu {
 
-		CCCCommand cccCommands[] = new CCCCommand[4];
+		CCCCommand cccCommands[] = new CCCCommand[5];
 
 		public CCCContextMenu() {
 
@@ -727,7 +781,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 							CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Bases",
-					cccCommands[1]= new MainCCCCreateResponseCommand(File.BASES, File.TRABAJADORES_TRAMOS),
+					cccCommands[1] = new MainCCCCreateResponseCommand(
+							File.BASES, File.TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Borrador",
 					cccCommands[2] = new MainCCCCretaRequestCommand(
@@ -736,6 +791,9 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n",
 					cccCommands[3] = new MainCCCCretaRequestCommand(
 							CretaService.File.SOLICITUD_CONFIRMACION),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Comunicaci\u00FAn de Datos Bancarios",
+					cccCommands[4] = new MainCCCDBACommand(),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME,
@@ -752,108 +810,129 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	private class MainCCCCretaRequestCommand
 			extends EmployeeTree.CreateRequestCommand implements CCCCommand {
-		
+
 		public MainCCCCretaRequestCommand(File file) {
 			super(file, MainCreta.this.detailPanel);
 
 			dialog.selectLabel.setVisible(false);
 			dialog.selectDataGrid.setVisible(false);
 		}
-		
+
 		@Override
 		protected String getDescription(CCC ccc) {
 			return Province.getName(ccc.getGeozone()) + " " + ccc.getCode();
 		}
-		
+
 		@Override
 		public void setCCC(CCC ccc) {
 			dialog.setData(Collections.singletonList(ccc));
 			dialog.setSelectedData(Collections.singletonList(ccc));
 		}
-		
+
 	}
 
-	private class  MainCCCCreateResponseCommand extends MainCretaResponseCommand implements CCCCommand {
-		
+	private class MainCCCDBACommand extends EmployeeTree.DBACommand
+			implements CCCCommand {
+
+		public MainCCCDBACommand() {
+			super(MainCreta.this.detailPanel);
+
+		}
+
+		@Override
+		protected String getDescription(CCC ccc) {
+			return Province.getName(ccc.getGeozone()) + " " + ccc.getCode();
+		}
+
+		@Override
+		public void setCCC(CCC ccc) {
+			setData(Collections.singletonList(ccc));
+			setSelectedData(Collections.singletonList(ccc));
+			setBankAccounts(getBankAccounts(ccc));
+		}
+
+	}
+
+	private class MainCCCCreateResponseCommand extends MainCretaResponseCommand
+			implements CCCCommand {
+
 		private CCC ccc;
 
 		public MainCCCCreateResponseCommand(File outFile, File inFile) {
 			super(outFile, inFile);
 		}
 
-		
 		@Override
 		protected String getDescription(String fullccc) {
 			String province = fullccc.substring(4, 6);
 			return Province.getName(province);
 		}
-		
+
 		@Override
 		protected boolean accept(String fullccc) {
 			return fullccc.endsWith(ccc.getCode());
 		}
-		
+
 		// ---------------------------------------------------- ActivityCommand
 
 		@Override
 		public void setCCC(CCC ccc) {
 			this.ccc = ccc;
 		}
-		
-		
+
 	}
 
 	private class CCCCretaDetail extends BaseCretaDetail {
-		
+
 		private CCC ccc;
-		
+
 		public void setCCC(CCC ccc) {
 			this.ccc = ccc;
 		}
-		
+
 		@Override
 		protected <T extends JsFile> List<T> filter(Collection<T> jsFiles) {
 			List<T> filtered = new ArrayList<T>();
-			
+
 			for (T jsFile : jsFiles)
-				if ( MainCreta.accept(ccc, jsFile.getCCC()) )
+				if (MainCreta.accept(ccc, jsFile.getCCC()))
 					filtered.add(jsFile);
-			
+
 			return filtered;
 		}
-		
+
 		@Override
 		protected String getDescription(String fullccc) {
 			return MainCreta.getDescription(ccc, fullccc);
 		}
-		
+
 		@Override
 		void onClickBorradorButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_BORRADOR);
 		}
-		
+
 		@Override
 		void onClickConfirmacionButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_CONFIRMACION);
 		}
-		
+
 		@Override
 		void onClickTrabajadoresYTramosButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
 		}
-		
+
 		protected void onRequestCommand(File file) {
-			MainCCCCretaRequestCommand cmd = new MainCCCCretaRequestCommand(file);
+			MainCCCCretaRequestCommand cmd = new MainCCCCretaRequestCommand(
+					file);
 			cmd.setCCC(ccc);
 			cmd.execute();
 		}
-		
 
 	}
 
 	private class EnterprisesContextMenu extends ContextMenu {
 
-		EnterprisesCommand cretaRequestCommands[] = new EnterprisesCommand[4];
+		EnterprisesCommand cretaRequestCommands[] = new EnterprisesCommand[5];
 
 		public EnterprisesContextMenu() {
 
@@ -862,7 +941,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 							CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Bases",
-					cretaRequestCommands[1] = new MainEnterprisesCreateResponseCommand(File.BASES, File.TRABAJADORES_TRAMOS),
+					cretaRequestCommands[1] = new MainEnterprisesCreateResponseCommand(
+							File.BASES, File.TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Borrador",
 					cretaRequestCommands[2] = new EnterprisesCretaRequestCommand(
@@ -871,6 +951,9 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n",
 					cretaRequestCommands[3] = new EnterprisesCretaRequestCommand(
 							CretaService.File.SOLICITUD_CONFIRMACION),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Comunicaci\u00FAn de Datos Bancarios",
+					cretaRequestCommands[4] = new EnterprisesDBACommand(),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME,
@@ -886,150 +969,174 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 
-	private class EnterprisesCretaRequestCommand
-			extends EmployeeTree.CreateRequestCommand implements EnterprisesCommand{
+	private class EnterprisesCretaRequestCommand extends
+			EmployeeTree.CreateRequestCommand implements EnterprisesCommand {
 
 		private List<Enterprise> enterprises;
 
 		public EnterprisesCretaRequestCommand(File file) {
 			super(file, MainCreta.this.detailPanel);
 		}
-		
+
 		void setSelected(List<CCC> cccs) {
 			dialog.setSelectedData(cccs);
 		}
-		
+
 		@Override
 		protected String getDescription(CCC ccc) {
-			String province = ccc.getGeozone();
-			
-			for ( Enterprise enterprise : enterprises )
-				for ( Activity activity: enterprise.getActivities()) 
-					for ( CCC cc : activity.getCccs())
-						if ( ccc.getCode().equals(cc.getCode()) )
-							return enterprise.getName() +" " + activity.getDescription() + ", " + Province.getName(province) + " " + ccc.getCode() ;
-			
-			return ccc.getCode();
+			return MainCreta.getDescription(ccc, enterprises);
 		}
-		
+
 		@Override
 		public void setEnterprises(List<Enterprise> enterprises) {
 			this.enterprises = enterprises;
 			dialog.setData(getCCCs(enterprises));
 		}
 
-		private List<CCC> getCCCs(List<Enterprise> enterprises) {
-			List<CCC> cccs = new ArrayList<CCC>();
-			for (Enterprise enterprise : enterprises)
-				for (Activity activity : enterprise.getActivities())
-					cccs.addAll(activity.getCccs());
-			return cccs;
-
-		}
 	}
 
-	private class  MainEnterprisesCreateResponseCommand extends MainCretaResponseCommand implements EnterprisesCommand {
-		
+	private class EnterprisesDBACommand extends
+			EmployeeTree.DBACommand implements EnterprisesCommand {
+
+		private List<Enterprise> enterprises;
+
+		public EnterprisesDBACommand() {
+			super(MainCreta.this.detailPanel);
+		}
+
+		void setSelected(List<CCC> cccs) {
+			setSelectedData(cccs);
+		}
+
+		@Override
+		protected String getDescription(CCC ccc) {
+			return MainCreta.getDescription(ccc, enterprises);
+		}
+
+		@Override
+		public void setEnterprises(List<Enterprise> enterprises) {
+			this.enterprises = enterprises;
+			setData(getCCCs(enterprises));
+			setBankAccounts(getBankAccounts(enterprises));
+		}
+
+	}
+
+	private class MainEnterprisesCreateResponseCommand
+			extends MainCretaResponseCommand implements EnterprisesCommand {
+
 		private List<Enterprise> enterprises;
 
 		public MainEnterprisesCreateResponseCommand(File outFile, File inFile) {
 			super(outFile, inFile);
 		}
 
-		
 		@Override
 		protected String getDescription(String fullccc) {
-			
-			String province = fullccc.substring(4,6);
-			
-			for ( Enterprise enterprise : enterprises )
-				for ( Activity activity: enterprise.getActivities()) 
-					for ( CCC ccc : activity.getCccs())
-						if ( fullccc.endsWith(ccc.getCode()) )
-							return enterprise.getName() +" " + activity.getDescription() + ", " + Province.getName(province)  ;
-			
+
+			String province = fullccc.substring(4, 6);
+
+			for (Enterprise enterprise : enterprises)
+				for (Activity activity : enterprise.getActivities())
+					for (CCC ccc : activity.getCccs())
+						if (fullccc.endsWith(ccc.getCode()))
+							return enterprise.getName() + " "
+									+ activity.getDescription() + ", "
+									+ Province.getName(province);
+
 			return "";
 		}
-		
+
 		@Override
 		protected boolean accept(String fullccc) {
-			
-			for ( Enterprise enterprise : enterprises )
-				for ( Activity activity: enterprise.getActivities()) 
-					for ( CCC ccc : activity.getCccs())
-						if ( fullccc.endsWith(ccc.getCode()) )
+
+			for (Enterprise enterprise : enterprises)
+				for (Activity activity : enterprise.getActivities())
+					for (CCC ccc : activity.getCccs())
+						if (fullccc.endsWith(ccc.getCode()))
 							return true;
-			
+
 			return false;
 		}
-		
+
 		// -------------------------------------------------- EnterpriseCommand
 
 		@Override
 		public void setEnterprises(List<Enterprise> enterprises) {
 			this.enterprises = enterprises;
 		}
-		
-		
+
 	}
 
-	
-	
 	private class EnterprisesCretaDetail extends BaseCretaDetail {
-		
+
 		private List<Enterprise> enterprises;
 
-		
 		public void setEnterprises(List<Enterprise> enterprises) {
 			this.enterprises = enterprises;
 		}
-		
+
 		@Override
 		protected <T extends JsFile> List<T> filter(Collection<T> jsFiles) {
 			List<T> filtered = new ArrayList<T>();
-			
+
 			for (T jsFile : jsFiles)
-				if ( MainCreta.accept(enterprises, jsFile.getCCC()) )
+				if (MainCreta.accept(enterprises, jsFile.getCCC()))
 					filtered.add(jsFile);
-			
+
 			Collections.sort(filtered, JsFileComparator.newInstace());
-			
+
 			return filtered;
 		}
-		
+
 		@Override
 		protected String getDescription(String fullccc) {
 			return MainCreta.getDescription(enterprises, fullccc);
 		}
-		
+
 		@Override
 		void onClickBorradorButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_BORRADOR);
 		}
-		
+
 		@Override
 		void onClickConfirmacionButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_CONFIRMACION);
 		}
-		
+
 		@Override
 		void onClickTrabajadoresYTramosButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
 		}
-		
+
 		protected void onRequestCommand(File file) {
-			EnterprisesCretaRequestCommand cmd = new EnterprisesCretaRequestCommand(file);
+			EnterprisesCretaRequestCommand cmd = new EnterprisesCretaRequestCommand(
+					file);
 			cmd.setEnterprises(enterprises);
 			cmd.execute();
 		}
 	}
 	
+	private Collection<BankAccount> getBankAccounts(CCC ccc){
+		return enterprises.getEnterprise(ccc).getBankAccounts();
+	}
+
+	private Collection<BankAccount> getBankAccounts(Activity activity){
+		return enterprises.getEnterprise(activity).getBankAccounts();
+	}
+
+	private Collection<BankAccount> getBankAccounts(Workplace workplace){
+		return enterprises.getEnterprise(workplace).getBankAccounts();
+	}
+
 	// ------------------------------------------------------------------------
 
-	protected static void submit(String url, Map<String,Collection<String>> datas, Collection<JsFile> jsFiles, final AsyncCallback<JsBasesResult> cb) {
-		
+	protected static void submit(String url,
+			Map<String, Collection<String>> datas, Collection<JsFile> jsFiles,
+			final AsyncCallback<JsBasesResult> cb) {
+
 		XMLHttpRequest xmlHttpRequest = XMLHttpRequest.create();
-		
+
 		xmlHttpRequest.setOnReadyStateChange(new ReadyStateChangeHandler() {
 			@Override
 			public void onReadyStateChange(XMLHttpRequest xhr) {
@@ -1040,271 +1147,353 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					String json = xhr.getResponseText();
 					JsBasesResult result = eval("(" + json + ")");
 					cb.onSuccess(result);
-				} catch ( Throwable caught ) {
+				} catch (Throwable caught) {
 					String json = xhr.getResponseText();
 					Window.alert(json);
 					cb.onFailure(caught);
 				}
-				
+
 			}
 		});
-		
-		xmlHttpRequest.open("POST", url );
-		
+
+		xmlHttpRequest.open("POST", url);
+
 		/* enctype is multipart/form-data */
-		String boundary = "---------------------------" + Long.toHexString(System.currentTimeMillis());
-		xmlHttpRequest.setRequestHeader("Content-Type", "multipart/form-data; boundary=" + boundary);
-		
+		String boundary = "---------------------------"
+				+ Long.toHexString(System.currentTimeMillis());
+		xmlHttpRequest.setRequestHeader("Content-Type",
+				"multipart/form-data; boundary=" + boundary);
+
 		StringBuffer requestBuffer = new StringBuffer();
-		
-		for ( Map.Entry<String, Collection<String>> entry: datas.entrySet()) {
-			for ( String value : entry.getValue() )  {
+
+		for (Map.Entry<String, Collection<String>> entry : datas.entrySet()) {
+			for (String value : entry.getValue()) {
 				// We start a new part in our body's request
-				requestBuffer.append("--" + boundary + "\r\n" );
+				requestBuffer.append("--" + boundary + "\r\n");
 				// We said it's form data (it could be something else)
 				requestBuffer.append("Content-Disposition: form-data; "
 						// We define the name of the form data
-						+"name=\"" + entry.getKey() + "\"\r\n" );
-				// There is always a blank line between the meta-data and the data
+						+ "name=\"" + entry.getKey() + "\"\r\n");
+				// There is always a blank line between the meta-data and the
+				// data
 				requestBuffer.append("\r\n");
-	
+
 				requestBuffer.append(value);
-	
+
 				requestBuffer.append("\r\n");
 			}
 		}
-		
-		
-		for ( JsFile jsFile: jsFiles ) {
+
+		for (JsFile jsFile : jsFiles) {
 			// We start a new part in our body's request
-			requestBuffer.append("--" + boundary + "\r\n" );
+			requestBuffer.append("--" + boundary + "\r\n");
 			// We said it's form data (it could be something else)
 			requestBuffer.append("Content-Disposition: form-data; "
 					// We define the name of the form data
-					+"name=\"" + jsFile.getName() +"\"; "
+					+ "name=\"" + jsFile.getName() + "\"; "
 					// We provide the 'real' name of the file
-					+"filename=\"" +  jsFile.getId() + ".xml" + "\"\r\n");
+					+ "filename=\"" + jsFile.getId() + ".xml" + "\"\r\n");
 			// We provide the mime type of the file
 			requestBuffer.append("Content-Type: text/xml\r\n");
 			// There is always a blank line between the meta-data and the data
 			requestBuffer.append("\r\n");
-			
+
 			requestBuffer.append(jsFile.getXML());
 
 			requestBuffer.append("\r\n");
 		}
-		
+
 		// Once we are done, we "close" the body's request
-		requestBuffer.append("--" + boundary + "--\r\n" );		
-		
+		requestBuffer.append("--" + boundary + "--\r\n");
+
 		xmlHttpRequest.send(requestBuffer.toString());
-		
-		
+
 	}
 
 	// ------------------------------------------------------------------------
-	
-	
+
 	private static String getDescription(CCC ccc, String fullccc) {
 		String province = fullccc.substring(4, 6);
-		return Province.getName(province) ;
+		return Province.getName(province);
 	}
-	
-	
-	private static  boolean accept(CCC ccc, String fullccc) {
+
+	private static boolean accept(CCC ccc, String fullccc) {
 		return fullccc.endsWith(ccc.getCode());
 	}
 
 	private static String getDescription(Activity activity, String fullccc) {
 		String province = fullccc.substring(4, 6);
-		return activity.getDescription() + ", " +Province.getName(province) ;
-		
+		return activity.getDescription() + ", " + Province.getName(province);
+
 	}
-	
-	
-	private static  boolean accept(Activity activity, String fullccc) {
-		
-		for ( CCC ccc : activity.getCccs())
-			if ( fullccc.endsWith(ccc.getCode()) )
+
+	private static boolean accept(Activity activity, String fullccc) {
+
+		for (CCC ccc : activity.getCccs())
+			if (fullccc.endsWith(ccc.getCode()))
 				return true;
-		
+
 		return false;
 	}
 
-	private static String getDescription(Enterprise enterprise, String fullccc) {
+	private static String getDescription(Enterprise enterprise,
+			String fullccc) {
 
 		String province = fullccc.substring(4, 6);
 
-		for ( Activity activity: enterprise.getActivities()) 
-			for ( CCC ccc : activity.getCccs())
-				if ( fullccc.endsWith(ccc.getCode()) )
-					return activity.getDescription() + ", " + Province.getName(province) ;
-		
+		for (Activity activity : enterprise.getActivities())
+			for (CCC ccc : activity.getCccs())
+				if (fullccc.endsWith(ccc.getCode()))
+					return activity.getDescription() + ", "
+							+ Province.getName(province);
+
 		return "";
 	}
-	
-	
-	private static  boolean accept(Enterprise enterprise, String fullccc) {
-		
-		for ( Activity activity: enterprise.getActivities()) 
-			for ( CCC ccc : activity.getCccs())
-				if ( fullccc.endsWith(ccc.getCode()) )
+
+	private static boolean accept(Enterprise enterprise, String fullccc) {
+
+		for (Activity activity : enterprise.getActivities())
+			for (CCC ccc : activity.getCccs())
+				if (fullccc.endsWith(ccc.getCode()))
 					return true;
-		
+
 		return false;
 	}
 
-	
-	private static String getDescription(Collection<Enterprise> enterprises, String fullccc) {
+	private static String getDescription(Collection<Enterprise> enterprises,
+			String fullccc) {
 
 		String province = fullccc.substring(4, 6);
 
-		for ( Enterprise enterprise: enterprises )
-			for ( Activity activity: enterprise.getActivities()) 
-				for ( CCC ccc : activity.getCccs())
-					if ( fullccc.endsWith(ccc.getCode()) )
-						return enterprise.getName() +" " + activity.getDescription() + ", " + Province.getName(province) ;
-		
+		for (Enterprise enterprise : enterprises)
+			for (Activity activity : enterprise.getActivities())
+				for (CCC ccc : activity.getCccs())
+					if (fullccc.endsWith(ccc.getCode()))
+						return enterprise.getName() + " "
+								+ activity.getDescription() + ", "
+								+ Province.getName(province);
+
 		return "";
 	}
-	
-	
-	private static  boolean accept(Collection<Enterprise> enterprises, String fullccc) {
-		for ( Enterprise enterprise: enterprises )
-			for ( Activity activity: enterprise.getActivities()) 
-				for ( CCC ccc : activity.getCccs())
-					if ( fullccc.endsWith(ccc.getCode()) )
+
+	private static boolean accept(Collection<Enterprise> enterprises,
+			String fullccc) {
+		for (Enterprise enterprise : enterprises)
+			for (Activity activity : enterprise.getActivities())
+				for (CCC ccc : activity.getCccs())
+					if (fullccc.endsWith(ccc.getCode()))
 						return true;
-		
+
 		return false;
 	}
 
-	private static  List<String> getCCCs(Collection<Enterprise> enterprises) {
-		List<String> cccs = new ArrayList<String>();  
-		for ( Enterprise enterprise: enterprises )
-			for ( Activity activity: enterprise.getActivities()) 
-				for ( CCC ccc : activity.getCccs())
+	private static List<String> getCCCs(Collection<Enterprise> enterprises) {
+		List<String> cccs = new ArrayList<String>();
+		for (Enterprise enterprise : enterprises)
+			for (Activity activity : enterprise.getActivities())
+				for (CCC ccc : activity.getCccs())
 					cccs.add("0111" + ccc.getGeozone() + ccc.getCode());
 		return cccs;
 	}
-	
-	private static <T extends JsFile >  Collection<T> merge (T t1 [], T t2 []) {
-		Map<String, T> map = new HashMap<String,T>(); 
-		for ( T t : t1 ) 
+
+	private static <T extends JsFile> Collection<T> merge(T t1[], T t2[]) {
+		Map<String, T> map = new HashMap<String, T>();
+		for (T t : t1)
 			map.put(t.getId(), t);
-		for ( T t : t2 ) 
+		for (T t : t2)
 			map.put(t.getId(), t);
-		
-		
+
 		return map.values();
 	}
 
-	private static <T extends JsFile> void set(String key, T ts []){
+	private static <T extends JsFile> void set(String key, T ts[]) {
 		Storage localStorage = Storage.getLocalStorageIfSupported();
-		if ( localStorage == null )
+		if (localStorage == null)
 			return;
-		
+
 		JsArray<T> jsArray = JsArrayUtils.readOnlyJsArray(ts);
 		String json = JsonUtils.stringify(jsArray);
 		localStorage.setItem(key, json);
 	}
 
-	private static <T extends JsFile> void set(String key, Collection<T> ts){
+	private static <T extends JsFile> void set(String key, Collection<T> ts) {
 		Storage localStorage = Storage.getLocalStorageIfSupported();
-		if ( localStorage == null )
+		if (localStorage == null)
 			return;
-		
+
 		JsArray<T> jsArray = JsArray.createArray(ts.size()).cast();
-		for(T t: ts)
+		for (T t : ts)
 			jsArray.push(t);
-		
+
 		String json = JsonUtils.stringify(jsArray);
 		localStorage.setItem(key, json);
 	}
 
-	private static <T extends JsFile> Map<String,T> add(String key, T ts []){
+	private static <T extends JsFile> Map<String, T> add(String key, T ts[]) {
 		Storage localStorage = Storage.getLocalStorageIfSupported();
-		if ( localStorage == null )
+		if (localStorage == null)
 			throw new UnsupportedOperationException();
-		
-		Map<String,T> map = get(key);
-		for ( T t : ts) 
+
+		Map<String, T> map = get(key);
+		for (T t : ts)
 			map.put(t.getId(), t);
-		
+
 		set(key, map.values());
-		
+
 		return Collections.unmodifiableMap(map);
 	}
 
-	private static <T extends JsFile> Map<String,T>  get(String key){
-		
+	private static <T extends JsFile> Map<String, T> get(String key) {
+
 		Storage localStorage = Storage.getLocalStorageIfSupported();
-		if ( localStorage == null )
+		if (localStorage == null)
 			throw new UnsupportedOperationException();
-		
+
 		String json = localStorage.getItem(key);
-		
-		if ( AonStringUtils.isBlank(json) )
-			return new HashMap<String,T>();
+
+		if (AonStringUtils.isBlank(json))
+			return new HashMap<String, T>();
 
 		try {
 			JsArray<T> jsArray = JsonUtils.safeEval(json);
 			Map<String, T> map = new HashMap<String, T>();
 			for (int i = 0; i < jsArray.length(); i++) {
 				T t = jsArray.get(i);
-				if ( t != null)
+				if (t != null)
 					map.put(t.getId(), t);
-		}
-		return map;
-		} catch ( IllegalArgumentException e ){
-			return new HashMap<String,T>();
+			}
+			return map;
+		} catch (IllegalArgumentException e) {
+			return new HashMap<String, T>();
 		}
 	}
-	
-	public static class JsFileComparator<T extends JsFile> implements Comparator<T> {
-		
-		public static <T extends JsFile> JsFileComparator<T> newInstace(){
+
+	public static class JsFileComparator<T extends JsFile>
+			implements Comparator<T> {
+
+		public static <T extends JsFile> JsFileComparator<T> newInstace() {
 			return new JsFileComparator<T>();
 		}
-		
+
 		private JsFileComparator() {
 			// TODO Auto-generated constructor stub
 		}
-		
+
 		@Override
 		public int compare(T t1, T t2) {
 
 			// Dates DESC
 			int compare = t2.getFrom().compareTo(t1.getFrom());
-			if ( compare == 0 )
+			if (compare == 0)
 				compare = t2.getTo().compareTo(t1.getTo());
-			
-			if ( compare == 0 )
+
+			if (compare == 0)
 				compare = t1.getCCC().compareTo(t2.getCCC());
 			return compare;
 		}
 	}
-	
-	
-	
-	private static void sendAsBinary(XMLHttpRequest xmlHttpRequest, String sData) {
-		int nBytes = sData.length(); 
-		Uint8Array ui8Data = Uint8ArrayNative.create(nBytes);
-		for ( int i = 0; i < nBytes; i++)
-			ui8Data.set(i, sData.charAt(i) & 0xFF ); 
-		
-		/* send as ArrayBufferView...: */
-		//xmlHttpRequest.send(ui8Data);
-		/* ...or as ArrayBuffer (legacy)...: this.send(ui8Data.buffer); */
-		//xmlHttpRequest.send(ui8Data.buffer());
+
+	public static void send(File file, Map<Parameter, Collection<String>> params,
+			final AsyncCallback<String> cb) {
+		StringBuffer requestDataBuffer = new StringBuffer();
+
+		for (Entry<Parameter, Collection<String>> entry : params.entrySet())
+			for ( String value: entry.getValue() )
+				requestDataBuffer
+						.append("&" + entry.getKey() + "=" + value);
+
+		// Send request to server and catch any errors.
+
+		XMLHttpRequest xhr = XMLHttpRequest.create();
+		xhr.open("POST", CretaService.CRETA_URL + "/" + file.name());
+		xhr.setRequestHeader("Content-type",
+				"application/x-www-form-urlencoded");
+		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
+
+			private int loaded = 0;
+
+			@Override
+			public void onReadyStateChange(XMLHttpRequest xhr) {
+				int state = xhr.getReadyState();
+
+				if (state != XMLHttpRequest.DONE)
+					return;
+
+				int status = xhr.getStatus();
+
+				// Successful 2xx
+				if (status >= 200 && status < 300)
+					cb.onSuccess(xhr.getResponseText());
+				else
+					cb.onFailure(
+							new HttpException(status, xhr.getResponseText()));
+			}
+
+		});
+
+		xhr.send(requestDataBuffer.toString());
+
 	}
 
-	private static native < T extends JavaScriptObject> T eval(String javascript)
+	// ------------------------------------------------------------------------
+
+	private static void sendAsBinary(XMLHttpRequest xmlHttpRequest,
+			String sData) {
+		int nBytes = sData.length();
+		Uint8Array ui8Data = Uint8ArrayNative.create(nBytes);
+		for (int i = 0; i < nBytes; i++)
+			ui8Data.set(i, sData.charAt(i) & 0xFF);
+
+		/* send as ArrayBufferView...: */
+		// xmlHttpRequest.send(ui8Data);
+		/* ...or as ArrayBuffer (legacy)...: this.send(ui8Data.buffer); */
+		// xmlHttpRequest.send(ui8Data.buffer());
+	}
+
+	private static native <T extends JavaScriptObject> T eval(String javascript)
 	/*-{
-	   return eval(javascript);
+		return eval(javascript);
 	}-*/;
+
+	private static List<CCC> getCCs(Enterprise enterprise) {
+		List<CCC> cccs = new LinkedList<CCC>();
+		for (Activity activity : enterprise.getActivities())
+			cccs.addAll(activity.getCccs());
+		return cccs;
+	}
 	
 	
+	private static List<CCC> getCCCs(List<Enterprise> enterprises) {
+		List<CCC> cccs = new ArrayList<CCC>();
+		for (Enterprise enterprise : enterprises)
+			for (Activity activity : enterprise.getActivities())
+				cccs.addAll(activity.getCccs());
+		return cccs;
+
+	}
 	
+	private static Collection<BankAccount> getBankAccounts(Collection<Enterprise> enterprises){
+		List<BankAccount> bankAccounts = new ArrayList<BankAccount>();
+		for ( Enterprise enterprise: enterprises )
+			bankAccounts.addAll(enterprise.getBankAccounts());
+		return bankAccounts;
+	}
 	
+	private static String getDescription(CCC ccc, List<Enterprise> enterprises) {
+		String province = ccc.getGeozone();
+
+		for (Enterprise enterprise : enterprises)
+			for (Activity activity : enterprise.getActivities())
+				for (CCC cc : activity.getCccs())
+					if (ccc.getCode().equals(cc.getCode()))
+						return enterprise.getName() + " "
+								+ activity.getDescription() + ", "
+								+ Province.getName(province) + " "
+								+ ccc.getCode();
+
+		return ccc.getCode();
+	}
+
+	
+
 }

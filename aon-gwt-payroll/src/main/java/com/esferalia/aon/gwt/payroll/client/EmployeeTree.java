@@ -8,6 +8,11 @@ import static com.esferalia.aon.gwt.payroll.shared.CalculateService.SAVE;
 import static com.esferalia.aon.gwt.payroll.shared.CalculateService.START_DATE;
 import static com.esferalia.aon.gwt.payroll.shared.CalculateService.WORKPLACES;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -16,6 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.velocity.runtime.parser.node.SetExecutor;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.TextCell;
@@ -31,6 +38,7 @@ import com.esferalia.aon.gwt.common.shared.HasId;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptEvent;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptHandler;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
+import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CalculateService;
@@ -443,7 +451,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				optionsBits |= OVERWRITE_OPTION;
 			if (calcDialog.isDuplicateSelected())
 				optionsBits |= DUPLICATE_OPTION;
-
+			
 			EmployeeTree.calculate(startDate, endDate, EMPLOYEES, employees,
 					optionsBits, this);
 			clear();
@@ -799,14 +807,26 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				public void visitSolicitudTrabajadoresTramos(Void t, Void l)
 						throws RuntimeException {
 				}
+				
+				@Override
+				public void visitComunicacionDatosBancarios(Void t, Void l)
+						throws RuntimeException {
+					// TODO Auto-generated method stub
+				}
 
 			}, null, null);
 
 		}
 
 	}
+	
+	interface WorkplaceCommand extends ScheduledCommand {
+		void setWorkplace(Workplace workplace);
+	}
 
-	class WorkplaceCreateRequestCommand extends CreateRequestCommand {
+	class WorkplaceCreateRequestCommand extends CreateRequestCommand implements WorkplaceCommand {
+		
+		private Workplace workplace; 
 
 		public WorkplaceCreateRequestCommand(File file, DetailPanel detailPanel,
 				FileEditor fileEditor) {
@@ -814,38 +834,57 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 
 		// --------------------------------------------------------------------
+		@Override
 		public void setWorkplace(Workplace workplace) {
-
+			this.workplace = workplace;
 			dialog.setData(getCCs(workplace));
 		}
-
-		protected List<CCC> getCCs(Workplace workplace) {
-
-			Activity activity = workplace.getActivity();
-			if (activity == null)
-				return Collections.emptyList();
-			List<CCC> ccs = activity.getCccs();
-			if (ccs == null)
-				return Collections.emptyList();
-			return ccs;
-		}
-
-		// --------------------------------------------------
+		// --------------------------------------------------------------------
 
 		@Override
 		protected String getDescription(CCC ccc) {
-			String province = ccc.getGeozone();
-			Activity activity = workplace.getActivity();
-			return activity.getDescription() + "," + Province.getName(province)
-					+ " " + ccc.getCode();
+			return EmployeeTree.getDescription(ccc, workplace);
 		}
 
 	}
 
-	public static class EnterpriseCretaRequestCommand
-			extends CreateRequestCommand {
+	class WorkplaceDBACommand extends DBACommand implements WorkplaceCommand  {
+		
+		protected Workplace workplace;
+		
+		public WorkplaceDBACommand(DetailPanel detailPanel,
+				FileEditor fileEditor) {
+			super(detailPanel, fileEditor);
+		}
 
-		private Enterprise enterprise;
+		// --------------------------------------------------------------------
+
+		@Override
+		public void setWorkplace(Workplace workplace) {
+			this.workplace = workplace;
+			setData(getCCs(workplace));
+			setBankAccounts(enterprise.getBankAccounts());
+		}
+
+		
+		// --------------------------------------------------------------------
+		
+		
+		@Override
+		protected String getDescription(CCC ccc) {
+			return EmployeeTree.getDescription(ccc, workplace);
+		}
+
+	}
+	
+	public interface EnterpriseCommand extends ScheduledCommand{
+		void setEnterprise(Enterprise enterprise);
+	}
+
+	public static class EnterpriseCretaRequestCommand
+			extends CreateRequestCommand implements EnterpriseCommand{
+
+		protected Enterprise enterprise;
 
 		public EnterpriseCretaRequestCommand(File file,
 				DetailPanel detailPanel) {
@@ -862,43 +901,84 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			this.enterprise = enterprise;
 			dialog.setData(getCCs(enterprise));
 		}
+		
 
 		// --------------------------------------------------
 
 		@Override
 		protected String getDescription(CCC ccc) {
-			String province = ccc.getGeozone();
-
-			for (Activity activity : enterprise.getActivities())
-				for (CCC cc : activity.getCccs())
-					if (ccc.getCode().equals(cc.getCode()))
-						return activity.getDescription() + ", "
-								+ Province.getName(province) + " "
-								+ ccc.getCode();
-
-			return "";
+			return EmployeeTree.getDescription(ccc, this.enterprise);
 		}
 
-		protected List<CCC> getCCs(Enterprise enterprise) {
+	}
 
-			List<CCC> ccs = new LinkedList<CCC>();
-
-			for (Workplace workplace : enterprise.getWorkplaces()) {
-
-				Activity activity = workplace.getActivity();
-				if (activity == null) {
-					continue;
-				}
-
-				List<CCC> workplaceCcs = activity.getCccs();
-				if (workplaceCcs == null) {
-					continue;
-				}
-
-				ccs.addAll(workplaceCcs);
-			}
-			return ccs;
+	public static class DBACommand extends CretaDBACommand {
+		private FileEditor fileEditor;
+		private DetailPanel detailPanel;
+		
+		public DBACommand(DetailPanel detailPanel) {
+			this(detailPanel, new FileEditor());
 		}
+
+
+		public DBACommand(DetailPanel detailPanel,
+				FileEditor fileEditor) {
+			this.fileEditor = fileEditor;
+			this.detailPanel = detailPanel;
+		}
+
+		// --------------------------------------------------------------------
+		
+		@Override
+		protected void onSucces(String response) {
+			fileEditor.setMode("xml");
+			fileEditor.setText(response);
+			fileEditor.setFoldGutter(true);
+			fileEditor.setLineNumbers(true);
+			fileEditor.setTitle(File.COMUNICACION_DATOS_BANCARIOS.getFilename());
+			fileEditor.setFilename(File.COMUNICACION_DATOS_BANCARIOS.getFilename() + ".xml");
+			detailPanel.setWidget(fileEditor);
+			fileEditor.autoRefresh();
+		}
+		
+		@Override
+		protected void onFailure(Throwable caugth) {
+			// TODO Auto-generated method stub
+			super.onFailure(caugth);
+		}
+	}
+
+	public static class EnterpriseDBACommand extends DBACommand implements EnterpriseCommand  {
+		
+		protected Enterprise enterpr1se; 
+		
+		public EnterpriseDBACommand(DetailPanel detailPanel) {
+			super(detailPanel, new FileEditor());
+		}
+
+
+		public EnterpriseDBACommand(DetailPanel detailPanel,
+				FileEditor fileEditor) {
+			super(detailPanel, fileEditor);
+		}
+
+		// --------------------------------------------------------------------
+
+		@Override
+		public void setEnterprise(Enterprise enterprise) {
+			this.enterpr1se = enterprise;
+			setData(getCCs(enterprise));
+			setBankAccounts(enterprise.getBankAccounts());
+		}
+
+		
+		// --------------------------------------------------------------------
+		
+		@Override
+		protected String getDescription(CCC ccc) {
+			return EmployeeTree.getDescription(ccc, this.enterpr1se);
+		}
+
 	}
 
 	class CalcWorkplaceCommand
@@ -1010,7 +1090,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		CalcWorkplaceCommand calcCmd;
 		PasteEmployeeCommand pasteCmd;
 
-		WorkplaceCreateRequestCommand cretaRequestCmds[] = new WorkplaceCreateRequestCommand[4];
+		WorkplaceCommand workplaceCmds[] = new WorkplaceCommand[5];
 		WorkplaceCreateResponseCommand cretaResponseCmds[] = new WorkplaceCreateResponseCommand[1];
 
 		public WorkplaceContextMenu() {
@@ -1039,16 +1119,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			addItem("SLD-Fichero de Solicitud de Trabajadores y Tramos",
-					cretaRequestCmds[0] = new WorkplaceCreateRequestCommand(
+					workplaceCmds[0] = new WorkplaceCreateRequestCommand(
 							CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS,
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			// addItem("SLD-Fichero de Solicitud de C\u00E1lculo", //
-			// cretaRequestCmds[1]
-			// = new
-			// WorkplaceCreateRequestCommand(CretaService.File.CALCULOS),//
-			// AON.AON_ICON_SEGSOCIAL_SMALL,
-			// AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Bases",
 					cretaResponseCmds[0] = new WorkplaceCreateResponseCommand(
 							CretaService.File.BASES,
@@ -1060,21 +1134,27 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 						}
 					}, AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Borrador",
-					cretaRequestCmds[2] = new WorkplaceCreateRequestCommand(
+					workplaceCmds[2] = new WorkplaceCreateRequestCommand(
 							CretaService.File.SOLICITUD_BORRADOR,
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n",
-					cretaRequestCmds[3] = new WorkplaceCreateRequestCommand(
+					workplaceCmds[3] = new WorkplaceCreateRequestCommand(
 							CretaService.File.SOLICITUD_CONFIRMACION,
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			
+			addItem("SLD-Fichero de Comunicaci\u00FAn de Datos Bancarios",
+					workplaceCmds[4] = new WorkplaceDBACommand(
+							employeeDetail, fileEditor),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			
 		}
 
 		public void setWorkplace(Workplace workplace) {
 			calcCmd.setWorkplace(workplace);
 
-			for (WorkplaceCreateRequestCommand cmd : cretaRequestCmds)
+			for (WorkplaceCommand cmd : workplaceCmds)
 				if (cmd != null)
 					cmd.setWorkplace(workplace);
 
@@ -1092,12 +1172,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	class EnterpriseContextMenu extends ContextMenu {
 
 		CalcEnterpriseCommand calcCmd;
-		EnterpriseCretaRequestCommand cretaRequestCommands[] = new EnterpriseCretaRequestCommand[3];
+		EnterpriseCommand enterpriseCommands[] = new EnterpriseCommand[4];
 
 		public EnterpriseContextMenu() {
 
 			MenuBar newPopup = new MenuBar(true);
-
 			MenuItem newWorkPlaceItem = newPopup.addItem(
 					getHTML("Centro", AON.AON_ICON_WORKPLACE,
 							AON.AON_ICON_CMD_BUTTON),
@@ -1123,25 +1202,29 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			addItem("SLD-Fichero de Solicitud de Trabajadores y Tramos",
-					cretaRequestCommands[0] = new EnterpriseCretaRequestCommand(
+					enterpriseCommands[0] = new EnterpriseCretaRequestCommand(
 							CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS,
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Borrador",
-					cretaRequestCommands[1] = new EnterpriseCretaRequestCommand(
+					enterpriseCommands[1] = new EnterpriseCretaRequestCommand(
 							CretaService.File.SOLICITUD_BORRADOR,
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n",
-					cretaRequestCommands[2] = new EnterpriseCretaRequestCommand(
+					enterpriseCommands[2] = new EnterpriseCretaRequestCommand(
 							CretaService.File.SOLICITUD_CONFIRMACION,
+							employeeDetail, fileEditor),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Comunicaci\u00FAn de Datos Bancarios",
+					enterpriseCommands[3] = new EnterpriseDBACommand(
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 		}
 
 		void setEnterprise(Enterprise enterprise) {
 			calcCmd.setEnterprise(enterprise);
-			for (EnterpriseCretaRequestCommand cmd : cretaRequestCommands)
+			for (EnterpriseCommand cmd : enterpriseCommands)
 				if (cmd != null)
 					cmd.setEnterprise(enterprise);
 		}
@@ -1790,7 +1873,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		return null;
 
 	}
-
+	
+	
 	// --------------------------------------------------------- Private methods
 
 	private static void showSalaryDraft(int employeeId, int workplaceId,
@@ -2114,5 +2198,59 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private static void logEvent(String type) {
 		StatsEventLogger.logEvent("aon", "EmployeeTree", type);
 	}
+	
+	private static List<CCC> getCCs(Workplace workplace) {
+
+		Activity activity = workplace.getActivity();
+		if (activity == null)
+			return Collections.emptyList();
+		List<CCC> ccs = activity.getCccs();
+		if (ccs == null)
+			return Collections.emptyList();
+		return ccs;
+	}
+	
+
+	private static List<CCC> getCCs(Enterprise enterprise) {
+
+		List<CCC> ccs = new LinkedList<CCC>();
+
+		for (Workplace workplace : enterprise.getWorkplaces()) {
+
+			Activity activity = workplace.getActivity();
+			if (activity == null) {
+				continue;
+			}
+
+			List<CCC> workplaceCcs = activity.getCccs();
+			if (workplaceCcs == null) {
+				continue;
+			}
+
+			ccs.addAll(workplaceCcs);
+		}
+		return ccs;
+	}
+	
+
+	private static String getDescription(CCC ccc, Enterprise enterprise) {
+		String province = ccc.getGeozone();
+
+		for (Activity activity : enterprise.getActivities())
+			for (CCC cc : activity.getCccs())
+				if (ccc.getCode().equals(cc.getCode()))
+					return activity.getDescription() + ", "
+							+ ccc.getCode();
+
+		return ccc.getCode();
+	}
+	
+	private static  String getDescription(CCC ccc, Workplace workplace) {
+		String province = ccc.getGeozone();
+		Activity activity = workplace.getActivity();
+		return activity.getDescription() + "," + ccc.getCode();
+	}
+	
+	
 
 }

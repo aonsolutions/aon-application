@@ -26,6 +26,17 @@
 				<!-- groupId>org.jvnet.jaxb2.maven2</groupId>
 				<artifactId>maven-jaxb2-plugin</artifactId-->
 				<executions>
+					<execution>
+						<id>xjc-request-dba</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<schemaFiles>DBA.xsd</schemaFiles>
+							<packageName>net.aonsolutions.tgss.creta.jaxb.dba</packageName>
+							<clearOutputDir>false</clearOutputDir>
+						</configuration>
+					</execution>
 					<!--  execution>
 						<id>xjc-request-employee</id>
 						<goals>
@@ -147,6 +158,7 @@
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution -->
+
 				</executions>
 			</plugin>
 			

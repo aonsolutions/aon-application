@@ -176,6 +176,7 @@ select {
 
 
 .gwt-Selector .gwt-SuggestBoxPopup {
+	z-index: 70;
 	margin : 0px;
 	padding: 4px 0px;
 	background: #F1EEE9;

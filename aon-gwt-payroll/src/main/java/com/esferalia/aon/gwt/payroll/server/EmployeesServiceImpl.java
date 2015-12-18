@@ -5,7 +5,6 @@ import static com.esferalia.aon.gwt.common.server.AonServletUtils.disableAutoCom
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoCommit;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
-import static com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper.getAvailableBonuses;
 import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.DOMAIN;
@@ -16,6 +15,7 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.IRPF_DATA;
 import static com.esferalia.aon.payroll.sql.SQLConstants.IRPF_REGULARIZATION;
 import static com.esferalia.aon.payroll.sql.SQLConstants.IRPF_RESULT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.PAYROLL_WORKPLACE;
+import static com.esferalia.aon.payroll.sql.SQLConstants.RBANK;
 import static com.esferalia.aon.payroll.sql.SQLConstants.REGISTRY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.USER;
@@ -51,9 +51,6 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import javax.faces.context.FacesContext;
-
-import net.sf.jasperreports.engine.JRParameter;
-import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
@@ -98,6 +95,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
+import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
@@ -167,6 +165,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.IrpfDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfRegularizationColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfResultColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PayrollWorkplaceColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.RbankColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryBonusColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
@@ -200,6 +199,9 @@ import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
+
+import net.sf.jasperreports.engine.JRParameter;
+import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 
 /**
  * The server side implementation of the RPC service.
@@ -954,7 +956,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				try {
 					results = ctx.getExpressionContext().eval(name, startDate, endDate);
 				} catch ( DeferredException e ){
-					e.eval(ctx.getExpressionContext());
+					e.eval(ctx.getExpressionContext(), Object.class );
 					results = ctx.getExpressionContext().eval(name, startDate, endDate);
 				} catch ( Exception  e) {
 					continue;
@@ -2871,6 +2873,48 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	private static List<BankAccount> getEnterpriseBankAccounts(
+			Connection connection, Integer enterpriseId) throws SQLException {
+
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+
+		try {
+			//@formatter:off
+			String sql = "SELECT * " 
+					+ " FROM " + RBANK
+					+ " WHERE " + RbankColumns.REGISTRY + " = ? ";
+			//@formatter:on
+
+			stmt = connection.prepareStatement(sql);
+			stmt.setInt(1, enterpriseId);
+			rs = stmt.executeQuery();
+
+			List<BankAccount> bankAccounts = new LinkedList<BankAccount>();
+			while (rs.next()) {
+
+				BankAccount bankAccount = new BankAccount();
+				bankAccount.setId(rs.getInt(RbankColumns.ID));
+				bankAccount.setBic(rs
+						.getString(RbankColumns.BIC));
+				bankAccount.setAlias(rs
+						.getString(RbankColumns.ALIAS));
+				bankAccount.setAccount(rs
+						.getString(RbankColumns.BANK_ACCOUNT));
+
+				bankAccounts.add(bankAccount);
+			}
+
+			return bankAccounts;
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (stmt != null) {
+				rs.close();
+			}
+		}
+	}
 
 	private static Enterprise getEnterprise(Integer registryID, Integer userID,
 			Connection connection) throws SQLException {
@@ -2933,7 +2977,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			List<Activity> activities = getEnterpriseActivities(connection,
 					enterprise.getId());
 			enterprise.setActivities(activities);
-
+			
+			List<BankAccount> bankAccounts = getEnterpriseBankAccounts(connection, enterprise.getId());
+			enterprise.setBankAccounts(bankAccounts);
+			
+			
 			return enterprise;
 		} finally {
 			if (rs != null) {
@@ -4106,6 +4154,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			ccc = new CCC();
 			ccc.setId(rs.getInt(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.ID)));
 			ccc.setCode(rs.getString(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.CCC)));
+			ccc.setGeozone(rs.getString(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.GEOZONE)));
 			workplaceHandler.getWorkplace().getActivity().addCcc(ccc);
 		}
 

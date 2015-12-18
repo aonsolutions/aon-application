@@ -8,7 +8,23 @@ import com.google.gwt.http.client.URL;
 public interface CretaService {
 
 	public static enum Parameter {
-		CCC, MES, ANHO, TIPO, NAFS, FILE, COMMENTS, DEFAULTS, AUTORIZADO, SKIP_EXISTING, ACEPTAR_BASES_ANTERIORES
+		CCC, 
+		MES, 
+		ANHO, 
+		TIPO, 
+		NAFS, 
+		FILE, 
+		COMMENTS, 
+		DEFAULTS, 
+		AUTORIZADO, 
+		SKIP_EXISTING, 
+		ACEPTAR_BASES_ANTERIORES, 
+		TIPO_MOVIMIENTO, 
+		TIPO_ACCION, 
+		IBAN, 
+		TITULAR, 
+		DOCUMENTO, 
+		TIPO_DOCUMENTO
 	}
 
 	public static enum File {
@@ -79,7 +95,7 @@ public interface CretaService {
 		SOLICITUD_CONFIRMACION {
 			@Override
 			public String getFilename() {
-				return "SLD-Fichero de Solicitud de Confirmacion";
+				return "SLD-Fichero de Solicitud de Confirmaci\u00FAn";
 			}
 
 			@Override
@@ -99,7 +115,21 @@ public interface CretaService {
 					Visitor<T, L, E> visitor, T t, L l) throws E {
 				visitor.visitSolicitudTrabajadoresTramos(t, l);
 			}
-		};
+		},
+		COMUNICACION_DATOS_BANCARIOS{
+			@Override
+			public String getFilename() {
+				return "SLD-Fichero de Comunicaci\u00FAn de Datos Bancarios";
+			}
+			
+			@Override
+			public <T, L, E extends Throwable> void accept(
+					Visitor<T, L, E> visitor, T t, L l) throws E {
+				visitor.visitComunicacionDatosBancarios(t, l);
+				
+			}
+		}
+		;
 
 		public static interface Visitor<T, L, E extends Throwable> {
 			void visitBases(T t, L l) throws E;
@@ -115,6 +145,8 @@ public interface CretaService {
 			void visitSolicitudConfirmacion(T t, L l) throws E;
 
 			void visitSolicitudTrabajadoresTramos(T t, L l) throws E;
+
+			void visitComunicacionDatosBancarios(T t, L l) throws E;
 		}
 
 		abstract public String getFilename();

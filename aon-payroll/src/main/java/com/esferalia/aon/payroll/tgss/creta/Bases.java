@@ -93,19 +93,19 @@ import net.aonsolutions.tgss.creta.jaxb.bases.TramoBuilder;
 public class Bases {
 
 	@SuppressWarnings("serial")
-	public static class EmptyBasesException extends  Exception {
-		
+	public static class EmptyBasesException extends Exception {
+
 		String autorizado;
-		
+
 		public String getAutorizado() {
 			return autorizado;
 		}
-		
+
 		public EmptyBasesException setAutorizado(String autorizado) {
 			this.autorizado = autorizado;
 			return this;
 		}
-		
+
 	}
 
 	private static class MonthlySalaryCretaData implements CretaData {
@@ -1427,10 +1427,8 @@ public class Bases {
 		if (partialFactor != null)
 			checkContextVariable(PARTIAL_FACTOR,
 					(partialFactor != null
-							? Double.toString(
-									Integer.parseInt(partialFactor) / 1000.00)
-							: null),
-					p, salary, cbs);
+							? Integer.parseInt(partialFactor) / 1000.00 : null),
+					3, p, salary, cbs);
 		// for (Peculiaridad peculiaridad : tramo.getInformacionAfiliacion()
 		// .getPeculiaridades().getPeculiaridad()) {
 		//
@@ -1466,9 +1464,19 @@ public class Bases {
 
 	private static void checkContextVariable(ContextVariable contextVariable,
 			Integer rigthValue, Period p, Salary salary, BasesCallback... cbs) {
-
+		String salaryString = null;
 		try {
-			String salaryString = get(salary, contextVariable, p);
+
+			salaryString = get(salary, contextVariable, p);
+			
+			if (rigthValue == null && salaryString == null)
+				return;
+
+			if (rigthValue == null && salaryString != null)
+				for (BasesCallback cb : cbs)
+					cb.wrongContextVariable(salary, contextVariable, p, null,
+							salaryString);
+
 			Integer salaryValue = Integer.parseInt(salaryString);
 
 			if (!rigthValue.equals(salaryValue))
@@ -1480,6 +1488,11 @@ public class Bases {
 					cb.rightContextVariable(contextVariable, p,
 							Integer.toString(rigthValue));
 
+		} catch (NumberFormatException e) {
+			for (BasesCallback cb : cbs)
+				cb.wrongContextVariable(salary, contextVariable, p,
+						Double.toString(rigthValue), salaryString);
+
 		} catch (NoSuchContextVariableException e) {
 			if (rigthValue != null)
 				for (BasesCallback cb : cbs)
@@ -1489,6 +1502,52 @@ public class Bases {
 			for (BasesCallback cb : cbs)
 				cb.ambigousContextVariable(salary, contextVariable, p,
 						Integer.toString(rigthValue), e.getValues());
+		}
+	}
+
+	private static void checkContextVariable(ContextVariable contextVariable,
+			Double rigthValue, int decimals, Period p, Salary salary,
+			BasesCallback... cbs) {
+
+		String salaryString = null;
+		try {
+			salaryString = get(salary, contextVariable, p);
+
+			if (rigthValue == null && salaryString == null)
+				return;
+
+			if (rigthValue == null && salaryString != null)
+				for (BasesCallback cb : cbs)
+					cb.wrongContextVariable(salary, contextVariable, p, null,
+							salaryString);
+
+			Double salaryValue = Double.parseDouble(salaryString);
+			salaryValue = Math.round(salaryValue * Math.pow(10.00, decimals))
+					/ Math.pow(10.00, decimals);
+
+			if (!rigthValue.equals(salaryValue))
+				for (BasesCallback cb : cbs)
+					cb.wrongContextVariable(salary, contextVariable, p,
+							Double.toString(rigthValue), salaryString);
+			else
+				for (BasesCallback cb : cbs)
+					cb.rightContextVariable(contextVariable, p,
+							Double.toString(rigthValue));
+
+		} catch (NumberFormatException e) {
+			for (BasesCallback cb : cbs)
+				cb.wrongContextVariable(salary, contextVariable, p,
+						Double.toString(rigthValue), salaryString);
+
+		} catch (NoSuchContextVariableException e) {
+			if (rigthValue != null)
+				for (BasesCallback cb : cbs)
+					cb.noSuchContextVariable(salary, contextVariable, p,
+							Double.toString(rigthValue));
+		} catch (AmbiguousContextVariableException e) {
+			for (BasesCallback cb : cbs)
+				cb.ambigousContextVariable(salary, contextVariable, p,
+						Double.toString(rigthValue), e.getValues());
 		}
 	}
 
@@ -1782,7 +1841,8 @@ public class Bases {
 
 	}
 
-	private static String toString(net.aonsolutions.tgss.creta.jaxb.bases.CtaCot ctaCot) {
+	private static String toString(
+			net.aonsolutions.tgss.creta.jaxb.bases.CtaCot ctaCot) {
 		return String.format("%s%s%s", ctaCot.getProvincia(),
 				ctaCot.getRegimen(), ctaCot.getNumero());
 
@@ -1915,7 +1975,8 @@ public class Bases {
 	//
 
 	@SuppressWarnings("static-access")
-	public static void main(String[] args) throws EmptyBasesException, JAXBException, SQLException,
+	public static void main(String[] args)
+			throws EmptyBasesException, JAXBException, SQLException,
 			ClassNotFoundException, IOException, XMLStreamException,
 			FactoryConfigurationError, TransformerConfigurationException,
 			TransformerFactoryConfigurationError {
@@ -2042,8 +2103,8 @@ public class Bases {
 			boolean skipExisting, boolean acceptPrevBases, String nafs[],
 			String defaultsValues[], InputStream trabajadoresTramosIs,
 			InputStream respuestaIs, OutputStream os, BasesCallback... cbs)
-					throws EmptyBasesException, JAXBException, XMLStreamException,
-					FactoryConfigurationError, IOException {
+					throws EmptyBasesException, JAXBException,
+					XMLStreamException, FactoryConfigurationError, IOException {
 		//@formatter:off
 		generate(connection, 
 				comments, 
@@ -2062,8 +2123,8 @@ public class Bases {
 			boolean skipExisting, boolean acceptPrevBases, String nafs[],
 			String defaultsValues[], List<File> trabajadoresTramosFiles,
 			List<File> respuestaFiles, OutputStream os, BasesCallback... cbs)
-					throws EmptyBasesException, JAXBException, XMLStreamException,
-					FactoryConfigurationError, IOException {
+					throws EmptyBasesException, JAXBException,
+					XMLStreamException, FactoryConfigurationError, IOException {
 		List<InputStream> trabajadoresTramosIsList = new ArrayList<InputStream>();
 		for (File trabajadoresTramosFile : trabajadoresTramosFiles)
 			trabajadoresTramosIsList
@@ -2092,8 +2153,8 @@ public class Bases {
 			String defaultsValues[],
 			Collection<InputStream> trabajadoresTramosIss,
 			Collection<InputStream> respuestaIss, OutputStream os,
-			BasesCallback... cbs) throws EmptyBasesException, JAXBException, XMLStreamException,
-					FactoryConfigurationError, IOException {
+			BasesCallback... cbs) throws EmptyBasesException, JAXBException,
+					XMLStreamException, FactoryConfigurationError, IOException {
 		AONContext ctx = new AONContext(connection);
 
 		XMLStreamWriter xsw = new IndentXMLStreamWriter(
@@ -2164,16 +2225,15 @@ public class Bases {
 				liquidacion = liquidacion(trabajadoresTramos, ctx,
 						acceptPrevBases, xsw, callbacks);
 
-				boolean noTrabajadores = liquidacion.getLiquidacionMes().stream()
-				.map(l->l.getTrabajadores())
-				.allMatch(t-> t == null || t.getTrabajador().isEmpty() );
-				
-				if ( noTrabajadores )
-					for ( BasesCallback cb: cbs)
+				boolean noTrabajadores = liquidacion.getLiquidacionMes()
+						.stream().map(l -> l.getTrabajadores()).allMatch(
+								t -> t == null || t.getTrabajador().isEmpty());
+
+				if (noTrabajadores)
+					for (BasesCallback cb : cbs)
 						cb.noDiffs(liquidacion);
 				else
 					liquidaciones.put(ccc, liquidacion);
-				
 
 			} catch (JAXBException e) {
 				for (BasesCallback cb : callbacks)
@@ -2193,19 +2253,18 @@ public class Bases {
 
 				autorizados.add(respuesta.getAutorizado());
 
-				liquidaciones(respuesta, ctx,
-						acceptPrevBases, xsw, callbacks)
-				.stream()
-				.forEach(l->liquidaciones.put(toString(l.getCcc()), l));
+				liquidaciones(respuesta, ctx, acceptPrevBases, xsw, callbacks)
+						.stream().forEach(l -> liquidaciones
+								.put(toString(l.getCcc()), l));
 				;
-				
+
 			} catch (JAXBException e) {
 				for (BasesCallback cb : callbacks)
 					cb.wrongTrabajadoresTramosIs(respuestaIs, e);
 			}
 			respuestaIs.close();
 		}
-		
+
 		String autorizado = null;
 
 		if (autorizados.size() > 1) {
@@ -2216,12 +2275,10 @@ public class Bases {
 			autorizado = autorizados.stream().findFirst().get();
 			builder.setAutorizado(autorizado);
 		}
-		
-		
-		if ( liquidaciones.isEmpty() )
-			throw new  EmptyBasesException()
-			.setAutorizado(autorizado);
-		
+
+		if (liquidaciones.isEmpty())
+			throw new EmptyBasesException().setAutorizado(autorizado);
+
 		builder.addLiquidaciones(liquidaciones.values());
 		net.aonsolutions.tgss.creta.jaxb.bases.Bases bases = builder.create();
 
@@ -2243,5 +2300,28 @@ public class Bases {
 		return (int) getDaysBetweenDates(contextData.getStartDate(),
 				contextData.getEndDate()) + 1;
 
+	}
+
+	// return an integer stating how many decimal points the number has
+	// assume the number provided is a positive double
+	private static int getNumberOfDecimals(double number) {
+		// convert the number to a string
+		String strNumber = Double.toString(number);
+
+		// get the length of the number as a string
+		int stringLength = strNumber.length();
+		int numberOfDecimals = 0;
+		char theChar = 'e';
+		int counter;
+
+		// check what number the decimal point character is in the string
+		for (counter = 1; theChar != '.'; counter++) {
+			theChar = strNumber.charAt(counter);
+		}
+
+		// calculate the number of decimals the double has
+		numberOfDecimals = stringLength - counter;
+
+		return numberOfDecimals;
 	}
 }
