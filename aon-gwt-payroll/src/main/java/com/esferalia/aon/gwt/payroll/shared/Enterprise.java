@@ -23,10 +23,12 @@ public class Enterprise implements Serializable, HasId<Integer>, HasName<String>
 	private String 			name;
 	private List<Activity>	activities;
 	private List<Workplace> workplaces;
+	private List<BankAccount> bankAccounts;
 	
 	public Enterprise() {
 		activities = new LinkedList<Activity>();
 		workplaces = new LinkedList<Workplace>();
+		bankAccounts = new LinkedList<BankAccount>();
 	}
 
 	@Override
@@ -76,6 +78,19 @@ public class Enterprise implements Serializable, HasId<Integer>, HasName<String>
 	public void addActivity(Activity activity ) {
 		activities.add(activity);
 	}
+	
+	public List<BankAccount> getBankAccounts() {
+		return bankAccounts;
+	}
+	
+	public void addBankAccount(BankAccount bankAccount){
+		bankAccounts.add(bankAccount);
+	}
+	
+	public void setBankAccounts(List<BankAccount> bankAccounts){
+		this.bankAccounts = bankAccounts;
+	}
+	// ------------------------------------------------------------------------
 
 	public static boolean isGPS(Enterprise enterprise) {
 		for (Activity activity : enterprise.getActivities()) {

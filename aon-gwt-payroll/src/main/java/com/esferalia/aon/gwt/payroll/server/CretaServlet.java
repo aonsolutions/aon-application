@@ -42,6 +42,7 @@ import com.esferalia.aon.payroll.tgss.creta.Bases.EmptyBasesException;
 import com.esferalia.aon.payroll.tgss.creta.Borrador;
 import com.esferalia.aon.payroll.tgss.creta.Calculo;
 import com.esferalia.aon.payroll.tgss.creta.Confirmacion;
+import com.esferalia.aon.payroll.tgss.creta.DBA;
 import com.esferalia.aon.payroll.tgss.creta.IndentXMLStreamWriter;
 import com.esferalia.aon.payroll.tgss.creta.TrabajadoresTramos;
 import com.esferalia.aon.salary.expression.Period;
@@ -144,11 +145,15 @@ public class CretaServlet extends HttpServlet implements
 		}
 
 		try {
+			
+			
+			
+
 			os.printf("\"full_bases\":\"%s\",\r\n",
 					generateBases(connection, true, false, false, nafs,
 							defaults, trabajadoresYTramosIss, respuestasIss,
 							pickerBasesCb));
-			
+
 			respuestasIss.clear();
 			trabajadoresYTramosIss.clear();
 			for (Part part : req.getParts()) {
@@ -333,6 +338,42 @@ public class CretaServlet extends HttpServlet implements
 	public void visitRespuesta(HttpServletRequest t, HttpServletResponse l)
 			throws Exception {
 		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public void visitComunicacionDatosBancarios(HttpServletRequest req,
+			HttpServletResponse resp) throws Exception {
+		resp.setContentType("text/xml;");
+		
+		String autorizado = req
+				.getParameter(CretaService.Parameter.AUTORIZADO.name());
+		String cccs[] = req
+				.getParameterValues(CretaService.Parameter.CCC.name());
+		String tipoMoviento = req
+				.getParameter(CretaService.Parameter.TIPO_MOVIMIENTO.name());
+		String tipoAccion = req
+				.getParameter(CretaService.Parameter.TIPO_ACCION.name());
+		String iban = req
+				.getParameter(CretaService.Parameter.IBAN.name());
+		String titular = req
+				.getParameter(CretaService.Parameter.TITULAR.name());
+		String documento = req
+				.getParameter(CretaService.Parameter.DOCUMENTO.name());
+		String tipoDocumento = req
+				.getParameter(CretaService.Parameter.TIPO_DOCUMENTO.name());
+		
+		//@formatter:off
+		DBA.generate(
+				autorizado, 
+				cccs, 
+				tipoMoviento, 
+				tipoAccion, 
+				iban, 
+				titular, 
+				documento, 
+				tipoDocumento, 
+				resp.getOutputStream());
+		//@formatter:on
 	}
 
 	// ------------------------------------------------------------------------
@@ -720,19 +761,23 @@ public class CretaServlet extends HttpServlet implements
 		public void noSuchContextVariable(Salary salary, ContextVariable var,
 				Period p, String right) {
 			errors.add(new Event().setMessage(format(
-					"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) no encontrada. Se esperaba '%s'",
+					"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) no encontrada. Se esperaba '%7$s'",
 					// salary.getEnterpriseName(),
-					salary.getEmployeeName(), salary.getEmployeeDocument(),
+					salary.getEmployeeName(), 
+					salary.getEmployeeDocument(),
 					salary.getEmployeeSSNumber(),
 					// salary.getEnterpriseCCC(),
-					var.getName(), p.getStart(), p.getEnd(), right)));
+					var.getName(), 
+					p.getStart(), 
+					p.getEnd(), 
+					right)));
 		}
 
 		@Override
 		public void ambigousContextVariable(Salary salary, ContextVariable var,
 				Period p, String right, String... wrongs) {
 			errors.add(new Event().setMessage(format(
-					"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) ambigua. Se esperaba '%s' y es %s",
+					"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) ambigua. Se esperaba '%7$s' y es %8$s",
 					// salary.getEnterpriseName(),
 					salary.getEmployeeName(), salary.getEmployeeDocument(),
 					salary.getEmployeeSSNumber(),

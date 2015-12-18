@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.code.aon.registry.Registry;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
@@ -20,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
@@ -45,6 +47,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseCccColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.GeozoneColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.RbankColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDeductionColumns;
@@ -883,12 +886,13 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					"SELECT * FROM "
 					+ SQLConstants.ENTERPRISE 
 					+ ", " + SQLConstants.REGISTRY
+					+ " LEFT JOIN " + SQLConstants.RBANK + " ON (" + SQLConstants.REGISTRY + "."+ RegistryColumns.ID + " = " + SQLConstants.RBANK +"." + RbankColumns.REGISTRY + ")"
 					+ ", " + SQLConstants.DOMAIN 
 					+ ", " + SQLConstants.ENTERPRISE_ACTIVITY 
 					+ ", " + SQLConstants.ENTERPRISE_CCC
 					+ ", " + SQLConstants.GEOZONE
 					
-					+ " WHERE " + EnterpriseColumns.REGISTRY + " = " + SQLConstants.REGISTRY + "." + RegistryColumns.ID
+					+ " WHERE " + SQLConstants.ENTERPRISE +"."+ EnterpriseColumns.REGISTRY + " = " + SQLConstants.REGISTRY + "." + RegistryColumns.ID
 					+ " AND " + SQLConstants.ENTERPRISE + "." + EnterpriseColumns.DOMAIN + " = " + SQLConstants.DOMAIN + "." + DomainColumns.ID 
 
 					+ " AND " + SQLConstants.ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " = " + SQLConstants.ENTERPRISE_ACTIVITY+ "." + EnterpriseActivityColumns.ENTERPRISE
@@ -898,7 +902,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					+ " AND ( " + SQLConstants.DOMAIN + "." + DomainColumns.ID + " = ? " 
 						+ " OR " + SQLConstants.DOMAIN + "." + DomainColumns.PARENT + " = ? " + ")" 
 					
-					+ " ORDER BY " + SQLConstants.REGISTRY + "." + RegistryColumns.NAME 
+					+ " ORDER BY " + SQLConstants.REGISTRY + "." + RegistryColumns.NAME
+					+ ", " + SQLConstants.ENTERPRISE_ACTIVITY + "." + EnterpriseActivityColumns.ID
+					+ ", " + SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.ID
 					+ " LIMIT ?, ?"
 					);
 			// @formatter:on
@@ -908,7 +914,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 			stmt.setInt(3, offset);
 			stmt.setInt(4, limit);
-
+			
+			CCC ccc = null;
 			Activity activity = null;
 			Enterprise enterprise = null;
 
@@ -927,6 +934,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					enterprises.add(enterprise);
 				}
 				
+				Integer rbankId = (Integer) rs.getObject(SQLConstants.RBANK +"."+RbankColumns.ID);
+				if ( rbankId != null && enterprise.getBankAccounts().stream().noneMatch(a->a.getId().equals(rbankId)) ){
+					BankAccount bankAccount = new BankAccount();
+					bankAccount.setId(rbankId);
+					bankAccount.setBic(rs.getString(SQLConstants.RBANK+"."+RbankColumns.BIC));
+					bankAccount.setAlias(rs.getString(SQLConstants.RBANK+"."+RbankColumns.ALIAS));
+					bankAccount.setAccount(rs.getString(SQLConstants.RBANK+"."+RbankColumns.BANK_ACCOUNT));
+					enterprise.addBankAccount(bankAccount);
+				}
+
 				Integer activityId = (Integer) rs.getObject(SQLConstants.ENTERPRISE_ACTIVITY +"."+EnterpriseActivityColumns.ID);
 				if ( activityId == null )
 					continue;
@@ -943,11 +960,13 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				if ( cccId == null )
 					continue;
 
-				CCC ccc = new CCC();
-				ccc.setId( cccId );
-				ccc.setCode(rs.getString(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.CCC));
-				ccc.setGeozone(rs.getString(SQLConstants.GEOZONE +"."+GeozoneColumns.CODE));
-				activity.addCcc(ccc);
+				if ( ccc == null || !ccc.getId().equals(cccId) ){
+					ccc = new CCC();
+					ccc.setId( cccId );
+					ccc.setCode(rs.getString(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.CCC));
+					ccc.setGeozone(rs.getString(SQLConstants.GEOZONE +"."+GeozoneColumns.CODE));
+					activity.addCcc(ccc);
+				}
 			}
 
 			return enterprises;

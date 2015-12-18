@@ -49,7 +49,7 @@ public class ExpressionContext {
 
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-		public abstract void eval(ExpressionContext context)
+		public abstract <T> List<ITimedResult<T>> eval(ExpressionContext context, Class<T> toType)
 				throws ExpressionException;
 
 	}
@@ -131,11 +131,15 @@ public class ExpressionContext {
 		}
 
 		@Override
-		public void eval(ExpressionContext context) throws ExpressionException {
-			List<ITimedResult<Object>> results = context.eval(
-					expression.getExpression(), start, end);
-			for (ITimedResult<Object> result : results)
+		public <T> List<ITimedResult<T>> eval(ExpressionContext context, Class<T> toType) throws ExpressionException {
+			
+			List<ITimedResult<T>> results = context.eval(
+					expression.getExpression(), start, end, toType);
+			
+			for (ITimedResult<T> result : results)
 				context.putVariable(expression.getName(), result);
+			
+			return results;
 		}
 	}
 
@@ -530,7 +534,7 @@ public class ExpressionContext {
 		} catch (MacroException e) {
 			return eval(e.doMacro(script), bindingsList, toType);
 		} catch (DeferredException e) {
-			e.eval(this);
+			e.eval(this, toType);
 			return eval(script, start, end, toType);
 		} catch (UnknownUndefVarException e) {
 			return evalUnknowUndefVariable(script, inputs, start, end, toType);
@@ -679,7 +683,13 @@ public class ExpressionContext {
 	}
 
 	public static Set<String> getVariableSet(String script) {
+		
+		if (StringUtils.isBlank(script))
+			return Collections.emptySet();
+
+		
 		ParserContext ctx = new ParserContext();
+		
 		MVEL.analysisCompile(script, ctx);
 
 		Set<String> variables = new HashSet<String>();
@@ -688,6 +698,8 @@ public class ExpressionContext {
 			if (isJavaIdentifier(input))
 				variables.add(input);
 		}
+		
+		ctx.getVariables();
 
 		return variables;
 
@@ -713,5 +725,6 @@ public class ExpressionContext {
 	}
 
 	// ------------------------------------------------------------------------
+	
 
 }

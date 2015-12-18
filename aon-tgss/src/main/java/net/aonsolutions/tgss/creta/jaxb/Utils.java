@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.UUID;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -95,6 +96,10 @@ public class Utils {
 			for ( Listener  listener: listeners )
 				listener.beforeMarshal(source);
 		}
+	}
+
+	public static String createReferenciaExterna() {
+		return UUID.randomUUID().toString().substring(0, 8);
 	}
 
 }
