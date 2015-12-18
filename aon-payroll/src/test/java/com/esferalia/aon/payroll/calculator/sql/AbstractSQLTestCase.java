@@ -89,6 +89,7 @@ import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.ScopeRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.EmbargableType;
@@ -142,26 +143,40 @@ public abstract class AbstractSQLTestCase {
 
 	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(
 			Connection connection, Date startDate, Date endDate,
-			Date issueDate, Criteria criteria) throws ExpressionException,
+			Date issueDate, Criteria criteria, IContractSalaryCalculatorContext.IListener listener) throws ExpressionException,
 			SQLException {
 		ISQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
 				connection, startDate, endDate, issueDate, criteria);
+		if ( listener != null )
+			ctx.setListener(listener);
 		ctx.next();
 		return ctx;
 	}
 
 	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(
 			Connection connection, Date startDate, Date endDate,
-			Date issueDate, ContractRecord contract)
+			Date issueDate, Criteria criteria) throws ExpressionException,
+			SQLException {
+		return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, criteria, null);
+	}
+
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(
+			Connection connection, Date startDate, Date endDate,
+			Date issueDate, ContractRecord contract , IContractSalaryCalculatorContext.IListener listener)
 			throws ExpressionException, SQLException {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
 				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
 				contract.getId());
 		return getContractSalaryCalculatorContext(connection, startDate,
-				endDate, issueDate, criteria);
+				endDate, issueDate, criteria, listener);
 	}
 
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(
+			Connection connection, Date startDate, Date endDate,
+			Date issueDate, ContractRecord contract )throws ExpressionException, SQLException{
+		return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contract, null);
+	}
 	// ------------------------------------------------------- static 'library'
 
 	protected final void cleanSystemData(AONContext aonContext) {
@@ -196,6 +211,23 @@ public abstract class AbstractSQLTestCase {
 		for (Map.Entry<String, String> data : datas.entrySet()) {
 			aonContext.getDslContext().insertInto(SYSTEM_DATA)
 					.set(SYSTEM_DATA.DOMAIN, (-1) * ssRegimetype.ordinal())
+					.set(SYSTEM_DATA.START_DATE, startDate)
+					.set(SYSTEM_DATA.END_DATE, endDate)
+					.set(SYSTEM_DATA.NAME, data.getKey())
+					.set(SYSTEM_DATA.EXPRESSION, data.getValue()).execute();
+
+		}
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
+
+	protected final void addCCCData(AONContext aonContext,
+			CCCType cccType, Date startDate, Date endDate,
+			Map<String, String> datas) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+
+		for (Map.Entry<String, String> data : datas.entrySet()) {
+			aonContext.getDslContext().insertInto(SYSTEM_DATA)
+					.set(SYSTEM_DATA.DOMAIN,  (-1) * ( 100 + cccType.ordinal()))
 					.set(SYSTEM_DATA.START_DATE, startDate)
 					.set(SYSTEM_DATA.END_DATE, endDate)
 					.set(SYSTEM_DATA.NAME, data.getKey())
@@ -399,18 +431,24 @@ public abstract class AbstractSQLTestCase {
 	}
 
 	public static final AgreementLevelCategoryRecord newAgreementCategory(
-			AONContext aonContext, AgreementRecord agreement) {
+			AONContext aonContext, AgreementRecord agreement, String levelDescription, String categoryDescription) {
 		AgreementLevelRecord level = aonContext.getDslContext()
 				.insertInto(AGREEMENT_LEVEL)
 				.set(AGREEMENT_LEVEL.DOMAIN, agreement.getDomain())
 				.set(AGREEMENT_LEVEL.AGREEMENT, agreement.getId())
-				.set(AGREEMENT_LEVEL.DESCRIPTION, "").returning().fetchOne();
+				.set(AGREEMENT_LEVEL.DESCRIPTION, levelDescription).returning().fetchOne();
 
 		return aonContext.getDslContext().insertInto(AGREEMENT_LEVEL_CATEGORY)
 				.set(AGREEMENT_LEVEL_CATEGORY.DOMAIN, agreement.getDomain())
-				.set(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION, "")
+				.set(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION, categoryDescription)
 				.set(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL, level.getId())
 				.returning().fetchOne();
+		
+	}
+
+	public static final AgreementLevelCategoryRecord newAgreementCategory(
+			AONContext aonContext, AgreementRecord agreement) {
+		return newAgreementCategory(aonContext, agreement, "", "");
 	}
 
 	public static final AgreementLevelCategoryRecord newAgreement(

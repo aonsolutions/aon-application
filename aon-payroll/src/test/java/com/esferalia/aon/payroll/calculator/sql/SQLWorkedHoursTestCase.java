@@ -46,15 +46,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
+import com.esferalia.aon.payroll.IrpfOutcome;
+import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.Listener;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -62,9 +66,11 @@ import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
-import com.esferalia.aon.watson.util.AonDateUtils;
+
+import junit.framework.Assert;
 
 /**
  * @author rtrepiana
@@ -355,11 +361,12 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 					}
 				},
 
-		new String[] { "250.00 * DIAS_TRABAJADOS / DIAS_MES",
-				"1500.00 * DIAS_TRABAJADOS / DIAS_MES" },
+				new String[] { "250.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES" },
 
-		new String[] { "BASE_CGC * 0.10", "BASE_CGP * 0.05",
-				"BASE_IRPF * PORCENTAJE_IRPF/100" }, null);
+				new String[] { "BASE_CGC * 0.10", "BASE_CGP * 0.05",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" },
+				null);
 
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
@@ -402,11 +409,12 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 					}
 				},
 
-		new String[] { "250.00 * DIAS_TRABAJADOS / DIAS_MES",
-				"1500.00 * DIAS_TRABAJADOS / DIAS_MES" },
+				new String[] { "250.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES" },
 
-		new String[] { "BASE_CGC * 0.10", "BASE_CGP * 0.05",
-				"BASE_IRPF * PORCENTAJE_IRPF/100" }, null);
+				new String[] { "BASE_CGC * 0.10", "BASE_CGP * 0.05",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" },
+				null);
 
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
@@ -415,20 +423,77 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 		Date startIt = add(startDate, Calendar.DAY_OF_MONTH, 10);
 		Date endIt = add(startDate, Calendar.DAY_OF_MONTH, 20);
 
-		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIt,
-				endIt, null);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIt, endIt,
+				null);
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, issueDate, contract);
 
 		List<ITimedVariable<Object>> workedHours = ctx.getExpressionContext()
 				.getVariables(WORKED_HOURS);
-		
+
 		Assert.assertEquals(2, workedHours.size());
-		Assert.assertEquals( new Period(startDate, add(startIt, DAY_OF_MONTH,-1)), workedHours.get(0).getPeriod());
-		Assert.assertEquals( new Period(add(endIt, DAY_OF_MONTH,1), endDate), workedHours.get(1).getPeriod());
-		
-		
+		Assert.assertEquals(
+				new Period(startDate, add(startIt, DAY_OF_MONTH, -1)),
+				workedHours.get(0).getPeriod());
+		Assert.assertEquals(new Period(add(endIt, DAY_OF_MONTH, 1), endDate),
+				workedHours.get(1).getPeriod());
+
+	}
+
+	@Test
+	public void testPartialTimeUndefinedWorkedHours()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSystemData(aonContext);
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), new HashMap<String, String>() {
+					{
+						put(ContextVariable.TC2.getName(), format("\"%s\"",
+								random(PARTIAL_TIME).getValue()));
+
+						put(ContextVariable.QUOTE_GROUP.getName(), "'07'");
+					}
+				},
+
+				new String[] {
+						"TRACE('DIAS_TRABAJADOS = %f\r\n', DIAS_TRABAJADOS); 0.00", 
+						"TRACE('TIEMPO_COMPLETO = %s\r\n', TIEMPO_COMPLETO); 0.00", 
+						},
+				new String[] {}, null);
+
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null,
+				new HashMap() {
+					{
+						put("BASE_CGC_MIN",
+								"[ \"01\":(TIEMPO_COMPLETO ? 1056.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 6.37 * HORAS_NOMINA), \"02\":(TIEMPO_COMPLETO ? 876.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 5.28 * HORAS_NOMINA), \"03\":(TIEMPO_COMPLETO ? 762.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.59 * HORAS_NOMINA), \"04\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA), \"05\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA), \"06\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA), \"07\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA), \"08\":(TIEMPO_COMPLETO ? 25.22 * DIAS_NOMINA : 4.56 * HORAS_NOMINA), \"09\":(TIEMPO_COMPLETO ? 25.22 * DIAS_NOMINA : 4.56 * HORAS_NOMINA), \"10\":(TIEMPO_COMPLETO ? 25.22* DIAS_NOMINA : 4.56 * HORAS_NOMINA), \"11\":(TIEMPO_COMPLETO ? 25.22 * DIAS_NOMINA : 4.56 * HORAS_NOMINA) ] [GRUPO_COTIZACION]");
+					}
+				});
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, issueDate, contract);
+		ctx.setListener(new IContractSalaryCalculatorContext.IListener() {
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				// TODO Auto-generated method stub
+			}
+			public void onUndefinedData(IExpression expression, String variableName, String message, java.util.Date start, java.util.Date end) {
+				
+				System.out.printf("%s , %tF..%tF \r\n", variableName, start, end  );
+			};
+		} );
+		new ContractSalaryCalculator<Salary>(
+				new SalaryBuilder())
+		.calculate(ctx);
+
 
 	}
 
