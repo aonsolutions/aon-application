@@ -52,8 +52,9 @@ public class WarehouseCollectionsController implements Serializable {
 		Criteria criteria = new Criteria();
 		Expression nullWorkPlaceExp = ExpressionUtilities.getNullExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE));
 		String ljAlias = StringUtils.replace(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_SCOPE_ID), ".scope", "<scope");
-		Expression nullScopeExp = UserUtils.getInstance().getNullableScopeExpression(ljAlias);
-		criteria.addExpression(ExpressionUtilities.getOrExpression(nullWorkPlaceExp, nullScopeExp));
+		Expression scopeExp = UserUtils.getInstance().getNullableScopeExpression(ljAlias);
+		criteria.addExpression(ExpressionUtilities.getOrExpression(nullWorkPlaceExp, scopeExp));
+		criteria.addEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_ACTIVE), Boolean.TRUE);
 		return warehouseBean.getCount(criteria);
 	}
 	
@@ -63,50 +64,50 @@ public class WarehouseCollectionsController implements Serializable {
 		Criteria criteria = new Criteria();
 		Expression nullWorkPlaceExp = ExpressionUtilities.getNullExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE));
 		String ljAlias = StringUtils.replace(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_SCOPE_ID), ".scope", "<scope");
-		Expression nullScopeExp = UserUtils.getInstance().getNullableScopeExpression(ljAlias);
-		criteria.addExpression(ExpressionUtilities.getOrExpression(nullWorkPlaceExp, nullScopeExp));
+		Expression scopeExp = UserUtils.getInstance().getNullableScopeExpression(ljAlias);
+		criteria.addExpression(ExpressionUtilities.getOrExpression(nullWorkPlaceExp, scopeExp));
 		criteria.addEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_ACTIVE), Boolean.TRUE);
 		criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
-		List<ITransferObject> c = warehouseBean.getList(criteria);
-		Iterator<ITransferObject> iter = c.iterator();
-		while (iter.hasNext()) {
-			Warehouse warehouse = (Warehouse) iter.next();
+		for (ITransferObject ito : warehouseBean.getList(criteria)) {
+			Warehouse warehouse = (Warehouse)ito;
 			SelectItem item = new SelectItem(warehouse, warehouse.getName());
 			warehouses.add(item);
 		}
 		return warehouses;
 	}
 	
-	public static List<Warehouse> getWarehouseList( WorkPlace workPlace ) throws ManagerBeanException {
-		return getWarehouseList( workPlace, false );
+	public static List<Warehouse> getWarehouseList(WorkPlace workPlace) throws ManagerBeanException {
+		return getWarehouseList(workPlace, false, false);
 	}
-
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static List<Warehouse> getWarehouseList( WorkPlace workPlace, boolean skipScope ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Warehouse.class);
+	public static List<Warehouse> getWarehouseList(WorkPlace workPlace, boolean skipScope, boolean skipActive) throws ManagerBeanException {
+		IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
 		Criteria criteria = new Criteria();
-		if(!skipScope){
-			String ljAlias = StringUtils.replace(bean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_SCOPE_ID), ".scope", "<scope");
-			UserUtils.getInstance().addNullableScopeExpression( criteria, ljAlias );		
+		Expression workPlaceExp = ExpressionUtilities.getNullExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE));
+		if (workPlace!=null && workPlace.getId()!=null) {
+			Expression workPlaceIdExp = ExpressionUtilities.getEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), workPlace.getId());
+			workPlaceExp = ExpressionUtilities.getOrExpression(workPlaceExp, workPlaceIdExp);
 		}
-		Expression exp1 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE));
-		if( (workPlace!=null) && (workPlace.getId()!=null) ){
-			Expression exp2 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), workPlace.getId());
-			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
+		if (!skipScope) {
+			String ljAlias = StringUtils.replace(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_SCOPE_ID), ".scope", "<scope");
+			Expression scopeExp = UserUtils.getInstance().getNullableScopeExpression(ljAlias);
+			criteria.addExpression(ExpressionUtilities.getOrExpression(workPlaceExp, scopeExp));
 		} else {
-			criteria.addExpression(exp1);
+			criteria.addExpression(workPlaceExp);
 		}
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_ACTIVE), Boolean.TRUE);
-		criteria.addOrder(bean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
-		return (List) bean.getList(criteria);
+		if (!skipActive) {
+			criteria.addEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_ACTIVE), Boolean.TRUE);
+		}
+		criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
+		return (List)warehouseBean.getList(criteria);
 	}
 
-	public static List<SelectItem> getWarehouses( WorkPlace workPlace ) throws ManagerBeanException {
-		return getWarehouses( workPlace, false);
+	public static List<SelectItem> getWarehouses(WorkPlace workPlace) throws ManagerBeanException {
+		return getWarehouses(workPlace, false);
 	}
-	public static List<SelectItem> getWarehouses( WorkPlace workPlace, boolean skipScope ) throws ManagerBeanException {
+	public static List<SelectItem> getWarehouses(WorkPlace workPlace, boolean skipScope) throws ManagerBeanException {
 		List<SelectItem> warehouses = new LinkedList<SelectItem>();
-		for( Warehouse warehouse : getWarehouseList(workPlace, skipScope) ) {
+		for (Warehouse warehouse : getWarehouseList(workPlace, skipScope, false)) {
 			SelectItem item = new SelectItem(warehouse, warehouse.getName());
 			warehouses.add(item);			
 		}

@@ -1,8 +1,11 @@
 package com.code.aon.warehouse;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -21,8 +24,18 @@ public class WarehouseTransfer extends WarehouseTransferDB implements IHeaderObj
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
+	private Set<WarehouseTransferDetail> details = new HashSet<WarehouseTransferDetail>();
+
 	public WarehouseTransfer() {
 		setIssueTime( new Date() );
+	}
+
+	@OneToMany(mappedBy="warehouseTransfer")
+	public Set<WarehouseTransferDetail> getDetails() {
+		return this.details;
+	}
+	public void setDetails(Set<WarehouseTransferDetail> details) {
+		this.details = details;
 	}
 
     @Transient
@@ -38,10 +51,6 @@ public class WarehouseTransfer extends WarehouseTransferDB implements IHeaderObj
     public Date getDate() {
     	return getIssueTime();
     }
-    
-    @Override
-	public void setSecurityLevel(SecurityLevel securityLevel) {
-	}
 
 	@Override
 	@Transient
@@ -50,4 +59,8 @@ public class WarehouseTransfer extends WarehouseTransferDB implements IHeaderObj
 		// Al no dar soporte de confidencialidad, se devuelve siempre el mismo.
 		return SecurityLevel.OFFICIAL;
 	}
+    @Override
+	public void setSecurityLevel(SecurityLevel securityLevel) {
+	}
+
 }
