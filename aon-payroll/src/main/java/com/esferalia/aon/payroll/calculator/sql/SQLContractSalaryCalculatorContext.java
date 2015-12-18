@@ -3820,6 +3820,8 @@ public class SQLContractSalaryCalculatorContext
 			return;
 		if (results.isEmpty())
 			return;
+		
+		
 		if (implicit == null)
 			return;
 		
@@ -3831,6 +3833,7 @@ public class SQLContractSalaryCalculatorContext
 		
 		if ( isSystem(name, expr) ) 
 			return ;
+		
 		
 		
 		onRedefinedImplicit(name, results.get(0), implicit);
