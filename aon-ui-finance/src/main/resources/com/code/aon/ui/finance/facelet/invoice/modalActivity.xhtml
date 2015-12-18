@@ -61,8 +61,9 @@
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
 
 										<aon:outputLabel for="Activity_id" value="#{bundle.aon_activity}" />
-										<aon:selectOneMenu id="Activity_id" required="true"
+										<aon:selectOneMenu id="Activity_id"
 											value="#{invoiceController.to.activity}">
+											<f:selectItem itemLabel="- #{bundle.aon_common_all} -" value="#{null}" />
 											<f:selectItems value="#{companyCollections.companyActivities}" />
 										</aon:selectOneMenu>
 

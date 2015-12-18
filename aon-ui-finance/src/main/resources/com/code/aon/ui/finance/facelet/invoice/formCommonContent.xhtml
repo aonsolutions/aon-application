@@ -27,14 +27,18 @@
 		<aon:outputLabel for="Invoice_activity"
 			value="#{bundle.aon_activity}" />
 		<aon:div>
-			<aon:selectOneMenu id="Invoice_activity" required="true"
+			<aon:selectOneMenu id="Invoice_activity"
 				value="#{invoiceController.to.activity}" ajaxSingle="true"
 				rendered="#{!invoiceController.readOnly}">
+				<f:selectItem itemLabel="- #{bundle.aon_common_all} -" value="#{null}" />
 				<f:selectItems value="#{companyCollections.companyActivities}" />
 			</aon:selectOneMenu>
 			<aon:outputText styleClass="aon-bold"
 				value="#{invoiceController.to.activity.description}" 
-				rendered="#{invoiceController.readOnly}" />
+				rendered="#{invoiceController.readOnly and invoiceController.to.activity.id != null}" />
+			<aon:outputText styleClass="aon-bold"
+				value="#{bundle.aon_common_all}" 
+				rendered="#{invoiceController.readOnly and invoiceController.to.activity.id == null}" />
 		</aon:div>
 	</aon:if>
 
@@ -90,6 +94,8 @@
 			<aon:methodParam name="lookupChangeListener"
 				value="#{invoiceController.onSellerChanged}" type="lookupChangeListener" />
 		</ui:include>
+		<aon:outputLabel value="#{bundle.seller_stat_name}" 
+			rendered="#{invoiceController.readOnly}" />
 		<aon:outputText styleClass="aon-bold"
 			value="#{invoiceController.to.seller.registry.fullName}" 
 			rendered="#{invoiceController.readOnly}" />
