@@ -1,0 +1,69 @@
+package com.esferalia.aon.gwt.office.client;
+
+import org.junit.Ignore;
+
+public class GWTExtendsOfficeTestCase extends GWTOfficeTestCase {
+	
+	@Override
+	public AonHub getAonHub() {
+		AonHub aonHub = new AonHub("api/");
+		USER = "user";
+		REPONAME = "reponame";
+		aonHub.setRepositoryUrl("api/");
+		return aonHub;
+	}
+	
+	@Override @Ignore
+	public void testCreateRepository() {}
+
+	@Override @Ignore	
+	public void testGetRepository() {}
+	
+	@Override @Ignore
+	public void testCreateIssues() {}
+	
+	@Override @Ignore
+	public void testUpdateIssues() {}
+	
+	@Override @Ignore
+	public void testCloseIssues() {}
+	
+	@Override @Ignore
+	public void testReOpenIssuesTestCase() {}
+	
+//	@Override @Ignore
+//	public void testCreateLabels() {}
+	
+	@Override @Ignore
+	public void testUpdateLabels() {}
+	
+	@Override @Ignore
+	public void testAssignLabels() {}
+	
+	@Override @Ignore
+	public void testGetAssignLabels2Issues() {}
+	
+	@Override @Ignore
+	public void testDeleteLabels() {}
+	
+	@Override @Ignore
+	public void testAssignIssues() {}
+	
+	@Override @Ignore
+	public void testFilterIssues() {}
+	
+	@Override @Ignore
+	public void testCreateComments() {}
+	
+	@Override @Ignore
+	public void testUpdateComments() {}
+	
+	@Override @Ignore
+	public void testGetEvents() {}
+	
+	@Override @Ignore
+	public void testDeleteComments() {}
+	
+	@Override @Ignore
+	public void testDeleteRepository() {}	
+}

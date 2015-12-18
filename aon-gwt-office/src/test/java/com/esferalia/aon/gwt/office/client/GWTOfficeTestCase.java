@@ -3,14 +3,21 @@
  */
 package com.esferalia.aon.gwt.office.client;
 
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
+import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
+import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
+import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
+import com.esferalia.aon.gwt.office.client.values.LabelValue;
 import com.esferalia.aon.gwt.office.client.values.RepoValue;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
+import com.esferalia.aon.gwt.office.shared.GWTTestConstans;
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -18,423 +25,292 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  *
  */
 
-public class GWTGitHubTestCase extends GWTTestCase {
+public class GWTOfficeTestCase extends GWTTestConstans {
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see com.google.gwt.junit.client.GWTTestCase#getModuleName()
 	 */
-
-	private GitHub github = null;
-	private JsRepo repository = null;
-
-	@Override
-	public String getModuleName() {
-		return "com.esferalia.aon.gwt.office.TestingOffice";
-	}	
 	
-	public void testCreateRepos() {
+	protected static String USER = "amtzdelagos";
+	protected static String REPONAME = "aon-repoPrueba";
+	protected static String DESCRIPTION = "Repositorio de prueba para metodos de TEST";
+	
+	@BeforeClass
+	public void testCreateRepository() {
+		System.out.println("testCreateRepo() .....");
+		System.out
+				.println("======== >>> Creando repositorio de prueba .....");
 
-		final String description = "Prueba";
-
-		RepoValue repo = new RepoValue();
-		repo.setName(getRepoName());
-		repo.setDescription(description);
+		final RepoValue repo = new RepoValue();
+		repo.setName(REPONAME);
+		repo.setDescription(DESCRIPTION);
 		repo.setHasDownload(true);
 		repo.setHasIssues(true);
 		repo.setHasWiki(false);
 		repo.setPrivate(false);
 
-		getGitHub().createRepository(repo, new AsyncCallback<JsRepo>() {
+		getAonHub().createRepository(repo, new AsyncCallback<JsRepo>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
 				fail(caught.getMessage());
+				finishTest();
 			}
 
 			@Override
 			public void onSuccess(JsRepo result) {
-				assertNotNull(result);
-				assertEquals(getRepoName(), result.getName());
-				assertEquals(description, result.getDescription());
-				assertEquals(getUser() + "/" + getRepoName(),
-						result.getFullName());
-				assertEquals(false, result.isPrivate());
-				assertEquals(false, result.hasWiki());
-				assertEquals(0, result.getSize());
-				assertEquals(getUser(), result.getOwner().getLogin());
-				System.out.println("Repositorio " + getRepoName()
+				System.out.println("OK! Repositorio " + REPONAME
 						+ " creado correctamente");
 			}
 		});
 	}
+	
+	@Test
+	public void testGetRepository() {
+		System.out.println("testGetRepo() .....");
 
-	 
-	public void testGetRepos() {
-
-		getGitHub().getRepo(getUser(), getRepoName(),
+		getAonHub().getRepo(USER, REPONAME,
 				new AsyncCallback<AJSON<JsRepo>>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
 						fail(caught.getMessage());
+						finishTest();
 					}
 
 					@Override
 					public void onSuccess(AJSON<JsRepo> result) {
-						JsRepo repo = result.getData();
-						assertEquals(getRepoName(), repo.getName());
-						assertEquals(getUser() + "/" + getRepoName(),
+						if ( result == null)
+							finishTest();
+						if ( result.getData() == null) 
+							finishTest();
+						
+						assertNotNull(result);
+						assertNotNull(result.getData());
+						JsRepo repo = result.getData();						
+						assertNotNull(repo);
+						
+						assertEquals(REPONAME, repo.getName());
+						assertEquals(DESCRIPTION, repo.getDescription());
+						assertEquals(USER + "/" + REPONAME,
 								repo.getFullName());
-						assertEquals(getUser(), repo.getOwner().getLogin());
-						assertEquals(getDescription(), repo.getDescription());
 						assertEquals(false, repo.isPrivate());
-						assertEquals(0, repo.openIssues());
-						System.out.println("Repositorio " + repo.getName()
-								+ "obtenido correctamente");
+						assertEquals(false, repo.hasWiki());
+						assertEquals(USER, repo.getOwner().getLogin());
+						System.out.println(
+								" OK ===> Repositorio obtenido correctamente");
 					}
 				});
 	}
-
+	
+	@Test
 	public void testCreateIssues() {
+		
+		System.out.println("testCreateIssues() .....");
+		
+		for (int i = 0; i < MAX_ISSUES_COUNT; i++) {
+			final IssueValue issue = new IssueValue();
+			final String title = "Title issue " + (i + 1);
+			final String body = "Body issue " + (i + 1);
 
-		getGitHub().getRepo(getUser(), getRepoName(),
-				new AsyncCallback<AJSON<JsRepo>>() {
+			issue.setTitle(title);
+			issue.setBody(body);
+			issue.setState(OPEN_STATE_ISSUE);
+			System.out.println("Creando objecto Title issue " + (i + 1));
 
-					@Override
-					public void onFailure(Throwable caught) {
-						fail(caught.getMessage() + " "
-								+ caught.getLocalizedMessage());
-					}
+			getAonHub().createIssue(issue, new AsyncCallback<JsIssue>() {
 
-					@Override
-					public void onSuccess(AJSON<JsRepo> result) {
-						repository = result.getData();
-						assertNotNull(repository);
-						assertEquals(getRepoName(), repository.getName());
-						System.out.println("Repositorio " + repository.getName()
-								+ "obtenido correctamente");
-					}
-				});
+				@Override
+				public void onFailure(Throwable caught) {
+					fail(caught.getMessage());
+					finishTest();
+				}
 
-		// ********* Issue 1 *********
-		IssueValue issue1 = new IssueValue();
-		issue1.setTitle(Issue1.getTitle());
-		issue1.setBody(Issue1.getBody());
-		issue1.setState(Issue1.getOpenState());
-		System.out.println("Creando objeto ... " + Issue1.getTitle());
-		// ***************************
-
-		// ********* Issue 2 *********
-		IssueValue issue2 = new IssueValue();
-		issue2.setTitle(Issue2.getTitle());
-		issue2.setBody(Issue2.getBody());
-		issue2.setState(Issue2.getOpenState());
-		System.out.println("Creando objeto ... " + Issue2.getTitle());
-		// ***************************
-
-		// ********* Issue 1 *********
-		IssueValue issue3 = new IssueValue();
-		issue3.setTitle(Issue3.getTitle());
-		issue3.setBody(Issue3.getBody());
-		issue3.setState(Issue3.getOpenState());
-		System.out.println("Creando objeto ... " + Issue3.getTitle());
-		// ***************************
-
-		getGitHub().createIssue(repository, issue1,
-				new AsyncCallback<JsIssue>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						fail(caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(JsIssue result) {
-						assertNotNull(result);
-						assertEquals(Issue1.getTitle(), result.getTitle());
-						assertEquals(Issue1.getBody(), result.getBody());
-						assertEquals(Issue1.getOpenState(), result.getState());
-						System.out.println("Issue " + Issue1.getTitle()
-								+ " creado correctamente");
-					}
-				});
-
-		getGitHub().createIssue(repository, issue2,
-				new AsyncCallback<JsIssue>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						fail(caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(JsIssue result) {
-						assertNotNull(result);
-						assertEquals(Issue2.getTitle(), result.getTitle());
-						assertEquals(Issue2.getBody(), result.getBody());
-						assertEquals(Issue2.getOpenState(), result.getState());
-						System.out.println("Issue " + Issue2.getTitle()
-								+ " creado correctamente");
-					}
-				});
-
-		getGitHub().createIssue(repository, issue3,
-				new AsyncCallback<JsIssue>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						fail(caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(JsIssue result) {
-						assertNotNull(result);
-						assertEquals(Issue3.getTitle(), result.getTitle());
-						assertEquals(Issue3.getBody(), result.getBody());
-						assertEquals(Issue3.getOpenState(), result.getState());
-						System.out.println("Issue " + Issue3.getTitle()
-								+ " creado correctamente");
-					}
-				});
+				@Override
+				public void onSuccess(JsIssue result) {
+					assertNotNull(result);
+					assertEquals(title, result.getTitle());
+					assertEquals(body, result.getBody());
+					assertEquals(OPEN_STATE_ISSUE, result.getState());
+					
+					System.out.println(
+							"==============================================");
+					System.out.println(result.getTitle());
+					System.out.println(result.getBody());
+					System.out.println(result.getState());
+					System.out.println(" == >> OK! Issue " + result.getTitle()
+							+ " creada correctamente.... =====");
+				}
+			});
+		}		
 	}
-
-	public void testGetIssues() {
-
-		getGitHub().getRepo(getUser(), getRepoName(),
-				new AsyncCallback<AJSON<JsRepo>>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						fail(caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(AJSON<JsRepo> result) {
-						repository = result.getData();
-						assertNotNull(result);
-						assertNotNull(repository);
-						assertEquals(true, repository.hasIssues());
-						assertEquals(3, repository.openIssues());
-						System.out.println("Reposotorio " + repository.getName()
-								+ " obtenido correctamente");
-					}
-				});
-
-		getGitHub().getOpenIssues(getUser(), repository.getName(),
-				new AsyncCallback<JSON<JsIssue>>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						fail(caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(JSON<JsIssue> result) {
-						JsArray<JsIssue> issues = result.getData();
-						assertNotNull(issues);
-						assertEquals(3, issues.length());
-
-						for (int x = 0; x < issues.length(); x++) {
-
-							switch (x) {
-							case 0:
-								assertEquals(Issue3.getTitle(),
-										issues.get(x).getTitle());
-								assertEquals(Issue3.getBody(),
-										issues.get(x).getBody());
-								assertEquals(Issue3.getOpenState(),
-										issues.get(x).getState());
-								System.out.println("Issue " + Issue3.getTitle()
-										+ " obtenido correctamente");
-								break;
-							case 1:
-								assertEquals(Issue2.getTitle(),
-										issues.get(x).getTitle());
-								assertEquals(Issue2.getBody(),
-										issues.get(x).getBody());
-								assertEquals(Issue2.getOpenState(),
-										issues.get(x).getState());
-								System.out.println("Issue " + Issue2.getTitle()
-										+ " obtenido correctamente");
-								break;
-							case 2:
-								assertEquals(Issue1.getTitle(),
-										issues.get(x).getTitle());
-								assertEquals(Issue1.getBody(),
-										issues.get(x).getBody());
-								assertEquals(Issue1.getOpenState(),
-										issues.get(x).getState());
-								System.out.println("Issue " + Issue1.getTitle()
-										+ " obtenido correctamente");
-								break;
-
-							default:
-								fail("Error en la iteracion de issues creados");
-							}
-						}
-					}
-				});
-	}
-
-	/* Update title & ¿attach? */
+	
+	@Test
 	public void testUpdateIssues() {
-
-		getGitHub().getRepo(getUser(), getRepoName(),
-				new AsyncCallback<AJSON<JsRepo>>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						fail(caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(AJSON<JsRepo> result) {
-						assertNotNull(result);
-						repository = result.getData();
-						assertNotNull(repository);
-						assertEquals(getRepoName(), repository.getName());
-						System.out.println("Repositorio " + repository.getName()
-								+ " obtenido correctamente");
-					}
-				});
-
-		getGitHub().getOpenIssues(getUser(), getRepoName(),
-				new AsyncCallback<JSON<JsIssue>>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						fail(caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(JSON<JsIssue> result) {
-						assertNotNull(result);
-						JsArray<JsIssue> issues = result.getData();
-						assertNotNull(issues);
-
-						for (int x = 0; x < issues.length(); x++)
-							updateIssue(repository, result.getData().get(x));
-					}
-				});
-
+		System.out.println("testUpdateIssues() .... ");
+		
+		getAonHub().getOpenIssues(USER, REPONAME, new AsyncCallback<JSON<JsIssue>>() {
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				fail(caught.getMessage());
+				finishTest();
+			}
+			
+			@Override
+			public void onSuccess(JSON<JsIssue> result) {
+				
+				if (result == null)
+					finishTest();
+				if (result.getData() == null)
+					finishTest();				
+				
+				JsArray<JsIssue> issues = result.getData();				
+				for ( int x = 0; x < issues.length(); x++)
+					updateIssue(issues.get(x));
+			}
+		});
 	}
-
+	
+	@Test
 	public void testCloseIssues() {
+		System.out.println("testCloseIssues() .... ");
 		
-		getGitHub().getRepo(getUser(), getRepoName(), new AsyncCallback<AJSON<JsRepo>>() {
-
+		getAonHub().getOpenIssues(USER, REPONAME, new AsyncCallback<JSON<JsIssue>>() {
+			
 			@Override
 			public void onFailure(Throwable caught) {
 				fail(caught.getMessage());
+				finishTest();
 			}
-
-			@Override
-			public void onSuccess(AJSON<JsRepo> result) {
-				assertNotNull(result);
-				repository = result.getData();
-				assertNotNull(repository);
-				assertEquals(getUser(), repository.getOwner().getLogin());				
-				assertEquals(3, repository.openIssues());
-				System.out.println("Repositorio " + repository.getName() + " obtenido correctamente");
-			}
-		});
-		
-		getGitHub().getOpenIssues(getUser(), repository.getUrl(), new AsyncCallback<JSON<JsIssue>>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				fail(caught.getMessage());
-			}
-
+			
 			@Override
 			public void onSuccess(JSON<JsIssue> result) {
 				assertNotNull(result);
-				JsArray<JsIssue> issues = result.getData();
-				assertNotNull(issues);
-				assertTrue(issues.length() > 0);
+				assertNotNull(result.getData());
 				
-				JsIssue issue = issues.get(0);
-				updateStateIssue(repository, issue, Issue1.getCloseState());
-			}
-		});
-		
-		getGitHub().getOpenIssues(getUser(), repository.getUrl(), new AsyncCallback<JSON<JsIssue>>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				fail(caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(JSON<JsIssue> result) {
-				assertNotNull(result);
 				JsArray<JsIssue> issues = result.getData();
-				assertNotNull(issues);
-				assertEquals(2, issues.length());
-				System.out.println("Issues abiertas. Ok ..");
+				assertEquals(MAX_ISSUES_COUNT, issues.length());
 				
-				for ( int x = 0; x < issues.length() ; x++)
-					updateStateIssue(repository, issues.get(x), Issue1.getCloseState());
+				for ( int x = 0; x < issues.length(); x++)
+					updateStateIssue(issues.get(x), CLOSE_STATE_ISSUE);
 			}
 		});
-		
-		getGitHub().getOpenIssues(getUser(), repository.getUrl(), new AsyncCallback<JSON<JsIssue>>() {
-
+	}
+	
+	@Test
+	public void testReOpenIssuesTestCase() {
+		System.out.println("testReopenIssues() .... ");
+		getAonHub().getClosedIssues(USER, REPONAME, new AsyncCallback<JSON<JsIssue>>() {
+			
 			@Override
 			public void onFailure(Throwable caught) {
 				fail(caught.getMessage());
+				finishTest();
 			}
-
+			
 			@Override
 			public void onSuccess(JSON<JsIssue> result) {
 				assertNotNull(result);
-				JsArray<JsIssue> issues = result.getData();
-				assertNotNull(issues);
+				assertNotNull(result.getData());
 				
-				assertEquals(0, issues.length());
-				System.out.println("Lista issues abiertas vacia. Obteniendo lista issues cerradas ...");
+				JsArray<JsIssue> issues = result.getData();
+				assertEquals(MAX_ISSUES_COUNT, issues.length());
+				
+				for ( int x = 0; x < issues.length(); x++)
+					updateStateIssue(issues.get(x), OPEN_STATE_ISSUE);
 			}
 		});
+	}
+	
+	@Test
+	public void testCreateLabels() {
+		System.out.println("testCreateLabels() .... ");
 		
-		getGitHub().getClosedIssues(getUser(), repository.getUrl(), new AsyncCallback<JSON<JsIssue>>() {
-
+		for ( int x = 0 ; x < MAX_LABELS_COUNT; x++) {
+			LabelValue label = new LabelValue();
+			label.setName(LABEL_NAME + x);
+			label.setColor(LABEL_COLOR);		
+			
+			getAonHub().createLabel(label, new AsyncCallback<JsLabel>() {
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					fail(caught.getMessage());
+					finishTest();
+				}
+				
+				@Override
+				public void onSuccess(JsLabel result) {
+					assertTrue(result.getName().contains(LABEL_NAME));
+					assertEquals(LABEL_COLOR, result.getColor());
+					System.out.println(LABEL_NAME + result.getName()
+							+ " creada correctamente");
+				}
+			});
+		}
+	}
+	
+	@Test
+	public void testUpdateLabels() {
+		
+		getAonHub().getLabels(new AsyncCallback<JSON<JsLabel>>() {
+			
 			@Override
 			public void onFailure(Throwable caught) {
 				fail(caught.getMessage());
+				finishTest();
 			}
-
+			
 			@Override
-			public void onSuccess(JSON<JsIssue> result) {
+			public void onSuccess(JSON<JsLabel> result) {
 				assertNotNull(result);
-				JsArray<JsIssue> issues = result.getData();
-				assertNotNull(issues);
-				assertEquals(3, issues.length());			
-				System.out.println("Todas las issues cerradas correctamente");
+				assertNotNull(result.getData());
+				JsArray<JsLabel> labels = result.getData();
+				assertTrue(labels.length() > MAX_LABELS_COUNT);	
+				
+				for ( int x = 0; x < labels.length(); x++ ) {
+					if (labels.get(x).getName().contains(LABEL_NAME))
+						modifyLabel(labels.get(x));
+				}
 			}
 		});
-	}
-
-	public void testReOpenIssues() {
-		
-	}
-
-	/* Tags or Labels ??? */
-	public void testCreateTags() {
-	}
-
-	public void testGetTags() {
-	}
-
-	public void testUpdateTags() {
 	}
 
 	/* Assign TAGs to Issues */
-	public void testAssignTags() {
+	public void testAssignLabels() {
 	}
 
-	public void testDeleteTags() {
+	public void testGetAssignLabels2Issues() {
+
+	}
+	
+	@Test
+	public void testDeleteLabels() {
+		
+		getAonHub().getLabels(new AsyncCallback<JSON<JsLabel>>() {
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				fail(caught.getMessage());
+				finishTest();
+			}
+			
+			@Override
+			public void onSuccess(JSON<JsLabel> result) {
+				assertNotNull(result);
+				assertNotNull(result.getData());
+				
+				JsArray<JsLabel> labels = result.getData();
+				assertTrue(labels.length() > MAX_LABELS_COUNT);
+				
+				for  ( int x = 0; x < labels.length(); x++) {					
+					deleteLabel(labels.get(x));
+				}
+			}
+		});
 	}
 
 	public void testAssignIssues() {
@@ -444,20 +320,70 @@ public class GWTGitHubTestCase extends GWTTestCase {
 	public void testFilterIssues() {
 	}
 
-	public void testDeleteIssues() {
-		// TODO:
-	}
-
 	public void testCreateComments() {
-		// TODO:
-	}
-
-	public void testGetComments() {
-		// TODO:
+		
+		getAonHub().getOpenIssues(USER, REPONAME, new AsyncCallback<JSON<JsIssue>>() {
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				fail(caught.getMessage());
+				finishTest();
+			}
+			
+			@Override
+			public void onSuccess(JSON<JsIssue> result) {
+				assertNotNull(result);
+				assertNotNull(result.getData());
+				
+				JsArray<JsIssue> issues = result.getData();
+				assertEquals(MAX_ISSUES_COUNT, issues.length());
+				for ( int x = 0 ; x < issues.length() ; x++)
+					commentIssue(issues.get(x));
+			}
+		});
 	}
 
 	public void testUpdateComments() {
-		// TODO:
+		
+		getAonHub().getOpenIssues(USER, REPONAME, new AsyncCallback<JSON<JsIssue>>() {
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				fail(caught.getMessage());
+				finishTest();
+			}
+			
+			@Override
+			public void onSuccess(JSON<JsIssue> result) {
+				assertNotNull(result);
+				assertNotNull(result.getData());
+				
+				JsArray<JsIssue> issues = result.getData();
+				
+				for ( int x = 0; x < issues.length() ; x++) {
+					final JsIssue issue = issues.get(x);
+					
+					getAonHub().getIssueComments(issue, new AsyncCallback<JSON<JsIssueComment>>() {
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							fail(caught.getMessage());
+							finishTest();
+						}
+						
+						@Override
+						public void onSuccess(JSON<JsIssueComment> result) {
+							
+							assertNotNull(result);
+							assertNotNull(result.getData());
+							JsArray<JsIssueComment> comments = result.getData();
+							for ( int x = 0; x < comments.length() ; x++)
+								editCommentIssue(issue, comments.get(x));
+						}
+					});
+				}
+			}
+		});
 	}
 
 	public void testGetEvents() {
@@ -465,51 +391,59 @@ public class GWTGitHubTestCase extends GWTTestCase {
 	}
 
 	public void testDeleteComments() {
-		// TODO:
+		
+		System.out.println("testDeleteComment() .... ");
+		
+		getAonHub().getOpenIssues(USER, REPONAME, new AsyncCallback<JSON<JsIssue>>() {
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				fail(caught.getMessage());
+				finishTest();
+			}
+			
+			@Override
+			public void onSuccess(JSON<JsIssue> result) {				
+				
+				assertNotNull(result);
+				assertNotNull(result.getData());
+				
+				JsArray<JsIssue> issues = result.getData();
+				
+				for ( int x = 0; x < issues.length() ; x++)
+					deleteIssueComment(issues.get(x));
+			}
+		});
+	}
+	
+	@Test
+	public void testDeleteRepository() {
+		
+		System.out.println("Borrando repositorio ..."); 
+		
+		getAonHub().deleteRepository(new AsyncCallback<JsRepo>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				fail(caught.getMessage());
+				finishTest();
+			}
+
+			@Override
+			public void onSuccess(JsRepo result) {
+				System.out.println("Repositorio ELIMINADO");
+			}
+		});
 	}
 
-	// public void testDeleteRepository() {
-	//
-	// getGitHub().getRepo(getUser(), getRepoName(),
-	// new AsyncCallback<AJSON<JsRepo>>() {
-	//
-	// @Override
-	// public void onFailure(Throwable caught) {
-	// Assert.fail(caught.getMessage());
-	// }
-	//
-	// @Override
-	// public void onSuccess(AJSON<JsRepo> result) {
-	//
-	// JsRepo repo = result.getData();
-	// assertNotNull(repo);
-	// assertEquals(getRepoName(), repo.getName());
-	//
-	// getGitHub().deleteRepository(repo,
-	// new AsyncCallback<JsRepo>() {
-	//
-	// @Override
-	// public void onFailure(Throwable caught) {
-	// fail(caught.getMessage());
-	// }
-	//
-	// @Override
-	// public void onSuccess(JsRepo result) {
-	//
-	// }
-	// });
-	// }
-	// });
-	// }
-	
 	// ------------------------ Private Methods ------------------------------
 
-	private void updateIssue(JsRepo repo, final JsIssue issue) {
+	private void updateIssue(final JsIssue issue) {
 		IssueValue edited = new IssueValue();
-		edited.setTitle(issue.getTitle() + Issue1.getEdited());
-		edited.setBody(issue.getBody() + Issue1.getEdited());
+		edited.setTitle(issue.getTitle() + EDITED);
+		edited.setBody(issue.getBody() + EDITED);
 
-		getGitHub().editIssue(repository, issue, edited,
+		getAonHub().editIssue(issue, edited,
 				new AsyncCallback<JsIssue>() {
 
 					@Override
@@ -521,24 +455,26 @@ public class GWTGitHubTestCase extends GWTTestCase {
 					public void onSuccess(JsIssue result) {
 						assertNotNull(result);
 						assertEquals(issue.getId(), result.getId());
-						assertEquals(issue.getTitle() + Issue1.getEdited(),
+						assertEquals(issue.getTitle() + EDITED,
 								result.getTitle());
-						assertEquals(issue.getBody() + Issue1.getEdited(),
+						assertEquals(issue.getBody() + EDITED,
 								result.getBody());
-						assertEquals(issue.getState(), Issue1.getOpenState());
+						assertEquals(issue.getState(), OPEN_STATE_ISSUE);
 						System.out.println("Issue " + issue.getTitle() + " "
 								+ issue.getNumber() + " editado correctamente");
 					}
 				});
 	}
-	
-	private void updateStateIssue (JsRepo repo, final JsIssue issue, final String state) {
-		
-		IssueValue closed = new IssueValue();
-		closed.setState(state);
-		System.out.println("Cerrando Issue " + issue.getTitle() + " ...");
-		
-		getGitHub().editIssue(repository, issue, closed, new AsyncCallback<JsIssue>() {
+
+	private void updateStateIssue(final JsIssue issue,
+			final String state) {
+
+		IssueValue prop = new IssueValue();
+		prop.setState(state);
+		System.out.println("Modificando el stado de la Issue "
+				+ issue.getTitle() + ". Estado a " + state);
+
+		getAonHub().editIssue(issue, prop, new AsyncCallback<JsIssue>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -551,107 +487,148 @@ public class GWTGitHubTestCase extends GWTTestCase {
 				assertEquals(issue.getId(), result.getId());
 				assertEquals(issue.getTitle(), issue.getTitle());
 				assertEquals(issue.getBody(), result.getBody());
-				assertEquals(Issue1.getCloseState(), result.getState());
-				System.out.println("Issue " + result.getTitle() + " cerrado correctamente");
+				assertNotSame(issue.getState(), result.getState());
+				System.out.println("Estado de la Issue " + result.getTitle()
+						+ " actualizada correctamente");
+			}
+		});
+	}
+
+	private void modifyLabel(final JsLabel label) {
+		LabelValue prop = new LabelValue();
+		prop.setName(label.getName() + LABEL_NAME_EDITED);
+		prop.setColor(LABEL_COLOR_EDITED);
+
+		getAonHub().saveLabel(label, prop, new AsyncCallback<JsLabel>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				fail(caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(JsLabel result) {
+				assertNotNull(result);
+				assertEquals(label.getName() + LABEL_NAME_EDITED,
+						result.getName());
+				assertEquals(LABEL_COLOR_EDITED, result.getColor());
+				System.out.println(LABEL_NAME + result.getName()
+						+ " actualizada correctamente");
+			}
+		});
+	}
+	
+	private void deleteLabel(final JsLabel label) {
+		
+		getAonHub().deleteLabel(label.getName(), new AsyncCallback<JsLabel>() {
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				fail(caught.getMessage());
+				System.err.println(label.getName() + " no borrada");
+			}
+			
+			@Override
+			public void onSuccess(JsLabel result) {
+				System.out.println(" OK ..... ");
+			}
+		});
+	}
+	
+	private void commentIssue(final JsIssue issue) {
+		
+		for ( int x = 0; x < MAX_COMMENTS_COUNT; x++ ) {
+			IssueCommentValue comment = new IssueCommentValue();
+			comment.setBody(COMMENT);
+			
+			getAonHub().createIssueComment(issue, comment, new AsyncCallback<JsIssueComment>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					fail(caught.getMessage());
+					finishTest();
+				}
+
+				@Override
+				public void onSuccess(JsIssueComment result) {
+					assertNotNull(result);					
+					System.out.println("Comentario creado correctamente" );
+				}
+			});			
+		}
+	}
+	
+	private void editCommentIssue(final JsIssue issue, final JsIssueComment comment) {
+		
+		IssueCommentValue editComment = new IssueCommentValue();
+		editComment.setBody(comment.getBody() + EDITED);
+		
+		getAonHub().editIssueComment(USER, REPONAME, comment.getId(), editComment, new AsyncCallback<JsIssueComment>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				fail(caught.getMessage());
+				finishTest();
+			}
+
+			@Override
+			public void onSuccess(JsIssueComment result) {
+				System.out.println(result.getBody());						
+			}
+		});
+	}
+	
+	private void deleteIssueComment(final JsIssue issue) {
+		
+		getAonHub().getIssueComments(issue, new AsyncCallback<JSON<JsIssueComment>>() {
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				fail(caught.getMessage());
+				finishTest();
+			}
+			
+			@Override
+			public void onSuccess(JSON<JsIssueComment> result) {				
+				assertNotNull(result);
+				assertNotNull(result.getData());
+				JsArray<JsIssueComment> comments = result.getData();
+				
+				for ( int x = 0; x < comments.length(); x++) {
+					JsIssueComment comment = comments.get(x);
+					System.out.println(comment.getBody());
+					System.out.println(comment.getId());
+				}
 			}
 		});
 		
 		
-		
-	
-			
-
 	}
-
 	// ------------------------------------------------------------------------
-
-	protected String getUser() {
-		return "amtzdelagos";
-	}
-
-	protected String getRepoName() {
-		return "aon-repoPrueba";
-	}
-
-	protected String getDescription() {
-		return "Prueba";
-	}
-
-	protected GitHub getGitHub() {
-		if (github == null) {
-			github = new GitHub();
-			github.setAccessToken("06a75ef8dfa037f188c2075333ed73574ffd1971");
-		}
-		return github;
-	}
-
-	static class Issue1 {
-
-		static String getTitle() {
-			return "Title Issue 1";
-		}
-
-		static String getBody() {
-			return "Body Issue 1";
-		}
-
-		static String getEdited() {
-			return " edited";
-		}
-
-		static String getOpenState() {
-			return "open";
-		}
-
-		static String getCloseState() {
-			return "closed";
-		}
-	}
-
-	static class Issue2 {
-
-		static String getTitle() {
-			return "Title Issue 2";
-		}
-
-		static String getBody() {
-			return "Body Issue 2";
-		}
-
-		static String getEdited() {
-			return " edited";
-		}
-
-		static String getOpenState() {
-			return "open";
-		}
-
-		static String getCloseState() {
-			return "closed";
-		}
-	}
-
-	static class Issue3 {
-
-		static String getTitle() {
-			return "Title Issue 3";
-		}
-
-		static String getBody() {
-			return "Body Issue 3";
-		}
-
-		static String getEdited() {
-			return " edited";
-		}
-
-		static String getOpenState() {
-			return "open";
-		}
-
-		static String getCloseState() {
-			return "closed";
-		}
-	}
-
+	
+//	@Test
+//	public void testServlet(){
+//		String url = GWT.getModuleBaseURL() ;
+//		
+//		AonHub hub = new AonHub();
+//		hub.setAonHubUrl("api/");
+//		
+//		hub.getRepos("xxx", new AsyncCallback<JSON<JsRepo>>() {
+//			
+//			@Override
+//			public void onSuccess(JSON<JsRepo> arg0) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//			
+//			@Override
+//			public void onFailure(Throwable arg0) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//		});
+//		
+//		delayTestFinish(300*1000);
+//		
+//	}
 }
