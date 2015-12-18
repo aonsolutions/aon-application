@@ -1,15 +1,12 @@
 package com.esferalia.aon.gwt.office.client;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
-import com.esferalia.aon.gwt.office.client.values.IssueValue;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style.FontWeight;

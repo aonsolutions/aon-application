@@ -74,7 +74,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 		public DefaultAonIssuesSelected(JsIssue issue) {
 			this.timeFormat = DateTimeFormat
-					.getFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+					.getFormat("yyyy-MM-dd HH:mm:ss.S");
 			setIssue(issue);
 		}
 
@@ -103,15 +103,13 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		}
 
 		@Override
-		public Date getCreateAt() {
-			return new Date();
-			//return timeFormat.parse(issue.getCreatedAt());
-
+		public Date getCreateAt() {			
+			return timeFormat.parse(issue.getCreatedAt());
 		}
 
 		@Override
 		public Date getUpdatedAt() {
-			return new Date();
+			return timeFormat.parse(issue.getCreatedAt());
 			//return timeFormat.parse(issue.getUpdatedAt());
 		}
 

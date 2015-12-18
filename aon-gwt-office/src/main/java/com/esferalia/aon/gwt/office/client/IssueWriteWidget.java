@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.i18n.AonHubMessages;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.users.JsIdentification;
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;

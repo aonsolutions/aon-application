@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.office.client.models.issues;
 
-import com.esferalia.aon.gwt.office.client.GitHub;
+import com.esferalia.aon.gwt.office.client.AonHub;
 import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -76,6 +76,6 @@ public class JsIssue extends JavaScriptObject {
 			final AsyncCallback<AJSON<JsArray<JsIssueComment>>> callback) {
 
 		final String commentsUrl = getCommentsUrl();
-		GitHub.get(commentsUrl, callback);
+		AonHub.get(commentsUrl, "", callback);
 	}
 }

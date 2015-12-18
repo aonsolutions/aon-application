@@ -24,13 +24,13 @@ import org.jooq.exception.DataAccessException;
 
 import com.code.aon.config.enumeration.TagType;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.WorkgroupRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.office.Identification;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.impl.jooq.dao.AonHubDAO;
+
 
 @MultipartConfig
 @SuppressWarnings("serial")
@@ -41,7 +41,7 @@ public class GetRegistriesServlet extends HttpServlet {
 
 		static Integer getParent(AONContext aonContext, Integer domain) {
 			DomainRecord domainRecord = getParentDomain(aonContext, domain);
-			return domainRecord.getValue(Domain.DOMAIN.PARENT);
+			return domainRecord.getValue(com.esferalia.aon.jooq.tables.Domain.DOMAIN.PARENT);
 		}
 
 		static String getUserInfo(AONContext ctx, Integer userId)
@@ -62,7 +62,7 @@ public class GetRegistriesServlet extends HttpServlet {
 			return getEnterprise(ctx, domain);
 		}
 
-		static List<Record> getUsers(AONContext ctx, Integer parentDomain,
+		static List<org.jooq.Record> getUsers(AONContext ctx, Integer parentDomain,
 				Integer domain) throws DataAccessException, Exception {
 			return getUsersWorkings(ctx, parentDomain, domain);
 		}
@@ -73,7 +73,7 @@ public class GetRegistriesServlet extends HttpServlet {
 			return getWorkGroups(ctx, parentDomain, domain);
 		}
 
-		static List<Tag> getTagList(AONContext ctx, Integer parentDomain,
+		static List<com.esferalia.aon.occam.api.model.office.Tag> getTagList(AONContext ctx, Integer parentDomain,
 				Integer domain, byte type) throws DataAccessException,
 				Exception {
 			return getTags(ctx, parentDomain, domain, type);
@@ -155,14 +155,14 @@ public class GetRegistriesServlet extends HttpServlet {
 	private static String buildTags(AONContext ctx, Integer parentDomain,
 			Integer domain, byte type) throws DataAccessException, Exception {
 
-		List<Tag> tags = JooqGet.getTagList(ctx, parentDomain, domain, type);
+		List<com.esferalia.aon.occam.api.model.office.Tag> tags = JooqGet.getTagList(ctx, parentDomain, domain, type);
 
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("[\r\n");
 
 		if (tags != null) {
 
-			ListIterator<Tag> iterator = tags.listIterator();
+			ListIterator<com.esferalia.aon.occam.api.model.office.Tag> iterator = tags.listIterator();
 			while (iterator.hasNext()) {
 				Tag tag = iterator.next();
 				Integer id = tag.getId();
@@ -200,16 +200,16 @@ public class GetRegistriesServlet extends HttpServlet {
 			Integer parentDomain, Integer domain) throws DataAccessException,
 			Exception {
 
-		List<Record> users = JooqGet.getUsers(ctx, parentDomain, domain);
+		List<org.jooq.Record> users = JooqGet.getUsers(ctx, parentDomain, domain);
 
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("[\r\n");
 
 		if (users != null) {
 
-			ListIterator<Record> iterator = users.listIterator();
+			ListIterator<org.jooq.Record> iterator = users.listIterator();
 			while (iterator.hasNext()) {
-				Record record = iterator.next();
+				org.jooq.Record record = iterator.next();
 				Integer id = record.getValue(USER.ID);
 				String name = record.getValue(USER.NAME);
 				String enterprise = record.getValue(REGISTRY.NAME);

@@ -12,6 +12,10 @@ public class JsIssueComment extends JavaScriptObject {
 	protected JsIssueComment() {
 	}
 
+	public final native int getId() /*-{
+		return this.id;
+	}-*/;
+
 	public final native String getUrl() /*-{
 		return this.url;
 	}-*/;

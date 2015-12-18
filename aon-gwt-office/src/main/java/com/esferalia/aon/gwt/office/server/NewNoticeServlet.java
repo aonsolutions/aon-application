@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.office.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -12,18 +11,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jooq.exception.DataAccessException;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import com.code.aon.config.enumeration.TagType;
-import com.code.aon.groupware.enumeration.NoticeStatus;
-import com.code.aon.groupware.enumeration.NoticeType;
-import com.code.aon.groupware.enumeration.Priority;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.office.Notice;
-import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.impl.jooq.dao.AonHubDAO;
+
 
 @MultipartConfig
 @SuppressWarnings("serial")
@@ -81,6 +74,7 @@ public class NewNoticeServlet extends HttpServlet {
 
 			String buffer = doJson(req);
 			System.out.println(buffer.toString());
+			/*
 			JSONObject json = new JSONObject(buffer.toString());
 
 			Notice notice = new Notice();
@@ -135,7 +129,7 @@ public class NewNoticeServlet extends HttpServlet {
 			}
 
 			JooqSave.save(ctx, notice);
-
+			 */
 		} catch (IOException ex) {
 			System.out
 					.println(ex.getMessage() + " " + ex.getLocalizedMessage());

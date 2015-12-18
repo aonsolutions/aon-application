@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.office.client.models.repos;
 
 import java.util.Date;
 
-import com.esferalia.aon.gwt.office.client.GitHub;
+import com.esferalia.aon.gwt.office.client.AonHub;
 import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;
@@ -169,7 +169,7 @@ public class JsRepo extends JavaScriptObject {
 		
 		final String url = labelsUrl.substring(0, finalPosition);
 		
-		GitHub.get(url, callback);
+		AonHub.get(url, "", callback);
 	}
 
 }

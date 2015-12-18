@@ -63,6 +63,6 @@ public class Tag implements Serializable, HasId {
 	}
 	
 	public String getColor () {
-		return (this.color != null) ? this.color : "";
+		return color;
 	}
 }

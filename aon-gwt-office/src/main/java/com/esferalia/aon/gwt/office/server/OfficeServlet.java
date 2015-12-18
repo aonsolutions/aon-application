@@ -107,7 +107,7 @@ public class OfficeServlet extends HttpServlet {
 		} catch (ParseException ex) {
 			throw new ServletException();
 		}
-	}
+	}	
 
 	private void doJson(HttpServletRequest req, HttpServletResponse resp)
 			throws ParseException, SQLException, IOException {
@@ -145,7 +145,7 @@ public class OfficeServlet extends HttpServlet {
 				osx.println('{');
 
 				osx.printf("\"id\":\"%s\",\r\n", String.valueOf(id));
-				osx.printf("\"date\":\"%s\",\r\n", notice.getDate());
+				osx.printf("\"created_at\":\"%s\",\r\n", notice.getDate());
 				osx.printf("\"number\":\"%s\",\r\n", String.valueOf(id));
 				osx.printf("\"user\":%s",
 						buildUserSender(ctx, domain, senderId));

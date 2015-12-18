@@ -18,6 +18,7 @@
 				<artifactId>gwt-maven-plugin</artifactId>
 				<version>2.7.0</version>
 				<configuration>
+					<includes>**/GWT*.java</includes>
 					<deploy>${project.build.directory}/extra</deploy>
 					<extra>${project.build.directory}/extra</extra>
 					<module>com.esferalia.aon.gwt.office.Office</module>
@@ -31,22 +32,8 @@
 					<execution>
 						<phase>prepare-package</phase>
 						<goals>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>gwt-maven-plugin</artifactId>
-				<version>2.7.0</version>
-				<configuration>
-					<includes>**/GWT*.java</includes>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
 							<goal>test</goal>
+							<goal>compile</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -124,18 +111,6 @@
 					<artifactId>asm-attrs</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.company</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.ui.payroll</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
@@ -218,6 +193,4 @@
 			</build>
 		</profile>
 	</profiles>
-
-
 </project>

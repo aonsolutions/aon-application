@@ -26,7 +26,6 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -34,7 +33,6 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -84,7 +82,7 @@ public class Office extends Composite implements EntryPoint,
 	private JsUserWorkgroups userWorkgroups;
 	private IssuesLayoutPanel issueLayoutPanel;
 	private IssueSelected issueSelected;
-	private final GitHub gitHub = new GitHub();
+	private final AonHub gitHub = new AonHub("");
 	private List<IssueSelected> openIssues;
 	private List<IssueSelected> closedIssues;
 
@@ -229,7 +227,7 @@ public class Office extends Composite implements EntryPoint,
 	private void createAnIssue(JsRepo repo,
 			com.esferalia.aon.gwt.office.client.values.issues.IssueValue prop) {
 
-		gitHub.createIssue(repo, prop, new AsyncCallback<JsIssue>() {
+		gitHub.createIssue(prop, new AsyncCallback<JsIssue>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -245,7 +243,7 @@ public class Office extends Composite implements EntryPoint,
 
 	private void createIssueComment(JsRepo repo, JsIssue issue,
 			IssueCommentValue commentValue) {
-		gitHub.createIssueComment(repo, issue, commentValue,
+		gitHub.createIssueComment(issue, commentValue,
 				new AsyncCallback<JsIssueComment>() {
 
 					@Override
@@ -262,7 +260,7 @@ public class Office extends Composite implements EntryPoint,
 
 	private void editIssue(JsRepo repo, JsIssue issue,
 			com.esferalia.aon.gwt.office.client.values.issues.IssueValue prop) {
-		gitHub.editIssue(repo, issue, prop, new AsyncCallback<JsIssue>() {
+		gitHub.editIssue(issue, prop, new AsyncCallback<JsIssue>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				GWT.log(caught.getMessage());
@@ -475,19 +473,19 @@ public class Office extends Composite implements EntryPoint,
 
 	@Override
 	public void onCreateNewTag(LabelValue tagValue) {		
-		gitHub.createLabel(NEW_TAG_SERVLET_URL, tagValue, new AsyncCallback<JsLabel>() {
-			
-			@Override
-			public void onSuccess(JsLabel result) {				
-				System.out.println("Etiqueda insertada correctamente " + result.getName());
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				System.out.println("Etiqueta no creada: " + caught.getMessage());
-				
-			}
-		});
+//		gitHub.createLabel(NEW_TAG_SERVLET_URL, tagValue, new AsyncCallback<JsLabel>() {
+//			
+//			@Override
+//			public void onSuccess(JsLabel result) {				
+//				System.out.println("Etiqueda insertada correctamente " + result.getName());
+//			}
+//			
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				System.out.println("Etiqueta no creada: " + caught.getMessage());
+//				
+//			}
+//		});
 	}
 
 	private static native <T extends JavaScriptObject> T eval(String javascript)

@@ -23,6 +23,10 @@ public class JsUser extends JavaScriptObject {
 		return this.url;
 	}-*/;
 
+	public final native String getSiteAdmin() /*-{
+		return this.site_admin;
+	}-*/;	
+
 	public final native String getAvatarUrl() /*-{
 		return this.avatar_url;
 	}-*/;

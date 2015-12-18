@@ -16,9 +16,9 @@ import java.util.ListIterator;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.Record;
 import org.jooq.Result;
+import org.jooq.SelectConditionStep;
 import org.jooq.exception.DataAccessException;
 
-import com.esferalia.aon.jooq.tables.NoticeTag;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.NoticeRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
@@ -31,8 +31,181 @@ import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NoticeComment;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.office.User;
+import com.esferalia.aon.occam.api.model.type.NoticeStatus;
+import com.esferalia.aon.occam.api.model.type.TagType;
 
 public class AonHubDAO {
+	
+	public static void addNewNotice (AONContext ctx, Notice notice) {
+		
+	}
+	
+	public static Tag addNewTag (AONContext ctx, Tag tag) {
+		
+		Tag newTag = new Tag();
+		
+		TagRecord record = ctx.getDslContext().insertInto(TAG)
+		.set(TAG.DOMAIN, ctx.getDomainId())
+		.set(TAG.NAME, tag.getName())
+		.set(TAG.COLOR, (tag.getColor() != null) ? tag.getColor() : null)
+		.returning().fetchOne();
+		
+		newTag.setId(record.getValue(TAG.ID));
+		newTag.setName(record.getValue(TAG.NAME));
+		newTag.setDomain(record.getValue(TAG.DOMAIN));
+		newTag.setColor(record.getValue(TAG.COLOR));
+		
+		return newTag;
+	}
+
+	public static List<Notice> getOpenNotices(AONContext ctx) {
+
+		int domainId = ctx.getDomainId();
+
+		List<Notice> notices = new LinkedList<Notice>();
+		ctx.getDslContext().selectFrom(NOTICE)
+				.where(NOTICE.DOMAIN.eq(domainId)
+						.and(NOTICE.STATUS.eq(NoticeStatus.OPEN.value()).or(
+								NOTICE.STATUS.eq(NoticeStatus.REOPEN.value())))
+							.and(NOTICE.NOTICE_.isNull()))
+				.fetch()
+				.stream()
+				.forEach(record -> {
+					Notice notice = new Notice();
+					int id = record.getValue(NOTICE.ID);
+					notice.setId(id);
+					notice.setDomain(record.getValue(NOTICE.DOMAIN));
+					notice.setDate(record.getValue(NOTICE.DATE));
+					notice.setSender(record.getValue(NOTICE.SENDER));
+					notice.setTitle(record.getValue(NOTICE.SUBJECT));
+					notice.setRecipient(record.getValue(NOTICE.RECIPIENT));
+					notice.setContact(record.getValue(NOTICE.PHONE));
+					notice.setSource(record.getValue(NOTICE.SOURCE));
+					notice.setCompany(record.getValue(NOTICE.COMPANY));
+					notice.setStatus(record.getValue(NOTICE.STATUS).intValue());
+					notice.setWorkgroup(record.getValue(NOTICE.WORK_GROUP));
+					notice.setType(record.getValue(NOTICE.TYPE).intValue());
+					
+					try {
+						
+						String priorityName = ctx.getDslContext()
+								.selectFrom(TAG.rightOuterJoin(NOTICE_TAG).on(TAG.ID.eq(NOTICE_TAG.TAG)))
+								.where(TAG.TYPE.eq(TagType.PRIORITY.value())
+										.and(TAG.DOMAIN.eq(domainId))
+										.and(NOTICE_TAG.NOTICE.eq(id))
+										.and(NOTICE_TAG.START_DATE.eq(record.getValue(NOTICE.DATE))))
+								.fetchOne().getValue(TAG.NAME);
+						
+						notice.setPriority(priorityName);						
+						
+					} catch (Exception ex) {}
+					
+					ctx.getDslContext()
+					.selectFrom(NOTICE)
+					.where(NOTICE.NOTICE_.eq(id));					
+					
+					notices.add(notice);
+				});
+		return notices;
+
+	}
+	
+	public static List<Notice> getClosedIsues(AONContext ctx) {
+		
+		int domainId = ctx.getDomainId();
+		
+		List<Notice> notices = new LinkedList<Notice>();
+		ctx.getDslContext().selectFrom(NOTICE)
+		.where(NOTICE.DOMAIN.eq(domainId)
+				.and(NOTICE.STATUS.eq(NoticeStatus.CLOSED.value()))
+				.and(NOTICE.NOTICE_.isNull()))
+		.fetch()
+		.stream()
+		.forEach(record -> {
+			Notice notice = new Notice();
+			int id = record.getValue(NOTICE.ID);
+			notice.setId(id);
+			notice.setDomain(record.getValue(NOTICE.DOMAIN));
+			notice.setDate(record.getValue(NOTICE.DATE));
+			notice.setSender(record.getValue(NOTICE.SENDER));
+			notice.setTitle(record.getValue(NOTICE.SUBJECT));
+			notice.setRecipient(record.getValue(NOTICE.RECIPIENT));
+			notice.setContact(record.getValue(NOTICE.PHONE));
+			notice.setSource(record.getValue(NOTICE.SOURCE));
+			notice.setCompany(record.getValue(NOTICE.COMPANY));
+			notice.setStatus(record.getValue(NOTICE.STATUS).intValue());
+			notice.setWorkgroup(record.getValue(NOTICE.WORK_GROUP));
+			notice.setType(record.getValue(NOTICE.TYPE).intValue());
+			
+			try {
+				
+				String priorityName = ctx.getDslContext()
+						.selectFrom(TAG.rightOuterJoin(NOTICE_TAG).on(TAG.ID.eq(NOTICE_TAG.TAG)))
+						.where(TAG.TYPE.eq(TagType.PRIORITY.value())
+								.and(TAG.DOMAIN.eq(domainId))
+								.and(NOTICE_TAG.NOTICE.eq(id))
+								.and(NOTICE_TAG.START_DATE.eq(record.getValue(NOTICE.DATE))))
+						.fetchOne().getValue(TAG.NAME);
+				
+				notice.setPriority(priorityName);						
+				
+			} catch (Exception ex) {}
+			
+			notices.add(notice);
+		});
+		
+		return notices;
+	}
+	
+	public static List<Notice> getAllNotices (AONContext ctx) {
+		
+		int domainId = ctx.getDomainId();
+		
+		List<Notice> notices = new LinkedList<Notice>();
+		ctx.getDslContext().selectFrom(NOTICE)
+		.where(NOTICE.DOMAIN.eq(domainId)
+				.and(NOTICE.STATUS.eq(NoticeStatus.OPEN.value())
+						.or(NOTICE.STATUS.eq(NoticeStatus.REOPEN.value()))
+						.or(NOTICE.STATUS.eq(NoticeStatus.CLOSED.value()))
+						.or(NOTICE.STATUS.eq(NoticeStatus.DUPLICATED.value())))
+				.and(NOTICE.NOTICE_.isNull()))
+		.fetch()
+		.stream()
+		.forEach(record -> {
+			Notice notice = new Notice();
+			int id = record.getValue(NOTICE.ID);
+			notice.setId(id);
+			notice.setDomain(record.getValue(NOTICE.DOMAIN));
+			notice.setDate(record.getValue(NOTICE.DATE));
+			notice.setSender(record.getValue(NOTICE.SENDER));
+			notice.setTitle(record.getValue(NOTICE.SUBJECT));
+			notice.setRecipient(record.getValue(NOTICE.RECIPIENT));
+			notice.setContact(record.getValue(NOTICE.PHONE));
+			notice.setSource(record.getValue(NOTICE.SOURCE));
+			notice.setCompany(record.getValue(NOTICE.COMPANY));
+			notice.setStatus(record.getValue(NOTICE.STATUS).intValue());
+			notice.setWorkgroup(record.getValue(NOTICE.WORK_GROUP));
+			notice.setType(record.getValue(NOTICE.TYPE).intValue());
+			
+			try {
+				
+				String priorityName = ctx.getDslContext()
+						.selectFrom(TAG.rightOuterJoin(NOTICE_TAG).on(TAG.ID.eq(NOTICE_TAG.TAG)))
+						.where(TAG.TYPE.eq(TagType.PRIORITY.value())
+								.and(TAG.DOMAIN.eq(domainId))
+								.and(NOTICE_TAG.NOTICE.eq(id))
+								.and(NOTICE_TAG.START_DATE.eq(record.getValue(NOTICE.DATE))))
+						.fetchOne().getValue(TAG.NAME);
+				
+				notice.setPriority(priorityName);						
+				
+			} catch (Exception ex) {}
+			
+			notices.add(notice);
+		});
+		
+		return notices;
+	}
 
 	public static List<Notice> getOpenIssues(AONContext ctx, int parentDomain,
 			Integer domain, byte openIndex, byte reopenIndex, byte tagOrdinal,
@@ -41,13 +214,12 @@ public class AonHubDAO {
 		List<Notice> notices = new LinkedList<Notice>();
 
 		try {
-			List<NoticeRecord> recordList = ctx
-					.getDslContext()
+			List<NoticeRecord> recordList = ctx.getDslContext()
 					.selectFrom(NOTICE)
-					.where(NOTICE.DOMAIN.eq(parentDomain).or(
-							NOTICE.DOMAIN.eq(domain)))
-					.and(NOTICE.STATUS.eq(openIndex).or(
-							NOTICE.STATUS.equal(reopenIndex)))
+					.where(NOTICE.DOMAIN.eq(parentDomain)
+							.or(NOTICE.DOMAIN.eq(domain)))
+					.and(NOTICE.STATUS.eq(openIndex)
+							.or(NOTICE.STATUS.equal(reopenIndex)))
 					.and(NOTICE.NOTICE_.isNull()).fetchInto(NOTICE);
 
 			for (NoticeRecord record : recordList) {
@@ -76,22 +248,26 @@ public class AonHubDAO {
 				notice.setStatus(record.getValue(NOTICE.STATUS).intValue());
 				notice.setWorkgroup(record.getValue(NOTICE.WORK_GROUP));
 				notice.setType(record.getValue(NOTICE.TYPE).intValue());
-				
+
 				try {
 					String priorityName = ctx.getDslContext()
-							.selectFrom(TAG.rightOuterJoin(NOTICE_TAG).on(TAG.ID.eq(NOTICE_TAG.TAG)))
+							.selectFrom(TAG.rightOuterJoin(NOTICE_TAG)
+									.on(TAG.ID.eq(NOTICE_TAG.TAG)))
 							.where(TAG.TYPE.eq(priorityOrdinal)
-									.and(TAG.DOMAIN.eq(record.getValue(NOTICE.DOMAIN)))
-									.and(NOTICE_TAG.NOTICE.eq(record.getValue(NOTICE.ID)))
-									.and(NOTICE_TAG.START_DATE.eq(record.getValue(NOTICE.DATE))))
-									.fetchOne().getValue(TAG.NAME);
-					
+									.and(TAG.DOMAIN
+											.eq(record.getValue(NOTICE.DOMAIN)))
+									.and(NOTICE_TAG.NOTICE
+											.eq(record.getValue(NOTICE.ID)))
+									.and(NOTICE_TAG.START_DATE
+											.eq(record.getValue(NOTICE.DATE))))
+							.fetchOne().getValue(TAG.NAME);
+
 					notice.setPriority(priorityName);
 
-				} catch ( Exception ex) {
-					System.out.println( ex.getMessage() + " " + ex.getLocalizedMessage());
+				} catch (Exception ex) {
+					System.out.println(
+							ex.getMessage() + " " + ex.getLocalizedMessage());
 				}
-				
 
 				loadComments(ctx, notice.getComments(), noticeId);
 
@@ -158,27 +334,24 @@ public class AonHubDAO {
 	}
 
 	public static List<Record> getUsersWorkings(AONContext ctx,
-			Integer parentDomain, Integer domain) throws DataAccessException,
-			Exception {
+			Integer parentDomain, Integer domain)
+					throws DataAccessException, Exception {
 
-		return ctx
-				.getDslContext()
-				.selectFrom(
-						USER.rightOuterJoin(REGISTRY).on(
-								USER.DOMAIN.eq(REGISTRY.DOMAIN)))
+		return ctx.getDslContext()
+				.selectFrom(USER.rightOuterJoin(REGISTRY)
+						.on(USER.DOMAIN.eq(REGISTRY.DOMAIN)))
 				.where(USER.DOMAIN.eq(parentDomain).or(USER.DOMAIN.eq(domain)))
 				.fetch();
 	}
 
 	public static List<WorkgroupRecord> getWorkGroups(AONContext ctx,
-			Integer parentDomain, Integer domain) throws DataAccessException,
-			Exception {
+			Integer parentDomain, Integer domain)
+					throws DataAccessException, Exception {
 
 		return ctx
-				.getDslContext()
-				.selectFrom(WORKGROUP)
-				.where(WORKGROUP.DOMAIN.eq(parentDomain).or(
-						WORKGROUP.DOMAIN.eq(domain))).fetchInto(WORKGROUP);
+				.getDslContext().selectFrom(WORKGROUP).where(WORKGROUP.DOMAIN
+						.eq(parentDomain).or(WORKGROUP.DOMAIN.eq(domain)))
+				.fetchInto(WORKGROUP);
 	}
 
 	public static List<Tag> getTags(AONContext ctx, Integer parentDomain,
@@ -219,10 +392,8 @@ public class AonHubDAO {
 			throws DataAccessException, Exception {
 
 		// HEAD NOTICE
-		InsertSetMoreStep<NoticeRecord> noticeRecord = ctx
-				.getDslContext()
-				.insertInto(NOTICE)
-				.set(NOTICE.DOMAIN, notice.getDomain())
+		InsertSetMoreStep<NoticeRecord> noticeRecord = ctx.getDslContext()
+				.insertInto(NOTICE).set(NOTICE.DOMAIN, notice.getDomain())
 				.set(NOTICE.DATE,
 						new java.sql.Timestamp(notice.getDate().getTime()))
 				.set(NOTICE.SUBJECT, notice.getTitle())
@@ -244,8 +415,7 @@ public class AonHubDAO {
 		NoticeRecord newNoticeRecord = noticeRecord.returning().fetchOne();
 
 		// BODY NOTICE
-		ctx.getDslContext()
-				.insertInto(NOTICE)
+		ctx.getDslContext().insertInto(NOTICE)
 				.set(NOTICE.DOMAIN, newNoticeRecord.getValue(NOTICE.DOMAIN))
 				.set(NOTICE.SENDER, newNoticeRecord.getValue(NOTICE.SENDER))
 				.set(NOTICE.SUBJECT, newNoticeRecord.getValue(NOTICE.SUBJECT))
@@ -264,38 +434,32 @@ public class AonHubDAO {
 				.execute();
 
 		if (notice.getPriority() != null) {
-			Integer priority = ctx
-					.getDslContext()
-					.selectFrom(TAG)
+			Integer priority = ctx.getDslContext().selectFrom(TAG)
 					.where(TAG.DOMAIN.eq(notice.getDomain())
 							.and(TAG.NAME.eq(notice.getPriority()))
 							.and(TAG.TYPE.eq(notice.getPriorityOrdinal())))
 					.fetchOne().getValue(TAG.ID);
 
-			ctx.getDslContext()
-					.insertInto(NOTICE_TAG)
+			ctx.getDslContext().insertInto(NOTICE_TAG)
 					.set(NOTICE_TAG.NOTICE, newNoticeRecord.getValue(NOTICE.ID))
-					.set(NOTICE_TAG.TAG, priority)
-					.set(NOTICE_TAG.START_DATE,
-							newNoticeRecord.getValue(NOTICE.DATE)).execute();
+					.set(NOTICE_TAG.TAG, priority).set(NOTICE_TAG.START_DATE,
+							newNoticeRecord.getValue(NOTICE.DATE))
+					.execute();
 		}
 
 		for (String label : notice.getTags()) {
 
-			Integer labelId = ctx
-					.getDslContext()
-					.selectFrom(TAG)
+			Integer labelId = ctx.getDslContext().selectFrom(TAG)
 					.where(TAG.DOMAIN.eq(notice.getDomain())
 							.and(TAG.NAME.eq(label))
 							.and(TAG.TYPE.eq(notice.getTagOrdinal())))
 					.fetchOne().getValue(TAG.ID);
 
-			ctx.getDslContext()
-					.insertInto(NOTICE_TAG)
+			ctx.getDslContext().insertInto(NOTICE_TAG)
 					.set(NOTICE_TAG.NOTICE, newNoticeRecord.getValue(NOTICE.ID))
-					.set(NOTICE_TAG.TAG, labelId)
-					.set(NOTICE_TAG.START_DATE,
-							newNoticeRecord.getValue(NOTICE.DATE)).execute();
+					.set(NOTICE_TAG.TAG, labelId).set(NOTICE_TAG.START_DATE,
+							newNoticeRecord.getValue(NOTICE.DATE))
+					.execute();
 		}
 
 	}
@@ -314,24 +478,20 @@ public class AonHubDAO {
 	}
 
 	public static List<RegistryRecord> getRegistryNames(AONContext ctx,
-			Integer parentDomain, Integer domain) throws DataAccessException,
-			Exception {
-		return ctx
-				.getDslContext()
-				.selectFrom(REGISTRY)
-				.where(REGISTRY.DOMAIN.eq(domain).or(
-						REGISTRY.DOMAIN.eq(parentDomain))).fetchInto(REGISTRY);
+			Integer parentDomain, Integer domain)
+					throws DataAccessException, Exception {
+		return ctx.getDslContext().selectFrom(REGISTRY)
+				.where(REGISTRY.DOMAIN.eq(domain)
+						.or(REGISTRY.DOMAIN.eq(parentDomain)))
+				.fetchInto(REGISTRY);
 	}
 
-	public static List<Identification> getLoginsToIdentification(
-			AONContext ctx, Integer domain) throws DataAccessException,
-			Exception {
+	public static List<Identification> getLoginsToIdentification(AONContext ctx,
+			Integer domain) throws DataAccessException, Exception {
 
-		Result<Record> result = ctx
-				.getDslContext()
-				.select()
-				.from(REGISTRY.rightOuterJoin(RMEDIA).on(
-						REGISTRY.DOMAIN.eq(RMEDIA.DOMAIN)))
+		Result<Record> result = ctx.getDslContext().select()
+				.from(REGISTRY.rightOuterJoin(RMEDIA)
+						.on(REGISTRY.DOMAIN.eq(RMEDIA.DOMAIN)))
 				.where(REGISTRY.DOMAIN.eq(domain)).fetch();
 
 		List<Identification> idents = new LinkedList<Identification>();
