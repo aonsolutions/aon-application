@@ -36,9 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
-import com.code.aon.account.Account;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
@@ -46,9 +46,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.Projection;
-import com.code.aon.ql.ProjectionList;
-import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.loader.Loader;
 import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.loader.controller.AonLoaderController;
@@ -153,28 +151,19 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	        writer.print("totalFactura");
 	        writer.println();
 	        
-	        String maxAccountCode = obtainMaxAccountCode();
-	        int emptyAccountCount = 0;
-	        
         	int lineCount=0;
         	while(rowIterator.hasNext()){
         		row = rowIterator.next();
         		
         		String supplierDocument = getStringCellValue(row.getCell(headers.indexOf(SUPPLIER_DOCUMENT)));
         		String supplierName = getStringCellValue(row.getCell(headers.indexOf(SUPPLIER_NAME)));
-        		
         		String supplierCode = getStringCellValue(row.getCell(headers.indexOf(SUPPLIER_CODE)));
-        		
-        		String account = null;
-        		if(StringUtils.isNotBlank(supplierCode) && NumberUtils.isNumber(supplierCode)){
-        			account = String.valueOf( 400000000 + Double.valueOf(supplierCode).intValue() );
-        		}
+        		String account = obtainSupplierAccount(supplierDocument, supplierName);
         		
         		if(account==null || StringUtils.isBlank(account)){
-        			emptyAccountCount++;
-        			account = String.valueOf(Integer.valueOf(maxAccountCode)+emptyAccountCount);
+        			account = String.valueOf( 400000000 + Double.valueOf(supplierCode).intValue() );
         			supplierAccount.put(supplierDocument, account);
-        			logPanel.warn("El proveedor " + supplierName + " ("+supplierDocument+")" + " no tiene cuenta asignada. Se le asigna la siguiente libre");
+        			logPanel.warn("El proveedor " + supplierName + " ("+supplierDocument+")" + " no tiene cuenta asignada. Se le asigna la cuenta " + account);
         		}
         		
         		if(account!=null && StringUtils.isNotBlank(account)){
@@ -325,19 +314,32 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 		return false;
 	}
 	
-	private String obtainMaxAccountCode() throws ManagerBeanException {
-		String code = null;
-		IManagerBean bean = BeanManager.getManagerBean(Account.class);
-		Criteria c = new Criteria();
-		c.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE), Boolean.TRUE);
-		c.addExpression(ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.ACCOUNT_CODE), "400%"));
-		ProjectionList pl = new ProjectionList();
-		pl.add(Projection.max(bean.getFieldName(IEntityAlias.ACCOUNT_CODE)));
-		List<?> list = bean.getList(pl, c);
-		if (list != null && list.size() > 0 && list.get(0) != null) {
-			code = (String) list.get(0);	
+	private String obtainSupplierAccount(String supplierDocument, String supplierName) throws ManagerBeanException {
+		supplierDocument = StringUtils.trim(supplierDocument);
+		String account = null;
+		if(supplierAccount!=null && supplierAccount.containsKey(supplierDocument)){
+			account = supplierAccount.get(supplierDocument);
+		} else {
+			if(StringUtils.isNotBlank(supplierDocument)){
+				LogPanelController logPanel = LogPanelController.getInstance();
+				IManagerBean bean = BeanManager.getManagerBean(Supplier.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SUPPLIER_REGISTRY_DOCUMENT), supplierDocument);
+				List<ITransferObject> list = bean.getList(criteria);
+				if(list==null || list.size()==0){
+					logPanel.warn("Se procede a crear un nuevo proveedor " + supplierName + " (" + supplierDocument +")" );
+				} else if(list!=null && list.size()==1){
+					Supplier supplier = (Supplier) list.get(0);
+					if(supplier.getAccount()!=null && StringUtils.isNotBlank(supplier.getAccount().getCode())){
+						account = supplier.getAccount().getCode();
+						supplierAccount.put(supplierDocument, account);
+					}
+				} else {
+					logPanel.error("Existen varios registros de proveedor con el documento " + supplierDocument);
+				}
+			}
 		}
-		return code;
+		return account;
 	}
 	
 	private String getFormatInvoiceNumber(String value) {
