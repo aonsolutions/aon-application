@@ -156,8 +156,9 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	        String maxAccountCode = obtainMaxAccountCode();
 	        int emptyAccountCount = 0;
 	        
-        	int lineCount=1;
+        	int lineCount=0;
         	while(rowIterator.hasNext()){
+        		row = rowIterator.next();
         		
         		String supplierDocument = getStringCellValue(row.getCell(headers.indexOf(SUPPLIER_DOCUMENT)));
         		String supplierName = getStringCellValue(row.getCell(headers.indexOf(SUPPLIER_NAME)));
@@ -228,7 +229,6 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
         			lineCount++;
         		}
         		
-        		row = rowIterator.next();
         	}
         	
         	logPanel.info("Total facturas a procesar:" + lineCount);
@@ -302,16 +302,16 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 			Row row = null;
 			headers = new ArrayList<>();
 			
-			rowOffset=1;
-			for(int i=0; i<5 && rowIterator.hasNext()  && !headers.containsAll(Arrays.asList(SUPPORTED_COLUMNS)); i++){
+			rowOffset=0;
+			for(int i=0; i<5 && rowIterator.hasNext() && !headers.containsAll(Arrays.asList(SUPPORTED_COLUMNS)); i++){
 				row = rowIterator.next();
+				rowOffset++;
 				headers.clear();
 				for(int col=0;col<row.getLastCellNum();col++){
 					Cell cell = row.getCell(col);
 					String name = getStringCellValue(cell);
 					headers.add(StringUtils.isBlank(name)?"empty":name);
 				}
-				rowOffset++;
 			}
 			
 			return headers.containsAll(Arrays.asList(SUPPORTED_COLUMNS));
