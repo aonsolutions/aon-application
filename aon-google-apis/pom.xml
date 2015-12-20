@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>8.36-SNAPSHOT</version>
+		<version>8.36</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>aon.google.apis</artifactId>
@@ -297,7 +297,7 @@
 											<include>com.esferalia.aon:aon.entity:${project.version}</include>
 											<include>com.esferalia.aon:aon.master.jooq:${project.version}</include>
 											<include>com.esferalia.aon:aon.entity.common:${project.version}</include>
-											<include>include>com.code.aon:aon.oauth2:${project.version}</include>
+											<include>include&gt;com.code.aon:aon.oauth2:${project.version}</include>
 
 											<!-- Google -->
 											<include>com.google.api-client:google-api-client:1.21.0</include>
