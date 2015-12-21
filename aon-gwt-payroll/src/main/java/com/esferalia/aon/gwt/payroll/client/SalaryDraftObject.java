@@ -16,8 +16,10 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
+import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Result;
+import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Event;
@@ -25,8 +27,12 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
+import com.sun.star.beans.GetDirectPropertyTolerantResult;
 
 public class SalaryDraftObject implements IContextProvider {
 
@@ -274,6 +280,7 @@ public class SalaryDraftObject implements IContextProvider {
 
 	public void calculate(final CalculateCallback callback) {
 
+		setDraftType(salaryDraft);
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
 		removeSalaryPart(salaryDraft);
 
@@ -317,17 +324,17 @@ public class SalaryDraftObject implements IContextProvider {
 	}
 
 	public void saveITData(final CalculateCallback callback) {
-		
+
 		// TODO: Save only data relative to this employee.
 
 		dataObject.save(new ITDataObject.CallculateCallback() {
-			
+
 			@Override
 			public void onCalculateSuccess(ITDataObject object) {
 				dataObject = object;
 				callback.onCalculateSucces(SalaryDraftObject.this);
 			}
-			
+
 			@Override
 			public void onCalculateFailure(Throwable throwable) {
 				callback.onCalculateFailure(throwable);
@@ -856,6 +863,15 @@ public class SalaryDraftObject implements IContextProvider {
 		return true;
 	}
 
+	private static void setDraftType(SalaryDraft draft) {
+		for ( Payment p : draft.getDraftPayments() )
+			p.setSalaryType(draft.getType());
+		for ( Deduction d : draft.getDraftDeductions() )
+			setDeductionType(d, draft.getType());
+		for ( Deduction d : draft.getDraftEmbargos() )
+			setDeductionType(d, draft.getType());
+	}
+
 	private static void setDraftPeriod(Date draftStartDate, Date draftEndDate,
 			SalaryDraft draft) {
 		setStartAndEndDates(draftStartDate, draftEndDate,
@@ -868,6 +884,23 @@ public class SalaryDraftObject implements IContextProvider {
 				draft.getDraftEmbargos());
 		setStartAndEndDates(draftStartDate, draftEndDate,
 				draft.getDraftBonuses());
+	}
+
+	private static void setDeductionType(Deduction d,
+			Salary.Type type) {
+		String expression = d.getExpression();
+		
+		String pattern ="\\s*\\(\\s*.*\\s*\\)\\s*\\?\\s*\\(?\\s*(.*)\\s*\\)\\s*:\\s*REMOVE\\s*\\(\\s*\\)\\s*";
+		RegExp regexp = RegExp.compile(pattern, "im");
+		MatchResult matchResult = regexp.exec(expression);
+		if ( matchResult != null ) {
+			expression = matchResult.getGroup(1);
+		}else {
+			expression = "/*user*/"+ expression + "/**/";
+		}
+		
+		d.setExpression("("+type.getVariable()+")?("+ expression +"):REMOVE()");
+		
 	}
 
 	private static <T extends HasStartAndEndDate> void setStartAndEndDates(
