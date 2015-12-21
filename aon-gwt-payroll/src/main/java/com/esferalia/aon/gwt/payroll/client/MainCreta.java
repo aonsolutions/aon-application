@@ -530,7 +530,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					enterpriseCommands[2] = new MainEnterpriseCretaRequestCommand(
 							CretaService.File.SOLICITUD_CONFIRMACION),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addItem("SLD-Fichero de Comunicaci\u00FAn de Datos Bancarios",
+			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios",
 					enterpriseCommands[3] = new MainEnterpriseDBACommand(),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
@@ -585,6 +585,13 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		void onClickTrabajadoresYTramosButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
 		}
+		
+		@Override
+		void onClickDBAButton(ClickEvent e) {
+			MainEnterpriseDBACommand cmd = new MainEnterpriseDBACommand();
+			cmd.setEnterprise(enterprise);
+			cmd.execute();
+		}
 
 		protected void onRequestCommand(File file) {
 			MainEnterpriseCretaRequestCommand cmd = new MainEnterpriseCretaRequestCommand(
@@ -617,7 +624,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					activityCommands[3] = new MainActivityCretaRequestCommand(
 							CretaService.File.SOLICITUD_CONFIRMACION),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addItem("SLD-Fichero de Comunicaci\u00FAn de Datos Bancarios",
+			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios",
 					activityCommands[4] = new MainActivityDBACommand(),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
@@ -761,6 +768,13 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		void onClickTrabajadoresYTramosButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
 		}
+		
+		@Override
+		void onClickDBAButton(ClickEvent e) {
+			MainActivityDBACommand cmd = new MainActivityDBACommand();
+			cmd.setActivity(activity);
+			cmd.execute();
+		}
 
 		protected void onRequestCommand(File file) {
 			MainActivityCretaRequestCommand cmd = new MainActivityCretaRequestCommand(
@@ -792,7 +806,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					cccCommands[3] = new MainCCCCretaRequestCommand(
 							CretaService.File.SOLICITUD_CONFIRMACION),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addItem("SLD-Fichero de Comunicaci\u00FAn de Datos Bancarios",
+			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios",
 					cccCommands[4] = new MainCCCDBACommand(),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
@@ -920,7 +934,14 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		void onClickTrabajadoresYTramosButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
 		}
-
+		
+		@Override
+		void onClickDBAButton(ClickEvent e) {
+			MainCCCDBACommand cmd = new MainCCCDBACommand();
+			cmd.setCCC(ccc);
+			cmd.execute();
+		}
+		
 		protected void onRequestCommand(File file) {
 			MainCCCCretaRequestCommand cmd = new MainCCCCretaRequestCommand(
 					file);
@@ -952,7 +973,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					cretaRequestCommands[3] = new EnterprisesCretaRequestCommand(
 							CretaService.File.SOLICITUD_CONFIRMACION),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addItem("SLD-Fichero de Comunicaci\u00FAn de Datos Bancarios",
+			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios",
 					cretaRequestCommands[4] = new EnterprisesDBACommand(),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
@@ -1107,6 +1128,13 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		@Override
 		void onClickTrabajadoresYTramosButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
+		}
+		
+		@Override
+		void onClickDBAButton(ClickEvent e) {
+			EnterprisesDBACommand cmd = new EnterprisesDBACommand();
+			cmd.setEnterprises(enterprises);
+			cmd.execute();
 		}
 
 		protected void onRequestCommand(File file) {
