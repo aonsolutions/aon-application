@@ -165,6 +165,9 @@ public class InventoryController extends BasicController implements IAuditableCo
 	                " order by item.detail");
 			Iterator<?> iter = q.list().iterator();
 			while (iter.hasNext()){
+				Integer workplaceId = null;
+				if(inventory.getWarehouse().getWorkPlace() != null)
+					workplaceId = inventory.getWarehouse().getWorkPlace().getId();
 				InventoryDetail inventoryDetail = new InventoryDetail();
 				inventoryDetail.setInventory(inventory);
 				Object[] o = (Object[]) iter.next();
@@ -173,8 +176,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 				inventoryDetail.setItem(item);
 				inventoryDetail.setRealQuantity(total);
 				inventoryDetail.setActualQuantity(total);
-				inventoryDetail.setCost(getCost(inventoryDetail, inventory.getWarehouse().getWorkPlace().getId()
-						, inventory.getWarehouse().getId()));
+				inventoryDetail.setCost(getCost(inventoryDetail, workplaceId, inventory.getWarehouse().getId()));
 				inventoryDetail = (InventoryDetail) inventoryDetailBean.insert(inventoryDetail);
 			}
 			HibernateUtil.commitTransaction(sessionName);
@@ -273,11 +275,14 @@ public class InventoryController extends BasicController implements IAuditableCo
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
 		String user = AonUtil.getRemoteUser();
+		Integer workplaceId = null;
+		if(inventory.getWarehouse().getWorkPlace() != null)
+			workplaceId = inventory.getWarehouse().getWorkPlace().getId();
 		LinkedList<com.esferalia.aon.occam.api.model.warehouse.InventoryDetail> list = 
 				AON.getInventoryDetailList(domainName, domainId, user, inventory.getId());
 		for(com.esferalia.aon.occam.api.model.warehouse.InventoryDetail id : list){
 			InventoryDetail inventoryDetail = OccamClassesTransform.getInventoryDetail(id);
-			Double cost =  getCost(inventoryDetail, inventory.getWarehouse().getWorkPlace().getId(), inventory.getWarehouse().getId());
+			Double cost =  getCost(inventoryDetail, workplaceId, inventory.getWarehouse().getId());
 			inventoryDetail.setCost(cost);
 			inventoryDetail.setInventory(inventory);
 			try {

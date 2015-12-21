@@ -248,6 +248,8 @@ public class InvoiceDAO {
 	}
 	
 	public static InvoiceDetail getLastInvoiceDetail(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId){
+		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
+		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
 		return ctx.getDslContext()
 				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
 						INVOICE_DETAIL.QUANTITY)
@@ -255,20 +257,39 @@ public class InvoiceDAO {
 				.where(INVOICE_DETAIL.ITEM.eq(item.getId()))
 				.and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
 				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
-				.and(INVOICE_DETAIL.WORKPLACE.eq(workplaceId))
+				.and(workplaceCondition)
 				.orderBy(INVOICE.ISSUE_DATE.desc())
 				.limit(1).fetch().stream().map(new InvoiceDetailFiller())
-				.findFirst().orElse(null);
+				.findFirst().orElse(new InvoiceDetail());
+	}
+	
+	public static InvoiceDetail getLastInvoiceDetailUntilDate(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId, Date date){
+		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
+		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
+		return ctx.getDslContext()
+				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
+						INVOICE_DETAIL.QUANTITY)
+				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
+				.where(INVOICE_DETAIL.ITEM.eq(item.getId()))
+				.and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
+				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
+				.and(workplaceCondition)
+				.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toSql(date)))
+				.orderBy(INVOICE.ISSUE_DATE.desc())
+				.limit(1).fetch().stream().map(new InvoiceDetailFiller())
+				.findFirst().orElse(new InvoiceDetail());
 	}
 	
 	public static LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId) {
+		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
+		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
 		return ctx.getDslContext()
 				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
 						INVOICE_DETAIL.QUANTITY)
 				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
 				.where(INVOICE_DETAIL.ITEM.eq(item.getId())).and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
 				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
-				.and(INVOICE_DETAIL.WORKPLACE.eq(workplaceId))
+				.and(workplaceCondition)
 				.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toSql(startDate)))
 				
 				.union(ctx.getDslContext()
@@ -278,7 +299,7 @@ public class InvoiceDAO {
 							.join(INCOME_DETAIL).on(INCOME_DETAIL.ID.eq(INVOICE_DETAIL.SOURCE_ID))
 						.where(INVOICE_DETAIL.SOURCE.eq((byte) 4))
 						.and(INVOICE_DETAIL.ITEM.eq(item.getId()))
-						.and(INVOICE_DETAIL.WORKPLACE.eq(workplaceId))
+						.and(workplaceCondition)
 						.and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
 						.and(INVOICE_DETAIL.WAREHOUSE.isNull())
 						.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toSql(startDate))))
@@ -289,14 +310,18 @@ public class InvoiceDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static LinkedList<InvoiceDetail> getInvoiceDetailList(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId) {
+	public static LinkedList<InvoiceDetail> getLastInvoiceDetailListUntilDate(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId, Date date) {
+		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
+		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
 		return ctx.getDslContext()
 				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
 						INVOICE_DETAIL.QUANTITY)
 				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
 				.where(INVOICE_DETAIL.ITEM.eq(item.getId())).and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
 				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
-				.and(INVOICE_DETAIL.WORKPLACE.eq(workplaceId))
+				.and(workplaceCondition)
+				.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toSql(date)))
+				.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toSql(startDate)))
 				
 				.union(ctx.getDslContext()
 						.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
@@ -305,7 +330,39 @@ public class InvoiceDAO {
 							.join(INCOME_DETAIL).on(INCOME_DETAIL.ID.eq(INVOICE_DETAIL.SOURCE_ID))
 						.where(INVOICE_DETAIL.SOURCE.eq((byte) 4))
 						.and(INVOICE_DETAIL.ITEM.eq(item.getId()))
-						.and(INVOICE_DETAIL.WORKPLACE.eq(workplaceId))
+						.and(workplaceCondition)
+						.and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
+						.and(INVOICE_DETAIL.WAREHOUSE.isNull())
+						.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toSql(date)))
+						.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toSql(startDate))))
+						
+				
+				.orderBy(INVOICE.ISSUE_DATE.desc()
+						,INVOICE_DETAIL.ID.desc())
+				.fetch().stream().map(new InvoiceDetailFiller())
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<InvoiceDetail> getInvoiceDetailList(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId) {
+		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
+		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
+
+		return ctx.getDslContext()
+				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
+						INVOICE_DETAIL.QUANTITY)
+				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
+				.where(INVOICE_DETAIL.ITEM.eq(item.getId())).and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
+				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
+				.and(workplaceCondition)
+				
+				.union(ctx.getDslContext()
+						.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
+								INVOICE_DETAIL.QUANTITY)
+						.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
+							.join(INCOME_DETAIL).on(INCOME_DETAIL.ID.eq(INVOICE_DETAIL.SOURCE_ID))
+						.where(INVOICE_DETAIL.SOURCE.eq((byte) 4))
+						.and(INVOICE_DETAIL.ITEM.eq(item.getId()))
+						.and(workplaceCondition)
 						.and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
 						.and(INVOICE_DETAIL.WAREHOUSE.isNull()))
 				
@@ -316,6 +373,38 @@ public class InvoiceDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 
+	public static LinkedList<InvoiceDetail> getInvoiceDetailListUntilDate(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId, Date date) {
+		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
+		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
+
+		return ctx.getDslContext()
+				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
+						INVOICE_DETAIL.QUANTITY)
+				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
+				.where(INVOICE_DETAIL.ITEM.eq(item.getId())).and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
+				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
+				.and(workplaceCondition)
+				.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toSql(date)))
+				.union(ctx.getDslContext()
+						.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
+								INVOICE_DETAIL.QUANTITY)
+						.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
+							.join(INCOME_DETAIL).on(INCOME_DETAIL.ID.eq(INVOICE_DETAIL.SOURCE_ID))
+						.where(INVOICE_DETAIL.SOURCE.eq((byte) 4))
+						.and(INVOICE_DETAIL.ITEM.eq(item.getId()))
+						.and(workplaceCondition)
+						.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toSql(date)))
+						.and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
+						.and(INVOICE_DETAIL.WAREHOUSE.isNull()))
+				
+				
+				.orderBy(INVOICE.ISSUE_DATE.desc()
+						,INVOICE_DETAIL.ID.desc())
+				.fetch().stream().map(new InvoiceDetailFiller())
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+
+	
 	public static LinkedList<InvoicingGroup> getInvoicingGroupList(AONContext ctx, InvoicingGroupFilter filter){
 		return ctx.getDslContext().select(INVOICING_GROUP.ID,INVOICING_GROUP.DESCRIPTION)
 				.from(INVOICING_GROUP).where(INVOICING_GROUP_PROPERTIES.getConditions(filter))
