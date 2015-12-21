@@ -18,9 +18,9 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -387,7 +387,7 @@ public class Mod390DAO {
 		}
 		
 		public static Mod390DetailKey[] getKeys(VatContext vc) {
-			List<Mod390DetailKey> list = new ArrayList<Mod390DetailKey>();
+			List<Mod390DetailKey> list = new LinkedList<Mod390DetailKey>();
 			for (DetailKey key : DetailKey.values()) {
 				if (key.accept(vc)) {
 					list.add(key.getKey()); 
@@ -427,9 +427,9 @@ public class Mod390DAO {
 		return mod390;	
 	}
 
-	public static ArrayList<Mod3902014> getByDomain(AONContext ctx, int domain) {
+	public static LinkedList<Mod3902014> getByDomain(AONContext ctx, int domain) {
 		ctx.checkRead();
-		ArrayList<Mod3902014> list = new ArrayList<Mod3902014>();
+		LinkedList<Mod3902014> list = new LinkedList<Mod3902014>();
 		ctx.getDslContext()
 				.select(FS_MODEL390.fields())
 				.from(FS_MODEL390)
@@ -643,7 +643,7 @@ public class Mod390DAO {
 				.where(FS_MODEL390.ID.equal(mod390.getId())).execute();
 	}
 
-	public static ArrayList<Mod390Detail> getMod390Details(AONContext ctx, Mod3902014 mod390 ) {
+	public static LinkedList<Mod390Detail> getMod390Details(AONContext ctx, Mod3902014 mod390 ) {
 		Date firstDay = AonDateUtils.getYearFirstDay(mod390.getYear());
 		Date lastDay = AonDateUtils.getYearLastDay(mod390.getYear());
 		
@@ -900,7 +900,7 @@ public class Mod390DAO {
 				}
 			}
 				
-		return new ArrayList<Mod390Detail>(map.values());
+		return new LinkedList<Mod390Detail>(map.values());
 	}
 	
 	private static Mod3902014 fillGeneralRegimeData(AONContext ctx, Mod3902014 mod390) {

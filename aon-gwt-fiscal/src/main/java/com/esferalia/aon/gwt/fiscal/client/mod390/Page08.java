@@ -1,7 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model3902014.IMod3902014CallBack;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model3902014.IMod3902014Page;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -14,113 +15,262 @@ import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Page08 extends ResizeComposite implements RequiresResize {
+public class Page08 extends ResizeComposite implements RequiresResize , IMod3902014Page {
 
-	interface Page7Binder extends UiBinder<Widget, Page08> {
+	interface PageBinder extends UiBinder<Widget, Page08> {
 	}
 
-	private static final Page7Binder page7Binder = GWT
-			.create(Page7Binder.class);
+	private static final PageBinder BINDER = GWT.create(PageBinder.class);
 
 	private Mod3902014 mod390;
+
+	IMod3902014CallBack callback;
 	
-	Mod390CallBack callback;
+	@UiField
+	DoubleBox box99;
+	
+	@UiField
+	DoubleBox box653;
 
 	@UiField
-	DoubleBox box84;
+	DoubleBox box103;
+	
 	@UiField
-	DoubleBox box87;
+	DoubleBox box104;
+	
 	@UiField
-	DoubleBox box88;
+	DoubleBox box105;
+	
 	@UiField
-	DoubleBox box89;
+	DoubleBox box110;
+	
 	@UiField
-	DoubleBox box90;
+	DoubleBox box112;
+	
 	@UiField
-	DoubleBox box91;
+	DoubleBox box100;
+	
 	@UiField
-	DoubleBox box92;
+	DoubleBox box101;
+	
 	@UiField
-	DoubleBox box93;
+	DoubleBox box102;
+	
 	@UiField
-	DoubleBox box94;
-
+	DoubleBox box227;
+	
+	@UiField
+	DoubleBox box228;
+	
+	@UiField
+	DoubleBox box106;
+	
+	@UiField
+	DoubleBox box107;
+	
+	@UiField
+	DoubleBox box108;
+	
 	public Page08() {
-		Widget ui = page7Binder.createAndBindUi(this);
+		Widget ui = BINDER.createAndBindUi(this);
 		initWidget(ui);
-		box87.setValue(100.0);
-		box87.setMaxLength(6);
-		box87.setVisibleLength(6);
-		
-		box88.setValue(0.0);
-		box88.setMaxLength(6);
-		box88.setVisibleLength(6);
-		
-		box89.setValue(0.0);
-		box89.setMaxLength(6);
-		box89.setVisibleLength(6);
-		
-		box90.setValue(0.0);
-		box90.setMaxLength(6);
-		box90.setVisibleLength(6);
-		
-		box91.setValue(0.0);
-		box91.setMaxLength(6);
-		box91.setVisibleLength(6);
-		
-		box84.setEnabled(false);
-		box92.setEnabled(false);
-		box94.setEnabled(false);
-	}
-	
-	@UiHandler("box87")
-	void onChangeBox87 (ChangeEvent event) {
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				mod390.setBox87(box87.getValue());
-				callback.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box93")
-	void onChangeBox93 (ChangeEvent event) {
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				mod390.setBox93(box93.getValue());
-				callback.calculateAndRefresh();
-			}
-		});
+		box108.setEnabled(false);
 	}
 
 	public void setValue(Mod3902014 m390) {
 		this.mod390 = m390;
-		box84.setValue(this.mod390.getBox84());
-		box87.setValue(this.mod390.getBox87());
-		box88.setValue(this.mod390.getBox88());
-		box89.setValue(this.mod390.getBox89());
-		box90.setValue(this.mod390.getBox90());
-		box91.setValue(this.mod390.getBox91());
-		box92.setValue(this.mod390.getBox92());
-		box93.setValue(this.mod390.getBox93());
-		box94.setValue(this.mod390.getBox94());
+		box99.setValue(this.mod390.getBox99());
+		box653.setValue(this.mod390.getBox653());
+		box103.setValue(this.mod390.getBox103());
+		box104.setValue(this.mod390.getBox104());
+		box105.setValue(this.mod390.getBox105());
+		box110.setValue(this.mod390.getBox110());
+		box112.setValue(this.mod390.getBox112());
+		box100.setValue(this.mod390.getBox100());
+		box101.setValue(this.mod390.getBox101());
+		box102.setValue(this.mod390.getBox102());
+		box227.setValue(this.mod390.getBox227());
+		box228.setValue(this.mod390.getBox228());
+		box106.setValue(this.mod390.getBox106());
+		box107.setValue(this.mod390.getBox107());
+		box108.setValue(this.mod390.getBox108());
 	}
 
 	public void populate(Mod3902014 mod390) {
-		mod390.setBox84(box84.getValue());
-		mod390.setBox87(box87.getValue());
-		mod390.setBox88(box88.getValue());
-		mod390.setBox89(box89.getValue());
-		mod390.setBox90(box90.getValue());
-		mod390.setBox91(box91.getValue());
-		mod390.setBox92(box92.getValue());
-		mod390.setBox93(box93.getValue());
-		mod390.setBox94(box94.getValue());
+		mod390.setBox99(box99.getValue());
+		mod390.setBox653(box653.getValue());
+		mod390.setBox103(box103.getValue());
+		mod390.setBox104(box104.getValue());
+		mod390.setBox105(box105.getValue());
+		mod390.setBox110(box110.getValue());
+		mod390.setBox112(box112.getValue());
+		mod390.setBox100(box100.getValue());
+		mod390.setBox101(box101.getValue());
+		mod390.setBox102(box102.getValue());
+		mod390.setBox227(box227.getValue());
+		mod390.setBox228(box228.getValue());
+		mod390.setBox106(box106.getValue());
+		mod390.setBox107(box107.getValue());
+		mod390.setBox108(box108.getValue());
 	}
 	
-	public void setCallback(Mod390CallBack callback) {
+	@UiHandler("box99")
+	void onChangeBox99(ChangeEvent event) {
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				mod390.setBox99(box99.getValue());
+				callback.calculateAndRefresh();
+			}
+		});
+	}
+
+	@UiHandler("box653")
+	void onChangeBox653(ChangeEvent event) {
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				mod390.setBox653(box653.getValue());
+				callback.calculateAndRefresh();
+			}
+		});
+	}
+
+	@UiHandler("box103")
+	void onChangeBox103(ChangeEvent event) {
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				mod390.setBox103(box103.getValue());
+				callback.calculateAndRefresh();
+			}
+		});
+	}
+	
+	@UiHandler("box104")
+	void onChangeBox104(ChangeEvent event) {
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				mod390.setBox104(box104.getValue());
+				callback.calculateAndRefresh();
+			}
+		});
+	}
+	
+	@UiHandler("box105")
+	void onChangeBox105(ChangeEvent event) {
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				mod390.setBox105(box105.getValue());
+				callback.calculateAndRefresh();
+			}
+		});
+	}
+	
+	@UiHandler("box110")
+	void onChangeBox110(ChangeEvent event) {
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				mod390.setBox110(box110.getValue());
+				callback.calculateAndRefresh();
+			}
+		});
+	}
+	
+	@UiHandler("box112")
+	void onChangeBox112(ChangeEvent event) {
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				mod390.setBox112(box112.getValue());
+				callback.calculateAndRefresh();
+			}
+		});
+	}
+	
+	@UiHandler("box100")
+	void onChangeBox100(ChangeEvent event) {
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				mod390.setBox100(box100.getValue());
+				callback.calculateAndRefresh();
+			}
+		});
+	}
+
+	@UiHandler("box101")
+	void onChangeBox101(ChangeEvent event) {
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				mod390.setBox101(box101.getValue());
+				callback.calculateAndRefresh();
+			}
+		});
+	}
+	
+	@UiHandler("box102")
+	void onChangeBox102(ChangeEvent event) {
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				mod390.setBox102(box102.getValue());
+				callback.calculateAndRefresh();
+			}
+		});
+	}
+	
+	@UiHandler("box227")
+	void onChangeBox227(ChangeEvent event) {
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				mod390.setBox227(box227.getValue());
+				callback.calculateAndRefresh();
+			}
+		});
+	}
+	
+	@UiHandler("box228")
+	void onChangeBox228(ChangeEvent event) {
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				mod390.setBox228(box228.getValue());
+				callback.calculateAndRefresh();
+			}
+		});
+	}
+	
+	@UiHandler("box106")
+	void onChangeBox106(ChangeEvent event) {
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				mod390.setBox106(box106.getValue());
+				callback.calculateAndRefresh();
+			}
+		});
+	}
+	
+	@UiHandler("box107")
+	void onChangeBox107(ChangeEvent event) {
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				mod390.setBox107(box107.getValue());
+				callback.calculateAndRefresh();
+			}
+		});
+	}
+
+	public void setCallback(IMod3902014CallBack callback) {
 		this.callback = callback;
 	}
+	
 }
+

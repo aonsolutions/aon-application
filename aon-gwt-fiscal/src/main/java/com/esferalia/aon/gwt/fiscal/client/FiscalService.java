@@ -100,10 +100,10 @@ public interface FiscalService extends RemoteService {
 
 	// ---------------------------------------------------------------MODELO 390
 	Mod3902014 getMod390(String domainName, Integer domain,Integer id) throws AonCoreException;
-	ArrayList<Mod3902014> getMod390s(String domainName, Integer domain) throws AonCoreException;
+	LinkedList<Mod3902014> getMod390s(String domainName, Integer domain) throws AonCoreException;
 	Mod3902014 saveMod390(String domainName, Integer domain,Mod3902014 mod390) throws AonCoreException;
 	void deleteMod390(String domainName, Integer domain,Mod3902014 mod390) throws AonCoreException;
-	ArrayList<Mod390Detail> getMod390Details(String domainName, Integer domain,Mod3902014 mod390) throws AonCoreException;
+	LinkedList<Mod390Detail> getMod390Details(String domainName, Integer domain,Mod3902014 mod390) throws AonCoreException;
 	Mod3902014 initializeMod390(String domainName, Integer domain, Integer year);
 
 	// ---------------------------------------------------------------MODELO 131

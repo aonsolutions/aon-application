@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
@@ -40,8 +41,8 @@ public class Mod390Print extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("mod390"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			Mod3902014 mod390 = AON.getMod390(domainName, domainId, id);
-			String content = AON.getMod390XML(domainName, domainId, id);
+			Mod3902014 mod390 = AON.getMod390(domainName, domainId, AonServletUtils.getLoggedUser(), id);
+			String content = AON.getMod390XML(domainName, domainId, AonServletUtils.getLoggedUser(), id);
 
 			String s = mod390.getName();
 			StringBuilder sb = new StringBuilder();

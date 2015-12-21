@@ -8,56 +8,109 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
 	<g:HTMLPanel styleName="{aonResources.css.aonMarginTop}">
+	
 		<table class="{aonResources.css.aonWidthAll}">
 			<colgroup>
 				<col style="width: auto;" />
+				<col style="width: 120px;"/>
 				<col style="width: 40px;" />
-				<col style="width: 120px;" class="{aonResources.css.aonTextCenter}" />
+				<col style="width: 120px;"/>
 			</colgroup>
 			<tr>
-				<td colspan="3" class="{aonResources.css.aonInfoMessageBlock}">
-					<g:Label text="{msg.page7HelpText}"/>
+				<td colspan="4" class="{aonResources.css.aonPageHeader}">
+					<g:Label text="{msg.commonRegimePeriods}"/>
 				</td>
 			</tr>
 			<tr>
-				<td colspan="3" class="{aonResources.css.aonPageHeader}">
-					<g:Label text="{msg.annualLiquidationResult}" />
+				<td colspan="2">
+					<g:Label text="{msg.depositDeclarationsResult}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="95"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box95"/>
+				</td>
+			</tr>
+			
+			<tr>
+				<td colspan="2"> 
+					<g:Label text="{msg.paybacksTotal}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="96"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box96"/>
+				</td>
+			</tr>
+			
+			<tr>
+				<td colspan="2"> 
+					<g:Label text="{msg.paybackTransportTotal}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="524"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box524"/>
+				</td>
+			</tr>
+			
+			<tr>
+				<td rowspan="2">
+					<g:Label text="{msg.lastDeclarationResult}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td class="{aonResources.css.aonTextRight}" style="padding-right:5px;">
+					<g:Label text="{msg.toCompensate}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="97"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box97"/>
+				</td>
+			</tr>
+
+			<tr>
+				<td class="{aonResources.css.aonTextRight}" style="padding-right:5px;">
+					<g:Label text="{msg.toPayback}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="98"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box98"/>
 				</td>
 			</tr>
 			<tr>
-				<td>
-					<g:Label text="{msg.resultSum}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
-				</td>
-				<td>
-					<aon:BoxLabel text="84"/>
-				</td>
-				<td>
-					<aon:DoubleBox ui:field="box84"/>
+				<td colspan="4" class="{aonResources.css.aonPageHeader}">
+					<g:Label text="{msg.entityGroupRegimePeriods}"/>
 				</td>
 			</tr>
 			<tr>
-				<td>
-					<g:Label text="{msg.previousYearCompensation}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				<td colspan="2">
+					<g:Label text="{msg.mod322PositiveResults}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
 				</td>
 				<td>
-					<aon:BoxLabel text="85"/>
+					<aon:BoxLabel text="525"/>
 				</td>
 				<td>
-					<aon:DoubleBox ui:field="box85"/>
+					<aon:DoubleBox ui:field="box525"/>
 				</td>
 			</tr>
 			<tr>
-				<td>
-					<g:Label text="{msg.liquidationResult}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				<td colspan="2">
+					<g:Label text="{msg.mod322NegativeResults}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
 				</td>
 				<td>
-					<aon:BoxLabel text="86"/>
+					<aon:BoxLabel text="526"/>
 				</td>
 				<td>
-					<aon:DoubleBox ui:field="box86"/>
+					<aon:DoubleBox ui:field="box526"/>
 				</td>
 			</tr>
 		</table>
 	</g:HTMLPanel>
-
+	
 </ui:UiBinder>

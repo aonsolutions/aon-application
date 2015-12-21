@@ -1,7 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
-import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model3902014.IMod3902014CallBack;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model3902014.IMod3902014Page;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -15,9 +16,9 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Page00 extends ResizeComposite {
+public class Page00 extends ResizeComposite implements IMod3902014Page {
 
-	Mod390CallBack callback;
+	IMod3902014CallBack callback;
 	
 	@UiField
 	DeckPanel page0Panel;
@@ -68,15 +69,12 @@ public class Page00 extends ResizeComposite {
 	@UiField
 	CheckBox accrualRegimeTarget;
 	
-	interface Page1Binder extends
-			UiBinder<Widget, Page00> {
-	}
+	interface PageBinder extends UiBinder<Widget, Page00> {}
 
-	private static final Page1Binder page1Binder = GWT
-			.create(Page1Binder.class);
+	private static final PageBinder BINDER = GWT.create(PageBinder.class);
 
 	public Page00() {
-		Widget ui = page1Binder.createAndBindUi(this);
+		Widget ui = BINDER.createAndBindUi(this);
 		initWidget(ui);
 		document.setEnabled(false);
 	}
@@ -162,7 +160,7 @@ public class Page00 extends ResizeComposite {
 		}
 	}
 
-	public void setCallback(Mod390CallBack callback) {
+	public void setCallback(IMod3902014CallBack callback) {
 		this.callback = callback;
 	}
 }

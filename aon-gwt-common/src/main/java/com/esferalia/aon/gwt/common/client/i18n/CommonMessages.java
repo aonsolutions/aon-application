@@ -343,6 +343,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("No se pudo encontrar el perceptor seleccionado. Causa: \n {0}")
 	String unableToFindMod184Detail(String field);
 
+	@DefaultMessage("No se pudo borrar la declaraci\u00F3n del modelo 390. Causa: \n {0}")
+	String unableToDeleteMod390(String message);
+	
 	@DefaultMessage("No existe un perceptor con c\u00F3digo {0}")
 	String unableToFindPerceptor(Integer id);
 

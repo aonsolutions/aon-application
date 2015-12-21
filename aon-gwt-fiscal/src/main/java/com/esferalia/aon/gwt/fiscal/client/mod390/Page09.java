@@ -1,7 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model3902014.IMod3902014CallBack;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model3902014.IMod3902014Page;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -10,61 +11,82 @@ import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Page09 extends ResizeComposite implements RequiresResize {
+public class Page09 extends ResizeComposite implements RequiresResize , IMod3902014Page {
 
-	interface Page7Binder extends UiBinder<Widget, Page09> {
-	}
+	interface PageBinder extends UiBinder<Widget, Page09> {}
 
-	private static final Page7Binder page7Binder = GWT
-			.create(Page7Binder.class);
+	private static final PageBinder BINDER = GWT.create(PageBinder.class);
 
-	Mod390CallBack callback;
+	IMod3902014CallBack callback;
 	
 	@UiField
-	DoubleBox box95;
+	DoubleBox box230;
+	
 	@UiField
-	DoubleBox box96;
+	DoubleBox box109;
+	
 	@UiField
-	DoubleBox box524;
+	DoubleBox box231;
+	
 	@UiField
-	DoubleBox box97;
+	DoubleBox box232;
+	
 	@UiField
-	DoubleBox box98;
+	DoubleBox box111;
+	
 	@UiField
-	DoubleBox box525;
+	DoubleBox box113;
+	
 	@UiField
-	DoubleBox box526;
+	DoubleBox box523;
 
-	int domain;
-	int year;
+	@UiField
+	DoubleBox box654;
+	
+	@UiField
+	DoubleBox box655;
+	
+	@UiField
+	DoubleBox box656;
+	
+	@UiField
+	DoubleBox box657;
 
 	public Page09() {
-		Widget ui = page7Binder.createAndBindUi(this);
+		Widget ui = BINDER.createAndBindUi(this);
 		initWidget(ui);
 	}
 
 	public void setValue(Mod3902014 m390) {
-		box95.setValue(m390.getBox95());
-		box96.setValue(m390.getBox96());
-		box524.setValue(m390.getBox524());
-		box97.setValue(m390.getBox97());
-		box98.setValue(m390.getBox98());
-		box525.setValue(m390.getBox525());
-		box526.setValue(m390.getBox526());
+		box230.setValue(m390.getBox230());
+		box109.setValue(m390.getBox109());
+		box231.setValue(m390.getBox231());
+		box232.setValue(m390.getBox232());
+		box111.setValue(m390.getBox111());
+		box113.setValue(m390.getBox113());
+		box523.setValue(m390.getBox523());
+		box654.setValue(m390.getBox654());
+		box655.setValue(m390.getBox655());
+		box656.setValue(m390.getBox656());
+		box657.setValue(m390.getBox657());
 	}
 
 	public void populate(Mod3902014 mod390) {
-		mod390.setBox95(box95.getValue());
-		mod390.setBox96(box96.getValue());
-		mod390.setBox524(box524.getValue());
-		mod390.setBox97(box97.getValue());
-		mod390.setBox98(box98.getValue());
-		mod390.setBox525(box525.getValue());
-		mod390.setBox526(box526.getValue());
-	}
-
-	public void setCallback(Mod390CallBack callback) {
-		this.callback = callback;
+		mod390.setBox230(box230.getValue());
+		mod390.setBox109(box109.getValue());
+		mod390.setBox231(box231.getValue());
+		mod390.setBox232(box232.getValue());
+		mod390.setBox111(box111.getValue());
+		mod390.setBox113(box113.getValue());
+		mod390.setBox523(box523.getValue());
+		mod390.setBox654(box654.getValue());
+		mod390.setBox655(box655.getValue());
+		mod390.setBox656(box656.getValue());
+		mod390.setBox657(box657.getValue());
 	}
 	
+	public void setCallback(IMod3902014CallBack callback) {
+		this.callback = callback;
+	}
+
 }

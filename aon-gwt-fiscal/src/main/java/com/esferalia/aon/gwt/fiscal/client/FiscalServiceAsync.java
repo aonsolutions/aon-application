@@ -103,10 +103,10 @@ public interface FiscalServiceAsync {
 
 	// ---------------------------------------------------------------MODELO 390
 	void getMod390(String domainName, Integer domain,Integer id, AsyncCallback<Mod3902014> callback);
-	void getMod390s(String domainName, Integer domain, AsyncCallback<ArrayList<Mod3902014>> callback);
+	void getMod390s(String domainName, Integer domain, AsyncCallback<LinkedList<Mod3902014>> callback);
 	void saveMod390(String domainName, Integer domain, Mod3902014 mod390, AsyncCallback<Mod3902014> callback);
 	void deleteMod390(String domainName, Integer domain, Mod3902014 mod390, AsyncCallback<Void> callback);
-	void getMod390Details(String domainName, Integer domain, Mod3902014 mod390,AsyncCallback<ArrayList<Mod390Detail>> callback);
+	void getMod390Details(String domainName, Integer domain, Mod3902014 mod390,AsyncCallback<LinkedList<Mod390Detail>> callback);
 	void initializeMod390(String domainName, Integer domain, Integer year, AsyncCallback<Mod3902014> callback);
 
 	// ---------------------------------------------------------------MODELO 131

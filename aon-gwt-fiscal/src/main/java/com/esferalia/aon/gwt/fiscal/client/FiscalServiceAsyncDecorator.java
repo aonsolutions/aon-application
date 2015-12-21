@@ -373,10 +373,10 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 
 	@Override
 	public void getMod390s(String domainName, Integer domain,
-			AsyncCallback<ArrayList<Mod3902014>> callback) {
+			AsyncCallback<LinkedList<Mod3902014>> callback) {
 		AON.start();
 		fsa.getMod390s(domainName, domain,
-				new AsyncCallbackWrapper<ArrayList<Mod3902014>>(callback));
+				new AsyncCallbackWrapper<LinkedList<Mod3902014>>(callback));
 	}
 
 	@Override
@@ -397,10 +397,10 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 
 	@Override
 	public void getMod390Details(String domainName, Integer domain,
-			Mod3902014 mod390, AsyncCallback<ArrayList<Mod390Detail>> callback) {
+			Mod3902014 mod390, AsyncCallback<LinkedList<Mod390Detail>> callback) {
 		AON.start();
 		fsa.getMod390Details(domainName, domain, mod390,
-				new AsyncCallbackWrapper<ArrayList<Mod390Detail>>(callback));
+				new AsyncCallbackWrapper<LinkedList<Mod390Detail>>(callback));
 	}
 
 	@Override

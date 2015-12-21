@@ -301,31 +301,31 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	// ---------------------------------------------------------------MODELO 390
 	@Override
 	public Mod3902014 getMod390(String domainName, Integer domain,Integer id) {
-		return AON.getMod390(domainName, domain, id);
+		return AON.getMod390(domainName, domain, AonServletUtils.getLoggedUser(), id);
 	}
 
 	@Override
-	public ArrayList<Mod3902014> getMod390s(String domainName, Integer domain) {
-		return AON.getMod390s(domainName, domain);
+	public LinkedList<Mod3902014> getMod390s(String domainName, Integer domain) {
+		return AON.getMod390s(domainName, domain, AonServletUtils.getLoggedUser());
 	}
 
 	@Override
 	public Mod3902014 saveMod390(String domainName, Integer domain, Mod3902014 mod390) {
-		return AON.saveMod390(domainName, domain, mod390);
+		return AON.saveMod390(domainName, domain, AonServletUtils.getLoggedUser(), mod390);
 	}
 
 	@Override
 	public void deleteMod390(String domainName, Integer domain, Mod3902014 mod390) {
-		AON.deleteMod390(domainName, domain, mod390);
+		AON.deleteMod390(domainName, domain, AonServletUtils.getLoggedUser(), mod390);
 	}
 	
 	@Override
-	public ArrayList<Mod390Detail> getMod390Details(String domainName, Integer domain, Mod3902014 mod390) {
-		return AON.getMod390Details(domainName, domain, mod390);
+	public LinkedList<Mod390Detail> getMod390Details(String domainName, Integer domain, Mod3902014 mod390) {
+		return AON.getMod390Details(domainName, domain, AonServletUtils.getLoggedUser(), mod390);
 	}
 	@Override
 	public Mod3902014 initializeMod390(String domainName, Integer domain,Integer year) {
-		return AON.initializeMod390(domainName, domain, year);
+		return AON.initializeMod390(domainName, domain, AonServletUtils.getLoggedUser(), year);
 	}
 
 	// ---------------------------------------------------------------MODELO 131

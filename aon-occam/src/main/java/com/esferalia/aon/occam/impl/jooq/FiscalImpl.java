@@ -227,7 +227,7 @@ public class FiscalImpl implements IFiscal {
 
 	// ----------------------------------------------------------- [MODELO 390]
 	@Override
-	public ArrayList<Mod3902014> getMod390s(AONContext ctx, int domain) {
+	public LinkedList<Mod3902014> getMod390s(AONContext ctx, int domain) {
 		try {
 			return Mod390DAO.getByDomain(ctx, domain);
 		} catch (Throwable t) {
@@ -274,7 +274,7 @@ public class FiscalImpl implements IFiscal {
 	}
 
 	@Override
-	public ArrayList<Mod390Detail> getMod390Details(AONContext ctx, Mod3902014 mod390) {
+	public LinkedList<Mod390Detail> getMod390Details(AONContext ctx, Mod3902014 mod390) {
 		try {
 			return Mod390DAO.getMod390Details(ctx, mod390);
 		} catch (Throwable t) {

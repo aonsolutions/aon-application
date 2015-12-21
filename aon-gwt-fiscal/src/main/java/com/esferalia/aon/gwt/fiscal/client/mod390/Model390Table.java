@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.resources.client.ImageResource;
@@ -106,8 +107,10 @@ public class Model390Table extends CellTable<Mod3902014> {
 	private void addNameColumn() {
 		final TextColumn<Mod3902014> nameColumn = new TextColumn<Mod3902014>() {
 			@Override
-			public String getValue(Mod3902014 mod180) {
-				return mod180.getName();
+			public String getValue(Mod3902014 mod390) {
+				return AonStringUtils.defaultIfBlank(mod390.getName(),"")
+					+ " " + AonStringUtils.defaultIfBlank(mod390.getFirstSurname(),"")
+					+ " " + AonStringUtils.defaultIfBlank(mod390.getSecondSurname(),""); 
 			}
 		};
 		this.addColumn(nameColumn, AON.MSG.name());

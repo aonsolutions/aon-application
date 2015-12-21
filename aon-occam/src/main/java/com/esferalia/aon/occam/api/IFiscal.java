@@ -72,12 +72,12 @@ public interface IFiscal {
 	public void deleteMod184(AONContext ctx,Mod184 mod184);
 
 	// 				   		  MOD390
-	public ArrayList<Mod3902014> getMod390s(AONContext ctx,int domain);
+	public LinkedList<Mod3902014> getMod390s(AONContext ctx,int domain);
 	public Mod3902014 getMod390(AONContext ctx,Integer id);
 	public String getMod390XML(AONContext aonContext, int id);
 	public Mod3902014 saveMod390(AONContext ctx,Mod3902014 mod390);
 	public void deleteMod390(AONContext ctx,Mod3902014 mod390);
-	public ArrayList<Mod390Detail> getMod390Details(AONContext aonContext,Mod3902014 mod390);
+	public LinkedList<Mod390Detail> getMod390Details(AONContext aonContext,Mod3902014 mod390);
 	public Mod3902014 initializeMod390(AONContext ctx, int year);
 
 	// 				   		  MOD131

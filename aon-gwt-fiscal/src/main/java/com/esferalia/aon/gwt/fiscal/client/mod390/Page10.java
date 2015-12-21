@@ -1,276 +1,333 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390;
 
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Mod390CallBack;
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.CnaePanel;
+import com.esferalia.aon.gwt.common.client.widget.cell.SizableTextInputCell;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model3902014.IMod3902014CallBack;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model3902014.IMod3902014Page;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Prorrata;
+import com.esferalia.aon.occam.api.model.type.CNAE;
+import com.google.gwt.cell.client.ButtonCell;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.text.shared.SafeHtmlRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.HasKeyboardPagingPolicy.KeyboardPagingPolicy;
+import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
 
-public class Page10 extends ResizeComposite implements RequiresResize {
+public class Page10 extends ResizeComposite implements RequiresResize , IMod3902014Page {
 
-	interface Page7Binder extends UiBinder<Widget, Page10> {
+	interface CnaeButtonTemplate extends SafeHtmlTemplates {
+		@Template("<input type=\"button\" value=\"&nbsp;\" class=\"aon-icon-lookup\" style=\"border: medium none !important;\">")
+		SafeHtml render(String option);
+	}
+	static class CnaeButtonSafeHtmlTemplates implements SafeHtmlRenderer<String> {
+
+		private static CnaeButtonTemplate template;
+
+		protected CnaeButtonSafeHtmlTemplates() {
+			template = GWT.create(CnaeButtonTemplate.class);
+		}
+		
+		@Override
+		public SafeHtml render(String object) {
+			return template.render(object);
+		}
+
+		@Override
+		public void render(String object, SafeHtmlBuilder builder) {
+			builder.append( template.render(object) );
+		}
+		
 	}
 
-	private static final Page7Binder page7Binder = GWT
-			.create(Page7Binder.class);
+	interface DeleteButtonTemplate extends SafeHtmlTemplates {
+		@Template("<input type=\"button\" value=\"&nbsp;\" class=\"aon-icon-delete\" style=\"border: medium none !important;\">")
+		SafeHtml render(String option);
+	}
+	static class DeleteButtonSafeHtmlTemplates implements SafeHtmlRenderer<String> {
 
-	private Mod3902014 mod390;
+		private static DeleteButtonTemplate template;
 
-	Mod390CallBack callback;
+		protected DeleteButtonSafeHtmlTemplates() {
+			template = GWT.create(DeleteButtonTemplate.class);
+		}
+		
+		@Override
+		public SafeHtml render(String object) {
+			return template.render(object);
+		}
+
+		@Override
+		public void render(String object, SafeHtmlBuilder builder) {
+			builder.append( template.render(object) );
+		}
+		
+	}
+
+	interface PageBinder extends UiBinder<Widget, Page10> {}
+
+	private static final PageBinder BINDER = GWT.create(PageBinder.class);
+
+	IMod3902014CallBack callback;
+	Mod3902014 mod390;
 	
-	@UiField
-	DoubleBox box99;
+	private CnaePanel cnaePanel;
 	
-	@UiField
-	DoubleBox box653;
+	private ListDataProvider<Prorrata> dataProvider;
+	@UiField(provided = true)
+	CellTable<Prorrata> table;
 
 	@UiField
-	DoubleBox box103;
-	
-	@UiField
-	DoubleBox box104;
-	
-	@UiField
-	DoubleBox box105;
-	
-	@UiField
-	DoubleBox box110;
-	
-	@UiField
-	DoubleBox box112;
-	
-	@UiField
-	DoubleBox box100;
-	
-	@UiField
-	DoubleBox box101;
-	
-	@UiField
-	DoubleBox box102;
-	
-	@UiField
-	DoubleBox box227;
-	
-	@UiField
-	DoubleBox box228;
-	
-	@UiField
-	DoubleBox box106;
-	
-	@UiField
-	DoubleBox box107;
-	
-	@UiField
-	DoubleBox box108;
+	Button newProrrata;
 	
 	public Page10() {
-		Widget ui = page7Binder.createAndBindUi(this);
+		cnaePanel = new CnaePanel();
+
+		table = new CellTable<Prorrata>(50, AON.AON_CELL_TABLE_STYLE);
+		table.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
+		table.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+		table.setEmptyTableWidget(new HTML(AON.MSG.noData()));
+		dataProvider = new ListDataProvider<Prorrata>();
+		dataProvider.addDataDisplay(table);
+		addCnaePanelColumn();
+		addCnaeColumn();
+		addActivityColumn();
+		addTypeColumn();
+		addAmountColumn();
+		addAmountWithRightColumn();
+		addPercentColumn();
+		addRemoveColumn();
+
+		Widget ui = BINDER.createAndBindUi(this);
 		initWidget(ui);
-		box108.setEnabled(false);
 	}
 
+	private void addCnaePanelColumn() {
+		
+		ButtonCell removeButton = new ButtonCell( new CnaeButtonSafeHtmlTemplates())  {
+			  @Override
+			  public void render(Context context, SafeHtml data, SafeHtmlBuilder sb) {
+			    if (data != null) {
+			      sb.append(data);
+			    }
+			  }
+		};
+		Column<Prorrata,String> col = new Column<Prorrata,String>(removeButton) {
+		  public String getValue(Prorrata object) {
+		    return AON.MSG.deleteAction();
+		  }
+		};
+		col.setFieldUpdater(new FieldUpdater<Prorrata, String>() {
+		    public void update(int index, final Prorrata pro, String value) {
+		    	cnaePanel = new CnaePanel( new CnaePanel.SelectionCallBack() {
+					@Override
+					public void onSelect(CNAE selected) {
+						pro.setCnae( selected.getCode());
+						pro.setActivity( selected.getDescription());
+						table.redraw();
+					}
+					@Override
+					public void onClose() {
+						// Nothing
+					}
+				});		    	
+		    	cnaePanel.onShow();
+		    }
+		});		
+		table.addColumn(col);
+		table.setColumnWidth(col, 20, Unit.PX);
+		col.setCellStyleNames(AON.AON_CSS.aonTextCenter());
+	}
+
+	private void addCnaeColumn() {
+		SizableTextInputCell input = new SizableTextInputCell(5);
+		Column<Prorrata, String> col = new Column<Prorrata, String>(
+				input) {
+			@Override
+			public String getValue(Prorrata ca) {
+				return ca.getCnae();
+			}
+		};
+		col.setFieldUpdater(new FieldUpdater<Prorrata, String>() {
+		    public void update(int index, Prorrata ca, String value) {
+		    	dataProvider.getList().get(index).setCnae(value);
+		    }
+		});		
+		table.addColumn(col, "C.N.A.E.");
+		col.setCellStyleNames(AON.AON_CSS.aonTextLeft());
+	}
+
+	private void addActivityColumn() {
+		SizableTextInputCell input = new SizableTextInputCell(40);
+		Column<Prorrata, String> col = new Column<Prorrata, String>(
+				input) {
+			@Override
+			public String getValue(Prorrata ca) {
+				return ca.getActivity();
+			}
+		};
+		col.setFieldUpdater(new FieldUpdater<Prorrata, String>() {
+		    public void update(int index, Prorrata ca, String value) {
+		    	dataProvider.getList().get(index).setActivity(value);
+		    }
+		});		
+		table.addColumn(col, AON.MSG.activityDescription());
+		col.setCellStyleNames(AON.AON_CSS.aonTextLeft());
+	}
+
+	private void addTypeColumn() {
+		SizableTextInputCell input = new SizableTextInputCell(2);
+		Column<Prorrata, String> col = new Column<Prorrata, String>(
+				input) {
+			@Override
+			public String getValue(Prorrata ca) {
+				return ca.getType();
+			}
+		};
+		col.setFieldUpdater(new FieldUpdater<Prorrata, String>() {
+		    public void update(int index, Prorrata ca, String value) {
+		    	dataProvider.getList().get(index).setType(value);
+		    }
+		});		
+		table.addColumn(col, AON.MSG.type() + " E/G");
+		col.setCellStyleNames(AON.AON_CSS.aonTextLeft());
+	}
+
+
+	private void addAmountColumn() {
+		SizableTextInputCell input = new SizableTextInputCell(15);
+		Column<Prorrata, String> col = new Column<Prorrata, String>(input) {
+			@Override
+			public String getValue(Prorrata ca) {
+				return Double.toString(ca.getAmount());
+			}
+		};
+		col.setFieldUpdater(new FieldUpdater<Prorrata, String>() {
+		    public void update(int index, Prorrata ca, String value) {
+		    	double val = 0;
+		    	try {
+		    		val = Double.parseDouble(value);
+		    	} catch (NumberFormatException e) {
+		    		// Nothing.
+		    	}
+		    	dataProvider.getList().get(index).setAmount(val);
+		    }
+		});		
+		table.addColumn(col, AON.MSG.operationsAmount());
+		col.setCellStyleNames(AON.AON_CSS.aonTextRight());
+	}
+
+	private void addAmountWithRightColumn() {
+		SizableTextInputCell input = new SizableTextInputCell(15);
+		Column<Prorrata, String> col = new Column<Prorrata, String>(input) {
+			@Override
+			public String getValue(Prorrata ca) {
+				return Double.toString(ca.getAmountWithRight());
+			}
+		};
+		col.setFieldUpdater(new FieldUpdater<Prorrata, String>() {
+		    public void update(int index, Prorrata ca, String value) {
+		    	double val = 0;
+		    	try {
+		    		val = Double.parseDouble(value);
+		    	} catch (NumberFormatException e) {
+		    		// Nothing.
+		    	}
+		    	dataProvider.getList().get(index).setAmountWithRight(val);
+		    }
+		});		
+		table.addColumn(col, AON.MSG.operationsAmountWithRight());
+		col.setCellStyleNames(AON.AON_CSS.aonTextRight());
+	}
+	
+	private void addPercentColumn() {
+		SizableTextInputCell input = new SizableTextInputCell(7);
+		Column<Prorrata, String> col = new Column<Prorrata, String>(input) {
+			@Override
+			public String getValue(Prorrata ca) {
+				return Double.toString(ca.getPercent());
+			}
+		};
+		col.setFieldUpdater(new FieldUpdater<Prorrata, String>() {
+		    public void update(int index, Prorrata ca, String value) {
+		    	double val = 0;
+		    	try {
+		    		val = Double.parseDouble(value);
+		    	} catch (NumberFormatException e) {
+		    		// Nothing.
+		    	}
+		    	dataProvider.getList().get(index).setPercent(val);
+		    }
+		});		
+		table.addColumn(col, AON.MSG.percent());
+		col.setCellStyleNames(AON.AON_CSS.aonTextRight());
+	}
+
+	private void addRemoveColumn() {
+		
+		ButtonCell removeButton = new ButtonCell( new DeleteButtonSafeHtmlTemplates())  {
+			  @Override
+			  public void render(Context context, SafeHtml data, SafeHtmlBuilder sb) {
+			    if (data != null) {
+			      sb.append(data);
+			    }
+			  }
+		};
+		Column<Prorrata,String> col = new Column<Prorrata,String>(removeButton) {
+		  public String getValue(Prorrata object) {
+		    return AON.MSG.deleteAction();
+		  }
+		};
+		col.setFieldUpdater(new FieldUpdater<Prorrata, String>() {
+		    public void update(int index, Prorrata lr, String value) {
+		    	if (Window.confirm(AON.MSG.confirmDeleteAction())) {
+		    		dataProvider.getList().remove(index);
+		    		table.redraw();
+		    	}
+		    }
+		});		
+		table.addColumn(col);
+		table.setColumnWidth(col, 20, Unit.PX);
+		col.setCellStyleNames(AON.AON_CSS.aonTextCenter());
+	}
+
+	@UiHandler("newProrrata")
+	void onNewProrrata(ClickEvent event) {
+		dataProvider.getList().add(new Prorrata());
+		table.redraw();		    		
+	}
+	
 	public void setValue(Mod3902014 m390) {
 		this.mod390 = m390;
-		box99.setValue(this.mod390.getBox99());
-		box653.setValue(this.mod390.getBox653());
-		box103.setValue(this.mod390.getBox103());
-		box104.setValue(this.mod390.getBox104());
-		box105.setValue(this.mod390.getBox105());
-		box110.setValue(this.mod390.getBox110());
-		box112.setValue(this.mod390.getBox112());
-		box100.setValue(this.mod390.getBox100());
-		box101.setValue(this.mod390.getBox101());
-		box102.setValue(this.mod390.getBox102());
-		box227.setValue(this.mod390.getBox227());
-		box228.setValue(this.mod390.getBox228());
-		box106.setValue(this.mod390.getBox106());
-		box107.setValue(this.mod390.getBox107());
-		box108.setValue(this.mod390.getBox108());
+		dataProvider = new ListDataProvider<Prorrata>(this.mod390.getProrratas());
+		dataProvider.addDataDisplay(table);
+		table.redraw();
 	}
 
 	public void populate(Mod3902014 mod390) {
-		mod390.setBox99(box99.getValue());
-		mod390.setBox653(box653.getValue());
-		mod390.setBox103(box103.getValue());
-		mod390.setBox104(box104.getValue());
-		mod390.setBox105(box105.getValue());
-		mod390.setBox110(box110.getValue());
-		mod390.setBox112(box112.getValue());
-		mod390.setBox100(box100.getValue());
-		mod390.setBox101(box101.getValue());
-		mod390.setBox102(box102.getValue());
-		mod390.setBox227(box227.getValue());
-		mod390.setBox228(box228.getValue());
-		mod390.setBox106(box106.getValue());
-		mod390.setBox107(box107.getValue());
-		mod390.setBox108(box108.getValue());
+		// Nothing
 	}
 	
-	@UiHandler("box99")
-	void onChangeBox99(ChangeEvent event) {
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				mod390.setBox99(box99.getValue());
-				callback.calculateAndRefresh();
-			}
-		});
-	}
-
-	@UiHandler("box653")
-	void onChangeBox653(ChangeEvent event) {
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				mod390.setBox653(box653.getValue());
-				callback.calculateAndRefresh();
-			}
-		});
-	}
-
-	@UiHandler("box103")
-	void onChangeBox103(ChangeEvent event) {
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				mod390.setBox103(box103.getValue());
-				callback.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box104")
-	void onChangeBox104(ChangeEvent event) {
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				mod390.setBox104(box104.getValue());
-				callback.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box105")
-	void onChangeBox105(ChangeEvent event) {
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				mod390.setBox105(box105.getValue());
-				callback.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box110")
-	void onChangeBox110(ChangeEvent event) {
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				mod390.setBox110(box110.getValue());
-				callback.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box112")
-	void onChangeBox112(ChangeEvent event) {
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				mod390.setBox112(box112.getValue());
-				callback.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box100")
-	void onChangeBox100(ChangeEvent event) {
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				mod390.setBox100(box100.getValue());
-				callback.calculateAndRefresh();
-			}
-		});
-	}
-
-	@UiHandler("box101")
-	void onChangeBox101(ChangeEvent event) {
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				mod390.setBox101(box101.getValue());
-				callback.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box102")
-	void onChangeBox102(ChangeEvent event) {
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				mod390.setBox102(box102.getValue());
-				callback.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box227")
-	void onChangeBox227(ChangeEvent event) {
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				mod390.setBox227(box227.getValue());
-				callback.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box228")
-	void onChangeBox228(ChangeEvent event) {
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				mod390.setBox228(box228.getValue());
-				callback.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box106")
-	void onChangeBox106(ChangeEvent event) {
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				mod390.setBox106(box106.getValue());
-				callback.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box107")
-	void onChangeBox107(ChangeEvent event) {
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				mod390.setBox107(box107.getValue());
-				callback.calculateAndRefresh();
-			}
-		});
-	}
-
-	public void setCallback(Mod390CallBack callback) {
+	public void setCallback(IMod3902014CallBack callback) {
 		this.callback = callback;
 	}
 	
 }
-
