@@ -24,7 +24,6 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import com.code.aon.company.Department;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.template.jooq.DBCatalogue;
@@ -33,6 +32,7 @@ import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.warehouse.Department;
 
 @WebServlet(name = "DownloadTemplatesCatalogue", urlPatterns = { "/aon_gwt_template/gwt_download_catalogue/*" })
 public class DownloadCatalogueServlet extends HttpServlet {

@@ -25,11 +25,6 @@ import org.jooq.Record5;
 import org.jooq.Record7;
 import org.jooq.Result;
 
-import com.code.aon.config.Tag;
-import com.code.aon.config.Tax;
-import com.code.aon.product.Brand;
-import com.code.aon.product.ProductCategory;
-import com.code.aon.product.ProductTag;
 import com.esferalia.aon.gwt.template.server.AuditInfo;
 import com.esferalia.aon.gwt.template.server.ProductInfo;
 import com.esferalia.aon.gwt.template.shared.Error;
@@ -38,7 +33,12 @@ import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductCategory;
+import com.esferalia.aon.occam.api.model.product.ProductTag;
+import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
 
 public class DBProduct {

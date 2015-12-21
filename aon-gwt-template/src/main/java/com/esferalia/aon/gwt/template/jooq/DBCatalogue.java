@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.template.jooq;
 
 import static com.esferalia.aon.jooq.tables.Catalogue.CATALOGUE;
 import static com.esferalia.aon.jooq.tables.CatalogueItem.CATALOGUE_ITEM;
-import static com.esferalia.aon.jooq.tables.Department.DEPARTMENT;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
@@ -11,14 +10,13 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPARTMENT;
 
 import java.sql.Date;
+import java.util.LinkedList;
 import java.util.Vector;
 
-import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record6;
 import org.jooq.Result;
 
-import com.code.aon.company.Department;
 import com.esferalia.aon.gwt.template.server.CatalogueInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -26,6 +24,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.warehouse.Department;
 
 
 
@@ -68,29 +67,9 @@ public class DBCatalogue {
 		}
 	}
 	
-	public static Vector<com.esferalia.aon.gwt.template.shared.Department> getDepartments(Domain domain, Integer workplace, String login){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
-			
-			Result<Record2<Integer, String>> record = ctx.getDslContext().selectDistinct(DEPARTMENT.ID, DEPARTMENT.NAME)
-					.from(DEPARTMENT).join(WORKPLACE_DEPARTMENT).on(DEPARTMENT.ID.eq(WORKPLACE_DEPARTMENT.DEPARTMENT))
-					.where(DEPARTMENT.DOMAIN.eq(domain.getId()))
-					.and(WORKPLACE_DEPARTMENT.WORKPLACE.eq(workplace))
-					.fetch();
-			
-			Vector<com.esferalia.aon.gwt.template.shared.Department> v = new Vector<com.esferalia.aon.gwt.template.shared.Department>();
-			record.stream().forEach(r -> {
-				com.esferalia.aon.gwt.template.shared.Department d = new com.esferalia.aon.gwt.template.shared.Department() ;
-				d.setId(r.value1());
-				d.setName(r.value2());
-				v.add(d);
-			});
-			return v;
-			
-		} finally{
-			if (ctx != null) ctx.close();
-		}
+	public static LinkedList<Department> getDepartments(Domain domain, Integer workplaceId, String login){
+		return AON.getDepartmentList(domain.getName(), domain.getId(), login,
+				workplaceId, f -> f.getDomainProperty().eq(domain.getId()));
 	}
 	
 	public static Workplace getWorkplace(Domain domain, User user, String workplaceDescription) {
@@ -103,55 +82,14 @@ public class DBCatalogue {
 				filter -> filter.getIdProperty().eq(workplaceId));
 	}
 	
-	public static Department getDepartment(Domain domain, Workplace wp, String department, String login){
-		
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
-			
-			Record1<Integer> record = ctx.getDslContext().selectDistinct(DEPARTMENT.ID)
-				.from(DEPARTMENT).join(WORKPLACE_DEPARTMENT)
-				.on(WORKPLACE_DEPARTMENT.DEPARTMENT.eq(DEPARTMENT.ID))
-				.where(DEPARTMENT.DOMAIN.eq(domain.getId()))
-				.and(DEPARTMENT.NAME.eq(department))
-				.and(WORKPLACE_DEPARTMENT.WORKPLACE.eq(wp.getId()))
-				.fetchOne();
-			
-			if(record.value1() != null){
-				Department d = new Department();
-				d.setId(record.value1());
-				d.setName(department);
-				return d;
-			}
-			return null;
-		} finally{
-			if (ctx != null) ctx.close();
-		}
+	public static Department getDepartment(Domain domain, Workplace wp, String departmentName, String login){
+		return AON.getDepartment(domain.getName(), domain.getId(), login, wp.getId(), 
+				f -> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().eq(departmentName)));
 	}
 	
-	public static Department getDepartment(Domain domain, Workplace wp, Integer department, String login) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
-			
-			Record1<String> record = ctx.getDslContext().selectDistinct(DEPARTMENT.NAME)
-					.from(DEPARTMENT).join(WORKPLACE_DEPARTMENT)
-					.on(WORKPLACE_DEPARTMENT.DEPARTMENT.eq(DEPARTMENT.ID))
-					.where(DEPARTMENT.DOMAIN.eq(domain.getId()))
-					.and(DEPARTMENT.ID.eq(department))
-					.and(WORKPLACE_DEPARTMENT.WORKPLACE.eq(wp.getId()))
-					.fetchOne();
-			
-			if(record.value1() != null){
-				Department d = new Department();
-				d.setId(department);
-				d.setName(record.value1());
-				return d;
-			}
-			return null;
-		} finally{
-			if (ctx != null) ctx.close();
-		}
+	public static Department getDepartment(Domain domain, Workplace wp, Integer departmentId, String login) {
+		return AON.getDepartment(domain.getName(), domain.getId(), login, wp.getId(), 
+				f -> f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().eq(departmentId)));
 	}
 	
 	public static Vector<CatalogueInfo> getCatalogues(Domain domain, Workplace wp, Department dt, String login){

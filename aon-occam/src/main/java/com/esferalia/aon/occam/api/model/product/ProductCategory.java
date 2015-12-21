@@ -9,6 +9,11 @@ public class ProductCategory implements Serializable {
 	Integer id;
 	Integer domain;
 	String name;
+	
+	String detail;
+	String detail2;
+	String detail3;
+	
 	boolean selected;
 	
 	public Integer getId() {
@@ -39,5 +44,27 @@ public class ProductCategory implements Serializable {
 		this.selected = selected;
 		return this;
 	}
+	public String getDetail() {
+		return detail;
+	}
+	public ProductCategory setDetail(String detail) {
+		this.detail = detail;
+		return this;
+	}
+	public String getDetail2() {
+		return detail2;
+	}
+	public ProductCategory setDetail2(String detail2) {
+		this.detail2 = detail2;
+		return this;
+	}
+	public String getDetail3() {
+		return detail3;
+	}
+	public ProductCategory setDetail3(String detail3) {
+		this.detail3 = detail3;
+		return this;
+	}
+	
 	
 }

@@ -7,11 +7,12 @@ import java.util.LinkedList;
 
 import org.jooq.Result;
 
-import com.esferalia.aon.google.sql.AbstractSQL.Task;
+
 import com.esferalia.aon.jooq.tables.records.TaskRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.security.User;
 
@@ -43,15 +44,15 @@ public class DBTask {
 				task.setGtaskId(tr.getGtaskId());
 				task.setGtasklistId(tr.getGtasklistId());
 				task.setId(tr.getId());
-				task.setPercent((short)tr.getPercent());
-				task.setPriority((short)tr.getPriority());
+				task.setPercent(tr.getPercent());
+				task.setPriority(tr.getPriority());
 				task.setProject(tr.getProject());
 				task.setRegistry(tr.getRegistry());
-				task.setRepeatPeriod((short)tr.getRepeatPeriod());
+				task.setRepeatPeriod(tr.getRepeatPeriod());
 				task.setSender(tr.getSender());
-				task.setSource((short)tr.getSource());
+				task.setSource(tr.getSource());
 				task.setStartDate(tr.getStartDate());
-				task.setStatus((short)tr.getStatus());
+				task.setStatus(tr.getStatus());
 				task.setTaskHolder(tr.getTaskHolder());
 				task.setWorkgroup(tr.getWorkgroup());
 				taskList.add(task);

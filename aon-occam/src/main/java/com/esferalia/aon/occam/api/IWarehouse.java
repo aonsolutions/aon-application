@@ -3,32 +3,47 @@ package com.esferalia.aon.occam.api;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
+import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 
 public interface IWarehouse {
 	
+	// 	***********************************************
+	// 	********************************* WAREHOUSE ***
+	// 	***********************************************
+	
+	Warehouse getWarehouse(AONContext ctx, WarehouseFilter filter);
 	
 	// 	***********************************************
 	// 	****************************** INCOME DETAIL***
 	// 	***********************************************
 
 	IncomeDetail getLastIncomeDetail(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId);
+	IncomeDetail getLastIncomeDetailUntilDate(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId, Date date);
 	LinkedList<IncomeDetail> getLastIncomeDetailList(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId);
+	LinkedList<IncomeDetail> getLastIncomeDetailListUntilDate(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId, Date date);
 	LinkedList<IncomeDetail> getIncomeDetailList(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId);
+	LinkedList<IncomeDetail> getIncomeDetailListUntilDate(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId, Date date);
 
+	
 	// 	***********************************************
 	// 	************************** INVENTORY DETAIL ***
 	// 	***********************************************
 	
 	LinkedList<InventoryDetail> getInventoryDetailList(AONContext ctx, Integer inventoryId);
+	void updateInventoryDetail(AONContext ctx, InventoryDetail inventoryDetail);
 	
 	// 	***********************************************
 	// 	********************************* INVENTORY ***
 	// 	***********************************************
 	
+	LinkedList<Inventory> getInventoryList(AONContext ctx, Date startDate, Date endDate);
 	LinkedList<Inventory> getTwoLastInventory(AONContext ctx, Integer warehouseID);
 	void updateInventory(AONContext ctx, Inventory inventory);
 	void deleteInventory(AONContext ctx, Integer inventoryId);
@@ -38,5 +53,12 @@ public interface IWarehouse {
 	// 	***********************************************
 	
 	void deleteWarehouseTransfer(AONContext ctx, Integer inventoryId);
+	
+	// 	***********************************************
+	// 	******************************** DEPARTMENT ***
+	// 	***********************************************
+	
+	Department getDepartment(AONContext ctx, Integer workplaceId, DepartmentFilter filter);
+	LinkedList<Department> getDepartmentList(AONContext ctx, Integer workplaceId, DepartmentFilter filter);
 
 }

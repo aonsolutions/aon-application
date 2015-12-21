@@ -26,6 +26,7 @@ public interface IProduct {
 	public void deleteProductTag(AONContext ctx,Stream<ProductTag> pts);	
 	
 	// ITEM
+	public Item getItem(AONContext ctx, Integer itemId);
 	public void insertItem(AONContext ctx, Item i);
 	public void insertItemWithId(AONContext ctx,Item i);
 	public void insertItem(AONContext ctx, Stream<Item> is);

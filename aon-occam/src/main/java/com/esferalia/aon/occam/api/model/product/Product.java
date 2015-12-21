@@ -133,6 +133,9 @@ public class Product implements Serializable{
 	public void setManufactured(Byte manufactured) {
 		this.manufactured = manufactured;
 	}
+	public Boolean isManufactured(){
+		return manufactured == 1;
+	}
 	public Byte getComposition() {
 		return composition;
 	}

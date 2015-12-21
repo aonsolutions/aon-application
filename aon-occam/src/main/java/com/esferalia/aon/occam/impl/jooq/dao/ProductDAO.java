@@ -27,6 +27,7 @@ import com.esferalia.aon.jooq.tables.records.ItemRecord;
 import com.esferalia.aon.jooq.tables.records.ProductRecord;
 import com.esferalia.aon.jooq.tables.records.ProductTagRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
@@ -277,10 +278,10 @@ public class ProductDAO {
 		if(record != null){
 			ProductTag pt = new ProductTag();
 			pt.setId(id);
-			if(record.value1() != null) pt.setDomain(record.value1());
-			if(record.value2() != null) pt.setProduct(record.value2());
-			if(record.value3() != null) pt.setTag(record.value3());
-			
+			if(record.value1() != null) pt.setDomain(record.getValue(PRODUCT_TAG.DOMAIN));
+			if(record.value2() != null) pt.setProduct(record.getValue(PRODUCT_TAG.PRODUCT));
+			if(record.value3() != null) pt.setTag(new Tag().setId(record.getValue(PRODUCT_TAG.TAG)));
+
 			return pt;
 		}
 		return null;
@@ -292,7 +293,7 @@ public class ProductDAO {
 			ProductValidation.validateProductTag(ctx, pt);
 			ctx.getDslContext()
 				.insertInto(PRODUCT_TAG, PRODUCT_TAG.DOMAIN, PRODUCT_TAG.PRODUCT, PRODUCT_TAG.TAG)
-				.values(pt.getDomain(), pt.getProduct(), pt.getTag())
+				.values(pt.getDomain(), pt.getProduct(), pt.getTag().getId())
 				.execute();
 		});		
 	}
@@ -303,7 +304,7 @@ public class ProductDAO {
 			InsertValuesStep3<ProductTagRecord, Integer, Integer, Integer> insertQuery = ctx.getDslContext().insertInto(PRODUCT_TAG, PRODUCT_TAG.DOMAIN, PRODUCT_TAG.PRODUCT, PRODUCT_TAG.TAG);
 			pts.forEach(pt ->{
 				ProductValidation.validateProductTag(ctx, pt);
-				insertQuery.values(pt.getDomain(), pt.getProduct(), pt.getTag());
+				insertQuery.values(pt.getDomain(), pt.getProduct(), pt.getTag().getId());
 			});
 			insertQuery.execute();
 		});		
@@ -316,7 +317,7 @@ public class ProductDAO {
 				.update(PRODUCT_TAG)
 					.set(PRODUCT_TAG.DOMAIN, pt.getDomain())
 					.set(PRODUCT_TAG.PRODUCT, pt.getProduct())
-					.set(PRODUCT_TAG.TAG, pt.getTag())
+					.set(PRODUCT_TAG.TAG, pt.getTag().getId())
 					.where(PRODUCT_TAG.ID.equal(pt.getId()))
 					.execute();
 		});	

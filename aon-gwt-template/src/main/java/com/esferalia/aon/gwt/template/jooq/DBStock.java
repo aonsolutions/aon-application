@@ -39,7 +39,6 @@ import org.jooq.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.company.Department;
 import com.code.aon.config.Series;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
@@ -59,6 +58,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.warehouse.Department;
 
 public class DBStock {
 	

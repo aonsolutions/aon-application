@@ -21,9 +21,6 @@ import org.jooq.Record5;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
-import com.code.aon.customer.Customer;
-import com.code.aon.customer.enumeration.CustomerStatus;
-import com.code.aon.registry.Registry;
 import com.esferalia.aon.gwt.template.server.AuditInfo;
 import com.esferalia.aon.gwt.template.server.FeeInfo;
 import com.esferalia.aon.gwt.template.shared.Error;
@@ -31,11 +28,14 @@ import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.jooq.tables.records.CustomerFeeRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 
 public class DBFee {
 
@@ -203,12 +203,13 @@ public class DBFee {
 						index++;
 					}
 				}
-	
-				customer.setId(result.get(index).value1());
-				Registry registry = new Registry();
-				registry.setAlias(result.get(index).value2());
-				registry.setDocument(result.get(index).value3());
-				registry.setName(result.get(index).value4());
+				
+				customer.setId(result.get(index).getValue(REGISTRY.ID));
+				Registry registry = new Registry()
+						.setId(result.get(index).getValue(REGISTRY.ID))
+						.setAlias(result.get(index).getValue(REGISTRY.ALIAS))
+						.setDocument(result.get(index).getValue(REGISTRY.DOCUMENT))
+						.setName(result.get(index).getValue(REGISTRY.NAME));
 				customer.setRegistry(registry);
 				customer.setStatus(CustomerStatus.values()[result.get(index).value5()]);
 			

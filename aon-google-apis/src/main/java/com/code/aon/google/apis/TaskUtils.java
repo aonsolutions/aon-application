@@ -1,7 +1,6 @@
 package com.code.aon.google.apis;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.TimeZone;
@@ -11,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.google.apis.jooq.DBTask;
-import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -56,7 +54,7 @@ public class TaskUtils {
 			return -1;
 		}
 		
-		public static Integer searchTask(com.esferalia.aon.google.sql.AbstractSQL.Task taskBD, Tasks tasks, int n){
+		public static Integer searchTask(com.esferalia.aon.occam.api.model.Task taskBD, Tasks tasks, int n){
 			// COMPARA LA DESCRIPCIÓN DE LA TAREA DE LA BD CON EL TITULO DE LA TAREA DE GOOGLE
 			int centro;
 			int inf = 0;
@@ -233,7 +231,7 @@ public class TaskUtils {
 	 * @param task
 	 * @return
 	 */
-	public static Task newTask(com.esferalia.aon.google.sql.AbstractSQL.Task task){
+	public static Task newTask(com.esferalia.aon.occam.api.model.Task task){
 		Task task2= new Task();
 		
 		DateTime date = new DateTime(task.getDueDate(), TimeZone.getTimeZone("UTC"));// es posible que sea necesario el convertDate de CalendarUtils
@@ -284,61 +282,7 @@ public class TaskUtils {
 	
 	
 	//------------------------------------------- UTILS
-	
-	/**
-	 * 
-	 * @throws SQLException
-	 * @throws AonConnectionException
-	 * @throws IOException
-	 */
-	/*public static void synchronizeOld(com.google.api.services.tasks.Tasks client) throws SQLException, AonConnectionException, IOException{
-		
-		System.out.println(client);
-		String domain= AonUtil.getDomainName();
-		String username=AonUtil.getAuthPrincipal().getShortName();
-		System.out.println(domain+"  "+username);
-		Vector<com.esferalia.aon.google.sql.AbstractSQL.Task> tasksBD = getTask(domain, username);
-		TaskList taskList = null;
-		int aux = -1;
-		int aux2 = -1;
-		for(int i= 0; i<tasksBD.size();i++){
-			Project project = getProjectTask(domain,tasksBD.get(i).getId());
-			TaskLists taskLists = Search.taskListsort(client.tasklists().list().execute());
-			aux = Search.searchProject(project,taskLists, taskLists.getItems().size());
-			if (aux ==-1 ){
-				taskList = addTaskList(newTaskList(project),client);
-			}
-			if (taskList !=null){
-				com.google.api.services.tasks.model.Tasks tasks= client.tasks().list(taskList.getId()).execute();
-				if (tasks.getItems() != null){
-					tasks = Search.tasksort(tasks);
-					aux2 = Search.searchTask(tasksBD.get(i),tasks,tasks.getItems().size());
-				}
-				System.out.println(aux2);
-				if (aux2==-1){
-					Task t=addTask(newTask(tasksBD.get(i)), taskList,client);
-					System.out.println(t.getId());
-				}
-				else updateTask(tasks.getItems().get(aux2), taskList,client);
-				
-			}
-			else{
-				com.google.api.services.tasks.model.Tasks tasks= client.tasks().list(taskLists.getItems().get(aux).getId()).execute();
-				if(tasks.getItems()!=null){
-					tasks = Search.tasksort(tasks);
-					aux2 = Search.searchTask(tasksBD.get(i),tasks,tasks.getItems().size());
-				}
-				if (aux2==-1) addTask(newTask(tasksBD.get(i)),taskLists.getItems().get(aux),client);
-				else updateTask(tasks.getItems().get(aux2), taskLists.getItems().get(aux),client);
-			}
-		}
-	}*/
-	
-	
-	
-	
-	
-	
+
 	public static TaskList getTaskList(com.google.api.services.tasks.Tasks client,String id) throws IOException{
 		
 		return client.tasklists().get(id).execute();
@@ -346,22 +290,20 @@ public class TaskUtils {
 	
 	/**
 	 * 
-	 * @throws SQLException
-	 * @throws AonConnectionException
 	 * @throws IOException
 	 */
-	public static void synchronize(com.google.api.services.tasks.Tasks client) throws SQLException, AonConnectionException, IOException{
+	public static void synchronize(com.google.api.services.tasks.Tasks client) throws IOException{
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
 		String username=AonUtil.getAuthPrincipal().getShortName();
 		Domain domain = AON.getDomain(domainName, domainId, username);		
 		User user = new User().setLogin(username);
 
-		LinkedList<com.esferalia.aon.google.sql.AbstractSQL.Task> taskBDList = DBTask.getTask(domain, user);
+		LinkedList<com.esferalia.aon.occam.api.model.Task> taskBDList = DBTask.getTask(domain, user);
 		TaskList taskList = null;
 		for(int i= 0; i<taskBDList.size();i++){
 			Project project = DBTask.getProjectTask(domain, user, taskBDList.get(i));
-			com.esferalia.aon.google.sql.AbstractSQL.Task taskBD=taskBDList.get(i);
+			com.esferalia.aon.occam.api.model.Task taskBD=taskBDList.get(i);
 			if (taskBD.getGtasklistId() == null){
 				taskList = addTaskList(newTaskList(project),client);
 				

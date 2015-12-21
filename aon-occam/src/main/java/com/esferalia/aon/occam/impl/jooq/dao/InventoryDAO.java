@@ -29,6 +29,18 @@ public class InventoryDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	
+	public static LinkedList<Inventory> getInventoryList(AONContext ctx, Date startDate, Date endDate){
+		return ctx.getDslContext()
+			.select()
+			.from(INVENTORY)
+			.where(INVENTORY.INVENTORY_DATE.between(startDate, endDate))
+			.and(INVENTORY.DOMAIN.eq(ctx.getDomainId()))
+			.fetchInto(INVENTORY)
+			.stream().map(new FullInventoryFiller())
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 	public static LinkedList<Inventory> getTwoLastInventory(AONContext ctx, Integer warehouseId){
 		return ctx.getDslContext()
 				.select()
@@ -39,6 +51,21 @@ public class InventoryDAO {
 				.fetchInto(INVENTORY)
 				.stream().map(new FullInventoryFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static void updateInventoryDetail(AONContext ctx, InventoryDetail inventoryDetail){
+		ctx.getDslContext().update(INVENTORY_DETAIL)
+		.set(INVENTORY_DETAIL.ACTUAL_QUANTITY, inventoryDetail.getActualQuantity())
+		.set(INVENTORY_DETAIL.COST, inventoryDetail.getCost())
+		.set(INVENTORY_DETAIL.CREATION_DATE, inventoryDetail.getCreationDate() != null ? new Timestamp(inventoryDetail.getCreationDate().getTime()) : null)
+		.set(INVENTORY_DETAIL.CREATION_USER, inventoryDetail.getCreationUser())
+		.set(INVENTORY_DETAIL.DOMAIN, inventoryDetail.getDomain())
+		.set(INVENTORY_DETAIL.INVENTORY, inventoryDetail.getInventory().getId())
+		.set(INVENTORY_DETAIL.ITEM, inventoryDetail.getItem().getId())
+		.set(INVENTORY_DETAIL.MODIFICATION_DATE, inventoryDetail.getModificationDate() != null ? new Timestamp(inventoryDetail.getModificationDate().getTime()) : null)
+		.set(INVENTORY_DETAIL.MODIFICATION_USER, inventoryDetail.getModificationUser())
+		.set(INVENTORY_DETAIL.REAL_QUANTITY, inventoryDetail.getRealQuantity())
+		.execute();
 	}
 	
 	public static void updateInventory(AONContext ctx, Inventory inventory){

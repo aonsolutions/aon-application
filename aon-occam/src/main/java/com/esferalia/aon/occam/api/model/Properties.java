@@ -110,5 +110,19 @@ public interface Properties {
 		Property<Double> getSizeProperty();			
 	}
 	
+	public interface WarehouseProperties {
+		Property<Byte> getActiveProperty();
+		Property<Integer> getDepartmentProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getIdProperty();
+		Property<String> getNameProperty();
+		Property<Integer> getWorkplaceProperty();			
+	}
+	
+	public interface DepartmentProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getNameProperty();
+	}
 	
 }

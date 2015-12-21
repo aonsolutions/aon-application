@@ -12,6 +12,7 @@ import org.junit.Test;
 import com.code.aon.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
@@ -24,11 +25,12 @@ public class ProductTest {
 	private static AONContext ctx;
 	private static String DOMAIN_NAME = "garajeolabe.aibanez.net";
 	private static int DOMAIN_ID = 596;
+	private static String LOGIN = "contacto";
 
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
 		Class.forName( org.gjt.mm.mysql.Driver.class.getName() );
-		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID);
+		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID, LOGIN);
 	}
 	
 	// ------------------------------------ PRODUCT
@@ -131,7 +133,7 @@ public class ProductTest {
 		ProductTag pt = new ProductTag();
 		pt.setDomain(ctx.getDomainId());
 		pt.setProduct(1); // No tiene que existir
-		pt.setTag(1);
+		pt.setTag(new Tag().setId(1));
 		AON.insertProductTag(ctx, pt);
 	}
 	
@@ -141,7 +143,7 @@ public class ProductTest {
 		ProductTag pt = new ProductTag();
 		pt.setDomain(ctx.getDomainId());
 		pt.setProduct(1); // Tiene que existir
-		pt.setTag(1); // No tiene que existir
+		pt.setTag(new Tag().setId(1)); // No tiene que existir
 		AON.insertProductTag(ctx, pt);
 	}
 	
@@ -153,7 +155,7 @@ public class ProductTest {
 			productTag = new ProductTag();
 			productTag.setDomain(ctx.getDomainId());
 			productTag.setProduct(1);
-			productTag.setTag(1);
+			productTag.setTag(new Tag().setId(1));
 			AON.insertProductTag(ctx, productTag);
 		}
 		AON.insertProductTag(ctx, productTag);

@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
+import com.esferalia.aon.occam.api.model.Properties.DepartmentProperties;
+import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
 
 public interface Filter {
 	
@@ -21,5 +23,15 @@ public interface Filter {
 	public Filter or(Filter filter);
 	public Filter and(Filter filter);
 	public Filter not(Filter filter);
+	
+	@FunctionalInterface
+	public interface WarehouseFilter{
+		Filter filter(WarehouseProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface DepartmentFilter{
+		Filter filter(DepartmentProperties properties);
+	}
 
 }

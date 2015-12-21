@@ -37,7 +37,6 @@ import org.jooq.Condition;
 
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
-import com.code.aon.product.ProductTag;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.DateUtil;
@@ -47,6 +46,7 @@ import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.google.api.services.drive.Drive;

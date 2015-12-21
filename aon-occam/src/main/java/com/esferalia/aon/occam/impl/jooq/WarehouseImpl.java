@@ -5,24 +5,47 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IWarehouse;
+import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
+import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.dao.IncomeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InventoryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class WarehouseImpl implements IWarehouse {
 
+	@Override
+	public Warehouse getWarehouse(AONContext ctx, WarehouseFilter filter){
+		return ctx.getDslContext().transactionResult(configuration ->
+				WarehouseDAO.getWarehouse(ctx, filter));
+	}
+
+	
 	@Override
 	public IncomeDetail getLastIncomeDetail(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId) {
 		return IncomeDAO.getLastIncomeDetail(ctx, item, workplaceId, warehouseId);
 	}
 	
 	@Override
+	public IncomeDetail getLastIncomeDetailUntilDate(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId, Date date) {
+		return IncomeDAO.getLastIncomeDetailUntilDate(ctx, item, workplaceId, warehouseId, date);
+	}
+	
+	@Override
 	public LinkedList<IncomeDetail> getLastIncomeDetailList(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId) {
 		return IncomeDAO.getLastIncomeDetailList(ctx, item, startDate, workplaceId, warehouseId);
+	}
+	
+	
+	@Override
+	public LinkedList<IncomeDetail> getLastIncomeDetailListUntilDate(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId, Date date) {
+		return IncomeDAO.getLastIncomeDetailListUntilDate(ctx, item, startDate, workplaceId, warehouseId, date);
 	}
 	
 	@Override
@@ -31,8 +54,19 @@ public class WarehouseImpl implements IWarehouse {
 	}
 
 	@Override
+	public LinkedList<IncomeDetail> getIncomeDetailListUntilDate(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId, Date date) {
+		return IncomeDAO.getIncomeDetailListUntilDate(ctx, item, workplaceId, warehouseId, date);
+	}
+	
+	@Override
 	public LinkedList<InventoryDetail> getInventoryDetailList(AONContext ctx, Integer inventoryId) {
 		return InventoryDAO.getInventoryDetailList(ctx,inventoryId);
+	}
+	
+	@Override
+	public void updateInventoryDetail(AONContext ctx, InventoryDetail inventoryDetail) {
+		ctx.getDslContext().transaction(configuration -> 
+		InventoryDAO.updateInventoryDetail(ctx, inventoryDetail));
 	}
 
 	@Override
@@ -46,6 +80,12 @@ public class WarehouseImpl implements IWarehouse {
 		ctx.getDslContext().transaction(configuration -> 
 			WarehouseDAO.deleteWarehouseTransfer(ctx, inventoryId));		
 	}
+	
+	@Override
+	public LinkedList<Inventory> getInventoryList(AONContext ctx, Date startDate, Date endDate){
+		return ctx.getDslContext().transactionResult(configuration -> 
+				InventoryDAO.getInventoryList(ctx, AonDateUtils.toSql(startDate), AonDateUtils.toSql(endDate)));
+	}
 
 	@Override
 	public LinkedList<Inventory> getTwoLastInventory(AONContext ctx, Integer warehouseId) {
@@ -57,5 +97,17 @@ public class WarehouseImpl implements IWarehouse {
 	public void deleteInventory(AONContext ctx, Integer inventoryId) {
 		ctx.getDslContext().transaction(configuration -> 
 			InventoryDAO.deleteInventory(ctx, inventoryId));		
+	}
+	
+	@Override
+	public Department getDepartment(AONContext ctx, Integer workplaceId, DepartmentFilter filter){
+		return ctx.getDslContext().transactionResult(configuration -> 
+				WarehouseDAO.getDepartment(ctx, workplaceId, filter));
+	}
+	
+	@Override
+	public LinkedList<Department> getDepartmentList(AONContext ctx, Integer workplaceId, DepartmentFilter filter){
+		return ctx.getDslContext().transactionResult(configuration -> 
+				WarehouseDAO.getDepartmentList(ctx, workplaceId, filter));
 	}
 }

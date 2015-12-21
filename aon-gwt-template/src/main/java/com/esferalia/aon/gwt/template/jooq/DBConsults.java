@@ -20,8 +20,6 @@ import org.jooq.Record4;
 import org.jooq.Result;
 
 import com.code.aon.AonVersion;
-import com.code.aon.common.enumeration.MimeType;
-import com.esferalia.aon.carrier.enumeration.ShipmentStatus;
 import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.shared.Hotel;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
@@ -33,6 +31,8 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.ShipmentStatus;
 
 
 
@@ -350,7 +350,7 @@ public class DBConsults {
 			
 
 			return ctx.getDslContext().insertInto(RATTACH,RATTACH.REGISTRY,RATTACH.DOMAIN,RATTACH.CATEGORY,RATTACH.MIMETYPE,RATTACH.DESCRIPTION,RATTACH.TYPE,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.ATTACH_DATE,RATTACH.DATA,RATTACH.DRIVE_ID,RATTACH.DPARENT_ID)
-						.values(registry,domain.getId(),null,(byte) MimeType.MIME_XML.ordinal(),ti.getName(),(byte) 15,null,(byte)0,null,b,null,null).returning(RATTACH.ID).fetchOne().getId();
+						.values(registry,domain.getId(),null, MimeType.XML.value(),ti.getName(),(byte) 15,null,(byte)0,null,b,null,null).returning(RATTACH.ID).fetchOne().getId();
 	
 		} finally {
 			if (ctx != null) ctx.close();
@@ -430,7 +430,7 @@ public class DBConsults {
 			Result<DeliveryRecord> result = ctx.getDslContext().select()
 				.from(DELIVERY)
 				.where(DELIVERY.DOMAIN.eq(domain.getId()))
-				.and(DELIVERY.SHIPPING_STATUS.eq((byte)ShipmentStatus.IN_AGENCY.ordinal()))
+				.and(DELIVERY.SHIPPING_STATUS.eq(ShipmentStatus.IN_AGENCY.value()))
 				.fetchInto(DELIVERY);
 			
 			List<AmazonDelivery> list = new ArrayList<AmazonDelivery>();

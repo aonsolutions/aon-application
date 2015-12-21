@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
-import com.esferalia.aon.gwt.template.shared.Department;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.Hotel;
@@ -17,6 +16,7 @@ import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.esferalia.aon.gwt.template.shared.WorkPlace;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
@@ -60,7 +60,8 @@ public interface ITemplateAsync {
 
 	void getWorkplaces(Domain domain, AsyncCallback<Vector<WorkPlace>> callback);
 
-	void getDepartments(Domain domain, String workplace, AsyncCallback<Vector<Department>> callback);
+	void getDepartments(Domain domain, String workplace,
+			AsyncCallback<LinkedList<Department>> callback);
 
 	void executeExcelProposal(TemplateInfo templateInfo,
 			AsyncCallback<Integer> callback);

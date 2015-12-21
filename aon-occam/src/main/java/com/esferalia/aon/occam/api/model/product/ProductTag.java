@@ -1,10 +1,10 @@
 package com.esferalia.aon.occam.api.model.product;
-
+import com.esferalia.aon.occam.api.model.office.Tag;
 public class ProductTag {
 	Integer id;
 	Integer domain;
 	Integer product;
-	Integer Tag;
+	Tag Tag;
 	
 	public Integer getId() {
 		return id;
@@ -24,10 +24,10 @@ public class ProductTag {
 	public void setProduct(Integer product) {
 		this.product = product;
 	}
-	public Integer getTag() {
+	public Tag getTag() {
 		return Tag;
 	}
-	public void setTag(Integer tag) {
+	public void setTag(Tag tag) {
 		Tag = tag;
 	}
 	

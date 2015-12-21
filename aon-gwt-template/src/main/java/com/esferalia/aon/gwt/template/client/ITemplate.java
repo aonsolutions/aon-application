@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -62,7 +63,7 @@ public interface ITemplate extends RemoteService{
 
 	public Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Domain domain);
 	
-	public Vector<com.esferalia.aon.gwt.template.shared.Department> getDepartments(Domain domain, String workplace);
+	public LinkedList<Department> getDepartments(Domain domain, String workplace);
 	
 	public Integer executeExcelProposal(TemplateInfo templateInfo);
 	

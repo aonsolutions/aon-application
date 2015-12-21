@@ -39,6 +39,8 @@ import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
+import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
+import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
@@ -84,9 +86,11 @@ import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
 import com.esferalia.aon.occam.impl.jooq.AgreementImpl;
 import com.esferalia.aon.occam.impl.jooq.AttachmentImpl;
@@ -407,6 +411,16 @@ public class AON {
 	}
 
 	// ------------------------------------ PRODUCT
+	public static Product getProduct(String domainName, Integer domainId, String login, Integer productId){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getProduct(ctx, productId);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	public static List<String> getProductTags(String domainName, int domainId) {
 		AONContext ctx = null;
 		try {
@@ -528,6 +542,17 @@ public class AON {
 
 	// ------------------------------------ ITEM
 
+	public static Item getItem(String domainName, Integer domainId, String login,
+			Integer itemId){
+		AONContext  ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getProduct().getItem(ctx, itemId);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	public static void insertItem(AONContext ctx, Item i) {
 		getProduct().insertItem(ctx, i);
 	}
@@ -1602,6 +1627,19 @@ public class AON {
 		}
 	}
 	
+	public static InvoiceDetail getLastInvoiceDetailUntilDate(String domainName,
+			Integer domainId, String user, Item item, Integer workplaceId,
+			Integer warehouseId, Date date){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFinance().getLastInvoiceDetailUntilDate(ctx, item, workplaceId, warehouseId, date);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static LinkedList<InvoiceDetail> getLastInvoiceDetailList(String domainName,
 			Integer domainId, String user, Item item, String months, Integer workplaceId,
 			Integer warehouseId){
@@ -1613,6 +1651,24 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getFinance().getLastInvoiceDetailList(ctx, item, calendar.getTime(), workplaceId, warehouseId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<InvoiceDetail> getLastInvoiceDetailListUntilDate(String domainName,
+			Integer domainId, String user, Item item, String months, Integer workplaceId,
+			Integer warehouseId, Date date){
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		Integer m = Integer.parseInt(months);
+		calendar.add(Calendar.MONTH, -m);
+		
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFinance().getLastInvoiceDetailListUntilDate(ctx, item, calendar.getTime(), workplaceId, warehouseId, date);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1631,6 +1687,19 @@ public class AON {
 		}
 	}
 
+	public static LinkedList<InvoiceDetail> getInvoiceDetailListUntilDate(String domainName,
+			Integer domainId, String user, Item item, Integer workplaceId, Integer warehouseId
+			, Date date){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFinance().getInvoiceDetailListUntilDate(ctx, item, workplaceId, warehouseId, date);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static LinkedList<InvoicingGroup> getInvoicingGroupList(String domainName, Integer domainId, String login
 			, InvoicingGroupFilter filter){
 		AONContext ctx = null;
@@ -1930,6 +1999,17 @@ public class AON {
 	// ******************************* WAREHOUSE **
 	// ********************************************
 
+	public static Warehouse getWarehouse(String domainName, Integer domainId, String login,
+			WarehouseFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getWarehouse(ctx, filter);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	public static IncomeDetail getLastIncomeDetail(String domainName,
 			Integer domainId, String user, Item item, Integer workplaceId,
 			Integer warehouseId){
@@ -1937,6 +2017,19 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getWarehouse().getLastIncomeDetail(ctx, item, workplaceId, warehouseId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static IncomeDetail getLastIncomeDetailUntilDate(String domainName,
+			Integer domainId, String user, Item item, Integer workplaceId,
+			Integer warehouseId, Date date){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getWarehouse().getLastIncomeDetailUntilDate(ctx, item, workplaceId, warehouseId, date);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1960,12 +2053,43 @@ public class AON {
 		}
 	}
 	
+	public static LinkedList<IncomeDetail> getLastIncomeDetailListUntilDate(String domainName,
+			Integer domainId, String user, Item item, String months, Integer workplaceId,
+			Integer warehouseId, Date date){
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		Integer m = Integer.parseInt(months);
+		calendar.add(Calendar.MONTH, -m);
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getWarehouse().getLastIncomeDetailListUntilDate(ctx, item, calendar.getTime(),
+					workplaceId, warehouseId, date);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static LinkedList<IncomeDetail> getIncomeDetailList(String domainName,
 			Integer domainId, String user, Item item, Integer workplaceId, Integer warehouseId){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getWarehouse().getIncomeDetailList(ctx, item, workplaceId, warehouseId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<IncomeDetail> getIncomeDetailListUntilDate(String domainName,
+			Integer domainId, String user, Item item, Integer workplaceId, Integer warehouseId
+			, Date date){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getWarehouse().getIncomeDetailListUntilDate(ctx, item, workplaceId, warehouseId, date);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1983,6 +2107,51 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static LinkedList<Inventory> getInventoryList(String domainName, Integer domainId, String login,
+			Date startDate, Date endDate){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getInventoryList(ctx, startDate, endDate);
+		} finally  {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static void updateInventoryDetail(String domainName, Integer domainId, String login,
+			InventoryDetail inventoryDetail){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getWarehouse().updateInventoryDetail(ctx, inventoryDetail);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static Department getDepartment(String domainName, Integer domainId, String login,
+			Integer workplaceId, DepartmentFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getDepartment(ctx, workplaceId, filter);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+
+	public static LinkedList<Department> getDepartmentList(String domainName, Integer domainId, String login,
+			Integer workplaceId, DepartmentFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getDepartmentList(ctx, workplaceId, filter);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	// ------------------------------------------------------------------- STATS
 	public static StatParams createStatParams(String domainName, int domain, String user) {
 		AONContext ctx = null;

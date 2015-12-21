@@ -33,13 +33,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
 import com.code.aon.config.Series;
-import com.code.aon.config.Tax;
-import com.code.aon.config.enumeration.TaxType;
-import com.code.aon.customer.Customer;
 import com.code.aon.finance.enumeration.BillingPeriod;
-import com.code.aon.product.Brand;
-import com.code.aon.product.ProductCategory;
-import com.code.aon.product.ProductTag;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
@@ -65,6 +59,7 @@ import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -72,10 +67,16 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.product.Brand;
+import com.esferalia.aon.occam.api.model.product.ProductCategory;
+import com.esferalia.aon.occam.api.model.product.ProductTag;
+import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.warehouse.Department;
 
 
 
@@ -1492,8 +1493,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 							com.esferalia.aon.occam.api.model.product.ProductTag pt = new com.esferalia.aon.occam.api.model.product.ProductTag();
 							pt.setDomain(tag.getDomain());
 							pt.setId(tag.getId());
-							pt.setProduct(tag.getProduct().getId());
-							pt.setTag(tag.getTag().getId());
+							pt.setProduct(tag.getProduct());
+							pt.setTag(tag.getTag());
 							pts.add(pt);
 						}
 					}
@@ -1835,7 +1836,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	public Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Domain domain){
 		return DBCatalogue.getWorkplaces(domain,getUser());
 	}
-	public Vector<com.esferalia.aon.gwt.template.shared.Department> getDepartments(Domain domain, String workplaceDescription){
+	public LinkedList<Department> getDepartments(Domain domain, String workplaceDescription){
 		Workplace w = DBCatalogue.getWorkplace(domain, getUser(), workplaceDescription);
 		return DBCatalogue.getDepartments(domain, w.getId(), getUser().getLogin());
 	}

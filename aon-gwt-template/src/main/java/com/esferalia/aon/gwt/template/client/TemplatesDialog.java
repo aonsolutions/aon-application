@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
-import com.esferalia.aon.gwt.template.shared.Department;
 import com.esferalia.aon.gwt.template.shared.Dialog;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.Error;
@@ -17,6 +16,7 @@ import com.esferalia.aon.gwt.template.shared.WorkPlace;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -504,10 +504,10 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					ListBox lb = lbaux;
 					@Override
 					public void onChange(ChangeEvent event) {
-						item.getDepartments(getDomain(), lb.getItemText(lb.getSelectedIndex()), new AsyncCallback<Vector<Department>>() {
+						item.getDepartments(getDomain(), lb.getItemText(lb.getSelectedIndex()), new AsyncCallback<LinkedList<Department>>() {
 							
 							@Override
-							public void onSuccess(Vector<Department> result) {
+							public void onSuccess(LinkedList<Department> result) {
 								ListBox lb2 = new ListBox();
 								lb2.addItem("-");
 								for(Department w : result){

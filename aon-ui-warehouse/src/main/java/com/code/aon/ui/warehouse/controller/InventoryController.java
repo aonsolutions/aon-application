@@ -452,7 +452,8 @@ public class InventoryController extends BasicController implements IAuditableCo
 		Double qError = 0.0;
 		Integer i = 0;
 		Integer j = 0;
-		while(q < quantity &&  qError == 0.0){
+		Double quantity2 = Math.abs(quantity) ;
+		while(q < quantity2 &&  qError == 0.0){
 			
 			InvoiceDetail invoiceDetail = invoiceList.size() > i  ? invoiceList.get(i) : null;
 			IncomeDetail incomeDetail = incomeList.size() > j ? incomeList.get(j) : null;
@@ -474,17 +475,17 @@ public class InventoryController extends BasicController implements IAuditableCo
 				}
 				j++;
 			}
-			else qError = quantity;
+			else qError = quantity2;
 		}
 		if(qError != 0.0) return item.getPurchasePrice();
-		if(q == quantity){
+		if(q == quantity2){
 			Double fifoPrice = fifoList.stream().mapToDouble(x -> x.getPrice() * x.getQuantity()).sum();
-			return fifoPrice / quantity;
+			return fifoPrice / quantity2;
 		}
 		else{
 			Double fifoPrice = fifoList.stream().limit(fifoList.size()-1).mapToDouble(x -> x.getPrice() * (1 -(x.getDiscount()/100.0)) * x.getQuantity()).sum();
-			Double lastFifoPrice = fifoList.getLast().getPrice() * (1 - (fifoList.getLast().getDiscount()/100.0)) * (fifoList.getLast().getQuantity() - (q-quantity));
-			return (fifoPrice + lastFifoPrice) / quantity;
+			Double lastFifoPrice = fifoList.getLast().getPrice() * (1 - (fifoList.getLast().getDiscount()/100.0)) * (fifoList.getLast().getQuantity() - (q-quantity2));
+			return (fifoPrice + lastFifoPrice) / quantity2;
 		}
 	}
 	

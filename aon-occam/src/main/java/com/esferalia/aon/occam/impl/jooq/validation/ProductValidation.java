@@ -145,7 +145,7 @@ public class ProductValidation {
 	public static BiConsumer<ProductTag,AONContext> EXIST_TAG = (pt,ctx) -> {
 		int count = ctx.getDslContext().selectCount()
 				.from(TAG)
-				.where(TAG.ID.eq(pt.getTag()))
+				.where(TAG.ID.eq(pt.getTag().getId()))
 				.and(TAG.DOMAIN.eq(pt.getDomain()))
 				.fetchOne(0,int.class);
 		if (count>0) 
@@ -160,12 +160,12 @@ public class ProductValidation {
 				.from(PRODUCT_TAG)
 				.where(PRODUCT_TAG.DOMAIN.eq(pt.getDomain()))
 				.and(PRODUCT_TAG.PRODUCT.eq(pt.getProduct()))
-				.and(PRODUCT_TAG.TAG.eq(pt.getTag()))
+				.and(PRODUCT_TAG.TAG.eq(pt.getTag().getId()))
 				.fetchOne(0,int.class);
 		if (count>0){ 
 			String tag = ctx.getDslContext().select(TAG.NAME)
 					.from(TAG)
-					.where(TAG.ID.eq(pt.getTag()))
+					.where(TAG.ID.eq(pt.getTag().getId()))
 					.fetchOne().value1();
 			throw new AonCoreException(AonError.DUPLICATE_PRODUCT_TAG.format(tag));
 		}

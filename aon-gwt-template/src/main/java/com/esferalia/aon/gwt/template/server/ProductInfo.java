@@ -14,7 +14,7 @@ public class ProductInfo implements IsSerializable{
 	Vector<Item> item;
 	Integer row;
 	Boolean isProduct;
-	Set<com.code.aon.product.ProductTag> tags;
+	Set<ProductTag> tags;
 	Item downloadItem;
 
 	public Integer getRow() {
@@ -47,10 +47,10 @@ public class ProductInfo implements IsSerializable{
 	public void setItem(Vector<Item> item) {
 		this.item = item;
 	}
-	public Set<com.code.aon.product.ProductTag> getTags() {
+	public Set<ProductTag> getTags() {
 		return tags;
 	}
-	public void setTags(Set<com.code.aon.product.ProductTag> tags) {
+	public void setTags(Set<ProductTag> tags) {
 		this.tags = tags;
 	}
 	public Item getDownloadItem() {

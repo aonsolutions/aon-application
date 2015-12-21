@@ -18,8 +18,6 @@ import org.jooq.Record1;
 import org.jooq.Record8;
 import org.jooq.Result;
 
-import com.code.aon.registry.enumeration.RegistryAttachmentType;
-import com.esferalia.aon.carrier.enumeration.ShipmentStatus;
 import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.server.marketplace.XMLUtils;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
@@ -38,8 +36,10 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.ShipmentStatus;
 
 
 
@@ -48,7 +48,7 @@ public class DBMarketplace {
 	public static List<EcommerceProduct> getProductTemplatesList(Domain domain, User user){
 		LinkedList<Attach> attachList = AON.getAttachList(domain.getName(), domain.getId(), user.getLogin(),
 				filter -> filter.getDomainProperty().eq(domain.getId())
-				.and(filter.getTypeProperty().eq(((byte) RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.ordinal())))
+				.and(filter.getTypeProperty().eq((RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value())))
 				, AttachType.REGISTRY);
 		List<EcommerceProduct> list = new ArrayList<EcommerceProduct>();
 		attachList.stream().forEach(attach->{
@@ -104,7 +104,7 @@ public class DBMarketplace {
 								.from(SALES).join(DELIVERY).on(SALES.SERIES.eq(DELIVERY.SERIES).and(SALES.NUMBER.eq(DELIVERY.NUMBER)))
 								.where(SALES.DOMAIN.eq(domain.getId()))
 									.and(SALES.PURCHASE_REFERENCE.isNotNull())
-									.and(DELIVERY.SHIPPING_STATUS.eq((byte)ShipmentStatus.IN_AGENCY.ordinal()))
+									.and(DELIVERY.SHIPPING_STATUS.eq(ShipmentStatus.IN_AGENCY.value()))
 								.fetch();
 			
 
@@ -164,7 +164,7 @@ public class DBMarketplace {
 	public static void deleteTemplate(Domain domain, User user, String description){
 		AON.delete(domain.getName(), domain.getId(), user.getLogin(), 
 				filter -> filter.getDescriptionProperty().eq(description)
-				.and(filter.getTypeProperty().eq(((byte) RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.ordinal()))
+				.and(filter.getTypeProperty().eq((RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value()))
 				.and(filter.getDomainProperty().eq(domain.getId())))
 				, AttachType.REGISTRY);	
 	}
