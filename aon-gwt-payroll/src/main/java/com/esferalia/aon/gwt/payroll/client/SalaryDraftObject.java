@@ -32,7 +32,6 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
-import com.sun.star.beans.GetDirectPropertyTolerantResult;
 
 public class SalaryDraftObject implements IContextProvider {
 
