@@ -1144,7 +1144,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			
-			addItem("SLD-Fichero de Comunicaci\u00FAn de Datos Bancarios",
+			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios",
 					workplaceCmds[4] = new WorkplaceDBACommand(
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
@@ -1216,7 +1216,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 							CretaService.File.SOLICITUD_CONFIRMACION,
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addItem("SLD-Fichero de Comunicaci\u00FAn de Datos Bancarios",
+			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios",
 					enterpriseCommands[3] = new EnterpriseDBACommand(
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
