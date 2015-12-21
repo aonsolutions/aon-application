@@ -119,7 +119,7 @@ public interface CretaService {
 		COMUNICACION_DATOS_BANCARIOS{
 			@Override
 			public String getFilename() {
-				return "SLD-Fichero de Comunicaci\u00FAn de Datos Bancarios";
+				return "SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios";
 			}
 			
 			@Override

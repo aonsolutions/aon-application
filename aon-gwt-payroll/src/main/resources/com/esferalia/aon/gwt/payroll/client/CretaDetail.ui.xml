@@ -24,7 +24,7 @@
 	<ui:import field="com.esferalia.aon.gwt.payroll.shared.CretaService.File.*" />
 
 	<g:DockLayoutPanel unit="PX" >
-		<g:north size="92"  >
+		<g:north size="114"  >
 
 			<g:FlowPanel >
 
@@ -44,13 +44,28 @@
 					<g:HorizontalPanel >
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal" >
-								<g:Label styleName="aon-outputText" >Sistema de Liquidaci&oacute;n Directa (Proyecto Cret@)</g:Label>
+								<g:Label styleName="aon-outputText" >SLD (Proyecto Cret@)</g:Label>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
 								<g:Button ui:field='msjRecButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="Mensajes Recibidos" /> 
+							</g:HTMLPanel>
+						</g:HorizontalPanel>
+					</g:HorizontalPanel>
+				</g:FlowPanel>				
+
+				<g:FlowPanel styleName="aon-finding-title-toolbar" >
+					<g:HorizontalPanel >
+						<g:HTMLPanel styleName="aon-finding-title">
+							<g:HTMLPanel styleName="aon-finding-title-internal" >
+								<g:Label styleName="aon-outputText" >Comunicaciones</g:Label>
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+						<g:HorizontalPanel styleName="aon-finding-toolbar">
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
 								<g:Button ui:field='basesButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="{BASES.getFilename}" enabled="false"/> 
+								<g:Button ui:field='dbaButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="{COMUNICACION_DATOS_BANCARIOS.getFilename}" /> 
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
@@ -72,6 +87,7 @@
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
 				</g:FlowPanel>				
+
 
 				<g:FormPanel visible="false" ui:field="formPanel" method="{METHOD_POST}" action="{CRETA_URL}/{TRABAJADORES_TRAMOS.name}"  encoding="{ENCODING_MULTIPART}">
 					<g:FileUpload visible="false"  name="{TRABAJADORES_TRAMOS.name}" ui:field="fileUpload" />

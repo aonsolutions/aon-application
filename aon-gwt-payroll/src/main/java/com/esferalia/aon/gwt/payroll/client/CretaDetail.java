@@ -212,6 +212,10 @@ public abstract class CretaDetail extends Composite {
 		fileUpload.click();
 	}
 
+	@UiHandler("dbaButton")
+	void onClickDBAButton(ClickEvent e) {
+	}
+
 	@UiHandler("basesButton")
 	void onClickBasesButton(ClickEvent e) {
 		submitBases();
