@@ -150,7 +150,7 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		Invoice invoice = getInvoice();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)getTo();
 		if (invoiceDetail.getItem() != null && invoiceDetail.getItem().getId() != null) {
-			invoiceDetail.setVatPercent(!invoice.isVatFree() ? getVatPercent() : 0);
+			invoiceDetail.setVatPercent(isVatIncluded() ? getVatPercent() : 0);
 			invoiceDetail.setSurchargePercent(invoice.isSurcharge() ? getSurchargePercent() : 0);
 			invoiceDetail.setRetentionPercent(!invoice.isRetentionFree() ? getRetentionPercent() : 0);
 
@@ -171,6 +171,11 @@ public class InvoiceDetailController extends LinesController implements IFinance
 				invoiceDetail.setRetentionQuota(getRetentionQuota(invoiceDetail));
 			}
 		}
+	}
+
+	public boolean isVatIncluded() {
+		Invoice invoice = getInvoice();
+		return !invoice.isVatFree() || (!invoice.isSales() && (invoice.isIntracommunity() || invoice.isOtherISP()));
 	}
 
 	public double getVatPercent() {

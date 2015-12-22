@@ -726,6 +726,11 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return true;
 	}
 
+	public boolean isTaxFree() {
+		Invoice invoice = getInvoice();
+		return invoice.isVatFree() && (invoice.isRetentionFree() || !invoice.isWithholding());
+	}
+
 	public double getToInvoiceTotalQuantity() {
 		return getInvoiceTotalQuantity(getInvoice());
 	}

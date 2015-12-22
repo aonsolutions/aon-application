@@ -156,16 +156,19 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 	}
 
 	public double getInvoiceDetailTotal() throws ManagerBeanException {
-		InvoiceDetail invoiceDetail = (InvoiceDetail)this.getModel().getRowData();
-		return getTotal(invoiceDetail.getTaxableBase(), invoiceDetail.getVatQuota(), invoiceDetail.getRetentionQuota());
+		return getInvoiceDetailTotal((Invoice)getMasterController().getTo(), (InvoiceDetail)this.getModel().getRowData());
 	}
 
 	public double getToInvoiceDetailTotal() {
-		InvoiceDetail invoiceDetail = (InvoiceDetail)this.getTo();
-		return getTotal(invoiceDetail.getTaxableBase(), invoiceDetail.getVatQuota(), invoiceDetail.getRetentionQuota());
+		return getInvoiceDetailTotal((Invoice)getMasterController().getTo(), (InvoiceDetail)this.getTo());
+	}
+	public void setToInvoiceDetailTotal(double toInvoiceDetailTotal) {
 	}
 
-	public void setToInvoiceDetailTotal(double toInvoiceDetailTotal) {
+	private double getInvoiceDetailTotal(Invoice invoice, InvoiceDetail invoiceDetail) {
+		double vatQuota = (!invoice.isVatFree()) ? invoiceDetail.getVatQuota() : 0;
+		double retentionQuota = (!invoice.isRetentionFree()) ? invoiceDetail.getRetentionQuota() : 0;
+		return getTotal(invoiceDetail.getTaxableBase(), vatQuota, retentionQuota);
 	}
 
 	private double getTotal(double taxableBase, double vatQuota, double retentionQuota) {

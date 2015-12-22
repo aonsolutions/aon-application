@@ -187,10 +187,10 @@
 			</aon:outputText>
 			<aon:outputText styleClass="aon-italic"
 				value="#{bundle.aon_total} #{bundle.aon_tax_included}:"
-				rendered="#{(!invoiceController.to.vatFree or !invoiceController.to.retentionFree) and detailController.to.item.id != null}" />
+				rendered="#{!invoiceController.taxFree and detailController.to.item.id != null}" />
 			<aon:outputText styleClass="aon-padding-right aon-italic aon-bold" 
 				value="#{detailController.total}"
-				rendered="#{(!invoiceController.to.vatFree or !invoiceController.to.retentionFree) and detailController.to.item.id != null}">
+				rendered="#{!invoiceController.taxFree and detailController.to.item.id != null}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 		</aon:panelGrid>
