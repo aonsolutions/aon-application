@@ -122,7 +122,7 @@
 							<aon:if test="#{aonRole.accountingOperator}">
 								<aon:column>
 									<f:facet name="header">
-										<aon:outputLabel for="Account_id-Purchase" value="#{bundle.product_expense_account}" />
+										<aon:outputLabel for="Account_id" value="#{bundle.product_expense_account}" />
 									</f:facet>
 									<aon:div style="width: 90%;" rendered="#{formList}" ajaxRendered="true">
 										<aon:outputText value="#{to.product.purchaseAccount.code}" />
@@ -132,15 +132,16 @@
 									</aon:div>
 									<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
 										<ui:param name="lookupTo" value="#{expenseItem.to.product.purchaseAccount}" />
-										<ui:param name="lookupSuffix" value="-Purchase" />
 										<ui:param name="lookupRendered" value="#{formEdit}" />
+										<ui:param name="idRequired" value="#{true}" />						
 										<ui:param name="skipSuggestText" value="#{true}" />
 									</ui:include>
 									<f:facet name="footer">
 										<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
 											<ui:param name="lookupTo" value="#{expenseItem.to.product.purchaseAccount}" />
-											<ui:param name="lookupSuffix" value="-Purchase-New" />
+											<ui:param name="lookupSuffix" value="-New" />
 											<ui:param name="lookupRendered" value="#{formNew}" />
+											<ui:param name="idRequired" value="#{true}" />						
 											<ui:param name="skipSuggestText" value="#{true}" />
 										</ui:include>
 									</f:facet>
