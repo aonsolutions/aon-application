@@ -38,8 +38,13 @@
 						rendered="#{!inventory.to.closed}"
 						iconClass="aon-icon-accept"
 						actionListener="#{inventory.onStartAdjustment}"
-						oncomplete="#{rich:element('inventoryDetailRefreshButton')}.click()"
-						reRender="showInventoryAdjustmentWindow"/>
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')"					
+						reRender="showInventoryAdjustmentWindow">
+						<f:setPropertyActionListener
+								target="#{warehouseTransfer.workplace}"
+								value="#{inventory.to.warehouse.workPlace}" />
+					</aon:menuItem>
 					
 					<aon:if test="#{aonRole.accountingManager}">
 						<aon:menuItem id="inventory-revert"
@@ -259,6 +264,7 @@
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{allItemLookup}" />
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<aon:if test="#{!inventory.to.closed}" >
 			<ui:include src="/com/code/aon/ui/warehouse/facelet/inventory/modalInventoryAdjustment.xhtml" />
 		</aon:if>		

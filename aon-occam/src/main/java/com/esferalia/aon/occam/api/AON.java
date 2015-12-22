@@ -90,6 +90,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
 import com.esferalia.aon.occam.impl.jooq.AgreementImpl;
@@ -2148,6 +2149,17 @@ public class AON {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getWarehouse().getDepartmentList(ctx, workplaceId, filter);
 		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static LinkedList<Series> getSeriesDeliveryList(String domainName, Integer domainId, String login,
+			Integer scopeId){	
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getSeriesDeliveryList(ctx, scopeId);
+		} finally {
 			if(ctx != null) ctx.close();
 		}
 	}

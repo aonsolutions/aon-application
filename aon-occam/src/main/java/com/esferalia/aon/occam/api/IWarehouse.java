@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 
 public interface IWarehouse {
@@ -60,5 +61,10 @@ public interface IWarehouse {
 	
 	Department getDepartment(AONContext ctx, Integer workplaceId, DepartmentFilter filter);
 	LinkedList<Department> getDepartmentList(AONContext ctx, Integer workplaceId, DepartmentFilter filter);
-
+	
+	// 	***********************************************
+	// 	************************************ SERIES ***
+	// 	***********************************************
+	
+	LinkedList<Series> getSeriesDeliveryList(AONContext ctx, Integer scopeId);
 }
