@@ -93,10 +93,11 @@
 							</ui:include>
 							<aon:panelGroup id="invoiceDetailItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
 								<aon:inputTextarea id="InvoiceDetail_description"
+									style="#{!controller.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}"
 									value="#{controller.to.description}"
-									rendered="#{controller.to.item != null and controller.to.item.id != null}"
 									cols="60" rows="#{!controller.longDescription?1:5}"
-									style="#{!controller.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+									rendered="#{controller.to.item != null and controller.to.item.id != null}"
+									ajaxSingle="true">
 									<f:validateLength maximum="1024" />
 								</aon:inputTextarea>
 								<aon:commandLink id="InvoiceDetail_description_short" immediate="true"
@@ -131,10 +132,11 @@
 									</ui:include>
 									<aon:panelGroup id="invoiceDetailItemNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
 										<aon:inputTextarea id="InvoiceDetail_description-New"
+											style="#{!controller.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}"
 											value="#{controller.to.description}"
-											rendered="#{controller.to.item != null and controller.to.item.id != null}"
 											cols="60" rows="#{!controller.longDescription?1:5}"
-											style="#{!controller.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+											rendered="#{controller.to.item != null and controller.to.item.id != null}"
+											ajaxSingle="true">
 											<f:validateLength maximum="1024" />
 										</aon:inputTextarea>
 										<aon:commandLink id="InvoiceDetail_description_short-New" immediate="true"
