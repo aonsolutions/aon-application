@@ -67,10 +67,11 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	private final Pattern invoiceNumberPattern = Pattern.compile("(\\d{1})\\.(\\d+)E\\.{0,1}(\\d{1,2})");
 	private Matcher matcher = null;
 	private ArrayList<String> headers;
-	private Map<String, String> supplierAccount = new HashMap<>();
+	private Map<String, String> supplierAccount;
+	private Map<String, String> supplierNames;
 	
 	private final String SUPPLIER_DOCUMENT = "CIFEmisora";
-	private final String SUPPLIER_NAME = "Nombre";
+	private final String CONSUMER_NAME = "Nombre";
 	private final String SUPPLIER_CODE = "CodigoEmisora";
 	private final String INVOICE_DOCUMENT = "NumeroFactura";
 	private final String INVOICE_DATE = "FechaFactura";
@@ -87,7 +88,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	
 	private final String[] SUPPORTED_COLUMNS = {
 			SUPPLIER_DOCUMENT,
-			SUPPLIER_NAME,
+			CONSUMER_NAME,
 			SUPPLIER_CODE,
 			INVOICE_DOCUMENT,
 			INVOICE_DATE,
@@ -151,16 +152,25 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	        writer.print("totalFactura");
 	        writer.println();
 	        
+	        supplierAccount = new HashMap<>();
+	    	supplierNames = new HashMap<>();
+	        
         	int lineCount=0;
         	while(rowIterator.hasNext()){
         		row = rowIterator.next();
         		
         		String supplierDocument = getStringCellValue(row.getCell(headers.indexOf(SUPPLIER_DOCUMENT)));
-        		String supplierName = getStringCellValue(row.getCell(headers.indexOf(SUPPLIER_NAME)));
+        		String consumerName = getStringCellValue(row.getCell(headers.indexOf(CONSUMER_NAME)));
         		String supplierCode = getStringCellValue(row.getCell(headers.indexOf(SUPPLIER_CODE)));
-        		String account = obtainSupplierAccount(supplierDocument, supplierName);
         		
+        		String supplierName = supplierNames.get(supplierDocument);
+        		if(supplierName==null || StringUtils.isBlank(supplierName)){
+        			loadSupplierName(supplierDocument, consumerName);
+        			supplierName = supplierNames.get(supplierDocument);
+        		}
+        		String account = supplierAccount.get(supplierDocument);
         		if(account==null || StringUtils.isBlank(account)){
+        			loadSupplierAccount(supplierDocument);
         			account = String.valueOf( 400000000 + Double.valueOf(supplierCode).intValue() );
         			supplierAccount.put(supplierDocument, account);
         			logPanel.warn("El proveedor " + supplierName + " ("+supplierDocument+")" + " no tiene cuenta asignada. Se le asigna la cuenta " + account);
@@ -314,32 +324,57 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 		return false;
 	}
 	
-	private String obtainSupplierAccount(String supplierDocument, String supplierName) throws ManagerBeanException {
+	private void loadSupplierName(String supplierDocument, String name) throws ManagerBeanException {
 		supplierDocument = StringUtils.trim(supplierDocument);
-		String account = null;
-		if(supplierAccount!=null && supplierAccount.containsKey(supplierDocument)){
-			account = supplierAccount.get(supplierDocument);
-		} else {
-			if(StringUtils.isNotBlank(supplierDocument)){
-				LogPanelController logPanel = LogPanelController.getInstance();
-				IManagerBean bean = BeanManager.getManagerBean(Supplier.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SUPPLIER_REGISTRY_DOCUMENT), supplierDocument);
-				List<ITransferObject> list = bean.getList(criteria);
-				if(list==null || list.size()==0){
-					logPanel.warn("Se procede a crear un nuevo proveedor " + supplierName + " (" + supplierDocument +")" );
-				} else if(list!=null && list.size()==1){
-					Supplier supplier = (Supplier) list.get(0);
-					if(supplier.getAccount()!=null && StringUtils.isNotBlank(supplier.getAccount().getCode())){
-						account = supplier.getAccount().getCode();
-						supplierAccount.put(supplierDocument, account);
-					}
-				} else {
-					logPanel.error("Existen varios registros de proveedor con el documento " + supplierDocument);
+		name = StringUtils.trim(name);
+		if(supplierNames==null){
+			supplierNames = new HashMap<>();
+		}
+		if(!supplierNames.containsKey(supplierDocument)){
+			LogPanelController logPanel = LogPanelController.getInstance();
+			Supplier supplier = obtainSupplier(supplierDocument);
+			if(supplier==null || supplier.getId()==null){
+				logPanel.warn("Se procede a crear un nuevo proveedor " + name + " (" + supplierDocument +")" );
+				supplierNames.put(supplierDocument, name);
+			} else {
+				supplierNames.put(supplierDocument, supplier.getRegistry().getFullName());
+				if(supplier.getAccount()!=null && StringUtils.isNotBlank(supplier.getAccount().getCode())){
+					supplierAccount.put(supplierDocument, supplier.getAccount().getCode());
 				}
 			}
 		}
-		return account;
+	}
+	
+	private void loadSupplierAccount(String supplierDocument) throws ManagerBeanException {
+		supplierDocument = StringUtils.trim(supplierDocument);
+		if(supplierAccount==null){
+			supplierAccount = new HashMap<>();
+		}
+		if(!supplierAccount.containsKey(supplierDocument)){
+			Supplier supplier = obtainSupplier(supplierDocument);
+			if(supplier!=null && supplier.getId()!=null){
+				if(supplier.getAccount()!=null && StringUtils.isNotBlank(supplier.getAccount().getCode())){
+					supplierAccount.put(supplierDocument, supplier.getAccount().getCode());
+				}
+			}
+		}
+	}
+	
+	private Supplier obtainSupplier(String supplierDocument) throws ManagerBeanException {
+		if(StringUtils.isNotBlank(supplierDocument)){
+			LogPanelController logPanel = LogPanelController.getInstance();
+			IManagerBean bean = BeanManager.getManagerBean(Supplier.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SUPPLIER_REGISTRY_DOCUMENT), supplierDocument);
+			List<ITransferObject> list = bean.getList(criteria);
+			if(list!=null && list.size()>0){
+				if(list.size()>1){
+					logPanel.error("Existen varios registros de proveedor con el documento " + supplierDocument);
+				}
+				return (Supplier) list.get(0);
+			}
+		}
+		return null;
 	}
 	
 	private String getFormatInvoiceNumber(String value) {
@@ -393,10 +428,10 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 			controller.setLoadPressed(false);
 		}
 	}
-
-
-
-
+	
+	
+	
+	
 
 	///////////////////////////////
 	///////////////////////////////

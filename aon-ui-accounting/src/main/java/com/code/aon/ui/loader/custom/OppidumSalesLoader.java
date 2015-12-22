@@ -73,7 +73,7 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 	private final Pattern cccPattern = Pattern.compile("(\\d{1})\\.(\\d+)E\\.{0,1}\\d{1,2}");
 	private Matcher matcher = null;
 	private ArrayList<String> headers;
-	private Map<String, String> customerAccount = new HashMap<>();
+	private Map<String, String> customerAccount;
 	
 	private final String CUSTOMER_DOCUMENT = "Nif_RazonSocial";
 	private final String CUSTOMER_NAME = "Nombre_RazonSocial";
@@ -165,6 +165,7 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 	        
 	        String maxAccountCode = obtainMaxAccountCode();
 	        int emptyAccountCount = 0;
+	        customerAccount = new HashMap<>();
 	        
         	int lineCount=0;
         	while(rowIterator.hasNext()){
