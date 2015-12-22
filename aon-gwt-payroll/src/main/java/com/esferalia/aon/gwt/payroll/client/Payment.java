@@ -306,7 +306,8 @@ public class Payment extends ResizeComposite {
 		onTaxListBoxChange(null);
 		taxTextBox.setExpression(getExpression(listValue, expression));
 		showOrHideResetTaxButton();
-		taxTextBox.enable(!SpecialExpresion.isReadOnly(expression));
+		//taxTextBox.enable(!SpecialExpresion.isReadOnly(expression));
+		enableCustomTax(listValue.equals(CUSTOM) && !SpecialExpresion.isReadOnly(expression));
 	}
 
 	public String getQuoteExpression() {
@@ -320,7 +321,8 @@ public class Payment extends ResizeComposite {
 		onQuoteListBoxChange(null);
 		quoteTextBox.setExpression(getExpression(listValue, expression));
 		showOrHideResetQuoteButton();
-		quoteTextBox.enable(!SpecialExpresion.isReadOnly(expression));
+		//quoteTextBox.enable(!SpecialExpresion.isReadOnly(expression));
+		enableCustomQuote(listValue.equals(CUSTOM) && !SpecialExpresion.isReadOnly(expression));
 	}
 
 	public void setType(com.esferalia.aon.gwt.payroll.shared.Payment.Type type) {
@@ -464,7 +466,6 @@ public class Payment extends ResizeComposite {
 	@UiHandler("quoteTextBox")
 	void onQuoteTextBoxChange(BlurEvent event) {
 		showOrHideResetQuoteButton();
-
 	}
 
 	@UiHandler({ "resetQuoteButton" })
@@ -514,7 +515,7 @@ public class Payment extends ResizeComposite {
 
 	public String getExpression(String listValue, String src) {
 		if (NONE.equals(listValue)) {
-			return null;
+			return "0.00"; // Avoid null' 
 		}
 		if (ALL.equals(listValue)) {
 			return "_P";
