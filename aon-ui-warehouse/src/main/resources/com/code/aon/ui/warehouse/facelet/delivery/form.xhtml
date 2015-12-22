@@ -198,7 +198,7 @@
 					<aon:outputLabel for="Delivery_workPlace" 
 						value="#{bundle.purchase_workplace}" />
 					<aon:selectOneMenu id="Delivery_workPlace" 
-						value="#{delivery.to.workPlace}"
+						value="#{delivery.to.workPlace}" required="#{true}"
 						disabled="#{deliveryDetail.model.rowCount>0 and delivery.warehouse.workPlace.id!=null}"
 						valueChangeListener="#{delivery.onWorkPlaceChanged}" 
 						reRender="Delivery_warehouse,Delivery_scope">
@@ -208,7 +208,7 @@
 					<aon:outputLabel for="Delivery_warehouse" 
 						value="#{bundle.aon_module_warehouse}" />
 					<aon:selectOneMenu id="Delivery_warehouse" 
-						value="#{delivery.warehouse}"
+						value="#{delivery.warehouse}" required="#{true}"
 						disabled="#{deliveryDetail.model.rowCount>0}">
 						<f:selectItems value="#{delivery.warehouses}" />
 					</aon:selectOneMenu>

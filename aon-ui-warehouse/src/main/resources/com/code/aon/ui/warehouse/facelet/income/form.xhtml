@@ -180,13 +180,13 @@
 					<aon:outputLabel for="Income_workPlace" 
 						value="#{bundle.purchase_workplace}" />
 					<aon:selectOneMenu id="Income_workPlace" 
-						value="#{income.to.workPlace}"
+						value="#{income.to.workPlace}" required="#{true}"
 						disabled="#{incomeDetail.model.rowCount>0 and income.warehouse.workPlace.id!=null}"
 						valueChangeListener="#{income.onWorkPlaceChanged}" 
 						reRender="Income_warehouse, Income_scope">
-						<c:if test="#{fn:length(companyCollections.currentUserWorkPlaces) > 1}" >
+						<aon:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
 							<f:selectItem itemLabel=" - " itemValue="#{null}" />
-						</c:if>
+						</aon:if>
 						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 					</aon:selectOneMenu>
 
