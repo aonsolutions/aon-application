@@ -166,7 +166,44 @@
 				</property>
 			</activation>
 			<dependencies>
-			
+				<dependency>
+					<groupId>com.code.aon</groupId>
+					<artifactId>aon.pool</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.mchange</groupId>
+					<artifactId>c3p0</artifactId>
+					<version>0.9.2</version>
+				</dependency>
+				<dependency>
+					<groupId>com.mchange</groupId>
+					<artifactId>mchange-commons-java</artifactId>
+					<version>0.2.3.3</version>
+				</dependency>
+							<dependency>
+					<groupId>commons-lang</groupId>
+					<artifactId>commons-lang</artifactId>
+					<version>2.5</version>
+				</dependency>
+
+				<dependency>
+					<groupId>commons-io</groupId>
+					<artifactId>commons-io</artifactId>
+					<version>1.4</version>
+				</dependency>
+
+				<dependency>
+					<groupId>org.jooq</groupId>
+					<artifactId>jooq</artifactId>
+					<version>3.5.2</version>
+				</dependency>
+
+				<dependency>
+					<groupId>commons-net</groupId>
+					<artifactId>commons-net</artifactId>
+					<version>3.3</version>
+				</dependency>
 			</dependencies>
 			<build>
 				<plugins>
@@ -243,7 +280,7 @@
 									<filemode>755</filemode>
 									<username>root</username>
 									<groupname>root</groupname>
-									<directory>/usr/share/aon-google-apis/bin</directory>
+									<directory>/usr/share/aon-ui-warehouse/bin</directory>
 									<sources>
 										<source>
 											<location>src/main/scripts</location>
