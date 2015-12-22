@@ -38,7 +38,7 @@ public class UndeductibleInvoiceDetailController extends InvoiceDetailController
 		if (invoice.getRegistry() == null || invoice.getRegistry().getId() == null) {
 			Creditor creditor = obtainExpenseLastCreditor(item);
 			if (creditor != null) {
-				((ExpenseInvoiceController)getMasterController()).creditorChanged(creditor);
+				((UndeductibleInvoiceController)getMasterController()).creditorChanged(creditor);
 			}
 		}
 	}
