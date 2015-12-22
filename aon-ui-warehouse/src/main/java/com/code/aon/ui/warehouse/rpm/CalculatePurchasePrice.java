@@ -5,6 +5,7 @@ import static org.apache.commons.cli.HelpFormatter.DEFAULT_SYNTAX_PREFIX;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
-import com.code.aon.google.apis.jooq.DBSync;
+import com.code.aon.pool.AonConnectionException;
+import com.code.aon.pool.ConnectionInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -196,19 +198,51 @@ public class CalculatePurchasePrice {
 		return Integer.parseInt(date.substring(6));
 	}
 	
+	public static Map<String, String> getDomains() throws AonConnectionException {
+		ConnectionInfo connectionInfo = ConnectionInfo
+				.getDefaultConnectionInfo();
+		return  connectionInfo.getDomains();
+	}
+	
+	public static Map<String, Integer> getDomainMap() throws AonConnectionException {
+		ConnectionInfo connectionInfo = ConnectionInfo
+				.getDefaultConnectionInfo();
+		return  connectionInfo.getDomainMap();
+	}
+	
+	public static Map<String, String> initializeDomains(){
+		Map<String, String> map  = new HashMap<String, String>();
+		try {
+			map =  getDomains();
+		} catch (AonConnectionException e) {
+			e.printStackTrace();
+		}
+		return map;
+	}
+	
+	public static Map<String, Integer> initializeDomainMap(){
+		Map<String, Integer> map  = new HashMap<String, Integer>();
+		try {
+			map =  getDomainMap();
+		} catch (AonConnectionException e) {
+			e.printStackTrace();
+		}
+		return map;
+	}
+	
 	public static void main(String[] args) {
 		parse(args);
-		Map<String, Integer> domainMap = DBSync.initializeDomainMap();
+		Map<String, Integer> domainMap = initializeDomainMap();
 		if (domains == null || domains.length == 0 || domains[0].equals("ALL")) {
 			// Obtiene todos los dominios de la BD.
-			Map<String, String> allDomains = DBSync.initializeDomains();
+			Map<String, String> allDomains = initializeDomains();
 			// Ordena los dominios por orden alfabetico.
 			List<String> list = new ArrayList<String>(allDomains.keySet());
 			Collections.sort(list, (String s1, String s2) -> s1.compareTo(s2));
 			domains = (String[]) list.toArray();
 		}
 		for (String domainName : domains){
-			System.out.println(" DOMAIN -> "+ domainName);
+			System.out.println(" DOMAIN -> "+ domainName + " ID " + domainMap.get(domainName));
 			Domain domain = AON.getDomain(domainName, domainMap.get(domainName), login);
 			Date start = AonDateUtils.getDate(getYear(startDate), getMonth(startDate), getDay(startDate));
 			Date end = AonDateUtils.getDate(getYear(endDate), getMonth(endDate), getDay(endDate));
