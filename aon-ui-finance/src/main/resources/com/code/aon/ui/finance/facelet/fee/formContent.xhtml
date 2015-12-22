@@ -61,10 +61,13 @@
 	</aon:div>
 
 	<aon:outputLabel for="CustomerFee_quantity" value="#{bundle.aon_quantity}" />
-	<aon:panelGrid columns="5" columnClasses="aon-width-150,aon-width-60,aon-width-100,aon-width-40,aon-width-auto">
+	<aon:panelGrid columns="5" columnClasses="aon-width-150,aon-width-60,aon-width-100,aon-width-50,aon-width-auto">
 		<aon:inputText id="CustomerFee_quantity" 
 			value="#{controller.to.quantity}" 
-			required="true" size="2" />
+			required="true" size="2"
+			valueChangeListener="#{controller.onQuantityChanged}"
+			reRender="CustomerFee_price,CustomerFee_discount"
+			focus="CustomerFee_price" />
 
 		<aon:outputLabel for="CustomerFee_price" value="#{bundle.aon_price}"
 			styleClass="aon-margin-right" />
