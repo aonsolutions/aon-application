@@ -1,22 +1,19 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Map;
+import java.util.ArrayList;
 
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod3902014 implements Serializable {
+@SuppressWarnings("serial")
+public class Mod3902015 implements Serializable {
 
-	private static final long serialVersionUID = -6573468107163112737L;
-	
 	private static final String LEGAL_ENTITY_PATTERN = "^[0-9|X|Y|Z].*";
 
 	public static class Activity implements Serializable {
 
-		private static final long serialVersionUID = -1202033752419394011L;
-		
 		private String description;
 		private String key;
 		private String epigraph;
@@ -43,8 +40,6 @@ public class Mod3902014 implements Serializable {
 
 	public static class Address implements Serializable {
 
-		private static final long serialVersionUID = -1371668275083259023L;
-		
 		private String rdocument;
 		private String rname;
 		private String rstreetType;
@@ -157,9 +152,7 @@ public class Mod3902014 implements Serializable {
 	
 	public static class SimpliedRegimeActivity implements Serializable {
 
-		private static final long serialVersionUID = -9079100575010321532L;
-		
-		private String epigrafe;
+	    private String epigrafe;
 	    private double unit1;
 	    private double amount1;
 	    private double unit2;
@@ -350,9 +343,7 @@ public class Mod3902014 implements Serializable {
 
 	public static class FarmerRegimeActivity implements Serializable {
 		
-		private static final long serialVersionUID = -4804784023604845693L;
-		
-		protected String codigo;
+	    protected String codigo;
 	    protected double incomes;
 	    protected double quotaIndex;
 	    protected double accrualQuota;
@@ -400,8 +391,6 @@ public class Mod3902014 implements Serializable {
 
 	public static class Mod390Detail implements Serializable {
 
-		private static final long serialVersionUID = 3233560801623501230L;
-		
 		private Mod390DetailKey key;
 		private double taxableBase;
 		private double percent;
@@ -732,9 +721,6 @@ public class Mod3902014 implements Serializable {
 	}
 	
 	public static class Prorrata implements Serializable {
-		
-		private static final long serialVersionUID = 8727162318077358277L;
-		
 		private String activity;
 		private String cnae;
 		private double amount;
@@ -856,6 +842,9 @@ public class Mod3902014 implements Serializable {
 	private double box82;
 	private double box83;
 	
+	private double box658;
+	private double box659;
+	
 	private double box84;
 	private double box85;
 	private double box86;
@@ -901,7 +890,7 @@ public class Mod3902014 implements Serializable {
 	private double box656;
 	private double box657;
 	
-	private ArrayList<Prorrata> prorratas = new ArrayList<Mod3902014.Prorrata>();
+	private ArrayList<Prorrata> prorratas = new ArrayList<Mod3902015.Prorrata>();
 	
 	public Integer getId() {
 		return id;
@@ -912,26 +901,30 @@ public class Mod3902014 implements Serializable {
 	public int getDomain() {
 		return domain;
 	}
-	public void setDomain(int domain) {
+	public Mod3902015 setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
 	public int getEnterprise() {
 		return enterprise;
 	}
-	public void setEnterprise(int enterprise) {
+	public Mod3902015 setEnterprise(int enterprise) {
 		this.enterprise = enterprise;
+		return this;
 	}
 	public String getEnterpriseName() {
 		return enterpriseName;
 	}
-	public void setEnterpriseName(String enterpriseName) {
+	public Mod3902015 setEnterpriseName(String enterpriseName) {
 		this.enterpriseName = enterpriseName;
+		return this; 
 	}
 	public int getYear() {
 		return year;
 	}
-	public void setYear(int year) {
+	public Mod3902015 setYear(int year) {
 		this.year = year;
+		return this;
 	}
 	public boolean is2013() {
 		return (this.year == 2013); 
@@ -985,14 +978,16 @@ public class Mod3902014 implements Serializable {
 	public String getDocument() {
 		return document;
 	}
-	public void setDocument(String document) {
+	public Mod3902015 setDocument(String document) {
 		this.document = document;
+		return this;
 	}
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
+	public Mod3902015 setName(String name) {
 		this.name = name;
+		return this;
 	}
 	public String getFirstSurname() {
 		return firstSurname;
@@ -1281,6 +1276,18 @@ public class Mod3902014 implements Serializable {
 	}
 	public void setBox83(double box83) {
 		this.box83 = box83;
+	}
+	public double getBox658() {
+		return box658;
+	}
+	public void setBox658(double box658) {
+		this.box658 = box658;
+	}
+	public double getBox659() {
+		return box659;
+	}
+	public void setBox659(double box659) {
+		this.box659 = box659;
 	}
 	public double getBox84() {
 		return box84;

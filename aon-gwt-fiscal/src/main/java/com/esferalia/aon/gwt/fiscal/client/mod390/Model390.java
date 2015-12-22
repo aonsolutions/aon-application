@@ -10,8 +10,9 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.mod390.e2014.Model3902014;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
@@ -23,13 +24,21 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 
 public class Model390 extends MainEntryPoint {
 
-	static interface IMod390CallBack {
+	public static interface IModel390 {
+		void prepareNew();
+		void select(Mod390 m390);
+		void onNew();
+	}	
+
+	public static interface IMod390CallBack {
 		void onCancel();
 	}	
 
@@ -39,7 +48,7 @@ public class Model390 extends MainEntryPoint {
 	private static final Model390Binder MODEL_390_BINDER = GWT
 			.create(Model390Binder.class);
 
-	private Mod3902014 mod390;
+	private Mod390 mod390;
 	private FiscalServiceAsync fiscalService;
 	private NewContextMenu newContextMenu;
 
@@ -52,9 +61,8 @@ public class Model390 extends MainEntryPoint {
 	DeckLayoutPanel deckPanel;
 	@UiField
 	DockLayoutPanel listPanel;
-	@UiField(provided = true)
-	Model3902014 formPanel;
-
+	@UiField
+	SimpleLayoutPanel formPanel;
 
 	@UiField(provided = true)
 	Model390Table table;
@@ -62,21 +70,27 @@ public class Model390 extends MainEntryPoint {
 	@UiField
 	Button newButton;
 	
+	private IMod390CallBack mod390CallBack = new IMod390CallBack() {
+		
+		@Override
+		public void onCancel() {
+			Model390.this.onCancel();
+		}
+	};
+
+	
 	@Override
 	public void onModuleLoad() {
 		AON.ensureInjected();
 
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
 		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
-		IMod390CallBack mod390CallBack = new IMod390CallBack() {
-			
+		table = new Model390Table(new Handler() {
 			@Override
-			public void onCancel() {
-				Model390.this.onCancel();
+			public void onSelectionChange(SelectionChangeEvent event) {
+				select(table.getSelected());
 			}
-		};
-		formPanel = new Model3902014(mod390CallBack);
-		table = new Model390Table(new Mod390SelectionHandler());
+		});
 		newContextMenu = new NewContextMenu();
 
 		// Create the UI defined in Employee.ui.xml.
@@ -99,44 +113,34 @@ public class Model390 extends MainEntryPoint {
 		return $wnd.getCurrentDomain();
 	}-*/;
 
-	class Mod390SelectionHandler implements SelectionChangeEvent.Handler {
-		@Override
-		public void onSelectionChange(SelectionChangeEvent event) {
-			Mod3902014 sel = table.getSelected();
-			fiscalService.getMod390(getCurrentDomainName(), getCurrentDomain(),
-					sel.getId(), new AsyncCallback<Mod3902014>() {
-				@Override
-				public void onSuccess(Mod3902014 selected) {
-					if (selected == null) {
-						DialogMessages.alertErrorWidget(AON.MSG.unableToFindMod190());
-					} else {
-						select(selected);
-						int i = deckPanel.getWidgetIndex(formPanel);
-						deckPanel.showWidget(i);
-						formPanel.prepareNew();
-					}
-				}
-
-				@Override
-				public void onFailure(Throwable caught) {
-					DialogMessages.alertErrorWidget(AON.MSG.unableToReadMod190(caught.getMessage()));
-				}
-			});
-		}
+	private void select(Mod390 m390) {
+		Model3902014 model3902014 = new Model3902014(mod390CallBack);
+		model3902014.prepareNew();
+		formPanel.setWidget(model3902014);
+		int i = deckPanel.getWidgetIndex(formPanel);
+		deckPanel.showWidget(i);
+		model3902014.select(m390);		
 	}
-
-	private void select(Mod3902014 m390) {
-		formPanel.select(m390);
+	
+	private void newModel(int year) {
+		Model3902014 model3902014 = new Model3902014(mod390CallBack);
+		model3902014.prepareNew();
+		formPanel.setWidget(model3902014);
+		int i = deckPanel.getWidgetIndex(formPanel);
+		deckPanel.showWidget(i);
+		model3902014.onNew();		
 	}
 
 	@UiHandler("table")
 	void onTableRangeChange(RangeChangeEvent event) {
 		fiscalService.getMod390s(getCurrentDomainName(), getCurrentDomain(),
-				new AsyncCallback<LinkedList<Mod3902014>>() {
+				new AsyncCallback<LinkedList<Mod390>>() {
 					@Override
-					public void onSuccess(LinkedList<Mod3902014> result) {
+					public void onSuccess(LinkedList<Mod390> result) {
 						if (result == null || result.size() == 0) {
-							onNewButtonClick(null);
+							int i = deckPanel.getWidgetIndex(formPanel);
+							deckPanel.showWidget(i);
+							newModel(2015);
 						} else {
 							int i = deckPanel.getWidgetIndex(listPanel);
 							table.setRowData(result);
@@ -184,9 +188,7 @@ public class Model390 extends MainEntryPoint {
 			addItem(FiscalModelType.M390,AON.MSG.newSomething( "390 - 2013" ), new ScheduledCommand() {
 						@Override
 						public void execute() {
-							int i = deckPanel.getWidgetIndex(formPanel);
-							deckPanel.showWidget(i);
-							formPanel.onNewButtonClick(null);
+							newModel(2013);
 						}
 			});
 			return this; 
@@ -195,9 +197,7 @@ public class Model390 extends MainEntryPoint {
 			addItem(FiscalModelType.M390,AON.MSG.newSomething( "390 - 2014" ), new ScheduledCommand() {
 						@Override
 						public void execute() {
-							int i = deckPanel.getWidgetIndex(formPanel);
-							deckPanel.showWidget(i);
-							formPanel.onNewButtonClick(null);
+							newModel(2014);
 						}
 			});
 			return this; 
@@ -206,9 +206,7 @@ public class Model390 extends MainEntryPoint {
 			addItem(FiscalModelType.M390,AON.MSG.newSomething( "390 - 2015" ), new ScheduledCommand() {
 						@Override
 						public void execute() {
-							int i = deckPanel.getWidgetIndex(formPanel);
-							deckPanel.showWidget(i);
-							formPanel.onNewButtonClick(null);
+							newModel(2015);
 						}
 			});
 			return this; 

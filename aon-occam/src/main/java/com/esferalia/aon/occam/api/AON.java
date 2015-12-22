@@ -66,8 +66,10 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
@@ -1519,7 +1521,7 @@ public class AON {
 	}
 
 	// ----------------------------------MODELO 390
-	public static LinkedList<Mod3902014> getMod390s(String domainName, int domainId, String login) {
+	public static LinkedList<Mod390> getMod390s(String domainName, int domainId, String login) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -1530,76 +1532,124 @@ public class AON {
 		}
 	}
 
-	public static Mod3902014 getMod390(String domainName, int domainId, String login, int id) {
+	// ----------------------------------MODELO 390 - 2014
+	public static Mod3902014 getMod3902014(String domainName, int domainId, String login, int id) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId,login);
-			return getFiscal().getMod390(ctx, id);
+			return getFiscal().getMod3902014(ctx, id);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
 
-	public static String getMod390XML(String domainName, int domainId, String login, int id) {
+	public static String getMod3902014XML(String domainName, int domainId, String login, int id) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getFiscal().getMod390XML(ctx, id);
+			return getFiscal().getMod3902014XML(ctx, id);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
 
-	public static Mod3902014 initializeMod390(String domainName, int domainId, String login,
+	public static Mod3902014 initializeMod3902014(String domainName, int domainId, String login,
 			Integer year) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getFiscal().initializeMod390(ctx, year);
+			return getFiscal().initializeMod3902014(ctx, year);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
 
-	public static Mod3902014 saveMod390(String domainName, int domainId, String login,
+	public static Mod3902014 saveMod3902014(String domainName, int domainId, String login,
 			Mod3902014 mod390) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getFiscal().saveMod390(ctx, mod390);
+			return getFiscal().saveMod3902014(ctx, mod390);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
 
-	public static void deleteMod390(String domainName, int domainId, String login,
+	public static void deleteMod3902014(String domainName, int domainId, String login,
 			Mod3902014 mod390) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			getFiscal().deleteMod390(ctx, mod390);
+			getFiscal().deleteMod3902014(ctx, mod390);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
 
-	public static LinkedList<Mod390Detail> getMod390Details(String domainName,
-			Integer domainId, String login, Mod3902014 mod390) {
+	// ----------------------------------MODELO 390 - 2015
+	public static Mod3902015 getMod3902015(String domainName, int domainId, String login, int id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId,login);
+			return getFiscal().getMod3902015(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static String getMod3902015XML(String domainName, int domainId, String login, int id) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getFiscal().getMod390Details(ctx, mod390);
+			return getFiscal().getMod3902015XML(ctx, id);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
 
+	public static Mod3902015 initializeMod3902015(String domainName, int domainId, String login,
+			Integer year) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFiscal().initializeMod3902015(ctx, year);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod3902015 saveMod3902015(String domainName, int domainId, String login,
+			Mod3902015 mod390) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFiscal().saveMod3902015(ctx, mod390);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static void deleteMod3902015(String domainName, int domainId, String login,
+			Mod3902015 mod390) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getFiscal().deleteMod3902015(ctx, mod390);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	// ********************************************
 	// ********************************* FINANCE **
 	// ********************************************

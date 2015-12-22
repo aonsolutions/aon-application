@@ -15,8 +15,9 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
@@ -72,14 +73,20 @@ public interface IFiscal {
 	public void deleteMod184(AONContext ctx,Mod184 mod184);
 
 	// 				   		  MOD390
-	public LinkedList<Mod3902014> getMod390s(AONContext ctx,int domain);
-	public Mod3902014 getMod390(AONContext ctx,Integer id);
-	public String getMod390XML(AONContext aonContext, int id);
-	public Mod3902014 saveMod390(AONContext ctx,Mod3902014 mod390);
-	public void deleteMod390(AONContext ctx,Mod3902014 mod390);
-	public LinkedList<Mod390Detail> getMod390Details(AONContext aonContext,Mod3902014 mod390);
-	public Mod3902014 initializeMod390(AONContext ctx, int year);
+	public LinkedList<Mod390> getMod390s(AONContext ctx, int domain);
+	
+	public Mod3902014 getMod3902014(AONContext ctx,Integer id);
+	public String getMod3902014XML(AONContext aonContext, int id);
+	public Mod3902014 saveMod3902014(AONContext ctx,Mod3902014 mod390);
+	public void deleteMod3902014(AONContext ctx,Mod3902014 mod390);
+	public Mod3902014 initializeMod3902014(AONContext ctx, int year);
 
+	public Mod3902015 getMod3902015(AONContext ctx,Integer id);
+	public String getMod3902015XML(AONContext aonContext, int id);
+	public Mod3902015 saveMod3902015(AONContext ctx,Mod3902015 mod390);
+	public void deleteMod3902015(AONContext ctx,Mod3902015 mod390);
+	public Mod3902015 initializeMod3902015(AONContext ctx, int year);
+	
 	// 				   		  MOD131
 	public Mod131 getMod131(AONContext ctx, int id);
 	public LinkedList<Mod131> getMod131s(AONContext ctx, int domain);

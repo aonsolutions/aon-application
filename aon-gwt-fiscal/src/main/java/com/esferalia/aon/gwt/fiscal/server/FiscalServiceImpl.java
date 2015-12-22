@@ -35,9 +35,10 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Activity;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015;
@@ -298,36 +299,53 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		return AON.getMod184(domainName, domain, AonServletUtils.getLoggedUser(), id);
 	}
 
-	// ---------------------------------------------------------------MODELO 390
+	// ---------------------------------------------------------------MODELO 390  
 	@Override
-	public Mod3902014 getMod390(String domainName, Integer domain,Integer id) {
-		return AON.getMod390(domainName, domain, AonServletUtils.getLoggedUser(), id);
-	}
-
-	@Override
-	public LinkedList<Mod3902014> getMod390s(String domainName, Integer domain) {
+	public LinkedList<Mod390> getMod390s(String domainName, Integer domain) {
 		return AON.getMod390s(domainName, domain, AonServletUtils.getLoggedUser());
 	}
 
+	// ---------------------------------------------------------------MODELO 390 - 2014 
 	@Override
-	public Mod3902014 saveMod390(String domainName, Integer domain, Mod3902014 mod390) {
-		return AON.saveMod390(domainName, domain, AonServletUtils.getLoggedUser(), mod390);
+	public Mod3902014 getMod3902014(String domainName, Integer domain,Integer id) {
+		return AON.getMod3902014(domainName, domain, AonServletUtils.getLoggedUser(), id);
 	}
 
 	@Override
-	public void deleteMod390(String domainName, Integer domain, Mod3902014 mod390) {
-		AON.deleteMod390(domainName, domain, AonServletUtils.getLoggedUser(), mod390);
+	public Mod3902014 saveMod3902014(String domainName, Integer domain, Mod3902014 mod390) {
+		return AON.saveMod3902014(domainName, domain, AonServletUtils.getLoggedUser(), mod390);
+	}
+
+	@Override
+	public void deleteMod3902014(String domainName, Integer domain, Mod3902014 mod390) {
+		AON.deleteMod3902014(domainName, domain, AonServletUtils.getLoggedUser(), mod390);
 	}
 	
 	@Override
-	public LinkedList<Mod390Detail> getMod390Details(String domainName, Integer domain, Mod3902014 mod390) {
-		return AON.getMod390Details(domainName, domain, AonServletUtils.getLoggedUser(), mod390);
-	}
-	@Override
-	public Mod3902014 initializeMod390(String domainName, Integer domain,Integer year) {
-		return AON.initializeMod390(domainName, domain, AonServletUtils.getLoggedUser(), year);
+	public Mod3902014 initializeMod3902014(String domainName, Integer domain,Integer year) {
+		return AON.initializeMod3902014(domainName, domain, AonServletUtils.getLoggedUser(), year);
 	}
 
+	// ---------------------------------------------------------------MODELO 390 - 2015 
+	@Override
+	public Mod3902015 getMod3902015(String domainName, Integer domain,Integer id) {
+		return AON.getMod3902015(domainName, domain, AonServletUtils.getLoggedUser(), id);
+	}
+
+	@Override
+	public Mod3902015 saveMod3902015(String domainName, Integer domain, Mod3902015 mod390) {
+		return AON.saveMod3902015(domainName, domain, AonServletUtils.getLoggedUser(), mod390);
+	}
+
+	@Override
+	public void deleteMod3902015(String domainName, Integer domain, Mod3902015 mod390) {
+		AON.deleteMod3902015(domainName, domain, AonServletUtils.getLoggedUser(), mod390);
+	}
+	
+	@Override
+	public Mod3902015 initializeMod3902015(String domainName, Integer domain,Integer year) {
+		return AON.initializeMod3902015(domainName, domain, AonServletUtils.getLoggedUser(), year);
+	}
 	// ---------------------------------------------------------------MODELO 131
 	@Override
 	public Mod131 getMod131(String domainName,

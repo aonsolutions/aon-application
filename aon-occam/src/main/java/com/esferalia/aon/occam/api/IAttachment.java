@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import com.esferalia.aon.occam.api.model.AttachFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachQueryProperties;
-import com.esferalia.aon.occam.api.model.office.Tag;
 
 
 public interface IAttachment {
