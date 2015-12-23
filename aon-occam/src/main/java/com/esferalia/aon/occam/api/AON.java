@@ -75,6 +75,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
+import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
@@ -105,6 +106,7 @@ import com.esferalia.aon.occam.impl.jooq.FiscalImpl;
 import com.esferalia.aon.occam.impl.jooq.GroupwareImpl;
 import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
 import com.esferalia.aon.occam.impl.jooq.MarketplaceImpl;
+import com.esferalia.aon.occam.impl.jooq.OfficeImpl;
 import com.esferalia.aon.occam.impl.jooq.ProductImpl;
 import com.esferalia.aon.occam.impl.jooq.ProjectImpl;
 import com.esferalia.aon.occam.impl.jooq.RegistryImpl;
@@ -161,11 +163,15 @@ public class AON {
 	private static IFee getFee() {
 		return new FeeImpl();
 	}
-	
+
+	private static IOffice getOffice() {
+		return new OfficeImpl();
+	}
+
 	private static IGroupware getGroupware() {
 		return new GroupwareImpl();
 	}
-	
+
 	private static IAttachment getAttachment() {
 		return new AttachmentImpl();
 	}
@@ -173,27 +179,27 @@ public class AON {
 	private static IWarehouse getWarehouse() {
 		return new WarehouseImpl();
 	}
-	
+
 	private static IStats getStats() {
 		return new StatsImpl();
 	}
-	
-	private static IProject getProject(){
+
+	private static IProject getProject() {
 		return new ProjectImpl();
 	}
-	
-	private static IRegistry getRegistry(){
+
+	private static IRegistry getRegistry() {
 		return new RegistryImpl();
 	}
-	
-	private static ICommercial getCommercial(){
+
+	private static ICommercial getCommercial() {
 		return new CommercialImpl();
 	}
 
-	private static IMarketplace getMarketplace(){
+	private static IMarketplace getMarketplace() {
 		return new MarketplaceImpl();
 	}
-	
+
 	// ********************************************
 	// ******************************** SECURITY **
 	// ********************************************
@@ -207,7 +213,7 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
+
 	public static Integer[] getUserScopes(String domainName, int domainId,
 			Integer userId) {
 		AONContext ctx = null;
@@ -225,94 +231,106 @@ public class AON {
 	// ********************************************
 
 	// --------------------- DOMAIN
-	
-	public static Domain getDomain(String domainName, Integer domainId, String user){
+
+	public static Domain getDomain(String domainName, Integer domainId,
+			String user) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getCommon().getDomain(ctx, domainId);
 		} finally {
-			if(ctx != null)
+			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
-	public static DomainGserviceaccount getDomainGserviceaccount(String domainName, Integer domainId, String login){
+
+	public static DomainGserviceaccount getDomainGserviceaccount(
+			String domainName, Integer domainId, String login) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getCommon().getDomainGserviceaccount(ctx);
 		} finally {
-			if(ctx != null) ctx.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
-	public static LinkedList<DomainGserviceaccount> getDomainGserviceaccountList(String domainName, Integer domainId, String login){
+
+	public static LinkedList<DomainGserviceaccount> getDomainGserviceaccountList(
+			String domainName, Integer domainId, String login) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getCommon().getDomainGserviceaccountList(ctx);
 		} finally {
-			if(ctx != null) ctx.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
-	public static DomainGserviceaccount getDomainGserviceaccount(String domainName, Integer domainId, String login, 
-			DomainGserviceaccountFilter filter){
+
+	public static DomainGserviceaccount getDomainGserviceaccount(
+			String domainName, Integer domainId, String login,
+			DomainGserviceaccountFilter filter) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getCommon().getDomainGserviceaccount(ctx, filter);
 		} finally {
-			if(ctx != null) ctx.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
-	public static void updateDomainGserviceaccount(String domainName, Integer domainId, String login, 
-			String googleAccount){
+
+	public static void updateDomainGserviceaccount(String domainName,
+			Integer domainId, String login, String googleAccount) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			getCommon().updateDomainGserviceaccount(ctx, googleAccount);
-		} finally{
-			if(ctx != null) ctx.close();
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
-	public static void updateDomainGserviceaccount(String domainName, Integer domainId, String login,
-			DomainGserviceaccount dgsa){
+
+	public static void updateDomainGserviceaccount(String domainName,
+			Integer domainId, String login, DomainGserviceaccount dgsa) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			getCommon().updateDomainGserviceaccount(ctx, dgsa);
-		} finally{
-			if(ctx != null) ctx.close();
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
-	public static void deleteDomainGserviceaccount(String domainName, Integer domainId, String login){
+
+	public static void deleteDomainGserviceaccount(String domainName,
+			Integer domainId, String login) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			getCommon().deleteDomainGserviceaccount(ctx);
-		} finally{
-			if(ctx != null) ctx.close();
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
-	public static void insertDomainGserviceaccount(String domainName, Integer domainId, String login,
-			DomainGserviceaccount dgsa){
+
+	public static void insertDomainGserviceaccount(String domainName,
+			Integer domainId, String login, DomainGserviceaccount dgsa) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			getCommon().insertDomainGserviceaccount(ctx, dgsa);
-		} finally{
-			if(ctx != null) ctx.close();
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
+
 	// --------------------- APPLICATION PARAMETERS
-	
+
 	public static FiscalParameters getFiscalParameters(String domainName,
 			int domainId) {
 		AONContext ctx = null;
@@ -325,8 +343,8 @@ public class AON {
 		}
 	}
 
-	public static ApplicationParameter fetchApplicationParameter(
-			AONContext ctx, AppParam param) {
+	public static ApplicationParameter fetchApplicationParameter(AONContext ctx,
+			AppParam param) {
 		return getCommon().fetchOne(ctx, param);
 	}
 
@@ -343,7 +361,8 @@ public class AON {
 		}
 	}
 
-	public static Enterprise getEnterprise(String domainName, int domain, int id) {
+	public static Enterprise getEnterprise(String domainName, int domain,
+			int id) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain);
@@ -388,42 +407,46 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
+
 	// ------------------------------------ WORKPLACE
-	
-	public static Workplace getWorkplace(String domainName, Integer domainId, String login,
-			WorkplaceFilter filter){
+
+	public static Workplace getWorkplace(String domainName, Integer domainId,
+			String login, WorkplaceFilter filter) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getCommon().getWorkplace(ctx, filter);
 		} finally {
-			if(ctx != null) ctx.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
-	public static LinkedList<Workplace> getWorkplaceList(String domainName, Integer domainId, String login,
-			WorkplaceFilter filter){
+
+	public static LinkedList<Workplace> getWorkplaceList(String domainName,
+			Integer domainId, String login, WorkplaceFilter filter) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getCommon().getWorkplaceList(ctx, filter);
 		} finally {
-			if(ctx != null) ctx.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 
 	// ------------------------------------ PRODUCT
-	public static Product getProduct(String domainName, Integer domainId, String login, Integer productId){
+	public static Product getProduct(String domainName, Integer domainId,
+			String login, Integer productId) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getProduct(ctx, productId);
 		} finally {
-			if(ctx != null) ctx.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
+
 	public static List<String> getProductTags(String domainName, int domainId) {
 		AONContext ctx = null;
 		try {
@@ -457,7 +480,9 @@ public class AON {
 	public static Account getAccount(AONContext ctx, String code) {
 		return getAccounting().getAccount(ctx, code);
 	}
-	public static Account getAccount(String domainName, int domainId,String code) {
+
+	public static Account getAccount(String domainName, int domainId,
+			String code) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId);
@@ -468,7 +493,8 @@ public class AON {
 		}
 	}
 
-	public static Stream<Account> getAccounts(String domainName, int domainId,AccountFilter filter) {
+	public static Stream<Account> getAccounts(String domainName, int domainId,
+			AccountFilter filter) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId);
@@ -480,7 +506,7 @@ public class AON {
 			if (ctx != null)
 				ctx.close();
 		}
-		
+
 	}
 
 	// ********************************************
@@ -527,7 +553,8 @@ public class AON {
 		getProduct().insertProductTag(ctx, pt);
 	}
 
-	public static void insertProductTag(AONContext ctx, Stream<ProductTag> pts) {
+	public static void insertProductTag(AONContext ctx,
+			Stream<ProductTag> pts) {
 		getProduct().insertProductTag(ctx, pts);
 	}
 
@@ -539,23 +566,25 @@ public class AON {
 		getProduct().deleteProductTag(ctx, pt);
 	}
 
-	public static void deleteProductTag(AONContext ctx, Stream<ProductTag> pts) {
+	public static void deleteProductTag(AONContext ctx,
+			Stream<ProductTag> pts) {
 		getProduct().deleteProductTag(ctx, pts);
 	}
 
 	// ------------------------------------ ITEM
 
-	public static Item getItem(String domainName, Integer domainId, String login,
-			Integer itemId){
-		AONContext  ctx = null;
-		try{
+	public static Item getItem(String domainName, Integer domainId,
+			String login, Integer itemId) {
+		AONContext ctx = null;
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getProduct().getItem(ctx, itemId);
 		} finally {
-			if(ctx != null) ctx.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
+
 	public static void insertItem(AONContext ctx, Item i) {
 		getProduct().insertItem(ctx, i);
 	}
@@ -618,19 +647,21 @@ public class AON {
 			int domain, String user) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain,user);
+			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().getDomainPeriods(ctx);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
+
 	// ------------------------------ ACCOUNT ENTRY
-	public static LinkedList<AccountEntry> getAccountEntries(String domainName,int domain,String user, 
-			final AccountEntryParams params,int offset, int limit) throws AonCoreException {
+	public static LinkedList<AccountEntry> getAccountEntries(String domainName,
+			int domain, String user, final AccountEntryParams params,
+			int offset, int limit) throws AonCoreException {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain,user);
+			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().getAccountEntries(ctx, params, offset, limit)
 					.collect(Collectors.toCollection(LinkedList::new));
 		} finally {
@@ -639,37 +670,39 @@ public class AON {
 		}
 	}
 
-	
-	public static AccountEntry save(String domainName, int domain, String user, AccountEntry ae) {
+	public static AccountEntry save(String domainName, int domain, String user,
+			AccountEntry ae) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain,user);
+			ctx = AONContext.getAONContext(domainName, domain, user);
 			Integer id = getAccounting().save(ctx, ae);
-			AccountEntry saved = getAccounting().getAccountEntry(ctx,id); 
+			AccountEntry saved = getAccounting().getAccountEntry(ctx, id);
 			return saved;
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
-	public static LinkedList<AccountEntry> getAccountEntries(String domainName, int domain
-			, String user, AccountEntryFilter filter, int offset, int limit) {
+
+	public static LinkedList<AccountEntry> getAccountEntries(String domainName,
+			int domain, String user, AccountEntryFilter filter, int offset,
+			int limit) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain,user);
+			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccountEntries(ctx, filter, offset, limit)
 					.collect(Collectors.toCollection(LinkedList::new));
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
-		
+
 	}
-	
+
 	public static Stream<AccountEntry> getAccountEntries(AONContext ctx,
 			AccountEntryFilter filter, int offset, int numberOfRows) {
-		return getAccounting().getAccountEntries(ctx, filter, offset, numberOfRows);
+		return getAccounting().getAccountEntries(ctx, filter, offset,
+				numberOfRows);
 	}
 
 	public static boolean existsAnyEntry(AONContext ctx, Integer period,
@@ -677,20 +710,23 @@ public class AON {
 		return getAccounting().existsAnyEntry(ctx, period, accountEntryType);
 	}
 
-	public static void deleteAccountEntry(String domainName, int domain, String user,Integer id) {
+	public static void deleteAccountEntry(String domainName, int domain,
+			String user, Integer id) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain,user);
-			getAccounting().delete(ctx, id);;
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			getAccounting().delete(ctx, id);
+			;
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
-		
+
 	}
 
 	public static LinkedHashMap<String, AccountBalance> getAccountBalances(
-			AONContext ctx, AccMiningParameters params) throws AonCoreException {
+			AONContext ctx, AccMiningParameters params)
+					throws AonCoreException {
 		return getAccounting().getAccountBalances(ctx, params);
 	}
 
@@ -713,55 +749,58 @@ public class AON {
 	 *            Código del banco de la empresa por la que se pagarán las
 	 *            nóminas, Si el valor es NULL la partida se destinará a
 	 *            "Remuneraciones pendientes de pago"
-	 * @return 
+	 * @return
 	 * @return El apunte contable grabado.
 	 */
-	public static List<Integer> insertSalaryEntries(String domainName,int domain, String user,
-			Date from, Date to, String concept, Integer registryBank) {
-		return getAccounting().insertSalaryEntries(domainName,domain,user,from, to, concept, registryBank);
+	public static List<Integer> insertSalaryEntries(String domainName,
+			int domain, String user, Date from, Date to, String concept,
+			Integer registryBank) {
+		return getAccounting().insertSalaryEntries(domainName, domain, user,
+				from, to, concept, registryBank);
 	}
 
-	public static Stream<AccountEntry> getSalaryEntries(AONContext ctx
-			, Date from, Date to, String concept, Integer registryBank) {
-			Company company = getCommon().getCompany(ctx, ctx.getDomainId());
-			return getSalary().getSalaryAccountEntries(ctx, company.getId(), from, to, concept, registryBank)
-					.map(sae -> getAccounting().getAccountEntry(ctx, sae));
+	public static Stream<AccountEntry> getSalaryEntries(AONContext ctx,
+			Date from, Date to, String concept, Integer registryBank) {
+		Company company = getCommon().getCompany(ctx, ctx.getDomainId());
+		return getSalary()
+				.getSalaryAccountEntries(ctx, company.getId(), from, to,
+						concept, registryBank)
+				.map(sae -> getAccounting().getAccountEntry(ctx, sae));
 	}
+
 	// ------------------------------ ACCOUNT STATEMENT
-	public static AccountStatementReport getAccountStatement(String domainName,int domain, String user
-			, AccountStatementParams params) {
+	public static AccountStatementReport getAccountStatement(String domainName,
+			int domain, String user, AccountStatementParams params) {
 		AONContext ctx = null;
 		try {
-			AccountStatementReport report = new AccountStatementReport(); 
-			ctx = AONContext.getAONContext(domainName, domain,user);
+			AccountStatementReport report = new AccountStatementReport();
+			ctx = AONContext.getAONContext(domainName, domain, user);
 			report.setFrom(params.getFromDate());
 			report.setTo(params.getToDate());
-			report.setAccount( AON.getAccount(ctx, params.getAccount()));
-			report.setSummary(getAccounting()
-					.getAccountBalance(ctx, params)
+			report.setAccount(AON.getAccount(ctx, params.getAccount()));
+			report.setSummary(getAccounting().getAccountBalance(ctx, params)
 					.collect(Collectors.toCollection(LinkedList::new)));
-			report.setDetails(getAccounting()
-					.getAccountStatement(ctx, params)
+			report.setDetails(getAccounting().getAccountStatement(ctx, params)
 					.collect(Collectors.toCollection(LinkedList::new)));
 			report = AccountStatementDAO.calculate(report);
-			return  report;
+			return report;
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
-	public static Stream<AccountStatement> getAccountBalance(String domainName,int domain, String user
-			, AccountStatementParams params) {
+
+	public static Stream<AccountStatement> getAccountBalance(String domainName,
+			int domain, String user, AccountStatementParams params) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain,user);
-			return getAccounting().getAccountBalance(ctx, params); 
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().getAccountBalance(ctx, params);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
 
 	// ********************************************
 	// ********************************** FISCAL **
@@ -821,7 +860,8 @@ public class AON {
 		}
 	}
 
-	public static FiscalActivity calculate(String domainName, FiscalActivity fa) {
+	public static FiscalActivity calculate(String domainName,
+			FiscalActivity fa) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, fa.getDomain());
@@ -926,7 +966,8 @@ public class AON {
 	}
 
 	// ----------------------------------MODELO 131
-	public static LinkedList<Mod131> getMod131s(String domainName, int domainId) {
+	public static LinkedList<Mod131> getMod131s(String domainName,
+			int domainId) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId);
@@ -994,7 +1035,8 @@ public class AON {
 	}
 
 	// ----------------------------------MODELO 180
-	public static LinkedList<Mod180> getMod180s(String domainName, int domainId, String user) {
+	public static LinkedList<Mod180> getMod180s(String domainName, int domainId,
+			String user) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
@@ -1005,7 +1047,8 @@ public class AON {
 		}
 	}
 
-	public static Mod180 getMod180(String domainName, int domainId, String user, Integer id) {
+	public static Mod180 getMod180(String domainName, int domainId, String user,
+			Integer id) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
@@ -1016,8 +1059,8 @@ public class AON {
 		}
 	}
 
-	public static Mod180 initializeMod180(String domainName, int domainId, String user,
-			Integer year) {
+	public static Mod180 initializeMod180(String domainName, int domainId,
+			String user, Integer year) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
@@ -1028,8 +1071,8 @@ public class AON {
 		}
 	}
 
-	public static Mod180 saveMod180(String domainName, int domainId, String user,
-			Mod180 mod180) {
+	public static Mod180 saveMod180(String domainName, int domainId,
+			String user, Mod180 mod180) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
@@ -1040,11 +1083,11 @@ public class AON {
 		}
 	}
 
-	public static void deleteMod180(String domainName, int domainId, String user,
-			Mod180 mod180) {
+	public static void deleteMod180(String domainName, int domainId,
+			String user, Mod180 mod180) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId,user);
+			ctx = AONContext.getAONContext(domainName, domainId, user);
 			getFiscal().deleteMod180(ctx, mod180);
 		} finally {
 			if (ctx != null)
@@ -1052,8 +1095,8 @@ public class AON {
 		}
 	}
 
-	public static Mod180Detail getMod180Detail(String domainName, int domainId, String user,
-			Integer id) {
+	public static Mod180Detail getMod180Detail(String domainName, int domainId,
+			String user, Integer id) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
@@ -1065,7 +1108,8 @@ public class AON {
 	}
 
 	// ----------------------------------MODELO 190
-	public static LinkedList<Mod190> getMod190s(String domainName, int domainId, String user) {
+	public static LinkedList<Mod190> getMod190s(String domainName, int domainId,
+			String user) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
@@ -1076,7 +1120,8 @@ public class AON {
 		}
 	}
 
-	public static Mod190 getMod190(String domainName, int domainId, String user, Integer id) {
+	public static Mod190 getMod190(String domainName, int domainId, String user,
+			Integer id) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
@@ -1087,7 +1132,8 @@ public class AON {
 		}
 	}
 
-	public static Mod190 initializeMod190(String domainName, int domainId, String user, Integer year) {
+	public static Mod190 initializeMod190(String domainName, int domainId,
+			String user, Integer year) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
@@ -1098,7 +1144,8 @@ public class AON {
 		}
 	}
 
-	public static Mod190 saveMod190(String domainName, int domainId, String user, Mod190 mod190) {
+	public static Mod190 saveMod190(String domainName, int domainId,
+			String user, Mod190 mod190) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
@@ -1109,7 +1156,8 @@ public class AON {
 		}
 	}
 
-	public static void deleteMod190(String domainName, int domainId, String user,Mod190 mod190) {
+	public static void deleteMod190(String domainName, int domainId,
+			String user, Mod190 mod190) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
@@ -1120,7 +1168,8 @@ public class AON {
 		}
 	}
 
-	public static Mod190Detail getMod190Detail(String domainName, int domainId, String user, Integer id) {
+	public static Mod190Detail getMod190Detail(String domainName, int domainId,
+			String user, Integer id) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
@@ -1132,7 +1181,8 @@ public class AON {
 	}
 
 	// ----------------------------------MODELO 193
-	public static LinkedList<Mod193> getMod193s(String domainName, int domainId, String user) {
+	public static LinkedList<Mod193> getMod193s(String domainName, int domainId,
+			String user) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
@@ -1143,7 +1193,8 @@ public class AON {
 		}
 	}
 
-	public static Mod193 getMod193(String domainName, int domainId, String user, Integer id) {
+	public static Mod193 getMod193(String domainName, int domainId, String user,
+			Integer id) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
@@ -1154,8 +1205,8 @@ public class AON {
 		}
 	}
 
-	public static Mod193 initializeMod193(String domainName, int domainId, String user, 
-			Integer year) {
+	public static Mod193 initializeMod193(String domainName, int domainId,
+			String user, Integer year) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
@@ -1166,7 +1217,8 @@ public class AON {
 		}
 	}
 
-	public static Mod193 saveMod193(String domainName, int domainId, String user, Mod193 mod193) {
+	public static Mod193 saveMod193(String domainName, int domainId,
+			String user, Mod193 mod193) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
@@ -1177,7 +1229,8 @@ public class AON {
 		}
 	}
 
-	public static void deleteMod193(String domainName, int domainId, String user, Mod193 mod193) {
+	public static void deleteMod193(String domainName, int domainId,
+			String user, Mod193 mod193) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
@@ -1189,10 +1242,11 @@ public class AON {
 	}
 
 	// ----------------------------------MODELO 184
-	public static LinkedList<Mod184> getMod184s(String domainName, int domainId,String user) {
+	public static LinkedList<Mod184> getMod184s(String domainName, int domainId,
+			String user) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId,user);
+			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getFiscal().getMod184s(ctx, domainId);
 		} finally {
 			if (ctx != null)
@@ -1200,10 +1254,11 @@ public class AON {
 		}
 	}
 
-	public static Mod184 getMod184(String domainName, int domainId, String user,Integer id) {
+	public static Mod184 getMod184(String domainName, int domainId, String user,
+			Integer id) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId,user);
+			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getFiscal().getMod184(ctx, id);
 		} finally {
 			if (ctx != null)
@@ -1211,11 +1266,11 @@ public class AON {
 		}
 	}
 
-	public static Mod184 initializeMod184(String domainName, int domainId,String user,
-			Integer year) {
+	public static Mod184 initializeMod184(String domainName, int domainId,
+			String user, Integer year) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId,user);
+			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getFiscal().initializeMod184(ctx, year);
 		} finally {
 			if (ctx != null)
@@ -1223,11 +1278,11 @@ public class AON {
 		}
 	}
 
-	public static Mod184 saveMod184(String domainName, int domainId,String user,
-			Mod184 mod184) {
+	public static Mod184 saveMod184(String domainName, int domainId,
+			String user, Mod184 mod184) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId,user);
+			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getFiscal().saveMod184(ctx, mod184);
 		} finally {
 			if (ctx != null)
@@ -1235,11 +1290,11 @@ public class AON {
 		}
 	}
 
-	public static void deleteMod184(String domainName, int domainId,String user,
-			Mod184 mod184) {
+	public static void deleteMod184(String domainName, int domainId,
+			String user, Mod184 mod184) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId,user);
+			ctx = AONContext.getAONContext(domainName, domainId, user);
 			getFiscal().deleteMod184(ctx, mod184);
 		} finally {
 			if (ctx != null)
@@ -1248,7 +1303,8 @@ public class AON {
 	}
 
 	// ----------------------------------MODELO 202
-	public static LinkedList<Mod202> getMod202s(String domainName, int domainId) {
+	public static LinkedList<Mod202> getMod202s(String domainName,
+			int domainId) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId);
@@ -1328,8 +1384,8 @@ public class AON {
 		}
 	}
 
-	public static Mod2002013 initializeMod2002013(String domainName,
-			int domain, Mod2002013 mod200) {
+	public static Mod2002013 initializeMod2002013(String domainName, int domain,
+			Mod2002013 mod200) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain);
@@ -1397,10 +1453,11 @@ public class AON {
 
 	public static String dumpAEATMod2002013(Mod2002013 mod200) {
 		return getFiscal().dumpAEATMod2002013(mod200);
-	}	
-	
+	}
+
 	public static Domain insertDomain(String domainName, int parentDomain,
-			String cifEnterprise, String nameEnterprise, List<String> messages) {
+			String cifEnterprise, String nameEnterprise,
+			List<String> messages) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, parentDomain);
@@ -1413,8 +1470,8 @@ public class AON {
 	}
 
 	// ----------------------------------MODELO 200 - 2014
-	public static Mod2002014 createMod2002014(String domainName,
-			int domain, int year) {
+	public static Mod2002014 createMod2002014(String domainName, int domain,
+			int year) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain);
@@ -1437,8 +1494,8 @@ public class AON {
 		}
 	}
 
-	public static Mod2002014 initializeMod2002014(String domainName,
-			int domain, Mod2002014 mod200) {
+	public static Mod2002014 initializeMod2002014(String domainName, int domain,
+			Mod2002014 mod200) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain);
@@ -1521,7 +1578,8 @@ public class AON {
 	}
 
 	// ----------------------------------MODELO 390
-	public static LinkedList<Mod390> getMod390s(String domainName, int domainId, String login) {
+	public static LinkedList<Mod390> getMod390s(String domainName, int domainId,
+			String login) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -1533,10 +1591,11 @@ public class AON {
 	}
 
 	// ----------------------------------MODELO 390 - 2014
-	public static Mod3902014 getMod3902014(String domainName, int domainId, String login, int id) {
+	public static Mod3902014 getMod3902014(String domainName, int domainId,
+			String login, int id) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId,login);
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getFiscal().getMod3902014(ctx, id);
 		} finally {
 			if (ctx != null)
@@ -1544,7 +1603,8 @@ public class AON {
 		}
 	}
 
-	public static String getMod3902014XML(String domainName, int domainId, String login, int id) {
+	public static String getMod3902014XML(String domainName, int domainId,
+			String login, int id) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -1555,8 +1615,8 @@ public class AON {
 		}
 	}
 
-	public static Mod3902014 initializeMod3902014(String domainName, int domainId, String login,
-			Integer year) {
+	public static Mod3902014 initializeMod3902014(String domainName,
+			int domainId, String login, Integer year) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -1567,8 +1627,8 @@ public class AON {
 		}
 	}
 
-	public static Mod3902014 saveMod3902014(String domainName, int domainId, String login,
-			Mod3902014 mod390) {
+	public static Mod3902014 saveMod3902014(String domainName, int domainId,
+			String login, Mod3902014 mod390) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -1579,8 +1639,8 @@ public class AON {
 		}
 	}
 
-	public static void deleteMod3902014(String domainName, int domainId, String login,
-			Mod3902014 mod390) {
+	public static void deleteMod3902014(String domainName, int domainId,
+			String login, Mod3902014 mod390) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -1592,10 +1652,11 @@ public class AON {
 	}
 
 	// ----------------------------------MODELO 390 - 2015
-	public static Mod3902015 getMod3902015(String domainName, int domainId, String login, int id) {
+	public static Mod3902015 getMod3902015(String domainName, int domainId,
+			String login, int id) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId,login);
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getFiscal().getMod3902015(ctx, id);
 		} finally {
 			if (ctx != null)
@@ -1603,7 +1664,8 @@ public class AON {
 		}
 	}
 
-	public static String getMod3902015XML(String domainName, int domainId, String login, int id) {
+	public static String getMod3902015XML(String domainName, int domainId,
+			String login, int id) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -1614,8 +1676,8 @@ public class AON {
 		}
 	}
 
-	public static Mod3902015 initializeMod3902015(String domainName, int domainId, String login,
-			Integer year) {
+	public static Mod3902015 initializeMod3902015(String domainName,
+			int domainId, String login, Integer year) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -1626,8 +1688,8 @@ public class AON {
 		}
 	}
 
-	public static Mod3902015 saveMod3902015(String domainName, int domainId, String login,
-			Mod3902015 mod390) {
+	public static Mod3902015 saveMod3902015(String domainName, int domainId,
+			String login, Mod3902015 mod390) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -1638,8 +1700,8 @@ public class AON {
 		}
 	}
 
-	public static void deleteMod3902015(String domainName, int domainId, String login,
-			Mod3902015 mod390) {
+	public static void deleteMod3902015(String domainName, int domainId,
+			String login, Mod3902015 mod390) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -1649,7 +1711,7 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
+
 	// ********************************************
 	// ********************************* FINANCE **
 	// ********************************************
@@ -1664,104 +1726,114 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
+
 	public static InvoiceDetail getLastInvoiceDetail(String domainName,
 			Integer domainId, String user, Item item, Integer workplaceId,
-			Integer warehouseId){
+			Integer warehouseId) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getFinance().getLastInvoiceDetail(ctx, item, workplaceId, warehouseId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static InvoiceDetail getLastInvoiceDetailUntilDate(String domainName,
-			Integer domainId, String user, Item item, Integer workplaceId,
-			Integer warehouseId, Date date){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getFinance().getLastInvoiceDetailUntilDate(ctx, item, workplaceId, warehouseId, date);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static LinkedList<InvoiceDetail> getLastInvoiceDetailList(String domainName,
-			Integer domainId, String user, Item item, String months, Integer workplaceId,
-			Integer warehouseId){
-		Calendar calendar = Calendar.getInstance();	
-		Integer m = Integer.parseInt(months);
-		calendar.add(Calendar.MONTH, -m);
-		
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getFinance().getLastInvoiceDetailList(ctx, item, calendar.getTime(), workplaceId, warehouseId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static LinkedList<InvoiceDetail> getLastInvoiceDetailListUntilDate(String domainName,
-			Integer domainId, String user, Item item, String months, Integer workplaceId,
-			Integer warehouseId, Date date){
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		Integer m = Integer.parseInt(months);
-		calendar.add(Calendar.MONTH, -m);
-		
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getFinance().getLastInvoiceDetailListUntilDate(ctx, item, calendar.getTime(), workplaceId, warehouseId, date);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static LinkedList<InvoiceDetail> getInvoiceDetailList(String domainName,
-			Integer domainId, String user, Item item, Integer workplaceId, Integer warehouseId){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getFinance().getInvoiceDetailList(ctx, item, workplaceId, warehouseId);
+			return getFinance().getLastInvoiceDetail(ctx, item, workplaceId,
+					warehouseId);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
 
-	public static LinkedList<InvoiceDetail> getInvoiceDetailListUntilDate(String domainName,
-			Integer domainId, String user, Item item, Integer workplaceId, Integer warehouseId
-			, Date date){
+	public static InvoiceDetail getLastInvoiceDetailUntilDate(String domainName,
+			Integer domainId, String user, Item item, Integer workplaceId,
+			Integer warehouseId, Date date) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getFinance().getInvoiceDetailListUntilDate(ctx, item, workplaceId, warehouseId, date);
+			return getFinance().getLastInvoiceDetailUntilDate(ctx, item,
+					workplaceId, warehouseId, date);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
-	public static LinkedList<InvoicingGroup> getInvoicingGroupList(String domainName, Integer domainId, String login
-			, InvoicingGroupFilter filter){
+
+	public static LinkedList<InvoiceDetail> getLastInvoiceDetailList(
+			String domainName, Integer domainId, String user, Item item,
+			String months, Integer workplaceId, Integer warehouseId) {
+		Calendar calendar = Calendar.getInstance();
+		Integer m = Integer.parseInt(months);
+		calendar.add(Calendar.MONTH, -m);
+
 		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getFinance().getInvoicingGroupList(ctx, filter);
-		} finally{
-			if(ctx != null) ctx.close();
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFinance().getLastInvoiceDetailList(ctx, item,
+					calendar.getTime(), workplaceId, warehouseId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
+
+	public static LinkedList<InvoiceDetail> getLastInvoiceDetailListUntilDate(
+			String domainName, Integer domainId, String user, Item item,
+			String months, Integer workplaceId, Integer warehouseId,
+			Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		Integer m = Integer.parseInt(months);
+		calendar.add(Calendar.MONTH, -m);
+
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFinance().getLastInvoiceDetailListUntilDate(ctx, item,
+					calendar.getTime(), workplaceId, warehouseId, date);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static LinkedList<InvoiceDetail> getInvoiceDetailList(
+			String domainName, Integer domainId, String user, Item item,
+			Integer workplaceId, Integer warehouseId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFinance().getInvoiceDetailList(ctx, item, workplaceId,
+					warehouseId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static LinkedList<InvoiceDetail> getInvoiceDetailListUntilDate(
+			String domainName, Integer domainId, String user, Item item,
+			Integer workplaceId, Integer warehouseId, Date date) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFinance().getInvoiceDetailListUntilDate(ctx, item,
+					workplaceId, warehouseId, date);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static LinkedList<InvoicingGroup> getInvoicingGroupList(
+			String domainName, Integer domainId, String login,
+			InvoicingGroupFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFinance().getInvoicingGroupList(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	// ********************************************
 	// ****************************** MANAGEMENT **
 	// ********************************************
@@ -1786,11 +1858,13 @@ public class AON {
 		getAgreement().save(ctx, agreements);
 	}
 
-	public static Stream<Salary> getSalaries(AONContext ctx, SalaryFilter filter) {
+	public static Stream<Salary> getSalaries(AONContext ctx,
+			SalaryFilter filter) {
 		return getSalary().getSalaries(ctx, filter, Salary::new);
 	}
 
-	public static Stream<Salary> getSalaryData(AONContext ctx, SalaryFilter filter) {
+	public static Stream<Salary> getSalaryData(AONContext ctx,
+			SalaryFilter filter) {
 		return getSalary().getSalaryData(ctx, filter, Salary::new);
 	}
 
@@ -1822,13 +1896,57 @@ public class AON {
 	public static void deleteFee(AONContext ctx, Stream<Fee> fs) {
 		getFee().deleteFee(ctx, fs);
 	}
+
+	// ********************************************
+	// ****************************** GWT-OFFICE **
+	// ********************************************
+
+	public static List<Notice> getAllNotices(Integer domainId,
+			String domainName, String userName) {
+
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getOffice().getAllIssues(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static List<Notice> getOpenNotices(Integer domainId,
+			String domainName, String userName) {
+		
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getOffice().getOpenNotices(ctx);
+		} finally {
+			if ( ctx != null )
+				ctx.close();
+		}
+	}
 	
+	public static List<Notice> getClosedNotices (Integer domainId,
+			String domainName, String userName) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getOffice().getClosedNotices(ctx);
+			
+		} finally {
+			if ( ctx != null )
+				ctx.close();
+		}
+		
+	}
+
 	// ********************************************
 	// ****************************** CALLCENTER **
 	// ********************************************
-	
-	public static ArrayList<Issue> getOpenIssues(String domainName,
-			int domain, String subject) {
+
+	public static ArrayList<Issue> getOpenIssues(String domainName, int domain,
+			String subject) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain);
@@ -1838,7 +1956,7 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
+
 	public static ArrayList<Issue> getClosedIssues(String domainName,
 			int domain, String subject) {
 		AONContext ctx = null;
@@ -1862,251 +1980,324 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
-	
+
 	// ********************************************
 	// ****************************** ATTACHMENT **
 	// ********************************************
-	
-	public static Attach getAttach(String domainName, Integer domainId, String login,
-			AttachFilter filter, AttachType attachType) {
+
+	public static Attach getAttach(String domainName, Integer domainId,
+			String login, AttachFilter filter, AttachType attachType) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			
+
 			Attach attach = new Attach();
-			
-			if(attachType.equals(AttachType.REGISTRY)) attach = getAttachment().getRegistryAttach(ctx, filter);
-			else if(attachType.equals(AttachType.CONTRACT)) attach = getAttachment().getContractAttach(ctx, filter);
-			else if(attachType.equals(AttachType.INVOICE)) attach =  getAttachment().getInvoiceAttach(ctx, filter);
-			else if(attachType.equals(AttachType.ITEM)) attach =  getAttachment().getItemAttach(ctx, filter);
-			else if(attachType.equals(AttachType.OFFER)) attach =  getAttachment().getOfferAttach(ctx, filter);
-			else if(attachType.equals(AttachType.PAYROLL)) attach =  getAttachment().getPayrollAttach(ctx, filter);
-			else if(attachType.equals(AttachType.PROJECT)) attach =  getAttachment().getProjectAttach(ctx, filter);
-			else if(attachType.equals(AttachType.SEPE)) attach =  getAttachment().getSepeAttach(ctx, filter);
-			
-			return attach;		
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static LinkedList<Attach> getAttachList(String domainName, Integer domainId, String login,
-			AttachFilter filter, AttachType attachType) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			
-			LinkedList<Attach> attachList = new LinkedList<Attach>();
-			
-			if(attachType.equals(AttachType.REGISTRY)) attachList = getAttachment().getRegistryAttachList(ctx, filter);
-			else if(attachType.equals(AttachType.CONTRACT)) attachList = getAttachment().getContractAttachList(ctx, filter);
-			else if(attachType.equals(AttachType.INVOICE)) attachList = getAttachment().getInvoiceAttachList(ctx, filter);
-			else if(attachType.equals(AttachType.ITEM)) attachList = getAttachment().getItemAttachList(ctx, filter);
-			else if(attachType.equals(AttachType.OFFER)) attachList = getAttachment().getOfferAttachList(ctx, filter);
-			else if(attachType.equals(AttachType.PAYROLL)) attachList = getAttachment().getPayrollAttachList(ctx, filter);
-			else if(attachType.equals(AttachType.PROJECT)) attachList = getAttachment().getProjectAttachList(ctx, filter);
-			else if(attachType.equals(AttachType.SEPE)) attachList = getAttachment().getSepeAttachList(ctx, filter);
-			
-			return attachList;		
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static LinkedList<Attach> getAttachList(String domainName, Integer domainId, String login,
-			AttachFilter filter, AttachType attachType, AttachQueryProperties aqp) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			
-			LinkedList<Attach> attachList = new LinkedList<Attach>();
-			
-			if(attachType.equals(AttachType.REGISTRY)) attachList = getAttachment().getRegistryAttachList(ctx, filter, aqp);
-			else if(attachType.equals(AttachType.CONTRACT)) attachList = getAttachment().getContractAttachList(ctx, filter, aqp);
-			else if(attachType.equals(AttachType.INVOICE)) attachList = getAttachment().getInvoiceAttachList(ctx, filter, aqp);
-			else if(attachType.equals(AttachType.ITEM)) attachList = getAttachment().getItemAttachList(ctx, filter, aqp);
-			else if(attachType.equals(AttachType.OFFER)) attachList = getAttachment().getOfferAttachList(ctx, filter, aqp);
-			else if(attachType.equals(AttachType.PAYROLL)) attachList = getAttachment().getPayrollAttachList(ctx, filter, aqp);
-			else if(attachType.equals(AttachType.PROJECT)) attachList = getAttachment().getProjectAttachList(ctx, filter, aqp);
-			else if(attachType.equals(AttachType.SEPE)) attachList = getAttachment().getSepeAttachList(ctx, filter, aqp);
-			
-			return attachList;		
+
+			if (attachType.equals(AttachType.REGISTRY))
+				attach = getAttachment().getRegistryAttach(ctx, filter);
+			else if (attachType.equals(AttachType.CONTRACT))
+				attach = getAttachment().getContractAttach(ctx, filter);
+			else if (attachType.equals(AttachType.INVOICE))
+				attach = getAttachment().getInvoiceAttach(ctx, filter);
+			else if (attachType.equals(AttachType.ITEM))
+				attach = getAttachment().getItemAttach(ctx, filter);
+			else if (attachType.equals(AttachType.OFFER))
+				attach = getAttachment().getOfferAttach(ctx, filter);
+			else if (attachType.equals(AttachType.PAYROLL))
+				attach = getAttachment().getPayrollAttach(ctx, filter);
+			else if (attachType.equals(AttachType.PROJECT))
+				attach = getAttachment().getProjectAttach(ctx, filter);
+			else if (attachType.equals(AttachType.SEPE))
+				attach = getAttachment().getSepeAttach(ctx, filter);
+
+			return attach;
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
 
-	public static Integer insert(String domainName, Integer domainId, String login,
-			Attach attach) {
+	public static LinkedList<Attach> getAttachList(String domainName,
+			Integer domainId, String login, AttachFilter filter,
+			AttachType attachType) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			
-			if(attach.getAttachType().equals(AttachType.REGISTRY)) return getAttachment().insertRegistryAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.CONTRACT)) return getAttachment().insertContractAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.INVOICE)) return getAttachment().insertInvoiceAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.ITEM)) return getAttachment().insertItemAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.OFFER)) return getAttachment().insertOfferAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.PAYROLL)) return getAttachment().insertPayrollAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.PROJECT)) return getAttachment().insertProjectAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.SEPE)) return getAttachment().insertSepeAttach(ctx, attach);
+
+			LinkedList<Attach> attachList = new LinkedList<Attach>();
+
+			if (attachType.equals(AttachType.REGISTRY))
+				attachList = getAttachment().getRegistryAttachList(ctx, filter);
+			else if (attachType.equals(AttachType.CONTRACT))
+				attachList = getAttachment().getContractAttachList(ctx, filter);
+			else if (attachType.equals(AttachType.INVOICE))
+				attachList = getAttachment().getInvoiceAttachList(ctx, filter);
+			else if (attachType.equals(AttachType.ITEM))
+				attachList = getAttachment().getItemAttachList(ctx, filter);
+			else if (attachType.equals(AttachType.OFFER))
+				attachList = getAttachment().getOfferAttachList(ctx, filter);
+			else if (attachType.equals(AttachType.PAYROLL))
+				attachList = getAttachment().getPayrollAttachList(ctx, filter);
+			else if (attachType.equals(AttachType.PROJECT))
+				attachList = getAttachment().getProjectAttachList(ctx, filter);
+			else if (attachType.equals(AttachType.SEPE))
+				attachList = getAttachment().getSepeAttachList(ctx, filter);
+
+			return attachList;
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static LinkedList<Attach> getAttachList(String domainName,
+			Integer domainId, String login, AttachFilter filter,
+			AttachType attachType, AttachQueryProperties aqp) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+
+			LinkedList<Attach> attachList = new LinkedList<Attach>();
+
+			if (attachType.equals(AttachType.REGISTRY))
+				attachList = getAttachment().getRegistryAttachList(ctx, filter,
+						aqp);
+			else if (attachType.equals(AttachType.CONTRACT))
+				attachList = getAttachment().getContractAttachList(ctx, filter,
+						aqp);
+			else if (attachType.equals(AttachType.INVOICE))
+				attachList = getAttachment().getInvoiceAttachList(ctx, filter,
+						aqp);
+			else if (attachType.equals(AttachType.ITEM))
+				attachList = getAttachment().getItemAttachList(ctx, filter,
+						aqp);
+			else if (attachType.equals(AttachType.OFFER))
+				attachList = getAttachment().getOfferAttachList(ctx, filter,
+						aqp);
+			else if (attachType.equals(AttachType.PAYROLL))
+				attachList = getAttachment().getPayrollAttachList(ctx, filter,
+						aqp);
+			else if (attachType.equals(AttachType.PROJECT))
+				attachList = getAttachment().getProjectAttachList(ctx, filter,
+						aqp);
+			else if (attachType.equals(AttachType.SEPE))
+				attachList = getAttachment().getSepeAttachList(ctx, filter,
+						aqp);
+
+			return attachList;
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Integer insert(String domainName, Integer domainId,
+			String login, Attach attach) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+
+			if (attach.getAttachType().equals(AttachType.REGISTRY))
+				return getAttachment().insertRegistryAttach(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.CONTRACT))
+				return getAttachment().insertContractAttach(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.INVOICE))
+				return getAttachment().insertInvoiceAttach(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.ITEM))
+				return getAttachment().insertItemAttach(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.OFFER))
+				return getAttachment().insertOfferAttach(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.PAYROLL))
+				return getAttachment().insertPayrollAttach(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.PROJECT))
+				return getAttachment().insertProjectAttach(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.SEPE))
+				return getAttachment().insertSepeAttach(ctx, attach);
 			return null;
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
+
 	public static void update(String domainName, Integer domainId, String login,
-			Attach attach){
+			Attach attach) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			
-			if(attach.getAttachType().equals(AttachType.REGISTRY)) getAttachment().updateRegistryAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.CONTRACT)) getAttachment().updateContractAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.INVOICE)) getAttachment().updateInvoiceAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.ITEM)) getAttachment().updateItemAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.OFFER)) getAttachment().updateOfferAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.PAYROLL)) getAttachment().updatePayrollAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.PROJECT)) getAttachment().updateProjectAttach(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.SEPE)) getAttachment().updateSepeAttach(ctx, attach);
-			
+
+			if (attach.getAttachType().equals(AttachType.REGISTRY))
+				getAttachment().updateRegistryAttach(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.CONTRACT))
+				getAttachment().updateContractAttach(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.INVOICE))
+				getAttachment().updateInvoiceAttach(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.ITEM))
+				getAttachment().updateItemAttach(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.OFFER))
+				getAttachment().updateOfferAttach(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.PAYROLL))
+				getAttachment().updatePayrollAttach(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.PROJECT))
+				getAttachment().updateProjectAttach(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.SEPE))
+				getAttachment().updateSepeAttach(ctx, attach);
+
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
-	public static void updateAttachData(String domainName, Integer domainId, String login, 
-			Attach attach){
+
+	public static void updateAttachData(String domainName, Integer domainId,
+			String login, Attach attach) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(attach.getDomain().getName(), attach.getDomain().getId(), login);
-			
-			if(attach.getAttachType().equals(AttachType.REGISTRY)) getAttachment().updateRegistryAttachData(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.CONTRACT)) getAttachment().updateContractAttachData(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.INVOICE)) getAttachment().updateInvoiceAttachData(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.ITEM)) getAttachment().updateItemAttachData(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.OFFER)) getAttachment().updateOfferAttachData(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.PAYROLL)) getAttachment().updatePayrollAttachData(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.PROJECT)) getAttachment().updateProjectAttachData(ctx, attach);
-			else if(attach.getAttachType().equals(AttachType.SEPE)) getAttachment().updateSepeAttachData(ctx, attach);
-			
+			ctx = AONContext.getAONContext(attach.getDomain().getName(),
+					attach.getDomain().getId(), login);
+
+			if (attach.getAttachType().equals(AttachType.REGISTRY))
+				getAttachment().updateRegistryAttachData(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.CONTRACT))
+				getAttachment().updateContractAttachData(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.INVOICE))
+				getAttachment().updateInvoiceAttachData(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.ITEM))
+				getAttachment().updateItemAttachData(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.OFFER))
+				getAttachment().updateOfferAttachData(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.PAYROLL))
+				getAttachment().updatePayrollAttachData(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.PROJECT))
+				getAttachment().updateProjectAttachData(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.SEPE))
+				getAttachment().updateSepeAttachData(ctx, attach);
+
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
+
 	public static void delete(String domainName, Integer domainId, String login,
-			AttachFilter filter, AttachType attachType){
+			AttachFilter filter, AttachType attachType) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			
-			if(attachType.equals(AttachType.REGISTRY)) getAttachment().deleteRegistryAttach(ctx, filter);
-			else if(attachType.equals(AttachType.CONTRACT)) getAttachment().deleteContractAttach(ctx, filter);
-			else if(attachType.equals(AttachType.INVOICE)) getAttachment().deleteInvoiceAttach(ctx, filter);
-			else if(attachType.equals(AttachType.ITEM)) getAttachment().deleteItemAttach(ctx, filter);
-			else if(attachType.equals(AttachType.OFFER)) getAttachment().deleteOfferAttach(ctx, filter);
-			else if(attachType.equals(AttachType.PAYROLL)) getAttachment().deletePayrollAttach(ctx, filter);
-			else if(attachType.equals(AttachType.PROJECT)) getAttachment().deleteProjectAttach(ctx, filter);
-			else if(attachType.equals(AttachType.SEPE)) getAttachment().deleteSepeAttach(ctx, filter);
-			
+
+			if (attachType.equals(AttachType.REGISTRY))
+				getAttachment().deleteRegistryAttach(ctx, filter);
+			else if (attachType.equals(AttachType.CONTRACT))
+				getAttachment().deleteContractAttach(ctx, filter);
+			else if (attachType.equals(AttachType.INVOICE))
+				getAttachment().deleteInvoiceAttach(ctx, filter);
+			else if (attachType.equals(AttachType.ITEM))
+				getAttachment().deleteItemAttach(ctx, filter);
+			else if (attachType.equals(AttachType.OFFER))
+				getAttachment().deleteOfferAttach(ctx, filter);
+			else if (attachType.equals(AttachType.PAYROLL))
+				getAttachment().deletePayrollAttach(ctx, filter);
+			else if (attachType.equals(AttachType.PROJECT))
+				getAttachment().deleteProjectAttach(ctx, filter);
+			else if (attachType.equals(AttachType.SEPE))
+				getAttachment().deleteSepeAttach(ctx, filter);
+
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
-	public static Integer insertRegistryAttachTag(String domainName, Integer domainId, String login,
-			Integer rattachId, Integer tagId){
+
+	public static Integer insertRegistryAttachTag(String domainName,
+			Integer domainId, String login, Integer rattachId, Integer tagId) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getAttachment().insertRegistryAttachTag(ctx, rattachId, tagId);
+			return getAttachment().insertRegistryAttachTag(ctx, rattachId,
+					tagId);
 		} finally {
-			if(ctx != null) ctx.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
-	public static void deleteRegistryAttachTag(String domainName, Integer domainId, String login,
-			Integer rattachId){
+
+	public static void deleteRegistryAttachTag(String domainName,
+			Integer domainId, String login, Integer rattachId) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			getAttachment().deleteRegistryAttachTag(ctx, rattachId);
-		} finally{
-			if(ctx != null) ctx.close();
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
+
 	// ********************************************
 	// ******************************* WAREHOUSE **
 	// ********************************************
 
-	public static Warehouse getWarehouse(String domainName, Integer domainId, String login,
-			WarehouseFilter filter){
+	public static Warehouse getWarehouse(String domainName, Integer domainId,
+			String login, WarehouseFilter filter) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getWarehouse().getWarehouse(ctx, filter);
-		} finally{
-			if(ctx != null) ctx.close();
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
+
 	public static IncomeDetail getLastIncomeDetail(String domainName,
 			Integer domainId, String user, Item item, Integer workplaceId,
-			Integer warehouseId){
+			Integer warehouseId) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getWarehouse().getLastIncomeDetail(ctx, item, workplaceId, warehouseId);
+			return getWarehouse().getLastIncomeDetail(ctx, item, workplaceId,
+					warehouseId);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
+
 	public static IncomeDetail getLastIncomeDetailUntilDate(String domainName,
 			Integer domainId, String user, Item item, Integer workplaceId,
-			Integer warehouseId, Date date){
+			Integer warehouseId, Date date) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getWarehouse().getLastIncomeDetailUntilDate(ctx, item, workplaceId, warehouseId, date);
+			return getWarehouse().getLastIncomeDetailUntilDate(ctx, item,
+					workplaceId, warehouseId, date);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
-	public static LinkedList<IncomeDetail> getLastIncomeDetailList(String domainName,
-			Integer domainId, String user, Item item, String months, Integer workplaceId,
-			Integer warehouseId){
+
+	public static LinkedList<IncomeDetail> getLastIncomeDetailList(
+			String domainName, Integer domainId, String user, Item item,
+			String months, Integer workplaceId, Integer warehouseId) {
 		Calendar calendar = Calendar.getInstance();
 		Integer m = Integer.parseInt(months);
 		calendar.add(Calendar.MONTH, -m);
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getWarehouse().getLastIncomeDetailList(ctx, item, calendar.getTime(),
-					workplaceId, warehouseId);
+			return getWarehouse().getLastIncomeDetailList(ctx, item,
+					calendar.getTime(), workplaceId, warehouseId);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
-	public static LinkedList<IncomeDetail> getLastIncomeDetailListUntilDate(String domainName,
-			Integer domainId, String user, Item item, String months, Integer workplaceId,
-			Integer warehouseId, Date date){
+
+	public static LinkedList<IncomeDetail> getLastIncomeDetailListUntilDate(
+			String domainName, Integer domainId, String user, Item item,
+			String months, Integer workplaceId, Integer warehouseId,
+			Date date) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
 		Integer m = Integer.parseInt(months);
@@ -2114,114 +2305,125 @@ public class AON {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getWarehouse().getLastIncomeDetailListUntilDate(ctx, item, calendar.getTime(),
+			return getWarehouse().getLastIncomeDetailListUntilDate(ctx, item,
+					calendar.getTime(), workplaceId, warehouseId, date);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static LinkedList<IncomeDetail> getIncomeDetailList(
+			String domainName, Integer domainId, String user, Item item,
+			Integer workplaceId, Integer warehouseId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getWarehouse().getIncomeDetailList(ctx, item, workplaceId,
+					warehouseId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static LinkedList<IncomeDetail> getIncomeDetailListUntilDate(
+			String domainName, Integer domainId, String user, Item item,
+			Integer workplaceId, Integer warehouseId, Date date) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getWarehouse().getIncomeDetailListUntilDate(ctx, item,
 					workplaceId, warehouseId, date);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
-	public static LinkedList<IncomeDetail> getIncomeDetailList(String domainName,
-			Integer domainId, String user, Item item, Integer workplaceId, Integer warehouseId){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getWarehouse().getIncomeDetailList(ctx, item, workplaceId, warehouseId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static LinkedList<IncomeDetail> getIncomeDetailListUntilDate(String domainName,
-			Integer domainId, String user, Item item, Integer workplaceId, Integer warehouseId
-			, Date date){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getWarehouse().getIncomeDetailListUntilDate(ctx, item, workplaceId, warehouseId, date);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static LinkedList<InventoryDetail> getInventoryDetailList(String domainName, Integer domainId,
-			String user, Integer inventoryId){
+
+	public static LinkedList<InventoryDetail> getInventoryDetailList(
+			String domainName, Integer domainId, String user,
+			Integer inventoryId) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getWarehouse().getInventoryDetailList(ctx, inventoryId);
 		} finally {
-			if (ctx != null) 
+			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
-	public static LinkedList<Inventory> getInventoryList(String domainName, Integer domainId, String login,
-			Date startDate, Date endDate){
+
+	public static LinkedList<Inventory> getInventoryList(String domainName,
+			Integer domainId, String login, Date startDate, Date endDate) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getWarehouse().getInventoryList(ctx, startDate, endDate);
-		} finally  {
-			if(ctx != null) ctx.close();
-		}
-	}
-	
-	public static void updateInventoryDetail(String domainName, Integer domainId, String login,
-			InventoryDetail inventoryDetail){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			getWarehouse().updateInventoryDetail(ctx, inventoryDetail);
 		} finally {
-			if(ctx != null) ctx.close();
-		}
-	}
-	
-	public static Department getDepartment(String domainName, Integer domainId, String login,
-			Integer workplaceId, DepartmentFilter filter){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getWarehouse().getDepartment(ctx, workplaceId, filter);
-		} finally{
-			if(ctx != null) ctx.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 
-	public static LinkedList<Department> getDepartmentList(String domainName, Integer domainId, String login,
-			Integer workplaceId, DepartmentFilter filter){
+	public static void updateInventoryDetail(String domainName,
+			Integer domainId, String login, InventoryDetail inventoryDetail) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getWarehouse().getDepartmentList(ctx, workplaceId, filter);
-		} finally{
-			if(ctx != null) ctx.close();
+			getWarehouse().updateInventoryDetail(ctx, inventoryDetail);
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
-	public static LinkedList<Series> getSeriesDeliveryList(String domainName, Integer domainId, String login,
-			Integer scopeId){	
+
+	public static Department getDepartment(String domainName, Integer domainId,
+			String login, Integer workplaceId, DepartmentFilter filter) {
 		AONContext ctx = null;
-		try{
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getDepartment(ctx, workplaceId, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static LinkedList<Department> getDepartmentList(String domainName,
+			Integer domainId, String login, Integer workplaceId,
+			DepartmentFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getDepartmentList(ctx, workplaceId, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static LinkedList<Series> getSeriesDeliveryList(String domainName,
+			Integer domainId, String login, Integer scopeId) {
+		AONContext ctx = null;
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getWarehouse().getSeriesDeliveryList(ctx, scopeId);
 		} finally {
-			if(ctx != null) ctx.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
+
 	// ------------------------------------------------------------------- STATS
-	public static StatParams createStatParams(String domainName, int domain, String user) {
+	public static StatParams createStatParams(String domainName, int domain,
+			String user) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName,domain, user);
+			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getStats().createStatParams(ctx);
 		} finally {
-			if (ctx != null) 
+			if (ctx != null)
 				ctx.close();
 		}
 	}
@@ -2230,24 +2432,24 @@ public class AON {
 			StatParams params, String user) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(params.getDomainName()
-					,params.getDomain(), user);
+			ctx = AONContext.getAONContext(params.getDomainName(),
+					params.getDomain(), user);
 			return getStats().getYearInvoiceTypeData(ctx, params);
 		} finally {
-			if (ctx != null) 
+			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
+
 	public static StatData<Integer, InvoiceType, Double> getMonthInvoiceTypeData(
 			StatParams params, String user) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(params.getDomainName()
-					,params.getDomain(), user);
+			ctx = AONContext.getAONContext(params.getDomainName(),
+					params.getDomain(), user);
 			return getStats().getMonthInvoiceTypeData(ctx, params);
 		} finally {
-			if (ctx != null) 
+			if (ctx != null)
 				ctx.close();
 		}
 	}
@@ -2255,201 +2457,219 @@ public class AON {
 	// ********************************************
 	// ********************************* Project **
 	// ********************************************
-	
-	public static Project getProject(String domainName, Integer domainId, String login,
-			ProjectFilter filter){
+
+	public static Project getProject(String domainName, Integer domainId,
+			String login, ProjectFilter filter) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getProject().getProject(ctx, filter);
-		} finally{
-			if(ctx != null) ctx.close();
-		}
-	}
-	
-	public static LinkedList<Project> getProjectList(String domainName, Integer domainId, String login,
-			ProjectFilter filter){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getProject().getProjectList(ctx, filter);
-		} finally{
-			if(ctx != null) ctx.close();
-		}
-	}
-	
-	public static Integer insertProject(String domainName, Integer domainId, String login,
-			Project project){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getProject().insertProject(ctx, project);
-		} finally{
-			if(ctx != null) ctx.close();
-		}
-	}
-	
-	public static ProjectReservation getProjectReservation(String domainName, Integer domainId, String login,
-			Integer projectId){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getProject().getProjectReservation(ctx, projectId);
 		} finally {
-			if(ctx != null)
+			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
+
+	public static LinkedList<Project> getProjectList(String domainName,
+			Integer domainId, String login, ProjectFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getProject().getProjectList(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Integer insertProject(String domainName, Integer domainId,
+			String login, Project project) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getProject().insertProject(ctx, project);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static ProjectReservation getProjectReservation(String domainName,
+			Integer domainId, String login, Integer projectId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getProject().getProjectReservation(ctx, projectId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	// ********************************************
 	// ******************************* Warehouse **
 	// ********************************************
-	
-	public static void deleteWarehouseTransfer(String domainName, Integer domainId, String login,
-			Integer inventoryId) {
+
+	public static void deleteWarehouseTransfer(String domainName,
+			Integer domainId, String login, Integer inventoryId) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			getWarehouse().deleteWarehouseTransfer(ctx, inventoryId);
 		} finally {
-			if(ctx != null)
+			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
-	public static void updateInventory(String domainName, Integer domainId, String login,
-			Inventory inventory){
+
+	public static void updateInventory(String domainName, Integer domainId,
+			String login, Inventory inventory) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			getWarehouse().updateInventory(ctx, inventory);
 		} finally {
-			if(ctx != null) ctx.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
-	public static LinkedList<Inventory> getTwoLastInventory(String domainName, Integer domainId, String login,
-			Integer warehouseId) {
+
+	public static LinkedList<Inventory> getTwoLastInventory(String domainName,
+			Integer domainId, String login, Integer warehouseId) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getWarehouse().getTwoLastInventory(ctx, warehouseId);
 		} finally {
-			if(ctx != null) ctx.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
-	public static void deleteInventory(String domainName, Integer domainId, String login,
-			Integer inventoryId){
+
+	public static void deleteInventory(String domainName, Integer domainId,
+			String login, Integer inventoryId) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			getWarehouse().deleteInventory(ctx, inventoryId);
-		} finally{
-			if(ctx != null) ctx.close();
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
+
 	// ********************************************
 	// ******************************** Registry **
 	// ********************************************
 
-	public static Category getCategory(String domainName, Integer domainId, String login, 
-			Integer categoryId){
+	public static Category getCategory(String domainName, Integer domainId,
+			String login, Integer categoryId) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getRegistry().getCategory(ctx, categoryId);
-		} finally{
-			if(ctx != null) ctx.close();
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
-	public static LinkedList<Category> getCategoryList(String domainName, Integer domainId, String login){
+
+	public static LinkedList<Category> getCategoryList(String domainName,
+			Integer domainId, String login) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getRegistry().getCategoryList(ctx);
-		} finally{
-			if(ctx != null) ctx.close();
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
+
 	// ********************************************
 	// ****************************** Commercial **
 	// ********************************************
-	
-	//-------------------- COMMERCIAL TRACKING
-	
-	public static CommercialTracking getCommercialTracking(String domainName, Integer domainId, String login,
-			CommercialTrackingFilter filter){
+
+	// -------------------- COMMERCIAL TRACKING
+
+	public static CommercialTracking getCommercialTracking(String domainName,
+			Integer domainId, String login, CommercialTrackingFilter filter) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getCommercial().getCommercialTracking(ctx, filter);
-		} finally{
-			if(ctx != null) ctx.close();
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
-	public static LinkedList<CommercialTracking> getCommercialTrackingList(String domainName, Integer domainId, String login,
-			CommercialTrackingFilter filter){
+
+	public static LinkedList<CommercialTracking> getCommercialTrackingList(
+			String domainName, Integer domainId, String login,
+			CommercialTrackingFilter filter) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getCommercial().getCommercialTrackingList(ctx, filter);
-		} finally{
-			if(ctx != null) ctx.close();
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
-	public static void updateEventId(String domainName, Integer domainId, String login,
-			Integer ctId, String eventId){
+
+	public static void updateEventId(String domainName, Integer domainId,
+			String login, Integer ctId, String eventId) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			getCommercial().updateEventId(ctx, ctId, eventId);
-		} finally{
-			if(ctx != null) ctx.close();
-		}	
-	}
-	
-	//-------------------- COMMERCIAL ACTIVITY
-	
-	public static CommercialActivity getCommercialActivity(String domainName, Integer domainId, String login,
-			CommercialActivityFilter filter){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getCommercial().getCommercialActivity(ctx, filter);
-		} finally{
-			if(ctx != null) ctx.close();
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
-	public static LinkedList<CommercialActivity> getCommercialActivityList(String domainName, Integer domainId, String login,
-			CommercialActivityFilter filter){
+
+	// -------------------- COMMERCIAL ACTIVITY
+
+	public static CommercialActivity getCommercialActivity(String domainName,
+			Integer domainId, String login, CommercialActivityFilter filter) {
 		AONContext ctx = null;
-		try{
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommercial().getCommercialActivity(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static LinkedList<CommercialActivity> getCommercialActivityList(
+			String domainName, Integer domainId, String login,
+			CommercialActivityFilter filter) {
+		AONContext ctx = null;
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getCommercial().getCommercialActivityList(ctx, filter);
-		} finally{
-			if(ctx != null) ctx.close();
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 
 	// ********************************************
 	// ***************************** Marketplace **
 	// ********************************************
-	
-	public static LinkedList<Tag> getMatketplaceTagList(String domainName, Integer domainId, String login){
+
+	public static LinkedList<Tag> getMatketplaceTagList(String domainName,
+			Integer domainId, String login) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getMarketplace().getMarketplaceTagList(ctx);
 		} finally {
-			if(ctx != null) ctx.close();			
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
+
 }

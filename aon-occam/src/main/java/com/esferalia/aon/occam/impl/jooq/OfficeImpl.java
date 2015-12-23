@@ -5,29 +5,26 @@ import java.util.List;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IOffice;
 import com.esferalia.aon.occam.api.model.office.Notice;
+import com.esferalia.aon.occam.impl.jooq.dao.AonHubDAO;
 
 public class OfficeImpl implements IOffice {
 
 	@Override
 	public List<Notice> getOpenNotices(AONContext ctx)
 			throws IllegalArgumentException {
-		return null;
+		return AonHubDAO.getOpenNotices(ctx);
 	}
 
 	@Override
 	public List<Notice> getClosedNotices(AONContext ctx)
 			throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		return null;
+		return AonHubDAO.getClosedIsues(ctx);
 	}
 
 	@Override
 	public List<Notice> getAllIssues(AONContext ctx)
 			throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		return null;
+		return AonHubDAO.getAllNotices(ctx);
 	}
-	
-	
 
 }

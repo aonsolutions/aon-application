@@ -134,7 +134,10 @@ public class OfficeApiNoticeServlet extends HttpServlet {
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
 			System.out.println(
-					"List all issues across all the authenticated user's visible repositories including owned repositories, member repositories, and organization repositories");			
+					"List all issues across all the authenticated user's visible repositories including owned repositories, member repositories, and organization repositories");
+			
+			String parameter = req.getParameter("state");
+			System.out.println("Parameter: " + parameter);
 			
 		}
 	}
@@ -439,7 +442,7 @@ public class OfficeApiNoticeServlet extends HttpServlet {
 	}
 
 	private static String getJsonObject(HttpServletRequest req)
-			throws IOException {
+			throws IOException, Exception {
 		StringBuffer buffer = new StringBuffer();
 		String line = null;
 		BufferedReader reader = req.getReader();
