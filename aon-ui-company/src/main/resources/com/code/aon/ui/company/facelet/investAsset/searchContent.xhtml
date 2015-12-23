@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:outputLabel for="InvestAsset_description"
+		value="#{bundle.aon_description}" />
+	<aon:inputText id="InvestAsset_description" size="40"
+		valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="InvestAsset_type" 
+		value="#{bundle.aon_type}" />
+	<aon:selectOneMenu id="InvestAsset_type"
+		value="#{searchController.type}">
+		<f:selectItem itemLabel=" - " value="#{null}" />
+		<f:selectItems value="#{companyCollections.investAssetTypes}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="InvestAsset_regime" 
+		value="#{bundle.pms_regime}" />
+	<aon:selectOneMenu id="InvestAsset_regime"
+		value="#{searchController.regime}">
+		<f:selectItem itemLabel=" - " value="#{null}" />
+		<f:selectItems value="#{companyCollections.investAssetRegimes}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="InvestAsset_vatPercent"
+		value="#{bundle.accounting_invest_asset_vat_encumbrance}" />
+	<aon:inputText id="InvestAsset_vatPercent" size="5"
+		valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="InvestAsset_retentionPercent"
+		value="#{bundle.accounting_invest_asset_retention_encumbrance}" />
+	<aon:inputText id="InvestAsset_retentionPercent" size="5"
+		valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel value="" />
+	<aon:div>
+		<aon:selectBooleanCheckbox id="InvestAsset_withdrawnAsset"
+			value="#{searchController.withdrawnAsset}" />
+		<aon:outputLabel for="InvestAsset_withdrawnAsset" 
+			value="#{bundle.accounting_invest_asset_include_withdrawn_assets}" />
+	</aon:div>
+
+</ui:composition>

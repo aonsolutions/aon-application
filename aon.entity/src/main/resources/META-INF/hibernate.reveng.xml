@@ -743,6 +743,11 @@
 		</foreign-key>
 	</table>
 
+	<table name="invest_asset">
+		<column name="type" type="com.code.aon.company.enumeration.InvestAssetType"/>
+		<column name="regime" type="com.code.aon.company.enumeration.InvestAssetRegime"/>
+	</table>
+
 	<table name="invoice">
 		<column name="status" type="com.code.aon.finance.enumeration.InvoiceStatus"/>
 		<column name="type" type="com.code.aon.finance.enumeration.InvoiceType"/>

@@ -21,6 +21,8 @@ import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.enumeration.EnterpriseSalaryTemplate;
 import com.code.aon.company.enumeration.FinancePaymentTemplate;
+import com.code.aon.company.enumeration.InvestAssetRegime;
+import com.code.aon.company.enumeration.InvestAssetType;
 import com.code.aon.company.enumeration.ItemTagTemplate;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SalarySendingMethod;
@@ -49,6 +51,8 @@ public class CompanyCollectionsController implements Serializable {
 	private List<SelectItem> simpleReportPrintOptions;
 	private List<SelectItem> financePaymentTemplate;
 	private List<SelectItem> itemTagTemplate;
+	private List<SelectItem> investAssetTypes;
+	private List<SelectItem> investAssetRegimes;
 	
 	public List<SelectItem> getItemTagTemplate(){
 		if (itemTagTemplate == null) {
@@ -371,6 +375,30 @@ public class CompanyCollectionsController implements Serializable {
 			return activityBean.getCount(criteria);
     	}
 		return 0;
+	}
+
+	public List<SelectItem> getInvestAssetTypes() {
+		if (investAssetTypes == null) {
+			Locale locale = AonUtil.getCurrentLocale();
+			investAssetTypes = new LinkedList<SelectItem>();
+			for (InvestAssetType type : InvestAssetType.values()) {
+				SelectItem item = new SelectItem(type, type.getName(locale));
+				investAssetTypes.add(item);
+			}
+		}
+		return investAssetTypes;
+	}
+
+	public List<SelectItem> getInvestAssetRegimes() {
+		if (investAssetRegimes == null) {
+			Locale locale = AonUtil.getCurrentLocale();
+			investAssetRegimes = new LinkedList<SelectItem>();
+			for (InvestAssetRegime regime : InvestAssetRegime.values()) {
+				SelectItem item = new SelectItem(regime, regime.getName(locale));
+				investAssetRegimes.add(item);
+			}
+		}
+		return investAssetRegimes;
 	}
 
 }

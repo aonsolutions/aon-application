@@ -275,8 +275,9 @@ public class AonExporter extends GenericExporter{
 		map.put("Department","com.code.aon.company.Department");
 		map.put("Enterprise","com.code.aon.company.Enterprise");
 		map.put("EnterpriseData","com.code.aon.company.EnterpriseData");
-		map.put("WorkPlace","com.code.aon.company.WorkPlace");
 		map.put("EnterpriseUser","com.code.aon.company.EnterpriseUser");
+		map.put("InvestAsset","com.code.aon.company.InvestAsset");
+		map.put("WorkPlace","com.code.aon.company.WorkPlace");
 		map.put("WorkplaceDepartment","com.code.aon.company.WorkplaceDepartment");
 
 		//AON CONFIG 

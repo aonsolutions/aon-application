@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.36.0
+# Version: 8.37.0
 # Created by: girazu
-# Creation Date: 11/12/2015 13:20
+# Creation Date: 18/12/2015 12:40
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -656,6 +656,25 @@ CREATE TABLE `account_entry_fbatch` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Asientos Contables y Remesas';
 
 #
+# Structure for the `invest_asset` table : 
+#
+
+CREATE TABLE `invest_asset` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Bien',
+  `type` tinyint(2) NOT NULL COMMENT 'Tipo de Bien',
+  `regime` tinyint(2) NOT NULL COMMENT 'Regimen',
+  `start_date` date default NULL COMMENT 'Fecha de alta',
+  `end_date` date default NULL COMMENT 'Fecha de baja',
+  `vat_percent` double default '0' COMMENT 'Porcentaje de afectacion de IVA',
+  `retention_percent` double default '0' COMMENT 'Porcentaje de afectacion de IRPF',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_INVEST_ASSET_DOMAIN` (`domain`),
+  CONSTRAINT `FK_INVEST_ASSET_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bienes afectos o de inversion';
+
+#
 # Structure for the `cnae` table : 
 #
 
@@ -995,6 +1014,7 @@ CREATE TABLE `invoice` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Factura',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `activity` int(4) default NULL COMMENT 'Identificador de la Actividad',
+  `invest_asset` int(4) default NULL COMMENT 'Identificador del Bien afecto',
   `project` int(4) default NULL COMMENT 'Identificador del Proyecto',
   `series` char(5) collate latin1_spanish_ci default NULL COMMENT 'Serie de la Factura',
   `number` int(4) NOT NULL default '0' COMMENT 'Numero de la Factura',
@@ -1048,8 +1068,10 @@ CREATE TABLE `invoice` (
   KEY `IDX_INVOICE_POS_SHIFT` (`pos_shift`),
   KEY `IDX_INVOICE_REFERENCE_CODE` (`reference_code`),
   KEY `IDX_INVOICE_ACTIVITY` (`activity`),
+  KEY `IDX_INVOICE_INVEST_ASSET` (`invest_asset`),
   CONSTRAINT `FK_INVOICE_ACTIVITY` FOREIGN KEY (`activity`) REFERENCES `enterprise_activity` (`id`),
   CONSTRAINT `FK_INVOICE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_INVOICE_INVEST_ASSET` FOREIGN KEY (`invest_asset`) REFERENCES `invest_asset` (`id`),
   CONSTRAINT `FK_INVOICE_INVOICE` FOREIGN KEY (`rectification_invoice`) REFERENCES `invoice` (`id`),
   CONSTRAINT `FK_INVOICE_POS_SHIFT` FOREIGN KEY (`pos_shift`) REFERENCES `pos_shift` (`id`),
   CONSTRAINT `FK_INVOICE_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
@@ -5355,6 +5377,7 @@ CREATE TABLE `invoice_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle de la Factura',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `invoice` int(4) NOT NULL default '0' COMMENT 'Identificador de la Factura',
+  `invest_asset` int(4) default NULL COMMENT 'Identificador del Bien afecto',
   `project` int(4) default NULL COMMENT 'Identificador del Proyecto',
   `line` smallint(2) default '1' COMMENT 'Numero de linea del Detalle dentro de la Factura',
   `item` int(4) default NULL COMMENT 'Identificador del Articulo del Detalle de Factura',
@@ -5383,7 +5406,9 @@ CREATE TABLE `invoice_detail` (
   KEY `IDX_INVOICE_DETAIL_WORKPLACE` (`workplace`),
   KEY `IDX_INVOICE_DETAIL_DOMAIN` (`domain`),
   KEY `IDX_INVOICE_DETAIL_SELLER` (`seller`),
+  KEY `IDX_INVOICE_DETAIL_INVEST_ASSET` (`invest_asset`),
   CONSTRAINT `FK_INVOICE_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_INVOICE_DETAIL_INVEST_ASSET` FOREIGN KEY (`invest_asset`) REFERENCES `invest_asset` (`id`),
   CONSTRAINT `FK_INVOICE_DETAIL_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
   CONSTRAINT `FK_INVOICE_DETAIL_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_INVOICE_DETAIL_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
@@ -8025,7 +8050,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.36.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.37.0');
 
 COMMIT;
 

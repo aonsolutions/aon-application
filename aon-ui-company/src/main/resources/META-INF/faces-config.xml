@@ -1262,6 +1262,42 @@
 		</managed-property>				
 	</managed-bean>
 	
+	<!-- ****** INVEST ASSET ****** -->
+	<managed-bean>
+		<managed-bean-name>investAsset</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.company.InvestAsset</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>investAsset</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>InvestAsset_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{investAssetSearch}</value>
+			</list-entries>
+		</managed-property>		
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>investAssetSearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.company.event.InvestAssetSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUPS ========================== -->
 	<!-- ========================================================== -->
@@ -1352,5 +1388,21 @@
 		</navigation-case>
 	</navigation-rule>
 			
+	<!-- =================== Invest Asset ========================== -->
+	<navigation-rule>
+	    <navigation-case>
+	      <from-outcome>investAsset_form</from-outcome>
+	      <to-view-id>/com/code/aon/ui/company/facelet/investAsset/form.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>investAsset_list</from-outcome>
+	      <to-view-id>/com/code/aon/ui/company/facelet/investAsset/list.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>investAsset_search</from-outcome>
+	      <to-view-id>/com/code/aon/ui/company/facelet/investAsset/search.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
 </faces-config>
 		
