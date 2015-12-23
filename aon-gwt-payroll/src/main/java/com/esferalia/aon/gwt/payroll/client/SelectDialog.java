@@ -223,8 +223,7 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 				.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 					@Override
 					public void onSelectionChange(SelectionChangeEvent event) {
-						acceptButton.setEnabled(selectionModel.getSelectedSet()
-								.size() > 0);
+						acceptButton.setEnabled(SelectDialog.this.enableAccept());
 					}
 				});
 		
@@ -294,5 +293,11 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 	public HandlerRegistration addAcceptHandler(AcceptHandler handler) {
 		return addHandler(handler, AcceptEvent.getType());
 	}
-
+	
+	// ------------------------------------------------------------------------
+	
+	protected boolean enableAccept () {
+		return selectionModel.getSelectedSet()
+		.size() > 0;
+	}
 }

@@ -50,6 +50,7 @@ import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Province;
 import com.esferalia.aon.gwt.payroll.shared.ShareService;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -864,6 +865,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			this.workplace = workplace;
 			setData(getCCs(workplace));
 			setBankAccounts(enterprise.getBankAccounts());
+
+			if ( AonStringUtils.isBlank(getHolder())) 
+				setHolder(enterprise.getName());
+			
 		}
 
 		
@@ -969,6 +974,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			this.enterpr1se = enterprise;
 			setData(getCCs(enterprise));
 			setBankAccounts(enterprise.getBankAccounts());
+			
+			if ( AonStringUtils.isBlank(getHolder())) 
+				setHolder(enterprise.getName());
 		}
 
 		
@@ -1025,6 +1033,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			};
 
 			calcDialog.setDataProvider(employeeProvider);
+			
 		}
 
 		// ------------------------------------------------------ AcceptHandler
