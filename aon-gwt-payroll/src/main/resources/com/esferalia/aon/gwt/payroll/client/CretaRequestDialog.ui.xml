@@ -44,12 +44,10 @@
 	}
 	
 	.error {
-		
 	}
 	
 	.messages {
-		padding-left: 0.5em;
-		padding-bottom: 10px;
+		padding-left: 20px;
 	}
 	
 	.form textarea {
@@ -70,6 +68,11 @@
 	<g:HTMLPanel styleName="aon-width-all aon-height-all">
 
 		<table class="aon-width-all {style.form} ">
+			<tr >
+				<td  colspan="2">
+					<g:Label styleName="gwt-Label {style.messages} aon-icon-exception"  ui:field="messagesLabel"  />
+				</td>
+			</tr>
 			<tr>
 				<td class="{style.label}">
 					<g:Label text="Autorizado" />

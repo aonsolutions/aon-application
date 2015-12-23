@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Date;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -9,7 +10,10 @@ import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -47,7 +51,12 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 	Label selectLabel;
 	
 	@UiField
+	Label messagesLabel;
+
+
+	@UiField
 	Element previousBasesTR;
+
 
 	@UiField
 	CheckBox previousBasesCheckBox;
@@ -76,6 +85,8 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 		addColumn(fullNameColumn, "C\u00F3digo de Cuenta de Cotizaci\u00F3n");
 		
 		monthListBox.setSelectedMonth(DateUtils.getFirstDayOfMonth());
+		
+		acceptButton.setEnabled(enableAccept());
 	}
 	
 	
@@ -93,8 +104,13 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 	}
 	
 	@UiHandler("authLongBox")
-	void onAuthCahnged(ValueChangeEvent<Long> e) {
-		acceptButton.setEnabled(e.getValue()!= null);
+	void onAuthChanged(ValueChangeEvent<Long> e) {
+		acceptButton.setEnabled(enableAccept());
+	}
+	
+	@UiHandler("authLongBox")
+	void onAuthChanged(KeyUpEvent e ){
+		acceptButton.setEnabled(enableAccept());
 	}
 	
 	// ------------------------------------------------------------------------
@@ -131,14 +147,58 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 	// ------------------------------------------------------------------------
 	
 	protected void setVisiblePreviousBases(boolean visible){
+		setVisible(visible, previousBasesTR);
+	}
+	
+	
+	protected void setVisible(boolean visible, Element el){
 		if ( visible )
-			previousBasesTR.getStyle().clearDisplay();
+			el.getStyle().clearDisplay();
 		else
-			previousBasesTR.getStyle().setDisplay(Display.NONE);
+			el.getStyle().setDisplay(Display.NONE);
+		
+	}
+
+	// ------------------------------------------------------------------------
+	
+	@Override
+	protected boolean enableAccept() {
+		try {
+			checkAuth();
+			checkCCCs();
+			hide(messagesLabel, true);
+			return true;
+		} catch ( Exception e ){
+			hide(messagesLabel, false);
+			messagesLabel.setText(e.getMessage());
+			return false;
+		}
 		
 	}
 	
 	// ------------------------------------------------------------------------
+	
+	
+
+	private void checkCCCs() throws Exception{
+		if ( getSelectedData().isEmpty() )
+			throw new Exception("Debe seleccionar al menos un C\u00F3digo de Cuenta de Cotizaci\u00F3n (CCC).");
+	}
+
+	private void checkAuth() throws Exception{
+		if ( authLongBox.getValue() == null )
+			throw new Exception("Autorizado no v\u00E1lido. Debe ser un n\u00FAmero que contenga 8 d\u00EDgitos o menos.");
+			
+	}
+	// ------------------------------------------------------------------------
+	
+	private static void hide(Widget widget, boolean hide){
+		if ( hide )
+			widget.getElement().getStyle().setVisibility(Visibility.HIDDEN);
+		else 
+			widget.getElement().getStyle().clearVisibility();
+	}
+	
 
 	private static native void click(Element a)/*-{
 		a.click();

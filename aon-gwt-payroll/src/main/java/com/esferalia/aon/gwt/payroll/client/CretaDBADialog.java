@@ -7,9 +7,15 @@ import java.util.Map;
 import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.Visibility;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -107,6 +113,9 @@ public class CretaDBADialog extends SelectDialog<CCC> {
 	Label selectLabel;
 
 	@UiField
+	Label messagesLabel;
+
+	@UiField
 	Anchor downloadAnchor;
 
 	private BankAccountSuggestOracle ibanOracle;
@@ -131,6 +140,7 @@ public class CretaDBADialog extends SelectDialog<CCC> {
 
 		addColumn(fullNameColumn, "C\u00F3digo de Cuenta de Cotizaci\u00F3n");
 
+		acceptButton.setEnabled(enableAccept());
 	}
 
 	// ------------------------------------------------------------------------
@@ -148,20 +158,50 @@ public class CretaDBADialog extends SelectDialog<CCC> {
 
 	@UiHandler("authLongBox")
 	void onAuthCahnged(ValueChangeEvent<Long> e) {
+		acceptButton.setEnabled(enableAccept());
 	}
 	
 	@UiHandler("ibanSuggestBox")
 	void onIbanCahnged(ValueChangeEvent<String> e) {
+		acceptButton.setEnabled(enableAccept());
 	}
 	
 	@UiHandler("holderTextBox")
 	void onHolderCahnged(ValueChangeEvent<String> e) {
+		acceptButton.setEnabled(enableAccept());
 	}
 
 	@UiHandler("documentTextBox")
 	void onDocumentCahnged(ValueChangeEvent<String> e) {
+		acceptButton.setEnabled(enableAccept());
 	}
 
+	@UiHandler("authLongBox")
+	void onAuthCahnged(KeyUpEvent e) {
+		acceptButton.setEnabled(enableAccept());
+	}
+	
+	@UiHandler("ibanSuggestBox")
+	void onIbanCahnged(KeyUpEvent e) {
+		acceptButton.setEnabled(enableAccept());
+	}
+	
+	@UiHandler("holderTextBox")
+	void onHolderCahnged(KeyUpEvent e) {
+		acceptButton.setEnabled(enableAccept());
+	}
+
+	@UiHandler("documentTextBox")
+	void onDocumentCahnged(KeyUpEvent e) {
+		acceptButton.setEnabled(enableAccept());
+	}
+	
+	@UiHandler("documentTypeListBox")
+	void onDocumentTypeCahnged(ChangeEvent e) {
+		acceptButton.setEnabled(enableAccept());
+	}
+	
+	
 	// ------------------------------------------------------------------------
 
 	public Long getAuthorized() {
@@ -250,10 +290,93 @@ public class CretaDBADialog extends SelectDialog<CCC> {
 
 	// ------------------------------------------------------------------------
 
+	@Override
+	protected boolean enableAccept() {
+		try {
+			checkAuth();
+			checkIBAN();
+			checkNIF();
+			checkHolder();
+			checkCCCs();
+			hide(messagesLabel, true);
+			return true;
+		} catch ( Exception e ){
+			hide(messagesLabel, false);
+			messagesLabel.setText(e.getMessage());
+			return false;
+		}
+		
+	}
+	
+	// ------------------------------------------------------------------------
+
+	private void checkNIF() throws Exception{
+		if ( AonStringUtils.isBlank(documentTextBox.getText()))
+			throw new Exception("Documento vacio.");
+		
+		char document [] = documentTextBox.getText().toCharArray();
+		
+		switch (documentTypeListBox.getSelectedValue()) {
+		case "6":
+			try {
+				if ( AonDocumentUtil.isValidNIE(document) )
+					return;
+			}
+			catch ( Exception e ){
+			}
+			throw new Exception("Documento ( NIE ) del titular no v\u00E1lido.");
+		default:
+			try {
+				if ( AonDocumentUtil.isValidNIF(document) )
+					return;
+			}catch(Exception e){
+			}
+			try {
+				if (AonDocumentUtil.isValidCIF(document) )
+					return;
+			}catch(Exception e){
+			}
+			
+			throw new Exception("Documento ( NIF o CIF ) del titular no v\u00E1lido.");
+		}
+	}
+
+	private void checkCCCs() throws Exception{
+		if ( getSelectedData().isEmpty() )
+			throw new Exception("Debe seleccionar al menos un C\u00F3digo de Cuenta de Cotizaci\u00F3n (CCC).");
+	}
+
+	private void checkAuth() throws Exception{
+		if ( authLongBox.getValue() == null )
+			throw new Exception("Autorizado no v\u00E1lido. Debe ser un n\u00FAmero que contenga 8 d\u00EDgitos o menos.");
+			
+	}
+
+	private void checkIBAN() throws Exception{
+		String iban = ibanSuggestBox.getValue();
+		if ( AonStringUtils.isBlank(iban) || iban.length() != 24)
+			throw new Exception("IBAN no v\u00E1lido.");
+	}
+
+	private void checkHolder() throws Exception{
+		if ( AonStringUtils.isBlank(holderTextBox.getText()) )
+			throw new Exception("Apellidos y Nombre o Raz\u00F3n Social del titular vacio.");
+		
+	}
+
+	// ------------------------------------------------------------------------
+
 	private static native void click(Element a)/*-{
 		a.click();
 	}-*/;
 
+	private static void hide(Widget widget, boolean hide){
+		if ( hide )
+			widget.getElement().getStyle().setVisibility(Visibility.HIDDEN);
+		else 
+			widget.getElement().getStyle().clearVisibility();
+	}
+	
 	private static void setSelected(ListBox listBox, String string) {
 		for (int i = 0; i < listBox.getItemCount(); i++) {
 			if (listBox.getValue(i).equals(string)) {

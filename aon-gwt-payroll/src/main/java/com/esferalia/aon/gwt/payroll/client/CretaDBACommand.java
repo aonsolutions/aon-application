@@ -50,6 +50,30 @@ public class CretaDBACommand implements ScheduledCommand, CretaService {
 		dialog.setData(cccs);
 	}
 	
+	public void setHolder(String holder) {
+		dialog.setHolder(holder);
+	}
+
+	public String getHolder() {
+		return dialog.getHolder();
+	}
+	
+	public void setDocument(String document) {
+		dialog.setDocument(document);
+	}
+
+	public String getDocument() {
+		return dialog.getDocument();
+	}
+
+	public void setDocumentType(String documentType) {
+		dialog.setDocumentType(documentType);
+	}
+
+	public String getDocumentType() {
+		return dialog.getDocumentType();
+	}
+
 	public void setSelectedData(List<CCC> cccs) {
 		dialog.setSelectedData(cccs);
 	}
@@ -57,9 +81,12 @@ public class CretaDBACommand implements ScheduledCommand, CretaService {
 	public void setBankAccounts(Collection<BankAccount> bankAccounts){
 		dialog.setBankAccounts(bankAccounts);
 	}
+	
+	
 	// ------------------------------------------------------------------------
 	
 	
+
 	protected void onSucces(String dba) {
 	}
 	
