@@ -466,6 +466,10 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			this.enterpr1se = enterprise;
 			setData(getCCs(enterprise));
 			setBankAccounts(enterprise.getBankAccounts());
+
+			if ( AonStringUtils.isBlank(getHolder())) 
+				setHolder(enterprise.getName());
+			
 		}
 
 	}
@@ -691,6 +695,9 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			this.activity = activity;
 			setData(getCCCs(activity));
 			setBankAccounts(getBankAccounts(activity));
+
+			if ( AonStringUtils.isBlank(getHolder())) 
+				setHolder(getEnterprise(activity).getName());
 		}
 
 		protected List<CCC> getCCCs(Activity activity) {
@@ -863,6 +870,9 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			setData(Collections.singletonList(ccc));
 			setSelectedData(Collections.singletonList(ccc));
 			setBankAccounts(getBankAccounts(ccc));
+
+			if ( AonStringUtils.isBlank(getHolder())) 
+				setHolder(getEnterprise(ccc).getName());
 		}
 
 	}
@@ -1145,6 +1155,14 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 	}
 	
+	private Enterprise getEnterprise(CCC ccc){
+		return enterprises.getEnterprise(ccc);
+	}
+
+	private Enterprise getEnterprise(Activity activity){
+		return enterprises.getEnterprise(activity);
+	}
+
 	private Collection<BankAccount> getBankAccounts(CCC ccc){
 		return enterprises.getEnterprise(ccc).getBankAccounts();
 	}
