@@ -76,6 +76,6 @@ public class JsIssue extends JavaScriptObject {
 			final AsyncCallback<AJSON<JsArray<JsIssueComment>>> callback) {
 
 		final String commentsUrl = getCommentsUrl();
-		AonHub.get(commentsUrl, "", callback);
+		AonHub.get(commentsUrl, callback);
 	}
 }

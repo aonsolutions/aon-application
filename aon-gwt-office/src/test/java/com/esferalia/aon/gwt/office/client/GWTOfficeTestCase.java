@@ -604,31 +604,4 @@ public class GWTOfficeTestCase extends GWTTestConstans {
 		
 		
 	}
-	// ------------------------------------------------------------------------
-	
-//	@Test
-//	public void testServlet(){
-//		String url = GWT.getModuleBaseURL() ;
-//		
-//		AonHub hub = new AonHub();
-//		hub.setAonHubUrl("api/");
-//		
-//		hub.getRepos("xxx", new AsyncCallback<JSON<JsRepo>>() {
-//			
-//			@Override
-//			public void onSuccess(JSON<JsRepo> arg0) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			
-//			@Override
-//			public void onFailure(Throwable arg0) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//		});
-//		
-//		delayTestFinish(300*1000);
-//		
-//	}
 }

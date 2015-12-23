@@ -169,7 +169,7 @@ public class JsRepo extends JavaScriptObject {
 		
 		final String url = labelsUrl.substring(0, finalPosition);
 		
-		AonHub.get(url, "", callback);
+		AonHub.get(url, callback);
 	}
 
 }

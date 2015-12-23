@@ -9,14 +9,13 @@ import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.jooq.InsertSetMoreStep;
 import org.jooq.Record;
 import org.jooq.Result;
-import org.jooq.SelectConditionStep;
 import org.jooq.exception.DataAccessException;
 
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
@@ -32,29 +31,111 @@ import com.esferalia.aon.occam.api.model.office.NoticeComment;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.office.User;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
+import com.esferalia.aon.occam.api.model.type.NoticeType;
+import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
 public class AonHubDAO {
 	
-	public static void addNewNotice (AONContext ctx, Notice notice) {
+	public static void deleteNotice (AONContext ctx, Notice notice) {
+		
 		
 	}
-	
-	public static Tag addNewTag (AONContext ctx, Tag tag) {
+
+	public static Notice addNewNotice(AONContext ctx, Notice notice) {	
+
+		Date today = new Date();
+
+		Integer userId = ctx.getDslContext().selectFrom(USER)
+				.where(USER.LOGIN.eq(ctx.getUser())
+						.and(USER.DOMAIN.eq(ctx.getDomainId())))
+				.fetchOne().getValue(USER.ID);
+
+		NoticeRecord noticeRecord = ctx.getDslContext().insertInto(NOTICE)
+				.set(NOTICE.DOMAIN, ctx.getDomainId())
+				.set(NOTICE.SENDER, userId)
+				.set(NOTICE.DATE,
+						new java.sql.Timestamp((new Date()).getTime()))
+				.set(NOTICE.SUBJECT, notice.getTitle())
+				.set(NOTICE.PHONE,
+						(notice.getPhone() != null) ? notice.getPhone() : null)
+				.set(NOTICE.STATUS, NoticeStatus.OPEN.value())
+				.set(NOTICE.TYPE,
+						(byte) NoticeType.valueOf(notice.getType()).ordinal())
+				.set(NOTICE.PRIORITY,
+						(byte) Priority.valueOf(notice.getPriority()).ordinal())
+				.set(NOTICE.COMPANY, 
+						(notice.getCompany() != null) ? notice.getCompany() : null)
+				.set(NOTICE.RECIPIENT, 
+						(notice.getRecipient() != null) ? notice.getRecipient() : null)
+				.set(NOTICE.WORK_GROUP, 
+						(notice.getWorkgroup() != null) ? notice.getWorkgroup() : null)
+				.returning().fetchOne();
 		
+		ctx.getDslContext()
+		.insertInto(NOTICE)
+		.set(NOTICE.DOMAIN, noticeRecord.getValue(NOTICE.DOMAIN))
+		.set(NOTICE.SENDER, noticeRecord.getValue(NOTICE.SENDER))
+		.set(NOTICE.DATE, noticeRecord.getValue(NOTICE.DATE))
+		.set(NOTICE.SUBJECT, notice.getTitle())
+		.set(NOTICE.PHONE, noticeRecord.getValue(NOTICE.PHONE))
+		.set(NOTICE.STATUS, noticeRecord.getValue(NOTICE.STATUS))
+		.set(NOTICE.TYPE, noticeRecord.getValue(NOTICE.TYPE))
+		.set(NOTICE.PRIORITY, noticeRecord.getValue(NOTICE.PRIORITY))
+		.set(NOTICE.WORK_GROUP, noticeRecord.getValue(NOTICE.WORK_GROUP))
+		.set(NOTICE.NOTICE_, noticeRecord.getValue(NOTICE.ID))
+		.execute();
+		
+		for (String tagName : notice.getTags()) {
+			
+			TagRecord tagRecord = ctx.getDslContext()
+					.selectFrom(TAG)
+					.where(TAG.DOMAIN.eq(ctx.getDomainId())
+							.and(TAG.NAME.eq(tagName)))
+					.fetchOne();
+			
+			ctx.getDslContext().insertInto(NOTICE_TAG)
+			.set(NOTICE_TAG.NOTICE, noticeRecord.getValue(NOTICE.ID))
+			.set(NOTICE_TAG.TAG, tagRecord.getValue(TAG.ID))
+			.set(NOTICE_TAG.START_DATE, noticeRecord.getValue(NOTICE.DATE))
+			.execute();
+		}
+		
+		Notice object = new Notice();
+		object.setId(noticeRecord.getValue(NOTICE.ID));
+		object.setDomain(ctx.getDomainId());
+		object.setDate(today);
+		object.setSender(noticeRecord.getValue(NOTICE.SENDER));
+		object.setTitle(notice.getTitle());
+		object.setBody(notice.getBody());
+		object.setRecipient(noticeRecord.getValue(NOTICE.RECIPIENT));
+		object.setContact(noticeRecord.getValue(NOTICE.PHONE));
+		object.setSource(noticeRecord.getValue(NOTICE.SOURCE));
+		object.setCompany(noticeRecord.getValue(NOTICE.COMPANY));
+		object.setStatus(noticeRecord.getValue(NOTICE.STATUS).intValue());
+		object.setWorkgroup(noticeRecord.getValue(NOTICE.WORK_GROUP));
+		object.setType(NoticeType.values()[noticeRecord.getValue(NOTICE.TYPE)].getValue());
+		object.setPriority(Priority.values()[noticeRecord.getValue(NOTICE.PRIORITY)].getValue());
+		
+		return object;
+
+	}
+
+	public static Tag addNewTag(AONContext ctx, Tag tag) {
+
 		Tag newTag = new Tag();
-		
+
 		TagRecord record = ctx.getDslContext().insertInto(TAG)
-		.set(TAG.DOMAIN, ctx.getDomainId())
-		.set(TAG.NAME, tag.getName())
-		.set(TAG.COLOR, (tag.getColor() != null) ? tag.getColor() : null)
-		.returning().fetchOne();
-		
+				.set(TAG.DOMAIN, ctx.getDomainId()).set(TAG.NAME, tag.getName())
+				.set(TAG.COLOR,
+						(tag.getColor() != null) ? tag.getColor() : null)
+				.returning().fetchOne();
+
 		newTag.setId(record.getValue(TAG.ID));
 		newTag.setName(record.getValue(TAG.NAME));
 		newTag.setDomain(record.getValue(TAG.DOMAIN));
 		newTag.setColor(record.getValue(TAG.COLOR));
-		
+
 		return newTag;
 	}
 
@@ -65,11 +146,10 @@ public class AonHubDAO {
 		List<Notice> notices = new LinkedList<Notice>();
 		ctx.getDslContext().selectFrom(NOTICE)
 				.where(NOTICE.DOMAIN.eq(domainId)
-						.and(NOTICE.STATUS.eq(NoticeStatus.OPEN.value()).or(
-								NOTICE.STATUS.eq(NoticeStatus.REOPEN.value())))
-							.and(NOTICE.NOTICE_.isNull()))
-				.fetch()
-				.stream()
+						.and(NOTICE.STATUS.eq(NoticeStatus.OPEN.value())
+								.or(NOTICE.STATUS
+										.eq(NoticeStatus.REOPEN.value())))
+				.and(NOTICE.NOTICE_.isNull())).fetch().stream()
 				.forEach(record -> {
 					Notice notice = new Notice();
 					int id = record.getValue(NOTICE.ID);
@@ -84,128 +164,144 @@ public class AonHubDAO {
 					notice.setCompany(record.getValue(NOTICE.COMPANY));
 					notice.setStatus(record.getValue(NOTICE.STATUS).intValue());
 					notice.setWorkgroup(record.getValue(NOTICE.WORK_GROUP));
-					notice.setType(record.getValue(NOTICE.TYPE).intValue());
 					
+					byte ordinalType = record.getValue(NOTICE.TYPE);
+					notice.setType(NoticeType.values()[ordinalType].getValue());
+
 					try {
-						
+
 						String priorityName = ctx.getDslContext()
-								.selectFrom(TAG.rightOuterJoin(NOTICE_TAG).on(TAG.ID.eq(NOTICE_TAG.TAG)))
+								.selectFrom(TAG.rightOuterJoin(NOTICE_TAG)
+										.on(TAG.ID.eq(NOTICE_TAG.TAG)))
 								.where(TAG.TYPE.eq(TagType.PRIORITY.value())
 										.and(TAG.DOMAIN.eq(domainId))
 										.and(NOTICE_TAG.NOTICE.eq(id))
-										.and(NOTICE_TAG.START_DATE.eq(record.getValue(NOTICE.DATE))))
+										.and(NOTICE_TAG.START_DATE.eq(
+												record.getValue(NOTICE.DATE))))
 								.fetchOne().getValue(TAG.NAME);
-						
-						notice.setPriority(priorityName);						
-						
-					} catch (Exception ex) {}
-					
-					ctx.getDslContext()
-					.selectFrom(NOTICE)
-					.where(NOTICE.NOTICE_.eq(id));					
-					
+
+						notice.setPriority(priorityName);
+
+					} catch (Exception ex) {
+					}
+
+					ctx.getDslContext().selectFrom(NOTICE)
+							.where(NOTICE.NOTICE_.eq(id));
+
 					notices.add(notice);
 				});
 		return notices;
 
 	}
-	
+
 	public static List<Notice> getClosedIsues(AONContext ctx) {
-		
+
 		int domainId = ctx.getDomainId();
-		
+
 		List<Notice> notices = new LinkedList<Notice>();
 		ctx.getDslContext().selectFrom(NOTICE)
-		.where(NOTICE.DOMAIN.eq(domainId)
-				.and(NOTICE.STATUS.eq(NoticeStatus.CLOSED.value()))
-				.and(NOTICE.NOTICE_.isNull()))
-		.fetch()
-		.stream()
-		.forEach(record -> {
-			Notice notice = new Notice();
-			int id = record.getValue(NOTICE.ID);
-			notice.setId(id);
-			notice.setDomain(record.getValue(NOTICE.DOMAIN));
-			notice.setDate(record.getValue(NOTICE.DATE));
-			notice.setSender(record.getValue(NOTICE.SENDER));
-			notice.setTitle(record.getValue(NOTICE.SUBJECT));
-			notice.setRecipient(record.getValue(NOTICE.RECIPIENT));
-			notice.setContact(record.getValue(NOTICE.PHONE));
-			notice.setSource(record.getValue(NOTICE.SOURCE));
-			notice.setCompany(record.getValue(NOTICE.COMPANY));
-			notice.setStatus(record.getValue(NOTICE.STATUS).intValue());
-			notice.setWorkgroup(record.getValue(NOTICE.WORK_GROUP));
-			notice.setType(record.getValue(NOTICE.TYPE).intValue());
-			
-			try {
-				
-				String priorityName = ctx.getDslContext()
-						.selectFrom(TAG.rightOuterJoin(NOTICE_TAG).on(TAG.ID.eq(NOTICE_TAG.TAG)))
-						.where(TAG.TYPE.eq(TagType.PRIORITY.value())
-								.and(TAG.DOMAIN.eq(domainId))
-								.and(NOTICE_TAG.NOTICE.eq(id))
-								.and(NOTICE_TAG.START_DATE.eq(record.getValue(NOTICE.DATE))))
-						.fetchOne().getValue(TAG.NAME);
-				
-				notice.setPriority(priorityName);						
-				
-			} catch (Exception ex) {}
-			
-			notices.add(notice);
-		});
-		
+				.where(NOTICE.DOMAIN.eq(domainId)
+						.and(NOTICE.STATUS.eq(NoticeStatus.CLOSED.value()))
+						.and(NOTICE.NOTICE_.isNull()))
+				.fetch().stream().forEach(record -> {
+					Notice notice = new Notice();
+					int id = record.getValue(NOTICE.ID);
+					notice.setId(id);
+					notice.setDomain(record.getValue(NOTICE.DOMAIN));
+					notice.setDate(record.getValue(NOTICE.DATE));
+					notice.setSender(record.getValue(NOTICE.SENDER));
+					notice.setTitle(record.getValue(NOTICE.SUBJECT));
+					notice.setRecipient(record.getValue(NOTICE.RECIPIENT));
+					notice.setContact(record.getValue(NOTICE.PHONE));
+					notice.setSource(record.getValue(NOTICE.SOURCE));
+					notice.setCompany(record.getValue(NOTICE.COMPANY));
+					notice.setStatus(record.getValue(NOTICE.STATUS).intValue());
+					notice.setWorkgroup(record.getValue(NOTICE.WORK_GROUP));
+					
+					byte ordinalType = record.getValue(NOTICE.TYPE);					
+					notice.setType(NoticeType.values()[ordinalType].getValue());
+
+					try {
+
+						String priorityName = ctx.getDslContext()
+								.selectFrom(TAG.rightOuterJoin(NOTICE_TAG)
+										.on(TAG.ID.eq(NOTICE_TAG.TAG)))
+								.where(TAG.TYPE.eq(TagType.PRIORITY.value())
+										.and(TAG.DOMAIN.eq(domainId))
+										.and(NOTICE_TAG.NOTICE.eq(id))
+										.and(NOTICE_TAG.START_DATE.eq(
+												record.getValue(NOTICE.DATE))))
+								.fetchOne().getValue(TAG.NAME);
+
+						notice.setPriority(priorityName);
+
+					} catch (Exception ex) {
+					}
+
+					notices.add(notice);
+				});
+
 		return notices;
 	}
-	
-	public static List<Notice> getAllNotices (AONContext ctx) {
-		
+
+	public static List<Notice> getAllNotices(AONContext ctx) {
+
 		int domainId = ctx.getDomainId();
-		
+
 		List<Notice> notices = new LinkedList<Notice>();
 		ctx.getDslContext().selectFrom(NOTICE)
-		.where(NOTICE.DOMAIN.eq(domainId)
-				.and(NOTICE.STATUS.eq(NoticeStatus.OPEN.value())
-						.or(NOTICE.STATUS.eq(NoticeStatus.REOPEN.value()))
+				.where(NOTICE.DOMAIN.eq(domainId)
+						.and(NOTICE.STATUS.eq(NoticeStatus.OPEN.value())
+								.or(NOTICE.STATUS
+										.eq(NoticeStatus.REOPEN.value()))
 						.or(NOTICE.STATUS.eq(NoticeStatus.CLOSED.value()))
 						.or(NOTICE.STATUS.eq(NoticeStatus.DUPLICATED.value())))
-				.and(NOTICE.NOTICE_.isNull()))
-		.fetch()
-		.stream()
-		.forEach(record -> {
-			Notice notice = new Notice();
-			int id = record.getValue(NOTICE.ID);
-			notice.setId(id);
-			notice.setDomain(record.getValue(NOTICE.DOMAIN));
-			notice.setDate(record.getValue(NOTICE.DATE));
-			notice.setSender(record.getValue(NOTICE.SENDER));
-			notice.setTitle(record.getValue(NOTICE.SUBJECT));
-			notice.setRecipient(record.getValue(NOTICE.RECIPIENT));
-			notice.setContact(record.getValue(NOTICE.PHONE));
-			notice.setSource(record.getValue(NOTICE.SOURCE));
-			notice.setCompany(record.getValue(NOTICE.COMPANY));
-			notice.setStatus(record.getValue(NOTICE.STATUS).intValue());
-			notice.setWorkgroup(record.getValue(NOTICE.WORK_GROUP));
-			notice.setType(record.getValue(NOTICE.TYPE).intValue());
-			
-			try {
-				
-				String priorityName = ctx.getDslContext()
-						.selectFrom(TAG.rightOuterJoin(NOTICE_TAG).on(TAG.ID.eq(NOTICE_TAG.TAG)))
-						.where(TAG.TYPE.eq(TagType.PRIORITY.value())
-								.and(TAG.DOMAIN.eq(domainId))
-								.and(NOTICE_TAG.NOTICE.eq(id))
-								.and(NOTICE_TAG.START_DATE.eq(record.getValue(NOTICE.DATE))))
-						.fetchOne().getValue(TAG.NAME);
-				
-				notice.setPriority(priorityName);						
-				
-			} catch (Exception ex) {}
-			
-			notices.add(notice);
-		});
-		
+				.and(NOTICE.NOTICE_.isNull())).fetch().stream()
+				.forEach(record -> {
+					Notice notice = new Notice();
+					int id = record.getValue(NOTICE.ID);
+					notice.setId(id);
+					notice.setDomain(record.getValue(NOTICE.DOMAIN));
+					notice.setDate(record.getValue(NOTICE.DATE));
+					notice.setSender(record.getValue(NOTICE.SENDER));
+					notice.setTitle(record.getValue(NOTICE.SUBJECT));
+					notice.setRecipient(record.getValue(NOTICE.RECIPIENT));
+					notice.setContact(record.getValue(NOTICE.PHONE));
+					notice.setSource(record.getValue(NOTICE.SOURCE));
+					notice.setCompany(record.getValue(NOTICE.COMPANY));
+					notice.setStatus(record.getValue(NOTICE.STATUS).intValue());
+					notice.setWorkgroup(record.getValue(NOTICE.WORK_GROUP));
+					
+					byte ordinalType = record.getValue(NOTICE.TYPE);					
+					notice.setType(NoticeType.values()[ordinalType].getValue());
+
+
+					try {
+
+						String priorityName = ctx.getDslContext()
+								.selectFrom(TAG.rightOuterJoin(NOTICE_TAG)
+										.on(TAG.ID.eq(NOTICE_TAG.TAG)))
+								.where(TAG.TYPE.eq(TagType.PRIORITY.value())
+										.and(TAG.DOMAIN.eq(domainId))
+										.and(NOTICE_TAG.NOTICE.eq(id))
+										.and(NOTICE_TAG.START_DATE.eq(
+												record.getValue(NOTICE.DATE))))
+								.fetchOne().getValue(TAG.NAME);
+
+						notice.setPriority(priorityName);
+
+					} catch (Exception ex) {
+					}
+
+					notices.add(notice);
+				});
+
 		return notices;
 	}
+	
+	
+	
+	
 
 	public static List<Notice> getOpenIssues(AONContext ctx, int parentDomain,
 			Integer domain, byte openIndex, byte reopenIndex, byte tagOrdinal,
@@ -247,7 +343,10 @@ public class AonHubDAO {
 				notice.setCompany(record.getValue(NOTICE.COMPANY));
 				notice.setStatus(record.getValue(NOTICE.STATUS).intValue());
 				notice.setWorkgroup(record.getValue(NOTICE.WORK_GROUP));
-				notice.setType(record.getValue(NOTICE.TYPE).intValue());
+				
+				byte ordinalType = record.getValue(NOTICE.TYPE);					
+				notice.setType(NoticeType.values()[ordinalType].getValue());
+
 
 				try {
 					String priorityName = ctx.getDslContext()
@@ -385,82 +484,6 @@ public class AonHubDAO {
 		ctx.getDslContext().insertInto(TAG).set(TAG.DOMAIN, tag.getDomain())
 				.set(TAG.NAME, tag.getName()).set(TAG.TYPE, tag.getType())
 				.set(TAG.COLOR, tag.getColor()).execute();
-
-	}
-
-	public static void insertNewNotice(AONContext ctx, Notice notice)
-			throws DataAccessException, Exception {
-
-		// HEAD NOTICE
-		InsertSetMoreStep<NoticeRecord> noticeRecord = ctx.getDslContext()
-				.insertInto(NOTICE).set(NOTICE.DOMAIN, notice.getDomain())
-				.set(NOTICE.DATE,
-						new java.sql.Timestamp(notice.getDate().getTime()))
-				.set(NOTICE.SUBJECT, notice.getTitle())
-				.set(NOTICE.PHONE, notice.getPhone())
-				.set(NOTICE.COMPANY, notice.getCompany())
-				.set(NOTICE.SOURCE, notice.getSource())
-				.set(NOTICE.STATUS, notice.getStatus().byteValue())
-				.set(NOTICE.SENDER, notice.getSender())
-				.set(NOTICE.TYPE, notice.getType().byteValue())
-				.set(NOTICE.PRIORITY, (byte) 0);
-
-		if (notice.getRecipient() != null)
-			noticeRecord = noticeRecord.set(NOTICE.RECIPIENT,
-					notice.getRecipient());
-		if (notice.getWorkgroup() != null)
-			noticeRecord = noticeRecord.set(NOTICE.WORK_GROUP,
-					notice.getWorkgroup());
-
-		NoticeRecord newNoticeRecord = noticeRecord.returning().fetchOne();
-
-		// BODY NOTICE
-		ctx.getDslContext().insertInto(NOTICE)
-				.set(NOTICE.DOMAIN, newNoticeRecord.getValue(NOTICE.DOMAIN))
-				.set(NOTICE.SENDER, newNoticeRecord.getValue(NOTICE.SENDER))
-				.set(NOTICE.SUBJECT, newNoticeRecord.getValue(NOTICE.SUBJECT))
-				.set(NOTICE.RECIPIENT,
-						newNoticeRecord.getValue(NOTICE.RECIPIENT))
-				.set(NOTICE.PHONE, newNoticeRecord.getValue(NOTICE.PHONE))
-				.set(NOTICE.COMPANY, newNoticeRecord.getValue(NOTICE.COMPANY))
-				.set(NOTICE.SOURCE, newNoticeRecord.getValue(NOTICE.SOURCE))
-				.set(NOTICE.STATUS, newNoticeRecord.getValue(NOTICE.STATUS))
-				.set(NOTICE.TYPE, newNoticeRecord.getValue(NOTICE.TYPE))
-				.set(NOTICE.PRIORITY, newNoticeRecord.getValue(NOTICE.PRIORITY))
-				.set(NOTICE.WORK_GROUP,
-						newNoticeRecord.getValue(NOTICE.WORK_GROUP))
-				.set(NOTICE.DATE, newNoticeRecord.getValue(NOTICE.DATE))
-				.set(NOTICE.NOTICE_, newNoticeRecord.getValue(NOTICE.ID))
-				.execute();
-
-		if (notice.getPriority() != null) {
-			Integer priority = ctx.getDslContext().selectFrom(TAG)
-					.where(TAG.DOMAIN.eq(notice.getDomain())
-							.and(TAG.NAME.eq(notice.getPriority()))
-							.and(TAG.TYPE.eq(notice.getPriorityOrdinal())))
-					.fetchOne().getValue(TAG.ID);
-
-			ctx.getDslContext().insertInto(NOTICE_TAG)
-					.set(NOTICE_TAG.NOTICE, newNoticeRecord.getValue(NOTICE.ID))
-					.set(NOTICE_TAG.TAG, priority).set(NOTICE_TAG.START_DATE,
-							newNoticeRecord.getValue(NOTICE.DATE))
-					.execute();
-		}
-
-		for (String label : notice.getTags()) {
-
-			Integer labelId = ctx.getDslContext().selectFrom(TAG)
-					.where(TAG.DOMAIN.eq(notice.getDomain())
-							.and(TAG.NAME.eq(label))
-							.and(TAG.TYPE.eq(notice.getTagOrdinal())))
-					.fetchOne().getValue(TAG.ID);
-
-			ctx.getDslContext().insertInto(NOTICE_TAG)
-					.set(NOTICE_TAG.NOTICE, newNoticeRecord.getValue(NOTICE.ID))
-					.set(NOTICE_TAG.TAG, labelId).set(NOTICE_TAG.START_DATE,
-							newNoticeRecord.getValue(NOTICE.DATE))
-					.execute();
-		}
 
 	}
 

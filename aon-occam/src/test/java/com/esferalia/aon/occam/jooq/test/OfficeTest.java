@@ -259,7 +259,10 @@ public class OfficeTest {
 					notice.setCompany(record.getValue(NOTICE.COMPANY));
 					notice.setStatus(record.getValue(NOTICE.STATUS).intValue());
 					notice.setWorkgroup(record.getValue(NOTICE.WORK_GROUP));
-					notice.setType(record.getValue(NOTICE.TYPE).intValue());
+					
+					byte ordinalType = record.getValue(NOTICE.TYPE);
+					notice.setType(NoticeType.values()[ordinalType].getValue());
+
 					
 					try {
 						

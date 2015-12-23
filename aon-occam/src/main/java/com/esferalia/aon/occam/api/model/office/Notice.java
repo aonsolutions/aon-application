@@ -27,11 +27,8 @@ public class Notice implements Serializable, HasId {
 	private String company; // Empresa donde trabaja el origen del aviso
 	private Integer status; // Estado del aviso
 	private Integer workgroup; // Grupo de trabajo al que va dirigido el aviso
-	private Integer type; //Tipo de aviso
+	private String type; //Tipo de aviso
 	private String priority; //Prioridad
-	
-	private byte tagOrdinal;
-	private byte priorityOrdinal;
 	
 	private Integer notice; //Notice al que referencia **null si es cabecera = titulo
 
@@ -93,7 +90,7 @@ public class Notice implements Serializable, HasId {
 		this.workgroup = workgroup;
 	}
 	
-	public void setType(Integer type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 	
@@ -111,14 +108,6 @@ public class Notice implements Serializable, HasId {
 	
 	public void addNotice(NoticeComment comment) {
 		this.comments.add(comment);
-	}
-	
-	public void setTagOrdinal(byte tagOrdinal) {
-		this.tagOrdinal = tagOrdinal;
-	}
-	
-	public void setPriorityOrdinal(byte priorityOrdinal) {
-		this.priorityOrdinal = priorityOrdinal;
 	}
 	
 	// ===============GETTERS=================== //
@@ -153,15 +142,15 @@ public class Notice implements Serializable, HasId {
 	}
 	
 	public String getPhone() {
-		return (contact != null) ? contact : "";
+		return contact;
 	}
 	
 	public String getSource() {
-		return (source != null) ? source : "";
+		return source;
 	}
 	
 	public String getCompany() {
-		return (company != null) ? company : "";
+		return company;
 	}
 	
 	public Integer getStatus() {
@@ -172,7 +161,7 @@ public class Notice implements Serializable, HasId {
 		return workgroup;
 	}
 	
-	public Integer getType() {
+	public String getType() {
 		return type;
 	}
 	
@@ -190,13 +179,5 @@ public class Notice implements Serializable, HasId {
 	
 	public List<NoticeComment> getComments() {
 		return comments;
-	}
-	
-	public byte getTagOrdinal() {
-		return tagOrdinal;
-	}
-	
-	public byte getPriorityOrdinal() {
-		return priorityOrdinal;
 	}
 }

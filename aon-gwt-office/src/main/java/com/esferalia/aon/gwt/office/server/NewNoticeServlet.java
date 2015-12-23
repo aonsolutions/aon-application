@@ -32,7 +32,7 @@ public class NewNoticeServlet extends HttpServlet {
 		public static void save(AONContext ctx, Notice notice) {
 
 			try {
-				insertNewNotice(ctx, notice);
+			//	insertNewNotice(ctx, notice);
 			} catch (DataAccessException ex) {
 				System.out.println(ex.getMessage());
 				throw new DataAccessException(ex.getMessage());
