@@ -3,8 +3,6 @@ package com.esferalia.aon.occam.api.model.attachment;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.apache.commons.codec.digest.DigestUtils;
-
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
@@ -249,10 +247,6 @@ public class Attach implements Serializable {
 		return this;
 	}
 	
-
-	public String generateMD5() {
-		return DigestUtils.md5Hex(getData());
-	}
 	
 	public static Attach projectAttach(Integer project, Domain domain, com.esferalia.aon.occam.api.model.type.MimeType mimetype, String description,
 			byte[] data, Boolean confidential, Date date, String driveId){

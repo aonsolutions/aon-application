@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
@@ -50,7 +51,9 @@ public class CompanyDocumentServlet extends HttpServlet {
 		}		
 		return null;			
 	}
-			
+	public String generateMD5(byte[] b) {
+		return DigestUtils.md5Hex(b);
+	}
 	
 	private Attach getAttachment( HttpServletRequest req ) {		
 		Attach attach = new Attach();
@@ -94,7 +97,7 @@ public class CompanyDocumentServlet extends HttpServlet {
 					}
 					if ( (attachmentId != null) && (attach.getId() != null) ) {
 						String md5Value = StringUtils.substringAfterLast(value, "-");
-						if (!md5Value.equals(attach.generateMD5())) {
+						if (!md5Value.equals(generateMD5(attach.getData()))) {
 							attach = null;
 						}
 					}			
