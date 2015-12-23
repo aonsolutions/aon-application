@@ -1,42 +1,33 @@
 package com.code.aon.ui.company.servlet;
 
-import java.io.ByteArrayInputStream;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.sql.Connection;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
-import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
-import com.code.aon.common.BasicAttachment;
-import com.code.aon.common.IAttachment;
-import com.code.aon.common.domain.DomainManager;
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.dbutils.DatabaseUtil;
-import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.google.apis.DriveUtils;
-import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
-import com.esferalia.aon.occam.api.model.security.User;
-import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.File;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.watson.server.io.AonFileUtils;
 
 public class CompanyDocumentServlet extends HttpServlet {
 
@@ -46,24 +37,7 @@ public class CompanyDocumentServlet extends HttpServlet {
 	
 	private static final String COMPANY_LOGO = "company.logo";
 	
-	private void finishDownload( HttpServletResponse response, OutputStream out ) {
-		IOUtils.closeQuietly(out);
-		if ( response != null ) {
-			try {
-				response.flushBuffer();
-			} catch (IOException e) {
-				LOGGER.error( e.getMessage(), e );
-			}	
-		}
-	}
 	
-	private String getName( IAttachment attachment, MimeType type ) {
-		String name = attachment.getDescription();
-		if ( StringUtils.isEmpty(name) ) {
-			name = "image-" + attachment.getId();
-		}
-		return DownloadUtil.getFileName(name, type);
-	}
 	
 	private Integer getCompanyId( Connection connection, Integer domainId ) {
 		QueryRunner run = new QueryRunner();
@@ -76,86 +50,10 @@ public class CompanyDocumentServlet extends HttpServlet {
 		}		
 		return null;			
 	}
-	
-	private byte[] getDriveData(String domainName, String driveId) {
-		Drive drive = null;
-		File f = null;
-		byte[] data = null;
-		try {
-			Integer domainId = DomainManager.getCurrentDomain();
-			Domain domain = new Domain().setName(domainName).setId(domainId);
-			User user = new User().setLogin("");
-			DomainGserviceaccount g = DBConsults.getServiceAccount(domain, user);
 			
-			drive = DriveUtils.serviceInitialize(g);
-			f = DriveUtils.getFile(drive, domain, user, driveId, null);
-			if(f.getDescription().equals("OLDRIVE"))
-				drive = DriveUtils.serviceInitializeOld(g);
-		} catch (Throwable e) {
-			LOGGER.error( "Error getting drive file for " + driveId, e);
-		}
-		InputStream in = null;
-		try {
-			in = DriveUtils.downloadFile(drive, f);
-			data = IOUtils.toByteArray(in);
-			return data;
-		} catch (Throwable e) {
-			LOGGER.error( "Error getting data of drive file " + driveId, e);
-		} finally {
-			IOUtils.closeQuietly(in);
-		}
-		return data;
-	}
 	
-	private BasicAttachment convert( Object[] values, String domainName ) {
-		if (! ArrayUtils.isEmpty(values) ) {
-			BasicAttachment logo = new BasicAttachment();
-			logo.setId( (Integer) values[0] );
-			logo.setDescription( (String) values[1] );
-			if ( values[2] != null ) {
-				logo.setMimeType( MimeType.values()[(Integer) values[2]] );	
-			}
-			logo.setData( (byte[]) values[3] );
-			logo.setDriveId( (String) values[4] );
-			if (! StringUtils.isEmpty(logo.getDriveId()) ) {
-				byte[] data = getDriveData(domainName, logo.getDriveId());
-				logo.setData(data);
-			}
-			return logo;
-		}
-		return null;
-	}
-	
-	private BasicAttachment getLogo( Connection connection, String domainName, Integer domainId, Integer companyId ) {
-		QueryRunner run = new QueryRunner();
-		try {
-			ResultSetHandler<Object[]> h = new ArrayHandler();
-			Object[] values = run.query( connection, 
-				    "SELECT id, description, mimeType, data, drive_id FROM rattach WHERE domain = ? and registry =? and type=0 and ((drive_id is not null) or (data is not null)) LIMIT 1",
-				    h, domainId, companyId);
-			return convert(values, domainName);
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(), e);
-		}		
-		return null;			
-	}			
-	
-	private BasicAttachment getAttachment( Connection connection, String domainName, Integer id ) {
-		QueryRunner run = new QueryRunner();
-		try {
-			ResultSetHandler<Object[]> h = new ArrayHandler();
-			Object[] values = run.query( connection, 
-				    "SELECT id, description, mimeType, data, drive_id FROM rattach WHERE id = ? and ((drive_id is not null) or (data is not null)) LIMIT 1",
-				    h, id);
-			return convert(values, domainName);
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(), e);
-		}		
-		return null;			
-	}			
-	
-	private IAttachment getAttachment( HttpServletRequest req ) {
-		BasicAttachment attachment = null;
+	private Attach getAttachment( HttpServletRequest req ) {		
+		Attach attach = new Attach();
 		boolean companyLogo = false;
 		Integer attachmentId = null;
 		String uri = StringUtils.substringBefore(req.getRequestURI(), ";");
@@ -175,16 +73,29 @@ public class CompanyDocumentServlet extends HttpServlet {
 				connection = DatabaseUtil.getConnection(domainName);
 				if ( connection != null ) {
 					Integer domainId = DatabaseUtil.getDomain(connection, domainName);
-					if ( companyLogo ) {
+					if (companyLogo) {
 						Integer companyId = getCompanyId(connection, domainId);
-						attachment = getLogo(connection, domainName, domainId, companyId);
+						attach = AON.getAttach(domainName, domainId, "",
+								f -> f.getDomainProperty().eq(domainId)
+								.and(f.getAttachModuleProperty().eq(companyId))
+								.and(f.getTypeProperty().eq((byte) 0)),
+								AttachType.REGISTRY);
+						//attachment = getLogo(connection, domainName, domainId, companyId);
 					} else {
-						attachment = getAttachment(connection, domainName, attachmentId);
+						final Integer attachId = attachmentId;
+						attach = AON.getAttach(domainName, domainId, "",
+								f -> f.getIdProperty().eq(attachId),
+								AttachType.REGISTRY);
+						
+						//attachment = getAttachment(connection, domainName, attachmentId);
 					}
-					if ( (attachmentId != null) && (attachment != null) ) {
+					if(attach.getDriveId() != null){
+						attach.setData(DriveUtils.getByteFile(domainName, domainId, "", attach.getDriveId(), attach.getId()));
+					}
+					if ( (attachmentId != null) && (attach.getId() != null) ) {
 						String md5Value = StringUtils.substringAfterLast(value, "-");
-						if (! StringUtils.equals(attachment.getMD5(), md5Value) ) {
-							attachment = null;
+						if (!md5Value.equals(attach.generateMD5())) {
+							attach = null;
 						}
 					}			
 				}				
@@ -194,7 +105,7 @@ public class CompanyDocumentServlet extends HttpServlet {
 				DatabaseUtil.closeQuietly(connection);
 			}
 		}
-		return attachment;
+		return attach;
 	}
 	
 	/**
@@ -207,32 +118,34 @@ public class CompanyDocumentServlet extends HttpServlet {
 	 * @throws ServletException the servlet exception
 	 */
 	protected void doGet(HttpServletRequest req, HttpServletResponse res)throws ServletException, IOException {
-		OutputStream out = null;
-		try {
-			IAttachment attachment = getAttachment(req);
-			if ( attachment != null ) {
-				
-				/*RequestDispatcher dispatcher = getServletContext()
-							.getRequestDispatcher("/login/documentsViewer2.jsp");
-					req.setAttribute("id", attachment.getId());
-					req.setAttribute("mimetype",attachment.getMimeType().ordinal());
-					req.setAttribute("icon", "");
-					req.setAttribute("name", attachment.getDescription());
-					dispatcher.forward(req, res); 
-				*/
-				
-				MimeType type = DownloadUtil.resolveMimeType(attachment);
-				String name = getName(attachment, type);
-				out = DownloadUtil.initDownload(res, name, type, attachment.getSize());
-				DownloadUtil.setCacheable(res);
-				InputStream in = new ByteArrayInputStream(attachment.getData());
-				IOUtils.copyLarge(in, out);
-			}
-		} catch (Throwable th) {
-			LOGGER.error( th.getMessage(), th );
-			throw new ServletException(th.getMessage(), th);
-		} finally {
-			finishDownload(res, out);
+		Attach attach = getAttachment(req);
+		if ( attach != null ) {
+			File file = File.createTempFile(attach.getDescription(),"." + attach.getMimeType().getExtension());
+			AonFileUtils.writeByteArrayToFile(file, attach.getData());
+			long length = file.length();
+			FileInputStream fis = new FileInputStream(file);
+		       
+		    res.addHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"."+attach.getMimeType().getExtension()+"\"");
+		    //p_response.setContentType("application/octet-stream");
+		    res.setContentType(attach.getMimeType().getName());
+
+		    if (length > 0 && length <= Integer.MAX_VALUE)	
+		    	res.setContentLength((int)length);
+		    
+	        ServletOutputStream out = res.getOutputStream();
+	        res.setBufferSize(32768);
+	        int bufSize = res.getBufferSize();
+	        byte[] buffer = new byte[bufSize];
+	        BufferedInputStream bis = new BufferedInputStream(fis,bufSize);
+	        int bytes;
+	        while ((bytes = bis.read(buffer, 0, bufSize)) >= 0)
+	        	out.write(buffer, 0, bytes);
+		        	
+		        
+	        bis.close();
+	        fis.close();
+	        out.flush();
+	        out.close();
 		}
 	}
 

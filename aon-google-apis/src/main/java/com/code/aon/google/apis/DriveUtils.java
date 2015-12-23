@@ -1019,7 +1019,30 @@ public class DriveUtils implements IBlobManager {
 	}
 
 	/************************* DESCARGAR ARCHIVO DE DRIVE *********************/
-
+	
+	
+	public static byte[] getByteFile(String domainName, Integer domainId, String login, String driveId, Integer attachId) throws KeyStoreException, IOException, GeneralSecurityException{
+		Domain domain = new Domain().setName(domainName).setId(domainId);
+		User user = new User().setLogin(login);
+		DomainGserviceaccount domainGserviceaccount = AON.getDomainGserviceaccount(domainName, domainId, login);
+		Drive drive = serviceInitialize(domainGserviceaccount);
+		Drive oldDrive = DriveUtils.serviceInitializeOld(domainGserviceaccount);
+		File file = new File();
+		try {
+			file = getFile(drive, domain, user, driveId, attachId);
+		} catch (IOException | GeneralSecurityException e) {
+			e.printStackTrace();
+		}		
+		InputStream in = downloadFile(file.getDescription().equals("OLDRIVE") ? oldDrive : drive, file);
+		byte[] b = null;
+		try {
+			b = Utils.InputStreamToByte(in);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return b;
+	}
+	
 	public static InputStream downloadFile(Drive drive, File file) {
 		if (file.getDownloadUrl() != null && file.getDownloadUrl().length() > 0) {
 			try {
