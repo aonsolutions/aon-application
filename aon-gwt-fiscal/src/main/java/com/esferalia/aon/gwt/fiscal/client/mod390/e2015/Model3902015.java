@@ -1,9 +1,8 @@
-package com.esferalia.aon.gwt.fiscal.client.mod390.e2014;
+package com.esferalia.aon.gwt.fiscal.client.mod390.e2015;
 
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
@@ -12,14 +11,14 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.mod390.ErrorPage;
-import com.esferalia.aon.gwt.fiscal.client.mod390.ValidationMessage;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.IMod390CallBack;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.IModel390;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.ValidationMessages;
+import com.esferalia.aon.gwt.fiscal.client.mod390.ValidationMessage;
 import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -53,25 +52,25 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 
-public class Model3902014 extends ResizeComposite implements IModel390 {
+public class Model3902015 extends ResizeComposite implements IModel390 {
 	
-	private static final Integer DEFAULT_YEAR = 2014;
+	private static final Integer DEFAULT_YEAR = 2015;
 
-	interface Model390Binder extends UiBinder<Widget, Model3902014> {
+	interface Model390Binder extends UiBinder<Widget, Model3902015> {
 	}
 
 	private static final Model390Binder MODEL_390_BINDER = GWT.create(Model390Binder.class);
 
-	private Mod3902014 mod390;
+	private Mod3902015 mod390;
 	private FiscalServiceAsync fiscalService;
 	
 	private IMod390CallBack mod390CallBack;
 
-	static interface IMod3902014CallBack {
+	static interface IMod3902015CallBack {
 		void calculateAndRefresh();
 	}	
 
-	IMod3902014CallBack callback = new IMod3902014CallBack() {
+	IMod3902015CallBack callback = new IMod3902015CallBack() {
 
 		@Override
 		public void calculateAndRefresh() {
@@ -86,10 +85,10 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 		
 	};
 	
-	static interface IMod3902014Page extends IsWidget {
-		void setValue(Mod3902014 m390);
-		void populate(Mod3902014 m390);
-		void setCallback( IMod3902014CallBack callback );
+	static interface IMod3902015Page extends IsWidget {
+		void setValue(Mod3902015 m390);
+		void populate(Mod3902015 m390);
+		void setCallback( IMod3902015CallBack callback );
 	}	
 	
 	@UiField
@@ -141,7 +140,7 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 	Hidden domainIdHidden;
 	Hidden domainNameHidden;
 
-	public Model3902014(final IMod390CallBack mod390CallBack) {
+	public Model3902015(final IMod390CallBack mod390CallBack) {
 		this.mod390CallBack = mod390CallBack;
 		
 		AON.ensureInjected();
@@ -206,7 +205,7 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 		return $wnd.getCurrentDomain();
 	}-*/;
 
-	private void refreshPages(Mod3902014 m390) {
+	private void refreshPages(Mod3902015 m390) {
 		for (int i = 0 ; i < linkContainer.getWidgetCount(); i ++) {
 			WestFocusPanel page = (WestFocusPanel) linkContainer.getWidget(i);
 			page.setValue(m390);	
@@ -219,10 +218,10 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 	
 	@Override
 	public void select(Mod390 m390) {
-		fiscalService.getMod3902014(getCurrentDomainName(), getCurrentDomain(),
-				m390.getId(), new AsyncCallback<Mod3902014>() {
+		fiscalService.getMod3902015(getCurrentDomainName(), getCurrentDomain(),
+				m390.getId(), new AsyncCallback<Mod3902015>() {
 			@Override
-			public void onSuccess(Mod3902014 selected) {
+			public void onSuccess(Mod3902015 selected) {
 				if (selected == null) {
 					showErrorMessage(AON.MSG.unableToFindMod390());
 				} else {
@@ -232,11 +231,11 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				DialogMessages.alertErrorWidget(AON.MSG.unableToReadMod190(caught.getMessage()));
+				showErrorMessage(AON.MSG.unableToReadMod390(caught.getMessage()));
 			}
 		});
 	}
-	public void select(Mod3902014 m390) {
+	public void select(Mod3902015 m390) {
 		mod390 = m390;
 		WestFocusPanel wfp = (WestFocusPanel) linkContainer.getWidget(0);
 		wfp.showPage();
@@ -244,10 +243,9 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 		domain = m390.getDomain();
 		enterpriseSuggest.setValue(mod390.getDocument(), m390.getEnterpriseName());
 		refreshPages(mod390);
-		// Toolbar states
+
 		deleteButton.setVisible(mod390.getId() != null);
 		newButton.setVisible(mod390.getId() != null);
-		//cancelButton.setVisible(table.getRowCount() > 0);
 		cancelButton.setVisible(true);
 		saveButton.setVisible(true);
 		generateFileButton.setVisible(mod390.getId() != null);
@@ -269,10 +267,10 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 			populateMod390();
 			cleanErrorMessage();
 			validate(this.mod390);
-			fiscalService.saveMod3902014(getCurrentDomainName(),getCurrentDomain(),this.mod390
-					, new AsyncCallback<Mod3902014>() {
+			fiscalService.saveMod3902015(getCurrentDomainName(),getCurrentDomain(),this.mod390
+					, new AsyncCallback<Mod3902015>() {
 						@Override
-						public void onSuccess(Mod3902014 result) {
+						public void onSuccess(Mod3902015 result) {
 							select(result);
 							popup.hide();
 						}
@@ -292,11 +290,11 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 	@UiHandler("deleteButton")
 	void onDeleteButtonClick(ClickEvent event) {
 		if (Window.confirm(AON.MSG.confirmDeleteAction())) {
-			fiscalService.deleteMod3902014(getCurrentDomainName(),getCurrentDomain(),
+			fiscalService.deleteMod3902015(getCurrentDomainName(),getCurrentDomain(),
 					this.mod390, new AsyncCallback<Void>() {
 				@Override
 				public void onSuccess(Void result) {
-					select(new Mod3902014());
+					select(new Mod3902015());
 					cleanErrorMessage();
 					mod390CallBack.onCancel();
 				}
@@ -317,10 +315,10 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 	@Override
 	public void onNew() {
 		cleanErrorMessage();
-		fiscalService.initializeMod3902014(getCurrentDomainName(),domain, DEFAULT_YEAR,
-				new AsyncCallback<Mod3902014>() {
+		fiscalService.initializeMod3902015(getCurrentDomainName(),domain, DEFAULT_YEAR,
+				new AsyncCallback<Mod3902015>() {
 			@Override
-			public void onSuccess(Mod3902014 mod390) {
+			public void onSuccess(Mod3902015 mod390) {
 				select( mod390 );
 				pagesPanel.showWidget(0);
 			}
@@ -422,17 +420,6 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 		openFootPanel();
 	}
 
-//	private void addErrorMessage(String msg) {
-//		SimplePanel panel = new SimplePanel();
-//		Label label = new Label(msg);
-//		label.setStyleName(AON.AON_CSS.aonIconError());
-//		label.addStyleName(AON.AON_CSS.aonMarginLeft());
-//		label.addStyleName(AON.AON_CSS.aonColorRed());
-//		label.addStyleName(AON.AON_CSS.aonBold());
-//		panel.add(label);
-//		resultsPanel.setWidget(errorPage);
-//	}
-
 	protected void paintHeaderTable() {
 		headerPanel.clear();
 		headerPanel.setStyleName(AON.AON_CSS.aonWidthAll());
@@ -470,9 +457,9 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 	
 	private class WestFocusPanel extends FocusPanel {
 		
-		private IMod3902014Page content;
+		private IMod3902015Page content;
 		
-		public WestFocusPanel(String label, final IMod3902014Page content,IMod3902014CallBack callback) {
+		public WestFocusPanel(String label, final IMod3902015Page content,IMod3902015CallBack callback) {
 			super();
 			this.content = content;
 			setStyleName(AON.AON_CSS.aonLinkItem());
@@ -501,18 +488,18 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 			pagesPanel.showWidget(pagesPanel.getWidgetIndex(content));
 		}
 
-		public void setValue(Mod3902014 m390) {
+		public void setValue(Mod3902015 m390) {
 			content.setValue(m390);
 		}
-		public void populate(Mod3902014 m390) {
+		public void populate(Mod3902015 m390) {
 			content.populate(m390);
 		}
 		
 	}
 	
-	private void validate(Mod3902014 m390) {
+	private void validate(Mod3902015 m390) {
 		LinkedList<ValidationMessage> msg = new LinkedList<ValidationMessage>();
-		if (m390.getYear() != 2014 && m390.getYear() != 2013) msg.add(ValidationMessages.EMPTY_YEAR.getMsg());
+		if (m390.getYear() != 2015) msg.add(ValidationMessages.EMPTY_YEAR.getMsg());
 		if (!m390.isLegalEntity()) {
 			if (AonStringUtils.isEmpty(m390.getDocument())) msg.add(ValidationMessages.EMPTY_DOCUMENT.getMsg());
 			if (!AonDocumentUtil.isValid(m390.getDocument())) msg.add(ValidationMessages.WRONG_DOCUMENT.getMsg());

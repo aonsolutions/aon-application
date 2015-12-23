@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
@@ -23,6 +22,7 @@ import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
@@ -37,7 +37,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
@@ -97,7 +96,7 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		return AON.calculate(domainName, fa);
 	}
 	@Override
-	public ArrayList<FiscalActivity> getFiscalActivities(String domainName,
+	public LinkedList<FiscalActivity> getFiscalActivities(String domainName,
 			int domain) throws AonCoreException {
 		return AON.getFiscalActivities(domainName, domain);
 	}
@@ -149,13 +148,13 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 
 	// -------------------------------------------------------------- ACTIVITIES
 	@Override
-	public ArrayList<Epigraph> getModuleEpigraphs(int year) {
-		return new ArrayList<Epigraph>(Arrays.asList(Modules2015.Epigraph.values()));
+	public LinkedList<Epigraph> getModuleEpigraphs(int year) {
+		return new LinkedList<Epigraph>(Arrays.asList(Modules2015.Epigraph.values()));
 	}
 	
 	@Override
-	public ArrayList<Activity> getActivities(int activityGroup) throws AonCoreException {
-		ArrayList<Activity> list = new ArrayList<Activity>();
+	public LinkedList<Activity> getActivities(int activityGroup) throws AonCoreException {
+		LinkedList<Activity> list = new LinkedList<Activity>();
 		TypeActivity[] types = null;
 		if (activityGroup == 0) {
 			types = Type1Activities.values();

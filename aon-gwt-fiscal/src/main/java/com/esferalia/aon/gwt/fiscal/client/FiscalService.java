@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -12,6 +11,7 @@ import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
@@ -26,7 +26,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
@@ -52,12 +51,12 @@ public interface FiscalService extends RemoteService {
 	LinkedList<IFiscalModel> getAllModels(String domainName, int domain, int year);
 	
 	// -------------------------------------------------------------- ACTIVITIES
-	ArrayList<Activity> getActivities(int activityGroup) throws AonCoreException;
+	LinkedList<Activity> getActivities(int activityGroup) throws AonCoreException;
 	
 	// ---------------------------------------------------------- FISCAL ACTIVITIES
 	FiscalActivity calculate(String domainName, FiscalActivity fa);
-	ArrayList<Epigraph> getModuleEpigraphs(int year);
-	ArrayList<FiscalActivity> getFiscalActivities(String domainName, int domain) throws AonCoreException;
+	LinkedList<Epigraph> getModuleEpigraphs(int year);
+	LinkedList<FiscalActivity> getFiscalActivities(String domainName, int domain) throws AonCoreException;
 	FiscalActivity getFiscalActivity(String domainName, int domain, int id) throws AonCoreException;
 	FiscalActivity getFiscalActivityFor(String domainName,Epigraph epigraph, FiscalActivity fa);
 	FiscalActivity save(String domainName, FiscalActivity fa) throws AonCoreException;

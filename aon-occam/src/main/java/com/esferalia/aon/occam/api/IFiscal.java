@@ -33,7 +33,7 @@ public interface IFiscal {
 	public FiscalActivity save(AONContext ctx, FiscalActivity fa);
 	public void delete(AONContext ctx, FiscalActivity fa);
 	public FiscalActivity getActivity(AONContext ctx, int id);
-	public ArrayList<FiscalActivity> getActivities(AONContext ctx, int domainId);
+	public LinkedList<FiscalActivity> getActivities(AONContext ctx, int domainId);
 	public FiscalActivity getActivityFor(AONContext ctx,Epigraph epigraph, FiscalActivity fa);
 
 	// 			   FISCAL MODEL

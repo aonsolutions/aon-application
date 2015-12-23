@@ -1,12 +1,12 @@
-package com.esferalia.aon.gwt.fiscal.client.mod390.e2014;
+package com.esferalia.aon.gwt.fiscal.client.mod390.e2015;
 
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2014.Model3902014.IMod3902014CallBack;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2014.Model3902014.IMod3902014Page;
+import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015CallBack;
+import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015Page;
 import com.esferalia.aon.gwt.fiscal.client.widget.ActivityPanel;
 import com.esferalia.aon.gwt.fiscal.client.widget.ActivityPanel.SelectionCallBack;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -20,14 +20,14 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Page01 extends ResizeComposite implements IMod3902014Page {
+public class Page01 extends ResizeComposite implements IMod3902015Page {
 
 	interface PageBinder extends UiBinder<Widget, Page01> {
 	}
 
 	private static final PageBinder BINDER = GWT.create(PageBinder.class);
 
-	IMod3902014CallBack callback;
+	IMod3902015CallBack callback;
 	
 	@UiField
 	Button mainActivityButton;
@@ -258,7 +258,7 @@ public class Page01 extends ResizeComposite implements IMod3902014Page {
 		activity5Epigraph.setText(null);
 	}
 
-	public void setValue(Mod3902014 m390) {
+	public void setValue(Mod3902015 m390) {
 		if (m390.getMainActivity() != null) {
 			mainActivityDescription.setText(m390.getMainActivity().getDescription());	
 			mainActivityKey.setText(m390.getMainActivity().getKey());
@@ -318,7 +318,7 @@ public class Page01 extends ResizeComposite implements IMod3902014Page {
 		mergedDeclarationName.setValue(m390.getMergedDeclarationName());
 	}
 
-	public void populate(Mod3902014 mod390) {
+	public void populate(Mod3902015 mod390) {
 		if (!AonStringUtils.isEmpty( mainActivityKey.getText() ) ) {
 			Activity mainActivity = new Activity();
 			mainActivity.setKey(mainActivityKey.getText());
@@ -384,7 +384,7 @@ public class Page01 extends ResizeComposite implements IMod3902014Page {
 		mod390.setMergedDeclarationName(mergedDeclarationName.getValue());
 	}
 
-	public void setCallback(IMod3902014CallBack callback) {
+	public void setCallback(IMod3902015CallBack callback) {
 		this.callback = callback;
 	}
 

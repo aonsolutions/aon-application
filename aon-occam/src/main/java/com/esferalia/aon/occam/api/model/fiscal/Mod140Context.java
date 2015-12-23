@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public class Mod140Context implements Serializable {
 
+	private static final long serialVersionUID = 1945390780992784104L;
+	
 	private String document;
 	private String epigraph;
 	

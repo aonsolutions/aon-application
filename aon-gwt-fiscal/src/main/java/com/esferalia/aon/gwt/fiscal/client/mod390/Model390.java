@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2014.Model3902014;
+import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.google.gwt.core.client.GWT;
@@ -114,21 +115,36 @@ public class Model390 extends MainEntryPoint {
 	}-*/;
 
 	private void select(Mod390 m390) {
-		Model3902014 model3902014 = new Model3902014(mod390CallBack);
-		model3902014.prepareNew();
-		formPanel.setWidget(model3902014);
+		if (m390.getYear() == 2013 || m390.getYear() == 2014) {
+			Model3902014 model3902014 = new Model3902014(mod390CallBack);
+			model3902014.prepareNew();
+			formPanel.setWidget(model3902014);
+			model3902014.select(m390);
+		} else if (m390.getYear() == 2015) {
+			Model3902015 model3902015 = new Model3902015(mod390CallBack);
+			model3902015.prepareNew();
+			formPanel.setWidget(model3902015);
+			model3902015.select(m390);
+		}
+		
 		int i = deckPanel.getWidgetIndex(formPanel);
 		deckPanel.showWidget(i);
-		model3902014.select(m390);		
 	}
 	
 	private void newModel(int year) {
-		Model3902014 model3902014 = new Model3902014(mod390CallBack);
-		model3902014.prepareNew();
-		formPanel.setWidget(model3902014);
+		if (year == 2013 || year == 2014) {
+			Model3902014 model3902014 = new Model3902014(mod390CallBack);
+			model3902014.prepareNew();
+			formPanel.setWidget(model3902014);
+			model3902014.onNew();		
+		} else if (year == 2015) {
+			Model3902015 model3902015 = new Model3902015(mod390CallBack);
+			model3902015.prepareNew();
+			formPanel.setWidget(model3902015);
+			model3902015.onNew();		
+		}
 		int i = deckPanel.getWidgetIndex(formPanel);
 		deckPanel.showWidget(i);
-		model3902014.onNew();		
 	}
 
 	@UiHandler("table")
@@ -158,8 +174,7 @@ public class Model390 extends MainEntryPoint {
 	@UiHandler("newButton")
 	void onNewButtonClick(ClickEvent event) {
 		NativeEvent nativeEvent = event.getNativeEvent();
-		newContextMenu.setPopupPosition(nativeEvent.getClientX(),
-				nativeEvent.getClientY());
+		newContextMenu.setPopupPosition(nativeEvent.getClientX(),nativeEvent.getClientY());
 		newContextMenu.show();
 	}
 
@@ -215,4 +230,31 @@ public class Model390 extends MainEntryPoint {
 	}
 	
 	
+	public static enum ValidationMessages {
+		// PAGE00
+		 EMPTY_YEAR		(new ValidationMessage(0, AON.MSG.requiredField(AON.MSG.fiscalYear())))
+		,EMPTY_DOCUMENT	(new ValidationMessage(0, AON.MSG.requiredField(AON.MSG.document())))
+		,WRONG_DOCUMENT	(new ValidationMessage(0, "El NIF/DNI no es correcto"))
+		,REQ_NAME 		(new ValidationMessage(0, "Para personas f\u00EDsicas, el nombre es obligatorio."))
+		,REQ_SURNAME 	(new ValidationMessage(0, "Para personas f\u00EDsicas, el primer apellido es obligatorio."))
+		,EMPTY_NAME 	(new ValidationMessage(0, "No se ha indicado el nombre del declarante."))
+		// PAGE01
+		,EMPTY_ACTI 	(new ValidationMessage(1, "No se ha indicado actividad principal."))
+		// PAGE02
+		,EMPTY_REPR 	(new ValidationMessage(2, "Indique datos del represante."))
+		,EMPTY_REPR_DOC	(new ValidationMessage(2, "Para personas f\u00EDsicas, el NIF/DNI del representante es obligatorio."))
+		,WRONG_REPR_DOC	(new ValidationMessage(2, "El NIF/DNI del representante no es correcto."))
+		,LG1_WRONG_DOC	(new ValidationMessage(2, "El NIF del primer representante para personas jur\u00EDdicas no es correcto."))
+		,LG2_WRONG_DOC	(new ValidationMessage(2, "El NIF del segundo representante para personas jur\u00EDdicas no es correcto."))
+		,LG3_WRONG_DOC	(new ValidationMessage(2, "El NIF del tercer representante para personas jur\u00EDdicas no es correcto."))
+		;
+		
+		private ValidationMessage msg;
+		private ValidationMessages(ValidationMessage msg) {
+			this.msg = msg;
+		}
+		public ValidationMessage getMsg() {
+			return msg;
+		}
+	}
 }

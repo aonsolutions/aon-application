@@ -473,7 +473,6 @@ public class Mod3902014DAO {
 		try {
 			StringReader reader = new StringReader(record.getValue(FS_MODEL390.MODEL));
 			if (mod390.getYear() == 2013) {
-				
 				JAXBContext context = JAXBContext.newInstance(AEATIVA2013.class);
 				Unmarshaller um = context.createUnmarshaller();
 				AEATIVA2013 iva = (AEATIVA2013) um.unmarshal(reader);
@@ -483,11 +482,8 @@ public class Mod3902014DAO {
 				Unmarshaller um = context.createUnmarshaller();
 				AEATIVA2014 iva = (AEATIVA2014) um.unmarshal(reader);
 				AEATIVA2014toMod390.populate(mod390, iva);
-			} else if (mod390.getYear() == 2015) {
-				JAXBContext context = JAXBContext.newInstance(AEATIVA2014.class);
-				Unmarshaller um = context.createUnmarshaller();
-				AEATIVA2014 iva = (AEATIVA2014) um.unmarshal(reader);
-				AEATIVA2014toMod390.populate(mod390, iva);
+			} else {
+				throw new IllegalArgumentException("Ejercicio incorrecto.");
 			}
 		} catch (JAXBException e1) {
 			e1.printStackTrace();
@@ -534,16 +530,9 @@ public class Mod3902014DAO {
 				um.setProperty("jaxb.encoding", "ISO-8859-1");
 				um.marshal(iva,writer);
 				return writer.toString();
-			} else if (mod390.getYear() == 2015) {
-				AEATIVA2014 iva = Mod390toAEATIVA2014.getAEATIVA2014(mod390);
-				StringWriter writer = new StringWriter();
-				JAXBContext context = JAXBContext.newInstance(AEATIVA2014.class);
-				Marshaller um = context.createMarshaller();
-				um.setProperty("jaxb.encoding", "ISO-8859-1");
-				um.marshal(iva,writer);
-				return AonStringUtils.trim(writer.toString());
+			} else {
+				throw new IllegalArgumentException("Ejercicio incorrecto.");
 			}
-			return null;
 		} catch (JAXBException e) {
 			e.printStackTrace();
 			throw new AonCoreException("Error en conversión XML",e);

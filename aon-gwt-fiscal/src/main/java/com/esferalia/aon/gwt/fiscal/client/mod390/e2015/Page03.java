@@ -1,16 +1,16 @@
-package com.esferalia.aon.gwt.fiscal.client.mod390.e2014;
+package com.esferalia.aon.gwt.fiscal.client.mod390.e2015;
 
 import java.util.EnumMap;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2014.Model3902014.IMod3902014CallBack;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2014.Model3902014.IMod3902014Page;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390Detail;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390DetailKey;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390DetailKeyGroup;
+import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015CallBack;
+import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015Page;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.Mod390DetailKey;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.Mod390DetailKeyGroup;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 
-public class Page03 extends ResizeComposite implements RequiresResize , IMod3902014Page {
+public class Page03 extends ResizeComposite implements RequiresResize , IMod3902015Page {
 
 	public static class Mod390DetailFields {
 		private Mod390Detail detail;
@@ -58,9 +58,9 @@ public class Page03 extends ResizeComposite implements RequiresResize , IMod3902
 	
 	private FlexTable table;
 	
-	IMod3902014CallBack callback;
+	IMod3902015CallBack callback;
 	
-	private Mod3902014 mod390;
+	private Mod3902015 mod390;
 	
 	private EnumMap<Mod390DetailKey, Mod390DetailFields> map; 
 					
@@ -71,7 +71,7 @@ public class Page03 extends ResizeComposite implements RequiresResize , IMod3902
 		initWidget(container);
 	}
 
-	public void setValue(Mod3902014 m390) {
+	public void setValue(Mod3902015 m390) {
 		this.mod390 = m390;
 		initializeMap();
 		refreshMap(m390,null);
@@ -89,7 +89,7 @@ public class Page03 extends ResizeComposite implements RequiresResize , IMod3902
 		}
 	}
 
-	public void refreshMap(Mod3902014 mod390, Mod390DetailKey eventSource) {
+	public void refreshMap(Mod3902015 mod390, Mod390DetailKey eventSource) {
 		if (mod390.getGeneralRegime() != null) {
 			for (Mod390DetailKey key : mod390.getGeneralRegime().keySet()) {
 				Mod390Detail detail = mod390.getGeneralRegime().get(key);
@@ -106,7 +106,7 @@ public class Page03 extends ResizeComposite implements RequiresResize , IMod3902
 			}
 		}
 	}
-	public void populate(Mod3902014 mod390) {
+	public void populate(Mod3902015 mod390) {
 		for (Mod390DetailKey key : map.keySet()) {
 			Mod390DetailFields f = map.get(key);
 			mod390.getGeneralRegime().put(key, f.getDetail());
@@ -281,7 +281,7 @@ public class Page03 extends ResizeComposite implements RequiresResize , IMod3902
 		}
 	}
 
-	public void setCallback(IMod3902014CallBack callback) {
+	public void setCallback(IMod3902015CallBack callback) {
 		this.callback = callback;
 	}
 }

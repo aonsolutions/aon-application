@@ -468,8 +468,8 @@ public class Mod3902015DAO {
 		mod390.setReplacement(record.getValue(FS_MODEL390.REPLACEMENT) == 1);
 		mod390.setReplacedReceipt(record.getValue(FS_MODEL390.REPLACED_RECEIPT));
 		mod390.setComments(record.getValue(FS_MODEL390.COMMENTS));
+		StringReader reader = new StringReader(record.getValue(FS_MODEL390.MODEL));
 		try {
-			StringReader reader = new StringReader(record.getValue(FS_MODEL390.MODEL));
 			if (mod390.getYear() == 2015) {
 				JAXBContext context = JAXBContext.newInstance(AEATIVA2015.class);
 				Unmarshaller um = context.createUnmarshaller();
@@ -478,12 +478,9 @@ public class Mod3902015DAO {
 			} else {
 				throw new IllegalArgumentException("Ejercicio incorrecto.");
 			}
-		} catch (JAXBException e1) {
+		} catch (ParseException | JAXBException e1) {
 			e1.printStackTrace();
 			throw new AonCoreException("XML PROBLEM",e1);
-		} catch (ParseException e) {
-			e.printStackTrace();
-			throw new AonCoreException("XML PROBLEM",e);
 		}
 	}
 	
@@ -603,6 +600,10 @@ public class Mod3902015DAO {
 				.where(FS_MODEL390.YEAR.equal(mod390.getYear())
 				.and(FS_MODEL390.ENTERPRISE.equal(mod390.getEnterprise()))
 				.and(FS_MODEL390.REPLACEMENT.equal(ZERO_BYTE)))
+				.and(	(mod390.getId()!=null)
+						?FS_MODEL390.ID.ne(mod390.getId())
+						:FS_MODEL390.ID.eq(FS_MODEL390.ID)
+						)
 				.fetch()
 				.stream()
 				.findFirst()

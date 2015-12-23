@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -75,7 +74,7 @@ public class FiscalImpl implements IFiscal {
 	}
 
 	@Override
-	public ArrayList<FiscalActivity> getActivities(AONContext ctx, int domainId) {
+	public LinkedList<FiscalActivity> getActivities(AONContext ctx, int domainId) {
 		return FiscalActivityDAO.getActivities(ctx, domainId);
 	}
 

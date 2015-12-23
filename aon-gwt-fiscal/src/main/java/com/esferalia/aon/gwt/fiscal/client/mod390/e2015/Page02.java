@@ -1,15 +1,15 @@
-package com.esferalia.aon.gwt.fiscal.client.mod390.e2014;
+package com.esferalia.aon.gwt.fiscal.client.mod390.e2015;
 
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2014.Model3902014.IMod3902014CallBack;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2014.Model3902014.IMod3902014Page;
+import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015CallBack;
+import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015Page;
 import com.esferalia.aon.occam.api.model.fiscal.Address;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -18,7 +18,7 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Page02 extends ResizeComposite implements IMod3902014Page {
+public class Page02 extends ResizeComposite implements IMod3902015Page {
 
 	interface PageBinder extends
 			UiBinder<Widget, Page02> {
@@ -27,7 +27,7 @@ public class Page02 extends ResizeComposite implements IMod3902014Page {
 	private static final PageBinder BINDER = GWT
 			.create(PageBinder.class);
 
-	IMod3902014CallBack callback;
+	IMod3902015CallBack callback;
 
 	@UiField
 	DocumentTextBox rdocument;
@@ -87,7 +87,7 @@ public class Page02 extends ResizeComposite implements IMod3902014Page {
 
 	}
 
-	public void setValue(Mod3902014 m390) {
+	public void setValue(Mod3902015 m390) {
 		if (m390.getAddress() != null) {
 			rdocument.setValue(m390.getAddress().getRdocument());
 			rname.setValue(m390.getAddress().getRname());
@@ -153,7 +153,7 @@ public class Page02 extends ResizeComposite implements IMod3902014Page {
 		}
 	}
 
-	public void populate(Mod3902014 mod390) {
+	public void populate(Mod3902015 mod390) {
 		Address address = new Address();
 		address.setRdocument(rdocument.getValue());
 		address.setRname(rname.getValue());
@@ -202,7 +202,7 @@ public class Page02 extends ResizeComposite implements IMod3902014Page {
 		}
 	}
 	
-	public void setCallback(IMod3902014CallBack callback) {
+	public void setCallback(IMod3902015CallBack callback) {
 		this.callback = callback;
 	}
 

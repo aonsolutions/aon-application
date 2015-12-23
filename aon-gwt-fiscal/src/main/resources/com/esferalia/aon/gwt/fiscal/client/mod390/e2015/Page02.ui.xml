@@ -1,0 +1,206 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:fiscal='urn:import:com.esferalia.aon.gwt.fiscal.client.widget'
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	<g:HTMLPanel styleName="{aonResources.css.aonMarginTop}">
+		<table class="{aonResources.css.aonWidthAll}">
+			<tr>
+				<td class="{aonResources.css.aonPageHeader}">
+					<g:Label text="{msg.representativeData}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<table class="{aonResources.css.aonWidthAll}">		
+						<tr>
+							<td colspan="2" class="{aonResources.css.aonBorderBottom} {aonResources.css.aonBold}">
+								<g:Label text="{msg.nonLegalEntities}"/>
+							</td>
+						</tr>
+						<tr>
+							<td class="{aonResources.css.aonWidth150}">
+								<g:Label text="{msg.representativeData}" styleName="{aonResources.css.aonInnerLabel}"/>
+							</td>
+							<td class="{aonResources.css.aonWidthAuto}">
+								<g:Label text="{msg.name}" styleName="{aonResources.css.aonInnerLabel}"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<aon:DocumentTextBox ui:field="rdocument"/>
+							</td>
+							<td>
+								<g:TextBox visibleLength="42" maxLength="40" ui:field="rname" 
+									styleName="{aonResources.css.aonInputText}"/>
+							</td>
+						</tr>
+					</table>
+					<table class="{aonResources.css.aonWidthAll}">
+						<tr>
+							<td class="{aonResources.css.aonWidth70}">
+								<g:Label text="{msg.streetType}" styleName="{aonResources.css.aonInnerLabel}"/>
+							</td>
+							<td class="{aonResources.css.aonWidth250}">
+								<g:Label text="{msg.streetName}" styleName="{aonResources.css.aonInnerLabel}"/>
+							</td>
+							<td class="{aonResources.css.aonWidth70}">
+								<g:Label text="{msg.streetNumber}" styleName="{aonResources.css.aonInnerLabel}"/>
+							</td>
+							<td class="{aonResources.css.aonWidth60}">
+								<g:Label text="{msg.streetStair}" styleName="{aonResources.css.aonInnerLabel}"/>
+							</td>
+							<td class="{aonResources.css.aonWidth60}">
+								<g:Label text="{msg.streetFloor}" styleName="{aonResources.css.aonInnerLabel}"/>
+							</td>
+							<td class="{aonResources.css.aonWidth60}">
+								<g:Label text="{msg.streetDoor}" styleName="{aonResources.css.aonInnerLabel}"/>
+							</td>
+							<td class="{aonResources.css.aonWidthAuto}">
+								<g:Label text="{msg.phone}" styleName="{aonResources.css.aonInnerLabel}"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:TextBox visibleLength="4" maxLength="4" ui:field="rstreetType" 
+									styleName="{aonResources.css.aonInputText}"/>
+							</td>
+							<td>
+								<g:TextBox visibleLength="30" maxLength="30" ui:field="rstreetName" 
+									styleName="{aonResources.css.aonInputText}"/>
+							</td>
+							<td>
+								<g:TextBox visibleLength="5" maxLength="5" ui:field="rstreetNumber" 
+									styleName="{aonResources.css.aonInputText}"/>
+							</td>
+							<td>
+								<g:TextBox visibleLength="3" maxLength="3" ui:field="rstreetStair" 
+									styleName="{aonResources.css.aonInputText}"/>
+							</td>
+							<td>
+								<g:TextBox visibleLength="3" maxLength="3" ui:field="rstreetFloor" 
+									styleName="{aonResources.css.aonInputText}"/>
+							</td>
+							<td>
+								<g:TextBox visibleLength="3" maxLength="3" ui:field="rstreetDoor" 
+									styleName="{aonResources.css.aonInputText}"/>
+							</td>
+							<td>
+								<g:TextBox visibleLength="9" maxLength="9" ui:field="rphone" 
+									styleName="{aonResources.css.aonInputText}"/>
+							</td>
+						</tr>
+					</table>
+					<table class="{aonResources.css.aonWidthAll}">
+						<tr>
+							<td class="{aonResources.css.aonWidth250}">
+								<g:Label text="{msg.town}"  styleName="{aonResources.css.aonInnerLabel}"/>
+							</td>
+							<td class="{aonResources.css.aonWidth150}">
+								<g:Label text="{msg.province}" styleName="{aonResources.css.aonInnerLabel}"/>
+							</td>
+							<td class="{aonResources.css.aonWidthAuto}">
+								<g:Label text="{msg.zip}" styleName="{aonResources.css.aonInnerLabel}"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:TextBox visibleLength="30" maxLength="30" ui:field="rtown" 
+									styleName="{aonResources.css.aonInputText}"/>
+							</td>
+							<td>
+								<aon:ProvinceListBox ui:field="rprovince" />
+							</td>
+							<td>
+								<g:TextBox visibleLength="5" maxLength="5" ui:field="rzip" 
+									styleName="{aonResources.css.aonInputText}"/>
+							</td>
+						</tr>
+					</table>
+					
+					<table class="{aonResources.css.aonWidthAll}">
+						<colgroup>
+							<col style="width: 80px;"/>
+							<col style="width: 250px;"/>
+							<col style="width: 250px;"/>
+							<col style="width: auto;"/>
+						</colgroup>
+						<tr>
+							<td colspan="4" class="{aonResources.css.aonBorderBottom} {aonResources.css.aonBold}">
+								<g:Label text="{msg.legalEntities}"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="D."/>
+							</td>
+							<td>
+								<g:TextBox ui:field="name1" visibleLength="25" maxLength="40" tabIndex="100" 
+									styleName="{aonResources.css.aonInputText}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="name2" visibleLength="25" maxLength="40" tabIndex="200" 
+									styleName="{aonResources.css.aonInputText}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="name3" visibleLength="25" maxLength="40" tabIndex="300" 
+									styleName="{aonResources.css.aonInputText}"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="NIF"/>
+							</td>
+							<td>
+								<aon:DocumentTextBox ui:field="document1" tabIndex="101"/>
+							</td>
+							<td>
+								<aon:DocumentTextBox ui:field="document2" tabIndex="201"/>
+							</td>
+							<td>
+								<aon:DocumentTextBox ui:field="document3" tabIndex="301"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="{msg.registrationDate}" />
+							</td>
+							<td>
+								<aon:DateBoxEx ui:field="notaryDate1" tabIndex="102"/>
+							</td>
+							<td>
+								<aon:DateBoxEx ui:field="notaryDate2" tabIndex="202"/>
+							</td>
+							<td>
+								<aon:DateBoxEx ui:field="notaryDate3" tabIndex="302"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Label text="{msg.notary}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="notary1" visibleLength="20" maxLength="20" tabIndex="103" 
+									styleName="{aonResources.css.aonInputText}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="notary2" visibleLength="20" maxLength="20" tabIndex="203" 
+									styleName="{aonResources.css.aonInputText}"/>
+							</td>
+							<td>
+								<g:TextBox ui:field="notary3" visibleLength="20" maxLength="20" tabIndex="303" 
+									styleName="{aonResources.css.aonInputText}"/>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</g:HTMLPanel>
+
+</ui:UiBinder>

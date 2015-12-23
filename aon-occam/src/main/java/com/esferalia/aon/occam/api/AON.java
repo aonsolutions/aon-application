@@ -848,7 +848,7 @@ public class AON {
 	}
 
 	// -------------------------- FISCAL ACTIVITIES
-	public static ArrayList<FiscalActivity> getFiscalActivities(
+	public static LinkedList<FiscalActivity> getFiscalActivities(
 			String domainName, int domainId) {
 		AONContext ctx = null;
 		try {

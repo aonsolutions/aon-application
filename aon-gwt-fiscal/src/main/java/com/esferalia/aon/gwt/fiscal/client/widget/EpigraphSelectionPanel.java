@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.widget;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
@@ -93,7 +93,7 @@ public class EpigraphSelectionPanel extends CustomDialog {
 
 	public void setCallback(SelectionCallBack callback) {
 		this.callback = callback;
-		table.setRowData(new ArrayList<Epigraph>());
+		table.setRowData(new LinkedList<Epigraph>());
 		table.setRowCount(0, true);
 		selected = null;
 	}
@@ -143,9 +143,9 @@ public class EpigraphSelectionPanel extends CustomDialog {
 	@UiHandler("table")
 	void onTableRangeChange(RangeChangeEvent event) {
 		FiscalTree.FISCAL_SERVICE.getModuleEpigraphs(FiscalTree.CURRENT_YEAR,
-				new AsyncCallback<ArrayList<Epigraph>>() {
+				new AsyncCallback<LinkedList<Epigraph>>() {
 					@Override
-					public void onSuccess(ArrayList<Epigraph> result) {
+					public void onSuccess(LinkedList<Epigraph> result) {
 						table.setRowData(result);
 						table.setRowCount(result.size(), true);
 					}

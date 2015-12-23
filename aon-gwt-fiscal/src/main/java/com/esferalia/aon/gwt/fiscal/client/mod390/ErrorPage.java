@@ -1,10 +1,9 @@
-package com.esferalia.aon.gwt.fiscal.client.mod390.e2014;
+package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;
@@ -56,17 +55,17 @@ public class ErrorPage extends ResizeComposite implements HasSelectionChangedHan
 		
 	}
 
-	private ListDataProvider<ValidationMessage2014> dataProvider;
-	private NoSelectionModel<ValidationMessage2014> model;
+	private ListDataProvider<ValidationMessage> dataProvider;
+	private NoSelectionModel<ValidationMessage> model;
 	
 	@UiField(provided = true)
-	CellTable<ValidationMessage2014> table;
+	CellTable<ValidationMessage> table;
 	
 	
 	public ErrorPage( ) {
 		CellTable.Resources tableStyle = GWT.create(AonCellTable.class);
 		
-		table = new CellTable<ValidationMessage2014>(1, tableStyle);
+		table = new CellTable<ValidationMessage>(1, tableStyle);
 		table.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
 		table.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 		
@@ -76,10 +75,10 @@ public class ErrorPage extends ResizeComposite implements HasSelectionChangedHan
 		addMessageColumn();
 		
 		table.setEmptyTableWidget(new HTML(AON.MSG.noData()));
-		dataProvider= new ListDataProvider<ValidationMessage2014>();
+		dataProvider= new ListDataProvider<ValidationMessage>();
 		dataProvider.addDataDisplay(table);
 		
-		model = new NoSelectionModel<ValidationMessage2014>();
+		model = new NoSelectionModel<ValidationMessage>();
 		table.setSelectionModel(model);
 		
 		ScrollPanel sp = new ScrollPanel();
@@ -88,7 +87,7 @@ public class ErrorPage extends ResizeComposite implements HasSelectionChangedHan
 		initWidget(sp);
 	}
 	
-	public void addErrorMsg(LinkedList<ValidationMessage2014> messages) {
+	public void addErrorMsg(LinkedList<ValidationMessage> messages) {
 		dataProvider.setList(messages);
 		table.setPageSize(messages.size());
 		table.redraw();
@@ -108,20 +107,20 @@ public class ErrorPage extends ResizeComposite implements HasSelectionChangedHan
 		addMessage(msg);
 	}
 	private void addMessage(String message) {
-		addMessage(new ValidationMessage2014(-1,null,message,null));
+		addMessage(new ValidationMessage(-1,null,message,null));
 	}
 	
-	private void addMessage(ValidationMessage2014 msg) {
+	private void addMessage(ValidationMessage msg) {
 		dataProvider.getList().add(msg);
 		table.setPageSize( dataProvider.getList().size() );
 		table.redraw();		    		
 	}
 	
 	private void addPageColumn() {
-		Column<ValidationMessage2014,String> col = new TextColumn<ValidationMessage2014>() {
+		Column<ValidationMessage,String> col = new TextColumn<ValidationMessage>() {
 
 			@Override
-			public String getValue(ValidationMessage2014 errorMessage) {
+			public String getValue(ValidationMessage errorMessage) {
 				return errorMessage.getPage()>=0?Integer.toString(errorMessage.getPage()+1):"";
 			}
 			
@@ -132,11 +131,11 @@ public class ErrorPage extends ResizeComposite implements HasSelectionChangedHan
 	}
 	
 	private void addBoxColumn() {
-		Column<ValidationMessage2014,String> col = new TextColumn<ValidationMessage2014>() {
+		Column<ValidationMessage,String> col = new TextColumn<ValidationMessage>() {
 
 			@Override
-			public String getValue(ValidationMessage2014 errorMessage) {
-				return errorMessage.getKey() != null? AonNumberUtils.toString(errorMessage.getKey().getBox()) : ""; 
+			public String getValue(ValidationMessage errorMessage) {
+				return errorMessage.getKey(); 
 			}
 			
 		};
@@ -145,10 +144,10 @@ public class ErrorPage extends ResizeComposite implements HasSelectionChangedHan
 		col.setCellStyleNames(AON.AON_CSS.aonTextCenter());
 	}
 	private void addMessageColumn() {
-		Column<ValidationMessage2014,String> col = new TextColumn<ValidationMessage2014>() {
+		Column<ValidationMessage,String> col = new TextColumn<ValidationMessage>() {
 
 			@Override
-			public String getValue(ValidationMessage2014 errorMessage) {
+			public String getValue(ValidationMessage errorMessage) {
 				return errorMessage.getMessage();
 			}
 			
@@ -166,13 +165,13 @@ public class ErrorPage extends ResizeComposite implements HasSelectionChangedHan
 			    }
 			  }
 		};
-		Column<ValidationMessage2014,String> col = new Column<ValidationMessage2014,String>(navigateButton) {
-		  public String getValue(ValidationMessage2014 object) {
+		Column<ValidationMessage,String> col = new Column<ValidationMessage,String>(navigateButton) {
+		  public String getValue(ValidationMessage object) {
 		    return AON.MSG.goAction();
 		  }
 		};
-		col.setFieldUpdater(new FieldUpdater<ValidationMessage2014, String>() {
-		    public void update(int index, ValidationMessage2014 ca, String value) {
+		col.setFieldUpdater(new FieldUpdater<ValidationMessage, String>() {
+		    public void update(int index, ValidationMessage ca, String value) {
 		    	SelectionChangeEvent.fire(ErrorPage.this);
 		    }
 		});		
@@ -186,7 +185,7 @@ public class ErrorPage extends ResizeComposite implements HasSelectionChangedHan
 		return model.addSelectionChangeHandler( handler );
 	}
 	
-	public ValidationMessage2014 getSelected() {
+	public ValidationMessage getSelected() {
 		return model.getLastSelectedObject();
 	}
 

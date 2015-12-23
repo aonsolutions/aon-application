@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -14,6 +13,7 @@ import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
@@ -28,7 +28,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
@@ -97,18 +96,18 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 
 	@Override
 	public void getModuleEpigraphs(int year,
-			AsyncCallback<ArrayList<Epigraph>> callback) {
+			AsyncCallback<LinkedList<Epigraph>> callback) {
 		AON.start();
 		fsa.getModuleEpigraphs(year,
-				new AsyncCallbackWrapper<ArrayList<Epigraph>>(callback));
+				new AsyncCallbackWrapper<LinkedList<Epigraph>>(callback));
 	}
 
 	@Override
 	public void getFiscalActivities(String domainName, int domain,
-			AsyncCallback<ArrayList<FiscalActivity>> callback) {
+			AsyncCallback<LinkedList<FiscalActivity>> callback) {
 		AON.start();
 		fsa.getFiscalActivities(domainName, domain,
-				new AsyncCallbackWrapper<ArrayList<FiscalActivity>>(callback));
+				new AsyncCallbackWrapper<LinkedList<FiscalActivity>>(callback));
 	}
 
 	@Override
@@ -177,10 +176,10 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 	// -------------------------------------------------------------- ACTIVITIES
 	@Override
 	public void getActivities(int activityGroup,
-			AsyncCallback<ArrayList<Activity>> callback) {
+			AsyncCallback<LinkedList<Activity>> callback) {
 		AON.start();
 		fsa.getActivities(activityGroup,
-				new AsyncCallbackWrapper<ArrayList<Activity>>(callback));
+				new AsyncCallbackWrapper<LinkedList<Activity>>(callback));
 	}
 
 	// ---------------------------------------------------------------MODELO 190

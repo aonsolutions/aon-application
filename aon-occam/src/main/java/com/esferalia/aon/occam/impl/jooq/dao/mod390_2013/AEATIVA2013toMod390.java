@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.esferalia.aon.occam.api.model.fiscal.Activity;
+import com.esferalia.aon.occam.api.model.fiscal.Address;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Activity;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Address;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.FarmerRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390DetailKey;

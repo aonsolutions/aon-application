@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.tree.node;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree;
@@ -35,10 +35,10 @@ public class ActivityGroupTreeNode extends TreeNode<Enterprise> {
     	setUserObject(enterprise);
     	parent.addItem(this);
     	FiscalTree.FISCAL_SERVICE.getFiscalActivities(FiscalTree.getCurrentDomainName()
-    		, enterprise.getDomain(), new AsyncCallback<ArrayList<FiscalActivity>>() {
+    		, enterprise.getDomain(), new AsyncCallback<LinkedList<FiscalActivity>>() {
 			
 			@Override
-			public void onSuccess(ArrayList<FiscalActivity> result) {
+			public void onSuccess(LinkedList<FiscalActivity> result) {
 				boolean currentYearRendered = false;
 				for (FiscalActivity fa : result) {
 					TreeItem yearNode = null; 

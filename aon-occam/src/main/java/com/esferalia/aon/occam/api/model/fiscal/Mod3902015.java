@@ -1,8 +1,8 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
-import java.util.Map;
 import java.util.ArrayList;
+import java.util.Map;
 
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -11,144 +11,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class Mod3902015 implements Serializable {
 
 	private static final String LEGAL_ENTITY_PATTERN = "^[0-9|X|Y|Z].*";
-
-	public static class Activity implements Serializable {
-
-		private String description;
-		private String key;
-		private String epigraph;
-		
-		public String getDescription() {
-			return description;
-		}
-		public void setDescription(String description) {
-			this.description = description;
-		}
-		public String getKey() {
-			return key;
-		}
-		public void setKey(String key) {
-			this.key = key;
-		}
-		public String getEpigraph() {
-			return epigraph;
-		}
-		public void setEpigraph(String epigraph) {
-			this.epigraph = epigraph;
-		}
-	}
-
-	public static class Address implements Serializable {
-
-		private String rdocument;
-		private String rname;
-		private String rstreetType;
-		private String rstreetName;
-		private String rstreetNumber;
-		private String rstreetStair;
-		private String rstreetFloor;
-		private String rstreetDoor;
-		private String rphone;
-		private String rtown;
-		private int rprovince;
-		private String rzip;
-
-		public String getRdocument() {
-			return rdocument;
-		}
-
-		public void setRdocument(String rdocument) {
-			this.rdocument = rdocument;
-		}
-
-		public String getRname() {
-			return rname;
-		}
-
-		public void setRname(String rname) {
-			this.rname = rname;
-		}
-
-		public String getRstreetType() {
-			return rstreetType;
-		}
-
-		public void setRstreetType(String rstreetType) {
-			this.rstreetType = rstreetType;
-		}
-
-		public String getRstreetName() {
-			return rstreetName;
-		}
-
-		public void setRstreetName(String rstreetName) {
-			this.rstreetName = rstreetName;
-		}
-
-		public String getRstreetNumber() {
-			return rstreetNumber;
-		}
-
-		public void setRstreetNumber(String rstreetNumber) {
-			this.rstreetNumber = rstreetNumber;
-		}
-
-		public String getRstreetStair() {
-			return rstreetStair;
-		}
-
-		public void setRstreetStair(String rstreetStair) {
-			this.rstreetStair = rstreetStair;
-		}
-
-		public String getRstreetFloor() {
-			return rstreetFloor;
-		}
-
-		public void setRstreetFloor(String rstreetFloor) {
-			this.rstreetFloor = rstreetFloor;
-		}
-
-		public String getRstreetDoor() {
-			return rstreetDoor;
-		}
-
-		public void setRstreetDoor(String rstreetDoor) {
-			this.rstreetDoor = rstreetDoor;
-		}
-
-		public String getRphone() {
-			return rphone;
-		}
-
-		public void setRphone(String rphone) {
-			this.rphone = rphone;
-		}
-
-		public String getRtown() {
-			return rtown;
-		}
-
-		public void setRtown(String rtown) {
-			this.rtown = rtown;
-		}
-
-		public int getRprovince() {
-			return rprovince;
-		}
-
-		public void setRprovince(int rprovince) {
-			this.rprovince = rprovince;
-		}
-
-		public String getRzip() {
-			return rzip;
-		}
-
-		public void setRzip(String rzip) {
-			this.rzip = rzip;
-		}
-	}
 	
 	public static class SimpliedRegimeActivity implements Serializable {
 
@@ -641,82 +503,127 @@ public class Mod3902015 implements Serializable {
 	}
 
 	public static enum Mod390DetailKeyGroup implements Serializable {
-		  DEV_001 (new Mod390DetailKey[]{Mod390DetailKey.K00_04,Mod390DetailKey.K00_08
-				 ,Mod390DetailKey.K00_10,Mod390DetailKey.K00_18,Mod390DetailKey.K00_21})
-		 ,DEV_002 (new Mod390DetailKey[]{Mod390DetailKey.K01_04,Mod390DetailKey.K01_08
+		  DEV_001 ("R\u00E9gimen ordinario"
+				  ,new Mod390DetailKey[]{Mod390DetailKey.K00_04,Mod390DetailKey.K00_08
+				  ,Mod390DetailKey.K00_10,Mod390DetailKey.K00_18,Mod390DetailKey.K00_21})
+		 ,DEV_002 ("Operaciones intragrupo"
+				 ,new Mod390DetailKey[]{Mod390DetailKey.K01_04,Mod390DetailKey.K01_08
 				 ,Mod390DetailKey.K01_10,Mod390DetailKey.K01_18,Mod390DetailKey.K01_21})
-		 ,DEV_003  (new Mod390DetailKey[]{Mod390DetailKey.K40_04,Mod390DetailKey.K40_10
+		 ,DEV_003  ("R\u00E9gimen especial del criterio de caja"
+				 ,new Mod390DetailKey[]{Mod390DetailKey.K40_04,Mod390DetailKey.K40_10
 				 ,Mod390DetailKey.K40_21})
-		 ,DEV_004  (new Mod390DetailKey[]{Mod390DetailKey.K02_04,Mod390DetailKey.K02_08
+		 ,DEV_004  ("R\u00E9gimen especial de bienes usados, objetos de arte, antig\u00fcedades y objetos de colecci\u00F3n"
+				 ,new Mod390DetailKey[]{Mod390DetailKey.K02_04,Mod390DetailKey.K02_08
 				 ,Mod390DetailKey.K02_10,Mod390DetailKey.K02_18,Mod390DetailKey.K02_21})
-		 ,DEV_005  (new Mod390DetailKey[]{Mod390DetailKey.K03_18,Mod390DetailKey.K03_21})
-		 ,DEV_006  (new Mod390DetailKey[]{Mod390DetailKey.K04_04,Mod390DetailKey.K04_08
+		 ,DEV_005  ("R\u00E9gimen especial de agencias de viaje"
+				 ,new Mod390DetailKey[]{Mod390DetailKey.K03_18,Mod390DetailKey.K03_21})
+		 ,DEV_006  ("Adquisiciones intracomunitarias de bienes"
+				 ,new Mod390DetailKey[]{Mod390DetailKey.K04_04,Mod390DetailKey.K04_08
 				 ,Mod390DetailKey.K04_10,Mod390DetailKey.K04_18,Mod390DetailKey.K04_21})
-		 ,DEV_007  (new Mod390DetailKey[]{Mod390DetailKey.K05_04,Mod390DetailKey.K05_08
+		 ,DEV_007  ("Adquisiciones intracomunitarias de servicios"
+				 ,new Mod390DetailKey[]{Mod390DetailKey.K05_04,Mod390DetailKey.K05_08
 				 ,Mod390DetailKey.K05_10,Mod390DetailKey.K05_18,Mod390DetailKey.K05_21})
-		 ,DEV_008  (new Mod390DetailKey[]{Mod390DetailKey.K06})
-		 ,DEV_009  (new Mod390DetailKey[]{Mod390DetailKey.K07})
-		 ,DEV_010  (new Mod390DetailKey[]{Mod390DetailKey.K07_I})
-		 ,DEV_011  (new Mod390DetailKey[]{Mod390DetailKey.K08})
-		 ,DEV_012  (new Mod390DetailKey[]{Mod390DetailKey.K09})
-		 ,DEV_013  (new Mod390DetailKey[]{Mod390DetailKey.K10_05,Mod390DetailKey.K10_1
+		 ,DEV_008  ("IVA devengado en otros supuestos de inversi\u00F3n del sujeto pasivo"
+				 ,new Mod390DetailKey[]{Mod390DetailKey.K06})
+		 ,DEV_009  ("Modificaci\u00F3n de bases y cuotas"
+				 ,new Mod390DetailKey[]{Mod390DetailKey.K07})
+		 ,DEV_010  ("Modificaci\u00F3n de bases y cuotas de operaciones intragrupo"
+				 ,new Mod390DetailKey[]{Mod390DetailKey.K07_I})
+		 ,DEV_011  ("Modificaci\u00F3n de bases y cuotas por auto de declaraci\u00F3n de concurso de acreedores"
+				 ,new Mod390DetailKey[]{Mod390DetailKey.K08})
+		 ,DEV_012  ("Total bases y cuotas IVA"
+				 ,new Mod390DetailKey[]{Mod390DetailKey.K09})
+		 ,DEV_013  ("Recargo de equivalencia",new Mod390DetailKey[]{Mod390DetailKey.K10_05,Mod390DetailKey.K10_1
 				 ,Mod390DetailKey.K10_14,Mod390DetailKey.K10_4,Mod390DetailKey.K10_52
 				 ,Mod390DetailKey.K10_175})
-		 ,DEV_014  (new Mod390DetailKey[]{Mod390DetailKey.K11})
-		 ,DEV_015  (new Mod390DetailKey[]{Mod390DetailKey.K12})
-		 ,DEV_016  (new Mod390DetailKey[]{Mod390DetailKey.K13})
-		 ,DED_001  (new Mod390DetailKey[]{Mod390DetailKey.K14_04,Mod390DetailKey.K14_07
+		 ,DEV_014  ("Modificaci\u00F3n recargo equivalencia"
+				 ,new Mod390DetailKey[]{Mod390DetailKey.K11})
+		 ,DEV_015  ("Modificaci\u00F3n recargo equivalencia por auto de declaraci\u00F3n de concurso de acreedores"
+				 ,new Mod390DetailKey[]{Mod390DetailKey.K12})
+		 ,DEV_016  ("Total cuotas IVA y recargo de equivalencia"
+				 ,new Mod390DetailKey[]{Mod390DetailKey.K13})
+		 ,DED_001  ("IVA deducible en operaciones interiores de bienes y servicios corrientes"
+				 ,new Mod390DetailKey[]{Mod390DetailKey.K14_04,Mod390DetailKey.K14_07
 				 ,Mod390DetailKey.K14_08,Mod390DetailKey.K14_10,Mod390DetailKey.K14_16
 				 ,Mod390DetailKey.K14_18,Mod390DetailKey.K14_21})
-		 ,DED_002  (new Mod390DetailKey[]{Mod390DetailKey.K15})
-		 ,DED_003  (new Mod390DetailKey[]{Mod390DetailKey.K16_04,Mod390DetailKey.K16_07
+		 ,DED_002  ("Total bases imponibles y cuotas deducibles en operaciones interiores de bienes y servicios corrientes"
+				 ,new Mod390DetailKey[]{Mod390DetailKey.K15})
+		 ,DED_003  ("IVA deducible en operaciones intragrupo de bienes y servicios corrientes"
+				 ,new Mod390DetailKey[]{Mod390DetailKey.K16_04,Mod390DetailKey.K16_07
 				 ,Mod390DetailKey.K16_08,Mod390DetailKey.K16_10,Mod390DetailKey.K16_16
 				 ,Mod390DetailKey.K16_18,Mod390DetailKey.K16_21})
-		 ,DED_004  (new Mod390DetailKey[]{Mod390DetailKey.K17})
-		 ,DED_005  (new Mod390DetailKey[]{Mod390DetailKey.K18_04,Mod390DetailKey.K18_07
+		 ,DED_004  ("Total bases imponibles y cuotas deducibles en operaciones intragrupo de bienes y servicios corrientes"
+				 ,new Mod390DetailKey[]{Mod390DetailKey.K17})
+		 ,DED_005  ("IVA deducible en operaciones interiores de bienes de inversi\u00F3n"
+				 ,new Mod390DetailKey[]{Mod390DetailKey.K18_04,Mod390DetailKey.K18_07
 				 ,Mod390DetailKey.K18_08,Mod390DetailKey.K18_10,Mod390DetailKey.K18_16
 				 ,Mod390DetailKey.K18_18,Mod390DetailKey.K18_21})
-		 ,DED_006  (new Mod390DetailKey[]{Mod390DetailKey.K19})
-		 ,DED_007  (new Mod390DetailKey[]{Mod390DetailKey.K20_04,Mod390DetailKey.K20_07
+		 ,DED_006  ("Total bases imponibles y cuotas deducibles en operaciones interiores de bienes de inversi\u00F3n"
+				 ,new Mod390DetailKey[]{Mod390DetailKey.K19})
+		 ,DED_007  ("IVA deducible en operaciones intragrupo de bienes de inversi\u00F3n"
+				 ,new Mod390DetailKey[]{Mod390DetailKey.K20_04,Mod390DetailKey.K20_07
 				 ,Mod390DetailKey.K20_08,Mod390DetailKey.K20_10,Mod390DetailKey.K20_16
 				 ,Mod390DetailKey.K20_18,Mod390DetailKey.K20_21})
-		,DED_008  (new Mod390DetailKey[]{Mod390DetailKey.K21})
-		,DED_009  (new Mod390DetailKey[]{Mod390DetailKey.K22_04,Mod390DetailKey.K22_07
+		,DED_008  ("Total bases imponibles y cuotas deducibles en operaciones intragrupo de bienes de inversi\u00F3n"
+				,new Mod390DetailKey[]{Mod390DetailKey.K21})
+		,DED_009  ("IVA deducible en importaciones de bienes corrientes"
+				,new Mod390DetailKey[]{Mod390DetailKey.K22_04,Mod390DetailKey.K22_07
 				,Mod390DetailKey.K22_08,Mod390DetailKey.K22_10,Mod390DetailKey.K22_16
 				,Mod390DetailKey.K22_18,Mod390DetailKey.K22_21})
-		,DED_010  (new Mod390DetailKey[]{Mod390DetailKey.K23})
-		,DED_011  (new Mod390DetailKey[]{Mod390DetailKey.K24_04,Mod390DetailKey.K24_07
+		,DED_010  ("Total bases imponibles y cuotas deducibles en importaciones de bienes corrientes"
+				,new Mod390DetailKey[]{Mod390DetailKey.K23})
+		
+		,DED_011  ("IVA deducible en importaciones de bienes de inversi\u00F3n"
+				,new Mod390DetailKey[]{Mod390DetailKey.K24_04,Mod390DetailKey.K24_07
 				,Mod390DetailKey.K24_08,Mod390DetailKey.K24_10,Mod390DetailKey.K24_16
 				,Mod390DetailKey.K24_18,Mod390DetailKey.K24_21})
-		,DED_012  (new Mod390DetailKey[]{Mod390DetailKey.K25})
-		,DED_013  (new Mod390DetailKey[]{Mod390DetailKey.K26_04,Mod390DetailKey.K26_07
+		,DED_012  ("Total bases imponibles y cuotas deducibles en importaciones de bienes de inversi\u00F3n",new Mod390DetailKey[]{Mod390DetailKey.K25})
+		,DED_013  ("IVA deducible en adquisiciones intracomunitarias de bienes corrientes"
+				,new Mod390DetailKey[]{Mod390DetailKey.K26_04,Mod390DetailKey.K26_07
 				,Mod390DetailKey.K26_08,Mod390DetailKey.K26_10,Mod390DetailKey.K26_16
 				,Mod390DetailKey.K26_18,Mod390DetailKey.K26_21})
-		,DED_014  (new Mod390DetailKey[]{Mod390DetailKey.K27})
-		,DED_015  (new Mod390DetailKey[]{Mod390DetailKey.K28_04,Mod390DetailKey.K28_07
+		,DED_014  ("Total bases imponibles y cuotas deducibles en adquisiciones intracomunitarias de bienes corrientes"
+				,new Mod390DetailKey[]{Mod390DetailKey.K27})
+		,DED_015  ("IVA deducible en adquisiciones intracomunitarias de bienes de inversi\u00F3n"
+				,new Mod390DetailKey[]{Mod390DetailKey.K28_04,Mod390DetailKey.K28_07
 				,Mod390DetailKey.K28_08,Mod390DetailKey.K28_10,Mod390DetailKey.K28_16
 				,Mod390DetailKey.K28_18,Mod390DetailKey.K28_21})
-		,DED_016  (new Mod390DetailKey[]{Mod390DetailKey.K29})
-		,DED_017  (new Mod390DetailKey[]{Mod390DetailKey.K30_04,Mod390DetailKey.K30_07
+		,DED_016  ("Total bases imponibles y cuotas deducibles en adquisiciones intracomunitarias de bienes de inversi\u00F3n"
+				,new Mod390DetailKey[]{Mod390DetailKey.K29})
+		,DED_017  ("IVA deducible en adquisiciones intracomunitarias de servicios"
+				,new Mod390DetailKey[]{Mod390DetailKey.K30_04,Mod390DetailKey.K30_07
 				,Mod390DetailKey.K30_08,Mod390DetailKey.K30_10,Mod390DetailKey.K30_16
 				,Mod390DetailKey.K30_18,Mod390DetailKey.K30_21})
-		,DED_018  (new Mod390DetailKey[]{Mod390DetailKey.K31})
-		,DED_019  (new Mod390DetailKey[]{Mod390DetailKey.K32})
-		,DED_020  (new Mod390DetailKey[]{Mod390DetailKey.K33})
-		,DED_021  (new Mod390DetailKey[]{Mod390DetailKey.K33_I})
-		,DED_022  (new Mod390DetailKey[]{Mod390DetailKey.K34})
-		,DED_023  (new Mod390DetailKey[]{Mod390DetailKey.K35})
-		,DED_024  (new Mod390DetailKey[]{Mod390DetailKey.K36})
-		,DED_025  (new Mod390DetailKey[]{Mod390DetailKey.K37})
+		,DED_018  ("Total bases imponibles y cuotas deducibles en adquisiciones intracomunitarias de servicios"
+				,new Mod390DetailKey[]{Mod390DetailKey.K31})
+		,DED_019  ("Compensaci\u00F3n en r\u00E9gimen especial de la agricultura, ganaderia y pesca"
+				,new Mod390DetailKey[]{Mod390DetailKey.K32})
+		,DED_020  ("Rectificaci\u00F3n de deducciones"
+				,new Mod390DetailKey[]{Mod390DetailKey.K33})
+		,DED_021  ("Rectificaci\u00F3n de deducciones por operaciones intragrupo"
+				,new Mod390DetailKey[]{Mod390DetailKey.K33_I})
+		,DED_022  ("Regularizaci\u00F3n de bienes de inversi\u00F3n"
+				,new Mod390DetailKey[]{Mod390DetailKey.K34})
+		,DED_023  ("Regularizaci\u00F3n por aplicaci\u00F3n porcentaje definitivo de prorrata"
+				,new Mod390DetailKey[]{Mod390DetailKey.K35})
+		,DED_024  ("Suma de deducciones"
+				,new Mod390DetailKey[]{Mod390DetailKey.K36})
+		,DED_025  ("Resultado r\u00E9gimen general"
+				,new Mod390DetailKey[]{Mod390DetailKey.K37})
 		 ;
-		  
+		
+		private String label;
 		private Mod390DetailKey[] keys;
 		
-		private Mod390DetailKeyGroup(Mod390DetailKey[] keys) {
+		private Mod390DetailKeyGroup(String label,Mod390DetailKey[] keys) {
+			this.label = label;
 			this.keys = keys;
 		}
 		public Mod390DetailKey[] getKeys() {
 			return keys;
+		}
+		public String getLabel() {
+			return label;
 		}
 	}
 	

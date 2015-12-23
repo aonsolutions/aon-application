@@ -1,16 +1,15 @@
 package com.esferalia.aon.gwt.fiscal.client.widget;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
-import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Activity;
+import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.type.ActivityGroup;
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.core.client.GWT;
@@ -26,6 +25,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.HasKeyboardPagingPolicy.KeyboardPagingPolicy;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
@@ -131,7 +131,7 @@ public class ActivityPanel extends CustomDialog {
 	public void setCallback(SelectionCallBack callback) {
 		this.callback = callback;
 		activityGroup.setItemSelected(0, true);
-		table.setRowData(new ArrayList<Activity>());
+		table.setRowData(new LinkedList<Activity>());
 		table.setRowCount(0, true);
 		int i = deckPanel.getWidgetIndex(tablePanel);
 		deckPanel.showWidget(i);
@@ -144,25 +144,6 @@ public class ActivityPanel extends CustomDialog {
 		this.hide();
 		callback.onClose();
 	}
-	
-//	@Override
-//	protected void onPreviewNativeEvent(NativePreviewEvent event) {
-//		super.onPreviewNativeEvent(event);
-//		if (!event.isCanceled()) {
-//			if (event.getTypeInt() == Event.ONCLICK && isCloseEvent(event)) {
-//				this.hide();
-//				callback.onClose();
-//			} else if (event.getTypeInt() == Event.ONKEYDOWN
-//					&& event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
-//				this.hide();
-//				callback.onClose();
-//			}
-//		}
-//	}
-//	private boolean isCloseEvent(NativePreviewEvent event) {
-//		NativeEvent ev = event.getNativeEvent();
-//		return ev.getEventTarget().equals(close.getElement());
-//	}
 
 	private void addSelectorColumn() {
 		final Column<Activity, ImageResource> selectorColumn = new Column<Activity, ImageResource>(
@@ -220,21 +201,20 @@ public class ActivityPanel extends CustomDialog {
 		if (i >= 0) {
 			ActivityGroup ag = ActivityGroup.values()[i];
 			fiscalService.getActivities(ag.ordinal(),
-					new AsyncCallback<ArrayList<Activity>>() {
+					new AsyncCallback<LinkedList<Activity>>() {
 						@Override
-						public void onSuccess(ArrayList<Activity> result) {
+						public void onSuccess(LinkedList<Activity> result) {
 							table.setRowData(result);
 							table.setRowCount(result.size(), true);
 						}
 
 						@Override
 						public void onFailure(Throwable caught) {
-							DialogMessages.alertErrorWidget(AON.MSG
-								.unableToReadMod190(caught.getMessage()));
+							Window.alert(AON.MSG.unexpectedError(caught.getMessage()));
 						}
 					});
 		} else {
-			table.setRowData(new ArrayList<Activity>());
+			table.setRowData(new LinkedList<Activity>());
 			table.setRowCount(0, true);
 			table.redraw();
 		}

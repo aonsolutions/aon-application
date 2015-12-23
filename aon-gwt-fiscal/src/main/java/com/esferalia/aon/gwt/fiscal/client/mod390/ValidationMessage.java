@@ -1,30 +1,27 @@
-package com.esferalia.aon.gwt.fiscal.client.mod390.e2014;
+package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import java.io.Serializable;
 
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390DetailKey;
-
-public class ValidationMessage2014 implements Serializable {
+public class ValidationMessage implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	int page;
 	String message;
-	Mod390DetailKey key;
+	String key;
 	String expression;
 
-	public ValidationMessage2014() {
+	public ValidationMessage() {
 	}
 
-	public ValidationMessage2014(int page, Mod390DetailKey key, String message,
-			String expression) {
+	public ValidationMessage(int page, String key, String message, String expression) {
 		this.message = message;
 		this.page = page;
 		this.key = key;
 		this.expression = expression;
 	}
 
-	public ValidationMessage2014(int page, String message) {
+	public ValidationMessage(int page, String message) {
 		this(page,null,message,null);
 	}
 
@@ -44,11 +41,11 @@ public class ValidationMessage2014 implements Serializable {
 		this.page = page;
 	}
 
-	public Mod390DetailKey getKey() {
+	public String getKey() {
 		return key;
 	}
 
-	public void setKey(Mod390DetailKey key) {
+	public void setKey(String key) {
 		this.key = key;
 	}
 

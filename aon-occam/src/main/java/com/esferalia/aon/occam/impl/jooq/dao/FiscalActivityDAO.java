@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.FsActivity.FS_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.FsActivityInfo.FS_ACTIVITY_INFO;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.jooq.Record;
@@ -90,9 +90,9 @@ public class FiscalActivityDAO {
 		));
 	}
 
-	public static ArrayList<FiscalActivity> getActivities(AONContext ctx,int domain) {
+	public static LinkedList<FiscalActivity> getActivities(AONContext ctx,int domain) {
 		ctx.checkRead();
-		ArrayList<FiscalActivity> list = new ArrayList<FiscalActivity>();
+		LinkedList<FiscalActivity> list = new LinkedList<FiscalActivity>();
 		ctx.getDslContext().select(
 				 FS_ACTIVITY.ID
 				,FS_ACTIVITY.DOMAIN
