@@ -27,7 +27,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
-import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -51,7 +51,7 @@ public class DownloadTemplatesServlet extends HttpServlet {
         String login = p_request.getParameter("username");
         String domain_id = p_request.getParameter("domain_id");
         User user = new User().setLogin(login);
-        String domainName = AonUtil.getDomainName();
+        String domainName = AonServletUtils.getRequestDomainName(p_request);
         Integer domainId = Integer.parseInt(domain_id);
         Domain domain = new Domain().setName(domainName).setId(domainId);
         Integer idFile = Integer.parseInt(fileId);

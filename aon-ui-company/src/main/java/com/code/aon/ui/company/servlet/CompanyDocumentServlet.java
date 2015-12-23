@@ -128,7 +128,7 @@ public class CompanyDocumentServlet extends HttpServlet {
 			long length = file.length();
 			FileInputStream fis = new FileInputStream(file);
 		       
-		    res.addHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"."+attach.getMimeType().getExtension()+"\"");
+		    res.addHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
 		    //p_response.setContentType("application/octet-stream");
 		    res.setContentType(attach.getMimeType().getName());
 

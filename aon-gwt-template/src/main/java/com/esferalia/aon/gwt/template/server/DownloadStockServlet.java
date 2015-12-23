@@ -35,7 +35,6 @@ import org.jooq.Condition;
 
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
@@ -83,7 +82,7 @@ public class DownloadStockServlet extends HttpServlet {
         
         Boolean closeInventory = close_inventory.equals("true");
         Integer domainId = Integer.parseInt(domain_id);
-        String domainName = AonUtil.getDomainName();
+        String domainName = AonServletUtils.getRequestDomainName(p_request);
         Domain domain = new Domain().setId(domainId).setName(domainName);
         Integer idFile  = Integer.parseInt(fileId);
         Integer userId = AonServletUtils.getRequestUserId(p_request);

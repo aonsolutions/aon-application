@@ -114,19 +114,9 @@
  
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.warehouse</artifactId>
+			<artifactId>aon.google.apis</artifactId>
 			<version>${project.version}</version>
-			<scope>provided</scope>
-    		<exclusions>
-				<exclusion>
-					<groupId>asm</groupId>
-					<artifactId>asm</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>asm</groupId>
-					<artifactId>asm-attrs</artifactId>
-				</exclusion>
-			</exclusions>
+			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>

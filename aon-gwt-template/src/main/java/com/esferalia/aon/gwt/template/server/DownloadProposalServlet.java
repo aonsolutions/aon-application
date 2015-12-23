@@ -24,7 +24,7 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
@@ -50,7 +50,7 @@ public class DownloadProposalServlet extends HttpServlet {
         User user = new User().setLogin(login);
         Integer proposalId = Integer.parseInt(proposal_id);
         Integer domainId = Integer.parseInt(domain_id);
-        String domainName = AonUtil.getDomainName();
+        String domainName = AonServletUtils.getRequestDomainName(p_request);
         Domain domain = new Domain().setId(domainId).setName(domainName);
         byte[] b = null ;
         

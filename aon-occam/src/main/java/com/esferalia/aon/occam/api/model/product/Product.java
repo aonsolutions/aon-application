@@ -34,38 +34,44 @@ public class Product implements Serializable{
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public Product setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	public Integer getDomain() {
 		return domain;
 	}
-	public void setDomain(Integer domain) {
+	public Product setDomain(Integer domain) {
 		this.domain = domain;
+		return this;
 	}
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
+	public Product setName(String name) {
 		this.name = name;
+		return this;
 	}
 	public String getCode() {
 		return code;
 	}
-	public void setCode(String code) {
+	public Product setCode(String code) {
 		this.code = code;
+		return this;
 	}
 	public Integer getBrand() {
 		return brand;
 	}
-	public void setBrand(Integer brand) {
+	public Product setBrand(Integer brand) {
 		this.brand = brand;
+		return this;
 	}
 	public Integer getCategory() {
 		return category;
 	}
-	public void setCategory(Integer category) {
+	public Product setCategory(Integer category) {
 		this.category = category;
+		return this;
 	}
 	public Byte getInventoriable() {
 		return inventoriable;
@@ -73,11 +79,13 @@ public class Product implements Serializable{
 	public Boolean isInventoriable(){
 		return inventoriable==1;
 	}
-	public void setInventoriable(Byte inventoriable) {
+	public Product setInventoriable(Byte inventoriable) {
 		this.inventoriable = inventoriable;
+		return this;
 	}
-	public void setInventoriable(Boolean inventoriable){
+	public Product setInventoriable(Boolean inventoriable){
 		this.inventoriable = inventoriable ? (byte) 1 : (byte) 0;
+		return this;
 	}
 	public Byte getSerializable() {
 		return serializable;
@@ -85,11 +93,13 @@ public class Product implements Serializable{
 	public Boolean isSerializable(){
 		return serializable == 1;
 	}
-	public void setSerializable(Byte serializable) {
+	public Product setSerializable(Byte serializable) {
 		this.serializable = serializable;
+		return this;
 	}
-	public void setSerializable(Boolean serializable){
+	public Product setSerializable(Boolean serializable){
 		this.serializable = serializable ? (byte) 1 : (byte) 0;
+		return this;
 	}
 	public Byte getLotable() {
 		return lotable;
@@ -97,41 +107,48 @@ public class Product implements Serializable{
 	public Boolean isLotable(){
 		return lotable == 1;
 	}
-	public void setLotable(Byte lotable) {
+	public Product setLotable(Byte lotable) {
 		this.lotable = lotable;
+		return this;
 	}
-	public void setLotable(Boolean lotable){
+	public Product setLotable(Boolean lotable){
 		this.lotable = lotable ? (byte) 1 : (byte) 0;
+		return this;
 	}
 	public Byte getStatus() {
 		return status;
 	}
-	public void setStatus(Byte status) {
+	public Product setStatus(Byte status) {
 		this.status = status;
+		return this;
 	}
 	public Integer getVat() {
 		return vat;
 	}
-	public void setVat(Integer vat) {
+	public Product setVat(Integer vat) {
 		this.vat = vat;
+		return this;
 	}
 	public Integer getRetention() {
 		return retention;
 	}
-	public void setRetention(Integer retention) {
+	public Product setRetention(Integer retention) {
 		this.retention = retention;
+		return this;
 	}
 	public Byte getType() {
 		return type;
 	}
-	public void setType(Byte type) {
+	public Product setType(Byte type) {
 		this.type = type;
+		return this;
 	}
 	public Byte getManufactured() {
 		return manufactured;
 	}
-	public void setManufactured(Byte manufactured) {
+	public Product setManufactured(Byte manufactured) {
 		this.manufactured = manufactured;
+		return this;
 	}
 	public Boolean isManufactured(){
 		return manufactured == 1;
@@ -142,11 +159,13 @@ public class Product implements Serializable{
 	public Boolean isComposition(){
 		return composition == 1;
 	}
-	public void setComposition(Byte composition) {
+	public Product setComposition(Byte composition) {
 		this.composition = composition;
+		return this;
 	}
-	public void setComposition(Boolean composition){
+	public Product setComposition(Boolean composition){
 		this.composition = composition ? (byte) 1 : (byte) 0;
+		return this;
 	}
 	public Byte getCompositionPrice() {
 		return compositionPrice;
@@ -154,47 +173,55 @@ public class Product implements Serializable{
 	public Boolean isCompositionPrice(){
 		return compositionPrice == 1;
 	}
-	public void setCompositionPrice(Byte compositionPrice) {
+	public Product setCompositionPrice(Byte compositionPrice) {
 		this.compositionPrice = compositionPrice;
+		return this;
 	}
-	public void setCompositionPrice(Boolean compositionPrice){
+	public Product setCompositionPrice(Boolean compositionPrice){
 		this.compositionPrice = compositionPrice ? (byte) 1 : (byte) 0;
+		return this;
 	}
 	public Integer getSalesAccount() {
 		return salesAccount;
 	}
-	public void setSalesAccount(Integer salesAccount) {
+	public Product setSalesAccount(Integer salesAccount) {
 		this.salesAccount = salesAccount;
+		return this;
 	}
 	public Integer getPurchaseAccount() {
 		return purchaseAccount;
 	}
-	public void setPurchaseAccount(Integer purchaseAccount) {
+	public Product setPurchaseAccount(Integer purchaseAccount) {
 		this.purchaseAccount = purchaseAccount;
+		return this;
 	}
 	public String getCreationUser() {
 		return creationUser;
 	}
-	public void setCreationUser(String creationUser) {
+	public Product setCreationUser(String creationUser) {
 		this.creationUser = creationUser;
+		return this;
 	}
 	public Date getCreationDate() {
 		return creationDate;
 	}
-	public void setCreationDate(Date creationDate) {
+	public Product setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
+		return this;
 	}
 	public String getModificationUser() {
 		return modificationUser;
 	}
-	public void setModificationUser(String modificationUser) {
+	public Product setModificationUser(String modificationUser) {
 		this.modificationUser = modificationUser;
+		return this;
 	}
 	public Date getModificationDate() {
 		return modificationDate;
 	}
-	public void setModificationDate(Date modificationDate) {
+	public Product setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+		return this;
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
@@ -202,8 +229,9 @@ public class Product implements Serializable{
 	public Byte getKind() {
 		return kind;
 	}
-	public void setKind(Byte kind) {
+	public Product setKind(Byte kind) {
 		this.kind = kind;
+		return this;
 	}
 	
 	

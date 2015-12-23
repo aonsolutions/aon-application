@@ -19,7 +19,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
-import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.template.jooq.DBMarketplace;
 import com.esferalia.aon.gwt.template.shared.marketplace.AmazonDelivery;
 import com.esferalia.aon.gwt.template.shared.marketplace.Order;
@@ -40,7 +40,7 @@ public class DownloadAmazonDeliveryServlet extends HttpServlet {
         String domain_id = p_request.getParameter("domain_id");
         String login = p_request.getParameter("username");
         Integer domainId = Integer.parseInt(domain_id);
-        String domainName = AonUtil.getDomainName();
+        String domainName = AonServletUtils.getRequestDomainName(p_request);
         Domain domain = new Domain().setId(domainId).setName(domainName); 
         File archivoXLS = new File("AmazonDelivery-"+ domainId  +".xls" );
         if(archivoXLS.exists()) archivoXLS.delete();

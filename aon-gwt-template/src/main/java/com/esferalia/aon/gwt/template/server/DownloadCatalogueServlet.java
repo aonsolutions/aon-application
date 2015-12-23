@@ -24,7 +24,7 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.template.jooq.DBCatalogue;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
@@ -50,7 +50,7 @@ public class DownloadCatalogueServlet extends HttpServlet {
         String login = p_request.getParameter("username");
         User user = new User().setLogin(login);
         Integer domainId = Integer.parseInt(domain_id);
-        String domainName = AonUtil.getDomainName();
+        String domainName = AonServletUtils.getRequestDomainName(p_request);
         Domain domain = new Domain().setName(domainName).setId(domainId);
         Workplace wp = null;
         if(!workplace.equals("-"))

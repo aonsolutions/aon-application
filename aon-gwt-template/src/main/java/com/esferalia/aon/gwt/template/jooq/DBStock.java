@@ -36,13 +36,7 @@ import org.jooq.Record4;
 import org.jooq.Record5;
 import org.jooq.Record6;
 import org.jooq.Result;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.code.aon.config.Series;
-import com.code.aon.product.Item;
-import com.code.aon.product.Product;
-import com.code.aon.product.enumeration.ProductStatus;
 import com.esferalia.aon.gwt.template.server.AuditInfo;
 import com.esferalia.aon.gwt.template.server.ProposalInfo;
 import com.esferalia.aon.gwt.template.server.StockInfo;
@@ -57,13 +51,14 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
+import com.esferalia.aon.occam.api.model.warehouse.Series;
 
 public class DBStock {
-	
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(DBStock.class.getName());
 	
 	static String stockquery ;
 	static String inventoryquery ;
@@ -91,13 +86,13 @@ public class DBStock {
 			AONContext sctx = ctx;
 			stock.stream().forEach(s ->{
 				if(s.getProduct() != null){
-					Result<Record5<Integer, Double, Double, Byte, Byte>> data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE
-							, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE)
+					Result<Record6<Integer, Double, Double, Byte, Byte, Integer>> data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE
+							, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE, PRODUCT.ID)
 						.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domainId)).fetch();
 					if(data.isEmpty()){
 
-						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE)
+						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE, PRODUCT.ID)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
 										.and(PRODUCT.DOMAIN.eq(domainId)).fetch();
@@ -115,7 +110,7 @@ public class DBStock {
 						if(s.getDetail3() == "") 
 							detail3 = ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull());
 						
-						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE)
+						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE, PRODUCT.ID)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
 									.and(detail)
@@ -139,10 +134,11 @@ public class DBStock {
 						Item item = new Item();
 						item.setId(itemId);
 						item.setPurchasePrice(data.get(0).value3() != null ? data.get(0).value3() :0.0);
-						Product product = new Product();
-						product.setManufactured(data.get(0).value4() != 0);
-						product.setInventoriable(data.get(0).value5() != 0);
+						Product product = new Product().setId(data.get(0).getValue(PRODUCT.ID))
+								.setManufactured(data.get(0).getValue(PRODUCT.MANUFACTURED))
+								.setInventoriable(data.get(0).getValue(PRODUCT.INVENTORIABLE));
 						item.setProduct(product);
+						item.setProductId(product.getId());
 						item.setDomain(domainId);
 						
 						Record2<Integer,Integer> data3 = sctx.getDslContext().select(WAREHOUSE.ID, WAREHOUSE.WORKPLACE)
@@ -478,7 +474,7 @@ public class DBStock {
 						Integer stockId, stockId2;
 						if((ti.getSourceWarehouse() != null && ti.getSourceWarehouse().getId() != null) 
 								&& (ti.getTargetWarehouse() != null && ti.getTargetWarehouse().getId() != null)){
-							LOGGER.debug("Source warehouse is not null & target warehouse is not null");
+						//	LOGGER.debug("Source warehouse is not null & target warehouse is not null");
 							if(data2.isNotEmpty() && data3.isNotEmpty()){
 								quantity = data2.get(0).value1();
 								quantity2 = data3.get(0).value1();
@@ -501,7 +497,7 @@ public class DBStock {
 						}
 						else if((ti.getSourceWarehouse() != null && ti.getSourceWarehouse().getId() != null) 
 								&& (ti.getTargetWarehouse() == null || ti.getTargetWarehouse().getId() == null)){
-							LOGGER.debug("Source warehouse is not null & target warehouse is null");
+							//LOGGER.debug("Source warehouse is not null & target warehouse is null");
 							if(data3.isNotEmpty()){
 								quantity2 = data3.get(0).value1();
 								stockId2 = data3.get(0).value2();
@@ -513,7 +509,7 @@ public class DBStock {
 						}
 						else if((ti.getSourceWarehouse() == null || ti.getSourceWarehouse().getId() == null) 
 								&& (ti.getTargetWarehouse() != null && ti.getTargetWarehouse().getId() != null)){
-							LOGGER.debug("Source warehouse is null & target warehouse is not null");
+							//LOGGER.debug("Source warehouse is null & target warehouse is not null");
 							if(data2.isNotEmpty()){
 								quantity = data2.get(0).value1();
 								stockId = data2.get(0).value2();
@@ -529,7 +525,7 @@ public class DBStock {
 					}
 					else{
 						v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
-						LOGGER.error("Error: *Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
+						//LOGGER.error("Error: *Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
 						error.setError(false);
 						error.setTextError(v);
 					}
@@ -588,7 +584,7 @@ public class DBStock {
 			Vector<StockInfo> v = new Vector<StockInfo>();
 			for (Record5<Integer, Integer, Integer, Double, Integer> d : data) {
 				Item i = getItem(ctx,domain.getName(),d.value2());
-				if ( (d.value4() == 0) && ((i.getStatus() == ProductStatus.DISCONTINUED) || (!i.getProduct().isInventoriable()) ) ) {
+				if ( (d.value4() == 0) && ((i.getStatus() == ProductStatus.DISCONTINUED.value()) || (!i.getProduct().isInventoriable()) ) ) {
 					ctx.getDslContext().delete(STOCK).where(STOCK.ID.equal(d.value1()));
 				} else if ( !onlyNonCero || (d.value4() != 0) ) {
 					StockInfo si = new StockInfo();
@@ -602,7 +598,7 @@ public class DBStock {
 					
 					si.setQuantity(d.value4());
 					String[] s = getWarehouseComments(ctx.getDslContext(), d.value3());
-					Series ss = new Series();ss.setCode(s[1]);
+					Series ss = new Series().setCode(s[1]);
 					//si.setSeries(ss);
 					//si.setComments(s[0]);
 					//si.setTargetWarehouse(getWarehouse(dslContext, d.value3()));
@@ -681,7 +677,7 @@ public class DBStock {
 		else i.setDetail3("");
 		Product p = getProduct(ctx, data.get(0).value5());
 		i.setProduct(p);
-		if(data.get(0).value6() != null) i.setStatus( ProductStatus.values()[data.get(0).value6()] );
+		if(data.get(0).value6() != null) i.setStatus(data.get(0).value6());
 		
 		return i;
 		

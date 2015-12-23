@@ -44,6 +44,7 @@ public class Item implements Serializable {
 	private Timestamp creationDate;
 	private String modificationUser;
 	private Timestamp modificationDate;
+	private Product product;
 	
 	public Integer getId() {
 		return id;
@@ -237,8 +238,9 @@ public class Item implements Serializable {
 	public Byte getStatus() {
 		return status;
 	}
-	public void setStatus(Byte status) {
+	public Item setStatus(Byte status) {
 		this.status = status;
+		return this;
 	}
 	
 	
@@ -246,35 +248,47 @@ public class Item implements Serializable {
 	public String getSerialNumber() {
 		return serialNumber;
 	}
-	public void setSerialNumber(String serialNumber) {
+	public Item setSerialNumber(String serialNumber) {
 		this.serialNumber = serialNumber;
+		return this;
 	}
 	
 	
 	
+	public Product getProduct() {
+		return product;
+	}
+	public Item setProduct(Product product) {
+		this.product = product;
+		return this;
+	}
 	public String getCreationUser() {
 		return creationUser;
 	}
-	public void setCreationUser(String creationUser) {
+	public Item setCreationUser(String creationUser) {
 		this.creationUser = creationUser;
+		return this;
 	}
 	public Timestamp getCreationDate() {
 		return creationDate;
 	}
-	public void setCreationDate(Timestamp creationDate) {
+	public Item setCreationDate(Timestamp creationDate) {
 		this.creationDate = creationDate;
+		return this;
 	}
 	public String getModificationUser() {
 		return modificationUser;
 	}
-	public void setModificationUser(String modificationUser) {
+	public Item setModificationUser(String modificationUser) {
 		this.modificationUser = modificationUser;
+		return this;
 	}
 	public Timestamp getModificationDate() {
 		return modificationDate;
 	}
-	public void setModificationDate(Timestamp modificationDate) {
+	public Item setModificationDate(Timestamp modificationDate) {
 		this.modificationDate = modificationDate;
+		return this;
 	}
 	public String getDetails(){
 		String details = "";

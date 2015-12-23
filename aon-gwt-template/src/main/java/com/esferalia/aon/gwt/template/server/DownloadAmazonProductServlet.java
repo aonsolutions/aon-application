@@ -18,7 +18,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 
-import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.template.server.marketplace.XMLUtils;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
 import com.esferalia.aon.occam.api.AON;
@@ -40,7 +40,7 @@ public class DownloadAmazonProductServlet extends HttpServlet{
         String login = p_request.getParameter("username");
         String description = p_request.getParameter("description");
         Integer domainId = Integer.parseInt(domain_id);
-        String domainName = AonUtil.getDomainName();
+        String domainName = AonServletUtils.getRequestDomainName(p_request);
         
 		LinkedList<Attach> iattachList = AON.getAttachList(domainName, domainId, login,
 				filter -> filter.getTypeProperty().eq(AttachmentType.ECOMMERCE_PRODUCT.value())

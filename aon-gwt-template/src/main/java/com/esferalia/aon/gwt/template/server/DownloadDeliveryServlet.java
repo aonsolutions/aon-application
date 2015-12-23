@@ -38,7 +38,7 @@ import org.jooq.Condition;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.product.enumeration.ProductStatus;
-import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBProduct;
@@ -106,7 +106,7 @@ public class DownloadDeliveryServlet extends HttpServlet {
         User user = new User().setLogin(login);
         
         Integer domainId = Integer.parseInt(domain_id);
-        String domainName = AonUtil.getDomainName();
+        String domainName = AonServletUtils.getRequestDomainName(p_request);
         Domain domain = new Domain().setId(domainId).setName(domainName);
         Integer idFile = Integer.parseInt(fileId);
         

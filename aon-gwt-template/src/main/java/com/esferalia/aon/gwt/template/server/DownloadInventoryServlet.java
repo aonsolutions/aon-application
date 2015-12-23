@@ -23,7 +23,7 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBInventory;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
@@ -50,7 +50,7 @@ public class DownloadInventoryServlet extends HttpServlet {
         Integer inventoryId = Integer.parseInt(inventory_id);
         Integer domainId = Integer.parseInt(domain_id);
         Boolean close = closed.equals("true");
-        String domainName = AonUtil.getDomainName();
+        String domainName = AonServletUtils.getRequestDomainName(p_request);
         Domain domain = new Domain().setId(domainId).setName(domainName);
         byte[] b = null ;
         

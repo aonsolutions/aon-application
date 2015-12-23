@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -24,13 +25,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.code.aon.product.Item;
-import com.code.aon.ui.warehouse.controller.InventoryController;
 import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 
 public class Utils {
@@ -399,10 +402,150 @@ public class Utils {
 		ApplicationParameter ap = AppParamDAO.fetchOne(ctx, AppParam.AON_PRODUCT_VALUATION_METHOD);
 		switch (ap.getValue()) {
 			case "0": return quantity != 0 ? item.getPurchasePrice() : 0.0;
-			case "1": return InventoryController.getLastPurchasePrice(item, quantity, login, workplaceId, warehouseId);
-			case "2": return InventoryController.getAveragePurchasePrice(item, quantity, login, workplaceId, warehouseId);
-			case "3": return InventoryController.getFifoPrice(item, quantity, login, workplaceId, warehouseId);	
+			case "1": return getLastPurchasePrice(ctx.getDomainName(), item, quantity, login, workplaceId, warehouseId);
+			case "2": return getAveragePurchasePrice(ctx, item, quantity, login, workplaceId, warehouseId);
+			case "3": return getFifoPrice(ctx.getDomainName(), item, quantity, login, workplaceId, warehouseId);	
 			default : return quantity != 0 ? item.getPurchasePrice() : 0.0;
+		}
+	}
+	
+	public static Double getLastPurchasePrice(String domainName, Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId){
+		if(quantity == 0) return 0.0;
+		if(item.getProduct().isInventoriable() && item.getProduct().isManufactured()) 
+			return item.getPurchasePrice();
+		
+		// COMPRAS (Albaranes)
+		IncomeDetail incomeDetail = AON.getLastIncomeDetail(domainName, item.getDomain(), user, item, workplaceId, warehouseId);
+	
+		Double price1 = 0.0;
+		Date date1 = new Date();
+		if(incomeDetail.getId() != null){
+			if(incomeDetail.getIncome().getIssueDate() != null) date1 = incomeDetail.getIncome().getIssueDate();
+			if(incomeDetail.getPrice() != null) price1 = incomeDetail.getPrice();
+		}
+			
+		// COMPRAS (Facturas)
+		InvoiceDetail invoiceDetail = AON.getLastInvoiceDetail(domainName, item.getDomain(), user, item, workplaceId, warehouseId);
+		Double price2 = 0.0;
+		Date date2 = new Date();
+		if(invoiceDetail.getId() != null){
+			if(invoiceDetail.getInvoice().getIssueDate() != null) 
+				date2 = invoiceDetail.getInvoice().getIssueDate();
+			if(invoiceDetail.getPrice() != null) 
+				price2 = invoiceDetail.getPrice();
+		}
+			
+		if(incomeDetail.getId() == null && invoiceDetail.getId() == null) return item.getPurchasePrice();
+		else if(incomeDetail.getId() == null) return price2;
+		else if(invoiceDetail.getId() == null) return price1;
+		else return date1.compareTo(date2) < 0 ? price1 : price2;
+	}
+	
+	public static Double getAveragePurchasePrice(AONContext ctx, Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId){
+		if(quantity == 0) return 0.0;
+		if(item.getProduct().isInventoriable() && item.getProduct().isManufactured()) 
+			return item.getPurchasePrice();
+					
+		String domainName = ctx.getDomainName();
+		Integer domainId = item.getDomain();
+		ApplicationParameter ap = AppParamDAO.fetchOne(ctx, AppParam.AON_PRODUCT_AVERAGE_MONTHS);
+		
+		LinkedList<InvoiceDetail> invoiceList = AON.getLastInvoiceDetailList(domainName, domainId, user, item, ap.getValue(), workplaceId, warehouseId);
+		LinkedList<IncomeDetail> incomeList = AON.getLastIncomeDetailList(domainName, domainId, user, item, ap.getValue(), workplaceId, warehouseId);
+		
+		Double invoiceSum = invoiceList.stream().mapToDouble(x -> x.getPrice() * (1 -(Double.parseDouble(x.getDiscountExpression())/100.0)) * Math.abs(x.getQuantity())).sum();
+		Double incomeSum = incomeList.stream().mapToDouble(x -> x.getPrice() * (1 -(Double.parseDouble(x.getDiscountExpression())/100.0)) * Math.abs(x.getQuantity())).sum();
+		Double sum = invoiceSum + incomeSum;
+		Double invoiceQuantity = invoiceList.stream().mapToDouble(x -> Math.abs(x.getQuantity())).sum();
+		Double incomeQuantity = incomeList.stream().mapToDouble(x -> Math.abs(x.getQuantity())).sum();
+		Double totalQuantity = invoiceQuantity + incomeQuantity;
+		
+		if(totalQuantity == 0) return item.getPurchasePrice();
+		return  sum / totalQuantity;
+	}
+
+	public static Double getFifoPrice(String domainName, Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId){
+		if(quantity == 0) return 0.0; 
+		if((item.getProduct().isInventoriable() && item.getProduct().isManufactured())) 
+			return item.getPurchasePrice();
+		
+		Integer domainId = item.getDomain();
+		LinkedList<InvoiceDetail> invoiceList = AON.getInvoiceDetailList(domainName, domainId, user, item, workplaceId, warehouseId);
+		LinkedList<IncomeDetail> incomeList = AON.getIncomeDetailList(domainName, domainId, user, item, workplaceId, warehouseId);
+		
+		LinkedList<Fifo> fifoList = new LinkedList<Fifo>();
+
+		Double q = 0.0;
+		Double qError = 0.0;
+		Integer i = 0;
+		Integer j = 0;
+		Double quantity2 = Math.abs(quantity) ;
+		while(q < quantity2 &&  qError == 0.0){
+			
+			InvoiceDetail invoiceDetail = invoiceList.size() > i  ? invoiceList.get(i) : null;
+			IncomeDetail incomeDetail = incomeList.size() > j ? incomeList.get(j) : null;
+			
+			if((invoiceDetail!= null && incomeDetail == null) ||(invoiceDetail!= null &&
+					invoiceDetail.getInvoice().getIssueDate().compareTo(incomeDetail.getIncome().getIssueDate())>= 0)){
+				if(invoiceDetail.getQuantity() > 0){
+					q = q + invoiceDetail.getQuantity(); 
+					Fifo fifo = new Fifo(invoiceDetail.getPrice(), invoiceDetail.getQuantity(), Double.parseDouble(invoiceDetail.getDiscountExpression()));
+					fifoList.add(fifo);
+				}
+				i++;	
+			}
+			else if(incomeDetail != null){
+				if(incomeDetail.getQuantity() > 0){
+					q = q + incomeDetail.getQuantity(); 
+					Fifo fifo = new Fifo(incomeDetail.getPrice(), incomeDetail.getQuantity(), Double.parseDouble(incomeDetail.getDiscountExpression()));
+					fifoList.add(fifo);
+				}
+				j++;
+			}
+			else qError = quantity2;
+		}
+		if(qError != 0.0) return item.getPurchasePrice();
+		if(q == quantity2){
+			Double fifoPrice = fifoList.stream().mapToDouble(x -> x.getPrice() * x.getQuantity()).sum();
+			return fifoPrice / quantity2;
+		}
+		else{
+			Double fifoPrice = fifoList.stream().limit(fifoList.size()-1).mapToDouble(x -> x.getPrice() * (1 -(x.getDiscount()/100.0)) * x.getQuantity()).sum();
+			Double lastFifoPrice = fifoList.getLast().getPrice() * (1 - (fifoList.getLast().getDiscount()/100.0)) * (fifoList.getLast().getQuantity() - (q-quantity2));
+			return (fifoPrice + lastFifoPrice) / quantity2;
+		}
+	}
+	
+	public static class Fifo {
+		private Double price;
+		private Double quantity;
+		private Double discount;
+	
+		public Fifo(Double price, Double quantity, Double discount) {
+			this.price = price;
+			this.quantity = quantity;
+			this.discount = discount;
+		}
+		
+		public Double getPrice() {
+			return price;
+		}
+		public void setPrice(Double price) {
+			this.price = price;
+		}
+		public Double getQuantity() {
+			return quantity;
+		}
+		public void setQuantity(Double quantity) {
+			this.quantity = quantity;
+		}
+
+		public Double getDiscount() {
+			return discount;
+		}
+
+		public void setDiscount(Double discount) {
+			this.discount = discount;
 		}
 	}
 	

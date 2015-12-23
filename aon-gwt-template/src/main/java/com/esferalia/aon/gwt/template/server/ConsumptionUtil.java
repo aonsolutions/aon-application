@@ -22,7 +22,6 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBConsumption;
 import com.esferalia.aon.gwt.template.shared.ConsumptionItem;
@@ -47,11 +46,10 @@ public class ConsumptionUtil {
 	private static final String PDF = "pdf";
 	
 
-    public static File generateConsumption(Vector<Warehouse> warehouses, String fileType, Boolean onlyNegative,
-    		Boolean detail, Integer domainId,  Integer size, Integer fileId, String login) throws ServletException, IOException{
-
-    	Domain domain = new Domain().setName(AonUtil.getDomainName()).setId(domainId);
-        Collections.sort(warehouses, (Warehouse s1, Warehouse s2) -> s1.getName().compareTo(s2.getName()));        
+    public static File generateConsumption(Domain domain, Vector<Warehouse> warehouses, String fileType, Boolean onlyNegative,
+    		Boolean detail, Integer size, Integer fileId, String login) throws ServletException, IOException{
+    
+    	Collections.sort(warehouses, (Warehouse s1, Warehouse s2) -> s1.getName().compareTo(s2.getName()));        
         byte[] b = null ;
         User user = new User().setLogin(login);
         b = DBConsults.getTemplate(domain, user, fileId);
@@ -125,9 +123,9 @@ public class ConsumptionUtil {
         	
         	allMap.put(w.getName(), v);
         }
-        libro2(domain.getName(), domainId, warehouses, libro, onlyNegative, allMap, getTemplateInfoC(),0);
-        libro(domain.getName(), domainId, warehouses, libro, onlyNegative, allMap, getTemplateInfoA(),1);
-        libro(domain.getName(), domainId, warehouses, libro, onlyNegative, allMap, getTemplateInfoB(),2);
+        libro2(domain.getName(), domain.getId(), warehouses, libro, onlyNegative, allMap, getTemplateInfoC(),0);
+        libro(domain.getName(), domain.getId(), warehouses, libro, onlyNegative, allMap, getTemplateInfoA(),1);
+        libro(domain.getName(), domain.getId(), warehouses, libro, onlyNegative, allMap, getTemplateInfoB(),2);
         
         for (int index = 0; index < size; index++) {
        

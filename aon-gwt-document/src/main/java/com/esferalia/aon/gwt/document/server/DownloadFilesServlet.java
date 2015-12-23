@@ -171,7 +171,7 @@ public class DownloadFilesServlet extends HttpServlet {
         //p_response.setContentType("application/octet-stream");
         p_response.setContentType(mimetype);
 
-        if (length > 0 && length <= Integer.MAX_VALUE);
+        if (length > 0 && length <= Integer.MAX_VALUE)
             p_response.setContentLength((int)length);
         ServletOutputStream out = p_response.getOutputStream();
         p_response.setBufferSize(32768);

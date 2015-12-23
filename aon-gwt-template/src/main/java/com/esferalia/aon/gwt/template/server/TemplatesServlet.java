@@ -32,10 +32,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
-import com.code.aon.config.Series;
-import com.code.aon.finance.enumeration.BillingPeriod;
-import com.code.aon.product.enumeration.ProductStatus;
-import com.code.aon.product.enumeration.ProductType;
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.template.client.ITemplate;
 import com.esferalia.aon.gwt.template.jooq.DBCatalogue;
@@ -69,14 +65,18 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
+import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonRole;
+import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
+import com.esferalia.aon.occam.api.model.warehouse.Series;
 
 
 
@@ -84,21 +84,21 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 
 	private static final long serialVersionUID = 6871016881549113129L;
 	
-	static final String COMMERCIAL_PRODUCT = ProductType.COMMERCIAL_PRODUCT.getName(new Locale("es_ES")); 
-	static final String EXTERNAL_WORK = ProductType.EXTERNAL_WORK.getName(new Locale("es_ES"));
-	static final String EXPENSE = ProductType.EXPENSE.getName(new Locale("es_ES"));
-	static final String INCREASE = ProductType.INCREASE.getName(new Locale("es_ES"));
-	static final String LABOUR = ProductType.LABOUR.getName(new Locale("es_ES"));
-	static final String PREPAYMENT = ProductType.PREPAYMENT.getName(new Locale("es_ES"));
-	static final String SERVICE = ProductType.SERVICE.getName(new Locale("es_ES"));
+	static final String COMMERCIAL_PRODUCT = ProductType.COMMERCIAL_PRODUCT.getName(); 
+	static final String EXTERNAL_WORK = ProductType.EXTERNAL_WORK.getName();
+	static final String EXPENSE = ProductType.EXPENSE.getName();
+	static final String INCREASE = ProductType.INCREASE.getName();
+	static final String LABOUR = ProductType.LABOUR.getName();
+	static final String PREPAYMENT = ProductType.PREPAYMENT.getName();
+	static final String SERVICE = ProductType.SERVICE.getName();
 
-	static final String NO_PERIOD = BillingPeriod.NO_PERIOD.getName(new  Locale("es_ES"));
-	static final String MONTHLY = BillingPeriod.MONTHLY.getName(new Locale("es_ES"));
-	static final String BI_MONTHLY = BillingPeriod.BI_MONTHLY.getName(new Locale("es_ES"));
-	static final String THREE_MONTHLY = BillingPeriod.THREE_MONTHLY.getName(new Locale("es_ES"));
-	static final String FOUR_MONTHLY = BillingPeriod.FOUR_MONTHLY.getName(new Locale("es_ES"));
-	static final String SIX_MONTHLY = BillingPeriod.SIX_MONTHLY.getName(new Locale("es_ES"));
-	static final String YEARLY = BillingPeriod.YEARLY.getName(new Locale("es_ES"));
+	static final String NO_PERIOD = BillingPeriod.NO_PERIOD.getName();
+	static final String MONTHLY = BillingPeriod.MONTHLY.getName();
+	static final String BI_MONTHLY = BillingPeriod.BI_MONTHLY.getName();
+	static final String THREE_MONTHLY = BillingPeriod.THREE_MONTHLY.getName();
+	static final String FOUR_MONTHLY = BillingPeriod.FOUR_MONTHLY.getName();
+	static final String SIX_MONTHLY = BillingPeriod.SIX_MONTHLY.getName();
+	static final String YEARLY = BillingPeriod.YEARLY.getName();
 	
 	HashMap<String, ProductInfo> map = new HashMap<String, ProductInfo>();
 	public static byte[] out;
@@ -2150,7 +2150,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 								 Integer size, Integer fileId) {
 		File file = null;
 		try {
-			file = ConsumptionUtil.generateConsumption(warehouses, type, onlyNegative, detail, domain.getId(), size, fileId, getUser().getLogin());
+			file = ConsumptionUtil.generateConsumption(domain, warehouses, type, onlyNegative, detail, size, fileId, getUser().getLogin());
 		} catch (ServletException | IOException e) {
 			e.printStackTrace();
 		}

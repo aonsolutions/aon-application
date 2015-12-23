@@ -25,7 +25,7 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBConsumption;
 import com.esferalia.aon.gwt.template.shared.ConsumptionItem;
@@ -60,7 +60,7 @@ public class DownloadConsumptionServlet extends HttpServlet {
         Integer warehouseId = Integer.parseInt(warehouse);
         Integer initialId = Integer.parseInt(initial_id);
         Integer finalId = Integer.parseInt(final_id);
-        String domainName = AonUtil.getDomainName();
+        String domainName = AonServletUtils.getRequestDomainName(p_request);
         Domain domain = new Domain().setId(domainId).setName(domainName);
         Long finalDate2 = Long.parseLong(final_date);
         Long initialDate2 = Long.parseLong(initial_date);
