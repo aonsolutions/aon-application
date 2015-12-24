@@ -262,6 +262,7 @@
 											<include>com.esferalia.aon:aon.master.jooq:${project.version}</include>
 											<include>com.esferalia.aon:aon.entity.common:${project.version}</include>
 											<include>com.esferalia.aon:aon.occam:${project.version}</include>
+											<include>com.esferalia.aon:aon.watson:${project.version}</include>
 										</includes>
 									</dependency>
 									<sources>
