@@ -173,21 +173,26 @@ public class ProductDAO {
 					.execute();
 		});
 	}
-	
+	static Integer cont;
 	public static void insert(AONContext ctx, Stream<Product> ps) {
 		ctx.checkWrite();
 		AONContext sctx = ctx;
 		ctx.getDslContext().transaction(configuration -> {
 			InsertValuesStep22<ProductRecord, Integer, String, String, Integer, Integer, Byte, Byte, Byte, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Integer, Integer, String, Timestamp, String, Timestamp, Byte> insertQuery = ctx.getDslContext().insertInto(PRODUCT, PRODUCT.DOMAIN, PRODUCT.NAME, PRODUCT.CODE, PRODUCT.BRAND, PRODUCT.CATEGORY, PRODUCT.INVENTORIABLE, PRODUCT.SERIALIZABLE, PRODUCT.LOTABLE, PRODUCT.STATUS, PRODUCT.VAT, PRODUCT.RETENTION, PRODUCT.TYPE, PRODUCT.MANUFACTURED, PRODUCT.COMPOSITION, PRODUCT.COMPOSITION_PRICE, PRODUCT.SALES_ACCOUNT, PRODUCT.PURCHASE_ACCOUNT, PRODUCT.CREATION_USER, PRODUCT.CREATION_DATE, PRODUCT.MODIFICATION_USER, PRODUCT.MODIFICATION_DATE, PRODUCT.KIND);
 			AONContext sctx2 = sctx;
+			cont = 0;
 			ps.forEach(p ->{
+				if(cont < 400)
+				System.out.println(cont + " - Code - " + p.getCode() + " - Name - " + p.getName());
 				ProductValidation.validate(sctx2, p);
 				Timestamp creationDate = null, modificationDate = null;
 				if(p.getCreationDate() != null)
 					creationDate = new java.sql.Timestamp(p.getCreationDate().getTime());
 				if(p.getModificationDate() != null)
 					modificationDate = new java.sql.Timestamp(p.getModificationDate().getTime());
+				
 				insertQuery.values(p.getDomain(), p.getName(), p.getCode(), p.getBrand(), p.getCategory(), p.getInventoriable(), p.getSerializable(), p.getLotable(), p.getStatus(), p.getVat(), p.getRetention(), p.getType(), p.getManufactured(),p.getComposition(), p.getCompositionPrice(), p.getSalesAccount(), p.getPurchaseAccount(), p.getCreationUser(), creationDate, p.getModificationUser(), modificationDate, p.getKind() != null ? p.getKind() : 0);
+				cont++;
 			});
 			insertQuery.execute();
 		});
@@ -234,7 +239,8 @@ public class ProductDAO {
 					.set(PRODUCT.SALES_ACCOUNT, p.getSalesAccount())
 					.set(PRODUCT.PURCHASE_ACCOUNT, p.getPurchaseAccount())
 					.set(PRODUCT.CREATION_USER, p.getCreationUser())
-					.set(PRODUCT.CREATION_DATE, new java.sql.Timestamp(p.getCreationDate().getTime()))
+					.set(PRODUCT.CREATION_DATE,p.getCreationDate() != null ?
+							new java.sql.Timestamp(p.getCreationDate().getTime()) : null)
 					.set(PRODUCT.MODIFICATION_USER, p.getModificationUser())
 					.set(PRODUCT.MODIFICATION_DATE, new java.sql.Timestamp(p.getModificationDate().getTime()))
 					.set(PRODUCT.KIND, p.getKind() != null ? p.getKind() : 0)

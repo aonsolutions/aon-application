@@ -1296,7 +1296,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 
 							if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre")){
 								long startcheck= System.currentTimeMillis();
-								pi = check(domain, ti.getColumns().get(cell.getColumnIndex()),object,pi,cell.getCellType());
+								pi = check(domain, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()), ti.getColumns().get(cell.getColumnIndex()),object,pi,cell.getCellType());
 								long timecheck = System.currentTimeMillis() - startcheck;
 								System.out.println("timecheck: " + (timecheck/1000d));
 								if(pi == null){
@@ -1411,35 +1411,47 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return error;
 	}
 
-	private ProductInfo check(Domain domain, String template, Object value,ProductInfo product, Integer type) {
+	private ProductInfo check(Domain domain, Integer row, String column, String template, Object value,ProductInfo product, Integer type) {
 		switch (template) {
 		case "Nombre": 
-			if(type.equals(Cell.CELL_TYPE_STRING) && !value.equals("")){
-				product.getProduct().setName((String) value);
+			if((type.equals(Cell.CELL_TYPE_STRING) && !value.equals("")) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+				product.getProduct().setName(value.toString());
+				if(product.getProduct().getName().length() > 64){
+					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
+					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TOO_LARGE.getMessage() +"\n";
+				}
 			}
 			else return null;
 			break;
 		case "C\u00f3digo" : 
-			if(type.equals(Cell.CELL_TYPE_STRING) && !value.equals("")){
-				product.getProduct().setCode((String) value);		
+			if((type.equals(Cell.CELL_TYPE_STRING) && !value.equals("")) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+				product.getProduct().setCode(value.toString());		
+				if(product.getProduct().getCode().length() > 15){
+					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
+					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TOO_LARGE.getMessage() +"\n";
+				}
 			}
 			else return null;
 			break; 
 		case "Precio Coste" : 
 			if(type.equals(Cell.CELL_TYPE_NUMERIC)){
 				product.getItem().get(0).setPurchasePrice((double) value);
+			}else {
+				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.NOT_NUMERIC.getMessage());
+				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.NOT_NUMERIC.getMessage() +"\n";
 			}
-			else return null;
 			break; 
 		case "Precio Venta Base" :
 			if(type.equals(Cell.CELL_TYPE_NUMERIC)){
 				product.getItem().get(0).setPrice((double) value);
+			}else {
+				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.NOT_NUMERIC.getMessage());
+				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.NOT_NUMERIC.getMessage() +"\n";
 			}
-			else return null;
 			break; 
 		case "Categor\u00eda" :
-			if(type.equals(Cell.CELL_TYPE_STRING)){
-				String strAux = (String) value;
+			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+				String strAux = value.toString();
 				Vector<ProductCategory> v = DBProduct.getCategories(domain.getName(), domain.getId(), getUser().getLogin());
 				Boolean b = true;
 				for(ProductCategory pc : v){
@@ -1448,24 +1460,15 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 						b= false;
 					}
 				}
-				if(b) return null;
+				if(b){
+					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.CATEGORY_NOT_EXIST.getMessage());
+					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.CATEGORY_NOT_EXIST.getMessage() +"\n";
+				}
 			}
 			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break; 
 		case "Marca" : 
-			if(type.equals(Cell.CELL_TYPE_STRING)){
-				String strAux = (String) value;
-				Vector<Brand> v =  DBProduct.getBrands(domain.getName(), domain.getId(), getUser().getLogin());
-				Boolean b = true;
-				for(Brand brand : v){
-					if(strAux.equalsIgnoreCase(brand.getName())){
-						product.getProduct().setBrand(brand.getId());
-						b= false;
-					}
-				}
-				if(b) return null;
-			}
-			else if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
 				String strAux = value.toString();
 				Vector<Brand> v =  DBProduct.getBrands(domain.getName(), domain.getId(), getUser().getLogin());
 				Boolean b = true;
@@ -1475,22 +1478,25 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 						b= false;
 					}
 				}
-				if(b) return null;
+				if(b) {
+					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.BRAND_NOT_EXIST.getMessage());
+					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.BRAND_NOT_EXIST.getMessage() +"\n";
+				}
 			}
 			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break; 
 		case "Etiqueta" : 
-			if(type.equals(Cell.CELL_TYPE_STRING)){
+			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
 				Vector<ProductTag> tags =  DBProduct.getTags(domain.getName(), domain.getId(), getUser().getLogin());
 
-				Vector<String> strings = tags((String)value);
+				Vector<String> strings = tags(value.toString());
 				Set<ProductTag> tags2 = new HashSet<ProductTag>();
-				Vector<com.esferalia.aon.occam.api.model.product.ProductTag> pts = new Vector<com.esferalia.aon.occam.api.model.product.ProductTag>();
+				Vector<ProductTag> pts = new Vector<ProductTag>();
 				for(ProductTag tag : tags){
 					for(String s : strings){
 						if(s.equalsIgnoreCase(tag.getTag().getName())){
 							tags2.add(tag);
-							com.esferalia.aon.occam.api.model.product.ProductTag pt = new com.esferalia.aon.occam.api.model.product.ProductTag();
+							ProductTag pt = new ProductTag();
 							pt.setDomain(tag.getDomain());
 							pt.setId(tag.getId());
 							pt.setProduct(tag.getProduct());
@@ -1549,7 +1555,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 						b = false;
 					}
 				}
-				if(b) return null;
+				if(b) {
+					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAX_NOT_EXIST.getMessage());
+					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TAX_NOT_EXIST.getMessage() +"\n";
+				}
 				break;
 			case Cell.CELL_TYPE_NUMERIC:
 				Double f = (Double) value;
@@ -1560,7 +1569,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 						b2 = false;
 					}
 				}
-				if(b2) return null;
+				if(b2) {
+					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAX_NOT_EXIST.getMessage());
+					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TAX_NOT_EXIST.getMessage() +"\n";
+				}
 				break;
 			case Cell.CELL_TYPE_BLANK:
 				return product;
@@ -1582,7 +1594,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 						b3 = false;
 					}
 				}
-				if(b3) return null;
+				if(b3){
+					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAX_NOT_EXIST.getMessage());
+					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TAX_NOT_EXIST.getMessage() +"\n";
+				}
 				break;
 			case Cell.CELL_TYPE_NUMERIC:
 				Double f = (Double) value;
@@ -1593,7 +1608,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 						b4 = false;
 					}
 				}
-				if(b4) return null;
+				if(b4){
+					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAX_NOT_EXIST.getMessage());
+					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TAX_NOT_EXIST.getMessage() +"\n";
+				}
 				break;
 			case Cell.CELL_TYPE_BLANK:
 				return product;
@@ -1720,26 +1738,26 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break; 
 		case "Descripci\u00f3n" :
-			if(type.equals(Cell.CELL_TYPE_STRING)){
-				product.getItem().get(0).setDescription((String)value);
+			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+				product.getItem().get(0).setDescription(value.toString());
 			}
 			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break;
 		case "Detalle 1":
-			if(type.equals(Cell.CELL_TYPE_STRING)){
-				product.getItem().get(0).setDetail((String) value);
+			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+				product.getItem().get(0).setDetail(value.toString());
 			}
 			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break;
 		case "Detalle 2":
-			if(type.equals(Cell.CELL_TYPE_STRING)){
-				product.getItem().get(0).setDetail2((String) value);
+			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+				product.getItem().get(0).setDetail2(value.toString());
 			}
 			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break;
 		case "Detalle 3":
-			if(type.equals(Cell.CELL_TYPE_STRING)){
-				product.getItem().get(0).setDetail3((String) value);
+			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+				product.getItem().get(0).setDetail3(value.toString());
 			}
 			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break;
