@@ -32,10 +32,12 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 		
 		private final ControllerEvent event;
 		private final String domain;
+		private final String login;
 		
-		public UpdateThread(ControllerEvent event, String domain) {
+		public UpdateThread(ControllerEvent event, String domain, String login) {
 			this.event = event;
 			this.domain = domain;
+			this.login = login;
 		}
 		
 		@Override
@@ -43,7 +45,7 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 			try {
 				CommercialTracking tracking = getCommercialTracking(event);
 				Domain company = DBConsults.getDomain(domain,tracking.getDomain());
-				User user = new User().setLogin(AonUtil.getRemoteUser() != null ? AonUtil.getRemoteUser() : "");
+				User user = new User().setLogin(login);
 				DomainGserviceaccount g = DBConsults.getServiceAccount(domain, company.getId());
 				if (g.getClientId() != null){
 					CalendarUtils.serviceInitialize(g);
@@ -72,16 +74,18 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 		
 		private final ControllerEvent event;
 		private final String domain;
+		private final String login;
 		
-		public AddThread(ControllerEvent event, String domain) {
+		public AddThread(ControllerEvent event, String domain, String login) {
 			this.event = event;
 			this.domain = domain;
+			this.login = login;
 		}
 		
 		@Override
 		public void run() {
 			try {
-				User user = new User().setLogin(AonUtil.getRemoteUser() != null ? AonUtil.getRemoteUser() : "");
+				User user = new User().setLogin(login);
 				CommercialTracking tracking = getCommercialTracking(event);
 				Domain company = DBConsults.getDomain(domain,tracking.getDomain());
 				DomainGserviceaccount g = DBConsults.getServiceAccount(domain, company.getId());
@@ -119,18 +123,21 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 		private final ControllerEvent event;
 		private final String domain;
 		private final CommercialTracking tracking;
+		private final String login;
 	
-		public RemoveThread(ControllerEvent event, String domain, CommercialTracking tracking) {
+		public RemoveThread(ControllerEvent event, String domain, CommercialTracking tracking, String login) {
 			this.event = event;
 			this.domain = domain;
 			this.tracking = tracking;
+			this.login = login;
 		}
 	
 		@Override
 		public void run() {
 			try {
+				User user = new User().setLogin(login);
 				Domain company = DBConsults.getDomain(domain,tracking.getDomain());
-				DomainGserviceaccount g = DBConsults.getServiceAccount(domain, company.getId());
+				DomainGserviceaccount g = DBConsults.getServiceAccount(company, user);
 				if (g.getClientId() != null){
 					CalendarUtils.serviceInitialize(g);	
 					CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
@@ -157,7 +164,8 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 	public void afterBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
 		String domain= AonUtil.getDomainName();
-		UpdateThread thread = new UpdateThread(event,domain);
+		String login = AonUtil.getRemoteUser();
+		UpdateThread thread = new UpdateThread(event,domain, login);
 		thread.start();
 	}
 	
@@ -165,7 +173,8 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
 		String domain= AonUtil.getDomainName();
-		AddThread thread = new AddThread(event,domain);
+		String login = AonUtil.getRemoteUser();
+		AddThread thread = new AddThread(event,domain, login);
 		thread.start();
 	}
 	
@@ -173,8 +182,9 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 	public void afterBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
 		String domain= AonUtil.getDomainName();
+		String login = AonUtil.getRemoteUser();
 		CommercialTracking tracking = getCommercialTracking(event);
-		RemoveThread thread = new RemoveThread(event,domain,tracking);
+		RemoveThread thread = new RemoveThread(event,domain,tracking, login);
 		thread.start();
 	}
 	
