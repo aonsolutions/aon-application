@@ -368,7 +368,7 @@ public class Model3902015 extends ResizeComposite implements IModel390 {
 				+ " Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n"
 				+ " El fichero se genera a partir de los datos guardados.");
 		diskForm.setAction(GWT.getHostPageBaseURL()
-				+ "/aon_gwt_fiscal/Model3902014File");
+				+ "/aon_gwt_fiscal/Model3902015File");
 		mod390Hidden.setValue(String.valueOf(mod390.getId()));
 		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 		domainNameHidden.setValue(getCurrentDomainName());
@@ -377,7 +377,7 @@ public class Model3902015 extends ResizeComposite implements IModel390 {
 
 	@UiHandler("printButton")
 	void onPrintButtonClick(ClickEvent event) {
-		diskForm.setAction(GWT.getHostPageBaseURL()	+ "/aon_gwt_fiscal/Model3902014Print");
+		diskForm.setAction(GWT.getHostPageBaseURL()	+ "/aon_gwt_fiscal/Model3902015Print");
 		mod390Hidden.setValue(String.valueOf(mod390.getId()));
 		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 		domainNameHidden.setValue(getCurrentDomainName());

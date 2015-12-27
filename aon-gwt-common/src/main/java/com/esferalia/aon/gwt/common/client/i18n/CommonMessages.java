@@ -60,6 +60,11 @@ public interface CommonMessages extends Messages {
 		, "COMMON_TERRITORY", "Territorio Com\u00FAn"})
 	String administrationName(@Select Administration administration);
 
+	/**
+	 * @param province
+	 * @return
+	 * @deprecated use Province.getName
+	 */
 	@DefaultMessage("----------")
 	@AlternateMessage({ "DESCONOCIDO", "Desconocido", "ARABA",
 			"Araba/\u00C1lava", "ALBACETE", "Albacete", "ALICANTE", "Alicante",
@@ -84,6 +89,7 @@ public interface CommonMessages extends Messages {
 			"Valladolid", "ZAMORA", "Zamora", "ZARAGOZA", "Zaragoza",
 
 			"NO_RESIDENTE", "No residente" })
+	@Deprecated
 	String provinceName(@Select Province province);
 
 	@DefaultMessage("{0}")

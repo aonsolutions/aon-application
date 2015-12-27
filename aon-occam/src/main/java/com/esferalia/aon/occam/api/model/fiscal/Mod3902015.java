@@ -1466,6 +1466,10 @@ public class Mod3902015 implements Serializable {
 	public void setProrratas(ArrayList<Prorrata> prorratas) {
 		this.prorratas = prorratas;
 	}
+	
+	public Prorrata getProrrata(int index) {
+		return (prorratas!=null && index < prorratas.size()) ? prorratas.get(index) :null;
+	}
 
 	private static final Mod390DetailKey[] K09_FORMULA = new Mod390DetailKey[]{ Mod390DetailKey.K00_04
 				,Mod390DetailKey.K00_08,Mod390DetailKey.K00_10,Mod390DetailKey.K00_18

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -180,5 +181,16 @@ public class AonFiscalFileUtils {
 		
 		System.out.println(unsigned( 1, 1, 0) + " ----> " + 1 );
 		 
+	}
+	
+	public static String getProvinceName(Integer prov, int size) {
+		String name = null;
+		if (prov != null) {
+			Province p = Province.safeValueOf(prov);
+			if (p != null) {
+				name = p.getName();
+			}
+		}
+		return text(name,size);
 	}
 }
