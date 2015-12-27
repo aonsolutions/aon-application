@@ -400,7 +400,8 @@ public class SQLContractSalaryCalculatorContext
 		
 		// --------------------------------------------------------------------
 		protected String zeroGuarantee(String script) {
-
+			if ( script == null )
+				return null;
 			return script.replaceAll(String.format(
 					"%s\\w*\\(([^(),]|\\(([^\\)]*)\\))*",
 					GUARANTEE), "SELF.guarantee(0");
