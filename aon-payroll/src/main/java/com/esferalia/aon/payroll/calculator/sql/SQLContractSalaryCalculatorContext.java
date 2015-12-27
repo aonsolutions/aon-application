@@ -375,31 +375,36 @@ public class SQLContractSalaryCalculatorContext
 				throws ExpressionException;
 	}
 
-	private final class ContractExpressionContext extends ExpressionContext {
+	private  class ContractExpressionContext extends ExpressionContext {
 
 		private ContractExpressionContext(ExpressionContext expressionContext,
 				NotFoundHandler notFoundHandler) {
 			super(expressionContext, notFoundHandler);
 		}
+		
 
 		@Override
 		public <T> List<ITimedResult<T>> eval(String script, Date start,
 				Date end, Class<T> toType) throws ExpressionException,
 						UndefinedVariablesException {
 			try {
+				script = zeroGuarantee(script);
 				return super.eval(script, start, end, toType);
 			} catch (UndefinedVariablesException e) {
 
-				if (script.matches(String.format(".*%s\\w*\\(.*", GUARANTEE)))
-					return eval(
-							script.replaceAll(String.format(
-									"%s\\w*\\(([^(),]|\\(([^\\)]*)\\))*",
-									GUARANTEE), "SELF.guarantee(0"),
-							start, end, toType);
 				if (e.getExpression() == null)
 					e.setExpression(script);
 				throw e;
 			}
+		}
+		
+		// --------------------------------------------------------------------
+		protected String zeroGuarantee(String script) {
+
+			return script.replaceAll(String.format(
+					"%s\\w*\\(([^(),]|\\(([^\\)]*)\\))*",
+					GUARANTEE), "SELF.guarantee(0");
+			
 		}
 
 	}
@@ -580,7 +585,7 @@ public class SQLContractSalaryCalculatorContext
 					leaveCalendar.add(Calendar.DATE, start - (int) parentDays);
 					Date guarenteeStart = leaveCalendar.getTime();
 					leaveCalendar.add(Calendar.DATE, end - start);
-					Date guarenteeEnd = leaveCalendar.getTime();
+					Date guarenteeEnd = Period.min(leaveEnd, leaveCalendar.getTime());
 
 					Period guarenteePeriod = new Period(guarenteeStart,
 							guarenteeEnd);
@@ -687,6 +692,18 @@ public class SQLContractSalaryCalculatorContext
 			}
 			return super.guarantee(guarentee);
 
+		}
+		
+		@Override
+		protected ContractExpressionContext newContractExpressionContext(
+				ExpressionContext expressionContext,
+				NotFoundHandler notFoundHandler) {
+			return new ContractExpressionContext(expressionContext, notFoundHandler){
+				@Override
+				protected String zeroGuarantee(String script) {
+					return script;
+				}
+			};
 		}
 
 		@Override
@@ -3332,7 +3349,7 @@ public class SQLContractSalaryCalculatorContext
 		 * });
 		 */
 
-		this.contractExpressionContext = new ContractExpressionContext(
+		this.contractExpressionContext = newContractExpressionContext(
 				this.implicitExpressionContext, this);
 
 		this.contractExpressionContext.setVariable(CONTEXT,
@@ -3384,6 +3401,12 @@ public class SQLContractSalaryCalculatorContext
 		// WEEK_HOURS, WORKED_DAYS and so on. These variables
 		//
 		loadDaysContextVariables(contractExpressionContext);
+	}
+	
+	protected ContractExpressionContext newContractExpressionContext(ExpressionContext expressionContext,
+			NotFoundHandler notFoundHandler) {
+		return new ContractExpressionContext(
+				expressionContext, notFoundHandler);		
 	}
 
 	protected void loadDaysContextVariables(ContractExpressionContext ctx)
