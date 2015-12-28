@@ -24,7 +24,6 @@ import org.jooq.exception.DataAccessException;
 
 import com.code.aon.config.enumeration.TagType;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.WorkgroupRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.office.Identification;
@@ -40,8 +39,7 @@ public class GetRegistriesServlet extends HttpServlet {
 	static class JooqGet extends AonHubDAO {
 
 		static Integer getParent(AONContext aonContext, Integer domain) {
-			DomainRecord domainRecord = getParentDomain(aonContext, domain);
-			return domainRecord.getValue(com.esferalia.aon.jooq.tables.Domain.DOMAIN.PARENT);
+			return 0;			
 		}
 
 		static String getUserInfo(AONContext ctx, Integer userId)
@@ -70,13 +68,13 @@ public class GetRegistriesServlet extends HttpServlet {
 		static List<WorkgroupRecord> getWorkGroupList(AONContext ctx,
 				Integer parentDomain, Integer domain)
 				throws DataAccessException, Exception {
-			return getWorkGroups(ctx, parentDomain, domain);
+			return null;
 		}
 
 		static List<com.esferalia.aon.occam.api.model.office.Tag> getTagList(AONContext ctx, Integer parentDomain,
 				Integer domain, byte type) throws DataAccessException,
 				Exception {
-			return getTags(ctx, parentDomain, domain, type);
+			return null;
 		}
 	}
 

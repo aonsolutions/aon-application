@@ -9,7 +9,7 @@
 	<!--extend-property name="user.agent" values="safari" />
 	<extend-property name="user.agent" values="ie9" / -->
 
-	<servlet path="/api/*" class="com.esferalia.aon.gwt.office.server.OfficeApiNoticeServlet" />
+	<servlet path="/api/*" class="com.esferalia.aon.gwt.office.server.OfficeApiServlet" />
 	<!--  servlet path="/issues" class="com.esferalia.aon.gwt.office.server." /-->
 
 </module>

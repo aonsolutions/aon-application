@@ -1,7 +1,5 @@
 package com.esferalia.aon.gwt.office.server;
 
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -36,7 +34,7 @@ public class OfficeServlet extends HttpServlet {
 	static class JooqNotices extends AonHubDAO {
 
 		public static Integer getParentId(AONContext ctx, Integer domain) {
-			return getParentDomain(ctx, domain).getValue(DOMAIN.ID);
+			return 0;
 		}
 
 		public static List<Notice> getNotices(AONContext ctx,
@@ -44,8 +42,7 @@ public class OfficeServlet extends HttpServlet {
 				byte reopenIndex, byte tagOrdinal, byte priorityOrdinal) {
 
 			try {
-				return getOpenIssues(ctx, parentDomain, domain, openIndex,
-						reopenIndex, tagOrdinal, priorityOrdinal);
+				return null;
 			} catch (DataAccessException ex) {
 				throw new DataAccessException(ex.getMessage());
 			} catch (Exception ex) {
@@ -139,7 +136,7 @@ public class OfficeServlet extends HttpServlet {
 
 				Notice notice = iter.next();
 				Integer id = notice.getId();
-				Integer senderId = notice.getSender();
+				Integer senderId = 0; //notice.getSender();
 				Integer assigneeId = notice.getRecipient();
 
 				osx.println('{');

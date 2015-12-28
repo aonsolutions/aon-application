@@ -2,6 +2,9 @@ package com.esferalia.aon.gwt.office.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,6 +14,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.office.Notice;
+import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.office.User;
 
 /**
  * 
@@ -22,9 +30,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 
 @MultipartConfig
-@WebServlet(name = "Office Api Notice Servlet", urlPatterns = {
+@WebServlet(name = "Office Api Servlet", urlPatterns = {
 		"/aon_gwt_office/api" })
-public class OfficeApiNoticeServlet extends HttpServlet {
+public class OfficeApiServlet extends HttpServlet {
 
 	// ------------------------------------------------------------------------
 
@@ -86,8 +94,8 @@ public class OfficeApiNoticeServlet extends HttpServlet {
 		}
 
 		@Override
-		public void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
+		public void handler(HttpServletRequest req,
+				HttpServletResponse resp) throws ServletException, IOException {
 			System.out.println("Obteniendo User ... ");
 		}
 	}
@@ -124,21 +132,33 @@ public class OfficeApiNoticeServlet extends HttpServlet {
 	}
 
 	private static class GetAllIssuesRequestHandler
-			extends SimpleRequestHandler {
+			extends RegExpRequestHandler {
 
 		public GetAllIssuesRequestHandler() {
-			super("/issues");
+			super("/repos/(.+)/(.+)/issues");
 		}
 
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
-			System.out.println(
-					"List all issues across all the authenticated user's visible repositories including owned repositories, member repositories, and organization repositories");
 			
-			String parameter = req.getParameter("state");
-			System.out.println("Parameter: " + parameter);
+			// TODO: 
+			// EN UN FUTURO PUEDEN SER OTROS STATE.			
 			
+			System.out.println("Preparado Lanzamiento..");
+			switch (req.getParameter("state")) {
+			case "open":
+				getOpenNotices(req, resp);				
+				break;
+			case "closed":
+				getClosedNotices(req, resp);
+			case "all":
+				getAllNotices(req, resp);
+				break;
+			default:
+				getAllNotices(req, resp);
+				break;
+			}
 		}
 	}
 
@@ -412,7 +432,7 @@ public class OfficeApiNoticeServlet extends HttpServlet {
 			// @formatter:on
 
 	// ------------------------------------------------------------------------
-
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -422,10 +442,11 @@ public class OfficeApiNoticeServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		resp.setContentType("application/javascript;charset=UTF-8");
 		for (HttpRequestHandler handler : HANDLERS) {
 			if (handler.accept(req)) {
-				handler.handler(req, resp);
-				return;
+				handler.handler(req, resp);	
+				break;
 			}
 		}
 	}
@@ -433,10 +454,11 @@ public class OfficeApiNoticeServlet extends HttpServlet {
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		resp.setContentType("application/json;charset=UTF-8");		
 		for (HttpRequestHandler handler : DELETES) {
 			if (handler.accept(req)) {
 				handler.handler(req, resp);
-				return;
+				break;
 			}
 		}
 	}
@@ -457,5 +479,137 @@ public class OfficeApiNoticeServlet extends HttpServlet {
 		return req.getRequestURI().substring(req.getServletPath().length());
 
 	}
+	
+	//--------------------------------------------------------------------
+	
+	private static final Integer DOMAIN_ID = 553;
+	private static final String DOMAIN_NAME = "mac.amtzdelagos.dev";
+	private static final String USER_NAME = "mac"; 
+	
+	private static void getOpenNotices (HttpServletRequest req, HttpServletResponse resp) {	
+		
+		PrintWriter pw = null;
+		try {
+			pw = resp.getWriter();
+			List<Notice> notices = AON.getOpenNotices(DOMAIN_ID, DOMAIN_NAME, USER_NAME);
+			
+//			pw.printf("\"data\"[ %s\r\n",
+//					buildNotices(notices.listIterator()));			
+			pw.append("[\n");		
+			pw.append(buildNotices(notices.listIterator()));
+			pw.append(']');			
+		} catch ( Exception ex) {
+			System.out.println("Exception ex: " + ex.getMessage() + " " + ex.getLocalizedMessage());
+		} finally {
+			if ( pw != null){
+				pw.flush();
+				pw.close();
+			}
+				
+		}
+	}
+	
+	private static void getClosedNotices (HttpServletRequest req, HttpServletResponse resp) {
 
+		PrintWriter pw = null;
+		try {
+			
+			List<Notice> notices = AON.getClosedNotices(DOMAIN_ID, DOMAIN_NAME, USER_NAME);
+			
+			pw = resp.getWriter();
+//			pw.printf("\"data\":%s\r\n",
+//					buildNotices(notices.listIterator()));
+			pw.append(buildNotices(notices.listIterator()));
+			pw.flush();
+		} catch ( Exception ex) {
+			System.out.println("Exception ex: " + ex.getMessage() + " " + ex.getLocalizedMessage());
+		} finally {
+			if ( pw != null)
+				pw.close();				
+		}
+	}
+	
+	private static void getAllNotices (HttpServletRequest req, HttpServletResponse resp) {
+		
+		PrintWriter pw = null;
+		try {
+			
+			List<Notice> notices = AON.getAllNotices(DOMAIN_ID, DOMAIN_NAME, USER_NAME);
+			
+			pw = resp.getWriter();
+//			pw.printf("\"data\":%s\r\n",
+//					buildNotices(notices.listIterator()));
+			pw.append(buildNotices(notices.listIterator()));
+			pw.flush();
+		} catch ( Exception ex) {
+			System.out.println("Exception ex: " + ex.getMessage() + " " + ex.getLocalizedMessage());
+		} finally {
+			if ( pw != null)
+				pw.close();				
+		}
+	}
+	
+	private static String buildNotices(ListIterator<Notice> iterator) {
+		
+		StringBuffer buffer = new StringBuffer();
+		
+		while (iterator.hasNext()) {		
+
+			Notice notice = iterator.next();			
+			buffer.append("{\n");
+			buffer.append(String.format("\"id\":%s,\r\n",
+					String.valueOf(notice.getId())));
+			buffer.append(String.format("\"user\":%s,\r\n",
+					buildUserSender(notice.getSender())));
+			buffer.append(String.format("\"title\":\"%s\",\r\n",
+					notice.getTitle()));
+			buffer.append(String.format("\"body\":\"%s\",\r\n",
+					notice.getBody()));
+			buffer.append(String.format("\"labels\":%s,\r\n",
+					buildLabels(notice.getTags().listIterator())));
+			buffer.append(String.format("\"state\":\"%s\"\r\n",
+					"open"));
+			
+			buffer.append("},");
+		}
+		String cadena = buffer.substring(0, buffer.length() - 1);
+		return cadena;
+	}
+	
+	private static String buildUserSender(User user) {
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("{\n");
+		buffer.append(String.format("\"id\":%s,\r\n",
+				String.valueOf(user.getId())));
+		buffer.append(String.format("\"login\":\"%s\"\r\n",
+				user.getName()));
+		buffer.append("}");
+		return buffer.toString();
+	}
+	
+	private static String buildLabels(ListIterator<Tag> tagsIterator) {
+		
+		StringBuffer buffer = new StringBuffer();
+		
+		buffer.append("[\n");
+		while(tagsIterator.hasNext()) {
+			Tag tag = tagsIterator.next();
+			buffer.append("{\n");
+			buffer.append(String.format("\"id\":%s,\r\n",
+					String.valueOf(tag.getId())));
+			buffer.append(String.format("\"name\":\"%s\",\r\n",
+					tag.getName()));
+			buffer.append(String.format("\"color\":\"%s\"\r\n",
+					(tag.getColor() != null) ? tag.getColor() : "" ));
+			
+			if (tagsIterator.hasNext())
+				buffer.append("},\n");
+			else
+				buffer.append("}\n");
+		}
+		buffer.append("]");
+		
+		return buffer.toString();
+	}
 }

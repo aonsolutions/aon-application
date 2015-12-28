@@ -292,7 +292,7 @@ public class AonHub implements IAonHub {
 	
 	private <T extends JavaScriptObject> void delete(String url, 
 			AsyncCallback<T> callback) {
-		String requestUrl = makeRequestUrl(url); // + "&action=" + action;		
+		String requestUrl = makeRequestUrl(url); 		
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.DELETE, requestUrl);
 		final AsyncCallback<T> hookedCallback = hookCallback(callback);
 		final StringBuilder log = new StringBuilder();
@@ -303,7 +303,6 @@ public class AonHub implements IAonHub {
 				
 				@Override
 				public void onResponseReceived(Request request, Response response) {					
-					//T result = JsonUtils.<T> safeEval(response.getText());
 					log.append("\n\n--" + response.getStatusText() + ":"
 							+ response.getStatusCode() + "\n"
 							+ response.getText());

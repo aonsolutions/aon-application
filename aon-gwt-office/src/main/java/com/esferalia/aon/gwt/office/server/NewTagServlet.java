@@ -29,7 +29,7 @@ public class NewTagServlet extends HttpServlet {
 		public static void saveNewTag(AONContext ctx, Tag tag) {
 
 			try {
-				insertNewTag(ctx, tag);
+				//insertNewTag(ctx, tag);
 			} catch (DataAccessException ex) {
 				throw new DataAccessException(ex.getMessage());
 			}

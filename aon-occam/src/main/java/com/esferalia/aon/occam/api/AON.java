@@ -1938,7 +1938,28 @@ public class AON {
 			if ( ctx != null )
 				ctx.close();
 		}
-		
+	}
+	
+	public static Tag addNewTag (Integer domainId, String domainName, String userName, Tag tag) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getOffice().addNewTag(ctx, tag);
+		} finally {
+			if ( ctx != null )
+				ctx.close();
+		}
+	}
+	
+	public static List<Tag> getTags (Integer domainId, String domainName, String userName) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getOffice().getTags(ctx);
+		} finally {
+			if ( ctx != null )
+				ctx.close();
+		}
 	}
 
 	// ********************************************

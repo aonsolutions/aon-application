@@ -8,7 +8,6 @@ import java.util.List;
 import com.esferalia.aon.occam.api.model.HasId;
 
 public class Notice implements Serializable, HasId {
-	
 
 	/**
 	 * 
@@ -17,26 +16,27 @@ public class Notice implements Serializable, HasId {
 
 	private Integer id;
 	private Integer domain;
-	private Date date;
-	private Integer sender; //Remitente del aviso
+	private Integer recipient; // Destinatario del aviso
+	private Integer status; // Estado del aviso
+	private Integer workgroup; // Grupo de trabajo al que va dirigido el aviso
+	private Integer notice; //Notice al que referencia **null si es cabecera = titulo
+	
 	private String title; // Asunto del aviso
 	private String body; //Cuerpo del aviso
-	private Integer recipient; // Destinatario del aviso
 	private String contact; //Modo de contacto
 	private String source; // Origen del aviso
 	private String company; // Empresa donde trabaja el origen del aviso
-	private Integer status; // Estado del aviso
-	private Integer workgroup; // Grupo de trabajo al que va dirigido el aviso
 	private String type; //Tipo de aviso
 	private String priority; //Prioridad
 	
-	private Integer notice; //Notice al que referencia **null si es cabecera = titulo
-
-	private List<String> tags;
+	private Date date;
+	private User sender; //Remitente del aviso
+	
+	private List<Tag> tags;
 	private List<NoticeComment> comments;
 
 	public Notice() {
-		tags = new LinkedList<String>();
+		tags = new LinkedList<Tag>();
 		comments = new LinkedList<NoticeComment>();
 	}
 	
@@ -54,7 +54,7 @@ public class Notice implements Serializable, HasId {
 		this.date = date;
 	}
 	
-	public void setSender(Integer sender) {
+	public void setSender(User sender) {
 		this.sender = sender;
 	}
 	
@@ -102,7 +102,7 @@ public class Notice implements Serializable, HasId {
 		this.notice = notice;
 	}
 	
-	public void addTag (String tag) {
+	public void addTag (Tag tag) {
 		this.tags.add(tag);
 	}
 	
@@ -125,7 +125,7 @@ public class Notice implements Serializable, HasId {
 		return date;
 	}
 	
-	public Integer getSender() {
+	public User getSender() {
 		return sender;
 	}
 	
@@ -173,7 +173,7 @@ public class Notice implements Serializable, HasId {
 		return notice;
 	}
 	
-	public List<String> getTags() {
+	public List<Tag> getTags() {
 		return tags;		
 	}
 	
