@@ -218,22 +218,36 @@ public class Model3902015 extends ResizeComposite implements IModel390 {
 	
 	@Override
 	public void select(Mod390 m390) {
-		fiscalService.getMod3902015(getCurrentDomainName(), getCurrentDomain(),
-				m390.getId(), new AsyncCallback<Mod3902015>() {
-			@Override
-			public void onSuccess(Mod3902015 selected) {
-				if (selected == null) {
-					showErrorMessage(AON.MSG.unableToFindMod390());
-				} else {
-					select(selected);
+		final PopupPanel popup = new PopupPanel(false, true);
+		Label label = new Label(AON.MSG.processing());
+		label.addStyleName(AON.AON_CSS.aonTimer());
+		popup.add(label);
+		popup.setGlassEnabled(true);
+		popup.setAnimationEnabled(true);
+		popup.center();
+		try {
+			fiscalService.getMod3902015(getCurrentDomainName(), getCurrentDomain(),
+					m390.getId(), new AsyncCallback<Mod3902015>() {
+				@Override
+				public void onSuccess(Mod3902015 selected) {
+					if (selected == null) {
+						showErrorMessage(AON.MSG.unableToFindMod390());
+					} else {
+						select(selected);
+					}
+					popup.hide();
 				}
-			}
 
-			@Override
-			public void onFailure(Throwable caught) {
-				showErrorMessage(AON.MSG.unableToReadMod390(caught.getMessage()));
-			}
-		});
+				@Override
+				public void onFailure(Throwable caught) {
+					popup.hide();
+					showErrorMessage(AON.MSG.unableToReadMod390(caught.getMessage()));
+				}
+			});
+		} catch (IllegalArgumentException e) {
+			popup.hide();
+			showErrorMessage(e.getMessage());
+		}
 	}
 	public void select(Mod3902015 m390) {
 		mod390 = m390;

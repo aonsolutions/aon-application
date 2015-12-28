@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -219,22 +220,36 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 	
 	@Override
 	public void select(Mod390 m390) {
-		fiscalService.getMod3902014(getCurrentDomainName(), getCurrentDomain(),
-				m390.getId(), new AsyncCallback<Mod3902014>() {
-			@Override
-			public void onSuccess(Mod3902014 selected) {
-				if (selected == null) {
-					showErrorMessage(AON.MSG.unableToFindMod390());
-				} else {
-					select(selected);
+		final PopupPanel popup = new PopupPanel(false, true);
+		Label label = new Label(AON.MSG.processing());
+		label.addStyleName(AON.AON_CSS.aonTimer());
+		popup.add(label);
+		popup.setGlassEnabled(true);
+		popup.setAnimationEnabled(true);
+		popup.center();
+		try {
+			fiscalService.getMod3902014(getCurrentDomainName(), getCurrentDomain(),
+					m390.getId(), new AsyncCallback<Mod3902014>() {
+				@Override
+				public void onSuccess(Mod3902014 selected) {
+					if (selected == null) {
+						showErrorMessage(AON.MSG.unableToFindMod390());
+					} else {
+						select(selected);
+					}
+					popup.hide();
 				}
-			}
 
-			@Override
-			public void onFailure(Throwable caught) {
-				DialogMessages.alertErrorWidget(AON.MSG.unableToReadMod190(caught.getMessage()));
-			}
-		});
+				@Override
+				public void onFailure(Throwable caught) {
+					popup.hide();
+					DialogMessages.alertErrorWidget(AON.MSG.unableToReadMod190(caught.getMessage()));
+				}
+			});
+		} catch (IllegalArgumentException e) {
+			popup.hide();
+			showErrorMessage(e.getMessage());
+		}
 	}
 	public void select(Mod3902014 m390) {
 		mod390 = m390;
