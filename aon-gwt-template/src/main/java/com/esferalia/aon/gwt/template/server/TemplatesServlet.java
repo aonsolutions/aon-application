@@ -1971,7 +1971,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					attach.setAttachModule(getCompany(domain).getId());
 				else attach.setAttachModule(seller.getId());
 		
-				AON.insert(domain.getName(), domain.getId(), getUser().getLogin(), attach);
+				attach.setId(AON.insert(domain.getName(), domain.getId(), getUser().getLogin(), attach));
 				AON.insertRegistryAttachTag(domain.getName(), domain.getId(), getUser().getLogin(),
 						attach.getId(), tag.getId());
 			}
@@ -2029,6 +2029,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			Stream<Cell> cellStream2 = StreamSupport.stream(cellIterable2.spliterator(),false);
 			HSSFSheet sheet2 = workbook.getSheet("Valores válidos");
 		    final AtomicInteger count = new AtomicInteger();
+		    count.set(0);
 			cellStream2.forEach(cell ->{
 				pd.getEcommerce().get(cell.getColumnIndex()).setCode(cell.getStringCellValue());
 				Cell cellv = sheet2.getRow(1).getCell(count.get());
@@ -2043,7 +2044,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					while(strx != null && !strx.equals("")){
 						list.add(strx);
 						j++;
-						rowx = sheet.getRow(j);
+						rowx = sheet2.getRow(j);
 						cellx = null;
 						if(rowx != null) cellx = rowx.getCell(count.get());
 						strx = null;
@@ -2051,32 +2052,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					}
 					PresetValues pv = new PresetValues();
 					pv.setPresetValue(list);
-					pd.getEcommerce().get(count.getAndIncrement()).setPresetValues(pv);
+					pd.getEcommerce().get(cell.getColumnIndex()).setPresetValues(pv);
+					count.getAndIncrement();
 				}
-
 			});
-			
-			/*for(Integer i = 0; i < pd.getEcommerce().size(); i++){
-				Integer j = 3;
-				Row rowx = sheet.getRow(j);
-				Cell cellx = null;
-				if(rowx != null) cellx = rowx.getCell(i);
-				String strx = null;
-				if(cellx != null) strx = cellx.getStringCellValue(); 
-				List<String> list = new ArrayList<String>();
-				while(strx != null && !strx.equals("")){
-					list.add(strx);
-					j++;
-					rowx = sheet.getRow(j);
-					cellx = null;
-					if(rowx != null) cellx = rowx.getCell(i);
-					strx = null;
-					if(cellx != null) strx = cellx.getStringCellValue(); 
-				}
-				PresetValues pv = new PresetValues();
-				pv.setPresetValue(list);
-				pd.getEcommerce().get(i).setPresetValues(pv);
-			}*/
 			
 			workbook.close();
 			EcommerceProduct ep =  new EcommerceProduct();
