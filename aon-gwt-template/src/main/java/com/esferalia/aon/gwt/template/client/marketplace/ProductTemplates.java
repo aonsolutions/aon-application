@@ -318,9 +318,9 @@ public class ProductTemplates  extends ResizeComposite{
 						
 						ListBox tagListBox = (ListBox) flex_table.getWidget(3, 1);
 						Tag tag = new Tag();
-						tag.setName(tagListBox.getSelectedItemText());
-						tag.setId(Integer.parseInt(tagListBox.getSelectedValue()));
-						
+						if(!tagListBox.getSelectedItemText().equals("-"))
+							tag.setName(tagListBox.getSelectedItemText())
+								.setId(Integer.parseInt(tagListBox.getSelectedValue()));
 						item.executeExcelEcommerce(getDomain(), ecommerce, seller, type, tag, new AsyncCallback<Error>() {
 							@Override
 							public void onSuccess(Error result) {

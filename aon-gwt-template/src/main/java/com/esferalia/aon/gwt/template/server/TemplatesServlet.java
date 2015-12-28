@@ -18,6 +18,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -2026,11 +2027,36 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			
 			Iterable<Cell> cellIterable2 = () -> cellIterator2;
 			Stream<Cell> cellStream2 = StreamSupport.stream(cellIterable2.spliterator(),false);
+			HSSFSheet sheet2 = workbook.getSheet("Valores válidos");
+		    final AtomicInteger count = new AtomicInteger();
 			cellStream2.forEach(cell ->{
 				pd.getEcommerce().get(cell.getColumnIndex()).setCode(cell.getStringCellValue());
+				Cell cellv = sheet2.getRow(1).getCell(count.get());
+				if(cellv.getStringCellValue().equals(cell.getStringCellValue())){
+					Integer j = 2;
+					Row rowx = sheet2.getRow(j);
+					Cell cellx = null;
+					if(rowx != null) cellx = rowx.getCell(count.get());
+					String strx = null;
+					if(cellx != null) strx = cellx.getStringCellValue(); 
+					LinkedList<String> list = new LinkedList<String>();
+					while(strx != null && !strx.equals("")){
+						list.add(strx);
+						j++;
+						rowx = sheet.getRow(j);
+						cellx = null;
+						if(rowx != null) cellx = rowx.getCell(count.get());
+						strx = null;
+						if(cellx != null) strx = cellx.getStringCellValue(); 
+					}
+					PresetValues pv = new PresetValues();
+					pv.setPresetValue(list);
+					pd.getEcommerce().get(count.getAndIncrement()).setPresetValues(pv);
+				}
+
 			});
 			
-			for(Integer i = 0; i < pd.getEcommerce().size(); i++){
+			/*for(Integer i = 0; i < pd.getEcommerce().size(); i++){
 				Integer j = 3;
 				Row rowx = sheet.getRow(j);
 				Cell cellx = null;
@@ -2050,7 +2076,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				PresetValues pv = new PresetValues();
 				pv.setPresetValue(list);
 				pd.getEcommerce().get(i).setPresetValues(pv);
-			}
+			}*/
 			
 			workbook.close();
 			EcommerceProduct ep =  new EcommerceProduct();
