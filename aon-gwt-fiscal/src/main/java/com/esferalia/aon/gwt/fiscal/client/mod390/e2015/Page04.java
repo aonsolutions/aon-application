@@ -157,6 +157,7 @@ public class Page04 extends ResizeComposite implements RequiresResize , IMod3902
 		f05C.setVisibleLength(5);
 	}
 
+	@Override
 	public void setValue(Mod3902015 m390) {
 		SimpliedRegimeActivity regime = m390.getSimpRegime1();
 		if (regime != null) {
@@ -295,6 +296,7 @@ public class Page04 extends ResizeComposite implements RequiresResize , IMod3902
 	}
 		
 		
+	@Override
 	public void populate(Mod3902015 mod390) {
 		SimpliedRegimeActivity regime = activity1.populate();
 		mod390.setSimpRegime1((regime != null)?regime:null);
@@ -417,7 +419,13 @@ public class Page04 extends ResizeComposite implements RequiresResize , IMod3902
 		}
 	}
 	
+	@Override
 	public void setCallback(IMod3902015CallBack callback) {
 		this.callback = callback;
+	}
+	
+	@Override
+	public void refresh(Mod3902015 m390) {
+		setValue(m390);
 	}
 }

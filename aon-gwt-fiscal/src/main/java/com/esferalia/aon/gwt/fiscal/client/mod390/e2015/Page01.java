@@ -258,6 +258,7 @@ public class Page01 extends ResizeComposite implements IMod3902015Page {
 		activity5Epigraph.setText(null);
 	}
 
+	@Override
 	public void setValue(Mod3902015 m390) {
 		if (m390.getMainActivity() != null) {
 			mainActivityDescription.setText(m390.getMainActivity().getDescription());	
@@ -318,6 +319,7 @@ public class Page01 extends ResizeComposite implements IMod3902015Page {
 		mergedDeclarationName.setValue(m390.getMergedDeclarationName());
 	}
 
+	@Override
 	public void populate(Mod3902015 mod390) {
 		if (!AonStringUtils.isEmpty( mainActivityKey.getText() ) ) {
 			Activity mainActivity = new Activity();
@@ -384,8 +386,13 @@ public class Page01 extends ResizeComposite implements IMod3902015Page {
 		mod390.setMergedDeclarationName(mergedDeclarationName.getValue());
 	}
 
+	@Override
 	public void setCallback(IMod3902015CallBack callback) {
 		this.callback = callback;
+	}
+	@Override
+	public void refresh(Mod3902015 m390) {
+		setValue(m390);
 	}
 
 }

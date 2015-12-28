@@ -1042,6 +1042,12 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Resultado liquidaci\u00F3n anual")
 	String annualLiquidationResult();
+	
+	@DefaultMessage("Regularizaci\u00F3n cuotas art. 80.Cinco.5\u00BA LIVA")
+	String regQuotaArt80();
+
+	@DefaultMessage("IVA a la importaci\u00F3n liquidado por la Aduana (s\u00F3lo sujetos pasivos con opci\u00F3n de diferimiento")
+	String importIVACustoms();
 
 	@DefaultMessage("Suma de Resultados")
 	String resultSum();

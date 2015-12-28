@@ -253,22 +253,22 @@ public class Mod3902015 implements Serializable {
 
 	public static class Mod390Detail implements Serializable {
 
-		private Mod390DetailKey key;
+		private Mod3902015DetailKey key;
 		private double taxableBase;
 		private double percent;
 		private double quota;
 
-		public Mod390DetailKey getKey() {
+		public Mod3902015DetailKey getKey() {
 			return key;
 		}
-		public void setKey(Mod390DetailKey key) {
+		public void setKey(Mod3902015DetailKey key) {
 			this.key = key;
 		}
 
 		public int getTaxableBaseBox() {
 			
 			// Unica excepcion en todo el modelo.	
-			if (key == Mod390DetailKey.K33) return 639;
+			if (key == Mod3902015DetailKey.K33) return 639;
 			
 			return (key.getBox() - 1);
 		}
@@ -303,329 +303,6 @@ public class Mod3902015 implements Serializable {
 
 	}
 
-	public static enum Mod390DetailKey implements Serializable {
-		  K00_04 (2,	 4.00, null,true,false)		
-		 ,K00_08 (528,	 8.00, 2013,true,false)
-		 ,K00_10 (4,	10.00, null,true,false)
-		 ,K00_18 (530,	18.00, 2013,true,false)
-		 ,K00_21 (6  ,	21.00, null,true,false)
-		 ,K01_04 (501,	 4.00, null,true,false)
-		 ,K01_08 (532,	 8.00, 2013,true,false)
-		 ,K01_10 (503,	10.00, null,true,false)
-		 ,K01_18 (534,	18.00, 2013,true,false)
-		 ,K01_21 (505,	21.00, null,true,false)
-		 ,K40_04 (644,	 4.00, null,true,false)
-		 ,K40_10 (646,	10.00, null,true,false)
-		 ,K40_21 (648,	21.00, null,true,false)
-		 ,K02_04 (8  ,	 4.00, null,true,false)
-		 ,K02_08 (536,	 8.00, 2013,true,false)
-		 ,K02_10 (10 ,	10.00, null,true,false)
-		 ,K02_18 (538,	18.00, 2013,true,false)
-		 ,K02_21 (12 ,	21.00, null,true,false)
-		 ,K03_18 (540,	18.00, 2013,true,false)
-		 ,K03_21 (14 ,	21.00, null,true,false)
-		 ,K04_04 (22 ,	 4.00, null,true,false)
-		 ,K04_08 (542,	 8.00, 2013,true,false)
-		 ,K04_10 (24 ,	10.00, null,true,false)
-		 ,K04_18 (544,	18.00, 2013,true,false)
-		 ,K04_21 (26 ,	21.00, null,true,false)
-		 ,K05_04 (546,	 4.00, null,true,false)
-		 ,K05_08 (550,   8.00, 2013,true,false)
-		 ,K05_10 (548,  10.00, null,true,false)
-		 ,K05_18 (554,  18.00, 2013,true,false)
-		 ,K05_21 (552,  21.00, null,true,false)
-		 ,K06	 (28,	 0.00, null,true,false)
-		 ,K07	 (30,	 0.00, null,true,false)
-		 ,K07_I	 (650,	 0.00, null,true,false)
-		 ,K08	 (32,	 0.00, null,true,false)
-		 ,K09	 (34,	 0.00, null,true,true )
-		 ,K10_05 (36,	 0.50, null,true,false)
-		 ,K10_1  (600,	 1.00, 2013,true,false)
-		 ,K10_14 (600,	 1.40, null,true,false)
-	 	 ,K10_4  (40,	 4.00, 2013,true,false)
-		 ,K10_52 (602,	 5.20, null,true,false)
-		 ,K10_175(42,	 1.75, null,true,false)
-		 ,K11	 (44,	 0.00, null,true,false)
-		 ,K12	 (46,	 0.00, null,true,false)
-		 ,K13	 (47,	 0.00, null,false,true)
-		 
-		 ,K14_04 (191,	 4.00, null,true,false,true)
-		 ,K14_07 (193,	 7.00, null,true,false,true)
-		 ,K14_08 (556,	 8.00, null,true,false,true)
-		 ,K14_10 (604,	10.00, null,true,false,true)
-		 ,K14_16 (195,	16.00, null,true,false,true)
-		 ,K14_18 (558,	18.00, null,true,false,true)
-		 ,K14_21 (606,	21.00, null,true,false,true)
-		 ,K15	 (49,	 0.00, null,true,true )
-		 ,K16_04 (507,	 4.00, null,true,false,true)
-		 ,K16_07 (509,	 7.00, null,true,false,true)
-		 ,K16_08 (560,	 8.00, null,true,false,true)
-		 ,K16_10 (608,	10.00, null,true,false,true)
-		 ,K16_16 (511,	16.00, null,true,false,true)
-		 ,K16_18 (562,	18.00, null,true,false,true)
-		 ,K16_21 (610,	21.00, null,true,false,true)
-		 ,K17	 (513,	 0.00, null,true,true )
-		 ,K18_04 (197,	 4.00, null,true,false,true)
-		 ,K18_07 (199,	 7.00, null,true,false,true)
-		 ,K18_08 (564,	 8.00, null,true,false,true)
-		 ,K18_10 (612,	10.00, null,true,false,true)
-		 ,K18_16 (201,	16.00, null,true,false,true)
-		 ,K18_18 (566,	18.00, null,true,false,true)
-		 ,K18_21 (614,	21.00, null,true,false,true)
-		 ,K19	 (51,	 0.00, null,true,true )
-		 ,K20_04 (515,	 4.00, null,true,false,true)
-		 ,K20_07 (517,	 7.00, null,true,false,true)
-		 ,K20_08 (568,	 8.00, null,true,false,true)
-		 ,K20_10 (616,	10.00, null,true,false,true)
-		 ,K20_16 (519,	16.00, null,true,false,true)
-		 ,K20_18 (570,	18.00, null,true,false,true)
-		 ,K20_21 (618,	21.00, null,true,false,true)
-		 ,K21	 (521,	 0.00, null,true,true )
-		 ,K22_04 (203,	 4.00, null,true,false,true)
-		 ,K22_07 (205,	 7.00, null,true,false,true)
-		 ,K22_08 (272, 	 8.00, null,true,false,true)
-		 ,K22_10 (620,	10.00, null,true,false,true)
-		 ,K22_16 (207,	16.00, null,true,false,true)
-		 ,K22_18 (574, 	18.00, null,true,false,true)
-		 ,K22_21 (622,  21.00, null,true,false,true)
-		 ,K23	 (53,    0.00, null,true,true )
-		 ,K24_04 (209,   4.00, null,true,false,true)
-		 ,K24_07 (211,   7.00, null,true,false,true)
-		 ,K24_08 (576,   8.00, null,true,false,true)
-		 ,K24_10 (624,  10.00, null,true,false,true)
-		 ,K24_16 (213,  16.00, null,true,false,true)
-		 ,K24_18 (578,  18.00, null,true,false,true)
-		 ,K24_21 (626,  21.00, null,true,false,true)
-		 ,K25	 (55,    0.00, null,true,true )
-		 ,K26_04 (215,   4.00, null,true,false,true)
-		 ,K26_07 (217,   7.00, null,true,false,true)
-		 ,K26_08 (580,   8.00, null,true,false,true)
-		 ,K26_10 (628,  10.00, null,true,false,true)
-		 ,K26_16 (219,  16.00, null,true,false,true)
-		 ,K26_18 (582,  18.00, null,true,false,true)
-		 ,K26_21 (630,  21.00, null,true,false,true)
-		 ,K27	 (57,    0.00, null,true,true )
-		 ,K28_04 (221,   4.00, null,true,false,true)
-		 ,K28_07 (223,   7.00, null,true,false,true)
-		 ,K28_08 (584,   8.00, null,true,false,true)
-		 ,K28_10 (632,  10.00, null,true,false,true)
-		 ,K28_16 (225,  16.00, null,true,false,true)
-		 ,K28_18 (586,  18.00, null,true,false,true)
-		 ,K28_21 (634,  21.00, null,true,false,true)
-		 ,K29	 (59,    0.00, null,true,true )
-		 
-		 ,K30_04 (588,   4.00, null,true,false,true)
-		 ,K30_07 (590,   7.00, null,true,false,true)
-		 ,K30_08 (592,   8.00, null,true,false,true)
-		 ,K30_10 (636,  10.00, null,true,false,true)
-		 ,K30_16 (594,  16.00, null,true,false,true)
-		 ,K30_18 (596,  18.00, null,true,false,true)
-		 ,K30_21 (638,  21.00, null,true,false,true)
-		 ,K31	 (598,   0.00, null,true,true  )
-		 
-		 ,K32	 (61,    0.00, null,true,false )
-		 	 
-		 ,K33	 (62,    0.00, null,true ,false)
-		 ,K33_I	 (652,   0.00, null,true ,false)
-		 ,K34	 (63,    0.00, null,false,false)
-		 ,K35	 (522,   0.00, null,false,false)
-		 ,K36	 (64,    0.00, null,false,true )
-		 ,K37	 (65,    0.00, null,false,true )
-		 
-		 ,B099	 (99,    0.00, null,true ,false)
-		 ,B653	 (653,   0.00, null,true ,false)
-		 ,B103	 (103,   0.00, null,true ,false)
-		 ,B104	 (104,   0.00, null,true ,false)
-		 ,B105	 (105,   0.00, null,true ,false)
-		 ,B110	 (110,   0.00, null,true ,false)
-		 ,B112	 (112,   0.00, null,true ,false)
-		 ,B100	 (100,   0.00, null,true ,false)
-		 ,B101	 (101,   0.00, null,true ,false)
-		 ,B102	 (102,   0.00, null,true ,false)
-		 ,B227	 (227,   0.00, null,true ,false)
-		 ,B228	 (228,   0.00, null,true ,false)
-		 ,B106	 (106,   0.00, null,true ,false)
-		 ,B107	 (107,   0.00, null,true ,false)
-		 ,B108	 (108,   0.00, null,true ,false) 
-		 ,B654	 (654,   0.00, null,true ,false)
-		 ,B656	 (654,   0.00, null,true ,false)
-		 ;
-		 
-		private int box;
-		private Double percent;
-		private Integer year;
-		private boolean taxableBaseAvailable;
-		private boolean readonly;
-		private boolean prorrata;
-		
-		private Mod390DetailKey(int box, Double percent, Integer year, boolean taxableBaseAvailable, boolean readonly) {
-			this(box, percent, year, taxableBaseAvailable, readonly, false);	
-		}
-		
-		private Mod390DetailKey(int box, Double percent, Integer year, boolean taxableBaseAvailable, boolean readonly, boolean prorrata) {
-			this.percent = percent;
-			this.box = box;
-			this.year = year;
-			this.taxableBaseAvailable = taxableBaseAvailable;
-			this.readonly = readonly;
-			this.prorrata = prorrata;
-		}
-		public Double getPercent() {
-			return percent;
-		}
-
-		public int getBox() {
-			return box;
-		}
-		public boolean accept( int year) {
-			return (this.year == null || this.year == year); 
-		}
-		
-		public boolean hasTaxableBaseAvailable(){
-			return taxableBaseAvailable;
-		}
-		public boolean isReadonly() {
-			return readonly;
-		}
-		public boolean isSurcharge() {
-			return (this == K10_05
-				|| this == K10_1
-				|| this == K10_14
-				|| this == K10_4
-				|| this == K10_52
-				|| this == K10_175
-				|| this == K11
-				|| this == B102);
-		}
-		public boolean isProrrataEnabled() {
-			return prorrata;
-		}
-	}
-
-	public static enum Mod390DetailKeyGroup implements Serializable {
-		  DEV_001 ("R\u00E9gimen ordinario"
-				  ,new Mod390DetailKey[]{Mod390DetailKey.K00_04,Mod390DetailKey.K00_08
-				  ,Mod390DetailKey.K00_10,Mod390DetailKey.K00_18,Mod390DetailKey.K00_21})
-		 ,DEV_002 ("Operaciones intragrupo"
-				 ,new Mod390DetailKey[]{Mod390DetailKey.K01_04,Mod390DetailKey.K01_08
-				 ,Mod390DetailKey.K01_10,Mod390DetailKey.K01_18,Mod390DetailKey.K01_21})
-		 ,DEV_003  ("R\u00E9gimen especial del criterio de caja"
-				 ,new Mod390DetailKey[]{Mod390DetailKey.K40_04,Mod390DetailKey.K40_10
-				 ,Mod390DetailKey.K40_21})
-		 ,DEV_004  ("R\u00E9gimen especial de bienes usados, objetos de arte, antig\u00fcedades y objetos de colecci\u00F3n"
-				 ,new Mod390DetailKey[]{Mod390DetailKey.K02_04,Mod390DetailKey.K02_08
-				 ,Mod390DetailKey.K02_10,Mod390DetailKey.K02_18,Mod390DetailKey.K02_21})
-		 ,DEV_005  ("R\u00E9gimen especial de agencias de viaje"
-				 ,new Mod390DetailKey[]{Mod390DetailKey.K03_18,Mod390DetailKey.K03_21})
-		 ,DEV_006  ("Adquisiciones intracomunitarias de bienes"
-				 ,new Mod390DetailKey[]{Mod390DetailKey.K04_04,Mod390DetailKey.K04_08
-				 ,Mod390DetailKey.K04_10,Mod390DetailKey.K04_18,Mod390DetailKey.K04_21})
-		 ,DEV_007  ("Adquisiciones intracomunitarias de servicios"
-				 ,new Mod390DetailKey[]{Mod390DetailKey.K05_04,Mod390DetailKey.K05_08
-				 ,Mod390DetailKey.K05_10,Mod390DetailKey.K05_18,Mod390DetailKey.K05_21})
-		 ,DEV_008  ("IVA devengado en otros supuestos de inversi\u00F3n del sujeto pasivo"
-				 ,new Mod390DetailKey[]{Mod390DetailKey.K06})
-		 ,DEV_009  ("Modificaci\u00F3n de bases y cuotas"
-				 ,new Mod390DetailKey[]{Mod390DetailKey.K07})
-		 ,DEV_010  ("Modificaci\u00F3n de bases y cuotas de operaciones intragrupo"
-				 ,new Mod390DetailKey[]{Mod390DetailKey.K07_I})
-		 ,DEV_011  ("Modificaci\u00F3n de bases y cuotas por auto de declaraci\u00F3n de concurso de acreedores"
-				 ,new Mod390DetailKey[]{Mod390DetailKey.K08})
-		 ,DEV_012  ("Total bases y cuotas IVA"
-				 ,new Mod390DetailKey[]{Mod390DetailKey.K09})
-		 ,DEV_013  ("Recargo de equivalencia",new Mod390DetailKey[]{Mod390DetailKey.K10_05,Mod390DetailKey.K10_1
-				 ,Mod390DetailKey.K10_14,Mod390DetailKey.K10_4,Mod390DetailKey.K10_52
-				 ,Mod390DetailKey.K10_175})
-		 ,DEV_014  ("Modificaci\u00F3n recargo equivalencia"
-				 ,new Mod390DetailKey[]{Mod390DetailKey.K11})
-		 ,DEV_015  ("Modificaci\u00F3n recargo equivalencia por auto de declaraci\u00F3n de concurso de acreedores"
-				 ,new Mod390DetailKey[]{Mod390DetailKey.K12})
-		 ,DEV_016  ("Total cuotas IVA y recargo de equivalencia"
-				 ,new Mod390DetailKey[]{Mod390DetailKey.K13})
-		 ,DED_001  ("IVA deducible en operaciones interiores de bienes y servicios corrientes"
-				 ,new Mod390DetailKey[]{Mod390DetailKey.K14_04,Mod390DetailKey.K14_07
-				 ,Mod390DetailKey.K14_08,Mod390DetailKey.K14_10,Mod390DetailKey.K14_16
-				 ,Mod390DetailKey.K14_18,Mod390DetailKey.K14_21})
-		 ,DED_002  ("Total bases imponibles y cuotas deducibles en operaciones interiores de bienes y servicios corrientes"
-				 ,new Mod390DetailKey[]{Mod390DetailKey.K15})
-		 ,DED_003  ("IVA deducible en operaciones intragrupo de bienes y servicios corrientes"
-				 ,new Mod390DetailKey[]{Mod390DetailKey.K16_04,Mod390DetailKey.K16_07
-				 ,Mod390DetailKey.K16_08,Mod390DetailKey.K16_10,Mod390DetailKey.K16_16
-				 ,Mod390DetailKey.K16_18,Mod390DetailKey.K16_21})
-		 ,DED_004  ("Total bases imponibles y cuotas deducibles en operaciones intragrupo de bienes y servicios corrientes"
-				 ,new Mod390DetailKey[]{Mod390DetailKey.K17})
-		 ,DED_005  ("IVA deducible en operaciones interiores de bienes de inversi\u00F3n"
-				 ,new Mod390DetailKey[]{Mod390DetailKey.K18_04,Mod390DetailKey.K18_07
-				 ,Mod390DetailKey.K18_08,Mod390DetailKey.K18_10,Mod390DetailKey.K18_16
-				 ,Mod390DetailKey.K18_18,Mod390DetailKey.K18_21})
-		 ,DED_006  ("Total bases imponibles y cuotas deducibles en operaciones interiores de bienes de inversi\u00F3n"
-				 ,new Mod390DetailKey[]{Mod390DetailKey.K19})
-		 ,DED_007  ("IVA deducible en operaciones intragrupo de bienes de inversi\u00F3n"
-				 ,new Mod390DetailKey[]{Mod390DetailKey.K20_04,Mod390DetailKey.K20_07
-				 ,Mod390DetailKey.K20_08,Mod390DetailKey.K20_10,Mod390DetailKey.K20_16
-				 ,Mod390DetailKey.K20_18,Mod390DetailKey.K20_21})
-		,DED_008  ("Total bases imponibles y cuotas deducibles en operaciones intragrupo de bienes de inversi\u00F3n"
-				,new Mod390DetailKey[]{Mod390DetailKey.K21})
-		,DED_009  ("IVA deducible en importaciones de bienes corrientes"
-				,new Mod390DetailKey[]{Mod390DetailKey.K22_04,Mod390DetailKey.K22_07
-				,Mod390DetailKey.K22_08,Mod390DetailKey.K22_10,Mod390DetailKey.K22_16
-				,Mod390DetailKey.K22_18,Mod390DetailKey.K22_21})
-		,DED_010  ("Total bases imponibles y cuotas deducibles en importaciones de bienes corrientes"
-				,new Mod390DetailKey[]{Mod390DetailKey.K23})
-		
-		,DED_011  ("IVA deducible en importaciones de bienes de inversi\u00F3n"
-				,new Mod390DetailKey[]{Mod390DetailKey.K24_04,Mod390DetailKey.K24_07
-				,Mod390DetailKey.K24_08,Mod390DetailKey.K24_10,Mod390DetailKey.K24_16
-				,Mod390DetailKey.K24_18,Mod390DetailKey.K24_21})
-		,DED_012  ("Total bases imponibles y cuotas deducibles en importaciones de bienes de inversi\u00F3n",new Mod390DetailKey[]{Mod390DetailKey.K25})
-		,DED_013  ("IVA deducible en adquisiciones intracomunitarias de bienes corrientes"
-				,new Mod390DetailKey[]{Mod390DetailKey.K26_04,Mod390DetailKey.K26_07
-				,Mod390DetailKey.K26_08,Mod390DetailKey.K26_10,Mod390DetailKey.K26_16
-				,Mod390DetailKey.K26_18,Mod390DetailKey.K26_21})
-		,DED_014  ("Total bases imponibles y cuotas deducibles en adquisiciones intracomunitarias de bienes corrientes"
-				,new Mod390DetailKey[]{Mod390DetailKey.K27})
-		,DED_015  ("IVA deducible en adquisiciones intracomunitarias de bienes de inversi\u00F3n"
-				,new Mod390DetailKey[]{Mod390DetailKey.K28_04,Mod390DetailKey.K28_07
-				,Mod390DetailKey.K28_08,Mod390DetailKey.K28_10,Mod390DetailKey.K28_16
-				,Mod390DetailKey.K28_18,Mod390DetailKey.K28_21})
-		,DED_016  ("Total bases imponibles y cuotas deducibles en adquisiciones intracomunitarias de bienes de inversi\u00F3n"
-				,new Mod390DetailKey[]{Mod390DetailKey.K29})
-		,DED_017  ("IVA deducible en adquisiciones intracomunitarias de servicios"
-				,new Mod390DetailKey[]{Mod390DetailKey.K30_04,Mod390DetailKey.K30_07
-				,Mod390DetailKey.K30_08,Mod390DetailKey.K30_10,Mod390DetailKey.K30_16
-				,Mod390DetailKey.K30_18,Mod390DetailKey.K30_21})
-		,DED_018  ("Total bases imponibles y cuotas deducibles en adquisiciones intracomunitarias de servicios"
-				,new Mod390DetailKey[]{Mod390DetailKey.K31})
-		,DED_019  ("Compensaci\u00F3n en r\u00E9gimen especial de la agricultura, ganaderia y pesca"
-				,new Mod390DetailKey[]{Mod390DetailKey.K32})
-		,DED_020  ("Rectificaci\u00F3n de deducciones"
-				,new Mod390DetailKey[]{Mod390DetailKey.K33})
-		,DED_021  ("Rectificaci\u00F3n de deducciones por operaciones intragrupo"
-				,new Mod390DetailKey[]{Mod390DetailKey.K33_I})
-		,DED_022  ("Regularizaci\u00F3n de bienes de inversi\u00F3n"
-				,new Mod390DetailKey[]{Mod390DetailKey.K34})
-		,DED_023  ("Regularizaci\u00F3n por aplicaci\u00F3n porcentaje definitivo de prorrata"
-				,new Mod390DetailKey[]{Mod390DetailKey.K35})
-		,DED_024  ("Suma de deducciones"
-				,new Mod390DetailKey[]{Mod390DetailKey.K36})
-		,DED_025  ("Resultado r\u00E9gimen general"
-				,new Mod390DetailKey[]{Mod390DetailKey.K37})
-		 ;
-		
-		private String label;
-		private Mod390DetailKey[] keys;
-		
-		private Mod390DetailKeyGroup(String label,Mod390DetailKey[] keys) {
-			this.label = label;
-			this.keys = keys;
-		}
-		public Mod390DetailKey[] getKeys() {
-			return keys;
-		}
-		public String getLabel() {
-			return label;
-		}
-	}
 	
 	public static class Prorrata implements Serializable {
 		private String activity;
@@ -727,7 +404,7 @@ public class Mod3902015 implements Serializable {
 	private LegalRepresentative legalRepr2; 
 	private LegalRepresentative legalRepr3;
 	
-	private Map<Mod390DetailKey,Mod390Detail> generalRegime;
+	private Map<Mod3902015DetailKey,Mod390Detail> generalRegime;
 	
 	private SimpliedRegimeActivity simpRegime1;
 	private SimpliedRegimeActivity simpRegime2;
@@ -1065,10 +742,10 @@ public class Mod3902015 implements Serializable {
 	public void setLegalRepr3(LegalRepresentative legalRepr3) {
 		this.legalRepr3 = legalRepr3;
 	}
-	public Map<Mod390DetailKey, Mod390Detail> getGeneralRegime() {
+	public Map<Mod3902015DetailKey, Mod390Detail> getGeneralRegime() {
 		return generalRegime;
 	}
-	public void setGeneralRegime(Map<Mod390DetailKey, Mod390Detail> generalRegime) {
+	public void setGeneralRegime(Map<Mod3902015DetailKey, Mod390Detail> generalRegime) {
 		this.generalRegime = generalRegime;
 	}
 	public SimpliedRegimeActivity getSimpRegime1() {
@@ -1471,99 +1148,99 @@ public class Mod3902015 implements Serializable {
 		return (prorratas!=null && index < prorratas.size()) ? prorratas.get(index) :null;
 	}
 
-	private static final Mod390DetailKey[] K09_FORMULA = new Mod390DetailKey[]{ Mod390DetailKey.K00_04
-				,Mod390DetailKey.K00_08,Mod390DetailKey.K00_10,Mod390DetailKey.K00_18
-				,Mod390DetailKey.K00_21,Mod390DetailKey.K01_04,Mod390DetailKey.K01_08
-				,Mod390DetailKey.K01_10,Mod390DetailKey.K01_18,Mod390DetailKey.K01_21
-				,Mod390DetailKey.K40_04,Mod390DetailKey.K40_10,Mod390DetailKey.K40_21
-				,Mod390DetailKey.K02_04,Mod390DetailKey.K02_08,Mod390DetailKey.K02_10
-				,Mod390DetailKey.K02_18,Mod390DetailKey.K02_21,Mod390DetailKey.K03_18
-				,Mod390DetailKey.K03_21,Mod390DetailKey.K04_04,Mod390DetailKey.K04_08
-				,Mod390DetailKey.K04_10,Mod390DetailKey.K04_18,Mod390DetailKey.K04_21
-				,Mod390DetailKey.K05_04,Mod390DetailKey.K05_08,Mod390DetailKey.K05_10
-				,Mod390DetailKey.K05_18,Mod390DetailKey.K05_21,Mod390DetailKey.K06
-				,Mod390DetailKey.K07   ,Mod390DetailKey.K07_I ,Mod390DetailKey.K08};
-	private static final Mod390DetailKey[] K13_FORMULA = new Mod390DetailKey[]{ Mod390DetailKey.K09
-				,Mod390DetailKey.K10_05,Mod390DetailKey.K10_1 ,Mod390DetailKey.K10_14 
-				,Mod390DetailKey.K10_4 ,Mod390DetailKey.K10_52,Mod390DetailKey.K10_175
-				,Mod390DetailKey.K11   ,Mod390DetailKey.K12};	 
-	private static final Mod390DetailKey[] K15_FORMULA = {
-		Mod390DetailKey.K14_04, Mod390DetailKey.K14_07,
-		Mod390DetailKey.K14_08, Mod390DetailKey.K14_10,
-		Mod390DetailKey.K14_16, Mod390DetailKey.K14_18,
-		Mod390DetailKey.K14_21 };
+	private static final Mod3902015DetailKey[] K09_FORMULA = new Mod3902015DetailKey[]{ Mod3902015DetailKey.K00_04
+				,Mod3902015DetailKey.K00_10
+				,Mod3902015DetailKey.K00_21,Mod3902015DetailKey.K01_04
+				,Mod3902015DetailKey.K01_10,Mod3902015DetailKey.K01_21
+				,Mod3902015DetailKey.K40_04,Mod3902015DetailKey.K40_10,Mod3902015DetailKey.K40_21
+				,Mod3902015DetailKey.K02_04,Mod3902015DetailKey.K02_10
+				,Mod3902015DetailKey.K02_21
+				,Mod3902015DetailKey.K03_21,Mod3902015DetailKey.K04_04
+				,Mod3902015DetailKey.K04_10,Mod3902015DetailKey.K04_21
+				,Mod3902015DetailKey.K05_04,Mod3902015DetailKey.K05_10
+				,Mod3902015DetailKey.K05_21,Mod3902015DetailKey.K06
+				,Mod3902015DetailKey.K07   ,Mod3902015DetailKey.K07_I ,Mod3902015DetailKey.K08};
+	private static final Mod3902015DetailKey[] K13_FORMULA = new Mod3902015DetailKey[]{ Mod3902015DetailKey.K09
+				,Mod3902015DetailKey.K10_05,Mod3902015DetailKey.K10_14 
+				,Mod3902015DetailKey.K10_52,Mod3902015DetailKey.K10_175
+				,Mod3902015DetailKey.K11   ,Mod3902015DetailKey.K12};	 
+	private static final Mod3902015DetailKey[] K15_FORMULA = {
+		Mod3902015DetailKey.K14_04, Mod3902015DetailKey.K14_07,
+		Mod3902015DetailKey.K14_08, Mod3902015DetailKey.K14_10,
+		Mod3902015DetailKey.K14_16, Mod3902015DetailKey.K14_18,
+		Mod3902015DetailKey.K14_21 };
 
-	private static final Mod390DetailKey[] K17_FORMULA = {
-			Mod390DetailKey.K16_04, Mod390DetailKey.K16_07,
-			Mod390DetailKey.K16_08, Mod390DetailKey.K16_10,
-			Mod390DetailKey.K16_16, Mod390DetailKey.K16_18,
-			Mod390DetailKey.K16_21 };
+	private static final Mod3902015DetailKey[] K17_FORMULA = {
+			Mod3902015DetailKey.K16_04, Mod3902015DetailKey.K16_07,
+			Mod3902015DetailKey.K16_08, Mod3902015DetailKey.K16_10,
+			Mod3902015DetailKey.K16_16, Mod3902015DetailKey.K16_18,
+			Mod3902015DetailKey.K16_21 };
 	
-	private static final Mod390DetailKey[] K19_FORMULA = {
-			Mod390DetailKey.K18_04, Mod390DetailKey.K18_07,
-			Mod390DetailKey.K18_08, Mod390DetailKey.K18_10,
-			Mod390DetailKey.K18_16, Mod390DetailKey.K18_18,
-			Mod390DetailKey.K18_21 };
+	private static final Mod3902015DetailKey[] K19_FORMULA = {
+			Mod3902015DetailKey.K18_04, Mod3902015DetailKey.K18_07,
+			Mod3902015DetailKey.K18_08, Mod3902015DetailKey.K18_10,
+			Mod3902015DetailKey.K18_16, Mod3902015DetailKey.K18_18,
+			Mod3902015DetailKey.K18_21 };
 	
-	private static final Mod390DetailKey[] K21_FORMULA = {
-			Mod390DetailKey.K20_04, Mod390DetailKey.K20_07,
-			Mod390DetailKey.K20_08, Mod390DetailKey.K20_10,
-			Mod390DetailKey.K20_16, Mod390DetailKey.K20_18,
-			Mod390DetailKey.K20_21 };
+	private static final Mod3902015DetailKey[] K21_FORMULA = {
+			Mod3902015DetailKey.K20_04, Mod3902015DetailKey.K20_07,
+			Mod3902015DetailKey.K20_08, Mod3902015DetailKey.K20_10,
+			Mod3902015DetailKey.K20_16, Mod3902015DetailKey.K20_18,
+			Mod3902015DetailKey.K20_21 };
 	
-	private static final Mod390DetailKey[] K23_FORMULA = {
-			Mod390DetailKey.K22_04, Mod390DetailKey.K22_07,
-			Mod390DetailKey.K22_08, Mod390DetailKey.K22_10,
-			Mod390DetailKey.K22_16, Mod390DetailKey.K22_18,
-			Mod390DetailKey.K22_21 };
+	private static final Mod3902015DetailKey[] K23_FORMULA = {
+			Mod3902015DetailKey.K22_04, Mod3902015DetailKey.K22_07,
+			Mod3902015DetailKey.K22_08, Mod3902015DetailKey.K22_10,
+			Mod3902015DetailKey.K22_16, Mod3902015DetailKey.K22_18,
+			Mod3902015DetailKey.K22_21 };
 	
-	private static final Mod390DetailKey[] K25_FORMULA = {
-			Mod390DetailKey.K24_04, Mod390DetailKey.K24_07,
-			Mod390DetailKey.K24_08, Mod390DetailKey.K24_10,
-			Mod390DetailKey.K24_16, Mod390DetailKey.K24_18,
-			Mod390DetailKey.K24_21 };
+	private static final Mod3902015DetailKey[] K25_FORMULA = {
+			Mod3902015DetailKey.K24_04, Mod3902015DetailKey.K24_07,
+			Mod3902015DetailKey.K24_08, Mod3902015DetailKey.K24_10,
+			Mod3902015DetailKey.K24_16, Mod3902015DetailKey.K24_18,
+			Mod3902015DetailKey.K24_21 };
 	
-	private static final Mod390DetailKey[] K27_FORMULA = {
-			Mod390DetailKey.K26_04, Mod390DetailKey.K26_07,
-			Mod390DetailKey.K26_08, Mod390DetailKey.K26_10,
-			Mod390DetailKey.K26_16, Mod390DetailKey.K26_18,
-			Mod390DetailKey.K26_21 };
+	private static final Mod3902015DetailKey[] K27_FORMULA = {
+			Mod3902015DetailKey.K26_04, Mod3902015DetailKey.K26_07,
+			Mod3902015DetailKey.K26_08, Mod3902015DetailKey.K26_10,
+			Mod3902015DetailKey.K26_16, Mod3902015DetailKey.K26_18,
+			Mod3902015DetailKey.K26_21 };
 	
-	private static final Mod390DetailKey[] K29_FORMULA = {
-			Mod390DetailKey.K28_04, Mod390DetailKey.K28_07,
-			Mod390DetailKey.K28_08, Mod390DetailKey.K28_10,
-			Mod390DetailKey.K28_16, Mod390DetailKey.K28_18,
-			Mod390DetailKey.K28_21 };
+	private static final Mod3902015DetailKey[] K29_FORMULA = {
+			Mod3902015DetailKey.K28_04, Mod3902015DetailKey.K28_07,
+			Mod3902015DetailKey.K28_08, Mod3902015DetailKey.K28_10,
+			Mod3902015DetailKey.K28_16, Mod3902015DetailKey.K28_18,
+			Mod3902015DetailKey.K28_21 };
 
-	private static final Mod390DetailKey[] K31_FORMULA = {
-		Mod390DetailKey.K30_04, Mod390DetailKey.K30_07,
-		Mod390DetailKey.K30_08, Mod390DetailKey.K30_10,
-		Mod390DetailKey.K30_16, Mod390DetailKey.K30_18,
-		Mod390DetailKey.K30_21};	
+	private static final Mod3902015DetailKey[] K31_FORMULA = {
+		Mod3902015DetailKey.K30_04, Mod3902015DetailKey.K30_07,
+		Mod3902015DetailKey.K30_08, Mod3902015DetailKey.K30_10,
+		Mod3902015DetailKey.K30_16, Mod3902015DetailKey.K30_18,
+		Mod3902015DetailKey.K30_21};	
 
-	private static final Mod390DetailKey[] K36_FORMULA = { Mod390DetailKey.K15,
-		Mod390DetailKey.K17, Mod390DetailKey.K19, Mod390DetailKey.K21,
-		Mod390DetailKey.K23, Mod390DetailKey.K25, Mod390DetailKey.K27,
-		Mod390DetailKey.K29, Mod390DetailKey.K31, Mod390DetailKey.K32,
-		Mod390DetailKey.K33, Mod390DetailKey.K33_I,
-		Mod390DetailKey.K34, Mod390DetailKey.K35};
+	private static final Mod3902015DetailKey[] K36_FORMULA = { Mod3902015DetailKey.K15,
+		Mod3902015DetailKey.K17, Mod3902015DetailKey.K19, Mod3902015DetailKey.K21,
+		Mod3902015DetailKey.K23, Mod3902015DetailKey.K25, Mod3902015DetailKey.K27,
+		Mod3902015DetailKey.K29, Mod3902015DetailKey.K31, Mod3902015DetailKey.K32,
+		Mod3902015DetailKey.K33, Mod3902015DetailKey.K33_I,
+		Mod3902015DetailKey.K34, Mod3902015DetailKey.K35};
 
 	public void calculate() {
 		double k37Quota = 0;
 		if (!isSimplifiedRegime()) {
-			calculate(Mod390DetailKey.K09, K09_FORMULA);
-			Mod390Detail k13 = calculate(Mod390DetailKey.K13, K13_FORMULA);
-			calculate(Mod390DetailKey.K15, K15_FORMULA);
-			calculate(Mod390DetailKey.K17, K17_FORMULA);
-			calculate(Mod390DetailKey.K19, K19_FORMULA);
-			calculate(Mod390DetailKey.K23, K21_FORMULA);
-			calculate(Mod390DetailKey.K23, K23_FORMULA);
-			calculate(Mod390DetailKey.K25, K25_FORMULA);
-			calculate(Mod390DetailKey.K27, K27_FORMULA);
-			calculate(Mod390DetailKey.K29, K29_FORMULA);
-			calculate(Mod390DetailKey.K31, K31_FORMULA);
-			Mod390Detail k36 = calculate(Mod390DetailKey.K36, K36_FORMULA);
-			Mod390Detail k37 = ensure(Mod390DetailKey.K37);
+			calculate(Mod3902015DetailKey.K09, K09_FORMULA);
+			Mod390Detail k13 = calculate(Mod3902015DetailKey.K13, K13_FORMULA);
+			calculate(Mod3902015DetailKey.K15, K15_FORMULA);
+			calculate(Mod3902015DetailKey.K17, K17_FORMULA);
+			calculate(Mod3902015DetailKey.K19, K19_FORMULA);
+			calculate(Mod3902015DetailKey.K23, K21_FORMULA);
+			calculate(Mod3902015DetailKey.K23, K23_FORMULA);
+			calculate(Mod3902015DetailKey.K25, K25_FORMULA);
+			calculate(Mod3902015DetailKey.K27, K27_FORMULA);
+			calculate(Mod3902015DetailKey.K29, K29_FORMULA);
+			calculate(Mod3902015DetailKey.K31, K31_FORMULA);
+			Mod390Detail k36 = calculate(Mod3902015DetailKey.K36, K36_FORMULA);
+			Mod390Detail k37 = ensure(Mod3902015DetailKey.K37);
 			k37Quota = AonMathUtils.round(k13.getQuota() - k36.getQuota());
 			k37.setQuota( k37Quota );
 		}
@@ -1584,15 +1261,15 @@ public class Mod3902015 implements Serializable {
 			box75 = 0;
 		}
 		box84 = AonMathUtils.round(k37Quota + box83);
-		box86 = AonMathUtils.round(box84 - box85);
+		box86 = AonMathUtils.round(box84 + box659 - box85);
 		box92 = AonMathUtils.round(box84 * box87 / 100);
-		box94 = AonMathUtils.round(box92 - box93);
+		box94 = AonMathUtils.round(box92 + box659 - box93);
 		box108 =  AonMathUtils.round(box99+box653+box103+box104+box105
 				+box110+box112+box100+box101+box102+box227
 				+box228-box106-box107);
 	}
 	
-	public Mod390Detail ensure(Mod390DetailKey key) {
+	public Mod390Detail ensure(Mod3902015DetailKey key) {
 		Mod390Detail detail = getGeneralRegime().get(key);
 		if (detail == null) {
 			detail = new Mod390Detail();
@@ -1603,11 +1280,11 @@ public class Mod3902015 implements Serializable {
 		return detail;
 	}
 	
-	private Mod390Detail calculate(Mod390DetailKey key, Mod390DetailKey ... keys) {
+	private Mod390Detail calculate(Mod3902015DetailKey key, Mod3902015DetailKey ... keys) {
 		Mod390Detail detail = ensure(key);
 		detail.setTaxableBase(0.0);
 		detail.setQuota(0.0);
-		for (Mod390DetailKey k : keys) {
+		for (Mod3902015DetailKey k : keys) {
 			Mod390Detail det = getGeneralRegime().get(k);
 			if (det != null) {
 				detail.setTaxableBase( AonMathUtils.round(detail.getTaxableBase() + det.getTaxableBase()));
@@ -1616,6 +1293,6 @@ public class Mod3902015 implements Serializable {
 		}
 		return detail;
 	}
-
+	
 }
 

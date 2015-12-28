@@ -87,6 +87,7 @@ public class Page02 extends ResizeComposite implements IMod3902015Page {
 
 	}
 
+	@Override
 	public void setValue(Mod3902015 m390) {
 		if (m390.getAddress() != null) {
 			rdocument.setValue(m390.getAddress().getRdocument());
@@ -153,6 +154,7 @@ public class Page02 extends ResizeComposite implements IMod3902015Page {
 		}
 	}
 
+	@Override
 	public void populate(Mod3902015 mod390) {
 		Address address = new Address();
 		address.setRdocument(rdocument.getValue());
@@ -202,8 +204,13 @@ public class Page02 extends ResizeComposite implements IMod3902015Page {
 		}
 	}
 	
+	@Override
 	public void setCallback(IMod3902015CallBack callback) {
 		this.callback = callback;
 	}
 
+	@Override
+	public void refresh(Mod3902015 m390) {
+		setValue(m390);
+	}
 }

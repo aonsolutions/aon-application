@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015CallBack;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015Page;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -23,10 +24,10 @@ public class Page06 extends ResizeComposite implements RequiresResize , IMod3902
 	private static final PageBinder BINDER = GWT
 			.create(PageBinder.class);
 
-	private Mod3902015 mod390;
-	
-	IMod3902015CallBack callback;
+	IMod3902015CallBack cbk;
 
+	@UiField
+	DoubleBox box658;
 	@UiField
 	DoubleBox box84;
 	@UiField
@@ -42,6 +43,8 @@ public class Page06 extends ResizeComposite implements RequiresResize , IMod3902
 	@UiField
 	DoubleBox box92;
 	@UiField
+	DoubleBox box659;
+	@UiField
 	DoubleBox box93;
 	@UiField
 	DoubleBox box94;
@@ -49,23 +52,18 @@ public class Page06 extends ResizeComposite implements RequiresResize , IMod3902
 	public Page06() {
 		Widget ui = BINDER.createAndBindUi(this);
 		initWidget(ui);
-		box87.setValue(100.0);
 		box87.setMaxLength(6);
 		box87.setVisibleLength(6);
 		
-		box88.setValue(0.0);
 		box88.setMaxLength(6);
 		box88.setVisibleLength(6);
 		
-		box89.setValue(0.0);
 		box89.setMaxLength(6);
 		box89.setVisibleLength(6);
 		
-		box90.setValue(0.0);
 		box90.setMaxLength(6);
 		box90.setVisibleLength(6);
 		
-		box91.setValue(0.0);
 		box91.setMaxLength(6);
 		box91.setVisibleLength(6);
 		
@@ -74,42 +72,68 @@ public class Page06 extends ResizeComposite implements RequiresResize , IMod3902
 		box94.setEnabled(false);
 	}
 	
+	@UiHandler("box658")
+	void onChangeBox658 (ChangeEvent event) {
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				cbk.getMod390().setBox658(box658.getValue());
+				cbk.calculateAndRefresh();
+			}
+		});
+	}
+
 	@UiHandler("box87")
 	void onChangeBox87 (ChangeEvent event) {
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
-				mod390.setBox87(box87.getValue());
-				callback.calculateAndRefresh();
+				cbk.getMod390().setBox87(box87.getValue());
+				cbk.calculateAndRefresh();
 			}
 		});
 	}
 	
+	@UiHandler("box659")
+	void onChangeBox659 (ChangeEvent event) {
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				cbk.getMod390().setBox659(box659.getValue());
+				cbk.calculateAndRefresh();
+			}
+		});
+	}
+
 	@UiHandler("box93")
 	void onChangeBox93 (ChangeEvent event) {
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
-				mod390.setBox93(box93.getValue());
-				callback.calculateAndRefresh();
+				cbk.getMod390().setBox93(box93.getValue());
+				cbk.calculateAndRefresh();
 			}
 		});
 	}
 
+	@Override
 	public void setValue(Mod3902015 m390) {
-		this.mod390 = m390;
-		box84.setValue(this.mod390.getBox84());
-		box87.setValue(this.mod390.getBox87());
-		box88.setValue(this.mod390.getBox88());
-		box89.setValue(this.mod390.getBox89());
-		box90.setValue(this.mod390.getBox90());
-		box91.setValue(this.mod390.getBox91());
-		box92.setValue(this.mod390.getBox92());
-		box93.setValue(this.mod390.getBox93());
-		box94.setValue(this.mod390.getBox94());
+		box658.setValue(m390.getBox658());
+		box84.setValue(m390.getBox84());
+		box87.setValue(m390.getBox87());
+		box88.setValue(m390.getBox88());
+		box89.setValue(m390.getBox89());
+		box90.setValue(m390.getBox90());
+		box91.setValue(m390.getBox91());
+		box92.setValue(m390.getBox92());
+		box659.setValue(m390.getBox659());
+		box93.setValue(m390.getBox93());
+		box94.setValue(m390.getBox94());
 	}
 
+	@Override
 	public void populate(Mod3902015 mod390) {
+		mod390.setBox658(box658.getValue());
 		mod390.setBox84(box84.getValue());
 		mod390.setBox87(box87.getValue());
 		mod390.setBox88(box88.getValue());
@@ -117,11 +141,27 @@ public class Page06 extends ResizeComposite implements RequiresResize , IMod3902
 		mod390.setBox90(box90.getValue());
 		mod390.setBox91(box91.getValue());
 		mod390.setBox92(box92.getValue());
+		mod390.setBox659(box659.getValue());
 		mod390.setBox93(box93.getValue());
 		mod390.setBox94(box94.getValue());
 	}
 	
+	@Override
 	public void setCallback(IMod3902015CallBack callback) {
-		this.callback = callback;
+		this.cbk = callback;
+	}
+	
+	@Override
+	public void refresh(Mod3902015 m390) {
+		if (!AonMathUtils.equals(box658.getValue(), m390.getBox658())) 
+			box658.setValue(m390.getBox658(),true,true);
+		if (!AonMathUtils.equals(box659.getValue(), m390.getBox659())) 
+			box659.setValue(m390.getBox659(),true,true);
+		if (!AonMathUtils.equals(box84.getValue(), m390.getBox84())) 
+			box84.setValue(m390.getBox84(),true,true);
+		if (!AonMathUtils.equals(box92.getValue(), m390.getBox92())) 
+			box92.setValue(m390.getBox92(),true,true);
+		if (!AonMathUtils.equals(box94.getValue(), m390.getBox94())) 
+			box94.setValue(m390.getBox94(),true,true);
 	}
 }

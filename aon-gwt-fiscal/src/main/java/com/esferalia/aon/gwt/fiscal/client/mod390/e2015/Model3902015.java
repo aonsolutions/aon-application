@@ -68,6 +68,7 @@ public class Model3902015 extends ResizeComposite implements IModel390 {
 
 	static interface IMod3902015CallBack {
 		void calculateAndRefresh();
+		Mod3902015 getMod390();
 	}	
 
 	IMod3902015CallBack callback = new IMod3902015CallBack() {
@@ -75,18 +76,23 @@ public class Model3902015 extends ResizeComposite implements IModel390 {
 		@Override
 		public void calculateAndRefresh() {
 			mod390.calculate();
-			((WestFocusPanel) linkContainer.getWidget(3)).setValue(mod390);
-			((WestFocusPanel) linkContainer.getWidget(4)).setValue(mod390);
-			((WestFocusPanel) linkContainer.getWidget(5)).setValue(mod390);
-			((WestFocusPanel) linkContainer.getWidget(6)).setValue(mod390);
-			((WestFocusPanel) linkContainer.getWidget(7)).setValue(mod390);
-			((WestFocusPanel) linkContainer.getWidget(8)).setValue(mod390);
+			((WestFocusPanel) linkContainer.getWidget(3)).refresh(mod390);
+			((WestFocusPanel) linkContainer.getWidget(4)).refresh(mod390);
+			((WestFocusPanel) linkContainer.getWidget(5)).refresh(mod390);
+			((WestFocusPanel) linkContainer.getWidget(6)).refresh(mod390);
+			((WestFocusPanel) linkContainer.getWidget(8)).refresh(mod390);
+		}
+
+		@Override
+		public Mod3902015 getMod390() {
+			return mod390;
 		}
 		
 	};
 	
 	static interface IMod3902015Page extends IsWidget {
 		void setValue(Mod3902015 m390);
+		void refresh(Mod3902015 m390);
 		void populate(Mod3902015 m390);
 		void setCallback( IMod3902015CallBack callback );
 	}	
@@ -502,6 +508,9 @@ public class Model3902015 extends ResizeComposite implements IModel390 {
 			pagesPanel.showWidget(pagesPanel.getWidgetIndex(content));
 		}
 
+		public void refresh(Mod3902015 m390) {
+			content.refresh(m390);
+		}
 		public void setValue(Mod3902015 m390) {
 			content.setValue(m390);
 		}

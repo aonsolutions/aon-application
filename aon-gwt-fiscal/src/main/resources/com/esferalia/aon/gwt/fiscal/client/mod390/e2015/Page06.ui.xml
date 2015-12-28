@@ -28,6 +28,17 @@
 			
 			<tr>
 				<td>
+					<g:Label text="{msg.regQuotaArt80}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="658"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box658"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
 					<g:Label text="{msg.resultSum}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
 				</td>
 				<td>
@@ -115,7 +126,17 @@
 					<aon:DoubleBox ui:field="box92"/>
 				</td>
 			</tr>
-
+			<tr>
+				<td>
+					<g:Label text="{msg.importIVACustoms}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="659"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box659"/>
+				</td>
+			</tr>
 			<tr>
 				<td>
 					<g:Label text="{msg.commonTerritoryQuotaCompensation}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>

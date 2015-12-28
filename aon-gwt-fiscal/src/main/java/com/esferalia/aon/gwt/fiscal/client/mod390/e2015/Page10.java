@@ -86,8 +86,7 @@ public class Page10 extends ResizeComposite implements RequiresResize , IMod3902
 
 	private static final PageBinder BINDER = GWT.create(PageBinder.class);
 
-	IMod3902015CallBack callback;
-	Mod3902015 mod390;
+	IMod3902015CallBack cbk;
 	
 	private CnaePanel cnaePanel;
 	
@@ -315,19 +314,25 @@ public class Page10 extends ResizeComposite implements RequiresResize , IMod3902
 		table.redraw();		    		
 	}
 	
+	@Override
 	public void setValue(Mod3902015 m390) {
-		this.mod390 = m390;
-		dataProvider = new ListDataProvider<Prorrata>(this.mod390.getProrratas());
+		dataProvider = new ListDataProvider<Prorrata>(m390.getProrratas());
 		dataProvider.addDataDisplay(table);
 		table.redraw();
 	}
 
+	@Override
 	public void populate(Mod3902015 mod390) {
 		// Nothing
 	}
 	
+	@Override
 	public void setCallback(IMod3902015CallBack callback) {
-		this.callback = callback;
+		this.cbk = callback;
 	}
 	
+	@Override
+	public void refresh(Mod3902015 m390) {
+		setValue(m390);
+	}
 }

@@ -79,6 +79,7 @@ public class Page00 extends ResizeComposite implements IMod3902015Page {
 		document.setEnabled(false);
 	}
 
+	@Override
 	public void setValue(Mod3902015 m390) {
 		document.setValue(m390.getDocument());
 		name.setValue(m390.getName());
@@ -121,6 +122,7 @@ public class Page00 extends ResizeComposite implements IMod3902015Page {
 		onClickSpecialGroupRegime(null);
 	}
 
+	@Override
 	public void populate(Mod3902015 mod390) {
 		mod390.setName(name.getValue());
 		mod390.setFirstSurname(firstSurname.getValue());
@@ -160,7 +162,14 @@ public class Page00 extends ResizeComposite implements IMod3902015Page {
 		}
 	}
 
+	@Override
 	public void setCallback(IMod3902015CallBack callback) {
 		this.callback = callback;
 	}
+	
+	@Override
+	public void refresh(Mod3902015 m390) {
+		setValue(m390);
+	}
+
 }

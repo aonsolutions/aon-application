@@ -14,9 +14,9 @@ import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.FarmerRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.Mod390Detail;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.Mod390DetailKey;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.Prorrata;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.SimpliedRegimeActivity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902015DetailKey;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.Administraciones;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.DatEstadisticos;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.DatEstadisticos.Otras;
@@ -175,7 +175,7 @@ public class AEATIVA2015toMod390 {
 			}
 		}
 
-		Map<Mod390DetailKey, Mod390Detail> map = new TreeMap<Mod390DetailKey, Mod390Detail>();
+		Map<Mod3902015DetailKey, Mod390Detail> map = new TreeMap<Mod3902015DetailKey, Mod390Detail>();
 		mod390.setGeneralRegime(map);
 
 		if (iva.getRegGeneral() != null) {
@@ -183,278 +183,278 @@ public class AEATIVA2015toMod390 {
 					.getBaseImponibleyCuota();
 			if (b != null) {
 				if (b.getRegOrdinario() != null) {
-					put(mod390, Mod390DetailKey.K00_04, b.getRegOrdinario()
+					put(mod390, Mod3902015DetailKey.K00_04, b.getRegOrdinario()
 							.getTipo4());
-					put(mod390, Mod390DetailKey.K00_10, b.getRegOrdinario()
+					put(mod390, Mod3902015DetailKey.K00_10, b.getRegOrdinario()
 							.getTipo10());
-					put(mod390, Mod390DetailKey.K00_21, b.getRegOrdinario()
+					put(mod390, Mod3902015DetailKey.K00_21, b.getRegOrdinario()
 							.getTipo21());
 				}
 				if (b.getRegCriterioCaja() != null) {
-					put(mod390, Mod390DetailKey.K40_04, b.getRegCriterioCaja().getTipo4());
-					put(mod390, Mod390DetailKey.K40_10, b.getRegCriterioCaja().getTipo10());
-					put(mod390, Mod390DetailKey.K40_21, b.getRegCriterioCaja().getTipo21());
+					put(mod390, Mod3902015DetailKey.K40_04, b.getRegCriterioCaja().getTipo4());
+					put(mod390, Mod3902015DetailKey.K40_10, b.getRegCriterioCaja().getTipo10());
+					put(mod390, Mod3902015DetailKey.K40_21, b.getRegCriterioCaja().getTipo21());
 				}
 				if (b.getOpIntragrupo() != null) {
-					put(mod390, Mod390DetailKey.K01_04, b.getOpIntragrupo()
+					put(mod390, Mod3902015DetailKey.K01_04, b.getOpIntragrupo()
 							.getTipo4());
-					put(mod390, Mod390DetailKey.K01_10, b.getOpIntragrupo()
+					put(mod390, Mod3902015DetailKey.K01_10, b.getOpIntragrupo()
 							.getTipo10());
-					put(mod390, Mod390DetailKey.K01_21, b.getOpIntragrupo()
+					put(mod390, Mod3902015DetailKey.K01_21, b.getOpIntragrupo()
 							.getTipo21());
 				}
 				if (b.getRegBienesUsados() != null) {
-					put(mod390, Mod390DetailKey.K02_04, b.getRegBienesUsados()
+					put(mod390, Mod3902015DetailKey.K02_04, b.getRegBienesUsados()
 							.getTipo4());
-					put(mod390, Mod390DetailKey.K02_10, b.getRegBienesUsados()
+					put(mod390, Mod3902015DetailKey.K02_10, b.getRegBienesUsados()
 							.getTipo10());
-					put(mod390, Mod390DetailKey.K02_21, b.getRegBienesUsados()
+					put(mod390, Mod3902015DetailKey.K02_21, b.getRegBienesUsados()
 							.getTipo21());
 				}
 				if (b.getRegAgViajes() != null) {
-					put(mod390, Mod390DetailKey.K03_21, b.getRegAgViajes()
+					put(mod390, Mod3902015DetailKey.K03_21, b.getRegAgViajes()
 							.getTipo21());
 				}
 				if (b.getAdqIntracomBienes() != null) {
-					put(mod390, Mod390DetailKey.K04_04, b
+					put(mod390, Mod3902015DetailKey.K04_04, b
 							.getAdqIntracomBienes().getTipo4());
-					put(mod390, Mod390DetailKey.K04_10, b
+					put(mod390, Mod3902015DetailKey.K04_10, b
 							.getAdqIntracomBienes().getTipo10());
-					put(mod390, Mod390DetailKey.K04_21, b
+					put(mod390, Mod3902015DetailKey.K04_21, b
 							.getAdqIntracomBienes().getTipo21());
 				}
 				if (b.getAdqIntracomServicios() != null) {
-					put(mod390, Mod390DetailKey.K05_04, b
+					put(mod390, Mod3902015DetailKey.K05_04, b
 							.getAdqIntracomServicios().getTipo4());
-					put(mod390, Mod390DetailKey.K05_10, b
+					put(mod390, Mod3902015DetailKey.K05_10, b
 							.getAdqIntracomServicios().getTipo10());
-					put(mod390, Mod390DetailKey.K05_21, b
+					put(mod390, Mod3902015DetailKey.K05_21, b
 							.getAdqIntracomServicios().getTipo21());
 				}
 				if (b.getIVAdevengadoInversionSP() != null) {
-					put(mod390, Mod390DetailKey.K06, b
+					put(mod390, Mod3902015DetailKey.K06, b
 							.getIVAdevengadoInversionSP().getTipoX());
 				}
 				if (b.getModBasesyCuotas() != null) {
-					put(mod390, Mod390DetailKey.K07, b.getModBasesyCuotas()
+					put(mod390, Mod3902015DetailKey.K07, b.getModBasesyCuotas()
 							.getTipoX());
 				}
 				if (b.getModBasesyCuotasConcursoAcreedores() != null) {
-					put(mod390, Mod390DetailKey.K08, b
+					put(mod390, Mod3902015DetailKey.K08, b
 							.getModBasesyCuotasConcursoAcreedores().getTipoX());
 				}
 				if (b.getTotalBasesyCuotasIVA() != null) {
-					put(mod390, Mod390DetailKey.K09, b
+					put(mod390, Mod3902015DetailKey.K09, b
 							.getTotalBasesyCuotasIVA().getTipoX());
 				}
 				if (b.getRecargoEquivalencia() != null) {
-					put(mod390, Mod390DetailKey.K10_05, b
+					put(mod390, Mod3902015DetailKey.K10_05, b
 							.getRecargoEquivalencia().getTipo05());
-					put(mod390, Mod390DetailKey.K10_14, b
+					put(mod390, Mod3902015DetailKey.K10_14, b
 							.getRecargoEquivalencia().getTipo14());
-					put(mod390, Mod390DetailKey.K10_175, b
+					put(mod390, Mod3902015DetailKey.K10_175, b
 							.getRecargoEquivalencia().getTipo175());
-					put(mod390, Mod390DetailKey.K10_52, b
+					put(mod390, Mod3902015DetailKey.K10_52, b
 							.getRecargoEquivalencia().getTipo52());
 				}
 				if (b.getModRecargoEquivalencia() != null) {
-					put(mod390, Mod390DetailKey.K11, b
+					put(mod390, Mod3902015DetailKey.K11, b
 							.getModRecargoEquivalencia().getTipoX());
 				}
 				if (b.getModRecargoEquivalenciaConcursoAcreedores() != null) {
-					put(mod390, Mod390DetailKey.K12, b
+					put(mod390, Mod3902015DetailKey.K12, b
 							.getModRecargoEquivalenciaConcursoAcreedores()
 							.getTipoX());
 				}
 				if (b.getTotalCuotasIVA() != null) {
-					put(mod390, Mod390DetailKey.K13, b.getTotalCuotasIVA());
+					put(mod390, Mod3902015DetailKey.K13, b.getTotalCuotasIVA());
 				}
 			}
 			if (iva.getRegGeneral().getDeducciones() != null) {
 				Deducciones d = iva.getRegGeneral().getDeducciones();
 				if (d.getOpInterioresBienesServiciosCorrientes() != null) {
-					put(mod390, Mod390DetailKey.K14_04, d
+					put(mod390, Mod3902015DetailKey.K14_04, d
 							.getOpInterioresBienesServiciosCorrientes()
 							.getTipo4());
-					put(mod390, Mod390DetailKey.K14_07, d
+					put(mod390, Mod3902015DetailKey.K14_07, d
 							.getOpInterioresBienesServiciosCorrientes()
 							.getTipo7());
-					put(mod390, Mod390DetailKey.K14_08, d
+					put(mod390, Mod3902015DetailKey.K14_08, d
 							.getOpInterioresBienesServiciosCorrientes()
 							.getTipo8());
-					put(mod390, Mod390DetailKey.K14_10, d
+					put(mod390, Mod3902015DetailKey.K14_10, d
 							.getOpInterioresBienesServiciosCorrientes()
 							.getTipo10());
-					put(mod390, Mod390DetailKey.K14_16, d
+					put(mod390, Mod3902015DetailKey.K14_16, d
 							.getOpInterioresBienesServiciosCorrientes()
 							.getTipo16());
-					put(mod390, Mod390DetailKey.K14_18, d
+					put(mod390, Mod3902015DetailKey.K14_18, d
 							.getOpInterioresBienesServiciosCorrientes()
 							.getTipo18());
-					put(mod390, Mod390DetailKey.K14_21, d
+					put(mod390, Mod3902015DetailKey.K14_21, d
 							.getOpInterioresBienesServiciosCorrientes()
 							.getTipo21());
 				}
 				if (d.getOpIntragrupoCorrientes() != null) {
-					put(mod390, Mod390DetailKey.K16_04, d
+					put(mod390, Mod3902015DetailKey.K16_04, d
 							.getOpIntragrupoCorrientes().getTipo4());
-					put(mod390, Mod390DetailKey.K16_07, d
+					put(mod390, Mod3902015DetailKey.K16_07, d
 							.getOpIntragrupoCorrientes().getTipo7());
-					put(mod390, Mod390DetailKey.K16_08, d
+					put(mod390, Mod3902015DetailKey.K16_08, d
 							.getOpIntragrupoCorrientes().getTipo8());
-					put(mod390, Mod390DetailKey.K16_10, d
+					put(mod390, Mod3902015DetailKey.K16_10, d
 							.getOpIntragrupoCorrientes().getTipo10());
-					put(mod390, Mod390DetailKey.K16_16, d
+					put(mod390, Mod3902015DetailKey.K16_16, d
 							.getOpIntragrupoCorrientes().getTipo16());
-					put(mod390, Mod390DetailKey.K16_18, d
+					put(mod390, Mod3902015DetailKey.K16_18, d
 							.getOpIntragrupoCorrientes().getTipo18());
-					put(mod390, Mod390DetailKey.K16_21, d
+					put(mod390, Mod3902015DetailKey.K16_21, d
 							.getOpIntragrupoCorrientes().getTipo21());
 				}
 				if (d.getOpInterioresBienesInversion() != null) {
-					put(mod390, Mod390DetailKey.K18_04, d
+					put(mod390, Mod3902015DetailKey.K18_04, d
 							.getOpInterioresBienesInversion().getTipo4());
-					put(mod390, Mod390DetailKey.K18_07, d
+					put(mod390, Mod3902015DetailKey.K18_07, d
 							.getOpInterioresBienesInversion().getTipo7());
-					put(mod390, Mod390DetailKey.K18_08, d
+					put(mod390, Mod3902015DetailKey.K18_08, d
 							.getOpInterioresBienesInversion().getTipo8());
-					put(mod390, Mod390DetailKey.K18_10, d
+					put(mod390, Mod3902015DetailKey.K18_10, d
 							.getOpInterioresBienesInversion().getTipo10());
-					put(mod390, Mod390DetailKey.K18_16, d
+					put(mod390, Mod3902015DetailKey.K18_16, d
 							.getOpInterioresBienesInversion().getTipo16());
-					put(mod390, Mod390DetailKey.K18_18, d
+					put(mod390, Mod3902015DetailKey.K18_18, d
 							.getOpInterioresBienesInversion().getTipo18());
-					put(mod390, Mod390DetailKey.K18_21, d
+					put(mod390, Mod3902015DetailKey.K18_21, d
 							.getOpInterioresBienesInversion().getTipo21());
 				}
 				if (d.getOpIntragrupoBienesInversion() != null) {
-					put(mod390, Mod390DetailKey.K20_04, d
+					put(mod390, Mod3902015DetailKey.K20_04, d
 							.getOpIntragrupoBienesInversion().getTipo4());
-					put(mod390, Mod390DetailKey.K20_07, d
+					put(mod390, Mod3902015DetailKey.K20_07, d
 							.getOpIntragrupoBienesInversion().getTipo7());
-					put(mod390, Mod390DetailKey.K20_08, d
+					put(mod390, Mod3902015DetailKey.K20_08, d
 							.getOpIntragrupoBienesInversion().getTipo8());
-					put(mod390, Mod390DetailKey.K20_10, d
+					put(mod390, Mod3902015DetailKey.K20_10, d
 							.getOpIntragrupoBienesInversion().getTipo10());
-					put(mod390, Mod390DetailKey.K20_16, d
+					put(mod390, Mod3902015DetailKey.K20_16, d
 							.getOpIntragrupoBienesInversion().getTipo16());
-					put(mod390, Mod390DetailKey.K20_18, d
+					put(mod390, Mod3902015DetailKey.K20_18, d
 							.getOpIntragrupoBienesInversion().getTipo18());
-					put(mod390, Mod390DetailKey.K20_21, d
+					put(mod390, Mod3902015DetailKey.K20_21, d
 							.getOpIntragrupoBienesInversion().getTipo21());
 				}
 				if (d.getImportacionesBienesCorrientes() != null) {
-					put(mod390, Mod390DetailKey.K22_04, d
+					put(mod390, Mod3902015DetailKey.K22_04, d
 							.getImportacionesBienesCorrientes().getTipo4());
-					put(mod390, Mod390DetailKey.K22_07, d
+					put(mod390, Mod3902015DetailKey.K22_07, d
 							.getImportacionesBienesCorrientes().getTipo7());
-					put(mod390, Mod390DetailKey.K22_08, d
+					put(mod390, Mod3902015DetailKey.K22_08, d
 							.getImportacionesBienesCorrientes().getTipo8());
-					put(mod390, Mod390DetailKey.K22_10, d
+					put(mod390, Mod3902015DetailKey.K22_10, d
 							.getImportacionesBienesCorrientes().getTipo10());
-					put(mod390, Mod390DetailKey.K22_16, d
+					put(mod390, Mod3902015DetailKey.K22_16, d
 							.getImportacionesBienesCorrientes().getTipo16());
-					put(mod390, Mod390DetailKey.K22_18, d
+					put(mod390, Mod3902015DetailKey.K22_18, d
 							.getImportacionesBienesCorrientes().getTipo18());
-					put(mod390, Mod390DetailKey.K22_21, d
+					put(mod390, Mod3902015DetailKey.K22_21, d
 							.getImportacionesBienesCorrientes().getTipo21());
 				}
 				if (d.getImportacionesBienesInversion() != null) {
-					put(mod390, Mod390DetailKey.K24_04, d
+					put(mod390, Mod3902015DetailKey.K24_04, d
 							.getImportacionesBienesInversion().getTipo4());
-					put(mod390, Mod390DetailKey.K24_07, d
+					put(mod390, Mod3902015DetailKey.K24_07, d
 							.getImportacionesBienesInversion().getTipo7());
-					put(mod390, Mod390DetailKey.K24_08, d
+					put(mod390, Mod3902015DetailKey.K24_08, d
 							.getImportacionesBienesInversion().getTipo8());
-					put(mod390, Mod390DetailKey.K24_10, d
+					put(mod390, Mod3902015DetailKey.K24_10, d
 							.getImportacionesBienesInversion().getTipo10());
-					put(mod390, Mod390DetailKey.K24_16, d
+					put(mod390, Mod3902015DetailKey.K24_16, d
 							.getImportacionesBienesInversion().getTipo16());
-					put(mod390, Mod390DetailKey.K24_18, d
+					put(mod390, Mod3902015DetailKey.K24_18, d
 							.getImportacionesBienesInversion().getTipo18());
-					put(mod390, Mod390DetailKey.K24_21, d
+					put(mod390, Mod3902015DetailKey.K24_21, d
 							.getImportacionesBienesInversion().getTipo21());
 				}
 				if (d.getAdqIntracomunitariasBienesCorrientes() != null) {
-					put(mod390, Mod390DetailKey.K26_04, d
+					put(mod390, Mod3902015DetailKey.K26_04, d
 							.getAdqIntracomunitariasBienesCorrientes()
 							.getTipo4());
-					put(mod390, Mod390DetailKey.K26_07, d
+					put(mod390, Mod3902015DetailKey.K26_07, d
 							.getAdqIntracomunitariasBienesCorrientes()
 							.getTipo7());
-					put(mod390, Mod390DetailKey.K26_08, d
+					put(mod390, Mod3902015DetailKey.K26_08, d
 							.getAdqIntracomunitariasBienesCorrientes()
 							.getTipo8());
-					put(mod390, Mod390DetailKey.K26_10, d
+					put(mod390, Mod3902015DetailKey.K26_10, d
 							.getAdqIntracomunitariasBienesCorrientes()
 							.getTipo10());
-					put(mod390, Mod390DetailKey.K26_16, d
+					put(mod390, Mod3902015DetailKey.K26_16, d
 							.getAdqIntracomunitariasBienesCorrientes()
 							.getTipo16());
-					put(mod390, Mod390DetailKey.K26_18, d
+					put(mod390, Mod3902015DetailKey.K26_18, d
 							.getAdqIntracomunitariasBienesCorrientes()
 							.getTipo18());
-					put(mod390, Mod390DetailKey.K26_21, d
+					put(mod390, Mod3902015DetailKey.K26_21, d
 							.getAdqIntracomunitariasBienesCorrientes()
 							.getTipo21());
 				}
 				if (d.getAdqIntracomunitariasBienesInversion() != null) {
-					put(mod390, Mod390DetailKey.K28_04, d
+					put(mod390, Mod3902015DetailKey.K28_04, d
 							.getAdqIntracomunitariasBienesInversion()
 							.getTipo4());
-					put(mod390, Mod390DetailKey.K28_07, d
+					put(mod390, Mod3902015DetailKey.K28_07, d
 							.getAdqIntracomunitariasBienesInversion()
 							.getTipo7());
-					put(mod390, Mod390DetailKey.K28_08, d
+					put(mod390, Mod3902015DetailKey.K28_08, d
 							.getAdqIntracomunitariasBienesInversion()
 							.getTipo8());
-					put(mod390, Mod390DetailKey.K28_10, d
+					put(mod390, Mod3902015DetailKey.K28_10, d
 							.getAdqIntracomunitariasBienesInversion()
 							.getTipo10());
-					put(mod390, Mod390DetailKey.K28_16, d
+					put(mod390, Mod3902015DetailKey.K28_16, d
 							.getAdqIntracomunitariasBienesInversion()
 							.getTipo16());
-					put(mod390, Mod390DetailKey.K28_18, d
+					put(mod390, Mod3902015DetailKey.K28_18, d
 							.getAdqIntracomunitariasBienesInversion()
 							.getTipo18());
-					put(mod390, Mod390DetailKey.K28_21, d
+					put(mod390, Mod3902015DetailKey.K28_21, d
 							.getAdqIntracomunitariasBienesInversion()
 							.getTipo21());
 				}
 				if (d.getAdqIntracomunitariasServicios() != null) {
-					put(mod390, Mod390DetailKey.K30_04, d
+					put(mod390, Mod3902015DetailKey.K30_04, d
 							.getAdqIntracomunitariasServicios().getTipo4());
-					put(mod390, Mod390DetailKey.K30_07, d
+					put(mod390, Mod3902015DetailKey.K30_07, d
 							.getAdqIntracomunitariasServicios().getTipo7());
-					put(mod390, Mod390DetailKey.K30_08, d
+					put(mod390, Mod3902015DetailKey.K30_08, d
 							.getAdqIntracomunitariasServicios().getTipo8());
-					put(mod390, Mod390DetailKey.K30_10, d
+					put(mod390, Mod3902015DetailKey.K30_10, d
 							.getAdqIntracomunitariasServicios().getTipo10());
-					put(mod390, Mod390DetailKey.K30_16, d
+					put(mod390, Mod3902015DetailKey.K30_16, d
 							.getAdqIntracomunitariasServicios().getTipo16());
-					put(mod390, Mod390DetailKey.K30_18, d
+					put(mod390, Mod3902015DetailKey.K30_18, d
 							.getAdqIntracomunitariasServicios().getTipo18());
-					put(mod390, Mod390DetailKey.K30_21, d
+					put(mod390, Mod3902015DetailKey.K30_21, d
 							.getAdqIntracomunitariasServicios().getTipo21());
 				}
 				if (d.getComRegAgricGanadPesca() != null) {
-					put(mod390, Mod390DetailKey.K32, d
+					put(mod390, Mod3902015DetailKey.K32, d
 							.getComRegAgricGanadPesca().getTipoX());
 				}
 				if (d.getRectifDeducciones() != null) {
-					put(mod390, Mod390DetailKey.K33, d.getRectifDeducciones()
+					put(mod390, Mod3902015DetailKey.K33, d.getRectifDeducciones()
 							.getTipoX());
 				}
 				if (d.getRegularizInversiones() != null) {
-					put(mod390, Mod390DetailKey.K34,
+					put(mod390, Mod3902015DetailKey.K34,
 							d.getRegularizInversiones());
 				}
 				if (d.getRegularizPorcProrrata() != null) {
-					put(mod390, Mod390DetailKey.K35,
+					put(mod390, Mod3902015DetailKey.K35,
 							d.getRegularizPorcProrrata());
 				}
 				if (d.getSumDeducciones() != null) {
-					put(mod390, Mod390DetailKey.K36, d.getSumDeducciones());
+					put(mod390, Mod3902015DetailKey.K36, d.getSumDeducciones());
 				}
 
 			}
@@ -462,7 +462,7 @@ public class AEATIVA2015toMod390 {
 			if (AonStringUtils.isNotEmpty(res)) {
 				try {
 					double val = Double.parseDouble(res);
-					put(mod390, Mod390DetailKey.K37, new BigDecimal(val));
+					put(mod390, Mod3902015DetailKey.K37, new BigDecimal(val));
 				} catch (NumberFormatException e) {
 					// Nothing
 				}
@@ -709,7 +709,7 @@ public class AEATIVA2015toMod390 {
 		return sra;
 	}
 
-	private static void put(Mod3902015 mod390, Mod390DetailKey key,
+	private static void put(Mod3902015 mod390, Mod3902015DetailKey key,
 			TipoBaseImponibleYCuota tipo) {
 		if (tipo != null) {
 			Mod390Detail detail = new Mod390Detail();
@@ -726,7 +726,7 @@ public class AEATIVA2015toMod390 {
 
 	}
 
-	private static void put(Mod3902015 mod390, Mod390DetailKey key, BigDecimal quota) {
+	private static void put(Mod3902015 mod390, Mod3902015DetailKey key, BigDecimal quota) {
 		if (quota != null) {
 			Mod390Detail detail = new Mod390Detail();
 			detail.setKey(key);

@@ -26,6 +26,12 @@ public class Page11 extends ResizeComposite implements RequiresResize , IMod3902
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public void refresh(Mod3902015 m390) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	public void populate(Mod3902015 mod390) {
 		// TODO Auto-generated method stub
@@ -34,5 +40,6 @@ public class Page11 extends ResizeComposite implements RequiresResize , IMod3902
 	public void setCallback(IMod3902015CallBack callback) {
 		this.callback = callback;
 	}
+
 	
 }

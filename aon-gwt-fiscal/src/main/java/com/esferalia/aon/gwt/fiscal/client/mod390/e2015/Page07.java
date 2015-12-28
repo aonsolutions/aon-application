@@ -43,6 +43,7 @@ public class Page07 extends ResizeComposite implements RequiresResize , IMod3902
 		initWidget(ui);
 	}
 
+	@Override
 	public void setValue(Mod3902015 m390) {
 		box95.setValue(m390.getBox95());
 		box96.setValue(m390.getBox96());
@@ -53,6 +54,7 @@ public class Page07 extends ResizeComposite implements RequiresResize , IMod3902
 		box526.setValue(m390.getBox526());
 	}
 
+	@Override
 	public void populate(Mod3902015 mod390) {
 		mod390.setBox95(box95.getValue());
 		mod390.setBox96(box96.getValue());
@@ -63,8 +65,13 @@ public class Page07 extends ResizeComposite implements RequiresResize , IMod3902
 		mod390.setBox526(box526.getValue());
 	}
 
+	@Override
 	public void setCallback(IMod3902015CallBack callback) {
 		this.callback = callback;
 	}
 	
+	@Override
+	public void refresh(Mod3902015 m390) {
+		setValue(m390);
+	}
 }
