@@ -14,8 +14,8 @@ public class AonFiscalFileUtils {
 	private static char[] SEEK= new char[]{'á','é','í','ó','ú','Á','É','Í','Ó','Ú','º','ª'};
 	private static char[] ALTER = new char[]{'a','e','i','o','u','A','E','I','O','U',' ',' '};
 
-	private static final SimpleDateFormat DATE_FORMAT = 
-			new SimpleDateFormat("yyyyMMdd");
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
+	private static final SimpleDateFormat DATE_FORMAT_ES = new SimpleDateFormat("ddMMyyyy");
 	
 	private static final String AEAT_MARK = "X";
 
@@ -47,13 +47,17 @@ public class AonFiscalFileUtils {
 	}
 
 	public static String date(Date date) {
-		return date == null ? AonStringUtils.repeat(' ', 8) : DATE_FORMAT
-				.format(date);
+		return date == null ? AonStringUtils.repeat(' ', 8) : DATE_FORMAT.format(date);
+	}
+	public static String dateES(Date date) {
+		return date == null ? AonStringUtils.repeat(' ', 8) : DATE_FORMAT_ES.format(date);
 	}
 	
 	public static String dateZero(Date date) {
-		return date == null ? AonStringUtils.repeat('0', 8) : DATE_FORMAT
-				.format(date);
+		return date == null ? AonStringUtils.repeat('0', 8) : DATE_FORMAT.format(date);
+	}
+	public static String dateZeroES(Date date) {
+		return date == null ? AonStringUtils.repeat('0', 8) : DATE_FORMAT_ES.format(date);
 	}
 	
 	public static String signedZero(Double value, int size) {
@@ -191,6 +195,6 @@ public class AonFiscalFileUtils {
 				name = p.getName();
 			}
 		}
-		return text(name,size);
+		return text(changeInvalidCharacters(name),size);
 	}
 }

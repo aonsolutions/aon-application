@@ -1,13 +1,13 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390.e2015;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.CnaePanel;
+import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel;
 import com.esferalia.aon.gwt.common.client.widget.cell.SizableTextInputCell;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015CallBack;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015Page;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.Prorrata;
-import com.esferalia.aon.occam.api.model.type.CNAE;
+import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
@@ -88,7 +88,7 @@ public class Page10 extends ResizeComposite implements RequiresResize , IMod3902
 
 	IMod3902015CallBack cbk;
 	
-	private CnaePanel cnaePanel;
+	private Cnae2009Panel cnaePanel;
 	
 	private ListDataProvider<Prorrata> dataProvider;
 	@UiField(provided = true)
@@ -98,7 +98,7 @@ public class Page10 extends ResizeComposite implements RequiresResize , IMod3902
 	Button newProrrata;
 	
 	public Page10() {
-		cnaePanel = new CnaePanel();
+		cnaePanel = new Cnae2009Panel();
 
 		table = new CellTable<Prorrata>(50, AON.AON_CELL_TABLE_STYLE);
 		table.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
@@ -136,9 +136,9 @@ public class Page10 extends ResizeComposite implements RequiresResize , IMod3902
 		};
 		col.setFieldUpdater(new FieldUpdater<Prorrata, String>() {
 		    public void update(int index, final Prorrata pro, String value) {
-		    	cnaePanel = new CnaePanel( new CnaePanel.SelectionCallBack() {
+		    	cnaePanel = new Cnae2009Panel( new Cnae2009Panel.SelectionCallBack() {
 					@Override
-					public void onSelect(CNAE selected) {
+					public void onSelect(CNAE2009 selected) {
 						pro.setCnae( selected.getCode());
 						pro.setActivity( selected.getDescription());
 						table.redraw();

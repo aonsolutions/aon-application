@@ -455,6 +455,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Imprimir via AEAT")
 	String printViaAeat();
 
+	@DefaultMessage("Validar / Borrador / Predeclaraci\u00F3n")
+	String predeclaration();
+
 	@DefaultMessage("Imprimir")
 	String print();
 

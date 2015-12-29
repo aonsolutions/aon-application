@@ -34,10 +34,10 @@
 										styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconCancel}" />
 									<g:Button ui:field="deleteButton" text="{msg.deleteAction}" 
 										styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconDelete}" />
-									<g:Button ui:field="printButton" text="{msg.printViaAeat}"
-										styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconPdfPreview}" />
+									<g:Button ui:field="printButton" text="{msg.predeclaration}"
+										styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconAeat}" />
 									<g:Button ui:field="generateFileButton" text="{msg.generateFile}"
-										styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconAeat}"  />
+										styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconAeatBW}"  />
 									<g:Anchor ui:field="download" visible="false"/>							
 									<g:FlowPanel ui:field="formContainer"/>
 								</g:FlowPanel>
