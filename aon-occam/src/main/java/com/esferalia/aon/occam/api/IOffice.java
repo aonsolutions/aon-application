@@ -7,9 +7,12 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 
 public interface IOffice {
 	
+	public Notice addNewNotice (AONContext ctx, Notice notice) throws IllegalArgumentException;	
 	public List<Notice> getOpenNotices (AONContext ctx) throws IllegalArgumentException;
 	public List<Notice> getClosedNotices (AONContext ctx) throws IllegalArgumentException;
 	public List<Notice> getAllIssues (AONContext ctx) throws IllegalArgumentException;
+	public void deleteNotice (AONContext ctx, Notice notice);
+	public void deleteTag (AONContext ctx, Tag tag);
 	public Tag addNewTag (AONContext ctx, Tag tag) throws IllegalArgumentException;
 	public List<Tag> getTags (AONContext ctx) throws IllegalArgumentException;
 

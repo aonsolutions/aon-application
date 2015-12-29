@@ -39,4 +39,20 @@ public class OfficeImpl implements IOffice {
 		return AonHubDAO.getTags(ctx);
 	}
 
+	@Override
+	public Notice addNewNotice(AONContext ctx, Notice notice)
+			throws IllegalArgumentException {		
+		return AonHubDAO.addNewNotice(ctx, notice);
+	}
+
+	@Override
+	public void deleteNotice(AONContext ctx, Notice notice) {
+		AonHubDAO.deleteNotice(ctx, notice);
+	}
+	
+	@Override
+	public void deleteTag(AONContext ctx, Tag tag) {
+		AonHubDAO.deleteTag(ctx, tag);
+	}
+
 }

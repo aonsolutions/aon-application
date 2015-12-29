@@ -33,22 +33,20 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
+import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
-import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
-import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachQueryProperties;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.callcenter.Issue;
-import com.esferalia.aon.occam.api.model.callcenter.IssueComment;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -68,7 +66,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
@@ -103,7 +100,6 @@ import com.esferalia.aon.occam.impl.jooq.CommonImpl;
 import com.esferalia.aon.occam.impl.jooq.FeeImpl;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
 import com.esferalia.aon.occam.impl.jooq.FiscalImpl;
-import com.esferalia.aon.occam.impl.jooq.GroupwareImpl;
 import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
 import com.esferalia.aon.occam.impl.jooq.MarketplaceImpl;
 import com.esferalia.aon.occam.impl.jooq.OfficeImpl;
@@ -166,10 +162,6 @@ public class AON {
 
 	private static IOffice getOffice() {
 		return new OfficeImpl();
-	}
-
-	private static IGroupware getGroupware() {
-		return new GroupwareImpl();
 	}
 
 	private static IAttachment getAttachment() {
@@ -1958,46 +1950,6 @@ public class AON {
 			return getOffice().getTags(ctx);
 		} finally {
 			if ( ctx != null )
-				ctx.close();
-		}
-	}
-
-	// ********************************************
-	// ****************************** CALLCENTER **
-	// ********************************************
-
-	public static ArrayList<Issue> getOpenIssues(String domainName, int domain,
-			String subject) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain);
-			return getGroupware().getOpenIssues(ctx, domain, subject);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static ArrayList<Issue> getClosedIssues(String domainName,
-			int domain, String subject) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain);
-			return getGroupware().getClosedIssues(ctx, domain, subject);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static ArrayList<IssueComment> getIssueComments(String domainName,
-			int domain, int issue) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain);
-			return getGroupware().getIssueComments(ctx, issue);
-		} finally {
-			if (ctx != null)
 				ctx.close();
 		}
 	}

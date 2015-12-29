@@ -24,13 +24,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
@@ -53,15 +47,6 @@ public class Office extends Composite implements EntryPoint,
 
 	interface OfficeUiBinder extends UiBinder<Widget, Office> {
 	}
-
-	private static final String OFFICE_SERVET_URL = GWT.getModuleBaseURL()
-			+ "OfficeSerlvet";
-	private static final String GET_REGISTRIES_SERVLET_URL = GWT
-			.getModuleBaseURL() + "GetRegistriesServlet";
-	private static final String NEW_NOTICE_SERVLET_URL = GWT.getModuleBaseURL()
-			+ "NewNoticeServlet";
-	private static final String NEW_TAG_SERVLET_URL = GWT.getModuleBaseURL()
-			+ "NewTagServlet";
 
 	@UiField
 	DeckLayoutPanel deckPanel;
@@ -143,69 +128,10 @@ public class Office extends Composite implements EntryPoint,
 	}
 
 	private void loadUsersWorking() {
-		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
-				GET_REGISTRIES_SERVLET_URL);
-
-		try {
-			builder.sendRequest(null, new RequestCallback() {
-
-				@Override
-				public void onResponseReceived(Request request,
-						Response response) {
-					if (200 == response.getStatusCode()) {
-
-						try {
-							userWorkgroups = JsonUtils.safeEval(response
-									.getText());
-						} catch (Exception ex) {
-							Window.alert("Exception: " + ex.getMessage());
-						}
-
-					} else {
-						Window.alert("Else: " + response.getText());
-					}
-				}
-
-				@Override
-				public void onError(Request request, Throwable exception) {
-					Window.alert("On Error: " + exception.getMessage());
-
-				}
-			});
-		} catch (RequestException ex) {
-			Window.alert("RequestException: " + ex.getMessage());
-		}
 	}
 
 	private void loadNotices() {
 
-		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
-				OFFICE_SERVET_URL);
-
-		try {
-			builder.sendRequest(null, new RequestCallback() {
-
-				@Override
-				public void onResponseReceived(Request request,
-						Response response) {
-					if (200 == response.getStatusCode()) {
-						JsArray<JsIssue> issues = eval(response.getText());
-						loadNotices(issues);
-
-					} else {
-						Window.alert(response.getText());
-					}
-				}
-
-				@Override
-				public void onError(Request request, Throwable exception) {
-					Window.alert("On Error: " + exception.getMessage());
-				}
-			});
-
-		} catch (RequestException ex) {
-			Window.alert("RequestException: " + ex.getMessage());
-		}
 	}
 
 	private void loadNotices(JsArray<JsIssue> notices) {
@@ -454,21 +380,6 @@ public class Office extends Composite implements EntryPoint,
 			com.esferalia.aon.gwt.office.client.values.issues.IssueValue issueValue) {
 		// createAnIssue(repo, issueValue);
 
-		gitHub.saveNotice(NEW_NOTICE_SERVLET_URL, issueValue,
-				new AsyncCallback<JsIssue>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						Window.alert(caught.getMessage() + " "
-								+ caught.getLocalizedMessage());
-					}
-
-					@Override
-					public void onSuccess(JsIssue result) {
-						loadNotices();
-						showDockOfficePanel();
-					}
-				});
 	}
 
 	@Override
@@ -536,24 +447,6 @@ public class Office extends Composite implements EntryPoint,
 	}
 
 	private void loadIssuesList() {
-		gitHub.getIssues("amtzdelagos", "aon-GwtOffice",
-				new AsyncCallback<JSON<JsIssue>>() {
-					@Override
-					public void onSuccess(JSON<JsIssue> result) {
-
-						for (int x = 0; x < result.getData().length(); x++) {
-							JsIssue issue = result.getData().get(x);
-							issuesMap.put(issue.getId(), issue);
-							loadIssueComments(issue);
-						}
-						changeOpenIssuesText(result.getData().length());
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						GWT.log(caught.getMessage());
-					}
-				});
 	}
 
 	private void loadIssueComments(final JsIssue issue) {
