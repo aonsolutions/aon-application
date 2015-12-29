@@ -290,8 +290,7 @@ public class Templates extends Composite implements EntryPoint {
 							
 							@Override
 							public void onSuccess(Integer result) {
-								if(result != null){
-									item.insertProduct(getDomain(),value, new AsyncCallback<Error>() {
+								item.insertProduct(getDomain(),value, new AsyncCallback<Error>() {
 										@Override
 										public void onSuccess(Error result) {
 											pbd.completed();
@@ -317,8 +316,7 @@ public class Templates extends Composite implements EntryPoint {
 											
 										@Override
 										public void onFailure(Throwable caught) {}
-									});
-								}	
+								});
 							}
 						
 							@Override
