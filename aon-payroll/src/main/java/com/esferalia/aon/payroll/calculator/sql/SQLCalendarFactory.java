@@ -12,6 +12,7 @@ import java.util.Map;
 import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.payroll.calculator.LRUCache;
 import com.esferalia.aon.payroll.calculator.LRUCacheFactory;
+import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.CalendarColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.CalendarHolidayColumns;
 
@@ -58,13 +59,19 @@ public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 		+" FROM calendar"
 		+" WHERE id = ? ";
 	
-	private static final String HOLIDAY_SQL = "SELECT * "
+	private static final String _HOLIDAY_SQL = "SELECT * "
 		+" FROM calendar_holiday"
 		+" WHERE calendar = ?"
 		+" AND date <= ? "
 		+" AND date >= ? ";
 	
-	
+	private static final String HOLIDAY_SQL = "SELECT"
+			+" holiday_detail.*"
+			+" FROM  (SELECT *, @pv := (SELECT holiday FROM calendar WHERE id = ?) FROM holiday ORDER BY holiday DESC, id DESC) holiday_sorted"
+			+" LEFT JOIN holiday_detail ON ( holiday_sorted.id = holiday_detail.holiday  AND holiday_detail.date <= ? AND holiday_detail.date >= ? )"
+			+" WHERE FIND_IN_SET(holiday_sorted.id , @pv) > 0"
+			+" AND @pv := CONCAT(@pv,',',IFNULL(holiday_sorted.holiday,''))"
+			;	
 	private PreparedStatement calendarStmt;
 	private PreparedStatement holidayStmt;
 	private LRUCache<Integer, ICalendar> cache;
@@ -152,9 +159,8 @@ public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 			holidayStmt.setInt(1, calendarId );
 			rs = holidayStmt.executeQuery();
 			while ( rs.next() ) {
-				Date day = rs.getDate(CalendarHolidayColumns.DATE);
-				int type = rs.getInt(CalendarHolidayColumns.DAY_TYPE);
-				calendar.add(day, DayType.values()[type]);
+				Date day = rs.getDate(SQLConstants.HolidayDetailColumns.DATE);
+				calendar.add(day, DayType.HOLIDAY);
 			}
 		}
 		finally {
