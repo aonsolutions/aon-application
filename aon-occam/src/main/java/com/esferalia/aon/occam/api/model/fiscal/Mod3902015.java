@@ -11,6 +11,136 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class Mod3902015 implements Serializable {
 
 	private static final String LEGAL_ENTITY_PATTERN = "^[0-9|X|Y|Z].*";
+
+	public static class DeductionRegime implements Serializable {
+		
+		private double base1;
+		private double quota1;
+		private double base2;
+		private double quota2;
+		private double base3;
+		private double quota3;
+		private double base4;
+		private double quota4;
+		private double base5;
+		private double quota5;
+		private double base6;
+		private double quota6;
+		private double base7;
+		private double quota7;
+		private double base8;
+		private double quota8;
+		private double quota9;
+		private double quota10;
+		public double getBase1() {
+			return base1;
+		}
+		public void setBase1(double base1) {
+			this.base1 = base1;
+		}
+		public double getQuota1() {
+			return quota1;
+		}
+		public void setQuota1(double quota1) {
+			this.quota1 = quota1;
+		}
+		public double getBase2() {
+			return base2;
+		}
+		public void setBase2(double base2) {
+			this.base2 = base2;
+		}
+		public double getQuota2() {
+			return quota2;
+		}
+		public void setQuota2(double quota2) {
+			this.quota2 = quota2;
+		}
+		public double getBase3() {
+			return base3;
+		}
+		public void setBase3(double base3) {
+			this.base3 = base3;
+		}
+		public double getQuota3() {
+			return quota3;
+		}
+		public void setQuota3(double quota3) {
+			this.quota3 = quota3;
+		}
+		public double getBase4() {
+			return base4;
+		}
+		public void setBase4(double base4) {
+			this.base4 = base4;
+		}
+		public double getQuota4() {
+			return quota4;
+		}
+		public void setQuota4(double quota4) {
+			this.quota4 = quota4;
+		}
+		public double getBase5() {
+			return base5;
+		}
+		public void setBase5(double base5) {
+			this.base5 = base5;
+		}
+		public double getQuota5() {
+			return quota5;
+		}
+		public void setQuota5(double quota5) {
+			this.quota5 = quota5;
+		}
+		public double getBase6() {
+			return base6;
+		}
+		public void setBase6(double base6) {
+			this.base6 = base6;
+		}
+		public double getQuota6() {
+			return quota6;
+		}
+		public void setQuota6(double quota6) {
+			this.quota6 = quota6;
+		}
+		public double getBase7() {
+			return base7;
+		}
+		public void setBase7(double base7) {
+			this.base7 = base7;
+		}
+		public double getQuota7() {
+			return quota7;
+		}
+		public void setQuota7(double quota7) {
+			this.quota7 = quota7;
+		}
+		public double getBase8() {
+			return base8;
+		}
+		public void setBase8(double base8) {
+			this.base8 = base8;
+		}
+		public double getQuota8() {
+			return quota8;
+		}
+		public void setQuota8(double quota8) {
+			this.quota8 = quota8;
+		}
+		public double getQuota9() {
+			return quota9;
+		}
+		public void setQuota9(double quota9) {
+			this.quota9 = quota9;
+		}
+		public double getQuota10() {
+			return quota10;
+		}
+		public void setQuota10(double quota10) {
+			this.quota10 = quota10;
+		}
+	}
 	
 	public static class SimpliedRegimeActivity implements Serializable {
 
@@ -475,6 +605,10 @@ public class Mod3902015 implements Serializable {
 	private double box657;
 	
 	private ArrayList<Prorrata> prorratas = new ArrayList<Mod3902015.Prorrata>();
+	
+	private DeductionRegime regime1;
+	private DeductionRegime regime2;
+	private DeductionRegime regime3;
 	
 	public Integer getId() {
 		return id;
@@ -1146,6 +1280,25 @@ public class Mod3902015 implements Serializable {
 	
 	public Prorrata getProrrata(int index) {
 		return (prorratas!=null && index < prorratas.size()) ? prorratas.get(index) :null;
+	}
+	
+	public DeductionRegime getRegime1() {
+		return regime1;
+	}
+	public void setRegime1(DeductionRegime regime1) {
+		this.regime1 = regime1;
+	}
+	public DeductionRegime getRegime2() {
+		return regime2;
+	}
+	public void setRegime2(DeductionRegime regime2) {
+		this.regime2 = regime2;
+	}
+	public DeductionRegime getRegime3() {
+		return regime3;
+	}
+	public void setRegime3(DeductionRegime regime3) {
+		this.regime3 = regime3;
 	}
 
 	private static final Mod3902015DetailKey[] K09_FORMULA = new Mod3902015DetailKey[]{ Mod3902015DetailKey.K00_04

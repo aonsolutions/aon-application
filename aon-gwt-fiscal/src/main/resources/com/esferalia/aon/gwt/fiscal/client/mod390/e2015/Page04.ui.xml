@@ -183,7 +183,7 @@
 					</tr>
 					<tr>
 						<td>
-							<g:Label text="{msg.box81Msg}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+							<g:Label text="{msg.investAssetRegularization}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
 						</td>
 						<td>
 							<aon:BoxLabel text="81"/>
@@ -194,7 +194,7 @@
 					</tr>
 					<tr>
 						<td>
-							<g:Label text="{msg.box82Msg}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+							<g:Label text="{msg.deductionSum}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
 						</td>
 						<td>
 							<aon:BoxLabel text="82"/>

@@ -547,6 +547,71 @@ public class Mod3902015Writer {
 		   ,(wr,m390) -> wr.append(AonStringUtils.repeat(' ', 150))
 		   ,(wr,m390) -> wr.append("</T39007000>")
 		})
+		
+		,PAGE_8 (new IPropertyFiller[] { 
+			(wr,m390) -> wr.append("<T39008000>")
+		   ,(wr,m390) -> wr.append(" ")
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime1()==null?0.0:m390.getRegime1().getBase1(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime1()==null?0.0:m390.getRegime1().getQuota1(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime1()==null?0.0:m390.getRegime1().getBase2(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime1()==null?0.0:m390.getRegime1().getQuota2(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime1()==null?0.0:m390.getRegime1().getBase3(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime1()==null?0.0:m390.getRegime1().getQuota3(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime1()==null?0.0:m390.getRegime1().getBase4(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime1()==null?0.0:m390.getRegime1().getQuota4(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime1()==null?0.0:m390.getRegime1().getBase5(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime1()==null?0.0:m390.getRegime1().getQuota5(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime1()==null?0.0:m390.getRegime1().getBase6(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime1()==null?0.0:m390.getRegime1().getQuota6(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime1()==null?0.0:m390.getRegime1().getBase7(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime1()==null?0.0:m390.getRegime1().getQuota7(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime1()==null?0.0:m390.getRegime1().getBase8(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime1()==null?0.0:m390.getRegime1().getQuota8(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime1()==null?0.0:m390.getRegime1().getQuota9(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime1()==null?0.0:m390.getRegime1().getQuota10(),17,2))
+		   
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime2()==null?0.0:m390.getRegime2().getBase1(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime2()==null?0.0:m390.getRegime2().getQuota1(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime2()==null?0.0:m390.getRegime2().getBase2(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime2()==null?0.0:m390.getRegime2().getQuota2(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime2()==null?0.0:m390.getRegime2().getBase3(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime2()==null?0.0:m390.getRegime2().getQuota3(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime2()==null?0.0:m390.getRegime2().getBase4(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime2()==null?0.0:m390.getRegime2().getQuota4(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime2()==null?0.0:m390.getRegime2().getBase5(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime2()==null?0.0:m390.getRegime2().getQuota5(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime2()==null?0.0:m390.getRegime2().getBase6(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime2()==null?0.0:m390.getRegime2().getQuota6(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime2()==null?0.0:m390.getRegime2().getBase7(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime2()==null?0.0:m390.getRegime2().getQuota7(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime2()==null?0.0:m390.getRegime2().getBase8(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime2()==null?0.0:m390.getRegime2().getQuota8(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime2()==null?0.0:m390.getRegime2().getQuota9(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime2()==null?0.0:m390.getRegime2().getQuota10(),17,2))
+		   
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime3()==null?0.0:m390.getRegime3().getBase1(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime3()==null?0.0:m390.getRegime3().getQuota1(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime3()==null?0.0:m390.getRegime3().getBase2(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime3()==null?0.0:m390.getRegime3().getQuota2(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime3()==null?0.0:m390.getRegime3().getBase3(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime3()==null?0.0:m390.getRegime3().getQuota3(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime3()==null?0.0:m390.getRegime3().getBase4(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime3()==null?0.0:m390.getRegime3().getQuota4(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime3()==null?0.0:m390.getRegime3().getBase5(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime3()==null?0.0:m390.getRegime3().getQuota5(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime3()==null?0.0:m390.getRegime3().getBase6(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime3()==null?0.0:m390.getRegime3().getQuota6(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime3()==null?0.0:m390.getRegime3().getBase7(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime3()==null?0.0:m390.getRegime3().getQuota7(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime3()==null?0.0:m390.getRegime3().getBase8(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime3()==null?0.0:m390.getRegime3().getQuota8(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime3()==null?0.0:m390.getRegime3().getQuota9(),17,2))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getRegime3()==null?0.0:m390.getRegime3().getQuota10(),17,2))
+		   
+		   
+		   ,(wr,m390) -> wr.append(AonStringUtils.repeat(' ', 150))
+		   ,(wr,m390) -> wr.append("</T39008000>")
+		})
 			   
 		,END (new IPropertyFiller[] { 
 			(wr,m390) -> wr.append("</T")
@@ -582,6 +647,7 @@ public class Mod3902015Writer {
 		Mod390File2015.PAGE_5.fillPage(m390,wr);
 		Mod390File2015.PAGE_6.fillPage(m390,wr);
 		Mod390File2015.PAGE_7.fillPage(m390,wr);
+		Mod390File2015.PAGE_8.fillPage(m390,wr);
 		Mod390File2015.END.fillPage(m390,wr);
 		wr.flush();
 	}

@@ -298,7 +298,7 @@ public class Model3902015 extends ResizeComposite implements IModel390 {
 						@Override
 						public void onFailure(Throwable caught) {
 							popup.hide();
-							showErrorMessage(AON.MSG.unableToSaveMod190(caught.getMessage()));
+							showErrorMessage(AON.MSG.unableToSaveMod390(caught.getMessage()));
 						}
 					});
 		} catch (IllegalArgumentException e) {

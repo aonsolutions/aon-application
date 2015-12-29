@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Address;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.DeductionRegime;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.FarmerRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.Prorrata;
@@ -644,12 +645,140 @@ public class AEATIVA2015toMod390 {
 			}
 		}
 		
-		// TODO
-		// iva.ivaDeducibleGrupo1
-		// TODO
-		// iva.ivaDeducibleGrupo2
-		// TODO
-		// iva.ivaDeducibleGrupo3
+		if (iva.getIVADeducibleGrupo1() != null) {
+			DeductionRegime regime = new DeductionRegime();
+			mod390.setRegime1(regime);
+			if (iva.getIVADeducibleGrupo1().getOpInteriores() != null) {
+				if (iva.getIVADeducibleGrupo1().getOpInteriores().getBienesyServiciosCorrientes() != null) {
+					regime.setBase1(ensureBigDecimal(iva.getIVADeducibleGrupo1().getOpInteriores().getBienesyServiciosCorrientes().getBI()));
+					regime.setQuota1(ensureBigDecimal(iva.getIVADeducibleGrupo1().getOpInteriores().getBienesyServiciosCorrientes().getCuota()));
+				}
+				if (iva.getIVADeducibleGrupo1().getOpInteriores().getBienesInversion() != null) {
+					regime.setBase2(ensureBigDecimal(iva.getIVADeducibleGrupo1().getOpInteriores().getBienesInversion().getBI()));
+					regime.setQuota2(ensureBigDecimal(iva.getIVADeducibleGrupo1().getOpInteriores().getBienesInversion().getCuota()));
+				}
+			}
+			if (iva.getIVADeducibleGrupo1().getImportaciones() != null) {
+				if (iva.getIVADeducibleGrupo1().getImportaciones().getBienesCorrientes() != null) {
+					regime.setBase3(ensureBigDecimal(iva.getIVADeducibleGrupo1().getImportaciones().getBienesCorrientes().getBI()));
+					regime.setQuota3(ensureBigDecimal(iva.getIVADeducibleGrupo1().getImportaciones().getBienesCorrientes().getCuota()));
+				}
+				if (iva.getIVADeducibleGrupo1().getImportaciones().getBienesInversion() != null) {
+					regime.setBase4(ensureBigDecimal(iva.getIVADeducibleGrupo1().getImportaciones().getBienesInversion().getBI()));
+					regime.setQuota4(ensureBigDecimal(iva.getIVADeducibleGrupo1().getImportaciones().getBienesInversion().getCuota()));
+				}
+			}
+			if (iva.getIVADeducibleGrupo1().getAdqIntracomunitarias() != null) {
+				if (iva.getIVADeducibleGrupo1().getAdqIntracomunitarias().getBienesCorrientes() != null) {
+					regime.setBase5(ensureBigDecimal(iva.getIVADeducibleGrupo1().getAdqIntracomunitarias().getBienesCorrientes().getBI()));
+					regime.setQuota5(ensureBigDecimal(iva.getIVADeducibleGrupo1().getAdqIntracomunitarias().getBienesCorrientes().getCuota()));
+				}
+				if (iva.getIVADeducibleGrupo1().getAdqIntracomunitarias().getBienesInversion() != null) {
+					regime.setBase6(ensureBigDecimal(iva.getIVADeducibleGrupo1().getAdqIntracomunitarias().getBienesInversion().getBI()));
+					regime.setQuota6(ensureBigDecimal(iva.getIVADeducibleGrupo1().getAdqIntracomunitarias().getBienesInversion().getCuota()));
+				}
+			}
+			if (iva.getIVADeducibleGrupo1().getCompRegEspAgricGanadPesca() != null) {
+				regime.setBase7(ensureBigDecimal(iva.getIVADeducibleGrupo1().getCompRegEspAgricGanadPesca().getBI()));
+				regime.setQuota7(ensureBigDecimal(iva.getIVADeducibleGrupo1().getCompRegEspAgricGanadPesca().getCuota()));
+			}
+			if (iva.getIVADeducibleGrupo1().getRectDeducciones() != null) {
+				regime.setBase8(ensureBigDecimal(iva.getIVADeducibleGrupo1().getRectDeducciones().getBI()));
+				regime.setQuota8(ensureBigDecimal(iva.getIVADeducibleGrupo1().getRectDeducciones().getCuota()));
+			}
+			regime.setQuota9(ensureBigDecimal(iva.getIVADeducibleGrupo1().getRegInversiones()));
+			regime.setQuota10(ensureBigDecimal(iva.getIVADeducibleGrupo1().getSumaDeducciones()));
+		}
+
+		if (iva.getIVADeducibleGrupo2() != null) {
+			DeductionRegime regime = new DeductionRegime();
+			mod390.setRegime2(regime);
+			if (iva.getIVADeducibleGrupo2().getOpInteriores() != null) {
+				if (iva.getIVADeducibleGrupo2().getOpInteriores().getBienesyServiciosCorrientes() != null) {
+					regime.setBase1(ensureBigDecimal(iva.getIVADeducibleGrupo2().getOpInteriores().getBienesyServiciosCorrientes().getBI()));
+					regime.setQuota1(ensureBigDecimal(iva.getIVADeducibleGrupo2().getOpInteriores().getBienesyServiciosCorrientes().getCuota()));
+				}
+				if (iva.getIVADeducibleGrupo2().getOpInteriores().getBienesInversion() != null) {
+					regime.setBase2(ensureBigDecimal(iva.getIVADeducibleGrupo2().getOpInteriores().getBienesInversion().getBI()));
+					regime.setQuota2(ensureBigDecimal(iva.getIVADeducibleGrupo2().getOpInteriores().getBienesInversion().getCuota()));
+				}
+			}
+			if (iva.getIVADeducibleGrupo2().getImportaciones() != null) {
+				if (iva.getIVADeducibleGrupo2().getImportaciones().getBienesCorrientes() != null) {
+					regime.setBase3(ensureBigDecimal(iva.getIVADeducibleGrupo2().getImportaciones().getBienesCorrientes().getBI()));
+					regime.setQuota3(ensureBigDecimal(iva.getIVADeducibleGrupo2().getImportaciones().getBienesCorrientes().getCuota()));
+				}
+				if (iva.getIVADeducibleGrupo2().getImportaciones().getBienesInversion() != null) {
+					regime.setBase4(ensureBigDecimal(iva.getIVADeducibleGrupo2().getImportaciones().getBienesInversion().getBI()));
+					regime.setQuota4(ensureBigDecimal(iva.getIVADeducibleGrupo2().getImportaciones().getBienesInversion().getCuota()));
+				}
+			}
+			if (iva.getIVADeducibleGrupo2().getAdqIntracomunitarias() != null) {
+				if (iva.getIVADeducibleGrupo2().getAdqIntracomunitarias().getBienesCorrientes() != null) {
+					regime.setBase5(ensureBigDecimal(iva.getIVADeducibleGrupo2().getAdqIntracomunitarias().getBienesCorrientes().getBI()));
+					regime.setQuota5(ensureBigDecimal(iva.getIVADeducibleGrupo2().getAdqIntracomunitarias().getBienesCorrientes().getCuota()));
+				}
+				if (iva.getIVADeducibleGrupo2().getAdqIntracomunitarias().getBienesInversion() != null) {
+					regime.setBase6(ensureBigDecimal(iva.getIVADeducibleGrupo2().getAdqIntracomunitarias().getBienesInversion().getBI()));
+					regime.setQuota6(ensureBigDecimal(iva.getIVADeducibleGrupo2().getAdqIntracomunitarias().getBienesInversion().getCuota()));
+				}
+			}
+			if (iva.getIVADeducibleGrupo1().getCompRegEspAgricGanadPesca() != null) {
+				regime.setBase7(ensureBigDecimal(iva.getIVADeducibleGrupo2().getCompRegEspAgricGanadPesca().getBI()));
+				regime.setQuota7(ensureBigDecimal(iva.getIVADeducibleGrupo2().getCompRegEspAgricGanadPesca().getCuota()));
+			}
+			if (iva.getIVADeducibleGrupo2().getRectDeducciones() != null) {
+				regime.setBase8(ensureBigDecimal(iva.getIVADeducibleGrupo2().getRectDeducciones().getBI()));
+				regime.setQuota8(ensureBigDecimal(iva.getIVADeducibleGrupo2().getRectDeducciones().getCuota()));
+			}
+			regime.setQuota9(ensureBigDecimal(iva.getIVADeducibleGrupo2().getRegInversiones()));
+			regime.setQuota10(ensureBigDecimal(iva.getIVADeducibleGrupo2().getSumaDeducciones()));
+		}
+
+		if (iva.getIVADeducibleGrupo3() != null) {
+			DeductionRegime regime = new DeductionRegime();
+			mod390.setRegime3(regime);
+			if (iva.getIVADeducibleGrupo3().getOpInteriores() != null) {
+				if (iva.getIVADeducibleGrupo3().getOpInteriores().getBienesyServiciosCorrientes() != null) {
+					regime.setBase1(ensureBigDecimal(iva.getIVADeducibleGrupo3().getOpInteriores().getBienesyServiciosCorrientes().getBI()));
+					regime.setQuota1(ensureBigDecimal(iva.getIVADeducibleGrupo3().getOpInteriores().getBienesyServiciosCorrientes().getCuota()));
+				}
+				if (iva.getIVADeducibleGrupo3().getOpInteriores().getBienesInversion() != null) {
+					regime.setBase2(ensureBigDecimal(iva.getIVADeducibleGrupo3().getOpInteriores().getBienesInversion().getBI()));
+					regime.setQuota2(ensureBigDecimal(iva.getIVADeducibleGrupo3().getOpInteriores().getBienesInversion().getCuota()));
+				}
+			}
+			if (iva.getIVADeducibleGrupo3().getImportaciones() != null) {
+				if (iva.getIVADeducibleGrupo3().getImportaciones().getBienesCorrientes() != null) {
+					regime.setBase3(ensureBigDecimal(iva.getIVADeducibleGrupo3().getImportaciones().getBienesCorrientes().getBI()));
+					regime.setQuota3(ensureBigDecimal(iva.getIVADeducibleGrupo3().getImportaciones().getBienesCorrientes().getCuota()));
+				}
+				if (iva.getIVADeducibleGrupo3().getImportaciones().getBienesInversion() != null) {
+					regime.setBase4(ensureBigDecimal(iva.getIVADeducibleGrupo3().getImportaciones().getBienesInversion().getBI()));
+					regime.setQuota4(ensureBigDecimal(iva.getIVADeducibleGrupo3().getImportaciones().getBienesInversion().getCuota()));
+				}
+			}
+			if (iva.getIVADeducibleGrupo3().getAdqIntracomunitarias() != null) {
+				if (iva.getIVADeducibleGrupo3().getAdqIntracomunitarias().getBienesCorrientes() != null) {
+					regime.setBase5(ensureBigDecimal(iva.getIVADeducibleGrupo3().getAdqIntracomunitarias().getBienesCorrientes().getBI()));
+					regime.setQuota5(ensureBigDecimal(iva.getIVADeducibleGrupo3().getAdqIntracomunitarias().getBienesCorrientes().getCuota()));
+				}
+				if (iva.getIVADeducibleGrupo3().getAdqIntracomunitarias().getBienesInversion() != null) {
+					regime.setBase6(ensureBigDecimal(iva.getIVADeducibleGrupo3().getAdqIntracomunitarias().getBienesInversion().getBI()));
+					regime.setQuota6(ensureBigDecimal(iva.getIVADeducibleGrupo3().getAdqIntracomunitarias().getBienesInversion().getCuota()));
+				}
+			}
+			if (iva.getIVADeducibleGrupo3().getCompRegEspAgricGanadPesca() != null) {
+				regime.setBase7(ensureBigDecimal(iva.getIVADeducibleGrupo3().getCompRegEspAgricGanadPesca().getBI()));
+				regime.setQuota7(ensureBigDecimal(iva.getIVADeducibleGrupo3().getCompRegEspAgricGanadPesca().getCuota()));
+			}
+			if (iva.getIVADeducibleGrupo3().getRectDeducciones() != null) {
+				regime.setBase8(ensureBigDecimal(iva.getIVADeducibleGrupo3().getRectDeducciones().getBI()));
+				regime.setQuota8(ensureBigDecimal(iva.getIVADeducibleGrupo3().getRectDeducciones().getCuota()));
+			}
+			regime.setQuota9(ensureBigDecimal(iva.getIVADeducibleGrupo3().getRegInversiones()));
+			regime.setQuota10(ensureBigDecimal(iva.getIVADeducibleGrupo3().getSumaDeducciones()));
+		}
 
 	}
 

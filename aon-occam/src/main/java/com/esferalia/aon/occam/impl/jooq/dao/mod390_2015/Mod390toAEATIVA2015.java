@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Address;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.DeductionRegime;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.FarmerRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.Prorrata;
@@ -31,6 +32,12 @@ import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.Devengo.Des
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.Devengo.RegCriterioCajaNO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.Devengo.RegCriterioCajaSI;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.Devengo.RegDevMensual;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.IVADeducibleGrupo1;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.IVADeducibleGrupo1.AdqIntracomunitarias;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.IVADeducibleGrupo1.Importaciones;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.IVADeducibleGrupo1.OpInteriores;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.IVADeducibleGrupo2;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.IVADeducibleGrupo3;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.LiqAnual;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.OpEspecificas;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.OpEspecificas.AdqCriterioCajaBase;
@@ -168,13 +175,60 @@ public class Mod390toAEATIVA2015 {
 			if (!prorratas.getPro().isEmpty())
 				iva.setProrratas(prorratas);
 		}
-
-		// TODO
-		// iva.ivaDeducibleGrupo1
-		// TODO
-		// iva.ivaDeducibleGrupo2
-		// TODO
-		// iva.ivaDeducibleGrupo3
+		if (mod390.getRegime1() != null) {
+			DeductionRegime regime = mod390.getRegime1();
+			IVADeducibleGrupo1 ivad = new IVADeducibleGrupo1();
+			ivad.setOpInteriores(new OpInteriores());
+			ivad.getOpInteriores().setBienesyServiciosCorrientes( getTipoBaseImponibleYCuota(regime.getBase1(), regime.getQuota1()) );
+			ivad.getOpInteriores().setBienesInversion( getTipoBaseImponibleYCuota(regime.getBase2(), regime.getQuota2()) );
+			ivad.setImportaciones(new Importaciones());
+			ivad.getImportaciones().setBienesCorrientes( getTipoBaseImponibleYCuota(regime.getBase3(), regime.getQuota3()) );
+			ivad.getImportaciones().setBienesInversion( getTipoBaseImponibleYCuota(regime.getBase4(), regime.getQuota4()) );
+			ivad.setAdqIntracomunitarias(new AdqIntracomunitarias());
+			ivad.getAdqIntracomunitarias().setBienesCorrientes( getTipoBaseImponibleYCuota(regime.getBase5(), regime.getQuota5()) );
+			ivad.getAdqIntracomunitarias().setBienesInversion( getTipoBaseImponibleYCuota(regime.getBase6(), regime.getQuota6()) );
+			ivad.setCompRegEspAgricGanadPesca( getTipoBaseImponibleYCuota(regime.getBase7(), regime.getQuota7()));
+			ivad.setRectDeducciones( getTipoBaseImponibleYCuota(regime.getBase8(), regime.getQuota8()));
+			ivad.setRegInversiones(ensureBigDecimal(regime.getQuota9()));
+			ivad.setSumaDeducciones(ensureBigDecimal(regime.getQuota10()));
+			iva.setIVADeducibleGrupo1( ivad );
+		}
+		if (mod390.getRegime2() != null) {
+			DeductionRegime regime = mod390.getRegime2();
+			IVADeducibleGrupo2 ivad = new IVADeducibleGrupo2();
+			ivad.setOpInteriores(new com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.IVADeducibleGrupo2.OpInteriores());
+			ivad.getOpInteriores().setBienesyServiciosCorrientes( getTipoBaseImponibleYCuota(regime.getBase1(), regime.getQuota1()) );
+			ivad.getOpInteriores().setBienesInversion( getTipoBaseImponibleYCuota(regime.getBase2(), regime.getQuota2()) );
+			ivad.setImportaciones(new com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.IVADeducibleGrupo2.Importaciones());
+			ivad.getImportaciones().setBienesCorrientes( getTipoBaseImponibleYCuota(regime.getBase3(), regime.getQuota3()) );
+			ivad.getImportaciones().setBienesInversion( getTipoBaseImponibleYCuota(regime.getBase4(), regime.getQuota4()) );
+			ivad.setAdqIntracomunitarias(new com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.IVADeducibleGrupo2.AdqIntracomunitarias());
+			ivad.getAdqIntracomunitarias().setBienesCorrientes( getTipoBaseImponibleYCuota(regime.getBase5(), regime.getQuota5()) );
+			ivad.getAdqIntracomunitarias().setBienesInversion( getTipoBaseImponibleYCuota(regime.getBase6(), regime.getQuota6()) );
+			ivad.setCompRegEspAgricGanadPesca( getTipoBaseImponibleYCuota(regime.getBase7(), regime.getQuota7()));
+			ivad.setRectDeducciones( getTipoBaseImponibleYCuota(regime.getBase8(), regime.getQuota8()));
+			ivad.setRegInversiones(ensureBigDecimal(regime.getQuota9()));
+			ivad.setSumaDeducciones(ensureBigDecimal(regime.getQuota10()));
+			iva.setIVADeducibleGrupo2( ivad );
+		}
+		if (mod390.getRegime3() != null) {
+			DeductionRegime regime = mod390.getRegime3();
+			IVADeducibleGrupo3 ivad = new IVADeducibleGrupo3();
+			ivad.setOpInteriores(new com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.IVADeducibleGrupo3.OpInteriores());
+			ivad.getOpInteriores().setBienesyServiciosCorrientes( getTipoBaseImponibleYCuota(regime.getBase1(), regime.getQuota1()) );
+			ivad.getOpInteriores().setBienesInversion( getTipoBaseImponibleYCuota(regime.getBase2(), regime.getQuota2()) );
+			ivad.setImportaciones(new com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.IVADeducibleGrupo3.Importaciones());
+			ivad.getImportaciones().setBienesCorrientes( getTipoBaseImponibleYCuota(regime.getBase3(), regime.getQuota3()) );
+			ivad.getImportaciones().setBienesInversion( getTipoBaseImponibleYCuota(regime.getBase4(), regime.getQuota4()) );
+			ivad.setAdqIntracomunitarias(new com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015.IVADeducibleGrupo3.AdqIntracomunitarias());
+			ivad.getAdqIntracomunitarias().setBienesCorrientes( getTipoBaseImponibleYCuota(regime.getBase5(), regime.getQuota5()) );
+			ivad.getAdqIntracomunitarias().setBienesInversion( getTipoBaseImponibleYCuota(regime.getBase6(), regime.getQuota6()) );
+			ivad.setCompRegEspAgricGanadPesca( getTipoBaseImponibleYCuota(regime.getBase7(), regime.getQuota7()));
+			ivad.setRectDeducciones( getTipoBaseImponibleYCuota(regime.getBase8(), regime.getQuota8()));
+			ivad.setRegInversiones(ensureBigDecimal(regime.getQuota9()));
+			ivad.setSumaDeducciones(ensureBigDecimal(regime.getQuota10()));
+			iva.setIVADeducibleGrupo3( ivad );
+		}
 		
 		return iva;
 	}
@@ -925,6 +979,18 @@ public class Mod390toAEATIVA2015 {
 		if (detail!= null && (detail.getTaxableBase() != 0 || detail.getQuota() != 0)) {
 			tipo.setBI(ensureBigDecimal(detail.getTaxableBase()));
 			tipo.setCuota(ensureBigDecimal(detail.getQuota()));
+		} else {
+			tipo.setBI(ensureBigDecimal(0));
+			tipo.setCuota(ensureBigDecimal(0));
+		}
+		return tipo;
+	}
+
+	private static TipoBaseImponibleYCuota getTipoBaseImponibleYCuota(double base, double quota) {
+		TipoBaseImponibleYCuota tipo = new TipoBaseImponibleYCuota();
+		if (base != 0 || quota != 0) {
+			tipo.setBI(ensureBigDecimal(base));
+			tipo.setCuota(ensureBigDecimal(quota));
 		} else {
 			tipo.setBI(ensureBigDecimal(0));
 			tipo.setCuota(ensureBigDecimal(0));

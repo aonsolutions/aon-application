@@ -1034,12 +1034,6 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("IVA soportado en adquisici\u00F3n de activos fijos")
 	String box80Msg();
 
-	@DefaultMessage("Regularizaci\u00F3n de bienes de inversi\u00F3n")
-	String box81Msg();
-
-	@DefaultMessage("Suma de deducciones")
-	String box82Msg();
-
 	@DefaultMessage("Resultado del r\u00E9gimen simplificado")
 	String box83Msg();
 
@@ -1229,6 +1223,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("R\u00E9gimen especial del grupo de entidades en "
 			+ "alg\u00FAn per\u00EDodo del ejercicio")
 	String specialGroupRegime();
+
+	@DefaultMessage("Grupo")
+	String group();
 
 	@DefaultMessage("N\u00BA Grupo")
 	String groupNumber();
@@ -2762,6 +2759,33 @@ public interface CommonMessages extends Messages {
 
  	@DefaultMessage("Categor\u00EDas de productos")
 	String productCategories();
+
+ 	@DefaultMessage("IVA deducible en operaciones interiores")
+	String internOpVatDeduction();
+ 	
+ 	@DefaultMessage("IVA deducible en operaciones importaciones")
+	String importVatDeduction();
+ 	
+ 	@DefaultMessage("IVA deducible en adquisiciones intracomunitarias")
+	String intracommunityAdqVatDeduction();
+ 	
+ 	@DefaultMessage("Compensaci\u00F3n en r\u00E9gimen especial de la agricultura, ganader\u00EDa y pesca")
+	String agricultureCompensation();
+ 	
+ 	@DefaultMessage("Rectificaci\u00F3n de deducciones")
+	String deductionRectification();
+	
+ 	@DefaultMessage("Regularizaci\u00F3n de bienes de inversi\u00F3n")
+	String investAssetRegularization();
+
+ 	@DefaultMessage("Suma de deducciones")
+	String deductionSum();
+	
+	@DefaultMessage("Bienes y servicios corriente")
+	String commonAsset();
+
+	@DefaultMessage("Bienes de inversi\u00F3n")
+	String investAsset();
 	
 
 }
