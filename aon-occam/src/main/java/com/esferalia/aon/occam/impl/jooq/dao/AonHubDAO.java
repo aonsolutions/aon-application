@@ -2,8 +2,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
 import static com.esferalia.aon.jooq.tables.NoticeTag.NOTICE_TAG;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
@@ -11,19 +9,16 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.jooq.Cursor;
+import org.jooq.InsertSetMoreStep;
 import org.jooq.Record;
-import org.jooq.Result;
-import org.jooq.exception.DataAccessException;
 
 import com.esferalia.aon.jooq.tables.records.NoticeRecord;
-import com.esferalia.aon.jooq.tables.records.RegistryRecord;
+import com.esferalia.aon.jooq.tables.records.NoticeTagRecord;
 import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.office.Identification;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.office.User;
@@ -78,26 +73,37 @@ public class AonHubDAO {
 				.set(NOTICE.WORK_GROUP,
 						noticeRecord.getValue(NOTICE.WORK_GROUP))
 				.set(NOTICE.NOTICE_, noticeRecord.getValue(NOTICE.ID))
-				.execute();
-
-		for (Tag tag : notice.getTags()) {
-			// PUEDE QUE SOLO VENGA EL NOMBRE
-			Integer tagId = ctx.getDslContext().selectFrom(TAG)
-					.where(TAG.DOMAIN.eq(ctx.getDomainId())
-							.and(TAG.NAME.eq(tag.getName())))
-					.fetchOne().getValue(TAG.ID);
-
+				.execute();			
+		
+		if ( notice.getTags().isEmpty() ) {
 			ctx.getDslContext().insertInto(NOTICE_TAG)
-					.set(NOTICE_TAG.NOTICE, noticeRecord.getValue(NOTICE.ID))
-					.set(NOTICE_TAG.TAG, tagId).set(NOTICE_TAG.START_DATE,
-							noticeRecord.getValue(NOTICE.DATE))
-					.execute();
+			.set(NOTICE_TAG.NOTICE, noticeRecord.getValue(NOTICE.ID))
+			.set(NOTICE_TAG.START_DATE,
+					noticeRecord.getValue(NOTICE.DATE))
+			.execute();
 		}
+		else {
+
+			for (Tag tag : notice.getTags()) {
+				// PUEDE QUE SOLO VENGA EL NOMBRE
+				Integer tagId = ctx.getDslContext().selectFrom(TAG)
+						.where(TAG.DOMAIN.eq(ctx.getDomainId())
+								.and(TAG.NAME.eq(tag.getName())))
+						.fetchOne().getValue(TAG.ID);
+
+				ctx.getDslContext().insertInto(NOTICE_TAG)
+						.set(NOTICE_TAG.NOTICE, noticeRecord.getValue(NOTICE.ID))
+						.set(NOTICE_TAG.TAG, tagId).set(NOTICE_TAG.START_DATE,
+								noticeRecord.getValue(NOTICE.DATE))
+						.execute();
+			}
+		}
+
 
 		Notice object = new Notice();
 		object.setId(noticeRecord.getValue(NOTICE.ID));
 		object.setDomain(ctx.getDomainId());
-		object.setDate(today);
+		object.setStartDate(today);		
 
 		User user = new User();
 		UserRecord userRecord = ctx.getDslContext().selectFrom(USER)
@@ -124,6 +130,51 @@ public class AonHubDAO {
 
 		return object;
 	}
+	
+	public static Notice editNotice(AONContext ctx, Notice notice) {		
+		
+		NoticeRecord noticeRecord = ctx.getDslContext().update(NOTICE)
+		.set(NOTICE.SUBJECT, notice.getTitle())
+		.set(NOTICE.STATUS, notice.getStatus().byteValue())
+		.set(NOTICE.TYPE,
+				(byte) NoticeType.valueOf(notice.getType()).ordinal())
+		.set(NOTICE.PRIORITY,
+				(byte) Priority.valueOf(notice.getPriority()).ordinal())
+		.where(NOTICE.ID.eq(notice.getId()))
+		.returning().fetchOne();
+		
+		ctx.getDslContext().update(NOTICE)
+		.set(NOTICE.SUBJECT, notice.getBody())
+		.set(NOTICE.STATUS, notice.getStatus().byteValue())
+		.set(NOTICE.TYPE,
+				(byte) NoticeType.valueOf(notice.getType()).ordinal())
+		.set(NOTICE.PRIORITY,
+				(byte) Priority.valueOf(notice.getPriority()).ordinal())
+		.where(NOTICE.NOTICE_.eq(notice.getId()))
+		.execute();
+		
+		ctx.getDslContext().delete(NOTICE_TAG)
+		.where(NOTICE_TAG.NOTICE.eq(notice.getId()))
+		.execute();
+		
+		for (Tag tag : notice.getTags()) {
+			// PUEDE QUE SOLO VENGA EL NOMBRE
+			Integer tagId = ctx.getDslContext().selectFrom(TAG)
+					.where(TAG.DOMAIN.eq(ctx.getDomainId())
+							.and(TAG.NAME.eq(tag.getName())))
+					.fetchOne().getValue(TAG.ID);
+
+			InsertSetMoreStep<NoticeTagRecord> select = ctx.getDslContext().insertInto(NOTICE_TAG)
+					.set(NOTICE_TAG.NOTICE, noticeRecord.getValue(NOTICE.ID))
+					.set(NOTICE_TAG.TAG, tagId).set(NOTICE_TAG.START_DATE,
+							noticeRecord.getValue(NOTICE.DATE));
+			
+			
+			
+		}
+		
+		return notice;
+	}
 
 	public static void deleteNotice(AONContext ctx, Notice notice) {
 		
@@ -148,7 +199,9 @@ public class AonHubDAO {
 		Tag newTag = new Tag();
 
 		TagRecord record = ctx.getDslContext().insertInto(TAG)
-				.set(TAG.DOMAIN, ctx.getDomainId()).set(TAG.NAME, tag.getName())
+				.set(TAG.DOMAIN, ctx.getDomainId())
+				.set(TAG.NAME, tag.getName())
+				.set(TAG.TYPE, tag.getType())
 				.set(TAG.COLOR,
 						(tag.getColor() != null) ? tag.getColor() : null)
 				.returning().fetchOne();
@@ -188,7 +241,7 @@ public class AonHubDAO {
 					int id = record.getValue(NOTICE.ID);
 					notice.setId(id);
 					notice.setDomain(record.getValue(NOTICE.DOMAIN));
-					notice.setDate(record.getValue(NOTICE.DATE));
+					notice.setStartDate(record.getValue(NOTICE.DATE));					
 
 					User user = new User();
 					UserRecord userRecord = ctx.getDslContext().selectFrom(USER)
@@ -276,8 +329,14 @@ public class AonHubDAO {
 					int id = record.getValue(NOTICE.ID);
 					notice.setId(id);
 					notice.setDomain(record.getValue(NOTICE.DOMAIN));
-					notice.setDate(record.getValue(NOTICE.DATE));
-
+					notice.setStartDate(record.getValue(NOTICE.DATE));
+					
+					Date endDate = ctx.getDslContext()
+							.selectFrom(NOTICE_TAG)
+							.where(NOTICE_TAG.NOTICE.eq(id))
+							.fetchOne().getValue(NOTICE_TAG.END_DATE);
+					notice.setEndDate(endDate);
+					
 					User user = new User();
 					UserRecord userRecord = ctx.getDslContext().selectFrom(USER)
 							.where(USER.DOMAIN.eq(ctx.getDomainId())
@@ -366,7 +425,12 @@ public class AonHubDAO {
 					int id = record.getValue(NOTICE.ID);
 					notice.setId(id);
 					notice.setDomain(record.getValue(NOTICE.DOMAIN));
-					notice.setDate(record.getValue(NOTICE.DATE));
+					notice.setStartDate(record.getValue(NOTICE.DATE));
+					
+					Date endDate = ctx.getDslContext().selectFrom(NOTICE_TAG)
+							.where(NOTICE_TAG.NOTICE.eq(id))
+							.fetchOne().getValue(NOTICE_TAG.END_DATE);
+					notice.setEndDate(endDate);
 
 					User user = new User();
 					UserRecord userRecord = ctx.getDslContext().selectFrom(USER)

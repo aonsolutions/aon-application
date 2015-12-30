@@ -158,7 +158,8 @@ public class OfficeApiServlet extends HttpServlet {
 			default:
 				getAllNotices(req, resp);
 				break;
-			}
+			}			
+	
 		}
 	}
 
@@ -352,8 +353,6 @@ public class OfficeApiServlet extends HttpServlet {
 	
 	// AddLabels2Issue es la misma url pero por POST que ListLabelsOnAnIssue()
 	
-	
-	
 	private static class DeleteComment extends RegExpRequestHandler {
 		
 		public DeleteComment() {
@@ -447,14 +446,14 @@ public class OfficeApiServlet extends HttpServlet {
 			if (handler.accept(req)) {
 				handler.handler(req, resp);	
 				break;
-			}
+			}			
 		}
 	}
 	
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.setContentType("application/json;charset=UTF-8");		
+		resp.setContentType("application/javascript;charset=UTF-8");		
 		for (HttpRequestHandler handler : DELETES) {
 			if (handler.accept(req)) {
 				handler.handler(req, resp);
@@ -495,17 +494,16 @@ public class OfficeApiServlet extends HttpServlet {
 			
 //			pw.printf("\"data\"[ %s\r\n",
 //					buildNotices(notices.listIterator()));			
-			pw.append("[\n");		
+			pw.append("[");		
 			pw.append(buildNotices(notices.listIterator()));
-			pw.append(']');			
+			pw.append("\n]");
+			pw.flush();
 		} catch ( Exception ex) {
 			System.out.println("Exception ex: " + ex.getMessage() + " " + ex.getLocalizedMessage());
 		} finally {
 			if ( pw != null){
-				pw.flush();
 				pw.close();
 			}
-				
 		}
 	}
 	
@@ -517,9 +515,9 @@ public class OfficeApiServlet extends HttpServlet {
 			List<Notice> notices = AON.getClosedNotices(DOMAIN_ID, DOMAIN_NAME, USER_NAME);
 			
 			pw = resp.getWriter();
-//			pw.printf("\"data\":%s\r\n",
-//					buildNotices(notices.listIterator()));
+			pw.append("[");		
 			pw.append(buildNotices(notices.listIterator()));
+			pw.append("\n]");
 			pw.flush();
 		} catch ( Exception ex) {
 			System.out.println("Exception ex: " + ex.getMessage() + " " + ex.getLocalizedMessage());
@@ -537,9 +535,9 @@ public class OfficeApiServlet extends HttpServlet {
 			List<Notice> notices = AON.getAllNotices(DOMAIN_ID, DOMAIN_NAME, USER_NAME);
 			
 			pw = resp.getWriter();
-//			pw.printf("\"data\":%s\r\n",
-//					buildNotices(notices.listIterator()));
+			pw.append("[");		
 			pw.append(buildNotices(notices.listIterator()));
+			pw.append("\n]");
 			pw.flush();
 		} catch ( Exception ex) {
 			System.out.println("Exception ex: " + ex.getMessage() + " " + ex.getLocalizedMessage());
@@ -551,12 +549,10 @@ public class OfficeApiServlet extends HttpServlet {
 	
 	private static String buildNotices(ListIterator<Notice> iterator) {
 		
-		StringBuffer buffer = new StringBuffer();
-		
-		while (iterator.hasNext()) {		
+		StringBuffer buffer = new StringBuffer();		
 
-			Notice notice = iterator.next();			
-			buffer.append("{\n");
+		iterator.forEachRemaining(notice -> {
+			buffer.append("\n{\n");
 			buffer.append(String.format("\"id\":%s,\r\n",
 					String.valueOf(notice.getId())));
 			buffer.append(String.format("\"user\":%s,\r\n",
@@ -569,9 +565,8 @@ public class OfficeApiServlet extends HttpServlet {
 					buildLabels(notice.getTags().listIterator())));
 			buffer.append(String.format("\"state\":\"%s\"\r\n",
 					"open"));
-			
 			buffer.append("},");
-		}
+		});
 		String cadena = buffer.substring(0, buffer.length() - 1);
 		return cadena;
 	}

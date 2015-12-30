@@ -109,19 +109,6 @@ public class AonHub implements IAonHub {
 		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=all", callback);
 	}
 
-	@Deprecated
-	@Override
-	public void getIssues(String user, String r,
-			AsyncCallback<JSON<JsIssue>> callback) {
-		get(baseUrl + "repos/" + user + "/" + r + "/issues", callback);
-	}
-	
-	@Deprecated
-	@Override
-	public void getIssues(JsRepo r, AsyncCallback<JSON<JsIssue>> callback) {
-		get(r.getUrl() + "/issues", callback);
-	}
-
 	@Override
 	public void createIssue(IssueValue prop,
 			AsyncCallback<JsIssue> callback) {
@@ -236,16 +223,16 @@ public class AonHub implements IAonHub {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				System.out.println("Ha fallado : " + caught.getMessage());
 				callback.onFailure(caught);
 			}
 		};
 	}
 
 	public static final <T extends JavaScriptObject> void get(String url,
-			final AsyncCallback<T> callback) {		
-		String requestUrl = makeRequestUrl(url);		
-		GWT.log("[GET]" + requestUrl);
-		
+			final AsyncCallback<T> callback) {
+		String requestUrl = makeRequestUrl(url);
+		GWT.log("[GET] " + requestUrl);		
 		JsonpRequestBuilder jsonp = new JsonpRequestBuilder();		
 		jsonp.requestObject(requestUrl, hookCallback(callback));		
 	}

@@ -29,7 +29,8 @@ public class Notice implements Serializable, HasId {
 	private String type; //Tipo de aviso
 	private String priority; //Prioridad
 	
-	private Date date;
+	private Date startDate;
+	private Date endDate;
 	private User sender; //Remitente del aviso
 	
 	private List<Tag> tags;
@@ -50,8 +51,12 @@ public class Notice implements Serializable, HasId {
 		this.domain = domain;
 	}
 	
-	public void setDate(Date date) {
-		this.date = date;
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+	
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 	}
 	
 	public void setSender(User sender) {
@@ -121,8 +126,12 @@ public class Notice implements Serializable, HasId {
 		return domain;
 	}
 	
-	public Date getDate() {
-		return date;
+	public Date getStartDate() {
+		return startDate;
+	}
+	
+	public Date getEndDate() {
+		return endDate;
 	}
 	
 	public User getSender() {

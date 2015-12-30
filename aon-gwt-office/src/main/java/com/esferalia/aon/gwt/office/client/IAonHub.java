@@ -40,13 +40,6 @@ public interface IAonHub {
 	void getAllIssues(String user, String repo,
 			AsyncCallback<JSON<JsIssue>> callback);
 
-	@Deprecated
-	void getIssues(String user, String r,
-			AsyncCallback<JSON<JsIssue>> callback);
-
-	@Deprecated
-	void getIssues(JsRepo r, AsyncCallback<JSON<JsIssue>> callback);
-
 	void createIssue(IssueValue prop,
 			final AsyncCallback<JsIssue> callback);
 
