@@ -34,6 +34,8 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class CalculatePurchasePrice {
 	
+	//private static final Logger LOGGER = LoggerFactory
+	//		.getLogger(CalculatePurchasePrice.class.getName());
 	
 	private static Double getCost(Domain domain, InventoryDetail inventoryDetail, Integer workplaceId, Integer warehouseId, Date inventoryDate){
 		Item item = AON.getItem(domain.getName(), domain.getId(), login, inventoryDetail.getItem().getId());
@@ -191,7 +193,7 @@ public class CalculatePurchasePrice {
 	}
 	
 	public static Integer getMonth(String date){
-		return Integer.parseInt(date.substring(3,5));
+		return Integer.parseInt(date.substring(3,5)) -1;
 	}
 	
 	public static Integer getYear(String date){
@@ -242,22 +244,28 @@ public class CalculatePurchasePrice {
 			domains = (String[]) list.toArray();
 		}
 		for (String domainName : domains){
-			System.out.println(" DOMAIN -> "+ domainName + " ID " + domainMap.get(domainName));
 			Domain domain = AON.getDomain(domainName, domainMap.get(domainName), login);
+			//LOGGER.info("DOMAIN: " + domainName + " - ID: " + domainMap.get(domainName));
+			System.out.println("DOMAIN: " + domainName + " - ID: " + domainMap.get(domainName));
 			Date start = AonDateUtils.getDate(getYear(startDate), getMonth(startDate), getDay(startDate));
 			Date end = AonDateUtils.getDate(getYear(endDate), getMonth(endDate), getDay(endDate));
 			LinkedList<Inventory> inventoryList = AON.getInventoryList(domain.getName(), domain.getId(), login, start, end);
 			Collections.sort(inventoryList, (Inventory s1, Inventory s2) -> s1.getInventoryDate().compareTo(s1.getInventoryDate()));
 			for (Inventory inventory : inventoryList) {
-				System.out.println(inventory.getInventoryDate() + "	INVENTORY -> " + inventory.getDescription());
+				Warehouse warehouse = AON.getWarehouse(domain.getName(), domain.getId(), login,
+						f -> f.getIdProperty().eq(inventory.getWarehouse()));
+				//LOGGER.info("WAREHOUSE: "+ warehouse.getName());
+				System.out.println("WAREHOUSE: "+ warehouse.getName());System.out.println();
+				//LOGGER.info(inventory.getInventoryDate() + " - INVENTORY: " + inventory.getDescription());
+				System.out.println(inventory.getInventoryDate() + " - INVENTORY: " + inventory.getDescription());System.out.println();
 				LinkedList<InventoryDetail> inventoryDetailList = AON.getInventoryDetailList(domain.getName(), domain.getId(), login, inventory.getId());
+				
 				for (InventoryDetail inventoryDetail : inventoryDetailList) {
-					System.out.println("		DETAIL -> " + inventoryDetail.getId() + " - " + inventoryDetail.getCost());
-					Warehouse warehouse = AON.getWarehouse(domain.getName(), domain.getId(), login,
-							f -> f.getIdProperty().eq(inventory.getWarehouse()));
-					System.out.println(warehouse.getName());
+					//LOGGER.info("DETAIL : " + inventoryDetail.getId() + " - COSTE ACTUAL: " + inventoryDetail.getCost());
+					System.out.println("DETAIL : " + inventoryDetail.getId() + " - COSTE ACTUAL: " + inventoryDetail.getCost());
 					Double cost = getCost(domain, inventoryDetail, warehouse.getWorkplace(), warehouse.getId(), inventory.getInventoryDate());
-					System.out.println(cost);
+					//LOGGER.info("NUEVO COSTE: " + cost);
+					System.out.println("NUEVO COSTE: " + cost);System.out.println();
 					inventoryDetail.setCost(cost);
 					if(!dryRun)
 						AON.updateInventoryDetail(domain.getName(), domain.getId(), login, inventoryDetail);
@@ -352,9 +360,9 @@ public class CalculatePurchasePrice {
 			
 			
 			dryRun = line.hasOption(dryOption.getOpt());
-			//if (dryRun)
+			if (dryRun)
 				//LOGGER.info("DryRun ON: Perform a trial run with no changes made.");
-
+				System.out.println("DryRun ON: Perform a trial run with no changes made.");
 			type = line.getOptionValue(typeOption.getOpt());
 			
 			startDate = line.getOptionValue(startDateOption.getOpt());
@@ -367,7 +375,8 @@ public class CalculatePurchasePrice {
 
 			months =  line.getOptionValue(monthsOption.getOpt());
 		} catch (ParseException e) {
-			System.out.print(e.getMessage());
+			//LOGGER.error(e.getMessage());
+			System.out.println(e.getMessage());
 			helpFormatter.printHelp(DEFAULT_SYNTAX_PREFIX, options, true);
 			return false;
 		}
