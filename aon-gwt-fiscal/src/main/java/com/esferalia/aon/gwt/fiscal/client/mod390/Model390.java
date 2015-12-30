@@ -34,7 +34,6 @@ import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 public class Model390 extends MainEntryPoint {
 
 	public static interface IModel390 {
-		void prepareNew();
 		void select(Mod390 m390);
 		void onNew();
 	}	
@@ -117,12 +116,10 @@ public class Model390 extends MainEntryPoint {
 	private void select(Mod390 m390) {
 		if (m390.getYear() == 2013 || m390.getYear() == 2014) {
 			Model3902014 model3902014 = new Model3902014(mod390CallBack);
-			model3902014.prepareNew();
 			formPanel.setWidget(model3902014);
 			model3902014.select(m390);
 		} else if (m390.getYear() == 2015) {
 			Model3902015 model3902015 = new Model3902015(mod390CallBack);
-			model3902015.prepareNew();
 			formPanel.setWidget(model3902015);
 			model3902015.select(m390);
 		}
@@ -134,12 +131,11 @@ public class Model390 extends MainEntryPoint {
 	private void newModel(int year) {
 		if (year == 2013 || year == 2014) {
 			Model3902014 model3902014 = new Model3902014(mod390CallBack);
-			model3902014.prepareNew();
+			
 			formPanel.setWidget(model3902014);
 			model3902014.onNew();		
 		} else if (year == 2015) {
 			Model3902015 model3902015 = new Model3902015(mod390CallBack);
-			model3902015.prepareNew();
 			formPanel.setWidget(model3902015);
 			model3902015.onNew();		
 		}

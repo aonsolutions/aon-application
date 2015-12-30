@@ -112,6 +112,10 @@ public class VatTaxController extends BasicController implements IFiscalModelCon
 	public void setNewDetail(VatTaxDetail newDetail) {
 		this.newDetail = newDetail;
 	}
+	public boolean isLastPeriod() {
+		VatTax vatTax = (VatTax) getTo();
+		return (vatTax != null && (vatTax.getPeriod() == Period.M12 || vatTax.getPeriod() == Period.T4));
+	}
 
 	public boolean isDetailNew() {
 		return detailNew;

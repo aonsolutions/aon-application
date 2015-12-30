@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.api;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;

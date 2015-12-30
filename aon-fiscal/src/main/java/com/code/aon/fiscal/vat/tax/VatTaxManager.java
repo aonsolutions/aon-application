@@ -35,6 +35,7 @@ import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class VatTaxManager implements Serializable {
 	
@@ -129,8 +130,12 @@ public class VatTaxManager implements Serializable {
 	}
 		
 	public List<VatTaxDetail> getVatTax(List<VatTaxDetail> list,int domain,Date dateFrom,Date dateTo,VatTax vatTax,InvoiceStatus status) throws ManagerBeanException {
-		getVatTaxINNER(list,domain,dateFrom,dateTo,vatTax,status,false);
-		getVatTaxINNER(list,domain,dateFrom,dateTo,vatTax,status,true);
+		getVatTaxINNER(list,domain,dateFrom,dateTo,vatTax,status,false,false);
+		getVatTaxINNER(list,domain,dateFrom,dateTo,vatTax,status,true,false);
+		// En el ultimo perido se debe declarar lo pendiente del año anterior de criterio de caja.
+		if (vatTax.getPeriod() == Period.M12 || vatTax.getPeriod() == Period.T4) {
+			getVatTaxINNER(list,domain,dateFrom,dateTo,vatTax,status,true,true);
+		}
 		return list;
 	}
 
@@ -141,19 +146,37 @@ public class VatTaxManager implements Serializable {
 			Date dateTo,
 			VatTax vatTax,
 			InvoiceStatus status,
-			boolean vatAccrualPayment) throws ManagerBeanException {
+			boolean vatAccrualPayment,
+			boolean lastPeriod) throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		TaxColumn column = TaxColumn.ACUMULADO; 
 		Connection conn = null;
 		try {
 			conn = DatabaseUtil.getConnection(getDomainName());
-			String select = vatAccrualPayment?getVatAccrualSelect():getSelect();
+			String select = null;
+			if (vatAccrualPayment) {
+				if (lastPeriod) {
+					select = getLastPeriodVatAccrualSelect();	
+				} else {
+					select = getVatAccrualSelect();
+				}
+			} else {
+				select = getSelect();
+			}
 			ps = conn.prepareStatement(select,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			ps.setInt(++i, domain);
-			ps.setDate(++i, new java.sql.Date( dateFrom.getTime() ));
-			ps.setDate(++i, new java.sql.Date( dateTo.getTime()));
+			if (lastPeriod) {
+				ps.setDate(++i, new java.sql.Date( AonDateUtils.getYearFirstDay(vatTax.getYear() - 1).getTime()) );	
+				ps.setDate(++i, new java.sql.Date( AonDateUtils.getYearLastDay(vatTax.getYear() - 1).getTime()) );
+			} else {
+				ps.setDate(++i, new java.sql.Date( dateFrom.getTime() ));
+				ps.setDate(++i, new java.sql.Date( dateTo.getTime()));
+				if (vatAccrualPayment ){
+					ps.setDate(++i, new java.sql.Date( AonDateUtils.getYearFirstDay(vatTax.getYear() - 1).getTime()) );	
+				}
+			}
 			ps.setInt(++i, (status == InvoiceStatus.SCORED?InvoiceStatus.SCORED.ordinal():InvoiceStatus.PENDING.ordinal()));
 			rs = ps.executeQuery();
 			boolean hasVatAccrualPayment = false;
@@ -175,6 +198,17 @@ public class VatTaxManager implements Serializable {
 					invoiceTotal = CommonUtil.round(invoiceBase + invoiceVat - invoiceRetention);
 					taxableBase = CommonUtil.round(financeAmount * taxableBase / invoiceTotal,4);
 					quota = CommonUtil.round(taxableBase * percent / 100);
+					
+					System.out.println(
+							rs.getBoolean(INVESTMENT)
+							+ "\t" + invoiceTotal
+							+ "\t" + financeAmount
+							+ "---> \t" + taxableBase
+							+ "\t" + percent
+							+ "\t" + quota
+							);
+					
+					
 					deductibleQuota = quota; // TODO soporte a cuota deducible.
 					hasVatAccrualPayment = true;
 				}
@@ -621,11 +655,47 @@ public class VatTaxManager implements Serializable {
 		stmt.append(	" AND ft.tracking_date <= ?");
 		stmt.append(	" AND ft.type IN (1,2) ");
 		stmt.append(	" AND it.tax_type = 1");
-		stmt.append(	" AND i.tax_date >= '2014-01-01'");
+		stmt.append(	" AND i.tax_date >= ?");
 		stmt.append(	" AND i.vat_accrual_payment = 1");	// Criterio de Caja.
 		stmt.append(	" AND i.status >= ? ");
 		stmt.append(" GROUP BY it.id,"+PERCENTAGE +","+ SURCHARGE_PERCENT+","+VAT_DEDUCTION_TYPE);
 		return stmt.toString();
 	}
 	
+	private String getLastPeriodVatAccrualSelect() {
+		String quotaStmt = "IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 4) )";
+		StringWriter stmt = new StringWriter();
+		stmt.append("SELECT it.id");
+		stmt.append(	",i.type " + TYPE);
+		stmt.append(	",i.rectification_type " + RECTIFICATION_TYPE);
+		stmt.append(	",i.service " + SERVICE);
+		stmt.append(	",it.percentage " + PERCENTAGE);
+		stmt.append(	",it.surcharge " + SURCHARGE_PERCENT);
+		stmt.append(	",it.vat_deduction_type " + VAT_DEDUCTION_TYPE);
+		stmt.append(	",i.transaction "+ TRANSACTION);
+		stmt.append(	",i.investment " + INVESTMENT);
+		stmt.append(	",i.withholding_farmer " + WITHHOLDING_FARMER);
+		stmt.append(	",i.taxable_base " + INVOICE_BASE);
+		stmt.append(	",i.vat_quota " + INVOICE_VAT);
+		stmt.append(	",i.retention_quota " + INVOICE_RETENTION);
+		stmt.append(	",i.total " + INVOICE_TOTAL);
+		stmt.append(	",it.base " + BASE);
+		stmt.append(	"," + quotaStmt + " " + QUOTA);
+		stmt.append(	",SUM( IF(it.surcharge_quota != 0,it.surcharge_quota,ROUND(it.base * it.surcharge / 100, 2) ) ) " + SURCHARGE_QUOTA);
+		stmt.append(	",SUM( IF(it.deductible_quota != 0,it.deductible_quota," + quotaStmt + ")) " + DEDUCTIBLE_QUOTA);
+		stmt.append(	",SUM( f.amount ) " + FINANCE_AMOUNT);
+		stmt.append("  FROM finance f ");
+		stmt.append("  INNER JOIN invoice i ON (f.invoice = i.id AND vat_accrual_payment = 1) ");
+		stmt.append("  INNER JOIN invoice_detail id ON (id.invoice = i.id) ");
+		stmt.append("  INNER JOIN invoice_tax it ON (it.invoice_detail = id.id) ");
+		stmt.append(" WHERE f.domain = ?");
+		stmt.append(	" AND f.status = 0 ");
+		stmt.append(	" AND it.tax_type = 1");
+		stmt.append(	" AND i.tax_date >= ?");
+		stmt.append(	" AND i.tax_date <= ?");
+		stmt.append(	" AND i.vat_accrual_payment = 1");	// Criterio de Caja.
+		stmt.append(	" AND i.status >= ? ");
+		stmt.append(" GROUP BY it.id,"+PERCENTAGE +","+ SURCHARGE_PERCENT+","+VAT_DEDUCTION_TYPE);
+		return stmt.toString();
+	}
 }

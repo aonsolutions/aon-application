@@ -12,15 +12,14 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.mod390.ErrorPage;
-import com.esferalia.aon.gwt.fiscal.client.mod390.ValidationMessage;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.IMod390CallBack;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.IModel390;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.ValidationMessages;
+import com.esferalia.aon.gwt.fiscal.client.mod390.ValidationMessage;
 import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -253,6 +252,7 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 	}
 	public void select(Mod3902014 m390) {
 		mod390 = m390;
+		cleanErrorMessage();		
 		WestFocusPanel wfp = (WestFocusPanel) linkContainer.getWidget(0);
 		wfp.showPage();
 		enterprise = m390.getEnterprise();
@@ -311,7 +311,6 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 					this.mod390, new AsyncCallback<Void>() {
 				@Override
 				public void onSuccess(Void result) {
-					select(new Mod3902014());
 					cleanErrorMessage();
 					mod390CallBack.onCancel();
 				}
@@ -478,11 +477,6 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 		headerPanel.setWidget(headerTable);
 	}
 
-	@Override
-	public void prepareNew() {
-		cleanErrorMessage();
-	}
-	
 	private class WestFocusPanel extends FocusPanel {
 		
 		private IMod3902014Page content;

@@ -75,7 +75,7 @@
 						<a4j:support event="onchange" 
 							rendered="#{vatTax.nevv}"
 							actionListener="#{vatTax.onChangePeriod}"
-							reRender="VatTax_prorata"
+							reRender="VatTax_prorata,lastPeriodDiv"
 						/>
 					</aon:selectOneMenu>
 
@@ -160,6 +160,15 @@
 				</aon:panelGrid>
 				
 				<aon:if test="#{vatTax.nevv}">
+					<aon:div id="lastPeriodDiv">
+						<aon:div rendered="#{vatTax.to.year >= 2015 and vatTax.lastPeriod}"
+							style="margin-top: 5px; margin-bottom: 5px; border: solid red 1px; padding: 10px;">
+							<aon:outputText style="color: red; font-weight: bold;" value="AVISO:&#160;" />
+							<aon:outputText style="color: red;" 
+								value="Si se encuentra acogido al régimen especial del criterio de caja y/o es destinatario de operaciones afectadas por el mismo, se tendrán en cuenta las facturas con vencimientos pendientes del ejercicio #{vatTax.to.year - 1}" />
+						</aon:div>
+					</aon:div>
+
 					<aon:div styleClass="aon-panelGrid-search">
 						<aon:div styleClass="aon-panelGrid-search-info">
 							<aon:outputText value="#{bundle.fiscal_vat_tax_import_info}" 

@@ -257,6 +257,7 @@ public class Model3902015 extends ResizeComposite implements IModel390 {
 	}
 	public void select(Mod3902015 m390) {
 		mod390 = m390;
+		cleanErrorMessage();
 		WestFocusPanel wfp = (WestFocusPanel) linkContainer.getWidget(0);
 		wfp.showPage();
 		enterprise = m390.getEnterprise();
@@ -314,7 +315,7 @@ public class Model3902015 extends ResizeComposite implements IModel390 {
 					this.mod390, new AsyncCallback<Void>() {
 				@Override
 				public void onSuccess(Void result) {
-					select(new Mod3902015());
+//					select(new Mod3902015());
 					cleanErrorMessage();
 					mod390CallBack.onCancel();
 				}
@@ -470,11 +471,6 @@ public class Model3902015 extends ResizeComposite implements IModel390 {
 		headerPanel.setWidget(headerTable);
 	}
 
-	@Override
-	public void prepareNew() {
-		cleanErrorMessage();
-	}
-	
 	private class WestFocusPanel extends FocusPanel {
 		
 		private IMod3902015Page content;

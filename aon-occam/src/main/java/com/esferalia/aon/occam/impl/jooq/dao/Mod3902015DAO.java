@@ -37,8 +37,8 @@ import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.FarmerRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.Mod390Detail;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015DetailKey;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.SimpliedRegimeActivity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902015DetailKey;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -622,7 +622,7 @@ public class Mod3902015DAO {
 		Field<BigDecimal> sumSurchargeQuotaOp = DSL.sum(DSL.decode()
 				.when(INVOICE_TAX.SURCHARGE_QUOTA.notEqual(0.0),INVOICE_TAX.SURCHARGE_QUOTA)
 				.when(INVOICE_TAX.SURCHARGE_QUOTA.equal(0.0), invoiceSurchargeQuota));		
-		EnumMap<Mod3902015DetailKey, Mod390Detail> map = new EnumMap<Mod3902015DetailKey, Mod390Detail>(Mod3902015DetailKey.class);
+		EnumMap<Mod3902015DetailKey, Mod390Detail> map = new EnumMap<Mod3902015DetailKey, Mod390Detail>(Mod3902015DetailKey.class); 
 		Mod390Detail det = null;
 		for (Mod3902015DetailKey key : Mod3902015DetailKey.values() ) {
 			if (key.accept(mod390.getYear())) {
@@ -718,9 +718,10 @@ public class Mod3902015DAO {
 						}
 				);
 		
-		Field<Double> financeTrackingAmountDecode = DSL.decode()
-				.when(FINANCE_TRACKING.TYPE.equal((byte) 0), FINANCE_TRACKING.AMOUNT.mul(-1))
-				.otherwise(FINANCE_TRACKING.AMOUNT);
+		Field<Double> financeTrackingAmountDecode0 = DSL.decode()
+				.when(FINANCE_TRACKING.TYPE.equal((byte) 1), FINANCE_TRACKING.AMOUNT)
+				.otherwise(FINANCE_TRACKING.AMOUNT.mul(-1));
+		Field<BigDecimal> financeTrackingAmountDecode = DSL.sum(financeTrackingAmountDecode0);
 		
 		ctx.getDslContext().select(INVOICE_TAX.ID
 				,INVOICE.TYPE
@@ -751,7 +752,7 @@ public class Mod3902015DAO {
 				.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
 				// Lo anterior al 2014 no interesa. Ese dia empezo la aplicación del regimen de caja.
 				.and(INVOICE.TAX_DATE.greaterOrEqual( AonDateUtils.toSql(AonDateUtils.getYearFirstDay(2014))))  
-				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// No Criterio de Caja.
+				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	//  Criterio de Caja.
 				.groupBy(INVOICE_TAX.ID
 						,INVOICE_TAX.PERCENTAGE
 						,INVOICE_TAX.SURCHARGE
@@ -783,7 +784,7 @@ public class Mod3902015DAO {
 							double invoiceVat  = record.getValue(INVOICE.VAT_QUOTA);
 							double invoiceRetention = record.getValue(INVOICE.RETENTION_QUOTA);
 							double invoiceTotal = record.getValue(INVOICE.TOTAL);
-							double financeAmount = record.getValue(financeTrackingAmountDecode);
+							double financeAmount = record.getValue(financeTrackingAmountDecode).doubleValue();
 							
 							invoiceTotal = AonMathUtils.round(invoiceBase + invoiceVat - invoiceRetention);
 							taxableBase = AonMathUtils.round(financeAmount * taxableBase / invoiceTotal,4);
@@ -817,7 +818,7 @@ public class Mod3902015DAO {
 					.from(INVOICE)
 					.where(INVOICE.DOMAIN.equal(mod390.getDomain()))
 					.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
-					.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// No Criterio de Caja.
+					.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
 					.groupBy(INVOICE.TYPE)
 					.having(DSL.sum(INVOICE.VAT_QUOTA).greaterThan( new BigDecimal(0)) )
 					.fetch()
@@ -838,6 +839,101 @@ public class Mod3902015DAO {
 								detail.setQuota(quota);
 								}
 					);
+			// **********************************************************************************************
+			// **********************************************************************************************
+			Field<BigDecimal> sumFinanceAmount = DSL.sum( FINANCE.AMOUNT);
+			
+			ctx.getDslContext().select(INVOICE_TAX.ID
+					,INVOICE.TYPE
+					,INVOICE.RECTIFICATION_TYPE
+					,INVOICE.SERVICE
+					,INVOICE.TRANSACTION
+					,INVOICE.INVESTMENT
+					,INVOICE.WITHHOLDING_FARMER
+					,INVOICE_TAX.PERCENTAGE
+					,INVOICE_TAX.SURCHARGE
+					,INVOICE_TAX.VAT_DEDUCTION_TYPE
+					,INVOICE.TAXABLE_BASE
+					,INVOICE.VAT_QUOTA
+					,INVOICE.RETENTION_QUOTA
+					,INVOICE.TOTAL
+					,INVOICE_TAX.BASE
+					,invoiceTaxQuotaDecode
+					,sumSurchargeQuotaOp
+					,sumFinanceAmount)
+					.from(FINANCE)
+					.join(INVOICE).on(FINANCE.INVOICE.equal(INVOICE.ID))
+					.join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
+					.join(INVOICE_TAX).on(INVOICE_DETAIL.ID.equal(INVOICE_TAX.INVOICE_DETAIL))
+					.where(FINANCE.DOMAIN.equal(mod390.getDomain()))
+					.and(FINANCE.STATUS.eq((byte)0)
+					.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
+					.and(INVOICE.TAX_DATE.between(
+							 AonDateUtils.toSql(AonDateUtils.getYearFirstDay(2014))
+							,AonDateUtils.toSql(AonDateUtils.getYearLastDay(2014))) ))
+					.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
+					.groupBy(INVOICE_TAX.ID
+							,INVOICE_TAX.PERCENTAGE
+							,INVOICE_TAX.SURCHARGE
+							,INVOICE_TAX.VAT_DEDUCTION_TYPE)
+					.fetch()
+					.stream()
+					.forEach(
+							record -> {
+								VatContext vc = new VatContext();
+								vc.setInvoiceType(InvoiceType.values()[record.getValue(INVOICE.TYPE)]);
+								vc.setRectificationType(RectificationType.values()[record.getValue(INVOICE.RECTIFICATION_TYPE)]);
+								vc.setService(record.getValue(INVOICE.SERVICE) == 1);
+								vc.setTransaction(InvoiceTransactionType.values()[record.getValue(INVOICE.TRANSACTION)]);
+								vc.setInvestment(record.getValue(INVOICE.INVESTMENT) == 1);
+								vc.setAccrualRegime(true);
+								vc.setFarmerRegime(record.getValue(INVOICE.WITHHOLDING_FARMER) == 1);
+								
+								double surchargePercent = record.getValue(INVOICE_TAX.SURCHARGE).doubleValue();
+								vc.setSurchargePercent(surchargePercent);
+								boolean surcharge = (surchargePercent > 0);
+								vc.setSurcharge(surcharge);
+								
+								double taxableBase = record.getValue(INVOICE_TAX.BASE);
+								double quota = record.getValue(invoiceTaxQuotaDecode);
+								double surchargeQuota = record.getValue(sumSurchargeQuotaOp).doubleValue();
+								double percentage = record.getValue(INVOICE_TAX.PERCENTAGE); 
+								vc.setPercentage(percentage);
+								double invoiceBase = record.getValue(INVOICE.TAXABLE_BASE);
+								double invoiceVat  = record.getValue(INVOICE.VAT_QUOTA);
+								double invoiceRetention = record.getValue(INVOICE.RETENTION_QUOTA);
+								double invoiceTotal = record.getValue(INVOICE.TOTAL);
+								double financeAmount = record.getValue(sumFinanceAmount).doubleValue();
+								
+								invoiceTotal = AonMathUtils.round(invoiceBase + invoiceVat - invoiceRetention);
+								taxableBase = AonMathUtils.round(financeAmount * taxableBase / invoiceTotal,4);
+								quota = AonMathUtils.round(taxableBase * percentage / 100);
+								vc.setVatDeductionType(VatDeductionType.values()[record.getValue(INVOICE_TAX.VAT_DEDUCTION_TYPE)]);
+
+								Mod3902015DetailKey[] keys = DetailKey.getKeys(vc);			
+								if (keys != null) {
+									for (Mod3902015DetailKey key : keys) {
+										Mod390Detail detail = map.get(key);
+										if (detail == null) {
+											detail = new Mod390Detail();
+											map.put(key, detail );
+										}
+										detail.setKey(key);
+										detail.setPercent(percentage);
+										double q = key.isSurcharge()?surchargeQuota:quota;
+										if ( mustApplyProrrata &&  key.isProrrataEnabled() ) {
+											q = AonMathUtils.round(q * prorrata);
+										}
+										detail.setQuota( AonMathUtils.round(detail.getQuota()  + q));
+										detail.setTaxableBase( AonMathUtils.round( detail.getTaxableBase() + taxableBase));
+										
+									}
+								}
+							}
+					);
+
+			// **********************************************************************************************
+			// **********************************************************************************************
 			
 			// Cálculo de la Regularizacion por aplicacion del porcentaje definitivo de prorrata 
 			Record1<BigDecimal> record = ctx.getDslContext()
@@ -868,7 +964,8 @@ public class Mod3902015DAO {
 		try {
 			EnumMap<Mod3902015DetailKey, Mod390Detail> map = new EnumMap<Mod3902015DetailKey, Mod390Detail>(Mod3902015DetailKey.class);
 			Mod390Detail det = null;
-			for (Mod390Detail detail : getMod390Details(ctx, mod390)) {
+			LinkedList<Mod390Detail> details = getMod390Details(ctx, mod390);
+			for (Mod390Detail detail : details) {
 				map.put(detail.getKey(), detail); 
 			}
 			if (!mod390.isSimplifiedRegime()) {
