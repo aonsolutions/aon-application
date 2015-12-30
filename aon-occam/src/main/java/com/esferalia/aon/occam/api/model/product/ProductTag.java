@@ -4,32 +4,35 @@ public class ProductTag {
 	Integer id;
 	Integer domain;
 	Integer product;
-	Tag Tag;
-	
+	Tag tag;
+		
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public ProductTag setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	public Integer getDomain() {
 		return domain;
 	}
-	public void setDomain(Integer domain) {
+	public ProductTag setDomain(Integer domain) {
 		this.domain = domain;
+		return this;
 	}
 	public Integer getProduct() {
 		return product;
 	}
-	public void setProduct(Integer product) {
+	public ProductTag setProduct(Integer product) {
 		this.product = product;
+		return this;
+		
 	}
 	public Tag getTag() {
-		return Tag;
+		return tag;
 	}
-	public void setTag(Tag tag) {
-		Tag = tag;
+	public ProductTag setTag(Tag tag) {
+		this.tag = tag;
+		return this;
 	}
-	
-	
 }

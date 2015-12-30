@@ -1,9 +1,12 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.LinkedList;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 
 public interface IProduct {
@@ -12,7 +15,7 @@ public interface IProduct {
 	public Product getProduct(AONContext ctx, Integer productId);
 	public void insert(AONContext ctx,Product p);
 	public void insertWithId(AONContext ctx,Product p);
-	public void insert(AONContext ctx,Stream<Product> ps);
+	public LinkedList<Product> insert(AONContext ctx,Stream<Product> ps);
 	public void insertWithId(AONContext ctx,Stream<Product> ps);
 	public void update(AONContext ctx,Product p);
 	public void delete(AONContext ctx,Product p);
@@ -34,4 +37,10 @@ public interface IProduct {
 	public void updateItem(AONContext ctx, Item i);
 	public void deleteItem(AONContext ctx, Item i);
 	public void deleteItem(AONContext ctx, Stream<Item> is);
+	
+	// BRAND
+	public Brand insertBrand(AONContext ctx, Brand brand); 
+	
+	// PRODUCT CATEGORY
+	public ProductCategory insertProductCategory(AONContext ctx, ProductCategory productCategory); 
 }

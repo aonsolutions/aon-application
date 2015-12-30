@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
@@ -12,6 +13,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Vector;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,11 +25,14 @@ import org.jooq.Record20;
 import org.jooq.Record21;
 import org.jooq.Record3;
 
+import com.esferalia.aon.jooq.tables.records.BrandRecord;
 import com.esferalia.aon.jooq.tables.records.ItemRecord;
+import com.esferalia.aon.jooq.tables.records.PcategoryRecord;
 import com.esferalia.aon.jooq.tables.records.ProductRecord;
 import com.esferalia.aon.jooq.tables.records.ProductTagRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
@@ -173,24 +178,23 @@ public class ProductDAO {
 					.execute();
 		});
 	}
-	public static void insert(AONContext ctx, Stream<Product> ps) {
+	public static LinkedList<Product> insert(AONContext ctx, Stream<Product> ps) {
 		ctx.checkWrite();
 		AONContext sctx = ctx;
-		ctx.getDslContext().transaction(configuration -> {
-			InsertValuesStep22<ProductRecord, Integer, String, String, Integer, Integer, Byte, Byte, Byte, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Integer, Integer, String, Timestamp, String, Timestamp, Byte> insertQuery = ctx.getDslContext().insertInto(PRODUCT, PRODUCT.DOMAIN, PRODUCT.NAME, PRODUCT.CODE, PRODUCT.BRAND, PRODUCT.CATEGORY, PRODUCT.INVENTORIABLE, PRODUCT.SERIALIZABLE, PRODUCT.LOTABLE, PRODUCT.STATUS, PRODUCT.VAT, PRODUCT.RETENTION, PRODUCT.TYPE, PRODUCT.MANUFACTURED, PRODUCT.COMPOSITION, PRODUCT.COMPOSITION_PRICE, PRODUCT.SALES_ACCOUNT, PRODUCT.PURCHASE_ACCOUNT, PRODUCT.CREATION_USER, PRODUCT.CREATION_DATE, PRODUCT.MODIFICATION_USER, PRODUCT.MODIFICATION_DATE, PRODUCT.KIND);
-			AONContext sctx2 = sctx;
-			ps.forEach(p ->{
-				ProductValidation.validate(sctx2, p);
-				Timestamp creationDate = null, modificationDate = null;
-				if(p.getCreationDate() != null)
-					creationDate = new java.sql.Timestamp(p.getCreationDate().getTime());
-				if(p.getModificationDate() != null)
-					modificationDate = new java.sql.Timestamp(p.getModificationDate().getTime());
+		InsertValuesStep22<ProductRecord, Integer, String, String, Integer, Integer, Byte, Byte, Byte, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Integer, Integer, String, Timestamp, String, Timestamp, Byte> insertQuery = ctx.getDslContext().insertInto(PRODUCT, PRODUCT.DOMAIN, PRODUCT.NAME, PRODUCT.CODE, PRODUCT.BRAND, PRODUCT.CATEGORY, PRODUCT.INVENTORIABLE, PRODUCT.SERIALIZABLE, PRODUCT.LOTABLE, PRODUCT.STATUS, PRODUCT.VAT, PRODUCT.RETENTION, PRODUCT.TYPE, PRODUCT.MANUFACTURED, PRODUCT.COMPOSITION, PRODUCT.COMPOSITION_PRICE, PRODUCT.SALES_ACCOUNT, PRODUCT.PURCHASE_ACCOUNT, PRODUCT.CREATION_USER, PRODUCT.CREATION_DATE, PRODUCT.MODIFICATION_USER, PRODUCT.MODIFICATION_DATE, PRODUCT.KIND);
+		AONContext sctx2 = sctx;
+		ps.forEach(p ->{
+			ProductValidation.validate(sctx2, p);
+			Timestamp creationDate = null, modificationDate = null;
+			if(p.getCreationDate() != null)
+				creationDate = new java.sql.Timestamp(p.getCreationDate().getTime());
+			if(p.getModificationDate() != null)
+				modificationDate = new java.sql.Timestamp(p.getModificationDate().getTime());
 				
-				insertQuery.values(p.getDomain(), p.getName(), p.getCode(), p.getBrand(), p.getCategory(), p.getInventoriable(), p.getSerializable(), p.getLotable(), p.getStatus(), p.getVat(), p.getRetention(), p.getType(), p.getManufactured(),p.getComposition(), p.getCompositionPrice(), p.getSalesAccount(), p.getPurchaseAccount(), p.getCreationUser(), creationDate, p.getModificationUser(), modificationDate, p.getKind() != null ? p.getKind() : 0);
-			});
-			insertQuery.execute();
+			insertQuery.values(p.getDomain(), p.getName(), p.getCode(), p.getBrand(), p.getCategory(), p.getInventoriable(), p.getSerializable(), p.getLotable(), p.getStatus(), p.getVat(), p.getRetention(), p.getType(), p.getManufactured(),p.getComposition(), p.getCompositionPrice(), p.getSalesAccount(), p.getPurchaseAccount(), p.getCreationUser(), creationDate, p.getModificationUser(), modificationDate, p.getKind() != null ? p.getKind() : 0);
 		});
+		return insertQuery.returning().fetch().stream().map(new ImportProductFiller())
+				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	public static void insertWithId(AONContext ctx, Stream<Product> ps) {
 		ctx.checkWrite();
@@ -488,7 +492,59 @@ public class ProductDAO {
 		});		
 	}
 
+	private static class ImportProductFiller implements Function<ProductRecord, Product> {
+		@Override
+		public Product apply(ProductRecord r) {
+			return new Product().setId(r.getId())
+					.setCode(r.getCode())
+					.setDomain(r.getDomain());		
+		}
+	}
 	
+	// ------------------------------------- BRAND
 	
+	public static Brand getBrand(AONContext ctx, Integer brandId){
+		return ctx.getDslContext().select().from(BRAND).where(BRAND.ID.eq(brandId))
+				.fetchInto(BRAND).stream().map(new FullBrandFiller()).findFirst().orElse(new Brand());
+	}
 	
+	public static Brand insertBrand(AONContext ctx, Brand brand){
+		return ctx.getDslContext().insertInto(BRAND, BRAND.DOMAIN, BRAND.NAME)
+		.values(brand.getDomain(), brand.getName()).returning().fetch().stream()
+		.map(new FullBrandFiller()).findFirst().orElse(new Brand());
+	}
+
+	private static class FullBrandFiller implements Function<BrandRecord, Brand> {
+		@Override
+		public Brand apply(BrandRecord r) {
+			return new Brand().setId(r.getId())
+					.setName(r.getName())
+					.setDomain(r.getDomain());		
+		}
+	}
+	
+	// ------------------------------------- PRODUCT CATEGORY
+	
+	public static ProductCategory getProductCategory(AONContext ctx, Integer productCategoryId){
+		return ctx.getDslContext().select().from(PCATEGORY).where(PCATEGORY.ID.eq(productCategoryId))
+				.fetchInto(PCATEGORY).stream().map(new FullProductCategoryFiller()).findFirst().orElse(new ProductCategory());
+	}
+		
+	public static ProductCategory insertProductCategory(AONContext ctx, ProductCategory productCategory){
+		return ctx.getDslContext().insertInto(PCATEGORY, PCATEGORY.DOMAIN, PCATEGORY.NAME, PCATEGORY.DETAIL, PCATEGORY.DETAIL2, PCATEGORY.DETAIL3)
+		.values(productCategory.getDomain(), productCategory.getName(), productCategory.getDetail(), productCategory.getDetail2(), productCategory.getDetail3())
+		.returning().fetch().stream().map(new FullProductCategoryFiller()).findFirst().orElse(new ProductCategory());
+	}
+
+	private static class FullProductCategoryFiller implements Function<PcategoryRecord, ProductCategory> {
+		@Override
+		public ProductCategory apply(PcategoryRecord r) {
+			return new ProductCategory().setId(r.getId())
+					.setName(r.getName())
+					.setDomain(r.getDomain())
+					.setDetail(r.getDetail())
+					.setDetail2(r.getDetail2())
+					.setDetail3(r.getDetail3());		
+		}
+	}
 }

@@ -148,7 +148,7 @@ public class ProductValidation {
 				.where(TAG.ID.eq(pt.getTag().getId()))
 				.and(TAG.DOMAIN.eq(pt.getDomain()))
 				.fetchOne(0,int.class);
-		if (count>0) 
+		if (count<=0) 
 			throw new AonCoreException(AonError.EXIST_TAG.getMessage());
 	};
 	
@@ -175,8 +175,8 @@ public class ProductValidation {
 			.andThen(EMPTY_PRODUCT)
 			.andThen(EMPTY_TAG)
 			//.andThen(EXIST_PRODUCT)
-			.andThen(EXIST_TAG)
-			.andThen(DUPLICATE_PRODUCT_TAG)
+			//.andThen(EXIST_TAG)
+			//.andThen(DUPLICATE_PRODUCT_TAG)
 			.accept(pt, ctx);
 	}
 	

@@ -74,8 +74,10 @@ import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.registry.Category;
@@ -519,8 +521,8 @@ public class AON {
 		getProduct().insertWithId(ctx, p);
 	}
 
-	public static void insert(AONContext ctx, Stream<Product> ps) {
-		getProduct().insert(ctx, ps);
+	public static LinkedList<Product> insert(AONContext ctx, Stream<Product> ps) {
+		return getProduct().insert(ctx, ps);
 	}
 
 	public static void insertWithId(AONContext ctx, Stream<Product> ps) {
@@ -605,6 +607,32 @@ public class AON {
 		getProduct().deleteItem(ctx, is);
 	}
 
+	// ------------------------------------ BRAND
+	
+	public static Brand insertBrand(String domainName, Integer domainId, String login,
+			Brand brand){
+		AONContext ctx = null;
+		try{
+			ctx =AONContext.getAONContext(domainName, domainId, login);
+			return getProduct().insertBrand(ctx, brand);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	// ------------------------------------ PRODUCT CATEGORY
+	
+	public static ProductCategory insertProductCategory(String domainName, Integer domainId, String login,
+			ProductCategory productCategory){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getProduct().insertProductCategory(ctx, productCategory);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	// ********************************************
 	// ****************************** ACCOUNTING **
 	// ********************************************

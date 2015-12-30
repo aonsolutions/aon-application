@@ -10,7 +10,9 @@ import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.Tax.TAX;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.Vector;
 
@@ -153,6 +155,7 @@ public class DBProduct {
 			Vector<com.esferalia.aon.occam.api.model.product.Product> iproducts = new Vector<com.esferalia.aon.occam.api.model.product.Product>();
 			Vector<com.esferalia.aon.occam.api.model.product.ProductTag> uproductsTag = new Vector<com.esferalia.aon.occam.api.model.product.ProductTag>();
 			Vector<com.esferalia.aon.occam.api.model.product.ProductTag> iproductsTag = new Vector<com.esferalia.aon.occam.api.model.product.ProductTag>();
+			HashMap<String, LinkedList<com.esferalia.aon.occam.api.model.product.ProductTag>> iNewProductsTag = new HashMap<String, LinkedList<com.esferalia.aon.occam.api.model.product.ProductTag>>();
 			Vector<com.esferalia.aon.occam.api.model.product.Item> iitems = new Vector<com.esferalia.aon.occam.api.model.product.Item>();
 			Vector<com.esferalia.aon.occam.api.model.product.Item> uitems = new Vector<com.esferalia.aon.occam.api.model.product.Item>();
 
@@ -179,7 +182,8 @@ public class DBProduct {
 								Result<Record1<Integer>> tag = sctx.getDslContext().select(PRODUCT_TAG.ID)
 										.from(PRODUCT_TAG).where(PRODUCT_TAG.ID.eq(pt.getId()))
 										.fetch();	
-								
+								pt.setDomain(r.getProduct().getDomain());
+								pt.setProduct(product.getId());
 								if(tag != null && tag.isNotEmpty())
 									uproductsTag.add(pt);
 								else iproductsTag.add(pt);
@@ -213,6 +217,18 @@ public class DBProduct {
 					}
 				}
 				else{
+					if(r.getProductTag() != null){
+						r.getProductTag().stream().forEach(pt->{
+							String code = r.getProduct().getCode();
+							if(iNewProductsTag.containsKey(code)){
+								LinkedList<ProductTag> list = iNewProductsTag.get(code);list.add(pt);
+								iNewProductsTag.put(code, list);
+							} else {
+								LinkedList<ProductTag> list = new LinkedList<ProductTag>();list.add(pt);
+								iNewProductsTag.put(code, list);
+							}
+						});
+					}
 					com.esferalia.aon.occam.api.model.product.Product product2 = r.getProduct();
 					product2.setKind(Byte.parseByte(kind));
 					product2.setCreationUser(ai.getUsername());product2.setModificationUser(ai.getUsername());
@@ -228,7 +244,18 @@ public class DBProduct {
 				});
 				if(iproductsTag.size() > 0) AON.insertProductTag(sctx, iproductsTag.stream());
 			
-				if(iproducts.size() > 0) AON.insert(ctx, iproducts.stream());
+				if(iproducts.size() > 0){ 
+					LinkedList<Product> list = AON.insert(ctx, iproducts.stream());
+					for (Product p : list) {
+						LinkedList<ProductTag> l = iNewProductsTag.get(p.getCode()) != null
+								? iNewProductsTag.get(p.getCode()) : new LinkedList<ProductTag>();
+						for (ProductTag pt : l) {
+							pt.setDomain(p.getDomain());
+							pt.setProduct(p.getId());
+						}
+						AON.insertProductTag(sctx, l.stream());
+					}
+				}
 				
 				uitems.stream().forEach(r->{
 					AON.updateItem(sctx, r);

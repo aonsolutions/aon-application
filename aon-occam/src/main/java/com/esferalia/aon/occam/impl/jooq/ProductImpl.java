@@ -1,11 +1,14 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IProduct;
+import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 
@@ -34,10 +37,9 @@ public class ProductImpl implements IProduct{
 	}
 
 	@Override
-	public void insert(AONContext ctx, Stream<Product> ps) {
-		ctx.getDslContext().transaction(configuration -> {
-			ProductDAO.insert(ctx, ps);
-		} );		
+	public LinkedList<Product> insert(AONContext ctx, Stream<Product> ps) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			ProductDAO.insert(ctx, ps));		
 	}
 
 	@Override
@@ -160,6 +162,22 @@ public class ProductImpl implements IProduct{
 		ctx.getDslContext().transaction(configuration -> {
 			ProductDAO.insertItemWithId(ctx, is);
 		} );
+	}
+	
+	// ------------------------------------- BRAND
+
+	@Override
+	public Brand insertBrand(AONContext ctx, Brand brand){
+		return ctx.getDslContext().transactionResult(configuration -> 
+			ProductDAO.insertBrand(ctx, brand));
+	}
+
+	// ------------------------------------- BRAND
+	
+	@Override
+	public ProductCategory insertProductCategory(AONContext ctx, ProductCategory productCategory){
+		return ctx.getDslContext().transactionResult(configuration ->
+			ProductDAO.insertProductCategory(ctx, productCategory));
 	}
 
 }
