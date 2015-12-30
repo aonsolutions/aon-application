@@ -233,7 +233,7 @@ public class OfficeTest {
 
 					notice.setId(id);
 					notice.setDomain(domain);
-					notice.setDate(record.getValue(NOTICE.DATE));
+					notice.setStartDate(record.getValue(NOTICE.DATE));
 
 					User user = new User();
 					UserRecord userRecord = ctx.getDslContext().selectFrom(USER)
