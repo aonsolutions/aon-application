@@ -8,7 +8,8 @@
 	xmlns:f="http://java.sun.com/jsf/core">
 
 	<aon:if test="#{domainSwitcher.parentDomain and desktop.state.showExternalApplications}">
-		<aon:div styleClass="aon-margin-top">					  
+		<aon:div styleClass="aon-margin-top">	
+			<!-- TIRANT ASESORES 				  
 			<aon:if test="#{desktop.state.showTirant}">
 				<aon:div styleClass="aon-text-center aon-margin-bottom aon-margin-top aon-support">
 					<h:outputLink id="tirantWeb" target="_blank" value="#{desktop.state.tirantExternalUrl}" >
@@ -17,6 +18,7 @@
 					</h:outputLink>
 				</aon:div>
 			</aon:if>							
+			-->
 			<aon:if test="#{desktop.state.showServiconvenios}">
 				<aon:div styleClass="aon-text-center aon-margin-bottom aon-support">
 					<aon:commandLink id="serviconvenios" styleClass="none" 
@@ -30,6 +32,7 @@
 					</aon:commandLink>
 				</aon:div>
 			</aon:if>
+			<!-- DEH Online 
 			<aon:if test="#{desktop.state.showDehOnline}">							
 				<aon:div styleClass="aon-text-center aon-margin-bottom aon-support">
 					<h:graphicImage title="#{bundle.aon_external_dehOnline}"
@@ -38,6 +41,7 @@
 						onclick="document.getElementById('dehonlineForm').submit()"/>
 				</aon:div>
 			</aon:if>
+			-->
 		</aon:div>		
 	</aon:if>
 					

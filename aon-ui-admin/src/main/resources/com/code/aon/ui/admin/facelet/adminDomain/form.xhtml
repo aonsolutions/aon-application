@@ -309,14 +309,20 @@
 						</h:panelGrid>	
 					</aon:if>
 
-					<aon:outputLabel for="Domain_externalApplications"
-						value="#{bundle.aon_external_applications}" />
-					<aon:div>
+					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+						<aon:if test="#{conexflow.showConexflow}" >
+							<aon:outputLabel for="Domain_externalApplications"
+								value="#{bundle.aon_external_applications}" />
+							<aon:div>
+						<!-- TIRANT ASESORES
 						<aon:selectBooleanCheckbox id="ExternalApplication_Tirant"
 							value="#{adminDomain.bookingInfo.tirant}">
 						</aon:selectBooleanCheckbox>
 						<aon:outputLabel for="ExternalApplication_Tirant"
-							value="#{bundle.aon_external_tirant}" />						
+							value="#{bundle.aon_external_tirant}" />	
+						 -->
+						 
+						<!-- DEH Online  					
 						<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 							<aon:selectBooleanCheckbox id="ExternalApplication_DEHOnline"
 								value="#{adminDomain.bookingInfo.dehOnline}">
@@ -343,9 +349,9 @@
 										target="#{globalConfig.currentOption}" />
 								</aon:commandLink>									
 							</aon:if>								
-						</aon:if>		
-						<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-							<aon:if test="#{conexflow.showConexflow}" >
+						</aon:if>	
+						-->	
+						
 							<aon:selectBooleanCheckbox id="ExternalApplication_ConexFlow"
 								value="#{conexflow.conexFlow}" reRender="aonContent">
 							
@@ -365,9 +371,9 @@
 										reRender="showConexFlowWindow">
 								</aon:commandButton>
 							</aon:if>
+							</aon:div>
 						</aon:if>	
-						</aon:if>
-					</aon:div>
+					</aon:if>
 					
 				</aon:panelGrid>								
 
