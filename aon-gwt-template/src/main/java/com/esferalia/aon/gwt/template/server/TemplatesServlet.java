@@ -1122,8 +1122,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	private StockInfo check(Integer row, String column, String template, Object value,StockInfo stock, Integer type) {
 		
 		switch (template) {
-		case "Producto": case "Product": 
-			if((type.equals(Cell.CELL_TYPE_STRING) && value.equals("")) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+		case "Producto": case "Product":
+			if((type.equals(Cell.CELL_TYPE_STRING) && !value.equals("")) || type.equals(Cell.CELL_TYPE_NUMERIC)){
 				stock.setProduct(toString(value));
 				if(stock.getProduct().length() > 15){
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
