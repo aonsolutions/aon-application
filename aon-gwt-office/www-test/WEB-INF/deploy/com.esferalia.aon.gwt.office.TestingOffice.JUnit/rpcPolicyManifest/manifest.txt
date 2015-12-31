@@ -1,2 +1,0 @@
-# Module com.esferalia.aon.gwt.office.TestingOffice.JUnit
-# RPC service class, partial path of RPC policy file

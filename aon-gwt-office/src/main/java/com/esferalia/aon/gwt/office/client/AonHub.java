@@ -27,8 +27,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class AonHub implements IAonHub {
 
 	private static String accessToken = null;
-	private String baseUrl = "https://api.github.com/";
-	private String repositoryUrl = "https://api.github.com/";
+	private static String baseUrl = "https://api.github.com/";
+	private static String repositoryUrl = "https://api.github.com/";
 	private static boolean authorized = false;
 	
 	public AonHub(String url) {
@@ -231,10 +231,51 @@ public class AonHub implements IAonHub {
 
 	public static final <T extends JavaScriptObject> void get(String url,
 			final AsyncCallback<T> callback) {
+
 		String requestUrl = makeRequestUrl(url);
-		GWT.log("[GET] " + requestUrl);		
-		JsonpRequestBuilder jsonp = new JsonpRequestBuilder();		
-		jsonp.requestObject(requestUrl, hookCallback(callback));		
+		
+		if ( baseUrl.contains("api.github.com") ) {
+			//API GITHUB
+			GWT.log("[GET] " + requestUrl);
+			JsonpRequestBuilder jsonp = new JsonpRequestBuilder();		
+			jsonp.requestObject(requestUrl, hookCallback(callback));
+		}
+		else {
+			//OTRA URL
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					requestUrl);
+
+			final AsyncCallback<T> hookedCallback = hookCallback(callback);
+			final StringBuilder log = new StringBuilder();
+			log.append("[GET]" + requestUrl);
+			
+			try {			
+				builder.sendRequest(null, new RequestCallback() {
+					@Override
+					public void onResponseReceived(Request request,
+							Response response) {
+						
+						T result = JsonUtils.<T> safeEval(response.getText());
+						log.append("\n\n--" + response.getStatusText() + ":"
+								+ response.getStatusCode() + "\n"
+								+ response.getText());
+						hookedCallback.onSuccess(result);
+						GWT.log(log.toString());
+					}
+
+					@Override
+					public void onError(Request request, Throwable e) {
+						log.append("\n\n--" + e.getStackTrace());
+						hookedCallback.onFailure(e);
+						GWT.log(log.toString());
+					}
+				});
+			} catch (RequestException e) {
+				log.append("\n\n--" + e.getStackTrace());
+				hookedCallback.onFailure(e);
+				GWT.log(log.toString());
+			}
+		}
 	}
 	
 	private <T extends JavaScriptObject> void post(String url,  

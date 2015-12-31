@@ -33,8 +33,12 @@ public class GWTExtendsOfficeTestCase extends GWTOfficeTestCase {
 			
 			@Override
 			public void onSuccess(JSON<JsIssue> result) {
+				System.out.println("SIZE: " + result.getData().length());
+				
 				assertNotNull(result);
 				assertNotNull(result.getData());
+				
+				//assertNotNull(result.getData());
 				for (int x = 0; x < result.getData().length() ; x++) {
 					System.out.println("ID: " + result.getData().get(x).getId()
 							+ "\nTitle: " + result.getData().get(x).getTitle()
