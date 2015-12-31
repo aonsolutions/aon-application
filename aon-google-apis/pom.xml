@@ -153,14 +153,6 @@
 			<version>20090211</version>
 		</dependency>
 
-		<!--dependency>
-			<groupId>com.sparkjava</groupId>
-			<artifactId>spark-core</artifactId>
-			<version>1.1</version>
-		</dependency-->
-
-
-
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
@@ -297,8 +289,10 @@
 											<include>com.esferalia.aon:aon.entity:${project.version}</include>
 											<include>com.esferalia.aon:aon.master.jooq:${project.version}</include>
 											<include>com.esferalia.aon:aon.entity.common:${project.version}</include>
-											<include>include&gt;com.code.aon:aon.oauth2:${project.version}</include>
-
+											<include>com.code.aon:aon.oauth2:${project.version}</include>
+											<include>com.esferalia.aon:aon.occam:${project.version}</include>
+											<include>com.esferalia.aon:aon.watson:${project.version}</include>
+											
 											<!-- Google -->
 											<include>com.google.api-client:google-api-client:1.21.0</include>
 											<include>com.google.http-client:google-http-client:1.21.0</include>
