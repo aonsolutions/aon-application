@@ -521,7 +521,8 @@ public class AON {
 		getProduct().insertWithId(ctx, p);
 	}
 
-	public static LinkedList<Product> insert(AONContext ctx, Stream<Product> ps) {
+	public static LinkedList<Product> insert(AONContext ctx,
+			Stream<Product> ps) {
 		return getProduct().insert(ctx, ps);
 	}
 
@@ -608,31 +609,33 @@ public class AON {
 	}
 
 	// ------------------------------------ BRAND
-	
-	public static Brand insertBrand(String domainName, Integer domainId, String login,
-			Brand brand){
+
+	public static Brand insertBrand(String domainName, Integer domainId,
+			String login, Brand brand) {
 		AONContext ctx = null;
-		try{
-			ctx =AONContext.getAONContext(domainName, domainId, login);
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getProduct().insertBrand(ctx, brand);
-		} finally{
-			if(ctx != null) ctx.close();
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
+
 	// ------------------------------------ PRODUCT CATEGORY
-	
-	public static ProductCategory insertProductCategory(String domainName, Integer domainId, String login,
-			ProductCategory productCategory){
+
+	public static ProductCategory insertProductCategory(String domainName,
+			Integer domainId, String login, ProductCategory productCategory) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getProduct().insertProductCategory(ctx, productCategory);
 		} finally {
-			if(ctx != null) ctx.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
+
 	// ********************************************
 	// ****************************** ACCOUNTING **
 	// ********************************************
@@ -1936,46 +1939,74 @@ public class AON {
 
 	public static List<Notice> getOpenNotices(Integer domainId,
 			String domainName, String userName) {
-		
+
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
 			return getOffice().getOpenNotices(ctx);
 		} finally {
-			if ( ctx != null )
+			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
-	public static List<Notice> getClosedNotices (Integer domainId,
+
+	public static List<Notice> getClosedNotices(Integer domainId,
 			String domainName, String userName) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
 			return getOffice().getClosedNotices(ctx);
-			
+
 		} finally {
-			if ( ctx != null )
+			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
-	public static Tag addNewTag (Integer domainId, String domainName, String userName, Tag tag) {
+
+	public static Notice addNewNotice(Integer domainId, String domainName,
+			String userName, Notice notice) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getOffice().addNewNotice(ctx, notice);
+
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Tag addNewTag(Integer domainId, String domainName,
+			String userName, Tag tag) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
 			return getOffice().addNewTag(ctx, tag);
 		} finally {
-			if ( ctx != null )
+			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
-	public static List<Tag> getTags (Integer domainId, String domainName, String userName) {
+
+	public static List<Tag> getTags(Integer domainId, String domainName,
+			String userName) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
 			return getOffice().getTags(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static void deleteTag(Integer domainId, String domainName,
+			String userName, Tag tag) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			getOffice().deleteTag(ctx, tag);
+			
 		} finally {
 			if ( ctx != null )
 				ctx.close();

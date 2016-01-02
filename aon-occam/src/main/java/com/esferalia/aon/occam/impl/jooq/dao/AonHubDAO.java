@@ -99,7 +99,6 @@ public class AonHubDAO {
 			}
 		}
 
-
 		Notice object = new Notice();
 		object.setId(noticeRecord.getValue(NOTICE.ID));
 		object.setDomain(ctx.getDomainId());
@@ -120,7 +119,7 @@ public class AonHubDAO {
 		object.setContact(noticeRecord.getValue(NOTICE.PHONE));
 		object.setSource(noticeRecord.getValue(NOTICE.SOURCE));
 		object.setCompany(noticeRecord.getValue(NOTICE.COMPANY));
-		object.setStatus(noticeRecord.getValue(NOTICE.STATUS).intValue());
+		object.setStatus(noticeRecord.getValue(NOTICE.STATUS));
 		object.setWorkgroup(noticeRecord.getValue(NOTICE.WORK_GROUP));
 		object.setType(NoticeType.values()[noticeRecord.getValue(NOTICE.TYPE)]
 				.getValue());
@@ -135,7 +134,7 @@ public class AonHubDAO {
 		
 		NoticeRecord noticeRecord = ctx.getDslContext().update(NOTICE)
 		.set(NOTICE.SUBJECT, notice.getTitle())
-		.set(NOTICE.STATUS, notice.getStatus().byteValue())
+		.set(NOTICE.STATUS, notice.getStatus())
 		.set(NOTICE.TYPE,
 				(byte) NoticeType.valueOf(notice.getType()).ordinal())
 		.set(NOTICE.PRIORITY,
@@ -145,7 +144,7 @@ public class AonHubDAO {
 		
 		ctx.getDslContext().update(NOTICE)
 		.set(NOTICE.SUBJECT, notice.getBody())
-		.set(NOTICE.STATUS, notice.getStatus().byteValue())
+		.set(NOTICE.STATUS, notice.getStatus())
 		.set(NOTICE.TYPE,
 				(byte) NoticeType.valueOf(notice.getType()).ordinal())
 		.set(NOTICE.PRIORITY,
@@ -168,9 +167,6 @@ public class AonHubDAO {
 					.set(NOTICE_TAG.NOTICE, noticeRecord.getValue(NOTICE.ID))
 					.set(NOTICE_TAG.TAG, tagId).set(NOTICE_TAG.START_DATE,
 							noticeRecord.getValue(NOTICE.DATE));
-			
-			
-			
 		}
 		
 		return notice;
@@ -257,7 +253,7 @@ public class AonHubDAO {
 					notice.setContact(record.getValue(NOTICE.PHONE));
 					notice.setSource(record.getValue(NOTICE.SOURCE));
 					notice.setCompany(record.getValue(NOTICE.COMPANY));
-					notice.setStatus(record.getValue(NOTICE.STATUS).intValue());
+					notice.setStatus(record.getValue(NOTICE.STATUS));
 					notice.setWorkgroup(record.getValue(NOTICE.WORK_GROUP));
 
 					String body = ctx.getDslContext().selectFrom(NOTICE)
@@ -352,7 +348,7 @@ public class AonHubDAO {
 					notice.setContact(record.getValue(NOTICE.PHONE));
 					notice.setSource(record.getValue(NOTICE.SOURCE));
 					notice.setCompany(record.getValue(NOTICE.COMPANY));
-					notice.setStatus(record.getValue(NOTICE.STATUS).intValue());
+					notice.setStatus(record.getValue(NOTICE.STATUS));
 					notice.setWorkgroup(record.getValue(NOTICE.WORK_GROUP));
 
 					String body = ctx.getDslContext().selectFrom(NOTICE)
@@ -447,7 +443,7 @@ public class AonHubDAO {
 					notice.setContact(record.getValue(NOTICE.PHONE));
 					notice.setSource(record.getValue(NOTICE.SOURCE));
 					notice.setCompany(record.getValue(NOTICE.COMPANY));
-					notice.setStatus(record.getValue(NOTICE.STATUS).intValue());
+					notice.setStatus(record.getValue(NOTICE.STATUS));
 					notice.setWorkgroup(record.getValue(NOTICE.WORK_GROUP));
 
 					String body = ctx.getDslContext().selectFrom(NOTICE)

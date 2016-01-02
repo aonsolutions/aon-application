@@ -17,7 +17,7 @@ public class Notice implements Serializable, HasId {
 	private Integer id;
 	private Integer domain;
 	private Integer recipient; // Destinatario del aviso
-	private Integer status; // Estado del aviso
+	private byte status; // Estado del aviso
 	private Integer workgroup; // Grupo de trabajo al que va dirigido el aviso
 	private Integer notice; //Notice al que referencia **null si es cabecera = titulo
 	
@@ -87,7 +87,7 @@ public class Notice implements Serializable, HasId {
 		this.company = company;
 	}
 	
-	public void setStatus(Integer status) {
+	public void setStatus(byte status) {
 		this.status = status;
 	}
 	
@@ -162,7 +162,7 @@ public class Notice implements Serializable, HasId {
 		return company;
 	}
 	
-	public Integer getStatus() {
+	public byte getStatus() {
 		return status;
 	}
 	

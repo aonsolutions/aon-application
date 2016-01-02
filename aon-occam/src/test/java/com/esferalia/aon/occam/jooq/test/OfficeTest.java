@@ -249,7 +249,7 @@ public class OfficeTest {
 					notice.setContact(record.getValue(NOTICE.PHONE));
 					notice.setSource(record.getValue(NOTICE.SOURCE));
 					notice.setCompany(record.getValue(NOTICE.COMPANY));
-					notice.setStatus(record.getValue(NOTICE.STATUS).intValue());
+					notice.setStatus(record.getValue(NOTICE.STATUS));
 					notice.setWorkgroup(record.getValue(NOTICE.WORK_GROUP));
 
 					byte ordinalType = record.getValue(NOTICE.TYPE);
