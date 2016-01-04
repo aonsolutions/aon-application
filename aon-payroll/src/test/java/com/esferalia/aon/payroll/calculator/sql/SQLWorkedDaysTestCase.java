@@ -806,7 +806,7 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 				end, criteria);
 		ctx.next();
 		if ( monthdays != null )
-			assertEquals(ctx, Math.min((double) (get(end, DAY_OF_MONTH) * coefficient), monthdays),
+			assertEquals(ctx, Math.min((double) (Math.max(get(end, DAY_OF_MONTH),30) * coefficient), monthdays),
 					start, end, monthdays);
 		else
 			assertEquals(ctx, (double) (get(end, DAY_OF_MONTH) * coefficient),
