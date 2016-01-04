@@ -73,7 +73,13 @@ public class ExcelFunctions {
 
 	@Variable(ContextVariable.DAYS)
 	public static Long days(Date from, Date to) {
-		return (long) (from.getTime() - to.getTime()) / (1000 * 60 * 60 * 24);
+		Calendar fromCalendar = Calendar.getInstance();
+		fromCalendar.setTime(from);
+		
+		Calendar toCalendar = Calendar.getInstance();
+		toCalendar.setTime(to);
+		
+		return (long) ((fromCalendar.getTimeInMillis() + fromCalendar.get(Calendar.DST_OFFSET)) - (toCalendar.getTimeInMillis() + toCalendar.get(Calendar.DST_OFFSET) )) / (1000 * 60 * 60 * 24);
 	}
 
 	@Variable(ContextVariable.DATE)
@@ -132,7 +138,13 @@ public class ExcelFunctions {
 	public static Date day(Date date, int days) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		
 		calendar.add(Calendar.DAY_OF_MONTH, days);
+
 		return calendar.getTime();
 	}
 
