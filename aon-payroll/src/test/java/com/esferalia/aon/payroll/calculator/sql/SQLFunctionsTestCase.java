@@ -186,7 +186,7 @@ public class SQLFunctionsTestCase extends
 				ctx.getExpressionContext().eval(
 						String.format("AÑO(FECHA(%d,%d,%d))", 
 								get(today, Calendar.YEAR),
-								get(today, Calendar.MONTH),
+								get(today, Calendar.MONTH)+1,
 								get(today, Calendar.DATE)
 						)
 						, startDate
@@ -308,6 +308,22 @@ public class SQLFunctionsTestCase extends
 		Date today = getToday();
 		
 		List<ITimedResult<Integer>>  days = 
+				ctx.getExpressionContext().eval(
+						String.format("DIAS(DIA(FECHA(%d,%d,%d),10),FECHA(%d,%d,%d))", 
+								get(today, Calendar.YEAR),
+								get(today, Calendar.MONTH)+1,
+								get(today, Calendar.DATE),
+								get(today, Calendar.YEAR),
+								get(today, Calendar.MONTH)+1,
+								get(today, Calendar.DATE)
+						)
+						, startDate
+						, endDate, Integer.class);
+		
+
+		Assert.assertEquals(10, (int)days.get(0).getValue());
+
+		days = 
 				ctx.getExpressionContext().eval(
 						String.format("DIAS(DIA(FECHA(%d,%d,%d),100),FECHA(%d,%d,%d))", 
 								get(today, Calendar.YEAR),
