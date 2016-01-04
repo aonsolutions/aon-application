@@ -53,6 +53,7 @@ public class AonHub implements IAonHub {
 	public void getUser(String login, AsyncCallback<AJSON<JsUser>> callback) {
 		get(baseUrl + "users/" + URL.encode(login), callback);
 	}
+	
 
 	// *********** REPOSITORIES *********** //
 

@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -20,11 +19,11 @@ import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.office.Notice;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.office.User;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.esferalia.aon.occam.api.model.type.NoticeType;
 import com.esferalia.aon.occam.api.model.type.Priority;
-import com.esferalia.aon.occam.api.model.type.TagType;
 
 public class OfficeTest {
 
@@ -42,7 +41,127 @@ public class OfficeTest {
 		Class.forName(org.gjt.mm.mysql.Driver.class.getName());
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID, USER_NAME);
 	}
+	
+	@Test
+	public void testPruebaCreateNotice () {
 
+		Notice notice = new Notice();
+		notice.setTitle("Title Issue");
+		notice.setBody("Body Issue");
+		notice.setStatus(NoticeStatus.OPEN.value());
+		notice.setType("TICKET");
+		notice.setPriority("LOW");	
+		
+		Date today = new Date();
+
+		Integer userId = ctx.getDslContext().selectFrom(USER)
+				.where(USER.LOGIN.eq(ctx.getUser())
+						.and(USER.DOMAIN.eq(ctx.getDomainId())))
+				.fetchOne().getValue(USER.ID);
+
+		NoticeRecord noticeRecord = ctx.getDslContext().insertInto(NOTICE)
+				.set(NOTICE.DOMAIN, ctx.getDomainId())
+				.set(NOTICE.SENDER, userId)
+				.set(NOTICE.DATE,
+						new java.sql.Timestamp((new Date()).getTime()))
+				.set(NOTICE.SUBJECT, notice.getTitle())
+				.set(NOTICE.PHONE,
+						(notice.getPhone() != null) ? notice.getPhone() : null)
+				.set(NOTICE.STATUS, NoticeStatus.OPEN.value())
+				.set(NOTICE.TYPE,
+						(byte) NoticeType.valueOf(notice.getType()).ordinal())
+				.set(NOTICE.PRIORITY,
+						(byte) Priority.valueOf(notice.getPriority()).ordinal())
+				.set(NOTICE.COMPANY,
+						(notice.getCompany() != null) ? notice.getCompany()
+								: "")
+				.set(NOTICE.RECIPIENT,
+						(notice.getRecipient() != null) ? notice.getRecipient()
+								: null)
+				.set(NOTICE.WORK_GROUP, (notice.getWorkgroup() != null)
+						? notice.getWorkgroup() : null)
+				.returning().fetchOne();
+
+
+		ctx.getDslContext().insertInto(NOTICE)
+				.set(NOTICE.DOMAIN, noticeRecord.getValue(NOTICE.DOMAIN))
+				.set(NOTICE.SENDER, noticeRecord.getValue(NOTICE.SENDER))
+				.set(NOTICE.DATE, noticeRecord.getValue(NOTICE.DATE))
+				.set(NOTICE.SUBJECT, notice.getTitle())
+				.set(NOTICE.PHONE, noticeRecord.getValue(NOTICE.PHONE))
+				.set(NOTICE.STATUS, noticeRecord.getValue(NOTICE.STATUS))
+				.set(NOTICE.TYPE, noticeRecord.getValue(NOTICE.TYPE))
+				.set(NOTICE.PRIORITY, noticeRecord.getValue(NOTICE.PRIORITY))
+				.set(NOTICE.WORK_GROUP,
+						noticeRecord.getValue(NOTICE.WORK_GROUP))
+				.set(NOTICE.NOTICE_, noticeRecord.getValue(NOTICE.ID))
+				.execute();			
+		
+		if ( notice.getTags().isEmpty() ) {
+			ctx.getDslContext().insertInto(NOTICE_TAG)
+			.set(NOTICE_TAG.NOTICE, noticeRecord.getValue(NOTICE.ID))
+			.set(NOTICE_TAG.START_DATE,
+					noticeRecord.getValue(NOTICE.DATE))
+			.execute();
+		}
+		else {
+
+			for (Tag tag : notice.getTags()) {
+				// PUEDE QUE SOLO VENGA EL NOMBRE
+				Integer tagId = ctx.getDslContext().selectFrom(TAG)
+						.where(TAG.DOMAIN.eq(ctx.getDomainId())
+								.and(TAG.NAME.eq(tag.getName())))
+						.fetchOne().getValue(TAG.ID);
+
+				ctx.getDslContext().insertInto(NOTICE_TAG)
+						.set(NOTICE_TAG.NOTICE, noticeRecord.getValue(NOTICE.ID))
+						.set(NOTICE_TAG.TAG, tagId).set(NOTICE_TAG.START_DATE,
+								noticeRecord.getValue(NOTICE.DATE))
+						.execute();
+			}
+		}
+
+		Notice object = new Notice();
+		object.setId(noticeRecord.getValue(NOTICE.ID));
+		object.setDomain(ctx.getDomainId());
+		object.setStartDate(today);		
+
+		User user = new User();
+		UserRecord userRecord = ctx.getDslContext().selectFrom(USER)
+				.where(USER.DOMAIN.eq(ctx.getDomainId())
+						.and(USER.LOGIN.eq(ctx.getUser())))
+				.fetchOne();
+		user.setId(userRecord.getValue(USER.ID));
+		user.setName(ctx.getUser());
+
+		object.setSender(user);
+		object.setTitle(notice.getTitle());
+		object.setBody(notice.getBody());
+		object.setRecipient(noticeRecord.getValue(NOTICE.RECIPIENT));
+		object.setContact(noticeRecord.getValue(NOTICE.PHONE));
+		object.setSource(noticeRecord.getValue(NOTICE.SOURCE));
+		object.setCompany(noticeRecord.getValue(NOTICE.COMPANY));
+		object.setStatus(noticeRecord.getValue(NOTICE.STATUS));
+		object.setWorkgroup(noticeRecord.getValue(NOTICE.WORK_GROUP));
+		object.setType(NoticeType.values()[noticeRecord.getValue(NOTICE.TYPE)]
+				.getValue());
+		object.setPriority(
+				Priority.values()[noticeRecord.getValue(NOTICE.PRIORITY)]
+						.getValue());
+
+		System.out.println("ID: " + object.getId());
+		System.out.println("DOMAIN: " + object.getDomain());
+		System.out.println("START DATE: " + object.getStartDate());
+		System.out.println("User: ............. ");
+		System.out.println(" User ID : " + object.getSender().getId());
+		System.out.println(" User Name : " + object.getSender().getName());
+		System.out.println(" .................................. ");
+		System.out.println("Title:_ " + object.getTitle());
+		System.out.println("Body: " + object.getBody());
+		
+	}
+
+	/*
 	@Test
 	public void testCreate() {
 
@@ -340,5 +459,5 @@ public class OfficeTest {
 		}
 
 	}
-
+*/
 }

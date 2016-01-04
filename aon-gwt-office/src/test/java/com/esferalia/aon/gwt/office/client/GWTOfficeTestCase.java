@@ -118,6 +118,9 @@ public class GWTOfficeTestCase extends GWTTestConstans {
 			issue.setTitle(title);
 			issue.setBody(body);
 			issue.setState(OPEN_STATE_ISSUE);
+			issue.setType("TICKET");
+			issue.setPriority("LOW");			
+			
 			System.out.println("Creando objecto Title issue " + (i + 1));
 
 			getAonHub().createIssue(issue, new AsyncCallback<JsIssue>() {

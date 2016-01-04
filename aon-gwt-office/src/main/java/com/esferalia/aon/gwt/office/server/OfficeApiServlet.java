@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.office.server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.regex.Matcher;
@@ -24,7 +23,6 @@ import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.office.User;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
-import com.google.api.client.http.HttpRequest;
 
 /**
  * 
@@ -158,9 +156,14 @@ public class OfficeApiServlet extends HttpServlet {
 				notice.setTitle(json.getString("title"));
 				notice.setBody(json.getString("body"));
 				notice.setStatus(NoticeStatus.OPEN.value());
-				notice.setPriority(json.getString("priority"));
 				
-				if ( json.getJSONArray("labels") != null) {
+				if ( json.isNull("type") == false)
+					notice.setType(json.getString("type"));
+				
+				if ( json.isNull("priority") == false)
+					notice.setPriority(json.getString("priority"));
+				
+				if ( json.isNull("labels") == false) {
 					JSONArray tags = json.getJSONArray("labels");
 					
 					for ( int x = 0 ; x < tags.length(); x++) {
@@ -168,10 +171,10 @@ public class OfficeApiServlet extends HttpServlet {
 						tag.setName(tags.getString(x));
 						notice.addTag(tag);
 					}
+
 				}
-				
+
 				getNotice(resp, notice);
-				
 				
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -637,15 +640,41 @@ public class OfficeApiServlet extends HttpServlet {
 	private static void getNotice (HttpServletResponse resp, Notice notice) {
 		
 		PrintWriter pw = null;
-		List<Notice> notices = new LinkedList<Notice>();
 		try {
-			Notice newNotice = AON.addNewNotice(DOMAIN_ID, DOMAIN_NAME, DOMAIN_NAME, notice);
-			notices.add(newNotice);
 			
-			buildNotices(notices.listIterator());
+			pw = resp.getWriter();
+			Notice newNotice = AON.addNewNotice(DOMAIN_ID, DOMAIN_NAME, USER_NAME, notice);
+			StringBuffer buffer = new StringBuffer();		 
+			
+			buffer.append("{\n");
+			buffer.append(String.format("\"id\":%s,\r\n",
+					String.valueOf(newNotice.getId())));
+			buffer.append(String.format("\"number\":%s,\r\n",
+					String.valueOf(newNotice.getId())));
+			buffer.append(
+					String.format("\"title\":\"%s\",\r\n", newNotice.getTitle()));
+			buffer.append(
+					String.format("\"body\":\"%s\",\r\n", newNotice.getBody()));
+			buffer.append(
+					String.format("\"state\":\"%s\",\r\n", 
+							NoticeStatus.values()[newNotice.getStatus()].getValue()));
+			buffer.append(String.format("\"user\":%s,\r\n",
+					buildUserSender(newNotice.getSender())));
+			buffer.append(
+					String.format("\"created_at\":\"%s\",\r\n", newNotice.getStartDate()));
+			buffer.append(String.format("\"labels\":%s\r\n",
+					buildLabels(newNotice.getTags().listIterator())));
+			buffer.append('}');
+			
+			pw.append(buffer);
+			pw.flush();
+			
 			
 		} catch ( Exception ex) {
 			System.out.println("Exception: " + ex.getMessage());
+		} finally {
+			if ( pw != null )
+				pw.close();
 		}
 	}
 

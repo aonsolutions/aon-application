@@ -40,8 +40,7 @@ public class OfficeImpl implements IOffice {
 	}
 
 	@Override
-	public Notice addNewNotice(AONContext ctx, Notice notice)
-			throws IllegalArgumentException {		
+	public Notice addNewNotice(AONContext ctx, Notice notice) {		
 		return AonHubDAO.addNewNotice(ctx, notice);
 	}
 

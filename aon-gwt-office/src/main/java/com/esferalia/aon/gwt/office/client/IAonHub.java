@@ -16,7 +16,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface IAonHub {
 
 	void getUser(String login, final AsyncCallback<AJSON<JsUser>> callback);
-
+	
 	void createRepository(RepoValue prop, AsyncCallback<JsRepo> callback);
 
 	void getRepoOrganization(String organization,

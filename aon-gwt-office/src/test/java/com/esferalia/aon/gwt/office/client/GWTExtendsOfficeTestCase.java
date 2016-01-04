@@ -18,34 +18,6 @@ public class GWTExtendsOfficeTestCase extends GWTOfficeTestCase {
 		return aonHub;
 	}
 	
-//	@Test
-//	public void testOpenNotices() {
-//
-//		getAonHub().getOpenIssues(USER, REPONAME, new AsyncCallback<JSON<JsIssue>>() {
-//			
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				fail("ERROR EN EL TEST");
-//				finishTest();
-//			}
-//			
-//			@Override
-//			public void onSuccess(JSON<JsIssue> result) {
-//				System.out.println("SIZE: " + result.getData().length());
-//				
-//				assertNotNull(result);
-//				assertNotNull(result.getData());
-//				
-//				//assertNotNull(result.getData());
-//				for (int x = 0; x < result.getData().length() ; x++) {
-//					System.out.println("ID: " + result.getData().get(x).getId()
-//							+ "\nTitle: " + result.getData().get(x).getTitle()
-//							+ "\nBody: " + result.getData().get(x).getBody());
-//				}
-//			}
-//		});		
-//	}
-	
 	@Override @Ignore
 	public void testCreateRepository() {}
 
@@ -53,7 +25,7 @@ public class GWTExtendsOfficeTestCase extends GWTOfficeTestCase {
 	public void testGetRepository() {}
 	
 	@Test
-	public void testIssuesCreate() {
+	public void testCreateNotices() {
 		System.out.println("testCreateIssues() .....");
 		
 		for (int i = 0; i < MAX_ISSUES_COUNT; i++) {
@@ -64,6 +36,9 @@ public class GWTExtendsOfficeTestCase extends GWTOfficeTestCase {
 			issue.setTitle(title);
 			issue.setBody(body);
 			issue.setState(OPEN_STATE_ISSUE);
+			issue.setType("TICKET");
+			issue.setPriority("LOW");
+			issue.setLabels(new String[]{"LABORAL","FISCAL"});
 			
 			System.out.println("Creando objecto Title issue " + (i + 1));
 
@@ -77,6 +52,11 @@ public class GWTExtendsOfficeTestCase extends GWTOfficeTestCase {
 
 				@Override
 				public void onSuccess(JsIssue result) {
+					assertNotNull(result);
+					assertEquals(title, result.getTitle());
+					assertEquals(body, result.getBody());
+					assertEquals(OPEN_STATE_ISSUE.toUpperCase(), result.getState());
+					
 					System.out.println(
 							"==============================================");
 					System.out.println(result.getTitle());
@@ -87,10 +67,9 @@ public class GWTExtendsOfficeTestCase extends GWTOfficeTestCase {
 				}
 			});
 		}		
-
 	}
 	
-	@Override
+	@Override @Ignore
 	public void testCreateIssues() {
 		//delayTestFinish(300*1000);
 	}
