@@ -92,7 +92,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		Salary settle = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
-		double br = (1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12) * 12 / AonDateUtils.getMax(getToday(), DAY_OF_YEAR);
+		double br = (1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12) * 12 / (365) ; //AonDateUtils.getMax(getToday(), DAY_OF_YEAR);
 
 		Assert.assertEquals( 12 * (2/12.00) * br, settle.getTotalPayment());
 		Assert.assertEquals( 12 * (2/12.00) * br, settle.getTotalLiquid());
@@ -149,7 +149,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		Salary settle = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
-		double br = (1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12) * 12 / AonDateUtils.getMax(getToday(), DAY_OF_YEAR);
+		double br = (1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12) * 12 / 365; //AonDateUtils.getMax(getToday(), DAY_OF_YEAR);
 
 		Assert.assertEquals( 20 * (2/12.00) * br, settle.getTotalPayment());
 		
@@ -160,10 +160,13 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 
 
 	private void addSSRegimeStuff(AONContext aonContext) {
+		
+		Date startDate = AonDateUtils.add(getFirstDayOfYear(getToday()), Calendar.YEAR, -2);
+		
 		addSSRegimeData(aonContext, 
 				SSRegimeType.GENERAL, 
-				getFirstDayOfYear(getToday()), 
-				getLastDayOfYear(getToday()), 
+				startDate, 
+				null, 
 				new HashMap<String, String>() {
 					{
 						put("DIAS_INDEMNIZACION_FIN", format("%d", 12));
@@ -173,7 +176,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		// INDEMNIZACION POR CESE
 		addSSRegimePayment(aonContext, 
 				SSRegimeType.GENERAL, 
-				getFirstDayOfYear(getToday()), 
+				startDate, 
 				PaymentType.CRA_0054, 
 				"(CAUSA_INDEMNIZACION == FIN) ? DIAS_INDEMNIZACION_FIN(FIN_CONTRATO) * AÑOS_TRABAJADOS * SALARIO_DIA : REMOVE()",
 				null ,
@@ -193,7 +196,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		//INDEMNIZACION POR DESPIDO IMPROCEDENTE (>= 13 DE FEBRERO DE 2012)
 		addSSRegimePayment(aonContext, 
 				SSRegimeType.GENERAL, 
-				getFirstDayOfYear(getToday()), 
+				startDate, 
 				PaymentType.CRA_0054, 
 				"(CAUSA_INDEMNIZACION==IMPROCEDENTE)?MIN(33*AÑOS_TRABAJADOS*SALARIO_DIA,ABS(SALARIO_DIA*365/12*24-INDEMNIZACION)):REMOVE()",
 				null ,
@@ -203,7 +206,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		//INDEMNIZACION POR DESPIDO POR CAUSAS OBJETIVAS
 		addSSRegimePayment(aonContext, 
 				SSRegimeType.GENERAL, 
-				getFirstDayOfYear(getToday()), 
+				startDate, 
 				PaymentType.CRA_0054, 
 				" (CAUSA_INDEMNIZACION == PROCEDENTE ) ? MIN(20 * AÑOS_TRABAJADOS * SALARIO_DIA, SALARIO_DIA * 365 / 12 * 12 ) : REMOVE()",
 				null ,
