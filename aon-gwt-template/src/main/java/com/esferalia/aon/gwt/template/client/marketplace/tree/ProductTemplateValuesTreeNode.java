@@ -21,7 +21,7 @@ public class ProductTemplateValuesTreeNode extends TreeNode<Integer>{
 		marketplace = _marketplace;
 		
 		marketplace.getImpl().getProductList(getDomain(),
-				this.marketplace.getLogin(), null, new AsyncCallback<List<Product>>() {
+				this.marketplace.getLogin(), null, true, new AsyncCallback<List<Product>>() {
 					@Override
 					public void onSuccess(List<Product> result) {
 						ProductList list = new ProductList(result, marketplace

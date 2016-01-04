@@ -33,6 +33,7 @@
 		</g:north>
 	
 		<g:center>
+					
 			<g:DockLayoutPanel unit="EM" styleName="aondockLayoutPanel-template">
 				<g:north size="8">
 					<g:HTMLPanel  styleName="aon-panelGrid-search searchPanel-template">
@@ -45,28 +46,40 @@
 							<tr>
 								<td> <span class="aon-panelGrid-search-info-internal2-template">Nombre:</span> </td>
 								<td style="width:550px">
-									<g:TextBox ui:field="nameSearchBox"  styleName="aon-search-box-template" />
+									<g:TextBox ui:field="nameSearchBox" styleName="aon-search-box-template" />
 								</td>
-								<td> <g:Button ui:field="nameSearchButton" visible="false" styleName="aon-editDataTable-button" /> </td>
 							</tr>
 						</table>
 						
-						<g:DisclosurePanel>
-							<g:header>Opciones avanzadas</g:header>
-							<g:HTMLPanel>
-								<table class="aon-panelGrid">
-									<tr>
-										<td> <span class="aon-panelGrid-search-info-internal2-template">Codigo:</span> </td>
-										<td style="width:550px">
-											<g:TextBox ui:field="codeSearchBox"  styleName="aon-search-box-template" />
-										</td>
-										<td> <g:Button ui:field="codeSearchButton" visible="false" styleName="aon-editDataTable-button" /> </td>
-									</tr>
-								</table>
-							</g:HTMLPanel>
-						</g:DisclosurePanel>
-						
 					</g:HTMLPanel>
+					<!--  
+					<g:HTMLPanel styleName="aon-panelGrid-search searchPanel-template">
+					    <g:VerticalPanel styleName="aon-panelGrid">
+					        <g:HorizontalPanel>
+								<g:TextBox ui:field="nameSearchBox"  styleName="aon-search-box-template" />
+					            <g:PushButton text="V" ui:field="moreOptionsButton"/>
+					            <g:PushButton text="Search"/>
+					        </g:HorizontalPanel>
+					        <g:DecoratedPopupPanel ui:field="searchOptionsPanel">
+						        <g:VerticalPanel>
+						            <g:HorizontalPanel>
+						                <g:Label text="Foo"
+						                	styleName="aon-panelGrid-search-info-internal2-template"/>
+						                <g:TextBox
+						                	styleName="aon-search-box-template" />
+						            </g:HorizontalPanel>
+						            <g:HorizontalPanel>
+						                <g:Label text="Bar"
+						                	styleName="aon-panelGrid-search-info-internal2-template"/>
+						                <g:TextBox
+						                	styleName="aon-search-box-template" />
+						            </g:HorizontalPanel>
+						        </g:VerticalPanel>
+					        </g:DecoratedPopupPanel>
+					    </g:VerticalPanel>
+					</g:HTMLPanel>
+					-->
+					
 				</g:north>
 				
 				<g:center>
@@ -74,6 +87,7 @@
 				</g:center>
 				
 			</g:DockLayoutPanel>
+			
 		</g:center>
 		
 	</g:DockLayoutPanel>

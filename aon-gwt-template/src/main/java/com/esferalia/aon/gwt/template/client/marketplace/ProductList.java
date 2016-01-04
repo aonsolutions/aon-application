@@ -12,7 +12,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -20,7 +19,6 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
@@ -28,7 +26,6 @@ import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -57,9 +54,9 @@ public class ProductList extends ResizeComposite{
 	
 	@UiField(provided = true) DataGrid<Product> dataGrid;
 	@UiField(provided = true) TextBox nameSearchBox;
-	@UiField Button nameSearchButton;
-	@UiField(provided = true) TextBox codeSearchBox;
-	@UiField Button codeSearchButton;
+	
+//	@UiField PushButton moreOptionsButton;
+//	@UiField DecoratedPopupPanel searchOptionsPanel;
 	
 	private List<Product> list;
 	private String login;
@@ -71,51 +68,63 @@ public class ProductList extends ResizeComposite{
 		setLogin(login);
 		
 		dataGrid = new DataGrid<Product>(Integer.MAX_VALUE, resources); 
-		
 		nameSearchBox = new TextBox();
-		nameSearchButton = new Button();
-
-		codeSearchBox = new TextBox();
-		codeSearchButton = new Button();
-		
-		
-//		// Create some advanced options
-////	    HorizontalPanel genderPanel = new HorizontalPanel();
-////	    String[] genderOptions = constants.cwDisclosurePanelFormGenderOptions();
-////	    for (int i = 0; i < genderOptions.length; i++) {
-////	      genderPanel.add(new RadioButton("gender", genderOptions[i]));
-////	    }
-////	    Grid advancedOptions = new Grid(2, 2);
-////	    advancedOptions.setCellSpacing(6);
-////	    advancedOptions.setHTML(0, 0, "Option 1");
-////	    advancedOptions.setWidget(0, 1, new TextBox());
-////	    advancedOptions.setHTML(1, 0, "Option 2");
-////	    advancedOptions.setWidget(1, 1, new TextBox());
-//
-//	    // Add advanced options to form in a disclosure panel
-//	    DisclosurePanel advancedDisclosure = new DisclosurePanel("Opciones avanzadas");
-//	    advancedDisclosure.setAnimationEnabled(true);
-////	    advancedDisclosure.ensureDebugId("cwDisclosurePanel");
-//	    advancedDisclosure.setContent(advancedOptions);
-//	    layout.setWidget(3, 0, advancedDisclosure);
-////	    cellFormatter.setColSpan(3, 0, 2);
-		
-		
 
 		Widget ui = binder.createAndBindUi(this);
+		
 		initWidget(ui);
-		load();
+//		searchOptionsPanel.setVisible( false );
+//		searchOptionsPanel.getElement().getStyle().setZIndex(10000);
+		initSearchBox();
+		loadDataGrid();
 	}
 	
-	private void load() {
-		loadSearchBox();
-		loadDataGrid();
+//	@UiHandler("moreOptionsButton")
+//	void onMoreOptionsBttnClick(ClickEvent event) {
+//	    searchOptionsPanel.setVisible( true );
+//	}
+	
+	public List<Product> getList(){
+		return list;
+	}
+	
+	public void setList(List<Product> list){
+		this.list = list;
+	}
+	
+	public String getLogin(){
+		return login;
+	}
+	
+	public void setLogin(String login){
+		this.login = login;
 	}
 	
 	//------------------------------ Actions
 	
-	@UiHandler("nameSearchButton")
-	void namebutton(ClickEvent event) {
+	
+	
+	//------------------------------ DataGrid Utils
+	
+	private void initSearchBox(){
+		nameSearchBox.addBitlessDomHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				searchByName();
+			}
+		}, ChangeEvent.getType());
+		nameSearchBox.addKeyUpHandler(new KeyUpHandler() {
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if(!Utils.isNotAlpKey(event.getNativeEvent().getKeyCode())){
+					searchByName();
+				}
+			}
+		});
+
+	}
+	
+	private void searchByName() {
 		String searchStr = nameSearchBox.getText();
 		Vector<Product> vaux = new Vector<Product>();
 		vaux.addAll(getList());
@@ -128,67 +137,9 @@ public class ProductList extends ResizeComposite{
 				dataGrid.redraw();
 			}
 			@Override
-			public void onFailure(Throwable caught) {
-		
-			}
+			public void onFailure(Throwable caught) {}
 		});
 		
-	}
-
-	@UiHandler("codeSearchButton")
-	void codebutton(ClickEvent event) {
-		String searchStr = codeSearchBox.getText();
-		Vector<Product> vaux = new Vector<Product>();
-		vaux.addAll(getList());
-		
-		impl.searchProductByName(searchStr, vaux, new AsyncCallback<Vector<Product>>() {
-			@Override
-			public void onSuccess(Vector<Product> result) {
-				dataProvider = new ListDataProvider<Product>(result);
-				dataProvider.addDataDisplay(dataGrid);
-				dataGrid.redraw();
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				
-			}
-		});
-		
-	}
-	
-	
-	//------------------------------ DataGrid Utils
-	
-	private void loadSearchBox(){
-		nameSearchBox.addBitlessDomHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				nameSearchButton.click();
-			}
-		}, ChangeEvent.getType());
-		nameSearchBox.addKeyUpHandler(new KeyUpHandler() {
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if(!Utils.isNotAlpKey(event.getNativeEvent().getKeyCode())){
-					nameSearchButton.click();
-				}
-			}
-		});
-
-		codeSearchBox.addBitlessDomHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				codeSearchButton.click();
-			}
-		}, ChangeEvent.getType());
-		codeSearchBox.addKeyUpHandler(new KeyUpHandler() {
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if(!Utils.isNotAlpKey(event.getNativeEvent().getKeyCode())){
-					codeSearchButton.click();
-				}
-			}
-		});
 	}
 	
 	private void loadDataGrid(){
@@ -303,25 +254,6 @@ public class ProductList extends ResizeComposite{
 		dataGrid.addColumn(nameColumn, "Nombre");
 		dataGrid.setColumnWidth(nameColumn, 85, Unit.PCT);
 	
-	}
-	
-	
-	//------------------------------ Getters & Setters
-	
-	public List<Product> getList(){
-		return list;
-	}
-	
-	public void setList(List<Product> list){
-		this.list = list;
-	}
-	
-	public String getLogin(){
-		return login;
-	}
-	
-	public void setLogin(String login){
-		this.login = login;
 	}
 	
 	

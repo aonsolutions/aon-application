@@ -10,6 +10,8 @@ import java.util.Vector;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.lang.math.NumberUtils;
+
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.template.client.marketplace.IMarketplace;
 import com.esferalia.aon.gwt.template.jooq.DBMarketplace;
@@ -96,6 +98,10 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 		return DBMarketplace.getProductList(domain, login, category);
 	}
 	
+	public List<Product> getProductList(Domain domain, String login, Integer category, Boolean active){
+		return DBMarketplace.getProductList(domain, login, category, active);
+	}
+	
 	public Vector<Product> searchProductByName(String searchStr, Vector<Product> list){
 		Vector<Product> vector = new Vector<Product>();
 		for (Product p : list) {
@@ -110,12 +116,15 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 		return DBMarketplace.getAttachTemplateTagList(domain, login, pTagList);
 	}
 	
-	public List<Attach> obtainEcommerceProductTemplates(Domain domain, Product product){
-		List<Attach> list = AON.getAttachList(domain.getName()
-				, domain.getId()
-				, getUserLogin()
-				, filter -> filter.getTypeProperty().eq(RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value())
-				, AttachType.REGISTRY);
+	public List<Attach> obtainEcommerceProductTemplates(Domain domain, String sellerId){
+		Integer id = NumberUtils.isNumber(sellerId)?Integer.parseInt(sellerId):null;
+		List<Attach> list = AON.getAttachList(
+						domain.getName(),
+						domain.getId(),
+						getUserLogin(),
+						filter -> filter.getTypeProperty().eq(RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value())
+								.and(sellerId != null ? filter.getAttachModuleProperty().eq(id): filter.getAttachModuleProperty().isNotNull()), 
+						AttachType.REGISTRY);
 		return list;
 	}
 	
@@ -140,23 +149,17 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 	}
 	
 	public EcommerceProduct obtainEcommerceProductValues(Domain domain, Product product, String templateName){
-		// Obtiene la plantilla especifica del producto
-		Attach attach = obtainEcommerceProductAttach(domain, product, templateName);
-		// Obtiene la plantilla generica 
-		if(attach==null){
-			attach = AON.getAttach(domain.getName()
-					, domain.getId()
-					, getUserLogin()
-					, filter -> filter.getTypeProperty().eq(RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value())
-					.and(filter.getDescriptionProperty().eq(templateName))
-					, AttachType.REGISTRY);
-		}
+		Attach attach = AON.getAttach(domain.getName()
+				, domain.getId()
+				, getUserLogin()
+				, filter -> filter.getTypeProperty().eq(RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value())
+				.and(filter.getDescriptionProperty().eq(templateName))
+				, AttachType.REGISTRY);
 		
 		return obtainEcommerceProductValues(domain, attach, product);
 	}
 	
 	public Boolean insertEcommerceProductValues(Domain domain, String login, String templateName, EcommerceProduct ecommerceProduct, Attach attach){
-		
 		byte[] data = null;
 		try {
 			data = XMLUtils.writeXml(ecommerceProduct);
@@ -167,7 +170,7 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 		}
 
 		if(data!=null){
-			if(attach==null || attach.getId()==null){
+			if(attach==null){
 				attach = new Attach();
 			}
 			attach.setDomain(domain);
@@ -178,7 +181,7 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 			attach.setType(AttachmentType.ECOMMERCE_PRODUCT.value());
 			attach.setConfidential(false);
 			attach.setData(data);
-			if(attach==null || attach.getId()==null){
+			if(attach.getId()==null){
 				AON.insert(domain.getName(), domain.getId(), login, attach);
 			} else {
 				AON.update(domain.getName(), domain.getId(), login, attach);

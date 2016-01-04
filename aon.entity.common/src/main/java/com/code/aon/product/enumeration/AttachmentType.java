@@ -33,7 +33,7 @@ public enum AttachmentType implements IResourceable {
 	/**
      * Amazon Product
      */
-	AMAZON_PRODUCT;
+	ECOMMERCE_PRODUCT;
    
 	
     /**

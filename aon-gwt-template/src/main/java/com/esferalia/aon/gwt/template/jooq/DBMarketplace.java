@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.ShipmentStatus;
 
@@ -187,14 +188,19 @@ public class DBMarketplace {
 	}
 	
 	public static List<Product> getProductList(Domain domain, String login, Integer category){
+		return getProductList(domain, login, category, null);
+	}
+
+	public static List<Product> getProductList(Domain domain, String login, Integer category, Boolean active){
 		AONContext ctx = null;
 		try {			
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			Result<ProductRecord> result = ctx.getDslContext().select()
-										.from(PRODUCT)
-										.where(PRODUCT.DOMAIN.eq(domain.getId()))
-											.and(category!=null?PRODUCT.CATEGORY.equal(category):PRODUCT.CATEGORY.isNotNull())
-										.fetchInto(PRODUCT);
+					.from(PRODUCT)
+					.where(PRODUCT.DOMAIN.eq(domain.getId()))
+					.and(category!=null?PRODUCT.CATEGORY.equal(category):PRODUCT.CATEGORY.isNotNull())
+					.and(active!=null?PRODUCT.STATUS.equal(active?ProductStatus.ACTIVE.value():ProductStatus.DISCONTINUED.value()):PRODUCT.STATUS.isNotNull())
+					.fetchInto(PRODUCT);
 			List<Product> list = new ArrayList<Product>();
 			result.stream().forEach(record ->{
 				Product product = new Product();

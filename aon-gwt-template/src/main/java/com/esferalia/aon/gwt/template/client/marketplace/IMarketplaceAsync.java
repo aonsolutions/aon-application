@@ -38,11 +38,13 @@ public interface IMarketplaceAsync {
 	
 	void getProductList(Domain domain, String login, Integer category, AsyncCallback<List<Product>> callback);
 	
+	void getProductList(Domain domain, String login, Integer category, Boolean active, AsyncCallback<List<Product>> callback);
+	
 	void searchProductByName(String searchStr, Vector<Product> list, AsyncCallback<Vector<Product>> callback);
 	
 	void getAttachTemplateTagList(Domain domain, String login, List<Integer> pTagList, AsyncCallback<List<RegistryAttachTag>> callback);
 	
-	void obtainEcommerceProductTemplates(Domain domain, Product product, AsyncCallback<List<Attach>> callback);
+	void obtainEcommerceProductTemplates(Domain domain, String sellerId, AsyncCallback<List<Attach>> callback);
 	
 	void obtainEcommerceProductAttach(Domain domain, Product product, String templateName, AsyncCallback<Attach> callback);
 

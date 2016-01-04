@@ -39,12 +39,14 @@ public interface IMarketplace extends RemoteService{
 	public LinkedList<Tag> getMarketplaceTagList(Domain domain);
 	
 	List<Product> getProductList(Domain domain, String login, Integer category);
+
+	List<Product> getProductList(Domain domain, String login, Integer category, Boolean active);
 	
 	public Vector<Product> searchProductByName(String searchStr, Vector<Product> list);
 	
 	List<RegistryAttachTag> getAttachTemplateTagList(Domain domain, String login, List<Integer> pTagList);
 	
-	public List<Attach> obtainEcommerceProductTemplates(Domain domain, Product product);
+	public List<Attach> obtainEcommerceProductTemplates(Domain domain, String sellerId);
 	
 	public Attach obtainEcommerceProductAttach(Domain domain, Product product, String templateName);
 

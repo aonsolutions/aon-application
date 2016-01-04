@@ -25,7 +25,7 @@
 		</div>
 
 		<div class='{style.margin-top}'>
-			<g:ScrollPanel ui:field="scrollPanel" height="300px">
+			<g:ScrollPanel ui:field="scrollPanel" height="500px">
 				<g:FlexTable ui:field="valuesGrid" />
 			</g:ScrollPanel>
 		</div>
