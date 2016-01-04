@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ALL;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CATEGORY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_ENTERPRISE;
@@ -49,6 +50,7 @@ import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
@@ -70,6 +72,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
 
 	private DSLContext dslContext;
 
+	
 	private InsertSetMoreStep<SalaryRecord> insertMoreSalary;
 	private InsertSetMoreStep<SalaryCostRecord> insertMoreCost;
 	private InsertSetMoreStep<SalaryDataRecord> insertMoreData;
@@ -77,6 +80,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
 	private InsertSetMoreStep<SalaryPaymentRecord> insertMorePayment;
 	private InsertSetMoreStep<SalaryDeductionRecord> insertMoreDeduction;
 	private InsertSetMoreStep<SalaryEmbargoRecord> insertMoreEmbargo;
+	
 
 	private int salaryId = -1;
 	private int domainId = -1;
@@ -104,7 +108,8 @@ public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
 	public void createNewSalary() {
 
 		variables.clear();
-
+		
+		
 		InsertSetStep<SalaryRecord> insertSalary = insertMoreSalary == null ? dslContext
 				.insertInto(SALARY) : insertMoreSalary.newRecord();
 
@@ -612,14 +617,19 @@ public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
 		return filter(entry.getKey(), entry.getValue());
 	}
 
+	
+	// ------------------------------------------------------------------------
+
 	private static boolean isAlreadyAtSalary(String name) {
 		if (ALREADY_AT_SALARY == null) {
 			ALREADY_AT_SALARY = new LinkedList<String>();
+			// Implicit
+			ALREADY_AT_SALARY.add(ALL);
 			// Bases
 			ALREADY_AT_SALARY.add(CATEGORY.getName());
-			ALREADY_AT_SALARY.add(CGC_BASE.getName());
+//			ALREADY_AT_SALARY.add(CGC_BASE.getName());
 			ALREADY_AT_SALARY.add(CGC_ENTERPRISE.getName());
-			ALREADY_AT_SALARY.add(CGP_BASE.getName());
+//			ALREADY_AT_SALARY.add(CGP_BASE.getName());
 			ALREADY_AT_SALARY.add(IRPF_BASE.getName());
 			ALREADY_AT_SALARY.add(STRUCTURAL_OVERTIME_BASE.getName());
 			ALREADY_AT_SALARY.add(NON_STRUCTURAL_OVERTIME_BASE.getName());
