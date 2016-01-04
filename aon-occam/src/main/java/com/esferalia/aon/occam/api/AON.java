@@ -2420,6 +2420,17 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static void updateZeroInventoryDetail(String domainName,Integer domainId, String login) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getWarehouse().updateZeroInventoryDetail(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	public static Department getDepartment(String domainName, Integer domainId,
 			String login, Integer workplaceId, DepartmentFilter filter) {

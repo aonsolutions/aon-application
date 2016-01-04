@@ -247,6 +247,7 @@ public class CalculatePurchasePrice {
 			Domain domain = AON.getDomain(domainName, domainMap.get(domainName), login);
 			//LOGGER.info("DOMAIN: " + domainName + " - ID: " + domainMap.get(domainName));
 			System.out.println("DOMAIN: " + domainName + " - ID: " + domainMap.get(domainName));
+			AON.updateZeroInventoryDetail(domainName, domain.getId(), login);
 			Date start = AonDateUtils.getDate(getYear(startDate), getMonth(startDate), getDay(startDate));
 			Date end = AonDateUtils.getDate(getYear(endDate), getMonth(endDate), getDay(endDate));
 			LinkedList<Inventory> inventoryList = AON.getInventoryList(domain.getName(), domain.getId(), login, start, end);
@@ -265,13 +266,24 @@ public class CalculatePurchasePrice {
 					System.out.println("DETAIL : " + inventoryDetail.getId() + " - COSTE ACTUAL: " + inventoryDetail.getCost());
 					Double cost = getCost(domain, inventoryDetail, warehouse.getWorkplace(), warehouse.getId(), inventory.getInventoryDate());
 					//LOGGER.info("NUEVO COSTE: " + cost);
-					System.out.println("NUEVO COSTE: " + cost);System.out.println();
-					inventoryDetail.setCost(cost);
-					if(!dryRun)
-						AON.updateInventoryDetail(domain.getName(), domain.getId(), login, inventoryDetail);
+					if(!inventoryDetail.equals(round(cost,2))){
+						inventoryDetail.setCost(round(cost,2));
+						if(!dryRun)
+							AON.updateInventoryDetail(domain.getName(), domain.getId(), login, inventoryDetail);
+					}
+					System.out.println("NUEVO COSTE: " + round(cost,2));System.out.println();
 				}
 			}
 		}
+	}
+	
+	public static Double round(Double value, Integer places) {
+	    if (places < 0) throw new IllegalArgumentException();
+
+	    Long factor = (long) Math.pow(10, places);
+	    value = value * factor;
+	    Long tmp = Math.round(value);
+	    return (double) tmp / factor;
 	}
 	
 	private static String domains[];

@@ -69,6 +69,12 @@ public class WarehouseImpl implements IWarehouse {
 		ctx.getDslContext().transaction(configuration -> 
 		InventoryDAO.updateInventoryDetail(ctx, inventoryDetail));
 	}
+	
+	@Override
+	public void updateZeroInventoryDetail(AONContext ctx) {
+		ctx.getDslContext().transaction(configuration -> 
+		InventoryDAO.updateZeroInventoryDetail(ctx));
+	}
 
 	@Override
 	public void updateInventory(AONContext ctx, Inventory inventory) {

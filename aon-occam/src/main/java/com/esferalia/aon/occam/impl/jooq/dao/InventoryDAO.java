@@ -65,6 +65,14 @@ public class InventoryDAO {
 		.set(INVENTORY_DETAIL.MODIFICATION_DATE, inventoryDetail.getModificationDate() != null ? new Timestamp(inventoryDetail.getModificationDate().getTime()) : null)
 		.set(INVENTORY_DETAIL.MODIFICATION_USER, inventoryDetail.getModificationUser())
 		.set(INVENTORY_DETAIL.REAL_QUANTITY, inventoryDetail.getRealQuantity())
+		.where(INVENTORY_DETAIL.ID.eq(inventoryDetail.getId()))
+		.execute();
+	}
+	
+	public static void updateZeroInventoryDetail(AONContext ctx){
+		ctx.getDslContext().update(INVENTORY_DETAIL)
+		.set(INVENTORY_DETAIL.COST, 0.0)
+		.where(INVENTORY_DETAIL.REAL_QUANTITY.eq(0.0))
 		.execute();
 	}
 	

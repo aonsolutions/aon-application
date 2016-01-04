@@ -39,6 +39,7 @@ public interface IWarehouse {
 	
 	LinkedList<InventoryDetail> getInventoryDetailList(AONContext ctx, Integer inventoryId);
 	void updateInventoryDetail(AONContext ctx, InventoryDetail inventoryDetail);
+	void updateZeroInventoryDetail(AONContext ctx);
 	
 	// 	***********************************************
 	// 	********************************* INVENTORY ***
