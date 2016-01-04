@@ -160,6 +160,9 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
         		row = rowIterator.next();
         		
         		String supplierDocument = getStringCellValue(row.getCell(headers.indexOf(SUPPLIER_DOCUMENT)));
+        		if(supplierDocument!=null && StringUtils.length(supplierDocument)>9){
+        			supplierDocument = supplierDocument.substring(0, 9);
+        		}
         		String consumerName = getStringCellValue(row.getCell(headers.indexOf(CONSUMER_NAME)));
         		String supplierCode = getStringCellValue(row.getCell(headers.indexOf(SUPPLIER_CODE)));
         		
