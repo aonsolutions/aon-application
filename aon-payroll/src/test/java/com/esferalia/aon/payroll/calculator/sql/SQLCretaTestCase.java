@@ -22,6 +22,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.junit.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -38,6 +39,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class SQLCretaTestCase extends AbstractSQLTestCase {
 
@@ -214,7 +216,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		addSSRegimePayment(aonContext, SSRegimeType.GENERAL,
 				getFirstDayOfYear(getToday()), PaymentType.CRA_0004,
 				"TRACE('DIAS_MATERNIDAD=%d\r\n',DIAS_MATERNIDAD);0.00",
-				"DIAS_MATERNIDAD * BASE_REGULADORA", "0.00");
+				"DIAS_MATERNIDAD * BASE_REGULADORA", 
+				"TRACE('BASE_REGULADORA=%f\r\n',BASE_REGULADORA);0.00");
 		//@formatter:off
 		@SuppressWarnings("serial")
 		ContractRecord contract = newContract(aonContext, 
@@ -242,13 +245,15 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 		int monthDays = AonDateUtils.getMax(startDate, DAY_OF_MONTH);
 
+		double br = Math.round((1755.00 / monthDays * 1000.00)) / 1000.00; // DB only has three decimals
+		
 		//@formatter:off
 		addIT(aonContext, 
 				contract, 
 				MATERNITY, 
 				getFirstDayOfYear(startDate), 
 				null, 
-				1755.00 / monthDays);
+				br);
 		//@formatter:on
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
@@ -270,13 +275,13 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 					Assert.assertEquals(startDate, datas.get(0).getStartDate());
 					Assert.assertEquals(endDate, datas.get(0).getEndDate());
-					Assert.assertEquals(1755.00,
+					Assert.assertEquals(br * monthDays,
 							Double.parseDouble(datas.get(0).getExpression()),
 							DELTA);
 
 				});
 		;
-
+		
 	}
 
 	// -------------------------------------------------------------------------
@@ -302,12 +307,13 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 				},
 				new String[] {
 				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
-				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
 				}, 
 				new String[] {						
 				"BASE_CGC * 0.10", 
 				"BASE_CGP * 0.05",
 				"BASE_IRPF * PORCENTAJE_IRPF/100" ,
+				"TRACE('BASE_CGC=%f\r\n', BASE_CGC); 0.00;",
 				"TRACE('DIAS_TRABAJADOS=%f\r\n', DIAS_TRABAJADOS); 0.00;"
 				},
 				null);
@@ -443,13 +449,13 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 					Assert.assertEquals(noOcupationEnd,
 							datas.get(0).getEndDate());
 					Assert.assertEquals(1750.00 * 10 / monthDays,
-							Double.parseDouble(datas.get(0).getExpression()));
+							Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
 					Assert.assertEquals(ocupationStart,
 							datas.get(1).getStartDate());
 					Assert.assertEquals(endDate, datas.get(1).getEndDate());
 					Assert.assertEquals(1750.00 * (monthDays - 10) / monthDays,
-							Double.parseDouble(datas.get(1).getExpression()));
+							Double.parseDouble(datas.get(1).getExpression()), DELTA);
 
 					// 601 o 611 Base de Accidentes de Trabajo.
 					datas = salary.getContextData().get(CGP_BASE.getName());
@@ -458,13 +464,13 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 					Assert.assertEquals(noOcupationEnd,
 							datas.get(0).getEndDate());
 					Assert.assertEquals(1750.00 * 10 / monthDays,
-							Double.parseDouble(datas.get(0).getExpression()));
+							Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
 					Assert.assertEquals(ocupationStart,
 							datas.get(1).getStartDate());
 					Assert.assertEquals(endDate, datas.get(1).getEndDate());
 					Assert.assertEquals(1750.00 * (monthDays - 10) / monthDays,
-							Double.parseDouble(datas.get(1).getExpression()));
+							Double.parseDouble(datas.get(1).getExpression()), DELTA);
 
 				});
 		;
