@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 
 public interface ICommon {
@@ -71,4 +72,8 @@ public interface ICommon {
 	public void updateDomainGserviceaccount(AONContext ctx, DomainGserviceaccount dgsa);
 	public void deleteDomainGserviceaccount(AONContext ctx);
 	public void insertDomainGserviceaccount(AONContext ctx, DomainGserviceaccount dgsa);	
+
+	// TAG
+	public void updateTag(AONContext ctx, Tag tag);
+	public void deleteTag(AONContext ctx, Tag tag);
 }

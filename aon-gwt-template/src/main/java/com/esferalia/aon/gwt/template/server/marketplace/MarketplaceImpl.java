@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.TagType;
 
 
 public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketplace{
@@ -71,6 +72,20 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 	
 	public void deleteTemplate(Domain domain, String description){
 		DBMarketplace.deleteTemplate(domain, getUser(), description);
+	}
+	
+	public Tag addMarketplaceTag(Domain domain, String name){
+		return DBMarketplace.insertMarketplaceTag(domain, getUser(),new Tag()
+			.setDomain(domain.getId()).setName(name).setType(TagType.MARKETPLACE.value()));
+	}
+	
+	public void removeMarketplaceTag(Domain domain, Tag tag){
+		DBMarketplace.deleteMarketplaceTag(domain, getUser(), tag);
+	}
+	
+	public Tag updateMarketplaceTag(Domain domain, Tag tag){
+		DBMarketplace.updateMarketplaceTag(domain, getUser(), tag);
+		return tag;
 	}
 	
 	public LinkedList<Tag> getMarketplaceTagList(Domain domain){

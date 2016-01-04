@@ -29,6 +29,7 @@ public class Dialog implements IsSerializable{
 	EcommerceProduct ecommerceProduct;
 	LinkedList<String> typeList;
 	LinkedList<Tag> tagList;
+	Tag tag;
 	
 	public Dialog() {
 	
@@ -211,6 +212,15 @@ public class Dialog implements IsSerializable{
 
 	public Dialog setTagList(LinkedList<Tag> tagList) {
 		this.tagList = tagList;
+		return this;
+	}
+
+	public Tag getTag() {
+		return tag;
+	}
+
+	public Dialog setTag(Tag tag) {
+		this.tag = tag;
 		return this;
 	}
 	

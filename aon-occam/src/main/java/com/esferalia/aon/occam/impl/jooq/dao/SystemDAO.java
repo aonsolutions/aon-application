@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.BonusConcept.BONUS_CONCEPT;
-import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 
 import java.util.function.Supplier;
 import java.util.stream.Stream;

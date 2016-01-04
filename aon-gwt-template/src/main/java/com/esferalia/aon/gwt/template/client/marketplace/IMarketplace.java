@@ -30,6 +30,12 @@ public interface IMarketplace extends RemoteService{
 
 	public void deleteTemplate(Domain domain, String description);
 	
+	public Tag addMarketplaceTag(Domain domain, String name);
+	
+	public void removeMarketplaceTag(Domain domain, Tag tag);
+	
+	public Tag updateMarketplaceTag(Domain domain, Tag tag);
+	
 	public LinkedList<Tag> getMarketplaceTagList(Domain domain);
 	
 	List<Product> getProductList(Domain domain, String login, Integer category);

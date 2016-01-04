@@ -9,10 +9,12 @@
 	<ui:style>
 		@external .gwt-SplitLayoutPanel-HDragger;
 		@external .gwt-SplitLayoutPanel-VDragger;
+		@external .gwt-DisclosurePanel .content;
 		@external .gwt-MenuBar-horizontal;
 		@external .searchPanel-template;
 		@external .aon_dataGrid-template;
 		@external .gwt-StackLayoutPanelHeader;
+		@external .gwt-MenuBarPopup;
 		
 		.gwt-SplitLayoutPanel-HDragger { 
 			background-color: #FFF  !important;
@@ -46,6 +48,20 @@
 			padding-left:30px;
 			padding-top:5px;
 		}
+		
+		.gwt-DisclosurePanel .content {
+  			border-left: 3px solid #FFF !important;
+  			padding: 4px 8px 4px 0px !important;
+			margin-left: 20px !important;
+		}
+		
+		.gwt-MenuBarPopup {
+    		margin: 0px !important;
+    		background: none repeat scroll 0% 0% #FFF !important;
+    		border: 1px solid #DDDDDD !important;
+    		padding: 4px 0px !important;
+    		box-shadow: 2px 2px 5px 1px #EBEBEF !important;
+		}
 	</ui:style>
 	
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
@@ -74,7 +90,15 @@
 			
 				<g:center>
 					<g:ScrollPanel ui:field="sidebar" styleName="{aonResources.css.aonNoPrint}">
-						<g:Tree ui:field="tree"/>
+						<g:VerticalPanel>
+							<g:Tree ui:field="tree"/>
+							<g:HorizontalPanel>
+								<g:DisclosurePanel ui:field="epanel" styleName="gwt-DisclosurePanel">
+
+								</g:DisclosurePanel>
+								<g:Button ui:field="tagButton" styleName="aon-editDataTable-button aon-lookupButton-new-disabled aon-aux-right" title="Nueva Etiqueta"></g:Button>
+							</g:HorizontalPanel>
+						</g:VerticalPanel>
 					</g:ScrollPanel>
 				</g:center>
 			</g:DockLayoutPanel>

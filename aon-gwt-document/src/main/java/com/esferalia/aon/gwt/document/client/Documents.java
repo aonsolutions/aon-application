@@ -47,6 +47,8 @@ import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -85,7 +87,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineHTML;
@@ -735,8 +736,6 @@ public class Documents extends Composite implements EntryPoint {
 								dpanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Categor\u00edas");
 								epanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Etiquetas");
 								Load();
-							
-
 							}
 						});
 					}
@@ -4061,20 +4060,14 @@ public class Documents extends Composite implements EntryPoint {
 		 epanel.setOpen(true);
 		 TextBox tb = new TextBox();
 		 tb.setStyleName("aon-inputText");
-		 tb.addFocusListener(new FocusListener() {
-				
-				@Override
-				public void onLostFocus(Widget sender) {
-					VerticalPanel v = (VerticalPanel) epanel.getContent();
-					v.remove(v.getWidgetCount() - 1);
-				}
-				
-				@Override
-				public void onFocus(Widget sender) {
-					
-				}
-			});
-		 
+		 tb.addBlurHandler(new BlurHandler() {
+			@Override
+			public void onBlur(BlurEvent event) {
+				VerticalPanel v = (VerticalPanel) epanel.getContent();
+				v.remove(v.getWidgetCount() - 1);				
+			}
+		 });
+
 		 tb.addKeyPressHandler(new KeyPressHandler() {
 			
 			@Override
@@ -4188,19 +4181,14 @@ public class Documents extends Composite implements EntryPoint {
 		 dpanel.setOpen(true);
 		 TextBox tb = new TextBox();
 		 tb.setStyleName("aon-inputText");
-		 tb.addFocusListener(new FocusListener() {
+		 tb.addBlurHandler(new BlurHandler() {
 			
 			@Override
-			public void onLostFocus(Widget sender) {
+			public void onBlur(BlurEvent event) {
 				VerticalPanel v = (VerticalPanel) dpanel.getContent();
-				v.remove(v.getWidgetCount() - 1);
+				v.remove(v.getWidgetCount() - 1);	
 			}
-			
-			@Override
-			public void onFocus(Widget sender) {
-				
-			}
-		});
+		 });
 		 tb.addKeyPressHandler(new KeyPressHandler() {
 			@Override
 			public void onKeyPress(KeyPressEvent event) {

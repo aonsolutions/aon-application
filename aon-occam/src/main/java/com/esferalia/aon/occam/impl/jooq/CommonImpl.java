@@ -17,11 +17,13 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TagDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 
 public class CommonImpl implements ICommon {
@@ -149,4 +151,18 @@ public class CommonImpl implements ICommon {
 			configuration -> DomainDAO.insertDomainGserviceaccount(ctx, dgsa));
 	}
 	
+	// ------------------ TAG
+	
+	@Override
+	public void updateTag(AONContext ctx, Tag tag){
+		 ctx.getDslContext().transaction(configuration -> 
+		 	TagDAO.updateTag(ctx, tag));
+	}
+	
+	@Override
+	public void deleteTag(AONContext ctx, Tag tag){
+		 ctx.getDslContext().transaction(configuration -> 
+		 	TagDAO.deleteTag(ctx, tag));
+	}
+
 }

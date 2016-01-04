@@ -105,8 +105,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			Dialog dialog = d;
 			@Override
 			public void onClick(ClickEvent event) {
-				
-				
+			
 				if(dialog.getType().equals("exportCatalogue")){
 					ListBox lb1 = (ListBox) flex_table.getWidget(0, 1);
 					ListBox lb2 = null;
@@ -140,6 +139,9 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					if(dialog.getType().equals("new")){
 						onAccept();
 					}
+					else if(dialog.getType().equals("deleteTag") || dialog.getType().equals("editTag")){
+						onAccept();
+					}
 					else if(FeeUtils.feeCheck(dialog,flex_table) || StockUtils.stockCheck(dialog,flex_table) || ProductUtils.productCheck(dialog,flex_table) 
 							|| ConsumptionUtils.consumptionCheck(dialog, flex_table)|| InventoryUtils.inventoryCheck(dialog, flex_table) 
 							|| dialog.getType().equals("delete") ||  dialog.getType().equals("deleteEcommerce") || dialog.getType().contains("import") 
@@ -168,9 +170,11 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		switch (dialog.getType()) {
 		case "new": newTemplate();break;
 		case "edit": editTemplate(dialog);break;
+		case "editTag": editTag(dialog);break;
 		case "import": importar(dialog);break;
 		case "export": exportar(dialog);break;
 		case "delete": deleteTemplate(dialog.getTemplateInfo().getName());break;
+		case "deleteTag": deleteTag(dialog.getTag().getName());break;
 		case "deleteEcommerce": deleteTemplate(dialog.getEcommerceProduct().getTemplate().getType());break;
 		case "importProduct": importProduct(dialog.getUrl(),dialog.getTemplateList());break;
 		case "importStock": importStock(dialog);break;
@@ -546,12 +550,27 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	}
 	
 	private void editTemplate(Dialog dialog) {
-
-		
 		flexTableEdit();
 	}
 	
+	private void editTag(Dialog dialog){
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+		TextBox tb = new TextBox();
+		tb.setStyleName("aon-inputText");
+		tb.setText(dialog.getTag().getName());
+		flex_table.setWidget(0, 0, new Label("Nombre"));
+		flex_table.setWidget(0, 1, tb);
+		flexTableCss();
+	}
+	
 	private void deleteTemplate(String name) {
+		label.setText("Est\u00e1s seguro de eliminar la plantilla " + name);
+	}
+	
+	private void deleteTag(String name) {
 		label.setText("Est\u00e1s seguro de eliminar la plantilla " + name);
 	}
 	

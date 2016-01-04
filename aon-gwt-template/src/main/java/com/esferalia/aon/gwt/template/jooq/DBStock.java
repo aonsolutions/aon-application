@@ -161,7 +161,7 @@ public class DBStock {
 			
 					}
 					else{
-						v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
+						v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coinciden.");
 						error.setError(false);
 						error.setTextError(v);
 					}

@@ -2692,6 +2692,28 @@ public class AON {
 	// ***************************** Marketplace **
 	// ********************************************
 
+	public static void updateTag(String domainName, Integer domainId, String login,
+			Tag tag){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getCommon().updateTag(ctx, tag);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static void deleteTag(String domainName, Integer domainId, String login,
+			Tag tag){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getCommon().deleteTag(ctx, tag);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	public static LinkedList<Tag> getMatketplaceTagList(String domainName,
 			Integer domainId, String login) {
 		AONContext ctx = null;

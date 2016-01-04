@@ -79,7 +79,8 @@ public class DBMarketplace {
 				order.setSerie(record.getSeries());
 				order.setNumber(record.getNumber());
 				order.setOrderId(record.getPurchaseReference());
-				String CustomerName = getCustomer(domain, login, record.getCustomer());
+				String CustomerName = record.getCustomer() != null ? 
+						getCustomer(domain, login, record.getCustomer()) : "";
 				order.setCustomerName(CustomerName);
 				order.setDate(record.getIssueDate());
 				String dateStr = Utils.getDateStr(record.getIssueDate());
@@ -154,7 +155,7 @@ public class DBMarketplace {
 			.where(REGISTRY.ID.eq(customerId))
 			.limit(1).fetchOne();
 			
-			return record.value1() != null ? record.value1() : "";
+			return (record != null && record.value1() != null) ? record.value1() : "";
 		}finally{
 			if(ctx != null)
 				ctx.close();
@@ -167,6 +168,18 @@ public class DBMarketplace {
 				.and(filter.getTypeProperty().eq((RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value()))
 				.and(filter.getDomainProperty().eq(domain.getId())))
 				, AttachType.REGISTRY);	
+	}
+	
+	public static Tag insertMarketplaceTag(Domain domain, User user, Tag tag){
+		return AON.addNewTag(domain.getId(), domain.getName(), user.getLogin(), tag);
+	}
+	
+	public static void deleteMarketplaceTag(Domain domain, User user, Tag tag){
+		AON.deleteTag(domain.getName(), domain.getId(), user.getLogin(), tag);
+	}
+	
+	public static void updateMarketplaceTag(Domain domain, User user, Tag tag){
+		AON.updateTag(domain.getName(), domain.getId(), user.getLogin(), tag);
 	}
 	
 	public static LinkedList<Tag> getMarketplaceTagList(Domain domain, User user){
