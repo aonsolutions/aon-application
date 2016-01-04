@@ -95,24 +95,18 @@ public class AonHubDAO {
 		object.setPriority(notice.getPriority());
 		
 		for (Tag tag : notice.getTags()) {
-			// PUEDE QUE SOLO VENGA EL NOMBRE
-			TagRecord tagRecord = ctx.getDslContext().selectFrom(TAG)
-					.where(TAG.DOMAIN.eq(ctx.getDomainId())
-							.and(TAG.NAME.eq(tag.getName())))
-					.fetchOne();
-
 			ctx.getDslContext().insertInto(NOTICE_TAG)
 					.set(NOTICE_TAG.NOTICE,
 							noticeRecord.getValue(NOTICE.ID))
-					.set(NOTICE_TAG.TAG, tagRecord.getValue(TAG.ID))
+					.set(NOTICE_TAG.TAG, tag.getId())
 					.set(NOTICE_TAG.START_DATE,
 							noticeRecord.getValue(NOTICE.DATE))
 					.execute();
 			
 			Tag tagAux = new Tag();
-			tagAux.setId(tagRecord.getValue(TAG.ID));
-			tagAux.setName(tagRecord.getValue(TAG.NAME));
-			tagAux.setColor(tagRecord.getValue(TAG.COLOR));
+			tagAux.setId(tag.getId());
+			tagAux.setName(tag.getName());
+			tagAux.setColor((tag.getColor() != null) ? tag.getColor() : "");
 			object.addTag(tagAux);
 		}
 
@@ -474,6 +468,20 @@ public class AonHubDAO {
 				});
 
 		return notices;
+	}
+	
+	public static Tag getTag (AONContext ctx, String name) {
+		
+		TagRecord tagRecord = ctx.getDslContext().selectFrom(TAG)
+				.where(TAG.DOMAIN.eq(ctx.getDomainId())
+						.and(TAG.NAME.eq(name)))
+				.fetchOne();
+		Tag tag = new Tag();
+		tag.setId(tagRecord.getValue(TAG.ID));
+		tag.setName(tagRecord.getValue(TAG.NAME));
+		tag.setColor(tagRecord.getValue(TAG.COLOR));
+
+		return tag;
 	}
 
 	public static List<Tag> getTags(AONContext ctx) {

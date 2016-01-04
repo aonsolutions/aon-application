@@ -53,5 +53,11 @@ public class OfficeImpl implements IOffice {
 	public void deleteTag(AONContext ctx, Tag tag) {
 		AonHubDAO.deleteTag(ctx, tag);
 	}
+	
+	@Override
+	public Tag getTag(AONContext ctx, String name)
+			throws IllegalArgumentException {	
+		return AonHubDAO.getTag(ctx, name);
+	}
 
 }

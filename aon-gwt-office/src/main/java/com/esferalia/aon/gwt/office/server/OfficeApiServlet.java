@@ -19,6 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.office.User;
@@ -167,11 +168,10 @@ public class OfficeApiServlet extends HttpServlet {
 					JSONArray tags = json.getJSONArray("labels");
 					
 					for ( int x = 0 ; x < tags.length(); x++) {
-						Tag tag = new Tag();
-						tag.setName(tags.getString(x));
+						String name = tags.getString(x);
+						Tag tag = AON.getTag(DOMAIN_ID, DOMAIN_NAME, USER_NAME, name);		
 						notice.addTag(tag);
 					}
-
 				}
 
 				getNotice(resp, notice);

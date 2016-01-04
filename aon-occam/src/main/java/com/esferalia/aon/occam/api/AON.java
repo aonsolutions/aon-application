@@ -2012,6 +2012,17 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static Tag getTag (Integer domainId, String domainName, String userName, String name) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getOffice().getTag(ctx, name);
+		} finally {
+			if ( ctx != null )
+				ctx.close();
+		}
+	}
 
 	// ********************************************
 	// ****************************** ATTACHMENT **
