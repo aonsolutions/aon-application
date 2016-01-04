@@ -266,12 +266,12 @@ public class CalculatePurchasePrice {
 					System.out.println("DETAIL : " + inventoryDetail.getId() + " - COSTE ACTUAL: " + inventoryDetail.getCost());
 					Double cost = getCost(domain, inventoryDetail, warehouse.getWorkplace(), warehouse.getId(), inventory.getInventoryDate());
 					//LOGGER.info("NUEVO COSTE: " + cost);
-					if(!inventoryDetail.equals(round(cost,2))){
-						inventoryDetail.setCost(round(cost,2));
+					if(!inventoryDetail.equals(round(cost,3))){
+						inventoryDetail.setCost(round(cost,3));
 						if(!dryRun)
 							AON.updateInventoryDetail(domain.getName(), domain.getId(), login, inventoryDetail);
 					}
-					System.out.println("NUEVO COSTE: " + round(cost,2));System.out.println();
+					System.out.println("NUEVO COSTE: " + round(cost,3));System.out.println();
 				}
 			}
 		}
