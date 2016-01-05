@@ -108,7 +108,15 @@ public class SQLContractPayment extends SQLCollection<IContractPayment> implemen
 
 	@Override
 	public String getName() {
-		return getString(PaymentConceptColumns.CODE);
+		String name = getString(PaymentConceptColumns.CODE);
+		if ( name != null )
+			return name ;
+		
+		Integer conceptId = getInt(SQLConstants.PAYMENT_CONCEPT + "." + PaymentConceptColumns.ID);
+		if ( conceptId == null )
+			return null;
+		
+		return String.format("__%d", conceptId);
 	}
 	
 	@Override

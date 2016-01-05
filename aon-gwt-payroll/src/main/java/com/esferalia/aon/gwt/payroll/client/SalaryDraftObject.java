@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.HasStartAndEndDate;
+import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -14,9 +15,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
-import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
-import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -29,7 +28,6 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -791,14 +789,19 @@ public class SalaryDraftObject implements IContextProvider {
 		List<Payment> twins = new LinkedList<Payment>();
 		twins.add(payment);
 
-		String name = payment.getName();
-		if (StringUtils.isBlank(name))
+//		String name = payment.getName();
+//		if (StringUtils.isBlank(name))
+//			return twins;
+		
+		if ( payment.getConceptId() == null ) 
 			return twins;
-
+		
 		for (Payment p : salaryDraft.getPayments()) {
 			if (p.getScope().compareTo(Scope.AGREEMENT) > 0)
 				continue;
-			if (StringUtils.equals(name, p.getName()))
+			if (StringUtils.equals(payment.getName(), p.getName()))
+				twins.add(p);
+			if (NumberUtils.equals(payment.getConceptId(), p.getConceptId()))
 				twins.add(p);
 		}
 
@@ -808,7 +811,9 @@ public class SalaryDraftObject implements IContextProvider {
 			if (var.getScope().compareTo(Scope.AGREEMENT) > 0)
 				continue;
 			Payment p = ((UndefinedPaymentVariable) var).getPayment();
-			if (StringUtils.equals(name, p.getName()))
+			if (StringUtils.equals(payment.getName(), p.getName()))
+				twins.add(p);
+			if (NumberUtils.equals(payment.getConceptId(), p.getConceptId()))
 				twins.add(p);
 		}
 
