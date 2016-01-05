@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.jooq.Cursor;
@@ -72,7 +74,7 @@ public class SQLAgreementDraft {
 
 	public static Set<Payment> getPaymentsAux(Connection connection,
 			int agreementId, Date startDate, Date endDate, Integer... domains)
-			throws SQLException {
+					throws SQLException {
 
 		Cursor<Record> cursor = null;
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
@@ -89,15 +91,13 @@ public class SQLAgreementDraft {
 			java.sql.Date sqlEndDate = SQLUtils.date2sql(endDate);
 			java.sql.Date sqlStartDate = SQLUtils.date2sql(startDate);
 
-			cursor = dslContext
-					.select()
-					.from(AGREEMENT_PAYMENT.leftOuterJoin(PAYMENT_CONCEPT).on(
-							AGREEMENT_PAYMENT.PAYMENT_CONCEPT
+			cursor = dslContext.select()
+					.from(AGREEMENT_PAYMENT.leftOuterJoin(PAYMENT_CONCEPT)
+							.on(AGREEMENT_PAYMENT.PAYMENT_CONCEPT
 									.eq(PAYMENT_CONCEPT.ID)))
-					.where(AGREEMENT_PAYMENT.AGREEMENT
-							.eq(agreementId)
-							.and(AGREEMENT_PAYMENT.END_DATE.isNull().or(
-									AGREEMENT_PAYMENT.END_DATE
+					.where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreementId)
+							.and(AGREEMENT_PAYMENT.END_DATE.isNull()
+									.or(AGREEMENT_PAYMENT.END_DATE
 											.greaterOrEqual(sqlStartDate)))
 							.and(AGREEMENT_PAYMENT.START_DATE
 									.lessOrEqual(sqlEndDate))
@@ -115,28 +115,38 @@ public class SQLAgreementDraft {
 
 				payment.setId(record.getValue(AGREEMENT_PAYMENT.ID));
 				payment.setDomain(record.getValue(AGREEMENT_PAYMENT.DOMAIN));
-				
-				payment.setExpression(getAux(String.class, AGREEMENT_PAYMENT.EXPRESSION, PAYMENT_CONCEPT.EXPRESSION));
-				payment.setIrpfExpression(getAux(String.class, AGREEMENT_PAYMENT.IRPF_EXPRESSION, PAYMENT_CONCEPT.IRPF_EXPRESSION));
-				payment.setQuoteExpression(getAux(String.class, AGREEMENT_PAYMENT.QUOTE_EXPRESSION, PAYMENT_CONCEPT.QUOTE_EXPRESSION));
-				payment.setDescription(getAux(String.class, AGREEMENT_PAYMENT.DESCRIPTION, PAYMENT_CONCEPT.DESCRIPTION));
-				
-				Object paymentType = getAux(Object.class, AGREEMENT_PAYMENT.TYPE, PAYMENT_CONCEPT.TYPE);
+
+				payment.setExpression(
+						getAux(String.class, AGREEMENT_PAYMENT.EXPRESSION,
+								PAYMENT_CONCEPT.EXPRESSION));
+				payment.setIrpfExpression(
+						getAux(String.class, AGREEMENT_PAYMENT.IRPF_EXPRESSION,
+								PAYMENT_CONCEPT.IRPF_EXPRESSION));
+				payment.setQuoteExpression(
+						getAux(String.class, AGREEMENT_PAYMENT.QUOTE_EXPRESSION,
+								PAYMENT_CONCEPT.QUOTE_EXPRESSION));
+				payment.setDescription(
+						getAux(String.class, AGREEMENT_PAYMENT.DESCRIPTION,
+								PAYMENT_CONCEPT.DESCRIPTION));
+
+				Object paymentType = getAux(Object.class,
+						AGREEMENT_PAYMENT.TYPE, PAYMENT_CONCEPT.TYPE);
 				payment.setType(getType(paymentType, Payment.Type.class));
-				
+
 				Integer month = getAux(Integer.class, AGREEMENT_PAYMENT.MONTH);
 				payment.setMonth(month != null ? month.shortValue() : null);
-				
-				Object salaryType = record.getValue(AGREEMENT_PAYMENT.SALARY_TYPE);
+
+				Object salaryType = record
+						.getValue(AGREEMENT_PAYMENT.SALARY_TYPE);
 				payment.setSalaryType(getType(salaryType, Salary.Type.class));
-				
+
 				payment.setName(record.getValue(PAYMENT_CONCEPT.CODE));
-				
+
 				payment.setConceptId(getAux(Integer.class, PAYMENT_CONCEPT.ID));
-				
+
 				payments.add(payment);
 			}
-			
+
 			return payments;
 
 		} finally {
@@ -147,7 +157,7 @@ public class SQLAgreementDraft {
 
 	public static Set<Payment> getPayments(Connection connection,
 			int agreementId, Date startDate, Date endDate, Integer... domains)
-			throws SQLException {
+					throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
@@ -201,8 +211,8 @@ public class SQLAgreementDraft {
 				payment.setId(rs.getInt(SQLConstants.AGREEMENT_PAYMENT + "."
 						+ AgreementPaymentColumns.ID));
 
-				payment.setDomain(rs.getInt(SQLConstants.AGREEMENT_PAYMENT
-						+ "." + AgreementPaymentColumns.DOMAIN));
+				payment.setDomain(rs.getInt(SQLConstants.AGREEMENT_PAYMENT + "."
+						+ AgreementPaymentColumns.DOMAIN));
 
 				// bellow payment's properties may be inherit from concept
 				payment.setExpression(get(rs,
@@ -233,9 +243,8 @@ public class SQLAgreementDraft {
 				payment.setName(rs.getString(SQLConstants.PAYMENT_CONCEPT + "."
 						+ PaymentConceptColumns.CODE));
 
-				payment.setConceptId(getInteger(rs,
-						SQLConstants.PAYMENT_CONCEPT + "."
-								+ PaymentConceptColumns.ID));
+				payment.setConceptId(getInteger(rs, SQLConstants.PAYMENT_CONCEPT
+						+ "." + PaymentConceptColumns.ID));
 
 				payments.add(payment);
 			}
@@ -282,7 +291,8 @@ public class SQLAgreementDraft {
 				var.setStartDate(sqlStartDate);
 				var.setEndDate(sqlEndDate);
 				var.setName(rs.getString(AgreementDataColumns.NAME));
-				var.setExpression(rs.getString(AgreementDataColumns.EXPRESSION));
+				var.setExpression(
+						rs.getString(AgreementDataColumns.EXPRESSION));
 				salaryTable.put(0, var);
 			}
 
@@ -302,8 +312,8 @@ public class SQLAgreementDraft {
 					+ " AND ( " + SQLConstants.AGREEMENT_LEVEL_DATA + "."
 					+ AgreementLevelDataColumns.END_DATE + " IS NULL " + " OR "
 					+ SQLConstants.AGREEMENT_LEVEL_DATA + "."
-					+ AgreementLevelDataColumns.END_DATE + " >= ?  ) "
-					+ " AND " + SQLConstants.AGREEMENT_LEVEL_DATA + "."
+					+ AgreementLevelDataColumns.END_DATE + " >= ?  ) " + " AND "
+					+ SQLConstants.AGREEMENT_LEVEL_DATA + "."
 					+ AgreementLevelDataColumns.START_DATE + " <= ? ");
 
 			stmt.setInt(1, agreementId);
@@ -318,8 +328,8 @@ public class SQLAgreementDraft {
 				var.setStartDate(sqlStartDate);
 				var.setEndDate(sqlEndDate);
 				var.setName(rs.getString(AgreementLevelDataColumns.NAME));
-				var.setExpression(rs
-						.getString(AgreementLevelDataColumns.EXPRESSION));
+				var.setExpression(
+						rs.getString(AgreementLevelDataColumns.EXPRESSION));
 				salaryTable.put(
 						rs.getInt(AgreementLevelDataColumns.AGREEMENT_LEVEL),
 						var);
@@ -355,8 +365,8 @@ public class SQLAgreementDraft {
 			while (rs.next()) {
 				Level level = new Level();
 				level.setId(rs.getInt(AgreementLevelColumns.ID));
-				level.setDescription(rs
-						.getString(AgreementLevelColumns.DESCRIPTION));
+				level.setDescription(
+						rs.getString(AgreementLevelColumns.DESCRIPTION));
 				levels.add(level);
 			}
 
@@ -375,8 +385,8 @@ public class SQLAgreementDraft {
 	 * Returns level categories. The categories are returned in the order in
 	 * which categories were inserted into the Database.
 	 */
-	public static Map<Integer, Set<String>> getCategories(
-			Connection connection, int agreementId) throws SQLException {
+	public static Map<Integer, Set<String>> getCategories(Connection connection,
+			int agreementId) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
@@ -408,8 +418,8 @@ public class SQLAgreementDraft {
 					categoriesMap.put(level,
 							categories = new LinkedHashSet<String>());
 				}
-				categories.add(rs
-						.getString(SQLConstants.AGREEMENT_LEVEL_CATEGORY + "."
+				categories.add(
+						rs.getString(SQLConstants.AGREEMENT_LEVEL_CATEGORY + "."
 								+ AgreementLevelCategoryColumns.DESCRIPTION));
 			}
 
@@ -521,13 +531,13 @@ public class SQLAgreementDraft {
 				Extra extra = new Extra();
 				extra.setId(rs.getInt(AgreementExtraColumns.ID));
 				extra.setDomain(rs.getInt(AgreementExtraColumns.DOMAIN));
-				extra.setPaymentId(rs
-						.getInt(AgreementExtraColumns.AGREEMENT_PAYMENT));
-				extra.setStartDate(rs
-						.getString(AgreementExtraColumns.START_DATE));
+				extra.setPaymentId(
+						rs.getInt(AgreementExtraColumns.AGREEMENT_PAYMENT));
+				extra.setStartDate(
+						rs.getString(AgreementExtraColumns.START_DATE));
 				extra.setEndDate(rs.getString(AgreementExtraColumns.END_DATE));
-				extra.setIssueDate(rs
-						.getString(AgreementExtraColumns.ISSUE_DATE));
+				extra.setIssueDate(
+						rs.getString(AgreementExtraColumns.ISSUE_DATE));
 				extras.add(extra);
 			}
 
@@ -563,7 +573,8 @@ public class SQLAgreementDraft {
 			insertData(conn, domainId, draft.getId(), variable);
 		}
 
-		Map<Integer, Set<String>> categoriesMap = draft.getDraftCategories();
+		Map<Integer, Set<String>> draftCategoriesMap = draft
+				.getDraftCategories();
 
 		for (Level level : draft.getDraftLevels()) {
 			int levelId = insertLevel(conn, domainId, draft.getId(), level);
@@ -572,8 +583,13 @@ public class SQLAgreementDraft {
 			for (Variable variable : salaryTable.getVariables(levelId))
 				insertLevelData(conn, domainId, levelId, variable);
 			// Categories
-			Set<String> categories = categoriesMap.get(level.getId());
-			updateCategories(conn, domainId, levelId, categories);
+			Set<String> draftCategories = draftCategoriesMap.get(level.getId());
+
+			Set<String> categories = draft.getCategoriesMap()
+					.get(level.getId());
+
+			updateCategories(conn, domainId, levelId, categories,
+					draftCategories);
 		}
 
 		for (Payment payment : draft.getDraftPayments()) {
@@ -600,7 +616,8 @@ public class SQLAgreementDraft {
 
 		Set<Level> draftLevels = draft.getDraftLevels();
 		SalaryTable salaryTable = draft.getDraftSalaryTable();
-		Map<Integer, Set<String>> categoriesMap = draft.getDraftCategories();
+		Map<Integer, Set<String>> draftCategoriesMap = draft
+				.getDraftCategories();
 
 		for (Level level : draftLevels) {
 
@@ -621,9 +638,11 @@ public class SQLAgreementDraft {
 				updateLevelData(conn, domainId, dbId, variable);
 			}
 
-			if (categoriesMap.containsKey(draftId)) {
+			if (draftCategoriesMap.containsKey(draftId)) {
+
 				updateCategories(conn, domainId, dbId,
-						categoriesMap.get(draftId));
+						draft.getCategoriesMap().get(draftId),
+						draftCategoriesMap.get(draftId));
 			}
 		}
 
@@ -645,9 +664,10 @@ public class SQLAgreementDraft {
 				updateLevelData(conn, domainId, levelId, variable);
 			}
 
-			if (categoriesMap.containsKey(levelId))
+			if (draftCategoriesMap.containsKey(levelId))
 				updateCategories(conn, domainId, levelId,
-						categoriesMap.get(levelId));
+						draft.getCategoriesMap().get(levelId),
+						draftCategoriesMap.get(levelId));
 		}
 
 		for (Payment payment : draft.getDraftPayments()) {
@@ -1143,8 +1163,8 @@ public class SQLAgreementDraft {
 					new java.sql.Date(payment.getStartDate().getTime()));
 			Date endDate = payment.getEndDate();
 			if (endDate != null)
-				stmt.setDate(12, new java.sql.Date(payment.getStartDate()
-						.getTime()));
+				stmt.setDate(12,
+						new java.sql.Date(payment.getStartDate().getTime()));
 			else
 				stmt.setNull(12, Types.DATE);
 
@@ -1300,11 +1320,12 @@ public class SQLAgreementDraft {
 				DBVariable dbVar = new DBVariable();
 				dbVar.setId(rs.getInt(AgreementLevelDataColumns.ID));
 				dbVar.setName(rs.getString(AgreementLevelDataColumns.NAME));
-				dbVar.setExpression(rs
-						.getString(AgreementLevelDataColumns.EXPRESSION));
-				dbVar.setStartDate(rs
-						.getDate(AgreementLevelDataColumns.START_DATE));
-				dbVar.setEndDate(rs.getDate(AgreementLevelDataColumns.END_DATE));
+				dbVar.setExpression(
+						rs.getString(AgreementLevelDataColumns.EXPRESSION));
+				dbVar.setStartDate(
+						rs.getDate(AgreementLevelDataColumns.START_DATE));
+				dbVar.setEndDate(
+						rs.getDate(AgreementLevelDataColumns.END_DATE));
 				variables.add(dbVar);
 			}
 			return variables;
@@ -1318,8 +1339,8 @@ public class SQLAgreementDraft {
 
 	}
 
-	private static List<DBVariable> getDBLevelData(Connection conn,
-			int levelId, Variable variable) throws SQLException {
+	private static List<DBVariable> getDBLevelData(Connection conn, int levelId,
+			Variable variable) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
@@ -1359,11 +1380,12 @@ public class SQLAgreementDraft {
 				DBVariable dbVar = new DBVariable();
 				dbVar.setId(rs.getInt(AgreementLevelDataColumns.ID));
 				dbVar.setName(rs.getString(AgreementLevelDataColumns.NAME));
-				dbVar.setExpression(rs
-						.getString(AgreementLevelDataColumns.EXPRESSION));
-				dbVar.setStartDate(rs
-						.getDate(AgreementLevelDataColumns.START_DATE));
-				dbVar.setEndDate(rs.getDate(AgreementLevelDataColumns.END_DATE));
+				dbVar.setExpression(
+						rs.getString(AgreementLevelDataColumns.EXPRESSION));
+				dbVar.setStartDate(
+						rs.getDate(AgreementLevelDataColumns.START_DATE));
+				dbVar.setEndDate(
+						rs.getDate(AgreementLevelDataColumns.END_DATE));
 				variables.add(dbVar);
 			}
 			return variables;
@@ -1396,7 +1418,8 @@ public class SQLAgreementDraft {
 					+ " WHERE " + AgreementPaymentColumns.ID + "= ? ");
 			// @formatter:on
 
-			stmt.setDate(1, new java.sql.Date(payment.getStartDate().getTime()));
+			stmt.setDate(1,
+					new java.sql.Date(payment.getStartDate().getTime()));
 			Date endDate = payment.getEndDate();
 			if (endDate != null)
 				stmt.setDate(2, new java.sql.Date(endDate.getTime()));
@@ -1541,20 +1564,44 @@ public class SQLAgreementDraft {
 	}
 
 	private static void updateCategories(Connection conn, Integer domainId,
-			Integer levelId, Set<String> categories) throws SQLException {
+			Integer levelId, Set<String> oldCategories,
+			Set<String> newCategories) throws SQLException {
 		PreparedStatement stmt = null;
-		try {
+		
+		if ( newCategories == null  )
+			newCategories = Collections.emptySet();
+		if ( oldCategories == null  )
+			oldCategories = Collections.emptySet();
 
-			// @formatter:off
-			stmt = conn.prepareStatement("DELETE FROM "
-					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + " WHERE "
-					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL + " = ? ");
-			// @formatter:on
-			stmt.setInt(1, levelId);
-			stmt.executeUpdate();
-			stmt.close();
+		try {			
+			
+			Set<String> deleteCategories = new HashSet<String>(oldCategories);
+			deleteCategories.removeAll(newCategories);
+			
+			if ( deleteCategories.size() > 0 ) {
+				// @formatter:off
+				stmt = conn.prepareStatement("DELETE FROM "
+						+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + " WHERE "
+						+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL + " = ? "
+						+ " AND "+ AgreementLevelCategoryColumns.DESCRIPTION 
+						+ " IN ("+ deleteCategories.stream().map(category-> "?").collect(Collectors.joining(",")) +")"
+						);
+				// @formatter:on
+				stmt.setInt(1, levelId);
+				
+				int i = 2;
+				for ( String category: deleteCategories)
+					stmt.setString(i++, category);
+					
+				stmt.executeUpdate();
+				stmt.close();
+			}
 
-			if (categories == null || categories.isEmpty())
+			
+			Set<String> insertCategories = new HashSet<String>(newCategories);
+			insertCategories.removeAll(oldCategories);
+			
+			if (insertCategories.isEmpty())
 				return;
 
 			// @formatter:off
@@ -1566,7 +1613,7 @@ public class SQLAgreementDraft {
 					+ " VALUES (?, ?, ?) ");
 			// @formatter:on
 
-			for (String category : categories) {
+			for (String category : insertCategories) {
 				stmt.setInt(1, domainId);
 				stmt.setInt(2, levelId);
 				stmt.setString(3, category);
@@ -1769,12 +1816,13 @@ public class SQLAgreementDraft {
 
 	private static <T> T get(ResultSet rs, String paymentColumn,
 			String conceptColumn, Class<T> toType) throws SQLException {
-		return SQLUtils.get(rs, toType, SQLConstants.AGREEMENT_PAYMENT + "."
-				+ paymentColumn, SQLConstants.PAYMENT_CONCEPT + "."
-				+ conceptColumn);
+		return SQLUtils.get(rs, toType,
+				SQLConstants.AGREEMENT_PAYMENT + "." + paymentColumn,
+				SQLConstants.PAYMENT_CONCEPT + "." + conceptColumn);
 	}
 
-	private static <T> T getAux(Class<T> toType, Object ...values) throws SQLException {
+	private static <T> T getAux(Class<T> toType, Object... values)
+			throws SQLException {
 		return JooqUtils.get(toType, values);
 	}
 
