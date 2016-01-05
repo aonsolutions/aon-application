@@ -1,11 +1,6 @@
 package com.esferalia.aon.gwt.office.client;
 
 import org.junit.Ignore;
-import org.junit.Test;
-
-import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
-import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class GWTExtendsOfficeTestCase extends GWTOfficeTestCase {
 	
@@ -24,7 +19,7 @@ public class GWTExtendsOfficeTestCase extends GWTOfficeTestCase {
 	@Override @Ignore	
 	public void testGetRepository() {}
 	
-	@Test
+	/*@Test
 	public void testCreateNotices() {
 		System.out.println("testCreateIssues() .....");
 		
@@ -67,15 +62,17 @@ public class GWTExtendsOfficeTestCase extends GWTOfficeTestCase {
 				}
 			});
 		}		
-	}
+	}*/
 	
 	@Override @Ignore
 	public void testCreateIssues() {
 		//delayTestFinish(300*1000);
 	}
 	
-	@Override @Ignore
-	public void testUpdateIssues() {}
+	@Override
+	public void testUpdateIssues() {
+		super.testUpdateIssues();
+	}
 	
 	@Override @Ignore
 	public void testCloseIssues() {}

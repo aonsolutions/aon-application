@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.office.server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.regex.Matcher;
@@ -19,7 +20,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.office.User;
@@ -174,7 +174,7 @@ public class OfficeApiServlet extends HttpServlet {
 					}
 				}
 
-				getNotice(resp, notice);
+				getCreateNotice(resp, notice);
 				
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -186,14 +186,32 @@ public class OfficeApiServlet extends HttpServlet {
 	private static class EditIssue extends RegExpRequestHandler {
 		
 		public EditIssue() {
-			super ("/repos/(.+)/(.+)/issues/(\\d+)");
+			super ("/issues/(\\d+)");
 		}
 		
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
 			//TODO
-			System.out.println("Issue owners and users with push access can edit an issue.");
+			try {
+				String object = getJsonObject(req);
+				System.out.println("Object: " + object);
+				JSONObject json = new JSONObject(object);
+				
+				Notice notice = new Notice();
+				notice.setId(Integer.parseInt(group(1)));
+				notice.setTitle(json.getString("title"));
+				notice.setBody(json.getString("body"));
+				
+				System.out.println("ID: " + notice.getId());
+				System.out.println("Title: " + notice.getTitle());
+				System.out.println("Body: " + notice.getBody());
+				
+				getEditNotice(resp, notice);
+				
+			} catch ( Exception ex) {
+				System.out.println(ex.getMessage());
+			}
 		}
 	}
 
@@ -208,20 +226,39 @@ public class OfficeApiServlet extends HttpServlet {
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
 			
-			String state = req.getParameter("state"); 
+			PrintWriter pw = null;
+			try {
+				pw = resp.getWriter();
+				List<Notice> notices = new LinkedList<Notice>();
 
-			switch (state) {
-			case "open":				
-				getOpenNotices(req, resp);
-				break;
-			case "closed":				
-				getClosedNotices(req, resp);
-			case "all":
-				getAllNotices(req, resp);
-				break;
-			default:
-				getAllNotices(req, resp);
-				break;
+				String state = req.getParameter("state");		
+				switch (state) {
+				case "open":
+					notices = AON.getOpenNotices(DOMAIN_ID, DOMAIN_NAME, USER_NAME);
+					break;
+				case "closed":
+					notices = AON.getClosedNotices(DOMAIN_ID, DOMAIN_NAME, USER_NAME);
+					break;
+
+				default:
+					notices = AON.getAllNotices(DOMAIN_ID, DOMAIN_NAME, USER_NAME);
+					break;
+				}
+				
+				pw.append('{');			
+				pw.printf(String.format("\"message\":\"%s\",\r\n", 
+						"FOUNDED"));
+				pw.printf("\"data\":%s", buildNotices(notices.listIterator()));
+				pw.append('}');
+				pw.flush();
+				
+			} catch (Exception ex) {
+				System.out.println("Exception ex: " + ex.getMessage() + " "
+						+ ex.getLocalizedMessage());
+			} finally {
+				if (pw != null) {
+					pw.close();
+				}
 			}
 		}
 	}
@@ -562,143 +599,85 @@ public class OfficeApiServlet extends HttpServlet {
 	private static final Integer DOMAIN_ID = 553;
 	private static final String DOMAIN_NAME = "mac.amtzdelagos.dev";
 	private static final String USER_NAME = "mac";
-
-	private static void getOpenNotices(HttpServletRequest req,
-			HttpServletResponse resp) {
-
-		PrintWriter pw = null;
-		try {
-			pw = resp.getWriter();
-			List<Notice> notices = AON.getOpenNotices(DOMAIN_ID, DOMAIN_NAME,
-					USER_NAME);
-			
-			pw.append('{');			
-			pw.printf(String.format("\"message\":\"%s\",\r\n", 
-					"FOUNDED"));
-			pw.printf("\"data\":%s", buildNotices(notices.listIterator()));
-			pw.append('}');
-			pw.flush();
-		} catch (Exception ex) {
-			System.out.println("Exception ex: " + ex.getMessage() + " "
-					+ ex.getLocalizedMessage());
-		} finally {
-			if (pw != null) {
-				pw.close();
-			}
-		}
-	}
-
-	private static void getClosedNotices(HttpServletRequest req,
-			HttpServletResponse resp) {
-
-		PrintWriter pw = null;
-		try {
-			pw = resp.getWriter();
-			List<Notice> notices = AON.getClosedNotices(DOMAIN_ID, DOMAIN_NAME,
-					USER_NAME);
-
-			pw.append('{');			
-			pw.printf(String.format("\"message\":\"%s\",\r\n", 
-					"FOUNDED"));
-			pw.printf("\"data\":%s", buildNotices(notices.listIterator()));
-			pw.append('}');
-			pw.flush();
-		} catch (Exception ex) {
-			System.out.println("Exception ex: " + ex.getMessage() + " "
-					+ ex.getLocalizedMessage());
-		} finally {
-			if (pw != null)
-				pw.close();
-		}
-	}
-
-	private static void getAllNotices(HttpServletRequest req,
-			HttpServletResponse resp) {
-
-		PrintWriter pw = null;
-		try {
-
-			List<Notice> notices = AON.getAllNotices(DOMAIN_ID, DOMAIN_NAME,
-					USER_NAME);
-
-			pw = resp.getWriter();
-			pw.append('{');			
-			pw.printf(String.format("\"message\":\"%s\",\r\n", 
-					"FOUND"));
-			pw.printf("\"data\":%s", buildNotices(notices.listIterator()));
-			pw.append('}');
-			pw.flush();
-		} catch (Exception ex) {
-			System.out.println("Exception ex: " + ex.getMessage() + " "
-					+ ex.getLocalizedMessage());
-		} finally {
-			if (pw != null)
-				pw.close();
-		}
+	
+	private static String getNotice (Notice notice) throws Exception {
+		
+		StringBuffer buffer = new StringBuffer();		 
+		
+		buffer.append("{\n");
+		buffer.append(String.format("\"id\":%s,\r\n",
+				String.valueOf(notice.getId())));
+		buffer.append(String.format("\"number\":%s,\r\n",
+				String.valueOf(notice.getId())));
+		buffer.append(
+				String.format("\"title\":\"%s\",\r\n", notice.getTitle()));
+		buffer.append(
+				String.format("\"body\":\"%s\",\r\n", notice.getBody()));
+		buffer.append(
+				String.format("\"state\":\"%s\",\r\n", 
+						NoticeStatus.values()[notice.getStatus()].getValue()));
+		buffer.append(String.format("\"user\":%s,\r\n",
+				buildUserSender(notice.getSender())));
+		buffer.append(
+				String.format("\"type\":\"%s\",\r\n", notice.getType()));
+		buffer.append(
+				String.format("\"priority\":\"%s\",\r\n", notice.getPriority()));
+		buffer.append(
+				String.format("\"created_at\":\"%s\",\r\n", notice.getStartDate()));
+		buffer.append(String.format("\"labels\":%s\r\n",
+				buildLabels(notice.getTags().listIterator())));
+		buffer.append('}');
+		
+		return buffer.toString();
+		
 	}
 	
-	private static void getNotice (HttpServletResponse resp, Notice notice) {
+	private static void getCreateNotice (HttpServletResponse resp, Notice notice) {
 		
 		PrintWriter pw = null;
 		try {
 			
 			pw = resp.getWriter();
-			Notice newNotice = AON.addNewNotice(DOMAIN_ID, DOMAIN_NAME, USER_NAME, notice);
-			StringBuffer buffer = new StringBuffer();		 
-			
-			buffer.append("{\n");
-			buffer.append(String.format("\"id\":%s,\r\n",
-					String.valueOf(newNotice.getId())));
-			buffer.append(String.format("\"number\":%s,\r\n",
-					String.valueOf(newNotice.getId())));
-			buffer.append(
-					String.format("\"title\":\"%s\",\r\n", newNotice.getTitle()));
-			buffer.append(
-					String.format("\"body\":\"%s\",\r\n", newNotice.getBody()));
-			buffer.append(
-					String.format("\"state\":\"%s\",\r\n", 
-							NoticeStatus.values()[newNotice.getStatus()].getValue()));
-			buffer.append(String.format("\"user\":%s,\r\n",
-					buildUserSender(newNotice.getSender())));
-			buffer.append(
-					String.format("\"created_at\":\"%s\",\r\n", newNotice.getStartDate()));
-			buffer.append(String.format("\"labels\":%s\r\n",
-					buildLabels(newNotice.getTags().listIterator())));
-			buffer.append('}');
-			
-			pw.append(buffer);
+			Notice newNotice = AON.addNewNotice(DOMAIN_ID, DOMAIN_NAME, USER_NAME, notice);			
+			pw.append(getNotice(newNotice));
 			pw.flush();
-			
-			
+
 		} catch ( Exception ex) {
 			System.out.println("Exception: " + ex.getMessage());
+			pw.flush();
 		} finally {
 			if ( pw != null )
 				pw.close();
 		}
 	}
+	
+	private static void getEditNotice (HttpServletResponse resp, Notice notice) {
+		PrintWriter pw = null;
+		try {
+			
+			pw = resp.getWriter();
+			Notice editNotice = AON.editNotice(DOMAIN_ID, DOMAIN_NAME, USER_NAME, notice);
+			pw.append(getNotice(editNotice));
+			pw.flush();
+			
+		} catch ( Exception ex) {
+			System.out.println("Exception: " + ex.getMessage());
+			pw.flush();
+		} finally {
+			if ( pw != null )
+				pw.close();
+		}
 
-	private static String buildNotices(ListIterator<Notice> iterator) {
+	}
+
+	private static String buildNotices(ListIterator<Notice> iterator) throws Exception {
 
 		StringBuffer buffer = new StringBuffer();
 		buffer.append('[');
 
 		while (iterator.hasNext()) {
 			Notice notice = iterator.next();
-			buffer.append("\n{\n");
-			buffer.append(String.format("\"id\":%s,\r\n",
-					String.valueOf(notice.getId())));
-			buffer.append(String.format("\"user\":%s,\r\n",
-					buildUserSender(notice.getSender())));
-			buffer.append(
-					String.format("\"title\":\"%s\",\r\n", notice.getTitle()));
-			buffer.append(
-					String.format("\"body\":\"%s\",\r\n", notice.getBody()));
-			buffer.append(String.format("\"labels\":%s,\r\n",
-					buildLabels(notice.getTags().listIterator())));
-			buffer.append(String.format("\"state\":\"%s\"\r\n", "open"));
-			buffer.append('}');
-
+			buffer.append(getNotice(notice));
 			if (iterator.hasNext())
 				buffer.append(',');
 		}
@@ -711,8 +690,9 @@ public class OfficeApiServlet extends HttpServlet {
 
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("{\n");
-		buffer.append(
-				String.format("\"id\":%s,\r\n", String.valueOf(user.getId())));
+		buffer.append(String.format("\"id\":%s,\r\n",
+				String.valueOf(user.getId())));		
+//		buffer.append(String.format("\"id\":\"%s\",\r\n", user.getId()));	
 		buffer.append(String.format("\"login\":\"%s\"\r\n", user.getName()));
 		buffer.append("}");
 		return buffer.toString();

@@ -1976,6 +1976,18 @@ public class AON {
 		}
 	}
 
+	public static Notice editNotice(Integer domainId, String domainName,
+			String userName, Notice notice) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getOffice().editNotice(ctx, notice);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static Tag addNewTag(Integer domainId, String domainName,
 			String userName, Tag tag) {
 		AONContext ctx = null;
@@ -2006,20 +2018,21 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
 			getOffice().deleteTag(ctx, tag);
-			
+
 		} finally {
-			if ( ctx != null )
+			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
-	public static Tag getTag (Integer domainId, String domainName, String userName, String name) {
+
+	public static Tag getTag(Integer domainId, String domainName,
+			String userName, String name) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
 			return getOffice().getTag(ctx, name);
 		} finally {
-			if ( ctx != null )
+			if (ctx != null)
 				ctx.close();
 		}
 	}
@@ -2420,8 +2433,9 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
-	public static void updateZeroInventoryDetail(String domainName,Integer domainId, String login) {
+
+	public static void updateZeroInventoryDetail(String domainName,
+			Integer domainId, String login) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -2714,28 +2728,30 @@ public class AON {
 	// ***************************** Marketplace **
 	// ********************************************
 
-	public static void updateTag(String domainName, Integer domainId, String login,
-			Tag tag){
+	public static void updateTag(String domainName, Integer domainId,
+			String login, Tag tag) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			getCommon().updateTag(ctx, tag);
 		} finally {
-			if(ctx != null) ctx.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
-	public static void deleteTag(String domainName, Integer domainId, String login,
-			Tag tag){
+
+	public static void deleteTag(String domainName, Integer domainId,
+			String login, Tag tag) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			getCommon().deleteTag(ctx, tag);
 		} finally {
-			if(ctx != null) ctx.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
+
 	public static LinkedList<Tag> getMatketplaceTagList(String domainName,
 			Integer domainId, String login) {
 		AONContext ctx = null;

@@ -243,7 +243,7 @@ public class AonHub implements IAonHub {
 		}
 		else {
 			//OTRA URL
-			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
 					requestUrl);
 
 			final AsyncCallback<T> hookedCallback = hookCallback(callback);

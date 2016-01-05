@@ -111,6 +111,10 @@ public class Notice implements Serializable, HasId {
 		this.tags.add(tag);
 	}
 	
+	public void clearTagList() {
+		this.tags = new LinkedList<Tag>();
+	}
+	
 	public void addNotice(NoticeComment comment) {
 		this.comments.add(comment);
 	}
