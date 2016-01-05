@@ -394,7 +394,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		// --------------------------------------------------------------------
 
-		private void selectValue(String value) {
+		protected void selectValue(String value) {
 			for (int i = 0; i < getItemCount(); i++) {
 				if (StringUtils.equals(getValue(i), value)) {
 					setSelectedIndex(i);
@@ -459,12 +459,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	}
 
-	static class MonthDaysEditorFactory<E extends Enum<?> & HasDescription>
+	static class DaysEditorFactory<E extends Enum<?> & HasDescription>
 			implements VariableEditorFactory<TextListBox> {
 
 		private String name;
 
-		public MonthDaysEditorFactory(String name) {
+		public DaysEditorFactory(String name) {
 			this.name = name;
 		}
 
@@ -499,6 +499,58 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 			}
 
+			return textListBox;
+		}
+
+	}
+
+	static class MonthDaysEditorFactory<E extends Enum<?> & HasDescription>
+			implements VariableEditorFactory<TextListBox> {
+
+		private String name;
+
+		public MonthDaysEditorFactory(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public boolean accept(Variable variable) {
+			return name.equals(variable.getName());
+		}
+
+		@Override
+		public TextListBox create(Variable variable) {
+			TextListBox textListBox = new TextListBox() {
+				@Override
+				public String getValue() {
+					return getValue(getSelectedIndex());
+				}
+				
+				
+
+			};
+
+			textListBox.addItem( variable.getValue().toString(), variable.getValue().toString() );
+
+			textListBox.addItem("COTIZACI\u00D3N MENSUAL", "30");
+
+			textListBox.addItem("COTIZACI\u00D3N DIARIA",
+					"DIAS_NATURALES_MES");
+
+			
+			if ( variable.getExpression() != null ){
+				String expression = variable.getExpression();
+				if ( expression.matches("30(\\.0+)?")) {
+					textListBox.selectValue("30");
+					return textListBox;
+				}
+				else if ( expression.matches("DIAS_NATURALES_MES")){
+					textListBox.selectValue("DIAS_NATURALES_MES");
+					return textListBox;
+				}
+			}
+		
+			
 			return textListBox;
 		}
 
@@ -560,8 +612,9 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			TextListBox textListBox = new TextListBox() {
 				@Override
 				public void setValue(String value) {
-					if ( value != null )
-						super.setValue(value.replaceAll("^[\"'](.*)[\"']$", "$1"));
+					if (value != null)
+						super.setValue(
+								value.replaceAll("^[\"'](.*)[\"']$", "$1"));
 				}
 
 			};
@@ -1150,6 +1203,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		@Override
 		void onExpressionChange(Deduction item, String expression) {
 			item.setScope(Scope.SALARY);
+
 			item.setExpression(expression);
 
 			if (item.getType() == Deduction.Type.EMBARGO)
@@ -1162,7 +1216,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	class BonusChangeHandler<T extends UIObject & HasValue<String> & HasAllFocusHandlers & Focusable>
-			extends ItemChangeHandler<T, Bonus>implements BonusDialog.Callback {
+			extends ItemChangeHandler<T, Bonus>
+			implements BonusDialog.Callback {
 
 		// --------------------------------------------------------------------
 		@Override
@@ -2851,28 +2906,34 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			salaryDraftObject.saveITData(new CalculateCallback() {
 				@Override
 				public void onCalculateSucces(SalaryDraftObject object) {
-					SalaryDraft.this.onCalculateSucces(object); // TODO: It's necessary ?
-					salaryDraftObject.save( new CalculateCallback() {
-						
+					SalaryDraft.this.onCalculateSucces(object); // TODO: It's
+																// necessary ?
+					salaryDraftObject.save(new CalculateCallback() {
+
 						@Override
-						public void onCalculateSucces(SalaryDraftObject object) {
-							SalaryDraft.this.onCalculateSucces(object); // TODO: It's necessary ?
-							SalaryDraft.this.salaryDraftObject.emitSalary(SalaryDraft.this);
+						public void onCalculateSucces(
+								SalaryDraftObject object) {
+							SalaryDraft.this.onCalculateSucces(object); // TODO:
+																		// It's
+																		// necessary
+																		// ?
+							SalaryDraft.this.salaryDraftObject
+									.emitSalary(SalaryDraft.this);
 						}
-						
+
 						@Override
 						public void onCalculateFailure(Throwable throwable) {
 							SalaryDraft.this.onCalculateFailure(throwable);
 						}
 					});
 				}
-				
+
 				@Override
 				public void onCalculateFailure(Throwable throwable) {
 					SalaryDraft.this.onCalculateFailure(throwable);
 				}
 			});
-		else 
+		else
 			salaryDraftObject.emitSalary(this);
 	}
 
@@ -3340,11 +3401,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 								.getChilds()) {
 
 							dumpSystemItem(child,
-									"  "+ description + " "
+									"  " + description + " "
 											+ formatChildDescriptionSuffix(
 													child, salaryDraftObject),
 									row, null, null);
-							
+
 							paymentsTable.getRowFormatter().getElement(row++)
 									.getStyle().setDisplay(Display.NONE);
 						}
@@ -3680,7 +3741,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		} else {
 			paymentsTable.setWidget(row, 0, iconLabel);
 		}
-		if ( percentageWidget != null )
+		if (percentageWidget != null)
 			paymentsTable.setWidget(row, 1, percentageWidget);
 		/* paymentsTable.setText(row, 1, deduction.getDescription()); */
 
@@ -4070,20 +4131,20 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	private Label getLabel(Variable variable) {
-		StringBuffer text = new StringBuffer( variable.getName() );
-		
-		
+		StringBuffer text = new StringBuffer(variable.getName());
+
 		try {
 			Date startDate = variable.getStartDate();
 			Date endDate = variable.getEndDate();
-			if ( !startDate.equals(salaryDraftObject.getStartDate()) 
-					|| !endDate.equals(salaryDraftObject.getEndDate())){
-					DateTimeFormat format = DateTimeFormat.getFormat("dd/MM");
-					text.append(" ( " + format.format(startDate) + " - " + format.format(endDate) + " )");
+			if (!startDate.equals(salaryDraftObject.getStartDate())
+					|| !endDate.equals(salaryDraftObject.getEndDate())) {
+				DateTimeFormat format = DateTimeFormat.getFormat("dd/MM");
+				text.append(" ( " + format.format(startDate) + " - "
+						+ format.format(endDate) + " )");
 			}
-		} catch ( Exception e ) {
+		} catch (Exception e) {
 		}
-		
+
 		Label label = new Label(text.toString());
 
 		label.setStyleName(style.cellLabel());
@@ -4482,7 +4543,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		case IRPF:
 			return newIrpfPercentBox(deduction, percent);
 		case UNEMPLOYMENT:
-			return newPercentBox("PORCENTAJE_" + deduction.getName(), deduction, percent);
+			return newPercentBox("PORCENTAJE_" + deduction.getName(), deduction,
+					percent);
 		default:
 			return newPercentLabel(deduction, percent,
 					getPercentVariable(deduction.getType()));
@@ -4591,10 +4653,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		return irpfPercentPanel;
 	}
 
-	private Widget newPercentBox(
-			final String variable, 
-			final Deduction deduction,
-			final Double percent) {
+	private Widget newPercentBox(final String variable,
+			final Deduction deduction, final Double percent) {
 
 		final TextBox percentTexTBox = new ExpressionBox();
 
@@ -4628,7 +4688,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				StringVariable var = SalaryDraft.this
 						.newStringVariable(variable);
 				String value = percentTexTBox.getValue();
-				
+
 				var.setExpression(StringUtils.isEmpty(value)
 						? "REMOVE_VARIABLE()" : value);
 
@@ -4658,16 +4718,17 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			return percentPanel;
 		}
 
-//		if (isSystemVariable(percentVar)) {
-//			Button button = getSystemVarButton(percentVar,AON.AON_ICON_SEGSOCIAL_SMALL);
-//			button.setEnabled(false);
-//			percentPanel.add(button);
-//		} else {
-//			Button systemButton = getSystemVarButton(percentVar,
-//					AON.AON_ICON_CONFIG);
-//			systemButton.setTabIndex(Short.MAX_VALUE);
-//			percentPanel.add(systemButton);
-//		}
+		// if (isSystemVariable(percentVar)) {
+		// Button button =
+		// getSystemVarButton(percentVar,AON.AON_ICON_SEGSOCIAL_SMALL);
+		// button.setEnabled(false);
+		// percentPanel.add(button);
+		// } else {
+		// Button systemButton = getSystemVarButton(percentVar,
+		// AON.AON_ICON_CONFIG);
+		// systemButton.setTabIndex(Short.MAX_VALUE);
+		// percentPanel.add(systemButton);
+		// }
 
 		return percentPanel;
 	}
@@ -4923,8 +4984,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	// @formatter:off
 	private final static VariableEditorFactory VARIABLE_EDITOR_FACTORIES[] = {
 			new MonthDaysEditorFactory("DIAS_MES"),
-			new MonthDaysEditorFactory("DIAS_PAGA"),
-			new MonthDaysEditorFactory("DIAS_NOMINA"),
+			new DaysEditorFactory("DIAS_PAGA"),
+			new DaysEditorFactory("DIAS_NOMINA"),
 			new DateEditorFactory("FECHA_PREAVISO"),
 			new EnumNameListBoxFactory<Employee.Occupation>("OCUPACION",
 					Employee.Occupation.class),
