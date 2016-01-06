@@ -56,6 +56,7 @@ import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -1419,7 +1420,7 @@ public class ContractController extends BasicController {
 		// PECULIAR QUOTE PERCENT VALUES
 		private Map<String, ContractData> peculiarQuoteMap;
 		private Map<String, Boolean> checkedQuoteMap;
-		private TRL trl;
+		private ContractQuoteType contractQuoteType;
 		
 		public SalaryInfoHandler(Contract contract){
 			this.contract = contract;
@@ -1439,11 +1440,11 @@ public class ContractController extends BasicController {
 		public void setCheckedQuoteMap(Map<String, Boolean> checkedQuoteMap) {
 			this.checkedQuoteMap = checkedQuoteMap;
 		}
-		public TRL getTrl() {
-			return trl;
+		public ContractQuoteType getContractQuoteType() {
+			return contractQuoteType;
 		}
-		public void setTrl(TRL trl) {
-			this.trl = trl;
+		public void setContractQuoteType(ContractQuoteType contractQuoteType) {
+			this.contractQuoteType = contractQuoteType;
 		}
 		public Integer getFilterYear() {
 			return filterYear;
@@ -1665,7 +1666,7 @@ public class ContractController extends BasicController {
 			setSelectedDeduction(null);
 			dataTracking = null;
 			paymentTracking = null;
-			trl = null;
+			contractQuoteType = null;
 			loadContractData(contract);
 			loadPayments(contract);
 			loadDeductions(contract);
@@ -1799,9 +1800,9 @@ public class ContractController extends BasicController {
 			Map<String, ContractData> map = utils.getContractDataMap(contract, contract.getStartDate(), contract.getEndDate());
 
 			if(utils.getContractInfoMap(contract).containsKey(ContractVariable.COOPERATIVE_PARTNER.getValue())){
-				this.setTrl(TRL.COOPERATIVE_PARTNER);
+				this.setContractQuoteType(ContractQuoteType.COOPERATIVE_PARTNER);
 			} else {
-				this.setTrl(null);
+				this.setContractQuoteType(null);
 			}
 
 //			TRABAJADOR
@@ -1921,26 +1922,6 @@ public class ContractController extends BasicController {
 			}
 		}
 		
-		public void onChangeTrl(ActionEvent event){
-			for(String key: checkedQuoteMap.keySet()){
-				checkedQuoteMap.put(key, Boolean.FALSE);
-			}
-			if(getTrl()==null){
-			} else if(getTrl()==TRL.COOPERATIVE_PARTNER){
-				if(peculiarQuoteMap.containsKey("PORCENTAJE_FOGASA")){
-					ContractData data = peculiarQuoteMap.get("PORCENTAJE_FOGASA");
-					data.setExpression("0");
-					peculiarQuoteMap.put("PORCENTAJE_FOGASA", data);
-				} else {
-					ContractData data = new ContractData();
-					data.setName("PORCENTAJE_FOGASA");
-					data.setExpression("0");
-					peculiarQuoteMap.put("PORCENTAJE_FOGASA", data);
-				}
-				checkedQuoteMap.put("PORCENTAJE_FOGASA", Boolean.TRUE);
-			}
-		}
-		
 		public void onAcceptPeculiarQuote(ActionEvent event){
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
@@ -1961,23 +1942,30 @@ public class ContractController extends BasicController {
 				String msg = "Error al grabar los porcentajes de cotizacion. (" +e.getMessage() + ")";
 				AonUtil.addErrorMessage(msg);
 			}
+			ContractController controller = ((ContractController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER));
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
 				SEPEUtils utils = SEPEUtils.getInstance();
 				ContractInfo info = utils.getContractInfoMap(contract, null, null).get(ContractVariable.COOPERATIVE_PARTNER.getValue());
-				if(getTrl()==null){
+				if(getContractQuoteType()==null){
 					if(info!=null){
 					bean.remove(info);
 					}
-				} else if(getTrl()==TRL.COOPERATIVE_PARTNER){
+				} else if(getContractQuoteType()==ContractQuoteType.COOPERATIVE_PARTNER){
 					if(info==null || info.getId()==null){
 						ContractUtils.getInstance().enableCooperativePartner(contract);
 					}
 				}
-				ContractController controller = ((ContractController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER));
+//				ContractController controller = ((ContractController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER));
 				controller.getContractUtils().loadContractInfo((Contract) controller.getTo(), controller.getParams());
 			} catch (ManagerBeanException e) {
 				String msg = "Error al grabar los porcentajes de cotizacion. (" +e.getMessage() + ")";
+				AonUtil.addErrorMessage(msg);
+			}
+			try {
+				ContractUtils.getInstance().updateContractData(contract, controller.getParams());
+			} catch (ControllerListenerException e) {
+				String msg = "Error al grabar el tipo de cotizacion. (" +e.getMessage() + ")";
 				AonUtil.addErrorMessage(msg);
 			}
 		}
@@ -1994,7 +1982,7 @@ public class ContractController extends BasicController {
 		private ContractInfo ssStatusInfo;
 		
 		private boolean retaPartialTime;
-		private TRL trl;
+		private ContractQuoteType contractQuoteType;
 		private ContractOption contractOption;
 		private ContractType contractType;
 		private ContractModelCode contractModelCode;
@@ -2220,7 +2208,7 @@ public class ContractController extends BasicController {
 			this.bonusModel = bonusModel;
 		}
 		public boolean isRetaQuote() {
-			return trl!=null && trl==TRL.RETA;
+			return contractQuoteType!=null && contractQuoteType==ContractQuoteType.RETA;
 		}
 		
 		public boolean isRetaPartialTime() {
@@ -2230,13 +2218,13 @@ public class ContractController extends BasicController {
 			this.retaPartialTime = retaPartialTime;
 		}
 		public boolean isCooperativePartnerQuote() {
-			return trl!=null && trl==TRL.COOPERATIVE_PARTNER;
+			return contractQuoteType!=null && contractQuoteType==ContractQuoteType.COOPERATIVE_PARTNER;
 		}
-		public TRL getTrl() {
-			return trl;
+		public ContractQuoteType getContractQuoteType() {
+			return contractQuoteType;
 		}
-		public void setTrl(TRL trl) {
-			this.trl = trl;
+		public void setContractQuoteType(ContractQuoteType contractQuoteType) {
+			this.contractQuoteType = contractQuoteType;
 		}
 		public Double getWeekHours() {
 			return weekHours;
@@ -2305,7 +2293,7 @@ public class ContractController extends BasicController {
 		
 	}
 	
-	public enum TRL{
+	public enum ContractQuoteType {
 		RETA,
 		COOPERATIVE_PARTNER;
 	}
