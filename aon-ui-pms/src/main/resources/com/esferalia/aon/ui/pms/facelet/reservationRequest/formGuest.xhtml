@@ -68,7 +68,7 @@
 		<aon:inputText id="ReservationRequestGuest_province-Input"
 			value="#{reservationRequest.requestGuest.province}" size="30" maxlength="64"
 			rendered="#{reservationRequest.requestGuest.country != 'ES'}" />
-		<aon:selectOneMenu id="ProjectReservationGuest_province-List" styleClass="aon-width-180"
+		<aon:selectOneMenu id="ReservationRequestGuest_province-List" styleClass="aon-width-180"
 			value="#{reservationRequest.requestGuest.province}"
 			rendered="#{reservationRequest.requestGuest.country == 'ES'}">
 			<f:selectItem itemLabel="-" value="#{null}" />		
