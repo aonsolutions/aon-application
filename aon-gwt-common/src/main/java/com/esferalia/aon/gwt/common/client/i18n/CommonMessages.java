@@ -224,6 +224,8 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Modelo 349")
 	String mod349();
 	
+	@DefaultMessage("Desglose de facturas por series")
+	String invoiceSeriesBreakdown();
 
 	@DefaultMessage("Libro-registro de operaciones econ\u00F3micas")
 	String mod140Description();

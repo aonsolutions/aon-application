@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.SalaryEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceReport;
+import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceSeriesBreakdown;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
 import com.esferalia.aon.gwt.fiscal.client.mod180.Model180;
 import com.esferalia.aon.gwt.fiscal.client.mod184.Model184;
@@ -36,6 +37,7 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== FINANCE
 	//
 	private static final String FS_INVOICE_REPORT_ENTRY_POINT = "InvoiceReport";
+	private static final String FS_INVOICE_SERIES_BREAKDOWN_ENTRY_POINT = "InvoiceSeriesBreakdown";
 	
 	//
 	//    ================================================================== ACCOUNTING
@@ -168,6 +170,21 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					InvoiceReport invoiceReport = new InvoiceReport();
 					invoiceReport.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(FS_INVOICE_SERIES_BREAKDOWN_ENTRY_POINT)) {
+			GWT.runAsync(InvoiceSeriesBreakdown.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					InvoiceSeriesBreakdown invoiceSeriesBreakdown = new InvoiceSeriesBreakdown();
+					invoiceSeriesBreakdown.onModuleLoad();
 				}
 				
 			});

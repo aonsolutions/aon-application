@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IFinance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -59,6 +60,12 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public LinkedList<InvoicingGroup> getInvoicingGroupList(AONContext ctx, InvoicingGroupFilter filter){
 		return InvoiceDAO.getInvoicingGroupList(ctx, filter);
+	}
+
+	// ------------------------------------- INVOICE SERIES
+	@Override
+	public LinkedList<InvoiceSeries> getInvoiceSeries(AONContext ctx, Date from, Date to, boolean taxDate) {
+		return InvoiceDAO.getInvoiceSeries(ctx, from, to, taxDate);
 	}
 
 }

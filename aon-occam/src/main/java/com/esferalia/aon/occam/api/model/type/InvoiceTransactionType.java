@@ -4,10 +4,24 @@ import java.io.Serializable;
 
 public enum InvoiceTransactionType implements Serializable {
 
-	NATIONAL,
-	INTRACOMMUNITY,
-	EXTRACOMMUNITY,
-	CAN_CEU_MEL,
-	OTHER_ISP;
+	NATIONAL ("Nacional"),
+	INTRACOMMUNITY("Intracomunitaria"),
+	EXTRACOMMUNITY("Extracomunitaria"),
+	CAN_CEU_MEL("Canarias, Ceuta y Melilla"),
+	OTHER_ISP("I.S.P.");
+	
+	private String description;
+	
+	private InvoiceTransactionType(String description) {
+		this.description = description;
+	}
+
+	public byte value() {
+		return (byte) this.ordinal();
+	}
+	
+	public String getDescription() {
+		return description;
+	}
 	
 }

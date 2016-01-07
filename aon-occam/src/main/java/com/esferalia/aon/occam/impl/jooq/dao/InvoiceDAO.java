@@ -23,6 +23,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -38,12 +39,14 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
@@ -410,6 +413,50 @@ public class InvoiceDAO {
 				.from(INVOICING_GROUP).where(INVOICING_GROUP_PROPERTIES.getConditions(filter))
 				.fetchInto(INVOICING_GROUP).stream().map(new FullInvoicingGroupFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<InvoiceSeries> getInvoiceSeries(AONContext ctx, Date from, Date to, boolean taxDate){
+		Field<Integer> type = DSL.decode()
+				   .when(INVOICE.TYPE.equal((byte) 0), 0)
+				   .when(INVOICE.TYPE.equal((byte) 1), 1)
+				   .when(INVOICE.TYPE.equal((byte) 2), 0)
+				   .when(INVOICE.TYPE.equal((byte) 3), 0);
+		AggregateFunction<Integer> min = DSL.min(INVOICE.NUMBER);
+		AggregateFunction<Integer> max = DSL.max(INVOICE.NUMBER);
+		LinkedList<InvoiceSeries> list = new LinkedList<InvoiceSeries>(); 
+		ctx.getDslContext()
+		.select(type,INVOICE.SERIES,min,max)
+		.from(INVOICE)
+		.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+		.and((INVOICE.ISSUE_DATE).between(AonDateUtils.toSql(from),AonDateUtils.toSql(to)) )
+		.groupBy(type,INVOICE.SERIES)
+		.fetch()
+		.stream()
+		.forEach( rec -> list.add(
+			new InvoiceSeries()
+				.setSales(rec.getValue(type) == 1)
+				.setSeriesInfo(true)
+				.setDescription(rec.getValue(INVOICE.SERIES))
+				.setFromNumber(rec.getValue(min))
+				.setToNumber(rec.getValue(max)))
+				);
+		AggregateFunction<Integer> count = DSL.count();
+		ctx.getDslContext()
+			.select(type,INVOICE.TRANSACTION,count)
+			.from(INVOICE)
+			.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+			.and((INVOICE.ISSUE_DATE).between(AonDateUtils.toSql(from),AonDateUtils.toSql(to)) )
+			.groupBy(type,INVOICE.TRANSACTION)
+			.fetch()
+			.stream()
+			.forEach( rec -> list.add(
+				new InvoiceSeries()
+					.setSales(rec.getValue(type) == 1)
+					.setSeriesInfo(false)
+					.setDescription(InvoiceTransactionType.values()[rec.getValue(INVOICE.TRANSACTION)].getDescription())
+					.setFromNumber(rec.getValue(count)))
+					);
+		return list;
 	}
 	
 	private static class InvoiceDetailFiller implements Function<Record, InvoiceDetail> {

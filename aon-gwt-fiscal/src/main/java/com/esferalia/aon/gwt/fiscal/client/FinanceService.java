@@ -1,0 +1,17 @@
+package com.esferalia.aon.gwt.fiscal.client;
+
+import java.util.Date;
+import java.util.LinkedList;
+
+import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
+import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+
+@RemoteServiceRelativePath("Finance")
+public interface FinanceService extends RemoteService {
+	
+	// --------------------------------------------------------------- INVOICE SERIES
+	LinkedList<InvoiceSeries> getInvoiceSeries(String domainName, int domainId, Date from, Date to, boolean taxDate) throws AonCoreException;
+
+}

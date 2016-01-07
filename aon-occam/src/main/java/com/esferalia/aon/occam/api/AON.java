@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
@@ -2770,6 +2771,18 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getMarketplace().getMarketplaceTagList(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static LinkedList<InvoiceSeries> getInvoiceSeries(String domainName, int domainId, String login
+			, Date from, Date to, boolean taxDate) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFinance().getInvoiceSeries(ctx, from, to, taxDate);
 		} finally {
 			if (ctx != null)
 				ctx.close();
