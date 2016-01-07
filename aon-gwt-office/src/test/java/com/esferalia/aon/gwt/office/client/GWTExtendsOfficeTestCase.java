@@ -19,59 +19,14 @@ public class GWTExtendsOfficeTestCase extends GWTOfficeTestCase {
 	@Override @Ignore	
 	public void testGetRepository() {}
 	
-	/*@Test
-	public void testCreateNotices() {
-		System.out.println("testCreateIssues() .....");
-		
-		for (int i = 0; i < MAX_ISSUES_COUNT; i++) {
-			final IssueValue issue = new IssueValue();
-			final String title = "Title issue " + (i + 1);
-			final String body = "Body issue " + (i + 1);
-
-			issue.setTitle(title);
-			issue.setBody(body);
-			issue.setState(OPEN_STATE_ISSUE);
-			issue.setType("TICKET");
-			issue.setPriority("LOW");
-			issue.setLabels(new String[]{"LABORAL","FISCAL"});
-			
-			System.out.println("Creando objecto Title issue " + (i + 1));
-
-			getAonHub().createIssue(issue, new AsyncCallback<JsIssue>() {
-
-				@Override
-				public void onFailure(Throwable caught) {
-					fail(caught.getMessage());
-					finishTest();
-				}
-
-				@Override
-				public void onSuccess(JsIssue result) {
-					assertNotNull(result);
-					assertEquals(title, result.getTitle());
-					assertEquals(body, result.getBody());
-					assertEquals(OPEN_STATE_ISSUE.toUpperCase(), result.getState());
-					
-					System.out.println(
-							"==============================================");
-					System.out.println(result.getTitle());
-					System.out.println(result.getBody());
-					System.out.println(result.getState());
-					System.out.println(" == >> OK! Issue " + result.getTitle()
-							+ " creada correctamente.... =====");
-				}
-			});
-		}		
-	}*/
-	
-	@Override @Ignore
+	@Override 
 	public void testCreateIssues() {
-		//delayTestFinish(300*1000);
+		super.testCreateIssues();
 	}
 	
-	@Override @Ignore
+	@Override
 	public void testUpdateIssues() {
-		//super.testUpdateIssues();
+		super.testUpdateIssues();
 	}
 	
 	@Override
@@ -79,8 +34,10 @@ public class GWTExtendsOfficeTestCase extends GWTOfficeTestCase {
 		super.testCloseIssues();
 	}
 	
-	@Override @Ignore
-	public void testReOpenIssuesTestCase() {}
+	@Override
+	public void testReOpenIssuesTestCase() {
+		super.testReOpenIssuesTestCase();
+	}
 	
 	@Override @Ignore
 	public void testCreateLabels() {}
