@@ -215,7 +215,6 @@ function defaults(){
 	getSysDomainTables $database  | xargs \
         mysqldump -h `getHostName` -u `getOption 'user'` --password=`getOption 'password'`  $database  -t --where="domain <=0 " \
 	| tee >(logTableDump "where domain <= 0")
-	git add -p filename.x.
 }
 
 function admin(){
