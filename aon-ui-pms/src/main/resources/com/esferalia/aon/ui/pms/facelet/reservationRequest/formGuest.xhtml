@@ -65,7 +65,7 @@
 		</aon:div>
 	</aon:panelGrid>
 	<aon:div rendered="#{reservationRequest.to.active}">
-		<aon:inputText id="ReservationRequestGuest_province-Input"
+		<aon:inputText id="ReservationRequestGuest_province"
 			value="#{reservationRequest.requestGuest.province}" size="30" maxlength="64"
 			rendered="#{reservationRequest.requestGuest.country != 'ES'}" />
 		<aon:selectOneMenu id="ReservationRequestGuest_province-List" styleClass="aon-width-180"
