@@ -409,15 +409,31 @@ public class OfficeApiServlet extends HttpServlet {
 	private static class CreateLabel extends RegExpRequestHandler {
 
 		public CreateLabel() {
-			super("/repos/(.+)/(.+)/labels");
+			super("/labels");
 		}
 
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
 			//TODO
-			System.out.println("Create a label " + " Owner: " + group(1)
-					+ " Repo: " + group(2));
+			System.out.println("Create a label");
+			
+			try {
+				String object = getJsonObject(req);
+				System.out.println("Objecto: " + object);
+				
+				JSONObject json = new JSONObject(object);
+				Tag tag = new Tag();
+				tag.setName(json.getString("name"));
+				
+				if ( json.isNull("color") == false)
+					tag.setColor(json.getString("color"));
+
+				buildLabel(resp, tag);
+			
+			} catch ( Exception ex) {
+				System.out.println("");
+			}
 		}
 	}
 
@@ -715,28 +731,51 @@ public class OfficeApiServlet extends HttpServlet {
 		buffer.append("}");
 		return buffer.toString();
 	}
-
+	
 	private static String buildLabels(ListIterator<Tag> tagsIterator) {
 
 		StringBuffer buffer = new StringBuffer();
 
 		buffer.append("[\n");
 		while (tagsIterator.hasNext()) {
-			Tag tag = tagsIterator.next();
-			buffer.append("{\n");
-			buffer.append(String.format("\"id\":%s,\r\n",
-					String.valueOf(tag.getId())));
-			buffer.append(String.format("\"name\":\"%s\",\r\n", tag.getName()));
-			buffer.append(String.format("\"color\":\"%s\"\r\n",
-					(tag.getColor() != null) ? tag.getColor() : ""));
-
+			getLabel(tagsIterator.next());
+			
 			if (tagsIterator.hasNext())
-				buffer.append("},\n");
-			else
-				buffer.append("}\n");
+				buffer.append(",\n");
 		}
 		buffer.append("]");
 
 		return buffer.toString();
 	}
+	
+	private static String getLabel ( Tag tag ) {
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("{\n");
+		buffer.append(String.format("\"id\":%s,\r\n",
+				String.valueOf(tag.getId())));
+		buffer.append(String.format("\"name\":\"%s\",\r\n", tag.getName()));
+		buffer.append(String.format("\"color\":\"%s\"\r\n",
+				(tag.getColor() != null) ? tag.getColor() : ""));
+		buffer.append("}");
+		
+		return buffer.toString();
+	}
+	
+	private static void buildLabel (HttpServletResponse resp, Tag tag) {
+		
+		PrintWriter pw = null;
+		try {
+
+			pw = resp.getWriter();
+			Tag newTag = AON.addNewTag(DOMAIN_ID, DOMAIN_NAME, USER_NAME, tag);
+			pw.append(getLabel(newTag));
+			pw.flush();
+
+		} catch ( Exception ex ) {
+			System.out.println(ex.getMessage() + " " + ex.getLocalizedMessage());
+			pw.flush();
+		}
+	}
+	
 }
