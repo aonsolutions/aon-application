@@ -30,7 +30,7 @@ public class Mod190Writer {
 		   ,(wr, mod190,detail) -> wr.append("T")
 		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(mod190.getContactPhone(),9))
 		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(mod190.getContactPerson(),40))
-		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(mod190.getReceipt(),13))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(mod190.getReceipt(),13,0))
 		   ,(wr, mod190,detail) -> wr.append(" ")
 		   ,(wr, mod190,detail) -> wr.append(mod190.isReplacement()?"S":" ")
 		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(mod190.getReplacedReceipt(),13,0))
