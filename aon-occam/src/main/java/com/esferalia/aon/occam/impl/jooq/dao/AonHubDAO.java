@@ -109,68 +109,42 @@ public class AonHubDAO {
 		return object;
 	}
 
-	public static Notice editNotice(AONContext ctx, Notice notice) {
+	public static Notice changeNoticeState(AONContext ctx, Notice notice) {
 
 		try {
 
 			ctx.getDslContext().update(NOTICE)
+					.set(NOTICE.STATUS, notice.getStatus())
+					.where(NOTICE.ID.eq(notice.getId())).execute();
+
+			ctx.getDslContext().update(NOTICE)
+					.set(NOTICE.STATUS, notice.getStatus())
+					.where(NOTICE.NOTICE_.eq(notice.getId())).execute();
+			
+			return buildNoticeById(ctx, notice.getId());
+		} catch (Exception ex) {
+			System.out
+					.println(ex.getMessage() + " " + ex.getLocalizedMessage());
+			throw ex;
+		}
+	}
+
+	public static Notice editNotice(AONContext ctx, Notice notice) {
+
+		try {
+			ctx.getDslContext().update(NOTICE)
 					.set(NOTICE.SUBJECT, notice.getTitle())
-					.where(NOTICE.ID.eq(notice.getId()))
-					.returning()
-					.fetchOne();
+					.where(NOTICE.ID.eq(notice.getId())).execute();
 
 			ctx.getDslContext().update(NOTICE)
 					.set(NOTICE.SUBJECT, notice.getBody())
-					.where(NOTICE.NOTICE_.eq(notice.getId()))
-					.execute();
+					.where(NOTICE.NOTICE_.eq(notice.getId())).execute();
 			
-			NoticeRecord noticeRecord = ctx.getDslContext().selectFrom(NOTICE)
-					.where(NOTICE.ID.eq(notice.getId()))
-					.fetchOne();
-
-			Notice editNotice = new Notice();
-			Integer id = notice.getId();
-			editNotice.setId(id);
-			editNotice.setDomain(noticeRecord.getValue(NOTICE.DOMAIN));
-			editNotice.setStartDate(noticeRecord.getValue(NOTICE.DATE));
-			User user = new User();
-			UserRecord userRecord = ctx.getDslContext().selectFrom(USER)
-					.where(USER.ID.eq(noticeRecord.getValue(NOTICE.SENDER)))
-					.fetchOne();
-			user.setId(userRecord.getValue(USER.ID));
-			user.setName(userRecord.getValue(USER.LOGIN));
-			editNotice.setSender(user);
-			editNotice.setTitle(notice.getTitle());
-			editNotice.setBody(notice.getBody());
-			editNotice.setRecipient(noticeRecord.getValue(NOTICE.RECIPIENT));
-			editNotice.setContact(noticeRecord.getValue(NOTICE.PHONE));
-			editNotice.setSource(noticeRecord.getValue(NOTICE.SOURCE));
-			editNotice.setCompany(noticeRecord.getValue(NOTICE.COMPANY));
-			editNotice.setStatus(noticeRecord.getValue(NOTICE.STATUS));
-			editNotice.setWorkgroup(noticeRecord.getValue(NOTICE.WORK_GROUP));
-			editNotice.setType(
-					NoticeType.values()[noticeRecord.getValue(NOTICE.TYPE)]
-							.getValue());
-			editNotice.setPriority(
-					Priority.values()[noticeRecord.getValue(NOTICE.PRIORITY)]
-							.getValue());
-			ctx.getDslContext().select()
-			.from(NOTICE_TAG.rightOuterJoin(TAG).on(NOTICE_TAG.TAG.eq(TAG.ID)))
-			.where(NOTICE_TAG.NOTICE.eq(notice.getId()))
-			.fetch()
-			.stream()
-			.forEach(record -> {
-				Tag tag = new Tag();
-				tag.setId(record.getValue(NOTICE_TAG.ID));
-				tag.setName(record.getValue(TAG.NAME));
-				tag.setColor(record.getValue(TAG.COLOR));
-				editNotice.addTag(tag);
-			});
-			return editNotice;
-
-		} catch (Exception ex) {
-			System.out.println(ex.getMessage() + " " + ex.getLocalizedMessage());	
-			return null;
+			return buildNoticeById(ctx, notice.getId());
+			
+		} catch ( Exception ex ) {
+			System.out.println( ex.getMessage() + " " + ex.getLocalizedMessage());
+			throw ex;
 		}
 	}
 
@@ -523,5 +497,58 @@ public class AonHubDAO {
 				});
 
 		return tags;
+	}
+
+	// -----------------------------------------------------------------------
+
+	private static Notice buildNoticeById(AONContext ctx, Integer id) {
+
+		NoticeRecord noticeRecord = ctx.getDslContext().selectFrom(NOTICE)
+				.where(NOTICE.ID.eq(id)).fetchOne();
+
+		Notice editNotice = new Notice();		
+		editNotice.setId(id);
+		editNotice.setDomain(noticeRecord.getValue(NOTICE.DOMAIN));
+		editNotice.setStartDate(noticeRecord.getValue(NOTICE.DATE));
+		
+		User user = new User();
+		UserRecord userRecord = ctx.getDslContext().selectFrom(USER)
+				.where(USER.ID.eq(noticeRecord.getValue(NOTICE.SENDER)))
+				.fetchOne();
+		user.setId(userRecord.getValue(USER.ID));
+		user.setName(userRecord.getValue(USER.LOGIN));
+		editNotice.setSender(user);
+		editNotice.setTitle(noticeRecord.getValue(NOTICE.SUBJECT));
+
+		String body = ctx.getDslContext().selectFrom(NOTICE)
+				.where(NOTICE.NOTICE_.eq(id)).fetchOne()
+				.getValue(NOTICE.SUBJECT);
+
+		editNotice.setBody(body);
+		editNotice.setRecipient(noticeRecord.getValue(NOTICE.RECIPIENT));
+		editNotice.setContact(noticeRecord.getValue(NOTICE.PHONE));
+		editNotice.setSource(noticeRecord.getValue(NOTICE.SOURCE));
+		editNotice.setCompany(noticeRecord.getValue(NOTICE.COMPANY));
+		editNotice.setStatus(noticeRecord.getValue(NOTICE.STATUS));
+		editNotice.setWorkgroup(noticeRecord.getValue(NOTICE.WORK_GROUP));
+		editNotice
+				.setType(NoticeType.values()[noticeRecord.getValue(NOTICE.TYPE)]
+						.getValue());
+		editNotice.setPriority(
+				Priority.values()[noticeRecord.getValue(NOTICE.PRIORITY)]
+						.getValue());
+		ctx.getDslContext().select()
+				.from(NOTICE_TAG.rightOuterJoin(TAG)
+						.on(NOTICE_TAG.TAG.eq(TAG.ID)))
+				.where(NOTICE_TAG.NOTICE.eq(id)).fetch().stream()
+				.forEach(record -> {
+					Tag tag = new Tag();
+					tag.setId(record.getValue(NOTICE_TAG.ID));
+					tag.setName(record.getValue(TAG.NAME));
+					tag.setColor(record.getValue(TAG.COLOR));
+					editNotice.addTag(tag);
+				});
+		
+		return editNotice;
 	}
 }

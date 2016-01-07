@@ -69,13 +69,15 @@ public class GWTExtendsOfficeTestCase extends GWTOfficeTestCase {
 		//delayTestFinish(300*1000);
 	}
 	
-	@Override
+	@Override @Ignore
 	public void testUpdateIssues() {
-		super.testUpdateIssues();
+		//super.testUpdateIssues();
 	}
 	
-	@Override @Ignore
-	public void testCloseIssues() {}
+	@Override
+	public void testCloseIssues() {
+		super.testCloseIssues();
+	}
 	
 	@Override @Ignore
 	public void testReOpenIssuesTestCase() {}
