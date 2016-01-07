@@ -200,15 +200,19 @@ public class OfficeApiServlet extends HttpServlet {
 				
 				Notice notice = new Notice();
 				notice.setId(Integer.parseInt(group(1)));
-				notice.setTitle(json.getString("title"));
-				notice.setBody(json.getString("body"));
 				
-				System.out.println("ID: " + notice.getId());
-				System.out.println("Title: " + notice.getTitle());
-				System.out.println("Body: " + notice.getBody());
-				
-				getEditNotice(resp, notice);
-				
+				if ( json.isNull("state") == false) {
+					String state = json.getString("state").toUpperCase();
+					byte status = NoticeStatus.valueOf(state).value();
+					notice.setStatus(status);
+					getChangeStatusNotice(resp, notice);
+				}
+				else {
+					notice.setTitle(json.getString("title"));					
+					notice.setBody(json.getString("body"));
+					getEditNotice(resp, notice);
+				}
+
 			} catch ( Exception ex) {
 				System.out.println(ex.getMessage());
 			}
@@ -654,7 +658,6 @@ public class OfficeApiServlet extends HttpServlet {
 	private static void getEditNotice (HttpServletResponse resp, Notice notice) {
 		PrintWriter pw = null;
 		try {
-			
 			pw = resp.getWriter();
 			Notice editNotice = AON.editNotice(DOMAIN_ID, DOMAIN_NAME, USER_NAME, notice);
 			pw.append(getNotice(editNotice));
@@ -667,7 +670,22 @@ public class OfficeApiServlet extends HttpServlet {
 			if ( pw != null )
 				pw.close();
 		}
-
+	}
+	
+	private static void getChangeStatusNotice (HttpServletResponse resp, Notice notice) {
+		PrintWriter pw = null;
+		try {
+			pw = resp.getWriter();
+			Notice editNotice = AON.changeNoticeStatus(DOMAIN_ID, DOMAIN_NAME, USER_NAME, notice);
+			pw.append(getNotice(editNotice));
+			pw.flush();
+		} catch ( Exception ex) {
+			System.out.println("Exception: " + ex.getMessage());
+			pw.flush();
+		} finally {
+			if ( pw != null)
+				pw.close();
+		}
 	}
 
 	private static String buildNotices(ListIterator<Notice> iterator) throws Exception {

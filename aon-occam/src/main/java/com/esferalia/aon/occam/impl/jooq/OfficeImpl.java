@@ -48,6 +48,11 @@ public class OfficeImpl implements IOffice {
 	public Notice editNotice(AONContext ctx, Notice notice) {		
 		return AonHubDAO.editNotice(ctx, notice);
 	}
+	
+	@Override
+	public Notice changeNoticeStatus(AONContext ctx, Notice notice) {	
+		return AonHubDAO.changeNoticeState(ctx, notice);
+	}
 
 	@Override
 	public void deleteNotice(AONContext ctx, Notice notice) {
