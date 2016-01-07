@@ -849,6 +849,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Prolongaci\u00F3n activ.laboral")
 	String workActivityExtension();
 
+	@DefaultMessage("Movilidad geogr\u00E1fica. Aceptaci\u00F3n 2014.")
+	String geographicMobility2014();
+
 	@DefaultMessage("Movilidad geogr\u00E1fica")
 	String geographicMobility();
 

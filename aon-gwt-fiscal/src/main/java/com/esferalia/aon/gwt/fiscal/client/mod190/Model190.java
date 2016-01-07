@@ -43,6 +43,7 @@ import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
@@ -58,6 +59,8 @@ public class Model190 extends MainEntryPoint {
 
 	static interface IModel190Detail extends HasVisibility {
 		public void populatePerceptor(Mod190Detail perceptor);
+
+		public void setMod190(Mod190 currentMod190);
 	}
 
 	private static final Model190Binder MODEL_190_BINDER = GWT
@@ -90,7 +93,7 @@ public class Model190 extends MainEntryPoint {
 	private int enterprise;
 
 	@UiField
-	Model190Detail2014 perceptorPanel;
+	SimpleLayoutPanel perceptorPanel;
 
 	@UiField
 	Button saveButton;
@@ -225,8 +228,20 @@ public class Model190 extends MainEntryPoint {
 		generateFileButton.setVisible(currentMod190.getId() != null);
 		printButton.setVisible(currentMod190.getId() != null);
 		printMod190Button.setVisible(currentMod190.getId() != null);
-		perceptorPanel.setMod190(currentMod190);
+		showDetail(currentMod190);
 		paintHeaderTable();		
+	}
+	
+	private void showDetail(Mod190 currentMod190) {
+		if ( currentMod190.getYear() == 2015) {
+			Model190Detail2015 detail = new Model190Detail2015();
+			detail.setMod190(currentMod190);	
+			perceptorPanel.setWidget(detail);
+		} else {
+			Model190Detail2014 detail = new Model190Detail2014();
+			detail.setMod190(currentMod190);	
+			perceptorPanel.setWidget(detail);
+		}
 	}
 
 	@UiHandler("table")
@@ -336,7 +351,7 @@ public class Model190 extends MainEntryPoint {
 				select(m190);
 				int i = deckPanel.getWidgetIndex(formPanel);
 				deckPanel.showWidget(i);
-				perceptorPanel.setMod190(m190);
+				showDetail(m190);
 			}
 
 			@Override
@@ -360,7 +375,7 @@ public class Model190 extends MainEntryPoint {
 	@UiHandler("cancelButton")
 	void onCancelButtonClick(ClickEvent event) {
 		cleanErrorMessage();
-		perceptorPanel.setMod190(null);
+		perceptorPanel.remove(perceptorPanel.getWidget());
 		int i = deckPanel.getWidgetIndex(listPanel);
 		deckPanel.showWidget(i);
 		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);

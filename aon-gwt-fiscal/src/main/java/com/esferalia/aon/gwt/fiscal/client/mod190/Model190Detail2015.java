@@ -9,7 +9,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfResult;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
-import com.esferalia.aon.occam.api.model.type.Mod1902014Key;
+import com.esferalia.aon.occam.api.model.type.Mod1902015Key;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.AbstractCell;
@@ -40,7 +40,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-public class Model190Detail2014 extends ResizeComposite {
+public class Model190Detail2015 extends ResizeComposite {
 
 	public static final ProvidesKey<Mod190Detail> MOD190_DETAIL_PROVIDES_KEY = new ProvidesKey<Mod190Detail>() {
 		@Override
@@ -50,7 +50,7 @@ public class Model190Detail2014 extends ResizeComposite {
 	};
 	
 	interface Model190Detail2013Binder extends
-			UiBinder<Widget, Model190Detail2014> {
+			UiBinder<Widget, Model190Detail2015> {
 	}
 
 	private static Model190Detail2013Binder MODEL190_DETAIL_2013_BINDER = GWT
@@ -63,7 +63,7 @@ public class Model190Detail2014 extends ResizeComposite {
 			subkey.setWidth("45px");
 
 			setWidth("40px");
-			for (Mod1902014Key key : Mod1902014Key.values()) {
+			for (Mod1902015Key key : Mod1902015Key.values()) {
 				this.addItem(key.getValue());
 			}
 
@@ -72,7 +72,7 @@ public class Model190Detail2014 extends ResizeComposite {
 				@Override
 				public void onChange(ChangeEvent event) {
 					subkey.clear();
-					Mod1902014Key keyEnum = Mod1902014Key.values()[getSelectedIndex()];
+					Mod1902015Key keyEnum = Mod1902015Key.values()[getSelectedIndex()];
 					if (keyEnum.hasSubkeys()) {
 						subkey.setEnabled(true);
 						for (int i = 0; i < keyEnum.getSubKeys().length; i++) {
@@ -86,7 +86,7 @@ public class Model190Detail2014 extends ResizeComposite {
 		}
 
 		public boolean hasSubkeys() {
-			Mod1902014Key keyEnum = Mod1902014Key.values()[getSelectedIndex()];
+			Mod1902015Key keyEnum = Mod1902015Key.values()[getSelectedIndex()];
 			return keyEnum.hasSubkeys();
 		}
 
@@ -95,7 +95,7 @@ public class Model190Detail2014 extends ResizeComposite {
 		}
 
 		public void setValue(String key, String subKey) {
-			Mod1902014Key keyEnum = Mod1902014Key.valueOf(key);
+			Mod1902015Key keyEnum = Mod1902015Key.valueOf(key);
 			setSelectedIndex(keyEnum.ordinal());
 			getSubkey().clear();
 			if (hasSubkeys()) {
@@ -230,7 +230,7 @@ public class Model190Detail2014 extends ResizeComposite {
 	@UiField
 	IntegerBox disabilityAscendant65Ratio;
 
-	public Model190Detail2014() {
+	public Model190Detail2015() {
 		key = new KeyListBox();
 		
 		Mod190DetailCell mod190DetailCell = new Mod190DetailCell();
@@ -372,16 +372,18 @@ public class Model190Detail2014 extends ResizeComposite {
 	}
 
 	private void enableOrDisableAdditionalDataPanel() {
-		Mod1902014Key keyEnum = Mod1902014Key.values()[key.getSelectedIndex()];
+		Mod1902015Key keyEnum = Mod1902015Key.values()[key.getSelectedIndex()];
 		String subk = ((key.getSubkey().getSelectedIndex() == -1) ? null : key
 				.getSubkey().getValue(key.getSubkey().getSelectedIndex()));
 		additionalDataPanel.setVisible( 
-				    Mod1902014Key.A == keyEnum 
-				||  Mod1902014Key.C == keyEnum
-				||  Mod1902014Key.D == keyEnum
-				|| (Mod1902014Key.E == keyEnum && "01".equals(subk))
-				|| (Mod1902014Key.B == keyEnum && "01".equals(subk))
-				|| (Mod1902014Key.B == keyEnum && "02".equals(subk)))
+				    Mod1902015Key.A == keyEnum
+				|| (Mod1902015Key.B == keyEnum && "01".equals(subk))
+				|| (Mod1902015Key.B == keyEnum && "02".equals(subk))
+				|| (Mod1902015Key.B == keyEnum && "04".equals(subk))
+				||  Mod1902015Key.C == keyEnum
+				|| (Mod1902015Key.E == keyEnum && "01".equals(subk))
+				|| (Mod1902015Key.E == keyEnum && "02".equals(subk))
+				)
 				;
 	}
 
@@ -446,7 +448,7 @@ public class Model190Detail2014 extends ResizeComposite {
 
 	@UiHandler("key")
 	void onChangeKey(ChangeEvent event) {
-		getDetail().setKey(Mod1902014Key.values()[key.getSelectedIndex()].getValue());
+		getDetail().setKey(Mod1902015Key.values()[key.getSelectedIndex()].getValue());
 		markAsDirty();
 		enableOrDisableAdditionalDataPanel();
 	}

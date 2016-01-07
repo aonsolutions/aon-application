@@ -1,25 +1,25 @@
 package com.esferalia.aon.occam.api.model.type;
 
-public enum Mod190Key {
-	 A (null)
-	,B (new String[] { "01", "02", "03" })
+public enum Mod1902015Key {
+	 A (new String[] { "01", "02" })
+	,B (new String[] { "01", "02", "03", "04" })
 	,C (null)
 	,D (null)
-	,E (new String[] { "01", "02" })
+	,E (new String[] { "01", "02", "03", "04"  })
 	,F (new String[] { "01", "02" })
 	,G (new String[] { "01", "02", "03", "04" })
-	,H (new String[] { "01","02", "03", "04" })
+	,H (new String[] { "01", "02", "03", "04" })
 	,I (new String[] { "01", "02" })
 	,J (null)
-	,K (new String[] { "01", "02" })
+	,K (new String[] { "01", "02", "03" })
 	,L (new String[] { "01", "02", "03", "04", "05", "06"
 					 , "07", "08", "09", "10", "11", "12"
 					 , "13", "14", "15", "16", "17", "18"
-					 , "19", "20", "21" }), ;
+					 , "19", "20", "21", "22", "23", "24", "25" }), ;
 
 	private String[] subKeys;
 
-	private Mod190Key(String[] subKeys) {
+	private Mod1902015Key(String[] subKeys) {
 		this.subKeys = subKeys;
 	}
 
@@ -35,22 +35,22 @@ public enum Mod190Key {
 		return toString();
 	}
 	
-	public static Mod190Key getDefaultKeyForProfessionalRetentions() {
-		return Mod190Key.G;
+	public static Mod1902015Key getDefaultKeyForProfessionalRetentions() {
+		return Mod1902015Key.G;
 	}
 	public static String getDefaultSubkeyForProfessionalRetentions() {
-		return Mod190Key.G.subKeys[0];
+		return Mod1902015Key.G.subKeys[0];
 	}
-	public static Mod190Key getDefaultKeyForFarmerRetentions() {
-		return Mod190Key.H;
+	public static Mod1902015Key getDefaultKeyForFarmerRetentions() {
+		return Mod1902015Key.H;
 	}
 	public static String getDefaultSubkeyForFarmerRetentions() {
-		return Mod190Key.H.subKeys[0];
+		return Mod1902015Key.H.subKeys[0];
 	}
-	public static Mod190Key getDefaultKeyForTransportRetentions() {
-		return Mod190Key.H;
+	public static Mod1902015Key getDefaultKeyForTransportRetentions() {
+		return Mod1902015Key.H;
 	}
 	public static String getDefaultSubkeyForTransportRetentions() {
-		return Mod190Key.H.subKeys[3];
+		return Mod1902015Key.H.subKeys[3];
 	}
 }

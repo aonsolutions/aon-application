@@ -60,7 +60,7 @@ public class Mod190File extends HttpServlet {
 					+ "_" + mod190.getYear() 
 					+ "_" + sb.toString();
 			
-			
+		    resp.setCharacterEncoding("ISO-8859-1");
 			resp.setContentType(MimeType.TXT.getName());
 			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\";");
 			AonIOUtils.copy(in, resp.getOutputStream());

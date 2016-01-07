@@ -39,7 +39,8 @@ import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfResult;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
-import com.esferalia.aon.occam.api.model.type.Mod190Key;
+import com.esferalia.aon.occam.api.model.type.Mod1902014Key;
+import com.esferalia.aon.occam.api.model.type.Mod1902015Key;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -584,7 +585,7 @@ public class Mod190DAO {
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 
-	private static void insertDetailsFromInvoice(AONContext ctx, Mod190 mod190) {
+	private static void insertDetailsFromInvoice(AONContext ctx, final Mod190 mod190) {
 		java.sql.Date firstDay = AonDateUtils.toSql(AonDateUtils.getYearFirstDay(mod190.getYear()));
 		java.sql.Date lastDay = AonDateUtils.toSql(AonDateUtils.getYearLastDay(mod190.getYear()));
 
@@ -616,14 +617,29 @@ public class Mod190DAO {
 							detail.setName(record.getValue(INVOICE.RNAME));
 							byte withholding = record.getValue(INVOICE_TAX.WITHHOLDING_TYPE);
 							if (withholding == 0) { // PROFESIONALES - PROFESSIONAL
-								detail.setKey(Mod190Key.getDefaultKeyForProfessionalRetentions().getValue());
-								detail.setSubKey(Mod190Key.getDefaultSubkeyForProfessionalRetentions());
+								if (mod190.getYear() == 2015) {
+									detail.setKey(Mod1902015Key.getDefaultKeyForProfessionalRetentions().getValue());
+									detail.setSubKey(Mod1902015Key.getDefaultSubkeyForProfessionalRetentions());
+								} else{
+									detail.setKey(Mod1902014Key.getDefaultKeyForProfessionalRetentions().getValue());
+									detail.setSubKey(Mod1902014Key.getDefaultSubkeyForProfessionalRetentions());
+								}
 							} else if (withholding == 3) { // AGRICULTOR - FARMER
-								detail.setKey(Mod190Key.getDefaultKeyForFarmerRetentions().getValue());
-								detail.setSubKey(Mod190Key.getDefaultSubkeyForFarmerRetentions());
+								if (mod190.getYear() == 2015) {
+									detail.setKey(Mod1902015Key.getDefaultKeyForFarmerRetentions().getValue());
+									detail.setSubKey(Mod1902015Key.getDefaultSubkeyForFarmerRetentions());
+								} else {
+									detail.setKey(Mod1902014Key.getDefaultKeyForFarmerRetentions().getValue());
+									detail.setSubKey(Mod1902014Key.getDefaultSubkeyForFarmerRetentions());
+								}
 							} else if (withholding == 4) { // TRANSPORTISTAS Y ASIMILADOS - TRANSPORT_OPERATOR
-								detail.setKey(Mod190Key.getDefaultKeyForTransportRetentions().getValue());
-								detail.setSubKey(Mod190Key.getDefaultSubkeyForTransportRetentions());
+								if (mod190.getYear() == 2015) {
+									detail.setKey(Mod1902015Key.getDefaultKeyForTransportRetentions().getValue());
+									detail.setSubKey(Mod1902015Key.getDefaultSubkeyForTransportRetentions());
+								} else {
+									detail.setKey(Mod1902014Key.getDefaultKeyForTransportRetentions().getValue());
+									detail.setSubKey(Mod1902014Key.getDefaultSubkeyForTransportRetentions());
+								}
 							}
 							detail.setPerception(record.getValue(sumBase).doubleValue());
 							detail.setRetention(record.getValue(quotaOp).doubleValue());
@@ -647,7 +663,7 @@ public class Mod190DAO {
 			.orElse(0);
 	}
 
-	private static void insertDetailsFromSalary(AONContext ctx, Mod190 mod190) {
+	private static void insertDetailsFromSalary(AONContext ctx, final Mod190 mod190) {
 		Date firstDay = AonDateUtils.getYearFirstDay(mod190.getYear());
 		Date lastDay = AonDateUtils.getYearLastDay(mod190.getYear());
 
@@ -688,7 +704,12 @@ public class Mod190DAO {
 							detail.setMod190(mod190.getId());
 							detail.setDocument(salaryData.getValue(SALARY.EMPLOYEE_DOCUMENT));
 							detail.setName(salaryData.getValue(SALARY.EMPLOYEE_NAME));
-							detail.setKey(Mod190Key.A.getValue());
+							if (mod190.getYear() == 2015) {
+								detail.setKey(Mod1902015Key.A.getValue());
+								detail.setSubKey("01");
+							} else {
+								detail.setKey(Mod1902014Key.A.getValue());
+							}
 							detail.setPerception(salaryData.getValue(moneyIrpfBase).doubleValue());
 							detail.setInKindPerception(salaryData.getValue(inKindIrpfBase).doubleValue());
 							detail.setRetention(salaryData.getValue(totalIrpf).doubleValue());
