@@ -28,8 +28,11 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.template.client.ITemplate;
@@ -48,6 +51,7 @@ import com.esferalia.aon.gwt.template.shared.EcommerceProduct.ProductData.Ecomme
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct.Template;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.Hotel;
+import com.esferalia.aon.gwt.template.shared.ImportType;
 import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
@@ -77,6 +81,7 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
+import com.esferalia.aon.watson.server.io.AonFileUtils;
 
 
 
@@ -196,68 +201,123 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	public void deleteTemplate(Domain domain, TemplateInfo ti){
 		DBConsults.removeTemplate(domain,getUser(), ti.getId());
 	}
+	
+	//-------------------- IMPORTAR 
+	
+	Vector<String> verror;
+	public Integer executeExcel(Domain domain, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient, 
+		Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number){
+
+		this.ti = ti;
+		error = new Error();
+		verror = new Vector<String>();
+		error.setTextError(verror);
+		textError = "";
+		
+		com.esferalia.aon.gwt.template.shared.Error error = new Error();
+    	
+		if(getOut() == null){
+			error.setError(false);
+ 			textError =  textError + "*No ha importado ningún archivo.\n";
+
+			verror.add("*No ha importado ningún archivo.");
+			error.setTextError(verror);
+			this.error = error;
+			return -1;
+		}
+		
+		Iterator<Row> rowIterator;
+		try {
+			byte[] data = getOut();
+			File aux = new File("/tmp/products.xls");
+			AonFileUtils.writeByteArrayToFile(aux, data);
+			FileInputStream excel = null;
+			try {
+				excel = new FileInputStream(aux);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			
+			HSSFWorkbook workbook = new HSSFWorkbook(excel);
+			HSSFSheet sheet = workbook.getSheetAt(0);
+			rowCount  = sheet.getPhysicalNumberOfRows();
+			rowIterator = sheet.iterator();
+			
+			if(importType.equals(ImportType.PRODUCT))
+				executeExcelProduct(domain, rowIterator, error);
+			else if(importType.equals(ImportType.FEE))
+				executeExcelFee(domain, rowIterator, error, ignoreInactiveClient);
+			else if(importType.equals(ImportType.PROPOSAL))
+				executeExcelProposal(rowIterator, error);
+			else if(importType.equals(ImportType.STOCK))
+				executeExcelStock(domain, rowIterator, error, inventory, warehouse1, warehouse2, series, comments, istransfer, number);
+			
+			workbook.close();
+		} catch (IOException e) {
+			//El archivo no es un fichero Excel.
+			error.setError(false);
+ 			textError =  textError + "*El archivo importado no es de tipo excel.\n";
+			verror.add("*El archivo importado no es de tipo excel.");
+			error.setTextError(verror);
+			this.error = error;
+			e.printStackTrace();
+			return -1;
+		} catch (OfficeXmlFileException e){
+			try {
+				byte[] data = getOut();
+				File aux = new File("/tmp/products.xlsx");
+				AonFileUtils.writeByteArrayToFile(aux, data);
+				FileInputStream excel = null;
+				try {
+					excel = new FileInputStream(aux);
+				} catch (FileNotFoundException e1) {
+					e.printStackTrace();
+				}
+				
+				XSSFWorkbook workbook = new XSSFWorkbook(excel);
+				XSSFSheet sheet = workbook.getSheetAt(0);
+				rowCount  = sheet.getPhysicalNumberOfRows();
+				rowIterator = sheet.iterator();
+				
+				if(importType.equals(ImportType.PRODUCT))
+					executeExcelProduct(domain, rowIterator, error);
+				else if(importType.equals(ImportType.FEE))
+					executeExcelFee(domain, rowIterator, error, ignoreInactiveClient);
+				else if(importType.equals(ImportType.PROPOSAL))
+					executeExcelProposal(rowIterator, error);
+				else if(importType.equals(ImportType.STOCK))
+					executeExcelStock(domain, rowIterator, error, inventory, warehouse1, warehouse2, series, comments, istransfer, number);
+
+				workbook.close();
+			} catch (IOException e1) {
+					//El archivo no es un fichero Excel.
+					error.setError(false);
+		 			textError =  textError + "*El archivo importado no es de tipo excel.\n";
+					verror.add("*El archivo importado no es de tipo excel.");
+					error.setTextError(verror);
+					this.error = error;
+					e.printStackTrace();
+					return -1;
+			}
+		}
+		return rowCount;
+	}
+	
 	//-------------------- IMPORTAR FEE
 	Vector<FeeInfo> fees;
 	FeeInfo fi;
 	List<Seller> sellers = new Vector<Seller>();
 	LinkedList<Workplace> workplaces = new LinkedList<Workplace>();
 	LinkedList<InvoicingGroup> invoicingGroupList = new LinkedList<InvoicingGroup>();
-	
-	public Integer executeExcel3(final Domain domain, TemplateInfo templateInfo, Boolean ignoreInactiveClient){
-		ti = templateInfo;
-		long startAll= System.currentTimeMillis();
-		error = new Error();
-		verror = new Vector<String>();
-		error.setTextError(verror);
-		textError = "";
+	Boolean feeBool;
+	private void executeExcelFee(final Domain domain, Iterator<Row> rowIterator, Error error, Boolean ignoreInactiveClient){
 		Vector<FeeInfo> fees = new Vector<FeeInfo>();
-
+		
 		sellers = DBFee.getSellers(domain, getUser().getLogin());
 		workplaces = DBFee.getWorkplaceList(domain, getUser());
 		invoicingGroupList = DBFee.getInvoicingGroupList(domain, getUser());
-	
-		Error error = new Error();
-		if(getOut() == null){
-			error.setError(false);
- 			textError =  textError + "*No ha importado ningún archivo.\n";
-			verror.add("*No ha importado ningún archivo.");
-			error.setTextError(verror);
-			this.error = error;
-			return -1;
-		}
-		if(!Utils.isExcel(getMimetype())){
-				//El archivo no es un fichero Excel.
-				error.setError(false);
-	 			textError =  textError + "*El archivo importado no es de tipo excel.\n";
-				verror.add("*El archivo importado no es de tipo excel.");
-				error.setTextError(verror);
-				this.error = error;
-				return -1;
-		}
-		byte[] data = getOut();
-		File aux = new File("/tmp/fee.xls");
-		try {
-			org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		FileInputStream excel = null;
-		try {
-			excel = new FileInputStream(aux);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		HSSFWorkbook workbook= null;
-		try {
-			workbook = new HSSFWorkbook(excel);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		HSSFSheet sheet = workbook.getSheetAt(0);
-		rowCount  = sheet.getPhysicalNumberOfRows();
-		Iterator<Row> rowIterator = sheet.iterator();
 
+		feeBool = true;
 		/* LAMBDA java 1.8 */
 		Iterable<Row> rowIterable = () -> rowIterator;
 		Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
@@ -279,9 +339,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 								error.setTextError(verror);
 								this.error = error;
 								rowCount = -1;
+								feeBool = false;
 							}	 
 						}
-						else{
+						else if(feeBool){
 							if(cell.getColumnIndex() !=0){
 								Cell beforeCell = rowAux.getCell(cell.getColumnIndex()-1);
 								if((beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK) && isRequiredFee(ti.getColumns().get(cell.getColumnIndex()-1))){
@@ -315,8 +376,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 						error.setTextError(verror);
 						this.error = error;
 						rowCount = -1;         		
+						feeBool = false;
 					}
-					else{
+					else if(feeBool){
 						if(row.getLastCellNum() != -1){
 							Short cellnum = row.getLastCellNum();
 							if(row.getLastCellNum() == ti.getColumns().size())cellnum--;
@@ -336,18 +398,11 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		});
 		
 		this.fees = fees;
-
-		long time = System.currentTimeMillis() - startAll;
-		System.out.println("time: " + (time/1000d));
 		if(rowCount != -1) rowCount = fees.size();
 		System.out.println(rowCount);
-		setOut(null);setMimetype(null);
-		try {
-			workbook.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return rowCount;
+		setOut(null);
+		setMimetype(null);
+	
 	}
 
 	public Boolean isRequiredFee(String s){
@@ -571,11 +626,13 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		case "Expediente": case "Record":  //BD
 			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
 				Project project = DBFee.getProject(domain, toString(value), fee.getClientId(), getUser().getLogin());
-				if(project == null){
+				if(project == null && fee.getClientId() != null){
 					project = new Project().setId(DBFee.insertProject(domain, getUser(), toString(value), fee.getClientId()));
 				}
-				fee.setProject(cell.getStringCellValue());
-				fee.setProjectId(project.getId());	
+				if(project != null){
+					fee.setProject(cell.getStringCellValue());		
+					fee.setProjectId(project.getId());	
+				}
 			}
 			else return null;
 			break;
@@ -617,65 +674,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	StockInfo si;
 	TemplateInfo ti;
 	Row rowAux ;
-	
-	public Integer executeExcelProposal(TemplateInfo templateInfo){
-		ti = templateInfo;
-		long startAll= System.currentTimeMillis();
-		error = new Error();
-		Vector<String> verror = new Vector<String>();
-		error.setTextError(verror);
-		textError = "";
+	Boolean proposalBool;
+	public Integer executeExcelProposal(Iterator<Row> rowIterator, Error error){
 		Vector<StockInfo> stock = new Vector<StockInfo>();
-		Error error = new Error();
-		
-		if(getOut() == null){
-			error.setError(false);
- 			textError =  textError + "*No ha importado ningún archivo.\n";
-
-			verror.add("*No ha importado ningún archivo.");
-			error.setTextError(verror);
-			this.error = error;
-			return -1;
-		}
-		if(!Utils.isExcel(getMimetype())){
-				//El archivo no es un fichero Excel.
-				error.setError(false);
-	 			textError =  textError + "*El archivo importado no es de tipo excel.\n";
-
-				verror.add("*El archivo importado no es de tipo excel.");
-				error.setTextError(verror);
-				this.error = error;
-				return -1;
-		}
-		
-		byte[] data = getOut();
-		
-		File aux = new File("/tmp/products.xls");
-		
-		try {
-			org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		FileInputStream excel = null;
-		try {
-			excel = new FileInputStream(aux);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		HSSFWorkbook workbook= null;
-		try {
-			workbook = new HSSFWorkbook(excel);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		HSSFSheet sheet = workbook.getSheetAt(0);
-		
-		rowCount  = sheet.getPhysicalNumberOfRows();
-		
-		Iterator<Row> rowIterator = sheet.iterator();
-
+		proposalBool = true;
 		/* LAMBDA java 1.8 */
 		Iterable<Row> rowIterable = () -> rowIterator;
 		Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
@@ -715,9 +717,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 								error.setTextError(verror);
 								this.error = error;
 								rowCount = -1;
+								proposalBool = false;
 							} 	
 						}
-						else{
+						else if(proposalBool){
 							if(cell.getColumnIndex() !=0){
 								Cell beforeCell = rowAux.getCell(cell.getColumnIndex()-1);
 								if((beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK) && isRequiredStock(ti.getColumns().get(cell.getColumnIndex()-1))){
@@ -759,9 +762,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	            		error.setTextError(verror);
 	            		this.error = error;
 	            		rowCount = -1;
-	            	
+	            		proposalBool = false;
 	            	}
-	           		else{
+	           		else if(proposalBool){
 	           			if(row.getLastCellNum() != -1){
 	           				Short cellnum = row.getLastCellNum();
 	           				if(row.getLastCellNum() == ti.getColumns().size())cellnum--;
@@ -785,16 +788,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			}
 		});
 		this.stock = stock;
-		long time = System.currentTimeMillis() - startAll;
-		System.out.println("time: " + (time/1000d));
 		if(rowCount != -1) rowCount = stock.size();
-		System.out.println(rowCount);
 		setOut(null);setMimetype(null);
-		try {
-			workbook.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		
 		return rowCount;
 	}
 	
@@ -829,19 +825,12 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	Integer inventoryId ;
 	Boolean transfer;
 	Map<String, StockInfo> stockMap;
-
-	public Integer executeExcel(Domain domain, Integer inventory, TemplateInfo templateInfo, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number){
+	Boolean stockBool;
+	public Integer executeExcelStock(Domain domain,Iterator<Row> rowIterator, Error error, Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number){
 		transfer = istransfer;
-		ti = templateInfo;
 		inventoryId = inventory;
-		long startAll= System.currentTimeMillis();
-		error = new Error();
-		Vector<String> verror = new Vector<String>();
-		error.setTextError(verror);
-		textError = "";
 		Vector<StockInfo> stock = new Vector<StockInfo>();
 		Map<String, StockInfo> stockMap =  new HashMap<String, StockInfo>();
-		Error error = new Error();
 		
 		if(warehouse1.equals("-") && (warehouse2.equals("-") || warehouse2 == null)){
 			error.setError(false);
@@ -874,52 +863,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		transferInfo.setComments(comments);
 		if(istransfer) transferInfo.setNumber(number);
 		
-    	if(getOut() == null){
-			error.setError(false);
- 			textError =  textError + "*No ha importado ningún archivo.\n";
-			verror.add("*No ha importado ningún archivo.");
-			error.setTextError(verror);
-			this.error = error;
-			return -1;
-		}
-
-		if(!Utils.isExcel(getMimetype())){
-			//El archivo no es un fichero Excel.
-			error.setError(false);
- 			textError =  textError + "*El archivo importado no es de tipo excel.\n";
-			verror.add("*El archivo importado no es de tipo excel.");
-			error.setTextError(verror);
-			this.error = error;
-			return -1;
-		}
-		
-		byte[] data = getOut();
-		
-		File aux = new File("/tmp/products.xls");
-		try {
-			org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		FileInputStream excel = null;
-		try {
-			excel = new FileInputStream(aux);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		HSSFWorkbook workbook= null;
-		try {
-			workbook = new HSSFWorkbook(excel);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		HSSFSheet sheet = workbook.getSheetAt(0);
-		
-		rowCount  = 1;//sheet.getPhysicalNumberOfRows();
-		
-		Iterator<Row> rowIterator = sheet.iterator();
-
+		stockBool = true;
 	 	/* LAMBDA java 1.8 */
 		Iterable<Row> rowIterable = () -> rowIterator;
 		Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
@@ -959,9 +903,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 								error.setTextError(verror);
 								this.error = error;
 								rowCount = -1;
+								stockBool = false;
 							} 
 						}
-						else{
+						else if(stockBool){
 							if(cell.getColumnIndex() !=0){
 								Cell beforeCell = rowAux.getCell(cell.getColumnIndex()-1);
 								if((beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK) && isRequiredStock(ti.getColumns().get(cell.getColumnIndex()-1))){
@@ -1005,9 +950,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 						error.setTextError(verror);
 						this.error = error;
 						rowCount = -1;
-						
+						stockBool = false;
 					}
-					else{
+					else if(stockBool){
 						if(row.getLastCellNum() != -1){
 							Short cellnum = row.getLastCellNum();
 							if(row.getLastCellNum() == ti.getColumns().size())cellnum--;
@@ -1045,16 +990,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		});
 		this.stock = stock;
 		this.stockMap = stockMap;
-		long time = System.currentTimeMillis() - startAll;
-		System.out.println("time: " + (time/1000d));
 		if(rowCount != -1) rowCount = stock.size();
 		System.out.println(rowCount);
 		setOut(null);setMimetype(null);
-		try {
-			workbook.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		
 		return rowCount;
 	}
 	public Boolean isRequiredStock(String s){
@@ -1151,6 +1090,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC))
 				stock.setDetail3(toString(value));
 			break;
+		case "Numero Serie": case "Serial Number":
+			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC))
+				stock.setSerialNumber(toString(value));
+			break;
 		default:
 			break;
 		}
@@ -1194,69 +1137,16 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 	
 	//-------------------- IMPORTAR PRODUCTOS
-	Vector<String> verror;
+	Boolean productBool;
 	Vector<ProductInfo> products;
 	ProductInfo pi;
-	public Integer executeExcel2(Domain domain, TemplateInfo ti){
-		this.ti = ti;
-		error = new Error();
-		verror = new Vector<String>();
-		error.setTextError(verror);
-		textError = "";
+	private void executeExcelProduct(Domain domain, Iterator<Row> rowIterator, com.esferalia.aon.gwt.template.shared.Error error) {
 		Vector<ProductInfo> products = new Vector<ProductInfo>();
-		com.esferalia.aon.gwt.template.shared.Error error = new Error();
-    	
-		if(getOut() == null){
-			error.setError(false);
- 			textError =  textError + "*No ha importado ningún archivo.\n";
-
-			verror.add("*No ha importado ningún archivo.");
-			error.setTextError(verror);
-			this.error = error;
-			return -1;
-		}
-		if(!Utils.isExcel(getMimetype())){
-			//El archivo no es un fichero Excel.
-			error.setError(false);
- 			textError =  textError + "*El archivo importado no es de tipo excel.\n";
-
-			verror.add("*El archivo importado no es de tipo excel.");
-			error.setTextError(verror);
-			this.error = error;
-			return -1;
-		}
-		
-		byte[] data = getOut();
-		
-		File aux = new File("/tmp/products.xls");
-		try {
-			org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		FileInputStream excel = null;
-		try {
-			excel = new FileInputStream(aux);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		HSSFWorkbook workbook= null;
-		try {
-			workbook = new HSSFWorkbook(excel);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		HSSFSheet sheet = workbook.getSheetAt(0);
-		
-		rowCount  = sheet.getPhysicalNumberOfRows();
-		
-		Iterator<Row> rowIterator = sheet.iterator();
-
-	 	/* LAMBDA java 1.8 */
+		/* LAMBDA java 1.8 */
 		Iterable<Row> rowIterable = () -> rowIterator;
 		Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
 		map = new HashMap<String, ProductInfo>();
+		productBool = true;
 		rowStream.forEach(row ->{
 			if(row.getRowNum() !=0){
 				Iterator<Cell> cellIterator = row.cellIterator();
@@ -1275,9 +1165,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 								error.setTextError(verror);
 								this.error = error;
 								rowCount = -1;
+								productBool = false;
 							} 
 						}
-						else{
+						else if(productBool){
 							if(cell.getColumnIndex() !=0){
 								Cell beforeCell = row.getCell(cell.getColumnIndex()-1);
 								if((beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK) && isRequiredProduct(ti.getColumns().get(cell.getColumnIndex()-1))){
@@ -1314,9 +1205,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
             			error.setTextError(verror);
             			this.error = error;
             			rowCount = -1;
-            		
+            			productBool = false;
             		}
-            		else{
+            		else if(productBool){
             			if(row.getLastCellNum() != -1){
             				Short cellnum = row.getLastCellNum();
             				if(row.getLastCellNum() == ti.getColumns().size())cellnum--;
@@ -1362,14 +1253,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		}
 		if(rowCount != -1) rowCount = products.size();
 		setOut(null);setMimetype(null);
-		try {
-			workbook.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return rowCount;
 	}
-
+	
 	public Boolean esta(com.esferalia.aon.occam.api.model.product.ProductTag pt, Vector<com.esferalia.aon.occam.api.model.product.ProductTag> pts){
 		for (com.esferalia.aon.occam.api.model.product.ProductTag productTag : pts) {
 			if(productTag.getId().equals(pt.getId())) return true;
@@ -1402,7 +1287,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			error.setError(false);
  			error.setTextError(verror);
 		}
-		
+
 		long timeAll = System.currentTimeMillis() - startAll;
 			
 		System.out.println("ALL    " + (timeAll/1000d));
@@ -1897,7 +1782,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	public List<com.esferalia.aon.gwt.template.shared.ProductCategory> getProductCategories(Domain domain) {
 		return DBProduct.getCategoriesShared(domain.getName(), domain.getId(), getUser().getLogin());
 	}
-	
+	 
 	public Error executeExcelEcommerce(Domain domain, Ecommerce ecommerce, Seller seller, String type, Tag tag) {
 		Error error = new Error();
 		error.setError(true);
@@ -2175,9 +2060,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 	
 	public Integer excelRowNumber(){
-		if(getOut() != null && Utils.isExcel(getMimetype())){
-			byte[] data = getOut();
+		if(getOut() != null){
 			try{
+				byte[] data = getOut();
 				File aux = new File("/tmp/products.xls");
 				org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
 				FileInputStream excel = null;
@@ -2190,6 +2075,23 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				return size;
 			} catch (IOException e) {
 				e.printStackTrace();
+				return 1;
+			} catch (OfficeXmlFileException e){
+				try {
+					byte[] data = getOut();
+					File aux = new File("/tmp/products.xlsx");
+					org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
+					FileInputStream excel = null;
+					excel = new FileInputStream(aux);	
+					XSSFWorkbook workbook = new XSSFWorkbook(excel);
+					XSSFSheet sheet = workbook.getSheetAt(0);
+					Integer size = sheet.getPhysicalNumberOfRows();
+					workbook.close();
+					return size;
+				} catch (IOException e1) {
+					e1.printStackTrace();
+					return 1;
+				}
 			}
 		}
 		return 1;

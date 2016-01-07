@@ -7,6 +7,7 @@ import java.util.Vector;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.Hotel;
+import com.esferalia.aon.gwt.template.shared.ImportType;
 import com.esferalia.aon.gwt.template.shared.ProductCategory;
 import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.gwt.template.shared.Series;
@@ -49,13 +50,10 @@ public interface ITemplate extends RemoteService{
 	
 	public Error insertStock(Domain domain);
 	
-	public Integer executeExcel(Domain domain, Integer inventory,TemplateInfo ti, String warehouse,String warehouse2, String series, String comments, Boolean istransfer,Integer number);
-
 	public Error insertProduct(Domain domain, String value);
 	
-	public Integer executeExcel2(Domain domain, TemplateInfo ti);
-	
-	public Integer executeExcel3(Domain domain, TemplateInfo ti, Boolean ignoreInactiveClient);
+	public Integer executeExcel(Domain domain, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient, 
+			Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number);
 	
 	public Error insertFee(Domain domain);
 	
@@ -64,8 +62,6 @@ public interface ITemplate extends RemoteService{
 	public Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Domain domain);
 	
 	public LinkedList<Department> getDepartments(Domain domain, String workplace);
-	
-	public Integer executeExcelProposal(TemplateInfo templateInfo);
 	
 	public Error insertProposal(Domain domain, Integer proposal, Integer workplace);
 	

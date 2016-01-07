@@ -14,6 +14,7 @@ public class StockUtils {
 	public static final String STOCK_DETAIL2 = "Detalle 2";
 	public static final String STOCK_DETAIL3 = "Detalle 3";
 	public static final String STOCK_NAME = "Nombre";
+	public static final String STOCK_SERIAL_NUMBER = "Numero Serie";
 	
 	public static Vector<String> stockList(){
 		Vector<String> v = new Vector<String>();
@@ -23,6 +24,7 @@ public class StockUtils {
 		v.add(STOCK_DETAIL2);
 		v.add(STOCK_DETAIL3);
 		v.add(STOCK_NAME);
+		v.add(STOCK_SERIAL_NUMBER);
 		return v;
 	}
 	
@@ -32,6 +34,7 @@ public class StockUtils {
 		v.add(STOCK_DETAIL2);
 		v.add(STOCK_DETAIL3);
 		v.add(STOCK_NAME);
+		v.add(STOCK_SERIAL_NUMBER);
 		return v;
 	}
 	

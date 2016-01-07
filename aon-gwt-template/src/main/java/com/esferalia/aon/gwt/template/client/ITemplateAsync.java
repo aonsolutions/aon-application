@@ -7,6 +7,7 @@ import java.util.Vector;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.Hotel;
+import com.esferalia.aon.gwt.template.shared.ImportType;
 import com.esferalia.aon.gwt.template.shared.ProductCategory;
 import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.gwt.template.shared.Series;
@@ -45,14 +46,11 @@ public interface ITemplateAsync {
 
 	void getSeries(Domain domain, String warehouse, AsyncCallback<Vector<Series>> callback);
 
-	void executeExcel(Domain domain, Integer inventory, TemplateInfo ti, String warehouse, String warehouse2,
-			String series, String comments, Boolean istransfer, Integer number, AsyncCallback<Integer> callback);
+	void executeExcel(Domain domain, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient,
+			Integer inventory, String warehouse1, String warehouse2, String series, String comments, Boolean istransfer,
+			Integer number, AsyncCallback<Integer> callback);
 
 	void insertProduct(Domain domain, String value, AsyncCallback<Error> callback);
-
-	void executeExcel2(Domain domain, TemplateInfo ti, AsyncCallback<Integer> callback);
-
-	void executeExcel3(Domain domain, TemplateInfo ti, Boolean ignoreInactiveClient, AsyncCallback<Integer> callback);
 
 	void insertFee(Domain domain, AsyncCallback<Error> callback);
 
@@ -62,9 +60,6 @@ public interface ITemplateAsync {
 
 	void getDepartments(Domain domain, String workplace,
 			AsyncCallback<LinkedList<Department>> callback);
-
-	void executeExcelProposal(TemplateInfo templateInfo,
-			AsyncCallback<Integer> callback);
 
 	void insertProposal(Domain domain, Integer proposal, Integer workplace, AsyncCallback<Error> callback);
 

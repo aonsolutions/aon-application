@@ -19,6 +19,7 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPARTMENT;
 
 import java.sql.Timestamp;
+import java.util.LinkedList;
 import java.util.Vector;
 
 import org.jooq.Condition;
@@ -110,54 +111,62 @@ public class DBStock {
 						if(s.getDetail3() == "") 
 							detail3 = ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull());
 						
+						Condition serialNumber = ITEM.SERIAL_NUMBER.eq(s.getSerialNumber());
+						if(s.getSerialNumber() == null)
+							serialNumber = ITEM.SERIAL_NUMBER.isNull();
+										
 						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE, PRODUCT.ID)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
 									.and(detail)
 									.and(detail2)
 									.and(detail3)
-									
-									
+									.and(serialNumber)
 									.and(PRODUCT.DOMAIN.eq(domainId)).fetch();
 					}
-					
 					if(!data.isEmpty()){
-						Integer itemId = data.get(0).value1();
-						System.out.println(itemId);
-						s.setDomainId(domainId);
-						s.setItemId(itemId);
+						if((s.getSerialNumber() != null) && s.getQuantity() > 1 ){
+							v.add("*Fila " +(s.getRow()+1) + " : La cantidad no puede ser mayor que 1.");
+							error.setError(false);
+							error.setTextError(v);
+						} else {
+
+							Integer itemId = data.get(0).value1();
+							System.out.println(itemId);
+							s.setDomainId(domainId);
+							s.setItemId(itemId);
 						
-						Result<Record1<Integer>> data2 = sctx.getDslContext().select(INVENTORY_DETAIL.ID).from(INVENTORY_DETAIL)
-						.where(INVENTORY_DETAIL.ITEM.eq(itemId))
-						.and(INVENTORY_DETAIL.INVENTORY.eq(inventoryId)).fetch();
+							Result<Record1<Integer>> data2 = sctx.getDslContext().select(INVENTORY_DETAIL.ID).from(INVENTORY_DETAIL)
+								.where(INVENTORY_DETAIL.ITEM.eq(itemId))
+								.and(INVENTORY_DETAIL.INVENTORY.eq(inventoryId)).fetch();
 						
-						Item item = new Item();
-						item.setId(itemId);
-						item.setPurchasePrice(data.get(0).value3() != null ? data.get(0).value3() :0.0);
-						Product product = new Product().setId(data.get(0).getValue(PRODUCT.ID))
+							Item item = new Item();
+							item.setId(itemId);
+							item.setPurchasePrice(data.get(0).value3() != null ? data.get(0).value3() :0.0);
+							Product product = new Product().setId(data.get(0).getValue(PRODUCT.ID))
 								.setManufactured(data.get(0).getValue(PRODUCT.MANUFACTURED))
 								.setInventoriable(data.get(0).getValue(PRODUCT.INVENTORIABLE));
-						item.setProduct(product);
-						item.setProductId(product.getId());
-						item.setDomain(domainId);
+							item.setProduct(product);
+							item.setProductId(product.getId());
+							item.setDomain(domainId);
 						
-						Record2<Integer,Integer> data3 = sctx.getDslContext().select(WAREHOUSE.ID, WAREHOUSE.WORKPLACE)
+							Record2<Integer,Integer> data3 = sctx.getDslContext().select(WAREHOUSE.ID, WAREHOUSE.WORKPLACE)
 								.from(INVENTORY).join(WAREHOUSE).on(WAREHOUSE.ID.eq(INVENTORY.WAREHOUSE))
 								.where(INVENTORY.ID.eq(inventoryId))
 								.limit(1).fetchOne();
-						Integer warehouseId = data3.getValue(WAREHOUSE.ID);
-						Integer workplaceId = data3.getValue(WAREHOUSE.WORKPLACE); 
-						Double cost = Utils.getValCost(sctx, s.getQuantity(), item, login, workplaceId, warehouseId);
-						if(data2.isNotEmpty()){
-							itemIds = itemIds + ","+itemId;
-							inventoryquery = inventoryquery + " when item = " + itemId + " then " + s.getQuantity();
-							inventoryCostquery = inventoryCostquery + " when item = " + itemId + " then " + cost;
-						}
-						else{
-							sctx.getDslContext().insertInto(INVENTORY_DETAIL, INVENTORY_DETAIL.ACTUAL_QUANTITY, INVENTORY_DETAIL.COST, INVENTORY_DETAIL.REAL_QUANTITY, INVENTORY_DETAIL.DOMAIN, INVENTORY_DETAIL.INVENTORY, INVENTORY_DETAIL.ITEM)
+							Integer warehouseId = data3.getValue(WAREHOUSE.ID);
+							Integer workplaceId = data3.getValue(WAREHOUSE.WORKPLACE); 
+							Double cost = Utils.getValCost(sctx, s.getQuantity(), item, login, workplaceId, warehouseId);
+							if(data2.isNotEmpty()){
+								itemIds = itemIds + ","+itemId;
+								inventoryquery = inventoryquery + " when item = " + itemId + " then " + s.getQuantity();
+								inventoryCostquery = inventoryCostquery + " when item = " + itemId + " then " + cost;
+							}
+							else{
+								sctx.getDslContext().insertInto(INVENTORY_DETAIL, INVENTORY_DETAIL.ACTUAL_QUANTITY, INVENTORY_DETAIL.COST, INVENTORY_DETAIL.REAL_QUANTITY, INVENTORY_DETAIL.DOMAIN, INVENTORY_DETAIL.INVENTORY, INVENTORY_DETAIL.ITEM)
 									.values(0.0, cost, s.getQuantity(), s.getDomainId(), inventoryId, itemId).execute() ;
+							}
 						}
-						
 			
 					}
 					else{
@@ -371,6 +380,8 @@ public class DBStock {
 		return pi;
 	}
 	
+	
+	
 	public static Error insertTransferStock(Domain domain,Vector<StockInfo> stock, TransferInfo ti,AuditInfo ai, String login){
 		Error error = new Error();
 		error.setError(true);
@@ -387,10 +398,10 @@ public class DBStock {
 			InsertValuesStep5<StockRecord, Integer, Integer, Integer, Double, Integer> stockUpdateQuery = ctx.getDslContext().insertInto(STOCK, STOCK.ID, STOCK.DOMAIN, STOCK.ITEM, STOCK.QUANTITY, STOCK.WAREHOUSE);
 			InsertValuesStep4<WarehouseTransferDetailRecord, Integer, Integer, Integer, Double> transferInsert = ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER_DETAIL, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, WAREHOUSE_TRANSFER_DETAIL.QUANTITY);
 			InsertValuesStep5<WarehouseTransferDetailRecord, Integer, Integer, Integer, Integer, Double> transferUpdate = ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER_DETAIL,WAREHOUSE_TRANSFER_DETAIL.ID, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, WAREHOUSE_TRANSFER_DETAIL.QUANTITY);
-
+			
 			Vector<Integer> stockDeleteIds = new Vector<Integer>();
 			Vector<Integer> transferDeleteIds = new Vector<Integer>();
-			
+			LinkedList<StockAux> updateStockList = new LinkedList<StockAux>();
 			Integer transferId;
 			if(ti.getSeries().getCode() != null){
 				transferId = ctx.getDslContext().select(WAREHOUSE_TRANSFER.ID)
@@ -443,83 +454,116 @@ public class DBStock {
 									.and(PRODUCT.DOMAIN.eq(domain.getId())).fetch();
 					}
 					if(!data.isEmpty()){
-						Integer itemId = data.get(0).value1();
-						ti.getSourceWarehouse();
-						ti.getTargetWarehouse();
-						Result<Record2<Double, Integer>> data2 = null;
-						if(ti.getTargetWarehouse() != null && ti.getTargetWarehouse().getId() != null)
-							data2 = sctx.getDslContext().select(STOCK.QUANTITY, STOCK.ID)
-								.from(STOCK)
-								.where(STOCK.ITEM.eq(itemId).and(STOCK.WAREHOUSE.eq(ti.getTargetWarehouse().getId()))).fetch();
+						if((s.getSerialNumber() != null) && s.getQuantity() > 1 ){
+							v.add("*Fila " +(s.getRow()+1) + " : La cantidad no puede ser mayor que 1.");
+							error.setError(false);
+							error.setTextError(v);
+						} else{
+							Integer itemId = data.get(0).value1();
+							ti.getSourceWarehouse();
+							ti.getTargetWarehouse();
+							Result<Record2<Double, Integer>> data2 = null;
+							if(ti.getTargetWarehouse() != null && ti.getTargetWarehouse().getId() != null)
+								data2 = sctx.getDslContext().select(STOCK.QUANTITY, STOCK.ID)
+									.from(STOCK)
+									.where(STOCK.ITEM.eq(itemId).and(STOCK.WAREHOUSE.eq(ti.getTargetWarehouse().getId()))).fetch();
 							
-						Result<Record2<Double, Integer>> data3 = null; 
-						if(ti.getSourceWarehouse() != null && ti.getSourceWarehouse().getId() != null)
+							Result<Record2<Double, Integer>> data3 = null; 
+							if(ti.getSourceWarehouse() != null && ti.getSourceWarehouse().getId() != null)
 							data3= sctx.getDslContext().select(STOCK.QUANTITY, STOCK.ID)
 								.from(STOCK)
 								.where(STOCK.ITEM.eq(itemId).and(STOCK.WAREHOUSE.eq(ti.getSourceWarehouse().getId()))).fetch();
 						
-						Record2<Integer,Double> data4 = sctx.getDslContext().select(WAREHOUSE_TRANSFER_DETAIL.ID, WAREHOUSE_TRANSFER_DETAIL.QUANTITY)
+							Record2<Integer,Double> data4 = sctx.getDslContext().select(WAREHOUSE_TRANSFER_DETAIL.ID, WAREHOUSE_TRANSFER_DETAIL.QUANTITY)
 											.from(WAREHOUSE_TRANSFER_DETAIL)
 											.where(WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER.eq(transferId))
 											.and(WAREHOUSE_TRANSFER_DETAIL.ITEM.eq(itemId))
 											.fetchOne();
-						if(data4 != null){
-							transferDeleteIds.add(data4.value1());
-							transferUpdate.values(data4.value1(),domain.getId(), itemId, transferId,s.getQuantity()+data4.value2());
-						}
-						else {
-							transferInsert.values(domain.getId(), itemId, transferId,s.getQuantity());
-						}
-						Double quantity, quantity2;
-						Integer stockId, stockId2;
-						if((ti.getSourceWarehouse() != null && ti.getSourceWarehouse().getId() != null) 
+							if(data4 != null){
+								transferDeleteIds.add(data4.value1());
+								transferUpdate.values(data4.value1(),domain.getId(), itemId, transferId,s.getQuantity()+data4.value2());
+							}
+							else {
+								transferInsert.values(domain.getId(), itemId, transferId,s.getQuantity());
+							}
+							Double quantity, quantity2;
+							Integer stockId, stockId2;
+							if((ti.getSourceWarehouse() != null && ti.getSourceWarehouse().getId() != null) 
 								&& (ti.getTargetWarehouse() != null && ti.getTargetWarehouse().getId() != null)){
-						//	LOGGER.debug("Source warehouse is not null & target warehouse is not null");
-							if(data2.isNotEmpty() && data3.isNotEmpty()){
-								quantity = data2.get(0).value1();
-								quantity2 = data3.get(0).value1();
-								stockId = data2.get(0).value2();
-								stockId2 = data3.get(0).value2();
+							//	LOGGER.debug("Source warehouse is not null & target warehouse is not null");
+								if(data2.isNotEmpty() && data3.isNotEmpty()){
+									quantity = data2.get(0).value1();
+									quantity2 = data3.get(0).value1();
+									stockId = data2.get(0).value2();
+									stockId2 = data3.get(0).value2();
 								
-								//UPDATE source & target
-								updateStock(sctx, stockId, itemId, (quantity+s.getQuantity()), ti.getTargetWarehouse().getId());
-								updateStock(sctx, stockId2, itemId, (quantity2-s.getQuantity()), ti.getSourceWarehouse().getId());
-							}
-							else if(data2.isEmpty() && data3.isNotEmpty()){
-								quantity2 = data3.get(0).value1();
-								stockId2 = data3.get(0).value2(); 
+									//UPDATE source & target
+									if((s.getSerialNumber() != null ) && (quantity+s.getQuantity() > 1 || quantity2-s.getQuantity() < -1)){
+										v.add("*Fila " +(s.getRow()+1) + " : La cantidad no puede ser mayor que 1.");
+										error.setError(false);
+										error.setTextError(v);
+									} else if(error.getError()){
+										updateStockList.add(new StockAux().setStockId(stockId).setItemId(itemId).setQuantity((quantity+s.getQuantity()))
+												.setWarehouseId(ti.getTargetWarehouse().getId()));
+										updateStockList.add(new StockAux().setStockId(stockId2).setItemId(itemId).setQuantity((quantity2-s.getQuantity()))
+												.setWarehouseId(ti.getSourceWarehouse().getId()));
+									}
+								}
+								else if(data2.isEmpty() && data3.isNotEmpty()){
+									quantity2 = data3.get(0).value1();
+									stockId2 = data3.get(0).value2(); 
 								
-								//UPDATE source
-								updateStock(sctx, stockId2, itemId, (quantity2-s.getQuantity()), ti.getSourceWarehouse().getId());
-								//INSERT target
-								stockInsertQuery.values(domain.getId(), itemId, s.getQuantity(), ti.getTargetWarehouse().getId());
+									if((s.getSerialNumber() != null ) && quantity2+s.getQuantity() < -1 ){
+										v.add("*Fila " +(s.getRow()+1) + " : La cantidad no puede ser mayor que 1.");
+										error.setError(false);
+										error.setTextError(v);
+									} else if(error.getError()){
+										//UPDATE source
+										updateStockList.add(new StockAux().setStockId(stockId2).setItemId(itemId).setQuantity((quantity2-s.getQuantity()))
+												.setWarehouseId(ti.getSourceWarehouse().getId()));
+										//INSERT target
+										stockInsertQuery.values(domain.getId(), itemId, s.getQuantity(), ti.getTargetWarehouse().getId());
+									}
+								}
 							}
-						}
-						else if((ti.getSourceWarehouse() != null && ti.getSourceWarehouse().getId() != null) 
+							else if((ti.getSourceWarehouse() != null && ti.getSourceWarehouse().getId() != null) 
 								&& (ti.getTargetWarehouse() == null || ti.getTargetWarehouse().getId() == null)){
-							//LOGGER.debug("Source warehouse is not null & target warehouse is null");
-							if(data3.isNotEmpty()){
-								quantity2 = data3.get(0).value1();
-								stockId2 = data3.get(0).value2();
+								//LOGGER.debug("Source warehouse is not null & target warehouse is null");
+								if(data3.isNotEmpty()){
+									quantity2 = data3.get(0).value1();
+									stockId2 = data3.get(0).value2();
 								
-								//UPDATE source
-								updateStock(sctx, stockId2, itemId, (quantity2-s.getQuantity()),  ti.getSourceWarehouse().getId());
-							}
+									//UPDATE source
+									if((s.getSerialNumber() != null ) && quantity2+s.getQuantity() < -1 ){
+										v.add("*Fila " +(s.getRow()+1) + " : La cantidad no puede ser mayor que 1.");
+										error.setError(false);
+										error.setTextError(v);
+									} else if(error.getError()) 
+										updateStockList.add(new StockAux().setStockId(stockId2).setItemId(itemId).setQuantity((quantity2-s.getQuantity()))
+												.setWarehouseId(ti.getSourceWarehouse().getId()));
+								}
 
-						}
-						else if((ti.getSourceWarehouse() == null || ti.getSourceWarehouse().getId() == null) 
-								&& (ti.getTargetWarehouse() != null && ti.getTargetWarehouse().getId() != null)){
-							//LOGGER.debug("Source warehouse is null & target warehouse is not null");
-							if(data2.isNotEmpty()){
-								quantity = data2.get(0).value1();
-								stockId = data2.get(0).value2();
-								
-								//UPDATE target
-								updateStock(sctx, stockId, itemId, (quantity+s.getQuantity()),  ti.getTargetWarehouse().getId());
 							}
-							else{
-								//INSERT target
-								stockInsertQuery.values(domain.getId(), itemId, s.getQuantity(), ti.getTargetWarehouse().getId());
+							else if((ti.getSourceWarehouse() == null || ti.getSourceWarehouse().getId() == null) 
+								&& (ti.getTargetWarehouse() != null && ti.getTargetWarehouse().getId() != null)){
+								//LOGGER.debug("Source warehouse is null & target warehouse is not null");
+								if(data2.isNotEmpty()){
+									quantity = data2.get(0).value1();
+									stockId = data2.get(0).value2();
+								
+									//UPDATE target
+									if((s.getSerialNumber() != null ) && quantity+s.getQuantity() > 1 ){
+										v.add("*Fila " +(s.getRow()+1) + " : La cantidad no puede ser mayor que 1.");
+										error.setError(false);
+										error.setTextError(v);
+									} else if(error.getError())
+										updateStockList.add(new StockAux().setStockId(stockId).setItemId(itemId).setQuantity((quantity+s.getQuantity()))
+												.setWarehouseId(ti.getSourceWarehouse().getId()));
+								}
+								else{
+									//INSERT target
+									stockInsertQuery.values(domain.getId(), itemId, s.getQuantity(), ti.getTargetWarehouse().getId());
+								}
 							}
 						}
 					}
@@ -533,6 +577,9 @@ public class DBStock {
 			});
 	
 			if(error.getError()){
+				for (StockAux sa : updateStockList) {
+					updateStock(ctx, sa.stockId, sa.getItemId(), sa.getQuantity(), sa.getWarehouseId());
+				}
 				ctx.deactivateForeignKeys();
 				stockInsertQuery.execute();
 				
@@ -999,5 +1046,54 @@ public class DBStock {
 		} finally {
 			if (ctx != null) ctx.close();
 		}
+	}
+	
+	
+	static class StockAux {
+		Integer domainId;
+		Integer stockId;
+		Integer itemId;
+		Double quantity;
+		Integer warehouseId;
+		
+		public StockAux() {
+		}
+		
+		public Integer getDomainId() {
+			return domainId;
+		}
+		public StockAux setDomainId(Integer domainId) {
+			this.domainId = domainId;
+			return this;
+		}
+		public Integer getStockId() {
+			return stockId;
+		}
+		public StockAux setStockId(Integer stockId) {
+			this.stockId = stockId;
+			return this;
+		}
+		public Integer getItemId() {
+			return itemId;
+		}
+		public StockAux setItemId(Integer itemId) {
+			this.itemId = itemId;
+			return this;
+		}
+		public Double getQuantity() {
+			return quantity;
+		}
+		public StockAux setQuantity(Double quantity) {
+			this.quantity = quantity;
+			return this;
+		}
+		public Integer getWarehouseId() {
+			return warehouseId;
+		}
+		public StockAux setWarehouseId(Integer warehouseId) {
+			this.warehouseId = warehouseId;
+			return this;
+		}
+		
 	}
 }

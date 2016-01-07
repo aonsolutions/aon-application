@@ -22,92 +22,115 @@ public class StockInfo implements IsSerializable{
 	String productName;
 	String workplaceStr;
 	String departmentStr;
+	String serialNumber;
 	
 	
 	public String getWorkplaceStr() {
 		return workplaceStr;
 	}
-	public void setWorkplaceStr(String workplaceStr) {
+	public StockInfo setWorkplaceStr(String workplaceStr) {
 		this.workplaceStr = workplaceStr;
+		return this;
 	}
 	public String getDepartmentStr() {
 		return departmentStr;
 	}
-	public void setDepartmentStr(String departmentStr) {
+	public StockInfo setDepartmentStr(String departmentStr) {
 		this.departmentStr = departmentStr;
+		return this;
 	}
 	public String getProduct() {
 		return product;
 	}
-	public void setProduct(String product) {
+	public StockInfo setProduct(String product) {
 		this.product = product;
+		return this;
 	}
 	public String getDetail() {
 		return detail;
 	}
-	public void setDetail(String detail) {
+	public StockInfo setDetail(String detail) {
 		this.detail = detail;
+		return this;
 	}
 	public String getDetail2() {
 		return detail2;
 	}
-	public void setDetail2(String detail2) {
+	public StockInfo setDetail2(String detail2) {
 		this.detail2 = detail2;
+		return this;
 	}
 	public String getDetail3() {
 		return detail3;
 	}
-	public void setDetail3(String detail3) {
+	public StockInfo setDetail3(String detail3) {
 		this.detail3 = detail3;
+		return this;
 	}
 	public Double getQuantity() {
 		return quantity;
 	}
-	public void setQuantity(Double quantity) {
+	public StockInfo setQuantity(Double quantity) {
 		this.quantity = quantity;
+		return this;
 	}
 	public Integer getProductId() {
 		return productId;
 	}
-	public void setProductId(Integer productId) {
+	public StockInfo setProductId(Integer productId) {
 		this.productId = productId;
+		return this;
 	}
 	public Integer getRow() {
 		return row;
 	}
-	public void setRow(Integer row) {
+	public StockInfo setRow(Integer row) {
 		this.row = row;
+		return this;
 	}
 	public Integer getItemId() {
 		return itemId;
 	}
-	public void setItemId(Integer itemId) {
+	public StockInfo setItemId(Integer itemId) {
 		this.itemId = itemId;
+		return this;
 	}
 	public Integer getDomainId() {
 		return domainId;
 	}
-	public void setDomainId(Integer domainId) {
+	public StockInfo setDomainId(Integer domainId) {
 		this.domainId = domainId;
+		return this;
 	}
 	public Integer getTransferId() {
 		return transferId;
 	}
-	public void setTransferId(Integer transferId) {
+	public StockInfo setTransferId(Integer transferId) {
 		this.transferId = transferId;
+		return this;
 	}
 	public Double getQuantityDifference() {
 		return quantityDifference;
 	}
-	public void setQuantityDifference(Double quantityDifference) {
+	public StockInfo setQuantityDifference(Double quantityDifference) {
 		this.quantityDifference = quantityDifference;
+		return this;
 	}
 	public String getProductName() {
 		return productName;
 	}
-	public void setProductName(String productName) {
+	public StockInfo setProductName(String productName) {
 		this.productName = productName;
+		return this;
 	}
+	public String getSerialNumber() {
+		return serialNumber;
+	}
+	public StockInfo setSerialNumber(String serialNumber) {
+		this.serialNumber = serialNumber;
+		return this;
+	}
+	
 	
 	
 }

@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.template.shared.Dialog;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.ExportInfo;
+import com.esferalia.aon.gwt.template.shared.ImportType;
 import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
@@ -196,7 +197,8 @@ public class Templates extends Composite implements EntryPoint {
 						pbd.addStyleName("gwt-PopupPanel-template");
 						pbd.setGlassEnabled(true);
 						pbd.show();
-						item.executeExcel3(getDomain(),ti, ignoreInactiveClient, new AsyncCallback<Integer>() {
+						item.executeExcel(getDomain(),ti, ImportType.FEE, ignoreInactiveClient,
+								null, null, null, null, null, null, null, new AsyncCallback<Integer>() {
 							@Override
 							public void onSuccess(Integer result) {
 								item.insertFee(getDomain(),new AsyncCallback<Error>() {
@@ -246,7 +248,7 @@ public class Templates extends Composite implements EntryPoint {
 	private void exportFee(){
 		//TODO
 	}
-	
+
 	private void importProduct(){
 		Dialog d = new Dialog("Importar Productos","Importar",true,"Cancelar",true,"importProduct");
 		d.setUrl(GWT.getModuleBaseURL());
@@ -279,20 +281,60 @@ public class Templates extends Composite implements EntryPoint {
 					@Override
 					public void onSuccess(Integer result) {
 						hide();
-						pbd = new ProgressBarDialog(result.doubleValue(), 0.46) {
+						Double doubleValue = result.doubleValue();
+						pbd = new ProgressBarDialog(doubleValue , 0.46) {
 							
 						};
 						pbd.addStyleName("gwt-PopupPanel-template");
 						pbd.setGlassEnabled(true);
 						pbd.show();
 						
-						item.executeExcel2(getDomain(),ti, new AsyncCallback<Integer>() {
+						item.executeExcel(getDomain(),ti, ImportType.PRODUCT, null,
+								null, null, null, null, null, null, null, new AsyncCallback<Integer>() {
 							
 							@Override
 							public void onSuccess(Integer result) {
-								item.insertProduct(getDomain(),value, new AsyncCallback<Error>() {
+								AsyncCallback<Error> callback = new AsyncCallback<Error>() {
+									
+									
+									@Override
+									public void onSuccess(Error result) {
+							
+										pbd.completed();
+										pbd.hide();
+										Dialog d2 = new Dialog("Importar Productos","Aceptar",true,"Cancelar",false,"importResponse");
+										d2.setError(result);
+										TemplatesDialog popup2 = new TemplatesDialog(d2){
+
+											@Override
+											protected void onAccept() {
+												hide();			
+											}
+
+											@Override
+											protected void onCancel() {
+												hide();
+											}
+										};
+										popup2.addStyleName("gwt-PopupPanel-template");
+										popup2.setGlassEnabled(true);
+										popup2.show();
+									}
+										
+									@Override
+									public void onFailure(Throwable caught) {
+										//TODO 
+										pbd.completed();
+										pbd.hide();
+									}
+								};
+
+								item.insertProduct(getDomain(),value,callback);/* new AsyncCallback<Error>() {
+										
+								
 										@Override
 										public void onSuccess(Error result) {
+								
 											pbd.completed();
 											pbd.hide();
 											Dialog d2 = new Dialog("Importar Productos","Aceptar",true,"Cancelar",false,"importResponse");
@@ -315,8 +357,12 @@ public class Templates extends Composite implements EntryPoint {
 										}
 											
 										@Override
-										public void onFailure(Throwable caught) {}
-								});
+										public void onFailure(Throwable caught) {
+											
+											Window.alert("RPC Failed:" + caught);  
+									
+										}
+								});*/
 							}
 						
 							@Override
@@ -450,7 +496,8 @@ public class Templates extends Composite implements EntryPoint {
 						pbd.addStyleName("gwt-PopupPanel-template");
 						pbd.setGlassEnabled(true);
 						pbd.show();						
-						item.executeExcel(getDomain(),inventoryId, ti, warehouse,null, "" , "",false,-1,new AsyncCallback<Integer>() {
+						item.executeExcel(getDomain(), ti, ImportType.STOCK, null,
+								inventoryId, warehouse,null, "" , "",false,-1,new AsyncCallback<Integer>() {
 							
 							@Override
 							public void onSuccess(Integer result) {
@@ -545,7 +592,7 @@ public class Templates extends Composite implements EntryPoint {
 				tiAux = ti;warehouseAux = warehouse;warehouse2Aux = warehouse2;seriesAux= series;
 				commentsAux = comments;
 				item.excelRowNumber(new AsyncCallback<Integer>() {
-					TemplateInfo ti;String warehouse = warehouseAux;String warehouse2 = warehouse2Aux;
+					TemplateInfo ti= tiAux;String warehouse = warehouseAux;String warehouse2 = warehouse2Aux;
 					String series = seriesAux;String comments = commentsAux;
 					@Override
 					public void onSuccess(Integer result) {
@@ -556,7 +603,8 @@ public class Templates extends Composite implements EntryPoint {
 						pbd.addStyleName("gwt-PopupPanel-template");
 						pbd.setGlassEnabled(true);
 						pbd.show();	
-						item.executeExcel(getDomain(),0,ti, warehouse, warehouse2, series, comments,true,number, new AsyncCallback<Integer>() {
+						item.executeExcel(getDomain(), ti, ImportType.STOCK, null,
+								0, warehouse, warehouse2, series, comments,true,number, new AsyncCallback<Integer>() {
 							
 							@Override
 							public void onSuccess(Integer result) {
@@ -811,7 +859,8 @@ public class Templates extends Composite implements EntryPoint {
 						pbd.addStyleName("gwt-PopupPanel-template");
 						pbd.setGlassEnabled(true);
 						pbd.show();	
-						item.executeExcelProposal(tiAux, new AsyncCallback<Integer>() {
+						item.executeExcel(getDomain(),tiAux, ImportType.PROPOSAL, null,
+								null, null, null, null, null, null, null, new AsyncCallback<Integer>() {
 							
 							@Override
 							public void onSuccess(Integer result) {
