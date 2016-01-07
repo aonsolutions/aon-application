@@ -11,6 +11,7 @@ import java.util.Vector;
 
 import org.jooq.Record1;
 import org.jooq.Record8;
+import org.jooq.Record9;
 import org.jooq.Result;
 
 import com.esferalia.aon.gwt.template.server.InventoryInfo;
@@ -25,12 +26,12 @@ public class DBInventory {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
 			// INITIAL INVENTORY
-			Result<Record8<Double, Double, String, String, String, String, String, Integer>> data ;
+			Result<Record9<Double, Double, String, String, String, String, String, Integer, String>> data ;
 			if(close){
 				 data = ctx.getDslContext()
 						.select(INVENTORY_DETAIL.REAL_QUANTITY,INVENTORY_DETAIL.COST
 								, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3
-								, PRODUCT.CODE, PRODUCT.NAME, PRODUCT.CATEGORY)
+								, PRODUCT.CODE, PRODUCT.NAME, PRODUCT.CATEGORY, ITEM.SERIAL_NUMBER)
 						.from(INVENTORY_DETAIL).join(ITEM).on(ITEM.ID.equal(INVENTORY_DETAIL.ITEM))
 						.join(PRODUCT).on(ITEM.PRODUCT.equal(PRODUCT.ID))
 						.where(INVENTORY_DETAIL.INVENTORY.equal(inventoryId))
@@ -40,7 +41,7 @@ public class DBInventory {
 				data = ctx.getDslContext()
 						.select(INVENTORY_DETAIL.REAL_QUANTITY,INVENTORY_DETAIL.COST
 								, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3
-								, PRODUCT.CODE, PRODUCT.NAME, PRODUCT.CATEGORY)
+								, PRODUCT.CODE, PRODUCT.NAME, PRODUCT.CATEGORY, ITEM.SERIAL_NUMBER)
 						.from(INVENTORY_DETAIL).join(ITEM).on(ITEM.ID.equal(INVENTORY_DETAIL.ITEM))
 						.join(PRODUCT).on(ITEM.PRODUCT.equal(PRODUCT.ID))
 						.where(INVENTORY_DETAIL.INVENTORY.equal(inventoryId))
@@ -49,16 +50,12 @@ public class DBInventory {
 			}
 			Vector<InventoryInfo> v = new Vector<InventoryInfo>();
 			
-			for (Record8<Double, Double, String, String, String, String, String, Integer> record : data) {
+			for (Record9<Double, Double, String, String, String, String, String, Integer, String> record : data) {
 				InventoryInfo ii = new InventoryInfo();
 				if(record.value1() != null) ii.setInventory(record.value1());
-				if(!close){
-					
+				if(!close){	
 					if(record.value2() != null) ii.setCost(record.value2());
 					ii.setTotal(ii.getCost()*ii.getInventory());
-				}
-				else{
-					
 				}
 				if(record.value3() != null) ii.setDetail(record.value3());
 				if(record.value4() != null) ii.setDetail2(record.value4());
@@ -66,7 +63,7 @@ public class DBInventory {
 				if(record.value6() != null) ii.setProductCode(record.value6());
 				if(record.value7() != null) ii.setProductName(record.value7());
 				if(record.value8() != null) ii.setProductCategory(DBProduct.getCategory(domain.getName(), domain.getId(), record.value8(), login).getName());
-				
+				if(record.getValue(ITEM.SERIAL_NUMBER) != null) ii.setSerialNumber(record.getValue(ITEM.SERIAL_NUMBER));
 				v.add(ii);
 			} 
 

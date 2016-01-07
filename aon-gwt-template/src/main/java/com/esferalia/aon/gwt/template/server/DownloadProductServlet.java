@@ -39,7 +39,6 @@ import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBProduct;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
@@ -49,6 +48,7 @@ import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonRole;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.google.api.services.drive.Drive;
 
 @WebServlet(name = "DownloadTemplatesProduct", urlPatterns = { "/aon_gwt_template/gwt_download_product/*" })
@@ -175,13 +175,11 @@ public class DownloadProductServlet extends HttpServlet {
         
         Row rowInfo = hoja.createRow(0);
         Row fila = hoja.createRow(1);
-
-        Date d = new Date();
         
         String info = "Productos ## "
-        		+ DateUtil.getDay(d)
-        		+ "-" + (DateUtil.getMonth(d)+1)
-        		+ "-" + DateUtil.getYear();
+        		+ AonDateUtils.getDay(new Date())
+        		+ "-" + (AonDateUtils.getMonth(new Date()) +1)
+        		+ "-" +  AonDateUtils.getYear(new Date());
         		
         rowInfo.setHeightInPoints(16);
         fila.setHeightInPoints(16);
@@ -479,6 +477,7 @@ public class DownloadProductServlet extends HttpServlet {
         		case "Detalle 1":  celda.setCellValue(pi.getDownloadItem().getDetail());celda.setCellStyle(style2);break;
         		case "Detalle 2":  celda.setCellValue(pi.getDownloadItem().getDetail2());celda.setCellStyle(style2);break;
         		case "Detalle 3":  celda.setCellValue(pi.getDownloadItem().getDetail3());celda.setCellStyle(style2);break;
+        		case "Numero Serie": celda.setCellValue(pi.getDownloadItem().getSerialNumber());celda.setCellStyle(style2);break; 
         		default:
         			break;        		}
         	}

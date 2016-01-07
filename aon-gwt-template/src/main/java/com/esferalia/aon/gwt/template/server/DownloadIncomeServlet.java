@@ -25,12 +25,12 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 @WebServlet(name = "DownloadTemplatesIncome", urlPatterns = { "/aon_gwt_template/gwt_download_income/*" })
 public class DownloadIncomeServlet extends HttpServlet {
@@ -85,14 +85,11 @@ public class DownloadIncomeServlet extends HttpServlet {
 	        hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()));
 	        Row rowInfo = hoja.createRow(0);
 	        Row fila = hoja.createRow(1);
-	        
-
-	        Date d = new Date();
-	        
+	        	        
 	        String info = "Albarán de Compra ## "
-	        		+ DateUtil.getDay(d)
-	        		+ "-" + (DateUtil.getMonth(d)+1)
-	        		+ "-" + DateUtil.getYear(d);
+	        		+ AonDateUtils.getDay(new Date())
+	        		+ "-" + (AonDateUtils.getMonth(new Date()) +1)
+	        		+ "-" +  AonDateUtils.getYear(new Date());
 	        
 	        rowInfo.setHeightInPoints(16);
 	        fila.setHeightInPoints(16);
@@ -155,7 +152,7 @@ public class DownloadIncomeServlet extends HttpServlet {
 	        		case "Detalle 3":  celda.setCellValue(si.getDetail3());celda.setCellStyle(style2);break;
 	        		case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
 	        		case "Nombre": celda.setCellValue(si.getProductName());celda.setCellStyle(style3);break;
-	 
+	        		case "Numero Serie": celda.setCellValue(si.getSerialNumber());celda.setCellStyle(style2);break;
 	        		default:
 	        			break;
 	        		}

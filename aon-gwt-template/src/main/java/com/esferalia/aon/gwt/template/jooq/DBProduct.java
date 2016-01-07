@@ -20,8 +20,8 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.Record13;
-import org.jooq.Record19;
 import org.jooq.Record2;
+import org.jooq.Record20;
 import org.jooq.Record3;
 import org.jooq.Record5;
 import org.jooq.Record7;
@@ -442,11 +442,11 @@ public class DBProduct {
 		try {
 			ctx = AONContext.getAONContext(domain, domainId, login);
 			
-			Result<Record19<String, String, Integer, Integer, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Double, Double, String, String, String, String, String, Integer>>
+			Result<Record20<String, String, Integer, Integer, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Double, Double, String, String, String, String, String, Integer, String>>
 				data =	ctx.getDslContext().select(PRODUCT.CODE,PRODUCT.NAME,PRODUCT.CATEGORY
 						,PRODUCT.BRAND,PRODUCT.TYPE,PRODUCT.VAT, PRODUCT.RETENTION,PRODUCT.INVENTORIABLE,PRODUCT.COMPOSITION
 						,PRODUCT.COMPOSITION_PRICE,PRODUCT.STATUS,ITEM.PURCHASE_PRICE,ITEM.PRICE,ITEM.BARCODE,ITEM.DESCRIPTION
-						,ITEM.DETAIL,ITEM.DETAIL2,ITEM.DETAIL3,PRODUCT.ID)
+						,ITEM.DETAIL,ITEM.DETAIL2,ITEM.DETAIL3,PRODUCT.ID, ITEM.SERIAL_NUMBER)
 						.from(PRODUCT).join(ITEM).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 						.where(condition)
 						.orderBy(PRODUCT.NAME)
@@ -454,7 +454,7 @@ public class DBProduct {
 			
 			Vector<ProductInfo> v = new Vector<ProductInfo>();
 			
-			for(Record19<String, String, Integer, Integer, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Double, Double, String, String, String, String, String, Integer> r : data){
+			for(Record20<String, String, Integer, Integer, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Double, Double, String, String, String, String, String, Integer, String> r : data){
 				ProductInfo pi = new ProductInfo();
 				Item i = new Item();
 				i.setCode(r.value1());
@@ -508,6 +508,7 @@ public class DBProduct {
 				else i.setDetail2("");
 				if(r.value18()!=null) i.setDetail3(r.value18());
 				else i.setDetail3("");
+				if(r.getValue(ITEM.SERIAL_NUMBER) != null) i.setSerialNumber(r.getValue(ITEM.SERIAL_NUMBER));
 				Set<ProductTag> tags = getTags(ctx.getDslContext(), r.value19());
 				pi.setTags(tags);
 				pi.setDownloadItem(i);

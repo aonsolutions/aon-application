@@ -159,6 +159,7 @@ public class DownloadInventoryServlet extends HttpServlet {
             		case "Categor\u00eda": celda.setCellValue(ii.getProductCategory());celda.setCellStyle(style2);break; 
             		case "Recuento": celda.setCellValue("");celda.setCellStyle(style2);break;
             		case "Inventario": celda.setCellValue(ii.getInventory());celda.setCellStyle(style2);break;
+            		case "Numero Serie": celda.setCellValue(ii.getSerialNumber());celda.setCellStyle(style2);break;
             		default:
             			break;
             		}
@@ -174,6 +175,7 @@ public class DownloadInventoryServlet extends HttpServlet {
             		case "Coste": celda.setCellValue(round(ii.getCost(),2));celda.setCellStyle(style2);break; 
             		case "Inventario": celda.setCellValue(ii.getInventory());celda.setCellStyle(style2);break;
             		case "Total": celda.setCellValue(ii.getCost()*ii.getInventory());celda.setCellStyle(style2);break;
+            		case "Numero Serie": celda.setCellValue(ii.getSerialNumber());celda.setCellStyle(style2);break;
             		default:
             			break;
             		}

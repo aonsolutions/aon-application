@@ -25,7 +25,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -35,6 +34,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class Utils {
 
@@ -550,9 +550,9 @@ public class Utils {
 	}
 	
 	public static String getDateStr(Date date){
-		Integer month = DateUtil.getMonth(date);
-		Integer year = DateUtil.getYear(date);
-		Integer day = DateUtil.getDay(date);
+		Integer day = AonDateUtils.getDay(date);
+		Integer month = (AonDateUtils.getMonth(date) +1);
+		Integer year = AonDateUtils.getYear(date);
 	
 		String mes = month.toString();
 		if(month< 10) mes = "0"+ month;

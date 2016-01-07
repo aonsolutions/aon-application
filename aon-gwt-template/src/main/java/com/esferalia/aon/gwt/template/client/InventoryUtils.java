@@ -17,6 +17,7 @@ public class InventoryUtils {
 	public static final String INVENTORY_DETAIL1 = "Detalle 1";
 	public static final String INVENTORY_DETAIL2 = "Detalle 2";
 	public static final String INVENTORY_DETAIL3 = "Detalle 3";
+	public static final String INVENTORY_SERIAL_NUMBER = "Numero Serie";
 	public static final String INVENTORY_COUNT = "Recuento";
 
 	public static Vector<String> inventoryList(){
@@ -30,6 +31,7 @@ public class InventoryUtils {
 		v.add(INVENTORY_DETAIL1);
 		v.add(INVENTORY_DETAIL2);
 		v.add(INVENTORY_DETAIL3);
+		v.add(INVENTORY_SERIAL_NUMBER);
 		return v;
 	}
 	
@@ -39,6 +41,7 @@ public class InventoryUtils {
 		v.add(INVENTORY_DETAIL1);
 		v.add(INVENTORY_DETAIL2);
 		v.add(INVENTORY_DETAIL3);
+		v.add(INVENTORY_SERIAL_NUMBER);
 		return v;
 	}
 	
@@ -52,7 +55,7 @@ public class InventoryUtils {
 		v.add(INVENTORY_DETAIL1);
 		v.add(INVENTORY_DETAIL2);
 		v.add(INVENTORY_DETAIL3);
-		
+		v.add(INVENTORY_SERIAL_NUMBER);
 		return v;
 	}
 
@@ -62,6 +65,7 @@ public class InventoryUtils {
 		v.add(INVENTORY_DETAIL1);
 		v.add(INVENTORY_DETAIL2);
 		v.add(INVENTORY_DETAIL3);
+		v.add(INVENTORY_SERIAL_NUMBER);
 		return v;
 	}
 	

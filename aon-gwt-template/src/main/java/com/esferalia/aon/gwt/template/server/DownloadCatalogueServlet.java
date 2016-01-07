@@ -25,7 +25,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.template.jooq.DBCatalogue;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
@@ -33,6 +32,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 @WebServlet(name = "DownloadTemplatesCatalogue", urlPatterns = { "/aon_gwt_template/gwt_download_catalogue/*" })
 public class DownloadCatalogueServlet extends HttpServlet {
@@ -93,13 +93,10 @@ public class DownloadCatalogueServlet extends HttpServlet {
         Row rowInfo = hoja.createRow(0);
         Row fila = hoja.createRow(1);
         
-        Date d = new Date();
-      
-      
         String info = "Catalogo ## " + workplace + " ## " + department + " ## "
-        		+ DateUtil.getDay(d)
-        		+ "-" + (DateUtil.getMonth(d)+1)
-        		+ "-" + DateUtil.getYear(d);
+        		+ AonDateUtils.getDay(new Date())
+        		+ "-" + (AonDateUtils.getMonth(new Date()) +1)
+        		+ "-" +  AonDateUtils.getYear(new Date());
         
         
         rowInfo.setHeightInPoints(16);
@@ -176,7 +173,6 @@ public class DownloadCatalogueServlet extends HttpServlet {
         		case "Detalle 3":  celda.setCellValue(si.getDetail3());celda.setCellStyle(style2);break;
         		case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
         		case "Nombre": celda.setCellValue(si.getProductName());celda.setCellStyle(style3);break;
-
         		//case "Comentarios": celda.setCellValue(si.getComments());break;
         		default:
         			break;
@@ -225,9 +221,5 @@ public class DownloadCatalogueServlet extends HttpServlet {
         fis.close();
         out.flush();
         out.close();
-        
-       //TODO probar --->  libro.close();
-
     }
-	
-	}
+}

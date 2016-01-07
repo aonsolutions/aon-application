@@ -9,6 +9,7 @@ public class InventoryInfo {
 	String detail;
 	String detail2;
 	String detail3;
+	String serialNumber;
 	
 	String productCode;
 	String productName;
@@ -67,6 +68,10 @@ public class InventoryInfo {
 	public void setProductCategory(String productCategory) {
 		this.productCategory = productCategory;
 	}
-	
-	
+	public String getSerialNumber() {
+		return serialNumber;
+	}
+	public void setSerialNumber(String serialNumber) {
+		this.serialNumber = serialNumber;
+	}
 }

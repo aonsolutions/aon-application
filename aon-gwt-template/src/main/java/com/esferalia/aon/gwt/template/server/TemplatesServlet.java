@@ -1638,6 +1638,12 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			}
 			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break;
+		case "Numero Serie":
+			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+				product.getItem().get(0).setSerialNumber(toString(value));
+			}
+			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			break;
 		default:
 			break;
 		}

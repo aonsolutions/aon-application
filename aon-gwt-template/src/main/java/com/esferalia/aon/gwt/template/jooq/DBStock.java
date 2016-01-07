@@ -33,9 +33,9 @@ import org.jooq.Record1;
 import org.jooq.Record16;
 import org.jooq.Record2;
 import org.jooq.Record3;
-import org.jooq.Record4;
 import org.jooq.Record5;
 import org.jooq.Record6;
+import org.jooq.Record7;
 import org.jooq.Result;
 
 import com.esferalia.aon.gwt.template.server.AuditInfo;
@@ -260,12 +260,17 @@ public class DBStock {
 						if(s.getDetail3() == "") 
 							detail3 = ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull());
 						
+						Condition serialNumber = ITEM.SERIAL_NUMBER.eq(s.getSerialNumber());
+						if(s.getSerialNumber() == null)
+							serialNumber = ITEM.SERIAL_NUMBER.isNull();
+						
 						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
 									.and(detail)
 									.and(detail2)
 									.and(detail3)
+									.and(serialNumber)
 									.and(PRODUCT.DOMAIN.eq(domain.getId())).fetch();
 					}
 				/*	Record1<Integer> data = sctx.getDslContext().select(PRODUCT.ID)
@@ -279,38 +284,44 @@ public class DBStock {
 				*/
 					// TODO update
 					if(!data.isEmpty()){
-						ProposalInfo pi = new ProposalInfo();
-						pi.setQuantity(s.getQuantity());
-						pi.setDomain(domain.getId());
-						pi.setProposal(proposal);
-						pi.setItem(data.get(0).value1());
-						pi.setStatus((byte) 0); 
-						pi.setDescription("");
-						pi.setDiscount((double) 0);
-						Double[] supplier = getSupplier(sctx, workplace, domain.getId(),pi.getItem());
+						if((s.getSerialNumber() != null) && s.getQuantity() > 1 ){
+							v.add("*Fila " +(s.getRow()+1) + " : La cantidad no puede ser mayor que 1.");
+							error.setError(false);
+							error.setTextError(v);
+						} else {
+							ProposalInfo pi = new ProposalInfo();
+							pi.setQuantity(s.getQuantity());
+							pi.setDomain(domain.getId());
+							pi.setProposal(proposal);
+							pi.setItem(data.get(0).value1());
+							pi.setStatus((byte) 0); 
+							pi.setDescription("");
+							pi.setDiscount((double) 0);
+							Double[] supplier = getSupplier(sctx, workplace, domain.getId(),pi.getItem());
 				
-						if (supplier[0] != -1){
-							pi.setPrice(supplier[1]);
-							if(isCatalogue(sctx,pi)){
-								Timestamp t = new Timestamp(ai.getDate().getTime());
-								if(isProposal(sctx,pi)){
-									pi = getProposal(sctx,pi);
-									updateIds.add(pi.getId());
-									proposalUpdateQuery.values(pi.getId(), pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier[0].intValue(), ai.getUsername(), t);
+							if (supplier[0] != -1){
+								pi.setPrice(supplier[1]);
+								if(isCatalogue(sctx,pi)){
+									Timestamp t = new Timestamp(ai.getDate().getTime());
+									if(isProposal(sctx,pi)){
+										pi = getProposal(sctx,pi);
+										updateIds.add(pi.getId());
+										proposalUpdateQuery.values(pi.getId(), pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier[0].intValue(), ai.getUsername(), t);
+									}
+									else
+										proposalInsertQuery.values(pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier[0].intValue(), ai.getUsername(), t, ai.getUsername(), t);
 								}
-								else
-									proposalInsertQuery.values(pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier[0].intValue(), ai.getUsername(), t, ai.getUsername(), t);
+								else{
+									v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
+									error.setError(false);
+									error.setTextError(v);
+								}
 							}
 							else{
-								v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
+								v.add("*Fila " +(s.getRow()+1) + " : El producto no dispone de un proveedor asignable.");
 								error.setError(false);
 								error.setTextError(v);
 							}
-						}
-						else{
-							v.add("*Fila " +(s.getRow()+1) + " : El producto no dispone de un proveedor asignable.");
-							error.setError(false);
-							error.setTextError(v);
 						}
 					}else{
 						v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
@@ -445,12 +456,17 @@ public class DBStock {
 						if(s.getDetail3() == "") 
 							detail3 = ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull());
 						
+						Condition serialNumber = ITEM.SERIAL_NUMBER.eq(s.getSerialNumber());
+						if(s.getSerialNumber() == null)
+							serialNumber = ITEM.SERIAL_NUMBER.isNull();
+						
 						data = sctx.getDslContext().select(ITEM.ID)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
 									.and(detail)
 									.and(detail2)
 									.and(detail3)
+									.and(serialNumber)
 									.and(PRODUCT.DOMAIN.eq(domain.getId())).fetch();
 					}
 					if(!data.isEmpty()){
@@ -612,16 +628,16 @@ public class DBStock {
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
-			Result<Record5<Integer, Integer, Integer, Double,Integer>> data ;
+			Result<Record6<Integer, Integer, Integer, Double,Integer, String>> data ;
 			if(wid != null)
-				data = ctx.getDslContext().select(STOCK.ID, STOCK.ITEM, STOCK.WAREHOUSE, STOCK.QUANTITY,ITEM.PRODUCT)
+				data = ctx.getDslContext().select(STOCK.ID, STOCK.ITEM, STOCK.WAREHOUSE, STOCK.QUANTITY,ITEM.PRODUCT, ITEM.SERIAL_NUMBER)
 				.from(STOCK).join(ITEM).on(ITEM.ID.eq(STOCK.ITEM)).join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 				.where(STOCK.DOMAIN.eq(domain.getId())).and(STOCK.WAREHOUSE.eq(wid))
 				.and(c)
 				.orderBy(PRODUCT.NAME)
 				.fetch();
 			else
-				data = ctx.getDslContext().select(STOCK.ID, STOCK.ITEM, STOCK.WAREHOUSE, STOCK.QUANTITY,ITEM.PRODUCT)
+				data = ctx.getDslContext().select(STOCK.ID, STOCK.ITEM, STOCK.WAREHOUSE, STOCK.QUANTITY,ITEM.PRODUCT, ITEM.SERIAL_NUMBER)
 				.from(STOCK).join(ITEM).on(ITEM.ID.eq(STOCK.ITEM)).join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 				.where(STOCK.DOMAIN.eq(domain.getId()))
 				.and(c)
@@ -629,7 +645,7 @@ public class DBStock {
 				.fetch();
 				
 			Vector<StockInfo> v = new Vector<StockInfo>();
-			for (Record5<Integer, Integer, Integer, Double, Integer> d : data) {
+			for (Record6<Integer, Integer, Integer, Double, Integer, String> d : data) {
 				Item i = getItem(ctx,domain.getName(),d.value2());
 				if ( (d.value4() == 0) && ((i.getStatus() == ProductStatus.DISCONTINUED.value()) || (!i.getProduct().isInventoriable()) ) ) {
 					ctx.getDslContext().delete(STOCK).where(STOCK.ID.equal(d.value1()));
@@ -651,6 +667,7 @@ public class DBStock {
 					//si.setTargetWarehouse(getWarehouse(dslContext, d.value3()));
 					si.setProductId(d.value5());
 					si.setProductName(i.getProduct().getName());
+					si.setSerialNumber(d.getValue(ITEM.SERIAL_NUMBER));
 					v.add(si);					
 				}
 			}
@@ -989,22 +1006,23 @@ public class DBStock {
 				StockInfo si  = new StockInfo();
 				Workplace wp = DBCatalogue.getWorkplace(domain, new User().setLogin(login), r.value1());
 				Department d = DBCatalogue.getDepartment(domain, wp, r.value2(), login);
-				Record4<Integer, String, String, String> rd = ctx.getDslContext().select(ITEM.PRODUCT,ITEM.DETAIL,ITEM.DETAIL2, ITEM.DETAIL3).from(ITEM).where(ITEM.ID.eq(r.value6())).fetchOne();
-				Integer productId = rd.value1();
+				Record5<Integer, String, String, String, String> rd = ctx.getDslContext().select(ITEM.PRODUCT,ITEM.DETAIL,ITEM.DETAIL2, ITEM.DETAIL3, ITEM.SERIAL_NUMBER).from(ITEM).where(ITEM.ID.eq(r.value6())).fetchOne();
+				Integer productId = rd.getValue(ITEM.PRODUCT);
 				com.esferalia.aon.occam.api.model.product.Product p = AON.getProduct(ctx, productId);
 				si.setDepartmentStr(d.getName());
 				si.setWorkplaceStr(wp.getDescription());
 				si.setDomainId(domain.getId());
-				if(rd.value2() != null )si.setDetail(rd.value2()); 
+				if(rd.getValue(ITEM.DETAIL) != null )si.setDetail(rd.getValue(ITEM.DETAIL)); 
 				else si.setDetail("");
-				if(rd.value3() != null )si.setDetail2(rd.value3()); 
+				if(rd.getValue(ITEM.DETAIL2) != null )si.setDetail2(rd.getValue(ITEM.DETAIL2)); 
 				else si.setDetail2("");
-				if(rd.value4() != null )si.setDetail3(rd.value4()); 
+				if(rd.getValue(ITEM.DETAIL3) != null )si.setDetail3(rd.getValue(ITEM.DETAIL3)); 
 				else si.setDetail3("");
 				si.setItemId(r.value6());
 				si.setQuantity(r.value8());
 				si.setProductName(p.getName());
 				si.setProduct(p.getCode());
+				si.setSerialNumber(rd.getValue(ITEM.SERIAL_NUMBER));
 				v.add(si);
 			}
 			return v;
@@ -1018,7 +1036,7 @@ public class DBStock {
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
-			Result<Record6<Double, String, String, String, String, String>> data = ctx.getDslContext().select(INCOME_DETAIL.QUANTITY,ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, PRODUCT.NAME, PRODUCT.CODE)
+			Result<Record7<Double, String, String, String, String, String, String>> data = ctx.getDslContext().select(INCOME_DETAIL.QUANTITY,ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, PRODUCT.NAME, PRODUCT.CODE, ITEM.SERIAL_NUMBER)
 								.from(INCOME_DETAIL)
 								.join(ITEM).on(INCOME_DETAIL.ITEM.eq(ITEM.ID)).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(INCOME_DETAIL.INCOME.eq(incomeId))
@@ -1028,7 +1046,7 @@ public class DBStock {
 			
 			Vector<StockInfo> v = new Vector<StockInfo>();
 			
-			for(Record6<Double, String, String, String, String, String> r : data){
+			for(Record7<Double, String, String, String, String, String, String> r : data){
 				StockInfo si  = new StockInfo();
 				si.setDomainId(domain.getId());
 				if(r.value2() != null )si.setDetail(r.value2()); 
@@ -1040,6 +1058,7 @@ public class DBStock {
 				si.setQuantity(r.value1());
 				si.setProductName(r.value5());
 				si.setProduct(r.value6());
+				if(r.getValue(ITEM.SERIAL_NUMBER) != null) si.setSerialNumber(r.getValue(ITEM.SERIAL_NUMBER));
 				v.add(si);
 			}
 			return v;
