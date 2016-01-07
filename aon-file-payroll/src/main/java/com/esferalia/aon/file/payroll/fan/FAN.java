@@ -5,6 +5,7 @@ package com.esferalia.aon.file.payroll.fan;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,8 +40,8 @@ public class FAN extends AbstractFileFiller{
 	
 	private ETI eti;
 	
-	public FAN(ETI eti, String filePath) throws FileNotFoundException, UnsupportedEncodingException {
-		super(filePath);
+	public FAN(ETI eti, PrintWriter writer) throws FileNotFoundException, UnsupportedEncodingException {
+		super(writer);
 		if (eti == null)  {
 			throw new IllegalArgumentException("El registro FAN no puede ser nulo!");
 		}

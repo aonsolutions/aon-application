@@ -1,7 +1,8 @@
 package com.esferalia.aon.ui.payroll.file;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -80,11 +81,12 @@ public class AFIWriter implements Serializable {
 	public FileOutput createAFI(List<Contract> contractList ) throws ManagerBeanException {
 		try {
 			ETI eti = createETIRecord( isAfiTestEnvironmentActive(), contractList );
-			File file = File.createTempFile("temp", ".AFI");
-			FileFiller afi = new AFI(eti, file.getAbsolutePath());
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			PrintWriter writer = new PrintWriter(outputStream);
+			FileFiller afi = new AFI(eti, writer);
 			FileOutput output = new FileOutput();
-			output.setFile(file);
 			output.setErrors(afi.create());
+			output.setContent(outputStream.toByteArray());
 			return output;
 		} catch (IOException e) {
 			throw new ManagerBeanException(e);
@@ -107,7 +109,7 @@ public class AFIWriter implements Serializable {
 		eti.setIdentificador(AFI+WINSUITE_VERSION);
 		String authorizationKey = getAuthorizationKey();
 		if(StringUtils.isNotBlank(authorizationKey)){
-			eti.setClave(authorizationKey);
+			eti.setClave(StringUtils.leftPad(authorizationKey, 8, '0'));
 		} else {
 			AonUtil.addErrorMessage("No se ha definido la clave de autorización.");
 		}

@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,6 +33,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.faces.component.util.DownloadUtil;
+import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -138,20 +138,14 @@ public class ContractBatchController extends BasicController {
 			}
 			ContractBatch batch = (ContractBatch) getTo();
 			AFIWriter afiWriter = new AFIWriter();
-			File file = afiWriter.createAFI(getContractList()).getFile();
-			if (file != null) {
-				batch.setOutcomeFile(IOUtils.toByteArray(new FileInputStream(file)));
+			FileOutput output = afiWriter.createAFI(getContractList());
+			if (output != null && output.getContent() != null) {
+				batch.setOutcomeFile(output.getContent());
 				batch.setOutcomeFileDate(new Date());
 				batch.setStatus(FileStatus.GENERATED);
 				super.accept(null);
 			}
 		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage("Error generating AFI file");
-			AonUtil.addErrorMessage(e.getMessage());
-		} catch (FileNotFoundException e) {
-			AonUtil.addErrorMessage("Error generating AFI file");
-			AonUtil.addErrorMessage(e.getMessage());
-		} catch (IOException e) {
 			AonUtil.addErrorMessage("Error generating AFI file");
 			AonUtil.addErrorMessage(e.getMessage());
 		}

@@ -3,6 +3,7 @@ package com.esferalia.aon.file.payroll.cra;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +12,10 @@ import java.util.Map;
 import com.code.aon.file.format.core.DiskRegisterLoader;
 import com.code.aon.file.format.model.AbstractFileFiller;
 import com.code.aon.file.format.model.Fd0Exception;
-import com.esferalia.aon.file.payroll.cra.data.*;
+import com.esferalia.aon.file.payroll.cra.data.CRE;
+import com.esferalia.aon.file.payroll.cra.data.DDE;
+import com.esferalia.aon.file.payroll.cra.data.ETI;
+import com.esferalia.aon.file.payroll.cra.data.TRB;
 
 public class CRA extends AbstractFileFiller{
 	
@@ -30,8 +34,8 @@ public class CRA extends AbstractFileFiller{
 	
 	private ETI eti;
 	
-	public CRA(ETI eti, String filePath) throws FileNotFoundException, UnsupportedEncodingException {
-		super(filePath);
+	public CRA(ETI eti, PrintWriter writer) throws FileNotFoundException, UnsupportedEncodingException {
+		super(writer);
 		this.eti = eti;
 		InputStream input = null;
 		if (eti == null)  {

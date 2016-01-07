@@ -62,13 +62,15 @@ public class BasicCopy extends AbstractContractBasicCopy {
 			RegistryAddress address = contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress();
 			setPdfFieldValue(BasicCopyField.ENTERPRISE_ADDRESS.getValue(),address.getFullAddress());
 			try {
-				setPdfFieldValue(BasicCopyField.ENTERPRISE_MUNICIPALITY_CODE1.getValue(),address.getMunicipalityCode().substring(0, 1));
-				setPdfFieldValue(BasicCopyField.ENTERPRISE_MUNICIPALITY_CODE2.getValue(),address.getMunicipalityCode().substring(1, 2));
-				setPdfFieldValue(BasicCopyField.ENTERPRISE_MUNICIPALITY_CODE3.getValue(),address.getMunicipalityCode().substring(2, 3));
-				setPdfFieldValue(BasicCopyField.ENTERPRISE_MUNICIPALITY_CODE4.getValue(),address.getMunicipalityCode().substring(3, 4));
-				setPdfFieldValue(BasicCopyField.ENTERPRISE_MUNICIPALITY_CODE5.getValue(),address.getMunicipalityCode().substring(4, 5));
-				ResourceBundle bundle = ResourceBundle.getBundle(MUNICIPALITIES_BUNDLE_BASE_NAME);
-				setPdfFieldValue(BasicCopyField.ENTERPRISE_MUNICIPALITY_NAME.getValue(),bundle.getString(address.getMunicipalityCode()));
+				if(StringUtils.isNotBlank(address.getMunicipalityCode())){
+					setPdfFieldValue(BasicCopyField.ENTERPRISE_MUNICIPALITY_CODE1.getValue(),address.getMunicipalityCode().substring(0, 1));
+					setPdfFieldValue(BasicCopyField.ENTERPRISE_MUNICIPALITY_CODE2.getValue(),address.getMunicipalityCode().substring(1, 2));
+					setPdfFieldValue(BasicCopyField.ENTERPRISE_MUNICIPALITY_CODE3.getValue(),address.getMunicipalityCode().substring(2, 3));
+					setPdfFieldValue(BasicCopyField.ENTERPRISE_MUNICIPALITY_CODE4.getValue(),address.getMunicipalityCode().substring(3, 4));
+					setPdfFieldValue(BasicCopyField.ENTERPRISE_MUNICIPALITY_CODE5.getValue(),address.getMunicipalityCode().substring(4, 5));
+					ResourceBundle bundle = ResourceBundle.getBundle(MUNICIPALITIES_BUNDLE_BASE_NAME);
+					setPdfFieldValue(BasicCopyField.ENTERPRISE_MUNICIPALITY_NAME.getValue(),bundle.getString(address.getMunicipalityCode()));
+				}
 			} catch (StringIndexOutOfBoundsException aie) {
 				// do nothing
 			} catch (NullPointerException npe) {

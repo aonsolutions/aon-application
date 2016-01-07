@@ -40,6 +40,7 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.faces.component.util.DownloadUtil;
+import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
@@ -139,21 +140,15 @@ public class FanBatchController extends BasicController {
 			
 			FanBatch batch = (FanBatch) getTo();
 			FANWriter fanWriter = new FANWriter();
-			File file = fanWriter.createFAN(getEnterpriseCCCList(),((FanBatch)getTo()).getLiquidationType(), batch.getYear(), batch.getMonth(), batch.getMonth()).getFile();
-			if (file != null) {
-				batch.setOutcomeFile(IOUtils.toByteArray(new FileInputStream(file)));
+			FileOutput output = fanWriter.createFAN(getEnterpriseCCCList(),((FanBatch)getTo()).getLiquidationType(), batch.getYear(), batch.getMonth(), batch.getMonth());
+			if (output != null && output.getContent() != null) {
+				batch.setOutcomeFile(output.getContent());
 				batch.setOutcomeFileDate(new Date());
 				batch.setStatus(FileStatus.GENERATED);
 				super.accept(null);
 			}
 			
 		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage("Error generating FAN file");
-			AonUtil.addErrorMessage(e.getMessage());
-		} catch (FileNotFoundException e) {
-			AonUtil.addErrorMessage("Error generating FAN file");
-			AonUtil.addErrorMessage(e.getMessage());
-		} catch (IOException e) {
 			AonUtil.addErrorMessage("Error generating FAN file");
 			AonUtil.addErrorMessage(e.getMessage());
 		}

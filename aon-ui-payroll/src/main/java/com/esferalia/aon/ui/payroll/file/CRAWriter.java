@@ -4,8 +4,9 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -61,11 +62,12 @@ public class CRAWriter {
 	public FileOutput createCRA(List<EnterpriseCCC> list, Integer year, Month month) throws ManagerBeanException {
 		try {
 			ETI eti = buildCRA( list, year, month );
-			File file = File.createTempFile("temp", ".CRA");
-			FileFiller cra = new CRA(eti, file.getAbsolutePath());
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			PrintWriter writer = new PrintWriter(outputStream);
+			FileFiller cra = new CRA(eti, writer);
 			FileOutput output = new FileOutput();
-			output.setFile(file);
 			output.setErrors(cra.create());
+			output.setContent(outputStream.toByteArray());
 			return output;
 		} catch (IOException e) {
 			throw new ManagerBeanException(e);
@@ -122,7 +124,7 @@ public class CRAWriter {
 		ETI eti = new ETI();
 		String authorizationKey = getAuthorizationKey();
 		if(StringUtils.isNotBlank(authorizationKey)){
-			eti.setClave(authorizationKey);
+			eti.setClave(StringUtils.leftPad(authorizationKey, 8, '0'));
 		} else {
 			AonUtil.addErrorMessage("No se ha definido la clave de autorización.");
 		}

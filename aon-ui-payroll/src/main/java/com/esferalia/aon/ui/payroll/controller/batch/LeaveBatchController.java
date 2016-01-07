@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,6 +34,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.faces.component.util.DownloadUtil;
+import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -139,18 +139,14 @@ public class LeaveBatchController extends BasicController {
 			loggedUser = StringUtils.substringBefore(loggedUser, "@");
 			LeaveBatch batch = (LeaveBatch) getTo();
 			FDIWriter fdiWriter = new FDIWriter();
-			File file = fdiWriter.createFDI(getLeaveDetailList(), loggedUser).getFile();
-			if (file != null) {
-				batch.setOutcomeFile(IOUtils.toByteArray(new FileInputStream(file)));
+			FileOutput output = fdiWriter.createFDI(getLeaveDetailList(), loggedUser);
+			if (output != null && output.getContent() != null) {
+				batch.setOutcomeFile(output.getContent());
 				batch.setOutcomeFileDate(new Date());
 				batch.setStatus(FileStatus.GENERATED);
 				super.accept(null);
 			}
 		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage("error on generateFdiFile ["+e.getMessage()+"]");
-		} catch (FileNotFoundException e) {
-			AonUtil.addErrorMessage("error on generateFdiFile ["+e.getMessage()+"]");
-		} catch (IOException e) {
 			AonUtil.addErrorMessage("error on generateFdiFile ["+e.getMessage()+"]");
 		}
 	}

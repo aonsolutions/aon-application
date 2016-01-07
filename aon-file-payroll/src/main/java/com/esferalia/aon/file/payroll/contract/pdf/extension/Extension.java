@@ -128,13 +128,15 @@ public class Extension extends AbstractContractExtension {
 			
 			try {
 				RegistryAddress address = contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress();
-				ResourceBundle bundle = ResourceBundle.getBundle(MUNICIPALITIES_BUNDLE_BASE_NAME);
-				setPdfFieldValue(ENTERPRISE_MUNICIPALITY,bundle.getString(address.getMunicipalityCode()));
-				setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE1,address.getMunicipalityCode().substring(0, 1));
-				setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE2,address.getMunicipalityCode().substring(1, 2));
-				setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE3,address.getMunicipalityCode().substring(2, 3));
-				setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE4,address.getMunicipalityCode().substring(3, 4));
-				setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE5,address.getMunicipalityCode().substring(4, 5));
+				if(StringUtils.isNotBlank(address.getMunicipalityCode())){
+					ResourceBundle bundle = ResourceBundle.getBundle(MUNICIPALITIES_BUNDLE_BASE_NAME);
+					setPdfFieldValue(ENTERPRISE_MUNICIPALITY,bundle.getString(address.getMunicipalityCode()));
+					setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE1,address.getMunicipalityCode().substring(0, 1));
+					setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE2,address.getMunicipalityCode().substring(1, 2));
+					setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE3,address.getMunicipalityCode().substring(2, 3));
+					setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE4,address.getMunicipalityCode().substring(3, 4));
+					setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE5,address.getMunicipalityCode().substring(4, 5));
+				}
 			} catch (StringIndexOutOfBoundsException aie) {
 				// do nothing
 			} catch (NullPointerException npe) {
@@ -193,13 +195,15 @@ public class Extension extends AbstractContractExtension {
 				
 			try {
 				RegistryAddress address = contract.getWorkPlace().getAddress();
-				ResourceBundle bundle = ResourceBundle.getBundle(MUNICIPALITIES_BUNDLE_BASE_NAME);
-				setPdfFieldValue(WORKPLACE_MUNICIPALITY,bundle.getString(address.getMunicipalityCode()));
-				setPdfFieldValue(WORKPLACE_MUNICIPALITY_CODE1,address.getMunicipalityCode().substring(0, 1));
-				setPdfFieldValue(WORKPLACE_MUNICIPALITY_CODE2,address.getMunicipalityCode().substring(1, 2));
-				setPdfFieldValue(WORKPLACE_MUNICIPALITY_CODE3,address.getMunicipalityCode().substring(2, 3));
-				setPdfFieldValue(WORKPLACE_MUNICIPALITY_CODE4,address.getMunicipalityCode().substring(3, 4));
-				setPdfFieldValue(WORKPLACE_MUNICIPALITY_CODE5,address.getMunicipalityCode().substring(4, 5));
+				if(StringUtils.isNotBlank(address.getMunicipalityCode())){
+					ResourceBundle bundle = ResourceBundle.getBundle(MUNICIPALITIES_BUNDLE_BASE_NAME);
+					setPdfFieldValue(WORKPLACE_MUNICIPALITY,bundle.getString(address.getMunicipalityCode()));
+					setPdfFieldValue(WORKPLACE_MUNICIPALITY_CODE1,address.getMunicipalityCode().substring(0, 1));
+					setPdfFieldValue(WORKPLACE_MUNICIPALITY_CODE2,address.getMunicipalityCode().substring(1, 2));
+					setPdfFieldValue(WORKPLACE_MUNICIPALITY_CODE3,address.getMunicipalityCode().substring(2, 3));
+					setPdfFieldValue(WORKPLACE_MUNICIPALITY_CODE4,address.getMunicipalityCode().substring(3, 4));
+					setPdfFieldValue(WORKPLACE_MUNICIPALITY_CODE5,address.getMunicipalityCode().substring(4, 5));
+				}
 			} catch (StringIndexOutOfBoundsException aie) {
 				// do nothing
 			} catch (NullPointerException npe) {

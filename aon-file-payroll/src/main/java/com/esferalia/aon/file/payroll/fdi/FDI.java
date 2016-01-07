@@ -5,6 +5,7 @@ package com.esferalia.aon.file.payroll.fdi;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +16,6 @@ import org.apache.commons.lang.ObjectUtils;
 import com.code.aon.file.format.core.DiskRegisterLoader;
 import com.code.aon.file.format.model.AbstractFileFiller;
 import com.code.aon.file.format.model.Fd0Exception;
-import com.esferalia.aon.file.payroll.fdi.data.DIT;
 import com.esferalia.aon.file.payroll.fdi.data.EMP;
 import com.esferalia.aon.file.payroll.fdi.data.ETI;
 import com.esferalia.aon.file.payroll.fdi.data.TRA;
@@ -34,8 +34,8 @@ public class FDI  extends AbstractFileFiller{
 	
 	private ETI eti;
 	
-	public FDI(ETI eti, String filePath) throws FileNotFoundException, UnsupportedEncodingException {
-		super(filePath);
+	public FDI(ETI eti, PrintWriter writer) throws FileNotFoundException, UnsupportedEncodingException {
+		super(writer);
 		if (eti == null)  {
 			throw new IllegalArgumentException("El registro ETI no puede ser nulo!");
 		}
