@@ -133,7 +133,7 @@ public class VatTaxManager implements Serializable {
 		getVatTaxINNER(list,domain,dateFrom,dateTo,vatTax,status,false,false);
 		getVatTaxINNER(list,domain,dateFrom,dateTo,vatTax,status,true,false);
 		// En el ultimo perido se debe declarar lo pendiente del año anterior de criterio de caja.
-		if (vatTax.getPeriod() == Period.M12 || vatTax.getPeriod() == Period.T4) {
+		if (vatTax != null && (vatTax.getPeriod() == Period.M12 || vatTax.getPeriod() == Period.T4)) {
 			getVatTaxINNER(list,domain,dateFrom,dateTo,vatTax,status,true,true);
 		}
 		return list;
@@ -174,7 +174,8 @@ public class VatTaxManager implements Serializable {
 				ps.setDate(++i, new java.sql.Date( dateFrom.getTime() ));
 				ps.setDate(++i, new java.sql.Date( dateTo.getTime()));
 				if (vatAccrualPayment ){
-					ps.setDate(++i, new java.sql.Date( AonDateUtils.getYearFirstDay(vatTax.getYear() - 1).getTime()) );	
+					int prevYear = AonDateUtils.getYear(dateFrom) - 1;
+					ps.setDate(++i, new java.sql.Date( AonDateUtils.getYearFirstDay(prevYear).getTime()) );	
 				}
 			}
 			ps.setInt(++i, (status == InvoiceStatus.SCORED?InvoiceStatus.SCORED.ordinal():InvoiceStatus.PENDING.ordinal()));
