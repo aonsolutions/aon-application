@@ -69,7 +69,7 @@ import com.esferalia.aon.payroll.enumeration.ss.T55;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseParamsController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController.ContractParams;
-import com.esferalia.aon.ui.payroll.controller.contract.ContractController.ContractQuoteType;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractController.TRL;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 
@@ -228,20 +228,6 @@ public class ContractUtils implements Serializable {
 			throw new AbortProcessingException(msg,e);
 		}
 		try {
-			if(params.getContractQuoteType()!=null){
-				data = new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( "TIPO_COTIZACION" );
-				data.setExpression("\"" + (params.getContractQuoteType()==ContractQuoteType.COOPERATIVE_PARTNER?"01":"") + "\"");
-				bean.insert(data);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el grupo de cotizacion. (" +e.getMessage() + ")";
-			AonUtil.addErrorMessage(msg);
-		}
-		try {
 			if(params.getQuoteGroup()!=null){
 				data = new ContractData();
 				data.setContract(contract);
@@ -383,6 +369,29 @@ public class ContractUtils implements Serializable {
 		
 	}
 	
+	public void insertCooperativePartnerContractData(Contract contract) {
+		IManagerBean bean;
+		ContractData data;
+		try {
+			bean = BeanManager.getManagerBean(ContractData.class);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible grabar los datos de contrato. (" +e.getMessage() + ")";
+			throw new AbortProcessingException(msg,e);
+		}
+		try {
+			data = new ContractData();
+			data.setContract(contract);
+			data.setStartDate(contract.getStartDate());
+			data.setEndDate(contract.getEndDate());
+			data.setName( "PORCENTAJE_FOGASA" );
+			data.setExpression("0");
+			bean.insert(data);
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el tipo de jornada. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
+	}
+	
 	public void insertPartialTimeContractData(Contract contract, ContractParams params) {
 		IManagerBean bean;
 		ContractData data;
@@ -489,7 +498,7 @@ public class ContractUtils implements Serializable {
 		}
 		
 		try {
-			if(params.getContractQuoteType()==ContractQuoteType.COOPERATIVE_PARTNER){
+			if(params.getTrl()==TRL.COOPERATIVE_PARTNER){
 				info = new ContractInfo();
 				info.setContract(contract);
 				info.setStartDate(contract.getStartDate());
@@ -654,25 +663,6 @@ public class ContractUtils implements Serializable {
 			throw new ControllerListenerException(msg,e);
 		}
 		try {
-			ContractData contractQuoteTypeData = obtainContractData(contract, "TIPO_COTIZACION");
-			if(params.getContractQuoteType()!=null && params.getContractQuoteType()!=ContractQuoteType.RETA){
-				data = contractQuoteTypeData!=null?contractQuoteTypeData:new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( "TIPO_COTIZACION" );
-				data.setExpression("\"" + (params.getContractQuoteType()==ContractQuoteType.COOPERATIVE_PARTNER?"01":"") + "\"");
-				bean.insertOrUpdate(data);
-			} else {
-				if(contractQuoteTypeData != null){
-					bean.remove(contractQuoteTypeData);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el grupo de cotizacion. (" +e.getMessage() + ")";
-			AonUtil.addErrorMessage(msg);
-		}
-		try {
 			ContractData quoteGroupData = obtainContractData(contract, ContextVariable.QUOTE_GROUP.getName());
 			if(params.getQuoteGroup()!=null){
 				data = quoteGroupData!=null?quoteGroupData:new ContractData();
@@ -826,6 +816,8 @@ public class ContractUtils implements Serializable {
 			AonUtil.addErrorMessage(msg);
 		}
 		
+		updatePartialTimeContractData(contract, params);
+		
 	}
 	
 	public void updateRetaContractData(Contract contract, ContractParams params) throws ControllerListenerException {
@@ -851,8 +843,154 @@ public class ContractUtils implements Serializable {
 			String msg = "Error al grabar el tipo de jornada (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
 		}
+		
+		if(!params.isRetaPartialTime()){
+			params.setWeekHours(null);
+			params.getWeekDayHours()[0]=null;
+			params.getWeekDayHours()[1]=null;
+			params.getWeekDayHours()[2]=null;
+			params.getWeekDayHours()[3]=null;
+			params.getWeekDayHours()[4]=null;
+			params.getWeekDayHours()[5]=null;
+			params.getWeekDayHours()[6]=null;
+		}
+		updatePartialTimeContractData(contract, params);
 	}
 	
+	private void updatePartialTimeContractData(Contract contract, ContractParams params) throws ControllerListenerException {
+		IManagerBean bean;
+		ContractData data;
+		try {
+			bean = BeanManager.getManagerBean(ContractData.class);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible actualizar los datos de contrato. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+			throw new ControllerListenerException(msg,e);
+		}
+		try {
+			ContractData weekHoursData = obtainContractData(contract, ContextVariable.WEEK_HOURS.getName());
+			if(params.getWeekHours()!=null && params.getWeekHours()>0){
+				data = weekHoursData!=null?weekHoursData:new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.WEEK_HOURS.getName() );
+				data.setExpression(params.getWeekHours().toString());
+				bean.insertOrUpdate(data);
+			} else {
+				if(weekHoursData != null){
+					bean.remove(weekHoursData);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar las horas semanales del contrato (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
+		try {
+			ContractData mondayHours = obtainContractData(contract, ContextVariable.MONDAY_HOURS.getName());
+//			if(params.getMondayHours()!=null){
+			if(params.getWeekDayHours()[0]!=null && params.getWeekDayHours()[0]>0){
+				data = mondayHours!=null?mondayHours:new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.MONDAY_HOURS.getName() );
+				data.setExpression(params.getWeekDayHours()[0].toString());
+				bean.insertOrUpdate(data);
+			} else {
+				if(mondayHours !=null){
+					bean.remove(mondayHours);
+				}
+			}
+			ContractData tuesdayHours = obtainContractData(contract, ContextVariable.TUESDAY_HOURS.getName());
+			if(params.getWeekDayHours()[1]!=null && params.getWeekDayHours()[1]>0){
+				data = tuesdayHours!=null?tuesdayHours:new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.TUESDAY_HOURS.getName() );
+				data.setExpression(params.getWeekDayHours()[1].toString());
+				bean.insertOrUpdate(data);
+			} else {
+				if(tuesdayHours!=null){
+					bean.remove(tuesdayHours);
+				}
+			}
+			ContractData wednesdayHours = obtainContractData(contract, ContextVariable.WEDNESDAY_HOURS.getName());
+			if(params.getWeekDayHours()[2]!=null && params.getWeekDayHours()[2]>0){
+				data = wednesdayHours!=null?wednesdayHours:new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.WEDNESDAY_HOURS.getName() );
+				data.setExpression(params.getWeekDayHours()[2].toString());
+				bean.insertOrUpdate(data);
+			} else {
+				if(wednesdayHours!=null){
+					bean.remove(wednesdayHours);
+				}
+			}
+			ContractData thursdayHours = obtainContractData(contract, ContextVariable.THURSDAY_HOURS.getName());
+			if(params.getWeekDayHours()[3]!=null && params.getWeekDayHours()[3]>0){
+				data = thursdayHours!=null?thursdayHours:new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.THURSDAY_HOURS.getName() );
+				data.setExpression(params.getWeekDayHours()[3].toString());
+				bean.insertOrUpdate(data);
+			} else {
+				if(thursdayHours!=null){
+					bean.remove(thursdayHours);
+				}
+			}
+			ContractData fridayHours = obtainContractData(contract, ContextVariable.FRIDAY_HOURS.getName());
+			if(params.getWeekDayHours()[4]!=null && params.getWeekDayHours()[4]>0){
+				data = fridayHours!=null?fridayHours:new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.FRIDAY_HOURS.getName() );
+				data.setExpression(params.getWeekDayHours()[4].toString());
+				bean.insertOrUpdate(data);
+			} else {
+				if(fridayHours!=null){
+					bean.remove(fridayHours);
+				}
+			}
+			ContractData saturdayHours = obtainContractData(contract, ContextVariable.SATURDAY_HOURS.getName());
+			if(params.getWeekDayHours()[5]!=null && params.getWeekDayHours()[5]>0){
+				data = saturdayHours!=null?saturdayHours:new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.SATURDAY_HOURS.getName() );
+				data.setExpression(params.getWeekDayHours()[5].toString());
+				bean.insertOrUpdate(data);
+			} else {
+				if(saturdayHours!=null){
+					bean.remove(saturdayHours);
+				}
+			}
+			ContractData sundayHours = obtainContractData(contract, ContextVariable.SUNDAY_HOURS.getName());
+			if(params.getWeekDayHours()[6]!=null && params.getWeekDayHours()[6]>0){
+				data = sundayHours!=null?sundayHours:new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.SUNDAY_HOURS.getName() );
+				data.setExpression(params.getWeekDayHours()[6].toString());
+				bean.insertOrUpdate(data);
+			} else {
+				if(sundayHours!=null){
+					bean.remove(sundayHours);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar las horas del contrato. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
+	}
 	
 	public void updateContractInfo(Contract contract, ContractParams params) throws ControllerListenerException {
 		ContractInfo info;
@@ -1072,14 +1210,14 @@ public class ContractUtils implements Serializable {
 		Map<String, String> map = getContractInfoMap(contract);
 		if(map.get(ContractVariable.SELF_EMPLOYED.getValue())!=null){
 			if(new Boolean(map.get(ContractVariable.SELF_EMPLOYED.getValue()))){
-				params.setContractQuoteType(ContractQuoteType.RETA);
+				params.setTrl(TRL.RETA);
 			}
 		} else if(map.get(ContractVariable.COOPERATIVE_PARTNER.getValue())!=null){
 			if(new Boolean(map.get(ContractVariable.COOPERATIVE_PARTNER.getValue()))){
-				params.setContractQuoteType(ContractQuoteType.COOPERATIVE_PARTNER);
+				params.setTrl(TRL.COOPERATIVE_PARTNER);
 			}
 		} else {
-			params.setContractQuoteType(null);
+			params.setTrl(null);
 		}
 			
 		if(map.get(ContractVariable.CONTRACT_MODEL_OPTION.getValue())!=null){
