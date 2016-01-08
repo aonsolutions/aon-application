@@ -144,7 +144,7 @@ public class BankAccount implements Serializable {
 			sb.append(getBban2()).append(".");
 		}
 		if (StringUtils.isNotBlank(getBban3())) {
-			sb.append("." + getBban3());
+			sb.append(StringUtils.substring(getBban3(), 0, 2)).append(".").append(StringUtils.substring(getBban3(), 2, 4));
 		}
 		if (StringUtils.isNotBlank(getBban4())) {
 			sb.append(getBban4());
