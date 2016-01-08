@@ -13,7 +13,7 @@ public interface IOffice {
 	public List<Notice> getOpenNotices (AONContext ctx) throws IllegalArgumentException;
 	public List<Notice> getClosedNotices (AONContext ctx) throws IllegalArgumentException;
 	public List<Notice> getAllIssues (AONContext ctx) throws IllegalArgumentException;
-	public void deleteNotice (AONContext ctx, Notice notice);
+	public boolean deleteNotice (AONContext ctx, Integer id);
 	public boolean deleteTag (AONContext ctx, String labelName);
 	public Tag addNewTag (AONContext ctx, Tag tag) throws IllegalArgumentException;
 	public Tag editTag (AONContext ctx, String labelName, Tag tag);

@@ -136,9 +136,9 @@ public class AonHub implements IAonHub {
 	}
 	
 	@Override
-	public void deleteIssue(String name,
+	public void deleteIssue(JsIssue issue,
 			AsyncCallback<JsIssue> callback) {
-		delete(repositoryUrl + "/labels/" + name, callback);
+		delete(repositoryUrl + "/issues/" + issue.getNumber(), callback);
 	}
 
 
@@ -210,6 +210,7 @@ public class AonHub implements IAonHub {
 		delete(repositoryUrl + "/labels/" + labelName, callback);
 	}
 
+	
 	// ********* PUBLIC STATIC METHODS *********** //
 
 	private static <T extends JavaScriptObject> AsyncCallback<T> hookCallback(

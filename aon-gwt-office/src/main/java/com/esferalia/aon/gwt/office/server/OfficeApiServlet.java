@@ -550,7 +550,7 @@ public class OfficeApiServlet extends HttpServlet {
 				resp.setStatus(200);
 			}
 			else {
-				resp.setStatus(400);
+				resp.setStatus(404);
 			}
 			
 			PrintWriter pw = resp.getWriter();
@@ -558,6 +558,36 @@ public class OfficeApiServlet extends HttpServlet {
 			pw.append("}");
 			pw.flush();
 			
+		}
+	}
+	
+	private static class DeleteNotice extends RegExpRequestHandler {
+		
+		public DeleteNotice() {
+			super("/issues/(\\d+)");
+		}
+		
+		@Override
+		public void handler(HttpServletRequest req, HttpServletResponse resp)
+				throws ServletException, IOException {
+			System.out.println("Lets go to delete a dbNotice");
+			
+			Integer noticeId = Integer.parseInt(
+					URLDecoder.decode(group(1), "UTF-8"));
+			System.out.println("Number: " + noticeId);
+			
+			boolean deleted = AON.deleteNotice(DOMAIN_ID, DOMAIN_NAME, USER_NAME, noticeId);
+			System.out.println("BORRADO: " + deleted);
+			
+			if ( deleted )
+				resp.setStatus(200);
+			else
+				resp.setStatus(404);
+			
+			PrintWriter pw = resp.getWriter();
+			pw.append("{\n");
+			pw.append("}");
+			pw.flush();
 		}
 	}
 
@@ -605,6 +635,7 @@ public class OfficeApiServlet extends HttpServlet {
 	private static final HttpRequestHandler DELETE_HANDLERS[] = {
 			new DeleteComment(),
 			new DeleteLabel(),
+			new DeleteNotice(),
 			new DeletelabelFromIssue()
 	};
 	// @formatter:on

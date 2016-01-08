@@ -46,7 +46,7 @@ public interface IAonHub {
 	void editIssue(JsIssue issue, IssueValue prop,
 			final AsyncCallback<JsIssue> callback);
 
-	void deleteIssue(String name,
+	void deleteIssue(JsIssue issue,
 			final AsyncCallback<JsIssue> callback);
 
 	void getIssueComments(JsIssue issue,

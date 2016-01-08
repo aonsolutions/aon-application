@@ -112,8 +112,8 @@ public class GWTOfficeTestCase extends GWTTestConstans {
 		
 		for (int i = 0; i < MAX_ISSUES_COUNT; i++) {
 			final IssueValue issue = new IssueValue();
-			final String title = "Title issue " + (i + 1);
-			final String body = "Body issue " + (i + 1);
+			final String title = PRUEBA_TEST + " Title issue " + (i + 1);
+			final String body = PRUEBA_TEST + " Body issue " + (i + 1);
 
 			issue.setTitle(title);
 			issue.setBody(body);

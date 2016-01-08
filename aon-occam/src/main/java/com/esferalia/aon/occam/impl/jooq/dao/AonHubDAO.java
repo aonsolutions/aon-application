@@ -151,19 +151,29 @@ public class AonHubDAO {
 		}
 	}
 
-	public static void deleteNotice(AONContext ctx, Notice notice) {
-
-		Integer domainId = ctx.getDomainId();
-
-		ctx.getDslContext().delete(NOTICE_TAG)
-				.where(NOTICE_TAG.NOTICE.eq(notice.getId())).execute();
-
-		ctx.getDslContext().delete(NOTICE).where(NOTICE.NOTICE_
-				.eq(notice.getId()).and(NOTICE.DOMAIN.eq(domainId)));
-
-		ctx.getDslContext().delete(NOTICE).where(NOTICE.ID.eq(notice.getId()));
-
-		// FALTA LA GESTION DE LOS COMENTARIOS
+	public static boolean deleteNotice(AONContext ctx, Integer id) {
+		
+		try {
+			ctx.getDslContext().delete(NOTICE_TAG)
+			.where(NOTICE_TAG.NOTICE.eq(id))
+			.execute();
+			
+			ctx.getDslContext().delete(NOTICE)
+			.where(NOTICE.NOTICE_.eq(id))
+			.execute();
+			
+			ctx.getDslContext().delete(NOTICE)
+			.where(NOTICE.ID.eq(id))
+			.execute();
+			// FALTA LA GESTION DE LOS COMENTARIOS
+			
+			return true;
+			
+		} catch ( Exception ex ) {
+			System.err.println("Exception: " + ex.getMessage());
+			return false;
+		}
+		
 	}
 
 	public static Tag addNewTag(AONContext ctx, Tag tag) {

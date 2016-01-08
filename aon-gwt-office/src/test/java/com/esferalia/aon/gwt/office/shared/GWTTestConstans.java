@@ -11,6 +11,7 @@ public class GWTTestConstans extends GWTTestCase {
 
 	protected final static String EDITED = " --------- editado";
 	protected final static String OPEN_STATE_ISSUE = "open";
+	protected final static String PRUEBA_TEST = "PRUEBA PARA TEST";
 	protected final static String CLOSE_STATE_ISSUE = "closed";
 	protected final static String LABEL_NAME = "Etiqueta ";
 	protected final static String LABEL_NAME_EDITED = " -------- editada";

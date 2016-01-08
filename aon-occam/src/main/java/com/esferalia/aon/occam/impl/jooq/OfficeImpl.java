@@ -60,8 +60,8 @@ public class OfficeImpl implements IOffice {
 	}
 
 	@Override
-	public void deleteNotice(AONContext ctx, Notice notice) {
-		AonHubDAO.deleteNotice(ctx, notice);
+	public boolean deleteNotice(AONContext ctx, Integer id) {
+		return AonHubDAO.deleteNotice(ctx, id);
 	}
 	
 	@Override
