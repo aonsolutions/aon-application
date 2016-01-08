@@ -400,7 +400,7 @@ public class Utils {
 	
 	public static Double getValCost(AONContext ctx, Double quantity, Item item, String login, Integer workplaceId, Integer warehouseId){
 		ApplicationParameter ap = AppParamDAO.fetchOne(ctx, AppParam.AON_PRODUCT_VALUATION_METHOD);
-		switch (ap.getValue()) {
+		switch (ap != null ? ap.getValue() : "0") {
 			case "0": return quantity != 0 ? item.getPurchasePrice() : 0.0;
 			case "1": return getLastPurchasePrice(ctx.getDomainName(), item, quantity, login, workplaceId, warehouseId);
 			case "2": return getAveragePurchasePrice(ctx, item, quantity, login, workplaceId, warehouseId);
