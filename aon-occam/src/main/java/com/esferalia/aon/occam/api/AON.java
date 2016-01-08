@@ -2013,6 +2013,18 @@ public class AON {
 		}
 	}
 
+	public static Tag editTag(Integer domainId, String domainName,
+			String userName, String labelName, Tag tag) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getOffice().editTag(ctx, labelName, tag);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static List<Tag> getTags(Integer domainId, String domainName,
 			String userName) {
 		AONContext ctx = null;
@@ -2777,8 +2789,8 @@ public class AON {
 		}
 	}
 
-	public static LinkedList<InvoiceSeries> getInvoiceSeries(String domainName, int domainId, String login
-			, Date from, Date to, boolean taxDate) {
+	public static LinkedList<InvoiceSeries> getInvoiceSeries(String domainName,
+			int domainId, String login, Date from, Date to, boolean taxDate) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);

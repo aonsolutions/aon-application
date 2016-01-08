@@ -19,33 +19,35 @@ public class GWTExtendsOfficeTestCase extends GWTOfficeTestCase {
 	@Override @Ignore	
 	public void testGetRepository() {}
 	
-	@Override @Ignore
+	@Override 
 	public void testCreateIssues() {
-		//super.testCreateIssues();
+		super.testCreateIssues();
 	}
 	
-	@Override @Ignore
+	@Override 
 	public void testUpdateIssues() {
-//		super.testUpdateIssues();
+		super.testUpdateIssues();
 	}
 	
-	@Override @Ignore
+	@Override 
 	public void testCloseIssues() {
-//		super.testCloseIssues();
+		super.testCloseIssues();
 	}
 	
-	@Override @Ignore
+	@Override 
 	public void testReOpenIssuesTestCase() {
-//		super.testReOpenIssuesTestCase();
+		super.testReOpenIssuesTestCase();
 	}
 	
-	@Override
+	@Override 
 	public void testCreateLabels() {
 		super.testCreateLabels();
 	}
 	
-	@Override @Ignore
-	public void testUpdateLabels() {}
+	@Override
+	public void testUpdateLabels() {
+		super.testUpdateLabels();
+	}
 	
 	@Override @Ignore
 	public void testAssignLabels() {}

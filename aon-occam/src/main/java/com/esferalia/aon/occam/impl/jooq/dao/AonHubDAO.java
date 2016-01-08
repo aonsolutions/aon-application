@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.jooq.Condition;
 import org.jooq.Cursor;
 import org.jooq.Record;
 
@@ -182,6 +183,30 @@ public class AonHubDAO {
 		newTag.setColor(record.getValue(TAG.COLOR));
 
 		return newTag;
+	}
+	
+	public static Tag editTag ( AONContext ctx, String labelName, Tag tag) {
+		
+		ctx.getDslContext().update(TAG)
+		.set(TAG.NAME, tag.getName())
+		.where(TAG.DOMAIN.eq(ctx.getDomainId())
+				.and(TAG.TYPE.eq(TagType.NOTICE.value()))
+				.and(TAG.NAME.eq(labelName)))
+		.execute();
+		
+		TagRecord tagRecord = ctx.getDslContext()
+				.selectFrom(TAG)
+				.where(TAG.DOMAIN.eq(ctx.getDomainId())
+						.and(TAG.TYPE.eq(TagType.NOTICE.value()))
+						.and(TAG.NAME.eq(tag.getName())))
+				.fetchOne();
+		
+		Tag editTag = new Tag();
+		editTag.setId(tagRecord.getValue(TAG.ID));
+		editTag.setName(tagRecord.getValue(TAG.NAME));
+		editTag.setColor(tagRecord.getValue(TAG.COLOR));
+		
+		return editTag;
 	}
 
 	public static void deleteTag(AONContext ctx, Tag tag) {
@@ -429,7 +454,9 @@ public class AonHubDAO {
 	public static Tag getTag(AONContext ctx, String name) {
 
 		TagRecord tagRecord = ctx.getDslContext().selectFrom(TAG)
-				.where(TAG.DOMAIN.eq(ctx.getDomainId()).and(TAG.NAME.eq(name)))
+				.where(TAG.DOMAIN.eq(ctx.getDomainId())
+						.and(TAG.NAME.eq(name))
+						.and(TAG.TYPE.eq(TagType.NOTICE.value())))
 				.fetchOne();
 		Tag tag = new Tag();
 		tag.setId(tagRecord.getValue(TAG.ID));

@@ -16,6 +16,7 @@ public interface IOffice {
 	public void deleteNotice (AONContext ctx, Notice notice);
 	public void deleteTag (AONContext ctx, Tag tag);
 	public Tag addNewTag (AONContext ctx, Tag tag) throws IllegalArgumentException;
+	public Tag editTag (AONContext ctx, String labelName, Tag tag);
 	public Tag getTag (AONContext ctx, String name) throws IllegalArgumentException;
 	public List<Tag> getTags (AONContext ctx) throws IllegalArgumentException;
 

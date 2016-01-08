@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.office.server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLDecoder;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -24,6 +25,7 @@ import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.office.User;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
+import com.esferalia.aon.occam.api.model.type.TagType;
 
 /**
  * 
@@ -379,15 +381,24 @@ public class OfficeApiServlet extends HttpServlet {
 	private static class ListAllLabels extends RegExpRequestHandler {
 
 		public ListAllLabels() {
-			super("/repos/(.+)/(.+)/labels");
+			super("/labels");
 		}
 
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
 			//TODO
-			System.out.println("List all labels for this repository "
-					+ " Owner: " + group(1) + " Repo: " + group(2));
+			System.out.println("List all labels for this repository ");
+			
+			List<Tag> tags = AON.getTags(DOMAIN_ID, DOMAIN_NAME, USER_NAME);
+			
+			PrintWriter pw = resp.getWriter();
+			pw.append('{');			
+			pw.printf(String.format("\"message\":\"%s\",\r\n", 
+					"FOUNDED"));
+			pw.printf("\"data\":%s", buildLabels(tags.listIterator())); 
+			pw.append('}');
+			pw.flush();
 		}
 	}
 
@@ -425,6 +436,7 @@ public class OfficeApiServlet extends HttpServlet {
 				JSONObject json = new JSONObject(object);
 				Tag tag = new Tag();
 				tag.setName(json.getString("name"));
+				tag.setType(TagType.NOTICE.value());
 				
 				if ( json.isNull("color") == false)
 					tag.setColor(json.getString("color"));
@@ -440,15 +452,35 @@ public class OfficeApiServlet extends HttpServlet {
 	private static class UpdateLabel extends RegExpRequestHandler {
 
 		public UpdateLabel() {
-			super("/repos/(.+)/(.+)/labels/(.+)");
+			super("/labels/(.+)");
 		}
 
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
 			//TODO
-			System.out.println("Update a label " + " Owner: " + group(1)
-					+ " Repo: " + group(2) + " LabelName: " + group(3));
+			System.out.println("Update a label " + " Owner: " + group(1));
+			
+			try {
+				String object = getJsonObject(req);
+				System.out.println("Object: " + object);
+				JSONObject json = new JSONObject(object);
+				String labelName = URLDecoder.decode(group(1), "UTF-8");
+				System.out.println("Deco2: " + labelName);
+				Tag tag = new Tag();
+				
+				if ( json.isNull("name") == false )					
+					tag.setName(json.getString("name"));
+
+				if ( json.isNull("color") == false) 
+					tag.setColor(json.getString("color"));
+				
+				getEditLabel(resp, labelName, tag);
+				
+				System.out.println(" ================== ");
+			} catch ( Exception ex) {
+				System.out.println("Exception: " + ex.getMessage());
+			}
 		}
 	}
 
@@ -726,7 +758,6 @@ public class OfficeApiServlet extends HttpServlet {
 		buffer.append("{\n");
 		buffer.append(String.format("\"id\":%s,\r\n",
 				String.valueOf(user.getId())));		
-//		buffer.append(String.format("\"id\":\"%s\",\r\n", user.getId()));	
 		buffer.append(String.format("\"login\":\"%s\"\r\n", user.getName()));
 		buffer.append("}");
 		return buffer.toString();
@@ -738,7 +769,7 @@ public class OfficeApiServlet extends HttpServlet {
 
 		buffer.append("[\n");
 		while (tagsIterator.hasNext()) {
-			getLabel(tagsIterator.next());
+			buffer.append(getLabel(tagsIterator.next()));
 			
 			if (tagsIterator.hasNext())
 				buffer.append(",\n");
@@ -775,6 +806,26 @@ public class OfficeApiServlet extends HttpServlet {
 		} catch ( Exception ex ) {
 			System.out.println(ex.getMessage() + " " + ex.getLocalizedMessage());
 			pw.flush();
+		} finally {
+			if ( pw != null )
+				pw.close();
+		}
+	}
+	
+	private static void getEditLabel (HttpServletResponse resp, String labelName, Tag tag) {
+		
+		PrintWriter pw = null;
+		try {
+			pw = resp.getWriter();
+			Tag editTag = AON.editTag(DOMAIN_ID, DOMAIN_NAME, USER_NAME, labelName, tag);
+			pw.append(getLabel(editTag));
+			pw.flush();
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage() + " " + ex.getLocalizedMessage());
+			pw.flush();
+		} finally {
+			if ( pw != null )
+				pw.close();
 		}
 	}
 	

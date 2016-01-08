@@ -33,6 +33,11 @@ public class OfficeImpl implements IOffice {
 			throws IllegalArgumentException {
 		return AonHubDAO.addNewTag(ctx, tag);
 	}
+	
+	@Override
+	public Tag editTag(AONContext ctx, String labelName, Tag tag) {		
+		return AonHubDAO.editTag(ctx, labelName, tag);
+	}
 
 	@Override
 	public List<Tag> getTags(AONContext ctx) throws IllegalArgumentException {
