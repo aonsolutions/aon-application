@@ -2037,13 +2037,12 @@ public class AON {
 		}
 	}
 
-	public static void deleteTag(Integer domainId, String domainName,
-			String userName, Tag tag) {
+	public static boolean deleteTag(Integer domainId, String domainName,
+			String userName, String labelName) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			getOffice().deleteTag(ctx, tag);
-
+			return getOffice().deleteTag(ctx, labelName);
 		} finally {
 			if (ctx != null)
 				ctx.close();

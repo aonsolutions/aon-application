@@ -209,12 +209,32 @@ public class AonHubDAO {
 		return editTag;
 	}
 
-	public static void deleteTag(AONContext ctx, Tag tag) {
+	public static boolean deleteTag(AONContext ctx, String labelName) {
 
-		ctx.getDslContext().delete(NOTICE_TAG)
-				.where(NOTICE_TAG.TAG.eq(tag.getId())).execute();
+		try {
+			
+			TagRecord tagRecord = ctx.getDslContext()
+					.selectFrom(TAG)
+					.where(TAG.DOMAIN.eq(ctx.getDomainId())
+							.and(TAG.TYPE.equal(TagType.NOTICE.value()))
+							.and(TAG.NAME.eq(labelName)))
+					.fetchOne();
+			
+			ctx.getDslContext().delete(NOTICE_TAG)
+			.where(NOTICE_TAG.ID.eq(tagRecord.getValue(TAG.ID)))
+			.execute();
+			
+			ctx.getDslContext().delete(TAG)
+			.where(TAG.ID.eq(tagRecord.getValue(TAG.ID)))
+			.execute();
+			
+			return true;
 
-		ctx.getDslContext().delete(TAG).where(TAG.ID.eq(tag.getId())).execute();
+			
+		} catch ( Exception ex ) {
+			System.out.println("Exception: " + ex.getMessage());
+			return false;
+		}
 	}
 
 	public static List<Notice> getOpenNotices(AONContext ctx) {

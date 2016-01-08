@@ -308,8 +308,9 @@ public class GWTOfficeTestCase extends GWTTestConstans {
 				JsArray<JsLabel> labels = result.getData();
 				assertTrue(labels.length() > MAX_LABELS_COUNT);
 				
-				for  ( int x = 0; x < labels.length(); x++) {					
-					deleteLabel(labels.get(x));
+				for  ( int x = 0; x < labels.length(); x++) {
+					if ( labels.get(x).getName().contains(LABEL_NAME))
+						deleteLabel(labels.get(x));
 				}
 			}
 		});

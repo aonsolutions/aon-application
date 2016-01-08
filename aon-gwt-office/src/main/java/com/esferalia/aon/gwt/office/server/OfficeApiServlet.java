@@ -531,15 +531,33 @@ public class OfficeApiServlet extends HttpServlet {
 	private static class DeleteLabel extends RegExpRequestHandler {
 
 		public DeleteLabel() {
-			super("/repos/(.+)/(.+)/labels/(.+)");
+			super("/labels/(.+)");			
 		}
 
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
 			//TODO
-			System.out.println("Delete a label " + " Owner: " + group(1)
-					+ " Repo: " + group(2) + " LabelName: " + group(3));
+			System.out.println("Delete a label " + " Owner: " + group(1));
+			
+			String decoded = URLDecoder.decode(group(1), "UTF-8");
+			System.out.println("Label Decoded: " + decoded);
+			
+			boolean deleted = AON.deleteTag(DOMAIN_ID, DOMAIN_NAME, USER_NAME, decoded);
+			System.out.println("Borrado: " + deleted);
+			
+			if ( deleted ) {
+				resp.setStatus(200);
+			}
+			else {
+				resp.setStatus(400);
+			}
+			
+			PrintWriter pw = resp.getWriter();
+			pw.append("{\n");
+			pw.append("}");
+			pw.flush();
+			
 		}
 	}
 

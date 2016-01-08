@@ -55,8 +55,10 @@ public class GWTExtendsOfficeTestCase extends GWTOfficeTestCase {
 	@Override @Ignore
 	public void testGetAssignLabels2Issues() {}
 	
-	@Override @Ignore
-	public void testDeleteLabels() {}
+	@Override 
+	public void testDeleteLabels() {
+		super.testDeleteLabels();
+	}
 	
 	@Override @Ignore
 	public void testAssignIssues() {}

@@ -65,8 +65,8 @@ public class OfficeImpl implements IOffice {
 	}
 	
 	@Override
-	public void deleteTag(AONContext ctx, Tag tag) {
-		AonHubDAO.deleteTag(ctx, tag);
+	public boolean deleteTag(AONContext ctx, String labelName) {
+		return AonHubDAO.deleteTag(ctx, labelName);
 	}
 	
 	@Override
