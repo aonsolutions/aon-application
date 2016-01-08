@@ -1386,7 +1386,7 @@ public class Mod3902015 implements Serializable {
 			calculate(Mod3902015DetailKey.K15, K15_FORMULA);
 			calculate(Mod3902015DetailKey.K17, K17_FORMULA);
 			calculate(Mod3902015DetailKey.K19, K19_FORMULA);
-			calculate(Mod3902015DetailKey.K23, K21_FORMULA);
+			calculate(Mod3902015DetailKey.K21, K21_FORMULA);
 			calculate(Mod3902015DetailKey.K23, K23_FORMULA);
 			calculate(Mod3902015DetailKey.K25, K25_FORMULA);
 			calculate(Mod3902015DetailKey.K27, K27_FORMULA);

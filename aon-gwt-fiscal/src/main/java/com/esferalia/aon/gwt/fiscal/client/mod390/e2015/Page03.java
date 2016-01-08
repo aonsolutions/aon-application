@@ -99,11 +99,15 @@ public class Page03 extends ResizeComposite implements RequiresResize , IMod3902
 			for (Mod3902015DetailKey key : mod390.getGeneralRegime().keySet()) {
 				Mod390Detail detail = mod390.getGeneralRegime().get(key);
 				Mod390DetailFields fields = map.get(key);
-				if (!AonMathUtils.equals(fields.getTaxableBase().getValue(),detail.getTaxableBase())) {
-					fields.setTaxableBase(detail.getTaxableBase(),true);	
+				if (fields.getTaxableBase().getValue() != null) {
+					if (key.hasTaxableBaseAvailable() && !AonMathUtils.equals(fields.getTaxableBase().getValue(),detail.getTaxableBase())) {
+						fields.setTaxableBase(detail.getTaxableBase(),true);	
+					}
 				}
-				if (!AonMathUtils.equals(fields.getQuota().getValue(),detail.getQuota())) {
-					fields.setQuota(detail.getQuota(),true);
+				if (fields.getQuota().getValue() != null) {
+					if (!AonMathUtils.equals(fields.getQuota().getValue(),detail.getQuota())) {
+						fields.setQuota(detail.getQuota(),true);
+					}
 				}
 			}
 		}
