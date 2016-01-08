@@ -87,15 +87,20 @@ public class DBStock {
 			AONContext sctx = ctx;
 			stock.stream().forEach(s ->{
 				if(s.getProduct() != null){
+					Condition serialNumber = ITEM.SERIAL_NUMBER.eq(s.getSerialNumber());
+					if(s.getSerialNumber() == null)
+						serialNumber = ITEM.SERIAL_NUMBER.isNull();
 					Result<Record6<Integer, Double, Double, Byte, Byte, Integer>> data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE
 							, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE, PRODUCT.ID)
 						.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
-						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domainId)).fetch();
+						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domainId))
+						.and(serialNumber).fetch();
 					if(data.isEmpty()){
 
 						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE, PRODUCT.ID)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
+										.and(serialNumber)
 										.and(PRODUCT.DOMAIN.eq(domainId)).fetch();
 					}
 					if(data.size()>1){
@@ -111,9 +116,6 @@ public class DBStock {
 						if(s.getDetail3() == "") 
 							detail3 = ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull());
 						
-						Condition serialNumber = ITEM.SERIAL_NUMBER.eq(s.getSerialNumber());
-						if(s.getSerialNumber() == null)
-							serialNumber = ITEM.SERIAL_NUMBER.isNull();
 										
 						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE, PRODUCT.ID)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
@@ -237,15 +239,20 @@ public class DBStock {
 				String code = s.getProduct();
 				
 				if(code != null){
+					Condition serialNumber = ITEM.SERIAL_NUMBER.eq(s.getSerialNumber());
+					if(s.getSerialNumber() == null)
+						serialNumber = ITEM.SERIAL_NUMBER.isNull();
 					Result<Record2<Integer, Double>> data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE)
 						.from(ITEM)
-						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domain.getId())).fetch();
+						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domain.getId()))
+						.and(serialNumber).fetch();
 					if(data.isEmpty()){
 
 						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
-										.and(PRODUCT.DOMAIN.eq(domain.getId())).fetch();
+										.and(PRODUCT.DOMAIN.eq(domain.getId()))
+										.and(serialNumber).fetch();
 					}
 					if(data.size()>1){
 						Condition detail = ITEM.DETAIL.eq(s.getDetail());
@@ -259,10 +266,6 @@ public class DBStock {
 						Condition detail3 = ITEM.DETAIL3.eq(s.getDetail3());
 						if(s.getDetail3() == "") 
 							detail3 = ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull());
-						
-						Condition serialNumber = ITEM.SERIAL_NUMBER.eq(s.getSerialNumber());
-						if(s.getSerialNumber() == null)
-							serialNumber = ITEM.SERIAL_NUMBER.isNull();
 						
 						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
@@ -433,15 +436,21 @@ public class DBStock {
 			AONContext sctx = ctx;
 			stock.stream().forEach(s ->{
 				if(s.getProduct() != null){
+					Condition serialNumber = ITEM.SERIAL_NUMBER.eq(s.getSerialNumber());
+					if(s.getSerialNumber() == null)
+						serialNumber = ITEM.SERIAL_NUMBER.isNull();
+					
 					Result<Record1< Integer>> data = sctx.getDslContext().select(ITEM.ID)
 						.from(ITEM)
-						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domain.getId())).fetch();
+						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domain.getId()))
+						.and(serialNumber).fetch();
 					if(data.isEmpty()){
 
 						data = sctx.getDslContext().select(ITEM.ID)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
-										.and(PRODUCT.DOMAIN.eq(domain.getId())).fetch();
+										.and(PRODUCT.DOMAIN.eq(domain.getId()))
+										.and(serialNumber).fetch();
 					}
 					if(data.size()>1){
 						Condition detail = ITEM.DETAIL.eq(s.getDetail());
@@ -455,11 +464,7 @@ public class DBStock {
 						Condition detail3 = ITEM.DETAIL3.eq(s.getDetail3());
 						if(s.getDetail3() == "") 
 							detail3 = ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull());
-						
-						Condition serialNumber = ITEM.SERIAL_NUMBER.eq(s.getSerialNumber());
-						if(s.getSerialNumber() == null)
-							serialNumber = ITEM.SERIAL_NUMBER.isNull();
-						
+
 						data = sctx.getDslContext().select(ITEM.ID)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
