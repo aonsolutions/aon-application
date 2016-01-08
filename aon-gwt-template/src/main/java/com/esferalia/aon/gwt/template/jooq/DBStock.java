@@ -90,14 +90,14 @@ public class DBStock {
 					Condition serialNumber = ITEM.SERIAL_NUMBER.eq(s.getSerialNumber());
 					if(s.getSerialNumber() == null)
 						serialNumber = ITEM.SERIAL_NUMBER.isNull();
-					Result<Record6<Integer, Double, Double, Byte, Byte, Integer>> data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE
-							, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE, PRODUCT.ID)
+					Result<Record7<Integer, Double, Double, Byte, Byte, Integer, Byte>> data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE
+							, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE, PRODUCT.ID, PRODUCT.LOTABLE)
 						.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domainId))
 						.and(serialNumber).fetch();
 					if(data.isEmpty()){
 
-						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE, PRODUCT.ID)
+						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE, PRODUCT.ID, PRODUCT.LOTABLE)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
 										.and(serialNumber)
@@ -117,7 +117,7 @@ public class DBStock {
 							detail3 = ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull());
 						
 										
-						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE, PRODUCT.ID)
+						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE, PRODUCT.ID, PRODUCT.LOTABLE)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
 									.and(detail)
@@ -127,7 +127,8 @@ public class DBStock {
 									.and(PRODUCT.DOMAIN.eq(domainId)).fetch();
 					}
 					if(!data.isEmpty()){
-						if((s.getSerialNumber() != null) && s.getQuantity() > 1 ){
+						Byte lotable = data.get(0).getValue(PRODUCT.LOTABLE);
+						if((s.getSerialNumber() != null &&  lotable != 1) && s.getQuantity() > 1 ){
 							v.add("*Fila " +(s.getRow()+1) + " : La cantidad no puede ser mayor que 1.");
 							error.setError(false);
 							error.setTextError(v);
@@ -287,7 +288,8 @@ public class DBStock {
 				*/
 					// TODO update
 					if(!data.isEmpty()){
-						if((s.getSerialNumber() != null) && s.getQuantity() > 1 ){
+						Byte lotable = data.get(0).getValue(PRODUCT.LOTABLE);
+						if((s.getSerialNumber() != null && lotable != 1) && s.getQuantity() > 1 ){
 							v.add("*Fila " +(s.getRow()+1) + " : La cantidad no puede ser mayor que 1.");
 							error.setError(false);
 							error.setTextError(v);
@@ -475,7 +477,8 @@ public class DBStock {
 									.and(PRODUCT.DOMAIN.eq(domain.getId())).fetch();
 					}
 					if(!data.isEmpty()){
-						if((s.getSerialNumber() != null) && s.getQuantity() > 1 ){
+						Byte lotable = data.get(0).getValue(PRODUCT.LOTABLE);
+						if((s.getSerialNumber() != null && lotable != 1) && s.getQuantity() > 1 ){
 							v.add("*Fila " +(s.getRow()+1) + " : La cantidad no puede ser mayor que 1.");
 							error.setError(false);
 							error.setTextError(v);
@@ -519,7 +522,7 @@ public class DBStock {
 									stockId2 = data3.get(0).value2();
 								
 									//UPDATE source & target
-									if((s.getSerialNumber() != null ) && (quantity+s.getQuantity() > 1 || quantity2-s.getQuantity() < -1)){
+									if((s.getSerialNumber() != null && lotable != 1) && (quantity+s.getQuantity() > 1 || quantity2-s.getQuantity() < -1)){
 										v.add("*Fila " +(s.getRow()+1) + " : La cantidad no puede ser mayor que 1.");
 										error.setError(false);
 										error.setTextError(v);
@@ -534,7 +537,7 @@ public class DBStock {
 									quantity2 = data3.get(0).value1();
 									stockId2 = data3.get(0).value2(); 
 								
-									if((s.getSerialNumber() != null ) && quantity2+s.getQuantity() < -1 ){
+									if((s.getSerialNumber() != null && lotable != 1) && quantity2+s.getQuantity() < -1 ){
 										v.add("*Fila " +(s.getRow()+1) + " : La cantidad no puede ser mayor que 1.");
 										error.setError(false);
 										error.setTextError(v);
@@ -555,7 +558,7 @@ public class DBStock {
 									stockId2 = data3.get(0).value2();
 								
 									//UPDATE source
-									if((s.getSerialNumber() != null ) && quantity2+s.getQuantity() < -1 ){
+									if((s.getSerialNumber() != null && lotable != 1) && quantity2+s.getQuantity() < -1 ){
 										v.add("*Fila " +(s.getRow()+1) + " : La cantidad no puede ser mayor que 1.");
 										error.setError(false);
 										error.setTextError(v);
@@ -573,7 +576,7 @@ public class DBStock {
 									stockId = data2.get(0).value2();
 								
 									//UPDATE target
-									if((s.getSerialNumber() != null ) && quantity+s.getQuantity() > 1 ){
+									if((s.getSerialNumber() != null && lotable != 1) && quantity+s.getQuantity() > 1 ){
 										v.add("*Fila " +(s.getRow()+1) + " : La cantidad no puede ser mayor que 1.");
 										error.setError(false);
 										error.setTextError(v);
@@ -687,9 +690,9 @@ public class DBStock {
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
-			Result<Record6<Double, String, String, String, String, String>> data = 
+			Result<Record7<Double, String, String, String, String, String, String>> data = 
 				ctx.getDslContext().select(INVENTORY_DETAIL.REAL_QUANTITY,ITEM.DETAIL,
-						ITEM.DETAIL2, ITEM.DETAIL3, PRODUCT.CODE, PRODUCT.NAME)
+						ITEM.DETAIL2, ITEM.DETAIL3, PRODUCT.CODE, PRODUCT.NAME, ITEM.SERIAL_NUMBER)
 					.from(INVENTORY_DETAIL).join(ITEM).on(ITEM.ID.eq(INVENTORY_DETAIL.ITEM))
 					.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 					.where(INVENTORY_DETAIL.DOMAIN.eq(domain.getId()))
@@ -700,7 +703,7 @@ public class DBStock {
 			
 				
 			Vector<StockInfo> v = new Vector<StockInfo>();
-			for (Record6<Double, String, String, String, String, String> d : data) {
+			for (Record7<Double, String, String, String, String, String, String> d : data) {
 				StockInfo si = new StockInfo();
 				si.setDetail(d.value2());
 				si.setDetail2(d.value3());
@@ -708,6 +711,7 @@ public class DBStock {
 				si.setProduct(d.value5());
 				si.setQuantity(d.value1());
 				si.setProductName(d.value6());
+				si.setSerialNumber(d.getValue(ITEM.SERIAL_NUMBER));
 				v.add(si);
 			}
 			return v;
