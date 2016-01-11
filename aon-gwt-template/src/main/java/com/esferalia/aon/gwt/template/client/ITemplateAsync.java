@@ -88,4 +88,6 @@ public interface ITemplateAsync {
 
 	void getTypeList(Domain domain, AsyncCallback<LinkedList<String>> callback);
 
+	void print(String text, AsyncCallback<Void> callback);
+
 }

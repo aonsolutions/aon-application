@@ -106,7 +106,7 @@ public class Templates extends Composite implements EntryPoint {
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {print(caught);}
 				});
 			}
 			
@@ -527,19 +527,17 @@ public class Templates extends Composite implements EntryPoint {
 									}
 									
 									@Override
-									public void onFailure(Throwable caught) {
-
-									}
+									public void onFailure(Throwable caught) {print(caught);}
 								});
 							}
 
 							@Override
-							public void onFailure(Throwable caught) {}
+							public void onFailure(Throwable caught) {print(caught);}
 						});
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {print(caught);}
 				});	
 			}
 		};
@@ -1577,5 +1575,12 @@ public class Templates extends Composite implements EntryPoint {
 	
 	private Domain getDomain() {
 		return new Domain().setId(JsTemplates.getCurrentDomain()).setName(JsTemplates.getCurrentDomainName());
+	}
+	
+	private void print(Throwable caught){
+		item.print(caught.getMessage(), new AsyncCallback<Void>() {
+			@Override public void onSuccess(Void result) {}
+			@Override public void onFailure(Throwable caught) {}
+		});
 	}
 }

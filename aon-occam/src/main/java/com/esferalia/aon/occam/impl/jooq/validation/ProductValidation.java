@@ -308,8 +308,23 @@ public class ProductValidation {
 				.and(ITEM.DETAIL3.isNull())
 				.and(ITEM.PRODUCT.eq(i.getProductId()))
 				.fetchOne(0,int.class);
-			
-		if(count>0 && count2>0 && count3>0)
+		
+		int count4;
+		if(i.getSerialNumber() != null)
+			count4 = ctx.getDslContext().selectCount()
+				.from(ITEM)
+				.where(ITEM.DOMAIN.eq(i.getDomain()))
+				.and(ITEM.SERIAL_NUMBER.eq(i.getSerialNumber()))
+				.and(ITEM.PRODUCT.eq(i.getProductId()))
+				.fetchOne(0, int.class);
+		else count4 = ctx.getDslContext().selectCount()
+				.from(ITEM)
+				.where(ITEM.DOMAIN.eq(i.getDomain()))
+				.and(ITEM.SERIAL_NUMBER.isNull())
+				.and(ITEM.PRODUCT.eq(i.getProductId()))
+				.fetchOne(0, int.class);
+		
+		if(count>0 && count2>0 && count3>0 && count4>0)
 			throw new AonCoreException(AonError.DUPLICATE_DETAILS.format(i.getDetails()));
 		
 	};

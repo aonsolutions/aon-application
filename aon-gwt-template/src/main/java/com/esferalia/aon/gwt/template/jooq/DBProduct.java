@@ -19,9 +19,8 @@ import java.util.Vector;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
-import org.jooq.Record13;
 import org.jooq.Record2;
-import org.jooq.Record20;
+import org.jooq.Record22;
 import org.jooq.Record3;
 import org.jooq.Record5;
 import org.jooq.Record7;
@@ -32,23 +31,29 @@ import com.esferalia.aon.gwt.template.server.ProductInfo;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
+import com.esferalia.aon.jooq.tables.records.ProductRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.product.Product;
-import com.esferalia.aon.occam.api.model.product.ProductCategory;
-import com.esferalia.aon.occam.api.model.product.ProductTag;
-import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductCategory;
+import com.esferalia.aon.occam.api.model.product.ProductTag;
+import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 
 public class DBProduct {
 
 	private static Item getItem(Item i,Integer productId, Integer domainId, AONContext ctx){
+		Condition serialNumber = ITEM.SERIAL_NUMBER.eq(i.getSerialNumber());
+		if(i.getSerialNumber() == null)
+			serialNumber = ITEM.SERIAL_NUMBER.isNull();
 		Result<Record7<Integer, String, String, String, String, String, Timestamp>> data = ctx.getDslContext().select(ITEM.ID,ITEM.BARCODE,ITEM.DETAIL,ITEM.DETAIL2,ITEM.DETAIL3,ITEM.CREATION_USER,ITEM.CREATION_DATE)
 				.from(ITEM)
-				.where(ITEM.PRODUCT.eq(productId)).fetch();
+				.where(ITEM.PRODUCT.eq(productId))
+				.and(serialNumber).fetch();
 		
 		String barcode = null;
 		Integer itemId = null;
@@ -77,48 +82,54 @@ public class DBProduct {
 	}
 	
 	private static Product getProduct(Product p, TemplateInfo ti, Integer domainId, AONContext ctx){
-		Record13<Integer, Integer, Integer, Byte, Byte, Integer, Integer, Byte, Byte, Byte, String, Timestamp, Byte> data = ctx.getDslContext().select(PRODUCT.ID, PRODUCT.BRAND, PRODUCT.CATEGORY,PRODUCT.INVENTORIABLE,PRODUCT.STATUS, PRODUCT.VAT, PRODUCT.RETENTION,PRODUCT.TYPE, PRODUCT.COMPOSITION, PRODUCT.COMPOSITION_PRICE, PRODUCT.CREATION_USER, PRODUCT.CREATION_DATE, PRODUCT.KIND)
+		ProductRecord pr = ctx.getDslContext().select()
 				.from(PRODUCT)
-				.where(PRODUCT.CODE.eq(p.getCode()).and(PRODUCT.DOMAIN.eq(domainId))).fetchOne();
-		if(data != null){
+				.where(PRODUCT.CODE.eq(p.getCode()).and(PRODUCT.DOMAIN.eq(domainId)))
+				.fetchInto(PRODUCT).stream().findFirst().orElse(null);
+		if(pr != null){
 			Product product = new Product();
 			
-			product.setId(data.getValue(PRODUCT.ID));
+			product.setId(pr.getId());
 			product.setDomain(domainId);
 			product.setName(p.getName());
 			product.setCode(p.getCode());
 		
 			if(ti.getColumns().contains("Marca")) product.setBrand(p.getBrand());
-			else if(data.value2()!= null) product.setBrand(data.value2());
-			else product.setBrand(null);
+			else product.setBrand(pr.getBrand());
 			
 			if(ti.getColumns().contains("Categor\u00eda")) product.setCategory(p.getCategory());
-			else if(data.value3() != null) product.setCategory(data.value3());
-			else product.setCategory(null);
+			else product.setCategory(pr.getCategory());
 		
 			if(ti.getColumns().contains("Inventoriable")) product.setInventoriable(p.isInventoriable());
-			else product.setInventoriable(data.value4()==1);
+			else product.setInventoriable(pr.getInventoriable());
 	
 			if(ti.getColumns().contains("Estado")) product.setStatus(p.getStatus());
-			else product.setStatus(data.value5());
+			else product.setStatus(pr.getStatus());
 		
 			if(ti.getColumns().contains("IVA")) product.setVat(p.getVat());
-			else product.setVat(data.value6());
+			else product.setVat(pr.getVat());
 		
 			if(ti.getColumns().contains("IRPF")) product.setRetention(p.getRetention());
-			else product.setRetention(data.value7()); 
+			else product.setRetention(pr.getRetention()); 
 			
 			if(ti.getColumns().contains("Tipo")) product.setType(p.getType());
-			else product.setType(data.value8());
+			else product.setType(pr.getType());
 
 			if(ti.getColumns().contains("Producto Compuesto")) product.setComposition(p.isComposition());
-			else product.setComposition(data.value9() ==1);
+			else product.setComposition(pr.getComposition());
 		
 			if(ti.getColumns().contains("Precio Composici\u00f3n")) product.setCompositionPrice(p.isCompositionPrice());
-			else product.setCompositionPrice(data.value10() ==1);		 
-			product.setCreationUser(data.value11());
-			product.setCreationDate(data.value12());
-			product.setKind(data.getValue(PRODUCT.KIND));
+			else product.setCompositionPrice(pr.getCompositionPrice());		 
+		
+			if(ti.getColumns().contains("Serializable")) product.setSerializable(p.isSerializable());
+			else product.setSerializable(pr.getSerializable());
+			
+			if(ti.getColumns().contains("Loteable")) product.setLotable(p.isLotable());
+			else product.setLotable(pr.getLotable());
+			
+			product.setCreationUser(pr.getCreationUser());
+			product.setCreationDate(pr.getCreationDate());
+			product.setKind(pr.getKind());
 			return product;	
 		}
 		return null;
@@ -193,6 +204,11 @@ public class DBProduct {
 							r.getItem().stream().forEach(i ->{
 								com.esferalia.aon.occam.api.model.product.Item item = getItem(i, product.getId(), domain.getId(), sctx);
 								if(item != null){
+									if(item.getSerialNumber() != null &&  !product.isSerializable()){
+										error.setError(false);
+										verror.add("*Fila " + (r.getRow()+1)+": El producto no es serializable.");
+										error.setTextError(verror);
+									}
 									if(!esta(item,uitems)){
 										uitems.add(item);	
 									}
@@ -442,11 +458,11 @@ public class DBProduct {
 		try {
 			ctx = AONContext.getAONContext(domain, domainId, login);
 			
-			Result<Record20<String, String, Integer, Integer, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Double, Double, String, String, String, String, String, Integer, String>>
+			Result<Record22<String, String, Integer, Integer, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Double, Double, String, String, String, String, String, Integer, String, Byte, Byte>>
 				data =	ctx.getDslContext().select(PRODUCT.CODE,PRODUCT.NAME,PRODUCT.CATEGORY
 						,PRODUCT.BRAND,PRODUCT.TYPE,PRODUCT.VAT, PRODUCT.RETENTION,PRODUCT.INVENTORIABLE,PRODUCT.COMPOSITION
 						,PRODUCT.COMPOSITION_PRICE,PRODUCT.STATUS,ITEM.PURCHASE_PRICE,ITEM.PRICE,ITEM.BARCODE,ITEM.DESCRIPTION
-						,ITEM.DETAIL,ITEM.DETAIL2,ITEM.DETAIL3,PRODUCT.ID, ITEM.SERIAL_NUMBER)
+						,ITEM.DETAIL,ITEM.DETAIL2,ITEM.DETAIL3,PRODUCT.ID, ITEM.SERIAL_NUMBER, PRODUCT.SERIALIZABLE, PRODUCT.LOTABLE)
 						.from(PRODUCT).join(ITEM).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 						.where(condition)
 						.orderBy(PRODUCT.NAME)
@@ -454,29 +470,31 @@ public class DBProduct {
 			
 			Vector<ProductInfo> v = new Vector<ProductInfo>();
 			
-			for(Record20<String, String, Integer, Integer, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Double, Double, String, String, String, String, String, Integer, String> r : data){
+			for(Record22<String, String, Integer, Integer, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Double, Double, String, String, String, String, String, Integer, String, Byte, Byte> r : data){
 				ProductInfo pi = new ProductInfo();
 				Item i = new Item();
-				i.setCode(r.value1());
-				i.setName(r.value2());
+				Product p = new Product();
+				i.setCode(r.value1());p.setCode(r.getValue(PRODUCT.CODE));
+				i.setName(r.value2());p.setName(r.getValue(PRODUCT.NAME));
 				if(r.value3()!=null){
 					ProductCategory c = getCategory(domain,domainId, r.value3(), login);
-					i.setCategory(c.getName());
+					i.setCategory(c.getName());p.setCategory(c.getId());
 				}
 				else i.setCategory("");
 				
 				if(r.value4()!=null){
 					Brand brand = getBrand(domain,domainId, r.value4(), login);
-					i.setBrand(brand.getName());
+					i.setBrand(brand.getName());p.setBrand(brand.getId());
 				}
 				else i.setBrand("");
 				
 				if(r.value5()!=null){
 					i.setType(com.esferalia.aon.occam.api.model.type.ProductType.values()[r.value5()]);
+					p.setType(ProductType.values()[r.getValue(PRODUCT.TYPE)].value());
 				}
 				if(r.value6()!=null){
 					com.esferalia.aon.occam.api.model.product.Tax vat = getTax(domain,domainId, r.value6(), login);
-					i.setVat(vat);
+					i.setVat(vat);p.setVat(vat.getId());
 				}
 				else{
 					com.esferalia.aon.occam.api.model.product.Tax t = new com.esferalia.aon.occam.api.model.product.Tax();
@@ -485,17 +503,29 @@ public class DBProduct {
 				}
 				if(r.value7()!=null){
 					com.esferalia.aon.occam.api.model.product.Tax retention = getTax(domain,domainId, r.value7(), login);
-					i.setRetention(retention);
+					i.setRetention(retention);p.setRetention(retention.getId());
 				}
 				else{
 					com.esferalia.aon.occam.api.model.product.Tax t = new com.esferalia.aon.occam.api.model.product.Tax();
 					t.setName("");
 					i.setRetention(t);
 				}
-				if(r.value8()!=null) i.setInventoriable(r.value8()==1);
-				if(r.value9()!=null) i.setComposition(r.value9()==1);
-				if(r.value10()!=null) i.setCompositionPrice(r.value10()==1);
-				if(r.value11()!=null) i.setStatus(r.value11());
+				if(r.value8()!=null){
+					i.setInventoriable(r.value8()==1);
+					p.setInventoriable(r.getValue(PRODUCT.INVENTORIABLE));
+				}
+				if(r.value9()!=null) {
+					i.setComposition(r.value9()==1);
+					p.setComposition(r.getValue(PRODUCT.COMPOSITION));
+				}
+				if(r.value10()!=null){
+					i.setCompositionPrice(r.value10()==1);
+					p.setCompositionPrice(r.getValue(PRODUCT.COMPOSITION_PRICE));
+				}
+				if(r.value11()!=null){
+					i.setStatus(r.value11());
+					p.setStatus(r.getValue(PRODUCT.STATUS));
+				}
 				if(r.value12()!=null) i.setPurchasePrice(r.value12());
 				if(r.value13()!=null) i.setPrice(r.value13());
 				if(r.value14()!=null) i.setBarcode(r.value14());
@@ -509,6 +539,9 @@ public class DBProduct {
 				if(r.value18()!=null) i.setDetail3(r.value18());
 				else i.setDetail3("");
 				if(r.getValue(ITEM.SERIAL_NUMBER) != null) i.setSerialNumber(r.getValue(ITEM.SERIAL_NUMBER));
+				if(r.getValue(PRODUCT.SERIALIZABLE) != null) p.setSerializable(r.getValue(PRODUCT.SERIALIZABLE));
+				if(r.getValue(PRODUCT.LOTABLE) != null) p.setLotable(r.getValue(PRODUCT.LOTABLE));
+				pi.setProduct(p);
 				Set<ProductTag> tags = getTags(ctx.getDslContext(), r.value19());
 				pi.setTags(tags);
 				pi.setDownloadItem(i);

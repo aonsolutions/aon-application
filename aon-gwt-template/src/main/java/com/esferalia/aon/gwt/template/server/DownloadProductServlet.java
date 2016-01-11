@@ -444,7 +444,6 @@ public class DownloadProductServlet extends HttpServlet {
 			}
         }
         //TODO 
-        
         Vector<ProductInfo> v =  DBProduct.getProducts(domainName,domainId,c, login);
 
         for(Integer j = 0; j< v.size();j++){
@@ -478,8 +477,11 @@ public class DownloadProductServlet extends HttpServlet {
         		case "Detalle 2":  celda.setCellValue(pi.getDownloadItem().getDetail2());celda.setCellStyle(style2);break;
         		case "Detalle 3":  celda.setCellValue(pi.getDownloadItem().getDetail3());celda.setCellStyle(style2);break;
         		case "Numero Serie": celda.setCellValue(pi.getDownloadItem().getSerialNumber());celda.setCellStyle(style2);break; 
+        		case "Loteable": celda.setCellValue(pi.getProduct().getLotable());celda.setCellStyle(style2);break;
+        		case "Serializable": celda.setCellValue(pi.getProduct().getSerializable());celda.setCellStyle(style2);break;
         		default:
-        			break;        		}
+        			break;        		
+        		}
         	}
         	Cell lastCell = row.createCell(columns);
         	lastCell.setCellStyle(style2);

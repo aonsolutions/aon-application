@@ -27,6 +27,8 @@ public class ProductUtils {
 	public static final String PRODUCT_DETAIL1 = "Detalle 1";
 	public static final String PRODUCT_DETAIL2 = "Detalle 2";
 	public static final String PRODUCT_DETAIL3 = "Detalle 3";
+	public static final String PRODUCT_SERIALIZABLE = "Serializable";
+	public static final String PRODUCT_LOTEABLE = "Loteable";
 	public static final String PRODUCT_SERIAL_NUMBER = "Numero Serie";
 	
 	public static Vector<String> productList(){
@@ -50,7 +52,9 @@ public class ProductUtils {
 		v.add(PRODUCT_DETAIL1);
 		v.add(PRODUCT_DETAIL2);
 		v.add(PRODUCT_DETAIL3);
-		//v.add(PRODUCT_SERIAL_NUMBER);
+		v.add(PRODUCT_SERIALIZABLE);
+		v.add(PRODUCT_LOTEABLE);
+		v.add(PRODUCT_SERIAL_NUMBER);
 		return v;
 	}
 	
@@ -71,7 +75,9 @@ public class ProductUtils {
 		v.add(PRODUCT_DETAIL1);
 		v.add(PRODUCT_DETAIL2);
 		v.add(PRODUCT_DETAIL3);
-		//v.add(PRODUCT_SERIAL_NUMBER);
+		v.add(PRODUCT_SERIALIZABLE);
+		v.add(PRODUCT_LOTEABLE);
+		v.add(PRODUCT_SERIAL_NUMBER);
 		return v;
 	}
 	

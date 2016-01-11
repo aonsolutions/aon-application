@@ -219,7 +219,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		if(getOut() == null){
 			error.setError(false);
  			textError =  textError + "*No ha importado ningún archivo.\n";
-
 			verror.add("*No ha importado ningún archivo.");
 			error.setTextError(verror);
 			this.error = error;
@@ -1579,7 +1578,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			product.getProduct().setCompositionPrice(bool3);
 			break; 
 		case "Estado" : 
-	
 			ProductStatus status;
 			switch (type) {
 			case Cell.CELL_TYPE_STRING:
@@ -1644,6 +1642,60 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			}
 			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break;
+		case "Serializable" : 
+			Boolean bool4 = false;
+			switch (type) {
+			case Cell.CELL_TYPE_STRING:
+				String string = (String) value;
+				if(string.equalsIgnoreCase("si") || string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true"))
+					bool4 = true;
+				else if( string.equalsIgnoreCase("no") || string.equalsIgnoreCase("false"))
+					bool4 = false;
+				else return null;
+				break;
+			case Cell.CELL_TYPE_NUMERIC:
+				Double num = (Double) value;
+				if(num.equals(1.0)) bool4 = true;
+				else if(num.equals(0.0)) bool4 = false;
+				else return null;
+				break;
+			case Cell.CELL_TYPE_BOOLEAN:
+				bool4 = (Boolean) value;
+				break;
+			case Cell.CELL_TYPE_BLANK:
+				return product;
+			default:
+				return null;
+			}
+			product.getProduct().setSerializable(bool4);
+			break;  
+		case "Loteable" : 
+			Boolean bool5 = false;
+			switch (type) {
+			case Cell.CELL_TYPE_STRING:
+				String string = (String) value;
+				if(string.equalsIgnoreCase("si") || string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true"))
+					bool5 = true;
+				else if( string.equalsIgnoreCase("no") || string.equalsIgnoreCase("false"))
+					bool5 = false;
+				else return null;
+				break;
+			case Cell.CELL_TYPE_NUMERIC:
+				Double num = (Double) value;
+				if(num.equals(1.0)) bool5 = true;
+				else if(num.equals(0.0)) bool5 = false;
+				else return null;
+				break;
+			case Cell.CELL_TYPE_BOOLEAN:
+				bool5 = (Boolean) value;
+				break;
+			case Cell.CELL_TYPE_BLANK:
+				return product;
+			default:
+				return null;
+			}
+			product.getProduct().setLotable(bool5);
+			break;  
 		default:
 			break;
 		}
@@ -2160,5 +2212,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		} catch (NumberFormatException e){
 			return value.toString();
 		}
+	}
+	
+	public void print(String text){
+		System.out.println(text);
 	}
 }

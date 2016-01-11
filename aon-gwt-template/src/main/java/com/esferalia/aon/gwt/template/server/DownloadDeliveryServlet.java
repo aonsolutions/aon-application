@@ -464,13 +464,15 @@ public class DownloadDeliveryServlet extends HttpServlet {
         		case "Detalle 2":  celda.setCellValue(pi.getDownloadItem().getDetail2());celda.setCellStyle(style2);break;
         		case "Detalle 3":  celda.setCellValue(pi.getDownloadItem().getDetail3());celda.setCellStyle(style2);break;
         		case "Numero Serie": celda.setCellValue(pi.getDownloadItem().getSerialNumber());celda.setCellStyle(style2);break;
+        		case "Loteable": celda.setCellValue(pi.getProduct().getSerializable());celda.setCellStyle(style2);break;
+        		case "Serializable": celda.setCellValue(pi.getProduct().getLotable());celda.setCellStyle(style2);break;
         		default:
-        			break;        		}
+        			break;        		
+        		}
         	}
         	Cell lastCell = row.createCell(columns);
         	lastCell.setCellStyle(style2);
         	row.setHeightInPoints(20);
-
         }
         for(Integer h = 0; h< columns;h++){
         	hoja.autoSizeColumn(h);
