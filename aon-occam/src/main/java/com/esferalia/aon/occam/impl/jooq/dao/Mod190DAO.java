@@ -10,7 +10,8 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
-import static com.esferalia.aon.jooq.tables.IrpfResult.IRPF_RESULT;
+import static com.esferalia.aon.jooq.tables.IrpfDataAscendants.IRPF_DATA_ASCENDANTS;
+import static com.esferalia.aon.jooq.tables.IrpfDataDescendients.IRPF_DATA_DESCENDIENTS;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
@@ -31,8 +32,9 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsModel190DetailRecord;
 import com.esferalia.aon.jooq.tables.records.FsModel190Record;
+import com.esferalia.aon.jooq.tables.records.IrpfDataAscendantsRecord;
+import com.esferalia.aon.jooq.tables.records.IrpfDataDescendientsRecord;
 import com.esferalia.aon.jooq.tables.records.IrpfDataRecord;
-import com.esferalia.aon.jooq.tables.records.IrpfResultRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
@@ -579,6 +581,7 @@ public class Mod190DAO {
 		return ctx.getDslContext()
 			.selectFrom(FS_MODEL190_DETAIL)
 			.where(FS_MODEL190_DETAIL.FS_MODEL190.equal(mod190))
+			.orderBy(FS_MODEL190_DETAIL.NAME)
 			.fetch()
 			.stream()
 			.map( new Mod190DetailFiller() )
@@ -713,10 +716,10 @@ public class Mod190DAO {
 							detail.setPerception(salaryData.getValue(moneyIrpfBase).doubleValue());
 							detail.setInKindPerception(salaryData.getValue(inKindIrpfBase).doubleValue());
 							detail.setRetention(salaryData.getValue(totalIrpf).doubleValue());
-							detail.setIrpfData(getLastIrpfDataByPerson(ctx,salaryData.getValue(PERSON.REGISTRY),firstDay, lastDay));
+							detail.setIrpfData(getLastIrpfDataByPerson(ctx,salaryData.getValue(PERSON.REGISTRY),firstDay, lastDay, detail));
 							Integer birthData = salaryData.getValue(birthYear);
 							detail.getIrpfData().setBirthYear(birthData==null?0:birthData);
-							detail.setIrpfResult(getLastIrpfResultByPerson(ctx,salaryData.getValue(PERSON.REGISTRY),firstDay, lastDay));
+//							detail.setIrpfResult(getLastIrpfResultByPerson(ctx,salaryData.getValue(PERSON.REGISTRY),firstDay, lastDay));
 							detail.getIrpfResult().setDeducibleExpense(salaryData.getValue( socialSecurityContributions).doubleValue());
 							ctx.getDslContext()
 									.select(GEOZONE.CODE)
@@ -745,7 +748,7 @@ public class Mod190DAO {
 	}
 
 	private static IrpfData getLastIrpfDataByPerson(AONContext ctx, int person,
-			Date fromDate, Date toDate) {
+			Date fromDate, Date toDate, Mod190Detail detail) {
 		ctx.checkRead();
 		List<IrpfDataRecord> list = ctx
 				.getDslContext()
@@ -761,10 +764,10 @@ public class Mod190DAO {
 				.orderBy(IRPF_DATA.END_DATE.desc(),IRPF_DATA.START_DATE.asc())
 				.fetchInto(IrpfDataRecord.class);
 		IrpfData irpfData = new IrpfData();
+		IrpfResult result = new IrpfResult();		
 		if (list != null && list.size() > 0) { 
 			IrpfDataRecord record = list.get(0);
-			irpfData.setCeutaMelilla(AonEnumUtils.getBoolean(record
-					.getCeutaMelilla()));
+			irpfData.setCeutaMelilla(AonEnumUtils.getBoolean(record.getCeutaMelilla()));
 			Byte familySituation = record.getFamilySituation();
 			if (familySituation != null) {
 				familySituation = (byte) (familySituation + 1);
@@ -772,7 +775,6 @@ public class Mod190DAO {
 				familySituation = (byte) 0;
 			}
 			irpfData.setFamilySituation(familySituation);
-			
 			irpfData.setSpouseDocument(record.getSpouseDocument());
 			Byte disabilityLevel = record.getDisabilityLevel();
 			if (disabilityLevel != null) {
@@ -782,84 +784,104 @@ public class Mod190DAO {
 			}
 			irpfData.setDisability(disabilityLevel);
 			irpfData.setContract((byte) (record.getContractType() + 1));
-			irpfData.setWorkActivityExtension(AonEnumUtils.getBoolean(record
-					.getLabourProlongation()));
+			irpfData.setWorkActivityExtension(AonEnumUtils.getBoolean(record.getLabourProlongation()));
 			irpfData.setGeographicMobility(record.getMovingDate() != null);
+			
+			List<IrpfDataDescendientsRecord> descs = ctx.getDslContext()
+				.select(IRPF_DATA_DESCENDIENTS.fields())
+				.from(IRPF_DATA_DESCENDIENTS)
+				.where(IRPF_DATA_DESCENDIENTS.IRPF_DATA.eq(record.getId()))
+				.orderBy(IRPF_DATA_DESCENDIENTS.BIRTH_YEAR)
+				.fetchInto(IrpfDataDescendientsRecord.class);
+			int curYear = AonDateUtils.getYear(fromDate);
+			byte ZERO = 0;
+			byte ONE = 1;
+			if (descs != null && descs.size() > 0) {
+				int i = 1;
+				for (IrpfDataDescendientsRecord desc : descs) {
+					int descYear = desc.getAdoptionYear() == null?desc.getBirthYear():desc.getAdoptionYear();
+					boolean lessThan3 = ( curYear - 3 ) <=  descYear;
+					boolean disability = desc.getDisabilityLevel() != null;
+					boolean disability33 = desc.getDisabilityLevel() != null && desc.getDisabilityLevel() == 0;
+					boolean disability65 = desc.getDisabilityLevel() != null && desc.getDisabilityLevel() == 2;
+					boolean dependence = desc.getDependence() != null && desc.getDependence() == 1;
+					boolean byInteger = desc.getUniqueParent() != null && desc.getUniqueParent() == 1;
+					if (lessThan3) {
+						result.setLessThan3Descendent( (byte) (result.getLessThan3Descendent() + ONE) );
+						result.setLessThan3DescendentRatio( (byte) (result.getLessThan3DescendentRatio() + (byInteger?ONE:ZERO)));
+					} else {
+						result.setOtherDescendent( (byte) (result.getOtherDescendent() + ONE) );
+						result.setOtherDescendentRatio( (byte) (result.getOtherDescendentRatio() + (byInteger?ONE:ZERO)));
+					}
+					if (disability) {
+						if (disability33) {
+							result.setDisabilityDescendent33( (byte) (result.getDisabilityDescendent33() + ONE) );
+							result.setDisabilityDescendent33Ratio( (byte) (result.getDisabilityDescendent33Ratio() + (byInteger?ONE:ZERO)));
+							if ( dependence ) {
+								result.setDisabilityDescendentDependence( (byte) (result.getDisabilityDescendentDependence() + ONE) );
+								result.setDisabilityDescendentDependenceRatio( (byte) (result.getDisabilityDescendentDependenceRatio() + (byInteger?ONE:ZERO)));
+							}
+						}
+						if (disability65) {
+							result.setDisabilityDescendent65( (byte) (result.getDisabilityDescendent65() + ONE) );
+							result.setDisabilityDescendent65Ratio( (byte) (result.getDisabilityDescendent65Ratio() + (byInteger?ONE:ZERO)));
+						}
+					}
+					if (i == 1) {
+						result.setFirstChildCalculation(byInteger?ONE:ZERO);
+					} else if (i == 2) {
+						result.setSecondChildCalculation(byInteger?ONE:ZERO);
+					} else if (i == 3) {
+						result.setThirdChildCalculation(byInteger?ONE:ZERO);
+					}
+					i++;
+				}
+			}
+			
+			List<IrpfDataAscendantsRecord> ascs = ctx.getDslContext()
+					.select(IRPF_DATA_ASCENDANTS.fields())
+					.from(IRPF_DATA_ASCENDANTS)
+					.where(IRPF_DATA_ASCENDANTS.IRPF_DATA.eq(record.getId()))
+					.orderBy(IRPF_DATA_ASCENDANTS.BIRTH_YEAR)
+					.fetchInto(IrpfDataAscendantsRecord.class);
+			if (ascs != null && ascs.size() > 0) {
+				for (IrpfDataAscendantsRecord asc : ascs) {
+					boolean lessThan75 = ( curYear - 75 ) <  asc.getBirthYear();
+					boolean byInteger = asc.getAnotherDescendient() != null && asc.getAnotherDescendient() == 0;
+					boolean disability = asc.getDisabilityLevel() != null;
+					boolean disability33 = asc.getDisabilityLevel() != null && asc.getDisabilityLevel() == 0;
+					boolean disability65 = asc.getDisabilityLevel() != null && asc.getDisabilityLevel() == 2;
+					boolean dependence = asc.getDependence() != null && asc.getDependence() == 1;
+					
+					if (lessThan75) {
+						result.setLessThan75Ascendant( (byte) (result.getLessThan75Ascendant() + ONE) );
+						result.setLessThan75AscendantRatio( (byte) (result.getLessThan75AscendantRatio() + (byInteger?ONE:ZERO)));
+					} else {
+						result.setAscendant( (byte) (result.getAscendant() + ONE) );
+						result.setAscendantRatio( (byte) (result.getAscendantRatio() + (byInteger?ONE:ZERO)));
+					}
+					
+					if (disability) {
+						if (disability33) {
+							result.setDisabilityAscendant33( (byte) (result.getDisabilityAscendant33() + ONE) );
+							result.setDisabilityAscendant33Ratio( (byte) (result.getDisabilityAscendant33Ratio() + (byInteger?ONE:ZERO)));
+							if ( dependence ) {
+								result.setDisabilityAscendantDependence( (byte) (result.getDisabilityAscendantDependence() + ONE) );
+								result.setDisabilityAscendantDependenceRatio( (byte) (result.getDisabilityAscendantDependenceRatio() + (byInteger?ONE:ZERO)));
+							}
+						}
+						if (disability65) {
+							result.setDisabilityAscendant65( (byte) (result.getDisabilityAscendant65() + ONE) );
+							result.setDisabilityAscendant65Ratio( (byte) (result.getDisabilityAscendant65Ratio() + (byInteger?ONE:ZERO)));
+						}
+					}
+				}
+			}
+				
+			
 		}
+		detail.setIrpfResult(result);		
 		return irpfData;
-	}
-
-	private static IrpfResult getLastIrpfResultByPerson(AONContext ctx,
-			int person, Date fromDate, Date toDate) {
-		ctx.checkRead();
-		IrpfResultRecord record = ctx
-				.getDslContext()
-				.select(IRPF_RESULT.fields())
-				.from(IRPF_RESULT)
-				.join(CONTRACT)
-				.on(IRPF_RESULT.CONTRACT.equal(CONTRACT.ID))
-				.where(IRPF_RESULT.EFFECTIVE_DATE.between(
-						AonDateUtils.toSql(fromDate),
-						AonDateUtils.toSql(toDate)))
-				.and(CONTRACT.PERSON.equal(person))
-				.orderBy(IRPF_RESULT.EFFECTIVE_DATE.desc())
-				.fetchOneInto(IrpfResultRecord.class);
-		IrpfResult irpfResult = new IrpfResult();
-		if (record != null) {
-			double value = record.getIrregular_18_2Reduction()
-					+ record.getIrregular_18_3Reduction()
-					+ record.getWorkRemunerationReduction()
-					+ record.getWorkProlongationReduction()
-					+ record.getWorkMovingReduction()
-					+ record.getWorkDisabilityReduction();
-			irpfResult.setApplicableReduction(AonMathUtils.round(value));
-			irpfResult.setDeducibleExpense(record.getDeducciblesExpenses());
-			irpfResult.setCompensatoryPension(record.getSpousalSupport());
-			irpfResult.setFoodAnnuality(record.getFoodAnnuity());
-			irpfResult.setHomeLoanCommunnication(record
-					.getDeductHomeLoanAmount() == 0);
-			irpfResult.setLessThan3Descendent(record
-					.getDescendentsMinor_3Total());
-			irpfResult.setLessThan3DescendentRatio(record
-					.getDescendentsMinor_3Entirely());
-			irpfResult
-					.setOtherDescendent(record.getDescendentsRemainderTotal());
-			irpfResult.setOtherDescendentRatio(record
-					.getDescendentsRemainderEntirely());
-			irpfResult.setDisabilityDescendent33(record
-					.getDescendents_33_65Total());
-			irpfResult.setDisabilityDescendent33Ratio(record
-					.getDescendents_33_65Entirely());
-			irpfResult.setDisabilityDescendentDependence(record
-					.getDescendentsMovingTotal());
-			irpfResult.setDisabilityDescendentDependenceRatio(record
-					.getDescendentsMovingEntirely());
-			irpfResult.setDisabilityDescendent65(record
-					.getDescendents_65Total());
-			irpfResult.setDisabilityDescendent65Ratio(record
-					.getDescendents_65Entirely());
-			irpfResult.setLessThan75Ascendant(record
-					.getAscendentsMinor_75Total());
-			irpfResult.setLessThan75AscendantRatio(record
-					.getAscendentsMinor_75Entirely());
-			irpfResult.setAscendant(record.getAscendentsMayor_75Total());
-			irpfResult.setAscendantRatio(record.getAscendentsMayor_75Total());
-			irpfResult.setDisabilityAscendant33(record
-					.getAscendents_33_65Total());
-			irpfResult.setDisabilityAscendant33Ratio(record
-					.getAscendents_33_65Entirely());
-			irpfResult.setDisabilityAscendantDependence(record
-					.getAscendentsMovingTotal());
-			irpfResult.setDisabilityAscendantDependenceRatio(record
-					.getAscendentsMovingEntirely());
-			irpfResult.setDisabilityAscendant65(record.getAscendents_65Total());
-			irpfResult.setDisabilityAscendant65Ratio(record
-					.getAscendents_65Entirely());
-			irpfResult.setFirstChildCalculation(record.getDescendentsFirst());
-			irpfResult.setSecondChildCalculation(record.getDescendentsSecond());
-			irpfResult.setThirdChildCalculation(record.getDescendentsThird());
-		}
-		return irpfResult;
 	}
 
 	public static Mod190 initialize(AONContext ctx, int year) {
