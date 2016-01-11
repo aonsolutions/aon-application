@@ -5,13 +5,39 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.BR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MAX;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C200;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C209;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C230;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C239;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C250;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C289;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C501;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C502;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C503;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C508;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C510;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C518;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C520;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C530;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C540;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C541;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C550;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C552;
+import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
@@ -25,6 +51,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +69,7 @@ import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase.Extra;
@@ -660,5 +688,548 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 	// ------------------------------------------------------------------------
 
+	@Test
+	public void testCommonDiseaseITQuoteDaysI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext,
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String, String>(){
+					{
+						put(ContextVariable.MONTH_DAYS.getName(), "30");
+					}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				"TRACE('BASE_CGP=%f\r\n', BASE_CGP);BASE_CGC * 1.55 / 100",
+				"TRACE('BASE_CGP=%f\r\n', BASE_CGP);BASE_CGC * 0.10 / 100",
+				"TRACE('DIAS_IT_COTIZADOS=%f\r\n', DIAS_IT_COTIZADOS);0.00",
+				}, null);
+		//@formatter:on
+		
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		//@formatter:on
 
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+
+		calendar.set(Calendar.MONTH, Calendar.MAY);
+		calendar.set(Calendar.DAY_OF_MONTH, 5 );
+		Date startITDate = new Date(calendar.getTimeInMillis());
+		
+		calendar.set(Calendar.DAY_OF_MONTH, 10 );
+		Date endITDate = new Date(calendar.getTimeInMillis());		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				endITDate, 100.00);
+
+		Date startDate = getFirstDayOfMonth(startITDate);
+		Date endDate = getLastDayOfMonth(startITDate);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		
+		salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.forEach(data->System.out.println(data.getName() + " = " + data.getExpression() + "(" + data.getStartDate() + "..." + data.getEndDate() + ")"));
+		;
+		// + 4
+		long count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == startDate.getDate())
+		.peek(data->Assert.assertEquals(1750.00 * 4/30.00, Double.parseDouble(data.getExpression())))
+		.count();
+		
+		Assert.assertEquals(1, count);
+		
+		// + 3
+		count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == startITDate.getDate())
+		.peek(data->Assert.assertEquals(100.00 * 3.00, Double.parseDouble(data.getExpression())))
+		.count();
+		Assert.assertEquals(1, count);
+		
+		// + 2  (Here ADJUST)
+		count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == 8)
+		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),10))
+		.peek(data->Assert.assertEquals(100.00 * 2.00, Double.parseDouble(data.getExpression())))
+		.count();
+		Assert.assertEquals(1, count);
+		
+		// + 21
+		count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == 11)
+		.peek(data->Assert.assertEquals(1750.00 * 21/30.00, Double.parseDouble(data.getExpression())))
+		.count();
+		Assert.assertEquals(1, count);
+		//  = 30
+		
+		
+	}
+
+
+	@Test
+	public void testCommonDiseaseITQuoteDaysII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext,
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String, String>(){
+					{
+						put(ContextVariable.MONTH_DAYS.getName(), ContextVariable.NATURAL_MONTH_DAYS.getName() );
+					}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				"TRACE('BASE_CGP=%f\r\n', BASE_CGP);BASE_CGC * 1.55 / 100",
+				"TRACE('BASE_CGP=%f\r\n', BASE_CGP);BASE_CGC * 0.10 / 100",
+				"TRACE('DIAS_IT_COTIZADOS=%f\r\n', DIAS_IT_COTIZADOS);0.00",
+				}, null);
+		//@formatter:on
+		
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		//@formatter:on
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+
+		calendar.set(Calendar.MONTH, Calendar.MAY);
+		calendar.set(Calendar.DAY_OF_MONTH, 5 );
+		Date startITDate = new Date(calendar.getTimeInMillis());
+		
+		calendar.set(Calendar.DAY_OF_MONTH, 10 );
+		Date endITDate = new Date(calendar.getTimeInMillis());
+		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				endITDate, 100.00);
+
+		Date startDate = getFirstDayOfMonth(startITDate);
+		Date endDate = getLastDayOfMonth(startITDate);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		
+		salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.forEach(data->System.out.println(data.getName() + " = " + data.getExpression() + "(" + data.getStartDate() + "..." + data.getEndDate() + ")"));
+		;
+		// 4
+		long count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == startDate.getDate())
+		.peek(data->Assert.assertEquals(1750.00 * 4/31.00, Double.parseDouble(data.getExpression())))
+		.count();
+		
+		Assert.assertEquals(1, count);
+		
+		// 3
+		count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == startITDate.getDate())
+		.peek(data->Assert.assertEquals(100.00 * 3.00, Double.parseDouble(data.getExpression())))
+		.count();
+		Assert.assertEquals(1, count);
+		
+		// 3
+		count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == 8)
+		.peek(data->Assert.assertEquals(100.00 * 3.00, Double.parseDouble(data.getExpression())))
+		.count();
+		Assert.assertEquals(1, count);
+		
+		// 21
+		count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == 11)
+		.peek(data->Assert.assertEquals(1750.00 * 21/31.00, Double.parseDouble(data.getExpression())))
+		.count();
+		Assert.assertEquals(1, count);
+		
+		// 31
+
+	}
+	
+	@Test
+	public void testCommonDiseaseITQuoteDaysIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+		//@formatter:offhttp://www.marca.com/motor/formula1/2016/01/08/5690143c268e3e041d8b457d.html?cid=GEN35403
+		ContractRecord contract = newContract(aonContext,
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String, String>(){
+					{
+						put(ContextVariable.MONTH_DAYS.getName(), "30");
+					}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				"TRACE('BASE_CGP=%f\r\n', BASE_CGP);BASE_CGC * 1.55 / 100",
+				"TRACE('BASE_CGP=%f\r\n', BASE_CGP);BASE_CGC * 0.10 / 100",
+				"TRACE('DIAS_IT_COTIZADOS=%f\r\n', DIAS_IT_COTIZADOS);0.00",
+				}, null);
+		//@formatter:on
+		
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		//@formatter:on
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+
+		calendar.set(Calendar.MONTH, Calendar.MAY);
+		calendar.set(Calendar.DAY_OF_MONTH, 5 );
+		Date startITDate = new Date(calendar.getTimeInMillis());
+		
+		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, 100.00);
+
+		Date startDate = getFirstDayOfMonth(startITDate);
+		Date endDate = getLastDayOfMonth(startITDate);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		
+		salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.forEach(data->System.out.println(data.getName() + " = " + data.getExpression() + "(" + data.getStartDate() + "..." + data.getEndDate() + ")"));
+		;
+		// + 4
+		long count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == 1)
+		.peek(data->Assert.assertEquals(1750.00 * 4/30.00, Double.parseDouble(data.getExpression())))
+		.count();
+		
+		Assert.assertEquals(1, count);
+		
+		// + 3
+		count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == startITDate.getDate())
+		.peek(data->Assert.assertEquals(100.00 * 3.00, Double.parseDouble(data.getExpression())))
+		.count();
+		Assert.assertEquals(1, count);
+		
+		// + 12
+		count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == 8)
+		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),19))
+		.peek(data->Assert.assertEquals(100.00 * 12.00, Double.parseDouble(data.getExpression())))
+		.count();
+		Assert.assertEquals(1, count);
+		
+		// + 5
+		count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == 20)
+		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),24))
+		.peek(data->Assert.assertEquals(100.00 * 5.00, Double.parseDouble(data.getExpression())))
+		.count();
+		Assert.assertEquals(1, count);
+		
+		// + 6 ( ADJUST )
+		count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == 25)
+		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),31))
+		.peek(data->Assert.assertEquals(100.00 * 6.00, Double.parseDouble(data.getExpression())))
+		.count();
+		Assert.assertEquals(1, count);
+		
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		salary = calculator.calculate(ctx);
+		
+		// One period , 30 ( NO adjust ) 
+		count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.peek(data->Assert.assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
+		.count();
+		Assert.assertEquals(1, count);
+
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		salary = calculator.calculate(ctx);
+		
+		// One period , 30 ( YES adjust ) 
+		count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.peek(data->Assert.assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
+		.count();
+		Assert.assertEquals(1, count);
+	}
+	
+
+	@Test
+	public void testCommonDiseaseITQuoteDaysIV() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+		//@formatter:offhttp://www.marca.com/motor/formula1/2016/01/08/5690143c268e3e041d8b457d.html?cid=GEN35403
+		ContractRecord contract = newContract(aonContext,
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String, String>(){
+					{
+						put(ContextVariable.MONTH_DAYS.getName(), "30");
+						put(ContextVariable.TC2.getName(), format("\"%s\"",
+								C200.getValue()));
+						put(MONDAY_HOURS.getName(), format("%d", 4));
+						put(TUESDAY_HOURS.getName(), format("%d", 4));
+						put(WEDNESDAY_HOURS.getName(), format("%d", 4));
+						put(THURSDAY_HOURS.getName(), format("%d", 4));
+						put(FRIDAY_HOURS.getName(), format("%d", 4));
+					}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				"TRACE('BASE_CGP=%f\r\n', BASE_CGP);BASE_CGC * 1.55 / 100",
+				"TRACE('BASE_CGP=%f\r\n', BASE_CGP);BASE_CGC * 0.10 / 100",
+				"TRACE('DIAS_IT_COTIZADOS=%f\r\n', DIAS_IT_COTIZADOS);0.00",
+				}, null);
+		//@formatter:on
+		
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		//@formatter:on
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+
+		calendar.set(Calendar.MONTH, Calendar.MAY);
+		calendar.set(Calendar.DAY_OF_MONTH, 5 );
+		Date startITDate = new Date(calendar.getTimeInMillis());
+		
+		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, 100.00);
+
+		Date startDate = getFirstDayOfMonth(startITDate);
+		Date endDate = getLastDayOfMonth(startITDate);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		
+		salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.forEach(data->System.out.println(data.getName() + " = " + data.getExpression() + "(" + data.getStartDate() + "..." + data.getEndDate() + ")"));
+		;
+		// + 4
+		long count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == 1)
+		.peek(data->Assert.assertEquals(1750.00 * 4/30.00 * 0.5, Double.parseDouble(data.getExpression())))
+		.count();
+		
+		Assert.assertEquals(1, count);
+		
+		// + 3
+		count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == startITDate.getDate())
+		.peek(data->Assert.assertEquals(100.00 * 3.00, Double.parseDouble(data.getExpression())))
+		.count();
+		Assert.assertEquals(1, count);
+		
+		// + 12
+		count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == 8)
+		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),19))
+		.peek(data->Assert.assertEquals(100.00 * 12.00, Double.parseDouble(data.getExpression())))
+		.count();
+		Assert.assertEquals(1, count);
+		
+		// + 5
+		count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == 20)
+		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),24))
+		.peek(data->Assert.assertEquals(100.00 * 5.00, Double.parseDouble(data.getExpression())))
+		.count();
+		Assert.assertEquals(1, count);
+		
+		// + 7 ( NO ADJUST )
+		count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == 25)
+		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),31))
+		.peek(data->Assert.assertEquals(100.00 * 7.00, Double.parseDouble(data.getExpression())))
+		.count();
+		Assert.assertEquals(1, count);
+		
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		salary = calculator.calculate(ctx);
+		
+		// One period , 30 ( NO adjust ) 
+		count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.peek(data->Assert.assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
+		.count();
+		Assert.assertEquals(1, count);
+
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		salary = calculator.calculate(ctx);
+		
+		// One period , 31 ( NO adjust ) 
+		count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.peek(data->Assert.assertEquals(100.00 * 31.00, Double.parseDouble(data.getExpression())))
+		.count();
+		Assert.assertEquals(1, count);
+	}
+	
 }
