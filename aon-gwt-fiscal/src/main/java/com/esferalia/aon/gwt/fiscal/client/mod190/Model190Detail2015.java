@@ -765,6 +765,7 @@ public class Model190Detail2015 extends ResizeComposite {
 		currentMod190.getDetails().add(
 			new Mod190Detail()
 				.setKey("A")
+				.setSubKey("01")
 				.setIrpfData(new IrpfData())
 				.setIrpfResult(new IrpfResult())
 				.setDirty(true)
