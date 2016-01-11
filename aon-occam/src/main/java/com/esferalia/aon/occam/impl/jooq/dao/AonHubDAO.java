@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.jooq.Condition;
 import org.jooq.Cursor;
 import org.jooq.Record;
 
@@ -19,6 +18,7 @@ import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.office.Notice;
+import com.esferalia.aon.occam.api.model.office.NoticeComment;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.office.User;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
@@ -282,11 +282,12 @@ public class AonHubDAO {
 					notice.setCompany(record.getValue(NOTICE.COMPANY));
 					notice.setStatus(record.getValue(NOTICE.STATUS));
 					notice.setWorkgroup(record.getValue(NOTICE.WORK_GROUP));
-
-					String body = ctx.getDslContext().selectFrom(NOTICE)
+					
+					NoticeRecord  bodyRecord = ctx.getDslContext().selectFrom(NOTICE)
 							.where(NOTICE.DOMAIN.eq(domainId)
 									.and(NOTICE.NOTICE_.eq(id)))
-							.fetchOne().getValue(NOTICE.SUBJECT);
+							.fetchOne();
+					String body = bodyRecord.getValue(NOTICE.SUBJECT);
 					notice.setBody((body != null) ? body : "");
 
 					// Acuerdate que tengo que usar el id del body para ir
@@ -314,7 +315,6 @@ public class AonHubDAO {
 					notices.add(notice);
 				});
 		return notices;
-
 	}
 
 	public static List<Notice> getClosedIsues(AONContext ctx) {

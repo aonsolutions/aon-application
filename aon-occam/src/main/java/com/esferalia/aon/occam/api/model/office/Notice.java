@@ -34,11 +34,11 @@ public class Notice implements Serializable, HasId {
 	private User sender; //Remitente del aviso
 	
 	private List<Tag> tags;
-	private List<NoticeComment> comments;
+	private List<Notice> comments;
 
 	public Notice() {
 		tags = new LinkedList<Tag>();
-		comments = new LinkedList<NoticeComment>();
+		comments = new LinkedList<Notice>();
 	}
 	
 	// ===============SETTERS=================== //
@@ -115,7 +115,7 @@ public class Notice implements Serializable, HasId {
 		this.tags = new LinkedList<Tag>();
 	}
 	
-	public void addNotice(NoticeComment comment) {
+	public void addNotice(Notice comment) {
 		this.comments.add(comment);
 	}
 	
@@ -190,7 +190,7 @@ public class Notice implements Serializable, HasId {
 		return tags;		
 	}
 	
-	public List<NoticeComment> getComments() {
+	public List<Notice> getComments() {
 		return comments;
 	}
 }

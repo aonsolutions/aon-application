@@ -149,7 +149,7 @@ public class OfficeApiServlet extends HttpServlet {
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
-			//TODO
+
 			try {
 				String object = getJsonObject(req);
 				System.out.println("Object: " + object);
@@ -194,7 +194,7 @@ public class OfficeApiServlet extends HttpServlet {
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
-			//TODO
+
 			try {
 				String object = getJsonObject(req);
 				System.out.println("Object: " + object);
@@ -317,26 +317,10 @@ public class OfficeApiServlet extends HttpServlet {
 		}
 	}
 
-	private static class GetCommentsOnRepository extends RegExpRequestHandler {
+	private static class GetIssueComments extends RegExpRequestHandler {
 
-		public GetCommentsOnRepository() {
-			super("/repos/(.+)/(.+)/issues/comments");
-		}
-
-		@Override
-		public void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-			//TODO
-			System.out.println(
-					"By default, Issue Comments are ordered by ascending ID."
-							+ " Owner: " + group(1) + " Repo: " + group(2));
-		}
-	}
-
-	private static class GetSingleComment extends RegExpRequestHandler {
-
-		public GetSingleComment() {
-			super("/repos/(.+)/(.+)/issues/comments/(\\d+)");
+		public GetIssueComments() {
+			super("/issues/(\\d+)/comments");
 		}
 
 		@Override
@@ -348,10 +332,10 @@ public class OfficeApiServlet extends HttpServlet {
 		}
 	}
 
-	private static class CreateComment extends RegExpRequestHandler {
+	private static class CreateIssueComment extends RegExpRequestHandler {
 
-		public CreateComment() {
-			super("/repos/(.+)/(.+)/issues/(\\d+)/comments");
+		public CreateIssueComment() {
+			super("/issues/(\\d+)/comments");
 		}
 
 		@Override
@@ -387,7 +371,7 @@ public class OfficeApiServlet extends HttpServlet {
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
-			//TODO
+			
 			System.out.println("List all labels for this repository ");
 			
 			List<Tag> tags = AON.getTags(DOMAIN_ID, DOMAIN_NAME, USER_NAME);
@@ -426,7 +410,7 @@ public class OfficeApiServlet extends HttpServlet {
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
-			//TODO
+			
 			System.out.println("Create a label");
 			
 			try {
@@ -458,7 +442,7 @@ public class OfficeApiServlet extends HttpServlet {
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
-			//TODO
+		
 			System.out.println("Update a label " + " Owner: " + group(1));
 			
 			try {
@@ -537,7 +521,7 @@ public class OfficeApiServlet extends HttpServlet {
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
-			//TODO
+			
 			System.out.println("Delete a label " + " Owner: " + group(1));
 			
 			String decoded = URLDecoder.decode(group(1), "UTF-8");
@@ -570,6 +554,7 @@ public class OfficeApiServlet extends HttpServlet {
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
+		
 			System.out.println("Lets go to delete a dbNotice");
 			
 			Integer noticeId = Integer.parseInt(
@@ -613,10 +598,9 @@ public class OfficeApiServlet extends HttpServlet {
 			new GetUserIssuesRequestHandler(), 
 			new GetOrgIssuesRequestHandler(),
 			new GetAvaiableAssignees(),
-			new GetCheckAssignees(),
-			new GetCommentsOnRepository(),
+			new GetCheckAssignees(),		
 			new ListIssuesCommentsRequestHandler(),
-			new GetSingleComment(),
+			new GetIssueComments(),
 			new GetSingleLabel(),
 			new ListAllLabels(),
 			new ListLabelsOnAnIssue()
@@ -626,7 +610,7 @@ public class OfficeApiServlet extends HttpServlet {
 			new CreateIssue(),
 			new EditIssue(),
 			new AddLabelToIssue(),
-			new CreateComment(),
+			new CreateIssueComment(),
 			new EditComment(),
 			new CreateLabel(),
 			new UpdateLabel(),
