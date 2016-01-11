@@ -30,6 +30,7 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod180DAO {
@@ -314,7 +315,7 @@ public class Mod180DAO {
 		Field<Integer> minRegistry = DSL.min(INVOICE.REGISTRY).as(INVOICE.REGISTRY.getName());
 		Field<BigDecimal> sumBase = DSL.sum(INVOICE_TAX.BASE).as(INVOICE_TAX.BASE.getName());
 		Field<Double> invoiceTaxSum = DSL.round( (INVOICE_TAX.BASE.mul(INVOICE_TAX.PERCENTAGE)).div(100) ,2);
-		Field<Double> maxPercent = DSL.max(INVOICE_TAX.PERCENTAGE).as(INVOICE_TAX.PERCENTAGE.getName());
+		Field<String> maxPercent = DSL.groupConcat(INVOICE_TAX.PERCENTAGE, AonStringUtils.COMMA);
 		Field<BigDecimal> quotaOp = DSL.sum(DSL.decode()
 				.when(INVOICE_TAX.QUOTA.notEqual(0.0), INVOICE_TAX.QUOTA)
 				.when(INVOICE_TAX.QUOTA.equal(0.0), invoiceTaxSum));
@@ -331,7 +332,11 @@ public class Mod180DAO {
 		.groupBy(INVOICE.RDOCUMENT,INVOICE.RNAME)
 		.fetch()
 		.stream()
-		.map(rec ->	new Mod180Detail()
+		.map(rec -> {
+			String percents = rec.getValue(maxPercent);
+			int last = AonStringUtils.lastIndexOf(percents, AonStringUtils.COMMA);
+			String percent = AonStringUtils.substring(percents, last+1);
+			return new Mod180Detail()
 				.setDomain(mod180.getDomain())
 				.setMod180(mod180.getId())
 				.setDocument(rec.getValue(INVOICE.RDOCUMENT))
@@ -339,8 +344,9 @@ public class Mod180DAO {
 				.setInKind(false)
 				.setPerception(rec.getValue(sumBase).doubleValue())
 				.setRetention(rec.getValue(quotaOp).doubleValue())
-				.setPercent(rec.getValue(maxPercent))
-				.setProvince( getRegistryMainAddressProvince(ctx, rec.getValue(minRegistry)) ))
+				.setPercent(AonNumberUtils.toDouble(percent))
+				.setProvince( getRegistryMainAddressProvince(ctx, rec.getValue(minRegistry)) );
+			})
 		.forEach(detail -> insertDetail(ctx,detail));
 	}
 
