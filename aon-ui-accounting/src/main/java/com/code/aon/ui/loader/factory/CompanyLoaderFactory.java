@@ -19,6 +19,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.Domain;
 import com.code.aon.config.Tax;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
@@ -180,6 +181,20 @@ public class CompanyLoaderFactory extends RegistryLoaderFactory implements ILoad
 		company.setVatAccrualPayment(loaded.isVatAccrualPayment());  // Aplica RECC
 		
 		company = (Company) bean.insertOrUpdate(company);
+		
+		// Actualizar la descripción del dominio, con el nombre de la empresa
+		IManagerBean bd = BeanManager.getManagerBean(Domain.class);
+		Criteria cd = new Criteria();            
+        cd.addEqualExpression(bd.getFieldName(IEntityAlias.DOMAIN_ID), domainId);       
+        List<ITransferObject> ld = bd.getList(cd);
+ 
+        Domain domain = null;
+        
+        if (ld!=null && ld.size()>0) {
+        	domain = (Domain) ld.get(0);
+        	domain.setDescription(loaded.getRazonSocial());
+        	bd.update(domain);        	
+        }
 
 		// Direccion
 		insertRegistryAddressCompany(company.getRegistry(),loaded);

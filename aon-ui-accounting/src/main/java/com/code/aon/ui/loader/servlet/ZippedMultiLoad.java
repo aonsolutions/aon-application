@@ -50,7 +50,6 @@ import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.master.VersionManager;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.controller.DomainController;
-import com.code.aon.ui.admin.controller.IAdminConstants;
 import com.code.aon.ui.admin.controller.NewDomainController;
 import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.common.ICommonMessages;
@@ -272,8 +271,8 @@ public class ZippedMultiLoad {
 					ndc.setPassword(params.getPassword());
 					ndc.setDomainName(name);
 					ndc.setDomainDescription(name);
-					ndc.setOwner( "" );
-					ndc.setEnableHeredity(false);
+					ndc.setOwner( "" );					
+					ndc.setEnableHeredity(true);  // Se crea el dominio vinculado al entorno
 					ndc.onSave(null);
 					DomainData newDomain = searchDomain(parentDomain,domainName);
 					httpSession.setAttribute( AuditManager.AUDIT_LEVEL_PROPERTY, AuditLevel.NONE );
@@ -348,8 +347,10 @@ public class ZippedMultiLoad {
 		
 		private static final long serialVersionUID = 6445028792097706679L;
 		 
+		//private static final String INSERT_DOMAIN_DEFAULTS_SCRIPT = 
+		//		"com/code/aon/ui/loader/servlet/insert.database.aon.domain.sql";
 		private static final String INSERT_DOMAIN_DEFAULTS_SCRIPT = 
-				"com/code/aon/ui/loader/servlet/insert.database.aon.domain.sql";
+				"com/code/aon/ui/loader/servlet/insert.database.aon.domain.from.parent.sql";
 		
 		private Connection connection;
 		private ILogger log;
@@ -394,8 +395,8 @@ public class ZippedMultiLoad {
 				copyCustomizeId(newDomain);
 				log.info("Insertando company ....");
 				addCompany(newDomain);
-				log.info("Guardando historial ....");
-				saveHistory(newDomain);			
+				log.info("Guardando historial ....");				
+				saveHistory(newDomain);	// Se guarda el historial y se envian los emails a AON y propietario		
 			} catch (Throwable e) {
 				throw new AbortProcessingException(e.getMessage(), e);
 			}
