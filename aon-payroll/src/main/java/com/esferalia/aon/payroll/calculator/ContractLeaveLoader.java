@@ -1,7 +1,15 @@
 package com.esferalia.aon.payroll.calculator;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_TIME;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
+import static com.esferalia.aon.watson.server.AonDateUtils.getDaysBetweenDates;
+import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
+import static java.util.Calendar.DAY_OF_MONTH;
+
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -12,47 +20,13 @@ import com.esferalia.aon.payroll.enumeration.LeaveTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
-import com.esferalia.aon.watson.util.AonDateUtils;
 
 public class ContractLeaveLoader {
 
-//	private static class Days implements ITimedVariable<Double> {
-//
-//		private Period period;
-//		private ExpressionContext expressionContext;
-//
-//		public Days(Date start, Date end, ExpressionContext expressionContext) {
-//			this(new Period(start, end), expressionContext);
-//		}
-//		
-//		public Days(Period period, ExpressionContext expressionContext) {
-//			this.period = period;
-//			this.expressionContext = expressionContext;
-//		}
-//
-//		@Override
-//		public Period getPeriod() {
-//			return period;
-//		}
-//
-//		@Override
-//		public Double getValue(Period period) {
-//			long periodDays = CommonUtil.getDaysBetweenDates(period.getStart(),
-//					period.getEnd()) + 1;
-//
-//			long realMonthDays = AonDateUtils.getMax(period.getStart(),
-//					Calendar.DAY_OF_MONTH);
-//
-//			Number payrollMonthDays = expressionContext.getVariable(
-//					ContextVariable.MONTH_DAYS, period.getStart(),
-//					period.getEnd(), Number.class);
-//			
-//			return (double) (periodDays * payrollMonthDays.doubleValue() / realMonthDays);
-//		}
-//
-//	}
+
 
 	public static class Leave extends Period {
 		private Integer id;
@@ -107,6 +81,30 @@ public class ContractLeaveLoader {
 
 	protected static final DaysRange RANGES[] = { new DaysRange(1, 3),
 			new DaysRange(4, 15), new DaysRange(16, 20), new DaysRange(21) };
+
+	protected final class QuoteDays implements ITimedVariable<Double> {
+		
+		private final Date end;
+		private final Date start;
+		private final ExpressionContext exprCtx;
+
+		public QuoteDays(ExpressionContext exprCtx, Date start, Date end) {
+			this.end = end;
+			this.start = start;
+			this.exprCtx = exprCtx;
+		}
+
+		@Override
+		public Period getPeriod() {
+			return new Period(start, end );
+		}
+
+		@Override
+		public Double getValue(Period period) {
+			return ContractLeaveLoader.this.getQuoteDays(exprCtx, period);
+		}
+
+	}
 
 	protected Date endDate;
 	protected Date startDate;
@@ -187,6 +185,7 @@ public class ContractLeaveLoader {
 		exprCtx.addLazyExpression(exp, start, end);
 
 		exprCtx.setVariable(ContextVariable.LEAVE_DAYS, leaveDays, start, end);
+		
 
 		type.accept(new LeaveTypeVisitor<Void>() {
 
@@ -217,11 +216,14 @@ public class ContractLeaveLoader {
 					Date varStart = Period.max(rangeStart, start);
 					exprCtx.setVariable(name, days,
 							varStart, rangeEnd);
+					exprCtx.putVariable(QUOTE_DAYS, 
+							new QuoteDays(exprCtx, start, end));
 				}
 				// exprCtx.addVariable(ContextVariable.REGULATORY_BASE,
 				// regBase, start, end );
 				exprCtx.setVariable(ContextVariable.COMMON_DISEASE_DAYS,
 						leaveDays, start, end);
+
 				
 				return null;
 			}
@@ -233,8 +235,8 @@ public class ContractLeaveLoader {
 					return null;
 				exprCtx.setVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS,
 						days, start, end);
-//				 exprCtx.addVariable(ContextVariable.REGULATORY_BASE,
-//				 regBase, start, end );
+				exprCtx.putVariable(QUOTE_DAYS, 
+						new QuoteDays(exprCtx, start, end));
 				return null;
 			}
 
@@ -242,10 +244,8 @@ public class ContractLeaveLoader {
 			public Void visitMaternity(LeaveType leaveType) {
 				exprCtx.setVariable(ContextVariable.MATERNITY_DAYS, leaveDays,
 						start, end);
-//				 exprCtx.addVariable(ContextVariable.REGULATORY_BASE,
-//				 regBase, start, end );
-
-//				exprCtx.putVariable(ContextVariable.MATERNITY_DAYS, new Days(start, end, exprCtx));
+				exprCtx.putVariable(QUOTE_DAYS, 
+						new QuoteDays(exprCtx, start, end));
 				
 				return null;
 			}
@@ -254,7 +254,8 @@ public class ContractLeaveLoader {
 			public Void visitPaternity(LeaveType leaveType) {
 				exprCtx.setVariable(ContextVariable.PATERNITY_DAYS, leaveDays,
 						start, end);
-//				exprCtx.putVariable(ContextVariable.PATERNITY_DAYS, new Days(start, end, exprCtx));
+				exprCtx.putVariable(QUOTE_DAYS, 
+						new QuoteDays(exprCtx, start, end));
 				return null;
 			}
 
@@ -262,6 +263,8 @@ public class ContractLeaveLoader {
 			public Void visitPregnacyRisk(LeaveType leaveType) {
 				exprCtx.setVariable(ContextVariable.MATERNITY_DAYS, leaveDays,
 						start, end);
+				exprCtx.putVariable(QUOTE_DAYS, 
+						new QuoteDays(exprCtx, start, end));
 				return null;
 			}
 
@@ -296,7 +299,6 @@ public class ContractLeaveLoader {
 		return leaves;
 	}
 
-	// -------------------------------------------------------------- Protected
 	public void clean(ExpressionContext exprCtx, Leave leave) {
 		exprCtx.removeVariable(ContextVariable.IT_START, leave.getStart(),
 				leave.getEnd());
@@ -322,5 +324,48 @@ public class ContractLeaveLoader {
 				leave.getStart(), leave.getEnd());
 
 	}
+
+	// ---------------------------------------------------------------- Private
+	
+	private double getQuoteDays(ExpressionContext ctx, Period p) {
+
+		Long days = getDaysBetweenDates(p.getStart(), p.getEnd())+1;
+
+		if ( !leaves.last().getEnd().equals(p.getEnd()))
+			return days;
+		
+		try {
+			;
+			if ( !ctx.getVariable(FULL_TIME , p.getStart(), p.getEnd(), Boolean.class) )
+				return days;
+		} catch ( Exception e ){
+		}
+		
+		// Last I.T adjust...? 		
+		double naturalMonthDays = getMax(p.getStart(), DAY_OF_MONTH);
+		
+		double quoteMonthDays = 0.00;
+		try {
+			quoteMonthDays = ctx.getVariable(MONTH_DAYS, p.getStart(), p.getEnd(), Number.class).doubleValue();
+		} catch ( Exception e ){
+			try {
+				for ( ITimedResult<Number> result : ctx.eval(MONTH_DAYS.getName(), p.getStart(), p.getEnd(), Number.class) )
+					quoteMonthDays = result.getValue().doubleValue();
+			} catch (ExpressionException e1) {
+			}
+		}
+		
+		if ( naturalMonthDays == quoteMonthDays )
+			return days;
+		
+	
+		// Yes adjust... . 
+		// X = 30 - WORKED_DAYS
+		// X = 30 - (NATURAL_DAYS - IT_DAYS)
+		// X = 30 - NATURAL_DAYS + IT_DAYS
+		// X = IT_DAYS + 30 - NATURAL_DAYS
+		return days + ( 30 - naturalMonthDays );
+	}
+	
 
 }
