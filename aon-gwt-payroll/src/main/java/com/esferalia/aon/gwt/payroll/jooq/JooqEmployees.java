@@ -293,7 +293,8 @@ public class JooqEmployees {
 											.eq(AGREEMENT_LEVEL.ID)))
 					.on(CONTRACT.AGREEMENT_LEVEL_CATEGORY
 							.eq(AGREEMENT_LEVEL_CATEGORY.ID))
-					.where(CONTRACT.WORKPLACE.eq(workplaceId))
+					.where(CONTRACT.ID.ge(0))
+					.and(CONTRACT.WORKPLACE.eq(workplaceId))
 					.and(CONTRACT.END_DATE.isNull().or(
 							CONTRACT.END_DATE.greaterOrEqual(new java.sql.Date(
 									endDate.getTime()))));
