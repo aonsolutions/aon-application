@@ -357,8 +357,8 @@ public class CretaServlet extends HttpServlet implements
 				.getParameter(CretaService.Parameter.IBAN.name());
 		String titular = req
 				.getParameter(CretaService.Parameter.TITULAR.name());
-		String documento = req
-				.getParameter(CretaService.Parameter.DOCUMENTO.name());
+		String documento = AonStringUtils.leftPad(req
+				.getParameter(CretaService.Parameter.DOCUMENTO.name()), 10, '0');
 		String tipoDocumento = req
 				.getParameter(CretaService.Parameter.TIPO_DOCUMENTO.name());
 		
