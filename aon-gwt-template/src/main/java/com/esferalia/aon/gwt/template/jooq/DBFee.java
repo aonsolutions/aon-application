@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
+import com.esferalia.aon.occam.api.model.type.SellerStatus;
 
 public class DBFee {
 
@@ -264,12 +265,10 @@ public class DBFee {
 			Result<Record4<Integer, String, String, String>> data = ctx.getDslContext().select(REGISTRY.ID,REGISTRY.ALIAS,REGISTRY.NAME, REGISTRY.DOCUMENT)
 					.from(REGISTRY).join(SELLER).on(REGISTRY.ID.eq(SELLER.REGISTRY))
 					.where(SELLER.DOMAIN.eq(domain.getId()))
+					.and(SELLER.STATUS.eq(SellerStatus.ACTIVE.value()))
+					.orderBy(REGISTRY.NAME)
 					.fetch();
-			
-	
-
 			Vector<Seller> v = new Vector<Seller>();
-
 			for (Record4<Integer, String, String, String> r : data) {
 				Seller seller = new Seller();
 				seller.setId(r.value1());
@@ -278,9 +277,7 @@ public class DBFee {
 				seller.setRegistryDocument(r.value4());
 				v.add(seller);
 			}
-
 			return v;
-
 		} finally {
 			if (ctx != null) ctx.close();
 		}

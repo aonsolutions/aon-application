@@ -7,7 +7,6 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
 import com.esferalia.aon.gwt.template.shared.Dialog;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.Error;
-import com.esferalia.aon.gwt.template.shared.ProductCategory;
 import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
@@ -101,6 +100,9 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		
 		accept_button.setText(dialog.getAccept());
 		accept_button.setVisible(dialog.getBoolAccept());
+		if(dialog.getType().equals("editEcommerceTemplate") || dialog.getType().equals("importEcommerceTemplate")){
+			accept_button.setEnabled(false);
+		}
 		accept_button.addClickHandler(new ClickHandler() {
 			Dialog dialog = d;
 			@Override
@@ -118,7 +120,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 						onAccept();
 					}
 				}
-				else if(dialog.getType().contains("import") || dialog.getType().contains("export")){
+				else if(dialog.getType().contains("import") || dialog.getType().contains("export") 
+						|| dialog.getType().equals("editEcommerceTemplate")){
 					if(dialog.getType().equals("importResponse")){
 						onAccept();
 					}
@@ -255,30 +258,40 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		for(Ecommerce ecommerce : Ecommerce.values()){
 			ecommerceListBox.addItem(ecommerce.getName(), ecommerce.getOrdinalStr());
 		}
-		flex_table.setWidget(0, 0, new Label("Ecommerce"));
+		Label label1 = new Label("Ecommerce");
+		label1.addStyleName("aon-input-required");
+		flex_table.setWidget(0, 0, label1);
 		flex_table.setWidget(0, 1, ecommerceListBox);
 		
 		ListBox sellerListBox = new ListBox();
 		sellerListBox.addItem("-","-1");
 		for(Seller seller : dialog.getSellerList())
-			sellerListBox.addItem(seller.getRegistryName(), seller.getId().toString());		
-		flex_table.setWidget(1, 0, new Label("Vendedor"));
+			sellerListBox.addItem(seller.getRegistryName(), seller.getId().toString());
+		Label label2 = new Label("Vendedor");
+		label2.addStyleName("aon-input-required");
+		flex_table.setWidget(1, 0, label2);
 		flex_table.setWidget(1, 1, sellerListBox);
 		
 		TextBox typeTextBox = new TextBox();
 		typeTextBox.setStyleName("aon-inputText");
-		flex_table.setWidget(2, 0, new Label("Tipo"));
+		Label label3 = new Label("Tipo");
+		label3.addStyleName("aon-input-required");
+		flex_table.setWidget(2, 0, label3);
 		flex_table.setWidget(2, 1, typeTextBox);
 		
 		ListBox tagListBox = new ListBox();
 		tagListBox.addItem("-");
 		for(Tag tag : dialog.getTagList())
 			tagListBox.addItem(tag.getName(), tag.getId().toString());
-		flex_table.setWidget(3, 0, new Label("Etiqueta"));
+		Label label4 = new Label("Etiqueta");
+		label4.addStyleName("aon-input-required");
+		flex_table.setWidget(3, 0, label4);
 		flex_table.setWidget(3, 1, tagListBox);
 
-		SingleUploader upload = newUploader(null, dialog.getUrl(), 1);
-		flex_table.setWidget(4, 0, new Label("Archivo"));
+		SingleUploader upload = newUploader(null, dialog.getUrl(), 4);
+		Label label5 = new Label("Archivo");
+		label5.addStyleName("aon-input-required");
+		flex_table.setWidget(4, 0, label5);
 		flex_table.setWidget(4, 1, upload);
 		
 		flexTableCss();
@@ -305,38 +318,64 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
 		flex_table.setCellSpacing(0);
-		
+
 		ListBox ecommerceListBox = new ListBox();
-		ecommerceListBox.addItem(dialog.getEcommerceProduct().getTemplate().getEcommerce());
+
+		String value = "";
+		if(dialog.getEcommerceProduct().getTemplate().getEcommerce().equals(Ecommerce.AMAZON.getName()))
+			value = Ecommerce.AMAZON.getOrdinalStr();
+		else if(dialog.getEcommerceProduct().getTemplate().getEcommerce().equals(Ecommerce.EBAY.getName()))
+			value = Ecommerce.EBAY.getOrdinalStr();
+		
+		ecommerceListBox.addItem(dialog.getEcommerceProduct().getTemplate().getEcommerce(), value);
 		ecommerceListBox.setEnabled(false);
-		flex_table.setWidget(0, 0, new Label("Ecommerce"));
+		Label label1 = new Label("Ecommerce");
+		label1.addStyleName("aon-input-required");
+		flex_table.setWidget(0, 0, label1);
 		flex_table.setWidget(0, 1, ecommerceListBox);
 		
 		ListBox sellerListBox = new ListBox();
 		sellerListBox.addItem("-","-1");
-		for(Seller seller : dialog.getSellerList())
-			sellerListBox.addItem(seller.getRegistryName(), seller.getId().toString());		
-		flex_table.setWidget(1, 0, new Label("Vendedor"));
+		Integer index = 1;
+		for(Seller seller : dialog.getSellerList()){
+			sellerListBox.addItem(seller.getRegistryName(), seller.getId().toString());	
+			if(dialog.getEcommerceProduct().getTemplate().getSeller().equals(seller.getRegistryName()))
+				sellerListBox.setSelectedIndex(index);
+			index++;
+		}	
+		Label label2 = new  Label("Vendedor");
+		label2.addStyleName("aon-input-required");
+		flex_table.setWidget(1, 0, label2);
 		flex_table.setWidget(1, 1, sellerListBox);
 		
 		TextBox typeTextBox = new TextBox();
 		typeTextBox.setText(dialog.getEcommerceProduct().getTemplate().getType());
 		typeTextBox.setEnabled(false);
 		typeTextBox.setStyleName("aon-inputText");
-		flex_table.setWidget(2, 0, new Label("Tipo"));
+		Label label3 = new Label("Tipo");
+		label3.addStyleName("aon-input-required");
+		flex_table.setWidget(2, 0, label3);
 		flex_table.setWidget(2, 1, typeTextBox);
 		
-		ListBox categoryListBox = new ListBox();
-		categoryListBox.addItem("-");
-		for(ProductCategory pc : dialog.getCategories())
-			categoryListBox.addItem(pc.getName(), pc.getId().toString());
-		flex_table.setWidget(3, 0, new Label("Categoria"));
-		flex_table.setWidget(3, 1, categoryListBox);
+		ListBox tagListBox = new ListBox();
+		tagListBox.addItem("-");
+		Integer index2 = 1;
+		for(Tag tag : dialog.getTagList()){
+			tagListBox.addItem(tag.getName(), tag.getId().toString());
+			if(dialog.getEcommerceProduct().getTemplate().getTag().equals(tag.getName()))
+				tagListBox.setSelectedIndex(index2);
+			index2++;
+		}
+		Label label4 = new Label("Etiqueta");
+		label4.addStyleName("aon-input-required");
+		flex_table.setWidget(3, 0, label4);
+		flex_table.setWidget(3, 1, tagListBox);
 		
-		SingleUploader upload = newUploader(null, dialog.getUrl(), 1);
-		flex_table.setWidget(4, 0, new Label("Archivo"));
+		SingleUploader upload = newUploader(null, dialog.getUrl(), 4);
+		Label label5 = new Label("Archivo");
+		label5.addStyleName("aon-input-required");
+		flex_table.setWidget(4, 0, label5);
 		flex_table.setWidget(4, 1, upload);
-		
 		flexTableCss();
 	}
 	
@@ -1535,11 +1574,15 @@ public abstract class TemplatesDialog extends CustomDialogB {
         upload.addOnCancelUploadHandler(new OnCancelUploaderHandler() {
         	Integer row = rowAux;
         	String url = urlAux;
+        	Dialog dialog = d;
         	@Override
 			public void onCancel(IUploader uploader) {
         		//Window.alert("lalalala error");
         		SingleUploader upload = newUploader(null, url,row);
         		flex_table.setWidget(row, 1, upload);
+        		if(dialog.getType().equals("editEcommerceTemplate") || dialog.getType().equals("importEcommerceTemplate")){
+        			accept_button.setEnabled(false);
+        		}
         		// reset out of TemplatesServlet!!!
         		
 			}
@@ -1580,6 +1623,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 				upload.getStatusWidget().setStatus(Status.DONE);
 				upload.getStatusWidget().setVisible(true);
 				progress = 0;		
+				accept_button.setEnabled(true);
 			}
 		});
         upload.getForm().addSubmitCompleteHandler(new SubmitCompleteHandler() {

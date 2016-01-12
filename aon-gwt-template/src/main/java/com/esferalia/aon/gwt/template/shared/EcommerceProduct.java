@@ -123,6 +123,11 @@ public class EcommerceProduct implements Serializable, IsSerializable{
         protected String amazonTemplateType;
         @XmlElement(name = "amazonVersion", required = false)
         protected String amazonVersion;
+        @XmlElement(name = "seller",  required = true)
+        protected String seller;
+        @XmlElement(name = "tag",  required = true)
+        protected String tag;
+        
         
 		public String getEcommerce() {
 			return ecommerce;
@@ -154,7 +159,18 @@ public class EcommerceProduct implements Serializable, IsSerializable{
 		public void setAmazonVersion(String amazonVersion) {
 			this.amazonVersion = amazonVersion;
 		}
-		
+		public String getSeller() {
+			return seller;
+		}
+		public void setSeller(String seller) {
+			this.seller = seller;
+		}
+		public String getTag() {
+			return tag;
+		}
+		public void setTag(String tag) {
+			this.tag = tag;
+		}
     }
 
     @XmlAccessorType(XmlAccessType.FIELD)

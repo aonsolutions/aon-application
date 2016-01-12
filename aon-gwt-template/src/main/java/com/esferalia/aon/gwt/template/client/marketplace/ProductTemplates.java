@@ -303,7 +303,6 @@ public class ProductTemplates  extends ResizeComposite{
 						pbd.addStyleName("gwt-PopupPanel-template");
 						pbd.setGlassEnabled(true);
 						pbd.show();
-						
 						ListBox ecommerceListBox = (ListBox) flex_table.getWidget(0, 1);
 						Integer ordinal = Integer.parseInt(ecommerceListBox.getSelectedValue());
 						Ecommerce ecommerce = Ecommerce.values()[ordinal];
@@ -312,21 +311,19 @@ public class ProductTemplates  extends ResizeComposite{
 						Seller seller = new Seller();
 						seller.setRegistryName(sellerListBox.getSelectedItemText());
 						seller.setId(Integer.parseInt(sellerListBox.getSelectedValue()));
-						
+
 						TextBox typeTextBox = (TextBox) flex_table.getWidget(2, 1);
 						String type = typeTextBox.getText();
-						
+
 						ListBox tagListBox = (ListBox) flex_table.getWidget(3, 1);
 						Tag tag = new Tag();
 						if(!tagListBox.getSelectedItemText().equals("-"))
 							tag.setName(tagListBox.getSelectedItemText())
 								.setId(Integer.parseInt(tagListBox.getSelectedValue()));
+
 						item.executeExcelEcommerce(getDomain(), ecommerce, seller, type, tag, new AsyncCallback<Error>() {
 							@Override
-							public void onSuccess(Error result) {
-								if(result.getError()){
-									refreshDataGrid();
-								}
+							public void onSuccess(Error result) {		
 								pbd.hide();
 								Dialog d2 = new Dialog("Importar Plantilla Ecommerce","Aceptar",true,"Cancelar",false,"importResponse");
 								d2.setError(result);
@@ -334,7 +331,8 @@ public class ProductTemplates  extends ResizeComposite{
 
 									@Override
 									protected void onAccept() {
-										hide();			
+										hide();	
+										refreshDataGrid();
 									}
 												
 									@Override
@@ -510,8 +508,9 @@ public class ProductTemplates  extends ResizeComposite{
 			@Override
 			public void onSuccess(List<EcommerceProduct> result) {
 				setTemplateList(result);
-				dataGrid = new DataGrid<EcommerceProduct>(Integer.MAX_VALUE, resources); 
-				loadDataGrid();
+				addDataDisplay(dataGrid);
+				//dataGrid = new DataGrid<EcommerceProduct>(Integer.MAX_VALUE, resources); 
+				//loadDataGrid();
 			}
 			
 			@Override
@@ -728,6 +727,32 @@ public class ProductTemplates  extends ResizeComposite{
 		dataGrid.getColumnSortList().push(nameColumn);
 		dataGrid.addColumn(nameColumn, "Nombre");
 		dataGrid.setColumnWidth(nameColumn, 30, Unit.PCT);
+		
+		
+		/** Seller Column **/
+		Column<EcommerceProduct, String> sellerColumn = new Column<EcommerceProduct, String>(
+				new TextCell()) {
+
+			@Override
+			public String getValue(EcommerceProduct object) {
+				return object.getTemplate().getSeller();
+			}
+
+		};
+		sellerColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		sellerColumn.setSortable(true);
+		sortHandler.setComparator(sellerColumn,
+				new Comparator<EcommerceProduct>() {
+
+					@Override
+					public int compare(EcommerceProduct o1, EcommerceProduct o2) {
+						return o1.getTemplate().getSeller()
+								.compareTo(o2.getTemplate().getSeller());
+					}
+				});
+		dataGrid.getColumnSortList().push(sellerColumn);
+		dataGrid.addColumn(sellerColumn, "Vendedor");
+		dataGrid.setColumnWidth(sellerColumn, 30, Unit.PCT);
 
 		/** Type Column **/
 		Column<EcommerceProduct, String> typeColumn = new Column<EcommerceProduct, String>(
@@ -752,8 +777,33 @@ public class ProductTemplates  extends ResizeComposite{
 				});
 		dataGrid.getColumnSortList().push(typeColumn);
 		dataGrid.addColumn(typeColumn, "Tipo");
-		dataGrid.setColumnWidth(typeColumn, 20, Unit.PCT);
+		dataGrid.setColumnWidth(typeColumn, 15, Unit.PCT);
 
+		/** Tag Column **/
+		Column<EcommerceProduct, String> tagColumn = new Column<EcommerceProduct, String>(
+				new TextCell()) {
+
+			@Override
+			public String getValue(EcommerceProduct object) {
+				return object.getTemplate().getTag();
+			}
+
+		};
+		tagColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		tagColumn.setSortable(true);
+		sortHandler.setComparator(tagColumn,
+				new Comparator<EcommerceProduct>() {
+
+					@Override
+					public int compare(EcommerceProduct o1, EcommerceProduct o2) {
+						return o1.getTemplate().getTag()
+								.compareTo(o2.getTemplate().getTag());
+					}
+				});
+		dataGrid.getColumnSortList().push(tagColumn);
+		dataGrid.addColumn(tagColumn, "Etiqueta");
+		dataGrid.setColumnWidth(tagColumn, 30, Unit.PCT);
+		
 		/** ACTION Column **/
 		Column<EcommerceProduct, EcommerceProduct> actionColumn = new Column<EcommerceProduct, EcommerceProduct>(cell) {
 
@@ -764,7 +814,7 @@ public class ProductTemplates  extends ResizeComposite{
 		};
 		actionColumn.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
 		dataGrid.addColumn(actionColumn, "Acciones");
-		dataGrid.setColumnWidth(actionColumn, 10, Unit.PCT);
+		dataGrid.setColumnWidth(actionColumn, 15, Unit.PCT);
 	}
 
 	

@@ -1855,21 +1855,13 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		byte[] xml = null;
 		
     	if(getMimetype().equals(MimeType.CSV.getName()) && ecommerce.equals(Ecommerce.EBAY)){
-    		xml = csvToXmlEbay(data, ecommerce.getName(), type, tag.getName());
+    		xml = csvToXmlEbay(data, ecommerce.getName(), type, tag.getName(), seller.getRegistryName());
     	}
-    	else if(!Utils.isExcel(getMimetype())){
-			//El archivo no es un fichero Excel.
-			error.setError(false);
-			Vector<String> verror = new Vector<String>();
-			verror.add("*El archivo importado no es de tipo excel.");
-			error.setTextError(verror);
-			return error;
-		}
 
 		if(xml == null && ecommerce.equals(Ecommerce.AMAZON))
-			xml = excelToXmlAmazon(data, ecommerce.getName(), type, tag.getName());
+			xml = excelToXmlAmazonXXX(data, ecommerce.getName(), type, tag.getName(), seller.getRegistryName());
 		else if(xml == null && ecommerce.equals(Ecommerce.EBAY))
-			xml = excelToXmlEbay(data, ecommerce.getName(), type, tag.getName());
+			xml = excelToXmlEbayXXX(data, ecommerce.getName(), type, tag.getName(), seller.getRegistryName());
 	
 		if(xml != null){
 			Attach attach = AON.getAttach(domain.getName(), domain.getId(), getUser().getLogin(), 
@@ -1918,30 +1910,79 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		}
 		return error;
 	}
-	
-	public byte[] excelToXmlAmazon(byte[] data, String ec, String type, String category){
+
+	public byte[] excelToXmlAmazonXXX(byte[] data, String ec, String type, String tag, String seller){
 		try {
 			File aux = File.createTempFile("ecommerceTemplate", ".xls");
 			FileUtils.writeByteArrayToFile(aux, data);
 			FileInputStream excel = null;
 			excel = new FileInputStream(aux);
-
+			
 			HSSFWorkbook workbook= new HSSFWorkbook(excel);
-		
-			HSSFSheet sheet = workbook.getSheet("Template");
+			HSSFSheet sheet = null;
+			HSSFSheet sheet2 = null;
+			try{
+				sheet = workbook.getSheetAt(3);
+				sheet2 = workbook.getSheetAt(5);
+			} catch (IllegalArgumentException e){
+				workbook.close();
+				return null;
+			}
 			if(sheet == null){
 				workbook.close();
 				return null;
 			}
+			EcommerceProduct ep =  excelToXmlAmazonH(ec, type, tag, seller, sheet, sheet2);
+			workbook.close();
+			return XMLUtils.writeXml(ep);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		} catch (OfficeXmlFileException e){
+			try{
+				File aux = File.createTempFile("ecommerceTemplate", ".xlsx");
+				FileUtils.writeByteArrayToFile(aux, data);
+				FileInputStream excel = null;
+				excel = new FileInputStream(aux);
+				XSSFWorkbook workbook= new XSSFWorkbook(excel);
+				if(workbook.getCTWorkbook().getSheets().sizeOfSheetArray()<6){
+					workbook.close();
+					return null;
+				}
+				XSSFSheet sheet = workbook.getSheetAt(3);
+				XSSFSheet sheet2 = workbook.getSheetAt(5);
+				if(sheet == null){
+					workbook.close();
+					return null;
+				}
+				EcommerceProduct ep = excelToXmlAmazonX(ec, type, tag, seller, sheet, sheet2);
+				workbook.close();
+				return XMLUtils.writeXml(ep);
+			} catch (JAXBException e1) {
+				e1.printStackTrace();
+				return null;
+			} catch (IOException e1) {
+				e1.printStackTrace();
+				return null;
+			}
+		} catch (JAXBException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public EcommerceProduct excelToXmlAmazonH(String ec, String type, String tag, String seller, HSSFSheet sheet, HSSFSheet sheet2){
 			Row row = sheet.getRow(0);
 			Cell cell1 = row.getCell(0);
 			Cell cell2 = row.getCell(1);
 			Template template = new Template();
-			template.setCategory(category);
+			template.setCategory(tag);
+			template.setTag(tag);
 			template.setEcommerce(ec);
 			template.setType(type);
 			template.setAmazonTemplateType(cell1.getStringCellValue());
 			template.setAmazonVersion(cell2.getStringCellValue());
+			template.setSeller(seller);
 			
 			Row row1 = sheet.getRow(1);
 			Row row2 = sheet.getRow(2);
@@ -1961,7 +2002,151 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			
 			Iterable<Cell> cellIterable2 = () -> cellIterator2;
 			Stream<Cell> cellStream2 = StreamSupport.stream(cellIterable2.spliterator(),false);
-			HSSFSheet sheet2 = workbook.getSheet("Valores válidos");
+		    final AtomicInteger count = new AtomicInteger();
+		    count.set(0);
+			cellStream2.forEach(cell ->{
+				pd.getEcommerce().get(cell.getColumnIndex()).setCode(cell.getStringCellValue());
+				Cell cellv = sheet2.getRow(1).getCell(count.get());
+				if(cellv.getStringCellValue().equals(cell.getStringCellValue())){
+					Integer j = 2;
+					Row rowx = sheet2.getRow(j);
+					Cell cellx = null;
+					if(rowx != null) cellx = rowx.getCell(count.get());
+					String strx = null;
+					if(cellx != null) strx = cellx.getStringCellValue(); 
+					LinkedList<String> list = new LinkedList<String>();
+					while(strx != null && !strx.equals("")){
+						list.add(strx);
+						j++;
+						rowx = sheet2.getRow(j);
+						cellx = null;
+						if(rowx != null) cellx = rowx.getCell(count.get());
+						strx = null;
+						if(cellx != null) strx = cellx.getStringCellValue(); 
+					}
+					PresetValues pv = new PresetValues();
+					pv.setPresetValue(list);
+					pd.getEcommerce().get(cell.getColumnIndex()).setPresetValues(pv);
+					count.getAndIncrement();
+				}
+			});
+			EcommerceProduct ep =  new EcommerceProduct();
+			ep.setProductData(pd);
+			ep.setTemplate(template);
+			
+			return ep;
+	}
+	
+	public EcommerceProduct excelToXmlAmazonX(String ec, String type, String tag, String seller, XSSFSheet sheet, XSSFSheet sheet2){
+		Row row = sheet.getRow(0);
+		Cell cell1 = row.getCell(0);
+		Cell cell2 = row.getCell(1);
+		Template template = new Template();
+		template.setCategory(tag);
+		template.setTag(tag);
+		template.setEcommerce(ec);
+		template.setType(type);
+		template.setAmazonTemplateType(cell1.getStringCellValue());
+		template.setAmazonVersion(cell2.getStringCellValue());
+		template.setSeller(seller);
+		
+		Row row1 = sheet.getRow(1);
+		Row row2 = sheet.getRow(2);
+
+		ProductData pd = new ProductData();
+		pd.setEcommerce(new ArrayList<EcommerceProduct.ProductData.Ecommerce>());
+		Iterator<Cell> cellIterator1 = row1.cellIterator();
+		Iterator<Cell> cellIterator2 = row2.cellIterator();
+
+		Iterable<Cell> cellIterable1 = () -> cellIterator1;
+		Stream<Cell> cellStream1 = StreamSupport.stream(cellIterable1.spliterator(),false);
+		cellStream1.forEach(cell->{
+			EcommerceProduct.ProductData.Ecommerce ecommerce = new EcommerceProduct.ProductData.Ecommerce();
+			ecommerce.setName(cell.getStringCellValue());
+			pd.getEcommerce().add(ecommerce);
+		});
+		
+		Iterable<Cell> cellIterable2 = () -> cellIterator2;
+		Stream<Cell> cellStream2 = StreamSupport.stream(cellIterable2.spliterator(),false);
+	    final AtomicInteger count = new AtomicInteger();
+	    count.set(0);
+		cellStream2.forEach(cell ->{
+			pd.getEcommerce().get(cell.getColumnIndex()).setCode(cell.getStringCellValue());
+			Cell cellv = sheet2.getRow(1).getCell(count.get());
+			if(cellv.getStringCellValue().equals(cell.getStringCellValue())){
+				Integer j = 2;
+				Row rowx = sheet2.getRow(j);
+				Cell cellx = null;
+				if(rowx != null) cellx = rowx.getCell(count.get());
+				String strx = null;
+				if(cellx != null) strx = cellx.getStringCellValue(); 
+				LinkedList<String> list = new LinkedList<String>();
+				while(strx != null && !strx.equals("")){
+					list.add(strx);
+					j++;
+					rowx = sheet2.getRow(j);
+					cellx = null;
+					if(rowx != null) cellx = rowx.getCell(count.get());
+					strx = null;
+					if(cellx != null) strx = cellx.getStringCellValue(); 
+				}
+				PresetValues pv = new PresetValues();
+				pv.setPresetValue(list);
+				pd.getEcommerce().get(cell.getColumnIndex()).setPresetValues(pv);
+				count.getAndIncrement();
+			}
+		});
+		EcommerceProduct ep =  new EcommerceProduct();
+		ep.setProductData(pd);
+		ep.setTemplate(template);
+		
+		return ep;
+	}
+	
+	
+	public byte[] excelToXmlAmazon(byte[] data, String ec, String type, String tag, String seller){
+		try {
+			File aux = File.createTempFile("ecommerceTemplate", ".xls");
+			FileUtils.writeByteArrayToFile(aux, data);
+			FileInputStream excel = null;
+			excel = new FileInputStream(aux);
+			HSSFWorkbook workbook= new HSSFWorkbook(excel);
+			HSSFSheet sheet = workbook.getSheetAt(3);
+			HSSFSheet sheet2 = workbook.getSheetAt(5);
+			if(sheet == null){
+				workbook.close();
+				return null;
+			}
+			Row row = sheet.getRow(0);
+			Cell cell1 = row.getCell(0);
+			Cell cell2 = row.getCell(1);
+			Template template = new Template();
+			template.setCategory(tag);
+			template.setTag(tag);
+			template.setEcommerce(ec);
+			template.setType(type);
+			template.setAmazonTemplateType(cell1.getStringCellValue());
+			template.setAmazonVersion(cell2.getStringCellValue());
+			template.setSeller(seller);
+			
+			Row row1 = sheet.getRow(1);
+			Row row2 = sheet.getRow(2);
+
+			ProductData pd = new ProductData();
+			pd.setEcommerce(new ArrayList<EcommerceProduct.ProductData.Ecommerce>());
+			Iterator<Cell> cellIterator1 = row1.cellIterator();
+			Iterator<Cell> cellIterator2 = row2.cellIterator();
+
+			Iterable<Cell> cellIterable1 = () -> cellIterator1;
+			Stream<Cell> cellStream1 = StreamSupport.stream(cellIterable1.spliterator(),false);
+			cellStream1.forEach(cell->{
+				EcommerceProduct.ProductData.Ecommerce ecommerce = new EcommerceProduct.ProductData.Ecommerce();
+				ecommerce.setName(cell.getStringCellValue());
+				pd.getEcommerce().add(ecommerce);
+			});
+			
+			Iterable<Cell> cellIterable2 = () -> cellIterator2;
+			Stream<Cell> cellStream2 = StreamSupport.stream(cellIterable2.spliterator(),false);
 		    final AtomicInteger count = new AtomicInteger();
 		    count.set(0);
 			cellStream2.forEach(cell ->{
@@ -2003,7 +2188,77 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		}
 	}
 	
-	public byte[] excelToXmlEbay(byte[] data, String ec, String type, String category){
+	public byte[] excelToXmlEbayXXX(byte[] data, String ec, String type, String tag, String seller){
+		try {
+			File aux = File.createTempFile("ecommerceTemplate", ".xls");
+			FileUtils.writeByteArrayToFile(aux, data);
+			FileInputStream excel = null;
+			excel = new FileInputStream(aux);
+
+			HSSFWorkbook workbook= new HSSFWorkbook(excel);
+			HSSFSheet sheet = workbook.getSheetAt(0);
+			if(sheet == null){
+				workbook.close();
+				return null;
+			}
+			EcommerceProduct ep = excelToXmlEbayH(ec, type, tag, seller, sheet.getRow(0));
+			workbook.close();
+			return XMLUtils.writeXml(ep);
+		} catch (OfficeXmlFileException e){
+			try {
+				File aux = File.createTempFile("ecommerceTemplate", ".xlsx");
+				FileUtils.writeByteArrayToFile(aux, data);
+				FileInputStream excel = null;
+				excel = new FileInputStream(aux);
+
+				XSSFWorkbook workbook= new XSSFWorkbook(excel);
+				XSSFSheet sheet = workbook.getSheetAt(0);
+				if(sheet == null){
+					workbook.close();
+					return null;
+				}
+				EcommerceProduct ep = excelToXmlEbayH(ec, type, tag, seller, sheet.getRow(0));
+				workbook.close();
+			
+				return XMLUtils.writeXml(ep);
+			} catch (JAXBException | IOException e1) {
+				e1.printStackTrace();
+				return null;
+			}
+			
+		} catch (JAXBException | IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public EcommerceProduct excelToXmlEbayH(String ec, String type, String tag, String seller, Row row){
+		Template template = new Template();
+		template.setCategory(tag);
+		template.setEcommerce(ec);
+		template.setType(type);
+		template.setTag(tag);
+		template.setSeller(seller);
+
+		ProductData pd = new ProductData();
+		pd.setEcommerce(new ArrayList<EcommerceProduct.ProductData.Ecommerce>());
+		Iterator<Cell> cellIterator = row.cellIterator();
+
+		Iterable<Cell> cellIterable = () -> cellIterator;
+		Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
+		cellStream.forEach(cell->{
+			EcommerceProduct.ProductData.Ecommerce ecommerce = new EcommerceProduct.ProductData.Ecommerce();
+			ecommerce.setName(cell.getStringCellValue());
+			ecommerce.setCode(cell.getStringCellValue());
+			pd.getEcommerce().add(ecommerce);
+		});
+		EcommerceProduct ep =  new EcommerceProduct();
+		ep.setProductData(pd);
+		ep.setTemplate(template);
+		return ep;
+	}
+	
+	public byte[] excelToXmlEbay(byte[] data, String ec, String type, String tag, String seller){
 		try {
 			File aux = File.createTempFile("ecommerceTemplate", ".xls");
 			FileUtils.writeByteArrayToFile(aux, data);
@@ -2019,9 +2274,11 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			Row row = sheet.getRow(0);
 			
 			Template template = new Template();
-			template.setCategory(category);
+			template.setCategory(tag);
 			template.setEcommerce(ec);
 			template.setType(type);
+			template.setTag(tag);
+			template.setSeller(seller);
 
 			ProductData pd = new ProductData();
 			pd.setEcommerce(new ArrayList<EcommerceProduct.ProductData.Ecommerce>());
@@ -2041,14 +2298,15 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			ep.setProductData(pd);
 			ep.setTemplate(template);
 			return XMLUtils.writeXml(ep);
-		
+		} catch (OfficeXmlFileException e){
+			return null;
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 	
-	public byte[] csvToXmlEbay(byte[] data, String ec, String type, String category){
+	public byte[] csvToXmlEbay(byte[] data, String ec, String type, String tag, String seller){
 		try {
 			String csvSplitBy = ",";
 			String csvLineSplitBy = "\n";
@@ -2089,9 +2347,11 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				}
 			}
 			Template template = new Template();
-			template.setCategory(category);
+			template.setCategory(tag);
 			template.setEcommerce(ec);
 			template.setType(type);
+			template.setTag(tag);
+			template.setSeller(seller);
 			
 			EcommerceProduct ep =  new EcommerceProduct();
 			ep.setProductData(pd);
