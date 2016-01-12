@@ -3500,23 +3500,23 @@ public class SQLContractSalaryCalculatorContext
 			intersects = Period.intersect(intersects, periods);
 		}
 
-		for (Period period : quote) {
-			if (!containsVariable(QUOTE_DAYS, period)) {
-				ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
-					@Override
-					public Period getPeriod() {
-						return period;
-					}
-
-					@Override
-					public Double getValue(Period p) {
-						return getDays(ctx, p, 1.00);
-					}
-
-				};
-				ctx.putVariable(QUOTE_DAYS, quoteDays);
-			}
-		}
+//		for (Period period : quote) {
+//			if (!containsVariable(QUOTE_DAYS, period)) {
+//				ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
+//					@Override
+//					public Period getPeriod() {
+//						return period;
+//					}
+//
+//					@Override
+//					public Double getValue(Period p) {
+//						return getDays(ctx, p, 1.00);
+//					}
+//
+//				};
+//				ctx.putVariable(QUOTE_DAYS, quoteDays);
+//			}
+//		}
 
 		// ITs
 		List<Period> leaves = getLeavesPeriods();
@@ -3613,6 +3613,7 @@ public class SQLContractSalaryCalculatorContext
 						workedDays);
 			}
 
+
 			ITimedVariable<Double> workedHours = new ITimedVariable<Double>() {
 				private Map<Integer, ContextVariable> DAYS = new HashMap<Integer, ContextVariable>() {
 					{
@@ -3661,6 +3662,29 @@ public class SQLContractSalaryCalculatorContext
 						workedHours);
 			}
 
+			ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
+				@Override
+				public Period getPeriod() {
+					return period;
+				}
+	
+				@Override
+				public Double getValue(Period p) {
+					return getDays(ctx, p, 1.00);
+				}
+	
+			};
+
+			ITimedVariable<?> userQuoteDays = getExpressionContext()
+					.getVariable(QUOTE_DAYS, period.getStart(),
+							period.getEnd());
+
+			if (userQuoteDays == null) {
+				ctx.putVariable(QUOTE_DAYS, quoteDays);
+			} else {
+				onRedefinedImplicit(QUOTE_DAYS.getName(), userQuoteDays,
+						quoteDays);
+			}
 		}
 
 	}
