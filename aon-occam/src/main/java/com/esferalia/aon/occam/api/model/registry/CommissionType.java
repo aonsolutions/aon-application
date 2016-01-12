@@ -14,26 +14,30 @@ public class CommissionType implements Serializable {
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public CommissionType setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	public int getDomain() {
 		return domain;
 	}
-	public void setDomain(int domain) {
+	public CommissionType setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
+	public CommissionType setName(String name) {
 		this.name = name;
+		return this;
 	}
 	public double getRate() {
 		return rate;
 	}
-	public void setRate(double rate) {
+	public CommissionType setRate(double rate) {
 		this.rate = rate;
+		return this;
 	}
 	
 }

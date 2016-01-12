@@ -15,66 +15,82 @@ public class Order implements IsSerializable{
 	String customerName;
 	Double price;
 	AmazonDelivery amazonDelivery;
+	String sellerName;
 	
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public Order setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	public AmazonDelivery getAmazonDelivery() {
 		return amazonDelivery;
 	}
-	public void setAmazonDelivery(AmazonDelivery amazonDelivery) {
+	public Order setAmazonDelivery(AmazonDelivery amazonDelivery) {
 		this.amazonDelivery = amazonDelivery;
+		return this;
 	}
 	public String getOrderId() {
 		return orderId;
 	}
-	public void setOrderId(String orderId) {
+	public Order setOrderId(String orderId) {
 		this.orderId = orderId;
+		return this;
 	}
 	public Integer getNumber() {
 		return number;
 	}
-	public void setNumber(Integer number) {
+	public Order setNumber(Integer number) {
 		this.number = number;
+		return this;
 	}
 	public String getSerie() {
 		return serie;
 	}
-	public void setSerie(String serie) {
+	public Order setSerie(String serie) {
 		this.serie = serie;
+		return this;
 	}
 	public Date getDate() {
 		return date;
 	}
-	public void setDate(Date date) {
+	public Order setDate(Date date) {
 		this.date = date;
+		return this;
 	}
 	public String getCustomerName() {
 		return customerName;
 	}
-	public void setCustomerName(String customerName) {
+	public Order setCustomerName(String customerName) {
 		this.customerName = customerName;
+		return this;
 	}
 	public Double getPrice() {
 		return price;
 	}
-	public void setPrice(Double price) {
+	public Order setPrice(Double price) {
 		this.price = price;
+		return this;
 	}
 	
 	public String getDateStr(){
 		return dateStr;
 	}
 	
-	public void setDateStr(String dateStr){
+	public Order setDateStr(String dateStr){
 		this.dateStr = dateStr;
+		return this;
 	}
 	
 	public String getOrder(){
 		return getSerie() + "/" + getNumber(); 
 	}
-	
+	public String getSellerName() {
+		return sellerName;
+	}
+	public Order setSellerName(String sellerName) {
+		this.sellerName = sellerName;
+		return this;
+	}
 }

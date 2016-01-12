@@ -1,7 +1,10 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.CommercialTracking.COMMERCIAL_TRACKING;
 import static com.esferalia.aon.jooq.tables.CommercialActivity.COMMERCIAL_ACTIVITY;
+import static com.esferalia.aon.jooq.tables.CommercialTracking.COMMERCIAL_TRACKING;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
+import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 
 import java.sql.Timestamp;
 import java.util.LinkedList;
@@ -9,6 +12,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.jooq.Condition;
+import org.jooq.Record13;
 
 import com.esferalia.aon.jooq.tables.records.CommercialActivityRecord;
 import com.esferalia.aon.jooq.tables.records.CommercialTrackingRecord;
@@ -20,6 +24,10 @@ import com.esferalia.aon.occam.api.model.CommercialTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.CommercialActivityProperties;
 import com.esferalia.aon.occam.api.model.Properties.CommercialTrackingProperties;
+import com.esferalia.aon.occam.api.model.registry.CommissionType;
+import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 
 public class CommercialDAO {
 
@@ -97,6 +105,15 @@ public class CommercialDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	public static Seller getSeller(AONContext ctx, Integer sellerId){
+		return ctx.getDslContext().select(SELLER.REGISTRY, SELLER.DOMAIN, SELLER.COMMISSION_TYPE, SELLER.SCOPE, SELLER.STATUS,
+				SCOPE.DESCRIPTION, REGISTRY.DOCUMENT, REGISTRY.NAME, REGISTRY.ALIAS, REGISTRY.DOCUMENT_COUNTRY, REGISTRY.DOCUMENT_TYPE,
+				REGISTRY.NATIONALITY, REGISTRY.SECURITY_LEVEL)
+				.from(SELLER).join(SCOPE).on(SELLER.SCOPE.eq(SCOPE.ID))
+				.join(REGISTRY).on(REGISTRY.ID.eq(SELLER.REGISTRY))
+				.where(SELLER.REGISTRY.eq(sellerId)).fetch().stream().map(new FullSellerFiller()).findFirst().orElse(new Seller());
+	}
+
 	private static class FullCommercialTrackingFiller implements Function<CommercialTrackingRecord, CommercialTracking> {
 		@Override
 		public CommercialTracking apply(CommercialTrackingRecord r) {
@@ -126,6 +143,27 @@ public class CommercialDAO {
 					.setName(r.getName())
 					.setProbability(r.getProbability())
 					.setSurvey(r.getSurvey());			
+		}
+	}
+	
+	private static class FullSellerFiller implements Function<Record13<Integer, Integer, Integer, Integer, Byte, String, String, String , String, String, Byte, String, Byte>, Seller> {
+		@Override
+		public Seller apply(Record13<Integer, Integer, Integer, Integer, Byte, String, String, String , String, String, Byte, String, Byte> r) {
+			return new Seller()
+					.setDomain(r.getValue(SELLER.DOMAIN))
+					.setId(r.getValue(SELLER.REGISTRY))
+					.setActive(r.getValue(SELLER.STATUS) == 1)
+					.setCommissionType(new CommissionType().setId(r.getValue(SELLER.COMMISSION_TYPE)))
+					.setScope(r.getValue(SCOPE.DESCRIPTION))
+					
+					.setRegistryAlias(r.getValue(REGISTRY.ALIAS))
+					.setRegistryConfidential(r.getValue(REGISTRY.SECURITY_LEVEL) == 1)
+					.setRegistryDocument(r.getValue(REGISTRY.DOCUMENT))
+					.setRegistryDocumentCountry(Country.valueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY)))
+					.setRegistryName(r.getValue(REGISTRY.NAME))
+					.setRegistryDocumentType(DocumentType.values()[r.getValue(REGISTRY.DOCUMENT_TYPE)])
+					.setRegistryNationality(Country.valueOf(r.getValue(REGISTRY.NATIONALITY)))
+					;			
 		}
 	}
 

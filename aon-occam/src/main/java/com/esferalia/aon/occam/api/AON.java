@@ -83,6 +83,7 @@ import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
@@ -2761,6 +2762,20 @@ public class AON {
 		}
 	}
 
+	// -------------------- SELLER
+	
+	public static Seller getSeller(String domainName, Integer domainId, String login,
+			Integer sellerId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommercial().getSeller(ctx, sellerId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	// ********************************************
 	// ***************************** Marketplace **
 	// ********************************************

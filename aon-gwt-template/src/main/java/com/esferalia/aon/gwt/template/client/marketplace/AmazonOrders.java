@@ -5,24 +5,26 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
 
+import com.esferalia.aon.gwt.template.client.CustomDataGrid;
 import com.esferalia.aon.gwt.template.client.ITemplate;
 import com.esferalia.aon.gwt.template.client.ITemplateAsync;
 import com.esferalia.aon.gwt.template.client.JsTemplates;
 import com.esferalia.aon.gwt.template.client.ProgressBarDialog;
 import com.esferalia.aon.gwt.template.shared.marketplace.Order;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.AbstractHasData.DefaultKeyboardSelectionHandler;
+import com.google.gwt.user.cellview.client.AbstractPager;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
@@ -34,11 +36,13 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
@@ -66,16 +70,17 @@ public class AmazonOrders  extends ResizeComposite{
 	List<Order> orderList;
 	String login;
 	ProgressBarDialog pbd;
+	ShowMorePager showMorePager;
 
 	
 	public AmazonOrders(List<Order> orderList, String login) {
 		setOrderList(orderList);
 		setLogin(login);
 		
-		dataGrid = new DataGrid<Order>(Integer.MAX_VALUE, resources); 
+		dataGrid = new CustomDataGrid<Order>();//new DataGrid<Order>(Integer.MAX_VALUE, resources); 
 		deliveryButton = new Button();
 
-
+		
 		Widget ui = binder.createAndBindUi(this);
 		initWidget(ui);
 		load();
@@ -98,6 +103,93 @@ public class AmazonOrders  extends ResizeComposite{
 	
 	//------------------------------ DataGrid Utils
 	
+	/**
+	 * A scrolling pager that automatically increases the range every time the
+	 * scroll bar reaches the bottom.
+	 */
+	static class ShowMorePager extends AbstractPager {
+
+		/**
+		 * The default increment size.
+		 */
+		private static final int DEFAULT_INCREMENT = 20;
+
+		/**
+		 * The increment size.
+		 */
+		private int incrementSize = DEFAULT_INCREMENT;
+
+		/**
+		 * The last scroll position.
+		 */
+		private int lastScrollPos = 0;
+
+		/**
+		 * The scrollable panel.
+		 */
+		private final ScrollPanel scrollPanel;
+
+		CustomDataGrid<?> dataGridAux;
+		
+		/**
+		 * Construct a new {@link ShowMorePager}.
+		 */
+		
+		public ShowMorePager(CustomDataGrid<?> dataGrid) {
+			setDisplay(dataGrid);
+
+			this.scrollPanel = (ScrollPanel) dataGrid.getScrollPanel();
+			dataGridAux = dataGrid;
+			// Handle scroll events.
+			scrollPanel.addScrollHandler(new ScrollHandler() {
+				CustomDataGrid<?> dataGrid = dataGridAux;
+				@Override
+				public void onScroll(ScrollEvent event) {
+					// If scrolling up, ignore the event.
+					int oldScrollPos = ShowMorePager.this.lastScrollPos;
+					ShowMorePager.this.lastScrollPos = scrollPanel
+							.getVerticalScrollPosition();
+					if (oldScrollPos >= ShowMorePager.this.lastScrollPos) {
+						return;
+					}
+
+					int maxScrollTop = scrollPanel
+							.getMaximumVerticalScrollPosition();
+
+					
+
+					if (ShowMorePager.this.lastScrollPos >= maxScrollTop) {
+						// We are near the end, so increase the page size.
+						int incrementSize = getIncrementSize();
+						Range range = getDisplay().getVisibleRange();
+						// We are near the end, so increase the page size.
+						int newPageSize = range.getLength() + incrementSize;
+						Integer rowCount = dataGrid.getRowCount();
+						if(rowCount > range.getLength()){
+							if(rowCount <= newPageSize)
+								getDisplay().setVisibleRange(0, rowCount);
+							else getDisplay().setVisibleRange(0, newPageSize);
+						}
+					}
+				}
+			});
+		}
+
+		/**
+		 * Get the number of rows by which the range is increased when the
+		 * scrollbar reaches the bottom.
+		 * 
+		 * @return the increment size
+		 */
+		int getIncrementSize() {
+			return incrementSize;
+		}
+
+		@Override
+		protected void onRangeOrRowCountChanged() {
+		}
+	}
+	
 	private void loadDataGrid(){
 		DefaultKeyboardSelectionHandler<Order> selHandler = getSelHandler();	
 		dataGrid.addHandler(selHandler, CellPreviewEvent.getType());
@@ -112,6 +204,9 @@ public class AmazonOrders  extends ResizeComposite{
 				DefaultSelectionEventManager.<Order> createCheckboxManager());
 		dataGrid.setSelectionModel(selectionModel);
 		initTableColumns(selectionModel, sortHandler);
+		
+		showMorePager = new ShowMorePager((CustomDataGrid<Order>) dataGrid);
+
 	}
 	
 	private DefaultKeyboardSelectionHandler<Order> getSelHandler(){
@@ -168,15 +263,6 @@ public class AmazonOrders  extends ResizeComposite{
 				new TextCell()) {
 
 			@Override
-			public void render(Context context, Order object,
-					SafeHtmlBuilder sb) {
-
-				sb.appendHtmlConstant("<span>" + object.getDateStr()
-						+ "</span>");
-
-			}
-
-			@Override
 			public String getValue(Order object) {
 
 				return object.getDateStr();
@@ -228,17 +314,7 @@ public class AmazonOrders  extends ResizeComposite{
 				new TextCell()) {
 
 			@Override
-			public void render(Context context, Order object,
-					SafeHtmlBuilder sb) {
-
-				sb.appendHtmlConstant("<span>" + object.getCustomerName()
-						+ "</span>");
-
-			}
-
-			@Override
 			public String getValue(Order object) {
-
 				return object.getCustomerName();
 			}
 
@@ -257,6 +333,56 @@ public class AmazonOrders  extends ResizeComposite{
 		dataGrid.getColumnSortList().push(customerColumn);
 		dataGrid.addColumn(customerColumn, "Cliente");
 		dataGrid.setColumnWidth(customerColumn, 30, Unit.PCT);
+
+		/** Seller Column **/
+		Column<Order, String> sellerColumn = new Column<Order, String>(
+				new TextCell()) {
+
+			@Override
+			public String getValue(Order object) {
+				return object.getSellerName();
+			}
+
+		};
+		sellerColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		sellerColumn.setSortable(true);
+		sortHandler.setComparator(customerColumn,
+				new Comparator<Order>() {
+
+					@Override
+					public int compare(Order o1, Order o2) {
+						return o1.getSellerName()
+								.compareTo(o2.getSellerName());
+					}
+				});
+		dataGrid.getColumnSortList().push(sellerColumn);
+		dataGrid.addColumn(sellerColumn, "Comercial");
+		dataGrid.setColumnWidth(sellerColumn, 30, Unit.PCT);
+
+		/** Purchase Reference Column **/
+		Column<Order, String> purcaseRefColumn = new Column<Order, String>(
+				new TextCell()) {
+
+			@Override
+			public String getValue(Order object) {
+				return object.getOrderId();
+			}
+		};
+
+		purcaseRefColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		purcaseRefColumn.setSortable(true);
+		sortHandler.setComparator(purcaseRefColumn,
+				new Comparator<Order>() {
+
+					@Override
+					public int compare(Order o1, Order o2) {
+						return o1.getOrderId()
+								.compareTo(o2.getOrderId());
+					}
+				});
+		dataGrid.getColumnSortList().push(purcaseRefColumn);
+		dataGrid.addColumn(purcaseRefColumn, "Ref. Compra");
+		dataGrid.setColumnWidth(purcaseRefColumn, 15, Unit.PCT);
 	
 	}
 

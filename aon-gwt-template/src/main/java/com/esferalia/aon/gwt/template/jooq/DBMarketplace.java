@@ -13,8 +13,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import org.jooq.Field;
 import org.jooq.Record1;
+import org.jooq.Record7;
 import org.jooq.Record8;
 import org.jooq.Result;
 
@@ -30,7 +34,6 @@ import com.esferalia.aon.jooq.tables.records.IattachRecord;
 import com.esferalia.aon.jooq.tables.records.ProductRecord;
 import com.esferalia.aon.jooq.tables.records.RattachTagRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
-import com.esferalia.aon.jooq.tables.records.SalesRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -39,7 +42,9 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.api.model.type.ShipmentStatus;
 
 
@@ -63,32 +68,41 @@ public class DBMarketplace {
 		return list;
 	}
 	
-	public static List<Order> getOrderList(Domain domain, String login){
+	private static class OrderFiller implements Function<Record7<Integer, String, Integer, String, java.sql.Date, Object, Object>, Order> {
+		@Override
+		public Order apply(Record7<Integer, String, Integer, String, java.sql.Date, Object, Object> r) {
+			return new Order()
+					.setId(r.getValue(SALES.ID))
+					.setSerie(r.getValue(SALES.SERIES))
+					.setNumber(r.getValue(SALES.NUMBER))
+					.setOrderId(r.getValue(SALES.PURCHASE_REFERENCE))
+					.setCustomerName(r.value6() != null ? r.value6().toString() : "") 
+					.setDate(r.getValue(SALES.ISSUE_DATE))
+					.setDateStr(Utils.getDateStr(r.getValue(SALES.ISSUE_DATE)))
+					.setSellerName(r.value7() != null ? r.value7().toString() : "");
+		}
+	}
+
+	public static LinkedList<Order> getOrderList(Domain domain, String login){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
-			Result<SalesRecord> result = ctx.getDslContext().select()
-										.from(SALES)
-										.where(SALES.DOMAIN.eq(domain.getId()))
-											.and(SALES.PURCHASE_REFERENCE.isNotNull())
-										.fetchInto(SALES);
+			Field<Object> customerName = ctx.getDslContext().select(REGISTRY.NAME)
+					.from(REGISTRY)
+					.where(REGISTRY.ID.eq(SALES.CUSTOMER)).asField();
 			
-			List<Order> orderList = new ArrayList<Order>();
-			result.stream().forEach(record ->{
-				Order order = new Order();
-				order.setId(record.getId());
-				order.setSerie(record.getSeries());
-				order.setNumber(record.getNumber());
-				order.setOrderId(record.getPurchaseReference());
-				String CustomerName = record.getCustomer() != null ? 
-						getCustomer(domain, login, record.getCustomer()) : "";
-				order.setCustomerName(CustomerName);
-				order.setDate(record.getIssueDate());
-				String dateStr = Utils.getDateStr(record.getIssueDate());
-				order.setDateStr(dateStr);
-				orderList.add(order);
-			});
-			return orderList;
+			Field<Object> sellerName = ctx.getDslContext().select(REGISTRY.NAME)
+					.from(REGISTRY)
+					.where(REGISTRY.ID.eq(SALES.SELLER)).asField();
+			
+			return ctx.getDslContext().select(SALES.ID, SALES.SERIES, SALES.NUMBER, SALES.PURCHASE_REFERENCE, SALES.ISSUE_DATE, customerName, sellerName)
+				.from(SALES)			
+				.where(SALES.DOMAIN.eq(domain.getId()))
+					.and(SALES.STATUS.eq(SalesStatus.SERVED.value()))
+					.and(SALES.PURCHASE_REFERENCE.isNotNull())			
+				.fetch()
+				.stream().map(new OrderFiller())
+				.collect(Collectors.toCollection(LinkedList::new));
 			
 		}finally{
 			if(ctx != null)
@@ -108,10 +122,7 @@ public class DBMarketplace {
 									.and(SALES.PURCHASE_REFERENCE.isNotNull())
 									.and(DELIVERY.SHIPPING_STATUS.eq(ShipmentStatus.IN_AGENCY.value()))
 								.fetch();
-			
 
-			
-			
 			List<Order> orderList = new ArrayList<Order>();
 			result.stream().forEach(record ->{
 				Order order = new Order();
@@ -169,6 +180,10 @@ public class DBMarketplace {
 				.and(filter.getTypeProperty().eq((RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value()))
 				.and(filter.getDomainProperty().eq(domain.getId())))
 				, AttachType.REGISTRY);	
+	}
+	
+	public static Seller getSeller(Domain domain, String login, Integer sellerId){
+		return AON.getSeller(domain.getName(), domain.getId(), login, sellerId);
 	}
 	
 	public static Tag insertMarketplaceTag(Domain domain, User user, Tag tag){

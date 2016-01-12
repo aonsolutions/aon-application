@@ -17,6 +17,7 @@ public class MarketplaceDAO {
 		return ctx.getDslContext()
 				.select().from(TAG).where(TAG.DOMAIN.eq(ctx.getDomainId()))
 				.and(TAG.TYPE.eq(TagType.MARKETPLACE.value()))
+				.orderBy(TAG.NAME)
 				.fetchInto(TAG).stream().map(new FullTagFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
