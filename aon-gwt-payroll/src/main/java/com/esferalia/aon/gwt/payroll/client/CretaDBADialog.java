@@ -325,19 +325,21 @@ public class CretaDBADialog extends SelectDialog<CCC> {
 			catch ( Exception e ){
 			}
 			throw new Exception("Documento ( NIE ) del titular no v\u00E1lido.");
+		case "9":
+			try {
+				if ( AonDocumentUtil.isValidCIF(document) )
+					return;
+			}
+			catch ( Exception e ){
+			}
+			throw new Exception("Documento ( CIF ) del titular no v\u00E1lido.");
 		default:
 			try {
 				if ( AonDocumentUtil.isValidNIF(document) )
 					return;
 			}catch(Exception e){
 			}
-			try {
-				if (AonDocumentUtil.isValidCIF(document) )
-					return;
-			}catch(Exception e){
-			}
-			
-			throw new Exception("Documento ( NIF o CIF ) del titular no v\u00E1lido.");
+			throw new Exception("Documento ( NIF ) del titular no v\u00E1lido.");
 		}
 	}
 

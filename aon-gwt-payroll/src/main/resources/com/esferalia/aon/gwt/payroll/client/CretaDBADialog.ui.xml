@@ -149,6 +149,7 @@
 						ui:field="documentTypeListBox" >
 						<g:item value="1" >1: NIF </g:item>
 						<g:item value="6" >6: NIE</g:item>
+						<g:item value="9" >9: CIF</g:item>
 					</g:ListBox>
 				</td>
 			</tr>

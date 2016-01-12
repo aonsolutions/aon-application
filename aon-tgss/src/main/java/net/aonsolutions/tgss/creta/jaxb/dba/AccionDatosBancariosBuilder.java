@@ -47,7 +47,9 @@ public class AccionDatosBancariosBuilder {
 	
 	public static enum TipoDocumento implements Tipo {
 		DNI("1"),
-		NIE("6");
+		NIE("6"),
+		CIF("9"),
+		;
 
 		private String string;
 		
@@ -70,7 +72,7 @@ public class AccionDatosBancariosBuilder {
 	private TipoDocumento tipoDocumento;
 	
 	
-	
+
 	private List<DatosBancarios> datosBancarios;
 	
 	public AccionDatosBancariosBuilder() {
@@ -157,4 +159,6 @@ public class AccionDatosBancariosBuilder {
 	}
 	
 
+
+	
 }
