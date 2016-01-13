@@ -217,7 +217,7 @@ public class AttachPropertiesDAO {
 		@Override public Property<byte[]> getDataProperty() {return new FilterDAO.PropertyDAO<byte[]>(PROJECT_ATTACH.DATA);}
 		@Override public Property<String> getDriveIdProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_ATTACH.DRIVEID);}
 		@Override public Property<Byte> getMimeTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_ATTACH.MIMETYPE);}
-		@Override public Property<Integer> getAttachModuleProperty() {return null;}
+		@Override public Property<Integer> getAttachModuleProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_ATTACH.PROJECT);}
 		@Override public Property<Integer> getScopeProperty() {return null;}
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_ATTACH.SECURITY_LEVEL);}
 		

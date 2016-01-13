@@ -1541,7 +1541,9 @@ public class ProjectReservationController extends BasicController implements IPm
 						, connection.getCentro().toString(), connection.getTpv().toString()
 						, reservation.getCustomer().getId().toString(), token, getReservationConexFlow().getAmount());
 				conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query, reservation.getId(), getDomain(reservation), false);
-				if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) {
+				if(conexFlow == null)
+					errorMsg = "Error al realizar la operación"; 
+				else if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) {
 					errorMsg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
 				} 
 				break;
@@ -1550,7 +1552,9 @@ public class ProjectReservationController extends BasicController implements IPm
 						, connection.getCentro().toString(), connection.getTpv().toString(), token, getReservationConexFlow().getAmount()
 						, reservation.getCustomer().getId().toString(), reservation.getCreditCardCvv());
 				conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.	SALE_OP, query, reservation.getId(), getDomain(reservation), false);
-				if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK))
+				if(conexFlow == null)
+					errorMsg = "Error al realizar la operación"; 
+				else if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK))
 					errorMsg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
 				else getReservationConexFlow().onCollect();
 				break;
@@ -1572,13 +1576,14 @@ public class ProjectReservationController extends BasicController implements IPm
 						, cf2.getRespuesta().getIdOperacion(), cf2.getRespuesta().getFecha());
 				conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.	CANCELATION_OP, query, reservation.getId(), getDomain(reservation), false);
 				
-					
-				if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) 
+				if(conexFlow == null)
+					errorMsg = "Error al realizar la operación"; 
+				else if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) 
 					errorMsg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
 				else if(getReservationConexFlow().getConexflowOperationCancelation().equals(ConexFlowConstant.REFUND_OP)){
 					getReservationConexFlow().onRefundCancel();
 				}
-				if(conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK))
+				if(conexFlow != null && conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK))
 					getReservationConexFlow().onCancel();
 				break;
 			case ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP: 
@@ -1590,7 +1595,9 @@ public class ProjectReservationController extends BasicController implements IPm
 						, cf3.getRespuesta().getAutorizacion(), cf3.getRespuesta().getFecha()
 						, cf3.getRespuesta().getIdOperacion());
 				conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP, query, reservation.getId(), getDomain(reservation), false);
-				if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) 
+				if(conexFlow == null)
+					errorMsg = "Error al realizar la operación"; 
+				else if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) 
 					errorMsg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
 				else getReservationConexFlow().onCollect();
 				break;
@@ -1600,7 +1607,9 @@ public class ProjectReservationController extends BasicController implements IPm
 						, connection.getCentro().toString(), connection.getTpv().toString()
 						, token, getReservationConexFlow().getAmount().toString(), reservation.getCustomer().getId().toString());
 				conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.REFUND_OP, query, reservation.getId(), getDomain(reservation), false);
-				if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) 
+				if(conexFlow == null)
+					errorMsg = "Error al realizar la operación"; 
+				else if (!conexFlow.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) 
 					errorMsg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
 				else getReservationConexFlow().onRefund();
 				break;
