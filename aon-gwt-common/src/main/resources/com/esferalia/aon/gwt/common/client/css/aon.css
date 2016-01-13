@@ -1334,6 +1334,13 @@ input:disabled + label{
 	width: auto;	
 }
 
+@sprite .aon-icon-notices {
+	gwt-image: "aonIconNotices";
+	float: left;
+	padding-right: 100%;	
+	padding-left: 24px;
+}
+
 .aon-tree-icon-node {
     height: auto !important;
     overflow: hidden !important;

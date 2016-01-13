@@ -863,5 +863,7 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-toast-content")
 	String aonToastContent();
 	
+	@ClassName("aon-icon-notices")
+	String aonIconNotices();
 }
 

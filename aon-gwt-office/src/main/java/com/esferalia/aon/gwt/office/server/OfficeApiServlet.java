@@ -38,7 +38,7 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 
 @MultipartConfig
 @WebServlet(name = "Office Api Servlet", urlPatterns = {
-		"/aon_gwt_office/api" })
+		"/aon_gwt_office/api/*" })
 public class OfficeApiServlet extends HttpServlet {
 
 	// ------------------------------------------------------------------------
@@ -629,13 +629,14 @@ public class OfficeApiServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.setContentType("application/json;charset=UTF-8");		
+		resp.setContentType("application/json;charset=UTF-8");
 		for (HttpRequestHandler handler : GET_HANDLERS) {
 			if (handler.accept(req)) {
 				handler.handler(req, resp);
 				break;
 			}
 		}
+		
 	}
 
 	@Override
@@ -675,7 +676,16 @@ public class OfficeApiServlet extends HttpServlet {
 	}
 
 	private static String getRequestAction(HttpServletRequest req) {
-		return req.getRequestURI().substring(req.getServletPath().length());
+		
+		String action = req.getRequestURI().substring(req.getRequestURI()
+				.indexOf(req.getServletPath()));
+		
+		return action.substring(req.getServletPath().length() );
+		
+		// Esto funcionaba para los Test, pero cuando se mete 
+		// el Gwt.getModuleBase() deja de ser correcto.
+		
+//		return req.getRequestURI().substring(req.getServletPath().length());
 
 	}
 

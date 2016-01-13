@@ -1,11 +1,9 @@
 package com.esferalia.aon.gwt.office.client;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -16,7 +14,6 @@ import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
-import com.esferalia.aon.gwt.office.client.models.users.JsUserWorkgroups;
 import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
 import com.esferalia.aon.gwt.office.client.values.IssueValue;
 import com.esferalia.aon.gwt.office.client.values.LabelValue;
@@ -64,10 +61,9 @@ public class Office extends Composite implements EntryPoint,
 	LeftButtonsMenuBar leftButtonBarMenu;
 
 	private JsRepo repo;
-	private JsUserWorkgroups userWorkgroups;
 	private IssuesLayoutPanel issueLayoutPanel;
 	private IssueSelected issueSelected;
-	private final AonHub gitHub = new AonHub("");
+	private AonHub gitHub = new AonHub(GWT.getModuleBaseURL() + "api/");
 	private List<IssueSelected> openIssues;
 	private List<IssueSelected> closedIssues;
 
@@ -85,23 +81,31 @@ public class Office extends Composite implements EntryPoint,
 	public void onModuleLoad() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
-
-		this.gitHub.setAccessToken("06a75ef8dfa037f188c2075333ed73574ffd1971");
+		
 		this.dataGrid.addListener(this);
 		this.leftButtonBarMenu.addListener(this);
-		this.repositories = new HashMap<Integer, JsRepo>();
-		this.openIssues = new LinkedList<IssueSelected>();
-		this.closedIssues = new LinkedList<IssueSelected>();
-		this.issuesMap = new TreeMap<Integer, JsIssue>();
-
+		this.gitHub.setRepositoryUrl(GWT.getModuleBaseURL() + "api");
+		
 		initOpenIssues();
-		initCloseIssues();
-
-		loadUsersWorking();
-		loadNotices();
-
-		// loadReposList();
-		// loadIssuesList();
+//		initCloseIssues();
+		
+		gitHub.getOpenIssues("user", "repo", new AsyncCallback<JSON<JsIssue>>() {
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Exception getOpenIssues: " + caught.getMessage());
+			}
+			
+			@Override
+			public void onSuccess(JSON<JsIssue> result) {				
+				JsArray<JsIssue> issues = result.getData();
+				
+				for ( int x = 0; x < issues.length(); x++) {
+					IssueSelected issueSelected = new IssueGrid.IssueOpenLoadSelected(issues.get(x));
+					openIssues.add(issueSelected);
+				}
+			}
+		});
 
 		showDockOfficePanel();
 	}
@@ -116,22 +120,18 @@ public class Office extends Composite implements EntryPoint,
 	// ******************************************************************
 
 	void initOpenIssues() {
+		openIssues = new LinkedList<IssueSelected>();
 		ListDataProvider<IssueSelected> openIssuesProvider = new ListDataProvider<IssueSelected>();
 		openIssuesProvider.addDataDisplay(dataGrid);
 		openIssues = openIssuesProvider.getList();
+
 	}
 
 	void initCloseIssues() {
+		closedIssues = new LinkedList<IssueSelected>();
 		ListDataProvider<IssueSelected> closeIssuesProvider = new ListDataProvider<IssueSelected>();
 		closeIssuesProvider.addDataDisplay(dataGrid);
 		closedIssues = closeIssuesProvider.getList();
-	}
-
-	private void loadUsersWorking() {
-	}
-
-	private void loadNotices() {
-
 	}
 
 	private void loadNotices(JsArray<JsIssue> notices) {
@@ -246,11 +246,11 @@ public class Office extends Composite implements EntryPoint,
 	}
 
 	private void addLabel(int row, JsLabel label) {
-		leftButtonBarMenu.addLabelIssueButton(row, label);
+//		leftButtonBarMenu.addLabelIssueButton(row, label);
 	}
 
 	private void changeOpenIssuesText(Integer number) {
-		leftButtonBarMenu.changeOpenIssuesText(number);
+//		leftButtonBarMenu.changeOpenIssuesText(number);
 	}
 
 	private void showDockOfficePanel() {
@@ -285,12 +285,6 @@ public class Office extends Composite implements EntryPoint,
 
 	@Override
 	public void onNewIssueClickEvent(ClickEvent event) {
-		issueWrite.clear();
-		IssueWriteWidget issueWriteWidget = new IssueWriteWidget(
-				Office.this.userWorkgroups);
-		issueWriteWidget.addListener(this);
-		issueWrite.add(issueWriteWidget);
-		showWriteIssueWritePanel();
 	}
 
 	@Override
