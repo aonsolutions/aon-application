@@ -895,6 +895,7 @@ public class Mod190DAO {
 		mod190.setDocument(params.getDocument());
 		mod190.setName(AonStringUtils.left(params.getName(), FS_MODEL190.NAME.getDataType().length()));
 		mod190.setYear(year);
+		mod190.setReceipt("1900000000001");
 		mod190.setAdministration((byte) (params.getAdministration()!=null?params.getAdministration():4));
 		mod190.setContactPerson(AonStringUtils.left(params.getContactPerson(),
 				FS_MODEL190.CONTACT_PERSON.getDataType().length()));
