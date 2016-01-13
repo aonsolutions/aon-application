@@ -34,20 +34,11 @@
 										<aon:commandButton id="confirm-accept"
 											styleClass="aon-commandButton"
 											value="#{bundle.aon_accept}"
-											reRender="showCreditCardWindow">																		
+											reRender="showCreditCardWindow, showNotifyWindow">																		
 											<f:setPropertyActionListener
 												target="#{controller.showNotifyWindow}"
 												value="#{false}" />
 												
-										</aon:commandButton>
-
-										<aon:commandButton id="confirm-back"
-											styleClass="aon-commandButton"
-											value="#{bundle.aon_back}" 
-											reRender="showConfirmWindow" immediate="true">
-											<f:setPropertyActionListener
-												target="#{controller.showNotifyWindow}"
-												value="#{false}" />
 										</aon:commandButton>
 									</aon:panelGrid>
 								</aon:div>
