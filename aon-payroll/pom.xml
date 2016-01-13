@@ -139,10 +139,6 @@
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
-		<!-- <dependency> <groupId>com.aeat</groupId> <artifactId>Retenciones2011xml</artifactId> 
-			<scope>compile</scope> <version>1.0</version> </dependency> <dependency> 
-			<groupId>com.aeat</groupId> <artifactId>ModRet2011</artifactId> <scope>compile</scope> 
-			<version>1.0</version> </dependency> -->
 		<dependency>
 			<groupId>es.aeat</groupId>
 			<artifactId>ModRet2013</artifactId>
@@ -155,24 +151,30 @@
 			<scope>compile</scope>
 			<version>1.00</version>
 		</dependency>
-		<dependency>
+		<!--dependency>
 			<groupId>es.aeat</groupId>
 			<artifactId>ModRet2015</artifactId>
 			<scope>compile</scope>
 			<version>2.0</version>
+		</dependency-->
+		<dependency>
+			<groupId>es.aeat</groupId>
+			<artifactId>ModRet2016</artifactId>
+			<scope>compile</scope>
+			<version>1.0</version>
 		</dependency>
 		<!--dependency>
 			<groupId>es.aeat</groupId>
 			<artifactId>PRET-R150_shared</artifactId>
 			<scope>compile</scope>
 			<version>1.0</version>
-		</dependency-->
+		</dependency>
 		<dependency>
 			<groupId>es.aeat</groupId>
 			<artifactId>PRET-R151_shared</artifactId>
 			<scope>compile</scope>
 			<version>2.0</version>
-		</dependency>
+		</dependency-->
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.aeat</artifactId>

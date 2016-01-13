@@ -79,7 +79,7 @@
 	<xs:complexType name="tipo_Retenciones">
 		<xs:sequence>
 			<xs:element name="CodModelo" type="xs:string" fixed="RET"/>
-			<xs:element name="Ejercicio" type="xs:int" fixed="2015"/>
+			<xs:element name="Ejercicio" type="xs:int" fixed="2016"/>
 		</xs:sequence>
 	</xs:complexType>
 	<!-- CAUSAS DE REGULARIZACIÓN -->
@@ -92,7 +92,7 @@
 	<xs:simpleType name="tipo_AñoNacimiento">
 		<xs:restriction base="xs:int">
 			<xs:minInclusive value="1905" fixed="false"/>
-			<xs:maxInclusive value="2015" fixed="false"/>
+			<xs:maxInclusive value="2016" fixed="false"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<!-- TIPOS DE CONTRATO -->
@@ -120,13 +120,6 @@
 		<xs:restriction base="tipo_Alfanumerico">
 			<xs:minLength value="1"/>
 			<xs:maxLength value="40"/>
-		</xs:restriction>
-	</xs:simpleType>
-	<!-- FECHA CAMBIO RESIDENCIA -->
-	<xs:simpleType name="tipo_FechaCambio">
-		<xs:restriction base="xs:int">
-			<xs:minInclusive value="2014" fixed="false"/>
-			<xs:maxInclusive value="2015" fixed="false"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:complexType name="tipo_Discapacidad">
@@ -161,7 +154,7 @@
 	<xs:simpleType name="tipo_Retencion">
 		<xs:restriction base="xs:decimal">
 			<xs:minInclusive value="0.00"/>
-			<xs:maxInclusive value="47.00"/>
+			<xs:maxInclusive value="45.00"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="tipo_NumDescendientes">
@@ -199,36 +192,36 @@
 			<xs:enumeration value="Por entero"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:complexType name="tipo_RetenedorEntrada2015">
+	<xs:complexType name="tipo_RetenedorEntrada2016">
 		<xs:sequence>
 			<xs:element name="Nif" type="tipo_Nif"/>
 			<xs:element name="ApellidosNombre" type="tipo_RazonSocial"/>
-			<xs:element name="Retenido" type="tipo_RetenidoEntrada2015" maxOccurs="unbounded"/>
+			<xs:element name="Retenido" type="tipo_RetenidoEntrada2016" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:complexType name="tipo_RetenedorSalida2015">
+	<xs:complexType name="tipo_RetenedorSalida2016">
 		<xs:sequence>
 			<xs:element name="Nif" type="tipo_Nif"/>
 			<xs:element name="ApellidosNombre" type="tipo_RazonSocial"/>
-			<xs:element name="Retenido" type="tipo_RetenidoSalida2015" maxOccurs="unbounded"/>
+			<xs:element name="Retenido" type="tipo_RetenidoSalida2016" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:complexType name="tipo_RetenedorError2015">
+	<xs:complexType name="tipo_RetenedorError2016">
 		<xs:sequence>
 			<xs:element name="Nif" type="tipo_Nif"/>
 			<xs:element name="Orden" type="xs:int"/>
 			<xs:element name="Error" type="tipo_Error" minOccurs="0"/>
-			<xs:element name="Retenido" type="tipo_RetenidoError2015" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Retenido" type="tipo_RetenidoError2016" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:complexType name="tipo_RetenidoEntrada2015">
+	<xs:complexType name="tipo_RetenidoEntrada2016">
 		<xs:sequence>
 			<xs:element name="Nif" type="tipo_Nif"/>
 			<xs:element name="ApellidosNombre" type="tipo_ApellidosyNombre"/>
 			<xs:element name="AñoNacimiento">
 				<xs:simpleType>
 					<xs:restriction base="tipo_AñoNacimiento">
-						<xs:maxInclusive value="2015"/>
+						<xs:maxInclusive value="2016"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -306,15 +299,7 @@
 										<xs:annotation>
 											<xs:documentation>MOVIL</xs:documentation>
 										</xs:annotation>
-										<xs:complexType>
-											<xs:sequence>
-												<xs:element name="CambioResidencia" type="tipo_FechaCambio">
-													<xs:annotation>
-														<xs:documentation>FECHACR</xs:documentation>
-													</xs:annotation>
-												</xs:element>
-											</xs:sequence>
-										</xs:complexType>
+										<xs:complexType/>
 									</xs:element>
 								</xs:sequence>
 							</xs:complexType>
@@ -500,9 +485,9 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:complexType name="tipo_RetenidoSalida2015">
+	<xs:complexType name="tipo_RetenidoSalida2016">
 		<xs:complexContent>
-			<xs:extension base="tipo_RetenidoEntrada2015">
+			<xs:extension base="tipo_RetenidoEntrada2016">
 				<xs:sequence>
 					<xs:element name="Gastos">
 						<xs:complexType>
@@ -701,21 +686,10 @@
 					<xs:element name="Reduccion">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="RdtosTrabajo">
-									<xs:complexType>
-										<xs:sequence>
-											<xs:element name="General" type="tipo_ImpCeroPositivo">
-												<xs:annotation>
-													<xs:documentation>RED20</xs:documentation>
-												</xs:annotation>
-											</xs:element>
-											<xs:element name="MovilidadGeografica" type="tipo_ImpPositivo" minOccurs="0">
-												<xs:annotation>
-													<xs:documentation>MOVILGEO</xs:documentation>
-												</xs:annotation>
-											</xs:element>
-										</xs:sequence>
-									</xs:complexType>
+								<xs:element name="RdtosTrabajo" type="tipo_ImpCeroPositivo">
+									<xs:annotation>
+										<xs:documentation>RED20</xs:documentation>
+									</xs:annotation>
 								</xs:element>
 								<xs:element name="ReduccionMas2" type="tipo_ImpPositivo" minOccurs="0">
 									<xs:annotation>
@@ -877,7 +851,7 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:complexType name="tipo_RetenidoError2015">
+	<xs:complexType name="tipo_RetenidoError2016">
 		<xs:sequence>
 			<xs:element name="Nif" type="tipo_Nif"/>
 			<xs:element name="Orden" type="xs:int"/>
@@ -901,30 +875,30 @@
 		</xs:sequence>
 	</xs:complexType>
 	<!--ELEMENTOS GLOBALES-->
-	<xs:element name="AEATRetencionesEntrada2015">
+	<xs:element name="AEATRetencionesEntrada2016">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="IdDoc" type="tipo_Retenciones"/>
-				<xs:element name="Retenedor" type="tipo_RetenedorEntrada2015" maxOccurs="unbounded"/>
+				<xs:element name="Retenedor" type="tipo_RetenedorEntrada2016" maxOccurs="unbounded"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="AEATRetencionesSalida2015">
+	<xs:element name="AEATRetencionesSalida2016">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="IdDoc" type="tipo_Retenciones"/>
-				<xs:element name="Retenedor" type="tipo_RetenedorSalida2015" maxOccurs="unbounded"/>
+				<xs:element name="Retenedor" type="tipo_RetenedorSalida2016" maxOccurs="unbounded"/>
 			</xs:sequence>
 			<xs:attribute name="Sello" type="tipo_Sello" use="required"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="AEATRetencionesError2015">
+	<xs:element name="AEATRetencionesError2016">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="IdDoc" type="tipo_Retenciones"/>
 				<xs:choice>
 					<xs:element name="ErrorGeneral" type="tipo_ErrorGeneral" maxOccurs="unbounded"/>
-					<xs:element name="Retenedor" type="tipo_RetenedorError2015" maxOccurs="unbounded"/>
+					<xs:element name="Retenedor" type="tipo_RetenedorError2016" maxOccurs="unbounded"/>
 				</xs:choice>
 			</xs:sequence>
 		</xs:complexType>
