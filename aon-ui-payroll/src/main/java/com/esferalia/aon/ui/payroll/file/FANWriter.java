@@ -289,7 +289,7 @@ public class FANWriter implements Serializable {
 		4 Entidad u Organismo de las Admones.Públicas
 		*/
 		rzs.setTipoAlfabeticoEmpresario("1");
-		rzs.setRazonSocial(enterprise.getRegistry().getName());
+		rzs.setRazonSocial(obtainUtf(enterprise.getRegistry().getName()));
 		return rzs;
 	}
 	
@@ -333,9 +333,9 @@ public class FANWriter implements Serializable {
 	 */
 	private AYN createAYNRecord(Contract contract) {
 		AYN ayn = new AYN();
-		String ap1 = contract.getPerson().getFirstSurname();
-		String ap2 = contract.getPerson().getSecondSurname();
-		String n = contract.getPerson().getName();
+		String ap1 = obtainUtf(contract.getPerson().getFirstSurname());
+		String ap2 = obtainUtf(contract.getPerson().getSecondSurname());
+		String n = obtainUtf(contract.getPerson().getName());
 		ayn.setPrimerApellido(ap1!=null?ap1:WHITESPACE_20);
 		ayn.setSegundoApellido(ap2!=null?ap2:WHITESPACE_20);
 		ayn.setNombre(n!=null?n:WHITESPACE_15);
@@ -2254,6 +2254,18 @@ public class FANWriter implements Serializable {
 			diffDays = (int)((Math.floor((to.getTime() - from.getTime()) / MS_PER_DAY + 0.5d) + 1));
 		}
 		return diffDays;
+	}
+	
+	private String obtainUtf(String value) {
+		if(value!=null){
+			value = value.replaceAll("[ÁÀ]", "A");
+			value = value.replaceAll("[ÉÈ]", "E");
+			value = value.replaceAll("[ÍÌ]", "I");
+			value = value.replaceAll("[ÓÒ]", "O");
+			value = value.replaceAll("[ÚÙ]", "U");
+			value = value.replaceAll("[^-_;:¿?¡!@#$&\\(\\)\\s\\.,a-zA-Z0-9]", "?");
+		}
+		return value;
 	}
 	
 	private void analizeData(List<EnterpriseCCC> cccList, LiquidationType liquidationType) throws ManagerBeanException {
