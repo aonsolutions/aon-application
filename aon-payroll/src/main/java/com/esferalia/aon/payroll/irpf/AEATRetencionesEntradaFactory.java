@@ -5,9 +5,9 @@ import java.math.MathContext;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.esferalia.aon.aeat.jaxb.AEATRetencionesEntrada2015;
-import com.esferalia.aon.aeat.jaxb.TipoRetenedorEntrada2015;
-import com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015;
+import com.esferalia.aon.aeat.jaxb.AEATRetencionesEntrada2016;
+import com.esferalia.aon.aeat.jaxb.TipoRetenedorEntrada2016;
+import com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Ascendiente.Convivencia;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.CausaRegularizacion;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Contrato;
@@ -72,29 +72,29 @@ public class AEATRetencionesEntradaFactory {
 		return entrada2013;
 	}
 
-	public static AEATRetencionesEntrada2015 create2015(
+	public static AEATRetencionesEntrada2016 create2016(
 			IIrpfCalculatorContext ctx) throws SQLException,
 			ExpressionException {
 
-		AEATRetencionesEntrada2015 entrada2015 = new AEATRetencionesEntrada2015();
+		AEATRetencionesEntrada2016 entrada2016 = new AEATRetencionesEntrada2016();
 
 		com.esferalia.aon.aeat.jaxb.TipoRetenciones tipoRetenciones = new com.esferalia.aon.aeat.jaxb.TipoRetenciones();
-		tipoRetenciones.setEjercicio(2015);
+		tipoRetenciones.setEjercicio(2016);
 		tipoRetenciones.setCodModelo("RET");
-		entrada2015.setIdDoc(tipoRetenciones);
+		entrada2016.setIdDoc(tipoRetenciones);
 
-		List<TipoRetenedorEntrada2015> retenedores = entrada2015.getRetenedor();
-		TipoRetenedorEntrada2015 retenedor = new TipoRetenedorEntrada2015();
+		List<TipoRetenedorEntrada2016> retenedores = entrada2016.getRetenedor();
+		TipoRetenedorEntrada2016 retenedor = new TipoRetenedorEntrada2016();
 
 		retenedor.setNif(ctx.getRetenedorNif());
 		retenedor.setApellidosNombre(ctx.getRetenedorApellidosNombre());
 		retenedores.add(retenedor);
 
-		List<TipoRetenidoEntrada2015> retenidos = retenedor.getRetenido();
-		TipoRetenidoEntrada2015 retenido = newTipoRetenidoEntrada2015(ctx);
+		List<TipoRetenidoEntrada2016> retenidos = retenedor.getRetenido();
+		TipoRetenidoEntrada2016 retenido = newTipoRetenidoEntrada2016(ctx);
 		retenidos.add(retenido);
 
-		return entrada2015;
+		return entrada2016;
 	}
 
 	// --------------------------------------------------------- Private methods
@@ -268,12 +268,12 @@ public class AEATRetencionesEntradaFactory {
 		return ascendiente;
 	}
 
-	// ------------------------------------------------------------------- 2015
+	// ------------------------------------------------------------------- 2016
 
-	private static TipoRetenidoEntrada2015 newTipoRetenidoEntrada2015(
+	private static TipoRetenidoEntrada2016 newTipoRetenidoEntrada2016(
 			IIrpfCalculatorContext ctx) {
 
-		TipoRetenidoEntrada2015 retenido = new TipoRetenidoEntrada2015();
+		TipoRetenidoEntrada2016 retenido = new TipoRetenidoEntrada2016();
 		// ------------------------------------ Datos personales
 
 		retenido.setNif(ctx.getNif());
@@ -282,7 +282,7 @@ public class AEATRetencionesEntradaFactory {
 
 		if (ctx.getResidenciaCeutaMelilla()) {
 
-			retenido.setResidenciaCeutaMelilla(new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.ResidenciaCeutaMelilla());
+			retenido.setResidenciaCeutaMelilla(new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.ResidenciaCeutaMelilla());
 		}
 		retenido.setDiscapacidad(getAeat15Discapacidad(ctx.getDiscapacidad(),
 				ctx.getMovilidadReducida()));
@@ -292,13 +292,13 @@ public class AEATRetencionesEntradaFactory {
 				ctx.getSituacionLaboral(), ctx.getContrato(),
 				ctx.getMovilidadGeografica(), ctx.getProlongacionLaboral()));
 		// --------------------------------------- Descendientes
-		List<com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.Descendiente> descendientes = retenido.getDescendiente();
+		List<com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.Descendiente> descendientes = retenido.getDescendiente();
 		for (com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Descendiente descendiente : ctx
 				.getDescendientes()) {
 			descendientes.add(getAeat15Descendiente(descendiente));
 		}
 		// ---------------------------------------- Ascendientes
-		List<com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.Ascendiente> ascendientes = retenido.getAscendiente();
+		List<com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.Ascendiente> ascendientes = retenido.getAscendiente();
 		for (com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Ascendiente ascendiente : ctx
 				.getAscendientes()) {
 			ascendientes.add(getAeat15Ascendiente(ascendiente));
@@ -310,7 +310,7 @@ public class AEATRetencionesEntradaFactory {
 		BigDecimal irregularidad1 = ctx.getIrregularidad1();
 		BigDecimal irregularidad2 = ctx.getIrregularidad2();
 		if (irregularidad1 != null || irregularidad2 != null) {
-			com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.Reducciones reducciones = new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.Reducciones();
+			com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.Reducciones reducciones = new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.Reducciones();
 			reducciones.setIrregularidad1(irregularidad1);
 			reducciones.setIrregularidad2(irregularidad2);
 			retenido.setReducciones(reducciones);
@@ -320,17 +320,17 @@ public class AEATRetencionesEntradaFactory {
 		retenido.setCotizaciones(ctx.getGastosAnuales());
 		
 		if (ctx.getRdtosObtenidosCeutaMelilla())
-			retenido.setRdtosObtenidosCeutaMelilla(new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.RdtosObtenidosCeutaMelilla());
+			retenido.setRdtosObtenidosCeutaMelilla(new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.RdtosObtenidosCeutaMelilla());
 		retenido.setPensionCompensatoria(ctx.getPensionCompensatoria());
 		retenido.setAnualidadesHijos(ctx.getAnualidadesHijos());
 		if (ctx.getPagoPrestamosVivienda())
-			retenido.setPagoPrestamosVivienda(new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.PagoPrestamosVivienda());
+			retenido.setPagoPrestamosVivienda(new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.PagoPrestamosVivienda());
 
 		// -------------------------------------- Regularización
 		CausaRegularizacion causaRegularizacion = ctx.getCausaRegularizacion();
 		if (causaRegularizacion != null) {
-			com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.Regularizacion regularizacion = 
-					new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.Regularizacion();
+			com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.Regularizacion regularizacion = 
+					new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.Regularizacion();
 			List<Integer> causas = regularizacion.getCausa();
 			causas.add(causaRegularizacion.getValue());
 
@@ -342,7 +342,7 @@ public class AEATRetencionesEntradaFactory {
 					.getRetencionAnualInicial());
 			if (ctx.getResidenciaInicialCeutaMelilla())
 				regularizacion
-						.setResidenciaInicialCeutaMelilla(new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.Regularizacion.ResidenciaInicialCeutaMelilla());
+						.setResidenciaInicialCeutaMelilla(new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.Regularizacion.ResidenciaInicialCeutaMelilla());
 			regularizacion.setBaseRetencion(ctx.getBaseRetencion());
 			regularizacion.setMinimoPersonalFamiliarInicial(ctx
 					.getMinimoPersonalFamiliarInicial());
@@ -374,38 +374,38 @@ public class AEATRetencionesEntradaFactory {
 		return tipoDiscapacidad;
 	}
 
-	private static com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.SituacionFamiliar getAeat15Situacionfamiliar(
+	private static com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar getAeat15Situacionfamiliar(
 			SituacionFamiliar _situacionFamiliar, String nifConyuge) {
-		com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.SituacionFamiliar situacionFamiliar = new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.SituacionFamiliar();
+		com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar situacionFamiliar = new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar();
 		if (SituacionFamiliar.UNO == _situacionFamiliar) {
-			situacionFamiliar.setSituacion1(new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.SituacionFamiliar.Situacion1());
+			situacionFamiliar.setSituacion1(new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar.Situacion1());
 		} else if (SituacionFamiliar.DOS == _situacionFamiliar) {
-			com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.SituacionFamiliar.Situacion2 situacion2 = 
-					new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.SituacionFamiliar.Situacion2();
+			com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar.Situacion2 situacion2 = 
+					new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar.Situacion2();
 			situacion2.setNifConyuge(nifConyuge);
 			situacionFamiliar.setSituacion2(situacion2);
 		} else {
-			situacionFamiliar.setSituacion3(new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.SituacionFamiliar.Situacion3());
+			situacionFamiliar.setSituacion3(new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar.Situacion3());
 		}
 		return situacionFamiliar;
 	}
 
-	private static com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.Descendiente getAeat15Descendiente(
+	private static com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.Descendiente getAeat15Descendiente(
 			com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Descendiente _descendiente) {
-		com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.Descendiente descendiente = new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.Descendiente();
+		com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.Descendiente descendiente = new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.Descendiente();
 		descendiente.setAñoNacimiento(_descendiente.getAñoNacimiento());
 		descendiente.setAñoAdopcion(_descendiente.getAñoAdopcion());
 		descendiente.setDiscapacidad(getAeat15Discapacidad(
 				_descendiente.getDiscapacidad(),
 				_descendiente.getMovilidadReducida()));
 		if (_descendiente.getComputadoEntero())
-			descendiente.setComputadoEntero(new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.Descendiente.ComputadoEntero());
+			descendiente.setComputadoEntero(new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.Descendiente.ComputadoEntero());
 		return descendiente;
 	}
 
-	private static com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.Ascendiente getAeat15Ascendiente(
+	private static com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.Ascendiente getAeat15Ascendiente(
 			com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Ascendiente _ascendiente) {
-		com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.Ascendiente ascendiente = new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.Ascendiente();
+		com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.Ascendiente ascendiente = new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.Ascendiente();
 		ascendiente.setAñoNacimiento(_ascendiente.getAñoNacimiento());
 		ascendiente.setDiscapacidad(getAeat15Discapacidad(
 				_ascendiente.getDiscapacidad(),
@@ -418,24 +418,24 @@ public class AEATRetencionesEntradaFactory {
 		return ascendiente;
 	}
 
-	private static com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.SituacionLaboral getAeat15SituacionLaboral(
+	private static com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral getAeat15SituacionLaboral(
 			SituacionLaboral _situacionLaboral, Contrato contrato,
 			boolean movilidadGeografica, boolean prolongacionLaboral) {
-		com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.SituacionLaboral situacionLaboral = new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.SituacionLaboral();
+		com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral situacionLaboral = new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral();
 		if (SituacionLaboral.DESEMPLEADO == _situacionLaboral) {
-			situacionLaboral.setDesempleado(new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.SituacionLaboral.Desempleado());
+			situacionLaboral.setDesempleado(new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.Desempleado());
 		} else if (SituacionLaboral.PENSIONISTA == _situacionLaboral) {
-			situacionLaboral.setPensionista(new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.SituacionLaboral.Pensionista());
+			situacionLaboral.setPensionista(new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.Pensionista());
 		} else if (SituacionLaboral.TRABAJADOR_ACTIVO == _situacionLaboral) {
-			com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.SituacionLaboral.TrabajadorActivo trabajadorActivo = new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.SituacionLaboral.TrabajadorActivo();
+			com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.TrabajadorActivo trabajadorActivo = new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.TrabajadorActivo();
 			if (contrato == null)
 				contrato = Contrato.UNO;
 			trabajadorActivo.setContrato(contrato.getValue());
 			if (movilidadGeografica)
 				trabajadorActivo
-						.setMovilidadGeografica(new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.SituacionLaboral.TrabajadorActivo.MovilidadGeografica());
+						.setMovilidadGeografica(new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.TrabajadorActivo.MovilidadGeografica());
 			
-			/* At 2015 NOT Found
+			/* At 2016 NOT Found
 			if (prolongacionLaboral)
 				trabajadorActivo
 						.setProlongacionLaboral(new ProlongacionLaboral());
@@ -443,7 +443,7 @@ public class AEATRetencionesEntradaFactory {
 			
 			situacionLaboral.setTrabajadorActivo(trabajadorActivo);
 		} else {
-			situacionLaboral.setOtraSituacion( new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.SituacionLaboral.OtraSituacion());
+			situacionLaboral.setOtraSituacion( new com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.OtraSituacion());
 		}
 		return situacionLaboral;
 	}

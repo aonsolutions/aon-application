@@ -15,13 +15,13 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import com.code.aon.config.enumeration.Administration;
-import com.esferalia.aon.aeat.jaxb.AEATRetencionesEntrada2015;
-import com.esferalia.aon.aeat.jaxb.AEATRetencionesError2015;
-import com.esferalia.aon.aeat.jaxb.AEATRetencionesSalida2015;
-import com.esferalia.aon.aeat.jaxb.TipoRetenedorError2015;
-import com.esferalia.aon.aeat.jaxb.TipoRetenedorSalida2015;
-import com.esferalia.aon.aeat.jaxb.TipoRetenidoError2015;
-import com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015;
+import com.esferalia.aon.aeat.jaxb.AEATRetencionesEntrada2016;
+import com.esferalia.aon.aeat.jaxb.AEATRetencionesError2016;
+import com.esferalia.aon.aeat.jaxb.AEATRetencionesSalida2016;
+import com.esferalia.aon.aeat.jaxb.TipoRetenedorError2016;
+import com.esferalia.aon.aeat.jaxb.TipoRetenedorSalida2016;
+import com.esferalia.aon.aeat.jaxb.TipoRetenidoError2016;
+import com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016;
 import com.esferalia.aon.payroll.IrpfData;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.IrpfRegularization;
@@ -38,9 +38,9 @@ import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
+import es.aeat.pret.c160.mc.ModuloCalculo;
 import es.aeat.pret.rd13.ModeloRetencionesXMLJaxb;
 import es.aeat.pret.rd13.XMLProgressListener;
-import es.aeat.pret.rd15.julio.modulo.retenciones.ModuloCalculo;
 import es.aeat.pret.rw13.jaxb.AEATRetencionesEntrada2013;
 import es.aeat.pret.rw13.jaxb.AEATRetencionesError2013;
 import es.aeat.pret.rw13.jaxb.AEATRetencionesSalida2013;
@@ -100,29 +100,29 @@ public class IrpfCalculator {
 		return transfom(ctx, retenidoSalida2013);
 	}
 
-	// ------------------------------------------------------------------- 2015
+	// ------------------------------------------------------------------- 2016
 
 	public static double calculate(IIrpfCalculatorContext ctx) {
-		AEATRetencionesSalida2015 aeatRetencionesSalida2015 = calculate2015(ctx);
-		List<TipoRetenedorSalida2015> retenedores = aeatRetencionesSalida2015
+		AEATRetencionesSalida2016 aeatRetencionesSalida2016 = calculate2016(ctx);
+		List<TipoRetenedorSalida2016> retenedores = aeatRetencionesSalida2016
 				.getRetenedor();
-		TipoRetenedorSalida2015 retenedorSalida2015 = retenedores.get(0);
-		List<TipoRetenidoSalida2015> retenidos = retenedorSalida2015
+		TipoRetenedorSalida2016 retenedorSalida2016 = retenedores.get(0);
+		List<TipoRetenidoSalida2016> retenidos = retenedorSalida2016
 				.getRetenido();
-		TipoRetenidoSalida2015 retenidoSalida2015 = retenidos.get(0);
-		BigDecimal tipoRetencion = retenidoSalida2015.getTipoRetencion();
+		TipoRetenidoSalida2016 retenidoSalida2016 = retenidos.get(0);
+		BigDecimal tipoRetencion = retenidoSalida2016.getTipoRetencion();
 		return tipoRetencion != null ? tipoRetencion.doubleValue() : 0.00;
 	}
 
 	public static IrpfOutcome calculateIrpf(IIrpfCalculatorContext ctx) {
-		AEATRetencionesSalida2015 aeatRetencionesSalida2015 = calculate2015(ctx);
-		List<TipoRetenedorSalida2015> retenedores = aeatRetencionesSalida2015
+		AEATRetencionesSalida2016 aeatRetencionesSalida2016 = calculate2016(ctx);
+		List<TipoRetenedorSalida2016> retenedores = aeatRetencionesSalida2016
 				.getRetenedor();
-		TipoRetenedorSalida2015 retenedorSalida2015 = retenedores.get(0);
-		List<TipoRetenidoSalida2015> retenidos = retenedorSalida2015
+		TipoRetenedorSalida2016 retenedorSalida2016 = retenedores.get(0);
+		List<TipoRetenidoSalida2016> retenidos = retenedorSalida2016
 				.getRetenido();
-		TipoRetenidoSalida2015 retenidoSalida2015 = retenidos.get(0);
-		return transfom(ctx, retenidoSalida2015);
+		TipoRetenidoSalida2016 retenidoSalida2016 = retenidos.get(0);
+		return transfom(ctx, retenidoSalida2016);
 	}
 
 	// -------------------------------------------------------------------------
@@ -300,33 +300,33 @@ public class IrpfCalculator {
 	}
 
 	protected static IrpfOutcome transfom(IIrpfCalculatorContext ctx,
-			TipoRetenidoSalida2015 retenidoSalida2015) {
+			TipoRetenidoSalida2016 retenidoSalida2016) {
 
 		IrpfOutcome irpfOutcome = new IrpfOutcome();
 
 		irpfOutcome.setNif(ctx.getNif() == DEFAULT_NIF ? null : ctx.getNif());
 		irpfOutcome.setBirthYear(ctx.getAñoNacimiento());
-		irpfOutcome.setComunidadAutonoma(retenidoSalida2015
+		irpfOutcome.setComunidadAutonoma(retenidoSalida2016
 				.getComunidadAutonoma());
 
 		IrpfResult irpfResult = new IrpfResult();
 		irpfResult.setEffectiveDate(new Date()); // TODO: Now ???
 
-		irpfResult.setIrpf(toDouble(retenidoSalida2015.getTipoRetencion()));
+		irpfResult.setIrpf(toDouble(retenidoSalida2016.getTipoRetencion()));
 
-		irpfResult.setBaseIrpf(toDouble(retenidoSalida2015.getBaseRetencion()));
-		com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.MinimoPersonalFamiliar minimoPersonalFamiliar = retenidoSalida2015
+		irpfResult.setBaseIrpf(toDouble(retenidoSalida2016.getBaseRetencion()));
+		com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016.MinimoPersonalFamiliar minimoPersonalFamiliar = retenidoSalida2016
 				.getMinimoPersonalFamiliar();
 		irpfResult
 				.setMinimunPersonalFamily(minimoPersonalFamiliar != null ? toDouble(minimoPersonalFamiliar
 						.getTotal()) : 0.00);
 		irpfResult.setDeduct80Bis(toDouble(null /*
-												 * retenidoSalida2015.
+												 * retenidoSalida2016.
 												 * getDeduccion80Bis()
 												 */));
-		irpfResult.setDeductHomeLoanAmount(toDouble(retenidoSalida2015
+		irpfResult.setDeductHomeLoanAmount(toDouble(retenidoSalida2016
 				.getMinoracionPrestamo()));
-		irpfResult.setAnnualIrpf(toDouble(retenidoSalida2015
+		irpfResult.setAnnualIrpf(toDouble(retenidoSalida2016
 				.getImpAnualRetencionesIngresosCuenta()));
 
 		// DATOS PERSONALES DEL PERCEPTOR
@@ -339,14 +339,14 @@ public class IrpfCalculator {
 		irpfOutcome.setIrpfData(irpfData);
 
 		// DATOS ECONOMICOS
-		irpfResult.setAnnualRemuneration(toDouble(retenidoSalida2015
+		irpfResult.setAnnualRemuneration(toDouble(retenidoSalida2016
 				.getRetribAnuales()));
 		irpfResult.setIrregular18_2Reduction(toDouble(null /*
-															 * retenidoSalida2015.
+															 * retenidoSalida2016.
 															 * getDeduccion80Bis
 															 * ()
 															 */));
-		com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Reduccion reduccion = retenidoSalida2015
+		com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016.Reduccion reduccion = retenidoSalida2016
 				.getReduccion();
 		irpfResult
 				.setIrregular18_3Reduction(reduccion != null ? toDouble(null/*
@@ -357,18 +357,18 @@ public class IrpfCalculator {
 																			 * )
 																			 */)
 						: 0.00);
-		irpfResult.setDeducciblesExpenses(toDouble(retenidoSalida2015
-				.getCotizaciones()/* retenidoSalida2015.getGastosAnuales() */));
-		irpfResult.setSpousalSupport(toDouble(retenidoSalida2015
+		irpfResult.setDeducciblesExpenses(toDouble(retenidoSalida2016
+				.getCotizaciones()/* retenidoSalida2016.getGastosAnuales() */));
+		irpfResult.setSpousalSupport(toDouble(retenidoSalida2016
 				.getPensionCompensatoria()));
-		irpfResult.setFoodAnnuity(toDouble(retenidoSalida2015
+		irpfResult.setFoodAnnuity(toDouble(retenidoSalida2016
 				.getAnualidadesHijos()));
 
 		// DESCENCIENTES COMPUTADOS
-		com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Descendientes descendientes = retenidoSalida2015
+		com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016.Descendientes descendientes = retenidoSalida2016
 				.getDescendientes();
 		if (descendientes != null) {
-			com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Descendientes.Menores3Años menores3Años = descendientes
+			com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016.Descendientes.Menores3Años menores3Años = descendientes
 					.getMenores3Años();
 			if (menores3Años != null) {
 				irpfResult.setDescendentsMinor3Total(toInteger(menores3Años
@@ -376,7 +376,7 @@ public class IrpfCalculator {
 				irpfResult.setDescendentsMinor3Entirely(toInteger(menores3Años
 						.getPorEntero()));
 			}
-			com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Descendientes.Resto resto = descendientes
+			com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016.Descendientes.Resto resto = descendientes
 					.getResto();
 			if (resto != null) {
 				irpfResult.setDescendentsRemainderTotal(toInteger(resto
@@ -384,7 +384,7 @@ public class IrpfCalculator {
 				irpfResult.setDescendentsRemainderEntirely(toInteger(resto
 						.getPorEntero()));
 			}
-			com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Descendientes.ComputoDescendientes computoDescendientes = descendientes
+			com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016.Descendientes.ComputoDescendientes computoDescendientes = descendientes
 					.getComputoDescendientes();
 			if (computoDescendientes != null) {
 				irpfResult.setDescendentsFirst(toInteger(computoDescendientes
@@ -393,7 +393,7 @@ public class IrpfCalculator {
 						.getHijo2()));
 				irpfResult.setDescendentsThird(toInteger(computoDescendientes
 						.getHijo3()));
-				com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Descendientes.ComputoDescendientes.CuartoySucesivos cuartoySucesivos = computoDescendientes
+				com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016.Descendientes.ComputoDescendientes.CuartoySucesivos cuartoySucesivos = computoDescendientes
 						.getCuartoySucesivos();
 				if (cuartoySucesivos != null) {
 					irpfResult
@@ -404,17 +404,17 @@ public class IrpfCalculator {
 									.getPorEntero()));
 				}
 			}
-			com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Descendientes.ConDiscapacidad conDiscapacidad = descendientes
+			com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016.Descendientes.ConDiscapacidad conDiscapacidad = descendientes
 					.getConDiscapacidad();
 			if (conDiscapacidad != null) {
-				com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Descendientes.ConDiscapacidad.EnGrado1 grado1 = conDiscapacidad
+				com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016.Descendientes.ConDiscapacidad.EnGrado1 grado1 = conDiscapacidad
 						.getEnGrado1();
 				if (grado1 != null) {
 					irpfResult.setDescendents33_65Total(toInteger(grado1
 							.getTotal()));
 					irpfResult.setDescendents33_65Entirely(toInteger(grado1
 							.getPorEntero()));
-					com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Descendientes.ConDiscapacidad.EnGrado1.ConMovilidadReducida conMovilidadReducida = grado1
+					com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016.Descendientes.ConDiscapacidad.EnGrado1.ConMovilidadReducida conMovilidadReducida = grado1
 							.getConMovilidadReducida();
 					if (conMovilidadReducida != null) {
 						irpfResult
@@ -425,7 +425,7 @@ public class IrpfCalculator {
 										.getPorEntero()));
 					}
 				}
-				com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Descendientes.ConDiscapacidad.EnGrado2 grado2 = conDiscapacidad
+				com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016.Descendientes.ConDiscapacidad.EnGrado2 grado2 = conDiscapacidad
 						.getEnGrado2();
 				if (grado2 != null) {
 					irpfResult.setDescendents65Total(toInteger(grado2
@@ -439,18 +439,18 @@ public class IrpfCalculator {
 		}
 
 		// ASCENCIENTES COMPUTADOS
-		com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Ascendientes ascendientes = retenidoSalida2015
+		com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016.Ascendientes ascendientes = retenidoSalida2016
 				.getAscendientes();
 		if (ascendientes != null) {
-			com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Ascendientes.Menores75 menores75 = ascendientes
+			com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016.Ascendientes.Menores75 menores75 = ascendientes
 					.getMenores75();
 			if (menores75 != null) {
 			}
-			com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Ascendientes.Mayores75 mayores75 = ascendientes
+			com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016.Ascendientes.Mayores75 mayores75 = ascendientes
 					.getMayores75();
 			if (mayores75 != null) {
 			}
-			com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Ascendientes.ConDiscapacidad conDiscapacidad = ascendientes
+			com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016.Ascendientes.ConDiscapacidad conDiscapacidad = ascendientes
 					.getConDiscapacidad();
 			if (conDiscapacidad != null) {
 
@@ -460,7 +460,7 @@ public class IrpfCalculator {
 		irpfOutcome.setIrpfResult(irpfResult);
 
 		// REEGULARIZACION
-		com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2015.Regularizacion regularizacion = retenidoSalida2015
+		com.esferalia.aon.aeat.jaxb.TipoRetenidoEntrada2016.Regularizacion regularizacion = retenidoSalida2016
 				.getRegularizacion();
 		if (regularizacion != null) {
 			IrpfRegularization irpfRegularization = new IrpfRegularization();
@@ -504,15 +504,15 @@ public class IrpfCalculator {
 		return AEATCalculate.INSTANCE.calculate2013(ctx);
 	}
 
-	protected static AEATRetencionesSalida2015 calculate2015(
+	protected static AEATRetencionesSalida2016 calculate2016(
 			IIrpfCalculatorContext ctx) {
 		ctx.next();
 
 		for (Calculate calculate : ForalCalculate.INSTANCES)
 			if (calculate.accept(ctx))
-				return calculate.calculate2015(ctx);
+				return calculate.calculate2016(ctx);
 
-		return AEATCalculate.INSTANCE.calculate2015(ctx);
+		return AEATCalculate.INSTANCE.calculate2016(ctx);
 	}
 
 	private static Integer toInteger(Byte b) {
@@ -567,7 +567,7 @@ public class IrpfCalculator {
 
 		AEATRetencionesSalida2013 calculate2013(IIrpfCalculatorContext ctx);
 
-		AEATRetencionesSalida2015 calculate2015(IIrpfCalculatorContext ctx);
+		AEATRetencionesSalida2016 calculate2016(IIrpfCalculatorContext ctx);
 
 	}
 
@@ -620,12 +620,12 @@ public class IrpfCalculator {
 		}
 
 		@Override
-		public AEATRetencionesSalida2015 calculate2015(
+		public AEATRetencionesSalida2016 calculate2016(
 				IIrpfCalculatorContext ctx) {
 			try {
-				AEATRetencionesEntrada2015 aeatRetencionesEntrada2015 = AEATRetencionesEntradaFactory
-						.create2015(ctx);
-				return calculate(aeatRetencionesEntrada2015);
+				AEATRetencionesEntrada2016 aeatRetencionesEntrada2016 = AEATRetencionesEntradaFactory
+						.create2016(ctx);
+				return calculate(aeatRetencionesEntrada2016);
 			} catch (IOException e) {
 				throw new ExpressionExceptionWrapper(new ExpressionException(e));
 			} catch (SQLException e) {
@@ -635,21 +635,21 @@ public class IrpfCalculator {
 			} catch (ExpressionException e) {
 				throw new ExpressionExceptionWrapper(e);
 			} catch (IrpfCalculateException e) {
-				AEATRetencionesError2015 error = e
-						.getAEATRetencionesError2015();
+				AEATRetencionesError2016 error = e
+						.getAEATRetencionesError2016();
 
 				for (com.esferalia.aon.aeat.jaxb.TipoErrorGeneral tipoErrorGeneral : error
 						.getErrorGeneral())
 					throw new ExpressionExceptionWrapper(new CheckException(
 							tipoErrorGeneral.getDescripcion()));
 
-				List<TipoRetenedorError2015> retenedores = error.getRetenedor();
+				List<TipoRetenedorError2016> retenedores = error.getRetenedor();
 
 				String message = null;
-				TipoRetenedorError2015 retenedor = retenedores.get(0);
-				List<TipoRetenidoError2015> retenidos = retenedor.getRetenido();
+				TipoRetenedorError2016 retenedor = retenedores.get(0);
+				List<TipoRetenidoError2016> retenidos = retenedor.getRetenido();
 				if (retenidos.size() > 0) {
-					TipoRetenidoError2015 retenido = retenidos.get(0);
+					TipoRetenidoError2016 retenido = retenidos.get(0);
 					List<com.esferalia.aon.aeat.jaxb.TipoError> tipoErrores = retenido
 							.getError();
 					if (tipoErrores.size() > 0) {
@@ -702,43 +702,43 @@ public class IrpfCalculator {
 			return salida2013;
 		}
 
-		private AEATRetencionesSalida2015 calculate(
-				AEATRetencionesEntrada2015 entrada2015)
+		private AEATRetencionesSalida2016 calculate(
+				AEATRetencionesEntrada2016 entrada2016)
 				throws IrpfCalculateException, JAXBException, IOException {
 
 			Marshaller marshaller = JAXBContext.newInstance(
-					AEATRetencionesEntrada2015.class).createMarshaller();
-			File entrada2015File = File.createTempFile(
-					AEATRetencionesEntrada2015.class.getSimpleName(), null);
-			marshaller.marshal(entrada2015, entrada2015File);
+					AEATRetencionesEntrada2016.class).createMarshaller();
+			File entrada2016File = File.createTempFile(
+					AEATRetencionesEntrada2016.class.getSimpleName(), null);
+			marshaller.marshal(entrada2016, entrada2016File);
 
-			File salida2015File = File.createTempFile(
-					AEATRetencionesSalida2015.class.getSimpleName(), null);
-			File error2015File = File.createTempFile(
-					AEATRetencionesError2015.class.getSimpleName(), null);
+			File salida2016File = File.createTempFile(
+					AEATRetencionesSalida2016.class.getSimpleName(), null);
+			File error2016File = File.createTempFile(
+					AEATRetencionesError2016.class.getSimpleName(), null);
 
-			ModuloCalculo.procesarFicheroXml(entrada2015File.getAbsolutePath(),
-					error2015File.getAbsolutePath(), null,
-					salida2015File.getAbsolutePath());
-			entrada2015File.delete();
+			ModuloCalculo.procesarFicheroXml(entrada2016File.getAbsolutePath(),
+					error2016File.getAbsolutePath(), null,
+					salida2016File.getAbsolutePath());
+			entrada2016File.delete();
 			Unmarshaller unMarshaller = JAXBContext.newInstance(
-					AEATRetencionesError2015.class).createUnmarshaller();
+					AEATRetencionesError2016.class).createUnmarshaller();
 			try {
-				AEATRetencionesError2015 error2015 = (AEATRetencionesError2015) unMarshaller
-						.unmarshal(error2015File);
-				error2015File.delete();
-				throw new IrpfCalculateException(error2015);
+				AEATRetencionesError2016 error2016 = (AEATRetencionesError2016) unMarshaller
+						.unmarshal(error2016File);
+				error2016File.delete();
+				throw new IrpfCalculateException(error2016);
 			} catch (JAXBException e) {
 			} catch (IllegalArgumentException e) {
 			}
 
-			error2015File.delete();
+			error2016File.delete();
 			unMarshaller = JAXBContext.newInstance(
-					AEATRetencionesSalida2015.class).createUnmarshaller();
-			AEATRetencionesSalida2015 salida2015 = (AEATRetencionesSalida2015) unMarshaller
-					.unmarshal(salida2015File);
-			salida2015File.delete();
-			return salida2015;
+					AEATRetencionesSalida2016.class).createUnmarshaller();
+			AEATRetencionesSalida2016 salida2016 = (AEATRetencionesSalida2016) unMarshaller
+					.unmarshal(salida2016File);
+			salida2016File.delete();
+			return salida2016;
 		}
 
 	}
@@ -811,7 +811,7 @@ public class IrpfCalculator {
 		}
 
 		@Override
-		public AEATRetencionesSalida2015 calculate2015(
+		public AEATRetencionesSalida2016 calculate2016(
 				IIrpfCalculatorContext ctx) {
 			// TODO Auto-generated method stub
 			byte descendants = 0;
@@ -846,7 +846,7 @@ public class IrpfCalculator {
 										"discapacidad >= 33% y < 65%, movilidad reducida",
 										"discapacidad > 65%"}[handicap])) );
 
-			TipoRetenidoSalida2015 retenidoSalida = new TipoRetenidoSalida2015();
+			TipoRetenidoSalida2016 retenidoSalida = new TipoRetenidoSalida2016();
 			retenidoSalida.setTipoRetencion(BigDecimal.valueOf(percent));
 			retenidoSalida.setComunidadAutonoma(geozone);
 
@@ -854,7 +854,7 @@ public class IrpfCalculator {
 			retenidoSalida.setRetribAnuales(retribAnuales);
 			retenidoSalida.setCotizaciones(ctx.getGastosAnuales());
 			retenidoSalida.setBaseRetencion(retribAnuales);
-			com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Descendientes.ComputoDescendientes computoDescendientes = new com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Descendientes.ComputoDescendientes();
+			com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016.Descendientes.ComputoDescendientes computoDescendientes = new com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016.Descendientes.ComputoDescendientes();
 			if (descendants >= 1)
 				computoDescendientes
 						.setHijo1(com.esferalia.aon.aeat.jaxb.TipoComputo.POR_ENTERO);
@@ -865,24 +865,24 @@ public class IrpfCalculator {
 				computoDescendientes
 						.setHijo3(com.esferalia.aon.aeat.jaxb.TipoComputo.POR_ENTERO);
 			if (descendants >= 4) {
-				com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Descendientes.ComputoDescendientes.CuartoySucesivos cuartoySucesivos = new com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Descendientes.ComputoDescendientes.CuartoySucesivos();
+				com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016.Descendientes.ComputoDescendientes.CuartoySucesivos cuartoySucesivos = new com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016.Descendientes.ComputoDescendientes.CuartoySucesivos();
 				cuartoySucesivos.setTotal((byte) (descendants - 3));
 				cuartoySucesivos.setPorEntero((byte) (descendants - 3));
 				computoDescendientes.setCuartoySucesivos(cuartoySucesivos);
 			}
-			com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Descendientes descendientes15 = new com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2015.Descendientes();
+			com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016.Descendientes descendientes15 = new com.esferalia.aon.aeat.jaxb.TipoRetenidoSalida2016.Descendientes();
 			descendientes15.setComputoDescendientes(computoDescendientes);
 			retenidoSalida.setDescendientes(descendientes15);
 
-			TipoRetenedorSalida2015 retenedorSalida2015 = new TipoRetenedorSalida2015();
-			List<TipoRetenidoSalida2015> retenidosSalida = retenedorSalida2015
+			TipoRetenedorSalida2016 retenedorSalida2016 = new TipoRetenedorSalida2016();
+			List<TipoRetenidoSalida2016> retenidosSalida = retenedorSalida2016
 					.getRetenido();
 			retenidosSalida.add(retenidoSalida);
 
-			AEATRetencionesSalida2015 aeatRetencionesSalida = new AEATRetencionesSalida2015();
-			List<TipoRetenedorSalida2015> retenedoresSalida = aeatRetencionesSalida
+			AEATRetencionesSalida2016 aeatRetencionesSalida = new AEATRetencionesSalida2016();
+			List<TipoRetenedorSalida2016> retenedoresSalida = aeatRetencionesSalida
 					.getRetenedor();
-			retenedoresSalida.add(retenedorSalida2015);
+			retenedoresSalida.add(retenedorSalida2016);
 
 			return aeatRetencionesSalida;
 		}
