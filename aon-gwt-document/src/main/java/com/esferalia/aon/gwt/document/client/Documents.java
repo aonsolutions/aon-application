@@ -1060,6 +1060,7 @@ public class Documents extends Composite implements EntryPoint {
 		DefaultKeyboardSelectionHandler<FileInfo> selHandler = new DefaultKeyboardSelectionHandler<FileInfo>(dataGrid){
 			@Override
 			public void onCellPreview(CellPreviewEvent<FileInfo> event) {
+				
 				if(KeyCodes.KEY_DOWN == event.getNativeEvent().getKeyCode()
 					|| KeyCodes.KEY_LEFT == event.getNativeEvent().getKeyCode()
 					|| KeyCodes.KEY_RIGHT == event.getNativeEvent().getKeyCode()
@@ -1095,28 +1096,15 @@ public class Documents extends Composite implements EntryPoint {
 						delFile.setVisible(false);
 						optionFile.setVisible(false);
 			    	}
-			    	if(!isCheck){
+		
+			    	
+			    	dataGrid.getSelectionModel().setSelected(object, true);
+			    	if(event.getColumn() != 0){
 			    		for(Integer i = 0;i< dataProvider.getList().size();i++){
 			    			if(!dataProvider.getList().get(i).equals(object))
 			    				dataGrid.getSelectionModel().setSelected(dataProvider.getList().get(i), false);
 			    		}
-			    	
-			    		if(!dataGrid.getSelectionModel().isSelected(object))
-			    			dataGrid.getSelectionModel().setSelected(object, true);
 			    	}
-			    	else{
-			    		Integer aux=0;
-			    		for(Integer i = 0; i< dataProvider.getList().size();i++){
-			    			if(dataGrid.getSelectionModel().isSelected(dataProvider.getList().get(i)))
-			    				aux++;
-			    		}
-			    		if(aux.equals(1) && dataGrid.getSelectionModel().isSelected(object)){
-			    			editFile.setVisible(false);
-							delFile.setVisible(false);
-							optionFile.setVisible(false);
-			    		}		
-			    	}
-			    	isCheck = false;
 			    }
 				
 				if(BrowserEvents.CONTEXTMENU.equals(event.getNativeEvent().getType())){
@@ -2944,7 +2932,7 @@ public class Documents extends Composite implements EntryPoint {
 		docs.setFilter(docs.getServiconvenios());
 		
 	}
-	Boolean isCheck = false;
+
 	private void initTableColumns(
 			final SelectionModel<FileInfo> selectionModel,
 			ListHandler<FileInfo> sortHandler) {
@@ -2952,19 +2940,12 @@ public class Documents extends Composite implements EntryPoint {
 		/** Check Column **/
 	
 		 Column<FileInfo, Boolean> checkColumn =
-			        new Column<FileInfo, Boolean>(new CheckboxCell(true, false){
+			        new Column<FileInfo, Boolean>(new CheckboxCell(true, true){
 			        	
 			        	@Override
 			        	public void onBrowserEvent(com.google.gwt.cell.client.Cell.Context context
-			        			, Element parent, Boolean value, NativeEvent event
-			        			, com.google.gwt.cell.client.ValueUpdater<Boolean> valueUpdater) {
-			        		//Integer index = dataGrid.getKeyboardSelectedRow();
-			        		//FileInfo object = dataProvider.getList().get(index);
-			        		//Window.alert(index.toString());
-			        		//Window.alert(Boolean.toString(dataGrid.getSelectionModel().isSelected(object)));
-			        		isCheck= true;
-			        	}
-			   
+			        		, Element parent, Boolean value, NativeEvent event
+			        		, com.google.gwt.cell.client.ValueUpdater<Boolean> valueUpdater) {}
 			        	
 			        }){
 			          @Override
