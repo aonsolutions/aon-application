@@ -31,8 +31,9 @@ public class ConexFlowUtils {
 	public static Query getConexFlowCardPaymentQuery(String empresa, String centro, String tpv, String token, Double amount, String cliente, String cvv) {
 		Integer eur = amount.intValue();
 		Double cent = (amount - eur.doubleValue()) * 100;
+		Long c = Math.round(cent);
+		Integer importe = (eur * 100) + c.intValue(); 
 		
-		Integer importe = (eur * 100) + cent.intValue(); 
 		if(cvv == null) cvv = "";
 		
 		Query query = new Query();
@@ -136,8 +137,8 @@ public class ConexFlowUtils {
 	public static Query getConexFlowPreauthorizationPaymentQuery(String empresa, String centro, String tpv, String cliente, String token, Double amount) {
 		Integer eur = amount.intValue();
 		Double cent = (amount - eur.doubleValue()) * 100;
-		
-		Integer importe = (eur * 100) + cent.intValue(); 
+		Long c = Math.round(cent);
+		Integer importe = (eur * 100) + c.intValue(); 
 		
 		Query query = new Query();
 		query.setOperacion(ConexFlowConstant.PREAUTHORIZATION_OP);
@@ -245,7 +246,8 @@ public class ConexFlowUtils {
 		Double d = Double.parseDouble(amount);
 		Integer eur = d.intValue();
 		Double cent = (d - eur.doubleValue()) * 100;
-		Integer importe = (eur * 100) + cent.intValue(); 
+		Long c = Math.round(cent);
+		Integer importe = (eur * 100) + c.intValue(); 
 		
 		Query query = new Query();
 		query.setOperacion(ConexFlowConstant.REFUND_OP);
