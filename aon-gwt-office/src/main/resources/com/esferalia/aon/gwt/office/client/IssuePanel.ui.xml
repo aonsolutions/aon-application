@@ -1,0 +1,56 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.AonHubMessages"
+		field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
+		field="aonResources"></ui:with>
+
+	<ui:style>
+	.form {
+		padding: 10px;
+	}
+	.buttons {
+		padding-top: 10px;
+		text-align: right;
+	}
+	</ui:style>
+
+	<g:HTMLPanel styleName="{style.form}">
+		<g:Grid width="100%">
+			<g:row>
+				<g:customCell>
+					<g:InlineLabel
+						styleName="{aonResources.css.aonBold}
+					{aonResources.css.aonIconTitle} {aonResources.css.aonIconCommandButton}"
+						text="{msg.title}" />
+
+				</g:customCell>
+				<g:customCell>
+					<g:TextBox ui:field="titleTextBox" />
+				</g:customCell>
+			</g:row>
+
+			<g:row>
+				<g:customCell>
+					<g:InlineLabel
+						styleName="{aonResources.css.aonBold}
+					{aonResources.css.aonIconEmployee} {aonResources.css.aonIconCommandButton}"
+						text="{msg.priority}" />
+
+				</g:customCell>
+				<g:customCell>
+					<g:HorizontalPanel ui:field="priorityHPanel" spacing="5"/>
+				</g:customCell>
+			</g:row>
+
+		</g:Grid>
+
+		<div class="{style.buttons}">
+			<g:Button ui:field="cancelButton" text="Cancelar" />
+			<g:Button ui:field="acceptButton" text="Aceptar" />
+		</div>
+
+	</g:HTMLPanel>
+</ui:UiBinder> 

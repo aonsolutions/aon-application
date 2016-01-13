@@ -271,12 +271,16 @@ public class Office extends Composite implements EntryPoint,
 
 	@Override
 	public void onSelectionTitle(IssueSelected issue) {
-		this.issuesPanel.clear();
-		this.issueSelected = issue;
-		this.issueLayoutPanel = new IssuesLayoutPanel(issue);
-		this.issueLayoutPanel.addListener(this);
-		this.issuesPanel.add(issueLayoutPanel);
-		showIssueLayoutPanel();
+		
+		IssuePanel issuePanel = new IssuePanel("Mostrar Informacion");
+		issuePanel.showPopupPanel();
+		
+//		this.issuesPanel.clear();
+//		this.issueSelected = issue;
+//		this.issueLayoutPanel = new IssuesLayoutPanel(issue);
+//		this.issueLayoutPanel.addListener(this);
+//		this.issuesPanel.add(issueLayoutPanel);
+//		showIssueLayoutPanel();
 	}
 
 	// ******************************************************************

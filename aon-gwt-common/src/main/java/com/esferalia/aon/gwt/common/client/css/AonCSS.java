@@ -393,6 +393,8 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-icon-navarra-bw")
 	String aonIconNavarraBW();
 	
+	@ClassName("aon-icon-employee")
+	String aonIconEmployee();
 	
 	@ClassName("aon-icon-commandButton")
 	String aonIconCommandButton();
@@ -865,5 +867,8 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-icon-notices")
 	String aonIconNotices();
+	
+	@ClassName("aon-icon-title")
+	String aonIconTitle();
 }
 

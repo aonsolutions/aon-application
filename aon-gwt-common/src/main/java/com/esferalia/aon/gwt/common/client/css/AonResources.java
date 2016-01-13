@@ -80,6 +80,9 @@ public interface AonResources extends ClientBundle, Images {
 	
 	@Source("images/aon-icon-notices.png")
 	ImageResource aonIconNotices();
+	
+	@Source("images/aon-icon-title.png")
+	ImageResource aonIconTitle();
 
 	@Source("images/aon-icon-check.png")
 	ImageResource aonIconCheck();
