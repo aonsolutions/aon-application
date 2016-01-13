@@ -179,7 +179,7 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
         			emptyAccountCount++;
         			account = String.valueOf(Integer.valueOf(maxAccountCode)+emptyAccountCount);
         			customerAccount.put(customerDocument, account);
-        			logPanel.warn("El cliente " + customerDocument + " no tiene cuenta asignada. Se le asigna la siguiente libre");
+        			logPanel.warn("El cliente " + customerDocument + " no tiene cuenta asignada. Se le asigna la siguiente libre" + " (" + account + ")");
         		}
         		
         		if(account!=null && StringUtils.isNotBlank(account)){
@@ -238,7 +238,7 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 					writer.print(CommonUtil.round(baseGastosGestionCobro * vatPercent / 100) + "|");
 					writer.print("769000000|");
 					
-					writer.print(invoiceTotal + "|");
+					writer.print(CommonUtil.round(invoiceTotal) + "|");
 					writer.print(getFormatBankAccount(bankAccount));
         			writer.println();
 							
@@ -394,7 +394,7 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 		IManagerBean bean = BeanManager.getManagerBean(Account.class);
 		Criteria c = new Criteria();
 		c.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE), Boolean.TRUE);
-		c.addExpression(ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.ACCOUNT_CODE), "430%"));
+		c.addExpression(ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.ACCOUNT_CODE), "4300%"));
 		ProjectionList pl = new ProjectionList();
 		pl.add(Projection.max(bean.getFieldName(IEntityAlias.ACCOUNT_CODE)));
 		List<?> list = bean.getList(pl, c);

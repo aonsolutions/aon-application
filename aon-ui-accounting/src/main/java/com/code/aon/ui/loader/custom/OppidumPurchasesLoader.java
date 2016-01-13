@@ -59,6 +59,8 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(OppidumPurchasesLoader.class.getName());
 	
+	private boolean skipLoad;
+	
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	private SimpleDateFormat excelFormat = new SimpleDateFormat("dd/MM/yyyy");
 	
@@ -154,6 +156,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	        
 	        supplierAccount = new HashMap<>();
 	    	supplierNames = new HashMap<>();
+	    	skipLoad = false;
 	        
         	int lineCount=0;
         	while(rowIterator.hasNext()){
@@ -171,64 +174,67 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
         			loadSupplierName(supplierDocument, consumerName);
         			supplierName = supplierNames.get(supplierDocument);
         		}
-        		String account = supplierAccount.get(supplierDocument);
-        		if(account==null || StringUtils.isBlank(account)){
-        			loadSupplierAccount(supplierDocument);
-        			account = String.valueOf( 400000000 + Double.valueOf(supplierCode).intValue() );
-        			supplierAccount.put(supplierDocument, account);
-        			logPanel.warn("El proveedor " + supplierName + " ("+supplierDocument+")" + " no tiene cuenta asignada. Se le asigna la cuenta " + account);
-        		}
         		
-        		if(account!=null && StringUtils.isNotBlank(account)){
+        		if(supplierNames.containsKey(supplierDocument)){
+        			String account = supplierAccount.get(supplierDocument);
+        			if(account==null || StringUtils.isBlank(account)){
+        				loadSupplierAccount(supplierDocument);
+        				account = String.valueOf( 400000000 + Double.valueOf(supplierCode).intValue() );
+        				supplierAccount.put(supplierDocument, account);
+        				logPanel.warn("El proveedor " + supplierName + " ("+supplierDocument+")" + " no tiene cuenta asignada. Se le asigna la cuenta " + account);
+        			}
         			
-        			String invoiceNumber = getStringCellValue(row.getCell(headers.indexOf(INVOICE_DOCUMENT)));
-        			Date invoiceDate = getDateCellValue(row.getCell(headers.indexOf(INVOICE_DATE)));
-        			double vatPercent = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_VAT_PERCENT)));
-        			double vatBase = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_VAT_BASE)));
-        			double vatAmount = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_VAT_AMOUNT)));
-        			double invoiceTotal = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_TOTAL)));
-        			
-        			double baseTerminoPotencia = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_BASE_TERM_POT)));
-        			double baseExcesos = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_BASE_EXCESOS)));
-        			double baseAlquileres = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_BASE_ALQUILERES)));
-        			
-        			vatBase -= (baseTerminoPotencia + baseExcesos 
-        					+ baseAlquileres);
-        			vatAmount -= (CommonUtil.round((baseTerminoPotencia + baseExcesos) * vatPercent / 100) 
-        					+ CommonUtil.round(baseAlquileres * vatPercent / 100));
-        			
-        			
-        			writer.print("FRACTB|");
-        			writer.print(lineCount + "|");
-        			writer.print(getFormatInvoiceNumber(invoiceNumber) + "|");
-        			writer.print(account + "|");
-        			writer.print(supplierDocument + "|");
-        			writer.print("1|");
-        			writer.print("ES|");
-        			writer.print(supplierName + "|");
-        			writer.print(dateFormat.format(invoiceDate) + "|");
-        			writer.print("0|");
-        			
-        			// 1
-        			writer.print(CommonUtil.round(vatBase) + "|");
-					writer.print(CommonUtil.round(vatPercent) + "|");
-					writer.print(CommonUtil.round(vatAmount) + "|");
-					writer.print("600000001|");
-					// 2
-					writer.print(CommonUtil.round(baseTerminoPotencia + baseExcesos) + "|");
-					writer.print(CommonUtil.round(vatPercent) + "|");
-					writer.print(CommonUtil.round((baseTerminoPotencia + baseExcesos) * vatPercent / 100) + "|");
-					writer.print("600000002|");
-					// 3
-					writer.print(CommonUtil.round(baseAlquileres) + "|");
-					writer.print(CommonUtil.round(vatPercent) + "|");
-					writer.print(CommonUtil.round(baseAlquileres * vatPercent / 100) + "|");
-					writer.print("600000003|");
-					
-					writer.print(invoiceTotal);
-        			writer.println();
-							
-        			lineCount++;
+        			if(account!=null && StringUtils.isNotBlank(account)){
+        				
+        				String invoiceNumber = getStringCellValue(row.getCell(headers.indexOf(INVOICE_DOCUMENT)));
+        				Date invoiceDate = getDateCellValue(row.getCell(headers.indexOf(INVOICE_DATE)));
+        				double vatPercent = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_VAT_PERCENT)));
+        				double vatBase = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_VAT_BASE)));
+        				double vatAmount = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_VAT_AMOUNT)));
+        				double invoiceTotal = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_TOTAL)));
+        				
+        				double baseTerminoPotencia = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_BASE_TERM_POT)));
+        				double baseExcesos = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_BASE_EXCESOS)));
+        				double baseAlquileres = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_BASE_ALQUILERES)));
+        				
+        				vatBase -= (baseTerminoPotencia + baseExcesos 
+        						+ baseAlquileres);
+        				vatAmount -= (CommonUtil.round((baseTerminoPotencia + baseExcesos) * vatPercent / 100) 
+        						+ CommonUtil.round(baseAlquileres * vatPercent / 100));
+        				
+        				
+        				writer.print("FRACTB|");
+        				writer.print(lineCount + "|");
+        				writer.print(getFormatInvoiceNumber(invoiceNumber) + "|");
+        				writer.print(account + "|");
+        				writer.print(supplierDocument + "|");
+        				writer.print("1|");
+        				writer.print("ES|");
+        				writer.print(supplierName + "|");
+        				writer.print(dateFormat.format(invoiceDate) + "|");
+        				writer.print("0|");
+        				
+        				// 1
+        				writer.print(CommonUtil.round(vatBase) + "|");
+        				writer.print(CommonUtil.round(vatPercent) + "|");
+        				writer.print(CommonUtil.round(vatAmount) + "|");
+        				writer.print("600000001|");
+        				// 2
+        				writer.print(CommonUtil.round(baseTerminoPotencia + baseExcesos) + "|");
+        				writer.print(CommonUtil.round(vatPercent) + "|");
+        				writer.print(CommonUtil.round((baseTerminoPotencia + baseExcesos) * vatPercent / 100) + "|");
+        				writer.print("600000002|");
+        				// 3
+        				writer.print(CommonUtil.round(baseAlquileres) + "|");
+        				writer.print(CommonUtil.round(vatPercent) + "|");
+        				writer.print(CommonUtil.round(baseAlquileres * vatPercent / 100) + "|");
+        				writer.print("600000003|");
+        				
+        				writer.print(invoiceTotal);
+        				writer.println();
+        				
+        				lineCount++;
+        			}
         		}
         		
         	}
@@ -237,17 +243,22 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
         	
         	writer.flush();
         	
-        	AonLoaderController controller = (AonLoaderController) AonUtil.getRegisteredBean("aonLoader");
-			callAonLoader(IOUtils.toByteArray(new FileInputStream(defaultImportFile)), controller.getParams());
-	        
-	        workbook.close();
-	        file.close();
-	        
-	        writer.close();
-	        defaultImportFile.delete();
-	        
-	        logPanel.info("El fichero se ha procesado completamente.");
-	        logPanel.info("Carga de datos finalizada.");
+        	if(skipLoad){
+        		logPanel.info("Se han detectado problemas en los valores del fichero.");
+        		logPanel.info("Carga de datos abortada.");
+        	} else {
+        		AonLoaderController controller = (AonLoaderController) AonUtil.getRegisteredBean("aonLoader");
+        		callAonLoader(IOUtils.toByteArray(new FileInputStream(defaultImportFile)), controller.getParams());
+        		
+        		workbook.close();
+        		file.close();
+        		
+        		writer.close();
+        		defaultImportFile.delete();
+        		
+        		logPanel.info("El fichero se ha procesado completamente.");
+        		logPanel.info("Carga de datos finalizada.");
+        	}
 			
 		} catch (IOException e) {
 			String msg = "Error durante la carga de datos. ";
@@ -337,8 +348,8 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 			LogPanelController logPanel = LogPanelController.getInstance();
 			Supplier supplier = obtainSupplier(supplierDocument);
 			if(supplier==null || supplier.getId()==null){
-				logPanel.warn("Se procede a crear un nuevo proveedor " + name + " (" + supplierDocument +")" );
-				supplierNames.put(supplierDocument, name);
+				logPanel.warn("Proveedor no existente, se debe crear para poder continuar (" + supplierDocument +")");
+				skipLoad = true;
 			} else {
 				supplierNames.put(supplierDocument, supplier.getRegistry().getFullName());
 				if(supplier.getAccount()!=null && StringUtils.isNotBlank(supplier.getAccount().getCode())){
