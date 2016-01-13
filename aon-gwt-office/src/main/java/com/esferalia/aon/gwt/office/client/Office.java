@@ -14,9 +14,7 @@ import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
-import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
 import com.esferalia.aon.gwt.office.client.values.IssueValue;
-import com.esferalia.aon.gwt.office.client.values.LabelValue;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -37,8 +35,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class Office extends Composite implements EntryPoint,
-		IssueGrid.Listener, LeftButtonsMenuBar.LeftMenuBarListener,
-		IssuesLayoutPanel.Listener, IssueWriteWidget.Listener {
+		IssueGrid.Listener, LeftButtonsMenuBar.LeftMenuBarListener {
 
 	private static OfficeUiBinder uiBinder = GWT.create(OfficeUiBinder.class);
 
@@ -61,7 +58,6 @@ public class Office extends Composite implements EntryPoint,
 	LeftButtonsMenuBar leftButtonBarMenu;
 
 	private JsRepo repo;
-	private IssuesLayoutPanel issueLayoutPanel;
 	private IssueSelected issueSelected;
 	private AonHub gitHub = new AonHub(GWT.getModuleBaseURL() + "api/");
 	private List<IssueSelected> openIssues;
@@ -167,23 +163,6 @@ public class Office extends Composite implements EntryPoint,
 		});
 	}
 
-	private void createIssueComment(JsRepo repo, JsIssue issue,
-			IssueCommentValue commentValue) {
-		gitHub.createIssueComment(issue, commentValue,
-				new AsyncCallback<JsIssueComment>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						GWT.log(caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(JsIssueComment result) {
-						issueLayoutPanel.addCommentIssue(result);
-					}
-				});
-	}
-
 	private void editIssue(JsRepo repo, JsIssue issue,
 			com.esferalia.aon.gwt.office.client.values.issues.IssueValue prop) {
 		gitHub.editIssue(issue, prop, new AsyncCallback<JsIssue>() {
@@ -273,6 +252,11 @@ public class Office extends Composite implements EntryPoint,
 	public void onSelectionTitle(IssueSelected issue) {
 		
 		IssuePanel issuePanel = new IssuePanel("Mostrar Informacion");
+		issuePanel.setTitle(issue.getTitle());
+		issuePanel.setSender(issue.getUser().getLogin());
+		issuePanel.setPriority(issue.getPriority());
+		issuePanel.setType(issue.getType());
+		issuePanel.setBody(issue.getBody());
 		issuePanel.showPopupPanel();
 		
 //		this.issuesPanel.clear();
@@ -289,6 +273,8 @@ public class Office extends Composite implements EntryPoint,
 
 	@Override
 	public void onNewIssueClickEvent(ClickEvent event) {
+		IssuePanel issuePanel = new IssuePanel("NUEVA INCIDENCIA");
+		issuePanel.showPopupPanel();
 	}
 
 	@Override
@@ -337,64 +323,6 @@ public class Office extends Composite implements EntryPoint,
 	public void onLabelIssueClickEvent(Button button) {
 		// TODO Auto-generated method stub
 
-	}
-
-	// ******************************************************************
-	// *********************** LAYOUT ISSUES ***************************
-	// ******************************************************************
-
-	@Override
-	public void onCloseIssueClickEvent(IssueSelected issue) {
-		JsIssue jsIssue = issuesMap.get(issue.getId());
-		com.esferalia.aon.gwt.office.client.values.issues.IssueValue value = new com.esferalia.aon.gwt.office.client.values.issues.IssueValue();
-		value.setState(IssueValue.Prop.CLOSE.value);
-
-		editIssue(this.repo, jsIssue, value);
-	}
-
-	@Override
-	public void onReopenedIssueClickEvent(IssueSelected issue) {
-		JsIssue jsIssue = issuesMap.get(issue.getId());
-		com.esferalia.aon.gwt.office.client.values.issues.IssueValue value = new com.esferalia.aon.gwt.office.client.values.issues.IssueValue();
-		value.setState(IssueValue.Prop.OPEN.value);
-
-		editIssue(this.repo, jsIssue, value);
-
-	}
-
-	// ******************************************************************
-	// *********************** ISSUES WRITE ****************************
-	// ******************************************************************
-
-	@Override
-	public void onComment(IssueCommentValue issueCommentValue) {
-		JsIssue jsIssue = issuesMap.get(issueSelected.getId());
-		createIssueComment(this.repo, jsIssue, issueCommentValue);
-
-	}
-
-	@Override
-	public void onCommentButtonClick(
-			com.esferalia.aon.gwt.office.client.values.issues.IssueValue issueValue) {
-		// createAnIssue(repo, issueValue);
-
-	}
-
-	@Override
-	public void onCreateNewTag(LabelValue tagValue) {		
-//		gitHub.createLabel(NEW_TAG_SERVLET_URL, tagValue, new AsyncCallback<JsLabel>() {
-//			
-//			@Override
-//			public void onSuccess(JsLabel result) {				
-//				System.out.println("Etiqueda insertada correctamente " + result.getName());
-//			}
-//			
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				System.out.println("Etiqueta no creada: " + caught.getMessage());
-//				
-//			}
-//		});
 	}
 
 	private static native <T extends JavaScriptObject> T eval(String javascript)

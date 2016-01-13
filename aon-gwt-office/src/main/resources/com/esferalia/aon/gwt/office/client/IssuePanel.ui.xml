@@ -11,6 +11,7 @@
 	.form {
 		padding: 10px;
 	}
+	
 	.buttons {
 		padding-top: 10px;
 		text-align: right;
@@ -25,10 +26,22 @@
 						styleName="{aonResources.css.aonBold}
 					{aonResources.css.aonIconTitle} {aonResources.css.aonIconCommandButton}"
 						text="{msg.title}" />
-
 				</g:customCell>
 				<g:customCell>
-					<g:TextBox ui:field="titleTextBox" />
+					<g:TextBox ui:field="titleTextBox" width="500px" />
+				</g:customCell>
+			</g:row>
+
+			<g:row>
+				<g:customCell>
+					<g:InlineLabel
+						styleName="{aonResources.css.aonBold}
+					{aonResources.css.aonIconJournal} {aonResources.css.aonIconCommandButton}"
+						text="{msg.priority}" />
+				</g:customCell>
+				<g:customCell>
+					<g:HorizontalPanel ui:field="priorityHPanel"
+						spacing="5" />
 				</g:customCell>
 			</g:row>
 
@@ -37,15 +50,44 @@
 					<g:InlineLabel
 						styleName="{aonResources.css.aonBold}
 					{aonResources.css.aonIconEmployee} {aonResources.css.aonIconCommandButton}"
-						text="{msg.priority}" />
-
+						text="{msg.sender}" />
 				</g:customCell>
 				<g:customCell>
-					<g:HorizontalPanel ui:field="priorityHPanel" spacing="5"/>
+					<g:TextBox ui:field="senderTextBox" width="300px" />
+				</g:customCell>
+			</g:row>
+
+			<g:row>
+				<g:customCell>
+					<g:InlineLabel
+						styleName="{aonResources.css.aonBold}
+					{aonResources.css.aonIconEnterprise} {aonResources.css.aonIconCommandButton}"
+						text="{msg.company}" />
+				</g:customCell>
+				<g:customCell>
+					<g:TextBox ui:field="enterpriseTextBox" width="300px" />
+				</g:customCell>
+			</g:row>
+
+			<g:row>
+				<g:customCell>
+					<g:InlineLabel
+						styleName="{aonResources.css.aonBold}
+					{aonResources.css.aonIconLock} {aonResources.css.aonIconCommandButton}"
+						text="Tipo aviso" />
+				</g:customCell>
+				<g:customCell>
+					<g:HorizontalPanel ui:field="typeHPanel"
+						spacing="5" />
 				</g:customCell>
 			</g:row>
 
 		</g:Grid>
+
+		<div>
+			<g:TextArea ui:field="commentTextArea" characterWidth="10"
+				visibleLines="9" width="98%" height="99%" />
+		</div>
 
 		<div class="{style.buttons}">
 			<g:Button ui:field="cancelButton" text="Cancelar" />

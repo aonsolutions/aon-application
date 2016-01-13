@@ -8,7 +8,7 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class JsIssue extends JavaScriptObject {
-	
+
 	public static JavaScriptObject create() {
 		return JavaScriptObject.createObject().cast();
 	}
@@ -30,6 +30,14 @@ public class JsIssue extends JavaScriptObject {
 
 	public final native String getState() /*-{
 		return this.state;
+	}-*/;
+
+	public final native String getPriority() /*-{
+		return this.priority;
+	}-*/;
+
+	public final native String getType() /*-{
+		return this.type;
 	}-*/;
 
 	public final native JsUser getUser() /*-{

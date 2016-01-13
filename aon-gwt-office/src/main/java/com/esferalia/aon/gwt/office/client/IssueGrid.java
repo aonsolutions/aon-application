@@ -26,7 +26,6 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.cellview.client.AbstractCellTableBuilder;
 import com.google.gwt.user.cellview.client.AbstractHeaderOrFooterBuilder;
 import com.google.gwt.user.cellview.client.Column;
@@ -101,6 +100,16 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		@Override
 		public String getState() {
 			return "";
+		}
+		
+		@Override
+		public String getPriority() {			
+			return issue.getPriority();
+		}
+		
+		@Override
+		public String getType() {		
+			return issue.getType();
 		}
 
 		@Override

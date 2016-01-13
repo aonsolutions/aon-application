@@ -17,6 +17,10 @@ public interface IssueSelected {
 	
 	String getState();
 	
+	String getPriority();
+	
+	String getType();
+	
 	JsUser getUser();
 	
 	Date getCreateAt();
