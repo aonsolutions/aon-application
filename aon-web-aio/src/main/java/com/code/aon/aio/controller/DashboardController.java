@@ -937,7 +937,7 @@ public class DashboardController implements Serializable {
 			}	
 			Byte b = 100;
 			DashboardDocs dd = getTypesBD(b);
-			dd.settype("otros");
+			dd.settype("Otros");
 			if ((!dd.gettype().equals("Logo") && !dd.gettype().equals("Firma")) ){
 				if (dd.getsize()>0){
 					types.add(dd);
@@ -946,7 +946,7 @@ public class DashboardController implements Serializable {
 			
 			DashboardDocs d = new DashboardDocs();
 			d.settype("Disponible");
-			dd.settype("otros");
+			dd.settype("Otros");
 			d.setnum(0);
 			d.setsize(free);
 			
@@ -1041,7 +1041,7 @@ public class DashboardController implements Serializable {
 						.from(RATTACH)
 						.where(RATTACH.CATEGORY.eq(category).and(RATTACH.DOMAIN.eq(domain.getId()))).fetch();
 				Category c = DBConsults.getCategory(getDomain(), getUser(), category);
-				a = new DashboardDocs(c.getName(),0,0,0);
+				a = new DashboardDocs(c.getName() != null ? c.getName() : "Otros",0,0,0);
 			}
 			
 			long aux = 0;
@@ -1094,7 +1094,7 @@ public class DashboardController implements Serializable {
 					else{
 						Category c = DBConsults.getCategory(getDomain(), getUser(), categoryId);
 						DashboardDocs a;
-						String category = c != null ? c.getName() : "Otros";
+						String category = c != null && c.getName() != null ? c.getName() : "Otros";
 						long size = (record.value2() != null) ? record.value2().longValue() : 0;
 						if (category != null)
 							a= new DashboardDocs(category, 1, size, 0);
@@ -1255,10 +1255,10 @@ public class DashboardController implements Serializable {
 						if (!typeName.equals("Logo")
 								&& !typeName.equals("Firma")) {
 							drc.setname(record.value3());
-							String category = "otros";
+							String category = "Otros";
 							if (record.value2() != null) {
 								Category c = DBConsults.getCategory(getDomain(), getUser(), record.value2());
-								category = c.getName();
+								category = c.getName() != null ? c.getName() : "Otros";
 							} 
 							drc.setcategory(category);
 
@@ -1276,7 +1276,7 @@ public class DashboardController implements Serializable {
 							if (record.value1() != null)
 								drc.settype(typeName);
 							else
-								drc.settype("otros");
+								drc.settype("Otros");
 
 							if (record.value4() != null) {
 								drc.setDate(record.value4().toString());

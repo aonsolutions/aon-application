@@ -15,7 +15,7 @@ public class RegistryDAO {
 	public static Category getCategory(AONContext ctx, Integer categoryId){
 		return ctx.getDslContext()
 				.select().from(CATEGORY).where(CATEGORY.ID.eq(categoryId)).limit(1)
-				.fetchInto(CATEGORY).stream().map(new FullCategoryFiller()).findFirst().orElse(null);
+				.fetchInto(CATEGORY).stream().map(new FullCategoryFiller()).findFirst().orElse(new Category());
 	}
 	
 	public static LinkedList<Category> getCategoryList(AONContext ctx){

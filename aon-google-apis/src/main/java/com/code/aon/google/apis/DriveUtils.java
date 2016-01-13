@@ -360,7 +360,7 @@ public class DriveUtils implements IBlobManager {
 		String name = "otros";
 		if (categoryId != -1) {
 			Category c = DBConsults.getCategory(domain, new User().setLogin(""), categoryId);
-			name = c.getName();
+			name = c.getName() != null ? c.getName() : "otros";
 		}
 		String a = "'" + file.getId() + "'";
 		FileList aux = drive.files().list().setQ(a + " in parents").execute();
@@ -385,7 +385,7 @@ public class DriveUtils implements IBlobManager {
 		File file = newFile(fileInfo.getMimetype(), fileInfo.getTitle());
 		file.setModifiedDate(new DateTime(new Date()));
 		file.setParents(parents);
-		file.setProperties(setProperties(drive, fileInfo, domain.getName()));
+		file.setProperties(setProperties(drive, fileInfo, domain));
 		// File's content.
 
 		//java.io.File fileContent = Utils.InputStreamToFile(fileInfo);
@@ -414,14 +414,12 @@ public class DriveUtils implements IBlobManager {
 		}
 	}
 
-	private static List<Property> setProperties(Drive drive, FileInfo fileInfo, String domainName) throws IOException {
+	private static List<Property> setProperties(Drive drive, FileInfo fileInfo, Domain domain) throws IOException {
 		String name = "otros";
 		if(fileInfo.getCategory()!= null){
-			com.esferalia.aon.occam.api.model.Domain domain = new com.esferalia.aon.occam.api.model.Domain();
-			domain.setName(domainName).setId(1);
 			User user = new User().setLogin(""); 
 			Category c = getCategory(domain, user, fileInfo.getCategory());
-			name = c.getName();
+			name = c.getName() != null ? c.getName() : "otros";
 		}
 		Property property1 = new Property();
 		property1.setValue(name);
