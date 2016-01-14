@@ -19,7 +19,6 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
@@ -299,7 +298,7 @@ public class Office extends Composite implements EntryPoint,
 	// ******************************************************************
 
 	@Override
-	public void onNewIssueClickEvent(ClickEvent event) {
+	public void onNewIssueClickEvent() {
 		IssuePanel issuePanel = new IssuePanel("NUEVA INCIDENCIA");
 		issuePanel.showPopupPanel();
 	}
@@ -311,37 +310,37 @@ public class Office extends Composite implements EntryPoint,
 	}
 
 	@Override
-	public void onShowClosedIssuesClickEvent(ClickEvent event) {
+	public void onShowClosedIssuesClickEvent() {
 		loadCloseIssues();
 		showDockOfficePanel();
 	}
 
 	@Override
-	public void onShowAllIssuesClickEvent(ClickEvent event) {
+	public void onShowAllIssuesClickEvent() {
 		loadAllIssues();
 		showDockOfficePanel();
 	}
 
 	@Override
-	public void onShowDeletedIssuesClickEvent(ClickEvent event) {
+	public void onShowDeletedIssuesClickEvent() {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onShowQuestionIssuesClickEvent(ClickEvent event) {
+	public void onShowQuestionIssuesClickEvent() {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onShowErrorIssuesClickEvent(ClickEvent event) {
+	public void onShowErrorIssuesClickEvent() {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onShowFaqsIssuesClickEvent(ClickEvent event) {
+	public void onShowFaqsIssuesClickEvent() {
 		// TODO Auto-generated method stub
 
 	}

@@ -11,56 +11,16 @@
 		field="aonResources"></ui:with>
 
 	<ui:style>
-	.vpanel {
-		border: 0px !important;
-		margin-left: 5px !important;
-	}
-	.tree-button-west {
-	min-height: 22px;
-	border: 0;
-	cursor: pointer;
-	padding-left: 15px;
-	padding-top: 0px;
-	padding-bottom: 0px;
-	padding-right: 0px;
-	background-color: transparent;
-	margin-right: 5px;
-}
-		
-	.button-href {
-		border: none;
-		font-family: arial, sans-serif;
-		font-size: 12px;
-		cursor: pointer;
-		padding-left: 14px;
-	}
-	
-	.principal-button {
-		font-family: arial, sans-serif;
-		cursor: pointer;
-		font-size: 14px;
-		padding-left: 10px;
-		margin-left: 14px;
-	}
-	
-	.button_bar {
-		
-	}
-	
-	.button_bar button {
-		background: none !important;
-		border: none;
-		font-family: arial, sans-serif;
-		font-size: 12px;
-		cursor: pointer;
-		padding-left: 14px;
+	.newButton {
+		float: right;
 	}
 	</ui:style>
-	
+
 	<g:DockLayoutPanel unit='PX'>
 		<g:north size='26'>
 			<g:FlowPanel styleName="gwt-MenuBar-horizontal" ui:field="buttonBar">
-				<common:OptionsToolbar ui:field="toolbar" />
+				<g:Button ui:field='newButton'
+					styleName='aon-editDataTable-button {aonResources.css.aonIconReset} {style.newButton}' />
 			</g:FlowPanel>
 		</g:north>
 

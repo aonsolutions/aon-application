@@ -4,12 +4,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.css.images.Images;
-import com.esferalia.aon.gwt.common.client.widget.OptionsToolbar;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -17,6 +15,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -27,25 +26,25 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
-public class LeftButtonsMenuBar extends Composite implements SelectionHandler<TreeItem> {
+public class LeftButtonsMenuBar extends Composite {
 
 	interface LeftMenuBarListener {
 
-		void onNewIssueClickEvent(ClickEvent event);
+		void onNewIssueClickEvent();
 
 		void onShowOpenIssuesClickEvent();
 
-		void onShowClosedIssuesClickEvent(ClickEvent event);
+		void onShowClosedIssuesClickEvent();
 
-		void onShowAllIssuesClickEvent(ClickEvent event);
+		void onShowAllIssuesClickEvent();
 
-		void onShowDeletedIssuesClickEvent(ClickEvent event);
+		void onShowDeletedIssuesClickEvent();
 
-		void onShowQuestionIssuesClickEvent(ClickEvent event);
+		void onShowQuestionIssuesClickEvent();
 
-		void onShowErrorIssuesClickEvent(ClickEvent event);
+		void onShowErrorIssuesClickEvent();
 
-		void onShowFaqsIssuesClickEvent(ClickEvent event);
+		void onShowFaqsIssuesClickEvent();
 
 		void onLabelIssueClickEvent(Button button);
 	}
@@ -60,13 +59,13 @@ public class LeftButtonsMenuBar extends Composite implements SelectionHandler<Tr
 	@UiField
 	Tree tree;
 	@UiField
-	OptionsToolbar toolbar;
+	Button newButton;
 
 	private Images images;
 	private PopupPanel newPopup;
 	private Button selectedButton;
 	private List<LeftMenuBarListener> listeners;
-	
+
 	private TreeItem labelsItem;
 
 	public LeftButtonsMenuBar() {
@@ -74,16 +73,10 @@ public class LeftButtonsMenuBar extends Composite implements SelectionHandler<Tr
 		initWidget(uiBinder.createAndBindUi(this));
 		images = GWT.create(Images.class);
 
-		this.tree.addSelectionHandler(this);
 		this.selectedButton = new Button();
 		this.listeners = new LinkedList<LeftMenuBarListener>();
 
-		toolbar.setVisibleCollapseButton(false);
-		toolbar.setVisibleDraftButton(false);
-		toolbar.setVisibleCopyButton(false);
-		toolbar.setVisiblePasteButton(false);
-		toolbar.setVisibleViewButton(false);	
-		
+		initNewPopupMenu();
 		initTree();
 
 		// setFontBoldColor(openIssues);
@@ -94,6 +87,29 @@ public class LeftButtonsMenuBar extends Composite implements SelectionHandler<Tr
 	// ************************* UI HANDLERS ****************************
 	// ******************************************************************
 
+	@UiHandler("tree")
+	void onTreeItemSelection(SelectionEvent<TreeItem> event)  {
+		TreeItem item = event.getSelectedItem();
+		String name = item.getText();
+
+		switch (name) {
+		case "Pendientes":
+			for (LeftMenuBarListener listener : listeners)
+				listener.onShowOpenIssuesClickEvent();
+			break;
+		default:
+			break;
+		}
+
+	}
+	@UiHandler("newButton")
+	void onNewButtonClicked(ClickEvent event) {
+		int left = newButton.getAbsoluteLeft();
+		int top = newButton.getAbsoluteTop() + newButton.getOffsetHeight();
+		newPopup.setPopupPosition(left, top);
+		newPopup.show();
+	}
+	
 	// ******************************************************************
 	// ******************************************************************
 
@@ -134,9 +150,9 @@ public class LeftButtonsMenuBar extends Composite implements SelectionHandler<Tr
 		TreeItem closedItem = new TreeItem(
 				imageItemHtml(images.aon_icon_issue_closed(), "Cerrados"));
 		tree.addItem(closedItem);
-		
+
 		labelsItem = new TreeItem(
-				imageItemHtml(images.aon_icon_issue_title(), "Etiquetas"));		
+				imageItemHtml(images.aon_icon_issue_title(), "Etiquetas"));
 		tree.addItem(labelsItem);
 	}
 
@@ -153,49 +169,26 @@ public class LeftButtonsMenuBar extends Composite implements SelectionHandler<Tr
 		newPopup = new PopupPanel();
 		MenuBar menuBar = new MenuBar();
 
-		MenuItem newLabelMenuItem = new MenuItem("Etiqueta", new Command() {
+		MenuItem newLabelMenuItem = new MenuItem(
+				imageItemHtml(images.aon_icon_issue_title(), "Etiqueta"),
+				new Command() {
 
-			@Override
-			public void execute() {
-				Tag tag = new Tag();
+					@Override
+					public void execute() {
+						Window.alert("Creando nueva etiqueta");
+					}
+				});
+		menuBar.addItem(newLabelMenuItem);
 
-			}
-		});
+		newPopup.add(menuBar);
+		newPopup.setStyleName("gwt-MenuBarPopup");
 	}
 
 	private void addLabel(Tag label) {
-		
-		final TreeItem item = new TreeItem(imageItemHtml(images.aon_icon_issue_title(), label.getName()));		
+
+		final TreeItem item = new TreeItem(
+				imageItemHtml(images.aon_icon_issue_title(), label.getName()));
 		labelsItem.addItem(item);
-
-//		 final Button labelButton = new Button();
-//		
-//		 labelButton.setText(label.getName());
-//		 labelButton.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
-//		 labelButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-//		
-//		 if (label.getColor() != null && !isWhite(label.getColor()))
-//		 labelButton.getElement().getStyle()
-//		 .setColor("#" + label.getColor());
-//		
-//		 setLabelClickEvent(labelButton);
-//		 labelsItem.addItem(labelButton);
-	}
-
-	@Override
-	public void onSelection(SelectionEvent<TreeItem> event) {
-		TreeItem item = event.getSelectedItem();
-		String name = item.getText();
-		
-		switch (name) {
-		case "Pendientes":
-			for ( LeftMenuBarListener listener :  listeners)
-				listener.onShowOpenIssuesClickEvent();
-			break;		
-		default:
-			break;
-		}
-
-		
+		newPopup.setAutoHideEnabled(true);
 	}
 }
