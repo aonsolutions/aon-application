@@ -159,7 +159,7 @@
 							</ui:include>
 						</aon:panelTab>
 
-						<aon:if test="#{aonConfiguration.bean.customer.showFinanceData and aonRole.financeOperator}">
+						<aon:if test="#{aonConfiguration.bean.customer.showFinanceData}">
 							<aon:panelTab id="finance" label="#{bundle.registry_finance_data_module}">
 								<aon:panel>
 									<f:facet name="header">
@@ -499,23 +499,27 @@
 			<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
 				<ui:param name="auditableController" value="#{customer}" />
 			</ui:include>						
-			<aon:if test="#{aonConfiguration.bean.customer.showFinanceData and aonRole.financeOperator}">
+			<aon:if test="#{aonConfiguration.bean.customer.showFinanceData}">
 				<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
 					<ui:param name="bankAccountController" value="#{customerRbank.accountHelper}" />
 					<ui:param name="modalReRender" value="customerTab" />
 				</ui:include>
 			</aon:if>						
-			<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
-				<ui:param name="bankAccountController" value="#{customerSupplier.accountHelper}" />
-				<ui:param name="bankAccountWindowSuffix" value="-RSupplier" />
-				<ui:param name="modalReRender" value="RegistrySupplier_payMethodPanel" />
-			</ui:include>
+			<aon:if test="#{aonConfiguration.bean.customer.showSupplier}">
+				<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
+					<ui:param name="bankAccountController" value="#{customerSupplier.accountHelper}" />
+					<ui:param name="bankAccountWindowSuffix" value="-RSupplier" />
+					<ui:param name="modalReRender" value="RegistrySupplier_payMethodPanel" />
+				</ui:include>
+			</aon:if>
 		</aon:if>
-		<aon:if test="#{customer.nevv and aonConfiguration.bean.customer.showFinanceData}">
-			<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
-				<ui:param name="bankAccountController" value="#{customerForm.accountHelper}" />
-				<ui:param name="modalReRender" value="Registry-PayMethodDiv" />
-			</ui:include>
+		<aon:if test="#{customer.nevv}">
+			<aon:if test="#{aonConfiguration.bean.customer.showFinanceData}">
+				<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
+					<ui:param name="bankAccountController" value="#{customerForm.accountHelper}" />
+					<ui:param name="modalReRender" value="Registry-PayMethodDiv" />
+				</ui:include>
+			</aon:if>
 		</aon:if>
 	</ui:define>
 </ui:composition>

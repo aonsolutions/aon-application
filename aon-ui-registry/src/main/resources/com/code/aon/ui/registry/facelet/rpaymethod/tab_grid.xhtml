@@ -14,8 +14,9 @@
 					aon-editDataTable-numberColumn, 
 					aon-editDataTable-numberColumn,
 					aon-nowrap aon-editDataTable-textColumn" />			
-		<ui:param name="showDataScroller" value="false" />			
-		<ui:param name="skipResetButton" value="#{controller.model.rowCount > 0}" />			
+		<ui:param name="showDataScroller" value="false" />
+		<ui:param name="skipResetButton" value="#{controller.model.rowCount > 0}" />
+		<ui:param name="skipLineEdition" value="#{!aonRole.financeOperator}" />
 
 		<ui:define name="columns">
 
@@ -23,8 +24,7 @@
 				<f:facet name="header">
 					<aon:outputLabel for="RegistryPayMethod_payment" value="#{bundle.finance_payMethod}" />
 				</f:facet>
-				<aon:outputText value="#{to.payment.name}"
-					rendered="#{formList}" />
+				<aon:outputText value="#{to.payment.name}" rendered="#{formList}" />
 				<aon:selectOneMenu id="RegistryPayMethod_payment"
 					valueChangeListener="#{controller.onPayMethodChanged}"
 					reRender="RegistryPayMethod_bank"
@@ -45,8 +45,8 @@
 				<f:facet name="header">
 					<aon:outputLabel for="RegistryPayMethod_bank" value="#{bundle.aon_bank}" />
 				</f:facet>
-				<aon:outputText value="#{to.registryBank.fullName}"
-					rendered="#{formList}" />
+				<aon:outputText value="#{to.registryBank.fullName}" rendered="#{formList and aonRole.financeOperator}" />
+				<aon:outputText value="#{to.registryBank.maskedFullName}" rendered="#{formList and !aonRole.financeOperator}" />
 				<aon:selectOneMenu id="RegistryPayMethod_bank"
 					rendered="#{formEdit}" value="#{controller.to.registryBank}">
 					<f:selectItem value="#{null}" />
@@ -70,8 +70,7 @@
 				<f:facet name="header">
 					<aon:outputLabel for="RegistryPayMethod_numberOfPayments" value="#{bundle.registry_number_of_payments}" />
 				</f:facet>
-				<aon:outputText value="#{to.numberOfPayments}"
-					rendered="#{formList}" />
+				<aon:outputText value="#{to.numberOfPayments}" rendered="#{formList}" />
 				<aon:inputText id="RegistryPayMethod_numberOfPayments"
 					value="#{controller.to.numberOfPayments}"
 					rendered="#{formEdit}" required="true" size="5" >
@@ -90,8 +89,7 @@
 				<f:facet name="header">
 					<aon:outputLabel for="RegistryPayMethod_daysToFirstPayment" value="#{bundle.registry_days_to_first_payment}" />
 				</f:facet>
-				<aon:outputText value="#{to.daysToFirstPayment}"
-					rendered="#{formList}" />
+				<aon:outputText value="#{to.daysToFirstPayment}" rendered="#{formList}" />
 				<aon:inputText id="RegistryPayMethod_daysToFirstPayment"
 					value="#{controller.to.daysToFirstPayment}"
 					rendered="#{formEdit}" required="true" size="5" />
@@ -106,8 +104,7 @@
 				<f:facet name="header">
 					<aon:outputLabel for="RegistryPayMethod_daysBetweenPayments" value="#{bundle.registry_days_between_payments}" />
 				</f:facet>
-				<aon:outputText value="#{to.daysBetweenPayments}"
-					rendered="#{formList}" />
+				<aon:outputText value="#{to.daysBetweenPayments}" rendered="#{formList}" />
 				<aon:inputText id="RegistryPayMethod_daysBetweenPayments"
 					value="#{controller.to.daysBetweenPayments}"
 					rendered="#{formEdit}" required="true" size="5" />
@@ -122,8 +119,7 @@
 				<f:facet name="header">
 					<aon:outputLabel for="RegistryPayMethod_paymentDays" value="#{bundle.registry_payment_days}" />
 				</f:facet>
-				<aon:outputText value="#{to.paymentDays}"
-					rendered="#{formList}" />
+				<aon:outputText value="#{to.paymentDays}" rendered="#{formList}" />
 				<aon:inputText id="RegistryPayMethod_paymentDays"
 					value="#{controller.to.paymentDays}" rendered="#{formEdit}" size="5" />
 				<f:facet name="footer">

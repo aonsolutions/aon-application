@@ -260,23 +260,27 @@
 			<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
 				<ui:param name="auditableController" value="#{target}" />
 			</ui:include>						
-			<aon:if test="#{aonConfiguration.bean.customer.showFinanceData and aonRole.financeOperator}">
+			<aon:if test="#{aonConfiguration.bean.customer.showFinanceData}">
 				<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
 					<ui:param name="bankAccountController" value="#{targetRbank.accountHelper}" />
 					<ui:param name="modalReRender" value="targetTab" />
 				</ui:include>
 			</aon:if>						
-			<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
-				<ui:param name="bankAccountController" value="#{targetSupplier.accountHelper}" />
-				<ui:param name="bankAccountWindowSuffix" value="-RSupplier" />
-				<ui:param name="modalReRender" value="RegistrySupplier_payMethodPanel" />
-			</ui:include>
+			<aon:if test="#{aonConfiguration.bean.target.showSupplier}">
+				<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
+					<ui:param name="bankAccountController" value="#{targetSupplier.accountHelper}" />
+					<ui:param name="bankAccountWindowSuffix" value="-RSupplier" />
+					<ui:param name="modalReRender" value="RegistrySupplier_payMethodPanel" />
+				</ui:include>
+			</aon:if>
 		</aon:if>
-		<aon:if test="#{target.nevv and aonConfiguration.bean.customer.showFinanceData}">
-			<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
-				<ui:param name="bankAccountController" value="#{targetForm.accountHelper}" />
-				<ui:param name="modalReRender" value="Registry-PayMethodDiv" />
-			</ui:include>				
-		</aon:if>	
+		<aon:if test="#{target.nevv}">
+			<aon:if test="#{aonConfiguration.bean.customer.showFinanceData}">
+				<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
+					<ui:param name="bankAccountController" value="#{targetForm.accountHelper}" />
+					<ui:param name="modalReRender" value="Registry-PayMethodDiv" />
+				</ui:include>				
+			</aon:if>	
+		</aon:if>
 	</ui:define>
 </ui:composition>

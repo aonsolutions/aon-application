@@ -10,13 +10,15 @@
 	<aon:valueParam name="showSuffix" default="#{false}"/>
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="skipLineEdition" value="#{!aonRole.financeOperator}" />
 
 		<ui:define name="columns">
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
 					<aon:outputLabel for="#{controller.beanName}_BankAccount_country" value="#{bundle.aon_iban}" />
 				</f:facet>
-				<aon:outputText value="#{to.bankAccount}" rendered="#{formList}" />
+				<aon:outputText value="#{to.bankAccount}" rendered="#{formList and aonRole.financeOperator}" />
+				<aon:outputText value="#{to.bankAccount.maskedIban}" rendered="#{formList and !aonRole.financeOperator}" />
 				<ui:include src="bankAccount.xhtml">
 					<ui:param name="bankAccountController" value="#{controller.accountHelper}" />
 					<ui:param name="renderBankAccount" value="#{formEdit}" />

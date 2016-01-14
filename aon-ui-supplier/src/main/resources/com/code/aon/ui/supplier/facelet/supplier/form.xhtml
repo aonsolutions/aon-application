@@ -117,7 +117,7 @@
 							</ui:include>
 						</aon:panelTab>
  
- 						<aon:if test="#{aonConfiguration.bean.supplier.showFinanceData and aonRole.financeOperator}">
+ 						<aon:if test="#{aonConfiguration.bean.supplier.showFinanceData}">
 							<aon:panelTab id="finance"
 								label="#{bundle.registry_finance_data_module}">
 								<aon:panel>
@@ -237,18 +237,20 @@
 			<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
 				<ui:param name="auditableController" value="#{supplier}" />
 			</ui:include>						
-			<aon:if test="#{aonConfiguration.bean.customer.showFinanceData and aonRole.financeOperator}">
+			<aon:if test="#{aonConfiguration.bean.customer.showFinanceData}">
 				<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
 					<ui:param name="bankAccountController" value="#{supplierRbank.accountHelper}" />
 					<ui:param name="modalReRender" value="supplierTab" />
 				</ui:include>
 			</aon:if>						
 		</aon:if>
-		<aon:if test="#{supplier.nevv and aonConfiguration.bean.supplier.showFinanceData}">
-			<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
-				<ui:param name="bankAccountController" value="#{supplierForm.accountHelper}" />
-				<ui:param name="modalReRender" value="Registry-PayMethodDiv" />
-			</ui:include>
+		<aon:if test="#{supplier.nevv}">
+			<aon:if test="#{aonConfiguration.bean.supplier.showFinanceData}">
+				<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
+					<ui:param name="bankAccountController" value="#{supplierForm.accountHelper}" />
+					<ui:param name="modalReRender" value="Registry-PayMethodDiv" />
+				</ui:include>
+			</aon:if>
 		</aon:if>
 	</ui:define>
 </ui:composition>
