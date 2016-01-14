@@ -701,6 +701,50 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!-- **************** MODEL 303 AI *************** -->
+	<managed-bean>
+		<managed-bean-name>mod303_ai</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.fiscal.controller.mod303.Mod303AIController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.fiscal.FiscalModel</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>mod303_ai</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>FiscalModel_model</key>
+					<value>#{fiscalCollections.model303AI}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>FiscalModel_year desc,FiscalModel_period desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{mod303AIControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>mod303AIControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.fiscal.controller.mod303.Mod303ControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
 	<!-- **************** MODEL 310  *************** -->
 	<managed-bean>
 		<managed-bean-name>mod310</managed-bean-name>

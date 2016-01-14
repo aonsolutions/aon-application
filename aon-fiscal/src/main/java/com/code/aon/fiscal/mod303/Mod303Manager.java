@@ -71,7 +71,7 @@ public class Mod303Manager extends FiscalModelManager {
 
 	@Override
 	public boolean accept(FiscalModelType type) {
-		return type == FiscalModelType.M303;
+		return type == FiscalModelType.M303 || type == FiscalModelType.M303_AI;
 	}
 
 	@Override

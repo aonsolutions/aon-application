@@ -71,6 +71,8 @@ public class FiscalModelDetail extends FiscalModelDetailDB {
 				return Mod131Key.getKeyWithValue( getType() );	
 			} else if (getFiscalModel().getModel() == FiscalModelType.M303) {
 				return Mod303Key.getKeyWithValue( getType() );	
+			} else if (getFiscalModel().getModel() == FiscalModelType.M303_AI) {
+				return Mod303Key.getKeyWithValue( getType() );	
 			} else if (getFiscalModel().getModel() == FiscalModelType.M310) {
 				return Mod310Key.getKeyWithValue( getType() );	
 			} else if (getFiscalModel().getModel() == FiscalModelType.M311) {

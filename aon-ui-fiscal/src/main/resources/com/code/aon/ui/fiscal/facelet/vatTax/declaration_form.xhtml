@@ -70,11 +70,29 @@
 			<aon:outputLabel for="VatTaxDeclaration_administration"
 				value="#{bundle.aon_administration}" />
 			<aon:div styleClass="aon-text-left">				
-				<aon:selectOneMenu id="VatTaxDeclaration_administration" value="#{vatTaxDeclaration.to.administration}" required="true">
+				<aon:selectOneMenu id="VatTaxDeclaration_administration" value="#{vatTaxDeclaration.to.administration}" 
+					required="true" reRender="VatTaxDeclarationGrid">
 					<f:selectItems value="#{configCollections.administrations}" />
 				</aon:selectOneMenu>
 			</aon:div>
-			<aon:outputText value="&#160;" />
+			<aon:div rendered="#{vatTaxDeclaration.additionalDataEnabled}" styleClass="aon-text-left">
+				<aon:outputLabel value="#{bundle.fiscal_model_303_act_msg}" />
+				<aon:commandButton id="additionalData"
+					value="#{vatTaxDeclaration.additionalDataDefined?'Ver ':'Crear '} #{bundle.aon_additional_data}"
+					actionListener="#{vatTaxDeclaration.onAdditionalData}"
+					styleClass="aon-finding-toolbar-item aon-icon-info"
+					style="border-width: 0px 0px 0px 0px;margin-left: 10px;" />
+				<aon:if test ="#{vatTaxDeclaration.additionalDataDefined}">
+					<aon:commandButton id="deleteAdditionalData"
+						value="Borrar #{bundle.aon_additional_data}"
+						actionListener="#{vatTaxDeclaration.onRemoveAdditionalData}"
+						styleClass="aon-finding-toolbar-item aon-icon-delete"
+						style="border-width: 0px 0px 0px 0px;margin-left: 10px;" />
+				</aon:if>
+			
+				
+			</aon:div>
+			<aon:outputText value="&#160;" rendered="#{!vatTaxDeclaration.additionalDataEnabled}"/>
 
 			<aon:outputText value="#{bundle.fiscal_operations_volume}" rendered="#{vatTax.to.anual}"/>
 			<aon:outputText value="#{vatTaxDeclaration.to.operationsVolume}" styleClass="aon-bold" rendered="#{vatTax.to.anual}">

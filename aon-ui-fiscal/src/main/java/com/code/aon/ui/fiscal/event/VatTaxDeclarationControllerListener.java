@@ -61,6 +61,9 @@ public class VatTaxDeclarationControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		VatTaxDeclarationController c = (VatTaxDeclarationController) event.getController();
+		if (c.isAdditionalDataDefined()) {
+			c.onRemoveAdditionalData(null);
+		}
 		c.setFileOutput(null);
 	}
 	@Override

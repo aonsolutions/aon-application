@@ -112,7 +112,9 @@ public class Mod303Controller extends FiscalModelController {
 
 	@Override
 	public void onEditSearch(ActionEvent event) {
-		checkFiscalActivity(FiscalModelType.M303);
+		if (getModelType() == FiscalModelType.M303) {
+			checkFiscalActivity(FiscalModelType.M303);
+		}
 		super.onEditSearch(event);	
 	}
 
@@ -507,7 +509,7 @@ public class Mod303Controller extends FiscalModelController {
 			Mod303 declaration = (Mod303) getDeclaration(); 
 			list.add(declaration);
 			MOD303Format format = MOD303Format.getFormat(fm.getAdministration(), fm.getYear());
-			setFileOutput( mod303Writer.createMOD303(list, format) );
+			setFileOutput( mod303Writer.createMOD303(list, format, null) );
 		    if (getFileOutput() != null) {
 		    	if (getFileOutput().getErrors().size() > 0) {
 		    		AonUtil.addErrorMessage("Se han producido errores durante la generación");

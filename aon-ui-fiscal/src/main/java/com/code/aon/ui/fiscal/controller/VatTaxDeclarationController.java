@@ -26,29 +26,33 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.file.tax.model.MOD303.MOD303Format;
+import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDeclaration;
 import com.code.aon.fiscal.VatTaxDetail;
+import com.code.aon.fiscal.enumeration.Mod303Key;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
 import com.code.aon.fiscal.mod303.IMod303Declaration;
+import com.code.aon.fiscal.mod303.Mod303;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.fiscal.aeat.AeatUtils;
 import com.code.aon.ui.fiscal.aeat.AeatUtils.Mod303Type;
+import com.code.aon.ui.fiscal.controller.mod303.Mod303AIController;
 import com.code.aon.ui.fiscal.controller.model.Mipf;
 import com.code.aon.ui.fiscal.file.MOD303Writer;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class VatTaxDeclarationController extends LinesController {
 	
@@ -58,6 +62,8 @@ public class VatTaxDeclarationController extends LinesController {
 
 	private FileOutput fileOutput;
 	private Mipf mipf;
+	
+	private boolean additionalDataPanelVisible;
 
 	private Mipf getMipf() {
 		if (this.mipf == null) {
@@ -241,7 +247,12 @@ public class VatTaxDeclarationController extends LinesController {
 		VatTaxDeclaration vatTaxDeclaration = (VatTaxDeclaration) getTo();
 		List<IMod303Declaration> declarations = new LinkedList<IMod303Declaration>();
 		declarations.add(vatTaxDeclaration);
-		setFileOutput( mod303Writer.createMOD303(declarations,getFormat(vatTaxDeclaration)) );
+		Mod303 additionalInfo = null;
+		if (isAdditionalDataDefined()) {
+			Mod303AIController m303Controller = (Mod303AIController) AonUtil.getRegisteredBean("mod303_ai");
+			additionalInfo = (Mod303) m303Controller.getDeclaration();
+		}
+		setFileOutput( mod303Writer.createMOD303(declarations,getFormat(vatTaxDeclaration), additionalInfo) );
         if (getFileOutput() != null && getFileOutput().getErrors().size() > 0) {
     		AonUtil.addErrorMessageFromBundle(FINANCE_BATCH_DISK_ERROR);
     		AonUtil.addErrorMessage("");
@@ -322,6 +333,12 @@ public class VatTaxDeclarationController extends LinesController {
 		}
 	}
 	
+	@Override
+	public void onRemove(ActionEvent event) {
+		System.out.println("onRemove");
+		super.onRemove(event);
+	}
+	
 	public boolean isScriptPresent() {
 		VatTaxDeclaration to = (VatTaxDeclaration) getTo();
 		return to != null && to.getVatTax() != null && getMipf().isScriptPresent(to.getVatTax().getYear());
@@ -339,7 +356,6 @@ public class VatTaxDeclarationController extends LinesController {
 			FacesContext faces = FacesContext.getCurrentInstance();
             HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
             VatTaxDeclaration dec = (VatTaxDeclaration) getTo();
-            MOD303Format format = getFormat(dec);
             String fileName = getAutomaticFileName();
             response.setHeader("Content-disposition", "attachment; filename=\""+fileName+"\";");
 			AeatUtils.printMod303(dec.getVatTax().getYear(),
@@ -442,5 +458,189 @@ public class VatTaxDeclarationController extends LinesController {
 					+ "_" + dec.getVatTax().getPeriod();
 		}
 	}
+	
+	public boolean isAdditionalDataEnabled() {
+		VatTaxDeclaration dec = (VatTaxDeclaration) getTo();
+		return !isNevv() && dec.getAdministration() == Administration.COMMON_TERRITORY &&
+				(dec.getVatTax().getPeriod() == Period.T4  || dec.getVatTax().getPeriod() == Period.M12);
+		
+	}
+	
+	public void onHideAdditionalData(ActionEvent event) {
+		setAdditionalDataPanelVisible(false);
+	}
 
+	public boolean isAdditionalDataPanelVisible() {
+		return additionalDataPanelVisible;
+	}
+
+	public void setAdditionalDataPanelVisible(boolean additionalDataPanelVisible) {
+		this.additionalDataPanelVisible = additionalDataPanelVisible;
+	}
+	
+	public boolean isAdditionalDataDefined() {
+		try {
+			VatTaxDeclaration dec = (VatTaxDeclaration) getTo();
+			if (isNevv()) return false;
+			Mod303AIController m303Controller = (Mod303AIController) AonUtil.getRegisteredBean("mod303_ai");
+			m303Controller.clearCriteria();
+			Criteria criteria = m303Controller.getCriteria();
+			String yearAlias = m303Controller.getManagerBean().getFieldName(IEntityAlias.FISCAL_MODEL_YEAR); 
+			String periodAlias = m303Controller.getManagerBean().getFieldName(IEntityAlias.FISCAL_MODEL_PERIOD);
+			String admonAlias = m303Controller.getManagerBean().getFieldName(IEntityAlias.FISCAL_MODEL_ADMINISTRATION);
+			criteria.addEqualExpression(yearAlias,dec.getVatTax().getYear());
+			criteria.addEqualExpression(periodAlias,dec.getVatTax().getPeriod());
+			criteria.addEqualExpression(admonAlias,dec.getAdministration());
+			System.out.println( "isAdditionalDataDefined --> " + criteria );
+			int count = m303Controller.getManagerBean().getCount(m303Controller.getCriteria());
+			if (count == 0) {
+				return false;
+			} else {
+				return true;
+			}
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage()); 
+			throw new AbortProcessingException(e.getMessage(),e);
+		}
+	}
+	
+	public void onAcceptAdditionalData(ActionEvent event ) {
+		try {
+			Mod303AIController m303Controller = (Mod303AIController) AonUtil.getRegisteredBean("mod303_ai");
+			m303Controller.accept(event);
+			String epi1 = m303Controller.getDeclaration().ensureDetail(Mod303Key.IAE_01).getDescription();
+			if (AonStringUtils.equals(epi1,"8611") || AonStringUtils.equals(epi1,"8612")) {
+				m303Controller.getDeclaration().ensureDetail(Mod303Key.IAC_01).setDescription("3");	
+			}
+			String epi2 = m303Controller.getDeclaration().ensureDetail(Mod303Key.IAE_02).getDescription();
+			if (AonStringUtils.equals(epi2,"8611") || AonStringUtils.equals(epi2,"8612")) {
+				m303Controller.getDeclaration().ensureDetail(Mod303Key.IAC_01).setDescription("3");	
+			}
+			String epi3 = m303Controller.getDeclaration().ensureDetail(Mod303Key.IAE_03).getDescription();
+			if (AonStringUtils.equals(epi3,"8611") || AonStringUtils.equals(epi3,"8612")) {
+				m303Controller.getDeclaration().ensureDetail(Mod303Key.IAC_01).setDescription("3");	
+			}
+			String epi4 = m303Controller.getDeclaration().ensureDetail(Mod303Key.IAE_04).getDescription();
+			if (AonStringUtils.equals(epi4,"8611") || AonStringUtils.equals(epi4,"8612")) {
+				m303Controller.getDeclaration().ensureDetail(Mod303Key.IAC_01).setDescription("3");	
+			}
+			String epi5 = m303Controller.getDeclaration().ensureDetail(Mod303Key.IAE_05).getDescription();
+			if (AonStringUtils.equals(epi5,"8611") || AonStringUtils.equals(epi5,"8612")) {
+				m303Controller.getDeclaration().ensureDetail(Mod303Key.IAC_01).setDescription("3");	
+			}
+			String epi6 = m303Controller.getDeclaration().ensureDetail(Mod303Key.IAE_06).getDescription();
+			if (AonStringUtils.equals(epi6,"8611") || AonStringUtils.equals(epi6,"8612")) {
+				m303Controller.getDeclaration().ensureDetail(Mod303Key.IAC_01).setDescription("3");	
+			}
+			onHideAdditionalData(event);
+		} catch (Throwable e) {
+			AonUtil.addErrorMessage(e.getMessage()); 
+			throw new AbortProcessingException(e.getMessage(),e);
+		}
+	}
+	
+	public void onRemoveAdditionalData(ActionEvent event ) {
+		try {
+			VatTaxDeclaration dec = (VatTaxDeclaration) getTo();
+			Mod303AIController m303Controller = (Mod303AIController) AonUtil.getRegisteredBean("mod303_ai");
+			m303Controller.clearCriteria();
+			Criteria criteria = m303Controller.getCriteria();
+			String yearAlias = m303Controller.getManagerBean().getFieldName(IEntityAlias.FISCAL_MODEL_YEAR); 
+			String periodAlias = m303Controller.getManagerBean().getFieldName(IEntityAlias.FISCAL_MODEL_PERIOD);
+			String admonAlias = m303Controller.getManagerBean().getFieldName(IEntityAlias.FISCAL_MODEL_ADMINISTRATION);
+			criteria.addEqualExpression(yearAlias,dec.getVatTax().getYear());
+			criteria.addEqualExpression(periodAlias,dec.getVatTax().getPeriod());
+			criteria.addEqualExpression(admonAlias,dec.getAdministration());
+			m303Controller.setCriteria(criteria);
+			System.out.println( "onRemoveAdditionalData --> " + criteria );
+			m303Controller.onSearch(null);
+			if (m303Controller.getRowCount() == 1) {
+				m303Controller.getModel().setRowIndex(0);
+				m303Controller.onSelect(null);
+				m303Controller.remove(event);
+			}
+			onHideAdditionalData(event);
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage()); 
+			throw new AbortProcessingException(e.getMessage(),e);
+		}
+	}
+	
+	public void onAdditionalData(ActionEvent event ) {
+		try {
+			VatTaxDeclaration dec = (VatTaxDeclaration) getTo();
+			Mod303AIController m303Controller = (Mod303AIController) AonUtil.getRegisteredBean("mod303_ai");
+			m303Controller.clearCriteria();			
+			Criteria criteria = m303Controller.getCriteria();
+			String yearAlias = m303Controller.getManagerBean().getFieldName(IEntityAlias.FISCAL_MODEL_YEAR); 
+			String periodAlias = m303Controller.getManagerBean().getFieldName(IEntityAlias.FISCAL_MODEL_PERIOD);
+			String admonAlias = m303Controller.getManagerBean().getFieldName(IEntityAlias.FISCAL_MODEL_ADMINISTRATION);
+			criteria.addEqualExpression(yearAlias,dec.getVatTax().getYear());
+			criteria.addEqualExpression(periodAlias,dec.getVatTax().getPeriod());
+			criteria.addEqualExpression(admonAlias,dec.getAdministration());
+			m303Controller.setCriteria(criteria);
+			System.out.println( "onAdditionalData --> " + criteria );
+			m303Controller.onSearch(null);
+			if (m303Controller.getRowCount() == 0) {
+				m303Controller.onReset(event);
+				FiscalModel fs = (FiscalModel) m303Controller.getTo();
+				fs.setYear(dec.getVatTax().getYear());
+				fs.setPeriod(dec.getVatTax().getPeriod());
+				fs.setAdministration(dec.getAdministration());
+				fs.setAdmonAeat("XXXXX");
+				m303Controller.accept(event);
+				
+				VatTaxController taxController =  (VatTaxController) AonUtil.getRegisteredBean("vatTax");
+				if (taxController.getVatTaxModel() != null) {
+					@SuppressWarnings("unchecked")
+					List<VatTaxDetail> vatDetails = (List<VatTaxDetail>) taxController.getVatTaxModel().getWrappedData(); 
+					double g = 0.0;
+					for (VatTaxDetail vatDetail : vatDetails) {
+						if (vatDetail.getKey() == VatTaxKey.A1) {
+							m303Controller.getDeclaration().ensureDetail(Mod303Key.C80).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+						}
+						if (vatDetail.getKey() == VatTaxKey.B1
+						  || vatDetail.getKey() == VatTaxKey.B3
+						  || vatDetail.getKey() == VatTaxKey.C1
+						  || vatDetail.getKey() == VatTaxKey.D1
+						  || vatDetail.getKey() == VatTaxKey.D3) {
+							g = g + vatDetail.getQuotaAccumulated(); 
+						}
+						if (vatDetail.getKey() == VatTaxKey.EI || vatDetail.getKey() == VatTaxKey.PS) { 
+							m303Controller.getDeclaration().ensureDetail(Mod303Key.C59).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+							m303Controller.getDeclaration().ensureDetail(Mod303Key.C82).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+						}
+						if (vatDetail.getKey() == VatTaxKey.EX1 || vatDetail.getKey() == VatTaxKey.EX2) {
+							m303Controller.getDeclaration().ensureDetail(Mod303Key.C60).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+							m303Controller.getDeclaration().ensureDetail(Mod303Key.C82).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+						}
+						if (vatDetail.getKey() == VatTaxKey.XO) {
+							m303Controller.getDeclaration().ensureDetail(Mod303Key.C62).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+							m303Controller.getDeclaration().ensureDetail(Mod303Key.C63).addAccumulatedAmount(vatDetail.getQuotaAccumulated());
+						}
+						if (vatDetail.getKey() == VatTaxKey.XI) {
+							m303Controller.getDeclaration().ensureDetail(Mod303Key.C74).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+							m303Controller.getDeclaration().ensureDetail(Mod303Key.C75).addAccumulatedAmount(vatDetail.getQuotaAccumulated());
+						}
+						if (vatDetail.getKey() == VatTaxKey.OS) {
+							m303Controller.getDeclaration().ensureDetail(Mod303Key.C83).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+						}
+						if (vatDetail.getKey() == VatTaxKey.EBI) {	// Ventas de inversion
+							m303Controller.getDeclaration().ensureDetail(Mod303Key.C87).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
+						}
+					}
+				}
+				
+				m303Controller.accept(event);
+			} else {
+				m303Controller.getModel().setRowIndex(0);
+				m303Controller.onSelect(null);
+			}
+			setAdditionalDataPanelVisible(true);
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage()); 
+			throw new AbortProcessingException(e.getMessage(),e);
+		}
+	}
+	
 }

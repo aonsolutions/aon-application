@@ -171,13 +171,15 @@ public class ModelManager {
 			Period period = Period.values()[per];
 			byte st = mod.getValue(FS_MODEL.STATUS);
 			String m = mod.getValue(FS_MODEL.MODEL);
-			Model model = null;
-			if ("303".equals(m)) {
-				model = Model.M303_RS;
-			} else {
-				model = Model.valueOf("M" + m );
+			if (!"3O3".equals(m)) {
+				Model model = null;
+				if ("303".equals(m)) {
+					model = Model.M303_RS;
+				} else {
+					model = Model.valueOf("M" + m );
+				}
+				putModelConfig(list,model,params.getYear(),period,st,adm,domainId,domainName,document,fullName);
 			}
-			putModelConfig(list,model,params.getYear(),period,st,adm,domainId,domainName,document,fullName);
 		}
 	}
 

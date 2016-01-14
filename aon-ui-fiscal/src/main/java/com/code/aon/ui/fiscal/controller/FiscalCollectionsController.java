@@ -234,6 +234,9 @@ public class FiscalCollectionsController implements Serializable {
 	public FiscalModelType getModel303() {
 		return FiscalModelType.M303;
 	}
+	public FiscalModelType getModel303AI() {
+		return FiscalModelType.M303_AI;
+	}
 	public FiscalModelType getModel310() {
 		return FiscalModelType.M310;
 	}
