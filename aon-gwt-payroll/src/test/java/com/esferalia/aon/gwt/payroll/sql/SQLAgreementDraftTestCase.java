@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
@@ -22,7 +23,118 @@ import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase;
 
+import junit.framework.Assert;
+
 public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
+
+	@Test
+	public void testNewCategories() throws SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		AgreementRecord agreement = newAgreement(aonContext);
+
+		AgreementDraft draft = new AgreementDraft();
+		draft.setId(agreement.getId());
+		
+
+		Level levelI = new Level();
+		levelI.setId(-1);
+		draft.addDraftLevel(levelI);
+		Set<String> categoriesI = new HashSet<String>();
+		categoriesI.add("C 1.1");
+		categoriesI.add("C 1.2");
+		draft.addDraftCategories(levelI, categoriesI);
+
+		EmployeesServiceHelper.calculate(connection,
+				draft, agreement.getDomain(), null);
+		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null);
+
+		draft.clearDrafts();
+		EmployeesServiceHelper.calculate(connection,
+				draft, agreement.getDomain(), null);
+		Assert.assertEquals(1, draft.getCategoriesMap().size());
+
+		Level levelII = new Level();
+		levelII.setId(-2);
+		draft.addDraftLevel(levelII);
+		Set<String> categoriesII = new HashSet<String>();
+		categoriesII.add("C 2.1");
+		categoriesII.add("C 2.2");
+		draft.addDraftCategories(levelII, categoriesII);
+		
+
+		EmployeesServiceHelper.calculate(connection,
+				draft, agreement.getDomain(), null);
+		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null);
+		
+		draft.clearDrafts();
+		EmployeesServiceHelper.calculate(connection,
+				draft, agreement.getDomain(), null);
+		
+		Assert.assertEquals(2, draft.getCategoriesMap().size());
+		
+		for( Map.Entry<Integer, Set<String>> entry: draft.getCategoriesMap().entrySet()) 
+			for( String category: entry.getValue())
+				System.out.println("1 :" + entry.getKey() + "-." +category);
+
+		for( Map.Entry<Integer, Set<String>> entry: draft.getCategoriesMap().entrySet()){ 
+			Assert.assertEquals(2, entry.getValue().size());			
+		}
+				
+				
+		for ( Level level : draft.getLevels() ){
+			Set<String> categories = new HashSet<String>();
+			for ( int i = 0 ; i < 100; i++ )
+				categories.add("C " + level.getId() + "." + i);
+			draft.addDraftCategories(level, categories);
+		}
+		
+		EmployeesServiceHelper.calculate(connection,
+				draft, agreement.getDomain(), null);
+		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null);
+
+		draft.clearDrafts();
+		EmployeesServiceHelper.calculate(connection,
+				draft, agreement.getDomain(), null);
+	
+		Assert.assertEquals(2, draft.getCategoriesMap().size());
+
+		for( Map.Entry<Integer, Set<String>> entry: draft.getCategoriesMap().entrySet()) 
+			for( String category: entry.getValue())
+				System.out.println("2 :" + entry.getKey() + "-." +category);
+
+		for( Map.Entry<Integer, Set<String>> entry: draft.getCategoriesMap().entrySet()){ 
+			Assert.assertEquals(100, entry.getValue().size());			
+		}
+
+		for ( Level level : draft.getLevels() ){
+			Set<String> categories = new HashSet<String>();
+			for ( int i = 0 ; i < 50; i++ )
+				categories.add("c " + level.getId() + "." + i);
+			draft.addDraftCategories(level, categories);
+		}
+		
+		EmployeesServiceHelper.calculate(connection,
+				draft, agreement.getDomain(), null);
+		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null);
+
+		draft.clearDrafts();
+		EmployeesServiceHelper.calculate(connection,
+				draft, agreement.getDomain(), null);
+	
+		Assert.assertEquals(2, draft.getCategoriesMap().size());
+
+		for( Map.Entry<Integer, Set<String>> entry: draft.getCategoriesMap().entrySet()) 
+			for( String category: entry.getValue())
+				System.out.println("2 :" + entry.getKey() + "-." +category);
+
+		for( Map.Entry<Integer, Set<String>> entry: draft.getCategoriesMap().entrySet()){ 
+			Assert.assertEquals(50, entry.getValue().size());			
+		}
+	}
+
 
 	@Test
 	public void testUpdateCategories() throws SQLException {

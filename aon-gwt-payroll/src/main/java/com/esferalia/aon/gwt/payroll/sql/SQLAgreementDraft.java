@@ -619,6 +619,8 @@ public class SQLAgreementDraft {
 		Map<Integer, Set<String>> draftCategoriesMap = draft
 				.getDraftCategories();
 
+		Map<Integer, Set<String>> dbCategoriesMap = getCategories(conn, draft.getId());
+
 		for (Level level : draftLevels) {
 
 			if (isRemove(level)) {
@@ -639,9 +641,10 @@ public class SQLAgreementDraft {
 			}
 
 			if (draftCategoriesMap.containsKey(draftId)) {
-
+				
+				
 				updateCategories(conn, domainId, dbId,
-						draft.getCategoriesMap().get(draftId),
+						dbCategoriesMap.get(draftId),
 						draftCategoriesMap.get(draftId));
 			}
 		}
@@ -666,7 +669,7 @@ public class SQLAgreementDraft {
 
 			if (draftCategoriesMap.containsKey(levelId))
 				updateCategories(conn, domainId, levelId,
-						draft.getCategoriesMap().get(levelId),
+						dbCategoriesMap.get(levelId),
 						draftCategoriesMap.get(levelId));
 		}
 
