@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.AttachmentType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 
 @WebServlet(name = "DownloadAmazonProduct", urlPatterns = { "/aon_gwt_template/gwt_download_amazon_product/*" })
 public class DownloadAmazonProductServlet extends HttpServlet{
@@ -48,28 +49,36 @@ public class DownloadAmazonProductServlet extends HttpServlet{
 				.and(filter.getDomainProperty().eq(domainId)),
 				AttachType.ITEM);
 		
+		Attach attach = AON.getAttach(domainName, domainId, login,
+				f -> f.getDomainProperty().eq(domainId)
+				.and(f.getDescriptionProperty().eq(description))
+				.and(f.getTypeProperty().eq(RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value())),
+				AttachType.REGISTRY);
+		
 		File xlsFile = File.createTempFile("AmazonProducts"+domainId, ".xls");
 		FileOutputStream outFile = new FileOutputStream(xlsFile);
 		
 		HSSFWorkbook book = new HSSFWorkbook();
 		HSSFSheet sheet = book.createSheet("Template");
-		if(iattachList != null && iattachList.size()>0){
-			Row header0 = sheet.createRow(0);
-			Row header1 = sheet.createRow(1);
-			Row header2 = sheet.createRow(2);
-			EcommerceProduct ep = new EcommerceProduct();
-			try {
-				ep = XMLUtils.readXml(iattachList.getFirst().getData());
-			} catch (JAXBException e) {
-				e.printStackTrace();
-			}
 		
-			for(Integer column = 0; column < ep.getProductData().getEcommerce().size(); column++){
-				if(column == 0) header0.createCell(column).setCellValue(ep.getTemplate().getAmazonTemplateType());
-				if(column == 1) header0.createCell(column).setCellValue(ep.getTemplate().getAmazonVersion());
-				header1.createCell(column).setCellValue(ep.getProductData().getEcommerce().get(column).getName());
-				header2.createCell(column).setCellValue(ep.getProductData().getEcommerce().get(column).getCode());
-			}
+		Row header0 = sheet.createRow(0);
+		Row header1 = sheet.createRow(1);
+		Row header2 = sheet.createRow(2);
+		EcommerceProduct ep = new EcommerceProduct();
+		try {
+			ep = XMLUtils.readXml(attach.getData());
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+	
+		for(Integer column = 0; column < ep.getProductData().getEcommerce().size(); column++){
+			if(column == 0) header0.createCell(column).setCellValue(ep.getTemplate().getAmazonTemplateType());
+			if(column == 1) header0.createCell(column).setCellValue(ep.getTemplate().getAmazonVersion());
+			header1.createCell(column).setCellValue(ep.getProductData().getEcommerce().get(column).getName());
+			header2.createCell(column).setCellValue(ep.getProductData().getEcommerce().get(column).getCode());
+		}
+		
+		if(iattachList != null && iattachList.size()>0){
 
 			for (Integer i = 0; i< iattachList.size(); i++) {
 				EcommerceProduct ecp = new EcommerceProduct();
