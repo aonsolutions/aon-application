@@ -74,6 +74,10 @@ public class OptionsToolbar extends Composite {
 	public void setVisibleViewButton(boolean visible) {
 		viewButton.setVisible(visible);
 	}
+	
+	public void setVisibleCollapseButton(boolean visible) {
+		collapseAllButton.setVisible(visible);
+	}
 
 	public void setEnabledPasteButton(boolean enabled) {
 		pasteButton.setEnabled(enabled);
@@ -91,8 +95,12 @@ public class OptionsToolbar extends Composite {
 		newButton.setEnabled(enabled);
 	}
 	
-	public void setEnabledViewButton(boolean visible) {
-		viewButton.setVisible(visible);
+	public void setEnabledViewButton(boolean enabled) {
+		viewButton.setEnabled(enabled);		
+	}
+	
+	public void setEnabledCollapseButton(boolean enabled) {
+		collapseAllButton.setEnabled(enabled);
 	}
 
 	@UiHandler("newButton")

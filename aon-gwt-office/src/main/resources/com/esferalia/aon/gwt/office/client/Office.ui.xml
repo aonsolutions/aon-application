@@ -37,14 +37,6 @@
 		border-bottom: 1px solid #BBB;
 		border-right: 0px !important;
 	}
-	
-	.options-scroll-panel>div {
-		height: 99%;
-	}
-	
-	.simple-panel {
-		background: #FFFFFF;
-	}
 	</ui:style>
 
 	<g:SplitLayoutPanel>
@@ -66,9 +58,8 @@
 		<g:center>
 			<g:DeckLayoutPanel ui:field="deckPanel">
 				<g:ResizeLayoutPanel ui:field="dockOfficePanel">
-					<g:HTMLPanel styleName="aon-scroll-area {style.options-scroll-panel}">
-						<g:SimpleLayoutPanel ui:field="resultsPanel"
-							styleName="{style.simple-panel}" height="100%">
+					<g:HTMLPanel styleName="aon-scroll-area">
+						<g:SimpleLayoutPanel ui:field="resultsPanel" height="100%">
 							<office:IssueGrid ui:field="dataGrid" />
 						</g:SimpleLayoutPanel>
 					</g:HTMLPanel>

@@ -7,6 +7,10 @@ public class JsLabel extends JavaScriptObject {
 	protected JsLabel() {
 	}
 
+	public final native Integer getId() /*-{
+		return this.id;
+	}-*/;
+
 	public final native String getColor() /*-{
 		return this.color;
 	}-*/;

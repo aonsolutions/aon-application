@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -626,10 +627,20 @@ public class OfficeApiServlet extends HttpServlet {
 
 	// ------------------------------------------------------------------------
 
+
+	private static Integer DOMAIN_ID;
+	private static String DOMAIN_NAME;
+	private static String USER_NAME;
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		resp.setContentType("application/json;charset=UTF-8");
+		
+		DOMAIN_ID = AonServletUtils.getRequestDomain(req);
+		DOMAIN_NAME = AonServletUtils.getRequestDomainName(req);
+		USER_NAME = AonServletUtils.getLoggedUser();
+		
 		for (HttpRequestHandler handler : GET_HANDLERS) {
 			if (handler.accept(req)) {
 				handler.handler(req, resp);
@@ -643,6 +654,11 @@ public class OfficeApiServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		resp.setContentType("application/json;charset=UTF-8");
+		
+		DOMAIN_ID = AonServletUtils.getRequestDomain(req);
+		DOMAIN_NAME = AonServletUtils.getRequestDomainName(req);
+		USER_NAME = AonServletUtils.getLoggedUser();
+		
 		for (HttpRequestHandler handler : POST_HANDLERS) {
 			if (handler.accept(req)) {
 				handler.handler(req, resp);
@@ -655,6 +671,11 @@ public class OfficeApiServlet extends HttpServlet {
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		resp.setContentType("application/json;charset=UTF-8");
+		
+		DOMAIN_ID = AonServletUtils.getRequestDomain(req);
+		DOMAIN_NAME = AonServletUtils.getRequestDomainName(req);
+		USER_NAME = AonServletUtils.getLoggedUser();
+		
 		for (HttpRequestHandler handler : DELETE_HANDLERS) {
 			if (handler.accept(req)) {
 				handler.handler(req, resp);
@@ -690,10 +711,6 @@ public class OfficeApiServlet extends HttpServlet {
 	}
 
 	// --------------------------------------------------------------------
-
-	private static final Integer DOMAIN_ID = 553;
-	private static final String DOMAIN_NAME = "mac.amtzdelagos.dev";
-	private static final String USER_NAME = "mac";
 	
 	private static String getNotice (Notice notice) throws Exception {
 		

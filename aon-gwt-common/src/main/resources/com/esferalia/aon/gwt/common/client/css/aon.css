@@ -1503,6 +1503,14 @@ input:disabled+label {
 	gwt-image: "aonIconTitle";
 }
 
+@sprite .aon-icon-issue-opened {
+	gwt-image: "aonIconIssueOpened";
+}
+
+@sprite .aon-icon-issue-closed {
+	gwt-image: "aonIconIssueClosed";
+}
+
 .aon-tree-icon-node {
 	height: auto !important;
 	overflow: hidden !important;

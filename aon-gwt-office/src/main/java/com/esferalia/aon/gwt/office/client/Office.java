@@ -8,13 +8,13 @@ import java.util.Map;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
 import com.esferalia.aon.gwt.office.client.values.IssueValue;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -85,6 +85,21 @@ public class Office extends Composite implements EntryPoint,
 		initOpenIssues();
 //		initCloseIssues();
 		
+		gitHub.getLabels(new AsyncCallback<JSON<JsLabel>>() {
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("getLabels(): " + caught.getMessage());
+			}
+			
+			@Override
+			public void onSuccess(JSON<JsLabel> result) {
+				
+				for ( int index = 0 ; index < result.getData().length() ; index++ )
+					saveLabelInDecoratorPanel(result.getData().get(index));
+			}
+		});
+		
 		gitHub.getOpenIssues("user", "repo", new AsyncCallback<JSON<JsIssue>>() {
 			
 			@Override
@@ -104,6 +119,18 @@ public class Office extends Composite implements EntryPoint,
 		});
 
 		showDockOfficePanel();
+	}
+	
+	private void saveLabelInDecoratorPanel(JsLabel label) {
+		
+		Tag tag = new Tag();
+		tag.setName(label.getName());
+		tag.setId(label.getId());
+		
+		if (label.getColor() != null)
+			tag.setColor(label.getColor());
+		
+		leftButtonBarMenu.addLabelIssueButton(tag);
 	}
 
 	@Override
@@ -329,67 +356,4 @@ public class Office extends Composite implements EntryPoint,
 	/*-{
 		return eval(javascript);
 	}-*/;
-
-	// ******************************************************************
-	// *********************** GITHUB METHODS ***************************
-	// ******************************************************************
-
-	private void loadReposList() {
-		gitHub.getRepos("amtzdelagos", new AsyncCallback<JSON<JsRepo>>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("Error al obtener los respositorios. " + " "
-						+ caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(JSON<JsRepo> result) {
-				if (result != null) {
-					for (int z = 0; z < result.getData().length(); z++) {
-						JsRepo repo = result.getData().get(z);
-						Office.this.repositories.put(repo.getId(), repo);
-						// Office.this.repoListBox.addItem(repo.getName(),
-						// String.valueOf(repo.getId()));
-						Office.this.repo = repo;
-					}
-
-					repo.getLabels(new AsyncCallback<AJSON<JsArray<JsLabel>>>() {
-
-						@Override
-						public void onFailure(Throwable caught) {
-							GWT.log(caught.getMessage());
-						}
-
-						@Override
-						public void onSuccess(AJSON<JsArray<JsLabel>> result) {
-							for (int x = 0; x < result.getData().length(); x++)
-								addLabel(x, result.getData().get(x));
-						}
-					});
-				}
-			}
-		});
-	}
-
-	private void loadIssuesList() {
-	}
-
-	private void loadIssueComments(final JsIssue issue) {
-		issue.getCommments(new AsyncCallback<AJSON<JsArray<JsIssueComment>>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				GWT.log(caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(AJSON<JsArray<JsIssueComment>> result) {
-
-				if (isOpenIssue(issue))
-					addOpenIssue(issue, result.getData());
-				else
-					addCloseIssue(issue, result.getData());
-			}
-		});
-	}
 }

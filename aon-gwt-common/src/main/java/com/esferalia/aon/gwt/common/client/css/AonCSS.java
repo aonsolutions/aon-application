@@ -868,6 +868,12 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-icon-notices")
 	String aonIconNotices();
 	
+	@ClassName("aon-icon-issue-opened")
+	String aonIconIssueOpen();
+	
+	@ClassName("aon-icon-issue-closed")
+	String aonIconIssueClosed();
+	
 	@ClassName("aon-icon-title")
 	String aonIconTitle();
 }

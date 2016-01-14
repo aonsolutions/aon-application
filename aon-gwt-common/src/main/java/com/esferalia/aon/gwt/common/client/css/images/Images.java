@@ -153,5 +153,8 @@ public interface Images extends ClientBundle, Tree.Resources {
 	@Source("aon-icon-issue-opened.png")
 	ImageResource aon_icon_issue_opened();
 
+	@Source("aon-icon-title.png")
+	ImageResource aon_icon_issue_title();
+
 
 }
