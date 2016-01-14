@@ -43,7 +43,7 @@ public class WorkplaceDAO {
 	
 	public static LinkedList<Workplace> getWorkplaceList(AONContext ctx, WorkplaceFilter filter){
 		return ctx.getDslContext().select().from(WORKPLACE).where(WORKPLACE_PROPERTIES.getConditions(filter))
-				.limit(1).fetchInto(WORKPLACE).stream().map(new FullWorkplaceFiller())
+				.fetchInto(WORKPLACE).stream().map(new FullWorkplaceFiller())
 				.collect(Collectors.toCollection(LinkedList::new));	
 	}
 	

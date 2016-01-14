@@ -514,12 +514,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			if(type.equals(Cell.CELL_TYPE_STRING)){
 				Date d = Utils.stringToDate(cell.getStringCellValue());
 				if(d != null) fee.setEndDate(d); 
-				else return null;
 			}
 			else if(type.equals(Cell.CELL_TYPE_NUMERIC)){
 				fee.setEndDate(cell.getDateCellValue());
 			}
-			else return null;
 			break;
 		case "Fecha Facturaci\u00f3n": case "Billing Date":
 			if(type.equals(Cell.CELL_TYPE_STRING)){
