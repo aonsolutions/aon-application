@@ -69,7 +69,7 @@
 
 					<aon:outputLabel for="invoiceDate-From"
 						value="#{bundle.finance_invoice_date}" />
-					<aon:panelGrid columns="3">
+					<aon:panelGrid columns="4">
 						<aon:selectInputDate id="invoiceDate-From"
 							value="#{retentionReport.params.fromInvoiceDate}"
 							timeZone="#{timeZoneController.timeZone}"
@@ -80,6 +80,12 @@
 							value="#{retentionReport.params.toInvoiceDate}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}" />
+							
+						<aon:panelGroup>
+							<aon:selectBooleanCheckbox id="retention_taxDateEnabled"  
+								value="#{retentionReport.params.taxDateEnabled}"/>
+							<aon:outputLabel for="retention_taxDateEnabled" value="#{bundle.fiscal_mod347_generate_from_tax_date}" />
+						</aon:panelGroup>
 					</aon:panelGrid>
 
 					<aon:outputLabel for="invoiceDate-From"

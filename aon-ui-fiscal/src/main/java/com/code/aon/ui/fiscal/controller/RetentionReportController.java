@@ -123,6 +123,7 @@ public class RetentionReportController implements ICollectionProvider, Serializa
 		getParams().setSecurityLevel(null);
 		getParams().setToCustomer(false);
 		getParams().setByPercent(false);
+		getParams().setTaxDateEnabled(true);
 		onResetModel(event);
 	}
 	

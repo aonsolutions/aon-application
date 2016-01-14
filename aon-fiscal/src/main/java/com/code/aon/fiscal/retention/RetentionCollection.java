@@ -26,6 +26,9 @@ public class RetentionCollection {
 	private static final String BASE = "base";
 	private static final String QUOTA = "quota";
 	
+	private static final String TAX_DATE = "i.tax_date";
+	private static final String ISSUE_DATE = "i.issue_date";
+	
 	public List<Retention> getRetentionList(RetentionCollectionParameters params) throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -52,10 +55,10 @@ public class RetentionCollection {
 			}
 			stmt.append(" AND it.tax_type = 2");
 			if (params.getFromInvoiceDate() != null) {
-				stmt.append(" AND i.tax_date >= ?");
+				stmt.append(" AND "+(params.isTaxDateEnabled()?TAX_DATE:ISSUE_DATE)+" >= ?");
 			}
 			if (params.getToInvoiceDate() != null) {
-				stmt.append(" AND i.tax_date <= ?");
+				stmt.append(" AND "+(params.isTaxDateEnabled()?TAX_DATE:ISSUE_DATE)+" <= ?");
 			}
 			if (!StringUtils.isEmpty(params.getFromSeries())) {
 				stmt.append(" AND i.series >= ?");
@@ -148,10 +151,10 @@ public class RetentionCollection {
 			}
 			stmt.append(" AND it.tax_type = 2");
 			if (params.getFromInvoiceDate() != null) {
-				stmt.append(" AND i.issue_date >= ?");
+				stmt.append(" AND "+(params.isTaxDateEnabled()?TAX_DATE:ISSUE_DATE)+" >= ?");
 			}
 			if (params.getToInvoiceDate() != null) {
-				stmt.append(" AND i.issue_date <= ?");
+				stmt.append(" AND "+(params.isTaxDateEnabled()?TAX_DATE:ISSUE_DATE)+" <= ?");
 			}
 			if (!StringUtils.isEmpty(params.getFromSeries())) {
 				stmt.append(" AND i.series >= ?");
@@ -272,10 +275,10 @@ public class RetentionCollection {
 			}
 			stmt.append(" AND it.tax_type = 2");
 			if (params.getFromInvoiceDate() != null) {
-				stmt.append(" AND i.issue_date >= ?");
+				stmt.append(" AND "+(params.isTaxDateEnabled()?TAX_DATE:ISSUE_DATE)+" >= ?");
 			}
 			if (params.getToInvoiceDate() != null) {
-				stmt.append(" AND i.issue_date <= ?");
+				stmt.append(" AND "+(params.isTaxDateEnabled()?TAX_DATE:ISSUE_DATE)+" <= ?");
 			}
 			if (!StringUtils.isEmpty(params.getFromSeries())) {
 				stmt.append(" AND i.series >= ?");

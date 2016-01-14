@@ -13,6 +13,7 @@ public class RetentionCollectionParameters implements Serializable {
 
 	private boolean toCustomer;
 	private boolean byPercent;
+	private boolean taxDateEnabled;
 	private Date fromInvoiceDate;
 	private Date toInvoiceDate;
 	private String fromSeries;
@@ -25,17 +26,10 @@ public class RetentionCollectionParameters implements Serializable {
 	private Date date;
 	private String domainName;
 	
+	
 	public RetentionCollectionParameters(String domainName) {
 		this.domainName = domainName;
 	}
-	
-//	public RetentionCollectionParameters() {
-//		setFromInvoiceDate(null);
-//		setToInvoiceDate(null);
-//		setDate(new Date());
-//		setWithholdingType(null);
-//		setToCustomer(false);
-//	}
 	
 	public String getDomainName() {
 		return domainName;
@@ -56,6 +50,14 @@ public class RetentionCollectionParameters implements Serializable {
 	}
 	public void setByPercent(boolean byPercent) {
 		this.byPercent = byPercent;
+	}
+	
+	public boolean isTaxDateEnabled() {
+		return taxDateEnabled;
+	}
+
+	public void setTaxDateEnabled(boolean taxDateEnabled) {
+		this.taxDateEnabled = taxDateEnabled;
 	}
 
 	public WithholdingType getWithholdingType() {
