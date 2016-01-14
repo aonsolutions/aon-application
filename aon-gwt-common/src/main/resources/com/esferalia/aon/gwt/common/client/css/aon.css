@@ -1503,7 +1503,7 @@ input:disabled+label {
 	gwt-image: "aonIconTitle";
 }
 
-@sprite .aon-icon-issue-opened {
+@sprite .aon-icon-opened {
 	gwt-image: "aonIconIssueOpened";
 }
 

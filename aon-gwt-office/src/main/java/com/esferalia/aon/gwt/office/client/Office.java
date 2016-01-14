@@ -305,7 +305,7 @@ public class Office extends Composite implements EntryPoint,
 	}
 
 	@Override
-	public void onShowOpenIssuesClickEvent(ClickEvent event) {
+	public void onShowOpenIssuesClickEvent() {
 		loadOpenIssues();
 		showDockOfficePanel();
 	}

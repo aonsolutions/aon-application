@@ -172,7 +172,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 		@Override
 		public String getStateIconStyle() {
-			return AON.AON_ICON_ISSUE_OPENED;
+			return AON.AON_CSS.aonIconIssueOpen();
 		}
 
 		@Override
@@ -195,7 +195,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 		@Override
 		public String getStateIconStyle() {
-			return AON.AON_ICON_ISSUE_CLOSED;
+			return AON.AON_CSS.aonIconIssueClosed();
 		}
 
 		@Override

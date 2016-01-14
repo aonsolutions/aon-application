@@ -7,15 +7,15 @@ import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.common.client.widget.OptionsToolbar;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.BorderStyle;
-import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
@@ -27,13 +27,13 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
-public class LeftButtonsMenuBar extends Composite {
+public class LeftButtonsMenuBar extends Composite implements SelectionHandler<TreeItem> {
 
 	interface LeftMenuBarListener {
 
 		void onNewIssueClickEvent(ClickEvent event);
 
-		void onShowOpenIssuesClickEvent(ClickEvent event);
+		void onShowOpenIssuesClickEvent();
 
 		void onShowClosedIssuesClickEvent(ClickEvent event);
 
@@ -62,28 +62,6 @@ public class LeftButtonsMenuBar extends Composite {
 	@UiField
 	OptionsToolbar toolbar;
 
-	// @UiField
-	// Button newIssue;
-	// @UiField
-	// VerticalPanel labelsVPanel;
-	//
-	// // Buttons Bar
-	// @UiField
-	// Button openIssues;
-	// @UiField
-	// Button closedIssues;
-	// @UiField
-	// Button allIssues;
-	// @UiField
-	// Button deletedIssues;
-	// @UiField
-	// Button questionIssues;
-	// @UiField
-	// Button errorIssues;
-	// @UiField
-	// Button faqsIssues;
-	// **************
-
 	private Images images;
 	private PopupPanel newPopup;
 	private Button selectedButton;
@@ -96,6 +74,7 @@ public class LeftButtonsMenuBar extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		images = GWT.create(Images.class);
 
+		this.tree.addSelectionHandler(this);
 		this.selectedButton = new Button();
 		this.listeners = new LinkedList<LeftMenuBarListener>();
 
@@ -103,7 +82,7 @@ public class LeftButtonsMenuBar extends Composite {
 		toolbar.setVisibleDraftButton(false);
 		toolbar.setVisibleCopyButton(false);
 		toolbar.setVisiblePasteButton(false);
-		toolbar.setVisibleViewButton(false);
+		toolbar.setVisibleViewButton(false);	
 		
 		initTree();
 
@@ -115,60 +94,6 @@ public class LeftButtonsMenuBar extends Composite {
 	// ************************* UI HANDLERS ****************************
 	// ******************************************************************
 
-	// @UiHandler("newIssue")
-	// void onNewIssueClick(ClickEvent event) {
-	// for (LeftMenuBarListener listener : listeners)
-	// listener.onNewIssueClickEvent(event);
-	// }
-	//
-	// @UiHandler("openIssues")
-	// void onOpenIssuesClick(ClickEvent event) {
-	// setFontBoldColor(openIssues);
-	// for (LeftMenuBarListener listener : listeners)
-	// listener.onShowOpenIssuesClickEvent(event);
-	// }
-	//
-	// @UiHandler("closedIssues")
-	// void onClosedIssuesClick(ClickEvent event) {
-	// setFontBoldColor(closedIssues);
-	// for (LeftMenuBarListener listener : listeners)
-	// listener.onShowClosedIssuesClickEvent(event);
-	// }
-	//
-	// @UiHandler("allIssues")
-	// void onAllIssuesClick(ClickEvent event) {
-	// setFontBoldColor(allIssues);
-	// for (LeftMenuBarListener listener : listeners)
-	// listener.onShowAllIssuesClickEvent(event);
-	// }
-	//
-	// @UiHandler("deletedIssues")
-	// void onDeletedIssuesClick(ClickEvent event) {
-	// setFontBoldColor(deletedIssues);
-	// for (LeftMenuBarListener listener : listeners)
-	// listener.onShowDeletedIssuesClickEvent(event);
-	// }
-	//
-	// @UiHandler("questionIssues")
-	// void onQuestionIssuesClick(ClickEvent event) {
-	// setFontBoldColor(questionIssues);
-	// for (LeftMenuBarListener listener : listeners)
-	// listener.onShowQuestionIssuesClickEvent(event);
-	// }
-	//
-	// @UiHandler("errorIssues")
-	// void onErrorIssuesClick(ClickEvent event) {
-	// setFontBoldColor(errorIssues);
-	// for (LeftMenuBarListener listener : listeners)
-	// listener.onShowErrorIssuesClickEvent(event);
-	// }
-	//
-	// @UiHandler("faqsIssues")
-	// void onFaqsIssuesClick(ClickEvent event) {
-	// setFontBoldColor(faqsIssues);
-	// for (LeftMenuBarListener listener : listeners)
-	// listener.onShowFaqsIssuesClickEvent(event);
-	// }
 	// ******************************************************************
 	// ******************************************************************
 
@@ -238,45 +163,39 @@ public class LeftButtonsMenuBar extends Composite {
 		});
 	}
 
-	private void addLabel(Tag label) {	
+	private void addLabel(Tag label) {
+		
+		final TreeItem item = new TreeItem(imageItemHtml(images.aon_icon_issue_title(), label.getName()));		
+		labelsItem.addItem(item);
 
-		 final Button labelButton = new Button();
-		
-		 labelButton.setText(label.getName());
-		 labelButton.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
-		 labelButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		
-		 if (label.getColor() != null && !isWhite(label.getColor()))
-		 labelButton.getElement().getStyle()
-		 .setColor("#" + label.getColor());
-		
-		 setLabelClickEvent(labelButton);
-		 labelsItem.addItem(labelButton);
+//		 final Button labelButton = new Button();
+//		
+//		 labelButton.setText(label.getName());
+//		 labelButton.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
+//		 labelButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+//		
+//		 if (label.getColor() != null && !isWhite(label.getColor()))
+//		 labelButton.getElement().getStyle()
+//		 .setColor("#" + label.getColor());
+//		
+//		 setLabelClickEvent(labelButton);
+//		 labelsItem.addItem(labelButton);
 	}
 
-	private boolean isWhite(String color) {
-		return color == "ffffff";
-	}
-
-	private void setFontBoldColor(Button button) {
-		if (button != selectedButton) {
-			selectedButton.getElement().getStyle().clearFontWeight();
-			button.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-			selectedButton = button;
+	@Override
+	public void onSelection(SelectionEvent<TreeItem> event) {
+		TreeItem item = event.getSelectedItem();
+		String name = item.getText();
+		
+		switch (name) {
+		case "Pendientes":
+			for ( LeftMenuBarListener listener :  listeners)
+				listener.onShowOpenIssuesClickEvent();
+			break;		
+		default:
+			break;
 		}
+
+		
 	}
-
-	private void setLabelClickEvent(final Button button) {
-		button.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-
-				for (LeftMenuBarListener listener : listeners)
-					listener.onLabelIssueClickEvent(button);
-			}
-		});
-	}
-	// ******************************************************************
-	// ******************************************************************
-
 }
