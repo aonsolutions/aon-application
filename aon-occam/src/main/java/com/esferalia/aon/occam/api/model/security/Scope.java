@@ -1,6 +1,9 @@
 package com.esferalia.aon.occam.api.model.security;
 
-public class Scope {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class Scope implements Serializable {
 	
 	String description;
 	Integer domain;

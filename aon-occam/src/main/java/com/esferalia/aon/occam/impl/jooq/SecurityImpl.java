@@ -1,7 +1,12 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.LinkedList;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ISecurity;
+import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.Signature;
+import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
@@ -28,5 +33,25 @@ public class SecurityImpl implements ISecurity {
 		return SecurityDAO.getScope(ctx, scopeId);
 	}
 
+	// ------------------ SIGNATURE
+	
+		@Override
+		public Signature getSignature(AONContext ctx, Integer signatureId) {
+			return ctx.getDslContext().transactionResult(
+					Configuration -> SecurityDAO.getSignature(ctx, signatureId));
+		}
+		
+	// ------------------ SIGNATURE
 
+	@Override
+	public MailAccount getMailAccount(AONContext ctx, MailAccountFilter filter) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.getMailAccount(ctx, filter));
+	}
+	
+	@Override
+	public LinkedList<MailAccount> getMailAccountList(AONContext ctx, MailAccountFilter filter) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.getMailAccountList(ctx, filter));
+	}
 }

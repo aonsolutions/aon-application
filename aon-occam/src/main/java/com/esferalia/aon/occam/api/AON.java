@@ -35,11 +35,14 @@ import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
+import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
+import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
@@ -491,6 +494,19 @@ public class AON {
 		}
 	}
 
+	// --------------------- SIGNATURE
+	
+	public static Signature getSignature(String domainName, Integer domainId, String login
+			, Integer signatureId){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getSecurity().getSignature(ctx, signatureId);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	// ********************************************
 	// ****************************** ACCOUNTING **
 	// ********************************************
@@ -2850,6 +2866,28 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+	
+	public static MailAccount getMailAccount(String domainName, Integer domainId, String login
+			, MailAccountFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getSecurity().getMailAccount(ctx, filter);
+		} finally{
+			if(ctx!= null) ctx.close();
+		}
+	}
+	
+	public static LinkedList<MailAccount> getMailAccountList(String domainName, Integer domainId, String login
+			, MailAccountFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getSecurity().getMailAccountList(ctx, filter);
+		} finally{
+			if(ctx!= null) ctx.close();
 		}
 	}
 

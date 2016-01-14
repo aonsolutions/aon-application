@@ -13,12 +13,12 @@ import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.FilterUtil;
 import com.esferalia.aon.gwt.document.shared.Init;
 import com.esferalia.aon.gwt.document.shared.Lists;
-import com.esferalia.aon.gwt.document.shared.MailAccount;
 import com.esferalia.aon.gwt.document.shared.MailAccountList;
 import com.esferalia.aon.gwt.document.shared.SearchInfo;
 import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface IDocumentAsync {
@@ -92,7 +92,8 @@ public interface IDocumentAsync {
 
 	void getMailAccounts(Domain domain, AsyncCallback<MailAccountList> callback);
 
-	void sendEmail(Domain domain, MailAccount ma, Emessage em, AsyncCallback<Void> callback);
+	void sendEmail(Domain domain, com.esferalia.aon.occam.api.model.MailAccount ma, Emessage em,
+			AsyncCallback<Void> callback);
 
 	void getContacts(Domain domain, AsyncCallback<ContactList> callback);
 

@@ -5,8 +5,8 @@ import java.util.Vector;
 
 import com.esferalia.aon.gwt.document.shared.Contact;
 import com.esferalia.aon.gwt.document.shared.ContactList;
-import com.esferalia.aon.gwt.document.shared.MailAccount;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle;

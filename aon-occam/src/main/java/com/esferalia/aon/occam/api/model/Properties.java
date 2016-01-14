@@ -199,4 +199,30 @@ public interface Properties {
 		Property<Byte> getTypeProperty();
 	}
 
+	public interface MailAccountProperties{
+		Property<Integer> getIdProperty();
+		Property<String> getNameProperty();
+		Property<String> getEmailProperty();
+		Property<Integer> getSignatureProperty();
+		Property<Byte> getDefaultAccountProperty();
+		Property<String> getDisplayNameProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getDraftFolderProperty();
+		Property<String> getIncomingHostProperty();
+		Property<Integer> getIncomingPortProperty();
+		Property<Byte> getIncomingSecurityProperty();
+		Property<String> getMailUsernameProperty();
+		Property<String> getOutgoingHostProperty();
+		Property<Integer> getOutgoingPortProperty();
+		Property<Byte> getOutgoingSecurityProperty();
+		Property<Byte> getOutgoingVerificationProperty();
+		Property<String> getPasswordProperty();
+		Property<String> getProtocolProperty();
+		Property<String> getReplytoMailProperty();
+		Property<String> getSentFolderProperty();
+		Property<String> getSpamFolderProperty();
+		Property<String> getTrashFolderProperty();
+		Property<Byte> getTypeProperty();
+		Property<Integer> getUserIdProperty();
+	}
 }

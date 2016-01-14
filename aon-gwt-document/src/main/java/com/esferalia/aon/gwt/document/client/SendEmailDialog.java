@@ -1,14 +1,12 @@
 package com.esferalia.aon.gwt.document.client;
 
-import gwtupload.client.MultiUploader;
-
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
 import com.esferalia.aon.gwt.document.client.richtexttoolbar.RichTextToolbar;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
-import com.esferalia.aon.gwt.document.shared.MailAccount;
 import com.esferalia.aon.gwt.document.shared.MailAccountList;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -20,7 +18,6 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -29,6 +26,8 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import gwtupload.client.MultiUploader;
 
 public abstract class SendEmailDialog extends CustomDialogB  {
 
@@ -119,7 +118,7 @@ public abstract class SendEmailDialog extends CustomDialogB  {
 			ListBox lb = (ListBox) grid.getWidget(0,1);
 
 
-			area.setHTML("<div>&nbsp;</div>"+mal.getList().get(lb.getSelectedIndex()).getSignature());
+			area.setHTML("<div>&nbsp;</div>"+mal.getList().get(lb.getSelectedIndex()).getSignatureStr());
 
 			ma = mal.getList().get(lb.getSelectedIndex());
 		    RichTextToolbar toolbar = new RichTextToolbar(area);
@@ -151,7 +150,7 @@ public abstract class SendEmailDialog extends CustomDialogB  {
 				RichTextArea area = new RichTextArea();
 			    area.setSize("100%", "14em");
 			    area.setText("asfasf");
-				area.setHTML("<div>&nbsp;</div>"+mal.getList().get(lb.getSelectedIndex()).getSignature());
+				area.setHTML("<div>&nbsp;</div>"+mal.getList().get(lb.getSelectedIndex()).getSignatureStr());
 				ma = mal.getList().get(lb.getSelectedIndex());
 				textEditor.setWidget(1, 0, area);
 			}

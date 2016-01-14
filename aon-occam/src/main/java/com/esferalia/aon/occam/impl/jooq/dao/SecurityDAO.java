@@ -4,22 +4,34 @@ import static com.esferalia.aon.jooq.tables.ApplicationRole.APPLICATION_ROLE;
 import static com.esferalia.aon.jooq.tables.ApplicationUser.APPLICATION_USER;
 import static com.esferalia.aon.jooq.tables.ApplicationUserProfile.APPLICATION_USER_PROFILE;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Profile.PROFILE;
 import static com.esferalia.aon.jooq.tables.ProfileRole.PROFILE_ROLE;
 import static com.esferalia.aon.jooq.tables.Role.ROLE;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
+import static com.esferalia.aon.jooq.tables.Signature.SIGNATURE;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import org.jooq.Condition;
 import org.jooq.Record5;
 
+import com.esferalia.aon.jooq.tables.records.MailAccountRecord;
 import com.esferalia.aon.jooq.tables.records.ScopeRecord;
+import com.esferalia.aon.jooq.tables.records.SignatureRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
+import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
+import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonRole;
@@ -209,6 +221,100 @@ public class SecurityDAO {
 		}
 	}
 
+	public static Signature getSignature(AONContext ctx, Integer signatureId){
+		return ctx.getDslContext()
+				.select(SIGNATURE.SIGNATURE_).from(SIGNATURE)
+				.where(SIGNATURE.ID.eq(signatureId)).limit(1).fetchInto(SIGNATURE)
+				.stream().map(new FullSignatureFiller()).findFirst().orElse(new Signature());
+	}
+	
+	private static class FullSignatureFiller implements Function<SignatureRecord, Signature> {
+		@Override
+		public Signature apply(SignatureRecord r) {
+			return new Signature()
+					.setDomain(r.getDomain())
+					.setId(r.getId())
+					.setName(r.getName())
+					.setSignature(r.getSignature())
+					.setUserId(r.getUserId())
+					;
+		}
+	}
+	
+	public static MailAccount getMailAccount(AONContext ctx, MailAccountFilter filter){
+		return ctx.getDslContext().select().from(MAIL_ACCOUNT).where(MAIL_ACCOUNT_PROPERTIES.getConditions(filter))
+		.limit(1).fetchInto(MAIL_ACCOUNT).stream().map(new FullMailAccountFiller()).findFirst().orElse(new MailAccount());
+	}
+	
+	public static LinkedList<MailAccount> getMailAccountList(AONContext ctx, MailAccountFilter filter){
+		return ctx.getDslContext().select().from(MAIL_ACCOUNT).where(MAIL_ACCOUNT_PROPERTIES.getConditions(filter))
+		.fetchInto(MAIL_ACCOUNT).stream().map(new FullMailAccountFiller()).collect(Collectors.toCollection(LinkedList::new));
+	}
+	private static final MailAccountPropertiesDAO MAIL_ACCOUNT_PROPERTIES = new MailAccountPropertiesDAO();
+
+	protected static class MailAccountPropertiesDAO implements MailAccountProperties {
+		protected Condition[] getConditions(MailAccountFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(MAIL_ACCOUNT.ID);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(MAIL_ACCOUNT.NAME);}
+		@Override public Property<String> getEmailProperty() {return new FilterDAO.PropertyDAO<String>(MAIL_ACCOUNT.EMAIL);}
+		@Override public Property<Integer> getSignatureProperty() {return new FilterDAO.PropertyDAO<Integer>(MAIL_ACCOUNT.SIGNATURE);}
+		@Override public Property<Byte> getDefaultAccountProperty() {return new FilterDAO.PropertyDAO<Byte>(MAIL_ACCOUNT.DEFAULT_ACCOUNT);}
+		@Override public Property<String> getDisplayNameProperty() {return new FilterDAO.PropertyDAO<String>(MAIL_ACCOUNT.DISPLAY_NAME);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(MAIL_ACCOUNT.DOMAIN);}
+		@Override public Property<String> getDraftFolderProperty() {return new FilterDAO.PropertyDAO<String>(MAIL_ACCOUNT.DRAFT_FOLDER);}
+		@Override public Property<String> getIncomingHostProperty() {return new FilterDAO.PropertyDAO<String>(MAIL_ACCOUNT.INCOMING_HOST);}
+		@Override public Property<Integer> getIncomingPortProperty() {return new FilterDAO.PropertyDAO<Integer>(MAIL_ACCOUNT.INCOMING_PORT);}
+		@Override public Property<Byte> getIncomingSecurityProperty() {return new FilterDAO.PropertyDAO<Byte>(MAIL_ACCOUNT.INCOMING_SECURITY);}
+		@Override public Property<String> getMailUsernameProperty() {return new FilterDAO.PropertyDAO<String>(MAIL_ACCOUNT.MAIL_USERNAME);}
+		@Override public Property<String> getOutgoingHostProperty() {return new FilterDAO.PropertyDAO<String>(MAIL_ACCOUNT.OUTGOING_HOST);}
+		@Override public Property<Integer> getOutgoingPortProperty() {return new FilterDAO.PropertyDAO<Integer>(MAIL_ACCOUNT.OUTGOING_PORT);}
+		@Override public Property<Byte> getOutgoingSecurityProperty() {return new FilterDAO.PropertyDAO<Byte>(MAIL_ACCOUNT.OUTGOING_SECURITY);}
+		@Override public Property<Byte> getOutgoingVerificationProperty() {return new FilterDAO.PropertyDAO<Byte>(MAIL_ACCOUNT.OUTGOING_VERIFICATION);}
+		@Override public Property<String> getPasswordProperty() {return new FilterDAO.PropertyDAO<String>(MAIL_ACCOUNT.PASSWORD);}
+		@Override public Property<String> getProtocolProperty() {return new FilterDAO.PropertyDAO<String>(MAIL_ACCOUNT.PROTOCOL);}
+		@Override public Property<String> getReplytoMailProperty() {return new FilterDAO.PropertyDAO<String>(MAIL_ACCOUNT.REPLYTO_MAIL);}
+		@Override public Property<String> getSentFolderProperty() {return new FilterDAO.PropertyDAO<String>(MAIL_ACCOUNT.SENT_FOLDER);}
+		@Override public Property<String> getSpamFolderProperty() {return new FilterDAO.PropertyDAO<String>(MAIL_ACCOUNT.SPAM_FOLDER);}
+		@Override public Property<String> getTrashFolderProperty() {return new FilterDAO.PropertyDAO<String>(MAIL_ACCOUNT.TRASH_FOLDER);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(MAIL_ACCOUNT.TYPE);}
+		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<Integer>(MAIL_ACCOUNT.USER_ID);}
+	}
+	
+	private static class FullMailAccountFiller implements Function<MailAccountRecord, MailAccount> {
+		@Override
+		public MailAccount apply(MailAccountRecord r) {
+			return new MailAccount()
+					.setDefaultAccount(r.getDefaultAccount())
+					.setDisplayName(r.getDisplayName())
+					.setDomain(r.getDomain())
+					.setDraftFolder(r.getDraftFolder())
+					.setEmail(r.getEmail())
+					.setId(r.getId())
+					.setIncomingHost(r.getIncomingHost())
+					.setIncomingPort(r.getIncomingPort())
+					.setIncomingSecurity(r.getIncomingSecurity())
+					.setMailUsername(r.getMailUsername())
+					.setName(r.getName())
+					.setOutgoingHost(r.getOutgoingHost())
+					.setOutgoingPort(r.getOutgoingPort())
+					.setOutgoingSecurity(r.getOutgoingSecurity())
+					.setOutgoingVerification(r.getOutgoingVerification())
+					.setPassword(r.getPassword())
+					.setProtocol(r.getProtocol())
+					.setReplytoMail(r.getReplytoMail())
+					.setSentFolder(r.getSentFolder())
+					.setSignatureId(r.getSignature())
+					.setSpamFolder(r.getSpamFolder())
+					.setTrashFolder(r.getTrashFolder())
+					.setType(r.getType())
+					.setUserId(r.getUserId());
+		}
+	}
+	
 	public static Integer[] getUserScopes(String domainName, int domainId,
 			Integer id) {
 		// TODO Auto-generated method stub
