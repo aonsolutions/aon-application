@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.document.client;
 
+import java.util.LinkedList;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.document.shared.Contact;
@@ -84,7 +85,7 @@ public class Utils {
 	    }
 	  }
 
-	static AonSuggestOracle createOracle(Vector<Domain> vector) {
+	static AonSuggestOracle createOracle(LinkedList<Domain> vector) {
 		AonSuggestOracle oracleSons = new AonSuggestOracle();
 
 		for (Domain d : vector) {

@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
+import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
@@ -84,6 +85,7 @@ import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
@@ -221,6 +223,17 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static Scope getScope(String domainName, Integer domainId, String login
+			, Integer scopeId){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getSecurity().getScope(ctx, scopeId);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
 
 	// ********************************************
 	// ********************************** COMMON **
@@ -234,6 +247,18 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getCommon().getDomain(ctx, domainId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<Domain> getDomainList(String domainName, Integer domainId, String login
+			, DomainFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().getDomainList(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();

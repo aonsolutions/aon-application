@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.document.client;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -34,7 +35,7 @@ public interface IDocument extends RemoteService{
 	
 	public Lists getLists(Domain domain);
 	
-	public Vector<Domain> getSons(Domain domain);
+	public LinkedList<Domain> getSons(Domain domain);
 	
 	public void removeFile(Domain domain, Vector<FileInfo> fvector);
 	

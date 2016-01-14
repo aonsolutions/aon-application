@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.document.shared;
 
-import java.util.Vector;
+import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Domain;
 
@@ -19,7 +19,7 @@ public class Dialog {
 	String baseUrl;
 	Lists lists;
 	SingleUploader upload;
-	Vector<Domain> sons;
+	LinkedList<Domain> sons;
 	Boolean son;
 	FileInfo fileInfo;
 	Tag tag;
@@ -111,11 +111,11 @@ public class Dialog {
 		this.upload = upload;
 	}
 
-	public Vector<Domain> getSons() {
+	public LinkedList<Domain> getSons() {
 		return sons;
 	}
 
-	public void setSons(Vector<Domain> sons) {
+	public void setSons(LinkedList<Domain> sons) {
 		this.sons = sons;
 	}
 

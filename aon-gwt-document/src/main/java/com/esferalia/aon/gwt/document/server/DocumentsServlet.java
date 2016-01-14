@@ -18,6 +18,7 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -299,11 +300,10 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		return true;
 	}
 
-	public Vector<Domain> getSons(Domain domain){		
-		Vector<Domain> vector = new Vector<Domain>();
-		vector = DBConsults.getSons(DBConsults.getDomain(domain, getUser()), getUser());
-		vector.add(domain.setDescription(""));
-		return vector;
+	public LinkedList<Domain> getSons(Domain domain){		
+		LinkedList<Domain> list = DBConsults.getSons(DBConsults.getDomain(domain, getUser()), getUser());
+		list.add(domain.setDescription(""));
+		return list;
 	}
 	
 	public Lists getLists(Domain domain){

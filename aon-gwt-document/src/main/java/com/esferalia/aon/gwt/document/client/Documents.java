@@ -5,6 +5,7 @@ import static com.esferalia.aon.gwt.common.client.AONEntryPoint.getParameter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -1766,12 +1767,12 @@ public class Documents extends Composite implements EntryPoint {
 	}
 	
 	
-	public Vector<Domain> getSons() {
+	public LinkedList<Domain> getSons() {
 		if(sons==null){
-		idoc.getSons(getDomain(),new AsyncCallback<Vector<Domain>>() {
+		idoc.getSons(getDomain(),new AsyncCallback<LinkedList<Domain>>() {
 			
 			@Override
-			public void onSuccess(Vector<Domain> result) {
+			public void onSuccess(LinkedList<Domain> result) {
 				sons= result;
 			}
 			
@@ -1786,7 +1787,7 @@ public class Documents extends Composite implements EntryPoint {
 	
 	
 	
-	Vector<Domain> sons = null;
+	LinkedList<Domain> sons = null;
 	FileUpload fuchange;
 	SingleUploader fuchange2;
 	

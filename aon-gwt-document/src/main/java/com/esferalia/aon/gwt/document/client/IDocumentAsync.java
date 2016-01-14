@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.document.client;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -31,7 +32,7 @@ public interface IDocumentAsync {
 
 	void getLists(Domain domain, AsyncCallback<Lists> callback);
 
-	void getSons(Domain domain, AsyncCallback<Vector<Domain>> callback);
+	void getSons(Domain domain, AsyncCallback<LinkedList<Domain>> callback);
 
 	void removeFile(Domain domain, Vector<FileInfo> fvector, AsyncCallback<Void> callback);
 

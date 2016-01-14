@@ -83,7 +83,7 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 
 	private static final FiscalTreeBinder BINDER = GWT.create(FiscalTreeBinder.class);
 	
-	public static final int CURRENT_YEAR = 2015;
+	public static final int CURRENT_YEAR = 2016;
 
 	Enterprise enterprise;
 	

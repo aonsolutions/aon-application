@@ -7,6 +7,8 @@ import static com.esferalia.aon.jooq.tables.DomainGserviceaccount.DOMAIN_GSERVIC
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
@@ -24,12 +26,43 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
+import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.DomainGserviceaccountProperties;
+import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 
 public class DomainDAO {
+	private static final DomainPropertiesDAO DOMAIN_PROPERTIES = new DomainPropertiesDAO();
 
+	protected static class DomainPropertiesDAO implements DomainProperties {
+		protected Condition[] getConditions(DomainFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<Byte>(DOMAIN.ACTIVE);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(DOMAIN.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(DOMAIN.CREATION_USER);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(DOMAIN.DESCRIPTION);}
+		@Override public Property<Byte> getDisabledomainmanagementProperty() {return new FilterDAO.PropertyDAO<Byte>(DOMAIN.DISABLEDOMAINMANAGEMENT);}
+		@Override public Property<Byte> getDomainmanagementProperty() {return new FilterDAO.PropertyDAO<Byte>(DOMAIN.DOMAINMANAGEMENT);}
+		@Override public Property<Byte> getEnableheredityProperty() {return new FilterDAO.PropertyDAO<Byte>(DOMAIN.ENABLEHEREDITY);}
+		@Override public Property<Date> getExpirationdateProperty() {return new FilterDAO.PropertyDAO<Date>(DOMAIN.EXPIRATIONDATE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(DOMAIN.ID);}
+		@Override public Property<Timestamp> getLastaccessDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(DOMAIN.LASTACCESS_DATE);}
+		@Override public Property<String> getLastaccessUserProperty() {return new FilterDAO.PropertyDAO<String>(DOMAIN.LASTACCESS_USER);}
+		@Override public Property<Integer> getMaxdefinedusersProperty() {return new FilterDAO.PropertyDAO<Integer>(DOMAIN.MAXDEFINEDUSERS);}
+		@Override public Property<Integer> getMaxdocumentsizeProperty() {return new FilterDAO.PropertyDAO<Integer>(DOMAIN.MAXDOCUMENTSIZE);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(DOMAIN.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(DOMAIN.MODIFICATION_USER);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(DOMAIN.NAME);}
+		@Override public Property<String> getOwnerProperty() {return new FilterDAO.PropertyDAO<String>(DOMAIN.OWNER);}
+		@Override public Property<Integer> getParentProperty() {return new FilterDAO.PropertyDAO<Integer>(DOMAIN.PARENT);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(DOMAIN.SCOPE);}
+		@Override public Property<String> getSubdomainsuffixProperty() {return new FilterDAO.PropertyDAO<String>(DOMAIN.SUBDOMAINSUFFIX);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(DOMAIN.TYPE);}
+	}
 	public static Domain getDomain(AONContext ctx, Integer domainId){
 		Domain domain = null;
 		Result<DomainRecord> domainResult = ctx.getDslContext().select()
@@ -51,6 +84,11 @@ public class DomainDAO {
 			domain.setEnableHeredity(domainRecord.getEnableheredity() == 1);
 		}
 		return domain;
+	}
+	
+	public static LinkedList<Domain> getDomainList(AONContext ctx, DomainFilter filter){
+		return ctx.getDslContext().select().from(DOMAIN).where(DOMAIN_PROPERTIES.getConditions(filter))
+			.fetchInto(DOMAIN).stream().map(new FullDomainFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static Domain insertDomain(AONContext ctx, Integer parentDomain,
@@ -359,6 +397,24 @@ public class DomainDAO {
 					.setPrivateKey(r.getPrivateKey())
 					.setPublicKey(r.getPublicKey())
 					.setSize(r.getSize());
+		}
+	}
+	
+	private static class FullDomainFiller implements Function<DomainRecord, Domain> {
+		@Override
+		public Domain apply(DomainRecord r) {
+			return new Domain()
+					.setActive(r.getActive() == 1)
+					.setChild(r.getParent() != null)
+					.setDescription(r.getDescription())
+					.setDomainType(DomainType.values()[r.getType()])
+					.setEnableHeredity(r.getEnableheredity() == 1)
+					.setId(r.getId())
+					.setName(r.getName())
+					.setParent(r.getParent() == null)
+					.setParentId(r.getParent())
+					//.setStandalone(¿standalone?)
+					;
 		}
 	}
 }

@@ -21,36 +21,41 @@ public class Scope implements IsSerializable{
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public Scope setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
+	public Scope setName(String name) {
 		this.name = name;
+		return this;
 	}
 	public String getDomain() {
 		return domain;
 	}
-	public void setDomain(String domain) {
+	public Scope setDomain(String domain) {
 		this.domain = domain;
+		return this;
 	}
 
 	public Boolean getIsSon() {
 		return isSon;
 	}
 
-	public void setIsSon(Boolean isSon) {
+	public Scope setIsSon(Boolean isSon) {
 		this.isSon = isSon;
+		return this;
 	}
 
 	public Boolean getIsParent() {
 		return isParent;
 	}
 
-	public void setIsParent(Boolean isParent) {
+	public Scope setIsParent(Boolean isParent) {
 		this.isParent = isParent;
+		return this;
 	}
 	
 }

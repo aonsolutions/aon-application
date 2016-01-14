@@ -7,20 +7,23 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Profile.PROFILE;
 import static com.esferalia.aon.jooq.tables.ProfileRole.PROFILE_ROLE;
 import static com.esferalia.aon.jooq.tables.Role.ROLE;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import org.jooq.Record5;
 
+import com.esferalia.aon.jooq.tables.records.ScopeRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.esferalia.aon.watson.server.AonEnumUtils;
-
 
 public class SecurityDAO {
 	
@@ -187,6 +190,22 @@ public class SecurityDAO {
 			// al dominio en curso ni al dominio padre. 
 			// Si ha llegado aqui es un error.
 			throw new IllegalAccessError("Usario sin permisos.");
+		}
+	}
+	
+	public static Scope getScope(AONContext ctx, Integer scopeId){
+		return ctx.getDslContext().select().from(SCOPE)
+				.where(SCOPE.ID.eq(scopeId)).limit(1).fetchInto(SCOPE)
+				.stream().map(new FullScopeFiller()).findFirst().orElse(new Scope());
+	}
+	
+	private static class FullScopeFiller implements Function<ScopeRecord, Scope> {
+		@Override
+		public Scope apply(ScopeRecord r) {
+			return new Scope()
+					.setDescription(r.getDescription())
+					.setDomain(r.getDomain())
+					.setId(r.getId());
 		}
 	}
 

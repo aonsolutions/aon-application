@@ -17,6 +17,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.Condition;
 import org.jooq.InsertValuesStep20;
 import org.jooq.InsertValuesStep21;
 import org.jooq.InsertValuesStep22;
@@ -31,6 +32,11 @@ import com.esferalia.aon.jooq.tables.records.PcategoryRecord;
 import com.esferalia.aon.jooq.tables.records.ProductRecord;
 import com.esferalia.aon.jooq.tables.records.ProductTagRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
+import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
+import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -41,6 +47,69 @@ import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
 
 
 public class ProductDAO {
+	
+	private static final ProductPropertiesDAO PRODUCT_PROPERTIES = new ProductPropertiesDAO();
+	private static final ItemPropertiesDAO ITEM_PROPERTIES = new ItemPropertiesDAO();
+	
+	protected static class ProductPropertiesDAO implements ProductProperties {
+		protected Condition[] getConditions(ProductFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.ID);} 
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.DOMAIN);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.NAME);}
+		@Override public Property<String> getCodeProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CODE);}
+		@Override public Property<Byte> getKindProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.KIND);}
+		@Override public Property<Integer> getBrandProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.BRAND);}
+		@Override public Property<Integer> getCategoryProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.CATEGORY);}
+		@Override public Property<Byte> getInventoriableProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.INVENTORIABLE);}
+		@Override public Property<Byte> getSerializableProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.SERIALIZABLE);}
+		@Override public Property<Byte> getLotableProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.LOTABLE);}
+		@Override public Property<Byte> getStatusProperty() { return new FilterDAO.PropertyDAO<Byte>(PRODUCT.STATUS);}
+		@Override public Property<Integer> getVatProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.VAT);}
+		@Override public Property<Integer> getRetentionProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.RETENTION);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.TYPE);}
+		@Override public Property<Byte> getManufacturedProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.MANUFACTURED);}
+		@Override public Property<Byte> getCompositionProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.COMPOSITION);}
+		@Override public Property<Byte> getCompositionPriceProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.COMPOSITION_PRICE);}
+		@Override public Property<Integer> getSalesAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.SALES_ACCOUNT);}
+		@Override public Property<Integer> getPurchaseAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.PURCHASE_ACCOUNT);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PRODUCT.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.NAME);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PRODUCT.MODIFICATION_DATE);}
+	}
+	
+	protected static class ItemPropertiesDAO implements ItemProperties {
+		protected Condition[] getConditions(ItemFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.ID);} 
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.DOMAIN);}
+		@Override public Property<Integer> getProductProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.PRODUCT);}
+		@Override public Property<String> getDetailProperty() {return new FilterDAO.PropertyDAO<String>(ITEM.DETAIL);}
+		@Override public Property<String> getDetail2Property() {return new FilterDAO.PropertyDAO<String>(ITEM.DETAIL2);}
+		@Override public Property<String> getDetail3Property() {return new FilterDAO.PropertyDAO<String>(ITEM.DETAIL3);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(ITEM.DESCRIPTION);}
+		@Override public Property<String> getSerialNumberProperty() {return new FilterDAO.PropertyDAO<String>(ITEM.SERIAL_NUMBER);}
+		@Override public Property<Date> getSerialDateProperty() {return new FilterDAO.PropertyDAO<Date>(ITEM.SERIAL_DATE);}
+		@Override public Property<Double> getPriceProperty() {return new FilterDAO.PropertyDAO<Double>(ITEM.PRICE);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(ITEM.STATUS);}
+		@Override public Property<Double> getExpensesPercentProperty() {return new FilterDAO.PropertyDAO<Double>(ITEM.EXPENSES_PERCENT);}
+		@Override public Property<Double> getExpensesFixedProperty() {return new FilterDAO.PropertyDAO<Double>(ITEM.EXPENSES_FIXED);}
+		@Override public Property<Double> getProfitPercentProperty() {return new FilterDAO.PropertyDAO<Double>(ITEM.PROFIT_PERCENT);}
+		@Override public Property<Double> getPurchasePriceProperty() {return new FilterDAO.PropertyDAO<Double>(ITEM.PURCHASE_PRICE);}
+		@Override public Property<Byte> getInternetProperty() {return new FilterDAO.PropertyDAO<Byte>(ITEM.INTERNET);}
+		@Override public Property<String> getBarcodeProperty() {return new FilterDAO.PropertyDAO<String>(ITEM.BARCODE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(ITEM.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ITEM.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(ITEM.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ITEM.MODIFICATION_DATE);}
+	}
 	
 	public static LinkedList<ProductCategory> getProductCategories(AONContext ctx) {
 		ctx.checkRead();

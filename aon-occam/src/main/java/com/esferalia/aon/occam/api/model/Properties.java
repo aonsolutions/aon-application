@@ -125,4 +125,78 @@ public interface Properties {
 		Property<String> getNameProperty();
 	}
 	
+	public interface ProductProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getNameProperty();
+		Property<String> getCodeProperty();
+		Property<Byte> getKindProperty();
+		Property<Integer> getBrandProperty();
+		Property<Integer> getCategoryProperty();
+		Property<Byte> getInventoriableProperty();
+		Property<Byte> getSerializableProperty();
+		Property<Byte> getLotableProperty();
+		Property<Byte> getStatusProperty();
+		Property<Integer> getVatProperty();
+		Property<Integer> getRetentionProperty();
+		Property<Byte> getTypeProperty();
+		Property<Byte> getManufacturedProperty();
+		Property<Byte> getCompositionProperty();
+		Property<Byte> getCompositionPriceProperty();
+		Property<Integer> getSalesAccountProperty();
+		Property<Integer> getPurchaseAccountProperty();
+		Property<String> getCreationUserProperty();
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getModificationUserProperty();
+		Property<Timestamp> getModificationDateProperty();
+	}
+	
+	public interface ItemProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getProductProperty();
+		Property<String> getDetailProperty();
+		Property<String> getDetail2Property();
+		Property<String> getDetail3Property();
+		Property<String> getDescriptionProperty();
+		Property<String> getSerialNumberProperty();
+		Property<Date> getSerialDateProperty();
+		Property<Double> getPriceProperty();
+		Property<Byte> getStatusProperty();
+		Property<Double> getExpensesPercentProperty();
+		Property<Double> getExpensesFixedProperty();
+		Property<Double> getProfitPercentProperty();
+		Property<Double> getPurchasePriceProperty();
+		Property<Byte> getInternetProperty();
+		Property<String> getBarcodeProperty();
+		Property<String> getCreationUserProperty();
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getModificationUserProperty();
+		Property<Timestamp> getModificationDateProperty();
+	}
+	
+	public interface DomainProperties {
+		Property<Byte> getActiveProperty();
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getCreationUserProperty();
+		Property<String> getDescriptionProperty();
+		Property<Byte> getDisabledomainmanagementProperty();
+		Property<Byte> getDomainmanagementProperty();
+		Property<Byte> getEnableheredityProperty();
+		Property<Date> getExpirationdateProperty();
+		Property<Integer> getIdProperty();
+		Property<Timestamp> getLastaccessDateProperty();
+		Property<String> getLastaccessUserProperty();
+		Property<Integer> getMaxdefinedusersProperty();
+		Property<Integer> getMaxdocumentsizeProperty();
+		Property<Timestamp> getModificationDateProperty();
+		Property<String> getModificationUserProperty();
+		Property<String> getNameProperty();
+		Property<String> getOwnerProperty();
+		Property<Integer> getParentProperty();
+		Property<Integer> getScopeProperty();
+		Property<String> getSubdomainsuffixProperty();
+		Property<Byte> getTypeProperty();
+	}
+
 }

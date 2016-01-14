@@ -126,7 +126,7 @@ public class ProjectDAO {
 
 	}
 	
-private static class FullProjectFiller implements Function<ProjectRecord, Project> {
+	private static class FullProjectFiller implements Function<ProjectRecord, Project> {
 		
 		@Override
 		public Project apply(ProjectRecord r) {

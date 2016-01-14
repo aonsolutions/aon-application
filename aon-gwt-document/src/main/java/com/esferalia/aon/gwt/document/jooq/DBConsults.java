@@ -14,6 +14,7 @@ import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.Vector;
 
 import org.apache.commons.io.FileUtils;
@@ -55,22 +56,15 @@ public class DBConsults {
 	private static String domain1=null;
 	private static Vector<FileInfo> vaux;
 
-	private static boolean esta(FileInfo fi,Integer user_id,DSLContext dslContext){
-		Result<Record1<Integer>> result = dslContext.select(USER_SCOPE.SCOPE)
-				.from(USER_SCOPE)
-				.where(USER_SCOPE.USER_ID.eq(user_id))
-				
-				.fetch();
-		
-		for (Record1<Integer> r: result) {
-			if(fi.getScope()!=null){
-				if(fi.getScope().getId().equals(r.value1())){
-					return true;
-				}
-			}
+	private static boolean esta(Domain domain, FileInfo fi,Integer userId,DSLContext dslContext){
+		Integer[] userScopeArray = AON.getUserScopes(domain.getName(), domain.getId(), userId);
+		for (Integer scope: userScopeArray) {
+			if(fi.getScope()!=null && fi.getScope().getId().equals(scope)) 
+				return true;
 		}
 		return false;
 	}
+	
 	public static Document getAllRattach(Domain domain,User user, String domain2, Boolean confidential){
 		AONContext ctx = null;
 		try {				
@@ -167,7 +161,7 @@ public class DBConsults {
 				}
 				for (Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp> record : result) {
 					FileInfo fi = newFileInfo(ctx, domain, user, domain2,record);
-					if (!esta(fi,user.getId(),ctx.getDslContext())&&(!fi.getConfidential() || (confidential && fi.getConfidential()))){
+					if (!esta(domain, fi,user.getId(),ctx.getDslContext())&&(!fi.getConfidential() || (confidential && fi.getConfidential()))){
 						filesGwt.add(fi);
 						if(fi.getDomain().equalsIgnoreCase(domain2) || fi.getIsParent())
 							if(domain.getName().equals(domain2))
@@ -307,36 +301,14 @@ public class DBConsults {
 		return fi;
 	}
 
-	public static Scope getScope(Domain domain, User user, Integer id){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
-			
-			Result<Record1<String>> data= ctx.getDslContext()
-					.select(SCOPE.DESCRIPTION)
-					.from(SCOPE)
-					.where(SCOPE.ID.eq(id)).fetch();
-			
-			Scope s = new Scope();
-			for (Record1<String> record : data) {
-				if(record.value1() != null){
-					s.setName(record.value1());
-					s.setId(id);
-					s.setDomain(domain.getName());
-				}
-			}
-	
-			return s;
-			
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-		
+	public static Scope getScope(Domain domain, User user, Integer scopeId){
+		com.esferalia.aon.occam.api.model.security.Scope scope = AON.getScope(domain.getName(), domain.getId(), user.getLogin(), scopeId);
+		return new Scope().setId(scope.getId())
+				.setDomain(domain.getName())
+				.setName(scope.getDescription());
 	}
 	
-	public static String getmType(
-			FileInfo fi2) {
+	public static String getmType(FileInfo fi2) {
 		return getmType(fi2.getMimetype());
 	}
 	public static String getmType(
@@ -373,7 +345,7 @@ public class DBConsults {
 			return "aon-icon-google-drive-unknown";
 	}
 
-	private static Tags getTags(Domain domain, User user,int fileId) {
+	private static Tags getTags(Domain domain, User user,int fileId) {		
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
@@ -747,36 +719,11 @@ public class DBConsults {
 		}
 	}
 
-	
-	public static Vector<Domain> getSons(Domain domain, User user) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
-			
-			Result<Record2<String, String>> sons = ctx.getDslContext()
-					.select(DOMAIN.NAME,DOMAIN.DESCRIPTION)
-					.from(DOMAIN)
-					.where(DOMAIN.PARENT.eq(domain.getId()))
-					.fetch();
-			
-			Vector<Domain> vector = new Vector<Domain>();
-			
-			for (Record2<String, String> record : sons) {
-				Domain d = new Domain();
-				d.setName(record.value1());
-				d.setDescription(record.value2());
-				vector.add(d);
-			}
-			return vector;
-			
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+	public static LinkedList<Domain> getSons(Domain domain, User user) {
+		return AON.getDomainList(domain.getName(), domain.getId(), user.getLogin(),
+				f -> f.getParentProperty().eq(domain.getId()));
 	}
 	
-	
-
 	public static Vector<FileInfo> getFilesGwt() {
 		return filesGwt;
 	}

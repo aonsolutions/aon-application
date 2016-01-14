@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
+import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
@@ -108,6 +109,12 @@ public class CommonImpl implements ICommon {
 	@Override
 	public Domain getDomain(AONContext ctx, Integer domainId) {
 		return DomainDAO.getDomain(ctx, domainId);
+	}
+	
+	@Override
+	public LinkedList<Domain> getDomainList(AONContext ctx, DomainFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> DomainDAO.getDomainList(ctx, filter));
 	}
 
 	@Override
