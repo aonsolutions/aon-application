@@ -101,8 +101,11 @@ public class CnaeRateController implements Serializable {
 			Expression expr2 = ExpressionUtilities.getLikeExpression("CNAE2009Rate.cnae2009.code", "%"+getFilter()+"%");
 			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 		}
-		criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CNAE2009RATE_START_DATE), getPeriodStartDate(getYear()));
-		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CNAE2009RATE_START_DATE), getPeriodEndDate(getYear()));
+		Expression startLessPeriod = ExpressionUtilities.getLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CNAE2009RATE_START_DATE), getPeriodStartDate(getYear()));
+		Expression endGreaterPeriod = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CNAE2009RATE_END_DATE), getPeriodEndDate(getYear()));
+		Expression endNull = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CNAE2009RATE_END_DATE));
+		criteria.addExpression(ExpressionUtilities.getAndExpression(
+				startLessPeriod, ExpressionUtilities.getOrExpression(endGreaterPeriod, endNull)));
 		criteria.addOrder("CNAE2009Rate.cnae2009.code");
 		List<ITransferObject> list = bean.getList(criteria);
 		setModel(new SerializableListDataModel(list));
