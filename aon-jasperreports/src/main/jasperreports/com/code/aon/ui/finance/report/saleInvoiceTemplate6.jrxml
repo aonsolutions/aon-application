@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="48"/>
+	<property name="ireport.y" value="288"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -662,6 +662,14 @@
 			</textField>
 			<line>
 				<reportElement uuid="18f09c21-134c-48a7-850f-a9e8a7738856" key="line-9" positionType="FixRelativeToBottom" x="553" y="0" width="15" height="225" forecolor="#999999">
+					<printWhenExpression><![CDATA[false]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement uuid="be78d444-bd80-485a-bd77-5f855e24479d" key="line-9" positionType="FixRelativeToBottom" x="538" y="107" width="15" height="70" forecolor="#999999">
 					<printWhenExpression><![CDATA[false]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>

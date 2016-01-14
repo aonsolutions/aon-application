@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="432"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -303,13 +303,21 @@
 				</graphicElement>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="909cd885-eb4e-4643-9dcd-d122b37580af" mode="Transparent" x="269" y="94" width="265" height="80"/>
+				<reportElement uuid="909cd885-eb4e-4643-9dcd-d122b37580af" mode="Transparent" x="269" y="94" width="265" height="85"/>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</rectangle>
 			<line>
 				<reportElement uuid="6d0f8293-0006-4091-b21e-cca725751be5" key="line-9" positionType="FixRelativeToBottom" x="553" y="0" width="12" height="94" forecolor="#999999">
+					<printWhenExpression><![CDATA[false]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement uuid="9177a4ac-4c0a-4fe3-86c7-eee055b78b9a" key="line-9" positionType="FixRelativeToBottom" x="553" y="94" width="15" height="85" forecolor="#999999">
 					<printWhenExpression><![CDATA[false]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
@@ -671,6 +679,14 @@
 			</textField>
 			<line>
 				<reportElement uuid="54ab9c9c-8bad-4619-adcc-7f4218e84eb9" key="line-9" positionType="FixRelativeToBottom" x="553" y="0" width="15" height="225" forecolor="#999999">
+					<printWhenExpression><![CDATA[false]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement uuid="55d52ef3-974b-4648-91ec-668a9c0e6ddd" key="line-9" positionType="FixRelativeToBottom" x="538" y="95" width="15" height="85" forecolor="#999999">
 					<printWhenExpression><![CDATA[false]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
