@@ -43,7 +43,12 @@ public class Task extends TaskDB {
 	public void setProcessTask(ProcessTask processTask) {
 		this.processTask = processTask;
 	}
-
+	@Transient
+	public String getProcessComments() {
+		return (getProcessTask() != null && getProcessTask().getProcessDetail() != null)
+				?getProcessTask().getProcessDetail().getComments()
+				:null; 
+	}
 	@Transient
 	public boolean isExpired() {
 		if (this.getStatus() != TaskStatus.FINISHED && this.getStatus() != TaskStatus.DELETED) {
@@ -158,6 +163,10 @@ public class Task extends TaskDB {
 	@Transient
 	public boolean isCommentsNotEmpty() {
 		return StringUtils.isNotBlank(getComments());
+	}
+	@Transient
+	public boolean isProcessCommentsNotEmpty() {
+		return StringUtils.isNotBlank(getProcessComments());
 	}
 	
 }

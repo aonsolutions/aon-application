@@ -88,6 +88,15 @@
 							/>		
 					</aon:div>
 					
+					<aon:outputText value=""
+						rendered="#{task.to.processCommentsNotEmpty}"/>
+					<aon:panel style="background-color:#f6f5e3; padding: 0px; margin-bottom: 5px;">
+						<aon:outputText value="#{task.to.processComments}"
+							rendered="#{task.to.processCommentsNotEmpty}"
+							style="margin-left: 50px;" 
+							/>		
+					</aon:panel>
+						
 					<aon:outputLabel for="Task_startDate"
 						value="#{bundle.aon_start_date}" />
 					<aon:selectInputDate id="Task_startDate"

@@ -315,6 +315,24 @@
 						</aon:div>
 					</aon:column>
  
+					<aon:column styleClass="aon-editDataTable-iconColumn aon-width-40">
+						<f:facet name="header">
+							<aon:outputText value="I" />
+						</f:facet>
+						<aon:div style="display:inline;cursor:pointer;"
+							rendered="#{to.processCommentsNotEmpty}">
+							<aon:outputText value="&#160;" 
+								style="padding-left:15px;" styleClass="aon-icon-info"/>
+							<rich:toolTip value="#{to.processComments}" showEvent="onclick"
+								style="width: 400px;"
+								hideDelay="2000">
+								<f:facet name="defaultContent">
+									<aon:outputText value="#{bundle.aon_in_progress}" />
+								</f:facet>
+							</rich:toolTip>
+						</aon:div>
+					</aon:column>
+
 					<aon:column alias="Task.description" styleClass="aon-editDataTable-text aon-width-auto aon-nowrap" >
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_description}" />
