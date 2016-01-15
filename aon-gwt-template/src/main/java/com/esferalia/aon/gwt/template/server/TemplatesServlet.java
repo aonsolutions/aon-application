@@ -97,13 +97,13 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	static final String PREPAYMENT = ProductType.PREPAYMENT.getName();
 	static final String SERVICE = ProductType.SERVICE.getName();
 
-	static final String NO_PERIOD = BillingPeriod.NO_PERIOD.getName();
-	static final String MONTHLY = BillingPeriod.MONTHLY.getName();
-	static final String BI_MONTHLY = BillingPeriod.BI_MONTHLY.getName();
-	static final String THREE_MONTHLY = BillingPeriod.THREE_MONTHLY.getName();
-	static final String FOUR_MONTHLY = BillingPeriod.FOUR_MONTHLY.getName();
-	static final String SIX_MONTHLY = BillingPeriod.SIX_MONTHLY.getName();
-	static final String YEARLY = BillingPeriod.YEARLY.getName();
+	static final String NO_PERIOD = "Sin Periodo" ;//BillingPeriod.NO_PERIOD.getName();
+	static final String MONTHLY = "Mensual";// BillingPeriod.MONTHLY.getName();
+	static final String BI_MONTHLY = "Bimestral";// BillingPeriod.BI_MONTHLY.getName();
+	static final String THREE_MONTHLY ="Trimestral";// com.code.aon.finance.enumeration.BillingPeriod.THREE_MONTHLY.getName();
+	static final String FOUR_MONTHLY = "Cuatrimestral";//BillingPeriod.FOUR_MONTHLY.getName();
+	static final String SIX_MONTHLY = "Semestral";///BillingPeriod.SIX_MONTHLY.getName();
+	static final String YEARLY = "Anual";//BillingPeriod.YEARLY.getName();
 	
 	HashMap<String, ProductInfo> map = new HashMap<String, ProductInfo>();
 	public static byte[] out;
@@ -531,22 +531,21 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			else return null;
 			break;
 		case "Periodo": case "period": //enum
-				String t;
-				if(type.equals(Cell.CELL_TYPE_STRING)){
-					t = cell.getStringCellValue();
-					if (t.equalsIgnoreCase(NO_PERIOD))
+				String t = toString(value);
+				if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+					if (t.equalsIgnoreCase(NO_PERIOD) || t.equals("0"))
 						fee.setPeriod(BillingPeriod.NO_PERIOD.ordinal());
-					else if(t.equalsIgnoreCase(MONTHLY))
+					else if(t.equalsIgnoreCase(MONTHLY)  || t.equals("1"))
 						fee.setPeriod(BillingPeriod.MONTHLY.ordinal());
-					else if(t.equalsIgnoreCase(BI_MONTHLY))
+					else if(t.equalsIgnoreCase(BI_MONTHLY)  || t.equals("2"))
 						fee.setPeriod(BillingPeriod.BI_MONTHLY.ordinal());
-					else if(t.equalsIgnoreCase(THREE_MONTHLY))
+					else if(t.equalsIgnoreCase(THREE_MONTHLY) || t.equals("3"))
 						fee.setPeriod(BillingPeriod.THREE_MONTHLY.ordinal());
-					else if(t.equalsIgnoreCase(FOUR_MONTHLY))
+					else if(t.equalsIgnoreCase(FOUR_MONTHLY)  || t.equals("4"))
 						fee.setPeriod(BillingPeriod.FOUR_MONTHLY.ordinal());
-					else if(t.equalsIgnoreCase(SIX_MONTHLY))
+					else if(t.equalsIgnoreCase(SIX_MONTHLY)  || t.equals("5"))
 						fee.setPeriod(BillingPeriod.SIX_MONTHLY.ordinal());
-					else if(t.equalsIgnoreCase(YEARLY))
+					else if(t.equalsIgnoreCase(YEARLY)  || t.equals("6"))
 						fee.setPeriod(BillingPeriod.YEARLY.ordinal());
 					else return null;
 				}
