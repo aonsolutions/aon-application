@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -145,54 +144,48 @@ public class CretaServlet extends HttpServlet implements
 		}
 
 		try {
-			
-			
-			
-
 			os.printf("\"full_bases\":\"%s\",\r\n",
 					generateBases(connection, true, false, false, nafs,
 							defaults, trabajadoresYTramosIss, respuestasIss,
 							pickerBasesCb));
-
-			respuestasIss.clear();
-			trabajadoresYTramosIss.clear();
-			for (Part part : req.getParts()) {
-				try {
-					CretaService.File file = CretaService.File
-							.valueOf(part.getName());
-					if (file == CretaService.File.TRABAJADORES_TRAMOS)
-						trabajadoresYTramosIss.add(part.getInputStream());
-					else if (file == CretaService.File.RESPUESTA)
-						respuestasIss.add(part.getInputStream());
-				} catch (IllegalArgumentException e) {
-
-				}
-			}
-
-			NoDiffsBasesCallback noDiffsBasesCb = new NoDiffsBasesCallback() {
-				@Override
-				public void noDiffs(
-						net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
-					super.noDiffs(liquidacion);
-					pickerBasesCb.noDiffs(liquidacion);
-				}
-			};
-			try {
-				os.printf("\"diff_bases\":\"%s\",\r\n",
-						generateBases(connection, true, true, true, nafs, defaults,
-								trabajadoresYTramosIss, respuestasIss,
-								noDiffsBasesCb));
-			} catch (EmptyBasesException e) {
-				os.printf("\"draft_request\":\"%s\",\r\n", generateBorrador(
-						e.getAutorizado(), noDiffsBasesCb.getMeses(),
-						noDiffsBasesCb.getAnhos(), noDiffsBasesCb.getTipos(),
-						noDiffsBasesCb.getAceptarBasesAnteriores(),
-						noDiffsBasesCb.getCCCs()));
-			}
-
-		} catch (EmptyBasesException e) {
+		}catch (EmptyBasesException e) {
 			os.printf("\"full_bases\":\"\",\r\n");
-			os.printf("\"diff_bases\":\"\",\r\n");
+		}
+
+		respuestasIss.clear();
+		trabajadoresYTramosIss.clear();
+		for (Part part : req.getParts()) {
+			try {
+				CretaService.File file = CretaService.File
+						.valueOf(part.getName());
+				if (file == CretaService.File.TRABAJADORES_TRAMOS)
+					trabajadoresYTramosIss.add(part.getInputStream());
+				else if (file == CretaService.File.RESPUESTA)
+					respuestasIss.add(part.getInputStream());
+			} catch (IllegalArgumentException e) {
+
+			}
+		}
+
+		NoDiffsBasesCallback noDiffsBasesCb = new NoDiffsBasesCallback() {
+			@Override
+			public void noDiffs(
+					net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
+				super.noDiffs(liquidacion);
+				pickerBasesCb.noDiffs(liquidacion);
+			}
+		};
+		try {
+			os.printf("\"diff_bases\":\"%s\",\r\n",
+					generateBases(connection, true, true, true, nafs, defaults,
+							trabajadoresYTramosIss, respuestasIss,
+							noDiffsBasesCb));
+		} catch (EmptyBasesException e) {
+			os.printf("\"draft_request\":\"%s\",\r\n", generateBorrador(
+					e.getAutorizado(), noDiffsBasesCb.getMeses(),
+					noDiffsBasesCb.getAnhos(), noDiffsBasesCb.getTipos(),
+					noDiffsBasesCb.getAceptarBasesAnteriores(),
+					noDiffsBasesCb.getCCCs()));
 		}
 		
 		os.printf("\"errors\":%s,\r\n", toJSON(pickerBasesCb.errors));
@@ -291,8 +284,9 @@ public class CretaServlet extends HttpServlet implements
 		.map(part->unmarshall(net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class, part))
 		.filter(optional->optional.isPresent())
 		.map(optional->optional.get())
+		.peek(t -> {})
 		.sorted(CretaServlet::compare)
-		.map(t->String.format("{\"name\":\"%s\",%s,\"file\":\"%s\"}\r\n", CretaService.File.TRABAJADORES_TRAMOS ,toJSON(t.getLiquidacion()), marshall2Json(t)))
+		.map(t->String.format("{\"name\":\"%s\",%s,\"file\":\"%s\"}\r\n", CretaService.File.TRABAJADORES_TRAMOS ,toJSON(t.getLiquidacion()), marshall(t)))
 		.collect(Collectors.joining(",", "[", "]"))
 		//@formatter:on
 		);
@@ -314,7 +308,7 @@ public class CretaServlet extends HttpServlet implements
 										toJSON(l), 
 										toJSON(l.getErrores()),
 										toJSON(l.getLiquidacionMes().stream()),
-										marshall2Json(r)
+										marshall(r)
 						)
 					)
 				.collect(Collectors.joining(","))
@@ -463,7 +457,7 @@ public class CretaServlet extends HttpServlet implements
 	}
 	// ------------------------------------------------------------------------
 
-	private static <T> String marshall2Json(T t) {
+	private static <T> String marshall(T t) {
 		try {
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			XMLStreamWriter xsw = new IndentXMLStreamWriter(
@@ -902,4 +896,5 @@ public class CretaServlet extends HttpServlet implements
 			return str;
 		}
 	}
+	
 }

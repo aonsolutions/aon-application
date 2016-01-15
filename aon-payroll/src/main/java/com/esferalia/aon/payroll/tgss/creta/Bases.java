@@ -88,6 +88,7 @@ import net.aonsolutions.tgss.creta.jaxb.bases.LiquidacionBuilder;
 import net.aonsolutions.tgss.creta.jaxb.bases.LiquidacionMesBuilder;
 import net.aonsolutions.tgss.creta.jaxb.bases.TrabajadorBuilder;
 import net.aonsolutions.tgss.creta.jaxb.bases.TramoBuilder;
+import net.aonsolutions.tgss.creta.jaxb.bases.Tramos;
 
 public class Bases {
 
@@ -359,6 +360,11 @@ public class Bases {
 				Trabajador trabajadorCreta, Salary salary) {
 		};
 
+		default void trabajadorEmpty(
+				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
+				Trabajador trabajadorCreta, Salary salary) {
+		};
+
 		default void unknownSalary(Salary salary) {
 		};
 
@@ -428,6 +434,16 @@ public class Bases {
 
 	@SuppressWarnings("serial")
 	private static class SkipExisting extends RuntimeException {
+
+	}
+
+	@SuppressWarnings("serial")
+	private static class InvalidTramo extends RuntimeException {
+
+	}
+
+	@SuppressWarnings("serial")
+	private static class InvalidTrabajador extends RuntimeException {
 
 	}
 
@@ -1357,6 +1373,12 @@ public class Bases {
 			} catch (UnsupportedOperationException e) {
 
 			}
+			
+			// Tramo without Dato, that's imposible . TODO: MarcaBorrado ?
+			if ( tramo.getDatosTramo() == null || 
+				tramo.getDatosTramo().getDatoSolicitado() == null ||
+				tramo.getDatosTramo().getDatoSolicitado().isEmpty())
+				continue;
 
 			TramoBuilder tramoBuilder = new TramoBuilder();
 
@@ -1385,14 +1407,28 @@ public class Bases {
 
 				data.add(salary, tramo, datoSolicitado, tramoBuilder, cbs);
 			}
-
+			
 			trabajadorBuilder.addTramo(tramoBuilder.create());
 		}
+		
 
 		trabajadores.remove(salary.getEmployeeSSNumber());
 
 		net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon = trabajadorBuilder
 				.create();
+		
+		try {
+			checkTrabajador(trabajadorAon);
+		} catch ( InvalidTrabajador e ){
+			return;
+		}
+		
+		if ( trabajadorAon.getTramos().getTramo().isEmpty() ) {
+			for (BasesCallback cb : cbs)
+				cb.trabajadorEmpty(trabajadorAon, trabajador, salary);
+			return;
+		}
+		
 		try {
 			for (BasesCallback cb : cbs)
 				cb.trabajadorAdded(trabajadorAon, trabajador, salary);
@@ -2322,5 +2358,15 @@ public class Bases {
 		numberOfDecimals = stringLength - counter;
 
 		return numberOfDecimals;
+	}
+	
+	private static void checkTrabajador(net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajador) {
+		Tramos tramos = trabajador.getTramos();
+		if ( tramos == null )
+			throw new InvalidTrabajador();
+		List<net.aonsolutions.tgss.creta.jaxb.bases.Tramo> tramo = tramos.getTramo();
+		if ( tramo == null || tramo.isEmpty() )
+			throw new InvalidTrabajador();
+		
 	}
 }
