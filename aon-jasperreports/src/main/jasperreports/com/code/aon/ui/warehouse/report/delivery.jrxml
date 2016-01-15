@@ -220,7 +220,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="b3eb0365-0c54-4fa7-bc83-1cfe51bac12a" key="textField-130" positionType="Float" x="165" y="49" width="212" height="24" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
-					<printWhenExpression><![CDATA[$P{printHeader} && !$P{web}.getValue().trim().isEmpty()]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
