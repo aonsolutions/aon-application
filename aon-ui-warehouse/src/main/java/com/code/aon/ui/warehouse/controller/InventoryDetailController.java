@@ -116,7 +116,7 @@ public class InventoryDetailController extends LinesController implements IColle
 		Integer workplaceId = null;
 		if(inventory.getWarehouse().getWorkPlace() != null)
 			workplaceId = inventory.getWarehouse().getWorkPlace().getId();
-		Double cost  = InventoryController.getCost(inventoryDetail, workplaceId, inventory.getWarehouse().getId());
+		Double cost  = InventoryController.getCost(inventoryDetail, workplaceId, inventory.getWarehouse().getId(), inventory.getInventoryDate());
 		inventoryDetail.setCost(cost);
 		accept(event);
 		int current = this.model.getRowIndex();

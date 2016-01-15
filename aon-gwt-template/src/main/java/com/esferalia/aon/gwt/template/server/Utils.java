@@ -398,24 +398,24 @@ public class Utils {
 		
 	}
 	
-	public static Double getValCost(AONContext ctx, Double quantity, Item item, String login, Integer workplaceId, Integer warehouseId){
+	public static Double getValCost(AONContext ctx, Double quantity, Item item, String login, Integer workplaceId, Integer warehouseId, Date inventoryDate){
 		ApplicationParameter ap = AppParamDAO.fetchOne(ctx, AppParam.AON_PRODUCT_VALUATION_METHOD);
 		switch (ap != null ? ap.getValue() : "0") {
 			case "0": return quantity != 0 ? item.getPurchasePrice() : 0.0;
-			case "1": return getLastPurchasePrice(ctx.getDomainName(), item, quantity, login, workplaceId, warehouseId);
-			case "2": return getAveragePurchasePrice(ctx, item, quantity, login, workplaceId, warehouseId);
-			case "3": return getFifoPrice(ctx.getDomainName(), item, quantity, login, workplaceId, warehouseId);	
+			case "1": return getLastPurchasePrice(ctx.getDomainName(), item, quantity, login, workplaceId, warehouseId, inventoryDate);
+			case "2": return getAveragePurchasePrice(ctx, item, quantity, login, workplaceId, warehouseId, inventoryDate);
+			case "3": return getFifoPrice(ctx.getDomainName(), item, quantity, login, workplaceId, warehouseId, inventoryDate);	
 			default : return quantity != 0 ? item.getPurchasePrice() : 0.0;
 		}
 	}
 	
-	public static Double getLastPurchasePrice(String domainName, Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId){
+	public static Double getLastPurchasePrice(String domainName, Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId, Date inventoryDate){
 		if(quantity == 0) return 0.0;
 		if(item.getProduct().isInventoriable() && item.getProduct().isManufactured()) 
 			return item.getPurchasePrice();
 		
 		// COMPRAS (Albaranes)
-		IncomeDetail incomeDetail = AON.getLastIncomeDetail(domainName, item.getDomain(), user, item, workplaceId, warehouseId);
+		IncomeDetail incomeDetail = AON.getLastIncomeDetailUntilDate(domainName, item.getDomain(), user, item, workplaceId, warehouseId, inventoryDate);
 	
 		Double price1 = 0.0;
 		Date date1 = new Date();
@@ -425,7 +425,7 @@ public class Utils {
 		}
 			
 		// COMPRAS (Facturas)
-		InvoiceDetail invoiceDetail = AON.getLastInvoiceDetail(domainName, item.getDomain(), user, item, workplaceId, warehouseId);
+		InvoiceDetail invoiceDetail = AON.getLastInvoiceDetailUntilDate(domainName, item.getDomain(), user, item, workplaceId, warehouseId, inventoryDate);
 		Double price2 = 0.0;
 		Date date2 = new Date();
 		if(invoiceDetail.getId() != null){
@@ -441,7 +441,7 @@ public class Utils {
 		else return date1.compareTo(date2) < 0 ? price1 : price2;
 	}
 	
-	public static Double getAveragePurchasePrice(AONContext ctx, Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId){
+	public static Double getAveragePurchasePrice(AONContext ctx, Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId, Date inventoryDate){
 		if(quantity == 0) return 0.0;
 		if(item.getProduct().isInventoriable() && item.getProduct().isManufactured()) 
 			return item.getPurchasePrice();
@@ -450,8 +450,8 @@ public class Utils {
 		Integer domainId = item.getDomain();
 		ApplicationParameter ap = AppParamDAO.fetchOne(ctx, AppParam.AON_PRODUCT_AVERAGE_MONTHS);
 		
-		LinkedList<InvoiceDetail> invoiceList = AON.getLastInvoiceDetailList(domainName, domainId, user, item, ap.getValue(), workplaceId, warehouseId);
-		LinkedList<IncomeDetail> incomeList = AON.getLastIncomeDetailList(domainName, domainId, user, item, ap.getValue(), workplaceId, warehouseId);
+		LinkedList<InvoiceDetail> invoiceList = AON.getLastInvoiceDetailListUntilDate(domainName, domainId, user, item, ap.getValue(), workplaceId, warehouseId, inventoryDate);
+		LinkedList<IncomeDetail> incomeList = AON.getLastIncomeDetailListUntilDate(domainName, domainId, user, item, ap.getValue(), workplaceId, warehouseId, inventoryDate);
 		
 		Double invoiceSum = invoiceList.stream().mapToDouble(x -> x.getPrice() * (1 -(Double.parseDouble(x.getDiscountExpression())/100.0)) * Math.abs(x.getQuantity())).sum();
 		Double incomeSum = incomeList.stream().mapToDouble(x -> x.getPrice() * (1 -(Double.parseDouble(x.getDiscountExpression())/100.0)) * Math.abs(x.getQuantity())).sum();
@@ -464,14 +464,14 @@ public class Utils {
 		return  sum / totalQuantity;
 	}
 
-	public static Double getFifoPrice(String domainName, Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId){
+	public static Double getFifoPrice(String domainName, Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId, Date inventoryDate){
 		if(quantity == 0) return 0.0; 
 		if((item.getProduct().isInventoriable() && item.getProduct().isManufactured())) 
 			return item.getPurchasePrice();
 		
 		Integer domainId = item.getDomain();
-		LinkedList<InvoiceDetail> invoiceList = AON.getInvoiceDetailList(domainName, domainId, user, item, workplaceId, warehouseId);
-		LinkedList<IncomeDetail> incomeList = AON.getIncomeDetailList(domainName, domainId, user, item, workplaceId, warehouseId);
+		LinkedList<InvoiceDetail> invoiceList = AON.getInvoiceDetailListUntilDate(domainName, domainId, user, item, workplaceId, warehouseId, inventoryDate);
+		LinkedList<IncomeDetail> incomeList = AON.getIncomeDetailListUntilDate(domainName, domainId, user, item, workplaceId, warehouseId, inventoryDate);
 		
 		LinkedList<Fifo> fifoList = new LinkedList<Fifo>();
 

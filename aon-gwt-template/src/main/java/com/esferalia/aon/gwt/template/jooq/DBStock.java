@@ -18,6 +18,7 @@ import static com.esferalia.aon.jooq.tables.WarehouseTransferDetail.WAREHOUSE_TR
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPARTMENT;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.Vector;
@@ -153,13 +154,14 @@ public class DBStock {
 							item.setProductId(product.getId());
 							item.setDomain(domainId);
 						
-							Record2<Integer,Integer> data3 = sctx.getDslContext().select(WAREHOUSE.ID, WAREHOUSE.WORKPLACE)
+							Record3<Integer,Integer, Date> data3 = sctx.getDslContext().select(WAREHOUSE.ID, WAREHOUSE.WORKPLACE, INVENTORY.INVENTORY_DATE)
 								.from(INVENTORY).join(WAREHOUSE).on(WAREHOUSE.ID.eq(INVENTORY.WAREHOUSE))
 								.where(INVENTORY.ID.eq(inventoryId))
 								.limit(1).fetchOne();
 							Integer warehouseId = data3.getValue(WAREHOUSE.ID);
 							Integer workplaceId = data3.getValue(WAREHOUSE.WORKPLACE); 
-							Double cost = Utils.getValCost(sctx, s.getQuantity(), item, login, workplaceId, warehouseId);
+							java.util.Date inventoryDate = data3.getValue(INVENTORY.INVENTORY_DATE);
+							Double cost = Utils.getValCost(sctx, s.getQuantity(), item, login, workplaceId, warehouseId, inventoryDate);
 							if(data2.isNotEmpty()){
 								itemIds = itemIds + ","+itemId;
 								inventoryquery = inventoryquery + " when item = " + itemId + " then " + s.getQuantity();
