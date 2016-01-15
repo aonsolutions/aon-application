@@ -19,12 +19,13 @@
 				<ui:param name="lookupDisabled" value="#{false}" />
 			</ui:include>
 			
-			<aon:outputLabel for="contract-trl" value="T.R.L."
-				title="Tipo de relación laboral" />
-			<aon:selectOneMenu id="contract-trl" value="#{contract.params.trl}" >
+			<aon:outputLabel for="contract-contractQuoteType" value="Tipo de cotización" />
+			<aon:selectOneMenu id="contract-contractQuoteType" value="#{contract.params.contractQuoteType}" >
 				<f:selectItem itemLabel="Común" itemValue="#{null}" />
 				<f:selectItem itemLabel="RETA" itemValue="#{'RETA'}" />
 				<f:selectItem itemLabel="SOCIOS COOP." itemValue="#{'COOPERATIVE_PARTNER'}" />
+				<f:selectItem itemLabel="Jubilación activa." itemValue="#{'ACTIVE_RETIREMENT'}" />
+				<f:selectItem itemLabel="Garantía juvenil." itemValue="#{'YOUTH_GUARANTEE'}" />
 				<a4j:support event="onchange" reRender="contract_panel" ajaxSingle="#{true}" />
 			</aon:selectOneMenu>
 		</aon:if>

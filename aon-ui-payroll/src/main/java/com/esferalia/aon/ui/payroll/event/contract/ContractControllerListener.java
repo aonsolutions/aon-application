@@ -38,7 +38,6 @@ import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractClauseController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
-import com.esferalia.aon.ui.payroll.controller.contract.ContractController.TRL;
 import com.esferalia.aon.ui.payroll.utils.ContractUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 import com.esferalia.aon.ui.sepe.controller.CertificadosController;
@@ -202,9 +201,6 @@ public class ContractControllerListener extends ControllerAdapter{
 				ContractInfoController infoController = (ContractInfoController) FormUtil.getController("contractDocumentInfo");
 				infoController.loadContractFields((Contract) this.getController().getTo(), true);
 				updateContractDocumentFields();
-				if(controller.getParams().getTrl()==TRL.COOPERATIVE_PARTNER){
-					utils.insertCooperativePartnerContractData((Contract) controller.getTo());
-				}
 			} else {
 				utils.insertRetaContractData((Contract) controller.getTo(), controller.getParams());
 			}

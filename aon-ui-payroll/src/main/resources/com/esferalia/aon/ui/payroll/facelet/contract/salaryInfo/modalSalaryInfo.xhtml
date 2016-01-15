@@ -475,13 +475,17 @@
 					actionListener="#{contract.salaryInfoHandler.onAcceptPeculiarQuote}"
 					reRender="contract_panel"
 					styleClass="aon-finding-toolbar-item aon-icon-accept" />
-				<aon:outputLabel for="contract-trl" value="T.R.L."
-					title="Tipo de relación laboral" />
-				<aon:selectOneMenu id="contract-trl" value="#{contract.salaryInfoHandler.trl}" >
+				<aon:outputLabel for="contract-contractQuoteType" value="Tipo de cotización" />
+				<aon:selectOneMenu id="contract-contractQuoteType" value="#{contract.salaryInfoHandler.contractQuoteType}" >
 					<f:selectItem itemLabel="Común" itemValue="#{null}" />
 					<f:selectItem itemLabel="SOCIOS COOP." itemValue="#{'COOPERATIVE_PARTNER'}" />
+					<f:selectItem itemLabel="Jubilación activa." itemValue="#{'ACTIVE_RETIREMENT'}" />
+					<f:selectItem itemLabel="Garantía juvenil." itemValue="#{'YOUTH_GUARANTEE'}" />
 					<a4j:support event="onchange" reRender="showContractSalaryInfoWindow" 
-						actionListener="#{contract.salaryInfoHandler.onChangeTrl}" />
+						 />
+					<!--  
+						actionListener="#{contract.salaryInfoHandler.onChangeTrl}"
+					-->
 				</aon:selectOneMenu>
 			</ui:define>
 		</ui:decorate>
