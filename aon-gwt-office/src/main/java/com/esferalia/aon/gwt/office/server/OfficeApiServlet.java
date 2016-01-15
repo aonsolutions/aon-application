@@ -421,7 +421,7 @@ public class OfficeApiServlet extends HttpServlet {
 				JSONObject json = new JSONObject(object);
 				Tag tag = new Tag();
 				tag.setName(json.getString("name"));
-				tag.setType(TagType.NOTICE.value());
+				tag.setType(TagType.OFFICE_NOTICE.value());
 				
 				if ( json.isNull("color") == false)
 					tag.setColor(json.getString("color"));

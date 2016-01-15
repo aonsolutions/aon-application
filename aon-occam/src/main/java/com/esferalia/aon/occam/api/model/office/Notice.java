@@ -18,14 +18,10 @@ public class Notice implements Serializable, HasId {
 	private Integer domain;
 	private Integer recipient; // Destinatario del aviso
 	private byte status; // Estado del aviso
-	private Integer workgroup; // Grupo de trabajo al que va dirigido el aviso
 	private Integer notice; //Notice al que referencia **null si es cabecera = titulo
 	
 	private String title; // Asunto del aviso
 	private String body; //Cuerpo del aviso
-	private String contact; //Modo de contacto
-	private String source; // Origen del aviso
-	private String company; // Empresa donde trabaja el origen del aviso
 	private String type; //Tipo de aviso
 	private String priority; //Prioridad
 	
@@ -75,24 +71,8 @@ public class Notice implements Serializable, HasId {
 		this.recipient = recipient;
 	}
 	
-	public void setContact(String contact) {
-		this.contact = contact;
-	}
-	
-	public void setSource(String source) {
-		this.source = source;
-	}
-	
-	public void setCompany(String company) {
-		this.company = company;
-	}
-	
 	public void setStatus(byte status) {
 		this.status = status;
-	}
-	
-	public void setWorkgroup(Integer workgroup) {
-		this.workgroup = workgroup;
 	}
 	
 	public void setType(String type) {
@@ -154,24 +134,8 @@ public class Notice implements Serializable, HasId {
 		return recipient;
 	}
 	
-	public String getPhone() {
-		return contact;
-	}
-	
-	public String getSource() {
-		return source;
-	}
-	
-	public String getCompany() {
-		return company;
-	}
-	
 	public byte getStatus() {
 		return status;
-	}
-	
-	public Integer getWorkgroup() {
-		return workgroup;
 	}
 	
 	public String getType() {

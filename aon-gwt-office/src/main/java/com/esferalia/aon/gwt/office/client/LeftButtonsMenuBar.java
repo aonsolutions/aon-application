@@ -90,17 +90,13 @@ public class LeftButtonsMenuBar extends Composite {
 	@UiHandler("tree")
 	void onTreeItemSelection(SelectionEvent<TreeItem> event)  {
 		TreeItem item = event.getSelectedItem();
-		String name = item.getText();
-
-		switch (name) {
-		case "Pendientes":
-			for (LeftMenuBarListener listener : listeners)
-				listener.onShowOpenIssuesClickEvent();
-			break;
-		default:
-			break;
-		}
-
+		Window.alert(item.getText());
+		
+		if ( item.getText().equals("Pendientes"))
+			onOpenIssueTreeItemSelected();
+		else if (item.getText().equals("Cerrados"))
+			onClosedIssueTreeItemSelected();
+		
 	}
 	@UiHandler("newButton")
 	void onNewButtonClicked(ClickEvent event) {
@@ -141,7 +137,19 @@ public class LeftButtonsMenuBar extends Composite {
 	// ********************** PRIVATE METHODS ***************************
 	// ******************************************************************
 
+	private void onOpenIssueTreeItemSelected() {
+		for (LeftMenuBarListener listener : listeners)
+			listener.onShowOpenIssuesClickEvent();
+	}
+	
+	private void onClosedIssueTreeItemSelected() {
+		for (LeftMenuBarListener listener : listeners)
+			listener.onShowClosedIssuesClickEvent();
+	}
+	
 	private void initTree() {
+		
+		
 
 		TreeItem openItem = new TreeItem(
 				imageItemHtml(images.aon_icon_issue_opened(), "Pendientes"));
@@ -153,6 +161,7 @@ public class LeftButtonsMenuBar extends Composite {
 
 		labelsItem = new TreeItem(
 				imageItemHtml(images.aon_icon_issue_title(), "Etiquetas"));
+	
 		tree.addItem(labelsItem);
 	}
 
@@ -182,6 +191,7 @@ public class LeftButtonsMenuBar extends Composite {
 
 		newPopup.add(menuBar);
 		newPopup.setStyleName("gwt-MenuBarPopup");
+		newPopup.setAutoHideEnabled(true);
 	}
 
 	private void addLabel(Tag label) {

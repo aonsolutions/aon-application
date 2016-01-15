@@ -18,7 +18,6 @@ import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.office.Notice;
-import com.esferalia.aon.occam.api.model.office.NoticeComment;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.office.User;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
@@ -46,21 +45,14 @@ public class AonHubDAO {
 				.set(NOTICE.DATE,
 						new java.sql.Timestamp((new Date()).getTime()))
 				.set(NOTICE.SUBJECT, notice.getTitle())
-				.set(NOTICE.PHONE,
-						(notice.getPhone() != null) ? notice.getPhone() : null)
 				.set(NOTICE.STATUS, NoticeStatus.OPEN.value())
 				.set(NOTICE.TYPE,
 						(byte) NoticeType.valueOf(notice.getType()).ordinal())
 				.set(NOTICE.PRIORITY,
 						(byte) Priority.valueOf(notice.getPriority()).ordinal())
-				.set(NOTICE.COMPANY,
-						(notice.getCompany() != null) ? notice.getCompany()
-								: "")
 				.set(NOTICE.RECIPIENT,
 						(notice.getRecipient() != null) ? notice.getRecipient()
 								: null)
-				.set(NOTICE.WORK_GROUP, (notice.getWorkgroup() != null)
-						? notice.getWorkgroup() : null)
 				.returning().fetchOne();
 
 		ctx.getDslContext().insertInto(NOTICE)
@@ -68,12 +60,10 @@ public class AonHubDAO {
 				.set(NOTICE.SENDER, noticeRecord.getValue(NOTICE.SENDER))
 				.set(NOTICE.DATE, noticeRecord.getValue(NOTICE.DATE))
 				.set(NOTICE.SUBJECT, notice.getBody())
-				.set(NOTICE.PHONE, noticeRecord.getValue(NOTICE.PHONE))
 				.set(NOTICE.STATUS, noticeRecord.getValue(NOTICE.STATUS))
 				.set(NOTICE.TYPE, noticeRecord.getValue(NOTICE.TYPE))
 				.set(NOTICE.PRIORITY, noticeRecord.getValue(NOTICE.PRIORITY))
-				.set(NOTICE.WORK_GROUP,
-						noticeRecord.getValue(NOTICE.WORK_GROUP))
+				.set(NOTICE.RECIPIENT, noticeRecord.getValue(NOTICE.RECIPIENT))
 				.set(NOTICE.NOTICE_, noticeRecord.getValue(NOTICE.ID))
 				.execute();
 
@@ -85,11 +75,7 @@ public class AonHubDAO {
 		object.setTitle(notice.getTitle());
 		object.setBody(notice.getBody());
 		object.setRecipient(noticeRecord.getValue(NOTICE.RECIPIENT));
-		object.setContact(noticeRecord.getValue(NOTICE.PHONE));
-		object.setSource(noticeRecord.getValue(NOTICE.SOURCE));
-		object.setCompany(noticeRecord.getValue(NOTICE.COMPANY));
 		object.setStatus(noticeRecord.getValue(NOTICE.STATUS));
-		object.setWorkgroup(noticeRecord.getValue(NOTICE.WORK_GROUP));
 		object.setType(notice.getType());
 		object.setPriority(notice.getPriority());
 
@@ -200,14 +186,14 @@ public class AonHubDAO {
 		ctx.getDslContext().update(TAG)
 		.set(TAG.NAME, tag.getName())
 		.where(TAG.DOMAIN.eq(ctx.getDomainId())
-				.and(TAG.TYPE.eq(TagType.NOTICE.value()))
+				.and(TAG.TYPE.eq(TagType.OFFICE_NOTICE.value()))
 				.and(TAG.NAME.eq(labelName)))
 		.execute();
 		
 		TagRecord tagRecord = ctx.getDslContext()
 				.selectFrom(TAG)
 				.where(TAG.DOMAIN.eq(ctx.getDomainId())
-						.and(TAG.TYPE.eq(TagType.NOTICE.value()))
+						.and(TAG.TYPE.eq(TagType.OFFICE_NOTICE.value()))
 						.and(TAG.NAME.eq(tag.getName())))
 				.fetchOne();
 		
@@ -226,7 +212,7 @@ public class AonHubDAO {
 			TagRecord tagRecord = ctx.getDslContext()
 					.selectFrom(TAG)
 					.where(TAG.DOMAIN.eq(ctx.getDomainId())
-							.and(TAG.TYPE.equal(TagType.NOTICE.value()))
+							.and(TAG.TYPE.equal(TagType.OFFICE_NOTICE.value()))
 							.and(TAG.NAME.eq(labelName)))
 					.fetchOne();
 			
@@ -277,11 +263,7 @@ public class AonHubDAO {
 					notice.setSender(user);
 					notice.setTitle(record.getValue(NOTICE.SUBJECT));
 					notice.setRecipient(record.getValue(NOTICE.RECIPIENT));
-					notice.setContact(record.getValue(NOTICE.PHONE));
-					notice.setSource(record.getValue(NOTICE.SOURCE));
-					notice.setCompany(record.getValue(NOTICE.COMPANY));
 					notice.setStatus(record.getValue(NOTICE.STATUS));
-					notice.setWorkgroup(record.getValue(NOTICE.WORK_GROUP));
 					
 					NoticeRecord  bodyRecord = ctx.getDslContext().selectFrom(NOTICE)
 							.where(NOTICE.DOMAIN.eq(domainId)
@@ -345,11 +327,7 @@ public class AonHubDAO {
 
 					notice.setTitle(noticeRecord.getValue(NOTICE.SUBJECT));
 					notice.setRecipient(noticeRecord.getValue(NOTICE.RECIPIENT));
-					notice.setContact(noticeRecord.getValue(NOTICE.PHONE));
-					notice.setSource(noticeRecord.getValue(NOTICE.SOURCE));
-					notice.setCompany(noticeRecord.getValue(NOTICE.COMPANY));
 					notice.setStatus(noticeRecord.getValue(NOTICE.STATUS));
-					notice.setWorkgroup(noticeRecord.getValue(NOTICE.WORK_GROUP));
 
 					String body = ctx.getDslContext().selectFrom(NOTICE)
 							.where(NOTICE.DOMAIN.eq(domainId)
@@ -423,11 +401,7 @@ public class AonHubDAO {
 
 					notice.setTitle(record.getValue(NOTICE.SUBJECT));
 					notice.setRecipient(record.getValue(NOTICE.RECIPIENT));
-					notice.setContact(record.getValue(NOTICE.PHONE));
-					notice.setSource(record.getValue(NOTICE.SOURCE));
-					notice.setCompany(record.getValue(NOTICE.COMPANY));
 					notice.setStatus(record.getValue(NOTICE.STATUS));
-					notice.setWorkgroup(record.getValue(NOTICE.WORK_GROUP));
 
 					String body = ctx.getDslContext().selectFrom(NOTICE)
 							.where(NOTICE.DOMAIN.eq(domainId)
@@ -463,7 +437,7 @@ public class AonHubDAO {
 						String priorityName = ctx.getDslContext()
 								.selectFrom(TAG.rightOuterJoin(NOTICE_TAG)
 										.on(TAG.ID.eq(NOTICE_TAG.TAG)))
-								.where(TAG.TYPE.eq(TagType.PRIORITY.value())
+								.where(TAG.TYPE.eq(TagType.OFFICE_PRIORITY.value())
 										.and(TAG.DOMAIN.eq(domainId))
 										.and(NOTICE_TAG.NOTICE.eq(id))
 										.and(NOTICE_TAG.START_DATE.eq(
@@ -486,7 +460,7 @@ public class AonHubDAO {
 		TagRecord tagRecord = ctx.getDslContext().selectFrom(TAG)
 				.where(TAG.DOMAIN.eq(ctx.getDomainId())
 						.and(TAG.NAME.eq(name))
-						.and(TAG.TYPE.eq(TagType.NOTICE.value())))
+						.and(TAG.TYPE.eq(TagType.OFFICE_NOTICE.value())))
 				.fetchOne();
 		Tag tag = new Tag();
 		tag.setId(tagRecord.getValue(TAG.ID));
@@ -503,7 +477,7 @@ public class AonHubDAO {
 
 		ctx.getDslContext().selectFrom(TAG)
 				.where(TAG.DOMAIN.eq(domainId)
-						.and(TAG.TYPE.eq(TagType.NOTICE.value())))
+						.and(TAG.TYPE.eq(TagType.OFFICE_NOTICE.value())))
 				.fetch().stream().forEach(record -> {
 					Tag tag = new Tag();
 
@@ -544,11 +518,7 @@ public class AonHubDAO {
 
 		editNotice.setBody(body);
 		editNotice.setRecipient(noticeRecord.getValue(NOTICE.RECIPIENT));
-		editNotice.setContact(noticeRecord.getValue(NOTICE.PHONE));
-		editNotice.setSource(noticeRecord.getValue(NOTICE.SOURCE));
-		editNotice.setCompany(noticeRecord.getValue(NOTICE.COMPANY));
 		editNotice.setStatus(noticeRecord.getValue(NOTICE.STATUS));
-		editNotice.setWorkgroup(noticeRecord.getValue(NOTICE.WORK_GROUP));
 		editNotice
 				.setType(NoticeType.values()[noticeRecord.getValue(NOTICE.TYPE)]
 						.getValue());

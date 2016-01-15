@@ -65,21 +65,14 @@ public class OfficeTest {
 				.set(NOTICE.DATE,
 						new java.sql.Timestamp((new Date()).getTime()))
 				.set(NOTICE.SUBJECT, notice.getTitle())
-				.set(NOTICE.PHONE,
-						(notice.getPhone() != null) ? notice.getPhone() : null)
 				.set(NOTICE.STATUS, NoticeStatus.OPEN.value())
 				.set(NOTICE.TYPE,
 						(byte) NoticeType.valueOf(notice.getType()).ordinal())
 				.set(NOTICE.PRIORITY,
 						(byte) Priority.valueOf(notice.getPriority()).ordinal())
-				.set(NOTICE.COMPANY,
-						(notice.getCompany() != null) ? notice.getCompany()
-								: "")
 				.set(NOTICE.RECIPIENT,
 						(notice.getRecipient() != null) ? notice.getRecipient()
 								: null)
-				.set(NOTICE.WORK_GROUP, (notice.getWorkgroup() != null)
-						? notice.getWorkgroup() : null)
 				.returning().fetchOne();
 
 
@@ -87,13 +80,9 @@ public class OfficeTest {
 				.set(NOTICE.DOMAIN, noticeRecord.getValue(NOTICE.DOMAIN))
 				.set(NOTICE.SENDER, noticeRecord.getValue(NOTICE.SENDER))
 				.set(NOTICE.DATE, noticeRecord.getValue(NOTICE.DATE))
-				.set(NOTICE.SUBJECT, notice.getTitle())
-				.set(NOTICE.PHONE, noticeRecord.getValue(NOTICE.PHONE))
 				.set(NOTICE.STATUS, noticeRecord.getValue(NOTICE.STATUS))
 				.set(NOTICE.TYPE, noticeRecord.getValue(NOTICE.TYPE))
 				.set(NOTICE.PRIORITY, noticeRecord.getValue(NOTICE.PRIORITY))
-				.set(NOTICE.WORK_GROUP,
-						noticeRecord.getValue(NOTICE.WORK_GROUP))
 				.set(NOTICE.NOTICE_, noticeRecord.getValue(NOTICE.ID))
 				.execute();			
 		
@@ -138,11 +127,7 @@ public class OfficeTest {
 		object.setTitle(notice.getTitle());
 		object.setBody(notice.getBody());
 		object.setRecipient(noticeRecord.getValue(NOTICE.RECIPIENT));
-		object.setContact(noticeRecord.getValue(NOTICE.PHONE));
-		object.setSource(noticeRecord.getValue(NOTICE.SOURCE));
-		object.setCompany(noticeRecord.getValue(NOTICE.COMPANY));
 		object.setStatus(noticeRecord.getValue(NOTICE.STATUS));
-		object.setWorkgroup(noticeRecord.getValue(NOTICE.WORK_GROUP));
 		object.setType(NoticeType.values()[noticeRecord.getValue(NOTICE.TYPE)]
 				.getValue());
 		object.setPriority(

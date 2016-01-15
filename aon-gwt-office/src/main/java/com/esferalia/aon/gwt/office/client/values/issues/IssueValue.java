@@ -9,9 +9,6 @@ public class IssueValue extends Value<IssueValue.Prop> {
 		Title("title"),
 		Priority("priority"),
 		Sender("sender"),
-		Source("source"),
-		Company("company"),
-		Phone("phone"),
         Body("body"),
         Assignee("assignee"),
         Recipient("recipient"),
@@ -43,18 +40,6 @@ public class IssueValue extends Value<IssueValue.Prop> {
 	
 	public void setSender(Integer sender) {
 		prop.put(Prop.Sender, sender);
-	}
-	
-	public void setSource(String source) {
-		prop.put(Prop.Source, source);
-	}
-	
-	public void setCompany(String company) {
-		prop.put(Prop.Company, company);
-	}
-	
-	public void setPhone(String phone) {
-		prop.put(Prop.Phone, phone);
 	}
 	
 	public void setBody(String body) {
