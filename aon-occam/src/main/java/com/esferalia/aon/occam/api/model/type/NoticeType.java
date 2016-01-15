@@ -7,10 +7,7 @@ public enum NoticeType implements Serializable {
 	VISIT,
 	MESSAGE,
     COMMUNICATION,
-    ISSUE,
-    TICKET,
-    WARNING, //aviso
-    NOTE,
+    DESCRIPTION,    
     COMMENT; //comentario de notice
 
 	public byte value() {
