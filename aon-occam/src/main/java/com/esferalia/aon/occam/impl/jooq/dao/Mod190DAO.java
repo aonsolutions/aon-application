@@ -672,23 +672,27 @@ public class Mod190DAO {
 	private static void insertDetailsFromSalary(AONContext ctx, final Mod190 mod190) {
 		Date firstDay = AonDateUtils.getYearFirstDay(mod190.getYear());
 		Date lastDay = AonDateUtils.getYearLastDay(mod190.getYear());
+		
+		Field<BigDecimal> moneyIrpfBase = DSL.sum(DSL.decode()
+				.when(SALARY.INKIND_IRPF_BASE.equal(0.0), SALARY.IRPF_BASE)
+				.when(SALARY.INKIND_IRPF_BASE.notEqual(0.0), SALARY.MONEY_IRPF_BASE));
+		Field<BigDecimal> inKindIrpfBase = DSL.sum(SALARY.INKIND_IRPF_BASE);
+	//	Field<BigDecimal> totalIrpf = DSL.sum(SALARY.TOTAL_IRPF);
+		Field<BigDecimal> socialSecurityContributions = DSL.sum(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
+		Field<Integer> birthYear = DSL.year(PERSON.BIRTH_DATE);
+		
 
-		Field<BigDecimal> moneyIrpfBase = DSL.sum(SALARY.MONEY_IRPF_BASE)
-				.as(SALARY.MONEY_IRPF_BASE.getName());
-		Field<BigDecimal> inKindIrpfBase = DSL.sum(SALARY.INKIND_IRPF_BASE)
-				.as(SALARY.INKIND_IRPF_BASE.getName());
-		Field<BigDecimal> irpfBase = DSL.sum(SALARY.IRPF_BASE)
-				.as(SALARY.IRPF_BASE.getName());
-		Field<BigDecimal> totalIrpf = DSL.sum(SALARY.TOTAL_IRPF)
-				.as(SALARY.TOTAL_IRPF.getName());
-		Field<BigDecimal> socialSecurityContributions = DSL.sum(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS)
-				.as(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS.getName());
-		Field<Integer> birthYear = DSL.year(PERSON.BIRTH_DATE)
-				.as(PERSON.BIRTH_DATE.getName());
-
+		Field<Double> moneyQuotaOp = DSL.round((SALARY.MONEY_IRPF_BASE.mul(SALARY.TOTAL_IRPF)).div( SALARY.IRPF_BASE ),2);  
+		Field<BigDecimal> moneyQuota = DSL.sum(DSL.decode()
+			.when(SALARY.INKIND_IRPF_BASE.equal(0.0), SALARY.TOTAL_IRPF)
+			.when(SALARY.INKIND_IRPF_BASE.notEqual(0.0), moneyQuotaOp));
+		Field<BigDecimal> inKindQuota = DSL.sum( DSL.decode()
+				.when(DSL.round(SALARY.INKIND_IRPF_BASE,2).equal(0.0), 0.0)
+				.when(SALARY.INKIND_IRPF_BASE.notEqual(0.0),SALARY.TOTAL_IRPF.minus(moneyQuotaOp)));
+		
 		ctx.getDslContext()
 				.select(SALARY.EMPLOYEE_DOCUMENT, SALARY.EMPLOYEE_NAME,
-						moneyIrpfBase, inKindIrpfBase, irpfBase, totalIrpf,
+						moneyIrpfBase, inKindIrpfBase, moneyQuota, inKindQuota,
 						socialSecurityContributions,PERSON.REGISTRY, birthYear)
 				.from(SALARY)
 				.join(CONTRACT)
@@ -700,7 +704,7 @@ public class Mod190DAO {
 				.where(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
 				.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
 				.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration()))
-				.groupBy(SALARY.EMPLOYEE_DOCUMENT)
+				.groupBy(SALARY.EMPLOYEE_DOCUMENT,PERSON.REGISTRY)
 				.fetch()
 				.stream()
 				.forEach(
@@ -718,7 +722,8 @@ public class Mod190DAO {
 							}
 							detail.setPerception(salaryData.getValue(moneyIrpfBase).doubleValue());
 							detail.setInKindPerception(salaryData.getValue(inKindIrpfBase).doubleValue());
-							detail.setRetention(salaryData.getValue(totalIrpf).doubleValue());
+							detail.setRetention( salaryData.getValue(moneyQuota).doubleValue());
+							detail.setInKindDeposit(salaryData.getValue(inKindQuota).doubleValue());
 							detail.setIrpfData(getLastIrpfDataByPerson(ctx,salaryData.getValue(PERSON.REGISTRY),firstDay, lastDay, detail));
 							Integer birthData = salaryData.getValue(birthYear);
 							detail.getIrpfData().setBirthYear(birthData==null?0:birthData);
