@@ -17,6 +17,7 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.sales.Sales;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
@@ -29,7 +30,6 @@ public class InvoiceDetailReportScriptlet extends JRDefaultScriptlet implements 
 	
 	private static final String VARIABLE_LINE_DESCRIPTION = "lineDescription";
 	private static final String FIELD_ID = "id";
-	private static final String COMPANY_CONTROLLER = "companyController";
 	
 	@Override
 	public void afterDetailEval() throws JRScriptletException {
@@ -43,13 +43,7 @@ public class InvoiceDetailReportScriptlet extends JRDefaultScriptlet implements 
 	}
 	
 	private CompanyController getCompanyController(){
-		Object controller = null;
-		try {
-			controller = getParameterValue(COMPANY_CONTROLLER);
-		} catch (JRScriptletException e) {
-			LOGGER.error("Error getting company controller");
-		}
-		return (CompanyController) controller;
+		return (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 	}
 		
 	private void fillDetailLineDescriptionCode() throws JRScriptletException{

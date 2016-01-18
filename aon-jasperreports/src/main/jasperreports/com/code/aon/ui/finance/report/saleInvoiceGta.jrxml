@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="112"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -496,7 +496,8 @@
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="293d19f3-f29f-45cb-b7c2-87980e543c47" key="textField-53" positionType="Float" x="66" y="111" width="469" height="15" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintProject() &&
+new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -511,7 +512,8 @@
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement uuid="2d479262-982d-4ec5-a0db-97354f0ccb31" key="textField-54" positionType="Float" x="0" y="111" width="66" height="15">
-					<printWhenExpression><![CDATA[new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintProject() &&
+new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

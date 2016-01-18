@@ -46,6 +46,9 @@ public interface ICompanyController extends IController {
 	boolean isPrintReferenceCode();
 	void setPrintReferenceCode(boolean printReferenceCode);
 	
+	boolean isPrintProject();
+	void setPrintProject(boolean printReferenceCode);
+	
 	ReportPrintOption getPrintName();
 	void setPrintName(ReportPrintOption printName);
 	
@@ -80,6 +83,7 @@ public interface ICompanyController extends IController {
 	String obtainItemTagBarcodePattern() throws ManagerBeanException;
 	boolean obtainPrintLogo() throws ManagerBeanException;
 	boolean obtainPrintReferenceCode() throws ManagerBeanException;
+	boolean obtainPrintProject() throws ManagerBeanException;
 	boolean obtainPrintProductCode() throws ManagerBeanException;
 	ReportPrintOption obtainPrintName() throws ManagerBeanException;
 	ReportPrintOption obtainPrintNif() throws ManagerBeanException;

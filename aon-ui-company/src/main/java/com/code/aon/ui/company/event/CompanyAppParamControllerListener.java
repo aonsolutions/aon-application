@@ -10,6 +10,7 @@ import static com.code.aon.common.enumeration.AppParam.APP_PRINT_NAME_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_NIF_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PRODUCT_CODE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_RECORD_DATA_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PROJECT_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_REFERENCE_CODE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_S_INVOICE_FOOTER_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM;
@@ -50,6 +51,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 			companyController.setPrintDiscountPriceApplied(companyController.obtainPrintDiscountPriceApplied());
 			companyController.setPrintLogo(companyController.obtainPrintLogo());
 			companyController.setPrintReferenceCode(companyController.obtainPrintReferenceCode());
+			companyController.setPrintProject(companyController.obtainPrintProject());
 			companyController.setPrintProductCode(companyController.obtainPrintProductCode());
 			companyController.setPrintName(companyController.obtainPrintName());
 			companyController.setPrintNif(companyController.obtainPrintNif());
@@ -116,6 +118,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 		AppParamUtil.insertParameter(AppParam.APP_PRINT_DISCOUNT_PRICE_APPLIED, companyController.isPrintDiscountPriceApplied());
 		AppParamUtil.insertParameter(APP_PRINT_LOGO_PARAM, companyController.isPrintLogo());
 		AppParamUtil.insertParameter(APP_PRINT_REFERENCE_CODE_PARAM, companyController.isPrintReferenceCode());
+		AppParamUtil.insertParameter(APP_PRINT_PROJECT_PARAM, companyController.isPrintProject());
 		AppParamUtil.insertParameter(APP_PRINT_PRODUCT_CODE_PARAM, companyController.isPrintProductCode());
 		updateParam(APP_PRINT_NAME_PARAM, companyController.getPrintName());
 		updateParam(APP_PRINT_NIF_PARAM, companyController.getPrintNif());

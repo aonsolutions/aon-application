@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="223"/>
+	<property name="ireport.y" value="127"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -23,7 +23,6 @@
 		</variable>
 	</subDataset>
 	<scriptlet name="invoiceReportScriptlet" class="com.code.aon.ui.finance.util.print.InvoiceReportScriptlet"/>
-	<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
@@ -437,9 +436,6 @@
 				<subreportParameter name="printDiscountPriceApplied">
 					<subreportParameterExpression><![CDATA[$P{printDiscountPriceApplied}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="companyController">
-					<subreportParameterExpression><![CDATA[$P{companyController}]]></subreportParameterExpression>
-				</subreportParameter>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false), new Boolean(false)))]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceDetail")]]></subreportExpression>
 			</subreport>
@@ -514,7 +510,8 @@
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="2c332f69-3577-4342-9cee-bb470a34dff7" key="textField-53" positionType="Float" x="137" y="10" width="417" height="15" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintProject() &&
+new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -529,7 +526,8 @@
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement uuid="dc4627d6-4d28-4c96-aa99-d41014ccb9c0" key="textField-54" positionType="Float" x="71" y="10" width="66" height="15">
-					<printWhenExpression><![CDATA[new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintProject() &&
+new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -567,9 +565,6 @@
 				</subreportParameter>
 				<subreportParameter name="isIncreaseType">
 					<subreportParameterExpression><![CDATA[new Boolean(true)]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="companyController">
-					<subreportParameterExpression><![CDATA[$P{companyController}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false), new Boolean(true), ProductType.INCREASE))]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceDetail")]]></subreportExpression>

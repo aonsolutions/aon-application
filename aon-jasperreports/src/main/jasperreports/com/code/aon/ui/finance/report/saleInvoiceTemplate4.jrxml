@@ -13,7 +13,6 @@
 		<paragraph lineSpacing="Single"/>
 	</style>
 	<subDataset name="detail" scriptletClass="com.code.aon.ui.finance.util.print.InvoiceDetailReportScriptlet" uuid="b6d87951-1160-4874-afd0-10de6cbb4575">
-		<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>
 		<field name="description" class="java.lang.String"/>
 		<field name="quantity" class="java.lang.Double"/>
 		<field name="price" class="java.lang.Double"/>
@@ -64,7 +63,6 @@
 		<field name="negotiableDocument" class="java.lang.Boolean"/>
 	</subDataset>
 	<scriptlet name="invoiceReportScriptlet" class="com.code.aon.ui.finance.util.print.InvoiceReportScriptlet"/>
-	<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
@@ -569,7 +567,8 @@
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement uuid="44dabb10-6dc6-4412-902b-a5df4d3c3711" key="textField-54" positionType="Float" x="21" y="120" width="66" height="15">
-					<printWhenExpression><![CDATA[new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintProject() &&
+new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -585,7 +584,8 @@
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="61df4c8d-0f35-4708-bdb6-d6f93ba42c4b" key="textField-53" positionType="Float" x="87" y="120" width="423" height="15" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintProject() &&
+new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -760,10 +760,7 @@
 			<componentElement>
 				<reportElement uuid="f89c7b02-5ec7-47d2-98a4-c2bf5f2856c5" key="detail" positionType="Float" mode="Opaque" x="21" y="217" width="489" height="15" backcolor="#F0F0F0"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="detail" uuid="b6ecb9bd-1214-4316-a053-d8668fce6fbe">
-						<datasetParameter name="companyController">
-							<datasetParameterExpression><![CDATA[$P{companyController}]]></datasetParameterExpression>
-						</datasetParameter>
+					<datasetRun subDataset="detail" uuid="60f150fe-a644-40ab-805a-c8bd299548ea">
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false), new Boolean(false)))]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="372" uuid="7b54d30c-32bd-4376-921d-278ad3147adb">
@@ -911,10 +908,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 					<printWhenExpression><![CDATA[$V{prepaymentTotal}!=null]]></printWhenExpression>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="detail" uuid="f4e92dc4-e985-474c-bd25-0dc66fe7e2f0">
-						<datasetParameter name="companyController">
-							<datasetParameterExpression><![CDATA[$P{companyController}]]></datasetParameterExpression>
-						</datasetParameter>
+					<datasetRun subDataset="detail" uuid="7f95273d-29a3-4c28-80b8-92e72ceca412">
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(true)))]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="372" uuid="002b88f9-4f3e-456b-867a-e969b0c6a7da">
@@ -1104,10 +1098,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 					<printWhenExpression><![CDATA[$V{increaseTotal}!=null]]></printWhenExpression>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="detail" uuid="ac2909bb-3966-4af5-abaf-6f5d337614c8">
-						<datasetParameter name="companyController">
-							<datasetParameterExpression><![CDATA[$P{companyController}]]></datasetParameterExpression>
-						</datasetParameter>
+					<datasetRun subDataset="detail" uuid="40739300-099e-4857-9d6f-72edd34a33ad">
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false), new Boolean(true), ProductType.INCREASE))]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="372" uuid="3dc68810-87d4-4266-971c-8da1c768de10">

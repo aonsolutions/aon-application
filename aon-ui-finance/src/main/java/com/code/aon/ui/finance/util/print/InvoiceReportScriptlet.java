@@ -23,6 +23,7 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.registry.RecordData;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 
 public class InvoiceReportScriptlet extends JRDefaultScriptlet implements Serializable {
@@ -33,18 +34,10 @@ public class InvoiceReportScriptlet extends JRDefaultScriptlet implements Serial
 	
 	private static final String FIELD_ID = "id";
 	
-	private static final String COMPANY_CONTROLLER = "companyController";
-	
 	private static final String INVOICE_FOOTER_TEXT = "invoiceFooterText";
 	
 	private CompanyController getCompanyController(){
-		Object controller = null;
-		try {
-			controller = getParameterValue(COMPANY_CONTROLLER);
-		} catch (JRScriptletException e) {
-			LOGGER.error("Error getting company controller");
-		}
-		return (CompanyController) controller;
+		return (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 	}
 	
 	public InputStream getLogoFile(){
@@ -91,6 +84,10 @@ public class InvoiceReportScriptlet extends JRDefaultScriptlet implements Serial
 	
 	public boolean isPrintRecordData() {
 		return getCompanyController().isPrintRecordData();
+	}
+	
+	public boolean isPrintProject() {
+		return getCompanyController().isPrintProject();
 	}
 	
 	public ReportPrintOption getPrintName() {

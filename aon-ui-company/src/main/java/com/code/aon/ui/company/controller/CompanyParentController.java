@@ -13,6 +13,7 @@ import static com.code.aon.common.enumeration.AppParam.APP_PRINT_NAME_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_NIF_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PRODUCT_CODE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_RECORD_DATA_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PROJECT_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_REFERENCE_CODE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_S_INVOICE_FOOTER_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM;
@@ -141,6 +142,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	private boolean printProductCode;
 	
 	private boolean printReferenceCode;
+	
+	private boolean printProject;
 	
 	private ReportPrintOption printName;
 	
@@ -819,6 +822,14 @@ public class CompanyParentController extends BasicController implements ICompany
 		this.printReferenceCode = printReferenceCode;
 	}
 
+	public boolean isPrintProject() {
+		return printProject;
+	}
+
+	public void setPrintProject(boolean printProject) {
+		this.printProject = printProject;
+	}
+
 	public ReportPrintOption getPrintName() {
 		return printName;
 	}
@@ -963,6 +974,10 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 	public boolean obtainPrintReferenceCode() throws ManagerBeanException {
 		return AppParamUtil.getValueAsBoolean(APP_PRINT_REFERENCE_CODE_PARAM);
+	}
+	
+	public boolean obtainPrintProject() throws ManagerBeanException {
+		return AppParamUtil.getValueAsBoolean(APP_PRINT_PROJECT_PARAM);
 	}
 	
 	public boolean obtainPrintProductCode() throws ManagerBeanException {
