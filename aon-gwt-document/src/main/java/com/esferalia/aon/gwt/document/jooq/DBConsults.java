@@ -56,8 +56,9 @@ public class DBConsults {
 	private static String domain1=null;
 	private static Vector<FileInfo> vaux;
 
-	private static boolean esta(Domain domain, FileInfo fi,Integer userId,DSLContext dslContext){
+	private static boolean esta(Domain domain, FileInfo fi,Integer userId){
 		Integer[] userScopeArray = AON.getUserScopes(domain.getName(), domain.getId(), userId);
+		if(userScopeArray == null) return true;
 		for (Integer scope: userScopeArray) {
 			if(fi.getScope()!=null && fi.getScope().getId().equals(scope)) 
 				return true;
@@ -161,7 +162,7 @@ public class DBConsults {
 				}
 				for (Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp> record : result) {
 					FileInfo fi = newFileInfo(ctx, domain, user, domain2,record);
-					if (!esta(domain, fi,user.getId(),ctx.getDslContext())&&(!fi.getConfidential() || (confidential && fi.getConfidential()))){
+					if (!esta(domain, fi,user.getId())&&(!fi.getConfidential() || (confidential && fi.getConfidential()))){
 						filesGwt.add(fi);
 						if(fi.getDomain().equalsIgnoreCase(domain2) || fi.getIsParent())
 							if(domain.getName().equals(domain2))
