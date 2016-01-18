@@ -504,10 +504,11 @@ public class DriveUtils implements IBlobManager {
 		if(f.getDescription() == null) f.setDescription("");
 		return f;
 	}
-	
+	static Integer cont; 
 	public static File getFile(Drive drive, Domain domain, User user, String fileId, Integer id) throws IOException, KeyStoreException, GeneralSecurityException {
 		File f = null;
-		
+		if(cont == -1)cont = 0;
+		if(cont == 1) cont = -1;
 		FileList fileList =SearchFiles.searchFilesProperties(drive, "oldDriveId",fileId);
 		if(fileList.getItems().size()>0){
 			f = fileList.getItems().get(0);
@@ -523,8 +524,21 @@ public class DriveUtils implements IBlobManager {
 			} catch (IOException e) {
 				DomainGserviceaccount g = DBConsults.getServiceAccount(domain, user);
 				Drive oldDrive = serviceInitializeOld(g);
-				f = oldDrive.files().get(fileId).execute();
-				f.setDescription("OLDRIVE");
+				try{
+					f = oldDrive.files().get(fileId).execute();
+					f.setDescription("OLDRIVE");
+				}catch(IOException e1){
+					if(cont == 0){
+						Domain domain2 = new Domain().setName(domain.getName()).setId(0);
+						DomainGserviceaccount g2 = DBConsults.getServiceAccount(domain2, user);	
+						Drive drive2 = serviceInitialize(g2);		
+						cont = 1;
+						f = getFile(drive2, domain2, user, fileId, id);
+						if(f.getDescription().equals("OLDRIVE"))
+							f.setDescription("DOMAINZEROOLDDRIVE");
+						else f.setDescription("DOMAINZERODRIVE");
+					}
+				}	
 			}
 		if(f.getDescription() == null) f.setDescription("");
 		return f;

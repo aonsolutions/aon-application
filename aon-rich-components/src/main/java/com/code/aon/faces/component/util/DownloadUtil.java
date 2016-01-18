@@ -63,13 +63,27 @@ public class DownloadUtil {
 			try {
 				String domainName = AonUtil.getDomainName();
 				Domain domain = new Domain().setName(domainName).setId(attach.getDomain());
+			
+				String domainName2 = "admin.grupoplayasol.com";
+				Integer domainId2 = 0;
+				Domain domain2 = new Domain().setName(domainName2).setId(domainId2);
+				
 				User user = new User().setLogin(AonUtil.getRemoteUser() != null ? AonUtil.getRemoteUser() : "");
+				
 				DomainGserviceaccount googleAccount = DBConsults
 						.getServiceAccount(domain,user);
+				
+				DomainGserviceaccount googleAccount2 = DBConsults
+						.getServiceAccount(domain2,user);
+				
 				Drive drive = DriveUtils.serviceInitialize(googleAccount);
 				File file = DriveUtils.getFile(drive, domain, user, attach.getDriveId(),attach.getId());
 				if(file.getDescription().equals("OLDRIVE"))
 					drive = DriveUtils.serviceInitializeOld(googleAccount);
+				else if(file.getDescription().equals("DOMAINZERODRIVE"))
+					drive = DriveUtils.serviceInitialize(googleAccount2);
+				else if(file.getDescription().equals("DOMAINZEROOLDDRIVE"))
+					drive = DriveUtils.serviceInitializeOld(googleAccount2);
 				in = DriveUtils.downloadFile(drive, file);
 				data = IOUtils.toByteArray(in);
 			} catch (KeyStoreException e) {
