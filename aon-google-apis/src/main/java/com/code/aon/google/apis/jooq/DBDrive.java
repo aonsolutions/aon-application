@@ -217,6 +217,7 @@ public class DBDrive {
 			fileInfo.setMimetype(a.getMimeType().value());
 			fileInfo.setFileId(a.getId());
 			fileInfo.setDomainId(a.getDomain().getId());
+			fileInfo.setDomain(a.getDomain().getName());
 			return fileInfo;
 		}
 	}
