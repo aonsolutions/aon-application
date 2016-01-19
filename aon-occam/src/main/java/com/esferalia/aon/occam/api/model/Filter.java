@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api.model;
 
+import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.DepartmentProperties;
 import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
@@ -56,6 +57,11 @@ public interface Filter {
 	@FunctionalInterface
 	public interface MailAccountFilter{
 		Filter filter(MailAccountProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface ContactFilter{
+		Filter filter(ContactProperties properties);
 	}
 	
 	

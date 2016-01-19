@@ -6,6 +6,8 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ISecurity;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
+import com.esferalia.aon.occam.api.model.Contact;
+import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -41,7 +43,7 @@ public class SecurityImpl implements ISecurity {
 					Configuration -> SecurityDAO.getSignature(ctx, signatureId));
 		}
 		
-	// ------------------ SIGNATURE
+	// ------------------ MAIL ACCOUNT
 
 	@Override
 	public MailAccount getMailAccount(AONContext ctx, MailAccountFilter filter) {
@@ -53,5 +55,25 @@ public class SecurityImpl implements ISecurity {
 	public LinkedList<MailAccount> getMailAccountList(AONContext ctx, MailAccountFilter filter) {
 		return ctx.getDslContext().transactionResult( 
 				configuration -> SecurityDAO.getMailAccountList(ctx, filter));
+	}
+	
+	// ------------------ CONTACT
+
+	@Override
+	public Contact getContact(AONContext ctx, ContactFilter filter) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.getContact(ctx, filter));
+	}
+
+	@Override
+	public LinkedList<Contact> getContactList(AONContext ctx, ContactFilter filter) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.getContactList(ctx, filter));
+	}
+
+	@Override
+	public String getContactEmail(AONContext ctx, Integer contactDataId) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.getContactEmail(ctx, contactDataId));
 	}
 }

@@ -1,8 +1,6 @@
 package com.esferalia.aon.gwt.document.jooq;
 
 import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
-import static com.esferalia.aon.jooq.tables.Contact.CONTACT;
-import static com.esferalia.aon.jooq.tables.ContactData.CONTACT_DATA;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
@@ -19,20 +17,16 @@ import java.util.Vector;
 
 import org.apache.commons.io.FileUtils;
 import org.jooq.Condition;
-import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.Record15;
-import org.jooq.Record16;
 import org.jooq.Record18;
 import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record7;
 import org.jooq.Result;
+import org.jooq.impl.DSL;
 
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.registry.Registry;
-import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.CategoryList;
 import com.esferalia.aon.gwt.document.shared.Contact;
@@ -48,6 +42,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.security.User;
 
 public class DBConsults {
@@ -85,7 +80,7 @@ public class DBConsults {
 				else
 					c = RATTACH.SCOPE.isNull();
 				
-				Byte sh = (byte)RegistryAttachmentType.CORPORATE_IDENTITY.ordinal();//5;
+				Byte sh = RegistryAttachmentType.CORPORATE_IDENTITY.value();//5;
 				//rattach domain + parent domain + scope not null
 				Result<Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp>> username = 
 						ctx.getDslContext()
@@ -1060,11 +1055,9 @@ public class DBConsults {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			
 			long currentDate = new java.util.Date().getTime();
-			
-			String sql = "UPDATE rattach SET category = NULL WHERE category = "+categoryId+";";
-			ctx.getDslContext().fetch(sql);
-			
+			Integer nullInteger = null;
 			ctx.getDslContext().update(RATTACH)
+					.set(RATTACH.CATEGORY, nullInteger)
 					.set(RATTACH.MODIFICATION_USER, user.getLogin())
 					.set(RATTACH.MODIFICATION_DATE, new Timestamp(currentDate))
 					.where(RATTACH.CATEGORY.eq(categoryId))
@@ -1078,80 +1071,23 @@ public class DBConsults {
 		}	
 	}
 	
-	public static com.code.aon.registry.RegistryAttachment getRegistryAttachment(Domain domain,User user, int id) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
-
-			Record16<Date, Integer, Timestamp, String, String, Integer, String, String, Integer, Byte, Timestamp, String, Integer, Integer, Byte, Byte> rattach = 
-					ctx.getDslContext().select(RATTACH.ATTACH_DATE, RATTACH.CATEGORY,
-															RATTACH.CREATION_DATE, RATTACH.CREATION_USER, RATTACH.DESCRIPTION, 
-															RATTACH.DOMAIN, RATTACH.DPARENT_ID, RATTACH.DRIVE_ID, RATTACH.ID, 
-															RATTACH.MIMETYPE, RATTACH.MODIFICATION_DATE, RATTACH.MODIFICATION_USER, 
-															RATTACH.REGISTRY, RATTACH.SCOPE,RATTACH.SECURITY_LEVEL, RATTACH.TYPE)
-					.from(RATTACH).where(RATTACH.ID.eq(id)).fetchOne();
-			com.code.aon.registry.RegistryAttachment attach = new com.code.aon.registry.RegistryAttachment();
-			
-			attach.setAttachDate(rattach.value1());
-			com.code.aon.registry.Category c = new com.code.aon.registry.Category();
-			c.setId(rattach.value2());
-			attach.setCategory(c);
-			attach.setCreationDate(rattach.value3());
-			attach.setCreationUser(rattach.value4());
-			attach.setDescription(rattach.value5());
-			attach.setDomain(rattach.value6());
-			attach.setDparentId(rattach.value7());
-			attach.setDriveId(rattach.value8());
-			attach.setId(rattach.value9());
-			attach.setMimeType(MimeType.values()[rattach.value10()]);
-			attach.setModificationDate(rattach.value11());
-			attach.setModificationUser(rattach.value12());
-			com.code.aon.registry.Registry r = new Registry();
-			r.setId(rattach.value13());
-			attach.setRegistry(r);
-			com.code.aon.config.Scope s = new com.code.aon.config.Scope();
-			s.setId(rattach.value14());
-			attach.setScope(s);
-			attach.setSecurityLevel(SecurityLevel.values()[rattach.value15()]);
-			attach.setRegistryAttachmentType(RegistryAttachmentType.values()[rattach.value16()]);
-			
-			return attach;
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-
-	}
+	
 	public static ContactList getContacts(Domain domain, User user){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
-
-			DSLContext dslContext = ctx.getDslContext();
-
-			Result<Record3<Integer, String, String>> result = dslContext.select(CONTACT.ID, CONTACT.DISPLAYNAME, CONTACT_DATA.EMAIL)
-														.from(CONTACT).join(CONTACT_DATA).on(CONTACT.CONTACT_DATA.eq(CONTACT_DATA.ID))
-														.where(CONTACT.USER_ID.eq(user.getId()).and(CONTACT.DOMAIN.eq(user.getDomain())
-																								.or(CONTACT.DOMAIN.eq(domain.getId())))).fetch();
-			
-			Vector<Contact> v = new Vector<Contact>();
-			result.stream().forEach(r->{
-				Contact c = new Contact();
-				c.setId(r.value1());
-				c.setDisplayName(r.value2());
-				c.setEmail(r.value3());
-				c.setUser_id(user.getId());
-				v.add(c);
-			});
-			ContactList cl = new ContactList();
-			cl.setList(v);
-			return cl;
-			
-		
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		LinkedList<com.esferalia.aon.occam.api.model.Contact> list = AON.getContactList(domain.getName(), domain.getId(), user.getLogin(),
+				f -> f.getUserIdProperty().eq(user.getId())
+				.and(f.getDomainProperty().eq(user.getDomain()))
+				.or(f.getDomainProperty().eq(domain.getId())));
+		Vector<Contact> vector = new Vector<Contact>();
+		for (com.esferalia.aon.occam.api.model.Contact contact : list) {
+			Contact c = new Contact();
+			c.setDisplayName(contact.getDisplayName());
+			c.setEmail(AON.getContactEmail(domain.getName(), domain.getId(), user.getLogin(), contact.getContactData()));
+			c.setUser_id(contact.getUserId());
+			c.setId(contact.getId());
+			vector.add(c);
 		}
-
+		ContactList cl = new ContactList();
+		cl.setList(vector);
+		return cl;
 	}
 }

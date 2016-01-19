@@ -118,14 +118,13 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 	
 	public List<Attach> obtainEcommerceProductTemplates(Domain domain, String sellerId){
 		Integer id = NumberUtils.isNumber(sellerId)?Integer.parseInt(sellerId):null;
-		List<Attach> list = AON.getAttachList(
+		return AON.getAttachList(
 						domain.getName(),
 						domain.getId(),
 						getUserLogin(),
 						filter -> filter.getTypeProperty().eq(RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value())
 								.and(sellerId != null ? filter.getAttachModuleProperty().eq(id): filter.getAttachModuleProperty().isNotNull()), 
 						AttachType.REGISTRY);
-		return list;
 	}
 	
 	public Attach obtainEcommerceProductAttach(Domain domain, Product product, String templateName){

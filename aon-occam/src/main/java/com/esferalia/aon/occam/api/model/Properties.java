@@ -225,4 +225,12 @@ public interface Properties {
 		Property<Byte> getTypeProperty();
 		Property<Integer> getUserIdProperty();
 	}
+	
+	public interface ContactProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getUserIdProperty();
+		Property<String> getDisplayNameProperty();
+		Property<Integer> getContactDataProperty();
+	}
 }

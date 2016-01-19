@@ -29,10 +29,12 @@ import com.esferalia.aon.occam.api.model.CommercialTracking;
 import com.esferalia.aon.occam.api.model.CommercialTrackingFilter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
+import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
@@ -2915,6 +2917,39 @@ public class AON {
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getSecurity().getMailAccountList(ctx, filter);
+		} finally{
+			if(ctx!= null) ctx.close();
+		}
+	}
+	
+	public static Contact getContact(String domainName, Integer domainId, String login
+			, ContactFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getSecurity().getContact(ctx, filter);
+		} finally{
+			if(ctx!= null) ctx.close();
+		}
+	}
+	
+	public static LinkedList<Contact> getContactList(String domainName, Integer domainId, String login
+			, ContactFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getSecurity().getContactList(ctx, filter);
+		} finally{
+			if(ctx!= null) ctx.close();
+		}
+	}
+	
+	public static String getContactEmail(String domainName, Integer domainId, String login
+			, Integer contactDataId){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getSecurity().getContactEmail(ctx, contactDataId);
 		} finally{
 			if(ctx!= null) ctx.close();
 		}

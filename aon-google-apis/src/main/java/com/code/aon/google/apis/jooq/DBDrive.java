@@ -60,7 +60,6 @@ public class DBDrive {
 				.collect(Collectors.toCollection(Vector::new));
 	}
 	
-	
 	public static Vector<FileInfo> getRegistryAttachLimit(Domain domain, User user, Vector<RegistryAttachmentType> rats,Integer firstId ){
 		
 		AONContext ctx = null;
@@ -240,12 +239,11 @@ public class DBDrive {
 	//REGISTRY ATTACH
 		
 		public static Vector<FileInfo> getRegistryAttach(Domain domain,Vector<FileInfo> attachs) {
-			LinkedList<Attach> attachList = AON.getAttachList(domain.getName(), domain.getId(), "",
+			attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
 					f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
 					.and(f.getDataProperty().isNotNull()),
-					AttachType.REGISTRY);
-			attachs.addAll(attachList.stream().map(new  AttachToFileInfo())
-			.collect(Collectors.toCollection(Vector::new)));
+					AttachType.REGISTRY).map(new  AttachToFileInfo())
+					.collect(Collectors.toCollection(Vector::new)));
 			return attachs;
 		}
 	
@@ -394,12 +392,11 @@ public class DBDrive {
 	//CONTRACT ATTACH
 		
 		public static Vector<FileInfo> getContractAttach(Domain domain,Vector<FileInfo> attachs) {
-			LinkedList<Attach> attachList = AON.getAttachList(domain.getName(), domain.getId(), "",
+			attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
 					f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
 					.and(f.getDataProperty().isNotNull()),
-					AttachType.CONTRACT);
-			attachs.addAll(attachList.stream().map(new  AttachToFileInfo())
-			.collect(Collectors.toCollection(Vector::new)));
+					AttachType.CONTRACT).map(new  AttachToFileInfo())
+					.collect(Collectors.toCollection(Vector::new)));
 			return attachs;
 		}
 
@@ -520,12 +517,11 @@ public class DBDrive {
 	//ITEM ATTACH
 		
 		public static Vector<FileInfo> getItemAttach(Domain domain,Vector<FileInfo> attachs) {
-			LinkedList<Attach> attachList = AON.getAttachList(domain.getName(), domain.getId(), "",
+			attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
 					f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
 					.and(f.getDataProperty().isNotNull()),
-					AttachType.ITEM);
-			attachs.addAll(attachList.stream().map(new  AttachToFileInfo())
-			.collect(Collectors.toCollection(Vector::new)));
+					AttachType.ITEM).map(new  AttachToFileInfo())
+					.collect(Collectors.toCollection(Vector::new)));
 			return attachs;
 		}
 		
@@ -616,12 +612,11 @@ public class DBDrive {
 	//INVOICE ATTACH
 		
 		public static Vector<FileInfo> getInvoiceAttach(Domain domain,Vector<FileInfo> attachs) {
-			LinkedList<Attach> attachList = AON.getAttachList(domain.getName(), domain.getId(), "",
+			attachs.addAll( AON.getAttachStream(domain.getName(), domain.getId(), "",
 					f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
 					.and(f.getDataProperty().isNotNull()),
-					AttachType.INVOICE);
-			attachs.addAll(attachList.stream().map(new  AttachToFileInfo())
-			.collect(Collectors.toCollection(Vector::new)));
+					AttachType.INVOICE).map(new  AttachToFileInfo())
+					.collect(Collectors.toCollection(Vector::new)));
 			return attachs;
 		}
 		
@@ -741,12 +736,11 @@ public class DBDrive {
 	//OFFER ATTACH
 		
 		public static Vector<FileInfo> getOfferAttach(Domain domain,Vector<FileInfo> attachs) {
-			LinkedList<Attach> attachList = AON.getAttachList(domain.getName(), domain.getId(), "",
+			attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
 					f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
 					.and(f.getDataProperty().isNotNull()),
-					AttachType.OFFER);
-			attachs.addAll(attachList.stream().map(new  AttachToFileInfo())
-			.collect(Collectors.toCollection(Vector::new)));
+					AttachType.OFFER).map(new  AttachToFileInfo())
+					.collect(Collectors.toCollection(Vector::new)));
 			return attachs;
 		}
 		
@@ -839,12 +833,11 @@ public class DBDrive {
 		
 		
 		public static Vector<FileInfo> getPayrollAttach(Domain domain,Vector<FileInfo> attachs) {
-			LinkedList<Attach> attachList = AON.getAttachList(domain.getName(), domain.getId(), "",
+			attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
 					f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
 					.and(f.getDataProperty().isNotNull()),
-					AttachType.PAYROLL);
-			attachs.addAll(attachList.stream().map(new  AttachToFileInfo())
-			.collect(Collectors.toCollection(Vector::new)));
+					AttachType.PAYROLL).map(new  AttachToFileInfo())
+					.collect(Collectors.toCollection(Vector::new)));
 			return attachs;
 		}
 		
@@ -937,12 +930,11 @@ public class DBDrive {
 	//PROJECT ATTACH
 		
 		public static Vector<FileInfo> getProjectAttach(Domain domain,Vector<FileInfo> attachs) {
-			LinkedList<Attach> attachList = AON.getAttachList(domain.getName(), domain.getId(), "",
+			attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
 					f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
 					.and(f.getDataProperty().isNotNull()),
-					AttachType.PROJECT);
-			attachs.addAll(attachList.stream().map(new  AttachToFileInfo())
-			.collect(Collectors.toCollection(Vector::new)));
+					AttachType.PROJECT).map(new  AttachToFileInfo())
+					.collect(Collectors.toCollection(Vector::new)));
 			return attachs;
 		}
 		
@@ -1061,12 +1053,11 @@ public class DBDrive {
 		//SEPE BATCH ATTACH
 		
 		public static Vector<FileInfo> getSepeAttach(Domain domain,Vector<FileInfo> attachs) {
-			LinkedList<Attach> attachList = AON.getAttachList(domain.getName(), domain.getId(), "",
+			attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
 					f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
 					.and(f.getDataProperty().isNotNull()),
-					AttachType.SEPE);
-			attachs.addAll(attachList.stream().map(new  AttachToFileInfo())
-			.collect(Collectors.toCollection(Vector::new)));
+					AttachType.SEPE).map(new  AttachToFileInfo())
+					.collect(Collectors.toCollection(Vector::new)));
 			return attachs;
 		}
 

@@ -12,6 +12,8 @@ import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Signature.SIGNATURE;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
+import static com.esferalia.aon.jooq.tables.Contact.CONTACT;
+import static com.esferalia.aon.jooq.tables.ContactData.CONTACT_DATA;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -20,16 +22,23 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.jooq.Condition;
+import org.jooq.Record3;
 import org.jooq.Record5;
+import org.jooq.Result;
 
+import com.esferalia.aon.jooq.tables.ContactData;
+import com.esferalia.aon.jooq.tables.records.ContactRecord;
 import com.esferalia.aon.jooq.tables.records.MailAccountRecord;
 import com.esferalia.aon.jooq.tables.records.ScopeRecord;
 import com.esferalia.aon.jooq.tables.records.SignatureRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -176,7 +185,7 @@ public class SecurityDAO {
 		}
 		// Es un usuario del dominio, por lo que es 
 		// consultar los scopes del dominio
-		if ( user.getDomain() == ctx.getDomainId() ) {
+		if ( user.getDomain() == ctx.getDomainId()) {
 			final List<Integer> list = new ArrayList<Integer>();
 			ctx.getDslContext()
 				.select(USER_SCOPE.SCOPE)
@@ -315,10 +324,54 @@ public class SecurityDAO {
 		}
 	}
 	
+	public static Contact getContact(AONContext ctx, ContactFilter filter){
+		return ctx.getDslContext().select().from(CONTACT).where(CONTACT_PROPERTIES.getConditions(filter))
+				.limit(1).fetchInto(CONTACT).stream().map(new FullContactFiller()).findFirst().orElse(new Contact());
+	}
+	
+	public static LinkedList<Contact> getContactList(AONContext ctx, ContactFilter filter){
+		return ctx.getDslContext().select().from(CONTACT).where(CONTACT_PROPERTIES.getConditions(filter))
+				.fetchInto(CONTACT).stream().map(new FullContactFiller()).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static String getContactEmail(AONContext ctx, Integer contactDataId){
+		return ctx.getDslContext().select(CONTACT_DATA.EMAIL).from(CONTACT_DATA).where(CONTACT_DATA.ID.eq(contactDataId))
+				.limit(1).fetchAny().getValue(CONTACT_DATA.EMAIL);
+	}
+	
+	private static final ContactPropertiesDAO CONTACT_PROPERTIES = new ContactPropertiesDAO();
+
+	protected static class ContactPropertiesDAO implements ContactProperties {
+		protected Condition[] getConditions(ContactFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(CONTACT.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(CONTACT.DOMAIN);}
+		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<Integer>(CONTACT.USER_ID);}
+		@Override public Property<String> getDisplayNameProperty() {return new FilterDAO.PropertyDAO<String>(CONTACT.DISPLAYNAME);}
+		@Override public Property<Integer> getContactDataProperty() {return new FilterDAO.PropertyDAO<Integer>(CONTACT.CONTACT_DATA);}
+	}
+	
+	private static class FullContactFiller implements Function<ContactRecord, Contact> {
+		@Override
+		public Contact apply(ContactRecord r) {
+			return new Contact()
+					.setId(r.getId())
+					.setDomain(r.getDomain())
+					.setUserId(r.getUserId())
+					.setDisplayName(r.getDisplayname())
+					.setContactData(r.getContactData())
+					;
+		}
+	}
+	
 	public static Integer[] getUserScopes(String domainName, int domainId,
 			Integer id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 }
 

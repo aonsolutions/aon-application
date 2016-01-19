@@ -52,12 +52,12 @@ import com.esferalia.aon.occam.api.model.type.ShipmentStatus;
 public class DBMarketplace {
 
 	public static List<EcommerceProduct> getProductTemplatesList(Domain domain, User user){
-		LinkedList<Attach> attachList = AON.getAttachList(domain.getName(), domain.getId(), user.getLogin(),
+		List<EcommerceProduct> list = new ArrayList<EcommerceProduct>();
+		AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(),
 				filter -> filter.getDomainProperty().eq(domain.getId())
 				.and(filter.getTypeProperty().eq((RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value())))
-				, AttachType.REGISTRY);
-		List<EcommerceProduct> list = new ArrayList<EcommerceProduct>();
-		attachList.stream().forEach(attach->{
+				, AttachType.REGISTRY)
+		.forEach(attach ->{
 			try {
 				EcommerceProduct ep = XMLUtils.readXml(attach.getData());
 				list.add(ep);
@@ -65,6 +65,7 @@ public class DBMarketplace {
 				e.printStackTrace();
 			}
 		});
+		
 		return list;
 	}
 	

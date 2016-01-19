@@ -504,7 +504,7 @@ public class DriveUtils implements IBlobManager {
 		if(f.getDescription() == null) f.setDescription("");
 		return f;
 	}
-	static Integer cont; 
+	static Integer cont = -1; 
 	public static File getFile(Drive drive, Domain domain, User user, String fileId, Integer id) throws IOException, KeyStoreException, GeneralSecurityException {
 		File f = null;
 		if(cont == -1)cont = 0;
