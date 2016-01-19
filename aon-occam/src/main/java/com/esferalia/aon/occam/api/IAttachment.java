@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.AttachFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -25,6 +26,15 @@ public interface IAttachment {
 	public LinkedList<Attach> getPayrollAttachList(AONContext ctx, AttachFilter filter);
 	public LinkedList<Attach> getProjectAttachList(AONContext ctx, AttachFilter filter);
 	public LinkedList<Attach> getSepeAttachList(AONContext ctx, AttachFilter filter);
+	
+	public Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter);
+	public Stream<Attach> getContractAttachStream(AONContext ctx, AttachFilter filter);
+	public Stream<Attach> getInvoiceAttachStream(AONContext ctx, AttachFilter filter);
+	public Stream<Attach> getItemAttachStream(AONContext ctx, AttachFilter filter);
+	public Stream<Attach> getOfferAttachStream(AONContext ctx, AttachFilter filter);
+	public Stream<Attach> getPayrollAttachStream(AONContext ctx, AttachFilter filter);
+	public Stream<Attach> getProjectAttachStream(AONContext ctx, AttachFilter filter);
+	public Stream<Attach> getSepeAttachStream(AONContext ctx, AttachFilter filter);
 	
 	public LinkedList<Attach> getRegistryAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp);
 	public LinkedList<Attach> getContractAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp);

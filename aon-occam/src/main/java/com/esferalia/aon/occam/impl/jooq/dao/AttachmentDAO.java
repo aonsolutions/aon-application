@@ -16,6 +16,7 @@ import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record7;
@@ -160,6 +161,55 @@ public class AttachmentDAO {
 			.select().from(SEPE_BATCH_ATTACH).where(SEPE_ATTACH_PROPERTIES.getConditions(filter))
 			.fetchInto(SEPE_BATCH_ATTACH).stream().map(new FullSepeAttachFiller(ctx))
 			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	
+	public static Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+			.select().from(RATTACH).where(RATTACH_PROPERTIES.getConditions(filter))
+			.fetchInto(RATTACH).stream().map(new FullRattachFiller(ctx));
+	}
+	
+	public static Stream<Attach> getContractAttachStream(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+			.select().from(CONTRACT_ATTACH).where(CONTRACT_ATTACH_PROPERTIES.getConditions(filter))
+			.fetchInto(CONTRACT_ATTACH).stream().map(new FullContractAttachFiller(ctx));
+	}
+	
+	public static Stream<Attach> getInvoiceAttachStream(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+			.select().from(INVOICE_ATTACH).where(INVOICE_ATTACH_PROPERTIES.getConditions(filter))
+			.fetchInto(INVOICE_ATTACH).stream().map(new FullInvoiceAttachFiller(ctx));
+	}
+	
+	public static Stream<Attach> getItemAttachStream(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+			.select().from(IATTACH).where(IATTACH_PROPERTIES.getConditions(filter))
+			.fetchInto(IATTACH).stream().map(new FullItemAttachFiller(ctx));
+	}
+	
+	public static Stream<Attach> getOfferAttachStream(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+			.select().from(OFFER_ATTACH).where(OFFER_ATTACH_PROPERTIES.getConditions(filter))
+			.fetchInto(OFFER_ATTACH).stream().map(new FullOfferAttachFiller(ctx));
+	}
+	
+	public static Stream<Attach> getPayrollAttachStream(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+			.select().from(PAYROLL_BATCH_ATTACH).where(PAYROLL_ATTACH_PROPERTIES.getConditions(filter))
+			.fetchInto(PAYROLL_BATCH_ATTACH).stream().map(new FullPayrollAttachFiller(ctx));
+	}
+	
+	public static Stream<Attach> getProjectAttachStream(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+			.select().from(PROJECT_ATTACH).where(PROJECT_ATTACH_PROPERTIES.getConditions(filter))
+			.fetchInto(PROJECT_ATTACH).stream().map(new FullProjectAttachFiller(ctx));
+	}
+	
+	public static Stream<Attach> getSepeAttachStream(AONContext ctx, AttachFilter filter){	
+		return ctx.getDslContext()
+			.select().from(SEPE_BATCH_ATTACH).where(SEPE_ATTACH_PROPERTIES.getConditions(filter))
+			.fetchInto(SEPE_BATCH_ATTACH).stream().map(new FullSepeAttachFiller(ctx));
 	}
 	
 	

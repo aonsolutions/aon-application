@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IAttachment;
@@ -101,6 +102,49 @@ public class AttachmentImpl implements IAttachment{
 	}
 	
 
+	@Override
+	public Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getRegistryAttachStream(ctx, filter));
+	}
+	@Override
+	public Stream<Attach> getContractAttachStream(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getContractAttachStream(ctx, filter));
+	}
+	@Override
+	public Stream<Attach> getInvoiceAttachStream(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getInvoiceAttachStream(ctx, filter));
+	}
+	@Override
+	public Stream<Attach> getItemAttachStream(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getItemAttachStream(ctx, filter));
+	}
+	@Override
+	public Stream<Attach> getOfferAttachStream(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getOfferAttachStream(ctx, filter));
+	}
+	@Override
+	public Stream<Attach> getPayrollAttachStream(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getPayrollAttachStream(ctx, filter));
+	}
+	@Override
+	public Stream<Attach> getProjectAttachStream(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getProjectAttachStream(ctx, filter));
+	}
+	@Override
+	public Stream<Attach> getSepeAttachStream(AONContext ctx, AttachFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getSepeAttachStream(ctx, filter));
+	}
+	
+	
+	
 	@Override
 	public LinkedList<Attach> getRegistryAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp) {
 		return 	ctx.getDslContext().transactionResult(

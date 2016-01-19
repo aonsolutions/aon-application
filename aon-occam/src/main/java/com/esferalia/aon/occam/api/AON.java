@@ -2184,6 +2184,35 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static Stream<Attach> getAttachStream(String domainName, Integer domainId, String login,
+			AttachFilter filter, AttachType attachType) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+
+			if (attachType.equals(AttachType.REGISTRY))
+				return getAttachment().getRegistryAttachStream(ctx, filter);
+			else if (attachType.equals(AttachType.CONTRACT))
+				return getAttachment().getContractAttachStream(ctx, filter);
+			else if (attachType.equals(AttachType.INVOICE))
+				return getAttachment().getInvoiceAttachStream(ctx, filter);
+			else if (attachType.equals(AttachType.ITEM))
+				return getAttachment().getItemAttachStream(ctx, filter);
+			else if (attachType.equals(AttachType.OFFER))
+				return getAttachment().getOfferAttachStream(ctx, filter);
+			else if (attachType.equals(AttachType.PAYROLL))
+				return getAttachment().getPayrollAttachStream(ctx, filter);
+			else if (attachType.equals(AttachType.PROJECT))
+				return getAttachment().getProjectAttachStream(ctx, filter);
+			else if (attachType.equals(AttachType.SEPE))
+				return getAttachment().getSepeAttachStream(ctx, filter);
+			return null;
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	public static LinkedList<Attach> getAttachList(String domainName,
 			Integer domainId, String login, AttachFilter filter,
