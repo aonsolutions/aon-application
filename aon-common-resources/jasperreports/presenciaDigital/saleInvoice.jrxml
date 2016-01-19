@@ -50,6 +50,7 @@
 		<field name="amount" class="java.lang.Double"/>
 		<field name="negotiableDocument" class="java.lang.Boolean"/>
 	</subDataset>
+	<scriptlet name="invoiceReportScriptlet" class="com.code.aon.ui.finance.util.print.InvoiceReportScriptlet"/>
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
@@ -533,7 +534,8 @@
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement uuid="8c0db60c-7eee-4a47-ae14-88d9db573491" key="textField-54" positionType="Float" x="21" y="120" width="66" height="15" forecolor="#007A97">
-					<printWhenExpression><![CDATA[new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintProject() &&
+new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -549,7 +551,8 @@
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="dc9d4815-a816-43fb-b523-6496f07856d3" key="textField-53" positionType="Float" x="87" y="120" width="423" height="15" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintProject() &&
+new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

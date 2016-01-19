@@ -75,7 +75,6 @@
 		<field name="negotiableDocument" class="java.lang.Boolean"/>
 	</subDataset>
 	<scriptlet name="invoiceReportScriptlet" class="com.code.aon.ui.finance.util.print.InvoiceReportScriptlet"/>
-	<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>	
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="logoImageFile" class="java.io.InputStream"/>

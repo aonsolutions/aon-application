@@ -21,7 +21,6 @@
 			<variableExpression><![CDATA[$F{taxableBase}]]></variableExpression>
 		</variable>
 	</subDataset>
-	<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>	
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
