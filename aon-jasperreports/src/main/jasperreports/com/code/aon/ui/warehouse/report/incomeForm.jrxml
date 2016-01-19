@@ -31,6 +31,7 @@
 		<field name="description" class="java.lang.String"/>
 		<field name="itemSupplierCode" class="java.lang.String"/>
 	</subDataset>
+	<scriptlet name="reportScriptlet" class="com.code.aon.ui.company.util.ReportScriptlet"/>
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
 	<parameter name="nestedReports" class="java.util.Map"/>
@@ -410,7 +411,8 @@
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement uuid="8427b410-8dd3-4219-9b2a-db6a2d9b3937" key="textField-54" positionType="Float" mode="Transparent" x="2" y="72" width="69" height="15" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.isPrintProject() &&
+new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -426,7 +428,8 @@
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
 				<reportElement uuid="f05628d1-8510-4add-aeb1-e1d54ccf6603" key="textField-53" positionType="Float" mode="Transparent" x="71" y="72" width="317" height="15" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.isPrintProject() &&
+new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

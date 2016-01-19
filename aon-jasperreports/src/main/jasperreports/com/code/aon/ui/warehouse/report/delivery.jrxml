@@ -4,11 +4,11 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="57"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<scriptlet name="deliveryReportScriptlet" class="com.code.aon.ui.warehouse.util.print.DeliveryReportScriptlet"/>
+	<scriptlet name="reportScriptlet" class="com.code.aon.ui.company.util.ReportScriptlet"/>
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
 	<parameter name="nestedReports" class="java.util.Map"/>
@@ -126,7 +126,7 @@
 			</line>
 			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle" isUsingCache="true" onErrorType="Blank">
 				<reportElement uuid="17c43d98-8048-41a7-bd98-e3834fb670a2" key="image-1" positionType="Float" mode="Opaque" x="1" y="0" width="535" height="802" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$P{deliveryReportScriptlet_SCRIPTLET}.getBackgroundFile()!=null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.getDeliveryBackgroundFile()!=null]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -135,7 +135,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<graphicElement fill="Solid"/>
-				<imageExpression><![CDATA[$P{deliveryReportScriptlet_SCRIPTLET}.getBackgroundFile()]]></imageExpression>
+				<imageExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.getDeliveryBackgroundFile()]]></imageExpression>
 			</image>
 		</band>
 	</background>
@@ -445,7 +445,8 @@
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement uuid="1bc39494-dce2-4ad3-a664-5bca79a7a657" key="textField-54" positionType="Float" mode="Transparent" x="0" y="205" width="70" height="15" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.isPrintProject() &&
+new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -461,7 +462,8 @@
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
 				<reportElement uuid="ae68809a-757f-48d7-bfbc-c4efae196ee2" key="textField-53" positionType="Float" mode="Transparent" x="70" y="205" width="465" height="15" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.isPrintProject() &&
+new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

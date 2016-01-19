@@ -1,12 +1,9 @@
 package com.code.aon.ui.finance.util.print;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 
-import net.sf.jasperreports.engine.JRDefaultScriptlet;
 import net.sf.jasperreports.engine.JRScriptletException;
 
 import org.apache.commons.lang.StringUtils;
@@ -22,11 +19,10 @@ import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.registry.RecordData;
 import com.code.aon.ui.common.ICommonMessages;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.company.util.ReportScriptlet;
 import com.code.aon.ui.util.AonUtil;
 
-public class InvoiceReportScriptlet extends JRDefaultScriptlet implements Serializable {
+public class InvoiceReportScriptlet extends ReportScriptlet implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -36,58 +32,8 @@ public class InvoiceReportScriptlet extends JRDefaultScriptlet implements Serial
 	
 	private static final String INVOICE_FOOTER_TEXT = "invoiceFooterText";
 	
-	private CompanyController getCompanyController(){
-		return (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-	}
-	
-	public InputStream getLogoFile(){
-		try {
-			return getCompanyController().getAttachAsInputStream();
-		} catch (ManagerBeanException e) {
-			String msg = "ERROR: imposible obtener los datos de la factura al generar su informe";
-			LOGGER.error(msg,e);
-		} catch (IOException e) {
-			String msg = "ERROR: imposible obtener los datos de la factura al generar su informe";
-			LOGGER.error(msg,e);
-		}
-		return null;
-	}
-	
-	public InputStream getSignatureFile(){
-		try {
-			return getCompanyController().getSignatureAttachAsInputStream();
-		} catch (ManagerBeanException e) {
-			String msg = "ERROR: imposible obtener los datos de la factura al generar su informe";
-			LOGGER.error(msg,e);
-		} catch (IOException e) {
-			String msg = "ERROR: imposible obtener los datos de la factura al generar su informe";
-			LOGGER.error(msg,e);
-		}
-		return null;
-	}
-	
 	public InputStream getBackgroundFile(){
-		byte[] data = getCompanyController().getSaleInvoiceBackgroundFile().getData();
-		if(data != null && data.length>0){
-			return new ByteArrayInputStream(data);
-		}
-		return null;
-	}
-	
-	public boolean isPrintHeader() {
-		return getCompanyController().isPrintHeader();
-	}
-
-	public boolean isPrintLogo() {
-		return getCompanyController().isPrintLogo();
-	}
-	
-	public boolean isPrintRecordData() {
-		return getCompanyController().isPrintRecordData();
-	}
-	
-	public boolean isPrintProject() {
-		return getCompanyController().isPrintProject();
+		return this.getSaleInvoiceBackgroundFile();
 	}
 	
 	public ReportPrintOption getPrintName() {

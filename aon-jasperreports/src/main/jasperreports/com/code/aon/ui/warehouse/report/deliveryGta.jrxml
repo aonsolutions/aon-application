@@ -4,11 +4,11 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="77"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<scriptlet name="deliveryReportScriptlet" class="com.code.aon.ui.warehouse.util.print.DeliveryReportScriptlet"/>
+	<scriptlet name="reportScriptlet" class="com.code.aon.ui.company.util.ReportScriptlet"/>
 	<parameter name="GTA_RESOURCE_BUNDLE" class="java.util.ResourceBundle"/>
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
@@ -92,7 +92,7 @@
 			</line>
 			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle" isUsingCache="true" onErrorType="Blank">
 				<reportElement uuid="8816671a-f2e5-4393-876f-417474aa07c3" key="image-1" positionType="Float" mode="Opaque" x="0" y="0" width="535" height="802" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$P{deliveryReportScriptlet_SCRIPTLET}.getBackgroundFile()!=null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.getDeliveryBackgroundFile()!=null]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -101,7 +101,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<graphicElement fill="Solid"/>
-				<imageExpression><![CDATA[$P{deliveryReportScriptlet_SCRIPTLET}.getBackgroundFile()]]></imageExpression>
+				<imageExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.getDeliveryBackgroundFile()]]></imageExpression>
 			</image>
 		</band>
 	</background>
