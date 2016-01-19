@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,7 +35,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.hamcrest.core.Is;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
@@ -61,7 +61,6 @@ import com.esferalia.aon.payroll.tgss.creta.TrabajadoresTramos;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.ibm.icu.util.Calendar;
 
 import net.aonsolutions.tgss.creta.jaxb.Dato;
 import net.aonsolutions.tgss.creta.jaxb.DatoSolicitado;
