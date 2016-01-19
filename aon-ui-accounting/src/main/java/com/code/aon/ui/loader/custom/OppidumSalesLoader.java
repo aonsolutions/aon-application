@@ -188,7 +188,10 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
         			String serie = obtainInvoiceSeries(invoiceNumber);
         			String num = obtainInvoiceNumber(invoiceNumber);
         			Date invoiceDate = getDateCellValue(row.getCell(headers.indexOf(INVOICE_DATE)));
-        			String bankAccount = getStringCellValue(row.getCell(headers.indexOf(INVOICE_BANK_ACCOUNT)));
+        			String bankAccount = null;
+        			if(headers.contains(INVOICE_BANK_ACCOUNT)){
+        				bankAccount = getStringCellValue(row.getCell(headers.indexOf(INVOICE_BANK_ACCOUNT)));
+        			}
         			double vatPercent = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_VAT_PERCENT)));
         			double vatBase = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_VAT_BASE)));
         			double vatAmount = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_VAT_AMOUNT)));
@@ -236,7 +239,7 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 					writer.print(CommonUtil.round(baseGastosGestionCobro) + "|");
 					writer.print(CommonUtil.round(vatPercent) + "|");
 					writer.print(CommonUtil.round(baseGastosGestionCobro * vatPercent / 100) + "|");
-					writer.print("769000000|");
+					writer.print("606000001|");
 					
 					writer.print(CommonUtil.round(invoiceTotal) + "|");
 					writer.print(getFormatBankAccount(bankAccount));
@@ -275,21 +278,23 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 	}
 	
 	private String getFormatBankAccount(String bankAccount) {
-		matcher = ibanPattern.matcher(bankAccount);
-		if(matcher.matches()){
-			return bankAccount;
-		}
-		matcher = cccPattern.matcher(bankAccount);
-		String match = null;
-		while (matcher.find()) {
-			match = matcher.group(1);
-			match += matcher.group(2);
-		}
-		if(match!=null){
-			while(match.length()<20){
-				match += 0;
+		if(bankAccount!=null){
+			matcher = ibanPattern.matcher(bankAccount);
+			if(matcher.matches()){
+				return bankAccount;
 			}
-			return match.substring(0, 4) + "." + match.substring(4, 8) + "." + match.substring(8, 10) + "." + match.substring(10, 20);
+			matcher = cccPattern.matcher(bankAccount);
+			String match = null;
+			while (matcher.find()) {
+				match = matcher.group(1);
+				match += matcher.group(2);
+			}
+			if(match!=null){
+				while(match.length()<20){
+					match += 0;
+				}
+				return match.substring(0, 4) + "." + match.substring(4, 8) + "." + match.substring(8, 10) + "." + match.substring(10, 20);
+			}
 		}
 		return "";
 	}
