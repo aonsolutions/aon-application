@@ -1,7 +1,10 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.CRETA_RESPUESTA;
+import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS;
 import static java.lang.String.format;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +15,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,10 +34,20 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.hamcrest.core.Is;
+
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.tgss.creta.Bases;
 import com.esferalia.aon.payroll.tgss.creta.Bases.BasesCallback;
@@ -45,7 +59,9 @@ import com.esferalia.aon.payroll.tgss.creta.DBA;
 import com.esferalia.aon.payroll.tgss.creta.IndentXMLStreamWriter;
 import com.esferalia.aon.payroll.tgss.creta.TrabajadoresTramos;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.ibm.icu.util.Calendar;
 
 import net.aonsolutions.tgss.creta.jaxb.Dato;
 import net.aonsolutions.tgss.creta.jaxb.DatoSolicitado;
@@ -60,18 +76,16 @@ import net.aonsolutions.tgss.creta.jaxb.bases.TramoBuilder;
 @MultipartConfig
 @SuppressWarnings("serial")
 @WebServlet(name = "SLD-Solicitud", urlPatterns = { "/aon_gwt_payroll/sdl/*" })
-public class CretaServlet extends HttpServlet implements
-		CretaService.File.Visitor<HttpServletRequest, HttpServletResponse, Exception> {
+public class CretaServlet extends HttpServlet
+		implements CretaService.File.Visitor<HttpServletRequest, HttpServletResponse, Exception> {
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		doPost(req, resp);
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 		String uri = req.getRequestURI();
 		String fichero = AonServletUtils.getFileName(uri);
@@ -95,14 +109,12 @@ public class CretaServlet extends HttpServlet implements
 	// Exception>
 
 	@Override
-	public void visitBases(HttpServletRequest req, HttpServletResponse resp)
-			throws Exception {
+	public void visitBases(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
 		Connection connection = getConnection();
 		resp.setContentType("text/html;");
 
-		String nafs[] = req
-				.getParameterValues(CretaService.Parameter.NAFS.name());
+		String nafs[] = req.getParameterValues(CretaService.Parameter.NAFS.name());
 		// String defaults[] = req
 		// .getParameterValues(CretaService.Parameter.DEFAULTS.name());
 		// boolean comments = AonStringUtils.equalsIgnoreCase(
@@ -114,13 +126,11 @@ public class CretaServlet extends HttpServlet implements
 		List<String> defaultsList = new ArrayList<String>();
 		defaultsList.addAll(Arrays.asList("51=M", "737=0"));
 
-		String paramDefaults[] = req
-				.getParameterValues(CretaService.Parameter.DEFAULTS.name());
+		String paramDefaults[] = req.getParameterValues(CretaService.Parameter.DEFAULTS.name());
 		if (paramDefaults != null && paramDefaults.length > 0)
 			defaultsList.addAll(Arrays.asList(paramDefaults));
 
-		String defaults[] = defaultsList
-				.toArray(new String[defaultsList.size()]);
+		String defaults[] = defaultsList.toArray(new String[defaultsList.size()]);
 
 		EventsPickerBasesCallback pickerBasesCb = new EventsPickerBasesCallback();
 
@@ -132,8 +142,7 @@ public class CretaServlet extends HttpServlet implements
 		List<InputStream> trabajadoresYTramosIss = new ArrayList<InputStream>();
 		for (Part part : req.getParts()) {
 			try {
-				CretaService.File file = CretaService.File
-						.valueOf(part.getName());
+				CretaService.File file = CretaService.File.valueOf(part.getName());
 				if (file == CretaService.File.TRABAJADORES_TRAMOS)
 					trabajadoresYTramosIss.add(part.getInputStream());
 				else if (file == CretaService.File.RESPUESTA)
@@ -144,11 +153,9 @@ public class CretaServlet extends HttpServlet implements
 		}
 
 		try {
-			os.printf("\"full_bases\":\"%s\",\r\n",
-					generateBases(connection, true, false, false, nafs,
-							defaults, trabajadoresYTramosIss, respuestasIss,
-							pickerBasesCb));
-		}catch (EmptyBasesException e) {
+			os.printf("\"full_bases\":\"%s\",\r\n", generateBases(connection, true, false, false, nafs, defaults,
+					trabajadoresYTramosIss, respuestasIss, pickerBasesCb));
+		} catch (EmptyBasesException e) {
 			os.printf("\"full_bases\":\"\",\r\n");
 		}
 
@@ -156,8 +163,7 @@ public class CretaServlet extends HttpServlet implements
 		trabajadoresYTramosIss.clear();
 		for (Part part : req.getParts()) {
 			try {
-				CretaService.File file = CretaService.File
-						.valueOf(part.getName());
+				CretaService.File file = CretaService.File.valueOf(part.getName());
 				if (file == CretaService.File.TRABAJADORES_TRAMOS)
 					trabajadoresYTramosIss.add(part.getInputStream());
 				else if (file == CretaService.File.RESPUESTA)
@@ -169,25 +175,21 @@ public class CretaServlet extends HttpServlet implements
 
 		NoDiffsBasesCallback noDiffsBasesCb = new NoDiffsBasesCallback() {
 			@Override
-			public void noDiffs(
-					net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
+			public void noDiffs(net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
 				super.noDiffs(liquidacion);
 				pickerBasesCb.noDiffs(liquidacion);
 			}
 		};
 		try {
-			os.printf("\"diff_bases\":\"%s\",\r\n",
-					generateBases(connection, true, true, true, nafs, defaults,
-							trabajadoresYTramosIss, respuestasIss,
-							noDiffsBasesCb));
+			os.printf("\"diff_bases\":\"%s\",\r\n", generateBases(connection, true, true, true, nafs, defaults,
+					trabajadoresYTramosIss, respuestasIss, noDiffsBasesCb));
 		} catch (EmptyBasesException e) {
-			os.printf("\"draft_request\":\"%s\",\r\n", generateBorrador(
-					e.getAutorizado(), noDiffsBasesCb.getMeses(),
-					noDiffsBasesCb.getAnhos(), noDiffsBasesCb.getTipos(),
-					noDiffsBasesCb.getAceptarBasesAnteriores(),
-					noDiffsBasesCb.getCCCs()));
+			os.printf("\"draft_request\":\"%s\",\r\n",
+					generateBorrador(e.getAutorizado(), noDiffsBasesCb.getMeses(), noDiffsBasesCb.getAnhos(),
+							noDiffsBasesCb.getTipos(), noDiffsBasesCb.getAceptarBasesAnteriores(),
+							noDiffsBasesCb.getCCCs()));
 		}
-		
+
 		os.printf("\"errors\":%s,\r\n", toJSON(pickerBasesCb.errors));
 
 		os.printf("\"unknown\":%s,\r\n", toJSON(pickerBasesCb.unknown));
@@ -204,121 +206,82 @@ public class CretaServlet extends HttpServlet implements
 	}
 
 	@Override
-	public void visitSolicitudBorrador(HttpServletRequest req,
-			HttpServletResponse resp) throws Exception {
+	public void visitSolicitudBorrador(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		resp.setContentType("text/xml;");
 		String mes = req.getParameter(CretaService.Parameter.MES.name());
 		String anho = req.getParameter(CretaService.Parameter.ANHO.name());
 		String tipo = req.getParameter(CretaService.Parameter.TIPO.name());
-		String cccs[] = req
-				.getParameterValues(CretaService.Parameter.CCC.name());
-		String autorizado = req
-				.getParameter(CretaService.Parameter.AUTORIZADO.name());
+		String cccs[] = req.getParameterValues(CretaService.Parameter.CCC.name());
+		String autorizado = req.getParameter(CretaService.Parameter.AUTORIZADO.name());
 		boolean aceptarBasesAnteriores = AonStringUtils.equalsIgnoreCase("on",
-				req.getParameter(CretaService.Parameter.ACEPTAR_BASES_ANTERIORES
-						.name()));
-		Borrador.generate(autorizado, mes, anho, tipo, aceptarBasesAnteriores,
-				cccs, resp.getOutputStream());
+				req.getParameter(CretaService.Parameter.ACEPTAR_BASES_ANTERIORES.name()));
+		Borrador.generate(autorizado, mes, anho, tipo, aceptarBasesAnteriores, cccs, resp.getOutputStream());
 	}
 
 	@Override
-	public void visitSolicitudConfirmacion(HttpServletRequest req,
-			HttpServletResponse resp) throws Exception {
+	public void visitSolicitudConfirmacion(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		resp.setContentType("text/xml;");
 		String mes = req.getParameter(CretaService.Parameter.MES.name());
 		String anho = req.getParameter(CretaService.Parameter.ANHO.name());
 		String tipo = req.getParameter(CretaService.Parameter.TIPO.name());
-		String cccs[] = req
-				.getParameterValues(CretaService.Parameter.CCC.name());
-		String autorizado = req
-				.getParameter(CretaService.Parameter.AUTORIZADO.name());
-		Confirmacion.generate(autorizado, mes, anho, tipo, cccs,
-				resp.getOutputStream());
+		String cccs[] = req.getParameterValues(CretaService.Parameter.CCC.name());
+		String autorizado = req.getParameter(CretaService.Parameter.AUTORIZADO.name());
+		Confirmacion.generate(autorizado, mes, anho, tipo, cccs, resp.getOutputStream());
 	}
 
 	@Override
-	public void visitSolicitudCalculos(HttpServletRequest req,
-			HttpServletResponse resp) throws Exception {
+	public void visitSolicitudCalculos(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		resp.setContentType("text/xml;");
 		String mes = req.getParameter(CretaService.Parameter.MES.name());
 		String anho = req.getParameter(CretaService.Parameter.ANHO.name());
 		String tipo = req.getParameter(CretaService.Parameter.TIPO.name());
-		String cccs[] = req
-				.getParameterValues(CretaService.Parameter.CCC.name());
-		String autorizado = req
-				.getParameter(CretaService.Parameter.AUTORIZADO.name());
-		Calculo.generate(autorizado, mes, anho, tipo, cccs,
-				resp.getOutputStream());
+		String cccs[] = req.getParameterValues(CretaService.Parameter.CCC.name());
+		String autorizado = req.getParameter(CretaService.Parameter.AUTORIZADO.name());
+		Calculo.generate(autorizado, mes, anho, tipo, cccs, resp.getOutputStream());
 	}
 
 	@Override
-	public void visitSolicitudTrabajadoresTramos(HttpServletRequest req,
-			HttpServletResponse resp) throws Exception {
+	public void visitSolicitudTrabajadoresTramos(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		resp.setContentType("text/xml;");
 		String mes = req.getParameter(CretaService.Parameter.MES.name());
 		String anho = req.getParameter(CretaService.Parameter.ANHO.name());
 		String tipo = req.getParameter(CretaService.Parameter.TIPO.name());
-		String cccs[] = req
-				.getParameterValues(CretaService.Parameter.CCC.name());
-		String autorizado = req
-				.getParameter(CretaService.Parameter.AUTORIZADO.name());
-		TrabajadoresTramos.generate(autorizado, mes, anho, tipo, cccs,
-				resp.getOutputStream());
+		String cccs[] = req.getParameterValues(CretaService.Parameter.CCC.name());
+		String autorizado = req.getParameter(CretaService.Parameter.AUTORIZADO.name());
+		TrabajadoresTramos.generate(autorizado, mes, anho, tipo, cccs, resp.getOutputStream());
 	}
 
 	@Override
-	public void visitTrabajadoresTramos(HttpServletRequest req,
-			HttpServletResponse resp) throws Exception {
+	public void visitTrabajadoresTramos(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
 		PrintWriter os = resp.getWriter();
 
 		os.println("<html>");
 		os.println("<body>");
 		os.println("<script>");
-		os.println("parent.__onTrabajadoresYTramos(");
-
-		os.println(
+		
+		
 		//@formatter:off
-		req.getParts()
-		.stream()
-		.map(part->unmarshall(net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class, part))
-		.filter(optional->optional.isPresent())
-		.map(optional->optional.get())
-		.peek(t -> {})
-		.sorted(CretaServlet::compare)
-		.map(t->String.format("{\"name\":\"%s\",%s,\"file\":\"%s\"}\r\n", CretaService.File.TRABAJADORES_TRAMOS ,toJSON(t.getLiquidacion()), marshall(t)))
-		.collect(Collectors.joining(",", "[", "]"))
-		//@formatter:on
+		__onTrabajadoresYTramos(os, 
+				Stream.concat(
+					req.getParts().stream()
+					.map(part -> unmarshall(net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class, part))
+					.filter(optional -> optional.isPresent())
+					.map(optional -> optional.get())
+					.peek(t -> {saveTrabajadoresYTramos(req, t);}),
+					findTrabajadoresYTramos(req)
+				),
+				Stream.concat(
+					req.getParts().stream()
+					.map(part -> unmarshall(net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta.class, part))
+					.filter(optional -> optional.isPresent())
+					.map(optional -> optional.get())
+					.peek(r -> {saveRespuesta(req, r);}),
+					findRespuestas(req)
+				)
 		);
-
-		os.println(",");
-
-		os.println("[");
-		os.println(
-		//@formatter:off
-		req.getParts()
-		.stream()
-		.map(part->unmarshall(net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta.class, part))
-		.filter(optional->optional.isPresent())
-		.map(optional->optional.get())
-		.map(r-> r.getLiquidacion()
-				.stream()
-				.map(l-> String.format("{\"name\":\"%s\",%s,\"errors\":[%s],\"employees\":[%s],\"file\":\"%s\"}\r\n", 
-										CretaService.File.RESPUESTA,
-										toJSON(l), 
-										toJSON(l.getErrores()),
-										toJSON(l.getLiquidacionMes().stream()),
-										marshall(r)
-						)
-					)
-				.collect(Collectors.joining(","))
-			)
-		.collect(Collectors.joining(","))
 		//@formatter:on
-		);
-		os.println("]");
-
-		os.println(");");
+		
 		os.println("</script>");
 		os.println("</body>");
 		os.println("</html>");
@@ -329,92 +292,69 @@ public class CretaServlet extends HttpServlet implements
 	}
 
 	@Override
-	public void visitRespuesta(HttpServletRequest t, HttpServletResponse l)
-			throws Exception {
+	public void visitRespuesta(HttpServletRequest t, HttpServletResponse l) throws Exception {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
-	public void visitComunicacionDatosBancarios(HttpServletRequest req,
-			HttpServletResponse resp) throws Exception {
+	public void visitComunicacionDatosBancarios(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		resp.setContentType("text/xml;");
-		
-		String autorizado = req
-				.getParameter(CretaService.Parameter.AUTORIZADO.name());
-		String cccs[] = req
-				.getParameterValues(CretaService.Parameter.CCC.name());
-		String tipoMoviento = req
-				.getParameter(CretaService.Parameter.TIPO_MOVIMIENTO.name());
-		String tipoAccion = req
-				.getParameter(CretaService.Parameter.TIPO_ACCION.name());
-		String iban = req
-				.getParameter(CretaService.Parameter.IBAN.name());
-		String titular = req
-				.getParameter(CretaService.Parameter.TITULAR.name());
-		String documento = AonStringUtils.leftPad(req
-				.getParameter(CretaService.Parameter.DOCUMENTO.name()), 10, '0');
-		String tipoDocumento = req
-				.getParameter(CretaService.Parameter.TIPO_DOCUMENTO.name());
-		
-		//@formatter:off
-		DBA.generate(
-				autorizado, 
-				cccs, 
-				tipoMoviento, 
-				tipoAccion, 
-				iban, 
-				titular, 
-				documento, 
-				tipoDocumento, 
+
+		String autorizado = req.getParameter(CretaService.Parameter.AUTORIZADO.name());
+		String cccs[] = req.getParameterValues(CretaService.Parameter.CCC.name());
+		String tipoMoviento = req.getParameter(CretaService.Parameter.TIPO_MOVIMIENTO.name());
+		String tipoAccion = req.getParameter(CretaService.Parameter.TIPO_ACCION.name());
+		String iban = req.getParameter(CretaService.Parameter.IBAN.name());
+		String titular = req.getParameter(CretaService.Parameter.TITULAR.name());
+		String documento = AonStringUtils.leftPad(req.getParameter(CretaService.Parameter.DOCUMENTO.name()), 10, '0');
+		String tipoDocumento = req.getParameter(CretaService.Parameter.TIPO_DOCUMENTO.name());
+
+		// @formatter:off
+		DBA.generate(autorizado, cccs, tipoMoviento, tipoAccion, iban, titular, documento, tipoDocumento,
 				resp.getOutputStream());
-		//@formatter:on
+		// @formatter:on
 	}
 
 	// ------------------------------------------------------------------------
 
-	private static String generateBases(Connection connection, boolean comments,
-			boolean skipExisting, boolean acceptPrevBases, String nafs[],
-			String defaults[], InputStream is, BasesCallback... cbs)
-					throws EmptyBasesException, JAXBException,
-					XMLStreamException, FactoryConfigurationError, IOException {
+	private static String generateBases(Connection connection, boolean comments, boolean skipExisting,
+			boolean acceptPrevBases, String nafs[], String defaults[], InputStream is, BasesCallback... cbs)
+					throws EmptyBasesException, JAXBException, XMLStreamException, FactoryConfigurationError,
+					IOException {
 
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		Bases.generate(connection, comments, skipExisting, acceptPrevBases,
-				nafs, defaults, is, null /* respuestaIs */, os, cbs);
+		Bases.generate(connection, comments, skipExisting, acceptPrevBases, nafs, defaults, is, null /* respuestaIs */,
+				os, cbs);
 		os.close();
 		return String.format("%s", URLEncoder.encode(os.toString(), "UTF-8"));
 
 	}
 
-	private static String generateBases(Connection connection, boolean comments,
-			boolean skipExisting, boolean acceptPrevBases, String nafs[],
-			String defaults[], List<InputStream> trabajadoresYTramosIss,
-			List<InputStream> respuestasIss, BasesCallback... cbs)
-					throws EmptyBasesException, JAXBException,
+	private static String generateBases(Connection connection, boolean comments, boolean skipExisting,
+			boolean acceptPrevBases, String nafs[], String defaults[], List<InputStream> trabajadoresYTramosIss,
+			List<InputStream> respuestasIss, BasesCallback... cbs) throws EmptyBasesException, JAXBException,
 					XMLStreamException, FactoryConfigurationError, IOException {
 
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		Bases.generate(connection, comments, skipExisting, acceptPrevBases,
-				nafs, defaults, trabajadoresYTramosIss, respuestasIss, os, cbs);
+		Bases.generate(connection, comments, skipExisting, acceptPrevBases, nafs, defaults, trabajadoresYTramosIss,
+				respuestasIss, os, cbs);
 		os.close();
 
 		return String.format("%s", URLEncoder.encode(os.toString(), "UTF-8"));
 
 	}
 
-	private static String generateBorrador(String autorizado, String meses[],
-			String anhos[], String tipos[], Boolean aceptarBasesAnteriores[],
-			String cccs[]) throws JAXBException, IOException,
-					XMLStreamException, FactoryConfigurationError {
+	private static String generateBorrador(String autorizado, String meses[], String anhos[], String tipos[],
+			Boolean aceptarBasesAnteriores[], String cccs[])
+					throws JAXBException, IOException, XMLStreamException, FactoryConfigurationError {
 
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		XMLStreamWriter xsw = new IndentXMLStreamWriter(
-				XMLOutputFactory.newInstance().createXMLStreamWriter(os),
+		XMLStreamWriter xsw = new IndentXMLStreamWriter(XMLOutputFactory.newInstance().createXMLStreamWriter(os),
 				"  ") {
 
 			@Override
-			public void writeStartElement(String prefix, String localName,
-					String namespaceURI) throws XMLStreamException {
+			public void writeStartElement(String prefix, String localName, String namespaceURI)
+					throws XMLStreamException {
 				if (localName.equalsIgnoreCase("Liquidacion"))
 					beforeLiquidacion();
 				else if (localName.equalsIgnoreCase("AceptarBasesAnteriores"))
@@ -423,32 +363,21 @@ public class CretaServlet extends HttpServlet implements
 			}
 
 			public void beforeLiquidacion() throws XMLStreamException {
-				super.writeComment(
-						"\r\nNo es necesario comunicar nada nuevo respecto\r\n"
-								+ "a la informaci\u00F3n del mes anterior.\r\n");
+				super.writeComment("\r\nNo es necesario comunicar nada nuevo respecto\r\n"
+						+ "a la informaci\u00F3n del mes anterior.\r\n");
 			}
 
-			public void beforeAceptarBasesAnteriores()
-					throws XMLStreamException {
-				super.writeComment(
-						"\r\nSi se utiliza como v\u00EDa de inicio, el usuario\r\n"
-								+ "deber\u00E1 solicitar la recuperaci\u00F3n de las bases\r\n"
-								+ "del mes anterior v\u00E1lidas a efectos de c\u00E1lculo.\r\n");
+			public void beforeAceptarBasesAnteriores() throws XMLStreamException {
+				super.writeComment("\r\nSi se utiliza como v\u00EDa de inicio, el usuario\r\n"
+						+ "deber\u00E1 solicitar la recuperaci\u00F3n de las bases\r\n"
+						+ "del mes anterior v\u00E1lidas a efectos de c\u00E1lculo.\r\n");
 			}
 
 		};
 
-		//@formatter:off
-		Borrador.generate(
-				autorizado, 
-				meses, 
-				anhos, 
-				tipos, 
-				aceptarBasesAnteriores, 
-				cccs, 
-				xsw
-		);
-		//@formatter:on
+		// @formatter:off
+		Borrador.generate(autorizado, meses, anhos, tipos, aceptarBasesAnteriores, cccs, xsw);
+		// @formatter:on
 
 		os.close();
 
@@ -457,16 +386,27 @@ public class CretaServlet extends HttpServlet implements
 	}
 	// ------------------------------------------------------------------------
 
-	private static <T> String marshall(T t) {
+	private static <T> byte[] marshall(T t) {
 		try {
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			XMLStreamWriter xsw = new IndentXMLStreamWriter(
-					XMLOutputFactory.newInstance().createXMLStreamWriter(os),
+			XMLStreamWriter xsw = new IndentXMLStreamWriter(XMLOutputFactory.newInstance().createXMLStreamWriter(os),
 					"  ");
 			Utils.marshal(t, xsw);
 			os.close();
-			return String.format("%s",
-					URLEncoder.encode(os.toString(), "UTF-8"));
+			return os.toByteArray();
+		} catch (JAXBException | IOException | XMLStreamException e) {
+		}
+		return new byte[0];
+	}
+
+	private static <T> String marshallAndEncode(T t) {
+		try {
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			XMLStreamWriter xsw = new IndentXMLStreamWriter(XMLOutputFactory.newInstance().createXMLStreamWriter(os),
+					"  ");
+			Utils.marshal(t, xsw);
+			os.close();
+			return String.format("%s", URLEncoder.encode(os.toString(), "UTF-8"));
 		} catch (JAXBException | IOException | XMLStreamException e) {
 		}
 		return "";
@@ -476,68 +416,69 @@ public class CretaServlet extends HttpServlet implements
 		try {
 			return Optional.of(Utils.unmarshal(clazz, part.getInputStream()));
 		} catch (JAXBException | IOException e) {
+			
 			return Optional.empty();
 		}
 	}
 
-	private static int compare(
-			net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos t1,
+	private static <T> Optional<T> unmarshall(Class<T> clazz, byte [] bytes) {
+		InputStream is = new ByteArrayInputStream(bytes);
+		try {
+			return Optional.of(Utils.unmarshal(clazz, is));
+		} catch (JAXBException e) {
+			return Optional.empty();
+		} finally {
+			try {
+				is.close();
+			} catch (IOException e) {
+			}
+		}
+	}
+
+	private static int compare(net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos t1,
 			net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos t2) {
 		return toString(t2.getLiquidacion().getPeriodoDesde())
 				.compareTo(toString(t1.getLiquidacion().getPeriodoDesde()));
 	}
 
 	private static String toString(net.aonsolutions.tgss.creta.jaxb.Periodo p) {
-		return String.format("%s-%02d", p.getAnho(),
-				Integer.parseInt(p.getMes()));
+		return String.format("%s-%02d", p.getAnho(), Integer.parseInt(p.getMes()));
 	}
 
-	private static String toJSON(
-			net.aonsolutions.tgss.creta.jaxb.Liquidacion<?, ?, ?, ?> l) {
+	private static String toJSON(net.aonsolutions.tgss.creta.jaxb.Liquidacion<?, ?, ?, ?> l) {
 
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(String.format("\"ccc\":\"%s%s%s\",", l.getCcc().getRegimen(), l.getCcc().getProvincia(),
+				l.getCcc().getNumero()));
+		buffer.append(String.format("\"from\":\"%s\",", toString(l.getPeriodoDesde())));
+		buffer.append(String.format("\"to\":\"%s\"", toString(l.getPeriodoDesde())));
+		return buffer.toString();
+	}
+
+	private static String toJSON(net.aonsolutions.tgss.creta.jaxb.respuesta.Errores errs) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(errs.getError().stream().map(err -> String.format("{\"code\":\"%s\", \"msg\":\"%s\"}",
+				err.getCodigoErr(), safeEncode(err.getDescripcion()))).collect(Collectors.joining(",")));
+
+		errs.getError().stream().forEach(err -> System.out.println(err.getDescripcion()));
+
+		return buffer.toString();
+	}
+
+	private static String toJSON(net.aonsolutions.tgss.creta.jaxb.respuesta.Trabajadores trabajadores) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(trabajadores.getTrabajador().stream()
+				.map(trabajador -> String.format("{\"naf\":\"%s\"}", trabajador.getNaf()))
+				.collect(Collectors.joining(",")));
+
+		return buffer.toString();
+	}
+
+	private static String toJSON(Stream<net.aonsolutions.tgss.creta.jaxb.respuesta.LiquidacionMes> liquidacionesMes) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(
-				String.format("\"ccc\":\"%s%s%s\",", l.getCcc().getRegimen(),
-						l.getCcc().getProvincia(), l.getCcc().getNumero()));
-		buffer.append(String.format("\"from\":\"%s\",",
-				toString(l.getPeriodoDesde())));
-		buffer.append(
-				String.format("\"to\":\"%s\"", toString(l.getPeriodoDesde())));
-		return buffer.toString();
-	}
-
-	private static String toJSON(
-			net.aonsolutions.tgss.creta.jaxb.respuesta.Errores errs) {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(errs.getError().stream()
-				.map(err -> String.format("{\"code\":\"%s\", \"msg\":\"%s\"}",
-						err.getCodigoErr(), safeEncode(err.getDescripcion())))
-				.collect(Collectors.joining(",")));
-
-		errs.getError().stream()
-				.forEach(err -> System.out.println(err.getDescripcion()));
-
-		return buffer.toString();
-	}
-
-	private static String toJSON(
-			net.aonsolutions.tgss.creta.jaxb.respuesta.Trabajadores trabajadores) {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(trabajadores
-				.getTrabajador().stream().map(trabajador -> String
-						.format("{\"naf\":\"%s\"}", trabajador.getNaf()))
-				.collect(Collectors.joining(",")));
-
-		return buffer.toString();
-	}
-
-	private static String toJSON(
-			Stream<net.aonsolutions.tgss.creta.jaxb.respuesta.LiquidacionMes> liquidacionesMes) {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(liquidacionesMes
-				.map(liquidacionMes -> String.format("%s",
-						toJSON(liquidacionMes.getTrabajadores())))
-				.collect(Collectors.joining(",")));
+				liquidacionesMes.map(liquidacionMes -> String.format("%s", toJSON(liquidacionMes.getTrabajadores())))
+						.collect(Collectors.joining(",")));
 
 		return buffer.toString();
 	}
@@ -565,8 +506,7 @@ public class CretaServlet extends HttpServlet implements
 
 		@Override
 		public String toJSON() {
-			return String.format("{" + "\"message\":\"%s\",\r\n" + "}",
-					message);
+			return String.format("{" + "\"message\":\"%s\",\r\n" + "}", message);
 		}
 	}
 
@@ -590,11 +530,9 @@ public class CretaServlet extends HttpServlet implements
 		@Override
 		public String toJSON() {
 			return String.format(
-					"{" + "\"message\":\"%s\",\r\n" + "\"type\":\"%s\",\r\n"
-							+ "\"code\":\"%s\",\r\n" + "\"mandatory\":%s\r\n"
-							+ "}",
-					getMessage(), dato.getTipoDato(), dato.getCodigo(),
-					"B".equals(dato.getIndicadorObligatoriedad()));
+					"{" + "\"message\":\"%s\",\r\n" + "\"type\":\"%s\",\r\n" + "\"code\":\"%s\",\r\n"
+							+ "\"mandatory\":%s\r\n" + "}",
+					getMessage(), dato.getTipoDato(), dato.getCodigo(), "B".equals(dato.getIndicadorObligatoriedad()));
 		}
 
 	}
@@ -602,8 +540,7 @@ public class CretaServlet extends HttpServlet implements
 	private static class NoDiffs extends Event<NoDiffs> {
 		private net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion;
 
-		public NoDiffs setLiquidacion(
-				net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
+		public NoDiffs setLiquidacion(net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
 			this.liquidacion = liquidacion;
 			return this;
 		}
@@ -612,8 +549,7 @@ public class CretaServlet extends HttpServlet implements
 
 		@Override
 		public String toJSON() {
-			return String.format("{" + "\"message\":\"%s\",\r\n" + "}",
-					getMessage());
+			return String.format("{" + "\"message\":\"%s\",\r\n" + "}", getMessage());
 		}
 	}
 
@@ -622,52 +558,42 @@ public class CretaServlet extends HttpServlet implements
 		List<net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion> liquidaciones = new ArrayList<net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion>();
 
 		@Override
-		public void noDiffs(
-				net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
+		public void noDiffs(net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
 			liquidaciones.add(liquidacion);
 		}
 
 		// --------------------------------------------------------------------
 
 		String[] getCCCs() {
-			//@formatter:off
-			return liquidaciones.stream()
-			.map(l->l.getCcc())
-			.map(ccc->ccc.getRegimen()+ccc.getProvincia()+ccc.getNumero())
-			.toArray(String[]::new);
-			//@formatter:on
+			// @formatter:off
+			return liquidaciones.stream().map(l -> l.getCcc())
+					.map(ccc -> ccc.getRegimen() + ccc.getProvincia() + ccc.getNumero()).toArray(String[]::new);
+			// @formatter:on
 		}
 
 		String[] getTipos() {
-			//@formatter:off
-			return liquidaciones.stream()
-			.map(l->l.getTipo())
-			.toArray(String[]::new);
-			//@formatter:on
+			// @formatter:off
+			return liquidaciones.stream().map(l -> l.getTipo()).toArray(String[]::new);
+			// @formatter:on
 		}
 
 		String[] getMeses() {
-			//@formatter:off
-			return liquidaciones.stream()
-			.map(l->l.getPeriodoDesde().getMes())
-			.toArray(String[]::new);
-			//@formatter:on
+			// @formatter:off
+			return liquidaciones.stream().map(l -> l.getPeriodoDesde().getMes()).toArray(String[]::new);
+			// @formatter:on
 		}
 
 		String[] getAnhos() {
-			//@formatter:off
-			return liquidaciones.stream()
-			.map(l->l.getPeriodoDesde().getAnho())
-			.toArray(String[]::new);
-			//@formatter:on
+			// @formatter:off
+			return liquidaciones.stream().map(l -> l.getPeriodoDesde().getAnho()).toArray(String[]::new);
+			// @formatter:on
 		}
 
 		Boolean[] getAceptarBasesAnteriores() {
-			//@formatter:off
-			return liquidaciones.stream()
-			.map(l->"S".equalsIgnoreCase(l.getAceptarBasesAnteriores()))
-			.toArray(Boolean[]::new);
-			//@formatter:on
+			// @formatter:off
+			return liquidaciones.stream().map(l -> "S".equalsIgnoreCase(l.getAceptarBasesAnteriores()))
+					.toArray(Boolean[]::new);
+			// @formatter:on
 		}
 
 	}
@@ -682,11 +608,9 @@ public class CretaServlet extends HttpServlet implements
 		// ------------------------------------------------------------- Errors
 
 		@Override
-		public void unknownDato(Liquidacion<?, ?, ?, ?> liquidacion,
-				DatoSolicitado datoSolicitado,
+		public void unknownDato(Liquidacion<?, ?, ?, ?> liquidacion, DatoSolicitado datoSolicitado,
 				LiquidacionBuilder liquidacionBuilder) {
-			boolean mandatory = "B".equalsIgnoreCase(
-					datoSolicitado.getIndicadorObligatoriedad());
+			boolean mandatory = "B".equalsIgnoreCase(datoSolicitado.getIndicadorObligatoriedad());
 			String message = String.format(
 
 					"Lo sentimos. %s (%s) no está soportado en AON SOLUTIONS ( Liquidaci\u00F3n %s%s%s).",
@@ -695,132 +619,101 @@ public class CretaServlet extends HttpServlet implements
 
 					mandatory ? "Obligatorio" : "Opcional",
 
-					liquidacion.getCcc().getProvincia(),
-					liquidacion.getCcc().getRegimen(),
+					liquidacion.getCcc().getProvincia(), liquidacion.getCcc().getRegimen(),
 					liquidacion.getCcc().getNumero()
 
 			);
 
-			UnknownDato event = new UnknownDato().setMessage(message)
-					.setDato(datoSolicitado).setLiquidacion(liquidacion);
+			UnknownDato event = new UnknownDato().setMessage(message).setDato(datoSolicitado)
+					.setLiquidacion(liquidacion);
 
 			unknown.add(event);
 		}
 
 		@Override
-		public void unknownDato(Salary salary, Tramo tramo,
-				DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
+		public void unknownDato(Salary salary, Tramo tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
 
-			boolean mandatory = "B".equalsIgnoreCase(
-					datoSolicitado.getIndicadorObligatoriedad());
-			String message = String.format(
-					"Lo sentimos. %s (%s) no está soportado en AON SOLUTIONS",
-					getDescription(datoSolicitado),
-					mandatory ? "Obligatorio" : "Opcional");
+			boolean mandatory = "B".equalsIgnoreCase(datoSolicitado.getIndicadorObligatoriedad());
+			String message = String.format("Lo sentimos. %s (%s) no está soportado en AON SOLUTIONS",
+					getDescription(datoSolicitado), mandatory ? "Obligatorio" : "Opcional");
 
-			UnknownDato event = new UnknownDato().setMessage(message)
-					.setDato(datoSolicitado);
+			UnknownDato event = new UnknownDato().setMessage(message).setDato(datoSolicitado);
 
 			unknown.add(event);
 
 		}
 
 		@Override
-		public void salaryNotFound(String ccc, Trabajador<?> trabajador,
-				Periodo mes) {
+		public void salaryNotFound(String ccc, Trabajador<?> trabajador, Periodo mes) {
 
-			errors.add(new Event().setMessage(format(
-					"No se ha encontrado n\u00F3mina del %s del %s para el trabajador (NAF:%s, CCC:%s) ",
-					mes.getMes(), mes.getAnho(), trabajador.getNaf(), ccc)));
+			errors.add(new Event().setMessage(
+					format("No se ha encontrado n\u00F3mina del %s del %s para el trabajador (NAF:%s, CCC:%s) ",
+							mes.getMes(), mes.getAnho(), trabajador.getNaf(), ccc)));
 		}
 
 		@Override
-		public void wrongContextVariable(Salary salary, ContextVariable var,
-				Period p, String right, String wrong) {
+		public void wrongContextVariable(Salary salary, ContextVariable var, Period p, String right, String wrong) {
 			if (right == null)
-				errors.add(new Event().setMessage(format(
-						"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecta. No se esperaba y es '%7$s'",
-						salary.getEmployeeName(), salary.getEmployeeDocument(),
-						salary.getEmployeeSSNumber(), var.getName(),
-						p.getStart(), p.getEnd(), wrong)));
+				errors.add(new Event().setMessage(
+						format("%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecta. No se esperaba y es '%7$s'",
+								salary.getEmployeeName(), salary.getEmployeeDocument(), salary.getEmployeeSSNumber(),
+								var.getName(), p.getStart(), p.getEnd(), wrong)));
 			else
-				errors.add(new Event().setMessage(format(
-						"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecta. Se esperaba '%7$s' y es '%8$s'",
-						salary.getEmployeeName(), salary.getEmployeeDocument(),
-						salary.getEmployeeSSNumber(), var.getName(),
-						p.getStart(), p.getEnd(), right, wrong)));
+				errors.add(new Event().setMessage(
+						format("%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecta. Se esperaba '%7$s' y es '%8$s'",
+								salary.getEmployeeName(), salary.getEmployeeDocument(), salary.getEmployeeSSNumber(),
+								var.getName(), p.getStart(), p.getEnd(), right, wrong)));
 		}
 
 		@Override
-		public void noSuchContextVariable(Salary salary, ContextVariable var,
-				Period p, String right) {
+		public void noSuchContextVariable(Salary salary, ContextVariable var, Period p, String right) {
 			errors.add(new Event().setMessage(format(
 					"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) no encontrada. Se esperaba '%7$s'",
 					// salary.getEnterpriseName(),
-					salary.getEmployeeName(), 
-					salary.getEmployeeDocument(),
-					salary.getEmployeeSSNumber(),
+					salary.getEmployeeName(), salary.getEmployeeDocument(), salary.getEmployeeSSNumber(),
 					// salary.getEnterpriseCCC(),
-					var.getName(), 
-					p.getStart(), 
-					p.getEnd(), 
-					right)));
+					var.getName(), p.getStart(), p.getEnd(), right)));
 		}
 
 		@Override
-		public void ambigousContextVariable(Salary salary, ContextVariable var,
-				Period p, String right, String... wrongs) {
+		public void ambigousContextVariable(Salary salary, ContextVariable var, Period p, String right,
+				String... wrongs) {
 			errors.add(new Event().setMessage(format(
 					"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) ambigua. Se esperaba '%7$s' y es %8$s",
 					// salary.getEnterpriseName(),
-					salary.getEmployeeName(), salary.getEmployeeDocument(),
-					salary.getEmployeeSSNumber(),
+					salary.getEmployeeName(), salary.getEmployeeDocument(), salary.getEmployeeSSNumber(),
 					// salary.getEnterpriseCCC(),
-					var.getName(), p.getStart(), p.getEnd(), right,
-					Arrays.stream(wrongs)
-							.map(wrong -> String.format("'%s'", wrong))
-							.collect(Collectors.joining(",")))));
+					var.getName(), p.getStart(), p.getEnd(), right, Arrays.stream(wrongs)
+							.map(wrong -> String.format("'%s'", wrong)).collect(Collectors.joining(",")))));
 		}
 
 		@Override
-		public void unMatchedContextVariable(Salary salary, ContextVariable var,
-				ContextData contextData, Dato datoSolicitado, Tramo tramo,
-				TramoBuilder tramoBuilder, boolean optional) {
+		public void unMatchedContextVariable(Salary salary, ContextVariable var, ContextData contextData,
+				Dato datoSolicitado, Tramo tramo, TramoBuilder tramoBuilder, boolean optional) {
 			errors.add(new Event().setMessage(format(
 					"%s (IPF:%s, NAF:%s) .Tramo para %s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecto se esperaba (%7$s/%8$s/%9$s...%10$s/%11$s/%12$s)",
 					// salary.getEnterpriseName(),
-					salary.getEmployeeName(), salary.getEmployeeDocument(),
-					salary.getEmployeeSSNumber(),
+					salary.getEmployeeName(), salary.getEmployeeDocument(), salary.getEmployeeSSNumber(),
 					// salary.getEnterpriseCCC(),
 					var.getName(),
 
 					contextData.getStartDate(), contextData.getEndDate(),
 
-					tramo.getFechaDesde().getDia(),
-					tramo.getFechaDesde().getMes(),
-					tramo.getFechaDesde().getAnho(),
+					tramo.getFechaDesde().getDia(), tramo.getFechaDesde().getMes(), tramo.getFechaDesde().getAnho(),
 
-					tramo.getFechaHasta().getDia(),
-					tramo.getFechaHasta().getMes(),
-					tramo.getFechaHasta().getAnho())));
+					tramo.getFechaHasta().getDia(), tramo.getFechaHasta().getMes(), tramo.getFechaHasta().getAnho())));
 
 		}
 
 		@Override
-		public void noSuchDato(Salary salary, Tramo tramo, Dato datoSolicitado,
-				TramoBuilder tramoBuilder, boolean optional) {
-			Event event = new Event().setMessage(format(
-					"%s (IPF:%s, NAF:%s) .%s (%s/%s/%s..%s/%s/%s) no encontrado. ",
+		public void noSuchDato(Salary salary, Tramo tramo, Dato datoSolicitado, TramoBuilder tramoBuilder,
+				boolean optional) {
+			Event event = new Event().setMessage(format("%s (IPF:%s, NAF:%s) .%s (%s/%s/%s..%s/%s/%s) no encontrado. ",
 					// salary.getEnterpriseName(),
-					salary.getEmployeeName(), salary.getEmployeeDocument(),
-					salary.getEmployeeSSNumber(),
+					salary.getEmployeeName(), salary.getEmployeeDocument(), salary.getEmployeeSSNumber(),
 					// salary.getEnterpriseCCC(),
-					getDescription(datoSolicitado),
-					tramo.getFechaDesde().getDia(),
-					tramo.getFechaDesde().getMes(),
-					tramo.getFechaDesde().getAnho(),
-					tramo.getFechaHasta().getDia(),
-					tramo.getFechaHasta().getMes(),
+					getDescription(datoSolicitado), tramo.getFechaDesde().getDia(), tramo.getFechaDesde().getMes(),
+					tramo.getFechaDesde().getAnho(), tramo.getFechaHasta().getDia(), tramo.getFechaHasta().getMes(),
 					tramo.getFechaHasta().getAnho()));
 			if (optional)
 				warnings.add(event);
@@ -832,24 +725,20 @@ public class CretaServlet extends HttpServlet implements
 
 		@Override
 		public void unknownSalary(Salary salary) {
-			warnings.add(new Event().setMessage(format(
-					"%s (IPF:%s, NAF:%s) no encontrado en el Sistema de Liquidación Directa (Proyecto Cret@)s",
-					// salary.getEnterpriseName(),
-					salary.getEmployeeName(), salary.getEmployeeDocument(),
-					salary.getEmployeeSSNumber()
+			warnings.add(new Event().setMessage(
+					format("%s (IPF:%s, NAF:%s) no encontrado en el Sistema de Liquidación Directa (Proyecto Cret@)s",
+							// salary.getEnterpriseName(),
+							salary.getEmployeeName(), salary.getEmployeeDocument(), salary.getEmployeeSSNumber()
 			// salary.getEnterpriseCCC()))
 			)));
 		}
 
 		@Override
-		public void noDiffs(
-				net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
-			warnings.add(new NoDiffs()
-					.setMessage(
-							format("No es necesario comunicar nada nuevo respecto a la información del mes anterior (%s%s%s).",
-									liquidacion.getCcc().getProvincia(),
-									liquidacion.getCcc().getRegimen(),
-									liquidacion.getCcc().getNumero()))
+		public void noDiffs(net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
+			warnings.add(new NoDiffs().setMessage(
+					format("No es necesario comunicar nada nuevo respecto a la información del mes anterior (%s%s%s).",
+							liquidacion.getCcc().getProvincia(), liquidacion.getCcc().getRegimen(),
+							liquidacion.getCcc().getNumero()))
 					.setLiquidacion(liquidacion));
 		}
 
@@ -867,8 +756,7 @@ public class CretaServlet extends HttpServlet implements
 
 			switch (dato.getTipoDato()) {
 			case "C":
-				return format("El Concepto Económico de Cotización %s",
-						dato.getCodigo());
+				return format("El Concepto Económico de Cotización %s", dato.getCodigo());
 			case "H":
 				return format("Las Horas %s", dato.getCodigo());
 			case "I":
@@ -883,8 +771,7 @@ public class CretaServlet extends HttpServlet implements
 	private static <J extends JSON> String toJSON(List<J> jsons) {
 		StringBuffer buff = new StringBuffer();
 		buff.append("[\r\n");
-		buff.append(jsons.stream().map(json -> json.toJSON())
-				.collect(Collectors.joining(",")));
+		buff.append(jsons.stream().map(json -> json.toJSON()).collect(Collectors.joining(",")));
 		buff.append("\r\n]");
 		return buff.toString();
 	}
@@ -895,6 +782,143 @@ public class CretaServlet extends HttpServlet implements
 		} catch (UnsupportedEncodingException e) {
 			return str;
 		}
+	}
+
+	
+	private static Stream<net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta> findRespuestas(HttpServletRequest req){
+		String login = AonServletUtils.getRequestUser(req);
+		Integer domainId = AonServletUtils.getRequestDomain(req);
+		String domainName = AonServletUtils.getRequestDomainName(req);
+		return
+		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_RESPUESTA)
+		.map(attach-> unmarshall(net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta.class, attach.getData()))
+		.filter(optional -> optional.isPresent())
+		.map(optional -> optional.get())
+		;
+	}
+
+	private static Stream<net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> findTrabajadoresYTramos(HttpServletRequest req){
+		String login = AonServletUtils.getRequestUser(req);
+		Integer domainId = AonServletUtils.getRequestDomain(req);
+		String domainName = AonServletUtils.getRequestDomainName(req);
+		return
+		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS)
+		.map(attach-> unmarshall(net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class, attach.getData()))
+		.filter(optional -> optional.isPresent())
+		.map(optional -> optional.get())
+		;
+	}
+	
+	private static void saveRespuesta(HttpServletRequest req,
+			net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta t) {
+		saveAttach(req, CRETA_RESPUESTA, t);
+	}
+
+	private static void saveTrabajadoresYTramos(HttpServletRequest req,
+			net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos t) {
+		saveAttach(req, CRETA_TRABAJADORES_Y_TRAMOS, t);
+	}
+	
+	
+	private static <T> void saveAttach(HttpServletRequest req, RegistryAttachmentType type, T t) {
+
+		Date now = Calendar.getInstance().getTime();
+
+		byte data [] = marshall(t);
+		String md5 = AonFileUtils.getMD5Checksum(data);
+
+		String login = AonServletUtils.getRequestUser(req);
+		Integer domainId = AonServletUtils.getRequestDomain(req);
+		String domainName = AonServletUtils.getRequestDomainName(req);
+
+		Attach attach = getAttach(domainName, domainId, login, type, md5);
+
+		if (attach != null) 
+			return; // already saved
+
+		Company  company = AON.getCompanyForDomain(domainName, domainId);
+		
+
+		attach = new Attach(AttachType.REGISTRY);
+
+		attach.setDate(now);
+		attach.setDescription(md5);
+		attach.setConfidential(true);
+		attach.setAttachModule(company.getId());
+		
+		attach.setCreationDate(now);
+		attach.setCreationUser(login);
+		attach.setModificationDate(now);
+		attach.setModificationUser(login);
+
+		attach.setData(data);
+		attach.setMimeType(MimeType.XML);
+		attach.setType((short) type.ordinal());
+		attach.setDparentId(Integer.toString(data.length));
+		attach.setDomain(new Domain().setId(domainId).setName(domainName));
+
+		AON.insert(domainName, domainId, login, attach);
+	}
+
+	private static Attach getAttach(String domainName, Integer domainId, String login, RegistryAttachmentType type, String md5) {
+
+		return  AON.getAttach(
+				domainName, 
+				domainId, 
+				login,
+				p -> 
+				p.getDomainProperty().eq(domainId)
+				.and(p.getTypeProperty().eq((byte)type.ordinal()))
+				.and(p.getDescriptionProperty().eq(md5)), 
+				AttachType.REGISTRY
+				);
+
+	}
+	
+	private static Stream<Attach> findAttachs(String domainName, Integer domainId, String login, RegistryAttachmentType type ) {
+		return  AON.getAttachList(
+				domainName, 
+				domainId, 
+				login,
+				p -> 
+				p.getDomainProperty().eq(domainId)
+				.and(p.getTypeProperty().eq((byte)type.ordinal())), 
+				AttachType.REGISTRY
+				).stream();
+		
+	}
+	
+	private static void __onTrabajadoresYTramos (PrintWriter os, 
+			Stream<net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> ts,
+			Stream<net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta> rs) {
+
+			os.println("parent.__onTrabajadoresYTramos(");
+
+			os.println(
+			// @formatter:off
+						ts
+						.sorted(CretaServlet::compare)
+						.map(t -> String.format("{\"name\":\"%s\",%s,\"file\":\"%s\"}\r\n",CretaService.File.TRABAJADORES_TRAMOS, toJSON(t.getLiquidacion()), marshallAndEncode(t)))
+						.collect(Collectors.joining(",", "[", "]"))
+			// @formatter:on
+			);
+
+			os.println(",");
+
+			os.println("[");
+			os.println(
+			// @formatter:off
+				rs
+				.map(r -> r.getLiquidacion().stream()
+				.map(l -> String.format("{\"name\":\"%s\",%s,\"errors\":[%s],\"employees\":[%s],\"file\":\"%s\"}\r\n",CretaService.File.RESPUESTA, toJSON(l), toJSON(l.getErrores()),toJSON(l.getLiquidacionMes().stream()), marshallAndEncode(r)))
+				.collect(Collectors.joining(",")))
+				.collect(Collectors.joining(","))
+			// @formatter:on
+			);
+			os.println("]");
+
+			os.println(");");
+		
 	}
 	
 }

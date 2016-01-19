@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -48,6 +49,8 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.storage.client.Storage;
 import com.google.gwt.typedarrays.client.Uint8ArrayNative;
 import com.google.gwt.typedarrays.shared.Uint8Array;
@@ -58,6 +61,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
+import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -112,13 +116,12 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	@Override
 	public void onModuleLoad() {
 
+
 		// Inject rich styles.
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
-		GWT.<MainEntryPoint
-				.CodeMirrorResources> create(
-						MainEntryPoint.CodeMirrorResources.class)
-				.css().ensureInjected();
+		GWT.<MainEntryPoint.CodeMirrorResources> create(MainEntryPoint.CodeMirrorResources.class).css()
+				.ensureInjected();
 
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
@@ -136,6 +139,18 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		activityCretaDetail = new ActivityCretaDetail();
 		enterpriseCretaDetail = new EnterpriseCretaDetail();
 		enterprisesCretaDetail = new EnterprisesCretaDetail();
+
+		sync(new AsyncCallback<Void>() {
+			@Override
+			public void onSuccess(Void result) {
+				MainCreta.this.enterprisesCretaDetail.onTrabajadoresYTramos();
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+		});
 	}
 
 	// --------------------------------------------------- Enterprises.Listener
@@ -173,44 +188,37 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		NativeEvent nativeEvent = event.getNativeEvent();
 		if (cccContextMenu == null)
 			cccContextMenu = new CCCContextMenu();
-		cccContextMenu.setPopupPosition(nativeEvent.getClientX(),
-				nativeEvent.getClientY());
+		cccContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
 		cccContextMenu.setCCC(ccc);
 		cccContextMenu.show();
 	}
 
 	@Override
-	public void onActivityContextMenu(Activity activity,
-			ContextMenuEvent event) {
+	public void onActivityContextMenu(Activity activity, ContextMenuEvent event) {
 		NativeEvent nativeEvent = event.getNativeEvent();
 		if (activityContextMenu == null)
 			activityContextMenu = new ActivityContextMenu();
-		activityContextMenu.setPopupPosition(nativeEvent.getClientX(),
-				nativeEvent.getClientY());
+		activityContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
 		activityContextMenu.setActivity(activity);
 		activityContextMenu.show();
 	}
 
 	@Override
-	public void onEnterpriseContextMenu(Enterprise enterprise,
-			ContextMenuEvent event) {
+	public void onEnterpriseContextMenu(Enterprise enterprise, ContextMenuEvent event) {
 		NativeEvent nativeEvent = event.getNativeEvent();
 		if (enterpriseContextMenu == null)
 			enterpriseContextMenu = new EnterpriseContextMenu();
-		enterpriseContextMenu.setPopupPosition(nativeEvent.getClientX(),
-				nativeEvent.getClientY());
+		enterpriseContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
 		enterpriseContextMenu.setEnterprise(enterprise);
 		enterpriseContextMenu.show();
 	}
 
 	@Override
-	public void onEnterprisesContextMenu(List<Enterprise> enterprises,
-			ContextMenuEvent event) {
+	public void onEnterprisesContextMenu(List<Enterprise> enterprises, ContextMenuEvent event) {
 		NativeEvent nativeEvent = event.getNativeEvent();
 		if (enterprisesContextMenu == null)
 			enterprisesContextMenu = new EnterprisesContextMenu();
-		enterprisesContextMenu.setPopupPosition(nativeEvent.getClientX(),
-				nativeEvent.getClientY());
+		enterprisesContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
 		enterprisesContextMenu.setEnterprises(enterprises);
 		enterprisesContextMenu.show();
 	}
@@ -255,8 +263,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 		byte icon = 0x0; // 00000000
 		for (JsError jsError : jsErros) {
-			ErrorDescription error = ErrorDescription
-					.getErrorDescription(jsError.getCode());
+			ErrorDescription error = ErrorDescription.getErrorDescription(jsError.getCode());
 			if (error == null)
 				icon |= 0x03b;
 			else
@@ -265,13 +272,11 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 						return 0x01b;
 					}
 
-					public Byte visitWarning(
-							ErrorDescription.WarningDescription error) {
+					public Byte visitWarning(ErrorDescription.WarningDescription error) {
 						return 0x02b;
 					}
 
-					public Byte visitSuccess(
-							ErrorDescription.SuccessDescription error) {
+					public Byte visitSuccess(ErrorDescription.SuccessDescription error) {
 						return 0x04b;
 					}
 				});
@@ -287,8 +292,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		return AON.AON_ICON_WARN;
 	}
 
-	public static PopupPanel showjsRespuestaToolTip(final JsRespuesta respuesta,
-			final int x, final int y) {
+	public static PopupPanel showjsRespuestaToolTip(final JsRespuesta respuesta, final int x, final int y) {
 
 		final DecoratedPopupPanel popupPanel = new DecoratedPopupPanel();
 		popupPanel.setAutoHideEnabled(true);
@@ -315,8 +319,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 			grid.setText(i + 1, 0, errors[i].getCode());
 
-			ErrorDescription errorDescription = ErrorDescription
-					.getErrorDescription(code);
+			ErrorDescription errorDescription = ErrorDescription.getErrorDescription(code);
 			if (errorDescription != null) {
 				grid.setText(i + 1, 1, errorDescription.getMessage());
 				grid.setText(i + 1, 2, errorDescription.getCause());
@@ -379,8 +382,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				mergeEditor.setText(result.getDraftRequestFile());
 			}
 			mergeEditor.setTitle(CretaService.File.BASES.getFilename());
-			mergeEditor.setFilename(
-					CretaService.File.BASES.getFilename() + ".xml");
+			mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
 			detailPanel.setWidget(mergeEditor);
 
 			CretaResults cretaResults = new CretaResults() {
@@ -395,8 +397,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			cretaResults.addUnknown(result.getUnknown());
 			resultsPanel.setWidget(cretaResults);
 
-			if (result.getErrors().length > 0
-					|| result.getWarnings().length > 0)
+			if (result.getErrors().length > 0 || result.getWarnings().length > 0)
 				showResultsPanel();
 
 			mergeEditor.autoRefresh();
@@ -415,18 +416,13 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				fileEditor.setText(jsFile.getXML());
 
 				try {
-					CretaService.File file = CretaService.File
-							.valueOf(jsFile.getName());
-					filesEditor.add(fileEditor, file.getFilename(),
-							AON.AON_ICON_SEGSOCIAL_SMALL);
+					CretaService.File file = CretaService.File.valueOf(jsFile.getName());
+					filesEditor.add(fileEditor, file.getFilename(), AON.AON_ICON_SEGSOCIAL_SMALL);
 				} catch (Exception e) {
-					String name = jsFile.getFile()
-							.indexOf("TrabajadoresTramos") >= 0
-									? CretaService.File.TRABAJADORES_TRAMOS
-											.getFilename()
-									: CretaService.File.RESPUESTA.getFilename();
-					filesEditor.add(fileEditor, name,
-							AON.AON_ICON_SEGSOCIAL_SMALL);
+					String name = jsFile.getFile().indexOf("TrabajadoresTramos") >= 0
+							? CretaService.File.TRABAJADORES_TRAMOS.getFilename()
+							: CretaService.File.RESPUESTA.getFilename();
+					filesEditor.add(fileEditor, name, AON.AON_ICON_SEGSOCIAL_SMALL);
 				}
 
 				fileEditor.autoRefresh();
@@ -439,8 +435,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 
-	private class MainEnterpriseCretaRequestCommand
-			extends EnterpriseCretaRequestCommand implements EnterpriseCommand {
+	private class MainEnterpriseCretaRequestCommand extends EnterpriseCretaRequestCommand implements EnterpriseCommand {
 
 		public MainEnterpriseCretaRequestCommand(File file) {
 			super(file, MainCreta.this.detailPanel);
@@ -454,8 +449,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 
-	private class MainEnterpriseDBACommand extends EnterpriseDBACommand
-			implements EnterpriseCommand {
+	private class MainEnterpriseDBACommand extends EnterpriseDBACommand implements EnterpriseCommand {
 
 		public MainEnterpriseDBACommand() {
 			super(MainCreta.this.detailPanel);
@@ -467,18 +461,16 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			setData(getCCs(enterprise));
 			setBankAccounts(enterprise.getBankAccounts());
 
-			if ( AonStringUtils.isBlank(getHolder())) 
+			if (AonStringUtils.isBlank(getHolder()))
 				setHolder(enterprise.getName());
-			
+
 		}
 
 	}
 
-	private abstract class MainCretaResponseCommand
-			extends EmployeeTree.CreateResponseCommand {
+	private abstract class MainCretaResponseCommand extends EmployeeTree.CreateResponseCommand {
 		public MainCretaResponseCommand(File outFile, File inFile) {
-			super(outFile, inFile, MainCreta.this.detailPanel,
-					MainCreta.this.resultsPanel);
+			super(outFile, inFile, MainCreta.this.detailPanel, MainCreta.this.resultsPanel);
 		}
 
 		@Override
@@ -488,8 +480,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 
-	private class MainEnterpriseCreateResponseCommand
-			extends MainCretaResponseCommand implements EnterpriseCommand {
+	private class MainEnterpriseCreateResponseCommand extends MainCretaResponseCommand implements EnterpriseCommand {
 
 		private Enterprise enterprise;
 
@@ -526,20 +517,17 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					enterpriseCommands[0] = new MainEnterpriseCretaRequestCommand(
 							CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addItem("SLD-Fichero de Bases",
-					enterpriseCommands[1] = new MainEnterpriseCreateResponseCommand(
-							File.BASES, File.TRABAJADORES_TRAMOS),
-					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Bases", enterpriseCommands[1] = new MainEnterpriseCreateResponseCommand(File.BASES,
+					File.TRABAJADORES_TRAMOS), AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n",
 					enterpriseCommands[2] = new MainEnterpriseCretaRequestCommand(
 							CretaService.File.SOLICITUD_CONFIRMACION),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios",
-					enterpriseCommands[3] = new MainEnterpriseDBACommand(),
-					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addSeparator();
-			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME,
+					enterpriseCommands[3] = new MainEnterpriseDBACommand(), AON.AON_ICON_SEGSOCIAL_SMALL,
 					AON.AON_ICON_CMD_BUTTON);
+			addSeparator();
+			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME, AON.AON_ICON_CMD_BUTTON);
 
 		}
 
@@ -589,7 +577,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		void onClickTrabajadoresYTramosButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
 		}
-		
+
 		@Override
 		void onClickDBAButton(ClickEvent e) {
 			MainEnterpriseDBACommand cmd = new MainEnterpriseDBACommand();
@@ -598,8 +586,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 
 		protected void onRequestCommand(File file) {
-			MainEnterpriseCretaRequestCommand cmd = new MainEnterpriseCretaRequestCommand(
-					file);
+			MainEnterpriseCretaRequestCommand cmd = new MainEnterpriseCretaRequestCommand(file);
 			cmd.setEnterprise(enterprise);
 			cmd.execute();
 		}
@@ -617,23 +604,19 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 							CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Bases",
-					activityCommands[1] = new MainActivityCreateResponseCommand(
-							File.BASES, File.TRABAJADORES_TRAMOS),
+					activityCommands[1] = new MainActivityCreateResponseCommand(File.BASES, File.TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Borrador",
-					activityCommands[2] = new MainActivityCretaRequestCommand(
-							CretaService.File.SOLICITUD_BORRADOR),
+					activityCommands[2] = new MainActivityCretaRequestCommand(CretaService.File.SOLICITUD_BORRADOR),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n",
-					activityCommands[3] = new MainActivityCretaRequestCommand(
-							CretaService.File.SOLICITUD_CONFIRMACION),
+					activityCommands[3] = new MainActivityCretaRequestCommand(CretaService.File.SOLICITUD_CONFIRMACION),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios",
-					activityCommands[4] = new MainActivityDBACommand(),
-					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addSeparator();
-			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME,
+					activityCommands[4] = new MainActivityDBACommand(), AON.AON_ICON_SEGSOCIAL_SMALL,
 					AON.AON_ICON_CMD_BUTTON);
+			addSeparator();
+			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME, AON.AON_ICON_CMD_BUTTON);
 		}
 
 		public void setActivity(Activity activity) {
@@ -644,8 +627,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 
-	private class MainActivityCretaRequestCommand extends
-			EmployeeTree.CreateRequestCommand implements ActivityCommand {
+	private class MainActivityCretaRequestCommand extends EmployeeTree.CreateRequestCommand implements ActivityCommand {
 
 		private Activity activity;
 
@@ -656,8 +638,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		// ---------------------------------------------------- ActivityCommand
 		@Override
 		protected String getDescription(CCC ccc) {
-			return activity.getDescription() + ", "
-					+ Province.getName(ccc.getGeozone()) + " " + ccc.getCode();
+			return activity.getDescription() + ", " + Province.getName(ccc.getGeozone()) + " " + ccc.getCode();
 		}
 
 		// ---------------------------------------------------- ActivityCommand
@@ -673,8 +654,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 
-	private class MainActivityDBACommand extends EmployeeTree.DBACommand
-			implements ActivityCommand {
+	private class MainActivityDBACommand extends EmployeeTree.DBACommand implements ActivityCommand {
 
 		private Activity activity;
 
@@ -685,8 +665,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		// --------------------------------------------------------------------
 		@Override
 		protected String getDescription(CCC ccc) {
-			return activity.getDescription() + ", "
-					+ Province.getName(ccc.getGeozone()) + " " + ccc.getCode();
+			return activity.getDescription() + ", " + Province.getName(ccc.getGeozone()) + " " + ccc.getCode();
 		}
 
 		// ---------------------------------------------------- ActivityCommand
@@ -696,7 +675,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			setData(getCCCs(activity));
 			setBankAccounts(getBankAccounts(activity));
 
-			if ( AonStringUtils.isBlank(getHolder())) 
+			if (AonStringUtils.isBlank(getHolder()))
 				setHolder(getEnterprise(activity).getName());
 		}
 
@@ -706,8 +685,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 
-	private class MainActivityCreateResponseCommand
-			extends MainCretaResponseCommand implements ActivityCommand {
+	private class MainActivityCreateResponseCommand extends MainCretaResponseCommand implements ActivityCommand {
 
 		private Activity activity;
 
@@ -775,7 +753,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		void onClickTrabajadoresYTramosButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
 		}
-		
+
 		@Override
 		void onClickDBAButton(ClickEvent e) {
 			MainActivityDBACommand cmd = new MainActivityDBACommand();
@@ -784,8 +762,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 
 		protected void onRequestCommand(File file) {
-			MainActivityCretaRequestCommand cmd = new MainActivityCretaRequestCommand(
-					file);
+			MainActivityCretaRequestCommand cmd = new MainActivityCretaRequestCommand(file);
 			cmd.setActivity(activity);
 			cmd.execute();
 		}
@@ -798,27 +775,21 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		public CCCContextMenu() {
 
 			addItem("SLD-Fichero de Solicitud de Trabajadores y Tramos",
-					cccCommands[0] = new MainCCCCretaRequestCommand(
-							CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS),
+					cccCommands[0] = new MainCCCCretaRequestCommand(CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Bases",
-					cccCommands[1] = new MainCCCCreateResponseCommand(
-							File.BASES, File.TRABAJADORES_TRAMOS),
+					cccCommands[1] = new MainCCCCreateResponseCommand(File.BASES, File.TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Borrador",
-					cccCommands[2] = new MainCCCCretaRequestCommand(
-							CretaService.File.SOLICITUD_BORRADOR),
+					cccCommands[2] = new MainCCCCretaRequestCommand(CretaService.File.SOLICITUD_BORRADOR),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n",
-					cccCommands[3] = new MainCCCCretaRequestCommand(
-							CretaService.File.SOLICITUD_CONFIRMACION),
+					cccCommands[3] = new MainCCCCretaRequestCommand(CretaService.File.SOLICITUD_CONFIRMACION),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios",
-					cccCommands[4] = new MainCCCDBACommand(),
+			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios", cccCommands[4] = new MainCCCDBACommand(),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
-			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME,
-					AON.AON_ICON_CMD_BUTTON);
+			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME, AON.AON_ICON_CMD_BUTTON);
 		}
 
 		void setCCC(CCC ccc) {
@@ -829,8 +800,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 
-	private class MainCCCCretaRequestCommand
-			extends EmployeeTree.CreateRequestCommand implements CCCCommand {
+	private class MainCCCCretaRequestCommand extends EmployeeTree.CreateRequestCommand implements CCCCommand {
 
 		public MainCCCCretaRequestCommand(File file) {
 			super(file, MainCreta.this.detailPanel);
@@ -852,8 +822,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 
-	private class MainCCCDBACommand extends EmployeeTree.DBACommand
-			implements CCCCommand {
+	private class MainCCCDBACommand extends EmployeeTree.DBACommand implements CCCCommand {
 
 		public MainCCCDBACommand() {
 			super(MainCreta.this.detailPanel);
@@ -871,14 +840,13 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			setSelectedData(Collections.singletonList(ccc));
 			setBankAccounts(getBankAccounts(ccc));
 
-			if ( AonStringUtils.isBlank(getHolder())) 
+			if (AonStringUtils.isBlank(getHolder()))
 				setHolder(getEnterprise(ccc).getName());
 		}
 
 	}
 
-	private class MainCCCCreateResponseCommand extends MainCretaResponseCommand
-			implements CCCCommand {
+	private class MainCCCCreateResponseCommand extends MainCretaResponseCommand implements CCCCommand {
 
 		private CCC ccc;
 
@@ -944,17 +912,16 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		void onClickTrabajadoresYTramosButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
 		}
-		
+
 		@Override
 		void onClickDBAButton(ClickEvent e) {
 			MainCCCDBACommand cmd = new MainCCCDBACommand();
 			cmd.setCCC(ccc);
 			cmd.execute();
 		}
-		
+
 		protected void onRequestCommand(File file) {
-			MainCCCCretaRequestCommand cmd = new MainCCCCretaRequestCommand(
-					file);
+			MainCCCCretaRequestCommand cmd = new MainCCCCretaRequestCommand(file);
 			cmd.setCCC(ccc);
 			cmd.execute();
 		}
@@ -972,23 +939,21 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 							CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Bases",
-					cretaRequestCommands[1] = new MainEnterprisesCreateResponseCommand(
-							File.BASES, File.TRABAJADORES_TRAMOS),
+					cretaRequestCommands[1] = new MainEnterprisesCreateResponseCommand(File.BASES,
+							File.TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Borrador",
-					cretaRequestCommands[2] = new EnterprisesCretaRequestCommand(
-							CretaService.File.SOLICITUD_BORRADOR),
+					cretaRequestCommands[2] = new EnterprisesCretaRequestCommand(CretaService.File.SOLICITUD_BORRADOR),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n",
 					cretaRequestCommands[3] = new EnterprisesCretaRequestCommand(
 							CretaService.File.SOLICITUD_CONFIRMACION),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios",
-					cretaRequestCommands[4] = new EnterprisesDBACommand(),
-					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addSeparator();
-			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME,
+					cretaRequestCommands[4] = new EnterprisesDBACommand(), AON.AON_ICON_SEGSOCIAL_SMALL,
 					AON.AON_ICON_CMD_BUTTON);
+			addSeparator();
+			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME, AON.AON_ICON_CMD_BUTTON);
 
 		}
 
@@ -1000,8 +965,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 
-	private class EnterprisesCretaRequestCommand extends
-			EmployeeTree.CreateRequestCommand implements EnterprisesCommand {
+	private class EnterprisesCretaRequestCommand extends EmployeeTree.CreateRequestCommand
+			implements EnterprisesCommand {
 
 		private List<Enterprise> enterprises;
 
@@ -1026,8 +991,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 
-	private class EnterprisesDBACommand extends
-			EmployeeTree.DBACommand implements EnterprisesCommand {
+	private class EnterprisesDBACommand extends EmployeeTree.DBACommand implements EnterprisesCommand {
 
 		private List<Enterprise> enterprises;
 
@@ -1053,8 +1017,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 
-	private class MainEnterprisesCreateResponseCommand
-			extends MainCretaResponseCommand implements EnterprisesCommand {
+	private class MainEnterprisesCreateResponseCommand extends MainCretaResponseCommand implements EnterprisesCommand {
 
 		private List<Enterprise> enterprises;
 
@@ -1071,8 +1034,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				for (Activity activity : enterprise.getActivities())
 					for (CCC ccc : activity.getCccs())
 						if (fullccc.endsWith(ccc.getCode()))
-							return enterprise.getName() + " "
-									+ activity.getDescription() + ", "
+							return enterprise.getName() + " " + activity.getDescription() + ", "
 									+ Province.getName(province);
 
 			return "";
@@ -1139,7 +1101,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		void onClickTrabajadoresYTramosButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
 		}
-		
+
 		@Override
 		void onClickDBAButton(ClickEvent e) {
 			EnterprisesDBACommand cmd = new EnterprisesDBACommand();
@@ -1148,42 +1110,38 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 
 		protected void onRequestCommand(File file) {
-			EnterprisesCretaRequestCommand cmd = new EnterprisesCretaRequestCommand(
-					file);
+			EnterprisesCretaRequestCommand cmd = new EnterprisesCretaRequestCommand(file);
 			cmd.setEnterprises(enterprises);
 			cmd.execute();
 		}
 	}
-	
-	private Enterprise getEnterprise(CCC ccc){
+
+	private Enterprise getEnterprise(CCC ccc) {
 		return enterprises.getEnterprise(ccc);
 	}
 
-	private Enterprise getEnterprise(Activity activity){
+	private Enterprise getEnterprise(Activity activity) {
 		return enterprises.getEnterprise(activity);
 	}
 
-	private Collection<BankAccount> getBankAccounts(CCC ccc){
+	private Collection<BankAccount> getBankAccounts(CCC ccc) {
 		return enterprises.getEnterprise(ccc).getBankAccounts();
 	}
 
-	private Collection<BankAccount> getBankAccounts(Activity activity){
+	private Collection<BankAccount> getBankAccounts(Activity activity) {
 		return enterprises.getEnterprise(activity).getBankAccounts();
 	}
 
-	private Collection<BankAccount> getBankAccounts(Workplace workplace){
+	private Collection<BankAccount> getBankAccounts(Workplace workplace) {
 		return enterprises.getEnterprise(workplace).getBankAccounts();
 	}
 
 	// ------------------------------------------------------------------------
 
-	protected static void submit(String url,
-			Map<String, Collection<String>> datas, Collection<JsFile> jsFiles,
+	protected static void submit(String url, Map<String, Collection<String>> datas, Collection<JsFile> jsFiles,
 			final AsyncCallback<JsBasesResult> cb) {
 
-		XMLHttpRequest xmlHttpRequest = XMLHttpRequest.create();
-
-		xmlHttpRequest.setOnReadyStateChange(new ReadyStateChangeHandler() {
+		submit(url, datas, jsFiles, new ReadyStateChangeHandler() {
 			@Override
 			public void onReadyStateChange(XMLHttpRequest xhr) {
 				try {
@@ -1201,14 +1159,20 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 			}
 		});
+	}
+
+	protected static void submit(String url, Map<String, Collection<String>> datas, Collection<JsFile> jsFiles,
+			final ReadyStateChangeHandler handler) {
+
+		XMLHttpRequest xmlHttpRequest = XMLHttpRequest.create();
+
+		xmlHttpRequest.setOnReadyStateChange(handler);
 
 		xmlHttpRequest.open("POST", url);
 
 		/* enctype is multipart/form-data */
-		String boundary = "---------------------------"
-				+ Long.toHexString(System.currentTimeMillis());
-		xmlHttpRequest.setRequestHeader("Content-Type",
-				"multipart/form-data; boundary=" + boundary);
+		String boundary = "---------------------------" + Long.toHexString(System.currentTimeMillis());
+		xmlHttpRequest.setRequestHeader("Content-Type", "multipart/form-data; boundary=" + boundary);
 
 		StringBuffer requestBuffer = new StringBuffer();
 
@@ -1256,6 +1220,49 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 
+	protected static void sync(final AsyncCallback<Void> cb) {
+
+		JsFile respuestas[] = MainCreta.get(CretaService.File.RESPUESTA, new JsFile[] {});
+		JsFile trabajadoresYTramos[] = MainCreta.get(CretaService.File.TRABAJADORES_TRAMOS, new JsFile[] {});
+
+		ArrayList<JsFile> jsFiles = new ArrayList<JsFile>(respuestas.length + trabajadoresYTramos.length);
+		Collections.addAll(jsFiles, respuestas);
+		Collections.addAll(jsFiles, trabajadoresYTramos);
+
+		Map<String, Collection<String>> options = Collections.emptyMap();
+
+		MainCreta.submit(CretaService.CRETA_URL + "/" + CretaService.File.TRABAJADORES_TRAMOS, options, jsFiles,
+				new ReadyStateChangeHandler() {
+					@Override
+					public void onReadyStateChange(XMLHttpRequest xhr) {
+						int state = xhr.getReadyState();
+						if (state != XMLHttpRequest.DONE)
+							return;
+						// TODO: Errors !!!
+						String html = xhr.getResponseText();
+						RegExp regExp = RegExp.compile(
+								"parent.__onTrabajadoresYTramos\\s*\\(\\s*(\\[(.|[\\r\\n])*\\])\\s*,\\s*(\\[(.|[\\r\\n])*\\])\\s*\\)",
+								"gim");
+						MatchResult matchResult = regExp.exec(html);
+						
+						JsArray<JsFile> trabajadoresYTramosArr = eval("("+matchResult.getGroup(1)+")");
+						JsFile trabajadoresYTramos [] = new JsFile[trabajadoresYTramosArr.length()];
+						for ( int i = 0; i < trabajadoresYTramos.length; i++ )
+							trabajadoresYTramos[i] = trabajadoresYTramosArr.get(i);
+						MainCreta.add(File.TRABAJADORES_TRAMOS, trabajadoresYTramos);
+						
+						JsArray<JsFile> respuestasArr = eval("("+matchResult.getGroup(3)+")");
+						JsFile respuestas [] = new JsFile[respuestasArr.length()];
+						for ( int i = 0; i < respuestas.length; i++ )
+							respuestas[i] = respuestasArr.get(i);
+						MainCreta.add(File.RESPUESTA, respuestas);
+						
+						cb.onSuccess(null);
+					}
+
+				});
+
+	}
 	// ------------------------------------------------------------------------
 
 	private static String getDescription(CCC ccc, String fullccc) {
@@ -1282,16 +1289,14 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		return false;
 	}
 
-	private static String getDescription(Enterprise enterprise,
-			String fullccc) {
+	private static String getDescription(Enterprise enterprise, String fullccc) {
 
 		String province = fullccc.substring(4, 6);
 
 		for (Activity activity : enterprise.getActivities())
 			for (CCC ccc : activity.getCccs())
 				if (fullccc.endsWith(ccc.getCode()))
-					return activity.getDescription() + ", "
-							+ Province.getName(province);
+					return activity.getDescription() + ", " + Province.getName(province);
 
 		return "";
 	}
@@ -1306,8 +1311,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		return false;
 	}
 
-	private static String getDescription(Collection<Enterprise> enterprises,
-			String fullccc) {
+	private static String getDescription(Collection<Enterprise> enterprises, String fullccc) {
 
 		String province = fullccc.substring(4, 6);
 
@@ -1315,15 +1319,13 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			for (Activity activity : enterprise.getActivities())
 				for (CCC ccc : activity.getCccs())
 					if (fullccc.endsWith(ccc.getCode()))
-						return enterprise.getName() + " "
-								+ activity.getDescription() + ", "
+						return enterprise.getName() + " " + activity.getDescription() + ", "
 								+ Province.getName(province);
 
 		return "";
 	}
 
-	private static boolean accept(Collection<Enterprise> enterprises,
-			String fullccc) {
+	private static boolean accept(Collection<Enterprise> enterprises, String fullccc) {
 		for (Enterprise enterprise : enterprises)
 			for (Activity activity : enterprise.getActivities())
 				for (CCC ccc : activity.getCccs())
@@ -1414,8 +1416,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 	}
 
-	public static class JsFileComparator<T extends JsFile>
-			implements Comparator<T> {
+	public static class JsFileComparator<T extends JsFile> implements Comparator<T> {
 
 		public static <T extends JsFile> JsFileComparator<T> newInstace() {
 			return new JsFileComparator<T>();
@@ -1439,21 +1440,18 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 	}
 
-	public static void send(File file, Map<Parameter, Collection<String>> params,
-			final AsyncCallback<String> cb) {
+	public static void send(File file, Map<Parameter, Collection<String>> params, final AsyncCallback<String> cb) {
 		StringBuffer requestDataBuffer = new StringBuffer();
 
 		for (Entry<Parameter, Collection<String>> entry : params.entrySet())
-			for ( String value: entry.getValue() )
-				requestDataBuffer
-						.append("&" + entry.getKey() + "=" + value);
+			for (String value : entry.getValue())
+				requestDataBuffer.append("&" + entry.getKey() + "=" + value);
 
 		// Send request to server and catch any errors.
 
 		XMLHttpRequest xhr = XMLHttpRequest.create();
 		xhr.open("POST", CretaService.CRETA_URL + "/" + file.name());
-		xhr.setRequestHeader("Content-type",
-				"application/x-www-form-urlencoded");
+		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
 
 			private int loaded = 0;
@@ -1471,8 +1469,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				if (status >= 200 && status < 300)
 					cb.onSuccess(xhr.getResponseText());
 				else
-					cb.onFailure(
-							new HttpException(status, xhr.getResponseText()));
+					cb.onFailure(new HttpException(status, xhr.getResponseText()));
 			}
 
 		});
@@ -1483,8 +1480,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	// ------------------------------------------------------------------------
 
-	private static void sendAsBinary(XMLHttpRequest xmlHttpRequest,
-			String sData) {
+	private static void sendAsBinary(XMLHttpRequest xmlHttpRequest, String sData) {
 		int nBytes = sData.length();
 		Uint8Array ui8Data = Uint8ArrayNative.create(nBytes);
 		for (int i = 0; i < nBytes; i++)
@@ -1507,8 +1503,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			cccs.addAll(activity.getCccs());
 		return cccs;
 	}
-	
-	
+
 	private static List<CCC> getCCCs(List<Enterprise> enterprises) {
 		List<CCC> cccs = new ArrayList<CCC>();
 		for (Enterprise enterprise : enterprises)
@@ -1517,14 +1512,14 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		return cccs;
 
 	}
-	
-	private static Collection<BankAccount> getBankAccounts(Collection<Enterprise> enterprises){
+
+	private static Collection<BankAccount> getBankAccounts(Collection<Enterprise> enterprises) {
 		List<BankAccount> bankAccounts = new ArrayList<BankAccount>();
-		for ( Enterprise enterprise: enterprises )
+		for (Enterprise enterprise : enterprises)
 			bankAccounts.addAll(enterprise.getBankAccounts());
 		return bankAccounts;
 	}
-	
+
 	private static String getDescription(CCC ccc, List<Enterprise> enterprises) {
 		String province = ccc.getGeozone();
 
@@ -1532,14 +1527,22 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			for (Activity activity : enterprise.getActivities())
 				for (CCC cc : activity.getCccs())
 					if (ccc.getCode().equals(cc.getCode()))
-						return enterprise.getName() + " "
-								+ activity.getDescription() + ", "
-								+ Province.getName(province) + " "
-								+ ccc.getCode();
+						return enterprise.getName() + " " + activity.getDescription() + ", "
+								+ Province.getName(province) + " " + ccc.getCode();
 
 		return ccc.getCode();
 	}
 
-	
+	private static <T extends JsFile> Map<String, T> upload(String key, T ts[]) {
+
+		Map<String, T> map = get(key);
+
+		for (T t : ts)
+			map.put(t.getId(), t);
+
+		set(key, map.values());
+
+		return Collections.unmodifiableMap(map);
+	}
 
 }

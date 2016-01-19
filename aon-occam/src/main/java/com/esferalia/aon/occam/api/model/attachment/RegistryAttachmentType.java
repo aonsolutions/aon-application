@@ -27,7 +27,9 @@ public enum RegistryAttachmentType {
 	POS_INVOICE_FOOTER_TEXT,
 	D2_DEPOSIT,
 	ECOMMERCE_PRODUCT_TEMPLATES,
-	REPORT_BACKGROUND;
+	REPORT_BACKGROUND,
+	CRETA_RESPUESTA,
+	CRETA_TRABAJADORES_Y_TRAMOS;
 	
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_registry_attachment_type_";
