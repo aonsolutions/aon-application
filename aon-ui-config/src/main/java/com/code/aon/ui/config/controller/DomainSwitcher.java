@@ -394,7 +394,11 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	public DomainType getType() {
 		return DomainType.values()[this.type];
 	}
-
+	
+	public boolean isHotel(){
+		return getType().equals(DomainType.HOTEL);
+	}
+	
 	public String getDomainURL() throws ManagerBeanException {
 		if (domainURL == null) {
 			IManagerBean bean = BeanManager.getManagerBean(Domain.class);

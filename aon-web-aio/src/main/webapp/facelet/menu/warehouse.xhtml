@@ -143,40 +143,43 @@
 										actionListener="#{stockReport.onReportByItemValued}"
 										value="#{bundle.warehouse_stock_by_item_valued_module}" />
 								</aon:div>
+								<aon:if test="#{domainSwitcher.hotel}">
 								
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="consumptionControl" 
-										action="consumptionControl_search"
-										actionListener="#{consumptionControl.onEditSearch}"
-										value="#{bundle.warehouse_consumption_control}" >
-										<f:setPropertyActionListener value="#{false}"
-											target="#{consumptionControl.errorControl}" />										
-									</aon:commandLink>
-								</aon:div>								
-
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="consumptionControlAggregate"
-										action="gwt_consumption_templates" title="#{bundle.warehouse_consumption_control_aggregate}">
-										<aon:outputText value="#{bundle.warehouse_consumption_control_aggregate}" />
-									</aon:commandLink>
-								</aon:div>
-
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="countErrorControl" 
-										action="consumptionControl_search-countError"
-										actionListener="#{consumptionControl.onEditSearch}"
-										value="#{bundle.warehouse_count_error_control}" >
-										<f:setPropertyActionListener value="#{true}"
-											target="#{consumptionControl.errorControl}" />										
-									</aon:commandLink>
-								</aon:div>							
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="consumptionControl" 
+											action="consumptionControl_search"
+											actionListener="#{consumptionControl.onEditSearch}"
+											value="#{bundle.warehouse_consumption_control}" >
+											<f:setPropertyActionListener value="#{false}"
+												target="#{consumptionControl.errorControl}" />										
+										</aon:commandLink>
+									</aon:div>								
+		
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="consumptionControlAggregate"
+											action="gwt_consumption_templates" title="#{bundle.warehouse_consumption_control_aggregate}">
+											<aon:outputText value="#{bundle.warehouse_consumption_control_aggregate}" />
+										</aon:commandLink>
+									</aon:div>
+	
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="countErrorControl" 
+											action="consumptionControl_search-countError"
+											actionListener="#{consumptionControl.onEditSearch}"
+											value="#{bundle.warehouse_count_error_control}" >
+											<f:setPropertyActionListener value="#{true}"
+												target="#{consumptionControl.errorControl}" />										
+										</aon:commandLink>
+									</aon:div>							
 									
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="countErrorControlAggregate"
-										action="gwt_consumption_error_templates" title="#{bundle.warehouse_count_error_control_aggregate}">
-										<aon:outputText value="#{bundle.warehouse_count_error_control_aggregate}" />
-									</aon:commandLink>
-								</aon:div>						
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="countErrorControlAggregate"
+											action="gwt_consumption_error_templates" title="#{bundle.warehouse_count_error_control_aggregate}">
+											<aon:outputText value="#{bundle.warehouse_count_error_control_aggregate}" />
+										</aon:commandLink>
+									</aon:div>	
+														
+								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
 
