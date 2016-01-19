@@ -255,9 +255,11 @@
 					</ui:define>
 					<ui:define name="endFormListContent">
 						<aon:div>
-							<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolTipAuditInfo.xhtml">
-								<ui:param name="auditableTO" value="#{to}" />
-							</ui:include>
+							<aon:if test="#{inventory.to.closed}" >
+								<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolTipAuditInfo.xhtml">
+									<ui:param name="auditableTO" value="#{to}" />
+								</ui:include>
+							</aon:if>
 						</aon:div>
 					</ui:define>
 				</ui:decorate>
@@ -269,7 +271,7 @@
 			<ui:include src="/com/code/aon/ui/warehouse/facelet/inventory/modalInventoryAdjustment.xhtml" />
 		</aon:if>		
 		<ui:decorate template="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
-			<ui:param name="auditableController" value="#{inventory}" />
+			<ui:param name="auditableController" value="#{inventoryDetail}" />
 		</ui:decorate>
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/inventory/modalConfirm.xhtml">
 			<ui:param name="controller" value="#{inventory}" />

@@ -25,6 +25,7 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
@@ -36,7 +37,7 @@ import com.code.aon.warehouse.Inventory;
 import com.code.aon.warehouse.InventoryDetail;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class InventoryDetailController extends LinesController implements ICollectionProvider {
+public class InventoryDetailController extends LinesController implements ICollectionProvider,IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -52,6 +53,7 @@ public class InventoryDetailController extends LinesController implements IColle
 	private String description;
 	private Boolean stock;
 	private ItemFilter itemFilter;
+	private Boolean showAuditInfoWindow = false;
 	
 	public boolean isShowSearchPanel() {
 		return showSearchPanel;
@@ -233,6 +235,17 @@ public class InventoryDetailController extends LinesController implements IColle
 				LOGGER.error("Error filtering items", e);
 			}
 		}
-
 	}
+	
+	@Override
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	@Override
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
+	
+
 }
