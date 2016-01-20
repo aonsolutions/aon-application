@@ -406,6 +406,9 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 		if (list != null && list.size() > 0 && list.get(0) != null) {
 			code = (String) list.get(0);	
 		}
+		if(code==null) {
+			code = "430000000";
+		}
 		return code;
 	}
 	
