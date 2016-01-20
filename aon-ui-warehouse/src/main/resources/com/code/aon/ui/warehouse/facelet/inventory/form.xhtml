@@ -132,12 +132,38 @@
 				<aon:methodParam name="saveActionListener" value="#{inventoryDetail.onAcceptNext}" type="actionListener" />
 
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+					<ui:param name="dataTableId" value="inventoryDetails" />
 					<ui:param name="controller" value="#{inventoryDetail}" />				
 					<ui:param name="skipRemoveButton" value="true" />
 					<ui:param name="skipResetButton" value="#{inventory.to.closed}" />
-					<ui:param name="skipLineEdition" value="#{inventory.to.closed}" />
+					<ui:param name="skipLineEdition" value="#{true}" />
 					<ui:param name="showNote" value="true" />
 					<ui:param name="showDataTable" value="#{inventoryDetail.model.rowCount > 0}" />
+					
+					<ui:param name="showDataScroller" value="false" />
+					<ui:param name="rowSelectorReRender" value="menuExt" />
+					<ui:param name="resetButtonReRender" value="menuExt" />
+					<ui:param name="newCancelButtonReRender" value="menuExt" />
+					<ui:param name="cancelButtonReRender" value="menuExt" />
+					<ui:param name="newSaveButtonReRender" value="menuExt,Income_total,Income_workPlace,Income_warehouse" />
+					<ui:param name="saveButtonReRender" value="menuExt,Income_total,Income_workPlace,Income_warehouse" />
+					<ui:param name="focusOnAdd" value="Item_id-New" />
+					<ui:param name="focusOnSelect" value="Item_id" />
+					
+					
+					
+					<ui:define name="beginFormListContent">
+						<aon:commandLink id="#{dataTableId}-selectButton"
+							styleClass="aon-table-row-link" value="&#160;"
+							immediate="true" ajaxSingle="true" requestDelay="100"
+							rendered="#{!inventory.to.closed}"
+							actionListener="#{inventoryDetail.onSelect}"
+							onkeyup="#{dataTableId}KeyUp(this)"
+							onfocus="#{dataTableId}SelectRow(this)"
+							onblur="#{dataTableId}DeselectRow(this)"
+							focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
+						</aon:commandLink>
+					</ui:define>
 					
 					<ui:define name="columns">					
 					
@@ -255,11 +281,9 @@
 					</ui:define>
 					<ui:define name="endFormListContent">
 						<aon:div>
-							<aon:if test="#{inventory.to.closed}" >
-								<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolTipAuditInfo.xhtml">
-									<ui:param name="auditableTO" value="#{to}" />
-								</ui:include>
-							</aon:if>
+							<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolTipAuditInfo.xhtml">
+								<ui:param name="auditableTO" value="#{to}" />
+							</ui:include>
 						</aon:div>
 					</ui:define>
 				</ui:decorate>
