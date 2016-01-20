@@ -3934,7 +3934,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			itemButton.setTabIndex(Short.MAX_VALUE);
 			valuePanel.add(itemButton);
 			// not show payments of variables at 'to' ...
-			itemButton.setValue(show && variable.getScope() == Scope.SALARY,
+			itemButton.setValue(show && variable.getScope().compareTo(Scope.AGREEMENT)>=0,
 					true);
 		} else if (variable instanceof UndefinedDeductionVariable) {
 			String styles[] = eventStyles.get(Event.Type.WARNING);
