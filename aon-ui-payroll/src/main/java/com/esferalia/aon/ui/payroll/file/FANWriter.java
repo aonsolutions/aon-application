@@ -1,7 +1,6 @@
 package com.esferalia.aon.ui.payroll.file;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -365,8 +364,7 @@ public class FANWriter implements Serializable {
 					ContractCode code = getContractCode(contract);
 					discountDaysHours = Double.valueOf(CommonUtil.round(getEreDays(salary, salaryDataList), 0)).intValue();
 					if(code!=null && !code.getValue().startsWith("1") && !code.getValue().startsWith("4")){
-						String weekHours = obtainWeekHours(contract);
-						Double dayHours = (Double.parseDouble(weekHours)/5);
+						Double dayHours = obtainDayHours(contract);
 						discountDaysHours = Double.valueOf(CommonUtil.round(discountDaysHours * dayHours, 0)).intValue();
 					}
 				}
@@ -391,8 +389,7 @@ public class FANWriter implements Serializable {
 				Integer itDays = getItDays(contract);
 				ContractCode code = getContractCode(contract);
 				if(code!=null && !code.getValue().startsWith("1") && !code.getValue().startsWith("4")){
-					String weekHours = obtainWeekHours(contract);
-					Double dayHours = (Double.parseDouble(weekHours)/5);
+					Double dayHours = obtainDayHours(contract);
 					itDays = Double.valueOf(CommonUtil.round(itDays * dayHours, 0)).intValue();
 				}
 				createDATRecord(datList, contract, salaryDataList, autoComplete(getJournalReduction(contract), 3, " ", true), itDays);
@@ -409,8 +406,7 @@ public class FANWriter implements Serializable {
 				Integer ereDays = getEreDays(salary, salaryDataList);
 				ContractCode code = getContractCode(contract);
 				if(code!=null && !code.getValue().startsWith("1") && !code.getValue().startsWith("4")){
-					String weekHours = obtainWeekHours(contract);
-					Double dayHours = (Double.parseDouble(weekHours)/5);
+					Double dayHours = obtainDayHours(contract);
 					ereDays = Double.valueOf(CommonUtil.round(ereDays * dayHours, 0)).intValue();
 				}
 				createDATRecord(datList, contract, salaryDataList, autoComplete(getOthers(salary, salaryDataList), 6, " ", true), ereDays);
@@ -1177,7 +1173,11 @@ public class FANWriter implements Serializable {
 				}
 			}
 		}
-		// TODO: if socio_cooperativa = true then match = true;
+		
+		String cooperativePartner = SEPEUtils.getInstance().getContractInfoMap(contract, false, true).get(ContractVariable.COOPERATIVE_PARTNER.getValue());
+		if(new Boolean(cooperativePartner)){
+			match = true;
+		}
 		
 		if(match){
 			Date contractStart = contract.getStartDate();
@@ -1218,11 +1218,20 @@ public class FANWriter implements Serializable {
 		String days = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.NO_HOLIDAYS.getName());
 		return (int) NumberUtils.toDouble(days);
 	}
-
-	private String obtainWeekHours(Contract contract) {
-		return SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
-	}
 	
+	private Double obtainDayHours(Contract contract) throws ManagerBeanException {
+		Salary salary = getSalary(contract, SalaryType.SALARY);
+		SalaryData workedHoursData = SEPEUtils.getInstance().getSalaryDataMap(salary, salary.getStartDate(), salary.getEndDate()).get(ContextVariable.WORKED_HOURS.getName());
+		String workedHours = workedHoursData!=null && NumberUtils.isNumber(workedHoursData.getExpression())?workedHoursData.getExpression():null;
+		Double dayHours = null;
+		if(workedHours!=null){
+			dayHours = Double.parseDouble(workedHours)/salary.getTimeUnits();
+		} else {
+			String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
+			dayHours = (Double.parseDouble(weekHours)/5);
+		}
+		return dayHours;
+	}
 	
 	/**
 	 * numero de horas destinadas a formacion para las bonificaciones por formacion
