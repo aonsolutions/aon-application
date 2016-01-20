@@ -1,8 +1,7 @@
-package com.esferalia.aon.gwt.payroll.client;
+package com.esferalia.aon.gwt.common.client.widget;
 
 import java.util.Date;
 
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
