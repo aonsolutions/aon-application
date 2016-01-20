@@ -233,7 +233,7 @@
 				<textFieldExpression><![CDATA[$R{aon_company_document} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="f9f01d70-8dbd-4483-b627-3d38dc964250" key="textField-55" x="287" y="6" width="101" height="20">
+				<reportElement uuid="f9f01d70-8dbd-4483-b627-3d38dc964250" key="textField-55" x="203" y="6" width="185" height="20">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -242,13 +242,13 @@
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="14" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{finance_invoice}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="6107743a-04c9-48e7-84f6-793e66426053" key="textField-55" x="287" y="26" width="101" height="20">
+				<reportElement uuid="6107743a-04c9-48e7-84f6-793e66426053" key="textField-55" x="203" y="26" width="185" height="20">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -257,13 +257,13 @@
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{rectifier}) ?  $R{finance_rectifier_invoice}.toUpperCase() : ($F{rectified}) ? $R{finance_rectified_invoice}.toUpperCase() : ""]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement uuid="5b60c928-2f1a-48fc-8271-519cbd9f7e28" key="textField-56" x="203" y="48" width="123" height="12">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="5b60c928-2f1a-48fc-8271-519cbd9f7e28" key="textField-56" x="203" y="48" width="185" height="12" isPrintWhenDetailOverflows="true">
 					<printWhenExpression><![CDATA[$P{printHeader} && $P{printInternetData}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -272,13 +272,13 @@
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{company}.getWeb().getValue()]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement uuid="39c9b17a-f8ec-43db-ba99-751dd44b9983" key="textField-56" x="203" y="60" width="123" height="12">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="39c9b17a-f8ec-43db-ba99-751dd44b9983" key="textField-56" x="203" y="60" width="185" height="12" isPrintWhenDetailOverflows="true">
 					<printWhenExpression><![CDATA[$P{printHeader} && $P{printInternetData}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -287,7 +287,7 @@
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{company}.getEmail().getValue()]]></textFieldExpression>
