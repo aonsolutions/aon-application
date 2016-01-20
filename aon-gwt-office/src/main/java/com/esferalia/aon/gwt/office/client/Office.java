@@ -14,13 +14,16 @@ import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
 import com.esferalia.aon.gwt.office.client.values.IssueValue;
+import com.esferalia.aon.gwt.office.client.values.LabelValue;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -34,13 +37,15 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class Office extends Composite implements EntryPoint,
-		IssueGrid.Listener, LeftButtonsMenuBar.LeftMenuBarListener {
+		IssueGrid.Listener, IssuePanel.Listener  {
 
 	private static OfficeUiBinder uiBinder = GWT.create(OfficeUiBinder.class);
 
 	interface OfficeUiBinder extends UiBinder<Widget, Office> {
 	}
 
+	@UiField
+	Button newIssueButton;
 	@UiField
 	DeckLayoutPanel deckPanel;
 	@UiField
@@ -52,16 +57,17 @@ public class Office extends Composite implements EntryPoint,
 	@UiField
 	SimpleLayoutPanel resultsPanel;
 	@UiField
-	IssueGrid dataGrid;
-	@UiField
-	LeftButtonsMenuBar leftButtonBarMenu;
+	IssueGrid dataGrid;	
 
 	private JsRepo repo;
+	private IssuePanel issuePanel;
 	private IssueSelected issueSelected;
 	private AonHub gitHub = new AonHub(GWT.getModuleBaseURL() + "api/");
 	private List<IssueSelected> openIssues;
 	private List<IssueSelected> closedIssues;
-
+	
+	private List<Tag> tagList;
+	
 	private Map<Integer, JsIssue> issuesMap;
 	private Map<Integer, JsRepo> repositories;
 
@@ -77,13 +83,14 @@ public class Office extends Composite implements EntryPoint,
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 		
+		this.tagList = new LinkedList<Tag>();
+		
 		this.dataGrid.addListener(this);
-		this.leftButtonBarMenu.addListener(this);
 		this.gitHub.setRepositoryUrl(GWT.getModuleBaseURL() + "api");
 		
 		initOpenIssues();
-//		initCloseIssues();
-		
+//		initCloseIssues();		
+
 		gitHub.getLabels(new AsyncCallback<JSON<JsLabel>>() {
 			
 			@Override
@@ -93,9 +100,10 @@ public class Office extends Composite implements EntryPoint,
 			
 			@Override
 			public void onSuccess(JSON<JsLabel> result) {
+				JsArray<JsLabel> labels = result.getData();
 				
-				for ( int index = 0 ; index < result.getData().length() ; index++ )
-					saveLabelInDecoratorPanel(result.getData().get(index));
+				for (int x = 0 ; x < labels.length(); x++)
+					addLabels2List(labels.get(x));
 			}
 		});
 		
@@ -119,22 +127,22 @@ public class Office extends Composite implements EntryPoint,
 
 		showDockOfficePanel();
 	}
-	
-	private void saveLabelInDecoratorPanel(JsLabel label) {
-		
-		Tag tag = new Tag();
-		tag.setName(label.getName());
-		tag.setId(label.getId());
-		
-		if (label.getColor() != null)
-			tag.setColor(label.getColor());
-		
-		leftButtonBarMenu.addLabelIssueButton(tag);
-	}
 
 	@Override
 	public void onSelectionChangeHandler(SelectionChangeEvent event) {
 
+	}
+	
+	// ******************************************************************
+	// *************************** UI - HANDLERS ************************
+	// ******************************************************************
+	
+	@UiHandler("newIssueButton")
+	void onNewIssueClick (ClickEvent event) {
+		issuePanel = new IssuePanel("Nueva Incidencia");
+		issuePanel.addListener(this);
+		issuePanel.setTagList(tagList);
+		issuePanel.showPopupPanel();
 	}
 
 	// ******************************************************************
@@ -155,107 +163,17 @@ public class Office extends Composite implements EntryPoint,
 		closeIssuesProvider.addDataDisplay(dataGrid);
 		closedIssues = closeIssuesProvider.getList();
 	}
+	
+	private void addLabels2List(JsLabel jsLabel) {
+		
+		Tag tag = new Tag();
+		tag.setId(jsLabel.getId());
+		tag.setName(jsLabel.getName());
+		tag.setType(jsLabel.getType());
+		tag.setColor(jsLabel.getColor());
+		
+		tagList.add(tag);
 
-	private void loadNotices(JsArray<JsIssue> notices) {
-
-		for (int x = 0; x < notices.length(); x++) {
-			JsIssue issue = notices.get(x);
-			issuesMap.put(issue.getId(), issue);
-			addOpenIssue(issue, null);
-			// loadIssueComments(issue);
-		}
-		changeOpenIssuesText(notices.length());
-
-	}
-
-	private boolean isOpenIssue(JsIssue issue) {
-		return issue.getState().equals(IssueValue.Prop.OPEN.value);
-	}
-
-	private void createAnIssue(JsRepo repo,
-			com.esferalia.aon.gwt.office.client.values.issues.IssueValue prop) {
-
-		gitHub.createIssue(prop, new AsyncCallback<JsIssue>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				GWT.log(caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(JsIssue result) {
-				Window.alert("Recarga el dataGrid");
-			}
-		});
-	}
-
-	private void editIssue(JsRepo repo, JsIssue issue,
-			com.esferalia.aon.gwt.office.client.values.issues.IssueValue prop) {
-		gitHub.editIssue(issue, prop, new AsyncCallback<JsIssue>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				GWT.log(caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(JsIssue result) {
-				Window.alert("Recarga el datagrid");
-			}
-		});
-	}
-
-	private void addOpenIssue(JsIssue issue, JsArray<JsIssueComment> comments) {
-		IssueSelected issueSelected = new IssueGrid.IssueOpenLoadSelected(issue);
-		if (comments != null)
-			issueSelected.setIssueComments(comments);
-		openIssues.add(issueSelected);
-	}
-
-	private void addCloseIssue(JsIssue issue, JsArray<JsIssueComment> comments) {
-		IssueSelected issueSelected = new IssueGrid.IssueClosedLoadSelected(
-				issue);
-		issueSelected.setIssueComments(comments);
-		closedIssues.add(issueSelected);
-	}
-
-	private void loadOpenIssues() {
-		List<IssueSelected> issues = new LinkedList<IssueSelected>();
-		Collections.sort(openIssues, IssueGrid.Comparators.NUMBER);
-
-		for (IssueSelected issue : openIssues)
-			issues.add(issue);
-	}
-
-	private void loadCloseIssues() {
-		List<IssueSelected> issues = new LinkedList<IssueSelected>();
-		Collections.sort(closedIssues, IssueGrid.Comparators.NUMBER);
-
-		for (IssueSelected issue : closedIssues)
-			issues.add(issue);
-	}
-
-	private void loadAllIssues() {
-		List<IssueSelected> issues = new LinkedList<IssueSelected>();
-
-		List<IssueSelected> allIssues = new LinkedList<IssueSelected>();
-		allIssues.addAll(openIssues);
-		allIssues.addAll(closedIssues);
-
-		Collections.sort(allIssues, IssueGrid.Comparators.NUMBER);
-		ListDataProvider<IssueSelected> listIssuesProvider = new ListDataProvider<IssueSelected>();
-		listIssuesProvider.addDataDisplay(dataGrid);
-		issues = listIssuesProvider.getList();
-
-		for (IssueSelected issue : allIssues)
-			issues.add(issue);
-	}
-
-	private void addLabel(int row, JsLabel label) {
-//		leftButtonBarMenu.addLabelIssueButton(row, label);
-	}
-
-	private void changeOpenIssuesText(Integer number) {
-//		leftButtonBarMenu.changeOpenIssuesText(number);
 	}
 
 	private void showDockOfficePanel() {
@@ -277,82 +195,36 @@ public class Office extends Composite implements EntryPoint,
 	@Override
 	public void onSelectionTitle(IssueSelected issue) {
 		
-		IssuePanel issuePanel = new IssuePanel("Mostrar Informacion");
-		issuePanel.setTitle(issue.getTitle());
-		issuePanel.setSender(issue.getUser().getLogin());
-		issuePanel.setPriority(issue.getPriority());
-		issuePanel.setType(issue.getType());
-		issuePanel.setBody(issue.getBody());
-		issuePanel.showPopupPanel();
-		
-//		this.issuesPanel.clear();
-//		this.issueSelected = issue;
-//		this.issueLayoutPanel = new IssuesLayoutPanel(issue);
-//		this.issueLayoutPanel.addListener(this);
-//		this.issuesPanel.add(issueLayoutPanel);
-//		showIssueLayoutPanel();
 	}
 
 	// ******************************************************************
-	// ********************** LEFT BAR BUTTONS **************************
+	// ********************** ISSUES PANEL LISTENER *********************
 	// ******************************************************************
-
+	
 	@Override
-	public void onNewIssueClickEvent() {
-		IssuePanel issuePanel = new IssuePanel("NUEVA INCIDENCIA");
-		issuePanel.showPopupPanel();
-	}
-
-	@Override
-	public void onShowOpenIssuesClickEvent() {
+	public void onCreateNewTag(final Tag tag) {
 		
-		Window.alert("Abiertas");
+		LabelValue value = new LabelValue();
+		value.setName(tag.getName());
+		Byte type = tag.getType();
+		value.setType(type.intValue());
 		
-		loadOpenIssues();
-		showDockOfficePanel();
+		gitHub.createLabel(value, new AsyncCallback<JsLabel>() {
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getMessage());
+			}
+			
+			@Override
+			public void onSuccess(JsLabel result) {
+				addLabels2List(result);
+				issuePanel.addTag(tag);
+			}
+		});
+		
 	}
 
-	@Override
-	public void onShowClosedIssuesClickEvent() {
-		loadCloseIssues();
-		showDockOfficePanel();
-	}
-
-	@Override
-	public void onShowAllIssuesClickEvent() {
-		loadAllIssues();
-		showDockOfficePanel();
-	}
-
-	@Override
-	public void onShowDeletedIssuesClickEvent() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onShowQuestionIssuesClickEvent() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onShowErrorIssuesClickEvent() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onShowFaqsIssuesClickEvent() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onLabelIssueClickEvent(Button button) {
-		// TODO Auto-generated method stub
-
-	}
 
 	private static native <T extends JavaScriptObject> T eval(String javascript)
 	/*-{

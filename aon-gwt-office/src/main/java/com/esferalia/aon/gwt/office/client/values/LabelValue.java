@@ -29,7 +29,7 @@ public class LabelValue extends Value<LabelValue.Prop> {
 		prop.put(Prop.URL, url);
 	}
 	
-	public void setType(String type) {
+	public void setType(Integer type) {
 		prop.put(Prop.TYPE, type);
 	}
 }

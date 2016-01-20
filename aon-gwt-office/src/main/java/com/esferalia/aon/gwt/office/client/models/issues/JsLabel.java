@@ -11,6 +11,10 @@ public class JsLabel extends JavaScriptObject {
 		return this.id;
 	}-*/;
 
+	public final native byte getType() /*-{
+		return this.type;
+	}-*/;
+
 	public final native String getColor() /*-{
 		return this.color;
 	}-*/;
@@ -21,5 +25,5 @@ public class JsLabel extends JavaScriptObject {
 
 	public final native String getName() /*-{
 		return this.name;
-	}-*/;	
+	}-*/;
 }

@@ -5,8 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
-import com.esferalia.aon.occam.api.model.type.NoticeType;
-import com.esferalia.aon.occam.api.model.type.Priority;
+import com.esferalia.aon.gwt.common.client.widget.FilterDialog;
+import com.esferalia.aon.gwt.office.client.values.LabelValue;
+import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.type.TagType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -14,18 +16,21 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class IssuePanel extends CustomDialog {
-	
+
 	interface Listener {
-		
-		void onPriorityChangeValue(String name);
+
+		void onCreateNewTag(Tag tag);
 	}
 
 	interface IssuePanelUiBinder extends UiBinder<Widget, IssuePanel> {
@@ -35,109 +40,166 @@ public class IssuePanel extends CustomDialog {
 			.create(IssuePanelUiBinder.class);
 
 	@UiField
+	HorizontalPanel statusHPanel;
+	@UiField
 	HorizontalPanel priorityHPanel;
 	@UiField
 	HorizontalPanel typeHPanel;
+	@UiField
+	HorizontalPanel labelsHPanel;
+
+	@UiField
+	Label newStatusButton;
+	@UiField
+	Label newTypeButton;
+	@UiField
+	Label newPriorityButton;
+	@UiField
+	Label newLabelButton;
+
 	@UiField
 	TextBox titleTextBox;
 	@UiField
 	TextBox senderTextBox;
 	@UiField
 	TextArea commentTextArea;
-	
+
 	@UiField
 	Button acceptButton;
 	@UiField
 	Button cancelButton;
-	
+
+	private List<Tag> tagsList = new LinkedList<Tag>();
 	private List<Listener> listeners;
 
 	public IssuePanel(String title) {
 		setCaption(title);
-		
+
 		setWidget(uiBinder.createAndBindUi(this));
-		
+
 		setAnimationEnabled(true);
-		setGlassEnabled(true);	
-		
+		setGlassEnabled(true);
+
 		this.listeners = new LinkedList<Listener>();
-		
-		for ( int x = 0; x < Priority.values().length; x++) {
-			
-			RadioButton rb = new RadioButton("Priority", Priority.values()[x].getValue());			
-			rb.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-				
-				@Override
-				public void onValueChange(ValueChangeEvent<Boolean> event) {
-					
-				}
-			});
-			priorityHPanel.add(rb);
-		}
-		
-		for ( int x = 0 ; x < NoticeType.values().length; x++) {
-			RadioButton rb = new RadioButton("Type", NoticeType.values()[x].getValue());
-			rb.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-				
-				@Override
-				public void onValueChange(ValueChangeEvent<Boolean> event) {
-					
-				}
-			});
-			typeHPanel.add(rb);
-		}
 	}
-	
-	public void addListener(Listener listener) {		
+
+	public void addListener(Listener listener) {
 		listeners.add(listener);
 	}
-	
-	public void removeListener (Listener listener) {
+
+	public void removeListener(Listener listener) {
 		listeners.remove(listener);
 	}
 
 	public void showPopupPanel() {
 		center();
 	}
-	
+
 	// ----------------------------------------------------
-	
+
+	public void setTagList(List<Tag> tagList) {
+		this.tagsList = tagList;
+		
+		for (Tag tag : tagList)
+			addTag(tag);
+	}
+
+	public void addTag(Tag tag) {
+
+		if (tag.getType() == TagType.OFFICE_NOTICE.value()) {
+			CheckBox check = new CheckBox(tag.getName());
+			check.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+				@Override
+				public void onValueChange(ValueChangeEvent<Boolean> event) {
+
+				}
+			});
+
+			labelsHPanel.add(check);
+
+		} else if (tag.getType() == TagType.OFFICE_PRIORITY.value()) {
+			RadioButton radioButton = new RadioButton("PRIORITY",
+					tag.getName());
+			radioButton
+					.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+						@Override
+						public void onValueChange(
+								ValueChangeEvent<Boolean> event) {
+
+						}
+					});
+			priorityHPanel.add(radioButton);
+		}
+
+		else if (tag.getType() == TagType.OFFICE_TYPE.value()) {
+			RadioButton radioButton = new RadioButton("TYPE", tag.getName());
+			radioButton
+					.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+						@Override
+						public void onValueChange(
+								ValueChangeEvent<Boolean> event) {
+
+						}
+					});
+			typeHPanel.add(radioButton);
+		}
+
+		else if (tag.getType() == TagType.OFFICE_STATUS.value()) {
+			RadioButton radioButton = new RadioButton("PRIORITY",
+					tag.getName());
+			radioButton
+					.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+						@Override
+						public void onValueChange(
+								ValueChangeEvent<Boolean> event) {
+
+						}
+					});
+			statusHPanel.add(radioButton);
+		}
+	}
+
 	public void setTitle(String title) {
 		titleTextBox.setValue(title);
 	}
-	
-	public void setSender (String login) {
+
+	public void setSender(String login) {
 		senderTextBox.setValue(login);
 	}
-	
+
 	public void setBody(String body) {
 		commentTextArea.setValue(body);
 	}
-	
+
 	public void setPriority(String priority) {
-		
+
 		Iterator<Widget> iter = priorityHPanel.iterator();
-		
-		while ( iter.hasNext() ) {
+
+		while (iter.hasNext()) {
 			RadioButton rb = (RadioButton) iter.next();
-			if ( rb.getText().compareTo(priority) == 0)
+			if (rb.getText().compareTo(priority) == 0)
 				rb.setValue(true);
 		}
 	}
-	
+
 	public void setType(String type) {
 		Iterator<Widget> iter = typeHPanel.iterator();
-		
-		while ( iter.hasNext() ) {
+
+		while (iter.hasNext()) {
 			RadioButton rb = (RadioButton) iter.next();
-			if ( rb.getText().compareTo(type) == 0)
+			if (rb.getText().compareTo(type) == 0)
 				rb.setValue(true);
 		}
 
 	}
-	
+
 	// ----------------------------------------------------
 	// ------------------------------------------- Handlers
+	// ----------------------------------------------------
 
 	@UiHandler("acceptButton")
 	void onAcceptButtonClick(ClickEvent event) {
@@ -148,4 +210,172 @@ public class IssuePanel extends CustomDialog {
 	void onCancelButtonClick(ClickEvent event) {
 		hide();
 	}
+
+	@UiHandler("newStatusButton")
+	void onNewStatusButtonClick(ClickEvent event) {
+		
+		new FilterDialog() {
+			
+			{
+				setCaption("Nuevo Estado");
+				setFilterLabel("Agrega nuevo estado: ");
+				setVisibleDateLabel(false);
+				setVisibleDateBox(false);
+				center();
+				show();
+			}
+			
+			@Override
+			protected void onAccept() {
+				
+				boolean encontrado = false;
+				
+				for ( Tag tag : tagsList) {
+					
+					if ( tag.getName().toUpperCase().compareTo(getName().toUpperCase()) == 0
+							&& tag.getType() == TagType.OFFICE_STATUS.value()) {
+						encontrado = true;
+						break;
+					}
+				}
+				
+				if ( encontrado ) {
+					Window.alert("Nombre del estado ya existente");					
+				}
+				else {
+					Tag tag = new Tag();
+					tag.setName(getName());
+					tag.setType(TagType.OFFICE_STATUS.value());
+					onCreateNewTag(tag);
+				}
+				
+			}
+		};
+	}
+
+	@UiHandler("newPriorityButton")
+	void onNewPriorityButtonClick(ClickEvent event) {
+		new FilterDialog() {
+			{
+				setCaption("Nueva Prioridad");
+				setFilterLabel("Agrega nueva prioridad: ");
+				setVisibleDateLabel(false);
+				setVisibleDateBox(false);
+				center();
+				show();
+
+			}
+			
+			@Override
+			protected void onAccept() {
+				boolean encontrado = false;
+				
+				for ( Tag tag : tagsList) {
+					
+					if ( tag.getName().toUpperCase().compareTo(getName().toUpperCase()) == 0
+							&& tag.getType() == TagType.PRIORITY.value()) {
+						encontrado = true;
+						break;
+					}
+				}
+				
+				if ( encontrado ) {
+					Window.alert("Nombre del estado ya existente");					
+				}
+				else {
+					Tag tag = new Tag();
+					tag.setName(getName());
+					tag.setType(TagType.OFFICE_PRIORITY.value());
+					onCreateNewTag(tag);
+				}
+
+				
+			}
+		};
+	}
+
+	@UiHandler("newTypeButton")
+	void onNewTypeButtonClick(ClickEvent event) {
+		new FilterDialog() {
+			{
+				setCaption("Nuevo Tipo");
+				setFilterLabel("Agrega nuevo tipo: ");
+				setVisibleDateLabel(false);
+				setVisibleDateBox(false);
+				center();
+				show();
+			}
+			
+			@Override
+			protected void onAccept() {
+				boolean encontrado = false;
+				
+				for ( Tag tag : tagsList) {
+					
+					if ( tag.getName().toUpperCase().compareTo(getName().toUpperCase()) == 0
+							&& tag.getType() == TagType.OFFICE_TYPE.value()) {
+						encontrado = true;
+						break;
+					}
+				}
+				
+				if ( encontrado ) {
+					Window.alert("Nombre del estado ya existente");					
+				}
+				else {
+					Tag tag = new Tag();
+					tag.setName(getName());
+					tag.setType(TagType.OFFICE_TYPE.value());
+					onCreateNewTag(tag);
+				}
+			}
+		};
+
+	}
+
+	@UiHandler("newLabelButton")
+	void onNewLabelButtonClick(ClickEvent event) {
+		new FilterDialog() {
+			{
+				setCaption("Nueva Etiqueta");
+				setFilterLabel("Agrega nueva etiqueta: ");
+				setVisibleDateLabel(false);
+				setVisibleDateBox(false);
+				center();
+				show();
+
+			}
+			
+			@Override
+			protected void onAccept() {
+				boolean encontrado = false;
+				
+				for ( Tag tag : tagsList) {
+					
+					if ( tag.getName().toUpperCase().compareTo(getName().toUpperCase()) == 0
+							&& tag.getType() == TagType.OFFICE_NOTICE.value()) {
+						encontrado = true;
+						break;
+					}
+				}
+				
+				if ( encontrado ) {
+					Window.alert("Nombre del estado ya existente");					
+				}
+				else {
+					Tag tag = new Tag();
+					tag.setName(getName());
+					tag.setType(TagType.OFFICE_NOTICE.value());
+					onCreateNewTag(tag);
+					
+				}
+			}
+		};
+	}
+	
+	private void onCreateNewTag(Tag tag) {
+		for ( Listener listener : listeners )
+			listener.onCreateNewTag(tag);
+	}
+
 }

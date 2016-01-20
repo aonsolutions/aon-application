@@ -31,6 +31,22 @@
 					<g:TextBox ui:field="titleTextBox" width="500px" />
 				</g:customCell>
 			</g:row>
+			<g:row>
+				<g:customCell>
+					<g:InlineLabel
+						styleName="{aonResources.css.aonBold}
+					{aonResources.css.aonIconSearch} {aonResources.css.aonIconCommandButton}"
+						text="Estado" />
+				</g:customCell>
+				<g:customCell>
+					<g:HorizontalPanel ui:field="statusHPanel"
+						spacing="5">
+						<g:Label ui:field="newStatusButton"
+							styleName="{aonResources.css.aonIconReset}
+						{aonResources.css.aonIconCommandButton}" />
+					</g:HorizontalPanel>
+				</g:customCell>
+			</g:row>
 
 			<g:row>
 				<g:customCell>
@@ -41,7 +57,11 @@
 				</g:customCell>
 				<g:customCell>
 					<g:HorizontalPanel ui:field="priorityHPanel"
-						spacing="5" />
+						spacing="5">
+						<g:Label ui:field="newPriorityButton"
+							styleName="{aonResources.css.aonIconReset}
+						{aonResources.css.aonIconCommandButton}" />
+					</g:HorizontalPanel>
 				</g:customCell>
 			</g:row>
 
@@ -61,25 +81,32 @@
 				<g:customCell>
 					<g:InlineLabel
 						styleName="{aonResources.css.aonBold}
-					{aonResources.css.aonIconEnterprise} {aonResources.css.aonIconCommandButton}"
-						text="{msg.company}" />
-				</g:customCell>
-				<g:customCell>
-					<g:TextBox ui:field="enterpriseTextBox" width="300px" />
-				</g:customCell>
-			</g:row>
-
-			<g:row>
-				<g:customCell>
-					<g:InlineLabel
-						styleName="{aonResources.css.aonBold}
 					{aonResources.css.aonIconLock} {aonResources.css.aonIconCommandButton}"
 						text="Tipo aviso" />
 				</g:customCell>
 				<g:customCell>
-					<g:HorizontalPanel ui:field="typeHPanel"
-						spacing="5" />
+					<g:HorizontalPanel ui:field="typeHPanel" spacing="5">
+						<g:Label ui:field="newTypeButton"
+							styleName="{aonResources.css.aonIconReset}
+						{aonResources.css.aonIconCommandButton}" />
+					</g:HorizontalPanel>
 				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell>
+					<g:InlineLabel
+						styleName="{aonResources.css.aonBold}
+					{aonResources.css.aonIconTitle} {aonResources.css.aonIconCommandButton}"
+						text="Etiquetas" />
+				</g:customCell>
+				<g:customCell>
+					<g:HorizontalPanel ui:field="labelsHPanel" spacing="5">
+						<g:Label ui:field="newLabelButton"
+							styleName="{aonResources.css.aonIconReset}
+						{aonResources.css.aonIconCommandButton}" />
+					</g:HorizontalPanel>
+				</g:customCell>
+
 			</g:row>
 
 		</g:Grid>

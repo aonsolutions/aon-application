@@ -421,7 +421,7 @@ public class OfficeApiServlet extends HttpServlet {
 				JSONObject json = new JSONObject(object);
 				Tag tag = new Tag();
 				tag.setName(json.getString("name"));
-				tag.setType(TagType.OFFICE_NOTICE.value());
+				tag.setType( (byte) json.getInt("type"));
 				
 				if ( json.isNull("color") == false)
 					tag.setColor(json.getString("color"));
@@ -845,6 +845,8 @@ public class OfficeApiServlet extends HttpServlet {
 		buffer.append("{\n");
 		buffer.append(String.format("\"id\":%s,\r\n",
 				String.valueOf(tag.getId())));
+		buffer.append(String.format("\"type\":%s,\r\n",
+				String.valueOf(tag.getType())));
 		buffer.append(String.format("\"name\":\"%s\",\r\n", tag.getName()));
 		buffer.append(String.format("\"color\":\"%s\"\r\n",
 				(tag.getColor() != null) ? tag.getColor() : ""));
