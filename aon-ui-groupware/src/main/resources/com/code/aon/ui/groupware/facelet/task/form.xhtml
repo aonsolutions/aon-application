@@ -90,9 +90,9 @@
 					
 					<aon:outputText value=""
 						rendered="#{task.to.processCommentsNotEmpty}"/>
-					<aon:panel style="background-color:#f6f5e3; padding: 0px; margin-bottom: 5px;">
+					<aon:panel style="background-color:#f6f5e3; padding: 0px; margin-bottom: 5px;"
+						rendered="#{task.to.processCommentsNotEmpty}">
 						<aon:outputText value="#{task.to.processComments}"
-							rendered="#{task.to.processCommentsNotEmpty}"
 							style="margin-left: 50px;" 
 							/>		
 					</aon:panel>
