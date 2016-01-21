@@ -47,8 +47,8 @@
 										</aon:div>								
 									</aon:if>															
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="aon_invoicing"
-											action="feeInvoicing"
+										<aon:commandLink id="aon_invoicing-aonOne"
+											action="feeInvoicing-aonOne"
 											actionListener="#{feeInvoicing.onInitialize}"
 											value="#{bundle.finance_fee_invoicing_module}"/>
 									</aon:div>
@@ -143,8 +143,8 @@
 									</aon:div>
 									<aon:if test="#{aonRole.saleOperator}">
 										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="aon_fee_assignment" 
-												action="feeAssignment_search"
+											<aon:commandLink id="aon_fee_assignment-aonOne" 
+												action="feeAssignment_search-aonOne"
 												actionListener="#{feeAssignment.onEditSearch}"
 												value="#{bundle.finance_fee_assignment_module}" />
 										</aon:div>
@@ -209,8 +209,8 @@
 								</aon:if>
 								<aon:if test="#{aonRole.saleOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="aon_pre_invoicing"
-											action="feePreInvoicing"
+										<aon:commandLink id="aon_pre_invoicing-aonOne"
+											action="feePreInvoicing-aonOne"
 											actionListener="#{preInvoicing.onInitialize}"
 											value="#{bundle.finance_pre_invoicing_module}"/>
 									</aon:div>
@@ -472,8 +472,8 @@
 								</aon:if>
 								<aon:if test="#{customize.snapshotVersion}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_invoiceStats"
-											action="gwt_invoiceStats"
+										<aon:commandLink id="gwt_invoiceStats-aonOne"
+											action="gwt_invoiceStats-aonOne"
 											title="Estadisticas">
 											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
 												style="margin-left: 5px; padding-left: 20px;" 
