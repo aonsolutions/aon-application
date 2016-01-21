@@ -47,8 +47,15 @@ import com.esferalia.aon.watson.error.AonCoreException;
 public class CertificateController implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;	
+	
+	private static final String IZENPE = "Izenpe";
+	private static final String IZENPE_TSA_URL = "http://ocsp.izenpe.com:8093"; 
 
-	private static final String DEFAULT_TSA_URL = "http://ocsp.izenpe.com:8093"; 
+	private static final String ACCV = "ACCV";
+	private static final String ACCV_TSA_URL = "http://tss.accv.es:8318/tsa";
+
+	private static final String CATCERT = "Catcert";
+	private static final String CATCERT_TSA_URL = "http://psis.catcert.net/psis/catcert/tsp";
 
 	private static final String SIGN_IMAGE_PATH = "sign.png";
 	
@@ -59,6 +66,10 @@ public class CertificateController implements Serializable {
 	private CompanyController companyController;
 	
 	private RegistryAttachment keystore;
+	
+	private String entity;
+	
+	private List<SelectItem> entities;
 	
 	private String password;
 
@@ -200,6 +211,15 @@ public class CertificateController implements Serializable {
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
 	}
+	
+
+	public String getEntity() {
+		return entity;
+	}
+
+	public void setEntity(String entity) {
+		this.entity = entity;
+	}
 
 	public String getPdf64Data() {
 		if ( getAttachment() == null ) {
@@ -297,6 +317,18 @@ public class CertificateController implements Serializable {
 		return rattachBean.getCount(criteria);
 	}	
 	
+	public List<SelectItem> getEntities(){
+		SelectItem izenpe = new SelectItem(IZENPE_TSA_URL, IZENPE);
+		SelectItem accv = new SelectItem(ACCV_TSA_URL, ACCV);
+		SelectItem catcert = new SelectItem(CATCERT_TSA_URL, CATCERT);
+		entities = new LinkedList<SelectItem>();
+		entities.add(izenpe);
+		entities.add(accv);
+		entities.add(catcert);
+
+		return entities;
+	}
+	
 	public boolean isSignable() throws ManagerBeanException {
 		return companyController.isSmartCard() || getCertificateCount()>0;
 	}
@@ -324,7 +356,7 @@ public class CertificateController implements Serializable {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try {
 			DocumentIFace document = DocumentFactory.buildPDFDocument( in );
-			document.setTSURL( DEFAULT_TSA_URL );
+			document.setTSURL(getEntity());
 			InputStream imageIS = SignerController.class.getResourceAsStream(SIGN_IMAGE_PATH);
 			byte[] imageData = IOUtils.toByteArray( imageIS );
 			document.firmar( getSignStore(), getCertificado(), out, true, 
