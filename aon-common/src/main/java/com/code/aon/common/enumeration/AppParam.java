@@ -286,6 +286,8 @@ public enum AppParam {
 	,ACC_SALARY_DED_IN_KIND_ACC
 	
 	,ACC_SALARY_DED_OTHER_ACC
+	
+	,ACC_VAT_NEGATIVE_ADJUST_ACC
 	;
 
 	public String getValue() {

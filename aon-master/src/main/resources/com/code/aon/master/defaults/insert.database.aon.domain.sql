@@ -695,6 +695,9 @@ INSERT INTO `account` (`domain`,`code`,`description`,`alias`,`entryEnabled`,`lev
 	(@Domain,'6330','Ajustes negativos en la imposición sobre beneficios.',NULL,0,4),
 	(@Domain,'634','Ajustes negativos en la imposición indirecta.',NULL,0,3),
 	(@Domain,'6340','Ajustes negativos en la imposición indirecta.',NULL,0,4),
+	(@Domain,'6341','Ajustes negativos en IVA de activo corriente.',NULL,0,4),
+	(@Domain,'634100001','Ajustes negativos en IVA de activo corriente.',NULL,1,5),
+	(@Domain,'6342','Ajustes negativos en IVA de inversiones.',NULL,0,4),
 	(@Domain,'636','Devolución de impuestos.',NULL,0,3),
 	(@Domain,'6360','Devolución de impuestos.',NULL,0,4),
 	(@Domain,'638','Ajustes positivos en la imposición sobre beneficios.',NULL,0,3),
@@ -1048,6 +1051,7 @@ INSERT INTO `app_param` (`domain`,`name`,`value`) VALUES
   (@Domain,'ACC_DEFAULT_SALES_ACC',(SELECT `id` FROM `account` WHERE `domain` = @Domain AND `code` = '700000000')),
   (@Domain,'ACC_DEFAULT_SOCIAL_INSURANCE_ACC',(SELECT `id` FROM `account` WHERE `domain` = @Domain AND `code` = '476000000')),
   (@Domain,'ACC_DEFAULT_PREPAYMENT_ACC',(SELECT `id` FROM `account` WHERE `domain` = @Domain AND `code` = '555900000')),
+  (@Domain,'ACC_VAT_NEGATIVE_ADJUST_ACC',(SELECT `id` FROM `account` WHERE `domain` = @Domain AND `code` = '634100001')),
   (@Domain,'APP_PRINT_HEADER_PARAM','false'),
   (@Domain,'APP_PRINT_RECORD_DATA_PARAM','false');
 

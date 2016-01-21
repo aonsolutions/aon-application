@@ -72,6 +72,8 @@ public class AccountAppParamsController implements Serializable {
 		DEFAULT_PARAMETERS.put(AppParam.ACC_SALARY_DED_SEIZE_ACC.getValue(), null );
 		DEFAULT_PARAMETERS.put(AppParam.ACC_SALARY_DED_IN_KIND_ACC.getValue(), null );
 		DEFAULT_PARAMETERS.put(AppParam.ACC_SALARY_DED_OTHER_ACC.getValue(), null );
+		
+		DEFAULT_PARAMETERS.put(AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC.getValue(), null );
 
 	}
 	
@@ -91,6 +93,8 @@ public class AccountAppParamsController implements Serializable {
 	private Account accSalaryDedSeizeAccount;
 	private Account accSalaryDedInKindAccount;
 	private Account accSalaryDedOtherAccount;
+	
+	private Account accVatNegativeAdjustAccount;
 
 	public Map<String, ApplicationParameter> getParameters() {
 		return parameters;
@@ -171,6 +175,7 @@ public class AccountAppParamsController implements Serializable {
 		initializeAccSalaryDedSeizeAccount();
 		initializeAccSalaryDedInKindAccount();
 		initializeAccSalaryDedOtherAccount();
+		initializeAccVatNegativeAdjustAccount();
 		
 	}
 	
@@ -447,4 +452,20 @@ public class AccountAppParamsController implements Serializable {
 		putAccount(AppParam.ACC_SALARY_DED_OTHER_ACC,accSalaryDedOtherAccount);
 	}
 	
+	private void initializeAccVatNegativeAdjustAccount() {
+		try {
+			setAccVatNegativeAdjustAccount( initializeAccount(AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Cuenta por defecto no válida.");
+			setAccVatNegativeAdjustAccount( new Account() );	
+		}
+	}
+	public Account getAccVatNegativeAdjustAccount() {
+		return accVatNegativeAdjustAccount;
+	}
+	public void setAccVatNegativeAdjustAccount(
+			Account accVatNegativeAdjustAccount) {
+		this.accVatNegativeAdjustAccount = accVatNegativeAdjustAccount;
+		putAccount(AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC,accVatNegativeAdjustAccount);
+	}
 }
