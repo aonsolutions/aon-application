@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.FilterDialog;
-import com.esferalia.aon.gwt.office.client.values.LabelValue;
+import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.google.gwt.core.client.GWT;
@@ -31,6 +31,8 @@ public class IssuePanel extends CustomDialog {
 	interface Listener {
 
 		void onCreateNewTag(Tag tag);
+
+		void onCreateNewIssue(Notice notice);
 	}
 
 	interface IssuePanelUiBinder extends UiBinder<Widget, IssuePanel> {
@@ -72,6 +74,11 @@ public class IssuePanel extends CustomDialog {
 	private List<Tag> tagsList = new LinkedList<Tag>();
 	private List<Listener> listeners;
 
+	private String state;
+	private String priority;
+	private String type;
+	private List<Tag> selectedTags = new LinkedList<Tag>();
+
 	public IssuePanel(String title) {
 		setCaption(title);
 
@@ -99,7 +106,7 @@ public class IssuePanel extends CustomDialog {
 
 	public void setTagList(List<Tag> tagList) {
 		this.tagsList = tagList;
-		
+
 		for (Tag tag : tagList)
 			addTag(tag);
 	}
@@ -112,7 +119,20 @@ public class IssuePanel extends CustomDialog {
 
 				@Override
 				public void onValueChange(ValueChangeEvent<Boolean> event) {
-
+					RadioButton rb = (RadioButton) event.getSource();
+					if (rb.getValue() == false) {
+						for (Tag tag : selectedTags) {
+							if (tag.getName().compareTo(rb.getText()) == 0) {
+								selectedTags.remove(tag);
+								break;
+							}
+						}
+					} else {
+						Tag tag = new Tag();
+						tag.setName(rb.getText());
+						tag.setType(TagType.OFFICE_NOTICE.value());
+						selectedTags.add(tag);
+					}
 				}
 			});
 
@@ -127,7 +147,8 @@ public class IssuePanel extends CustomDialog {
 						@Override
 						public void onValueChange(
 								ValueChangeEvent<Boolean> event) {
-
+							RadioButton rb = (RadioButton) event.getSource();
+							IssuePanel.this.priority = rb.getText();
 						}
 					});
 			priorityHPanel.add(radioButton);
@@ -141,22 +162,23 @@ public class IssuePanel extends CustomDialog {
 						@Override
 						public void onValueChange(
 								ValueChangeEvent<Boolean> event) {
-
+							RadioButton rb = (RadioButton) event.getSource();
+							IssuePanel.this.type = rb.getText();
 						}
 					});
 			typeHPanel.add(radioButton);
 		}
 
 		else if (tag.getType() == TagType.OFFICE_STATUS.value()) {
-			RadioButton radioButton = new RadioButton("PRIORITY",
-					tag.getName());
+			RadioButton radioButton = new RadioButton("STATUS", tag.getName());
 			radioButton
 					.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
 						@Override
 						public void onValueChange(
 								ValueChangeEvent<Boolean> event) {
-
+							RadioButton rb = (RadioButton) event.getSource();
+							IssuePanel.this.state = rb.getText();
 						}
 					});
 			statusHPanel.add(radioButton);
@@ -203,7 +225,37 @@ public class IssuePanel extends CustomDialog {
 
 	@UiHandler("acceptButton")
 	void onAcceptButtonClick(ClickEvent event) {
+
+		Notice notice = new Notice();
+		notice.setTitle((titleTextBox.getValue().isEmpty()) ? ""
+				: titleTextBox.getValue());
+
+		if (state != null) {
+			
+			Tag stateTag = new Tag();
+			stateTag.setName(state);
+			stateTag.setType(TagType.OFFICE_STATUS.value());
+			notice.addTag(stateTag);
+		}
+
+		if (priority != null)
+			notice.setPriority(priority);
+
+		if (type != null) {
+			Tag typeTag = new Tag();
+			typeTag.setName(type);
+			typeTag.setType(TagType.OFFICE_TYPE.value());
+			notice.addTag(typeTag);
+		}
+
+		for (Tag tag : selectedTags)
+			notice.addTag(tag);
+
+		notice.setBody((commentTextArea.getValue().isEmpty()) ? ""
+				: commentTextArea.getValue());
+		onCreateNewIssue(notice);
 		hide();
+
 	}
 
 	@UiHandler("cancelButton")
@@ -213,9 +265,9 @@ public class IssuePanel extends CustomDialog {
 
 	@UiHandler("newStatusButton")
 	void onNewStatusButtonClick(ClickEvent event) {
-		
+
 		new FilterDialog() {
-			
+
 			{
 				setCaption("Nuevo Estado");
 				setFilterLabel("Agrega nuevo estado: ");
@@ -224,31 +276,31 @@ public class IssuePanel extends CustomDialog {
 				center();
 				show();
 			}
-			
+
 			@Override
 			protected void onAccept() {
-				
+
 				boolean encontrado = false;
-				
-				for ( Tag tag : tagsList) {
-					
-					if ( tag.getName().toUpperCase().compareTo(getName().toUpperCase()) == 0
+
+				for (Tag tag : tagsList) {
+
+					if (tag.getName().toUpperCase()
+							.compareTo(getName().toUpperCase()) == 0
 							&& tag.getType() == TagType.OFFICE_STATUS.value()) {
 						encontrado = true;
 						break;
 					}
 				}
-				
-				if ( encontrado ) {
-					Window.alert("Nombre del estado ya existente");					
-				}
-				else {
+
+				if (encontrado) {
+					Window.alert("Nombre del estado ya existente");
+				} else {
 					Tag tag = new Tag();
 					tag.setName(getName());
 					tag.setType(TagType.OFFICE_STATUS.value());
 					onCreateNewTag(tag);
 				}
-				
+
 			}
 		};
 	}
@@ -265,31 +317,30 @@ public class IssuePanel extends CustomDialog {
 				show();
 
 			}
-			
+
 			@Override
 			protected void onAccept() {
 				boolean encontrado = false;
-				
-				for ( Tag tag : tagsList) {
-					
-					if ( tag.getName().toUpperCase().compareTo(getName().toUpperCase()) == 0
+
+				for (Tag tag : tagsList) {
+
+					if (tag.getName().toUpperCase()
+							.compareTo(getName().toUpperCase()) == 0
 							&& tag.getType() == TagType.PRIORITY.value()) {
 						encontrado = true;
 						break;
 					}
 				}
-				
-				if ( encontrado ) {
-					Window.alert("Nombre del estado ya existente");					
-				}
-				else {
+
+				if (encontrado) {
+					Window.alert("Nombre del estado ya existente");
+				} else {
 					Tag tag = new Tag();
 					tag.setName(getName());
 					tag.setType(TagType.OFFICE_PRIORITY.value());
 					onCreateNewTag(tag);
 				}
 
-				
 			}
 		};
 	}
@@ -305,24 +356,24 @@ public class IssuePanel extends CustomDialog {
 				center();
 				show();
 			}
-			
+
 			@Override
 			protected void onAccept() {
 				boolean encontrado = false;
-				
-				for ( Tag tag : tagsList) {
-					
-					if ( tag.getName().toUpperCase().compareTo(getName().toUpperCase()) == 0
+
+				for (Tag tag : tagsList) {
+
+					if (tag.getName().toUpperCase()
+							.compareTo(getName().toUpperCase()) == 0
 							&& tag.getType() == TagType.OFFICE_TYPE.value()) {
 						encontrado = true;
 						break;
 					}
 				}
-				
-				if ( encontrado ) {
-					Window.alert("Nombre del estado ya existente");					
-				}
-				else {
+
+				if (encontrado) {
+					Window.alert("Nombre del estado ya existente");
+				} else {
 					Tag tag = new Tag();
 					tag.setName(getName());
 					tag.setType(TagType.OFFICE_TYPE.value());
@@ -345,37 +396,40 @@ public class IssuePanel extends CustomDialog {
 				show();
 
 			}
-			
+
 			@Override
 			protected void onAccept() {
 				boolean encontrado = false;
-				
-				for ( Tag tag : tagsList) {
-					
-					if ( tag.getName().toUpperCase().compareTo(getName().toUpperCase()) == 0
+
+				for (Tag tag : tagsList) {
+
+					if (tag.getName().toUpperCase()
+							.compareTo(getName().toUpperCase()) == 0
 							&& tag.getType() == TagType.OFFICE_NOTICE.value()) {
 						encontrado = true;
 						break;
 					}
 				}
-				
-				if ( encontrado ) {
-					Window.alert("Nombre del estado ya existente");					
-				}
-				else {
+
+				if (encontrado) {
+					Window.alert("Nombre del estado ya existente");
+				} else {
 					Tag tag = new Tag();
 					tag.setName(getName());
 					tag.setType(TagType.OFFICE_NOTICE.value());
 					onCreateNewTag(tag);
-					
 				}
 			}
 		};
 	}
-	
+
 	private void onCreateNewTag(Tag tag) {
-		for ( Listener listener : listeners )
+		for (Listener listener : listeners)
 			listener.onCreateNewTag(tag);
 	}
 
+	private void onCreateNewIssue(Notice notice) {
+		for (Listener listener : listeners)
+			listener.onCreateNewIssue(notice);
+	}
 }

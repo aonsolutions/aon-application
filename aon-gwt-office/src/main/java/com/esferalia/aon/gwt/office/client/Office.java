@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.office.client;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -10,11 +9,11 @@ import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
-import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
-import com.esferalia.aon.gwt.office.client.values.IssueValue;
 import com.esferalia.aon.gwt.office.client.values.LabelValue;
+import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
+import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -222,7 +221,12 @@ public class Office extends Composite implements EntryPoint,
 				issuePanel.addTag(tag);
 			}
 		});
-		
+	}
+	
+	@Override
+	public void onCreateNewIssue(Notice notice) {
+		IssueValue value = new IssueValue();
+		value.setTitle(notice.getTitle());
 	}
 
 

@@ -17,9 +17,9 @@ public class Notice implements Serializable, HasId {
 	private Integer id;
 	private Integer domain;
 	private Integer recipient; // Destinatario del aviso
-	private byte status; // Estado del aviso
 	private Integer notice; //Notice al que referencia **null si es cabecera = titulo
 	
+	private String status;
 	private String title; // Asunto del aviso
 	private String body; //Cuerpo del aviso
 	private String type; //Tipo de aviso
@@ -71,7 +71,7 @@ public class Notice implements Serializable, HasId {
 		this.recipient = recipient;
 	}
 	
-	public void setStatus(byte status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 	
@@ -134,7 +134,7 @@ public class Notice implements Serializable, HasId {
 		return recipient;
 	}
 	
-	public byte getStatus() {
+	public String getStatus() {
 		return status;
 	}
 	

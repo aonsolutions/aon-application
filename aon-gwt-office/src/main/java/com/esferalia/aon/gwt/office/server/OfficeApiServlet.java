@@ -159,7 +159,7 @@ public class OfficeApiServlet extends HttpServlet {
 				Notice notice = new Notice();
 				notice.setTitle(json.getString("title"));
 				notice.setBody(json.getString("body"));
-				notice.setStatus(NoticeStatus.OPEN.value());
+				notice.setStatus(json.getString("state"));
 				
 				if ( json.isNull("type") == false)
 					notice.setType(json.getString("type"));
@@ -205,9 +205,7 @@ public class OfficeApiServlet extends HttpServlet {
 				notice.setId(Integer.parseInt(group(1)));
 				
 				if ( json.isNull("state") == false) {
-					String state = json.getString("state").toUpperCase();
-					byte status = NoticeStatus.valueOf(state).value();
-					notice.setStatus(status);
+					notice.setStatus(json.getString("state"));
 					getChangeStatusNotice(resp, notice);
 				}
 				else {
@@ -727,7 +725,7 @@ public class OfficeApiServlet extends HttpServlet {
 				String.format("\"body\":\"%s\",\r\n", notice.getBody()));
 		buffer.append(
 				String.format("\"state\":\"%s\",\r\n", 
-						NoticeStatus.values()[notice.getStatus()].getValue()));
+						notice.getStatus()));
 		buffer.append(String.format("\"user\":%s,\r\n",
 				buildUserSender(notice.getSender())));
 		buffer.append(
