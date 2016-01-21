@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.office.client;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -52,8 +53,6 @@ public class Office extends Composite implements EntryPoint,
 	@UiField
 	ResizeLayoutPanel issuesPanel;
 	@UiField
-	FlowPanel issueWrite;
-	@UiField
 	SimpleLayoutPanel resultsPanel;
 	@UiField
 	IssueGrid dataGrid;	
@@ -65,6 +64,8 @@ public class Office extends Composite implements EntryPoint,
 	private List<IssueSelected> openIssues;
 	private List<IssueSelected> closedIssues;
 	
+	private ListDataProvider<IssueSelected> openIssuesProvider;
+	private ListDataProvider<IssueSelected> closeIssuesProvider;
 	private List<Tag> tagList;
 	
 	private Map<Integer, JsIssue> issuesMap;
@@ -87,8 +88,7 @@ public class Office extends Composite implements EntryPoint,
 		this.dataGrid.addListener(this);
 		this.gitHub.setRepositoryUrl(GWT.getModuleBaseURL() + "api");
 		
-		initOpenIssues();
-//		initCloseIssues();		
+		initOpenIssues();	
 
 		gitHub.getLabels(new AsyncCallback<JSON<JsLabel>>() {
 			
@@ -114,13 +114,10 @@ public class Office extends Composite implements EntryPoint,
 			}
 			
 			@Override
-			public void onSuccess(JSON<JsIssue> result) {				
-				JsArray<JsIssue> issues = result.getData();
+			public void onSuccess(JSON<JsIssue> result) {
 				
-				for ( int x = 0; x < issues.length(); x++) {
-					IssueSelected issueSelected = new IssueGrid.IssueOpenLoadSelected(issues.get(x));
-					openIssues.add(issueSelected);
-				}
+				for ( int x = 0; x < result.getData().length(); x++)
+					addOpenIssue(result.getData().get(x));
 			}
 		});
 
@@ -148,17 +145,21 @@ public class Office extends Composite implements EntryPoint,
 	// ********************** PRIVATE METHODS ***************************
 	// ******************************************************************
 
-	void initOpenIssues() {
+	void initOpenIssues() {	
 		openIssues = new LinkedList<IssueSelected>();
-		ListDataProvider<IssueSelected> openIssuesProvider = new ListDataProvider<IssueSelected>();
-		openIssuesProvider.addDataDisplay(dataGrid);
+		openIssuesProvider = new ListDataProvider<IssueSelected>();
+		openIssuesProvider.addDataDisplay(dataGrid);		
 		openIssues = openIssuesProvider.getList();
-
+	}
+	
+	void addOpenIssue(JsIssue issue) {
+		IssueSelected issueSelected = new IssueGrid.IssueOpenLoadSelected(issue);
+		openIssues.add(issueSelected);
 	}
 
 	void initCloseIssues() {
 		closedIssues = new LinkedList<IssueSelected>();
-		ListDataProvider<IssueSelected> closeIssuesProvider = new ListDataProvider<IssueSelected>();
+		closeIssuesProvider = new ListDataProvider<IssueSelected>();
 		closeIssuesProvider.addDataDisplay(dataGrid);
 		closedIssues = closeIssuesProvider.getList();
 	}
@@ -181,10 +182,6 @@ public class Office extends Composite implements EntryPoint,
 
 	private void showIssueLayoutPanel() {
 		deckPanel.showWidget(issuesPanel);
-	}
-
-	private void showWriteIssueWritePanel() {
-		deckPanel.showWidget(issueWrite);
 	}
 
 	// ******************************************************************
@@ -218,7 +215,7 @@ public class Office extends Composite implements EntryPoint,
 			@Override
 			public void onSuccess(JsLabel result) {
 				addLabels2List(result);
-				issuePanel.addTag(tag);
+				issuePanel.addTag(tag);				
 			}
 		});
 	}
@@ -227,6 +224,37 @@ public class Office extends Composite implements EntryPoint,
 	public void onCreateNewIssue(Notice notice) {
 		IssueValue value = new IssueValue();
 		value.setTitle(notice.getTitle());
+		value.setPriority(notice.getPriority());
+		value.setBody(notice.getBody());
+		value.setState(notice.getStatus());
+		value.setType(notice.getType());
+		
+		if ( notice.getTags().size() > 0 ) {
+	
+			String[] labels = new String[notice.getTags().size()];
+			for ( int x = 0; x < notice.getTags().size() ; x++) {				
+				labels[x] = notice.getTags().get(x).getName();
+			}
+				
+			
+			value.setLabels(labels);
+		}
+		
+		gitHub.createIssue(value, new AsyncCallback<JsIssue>() {
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getMessage());
+			}
+			
+			@Override
+			public void onSuccess(JsIssue result) {
+				IssueSelected issueSelected = new IssueGrid.IssueOpenLoadSelected(result);	
+				openIssuesProvider.getList().add(issueSelected);
+				openIssuesProvider.refresh();
+			}
+		});
+		
 	}
 
 

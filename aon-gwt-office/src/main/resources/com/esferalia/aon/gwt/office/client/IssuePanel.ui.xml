@@ -73,7 +73,7 @@
 						text="{msg.sender}" />
 				</g:customCell>
 				<g:customCell>
-					<g:TextBox ui:field="senderTextBox" width="300px" />
+					<g:TextBox ui:field="senderTextBox" width="300px" enabled="false" />
 				</g:customCell>
 			</g:row>
 

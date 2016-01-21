@@ -1,13 +1,16 @@
 package com.esferalia.aon.gwt.office.client;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.FilterDialog;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -74,10 +77,9 @@ public class IssuePanel extends CustomDialog {
 	private List<Tag> tagsList = new LinkedList<Tag>();
 	private List<Listener> listeners;
 
-	private String state;
 	private String priority;
 	private String type;
-	private List<Tag> selectedTags = new LinkedList<Tag>();
+	private Map<String, String> selectedTags;	
 
 	public IssuePanel(String title) {
 		setCaption(title);
@@ -87,6 +89,7 @@ public class IssuePanel extends CustomDialog {
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
 
+		this.selectedTags = new HashMap<String, String>();
 		this.listeners = new LinkedList<Listener>();
 	}
 
@@ -110,29 +113,29 @@ public class IssuePanel extends CustomDialog {
 		for (Tag tag : tagList)
 			addTag(tag);
 	}
+	
+	private void addTagSelected(String name) {
+		selectedTags.put(name, name);
+	}
+	
+	private void removeTagSelected(String name) {
+		selectedTags.remove(name);
+	}
 
 	public void addTag(Tag tag) {
 
 		if (tag.getType() == TagType.OFFICE_NOTICE.value()) {
-			CheckBox check = new CheckBox(tag.getName());
+			CheckBox check = new CheckBox(tag.getName());			
 			check.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
 				@Override
 				public void onValueChange(ValueChangeEvent<Boolean> event) {
-					RadioButton rb = (RadioButton) event.getSource();
-					if (rb.getValue() == false) {
-						for (Tag tag : selectedTags) {
-							if (tag.getName().compareTo(rb.getText()) == 0) {
-								selectedTags.remove(tag);
-								break;
-							}
-						}
-					} else {
-						Tag tag = new Tag();
-						tag.setName(rb.getText());
-						tag.setType(TagType.OFFICE_NOTICE.value());
-						selectedTags.add(tag);
-					}
+					CheckBox cb = (CheckBox) event.getSource();
+					if (cb.getValue() == false)
+						removeTagSelected(cb.getText());
+						
+					else
+						addTagSelected(cb.getText());						
 				}
 			});
 
@@ -171,16 +174,11 @@ public class IssuePanel extends CustomDialog {
 
 		else if (tag.getType() == TagType.OFFICE_STATUS.value()) {
 			RadioButton radioButton = new RadioButton("STATUS", tag.getName());
-			radioButton
-					.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			radioButton.setEnabled(false);
+			
+			if (tag.getName().compareTo(NoticeStatus.OPEN.getValue()) == 0)
+				radioButton.setValue(true);
 
-						@Override
-						public void onValueChange(
-								ValueChangeEvent<Boolean> event) {
-							RadioButton rb = (RadioButton) event.getSource();
-							IssuePanel.this.state = rb.getText();
-						}
-					});
 			statusHPanel.add(radioButton);
 		}
 	}
@@ -225,31 +223,24 @@ public class IssuePanel extends CustomDialog {
 
 	@UiHandler("acceptButton")
 	void onAcceptButtonClick(ClickEvent event) {
-
+		
 		Notice notice = new Notice();
 		notice.setTitle((titleTextBox.getValue().isEmpty()) ? ""
 				: titleTextBox.getValue());
-
-		if (state != null) {
-			
-			Tag stateTag = new Tag();
-			stateTag.setName(state);
-			stateTag.setType(TagType.OFFICE_STATUS.value());
-			notice.addTag(stateTag);
-		}
-
+		notice.setStatus(NoticeStatus.OPEN.getValue());
+		
 		if (priority != null)
 			notice.setPriority(priority);
 
-		if (type != null) {
-			Tag typeTag = new Tag();
-			typeTag.setName(type);
-			typeTag.setType(TagType.OFFICE_TYPE.value());
-			notice.addTag(typeTag);
-		}
+		if (type != null)
+			notice.setType(type);
 
-		for (Tag tag : selectedTags)
+		for ( String name : selectedTags.keySet()) {
+			Tag tag = new Tag();
+			tag.setName(name);
+			tag.setType(TagType.OFFICE_NOTICE.value());
 			notice.addTag(tag);
+		}
 
 		notice.setBody((commentTextArea.getValue().isEmpty()) ? ""
 				: commentTextArea.getValue());

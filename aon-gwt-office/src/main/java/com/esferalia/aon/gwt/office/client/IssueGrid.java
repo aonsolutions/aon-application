@@ -485,7 +485,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 				for (int z = 0; z < object.getLabels().length(); z++)
 					labels += object.getLabels().get(z).getName().toUpperCase()
-							+ " ";
+							+ " - ";
 
 				return labels;
 

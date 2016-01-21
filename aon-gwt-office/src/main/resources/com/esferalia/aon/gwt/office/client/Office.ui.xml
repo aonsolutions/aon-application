@@ -107,9 +107,7 @@
 					</g:HTMLPanel>
 				</g:ResizeLayoutPanel>
 
-				<g:ResizeLayoutPanel ui:field="issuesPanel" />
-
-				<g:FlowPanel ui:field="issueWrite" height="100%" width="100%" />
+				<g:ResizeLayoutPanel ui:field="issuesPanel" />				
 
 			</g:DeckLayoutPanel>
 
