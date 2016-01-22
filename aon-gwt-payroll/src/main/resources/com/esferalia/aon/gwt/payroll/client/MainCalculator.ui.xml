@@ -6,13 +6,13 @@
 
 
 	<ui:style>
-	.monthListBox-item {
-		padding-left: 16px;
-	}
-	
-	.options-scroll-panel>div {
-		height: 99%;
-	}
+		.monthListBox-item {
+			padding-left: 16px;
+		}
+		
+		.options-scroll-panel>div {
+			height: 99%;
+		}
 	</ui:style>
 
 
@@ -31,12 +31,12 @@
 						</a>
 					</div>
 
-					<table class="aon-panelGrid" style="height:90%">
+					<table class="aon-panelGrid aon-width-all" style="height:90%">
 						<tr>
 							<td class="aon-panelGrid-odd">
 								<g:Label styleName="aon-outputLabel">Tipo</g:Label>
 							</td>
-							<td class="aon-panelGrid-even">
+							<td class="aon-panelGrid-even aon-width-half-plus">
 								<g:ListBox>
 									<g:item>N&oacute;mina</g:item>
 								</g:ListBox>
@@ -54,20 +54,43 @@
 						</tr>
 						<tr>
 							<td class="aon-panelGrid-odd">
-								<g:Label styleName="aon-outputLabel">Guardar</g:Label>
-							</td>
-							<td class="aon-panelGrid-even">
-								<g:RadioButton name="saveRadioButton" ui:field="saveRadioButton">Si</g:RadioButton>
-								<g:RadioButton name="saveRadioButton">No</g:RadioButton>
-							</td>
-						</tr>
-						<tr>
-							<td class="aon-panelGrid-odd">
 								<g:Label styleName="aon-outputLabel">Comparar con</g:Label>
 							</td>
 							<td class="aon-panelGrid-even ">
 								<g:ListBox styleName="aon-selectOneMenu"
 									ui:field="dbMonthListBox" />
+							</td>
+						</tr>
+						<tr>
+							<td class="aon-panelGrid-odd" >
+								<span class="aon-outputText">&nbsp;</span>
+							</td>
+							<td class="aon-panelGrid-even" >
+								<div class="aon-group aon-width-half">
+									<div class="aon-group-title" style="background-color: transparent;">
+										<g:CheckBox ui:field="saveCheckBox" checked="false">Guardar</g:CheckBox>
+									</div>
+									<div>
+										<g:RadioButton name="saveRadioButton" ui:field="keepRadioButton"
+											checked="true" enabled="false">Conservar n&oacute;minas calculadas</g:RadioButton>
+									</div>
+									<div>
+										<g:RadioButton name="saveRadioButton" ui:field="overwriteRadioButton"
+											enabled="false">Eliminar n&oacute;minas calculadas</g:RadioButton>
+									</div>
+									<!-- div>
+										<g:RadioButton name="saveRadioButton" ui:field="duplicateRadioButton"
+											enabled="false"> Duplicar n&oacute;minas calculadas</g:RadioButton>
+									</div-->
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td class="aon-panelGrid-odd" >
+								<span class="aon-outputText">&nbsp;</span>
+							</td>
+							<td class="aon-panelGrid-even" >
+								<span class="aon-outputText">&nbsp;</span>
 							</td>
 						</tr>
 						<tr>
@@ -78,15 +101,12 @@
 								<g:Button ui:field="calcButton" enabled="false">Calcular</g:Button>
 							</td>
 						</tr>
-						<!--tr style="height:90%;">
-							<td class="aon-panelGrid-odd aon-height-all ">
-								<g:Label styleName="aon-outputLabel">&nbsp;</g:Label>
+						<tr>
+							<td colspan="2" class="aon-panelGrid-even aon-width-all aon-height-all">
+								<aon:CustomDataGrid 
+									ui:field="enterprisesDataGrid" styleName="aon-width-all aon-height-all aon-text-left" />
 							</td>
-							<td class="aon-panelGrid-even aon-width-all aon-height-all">
-								<aon:SelectDataGrid nameLabel="Empresa"
-									ui:field="enterpriseDataGrid" styleName="aon-width-all aon-height-all" />
-							</td>
-						</tr-->
+						</tr>
 					</table>
 
 
@@ -95,9 +115,6 @@
 			</g:ScrollPanel>
 
 		</g:center>
-		<g:west size="0">
-		    <g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="westTabPanel" />
-		</g:west>
 
 		<g:south size="0">
 			<aon:MinimizePanel ui:field="footPanel">

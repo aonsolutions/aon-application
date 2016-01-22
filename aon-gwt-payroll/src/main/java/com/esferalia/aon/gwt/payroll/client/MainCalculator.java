@@ -10,40 +10,50 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.common.client.widget.SelectDataGrid;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.common.shared.HasId;
 import com.esferalia.aon.gwt.payroll.shared.CalculateService;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.Salary.TypeVisitor;
+import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsonUtils;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
+import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.HasData;
+import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.xhr.client.ReadyStateChangeHandler;
@@ -59,14 +69,113 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 
 	private static final Binder binder = GWT.create(Binder.class);
 
-	private static DateTimeFormat DATE_FORMAT = DateTimeFormat
-			.getFormat(CalculateService.DATE_FORMAT_PATTERN);
 
-	static String CALC_URL = URL.encode(GWT.getModuleBaseURL() + "calculate");
-
-	@UiField
-	TabLayoutPanel westTabPanel;
+	// ------------------------------------------------------------------------
 	
+	public static DateTimeFormat DATE_FORMAT = DateTimeFormat
+	.getFormat(CalculateService.DATE_FORMAT_PATTERN);
+
+	public static String CALC_URL = URL.encode(GWT.getModuleBaseURL() + "calculate");
+
+	public static final byte DUPLICATE_OPTION = 0x04;
+
+	public static final byte OVERWRITE_OPTION = 0x02;
+
+	public static final byte SAVE_OPTION = 0x01;
+
+	public static <T extends HasId<?>> void calculate(Date startDate,
+			Date endDate, String itemClass, Set<T> items, int optionsBits,
+			final AsyncCallback<JsSalaryResult> callback) {
+		calculate(startDate, endDate, startDate, endDate, itemClass, items, optionsBits, callback);
+	}
+
+	public static <T extends HasId<?>> void calculate(Date startDate,
+			Date endDate, Date startCheckDate, Date endCheckDate, 
+			String itemClass, Set<T> items, int optionsBits,
+			final AsyncCallback<JsSalaryResult> callback) {
+	
+		StringBuffer requestDataBuffer = new StringBuffer();
+	
+		requestDataBuffer
+				.append("&" + START_DATE + "=" + DATE_FORMAT.format(startDate));
+		requestDataBuffer
+				.append("&" + END_DATE + "=" + DATE_FORMAT.format(endDate));
+		requestDataBuffer
+				.append("&" + ISSUE_DATE + "=" + DATE_FORMAT.format(endDate));
+		requestDataBuffer
+				.append("&" + START_CHECK_DATE + "=" + DATE_FORMAT.format(startCheckDate));
+		requestDataBuffer
+				.append("&" + END_CHECK_DATE + "=" + DATE_FORMAT.format(endCheckDate));
+	
+		for (T item : items)
+			requestDataBuffer.append("&" + itemClass + "=" + item.getId());
+	
+		if ((optionsBits & SAVE_OPTION) > 0)
+			requestDataBuffer.append("&" + SAVE + "=" + Boolean.toString(true));
+		if ((optionsBits & OVERWRITE_OPTION) > 0)
+			requestDataBuffer
+					.append("&" + OVERWRITE + "=" + Boolean.toString(true));
+		else if ((optionsBits & DUPLICATE_OPTION) > 0)
+			requestDataBuffer
+					.append("&" + DUPLICATE + "=" + Boolean.toString(true));
+	
+		// Send request to server and catch any errors.
+	
+		XMLHttpRequest xhr = XMLHttpRequest.create();
+		xhr.open("POST", CALC_URL);
+		xhr.setRequestHeader("Content-type",
+				"application/x-www-form-urlencoded");
+		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
+	
+			private int loaded = 0;
+	
+			@Override
+			public void onReadyStateChange(XMLHttpRequest xhr) {
+				int state = xhr.getReadyState();
+	
+				if (state == XMLHttpRequest.LOADING
+						|| state == XMLHttpRequest.DONE) {
+	
+					String text = xhr.getResponseText();
+	
+					try {
+						for (JsSalaryResult result = read(
+								text); text != null; result = read(text))
+							callback.onSuccess(result);
+					} catch (IndexOutOfBoundsException e) {
+					}
+				}
+	
+			}
+	
+			private JsSalaryResult read(String text) {
+				for (int begin = loaded; begin < text.length(); begin++) {
+					if (text.charAt(begin) == '{') {
+						loaded = findEnd(text, begin + 1) + 1;
+						String json = text.substring(begin, loaded);
+						return JsonUtils.safeEval(json);
+					}
+				}
+				throw new IndexOutOfBoundsException();
+			}
+	
+			private int findEnd(String text, int start) {
+				for (int end = start; end < text.length(); end++) {
+					switch (text.charAt(end)) {
+					case '}':
+						return end;
+					case '{':
+						end = findEnd(text, end + 1);
+					}
+				}
+				throw new IndexOutOfBoundsException();
+			}
+	
+		});
+	
+		xhr.send(requestDataBuffer.toString());
+	}
+
 	@UiField
 	Button calcButton;
 
@@ -79,22 +188,38 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 	@UiField
 	MonthListBox monthListBox;
 	
+
 	@UiField
 	ListBox dbMonthListBox;
 
 	@UiField
-	SplitLayoutPanel splitLayoutPanel;
+	CheckBox saveCheckBox;
+
+	@UiField
+	RadioButton keepRadioButton;
+	@UiField
+	RadioButton overwriteRadioButton;
+//	@UiField
+//	RadioButton duplicateRadioButton;
 	
 	@UiField
-	RadioButton saveRadioButton;
-	
-	//MIO
-	private SimpleLayoutPanel simplePanel;
+	SplitLayoutPanel splitLayoutPanel;
 
-	private SelectDataGrid<Enterprise> enterpriseDataGrid;
+	/**
+	 * The enterprises DataGrid.
+	 */
+	@UiField(provided=true)
+	CustomDataGrid<Enterprise> enterprisesDataGrid;
+	
+	private SelectAllHeader<Enterprise> enterprisesSelectAllHeader;
+	private MultiSelectionModel<Enterprise> enterprisesSelectionModel;
+
+	private ListDataProvider<JsSalaryResult> resultsDataProvider;
+	
 	private EnterprisesServiceAsync enterprisesService;
 
 	private List<Cost> costs;
+
 
 	@Override
 	public void onModuleLoad() {
@@ -105,14 +230,15 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 		GWT.<AonResources> create(
 				AonResources.class).css().ensureInjected();
 
+		// Create & setup enterprise DataGrid 
+		createEnterprisesDataGrid();
+		
 		Widget ui = binder.createAndBindUi(this);
 
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
 		
-		this.enterpriseDataGrid = new SelectDataGrid<Enterprise>();
-		this.enterpriseDataGrid.setNameLabel("");
-
+		
 		// Create a remote service proxy to talk to the server-side Enterprises
 		// service.
 		EnterprisesServiceAsync gwtEnterprisesService = GWT
@@ -122,87 +248,95 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 				gwtEnterprisesService);
 		
 		initAsyncEnterprisesProvider();
-		initEnterprisesSelectionHandler();
 
 		clearDbMonthsListBox();
 		monthListBox.setSelectedMonth(new Date());
 		
-		showEnterprisesPanel();
+		
+		SalaryResults results = new SalaryResults();
+		resultsDataProvider = new ListDataProvider<JsSalaryResult>();
+		results.setDataProvider(resultsDataProvider);
+		results.addSelectionHandler(new SelectionHandler<JsSalaryResult>() {
+			@Override
+			public void onSelection(SelectionEvent<JsSalaryResult> event) {
+				//TODO:
+			}
+		});
+
+		resultsPanel.setWidget(results);
+		
 	}
+
+
 	
-	private void showEnterprisesPanel() {
-		InlineLabel tab = new InlineLabel("Empresas");
-		tab.setStyleName(AON.AON_ICON_COMPANY);
-		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
-		MainCalculator.this.westTabPanel.add(
-				MainCalculator.this.enterpriseDataGrid, tab);
-		MainCalculator.this.splitLayoutPanel.setWidgetSize(
-				MainCalculator.this.westTabPanel, Window.getClientWidth() / 3);
-	}
 
 	// -------------------------------------------------------------------------
 
 	@UiHandler("calcButton")
 	void onCalcButtonClicked(ClickEvent click) {
+		clear();
 		calculate();
 		if (!isResultsPanelVisible())
 			showResultsPanel();
 	}
 
+	@UiHandler("saveCheckBox")
+	void onSaveClicked(ClickEvent event) {
+		keepRadioButton.setEnabled(saveCheckBox.getValue());
+		overwriteRadioButton.setEnabled(saveCheckBox.getValue());
+	}
+
+	@UiHandler("dbMonthListBox")
+	void onDbMonthListBoxChanges(ChangeEvent event) {
+		Date checkMonth = getCheckMonth();
+		if ( checkMonth == null ) {
+			calcButton.setText("Calcular");
+			saveCheckBox.setEnabled(true);
+		}else {
+			calcButton.setText("Comparar");
+			saveCheckBox.setEnabled(false);
+			saveCheckBox.setValue(false);
+			overwriteRadioButton.setValue(false);
+		}
+	}
 	// -------------------------------------------------------------------------
+	
+	private void clear(){
+		resultsDataProvider.getList().clear();
+	}
 
 	private void calculate() {
+
+		int optionsBits = 0x00;
+		if (saveCheckBox.getValue())
+			optionsBits |= SAVE_OPTION;
+		if (overwriteRadioButton.getValue())
+			optionsBits |= OVERWRITE_OPTION;
+
+
 		Date month = monthListBox.getSelectedMonth();
-
-		StringBuffer requestDataBuffer = new StringBuffer();
-		requestDataBuffer.append(START_DATE + "="
-				+ DATE_FORMAT.format(DateUtils.getFirstDayOfMonth(month)));
-		requestDataBuffer.append("&" + END_DATE + "="
-				+ DATE_FORMAT.format(DateUtils.getLastDayOfMonth(month)));
-		requestDataBuffer.append("&" + ISSUE_DATE + "="
-				+ DATE_FORMAT.format(DateUtils.getLastDayOfMonth(month)));
-
-		Date checkMonth = getCheckMonth();
-		if (checkMonth != null)
-			requestDataBuffer.append("&" + CHECK_DATE + "="
-					+ DATE_FORMAT.format(checkMonth));
-
-		for (int enterpriseId : getSelectedEnterprisesIds())
-			requestDataBuffer.append("&" + ENPERPRISES + "=" + enterpriseId);
+		Date startDate = DateUtils.getFirstDayOfMonth(month);
+		Date endDate = DateUtils.getLastDayOfMonth(month);
 		
-		if ( saveRadioButton.getValue() ) {
-			requestDataBuffer.append("&" + SAVE );
-			requestDataBuffer.append("&" + OVERWRITE );
-		}
+		Date checkMonth = getCheckMonth();
+		Date startCheckDate = checkMonth == null ? startDate : DateUtils.getFirstDayOfMonth(checkMonth);
+		Date endCheckDate = checkMonth == null ? endDate :  DateUtils.getLastDayOfMonth(checkMonth);
 
-		// requestDataBuffer.append("&" + COMPARE );
-
-		XMLHttpRequest xhr = XMLHttpRequest.create();
-		xhr.open("POST", CALC_URL);
-		xhr.setRequestHeader("Content-type",
-				"application/x-www-form-urlencoded");
-
-		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
-
-			private int loaded = 0;
-
+		Set<Enterprise> enterprises = enterprisesSelectionModel.getSelectedSet();
+		
+		calculate(startDate, endDate, startCheckDate, endCheckDate, ENPERPRISES, enterprises, optionsBits, new AsyncCallback<JsSalaryResult>(){
 			@Override
-			public void onReadyStateChange(XMLHttpRequest xhr) {
-				int state = xhr.getReadyState();
-
-				if (state == XMLHttpRequest.LOADING
-						|| state == XMLHttpRequest.DONE) {
-
-					String text = xhr.getResponseText();
-					String html = text.substring(loaded);
-					resultsPanel.addHTML(html);
-					loaded = text.length();
-				}
-
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
 			}
+			@Override
+			public void onSuccess(JsSalaryResult result) {
+				MainCalculator.this.resultsDataProvider.getList().add(result);
+			}
+			
 		});
 
-		xhr.send(requestDataBuffer.toString());
 
 	}
 
@@ -243,20 +377,17 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 							}
 						});
 			}
-		}).addDataDisplay(enterpriseDataGrid);
+		}).addDataDisplay(enterprisesDataGrid);
 	}
 
 	private void onSelectionChange() {
 
 		List<Integer> enterpriseIds = getSelectedEnterprisesIds();
-
-		calcButton.setEnabled(enterpriseIds != null);
-
-		if (enterpriseIds == null) {
+		
+		if (enterpriseIds.isEmpty() && !isAllEnterprisesSelected() ) {
 			calcButton.setEnabled(false);
 			Set<Date> dbMonths = Collections.emptySet();
 			monthListBox.setHighLightMonths(dbMonths);
-
 			clearDbMonthsListBox();
 
 		} else {
@@ -314,34 +445,86 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 		return index == 0 ? null : getMonth(costs.get(index - 1));
 	}
 
-	private void initEnterprisesSelectionHandler() {
-
-		MultiSelectionModel<Enterprise> model = enterpriseDataGrid
-				.getMultiSelectionModel();
-		model.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-
-			@Override
-			public void onSelectionChange(SelectionChangeEvent event) {
-				MainCalculator.this.onSelectionChange();
-			}
-		});
+	
+	private boolean isAllEnterprisesSelected() {
+		return enterprisesSelectAllHeader.getValue();
 	}
 
 	private List<Integer> getSelectedEnterprisesIds() {
-		if (!enterpriseDataGrid.isAnySelected())
-			return null;
-		if (enterpriseDataGrid.isAllSelected())
-			return Collections.emptyList();
-
-		Set<Enterprise> enterprises = enterpriseDataGrid.getSelectedItems();
+		Set<Enterprise> enterprises = enterprisesSelectionModel.getSelectedSet();
 		List<Integer> enterpriseIds = new ArrayList<Integer>();
 		for (Enterprise enterprise : enterprises)
 			enterpriseIds.add(enterprise.getId());
 		return enterpriseIds;
 	}
+	
+
+	private void createEnterprisesDataGrid() {
+		/*
+		 * Set a key provider that provides a unique key for each item.
+		 */
+		ProvidesKey<Enterprise> keyProvider = HasIdKeyProvider.getKeyProvider();
+		enterprisesDataGrid = new CustomDataGrid<Enterprise>(Integer.MAX_VALUE, keyProvider);
+		
+		/*
+		 * Do not refresh the headers & footers every time the dataGrid is updated. .
+		 */
+		enterprisesDataGrid.setAutoHeaderRefreshDisabled(true);
+		enterprisesDataGrid.setAutoFooterRefreshDisabled(true);
+
+		// Set the message to display when the table is empty.
+		// TODO : selectDataGrid.setEmptyTableWidget(new Label());
+
+		// Add a selection model to handle user selection.
+		enterprisesSelectionModel = new MultiSelectionModel<Enterprise>(keyProvider);
+		enterprisesDataGrid.setSelectionModel(enterprisesSelectionModel,
+				DefaultSelectionEventManager.<Enterprise> createCheckboxManager(0));
+		enterprisesSelectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			@Override
+			public void onSelectionChange(SelectionChangeEvent event) {
+				MainCalculator.this.onSelectionChange();
+			}
+		});
+
+		// Checkbox column. This table will uses a checkbox column for
+		// selection.
+		Column<Enterprise, Boolean> checkColumn = new Column<Enterprise, Boolean>(
+				new CheckboxCell()) {
+			@Override
+			public Boolean getValue(Enterprise object) {
+				return MainCalculator.this.enterprisesSelectionModel.isSelected(object);
+			}
+		};
+
+		enterprisesSelectAllHeader = new SelectAllHeader<Enterprise>(enterprisesSelectionModel, enterprisesDataGrid);
+		enterprisesDataGrid.addColumn(checkColumn, enterprisesSelectAllHeader);
+		enterprisesDataGrid.setColumnWidth(checkColumn, "40px");
+		
+		// Full CCC.
+		Column<Enterprise, String> nameColumn = new Column<Enterprise, String>(
+				new TextCell()) {
+			@Override
+			public String getValue(Enterprise enterprise) {
+				return enterprise.getName();
+			}
+		};
+		
+		enterprisesDataGrid.addColumn(nameColumn, "Empresa");
+		
+		
+		enterprisesDataGrid.addStyleName(AON.AON_WIDTH_ALL);
+		enterprisesDataGrid.getElement().getStyle()
+				.setPropertyPx("minHeight", Window.getClientHeight() / 3);
+		enterprisesDataGrid.setWidth("100%");
+
+	}
+	
+
+
+
 
 	private static Date getMonth(Cost cost) {
-		return new Date(cost.getYear() - 1900, cost.getMonth() - 1, 0);
+		return new Date(cost.getYear() - 1900, cost.getMonth() + 1, 0);
 	}
 
 	private static SortedSet<Date> getMonthsSet(Collection<Cost> costs,

@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,9 +22,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import javax.servlet.ServletException;
@@ -35,6 +38,9 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Order;
+import com.code.aon.ql.OrderByList;
+import com.code.aon.ql.ast.IdentExpression;
 import com.code.aon.ql.ast.RelationalExpression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
@@ -48,8 +54,6 @@ import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorConte
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
 import com.esferalia.aon.salary.AbstractSalary;
@@ -62,10 +66,8 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 
 public class CalculateServlet extends HttpServlet implements CalculateService {
 
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
-			DATE_FORMAT_PATTERN);
-	
-	
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+
 	private static class SkipSalaryException extends SalaryException {
 
 	}
@@ -78,16 +80,13 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 			public void finish() throws SalaryException;
 
-			public void counterpart(ISalaryExtended salary)
-					throws SalaryException;
+			public void counterpart(ISQLSalary salary) throws SalaryException;
 
 		}
 
-		static class CompositeSalaryBuilderExtended<T extends ISalary>  extends
-				CompositeSalaryBuilder<T,ISalaryBuilderExtended<T>> implements
-				ISalaryBuilderExtended<T> {
-			public CompositeSalaryBuilderExtended(
-					ISalaryBuilderExtended<T>... builders) {
+		static class CompositeSalaryBuilderExtended<T extends ISalary>
+				extends CompositeSalaryBuilder<T, ISalaryBuilderExtended<T>> implements ISalaryBuilderExtended<T> {
+			public CompositeSalaryBuilderExtended(ISalaryBuilderExtended<T>... builders) {
 				super(builders);
 			}
 
@@ -106,15 +105,13 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			}
 
 			@Override
-			public void counterpart(ISalaryExtended salary)
-					throws SalaryException {
+			public void counterpart(ISQLSalary salary) throws SalaryException {
 				for (ISalaryBuilderExtended<T> builder : getBuilders())
 					builder.counterpart(salary);
 			}
 		}
 
-		static class SalaryBuilderExtended extends SalaryBuilder implements
-				ISalaryBuilderExtended<Salary> {
+		static class SalaryBuilderExtended extends SalaryBuilder implements ISalaryBuilderExtended<Salary> {
 
 			// ----------------------------------------------------------------
 			@Override
@@ -126,14 +123,12 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			}
 
 			@Override
-			public void counterpart(ISalaryExtended salary)
-					throws SalaryException {
+			public void counterpart(ISQLSalary salary) throws SalaryException {
 			}
 
 		}
 
-		static class JooqSalarySaver extends JooqSalaryBuilder implements
-				ISalaryBuilderExtended<ISalary> {
+		static class JooqSalarySaver extends JooqSalaryBuilder implements ISalaryBuilderExtended<ISalary> {
 
 			private boolean autoCommit;
 			private Connection connection;
@@ -172,8 +167,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			}
 
 			@Override
-			public void counterpart(ISalaryExtended salary)
-					throws SalaryException {
+			public void counterpart(ISQLSalary salary) throws SalaryException {
 				if (salary != null)
 					throw new SkipSalaryException();
 
@@ -189,8 +183,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			// ----------------------------------------------------------------
 
 			@Override
-			public void counterpart(ISalaryExtended salary)
-					throws SalaryException {
+			public void counterpart(ISQLSalary salary) throws SalaryException {
 				// NOOP
 			}
 		}
@@ -214,25 +207,18 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 			// ----------------------------------------------------------------
 			@Override
-			public void counterpart(ISalaryExtended salary)
-					throws SalaryException {
+			public void counterpart(ISQLSalary salary) throws SalaryException {
 				if (salary != null)
-					toRemove.add(salary.getSalaryId());
+					toRemove.add(salary.getInt(SQLConstants.SALARY, SalaryColumns.ID));
 			}
 
 			private void delete() {
-				getDSLContext().delete(SALARY_DATA)
-						.where(SALARY_DATA.SALARY.in(toRemove)).execute();
-				getDSLContext().delete(SALARY_COST)
-						.where(SALARY_COST.SALARY.in(toRemove)).execute();
-				getDSLContext().delete(SALARY_BONUS)
-						.where(SALARY_BONUS.SALARY.in(toRemove)).execute();
-				getDSLContext().delete(SALARY_PAYMENT)
-						.where(SALARY_PAYMENT.SALARY.in(toRemove)).execute();
-				getDSLContext().delete(SALARY_DEDUCTION).where(
-						SALARY_DEDUCTION.SALARY.in(toRemove)).execute();
-				getDSLContext().delete(SALARY).where(SALARY.ID.in(toRemove))
-						.execute();
+				getDSLContext().delete(SALARY_DATA).where(SALARY_DATA.SALARY.in(toRemove)).execute();
+				getDSLContext().delete(SALARY_COST).where(SALARY_COST.SALARY.in(toRemove)).execute();
+				getDSLContext().delete(SALARY_BONUS).where(SALARY_BONUS.SALARY.in(toRemove)).execute();
+				getDSLContext().delete(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.in(toRemove)).execute();
+				getDSLContext().delete(SALARY_DEDUCTION).where(SALARY_DEDUCTION.SALARY.in(toRemove)).execute();
+				getDSLContext().delete(SALARY).where(SALARY.ID.in(toRemove)).execute();
 			}
 		}
 
@@ -254,8 +240,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 				builders.add(new JooqSalarySaver(connection));
 			}
 
-			return new CompositeSalaryBuilderExtended(
-					builders.toArray(new ISalaryBuilderExtended[builders.size()]));
+			return new CompositeSalaryBuilderExtended(builders.toArray(new ISalaryBuilderExtended[builders.size()]));
 		}
 
 		public SalaryBBuilder setSave(boolean save) {
@@ -280,12 +265,17 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 	}
 
-	static interface ISalaryExtended extends ISalary {
-		public int getSalaryId();
+	static interface ISQLSalary extends ISalary {
+		public Integer getInt(String table, String column);
 	}
 
-	private static class Salaries extends AbstractSalary implements
-			Iterator<ISalaryExtended>, ISalaryExtended {
+	static class AbstractSQLSalary extends AbstractSalary implements ISQLSalary {
+		public Integer getInt(String table, String column) {
+			return null;
+		}
+	}
+
+	private static class Salaries implements Iterator<ISQLSalary> {
 
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
@@ -293,22 +283,17 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 		private boolean didNext = false;
 		private boolean hasNext = false;
 
-		public Salaries(Connection connection, Date startDate, Date endDate,
-				Date issueDate, Criteria criteria) throws SQLException {
+		public Salaries(Connection connection, Date startDate, Date endDate, Criteria criteria) throws SQLException {
 
-			//@formatter:off
-			String sql = "SELECT * "
-					+ " FROM contract"
-					+ " INNER JOIN registry AS "+ PERSON_REGISTRY +" ON (contract.person = "+PERSON_REGISTRY+".id)" 
-					+ " INNER JOIN workplace ON (contract.workplace = workplace.id)" 
+			// @formatter:off
+			String sql = "SELECT * " + " FROM contract" + " INNER JOIN registry AS " + PERSON_REGISTRY
+					+ " ON (contract.person = " + PERSON_REGISTRY + ".id)"
+					+ " INNER JOIN workplace ON (contract.workplace = workplace.id)"
 					+ " INNER JOIN enterprise ON ( workplace.enterprise = enterprise.registry) "
-					+ " LEFT JOIN salary ON (salary.contract = contract.id"
-					+ " AND salary.start_date >= ? "
-					+ " AND salary.end_date <= ?"
-					+ " AND salary.type = ? )"
-					+ " WHERE contract.start_date <= ? "
+					+ " LEFT JOIN salary ON (salary.contract = contract.id" + " AND salary.start_date >= ? "
+					+ " AND salary.end_date <= ?" + " AND salary.type = ? )" + " WHERE contract.start_date <= ? "
 					+ " AND ( contract.end_date  IS NULL" + " OR contract.end_date >= ? )";
-			//@formatter:on
+			// @formatter:on
 
 			sql = CriteriaUtilities.toSQLString(criteria, sql);
 
@@ -327,6 +312,15 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 		}
 
+		public Integer getInt(String table, String col) {
+			try {
+				Number number = ((Number) rs.getObject(table + "." + col));
+				return number != null ? number.intValue() : null;
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
 		public void close() throws SQLException {
 			if (rs != null)
 				rs.close();
@@ -336,18 +330,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 		private boolean hasSalary() {
 			try {
-				return rs.getObject(SQLConstants.SALARY + "."
-						+ SalaryColumns.ID) != null;
-			} catch (SQLException e) {
-				throw new RuntimeException(e);
-			}
-		}
-
-		// ----------------------------------------------------------------
-		@Override
-		public int getSalaryId() {
-			try {
-				return rs.getInt(SQLConstants.SALARY + "." + SalaryColumns.ID);
+				return rs.getObject(SQLConstants.SALARY + "." + SalaryColumns.ID) != null;
 			} catch (SQLException e) {
 				throw new RuntimeException(e);
 			}
@@ -356,12 +339,12 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 		// ----------------------------------------------------------------
 
 		@Override
-		public ISalaryExtended next() {
+		public ISQLSalary next() {
 			try {
 				if (!didNext)
 					hasNext = rs.next();
 				didNext = false;
-				return hasSalary() ? this : null;
+				return hasSalary() ? nextSQLSalary() : null;
 			} catch (SQLException e) {
 				throw new NoSuchElementException();
 			}
@@ -385,42 +368,61 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override
-		public Double getTotalPayment() {
-			return getSalaryDouble(SalaryColumns.TOTAL_PAYMENT);
-		}
+		private ISQLSalary nextSQLSalary() {
 
-		@Override
-		public Double getTotalDeduction() {
-			return getSalaryDouble(SalaryColumns.TOTAL_DEDUCTION);
-		}
+			return new AbstractSQLSalary() {
 
-		@Override
-		public Double getTotalLiquid() {
-			return getSalaryDouble(SalaryColumns.TOTAL_LIQUID);
-		}
+				// ----------------------------------------------------------------
+				Map<String, Object> data = new HashMap<String, Object>() {
+					{
+						try {
+							ResultSetMetaData rsMetaData = rs.getMetaData();
+							for (int i = 1; i <= rsMetaData.getColumnCount(); i++)
+								put(rsMetaData.getTableName(i) + "." + rsMetaData.getColumnName(i), rs.getObject(i));
+						} catch (SQLException e) {
+							throw new RuntimeException(e);
+						}
+					}
+				};
 
-		private Double getSalaryDouble(String column) {
-			try {
-				BigDecimal bigDecimal = rs.getBigDecimal(SQLConstants.SALARY
-						+ "." + column);
-				return bigDecimal != null ? bigDecimal.doubleValue() : null;
-			} catch (SQLException e) {
-				throw new RuntimeException(e);
-			}
+				@Override
+				public Integer getInt(String table, String col) {
+					Number number = ((Number) data.get(table + "." + col));
+					return number != null ? number.intValue() : null;
+				}
 
+				// ----------------------------------------------------------------
+				@Override
+				public Double getTotalPayment() {
+					return getSalaryDouble(SalaryColumns.TOTAL_PAYMENT);
+				}
+
+				@Override
+				public Double getTotalDeduction() {
+					return getSalaryDouble(SalaryColumns.TOTAL_DEDUCTION);
+				}
+
+				@Override
+				public Double getTotalLiquid() {
+					return getSalaryDouble(SalaryColumns.TOTAL_LIQUID);
+				}
+
+				// ----------------------------------------------------------------
+				private Double getSalaryDouble(String column) {
+					Number number = (Number) data.get(SQLConstants.SALARY + "." + column);
+					return number != null ? number.doubleValue() : null;
+				}
+			};
 		}
 	}
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		doPost(req, resp);
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
 			doJson(req, resp);
 		} catch (SQLException e) {
@@ -442,9 +444,8 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 			conn = AonServletUtils.getConnection();
 
-			SalaryBBuilder.ISalaryBuilderExtended salaryBuilder = new SalaryBBuilder()
-					.setSave(save(req)).setOverwrite(overwrite(req))
-					.setDuplicate(duplicate(req)).setConnection(conn).build();
+			SalaryBBuilder.ISalaryBuilderExtended salaryBuilder = new SalaryBBuilder().setSave(save(req))
+					.setOverwrite(overwrite(req)).setDuplicate(duplicate(req)).setConnection(conn).build();
 
 			os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
 
@@ -452,16 +453,19 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			Date startDate = getStartDate(req);
 			Date issueDate = getIssueDate(req);
 			Criteria criteria = getCriteria(req);
-			
-			
 
-			SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
-					conn, startDate, endDate, issueDate, criteria);
+			criteria.addOrder(SQLConstants.WORKPLACE + "." + SQLConstants.WorkplaceColumns.ID);
+			criteria.addOrder(SQLConstants.CONTRACT + "." + SQLConstants.ContractColumns.ID);
 
-			salaries = new Salaries(conn, startDate, endDate, issueDate,
-					criteria);
+			SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(conn, startDate, endDate,
+					issueDate, criteria);
 
-			doJson(ctx, salaries, salaryBuilder, os);
+			Date endCheckDate = getEndCheckDate(req);
+			Date startCheckDate = getStartCheckDate(req);
+
+			salaries = new Salaries(conn, startCheckDate, endCheckDate, criteria);
+
+			doJson(ctx, salaries, salaryBuilder, os, criteria.getOrderByList());
 
 		} catch (ExpressionException e) {
 		} finally {
@@ -478,10 +482,9 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 	// ------------------------------------------------------------------------
 
-	private static void doJson(ISQLContractSalaryCalculatorContext sqlCtx,
-			Iterator<ISalaryExtended> others,
-			SalaryBBuilder.ISalaryBuilderExtended<ISalary> salaryBuilder, PrintStream os)
-			throws IOException {
+	private static void doJson(ISQLContractSalaryCalculatorContext sqlCtx, Salaries others,
+			SalaryBBuilder.ISalaryBuilderExtended<ISalary> salaryBuilder, PrintStream os, OrderByList orderBy)
+					throws IOException {
 
 		try {
 
@@ -490,10 +493,11 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			calculator.setSalaryBuilder(salaryBuilder);
 
 			salaryBuilder.start();
-
+			ISQLSalary other = null;
 			while (sqlCtx.next()) {
 
-				ISalaryExtended other = others.next();
+				while (others.hasNext() && (compare(sqlCtx, others, orderBy) >= 0))
+					other = others.next();
 
 				try {
 					salaryBuilder.counterpart(other);
@@ -502,41 +506,29 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 				}
 
 				os.print('{');
-				os.printf("\"startDate\":\"%1$tY-%1$tm-%1$td\"",
-						sqlCtx.getStartDate());
-				os.printf(",\"endDate\":\"%1$tY-%1$tm-%1$td\"",
-						sqlCtx.getEndDate());
-				os.printf(",\"employeeId\":\"%d\"", sqlCtx.getInt(
-						SQLConstants.CONTRACT, ContractColumns.ID));
+				os.printf("\"startDate\":\"%1$tY-%1$tm-%1$td\"", sqlCtx.getStartDate());
+				os.printf(",\"endDate\":\"%1$tY-%1$tm-%1$td\"", sqlCtx.getEndDate());
+				os.printf(",\"employeeId\":\"%d\"", sqlCtx.getInt(SQLConstants.CONTRACT, ContractColumns.ID));
 				os.printf(",\"employeeName\":\"%s\"", sqlCtx.getEmployeeName());
-				os.printf(",\"enterpriseId\":\"%s\"", sqlCtx.getInt(
-						SQLConstants.ENTERPRISE, EnterpriseColumns.REGISTRY));
-				os.printf(",\"enterpriseName\":\"%s\"",
-						sqlCtx.getEnterpriseName());
-				os.printf(",\"workplaceId\":\"%s\"", sqlCtx.getInt(
-						SQLConstants.WORKPLACE, WorkplaceColumns.ID));
-				os.printf(",\"workplaceName\":\"%s\"", sqlCtx.getString(
-						SQLConstants.WORKPLACE, WorkplaceColumns.DESCRIPTION));
-				
-				
+				os.printf(",\"enterpriseId\":\"%s\"",
+						sqlCtx.getInt(SQLConstants.ENTERPRISE, EnterpriseColumns.REGISTRY));
+				os.printf(",\"enterpriseName\":\"%s\"", sqlCtx.getEnterpriseName());
+				os.printf(",\"workplaceId\":\"%s\"", sqlCtx.getInt(SQLConstants.WORKPLACE, WorkplaceColumns.ID));
+				os.printf(",\"workplaceName\":\"%s\"",
+						sqlCtx.getString(SQLConstants.WORKPLACE, WorkplaceColumns.DESCRIPTION));
+
 				try {
 
 					ISalary salary = calculator.calculate(sqlCtx);
 
-					os.printf(",\"totalLiquid\":\"%s\"",
-							Double.toString(salary.getTotalLiquid()));
-					os.printf(",\"totalPayment\":\"%s\"",
-							Double.toString(salary.getTotalPayment()));
-					os.printf(",\"totalDeduction\":\"%s\"",
-							Double.toString(salary.getTotalDeduction()));
+					os.printf(",\"totalLiquid\":\"%s\"", Double.toString(salary.getTotalLiquid()));
+					os.printf(",\"totalPayment\":\"%s\"", Double.toString(salary.getTotalPayment()));
+					os.printf(",\"totalDeduction\":\"%s\"", Double.toString(salary.getTotalDeduction()));
 
-					if (other != null) {
-						os.printf(",\"counterTotalLiquid\":\"%s\"",
-								Double.toString(other.getTotalLiquid()));
-						os.printf(",\"counterTotalPayment\":\"%s\"",
-								Double.toString(other.getTotalPayment()));
-						os.printf(",\"counterTotalDeduction\":\"%s\"",
-								Double.toString(other.getTotalDeduction()));
+					if (other != null && counter(sqlCtx, other)) {
+						os.printf(",\"counterTotalLiquid\":\"%s\"", Double.toString(other.getTotalLiquid()));
+						os.printf(",\"counterTotalPayment\":\"%s\"", Double.toString(other.getTotalPayment()));
+						os.printf(",\"counterTotalDeduction\":\"%s\"", Double.toString(other.getTotalDeduction()));
 					}
 
 				} catch (Throwable e) {
@@ -556,52 +548,67 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 	}
 
-	private static boolean save(HttpServletRequest request)
-			throws ParseException {
+	private static int compare(ISQLContractSalaryCalculatorContext ctx, Salaries salaries, OrderByList orderBy) {
+
+		int compare = 0;
+		for (Order order : orderBy.getOrders()) {
+			IdentExpression expression = order.getExpression();
+			String strings[] = expression.getName().split("\\.");
+			String table = strings[0];
+			String column = strings[1];
+			compare = ctx.getInt(table, column) - salaries.getInt(table, column);
+			if (compare != 0)
+				break;
+		}
+		return compare;
+	}
+
+	private static boolean counter(ISQLContractSalaryCalculatorContext ctx, ISQLSalary salary) {
+		return ctx.getInt(SQLConstants.CONTRACT, ContractColumns.ID) == salary.getInt(SQLConstants.CONTRACT,
+				ContractColumns.ID);
+	}
+
+	private static boolean save(HttpServletRequest request) throws ParseException {
 		return getBoolean(request, SAVE);
 	}
 
-	private static Date getEndDate(HttpServletRequest request)
-			throws ParseException {
+	private static Date getEndDate(HttpServletRequest request) throws ParseException {
 		return getDate(request, END_DATE);
 	}
 
-	private static Date getStartDate(HttpServletRequest request)
-			throws ParseException {
+	private static Date getStartDate(HttpServletRequest request) throws ParseException {
 		return getDate(request, START_DATE);
 	}
 
-	private static Date getIssueDate(HttpServletRequest request)
-			throws ParseException {
+	private static Date getIssueDate(HttpServletRequest request) throws ParseException {
 		return getDate(request, ISSUE_DATE);
 	}
 
-	private static Date getCheckDate(HttpServletRequest request)
-			throws ParseException {
-		return getDate(request, CHECK_DATE);
+	private static Date getEndCheckDate(HttpServletRequest request) throws ParseException {
+		return getDate(request, END_CHECK_DATE);
 	}
 
-	private static Date getDate(HttpServletRequest request, String name)
-			throws ParseException {
+	private static Date getStartCheckDate(HttpServletRequest request) throws ParseException {
+		return getDate(request, START_CHECK_DATE);
+	}
+
+	private static Date getDate(HttpServletRequest request, String name) throws ParseException {
 		String value = request.getParameter(name);
 		return value != null ? DATE_FORMAT.parse(value) : null;
 
 	}
 
-	private static boolean getBoolean(HttpServletRequest request, String name)
-			throws ParseException {
+	private static boolean getBoolean(HttpServletRequest request, String name) throws ParseException {
 		String value = request.getParameter(name);
 		return StringUtils.isBlank(value) ? false : Boolean.parseBoolean(value);
 
 	}
 
-	private static boolean duplicate(HttpServletRequest request)
-			throws ParseException {
+	private static boolean duplicate(HttpServletRequest request) throws ParseException {
 		return getBoolean(request, DUPLICATE);
 	}
 
-	private static boolean overwrite(HttpServletRequest request)
-			throws ParseException {
+	private static boolean overwrite(HttpServletRequest request) throws ParseException {
 		return getBoolean(request, OVERWRITE);
 	}
 
@@ -617,36 +624,28 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			criteria.addExpression(workPlacesExpr);
 		if (enterprisesExpr != null)
 			criteria.addExpression(enterprisesExpr);
-		
-		criteria.addOrder(PERSON_REGISTRY+"."+ RegistryColumns.NAME);
-		
+
+		// criteria.addOrder(PERSON_REGISTRY + "." + RegistryColumns.NAME);
+
 		return criteria;
 	}
 
-	private static RelationalExpression getEnperprisesExpression(
-			HttpServletRequest request) {
+	private static RelationalExpression getEnperprisesExpression(HttpServletRequest request) {
 		String enterprises[] = request.getParameterValues(ENPERPRISES);
-		return enterprises != null && enterprises.length > 0 ? ExpressionUtilities
-				.getInExpression(SQLConstants.ENTERPRISE + "."
-						+ EnterpriseColumns.REGISTRY,
-						Arrays.asList(enterprises)) : null;
+		return enterprises != null && enterprises.length > 0 ? ExpressionUtilities.getInExpression(
+				SQLConstants.ENTERPRISE + "." + EnterpriseColumns.REGISTRY, Arrays.asList(enterprises)) : null;
 	}
 
-	private static RelationalExpression getWorkPlacesExpression(
-			HttpServletRequest request) {
+	private static RelationalExpression getWorkPlacesExpression(HttpServletRequest request) {
 		String workplaces[] = request.getParameterValues(WORKPLACES);
 		return workplaces != null && workplaces.length > 0 ? ExpressionUtilities
-				.getInExpression(SQLConstants.WORKPLACE + "."
-						+ WorkplaceColumns.ID, Arrays.asList(workplaces))
-				: null;
+				.getInExpression(SQLConstants.WORKPLACE + "." + WorkplaceColumns.ID, Arrays.asList(workplaces)) : null;
 	}
 
-	private static RelationalExpression getEmployeesExpression(
-			HttpServletRequest request) {
+	private static RelationalExpression getEmployeesExpression(HttpServletRequest request) {
 		String employees[] = request.getParameterValues(EMPLOYEES);
 		return employees != null && employees.length > 0 ? ExpressionUtilities
-				.getInExpression(SQLConstants.CONTRACT + "."
-						+ ContractColumns.ID, Arrays.asList(employees)) : null;
+				.getInExpression(SQLConstants.CONTRACT + "." + ContractColumns.ID, Arrays.asList(employees)) : null;
 	}
 
 }

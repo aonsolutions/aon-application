@@ -11,7 +11,8 @@ public interface CalculateService {
 	static String START_DATE = "startDate";
 	static String ISSUE_DATE = "issueDate";
 	
-	static String CHECK_DATE = "checkDate";
+	static String END_CHECK_DATE = "endCheckDate";
+	static String START_CHECK_DATE = "startCheckDate";
 
 	static String EMPLOYEES = "employees";
 	static String WORKPLACES = "workplaces";

@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.code.aon.registry.Registry;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
@@ -902,7 +901,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					+ " AND ( " + SQLConstants.DOMAIN + "." + DomainColumns.ID + " = ? " 
 						+ " OR " + SQLConstants.DOMAIN + "." + DomainColumns.PARENT + " = ? " + ")" 
 					
-					+ " ORDER BY " + SQLConstants.REGISTRY + "." + RegistryColumns.NAME
+					+ " ORDER BY " + SQLConstants.REGISTRY + "." + RegistryColumns.ID
 					+ ", " + SQLConstants.ENTERPRISE_ACTIVITY + "." + EnterpriseActivityColumns.ID
 					+ ", " + SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.ID
 					+ " LIMIT ?, ?"
@@ -1204,7 +1203,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				int year = rs.getInt(yearCol);
 
 				cost.setYear(year);
-				cost.setMonth(month - 1);
+				cost.setMonth(month - 1); // MONTH (date) returns the month for date, in the range 1 to 12 
 				cost.setSalariesCount(rs.getInt(salariesCol));
 				cost.setExtrasCount(rs.getInt(extrasCol));
 				cost.setSettlesCount(rs.getInt(settlesCol));

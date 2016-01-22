@@ -1,18 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import static com.esferalia.aon.gwt.payroll.shared.CalculateService.DUPLICATE;
-import static com.esferalia.aon.gwt.payroll.shared.CalculateService.END_DATE;
-import static com.esferalia.aon.gwt.payroll.shared.CalculateService.ISSUE_DATE;
-import static com.esferalia.aon.gwt.payroll.shared.CalculateService.OVERWRITE;
-import static com.esferalia.aon.gwt.payroll.shared.CalculateService.SAVE;
-import static com.esferalia.aon.gwt.payroll.shared.CalculateService.START_DATE;
 import static com.esferalia.aon.gwt.payroll.shared.CalculateService.WORKPLACES;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -21,8 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.velocity.runtime.parser.node.SetExecutor;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.TextCell;
@@ -38,7 +25,6 @@ import com.esferalia.aon.gwt.common.shared.HasId;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptEvent;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptHandler;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
-import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CalculateService;
@@ -58,8 +44,6 @@ import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.logical.shared.AttachEvent;
-import com.google.gwt.event.logical.shared.AttachEvent.Handler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -95,15 +79,7 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 public class EmployeeTree implements EntryPoint, Employees.Listener,
 		MetaData.Listener, Cost.Listener, Salary.Listener {
 
-	static final byte SAVE_OPTION = 0x01;
-	static final byte OVERWRITE_OPTION = 0x02;
-	static final byte DUPLICATE_OPTION = 0x04;
-
-	static String SHARE_URL = URL.encode(GWT.getModuleBaseURL() + "share");
-	static String CALC_URL = URL.encode(GWT.getModuleBaseURL() + "calculate");
-	static DateTimeFormat DATE_FORMAT = DateTimeFormat
-			.getFormat(CalculateService.DATE_FORMAT_PATTERN);
-
+	public static String SHARE_URL = URL.encode(GWT.getModuleBaseURL() + "share");
 	static class EmployeeCalcDialog extends CalcDialog<Employee> {
 
 		public EmployeeCalcDialog() {
@@ -346,13 +322,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 			int optionsBits = 0x00;
 			if (calcDialog.isSaveSelected())
-				optionsBits |= SAVE_OPTION;
+				optionsBits |= MainCalculator.SAVE_OPTION;
 			if (calcDialog.isOverwriteSelected())
-				optionsBits |= OVERWRITE_OPTION;
+				optionsBits |= MainCalculator.OVERWRITE_OPTION;
 			if (calcDialog.isDuplicateSelected())
-				optionsBits |= DUPLICATE_OPTION;
+				optionsBits |= MainCalculator.DUPLICATE_OPTION;
 
-			EmployeeTree.calculate(startDate, endDate, WORKPLACES, workplaces,
+			MainCalculator.calculate(startDate, endDate, WORKPLACES, workplaces,
 					optionsBits, this);
 
 			clear();
@@ -447,13 +423,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 			int optionsBits = 0x00;
 			if (calcDialog.isSaveSelected())
-				optionsBits |= SAVE_OPTION;
+				optionsBits |= MainCalculator.SAVE_OPTION;
 			if (calcDialog.isOverwriteSelected())
-				optionsBits |= OVERWRITE_OPTION;
+				optionsBits |= MainCalculator.OVERWRITE_OPTION;
 			if (calcDialog.isDuplicateSelected())
-				optionsBits |= DUPLICATE_OPTION;
+				optionsBits |= MainCalculator.DUPLICATE_OPTION;
 			
-			EmployeeTree.calculate(startDate, endDate, EMPLOYEES, employees,
+			MainCalculator.calculate(startDate, endDate, EMPLOYEES, employees,
 					optionsBits, this);
 			clear();
 
@@ -626,6 +602,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		// --------------------------------------------------------------------
 		@Override
 		public void execute() {
+			sync();
 			dialog.onTrabajadoresYTramos();
 			dialog.center();
 			dialog.show();
@@ -677,6 +654,21 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		protected abstract boolean accept(String ccc);
 
 		protected abstract String getDescription(String ccc);
+		
+		// --------------------------------------------------------------------
+		
+		private void sync() {
+			MainCreta.sync(new AsyncCallback<Void>() {
+				@Override
+				public void onSuccess(Void result) {
+					CreateResponseCommand.this.dialog.onTrabajadoresYTramos();
+				}
+				public void onFailure(Throwable caught) {
+					// TODO Auto-generated method stub
+				};
+			});
+		}
+		
 	}
 
 	public static abstract class WorkplaceCreateResponseCommand
@@ -1049,13 +1041,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 			int optionsBits = 0x00;
 			if (calcDialog.isSaveSelected())
-				optionsBits |= SAVE_OPTION;
+				optionsBits |= MainCalculator.SAVE_OPTION;
 			if (calcDialog.isOverwriteSelected())
-				optionsBits |= OVERWRITE_OPTION;
+				optionsBits |= MainCalculator.OVERWRITE_OPTION;
 			if (calcDialog.isDuplicateSelected())
-				optionsBits |= DUPLICATE_OPTION;
+				optionsBits |= MainCalculator.DUPLICATE_OPTION;
 
-			EmployeeTree.calculate(startDate, endDate, EMPLOYEES, employees,
+			MainCalculator.calculate(startDate, endDate, EMPLOYEES, employees,
 					optionsBits, this);
 			clear();
 			showResultsPanel(); // TODO: Here or at below 'onReadyStateChange'
@@ -1894,88 +1886,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	private static EmployeeTree getEmployeeTree() {
 		return singlenton;
-	}
-
-	private static <T extends HasId<?>> void calculate(Date startDate,
-			Date endDate, String itemClass, Set<T> items, int optionsBits,
-			final AsyncCallback<JsSalaryResult> callback) {
-
-		StringBuffer requestDataBuffer = new StringBuffer();
-
-		requestDataBuffer
-				.append("&" + START_DATE + "=" + DATE_FORMAT.format(startDate));
-		requestDataBuffer
-				.append("&" + END_DATE + "=" + DATE_FORMAT.format(endDate));
-		requestDataBuffer
-				.append("&" + ISSUE_DATE + "=" + DATE_FORMAT.format(endDate));
-
-		for (T item : items)
-			requestDataBuffer.append("&" + itemClass + "=" + item.getId());
-
-		if ((optionsBits & SAVE_OPTION) > 0)
-			requestDataBuffer.append("&" + SAVE + "=" + Boolean.toString(true));
-		if ((optionsBits & OVERWRITE_OPTION) > 0)
-			requestDataBuffer
-					.append("&" + OVERWRITE + "=" + Boolean.toString(true));
-		else if ((optionsBits & DUPLICATE_OPTION) > 0)
-			requestDataBuffer
-					.append("&" + DUPLICATE + "=" + Boolean.toString(true));
-
-		// Send request to server and catch any errors.
-
-		XMLHttpRequest xhr = XMLHttpRequest.create();
-		xhr.open("POST", CALC_URL);
-		xhr.setRequestHeader("Content-type",
-				"application/x-www-form-urlencoded");
-		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
-
-			private int loaded = 0;
-
-			@Override
-			public void onReadyStateChange(XMLHttpRequest xhr) {
-				int state = xhr.getReadyState();
-
-				if (state == XMLHttpRequest.LOADING
-						|| state == XMLHttpRequest.DONE) {
-
-					String text = xhr.getResponseText();
-
-					try {
-						for (JsSalaryResult result = read(
-								text); text != null; result = read(text))
-							callback.onSuccess(result);
-					} catch (IndexOutOfBoundsException e) {
-					}
-				}
-
-			}
-
-			private JsSalaryResult read(String text) {
-				for (int begin = loaded; begin < text.length(); begin++) {
-					if (text.charAt(begin) == '{') {
-						loaded = findEnd(text, begin + 1) + 1;
-						String json = text.substring(begin, loaded);
-						return JsonUtils.safeEval(json);
-					}
-				}
-				throw new IndexOutOfBoundsException();
-			}
-
-			private int findEnd(String text, int start) {
-				for (int end = start; end < text.length(); end++) {
-					switch (text.charAt(end)) {
-					case '}':
-						return end;
-					case '{':
-						end = findEnd(text, end + 1);
-					}
-				}
-				throw new IndexOutOfBoundsException();
-			}
-
-		});
-
-		xhr.send(requestDataBuffer.toString());
 	}
 
 	private static <T extends HasId<?>> void share(
