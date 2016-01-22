@@ -1,0 +1,54 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.AonHubMessages"
+		field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
+		field="aonResources"></ui:with>
+
+	<ui:style>
+		.options-scroll-panel>div {
+		height: 99%;
+	
+	</ui:style>
+
+	<g:ScrollPanel styleName="{aonResources.css.aonScrollArea} {style.options-scroll-panel}">
+		<g:HTMLPanel>
+			<table class="{aonResources.css.aonPanelGrid}" style="height:90%">
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:Label styleName="aon-outputLabel" text="{msg.number}" />
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<g:Label ui:field="idLabel" />
+					</td>
+				</tr>
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:Label styleName="aon-outputLabel" text="Fecha" />
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<g:Label ui:field="dateLabel" />
+					</td>
+				</tr>
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:Label styleName="aon-outputLabel" text="Asunto" />
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<g:Label ui:field="titleLabel" />
+					</td>
+				</tr>
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:Label styleName="aon-outputLabel" text="Mensaje" />
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<g:TextArea ui:field="commentTextArea" />
+					</td>
+				</tr>
+			</table>
+		</g:HTMLPanel>
+	</g:ScrollPanel>
+</ui:UiBinder> 

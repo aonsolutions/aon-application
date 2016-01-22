@@ -12,6 +12,9 @@ public interface AonHubMessages extends Messages {
 	// º --> \u00AA ª --> \u00BA
 	// ¿ --> \u00BF
 	
+	@DefaultMessage("N\u00FAmero")
+	String number();
+	
 	@DefaultMessage("Identificaci\u00F3n")
 	String login();
 	

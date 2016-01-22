@@ -89,6 +89,9 @@
 							<g:Button ui:field='tagButton'
 								styleName='aon-finding-toolbar-item {aonResources.css.aonIconReset}'
 								text="ETIQUETAS" />
+							<g:Button ui:field='returnButton'
+								styleName='aon-finding-toolbar-item {aonResources.css.aonIconPrevious}'
+								text="VOLVER" enabled="false" />
 
 						</g:HTMLPanel>
 					</g:HorizontalPanel>
@@ -105,9 +108,10 @@
 							<office:IssueGrid ui:field="dataGrid" />
 						</g:SimpleLayoutPanel>
 					</g:HTMLPanel>
-				</g:ResizeLayoutPanel>
+				</g:ResizeLayoutPanel>				
+				<g:HorizontalPanel ui:field="readIssuePanel" />
 
-				<g:ResizeLayoutPanel ui:field="issuesPanel" />				
+				
 
 			</g:DeckLayoutPanel>
 

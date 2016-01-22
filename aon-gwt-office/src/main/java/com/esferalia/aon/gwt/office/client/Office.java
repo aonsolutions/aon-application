@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.office.client;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -29,7 +28,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ResizeLayoutPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -47,15 +46,19 @@ public class Office extends Composite implements EntryPoint,
 	@UiField
 	Button newIssueButton;
 	@UiField
+	Button returnButton;
+	@UiField
 	DeckLayoutPanel deckPanel;
 	@UiField
 	ResizeLayoutPanel dockOfficePanel;
 	@UiField
-	ResizeLayoutPanel issuesPanel;
+	HorizontalPanel readIssuePanel;
 	@UiField
 	SimpleLayoutPanel resultsPanel;
 	@UiField
 	IssueGrid dataGrid;	
+	
+	
 
 	private JsRepo repo;
 	private IssuePanel issuePanel;
@@ -86,9 +89,7 @@ public class Office extends Composite implements EntryPoint,
 		this.tagList = new LinkedList<Tag>();
 		
 		this.dataGrid.addListener(this);
-		this.gitHub.setRepositoryUrl(GWT.getModuleBaseURL() + "api");
-		
-		initOpenIssues();	
+		this.gitHub.setRepositoryUrl(GWT.getModuleBaseURL() + "api");		
 
 		gitHub.getLabels(new AsyncCallback<JSON<JsLabel>>() {
 			
@@ -106,6 +107,12 @@ public class Office extends Composite implements EntryPoint,
 			}
 		});
 		
+		loadOpenIssues();
+	}
+	
+	private void loadOpenIssues() {
+		
+		initOpenIssues();
 		gitHub.getOpenIssues("user", "repo", new AsyncCallback<JSON<JsIssue>>() {
 			
 			@Override
@@ -140,7 +147,13 @@ public class Office extends Composite implements EntryPoint,
 		issuePanel.setTagList(tagList);
 		issuePanel.showPopupPanel();
 	}
-
+	
+	@UiHandler("returnButton")
+	void onReturnButtonClick(ClickEvent event) {
+		showDockOfficePanel();
+		returnButton.setEnabled(false);
+	}
+	
 	// ******************************************************************
 	// ********************** PRIVATE METHODS ***************************
 	// ******************************************************************
@@ -179,9 +192,9 @@ public class Office extends Composite implements EntryPoint,
 	private void showDockOfficePanel() {
 		deckPanel.showWidget(dockOfficePanel);
 	}
-
-	private void showIssueLayoutPanel() {
-		deckPanel.showWidget(issuesPanel);
+	
+	private void showReadIssuePanel() {
+		deckPanel.showWidget(readIssuePanel);
 	}
 
 	// ******************************************************************
@@ -190,7 +203,11 @@ public class Office extends Composite implements EntryPoint,
 
 	@Override
 	public void onSelectionTitle(IssueSelected issue) {
-		
+		readIssuePanel.clear();
+		IssueReadPanel readPanel = new IssueReadPanel(issue);
+		readIssuePanel.add(readPanel);
+		returnButton.setEnabled(true);
+		showReadIssuePanel();
 	}
 
 	// ******************************************************************
@@ -249,9 +266,7 @@ public class Office extends Composite implements EntryPoint,
 			
 			@Override
 			public void onSuccess(JsIssue result) {
-				IssueSelected issueSelected = new IssueGrid.IssueOpenLoadSelected(result);	
-				openIssuesProvider.getList().add(issueSelected);
-				openIssuesProvider.refresh();
+				loadOpenIssues();
 			}
 		});
 		

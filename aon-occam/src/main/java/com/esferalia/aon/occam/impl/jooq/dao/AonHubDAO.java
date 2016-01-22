@@ -261,6 +261,7 @@ public class AonHubDAO {
 
 		Notice notice = new Notice();
 		int noticeId = record.getValue(NOTICE.ID);
+		notice.setId(noticeId);
 		notice.setDomain(ctx.getDomainId());
 		notice.setStartDate(record.getValue(NOTICE.DATE));
 
