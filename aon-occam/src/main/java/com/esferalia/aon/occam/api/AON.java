@@ -355,6 +355,16 @@ public class AON {
 		}
 	}
 
+	public static Integer[] getSonsDomains(String domainName, Integer domainId, String login){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().getSonsDomains(ctx);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	// --------------------- APPLICATION PARAMETERS
 
 	public static FiscalParameters getFiscalParameters(String domainName,

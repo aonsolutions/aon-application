@@ -158,6 +158,12 @@ public class CommonImpl implements ICommon {
 			configuration -> DomainDAO.insertDomainGserviceaccount(ctx, dgsa));
 	}
 	
+	@Override
+	public Integer[] getSonsDomains(AONContext ctx){
+		return ctx.getDslContext().transactionResult( 
+				configuration -> DomainDAO.getSonsDomains(ctx));
+	}
+	
 	// ------------------ TAG
 	
 	@Override

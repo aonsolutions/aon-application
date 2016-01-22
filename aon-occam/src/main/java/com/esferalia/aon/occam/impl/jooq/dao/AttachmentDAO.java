@@ -29,9 +29,9 @@ import com.esferalia.aon.jooq.tables.records.PayrollBatchAttachRecord;
 import com.esferalia.aon.jooq.tables.records.ProjectAttachRecord;
 import com.esferalia.aon.jooq.tables.records.RattachRecord;
 import com.esferalia.aon.jooq.tables.records.SepeBatchAttachRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AttachFilter;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachQueryProperties;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -663,8 +663,7 @@ public class AttachmentDAO {
 							.setData(r.getData())
 							.setDate(r.getAttachDate())
 							.setDescription(r.getDescription())
-							.setDomain(new Domain().setId(r.getDomain())
-									.setName(SecurityDAO.getDomain(ctx, r.getDomain()).getName()))
+							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDparentId(r.getDparentId())
 							.setDriveId(r.getDriveId())
 							.setId(r.getId())
@@ -690,8 +689,7 @@ public class AttachmentDAO {
 							.setData(r.getData())
 							.setDate(r.getAttachDate())
 							.setDescription(r.getDescription())
-							.setDomain(new Domain().setId(r.getDomain())
-									.setName(SecurityDAO.getDomain(ctx, r.getDomain()).getName()))
+							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDriveId(r.getDriveid())
 							.setId(r.getId())
 							.setMimeType(MimeType.values()[r.getMimetype()])
@@ -713,8 +711,7 @@ public class AttachmentDAO {
 							.setData(r.getData())
 							.setDate(r.getAttachDate())
 							.setDescription(r.getDescription())
-							.setDomain(new Domain().setId(r.getDomain())
-									.setName(SecurityDAO.getDomain(ctx, r.getDomain()).getName()))
+							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDriveId(r.getDriveid())
 							.setId(r.getId())
 							.setMimeType(MimeType.values()[r.getMimetype()])
@@ -734,8 +731,7 @@ public class AttachmentDAO {
 							.setAttachType(AttachType.ITEM)
 							.setData(r.getData())
 							.setDescription(r.getDescription())
-							.setDomain(new Domain().setId(r.getDomain())
-									.setName(SecurityDAO.getDomain(ctx, r.getDomain()).getName()))
+							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDriveId(r.getDriveid())
 							.setId(r.getId())
 							.setMimeType(MimeType.values()[r.getMimetype()])
@@ -755,8 +751,7 @@ public class AttachmentDAO {
 							.setAttachType(AttachType.OFFER)
 							.setData(r.getData())
 							.setDescription(r.getDescription())
-							.setDomain(new Domain().setId(r.getDomain())
-									.setName(SecurityDAO.getDomain(ctx, r.getDomain()).getName()))
+							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDriveId(r.getDriveid())
 							.setId(r.getId())
 							.setMimeType(MimeType.values()[r.getMimetype()]);		
@@ -775,8 +770,7 @@ public class AttachmentDAO {
 							.setData(r.getData())
 							.setDate(r.getAttachDate())
 							.setDescription(r.getDescription())
-							.setDomain(new Domain().setId(r.getDomain())
-									.setName(SecurityDAO.getDomain(ctx, r.getDomain()).getName()))
+							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDriveId(r.getDriveid())
 							.setId(r.getId())
 							.setMimeType(MimeType.values()[r.getMimetype()])
@@ -800,7 +794,7 @@ public class AttachmentDAO {
 							.setData(r.getData())
 							.setDate(r.getAttachDate())
 							.setDescription(r.getDescription())
-							.setDomain(new Domain().setId(r.getDomain()).setName(SecurityDAO.getDomain(ctx, r.getDomain()).getName()))
+							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDriveId(r.getDriveid())
 							.setId(r.getId())
 							.setMimeType(MimeType.values()[r.getMimetype()]);	
@@ -819,8 +813,7 @@ public class AttachmentDAO {
 							.setData(r.getData())
 							.setDate(r.getAttachDate())
 							.setDescription(r.getDescription())
-							.setDomain(new Domain().setId(r.getDomain())
-									.setName(SecurityDAO.getDomain(ctx, r.getDomain()).getName()))
+							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDriveId(r.getDriveid())
 							.setId(r.getId())
 							.setMimeType(MimeType.values()[r.getMimetype()])

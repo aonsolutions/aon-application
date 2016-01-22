@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
@@ -363,6 +364,12 @@ public class DomainDAO {
 				.execute();
 		}
 	}
+	
+	public static Integer[] getSonsDomains(AONContext ctx){
+		Object[] oArray = ctx.getDslContext().select(DOMAIN.ID).from(DOMAIN).where(DOMAIN.PARENT.eq(ctx.getDomainId())).fetch().stream().map(d -> d.getValue(DOMAIN.ID)).toArray();
+		return Arrays.copyOf(oArray, oArray.length, Integer[].class);
+	}
+	
 	
 	private static final DomainGserviceaccountDAO DOMAIN_GSERVICEACCOUNT_PROPERTIES = new DomainGserviceaccountDAO();
 	private static class DomainGserviceaccountDAO implements DomainGserviceaccountProperties {

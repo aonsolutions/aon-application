@@ -14,6 +14,9 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.Vector;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.jooq.Condition;
@@ -24,7 +27,6 @@ import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record7;
 import org.jooq.Result;
-import org.jooq.impl.DSL;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.gwt.document.shared.Category;
@@ -41,16 +43,13 @@ import com.esferalia.aon.gwt.document.shared.Tags;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.security.User;
 
 public class DBConsults {
-	private static Vector<FileInfo> filesGwt;
-	private static String atype=null;
-	private static String domain1=null;
-	private static Vector<FileInfo> vaux;
-
+	
 	private static boolean esta(Domain domain, FileInfo fi,Integer userId){
 		Integer[] userScopeArray = AON.getUserScopes(domain.getName(), domain.getId(), userId);
 		if(userScopeArray == null) return true;
@@ -61,13 +60,68 @@ public class DBConsults {
 		return false;
 	}
 	
+	public static Document getAllRattachNew(Domain domain, User user, String serverName, Boolean confidential){
+		Vector<FileInfo>
+		filesGwt = new Vector<FileInfo>();
+		Vector<FileInfo> 
+		vaux = new Vector<FileInfo>();
+		if(user.getDomain() == domain.getParentId()){
+			// Todos los archivos del documental del dominio actual
+			LinkedList<FileInfo> s = AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(),
+					f -> f.getDomainProperty().eq(domain.getId())
+					.and(f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value()))
+					, AttachType.REGISTRY).map(new AttachToFileInfo(user, domain.getId()))
+					.filter(fi -> !fi.getConfidential() || (confidential && fi.getConfidential())) 
+					.collect(Collectors.toCollection(LinkedList::new));
+		
+			filesGwt.addAll(s);
+			vaux.addAll(s);
+			
+		} else if(user.getDomain().equals(domain.getId())){
+			Integer[] userScopeArray = AON.getUserScopes(domain.getName(), domain.getId(), user.getId());
+			//Todos los archivos del dominio actual con los ambitos del user (incluidos los arcivos con scope nulo).
+			LinkedList<FileInfo> s = AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(),
+					f -> f.getDomainProperty().eq(domain.getId())
+					.and(f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value()))
+					.and(f.getScopeProperty().in(userScopeArray).or(f.getScopeProperty().isNull()))
+					, AttachType.REGISTRY).map(new AttachToFileInfo(user, domain.getId()))
+					.filter(fi -> !fi.getConfidential() || (confidential && fi.getConfidential()))
+					.collect(Collectors.toCollection(LinkedList::new));
+			filesGwt.addAll(s);
+			vaux.addAll(s);
+		}
+		System.out.println(serverName);
+		System.out.println(domain.getName());
+		if(domain.getParentId() != null && domain.isEnableHeredity() && domain.getName().equals(serverName)){
+			Integer[] userScopeArray = AON.getUserScopes(domain.getName(), domain.getId(), user.getId());
+			//Todos los archivos del dominio padre con los ambitos del user (incluidos los archivos con scope nulo).
+			LinkedList<FileInfo> s = AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(),
+								f -> f.getDomainProperty().eq(domain.getParentId())
+								.and(f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value()))
+								.and(f.getScopeProperty().in(userScopeArray).or(f.getScopeProperty().isNull()))
+								, AttachType.REGISTRY).map(new AttachToFileInfo(user, domain.getId()))
+					.filter(fi -> !fi.getConfidential() || (confidential && fi.getConfidential())) 
+					.collect(Collectors.toCollection(LinkedList::new));
+			filesGwt.addAll(s);
+			vaux.addAll(s);
+		} else if(domain.getParentId() == null){
+			Integer[] sonsDomainArray = AON.getSonsDomains(domain.getName(), domain.getId(), user.getLogin());
+			//Todos los archivos de los hijos.
+			Stream<FileInfo> s = AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(), 
+					f -> f.getDomainProperty().in(sonsDomainArray)
+					.and(f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value()))
+					, AttachType.REGISTRY).map(new AttachToFileInfo(user, domain.getId()));
+			filesGwt.addAll(s.filter(fi -> !fi.getConfidential() || (confidential && fi.getConfidential())) 
+					.collect(Collectors.toCollection(LinkedList::new)));
+		}
+		return new Document().setFiles(filesGwt).setEfiles(vaux).setFilter(vaux);
+	}
+	
 	public static Document getAllRattach(Domain domain,User user, String domain2, Boolean confidential){
 		AONContext ctx = null;
 		try {				
-			domain1=domain.getName();
-			atype="all";
-			filesGwt = new Vector<FileInfo>();
-			vaux = new Vector<FileInfo>();
+			Vector<FileInfo> filesGwt = new Vector<FileInfo>();
+			Vector<FileInfo> vaux = new Vector<FileInfo>();
 			
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());	
 				Condition c;
@@ -203,6 +257,159 @@ public class DBConsults {
 			if (ctx != null)
 				ctx.close();
 		}
+	}
+	
+	private static class AttachToFileInfo implements Function<Attach, FileInfo> {
+		User user;Integer actualDomain;
+		public AttachToFileInfo(User user,Integer actualDomain) {
+			this.user = user;
+			this.actualDomain = actualDomain;
+		}
+		
+		@Override
+		public FileInfo apply(Attach a){
+			FileInfo fi = new FileInfo();
+			fi.setAonType("registry");
+			if (a.getId() != null) {
+				fi.setFileId(a.getId());
+			}
+			if (a.getDescription() != null) {
+				fi.setTitle(a.getDescription());
+			}
+			if (a.getMimeType() != null) {
+				fi.setMimetype(a.getMimeType().value());
+			}
+			if (a.getType() != null) {
+				fi.setType(a.getType());
+			}
+			if (a.getDate() != null) {
+				fi.setDate(a.getDate());
+				String dateStr = fi.getDate().toString();
+				Integer pos = dateStr.indexOf("-");
+				Integer pos2 = dateStr.substring(pos+1).indexOf("-");
+				String aux = dateStr.substring(pos2+pos+2)+"-"+dateStr.substring(pos+1, pos2+pos+1)+"-"+dateStr.substring(0,pos);
+				fi.setDateStr(aux);
+			}
+			else fi.setDateStr("-");
+			if (a.getDriveId() != null) {
+				fi.setDriveId(a.getDriveId());
+			}
+			if (a.getCategory() != null) {
+				fi.setCategory(a.getCategory());
+			}
+			Tags tags = getTags(a.getDomain(), user, fi.getFileId());
+		
+			if(a.getCategory() != null) {
+				com.esferalia.aon.occam.api.model.registry.Category category = AON.getCategory(a.getDomain().getName(), a.getDomain().getId(), user.getLogin(), a.getCategory());
+				fi.setCategoryStr(category.getName());
+			}			
+			else fi.setCategoryStr("-");
+			
+			fi.setTags(tags.getTags().getList());
+			if(tags.getTagsStr()!=null)fi.setTagsStr(tags.getTagsStr()); else fi.setTagsStr("-");
+			if(a.getScope() !=null) {
+				Scope s = getScope(a.getDomain(), user, a.getScope());
+				fi.setScope(s);
+			}
+			if( a.getConfidential() != null){
+				fi.setConfidential(a.getConfidential());
+			}
+			
+			if (a.getDparentId() != null){
+				fi.setSize(Integer.valueOf(a.getDparentId()));
+			}
+			else fi.setSize(0);
+			fi.setSizeStr(FileUtils.byteCountToDisplaySize(fi.getSize()!=null?fi.getSize():0));
+			
+			
+			fi.setIcon(getmType(fi));
+			if(a.getDomain() != null && a.getDomain().getId() != null)
+				fi.setDomainId(a.getDomain().getId());
+			if(a.getDomain() != null && a.getDomain().getName() != null)
+				fi.setDomain(a.getDomain().getName());
+			if(a.getDomain() !=null && a.getDomain().getDescription() != null)
+				fi.setDomainDescription(a.getDomain().getDescription());
+			if(a.getDomain() != null){
+				if(!a.getDomain().getId().equals(actualDomain))
+					fi.setIsParent(a.getDomain().getParentId() == null);	
+			}
+			if(a.getCreationUser() != null)
+				fi.setCreationUser(a.getCreationUser());
+			if(a.getCreationDate() != null){
+				long b = a.getCreationDate().getTime();
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(new Date(b));
+				String dateStr = cal.get(Calendar.DATE)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.YEAR);
+				fi.setCreationDateStr(dateStr);
+			}
+			if(a.getModificationUser() != null)
+				fi.setModificationUser(a.getModificationUser());
+			if(a.getModificationDate() != null){
+				long b = a.getModificationDate().getTime();
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(new Date(b));
+				String dateStr = cal.get(Calendar.DATE)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.YEAR);
+				fi.setModificationDateStr(dateStr);
+			}
+			return fi;
+		}
+		/*
+		@Override
+		public FileInfo apply(Attach a) {
+			FileInfo fileInfo = new FileInfo();
+			fileInfo.setAonType(a.getAttachType().getName());
+			fileInfo.setCategory(a.getCategory() != null ? a.getCategory() : -2);
+			fileInfo.setCategoryStr(a.getCategory() != null ? 
+					AON.getCategory(a.getDomain().getName(),a.getDomain().getId() , user.getLogin(), a.getCategory()).getName() : "-");	
+			fileInfo.setData(a.getData());
+			fileInfo.setDate(a.getDate());
+			fileInfo.setDriveId(a.getDriveId());
+			fileInfo.setType(a.getType());
+			fileInfo.setTitle(a.getDescription());
+			fileInfo.setMimetype(a.getMimeType().value());
+			fileInfo.setFileId(a.getId());
+			fileInfo.setDomainId(a.getDomain().getId());
+			fileInfo.setDomain(a.getDomain().getName());
+			fileInfo.setConfidential(a.getConfidential());
+			if(fileInfo.getDate() != null){
+				String dateStr = fileInfo.getDate().toString();
+				Integer pos = dateStr.indexOf("-");
+				Integer pos2 = dateStr.substring(pos+1).indexOf("-");
+				String aux = dateStr.substring(pos2+pos+2)+"-"+dateStr.substring(pos+1, pos2+pos+1)+"-"+dateStr.substring(0,pos);
+				fileInfo.setDateStr(aux);
+			} else fileInfo.setDateStr("-");
+			Tags tags = getTags(a.getDomain(), user, fileInfo.getFileId());
+			fileInfo.setTags(tags.getTags().getList());
+			if(tags.getTagsStr()!=null)fileInfo.setTagsStr(tags.getTagsStr()); else fileInfo.setTagsStr("-");
+			Scope s = getScope(a.getDomain(), user, a.getScope());
+			fileInfo.setScope(s);
+		
+			fileInfo.setSize(a.getDparentId() != null ? Integer.valueOf(a.getDparentId()): 0);
+			fileInfo.setSizeStr(FileUtils.byteCountToDisplaySize(fileInfo.getSize()!=null?fileInfo.getSize():0));
+			fileInfo.setDomain(a.getDomain().getName());
+			fileInfo.setDomainDescription(a.getDomain().getDescription());
+			fileInfo.setDomainId(a.getDomain().getId());
+			fileInfo.setIsParent(a.getDomain().getParentId() == null);
+			
+			fileInfo.setCreationUser(a.getCreationUser());
+			
+			if(a.getCreationDate() != null){
+				long b = a.getCreationDate().getTime();
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(new java.util.Date(b));
+				String dateStr = cal.get(Calendar.DATE)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.YEAR);
+				fileInfo.setCreationDateStr(dateStr);
+			}
+			fileInfo.setModificationUser(a.getModificationUser());
+			if(a.getModificationDate() != null){
+				long b = a.getModificationDate().getTime();
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(new java.util.Date(b));
+				String dateStr = cal.get(Calendar.DATE)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.YEAR);
+				fileInfo.setModificationDateStr(dateStr);
+			}
+			return fileInfo;
+		}*/
 	}
 	
 	private static FileInfo newFileInfo(AONContext ctx, Domain domain, User user, String domain2, Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp> record){
@@ -645,68 +852,62 @@ public class DBConsults {
 		try {
 			Vector<FileInfo> vector = new Vector<FileInfo>();
 
-			if ((domain1==null || domain1!=domain.getName())||(atype == null || atype != "serviConvenios") ) {
-				domain1=domain.getName();
-				atype= "serviConvenios";
-				filesGwt = new Vector<FileInfo>();
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 				
-				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
-				
-				Result<Record7<Integer, String, Byte, Byte, Date, String, Integer>> username = 
-						ctx.getDslContext()
-						.select(RATTACH.ID, RATTACH.DESCRIPTION,
-								RATTACH.MIMETYPE, RATTACH.TYPE,
-								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY)
-						.from(RATTACH)
-						.where(RATTACH.DOMAIN.eq(0).and(RATTACH.ID.lessThan(0)))
-						.fetch();
+			Result<Record7<Integer, String, Byte, Byte, Date, String, Integer>> username = 
+					ctx.getDslContext()
+					.select(RATTACH.ID, RATTACH.DESCRIPTION,
+							RATTACH.MIMETYPE, RATTACH.TYPE,
+							RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY)
+					.from(RATTACH)
+					.where(RATTACH.DOMAIN.eq(0).and(RATTACH.ID.lessThan(0)))
+					.fetch();
 
-				for (Record7<Integer, String, Byte, Byte, Date, String, Integer> record : username) {
-					FileInfo fi = new FileInfo();
-					fi.setAonType("registry");
-					if (record.value1() != null) {
-						fi.setFileId(record.value1());
-					}
-					if (record.value2() != null) {
-						fi.setTitle(record.value2());
-					}
-					if (record.value3() != null) {
-						fi.setMimetype(record.value3());
-					}
-					if (record.value4() != null) {
-						fi.setType(record.value4());
-					}
-					if (record.value5() != null) {
-						fi.setDate(record.value5());
-						String dateStr = fi.getDate().toString();
-						Integer pos = dateStr.indexOf("-");
-						Integer pos2 = dateStr.substring(pos+1).indexOf("-");
-						String aux = dateStr.substring(pos2+pos+2)+"-"+dateStr.substring(pos+1, pos2+pos+1)+"-"+dateStr.substring(0,pos);
-						fi.setDateStr(aux);
-					} else fi.setDateStr("-");
-					if (record.value6() != null) {
-						fi.setDriveId(record.value6());
-					}
-					if (record.value7() != null) {
-						fi.setCategory(record.value7());
-					}
-					Tags tags = getTags(domain, user, fi.getFileId());
-					fi.setSize(0);
-					fi.setSizeStr(FileUtils.byteCountToDisplaySize(fi.getSize()!=null?fi.getSize():0));
-					if(record.value7() != null) fi.setCategoryStr(ctx.getDslContext().select(CATEGORY.NAME).from(CATEGORY).where(CATEGORY.ID.eq((record.value7()))).fetch().get(0).value1());
-					else fi.setCategoryStr("-");
-					
-					fi.setIcon(getmType(fi));
-					
-					fi.setTags(tags.getTags().getList());
-					if(tags.getTagsStr()!=null)fi.setTagsStr(tags.getTagsStr()); else fi.setTagsStr("-");
-					
-					fi.setConfidential(false);
-					fi.setDomainId(0);
-					vector.add(fi);
-					filesGwt.add(fi);
+			for (Record7<Integer, String, Byte, Byte, Date, String, Integer> record : username) {
+				FileInfo fi = new FileInfo();
+				fi.setAonType("registry");
+				if (record.value1() != null) {
+					fi.setFileId(record.value1());
 				}
+				if (record.value2() != null) {
+					fi.setTitle(record.value2());
+				}
+				if (record.value3() != null) {
+					fi.setMimetype(record.value3());
+				}
+				if (record.value4() != null) {
+					fi.setType(record.value4());
+				}
+				if (record.value5() != null) {
+					fi.setDate(record.value5());
+					String dateStr = fi.getDate().toString();
+					Integer pos = dateStr.indexOf("-");
+					Integer pos2 = dateStr.substring(pos+1).indexOf("-");
+					String aux = dateStr.substring(pos2+pos+2)+"-"+dateStr.substring(pos+1, pos2+pos+1)+"-"+dateStr.substring(0,pos);
+					fi.setDateStr(aux);
+				} else fi.setDateStr("-");
+				if (record.value6() != null) {
+					fi.setDriveId(record.value6());
+				}
+				if (record.value7() != null) {
+					fi.setCategory(record.value7());
+				}
+				Tags tags = getTags(domain, user, fi.getFileId());
+				fi.setSize(0);
+				fi.setSizeStr(FileUtils.byteCountToDisplaySize(fi.getSize()!=null?fi.getSize():0));
+				if(record.value7() != null) fi.setCategoryStr(ctx.getDslContext().select(CATEGORY.NAME).from(CATEGORY).where(CATEGORY.ID.eq((record.value7()))).fetch().get(0).value1());
+				else fi.setCategoryStr("-");
+				
+				fi.setIcon(getmType(fi));
+				
+				fi.setTags(tags.getTags().getList());
+				if(tags.getTagsStr()!=null)fi.setTagsStr(tags.getTagsStr()); else fi.setTagsStr("-");
+				
+				fi.setConfidential(false);
+				fi.setDomainId(0);
+				vector.add(fi);
 			}
+		
 			return vector;
 			
 		} finally {
@@ -718,15 +919,6 @@ public class DBConsults {
 	public static LinkedList<Domain> getSons(Domain domain, User user) {
 		return AON.getDomainList(domain.getName(), domain.getId(), user.getLogin(),
 				f -> f.getParentProperty().eq(domain.getId()));
-	}
-	
-	public static Vector<FileInfo> getFilesGwt() {
-		return filesGwt;
-	}
-
-	public static void setFilesGwt(
-			Vector<FileInfo> filesGwt) {
-		DBConsults.filesGwt = filesGwt;
 	}
 
 	public static void removeFile(Domain domain, User user, Integer attachId){

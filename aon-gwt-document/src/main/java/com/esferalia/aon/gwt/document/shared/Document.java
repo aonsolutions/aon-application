@@ -16,38 +16,44 @@ public class Document implements IsSerializable{
 	public Boolean getIsServiconvenios() {
 		return isServiconvenios;
 	}
-	public void setIsServiconvenios(Boolean isServiconvenios) {
+	public Document setIsServiconvenios(Boolean isServiconvenios) {
 		this.isServiconvenios = isServiconvenios;
+		return this;
 	}
 	public Vector<FileInfo> getFiles() {
 		return files;
 	}
-	public void setFiles(Vector<FileInfo> files) {
+	public Document setFiles(Vector<FileInfo> files) {
 		this.files = files;
+		return this;
 	}
 	
 	public Vector<FileInfo> getServiconvenios() {
 		return serviconvenios;
 	}
-	public void setServiconvenios(Vector<FileInfo> serviconvenios) {
+	public Document setServiconvenios(Vector<FileInfo> serviconvenios) {
 		this.serviconvenios = serviconvenios;
+		return this;
 	}
 	public Vector<FileInfo> getFilter() {
 		return filter;
 	}
-	public void setFilter(Vector<FileInfo> filter) {
+	public Document setFilter(Vector<FileInfo> filter) {
 		this.filter = filter;
+		return this;
 	}
 	public Vector<FileInfo> getEfiles() {
 		return efiles;
 	}
-	public void setEfiles(Vector<FileInfo> efiles) {
+	public Document setEfiles(Vector<FileInfo> efiles) {
 		this.efiles = efiles;
+		return this;
 	}
 	public String getDomain() {
 		return domain;
 	}
-	public void setDomain(String domain) {
+	public Document setDomain(String domain) {
 		this.domain = domain;
+		return this;
 	}
 }

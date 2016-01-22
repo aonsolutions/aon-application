@@ -75,6 +75,8 @@ public interface ICommon {
 	public void deleteDomainGserviceaccount(AONContext ctx);
 	public void insertDomainGserviceaccount(AONContext ctx, DomainGserviceaccount dgsa);	
 
+	public Integer[] getSonsDomains(AONContext ctx);
+	
 	// TAG
 	public void updateTag(AONContext ctx, Tag tag);
 	public void deleteTag(AONContext ctx, Tag tag);
