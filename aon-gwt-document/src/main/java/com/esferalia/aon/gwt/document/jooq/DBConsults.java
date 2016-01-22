@@ -279,9 +279,9 @@ public class DBConsults {
 			if (a.getMimeType() != null) {
 				fi.setMimetype(a.getMimeType().value());
 			}
-			if (a.getType() != null) {
-				fi.setType(a.getType());
-			}
+			
+			fi.setType(a.getType());
+			
 			if (a.getDate() != null) {
 				fi.setDate(a.getDate());
 				String dateStr = fi.getDate().toString();

@@ -19,7 +19,7 @@ public class Attach implements Serializable {
 	private String description;
 	private byte[] data;
 	private Date date;
-	private Byte type;
+	private short type;
 	private String driveId;
 	private Integer scope;
 	private Boolean confidential;
@@ -79,11 +79,11 @@ public class Attach implements Serializable {
 		return this;
 	}
 
-	public Byte getType() {
+	public short getType() {
 		return type;
 	}
 
-	public Attach setType(Byte type) {
+	public Attach setType(short type) {
 		this.type = type;
 		return this;
 	}
