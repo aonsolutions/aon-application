@@ -8,12 +8,18 @@
 		field="aonResources"></ui:with>
 
 	<ui:style>
-		.options-scroll-panel>div {
+	.options-scroll-panel {
 		height: 99%;
+	}
 	
+	.buttons {
+		padding-top: 10px;
+		text-align: right;
+	}
 	</ui:style>
 
-	<g:ScrollPanel styleName="{aonResources.css.aonScrollArea} {style.options-scroll-panel}">
+	<g:ScrollPanel
+		styleName="{aonResources.css.aonScrollArea} {style.options-scroll-panel}">
 		<g:HTMLPanel>
 			<table class="{aonResources.css.aonPanelGrid}" style="height:90%">
 				<tr>
@@ -34,6 +40,15 @@
 				</tr>
 				<tr>
 					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:Label styleName="aon-outputLabel" text="Estado" />
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<g:Label ui:field="statusLabel" />
+					</td>
+				</tr>
+
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
 						<g:Label styleName="aon-outputLabel" text="Asunto" />
 					</td>
 					<td class="{aonResources.css.aonPanelGridEven}">
@@ -42,12 +57,60 @@
 				</tr>
 				<tr>
 					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:Label styleName="aon-outputLabel" text="Tipo" />
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<g:Label ui:field="typeLabel" />
+					</td>
+				</tr>
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:Label styleName="aon-outputLabel" text="Creado" />
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<g:Label ui:field="userLabel" />
+					</td>
+				</tr>
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:Label styleName="aon-outputLabel" text="{msg.labelsIssues}" />
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<g:HorizontalPanel ui:field="labelsHPanel"
+							spacing="5" />
+					</td>
+				</tr>
+
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:Label styleName="aon-outputLabel" text="Tipo" />
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<g:Label ui:field="priorityLabel" />
+					</td>
+				</tr>
+
+
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
 						<g:Label styleName="aon-outputLabel" text="Mensaje" />
 					</td>
 					<td class="{aonResources.css.aonPanelGridEven}">
-						<g:TextArea ui:field="commentTextArea" />
+						<g:TextArea ui:field="commentTextArea" characterWidth="10"
+							visibleLines="9" width="98%" height="99%" readOnly="true" />
 					</td>
 				</tr>
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:Label />
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<div class="{style.buttons}">
+							<g:Button ui:field="closeButton" text="Cerrar" />
+						</div>
+					</td>
+				</tr>
+
 			</table>
 		</g:HTMLPanel>
 	</g:ScrollPanel>
