@@ -52,8 +52,8 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 	public enum Columns {
 
-		STATE(""), OWNER(""), COMPANY(""), TITLE(""), LABELS(""), CREATED_AT(
-				"");
+		STATE(""), OWNER("CREADO POR"), COMPANY("EMPRESA"), TITLE("ASUNTO"), LABELS("ETIQUETAS"), CREATED_AT(
+				"FECHA");
 
 		private String mensaje;
 
