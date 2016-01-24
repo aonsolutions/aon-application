@@ -43,10 +43,14 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.company.Company;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.supplier.Supplier;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.loader.Loader;
 import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.loader.controller.AonLoaderController;
@@ -71,6 +75,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	private ArrayList<String> headers;
 	private Map<String, String> supplierAccount;
 	private Map<String, String> supplierNames;
+	private Map<String, String> supplierPaymethods;
 	
 	private final String SUPPLIER_DOCUMENT = "CIFEmisora";
 	private final String CONSUMER_NAME = "Nombre";
@@ -151,11 +156,14 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	        writer.print("cuotaIVA3|");
 	        writer.print("cuentaExplotacion3|");
 	        
-	        writer.print("totalFactura");
+	        writer.print("totalFactura|");
+	        writer.print("formaPago");
 	        writer.println();
 	        
+	        String defaultPaymethod = getDefaultPaymethod();
 	        supplierAccount = new HashMap<>();
-	    	supplierNames = new HashMap<>();
+	        supplierNames = new HashMap<>();
+	        supplierPaymethods = new HashMap<>();
 	    	skipLoad = false;
 	        
         	int lineCount=0;
@@ -230,7 +238,9 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
         				writer.print(CommonUtil.round(baseAlquileres * vatPercent / 100) + "|");
         				writer.print("600000003|");
         				
-        				writer.print(invoiceTotal);
+        				writer.print(invoiceTotal + "|");
+        				String supplierPaymethod = supplierPaymethods.get(supplierDocument);
+        				writer.print(supplierPaymethod!=null?supplierPaymethod:defaultPaymethod);
         				writer.println();
         				
         				lineCount++;
@@ -269,6 +279,16 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	    } finally {
 	    	
 	    }
+	}
+	
+	private String getDefaultPaymethod() throws ManagerBeanException{
+		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		RegistryPayMethod rpm = ((Company)controller.getTo()).getPayMethod();
+		if(rpm!=null && rpm.getPayment()!=null && StringUtils.isNotBlank(rpm.getPayment().getName())){
+			return rpm.getPayment().getName();
+		}
+		return "";
+		
 	}
 	
 	private String getStringCellValue(Cell cell) {
@@ -354,6 +374,11 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 				supplierNames.put(supplierDocument, supplier.getRegistry().getFullName());
 				if(supplier.getAccount()!=null && StringUtils.isNotBlank(supplier.getAccount().getCode())){
 					supplierAccount.put(supplierDocument, supplier.getAccount().getCode());
+				}
+				if(supplier.getRegistry().getPayMethod()!=null 
+						&& supplier.getRegistry().getPayMethod().getPayment()!=null 
+						&& StringUtils.isNotBlank(supplier.getRegistry().getPayMethod().getPayment().getName())){
+					supplierPaymethods.put(supplierDocument, supplier.getRegistry().getPayMethod().getPayment().getName());
 				}
 			}
 		}

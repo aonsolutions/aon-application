@@ -44,7 +44,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.common.util.AdminUtil;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
@@ -54,9 +53,7 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
-import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.loader.Loader;
 import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.loader.controller.AonLoaderController;
@@ -251,7 +248,7 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 					
 					writer.print(CommonUtil.round(invoiceTotal) + "|");
 					String ccc = getFormatBankAccount(bankAccount);
-					writer.print(StringUtils.isNotBlank(ccc)?negotiablePaymethod:"" + "|");
+					writer.print((StringUtils.isNotBlank(ccc)?negotiablePaymethod:"") + "|");
 					writer.print(ccc);
 					writer.println();
 							
