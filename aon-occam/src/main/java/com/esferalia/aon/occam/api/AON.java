@@ -89,6 +89,7 @@ import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -228,15 +229,16 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
-	public static Scope getScope(String domainName, Integer domainId, String login
-			, Integer scopeId){
+
+	public static Scope getScope(String domainName, Integer domainId,
+			String login, Integer scopeId) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getSecurity().getScope(ctx, scopeId);
 		} finally {
-			if(ctx != null) ctx.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 
@@ -257,9 +259,9 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
-	public static LinkedList<Domain> getDomainList(String domainName, Integer domainId, String login
-			, DomainFilter filter) {
+
+	public static LinkedList<Domain> getDomainList(String domainName,
+			Integer domainId, String login, DomainFilter filter) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -355,16 +357,18 @@ public class AON {
 		}
 	}
 
-	public static Integer[] getSonsDomains(String domainName, Integer domainId, String login){
+	public static Integer[] getSonsDomains(String domainName, Integer domainId,
+			String login) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getCommon().getSonsDomains(ctx);
-		} finally{
-			if(ctx != null) ctx.close();
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
+
 	// --------------------- APPLICATION PARAMETERS
 
 	public static FiscalParameters getFiscalParameters(String domainName,
@@ -507,18 +511,19 @@ public class AON {
 	}
 
 	// --------------------- SIGNATURE
-	
-	public static Signature getSignature(String domainName, Integer domainId, String login
-			, Integer signatureId){
+
+	public static Signature getSignature(String domainName, Integer domainId,
+			String login, Integer signatureId) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getSecurity().getSignature(ctx, signatureId);
 		} finally {
-			if(ctx != null) ctx.close();
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
+
 	// ********************************************
 	// ****************************** ACCOUNTING **
 	// ********************************************
@@ -2128,6 +2133,18 @@ public class AON {
 		}
 	}
 
+	public static List<Registry> getRegistries(Integer domainId,
+			String domainName, String userName) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getOffice().getRegistries(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	// ********************************************
 	// ****************************** ATTACHMENT **
 	// ********************************************
@@ -2196,9 +2213,10 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
-	public static Stream<Attach> getAttachStream(String domainName, Integer domainId, String login,
-			AttachFilter filter, AttachType attachType) {
+
+	public static Stream<Attach> getAttachStream(String domainName,
+			Integer domainId, String login, AttachFilter filter,
+			AttachType attachType) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -2845,9 +2863,9 @@ public class AON {
 	}
 
 	// -------------------- SELLER
-	
-	public static Seller getSeller(String domainName, Integer domainId, String login,
-			Integer sellerId) {
+
+	public static Seller getSeller(String domainName, Integer domainId,
+			String login, Integer sellerId) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -2857,7 +2875,7 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
+
 	// ********************************************
 	// ***************************** Marketplace **
 	// ********************************************
@@ -2909,59 +2927,64 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
-	public static MailAccount getMailAccount(String domainName, Integer domainId, String login
-			, MailAccountFilter filter){
+
+	public static MailAccount getMailAccount(String domainName,
+			Integer domainId, String login, MailAccountFilter filter) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getSecurity().getMailAccount(ctx, filter);
-		} finally{
-			if(ctx!= null) ctx.close();
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
-	public static LinkedList<MailAccount> getMailAccountList(String domainName, Integer domainId, String login
-			, MailAccountFilter filter){
+
+	public static LinkedList<MailAccount> getMailAccountList(String domainName,
+			Integer domainId, String login, MailAccountFilter filter) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getSecurity().getMailAccountList(ctx, filter);
-		} finally{
-			if(ctx!= null) ctx.close();
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
-	public static Contact getContact(String domainName, Integer domainId, String login
-			, ContactFilter filter){
+
+	public static Contact getContact(String domainName, Integer domainId,
+			String login, ContactFilter filter) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getSecurity().getContact(ctx, filter);
-		} finally{
-			if(ctx!= null) ctx.close();
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
-	public static LinkedList<Contact> getContactList(String domainName, Integer domainId, String login
-			, ContactFilter filter){
+
+	public static LinkedList<Contact> getContactList(String domainName,
+			Integer domainId, String login, ContactFilter filter) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getSecurity().getContactList(ctx, filter);
-		} finally{
-			if(ctx!= null) ctx.close();
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
-	
-	public static String getContactEmail(String domainName, Integer domainId, String login
-			, Integer contactDataId){
+
+	public static String getContactEmail(String domainName, Integer domainId,
+			String login, Integer contactDataId) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getSecurity().getContactEmail(ctx, contactDataId);
-		} finally{
-			if(ctx!= null) ctx.close();
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 

@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.office.User;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
@@ -160,6 +161,11 @@ public class OfficeApiServlet extends HttpServlet {
 				notice.setTitle(json.getString("title"));
 				notice.setBody(json.getString("body"));
 				notice.setStatus(json.getString("state"));
+				
+				if ( json.isNull("company") == false) {
+					notice.setCompany(json.getString("company"));
+					notice.setSource(json.getString("source"));
+				}
 				
 				if ( json.isNull("labels") == false) {
 					JSONArray tags = json.getJSONArray("labels");
@@ -368,8 +374,6 @@ public class OfficeApiServlet extends HttpServlet {
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
 			
-			System.out.println("List all labels for this repository ");
-			
 			List<Tag> tags = AON.getTags(DOMAIN_ID, DOMAIN_NAME, USER_NAME);
 			
 			PrintWriter pw = resp.getWriter();
@@ -381,6 +385,30 @@ public class OfficeApiServlet extends HttpServlet {
 			pw.flush();
 		}
 	}
+	
+	
+	private static class GetRegistries extends RegExpRequestHandler {
+		
+		public GetRegistries() {
+			super("/registries");
+		}
+		
+		@Override
+		public void handler(HttpServletRequest req, HttpServletResponse resp)
+				throws ServletException, IOException {
+			
+			List<Registry> registries = AON.getRegistries(DOMAIN_ID, DOMAIN_NAME, USER_NAME);
+			System.out.println(registries.size());
+			PrintWriter pw = resp.getWriter();
+			pw.append('{');			
+			pw.printf(String.format("\"message\":\"%s\",\r\n", 
+					"FOUNDED"));
+			pw.printf("\"data\":%s", buildRegistries(registries.listIterator())); 
+			pw.append('}');
+			pw.flush();
+		}
+	}
+
 
 	private static class GetSingleLabel extends RegExpRequestHandler {
 
@@ -589,6 +617,7 @@ public class OfficeApiServlet extends HttpServlet {
 	}
 	// @formatter:off
 	private static final HttpRequestHandler GET_HANDLERS[] = {
+			new GetRegistries(),
 			new GetUserRequestHandler(),
 			new GetAllIssuesRequestHandler(),
 			new GetUserIssuesRequestHandler(), 
@@ -599,7 +628,7 @@ public class OfficeApiServlet extends HttpServlet {
 			new GetIssueComments(),
 			new GetSingleLabel(),
 			new ListAllLabels(),
-			new ListLabelsOnAnIssue()
+			new ListLabelsOnAnIssue(),			
 	};
 	
 	private static final HttpRequestHandler POST_HANDLERS[] = {
@@ -723,6 +752,13 @@ public class OfficeApiServlet extends HttpServlet {
 		buffer.append(
 				String.format("\"state\":\"%s\",\r\n", 
 						notice.getStatus()));
+		buffer.append(
+				String.format("\"company\":\"%s\",\r\n", 
+						notice.getCompany() != null ? notice.getCompany() : ""));
+		buffer.append(
+				String.format("\"source\":\"%s\",\r\n", 
+						notice.getSource() != null ? notice.getSource() : ""));
+		
 		buffer.append(String.format("\"user\":%s,\r\n",
 				buildUserSender(notice.getSender())));
 		buffer.append(
@@ -814,8 +850,9 @@ public class OfficeApiServlet extends HttpServlet {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("{\n");
 		buffer.append(String.format("\"id\":%s,\r\n",
-				String.valueOf(user.getId())));		
-		buffer.append(String.format("\"login\":\"%s\"\r\n", user.getName()));
+				String.valueOf(user.getId())));
+		buffer.append(String.format("\"login\":\"%s\",\r\n", user.getLogin()));
+		buffer.append(String.format("\"name\":\"%s\"\r\n", user.getName()));
 		buffer.append("}");
 		return buffer.toString();
 	}
@@ -851,6 +888,35 @@ public class OfficeApiServlet extends HttpServlet {
 		
 		return buffer.toString();
 	}
+	
+	private static String buildRegistries(ListIterator<Registry> regsIterator) {
+	
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("[\n");
+		while (regsIterator.hasNext()) {
+			buffer.append(getRegistry(regsIterator.next()));			
+			
+			if (regsIterator.hasNext())
+				buffer.append(",\n");
+		}
+		buffer.append("]");
+
+		return buffer.toString();
+	}
+	
+	private static String getRegistry ( Registry registry ) {
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("{\n");
+		buffer.append(String.format("\"id\":%s,\r\n",
+				String.valueOf(registry.getId())));
+		buffer.append(String.format("\"name\":\"%s\",\r\n", registry.getName()));
+		buffer.append(String.format("\"document\":\"%s\"\r\n", registry.getDocument()));
+		buffer.append("}");
+		
+		return buffer.toString();
+	}
+
 	
 	private static void buildLabel (HttpServletResponse resp, Tag tag) {
 		

@@ -10,11 +10,13 @@ import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
+import com.esferalia.aon.gwt.office.client.models.repos.JsRegistry;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
 import com.esferalia.aon.gwt.office.client.values.LabelValue;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -74,6 +76,7 @@ public class Office extends Composite implements EntryPoint,
 	private ListDataProvider<IssueSelected> openIssuesProvider;
 	private ListDataProvider<IssueSelected> closeIssuesProvider;
 	private List<Tag> tagList;
+	private List<Registry> registries;
 	
 	private Map<Integer, JsIssue> issuesMap;
 	private Map<Integer, JsRepo> repositories;
@@ -91,9 +94,25 @@ public class Office extends Composite implements EntryPoint,
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 		
 		this.tagList = new LinkedList<Tag>();
+		this.registries = new LinkedList<Registry>();
 		
 		this.dataGrid.addListener(this);
-		this.gitHub.setRepositoryUrl(GWT.getModuleBaseURL() + "api");		
+		this.gitHub.setRepositoryUrl(GWT.getModuleBaseURL() + "api");
+		
+		gitHub.getRegistries(new AsyncCallback<JSON<JsRegistry>>() {
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("getRegistries()" + caught.getMessage());
+			}
+			
+			@Override
+			public void onSuccess(JSON<JsRegistry> result) {
+				JsArray<JsRegistry> registries = result.getData();
+				for (int x = 0; x < registries.length(); x++)
+					addRegistry2List(registries.get(x));
+			}
+		});
 
 		gitHub.getLabels(new AsyncCallback<JSON<JsLabel>>() {
 			
@@ -168,6 +187,8 @@ public class Office extends Composite implements EntryPoint,
 		issuePanel = new IssuePanel("Nueva Incidencia");
 		issuePanel.addListener(this);
 		issuePanel.setTagList(tagList);
+		if ( registries.size() > 0 )
+			issuePanel.setRegistries(registries);
 		issuePanel.showPopupPanel();
 	}
 	
@@ -179,14 +200,21 @@ public class Office extends Composite implements EntryPoint,
 	
 	@UiHandler("openIssuesButton")
 	void onOpenIssuesButton(ClickEvent event) {
+		enabledIssuesButton();		
 		loadOpenIssues();
 		showDockOfficePanel();
 	}
 	
 	@UiHandler("closedIssuesButton")
 	void onClosedIssuesButton(ClickEvent event) {
+		enabledIssuesButton();
 		loadClosedIssues();
 		showDockOfficePanel();
+	}
+	
+	private void enabledIssuesButton() {
+		openIssuesButton.setEnabled(!openIssuesButton.isEnabled());
+		closedIssuesButton.setEnabled(!closedIssuesButton.isEnabled());
 	}
 	
 	// ******************************************************************
@@ -234,7 +262,15 @@ public class Office extends Composite implements EntryPoint,
 		tag.setColor(jsLabel.getColor());
 		
 		tagList.add(tag);
-
+	}
+	
+	private void addRegistry2List(JsRegistry jsRegistry) {
+		Registry registry = new Registry();
+		registry.setId(jsRegistry.getId());
+		registry.setName(jsRegistry.getName());
+		registry.setDocument(jsRegistry.getDocument());
+		
+		registries.add(registry);
 	}
 
 	private void showDockOfficePanel() {
@@ -293,6 +329,11 @@ public class Office extends Composite implements EntryPoint,
 		value.setTitle(notice.getTitle());		
 		value.setBody(notice.getBody());
 		value.setState(notice.getStatus());		
+		
+		if ( notice.getCompany() != null ) {
+			value.setCompany(notice.getCompany());
+			value.setSource(notice.getSource());
+		}
 		
 		if ( notice.getTags().size() > 0 ) {
 	

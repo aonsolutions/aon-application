@@ -13,6 +13,7 @@ public class User implements Serializable, HasId {
 	private Integer id;
 	private Integer domain;
 	private String name;
+	private String login;
 	private String enterprise;
 	
 	public User() {
@@ -31,6 +32,10 @@ public class User implements Serializable, HasId {
 		this.name = name;
 	}
 	
+	public void setLogin(String login) {
+		this.login = login;
+	}
+	
 	public void setEnterprise (String enterprise) {
 		this.enterprise = enterprise;
 	}
@@ -46,6 +51,10 @@ public class User implements Serializable, HasId {
 	
 	public String getName () {
 		return this.name;
+	}
+	
+	public String getLogin() {
+		return this.login;
 	}
 	
 	public String getEnterprise () {

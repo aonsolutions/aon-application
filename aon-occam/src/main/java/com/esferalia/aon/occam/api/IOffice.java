@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 
 public interface IOffice {
 	
@@ -19,5 +20,6 @@ public interface IOffice {
 	public Tag editTag (AONContext ctx, String labelName, Tag tag);
 	public Tag getTag (AONContext ctx, String name) throws IllegalArgumentException;
 	public List<Tag> getTags (AONContext ctx) throws IllegalArgumentException;
+	public List<Registry> getRegistries (AONContext ctx) throws IllegalArgumentException;
 
 }

@@ -5,6 +5,7 @@ import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
+import com.esferalia.aon.gwt.office.client.models.repos.JsRegistry;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
@@ -208,6 +209,12 @@ public class AonHub implements IAonHub {
 	public void deleteLabel(String labelName,
 			AsyncCallback<JsLabel> callback) {
 		delete(repositoryUrl + "/labels/" + labelName, callback);
+	}
+	
+	// *************** REGISTRIES ****************** //
+	
+	public void getRegistries(AsyncCallback<JSON<JsRegistry>> callback) {
+		get(repositoryUrl + "/registries", callback);
 	}
 
 	

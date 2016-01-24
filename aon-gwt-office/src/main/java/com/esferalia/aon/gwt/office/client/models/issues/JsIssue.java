@@ -32,6 +32,14 @@ public class JsIssue extends JavaScriptObject {
 		return this.state;
 	}-*/;
 
+	public final native String getCompany() /*-{
+		return this.company;
+	}-*/;
+
+	public final native String getSource() /*-{
+		return this.source;
+	}-*/;	
+
 	public final native String getPriority() /*-{
 		return this.priority;
 	}-*/;

@@ -190,7 +190,12 @@ public class DomainDAO {
 
 	public static DomainRecord getParentDomain(AONContext ctx, Integer domain) {
 		return ctx.getDslContext().selectFrom(DOMAIN)
-				.where(DOMAIN.ID.eq(domain)).fetchOne();
+				.where(DOMAIN.ID.eq(domain)).fetchOne();		
+	}
+	
+	public static Integer getParentDomain(AONContext ctx) {
+		return getParentDomain(ctx, ctx.getDomainId())
+				.getValue(DOMAIN.PARENT);
 	}
 	
 	//-------------------- DOMAIN G SERVICE ACCOUNT

@@ -60,7 +60,7 @@
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:Button ui:field='openIssuesButton' styleName="aon-finding-toolbar-item
-								 aon-icon-issue-opened"
+								 aon-icon-issue-opened"  enabled="false"
 									text="Abiertas" />
 								<g:Button ui:field='closedIssuesButton' styleName="aon-finding-toolbar-item
 								 aon-icon-issue-opened"

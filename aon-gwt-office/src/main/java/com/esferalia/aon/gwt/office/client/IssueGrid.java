@@ -41,8 +41,8 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-public class IssueGrid extends CustomDataGrid<IssueSelected> implements
-		HasSelectionHandlers<IssueSelected> {
+public class IssueGrid extends CustomDataGrid<IssueSelected>
+		implements HasSelectionHandlers<IssueSelected> {
 
 	interface Listener {
 		void onSelectionChangeHandler(SelectionChangeEvent event);
@@ -52,7 +52,8 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 	public enum Columns {
 
-		STATE(""), TITLE(""), LABELS(""), CREATED_AT("");
+		STATE(""), OWNER(""), COMPANY(""), TITLE(""), LABELS(""), CREATED_AT(
+				"");
 
 		private String mensaje;
 
@@ -65,16 +66,15 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		}
 	}
 
-	private static abstract class DefaultAonIssuesSelected implements
-			IssueSelected, Comparable<IssueSelected> {
+	private static abstract class DefaultAonIssuesSelected
+			implements IssueSelected, Comparable<IssueSelected> {
 
 		protected JsIssue issue;
 		private JsArray<JsIssueComment> comments;
 		private DateTimeFormat timeFormat;
 
 		public DefaultAonIssuesSelected(JsIssue issue) {
-			this.timeFormat = DateTimeFormat
-					.getFormat("yyyy-MM-dd HH:mm:ss.S");
+			this.timeFormat = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss.S");
 			setIssue(issue);
 		}
 
@@ -101,19 +101,19 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		public String getState() {
 			return "";
 		}
-		
+
 		@Override
-		public String getPriority() {			
+		public String getPriority() {
 			return issue.getPriority();
 		}
-		
+
 		@Override
-		public String getType() {		
+		public String getType() {
 			return issue.getType();
 		}
 
 		@Override
-		public Date getCreateAt() {			
+		public Date getCreateAt() {
 			return timeFormat.parse(issue.getCreatedAt());
 		}
 
@@ -143,6 +143,11 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		}
 
 		@Override
+		public String getCompany() {
+			return issue.getCompany();
+		}
+
+		@Override
 		public JsArray<JsLabel> getLabels() {
 			return issue.getLabels();
 		}
@@ -168,7 +173,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		public IssueOpenLoadSelected(JsIssue issue) {
 			super(issue);
 		}
-		
+
 		@Override
 		public JsIssue getJsIssue() {
 			return issue;
@@ -190,13 +195,13 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		}
 	}
 
-	public static class IssueClosedLoadSelected extends
-			DefaultAonIssuesSelected {
+	public static class IssueClosedLoadSelected
+			extends DefaultAonIssuesSelected {
 
 		public IssueClosedLoadSelected(JsIssue issue) {
 			super(issue);
 		}
-		
+
 		@Override
 		public JsIssue getJsIssue() {
 			return issue;
@@ -236,21 +241,21 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 	public static class Comparators {
 
-		public static Comparator<IssueSelected> NUMBER = new Comparator<IssueSelected>() {
-			@Override
-			public int compare(IssueSelected o1, IssueSelected o2) {
-				// TODO Auto-generated method stub
-				return o2.getNumber() - o1.getNumber();
-			}
-		};
+		public static Comparator<IssueSelected> NUMBER=new Comparator<IssueSelected>(){@Override public int compare(IssueSelected o1,IssueSelected o2){
+		// TODO Auto-generated method stub
+		return o2.getNumber()-o1.getNumber();}};
 	}
 
-	private class HeaderBuilder extends
-			AbstractHeaderOrFooterBuilder<IssueSelected> {
+	private class HeaderBuilder
+			extends AbstractHeaderOrFooterBuilder<IssueSelected> {
 
 		private final Integer ROW_COUNT = 1;
 		private Header<String> stateHeader = new TextHeader(
 				Columns.STATE.getColumnName());
+		private Header<String> ownerHeader = new TextHeader(
+				Columns.OWNER.getColumnName());
+		private Header<String> companyHeader = new TextHeader(
+						Columns.COMPANY.getColumnName());
 		private Header<String> titleHeader = new TextHeader(
 				Columns.TITLE.getColumnName());
 		private Header<String> labelsHeader = new TextHeader(
@@ -275,16 +280,20 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 					: sortList.get(0);
 			Column<?, ?> sortedColumn = (sortedInfo == null) ? null
 					: sortedInfo.getColumn();
-			boolean isSortAscending = (sortedInfo == null) ? false : sortedInfo
-					.isAscending();
+			boolean isSortAscending = (sortedInfo == null) ? false
+					: sortedInfo.isAscending();
 
 			tr = startRow().className(AON.AON_CSS.childCell());
 			buildHeader(tr, stateHeader, stateColumn, sortedColumn,
 					isSortAscending, false, false);
+			buildHeader(tr, ownerHeader, ownerColumn, sortedColumn,
+					isSortAscending, false, false);
+			buildHeader(tr, companyHeader, companyColumn, sortedColumn,
+					isSortAscending, false, false);
 			buildHeader(tr, titleHeader, title, sortedColumn, isSortAscending,
 					false, false);
-			buildHeader(tr, labelsHeader, labels, sortedColumn,
-					isSortAscending, false, false);
+			buildHeader(tr, labelsHeader, labels, sortedColumn, isSortAscending,
+					false, false);
 			buildHeader(tr, createdAtHeader, createdAt, sortedColumn,
 					isSortAscending, false, false);
 
@@ -302,15 +311,16 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 			th.className("aon-dataTable-header");
 			enableColumnHandlers(th, column);
 			Context context = new Context(0, 1, header.getKey());
-			renderSortableHeader(th, context, header, isSorted, isSortAscending);
+			renderSortableHeader(th, context, header, isSorted,
+					isSortAscending);
 
 			th.endTH();
 
 		}
 	}
 
-	private class CellTableBuilder extends
-			AbstractCellTableBuilder<IssueSelected> {
+	private class CellTableBuilder
+			extends AbstractCellTableBuilder<IssueSelected> {
 
 		private final String rowStyle;
 		private final String selectedRowStyle;
@@ -328,8 +338,8 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		}
 
 		public void buildIssuesImpl(IssueSelected rowValue, int rowIndex) {
-			boolean isSelected = (selectionModel == null || rowValue == null) ? false
-					: selectionModel.isSelected(rowValue);
+			boolean isSelected = (selectionModel == null || rowValue == null)
+					? false : selectionModel.isSelected(rowValue);
 			StringBuilder trClasses;
 
 			if ((rowIndex % 2) == 0)
@@ -352,6 +362,23 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 			td.title(rowValue.getState());
 			renderCell(td, createContext(col++), stateColumn, rowValue);
 			td.endTD();
+			
+			td = row.startTD().align(
+					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
+			//td.className(rowValue.getStateIconStyle());
+			//td.title("");
+			td.className(AON.AON_CSS.aonDataTableTextColumn());
+			renderCell(td, createContext(col++), ownerColumn, rowValue);
+			td.endTD();
+			
+			td = row.startTD().align(
+					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
+			//td.className(rowValue.getStateIconStyle());
+			//td.title("");
+			td.className(AON.AON_CSS.aonDataTableTextColumn());
+			renderCell(td, createContext(col++), companyColumn, rowValue);
+			td.endTD();
+
 
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
@@ -388,6 +415,8 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 	 */
 
 	private Column<IssueSelected, String> stateColumn;
+	private Column<IssueSelected, String> ownerColumn;
+	private Column<IssueSelected, String> companyColumn;
 	private Column<IssueSelected, String> title;
 	private Column<IssueSelected, String> labels;
 	private Column<IssueSelected, String> createdAt;
@@ -432,9 +461,8 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 	private void initializeSelectionModel() {
 
-		setSelectionModel(selectionModel,
-				DefaultSelectionEventManager
-						.<IssueSelected> createCheckboxManager(0));
+		setSelectionModel(selectionModel, DefaultSelectionEventManager
+				.<IssueSelected> createCheckboxManager(0));
 		selectionModel.addSelectionChangeHandler(new Handler() {
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
@@ -482,6 +510,24 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 		});
 		setColumnWidth(col++, 40, Unit.PX);
+		
+		ownerColumn = new Column<IssueSelected, String>(new TextCell()) {
+
+			@Override
+			public String getValue(IssueSelected object) {				
+				return object.getUser().getName();
+			}
+		};
+		setColumnWidth(col++, 60, Unit.PX);
+		
+		companyColumn = new Column<IssueSelected, String>(new TextCell()) {
+
+			@Override
+			public String getValue(IssueSelected object) {
+				return object.getCompany();
+			}
+		};
+		setColumnWidth(col++, 60, Unit.PX);
 
 		labels = new Column<IssueSelected, String>(new TextCell()) {
 

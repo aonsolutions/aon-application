@@ -19,11 +19,13 @@ public class Notice implements Serializable, HasId {
 	private Integer recipient; // Destinatario del aviso
 	private Integer notice; //Notice al que referencia **null si es cabecera = titulo
 	
+	private String source; //ID del registry	
 	private String status;
 	private String title; // Asunto del aviso
 	private String body; //Cuerpo del aviso
 	private String type; //Tipo de aviso
 	private String priority; //Prioridad
+	private String company;
 	
 	private Date startDate;
 	private Date endDate;
@@ -71,6 +73,10 @@ public class Notice implements Serializable, HasId {
 		this.recipient = recipient;
 	}
 	
+	public void setSource(String source) {
+		this.source = source;
+	}
+	
 	public void setStatus(String status) {
 		this.status = status;
 	}
@@ -81,6 +87,10 @@ public class Notice implements Serializable, HasId {
 	
 	public void setPriority(String priority) {
 		this.priority = priority;
+	}
+	
+	public void setCompany(String company) {
+		this.company = company;
 	}
 	
 	public void setNotice(Integer notice) {
@@ -130,12 +140,20 @@ public class Notice implements Serializable, HasId {
 		return (body != null) ? body : "";
 	}
 	
+	public String getSource() {
+		return source;
+	}
+	
 	public Integer getRecipient() {
 		return recipient;
 	}
 	
 	public String getStatus() {
 		return status;
+	}
+	
+	public String getCompany() {
+		return company;
 	}
 	
 	public String getType() {

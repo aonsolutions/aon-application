@@ -10,10 +10,12 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.FilterDialog;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -24,7 +26,10 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -64,8 +69,8 @@ public class IssuePanel extends CustomDialog {
 
 	@UiField
 	TextBox titleTextBox;
-	@UiField
-	TextBox senderTextBox;
+	@UiField (provided = true)
+	SuggestBox registrySuggest;
 	@UiField
 	TextArea commentTextArea;
 
@@ -73,17 +78,20 @@ public class IssuePanel extends CustomDialog {
 	Button acceptButton;
 	@UiField
 	Button cancelButton;
-
-	private List<Tag> tagsList = new LinkedList<Tag>();
-	private List<Listener> listeners;
-
-	private String priority;
+	
 	private String type;
-	private Map<String, String> selectedTags;	
+	private String priority;
+	private String company;
+	
+	private List<Listener> listeners;	
+	private List<Registry> registryList;
+	private Map<String, String> selectedTags;
+	private List<Tag> tagsList = new LinkedList<Tag>();
+	private MultiWordSuggestOracle registries = new MultiWordSuggestOracle();
 
 	public IssuePanel(String title) {
 		setCaption(title);
-
+		registrySuggest = new SuggestBox(registries);
 		setWidget(uiBinder.createAndBindUi(this));
 
 		setAnimationEnabled(true);
@@ -107,6 +115,14 @@ public class IssuePanel extends CustomDialog {
 
 	// ----------------------------------------------------
 
+	public void setRegistries(List<Registry> registries) {
+		this.registrySuggest.setEnabled(true);
+		this.registryList = registries;
+		for ( Registry registry : registries ) {
+			this.registries.add(registry.getName());
+		}
+	}
+	
 	public void setTagList(List<Tag> tagList) {
 		this.tagsList = tagList;
 
@@ -187,10 +203,6 @@ public class IssuePanel extends CustomDialog {
 		titleTextBox.setValue(title);
 	}
 
-	public void setSender(String login) {
-		senderTextBox.setValue(login);
-	}
-
 	public void setBody(String body) {
 		commentTextArea.setValue(body);
 	}
@@ -249,6 +261,16 @@ public class IssuePanel extends CustomDialog {
 			tagType.setType(TagType.OFFICE_TYPE.value());
 			notice.addTag(tagType);
 			
+		}
+		
+		if (company != null) {
+			int recipientId = -1;
+			for (Registry registry : registryList) {
+				 if ( registry.getName().compareTo(company) == 0)
+					 recipientId = registry.getId();
+			}
+			notice.setCompany(company);
+			notice.setSource(String.valueOf(recipientId));
 		}
 
 		for ( String name : selectedTags.keySet()) {
@@ -429,6 +451,12 @@ public class IssuePanel extends CustomDialog {
 				}
 			}
 		};
+	}
+	
+	@UiHandler("registrySuggest")
+	void onSelectionValue(SelectionEvent<SuggestOracle.Suggestion> event) {
+		company = event.getSelectedItem().getReplacementString();
+		
 	}
 
 	private void onCreateNewTag(Tag tag) {

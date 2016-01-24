@@ -30,6 +30,8 @@ public interface IssueSelected {
 	
 	String getBody();
 	
+	String getCompany();
+	
 	Integer getComments();
 	
 	String getAssignee();
