@@ -46,7 +46,7 @@ public class AonHubDAO {
 				.set(NOTICE.SENDER, user.getId())
 				.set(NOTICE.SUBJECT, notice.getTitle())
 				.set(NOTICE.STATUS, NoticeStatus.OPEN.value())
-				.set(NOTICE.TYPE, NoticeType.MESSAGE.value())
+				.set(NOTICE.TYPE, NoticeType.TICKET.value())
 				.set(NOTICE.PRIORITY, (byte) 0).returning().fetchOne();
 
 		ctx.getDslContext().insertInto(NOTICE)
@@ -55,7 +55,7 @@ public class AonHubDAO {
 				.set(NOTICE.SENDER, noticeRecord.getValue(NOTICE.SENDER))
 				.set(NOTICE.SUBJECT, notice.getBody())
 				.set(NOTICE.STATUS, noticeRecord.getValue(NOTICE.STATUS))
-				.set(NOTICE.TYPE, NoticeType.TICKET.value())
+				.set(NOTICE.TYPE, NoticeType.MESSAGE.value())
 				.set(NOTICE.PRIORITY, noticeRecord.getValue(NOTICE.PRIORITY))
 				.set(NOTICE.NOTICE_, noticeRecord.getValue(NOTICE.ID))
 				.execute();
@@ -288,7 +288,7 @@ public class AonHubDAO {
 		String body = ctx.getDslContext().selectFrom(NOTICE)
 				.where(NOTICE.DOMAIN.eq(ctx.getDomainId())
 						.and(NOTICE.NOTICE_.eq(record.getValue(NOTICE.ID)))
-						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value())))
+						.and(NOTICE.TYPE.eq(NoticeType.MESSAGE.value())))
 				.fetchOne().getValue(NOTICE.SUBJECT);
 		notice.setBody((body != null) ? body : "Error al obtener el body");
 
@@ -349,7 +349,7 @@ public class AonHubDAO {
 				.on(NOTICE.ID.eq(NOTICE_TAG.NOTICE)).rightOuterJoin(TAG)
 				.on(NOTICE_TAG.TAG.eq(TAG.ID))
 				.where(NOTICE.DOMAIN.eq(domainId).and(NOTICE.NOTICE_.isNull())
-						.and(NOTICE.TYPE.eq(NoticeType.MESSAGE.value()))
+						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
 						.and(TAG.ID.eq(openId).or(TAG.ID.eq(reopenId)))
 						.and(NOTICE_TAG.END_DATE.isNull()))
 				.orderBy(NOTICE.DATE.desc()).fetch().stream()
@@ -377,7 +377,7 @@ public class AonHubDAO {
 				.on(NOTICE_TAG.TAG.eq(TAG.ID))
 				.where(NOTICE.DOMAIN.eq(ctx.getDomainId())
 						.and(NOTICE.NOTICE_.isNull())
-						.and(NOTICE.TYPE.eq(NoticeType.MESSAGE.value()))
+						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
 						.and(TAG.ID.eq(closedId)))
 				.fetch().stream().forEach(record -> {
 
@@ -403,7 +403,8 @@ public class AonHubDAO {
 								.or(TAG.NAME.eq(NoticeStatus.REOPEN.getValue()))
 								.or(TAG.NAME.eq(
 										NoticeStatus.DUPLICATED.getValue())))
-						.and(NOTICE.NOTICE_.isNull()))
+						.and(NOTICE.NOTICE_.isNull())
+						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value())))
 				.fetch().stream().forEach(record -> {
 
 					Notice notice = buildNotice(ctx, record);
