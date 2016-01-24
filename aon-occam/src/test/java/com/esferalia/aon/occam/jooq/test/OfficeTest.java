@@ -14,11 +14,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.code.aon.pool.AonConnectionException;
-import com.esferalia.aon.jooq.tables.NoticeTag;
 import com.esferalia.aon.jooq.tables.records.NoticeRecord;
 import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.esferalia.aon.occam.api.model.type.NoticeType;
 import com.esferalia.aon.occam.api.model.type.Priority;
@@ -89,7 +87,7 @@ public class OfficeTest {
 				.set(NOTICE.SENDER, noticeRecord.getValue(NOTICE.SENDER))
 				.set(NOTICE.SUBJECT, "Body para prueba 1")
 				.set(NOTICE.STATUS, noticeRecord.getValue(NOTICE.STATUS))
-				.set(NOTICE.TYPE, NoticeType.DESCRIPTION.value())
+			//	.set(NOTICE.TYPE, NoticeType.DESCRIPTION.value())
 				.set(NOTICE.PRIORITY, noticeRecord.getValue(NOTICE.PRIORITY))
 				.set(NOTICE.NOTICE_, noticeRecord.getValue(NOTICE.ID))
 				.execute();
@@ -151,7 +149,7 @@ public class OfficeTest {
 				.set(NOTICE.SENDER, noticeRecord2.getValue(NOTICE.SENDER))
 				.set(NOTICE.SUBJECT, "Body para prueba 2 ------------- 2")
 				.set(NOTICE.STATUS, noticeRecord2.getValue(NOTICE.STATUS))
-				.set(NOTICE.TYPE, NoticeType.DESCRIPTION.value())
+			//	.set(NOTICE.TYPE, NoticeType.DESCRIPTION.value())
 				.set(NOTICE.PRIORITY, noticeRecord2.getValue(NOTICE.PRIORITY))
 				.set(NOTICE.NOTICE_, noticeRecord2.getValue(NOTICE.ID))
 				.execute();

@@ -68,7 +68,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 	private static abstract class DefaultAonIssuesSelected implements
 			IssueSelected, Comparable<IssueSelected> {
 
-		private JsIssue issue;
+		protected JsIssue issue;
 		private JsArray<JsIssueComment> comments;
 		private DateTimeFormat timeFormat;
 
@@ -169,6 +169,11 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		public IssueOpenLoadSelected(JsIssue issue) {
 			super(issue);
 		}
+		
+		@Override
+		public JsIssue getJsIssue() {
+			return issue;
+		}
 
 		@Override
 		public String getStateIconStyle() {
@@ -191,6 +196,11 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 		public IssueClosedLoadSelected(JsIssue issue) {
 			super(issue);
+		}
+		
+		@Override
+		public JsIssue getJsIssue() {
+			return issue;
 		}
 
 		@Override

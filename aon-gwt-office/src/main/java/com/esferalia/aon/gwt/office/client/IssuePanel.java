@@ -89,6 +89,7 @@ public class IssuePanel extends CustomDialog {
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
 
+		this.newStatusButton.setVisible(false);
 		this.selectedTags = new HashMap<String, String>();
 		this.listeners = new LinkedList<Listener>();
 	}

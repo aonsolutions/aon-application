@@ -1,8 +1,11 @@
 package com.esferalia.aon.gwt.office.client;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
+import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -17,6 +20,11 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
 public class IssueReadPanel extends Composite {
+	
+	interface Listener {
+		
+		void onUpdateIssueState(String state);
+	}
 
 	private static IssueReadPanelUiBinder uiBinder = GWT
 			.create(IssueReadPanelUiBinder.class);
@@ -45,9 +53,13 @@ public class IssueReadPanel extends Composite {
 	
 	@UiField
 	Button closeButton;
+	
+	private List<Listener> listeners;
 
 	public IssueReadPanel(IssueSelected issue) {
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		this.listeners = new LinkedList<Listener>();
 		
 		setNumber(issue.getId());
 		setDate(issue.getCreateAt());
@@ -63,6 +75,16 @@ public class IssueReadPanel extends Composite {
 	@UiHandler("closeButton")
 	void onCloseButtonClick(ClickEvent event) {
 		
+		for (Listener listener : listeners)
+			listener.onUpdateIssueState(NoticeStatus.CLOSED.getValue());
+	}
+	
+	public void addListener(Listener listener) {
+		listeners.add(listener);
+	}
+	
+	public void removeListener(Listener listener) {
+		listeners.remove(listener);
 	}
 	
 	private void setNumber(Integer id) {

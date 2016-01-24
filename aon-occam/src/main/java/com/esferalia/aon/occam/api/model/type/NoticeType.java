@@ -7,8 +7,12 @@ public enum NoticeType implements Serializable {
 	VISIT,
 	MESSAGE,
     COMMUNICATION,
-    DESCRIPTION,    
-    COMMENT; //comentario de notice
+    ISSUE,
+    TICKET,
+    AVISO, //warning = aviso
+    NOTA,
+    COMENTARIO
+    ;
 
 	public byte value() {
 		return (byte) this.ordinal();

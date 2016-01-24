@@ -36,7 +36,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class Office extends Composite implements EntryPoint,
-		IssueGrid.Listener, IssuePanel.Listener  {
+		IssueGrid.Listener, IssuePanel.Listener, IssueReadPanel.Listener  {
 
 	private static OfficeUiBinder uiBinder = GWT.create(OfficeUiBinder.class);
 
@@ -47,6 +47,10 @@ public class Office extends Composite implements EntryPoint,
 	Button newIssueButton;
 	@UiField
 	Button returnButton;
+	@UiField
+	Button openIssuesButton;
+	@UiField
+	Button closedIssuesButton;
 	@UiField
 	DeckLayoutPanel deckPanel;
 	@UiField
@@ -61,7 +65,7 @@ public class Office extends Composite implements EntryPoint,
 	
 
 	private JsRepo repo;
-	private IssuePanel issuePanel;
+	private IssuePanel issuePanel;	
 	private IssueSelected issueSelected;
 	private AonHub gitHub = new AonHub(GWT.getModuleBaseURL() + "api/");
 	private List<IssueSelected> openIssues;
@@ -130,6 +134,25 @@ public class Office extends Composite implements EntryPoint,
 
 		showDockOfficePanel();
 	}
+	
+	private void loadClosedIssues() {
+		initClosedIssues();
+		gitHub.getClosedIssues("user", "repo", new AsyncCallback<JSON<JsIssue>>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(JSON<JsIssue> result) {
+				
+				for ( int x = 0; x < result.getData().length(); x++)
+					addCloseIssue(result.getData().get(x));
+			}
+		});
+		showDockOfficePanel();
+	}
 
 	@Override
 	public void onSelectionChangeHandler(SelectionChangeEvent event) {
@@ -154,6 +177,18 @@ public class Office extends Composite implements EntryPoint,
 		returnButton.setEnabled(false);
 	}
 	
+	@UiHandler("openIssuesButton")
+	void onOpenIssuesButton(ClickEvent event) {
+		loadOpenIssues();
+		showDockOfficePanel();
+	}
+	
+	@UiHandler("closedIssuesButton")
+	void onClosedIssuesButton(ClickEvent event) {
+		loadClosedIssues();
+		showDockOfficePanel();
+	}
+	
 	// ******************************************************************
 	// ********************** PRIVATE METHODS ***************************
 	// ******************************************************************
@@ -165,9 +200,22 @@ public class Office extends Composite implements EntryPoint,
 		openIssues = openIssuesProvider.getList();
 	}
 	
+	void initClosedIssues() {	
+		closedIssues = new LinkedList<IssueSelected>();
+		closeIssuesProvider = new ListDataProvider<IssueSelected>();
+		closeIssuesProvider.addDataDisplay(dataGrid);		
+		closedIssues = closeIssuesProvider.getList();
+	}
+
+	
 	void addOpenIssue(JsIssue issue) {
 		IssueSelected issueSelected = new IssueGrid.IssueOpenLoadSelected(issue);
 		openIssues.add(issueSelected);
+	}
+	
+	void addCloseIssue(JsIssue issue) {
+		IssueSelected issueSelected = new IssueGrid.IssueClosedLoadSelected(issue);
+		closedIssues.add(issueSelected);
 	}
 
 	void initCloseIssues() {
@@ -204,7 +252,9 @@ public class Office extends Composite implements EntryPoint,
 	@Override
 	public void onSelectionTitle(IssueSelected issue) {
 		readIssuePanel.clear();
+		this.issueSelected = issue;
 		IssueReadPanel readPanel = new IssueReadPanel(issue);
+		readPanel.addListener(this);
 		readIssuePanel.add(readPanel);
 		returnButton.setEnabled(true);
 		showReadIssuePanel();
@@ -267,6 +317,31 @@ public class Office extends Composite implements EntryPoint,
 			@Override
 			public void onSuccess(JsIssue result) {
 				loadOpenIssues();
+			}
+		});
+		
+	}
+	
+	// ******************************************************************
+	// ******************* ISSUES READ PANEL LISTENER *******************
+	// ******************************************************************
+
+	@Override
+	public void onUpdateIssueState(String state) {
+		IssueValue value = new IssueValue();
+		value.setState(state);
+		
+		gitHub.editIssue(issueSelected.getJsIssue(), value, new AsyncCallback<JsIssue>() {
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getMessage());
+			}
+			
+			@Override
+			public void onSuccess(JsIssue result) {
+				loadOpenIssues();
+				showDockOfficePanel();
 			}
 		});
 		

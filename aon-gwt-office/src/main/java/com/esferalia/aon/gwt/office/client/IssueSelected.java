@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.office.client;
 
 import java.util.Date;
 
+import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;
@@ -36,6 +37,8 @@ public interface IssueSelected {
 	Integer getId();
 	
 	JsArray<JsLabel> getLabels();
+	
+	JsIssue getJsIssue();
 	
 	void setIssueComments(JsArray<JsIssueComment> comments);
 	
