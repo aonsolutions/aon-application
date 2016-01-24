@@ -24,9 +24,11 @@ public class CustomLoaderFactoryManager implements Serializable {
 		
 	public static ICustomLoaderFactory getFactory( AonFile aonFile ) {
 		ICustomLoaderFactory acceptedFactory = null;
-		if(aonFile.getFileName().matches(".*[vV][eE][nN][tT][aA][sS].*")){
+		if(aonFile.getFileName().matches(".*[vV][eE][nN][tT][aA][sS].*")
+				&& oppidumFactories.get(SALES).accept(aonFile.getData())){
 			acceptedFactory = oppidumFactories.get(SALES);
-		} else if(aonFile.getFileName().matches(".*[cC][oO][mM][pP][rR][aA][sS].*")){
+		} else if(aonFile.getFileName().matches(".*[cC][oO][mM][pP][rR][aA][sS].*")
+			&& oppidumFactories.get(PURCHASE).accept(aonFile.getData())){
 			acceptedFactory = oppidumFactories.get(PURCHASE);
 		}
 		if(acceptedFactory==null || !acceptedFactory.accept(aonFile.getData())) {

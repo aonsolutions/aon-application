@@ -99,7 +99,7 @@ public class AonLoaderController implements Serializable {
 					loader.load(new ByteArrayInputStream(getAonFile().getData()));
 				} else {
 					LogPanelController logPanel = LogPanelController.getInstance();
-		        	logPanel.error("No se existen cargadores que acepten el fichero.");
+		        	logPanel.error("No se reconoce el fichero.");
 		        	logPanel.error("Proceso abortado.");
 				}
 			}

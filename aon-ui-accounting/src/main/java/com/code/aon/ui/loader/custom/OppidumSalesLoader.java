@@ -43,14 +43,20 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.util.AdminUtil;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.PayMethod;
+import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.customer.Customer;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.loader.Loader;
 import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.loader.controller.AonLoaderController;
@@ -160,10 +166,12 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 	        writer.print("cuentaExplotacion4|");
 	        
 	        writer.print("totalFactura|");
+	        writer.print("formaPago|");
 	        writer.print("cuentaBanco");
 	        writer.println();
 	        
 	        String maxAccountCode = obtainMaxAccountCode();
+	        String negotiablePaymethod = getNegotiablePaymethod();
 	        int emptyAccountCount = 0;
 	        customerAccount = new HashMap<>();
 	        
@@ -242,8 +250,10 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 					writer.print("606000001|");
 					
 					writer.print(CommonUtil.round(invoiceTotal) + "|");
-					writer.print(getFormatBankAccount(bankAccount));
-        			writer.println();
+					String ccc = getFormatBankAccount(bankAccount);
+					writer.print(StringUtils.isNotBlank(ccc)?negotiablePaymethod:"" + "|");
+					writer.print(ccc);
+					writer.println();
 							
         			lineCount++;
         		}
@@ -297,6 +307,26 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 			}
 		}
 		return "";
+	}
+	
+	private String getNegotiablePaymethod() throws ManagerBeanException{
+		IManagerBean bean = BeanManager.getManagerBean(PayMethod.class);
+		Criteria c = new Criteria();
+		c.addEqualExpression(bean.getFieldName(IEntityAlias.PAY_METHOD_TYPE), PayMethodType.NEGOTIABLE_DOCUMENT);
+		c.addEqualExpression(bean.getFieldName(IEntityAlias.PAY_METHOD_DOMAIN), DomainManager.getCurrentDomain());
+		List<ITransferObject> list = bean.getList(c);
+		if(list==null || list.isEmpty()){
+			c = new Criteria();
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.PAY_METHOD_TYPE), PayMethodType.NEGOTIABLE_DOCUMENT);
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.PAY_METHOD_DOMAIN), DomainManager.getParentDomain());
+			list = bean.getList(c);
+		}
+		String name = "";
+		if(list!=null && !list.isEmpty()){
+			name = ((PayMethod)list.get(0)).getName();
+		}
+		return name;
+		
 	}
 
 	private String getStringCellValue(Cell cell) {
