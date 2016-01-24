@@ -88,8 +88,7 @@ public class IssuePanel extends CustomDialog {
 
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
-
-		this.newStatusButton.setVisible(false);
+		
 		this.selectedTags = new HashMap<String, String>();
 		this.listeners = new LinkedList<Listener>();
 	}
@@ -225,6 +224,13 @@ public class IssuePanel extends CustomDialog {
 	@UiHandler("acceptButton")
 	void onAcceptButtonClick(ClickEvent event) {
 		
+		if ( titleTextBox.getText().trim().isEmpty())
+			return;
+		
+		if ( commentTextArea.getText().trim().isEmpty() && 
+				Window.confirm("Mensaje vacio \u00BFDesea continuar?") == false)
+			return;
+		
 		Notice notice = new Notice();
 		notice.setTitle((titleTextBox.getValue().isEmpty()) ? ""
 				: titleTextBox.getValue());
@@ -266,7 +272,7 @@ public class IssuePanel extends CustomDialog {
 
 	@UiHandler("newStatusButton")
 	void onNewStatusButtonClick(ClickEvent event) {
-
+		/*
 		new FilterDialog() {
 
 			{
@@ -304,6 +310,7 @@ public class IssuePanel extends CustomDialog {
 
 			}
 		};
+		*/
 	}
 
 	@UiHandler("newPriorityButton")
