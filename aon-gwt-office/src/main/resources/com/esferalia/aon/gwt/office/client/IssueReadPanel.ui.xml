@@ -83,7 +83,7 @@
 
 				<tr>
 					<td class="{aonResources.css.aonPanelGridOdd}">
-						<g:Label styleName="aon-outputLabel" text="Tipo" />
+						<g:Label styleName="aon-outputLabel" text="Prioridad" />
 					</td>
 					<td class="{aonResources.css.aonPanelGridEven}">
 						<g:Label ui:field="priorityLabel" />

@@ -161,18 +161,15 @@ public class OfficeApiServlet extends HttpServlet {
 				notice.setBody(json.getString("body"));
 				notice.setStatus(json.getString("state"));
 				
-				if ( json.isNull("type") == false)
-					notice.setType(json.getString("type"));
-				
-				if ( json.isNull("priority") == false)
-					notice.setPriority(json.getString("priority"));
-				
 				if ( json.isNull("labels") == false) {
 					JSONArray tags = json.getJSONArray("labels");
 					
 					for ( int x = 0 ; x < tags.length(); x++) {
 						String name = tags.getString(x);
-						Tag tag = AON.getTag(DOMAIN_ID, DOMAIN_NAME, USER_NAME, name);		
+						Tag tag = AON.getTag(DOMAIN_ID, DOMAIN_NAME, USER_NAME, name);
+						System.out.println("TagId: " + tag.getId()
+						+"\nName: " + tag.getName()
+						+"\nType: " + tag.getType());
 						notice.addTag(tag);
 					}
 				}
@@ -729,9 +726,11 @@ public class OfficeApiServlet extends HttpServlet {
 		buffer.append(String.format("\"user\":%s,\r\n",
 				buildUserSender(notice.getSender())));
 		buffer.append(
-				String.format("\"type\":\"%s\",\r\n", notice.getType()));
+				String.format("\"type\":\"%s\",\r\n", (notice.getType() != null) 
+						? notice.getType() : "Sin asignar" ));
 		buffer.append(
-				String.format("\"priority\":\"%s\",\r\n", notice.getPriority()));
+				String.format("\"priority\":\"%s\",\r\n", (notice.getPriority() != null) 
+						? notice.getPriority() : "Sin asignar"));
 		buffer.append(
 				String.format("\"created_at\":\"%s\",\r\n", notice.getStartDate()));
 		buffer.append(String.format("\"labels\":%s\r\n",

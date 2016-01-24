@@ -120,7 +120,6 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 		@Override
 		public Date getUpdatedAt() {
 			return timeFormat.parse(issue.getCreatedAt());
-			//return timeFormat.parse(issue.getUpdatedAt());
 		}
 
 		@Override
@@ -182,7 +181,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 		@Override
 		public String getState() {
-			return "open";
+			return issue.getState();
 		}
 
 		@Override
@@ -210,7 +209,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected> implements
 
 		@Override
 		public String getState() {
-			return "closed";
+			return issue.getState();
 		}
 
 		@Override

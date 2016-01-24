@@ -230,11 +230,20 @@ public class IssuePanel extends CustomDialog {
 				: titleTextBox.getValue());
 		notice.setStatus(NoticeStatus.OPEN.getValue());
 		
-		if (priority != null)
-			notice.setPriority(priority);
+		if (priority != null) {
+			Tag tagPriority = new Tag();
+			tagPriority.setName(priority);
+			tagPriority.setType(TagType.OFFICE_PRIORITY.value());
+			notice.addTag(tagPriority);
+		}			
 
-		if (type != null)
-			notice.setType(type);
+		if (type != null) {
+			Tag tagType = new Tag();
+			tagType.setName(type);
+			tagType.setType(TagType.OFFICE_TYPE.value());
+			notice.addTag(tagType);
+			
+		}
 
 		for ( String name : selectedTags.keySet()) {
 			Tag tag = new Tag();

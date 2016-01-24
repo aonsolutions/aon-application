@@ -96,6 +96,9 @@ public class IssueReadPanel extends Composite {
 	}
 	
 	private void setStatusLabel(String status) {
+		if ( status.compareTo(NoticeStatus.OPEN.getValue()) != 0 )
+			this.closeButton.setVisible(false);
+		
 		this.statusLabel.setText(status);
 	}
 	

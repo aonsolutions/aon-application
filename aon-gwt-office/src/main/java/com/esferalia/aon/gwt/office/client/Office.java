@@ -290,11 +290,9 @@ public class Office extends Composite implements EntryPoint,
 	@Override
 	public void onCreateNewIssue(Notice notice) {
 		IssueValue value = new IssueValue();
-		value.setTitle(notice.getTitle());
-		value.setPriority(notice.getPriority());
+		value.setTitle(notice.getTitle());		
 		value.setBody(notice.getBody());
-		value.setState(notice.getStatus());
-		value.setType(notice.getType());
+		value.setState(notice.getStatus());		
 		
 		if ( notice.getTags().size() > 0 ) {
 	
