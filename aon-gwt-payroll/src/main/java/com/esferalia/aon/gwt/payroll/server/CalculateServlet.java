@@ -564,8 +564,8 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 	}
 
 	private static boolean counter(ISQLContractSalaryCalculatorContext ctx, ISQLSalary salary) {
-		return ctx.getInt(SQLConstants.CONTRACT, ContractColumns.ID) == salary.getInt(SQLConstants.CONTRACT,
-				ContractColumns.ID);
+		return ctx.getInt(SQLConstants.CONTRACT, ContractColumns.ID).equals(salary.getInt(SQLConstants.CONTRACT,
+				ContractColumns.ID));
 	}
 
 	private static boolean save(HttpServletRequest request) throws ParseException {
