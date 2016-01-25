@@ -64,9 +64,8 @@ public class DownloadUtil {
 				String domainName = AonUtil.getDomainName();
 				Domain domain = new Domain().setName(domainName).setId(attach.getDomain());
 			
-				String domainName2 = "admin.grupoplayasol.com";
 				Integer domainId2 = 0;
-				Domain domain2 = new Domain().setName(domainName2).setId(domainId2);
+				Domain domain2 = new Domain().setName(domainName).setId(domainId2);
 				
 				User user = new User().setLogin(AonUtil.getRemoteUser() != null ? AonUtil.getRemoteUser() : "");
 				
