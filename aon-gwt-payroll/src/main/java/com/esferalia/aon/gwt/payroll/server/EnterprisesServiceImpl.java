@@ -12,6 +12,10 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
+import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
+import com.esferalia.aon.google.sql.SQLConstants.UserScopeColumns;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
@@ -49,8 +53,10 @@ import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RbankColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ScopeColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDeductionColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.UserColumns;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
 /**
@@ -288,7 +294,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			initFacesContext();
 			connection = AonServletUtils.getConnection();
-			return getEnterprises(connection, getDomainID(), offset, limit);
+			return getEnterprises(connection, getUserID(), getDomainID(), offset, limit);
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -875,7 +881,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 
-	private static List<Enterprise> getEnterprises(Connection connection,
+	private static List<Enterprise> getEnterprises(Connection connection, int userId,
 			int domainId, int offset, int limit) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
@@ -899,7 +905,17 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					+ " AND " + SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.GEOZONE + " = " + SQLConstants.GEOZONE+ "." + GeozoneColumns.ID
 
 					+ " AND ( " + SQLConstants.DOMAIN + "." + DomainColumns.ID + " = ? " 
-						+ " OR " + SQLConstants.DOMAIN + "." + DomainColumns.PARENT + " = ? " + ")" 
+						+ " OR " + SQLConstants.DOMAIN + "." + DomainColumns.PARENT + " = ? " + ")"
+					
+					+" AND (" + SQLConstants.DOMAIN + "." + DomainColumns.SCOPE 
+						+ " IN ("
+						+ " SELECT " + UserScopeColumns.SCOPE + " FROM " + SQLConstants.USER_SCOPE + " WHERE " + UserScopeColumns.USER_ID + " =  ? "
+//						+ " UNION SELECT " + SQLConstants.SCOPE + "." + ScopeColumns.ID + " FROM " + SQLConstants.SCOPE 
+//							+ " INNER JOIN " + SQLConstants.DOMAIN + " ON ( " + SQLConstants.DOMAIN + "." + DomainColumns.ID + " = " + SQLConstants.SCOPE + "." + ScopeColumns.DOMAIN + ")"     
+//							+ " INNER JOIN " + SQLConstants.USER + " ON ( " + SQLConstants.DOMAIN + "." + DomainColumns.PARENT + " = " + SQLConstants.USER + "." + UserColumns.DOMAIN + ")"     
+						+ " )"
+						+ " OR " + SQLConstants.DOMAIN + "." + DomainColumns.SCOPE + " IS NULL"
+						+ " )"     
 					
 					+ " ORDER BY " + SQLConstants.REGISTRY + "." + RegistryColumns.ID
 					+ ", " + SQLConstants.ENTERPRISE_ACTIVITY + "." + EnterpriseActivityColumns.ID
@@ -910,9 +926,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 			stmt.setInt(1, domainId);
 			stmt.setInt(2, domainId);
+			stmt.setInt(3, userId);
 
-			stmt.setInt(3, offset);
-			stmt.setInt(4, limit);
+			stmt.setInt(4, offset);
+			stmt.setInt(5, limit);
 			
 			CCC ccc = null;
 			Activity activity = null;
@@ -928,7 +945,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				if ( enterprise == null || !enterprise.getId().equals(registry) ) {
 					enterprise = new Enterprise();
 					enterprise.setId(registry); // Not
-					enterprise.setName(rs.getString(SQLConstants.REGISTRY +"." + RegistryColumns.NAME));
+//					enterprise.setName(rs.getString(SQLConstants.REGISTRY +"." + RegistryColumns.NAME));
+					enterprise.setName(rs.getString(SQLConstants.DOMAIN +"." + DomainColumns.DESCRIPTION));
 					enterprise.setDomain(rs.getInt(SQLConstants.ENTERPRISE +"." + EnterpriseColumns.DOMAIN));
 					enterprises.add(enterprise);
 				}
@@ -1255,4 +1273,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 	}
+	
+	
 }
