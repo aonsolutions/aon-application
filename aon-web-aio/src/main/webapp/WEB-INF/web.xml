@@ -6,6 +6,32 @@
 		 http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
 
+
+
+	<servlet-mapping>
+		<servlet-name>Resource Servlet</servlet-name>
+		<url-pattern>/aon_gwt_pruebas/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Resource Servlet</servlet-name>
+		<url-pattern>/aon_gwt_prueba1/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Resource Servlet</servlet-name>
+		<url-pattern>/aon_gwt_prueba2/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>Resource Servlet</servlet-name>
+		<url-pattern>/aon_gwt_deposit/*</url-pattern>
+	</servlet-mapping>
+	
+
+	
+
+
+
+
 	<!-- Faces Servlet -->
 	<servlet>
 		<servlet-name>Faces Servlet</servlet-name>
@@ -522,20 +548,20 @@
 
 	<servlet>
 		<servlet-name>D2 Deposit</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.fiscal.server.normalizedMemory.NormalizedMemoryServlet</servlet-class>
+		<servlet-class>com.esferalia.aon.gwt.fiscal.deposit.server.normalizedMemory.NormalizedMemoryServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>D2 Deposit</servlet-name>
-		<url-pattern>/aon_gwt_fiscal/gwt_deposit</url-pattern>
+		<url-pattern>/aon_gwt_deposit/gwt_deposit</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>UploadFiscalFile</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.fiscal.server.normalizedMemory.UploadFileServlet</servlet-class>
+		<servlet-class>com.esferalia.aon.gwt.fiscal.deposit.server.normalizedMemory.UploadFileServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>UploadFiscalFile</servlet-name>
-		<url-pattern>/aon_gwt_fiscal/gwt_deposit_upload</url-pattern>
+		<url-pattern>/aon_gwt_deposit/gwt_deposit_upload</url-pattern>
 	</servlet-mapping>
 	<!-- JSF STANDARD CONFIGURATION -->
 	<context-param>

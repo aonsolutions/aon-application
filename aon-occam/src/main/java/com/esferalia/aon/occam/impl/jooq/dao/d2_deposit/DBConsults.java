@@ -8,6 +8,9 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.Month;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Vector;
 
 import javax.xml.bind.JAXBException;
@@ -21,7 +24,9 @@ import org.jooq.Result;
 
 import com.esferalia.aon.jooq.tables.records.RattachRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 
 public class DBConsults {
@@ -156,6 +161,83 @@ public class DBConsults {
 		}
 	}
 
+	public static File getXmlFile(String domain, Integer domainId, Integer year)
+			throws IOException {
+		AONContext ctx = null;
+		File parent = null;
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, Month.DECEMBER.ordinal());
+		calendar.set(Calendar.DAY_OF_MONTH, 31);
+		System.out.println(calendar.getTime());
+		try {
+			ctx = AONContext.getAONContext(domain, domainId);
+
+			// DOMAIN + DOMAIN SON
+			Record7<Integer, String, Byte, String, byte[], String, String> record = ctx
+					.getDslContext()
+					.select(RATTACH.ID, RATTACH.DESCRIPTION, RATTACH.MIMETYPE,
+							RATTACH.DRIVE_ID, RATTACH.DATA, REGISTRY.DOCUMENT,
+							REGISTRY.NAME)
+					.from(RATTACH)
+					.join(REGISTRY)
+					.on(REGISTRY.ID.eq(RATTACH.REGISTRY))
+					.where(RATTACH.TYPE.eq(RegistryAttachmentType.D2_DEPOSIT.value()))
+					.and(RATTACH.DOMAIN.eq(domainId))
+					.and(RATTACH.ATTACH_DATE.eq(AonDateUtils.toSql(calendar.getTime()))).
+					orderBy(RATTACH.ID).limit(1).fetchOne();
+			
+			byte[] data;
+			if (record != null) {
+				
+				parent = File.createTempFile(record.value2()+"%", "");
+				parent.delete();
+				parent.mkdir();
+				
+				File documents = File.createTempFile("Documentos%", "", parent);
+				documents.delete();
+				documents.mkdir();
+				
+				//**************************
+				getFileDocuments2Zip(domain, domainId, D2_FILE_MEMORY, documents);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_AUTOCARTERA_MODEL, documents);	
+				getFileDocuments2Zip(domain, domainId, D2_FILE_GESTION, documents);			
+				getFileDocuments2Zip(domain, domainId, D2_FILE_AUDIT, documents);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_CONVOC, documents);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_SICAV, documents);
+				//**************************
+				
+				File tmpDocuments = File.createTempFile("Documentos TMP%", "", parent);
+				tmpDocuments.delete();
+				tmpDocuments.mkdir();
+				
+				File otherDocuments =File.createTempFile("Otros Documentos%", "", parent);
+				otherDocuments.delete();
+				otherDocuments.mkdir();
+				
+				File otherTmpDocuments =File.createTempFile("Otros Documentos TMP%", "", parent);
+				otherTmpDocuments.delete();
+				otherTmpDocuments.mkdir();
+
+				File f = File.createTempFile("DEPOSITO%", ".xml", parent);
+				
+				data = record.value5();
+
+				try {
+					AonFileUtils.writeByteArrayToFile(f, data);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+			return parent;
+
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static Esquema readXml(byte[] data){
 		Esquema schema = null;
 		try {
@@ -635,4 +717,20 @@ public class DBConsults {
 		return new Date(2014-1900, 11, 31);
 	}
 	
+	public static String[] getDepositExercises(String domainName, Integer domainId, String login){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			Object[] array =  ctx.getDslContext().select(RATTACH.ATTACH_DATE)
+						.from(RATTACH)
+						.where(RATTACH.DOMAIN.eq(domainId))
+						.and(RATTACH.TYPE.eq(RegistryAttachmentType.D2_DEPOSIT.value()))
+						.fetch().stream()
+						.map(r -> Integer.toString(AonDateUtils.getYear(r.getValue(RATTACH.ATTACH_DATE))))
+						.toArray();
+			return Arrays.copyOf(array, array.length, String[].class);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
 }
