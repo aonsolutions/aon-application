@@ -608,7 +608,7 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration, Serializa
 		return false;
 	}
 	public boolean isLastPeriod(){
-		return (fiscalModel != null && fiscalModel.getPeriod() == Period.T4);
+		return (fiscalModel != null && (fiscalModel.getPeriod() == Period.T4 || fiscalModel.getPeriod() == Period.M12));
 	}
 	public double ensureAmount(Mod303Key key) {
 		FiscalModelDetail detail = getDetail( key );
