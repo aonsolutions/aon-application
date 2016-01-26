@@ -6,6 +6,7 @@ import java.util.List;
 import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.ui.finance.controller.InvoiceDetailController;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -46,6 +47,14 @@ public class PosInvoiceDetailControllerListener extends InvoiceDetailControllerL
 		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
 		invoiceDetail.fillTaxDataInDetail();
 		invoiceDetail.setTaxDataInDetail(true);
+	}
+
+	@Override
+	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		super.beforeBeanAdded(event);
+		
+		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
+		invoiceDetail.setTaxableBase(CommonUtil.round(invoiceDetail.getTaxableBase()));
 	}
 
 }

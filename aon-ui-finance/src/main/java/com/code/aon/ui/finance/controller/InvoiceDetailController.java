@@ -158,17 +158,26 @@ public class InvoiceDetailController extends LinesController implements IFinance
 				ItemPricesManager pricesManager = new ItemPricesManager();
 				double salesPrice = pricesManager.getSalesPrice(invoiceDetail.getVatPercent(), invoiceDetail.getRetentionPercent(), invoiceDetail.getPrice());
 				invoiceDetail.setPrice(salesPrice);
-				double totalSalesPrice = getPriceStrategy().getBasePrice(invoiceDetail);
-				invoiceDetail.setPrice(pricesManager.getPrice(invoiceDetail.getVatPercent(), invoiceDetail.getRetentionPercent(), salesPrice, 2));
-				invoiceDetail.setTaxableBase(pricesManager.getPrice(invoiceDetail.getVatPercent(), invoiceDetail.getRetentionPercent(), totalSalesPrice, 2));
+				double totalSalesPrice = CommonUtil.round(getPriceStrategy().getBasePrice(invoiceDetail));
+				invoiceDetail.setPrice(pricesManager.getPrice(invoiceDetail.getVatPercent(), invoiceDetail.getRetentionPercent(), salesPrice, 4));
+				invoiceDetail.setTaxableBase(pricesManager.getPrice(invoiceDetail.getVatPercent(), invoiceDetail.getRetentionPercent(), totalSalesPrice, 4));
+				if (includeQuotas) {
+					if (invoiceDetail.getSurchargePercent() == 0 && invoiceDetail.getRetentionPercent() == 0) {
+						double taxableBase = CommonUtil.round(invoiceDetail.getTaxableBase());
+						invoiceDetail.setVatQuota(CommonUtil.round(totalSalesPrice - taxableBase));
+					} else {
+						invoiceDetail.setVatQuota(getVatQuota(invoiceDetail));
+						invoiceDetail.setSurchargeQuota(getSurchargeQuota(invoiceDetail));
+						invoiceDetail.setRetentionQuota(getRetentionQuota(invoiceDetail));
+					}
+				}
 			} else {
 				invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
-			}
-
-			if (includeQuotas) {
-				invoiceDetail.setVatQuota(getVatQuota(invoiceDetail));
-				invoiceDetail.setSurchargeQuota(getSurchargeQuota(invoiceDetail));
-				invoiceDetail.setRetentionQuota(getRetentionQuota(invoiceDetail));
+				if (includeQuotas) {
+					invoiceDetail.setVatQuota(getVatQuota(invoiceDetail));
+					invoiceDetail.setSurchargeQuota(getSurchargeQuota(invoiceDetail));
+					invoiceDetail.setRetentionQuota(getRetentionQuota(invoiceDetail));
+				}
 			}
 		}
 	}

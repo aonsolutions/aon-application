@@ -30,6 +30,10 @@ public class SaleInvoiceDetailController extends InvoiceDetailController {
 	}	
 
 	public void itemChanged(Item item) {
+		itemChanged(item, false, true);
+	}
+
+	public void itemChanged(Item item, boolean workWithSalesPrice, boolean includeQuotas) {
 		Invoice invoice = (Invoice)getMasterController().getTo();
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
 		invoiceDetail.setItem(item);
@@ -49,7 +53,7 @@ public class SaleInvoiceDetailController extends InvoiceDetailController {
 			invoiceDetail.getDiscountExpression().setDiscountExpr(Double.toString(item.getProfitPercent()));
 		}
 		invoiceDetail.setPrice(getPriceStrategy().getUnitPrice(invoiceDetail, invoice.getIssueDate(), customer));
-		fillTaxDataInDetail(false, true);
+		fillTaxDataInDetail(workWithSalesPrice, includeQuotas);
 	}	
 
 	public void onQuantityChanged(ValueChangeEvent event) {
