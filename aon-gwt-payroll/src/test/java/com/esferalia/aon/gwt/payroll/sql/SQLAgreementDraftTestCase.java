@@ -20,6 +20,7 @@ import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase;
 
@@ -28,7 +29,49 @@ import junit.framework.Assert;
 public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 
 	@Test
-	public void testNewCategories() throws SQLException {
+	public void testNewCategoriesI() throws SQLException {
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		DomainRecord domain = newDomain(aonContext);
+
+		AgreementDraft draft = new AgreementDraft();
+		draft.setId(-1);
+		
+
+		Level levelI = new Level();
+		levelI.setId(-1);
+		draft.addDraftLevel(levelI);
+		Set<String> categoriesI = new HashSet<String>();
+		categoriesI.add("C 1.1");
+		categoriesI.add("C 1.2");
+		draft.addDraftCategories(levelI, categoriesI);
+		Level levelII = new Level();
+		levelII.setId(-2);
+		draft.addDraftLevel(levelII);
+		Set<String> categoriesII = new HashSet<String>();
+		categoriesII.add("C 2.1");
+		categoriesII.add("C 2.2");
+		draft.addDraftCategories(levelII, categoriesII);
+
+
+		EmployeesServiceHelper.calculate(connection,
+				draft, domain.getId(), null);
+		SQLAgreementDraft.save(connection, draft, domain.getId(), null);
+		
+		draft.clearDrafts();
+		EmployeesServiceHelper.calculate(connection,
+				draft, domain.getId(), null);
+		Assert.assertEquals(2, draft.getCategoriesMap().size());
+		
+		for( Map.Entry<Integer, Set<String>> entry: draft.getCategoriesMap().entrySet()) 
+			Assert.assertEquals(2, entry.getValue().size());			
+
+	}
+
+	@Test
+	public void testNewCategoriesII() throws SQLException {
 
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
