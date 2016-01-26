@@ -2002,7 +2002,7 @@ public class AON {
 
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			ctx = AONContext.getAONContext(domainName, domainId, userName);			
 			return getOffice().getOpenNotices(ctx);
 		} finally {
 			if (ctx != null)
@@ -2136,7 +2136,7 @@ public class AON {
 	public static List<Registry> getRegistries(Integer domainId,
 			String domainName, String userName) {
 		AONContext ctx = null;
-		try {
+		try {			
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
 			return getOffice().getRegistries(ctx);
 		} finally {

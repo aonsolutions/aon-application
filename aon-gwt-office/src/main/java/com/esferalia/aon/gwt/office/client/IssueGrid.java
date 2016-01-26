@@ -48,6 +48,8 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		void onSelectionChangeHandler(SelectionChangeEvent event);
 
 		void onSelectionTitle(IssueSelected issue);
+		
+		
 	}
 
 	public enum Columns {

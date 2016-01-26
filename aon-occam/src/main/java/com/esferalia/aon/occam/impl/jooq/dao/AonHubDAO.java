@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
 import static com.esferalia.aon.jooq.tables.NoticeTag.NOTICE_TAG;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
@@ -14,9 +15,12 @@ import java.util.List;
 import org.jooq.Cursor;
 import org.jooq.Record;
 import org.jooq.Record1;
+import org.jooq.Record3;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 
+import com.esferalia.aon.jooq.tables.Domain;
+import com.esferalia.aon.jooq.tables.records.CustomerRecord;
 import com.esferalia.aon.jooq.tables.records.NoticeRecord;
 import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
@@ -55,8 +59,9 @@ public class AonHubDAO {
 				.set(NOTICE.COMPANY,
 						(notice.getCompany() != null) ? notice.getCompany()
 								: null)
-				.set(NOTICE.SOURCE, (notice.getSource() != null) ? 
-						String.valueOf(notice.getSource()) : null)
+				.set(NOTICE.SOURCE,
+						(notice.getSource() != null)
+								? String.valueOf(notice.getSource()) : null)
 				.set(NOTICE.PRIORITY, (byte) 0).returning().fetchOne();
 
 		ctx.getDslContext().insertInto(NOTICE)
@@ -265,7 +270,7 @@ public class AonHubDAO {
 		notice.setStartDate(record.getValue(NOTICE.DATE));
 		notice.setCompany(record.getValue(NOTICE.COMPANY));
 		notice.setSource(record.getValue(NOTICE.SOURCE));
-		
+
 		User user = new User();
 
 		UserRecord userRecord = ctx.getDslContext().selectFrom(USER)
@@ -478,7 +483,7 @@ public class AonHubDAO {
 		editNotice.setStartDate(noticeRecord.getValue(NOTICE.DATE));
 		editNotice.setCompany(noticeRecord.getValue(NOTICE.COMPANY));
 		editNotice.setSource(noticeRecord.getValue(NOTICE.SOURCE));
-		
+
 		UserRecord userRecord = ctx.getDslContext().selectFrom(USER)
 				.where(USER.ID.eq(noticeRecord.getValue(NOTICE.SENDER)))
 				.fetchOne();
@@ -487,7 +492,7 @@ public class AonHubDAO {
 		user.setName(userRecord.getValue(USER.NAME));
 		user.setLogin(userRecord.getValue(USER.LOGIN));
 		editNotice.setSender(user);
-		
+
 		editNotice.setTitle(noticeRecord.getValue(NOTICE.SUBJECT));
 
 		String body = ctx.getDslContext().selectFrom(NOTICE)
@@ -496,7 +501,7 @@ public class AonHubDAO {
 
 		editNotice.setBody(body);
 		editNotice.setRecipient(noticeRecord.getValue(NOTICE.RECIPIENT));
-		
+
 		String status = ctx.getDslContext()
 				.selectFrom(NOTICE_TAG.rightOuterJoin(TAG)
 						.on(NOTICE_TAG.TAG.eq(TAG.ID)))
@@ -506,7 +511,7 @@ public class AonHubDAO {
 						.and(TAG.DOMAIN.eq(0)))
 				.fetchOne().getValue(TAG.NAME);
 		editNotice.setStatus(status);
-		
+
 		Record priorityRecord = ctx.getDslContext()
 				.selectFrom(NOTICE_TAG.rightOuterJoin(TAG)
 						.on(NOTICE_TAG.TAG.eq(TAG.ID)))
@@ -550,21 +555,28 @@ public class AonHubDAO {
 	public static List<Registry> getRegistries(AONContext ctx,
 			Integer parentDomain) {
 
-		Cursor<Record> cursor = null;
+		Cursor<Record3<Integer, String, String>> cursor = null;
 		List<Registry> registries = new LinkedList<Registry>();
 
 		try {
+			
+			if ( parentDomain == null )
+				return registries;
+			
+			SelectConditionStep<Record1<Integer>> domainSelect = 
+					ctx.getDslContext().select(DOMAIN.ID)
+			.from(DOMAIN)
+			.where(DOMAIN.ID.eq(ctx.getDomainId())
+					.and(DOMAIN.PARENT.eq(parentDomain)));
 
-			SelectConditionStep<Record> select = ctx.getDslContext()
-					.selectFrom(CUSTOMER.rightOuterJoin(REGISTRY)
-							.on(CUSTOMER.REGISTRY.eq(REGISTRY.ID)))
-					.where(CUSTOMER.STATUS.eq((byte) 0 )
-							.and(REGISTRY.DOMAIN.eq(ctx.getDomainId())));				
-
-			if (parentDomain != null)
-				select = select.or(REGISTRY.DOMAIN.eq(parentDomain));
-
-			cursor = select.fetchLazy();
+			cursor = ctx
+					.getDslContext()
+					.select(REGISTRY.ID, REGISTRY.NAME, REGISTRY.DOCUMENT)
+					.from(REGISTRY.rightOuterJoin(CUSTOMER)
+							.on(REGISTRY.ID.eq(CUSTOMER.REGISTRY)))
+					.where(REGISTRY.DOMAIN.in(domainSelect))
+					.and(CUSTOMER.STATUS.eq((byte) 0))
+					.fetchLazy();
 
 			for (Record registry : cursor) {
 				Registry reg = new Registry();

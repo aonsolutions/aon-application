@@ -25,7 +25,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.jsonp.client.JsonpRequestBuilder;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class AonHub implements IAonHub {
+public class AonHub  {
 
 	private static String accessToken = null;
 	private static String baseUrl = "https://api.github.com/";
@@ -49,82 +49,76 @@ public class AonHub implements IAonHub {
 	}
 	
 	// ************** USERS *************** //
-
-	@Override
+	
 	public void getUser(String login, AsyncCallback<AJSON<JsUser>> callback) {
 		get(baseUrl + "users/" + URL.encode(login), callback);
 	}
 	
 
 	// *********** REPOSITORIES *********** //
-
-	@Override	
+		
 	public void createRepository(RepoValue prop, AsyncCallback<JsRepo> callback) {
 		post(baseUrl + "user/repos", prop, callback);
-	}
+	}	
 	
-	@Override
 	public void getRepoOrganization(String organization,
 			AsyncCallback<JSON<JsRepo>> callback) {
 		get(baseUrl + "orgs/"+ organization + "/repos", callback);
 	}
-
-	@Override
+	
 	public void getRepos(String user, AsyncCallback<JSON<JsRepo>> callback) {
 		get(baseUrl + "users/" + URL.encode(user) + "/repos", callback);
 	}
-
-	@Override
+	
 	public void getRepo(String login, String name,
 			AsyncCallback<AJSON<JsRepo>> callback) {
 		get(baseUrl + "repos/" + URL.encode(login) + "/" + URL.encode(name), callback);
 	}
-
-	@Override
+	
 	public void saveRepo(RepoValue prop,
-			AsyncCallback<JsRepo> callback) {
+			AsyncCallback<JsRepo> callback) {		
 		post(repositoryUrl, prop, callback);
 	}
 	
-	@Override
-	public void deleteRepository(AsyncCallback<JsRepo> callback) {
+	public void deleteRepository(AsyncCallback<JsRepo> callback) {		
 		delete(repositoryUrl, callback);
 	}
 
 	// ************** ISSUES ************** //
 	
-	@Override
+	/**
+	 *  para tratar el metodo desde una api, los parametros deben ser los siguientes:
+	 *  String user: Id del dominio.
+	 *  String repo: Nombre del dominio.
+	 */
+
 	public void getOpenIssues(String user, String repo,
 			AsyncCallback<JSON<JsIssue>> callback) {
 		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=open", callback);
 	}
 	
-	@Override
 	public void getClosedIssues(String user, String repo,
 			AsyncCallback<JSON<JsIssue>> callback) {
 		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=closed", callback);
 	}
 	
-	@Override
 	public void getAllIssues(String user, String repo,
 			AsyncCallback<JSON<JsIssue>> callback) {
 		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=all", callback);
 	}
 
-	@Override
-	public void createIssue(IssueValue prop,
-			AsyncCallback<JsIssue> callback) {
-		post(repositoryUrl + "/issues", prop, callback);
+	public void createIssue(String user, String repo, IssueValue prop,
+			AsyncCallback<JsIssue> callback) {		
+		post(baseUrl + "repos/" + user + "/" + repo + "/issues", prop, callback);
 	}
-
-	@Override
-	public void editIssue(JsIssue issue, IssueValue prop,
+	
+	public void editIssue(String user, String repo, JsIssue issue, IssueValue prop,
 			AsyncCallback<JsIssue> callback) {
 
 		if (issue == null)
-			createIssue(prop, callback);
+			createIssue(user, repo, prop, callback);
 		else
-			post(repositoryUrl + "/issues/" + issue.getNumber(), prop, callback);
+			post(baseUrl + "repos/" + user + "/" + repo + "/issues/" + issue.getNumber(), prop, callback);
 	}
 	
 	public void saveNotice (String url, IssueValue prop, AsyncCallback<JsIssue> callback) {
@@ -134,87 +128,81 @@ public class AonHub implements IAonHub {
 	
 	public void addLabel2Issue (JsRepo repo, JsIssue issue, LabelValue prop, AsyncCallback<JsLabel> callback) {
 		post(repo.getUrl() + "/issues/" + issue.getNumber() + "/labels", prop, callback);
-	}
+	}	
 	
-	@Override
-	public void deleteIssue(JsIssue issue,
+	public void deleteIssue(String user, String repo, JsIssue issue,
 			AsyncCallback<JsIssue> callback) {
-		delete(repositoryUrl + "/issues/" + issue.getNumber(), callback);
+		delete(baseUrl + "repos/" + user + "/" + repo + "/issues/" + issue.getNumber(), callback);
 	}
 
 
 	// *************** COMMENTS ****************** //
-
-	@Override
-	public void getIssueComments(JsIssue issue,
+	
+	public void getIssueComments(String user, String repo, JsIssue issue,
 			AsyncCallback<JSON<JsIssueComment>> callback) {
-		get(repositoryUrl + "/issues/" + issue.getNumber() + "/comments", callback);
-	}
-
-	@Override
-	public void createIssueComment(JsIssue issue,
-			IssueCommentValue prop, AsyncCallback<JsIssueComment> callback) {
-		post(repositoryUrl + "/issues/" + issue.getNumber() + "/comments", prop,
-				callback);
+		get(baseUrl + "repos/" + user + "/" + repo + "/issues/" + issue.getNumber() + "/comments", callback);
 	}
 	
-	@Override
+	public void createIssueComment(String user, String repo, JsIssue issue,
+			IssueCommentValue prop, AsyncCallback<JsIssueComment> callback) {
+		post(baseUrl + "repos/" + user + "/" + repo + "/issues/" + issue.getNumber() + "/comments", prop, callback);
+	}	
+	
 	public void editIssueComment(String user, String repo,
 			Integer id, IssueCommentValue prop,
 			AsyncCallback<JsIssueComment> callback) {
-		post(repositoryUrl + "/repos/" + user + "/" + repo + "/issues/comments/" + id, prop, callback);
-	}
+		post(baseUrl + "repos/" + user + "/" + repo + "/issues/comments/" + id , prop, callback);
+	}	
 	
-	@Override
-	public void deleteIssueComment(Integer id,
+	public void deleteIssueComment(String user, String repo, Integer id,
 			AsyncCallback<JsIssue> callback) {
-		delete(repositoryUrl + "/issues/comments/" + id, callback);
+		delete(baseUrl + "repos/" + user + "/" + repo + "/issues/comments/" + id, callback);
 		
 	}
 
 	// *************** LABELS ****************** //
-
-	@Override
-	public void getLabels(AsyncCallback<JSON<JsLabel>> callback) {
-		get(repositoryUrl + "/labels", callback);
+	
+	public void getLabels(String user, String repo, AsyncCallback<JSON<JsLabel>> callback) {
+		get(baseUrl + "repos/" + user + "/" + repo + "/labels", callback);
 	}
-
-	@Override
-	public void createLabel(LabelValue prop,
+	
+	public void createLabel(String user, String repo, LabelValue prop,
 			AsyncCallback<JsLabel> callback) {
-		post(repositoryUrl + "/labels", prop, callback);
+		post(baseUrl + "repos/" + user + "/" + repo + "/", prop, callback);
 	}
 	
-	
-	@Override
-	public void saveLabel(String name, LabelValue prop,
+	public void saveLabel(String user, String repo, String name, LabelValue prop,
 			AsyncCallback<JsLabel> callback) {
 		if (name == null)
-			createLabel(prop, callback);
+			createLabel(user, repo, prop, callback);
 		else
-			post(repositoryUrl + "/labels/" + URL.encode(name), prop, callback);
+			post(baseUrl + "repos/" + user + "/" + repo + "/labels/" + URL.encode(name), prop, callback);
 	}
-
-	@Override
-	public void saveLabel(JsLabel label, LabelValue prop,
+	
+	public void saveLabel(String user, String repo, JsLabel label, LabelValue prop,
 			AsyncCallback<JsLabel> callback) {
 		if (label == null)
-			createLabel(prop, callback);
+			createLabel(user, repo, prop, callback);
 		else
-			post(repositoryUrl + "/labels/" + URL.encode(label.getName()),
+			post(baseUrl + "repos/" + user + "/" + repo + "/labels/" + URL.encode(label.getName()),
 					prop, callback);
 	}
 	
-	@Override
-	public void deleteLabel(String labelName,
+	public void deleteLabel(String user, String repo, String labelName,
 			AsyncCallback<JsLabel> callback) {
-		delete(repositoryUrl + "/labels/" + labelName, callback);
+		delete(baseUrl + "repos/" + user + "/" + repo + "/labels/" + URL.encode(labelName), callback);
 	}
 	
 	// *************** REGISTRIES ****************** //
-	
-	public void getRegistries(AsyncCallback<JSON<JsRegistry>> callback) {
-		get(repositoryUrl + "/registries", callback);
+	/**
+	 * 
+	 * @param domain id del current domain
+	 * @param domainName nombre del current domain
+	 * @param callback
+	 */
+	public void getRegistries(Integer domain, String domainName, 
+			AsyncCallback<JSON<JsRegistry>> callback) {		
+		get(baseUrl + "repos/" + domain + "/" + domainName + "/registries", callback);
 	}
 
 	

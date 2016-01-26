@@ -115,8 +115,7 @@ public class IssuePanel extends CustomDialog {
 
 	// ----------------------------------------------------
 
-	public void setRegistries(List<Registry> registries) {
-		this.registrySuggest.setEnabled(true);
+	public void setRegistries(List<Registry> registries) {		
 		this.registryList = registries;
 		for ( Registry registry : registries ) {
 			this.registries.add(registry.getName());

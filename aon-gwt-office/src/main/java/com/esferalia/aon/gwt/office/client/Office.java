@@ -37,8 +37,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
-public class Office extends Composite implements EntryPoint,
-		IssueGrid.Listener, IssuePanel.Listener, IssueReadPanel.Listener  {
+public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
+		IssuePanel.Listener, IssueReadPanel.Listener {
 
 	private static OfficeUiBinder uiBinder = GWT.create(OfficeUiBinder.class);
 
@@ -62,22 +62,20 @@ public class Office extends Composite implements EntryPoint,
 	@UiField
 	SimpleLayoutPanel resultsPanel;
 	@UiField
-	IssueGrid dataGrid;	
-	
-	
+	IssueGrid dataGrid;
 
 	private JsRepo repo;
-	private IssuePanel issuePanel;	
+	private IssuePanel issuePanel;
 	private IssueSelected issueSelected;
 	private AonHub gitHub = new AonHub(GWT.getModuleBaseURL() + "api/");
 	private List<IssueSelected> openIssues;
 	private List<IssueSelected> closedIssues;
-	
+
 	private ListDataProvider<IssueSelected> openIssuesProvider;
 	private ListDataProvider<IssueSelected> closeIssuesProvider;
 	private List<Tag> tagList;
 	private List<Registry> registries;
-	
+
 	private Map<Integer, JsIssue> issuesMap;
 	private Map<Integer, JsRepo> repositories;
 
@@ -92,84 +90,89 @@ public class Office extends Composite implements EntryPoint,
 	public void onModuleLoad() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
-		
+
 		this.tagList = new LinkedList<Tag>();
 		this.registries = new LinkedList<Registry>();
-		
+
 		this.dataGrid.addListener(this);
 		this.gitHub.setRepositoryUrl(GWT.getModuleBaseURL() + "api");
-		
-		gitHub.getRegistries(new AsyncCallback<JSON<JsRegistry>>() {
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("getRegistries()" + caught.getMessage());
-			}
-			
-			@Override
-			public void onSuccess(JSON<JsRegistry> result) {
-				JsArray<JsRegistry> registries = result.getData();
-				for (int x = 0; x < registries.length(); x++)
-					addRegistry2List(registries.get(x));
-			}
-		});
 
-		gitHub.getLabels(new AsyncCallback<JSON<JsLabel>>() {
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("getLabels(): " + caught.getMessage());
-			}
-			
-			@Override
-			public void onSuccess(JSON<JsLabel> result) {
-				JsArray<JsLabel> labels = result.getData();
-				
-				for (int x = 0 ; x < labels.length(); x++)
-					addLabels2List(labels.get(x));
-			}
-		});
-		
+		gitHub.getRegistries(getCurrentDomain(), getCurrentDomainName(),
+				new AsyncCallback<JSON<JsRegistry>>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("getRegistries()" + caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(JSON<JsRegistry> result) {
+						JsArray<JsRegistry> registries = result.getData();
+						for (int x = 0; x < registries.length(); x++)
+							addRegistry2List(registries.get(x));
+					}
+				});
+
+		gitHub.getLabels(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), new AsyncCallback<JSON<JsLabel>>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("getLabels(): " + caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(JSON<JsLabel> result) {
+						JsArray<JsLabel> labels = result.getData();
+
+						for (int x = 0; x < labels.length(); x++)
+							addLabels2List(labels.get(x));
+					}
+				});
+
 		loadOpenIssues();
 	}
-	
+
 	private void loadOpenIssues() {
-		
+
 		initOpenIssues();
-		gitHub.getOpenIssues("user", "repo", new AsyncCallback<JSON<JsIssue>>() {
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("Exception getOpenIssues: " + caught.getMessage());
-			}
-			
-			@Override
-			public void onSuccess(JSON<JsIssue> result) {
-				
-				for ( int x = 0; x < result.getData().length(); x++)
-					addOpenIssue(result.getData().get(x));
-			}
-		});
+		gitHub.getOpenIssues(String.valueOf(getCurrentDomain()), getCurrentDomainName(),
+				new AsyncCallback<JSON<JsIssue>>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Exception getOpenIssues: "
+								+ caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(JSON<JsIssue> result) {
+
+						for (int x = 0; x < result.getData().length(); x++)
+							addOpenIssue(result.getData().get(x));
+					}
+				});
 
 		showDockOfficePanel();
 	}
-	
+
 	private void loadClosedIssues() {
 		initClosedIssues();
-		gitHub.getClosedIssues("user", "repo", new AsyncCallback<JSON<JsIssue>>() {
+		gitHub.getClosedIssues(String.valueOf(getCurrentDomain()), getCurrentDomainName(),
+				new AsyncCallback<JSON<JsIssue>>() {
 
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getMessage());
-			}
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+					}
 
-			@Override
-			public void onSuccess(JSON<JsIssue> result) {
-				
-				for ( int x = 0; x < result.getData().length(); x++)
-					addCloseIssue(result.getData().get(x));
-			}
-		});
+					@Override
+					public void onSuccess(JSON<JsIssue> result) {
+
+						for (int x = 0; x < result.getData().length(); x++)
+							addCloseIssue(result.getData().get(x));
+					}
+				});
 		showDockOfficePanel();
 	}
 
@@ -177,72 +180,73 @@ public class Office extends Composite implements EntryPoint,
 	public void onSelectionChangeHandler(SelectionChangeEvent event) {
 
 	}
-	
+
 	// ******************************************************************
 	// *************************** UI - HANDLERS ************************
 	// ******************************************************************
-	
+
 	@UiHandler("newIssueButton")
-	void onNewIssueClick (ClickEvent event) {
+	void onNewIssueClick(ClickEvent event) {
 		issuePanel = new IssuePanel("Nueva Incidencia");
 		issuePanel.addListener(this);
 		issuePanel.setTagList(tagList);
-		if ( registries.size() > 0 )
+		if (registries.size() > 0)
 			issuePanel.setRegistries(registries);
 		issuePanel.showPopupPanel();
 	}
-	
+
 	@UiHandler("returnButton")
 	void onReturnButtonClick(ClickEvent event) {
 		showDockOfficePanel();
 		returnButton.setEnabled(false);
 	}
-	
+
 	@UiHandler("openIssuesButton")
 	void onOpenIssuesButton(ClickEvent event) {
-		enabledIssuesButton();		
+		enabledIssuesButton();
 		loadOpenIssues();
 		showDockOfficePanel();
 	}
-	
+
 	@UiHandler("closedIssuesButton")
 	void onClosedIssuesButton(ClickEvent event) {
 		enabledIssuesButton();
 		loadClosedIssues();
 		showDockOfficePanel();
 	}
-	
+
 	private void enabledIssuesButton() {
 		openIssuesButton.setEnabled(!openIssuesButton.isEnabled());
 		closedIssuesButton.setEnabled(!closedIssuesButton.isEnabled());
 	}
-	
+
 	// ******************************************************************
 	// ********************** PRIVATE METHODS ***************************
 	// ******************************************************************
 
-	void initOpenIssues() {	
+	void initOpenIssues() {
 		openIssues = new LinkedList<IssueSelected>();
 		openIssuesProvider = new ListDataProvider<IssueSelected>();
-		openIssuesProvider.addDataDisplay(dataGrid);		
+		openIssuesProvider.addDataDisplay(dataGrid);
 		openIssues = openIssuesProvider.getList();
 	}
-	
-	void initClosedIssues() {	
+
+	void initClosedIssues() {
 		closedIssues = new LinkedList<IssueSelected>();
 		closeIssuesProvider = new ListDataProvider<IssueSelected>();
-		closeIssuesProvider.addDataDisplay(dataGrid);		
+		closeIssuesProvider.addDataDisplay(dataGrid);
 		closedIssues = closeIssuesProvider.getList();
 	}
 
-	
 	void addOpenIssue(JsIssue issue) {
-		IssueSelected issueSelected = new IssueGrid.IssueOpenLoadSelected(issue);
+		IssueSelected issueSelected = new IssueGrid.IssueOpenLoadSelected(
+				issue);
 		openIssues.add(issueSelected);
 	}
-	
+
 	void addCloseIssue(JsIssue issue) {
-		IssueSelected issueSelected = new IssueGrid.IssueClosedLoadSelected(issue);
+		IssueSelected issueSelected = new IssueGrid.IssueClosedLoadSelected(
+				issue);
 		closedIssues.add(issueSelected);
 	}
 
@@ -252,31 +256,31 @@ public class Office extends Composite implements EntryPoint,
 		closeIssuesProvider.addDataDisplay(dataGrid);
 		closedIssues = closeIssuesProvider.getList();
 	}
-	
+
 	private void addLabels2List(JsLabel jsLabel) {
-		
+
 		Tag tag = new Tag();
 		tag.setId(jsLabel.getId());
 		tag.setName(jsLabel.getName());
 		tag.setType(jsLabel.getType());
 		tag.setColor(jsLabel.getColor());
-		
+
 		tagList.add(tag);
 	}
-	
+
 	private void addRegistry2List(JsRegistry jsRegistry) {
 		Registry registry = new Registry();
 		registry.setId(jsRegistry.getId());
 		registry.setName(jsRegistry.getName());
 		registry.setDocument(jsRegistry.getDocument());
-		
+
 		registries.add(registry);
 	}
 
 	private void showDockOfficePanel() {
 		deckPanel.showWidget(dockOfficePanel);
 	}
-	
+
 	private void showReadIssuePanel() {
 		deckPanel.showWidget(readIssuePanel);
 	}
@@ -299,68 +303,69 @@ public class Office extends Composite implements EntryPoint,
 	// ******************************************************************
 	// ********************** ISSUES PANEL LISTENER *********************
 	// ******************************************************************
-	
+
 	@Override
 	public void onCreateNewTag(final Tag tag) {
-		
+
 		LabelValue value = new LabelValue();
 		value.setName(tag.getName());
 		Byte type = tag.getType();
 		value.setType(type.intValue());
-		
-		gitHub.createLabel(value, new AsyncCallback<JsLabel>() {
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getMessage());
-			}
-			
-			@Override
-			public void onSuccess(JsLabel result) {
-				addLabels2List(result);
-				issuePanel.addTag(tag);				
-			}
-		});
+
+		gitHub.createLabel(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), value, new AsyncCallback<JsLabel>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(JsLabel result) {
+						addLabels2List(result);
+						issuePanel.addTag(tag);
+					}
+				});
 	}
-	
+
 	@Override
 	public void onCreateNewIssue(Notice notice) {
 		IssueValue value = new IssueValue();
-		value.setTitle(notice.getTitle());		
+		value.setTitle(notice.getTitle());
 		value.setBody(notice.getBody());
-		value.setState(notice.getStatus());		
-		
-		if ( notice.getCompany() != null ) {
+		value.setState(notice.getStatus());
+
+		if (notice.getCompany() != null) {
 			value.setCompany(notice.getCompany());
 			value.setSource(notice.getSource());
 		}
-		
-		if ( notice.getTags().size() > 0 ) {
-	
+
+		if (notice.getTags().size() > 0) {
+
 			String[] labels = new String[notice.getTags().size()];
-			for ( int x = 0; x < notice.getTags().size() ; x++) {				
+			for (int x = 0; x < notice.getTags().size(); x++) {
 				labels[x] = notice.getTags().get(x).getName();
 			}
-				
-			
+
 			value.setLabels(labels);
 		}
-		
-		gitHub.createIssue(value, new AsyncCallback<JsIssue>() {
-			
+
+		gitHub.createIssue(String.valueOf(getCurrentDomain()), getCurrentDomainName(), 
+				value, new AsyncCallback<JsIssue>() {
+
 			@Override
 			public void onFailure(Throwable caught) {
 				Window.alert(caught.getMessage());
 			}
-			
+
 			@Override
 			public void onSuccess(JsIssue result) {
 				loadOpenIssues();
 			}
 		});
-		
+
 	}
-	
+
 	// ******************************************************************
 	// ******************* ISSUES READ PANEL LISTENER *******************
 	// ******************************************************************
@@ -369,26 +374,38 @@ public class Office extends Composite implements EntryPoint,
 	public void onUpdateIssueState(String state) {
 		IssueValue value = new IssueValue();
 		value.setState(state);
-		
-		gitHub.editIssue(issueSelected.getJsIssue(), value, new AsyncCallback<JsIssue>() {
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getMessage());
-			}
-			
-			@Override
-			public void onSuccess(JsIssue result) {
-				loadOpenIssues();
-				showDockOfficePanel();
-			}
-		});
-		
-	}
 
+		gitHub.editIssue(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), issueSelected.getJsIssue(), value,
+				new AsyncCallback<JsIssue>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(JsIssue result) {
+						loadOpenIssues();
+						showDockOfficePanel();
+					}
+				});
+
+	}
 
 	private static native <T extends JavaScriptObject> T eval(String javascript)
 	/*-{
 		return eval(javascript);
 	}-*/;
+
+	public static native String getCurrentDomainName()
+	/*-{
+		return $wnd.getCurrentDomainName();
+	}-*/;
+
+	public static native int getCurrentDomain()
+	/*-{
+		return $wnd.getCurrentDomain();
+	}-*/;
+
 }

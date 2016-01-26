@@ -115,7 +115,7 @@ public class GWTExtendsOfficeTestCase extends GWTOfficeTestCase {
 	
 	private void deleteNotice(JsIssue issue) {
 		
-		getAonHub().deleteIssue(issue, new AsyncCallback<JsIssue>() {
+		getAonHub().deleteIssue(USER, REPONAME, issue, new AsyncCallback<JsIssue>() {
 			
 			@Override
 			public void onFailure(Throwable caught) {

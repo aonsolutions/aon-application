@@ -123,7 +123,7 @@ public class GWTOfficeTestCase extends GWTTestConstans {
 			
 			System.out.println("Creando objecto Title issue " + (i + 1));
 
-			getAonHub().createIssue(issue, new AsyncCallback<JsIssue>() {
+			getAonHub().createIssue(USER, REPONAME, issue, new AsyncCallback<JsIssue>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
@@ -236,7 +236,7 @@ public class GWTOfficeTestCase extends GWTTestConstans {
 			label.setName(LABEL_NAME + x);
 			label.setColor(LABEL_COLOR);		
 			
-			getAonHub().createLabel(label, new AsyncCallback<JsLabel>() {
+			getAonHub().createLabel(USER, REPONAME, label, new AsyncCallback<JsLabel>() {
 				
 				@Override
 				public void onFailure(Throwable caught) {
@@ -258,7 +258,7 @@ public class GWTOfficeTestCase extends GWTTestConstans {
 	@Test
 	public void testUpdateLabels() {
 		
-		getAonHub().getLabels(new AsyncCallback<JSON<JsLabel>>() {
+		getAonHub().getLabels(USER, REPONAME, new AsyncCallback<JSON<JsLabel>>() {
 			
 			@Override
 			public void onFailure(Throwable caught) {
@@ -292,7 +292,7 @@ public class GWTOfficeTestCase extends GWTTestConstans {
 	@Test
 	public void testDeleteLabels() {
 		
-		getAonHub().getLabels(new AsyncCallback<JSON<JsLabel>>() {
+		getAonHub().getLabels(USER, REPONAME, new AsyncCallback<JSON<JsLabel>>() {
 			
 			@Override
 			public void onFailure(Throwable caught) {
@@ -366,7 +366,7 @@ public class GWTOfficeTestCase extends GWTTestConstans {
 				for ( int x = 0; x < issues.length() ; x++) {
 					final JsIssue issue = issues.get(x);
 					
-					getAonHub().getIssueComments(issue, new AsyncCallback<JSON<JsIssueComment>>() {
+					getAonHub().getIssueComments(USER, REPONAME, issue, new AsyncCallback<JSON<JsIssueComment>>() {
 						
 						@Override
 						public void onFailure(Throwable caught) {
@@ -446,7 +446,7 @@ public class GWTOfficeTestCase extends GWTTestConstans {
 		edited.setTitle(issue.getTitle() + EDITED);
 		edited.setBody(issue.getBody() + EDITED);		
 		
-		getAonHub().editIssue(issue, edited,
+		getAonHub().editIssue(USER, REPONAME, issue, edited,
 				new AsyncCallback<JsIssue>() {
 
 					@Override
@@ -481,7 +481,7 @@ public class GWTOfficeTestCase extends GWTTestConstans {
 		System.out.println("Modificando el stado de la Issue "
 				+ issue.getTitle() + ". Estado a " + state);
 
-		getAonHub().editIssue(issue, prop, new AsyncCallback<JsIssue>() {
+		getAonHub().editIssue(USER, REPONAME, issue, prop, new AsyncCallback<JsIssue>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -506,7 +506,7 @@ public class GWTOfficeTestCase extends GWTTestConstans {
 		prop.setName(label.getName() + LABEL_NAME_EDITED);
 		prop.setColor(LABEL_COLOR_EDITED);
 
-		getAonHub().saveLabel(label, prop, new AsyncCallback<JsLabel>() {
+		getAonHub().saveLabel(USER, REPONAME, label, prop, new AsyncCallback<JsLabel>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -527,7 +527,7 @@ public class GWTOfficeTestCase extends GWTTestConstans {
 	
 	private void deleteLabel(final JsLabel label) {
 		
-		getAonHub().deleteLabel(label.getName(), new AsyncCallback<JsLabel>() {
+		getAonHub().deleteLabel(USER, REPONAME, label.getName(), new AsyncCallback<JsLabel>() {
 			
 			@Override
 			public void onFailure(Throwable caught) {
@@ -548,7 +548,7 @@ public class GWTOfficeTestCase extends GWTTestConstans {
 			IssueCommentValue comment = new IssueCommentValue();
 			comment.setBody(COMMENT);
 			
-			getAonHub().createIssueComment(issue, comment, new AsyncCallback<JsIssueComment>() {
+			getAonHub().createIssueComment(USER, REPONAME, issue, comment, new AsyncCallback<JsIssueComment>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
@@ -587,7 +587,7 @@ public class GWTOfficeTestCase extends GWTTestConstans {
 	
 	private void deleteIssueComment(final JsIssue issue) {
 		
-		getAonHub().getIssueComments(issue, new AsyncCallback<JSON<JsIssueComment>>() {
+		getAonHub().getIssueComments(USER, REPONAME, issue, new AsyncCallback<JSON<JsIssueComment>>() {
 			
 			@Override
 			public void onFailure(Throwable caught) {

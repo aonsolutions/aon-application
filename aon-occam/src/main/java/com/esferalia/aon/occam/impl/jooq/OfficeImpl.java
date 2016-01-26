@@ -20,7 +20,7 @@ public class OfficeImpl implements IOffice {
 
 	@Override
 	public List<Notice> getClosedNotices(AONContext ctx)
-			throws IllegalArgumentException {
+			throws IllegalArgumentException {		
 		return AonHubDAO.getClosedIsues(ctx);
 	}
 
@@ -79,7 +79,7 @@ public class OfficeImpl implements IOffice {
 	
 	@Override
 	public List<Registry> getRegistries(AONContext ctx)
-			throws IllegalArgumentException {
+			throws IllegalArgumentException {		
 		Integer parentID = DomainDAO.getParentDomain(ctx);
 		return AonHubDAO.getRegistries(ctx, parentID);
 	}
