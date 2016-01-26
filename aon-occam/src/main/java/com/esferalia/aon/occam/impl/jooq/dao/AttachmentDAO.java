@@ -667,7 +667,7 @@ public class AttachmentDAO {
 							.setDparentId(r.getDparentId())
 							.setDriveId(r.getDriveId())
 							.setId(r.getId())
-							.setMimeType(MimeType.values()[r.getMimetype()])
+							.setMimeType(r.getMimetype()!= null ? MimeType.values()[r.getMimetype()] : null)
 							.setModificationDate(r.getModificationDate())
 							.setModificationUser(r.getModificationUser())
 							.setScope(r.getScope())
