@@ -1,11 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory;
 
-import gwtupload.client.IFileInput.FileInputType;
-import gwtupload.client.IUploader;
-import gwtupload.client.IUploader.OnFinishUploaderHandler;
-import gwtupload.client.IUploader.OnStartUploaderHandler;
-import gwtupload.client.SingleUploader;
-
 import java.util.Map;
 import java.util.Vector;
 
@@ -31,7 +25,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -40,8 +33,9 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class NormalizedMemory extends ResizeComposite {
+import gwtupload.client.SingleUploader;
 
+public class NormalizedMemory extends ResizeComposite {
 	
 	interface NormalizedMemoryBinder extends UiBinder<Widget, NormalizedMemory> {
 	}
@@ -54,60 +48,31 @@ public class NormalizedMemory extends ResizeComposite {
 	private NormalizedMemory normalizedMemory;
 	private D2Deposit2014 d2Deposit2014;
 	
-	
 	@UiField Label depositType;
-	
-	@UiField
-	Button newButton;
-	
-	@UiField
-	Button saveButton;
-	
-	@UiField
-	Button cancelButton;
-	
-	@UiField
-	Button deleteButton;
-	
-	@UiField
-	Button importButton;
-	
-	@UiField
-	Button generateFileButton;
-
+	@UiField Button newButton;
+	@UiField Button saveButton;
+	@UiField Button cancelButton;
+	@UiField Button deleteButton;
+	@UiField Button importButton;
+	@UiField Button generateFileButton;
 	@UiField Button importTextButton;
-	
 	@UiField SimplePanel headerPanel;
-	
-	//@UiField Button importSocietyButton;
-
 	@UiField Button importAllButton;
+	@UiField Anchor download;							
+	@UiField FlowPanel pagesPanel;
 	
+	SingleUploader upload;
+	Enterprise enterprise;
+	Boolean textMode;
+	MemoryTemplate memoryTemplate;
+	Integer year;
+	DigitalDepositTreeNode digitalDepositTreeNode;
+	DigitalDepositFreeTextTreeNode digitalDepositFreeTextTreeNode;
+	Deposit deposit;
 	
-	@UiField
-	Anchor download;							
-
 	public void setImportAllButton(Button importAllButton) {
 		this.importAllButton = importAllButton;
 	}
-	// selected item content panel
-	@UiField
-	FlowPanel pagesPanel;
-	SingleUploader upload;
-	Enterprise enterprise;
-	//String page;
-	Boolean textMode;
-	MemoryTemplate memoryTemplate;
-	
-	Integer year;
-
-	
-	DigitalDepositTreeNode digitalDepositTreeNode;
-	DigitalDepositFreeTextTreeNode digitalDepositFreeTextTreeNode;
-	
-
-	Deposit deposit;
-	
 	
 	//-------------------- Constructors
 	
@@ -131,7 +96,6 @@ public class NormalizedMemory extends ResizeComposite {
 		importAllButton = new Button();
 		enterprise = ddtn.getD2Deposit2014().getEnterprise();
 		year = ddtn.getD2Deposit2014().getYear();
-		//this.page = page;
 		this.textMode = false;
 		digitalDepositTreeNode = ddtn;
 		this.deposit = deposit;		
@@ -147,16 +111,6 @@ public class NormalizedMemory extends ResizeComposite {
 		importButton.setVisible(false);
 		importTextButton.setVisible(false);
 		d2Deposit2014 = D2DepositTreeObjectToD2Deposit2014(ddtn.getD2Deposit2014());
-		/*inma.getSchema(enterprise.getDocument(), enterprise.getDomain(), textMode,new AsyncCallback<Map<String, String>>() {
-			
-			@Override
-			public void onSuccess(Map<String, String> result) {
-				d2Deposit2014 = result;
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
-		});*/
 		inma.isModify(enterprise.getDocument(),new AsyncCallback<Boolean>() {
 			
 			@Override
@@ -305,22 +259,13 @@ public class NormalizedMemory extends ResizeComposite {
 	/*-{
 		return $wnd.getCurrentDomain();
 	}-*/;
-
-
-
-	private void addErrorMessage(String msg) {
-		Label label = new Label(msg);
-		label.addStyleName("aon-icon-errorwarning");
-		label.addStyleName("aon-message-error");
-		label.addStyleName("aon-icon");
-	}
 	
 	@UiHandler("newButton")
 	void onNewButtonClick(ClickEvent event) {
 		String url = GWT.getModuleBaseURL()+"gwt_deposit_upload";
 		DepositDialog popup ;
 		if(textMode){
-			 popup = new DepositDialog("Nuevo Deposito","new2", enterprise,url,null, false, null) {
+			 popup = new DepositDialog("Nuevo Deposito","new2", enterprise,url,null, false, null, year) {
 				
 				@Override
 				protected void onCancel() {
@@ -348,7 +293,7 @@ public class NormalizedMemory extends ResizeComposite {
 			};
 		}
 		else{
-			popup = new DepositDialog("Nuevo Deposito","new", enterprise,url,null, false, null) {
+			popup = new DepositDialog("Nuevo Deposito","new", enterprise,url,null, false, null, year) {
 			
 				@Override
 				protected void onCancel() {
@@ -398,7 +343,6 @@ public class NormalizedMemory extends ResizeComposite {
 	
 	@UiHandler("saveButton")
 	void onSaveButtonClick(ClickEvent event) {
-		//Window.alert("onSaveButtonClick");
 		if(textMode){
 			inma.saveDeposit(memoryTemplate.getId().toString(),enterprise.getDomain(),textMode, year, new AsyncCallback<Void>() {
 				
@@ -415,7 +359,7 @@ public class NormalizedMemory extends ResizeComposite {
 		}
 		else{
 			// NUEVO SAVE
-			inma.saveDeposit(enterprise.getDocument(),enterprise.getDomain(), d2Deposit2014, false, new AsyncCallback<Void>() {
+			inma.saveDeposit(enterprise.getDocument(),enterprise.getDomain(), d2Deposit2014, false, year, new AsyncCallback<Void>() {
 			
 				@Override
 				public void onSuccess(Void result) {
@@ -442,9 +386,7 @@ public class NormalizedMemory extends ResizeComposite {
 	
 	@UiHandler("importButton")
 	void onImportButtonClick(ClickEvent event) {
-		
-		//String url = GWT.getModuleBaseURL()+"gwt_deposit_upload";
-		DepositDialog popup = new DepositDialog("Importar Deposito","import", enterprise, GWT.getModuleBaseURL(), null, false, null) {
+		DepositDialog popup = new DepositDialog("Importar Deposito","import", enterprise, GWT.getModuleBaseURL(), null, false, null, year) {
 
 			@Override
 			protected void onAccept() {
@@ -456,9 +398,7 @@ public class NormalizedMemory extends ResizeComposite {
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {
-						
-					}
+					public void onFailure(Throwable caught) {}
 				});
 				hide();
 			}
@@ -467,48 +407,15 @@ public class NormalizedMemory extends ResizeComposite {
 			protected void onCancel() {
 				hide();
 			}
-			
 		};
 		
 		popup.addStyleName("gwt-PopupPanel-template");
 		popup.setGlassEnabled(true);
 		popup.show();
-		
-		/*form = new FormPanel();
-		form.setAction(GWT.getModuleBaseURL()+"/gwt_upload/");
-		 a = new FileUpload();
-
-		a.addAttachHandler(new AttachEvent.Handler() {
-			
-			@Override
-			public void onAttachOrDetach(AttachEvent event) {
-				Window.alert("UPLOAD");
-			}
-		});
-		a.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				Window.alert("uppp");
-				Window.alert(a.getFilename());
-				FileUpload a2 =(FileUpload) form.getWidget();
-				Window.alert(a2.getFilename());
-				
-			}
-		});
-		a.click();
-		
-		form.setWidget(a);
-		
-		//form.add(a);*/
-		
-
 	}
 	
 	@UiHandler("cancelButton")
-	void onCancelButtonClick(ClickEvent event) {
-		//Window.alert("onCancelButtonClick");
-		
+	void onCancelButtonClick(ClickEvent event) {		
 		if(textMode){
 			inma.clearSession(memoryTemplate.getId().toString(), new AsyncCallback<Void>() {
 				
@@ -564,7 +471,7 @@ public class NormalizedMemory extends ResizeComposite {
 								mts = result;
 								DepositDialog popup = new DepositDialog(
 										"Importar", "importAll", enterprise,
-										url, result, false, null) {
+										url, result, false, null, year) {
 									Vector<MemoryTemplate> vector = mts;
 
 									@Override
@@ -717,8 +624,6 @@ public class NormalizedMemory extends ResizeComposite {
 	
 	@UiHandler("importTextButton")
 	void onImportTextButtonClick(ClickEvent event) {
-		
-		//Window.alert("onImportTextButtonClick");
 		inma.getParentDomain(enterprise.getDomain(), new AsyncCallback<Integer>() {
 
 			@Override
@@ -739,7 +644,7 @@ public class NormalizedMemory extends ResizeComposite {
 								mts = result;
 								DepositDialog popup = new DepositDialog(
 										"Importar Textos", "importText", enterprise,
-										url, result, false, null) {
+										url, result, false, null, year) {
 									Vector<MemoryTemplate> vector = mts;
 
 									@Override
@@ -797,7 +702,7 @@ public class NormalizedMemory extends ResizeComposite {
 		if(!textMode){
 			DepositDialog popup = new DepositDialog(
 					"Borrar Deposito", "delete", enterprise,
-					"", null, false, null) {
+					"", null, false, null, year) {
 			
 				@Override
 				protected void onCancel() {
@@ -829,7 +734,7 @@ public class NormalizedMemory extends ResizeComposite {
 		else{
 			DepositDialog popup = new DepositDialog(
 					"Borrar Deposito", "delete", enterprise,
-					"", null, false, null) {
+					"", null, false, null, year) {
 			
 				@Override
 				protected void onCancel() {
@@ -874,7 +779,7 @@ public class NormalizedMemory extends ResizeComposite {
 			public void onSuccess(String[] result) {
 				DepositDialog popup = new DepositDialog(
 						"Exportar Deposito", "export", enterprise,
-						"", null, false, result) {
+						"", null, false, result, year) {
 					@Override
 					protected void onAccept() {
 						hide();
@@ -900,12 +805,7 @@ public class NormalizedMemory extends ResizeComposite {
 	
 	@UiHandler("download")
 	void onDownloadClick(ClickEvent event) {
-		//Window.alert("onDownloadClick");
-	}
-
-	private void applySelectedStyle(FocusPanel panel) {
-		panel.getElement().getStyle().setBackgroundColor("#999");
-		panel.getElement().getStyle().setColor("white");
+		
 	}
 	
 	public void setPagesPanel(Widget widget){
@@ -927,42 +827,7 @@ public class NormalizedMemory extends ResizeComposite {
 		pagesPanel.add(widget);
 	}
 	
-	private SingleUploader newUploader() {
-		Button b= new Button();
-		b.setStyleName("aon-finding-toolbar-item aon-icon-file-upload");
-		b.setText("Importar");
 	
-		SingleUploader upload=  new SingleUploader(FileInputType.BROWSER_INPUT);
-		
-		String url = GWT.getModuleBaseURL()+"gwt_deposit_upload";
-	 	//Window.alert(url);
-		upload.setAutoSubmit(true);
-        upload.setServletPath(url);
-        upload.getFileInput().getWidget().setStyleName("aon-finding-toolbar-item aon-icon-file-upload");
-
-        upload.getForm().setAction(url);
-        upload.getForm().setEncoding(FormPanel.ENCODING_MULTIPART);
-        upload.getForm().setMethod(FormPanel.METHOD_POST);
-        upload.setTitle("uploadFormElement");
-        upload.avoidEmptyFiles(false);
-
-        upload.addOnStartUploadHandler(new OnStartUploaderHandler() {
-			
-			@Override
-			public void onStart(IUploader uploader) {
-
-			}
-		});
-
-        upload.addOnFinishUploadHandler(new OnFinishUploaderHandler() {
-			@Override
-			public void onFinish(IUploader uploader) {
-
-			}
-		});
-    
-        return upload;	
-	}
 	
 	public void update(){
 		PageAbs p = (PageAbs) pagesPanel.getWidget(0);

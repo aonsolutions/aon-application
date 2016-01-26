@@ -406,7 +406,6 @@ public class Header1 extends PageAbs {
 					@Override
 					public void onSuccess(Date result) {
 						d.setValue(result); 
-						
 					}
 					
 					@Override
@@ -419,8 +418,6 @@ public class Header1 extends PageAbs {
 					d.addStyleName(AON.AON_CSS.aonChanged());
 				}
 				else d.removeStyleName(AON.AON_CSS.aonChanged());
-
-
 			}
 			
 			d.addValueChangeHandler(new ValueChangeHandler<Date>() {
@@ -436,7 +433,6 @@ public class Header1 extends PageAbs {
 					String value = day+"."+month+"."+year;
 					d.addStyleName(AON.AON_CSS.aonChanged());
 					onEdit(key2, value);
-					
 					
 					String dayKey = null;
 					String monthKey = null;
@@ -463,15 +459,12 @@ public class Header1 extends PageAbs {
 					}
 					if(dayKey != null){
 						onEdit(dayKey, day.toString());
-						
 					}
 					if(monthKey != null){
 						onEdit(monthKey, month.toString());
-						
 					}
 					if(yearKey != null){
-						onEdit(yearKey, year.toString());
-							
+						onEdit(yearKey, year.toString());	
 					}
 				}
 			});

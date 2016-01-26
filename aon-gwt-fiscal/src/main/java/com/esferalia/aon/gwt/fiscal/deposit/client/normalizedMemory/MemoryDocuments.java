@@ -252,7 +252,7 @@ public class MemoryDocuments extends PageAbs {
 			public void onClick(ClickEvent event) {
 				// TODO UPLOAD ACTION
 
-				DepositDialog popup = new DepositDialog("Importar Archivo","import", enterprise,GWT.getModuleBaseURL(),null, false, null) {
+				DepositDialog popup = new DepositDialog("Importar Archivo","import", enterprise,GWT.getModuleBaseURL(),null, false, null, year) {
 						
 					@Override
 					protected void onCancel() {

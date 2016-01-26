@@ -32,7 +32,7 @@ public interface INormalizedMemory extends RemoteService{
 	
 	public void saveDeposit(String cif, Integer domainId, Boolean textMode, Integer year);
 	
-	public void saveDeposit(String cif, Integer domainId, D2Deposit2014 d2Deposit2014, Boolean textMode);
+	public void saveDeposit(String cif, Integer domainId, D2Deposit2014 d2Deposit2014, Boolean textMode, Integer year);
 	
 	public Vector<MemoryTemplate> getDigitalDepositTemplates(Integer domainId);
 	

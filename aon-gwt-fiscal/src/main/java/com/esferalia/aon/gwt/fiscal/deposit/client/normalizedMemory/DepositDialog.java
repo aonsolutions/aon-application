@@ -1,14 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory;
 
-import gwtupload.client.IFileInput.FileInputType;
-import gwtupload.client.IUploadStatus.Status;
-import gwtupload.client.IUploader;
-import gwtupload.client.IUploader.OnCancelUploaderHandler;
-import gwtupload.client.IUploader.OnFinishUploaderHandler;
-import gwtupload.client.IUploader.OnStartUploaderHandler;
-import gwtupload.client.IUploader.OnStatusChangedHandler;
-import gwtupload.client.SingleUploader;
-
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
@@ -23,15 +14,23 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FormHandler;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormSubmitEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import gwtupload.client.IFileInput.FileInputType;
+import gwtupload.client.IUploadStatus.Status;
+import gwtupload.client.IUploader;
+import gwtupload.client.IUploader.OnCancelUploaderHandler;
+import gwtupload.client.IUploader.OnFinishUploaderHandler;
+import gwtupload.client.IUploader.OnStartUploaderHandler;
+import gwtupload.client.IUploader.OnStatusChangedHandler;
+import gwtupload.client.SingleUploader;
 
 public abstract class DepositDialog extends CustomDialogB {
 	
@@ -57,26 +56,25 @@ public abstract class DepositDialog extends CustomDialogB {
 	@UiField Button cancel_button;
 	@UiField(provided = true) VerticalPanel vp;
 	String typeAux;
-	String ejercicio;
-	public DepositDialog(String title, String type, Enterprise enterprise, String url, Vector<MemoryTemplate> mts, Boolean ej, String[] exercises) {
+	
+	public DepositDialog(String title, String type, Enterprise enterprise, String url, Vector<MemoryTemplate> mts, Boolean ej, String[] exercises, Integer year) {
 		setCaption(title);
 		label = new Label();
 		flex_table = new FlexTable();
 		vp = new VerticalPanel();
 		typeAux = type;
 		switch (type) {
-		case DIALOG_NEW: newDeposit(enterprise, ej);break;
+		case DIALOG_NEW: newDeposit(enterprise, ej, year);break;
 		case DIALOG_NEW2: newDeposit2();break;
 		case DIALOG_IMPORT: label.setText("Al importar un archivo se eliminarán todos los datos referentes a la memoria normalizada.");
 							importar(enterprise, url);break;
 		case DIALOG_IMPORT_TEXT: importarTextos(mts);break;
 		case DIALOG_IMPORT_ALL: importAll(mts, enterprise, url); break;
-		case DIALOG_DELETE: label.setText("Esta seguro de eliminar el Deposito");
+		case DIALOG_DELETE: label.setText("Esta seguro de eliminar el Deposito");break;
 		case DIALOG_EXPORT: exportar(exercises);break;
 		default:
 			break;
 		}
-		
 		setWidget(binder.createAndBindUi(this));
 		
 		if(type.equals(DIALOG_NEW)) accept_button.setText("Nuevo");
@@ -86,7 +84,6 @@ public abstract class DepositDialog extends CustomDialogB {
 		if(type.equals(DIALOG_IMPORT_ALL)) accept_button.setText("Importar");
 		if(type.equals(DIALOG_DELETE)) accept_button.setText("Eliminar");
 		if(type.equals(DIALOG_EXPORT)) accept_button.setText("Exportar");
-		
 		accept_button.setVisible(true);
 		accept_button.addClickHandler(new ClickHandler() {
 			String type = typeAux;
@@ -150,7 +147,7 @@ public abstract class DepositDialog extends CustomDialogB {
 	
 	protected abstract void onCancel();
 	
-	private void newDeposit(Enterprise enterprise, Boolean ej) {
+	private void newDeposit(Enterprise enterprise, Boolean ej, Integer year) {
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
@@ -178,8 +175,7 @@ public abstract class DepositDialog extends CustomDialogB {
 		
 		ListBox  lb3 = new ListBox();
 		lb3.addItem("-");
-		lb3.addItem("2014");
-		//lb3.addItem("2015");
+		lb3.addItem(year.toString());
 		lb3.setSelectedIndex(1);
 		lb3.setStyleName("aon-inputText");
 		lb3.setEnabled(ej);
@@ -401,10 +397,9 @@ public abstract class DepositDialog extends CustomDialogB {
         
         up = upload; urlAux = url;
         upload.addOnCancelUploadHandler(new OnCancelUploaderHandler() {
-        	SingleUploader upload = up; String url = urlAux;
+        	String url = urlAux;
         	@Override
 			public void onCancel(IUploader uploader) {
-        		//Window.alert("lalalala error");
         		SingleUploader upload1 = newUploader(url);
         		flex_table.setWidget(0, 1, upload1);
         		// reset out of TemplatesServlet!!!
@@ -434,7 +429,6 @@ public abstract class DepositDialog extends CustomDialogB {
 			@Override
 			public void onStart(IUploader uploader) {
 				upload.getStatusWidget().setVisible(true);
-				//Window.alert("start");
 			}
 		});
         
@@ -443,26 +437,21 @@ public abstract class DepositDialog extends CustomDialogB {
 			@Override
 			public void onFinish(IUploader uploader) {
 				upload.getStatusWidget().setProgress(100, 100);
-				//Window.alert("finish");o
 				upload.getStatusWidget().setStatus(Status.DONE);
 				upload.getStatusWidget().setVisible(true);
 				progress = 0;		
 			}
 		});
         
-        upload.getForm().addFormHandler(new FormHandler() {
+        upload.getForm().addSubmitCompleteHandler(new SubmitCompleteHandler() {
         	SingleUploader upload = up;
 			@Override
-			public void onSubmitComplete(FormSubmitCompleteEvent event) {
+			public void onSubmitComplete(SubmitCompleteEvent event) {
 				upload.getForm().getWidget().getElement().getChild(0).removeFromParent();
-				
 			}
-			
-			@Override
-			public void onSubmit(FormSubmitEvent event) {}
 		});
-        return upload;
-		
+        
+        return upload;		
 	}
 	
 	public void flexTableCss(){
@@ -478,14 +467,4 @@ public abstract class DepositDialog extends CustomDialogB {
 			}
 		}
 	}
-
-	public String getEjercicio() {
-		return ejercicio;
-	}
-
-	public void setEjercicio(String ejercicio) {
-		this.ejercicio = ejercicio;
-	}
-	
-	
 }

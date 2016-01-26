@@ -25,8 +25,7 @@ public interface INormalizedMemoryAsync {
 
 	void clearSession(String cif, AsyncCallback<Void> callback);
 
-	void saveDeposit(String cif, Integer domainId, Boolean textMode,
-			Integer year, AsyncCallback<Void> callback);
+	void saveDeposit(String cif, Integer domainId, Boolean textMode, Integer year, AsyncCallback<Void> callback);
 
 	void getDigitalDepositTemplates(Integer domainId,
 			AsyncCallback<Vector<MemoryTemplate>> callback);
@@ -55,7 +54,7 @@ public interface INormalizedMemoryAsync {
 			AsyncCallback<Void> callback);
 
 	void saveDeposit(String cif, Integer domainId, D2Deposit2014 d2Deposit2014,
-			Boolean textMode, AsyncCallback<Void> callback);
+			Boolean textMode, Integer year, AsyncCallback<Void> callback);
 
 	void calculate(Map<String, String> map,
 			AsyncCallback<Map<String, String>> callback);

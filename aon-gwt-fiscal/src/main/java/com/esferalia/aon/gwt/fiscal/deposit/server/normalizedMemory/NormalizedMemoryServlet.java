@@ -201,23 +201,23 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		return DBConsults.getDepositExercises(domain, domainId, getUserLogin());
 	}
 	
-	public void saveDeposit(String cif, Integer domainId, D2Deposit2014 d2Deposit2014, Boolean textMode) {
+	public void saveDeposit(String cif, Integer domainId, D2Deposit2014 d2Deposit2014, Boolean textMode, Integer year) {
 		HttpServletRequest request = getThreadLocalRequest();
 		String domain = AonServletUtils.getRequestDomainName(request);
-		Esquema schema = DBConsults.getDeposit(domain, domainId, d2Deposit2014.getYear(), this.getUserLogin());
+		Esquema schema = DBConsults.getDeposit(domain, domainId, year, this.getUserLogin());
 		schema = D2Deposit2014ToSchema(schema, d2Deposit2014);
 		try {
 			byte[] b = Utils.writeXml(schema);
 			if (textMode) {
 				DBConsults.insertDeposit(domain, b, domainId, cif, this.getUserLogin());
 			} else
-				DBConsults.insertDeposit(domain, b, domainId, d2Deposit2014.getYear(), this.getUserLogin());
+				DBConsults.insertDeposit(domain, b, domainId, year, this.getUserLogin());
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
 		request.getSession().removeAttribute(MODIFY_D2_DEPOSIT_SCHEMA + cif);
 	}
-
+	
 	private Esquema D2Deposit2014ToSchema(Esquema schema, D2Deposit2014 d2Deposit2014) {
 		Esquema s = new Esquema();
 		s.setCabecera(schema.getCabecera());
@@ -250,7 +250,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		HttpServletRequest request = getThreadLocalRequest();
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, getUserLogin());
 
 			Result<Record3<Integer, String, byte[]>> data = ctx
 					.getDslContext()
@@ -418,7 +418,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, getUserLogin());
 
 			Record1<Integer> data = ctx.getDslContext().select(DOMAIN.PARENT)
 					.from(DOMAIN).where(DOMAIN.ID.eq(domainId)).fetchOne();
@@ -437,7 +437,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, getUserLogin());
 
 			Record1<String> data = ctx.getDslContext().select(DOMAIN.NAME)
 					.from(DOMAIN).where(DOMAIN.ID.eq(domainId)).fetchOne();

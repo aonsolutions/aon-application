@@ -88,14 +88,6 @@
 		</navigation-case>
 	</navigation-rule>
 
-	<!-- =================== NormalizedMemory ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>gwt_normalizedMemory</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/normalizedMemory/gwt.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	
 	<!-- =================== Deposit ========================== -->
 	<navigation-rule>
 		<navigation-case>
