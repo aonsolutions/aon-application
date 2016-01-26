@@ -6,32 +6,6 @@
 		 http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
 
-
-
-	<servlet-mapping>
-		<servlet-name>Resource Servlet</servlet-name>
-		<url-pattern>/aon_gwt_pruebas/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>Resource Servlet</servlet-name>
-		<url-pattern>/aon_gwt_prueba1/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>Resource Servlet</servlet-name>
-		<url-pattern>/aon_gwt_prueba2/*</url-pattern>
-	</servlet-mapping>
-	
-	<servlet-mapping>
-		<servlet-name>Resource Servlet</servlet-name>
-		<url-pattern>/aon_gwt_deposit/*</url-pattern>
-	</servlet-mapping>
-	
-
-	
-
-
-
-
 	<!-- Faces Servlet -->
 	<servlet>
 		<servlet-name>Faces Servlet</servlet-name>
@@ -154,6 +128,10 @@
 	<servlet-mapping>
 		<servlet-name>Resource Servlet</servlet-name>
 		<url-pattern>/aon_gwt_fiscal/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Resource Servlet</servlet-name>
+		<url-pattern>/aon_gwt_deposit/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>Resource Servlet</servlet-name>

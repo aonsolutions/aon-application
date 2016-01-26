@@ -20,7 +20,10 @@
 				<configuration>
 					<deploy>${project.build.directory}/extra</deploy>
 					<extra>${project.build.directory}/extra</extra>
-          			<module>com.esferalia.aon.gwt.fiscal.Fiscal</module>
+					<modules>
+          				<module>com.esferalia.aon.gwt.fiscal.Fiscal</module>
+          				<module>com.esferalia.aon.gwt.fiscal.deposit.Deposit</module>
+					</modules>
 					<webappDirectory>${project.build.outputDirectory}</webappDirectory>
 					<compileSourcesArtifacts>
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.common</compileSourcesArtifact>  
@@ -323,7 +326,10 @@
             <artifactId>gwt-maven-plugin</artifactId>
             <configuration>
               <draftCompile>true</draftCompile>
+              		<modules>
 					    <module>com.esferalia.aon.gwt.fiscal.WorkingFiscal</module>
+					    <module>com.esferalia.aon.gwt.fiscal.deposit.WorkingDeposit</module>
+ 					</modules>
             </configuration>
         </plugin>
       </plugins>
