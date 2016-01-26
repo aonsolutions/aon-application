@@ -46,14 +46,10 @@
 							value="&#160;" actionListener="#{webmailMessage.onSendEmail}" >
 						</aon:commandLink>
 						<aon:if test="#{customize.snapshotVersion and !actionDenied.moduleEnabled['hotel']}">
-							<aon:commandLink id="quickIssue" 
-								styleClass="aon-menu-icon aon-icon-issue-opened"
-								title="Nueva incidencia -i18n-" 
-								reRender="newIssueWindowPanel"
-								value="&#160;"  
-								actionListener="#{quickIssue.onReset}" >
-								<f:setPropertyActionListener target="#{quickIssue.showNewissueWindow}" value="#{true}" />
-							</aon:commandLink>
+							<aon:commandLink id="quickIssue" action="gwt_office"
+								styleClass="aon-menu-icon aon-icon-callcenter"
+								value="&#160;" title="office" 
+								target="gwt" />
 						</aon:if>
 						<ui:insert name="beforeRightMenuContent"/>								
 						<aon:commandLink id="home" action="home"
@@ -106,10 +102,6 @@
 	 		</aon:menuBar>
 		</aon:form>
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/about.xhtml" />
-		<ui:include src="/com/code/aon/ui/resources/facelet/shared/quickIssue.xhtml" />
-		<!--  
-		<ui:include src="/com/code/aon/ui/groupware/facelet/notice/quickIssue.xhtml" />
-		-->
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />				
 	</aon:if>
  </ui:composition>

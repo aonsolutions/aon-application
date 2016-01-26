@@ -23,9 +23,6 @@
 		<aon:if test="#{domainSwitcher.parentDomain or desktop.groupwareEnabled}">
 			<ui:include src="/facelet/homepage/portlet/taskPortlet.xhtml" />
 		</aon:if>
-		<aon:if test="#{customize.snapshotVersion and !actionDenied.moduleEnabled['hotel']}">
-			<ui:include src="/facelet/homepage/portlet/officePortlet.xhtml" />
-		</aon:if>
 		<ui:include src="/facelet/homepage/portlet/noticePortlet.xhtml" />
 		<ui:include src="/facelet/homepage/portlet/notePortlet.xhtml" />
 		<ui:include src="/facelet/homepage/portlet/favoritePortlet.xhtml" />
