@@ -28,7 +28,6 @@ import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentEx
 import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
-import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractInfo;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
@@ -286,7 +285,7 @@ public class LearningModel extends AbstractContractModel {
 				}
 			} else {
 				if(contrata!=null && contrata.getCno()!=null ){
-					setPdfFieldValue(PdfFieldLearning.ACTIVITY_EMPLOYEE_PROFFESION.getValue(),contrata.getCno().getTitle());
+					setPdfFieldValue(PdfFieldLearning.ACTIVITY_EMPLOYEE_PROFFESION.getValue(), contrata.getCno().getTitle());
 					setPdfFieldValue(PdfFieldLearning.ACTIVITY_EMPLOYEE_CATEGORY.getValue(), contract.getCategoryDescription());
 					String cno = contrata.getCno().getCode();
 					if( !StringUtils.isEmpty(cno) ){
@@ -305,33 +304,18 @@ public class LearningModel extends AbstractContractModel {
 			/*
 			 * Contract page 2
 			 */
-			// TODO
-			TrainingCourse tc = obtainTrainingCourse(getContractInfoMap(contract).get(ContractVariable.TRAINING_COURSE.getValue()));
-			if(tc!=null && tc.getId()!=null){
-//				CONTRACT_WORKPLACE_ADDRESS("Texto30",Boolean.FALSE),
-				if(tc.isProfessionalCertificate()){
-					setPdfFieldValue(PdfFieldLearning.CONTRACT_WORKPLACE_ADDRESS.getValue(), tc.getCertificationName());
-				} else if(tc.isFpTitle()){
-					setPdfFieldValue(PdfFieldLearning.CONTRACT_WORKPLACE_ADDRESS.getValue(), tc.getFpTitleName());
-				}
-//				CONTRACT_EMPLOYEE_PROFFESION("Texto31",Boolean.FALSE),
-				setPdfFieldValue(PdfFieldLearning.CONTRACT_EMPLOYEE_PROFFESION.getValue(), tc.getOccupationName());
-//				CONTRACT_EMPLOYEE_CATEGORY("Texto32",Boolean.FALSE),
-//				FORMATION_TEACHER("Texto33",Boolean.FALSE),
-//				FORMATION_TEACHER_QUALIFICATION("Texto34",Boolean.FALSE),
-				
+			setPdfFieldValue(PdfFieldLearning.CONTRACT_EMPLOYEE_PROFFESION.getValue(), contrata.getCno().getTitle());
+			setPdfFieldValue(PdfFieldLearning.CONTRACT_EMPLOYEE_CATEGORY.getValue(), contract.getCategoryDescription());
+			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldLearning.CONTRACT_WORKPLACE_ADDRESS.toString()))){
+				setPdfFieldValue(PdfFieldLearning.CONTRACT_WORKPLACE_ADDRESS.getValue(), getContractInfoMap(contract).get(PdfFieldLearning.CONTRACT_WORKPLACE_ADDRESS.toString()));
 			}
 			
-			
-//			ContractInfo trainingCourseInfo = obtainContractInfo(contract, ContractVariable.TRAINING_COURSE.getValue());
-//			if(trainingCourseInfo!=null && trainingCourseInfo.getStartDate()!=null){
-//				setPdfFieldValue(PdfFieldLearning.ANNEXII_TRAINING_COURSE_START_DATE.getValue(),formatter.format(trainingCourseInfo.getStartDate()));
-//			}
-//			if(trainingCourseInfo!=null && trainingCourseInfo.getEndDate()!=null){
-//				setPdfFieldValue(PdfFieldLearning.ANNEXII_TRAINING_COURSE_END_DATE.getValue(),formatter.format(trainingCourseInfo.getEndDate()));
-//			}
-			
-			
+			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldLearning.FORMATION_TEACHER.toString()))){
+				setPdfFieldValue(PdfFieldLearning.FORMATION_TEACHER.getValue(), getContractInfoMap(contract).get(PdfFieldLearning.FORMATION_TEACHER.toString()));
+			}
+			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldLearning.FORMATION_TEACHER_QUALIFICATION.toString()))){
+				setPdfFieldValue(PdfFieldLearning.FORMATION_TEACHER_QUALIFICATION.getValue(), getContractInfoMap(contract).get(PdfFieldLearning.FORMATION_TEACHER_QUALIFICATION.toString()));
+			}
 			
 			if(contrata!=null){
 				if(contrata.getHorasJornada()!=null){
@@ -386,8 +370,14 @@ public class LearningModel extends AbstractContractModel {
 				setPdfFieldValue(PdfFieldLearning.HOLIDAYS.getValue(),getContractInfoMap(contract).get(PdfFieldLearning.HOLIDAYS.toString()));
 			}
 			
-			setPdfFieldValue(PdfFieldLearning.ANNEX_I_CHECK.getValue(), null);
-			setPdfFieldValue(PdfFieldLearning.ANNEX_II_CHECK.getValue(), "true");
+			String annex1check = getContractInfoMap(contract).get(PdfFieldLearning.ANNEX_I_CHECK.toString());
+			if(StringUtils.isNotBlank(annex1check) && new Boolean(annex1check)){
+				setPdfFieldValue(PdfFieldLearning.ANNEX_I_CHECK.getValue(), "true");
+			}
+			String annex2check = getContractInfoMap(contract).get(PdfFieldLearning.ANNEX_II_CHECK.toString());
+			if(StringUtils.isNotBlank(annex2check) && new Boolean(annex2check)){
+				setPdfFieldValue(PdfFieldLearning.ANNEX_II_CHECK.getValue(), "true");
+			}
 			
 			if(pw!=null && pw.getAgreement()!=null){
 				setPdfFieldValue(PdfFieldLearning.COLLECTIVE_AGREEMENT.getValue(), pw.getAgreement().getDescription());
@@ -438,7 +428,7 @@ public class LearningModel extends AbstractContractModel {
 			// ANEX II fields: because its length is defined forward
 //			TrainingCourse trainingCourse = obtainTrainingCourse(map.get(ContractVariable.TRAINING_COURSE.getValue()));
 			
-			if(trainingCourse != null){
+			if(StringUtils.isNotBlank(annex2check) && new Boolean(annex2check) && trainingCourse != null){
 				// HEADER FIELDS
 				if(trainingCourse.isProfessionalCertificate()){
 					setPdfFieldValue(PdfFieldLearning.ANNEXII_CP_YES.getValue(),"true");
@@ -738,22 +728,6 @@ public class LearningModel extends AbstractContractModel {
 		return null;
 	}
 	
-	private ContractData obtainContractData(Contract contract, String name) {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId() );
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), name );
-			List<ITransferObject> list = bean.getList(criteria);
-			if( !list.isEmpty() ){
-				return (ContractData) list.get(0);
-			}
-		} catch (ManagerBeanException e) {
-			// do nothing ...
-		}
-		return null;
-	}
-
 	private ContractInfo obtainContractInfo(Contract contract, String name) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
