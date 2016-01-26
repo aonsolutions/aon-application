@@ -1098,9 +1098,11 @@ public class Documents extends Composite implements EntryPoint {
 						optionFile.setVisible(false);
 			    	}
 		
-			    	
-			    	dataGrid.getSelectionModel().setSelected(object, true);
-			    	if(event.getColumn() != 0){
+			    	if(event.getColumn() == 0){
+			    		if(dataGrid.getSelectionModel().isSelected(object))
+			    			dataGrid.getSelectionModel().setSelected(object, false);
+			    		else dataGrid.getSelectionModel().setSelected(object, true);
+			    	}else if(event.getColumn() != 0){
 			    		for(Integer i = 0;i< dataProvider.getList().size();i++){
 			    			if(!dataProvider.getList().get(i).equals(object))
 			    				dataGrid.getSelectionModel().setSelected(dataProvider.getList().get(i), false);

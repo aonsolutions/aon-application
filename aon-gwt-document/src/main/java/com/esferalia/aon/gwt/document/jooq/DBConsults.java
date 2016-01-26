@@ -47,6 +47,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class DBConsults {
 	
@@ -336,80 +337,19 @@ public class DBConsults {
 			if(a.getCreationUser() != null)
 				fi.setCreationUser(a.getCreationUser());
 			if(a.getCreationDate() != null){
-				long b = a.getCreationDate().getTime();
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(new Date(b));
-				String dateStr = cal.get(Calendar.DATE)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.YEAR);
-				fi.setCreationDateStr(dateStr);
+				fi.setCreationDateStr(AonDateUtils.getDay(a.getCreationDate())
+						+ "-" + (AonDateUtils.getMonth(a.getCreationDate())+1)
+						+ "-" + AonDateUtils.getYear(a.getCreationDate()));
 			}
 			if(a.getModificationUser() != null)
 				fi.setModificationUser(a.getModificationUser());
 			if(a.getModificationDate() != null){
-				long b = a.getModificationDate().getTime();
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(new Date(b));
-				String dateStr = cal.get(Calendar.DATE)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.YEAR);
-				fi.setModificationDateStr(dateStr);
+				fi.setModificationDateStr(AonDateUtils.getDay(a.getModificationDate())
+						+ "-" + (AonDateUtils.getMonth(a.getModificationDate())+1)
+						+ "-" + AonDateUtils.getYear(a.getModificationDate()));
 			}
 			return fi;
 		}
-		/*
-		@Override
-		public FileInfo apply(Attach a) {
-			FileInfo fileInfo = new FileInfo();
-			fileInfo.setAonType(a.getAttachType().getName());
-			fileInfo.setCategory(a.getCategory() != null ? a.getCategory() : -2);
-			fileInfo.setCategoryStr(a.getCategory() != null ? 
-					AON.getCategory(a.getDomain().getName(),a.getDomain().getId() , user.getLogin(), a.getCategory()).getName() : "-");	
-			fileInfo.setData(a.getData());
-			fileInfo.setDate(a.getDate());
-			fileInfo.setDriveId(a.getDriveId());
-			fileInfo.setType(a.getType());
-			fileInfo.setTitle(a.getDescription());
-			fileInfo.setMimetype(a.getMimeType().value());
-			fileInfo.setFileId(a.getId());
-			fileInfo.setDomainId(a.getDomain().getId());
-			fileInfo.setDomain(a.getDomain().getName());
-			fileInfo.setConfidential(a.getConfidential());
-			if(fileInfo.getDate() != null){
-				String dateStr = fileInfo.getDate().toString();
-				Integer pos = dateStr.indexOf("-");
-				Integer pos2 = dateStr.substring(pos+1).indexOf("-");
-				String aux = dateStr.substring(pos2+pos+2)+"-"+dateStr.substring(pos+1, pos2+pos+1)+"-"+dateStr.substring(0,pos);
-				fileInfo.setDateStr(aux);
-			} else fileInfo.setDateStr("-");
-			Tags tags = getTags(a.getDomain(), user, fileInfo.getFileId());
-			fileInfo.setTags(tags.getTags().getList());
-			if(tags.getTagsStr()!=null)fileInfo.setTagsStr(tags.getTagsStr()); else fileInfo.setTagsStr("-");
-			Scope s = getScope(a.getDomain(), user, a.getScope());
-			fileInfo.setScope(s);
-		
-			fileInfo.setSize(a.getDparentId() != null ? Integer.valueOf(a.getDparentId()): 0);
-			fileInfo.setSizeStr(FileUtils.byteCountToDisplaySize(fileInfo.getSize()!=null?fileInfo.getSize():0));
-			fileInfo.setDomain(a.getDomain().getName());
-			fileInfo.setDomainDescription(a.getDomain().getDescription());
-			fileInfo.setDomainId(a.getDomain().getId());
-			fileInfo.setIsParent(a.getDomain().getParentId() == null);
-			
-			fileInfo.setCreationUser(a.getCreationUser());
-			
-			if(a.getCreationDate() != null){
-				long b = a.getCreationDate().getTime();
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(new java.util.Date(b));
-				String dateStr = cal.get(Calendar.DATE)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.YEAR);
-				fileInfo.setCreationDateStr(dateStr);
-			}
-			fileInfo.setModificationUser(a.getModificationUser());
-			if(a.getModificationDate() != null){
-				long b = a.getModificationDate().getTime();
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(new java.util.Date(b));
-				String dateStr = cal.get(Calendar.DATE)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.YEAR);
-				fileInfo.setModificationDateStr(dateStr);
-			}
-			return fileInfo;
-		}*/
 	}
 	
 	private static FileInfo newFileInfo(AONContext ctx, Domain domain, User user, String domain2, Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp> record){

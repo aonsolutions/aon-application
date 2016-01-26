@@ -657,7 +657,7 @@ public class AttachmentDAO {
 			return new Attach().setAttachModule(r.getRegistry())
 							.setAttachType(AttachType.REGISTRY)
 							.setCategory(r.getCategory())
-							.setConfidential(r.getSecurityLevel().equals(1))
+							.setConfidential(r.getSecurityLevel() == 1)
 							.setCreationDate(r.getCreationDate())
 							.setCreationUser(r.getCreationUser())
 							.setData(r.getData())
