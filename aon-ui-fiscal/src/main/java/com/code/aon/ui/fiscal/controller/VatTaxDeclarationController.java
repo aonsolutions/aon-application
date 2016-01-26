@@ -589,46 +589,16 @@ public class VatTaxDeclarationController extends LinesController {
 				fs.setAdministration(dec.getAdministration());
 				fs.setAdmonAeat("XXXXX");
 				m303Controller.accept(event);
-				
 				VatTaxController taxController =  (VatTaxController) AonUtil.getRegisteredBean("vatTax");
 				if (taxController.getVatTaxModel() != null) {
 					@SuppressWarnings("unchecked")
 					List<VatTaxDetail> vatDetails = (List<VatTaxDetail>) taxController.getVatTaxModel().getWrappedData(); 
-					double g = 0.0;
 					for (VatTaxDetail vatDetail : vatDetails) {
 						if (vatDetail.getKey() == VatTaxKey.A1) {
 							m303Controller.getDeclaration().ensureDetail(Mod303Key.C80).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
 						}
-						if (vatDetail.getKey() == VatTaxKey.B1
-						  || vatDetail.getKey() == VatTaxKey.B3
-						  || vatDetail.getKey() == VatTaxKey.C1
-						  || vatDetail.getKey() == VatTaxKey.D1
-						  || vatDetail.getKey() == VatTaxKey.D3) {
-							g = g + vatDetail.getQuotaAccumulated(); 
-						}
-						if (vatDetail.getKey() == VatTaxKey.EI || vatDetail.getKey() == VatTaxKey.PS) { 
-							m303Controller.getDeclaration().ensureDetail(Mod303Key.C59).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
-							m303Controller.getDeclaration().ensureDetail(Mod303Key.C82).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
-						}
-						if (vatDetail.getKey() == VatTaxKey.EX1 || vatDetail.getKey() == VatTaxKey.EX2) {
-							m303Controller.getDeclaration().ensureDetail(Mod303Key.C60).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
-							m303Controller.getDeclaration().ensureDetail(Mod303Key.C82).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
-						}
-						if (vatDetail.getKey() == VatTaxKey.XO) {
-							m303Controller.getDeclaration().ensureDetail(Mod303Key.C62).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
-							m303Controller.getDeclaration().ensureDetail(Mod303Key.C63).addAccumulatedAmount(vatDetail.getQuotaAccumulated());
-						}
-						if (vatDetail.getKey() == VatTaxKey.XI) {
-							m303Controller.getDeclaration().ensureDetail(Mod303Key.C74).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
-							m303Controller.getDeclaration().ensureDetail(Mod303Key.C75).addAccumulatedAmount(vatDetail.getQuotaAccumulated());
-						}
-						if (vatDetail.getKey() == VatTaxKey.OS) {
-							m303Controller.getDeclaration().ensureDetail(Mod303Key.C83).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
-						}
-						if (vatDetail.getKey() == VatTaxKey.EBI) {	// Ventas de inversion
-							m303Controller.getDeclaration().ensureDetail(Mod303Key.C87).addAccumulatedAmount(vatDetail.getTaxableBaseAccumulated());
-						}
 					}
+					m303Controller.getDeclaration().ensureDetail(Mod303Key.C86).setAccumulatedAmount(0.0);
 				}
 				
 				m303Controller.accept(event);
