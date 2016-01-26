@@ -585,10 +585,7 @@ public class SQLAgreementDraft {
 			// Categories
 			Set<String> draftCategories = draftCategoriesMap.get(level.getId());
 
-			Set<String> categories = draft.getCategoriesMap()
-					.get(level.getId());
-
-			updateCategories(conn, domainId, levelId, categories,
+			updateCategories(conn, domainId, levelId, Collections.emptySet(),
 					draftCategories);
 		}
 
