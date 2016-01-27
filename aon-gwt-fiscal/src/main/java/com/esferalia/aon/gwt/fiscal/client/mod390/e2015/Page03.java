@@ -240,7 +240,7 @@ public class Page03 extends ResizeComposite implements RequiresResize , IMod3902
 				
 							// Percent 
 							FlowPanel p1 = new FlowPanel();
-							if  (det.getPercent() != 0.0) {
+							if  (det.getKey().getPercent() != 0.0) {
 								p1.addStyleName(AON.AON_CSS.aonTextCenter() );
 								p1.addStyleName(AON.AON_CSS.aonSimpleBorder() );
 								p1.add(new Label(AON.FMT.format(det.getPercent()))); 
