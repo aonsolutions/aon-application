@@ -160,7 +160,7 @@ public class Mod3902015DAO {
 			return this;
 		}
 		public boolean isRectification() {
-			return (rectificationType == RectificationType.SPECIAL_RECTIFIER);
+			return (rectificationType == RectificationType.NORMAL_RECTIFIER);
 		}
 		public boolean isSales() {
 			return (invoiceType == InvoiceType.SALES);
