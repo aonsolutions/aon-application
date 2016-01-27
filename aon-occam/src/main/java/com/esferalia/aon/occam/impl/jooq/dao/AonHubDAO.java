@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
 import static com.esferalia.aon.jooq.tables.NoticeTag.NOTICE_TAG;
@@ -20,7 +19,6 @@ import org.jooq.Record3;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 
-import com.esferalia.aon.jooq.tables.Target;
 import com.esferalia.aon.jooq.tables.records.NoticeRecord;
 import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
@@ -575,6 +573,7 @@ public class AonHubDAO {
 					.from(REGISTRY.rightOuterJoin(TARGET)
 							.on(REGISTRY.ID.eq(TARGET.REGISTRY)))
 					.where(REGISTRY.DOMAIN.in(domainSelect))
+					.and(TARGET.STATUS.eq((byte) 0))							
 					.fetchLazy();
 
 			for (Record registry : cursor) {
