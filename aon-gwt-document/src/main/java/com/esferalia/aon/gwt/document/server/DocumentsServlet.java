@@ -1215,7 +1215,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 
 	protected static JSONObject sendPostHttpClient(JSONObject json) {
 		try{
-			String url = "http://"+AonUtil.getDomainName()+"/aon-aio/openDocument2Image/";
+			String url = "http://"+AonUtil.getDomainName()+"/openDocument2Image/";
 			HttpClientBuilder base = HttpClientBuilder.create();
 			HttpClient client = base.build();
 			HttpPost post = new HttpPost(url);
