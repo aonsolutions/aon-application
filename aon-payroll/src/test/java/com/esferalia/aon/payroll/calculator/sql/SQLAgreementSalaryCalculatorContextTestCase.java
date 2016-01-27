@@ -11,6 +11,8 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Test;
 
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
@@ -118,5 +120,10 @@ public class SQLAgreementSalaryCalculatorContextTestCase extends AbstractSQLTest
 		
 	}
 
-
+	@AfterClass
+	public void afterClass(){
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		cleanSystemDeductions(aonContext);
+	}
 }
