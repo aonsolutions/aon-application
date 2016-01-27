@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
 import static com.esferalia.aon.jooq.tables.NoticeTag.NOTICE_TAG;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
+import static com.esferalia.aon.jooq.tables.Target.TARGET;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.util.Date;
@@ -19,8 +20,7 @@ import org.jooq.Record3;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 
-import com.esferalia.aon.jooq.tables.Domain;
-import com.esferalia.aon.jooq.tables.records.CustomerRecord;
+import com.esferalia.aon.jooq.tables.Target;
 import com.esferalia.aon.jooq.tables.records.NoticeRecord;
 import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
@@ -572,10 +572,9 @@ public class AonHubDAO {
 			cursor = ctx
 					.getDslContext()
 					.select(REGISTRY.ID, REGISTRY.NAME, REGISTRY.DOCUMENT)
-					.from(REGISTRY.rightOuterJoin(CUSTOMER)
-							.on(REGISTRY.ID.eq(CUSTOMER.REGISTRY)))
+					.from(REGISTRY.rightOuterJoin(TARGET)
+							.on(REGISTRY.ID.eq(TARGET.REGISTRY)))
 					.where(REGISTRY.DOMAIN.in(domainSelect))
-					.and(CUSTOMER.STATUS.eq((byte) 0))
 					.fetchLazy();
 
 			for (Record registry : cursor) {
