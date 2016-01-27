@@ -27,6 +27,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.SystemCost.SYSTEM_COST;
 import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
+import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAYMENT;
@@ -70,6 +71,7 @@ import com.esferalia.aon.jooq.tables.AgreementPayment;
 import com.esferalia.aon.jooq.tables.BonusConcept;
 import com.esferalia.aon.jooq.tables.ContractBonus;
 import com.esferalia.aon.jooq.tables.ContractEmbargo;
+import com.esferalia.aon.jooq.tables.SystemDeduction;
 import com.esferalia.aon.jooq.tables.SystemPayment;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
@@ -253,6 +255,14 @@ public abstract class AbstractSQLTestCase {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
+	protected final void cleanSystemDeductions(AONContext aonContext) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+
+		aonContext.getDslContext().delete(SYSTEM_DEDUCTION).execute();
+
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
+
 	protected final void addCCCCost(AONContext aonContext, CCCType cccType,
 			Date startDate, String code, DeductionType type, String expression) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
@@ -331,6 +341,26 @@ public abstract class AbstractSQLTestCase {
 				expression, ContextVariable.ALL, ContextVariable.ALL);
 	}
 
+	protected final void addSSRegimeDeduction(AONContext aonContext,
+			SSRegimeType ssRegimetype, Date startDate, DeductionType deductionType,
+			String expression ) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+
+		aonContext
+				.getDslContext()
+				.insertInto(SYSTEM_DEDUCTION)
+
+				.set(SYSTEM_DEDUCTION.START_DATE, startDate)
+				.set(SYSTEM_DEDUCTION.EXPRESSION, expression)
+				.set(SYSTEM_DEDUCTION.DOMAIN, (-1) * ssRegimetype.ordinal())
+				.set(SYSTEM_DEDUCTION.TYPE,
+						(byte) (deductionType != null ? deductionType.ordinal()
+								: DeductionType.OTHER.ordinal()))
+				.execute();
+
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
+	
 	public static String getDbPort() {
 		return System.getProperty("dbPort", "3306");
 	}

@@ -616,6 +616,8 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 
 					if (type.isSsDeduction()) {
 						ssContributions += deduction;
+						expressionContext.setVariable(EMPLOYEE_QUOTA, ssContributions,
+								start, end);
 					} else if (type.isTaxDeduction()) {
 						totalIrpf += deduction;
 					}
@@ -641,8 +643,6 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 
 			salaryBuilder.setTotalIrpf(totalIrpf);
 			salaryBuilder.setSocialSecurityContributions(ssContributions);
-			expressionContext.setVariable(EMPLOYEE_QUOTA, ssContributions,
-					start, end);
 
 			salaryBuilder.setTotalDeduction(totalDeduction);
 			return totalDeduction;

@@ -25,6 +25,7 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.WORKPLACE;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
@@ -49,6 +50,7 @@ import java.util.Map.Entry;
 import java.util.MissingResourceException;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.stream.Stream;
 
 import javax.faces.context.FacesContext;
 
@@ -152,6 +154,7 @@ import com.esferalia.aon.payroll.calculator.sql.SQLContractDelayCalculatorContex
 import com.esferalia.aon.payroll.calculator.sql.SQLContractNotEnjoyedCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns;
@@ -191,11 +194,13 @@ import com.esferalia.aon.salary.expression.ExpressionContext.DeferredException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InvalidVariables;
+import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
@@ -779,7 +784,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	@Override
 	public String getAgreementDraftReceiptHTML(AgreementDraft agreementDraft,
-			int levelId, Salary.Type type, int zoom)
+			int levelId, Salary.Type type , int zoom)
 			throws IllegalArgumentException {
 
 		Map<Object, Object> parameters = new HashMap<Object, Object>(
@@ -3817,7 +3822,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	private static IContractSalaryCalculatorContext getSalaryCalculatorContext(
 			final Connection conn, final AgreementDraft draft, int levelId)
 			throws ExpressionException, SQLException {
-		return getSalaryCalculatorContextImpl(conn, draft, levelId);
+		
+		Map<String, Object> data = new HashMap<String,Object>();
+		data.put(ContextVariable.QUOTE_GROUP.getName(), "01");
+		data.put(ContextVariable.TC2.getName(), ContractCode.C100.getValue());
+		
+		return getSalaryCalculatorContextImpl(conn, draft, levelId, data);
+	}
+
+	private static IContractSalaryCalculatorContext getSalaryCalculatorContext(
+			final Connection conn, final AgreementDraft draft, int levelId, Map<String, Object> data)
+			throws ExpressionException, SQLException {
+		return getSalaryCalculatorContextImpl(conn, draft, levelId, data);
 	}
 
 	private static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getNotEnjoyedCalculatorContextImpl(
@@ -3884,7 +3900,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	private static IContractSalaryCalculatorContext getSalaryCalculatorContextImpl(
-			Connection conn, final AgreementDraft draft, int levelId)
+			Connection conn, final AgreementDraft draft, int levelId, Map<String,Object> data)
 			throws ExpressionException, SQLException {
 
 		Date startDate = draft.getStartDate();
@@ -3892,7 +3908,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 		SQLAgreementSalaryCalculatorContext sqlAgreementSalaryCalculatorContext = new SQLAgreementSalaryCalculatorContext(
 				conn, startDate, endDate, levelId);
-		sqlAgreementSalaryCalculatorContext.next();
+		
+		sqlAgreementSalaryCalculatorContext.next(ctx-> data.entrySet().stream().forEach(entry->ctx.putVariable(entry.getKey(), new TimedObject<Object>(entry.getValue(), startDate, endDate))));
+		
 		return sqlAgreementSalaryCalculatorContext;
 	}
 
