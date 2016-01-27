@@ -56,22 +56,6 @@ public class OfficeApiServlet extends HttpServlet {
 				throws ServletException, IOException;
 	}
 
-	private static abstract class SimpleRequestHandler
-			implements HttpRequestHandler {
-
-		private String action;
-
-		public SimpleRequestHandler(String action) {
-			this.action = action;
-		}
-
-		@Override
-		public boolean accept(HttpServletRequest req) {
-			String requestAction = getRequestAction(req);
-			return action.equalsIgnoreCase(requestAction);
-		}
-	}
-
 	private static abstract class RegExpRequestHandler
 			implements HttpRequestHandler {
 
@@ -85,58 +69,12 @@ public class OfficeApiServlet extends HttpServlet {
 		@Override
 		public boolean accept(HttpServletRequest req) {
 			String action = getRequestAction(req);
-			this.matcher = pattern.matcher(action);
+			this.matcher = pattern.matcher(action);			
 			return matcher.matches();
 		}
 
 		protected String group(int group) {
 			return matcher.group(group);
-		}
-	}
-
-	private static class GetUserRequestHandler implements HttpRequestHandler {
-
-		@Override
-		public boolean accept(HttpServletRequest req) {
-			return false;
-		}
-
-		@Override
-		public void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-			System.out.println("Obteniendo User ... ");
-		}
-	}
-
-	private static class GetAvaiableAssignees extends RegExpRequestHandler {
-
-		public GetAvaiableAssignees() {
-			super("/repos/(.+)/(.+)/assignees");
-		}
-
-		@Override
-		public void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-			// TODO
-			System.out.println("This call lists all the available assignees to "
-					+ "Owner: " + group(1) + " Repo " + group(2)
-					+ " which issues may be assigned.");
-		}
-	}
-
-	private static class GetCheckAssignees extends RegExpRequestHandler {
-
-		public GetCheckAssignees() {
-			super("/repos/(.+)/(.+)/assignees/(.+)");
-		}
-
-		@Override
-		public void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-			// TODO
-			System.out.println("This call lists all the available assignees to "
-					+ "Owner: " + group(1) + " Repo " + group(2) + " Assignee: "
-					+ group(3) + " which issues may be assigned.");
 		}
 	}
 
@@ -281,99 +219,6 @@ public class OfficeApiServlet extends HttpServlet {
 		}
 	}
 
-	private static class GetUserIssuesRequestHandler
-			extends SimpleRequestHandler {
-
-		public GetUserIssuesRequestHandler() {
-			super("/user/issues");
-		}
-
-		@Override
-		public void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-			// TODO
-			System.out.println(
-					"List all issues across owned and member repositories for the authenticated user");
-		}
-	}
-
-	private static class GetOrgIssuesRequestHandler
-			extends RegExpRequestHandler {
-
-		public GetOrgIssuesRequestHandler() {
-			super("/orgs/(.+)/issues");
-		}
-
-		@Override
-		public void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-			// TODO
-			System.out.println("List all issues for a given organization ( "
-					+ group(1) + " ) for the authenticated user:");
-		}
-	}
-
-	private static class ListIssuesCommentsRequestHandler
-			extends RegExpRequestHandler {
-
-		public ListIssuesCommentsRequestHandler() {
-			super("/repos/(.+)/(.+)/issues/(\\d+)/comments");
-		}
-
-		@Override
-		public void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-			// TODO
-			System.out.println("List comments on an issue ( owner:" + group(1)
-					+ ", repo:" + group(2) + ", number:" + group(3) + ")");
-		}
-	}
-
-	private static class GetIssueComments extends RegExpRequestHandler {
-
-		public GetIssueComments() {
-			super("/issues/(\\d+)/comments");
-		}
-
-		@Override
-		public void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-			// TODO
-			System.out.println("  Get a single comment" + " Owner: " + group(1)
-					+ " Repo: " + group(2) + " Id: " + group(3));
-		}
-	}
-
-	private static class CreateIssueComment extends RegExpRequestHandler {
-
-		public CreateIssueComment() {
-			super("/issues/(\\d+)/comments");
-		}
-
-		@Override
-		public void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-			// TODO
-			System.out.println("Create comment " + " Owner: " + group(1)
-					+ " Repo: " + group(2) + " Number: " + group(3));
-		}
-	}
-
-	private static class EditComment extends RegExpRequestHandler {
-
-		public EditComment() {
-			super("/repos/(.+)/(.+)/issues/comments/(\\d+)");
-		}
-
-		@Override
-		public void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-			// TODO
-			System.out.println("Edit a comment " + " Owner: " + group(1)
-					+ " Repo: " + group(2) + " Number: " + group(3));
-		}
-	}
-
 	private static class ListAllLabels extends RegExpRequestHandler {
 
 		public ListAllLabels() {
@@ -387,7 +232,7 @@ public class OfficeApiServlet extends HttpServlet {
 			Integer domainId = Integer.parseInt(group(1));
 			String domainName = group(2);
 			String user_name = AonServletUtils.getLoggedUser();
-
+			
 			List<Tag> tags = AON.getTags(domainId, domainName, user_name);
 
 			PrintWriter pw = resp.getWriter();
@@ -402,42 +247,35 @@ public class OfficeApiServlet extends HttpServlet {
 	private static class GetRegistries extends RegExpRequestHandler {
 
 		public GetRegistries() {
-			super("/repos/(.+)/(.+)/registries");
+			super("/repos/(\\d+)/(.+)/registries");
 		}
 
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
-
-			Integer domainId = Integer.parseInt(group(1));
-			String domainName = group(2);
-			String userName = AonServletUtils.getLoggedUser();
-
-			List<Registry> registries = AON.getRegistries(domainId, domainName,
-					userName);
-			System.out.println(registries.size());
-			PrintWriter pw = resp.getWriter();
-			pw.append('{');
-			pw.printf(String.format("\"message\":\"%s\",\r\n", "FOUNDED"));
-			pw.printf("\"data\":%s",
-					buildRegistries(registries.listIterator()));
-			pw.append('}');
-			pw.flush();
-		}
-	}
-
-	private static class GetSingleLabel extends RegExpRequestHandler {
-
-		public GetSingleLabel() {
-			super("/repos/(.+)/(.+)/labels/(.+)");
-		}
-
-		@Override
-		public void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-			// TODO
-			System.out.println("Get a single label " + " Owner: " + group(1)
-					+ " Repo: " + group(2) + " Name: " + group(3));
+			
+			String action = getRequestAction(req);
+			System.out.println(action);
+			
+			try {				
+				Integer domainId = Integer.parseInt(group(1));
+				String domainName = group(2);
+				String userName = AonServletUtils.getLoggedUser();
+				
+				List<Registry> registries = AON.getRegistries(domainId, domainName,
+						userName);
+				System.out.println(registries.size());
+				PrintWriter pw = resp.getWriter();
+				pw.append('{');
+				pw.printf(String.format("\"message\":\"%s\",\r\n", "FOUNDED"));
+				pw.printf("\"data\":%s",
+						buildRegistries(registries.listIterator()));
+				pw.append('}');
+				pw.flush();
+				
+			} catch ( Exception ex) {
+				System.out.println("Error al obtener los customers. " + ex.getMessage());
+			}
 		}
 	}
 
@@ -514,50 +352,6 @@ public class OfficeApiServlet extends HttpServlet {
 		}
 	}
 
-	private static class ListLabelsOnAnIssue extends RegExpRequestHandler {
-
-		public ListLabelsOnAnIssue() {
-			super("/repos/(.+)/(.+)/issues/(\\d+)/labels");
-		}
-
-		@Override
-		public void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-			// TODO
-			System.out.println("List labels on an issue " + " Owner: "
-					+ group(1) + " Repo: " + group(2) + " Number: " + group(3));
-		}
-	}
-
-	private static class AddLabelToIssue extends RegExpRequestHandler {
-
-		public AddLabelToIssue() {
-			super("repos/(.+)/(.+)/issues/(\\d+)/labels");
-		}
-
-		@Override
-		public void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-			// TODO Auto-generated method stub
-			System.out.println("AddLabel2Issue");
-		}
-	}
-
-	private static class DeleteComment extends RegExpRequestHandler {
-
-		public DeleteComment() {
-			super("/repos/(.+)/(.+)/issues/comments/(\\d+)");
-		}
-
-		@Override
-		public void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-			// TODO
-			System.out.println("Delete a comment by id " + " Owner: " + group(1)
-					+ " Repo: " + group(2) + " Number: " + group(3));
-		}
-	}
-
 	private static class DeleteLabel extends RegExpRequestHandler {
 
 		public DeleteLabel() {
@@ -626,53 +420,23 @@ public class OfficeApiServlet extends HttpServlet {
 		}
 	}
 
-	private static class DeletelabelFromIssue extends RegExpRequestHandler {
-
-		public DeletelabelFromIssue() {
-			super("/repos/(.+)/(.+)/issues/(\\d+)/labels/(.+)");
-		}
-
-		@Override
-		public void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-			// TODO
-			System.out.println("Remove a label from an issue " + " Owner: "
-					+ group(1) + " Repo: " + group(2) + " Number: " + group(3)
-					+ " LabelName: " + group(4));
-		}
-	}
-
 	// @formatter:off
 	private static final HttpRequestHandler GET_HANDLERS[] = {
 			new GetRegistries(),
-			new GetUserRequestHandler(),
 			new GetAllIssuesRequestHandler(),
-			new GetUserIssuesRequestHandler(), 
-			new GetOrgIssuesRequestHandler(),
-			new GetAvaiableAssignees(),
-			new GetCheckAssignees(),		
-			new ListIssuesCommentsRequestHandler(),
-			new GetIssueComments(),
-			new GetSingleLabel(),
 			new ListAllLabels(),
-			new ListLabelsOnAnIssue(),			
 	};
 	
 	private static final HttpRequestHandler POST_HANDLERS[] = {
 			new CreateIssue(),
 			new EditIssue(),
-			new AddLabelToIssue(),
-			new CreateIssueComment(),
-			new EditComment(),
 			new CreateLabel(),
 			new UpdateLabel(),
 	};
 
 	private static final HttpRequestHandler DELETE_HANDLERS[] = {
-			new DeleteComment(),
 			new DeleteLabel(),
 			new DeleteNotice(),
-			new DeletelabelFromIssue()
 	};
 	// @formatter:on
 

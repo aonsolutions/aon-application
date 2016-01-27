@@ -12,6 +12,11 @@
 		height: 99%;
 	}
 	
+	.options-text-area {
+		width: 600px;
+		height: 170px;
+	}
+	
 	.buttons {
 		padding-top: 10px;
 		text-align: right;
@@ -97,7 +102,7 @@
 					</td>
 					<td class="{aonResources.css.aonPanelGridEven}">
 						<g:TextArea ui:field="commentTextArea" characterWidth="10"
-							visibleLines="9" width="98%" height="99%" readOnly="true" />
+							visibleLines="9" styleName="{style.options-text-area}" readOnly="true" />
 					</td>
 				</tr>
 				<tr>

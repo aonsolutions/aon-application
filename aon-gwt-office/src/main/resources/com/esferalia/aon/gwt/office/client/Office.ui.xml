@@ -90,7 +90,7 @@
 								styleName='aon-finding-toolbar-item {aonResources.css.aonIconReset}'
 								text="ETIQUETAS" />
 							<g:Button ui:field='returnButton'
-								styleName='aon-finding-toolbar-item {aonResources.css.aonIconPrevious}'
+								styleName='aon-finding-toolbar-item {aonResources.css.aonIconCancel}'
 								text="VOLVER" enabled="false" />
 
 						</g:HTMLPanel>
