@@ -456,8 +456,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		Object value = getObjectValue(cell);
 		switch (template) {
 		case "Cliente": case "Client":
-			if(type.equals(Cell.CELL_TYPE_STRING) && !cell.getStringCellValue().equals("") || type.equals(Cell.CELL_TYPE_NUMERIC)){
-				Customer customer = DBFee.getCustomer(domain, username, toString(value), ignoreInactiveCliente);
+			if(type.equals(Cell.CELL_TYPE_STRING) && !cell.getStringCellValue().equals("")){
+				Customer customer = DBFee.getCustomer(domain, username, cell.getStringCellValue(), ignoreInactiveCliente);
 				if(customer != null){
 					fee.setClient(cell.getStringCellValue());
 					fee.setClientId(customer.getId());
