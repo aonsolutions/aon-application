@@ -113,17 +113,11 @@ public class SQLAgreementSalaryCalculatorContextTestCase extends AbstractSQLTest
 		
 		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
-		System.out.println(salary.getTotalIrpf());
+		cleanSystemDeductions(aonContext);
 		
 		Assert.assertTrue( salary.getTotalIrpf() > 0.00 );
 		
 		
 	}
 
-	@AfterClass
-	public void afterClass(){
-		Connection connection = getConnection();
-		AONContext aonContext = new AONContext(connection);
-		cleanSystemDeductions(aonContext);
-	}
 }
