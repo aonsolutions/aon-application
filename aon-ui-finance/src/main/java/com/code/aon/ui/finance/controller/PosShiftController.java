@@ -1,6 +1,14 @@
 package com.code.aon.ui.finance.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.DATE_PATTERN;
+import static com.code.aon.ui.common.ICommonMessages.DECIMAL_2_PATTERN;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_CHARGED;
+
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,6 +18,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -312,6 +322,14 @@ public class PosShiftController extends BasicController implements IFinanceConst
 				throw new AbortProcessingException(msg);
 			} else {
 				Invoice invoice = (Invoice)invoiceList.get(0);
+				double financeTotal = invoice.getFinanceTotal();
+				if (financeTotal != 0 || invoice.getTotal() == 0) {
+					NumberFormat numberFormat = new DecimalFormat(AonUtil.getMessage(DECIMAL_2_PATTERN));
+					DateFormat dateFormat = new SimpleDateFormat(AonUtil.getMessage(DATE_PATTERN));
+					String comments = StringUtils.isNotBlank(invoice.getComments()) ? invoice.getComments() + "\n" : "";
+					comments += dateFormat.format(invoice.getDate()) + " - " + AonUtil.getMessage(FINANCE_CHARGED) + ": " + numberFormat.format(financeTotal) + "\n";
+					invoice.setComments(comments);
+				}
 				invoice.setPosShift(((PosShift)getTo()));
 				invoice.setUpdateEnabled(false);
 				BeanManager.getManagerBean(Invoice.class).update(invoice);

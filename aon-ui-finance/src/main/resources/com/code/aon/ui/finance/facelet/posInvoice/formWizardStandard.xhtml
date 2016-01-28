@@ -33,9 +33,28 @@
 			actionListener="#{detailController.onAccept}"
 			accesskey="#{bundle.aon_key_save}" />
 
-		<aon:outputLabel for="InvoiceDetail_price" styleClass="aon-input-required" 
-			value="#{bundle.aon_price}:" />
+		<aon:outputLabel for="InvoiceDetail_quantity"
+			value="#{bundle.aon_quantity}:" />
 		<aon:div styleClass="aon-nowrap">
+			<aon:commandButton id="PosDetail-minusQuantity" immediate="true"
+				styleClass="aon-medium-commandButton aon-width-30"
+				value="-"
+				actionListener="#{detailController.onMinusQuantity}"
+				reRender="InvoiceDetail_quantity,InvoiceDetail_price,InvoiceDetail_discount" ajaxSingle="true" />
+			<aon:inputText id="InvoiceDetail_quantity"
+				styleClass="aon-margin-right"
+				value="#{detailController.to.quantity}" 
+				required="true" size="1" maxlength="5"
+				valueChangeListener="#{detailController.onQuantityChanged}"
+				reRender="InvoiceDetail_price,InvoiceDetail_discount" ajaxSingle="true"
+				focus="#{posInvoice.posShift.pos.priceEditable ? 'InvoiceDetail_price' : 'InvoiceDetail_discount'}" />
+			<aon:commandButton id="PosDetail-plusQuantity" immediate="true"
+				styleClass="aon-medium-commandButton aon-width-30"
+				value="+"
+				actionListener="#{detailController.onPlusQuantity}"
+				reRender="InvoiceDetail_quantity,InvoiceDetail_price,InvoiceDetail_discount" ajaxSingle="true" />
+			<aon:outputLabel for="InvoiceDetail_price" styleClass="aon-margin-left aon-margin-right aon-input-required" 
+				value="#{bundle.aon_price}:" />
 			<aon:if test="#{posInvoice.posShift.pos.priceEditable}">
 				<aon:inputText id="InvoiceDetail_price"
 					value="#{detailController.to.salesPrice}"
@@ -63,25 +82,6 @@
 					value="#{detailController.to.discountExpression.discountExpr}" />
 			</aon:if>
 			<aon:outputText styleClass="aon-bold aon-margin-right" value=" %" />
-			<aon:outputLabel for="InvoiceDetail_quantity" styleClass="aon-margin-left aon-margin-right"
-				value="#{bundle.aon_quantity}:" />
-			<aon:commandButton id="PosDetail-minusQuantity" immediate="true"
-				styleClass="aon-medium-commandButton aon-width-30"
-				value="-"
-				actionListener="#{detailController.onMinusQuantity}"
-				reRender="InvoiceDetail_quantity" ajaxSingle="true" />
-			<aon:inputText id="InvoiceDetail_quantity"
-				styleClass="aon-margin-right"
-				value="#{detailController.to.quantity}" 
-				required="true" size="3" maxlength="5"
-				valueChangeListener="#{detailController.onQuantityChanged}"
-				reRender="InvoiceDetail_discount,InvoiceDetail_price" ajaxSingle="true"
-				focus="InvoiceDetail_discount" />
-			<aon:commandButton id="PosDetail-plusQuantity" immediate="true"
-				styleClass="aon-medium-commandButton aon-width-30"
-				value="+"
-				actionListener="#{detailController.onPlusQuantity}"
-				reRender="InvoiceDetail_quantity" ajaxSingle="true" />
 		</aon:div>
 		<aon:commandButton id="PosDetail-itemInfo" immediate="true" 
 			styleClass="aon-medium-commandButton aon-width-60"

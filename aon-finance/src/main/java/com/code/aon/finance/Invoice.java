@@ -402,6 +402,22 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 	}
 
 	@Transient
+	public double getFinanceTotal() throws ManagerBeanException {
+		double financeTotal = 0;
+		try {
+			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), getId());
+			Projection projection = Projection.sum(financeBean.getFieldName(IEntityAlias.FINANCE_AMOUNT));
+    		Object result = financeBean.getUniqueResult(projection, criteria);
+    		financeTotal = (result != null) ? CommonUtil.round(((Double)result).doubleValue()) : 0;
+		} catch (ManagerBeanException e) {
+			LOGGER.error("Error obtaining invoiceDetail list", e);
+		}
+		return financeTotal;
+	}
+
+	@Transient
 	public double getTotalQuantity() {
 		double totalQuantity = 0;
 		try {

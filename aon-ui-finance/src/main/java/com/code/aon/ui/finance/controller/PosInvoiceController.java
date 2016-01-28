@@ -511,7 +511,8 @@ public class PosInvoiceController extends SaleInvoiceController {
 		NumberFormat numberFormat = new DecimalFormat(AonUtil.getMessage(DECIMAL_2_PATTERN));
 		DateFormat dateFormat = new SimpleDateFormat(AonUtil.getMessage(TIMESTAMP_PATTERN));
 		String comments = StringUtils.isNotBlank(invoice.getComments()) ? invoice.getComments() + "\n" : "";
-		invoice.setComments(comments + dateFormat.format(new Date()) + " - " + AonUtil.getMessage(FINANCE_CHARGED) + ": " + numberFormat.format(totalAmount) + "\n");
+		comments = comments + dateFormat.format(new Date()) + " - " + AonUtil.getMessage(FINANCE_CHARGED) + ": " + numberFormat.format(totalAmount) + "\n";
+		invoice.setComments(comments);
 		accept(event);
 		FormUtil.getController(getInvoiceFinanceControllerName()).onSearch(null);
 	}
