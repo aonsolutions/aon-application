@@ -101,9 +101,9 @@ public class Calculo {
 			.setAnhoDesde(anho)
 			.setMesHasta(mes)
 			.setAnhoHasta(anho)
-			.addLiquidacion()
 			.setMesPresentacion(mes)
 			.setAnhoPresentacion(anho)
+			.addLiquidacion()
 			;
 		}
 		SolicitudCalculos solicitud = builder.createSolicitudCalculos();

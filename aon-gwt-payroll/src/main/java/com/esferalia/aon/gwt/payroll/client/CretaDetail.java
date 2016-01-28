@@ -1,6 +1,9 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.client.MainCreta.hasTrabajadoresYTramos;
+import static com.esferalia.aon.gwt.payroll.shared.CretaService.CRETA_URL;
+import static com.esferalia.aon.gwt.payroll.shared.CretaService.File.DOCUMENTO_CALCULO_LIQUIDACION;
+import static com.esferalia.aon.gwt.payroll.shared.CretaService.File.TRABAJADORES_TRAMOS;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +20,8 @@ import com.esferalia.aon.gwt.payroll.client.MainCreta.JsFileComparator;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBasesResult;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsDCLResult;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEvent;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsRespuesta;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsTrabajadoresYTramos;
@@ -64,6 +69,11 @@ public abstract class CretaDetail extends Composite {
 	Button msjRecButton;
 	@UiField
 	MenuItem msjRecMenuItem;
+
+	@UiField
+	Button dclButton;
+	@UiField
+	MenuItem dclMenuItem;
 
 	@UiField
 	Button basesButton;
@@ -209,6 +219,15 @@ public abstract class CretaDetail extends Composite {
 
 	@UiHandler("msjRecButton")
 	void onClickMsjRecButton(ClickEvent e) {
+		fileUpload.setName(TRABAJADORES_TRAMOS.name());
+		formPanel.setAction(CRETA_URL + '/' +TRABAJADORES_TRAMOS.name());
+		fileUpload.click();
+	}
+
+	@UiHandler("dclButton")
+	void onClickLiquidacionButton(ClickEvent e) {
+		fileUpload.setName(DOCUMENTO_CALCULO_LIQUIDACION.name());
+		formPanel.setAction(CRETA_URL + '/' +DOCUMENTO_CALCULO_LIQUIDACION.name());
 		fileUpload.click();
 	}
 
@@ -277,6 +296,13 @@ public abstract class CretaDetail extends Composite {
 
 	}
 
+	public void onDocumentoCalculoLiquidacion(
+			CretaService.JsDCLResult success[],
+			CretaService.JsDCLResult errors[]) {
+		
+		onDCLResults(success, errors);
+
+	}
 	// ------------------------------------------------------------------------
 
 	@Override
@@ -290,6 +316,8 @@ public abstract class CretaDetail extends Composite {
 	protected abstract String getDescription(String ccc);
 
 	protected abstract <T extends JsFile> List<T> filter(Collection<T> jsFiles);
+
+	protected abstract void onDCLResults(JsEvent success [], JsEvent errors []);
 
 	protected void onJsFileClick(final String key, final int x, final int y) {
 		// NOOP
@@ -360,6 +388,10 @@ public abstract class CretaDetail extends Composite {
 		$wnd.__onTrabajadoresYTramos = $entry(function(trabajadoresYTramos,
 				respuestas) {
 			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onTrabajadoresYTramos([Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsTrabajadoresYTramos;[Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsRespuesta;)(trabajadoresYTramos, respuestas);
+		});
+		$wnd.__onDocumentoCalculoLiquidacion = $entry(function(success,
+				errors) {
+			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onDocumentoCalculoLiquidacion([Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsDCLResult;[Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsDCLResult;)(success, errors);
 		});
 	}-*/;
 

@@ -32,6 +32,7 @@
 					<g:MenuItem text="SLD-Cret@" enabled="false">
 						<g:MenuBar vertical="true">
 							<g:MenuItem styleName="aon-icon-segsocial-small aon-icon-commandButton" ui:field="msjRecMenuItem"  text="Mensajes Recibidos" />
+							<g:MenuItem styleName="aon-icon-segsocial-small aon-icon-commandButton" ui:field="dclMenuItem"  text="{DOCUMENTO_CALCULO_LIQUIDACION.getFilename}" />
 							<g:MenuItem styleName="aon-icon-segsocial-small aon-icon-commandButton" ui:field="basesMenuItem"  text="{BASES.getFilename}" enabled="false"/>
 							<g:MenuItem styleName="aon-icon-segsocial-small aon-icon-commandButton" ui:field="trabajadoresYTramosMenuItem"  text="{SOLICITUD_TRABAJADORES_TRAMOS.getFilename}" enabled="false"/>
 							<g:MenuItem styleName="aon-icon-segsocial-small aon-icon-commandButton" ui:field="borradorMenuItem"  text="{SOLICITUD_BORRADOR.getFilename}" enabled="false"/>
@@ -44,12 +45,13 @@
 					<g:HorizontalPanel >
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal" >
-								<g:Label styleName="aon-outputText" >SLD (Proyecto Cret@)</g:Label>
+								<g:Label styleName="aon-outputText" >SLD</g:Label>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
 								<g:Button ui:field='msjRecButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="Mensajes Recibidos" /> 
+								<g:Button ui:field='dclButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="{DOCUMENTO_CALCULO_LIQUIDACION.getFilename}" /> 
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
@@ -93,7 +95,6 @@
 					<g:FileUpload visible="false"  name="{TRABAJADORES_TRAMOS.name}" ui:field="fileUpload" />
 				</g:FormPanel>
 				
-
 			</g:FlowPanel>
 
 		</g:north>

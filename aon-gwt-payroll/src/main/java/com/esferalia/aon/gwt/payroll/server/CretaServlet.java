@@ -15,8 +15,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,7 +36,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.occam.api.AON;
@@ -47,15 +47,17 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.tgss.creta.Bases;
 import com.esferalia.aon.payroll.tgss.creta.Bases.BasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.EmptyBasesException;
+import com.esferalia.aon.payroll.tgss.creta.DCL.LineaSalary;
 import com.esferalia.aon.payroll.tgss.creta.Borrador;
 import com.esferalia.aon.payroll.tgss.creta.Calculo;
 import com.esferalia.aon.payroll.tgss.creta.Confirmacion;
 import com.esferalia.aon.payroll.tgss.creta.DBA;
+import com.esferalia.aon.payroll.tgss.creta.DCL;
 import com.esferalia.aon.payroll.tgss.creta.IndentXMLStreamWriter;
 import com.esferalia.aon.payroll.tgss.creta.TrabajadoresTramos;
 import com.esferalia.aon.salary.expression.Period;
@@ -71,6 +73,7 @@ import net.aonsolutions.tgss.creta.jaxb.Tramo;
 import net.aonsolutions.tgss.creta.jaxb.Utils;
 import net.aonsolutions.tgss.creta.jaxb.bases.LiquidacionBuilder;
 import net.aonsolutions.tgss.creta.jaxb.bases.TramoBuilder;
+import net.aonsolutions.tgss.creta.jaxb.dcl.LineaDCL;
 
 @MultipartConfig
 @SuppressWarnings("serial")
@@ -114,13 +117,6 @@ public class CretaServlet extends HttpServlet
 		resp.setContentType("text/html;");
 
 		String nafs[] = req.getParameterValues(CretaService.Parameter.NAFS.name());
-		// String defaults[] = req
-		// .getParameterValues(CretaService.Parameter.DEFAULTS.name());
-		// boolean comments = AonStringUtils.equalsIgnoreCase(
-		// Boolean.toString(true), CretaService.Parameter.COMMENTS.name());
-		// boolean acceptPrevBases = AonStringUtils.equalsIgnoreCase("on",
-		// req.getParameter(CretaService.Parameter.ACEPTAR_BASES_ANTERIORES
-		// .name()));
 
 		List<String> defaultsList = new ArrayList<String>();
 		defaultsList.addAll(Arrays.asList("51=M", "737=0"));
@@ -312,6 +308,38 @@ public class CretaServlet extends HttpServlet
 		DBA.generate(autorizado, cccs, tipoMoviento, tipoAccion, iban, titular, documento, tipoDocumento,
 				resp.getOutputStream());
 		// @formatter:on
+	}
+	
+	
+	@Override
+	public void visitDocumentoCalculoLiquidacion(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+		PrintWriter os = resp.getWriter();
+		
+		
+
+		os.println("<html>");
+		os.println("<body>");
+		os.println("<script>");
+		
+		
+		//@formatter:off
+		__onDocumentoCalculoLiquidacion(
+					getConnection(), 
+					os, 
+					req.getParts().stream()
+					.map(part -> unmarshall(net.aonsolutions.tgss.creta.jaxb.dcl.DCL.class, part))
+					.filter(optional -> optional.isPresent())
+					.map(optional -> optional.get())
+		);
+		//@formatter:on
+		
+		os.println("</script>");
+		os.println("</body>");
+		os.println("</html>");
+
+		os.flush();
+		os.close();
+		
 	}
 
 	// ------------------------------------------------------------------------
@@ -919,5 +947,79 @@ public class CretaServlet extends HttpServlet
 			os.println(");");
 		
 	}
+	
+	private static void __onDocumentoCalculoLiquidacion(Connection connection, PrintWriter os, 
+			Stream<net.aonsolutions.tgss.creta.jaxb.dcl.DCL> dlcs) {
+		
+			
+			
+			List<Pair<LineaDCL, LineaSalary>> errors = new LinkedList<Pair<LineaDCL, LineaSalary>>();  
+			List<Pair<LineaDCL, LineaSalary>> success = new LinkedList<Pair<LineaDCL, LineaSalary>>();  
+			
+			// @formatter:off
+			dlcs
+			.forEach(dcl -> DCL.check(connection, dcl,  ( lineaDCL, lineaSalary )-> (DCL.checkEquals(lineaDCL, lineaSalary ) ? success: errors).add(new Pair<LineaDCL, LineaSalary>(lineaDCL, lineaSalary))));
+			// @formatter:on
+
+			
+			
+			
+			os.println("parent.__onDocumentoCalculoLiquidacion(");
+			os.println(
+			// @formatter:off
+						success.stream()
+						.map(pair -> String.format(
+								"{"
+								+ "\"description\":\"%s\""
+								+ ",\"sldBase\":%s"
+								+ ",\"sldImporte\":%s"
+								+ ",\"aonBase\":%d"
+								+ ",\"aonImporte\":%d"
+								+ ",\"message\":\"%s: Con base %.2f e importe %.2f correcto.\""
+								+ "}\r\n", 
+								pair.fst.getDescripcionLDCL()
+								, pair.fst.getBaseLDCL()
+								, pair.fst.getImporteLDCL()
+								, pair.snd.getBase()
+								, pair.snd.getImporte()
+								
+								,pair.fst.getDescripcionLDCL()
+								, pair.snd.getBase()/100.00
+								, pair.snd.getImporte()/100.00
+								))
+						.collect(Collectors.joining(",", "[", "]"))
+			// @formatter:on
+			);
+			os.println(",");
+			os.println(
+			// @formatter:off
+						errors.stream()
+						.map(pair -> String.format(
+								"{"
+								+ "\"description\":\"%s\""
+								+ ",\"sldBase\":%s"
+								+ ",\"sldImporte\":%s"
+								+ ",\"aonBase\":%d"
+								+ ",\"aonImporte\":%d"
+								+ ",\"message\":\"%s : %s %s\""
+								+ "}\r\n", 
+								pair.fst.getDescripcionLDCL()
+								, pair.fst.getBaseLDCL()
+								, pair.fst.getImporteLDCL()
+								, pair.snd.getBase()
+								, pair.snd.getImporte()
+
+								,pair.fst.getDescripcionLDCL()
+								, pair.snd.getBase() != (long) Long.parseLong(pair.fst.getBaseLDCL()) ? String.format("Base incorrecta se esperaba %.2f y es %.2f.", pair.snd.getBase()/100.00, (long) Long.parseLong(pair.fst.getBaseLDCL())/100.00  ) : ""
+								, pair.snd.getImporte() != (long) Long.parseLong(pair.fst.getImporteLDCL()) ? String.format("Importe incorrecto se esperaba %.2f y es %.2f.", pair.snd.getImporte()/100.00, (long) Long.parseLong(pair.fst.getImporteLDCL())/100.00  ) : ""
+								
+								))
+						.collect(Collectors.joining(",", "[", "]"))
+			// @formatter:on
+			);
+			os.println(");");
+		
+	}
+	
 	
 }

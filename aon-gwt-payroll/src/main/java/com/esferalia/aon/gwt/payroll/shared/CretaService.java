@@ -128,6 +128,19 @@ public interface CretaService {
 				visitor.visitComunicacionDatosBancarios(t, l);
 				
 			}
+		},
+		DOCUMENTO_CALCULO_LIQUIDACION{
+			@Override
+			public String getFilename() {
+				return "SLD-Documento C\u00E1lculo Liquidaci\u00F3n";
+			}
+			
+			@Override
+			public <T, L, E extends Throwable> void accept(
+					Visitor<T, L, E> visitor, T t, L l) throws E {
+				visitor.visitDocumentoCalculoLiquidacion(t, l);
+				
+			}
 		}
 		;
 
@@ -147,6 +160,8 @@ public interface CretaService {
 			void visitSolicitudTrabajadoresTramos(T t, L l) throws E;
 
 			void visitComunicacionDatosBancarios(T t, L l) throws E;
+			
+			void visitDocumentoCalculoLiquidacion(T t, L l ) throws E; 
 		}
 
 		abstract public String getFilename();
@@ -356,6 +371,35 @@ public interface CretaService {
 		}-*/;
 	}
 
+	public static class JsDCLResult extends JsEvent {
+		
+		protected JsDCLResult() {
+		}
+
+		// ----------------------------------- JSNI (Native JavaScript Methods)
+
+		public final native String getDescription() /*-{
+			return this.description;
+		}-*/;
+
+		public final native Long getSLDBase() /*-{
+			return this.sldBase;
+		}-*/;
+	
+		public final native Long getSLDImporte() /*-{
+			return this.sldImporte;
+		}-*/;
+
+		public final native Long getAONBase() /*-{
+			return this.aonBase;
+		}-*/;
+		
+		public final native Long getAONImporte() /*-{
+			return this.aonImporte;
+		}-*/;
+		
+	}
+	
 	public static final String CRETA_URL = URL
 			.encode(GWT.getModuleBaseURL() + "sdl");
 

@@ -806,6 +806,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 						throws RuntimeException {
 					// TODO Auto-generated method stub
 				}
+				
+				@Override
+				public void visitDocumentoCalculoLiquidacion(Void t, Void l) throws RuntimeException {
+					// TODO Auto-generated method stub
+					
+				}
 
 			}, null, null);
 
@@ -1091,7 +1097,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		CalcWorkplaceCommand calcCmd;
 		PasteEmployeeCommand pasteCmd;
 
-		WorkplaceCommand workplaceCmds[] = new WorkplaceCommand[5];
+		WorkplaceCommand workplaceCmds[] = new WorkplaceCommand[6];
 		WorkplaceCreateResponseCommand cretaResponseCmds[] = new WorkplaceCreateResponseCommand[1];
 
 		public WorkplaceContextMenu() {
@@ -1144,9 +1150,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 							CretaService.File.SOLICITUD_CONFIRMACION,
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Solicitud de C\u00FE1alculos",
+					workplaceCmds[4] = new WorkplaceCreateRequestCommand(
+							CretaService.File.SOLICITUD_CALCULOS,
+							employeeDetail, fileEditor),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			
 			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios",
-					workplaceCmds[4] = new WorkplaceDBACommand(
+					workplaceCmds[5] = new WorkplaceDBACommand(
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			
@@ -1173,7 +1184,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	class EnterpriseContextMenu extends ContextMenu {
 
 		CalcEnterpriseCommand calcCmd;
-		EnterpriseCommand enterpriseCommands[] = new EnterpriseCommand[4];
+		EnterpriseCommand enterpriseCommands[] = new EnterpriseCommand[5];
 
 		public EnterpriseContextMenu() {
 
@@ -1217,8 +1228,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 							CretaService.File.SOLICITUD_CONFIRMACION,
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Solicitud de C\u00E1lculos",
+					enterpriseCommands[3] = new EnterpriseCretaRequestCommand(
+							CretaService.File.SOLICITUD_CALCULOS,
+							employeeDetail, fileEditor),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios",
-					enterpriseCommands[3] = new EnterpriseDBACommand(
+					enterpriseCommands[4] = new EnterpriseDBACommand(
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 		}

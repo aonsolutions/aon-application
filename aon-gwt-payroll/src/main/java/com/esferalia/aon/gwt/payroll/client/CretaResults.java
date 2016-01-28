@@ -98,26 +98,33 @@ public class CretaResults extends Composite implements RequiresResize{
 	private TreeItem errorsItem;
 	private TreeItem warningsItem;
 	
+	private TreeItem messagesItem;
+
 	private Set<JsFile> jsFiles;
 
 	public CretaResults() {
 		
 		images = GWT.create(Images.class);
-//		data = new HashMap<String,String>();
 
 		initWidget(binder.createAndBindUi(this));
 
-		// errors
 		errorsItem = new TreeItem(imageItemHTML(images._error(), "ERRORES"));
 		eventsTree.addItem(errorsItem);
 
 		warningsItem = new TreeItem(imageItemHTML(images.warn(), "AVISOS"));
 		eventsTree.addItem(warningsItem);
 
+		messagesItem = new TreeItem(imageItemHTML(images.info(), "MENSAJES"));
+		eventsTree.addItem(messagesItem);
+		
+
 		eventsTree.addSelectionHandler(new EventsSelectionHandler());
 		eventsTree.addDomHandler(new EventsContextMenuHandler(),
 				ContextMenuEvent.getType());
-
+		
+		errorsItem.setVisible(false);
+		warningsItem.setVisible(false);
+		messagesItem.setVisible(false);
 	}
 	
 	public void setJsFiles(Set<JsFile> jsFiles) {
@@ -138,6 +145,14 @@ public class CretaResults extends Composite implements RequiresResize{
 		syncWarnings();
 	}
 
+	public void addMessages(CretaService.JsEvent infos[]) {
+		for (CretaService.JsEvent info : infos) {
+			addInfo(info);
+		}
+
+		syncMessages();
+	}
+
 	public void addUnknown(CretaService.JsUnknownDato unknowns[]) {
 
 		for (CretaService.JsUnknownDato unknown : unknowns) {
@@ -150,6 +165,7 @@ public class CretaResults extends Composite implements RequiresResize{
 
 		syncErrors();
 		syncWarnings();
+		syncMessages();
 	}
 
 	// ------------------------------------------------------------ @UiHandlers
@@ -224,6 +240,13 @@ public class CretaResults extends Composite implements RequiresResize{
 		warningsItem.setState(warningsItem.getChildCount() > 0);
 	}
 
+	private void syncMessages() {
+		messagesItem.setHTML(imageItemHTML(images.info(),
+				"AVISOS (" + messagesItem.getChildCount() + ")"));
+		messagesItem.setVisible(messagesItem.getChildCount() > 0);
+		messagesItem.setState(messagesItem.getChildCount() > 0);
+	}
+
 	private TreeItem addError(CretaService.JsEvent error) {
 		TreeItem treeItem = new TreeItem(
 				imageItemHTML(images._error(), error.getMessage()));
@@ -240,6 +263,15 @@ public class CretaResults extends Composite implements RequiresResize{
 		return treeItem;
 	}
 	
+	private TreeItem addInfo(CretaService.JsEvent info) {
+		TreeItem treeItem = new TreeItem(
+				imageItemHTML(images.info(), info.getMessage()));
+
+		messagesItem.addItem(treeItem);
+		treeItem.setUserObject(info);
+		return treeItem;
+	}
+
 	private void addDefault(JsUnknownDato unknownDato, String value){
 		Collection<String> defaults =  DATA.get(CretaService.Parameter.DEFAULTS.name());
 		if ( defaults == null )
@@ -252,6 +284,7 @@ public class CretaResults extends Composite implements RequiresResize{
 		errorsItem.setState(true);
 		warningsItem.setState(true);
 	}
+
 
 	private void collapseAll() {
 		errorsItem.setState(false);

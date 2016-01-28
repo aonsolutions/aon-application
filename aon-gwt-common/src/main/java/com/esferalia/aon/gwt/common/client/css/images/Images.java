@@ -26,6 +26,9 @@ public interface Images extends ClientBundle, Tree.Resources {
 
 	ImageResource _error();
 
+	@Source("aon-icon-info.png")
+	ImageResource info();
+
 	ImageResource person();
 
 	ImageResource family();

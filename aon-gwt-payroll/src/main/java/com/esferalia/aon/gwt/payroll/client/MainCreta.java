@@ -30,6 +30,7 @@ import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBasesResult;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEmployee;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsError;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEvent;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsRespuesta;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.Parameter;
@@ -395,12 +396,29 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			cretaResults.addErrors(result.getErrors());
 			cretaResults.addWarnings(result.getWarnings());
 			cretaResults.addUnknown(result.getUnknown());
+			cretaResults.addMessages(new JsEvent[]{});
 			resultsPanel.setWidget(cretaResults);
 
 			if (result.getErrors().length > 0 || result.getWarnings().length > 0)
 				showResultsPanel();
 
 			mergeEditor.autoRefresh();
+		}
+		
+		@Override
+		protected void onDCLResults(JsEvent[] msgs, JsEvent[] errors) {
+			CretaResults cretaResults = new CretaResults() {
+				@Override
+				protected void onBases(JsBasesResult result) {
+					// TODO ???
+				}
+			};
+			cretaResults.addErrors(errors);
+			cretaResults.addMessages(msgs);
+			resultsPanel.setWidget(cretaResults);
+
+			if (errors.length > 0 || msgs.length > 0 )
+				showResultsPanel();
 		}
 
 		@Override
@@ -509,7 +527,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	private class EnterpriseContextMenu extends ContextMenu {
 
-		EnterpriseCommand enterpriseCommands[] = new EnterpriseCommand[4];
+		EnterpriseCommand enterpriseCommands[] = new EnterpriseCommand[5];
 
 		public EnterpriseContextMenu() {
 
@@ -523,8 +541,12 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					enterpriseCommands[2] = new MainEnterpriseCretaRequestCommand(
 							CretaService.File.SOLICITUD_CONFIRMACION),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Solicitud de C\u00E1lculos",
+					enterpriseCommands[3] = new MainEnterpriseCretaRequestCommand(
+							CretaService.File.SOLICITUD_CALCULOS),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios",
-					enterpriseCommands[3] = new MainEnterpriseDBACommand(), AON.AON_ICON_SEGSOCIAL_SMALL,
+					enterpriseCommands[4] = new MainEnterpriseDBACommand(), AON.AON_ICON_SEGSOCIAL_SMALL,
 					AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME, AON.AON_ICON_CMD_BUTTON);
@@ -595,7 +617,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	private class ActivityContextMenu extends ContextMenu {
 
-		ActivityCommand activityCommands[] = new ActivityCommand[5];
+		ActivityCommand activityCommands[] = new ActivityCommand[6];
 
 		public ActivityContextMenu() {
 
@@ -612,8 +634,12 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n",
 					activityCommands[3] = new MainActivityCretaRequestCommand(CretaService.File.SOLICITUD_CONFIRMACION),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Solicitud de C\u00E1lculos",
+					activityCommands[4] = new MainActivityCretaRequestCommand(
+							CretaService.File.SOLICITUD_CALCULOS),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios",
-					activityCommands[4] = new MainActivityDBACommand(), AON.AON_ICON_SEGSOCIAL_SMALL,
+					activityCommands[5] = new MainActivityDBACommand(), AON.AON_ICON_SEGSOCIAL_SMALL,
 					AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME, AON.AON_ICON_CMD_BUTTON);
@@ -770,7 +796,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	private class CCCContextMenu extends ContextMenu {
 
-		CCCCommand cccCommands[] = new CCCCommand[5];
+		CCCCommand cccCommands[] = new CCCCommand[6];
 
 		public CCCContextMenu() {
 
@@ -786,7 +812,10 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n",
 					cccCommands[3] = new MainCCCCretaRequestCommand(CretaService.File.SOLICITUD_CONFIRMACION),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios", cccCommands[4] = new MainCCCDBACommand(),
+			addItem("SLD-Fichero de Solicitud de C\u00E1lculos",
+					cccCommands[4] = new MainCCCCretaRequestCommand(CretaService.File.SOLICITUD_CALCULOS),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios", cccCommands[5] = new MainCCCDBACommand(),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME, AON.AON_ICON_CMD_BUTTON);
@@ -930,7 +959,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	private class EnterprisesContextMenu extends ContextMenu {
 
-		EnterprisesCommand cretaRequestCommands[] = new EnterprisesCommand[5];
+		EnterprisesCommand cretaRequestCommands[] = new EnterprisesCommand[6];
 
 		public EnterprisesContextMenu() {
 
@@ -949,8 +978,12 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					cretaRequestCommands[3] = new EnterprisesCretaRequestCommand(
 							CretaService.File.SOLICITUD_CONFIRMACION),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Solicitud de C\u00E1lculos",
+					cretaRequestCommands[4] = new EnterprisesCretaRequestCommand(
+							CretaService.File.SOLICITUD_CALCULOS),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios",
-					cretaRequestCommands[4] = new EnterprisesDBACommand(), AON.AON_ICON_SEGSOCIAL_SMALL,
+					cretaRequestCommands[5] = new EnterprisesDBACommand(), AON.AON_ICON_SEGSOCIAL_SMALL,
 					AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME, AON.AON_ICON_CMD_BUTTON);

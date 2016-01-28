@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Calendar;
 import java.util.UUID;
 
 import javax.xml.bind.JAXBContext;
@@ -101,5 +102,35 @@ public class Utils {
 	public static String createReferenciaExterna() {
 		return UUID.randomUUID().toString().substring(0, 8);
 	}
+
+	public static Calendar toCalendar(Periodo periodo) {
+		return Utils.toCalendar(periodo.getAnho(), periodo.getMes());
+	}
+
+	public static Calendar toCalendar(String anho, String mes) {
+		int month = Integer.parseInt(mes) - 1;
+		int year = Integer.parseInt(anho);
+	
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, month);
+	
+		// Reset time
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+	
+		return calendar;
+	}
+
+	public static String toString(CtaCot ctaCot) {
+		return String.format("%s%s%s", ctaCot.getProvincia(),
+				ctaCot.getRegimen(), ctaCot.getNumero());
+	
+	}
+	
+	
+	
 
 }

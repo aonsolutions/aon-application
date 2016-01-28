@@ -1325,7 +1325,7 @@ public class Bases {
 		String ccc = String.format("%s%s", ctaCot.getProvincia(),
 				ctaCot.getNumero());
 
-		Calendar calendar = toCalendar(mesLiquidativo);
+		Calendar calendar = Utils.toCalendar(mesLiquidativo);
 		calendar.set(Calendar.DAY_OF_MONTH,
 				calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
 		Date startDate = calendar.getTime();
@@ -1870,12 +1870,6 @@ public class Bases {
 		throw new SkipExisting();
 	}
 
-	private static String toString(CtaCot ctaCot) {
-		return String.format("%s%s%s", ctaCot.getProvincia(),
-				ctaCot.getRegimen(), ctaCot.getNumero());
-
-	}
-
 	private static String toString(
 			net.aonsolutions.tgss.creta.jaxb.bases.CtaCot ctaCot) {
 		return String.format("%s%s%s", ctaCot.getProvincia(),
@@ -1942,26 +1936,6 @@ public class Bases {
 				.create();
 	}
 
-	public static Calendar toCalendar(Periodo periodo) {
-		return toCalendar(periodo.getAnho(), periodo.getMes());
-	}
-
-	public static Calendar toCalendar(String anho, String mes) {
-		int month = Integer.parseInt(mes) - 1;
-		int year = Integer.parseInt(anho);
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.YEAR, year);
-		calendar.set(Calendar.MONTH, month);
-
-		// Reset time
-		calendar.set(Calendar.HOUR_OF_DAY, 0);
-		calendar.set(Calendar.MINUTE, 0);
-		calendar.set(Calendar.SECOND, 0);
-		calendar.set(Calendar.MILLISECOND, 0);
-
-		return calendar;
-	}
 
 	public static Date toDate(Fecha fecha) {
 		return toCalendar(fecha).getTime();
@@ -2245,7 +2219,7 @@ public class Bases {
 						.unmarshal(
 								net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
 								trabajadoresTramosIs);
-				String ccc = toString(
+				String ccc = Utils.toString(
 						trabajadoresTramos.getLiquidacion().getCcc());
 				net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion = liquidaciones
 						.get(ccc);

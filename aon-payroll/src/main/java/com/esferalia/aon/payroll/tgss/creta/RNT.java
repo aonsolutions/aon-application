@@ -1,20 +1,15 @@
 package com.esferalia.aon.payroll.tgss.creta;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Date;
+import java.util.stream.Stream;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
-
-import net.aonsolutions.tgss.creta.jaxb.Utils;
-import net.aonsolutions.tgss.creta.jaxb.rnt.Liquidacion;
-import net.aonsolutions.tgss.creta.jaxb.rnt.RelacionNominalTrabajadores;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -25,15 +20,43 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.occam.api.model.Salary;
+
+import net.aonsolutions.tgss.creta.jaxb.Utils;
+import net.aonsolutions.tgss.creta.jaxb.rnt.Liquidacion;
+import net.aonsolutions.tgss.creta.jaxb.rnt.RelacionNominalTrabajadores;
 
 public class RNT {
 	
-	private static void liquidacion(Liquidacion liquidacion) {
+	
+	public static interface RNTCallback {
+		
 	}
 	
+	public static void check(Connection connection, RelacionNominalTrabajadores rnt, RNTCallback ...cbs) {
+		AONContext ctx = new AONContext(connection);
+		
+		Liquidacion liquidacion = rnt.getLiquidacion();
+		
+		String ccc = Utils.toString(liquidacion.getCcc());
 
+		Date startDate = Utils.toCalendar(liquidacion.getPeriodoDesde()).getTime();
+		Date endDate = Utils.toCalendar(liquidacion.getPeriodoHasta()).getTime();
+		
+		Stream<Salary> salaries = AON.getSalaryData(ctx, 
+				props->props.getCCCProperty().eq(ccc)
+					.and(props.getStartDateProperty().ge(startDate))
+					.and(props.getEndDateProperty().le(endDate))
+		);
+		
+		
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	
 	// ------------------------------------------------------------------------
 	
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, JAXBException, IOException {
@@ -73,8 +96,6 @@ public class RNT {
 					.getOptionValue(user.getLongOpt()), cmd
 					.getOptionValue(password.getLongOpt()));
 
-			AONContext ctx = new AONContext(connection);
-
 			InputStream is = cmd.hasOption(rntFile.getLongOpt()) ? 
 					System.in
 					: new FileInputStream(cmd.getOptionValue(rntFile.getLongOpt()));
@@ -83,7 +104,7 @@ public class RNT {
 			RelacionNominalTrabajadores rnt = 
 					Utils.unmarshal(RelacionNominalTrabajadores.class, is);
 			
-			rnt.getLiquidacion();
+			check(connection, rnt);
 			
 			is.close();
 
