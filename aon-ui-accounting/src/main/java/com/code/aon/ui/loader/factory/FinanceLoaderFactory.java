@@ -133,7 +133,7 @@ public class FinanceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			}
 		} else {
 			String cuenta = loaded.getCuenta();
-			if (StringUtils.startsWith(cuenta, "400")) {
+			if (StringUtils.startsWith(cuenta, "430")) {
 				LoadedCustomer loadedCustomer = loaded.getLoadedCustomer();
 				Customer customer = (Customer) engine.ensureAonEntity(params, loadedCustomer);
 				registry = customer.getRegistry();
@@ -143,13 +143,13 @@ public class FinanceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 				Creditor creditor = (Creditor) engine.ensureAonEntity(params, loadedCreditor);
 				registry = creditor.getRegistry();
 			}
-			if (StringUtils.startsWith(cuenta, "430")) {
+			if (StringUtils.startsWith(cuenta, "400")) {
 				LoadedSupplier loadedSupplier = loaded.getLoadedSupplier();
 				Supplier supplier = (Supplier) engine.ensureAonEntity(params, loadedSupplier);
 				registry = supplier.getRegistry();
 			}
 			if (registry == null) {
-				throw new ManagerBeanException("Registry es nulo!");
+				throw new ManagerBeanException("No se ha encontrado cliente/proveedor/acreedor para este vto. Registry es nulo!");
 			}
 		}
 		finance.setDueDate(loaded.getFechaVto());
