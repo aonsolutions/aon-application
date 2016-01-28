@@ -2,6 +2,7 @@ package com.code.aon.ui.company.event;
 
 import static com.code.aon.common.enumeration.AppParam.APP_FPAYMENT_TEMPLATE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_ITEM_TAG_TEMPLATE_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_MANUFACT_TEMPLATE_TAG_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_ADDRESS_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_HEADER_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_INTERNET_DATA_PARAM;
@@ -29,6 +30,7 @@ import com.code.aon.company.enumeration.FinancePaymentTemplate;
 import com.code.aon.company.enumeration.ItemTagTemplate;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SaleInvoiceTemplate;
+import com.code.aon.config.Tag;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyController;
@@ -63,6 +65,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 			companyController.setItemTagTemplate(companyController.obtainItemTagTemplate());
 			companyController.setItemTagDefaultText(companyController.obtainItemTagDefaultText());
 			companyController.setItemTagBarcodePattern(companyController.obtainItemTagBarcodePattern());
+			companyController.setManufacturingOrderTemplateTag(companyController.obtainManufacturingOrderTemplateTag());
 			companyController.searchCustomReportTemplate();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
@@ -140,6 +143,10 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 				AonUtil.addErrorMessage("Invalid barcode pattern!");
 			}
 		}
+		
+		// Manufacturing Order
+		updateParam(APP_MANUFACT_TEMPLATE_TAG_PARAM, companyController.getManufacturingOrderTemplateTag());
+		
 	}
 	
 	private boolean checkItemTagBarcodePattern(String itemTagBarcodePattern) {
@@ -172,6 +179,10 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 	
 	private void updateParam(AppParam appParam, ItemTagTemplate value) throws ManagerBeanException {
 		AppParamUtil.insertParameter(appParam, (value != null) ? value.getValue() : null);
+	}
+	
+	private void updateParam(AppParam appParam, Tag value) throws ManagerBeanException {
+		AppParamUtil.insertParameter(appParam, (value != null) ? value.getId() : null);
 	}
 	
 	private void updateParam(AppParam appParam, String value) throws ManagerBeanException {

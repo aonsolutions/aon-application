@@ -1,9 +1,10 @@
 package com.code.aon.ui.company.controller;
 
 import static com.code.aon.common.enumeration.AppParam.APP_FPAYMENT_TEMPLATE_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_ITEM_TAG_BARCODE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_ITEM_TAG_TEMPLATE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_ITEM_TAG_TEXT_PARAM;
-import static com.code.aon.common.enumeration.AppParam.APP_ITEM_TAG_BARCODE_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_MANUFACT_TEMPLATE_TAG_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_ADDRESS_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_DISCOUNT_PRICE_APPLIED;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_HEADER_PARAM;
@@ -40,6 +41,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +60,7 @@ import com.code.aon.company.enumeration.SaleInvoiceTemplate;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Domain;
 import com.code.aon.config.Scope;
+import com.code.aon.config.Tag;
 import com.code.aon.config.UserScope;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.util.AppParamUtil;
@@ -162,6 +165,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	private String itemTagDefaultText;
 	
 	private String itemTagBarcodePattern;
+	
+	private Tag manufacturingOrderTemplateTag;
 	
 	private boolean smartCard;
 	
@@ -903,6 +908,14 @@ public class CompanyParentController extends BasicController implements ICompany
 		this.itemTagBarcodePattern = itemTagBarcodePattern;
 	}
 
+	public Tag getManufacturingOrderTemplateTag() {
+		return manufacturingOrderTemplateTag;
+	}
+
+	public void setManufacturingOrderTemplateTag(Tag manufacturingOrderTemplateTag) {
+		this.manufacturingOrderTemplateTag = manufacturingOrderTemplateTag;
+	}
+
 	public boolean isSmartCard() {
 		return smartCard;
 	}
@@ -966,6 +979,14 @@ public class CompanyParentController extends BasicController implements ICompany
 	public String obtainItemTagBarcodePattern() throws ManagerBeanException {
 		String value = AppParamUtil.getValue(APP_ITEM_TAG_BARCODE_PARAM);
 		return value;
+	}
+	
+	public Tag obtainManufacturingOrderTemplateTag() throws ManagerBeanException {
+		String value = AppParamUtil.getValue(APP_MANUFACT_TEMPLATE_TAG_PARAM);
+		if(NumberUtils.isNumber(value)){
+			return (Tag) BeanManager.getManagerBean(Tag.class).get(Integer.parseInt(value));
+		}
+		return null;
 	}
 	
 	public boolean obtainPrintLogo() throws ManagerBeanException {

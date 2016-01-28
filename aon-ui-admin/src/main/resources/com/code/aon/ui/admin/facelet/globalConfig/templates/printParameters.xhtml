@@ -172,6 +172,23 @@
 				</aon:panel>
 			</aon:if>
 			
+			<aon:if test="#{actionDenied.moduleEnabled['warehouse']}">
+				<aon:panel>
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.warehouse_manufacturing_order}" />
+					</f:facet>
+					<aon:panelGrid id="manufacture-panel" columns="2" style="width:350px">
+						<aon:outputLabel for="Manufacture_print_tag"
+							value="#{bundle.company_manufacturingOrder_print_template_tag}" />
+						<aon:selectOneMenu id="Manufacture_print_tag"
+							value="#{company.manufacturingOrderTemplateTag}" >
+							<f:selectItem itemLabel="-" itemValue="#{null}" />
+							<f:selectItems value="#{configCollections.productTypeTags}" />
+						</aon:selectOneMenu>
+					</aon:panelGrid>
+				</aon:panel>
+			</aon:if>
+			
 		</aon:div>
 	</aon:form>
 

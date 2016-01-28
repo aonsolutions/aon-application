@@ -6,6 +6,7 @@ import com.code.aon.company.enumeration.ItemTagTemplate;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SaleInvoiceTemplate;
 import com.code.aon.config.Scope;
+import com.code.aon.config.Tag;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
@@ -36,6 +37,9 @@ public interface ICompanyController extends IController {
 	
 	String getItemTagBarcodePattern();
 	void setItemTagBarcodePattern(String iitemTagBarcodePattern);
+	
+	Tag getManufacturingOrderTemplateTag();
+	void setManufacturingOrderTemplateTag(Tag manufacturingOrderTemplateTag);
 	
 	boolean isPrintLogo();
 	void setPrintLogo(boolean printLogo);
@@ -81,6 +85,7 @@ public interface ICompanyController extends IController {
 	ItemTagTemplate obtainItemTagTemplate() throws ManagerBeanException;
 	String obtainItemTagDefaultText() throws ManagerBeanException;
 	String obtainItemTagBarcodePattern() throws ManagerBeanException;
+	Tag obtainManufacturingOrderTemplateTag() throws ManagerBeanException;
 	boolean obtainPrintLogo() throws ManagerBeanException;
 	boolean obtainPrintReferenceCode() throws ManagerBeanException;
 	boolean obtainPrintProject() throws ManagerBeanException;

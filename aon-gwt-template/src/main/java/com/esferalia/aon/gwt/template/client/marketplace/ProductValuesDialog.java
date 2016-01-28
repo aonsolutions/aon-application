@@ -35,14 +35,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ProductValuesDialog extends CustomDialogB {
@@ -114,10 +112,9 @@ public class ProductValuesDialog extends CustomDialogB {
 		templatesGrid.setHTML(2, 0, "Nombre");
 		templatesGrid.setWidget(2, 1, productTemplateList);
 		
-		loadTemplateList();
-		
 		applyGridStyle(templatesGrid);
 		templatesGrid.getCellFormatter().setStyleName(0, 0, "aon-panelGrid-even");
+		templatesGrid.getCellFormatter().addStyleName(0, 0, "aon-bold");
 	}
 
 	private void loadSellerList() {
@@ -151,7 +148,6 @@ public class ProductValuesDialog extends CustomDialogB {
 				for(Attach attach: result){
 					productTemplateList.addItem(attach.getDescription(), attach.getDescription());
 				}
-				loadValuesGrid();
 			}
 			@Override
 			public void onFailure(Throwable caught){
@@ -235,6 +231,7 @@ public class ProductValuesDialog extends CustomDialogB {
 		if(ecommerceProduct!=null){
 			HorizontalPanel panel = new HorizontalPanel();
 			panel.add(new HTML("Valores de producto"));
+			panel.addStyleName("aon-bold");
 			if(ecommerceProductAttach==null){
 				HTML newIcon = new HTML("");
 				newIcon.setSize("20px","20px");
@@ -254,9 +251,7 @@ public class ProductValuesDialog extends CustomDialogB {
 				if(ecommerceProductAttach!=null && ecommerceProductAttach.getId()!=null){
 					isDeprecated=isDeprecated(ecommerce);
 				}
-				if(isDeprecated){
-					ecommerce.setCode(null);
-				} else {
+				if(!isDeprecated){
 					valuesWidgetList.add(obtainEditValueWidget(ecommerce));
 				}
 			}
@@ -283,12 +278,7 @@ public class ProductValuesDialog extends CustomDialogB {
 					isDeprecated=isDeprecated(ecommerce);
 				}
 				if(isDeprecated){
-					ecommerce.setCode(null);
-					int currentRow = valuesGrid.getRowCount();
-					FocusWidget editValueWidget = (FocusWidget) obtainEditValueWidget(ecommerce);
-					editValueWidget.setEnabled(!isDeprecated);
-					
-					addGridRow(currentRow, ecommerce, editValueWidget, false, isDeprecated );
+					addGridRow(valuesGrid.getRowCount(), ecommerce, new HTML(ecommerce.getValue()), false, isDeprecated );
 				}
 			}
 		}
@@ -317,7 +307,7 @@ public class ProductValuesDialog extends CustomDialogB {
 		valuesGrid.setWidget(currentRow, 1, editValueWidget);
 		
 		valuesGrid.getCellFormatter().setStyleName(currentRow, 0, "aon-panelGrid-odd");
-		valuesGrid.getCellFormatter().setWordWrap(currentRow, 0, false);
+		valuesGrid.getCellFormatter().addStyleName(currentRow, 0, "aon-wrap");
 		valuesGrid.getCellFormatter().setStyleName(currentRow, 1, "aon-panelGrid-even");
 	}
 	
@@ -411,8 +401,8 @@ public class ProductValuesDialog extends CustomDialogB {
 				String value = null;
 				if(w instanceof ListBox){
 					value = ((ListBox)w).getSelectedValue();
-				} else if(w instanceof TextBox){
-					value = ((TextBox)w).getValue();
+				} else if(w instanceof CustomTextArea){
+					value = ((CustomTextArea)w).getText();
 				}
 				ecommerce.setValue(value);
 			}
@@ -459,8 +449,8 @@ public class ProductValuesDialog extends CustomDialogB {
 	public class CustomTextArea extends HorizontalPanel {
 		
 		private TextArea textArea;
-		private Button linesChange;
-		private boolean isReduced;
+		private Button extendButton;
+		private boolean extended;
 		
 		public CustomTextArea() {
 			super();
@@ -468,23 +458,31 @@ public class ProductValuesDialog extends CustomDialogB {
 			this.textArea = new TextArea();
 			this.textArea.setStyleName("aon-inputTextarea");
 			
-			this.linesChange = new Button();
+			this.extendButton = new Button();
 			loadLinesChangeButton();
 			
 			this.add(textArea);
-			this.add(linesChange);
+			this.add(extendButton);
 			
 			reduceLines();
 		}
 		
+		public String getText(){
+			return this.textArea.getText();
+		}
+		
+		public void setText(String text){
+			this.textArea.setText(text);
+		}
+		
 		private void loadLinesChangeButton() {
-			linesChange.addClickHandler(new ClickHandler() {
+			extendButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					if(isReduced){
-						extendLines();
-					} else {
+					if(extended){
 						reduceLines();
+					} else {
+						extendLines();
 					}
 				}
 			});
@@ -493,22 +491,19 @@ public class ProductValuesDialog extends CustomDialogB {
 		public void reduceLines() {
 			this.textArea.setVisibleLines(1);
 			this.textArea.setCharacterWidth(30);
-			this.isReduced = true;
-			linesChange.setSize("20px", "20px");
-			linesChange.setStyleName("aon-icon-edit-add");
+			this.extended = false;
+			extendButton.setSize("20px", "20px");
+			extendButton.setStyleName("aon-icon-edit-add");
 		}
 		
 		public void extendLines() {
 			this.textArea.setVisibleLines(4);
 			this.textArea.setCharacterWidth(90);
-			this.isReduced = false;
-			linesChange.setSize("20px", "20px");
-			linesChange.setStyleName("aon-icon-edit-end");
+			this.extended = true;
+			extendButton.setSize("20px", "20px");
+			extendButton.setStyleName("aon-icon-edit-end");
 		}
 		
-		public void setText(String text){
-			this.textArea.setText(text);
-		}
 		
 	}
 	

@@ -1,6 +1,14 @@
 package com.code.aon.ui.purchase.util.print;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import net.sf.jasperreports.engine.JRDefaultScriptlet;
 import net.sf.jasperreports.engine.JRScriptletException;
@@ -12,8 +20,16 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.product.ItemAddInfo;
+import com.code.aon.product.Product;
 import com.code.aon.purchase.PurchaseDetail;
+import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.AttachmentType;
 
 public class PurchaseReportScriptlet extends JRDefaultScriptlet implements Serializable {
 	
@@ -57,6 +73,47 @@ public class PurchaseReportScriptlet extends JRDefaultScriptlet implements Seria
 			LOGGER.error(msg,e);
 		}
 		return null;
+	}
+	
+	public List<EcommerceProduct> getValuesTemplate(Product product) throws JRScriptletException{
+		List<EcommerceProduct> list = new ArrayList<EcommerceProduct>();
+		for(Attach attach: getTemplates(product)){
+			if(attach!=null){
+				try {
+					EcommerceProduct ecommerceProduct = null;
+					ecommerceProduct = readXml(attach.getData());
+					ecommerceProduct.setProduct(new EcommerceProduct.Product());
+					ecommerceProduct.getProduct().setId(product.getId().toString());
+					ecommerceProduct.getProduct().setCode(product.getCode());
+					ecommerceProduct.getProduct().setName(product.getName());
+					list.add(ecommerceProduct);
+				} catch (JAXBException e) {
+					String msg = "No se han podido obtener los valores de la plantilla del producto";
+					LOGGER.error(msg,e);
+				}
+			}
+		}
+		return list;
+	}
+	
+	private List<Attach> getTemplates(Product product){
+		List<Attach> list = AON.getAttachList(
+				AonUtil.getDomainName(),
+				DomainManager.getCurrentDomain(),
+				UserUtils.getInstance().getLoggedUser().getLogin(),
+				filter -> filter.getTypeProperty().eq(AttachmentType.ECOMMERCE_PRODUCT.value())
+//						.and(sellerId != null ? filter.getAttachModuleProperty().eq(id): filter.getAttachModuleProperty().isNotNull()), 
+						.and(filter.getAttachModuleProperty().eq(product.getId())), 
+				AttachType.ITEM);
+		return list;
+	}
+	
+	private EcommerceProduct readXml(byte[] xmlFile) throws JAXBException{
+		JAXBContext ctx = JAXBContext.newInstance(EcommerceProduct.class);
+		Unmarshaller unmarshaller = ctx.createUnmarshaller();
+		InputStream input = new ByteArrayInputStream(xmlFile);
+		EcommerceProduct ecommerceProduct = (EcommerceProduct) unmarshaller.unmarshal(input);
+		return ecommerceProduct;
 	}
 	
 }

@@ -337,6 +337,18 @@ public class ConfigCollectionsController implements Serializable {
 		return list;
 	}
 	
+	public List<SelectItem> getProductTypeTags() throws ManagerBeanException {
+		IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(tagBean.getFieldName(IEntityAlias.TAG_TYPE), TagType.PRODUCT);
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		for (ITransferObject to : tagBean.getList(criteria)) {
+			Tag tag = (Tag) to;
+			list.add( AonUtil.getSelectItem(tag, tag.getName()));
+		}
+		return list;
+	}
+	
 	public List<SelectItem> getWorkgroups() throws ManagerBeanException {
 		List<SelectItem> workgroups = new LinkedList<SelectItem>(); 
 		IManagerBean workGroupBean = BeanManager.getManagerBean(WorkGroup.class); 
