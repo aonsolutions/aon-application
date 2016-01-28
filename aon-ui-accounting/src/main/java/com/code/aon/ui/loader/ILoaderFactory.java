@@ -38,7 +38,9 @@ public interface ILoaderFactory<E extends ILoadedPojo> {
 	
 	String CON = "CON";	// Conceptos automaticos contabilidad
 	
-	String CUO = "CUO";	// Cuotas	
+	String CUO = "CUO";	// Cuotas
+	
+	String ACT = "ACT";	// Actividades de la Empresa
 	
 	public boolean accept( String key);
 	public boolean accept(Class<? extends ILoadedPojo> clazz);

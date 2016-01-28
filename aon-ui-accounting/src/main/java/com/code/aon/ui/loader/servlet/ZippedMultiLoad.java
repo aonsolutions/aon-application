@@ -124,9 +124,9 @@ public class ZippedMultiLoad {
 				String entryName = entry.getName();
 				File file = new File(destinationFolder + File.separator + entryName);
 				if (entry.isDirectory()) {
-					File newDir = new File(file.getAbsolutePath());
-					log.info(MessageFormat.format("Creando carpeta..... {0}",entryName));
+					File newDir = new File(file.getAbsolutePath());					
 					if (!newDir.exists()) {
+						log.info(MessageFormat.format("Creando carpeta..... {0}",newDir.getName()));
 						boolean success = newDir.mkdirs();
 						if (!success) {
 							String msg = MessageFormat.format("Problema al crear la carpeta \'{0}\'",newDir.getAbsolutePath());
@@ -134,7 +134,24 @@ public class ZippedMultiLoad {
 							throw new ManagerBeanException(msg);
 						}
 					}
-				} else {
+				} else {					
+					// Comprobar que ya exista el directorio creado, si no es así, se crea
+					// En el ZIP, no tiene por que venir una entrada por el directorio tambien, 
+					// en ocasiones viene unicamente la entrada por el fichero, donde se incluye 
+					// el nombre del directorio, por lo que al llegar aqui, es posible que el 
+					// directorio no esté creado aún
+					File newDir = new File(file.getParent());
+					if (!newDir.exists()) {
+						log.info(MessageFormat.format("Creando carpeta..... {0}",newDir.getName()));
+						boolean success = newDir.mkdirs();
+						if (!success) {
+							String msg = MessageFormat.format("Problema al crear la carpeta \'{0}\'",newDir.getAbsolutePath());
+							log.error(msg);
+							throw new ManagerBeanException(msg);
+						}
+					}					
+					
+					// Ahora se descomprime el fichero
 					log.info(MessageFormat.format("Descomprimiendo ..... {0}",entryName));
 					out = new FileOutputStream(file);
 					AonIOUtils.copy(zipIn, out);
@@ -395,13 +412,14 @@ public class ZippedMultiLoad {
 				copyCustomizeId(newDomain);
 				log.info("Insertando company ....");
 				addCompany(newDomain);
-				log.info("Guardando historial ....");				
-				saveHistory(newDomain);	// Se guarda el historial y se envian los emails a AON y propietario		
+				log.info("Guardando historial ....");				 
+				saveHistory(newDomain);	 // Se guarda el historial y se envian los emails a AON y propietario		
 			} catch (Throwable e) {
 				throw new AbortProcessingException(e.getMessage(), e);
 			}
 		}
 	}
+	
 	private class AonSQLScriptExt extends AonSQLScript {
 
 		public AonSQLScriptExt(AonSQLFile file, Connection c) {
