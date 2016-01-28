@@ -141,7 +141,7 @@ public class ItemPricesManager implements Serializable {
 					price = CommonUtil.floor(salesPrice / (1 + vatPercent / 100 - retentionPercent / 100), i);
 					if (salesPrice == getSalesPrice(vatPercent, retentionPercent, price)) {
 						break;
-					} else if (i < 4) {
+					} else if (i < maxPrecision && i < 4) {
 						price = CommonUtil.round(price + 5 / Math.pow(10, i+1), i+1);
 						if (salesPrice == getSalesPrice(vatPercent, retentionPercent, price)) {
 							break;

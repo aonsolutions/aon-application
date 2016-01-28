@@ -1,7 +1,14 @@
 package com.code.aon.ui.finance.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.DECIMAL_2_PATTERN;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_CHARGED;
 import static com.code.aon.ui.common.ICommonMessages.POS_ERROR_PRINT_TICKET;
+import static com.code.aon.ui.common.ICommonMessages.TIMESTAMP_PATTERN;
 
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -472,6 +479,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 		}
 
 		double returnChange = financeController.getFinancesCashChange();
+		double totalAmount = 0;
 		Invoice invoice = getInvoice();
 		for (Finance finance : financeController.getFinances()) {
 			finance.setPayment(false);
@@ -488,19 +496,28 @@ public class PosInvoiceController extends SaleInvoiceController {
 			if (finance.getPayMethod().getType() == PayMethodType.CASH_BASIS && returnChange > 0) {
 				finance.setAmount(CommonUtil.round(financeController.getFinancesCashAmount() - returnChange));
 			}
-
-			try {
-				BeanManager.getManagerBean(Finance.class).insert(finance);
-			} catch (ManagerBeanException ex) {
-				String msg = "Error al cobrar la Factura.";
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg);
+			if (finance.getAmount() != 0) {
+				totalAmount = CommonUtil.round(totalAmount + finance.getAmount());
+				try {
+					BeanManager.getManagerBean(Finance.class).insert(finance);
+				} catch (ManagerBeanException ex) {
+					String msg = "Error al cobrar la Factura.";
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				}
 			}
 		}
 
-		getInvoice().setComments("Cobrado: " + new Date() + "\n");
+		NumberFormat numberFormat = new DecimalFormat(AonUtil.getMessage(DECIMAL_2_PATTERN));
+		DateFormat dateFormat = new SimpleDateFormat(AonUtil.getMessage(TIMESTAMP_PATTERN));
+		String comments = StringUtils.isNotBlank(invoice.getComments()) ? invoice.getComments() + "\n" : "";
+		invoice.setComments(comments + dateFormat.format(new Date()) + " - " + AonUtil.getMessage(FINANCE_CHARGED) + ": " + numberFormat.format(totalAmount) + "\n");
 		accept(event);
 		FormUtil.getController(getInvoiceFinanceControllerName()).onSearch(null);
+	}
+
+	public boolean isTicketFinished() {
+		return StringUtils.contains(getInvoice().getComments(), AonUtil.getMessage(FINANCE_CHARGED)) && getPendingAmount() == 0;
 	}
 
 	public List<Invoice> getSuspendedInvoiceList() throws ManagerBeanException {
@@ -694,7 +711,12 @@ public class PosInvoiceController extends SaleInvoiceController {
 				returnDetail.setInvoice(returnInvoice);
 				returnDetail.setLine(++line);
 				returnDetail.setQuantity(CommonUtil.round(returnDetail.getQuantity() * (-1), 3));
-				returnDetail.setTaxableBase(CommonUtil.round(returnDetail.getTaxableBase() * (-1), 4));
+				returnDetail.setTaxableBase(CommonUtil.round(returnDetail.getTaxableBase() * (-1)));
+				returnDetail.fillTaxDataInDetail();
+				returnDetail.setVatQuota(CommonUtil.round(returnDetail.getVatQuota() * (-1)));
+				returnDetail.setSurchargeQuota(CommonUtil.round(returnDetail.getSurchargeQuota() * (-1)));
+				returnDetail.setRetentionQuota(CommonUtil.round(returnDetail.getRetentionQuota() * (-1)));
+				returnDetail.setTaxDataInDetail(true);
 				returnDetail.setUpdateEnabled(line == detailController.getCheckedCount());
 				detailController.getManagerBean().restoreNullSubPOJOs(returnDetail);
 				detailController.getManagerBean().insert(returnDetail);

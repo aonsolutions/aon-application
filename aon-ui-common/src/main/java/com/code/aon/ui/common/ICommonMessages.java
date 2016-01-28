@@ -368,6 +368,7 @@ public interface ICommonMessages {
 	String FINANCE_FBATCH_PAYMENT_RECORD = "finance_fbatch_payment_record";
 	String FINANCE_PAYMENT_NO_DATA = "finance_payment_no_data";
 	String FINANCE_FBATCH_PAYMENT_NO_DATA = "finance_fbatch_payment_no_data";
+	String FINANCE_CHARGED = "finance_charged";
 	String FINANCE_CHARGE_EXPORT = "finance_charge_export";
 	String FINANCE_FBATCH_CHARGE_EXPORT = "finance_fbatch_charge_export";
 	String FINANCE_CHARGE_RECORD = "finance_charge_record";
