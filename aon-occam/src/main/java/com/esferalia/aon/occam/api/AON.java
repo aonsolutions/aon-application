@@ -115,6 +115,7 @@ import com.esferalia.aon.occam.impl.jooq.FiscalImpl;
 import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
 import com.esferalia.aon.occam.impl.jooq.MarketplaceImpl;
 import com.esferalia.aon.occam.impl.jooq.OfficeImpl;
+import com.esferalia.aon.occam.impl.jooq.PMSImpl;
 import com.esferalia.aon.occam.impl.jooq.ProductImpl;
 import com.esferalia.aon.occam.impl.jooq.ProjectImpl;
 import com.esferalia.aon.occam.impl.jooq.RegistryImpl;
@@ -202,6 +203,10 @@ public class AON {
 
 	private static IMarketplace getMarketplace() {
 		return new MarketplaceImpl();
+	}
+	
+	private static IPMS getPMS() {
+		return new PMSImpl();
 	}
 
 	// ********************************************
@@ -2988,4 +2993,15 @@ public class AON {
 		}
 	}
 
+	public static void deleteReservationCreditCard(String domainName, Integer domainId, String login
+			, Integer reservationId){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getPMS().deleteReservationCreditCard(ctx, reservationId);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 }

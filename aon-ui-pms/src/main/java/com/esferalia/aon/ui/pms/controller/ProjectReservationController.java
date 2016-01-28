@@ -82,6 +82,7 @@ import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.db.MailAccount;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
@@ -1703,7 +1704,6 @@ public class ProjectReservationController extends BasicController implements IPm
 								, (Double) 0.01, cf.getRespuesta().getAutorizacion()
 								, cf.getRespuesta().getRefClient(), cf.getRespuesta().getIdOperacion(), cf.getRespuesta().getFecha());
 						cf2 = ConexFlowPost.execute(connection, ConexFlowConstant.CANCELATION_OP, query,  reservation.getId(), getDomain(reservation), true);
-
 					}
 					if(cf2 != null){
 						if (!cf2.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK)) 
@@ -1714,13 +1714,29 @@ public class ProjectReservationController extends BasicController implements IPm
 			}
 			
 			if (errorMsg != null) {
+				deleteReservationCreditCard(reservation);
 				AonUtil.addErrorMessage(errorMsg);
 				throw new AbortProcessingException(errorMsg);
 			}
 		}
 		return true;
 	}
-
+	
+	public void deleteReservationCreditCard(ProjectReservation reservation){
+		Domain domain = getDomain(reservation);
+		AON.deleteReservationCreditCard(domain.getName(), domain.getId(), AonUtil.getRemoteUser(), reservation.getId());
+		reservation.setCreditCardCvv(null);
+		reservation.setHrCreditCardCvv(null);
+		reservation.setCreditCardExpirationMonth(null);
+		reservation.setHrCreditCardExpirationMonth(null);
+		reservation.setCreditCardExpirationYear(null);
+		reservation.setHrCreditCardExpirationYear(null);
+		reservation.setCreditCardHolder(null);
+		reservation.setHrCreditCardHolder(null);
+		reservation.setCreditCardNumber(null);
+		reservation.setHrCreditCardNumber(null);
+	}
+	
 	public void onCreditCardPreauthorizationShow(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		ConexFlow cf = DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
