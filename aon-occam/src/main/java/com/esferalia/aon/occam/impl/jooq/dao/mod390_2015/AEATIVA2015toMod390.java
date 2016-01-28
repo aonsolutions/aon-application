@@ -295,6 +295,9 @@ public class AEATIVA2015toMod390 {
 					put(mod390, Mod3902015DetailKey.K14_21, d
 							.getOpInterioresBienesServiciosCorrientes()
 							.getTipo21());
+					put(mod390, Mod3902015DetailKey.K15, d
+							.getOpInterioresBienesServiciosCorrientes()
+							.getTotal());
 				}
 				if (d.getOpIntragrupoCorrientes() != null) {
 					put(mod390, Mod3902015DetailKey.K16_04, d
@@ -311,6 +314,9 @@ public class AEATIVA2015toMod390 {
 							.getOpIntragrupoCorrientes().getTipo18());
 					put(mod390, Mod3902015DetailKey.K16_21, d
 							.getOpIntragrupoCorrientes().getTipo21());
+					put(mod390, Mod3902015DetailKey.K17, d
+							.getOpIntragrupoCorrientes()
+							.getTotal());
 				}
 				if (d.getOpInterioresBienesInversion() != null) {
 					put(mod390, Mod3902015DetailKey.K18_04, d
@@ -327,6 +333,9 @@ public class AEATIVA2015toMod390 {
 							.getOpInterioresBienesInversion().getTipo18());
 					put(mod390, Mod3902015DetailKey.K18_21, d
 							.getOpInterioresBienesInversion().getTipo21());
+					put(mod390, Mod3902015DetailKey.K19, d
+							.getOpInterioresBienesInversion()
+							.getTotal());
 				}
 				if (d.getOpIntragrupoBienesInversion() != null) {
 					put(mod390, Mod3902015DetailKey.K20_04, d
@@ -343,6 +352,9 @@ public class AEATIVA2015toMod390 {
 							.getOpIntragrupoBienesInversion().getTipo18());
 					put(mod390, Mod3902015DetailKey.K20_21, d
 							.getOpIntragrupoBienesInversion().getTipo21());
+					put(mod390, Mod3902015DetailKey.K21, d
+							.getOpIntragrupoBienesInversion()
+							.getTotal());
 				}
 				if (d.getImportacionesBienesCorrientes() != null) {
 					put(mod390, Mod3902015DetailKey.K22_04, d
@@ -359,6 +371,9 @@ public class AEATIVA2015toMod390 {
 							.getImportacionesBienesCorrientes().getTipo18());
 					put(mod390, Mod3902015DetailKey.K22_21, d
 							.getImportacionesBienesCorrientes().getTipo21());
+					put(mod390, Mod3902015DetailKey.K23, d
+							.getImportacionesBienesCorrientes()
+							.getTotal());
 				}
 				if (d.getImportacionesBienesInversion() != null) {
 					put(mod390, Mod3902015DetailKey.K24_04, d
@@ -375,6 +390,9 @@ public class AEATIVA2015toMod390 {
 							.getImportacionesBienesInversion().getTipo18());
 					put(mod390, Mod3902015DetailKey.K24_21, d
 							.getImportacionesBienesInversion().getTipo21());
+					put(mod390, Mod3902015DetailKey.K25, d
+							.getImportacionesBienesInversion()
+							.getTotal());
 				}
 				if (d.getAdqIntracomunitariasBienesCorrientes() != null) {
 					put(mod390, Mod3902015DetailKey.K26_04, d
@@ -398,6 +416,9 @@ public class AEATIVA2015toMod390 {
 					put(mod390, Mod3902015DetailKey.K26_21, d
 							.getAdqIntracomunitariasBienesCorrientes()
 							.getTipo21());
+					put(mod390, Mod3902015DetailKey.K27, d
+							.getAdqIntracomunitariasBienesCorrientes()
+							.getTotal());
 				}
 				if (d.getAdqIntracomunitariasBienesInversion() != null) {
 					put(mod390, Mod3902015DetailKey.K28_04, d
@@ -421,6 +442,9 @@ public class AEATIVA2015toMod390 {
 					put(mod390, Mod3902015DetailKey.K28_21, d
 							.getAdqIntracomunitariasBienesInversion()
 							.getTipo21());
+					put(mod390, Mod3902015DetailKey.K29, d
+							.getAdqIntracomunitariasBienesInversion()
+							.getTotal());
 				}
 				if (d.getAdqIntracomunitariasServicios() != null) {
 					put(mod390, Mod3902015DetailKey.K30_04, d
@@ -437,6 +461,9 @@ public class AEATIVA2015toMod390 {
 							.getAdqIntracomunitariasServicios().getTipo18());
 					put(mod390, Mod3902015DetailKey.K30_21, d
 							.getAdqIntracomunitariasServicios().getTipo21());
+					put(mod390, Mod3902015DetailKey.K31, d
+							.getAdqIntracomunitariasServicios()
+							.getTotal());
 				}
 				if (d.getComRegAgricGanadPesca() != null) {
 					put(mod390, Mod3902015DetailKey.K32, d
