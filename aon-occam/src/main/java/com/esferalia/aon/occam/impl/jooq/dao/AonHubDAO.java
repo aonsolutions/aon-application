@@ -194,8 +194,6 @@ public class AonHubDAO {
 
 	public static Tag addNewTag(AONContext ctx, Tag tag) {
 
-		Tag newTag = new Tag();
-
 		TagRecord record = ctx.getDslContext().insertInto(TAG)
 				.set(TAG.DOMAIN, ctx.getDomainId()).set(TAG.NAME, tag.getName())
 				.set(TAG.TYPE, tag.getType())
@@ -203,13 +201,7 @@ public class AonHubDAO {
 						(tag.getColor() != null) ? tag.getColor() : null)
 				.returning().fetchOne();
 
-		newTag.setId(record.getValue(TAG.ID));
-		newTag.setName(record.getValue(TAG.NAME));
-		newTag.setDomain(record.getValue(TAG.DOMAIN));
-		newTag.setType(record.getValue(TAG.TYPE));
-		newTag.setColor(record.getValue(TAG.COLOR));
-
-		return newTag;
+		return buildTag(record);
 	}
 
 	public static Tag editTag(AONContext ctx, String labelName, Tag tag) {
@@ -225,31 +217,27 @@ public class AonHubDAO {
 						.and(TAG.TYPE.eq(TagType.OFFICE_NOTICE.value()))
 						.and(TAG.NAME.eq(tag.getName())))
 				.fetchOne();
-
-		Tag editTag = new Tag();
-		editTag.setId(tagRecord.getValue(TAG.ID));
-		editTag.setName(tagRecord.getValue(TAG.NAME));
-		editTag.setColor(tagRecord.getValue(TAG.COLOR));
-
-		return editTag;
+		
+		return buildTag(tagRecord);
 	}
 
 	public static boolean deleteTag(AONContext ctx, String labelName) {
 
 		try {
+			
 
 			TagRecord tagRecord = ctx.getDslContext().selectFrom(TAG)
-					.where(TAG.DOMAIN.eq(ctx.getDomainId())
-							.and(TAG.TYPE.equal(TagType.OFFICE_NOTICE.value()))
+					.where(TAG.DOMAIN.eq(ctx.getDomainId())							
 							.and(TAG.NAME.eq(labelName)))
 					.fetchOne();
 
 			ctx.getDslContext().delete(NOTICE_TAG)
-					.where(NOTICE_TAG.ID.eq(tagRecord.getValue(TAG.ID)))
+					.where(NOTICE_TAG.TAG.eq(tagRecord.getValue(TAG.ID)))					
 					.execute();
 
 			ctx.getDslContext().delete(TAG)
-					.where(TAG.ID.eq(tagRecord.getValue(TAG.ID))).execute();
+					.where(TAG.ID.eq(tagRecord.getValue(TAG.ID)))
+					.execute();
 
 			return true;
 
@@ -319,14 +307,8 @@ public class AonHubDAO {
 						.and(TAG.TYPE.eq(TagType.OFFICE_NOTICE.value()))
 						.and(TAG.DOMAIN.eq(ctx.getDomainId())))
 				.fetch().stream().forEach(noticeTag -> {
-					Tag tag = new Tag();
-					tag.setId(noticeTag.getValue(TAG.ID));
-					tag.setType(TagType.OFFICE_NOTICE.value());
-					tag.setName(noticeTag.getValue(TAG.NAME));
-					tag.setColor(noticeTag.getValue(TAG.COLOR));
-
+					Tag tag = buildTag(noticeTag);
 					notice.addTag(tag);
-
 				});
 
 		return notice;
@@ -362,7 +344,6 @@ public class AonHubDAO {
 			record.stream().forEach(result -> {
 				Notice notice = buildNotice(ctx, result);
 				notices.add(notice);
-
 			});
 		}
 
@@ -429,14 +410,8 @@ public class AonHubDAO {
 												.value()))
 								.or(TAG.TYPE.eq(TagType.OFFICE_TYPE.value()))))
 				.fetchOne();
-
-		Tag tag = new Tag();
-		tag.setId(tagRecord.getValue(TAG.ID));
-		tag.setName(tagRecord.getValue(TAG.NAME));
-		tag.setColor(tagRecord.getValue(TAG.COLOR));
-		tag.setType(tagRecord.getValue(TAG.TYPE));
-
-		return tag;
+		
+		return buildTag(tagRecord);
 	}
 
 	public static List<Tag> getTags(AONContext ctx) {
@@ -453,19 +428,25 @@ public class AonHubDAO {
 						.and(TAG.DOMAIN.eq(0)
 								.or(TAG.DOMAIN.eq(ctx.getDomainId()))))
 				.fetch().stream().forEach(record -> {
-					Tag tag = new Tag();
-
-					tag.setId(record.getValue(TAG.ID));
-					tag.setDomain(record.getValue(TAG.DOMAIN));
-					tag.setName(record.getValue(TAG.NAME));
-					tag.setType(record.getValue(TAG.TYPE));
-					tag.setColor(record.getValue(TAG.COLOR));
-
+					Tag tag = buildTag(record);
 					tags.add(tag);
-
 				});
 
 		return tags;
+	}
+	
+	private static Tag buildTag(Record record) {
+		
+		Tag tag = new Tag();
+		tag.setId(record.getValue(TAG.ID));		
+		tag.setDomain(record.getValue(TAG.DOMAIN));
+		tag.setName(record.getValue(TAG.NAME));
+		tag.setType(record.getValue(TAG.TYPE));
+		tag.setColor(record.getValue(TAG.COLOR));
+		
+		return tag;
+
+		
 	}
 
 	// -----------------------------------------------------------------------
@@ -538,12 +519,7 @@ public class AonHubDAO {
 						.and(TAG.TYPE.eq(TagType.OFFICE_NOTICE.value()))
 						.and(TAG.DOMAIN.eq(ctx.getDomainId())))
 				.fetch().stream().forEach(noticeTag -> {
-					Tag tag = new Tag();
-					tag.setId(noticeTag.getValue(TAG.ID));
-					tag.setType(TagType.OFFICE_NOTICE.value());
-					tag.setName(noticeTag.getValue(TAG.NAME));
-					tag.setColor(noticeTag.getValue(TAG.COLOR));
-
+					Tag tag = buildTag(noticeRecord);
 					editNotice.addTag(tag);
 
 				});

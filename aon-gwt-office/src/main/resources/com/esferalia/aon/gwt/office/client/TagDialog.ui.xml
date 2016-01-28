@@ -1,0 +1,77 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+	.form {
+		padding: 10px;
+	}
+	
+	.label {
+		margin-top: 10x;
+		font-weight: bold;
+		padding: 1px 0.5em;
+		white-space: nowrap;
+		background-color: #F2F2F2;
+	}
+	
+	.labeltop {
+		margin-top: 10x;
+		font-weight: bold;
+		padding: 1px 0.5em;
+		vertical-align: top;
+		white-space: nowrap;
+		background-color: #F2F2F2;
+	}
+	
+	.field {
+		padding: 1px 0.5em;
+	}
+	
+	.buttons {
+		padding-top: 10px;
+		text-align: right;
+	}
+
+	
+	.messages {
+		padding-left: 0.5em;
+		padding-bottom: 10px;
+	}
+	
+	.form textarea {
+		resize: none;
+	}
+	</ui:style>
+	<g:HTMLPanel styleName="{style.form}">
+
+		<div class="{style.messages}">
+			<g:Label ui:field="filterLabel" text="Añade los datos para nueva 
+			etiqueta:" />
+		</div>
+
+		<g:Grid width="100%">
+			<g:row>
+				<g:customCell styleName="{style.label}">
+					<g:Label text="Grupo" />
+				</g:customCell>
+				<g:customCell styleName="{style.field}">
+					<g:ListBox ui:field="categoryListBox" />
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.label}">
+					<g:Label text="Nombre" />
+				</g:customCell>
+				<g:customCell styleName="{style.field}">
+					<g:TextBox ui:field="nameTextBox" />
+				</g:customCell>
+			</g:row>
+		</g:Grid>
+
+		<div class="{style.buttons}">
+			<g:Button ui:field="cancelButton">Cancelar</g:Button>
+			<g:Button ui:field="acceptButton">Aceptar</g:Button>
+		</div>
+
+	</g:HTMLPanel>
+</ui:UiBinder> 

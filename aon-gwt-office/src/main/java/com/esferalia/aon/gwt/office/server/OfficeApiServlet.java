@@ -366,7 +366,7 @@ public class OfficeApiServlet extends HttpServlet {
 			String domainName = group(2);
 			String userName = AonServletUtils.getLoggedUser();
 
-			String decoded = URLDecoder.decode(group(0), "UTF-8");
+			String decoded = URLDecoder.decode(group(3), "UTF-8");
 
 			boolean deleted = AON.deleteTag(domainId, domainName, userName,
 					decoded);
@@ -660,6 +660,7 @@ public class OfficeApiServlet extends HttpServlet {
 		buffer.append(String.format("\"type\":%s,\r\n",
 				String.valueOf(tag.getType())));
 		buffer.append(String.format("\"name\":\"%s\",\r\n", tag.getName()));
+		buffer.append(String.format("\"domain\":\"%s\",\r\n", String.valueOf(tag.getDomain())));
 		buffer.append(String.format("\"color\":\"%s\"\r\n",
 				(tag.getColor() != null) ? tag.getColor() : ""));
 		buffer.append("}");

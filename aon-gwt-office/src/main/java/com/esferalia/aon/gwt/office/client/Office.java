@@ -30,21 +30,24 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ResizeLayoutPanel;
-import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
-		IssuePanel.Listener, IssueReadPanel.Listener {
+		IssuePanel.Listener, IssueReadPanel.Listener, TagTree.Listener {
 
 	private static OfficeUiBinder uiBinder = GWT.create(OfficeUiBinder.class);
 
 	interface OfficeUiBinder extends UiBinder<Widget, Office> {
 	}
 
+	@UiField
+	DockLayoutPanel dockLayoutPanel;
 	@UiField
 	Button newIssueButton;
 	@UiField
@@ -54,15 +57,22 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	@UiField
 	Button closedIssuesButton;
 	@UiField
+	Button tagButton;
+	@UiField
+	Button visibleButton;
+	@UiField
 	DeckLayoutPanel deckPanel;
 	@UiField
 	ResizeLayoutPanel dockOfficePanel;
 	@UiField
 	HorizontalPanel readIssuePanel;
 	@UiField
-	SimpleLayoutPanel resultsPanel;
-	@UiField
 	IssueGrid dataGrid;
+
+	@UiField
+	StackLayoutPanel stackLayoutPanel;
+	@UiField
+	TagTree tagTree;
 
 	private JsRepo repo;
 	private IssuePanel issuePanel;
@@ -95,6 +105,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		this.registries = new LinkedList<Registry>();
 
 		this.dataGrid.addListener(this);
+		this.tagTree.addListener(this);
 		this.gitHub.setRepositoryUrl(GWT.getModuleBaseURL() + "api");
 
 		gitHub.getRegistries(getCurrentDomain(), getCurrentDomainName(),
@@ -113,6 +124,12 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					}
 				});
 
+		loadLabels();
+		loadOpenIssues();
+	}
+
+	private void loadLabels() {
+
 		gitHub.getLabels(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsLabel>>() {
 
@@ -129,15 +146,13 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 							addLabels2List(labels.get(x));
 					}
 				});
-
-		loadOpenIssues();
 	}
 
 	private void loadOpenIssues() {
 
 		initOpenIssues();
-		gitHub.getOpenIssues(String.valueOf(getCurrentDomain()), getCurrentDomainName(),
-				new AsyncCallback<JSON<JsIssue>>() {
+		gitHub.getOpenIssues(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), new AsyncCallback<JSON<JsIssue>>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
@@ -158,8 +173,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	private void loadClosedIssues() {
 		initClosedIssues();
-		gitHub.getClosedIssues(String.valueOf(getCurrentDomain()), getCurrentDomainName(),
-				new AsyncCallback<JSON<JsIssue>>() {
+		gitHub.getClosedIssues(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), new AsyncCallback<JSON<JsIssue>>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
@@ -193,6 +208,18 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		if (registries.size() > 0)
 			issuePanel.setRegistries(registries);
 		issuePanel.showPopupPanel();
+	}
+
+	@UiHandler("tagButton")
+	void onTagButtonClick(ClickEvent event) {
+		dockLayoutPanel.setWidgetSize(Office.this.stackLayoutPanel, 220);
+		visibleButton.setVisible(true);
+	}
+
+	@UiHandler("visibleButton")
+	void onVisibleButtonClick(ClickEvent event) {
+		dockLayoutPanel.setWidgetSize(Office.this.stackLayoutPanel, 0);
+		visibleButton.setVisible(false);
 	}
 
 	@UiHandler("returnButton")
@@ -264,8 +291,12 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		tag.setName(jsLabel.getName());
 		tag.setType(jsLabel.getType());
 		tag.setColor(jsLabel.getColor());
+		tag.setDomain(jsLabel.getDomain());
 
 		tagList.add(tag);
+
+		if (tag.getDomain() != 0)
+			tagTree.insertTag(tag);
 	}
 
 	private void addRegistry2List(JsRegistry jsRegistry) {
@@ -286,26 +317,11 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	}
 
 	// ******************************************************************
-	// ********************** ISSUES DATA GRID **************************
+	// *************************** TAG TREE *****************************
 	// ******************************************************************
 
 	@Override
-	public void onSelectionTitle(IssueSelected issue) {
-		readIssuePanel.clear();
-		this.issueSelected = issue;
-		IssueReadPanel readPanel = new IssueReadPanel(issue);
-		readPanel.addListener(this);
-		readIssuePanel.add(readPanel);
-		returnButton.setEnabled(true);
-		showReadIssuePanel();
-	}
-
-	// ******************************************************************
-	// ********************** ISSUES PANEL LISTENER *********************
-	// ******************************************************************
-
-	@Override
-	public void onCreateNewTag(final Tag tag) {
+	public void onAddNewTag(final Tag tag) {
 
 		LabelValue value = new LabelValue();
 		value.setName(tag.getName());
@@ -323,10 +339,47 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					@Override
 					public void onSuccess(JsLabel result) {
 						addLabels2List(result);
-						issuePanel.addTag(tag);
 					}
 				});
 	}
+
+	@Override
+	public void onDeleteTag(Tag tag) {
+
+		gitHub.deleteLabel(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), tag.getName(),
+				new AsyncCallback<JsLabel>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(JsLabel result) {
+						
+					}
+				});
+	}
+
+	// ******************************************************************
+	// ********************** ISSUES DATA GRID **************************
+	// ******************************************************************
+
+	@Override
+	public void onSelectionTitle(IssueSelected issue) {
+		readIssuePanel.clear();
+		this.issueSelected = issue;
+		IssueReadPanel readPanel = new IssueReadPanel(issue);
+		readPanel.addListener(this);
+		readIssuePanel.add(readPanel);
+		returnButton.setEnabled(true);
+		showReadIssuePanel();
+	}
+
+	// ******************************************************************
+	// ********************** ISSUES PANEL LISTENER *********************
+	// ******************************************************************
 
 	@Override
 	public void onCreateNewIssue(Notice notice) {
@@ -350,19 +403,19 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 			value.setLabels(labels);
 		}
 
-		gitHub.createIssue(String.valueOf(getCurrentDomain()), getCurrentDomainName(), 
-				value, new AsyncCallback<JsIssue>() {
+		gitHub.createIssue(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), value, new AsyncCallback<JsIssue>() {
 
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getMessage());
-			}
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+					}
 
-			@Override
-			public void onSuccess(JsIssue result) {
-				loadOpenIssues();
-			}
-		});
+					@Override
+					public void onSuccess(JsIssue result) {
+						loadOpenIssues();
+					}
+				});
 
 	}
 

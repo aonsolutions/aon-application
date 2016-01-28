@@ -23,6 +23,10 @@ public class JsLabel extends JavaScriptObject {
 		return this.url;
 	}-*/;
 
+	public final native int getDomain() /*-{
+		return this.domain;
+	}-*/;
+
 	public final native String getName() /*-{
 		return this.name;
 	}-*/;

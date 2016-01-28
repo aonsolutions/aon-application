@@ -39,12 +39,9 @@
 	}
 	</ui:style>
 
-	<g:DockLayoutPanel unit="PX">
+	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
 		<g:north size="72">
-
-
 			<g:FlowPanel>
-
 				<g:FlowPanel styleName="aon-finding-title-toolbar">
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">
@@ -59,10 +56,12 @@
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-								<g:Button ui:field='openIssuesButton' styleName="aon-finding-toolbar-item
-								 aon-icon-issue-opened"  enabled="false"
-									text="Abiertas" />
-								<g:Button ui:field='closedIssuesButton' styleName="aon-finding-toolbar-item
+								<g:Button ui:field='openIssuesButton'
+									styleName="aon-finding-toolbar-item
+								 aon-icon-issue-opened"
+									enabled="false" text="Abiertas" />
+								<g:Button ui:field='closedIssuesButton'
+									styleName="aon-finding-toolbar-item
 								 aon-icon-issue-opened"
 									text="Cerradas" />
 							</g:HTMLPanel>
@@ -89,10 +88,12 @@
 							<g:Button ui:field='tagButton'
 								styleName='aon-finding-toolbar-item {aonResources.css.aonIconReset}'
 								text="ETIQUETAS" />
+							<g:Button ui:field='visibleButton'
+								styleName='aon-finding-toolbar-item {aonResources.css.aonIconCancel}'
+								text="OCULTAR" visible="false" />
 							<g:Button ui:field='returnButton'
 								styleName='aon-finding-toolbar-item {aonResources.css.aonIconCancel}'
 								text="VOLVER" enabled="false" />
-
 						</g:HTMLPanel>
 					</g:HorizontalPanel>
 				</g:FlowPanel>
@@ -108,13 +109,26 @@
 							<office:IssueGrid ui:field="dataGrid" />
 						</g:SimpleLayoutPanel>
 					</g:HTMLPanel>
-				</g:ResizeLayoutPanel>				
+				</g:ResizeLayoutPanel>
 				<g:HorizontalPanel ui:field="readIssuePanel" />
-
-				
-
 			</g:DeckLayoutPanel>
-
 		</g:center>
+
+		<g:west size="0">
+			<g:StackLayoutPanel unit="EM" ui:field="stackLayoutPanel">
+				<g:stack ui:field="tagStack">
+					<g:header size='3'>
+						<div class='{style.stackHeader}'>
+							<div />
+							ETIQUETAS
+						</div>
+					</g:header>
+					<office:TagTree ui:field="tagTree" />
+				</g:stack>
+			</g:StackLayoutPanel>
+
+		</g:west>
+
+
 	</g:DockLayoutPanel>
 </ui:UiBinder> 
