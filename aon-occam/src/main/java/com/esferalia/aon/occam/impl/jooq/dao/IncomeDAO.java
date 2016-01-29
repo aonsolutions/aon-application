@@ -116,8 +116,18 @@ public class IncomeDAO {
 	}
 
 	public static LinkedList<IncomeDetail> getIncomeDetailListUntilDate(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId, Date date){
+		LinkedList<Integer> list = ctx.getDslContext().select(INVOICE_DETAIL.SOURCE_ID)
+		.from(INVOICE_DETAIL)															
+		.where(INVOICE_DETAIL.SOURCE.eq((byte)4))
+		.and(INVOICE_DETAIL.WORKPLACE.eq(workplaceId))
+		.and(INVOICE_DETAIL.ITEM.eq(item.getId()))
+		.and(INVOICE_DETAIL.WAREHOUSE.isNull())
+		.fetch().stream().map(r -> r.getValue(INVOICE_DETAIL.SOURCE_ID))
+		.collect(Collectors.toCollection(LinkedList::new));
+		
 		Condition workplaceCondition = INCOME.WORKPLACE.isNull();
 		if(workplaceId != null) workplaceCondition = INCOME.WORKPLACE.eq(workplaceId);
+		
 		return ctx.getDslContext()
 				.select(INCOME.ISSUE_TIME, INCOME_DETAIL.PRICE, INCOME_DETAIL.ID, INCOME_DETAIL.DISCOUNT_EXPR
 						,INCOME_DETAIL.QUANTITY)
@@ -125,14 +135,10 @@ public class IncomeDAO {
 				.where(INCOME_DETAIL.ITEM.eq(item.getId()))
 				.and(INCOME.ISSUE_TIME.lessOrEqual(AonDateUtils.toSql(date)))
 				.and(workplaceCondition).and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
-				.and(INCOME_DETAIL.ID.notIn(ctx.getDslContext().select(INVOICE_DETAIL.SOURCE_ID)
-															.from(INVOICE_DETAIL)															
-															.where(INVOICE_DETAIL.SOURCE.eq((byte)4))
-															.and(INVOICE_DETAIL.WORKPLACE.eq(workplaceId))
-															.and(INVOICE_DETAIL.WAREHOUSE.isNull())))
 				.orderBy(INCOME.ISSUE_TIME.desc()
 						,INCOME_DETAIL.ID.desc())
 				.fetch().stream().map(new IncomeDetailFiller())
+				.filter(f -> list.stream().filter(h -> h.equals(f.getId())).count() == 0)
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
