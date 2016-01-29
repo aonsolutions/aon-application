@@ -5,7 +5,7 @@
 
 BEGIN;
 
-ALTER TABLE `invoice_tax` ADD `deductible_percent` double DEFAULT '100.00' COMMENT 'Porcentaje de deducibilidad' AFTER `withholding_type`;
+ALTER TABLE `invoice_tax` ADD `deductible_percent` double(15,3) DEFAULT '100.000' COMMENT 'Porcentaje de deducibilidad' AFTER `withholding_type`;
 
 ALTER TABLE `fs_model184_detail` ADD `location` varchar(1) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Situacion del inmueble';
 ALTER TABLE `fs_model184_detail` ADD `cadasdral_reference` varchar(45) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Referencia catastral';

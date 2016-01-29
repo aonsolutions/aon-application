@@ -5488,7 +5488,7 @@ CREATE TABLE `invoice_tax` (
   `surcharge_quota` double default '0' COMMENT 'Cuota de recargo de equivalencia del Detalle de la Factura',
   `vat_deduction_type` tinyint(2) default '0' COMMENT 'Tipo de deduccion del IVA',
   `withholding_type` tinyint(2) default '0' COMMENT 'Tipo de retencion',
-  `deductible_percent` double default '100.00' COMMENT 'Porcentaje de deducibilidad',
+  `deductible_percent` double(15,3) default '100.000' COMMENT 'Porcentaje de deducibilidad',
   `deductible_quota` double default '0' COMMENT 'Cuota deducible',
   PRIMARY KEY  (`id`),
   KEY `IDX_INVOICE_TAX_INVOICE_DETAIL` (`invoice_detail`),
