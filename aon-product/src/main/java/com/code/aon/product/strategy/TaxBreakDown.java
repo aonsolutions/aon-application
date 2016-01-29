@@ -27,6 +27,9 @@ public class TaxBreakDown implements Serializable {
 	private Account account;
 	private Account balancingAccount;
 	private VatDeductionType vatDeductionType; 
+	private double deductibleBase;
+	private double deductiblePercent;
+	private double deductibleQuota;
 
 	public TaxType getTaxType() {
 		return taxType;
@@ -100,4 +103,25 @@ public class TaxBreakDown implements Serializable {
 		this.vatDeductionType = vatDeductionType;
 	}
 	
+	public double getDeductibleBase() {
+		return deductibleBase;
+	}
+	public void setDeductibleBase(double deductibleBase) {
+		this.deductibleBase = deductibleBase;
+	}
+
+	public double getDeductiblePercent() {
+		return deductiblePercent;
+	}
+	public void setDeductiblePercent(double deductiblePercent) {
+		this.deductiblePercent = deductiblePercent;
+	}
+
+	public double getDeductibleQuota() {
+		return deductibleQuota;
+	}
+	public void setDeductibleQuota(double deductibleQuota) {
+		this.deductibleQuota = deductibleQuota;
+	}
+
 }
