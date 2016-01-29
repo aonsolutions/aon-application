@@ -291,6 +291,7 @@ public class AonExporter extends GenericExporter{
 		map.put("CommissionType","com.code.aon.config.CommissionType");
 		map.put("Domain","com.code.aon.config.Domain");    
 		map.put("DomainApplication","com.code.aon.config.DomainApplication");    
+		map.put("IAE","com.code.aon.config.IAE");
 		map.put("PayMethodTypeDetail","com.code.aon.config.PayMethodTypeDetail");
 		map.put("PayMethod","com.code.aon.config.PayMethod");
 		map.put("Series","com.code.aon.config.Series");

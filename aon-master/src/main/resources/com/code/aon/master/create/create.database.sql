@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.37.0
+# Version: 8.41.0
 # Created by: girazu
-# Creation Date: 18/12/2015 12:40
+# Creation Date: 18/01/2016 18:00
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -442,6 +442,74 @@ CREATE TABLE `academic_skill` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aptitudes Academicas';
 
 #
+# Structure for the `cnae` table : 
+#
+
+CREATE TABLE `cnae` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `code` varchar(5) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo del CNAE',
+  `title` varchar(255) collate latin1_spanish_ci NOT NULL COMMENT 'Titulo del CNAE',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='CNAE';
+
+#
+# Structure for the `cnae2009` table : 
+#
+
+CREATE TABLE `cnae2009` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `code` varchar(4) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo del CNAE',
+  `title` varchar(255) collate latin1_spanish_ci NOT NULL COMMENT 'Titulo del CNAE',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='CNAE 2009. Clasificación Nacional de Actividades Económicas ';
+
+#
+# Structure for the `iae` table : 
+#
+
+CREATE TABLE `iae` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `section` varchar(1) collate latin1_spanish_ci NOT NULL COMMENT 'Seccion',
+  `epigraph` varchar(8) collate latin1_spanish_ci NOT NULL COMMENT 'Epigrafe',
+  `title` varchar(255) collate latin1_spanish_ci NOT NULL COMMENT 'Titulo',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='IAE';
+
+#
+# Structure for the `enterprise_activity` table : 
+#
+
+CREATE TABLE `enterprise_activity` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Actividad de la Empresa',
+  `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
+  `iae` int(4) default NULL COMMENT 'Epigrafe IAE',
+  `cnae` int(4) default NULL COMMENT 'Identificador del CNAE',
+  `type` tinyint(2) NOT NULL COMMENT 'Tipo de Actividad de la Empresa',
+  `cnae2009` int(4) default NULL COMMENT 'Identificador del CNAE 2009',
+  `surcharge` tinyint(1) default '0' COMMENT 'Indica si la Actividad tiene de recargo de equivalencia',
+  `vat_regime` tinyint(2) default NULL COMMENT 'Regimen de IVA',
+  `retention_regime` tinyint(2) default NULL COMMENT 'Regimen de IRPF',
+  `start_date` date default NULL COMMENT 'Fecha de inicio',
+  `end_date` date default NULL COMMENT 'Fecha de fin',
+  `prorata` double(5,2) default '100.00' COMMENT 'Porcentaje de prorrata',
+  `prorata_type` tinyint(1) default '0' COMMENT 'Indica el tipo de prorrata',
+  `principal` tinyint(1) NOT NULL default '0' COMMENT 'Indica si es la Actividad principal',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_ENTERPRISE_ACTIVITY_ENTERPRISE` (`enterprise`),
+  KEY `IDX_ENTERPRISE_ACTIVITY_CNAE` (`cnae`),
+  KEY `IDX_ENTERPRISE_ACTIVITY_CNAE2009` (`cnae2009`),
+  KEY `IDX_ENTERPRISE_ACTIVITY_DOMAIN` (`domain`),
+  KEY `IDX_ENTERPRISE_ACTIVITY_IAE` (`iae`),
+  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_CNAE` FOREIGN KEY (`cnae`) REFERENCES `cnae` (`id`),
+  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_CNAE2009` FOREIGN KEY (`cnae2009`) REFERENCES `cnae2009` (`id`),
+  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`),
+  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_IAE` FOREIGN KEY (`iae`) REFERENCES `iae` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades de Empresas';
+
+#
 # Structure for the `account_period` table : 
 #
 
@@ -470,6 +538,7 @@ CREATE TABLE `account_entry` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Asiento',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `account_period` int(4) NOT NULL COMMENT 'Ejercicio Contable del Asiento',
+  `activity` int(4) default NULL COMMENT 'Identificador de la Actividad',
   `entry_date` date default NULL COMMENT 'Fecha del Asiento',
   `entry_type` tinyint(2) default NULL COMMENT 'Tipo de Asiento',
   `journal` int(4) default NULL COMMENT 'Numero de diario del Asiento',
@@ -482,7 +551,9 @@ CREATE TABLE `account_entry` (
   PRIMARY KEY  (`id`),
   KEY `IDX_ACCOUNT_ENTRY_ACCOUNT_PERIOD` (`account_period`),
   KEY `IDX_ACCOUNT_ENTRY_DOMAIN` (`domain`),
+  KEY `IDX_ACCOUNT_ENTRY_ACTIVITY` (`activity`),
   CONSTRAINT `FK_ACCOUNT_ENTRY_ACCOUNT_PERIOD` FOREIGN KEY (`account_period`) REFERENCES `account_period` (`id`),
+  CONSTRAINT `FK_ACCOUNT_ENTRY_ACTIVITY` FOREIGN KEY (`activity`) REFERENCES `enterprise_activity` (`id`),
   CONSTRAINT `FK_ACCOUNT_ENTRY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Asientos Contables';
 
@@ -668,57 +739,11 @@ CREATE TABLE `invest_asset` (
   `start_date` date default NULL COMMENT 'Fecha de alta',
   `end_date` date default NULL COMMENT 'Fecha de baja',
   `vat_percent` double default '0' COMMENT 'Porcentaje de afectacion de IVA',
-  `retention_percent` double default '0' COMMENT 'Porcentaje de afectacion de IRPF',
+  `retention_percent` double default '0' COMMENT 'Porcentaje de afectacion de imposicion directa',
   PRIMARY KEY  (`id`),
   KEY `IDX_INVEST_ASSET_DOMAIN` (`domain`),
   CONSTRAINT `FK_INVEST_ASSET_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bienes afectos o de inversion';
-
-#
-# Structure for the `cnae` table : 
-#
-
-CREATE TABLE `cnae` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `code` varchar(5) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo del CNAE',
-  `title` varchar(255) collate latin1_spanish_ci NOT NULL COMMENT 'Titulo del CNAE',
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='CNAE';
-
-#
-# Structure for the `cnae2009` table : 
-#
-
-CREATE TABLE `cnae2009` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `code` varchar(4) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo del CNAE',
-  `title` varchar(255) collate latin1_spanish_ci NOT NULL COMMENT 'Titulo del CNAE',
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='CNAE 2009. Clasificación Nacional de Actividades Económicas ';
-
-#
-# Structure for the `enterprise_activity` table : 
-#
-
-CREATE TABLE `enterprise_activity` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Actividad de la Empresa',
-  `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
-  `cnae` int(4) default NULL COMMENT 'Identificador del CNAE',
-  `type` tinyint(2) NOT NULL COMMENT 'Tipo de Actividad de la Empresa',
-  `cnae2009` int(4) default NULL COMMENT 'Identificador del CNAE 2009',
-  `principal` tinyint(1) NOT NULL default '0' COMMENT 'Indica si es la Actividad principal',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_ENTERPRISE_ACTIVITY_ENTERPRISE` (`enterprise`),
-  KEY `IDX_ENTERPRISE_ACTIVITY_CNAE` (`cnae`),
-  KEY `IDX_ENTERPRISE_ACTIVITY_CNAE2009` (`cnae2009`),
-  KEY `IDX_ENTERPRISE_ACTIVITY_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_CNAE` FOREIGN KEY (`cnae`) REFERENCES `cnae` (`id`),
-  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_CNAE2009` FOREIGN KEY (`cnae2009`) REFERENCES `cnae2009` (`id`),
-  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades de Empresas';
 
 #
 # Structure for the `department` table : 
@@ -1727,6 +1752,7 @@ CREATE TABLE `amortization` (
   `fee_period` tinyint(2) NOT NULL default '0' COMMENT 'Periodo de las cuotas de Amortizacion',
   `sale_amount` double default NULL COMMENT 'Importe de la venta',
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios',
+  `invest_asset` int(4) default NULL COMMENT 'Identificador del Bien afecto',
   `fixed_asset_account` int(4) NOT NULL COMMENT 'Cuenta de inmovilizado',
   `accumulated_account` int(4) NOT NULL COMMENT 'Cuenta de Amortizacion acumulada',
   `allocation_account` int(4) NOT NULL COMMENT 'Cuenta para la dotacion de la Amortizacion',
@@ -1737,10 +1763,12 @@ CREATE TABLE `amortization` (
   KEY `IDX_AMORTIZATION_ACCUMULATED_ACCOUNT` (`accumulated_account`),
   KEY `IDX_AMORTIZATION_ALLOCATION_ACCOUNT` (`allocation_account`),
   KEY `IDX_AMORTIZATION_DOMAIN` (`domain`),
+  KEY `IDX_AMORTIZATION_INVEST_ASSET` (`invest_asset`),
   CONSTRAINT `FK_AMORTIZATION_ACCUMULATED_ACCOUNT` FOREIGN KEY (`accumulated_account`) REFERENCES `account` (`id`),
   CONSTRAINT `FK_AMORTIZATION_ALLOCATION_ACCOUNT` FOREIGN KEY (`allocation_account`) REFERENCES `account` (`id`),
   CONSTRAINT `FK_AMORTIZATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_AMORTIZATION_FIXED_ASSET_ACCOUNT` FOREIGN KEY (`fixed_asset_account`) REFERENCES `account` (`id`)
+  CONSTRAINT `FK_AMORTIZATION_FIXED_ASSET_ACCOUNT` FOREIGN KEY (`fixed_asset_account`) REFERENCES `account` (`id`),
+  CONSTRAINT `FK_AMORTIZATION_INVEST_ASSET` FOREIGN KEY (`invest_asset`) REFERENCES `invest_asset` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Fichas de Amortizacion Contables';
 
 #
@@ -4156,6 +4184,7 @@ CREATE TABLE `fs_activity` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `year` int(4) NOT NULL COMMENT 'Ejercicio del Lote',
+  `activity` int(4) default NULL COMMENT 'Identificador de la Actividad',
   `epigraph` varchar(7) collate latin1_spanish_ci NOT NULL COMMENT 'Epigrafe IAE',
   `description` varchar(128) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del epigrafe',
   `farmer` tinyint(1) default '0' COMMENT 'Actividad agricola',
@@ -4164,6 +4193,8 @@ CREATE TABLE `fs_activity` (
   `vat_percent` double(15,3) default '0.000' COMMENT 'IVA - porcentaje aplicable',
   PRIMARY KEY  (`id`),
   KEY `IDX_FS_ACTIVITY_DOMAIN` (`domain`),
+  KEY `IDX_FS_ACTIVITY_ACTIVITY` (`activity`),
+  CONSTRAINT `FK_FS_ACTIVITY_ACTIVITY` FOREIGN KEY (`activity`) REFERENCES `enterprise_activity` (`id`),
   CONSTRAINT `FK_FS_ACTIVITY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Fiscal. Datos previos de Modulos';
 
@@ -4519,6 +4550,12 @@ CREATE TABLE `fs_model184_detail` (
   `amount` double(15,3) default NULL COMMENT 'Importe (rendimiento / retencion / deduccion)',
   `reduction` double(15,3) default NULL COMMENT 'Reduccion',
   `address` varchar(60) collate latin1_spanish_ci default NULL COMMENT 'Direccion',
+  `location` varchar(1) collate latin1_spanish_ci default NULL COMMENT 'Situacion del inmueble',
+  `cadasdral_reference` varchar(45) collate latin1_spanish_ci default NULL COMMENT 'Referencia catastral',
+  `staff_expenses` double(15,3) default '0.000' COMMENT 'Gastos de personal',
+  `asset_acquisition` double(15,3) default '0.000' COMMENT 'Adquisicion a terceros de bienes y servicios',
+  `tax_deduction` double(15,3) default '0.000' COMMENT 'Tributos fiscalmente deducibles y gastos financieros',
+  `other_tax_deduction` double(15,3) default '0.000' COMMENT 'Otros gastos fiscalmente deducibles',
   PRIMARY KEY  (`id`),
   KEY `IDX_FS_MODEL184_DETAIL_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL184_DETAIL_FS_MODEL184` (`fs_model184`),
@@ -5451,6 +5488,7 @@ CREATE TABLE `invoice_tax` (
   `surcharge_quota` double default '0' COMMENT 'Cuota de recargo de equivalencia del Detalle de la Factura',
   `vat_deduction_type` tinyint(2) default '0' COMMENT 'Tipo de deduccion del IVA',
   `withholding_type` tinyint(2) default '0' COMMENT 'Tipo de retencion',
+  `deductible_percent` double default '100' COMMENT 'Porcentaje de deducibilidad',
   `deductible_quota` double default '0' COMMENT 'Cuota deducible',
   PRIMARY KEY  (`id`),
   KEY `IDX_INVOICE_TAX_INVOICE_DETAIL` (`invoice_detail`),
@@ -8050,7 +8088,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.37.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.41.0');
 
 COMMIT;
 

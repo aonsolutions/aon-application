@@ -9,6 +9,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.code.aon.AonVersion;
+import com.code.aon.fiscal.enumeration.RetentionRegime;
+import com.code.aon.fiscal.enumeration.VatRegime;
 import com.esferalia.aon.entity.master.EnterpriseActivityDB;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 
@@ -22,6 +24,8 @@ public class EnterpriseActivity extends EnterpriseActivityDB {
 
 	public EnterpriseActivity() {
 		setType(SSRegimeType.GENERAL);
+		setVatRegime(VatRegime.GENERAL);
+		setRetentionRegime(RetentionRegime.NORMAL_DIRECT_EVALUATION);
 	}
 
 	@OneToMany(mappedBy = "activity", cascade={CascadeType.REMOVE})

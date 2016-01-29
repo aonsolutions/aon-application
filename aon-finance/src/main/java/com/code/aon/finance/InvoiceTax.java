@@ -15,6 +15,10 @@ public class InvoiceTax extends InvoiceTaxDB implements ITransferObject {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+	public InvoiceTax() {
+		setDeductiblePercent(100);
+	}
+
 	@Transient
 	public boolean isVat() {
 		return getTaxType() == TaxType.VAT;

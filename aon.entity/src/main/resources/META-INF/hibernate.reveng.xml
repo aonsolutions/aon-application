@@ -64,6 +64,9 @@
 		<foreign-key constraint-name="FK_ACCOUNT_ENTRY_ACCOUNT_PERIOD">
 			<many-to-one property="accountPeriod" />
 		</foreign-key>
+		<foreign-key constraint-name="FK_ACCOUNT_ENTRY_ACTIVITY">
+			<many-to-one property="activity"/>
+		</foreign-key>
 	</table>
 
 	<table name="account_entry_detail">
@@ -523,6 +526,8 @@
 
 	<table name="enterprise_activity">
 		<column name="type" type="com.esferalia.aon.payroll.enumeration.SSRegimeType"/>
+		<column name="vat_regime" type="com.code.aon.fiscal.enumeration.VatRegime"/>
+		<column name="retention_regime" type="com.code.aon.fiscal.enumeration.RetentionRegime"/>
 		<foreign-key constraint-name="FK_ENTERPRISE_ACTIVITY_CNAE">
 			<many-to-one property="cnae" />
 		</foreign-key>
@@ -588,7 +593,11 @@
 		<column name="type" type="com.code.aon.finance.enumeration.FinanceTrackingType"/>
 	</table>
 
-	<table name="fs_activity" class="com.esferalia.aon.entity.master.FiscalActivity" />
+	<table name="fs_activity" class="com.esferalia.aon.entity.master.FiscalActivity">
+		<foreign-key constraint-name="FK_FS_ACTIVITY_ACTIVITY">
+			<many-to-one property="activity"/>
+		</foreign-key>
+	</table>
 	
 	<table name="fs_activity_info" class="com.esferalia.aon.entity.master.FiscalActivityInfo">
 		<column name="info_key" type="com.code.aon.fiscal.enumeration.FiscalActivityInfoKey"/>
@@ -711,6 +720,8 @@
 			<many-to-one property="serviceCatalogue" />
 		</foreign-key>
 	</table>
+
+	<table name="iae" class="com.esferalia.aon.entity.master.IAE" />
 
 	<table name="iattach" class="com.esferalia.aon.entity.master.ItemAttachment">
 		<column name="type" type="com.code.aon.product.enumeration.AttachmentType"/>

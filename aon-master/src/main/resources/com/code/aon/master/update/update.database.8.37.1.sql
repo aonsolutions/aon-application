@@ -5,7 +5,7 @@
 
 BEGIN;
 
-INSERT INTO `holiday` (`domain`, `description`, `holiday`, `editable`) (SELECT  `domain`, CONCAT ( IFNULL(`description`,''), '(', `id` , ')'), `holiday`, 0  from `calendar` WHERE `id` IN ( SELECT `calendar` FROM `calendar_holiday` ));
+INSERT INTO `holiday` (`domain`, `description`, `holiday`, `editable`) (SELECT  `domain`, CONCAT( IFNULL(`description`,''), '(', `id` , ')'), `holiday`, 0  from `calendar` WHERE `id` IN ( SELECT `calendar` FROM `calendar_holiday` ));
 
 INSERT INTO `holiday_detail` (`domain`, `holiday`, `date`, `description` ) (SELECT `domain`, (SELECT `id` FROM `holiday` WHERE description LIKE CONCAT('%(',`calendar`,')')) AS holiday, `date`, `description`  FROM `calendar_holiday` WHERE `day_type` = 2);
 
