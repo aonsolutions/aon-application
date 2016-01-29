@@ -14,7 +14,7 @@
 	
 	.options-text-area {
 		width: 600px;
-		height: 300px;
+		height: 200px;
 	}
 	
 	.form {
@@ -31,60 +31,94 @@
 		styleName="{aonResources.css.aonScrollArea} {style.options-scroll-panel}">
 		<g:HTMLPanel>
 			<table class="{aonResources.css.aonPanelGrid}" style="height:90%">
+
 				<tr>
 					<td class="{aonResources.css.aonPanelGridOdd}">
 						<g:InlineLabel styleName="{aonResources.css.aonBold}"
-							text="{msg.title}" />
+							text="Fecha" />
+					</td>
+					<td>
+						<g:InlineLabel styleName="{aonResources.css.aonBold}"
+							text="dd/mm/AAAA - HH:MM" ui:field="dateLabel" />
+					</td>
+					<td>
+						<g:InlineLabel styleName="{aonResources.css.aonBold}"
+							text="Estado: OPEN" />
+					</td>
+				</tr>
+
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:InlineLabel styleName="{aonResources.css.aonBold}"
+							text="Remitente" />
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<g:SuggestBox styleName="{aonResources.css.aonInputText}"
+							width="100%" enabled="false" ui:field="registrySuggest" />
+					</td>
+					<td>
+						<g:InlineLabel
+							styleName="{aonResources.css.aonIconReset} {aonResources.css.aonIconCommandButton}" />
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+					</td>
+					<td>
+						<table>
+							<tr>
+								<td class="{aonResources.css.aonPanelGridOdd}">
+									<g:InlineLabel text="Contacto" />
+								</td>
+								<td class="{aonResources.css.aonPanelGridEven}">
+									<g:SuggestBox styleName="{aonResources.css.aonInputText}"
+										width="300px" enabled="false" />
+								</td>
+							</tr>
+						</table>
+					</td>
+					<td>
+						<g:InlineLabel
+							styleName="{aonResources.css.aonIconReset} {aonResources.css.aonIconCommandButton}" />
+					</td>
+				</tr>
+
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:InlineLabel text="{msg.title}" />
 					</td>
 					<td class="{aonResources.css.aonPanelGridEven}">
 						<g:TextBox ui:field="titleTextBox" styleName="{aonResources.css.aonInputText}"
 							width="100%" />
 					</td>
-				</tr>
-				<tr>
-					<td class="{aonResources.css.aonPanelGridOdd}">
-						<g:InlineLabel styleName="{aonResources.css.aonBold}"
-							text="Estado" />
-					</td>
-					<td class="{aonResources.css.aonPanelGridEven}">
-						<g:HorizontalPanel ui:field="statusHPanel"
-							spacing="5">
-						</g:HorizontalPanel>
+					<td>
 					</td>
 				</tr>
+
 				<tr>
 					<td class="{aonResources.css.aonPanelGridOdd}">
 						<g:InlineLabel styleName="{aonResources.css.aonBold}"
 							text="{msg.priority}" />
 					</td>
 					<td class="{aonResources.css.aonPanelGridEven}">
-						<g:HorizontalPanel ui:field="priorityHPanel"
-							spacing="5">
+						<g:HorizontalPanel ui:field="priorityHPanel">
 						</g:HorizontalPanel>
 					</td>
 				</tr>
+
 				<tr>
 					<td class="{aonResources.css.aonPanelGridOdd}">
 						<g:InlineLabel styleName="{aonResources.css.aonBold}"
-							text="{msg.sender}" />
+							text="Tipo de aviso" />
 					</td>
 					<td class="{aonResources.css.aonPanelGridEven}">
-						<g:SuggestBox ui:field="registrySuggest"
-							styleName="{aonResources.css.aonInputText}" width="300px" 
-							enabled="false" />
-					</td>
-				</tr>
-				<tr>
-					<td class="{aonResources.css.aonPanelGridOdd}">
-						<g:InlineLabel styleName="{aonResources.css.aonBold}"
-							text="Tipo aviso" />
-					</td>
-					<td class="{aonResources.css.aonPanelGridEven}">
-						<g:HorizontalPanel ui:field="typeHPanel"
-							spacing="5">
+						<g:HorizontalPanel ui:field="typeHPanel">
 						</g:HorizontalPanel>
 					</td>
 				</tr>
+
+
 				<tr>
 					<td class="{aonResources.css.aonPanelGridOdd}">
 						<g:InlineLabel styleName="{aonResources.css.aonBold}"
@@ -92,35 +126,61 @@
 
 					</td>
 					<td class="{aonResources.css.aonPanelGridEven}">
-						<g:HorizontalPanel ui:field="labelsHPanel"
-							spacing="5">
+						<g:HorizontalPanel ui:field="labelsHPanel">
 						</g:HorizontalPanel>
 
 					</td>
 				</tr>
+
 				<tr>
-					<td class="{aonResources.css.aonPanelGridOdd}">
-						<g:Label />
-					</td>
-					<td class="{aonResources.css.aonPanelGridEven}">
+					<td colspan="3" class="{aonResources.css.aonPanelGridEven}">
 						<g:TextArea ui:field="commentTextArea" characterWidth="10"
 							visibleLines="9" styleName="{style.options-text-area}" />
 					</td>
 				</tr>
 
 				<tr>
-					<td class="{aonResources.css.aonPanelGridOdd}">
-						<g:Label />
+					<td colspan="2">
+						<g:InlineLabel ui:field="loggedLabel" />
 					</td>
-					<td class="{aonResources.css.aonPanelGridEven}">
+					<td>
 						<div class="{style.buttons}">
 							<g:Button ui:field="cancelButton" text="Cancelar" />
 							<g:Button ui:field="acceptButton" text="Aceptar" />
 						</div>
-					</td>
-				</tr>
 
+					</td>
+
+				</tr>
 			</table>
 		</g:HTMLPanel>
+
 	</g:ScrollPanel>
+
+	<!--g:ScrollPanel styleName="{aonResources.css.aonScrollArea} {style.options-scroll-panel}"> 
+		<g:HTMLPanel> <table class="{aonResources.css.aonPanelGrid}" style="height:90%"> 
+		<tr> <td class="{aonResources.css.aonPanelGridOdd}"> <g:InlineLabel styleName="{aonResources.css.aonBold}" 
+		text="{msg.title}" /> </td> <td class="{aonResources.css.aonPanelGridEven}"> 
+		<g:TextBox ui:field="titleTextBox" styleName="{aonResources.css.aonInputText}" 
+		width="100%" /> </td> </tr> <tr> <td class="{aonResources.css.aonPanelGridOdd}"> 
+		<g:InlineLabel styleName="{aonResources.css.aonBold}" text="{msg.priority}" 
+		/> </td> <td class="{aonResources.css.aonPanelGridEven}"> <g:HorizontalPanel 
+		ui:field="priorityHPanel" spacing="5"> </g:HorizontalPanel> </td> </tr> <tr> 
+		<td class="{aonResources.css.aonPanelGridOdd}"> <g:InlineLabel styleName="{aonResources.css.aonBold}" 
+		text="{msg.sender}" /> </td> <td class="{aonResources.css.aonPanelGridEven}"> 
+		<g:SuggestBox ui:field="registrySuggest" styleName="{aonResources.css.aonInputText}" 
+		width="300px" enabled="false" /> </td> </tr> <tr> <td class="{aonResources.css.aonPanelGridOdd}"> 
+		<g:InlineLabel styleName="{aonResources.css.aonBold}" text="Tipo aviso" /> 
+		</td> <td class="{aonResources.css.aonPanelGridEven}"> <g:HorizontalPanel 
+		ui:field="typeHPanel" spacing="5"> </g:HorizontalPanel> </td> </tr> <tr> 
+		<td class="{aonResources.css.aonPanelGridOdd}"> <g:InlineLabel styleName="{aonResources.css.aonBold}" 
+		text="Etiquetas" /> </td> <td class="{aonResources.css.aonPanelGridEven}"> 
+		<g:HorizontalPanel ui:field="labelsHPanel" spacing="5"> </g:HorizontalPanel> 
+		</td> </tr> <tr> <td class="{aonResources.css.aonPanelGridOdd}"> <g:Label 
+		/> </td> <td class="{aonResources.css.aonPanelGridEven}"> <g:TextArea ui:field="commentTextArea" 
+		characterWidth="10" visibleLines="9" styleName="{style.options-text-area}" 
+		/> </td> </tr> <tr> <td class="{aonResources.css.aonPanelGridOdd}"> <g:Label 
+		/> </td> <td class="{aonResources.css.aonPanelGridEven}"> <div class="{style.buttons}"> 
+		<g:Button ui:field="cancelButton" text="Cancelar" /> <g:Button ui:field="acceptButton" 
+		text="Aceptar" /> </div> </td> </tr> </table> </g:HTMLPanel> </g:ScrollPanel -->
 </ui:UiBinder> 

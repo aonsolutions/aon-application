@@ -200,9 +200,9 @@ public class AonHub  {
 	 * @param domainName nombre del current domain
 	 * @param callback
 	 */
-	public void getRegistries(Integer domain, String domainName, 
+	public void getRegistries(String user, String repo, 
 			AsyncCallback<JSON<JsRegistry>> callback) {		
-		get(baseUrl + "repos/" + domain + "/" + domainName + "/registries", callback);
+		get(baseUrl + "repos/" + user + "/" + repo + "/registries", callback);
 	}
 
 	

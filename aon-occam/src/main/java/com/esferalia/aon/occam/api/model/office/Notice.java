@@ -18,6 +18,7 @@ public class Notice implements Serializable, HasId {
 	private Integer domain;
 	private Integer recipient; // Destinatario del aviso
 	private Integer notice; //Notice al que referencia **null si es cabecera = titulo
+	private Integer userId;
 	
 	private String source; //ID del registry	
 	private String status;
@@ -97,6 +98,10 @@ public class Notice implements Serializable, HasId {
 		this.notice = notice;
 	}
 	
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+	
 	public void addTag (Tag tag) {
 		this.tags.add(tag);
 	}
@@ -166,6 +171,10 @@ public class Notice implements Serializable, HasId {
 	
 	public Integer getNotice() {
 		return notice;
+	}
+	
+	public Integer getUserId() {
+		return userId;
 	}
 	
 	public List<Tag> getTags() {

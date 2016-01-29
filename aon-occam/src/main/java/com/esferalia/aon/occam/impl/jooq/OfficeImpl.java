@@ -6,12 +6,17 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IOffice;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.office.User;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.impl.jooq.dao.AonHubDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 
 public class OfficeImpl implements IOffice {
 
+	@Override
+	public User getUser(AONContext ctx, Integer id) {		
+		return AonHubDAO.getUser(ctx, id);
+	}
 	@Override
 	public List<Notice> getOpenNotices(AONContext ctx)
 			throws IllegalArgumentException {

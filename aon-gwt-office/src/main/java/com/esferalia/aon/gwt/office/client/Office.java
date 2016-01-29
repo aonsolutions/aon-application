@@ -7,15 +7,18 @@ import java.util.Map;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRegistry;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
+import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.esferalia.aon.gwt.office.client.values.LabelValue;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.office.User;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -73,8 +76,9 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	StackLayoutPanel stackLayoutPanel;
 	@UiField
 	TagTree tagTree;
+	
+	private User user;
 
-	private JsRepo repo;
 	private IssuePanel issuePanel;
 	private IssueSelected issueSelected;
 	private AonHub gitHub = new AonHub(GWT.getModuleBaseURL() + "api/");
@@ -107,9 +111,28 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		this.dataGrid.addListener(this);
 		this.tagTree.addListener(this);
 		this.gitHub.setRepositoryUrl(GWT.getModuleBaseURL() + "api");
+		
+		gitHub.getUser(String.valueOf(getCurrentDomain()), new AsyncCallback<AJSON<JsUser>>() {
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getMessage());
+			}
+			
+			@Override
+			public void onSuccess(AJSON<JsUser> result) {				
+				userIdentificated(result.getData());
+			}
+		});
 
-		gitHub.getRegistries(getCurrentDomain(), getCurrentDomainName(),
-				new AsyncCallback<JSON<JsRegistry>>() {
+		loadRegistries();
+		loadLabels();
+		loadOpenIssues();
+	}
+
+	private void loadRegistries() {
+		gitHub.getRegistries(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), new AsyncCallback<JSON<JsRegistry>>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
@@ -124,8 +147,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					}
 				});
 
-		loadLabels();
-		loadOpenIssues();
 	}
 
 	private void loadLabels() {
@@ -202,7 +223,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@UiHandler("newIssueButton")
 	void onNewIssueClick(ClickEvent event) {
-		issuePanel = new IssuePanel("Nueva Incidencia");
+		issuePanel = new IssuePanel(this.user);
 		issuePanel.addListener(this);
 		issuePanel.setTagList(tagList);
 		if (registries.size() > 0)
@@ -283,6 +304,13 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		closeIssuesProvider.addDataDisplay(dataGrid);
 		closedIssues = closeIssuesProvider.getList();
 	}
+	
+	void userIdentificated(JsUser jsUser) {
+		this.user = new User();
+		this.user.setId(jsUser.getId());
+		this.user.setName(jsUser.getName());
+		this.user.setLogin(jsUser.getLogin());
+	}
 
 	private void addLabels2List(JsLabel jsLabel) {
 
@@ -357,7 +385,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 					@Override
 					public void onSuccess(JsLabel result) {
-						
+
 					}
 				});
 	}
@@ -387,6 +415,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		value.setTitle(notice.getTitle());
 		value.setBody(notice.getBody());
 		value.setState(notice.getStatus());
+		value.setSender(String.valueOf(notice.getSender().getId()));
 
 		if (notice.getCompany() != null) {
 			value.setCompany(notice.getCompany());

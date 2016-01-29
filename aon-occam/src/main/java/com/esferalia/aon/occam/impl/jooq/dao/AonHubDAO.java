@@ -6,7 +6,6 @@ import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
 import static com.esferalia.aon.jooq.tables.NoticeTag.NOTICE_TAG;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
-import static com.esferalia.aon.jooq.tables.Target.TARGET;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.util.Date;
@@ -20,7 +19,6 @@ import org.jooq.Record3;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 
-import com.esferalia.aon.jooq.tables.Customer;
 import com.esferalia.aon.jooq.tables.records.NoticeRecord;
 import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
@@ -34,19 +32,28 @@ import com.esferalia.aon.occam.api.model.type.NoticeType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
 public class AonHubDAO {
+	
+	public static User getUser(AONContext ctx, Integer id) {
+		
+		UserRecord userRecord = ctx.getDslContext()
+				.selectFrom(USER)
+				.where(USER.ID.eq(id))
+				.fetchOne();
+		
+		User user = new User();
+		user.setId(userRecord.getValue(USER.ID));
+		user.setLogin(userRecord.getValue(USER.LOGIN));
+		user.setName(userRecord.getValue(USER.NAME));
+		
+		return user;
+		
+	}
 
 	public static Notice addNewNotice(AONContext ctx, Notice notice) {
 
 		Date today = new Date();
-
-		User user = new User();
-		UserRecord userRecord = ctx.getDslContext().selectFrom(USER)
-				.where(USER.DOMAIN.eq(ctx.getDomainId())
-						.and(USER.LOGIN.eq(ctx.getUser())))
-				.fetchOne();
-		user.setId(userRecord.getValue(USER.ID));
-		user.setLogin(userRecord.getValue(USER.LOGIN));
-		user.setName(userRecord.getValue(USER.NAME));
+		
+		User user = getUser(ctx, notice.getUserId());
 
 		NoticeRecord noticeRecord = ctx.getDslContext().insertInto(NOTICE)
 				.set(NOTICE.DOMAIN, ctx.getDomainId())

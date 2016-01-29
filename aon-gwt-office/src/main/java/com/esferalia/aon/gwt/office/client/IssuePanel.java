@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.office.client;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -9,6 +10,7 @@ import java.util.Map;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.office.User;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
@@ -17,6 +19,9 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.thirdparty.common.css.compiler.ast.CssPriorityNode.PriorityType;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -24,6 +29,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SuggestBox;
@@ -46,7 +52,9 @@ public class IssuePanel extends CustomDialog {
 			.create(IssuePanelUiBinder.class);
 
 	@UiField
-	HorizontalPanel statusHPanel;
+	Label dateLabel;
+	@UiField
+	Label loggedLabel;
 	@UiField
 	HorizontalPanel priorityHPanel;
 	@UiField
@@ -68,23 +76,34 @@ public class IssuePanel extends CustomDialog {
 	
 	private String type;
 	private String priority;
-	private String company;
+	private String registry;
+	private Date date;
+	
+	private User user;
 	
 	private List<Listener> listeners;	
 	private List<Registry> registryList;
 	private Map<String, String> selectedTags;
 	private MultiWordSuggestOracle registries = new MultiWordSuggestOracle();
+	
+	private DateTimeFormat format = DateTimeFormat.getFormat("dd-MM-yyyy HH:mm");
 
-	public IssuePanel(String title) {
-		setCaption(title);
+	public IssuePanel(User user) {
+		setCaption("Nueva Incidencia");
 		registrySuggest = new SuggestBox(registries);
 		setWidget(uiBinder.createAndBindUi(this));
 
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
 		
+		this.user = user;
 		this.selectedTags = new HashMap<String, String>();
 		this.listeners = new LinkedList<Listener>();
+		
+		this.date = new Date();
+		dateLabel.setText(format.format(date));
+		loggedLabel.setText(user.getName());
+		
 	}
 
 	public void addListener(Listener listener) {
@@ -172,16 +191,6 @@ public class IssuePanel extends CustomDialog {
 					});
 			typeHPanel.add(radioButton);
 		}
-
-		else if (tag.getType() == TagType.OFFICE_STATUS.value()) {
-			RadioButton radioButton = new RadioButton("STATUS", tag.getName());
-			radioButton.setEnabled(false);
-			
-			if (tag.getName().compareTo(NoticeStatus.OPEN.getValue()) == 0)
-				radioButton.setValue(true);
-
-			statusHPanel.add(radioButton);
-		}
 	}
 
 	public void setTitle(String title) {
@@ -232,29 +241,31 @@ public class IssuePanel extends CustomDialog {
 		notice.setTitle((titleTextBox.getValue().isEmpty()) ? ""
 				: titleTextBox.getValue());
 		notice.setStatus(NoticeStatus.OPEN.getValue());
+		notice.setSender(user);
 		
 		if (priority != null) {
-			Tag tagPriority = new Tag();
-			tagPriority.setName(priority);
-			tagPriority.setType(TagType.OFFICE_PRIORITY.value());
-			notice.addTag(tagPriority);
+			Tag priorityTag = getPriorityTag(priority);			
+			notice.addTag(priorityTag);
 		}			
 
 		if (type != null) {
-			Tag tagType = new Tag();
-			tagType.setName(type);
-			tagType.setType(TagType.OFFICE_TYPE.value());
+			Tag tagType = getTypeTag(type);
 			notice.addTag(tagType);
-			
 		}
 		
-		if (company != null) {
+		if (registry != null) {
 			int recipientId = -1;
 			for (Registry registry : registryList) {
-				 if ( registry.getName().compareTo(company) == 0)
+				 if ( registry.getName().compareTo(this.registry) == 0)
 					 recipientId = registry.getId();
 			}
-			notice.setCompany(company);
+			
+			if ( recipientId == -1) {
+				Window.alert("Remitente no encontrado.");
+				return;
+			}
+				
+			notice.setCompany(registry);
 			notice.setSource(String.valueOf(recipientId));
 		}
 
@@ -279,12 +290,26 @@ public class IssuePanel extends CustomDialog {
 	
 	@UiHandler("registrySuggest")
 	void onSelectionValue(SelectionEvent<SuggestOracle.Suggestion> event) {
-		company = event.getSelectedItem().getReplacementString();
+		registry = event.getSelectedItem().getReplacementString();
 		
 	}
 
 	private void onCreateNewIssue(Notice notice) {
 		for (Listener listener : listeners)
 			listener.onCreateNewIssue(notice);
+	}
+	
+	private Tag getPriorityTag(String priority) {
+		Tag priorityTag = new Tag();		
+		priorityTag.setName(priority);
+		priorityTag.setType(TagType.OFFICE_PRIORITY.value());
+		return priorityTag;
+	}
+	
+	private Tag getTypeTag(String type) {
+		Tag typeTag = new Tag();
+		typeTag.setName(type);
+		typeTag.setType(TagType.OFFICE_TYPE.value());
+		return typeTag;
 	}
 }

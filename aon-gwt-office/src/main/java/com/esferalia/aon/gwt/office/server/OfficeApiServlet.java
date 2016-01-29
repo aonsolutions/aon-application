@@ -69,12 +69,71 @@ public class OfficeApiServlet extends HttpServlet {
 		@Override
 		public boolean accept(HttpServletRequest req) {
 			String action = getRequestAction(req);
-			this.matcher = pattern.matcher(action);			
+			this.matcher = pattern.matcher(action);
 			return matcher.matches();
 		}
 
 		protected String group(int group) {
 			return matcher.group(group);
+		}
+
+		protected Integer getDomainId() {
+			return Integer.parseInt(group(1));
+		}
+
+		protected String getDomainName() {
+			return group(2);
+		}
+	}
+	
+	private static class GetUser extends RegExpRequestHandler {
+		
+		public GetUser() {
+			super("/users/(\\d+)");
+		}
+		
+		@Override
+		public void handler(HttpServletRequest req, HttpServletResponse resp)
+				throws ServletException, IOException {
+			
+			Integer domainId = null;			
+			
+			try {
+				domainId = getDomainId();				
+				
+			} catch (Exception ex) {
+				String aux = getRequestAction(req);
+				String[] auxArr = aux.split("/");
+				domainId = Integer.parseInt(auxArr[2]);
+				
+			} finally {
+				getJsonUser(req, resp, domainId);
+			}
+		}
+		
+		private void getJsonUser(HttpServletRequest req, HttpServletResponse resp, Integer domainId) {
+			
+			PrintWriter pw = null;
+			try {
+				
+				String domainName = AonServletUtils.getRequestDomainName(req);
+				String userName = AonServletUtils.getLoggedUser();
+				Integer userId = AonServletUtils.getRequestUserId(req);
+				
+				User user = AON.getUser(domainId, domainName, userName, userId);
+				
+				pw = resp.getWriter();
+				pw.append('{');
+				pw.printf(String.format("\"message\":\"%s\",\r\n", "FOUNDED"));
+				pw.printf("\"data\":%s", buildUserSender(user));
+				pw.append('}');
+				pw.flush();
+
+			
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());
+			}
+			
 		}
 	}
 
@@ -88,19 +147,42 @@ public class OfficeApiServlet extends HttpServlet {
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
 
+			Integer domainId = null;
+			String domainName = "";
+
 			try {
+
+				domainId = getDomainId();
+				domainName = getDomainName();
+
+			} catch (Exception ex) {
+				String aux = getRequestAction(req);
+				String[] auxArr = aux.split("/");
+				domainId = Integer.parseInt(auxArr[2]);
+				domainName = auxArr[3];
+
+			} finally {
+				createNotice(req, resp, domainId, domainName);
+			}
+		}
+
+		private void createNotice(HttpServletRequest req,
+				HttpServletResponse resp, Integer domain, String domainName) {
+
+			try {
+
 				String object = getJsonObject(req);
 				System.out.println("Object: " + object);
 				JSONObject json = new JSONObject(object);
 
-				Integer domainId = Integer.parseInt(group(1));
-				String domainName = group(2);
 				String userName = AonServletUtils.getLoggedUser();
 
 				Notice notice = new Notice();
 				notice.setTitle(json.getString("title"));
 				notice.setBody(json.getString("body"));
 				notice.setStatus(json.getString("state"));
+				notice.setUserId(Integer.parseInt(json.getString("sender")));
+				
 
 				if (json.isNull("company") == false) {
 					notice.setCompany(json.getString("company"));
@@ -112,7 +194,7 @@ public class OfficeApiServlet extends HttpServlet {
 
 					for (int x = 0; x < tags.length(); x++) {
 						String name = tags.getString(x);
-						Tag tag = AON.getTag(domainId, domainName, userName,
+						Tag tag = AON.getTag(domain, domainName, userName,
 								name);
 						System.out.println("TagId: " + tag.getId() + "\nName: "
 								+ tag.getName() + "\nType: " + tag.getType());
@@ -120,44 +202,7 @@ public class OfficeApiServlet extends HttpServlet {
 					}
 				}
 
-				getCreateNotice(resp, domainId, domainName, notice);
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-		}
-	}
-
-	private static class EditIssue extends RegExpRequestHandler {
-
-		public EditIssue() {
-			super("/repos/(\\d+)/(.+)/issues/(\\d+)");			
-		}
-
-		@Override
-		public void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-
-			try {
-				String object = getJsonObject(req);
-				System.out.println("Object: " + object);
-				JSONObject json = new JSONObject(object);
-				
-				Integer domainId = Integer.parseInt(group(1));
-				String domainName = group(2);				
-
-				Notice notice = new Notice();
-				notice.setId(Integer.parseInt(group(1)));
-
-				if (json.isNull("state") == false) {
-					notice.setStatus(json.getString("state"));
-					getChangeStatusNotice(resp, domainId, domainName, notice);
-				} else {
-					notice.setTitle(json.getString("title"));
-					notice.setBody(json.getString("body"));
-					getEditNotice(resp, domainId, domainName, notice);
-				}
+				getCreateNotice(resp, domain, domainName, notice);
 
 			} catch (Exception ex) {
 				System.out.println(ex.getMessage());
@@ -165,26 +210,101 @@ public class OfficeApiServlet extends HttpServlet {
 		}
 	}
 
-	private static class GetAllIssuesRequestHandler
-			extends RegExpRequestHandler {
+	private static class EditIssue extends RegExpRequestHandler {
 
-		public GetAllIssuesRequestHandler() {
-			super("/repos/(\\d+)/(.+)/issues");
+		public EditIssue() {
+			super("/repos/(\\d+)/(.+)/issues/(\\d+)");
 		}
 
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
 
+			Integer domain = null;
+			String domainName = "";
+
+			try {
+
+				domain = getDomainId();
+				domainName = getDomainName();
+
+			} catch (Exception ex) {
+				String aux = getRequestAction(req);
+				String[] auxArr = aux.split("/");
+				domain = Integer.parseInt(auxArr[2]);
+				domainName = auxArr[3];
+
+			} finally {
+				editIssue(req, resp, domain, domainName);
+			}
+
+		}
+
+		private void editIssue(HttpServletRequest req, HttpServletResponse resp,
+				Integer domain, String domainName) {
+			try {
+				String object = getJsonObject(req);
+				System.out.println("Object: " + object);
+				JSONObject json = new JSONObject(object);
+
+				Notice notice = new Notice();
+				notice.setId(Integer.parseInt(group(3)));
+
+				if (json.isNull("state") == false) {
+					notice.setStatus(json.getString("state"));
+					getChangeStatusNotice(resp, domain, domainName, notice);
+				} else {
+					notice.setTitle(json.getString("title"));
+					notice.setBody(json.getString("body"));
+					getEditNotice(resp, domain, domainName, notice);
+				}
+
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());
+			}
+
+		}
+	}
+
+	private static class GetAllIssuesRequestHandler
+			extends RegExpRequestHandler {
+
+		public GetAllIssuesRequestHandler() {
+			super("/repos/(.+)/(.+)/issues");
+		}
+
+		@Override
+		public void handler(HttpServletRequest req, HttpServletResponse resp)
+				throws ServletException, IOException {
+
+			Integer domainId = null;
+			String domainName = "";
+
+			try {
+
+				domainId = getDomainId();
+				domainName = getDomainName();
+
+			} catch (Exception ex) {
+				String aux = getRequestAction(req);
+				String[] auxArr = aux.split("/");
+				domainId = Integer.parseInt(auxArr[2]);
+				domainName = auxArr[3];
+
+			} finally {
+				getAllNotices(req, resp, domainId, domainName);
+			}
+		}
+
+		private void getAllNotices(HttpServletRequest req,
+				HttpServletResponse resp, Integer domainId, String domainName) {
 			PrintWriter pw = null;
 			try {
 
-				Integer domainId = Integer.parseInt(group(1));
-				String domainName = group(2);
 				String userName = AonServletUtils.getLoggedUser();
+				List<Notice> notices = new LinkedList<Notice>();
 
 				pw = resp.getWriter();
-				List<Notice> notices = new LinkedList<Notice>();
 
 				String state = req.getParameter("state");
 				switch (state) {
@@ -222,59 +342,99 @@ public class OfficeApiServlet extends HttpServlet {
 	private static class ListAllLabels extends RegExpRequestHandler {
 
 		public ListAllLabels() {
-			super("/repos/(\\d+)/(.+)/labels");
+			super("/repos/(.+)/(.+)/labels");
 		}
 
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
 
-			Integer domainId = Integer.parseInt(group(1));
-			String domainName = group(2);
-			String user_name = AonServletUtils.getLoggedUser();
-			
-			List<Tag> tags = AON.getTags(domainId, domainName, user_name);
+			Integer domainId = null;
+			String domainName = "";
 
-			PrintWriter pw = resp.getWriter();
-			pw.append('{');
-			pw.printf(String.format("\"message\":\"%s\",\r\n", "FOUNDED"));
-			pw.printf("\"data\":%s", buildLabels(tags.listIterator()));
-			pw.append('}');
-			pw.flush();
+			try {
+				domainId = getDomainId();
+				domainName = getDomainName();
+
+			} catch (Exception ex) {
+				String aux = getRequestAction(req);
+				String[] auxArr = aux.split("/");
+				domainId = Integer.parseInt(auxArr[2]);
+				domainName = auxArr[3];
+
+			} finally {
+				getLabels(req, resp, domainId, domainName);
+			}
+		}
+
+		private void getLabels(HttpServletRequest req, HttpServletResponse resp,
+				Integer domainId, String domainName) {
+
+			try {
+				String user_name = AonServletUtils.getLoggedUser();
+
+				List<Tag> tags = AON.getTags(domainId, domainName, user_name);
+
+				PrintWriter pw = resp.getWriter();
+				pw.append('{');
+				pw.printf(String.format("\"message\":\"%s\",\r\n", "FOUNDED"));
+				pw.printf("\"data\":%s", buildLabels(tags.listIterator()));
+				pw.append('}');
+				pw.flush();
+
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());
+			}
 		}
 	}
 
 	private static class GetRegistries extends RegExpRequestHandler {
 
 		public GetRegistries() {
-			super("/repos/(\\d+)/(.+)/registries");
+			super("/repos/(.+)/(.+)/registries");
 		}
 
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
-			
-			String action = getRequestAction(req);
-			System.out.println(action);
-			
-			try {				
-				Integer domainId = Integer.parseInt(group(1));
-				String domainName = group(2);
+
+			Integer domain = null;
+			String domainName = "";
+
+			try {
+				domain = getDomainId();
+				domainName = getDomainName();
+
+			} catch (Exception ex) {
+				String ver = getRequestAction(req);
+				String[] actionArr = ver.split("/");
+				domain = Integer.parseInt(actionArr[2]);
+				domainName = actionArr[3];
+			}
+
+			finally {
+				getRegistries(resp, domain, domainName);
+			}
+		}
+
+		private void getRegistries(HttpServletResponse resp, Integer domainId,
+				String domainName) {
+			PrintWriter pw = null;
+			try {
 				String userName = AonServletUtils.getLoggedUser();
-				
-				List<Registry> registries = AON.getRegistries(domainId, domainName,
-						userName);
+				List<Registry> registries = AON.getRegistries(domainId,
+						domainName, userName);
 				System.out.println(registries.size());
-				PrintWriter pw = resp.getWriter();
+				pw = resp.getWriter();
 				pw.append('{');
 				pw.printf(String.format("\"message\":\"%s\",\r\n", "FOUNDED"));
 				pw.printf("\"data\":%s",
 						buildRegistries(registries.listIterator()));
 				pw.append('}');
 				pw.flush();
-				
-			} catch ( Exception ex) {
-				System.out.println("Error al obtener los customers. " + ex.getMessage());
+
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());
 			}
 		}
 	}
@@ -289,15 +449,26 @@ public class OfficeApiServlet extends HttpServlet {
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
 
-			System.out.println("Create a label");
+			Integer domain = null;
+			String domainName = "";
 
 			try {
+				domain = getDomainId();
+				domainName = getDomainName();
+			} catch (Exception ex) {
+				String ver = getRequestAction(req);
+				String[] actionArr = ver.split("/");
+				domain = Integer.parseInt(actionArr[2]);
+				domainName = actionArr[3];
+			} finally {
+				createLabel(req, resp, domain, domainName);
+			}
+		}
+
+		private void createLabel(HttpServletRequest req,
+				HttpServletResponse resp, Integer domainId, String domainName) {
+			try {
 				String object = getJsonObject(req);
-
-				Integer domainId = Integer.parseInt(group(1));
-				String domainName = group(2);
-
-				System.out.println("Objecto: " + object);
 
 				JSONObject json = new JSONObject(object);
 				Tag tag = new Tag();
@@ -312,6 +483,7 @@ public class OfficeApiServlet extends HttpServlet {
 			} catch (Exception ex) {
 				System.out.println("");
 			}
+
 		}
 	}
 
@@ -325,11 +497,29 @@ public class OfficeApiServlet extends HttpServlet {
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
 
+			Integer domain = null;
+			String domainName = "";
+
 			try {
-				
-				Integer domainId = Integer.parseInt(group(1));
-				String domainName = group(2);				
-				
+
+				domain = getDomainId();
+				domainName = getDomainName();
+
+			} catch (Exception ex) {
+				String ver = getRequestAction(req);
+				String[] actionArr = ver.split("/");
+				domain = Integer.parseInt(actionArr[2]);
+				domainName = actionArr[3];
+			} finally {
+				updateLabel(req, resp, domain, domainName);
+			}
+		}
+
+		private void updateLabel(HttpServletRequest req,
+				HttpServletResponse resp, Integer domain, String domainName) {
+
+			try {
+
 				String object = getJsonObject(req);
 				System.out.println("Object: " + object);
 				JSONObject json = new JSONObject(object);
@@ -343,12 +533,13 @@ public class OfficeApiServlet extends HttpServlet {
 				if (json.isNull("color") == false)
 					tag.setColor(json.getString("color"));
 
-				getEditLabel(resp, domainId, domainName, labelName, tag);
+				getEditLabel(resp, domain, domainName, labelName, tag);
 
 				System.out.println(" ================== ");
 			} catch (Exception ex) {
 				System.out.println("Exception: " + ex.getMessage());
 			}
+
 		}
 	}
 
@@ -362,8 +553,8 @@ public class OfficeApiServlet extends HttpServlet {
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
 
-			Integer domainId = Integer.parseInt(group(1));
-			String domainName = group(2);
+			Integer domainId = getDomainId();
+			String domainName = getDomainName();
 			String userName = AonServletUtils.getLoggedUser();
 
 			String decoded = URLDecoder.decode(group(3), "UTF-8");
@@ -396,8 +587,8 @@ public class OfficeApiServlet extends HttpServlet {
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
 
-			Integer domainId = Integer.parseInt(group(1));
-			String domainName = group(2);
+			Integer domainId = getDomainId();
+			String domainName = getDomainName();
 			String userName = AonServletUtils.getLoggedUser();
 
 			Integer noticeId = Integer
@@ -422,6 +613,7 @@ public class OfficeApiServlet extends HttpServlet {
 
 	// @formatter:off
 	private static final HttpRequestHandler GET_HANDLERS[] = {
+			new GetUser(),
 			new GetRegistries(),
 			new GetAllIssuesRequestHandler(),
 			new ListAllLabels(),
@@ -660,7 +852,8 @@ public class OfficeApiServlet extends HttpServlet {
 		buffer.append(String.format("\"type\":%s,\r\n",
 				String.valueOf(tag.getType())));
 		buffer.append(String.format("\"name\":\"%s\",\r\n", tag.getName()));
-		buffer.append(String.format("\"domain\":\"%s\",\r\n", String.valueOf(tag.getDomain())));
+		buffer.append(String.format("\"domain\":\"%s\",\r\n",
+				String.valueOf(tag.getDomain())));
 		buffer.append(String.format("\"color\":\"%s\"\r\n",
 				(tag.getColor() != null) ? tag.getColor() : ""));
 		buffer.append("}");
@@ -698,13 +891,15 @@ public class OfficeApiServlet extends HttpServlet {
 		return buffer.toString();
 	}
 
-	private static void buildLabel(HttpServletResponse resp, Integer domainId, String domainName, Tag tag) {
+	private static void buildLabel(HttpServletResponse resp, Integer domainId,
+			String domainName, Tag tag) {
 
 		PrintWriter pw = null;
 		try {
 
 			pw = resp.getWriter();
-			Tag newTag = AON.addNewTag(domainId, domainName, AonServletUtils.getLoggedUser(), tag);
+			Tag newTag = AON.addNewTag(domainId, domainName,
+					AonServletUtils.getLoggedUser(), tag);
 			pw.append(getLabel(newTag));
 			pw.flush();
 
@@ -718,14 +913,14 @@ public class OfficeApiServlet extends HttpServlet {
 		}
 	}
 
-	private static void getEditLabel(HttpServletResponse resp, Integer domainId, String domainName, String labelName,
-			Tag tag) {
+	private static void getEditLabel(HttpServletResponse resp, Integer domainId,
+			String domainName, String labelName, Tag tag) {
 
 		PrintWriter pw = null;
 		try {
 			pw = resp.getWriter();
-			Tag editTag = AON.editTag(domainId, domainName, AonServletUtils.getLoggedUser(),
-					labelName, tag);
+			Tag editTag = AON.editTag(domainId, domainName,
+					AonServletUtils.getLoggedUser(), labelName, tag);
 			pw.append(getLabel(editTag));
 			pw.flush();
 		} catch (Exception ex) {

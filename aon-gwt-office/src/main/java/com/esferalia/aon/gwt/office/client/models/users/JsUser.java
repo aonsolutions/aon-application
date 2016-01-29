@@ -15,26 +15,6 @@ public class JsUser extends JavaScriptObject {
 		return this.login;
 	}-*/;
 
-	public final native String getGravatarId() /*-{
-		return this.gravatar_id;
-	}-*/;
-
-	public final native String getUrl() /*-{
-		return this.url;
-	}-*/;
-
-	public final native String getSiteAdmin() /*-{
-		return this.site_admin;
-	}-*/;	
-
-	public final native String getAvatarUrl() /*-{
-		return this.avatar_url;
-	}-*/;
-
-	public final native String getUserId() /*-{
-		return this.id;
-	}-*/;
-
 	public final native String getName() /*-{
 		return this.name;
 	}-*/;

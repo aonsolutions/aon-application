@@ -1988,6 +1988,19 @@ public class AON {
 	// ********************************************
 	// ****************************** GWT-OFFICE **
 	// ********************************************
+	
+	public static com.esferalia.aon.occam.api.model.office.User getUser(
+			Integer domainId, String domainName, String userName, Integer userId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getOffice().getUser(ctx, userId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+		
+	}
 
 	public static List<Notice> getAllNotices(Integer domainId,
 			String domainName, String userName) {

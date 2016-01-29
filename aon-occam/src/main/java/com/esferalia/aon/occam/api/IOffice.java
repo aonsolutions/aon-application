@@ -4,10 +4,12 @@ import java.util.List;
 
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.office.User;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 
 public interface IOffice {
 	
+	public User getUser (AONContext ctx, Integer id);
 	public Notice addNewNotice (AONContext ctx, Notice notice);	
 	public Notice editNotice (AONContext ctx, Notice notice);
 	public Notice changeNoticeStatus (AONContext ctx, Notice notice);

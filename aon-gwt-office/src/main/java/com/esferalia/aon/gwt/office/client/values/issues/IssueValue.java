@@ -40,7 +40,7 @@ public class IssueValue extends Value<IssueValue.Prop> {
 		prop.put(Prop.Priority, priority);
 	}
 	
-	public void setSender(Integer sender) {
+	public void setSender(String sender) {
 		prop.put(Prop.Sender, sender);
 	}
 	
