@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMPENSATION_CAUSE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OBJECTIVE;
+import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfYear;
 import static java.lang.String.format;
@@ -92,7 +93,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		Salary settle = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
-		double br = (1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12) * 12 / (365) ; //AonDateUtils.getMax(getToday(), DAY_OF_YEAR);
+		double br = (1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12) * 12 / 365; //AonDateUtils.getMax(getToday(), DAY_OF_YEAR);
 
 		Assert.assertEquals( 12 * (2/12.00) * br, settle.getTotalPayment());
 		Assert.assertEquals( 12 * (2/12.00) * br, settle.getTotalLiquid());
@@ -123,6 +124,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 						this.issue = "01/07";
 					}
 				}, });
+		
 		
 		Date contractStart = add(getToday(), Calendar.MONTH, -2);
 		ContractRecord contract = newContract(aonContext, 
@@ -186,7 +188,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		//INDEMNIZACION POR DESPIDO IMPROCEDENTE (< 13 DE FEBRERO DE 2012)
 		addSSRegimePayment(aonContext, 
 				SSRegimeType.GENERAL, 
-				getFirstDayOfYear(getToday()), 
+				add(getFirstDayOfYear(getToday()),Calendar.YEAR,-1), 
 				PaymentType.CRA_0054, 
 				"(CAUSA_INDEMNIZACION == IMPROCEDENTE) ? MIN(45 * AÑOS_TRABAJADOS * SALARIO_DIA,SALARIO_DIA * 365 / 12 * 42 ): REMOVE()",
 				null ,

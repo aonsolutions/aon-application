@@ -2812,25 +2812,38 @@ public class SQLContractSalaryCalculatorContext
 		double years = 0;
 		double months = 0;
 
+		Calendar startCalendar = Calendar.getInstance();
+		startCalendar.setTime(start);
+
+		Calendar endCalendar = Calendar.getInstance();
+		endCalendar.setTime(end);
+
+		startCalendar.add(Calendar.YEAR, 1);
+		while (startCalendar.getTime().compareTo(end) <= 0) {
+			years++;
+			startCalendar.add(Calendar.YEAR, 1);
+		}
+		
+		startCalendar.add(Calendar.YEAR, -1);
+
+		startCalendar.add(Calendar.MONTH, 1);
+		while (startCalendar.getTime().compareTo(end) <= 0) {
+			months++;
+			startCalendar.add(Calendar.MONTH, 1);
+		}
+
+		
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(start);
-
-		calendar.add(Calendar.YEAR, 1);
-		while (calendar.getTime().compareTo(end) <= 0) {
-			years++;
-			calendar.add(Calendar.YEAR, 1);
+		if ( calendar.get(Calendar.DAY_OF_MONTH) == calendar.getActualMaximum(Calendar.DAY_OF_MONTH)){
+			calendar.setTime(end);
+			if ( calendar.get(Calendar.DAY_OF_MONTH) == calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
+				return years + months / 12d;
 		}
-
-		calendar.add(Calendar.YEAR, -1);
-
-		calendar.add(Calendar.MONTH, 1);
-		while (calendar.getTime().compareTo(end) <= 0) {
-			months++;
-			calendar.add(Calendar.MONTH, 1);
-		}
-
-		calendar.add(Calendar.MONTH, -1);
-		long days = CommonUtil.getDaysBetweenDates(calendar.getTime(), end);
+		
+		
+		startCalendar.add(Calendar.MONTH, -1);
+		long days = CommonUtil.getDaysBetweenDates(startCalendar.getTime(), end);
 		if (days > 0)
 			months++;
 
