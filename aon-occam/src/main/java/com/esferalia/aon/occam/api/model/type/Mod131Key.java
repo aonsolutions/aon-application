@@ -65,11 +65,11 @@ public enum Mod131Key implements IFiscalModelKey {
 	public String getValue() {
 		return value;
 	}
-	@Override
+	
 	public String getDescription() {
 		return description;
 	}
-	@Override
+	
 	public String getBox() {
 		return box;
 	}

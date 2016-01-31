@@ -56,11 +56,12 @@ public class FiscalModelValidation {
 				.and(FS_MODEL.MODEL.eq( fm.getModel().getValue()))
 				.and(FS_MODEL.YEAR.equal(fm.getYear()))
 				.and(FS_MODEL.PERIOD.eq( fm.getPeriod().getValue() ))
+				.and(FS_MODEL.ADMINISTRATION.eq( fm.getAdministration().getValue() ))
 				.and(FS_MODEL.REPLACEMENT.equal((byte) 1));
 			if (fm.getId() != null) {
 				select.and(FS_MODEL.ID.ne(fm.getId()));	
 			}
-			if (ctx.getDslContext().fetchCount(select) == 0) {
+			if (ctx.getDslContext().fetchCount(select) > 0) {
 				throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_REPLACED.getMessage());
 			}
 		} else {
@@ -72,6 +73,7 @@ public class FiscalModelValidation {
 				.and(FS_MODEL.MODEL.eq( fm.getModel().getValue()))
 				.and(FS_MODEL.YEAR.equal(fm.getYear())
 				.and(FS_MODEL.PERIOD.eq( fm.getPeriod().getValue() ))
+				.and(FS_MODEL.ADMINISTRATION.eq( fm.getAdministration().getValue() ))
 				.and(FS_MODEL.REPLACEMENT.equal((byte) 0)));
 			if (fm.getId() != null) {
 				select.and(FS_MODEL.ID.ne(fm.getId()));	

@@ -1,0 +1,159 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
+	xmlns:aon="urn:import:com.esferalia.aon.gwt.common.client.widget"
+	xmlns:fiscal="urn:import:com.esferalia.aon.gwt.fiscal.client.widget">
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+		<g:HTMLPanel>
+			<table class="{aonResources.css.aonPanelGrid} {aonResources.css.aonWidthAll}">
+				<colgroup>
+					<col style="width: 250px;" />
+					<col style="width: auto; white-space: nowrap;" />
+				</colgroup>
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:InlineLabel text="{msg.document}"/>
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<aon:DocumentTextBox ui:field="document"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:InlineLabel text=""/>
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<dl>
+							<dt>						
+								<g:Label ui:field="nameLabel" text="{msg.nameCompanyName}"
+									styleName="{aonResources.css.aonInnerLabel}"/>
+							</dt>
+							<dd>
+								<g:TextBox ui:field="name" visibleLength="45" maxLength="45" 
+									styleName="{aonResources.css.aonInputText}"/>
+							</dd>
+						</dl>		
+						<dl>
+							<dt>						
+								<g:Label ui:field="surnameLabel" text="{msg.surname}"
+									styleName="{aonResources.css.aonInnerLabel}"/>
+							</dt>
+							<dd>
+								<g:TextBox ui:field="surname" visibleLength="40" maxLength="40" 
+									styleName="{aonResources.css.aonInputText}"/>
+							</dd>
+						</dl>		
+						<div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:InlineLabel text="{msg.phone}"/>
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<g:TextBox ui:field="phone" visibleLength="9" maxLength="9" 
+							styleName="{aonResources.css.aonInputText}"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:InlineLabel text="{msg.address}"/>
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<g:FlowPanel styleName="{aonResources.css.aonNowrap}">
+							<g:InlineLabel text="{msg.streetType}" styleName="{aonResources.css.aonInnerLabel}"/>
+							<g:TextBox ui:field="streetInitial" visibleLength="3" maxLength="3"  
+								styleName="{aonResources.css.aonInputText}"/>	
+							<g:InlineLabel text="{msg.streetName}" styleName="{aonResources.css.aonInnerLabel}"/>
+							<g:TextBox ui:field="streetName" visibleLength="30" maxLength="40"  
+								styleName="{aonResources.css.aonInputText}"/>
+						</g:FlowPanel>
+						<g:FlowPanel styleName="{aonResources.css.aonNowrap} {aonResources.css.aonMarginTop}">
+							<g:InlineLabel text="{msg.streetNumber}" styleName="{aonResources.css.aonInnerLabel}"/>
+							<g:TextBox ui:field="streetNumber" visibleLength="5" maxLength="5"  
+								styleName="{aonResources.css.aonInputText}"/>
+							<g:InlineLabel text="{msg.streetStair}" styleName="{aonResources.css.aonInnerLabel}"/>
+							<g:TextBox ui:field="streetStair" visibleLength="2" maxLength="2"  
+								styleName="{aonResources.css.aonInputText}"/>
+							<g:InlineLabel text="{msg.streetFloor}" styleName="{aonResources.css.aonInnerLabel}"/>
+							<g:TextBox ui:field="streetFloor" visibleLength="2" maxLength="2"  
+								styleName="{aonResources.css.aonInputText}"/>
+							<g:InlineLabel text="{msg.streetDoor}" styleName="{aonResources.css.aonInnerLabel}"/>
+							<g:TextBox ui:field="streetDoor" visibleLength="2" maxLength="2"  
+								styleName="{aonResources.css.aonInputText}"/>
+						</g:FlowPanel>
+					</td>
+				</tr>
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:InlineLabel text="{msg.town}"/>
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<g:TextBox ui:field="town" visibleLength="35" maxLength="35" 
+							styleName="{aonResources.css.aonInputText}"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:InlineLabel text="{msg.province}"/>
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<aon:ProvinceListBox ui:field="province"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:InlineLabel text="{msg.zip}"/>
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<g:TextBox ui:field="zip" visibleLength="5" maxLength="5" 
+							styleName="{aonResources.css.aonInputText}"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:InlineLabel text="{msg.contactPerson}"/>
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<g:TextBox ui:field="contactPerson" visibleLength="40" maxLength="40" 
+							styleName="{aonResources.css.aonInputText}"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:InlineLabel text="{msg.contactPhone}"/>
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<g:TextBox ui:field="contactPhone" visibleLength="9" maxLength="9" 
+							styleName="{aonResources.css.aonInputText}"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:InlineLabel text="{msg.contactCellular}"/>
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<g:TextBox ui:field="contactCellular" visibleLength="9" maxLength="9" 
+							styleName="{aonResources.css.aonInputText}"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="{aonResources.css.aonPanelGridOdd}">
+						<g:InlineLabel text="{msg.contactMail}"/>
+					</td>
+					<td class="{aonResources.css.aonPanelGridEven}">
+						<g:TextBox ui:field="contactMail" visibleLength="40" maxLength="40" 
+							styleName="{aonResources.css.aonInputText}"/>
+					</td>
+				</tr>
+				
+			</table>
+		</g:HTMLPanel>
+		
+	</g:ScrollPanel>
+</ui:UiBinder>

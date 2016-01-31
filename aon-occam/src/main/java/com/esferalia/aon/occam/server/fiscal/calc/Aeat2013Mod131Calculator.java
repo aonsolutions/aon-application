@@ -72,7 +72,7 @@ public class Aeat2013Mod131Calculator {
 		AccMiningMVELContext ctx = new AccMiningMVELContext( ACCEPTER );
 		ctx.setExpressionMap(COMP);
 		for (FiscalModelDetail detail : mod131.getMap().values()) {
-			Mod131Key key = detail.getKey();
+			Mod131Key key = Mod131Key.getKey( detail.getType() );
 			if (key != null) 
 				ctx.put( key.toString(), detail.getAmount() );
 		}

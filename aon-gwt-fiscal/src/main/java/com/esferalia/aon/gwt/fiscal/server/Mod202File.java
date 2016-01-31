@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -26,7 +27,7 @@ public class Mod202File extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("modId"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			Mod202 mod202 = AON.getMod202(domainName, domainId, id);
+			Mod202 mod202 = AON.getMod202(domainName, domainId,AonServletUtils.getLoggedUser(), id);
 			
 			String s = mod202.getName();
 		    StringBuilder sb = new StringBuilder();

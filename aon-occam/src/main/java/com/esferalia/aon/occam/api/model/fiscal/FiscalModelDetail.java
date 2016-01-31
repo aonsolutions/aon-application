@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
 
-import com.esferalia.aon.occam.api.model.type.Mod131Key;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class FiscalModelDetail implements Serializable {
 
@@ -16,6 +16,7 @@ public class FiscalModelDetail implements Serializable {
 	private double resultAmount;
 	private double adjustAmount;
 	private double amount;
+	private String expression;
 	
 	public Integer getId() {
 		return id;
@@ -73,8 +74,28 @@ public class FiscalModelDetail implements Serializable {
 		this.amount = amount;
 		return this;
 	}
-	public Mod131Key getKey() {
-		return Mod131Key.getKey(getType());
+	public String getExpression() {
+		return expression;
+	}
+	public FiscalModelDetail setExpression(String expression) {
+		this.expression = expression;
+		return this;
+	}
+	
+	public void addAccumulatedAmount(double amount) {
+		setAccumulatedAmount( AonMathUtils.round(getAccumulatedAmount()) + amount);
+	}
+	public void addDeclaredAmount(double amount) {
+		setDeclaredAmount( AonMathUtils.round(getDeclaredAmount()) + amount);
+	}
+	public void addResultAmount(double amount) {
+		setResultAmount( AonMathUtils.round(getResultAmount()) + amount);
+	}
+	public void addAdjustAmount(double amount) {
+		setAdjustAmount( AonMathUtils.round(getAdjustAmount()) + amount);
+	}
+	public void addAmount(double amount) {
+		setAmount( AonMathUtils.round(getAmount()) + amount);
 	}
 	
 }

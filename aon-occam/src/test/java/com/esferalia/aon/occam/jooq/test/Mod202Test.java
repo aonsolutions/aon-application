@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.jooq.test;
 
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -18,26 +17,26 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.server.fiscal.format.mod202.Mod202Writer;
 
-
 public class Mod202Test {
 
 	private static AONContext ctx;
 	private static String DOMAIN_NAME = "miguelsilvestre.ecastellano.dev";
 	private static int DOMAIN_ID = 2155;
+	private static String USER_NAME = "admin";
 	
 
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
 		Class.forName( org.gjt.mm.mysql.Driver.class.getName() );
-		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID);
+		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,USER_NAME);
 	}
 	
 	@Test
 	public void testFile() throws IOException {
 		Writer writer = new OutputStreamWriter( new FileOutputStream( "/tmp/mod202.txt" ),"ISO-8859-15");  
-		List<Mod202> list = AON.getMod202s(DOMAIN_NAME, DOMAIN_ID);
+		List<Mod202> list = AON.getMod202s(DOMAIN_NAME, DOMAIN_ID, USER_NAME);
 		for (Mod202 mod202 : list) {
-			Mod202 m202 = AON.getMod202(DOMAIN_NAME, DOMAIN_ID, mod202.getId());
+			Mod202 m202 = AON.getMod202(DOMAIN_NAME, DOMAIN_ID, USER_NAME, mod202.getId());
 			Mod202Writer.fill(writer, m202);
 		}
 		writer.flush();

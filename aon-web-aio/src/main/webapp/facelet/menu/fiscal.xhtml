@@ -257,11 +257,31 @@
 												<aon:outputText styleClass="aon-fiscal-link-label" value="Impuesto Sociedades. Pago fraccionado." />
 											</aon:commandLink>
 
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="invoice_series_breakdown"
-												action="gwt_invoiceSeriesBreakdown"
-												value="Desglose de series de facturas" />
-										</aon:div>
+											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+												<aon:div styleClass="aon-direct-access-list-element">
+													<aon:commandLink id="invoice_series_breakdown"
+														action="gwt_invoiceSeriesBreakdown"
+													value="Desglose de series de facturas" />
+												</aon:div>
+												
+												<aon:outputText value="&#160;"/>
+											</aon:if>
+										
+										
+										
+										<aon:if test="#{customize.snapshotVersion}">
+											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+												<aon:commandLink id="gwt_mod111"
+													action="gwt_mod111"
+													title="#{bundle.fiscal_model_111_module}">
+													<aon:outputText styleClass="aon-fiscal-link-box" value="111" style="background-color: orange;"/>
+													<aon:outputText styleClass="aon-fiscal-link-label" value="  [BETA] #{bundle.fiscal_model_111_module}" />
+												</aon:commandLink>
+												
+												<aon:outputText value="&#160;"/>
+											</aon:if>
+										</aon:if>
+										
 							    </h:panelGrid>
 							     
 							</aon:div>

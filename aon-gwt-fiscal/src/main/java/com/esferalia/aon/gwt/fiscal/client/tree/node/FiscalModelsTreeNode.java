@@ -9,7 +9,6 @@ import com.esferalia.aon.gwt.fiscal.client.tree.content.EnterpriseYear;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -34,23 +33,6 @@ public class FiscalModelsTreeNode extends TreeNode<EnterpriseYear> {
 			@Override
 			public FiscalModel getFiscalModel(IFiscalModel fm) {
 				return map(fm);
-			}
-		};
-
-		public static TreeNodeFiscalModelTypes<Mod111> MODEL_111 = new TreeNodeFiscalModelTypes<Mod111>() {
-			@Override
-			public TreeNode<Mod111> getInstance() {
-				return new Model111TreeNode();
-			}
-			@Override
-			public boolean accept(IFiscalModel fm) {
-				return (fm.getModel() == FiscalModelType.M111);
-			}
-			@Override
-			public Mod111 getFiscalModel(IFiscalModel fm) {
-				Mod111 mod111 = new Mod111();
-				copy(fm, mod111);
-				return mod111;
 			}
 		};
 
@@ -163,7 +145,7 @@ public class FiscalModelsTreeNode extends TreeNode<EnterpriseYear> {
 		}
 		
 		static TreeNodeFiscalModelTypes<?>[] NODE_TYPES = new TreeNodeFiscalModelTypes<?>[]{
-			MODEL_111,MODEL_131,MODEL_202	
+			MODEL_131,MODEL_202	
 		};
 		
 	}

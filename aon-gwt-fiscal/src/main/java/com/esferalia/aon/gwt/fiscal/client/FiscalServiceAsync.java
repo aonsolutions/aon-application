@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
@@ -30,6 +31,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
+import com.esferalia.aon.occam.api.model.type.Mod111Key;
+import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface FiscalServiceAsync {
@@ -116,6 +119,16 @@ public interface FiscalServiceAsync {
 	void deleteMod3902015(String domainName, Integer domain, Mod3902015 mod390, AsyncCallback<Void> callback);
 	void initializeMod3902015(String domainName, Integer domain, Integer year, AsyncCallback<Mod3902015> callback);
 	
+	// ---------------------------------------------------------------MODELO 111
+	void getMod111(String domainName, int domain, int id,AsyncCallback<Mod111> callback);
+	void getMod111s(String domainName, int domain,AsyncCallback<LinkedList<Mod111>> callback);
+	void calculateMod111(String domainName, Mod111 mod111,AsyncCallback<Mod111> callback);
+	void deleteMod111(String currentDomainName, Mod111 mod111,AsyncCallback<Void> callback);
+	void saveMod111(String domainName, Mod111 mod111,AsyncCallback<Mod111> asyncCallback);
+	void initializeMod111(String domainName, int domain, Mod111 mod111,AsyncCallback<Mod111> asyncCallback);
+	void createMod111(String domainName, int domain, Mod111 mod111, AsyncCallback<Mod111> callback);
+	void getInfo(String domainName, int domain, Mod111 mod111, Mod111Key key, Mod111KeyInfo infoKey,AsyncCallback<String> callback);
+	
 	// ---------------------------------------------------------------MODELO 131
 	void getMod131(String domainName, int domain, int id,AsyncCallback<Mod131> callback);
 	void getMod131s(String domainName, int domain,AsyncCallback<LinkedList<Mod131>> callback);
@@ -190,7 +203,5 @@ public interface FiscalServiceAsync {
 	void getAccountBalance(String domainName, int domain, 
 			AccountStatementParams params,
 			AsyncCallback<LinkedList<AccountStatement>> callback);
-
-
 
 }

@@ -3,8 +3,10 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.FsModelDetail.FS_MODEL_DETAIL;
 
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.stream.Stream;
 
 import org.jooq.Record;
@@ -24,6 +26,7 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -116,7 +119,12 @@ public class FiscalModelDAO {
 			.setContactPerson(record.getValue(FS_MODEL.CONTACT_PERSON))
 			.setContactPhone(record.getValue(FS_MODEL.CONTACT_PHONE))
 			.setContactCellular(record.getValue(FS_MODEL.CONTACT_CELLULAR))
-			.setContactEmail(record.getValue(FS_MODEL.CONTACT_EMAIL));
+			.setContactEmail(record.getValue(FS_MODEL.CONTACT_EMAIL))
+			.setCreationUser(record.getValue(FS_MODEL.CREATION_USER))
+			.setCreationDate(record.getValue(FS_MODEL.CREATION_DATE))
+			.setModificationUser(record.getValue(FS_MODEL.MODIFICATION_USER))
+			.setModificationDate(record.getValue(FS_MODEL.MODIFICATION_DATE))
+		;
 	}
 
 	public static FiscalModel save(AONContext ctx, FiscalModel fm) {
@@ -171,6 +179,8 @@ public class FiscalModelDAO {
 				.set(FS_MODEL.CONTACT_PHONE,fm.getContactPhone())
 				.set(FS_MODEL.CONTACT_CELLULAR,fm.getContactCellular())
 				.set(FS_MODEL.CONTACT_EMAIL,fm.getContactEmail())
+				.set(FS_MODEL.CREATION_USER,ctx.getUser())
+				.set(FS_MODEL.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.returning(FS_MODEL.ID)
 			.fetchOne();
 		fm.setId(record.getId());
@@ -212,6 +222,8 @@ public class FiscalModelDAO {
 				.set(FS_MODEL.CONTACT_PHONE,fm.getContactPhone())
 				.set(FS_MODEL.CONTACT_CELLULAR,fm.getContactCellular())
 				.set(FS_MODEL.CONTACT_EMAIL,fm.getContactEmail())
+				.set(FS_MODEL.MODIFICATION_USER,ctx.getUser())
+				.set(FS_MODEL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.where(FS_MODEL.ID.equal(fm.getId()))
 			.execute();
 		deleteDetails(ctx, fm);
@@ -257,8 +269,22 @@ public class FiscalModelDAO {
 		fm.setDomain(ctx.getDomainId());
 		fm.setDocument(params.getDocument());
 		fm.setName(params.getName());
-		fm.setAdministration(params.getAdministration(Administration.COMMON_TERRITORY));
+		if (fm.getAdministration() == null) {
+			fm.setAdministration(params.getAdministration(Administration.COMMON_TERRITORY));
+		}
+		if (fm.getYear() < 2005 || fm.getYear() > 2050) {
+			Date today = new Date();
+			int year = AonDateUtils.getYear(today);
+			int month = AonDateUtils.getMonth(today);
+			if (month == 0) {
+				year = year - 1;
+				month = 11;
+			}
+			fm.setYear(year);
+			fm.setPeriod( Period.getQuarterlyPeriod(month));
+		}
 		fm.setAdmonAeat(params.getAdministrationCode());
+		fm.setStatus(FiscalStatus.PENDING);
 		
 		// ---------------------------
 		Company company = CompanyDAO.getCompany(ctx,ctx.getDomainId());
@@ -329,7 +355,12 @@ public class FiscalModelDAO {
 			.setContactPerson(record.getValue(FS_MODEL.CONTACT_PERSON))
 			.setContactPhone(record.getValue(FS_MODEL.CONTACT_PHONE))
 			.setContactCellular(record.getValue(FS_MODEL.CONTACT_CELLULAR))
-			.setContactEmail(record.getValue(FS_MODEL.CONTACT_EMAIL));
+			.setContactEmail(record.getValue(FS_MODEL.CONTACT_EMAIL))
+			.setCreationUser(record.getValue(FS_MODEL.CREATION_USER))
+			.setCreationDate(record.getValue(FS_MODEL.CREATION_DATE))
+			.setModificationUser(record.getValue(FS_MODEL.MODIFICATION_USER))
+			.setModificationDate(record.getValue(FS_MODEL.MODIFICATION_DATE))
+			;
 		return fm;	
 	}
 	

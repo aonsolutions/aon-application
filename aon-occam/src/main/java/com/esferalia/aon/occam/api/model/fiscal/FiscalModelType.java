@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum FiscalModelType implements Serializable{
@@ -48,6 +50,13 @@ public enum FiscalModelType implements Serializable{
 			if (AonStringUtils.equals(value, t.getValue())) return t;
 		}
 		return null;
+	}
+	public String getName(Administration admon, Period period) {
+		if (period.isQuarterPeriod() && (admon == Administration.ALAVA 
+				|| admon == Administration.BIZKAIA) ) {
+			return "110";
+		}
+		return name;
 	}
 	
 	

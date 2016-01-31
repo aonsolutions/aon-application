@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
@@ -22,9 +23,12 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
+import com.esferalia.aon.occam.api.model.type.Mod111Key;
+import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalActivityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMatrixDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.Mod111DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod131DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod180DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod184DAO;
@@ -315,6 +319,46 @@ public class FiscalImpl implements IFiscal {
 				configuration -> Mod3902015DAO.delete(ctx, mod390));
 	}
 	
+	// ----------------------------------------------------------- [MODELO 111]
+	@Override
+	public Mod111 getMod111(AONContext ctx, int id) {
+		return Mod111DAO.getMod111(ctx, id);
+	}
+	@Override
+	public LinkedList<Mod111> getMod111s(AONContext ctx, int domain) {
+		LinkedList<Mod111> list = new LinkedList<Mod111>();
+		Mod111DAO.getMod111s(ctx, domain)
+			.forEach(list::add);
+		return list;
+	}
+	@Override
+	public Mod111 calculateMod111(AONContext ctx, Mod111 mod111) {
+		return Mod111DAO.calculateMod111(ctx, mod111);
+	}
+	@Override
+	public Mod111 saveMod111(AONContext ctx, Mod111 mod111) {
+		return Mod111DAO.saveMod111(ctx, mod111);
+	}
+
+	@Override
+	public void deleteMod111(AONContext ctx, Mod111 mod111) {
+		Mod111DAO.delete(ctx, mod111);
+	}
+
+	@Override
+	public Mod111 initializeMod111(AONContext ctx, Mod111 mod111) {
+		return Mod111DAO.initializeMod111(ctx,mod111);
+	}
+
+	@Override
+	public Mod111 createMod111(AONContext ctx, Mod111 mod111) {
+		return Mod111DAO.createMod111(ctx,mod111);
+	}
+	@Override
+	public String getMod111Info(AONContext ctx, Mod111 mod111, Mod111Key key, Mod111KeyInfo infoKey) {
+		return Mod111DAO.getMod111Info(ctx,mod111,key,infoKey);
+	}
+
 	// ----------------------------------------------------------- [MODELO 131]
 	@Override
 	public Mod131 getMod131(AONContext ctx, int id) {

@@ -10,7 +10,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.server.util.AONMVELUtils;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
@@ -27,6 +26,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
@@ -49,6 +49,8 @@ import com.esferalia.aon.occam.api.model.type.Activities.Type3Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type4Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type7Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.TypeActivity;
+import com.esferalia.aon.occam.api.model.type.Mod111Key;
+import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.MOD2002014;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.XMLtoMod2002014;
 import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002014Import2013;
@@ -183,232 +185,277 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	// ---------------------------------------------------------------MODELO 190
 	@Override
 	public Mod190 initializeMod190(String domainName, Integer domain,Integer year) {
-		return AON.initializeMod190(domainName, domain, AonServletUtils.getLoggedUser(), year);
+		return AON.initializeMod190(domainName, domain, this.getUserLogin(), year);
 	}
 	
 	@Override
 	public LinkedList<Mod190> getMod190s(String domainName, int domain) {
-		return AON.getMod190s(domainName, domain, AonServletUtils.getLoggedUser());
+		return AON.getMod190s(domainName, domain, this.getUserLogin());
 	}
 
 	@Override
 	public void deleteMod190(String domainName, int domain, Mod190 mod190) {
-		AON.deleteMod190(domainName, domain, AonServletUtils.getLoggedUser(), mod190);
+		AON.deleteMod190(domainName, domain, this.getUserLogin(), mod190);
 	}
 
 	@Override
 	public Mod190 saveMod190(String domainName, int domain,Mod190 mod190) {
-		return AON.saveMod190(domainName, domain, AonServletUtils.getLoggedUser(), mod190);
+		return AON.saveMod190(domainName, domain, this.getUserLogin(), mod190);
 	}
 
 
 	@Override
 	public Mod190 getMod190(String domainName, int domain, Integer id) {
-		return AON.getMod190(domainName, domain, AonServletUtils.getLoggedUser(), id);
+		return AON.getMod190(domainName, domain, this.getUserLogin(), id);
 	}
 
 	@Override
 	public Mod190Detail getMod190Detail(String domainName, int domain, Integer id) {
-		return AON.getMod190Detail(domainName, domain, AonServletUtils.getLoggedUser(), id);
+		return AON.getMod190Detail(domainName, domain, this.getUserLogin(), id);
 	}
 
 	// ---------------------------------------------------------------MODELO 193
 	@Override
 	public Mod193 initializeMod193(String domainName, Integer domain,Integer year) {
-		return AON.initializeMod193(domainName, domain, AonServletUtils.getLoggedUser(), year);
+		return AON.initializeMod193(domainName, domain, this.getUserLogin(), year);
 	}
 	
 	@Override
 	public LinkedList<Mod193> getMod193s(String domainName, int domain) {
-		return AON.getMod193s(domainName, domain, AonServletUtils.getLoggedUser());
+		return AON.getMod193s(domainName, domain, this.getUserLogin());
 	}
 
 	@Override
 	public void deleteMod193(String domainName, int domain, Mod193 mod193) {
-		AON.deleteMod193(domainName, domain, AonServletUtils.getLoggedUser(), mod193);
+		AON.deleteMod193(domainName, domain, this.getUserLogin(), mod193);
 	}
 
 	@Override
 	public Mod193 saveMod193(String domainName, int domain,Mod193 mod193) {
-		return AON.saveMod193(domainName, domain, AonServletUtils.getLoggedUser(), mod193);
+		return AON.saveMod193(domainName, domain, this.getUserLogin(), mod193);
 	}
 
 
 	@Override
 	public Mod193 getMod193(String domainName, int domain, Integer id) {
-		return AON.getMod193(domainName, domain, AonServletUtils.getLoggedUser(), id);
+		return AON.getMod193(domainName, domain, this.getUserLogin(), id);
 	}
 
 	// ---------------------------------------------------------------MODELO 180
 	@Override
 	public Mod180 initializeMod180(String domainName, Integer domain,Integer year) {
-		return AON.initializeMod180(domainName, domain, AonServletUtils.getLoggedUser(), year);
+		return AON.initializeMod180(domainName, domain, this.getUserLogin(), year);
 	}
 
 	@Override
 	public LinkedList<Mod180> getMod180s(String domainName, int domain) {
-		return AON.getMod180s(domainName, domain, AonServletUtils.getLoggedUser());
+		return AON.getMod180s(domainName, domain, this.getUserLogin());
 	}
 
 	@Override
 	public void deleteMod180(String domainName, int domain, Mod180 mod180){
-		AON.deleteMod180(domainName, domain, AonServletUtils.getLoggedUser(), mod180);
+		AON.deleteMod180(domainName, domain, this.getUserLogin(), mod180);
 	}
 
 	@Override
 	public Mod180 saveMod180(String domainName, int domain,Mod180 mod180) {
-		return AON.saveMod180(domainName, domain, AonServletUtils.getLoggedUser(), mod180);
+		return AON.saveMod180(domainName, domain, this.getUserLogin(), mod180);
 	}
 
 
 	@Override
 	public Mod180 getMod180(String domainName, int domain, Integer id) {
-		return AON.getMod180(domainName, domain, AonServletUtils.getLoggedUser(), id);
+		return AON.getMod180(domainName, domain, this.getUserLogin(), id);
 	}
 
 	@Override
 	public Mod180Detail getMod180Detail(String domainName, int domain, Integer id) {
-		return AON.getMod180Detail(domainName, domain, AonServletUtils.getLoggedUser(), id);
+		return AON.getMod180Detail(domainName, domain, this.getUserLogin(), id);
 	}
 
 	// ---------------------------------------------------------------MODELO 184
 	@Override
 	public Mod184 initializeMod184(String domainName, Integer domain,Integer year) {
-		return AON.initializeMod184(domainName, domain, AonServletUtils.getLoggedUser(), year);
+		return AON.initializeMod184(domainName, domain, this.getUserLogin(), year);
 	}
 	
 	@Override
 	public LinkedList<Mod184> getMod184s(String domainName, int domain) {
-		return AON.getMod184s(domainName, domain, AonServletUtils.getLoggedUser());
+		return AON.getMod184s(domainName, domain, this.getUserLogin());
 	}
 
 	@Override
 	public void deleteMod184(String domainName, int domain, Mod184 mod184) {
-		AON.deleteMod184(domainName, domain, AonServletUtils.getLoggedUser(), mod184);
+		AON.deleteMod184(domainName, domain, this.getUserLogin(), mod184);
 	}
 
 	@Override
 	public Mod184 saveMod184(String domainName, int domain,Mod184 mod184) {
-		return AON.saveMod184(domainName, domain, AonServletUtils.getLoggedUser(), mod184);
+		return AON.saveMod184(domainName, domain, this.getUserLogin(), mod184);
 	}
 
 
 	@Override
 	public Mod184 getMod184(String domainName, int domain, Integer id) {
-		return AON.getMod184(domainName, domain, AonServletUtils.getLoggedUser(), id);
+		return AON.getMod184(domainName, domain, this.getUserLogin(), id);
 	}
 
 	// ---------------------------------------------------------------MODELO 390  
 	@Override
 	public LinkedList<Mod390> getMod390s(String domainName, Integer domain) {
-		return AON.getMod390s(domainName, domain, AonServletUtils.getLoggedUser());
+		return AON.getMod390s(domainName, domain, this.getUserLogin());
 	}
 
 	// ---------------------------------------------------------------MODELO 390 - 2014 
 	@Override
 	public Mod3902014 getMod3902014(String domainName, Integer domain,Integer id) {
-		return AON.getMod3902014(domainName, domain, AonServletUtils.getLoggedUser(), id);
+		return AON.getMod3902014(domainName, domain, this.getUserLogin(), id);
 	}
 
 	@Override
 	public Mod3902014 saveMod3902014(String domainName, Integer domain, Mod3902014 mod390) {
-		return AON.saveMod3902014(domainName, domain, AonServletUtils.getLoggedUser(), mod390);
+		return AON.saveMod3902014(domainName, domain, this.getUserLogin(), mod390);
 	}
 
 	@Override
 	public void deleteMod3902014(String domainName, Integer domain, Mod3902014 mod390) {
-		AON.deleteMod3902014(domainName, domain, AonServletUtils.getLoggedUser(), mod390);
+		AON.deleteMod3902014(domainName, domain, this.getUserLogin(), mod390);
 	}
 	
 	@Override
 	public Mod3902014 initializeMod3902014(String domainName, Integer domain,Integer year) {
-		return AON.initializeMod3902014(domainName, domain, AonServletUtils.getLoggedUser(), year);
+		return AON.initializeMod3902014(domainName, domain, this.getUserLogin(), year);
 	}
 
 	// ---------------------------------------------------------------MODELO 390 - 2015 
 	@Override
 	public Mod3902015 getMod3902015(String domainName, Integer domain,Integer id) {
-		return AON.getMod3902015(domainName, domain, AonServletUtils.getLoggedUser(), id);
+		return AON.getMod3902015(domainName, domain, this.getUserLogin(), id);
 	}
 
 	@Override
 	public Mod3902015 saveMod3902015(String domainName, Integer domain, Mod3902015 mod390) {
-		return AON.saveMod3902015(domainName, domain, AonServletUtils.getLoggedUser(), mod390);
+		return AON.saveMod3902015(domainName, domain, this.getUserLogin(), mod390);
 	}
 
 	@Override
 	public void deleteMod3902015(String domainName, Integer domain, Mod3902015 mod390) {
-		AON.deleteMod3902015(domainName, domain, AonServletUtils.getLoggedUser(), mod390);
+		AON.deleteMod3902015(domainName, domain, this.getUserLogin(), mod390);
 	}
 	
 	@Override
 	public Mod3902015 initializeMod3902015(String domainName, Integer domain,Integer year) {
-		return AON.initializeMod3902015(domainName, domain, AonServletUtils.getLoggedUser(), year);
+		return AON.initializeMod3902015(domainName, domain, this.getUserLogin(), year);
 	}
+
+	// ---------------------------------------------------------------MODELO 111
+	@Override
+	public Mod111 getMod111(String domainName,
+			int domain,int id) throws AonCoreException {
+		return AON.getMod111(domainName, domain, this.getUserLogin(), id);
+	}
+
+	@Override
+	public LinkedList<Mod111> getMod111s(String domainName,
+			int domain) throws AonCoreException {
+		return AON.getMod111s(domainName, domain, this.getUserLogin());
+	}
+
+	@Override
+	public Mod111 calculateMod111(String domainName, Mod111 mod111) {
+		return AON.calculate(domainName, this.getUserLogin(), mod111);
+	}
+
+	@Override
+	public Mod111 saveMod111(String domainName, Mod111 mod111) {
+		return AON.save(domainName, this.getUserLogin(), mod111);
+	}
+
+	@Override
+	public Mod111 initializeMod111(String domainName, int domain, Mod111 mod111) {
+		return AON.initializeMod111(domainName, domain, this.getUserLogin(), mod111);
+	}
+
+	@Override
+	public Mod111 createMod111(String domainName, int domain, Mod111 mod111) {
+		return AON.createMod111(domainName, domain, this.getUserLogin(), mod111);
+	}
+
+	@Override
+	public void deleteMod111(String domainName, Mod111 mod111) {
+		AON.deleteMod111(domainName, this.getUserLogin(), mod111);
+	}
+	@Override
+	public String getInfo(String domainName, int domain, Mod111 mod111, Mod111Key key, Mod111KeyInfo infoKey)
+			throws AonCoreException {
+		return AON.getMod111Info(domainName, domain, this.getUserLogin(), mod111, key, infoKey);
+		
+	}
+
 	// ---------------------------------------------------------------MODELO 131
 	@Override
 	public Mod131 getMod131(String domainName,
 			int domain,int id) throws AonCoreException {
-		return AON.getMod131(domainName, domain, id);
+		return AON.getMod131(domainName, domain, this.getUserLogin(), id);
 	}
 
 	@Override
 	public LinkedList<Mod131> getMod131s(String domainName,
 			int domain) throws AonCoreException {
-		return AON.getMod131s(domainName, domain);
+		return AON.getMod131s(domainName, domain, this.getUserLogin());
 	}
 
 	@Override
 	public Mod131 calculateMod131(String domainName, Mod131 mod131) {
-		return AON.calculate(domainName, mod131);
+		return AON.calculate(domainName, this.getUserLogin(), mod131);
 	}
 
 	@Override
 	public Mod131 saveMod131(String domainName, Mod131 mod131) {
-		return AON.save(domainName, mod131);
+		return AON.save(domainName, this.getUserLogin(), mod131);
 	}
 
 	@Override
 	public void deleteMod131(String domainName, Mod131 mod131) {
-		AON.deleteMod131(domainName, mod131);
+		AON.deleteMod131(domainName, this.getUserLogin(), mod131);
 	}
 
 	@Override
 	public Mod131 initializeMod131(String domainName, int domain, Mod131 mod131) {
-		return AON.initializeMod131(domainName, domain, mod131);
+		return AON.initializeMod131(domainName, domain, this.getUserLogin(), mod131);
 	}
 
 	// ---------------------------------------------------------------MODELO 202
 	@Override
 	public Mod202 getMod202(String domainName,
 			int domain,int id) throws AonCoreException {
-		return AON.getMod202(domainName, domain, id);
+		return AON.getMod202(domainName, domain, this.getUserLogin(), id);
 	}
 
 	@Override
 	public LinkedList<Mod202> getMod202s(String domainName,
 			int domain) throws AonCoreException {
-		return AON.getMod202s(domainName, domain);
+		return AON.getMod202s(domainName, domain,this.getUserLogin());
 	}
 
 	@Override
 	public Mod202 calculateMod202(String domainName, Mod202 mod202) {
-		return AON.calculate(domainName, mod202);
+		return AON.calculate(domainName,this.getUserLogin(), mod202);
 	}
 
 	@Override
 	public Mod202 saveMod202(String domainName, Mod202 mod202) {
-		return AON.save(domainName, mod202);
+		return AON.save(domainName,this.getUserLogin(), mod202);
 	}
 
 	@Override
 	public Mod202 initializeMod202(String domainName, int domain, Mod202 mod202) {
-		return AON.initializeMod202(domainName, domain, mod202);
+		return AON.initializeMod202(domainName, domain,this.getUserLogin(), mod202);
 	}
 
 	@Override
 	public void deleteMod202(String domainName, Mod202 mod202) {
-		AON.deleteMod202(domainName, mod202);
+		AON.deleteMod202(domainName,this.getUserLogin(), mod202);
 	}
 
 	// ---------------------------------------------------------------MODELO 200 - 2013
@@ -575,13 +622,13 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	@Override
 	public LinkedList<AccountPeriod> getDomainPeriods(String domainName,
 			int domain) throws AonCoreException {
-		return AON.getDomainPeriods(domainName, domain, AonServletUtils.getLoggedUser());
+		return AON.getDomainPeriods(domainName, domain, this.getUserLogin());
 	}
 	// --------------------------------------------------------------- ACCOUNT ENTRIES
 	@Override
 	public LinkedList<AccountEntry> getAccountEntries(String domainName,
 			int domain, final AccountEntryParams params,int offset, int limit) throws AonCoreException {
-		return AON.getAccountEntries(domainName, domain, AonServletUtils.getLoggedUser(),
+		return AON.getAccountEntries(domainName, domain, this.getUserLogin(),
 				params, offset, limit);
 	}
 
@@ -589,7 +636,7 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	public AccountEntry getAccountEntry(String domainName, int domain, int id)
 			throws AonCoreException {
 		LinkedList<AccountEntry> list = AON.getAccountEntries(
-				domainName, domain, AonServletUtils.getLoggedUser(), 
+				domainName, domain, this.getUserLogin(), 
 				p -> p.getIdProperty().eq(id)
 				, 0, 1)
 				;
@@ -602,12 +649,12 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	@Override
 	public AccountEntry save(String domainName, int domain, AccountEntry ae)
 			throws AonCoreException {
-		return AON.save(domainName, domain, AonServletUtils.getLoggedUser(), ae);
+		return AON.save(domainName, domain, this.getUserLogin(), ae);
 	}
 	@Override
 	public LinkedList<AccountEntry> getSalaryAccountEntries(String domainName,
 			int domain, Date from, Date to ) {
-		return AON.getAccountEntries(domainName, domain, AonServletUtils.getLoggedUser(), 
+		return AON.getAccountEntries(domainName, domain, this.getUserLogin(), 
 				p -> p.getDomainProperty().eq(domain)
 					.and(p.getEntryDateProperty().between(from, to))
 					.and(p.getEntryTypeProperty().eq((byte) AccountEntryType.SALARY.ordinal()))
@@ -616,7 +663,7 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 
 	@Override
 	public void deleteAccountEntry(String domainName, int domain, Integer id) {
-		AON.deleteAccountEntry(domainName, domain, AonServletUtils.getLoggedUser(), id);
+		AON.deleteAccountEntry(domainName, domain, this.getUserLogin(), id);
 	}
 
 	@Override
@@ -624,9 +671,9 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 			String domainName, int domain, Date from, Date to, String concept,
 			Integer registryBank) {
 		List<Integer> ids = AON.insertSalaryEntries(domainName, domain,
-				AonServletUtils.getLoggedUser() , from, to, concept, registryBank);
+				this.getUserLogin() , from, to, concept, registryBank);
 		final Integer[] arr = ids.toArray(new Integer[ids.size()]);  
-		return AON.getAccountEntries(domainName, domain, AonServletUtils.getLoggedUser()
+		return AON.getAccountEntries(domainName, domain, this.getUserLogin()
 				, p -> p.getIdProperty().in(arr)
 						.and(p.getDomainProperty().eq(domain) )
 				, 0, 100);

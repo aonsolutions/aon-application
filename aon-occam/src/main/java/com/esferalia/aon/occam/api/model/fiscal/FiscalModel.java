@@ -1,12 +1,14 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
-import java.util.HashMap;
+import java.util.Date;
+import java.util.LinkedHashMap;
 
+import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.type.Administration;
-import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
 
-public class FiscalModel implements IFiscalModel {
+public class FiscalModel implements IFiscalModel, HasAudit {
 
 	private static final long serialVersionUID = -6772628350162797968L;
 	
@@ -45,8 +47,13 @@ public class FiscalModel implements IFiscalModel {
 	private String contactCellular;
 	private String contactEmail;
 	private String iban;
+
+	private String creationUser;
+	private Date creationDate;
+	private String modificationUser;
+	private Date modificationDate;
 	
-	HashMap<String,FiscalModelDetail> map;
+	private LinkedHashMap<String,FiscalModelDetail> map;
 	
 	@Override
 	public Integer getId() {
@@ -183,6 +190,10 @@ public class FiscalModel implements IFiscalModel {
 		this.document = document;
 		return this;
 	}
+	public boolean isEntity() {
+		return AonDocumentUtil.isEntity(getDocument());
+	}
+	
 	@Override
 	public String getSurname() {
 		return surname;
@@ -311,13 +322,13 @@ public class FiscalModel implements IFiscalModel {
 		this.iban = iban;
 	}
 	
-	public HashMap<String, FiscalModelDetail> getMap() {
+	public LinkedHashMap<String, FiscalModelDetail> getMap() {
 		if (map == null) {
-			map = new HashMap<String, FiscalModelDetail>();
+			map = new LinkedHashMap<String, FiscalModelDetail>();
 		}
 		return map;
 	}
-	public FiscalModel setMap(HashMap<String, FiscalModelDetail> map) {
+	public FiscalModel setMap(LinkedHashMap<String, FiscalModelDetail> map) {
 		this.map = map;
 		return this;
 	}
@@ -345,7 +356,7 @@ public class FiscalModel implements IFiscalModel {
 	public double getAmount(IFiscalModelKey key) {
 		return getAmount(key.getValue());
 	}
-	public boolean getCheck(Mod202Key key) {
+	public boolean getCheck(IFiscalModelKey key) {
 		return getAmount(key.getValue()) == 1;
 	}
 
@@ -413,4 +424,37 @@ public class FiscalModel implements IFiscalModel {
 		to.setMap(from.getMap());
 	}
 
+	// ---------------------------------------------------------- AUDIT
+	@Override
+	public String getCreationUser() {
+		return creationUser;
+	}
+	public FiscalModel setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+		return this;
+	}
+	@Override
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	public FiscalModel setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+	@Override
+	public String getModificationUser() {
+		return modificationUser;
+	}
+	public FiscalModel setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
+		return this;
+	}
+	@Override
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+	public FiscalModel setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+		return this;
+	}
 }

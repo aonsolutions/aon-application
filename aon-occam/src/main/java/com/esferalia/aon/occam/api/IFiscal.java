@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
@@ -20,6 +21,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
+import com.esferalia.aon.occam.api.model.type.Mod111Key;
+import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
 
 public interface IFiscal {
 	// 			        FISCAL PANEL
@@ -86,6 +89,15 @@ public interface IFiscal {
 	public void deleteMod3902015(AONContext ctx,Mod3902015 mod390);
 	public Mod3902015 initializeMod3902015(AONContext ctx, int year);
 	
+	// 				   		  MOD111
+	public Mod111 getMod111(AONContext ctx, int id);
+	public LinkedList<Mod111> getMod111s(AONContext ctx, int domain);
+	public Mod111 calculateMod111(AONContext ctx, Mod111 mod111);
+	public Mod111 saveMod111(AONContext ctx, Mod111 mod111);
+	public Mod111 initializeMod111(AONContext ctx, Mod111 mod111);
+	public Mod111 createMod111(AONContext ctx, Mod111 mod111);
+	public void deleteMod111(AONContext ctx, Mod111 mod111);
+
 	// 				   		  MOD131
 	public Mod131 getMod131(AONContext ctx, int id);
 	public LinkedList<Mod131> getMod131s(AONContext ctx, int domain);
@@ -125,6 +137,7 @@ public interface IFiscal {
 	public void deleteMod2002014(AONContext ctx, int id);
 	public String dumpAEATMod2002014(Mod2002014 mod200);
 	public Mod2002014 importMod2002013(AONContext ctx, Mod2002014 mod200);
+	public String getMod111Info(AONContext ctx, Mod111 mod111, Mod111Key key, Mod111KeyInfo infoKey);
 	
 
 }
