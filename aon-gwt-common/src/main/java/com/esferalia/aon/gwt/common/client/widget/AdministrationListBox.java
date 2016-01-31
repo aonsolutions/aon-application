@@ -19,6 +19,10 @@ public class AdministrationListBox extends ListBox {
 		this.addItem( msgs.administrationName( Administration.NAVARRA));
 		this.addItem( msgs.administrationName( Administration.COMMON_TERRITORY ));
 	}
+
+	public Administration getValue() {
+		return Administration.values()[ getSelectedIndex()];
+	}
 	
 	
 }

@@ -64,13 +64,14 @@ public class ConfirmDialog extends CustomDialog {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				okButton.setEnabled(false);
 				hide();
 				callback.onAccept();
 			}
 		});
     	buttons.add(okButton);
     	
-    	Button cancelButton = new Button();
+    	final Button cancelButton = new Button();
     	cancelButton.setStyleName(AON.AON_CSS.aonConfirmDialogCancelButton());
     	cancelButton.addStyleName(AON.AON_CSS.aonMarginLeft());
     	cancelButton.setText( AON.MSG.cancelAction());
@@ -78,6 +79,7 @@ public class ConfirmDialog extends CustomDialog {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				cancelButton.setEnabled(false);
 				hide();
 				callback.onCancel();
 			}

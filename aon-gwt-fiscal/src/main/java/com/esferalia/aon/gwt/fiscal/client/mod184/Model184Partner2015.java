@@ -38,7 +38,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-public class Model184Partner2014 extends ResizeComposite {
+public class Model184Partner2015 extends ResizeComposite {
 	
 	public static final ProvidesKey<Mod184Partner> MOD184_PARTNER_PROVIDES_KEY = new ProvidesKey<Mod184Partner>() {
 		@Override
@@ -48,7 +48,7 @@ public class Model184Partner2014 extends ResizeComposite {
 	};
 
 
-	interface Model184Partner2014Binder extends UiBinder<Widget, Model184Partner2014> {}
+	interface Model184Partner2014Binder extends UiBinder<Widget, Model184Partner2015> {}
 	private static Model184Partner2014Binder MODEL184_PARTNER_2014_BINDER 
 		= GWT.create(Model184Partner2014Binder.class);
 
@@ -56,25 +56,24 @@ public class Model184Partner2014 extends ResizeComposite {
 		void redrawList( Mod184Partner partner);
 	}
 	
-	public static enum Mod1842014PartnerKey {
+	public static enum Mod1842015PartnerKey {
 			 A (new String[]{"01","02"})
 			,C 
 			,D 
 			,E 
 			,F (new String[]{"01","02"})
 			,G (new String[]{"01","02"})
-			,H (new String[]{"01","02"})
-			,I (new String[]{"01","02","03","04","05"})
-			,J (new String[]{"01","02","03","04","05","06"})
+			,I (new String[]{"01","02","03","04","05","06"})
+			,J (new String[]{"01","02","03","04"})
 			,K (new String[]{"01","02","03","04","05"})
 			;
 			
 			private String[] subkeys;
 			
-			private Mod1842014PartnerKey(String[] subkeys) {
+			private Mod1842015PartnerKey(String[] subkeys) {
 				this.subkeys = subkeys;
 			}
-			private Mod1842014PartnerKey() {
+			private Mod1842015PartnerKey() {
 				this(null);
 			}
 			
@@ -97,7 +96,7 @@ public class Model184Partner2014 extends ResizeComposite {
 
 			setWidth("40px");
 			this.addItem("-","");
-			for (Mod1842014PartnerKey key : Mod1842014PartnerKey.values()) {
+			for (Mod1842015PartnerKey key : Mod1842015PartnerKey.values()) {
 				this.addItem(key.getValue(),key.getValue());
 			}
 
@@ -111,7 +110,7 @@ public class Model184Partner2014 extends ResizeComposite {
 						getDetail().setSubKey(null);
 						getSubKey().clear();	
 					} else {
-						Mod1842014PartnerKey keyEnum = Mod1842014PartnerKey.values()[idx-1];
+						Mod1842015PartnerKey keyEnum = Mod1842015PartnerKey.values()[idx-1];
 						getDetail().setKey(keyEnum.getValue());
 						getDetail().setSubKey(null);
 						getSubKey().clear();
@@ -137,7 +136,7 @@ public class Model184Partner2014 extends ResizeComposite {
 
 		public void setValue(String key, String subkey) {
 			if (key != null) {
-				Mod1842014PartnerKey keyEnum = Mod1842014PartnerKey.valueOf(key);
+				Mod1842015PartnerKey keyEnum = Mod1842015PartnerKey.valueOf(key);
 				setSelectedIndex(keyEnum.ordinal()+1);
 				getSubKey().clear();
 				if (keyEnum.hasSubkeys()) {
@@ -205,7 +204,7 @@ public class Model184Partner2014 extends ResizeComposite {
 	@UiField
 	TextBox address;
 	
-	public Model184Partner2014() {
+	public Model184Partner2015() {
 		key = new PartnerKeyListBox();
 		
 		Mod184PartnerCell mod184PartnerCell = new Mod184PartnerCell();

@@ -40,7 +40,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-public class Model184Income2014 extends ResizeComposite {
+public class Model184Income2015 extends ResizeComposite {
 	
 	public static final ProvidesKey<Mod184Income> MOD184_INCOME_PROVIDES_KEY = new ProvidesKey<Mod184Income>() {
 		@Override
@@ -49,7 +49,7 @@ public class Model184Income2014 extends ResizeComposite {
 		}
 	};
 
-	interface Model184Income2014Binder extends UiBinder<Widget, Model184Income2014> {}
+	interface Model184Income2014Binder extends UiBinder<Widget, Model184Income2015> {}
 	private static Model184Income2014Binder MODEL184_INCOME_2014_BINDER 
 		= GWT.create(Model184Income2014Binder.class);
 
@@ -57,7 +57,7 @@ public class Model184Income2014 extends ResizeComposite {
 		void redrawList( Mod184Income income);
 	}
 
-	public static enum Mod1842014IncomeKey {
+	public static enum Mod1842015IncomeKey {
 		 A (new String[] {"01","02","03"})
 		,B 
 		,C (new String[] {"01","02","03"})
@@ -66,19 +66,18 @@ public class Model184Income2014 extends ResizeComposite {
 		,F (new String[] {"01","02","03","04"})
 		,G (new String[] {"01","02","03","04","05","06","07","08"})
 		,H 
-		,I (new String[] {"01","02","03","04","05"})
-		,J (new String[] {"01","02","03","04","05","06"})
+		,I (new String[] {"01","02","03","04","05","06"})
+		,J (new String[] {"01","02","03","04"})
 		,K (new String[] {"01","02","03","04","05"})
-		,L (new String[] {"A","C","D","E","F","G","M"})
-		,M (new String[] {"01","02","03","04"})
+		,L (new String[] {"A","C","D","E","F","G"})
 		;
 		
 		private String[] subkeys;
 		
-		private Mod1842014IncomeKey(String[] subkeys) {
+		private Mod1842015IncomeKey(String[] subkeys) {
 			this.subkeys = subkeys;
 		}
-		private Mod1842014IncomeKey() {
+		private Mod1842015IncomeKey() {
 			this(null);
 		}
 		
@@ -101,7 +100,7 @@ public class Model184Income2014 extends ResizeComposite {
 
 			setWidth("40px");
 			this.addItem("-","");
-			for (Mod1842014IncomeKey key : Mod1842014IncomeKey.values()) {
+			for (Mod1842015IncomeKey key : Mod1842015IncomeKey.values()) {
 				this.addItem(key.getValue(),key.getValue());
 			}
 
@@ -115,7 +114,7 @@ public class Model184Income2014 extends ResizeComposite {
 						getDetail().setSubKey(null);
 						subKey.clear();	
 					} else {
-						Mod1842014IncomeKey keyEnum = Mod1842014IncomeKey.values()[idx-1];
+						Mod1842015IncomeKey keyEnum = Mod1842015IncomeKey.values()[idx-1];
 						getDetail().setKey(keyEnum.getValue());
 						getDetail().setSubKey(null);
 						subKey.clear();
@@ -142,7 +141,7 @@ public class Model184Income2014 extends ResizeComposite {
 
 		public void setValue(String key, String subkey) {
 			if (key != null) {
-				Mod1842014IncomeKey keyEnum = Mod1842014IncomeKey.valueOf(key);
+				Mod1842015IncomeKey keyEnum = Mod1842015IncomeKey.valueOf(key);
 				setSelectedIndex(keyEnum.ordinal()+1);
 				getSubKey().clear();
 				if (keyEnum.hasSubkeys()) {
@@ -220,9 +219,20 @@ public class Model184Income2014 extends ResizeComposite {
 	DoubleBox deductionBase;
 	@UiField
 	DoubleBox retention;
+	@UiField
+	ListBox location;
+	@UiField
+	TextBox cadasdralReference;
+	@UiField
+	DoubleBox staffExpenses;
+	@UiField
+	DoubleBox assetAcquisition;
+	@UiField
+	DoubleBox taxDeduction;
+	@UiField
+	DoubleBox otherTaxDeduction;
 	
-	
-	public Model184Income2014() {
+	public Model184Income2015() {
 		Mod184IncomeCell mod184IncomeCell = new Mod184IncomeCell();
 		incomesList = new CellList<Mod184Income>(mod184IncomeCell, MOD184_INCOME_PROVIDES_KEY);
 		incomesList.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
@@ -265,6 +275,11 @@ public class Model184Income2014 extends ResizeComposite {
 		activityType.setWidth("150px");
 		
 		netYield.setEnabled(false);
+		
+		location.addItem( AON.MSG.buildingLocationValue(0) );
+		location.addItem( AON.MSG.buildingLocationValue(1) );	
+		location.addItem( AON.MSG.buildingLocationValue(2) );
+		location.addItem( AON.MSG.buildingLocationValue(3) );
 
 	}
 	
@@ -300,6 +315,21 @@ public class Model184Income2014 extends ResizeComposite {
 		result.setValue(getDetail().getResult());
 		deductionBase.setValue(getDetail().getDeductionBase());
 		retention.setValue(getDetail().getRetention());
+		if (getDetail().getLocation() != null) {
+			try {
+				location.setSelectedIndex( Integer.parseInt(getDetail().getLocation()) );
+			} catch (NumberFormatException e) {
+				location.setSelectedIndex( 0 );
+			}
+		} else {
+			location.setSelectedIndex( 0 );
+		}
+		cadasdralReference.setValue(getDetail().getCadasdralReference() );
+
+		staffExpenses.setValue(getDetail().getStaffExpenses());
+		assetAcquisition.setValue(getDetail().getAssetAcquisition());
+		taxDeduction.setValue(getDetail().getTaxDeduction());
+		otherTaxDeduction.setValue(getDetail().getOtherTaxDeduction());
 		
 		enableWidgets();
 		restoreDeletedButton.setVisible(getDetail().isDeleted());
@@ -456,7 +486,41 @@ public class Model184Income2014 extends ResizeComposite {
 		getDetail().setRetention(retention.getValue());
 		markAsDirty();
 	}
+	@UiHandler("location")
+	void onChangeLocation(ChangeEvent event) {
+		getDetail().setLocation(Integer.toString( location.getSelectedIndex()));
+		getDetail().setDirty(true);
+	}
+	@UiHandler("cadasdralReference")
+	void onChangeCadasdralReference(ChangeEvent event) {
+		getDetail().setCadasdralReference(cadasdralReference.getValue());
+		markAsDirty();
+	}
 	
+	@UiHandler("staffExpenses")
+	void onChangeStaffExpenses(ChangeEvent event) {
+		getDetail().setStaffExpenses(staffExpenses.getValue());
+		markAsDirty();
+	}
+
+	@UiHandler("assetAcquisition")
+	void onChangeAssetAcquisition(ChangeEvent event) {
+		getDetail().setAssetAcquisition(assetAcquisition.getValue());
+		markAsDirty();
+	}
+	
+	@UiHandler("taxDeduction")
+	void onChangeTaxDeduction(ChangeEvent event) {
+		getDetail().setTaxDeduction(taxDeduction.getValue());
+		markAsDirty();
+	}
+	
+	@UiHandler("otherTaxDeduction")
+	void onChangeOtherTaxDeduction(ChangeEvent event) {
+		getDetail().setOtherTaxDeduction(otherTaxDeduction.getValue());
+		markAsDirty();
+	}
+
 	private void enableWidgets() {
 		country.setEnabled(
 			    ("A".equals(getDetail().getKey()) && "02".equals(getDetail().getSubKey()))
@@ -527,7 +591,28 @@ public class Model184Income2014 extends ResizeComposite {
 		retention.setEnabled(
 				   "K".equals(getDetail().getKey())
 				);
-		
+		location.setEnabled(
+				   "C".equals(getDetail().getKey())
+				);
+		cadasdralReference.setEnabled(
+				   "C".equals(getDetail().getKey())
+				);
+		staffExpenses.setEnabled(
+				"D".equals(getDetail().getKey()) 
+				&& ("01".equals(getDetail().getSubKey()) || "02".equals(getDetail().getSubKey())) 
+				&& getDetail().getRegime() != 3);
+		assetAcquisition.setEnabled(
+				"D".equals(getDetail().getKey()) 
+				&& ("01".equals(getDetail().getSubKey()) || "02".equals(getDetail().getSubKey())) 
+				&& getDetail().getRegime() != 3);
+		taxDeduction.setEnabled(
+				"D".equals(getDetail().getKey()) 
+				&& ("01".equals(getDetail().getSubKey()) || "02".equals(getDetail().getSubKey())) 
+				&& getDetail().getRegime() != 3);
+		otherTaxDeduction.setEnabled(
+				"D".equals(getDetail().getKey()) 
+				&& ("01".equals(getDetail().getSubKey()) || "02".equals(getDetail().getSubKey())) 
+				&& getDetail().getRegime() != 3);
 	}
 	
 	private void markAsDirty() {

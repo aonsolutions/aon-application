@@ -390,7 +390,7 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 .aon-border-bottom-important {
 	border-bottom-style: solid !important;
 	border-bottom-width: 1px !important;
-	border-bottom-color: #999 !important;
+	border-bottom-color: #DDD !important;
 }
 
 .aon-border-bottom {
@@ -524,6 +524,9 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 .aon-icon-padding-left {
 	padding-left: 17px;
 }
+.aon-padding-left-20 {
+	padding-left: 20px;
+}
 
 @sprite .aon-icon-delete {
 	width: auto;
@@ -578,6 +581,11 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 @sprite .aon-icon-excel {
 	width: auto;
 	gwt-image: "aonIconExcel";
+}
+
+@sprite .aon-icon-printer {
+	width: auto;
+	gwt-image: "aonIconPrinter";
 }
 
 @sprite .aon-icon-moveUp {
@@ -1569,6 +1577,11 @@ input:disabled+label {
 	width: auto !important;
 }
 
+@sprite .aon-icon-info {
+	gwt-image: "aonIconInfo";
+	width: auto;
+}
+
 @sprite .aon-icon-loupe {
 	gwt-image: "aonIconLoupe";
 }
@@ -1582,8 +1595,23 @@ input:disabled+label {
 	width: auto !important;
 }
 
+@sprite .aon-icon-check {
+	gwt-image: "aonIconCheck";
+	width: auto !important;
+}
+
+@sprite .aon-icon-checked {
+	gwt-image: "aonIconChecked";
+	width: auto !important;
+}
+
 @sprite .aon-icon-model {
 	gwt-image: "aonIconModel";
+	width: auto !important;
+}
+@sprite .aon-icon-identification  {
+	gwt-image: "employee";
+	width: auto !important;
 }
 
 @sprite .aon-icon-journal-log {
@@ -2159,6 +2187,7 @@ input:disabled+label {
 	padding-left: 5px;
 	padding-top: 6px;
 	pointer-events: none;
+	border-bottom: 1px solid #ccc;
 }
 
 .aon-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelContentContainer {
@@ -2176,6 +2205,9 @@ input:disabled+label {
 .aon-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
 	background: #CBCBCB none repeat scroll 0 0;
 	border-radius: 3px 3px 0 0;
+	border-top: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
 	color: black;
 	cursor: pointer;
 	font-weight: normal;
@@ -2285,7 +2317,7 @@ input:disabled+label {
 	position: absolute;
 	color: #333;
 	width: 300px;
-	background-color: #3167B1;
+	background-color: #e2e3e3;
 	top: 160px;
 	right: 15px;
 	border: 0.5px solid #999;
@@ -2294,34 +2326,19 @@ input:disabled+label {
 	animation-duration: 0.5s;
 	animation-iteration-count: 1;
 }
+.aon-toast .aon-widget-close {
+	border: 1px solid darkgray;
+}
 
 @
-keyframes aon-toast { 0% {
-	top: 160px;
-	right: -300px;
+keyframes aon-toast { 
+	0%  {top: 160px; right: -300px;}
+	100%{top: 160px; right:15px;}
 }
 
-100%{
-top
-:
- 
-160
-px
-;
-
-        
-right
-:
- 
-15
-px
-;
-}
-}
 .aon-toast-header {
 	padding-left: 10px;
 	font-weight: bold;
-	color: white;
 	margin-top: 3px;
 }
 

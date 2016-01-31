@@ -256,7 +256,7 @@ public class Model180 extends MainEntryPoint {
 						@Override
 						public void onSuccess(Mod180 selected) {
 							if (selected == null) {
-								showErrorMessage(AON.MSG.unableToFindMod180());
+								showErrorMessage(AON.MSG.unableToFindDeclaration());
 							} else {
 								select(selected);
 								int i = deckPanel.getWidgetIndex(formPanel);
@@ -269,7 +269,7 @@ public class Model180 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							showErrorMessage(AON.MSG.unableToReadMod180(caught.getMessage()));
+							showErrorMessage(AON.MSG.unableToReadDeclaration(caught.getMessage()));
 						}
 					});
 		}
@@ -328,7 +328,7 @@ public class Model180 extends MainEntryPoint {
 					@Override
 					public void onFailure(Throwable caught) {
 						showErrorMessage(AON.MSG
-								.unableToReadMod180(caught.getMessage()));
+								.unableToReadDeclaration(caught.getMessage()));
 					}
 				});
 	}
@@ -360,7 +360,7 @@ public class Model180 extends MainEntryPoint {
 					@Override
 					public void onFailure(Throwable caught) {
 						popup.hide();
-						showErrorMessage(AON.MSG.unableToSaveMod180(caught.getMessage()));
+						showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
 					}
 				});
 	}
@@ -385,7 +385,7 @@ public class Model180 extends MainEntryPoint {
 					@Override
 					public void onFailure(Throwable caught) {
 						deleteButton.setEnabled(true);
-						showErrorMessage(AON.MSG.unableToDeleteMod180(caught.getMessage()));
+						showErrorMessage(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
 					}
 				});
 			}

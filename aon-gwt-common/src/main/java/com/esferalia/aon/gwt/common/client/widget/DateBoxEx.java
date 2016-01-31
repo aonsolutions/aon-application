@@ -111,4 +111,8 @@ public class DateBoxEx extends com.google.gwt.user.datepicker.client.DateBox {
 		return getFormat().format(this, this.getValue());
 	}
 
+	public Date parse(String value, boolean b) {
+		return getFormat().parse(this, value, b);
+	}
+
 }

@@ -29,6 +29,14 @@ public class Mod184Income implements Serializable {
 	private double result;
 	private double deductionBase;
 	private double retention;
+	private String location;
+	private String cadasdralReference;
+	private double staffExpenses;
+	private double assetAcquisition;
+	private double taxDeduction;
+	private double otherTaxDeduction;
+	
+	
 
 	private boolean dirty;
 	private boolean deleted;
@@ -229,6 +237,59 @@ public class Mod184Income implements Serializable {
 
 	public Mod184Income setRetention(double retention) {
 		this.retention = retention;
+		return this;
+	}
+	public String getLocation() {
+		return location;
+	}
+
+	public Mod184Income setLocation(String location) {
+		this.location = location;
+		return this;
+	}
+
+	public String getCadasdralReference() {
+		return cadasdralReference;
+	}
+
+	public Mod184Income setCadasdralReference(String cadasdralReference) {
+		this.cadasdralReference = cadasdralReference;
+		return this;
+	}
+	
+	public double getStaffExpenses() {
+		return staffExpenses;
+	}
+
+	public Mod184Income setStaffExpenses(double staffExpenses) {
+		this.staffExpenses = staffExpenses;
+		return this;
+	}
+
+	public double getAssetAcquisition() {
+		return assetAcquisition;
+	}
+
+	public Mod184Income setAssetAcquisition(double assetAcquisition) {
+		this.assetAcquisition = assetAcquisition;
+		return this;
+	}
+
+	public double getTaxDeduction() {
+		return taxDeduction;
+	}
+
+	public Mod184Income setTaxDeduction(double taxDeduction) {
+		this.taxDeduction = taxDeduction;
+		return this;
+	}
+
+	public double getOtherTaxDeduction() {
+		return otherTaxDeduction;
+	}
+
+	public Mod184Income setOtherTaxDeduction(double otherTaxDeduction) {
+		this.otherTaxDeduction = otherTaxDeduction;
 		return this;
 	}
 

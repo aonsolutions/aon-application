@@ -193,6 +193,9 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-icon-padding-left")
 	String aonIconPaddingLeft();
 	
+	@ClassName("aon-padding-left-20")
+	String aonPaddingLeft20();
+	
 	@ClassName("aon-icon-trash")
 	String aonIconTrash();
 
@@ -223,6 +226,9 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-icon-audit")
 	String aonIconAudit();
 	
+	@ClassName("aon-icon-info")
+	String aonIconInfo();
+
 	@ClassName("aon-icon-wizard")
 	String aonIconWizard();
 
@@ -563,6 +569,9 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-icon-paste")
 	String aonIconPaste();
 	
+	@ClassName("aon-icon-printer")
+	String aonIconPrinter();
+
 	@ClassName("aon-icon-moveUp")
 	String aonIconMoveUp();
 	
@@ -676,6 +685,12 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-tree-model")
 	String aonTreeModel();
 
+	@ClassName("aon-icon-check")
+	String aonIconCheck();
+
+	@ClassName("aon-icon-checked")
+	String aonIconChecked();
+
 	@ClassName("aon-icon-company")
 	String aonIconCompany();	
 
@@ -716,7 +731,10 @@ public interface AonCSS extends  CssResource {
 	String aonIconQuestion();
 	
 	@ClassName("aon-icon-model")
-	String aonIconModel();	
+	String aonIconModel();
+	
+	@ClassName("aon-icon-identification")
+	String aonIconIdentification();	
 
 	@ClassName("aon-fiscal-enterprise-suggest")
 	String aonFiscalEnterpriseSuggest();

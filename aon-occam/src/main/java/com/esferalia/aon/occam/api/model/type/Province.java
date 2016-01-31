@@ -94,4 +94,20 @@ public enum Province implements Serializable {
 		int i = Integer.parseInt(code);
 		return safeValueOf(i);
 	}
+	
+	public static Province getByName( String name ) {
+		if (AonStringUtils.isBlank(name)) {
+			return DESCONOCIDO;
+		}
+		for (Province p : Province.values() ) {
+			if (AonStringUtils.equalsIgnoreCase(p.toString(), name)) {
+				return p;
+			}
+			if (AonStringUtils.equalsIgnoreCase(p.getName(), name)) {
+				return p;
+			}
+		}
+		return DESCONOCIDO;
+	}
+	
 }

@@ -343,6 +343,8 @@ public class DashboardController implements Serializable {
 			return "gwt_mod390";
 		} else if ( mod == Model.M180) {
 			return "gwt_mod180";
+		} else if ( mod == Model.M184) {
+			return "gwt_mod184";
 		} else if ( mod == Model.M190) {
 			return "gwt_mod190";
 		} else if ( mod == Model.M200) {

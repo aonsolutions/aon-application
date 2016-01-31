@@ -29,6 +29,10 @@ public interface AonResources extends ClientBundle, Images {
 
 	@Source("images/aon-icon-paste.png")
 	ImageResource aonIconPaste();
+	
+	@Source("images/aon-icon-printer.png")
+	ImageResource aonIconPrinter();
+	
 
 	@Source("images/aon-icon-moveUp.png")
 	ImageResource aonIconMoveUp();

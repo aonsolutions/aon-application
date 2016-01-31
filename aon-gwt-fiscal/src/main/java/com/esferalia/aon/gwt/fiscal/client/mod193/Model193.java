@@ -181,7 +181,7 @@ public class Model193 extends MainEntryPoint {
 				@Override
 				public void onSuccess(Mod193 selected) {
 					if (selected == null) {
-						DialogMessages.alertErrorWidget(AON.MSG.unableToFindMod193());
+						DialogMessages.alertErrorWidget(AON.MSG.unableToFindDeclaration());
 					} else {
 						select(selected);
 						int i = deckPanel.getWidgetIndex(formPanel);
@@ -194,7 +194,7 @@ public class Model193 extends MainEntryPoint {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					DialogMessages.alertErrorWidget(AON.MSG.unableToReadMod193(caught
+					DialogMessages.alertErrorWidget(AON.MSG.unableToReadDeclaration(caught
 							.getMessage()));
 				}
 			});
@@ -254,7 +254,7 @@ public class Model193 extends MainEntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						DialogMessages.alertErrorWidget(AON.MSG.unableToReadMod193(caught
+						DialogMessages.alertErrorWidget(AON.MSG.unableToReadDeclaration(caught
 								.getMessage()));
 					}
 				});
@@ -287,7 +287,7 @@ public class Model193 extends MainEntryPoint {
 					@Override
 					public void onFailure(Throwable caught) {
 						popup.hide();
-						showErrorMessage(AON.MSG.unableToSaveMod193(caught.getMessage()));
+						showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
 					}
 				});
 	}
@@ -312,7 +312,7 @@ public class Model193 extends MainEntryPoint {
 					@Override
 					public void onFailure(Throwable caught) {
 						deleteButton.setEnabled(true);
-						showErrorMessage(AON.MSG.unableToDeleteMod193(caught.getMessage()));
+						showErrorMessage(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
 					}
 				});
 			}

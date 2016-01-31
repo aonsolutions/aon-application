@@ -47,7 +47,7 @@ public interface CommonMessages extends Messages {
 		,"11", "Diciembre"
 		})
 	String month(@Select int month);
-
+	
 	@DefaultMessage("Meses")
 	String months();
 
@@ -187,6 +187,12 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("ESP")
 	String currencyCode();
+	
+	@DefaultMessage("Notificaciones")
+	String notifications();
+
+	@DefaultMessage("Desglose informaci\u00F3n")
+	String informationBreakdown();
 
 	@DefaultMessage("Integral fiscal")
 	String fiscalPanel();
@@ -291,77 +297,29 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Expresion aritmetica no correcta ({0})")
 	String arithmeticExpressionError(String value);
 
-	@DefaultMessage("No se pudieron leer las declaraciones del modelo 190. Causa: \n {0}")
-	String unableToReadMod190(String cause);
+	@DefaultMessage("No se pudieron leer la declaraci\u00F3n. Causa: \n {0}")
+	String unableToReadDeclaration(String cause);
 
-	@DefaultMessage("No se pudo guardar la declaraci\u00F3n del modelo 190. Causa: \n {0}")
-	String unableToSaveMod190(String cause);
+	@DefaultMessage("No se pudo guardar la declaraci\u00F3n. Causa: \n {0}")
+	String unableToSaveDeclaration(String cause);
 
-	@DefaultMessage("No se pudo borrar la declaraci\u00F3n del modelo 190. Causa: \n {0}")
-	String unableToDeleteMod190(String message);
+	@DefaultMessage("No se pudo borrar la declaraci\u00F3n. Causa: \n {0}")
+	String unableToDeleteDeclaration(String message);
 
 	@DefaultMessage("No se pudo encontrar la declaraci\u00F3n seleccionada.")
-	String unableToFindMod190();
+	String unableToFindDeclaration();
 
 	@DefaultMessage("No se pudo encontrar el perceptor seleccionado. Causa: \n {0}")
 	String unableToFindMod190Detail(String field);
 
-	@DefaultMessage("No se pudieron leer las declaraciones del modelo 193. Causa: \n {0}")
-	String unableToReadMod193(String cause);
-
-	@DefaultMessage("No se pudo guardar la declaraci\u00F3n del modelo 193. Causa: \n {0}")
-	String unableToSaveMod193(String cause);
-
-	@DefaultMessage("No se pudo borrar la declaraci\u00F3n del modelo 193. Causa: \n {0}")
-	String unableToDeleteMod193(String message);
-
-	@DefaultMessage("No se pudo encontrar la declaraci\u00F3n seleccionada.")
-	String unableToFindMod193();
-
 	@DefaultMessage("No se pudo encontrar el perceptor seleccionado. Causa: \n {0}")
 	String unableToFindMod193Detail(String field);
-
-	@DefaultMessage("No se pudieron leer las declaraciones del modelo 180. Causa: \n {0}")
-	String unableToReadMod180(String cause);
-
-	@DefaultMessage("No se pudo guardar la declaraci\u00F3n del modelo 180. Causa: \n {0}")
-	String unableToSaveMod180(String cause);
-
-	@DefaultMessage("No se pudo borrar la declaraci\u00F3n del modelo 180. Causa: \n {0}")
-	String unableToDeleteMod180(String message);
-
-	@DefaultMessage("No se pudo encontrar la declaraci\u00F3n seleccionada.")
-	String unableToFindMod180();
 
 	@DefaultMessage("No se pudo encontrar el perceptor seleccionado. Causa: \n {0}")
 	String unableToFindMod180Detail(String field);
 
-	@DefaultMessage("No se pudieron leer las declaraciones del modelo 184. Causa: \n {0}")
-	String unableToReadMod184(String cause);
-
-	@DefaultMessage("No se pudo guardar la declaraci\u00F3n del modelo 184. Causa: \n {0}")
-	String unableToSaveMod184(String cause);
-
-	@DefaultMessage("No se pudo borrar la declaraci\u00F3n del modelo 184. Causa: \n {0}")
-	String unableToDeleteMod184(String message);
-
-	@DefaultMessage("No se pudo encontrar la declaraci\u00F3n seleccionada.")
-	String unableToFindMod184();
-
 	@DefaultMessage("No se pudo encontrar el perceptor seleccionado. Causa: \n {0}")
 	String unableToFindMod184Detail(String field);
-
-	@DefaultMessage("No se pudo encontrar la declaraci\u00F3n seleccionada.")
-	String unableToFindMod390();
-
-	@DefaultMessage("No se pudieron leer las declaraciones del modelo 390. Causa: \n {0}")
-	String unableToReadMod390(String cause);
-
-	@DefaultMessage("No se pudo borrar la declaraci\u00F3n del modelo 390. Causa: \n {0}")
-	String unableToDeleteMod390(String message);
-	
-	@DefaultMessage("No se pudo guardar la declaraci\u00F3n del modelo 390. Causa: \n {0}")
-	String unableToSaveMod390(String cause);
 
 	@DefaultMessage("No existe un perceptor con c\u00F3digo {0}")
 	String unableToFindPerceptor(Integer id);
@@ -417,6 +375,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Si continua se borrar\u00E1 la declaraci\u00F3n completa.\n \u00BFContinuar con el borrado?")
 	String confirmDeclarationDeleteAction();
+
+	@DefaultMessage("Confirme si desea cancelar la confecci\u00F3n de la declaraci\u00F3n.")
+	String confirmDeclarationCancelAction();
 
 	@DefaultMessage("Restaurar")
 	String restoreAction();
@@ -572,6 +533,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Identificaci\u00F3n")
 	String identification();
 
+	@DefaultMessage("Datos identificativos")
+	String identificationDate();
+
+	@DefaultMessage("Informaci\u00F3n")
+	String information();
+	
 	@DefaultMessage("N\u00FAmero")
 	String number();
 
@@ -760,6 +727,15 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Persona de contacto")
 	String contactPerson();
+
+	@DefaultMessage("Tel\u00E9fono de contacto")
+	String contactPhone();
+
+	@DefaultMessage("M\u00F3vil de contacto")
+	String contactCellular();
+
+	@DefaultMessage("Correo de contacto")
+	String contactMail();
 
 	@DefaultMessage("N\u00FAmero total de percepciones relacionadas en la declaraci\u00F3n")
 	String receiverCountTotal();
@@ -1006,6 +982,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Actividades agr\u00EDcolas, ganaderas y forestales")
 	String farmerActivity();
 
+	@DefaultMessage("Premios")
+	String prizes();
+
+	@DefaultMessage("Retribuciones en especie y otras")
+	String inKindAndOthers();
+
 	@DefaultMessage("Volumen Ingresos")
 	String f02Msg();
 
@@ -1209,7 +1191,13 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Concurso de acreedores")
 	String insolvencyState();
-	
+
+	@DefaultMessage("Preconsursal")
+	String preInsolvencyState();
+
+	@DefaultMessage("Postconsursal")
+	String postInsolvencyState();
+
 	@DefaultMessage("\u00BFHa sido declarado en concurso de acreeedores en este ejercicio?")
 	String insolvencyStateThisYear();
 	
@@ -1793,9 +1781,18 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Base de retenciones e ingresos a cuenta")
 	String retentionBase();
 	
+	@DefaultMessage("Trabajo")
+	String work();
+
+	@DefaultMessage("Actividades profesionales")
+	String professionalActivities();
+
 	@DefaultMessage("Retenciones e ingresos a cuenta")
 	String retentionAccount();
 	
+	@DefaultMessage("Rendimientos de actividades econ\u00F3micas en estimaci\u00F3n objetiva, modalidad signos, \u00EDndices o m\u00F3dulos")
+	String modulesActivitiesYields();
+
 	@DefaultMessage("Ret. e ingr. cta.")
 	String retentionAccountShort();
 	
@@ -2052,24 +2049,6 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("IV. Total liquidaci\u00F3n.")
 	String mod131Header4();
 	
-	@DefaultMessage("I. Rendimientos del trabajo")
-	String mod111Header1();
-	
-	@DefaultMessage("II. Rendimientos de actividades econ\u00F3micas")
-	String mod111Header2();
-	
-	@DefaultMessage("III. Premios por la participaci\u00F3n en juegos, concursos, rifas o combinaciones aleatorias")
-	String mod111Header3();
-	
-	@DefaultMessage("IV. Ganancias patrimoniales derivadas de los aprovechamientos forestales de los vecinos en los montes p\u00FAblicos")
-	String mod111Header4();
-	
-	@DefaultMessage("V. Contraprestaciones por la cesi\u00F3n de derechos de imagen, ingresos a cuenta previstos en el art\u00EDculo 92.8 de la Ley del Impuesto ")
-	String mod111Header5();
-
-	@DefaultMessage("Total liquidaci\u00F3n")
-	String mod111Header6();
-
 	@DefaultMessage("Rendimientos dinerarios")
 	String moneyYield();
 
@@ -2733,7 +2712,7 @@ public interface CommonMessages extends Messages {
 		"GROUP2", "Actividades profesionales sujetas al I.A.E.",
 		"GROUP3", "Actividades art\u00EDsticas sujetas al I.A.E.",
 		"GROUP4", "Arrendadores de locales de negocios",
-		"GROUP5", "Actividades agr\u00EDcolas, ganaderas o pesqueras, no sujetas al I.A.E.",
+		"GROUP5", "wo agr\u00EDcolas, ganaderas o pesqueras, no sujetas al I.A.E.",
 		"GROUP6", "Otras actividades no sujetas al I.A.E.", 
 		"GROUP7", "Sujetos pasivos sin actividad" })
 	String activityGroup(@Select ActivityGroup activityGroup);
@@ -2791,6 +2770,22 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Bienes de inversi\u00F3n")
 	String investAsset();
-	
 
+	@DefaultMessage("Nueva declaraci\u00F3n")
+	String newDeclaration();
+
+	@DefaultMessage("Detalle de gastos")
+	String expenseDetail();
+	
+	@DefaultMessage("Gastos de personal")
+	String staffExpenses();
+	
+	@DefaultMessage("Adquisici\u00F3n a terceros de bienes y servicios")
+	String assetAcquisition();
+	
+	@DefaultMessage("Tributos fiscalmente deducibles y gastos financieros")
+	String taxDeduction();
+	
+	@DefaultMessage("Otros gastos fiscalmente deducibles")
+	String otherTaxDeduction();
 }

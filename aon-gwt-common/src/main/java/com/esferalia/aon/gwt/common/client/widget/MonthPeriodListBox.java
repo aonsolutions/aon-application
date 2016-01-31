@@ -4,15 +4,15 @@ package com.esferalia.aon.gwt.common.client.widget;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.google.gwt.user.client.ui.ListBox;
 
-public class PeriodListBox extends ListBox {
+public class MonthPeriodListBox extends ListBox {
 
 	
-	public PeriodListBox() {
-		setWidth("90px");
+	public MonthPeriodListBox() {
+		setWidth("40px");
 		this.addItem(" --- ", "");
 		for (Period p : Period.values()) {
-			if (p != Period.YEAR ) {
-				this.addItem( p.getDescription(), Integer.toString( p.ordinal() ) );
+			if (p.isMonthPeriod()) {
+				this.addItem( p.getName(), Integer.toString( p.ordinal() ) );
 			}
 		}
 	}
@@ -25,8 +25,5 @@ public class PeriodListBox extends ListBox {
 		}
 	}
 	
-	public Period getValue() {
-		if (getSelectedIndex() == 0) return null;
-		return Period.values()[ getSelectedIndex() -1 ];
-	}
+	
 }

@@ -27,7 +27,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -45,6 +44,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
@@ -93,9 +93,14 @@ public class Model184 extends MainEntryPoint {
 	private int enterprise;
 
 	@UiField
-	Model184Income2014 incomesPanel;
+	SimpleLayoutPanel incomesPanel;
 	@UiField
-	Model184Partner2014 partnersPanel;
+	SimpleLayoutPanel partnersPanel;
+
+//	@UiField
+//	Model184Income2014 incomesPanel;
+//	@UiField
+//	Model184Partner2014 partnersPanel;
 
 	@UiField
 	Button saveButton;
@@ -189,7 +194,8 @@ public class Model184 extends MainEntryPoint {
 		
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
-		
+
+		/*		
 		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
 			
 			@Override
@@ -204,6 +210,7 @@ public class Model184 extends MainEntryPoint {
 			}
 			
 		});
+		*/
 
 		entityType.addItem(" - ","");
 		entityType.addItem("1 - Sociedad civil.","1");
@@ -320,7 +327,7 @@ public class Model184 extends MainEntryPoint {
 						@Override
 						public void onSuccess(Mod184 selected) {
 							if (selected == null) {
-								DialogMessages.alertErrorWidget(AON.MSG.unableToFindMod184());
+								DialogMessages.alertErrorWidget(AON.MSG.unableToFindDeclaration());
 							} else {
 								select(selected);
 								int i = deckPanel.getWidgetIndex(formPanel);
@@ -334,7 +341,7 @@ public class Model184 extends MainEntryPoint {
 						@Override
 						public void onFailure(Throwable caught) {
 							DialogMessages.alertErrorWidget(AON.MSG
-									.unableToReadMod184(caught.getMessage()));
+									.unableToReadDeclaration(caught.getMessage()));
 						}
 					});
 		}
@@ -384,9 +391,26 @@ public class Model184 extends MainEntryPoint {
 		partnersPanel.setVisible(currentMod184.getId() != null);
 		tabPanel.setVisible(currentMod184.getId() != null);
 		replacementPanel.setVisible(currentMod184.isReplacement());
-		incomesPanel.setMod184(currentMod184);
-		partnersPanel.setMod184(currentMod184);
+		showDetail(currentMod184);
 		paintHeaderTable();		
+	}
+
+	private void showDetail(Mod184 currentMod1842) {
+		if ( currentMod184.getYear() == 2015) {
+			Model184Income2015 income = new Model184Income2015();
+			income.setMod184(currentMod184);	
+			incomesPanel.setWidget(income);
+			Model184Partner2015 partner = new Model184Partner2015();
+			partner.setMod184(currentMod184);	
+			partnersPanel.setWidget(partner);
+		} else {
+			Model184Income2014 income = new Model184Income2014();
+			income.setMod184(currentMod184);	
+			incomesPanel.setWidget(income);
+			Model184Partner2014 partner = new Model184Partner2014();
+			partner.setMod184(currentMod184);	
+			partnersPanel.setWidget(partner);
+		}
 	}
 
 	@UiHandler("table")
@@ -413,7 +437,7 @@ public class Model184 extends MainEntryPoint {
 					@Override
 					public void onFailure(Throwable caught) {
 						DialogMessages.alertErrorWidget(AON.MSG
-								.unableToReadMod184(caught.getMessage()));
+								.unableToReadDeclaration(caught.getMessage()));
 					}
 				});
 	}
@@ -445,7 +469,7 @@ public class Model184 extends MainEntryPoint {
 					@Override
 					public void onFailure(Throwable caught) {
 						popup.hide();
-						showErrorMessage(AON.MSG.unableToSaveMod184(caught.getMessage()));
+						showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
 					}
 				});
 	}
@@ -464,7 +488,7 @@ public class Model184 extends MainEntryPoint {
 						@Override
 						public void onFailure(Throwable caught) {
 							DialogMessages.alertErrorWidget(AON.MSG
-									.unableToDeleteMod184(caught.getMessage()));
+									.unableToDeleteDeclaration(caught.getMessage()));
 						}
 					});
 		}
@@ -494,8 +518,8 @@ public class Model184 extends MainEntryPoint {
 	@UiHandler("cancelButton")
 	void onCancelButtonClick(ClickEvent event) {
 		cleanErrorMessage();
-		incomesPanel.setMod184(null);
-		partnersPanel.setMod184(null);
+		incomesPanel.remove(incomesPanel.getWidget());
+		partnersPanel.remove(partnersPanel.getWidget());
 		int i = deckPanel.getWidgetIndex(listPanel);
 		deckPanel.showWidget(i);
 		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);

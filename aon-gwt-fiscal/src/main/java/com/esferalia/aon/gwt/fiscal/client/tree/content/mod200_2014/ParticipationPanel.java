@@ -72,7 +72,7 @@ public class ParticipationPanel extends CustomDialog {
 		
 		List<String> options = new LinkedList<String>();
 		for (Province prov : Province.values()) {
-			options.add( AON.MSG.provinceName(prov) );
+			options.add( prov.getName()  );
 		}
 		Widget ui = participationPanelBinder.createAndBindUi(this);
 		setWidget(ui);

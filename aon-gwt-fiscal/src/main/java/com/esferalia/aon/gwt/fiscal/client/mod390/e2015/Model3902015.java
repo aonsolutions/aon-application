@@ -237,7 +237,7 @@ public class Model3902015 extends ResizeComposite implements IModel390 {
 				@Override
 				public void onSuccess(Mod3902015 selected) {
 					if (selected == null) {
-						showErrorMessage(AON.MSG.unableToFindMod390());
+						showErrorMessage(AON.MSG.unableToFindDeclaration());
 					} else {
 						select(selected);
 					}
@@ -247,7 +247,7 @@ public class Model3902015 extends ResizeComposite implements IModel390 {
 				@Override
 				public void onFailure(Throwable caught) {
 					popup.hide();
-					showErrorMessage(AON.MSG.unableToReadMod390(caught.getMessage()));
+					showErrorMessage(AON.MSG.unableToReadDeclaration(caught.getMessage()));
 				}
 			});
 		} catch (IllegalArgumentException e) {
@@ -299,7 +299,7 @@ public class Model3902015 extends ResizeComposite implements IModel390 {
 						@Override
 						public void onFailure(Throwable caught) {
 							popup.hide();
-							showErrorMessage(AON.MSG.unableToSaveMod390(caught.getMessage()));
+							showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
 						}
 					});
 		} catch (IllegalArgumentException e) {
@@ -322,7 +322,7 @@ public class Model3902015 extends ResizeComposite implements IModel390 {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					showErrorMessage(AON.MSG.unableToDeleteMod390(caught.getMessage()));
+					showErrorMessage(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
 				}
 			});
 		}

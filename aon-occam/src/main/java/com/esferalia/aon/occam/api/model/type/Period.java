@@ -3,33 +3,35 @@ package com.esferalia.aon.occam.api.model.type;
 import java.io.Serializable;
 
 public enum Period implements Serializable {
-	
-	M01(0,0,"01"),
-	M02(1,1,"02"),
-	M03(2,2,"03"),
-	M04(3,3,"04"),
-	M05(4,4,"05"),
-	M06(5,5,"06"),
-	M07(6,6,"07"),
-	M08(7,7,"08"),
-	M09(8,8,"09"),
-	M10(9,9,"10"),
-	M11(10,10,"11"),
-	M12(11,11,"12"),
-	T1(0,2,"T1"),	//12
-	T2(3,5,"T2"),	//13
-	T3(6,8,"T3"),	//14
-	T4(9,11,"T4"),	//15
-	YEAR(0,11,"An"); //16
 
-	private int startMonth;
+	M01(0,0,"01","Enero"),
+	M02(1,1,"02","Febrero"),
+	M03(2,2,"03","Marzo"),
+	M04(3,3,"04","Abril"),
+	M05(4,4,"05","Mayo"),
+	M06(5,5,"06","Junio"),
+	M07(6,6,"07","Julio"),
+	M08(7,7,"08","Agosto"),
+	M09(8,8,"09","Septiembre"),
+	M10(9,9,"10","Octubre"),
+	M11(10,10,"11","Noviembre"),
+	M12(11,11,"12","Diciembre"),
+	T1(0,2,"T1","1\u00AA Trim."),	//12
+	T2(3,5,"T2","2\u00AA Trim."),	//13
+	T3(6,8,"T3","3\u00AA Trim."),	//14
+	T4(9,11,"T4","4\u00AA Trim."),	//15
+	YEAR(0,11,"An","Anual"); //16
+	
+ 	private int startMonth;
 	private int dueMonth;
 	private String name;
+	private String description;
 	
-	private Period(int startMonth,int dueMonth,String name) {
+	private Period(int startMonth,int dueMonth,String name,String description) {
 		this.startMonth= startMonth;
 		this.dueMonth= dueMonth;
 		this.name = name;
+		this.description= description;
 	}
 
     public String getName() {
@@ -44,6 +46,10 @@ public enum Period implements Serializable {
     	}
     	return name;
     }
+    
+    public String getDescription() {
+    	return description;
+	}
     
 	public int getStartMonth() {
 		return startMonth;

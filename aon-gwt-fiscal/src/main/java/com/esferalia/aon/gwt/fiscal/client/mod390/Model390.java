@@ -162,7 +162,7 @@ public class Model390 extends MainEntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						DialogMessages.alertErrorWidget(AON.MSG.unableToReadMod190(caught.getMessage()));
+						DialogMessages.alertErrorWidget(AON.MSG.unableToReadDeclaration(caught.getMessage()));
 					}
 				});
 	}

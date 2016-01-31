@@ -363,14 +363,14 @@ public class Page01 extends PageAbs {
 	private void addAdmProvinceColumn() {
 		final List<String> options = new LinkedList<String>();
 		for (Province prov : Province.values()) {
-			options.add( AON.MSG.provinceName(prov) );
+			options.add( prov.getName()  );
 		}
 		TabSelectionCell provinceCell = new TabSelectionCell(options);
 		Column<CompanyAdministrator, String> col = new Column<CompanyAdministrator, String>(
 				provinceCell) {
 			@Override
 			public String getValue(CompanyAdministrator ca) {
-				return AON.MSG.provinceName( Province.values()[ca.getProvince()] );
+				return Province.values()[ca.getProvince()].getName();
 			}
 		};
 		col.setFieldUpdater(new FieldUpdater<CompanyAdministrator, String>() {

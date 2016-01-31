@@ -225,14 +225,14 @@
 											<g:customHeader>
 												<g:Label text="{msg.entityIncomes}" />
 											</g:customHeader>
-											<m184:Model184Income2014 ui:field="incomesPanel"/>
+											<g:SimpleLayoutPanel ui:field="incomesPanel"/>
 										</g:tab>
 										
 										<g:tab>
 											<g:customHeader>
 												<g:Label text="{msg.entityPartners}" />
 											</g:customHeader>
-											<m184:Model184Partner2014 ui:field="partnersPanel" />
+											<g:SimpleLayoutPanel ui:field="partnersPanel"/>
 										</g:tab>
 									</g:TabLayoutPanel>
 								</g:SimpleLayoutPanel>

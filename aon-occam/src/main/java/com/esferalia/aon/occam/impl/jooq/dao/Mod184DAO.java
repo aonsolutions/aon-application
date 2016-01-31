@@ -202,6 +202,12 @@ public class Mod184DAO {
 			.set(FS_MODEL184_DETAIL.RESULT,income.getResult())
 			.set(FS_MODEL184_DETAIL.DEDUCTION_BASE,income.getDeductionBase())
 			.set(FS_MODEL184_DETAIL.RETENTION,income.getRetention())
+			.set(FS_MODEL184_DETAIL.LOCATION,income.getLocation())
+			.set(FS_MODEL184_DETAIL.CADASDRAL_REFERENCE,income.getCadasdralReference())
+			.set(FS_MODEL184_DETAIL.STAFF_EXPENSES,income.getStaffExpenses())
+			.set(FS_MODEL184_DETAIL.ASSET_ACQUISITION,income.getAssetAcquisition())
+			.set(FS_MODEL184_DETAIL.TAX_DEDUCTION,income.getTaxDeduction())
+			.set(FS_MODEL184_DETAIL.OTHER_TAX_DEDUCTION,income.getOtherTaxDeduction())
 			.execute();
 	}
 
@@ -226,6 +232,12 @@ public class Mod184DAO {
 			.set(FS_MODEL184_DETAIL.RESULT,income.getResult())
 			.set(FS_MODEL184_DETAIL.DEDUCTION_BASE,income.getDeductionBase())
 			.set(FS_MODEL184_DETAIL.RETENTION,income.getRetention())
+			.set(FS_MODEL184_DETAIL.LOCATION,income.getLocation())
+			.set(FS_MODEL184_DETAIL.CADASDRAL_REFERENCE,income.getCadasdralReference())
+			.set(FS_MODEL184_DETAIL.STAFF_EXPENSES,income.getStaffExpenses())
+			.set(FS_MODEL184_DETAIL.ASSET_ACQUISITION,income.getAssetAcquisition())
+			.set(FS_MODEL184_DETAIL.TAX_DEDUCTION,income.getTaxDeduction())
+			.set(FS_MODEL184_DETAIL.OTHER_TAX_DEDUCTION,income.getOtherTaxDeduction())
 			.where(FS_MODEL184_DETAIL.ID.equal(income.getId()))
 			.execute();
 	}
@@ -373,7 +385,14 @@ public class Mod184DAO {
 				.setDeductionRightRent(record.getValue(FS_MODEL184_DETAIL.DEDUCTION_RIGHT_RENT))
 				.setResult(record.getValue(FS_MODEL184_DETAIL.RESULT))
 				.setDeductionBase(record.getValue(FS_MODEL184_DETAIL.DEDUCTION_BASE))
-				.setRetention(record.getValue(FS_MODEL184_DETAIL.RETENTION));
+				.setRetention(record.getValue(FS_MODEL184_DETAIL.RETENTION))
+				.setLocation(record.getValue(FS_MODEL184_DETAIL.LOCATION))
+				.setCadasdralReference(record.getValue(FS_MODEL184_DETAIL.CADASDRAL_REFERENCE))
+				.setStaffExpenses(record.getValue(FS_MODEL184_DETAIL.STAFF_EXPENSES))
+				.setAssetAcquisition(record.getValue(FS_MODEL184_DETAIL.ASSET_ACQUISITION))
+				.setTaxDeduction(record.getValue(FS_MODEL184_DETAIL.TAX_DEDUCTION))
+				.setOtherTaxDeduction(record.getValue(FS_MODEL184_DETAIL.OTHER_TAX_DEDUCTION))
+				;
 		}
 	}
 

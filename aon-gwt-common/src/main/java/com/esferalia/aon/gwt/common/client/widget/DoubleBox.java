@@ -156,6 +156,7 @@ public class DoubleBox extends ValueBox<Double> implements HasErrorHandlers{
 
 	@Override
 	public void setValue(Double value, boolean fireEvents) {
+		if (value == null) value = 0.0;
 		super.setValue(AonMathUtils.round(value,getPrecision()), fireEvents);
 	}
 	

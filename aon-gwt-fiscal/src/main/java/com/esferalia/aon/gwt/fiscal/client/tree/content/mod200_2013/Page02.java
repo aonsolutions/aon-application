@@ -191,7 +191,7 @@ public class Page02 extends PageAbs {
 	private void addInProvinceColumn() {
 		final List<String> options = new LinkedList<String>();
 		for (Province prov : Province.values()) {
-			options.add( AON.MSG.provinceName(prov) );
+			options.add( prov.getName() );
 		}
 		for (Country c : Country.values()) {
 			options.add( c.getName() );
@@ -206,7 +206,7 @@ public class Page02 extends PageAbs {
 				String country = ca.getCountry();
 				String name = null; 
 				if (idx > 0 && idx < Province.values().length) {
-					name = AON.MSG.provinceName( Province.values()[idx] ); 
+					name = Province.values()[idx].getName(); 
 				} else {
 					Country c = Country.safeValueOf(country);
 					name = (c==null?null:c.getName());
