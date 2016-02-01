@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.fiscal.server.FiscalModelExcelAction;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.google.gwt.editor.client.Editor.Ignore;
 
 public class Model111PrintTestCase {
 
@@ -28,6 +29,7 @@ public class Model111PrintTestCase {
 	private static String USER = "mac";
 
 	@Test
+	@Ignore
 	public void testGetById() throws IOException {
 		LinkedList<Mod111> list = AON.getMod111s(DOMAIN_NAME, DOMAIN_ID, USER);
 		for (Mod111 mod111 : list) {
