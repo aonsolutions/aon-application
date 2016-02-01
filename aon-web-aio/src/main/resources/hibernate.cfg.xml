@@ -126,6 +126,7 @@
 		<mapping class="com.code.aon.config.CommissionType"/>
 		<mapping class="com.code.aon.config.Domain"/>
 		<mapping class="com.code.aon.config.DomainApplication"/>
+		<mapping class="com.code.aon.config.IAE"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.PayMethodTypeDetail"/>
 		<mapping class="com.code.aon.config.Series"/>
