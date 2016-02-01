@@ -426,6 +426,7 @@ public abstract class AbstractSQLTestCase {
 			if (rs.getString(1).startsWith(dbName)) {
 				connection.createStatement().execute("use " + rs.getString(1));
 				new VersionManager().uptodateDatabase(connection);
+				System.out.println("use " + rs.getString(1));
 				return connection;
 			}
 		}
@@ -685,6 +686,240 @@ public abstract class AbstractSQLTestCase {
 	public static final ContractRecord newContract(AONContext aonContext,
 			SSRegimeType ssRegimeType, CCCType cccType, Date startDate,
 			Date endDate, Map<String, String> data, String[] payments,
+			String[] deductions, AgreementLevelCategoryRecord category, 
+			int domainId, int personId, int workplaceId,  int enterpriseCccId, int  enterpriseActivityId ) {
+		ContractRecord contract = aonContext
+				.getDslContext()
+				.insertInto(CONTRACT)
+				.set(CONTRACT.DOMAIN, domainId )
+				.set(CONTRACT.PERSON, personId)
+				.set(CONTRACT.WORKPLACE, workplaceId)
+				.set(CONTRACT.START_DATE, startDate)
+				.set(CONTRACT.END_DATE, endDate)
+				.set(CONTRACT.ENTERPRISE_CCC,
+						enterpriseCccId)
+				.set(CONTRACT.ENTERPRISE_ACTIVITY,
+						enterpriseActivityId)
+				.set(CONTRACT.AGREEMENT_LEVEL_CATEGORY,
+						category != null ? category.getId()
+								: null).returning().fetchOne();
+	
+		for (int i = 0; i < payments.length; i++) {
+			String payment = payments[i];
+			PaymentConceptRecord concept = aonContext
+					.getDslContext()
+					.insertInto(PAYMENT_CONCEPT)
+					.set(PAYMENT_CONCEPT.DOMAIN, domainId)
+					.set(PAYMENT_CONCEPT.CODE,
+							String.format("P_%d", i))
+					.set(PAYMENT_CONCEPT.TYPE,
+							(byte) PaymentType.CRA_0000
+									.ordinal())
+					.set(PAYMENT_CONCEPT.DESCRIPTION, payment)
+					.set(PAYMENT_CONCEPT.EXPRESSION, payment)
+					.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION,
+							PAYMENT.getName())
+					.set(PAYMENT_CONCEPT.IRPF_EXPRESSION,
+							PAYMENT.getName()).returning()
+					.fetchOne();
+	
+			aonContext
+					.getDslContext()
+					.insertInto(CONTRACT_PAYMENT)
+					.set(CONTRACT_PAYMENT.DOMAIN,
+							domainId)
+					.set(CONTRACT_PAYMENT.CONTRACT,
+							contract.getId())
+					.set(CONTRACT_PAYMENT.START_DATE, startDate)
+					.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT,
+							concept.getId())
+					.set(CONTRACT_PAYMENT.SALARY_TYPE,
+							(byte) SalaryType.SALARY.ordinal())
+					.execute();
+		}
+	
+		for (String deduction : deductions) {
+			DeductionType type = DeductionType.COMMON_CONTINGENCY;
+			if (deduction.contains("BASE_IRPF"))
+				type = DeductionType.IRPF;
+			else if (deduction.contains("BASE_ESTR"))
+				type = DeductionType.STRUCTURAL_OVERTIME;
+			else if (deduction.contains("BASE_NESTR"))
+				type = DeductionType.NON_STRUCTURAL_OVERTIME;
+	
+			aonContext
+					.getDslContext()
+					.insertInto(CONTRACT_DEDUCTION)
+					.set(CONTRACT_DEDUCTION.DOMAIN,
+							domainId)
+					.set(CONTRACT_DEDUCTION.CONTRACT,
+							contract.getId())
+					.set(CONTRACT_DEDUCTION.START_DATE,
+							startDate)
+					.set(CONTRACT_DEDUCTION.DESCRIPTION,
+							deduction)
+					.set(CONTRACT_DEDUCTION.EXPRESSION,
+							deduction)
+					.set(CONTRACT_DEDUCTION.TYPE,
+							(byte) type.ordinal()).execute();
+		}
+	
+		addData(aonContext, contract, contract.getStartDate(),
+				contract.getEndDate(), data);
+	
+		return contract;
+	}
+
+	public static final EnterpriseActivityRecord newEnterpriseActivity(AONContext aonContext, 
+			int domainId, 
+			int scopeId, 
+			SSRegimeType ssRegimeType) {
+
+		RegistryRecord enterprise = aonContext
+				.getDslContext()
+				.insertInto(REGISTRY)
+				.set(REGISTRY.DOMAIN, domainId)
+				.set(REGISTRY.NAME, "")
+				.set(REGISTRY.ALIAS, "")
+				.set(REGISTRY.DOCUMENT, "")
+				.set(REGISTRY.DOCUMENT_COUNTRY, "")
+				.set(REGISTRY.DOCUMENT_TYPE,
+						(byte) DocumentType.OTHER.ordinal())
+				.set(REGISTRY.NATIONALITY, "")
+				.set(REGISTRY.TYPE,
+						(byte) RegistryType.LEGAL.ordinal())
+				.returning().fetchOne();
+
+		aonContext.getDslContext().insertInto(ENTERPRISE)
+				.set(ENTERPRISE.DOMAIN, domainId)
+				.set(ENTERPRISE.REGISTRY, enterprise.getId())
+				.set(ENTERPRISE.SCOPE, scopeId)
+				.execute();
+
+		EnterpriseActivityRecord enterpriseActivity = aonContext
+				.getDslContext()
+				.insertInto(ENTERPRISE_ACTIVITY)
+				.set(ENTERPRISE_ACTIVITY.DOMAIN, domainId)
+				.set(ENTERPRISE_ACTIVITY.ENTERPRISE,
+						enterprise.getId())
+				.set(ENTERPRISE_ACTIVITY.DESCRIPTION, "")
+				.set(ENTERPRISE_ACTIVITY.TYPE,
+						(byte) ssRegimeType.ordinal())
+				.returning().fetchOne();
+
+		return enterpriseActivity;
+
+	}
+	
+	
+	public static final EnterpriseCccRecord newEnterpriseCcc(AONContext aonContext, 
+			int domainId, 
+			int scopeId,
+			int enterpriseActivityId,
+			CCCType cccType,
+			String ccc) {
+		EnterpriseCccRecord enterpriseCcc = aonContext
+			.getDslContext()
+			.insertInto(ENTERPRISE_CCC)
+			.set(ENTERPRISE_CCC.DOMAIN, domainId)
+			.set(ENTERPRISE_CCC.TYPE,
+					(byte) cccType.ordinal())
+			.set(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY,
+					enterpriseActivityId)
+			.set(ENTERPRISE_CCC.CCC, ccc)
+			.returning()
+			.fetchOne();
+		
+		return enterpriseCcc;
+	}	
+	
+	public static final WorkplaceRecord newWorkplace(AONContext aonContext, 
+			int domainId, 
+			int scopeId,
+			int enterpriseId) {
+		
+
+		RaddressRecord raddress = aonContext
+				.getDslContext()
+				.insertInto(RADDRESS)
+				.set(RADDRESS.DOMAIN, domainId)
+				.set(RADDRESS.REGISTRY, enterpriseId)
+				.set(RADDRESS.TYPE,
+						(byte) AddressType.MAIN.ordinal())
+				.returning().fetchOne();
+
+		WorkplaceRecord workplace = aonContext
+				.getDslContext()
+				.insertInto(WORKPLACE)
+				.set(WORKPLACE.DOMAIN, domainId)
+				.set(WORKPLACE.ENTERPRISE, enterpriseId)
+				.set(WORKPLACE.ACTIVE, (byte) 1)
+				.set(WORKPLACE.ECONOMICAGREEMENT,
+						(byte) Administration.COMMON_TERRITORY
+								.ordinal())
+				.set(WORKPLACE.DESCRIPTION, "")
+				.set(WORKPLACE.ADDRESS, raddress.getId())
+				.set(WORKPLACE.SCOPE, scopeId)
+				.returning().fetchOne();
+
+		aonContext
+				.getDslContext()
+				.insertInto(PAYROLL_WORKPLACE)
+				.set(PAYROLL_WORKPLACE.DOMAIN, domainId)
+				.set(PAYROLL_WORKPLACE.WORKPLACE,
+						workplace.getId()).execute();
+		return workplace;
+	}	
+
+	public static final RegistryRecord newPerson(AONContext aonContext, 
+			int domainId,
+			String document) {
+		RegistryRecord person = aonContext
+				.getDslContext()
+				.insertInto(REGISTRY)
+				.set(REGISTRY.DOMAIN, domainId)
+				.set(REGISTRY.NAME, "")
+				.set(REGISTRY.ALIAS, "")
+				.set(REGISTRY.DOCUMENT, document)
+				.set(REGISTRY.DOCUMENT_COUNTRY, "")
+				.set(REGISTRY.DOCUMENT_TYPE,
+						(byte) DocumentType.OTHER.ordinal())
+				.set(REGISTRY.NATIONALITY, "")
+				.set(REGISTRY.TYPE,
+						(byte) RegistryType.NATURAL.ordinal())
+				.returning().fetchOne();
+
+		aonContext
+				.getDslContext()
+				.insertInto(PERSON)
+				.set(PERSON.DOMAIN, domainId)
+				.set(PERSON.REGISTRY, person.getId())
+				.set(PERSON.NAME, "")
+				.set(PERSON.FIRST_SURNAME, "")
+				.set(PERSON.SECOND_SURNAME, "")
+				// .set(PERSON.BIRTH_DATE, null)
+				.set(PERSON.SOCIAL_SECURITY_NUM, "")
+				.set(PERSON.GENDER,
+						(byte) Gender.UNKNOWN.ordinal())
+				.set(PERSON.MARITAL_STATUS,
+						(byte) MaritalStatus.UNKNOWN.ordinal())
+				.execute();
+		return person;
+	}
+	
+	public static ScopeRecord newScope(AONContext aonContext, int domainId) {
+		ScopeRecord scope = aonContext.getDslContext()
+				.insertInto(SCOPE)
+				.set(SCOPE.DOMAIN, domainId)
+				.set(SCOPE.DESCRIPTION, "")
+				.returning()
+				.fetchOne();
+		return scope;
+	}
+	
+	public static final ContractRecord newContract(AONContext aonContext,
+			SSRegimeType ssRegimeType, CCCType cccType, Date startDate,
+			Date endDate, Map<String, String> data, String[] payments,
 			String[] deductions, AgreementLevelCategoryRecord category) {
 		return aonContext.getDslContext().transactionResult(
 				new TransactionalCallable<ContractRecord>() {
@@ -702,194 +937,45 @@ public abstract class AbstractSQLTestCase {
 								.set(DOMAIN.DESCRIPTION, "").returning()
 								.fetchOne();
 
-						ScopeRecord scope = aonContext.getDslContext()
-								.insertInto(SCOPE)
-								.set(SCOPE.DOMAIN, domain.getId())
-								.set(SCOPE.DESCRIPTION, "").returning()
-								.fetchOne();
+						ScopeRecord scope = newScope(aonContext, domain.getId());
 
-						RegistryRecord enterprise = aonContext
-								.getDslContext()
-								.insertInto(REGISTRY)
-								.set(REGISTRY.DOMAIN, domain.getId())
-								.set(REGISTRY.NAME, "")
-								.set(REGISTRY.ALIAS, "")
-								.set(REGISTRY.DOCUMENT, "")
-								.set(REGISTRY.DOCUMENT_COUNTRY, "")
-								.set(REGISTRY.DOCUMENT_TYPE,
-										(byte) DocumentType.OTHER.ordinal())
-								.set(REGISTRY.NATIONALITY, "")
-								.set(REGISTRY.TYPE,
-										(byte) RegistryType.LEGAL.ordinal())
-								.returning().fetchOne();
+						EnterpriseActivityRecord enterpriseActivity = newEnterpriseActivity(
+								aonContext, 
+								domain.getId(), 
+								scope.getId(), 
+								ssRegimeType);
 
-						aonContext.getDslContext().insertInto(ENTERPRISE)
-								.set(ENTERPRISE.DOMAIN, domain.getId())
-								.set(ENTERPRISE.REGISTRY, enterprise.getId())
-								.set(ENTERPRISE.SCOPE, scope.getId()).execute();
+						EnterpriseCccRecord enterpriseCcc = newEnterpriseCcc(aonContext, 
+								domain.getId(), 
+								scope.getId(), 
+								enterpriseActivity.getId(), 
+								cccType,
+								null );
 
-						EnterpriseActivityRecord enterpriseActivity = aonContext
-								.getDslContext()
-								.insertInto(ENTERPRISE_ACTIVITY)
-								.set(ENTERPRISE_ACTIVITY.DOMAIN, domain.getId())
-								.set(ENTERPRISE_ACTIVITY.ENTERPRISE,
-										enterprise.getId())
-								.set(ENTERPRISE_ACTIVITY.DESCRIPTION, "")
-								.set(ENTERPRISE_ACTIVITY.TYPE,
-										(byte) ssRegimeType.ordinal())
-								.returning().fetchOne();
+						WorkplaceRecord workplace = newWorkplace(aonContext, 
+								domain.getId(), 
+								scope.getId(), 
+								enterpriseActivity.getEnterprise());
 
-						EnterpriseCccRecord enterpriseCcc = aonContext
-								.getDslContext()
-								.insertInto(ENTERPRISE_CCC)
-								.set(ENTERPRISE_CCC.DOMAIN, domain.getId())
-								.set(ENTERPRISE_CCC.TYPE,
-										(byte) cccType.ordinal())
-								.set(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY,
-										enterpriseActivity.getId()).returning()
-								.fetchOne();
+						RegistryRecord person = newPerson(
+								aonContext, 
+								domain.getId(),
+								"");
 
-						RaddressRecord raddress = aonContext
-								.getDslContext()
-								.insertInto(RADDRESS)
-								.set(RADDRESS.DOMAIN, domain.getId())
-								.set(RADDRESS.REGISTRY, enterprise.getId())
-								.set(RADDRESS.TYPE,
-										(byte) AddressType.MAIN.ordinal())
-								.returning().fetchOne();
-
-						WorkplaceRecord workplace = aonContext
-								.getDslContext()
-								.insertInto(WORKPLACE)
-								.set(WORKPLACE.DOMAIN, domain.getId())
-								.set(WORKPLACE.ENTERPRISE, enterprise.getId())
-								.set(WORKPLACE.ACTIVE, (byte) 1)
-								.set(WORKPLACE.ECONOMICAGREEMENT,
-										(byte) Administration.COMMON_TERRITORY
-												.ordinal())
-								.set(WORKPLACE.DESCRIPTION, "")
-								.set(WORKPLACE.ADDRESS, raddress.getId())
-								.set(WORKPLACE.SCOPE, scope.getId())
-								.returning().fetchOne();
-
-						aonContext
-								.getDslContext()
-								.insertInto(PAYROLL_WORKPLACE)
-								.set(PAYROLL_WORKPLACE.DOMAIN, domain.getId())
-								.set(PAYROLL_WORKPLACE.WORKPLACE,
-										workplace.getId()).execute();
-
-						RegistryRecord person = aonContext
-								.getDslContext()
-								.insertInto(REGISTRY)
-								.set(REGISTRY.DOMAIN, domain.getId())
-								.set(REGISTRY.NAME, "")
-								.set(REGISTRY.ALIAS, "")
-								.set(REGISTRY.DOCUMENT, "")
-								.set(REGISTRY.DOCUMENT_COUNTRY, "")
-								.set(REGISTRY.DOCUMENT_TYPE,
-										(byte) DocumentType.OTHER.ordinal())
-								.set(REGISTRY.NATIONALITY, "")
-								.set(REGISTRY.TYPE,
-										(byte) RegistryType.NATURAL.ordinal())
-								.returning().fetchOne();
-
-						aonContext
-								.getDslContext()
-								.insertInto(PERSON)
-								.set(PERSON.DOMAIN, domain.getId())
-								.set(PERSON.REGISTRY, person.getId())
-								.set(PERSON.NAME, "")
-								.set(PERSON.FIRST_SURNAME, "")
-								.set(PERSON.SECOND_SURNAME, "")
-								// .set(PERSON.BIRTH_DATE, null)
-								.set(PERSON.SOCIAL_SECURITY_NUM, "")
-								.set(PERSON.GENDER,
-										(byte) Gender.UNKNOWN.ordinal())
-								.set(PERSON.MARITAL_STATUS,
-										(byte) MaritalStatus.UNKNOWN.ordinal())
-								.execute();
-
-						ContractRecord contract = aonContext
-								.getDslContext()
-								.insertInto(CONTRACT)
-								.set(CONTRACT.DOMAIN, domain.getId())
-								.set(CONTRACT.PERSON, person.getId())
-								.set(CONTRACT.WORKPLACE, workplace.getId())
-								.set(CONTRACT.START_DATE, startDate)
-								.set(CONTRACT.END_DATE, endDate)
-								.set(CONTRACT.ENTERPRISE_CCC,
-										enterpriseCcc.getId())
-								.set(CONTRACT.ENTERPRISE_ACTIVITY,
-										enterpriseActivity.getId())
-								.set(CONTRACT.AGREEMENT_LEVEL_CATEGORY,
-										category != null ? category.getId()
-												: null).returning().fetchOne();
-
-						for (int i = 0; i < payments.length; i++) {
-							String payment = payments[i];
-							PaymentConceptRecord concept = aonContext
-									.getDslContext()
-									.insertInto(PAYMENT_CONCEPT)
-									.set(PAYMENT_CONCEPT.DOMAIN, domain.getId())
-									.set(PAYMENT_CONCEPT.CODE,
-											String.format("P_%d", i))
-									.set(PAYMENT_CONCEPT.TYPE,
-											(byte) PaymentType.CRA_0000
-													.ordinal())
-									.set(PAYMENT_CONCEPT.DESCRIPTION, payment)
-									.set(PAYMENT_CONCEPT.EXPRESSION, payment)
-									.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION,
-											PAYMENT.getName())
-									.set(PAYMENT_CONCEPT.IRPF_EXPRESSION,
-											PAYMENT.getName()).returning()
-									.fetchOne();
-
-							aonContext
-									.getDslContext()
-									.insertInto(CONTRACT_PAYMENT)
-									.set(CONTRACT_PAYMENT.DOMAIN,
-											domain.getId())
-									.set(CONTRACT_PAYMENT.CONTRACT,
-											contract.getId())
-									.set(CONTRACT_PAYMENT.START_DATE, startDate)
-									.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT,
-											concept.getId())
-									.set(CONTRACT_PAYMENT.SALARY_TYPE,
-											(byte) SalaryType.SALARY.ordinal())
-									.execute();
-						}
-
-						for (String deduction : deductions) {
-							DeductionType type = DeductionType.COMMON_CONTINGENCY;
-							if (deduction.contains("BASE_IRPF"))
-								type = DeductionType.IRPF;
-							else if (deduction.contains("BASE_ESTR"))
-								type = DeductionType.STRUCTURAL_OVERTIME;
-							else if (deduction.contains("BASE_NESTR"))
-								type = DeductionType.NON_STRUCTURAL_OVERTIME;
-
-							aonContext
-									.getDslContext()
-									.insertInto(CONTRACT_DEDUCTION)
-									.set(CONTRACT_DEDUCTION.DOMAIN,
-											domain.getId())
-									.set(CONTRACT_DEDUCTION.CONTRACT,
-											contract.getId())
-									.set(CONTRACT_DEDUCTION.START_DATE,
-											startDate)
-									.set(CONTRACT_DEDUCTION.DESCRIPTION,
-											deduction)
-									.set(CONTRACT_DEDUCTION.EXPRESSION,
-											deduction)
-									.set(CONTRACT_DEDUCTION.TYPE,
-											(byte) type.ordinal()).execute();
-						}
-
-						addData(aonContext, contract, contract.getStartDate(),
-								contract.getEndDate(), data);
-
-						return contract;
+						return newContract(aonContext, 
+								ssRegimeType, 
+								cccType, 
+								startDate, 
+								endDate, 
+								data, 
+								payments, 
+								deductions,
+								category, 
+								domain.getId(), 
+								person.getId(), 
+								workplace.getId(), 
+								enterpriseCcc.getId(), 
+								enterpriseActivity.getId());
 					}
 				});
 
