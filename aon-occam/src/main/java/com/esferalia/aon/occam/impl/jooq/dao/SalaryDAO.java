@@ -342,12 +342,14 @@ public class SalaryDAO {
 			return emptyList.stream();
 		}
 
+
 		//@formatter:off
 		Cursor<Record> rootCursor = 
 		ctx.getDslContext()
 		.select()
 		.from(SALARY)
 		.where(conditions)
+		.groupBy(SALARY.EMPLOYEE_DOCUMENT)
 		.orderBy(SALARY.EMPLOYEE_DOCUMENT)
 		.fetchLazy();
 		//@formatter:on
@@ -388,8 +390,10 @@ public class SalaryDAO {
 		//@formatter:off
 		return Seq.seq(rootCursor)
 				.map(rootRecord-> {
-
+					
+					
 					String employeeDocument = rootRecord.getValue(SALARY.EMPLOYEE_DOCUMENT);	
+
 					Salary salary = supplier.get()
 					.setEmployeeDocument(employeeDocument)
 					.setEmployeeName(rootRecord.getValue(SALARY.EMPLOYEE_NAME))
@@ -398,6 +402,8 @@ public class SalaryDAO {
 					.setEnterpriseName(rootRecord.getValue(SALARY.ENTERPRISE_NAME))
 					.setEnterpriseCCC(rootRecord.getValue(SALARY.CCC))
 					;
+					
+					
 					
 					Seq.limitWhile(
 					Seq.skipUntil(Seq.seq(salaryDataIter), 

@@ -16,22 +16,29 @@ import static java.util.Calendar.MONTH;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.stream.Collectors;
 
-import junit.framework.Assert;
-
-import org.apache.commons.lang.math.NumberUtils;
 import org.junit.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.DomainRecord;
+import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
+import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
+import com.esferalia.aon.jooq.tables.records.RegistryRecord;
+import com.esferalia.aon.jooq.tables.records.ScopeRecord;
+import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalary;
@@ -39,7 +46,8 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
+
+import junit.framework.Assert;
 
 public class SQLCretaTestCase extends AbstractSQLTestCase {
 
@@ -475,7 +483,148 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 				});
 		;
 	}
+	
+	@Test
+	public void testSalaryDAOI()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
 
+		
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		DomainRecord domain = newDomain(aonContext);
+		
+		ScopeRecord scope = newScope(aonContext, domain.getId());
+
+		EnterpriseActivityRecord enterpriseActivity = newEnterpriseActivity(
+				aonContext, 
+				domain.getId(), 
+				scope.getId(), 
+				SSRegimeType.GENERAL);
+
+		EnterpriseCccRecord enterpriseCcc = newEnterpriseCcc(aonContext, 
+				domain.getId(), 
+				scope.getId(), 
+				enterpriseActivity.getId(), 
+				CCCType.PRINCIPAL,
+				ccc );
+
+		WorkplaceRecord workplace = newWorkplace(aonContext, 
+				domain.getId(), 
+				scope.getId(), 
+				enterpriseActivity.getEnterprise());
+
+		RegistryRecord person = newPerson(
+				aonContext, 
+				domain.getId(),
+				"00000000A");
+
+		String deductions  [] = new String[] {						
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05",
+				"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				};
+		
+		Map<String, String> data = 
+		new HashMap<String, String>() {
+			{
+				put(TC2.getName(), String.format("\"%s\"", C100.getValue()));
+			}
+		};
+		
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = AonDateUtils.add(startDate, DAY_OF_MONTH,1);
+		
+		List<ContractRecord> contracts = new ArrayList<ContractRecord>();
+		for ( int i = 0; i < 10 ; i++ ) {
+			//@formatter:off
+			contracts.add(newContract(aonContext, 
+					SSRegimeType.GENERAL, 
+					CCCType.PRINCIPAL, 
+					startDate, 
+					endDate, 
+					data, 
+					new String[] {
+					"1000.00 * DIAS_TRABAJADOS / DIAS_MES"
+					}, 
+					deductions,
+					null, 
+					domain.getId(), 
+					person.getId(), 
+					workplace.getId(), 
+					enterpriseCcc.getId(), 
+					enterpriseActivity.getId()));
+			//@formatter:on
+
+			startDate = add(endDate, DAY_OF_MONTH, 1);
+			endDate = AonDateUtils.add(startDate, DAY_OF_MONTH,2);
+		}
+		
+		
+		for( int i = 1; i < 10 ; i++) {
+			person = newPerson(
+					aonContext, 
+					domain.getId(),
+					String.format("%sA", new String(new char[8]).replace("\0", Integer.toString(i))));
+			contracts.add(newContract(aonContext, 
+					SSRegimeType.GENERAL, 
+					CCCType.PRINCIPAL, 
+					getFirstDayOfYear(getToday()), 
+					null, 
+					data, 
+					new String[] {
+					String.format("%f * DIAS_TRABAJADOS / DIAS_MES", 1000.00 * i)
+					}, 
+					deductions,
+					null, 
+					domain.getId(), 
+					person.getId(), 
+					workplace.getId(), 
+					enterpriseCcc.getId(), 
+					enterpriseActivity.getId()));
+		}
+
+		
+		startDate = getFirstDayOfMonth(getToday());
+		endDate = getLastDayOfMonth(startDate);
+		
+		
+
+		for ( ContractRecord contract: contracts ){
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			calculateAndSave(connection, ctx );
+		}
+		
+		
+		Map<String, Long> employeDocuments = new HashMap<String, Long>(); 
+		//@formatter:off
+		AON.getSalaryData(aonContext, 
+				p-> p.getCCCProperty().eq(ccc)
+		)
+		.forEach(salary-> { 
+			System.out.println(salary.getEmployeeDocument() );
+			for ( ContextData ctxData : salary.getContextData().get(ContextVariable.CGC_BASE.getName()) )
+				System.out.println(ContextVariable.CGC_BASE.getName() + " = " + ctxData.getExpression() + "[" + ctxData.getStartDate() + ".." + ctxData.getEndDate() + "]" );
+			employeDocuments.put(salary.getEmployeeDocument(),salary.getContextData(ContextVariable.CGC_BASE.getName(), Collectors.counting()));
+			
+		})
+		;
+		//@formatter:on
+		
+		for ( String employeeDocument: employeDocuments.keySet())
+			System.out.println(employeeDocument);
+		
+		Assert.assertEquals(10, employeDocuments.size());
+
+		Assert.assertEquals((Long)10L, employeDocuments.get("00000000A"));
+
+		for( int i = 1; i < 10 ; i++) {
+			Assert.assertEquals((Long)1L, employeDocuments.get(String.format("%sA", new String(new char[8]).replace("\0", Integer.toString(i)))));
+		}
+	}
 	// -------------------------------------------------------------------------
 
 	private static int calculateAndSave(Connection connection,
