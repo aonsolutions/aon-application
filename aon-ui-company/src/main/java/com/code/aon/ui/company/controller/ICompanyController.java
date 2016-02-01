@@ -77,6 +77,9 @@ public interface ICompanyController extends IController {
 	boolean isActive();
 	void setActive(boolean active);
 	
+	boolean isHelpdeskEnabled();
+	void setHelpdeskEnabled(boolean helpdeskEnabled);
+	
 	boolean obtainPrintHeader() throws ManagerBeanException;
 	boolean obtainPrintRecordData() throws ManagerBeanException;
 	SaleInvoiceTemplate obtainSaleInvoiceTemplate() throws ManagerBeanException;
@@ -97,6 +100,7 @@ public interface ICompanyController extends IController {
 	boolean obtainPrintSaleInvoiceFooter() throws ManagerBeanException;
 	boolean obtainSmartCard() throws ManagerBeanException;
 	void searchCustomReportTemplate() throws ManagerBeanException;
+	boolean obtainHelpdeskEnabled() throws ManagerBeanException;
 
 	RegistryAddress getMainAddress();
 	void setPhone(RegistryMedia phone);

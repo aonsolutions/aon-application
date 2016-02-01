@@ -45,13 +45,6 @@
 							rendered="#{(!aonConfiguration.properties.hideMenuEmail) and (mailConfig.mailAccountCount &gt; 0)}"
 							value="&#160;" actionListener="#{webmailMessage.onSendEmail}" >
 						</aon:commandLink>
-						<aon:if test="#{customize.snapshotVersion and !actionDenied.moduleEnabled['hotel']}">
-							<aon:commandLink id="quickIssue" action="gwt_office"
-								title="Gesti\u00F3n de incidencias"
-								styleClass="aon-menu-icon aon-icon-callcenter"
-								value="&#160;"  
-								target="gwt" />
-						</aon:if>
 						<ui:insert name="beforeRightMenuContent"/>								
 						<aon:commandLink id="home" action="home"
 							rendered="#{!aonConfiguration.properties.hideMenuHome}"
@@ -62,7 +55,13 @@
 			                <f:facet name="label"> 
 		                        <aon:graphicImage title="#{bundle.aon_help}"
 		                        	value="#{aonResource.resolve['/images/aon-main-menu/aon-icon-help.png']}" />
-			                </f:facet>					                
+			                </f:facet>		
+			                <aon:if test="#{company.helpdeskEnabled}">
+			              		<aon:menuItem id="menu-quickIssue" 
+									action="gwt_office"
+									value="#{bundle.office_new_issue}"
+									iconClass="aon-icon-helpdesk" />
+							</aon:if>			                
 			                <aon:if test="#{aonConfiguration.bean.alarm.showList}">
 		                		<aon:menuItem id="alarm"
 									value="#{bundle.aon_alarm}"

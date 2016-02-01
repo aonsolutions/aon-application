@@ -172,6 +172,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 	private boolean customReportTemplate;
 	
+	private boolean helpdeskEnabled;
+	
 	private List<IControllerListener> listenerClasses;
 	
 	private Scope scope;
@@ -932,6 +934,14 @@ public class CompanyParentController extends BasicController implements ICompany
 		this.customReportTemplate = customReportTemplate;
 	}
 	
+	public boolean isHelpdeskEnabled() {
+		return helpdeskEnabled;
+	}
+
+	public void setHelpdeskEnabled(boolean helpdeskEnabled) {
+		this.helpdeskEnabled = helpdeskEnabled;
+	}
+
 	public void setHideHeaderContent( boolean value ) {
 		ConfigurationController cc = AonUtil.getConfigurationController();
 		cc.getProperties().put( ICommonConstants.HIDE_HEADER_LINKS, value );
@@ -1032,6 +1042,10 @@ public class CompanyParentController extends BasicController implements ICompany
 	public void searchCustomReportTemplate() throws ManagerBeanException {
 		customSaleInvoiceTemplateParam = AppParamUtil.getParameter(AppParam.REPORT_saleInvoice);
 		setCustomReportTemplate( customSaleInvoiceTemplateParam!=null && StringUtils.isNotBlank(customSaleInvoiceTemplateParam.getValue()) );
+	}
+	
+	public boolean obtainHelpdeskEnabled() throws ManagerBeanException {
+		return AppParamUtil.getValueAsBoolean(AppParam.AON_HELPDESK_ENABLED);
 	}
 
 	private ReportPrintOption getReportPrintOptionValue(AppParam appParam) {
