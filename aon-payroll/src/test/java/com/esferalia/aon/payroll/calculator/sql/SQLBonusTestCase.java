@@ -349,6 +349,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				contract);
 		salary = calculator.calculate(ctx);
 
+		monthDays = getMax(getToday(), Calendar.DAY_OF_MONTH);
 		Assert.assertEquals((750.00 - 250.00) * workDays / monthDays * 23.60
 				/ 100, salary.getTotalEnterprise(), DELTA);
 
