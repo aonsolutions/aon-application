@@ -40,6 +40,7 @@
     	<mapping class="com.code.aon.config.CNAE2009"/>
     	<mapping class="com.code.aon.config.CommissionType"/>
     	<mapping class="com.code.aon.config.Domain"/>
+    	<mapping class="com.code.aon.config.IAE"/>
     	<mapping class="com.code.aon.config.PayMethod"/>
     	<mapping class="com.code.aon.config.Scope"/>
         <mapping class="com.code.aon.config.Tag"/>
