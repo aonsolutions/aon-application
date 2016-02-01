@@ -534,6 +534,9 @@
 		<foreign-key constraint-name="FK_ENTERPRISE_ACTIVITY_CNAE2009">
 			<many-to-one property="cnae2009" />
 		</foreign-key>
+		<foreign-key constraint-name="FK_ENTERPRISE_ACTIVITY_IAE">
+			<many-to-one property="iae" />
+		</foreign-key>
 	</table>
 
 	<table name="enterprise_ccc" class="com.esferalia.aon.entity.master.EnterpriseCCC">
