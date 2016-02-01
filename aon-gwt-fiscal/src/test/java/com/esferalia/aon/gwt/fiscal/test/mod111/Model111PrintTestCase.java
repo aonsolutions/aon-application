@@ -4,8 +4,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import org.junit.Test;
-
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model110Bizkaia;
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model110Gipuzkoa;
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model111AEAT;
@@ -20,7 +18,6 @@ import com.esferalia.aon.gwt.fiscal.server.FiscalModelExcelAction;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Administration;
-import com.google.gwt.editor.client.Editor.Ignore;
 
 public class Model111PrintTestCase {
 
@@ -28,9 +25,7 @@ public class Model111PrintTestCase {
 	private static int DOMAIN_ID = 536;
 	private static String USER = "mac";
 
-	@Test
-	@Ignore
-	public void testGetById() throws IOException {
+	public static void main(String[] args) throws IOException {
 		LinkedList<Mod111> list = AON.getMod111s(DOMAIN_NAME, DOMAIN_ID, USER);
 		for (Mod111 mod111 : list) {
 			if (mod111.getYear() == 2015) {
@@ -40,7 +35,7 @@ public class Model111PrintTestCase {
 		}
 	}
 
-	private IModelScript[] obtainScript(Mod111 mod111) {
+	private static IModelScript[] obtainScript(Mod111 mod111) {
 		IModelScript[] ms = null;
 		if (mod111.getAdministration() == Administration.COMMON_TERRITORY) {
 			ms = Model111AEAT.ModelScript.values();
@@ -77,7 +72,7 @@ public class Model111PrintTestCase {
 		return ms;
 	}
 
-	private void toExcel(Mod111 mod111, IModelScript[] script) throws IOException {
+	private static void toExcel(Mod111 mod111, IModelScript[] script) throws IOException {
 		FiscalModelExcelAction action = new FiscalModelExcelAction(mod111);
 		action.initialize(mod111.getModel().getName(mod111.getAdministration(), mod111.getPeriod()));
 		
