@@ -10,7 +10,6 @@ import com.esferalia.aon.gwt.fiscal.client.mod111.Model111.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -98,7 +97,7 @@ public class Model110Bizkaia extends Model111Base {
 		panel.setStyleName(AON.AON_CSS.aonScrollArea());
 		
 		panel.add(getAnchorPanel(
-				 "Impreso Rellenable. [pdf]" 
+				 "Impreso Rellenable." 
 				,"http://www.bizkaia.eus/ogasuna/ereduak/info_descarga.asp?Idioma=CA&val1=0E681A22B56829AFDBC3ED6DE62B26D17C12C3911BAF83BAC7253A40FDAC1106&Tam=171&Ext=application/pdf&Tem_Codigo=2093"));
 		panel.add(getAnchorPanel(
 				"ORDEN FORAL 1452/2007, de 23 de mayo."
@@ -107,7 +106,7 @@ public class Model110Bizkaia extends Model111Base {
 				"Enlace al programa de ayuda"
 				,"http://www.bizkaia.eus/home2/Temas/DetalleTema.asp?Tem_Codigo=1992&idioma=CA&dpto_biz=5&codpath_biz=5|3587|1933|1948|1992"));
 		panel.add(getAnchorPanel(
-				"Enlace a las fechas de vencimiento en el a?o vigente"
+				"Enlace a las fechas de vencimiento en el a\u00F1o vigente"
 				,"http://www.bizkaia.eus/ogasuna/egutegia/egutegia_anual.asp?id=0&Modelos=245&Age_Codigo=29/01/2016&Tem_Codigo=5346"));
 		panel.add(getAnchorPanel(
 				"Enlace a la gu\u00EDa de informaci\u00F3n tributaria GURE GIDA"
@@ -115,13 +114,4 @@ public class Model110Bizkaia extends Model111Base {
 		return panel;
 	}
 
-	private FlowPanel getAnchorPanel(String label, String href) {
-		FlowPanel p = new FlowPanel();
-		p.setStyleName(AON.AON_CSS.aonPadding2());
-		Anchor a = new Anchor(label,href,"_blank");
-		a.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-		a.addStyleName(AON.AON_CSS.aonIconPdfPreview());
-		p.add(a);
-		return p;
-	}
 }

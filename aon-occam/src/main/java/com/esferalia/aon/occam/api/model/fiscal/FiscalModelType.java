@@ -53,8 +53,15 @@ public enum FiscalModelType implements Serializable{
 	}
 	public String getName(Administration admon, Period period) {
 		if (period.isQuarterPeriod() && (admon == Administration.ALAVA 
-				|| admon == Administration.BIZKAIA) ) {
+			|| admon == Administration.BIZKAIA
+			|| admon == Administration.GIPUZKOA) ) {
 			return "110";
+		}
+		if (period.isQuarterPeriod() && admon == Administration.NAVARRA) {
+			return "715";
+		}
+		if (period.isMonthPeriod() && admon == Administration.NAVARRA) {
+			return "745";
 		}
 		return name;
 	}

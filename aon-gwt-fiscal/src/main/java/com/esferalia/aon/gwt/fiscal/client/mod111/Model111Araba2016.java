@@ -24,7 +24,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -205,16 +204,6 @@ public class Model111Araba2016 extends Model111Base {
 				"Orden Foral 104 de 17 de febrero de 2014. [pdf]"
 				,"http://www.araba.eus/cs/Satellite?blobcol=urldata&blobheader=application%2Fpdf&blobheadername1=Content-disposition&blobheadername2=pragma&blobheadervalue1=attachment%3B+filename%3DOrden+Foral+104+de+17+de+febrero+de+2014.pdf&blobheadervalue2=public&blobkey=id&blobtable=MungoBlobs&blobwhere=1224091668900&ssbinary=true"));
 		return panel;
-	}
-
-	private FlowPanel getAnchorPanel(String label, String href) {
-		FlowPanel p = new FlowPanel();
-		p.setStyleName(AON.AON_CSS.aonPadding2());
-		Anchor a = new Anchor(label,href,"_blank");
-		a.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-		a.addStyleName(AON.AON_CSS.aonIconPdfPreview());
-		p.add(a);
-		return p;
 	}
 	
 }

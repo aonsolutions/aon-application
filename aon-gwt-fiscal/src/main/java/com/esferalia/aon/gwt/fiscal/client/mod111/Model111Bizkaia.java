@@ -2,15 +2,15 @@ package com.esferalia.aon.gwt.fiscal.client.mod111;
 
 
 import static com.esferalia.aon.occam.api.model.type.Mod111KeyInfo.COMPUTE;
-import static com.esferalia.aon.occam.api.model.type.Mod111KeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.Mod111KeyInfo.INVOICE;
+import static com.esferalia.aon.occam.api.model.type.Mod111KeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.Mod111KeyInfo.SALARY;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model111.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -110,13 +110,4 @@ public class Model111Bizkaia extends Model111Base {
 		return panel;
 	}
 
-	private FlowPanel getAnchorPanel(String label, String href) {
-		FlowPanel p = new FlowPanel();
-		p.setStyleName(AON.AON_CSS.aonPadding2());
-		Anchor a = new Anchor(label,href,"_blank");
-		a.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-		a.addStyleName(AON.AON_CSS.aonIconPdfPreview());
-		p.add(a);
-		return p;
-	}
 }

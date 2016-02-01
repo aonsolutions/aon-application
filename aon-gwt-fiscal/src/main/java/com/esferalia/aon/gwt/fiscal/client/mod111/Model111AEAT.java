@@ -10,7 +10,6 @@ import com.esferalia.aon.gwt.fiscal.client.mod111.Model111.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -94,24 +93,15 @@ public class Model111AEAT extends Model111Base {
 		FlowPanel panel = new FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonScrollArea());
 		panel.add(getAnchorPanel(
-				"Tr\u00E1mites. [link]"
+				"Tr\u00E1mites."
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/tramitacion/GH01.shtml"));
 		panel.add(getAnchorPanel(
-				 "Informaci\u00F3n general. [link]" 
+				 "Informaci\u00F3n general." 
 				,"http://www.agenciatributaria.es/AEAT.internet/GH01/informacion.shtml"));
 		panel.add(getAnchorPanel(
-				"Ficha. [link]"
+				"Ficha."
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/procedimientos/GH01.shtml"));
 		return panel;
 	}
 
-	private FlowPanel getAnchorPanel(String label, String href) {
-		FlowPanel p = new FlowPanel();
-		p.setStyleName(AON.AON_CSS.aonPadding2());
-		Anchor a = new Anchor(label,href,"_blank");
-		a.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-		a.addStyleName(AON.AON_CSS.aonIconAeat());
-		p.add(a);
-		return p;
-	}
 }

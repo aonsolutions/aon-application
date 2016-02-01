@@ -352,11 +352,23 @@ public class Model111 extends MainEntryPoint {
 		identificationContainer.setWidget( identificationData);
 		if (currentMod111.getAdministration() == Administration.COMMON_TERRITORY) {
 			declaration = new Model111AEAT(callback);
+		} else  if (currentMod111.getAdministration() == Administration.GIPUZKOA) {
+			if (currentMod111.getPeriod().isQuarterPeriod()) {
+				declaration = new Model110Gipuzkoa(callback);
+			} else {
+				declaration = new Model111Gipuzkoa(callback);
+			}
 		} else  if (currentMod111.getAdministration() == Administration.BIZKAIA) {
 			if (currentMod111.getPeriod().isQuarterPeriod()) {
 				declaration = new Model110Bizkaia(callback);
 			} else {
 				declaration = new Model111Bizkaia(callback);
+			}
+		} else  if (currentMod111.getAdministration() == Administration.NAVARRA) {
+			if (currentMod111.getPeriod().isQuarterPeriod()) {
+				declaration = new Model715Navarra(callback);
+			} else {
+				declaration = new Model745Navarra(callback);
 			}
 		} else  if (currentMod111.getAdministration() == Administration.ALAVA) {
 			if (currentMod111.getYear() > 2015) {
@@ -531,9 +543,6 @@ public class Model111 extends MainEntryPoint {
 		tab.setWidget(0, 0, new Label(AON.MSG.administration()));
 		fmt.addStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
 		final AdministrationListBox admonList = new AdministrationListBox();
-		
-		admonList.getElement().getElementsByTagName("option").getItem(2).setAttribute("disabled", "disabled");
-		admonList.getElement().getElementsByTagName("option").getItem(3).setAttribute("disabled", "disabled");
 		
 		admonList.setSelectedIndex( currentMod111.getAdministration().ordinal());
 		admonList.addChangeHandler( new ChangeHandler() {
@@ -784,14 +793,6 @@ public class Model111 extends MainEntryPoint {
 		splitLayoutPanel.animate(500);
 	}
 	
-	private void showResultsPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 5);
-	}
-
-	private boolean isResultsPanelVisible() {
-		return splitLayoutPanel.getWidgetSize(footPanel) > 0;
-	}
-	
 	private void cleanErrorMessage() {
 		SimplePanel panel = new SimplePanel();
 		resultsPanel.setWidget(panel);
@@ -799,24 +800,11 @@ public class Model111 extends MainEntryPoint {
 	}
 
 	private void showErrorMessage(String msg) {
-		showResultsPanel();
-		addErrorMessage(msg);
-	}
-
-	private void showInfoPanel(String htmlText) {
 		if (splitLayoutPanel.getWidgetSize(footPanel) <= 30) {
 			splitLayoutPanel.setWidgetSize(footPanel,
 					Window.getClientHeight() / 4);
 			splitLayoutPanel.animate(500);
 		}
-		tabLayout.selectTab(INFORMATION_TAB);
-		HTMLPanel panel = new HTMLPanel(htmlText);
-		informationPanel.setWidget(panel);
-		informationPanel.scrollToTop();
-	}
-	
-	
-	private void addErrorMessage(String msg) {
 		SimplePanel panel = new SimplePanel();
 		Label label = new Label(msg);
 		label.addStyleName("aon-icon-errorwarning");
@@ -824,5 +812,18 @@ public class Model111 extends MainEntryPoint {
 		label.addStyleName("aon-icon");
 		panel.add(label);
 		resultsPanel.setWidget(panel);
+		tabLayout.selectTab(NOTIFICATIONS_TAB);
 	}
+
+	private void showInfoPanel(String htmlText) {
+		if (splitLayoutPanel.getWidgetSize(footPanel) <= 30) {
+			splitLayoutPanel.animate(500);
+			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+		}
+		tabLayout.selectTab(INFORMATION_TAB);
+		HTMLPanel panel = new HTMLPanel(htmlText);
+		informationPanel.setWidget(panel);
+		informationPanel.scrollToTop();
+	}
+	
 }

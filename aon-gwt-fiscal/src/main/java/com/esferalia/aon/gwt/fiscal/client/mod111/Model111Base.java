@@ -19,6 +19,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -146,7 +147,14 @@ public abstract class Model111Base extends ResizeComposite implements RequiresRe
 		if (script.getKeys() == null) {
 			table.getFlexCellFormatter().setColSpan(row, 0, COL_NUMBER);	
 		} else {
-			table.getFlexCellFormatter().setColSpan(row, 0, (script.getKeys().length==1?5:1) );
+			table.getFlexCellFormatter().setColSpan(row, 0, 
+					(script.getKeys().length==1
+						?5:
+						(script.getKeys().length==2
+							?3
+							:1)
+					) 
+				);
 			int col = 1;
 			for (Mod111Key key : script.getKeys()) {
 				col = paintBox( row, col, key );
@@ -257,4 +265,15 @@ public abstract class Model111Base extends ResizeComposite implements RequiresRe
 				}
 			);	
 	}
+	
+	protected FlowPanel getAnchorPanel(String label, String href) {
+		FlowPanel p = new FlowPanel();
+		p.setStyleName(AON.AON_CSS.aonPadding2());
+		Anchor a = new Anchor(label,href,"_blank");
+		a.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
+		a.addStyleName(AON.AON_CSS.aonIconPdfPreview());
+		p.add(a);
+		return p;
+	}
+	
 }

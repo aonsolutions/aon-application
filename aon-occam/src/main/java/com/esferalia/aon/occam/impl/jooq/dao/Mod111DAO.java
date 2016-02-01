@@ -93,6 +93,12 @@ public class Mod111DAO extends FiscalModelDAO {
 		private boolean isBizkaia() {
 			return (fiscalModel.getAdministration() == BIZKAIA);
 		}
+		private boolean isGipuzkoa() {
+			return (fiscalModel.getAdministration() == GIPUZKOA);
+		}
+		private boolean isNavarra() {
+			return (fiscalModel.getAdministration() == NAVARRA);
+		}
 		private boolean isAEAT() {
 			return (fiscalModel.getAdministration() == COMMON_TERRITORY);
 		}
@@ -336,23 +342,37 @@ public class Mod111DAO extends FiscalModelDAO {
 		// *************************************************************************
 		// ************************************************************ GIPUZKOA ***
 		// *************************************************************************
-		,GP_C01(Mod111Key.GP_C01, (mod -> mod.getAdministration() == GIPUZKOA))
-		,GP_C02(Mod111Key.GP_C02, (mod -> mod.getAdministration() == GIPUZKOA))
-		,GP_C03(Mod111Key.GP_C03, (mod -> mod.getAdministration() == GIPUZKOA))
-		,GP_C04(Mod111Key.GP_C04, (mod -> mod.getAdministration() == GIPUZKOA))
-		,GP_C05(Mod111Key.GP_C05, (mod -> mod.getAdministration() == GIPUZKOA))
-		,GP_C06(Mod111Key.GP_C06, (mod -> mod.getAdministration() == GIPUZKOA))
-		,GP_C07(Mod111Key.GP_C07, (mod -> mod.getAdministration() == GIPUZKOA))
-		,GP_C08(Mod111Key.GP_C08, (mod -> mod.getAdministration() == GIPUZKOA))
-		,GP_C09(Mod111Key.GP_C09, (mod -> mod.getAdministration() == GIPUZKOA))
+		,GP_C01(Mod111Key.GP_C01, (mod -> mod.getAdministration() == GIPUZKOA)
+				, (rc -> rc.isGipuzkoa() && rc.isSalary() && !rc.isInKind() && rc.isPerceptorCount() ))
+		,GP_C02(Mod111Key.GP_C02, (mod -> mod.getAdministration() == GIPUZKOA)
+				, (rc -> rc.isGipuzkoa() && rc.isSalary() && !rc.isInKind() && rc.isPerception() ))
+		,GP_C03(Mod111Key.GP_C03, (mod -> mod.getAdministration() == GIPUZKOA)
+				, (rc -> rc.isGipuzkoa() && rc.isSalary() && !rc.isInKind() && rc.isRetention() ))
+		,GP_C04(Mod111Key.GP_C04, (mod -> mod.getAdministration() == GIPUZKOA)
+				, (rc -> rc.isGipuzkoa() && rc.isPerceptorCount() && (rc.isProfessional() || rc.isTransportOperator())))
+		,GP_C05(Mod111Key.GP_C05, (mod -> mod.getAdministration() == GIPUZKOA)
+				, (rc -> rc.isGipuzkoa() && rc.isPerception() && (rc.isProfessional() || rc.isTransportOperator())))
+		,GP_C06(Mod111Key.GP_C06, (mod -> mod.getAdministration() == GIPUZKOA)
+				, (rc -> rc.isGipuzkoa() && rc.isRetention() && (rc.isProfessional() || rc.isTransportOperator())))
+		,GP_C07(Mod111Key.GP_C07, (mod -> mod.getAdministration() == GIPUZKOA)
+				, (rc -> rc.isGipuzkoa() && rc.isPerceptorCount() && rc.isFarmer()))
+		,GP_C08(Mod111Key.GP_C08, (mod -> mod.getAdministration() == GIPUZKOA)
+				, (rc -> rc.isGipuzkoa() && rc.isPerception() && rc.isFarmer()))
+		,GP_C09(Mod111Key.GP_C09, (mod -> mod.getAdministration() == GIPUZKOA)
+				, (rc -> rc.isGipuzkoa() && rc.isRetention() && rc.isFarmer()))
 		,GP_C10(Mod111Key.GP_C10, (mod -> mod.getAdministration() == GIPUZKOA))
 		,GP_C11(Mod111Key.GP_C11, (mod -> mod.getAdministration() == GIPUZKOA))
 		,GP_C12(Mod111Key.GP_C12, (mod -> mod.getAdministration() == GIPUZKOA))
-		,GP_C13(Mod111Key.GP_C13, (mod -> mod.getAdministration() == GIPUZKOA))
-		,GP_C14(Mod111Key.GP_C14, (mod -> mod.getAdministration() == GIPUZKOA))
-		,GP_C15(Mod111Key.GP_C15, (mod -> mod.getAdministration() == GIPUZKOA))
-		,GP_C16(Mod111Key.GP_C16, (mod -> mod.getAdministration() == GIPUZKOA))
-		,GP_C17(Mod111Key.GP_C17, (mod -> mod.getAdministration() == GIPUZKOA))
+		,GP_C13(Mod111Key.GP_C13, (mod -> mod.getAdministration() == GIPUZKOA)
+				, "GP_C02+GP_C05+GP_C08+GP_C11" )
+		,GP_C14(Mod111Key.GP_C14, (mod -> mod.getAdministration() == GIPUZKOA)
+				, "GP_C03+GP_C06+GP_C09+GP_C12" )
+		,GP_C15(Mod111Key.GP_C15, (mod -> mod.getAdministration() == GIPUZKOA)
+				, (rc -> rc.isGipuzkoa() && rc.isSalary() && rc.isInKind() && rc.isPerceptorCount() ))
+		,GP_C16(Mod111Key.GP_C16, (mod -> mod.getAdministration() == GIPUZKOA)
+				, (rc -> rc.isGipuzkoa() && rc.isSalary() && rc.isInKind() && rc.isPerception() ))
+		,GP_C17(Mod111Key.GP_C17, (mod -> mod.getAdministration() == GIPUZKOA)
+				, (rc -> rc.isGipuzkoa() && rc.isSalary() && rc.isInKind() && rc.isRetention() ))
 		,GP_C18(Mod111Key.GP_C18, (mod -> mod.getAdministration() == GIPUZKOA))
 		,GP_C19(Mod111Key.GP_C19, (mod -> mod.getAdministration() == GIPUZKOA))
 		,GP_C20(Mod111Key.GP_C20, (mod -> mod.getAdministration() == GIPUZKOA))
@@ -361,11 +381,19 @@ public class Mod111DAO extends FiscalModelDAO {
 		,GP_C23(Mod111Key.GP_C23, (mod -> mod.getAdministration() == GIPUZKOA))
 		,GP_C24(Mod111Key.GP_C24, (mod -> mod.getAdministration() == GIPUZKOA))
 		,GP_C25(Mod111Key.GP_C25, (mod -> mod.getAdministration() == GIPUZKOA))
+		,GP_C26(Mod111Key.GP_C26, (mod -> mod.getAdministration() == GIPUZKOA))
+		,GP_C27(Mod111Key.GP_C27, (mod -> mod.getAdministration() == GIPUZKOA)
+				, "GP_C16+GP_C19+GP_C22+GP_C25" )
+		,GP_C28(Mod111Key.GP_C28, (mod -> mod.getAdministration() == GIPUZKOA)
+				, "GP_C17+GP_C20+GP_C23+GP_C26" )
+		,GP_C29(Mod111Key.GP_C29, (mod -> mod.getAdministration() == GIPUZKOA)
+				, "GP_C14+GP_C28" )
 
 		// *************************************************************************
 		// ************************************************************* NAVARRA ***
 		// *************************************************************************
-		,NF_A1(Mod111Key.NF_A1, (mod -> mod.getAdministration() == NAVARRA))
+		,NF_A1(Mod111Key.NF_A1, (mod -> mod.getAdministration() == NAVARRA)
+				, (rc -> rc.isNavarra() && rc.isRetention() ))
 		;
 		
 		private Mod111Key key;
