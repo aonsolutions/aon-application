@@ -19,7 +19,7 @@ public class Model111AEAT extends Model111Base {
 	private static final String CASH = "Rendimientos en met\u00E1lico";
 	private static final String BOTH = "Contraprestaciones dinerarias o en especie";
 	
-	private static enum ModelScript implements IModelScript {
+	public static enum ModelScript implements IModelScript {
 		 CT_01 ("I. Rendimientos del trabajo",null,DISABLED, null)
 		,CT_02 (MONEY ,new Mod111Key[]{Mod111Key.CT_C01,Mod111Key.CT_C02,Mod111Key.CT_C03},ENABLED,SALARY)
 		,CT_03 (INKIND,new Mod111Key[]{Mod111Key.CT_C04,Mod111Key.CT_C05,Mod111Key.CT_C06},ENABLED,SALARY)

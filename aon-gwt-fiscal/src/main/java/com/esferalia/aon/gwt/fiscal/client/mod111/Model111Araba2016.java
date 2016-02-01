@@ -38,7 +38,7 @@ public class Model111Araba2016 extends Model111Base {
 	 							  + "este per\u00EDodo, indique el tipo de autoliquidaci\u00F3n";
 	private static String AR_909 = "Fecha en que se dict\u00F3 el auto de declaraci\u00F3n de concurso";
 	
-	private static enum ModelScript implements IModelScript {
+	public static enum ModelScript implements IModelScript {
 		 AR_CX0 ("Rendimientos procedentes del trabajo o servicios que se presten en el Territorio Hist\u00F3rico de \u00C1lava"
 				,new Mod111Key[]{Mod111Key.AR_C50,Mod111Key.AR_C60,Mod111Key.AR_C70},ENABLED,SALARY)
 		,AR_CX1 ("Pensiones"

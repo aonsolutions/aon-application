@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Model111Bizkaia extends Model111Base {
 
-	private static enum ModelScript implements IModelScript {
+	public static enum ModelScript implements IModelScript {
 		 AR_CX00 ("Rendimientos procedentes de trabajos o servicios que se presten en Bizkaia"
 				 ,new Mod111Key[]{Mod111Key.BZ_C01,Mod111Key.BZ_C12,Mod111Key.BZ_C23},ENABLED,SALARY)
 		,AR_CX01 ("Retribuciones de miembros de Consejos de Administraci\u00F3n y Juntas que hagan sus veces de empresas o entidades con domicilio fiscal en Bizkaia"

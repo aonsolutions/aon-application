@@ -708,7 +708,15 @@ public class Model111 extends MainEntryPoint {
 	}
 	@UiHandler("printButton")
 	void onPrintButtonClick(ClickEvent event) {
-		Window.alert("Imprimir");
+		Window.alert(
+				  "La impresi\u00F3 del borrador se realiza a partir de los datos guardados"
+				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n");
+		diskForm.setAction(GWT.getHostPageBaseURL()
+				+ "/aon_gwt_fiscal/Model111Print");
+		mod111Hidden.setValue(String.valueOf(currentMod111.getId()));
+		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
+		domainNameHidden.setValue(getCurrentDomainName());
+		diskForm.submit();
 	}
 
 	@UiHandler("generateFileButton")

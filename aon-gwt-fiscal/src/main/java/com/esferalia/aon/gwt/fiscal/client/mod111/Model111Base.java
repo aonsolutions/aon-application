@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 
 public abstract class Model111Base extends ResizeComposite implements RequiresResize, IMod111Declaration {
 
-	protected static interface IModelScript {
+	public static interface IModelScript {
 		String getLabel();
 		Mod111Key[] getKeys();
 		boolean isEnabled();

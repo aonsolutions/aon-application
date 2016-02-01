@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Model715Navarra extends Model111Base {
 
-	private static enum ModelScript implements IModelScript {
+	public static enum ModelScript implements IModelScript {
 		 AR_CX13 ("Deuda tributaria a ingresar",new Mod111Key[]{Mod111Key.NF_A1},ENABLED,NONE)
 		;
 		

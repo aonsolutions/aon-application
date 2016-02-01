@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Model110Gipuzkoa extends Model111Base {
 	
-	private static enum ModelScript implements IModelScript {
+	public static enum ModelScript implements IModelScript {
 		
 		  GP_CX00 ("Retenciones. Rendimientos del trabajo"
 				 ,new Mod111Key[]{Mod111Key.GP_C01,Mod111Key.GP_C02,Mod111Key.GP_C03},ENABLED,SALARY)

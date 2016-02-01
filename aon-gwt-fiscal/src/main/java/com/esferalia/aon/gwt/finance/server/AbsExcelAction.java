@@ -39,8 +39,14 @@ public abstract class AbsExcelAction  {
 	protected CellStyle numberStyle;
 	protected CellStyle centerCellStyle;
 	protected XSSFCellStyle headerCellStyle;
-    
+	protected Font boldFont;
+	protected Font defaulFont;	
+	
 	public void initialize(String name) {
+		initialize(name, true);
+	}
+    
+	public void initialize(String name, boolean printHeaders) {
 		workbook = new SXSSFWorkbook(1);
 		
 		
@@ -58,10 +64,18 @@ public abstract class AbsExcelAction  {
 	     
 	    decimalStyle = workbook.createCellStyle();
 	    decimalStyle.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
-	    numberStyle.setAlignment( HSSFCellStyle.ALIGN_RIGHT );
+	    decimalStyle.setAlignment( HSSFCellStyle.ALIGN_RIGHT );
 	    
 		centerCellStyle = workbook.createCellStyle();
 		centerCellStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );
+
+		defaulFont= workbook.createFont();
+		defaulFont.setFontHeightInPoints((short) 9);
+		
+
+		boldFont= workbook.createFont();
+		boldFont.setFontHeightInPoints((short) 9);
+		boldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 
 		Font headerFont= workbook.createFont();
 		headerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
@@ -74,8 +88,9 @@ public abstract class AbsExcelAction  {
 	    headerCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 	    headerCellStyle.setFillForegroundColor(AON_BLUE);
 	    headerCellStyle.setFont(headerFont);
-	    
-	    headerRow();
+	    if (printHeaders) {
+	    	headerRow();
+	    }
 	}
 	
 	protected Cell alignCenter(Cell cell) {

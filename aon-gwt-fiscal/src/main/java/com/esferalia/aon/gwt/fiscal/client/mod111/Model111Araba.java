@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Model111Araba extends Model111Base {
 	 
-	private static enum ModelScript implements IModelScript {
+	public static enum ModelScript implements IModelScript {
 		 AR_CX0 ("Rendimientos procedentes del trabajo o servicios que se presten en el Territorio Hist\u00F3rico de \u00C1lava"
 				,new Mod111Key[]{Mod111Key.AR_C50,Mod111Key.AR_C60,Mod111Key.AR_C70}
 				,ENABLED,SALARY)
