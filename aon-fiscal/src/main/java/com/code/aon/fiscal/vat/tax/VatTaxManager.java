@@ -257,7 +257,7 @@ public class VatTaxManager implements Serializable {
 			rs.close();
 			ps.close();
 			
-			if (hasVatAccrualPayment) {
+			if (hasVatAccrualPayment && !lastPeriod) {
 				String sel ="SELECT i.type " + TYPE
 						+ ",SUM( i.taxable_base)" + INVOICE_BASE
 						+ ",SUM( i.vat_quota)" + INVOICE_VAT
