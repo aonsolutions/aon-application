@@ -126,9 +126,7 @@
 
 					</td>
 					<td class="{aonResources.css.aonPanelGridEven}">
-						<g:HorizontalPanel ui:field="labelsHPanel">
-						</g:HorizontalPanel>
-
+						<g:VerticalPanel ui:field="vPanelTagsContainer" />					
 					</td>
 				</tr>
 

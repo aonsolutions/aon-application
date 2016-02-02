@@ -82,8 +82,11 @@ public class AonHubDAO {
 				.set(NOTICE.NOTICE_, noticeRecord.getValue(NOTICE.ID))
 				.execute();
 
-		SelectConditionStep<Record1<Integer>> openId = ctx.getDslContext()
-				.select(TAG.ID).from(TAG).where(TAG.DOMAIN.eq(0))
+		SelectConditionStep<Record1<Integer>> openId = ctx
+				.getDslContext()
+				.select(TAG.ID)
+				.from(TAG)
+				.where(TAG.DOMAIN.eq(0))
 				.and(TAG.NAME.eq(NoticeStatus.OPEN.getValue())
 						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())));
 

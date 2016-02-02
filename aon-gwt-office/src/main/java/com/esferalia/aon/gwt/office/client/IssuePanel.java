@@ -26,6 +26,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -34,6 +35,7 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class IssuePanel extends CustomDialog {
@@ -57,8 +59,8 @@ public class IssuePanel extends CustomDialog {
 	HorizontalPanel priorityHPanel;
 	@UiField
 	HorizontalPanel typeHPanel;
-	@UiField
-	HorizontalPanel labelsHPanel;
+	@UiField	
+	VerticalPanel vPanelTagsContainer;
 
 	@UiField
 	TextBox titleTextBox;
@@ -71,6 +73,7 @@ public class IssuePanel extends CustomDialog {
 	Button acceptButton;
 	@UiField
 	Button cancelButton;
+
 	
 	private String type;
 	private String priority;
@@ -101,7 +104,6 @@ public class IssuePanel extends CustomDialog {
 		this.date = new Date();
 		dateLabel.setText(format.format(date));
 		loggedLabel.setText(user.getName());
-		
 	}
 
 	public void addListener(Listener listener) {
@@ -156,8 +158,7 @@ public class IssuePanel extends CustomDialog {
 						addTagSelected(cb.getText());						
 				}
 			});
-
-			labelsHPanel.add(check);
+			insertTag(check);
 
 		} else if (tag.getType() == TagType.OFFICE_PRIORITY.value()) {
 			RadioButton radioButton = new RadioButton("PRIORITY",
@@ -189,6 +190,31 @@ public class IssuePanel extends CustomDialog {
 					});
 			typeHPanel.add(radioButton);
 		}
+	}
+	
+	private void insertTag(CheckBox check) {
+		int childs = vPanelTagsContainer.getWidgetCount();
+		
+		if (childs == 0) {
+			vPanelTagsContainer.add(getHorizontalPanel());
+		}
+		
+		HorizontalPanel hPanel = (HorizontalPanel) vPanelTagsContainer.getWidget(
+				vPanelTagsContainer.getWidgetCount() - 1);
+		
+		if ( hPanel.getWidgetCount() < 6)
+			hPanel.add(check);
+		else {
+			vPanelTagsContainer.add(getHorizontalPanel());
+			insertTag(check);
+		}
+
+	}
+	
+	private HorizontalPanel getHorizontalPanel() {
+		HorizontalPanel hPanel = new HorizontalPanel();
+		hPanel.setSpacing(5);
+		return hPanel;
 	}
 
 	public void setTitle(String title) {
