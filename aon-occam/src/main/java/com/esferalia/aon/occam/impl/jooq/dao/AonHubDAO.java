@@ -369,7 +369,8 @@ public class AonHubDAO {
 				.where(NOTICE.DOMAIN.eq(ctx.getDomainId())
 						.and(NOTICE.NOTICE_.isNull())
 						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
-						.and(TAG.ID.eq(closedId)))
+						.and(TAG.ID.eq(closedId))
+						.and(NOTICE_TAG.END_DATE.isNull()))
 				.orderBy(NOTICE.DATE.desc())
 				.fetch();
 		

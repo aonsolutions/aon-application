@@ -9,11 +9,13 @@ import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
@@ -82,9 +84,12 @@ public class IssueReadPanel extends Composite {
 		
 		userLogged.setText(issue.getUser().getName());
 		
-		if (issue instanceof IssueGrid.IssueClosedLoadSelected) {
+		if (issue instanceof IssueGrid.IssueOpenLoadSelected) {
+			createClosedButton();
+		}
+		else if (issue instanceof IssueGrid.IssueClosedLoadSelected) {
 			commentButton.setVisible(false);
-			closedButton.setVisible(false);
+			createReopenButton();
 		}
 			
 			
@@ -96,12 +101,6 @@ public class IssueReadPanel extends Composite {
 	
 	public void removeListener(Listener listener) {
 		listeners.remove(listener);
-	}
-	
-	@UiHandler("closedButton")
-	void onClosedButtonClick (ClickEvent event) {
-		for (Listener listener : listeners)
-			listener.onUpdateIssueState(NoticeStatus.CLOSED.getValue());
 	}
 	
 	private void setCompany(String company) {
@@ -142,6 +141,50 @@ public class IssueReadPanel extends Composite {
 		grid.setWidget(1, 0, textArea);
 		
 		historialVPanel.add(grid);
+	}
 	
+	private void createCommentButton() {
+		commentButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				onCommentButtonClick();
+			}
+		});
+	}
+	
+	private void createClosedButton() {
+		closedButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				onClosedButtonClick();
+			}
+		});
+	}
+	
+	private void createReopenButton() {
+		closedButton.setText("Abrir");		
+		closedButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				onReopenButtonClick();
+			}
+		});
+	}
+	
+	private void onCommentButtonClick () {
+		
+	}
+	
+	private void onClosedButtonClick() {
+		for (Listener listener : listeners)
+			listener.onUpdateIssueState(NoticeStatus.CLOSED.getValue());
+	}
+	
+	private void onReopenButtonClick() {
+		for(Listener listener : listeners)
+			listener.onUpdateIssueState(NoticeStatus.REOPEN.getValue());
 	}
 }
