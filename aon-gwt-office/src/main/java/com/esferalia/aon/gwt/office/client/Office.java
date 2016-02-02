@@ -172,8 +172,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	private void loadOpenIssues() {
 
 		initOpenIssues();
-		openIssuesButton.setEnabled(true);
-		closedIssuesButton.setEnabled(false);
+		openIssuesButton.setEnabled(false);
+		closedIssuesButton.setEnabled(true);
 
 		gitHub.getOpenIssues(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsIssue>>() {
