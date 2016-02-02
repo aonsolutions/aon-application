@@ -80,15 +80,16 @@
 												<g:InlineLabel ui:field="nameLabel" />
 												<g:InlineLabel ui:field="surnameLabel" />
 											</td>
+											<td class="{aonResources.css.aonPanelGridEven}">
+												<g:Label ui:field="replacementLabel" />
+												<g:Label ui:field="complementaryLabel" />
+											</td>
 											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap} {aonResources.css.aonFontSmall} {aonResources.css.aonTextCenter}">
 												<g:InlineLabel ui:field="dirtyLabel" 
 													styleName="{aonResources.css.aonColorRed}"/>
 											</td>
 											<td class="{aonResources.css.aonPanelGridEven}">
 												<g:Label ui:field="statusLabel" />
-											</td>
-											<td class="{aonResources.css.aonPanelGridEven}">
-												<g:CheckBox ui:field="replacement" text="{msg.replacement}" />
 											</td>
 											<td class="{aonResources.css.aonPanelGridEven}">
 												<g:CheckBox ui:field="confidential" text="{msg.confidential}"/>

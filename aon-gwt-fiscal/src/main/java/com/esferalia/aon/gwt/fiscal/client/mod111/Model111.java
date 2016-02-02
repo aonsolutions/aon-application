@@ -158,7 +158,9 @@ public class Model111 extends MainEntryPoint {
 	@UiField
 	Label statusLabel;
 	@UiField
-	CheckBox replacement;
+	Label replacementLabel;
+	@UiField
+	Label complementaryLabel;
 	@UiField
 	CheckBox confidential;
 	@UiField
@@ -279,8 +281,8 @@ public class Model111 extends MainEntryPoint {
 		
 		styleDirtyLabel();
 		styleStatusLabel();
-		
-		replacement.setValue(currentMod111.isReplacement());
+		replacementLabel.setText(currentMod111.isReplacement()?AON.MSG.replacement():"");
+		complementaryLabel.setText(currentMod111.isComplementary()?AON.MSG.complementary():"");
 		confidential.setValue(currentMod111.isConfidential());
 		domain = currentMod111.getDomain();
 		
@@ -525,16 +527,17 @@ public class Model111 extends MainEntryPoint {
 		newDialog.setAnimationEnabled(true);
 		
 		FlexTable tab = new FlexTable();
+		
 		tab.setCellPadding(0);
 		tab.setCellSpacing(0);
 		tab.setStyleName(AON.AON_CSS.aonMarginTop());
 		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
 		tab.addStyleName(AON.AON_CSS.aonPanelGrid());
 		ColumnFormatter cf = tab.getColumnFormatter();
-		cf.setWidth(0, "100px");
+		cf.setWidth(0, "130px");
 		cf.addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
 		cf.addStyleName(0, AON.AON_CSS.aonPaddingRight() );
-		cf.setWidth(1, "150px");
+		cf.setWidth(1, "250px");
 		cf.addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
 		cf.addStyleName(0, AON.AON_CSS.aonPaddingRight() );
 		FlexCellFormatter fmt = tab.getFlexCellFormatter();
@@ -585,8 +588,44 @@ public class Model111 extends MainEntryPoint {
 		});
 		tab.setWidget(2, 1, periodList);
 
-		fmt.setColSpan(3, 0, 2);
-		fmt.addStyleName(3, 0, AON.AON_CSS.aonPanelGridEven());
+		final CheckBox replacement = new CheckBox(AON.MSG.replacement());
+		final CheckBox complementary = new CheckBox(AON.MSG.complementary());
+		replacement.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				currentMod111.setReplacement(replacement.getValue());
+				complementary.setEnabled(!replacement.getValue());
+				if (replacement.getValue()) {
+					complementary.setValue(false);
+				}
+			}
+		});
+		complementary.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				currentMod111.setComplementary(complementary.getValue());
+				replacement.setEnabled(!complementary.getValue());
+				if (complementary.getValue()) {
+					replacement.setValue(false);
+				}
+			}
+		});
+		
+		fmt.addStyleName(3, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.setWidget(3, 0, new Label());
+		fmt.addStyleName(3, 1, AON.AON_CSS.aonPanelGridEven());
+		tab.setWidget(3, 1, replacement);
+
+		fmt.addStyleName(4, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.setWidget(4, 0, new Label());
+		fmt.addStyleName(4, 1, AON.AON_CSS.aonPanelGridEven());
+		tab.setWidget(4, 1, complementary);
+
+
+		fmt.setColSpan(5, 0, 2);
+		fmt.addStyleName(5, 0, AON.AON_CSS.aonPanelGridEven());
 		FlowPanel flowPanel = new FlowPanel();
 		flowPanel.setStyleName(AON.AON_CSS.aonPadding());
 		flowPanel.addStyleName(AON.AON_CSS.aonMarginTop());
@@ -631,7 +670,7 @@ public class Model111 extends MainEntryPoint {
 			
 		});
 		flowPanel.add(cancelButton);
-		tab.setWidget(3, 0, flowPanel);
+		tab.setWidget(5, 0, flowPanel);
 		newDialog.add(tab);
 		newDialog.center();
 		newDialog.show();
@@ -769,11 +808,6 @@ public class Model111 extends MainEntryPoint {
 		declaration.calculateAndRefresh(currentMod111);
 	}
 	
-	@UiHandler("replacement")
-	void onReplacementClick(ClickEvent event) {
-		currentMod111.setReplacement(replacement.getValue());
-		setDirty(true);
-	}
 	@UiHandler("confidential")
 	void onConfidentialClick(ClickEvent event) {
 		currentMod111.setConfidential(confidential.getValue());
