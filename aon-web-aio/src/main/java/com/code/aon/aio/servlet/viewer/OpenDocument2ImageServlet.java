@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.code.aon.aio.servlet.viewer.html2image.Html2Image;
+import com.code.aon.aio.servlet.viewer.html2image.ImageRenderer;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.ui.google.apis.controller.GoogleDriveController;
@@ -43,6 +45,7 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
+
 
 public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 
@@ -234,20 +237,40 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 				BufferedImage.TYPE_INT_RGB);
 
 		// generate the image
+		
+		 
+	
 		Image image = pdfPage.getImage(
-				zoomWidth,  // width
-				zoomHeight, // height
-				rect1, 		// clip rect
-				null, 		// null for the ImageObserver
-				true, 		// fill background with white
-				true 		// block until drawing is done
-				);
+			zoomWidth,  // width
+			zoomHeight, // height
+			rect1, 		// clip rect
+			null, 		// null for the ImageObserver
+			true, 		// fill background with white
+			true 		// block until drawing is done
+			);
 		
 		Graphics2D bufImageGraphics = 
-				bufferedImage.createGraphics();
+		bufferedImage.createGraphics();
 		bufImageGraphics.drawImage(image, 0, 0, null);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+  		ImageIO.write(bufferedImage, format, baos);
+		byte[] data = baos.toByteArray();
+		String md5 = AonFileUtils.getMD5Checksum(data);
+		System.out.println(md5);
+		if(md5.equals("968634550561b68ca4675b1ffe77fd6f")) error2Image(os);
+		else ImageIO.write(bufferedImage, format, os);
 		
-		ImageIO.write(bufferedImage, format, os);
+	}
+	
+	private static void error2Image(OutputStream os) throws IOException {
+
+	    String html = "<html>" +
+	            "<h1> ERROR DE VISUALIZACIÓN</h1>" +
+	    		"<span> El Documento no se puede visualizar, pulse en Descargar.</span>" +
+	            "</html>";
+	    ImageRenderer imageRenderer = Html2Image.fromHtml(html).getImageRenderer();
+	    BufferedImage bufferedImage = imageRenderer.getBufferedImage();
+	     ImageIO.write(bufferedImage, "png", os);
 	}
 
 	public static final long ONE_YEAR_MILLIS = 31363200000L;
