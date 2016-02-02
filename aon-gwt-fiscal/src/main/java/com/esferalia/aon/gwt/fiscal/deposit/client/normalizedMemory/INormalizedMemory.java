@@ -22,19 +22,19 @@ public interface INormalizedMemory extends RemoteService{
 	
 	public Integer initialize();
 	
-	public void updateSchema(String cif,Integer domainId, String key, String value);
+	void updateSchema(String cif, Integer domainId, String key, String value, Integer year);
 	
 	public Boolean isDigitalDeposit(Integer domainId, Integer year);
 	
-	public Boolean isModify(String cif);
+	public Boolean isModify(String cif, Integer year);
 	
-	public void clearSession(String cif);
+	public void clearSession(String cif, Integer year);
 	
 	public void saveDeposit(String cif, Integer domainId, Boolean textMode, Integer year);
 	
 	public void saveDeposit(String cif, Integer domainId, D2Deposit2014 d2Deposit2014, Boolean textMode, Integer year);
 	
-	public Vector<MemoryTemplate> getDigitalDepositTemplates(Integer domainId);
+	public Vector<MemoryTemplate> getDigitalDepositTemplates(Integer domainId, Integer year);
 	
 	public MemoryTemplate createTextMemory(Integer domainId, String name);
 
@@ -51,7 +51,7 @@ public interface INormalizedMemory extends RemoteService{
 	
 	public void delete(Integer domainId, String document, Integer year);
 
-	public void deleteFreeText(Integer domainId, Integer rattachId);
+	public void deleteFreeText(Integer domainId, Integer rattachId, Integer year);
 	
 	public Map<String, String> calculate(Map<String, String> map);
 	

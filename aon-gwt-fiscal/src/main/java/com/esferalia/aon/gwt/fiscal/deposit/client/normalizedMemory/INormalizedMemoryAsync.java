@@ -18,17 +18,16 @@ public interface INormalizedMemoryAsync {
 
 	void initialize(AsyncCallback<Integer> callback);
 
-	void updateSchema(String cif, Integer domainId, String key, String value,
+	void updateSchema(String cif, Integer domainId, String key, String value, Integer year,
 			AsyncCallback<Void> callback);
 
-	void isModify(String cif, AsyncCallback<Boolean> callback);
+	void isModify(String cif, Integer year, AsyncCallback<Boolean> callback);
 
-	void clearSession(String cif, AsyncCallback<Void> callback);
+	void clearSession(String cif, Integer year, AsyncCallback<Void> callback);
 
 	void saveDeposit(String cif, Integer domainId, Boolean textMode, Integer year, AsyncCallback<Void> callback);
 
-	void getDigitalDepositTemplates(Integer domainId,
-			AsyncCallback<Vector<MemoryTemplate>> callback);
+	void getDigitalDepositTemplates(Integer domainId, Integer year, AsyncCallback<Vector<MemoryTemplate>> callback);
 
 	void createTextMemory(Integer domainId, String name,
 			AsyncCallback<MemoryTemplate> callback);
@@ -50,8 +49,7 @@ public interface INormalizedMemoryAsync {
 	void getSchema(String cif, Integer domainId, Boolean textMode,
 			Integer year, AsyncCallback<Map<String, String>> callback);
 
-	void deleteFreeText(Integer domainId, Integer rattachId,
-			AsyncCallback<Void> callback);
+	void deleteFreeText(Integer domainId, Integer rattachId, Integer year, AsyncCallback<Void> callback);
 
 	void saveDeposit(String cif, Integer domainId, D2Deposit2014 d2Deposit2014,
 			Boolean textMode, Integer year, AsyncCallback<Void> callback);

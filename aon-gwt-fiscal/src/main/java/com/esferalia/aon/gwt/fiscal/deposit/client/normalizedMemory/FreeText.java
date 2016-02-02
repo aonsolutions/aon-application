@@ -125,7 +125,7 @@ public class FreeText extends PageAbs {
 					if(!textMode) 
 						onEdit(key.getCode(), s);
 					else
-						inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), s, new AsyncCallback<Void>() {
+						inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), s, year, new AsyncCallback<Void>() {
 							@Override
 							public void onFailure(Throwable caught) {}
 							@Override

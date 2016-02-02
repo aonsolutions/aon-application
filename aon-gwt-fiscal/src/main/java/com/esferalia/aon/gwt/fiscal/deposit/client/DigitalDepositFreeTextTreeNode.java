@@ -51,7 +51,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
     	enterprise.setDomain(domainId);
     	enterpriseAux = enterprise;
 
-    	inma.getDigitalDepositTemplates(domainId, new AsyncCallback<Vector<MemoryTemplate>>() {
+    	inma.getDigitalDepositTemplates(domainId, null, new AsyncCallback<Vector<MemoryTemplate>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {

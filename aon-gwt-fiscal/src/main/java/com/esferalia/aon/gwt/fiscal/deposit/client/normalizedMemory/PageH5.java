@@ -84,7 +84,7 @@ public class PageH5 extends PageAbs {
 				inma.updateSchema(enterprise.getDocument(),
 						enterprise.getDomain(),
 						D2DepositHeaderKey.IMA8099000.getCode(),
-						event.getValue() ? "1" : "0",
+						event.getValue() ? "1" : "0", year,
 						new AsyncCallback<Void>() {
 							@Override
 							public void onFailure(Throwable caught) {
@@ -110,7 +110,7 @@ public class PageH5 extends PageAbs {
 				inma.updateSchema(enterprise.getDocument(),
 						enterprise.getDomain(),
 						D2DepositHeaderKey.IMA8099010.getCode(),
-						event.getValue() ? "1" : "0",
+						event.getValue() ? "1" : "0", year,
 						new AsyncCallback<Void>() {
 							@Override
 							public void onFailure(Throwable caught) {
@@ -136,7 +136,7 @@ public class PageH5 extends PageAbs {
 	private void specialUpdate(String key, String value) {
 		onEdit(key, value);
 		inma.updateSchema(enterprise.getDocument(), enterprise.getDomain(),
-				key, value, new AsyncCallback<Void>() {
+				key, value, year, new AsyncCallback<Void>() {
 					@Override
 					public void onFailure(Throwable caught) {
 					}

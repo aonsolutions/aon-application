@@ -111,7 +111,7 @@ public class NormalizedMemory extends ResizeComposite {
 		importButton.setVisible(false);
 		importTextButton.setVisible(false);
 		d2Deposit2014 = D2DepositTreeObjectToD2Deposit2014(ddtn.getD2Deposit2014());
-		inma.isModify(enterprise.getDocument(),new AsyncCallback<Boolean>() {
+		inma.isModify(enterprise.getDocument(), year, new AsyncCallback<Boolean>() {
 			
 			@Override
 			public void onSuccess(Boolean result) {
@@ -162,7 +162,7 @@ public class NormalizedMemory extends ResizeComposite {
 		generateFileButton.setVisible(false);
 		importAllButton.setVisible(false);
 		deleteButton.setVisible(true);
-		inma.isModify(mt.getId().toString(),new AsyncCallback<Boolean>() {
+		inma.isModify(mt.getId().toString(), year, new AsyncCallback<Boolean>() {
 			
 			@Override
 			public void onSuccess(Boolean result) {
@@ -417,7 +417,7 @@ public class NormalizedMemory extends ResizeComposite {
 	@UiHandler("cancelButton")
 	void onCancelButtonClick(ClickEvent event) {		
 		if(textMode){
-			inma.clearSession(memoryTemplate.getId().toString(), new AsyncCallback<Void>() {
+			inma.clearSession(memoryTemplate.getId().toString(), year, new AsyncCallback<Void>() {
 				
 				@Override
 				public void onSuccess(Void result) {
@@ -461,7 +461,7 @@ public class NormalizedMemory extends ResizeComposite {
 
 			@Override
 			public void onSuccess(Integer result) {
-				inma.getDigitalDepositTemplates(result,
+				inma.getDigitalDepositTemplates(result, year,
 						new AsyncCallback<Vector<MemoryTemplate>>() {
 
 							@Override
@@ -634,7 +634,7 @@ public class NormalizedMemory extends ResizeComposite {
 			@Override
 			public void onSuccess(Integer result) {
 				
-				inma.getDigitalDepositTemplates(result,
+				inma.getDigitalDepositTemplates(result, year,
 						new AsyncCallback<Vector<MemoryTemplate>>() {
 
 							@Override
@@ -744,7 +744,7 @@ public class NormalizedMemory extends ResizeComposite {
 				@Override
 				protected void onAccept() {
 					hide();
-					inma.deleteFreeText(enterprise.getDomain(), memoryTemplate.getId(), new AsyncCallback<Void>() {
+					inma.deleteFreeText(enterprise.getDomain(), memoryTemplate.getId(), year, new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {
 							

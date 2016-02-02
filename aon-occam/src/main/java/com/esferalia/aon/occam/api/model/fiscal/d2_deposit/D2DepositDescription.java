@@ -510,7 +510,7 @@ public class D2DepositDescription {
 	static { 
 
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA111000 ,"A) ACTIVO NO CORRIENTE");
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA111100,"I. Inmovilizado tangible");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA111100,"I. Inmovilizado Intangible");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA111200,"II. Inmovilizado material");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA111300,"III. Inversiones inmobiliarias");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA111400,"IV. Inversiones en empresas del grupo y asociadas a largo plazo");

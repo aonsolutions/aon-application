@@ -28,7 +28,7 @@ public class D2PDepositConstants {
 		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA111600,D2DepositHeaderKey.BA1116009,D2DepositHeaderKey.BA11160098}
 		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA111700,D2DepositHeaderKey.BA1117009,D2DepositHeaderKey.BA11170098}
 		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA112000,D2DepositHeaderKey.BA1120009,D2DepositHeaderKey.BA11200098}
-		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA112100,D2DepositHeaderKey.BA1121009,D2DepositHeaderKey.BA11210098}
+		//,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA112100,D2DepositHeaderKey.BA1121009,D2DepositHeaderKey.BA11210098}
 		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA112200,D2DepositHeaderKey.BA1122009,D2DepositHeaderKey.BA11220098}
 		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA112300,D2DepositHeaderKey.BA1123009,D2DepositHeaderKey.BA11230098}
 		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA112380,D2DepositHeaderKey.BA1123809,D2DepositHeaderKey.BA11238098}

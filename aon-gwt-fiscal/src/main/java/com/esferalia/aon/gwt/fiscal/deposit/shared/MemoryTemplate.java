@@ -12,19 +12,22 @@ public class MemoryTemplate implements IsSerializable{
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
+	public MemoryTemplate setName(String name) {
 		this.name = name;
+		return this;
 	}
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public MemoryTemplate setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	public D2DepositTreeObject getD2Deposit2014() {
 		return d2Deposit2014;
 	}
-	public void setD2Deposit2014(D2DepositTreeObject d2Deposit2014) {
+	public MemoryTemplate setD2Deposit2014(D2DepositTreeObject d2Deposit2014) {
 		this.d2Deposit2014 = d2Deposit2014;
+		return this;
 	}
 }
