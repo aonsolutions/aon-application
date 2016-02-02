@@ -5,7 +5,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public enum Ecommerce implements IsSerializable{
 	
 	AMAZON("Amazon"),
-	EBAY("Ebay");
+	EBAY("Ebay"),
+	GENERIC("Generico");
 
 	private String name;
 	

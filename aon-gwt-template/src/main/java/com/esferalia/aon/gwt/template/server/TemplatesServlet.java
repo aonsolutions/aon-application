@@ -1851,13 +1851,13 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
     	byte[] data = getOut();
 		byte[] xml = null;
 		
-    	if(getMimetype().equals(MimeType.CSV.getName()) && ecommerce.equals(Ecommerce.EBAY)){
+    	if(getMimetype().equals(MimeType.CSV.getName()) && (ecommerce.equals(Ecommerce.EBAY) || ecommerce.equals(Ecommerce.GENERIC))){
     		xml = csvToXmlEbay(data, ecommerce.getName(), type, tag.getName(), seller.getRegistryName());
     	}
 
 		if(xml == null && ecommerce.equals(Ecommerce.AMAZON))
 			xml = excelToXmlAmazonXXX(data, ecommerce.getName(), type, tag.getName(), seller.getRegistryName());
-		else if(xml == null && ecommerce.equals(Ecommerce.EBAY))
+		else if(xml == null && (ecommerce.equals(Ecommerce.EBAY) || ecommerce.equals(Ecommerce.GENERIC)))
 			xml = excelToXmlEbayXXX(data, ecommerce.getName(), type, tag.getName(), seller.getRegistryName());
 	
 		if(xml != null){

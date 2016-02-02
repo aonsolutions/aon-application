@@ -326,6 +326,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			value = Ecommerce.AMAZON.getOrdinalStr();
 		else if(dialog.getEcommerceProduct().getTemplate().getEcommerce().equals(Ecommerce.EBAY.getName()))
 			value = Ecommerce.EBAY.getOrdinalStr();
+		else if(dialog.getEcommerceProduct().getTemplate().getEcommerce().equals(Ecommerce.GENERIC.getName()))
+			value = Ecommerce.GENERIC.getOrdinalStr();
 		
 		ecommerceListBox.addItem(dialog.getEcommerceProduct().getTemplate().getEcommerce(), value);
 		ecommerceListBox.setEnabled(false);

@@ -22,12 +22,16 @@ public class EcommerceTreeNode extends TreeNode<Ecommerce>{
 	public TreeNode<Ecommerce> render(HasTreeItems parent, Ecommerce ecommerce) {
 		InlineLabel label = new InlineLabel();
 		if(ecommerce.equals(Ecommerce.AMAZON)){
-			label.setText("Amazon"); 
+			label.setText(ecommerce.getName()); 
 	    	label.addStyleName("aon-icon-amazon");
 		}
 		else if(ecommerce.equals(Ecommerce.EBAY)){
-			label.setText("Ebay");
+			label.setText(ecommerce.getName());
 			label.addStyleName("aon-icon-ebay");
+		}
+		else if(ecommerce.equals(Ecommerce.GENERIC)){
+			label.setText(ecommerce.getName());
+			label.addStyleName("aon-icon-marketplace-generic");
 		}
 		
     	label.addStyleName(AON.AON_CSS.aonTreeIconNode() );
