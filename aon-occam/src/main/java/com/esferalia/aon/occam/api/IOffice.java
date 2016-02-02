@@ -12,7 +12,7 @@ public interface IOffice {
 	public User getUser (AONContext ctx, Integer id);
 	public Notice addNewNotice (AONContext ctx, Notice notice);	
 	public Notice editNotice (AONContext ctx, Notice notice);
-	public Notice changeNoticeStatus (AONContext ctx, Notice notice);
+	public void changeNoticeStatus (AONContext ctx, Notice notice);
 	public List<Notice> getOpenNotices (AONContext ctx) throws IllegalArgumentException;
 	public List<Notice> getClosedNotices (AONContext ctx) throws IllegalArgumentException;
 	public List<Notice> getAllIssues (AONContext ctx) throws IllegalArgumentException;

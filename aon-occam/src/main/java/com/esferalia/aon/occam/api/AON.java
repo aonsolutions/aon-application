@@ -2169,12 +2169,12 @@ public class AON {
 		}
 	}
 
-	public static Notice changeNoticeStatus(Integer domainId, String domainName,
+	public static void changeNoticeStatus(Integer domainId, String domainName,
 			String userName, Notice notice) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().changeNoticeStatus(ctx, notice);
+			getOffice().changeNoticeStatus(ctx, notice);
 		} finally {
 			if (ctx != null)
 				ctx.close();

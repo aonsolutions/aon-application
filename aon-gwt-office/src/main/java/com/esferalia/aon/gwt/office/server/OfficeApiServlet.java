@@ -178,7 +178,7 @@ public class OfficeApiServlet extends HttpServlet {
 				String userName = AonServletUtils.getLoggedUser();
 
 				Notice notice = new Notice();
-				notice.setTitle(json.getString("title"));
+				notice.setTitle(json.getString("title"));				
 				notice.setBody(json.getString("body"));
 				notice.setStatus(json.getString("state"));
 				notice.setUserId(Integer.parseInt(json.getString("sender")));
@@ -785,9 +785,11 @@ public class OfficeApiServlet extends HttpServlet {
 		PrintWriter pw = null;
 		try {
 			pw = resp.getWriter();
-			Notice editNotice = AON.changeNoticeStatus(domainId, domainName,
+			AON.changeNoticeStatus(domainId, domainName,
 					AonServletUtils.getLoggedUser(), notice);
-			pw.append(getNotice(editNotice));
+			pw.append('{');
+			pw.append('}');
+			//pw.append(getNotice(editNotice));
 			pw.flush();
 		} catch (Exception ex) {
 			System.out.println("Exception: " + ex.getMessage());

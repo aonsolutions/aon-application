@@ -157,30 +157,4 @@
 
 	</g:ScrollPanel>
 
-	<!--g:ScrollPanel styleName="{aonResources.css.aonScrollArea} {style.options-scroll-panel}"> 
-		<g:HTMLPanel> <table class="{aonResources.css.aonPanelGrid}" style="height:90%"> 
-		<tr> <td class="{aonResources.css.aonPanelGridOdd}"> <g:InlineLabel styleName="{aonResources.css.aonBold}" 
-		text="{msg.title}" /> </td> <td class="{aonResources.css.aonPanelGridEven}"> 
-		<g:TextBox ui:field="titleTextBox" styleName="{aonResources.css.aonInputText}" 
-		width="100%" /> </td> </tr> <tr> <td class="{aonResources.css.aonPanelGridOdd}"> 
-		<g:InlineLabel styleName="{aonResources.css.aonBold}" text="{msg.priority}" 
-		/> </td> <td class="{aonResources.css.aonPanelGridEven}"> <g:HorizontalPanel 
-		ui:field="priorityHPanel" spacing="5"> </g:HorizontalPanel> </td> </tr> <tr> 
-		<td class="{aonResources.css.aonPanelGridOdd}"> <g:InlineLabel styleName="{aonResources.css.aonBold}" 
-		text="{msg.sender}" /> </td> <td class="{aonResources.css.aonPanelGridEven}"> 
-		<g:SuggestBox ui:field="registrySuggest" styleName="{aonResources.css.aonInputText}" 
-		width="300px" enabled="false" /> </td> </tr> <tr> <td class="{aonResources.css.aonPanelGridOdd}"> 
-		<g:InlineLabel styleName="{aonResources.css.aonBold}" text="Tipo aviso" /> 
-		</td> <td class="{aonResources.css.aonPanelGridEven}"> <g:HorizontalPanel 
-		ui:field="typeHPanel" spacing="5"> </g:HorizontalPanel> </td> </tr> <tr> 
-		<td class="{aonResources.css.aonPanelGridOdd}"> <g:InlineLabel styleName="{aonResources.css.aonBold}" 
-		text="Etiquetas" /> </td> <td class="{aonResources.css.aonPanelGridEven}"> 
-		<g:HorizontalPanel ui:field="labelsHPanel" spacing="5"> </g:HorizontalPanel> 
-		</td> </tr> <tr> <td class="{aonResources.css.aonPanelGridOdd}"> <g:Label 
-		/> </td> <td class="{aonResources.css.aonPanelGridEven}"> <g:TextArea ui:field="commentTextArea" 
-		characterWidth="10" visibleLines="9" styleName="{style.options-text-area}" 
-		/> </td> </tr> <tr> <td class="{aonResources.css.aonPanelGridOdd}"> <g:Label 
-		/> </td> <td class="{aonResources.css.aonPanelGridEven}"> <div class="{style.buttons}"> 
-		<g:Button ui:field="cancelButton" text="Cancelar" /> <g:Button ui:field="acceptButton" 
-		text="Aceptar" /> </div> </td> </tr> </table> </g:HTMLPanel> </g:ScrollPanel -->
 </ui:UiBinder> 

@@ -1,22 +1,26 @@
 package com.esferalia.aon.gwt.office.client;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class IssueReadPanel extends Composite {
@@ -24,6 +28,14 @@ public class IssueReadPanel extends Composite {
 	interface Listener {
 		
 		void onUpdateIssueState(String state);
+	}
+	
+	interface GridStyle extends CssResource {
+		@ClassName("options-text-area")
+		String optionsTextArea();
+		
+		@ClassName("row-background")
+		String rowBackground();
 	}
 
 	private static IssueReadPanelUiBinder uiBinder = GWT
@@ -33,50 +45,49 @@ public class IssueReadPanel extends Composite {
 	}
 	
 	@UiField
-	Label idLabel;
+	GridStyle style;
 	@UiField
-	Label dateLabel;
+	Label companyLabel;
 	@UiField
-	Label statusLabel;
+	Label userLogged;
+	
 	@UiField
 	Label titleLabel;
-	@UiField
-	Label typeLabel;
-	@UiField
-	Label userLabel;
 	@UiField
 	HorizontalPanel labelsHPanel;
 	@UiField
 	Label priorityLabel;
 	@UiField
-	TextArea commentTextArea;
+	VerticalPanel historialVPanel;
 	
 	@UiField
-	Button closeButton;
+	Button closedButton;
+	@UiField
+	Button commentButton;
 	
 	private List<Listener> listeners;
+	
+	private DateTimeFormat fmt = DateTimeFormat.getFormat("dd/MM/yyyy HH:mm");
 
 	public IssueReadPanel(IssueSelected issue) {
 		initWidget(uiBinder.createAndBindUi(this));
-		
+
 		this.listeners = new LinkedList<Listener>();
 		
-		setNumber(issue.getId());
-		setDate(issue.getCreateAt());
-		setStatusLabel(issue.getState());
-		setAsunto(issue.getTitle());
-		setType(issue.getType());
+		setCompany(issue.getCompany());
 		setPriority(issue.getPriority());
-		setUser(issue.getUser().getLogin());
+		setAsunto(issue.getTitle());
 		setLabel(issue.getLabels());
-		setBody(issue.getBody());
-	}
-	
-	@UiHandler("closeButton")
-	void onCloseButtonClick(ClickEvent event) {
+		setBody(issue);
 		
-		for (Listener listener : listeners)
-			listener.onUpdateIssueState(NoticeStatus.CLOSED.getValue());
+		userLogged.setText(issue.getUser().getName());
+		
+		if (issue instanceof IssueGrid.IssueClosedLoadSelected) {
+			commentButton.setVisible(false);
+			closedButton.setVisible(false);
+		}
+			
+			
 	}
 	
 	public void addListener(Listener listener) {
@@ -87,37 +98,24 @@ public class IssueReadPanel extends Composite {
 		listeners.remove(listener);
 	}
 	
-	private void setNumber(Integer id) {
-		this.idLabel.setText(String.valueOf(id));
+	@UiHandler("closedButton")
+	void onClosedButtonClick (ClickEvent event) {
+		for (Listener listener : listeners)
+			listener.onUpdateIssueState(NoticeStatus.CLOSED.getValue());
 	}
 	
-	private void setDate(Date date) {
-		this.dateLabel.setText(String.valueOf(date));
-	}
-	
-	private void setStatusLabel(String status) {
-		if ( status.compareTo(NoticeStatus.OPEN.getValue()) != 0 )
-			this.closeButton.setVisible(false);
-		
-		this.statusLabel.setText(status);
+	private void setCompany(String company) {
+		companyLabel.setText(company.toUpperCase());
 	}
 	
 	private void setAsunto(String asunto) {
-		this.titleLabel.setText(asunto);
-	}
-	
-	private void setType(String type) {
-		this.typeLabel.setText(type);
+		this.titleLabel.setText(asunto.toUpperCase());
 	}
 	
 	private void setPriority(String priority) {
 		this.priorityLabel.setText(priority);
 	}
-	
-	private void setUser(String login) {
-		this.userLabel.setText(login);
-	}
-	
+
 	private void setLabel(JsArray<JsLabel> labels) {
 	
 		if ( labels.length() == 0 )
@@ -127,7 +125,23 @@ public class IssueReadPanel extends Composite {
 			labelsHPanel.add(new Label(labels.get(x).getName()));
 	}
 	
-	private void setBody(String body) {
-		this.commentTextArea.setValue(body);
+	private void setBody(IssueSelected issue) {
+		Grid grid = new Grid(2, 1);
+		Label label = new Label(issue.getState() + " por " + issue.getUser().getLogin() 
+				+ " el " + fmt.format(issue.getCreateAt()));
+		label.setStyleName(AON.AON_BOLD);
+		TextArea textArea = new TextArea();
+		textArea.setVisibleLines(9);
+		textArea.setCharacterWidth(10);
+		textArea.setWidth("600px");
+		textArea.setStylePrimaryName(style.optionsTextArea());
+		textArea.setValue(new String(issue.getBody().replaceAll("--", "\n")));
+		
+		grid.setWidget(0, 0, label);
+		grid.getRowFormatter().addStyleName(0, style.rowBackground());
+		grid.setWidget(1, 0, textArea);
+		
+		historialVPanel.add(grid);
+	
 	}
 }

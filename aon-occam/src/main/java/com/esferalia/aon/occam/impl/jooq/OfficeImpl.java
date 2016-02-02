@@ -62,8 +62,8 @@ public class OfficeImpl implements IOffice {
 	}
 	
 	@Override
-	public Notice changeNoticeStatus(AONContext ctx, Notice notice) {	
-		return AonHubDAO.changeNoticeState(ctx, notice);
+	public void changeNoticeStatus(AONContext ctx, Notice notice) {	
+		AonHubDAO.changeNoticeState(ctx, notice);
 	}
 
 	@Override

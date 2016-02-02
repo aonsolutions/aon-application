@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ClickableTextCell;
+import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.JsArray;
@@ -25,6 +26,7 @@ import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.cellview.client.AbstractCellTableBuilder;
 import com.google.gwt.user.cellview.client.AbstractHeaderOrFooterBuilder;
@@ -48,14 +50,13 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		void onSelectionChangeHandler(SelectionChangeEvent event);
 
 		void onSelectionTitle(IssueSelected issue);
-		
-		
+
 	}
 
 	public enum Columns {
 
-		STATE(""), OWNER("CREADO POR"), COMPANY("EMPRESA"), TITLE("ASUNTO"), LABELS("ETIQUETAS"), CREATED_AT(
-				"FECHA");
+		STATE(""), OWNER("CREADO POR"), COMPANY("EMPRESA"), TITLE(
+				"ASUNTO"), LABELS("ETIQUETAS"), CREATED_AT("FECHA");
 
 		private String mensaje;
 
@@ -116,17 +117,26 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 		@Override
 		public Date getCreateAt() {
-			return timeFormat.parse(issue.getCreatedAt());
+			Date date = timeFormat.parse(issue.getCreatedAt());
+			String dateString = DateTimeFormat.getFormat("dd-MM-yyyy HH:mm")
+					.format(date);
+			return DateTimeFormat.getFormat("dd-MM-yyyy HH:mm")
+					.parse(dateString);
+			// return timeFormat.parse(issue.getCreatedAt());
 		}
 
 		@Override
 		public Date getUpdatedAt() {
-			return timeFormat.parse(issue.getCreatedAt());
+			Date date = timeFormat.parse(issue.getCreatedAt());
+			DateTimeFormat fmt = DateTimeFormat.getFormat("dd-MM-yyyy HH:mm");
+			String dateString = fmt.format(date);
+			return fmt.parse(dateString);
+
 		}
 
 		@Override
 		public String getBody() {
-			return issue.getBody();
+			return URL.decode(issue.getBody());
 		}
 
 		@Override
@@ -243,9 +253,13 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 	public static class Comparators {
 
-		public static Comparator<IssueSelected> NUMBER=new Comparator<IssueSelected>(){@Override public int compare(IssueSelected o1,IssueSelected o2){
-		// TODO Auto-generated method stub
-		return o2.getNumber()-o1.getNumber();}};
+		public static Comparator<IssueSelected> NUMBER = new Comparator<IssueSelected>() {
+			@Override
+			public int compare(IssueSelected o1, IssueSelected o2) {
+				// TODO Auto-generated method stub
+				return o2.getNumber() - o1.getNumber();
+			}
+		};
 	}
 
 	private class HeaderBuilder
@@ -257,7 +271,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		private Header<String> ownerHeader = new TextHeader(
 				Columns.OWNER.getColumnName());
 		private Header<String> companyHeader = new TextHeader(
-						Columns.COMPANY.getColumnName());
+				Columns.COMPANY.getColumnName());
 		private Header<String> titleHeader = new TextHeader(
 				Columns.TITLE.getColumnName());
 		private Header<String> labelsHeader = new TextHeader(
@@ -364,23 +378,22 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 			td.title(rowValue.getState());
 			renderCell(td, createContext(col++), stateColumn, rowValue);
 			td.endTD();
-			
+
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
-			//td.className(rowValue.getStateIconStyle());
-			//td.title("");
+			// td.className(rowValue.getStateIconStyle());
+			// td.title("");
 			td.className(AON.AON_CSS.aonDataTableTextColumn());
 			renderCell(td, createContext(col++), ownerColumn, rowValue);
 			td.endTD();
-			
+
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
-			//td.className(rowValue.getStateIconStyle());
-			//td.title("");
+			// td.className(rowValue.getStateIconStyle());
+			// td.title("");
 			td.className(AON.AON_CSS.aonDataTableTextColumn());
 			renderCell(td, createContext(col++), companyColumn, rowValue);
 			td.endTD();
-
 
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
@@ -421,7 +434,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 	private Column<IssueSelected, String> companyColumn;
 	private Column<IssueSelected, String> title;
 	private Column<IssueSelected, String> labels;
-	private Column<IssueSelected, String> createdAt;
+	private Column<IssueSelected, Date> createdAt;
 
 	public IssueGrid() {
 		super();
@@ -512,16 +525,16 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 		});
 		setColumnWidth(col++, 40, Unit.PX);
-		
+
 		ownerColumn = new Column<IssueSelected, String>(new TextCell()) {
 
 			@Override
-			public String getValue(IssueSelected object) {				
+			public String getValue(IssueSelected object) {
 				return object.getUser().getName();
 			}
 		};
 		setColumnWidth(col++, 60, Unit.PX);
-		
+
 		companyColumn = new Column<IssueSelected, String>(new TextCell()) {
 
 			@Override
@@ -549,12 +562,12 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 			}
 		};
 		setColumnWidth(col++, 60, Unit.PX);
-
-		createdAt = new Column<IssueSelected, String>(new TextCell()) {
+		
+		createdAt = new Column<IssueSelected, Date>(new DateCell()) {
 
 			@Override
-			public String getValue(IssueSelected object) {
-				return AON.DATE_FORMAT.format(object.getCreateAt());
+			public Date getValue(IssueSelected object) {				
+				return object.getCreateAt();
 			}
 		};
 		setColumnWidth(col++, 40, Unit.PX);
