@@ -393,7 +393,7 @@
       <groupId>org.xhtmlrenderer</groupId>
       <artifactId>core-renderer</artifactId>
       <version>R8-AON</version>
-      <scope>runtime</scope>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
