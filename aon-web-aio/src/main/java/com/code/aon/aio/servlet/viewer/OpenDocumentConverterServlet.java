@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.GeneralSecurityException;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -21,18 +20,14 @@ import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
 import org.artofsolving.jodconverter.office.OfficeManager;
 
 import com.code.aon.google.apis.DriveUtils;
-import com.code.aon.google.apis.Utils;
-import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.google.api.services.drive.Drive;
 
 public class OpenDocumentConverterServlet extends HttpServlet {
 	/**
@@ -86,21 +81,10 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 		resp.setContentType(mimeType.getName());
 		OutputStream os = resp.getOutputStream();
 
-		if ( rattach.getMimeType() == mimeType ) {
+		if (rattach.getMimeType() == mimeType ) {
 			byte[] b = null;
 			if(rattach.getDriveId() != null){
-				DomainGserviceaccount g = DBConsults.getServiceAccount(domain, user);
-				Drive d;
-				try {
-					d = DriveUtils.serviceInitialize(g);
-					com.google.api.services.drive.model.File f = DriveUtils.getFile(d, domain, user, rattach.getDriveId(),null);
-					if(f.getDescription() != null && f.getDescription().equals("OLDRIVE"))
-						d = DriveUtils.serviceInitializeOld(g);
-					InputStream in = DriveUtils.downloadFile(d, f);
-					b = Utils.InputStreamToByte(in);
-				} catch (GeneralSecurityException e) {
-					e.printStackTrace();
-				}	
+				b = DriveUtils.getByteFile(domain, user, rattach.getDriveId(), rattach.getId());
 			}
 			else b = rattach.getData();
 			os.write(b);

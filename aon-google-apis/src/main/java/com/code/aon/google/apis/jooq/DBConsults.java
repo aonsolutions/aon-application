@@ -16,6 +16,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Vector;
 import java.util.function.Function;
@@ -63,6 +64,10 @@ public class DBConsults {
 	
 	public static DomainGserviceaccount getServiceAccount(Domain domain, User user){
 		return AON.getDomainGserviceaccount(domain.getName(), domain.getId(), user.getLogin());
+	}
+	
+	public static HashMap<Integer, DomainGserviceaccount> getServiceAccountMap(Domain domain, User user){
+		return AON.getDomainGserviceaccountMap(domain.getName(), domain.getId(), user.getLogin(), domain.getParentId());
 	}
 	
 	public static void updateGoogleAccount(Domain domain, User user, String googleAccount){

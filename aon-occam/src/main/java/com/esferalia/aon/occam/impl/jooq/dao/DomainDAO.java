@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
@@ -23,6 +24,7 @@ import org.jooq.Result;
 import com.esferalia.aon.jooq.tables.records.DomainGserviceaccountRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
@@ -204,13 +206,13 @@ public class DomainDAO {
 		return ctx.getDslContext().select()
 		.from(DOMAIN_GSERVICEACCOUNT)
 		.where(DOMAIN_GSERVICEACCOUNT_PROPERTIES.getConditions(filter))
-		.limit(1).fetchInto(DOMAIN_GSERVICEACCOUNT).stream().map(new FullDomainGserviceaccountFiller())
+		.limit(1).fetchInto(DOMAIN_GSERVICEACCOUNT).stream().map(new FullDomainGserviceaccountFiller(ctx.getDomainName(), ctx.getUser()))
 		.findFirst().orElse(null);
 	}
 	
 	public static LinkedList<DomainGserviceaccount> getDomainGserviceaccountList(AONContext ctx){
 		return ctx.getDslContext().select().from(DOMAIN_GSERVICEACCOUNT)
-				.fetchInto(DOMAIN_GSERVICEACCOUNT).stream().map(new FullDomainGserviceaccountFiller())
+				.fetchInto(DOMAIN_GSERVICEACCOUNT).stream().map(new FullDomainGserviceaccountFiller(ctx.getDomainName(), ctx.getUser()))
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
@@ -253,8 +255,7 @@ public class DomainDAO {
 				dgserviceaccount = new DomainGserviceaccount()
 					.setClientId(r.getValue(DOMAIN_GSERVICEACCOUNT.CLIENT_ID))
 					.setClientSecret(r.getValue(DOMAIN_GSERVICEACCOUNT.CLIENT_SECRET))
-					.setDomain(r.getValue(DOMAIN.NAME))
-					.setDomainId(r.getValue(DOMAIN_GSERVICEACCOUNT.DOMAIN))
+					.setDomain(AON.getDomain(r.getValue(DOMAIN.NAME), r.getValue(DOMAIN_GSERVICEACCOUNT.DOMAIN), ctx.getUser()))
 					.setEmailAddress(r.getValue(DOMAIN_GSERVICEACCOUNT.EMAIL_ADDRESS))
 					.setGoogleAccount(r.getValue(DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT))
 					.setLimit(r.getValue(DOMAIN_GSERVICEACCOUNT.LIMIT))
@@ -269,8 +270,7 @@ public class DomainDAO {
 				dgserviceaccount = new DomainGserviceaccount()
 						.setClientId(r.getValue(DOMAIN_GSERVICEACCOUNT.CLIENT_ID))
 						.setClientSecret(r.getValue(DOMAIN_GSERVICEACCOUNT.CLIENT_SECRET))
-						.setDomain(r.getValue(DOMAIN.NAME))
-						.setDomainId(r.getValue(DOMAIN_GSERVICEACCOUNT.DOMAIN))
+						.setDomain(AON.getDomain(r.getValue(DOMAIN.NAME), r.getValue(DOMAIN_GSERVICEACCOUNT.DOMAIN), ctx.getUser()))
 						.setEmailAddress(r.getValue(DOMAIN_GSERVICEACCOUNT.EMAIL_ADDRESS))
 						.setGoogleAccount(r.getValue(DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT))
 						.setLimit(r.getValue(DOMAIN_GSERVICEACCOUNT.LIMIT))
@@ -285,8 +285,7 @@ public class DomainDAO {
 				dgserviceaccount = new DomainGserviceaccount()
 						.setClientId(r.getValue(DOMAIN_GSERVICEACCOUNT.CLIENT_ID))
 						.setClientSecret(r.getValue(DOMAIN_GSERVICEACCOUNT.CLIENT_SECRET))
-						.setDomain(r.getValue(DOMAIN.NAME))
-						.setDomainId(r.getValue(DOMAIN_GSERVICEACCOUNT.DOMAIN))
+						.setDomain(AON.getDomain(r.getValue(DOMAIN.NAME), r.getValue(DOMAIN_GSERVICEACCOUNT.DOMAIN), ctx.getUser()))
 						.setEmailAddress(r.getValue(DOMAIN_GSERVICEACCOUNT.EMAIL_ADDRESS))
 						.setGoogleAccount(r.getValue(DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT))
 						.setLimit(r.getValue(DOMAIN_GSERVICEACCOUNT.LIMIT))
@@ -298,6 +297,36 @@ public class DomainDAO {
 		};
 				
 		return dgserviceaccount;		
+	}
+	
+	public static HashMap<Integer, DomainGserviceaccount> getDomainGserviceaccountMap(AONContext ctx, Integer parent){
+		Result<DomainGserviceaccountRecord> result;
+		if(parent != null)
+			result = ctx.getDslContext().select().from(DOMAIN_GSERVICEACCOUNT)
+					.where(DOMAIN_GSERVICEACCOUNT.DOMAIN.eq(ctx.getDomainId()))
+					.or(DOMAIN_GSERVICEACCOUNT.DOMAIN.eq(parent))
+					.or(DOMAIN_GSERVICEACCOUNT.DOMAIN.eq(0))
+					.fetchInto(DOMAIN_GSERVICEACCOUNT);			
+		else
+			result = ctx.getDslContext().select().from(DOMAIN_GSERVICEACCOUNT)
+					.where(DOMAIN_GSERVICEACCOUNT.DOMAIN.eq(ctx.getDomainId()))
+					.or(DOMAIN_GSERVICEACCOUNT.DOMAIN.eq(0))
+					.fetchInto(DOMAIN_GSERVICEACCOUNT);	
+		
+		HashMap<Integer, DomainGserviceaccount> map = new HashMap<Integer, DomainGserviceaccount>();
+ 		for (DomainGserviceaccountRecord r : result) {
+			map.put(r.getDomain(), new DomainGserviceaccount()
+					.setClientId(r.getClientId())
+					.setClientSecret(r.getClientSecret())
+					.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
+					.setEmailAddress(r.getEmailAddress())
+					.setGoogleAccount(r.getGoogleAccount())
+					.setLimit(r.getLimit())
+					.setPrivateKey(r.getPrivateKey())
+					.setPublicKey(r.getPublicKey())
+					.setSize(r.getSize()));
+		}
+		return map;
 	}
 	
 	public static void updateDomainGserviceaccount(AONContext ctx, String googleAccount){
@@ -395,14 +424,21 @@ public class DomainDAO {
 		@Override public Property<String> getPublicKeyProperty() {return new FilterDAO.PropertyDAO<String>(DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY);}
 		@Override public Property<Double> getSizeProperty() {return new FilterDAO.PropertyDAO<Double>(DOMAIN_GSERVICEACCOUNT.SIZE);}
 	}	
+
 	
 	private static class FullDomainGserviceaccountFiller implements Function<DomainGserviceaccountRecord, DomainGserviceaccount> {
+		String domainName , user;
+		public FullDomainGserviceaccountFiller(String domainName, String user) {
+			this.domainName = domainName;
+			this.user = user;
+		}
+		
 		@Override
 		public DomainGserviceaccount apply(DomainGserviceaccountRecord r) {
 			return new DomainGserviceaccount()
 					.setClientId(r.getClientId())
 					.setClientSecret(r.getClientSecret())
-					.setDomainId(r.getDomain())
+					.setDomain(AON.getDomain(domainName, r.getDomain(), user))
 					.setEmailAddress(r.getEmailAddress())
 					.setGoogleAccount(r.getGoogleAccount())
 					.setLimit(r.getLimit())

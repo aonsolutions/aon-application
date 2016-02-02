@@ -4,8 +4,7 @@ public class DomainGserviceaccount {
 	
 	String clientId;
 	byte[] clientSecret;
-	String domain;
-	Integer domainId;
+	Domain domain;
 	String emailAddress;
 	Double limit;
 	byte[] privateKey;
@@ -35,22 +34,21 @@ public class DomainGserviceaccount {
 		return this;
 	}
 
-	public String getDomain() {
+	public Domain getDomain() {
 		return domain;
 	}
 
-	public DomainGserviceaccount setDomain(String domain) {
+	public DomainGserviceaccount setDomain(Domain domain) {
 		this.domain = domain;
 		return this;
 	}
-
-	public Integer getDomainId() {
-		return domainId;
+	
+	public String getDomainName(){
+		return domain.getName();
 	}
-
-	public DomainGserviceaccount setDomainId(Integer domainId) {
-		this.domainId = domainId;
-		return this;
+	
+	public Integer getDomainId(){
+		return domain.getId();
 	}
 
 	public String getEmailAddress() {

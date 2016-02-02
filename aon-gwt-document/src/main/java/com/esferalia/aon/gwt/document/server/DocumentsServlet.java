@@ -955,34 +955,21 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 	
 	public FileInfo setmd5(Domain domain, FileInfo doc){
 		Attach  rattach = ViewerUtils.getRAttach(domain, getUser(), doc.getFileId());
-		
 		Domain domainAux = DBConsults.getDomain(domain.setId(rattach.getDomain().getId()), getUser());
 		doc.setDriveId(rattach.getDriveId());
 		doc.setDomainId(domainAux.getId());
 		doc.setDomain(domainAux.getName());
 		doc.setDomainDescription(domainAux.getDescription());
 		if(doc.getDriveId()!= null){
-        	Drive d = null;
-        	DomainGserviceaccount g = null;
         	if(doc.getIsDrive()){
-        		d = GoogleDriveController.dconnection;
+        		Drive drive = GoogleDriveController.dconnection;
+        		File file = DriveUtils.getFile(drive, doc.getDriveId());
+        		doc.setMd5(file.getMd5Checksum());
         	}
         	else{
-				g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(doc.getDomain(), doc.getDomainId());
-				try {
-					d = DriveUtils.serviceInitialize(g);
-				} catch (IOException | GeneralSecurityException e) {
-					LOGGER.error(e.getMessage());
-				}
+        		File file = DriveUtils.getDriveFile(domainAux, getUser(), doc.getDriveId(), doc.getFileId());
+        		doc.setMd5(file.getMd5Checksum());
         	}
-			com.google.api.services.drive.model.File f = null;
-			try {
-				f = DriveUtils.getFile(d, domainAux, getUser(), doc.getDriveId(),doc.getFileId());
-			} catch (IOException | GeneralSecurityException e) {
-				e.printStackTrace();
-			}
-			doc.setMd5(f.getMd5Checksum());
-			
 		}
 		else {
 			byte[] b = rattach.getData();
@@ -1045,11 +1032,8 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 			PrintStream printStream = new PrintStream(os);
 			InputStream in = null;
 			if(doc.getDriveId() != null){ 
-				DomainGserviceaccount g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(doc.getDomain(), doc.getDomainId());
-				Drive d = DriveUtils.serviceInitialize(g);
-				File f = DriveUtils.getFile(d, domain, user, doc.getDriveId(), doc.getFileId());//d.files().get(doc.getDriveId()).execute();
-				
-				in = DriveUtils.downloadFile(d, f);
+				byte[] b = DriveUtils.getByteFile(domain, user, doc.getDriveId(), doc.getFileId());
+				in = new ByteArrayInputStream(b);
 			}
 			else {
 				Attach rattach = ViewerUtils.getRAttach(domain, user, doc.getFileId());
@@ -1428,6 +1412,7 @@ public MailAccountList getMailAccounts(Domain domain) {
 	}
 	
 	public void sendGmail(Domain domain, MailAccount ma, Emessage em) {
+		domain = AON.getDomain(domain.getName(), domain.getId(), getUser().getLogin());
 		Gmail gmail = GoogleDriveController.uconnection.getGmail();
 
 		Vector<FileInfo> files = getOuts(getThreadLocalRequest());
@@ -1438,29 +1423,16 @@ public MailAccountList getMailAccounts(Domain domain) {
 			zos = new ZipOutputStream(baos);
 			for (FileInfo fi : em.getFiles()) {
 				if (fi.getDriveId() != null) {
-					Drive d = null;
+					byte[] b;
 					if (fi.getIsDrive()) {
-						d = GoogleDriveController.dconnection;
+		        		Drive drive = GoogleDriveController.dconnection;
+		        		com.google.api.services.drive.model.File file = 
+		        				DriveUtils.getFile(drive, fi.getDriveId());
+		        		InputStream in = DriveUtils.downloadFile(drive, file);
+		    			b = com.code.aon.google.apis.Utils.InputStreamToByte(in);
 					} else {
-						DomainGserviceaccount g;
-						try {
-							g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain.getName(), domain.getId());
-							d = DriveUtils.serviceInitialize(g);
-						} catch (KeyStoreException e) {
-							e.printStackTrace();
-						} catch (GeneralSecurityException e) {
-							e.printStackTrace();
-						}
+						b = DriveUtils.getByteFile(domain, getUser(), fi.getDriveId(), fi.getFileId());
 					}
-					com.google.api.services.drive.model.File f= null;
-					try {
-						f = DriveUtils.getFile(d, domain, getUser(), fi.getDriveId(), fi.getFileId());
-					} catch (GeneralSecurityException e) {
-						e.printStackTrace();
-					}
-					InputStream in = DriveUtils.downloadFile(d, f);
-					byte[] b = com.code.aon.google.apis.Utils
-							.InputStreamToByte(in);
 					fi.setData(b);
 				} else if ((Integer) fi.getFileId() != null) {
 					com.code.aon.google.apis.FileInfo fi2 = DBConsults

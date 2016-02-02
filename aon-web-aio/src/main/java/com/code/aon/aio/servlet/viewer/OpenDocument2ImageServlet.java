@@ -28,15 +28,14 @@ import org.json.JSONObject;
 
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
-import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.ui.google.apis.controller.GoogleDriveController;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.google.api.services.drive.Drive;
 import com.lowagie.text.DocumentException;
@@ -152,20 +151,14 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 		byte[] b = null;
 		MimeType mimetype = attach.getMimeType();
 		if(attach.getDriveId()!= null){
-        	Drive d = null;
-        	DomainGserviceaccount g = null;
-        	if(attach.getIsDrive()){
-        		d = GoogleDriveController.dconnection;
-        	}
-        	else{
-        		g = DBConsults.getServiceAccount(domain, user);
-        		d = DriveUtils.serviceInitialize(g);
-        	}
-			com.google.api.services.drive.model.File f = DriveUtils.getFile(d, domain, user, attach.getDriveId(), attach.getId());
-			if(f.getDescription() != null && f.getDescription().equals("OLDRIVE"))
-				d = DriveUtils.serviceInitializeOld(g);
-			InputStream in = DriveUtils.downloadFile(d, f);
-			b = Utils.InputStreamToByte(in);
+			if(attach.getIsDrive()){ // Si entra con una cuenta de Google a la aplicación
+        		Drive drive = GoogleDriveController.dconnection;
+        		com.google.api.services.drive.model.File file = 
+        				DriveUtils.getFile(drive, attach.getDriveId());
+        		InputStream in = DriveUtils.downloadFile(drive, file);
+    			b = Utils.InputStreamToByte(in);
+			}
+			else b = DriveUtils.getByteFile(domain, user, attach.getDriveId(), attach.getId());
 		}
 		else {
 			Attach rattach =  AON.getAttach(domain.getName(), domain.getId(), login, 

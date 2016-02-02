@@ -5,9 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -24,36 +21,30 @@ import org.artofsolving.jodconverter.office.OfficeManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
-import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.google.api.services.drive.Drive;
 
 public class PdfPrintServlet extends HttpServlet{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	private static final int DEFAULT_OFFICE_PORT = 2002;
-
 
 	@Override
     protected void doGet(HttpServletRequest p_request, HttpServletResponse p_response)throws ServletException, IOException{
         String driveId = p_request.getParameter("drive_id");
         String fileId = p_request.getParameter("file_id");
+        String fileTitle = p_request.getParameter("title");
         String mtype = p_request.getParameter("mimetype");
         String domainId = p_request.getParameter("domain_id");
         Integer domainID = Integer.parseInt(domainId);
         String domainName = AonUtil.getDomainName();
         Domain domain = new Domain().setName(domainName).setId(domainID);
-        String login = AonUtil.getRemoteUser();
+        String login = ""; //AonUtil.getRemoteUser();
         User user = new User().setLogin(login);
         Integer m = Integer.parseInt(mtype);
         MimeType mt = MimeType.values()[m];
@@ -61,31 +52,8 @@ public class PdfPrintServlet extends HttpServlet{
         String mimetype = MimeType.values()[m].getName();
         Attach fi = null;
         if (driveId != ""){
-			DomainGserviceaccount g = null;
-			Drive d = null;
-			try {
-				g = DBConsults.getServiceAccount(domain,user);
-				d = DriveUtils.serviceInitialize(g);
-			} catch (KeyStoreException e) {
-				e.printStackTrace();
-			} catch (GeneralSecurityException e) {
-				e.printStackTrace();
-			}
-			
-			com.google.api.services.drive.model.File f = null;
-			try {
-				f = DriveUtils.getFile(d, domain, user, driveId,idFile );
-				if(f.getDescription().equals("OLDRIVE"))
-					d = DriveUtils.serviceInitializeOld(g);
-			} catch (GeneralSecurityException e) {
-				e.printStackTrace();
-			}
-
-			InputStream in = DriveUtils.downloadFile(d, f);
-			fi = new Attach();
-			byte[] b = Utils.InputStreamToByte(in);
-		    fi.setData(b);
-		    fi.setDescription(f.getTitle());
+        	byte[] b = DriveUtils.getByteFile(domain, user, driveId, idFile);
+        	fi = new Attach().setData(b).setDescription(fileTitle);
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);

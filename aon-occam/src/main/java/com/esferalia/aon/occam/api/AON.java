@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -286,6 +287,18 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getCommon().getDomainGserviceaccount(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static HashMap<Integer, DomainGserviceaccount> getDomainGserviceaccountMap(String domainName, Integer domainId, String login,
+			Integer parent) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().getDomainGserviceaccountMap(ctx, parent);
 		} finally {
 			if (ctx != null)
 				ctx.close();

@@ -3192,7 +3192,8 @@ public class Documents extends Composite implements EntryPoint {
                 	+ "&mimetype=" +object.getMimetype()
                 	+ "&isdrive=" +object.getIsDrive()
 					+ "&ismultiple="+multiple
-					+ "&domain_id="+object.getDomainId();
+					+ "&domain_id="+object.getDomainId()
+					+ "&title="+object.getTitle();
 			Window.open( fileDownloadURL, "_blank",null);//"status=0,toolbar=0,menubar=0,location=0");
 		}
 		
@@ -3213,7 +3214,8 @@ public class Documents extends Composite implements EntryPoint {
                 + "?file_id=" + Integer.toString(object.getFileId())
                 + "&drive_id=" +URL.encode(driveId)
                 + "&mimetype=" +object.getMimetype()
-                + "&domain_id="+object.getDomainId();
+                + "&domain_id="+object.getDomainId()
+                + "&title="+object.getTitle();
 		PrintWindow.open(fileDownloadURL, "_blank", null);
 	}
 	

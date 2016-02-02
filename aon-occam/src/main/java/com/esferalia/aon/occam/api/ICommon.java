@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +69,7 @@ public interface ICommon {
 			String document, String name, List<String> messages);
 	
 	public DomainGserviceaccount getDomainGserviceaccount(AONContext ctx);
+	public HashMap<Integer, DomainGserviceaccount> getDomainGserviceaccountMap(AONContext ctx, Integer parent);
 	public LinkedList<DomainGserviceaccount> getDomainGserviceaccountList(AONContext ctx);
 	public DomainGserviceaccount getDomainGserviceaccount(AONContext ctx, DomainGserviceaccountFilter filter);
 	public void updateDomainGserviceaccount(AONContext ctx, String googleAccount);

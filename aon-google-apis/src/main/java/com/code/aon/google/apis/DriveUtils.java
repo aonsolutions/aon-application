@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -504,7 +505,9 @@ public class DriveUtils implements IBlobManager {
 		if(f.getDescription() == null) f.setDescription("");
 		return f;
 	}
+	
 	static Integer cont = -1; 
+	@Deprecated
 	public static File getFile(Drive drive, Domain domain, User user, String fileId, Integer id) throws IOException, KeyStoreException, GeneralSecurityException {
 		File f = null;
 		if(cont == -1)cont = 0;
@@ -512,7 +515,6 @@ public class DriveUtils implements IBlobManager {
 		FileList fileList =SearchFiles.searchFilesProperties(drive, "oldDriveId",fileId);
 		if(fileList.getItems().size()>0){
 			f = fileList.getItems().get(0);
-			
 			//TODO update bd with new driveId.
 			if(id != null)
 				DBDrive.updateDriveId(f,id);
@@ -520,7 +522,6 @@ public class DriveUtils implements IBlobManager {
 		} else
 			try {
 				f = drive.files().get(fileId).execute();
-				
 			} catch (IOException e) {
 				DomainGserviceaccount g = DBConsults.getServiceAccount(domain, user);
 				Drive oldDrive = serviceInitializeOld(g);
@@ -542,6 +543,129 @@ public class DriveUtils implements IBlobManager {
 			}
 		if(f.getDescription() == null) f.setDescription("");
 		return f;
+	}
+	
+	public static File getDriveFile(Domain domain, User user, String driveId, Integer attachId){
+		HashMap<Integer, DomainGserviceaccount> map = DBConsults.getServiceAccountMap(domain, user);
+		
+		if(map.containsKey(domain.getId())){
+			try {
+				Drive drive = serviceInitialize(map.get(domain.getId()));
+				File file = getFile(drive, driveId, attachId );
+				if(file == null){
+					drive= serviceInitializeOld(map.get(domain.getId()));
+					file = getFile(drive, driveId, attachId);
+				}
+				if(file != null) return file;
+			} catch (IOException | GeneralSecurityException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if(domain.getParentId() != null && map.containsKey(domain.getParentId())){
+			try{
+				Drive drive = serviceInitialize(map.get(domain.getParentId()));
+				File file = getFile(drive, driveId, attachId );
+				if(file == null){
+					drive= serviceInitializeOld(map.get(domain.getParentId()));
+					file = getFile(drive, driveId, attachId);
+				}
+				if(file != null) return file;
+			} catch (IOException | GeneralSecurityException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if(map.containsKey(0)){
+			try {
+				Drive drive = serviceInitialize(map.get(0));
+				File file = getFile(drive, driveId, attachId );
+				if(file == null){
+					drive= serviceInitializeOld(map.get(0));
+					file = getFile(drive, driveId, attachId);
+				}
+				if(file != null) return file;
+			} catch (IOException | GeneralSecurityException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+	
+	public static byte[] getByteFile(Domain domain, User user, String driveId, Integer attachId){
+		HashMap<Integer, DomainGserviceaccount> map = DBConsults.getServiceAccountMap(domain, user);
+		
+		if(map.containsKey(domain.getId())){
+			try {
+				Drive drive = serviceInitialize(map.get(domain.getId()));
+				File file = getFile(drive, driveId, attachId );
+				if(file == null){
+					drive= serviceInitializeOld(map.get(domain.getId()));
+					file = getFile(drive, driveId, attachId);
+				}
+				if(file != null){
+					InputStream data = downloadFile(drive, file);
+					return Utils.InputStreamToByte(data);
+				}
+			} catch (IOException | GeneralSecurityException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if(domain.getParentId() != null && map.containsKey(domain.getParentId())){
+			try{
+				Drive drive = serviceInitialize(map.get(domain.getParentId()));
+				File file = getFile(drive, driveId, attachId );
+				if(file == null){
+					drive= serviceInitializeOld(map.get(domain.getParentId()));
+					file = getFile(drive, driveId, attachId);
+				}
+				if(file != null){
+					InputStream data = downloadFile(drive, file);
+					return Utils.InputStreamToByte(data);
+				}
+			} catch (IOException | GeneralSecurityException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if(map.containsKey(0)){
+			try {
+				Drive drive = serviceInitialize(map.get(0));
+				File file = getFile(drive, driveId, attachId );
+				if(file == null){
+					drive= serviceInitializeOld(map.get(0));
+					file = getFile(drive, driveId, attachId);
+				}
+				if(file != null){
+					InputStream data = downloadFile(drive, file);
+					return Utils.InputStreamToByte(data);
+				}
+			} catch (IOException | GeneralSecurityException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+	
+	public static File getFile(Drive drive, String driveId, Integer attachId) throws IOException, KeyStoreException, GeneralSecurityException {
+		File f = null;
+		FileList fileList =SearchFiles.searchFilesProperties(drive, "oldDriveId",driveId);
+		if(fileList.getItems().size()>0){
+			f = fileList.getItems().get(0);
+			if(attachId != null)
+				DBDrive.updateDriveId(f,attachId);
+		} else
+			f = getFile(drive, driveId);
+		return f;
+	}
+	
+	public static File getFile(Drive drive, String driveId){
+		try {
+			return drive.files().get(driveId).execute();
+		} catch (IOException e) {
+			return null;
+		}
 	}
 
 	public static FileList getParentFiles(Drive drive, String parent)
@@ -1034,25 +1158,9 @@ public class DriveUtils implements IBlobManager {
 	
 	
 	public static byte[] getByteFile(String domainName, Integer domainId, String login, String driveId, Integer attachId) throws KeyStoreException, IOException, GeneralSecurityException{
-		Domain domain = new Domain().setName(domainName).setId(domainId);
+		Domain domain = AON.getDomain(domainName, domainId, login);
 		User user = new User().setLogin(login);
-		DomainGserviceaccount domainGserviceaccount = AON.getDomainGserviceaccount(domainName, domainId, login);
-		Drive drive = serviceInitialize(domainGserviceaccount);
-		Drive oldDrive = DriveUtils.serviceInitializeOld(domainGserviceaccount);
-		File file = new File();
-		try {
-			file = getFile(drive, domain, user, driveId, attachId);
-		} catch (IOException | GeneralSecurityException e) {
-			e.printStackTrace();
-		}		
-		InputStream in = downloadFile(file.getDescription().equals("OLDRIVE") ? oldDrive : drive, file);
-		byte[] b = null;
-		try {
-			b = Utils.InputStreamToByte(in);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return b;
+		return getByteFile(domain, user, driveId, attachId);
 	}
 	
 	public static InputStream downloadFile(Drive drive, File file) {
@@ -1152,6 +1260,16 @@ public class DriveUtils implements IBlobManager {
 
 	@Override
 	public byte[] getBlob(IBlobObject blobObject, String property) {
+		Domain domain = getDomain();
+		String driveId = (String) blobObject.getReference(property);
+		if (driveId != null) {
+			User user = new User().setLogin(AonUtil.getRemoteUser());
+			return getByteFile(domain, user, driveId, null);
+		}
+		return null;
+	}
+	
+	public byte[] getBlobOld(IBlobObject blobObject, String property) {
 		Domain domain = getDomain();
 		String driveId = (String) blobObject.getReference(property);
 		if (driveId != null) {

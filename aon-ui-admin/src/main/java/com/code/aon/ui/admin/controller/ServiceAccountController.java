@@ -107,8 +107,9 @@ public class ServiceAccountController extends BasicController {
 	
 	public void updateAccount(ActionEvent event) throws SQLException {
 		Integer domainId = DBConsults.getDomainId(getDomain(), DomainManager.getCurrentDomain(), "");
+		Domain domain = AON.getDomain(getDomain(), domainId, AonUtil.getRemoteUser());
 		DomainGserviceaccount dgsa = new DomainGserviceaccount()
-				.setDomainId(domainId)
+				.setDomain(domain)
 				.setEmailAddress(getEmail_address())
 				.setPrivateKey(getData())
 				.setPublicKey(getPublic_key())
@@ -137,9 +138,10 @@ public class ServiceAccountController extends BasicController {
 	
 	public void createAccount(ActionEvent event) throws SQLException {
 		Integer domainId = DBConsults.getDomainId(getDomain(), DomainManager.getCurrentDomain(), "");
+		Domain domain = AON.getDomain(getDomain(), domainId, AonUtil.getRemoteUser());
 		DomainGserviceaccount dgsa = new DomainGserviceaccount()
 				.setClientId(getClient_id())
-				.setDomainId(domainId)
+				.setDomain(domain)
 				.setEmailAddress(getEmail_address())
 				.setPrivateKey(getData())
 				.setPublicKey(getPublic_key())

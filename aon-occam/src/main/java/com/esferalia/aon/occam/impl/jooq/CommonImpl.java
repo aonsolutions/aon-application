@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -121,6 +122,12 @@ public class CommonImpl implements ICommon {
 	public DomainGserviceaccount getDomainGserviceaccount(AONContext ctx) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> DomainDAO.getDomainGserviceaccount(ctx));
+	}
+	
+	@Override
+	public HashMap<Integer,DomainGserviceaccount> getDomainGserviceaccountMap(AONContext ctx, Integer parent) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> DomainDAO.getDomainGserviceaccountMap(ctx, parent));
 	}
 	
 	@Override

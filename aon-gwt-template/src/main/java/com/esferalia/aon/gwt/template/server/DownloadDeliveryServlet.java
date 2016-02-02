@@ -8,9 +8,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -36,18 +33,16 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.jooq.Condition;
 
 import com.code.aon.google.apis.DriveUtils;
-import com.code.aon.google.apis.Utils;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBProduct;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.google.api.services.drive.Drive;
 
 @WebServlet(name = "DownloadTemplatesDelivery", urlPatterns = { "/aon_gwt_template/gwt_download_delivery/*" })
 public class DownloadDeliveryServlet extends HttpServlet {
@@ -107,36 +102,13 @@ public class DownloadDeliveryServlet extends HttpServlet {
         
         Integer domainId = Integer.parseInt(domain_id);
         String domainName = AonServletUtils.getRequestDomainName(p_request);
-        Domain domain = new Domain().setId(domainId).setName(domainName);
+        Domain domain = AON.getDomain(domainName, domainId, login);
         Integer idFile = Integer.parseInt(fileId);
         
         byte[] b = null ;
         
         if (driveId != ""){
-        	Drive d = null;
-        	
-        	DomainGserviceaccount g = null;
-			try {
-				g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domainName,domainId);
-				d = DriveUtils.serviceInitialize(g);
-			} catch (KeyStoreException e) {
-				e.printStackTrace();
-			} catch (GeneralSecurityException e) {
-				e.printStackTrace();
-			}
-        	
-			com.google.api.services.drive.model.File f = null;
-			try {
-				f = DriveUtils.getFile(d, domain, user, driveId, idFile);
-				if(f.getDescription().equals("OLDRIVE"))
-					d = DriveUtils.serviceInitializeOld(g);
-			} catch (GeneralSecurityException e) {
-				e.printStackTrace();
-			}
-
-			InputStream in = DriveUtils.downloadFile(d, f);
-			b = Utils.InputStreamToByte(in);
-        	
+        	b = DriveUtils.getByteFile(domain, user, driveId, idFile);
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
