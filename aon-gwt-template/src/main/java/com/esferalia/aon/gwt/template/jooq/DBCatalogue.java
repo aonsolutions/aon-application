@@ -99,7 +99,8 @@ public class DBCatalogue {
 			Date today = new Date(new java.util.Date().getTime());
 			Result<Record6<Integer, Integer, Integer, String, String, String>> record = null;
 			if(wp != null && dt != null){
-				record = ctx.getDslContext().selectDistinct(ITEM.PRODUCT, WORKPLACE_DEPARTMENT.WORKPLACE, WORKPLACE_DEPARTMENT.DEPARTMENT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3)
+				record = ctx.getDslContext().selectDistinct(ITEM.PRODUCT, WORKPLACE_DEPARTMENT.WORKPLACE,
+						WORKPLACE_DEPARTMENT.DEPARTMENT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3)
 				.from(CATALOGUE).join(CATALOGUE_ITEM).on(CATALOGUE.ID.eq(CATALOGUE_ITEM.CATALOGUE))
 				.join(ITEM).on(ITEM.ID.eq(CATALOGUE_ITEM.ITEM))
 				.join(WORKPLACE_DEPARTMENT).on(WORKPLACE_DEPARTMENT.CATALOGUE.eq(CATALOGUE_ITEM.CATALOGUE))
@@ -110,7 +111,7 @@ public class DBCatalogue {
 				.and(CATALOGUE_ITEM.DOMAIN.eq(domain.getId()))
 				.and(PRODUCT.STATUS.eq((byte)0))
 				.and(RITEM.WORKPLACE.eq(wp.getId()).or(RITEM.WORKPLACE.isNull()))
-				.and(WORKPLACE_DEPARTMENT.ACTIVE.eq((byte)0))
+				.and(WORKPLACE_DEPARTMENT.ACTIVE.eq((byte)1))
 				.and(CATALOGUE.PURCHASE.eq((byte) 1))
 				.and(CATALOGUE.START_DATE.lessThan(today))
 				.and(CATALOGUE.END_DATE.greaterThan(today).or(CATALOGUE.END_DATE.isNull()))

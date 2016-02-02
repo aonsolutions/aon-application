@@ -36,15 +36,17 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 
 @WebServlet(name = "DownloadTemplatesCatalogue", urlPatterns = { "/aon_gwt_template/gwt_download_catalogue/*" })
 public class DownloadCatalogueServlet extends HttpServlet {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 
 	@Override
     protected void doGet(HttpServletRequest p_request, HttpServletResponse p_response)throws ServletException, IOException{
         String domain_id = p_request.getParameter("domain_id");
         String workplace = p_request.getParameter("workplace");
+        if(workplace.contains("*")){
+        	Integer i = workplace.indexOf('*');
+        	workplace = workplace.substring(0,i) + "&" + workplace.substring(i+1);
+        }
         String department = p_request.getParameter("department");
         String template_id = p_request.getParameter("template_id");
         String login = p_request.getParameter("username");

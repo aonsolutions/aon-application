@@ -795,16 +795,21 @@ public class Templates extends Composite implements EntryPoint {
 				}
 				ListBox lb1 = (ListBox) flex_table.getWidget(1, 1);
 				String workplace = lb1.getSelectedItemText();
-				
+				if(workplace.contains("&")){
+					Integer i = workplace.indexOf("&");
+					workplace = workplace.substring(0,i) + "*"+ workplace.substring(i+1);
+				}
 				ListBox lb2;
 				String department = "-";
 				if(workplace != "-"){
 					lb2 = (ListBox) flex_table.getWidget(2, 1);
 					department = lb2.getSelectedItemText();
 				}
-
-				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_catalogue/"
-		            	+ "?&domain_id=" + getDomain().getId()
+				
+				
+				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_catalogue"
+	
+		            	+ "?domain_id=" + getDomain().getId()
 		            	+ "&workplace=" + workplace
 		            	+ "&department="+ department
 		            	+ "&template_id="+ti.getId()
