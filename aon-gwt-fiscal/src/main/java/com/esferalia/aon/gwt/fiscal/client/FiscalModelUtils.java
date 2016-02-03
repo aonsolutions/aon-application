@@ -89,6 +89,19 @@ public class FiscalModelUtils {
 		return AON.AON_CSS.aonIconAeat();
 	}
 
+	public static String getAdministrationIconBW(Administration adm) {
+		if (adm == Administration.ALAVA) {
+			return AON.AON_CSS.aonIconArabaBW();
+		} else if (adm == Administration.BIZKAIA) {
+			return AON.AON_CSS.aonIconBizkaiaBW();
+		} else if (adm == Administration.GIPUZKOA) {
+			return AON.AON_CSS.aonIconGipuzkoaBW();
+		} else if (adm == Administration.NAVARRA) {
+			return AON.AON_CSS.aonIconNavarraBW();
+		} 
+		return AON.AON_CSS.aonIconAeatBW();
+	}
+
 	public static ImageResource getAdministrationIconResource(Administration adm) {
 		if (adm ==Administration.ALAVA) {
 			return AON.AON_RESOURCES.aonIconAraba();	

@@ -81,8 +81,8 @@ public class Model111 extends MainEntryPoint {
 			.create(Model111Binder.class);
 
 	public static interface IMod111Declaration extends IsWidget {
+		Widget getInfoPanel(Mod111 mod111);
 		void calculateAndRefresh(Mod111 mod111);
-		Widget getInfoPanel();
 	}
 	
 	protected static interface IFiscalModelCallback<T extends FiscalModel> {
@@ -336,7 +336,7 @@ public class Model111 extends MainEntryPoint {
 		
 		fiscalInformationLabel.setStyleName(AON.AON_CSS.aonPaddingRight());
 		fiscalInformationLabel.addStyleName(AON.AON_CSS.aonPaddingLeft20());
-		fiscalInformationLabel.addStyleName(FiscalModelUtils.getAdministrationIcon(currentMod111.getAdministration()));
+		fiscalInformationLabel.addStyleName(FiscalModelUtils.getAdministrationIconBW(currentMod111.getAdministration()));
 
 		refreshToolbarState();
 		
@@ -419,7 +419,7 @@ public class Model111 extends MainEntryPoint {
 		}
 		if (declaration != null) {
 			declarationContainer.setWidget( declaration );
-			infoContainer.setWidget(declaration.getInfoPanel());
+			infoContainer.setWidget(declaration.getInfoPanel(currentMod111));
 		} else {
 			showErrorMessage("Administraci\u00F3n y/o ejercicio no soportado.");
 			hideToolbarButtons();
@@ -721,6 +721,9 @@ public class Model111 extends MainEntryPoint {
 	
 	private void cancel() {
 		cleanErrorMessage();
+		cleanInfo();
+		tabLayout.selectTab(INFORMATION_TAB);
+		closeFootPanel();
 		int i = deckPanel.getWidgetIndex(listPanel);
 		deckPanel.showWidget(i);
 		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
@@ -907,7 +910,13 @@ public class Model111 extends MainEntryPoint {
 		resultsPanel.setWidget(panel);
 		tabLayout.selectTab(NOTIFICATIONS_TAB);
 	}
-
+	private void cleanInfo() {
+		Widget w = informationPanel.getWidget();
+		if (w != null) {
+			informationPanel.remove( informationPanel.getWidget() ); 
+		}
+	}
+	
 	private void showInfoPanel(String htmlText) {
 		if (splitLayoutPanel.getWidgetSize(footPanel) <= 30) {
 			splitLayoutPanel.animate(500);

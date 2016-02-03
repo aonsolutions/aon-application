@@ -19,20 +19,11 @@ import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
 import org.artofsolving.jodconverter.office.OfficeManager;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model110Bizkaia;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model110Gipuzkoa;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model111AEAT;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model111Araba;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model111Araba2016;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model111Base.IModelScript;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model111Bizkaia;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model111Gipuzkoa;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model715Navarra;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model745Navarra;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
-import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.fiscal.mod111.IModelScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod111.Model111ScriptProvider;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
@@ -58,7 +49,7 @@ public class Mod111PrintPDF extends HttpServlet {
 			FiscalModelExcelAction action = new FiscalModelExcelAction(mod111);
 			action.initialize(mod111.getModel().getName(mod111.getAdministration(), mod111.getPeriod()));
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
-			for (IModelScript ms : obtainScript(mod111)) {
+			for (IModelScript ms : Model111ScriptProvider.obtainScript(mod111)) {
 				action.accept(ms);
 			}
 			action.finalize(output);
@@ -113,43 +104,6 @@ public class Mod111PrintPDF extends HttpServlet {
 				+ "_" + fs.getPeriod().getName() 
 				+ "_" + fs.getAdministration().toString() 
 				+ "_" + sb.toString();
-	}
-
-	private IModelScript[] obtainScript(Mod111 mod111) {
-		IModelScript[] ms = null;
-		if (mod111.getAdministration() == Administration.COMMON_TERRITORY) {
-			ms = Model111AEAT.ModelScript.values();
-		} else if (mod111.getAdministration() == Administration.GIPUZKOA) {
-			if (mod111.getPeriod().isQuarterPeriod()) {
-				ms = Model110Gipuzkoa.ModelScript.values();
-			} else {
-				ms = Model111Gipuzkoa.ModelScript.values();
-			}
-		} else if (mod111.getAdministration() == Administration.BIZKAIA) {
-			if (mod111.getPeriod().isQuarterPeriod()) {
-				ms = Model110Bizkaia.ModelScript.values();
-			} else {
-				ms = Model111Bizkaia.ModelScript.values();
-			}
-		} else if (mod111.getAdministration() == Administration.NAVARRA) {
-			if (mod111.getPeriod().isQuarterPeriod()) {
-				ms = Model715Navarra.ModelScript.values();
-			} else {
-				ms = Model745Navarra.ModelScript.values();
-			}
-		} else if (mod111.getAdministration() == Administration.ALAVA) {
-			if (mod111.getYear() > 2015) {
-				ms = Model111Araba2016.ModelScript.values();
-			} else {
-				ms = Model111Araba.ModelScript.values();
-			}
-		}
-		if (ms == null) {
-			throw new IllegalStateException(
-					"No hay declaración disponible para: " + mod111.getAdministration().toString() + " "
-							+ mod111.getYear() + " " + mod111.getPeriod().getDescription());
-		}
-		return ms;
 	}
 
 }

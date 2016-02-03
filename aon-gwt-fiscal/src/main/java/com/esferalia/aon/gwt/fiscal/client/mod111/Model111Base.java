@@ -6,10 +6,13 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
+import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model111.IFiscalModelCallback;
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model111.IMod111Declaration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
+import com.esferalia.aon.occam.api.model.fiscal.mod111.IModelScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod111.Model111ScriptProvider;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -29,13 +32,6 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 
 public abstract class Model111Base extends ResizeComposite implements RequiresResize, IMod111Declaration {
 
-	public static interface IModelScript {
-		String getLabel();
-		Mod111Key[] getKeys();
-		boolean isEnabled();
-		Mod111KeyInfo getInfoKey();
-	}
-	
 	protected static final boolean ENABLED = true;
 	protected static final boolean DISABLED = false;
 	protected static final boolean HAS_INFO = true;
@@ -54,7 +50,6 @@ public abstract class Model111Base extends ResizeComposite implements RequiresRe
 		}
 	}; 
 
-	
 	public Model111Base(IFiscalModelCallback<Mod111> callback) {
 		this.callback = callback;
 		fieldsMap = new EnumMap<>(Mod111Key.class);
@@ -74,7 +69,20 @@ public abstract class Model111Base extends ResizeComposite implements RequiresRe
 		return fieldsMap;
 	}
 	
-	protected abstract void paintDeclaration(final Mod111 mod111);
+	protected void paintDeclaration(final Mod111 mod111) {
+		if (getTable().getRowCount() > 0) {
+			getTable().removeAllRows();
+		}
+		defineTable();
+		
+		for (IModelScript ms : Model111ScriptProvider.obtainScript(mod111)) {
+			if (ms.paintHeaderBefore()) {
+				paintHeader();
+			}
+			paintRow(mod111,ms);	
+		}
+	}
+
 	
 	protected void defineTable() {
 		getTable().setWidth("100%");
@@ -142,28 +150,36 @@ public abstract class Model111Base extends ResizeComposite implements RequiresRe
 	}
 
 	protected void paintRow(final Mod111 mod111, IModelScript script) {
-		int row = table.getRowCount();
-		paintLabel(row,mod111,script);
-		if (script.getKeys() == null) {
-			table.getFlexCellFormatter().setColSpan(row, 0, COL_NUMBER);	
+		if (script.hasGraphicParticularity()) {
+			paintParticularyRow(mod111,script);		
 		} else {
-			table.getFlexCellFormatter().setColSpan(row, 0, 
-					(script.getKeys().length==1
-						?5:
-						(script.getKeys().length==2
-							?3
-							:1)
-					) 
-				);
-			int col = 1;
-			for (Mod111Key key : script.getKeys()) {
-				col = paintBox( row, col, key );
-				col = paintField( row, col, mod111, script, key );
+			int row = table.getRowCount();
+			paintLabel(row,mod111,script);
+			if (script.getKeys() == null) {
+				table.getFlexCellFormatter().setColSpan(row, 0, COL_NUMBER);	
+			} else {
+				table.getFlexCellFormatter().setColSpan(row, 0, 
+						(script.getKeys().length==1
+							?5:
+							(script.getKeys().length==2
+								?3
+								:1)
+						) 
+					);
+				int col = 1;
+				for (Mod111Key key : script.getKeys()) {
+					col = paintBox( row, col, key );
+					col = paintField( row, col, mod111, script, key );
+				}
+				paintInfoCol(row,col,mod111,script);	
 			}
-			paintInfoCol(row,col,mod111,script);	
 		}
 	}
-
+	
+	protected void paintParticularyRow(final Mod111 mod111, IModelScript script) {
+		
+	}
+	
 	protected void paintLabel( int row,Mod111 mod111, IModelScript script) {
 		String labelText = script.getLabel();
 		Label label = new Label();
@@ -266,12 +282,12 @@ public abstract class Model111Base extends ResizeComposite implements RequiresRe
 			);	
 	}
 	
-	protected FlowPanel getAnchorPanel(String label, String href) {
+	protected FlowPanel getAnchorPanel(Mod111 mod111, String label, String href) {
 		FlowPanel p = new FlowPanel();
 		p.setStyleName(AON.AON_CSS.aonPadding2());
 		Anchor a = new Anchor(label,href,"_blank");
 		a.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-		a.addStyleName(AON.AON_CSS.aonIconPdfPreview());
+		a.addStyleName(FiscalModelUtils.getAdministrationIcon(mod111.getAdministration()));
 		p.add(a);
 		return p;
 	}

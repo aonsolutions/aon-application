@@ -38,6 +38,7 @@ public class Model111Table extends CellTable<Mod111> {
 		addYearColumn();
 		addPeriodColumn();
 		addAdministrationColumn();
+		addModelColumn();
 		addStatusColumn();
 		addReplacementColumn();
 		addComplementaryColumn();
@@ -62,6 +63,29 @@ public class Model111Table extends CellTable<Mod111> {
 		this.setColumnWidth(selectorColumn, 20, Unit.PX);
 	}
 
+	private void addYearColumn() {
+		final TextColumn<Mod111> yearColumn = new TextColumn<Mod111>() {
+			@Override
+			public String getValue(Mod111 mod111) {
+				return Integer.toString(mod111.getYear());
+			}
+		};
+		this.addColumn(yearColumn, AON.MSG.fiscalYear());
+		yearColumn.setCellStyleNames(AON.AON_CSS.aonTextCenter());
+		this.setColumnWidth(yearColumn, 100, Unit.PX);
+	}
+
+	private void addPeriodColumn() {
+		final TextColumn<Mod111> documentColumn = new TextColumn<Mod111>() {
+			@Override
+			public String getValue(Mod111 mod111) {
+				return mod111.getPeriod().getDescription();
+			}
+		};
+		this.addColumn(documentColumn, AON.MSG.period());
+		this.setColumnWidth(documentColumn, 75, Unit.PX);
+	}
+
 	private void addAdministrationColumn() {
 		final Column<Mod111, ImageResource> iconColumn = new Column<Mod111, ImageResource>(
 				new ImageResourceCell()) {
@@ -74,6 +98,18 @@ public class Model111Table extends CellTable<Mod111> {
 		this.setColumnWidth(iconColumn, 20, Unit.PX);
 	}
 	
+	private void addModelColumn() {
+		final TextColumn<Mod111> modelColumn = new TextColumn<Mod111>() {
+			@Override
+			public String getValue(Mod111 mod111) {
+				return mod111.getModel().getName(mod111.getAdministration(), mod111.getPeriod());
+			}
+		};
+		this.addColumn(modelColumn, AON.MSG.model());
+		modelColumn.setCellStyleNames(AON.AON_CSS.aonTextCenter());
+		this.setColumnWidth(modelColumn, 50, Unit.PX);
+	}
+
 	private void addStatusColumn() {
 		final Column<Mod111, ImageResource> iconColumn = new Column<Mod111, ImageResource>(
 				new ImageResourceCell()) {
@@ -86,18 +122,6 @@ public class Model111Table extends CellTable<Mod111> {
 		};
 		this.addColumn(iconColumn, "E" );
 		this.setColumnWidth(iconColumn, 20, Unit.PX);
-	}
-
-	private void addYearColumn() {
-		final TextColumn<Mod111> yearColumn = new TextColumn<Mod111>() {
-			@Override
-			public String getValue(Mod111 mod111) {
-				return Integer.toString(mod111.getYear());
-			}
-		};
-		this.addColumn(yearColumn, AON.MSG.fiscalYear());
-		yearColumn.setCellStyleNames(AON.AON_CSS.aonTextCenter());
-		this.setColumnWidth(yearColumn, 100, Unit.PX);
 	}
 	
 	private void addReplacementColumn() {
@@ -129,17 +153,6 @@ public class Model111Table extends CellTable<Mod111> {
 		this.setColumnWidth(complementaryColumn, 100, Unit.PX);
 	}
 	
-	private void addNameColumn() {
-		final TextColumn<Mod111> nameColumn = new TextColumn<Mod111>() {
-			@Override
-			public String getValue(Mod111 mod111) {
-				return mod111.getFullName();
-			}
-		};
-		this.addColumn(nameColumn, AON.MSG.name());
-		this.setColumnWidth(nameColumn, 100, Unit.PCT);
-	}	
-
 	private void addDocumentColumn() {
 		final TextColumn<Mod111> documentColumn = new TextColumn<Mod111>() {
 			@Override
@@ -151,16 +164,16 @@ public class Model111Table extends CellTable<Mod111> {
 		this.setColumnWidth(documentColumn, 150, Unit.PX);
 	}
 
-	private void addPeriodColumn() {
-		final TextColumn<Mod111> documentColumn = new TextColumn<Mod111>() {
+	private void addNameColumn() {
+		final TextColumn<Mod111> nameColumn = new TextColumn<Mod111>() {
 			@Override
 			public String getValue(Mod111 mod111) {
-				return mod111.getPeriod().getDescription();
+				return mod111.getFullName();
 			}
 		};
-		this.addColumn(documentColumn, AON.MSG.period());
-		this.setColumnWidth(documentColumn, 75, Unit.PX);
-	}
+		this.addColumn(nameColumn, AON.MSG.name());
+		this.setColumnWidth(nameColumn, 100, Unit.PCT);
+	}	
 
 	public Mod111 getSelected() {
 		return model.getLastSelectedObject();

@@ -197,6 +197,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Integral fiscal")
 	String fiscalPanel();
 
+	@DefaultMessage("Modelo")
+	String model();
+
 	@DefaultMessage("Modelo 111")
 	String mod111();
 

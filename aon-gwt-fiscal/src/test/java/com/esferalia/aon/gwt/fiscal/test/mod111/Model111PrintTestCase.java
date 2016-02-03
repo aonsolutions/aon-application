@@ -4,20 +4,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model110Bizkaia;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model110Gipuzkoa;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model111AEAT;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model111Araba;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model111Araba2016;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model111Base.IModelScript;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model111Bizkaia;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model111Gipuzkoa;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model715Navarra;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model745Navarra;
 import com.esferalia.aon.gwt.fiscal.server.FiscalModelExcelAction;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
-import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.fiscal.mod111.IModelScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod111.Model111ScriptProvider;
 
 public class Model111PrintTestCase {
 
@@ -30,46 +21,9 @@ public class Model111PrintTestCase {
 		for (Mod111 mod111 : list) {
 			if (mod111.getYear() == 2015) {
 				mod111 = AON.getMod111(DOMAIN_NAME, DOMAIN_ID, USER, mod111.getId());
-				toExcel(mod111, obtainScript(mod111));
+				toExcel(mod111, Model111ScriptProvider.obtainScript(mod111));
 			}
 		}
-	}
-
-	private static IModelScript[] obtainScript(Mod111 mod111) {
-		IModelScript[] ms = null;
-		if (mod111.getAdministration() == Administration.COMMON_TERRITORY) {
-			ms = Model111AEAT.ModelScript.values();
-		} else if (mod111.getAdministration() == Administration.GIPUZKOA) {
-			if (mod111.getPeriod().isQuarterPeriod()) {
-				ms = Model110Gipuzkoa.ModelScript.values();
-			} else {
-				ms = Model111Gipuzkoa.ModelScript.values();
-			}
-		} else if (mod111.getAdministration() == Administration.BIZKAIA) {
-			if (mod111.getPeriod().isQuarterPeriod()) {
-				ms = Model110Bizkaia.ModelScript.values();
-			} else {
-				ms = Model111Bizkaia.ModelScript.values();
-			}
-		} else if (mod111.getAdministration() == Administration.NAVARRA) {
-			if (mod111.getPeriod().isQuarterPeriod()) {
-				ms = Model715Navarra.ModelScript.values();
-			} else {
-				ms = Model745Navarra.ModelScript.values();
-			}
-		} else if (mod111.getAdministration() == Administration.ALAVA) {
-			if (mod111.getYear() > 2015) {
-				ms = Model111Araba2016.ModelScript.values();
-			} else {
-				ms = Model111Araba.ModelScript.values();
-			}
-		}
-		if (ms == null) {
-			throw new IllegalStateException(
-					"No hay declaración disponible para: " + mod111.getAdministration().toString() + " "
-							+ mod111.getYear() + " " + mod111.getPeriod().getDescription());
-		}
-		return ms;
 	}
 
 	private static void toExcel(Mod111 mod111, IModelScript[] script) throws IOException {

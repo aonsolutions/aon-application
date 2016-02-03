@@ -20,8 +20,8 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model111Base.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
+import com.esferalia.aon.occam.api.model.fiscal.mod111.IModelScript;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -111,7 +111,6 @@ public class FiscalModelExcelAction extends AbsExcelAction {
 
 		printModelInfo();
 
-		headerRow();
 	}
 
 	@Override
@@ -150,6 +149,9 @@ public class FiscalModelExcelAction extends AbsExcelAction {
 	}
 
 	public void accept(IModelScript ms) {
+		if (ms.paintHeaderBefore()) {
+			headerRow();
+		}
 		row = sheet.createRow(rowCount++);
 		String concept = AonStringUtils.trimToEmpty(ms.getLabel());
 		int l = AonStringUtils.length(concept);

@@ -14,11 +14,11 @@ public class Model111Gipuzkoa extends Model110Gipuzkoa {
 
 	
 	@Override
-	public Widget getInfoPanel() {
+	public Widget getInfoPanel(Mod111 mod111) {
 
 		FlowPanel panel = new FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonScrollArea());
-		panel.add(getAnchorPanel(
+		panel.add(getAnchorPanel(mod111,
 				"Informaci\u00F3n tributaria"
 				, "http://www2.gipuzkoa.net/wps/portal/!ut/p/b1/hZDbjqpAEEW_Z"
 				+ "T6ANNCK-NjcBhBa7ki_EJCLiICMFxq_fpxkTk5ykqNVT5XsVbVrAwKS1VL"
