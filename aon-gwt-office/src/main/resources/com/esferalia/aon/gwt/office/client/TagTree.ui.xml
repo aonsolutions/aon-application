@@ -5,11 +5,33 @@
 	.stackHeader {
 		padding: .7em .5em .7em .6em;
 	}
+	
+	.newButton {
+		float: right;
+	}
+	
+	.legend-icon {
+		margin-top: 3px;
+	}
 	</ui:style>
 
 	<g:DockLayoutPanel unit='PX'>
 		<g:north size='26'>
-			<aon:OptionsToolbar ui:field="toolbar" />
+			<g:FlowPanel styleName="gwt-MenuBar-horizontal" ui:field="buttonBar">
+				<g:HTMLPanel styleName="{style.legend-icon}">
+					<g:Button ui:field='draftButton'
+						styleName='aon-editDataTable-button aon-icon-draft {style.newButton}'
+						title="Eliminar" />
+
+					<g:Button ui:field='newButton'
+						styleName='aon-editDataTable-button aon-icon-reset {style.newButton}'
+						title="Nuevo" />
+
+					<g:Button ui:field='hideButton'
+						styleName='aon-editDataTable-button aon-icon-cancel {style.newButton}'
+						title="Ocultar" />
+				</g:HTMLPanel>
+			</g:FlowPanel>
 		</g:north>
 		<g:center>
 			<g:ScrollPanel>
@@ -17,7 +39,7 @@
 					<g:TreeItem ui:field="statusTreeItem" text="Estado" />
 					<g:TreeItem ui:field="priorityTreeItem" text="Prioridad" />
 					<g:TreeItem ui:field="typeTreeItem" text="Tipo" />
-					<g:TreeItem ui:field="issueTreeItem" text="Incidencia"/>
+					<g:TreeItem ui:field="issueTreeItem" text="Incidencia" />
 				</g:Tree>
 			</g:ScrollPanel>
 		</g:center>

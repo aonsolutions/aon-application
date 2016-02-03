@@ -139,7 +139,9 @@
 
 				<tr>
 					<td colspan="2">
-						<g:InlineLabel ui:field="loggedLabel" />
+						<g:InlineLabel styleName="{aonResources.css.aonBold}" text="Usuario: "/>
+						<g:InlineLabel ui:field="loggedLabel" styleName="{aonResources.css.aonColorGreen}" />
+						
 					</td>
 					<td>
 						<div class="{style.buttons}">

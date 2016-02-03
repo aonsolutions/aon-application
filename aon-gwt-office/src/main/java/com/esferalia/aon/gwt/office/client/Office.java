@@ -54,15 +54,13 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	@UiField
 	Button newIssueButton;
 	@UiField
-	Button returnButton;
-	@UiField
 	Button openIssuesButton;
 	@UiField
 	Button closedIssuesButton;
 	@UiField
 	Button tagButton;
 	@UiField
-	Button visibleButton;
+	Button returnButton;
 	@UiField
 	DeckLayoutPanel deckPanel;
 	@UiField
@@ -237,13 +235,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	@UiHandler("tagButton")
 	void onTagButtonClick(ClickEvent event) {
 		dockLayoutPanel.setWidgetSize(Office.this.stackLayoutPanel, 220);
-		visibleButton.setVisible(true);
-	}
-
-	@UiHandler("visibleButton")
-	void onVisibleButtonClick(ClickEvent event) {
-		dockLayoutPanel.setWidgetSize(Office.this.stackLayoutPanel, 0);
-		visibleButton.setVisible(false);
 	}
 
 	@UiHandler("returnButton")
@@ -394,6 +385,11 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 					}
 				});
+	}
+	
+	@Override
+	public void onHideTagsPanel() {
+		dockLayoutPanel.setWidgetSize(Office.this.stackLayoutPanel, 0);
 	}
 
 	// ******************************************************************

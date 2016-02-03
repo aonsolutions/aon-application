@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.office.client;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.esferalia.aon.gwt.common.client.widget.OptionsToolbar;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.google.gwt.core.client.GWT;
@@ -15,20 +14,24 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
-public class TagTree extends Composite implements OptionsToolbar.Listener,
-		SelectionHandler<TreeItem>, KeyDownHandler {
+public class TagTree extends Composite
+		implements SelectionHandler<TreeItem>, KeyDownHandler {
 
 	interface Listener {
 
 		void onAddNewTag(Tag tag);
 
 		void onDeleteTag(Tag tag);
+		
+		void onHideTagsPanel();
 	}
 
 	private static TagTreeUiBinder uiBinder = GWT.create(TagTreeUiBinder.class);
@@ -49,19 +52,21 @@ public class TagTree extends Composite implements OptionsToolbar.Listener,
 	TreeItem issueTreeItem;
 
 	@UiField
-	OptionsToolbar toolbar;
+	Button draftButton;
+	@UiField
+	Button newButton;
+	@UiField
+	Button hideButton;
 
 	private Tag tagSelected;
 	private List<Listener> listeners;
 
 	public TagTree() {
-		initWidget(uiBinder.createAndBindUi(this));		
+		initWidget(uiBinder.createAndBindUi(this));
 
 		listeners = new LinkedList<Listener>();
 		tree.addSelectionHandler(this);
 		tree.addKeyDownHandler(this);
-		toolbar.addListener(this);
-		initOptionsToolbar();
 	}
 
 	public void insertTag(Tag tag) {
@@ -71,12 +76,12 @@ public class TagTree extends Composite implements OptionsToolbar.Listener,
 		getTreeItem(tag.getType()).addItem(treeItem);
 		getTreeItem(tag.getType()).setState(true);
 	}
-	
+
 	private void deleteTag(Tag tag) {
-		
+
 		TreeItem treeItem = getTreeItem(tag.getType());
-		for ( int x = 0; x < treeItem.getChildCount() ; x++) {
-			if ( treeItem.getChild(x).getText().compareTo(tag.getName()) == 0)
+		for (int x = 0; x < treeItem.getChildCount(); x++) {
+			if (treeItem.getChild(x).getText().compareTo(tag.getName()) == 0)
 				treeItem.removeItem(treeItem.getChild(x));
 		}
 	}
@@ -93,13 +98,6 @@ public class TagTree extends Composite implements OptionsToolbar.Listener,
 			return issueTreeItem;
 	}
 
-	private void initOptionsToolbar() {
-		toolbar.setVisibleCollapseButton(false);
-		toolbar.setVisibleCopyButton(false);
-		toolbar.setVisiblePasteButton(false);
-		toolbar.setVisibleViewButton(false);
-	}
-
 	public void addListener(Listener listener) {
 		this.listeners.add(listener);
 	}
@@ -107,10 +105,9 @@ public class TagTree extends Composite implements OptionsToolbar.Listener,
 	public void removeListener(Listener listener) {
 		this.listeners.remove(listener);
 	}
-
-	@Override
-	public void onNewButtonClick(ClickEvent event) {
-
+	
+	@UiHandler("newButton")
+	void onNewButtonClick(ClickEvent event) {
 		new TagDialog() {
 			{
 				center();
@@ -130,12 +127,24 @@ public class TagTree extends Composite implements OptionsToolbar.Listener,
 					if (evalNameOfTag(tag))
 						Window.alert("Etiqueta repetida");
 					else {
-						onAddNewTag(tag);						
+						onAddNewTag(tag);
 						hide();
 					}
 				}
 			}
 		};
+	}
+	
+	@UiHandler("draftButton")
+	void onDraftButtonClick(ClickEvent event) {
+		if (tagSelected != null)
+			confirm2Delete(tagSelected);
+	}
+	
+	@UiHandler("hideButton")
+	void onHideButtonClick(ClickEvent event) {
+		for (Listener listener : listeners)
+			listener.onHideTagsPanel();
 	}
 
 	@Override
@@ -169,7 +178,7 @@ public class TagTree extends Composite implements OptionsToolbar.Listener,
 	public void onDeleteTag(Tag tag) {
 		for (Listener listener : listeners)
 			listener.onDeleteTag(tag);
-		
+
 		deleteTag(tag);
 	}
 
@@ -178,10 +187,10 @@ public class TagTree extends Composite implements OptionsToolbar.Listener,
 	private boolean evalNameOfTag(Tag tag) {
 
 		boolean encontrado = false;
-		
-		for ( int y = 0 ; y < tree.getItemCount(); y++) {
+
+		for (int y = 0; y < tree.getItemCount(); y++) {
 			TreeItem treeItem = tree.getItem(y);
-			for ( int x = 0; x < treeItem.getChildCount(); x++) {
+			for (int x = 0; x < treeItem.getChildCount(); x++) {
 				TreeItem childTree = treeItem.getChild(x);
 				if (childTree.getText().toUpperCase()
 						.compareTo(tag.getName().toUpperCase()) == 0)
@@ -190,32 +199,11 @@ public class TagTree extends Composite implements OptionsToolbar.Listener,
 		}
 		return encontrado;
 	}
-	
+
 	private void confirm2Delete(Tag tag) {
-		
-		if (Window.confirm("\u00BFDesea borrar la etiqueta " + tagSelected.getName() + "?"))
+
+		if (Window.confirm("\u00BFDesea borrar la etiqueta "
+				+ tagSelected.getName() + "?"))
 			onDeleteTag(tagSelected);
 	}
- 
-	@Override
-	public void onPasteButtonClick(ClickEvent event) {
-		// NOTHING TODO
-	}
-
-	@Override
-	public void onCopyButtonClick(ClickEvent event) {
-		// NOTHING TODO
-	}
-
-	@Override
-	public void onDraftButtonClick(ClickEvent event) {
-		if (tagSelected != null)
-			confirm2Delete(tagSelected);
-	}
-
-	@Override
-	public void onCollapseAllButtonClick(ClickEvent event) {
-		// NOTHING TODO
-	}
-
 }

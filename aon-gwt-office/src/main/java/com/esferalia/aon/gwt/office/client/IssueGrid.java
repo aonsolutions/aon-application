@@ -381,16 +381,14 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
-			// td.className(rowValue.getStateIconStyle());
-			// td.title("");
+			td.style().cursor(Cursor.POINTER);
 			td.className(AON.AON_CSS.aonDataTableTextColumn());
 			renderCell(td, createContext(col++), ownerColumn, rowValue);
 			td.endTD();
 
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
-			// td.className(rowValue.getStateIconStyle());
-			// td.title("");
+			td.style().cursor(Cursor.POINTER);
 			td.className(AON.AON_CSS.aonDataTableTextColumn());
 			renderCell(td, createContext(col++), companyColumn, rowValue);
 			td.endTD();
@@ -404,6 +402,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_LEFT.getTextAlignString());
+			td.style().cursor(Cursor.POINTER);
 			renderCell(td, createContext(col++), labels, rowValue);
 			td.endTD();
 
@@ -519,32 +518,48 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 			@Override
 			public void update(int index, IssueSelected object, String value) {
-				for (Listener listener : listeners)
-					listener.onSelectionTitle(object);
+				onSelectionTitle(object);
 			}
 
 		});
 		setColumnWidth(col++, 40, Unit.PX);
 
-		ownerColumn = new Column<IssueSelected, String>(new TextCell()) {
+		ownerColumn = new Column<IssueSelected, String>(new ClickableTextCell()) {
 
 			@Override
 			public String getValue(IssueSelected object) {
 				return object.getUser().getName();
 			}
 		};
+		
+		ownerColumn.setFieldUpdater(new FieldUpdater<IssueSelected, String>() {
+
+			@Override
+			public void update(int index, IssueSelected object, String value) {
+				onSelectionTitle(object);
+			}
+		});
+		
 		setColumnWidth(col++, 60, Unit.PX);
 
-		companyColumn = new Column<IssueSelected, String>(new TextCell()) {
+		companyColumn = new Column<IssueSelected, String>(new ClickableTextCell()) {
 
 			@Override
 			public String getValue(IssueSelected object) {
 				return object.getCompany();
 			}
 		};
+		
+		companyColumn.setFieldUpdater(new FieldUpdater<IssueSelected, String>() {
+
+			@Override
+			public void update(int index, IssueSelected object, String value) {
+				onSelectionTitle(object);
+			}
+		});
 		setColumnWidth(col++, 60, Unit.PX);
 
-		labels = new Column<IssueSelected, String>(new TextCell()) {
+		labels = new Column<IssueSelected, String>(new ClickableTextCell()) {
 
 			@Override
 			public String getValue(IssueSelected object) {
@@ -561,6 +576,14 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 			}
 		};
+		
+		labels.setFieldUpdater(new FieldUpdater<IssueSelected, String>() {
+
+			@Override
+			public void update(int index, IssueSelected object, String value) {
+				onSelectionTitle(object);
+			}
+		});
 		setColumnWidth(col++, 60, Unit.PX);
 		
 		createdAt = new Column<IssueSelected, Date>(new DateCell()) {
@@ -579,6 +602,11 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 	public void clearSelected(IssueSelected object) {
 		selectionModel.setSelected(object, false);
+	}
+	
+	private void onSelectionTitle(IssueSelected issue) {
+		for (Listener listener : listeners)
+			listener.onSelectionTitle(issue);
 	}
 
 }

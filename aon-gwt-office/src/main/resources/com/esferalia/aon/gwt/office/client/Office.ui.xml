@@ -88,9 +88,6 @@
 							<g:Button ui:field='tagButton'
 								styleName='aon-finding-toolbar-item {aonResources.css.aonIconReset}'
 								text="ETIQUETAS" />
-							<g:Button ui:field='visibleButton'
-								styleName='aon-finding-toolbar-item {aonResources.css.aonIconCancel}'
-								text="OCULTAR" visible="false" />
 							<g:Button ui:field='returnButton'
 								styleName='aon-finding-toolbar-item {aonResources.css.aonIconCancel}'
 								text="VOLVER" enabled="false" />
