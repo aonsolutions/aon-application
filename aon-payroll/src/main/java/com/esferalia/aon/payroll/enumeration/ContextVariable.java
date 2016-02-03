@@ -108,6 +108,7 @@ public enum ContextVariable implements IResourceable{
 	NON_STRUCTURAL_OVERTIME_BASE("BASE_NESTR", VariableType.DOUBLE),
 	MATERNITY_BASE("BASE_MTNAD", VariableType.DOUBLE),
 	ERE_BASE("BASE_ERE", VariableType.DOUBLE),
+	DIRECT_BASE("BASE_PAGO_DIRECTO", VariableType.DOUBLE),
 
 	CGC_BASE_RAW("BASE_CGC_BRUTA", VariableType.DOUBLE),
 	CGP_BASE_RAW("BASE_CGP_BRUTA", VariableType.DOUBLE),
@@ -241,6 +242,7 @@ public enum ContextVariable implements IResourceable{
 	CONDITIONS_CHANGE("CAMBIO_CONDICIONES", VariableType.UNKNOWN),
 	
 	PREST_IT("PREST_IT", VariableType.DOUBLE),
+	DIRECT_PAY("PAGO_DIRECTO", VariableType.BOOLEAN),
 	
 	MONTHLY_SALARY("MODALIDAD_MENSUAL", VariableType.BOOLEAN)
 

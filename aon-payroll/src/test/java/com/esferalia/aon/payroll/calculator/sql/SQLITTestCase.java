@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MAX;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_DAYS;
@@ -43,8 +44,11 @@ import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
@@ -1666,5 +1670,177 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		.count();
 		Assert.assertEquals(1, count);
 	}
+	
+	@Test
+	public void testCommonDiseaseIT365() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemCosts(aonContext);
+		
+		addSSRegimeCost(aonContext, 
+				SSRegimeType.GENERAL, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				"CGC_E", 
+				DeductionType.ADVANCE_PAYMENT, 
+				"BASE_CGC_E * 23.60/100");
+		addSSRegimeCost(aonContext, 
+				SSRegimeType.GENERAL, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				"ECSS_E", 
+				DeductionType.ADVANCE_PAYMENT, 
+				"NOMINA ? ( -1 * DIAS_ENFERMEDAD_COMUN_21 * BASE_REGULADORA * 0.75  ) : REMOVE()");
+		
+		
+		//@formatter:offhttp://www.marca.com/motor/formula1/2016/01/08/5690143c268e3e041d8b457d.html?cid=GEN35403
+		ContractRecord contract = newContract(aonContext,
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String, String>(){
+					{
+						put(ContextVariable.MONTH_DAYS.getName(), "30");
+						put(ContextVariable.TC2.getName(), format("\"%s\"",
+								ContractCode.C100.getValue()));
+					}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				"TRACE('BASE_CGP=%f\r\n', BASE_CGP);BASE_CGC * 1.55 / 100",
+				"TRACE('BASE_CGP=%f\r\n', BASE_CGP);BASE_CGC * 0.10 / 100",
+				"TRACE('DIAS_IT_COTIZADOS=%f\r\n', DIAS_IT_COTIZADOS);0.00",
+				}, null);
+		//@formatter:on
+		
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		PaymentConceptRecord directPay = addConcept(aonContext, DIRECT_PAY.getName());
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.75 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, directPay, 
+				String.format("BASE_REGULADORA * 0.00 * %s_366",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * %s",  QUOTE_DAYS)
+				);
+		//@formatter:on
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), Calendar.DAY_OF_MONTH , 9);
+		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate, null, 100.00);
+		
+		Date _365Date = AonDateUtils.add(startITDate, Calendar.DAY_OF_MONTH,364);
+		Date startDate = getFirstDayOfMonth(_365Date);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		cleanSystemCosts(aonContext);
+
+		Assert.assertEquals(get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
+		Assert.assertEquals(30.00 * 100.00 , salary.getCommonBase() );
+		
+		Assert.assertEquals( get(_365Date, DAY_OF_MONTH)* 100.00 * 1.65 / 100.00 , 
+				salary.getSocialSecurityContributions(), DELTA);
+
+		Assert.assertEquals(
+				(30.00 * 100.00* 23.60 / 100.00)+ 
+				(-1)*get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75
+				
+				, salary.getTotalEnterprise()
+				, DELTA );
+
+	}
+
+	@Test
+	public void testProfessionalDiseaseIT365() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemCosts(aonContext);
+		
+		addSSRegimeCost(aonContext, 
+				SSRegimeType.GENERAL, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				"CGC_E", 
+				DeductionType.ADVANCE_PAYMENT, 
+				"BASE_CGC_E * 23.60/100");
+		addSSRegimeCost(aonContext, 
+				SSRegimeType.GENERAL, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				"ATEP_E", 
+				DeductionType.ADVANCE_PAYMENT, 
+				"NOMINA ? ( -1 * DIAS_ENFERMEDAD_PROFESIONAL * BASE_REGULADORA * 0.75 ) : REMOVE()");
+		
+		
+		//@formatter:offhttp://www.marca.com/motor/formula1/2016/01/08/5690143c268e3e041d8b457d.html?cid=GEN35403
+		ContractRecord contract = newContract(aonContext,
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String, String>(){
+					{
+						put(ContextVariable.MONTH_DAYS.getName(), "30");
+						put(ContextVariable.TC2.getName(), format("\"%s\"",
+								ContractCode.C100.getValue()));
+					}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				"TRACE('BASE_CGP=%f\r\n', BASE_CGP);BASE_CGC * 1.55 / 100",
+				"TRACE('BASE_CGP=%f\r\n', BASE_CGP);BASE_CGC * 0.10 / 100",
+				"TRACE('DIAS_IT_COTIZADOS=%f\r\n', DIAS_IT_COTIZADOS);0.00",
+				}, null);
+		//@formatter:on
+		
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.75 * %s",  OCCUPATIONAL_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		PaymentConceptRecord directPay = addConcept(aonContext, DIRECT_PAY.getName());
+		addPayment(aonContext, contract, directPay, 
+				String.format("BASE_REGULADORA * 0.00 * %s_366",  OCCUPATIONAL_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		//@formatter:on
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), Calendar.DAY_OF_MONTH , 9);
+		
+		addIT(aonContext, contract, LeaveType.OCCUPATIONAL_DISEASE, startITDate, null, 100.00);
+		
+		Date _365Date = AonDateUtils.add(startITDate, Calendar.DAY_OF_MONTH,364);
+		Date startDate = getFirstDayOfMonth(_365Date);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		cleanSystemCosts(aonContext);
+
+		Assert.assertEquals(get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
+		Assert.assertEquals(30.00* 100.00 , salary.getCommonBase() );
+		
+		Assert.assertEquals( get(_365Date, DAY_OF_MONTH)* 100.00 * 1.65 / 100.00 , 
+				salary.getSocialSecurityContributions(), DELTA);
+
+		Assert.assertEquals((30.00* 100.00 * 23.60/100.00)+(-1)*get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75, salary.getTotalEnterprise() );
+
+	}
+	
 	
 }

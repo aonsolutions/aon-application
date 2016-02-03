@@ -517,6 +517,9 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			Double maternityBase = quoteCalculator.getMaternityBase();
 			if ( maternityBase != null ) 
 				cgcBase += maternityBase;
+			Double directPayBase = quoteCalculator.getDirectPayBase();
+			if ( directPayBase != null ) 
+				cgcBase += directPayBase;
 			salaryBuilder.setCgcBase(cgcBase);
 
 			if (cgcBase != null )
@@ -533,6 +536,8 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 				cgpBase += ereBase;
 			if ( maternityBase != null ) 
 				cgpBase += maternityBase;
+			if ( directPayBase != null ) 
+				cgpBase += directPayBase;
 			salaryBuilder.setCgpBase(cgpBase);
 			if (cgpBase != null )
 				expressionContext.setVariable(CGP_BASE_ENTERPRISE,
@@ -636,6 +641,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 					onUndefinedData(contractDeduction, e.getMessage(),
 							e.getVariableNames());
 				} catch (CompileException e) {
+					e.printStackTrace();
 					onCompileError(contractDeduction, e.getMessage());
 				}
 

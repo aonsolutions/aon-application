@@ -23,6 +23,9 @@ import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.watson.util.AonDateUtils;
+
+import net.sf.cglib.transform.impl.AddDelegateTransformer;
 
 public class ContractLeaveLoader {
 
@@ -31,8 +34,9 @@ public class ContractLeaveLoader {
 	public static class Leave extends Period {
 		private Integer id;
 		private LeaveType type;
+		private int  parentDays;
 
-		public Leave(Integer id, Date start, Date end, LeaveType type) {
+		public Leave(Integer id, Date start, Date end, LeaveType type, int parentDays) {
 			super(start, end);
 			this.id = id;
 			this.type = type;
@@ -45,6 +49,11 @@ public class ContractLeaveLoader {
 		public LeaveType getType() {
 			return type;
 		}
+		
+		public int getParentDays() {
+			return parentDays;
+		}
+		
 
 	}
 
@@ -79,9 +88,31 @@ public class ContractLeaveLoader {
 		}
 	}
 
-	protected static final DaysRange RANGES[] = { new DaysRange(1, 3),
-			new DaysRange(4, 15), new DaysRange(16, 20), new DaysRange(21) };
-
+	//@formatter:off
+	protected static final DaysRange COMMON_RANGES[] = { 
+			new DaysRange(1, 3),
+			new DaysRange(4, 15), 
+			new DaysRange(16, 20), 
+			new DaysRange(21, 365){
+				public String getName(ContextVariable variable) {
+					return String.format("%s_%d", variable, start);
+				};
+			}, 
+			new DaysRange(366), 
+			};
+	//@formatter:on
+	//@formatter:off
+	protected static final DaysRange PROFESSIONAL_RANGES[] = { 
+			new DaysRange(1, 365){
+				public String getName(ContextVariable variable) {
+					return String.format("%s", variable);
+				};
+			}, 
+			new DaysRange(366), 
+			};
+	//@formatter:on
+	
+	
 	protected final class QuoteDays implements ITimedVariable<Double> {
 		
 		private final Date end;
@@ -186,12 +217,13 @@ public class ContractLeaveLoader {
 
 		exprCtx.setVariable(ContextVariable.LEAVE_DAYS, leaveDays, start, end);
 		
-
+		
 		type.accept(new LeaveTypeVisitor<Void>() {
 
 			@Override
 			public Void visitCommonDisease(LeaveType leaveType) {
-				for (DaysRange range : RANGES) {
+				
+				for (DaysRange range : COMMON_RANGES) {
 					
 					String name = range
 							.getName(ContextVariable.COMMON_DISEASE_DAYS);
@@ -230,13 +262,43 @@ public class ContractLeaveLoader {
 
 			@Override
 			public Void visitOcupationalDisease(LeaveType leaveType) {
-				long days = parentDays == 0 ? leaveDays - 1 : leaveDays;
-				if (days <= 0)
-					return null;
-				exprCtx.setVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS,
-						days, start, end);
-				exprCtx.putVariable(QUOTE_DAYS, 
-						new QuoteDays(exprCtx, start, end));
+				
+				for (DaysRange range : PROFESSIONAL_RANGES) {
+					
+					String name = range
+							.getName(ContextVariable.OCCUPATIONAL_DISEASE_DAYS);
+
+					long days = range.getDays(parentDays, leaveDays);
+
+					if (days == 0) {
+						//exprCtx.setVariable(name, days, start, end);
+						continue;
+					}
+
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(leaveStart);
+					calendar.add(Calendar.DATE,
+							(int) (range.start - 1 - parentDays));
+					Date rangeStart = Period.max(calendar.getTime(), start);
+
+					calendar.setTime(rangeStart);
+					calendar.add(Calendar.DATE, (int) days - 1);
+					Date rangeEnd = calendar.getTime();
+					
+					Date varStart = Period.max(rangeStart, start);
+					exprCtx.setVariable(name, days,
+							varStart, rangeEnd);
+					exprCtx.putVariable(QUOTE_DAYS, 
+							new QuoteDays(exprCtx, start, end));
+				}
+
+//				long days = parentDays == 0 ? leaveDays - 1 : leaveDays;
+//				if (days <= 0)
+//					return null;
+//				exprCtx.setVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS,
+//						days, start, end);
+//				exprCtx.putVariable(QUOTE_DAYS, 
+//						new QuoteDays(exprCtx, start, end));
 				return null;
 			}
 
@@ -280,7 +342,7 @@ public class ContractLeaveLoader {
 			}
 
 		});
-		add(new Leave(id, start, end, type));
+		add(new Leave(id, start, end, type, (int)parentDays));
 	}
 
 	protected void clear() {
@@ -303,7 +365,7 @@ public class ContractLeaveLoader {
 		exprCtx.removeVariable(ContextVariable.IT_START, leave.getStart(),
 				leave.getEnd());
 
-		for (DaysRange range : RANGES) {
+		for (DaysRange range : COMMON_RANGES) {
 
 			String common = range.getName(ContextVariable.COMMON_DISEASE_DAYS);
 			exprCtx.removeVariable(common, leave.getStart(), leave.getEnd());
