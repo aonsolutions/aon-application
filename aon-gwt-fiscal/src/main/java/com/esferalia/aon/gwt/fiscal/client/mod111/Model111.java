@@ -116,6 +116,8 @@ public class Model111 extends MainEntryPoint {
 	@UiField
 	MinimizePanel footPanel;
 	@UiField
+	Label fiscalInformationLabel;
+	@UiField
 	ScrollPanel informationPanel;
 	@UiField
 	Panel formContainer;
@@ -136,14 +138,16 @@ public class Model111 extends MainEntryPoint {
 	@UiField
 	Button printButton;
 	@UiField
+	Button printPDFButton;
+	@UiField
 	Button generateFileButton;
-	@UiField
-	Button printViaAeatButton;
-	@UiField
-	Button calculateButton;
-	@UiField
-	Button calculateCheckButton;
-	private boolean authomaticCalculation;
+//	@UiField
+//	Button printViaAeatButton;
+//	@UiField
+//	Button calculateButton;
+//	@UiField
+//	Button calculateCheckButton;
+//	private boolean authomaticCalculation;
 	@UiField
 	Button auditButton;
 
@@ -219,9 +223,9 @@ public class Model111 extends MainEntryPoint {
 		domainNameHidden = new Hidden("domainName");
 		formFlowPanel.add(domainNameHidden);
 		formContainer.add(diskForm);
-		authomaticCalculation = true;
-		calculateCheckButton.addStyleName( AON.AON_CSS.aonIconChecked() );
-		calculateButton.setVisible(!authomaticCalculation);
+//		authomaticCalculation = true;
+//		calculateCheckButton.addStyleName( AON.AON_CSS.aonIconChecked() );
+//		calculateButton.setVisible(!authomaticCalculation);
 
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
@@ -269,6 +273,48 @@ public class Model111 extends MainEntryPoint {
 	}
 	public void setDirty(boolean dirty) {
 		this.dirty = dirty;
+		styleDirtyLabel();
+	}
+	
+	private void refreshToolbarState() {
+		deleteButton.setVisible(currentMod111.getId() != null);
+		auditButton.setVisible(currentMod111.getId() != null);
+		newButton.setVisible(currentMod111.getId() != null);
+		cancelButton.setVisible(true);
+		saveButton.setVisible(true);
+		
+		saveButton.setEnabled(!currentMod111.isFinished());
+		deleteButton.setEnabled(!currentMod111.isFinished());
+		
+		printButton.setVisible(currentMod111.getId() != null);
+		printPDFButton.setVisible(currentMod111.getId() != null);
+		
+		generateFileButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		generateFileButton.addStyleName(FiscalModelUtils.getAdministrationIcon(currentMod111.getAdministration()));
+		generateFileButton.setVisible(currentMod111.getId() != null);
+		generateFileButton.setEnabled(currentMod111.isFinished());
+		
+//		printViaAeatButton.setVisible(currentMod111.getAdministration() == Administration.COMMON_TERRITORY);
+//		calculateCheckButton.setVisible( authomaticCalculation );
+//		calculateButton.setVisible( !authomaticCalculation );
+	}
+	private void toolbarForTable() {
+		hideToolbarButtons();
+		cancelButton.setVisible(false);
+	}
+	
+	private void hideToolbarButtons() {
+		deleteButton.setVisible(false);
+		auditButton.setVisible(false);
+		newButton.setVisible(true);
+		cancelButton.setVisible(true);
+		saveButton.setVisible(false);
+		printButton.setVisible(false);
+		printPDFButton.setVisible(false);
+		generateFileButton.setVisible(false);
+//		printViaAeatButton.setVisible(false);
+//		calculateCheckButton.setVisible(false);
+//		calculateButton.setVisible(false);
 	}
 	
 	private void select(Mod111 selected) {
@@ -288,18 +334,11 @@ public class Model111 extends MainEntryPoint {
 		
 		styleCommentsButton();
 		
-		// Toolbar states
-		deleteButton.setVisible(currentMod111.getId() != null);
-		auditButton.setVisible(currentMod111.getId() != null);
-		newButton.setVisible(currentMod111.getId() != null);
-		cancelButton.setVisible(true);
-		saveButton.setVisible(true);
-		printButton.setVisible(true);
-		generateFileButton.setVisible(currentMod111.getId() != null);
-		generateFileButton.addStyleName(FiscalModelUtils.getAdministrationIcon(currentMod111.getAdministration()));
-		printViaAeatButton.setVisible(currentMod111.getAdministration() == Administration.COMMON_TERRITORY);
-		calculateCheckButton.setVisible( authomaticCalculation );
-		calculateButton.setVisible( !authomaticCalculation );
+		fiscalInformationLabel.setStyleName(AON.AON_CSS.aonPaddingRight());
+		fiscalInformationLabel.addStyleName(AON.AON_CSS.aonPaddingLeft20());
+		fiscalInformationLabel.addStyleName(FiscalModelUtils.getAdministrationIcon(currentMod111.getAdministration()));
+
+		refreshToolbarState();
 		
 		FiscalModelUtils.paintHeaderTable(headerPanel,currentMod111);
 		
@@ -322,7 +361,7 @@ public class Model111 extends MainEntryPoint {
 			
 			@Override
 			public boolean isAuthomaticCalculationEnabled() {
-				return authomaticCalculation;
+				return true;
 			}
 
 			@Override
@@ -338,7 +377,6 @@ public class Model111 extends MainEntryPoint {
 			public void markAsDirty() {
 				if (!isDirty()) {
 					Model111.this.setDirty(true);
-					styleDirtyLabel();
 				}
 			}
 
@@ -384,16 +422,8 @@ public class Model111 extends MainEntryPoint {
 			infoContainer.setWidget(declaration.getInfoPanel());
 		} else {
 			showErrorMessage("Administraci\u00F3n y/o ejercicio no soportado.");
-			cancelButton.setVisible(false);
-			saveButton.setVisible(false);
-			deleteButton.setVisible(false);
-			auditButton.setVisible(false);
-			printButton.setVisible(false);
-			generateFileButton.setVisible(false);
-			newButton.setVisible(true);
-			printViaAeatButton.setVisible(false);
-			calculateButton.setVisible(false);
-			calculateCheckButton.setVisible(false);
+			hideToolbarButtons();
+			cancelButton.setVisible(true);
 		}
 	}
 	
@@ -420,16 +450,7 @@ public class Model111 extends MainEntryPoint {
 						int i = deckPanel.getWidgetIndex(listPanel);
 						table.setRowData(result);
 						deckPanel.showWidget(i);
-						cancelButton.setVisible(false);
-						saveButton.setVisible(false);
-						deleteButton.setVisible(false);
-						auditButton.setVisible(false);
-						printButton.setVisible(false);
-						generateFileButton.setVisible(false);
-						newButton.setVisible(true);
-						printViaAeatButton.setVisible(false);
-						calculateButton.setVisible(false);
-						calculateCheckButton.setVisible(false);
+						toolbarForTable();	
 					}
 
 					@Override
@@ -745,68 +766,98 @@ public class Model111 extends MainEntryPoint {
 			commentsButton.removeStyleName(AON.AON_CSS.aonIconComment());
 		}
 	}
+	
 	@UiHandler("printButton")
 	void onPrintButtonClick(ClickEvent event) {
-		Window.alert(
-				  "La impresi\u00F3 del borrador se realiza a partir de los datos guardados"
-				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n");
-		diskForm.setAction(GWT.getHostPageBaseURL()
-				+ "/aon_gwt_fiscal/Model111Print");
-		mod111Hidden.setValue(String.valueOf(currentMod111.getId()));
-		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
-		domainNameHidden.setValue(getCurrentDomainName());
-		diskForm.submit();
+		new ConfirmDialog().confirm(AON.MSG.draftPrint(),AON.MSG.draftPrintNote() 
+				, new ConfirmDialogCallback() {
+				
+				@Override
+				public void onAccept() {
+					submitForm("/aon_gwt_fiscal/Model111Print");
+				}
+
+				@Override
+				public void onCancel() {
+					// Nothing
+				}
+			});
 	}
 
+	@UiHandler("printPDFButton")
+	void onPrintPDFButtonClick(ClickEvent event) {
+		new ConfirmDialog().confirm(AON.MSG.draftPrint(),AON.MSG.draftPrintNote() 
+			, new ConfirmDialogCallback() {
+			
+			@Override
+			public void onAccept() {
+				submitForm("/aon_gwt_fiscal/Model111PrintPDF");
+			}
+
+			@Override
+			public void onCancel() {
+				// Nothing
+			}
+		});
+	}
+	
 	@UiHandler("generateFileButton")
 	void onGenerateFileButtonClick(ClickEvent event) {
-		Window.alert(
-				  "Se va a proceder a la generaci\u00F3n de un fichero\n"
-				+ "con los datos de la declaraci\u00F3n, para su \n"
-				+ "presentaci\u00F3n en Hacienda.\n\n"
-				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
-				+ "El fichero se genera a partir de los datos guardados.");
-		diskForm.setAction(GWT.getHostPageBaseURL()
-				+ "/aon_gwt_fiscal/Model111File");
+		new ConfirmDialog().confirm(AON.MSG.fileGeneration(),AON.MSG.fileGenerationNote() 
+			, new ConfirmDialogCallback() {
+			
+			@Override
+			public void onAccept() {
+				submitForm("/aon_gwt_fiscal/Model111File");
+			}
+
+			@Override
+			public void onCancel() {
+				// Nothing
+			}
+		});
+	}
+
+	private void submitForm(String action) {
+		diskForm.setAction(GWT.getHostPageBaseURL() + action);
 		mod111Hidden.setValue(String.valueOf(currentMod111.getId()));
 		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 		domainNameHidden.setValue(getCurrentDomainName());
 		diskForm.submit();
 	}
 
-	@UiHandler("printViaAeatButton")
-	void onPrintViaAeatButtonClick(ClickEvent event) {
-		Window.alert(
-				  "Se va a proceder a la validaci\u00F3n en los servidores de la \n"
-				+ "Agencia Tributaria. En el caso de validaci\u00F3n correcta,la Agencia \n"
-				+ "Tributaria devolver\u00E1 un documento PDF borrador con la declarai\u00F3n\n\n"
-				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
-				+ "La petici\u00F3n se genera a partir de los datos guardados.");
-		diskForm.setAction(GWT.getHostPageBaseURL()
-				+ "/aon_gwt_fiscal/Model111Print");
-		mod111Hidden.setValue(String.valueOf(currentMod111.getId()));
-		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
-		domainNameHidden.setValue(getCurrentDomainName());
-		diskForm.submit();
-	}
+//	@UiHandler("printViaAeatButton")
+//	void onPrintViaAeatButtonClick(ClickEvent event) {
+//		Window.alert(
+//				  "Se va a proceder a la validaci\u00F3n en los servidores de la \n"
+//				+ "Agencia Tributaria. En el caso de validaci\u00F3n correcta,la Agencia \n"
+//				+ "Tributaria devolver\u00E1 un documento PDF borrador con la declarai\u00F3n\n\n"
+//				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
+//				+ "La petici\u00F3n se genera a partir de los datos guardados.");
+//		diskForm.setAction(GWT.getHostPageBaseURL() + "/aon_gwt_fiscal/Model111Print");
+//		mod111Hidden.setValue(String.valueOf(currentMod111.getId()));
+//		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
+//		domainNameHidden.setValue(getCurrentDomainName());
+//		diskForm.submit();
+//	}
 
-	@UiHandler("calculateCheckButton")
-	void onCalculateCheckClick(ClickEvent event) {
-		authomaticCalculation = !authomaticCalculation;
-		calculateButton.setVisible(!authomaticCalculation);
-		if (authomaticCalculation) {
-			calculateCheckButton.removeStyleName(AON.AON_CSS.aonIconCheck());
-			calculateCheckButton.addStyleName(AON.AON_CSS.aonIconChecked());
-			declaration.calculateAndRefresh(currentMod111);
-		} else {
-			calculateCheckButton.addStyleName(AON.AON_CSS.aonIconCheck());
-			calculateCheckButton.removeStyleName(AON.AON_CSS.aonIconChecked());
-		}
-	}
-	@UiHandler("calculateButton")
-	void onCalculateButtonClick(ClickEvent event) {
-		declaration.calculateAndRefresh(currentMod111);
-	}
+//	@UiHandler("calculateCheckButton")
+//	void onCalculateCheckClick(ClickEvent event) {
+//		authomaticCalculation = !authomaticCalculation;
+//		calculateButton.setVisible(!authomaticCalculation);
+//		if (authomaticCalculation) {
+//			calculateCheckButton.removeStyleName(AON.AON_CSS.aonIconCheck());
+//			calculateCheckButton.addStyleName(AON.AON_CSS.aonIconChecked());
+//			declaration.calculateAndRefresh(currentMod111);
+//		} else {
+//			calculateCheckButton.addStyleName(AON.AON_CSS.aonIconCheck());
+//			calculateCheckButton.removeStyleName(AON.AON_CSS.aonIconChecked());
+//		}
+//	}
+//	@UiHandler("calculateButton")
+//	void onCalculateButtonClick(ClickEvent event) {
+//		declaration.calculateAndRefresh(currentMod111);
+//	}
 	
 	@UiHandler("confidential")
 	void onConfidentialClick(ClickEvent event) {

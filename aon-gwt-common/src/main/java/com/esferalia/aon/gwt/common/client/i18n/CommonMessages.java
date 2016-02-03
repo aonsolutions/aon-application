@@ -414,6 +414,22 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Imprimir certificado")
 	String printCertificate();
+	
+	@DefaultMessage("Borrador")
+	String draft();
+
+	@DefaultMessage("Impresi\u00F3n del borrador")
+	String draftPrint();
+
+	@DefaultMessage("La impresi\u00F3n del borrador se realiza a partir de los datos guardados. Aseg\u00FArese de haber guardado la declaraci\u00F3n.")	
+	String draftPrintNote();
+	
+	@DefaultMessage("Generaci\u00F3n de fichero")
+	String fileGeneration();
+	@DefaultMessage("Se va a proceder a la generaci\u00F3n de un fichero con los datos de la declaraci\u00F3n, para su "
+			+ "presentaci\u00F3n en Hacienda. Aseg\u00FArese de haber guardado la declaraci\u00F3n. "
+			+ "El fichero se genera a partir de los datos guardados.")
+	String fileGenerationNote();
 
 	@DefaultMessage("Imprimir via AEAT")
 	String printViaAeat();
@@ -538,7 +554,10 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Informaci\u00F3n")
 	String information();
-	
+
+	@DefaultMessage("Informaci\u00F3n Tributaria")
+	String fiscalInformation();
+
 	@DefaultMessage("N\u00FAmero")
 	String number();
 

@@ -302,6 +302,20 @@
 			<version>2.1.7</version>
 		</dependency>		
 		
+	    <dependency>
+			<groupId>org.swinglabs</groupId>
+			<artifactId>pdf-renderer</artifactId>
+			<version>1.0.5</version>
+			<scope>compile</scope>
+		</dependency>
+	       
+	    <dependency>
+			<groupId>org.artofsolving.jodconverter</groupId>
+			<artifactId>jodconverter-core</artifactId>
+			<version>3.0-beta-4</version>
+			<scope>compile</scope>
+	    </dependency>
+
 		<!-- TEST DEPENDENCIES -->
 		<dependency>
 			<groupId>junit</groupId>

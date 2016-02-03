@@ -2,8 +2,8 @@ package com.esferalia.aon.gwt.fiscal.client.mod111;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
+import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
-import com.esferalia.aon.occam.api.model.type.Administration;
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -38,7 +38,9 @@ public class Model111Table extends CellTable<Mod111> {
 		addYearColumn();
 		addPeriodColumn();
 		addAdministrationColumn();
+		addStatusColumn();
 		addReplacementColumn();
+		addComplementaryColumn();
 		addDocumentColumn();
 		addNameColumn();
 		
@@ -65,23 +67,27 @@ public class Model111Table extends CellTable<Mod111> {
 				new ImageResourceCell()) {
 			@Override
 			public ImageResource getValue(Mod111 mod111) {
-				Administration adm = mod111.getAdministration(); 
-				if (adm ==Administration.ALAVA) {
-					return AON.AON_RESOURCES.aonIconAraba();	
-				} else if (adm ==Administration.BIZKAIA) {
-					return AON.AON_RESOURCES.aonIconBizkaia();
-				} else if (adm ==Administration.GIPUZKOA) {
-					return AON.AON_RESOURCES.aonIconGipuzkoa();
-				} else if (adm ==Administration.NAVARRA) {
-					return AON.AON_RESOURCES.aonIconNavarra();
-				} 
-				return AON.AON_RESOURCES.aonAeat();
+				return FiscalModelUtils.getAdministrationIconResource(mod111.getAdministration());
 			}
 		};
-		this.addColumn(iconColumn);
+		this.addColumn(iconColumn, "A" );
 		this.setColumnWidth(iconColumn, 20, Unit.PX);
 	}
 	
+	private void addStatusColumn() {
+		final Column<Mod111, ImageResource> iconColumn = new Column<Mod111, ImageResource>(
+				new ImageResourceCell()) {
+			@Override
+			public ImageResource getValue(Mod111 mod111) {
+				return mod111.isFinished()
+						?AON.AON_RESOURCES.aonIconLock()
+						:AON.AON_RESOURCES.aonIconUnlock();
+			}
+		};
+		this.addColumn(iconColumn, "E" );
+		this.setColumnWidth(iconColumn, 20, Unit.PX);
+	}
+
 	private void addYearColumn() {
 		final TextColumn<Mod111> yearColumn = new TextColumn<Mod111>() {
 			@Override
@@ -103,16 +109,31 @@ public class Model111Table extends CellTable<Mod111> {
 						: AON.AON_RESOURCES.aonIconCheck();
 			}
 		};
-		this.addColumn(replacementColumn, AON.MSG.replacement());
+		this.addColumn(replacementColumn, "S" );
 		replacementColumn.setCellStyleNames(AON.AON_CSS.aonDataTableIconColumn());
 		this.setColumnWidth(replacementColumn, 100, Unit.PX);
 	}
 
+	private void addComplementaryColumn() {
+		Column<Mod111, ImageResource> complementaryColumn = new Column<Mod111, ImageResource>(
+				new ImageResourceCell()) {
+			@Override
+			public ImageResource getValue(Mod111 mod111) {
+				return mod111.isComplementary() 
+					? AON.AON_RESOURCES.aonIconChecked()
+					: AON.AON_RESOURCES.aonIconCheck();
+			}
+		};
+		this.addColumn(complementaryColumn, "C" );
+		complementaryColumn.setCellStyleNames(AON.AON_CSS.aonDataTableIconColumn());
+		this.setColumnWidth(complementaryColumn, 100, Unit.PX);
+	}
+	
 	private void addNameColumn() {
 		final TextColumn<Mod111> nameColumn = new TextColumn<Mod111>() {
 			@Override
 			public String getValue(Mod111 mod111) {
-				return mod111.getName();
+				return mod111.getFullName();
 			}
 		};
 		this.addColumn(nameColumn, AON.MSG.name());

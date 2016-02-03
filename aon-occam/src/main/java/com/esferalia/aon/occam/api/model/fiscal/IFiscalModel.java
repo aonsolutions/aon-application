@@ -23,4 +23,5 @@ public interface IFiscalModel extends Serializable {
 	String getDocument();
 	String getName();
 	String getSurname();
+	String getFullName();
 }

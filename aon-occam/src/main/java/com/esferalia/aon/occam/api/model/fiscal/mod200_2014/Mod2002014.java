@@ -386,6 +386,10 @@ public class Mod2002014 implements IFiscalModel {
 		return enterpriseName;
 	}
 	@Override
+	public String getFullName() {
+		return getName();
+	}
+	@Override
 	public String getSurname() {
 		return null;
 	}

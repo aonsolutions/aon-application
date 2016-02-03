@@ -37,10 +37,13 @@ public class ConfirmDialog extends CustomDialog {
 		root.setHeight("90px");
 		root.setStyleName(AON.AON_CSS.aonPadding());
 		this.setWidget(root);
-    }
-	
+	}
     public void confirm(String msg, final ConfirmDialogCallback callback) {
-    	setCaption("Pregunta");
+    	confirm("Pregunta", msg, callback);
+    }
+    
+	public void confirm(String header,String msg, final ConfirmDialogCallback callback) {
+    	setCaption(header);
     	FlowPanel panel = new FlowPanel();
     	Label label = new Label(msg);
     	label.setStyleName(AON.AON_CSS.aonConfirmDialogMsg());

@@ -190,7 +190,7 @@ public abstract class Model111Base extends ResizeComposite implements RequiresRe
 		final DoubleBox input = new DoubleBox();
 		input.setResolver(resolver);
 		fieldsMap.put(key, input);
-		input.setEnabled(script.isEnabled()); 
+		input.setEnabled(mod111.isNotFinished() && script.isEnabled()); 
 		input.setValue(det1.getAmount());
 		input.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			@Override

@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FiscalModel implements IFiscalModel, HasAudit {
 
@@ -124,6 +125,9 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 	public boolean isFinished() {
 		return getStatus() == FiscalStatus.FINISHED;
 	}
+	public boolean isNotFinished() {
+		return getStatus() != FiscalStatus.FINISHED;
+	}
 	public FiscalModel setStatus(FiscalStatus status) {
 		this.status = status;
 		return this;
@@ -210,6 +214,15 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		this.name = name;
 		return this;
 	}
+	
+	@Override
+	public String getFullName() {
+		return (isEntity())
+			?name
+			:AonStringUtils.prependIfMissing(getName(),AonStringUtils.appendIfMissing(
+					AonStringUtils.trimToNull(getSurname()), " ," ) ); 
+	}
+	
 	public String getStreetInitial() {
 		return streetInitial;
 	}
@@ -457,4 +470,5 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		this.modificationDate = modificationDate;
 		return this;
 	}
+	
 }

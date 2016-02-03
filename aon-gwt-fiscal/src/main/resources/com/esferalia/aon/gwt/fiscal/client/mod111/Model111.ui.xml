@@ -34,17 +34,21 @@
 									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconCancel}" />
 								<g:Button ui:field="deleteButton" text="{msg.deleteAction}" 
 									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconDelete}" />
-								<g:Button ui:field="printButton" text="{msg.print}"
-									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconPrinter}" />
+								<g:Button ui:field="printButton" text="&nbsp;" 
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconExcel}" />
+								<g:Button ui:field="printPDFButton" text="{msg.draft}"
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconPdfPreview}" />
+<!-- 
 								<g:Button ui:field="printViaAeatButton" text="{msg.printViaAeat}"
 									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconAeat}" />
-								<g:Button ui:field="generateFileButton" text="{msg.generateFile}"
-									styleName="{aonResources.css.aonFindingToolbarItem}"  />
-								<g:Anchor ui:field="download" visible="false"/>							
 								<g:Button ui:field="calculateButton"
 									styleName="aon-finding-toolbar-item aon-icon-calc" text="{msg.calculateAction}" />
 								<g:Button ui:field="calculateCheckButton"
 									styleName="aon-finding-toolbar-item" text="{msg.authomaticCalculation}" />
+								<g:Anchor ui:field="download" visible="false"/>							
+ -->
+								<g:Button ui:field="generateFileButton" text="{msg.generateFile}" />
+								
 								<g:Button ui:field="auditButton" text="{msg.audit}" 
 									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconAudit}" />
 								<g:FlowPanel ui:field="formContainer"/>
@@ -124,9 +128,7 @@
 										</g:tab>
 										<g:tab>
 											<g:customHeader>
-												<g:Label
-													styleName="{aonResources.css.aonIconInfo} {aonResources.css.aonPaddingRight} {aonResources.css.aonPaddingLeft20}"  
-													text="{msg.information}" />
+												<g:Label ui:field="fiscalInformationLabel" text="{msg.fiscalInformation}" />
 											</g:customHeader>
 											<g:ScrollPanel ui:field="infoContainer" styleName="{aonResources.css.aonScrollArea}"/>
 										</g:tab>

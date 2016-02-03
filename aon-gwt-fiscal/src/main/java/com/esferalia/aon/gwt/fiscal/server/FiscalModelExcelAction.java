@@ -151,7 +151,13 @@ public class FiscalModelExcelAction extends AbsExcelAction {
 
 	public void accept(IModelScript ms) {
 		row = sheet.createRow(rowCount++);
-		row.setHeight((short) 600);
+		String concept = AonStringUtils.trimToEmpty(ms.getLabel());
+		int l = AonStringUtils.length(concept);
+		if (l != 0) {
+			int r = (int) (l / 70) + 1; 
+			int h = (r * 250);
+			row.setHeight((h > Short.MAX_VALUE?Short.MAX_VALUE:(short) h));
+		}
 		row.setRowStyle(rowStyle);
 		cellCount = 0;
 		Cell cell = row.createCell(cellCount++);
@@ -161,7 +167,7 @@ public class FiscalModelExcelAction extends AbsExcelAction {
 		style.setBorderBottom(CellStyle.BORDER_THIN);
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 		cell.setCellStyle(style);
-		cell.setCellValue(AonStringUtils.trimToEmpty(ms.getLabel()));
+		cell.setCellValue(concept);
 		cell.setCellType(Cell.CELL_TYPE_STRING);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));			
 		if (ms.getKeys() == null) {

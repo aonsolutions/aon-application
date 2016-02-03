@@ -710,11 +710,13 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 }
 
 @sprite .aon-icon-araba {
-	gwt-image: "aonIconAraba"
+	gwt-image: "aonIconAraba";
+	width: auto;
 }
 
 @sprite .aon-icon-araba-bw {
-	gwt-image: "aonIconArabaBW"
+	gwt-image: "aonIconArabaBW";
+	width: auto;
 }
 
 @sprite .aon-icon-bizkaia {
@@ -723,27 +725,33 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 }
 
 @sprite .aon-icon-bizkaia-bw {
-	gwt-image: "aonIconBizkaiaBW"
+	gwt-image: "aonIconBizkaiaBW";
+	width: auto;
 }
 
 @sprite .aon-icon-gipuzkoa {
-	gwt-image: "aonIconGipuzkoa"
+	gwt-image: "aonIconGipuzkoa";
+	width: auto;
 }
 
 @sprite .aon-icon-gipuzkoa-bw {
-	gwt-image: "aonIconGipuzkoaBW"
+	gwt-image: "aonIconGipuzkoaBW";
+	width: auto;
 }
 
 @sprite .aon-icon-navarra {
-	gwt-image: "aonIconNavarra"
+	gwt-image: "aonIconNavarra";
+	width: auto;
 }
 
 @sprite .aon-icon-navarra-bw {
-	gwt-image: "aonIconNavarraBW"
+	gwt-image: "aonIconNavarraBW";
+	width: auto;
 }
 
 @sprite .aon-icon-question {
-	gwt-image: "aonIconQuestion"
+	gwt-image: "aonIconQuestion";
+	width: auto;
 }
 
 .aon-icon-button {

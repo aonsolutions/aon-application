@@ -4,9 +4,11 @@ import java.io.Serializable;
 
 public enum FiscalStatus implements Serializable {
 	 
-	 MISSING("Desconocido")
-	,PENDING("Pendiente")
+	 PENDING("Pendiente")
 	,FINISHED("Finalizado")
+	,BATCHED("En Lote")
+	,BLOCKED("Bloqueado")
+	,MISSING("Desconocido")
 	;
 	
 	private String name;
