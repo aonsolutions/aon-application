@@ -230,6 +230,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			"DIAS_ENFERMEDAD_COMUN_1_3", // internals
 			"DIAS_ENFERMEDAD_COMUN_16_20", // internals
 			"DIAS_ENFERMEDAD_COMUN_21", // internals
+			"DIAS_ENFERMEDAD_COMUN_366", // internals
+			"DIAS_ENFERMEDAD_PROFESIONAL_366", // internals
 			"DIAS_ERE", "DIAS_PATERNIDAD", // internals
 
 			"CONTEXT", "SELF", "THIS", // context
