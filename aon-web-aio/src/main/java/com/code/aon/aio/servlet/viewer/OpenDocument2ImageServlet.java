@@ -71,8 +71,8 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 			
 			Attach attach = new Attach()
 					.setMd5(jsonRequest.getString("md5"))
-					.setDomain(new Domain().setName(jsonRequest.getString("domainName"))
-							.setId(jsonRequest.getInt("domainId")))
+					.setDomain(AON.getDomain(jsonRequest.getString("domainName"),
+							jsonRequest.getInt("domainId"),""))
 					.setMimeType(MimeType.values()[(byte) jsonRequest.getInt("mimetype")])
 					.setId(jsonRequest.getInt("fileId"))
 					.setIsDrive(jsonRequest.getBoolean("isDrive"));
