@@ -47,8 +47,10 @@ public class OperationReportController implements IAccountingBookItem, Serializa
 	private static final String RNAME = "rname";
 	private static final String TAX_TYPE = "tax_type";
 	private static final String TAXABLE_BASE = "taxable_base";
-	private static final String QUOTA = "quota";
 	private static final String PERCENTAGE = "percentage";
+	private static final String QUOTA = "quota";
+	private static final String SURCHARGE_PERCENTAGE = "surchargePercent";
+	private static final String SURCHARGE_QUOTA = "surcharge";
 	
 	private static final ReportColumnMetadata[] COLUMN_LABELS = new ReportColumnMetadata[]{
 		new ReportColumnMetadata(ID,Types.INTEGER,ID,10)
@@ -63,6 +65,8 @@ public class OperationReportController implements IAccountingBookItem, Serializa
 		,new ReportColumnMetadata(TAXABLE_BASE,Types.DOUBLE,"B.Imp.",10)
 		,new ReportColumnMetadata(PERCENTAGE,Types.DOUBLE,"Porc.",5)
 		,new ReportColumnMetadata(QUOTA,Types.DOUBLE,"Cuota",10)
+		,new ReportColumnMetadata(SURCHARGE_PERCENTAGE,Types.DOUBLE,"Porc.Rec.",10)
+		,new ReportColumnMetadata(SURCHARGE_QUOTA,Types.DOUBLE,"Recargo",10)
 	};
 
 	private OperationReportParams params;
@@ -199,6 +203,8 @@ public class OperationReportController implements IAccountingBookItem, Serializa
 						exporter.exportColumn(metadata.getColumns().get((i++)), opt.getBase() );
 						exporter.exportColumn(metadata.getColumns().get((i++)), opt.getPercentage() );
 						exporter.exportColumn(metadata.getColumns().get((i++)), opt.getQuota() );
+						exporter.exportColumn(metadata.getColumns().get((i++)), opt.getSurchargePercentage() );
+						exporter.exportColumn(metadata.getColumns().get((i++)), opt.getSurchargeQuota() );
 						first = false;
 					}
 				}

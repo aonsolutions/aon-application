@@ -109,16 +109,11 @@ public class OperationReportManager {
 							opt.setBase(taxRs.getDouble(3));
 							opt.setQuota(taxRs.getDouble(4));
 							double surchargePercent = taxRs.getDouble(5);
-							op.getTaxes().add(opt);
-							
 							if (StringUtils.equals("IVA", tax) && surchargePercent != 0) {
-								opt = new OperationReportTax();
-								opt.setTaxType("RE");
-								opt.setPercentage(surchargePercent);
-								opt.setBase(taxRs.getDouble(3));
-								opt.setQuota(taxRs.getDouble(6));								
-								op.getTaxes().add(opt);
+								opt.setSurchargePercentage(surchargePercent);
+								opt.setSurchargeQuota(taxRs.getDouble(6));								
 							}
+							op.getTaxes().add(opt);
 						}
 						taxRs.close();
 					}

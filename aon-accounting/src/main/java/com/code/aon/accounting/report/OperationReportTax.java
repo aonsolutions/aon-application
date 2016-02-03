@@ -12,6 +12,9 @@ public class OperationReportTax implements Serializable {
 	private Double percentage;
 	private Double base;
 	private Double quota;
+	private Double surchargePercentage;
+	private Double surchargeQuota;
+	
 	public String getTaxType() {
 		return taxType;
 	}
@@ -35,5 +38,17 @@ public class OperationReportTax implements Serializable {
 	}
 	public void setQuota(Double quota) {
 		this.quota = quota;
+	}
+	public Double getSurchargePercentage() {
+		return surchargePercentage;
+	}
+	public void setSurchargePercentage(Double surchargePercentage) {
+		this.surchargePercentage = surchargePercentage;
+	}
+	public Double getSurchargeQuota() {
+		return surchargeQuota;
+	}
+	public void setSurchargeQuota(Double surchargeQuota) {
+		this.surchargeQuota = surchargeQuota;
 	}
 }

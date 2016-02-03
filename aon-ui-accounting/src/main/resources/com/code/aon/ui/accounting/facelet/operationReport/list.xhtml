@@ -128,10 +128,28 @@
 									<aon:outputText value="#{tot.percentage}">
 										<f:convertNumber pattern="#,##0.00" />
 									</aon:outputText>
+									<c:if test="#{not empty tot.surchargePercentage and tot.surchargePercentage!=0}">
+										<aon:outputText value="+"/>
+										<aon:outputText value="#{tot.surchargePercentage}">
+											<f:convertNumber pattern="#,##0.00" />
+										</aon:outputText>
+									</c:if>
 								</aon:column>
 		
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;vertical-align: top;">
 									<aon:outputText value="#{tot.quota}">
+										<f:convertNumber pattern="#,##0.00" />
+									</aon:outputText>
+								</aon:column>
+		
+								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;vertical-align: top;">
+									<aon:outputText value="#{tot.surchargeQuota}">
+										<f:convertNumber pattern="#,##0.00" />
+									</aon:outputText>
+								</aon:column>
+		
+								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;vertical-align: top;">
+									<aon:outputText value="#{tot.quota + tot.surchargeQuota}">
 										<f:convertNumber pattern="#,##0.00" />
 									</aon:outputText>
 								</aon:column>
