@@ -415,6 +415,7 @@ public class ProductValuesDialog extends CustomDialogB {
 				@Override
 				public void onFailure(Throwable caught) {
 					pbd.hide();
+					Window.alert(caught.getMessage());
 				}
 			});
 		}
