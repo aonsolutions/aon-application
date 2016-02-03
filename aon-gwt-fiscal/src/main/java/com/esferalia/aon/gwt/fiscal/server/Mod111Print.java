@@ -12,11 +12,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.mod111.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod111.Model111ScriptProvider;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod111 Print", urlPatterns = { "/aon_gwt_fiscal/Model111Print" })
@@ -43,26 +46,9 @@ public class Mod111Print extends HttpServlet {
 			action.finalize(output);
 			ByteArrayInputStream in = new ByteArrayInputStream(output.toByteArray());
 			
-			String s = mod111.getName();
-			StringBuilder sb = new StringBuilder();
-			if (!Character.isJavaIdentifierStart(s.charAt(0))) {
-				sb.append("_");
-			}
-			for (char c : s.toCharArray()) {
-				if (Character.isJavaIdentifierPart(c)) {
-					sb.append(c);
-				}
-			}
-
-			String fileName = "Mod"
-					+ mod111.getModel().getName(mod111.getAdministration(),mod111.getPeriod() )
-					+ "_" + mod111.getYear() 
-					+ "_" + mod111.getPeriod().getName()
-					+ "_" + mod111.getAdministration().toString()
-					+ "_" + sb.toString()
-					+ ".xlsx";
+			String modName = getPeriodName( mod111 );
 			resp.setContentType(MimeType.MS_EXCEL.getName());
-			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xslx\";");
+			resp.setHeader("Content-disposition", "attachment; filename=\"" + modName + ".xslx\";");
 			AonIOUtils.copy(in, resp.getOutputStream());
 			resp.flushBuffer();
 
@@ -72,4 +58,14 @@ public class Mod111Print extends HttpServlet {
 
 	}
 
+	private static String getPeriodName(FiscalModel fs) {
+		String name = AonStringUtils.trimToEmpty( fs.getName() );
+		name = AonFiscalFileUtils.changeInvalidCharacters(name);
+		name = name.replaceAll("[^a-zA-Z0-9.-]", "_");
+		return  "Mod" + fs.getModel().getName(fs.getAdministration(), fs.getPeriod()) 
+				+ "_" + fs.getYear() 
+				+ "_" + fs.getPeriod().getName() 
+				+ "_" + fs.getAdministration().toString() 
+				+ AonStringUtils.prependIfMissing(name , "_");
+	}
 }

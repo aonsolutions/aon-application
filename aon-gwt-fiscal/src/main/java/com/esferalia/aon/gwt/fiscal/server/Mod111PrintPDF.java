@@ -25,7 +25,9 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.mod111.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod111.Model111ScriptProvider;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod111 PDF Print", urlPatterns = { "/aon_gwt_fiscal/Model111PrintPDF" })
@@ -89,21 +91,14 @@ public class Mod111PrintPDF extends HttpServlet {
 	}
 
 	private static String getPeriodName(FiscalModel fs) {
-		String s = fs.getName();
-		StringBuilder sb = new StringBuilder();
-		if (!Character.isJavaIdentifierStart(s.charAt(0))) {
-			sb.append("_");
-		}
-		for (char c : s.toCharArray()) {
-			if (Character.isJavaIdentifierPart(c)) {
-				sb.append(c);
-			}
-		}
+		String name = AonStringUtils.trimToEmpty( fs.getName() );
+		name = AonFiscalFileUtils.changeInvalidCharacters(name);
+		name = name.replaceAll("[^a-zA-Z0-9.-]", "_");
 		return  "Mod" + fs.getModel().getName(fs.getAdministration(), fs.getPeriod()) 
 				+ "_" + fs.getYear() 
 				+ "_" + fs.getPeriod().getName() 
 				+ "_" + fs.getAdministration().toString() 
-				+ "_" + sb.toString();
+				+ AonStringUtils.prependIfMissing(name , "_");
 	}
 
 }
