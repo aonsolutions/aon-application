@@ -135,6 +135,7 @@ public class ProductValuesDialog extends CustomDialogB {
 			@Override
 			public void onChange(ChangeEvent arg0){
 				loadTemplateList();
+				loadValuesGrid();
 			}
 		});
 	}
@@ -406,11 +407,15 @@ public class ProductValuesDialog extends CustomDialogB {
 				}
 				ecommerce.setValue(value);
 			}
-			marketImpl.insertEcommerceProductValues(getDomain(), login, productTemplateList.getSelectedItemText(), ecommerceProduct, ecommerceProductAttach, new AsyncCallback<Boolean>() {
+			marketImpl.acceptEcommerceProductValues(getDomain(), login, productTemplateList.getSelectedItemText(), ecommerceProduct, ecommerceProductAttach, new AsyncCallback<Boolean>() {
 				@Override
 				public void onSuccess(Boolean result) {
 					pbd.hide();
-					loadValuesGrid();
+					if(result){
+						loadValuesGrid();
+					} else {
+						Window.alert("No se han pordido guardar los valores");
+					}
 				}
 				@Override
 				public void onFailure(Throwable caught) {

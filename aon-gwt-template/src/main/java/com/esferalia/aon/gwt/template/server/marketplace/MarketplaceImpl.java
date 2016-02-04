@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.template.server.marketplace;
 
-import java.io.IOException;
 import java.text.Collator;
 import java.util.Date;
 import java.util.LinkedList;
@@ -24,11 +23,9 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.attachment.AttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
 
@@ -158,36 +155,8 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 		return obtainEcommerceProductValues(domain, attach, product);
 	}
 	
-	public Boolean insertEcommerceProductValues(Domain domain, String login, String templateName, EcommerceProduct ecommerceProduct, Attach attach){
-		byte[] data = null;
-		try {
-			data = XMLUtils.writeXml(ecommerceProduct);
-		} catch (JAXBException e) {
-			data = null;
-		} catch (IOException e) {
-			data = null;
-		}
-
-		if(data!=null){
-			if(attach==null){
-				attach = new Attach();
-			}
-			attach.setDomain(domain);
-			attach.setMimeType(MimeType.XML);
-			attach.setDescription(templateName);
-			attach.setAttachType(AttachType.ITEM);
-			attach.setAttachModule(Integer.parseInt(ecommerceProduct.getProduct().getId()));
-			attach.setType(AttachmentType.ECOMMERCE_PRODUCT.value());
-			attach.setConfidential(false);
-			attach.setData(data);
-			if(attach.getId()==null){
-				AON.insert(domain.getName(), domain.getId(), login, attach);
-			} else {
-				AON.update(domain.getName(), domain.getId(), login, attach);
-			}
-			return true;
-		}
-		return false;
+	public Boolean acceptEcommerceProductValues(Domain domain, String login, String templateName, EcommerceProduct ecommerceProduct, Attach attach){
+		return DBMarketplace.acceptProductValues(domain, login, templateName, ecommerceProduct, attach);
 	}
 	
 	/**

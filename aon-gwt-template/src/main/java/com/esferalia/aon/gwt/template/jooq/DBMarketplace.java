@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Sales.SALES;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,6 +16,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import javax.xml.bind.JAXBException;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -39,11 +42,13 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.AttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.api.model.type.ShipmentStatus;
 
@@ -281,4 +286,37 @@ public class DBMarketplace {
 				ctx.close();
 		}
 	}
+	
+	public static boolean acceptProductValues(Domain domain, String login, String templateName, EcommerceProduct ecommerceProduct, Attach attach){
+		byte[] data = null;
+		try {
+			data = XMLUtils.writeXml(ecommerceProduct);
+		} catch (JAXBException e) {
+			data = null;
+		} catch (IOException e) {
+			data = null;
+		}
+	
+		if(data!=null){
+			if(attach==null){
+				attach = new Attach();
+			}
+			attach.setDomain(domain);
+			attach.setMimeType(MimeType.XML);
+			attach.setDescription(templateName);
+			attach.setAttachType(AttachType.ITEM);
+			attach.setAttachModule(Integer.parseInt(ecommerceProduct.getProduct().getId()));
+			attach.setType(AttachmentType.ECOMMERCE_PRODUCT.value());
+			attach.setConfidential(false);
+			attach.setData(data);
+			if(attach.getId()==null){
+				AON.insert(domain.getName(), domain.getId(), login, attach);
+			} else {
+				AON.update(domain.getName(), domain.getId(), login, attach);
+			}
+			return true;
+		}
+		return false;
+	}
+	
 }

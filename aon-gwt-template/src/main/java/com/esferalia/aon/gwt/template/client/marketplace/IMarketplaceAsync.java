@@ -52,7 +52,7 @@ public interface IMarketplaceAsync {
 	
 	void obtainEcommerceProductValues(Domain domain, Product product, String templateName, AsyncCallback<EcommerceProduct> callback);
 	
-	void insertEcommerceProductValues(Domain domain, String login, String templateName, EcommerceProduct eProduct, Attach iattach, AsyncCallback<Boolean> callback);
+	void acceptEcommerceProductValues(Domain domain, String login, String templateName, EcommerceProduct eProduct, Attach iattach, AsyncCallback<Boolean> callback);
 
 	void addMarketplaceTag(Domain domain, String name, AsyncCallback<Tag> callback);
 

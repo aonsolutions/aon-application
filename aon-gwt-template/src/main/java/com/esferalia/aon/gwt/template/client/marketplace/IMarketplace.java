@@ -54,5 +54,5 @@ public interface IMarketplace extends RemoteService{
 	
 	public EcommerceProduct obtainEcommerceProductValues(Domain domain, Product product, String templateName);
 	
-	public Boolean insertEcommerceProductValues(Domain domain, String login, String templateName, EcommerceProduct eProduct, Attach iattach);
+	public Boolean acceptEcommerceProductValues(Domain domain, String login, String templateName, EcommerceProduct eProduct, Attach iattach);
 }
