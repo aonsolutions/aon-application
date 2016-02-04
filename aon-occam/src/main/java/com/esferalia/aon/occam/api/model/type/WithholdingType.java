@@ -1,6 +1,8 @@
 package com.esferalia.aon.occam.api.model.type;
 
-public enum WithholdingType {
+import java.io.Serializable;
+
+public enum WithholdingType implements Serializable {
 
 	 PROFESSIONAL("Profesional")
 	,RENTING("Arrendamiento")
