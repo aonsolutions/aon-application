@@ -795,9 +795,14 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
 				connection, start, end, end, criteria);
 		ctx.next();
-		assertEquals(ctx, (double) (((monthdays != null ? monthdays : get(end, DAY_OF_MONTH))
-				- contractStartDayOfMonth + 1) * coefficient), contractStart,
-				end, monthdays);
+		if ( monthdays == null || contractStartDayOfMonth > 0)
+			assertEquals(ctx,(((double) get(end, DAY_OF_MONTH)
+					- contractStartDayOfMonth + 1) * coefficient), contractStart,
+					end, monthdays);
+		else
+			assertEquals(ctx,(((double) monthdays
+					- contractStartDayOfMonth + 1) * coefficient), contractStart,
+					end, monthdays);
 
 		// 95% of cases . Whole month
 		start = getFirstDayOfMonth(addMonths(start, 1));
