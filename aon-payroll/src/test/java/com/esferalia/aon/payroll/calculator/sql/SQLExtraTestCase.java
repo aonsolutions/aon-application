@@ -294,7 +294,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		calendar.set(DAY_OF_MONTH, 30);
 		Date endDate = new Date(calendar.getTimeInMillis());
 
-		ISQLContractSalaryCalculatorContext extraCtx = getSqlExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
+		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
 
 		Salary extra = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
 		
@@ -383,7 +383,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		calendar.set(DAY_OF_MONTH, 31);
 		Date endDate = new Date(calendar.getTimeInMillis());
 
-		ISQLContractSalaryCalculatorContext extraCtx = getSqlExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
+		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
 
 		Salary extra = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
 		
@@ -473,7 +473,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		calendar.set(DAY_OF_MONTH, 30);
 		Date endDate = new Date(calendar.getTimeInMillis());
 
-		ISQLContractSalaryCalculatorContext ctx = getSqlExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
+		ISQLContractSalaryCalculatorContext ctx = getExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
 
 
 		
@@ -559,7 +559,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		calendar.set(DAY_OF_MONTH, 31);
 		Date endDate = new Date(calendar.getTimeInMillis());
 
-		ISQLContractSalaryCalculatorContext ctx = getSqlExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
+		ISQLContractSalaryCalculatorContext ctx = getExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
 
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
@@ -641,7 +641,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		calendar.set(DAY_OF_MONTH, 30);
 		Date endDate = new Date(calendar.getTimeInMillis());
 
-		ISQLContractSalaryCalculatorContext ctx = getSqlExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
+		ISQLContractSalaryCalculatorContext ctx = getExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
 
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
@@ -725,7 +725,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		calendar.set(DAY_OF_MONTH, 31);
 		Date endDate = new Date(calendar.getTimeInMillis());
 
-		ISQLContractSalaryCalculatorContext ctx = getSqlExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
+		ISQLContractSalaryCalculatorContext ctx = getExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
 
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
@@ -814,7 +814,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		calendar.set(DAY_OF_MONTH, 30);
 		Date endDate = new Date(calendar.getTimeInMillis());
 
-		ISQLContractSalaryCalculatorContext extraCtx = getSqlExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
+		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
 
 		Salary extra = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
 		
@@ -913,7 +913,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		calendar.set(DAY_OF_MONTH, 30);
 		Date endDate = new Date(calendar.getTimeInMillis());
 
-		ISQLContractSalaryCalculatorContext extraCtx = getSqlExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
+		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
 
 		Salary extra = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
 		
@@ -931,19 +931,5 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 	
 	protected ContextVariable getPeriodVariable() {
 		return MONTH_DAYS;
-	}
-	
-	
-	protected ISQLContractSalaryCalculatorContext getSqlExtraSalaryCalculatorContext(Connection connection, ContractRecord contract, Date startDate, Date issueDate, Date endDate) throws SQLException, ExpressionException{
-		
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(
-				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
-				contract.getId());
-		
-		SQLExtraSalaryCalculatorContext ctx = new SQLExtraSalaryCalculatorContext(connection, issueDate, criteria);
-		ctx.next();
-		return ctx;
-		
 	}
 }

@@ -17,7 +17,7 @@ public class SQLContractExtraTestCase extends SQLExtraTestCase {
 	
 	
 	@Override
-	protected ISQLContractSalaryCalculatorContext getSqlExtraSalaryCalculatorContext(
+	public ISQLContractSalaryCalculatorContext getExtraSalaryCalculatorContext(
 			Connection connection, ContractRecord contract, Date startDate,
 			Date issueDate, Date endDate) throws SQLException,
 			ExpressionException {

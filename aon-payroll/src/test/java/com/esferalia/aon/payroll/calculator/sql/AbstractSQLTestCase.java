@@ -639,6 +639,21 @@ public abstract class AbstractSQLTestCase {
 		}
 	}
 
+	public ISQLContractSalaryCalculatorContext getExtraSalaryCalculatorContext(Connection connection, ContractRecord contract, Date startDate, Date issueDate,
+			Date endDate) throws SQLException, ExpressionException {
+				
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(
+						CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+						contract.getId());
+				
+				SQLExtraSalaryCalculatorContext ctx = new SQLExtraSalaryCalculatorContext(connection, issueDate, criteria);
+				ctx.next();
+				return ctx;
+				
+			}
+
+
 	public static final ContractRecord newContract(AONContext aonContext,
 			Date startDate, Map<String, String> data,
 			AgreementLevelCategoryRecord category) {
@@ -695,6 +710,7 @@ public abstract class AbstractSQLTestCase {
 				.set(CONTRACT.PERSON, personId)
 				.set(CONTRACT.WORKPLACE, workplaceId)
 				.set(CONTRACT.START_DATE, startDate)
+				.set(CONTRACT.SENIORITY_DATE, startDate)
 				.set(CONTRACT.END_DATE, endDate)
 				.set(CONTRACT.ENTERPRISE_CCC,
 						enterpriseCccId)

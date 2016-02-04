@@ -803,7 +803,11 @@ public class AgreementDraftObject {
 				add("DIAS_REALES");
 				add("DIAS_HUELGA");
 				add("DIAS_ERE");
-
+				
+				//ANTIGUEDAD
+				add("AÑOS_ANTIGUEDAD");
+				
+				
 				// FINIQUITO ?
 				add("DIAS_INDEMNIZACION");
 				add("CAUSA_INDEMNIZACION");
@@ -866,6 +870,7 @@ public class AgreementDraftObject {
 			{
 				// HORAS
 				add("HORAS_CONVENIO");
+				add("A\u00D1OS_ANTIGUEDAD");
 			}
 		};
 	}

@@ -52,6 +52,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_HOURS
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SELF;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SENIORITY;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SENIORITY_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SETTLE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SHORT_CONTRACT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.START;
@@ -3214,6 +3215,10 @@ public class SQLContractSalaryCalculatorContext
 		this.implicitExpressionContext.setVariable(CONTRACT_START,
 				getDate(SQLConstants.CONTRACT, ContractColumns.START_DATE),
 				startDate, endDate);
+		this.implicitExpressionContext.setVariable(SENIORITY_START,
+				getDate(SQLConstants.CONTRACT, ContractColumns.SENIORITY_DATE),
+				startDate, endDate);
+		
 		this.implicitExpressionContext
 				.setVariable(CONTRACT_END,
 						salaryType == SalaryType.SETTLE ? contractEndDate
@@ -3225,16 +3230,15 @@ public class SQLContractSalaryCalculatorContext
 
 		this.implicitExpressionContext.putVariable(START, start);
 		this.implicitExpressionContext.putVariable(END, end);
-
-		// this.implicitExpressionContext.putVariable(CGC_BASE, cgcBase);
-
-		this.implicitExpressionContext.putVariable(SENIORITY,
-				new ActiveTimedVariable<Integer>() {
-					@Override
-					public Integer getValue(Period period) {
-						return getSeniorityYears(period);
-					}
-				});
+		
+		if ( !this.implicitExpressionContext.containsVariable(SENIORITY, startDate, endDate))
+			this.implicitExpressionContext.putVariable(SENIORITY,
+					new ActiveTimedVariable<Integer>() {
+						@Override
+						public Integer getValue(Period period) {
+							return getSeniorityYears(period);
+						}
+					});
 
 		this.implicitExpressionContext.putVariable(BONUS_DAYS, bonusDays);
 
