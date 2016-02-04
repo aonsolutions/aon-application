@@ -16,10 +16,6 @@ public class JsIssueComment extends JavaScriptObject {
 		return this.id;
 	}-*/;
 
-	public final native String getUrl() /*-{
-		return this.url;
-	}-*/;
-
 	public final native String getBody() /*-{
 		return this.body;
 	}-*/;
@@ -45,5 +41,4 @@ public class JsIssueComment extends JavaScriptObject {
 	public final native String getUpdatedAtString() /*-{
 		return this.updated_at;
 	}-*/;
-
 }

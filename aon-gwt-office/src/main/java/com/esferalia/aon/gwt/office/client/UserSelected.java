@@ -1,16 +1,10 @@
 package com.esferalia.aon.gwt.office.client;
 
-import java.util.Date;
-
 public interface UserSelected {
+
+	Integer getUserId();
 	
 	String getLogin();
 	
-	String getGravatarId();
-	
-	Date getUrl();
-	
-	Date getAvatarUrl();
-	
-	String getUserId();
+	String getName();
 }

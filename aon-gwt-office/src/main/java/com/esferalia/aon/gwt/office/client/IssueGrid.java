@@ -16,7 +16,6 @@ import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.builder.shared.TableCellBuilder;
 import com.google.gwt.dom.builder.shared.TableRowBuilder;
@@ -73,7 +72,8 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 			implements IssueSelected, Comparable<IssueSelected> {
 
 		protected JsIssue issue;
-		private JsArray<JsIssueComment> comments;
+		protected JsUser user;
+		
 		private DateTimeFormat timeFormat;
 
 		public DefaultAonIssuesSelected(JsIssue issue) {
@@ -170,13 +170,8 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		}
 
 		@Override
-		public void setIssueComments(JsArray<JsIssueComment> comments) {
-			this.comments = comments;
-		}
-
-		@Override
 		public JsArray<JsIssueComment> getIssueComments() {
-			return comments;
+			return issue.getIssueComments();
 		}
 	}
 

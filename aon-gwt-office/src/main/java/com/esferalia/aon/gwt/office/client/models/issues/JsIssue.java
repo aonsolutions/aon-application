@@ -24,10 +24,6 @@ public class JsIssue extends JavaScriptObject {
 		return this.title;
 	}-*/;
 
-	public final native String getUrl() /*-{
-		return this.url;
-	}-*/;
-
 	public final native String getState() /*-{
 		return this.state;
 	}-*/;
@@ -80,8 +76,8 @@ public class JsIssue extends JavaScriptObject {
 		return this.id;
 	}-*/;
 
-	public final native JsMilestone getMilestone() /*-{
-		return this.milestone;
+	public final native JsArray<JsIssueComment> getIssueComments() /*-{
+		return this.comments;
 	}-*/;
 
 	public final native JsArray<JsLabel> getLabels() /*-{

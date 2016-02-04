@@ -10,10 +10,12 @@ import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
+import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRegistry;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;
+import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
 import com.esferalia.aon.gwt.office.client.values.LabelValue;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
 import com.esferalia.aon.occam.api.model.office.Notice;
@@ -74,7 +76,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	StackLayoutPanel stackLayoutPanel;
 	@UiField
 	TagTree tagTree;
-	
+
 	private User user;
 
 	private IssuePanel issuePanel;
@@ -109,19 +111,20 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		this.dataGrid.addListener(this);
 		this.tagTree.addListener(this);
 		this.gitHub.setRepositoryUrl(GWT.getModuleBaseURL() + "api");
-		
-		gitHub.getUser(String.valueOf(getCurrentDomain()), new AsyncCallback<AJSON<JsUser>>() {
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getMessage());
-			}
-			
-			@Override
-			public void onSuccess(AJSON<JsUser> result) {				
-				userIdentificated(result.getData());
-			}
-		});
+
+		gitHub.getUser(String.valueOf(getCurrentDomain()),
+				new AsyncCallback<AJSON<JsUser>>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(AJSON<JsUser> result) {
+						userIdentificated(result.getData());
+					}
+				});
 
 		loadRegistries();
 		loadLabels();
@@ -256,7 +259,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		loadClosedIssues();
 		showDockOfficePanel();
 	}
-	
+
 	private void initEnabledIssuesButton() {
 	}
 
@@ -301,7 +304,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		closeIssuesProvider.addDataDisplay(dataGrid);
 		closedIssues = closeIssuesProvider.getList();
 	}
-	
+
 	void userIdentificated(JsUser jsUser) {
 		this.user = new User();
 		this.user.setId(jsUser.getId());
@@ -386,7 +389,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					}
 				});
 	}
-	
+
 	@Override
 	public void onHideTagsPanel() {
 		dockLayoutPanel.setWidgetSize(Office.this.stackLayoutPanel, 0);
@@ -470,10 +473,31 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 					@Override
 					public void onSuccess(JsIssue result) {
-						loadOpenIssues();						
+						loadOpenIssues();
 					}
 				});
 
+	}
+
+	@Override
+	public void onIssueComment(String body) {
+		IssueCommentValue value = new IssueCommentValue();
+		value.setBody(body);
+
+		gitHub.createIssueComment(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), issueSelected.getJsIssue(), value,
+				new AsyncCallback<JsIssueComment>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Error al crear el comentario");
+					}
+
+					@Override
+					public void onSuccess(JsIssueComment result) {						
+						loadOpenIssues();
+					}
+				});
 	}
 
 	private static native <T extends JavaScriptObject> T eval(String javascript)

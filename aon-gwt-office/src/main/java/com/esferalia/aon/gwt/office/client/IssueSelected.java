@@ -38,11 +38,9 @@ public interface IssueSelected {
 	
 	Integer getId();
 	
+	JsArray<JsIssueComment> getIssueComments();
+	
 	JsArray<JsLabel> getLabels();
 	
 	JsIssue getJsIssue();
-	
-	void setIssueComments(JsArray<JsIssueComment> comments);
-	
-	JsArray<JsIssueComment> getIssueComments();
 }

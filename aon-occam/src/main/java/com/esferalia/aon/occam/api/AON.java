@@ -2143,6 +2143,17 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static Notice createComment(Integer domainId, String domainName, String userName, Integer noticeHeadId, Notice comment) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getOffice().createComment(ctx, noticeHeadId, comment);
+		} finally {
+			if(ctx != null)
+				ctx.close();
+		}
+	}
 
 	public static Notice addNewNotice(Integer domainId, String domainName,
 			String userName, Notice notice) {

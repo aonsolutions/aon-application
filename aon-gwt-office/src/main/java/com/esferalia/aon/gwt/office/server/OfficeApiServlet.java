@@ -85,43 +85,44 @@ public class OfficeApiServlet extends HttpServlet {
 			return group(2);
 		}
 	}
-	
+
 	private static class GetUser extends RegExpRequestHandler {
-		
+
 		public GetUser() {
 			super("/users/(\\d+)");
 		}
-		
+
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
-			
-			Integer domainId = null;			
-			
+
+			Integer domainId = null;
+
 			try {
-				domainId = getDomainId();				
-				
+				domainId = getDomainId();
+
 			} catch (Exception ex) {
 				String aux = getRequestAction(req);
 				String[] auxArr = aux.split("/");
 				domainId = Integer.parseInt(auxArr[2]);
-				
+
 			} finally {
 				getJsonUser(req, resp, domainId);
 			}
 		}
-		
-		private void getJsonUser(HttpServletRequest req, HttpServletResponse resp, Integer domainId) {
-			
+
+		private void getJsonUser(HttpServletRequest req,
+				HttpServletResponse resp, Integer domainId) {
+
 			PrintWriter pw = null;
 			try {
-				
+
 				String domainName = AonServletUtils.getRequestDomainName(req);
 				String userName = AonServletUtils.getLoggedUser();
 				Integer userId = AonServletUtils.getRequestUserId(req);
-				
+
 				User user = AON.getUser(domainId, domainName, userName, userId);
-				
+
 				pw = resp.getWriter();
 				pw.append('{');
 				pw.printf(String.format("\"message\":\"%s\",\r\n", "FOUNDED"));
@@ -129,11 +130,10 @@ public class OfficeApiServlet extends HttpServlet {
 				pw.append('}');
 				pw.flush();
 
-			
 			} catch (Exception ex) {
 				System.out.println(ex.getMessage());
 			}
-			
+
 		}
 	}
 
@@ -178,11 +178,10 @@ public class OfficeApiServlet extends HttpServlet {
 				String userName = AonServletUtils.getLoggedUser();
 
 				Notice notice = new Notice();
-				notice.setTitle(json.getString("title"));				
+				notice.setTitle(json.getString("title"));
 				notice.setBody(json.getString("body"));
 				notice.setStatus(json.getString("state"));
 				notice.setUserId(Integer.parseInt(json.getString("sender")));
-				
 
 				if (json.isNull("company") == false) {
 					notice.setCompany(json.getString("company"));
@@ -388,6 +387,60 @@ public class OfficeApiServlet extends HttpServlet {
 		}
 	}
 
+	private static class CreateComment extends RegExpRequestHandler {
+
+		private HttpServletRequest req;
+		private HttpServletResponse resp;
+
+		public CreateComment() {
+			super("/repos/(\\d+)/(.+)/issues/(\\d+)/comments");
+		}
+
+		@Override
+		public void handler(HttpServletRequest req, HttpServletResponse resp)
+				throws ServletException, IOException {
+
+			this.req = req;
+			this.resp = resp;
+
+			Integer domain = null;
+			Integer noticeHeadId = null;
+			String domainName = "";
+
+			try {
+				domain = getDomainId();
+				domainName = getDomainName();
+				noticeHeadId = Integer.parseInt(group(3));
+			} catch (Exception ex) {
+				String ver = getRequestAction(req);
+				String[] actionArr = ver.split("/");
+				domain = Integer.parseInt(actionArr[2]);
+				domainName = actionArr[3];
+				noticeHeadId = Integer.parseInt(actionArr[5]);
+
+			} finally {
+				createIssueComment(domain, domainName, noticeHeadId);
+			}
+		}
+
+		private void createIssueComment(Integer domainId, String domainName,
+				Integer noticeHeadId) {
+
+			try {
+				String object = getJsonObject(this.req);
+				JSONObject json = new JSONObject(object);
+				Notice comment = new Notice();
+				comment.setDomain(domainId);
+				comment.setUserId(AonServletUtils.getRequestUserId(this.req));
+				comment.setBody(json.getString("body"));
+				jsonComment(resp, domainId, domainName, noticeHeadId, comment);
+
+			} catch (Exception ex) {
+				System.out.println("Error al crear el comentario");
+			}
+		}
+	}
+
 	private static class GetRegistries extends RegExpRequestHandler {
 
 		public GetRegistries() {
@@ -483,7 +536,6 @@ public class OfficeApiServlet extends HttpServlet {
 			} catch (Exception ex) {
 				System.out.println("");
 			}
-
 		}
 	}
 
@@ -624,6 +676,7 @@ public class OfficeApiServlet extends HttpServlet {
 			new EditIssue(),
 			new CreateLabel(),
 			new UpdateLabel(),
+			new CreateComment()
 	};
 
 	private static final HttpRequestHandler DELETE_HANDLERS[] = {
@@ -722,7 +775,6 @@ public class OfficeApiServlet extends HttpServlet {
 				notice.getCompany() != null ? notice.getCompany() : ""));
 		buffer.append(String.format("\"source\":\"%s\",\r\n",
 				notice.getSource() != null ? notice.getSource() : ""));
-
 		buffer.append(String.format("\"user\":%s,\r\n",
 				buildUserSender(notice.getSender())));
 		buffer.append(String.format("\"type\":\"%s\",\r\n",
@@ -732,6 +784,8 @@ public class OfficeApiServlet extends HttpServlet {
 						: "Sin asignar"));
 		buffer.append(String.format("\"created_at\":\"%s\",\r\n",
 				notice.getStartDate()));
+		buffer.append(String.format("\"comments\":%s,\r\n",
+				buildComments(notice.getComments().listIterator())));
 		buffer.append(String.format("\"labels\":%s\r\n",
 				buildLabels(notice.getTags().listIterator())));
 		buffer.append('}');
@@ -789,7 +843,7 @@ public class OfficeApiServlet extends HttpServlet {
 					AonServletUtils.getLoggedUser(), notice);
 			pw.append('{');
 			pw.append('}');
-			//pw.append(getNotice(editNotice));
+			// pw.append(getNotice(editNotice));
 			pw.flush();
 		} catch (Exception ex) {
 			System.out.println("Exception: " + ex.getMessage());
@@ -826,6 +880,39 @@ public class OfficeApiServlet extends HttpServlet {
 		buffer.append(String.format("\"login\":\"%s\",\r\n", user.getLogin()));
 		buffer.append(String.format("\"name\":\"%s\"\r\n", user.getName()));
 		buffer.append("}");
+		return buffer.toString();
+	}
+
+	private static String buildComments(ListIterator<Notice> commentsIterator) {
+
+		StringBuffer buffer = new StringBuffer();
+
+		buffer.append("[\n");
+		while (commentsIterator.hasNext()) {
+			buffer.append(getComment(commentsIterator.next()));
+
+			if (commentsIterator.hasNext())
+				buffer.append(",\n");
+		}
+		buffer.append("]");
+
+		return buffer.toString();
+	}
+
+	private static String getComment(Notice comment) {
+
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("{\n");
+		buffer.append(String.format("\"id\":%s,\r\n",
+				String.valueOf(comment.getId())));
+		buffer.append(String.format("\"user\":%s,\r\n",
+				buildUserSender(comment.getSender())));
+		buffer.append(String.format("\"created_at\":\"%s\",\r\n",
+				comment.getStartDate()));
+		buffer.append(String.format("\"body\":\"%s\"\r\n",
+				(comment.getBody() != null) ? comment.getBody() : ""));
+		buffer.append("}");
+
 		return buffer.toString();
 	}
 
@@ -905,6 +992,26 @@ public class OfficeApiServlet extends HttpServlet {
 			pw.append(getLabel(newTag));
 			pw.flush();
 
+		} catch (Exception ex) {
+			System.out
+					.println(ex.getMessage() + " " + ex.getLocalizedMessage());
+			pw.flush();
+		} finally {
+			if (pw != null)
+				pw.close();
+		}
+	}
+
+	private static void jsonComment(HttpServletResponse resp, Integer domainId,
+			String domainName, Integer noticeHeadId, Notice comment) {
+
+		PrintWriter pw = null;
+		try {
+			pw = resp.getWriter();
+			Notice noticeComment = AON.createComment(domainId, domainName,
+					AonServletUtils.getLoggedUser(), noticeHeadId, comment);
+			pw.append(getComment(noticeComment));
+			pw.flush();
 		} catch (Exception ex) {
 			System.out
 					.println(ex.getMessage() + " " + ex.getLocalizedMessage());

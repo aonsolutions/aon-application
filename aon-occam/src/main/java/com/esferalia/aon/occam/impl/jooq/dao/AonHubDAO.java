@@ -317,6 +317,8 @@ public class AonHubDAO {
 					Tag tag = buildTag(noticeTag);
 					notice.addTag(tag);
 				});
+		
+		getComents(ctx, noticeId, notice.getComments());
 
 		return notice;
 	}
@@ -403,12 +405,55 @@ public class AonHubDAO {
 										NoticeStatus.DUPLICATED.getValue())))
 						.and(NOTICE.NOTICE_.isNull())
 						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value())))
+				.orderBy(NOTICE.DATE.desc())
 				.fetch().stream().forEach(record -> {
 
 					Notice notice = buildNotice(ctx, record);
 					notices.add(notice);
 				});
 		return notices;
+	}
+	
+	public static Notice createComment(AONContext ctx, Integer headId, Notice comment) {
+		
+		NoticeRecord noticeRecord = ctx.getDslContext().insertInto(NOTICE)
+		.set(NOTICE.DOMAIN, ctx.getDomainId())
+		.set(NOTICE.DATE,
+				new java.sql.Timestamp((new Date()).getTime()))
+		.set(NOTICE.SENDER, comment.getUserId())
+		.set(NOTICE.SUBJECT, comment.getBody())
+		.set(NOTICE.TYPE, NoticeType.COMENTARIO.value())
+		.set(NOTICE.NOTICE_, headId)
+		.set(NOTICE.STATUS, NoticeStatus.OPEN.value())
+		.set(NOTICE.PRIORITY, (byte) 0)
+		.returning().fetchOne();
+		
+		User user = getUser(ctx, comment.getUserId());
+		comment.setSender(user);
+		comment.setId(noticeRecord.getValue(NOTICE.ID));
+		return comment;
+	}
+	
+	public static void getComents(AONContext ctx, Integer headId, List<Notice> comments) {
+		
+		Result<NoticeRecord> result = ctx.getDslContext()
+		.selectFrom(NOTICE)		
+		.where(NOTICE.NOTICE_.eq(headId)
+				.and(NOTICE.TYPE.eq(NoticeType.COMENTARIO.value())))
+		.orderBy(NOTICE.DATE.asc())
+		.fetch();
+		
+		if ( result != null ) {
+			result.stream().forEach(record -> {
+				Notice notice = new Notice();
+				notice.setDomain(record.getValue(NOTICE.DOMAIN));
+				notice.setStartDate(record.getValue(NOTICE.DATE));
+				User user = getUser(ctx, record.getValue(NOTICE.SENDER));
+				notice.setSender(user);
+				notice.setBody(record.getValue(NOTICE.SUBJECT));			
+				comments.add(notice);
+			});
+		}
 	}
 
 	public static Tag getTag(AONContext ctx, String name) {
@@ -467,77 +512,6 @@ public class AonHubDAO {
 				.where(NOTICE.ID.eq(id)).fetchOne();
 		
 		return buildNotice(ctx, noticeRecord);
-/*
-		Notice editNotice = new Notice();
-		editNotice.setId(id);
-		editNotice.setDomain(ctx.getDomainId());
-		editNotice.setStartDate(noticeRecord.getValue(NOTICE.DATE));
-		editNotice.setCompany(noticeRecord.getValue(NOTICE.COMPANY));
-		editNotice.setSource(noticeRecord.getValue(NOTICE.SOURCE));
-
-		UserRecord userRecord = ctx.getDslContext().selectFrom(USER)
-				.where(USER.ID.eq(noticeRecord.getValue(NOTICE.SENDER)))
-				.fetchOne();
-		User user = new User();
-		user.setId(userRecord.getValue(USER.ID));
-		user.setName(userRecord.getValue(USER.NAME));
-		user.setLogin(userRecord.getValue(USER.LOGIN));
-		editNotice.setSender(user);
-
-		editNotice.setTitle(noticeRecord.getValue(NOTICE.SUBJECT));
-
-		String body = ctx.getDslContext().selectFrom(NOTICE)
-				.where(NOTICE.NOTICE_.eq(id)).fetchOne()
-				.getValue(NOTICE.SUBJECT);
-
-		editNotice.setBody(body.replaceAll("\n", "--"));
-		editNotice.setRecipient(noticeRecord.getValue(NOTICE.RECIPIENT));
-
-		String status = ctx.getDslContext()
-				.selectFrom(NOTICE_TAG.rightOuterJoin(TAG)
-						.on(NOTICE_TAG.TAG.eq(TAG.ID)))
-				.where(NOTICE_TAG.NOTICE.eq(id)
-						.and(NOTICE_TAG.END_DATE.isNull())
-						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value()))
-						.and(TAG.DOMAIN.eq(0)))
-				.fetchOne().getValue(TAG.NAME);
-		editNotice.setStatus(status);
-
-		Record priorityRecord = ctx.getDslContext()
-				.selectFrom(NOTICE_TAG.rightOuterJoin(TAG)
-						.on(NOTICE_TAG.TAG.eq(TAG.ID)))
-				.where(NOTICE_TAG.NOTICE.eq(id)
-						.and(TAG.TYPE.eq(TagType.OFFICE_PRIORITY.value()))
-						.and(TAG.DOMAIN.eq(ctx.getDomainId())))
-				.fetchOne();
-
-		if (priorityRecord != null)
-			editNotice.setPriority(priorityRecord.getValue(TAG.NAME));
-
-		Record typeRecord = ctx.getDslContext()
-				.selectFrom(NOTICE_TAG.rightOuterJoin(TAG)
-						.on(NOTICE_TAG.TAG.eq(TAG.ID)))
-				.where(NOTICE_TAG.NOTICE.eq(id)
-						.and(TAG.TYPE.eq(TagType.OFFICE_TYPE.value()))
-						.and(TAG.DOMAIN.eq(ctx.getDomainId())))
-				.fetchOne();
-
-		if (typeRecord != null)
-			editNotice.setType(typeRecord.getValue(TAG.NAME));
-
-
-		ctx.getDslContext().select().from(NOTICE_TAG).rightOuterJoin(TAG)
-				.on(NOTICE_TAG.TAG.eq(TAG.ID))
-				.where(NOTICE_TAG.NOTICE.eq(id)
-						.and(TAG.TYPE.eq(TagType.OFFICE_NOTICE.value()))
-						.and(TAG.DOMAIN.eq(ctx.getDomainId())))
-				.fetch().stream().forEach(noticeTag -> {
-					Tag tag = buildTag(noticeRecord);
-					editNotice.addTag(tag);
-
-				});
-		return editNotice;
-		*/
 	}
 
 	public static List<Registry> getRegistries(AONContext ctx,
@@ -577,6 +551,5 @@ public class AonHubDAO {
 			if (cursor != null)
 				cursor.close();
 		}
-
 	}
 }

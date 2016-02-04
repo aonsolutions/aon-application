@@ -2,9 +2,9 @@ package com.esferalia.aon.gwt.office.client;
 
 public interface LabelSelected {
 	
-	String getColor();
-	
-	String getUrl();
+	Integer getId();
 	
 	String getName();
+	
+	String getColor();
 }
