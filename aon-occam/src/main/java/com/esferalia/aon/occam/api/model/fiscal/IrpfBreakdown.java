@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.fiscal;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -15,6 +16,7 @@ public class IrpfBreakdown implements Serializable{
 	private String document;
 	private String name;
 	private Date issueDate;
+	private boolean fromSalary;
 	
 	// ------------------- facturas
 	private InvoiceType invoiceType;
@@ -24,6 +26,7 @@ public class IrpfBreakdown implements Serializable{
 	private String referenceCode;
 	private Date taxDate;
 	private WithholdingType withholdingType;
+	private IRPFRegime regime;
 	private double base;
 	private double percent;
 	private double quota;
@@ -53,6 +56,16 @@ public class IrpfBreakdown implements Serializable{
 	}
 	public IrpfBreakdown setIssueDate(Date issueDate) {
 		this.issueDate = issueDate;
+		return this;
+	}
+	public boolean isFromSalary() {
+		return fromSalary;
+	}
+	public boolean isFromInvoice() {
+		return !fromSalary;
+	}
+	public IrpfBreakdown setFromSalary(boolean fromSalary) {
+		this.fromSalary = fromSalary;
 		return this;
 	}
 	// ----------------------------------------------------------------
@@ -103,6 +116,13 @@ public class IrpfBreakdown implements Serializable{
 	}
 	public IrpfBreakdown setWithholdingType(WithholdingType withholdingType) {
 		this.withholdingType = withholdingType;
+		return this;
+	}
+	public IRPFRegime getIRPFRegime() {
+		return regime;
+	}
+	public IrpfBreakdown setIRPFRegime(IRPFRegime regime) {
+		this.regime = regime;
 		return this;
 	}
 	public double getBase() {
@@ -175,4 +195,34 @@ public class IrpfBreakdown implements Serializable{
 		return documentNumber;
 	}
 	
+	//
+	public boolean isSalaryRetention() {
+		return isFromSalary() && !isSalaryInKindRetention();
+	}
+	public boolean isSalaryInKindRetention() {
+		return isFromSalary() && (AonMathUtils.isNotZero(inKindBase) || AonMathUtils.isNotZero(inKindQuota));
+	}
+	public boolean isProfessional() {
+		return isFromInvoice() && withholdingType == WithholdingType.PROFESSIONAL;
+	}
+	public boolean isRenting() {
+		return isFromInvoice() && withholdingType == WithholdingType.RENTING;
+	}
+	public boolean isMovableCapital() {
+		return isFromInvoice() && withholdingType == WithholdingType.MOVABLE_CAPITAL;
+	}
+	public boolean isFarmer() {
+		return isFromInvoice() && withholdingType == WithholdingType.FARMER;
+	}
+	public boolean isTransportOperator() {
+		return isFromInvoice() &&  withholdingType == WithholdingType.TRANSPORT_OPERATOR;
+	}
+	public boolean isObjectiveRegime() {
+		return isFromInvoice() &&  (regime == IRPFRegime.OBJECTIVE);
+	}
+	public boolean isNotObjectiveRegime() {
+		return !isObjectiveRegime();
+	}
+	
 }
+

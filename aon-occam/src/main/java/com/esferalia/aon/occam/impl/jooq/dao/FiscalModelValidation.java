@@ -4,8 +4,7 @@ import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 
 import java.util.function.BiConsumer;
 
-import org.jooq.Record;
-import org.jooq.SelectConditionStep;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -15,6 +14,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FiscalModelValidation {
 
+	private static final byte ZERO = 0;
+	 
 	/**
 	 * El dominio no puede estar vacio.
 	 */
@@ -48,39 +49,23 @@ public class FiscalModelValidation {
 	};
 
 	public static BiConsumer<FiscalModel,AONContext> SAME_PERIOD_EXISTS_CHECK = (fm,ctx) -> {
-		if (fm.isReplacement()) {
-			// Se comprueba que no exista una decl. sustitutiva.
-			SelectConditionStep<Record> select = ctx.getDslContext().select()
+		if (!fm.isReplacement() && !fm.isComplementary()
+			&& ctx.getDslContext()
+				.select()
 				.from(FS_MODEL)
 				.where(FS_MODEL.DOMAIN.equal(fm.getDomain()))
-				.and(FS_MODEL.MODEL.eq( fm.getModel().getValue()))
-				.and(FS_MODEL.YEAR.equal(fm.getYear()))
-				.and(FS_MODEL.PERIOD.eq( fm.getPeriod().getValue() ))
-				.and(FS_MODEL.ADMINISTRATION.eq( fm.getAdministration().getValue() ))
-				.and(FS_MODEL.REPLACEMENT.equal((byte) 1));
-			if (fm.getId() != null) {
-				select.and(FS_MODEL.ID.ne(fm.getId()));	
-			}
-			if (ctx.getDslContext().fetchCount(select) > 0) {
-				throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_REPLACED.getMessage());
-			}
-		} else {
-			
-			// Se comprueba que no exista ya una decl.
-			SelectConditionStep<Record> select = ctx.getDslContext().select()
-				.from(FS_MODEL)
-				.where(FS_MODEL.DOMAIN.equal(fm.getDomain()))
-				.and(FS_MODEL.MODEL.eq( fm.getModel().getValue()))
-				.and(FS_MODEL.YEAR.equal(fm.getYear())
-				.and(FS_MODEL.PERIOD.eq( fm.getPeriod().getValue() ))
-				.and(FS_MODEL.ADMINISTRATION.eq( fm.getAdministration().getValue() ))
-				.and(FS_MODEL.REPLACEMENT.equal((byte) 0)));
-			if (fm.getId() != null) {
-				select.and(FS_MODEL.ID.ne(fm.getId()));	
-			}
-			if (ctx.getDslContext().fetchCount(select) > 0 )  
-				throw new AonCoreException(
-						AonError.FISCAL_DECLARATION_ALREADY_EXISTS.getMessage());
+					.and(FS_MODEL.MODEL.eq( fm.getModel().getValue()))
+					.and(FS_MODEL.YEAR.equal(fm.getYear()))
+					.and(FS_MODEL.PERIOD.eq( fm.getPeriod().getValue() ))
+					.and(FS_MODEL.ADMINISTRATION.eq( fm.getAdministration().getValue() ))
+					.and(FS_MODEL.REPLACEMENT.equal( ZERO ))
+					.and(FS_MODEL.COMPLEMENTARY.equal( ZERO ))
+					.and((fm.isNew())?DSL.trueCondition():FS_MODEL.ID.ne(fm.getId()))
+				.fetch()
+				.stream()
+				.findFirst()
+				.isPresent() ) {
+			throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_EXISTS.getMessage());
 		}
 	};
 

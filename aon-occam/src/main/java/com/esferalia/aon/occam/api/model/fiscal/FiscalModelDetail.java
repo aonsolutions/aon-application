@@ -2,8 +2,6 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
 
-import com.esferalia.aon.watson.util.AonMathUtils;
-
 public class FiscalModelDetail implements Serializable {
 
 	private static final long serialVersionUID = 5819123654568341791L;
@@ -83,19 +81,19 @@ public class FiscalModelDetail implements Serializable {
 	}
 	
 	public void addAccumulatedAmount(double amount) {
-		setAccumulatedAmount( AonMathUtils.round(getAccumulatedAmount()) + amount);
+		setAccumulatedAmount( getAccumulatedAmount() + amount);
 	}
 	public void addDeclaredAmount(double amount) {
-		setDeclaredAmount( AonMathUtils.round(getDeclaredAmount()) + amount);
+		setDeclaredAmount( getDeclaredAmount() + amount);
 	}
 	public void addResultAmount(double amount) {
-		setResultAmount( AonMathUtils.round(getResultAmount()) + amount);
+		setResultAmount( getResultAmount() + amount);
 	}
 	public void addAdjustAmount(double amount) {
-		setAdjustAmount( AonMathUtils.round(getAdjustAmount()) + amount);
+		setAdjustAmount( getAdjustAmount() + amount);
 	}
 	public void addAmount(double amount) {
-		setAmount( AonMathUtils.round(getAmount()) + amount);
+		setAmount( getAmount() + amount);
 	}
 	
 }

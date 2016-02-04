@@ -1,5 +1,11 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
+import static com.esferalia.aon.occam.api.model.type.Administration.ALAVA;
+import static com.esferalia.aon.occam.api.model.type.Administration.BIZKAIA;
+import static com.esferalia.aon.occam.api.model.type.Administration.COMMON_TERRITORY;
+import static com.esferalia.aon.occam.api.model.type.Administration.GIPUZKOA;
+import static com.esferalia.aon.occam.api.model.type.Administration.NAVARRA;
+
 import java.util.Date;
 import java.util.LinkedHashMap;
 
@@ -63,6 +69,9 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 	public FiscalModel setId(Integer id) {
 		this.id = id;
 		return this;
+	}
+	public boolean isNew() {
+		return id==null;
 	}
 	
 	@Override
@@ -435,6 +444,22 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		to.setContactEmail(from.getContactEmail());
 		to.setIban(from.getIban());;
 		to.setMap(from.getMap());
+	}
+
+	public boolean isAraba() {
+		return (administration == ALAVA);
+	}
+	public boolean isBizkaia() {
+		return (administration == BIZKAIA);
+	}
+	public boolean isGipuzkoa() {
+		return (administration == GIPUZKOA);
+	}
+	public boolean isNavarra() {
+		return (administration == NAVARRA);
+	}
+	public boolean isAEAT() {
+		return (administration == COMMON_TERRITORY);
 	}
 
 	// ---------------------------------------------------------- AUDIT

@@ -66,19 +66,18 @@
 							<g:north size="65">
 								<g:SimplePanel ui:field="headerPanel"/>
 							</g:north>
-							<g:north size="65">
+							<g:north size="75">
 								<g:HTMLPanel styleName="{aonResources.css.aonScrollArea}">
 									<table class="{aonResources.css.aonPanelGrid} {aonResources.css.aonWidthAll}">
 										<colgroup>
 											<col style="width: auto; white-space: nowrap;" />
-											<col style="width: 100px;" />
-											<col style="width: 100px;" />
+											<col style="width: 280px;" />
+											<col style="width: 120px;" />
 											<col style="width: 110px;" />
-											<col style="width: 110px;" />
-											<col style="width: 100px;" />
 										</colgroup>
 										<tr>
-											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap} {aonResources.css.aonFontBig} {aonResources.css.aonTextCenter}">
+											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap} {aonResources.css.aonFontBig} {aonResources.css.aonTextCenter}"
+												rowspan="2">
 												<g:InlineLabel ui:field="documentLabel"/>
 												<g:InlineLabel text=" - "/>
 												<g:InlineLabel ui:field="nameLabel" />
@@ -88,19 +87,26 @@
 												<g:Label ui:field="replacementLabel" />
 												<g:Label ui:field="complementaryLabel" />
 											</td>
-											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap} {aonResources.css.aonFontSmall} {aonResources.css.aonTextCenter}">
-												<g:InlineLabel ui:field="dirtyLabel" 
-													styleName="{aonResources.css.aonColorRed}"/>
-											</td>
-											<td class="{aonResources.css.aonPanelGridEven}">
-												<g:Label ui:field="statusLabel" />
-											</td>
 											<td class="{aonResources.css.aonPanelGridEven}">
 												<g:CheckBox ui:field="confidential" text="{msg.confidential}"/>
 											</td>
 											<td style="text-align: right;" class="{aonResources.css.aonPanelGridEven}">
 												<g:Button ui:field="commentsButton" text="{msg.comments}" 
 													styleName="{aonResources.css.aonIconCommandButton}"/>
+											</td>
+										</tr>
+										<tr>
+											<td class="{aonResources.css.aonPanelGridEven}">
+												<g:Label ui:field="replacedNumberLabel" text="{msg.previousDeclaration}"
+													styleName="{aonResources.css.aonInnerLabel}"/>
+												<aon:IntegerBox  ui:field="replacedNumber" />
+											</td>
+											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap} {aonResources.css.aonFontSmall} {aonResources.css.aonTextCenter}">
+												<g:InlineLabel ui:field="dirtyLabel" 
+													styleName="{aonResources.css.aonColorRed}"/>
+											</td>
+											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap} {aonResources.css.aonFontSmall} {aonResources.css.aonTextCenter}">
+												<g:Label ui:field="statusLabel" />
 											</td>
 										</tr>
 									</table>

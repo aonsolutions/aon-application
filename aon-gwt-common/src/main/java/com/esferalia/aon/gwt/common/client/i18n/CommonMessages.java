@@ -540,6 +540,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("N. Decl. Sustituida")
 	String replacedReceipt();
 
+	@DefaultMessage("Num. Decl. Anterior")
+	String previousDeclaration();
+
 	@DefaultMessage("Decl. complementaria")
 	String complementary();
 

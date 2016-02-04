@@ -166,6 +166,11 @@ public class Model111 extends MainEntryPoint {
 	@UiField
 	Label complementaryLabel;
 	@UiField
+	IntegerBox replacedNumber;
+	@UiField
+	Label replacedNumberLabel;
+	
+	@UiField
 	CheckBox confidential;
 	@UiField
 	Button commentsButton;
@@ -223,6 +228,10 @@ public class Model111 extends MainEntryPoint {
 		domainNameHidden = new Hidden("domainName");
 		formFlowPanel.add(domainNameHidden);
 		formContainer.add(diskForm);
+		
+		replacedNumber.setVisibleLength(13);
+		replacedNumber.setMaxLength(13);
+
 //		authomaticCalculation = true;
 //		calculateCheckButton.addStyleName( AON.AON_CSS.aonIconChecked() );
 //		calculateButton.setVisible(!authomaticCalculation);
@@ -327,8 +336,32 @@ public class Model111 extends MainEntryPoint {
 		
 		styleDirtyLabel();
 		styleStatusLabel();
-		replacementLabel.setText(currentMod111.isReplacement()?AON.MSG.replacement():"");
-		complementaryLabel.setText(currentMod111.isComplementary()?AON.MSG.complementary():"");
+		if (currentMod111.isReplacementDeclarationAvailable()) {
+			replacementLabel.setText(AON.MSG.replacement());
+			replacementLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
+			replacementLabel.addStyleName(currentMod111.isReplacement()
+					?AON.AON_CSS.aonIconChecked()
+					:AON.AON_CSS.aonIconCheck()
+				);
+		} else {
+			replacementLabel.setText("");
+		}
+		
+		if (currentMod111.isComplementaryDeclarationAvailable()) {
+			complementaryLabel.setText(AON.MSG.complementary());
+			complementaryLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
+			complementaryLabel.addStyleName(currentMod111.isReplacement()
+					?AON.AON_CSS.aonIconChecked()
+					:AON.AON_CSS.aonIconCheck()
+				);
+		} else {
+			complementaryLabel.setText("");
+		}
+		
+		replacedNumber.setValue(currentMod111.getReplacedNumber());
+		replacedNumber.setVisible(currentMod111.isReplacedNumberAvailable());
+		replacedNumberLabel.setVisible(currentMod111.isReplacedNumberAvailable());
+		
 		confidential.setValue(currentMod111.isConfidential());
 		domain = currentMod111.getDomain();
 		
@@ -563,52 +596,11 @@ public class Model111 extends MainEntryPoint {
 		cf.addStyleName(0, AON.AON_CSS.aonPaddingRight() );
 		FlexCellFormatter fmt = tab.getFlexCellFormatter();
 		
-		fmt.addStyleName(0, 0, AON.AON_CSS.aonPanelGridOdd());
-		tab.setWidget(0, 0, new Label(AON.MSG.administration()));
-		fmt.addStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
-		final AdministrationListBox admonList = new AdministrationListBox();
+		final Label previousLabel = new Label(AON.MSG.previousDeclaration()); 
+		previousLabel.setVisible(currentMod111.isReplacedNumberAvailable());
+		final IntegerBox previous = new IntegerBox();
+		previous.setVisible(currentMod111.isReplacedNumberAvailable());
 		
-		admonList.setSelectedIndex( currentMod111.getAdministration().ordinal());
-		admonList.addChangeHandler( new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				currentMod111.setAdministration( admonList.getValue() );
-			}
-		});
-		tab.setWidget(0, 1, admonList);
-		
-		
-		fmt.addStyleName(1, 0, AON.AON_CSS.aonPanelGridOdd());
-		tab.setWidget(1, 0, new Label(AON.MSG.year()));
-		fmt.addStyleName(1, 1, AON.AON_CSS.aonPanelGridEven());
-		final IntegerBox yearBox = new IntegerBox();
-		yearBox.setValue(currentMod111.getYear());
-		yearBox.setMaxLength(4);
-		yearBox.setVisibleLength(4);
-		yearBox.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				currentMod111.setYear(yearBox.getValue());
-			}
-		});
-		tab.setWidget(1, 1,yearBox);
-
-		fmt.addStyleName(2, 0, AON.AON_CSS.aonPanelGridOdd());
-		tab.setWidget(2, 0, new Label(AON.MSG.period()));
-		fmt.addStyleName(2, 1, AON.AON_CSS.aonPanelGridEven());
-		final PeriodListBox periodList = new PeriodListBox();
-		if (currentMod111.getPeriod() != null) {
-			periodList.setSelectedIndex(currentMod111.getPeriod().ordinal() + 1);
-		}
-		periodList.addChangeHandler( new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				currentMod111.setPeriod( periodList.getValue() );
-			}
-		});
-		tab.setWidget(2, 1, periodList);
-
 		final CheckBox replacement = new CheckBox(AON.MSG.replacement());
 		final CheckBox complementary = new CheckBox(AON.MSG.complementary());
 		replacement.addClickHandler(new ClickHandler() {
@@ -622,6 +614,8 @@ public class Model111 extends MainEntryPoint {
 				}
 			}
 		});
+		replacement.setVisible(currentMod111.isReplacementDeclarationAvailable());
+		
 		complementary.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -630,23 +624,95 @@ public class Model111 extends MainEntryPoint {
 				replacement.setEnabled(!complementary.getValue());
 				if (complementary.getValue()) {
 					replacement.setValue(false);
+					previousLabel.setVisible(currentMod111.isReplacedNumberAvailable());
+					previous.setVisible(currentMod111.isReplacedNumberAvailable());
 				}
 			}
 		});
+		complementary.setVisible(currentMod111.isComplementaryDeclarationAvailable());
 		
-		fmt.addStyleName(3, 0, AON.AON_CSS.aonPanelGridOdd());
-		tab.setWidget(3, 0, new Label());
-		fmt.addStyleName(3, 1, AON.AON_CSS.aonPanelGridEven());
-		tab.setWidget(3, 1, replacement);
+		int row = 0;
+		fmt.addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.setWidget(row, 0, new Label(AON.MSG.administration()));
+		fmt.addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		final AdministrationListBox admonList = new AdministrationListBox();
+		admonList.setSelectedIndex( currentMod111.getAdministration().ordinal());
+		admonList.addChangeHandler( new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				currentMod111.setAdministration( admonList.getValue() );
+				replacement.setVisible(currentMod111.isReplacementDeclarationAvailable());
+				complementary.setVisible(currentMod111.isComplementaryDeclarationAvailable());
+				previousLabel.setVisible(currentMod111.isReplacedNumberAvailable());
+				previous.setVisible(currentMod111.isReplacedNumberAvailable());
+			}
+		});
+		tab.setWidget(row, 1, admonList);
+		row++;
+		
+		fmt.addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.setWidget(row, 0, new Label(AON.MSG.year()));
+		fmt.addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		final IntegerBox yearBox = new IntegerBox();
+		yearBox.setValue(currentMod111.getYear());
+		yearBox.setMaxLength(4);
+		yearBox.setVisibleLength(4);
+		yearBox.addValueChangeHandler(new ValueChangeHandler<Integer>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Integer> event) {
+				currentMod111.setYear(yearBox.getValue());
+			}
+		});
+		tab.setWidget(row, 1,yearBox);
+		row++;
+		
+		fmt.addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.setWidget(row, 0, new Label(AON.MSG.period()));
+		fmt.addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		final PeriodListBox periodList = new PeriodListBox();
+		if (currentMod111.getPeriod() != null) {
+			periodList.setSelectedIndex(currentMod111.getPeriod().ordinal() + 1);
+		}
+		periodList.addChangeHandler( new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				currentMod111.setPeriod( periodList.getValue() );
+			}
+		});
+		tab.setWidget(row, 1, periodList);
+		row++;
+		
+		fmt.addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.setWidget(row, 0, new Label());
+		fmt.addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		tab.setWidget(row, 1, replacement);
+		row++;
+		
+		fmt.addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.setWidget(row, 0, new Label());
+		fmt.addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		tab.setWidget(row, 1, complementary);
+		row++;
+		
+		fmt.addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.setWidget(row, 0, previousLabel);
+		fmt.addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		previous.setMaxLength(13);
+		previous.setVisibleLength(13);
+		previous.setValue(currentMod111.getReplacedNumber());
+		previous.addChangeHandler( new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				currentMod111.setReplacedNumber( previous.getValue() );
+			}
+		});
+		tab.setWidget(row, 1, previous);
+		row++;
 
-		fmt.addStyleName(4, 0, AON.AON_CSS.aonPanelGridOdd());
-		tab.setWidget(4, 0, new Label());
-		fmt.addStyleName(4, 1, AON.AON_CSS.aonPanelGridEven());
-		tab.setWidget(4, 1, complementary);
-
-
-		fmt.setColSpan(5, 0, 2);
-		fmt.addStyleName(5, 0, AON.AON_CSS.aonPanelGridEven());
+		fmt.setColSpan(row, 0, 2);
+		fmt.addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		FlowPanel flowPanel = new FlowPanel();
 		flowPanel.setStyleName(AON.AON_CSS.aonPadding());
 		flowPanel.addStyleName(AON.AON_CSS.aonMarginTop());
@@ -691,7 +757,8 @@ public class Model111 extends MainEntryPoint {
 			
 		});
 		flowPanel.add(cancelButton);
-		tab.setWidget(5, 0, flowPanel);
+		tab.setWidget(row, 0, flowPanel);
+		
 		newDialog.add(tab);
 		newDialog.center();
 		newDialog.show();
@@ -867,6 +934,13 @@ public class Model111 extends MainEntryPoint {
 		currentMod111.setConfidential(confidential.getValue());
 		setDirty(true);
 	}
+	
+	@UiHandler("replacedNumber")
+	void onConfidentialChange(ChangeEvent event) {
+		currentMod111.setReplacedNumber(replacedNumber.getValue());
+		setDirty(true);
+	}
+	
 	
 	@UiHandler("footPanel")
 	void onFootMinimize(MinimizeEvent event) {
