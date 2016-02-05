@@ -21,6 +21,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.product.Item;
 import com.code.aon.product.ItemAddInfo;
 import com.code.aon.product.Product;
 import com.code.aon.purchase.PurchaseDetail;
@@ -77,9 +78,9 @@ public class PurchaseReportScriptlet extends JRDefaultScriptlet implements Seria
 	
 	public List<EcommerceProduct> getValuesTemplate(Product product) throws JRScriptletException{
 		List<EcommerceProduct> list = new ArrayList<EcommerceProduct>();
-		for(Attach attach: getTemplates(product)){
-			if(attach!=null){
-				try {
+		try {
+			for(Attach attach: getTemplates(product.getBaseItem())){
+				if(attach!=null){
 					EcommerceProduct ecommerceProduct = null;
 					ecommerceProduct = readXml(attach.getData());
 					ecommerceProduct.setProduct(new EcommerceProduct.Product());
@@ -87,23 +88,27 @@ public class PurchaseReportScriptlet extends JRDefaultScriptlet implements Seria
 					ecommerceProduct.getProduct().setCode(product.getCode());
 					ecommerceProduct.getProduct().setName(product.getName());
 					list.add(ecommerceProduct);
-				} catch (JAXBException e) {
-					String msg = "No se han podido obtener los valores de la plantilla del producto";
-					LOGGER.error(msg,e);
 				}
 			}
+		} catch (JAXBException e) {
+			String msg = "No se han podido obtener los valores de la plantilla del producto";
+			LOGGER.error(msg,e);
+		} catch (ManagerBeanException e) {
+			String msg = "No se han podido obtener los valores de la plantilla del producto";
+			LOGGER.error(msg,e);
 		}
 		return list;
 	}
 	
-	private List<Attach> getTemplates(Product product){
-		List<Attach> list = AON.getAttachList(
+	private List<Attach> getTemplates(Item item){
+		List<Attach> list = null;
+		list = AON.getAttachList(
 				AonUtil.getDomainName(),
 				DomainManager.getCurrentDomain(),
 				UserUtils.getInstance().getLoggedUser().getLogin(),
 				filter -> filter.getTypeProperty().eq(AttachmentType.ECOMMERCE_PRODUCT.value())
-//						.and(sellerId != null ? filter.getAttachModuleProperty().eq(id): filter.getAttachModuleProperty().isNotNull()), 
-						.and(filter.getAttachModuleProperty().eq(product.getId())), 
+//					.and(sellerId != null ? filter.getAttachModuleProperty().eq(id): filter.getAttachModuleProperty().isNotNull()), 
+					.and(filter.getAttachModuleProperty().eq(item.getId())), 
 				AttachType.ITEM);
 		return list;
 	}
