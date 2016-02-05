@@ -8,7 +8,6 @@ import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Sales.SALES;
 
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,8 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import javax.xml.bind.JAXBException;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -291,10 +288,9 @@ public class DBMarketplace {
 		byte[] data = null;
 		try {
 			data = XMLUtils.writeXml(ecommerceProduct);
-		} catch (JAXBException e) {
+		} catch (Throwable th) {
 			data = null;
-		} catch (IOException e) {
-			data = null;
+			th.printStackTrace();
 		}
 	
 		if(data!=null){
