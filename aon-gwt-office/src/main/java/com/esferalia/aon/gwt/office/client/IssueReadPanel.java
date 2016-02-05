@@ -102,6 +102,7 @@ public class IssueReadPanel extends Composite {
 			createCommentButton();			
 		} else if (issue instanceof IssueGrid.IssueClosedLoadSelected) {
 			commentButton.setVisible(false);
+			commentTextArea.setVisible(false);
 			createReopenButton();
 		}
 	}
