@@ -1,22 +1,18 @@
 package com.esferalia.aon.gwt.office.client;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
-import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
-import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
-import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.builder.shared.TableCellBuilder;
 import com.google.gwt.dom.builder.shared.TableRowBuilder;
 import com.google.gwt.dom.client.Style.Cursor;
@@ -25,8 +21,6 @@ import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.http.client.URL;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.cellview.client.AbstractCellTableBuilder;
 import com.google.gwt.user.cellview.client.AbstractHeaderOrFooterBuilder;
 import com.google.gwt.user.cellview.client.Column;
@@ -67,165 +61,29 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 			return mensaje;
 		}
 	}
-
-	private static abstract class DefaultAonIssuesSelected
-			implements IssueSelected, Comparable<IssueSelected> {
-
-		protected JsIssue issue;
-		protected JsUser user;
-		
-		private DateTimeFormat timeFormat;
-
-		public DefaultAonIssuesSelected(JsIssue issue) {
-			this.timeFormat = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss.S");
-			setIssue(issue);
-		}
-
-		private void setIssue(JsIssue issue) {
-			this.issue = issue;
-		}
-
-		@Override
-		public String getTitle() {
-			return issue.getTitle();
-		}
-
-		@Override
-		public Integer getNumber() {
-			return issue.getNumber();
-		}
-
-		@Override
-		public String getStateIconStyle() {
-			return "";
-		}
-
-		@Override
-		public String getState() {
-			return "";
-		}
-
-		@Override
-		public String getPriority() {
-			return issue.getPriority();
-		}
-
-		@Override
-		public String getType() {
-			return issue.getType();
-		}
-
-		@Override
-		public Date getCreateAt() {
-			Date date = timeFormat.parse(issue.getCreatedAt());
-			String dateString = DateTimeFormat.getFormat("dd-MM-yyyy HH:mm")
-					.format(date);
-			return DateTimeFormat.getFormat("dd-MM-yyyy HH:mm")
-					.parse(dateString);
-		}
-
-		@Override
-		public Date getUpdatedAt() {
-			Date date = timeFormat.parse(issue.getCreatedAt());
-			DateTimeFormat fmt = DateTimeFormat.getFormat("dd-MM-yyyy HH:mm");
-			String dateString = fmt.format(date);
-			return fmt.parse(dateString);
-
-		}
-
-		@Override
-		public String getBody() {
-			return URL.decode(issue.getBody());
-		}
-
-		@Override
-		public Integer getComments() {
-			return issue.getComments();
-		}
-
-		@Override
-		public String getAssignee() {
-			return null;
-		}
-
-		@Override
-		public Integer getId() {
-			return issue.getId();
-		}
-
-		@Override
-		public String getCompany() {
-			return issue.getCompany();
-		}
-
-		@Override
-		public JsArray<JsLabel> getLabels() {
-			return issue.getLabels();
-		}
-
-		@Override
-		public JsUser getUser() {
-			return issue.getUser();
-		}
-
-		@Override
-		public JsArray<JsIssueComment> getIssueComments() {
-			return issue.getIssueComments();
-		}
-	}
-
-	public static class IssueOpenLoadSelected extends DefaultAonIssuesSelected {
+	
+	public static class IssueOpenLoadSelected extends DefaultAonIssueSelected {
 
 		public IssueOpenLoadSelected(JsIssue issue) {
 			super(issue);
 		}
-
+		
 		@Override
-		public JsIssue getJsIssue() {
-			return issue;
-		}
-
-		@Override
-		public String getStateIconStyle() {
+		public String getStateIconStyle() {			
 			return AON.AON_CSS.aonIconIssueOpen();
-		}
-
-		@Override
-		public String getState() {
-			return issue.getState();
-		}
-
-		@Override
-		public int compareTo(IssueSelected o) {
-			return Comparators.NUMBER.compare(this, o);
 		}
 	}
 
 	public static class IssueClosedLoadSelected
-			extends DefaultAonIssuesSelected {
+			extends DefaultAonIssueSelected {
 
 		public IssueClosedLoadSelected(JsIssue issue) {
 			super(issue);
 		}
 
 		@Override
-		public JsIssue getJsIssue() {
-			return issue;
-		}
-
-		@Override
 		public String getStateIconStyle() {
 			return AON.AON_CSS.aonIconIssueClosed();
-		}
-
-		@Override
-		public String getState() {
-			return issue.getState();
-		}
-
-		@Override
-		public int compareTo(IssueSelected o) {
-			return Comparators.NUMBER.compare(this, o);
 		}
 	}
 
@@ -243,17 +101,6 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		}
 
 		public abstract String getIconStyle(Context context, T object);
-	}
-
-	public static class Comparators {
-
-		public static Comparator<IssueSelected> NUMBER = new Comparator<IssueSelected>() {
-			@Override
-			public int compare(IssueSelected o1, IssueSelected o2) {
-				// TODO Auto-generated method stub
-				return o2.getNumber() - o1.getNumber();
-			}
-		};
 	}
 
 	private class HeaderBuilder
@@ -557,17 +404,21 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 			@Override
 			public String getValue(IssueSelected object) {
-
+				
 				String labels = "";
-				if (object.getLabels() == null)
+				if ( object.getTags() == null)
 					return labels;
-
-				for (int z = 0; z < object.getLabels().length(); z++)
-					labels += object.getLabels().get(z).getName().toUpperCase()
-							+ " - ";
-
-				return labels;
-
+				
+				StringBuffer buffer = new StringBuffer();
+				ListIterator<DefaultAonTagIssueSelected> iterator = object.getTags().listIterator();
+				while ( iterator.hasNext() ) {
+					DefaultAonTagIssueSelected tag = iterator.next();
+					buffer.append(tag.getName().toUpperCase());
+					if ( iterator.hasNext() )
+						buffer.append(" - ");
+				}
+				
+				return buffer.toString();
 			}
 		};
 		
