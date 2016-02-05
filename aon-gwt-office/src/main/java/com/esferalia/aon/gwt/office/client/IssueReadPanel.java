@@ -18,11 +18,11 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class IssueReadPanel extends Composite {
@@ -62,7 +62,7 @@ public class IssueReadPanel extends Composite {
 	@UiField
 	Label priorityLabel;
 	@UiField
-	VerticalPanel historialVPanel;
+	FlowPanel historialVPanel;
 
 	@UiField
 	Button closedButton;
@@ -72,8 +72,8 @@ public class IssueReadPanel extends Composite {
 	private List<Listener> listeners;
 	private TextArea commentTextArea;
 
-	private DateTimeFormat fmt = DateTimeFormat.getFormat("dd/MM/yyyy HH:mm");
-
+	private DateTimeFormat fmt = DateTimeFormat.getFormat("dd/MM/yyyy HH:mm");	
+	
 	public IssueReadPanel(IssueSelected issue) {
 		initWidget(uiBinder.createAndBindUi(this));
 
@@ -146,20 +146,19 @@ public class IssueReadPanel extends Composite {
 	}
 
 	private void insertComment(JsIssueComment comment) {
-
-		Date date = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss.S")
-				.parse(comment.getCreatedAtString());
-		String dateString = DateTimeFormat.getFormat("dd-MM-yyyy HH:mm")
-				.format(date);
-		Date createAt = DateTimeFormat.getFormat("dd-MM-yyyy HH:mm")
-				.parse(dateString);
+		
+		DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss.S");
+		Date dateAux = format.parse(comment.getCreateAt());
+		String dateAsString = DateTimeFormat.getFormat("dd-MM-yyyy HH:mm").format(dateAux);
+		Date date = DateTimeFormat.getFormat("dd-MM-yyyy HH:mm").parse(dateAsString);
 
 		Grid grid = new Grid(2, 1);
+		grid.setSize("100%", "100%");
 		Label label = new Label("COMENTADO por " + comment.getUser().getLogin()
-				+ " el " + createAt);
+				+ " el " + fmt.format(date));
 
 		label.setStyleName(AON.AON_BOLD);
-		TextArea textArea = getTextArea(comment.getBody().replaceAll("--", "\n"));
+		TextArea textArea = getTextArea(new String(comment.getBody().replaceAll("--", "\n")));
 
 		grid.setWidget(0, 0, label);
 		grid.getRowFormatter().addStyleName(0, style.rowBackground());
@@ -171,6 +170,7 @@ public class IssueReadPanel extends Composite {
 	
 	private void createCommentTextArea() {
 		IssueReadPanel.this.commentTextArea = getTextArea("");
+		commentTextArea.setReadOnly(false);
 		historialVPanel.add(commentTextArea);
 	}
 
@@ -222,6 +222,7 @@ public class IssueReadPanel extends Composite {
 	
 	private TextArea getTextArea(String text) {
 		TextArea textArea = new TextArea();
+		textArea.setReadOnly(true);
 		textArea.setVisibleLines(5);
 		textArea.setCharacterWidth(10);
 		textArea.setWidth("600px");
