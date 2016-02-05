@@ -1,46 +1,40 @@
 package com.esferalia.aon.gwt.office.client;
 
 import java.util.Date;
+import java.util.List;
 
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
-import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
-import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
-import com.esferalia.aon.gwt.office.client.models.users.JsUser;
-import com.google.gwt.core.client.JsArray;
 
 public interface IssueSelected {
-	
-	String getTitle();
-	
-	String getStateIconStyle();
-	
+
+	Integer getId();
+
 	Integer getNumber();
-	
-	String getState();
-	
+
 	String getPriority();
-	
+
 	String getType();
-	
-	JsUser getUser();
-	
+
+	String getTitle();
+
+	String getStateIconStyle();
+
+	String getState();
+
+	String getBody();
+
+	String getCompany();	
+
 	Date getCreateAt();
-	
+
 	Date getUpdatedAt();
 	
-	String getBody();
+	DefaultAonUserIssueSelected getUser();
 	
-	String getCompany();
+	List<DefaultAonTagIssueSelected> getTags();
 	
-	Integer getComments();
-	
-	String getAssignee();
-	
-	Integer getId();
-	
-	JsArray<JsIssueComment> getIssueComments();
-	
-	JsArray<JsLabel> getLabels();
-	
+	List<DefaultAonIssueComments> getComments();
+
 	JsIssue getJsIssue();
+
 }

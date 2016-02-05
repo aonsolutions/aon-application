@@ -4,6 +4,8 @@ public interface LabelSelected {
 	
 	Integer getId();
 	
+	byte getType();
+	
 	String getName();
 	
 	String getColor();

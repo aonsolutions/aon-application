@@ -5,10 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -87,12 +85,11 @@ public class IssueReadPanel extends Composite {
 		setCompany(issue.getCompany());
 		setPriority(issue.getPriority());
 		setAsunto(issue.getTitle());
-		setLabel(issue.getLabels());
-		printComment(issue.getState(), issue.getCreateAt(), issue.getBody());		
-
-		for (int x = 0; x < issue.getIssueComments().length(); x++) {
-			Date createAt = getFormatDateComment(issue.getIssueComments().get(x).getCreateAt());
-			printComment("COMENTADO", createAt, issue.getIssueComments().get(x).getBody());
+		setLabels(issue.getTags());
+		printComment(issue.getState(), issue.getCreateAt(), issue.getBody());
+		
+		for (DefaultAonIssueComments comment : issue.getComments()) {
+			printComment("COMENTADO", comment.getCreatedAt(), comment.getBody());
 		}
 
 		userLogged.setText(issue.getUser().getName());
@@ -126,14 +123,14 @@ public class IssueReadPanel extends Composite {
 	private void setPriority(String priority) {
 		this.priorityLabel.setText(priority);
 	}
-
-	private void setLabel(JsArray<JsLabel> labels) {
-
-		if (labels.length() == 0)
+	
+	private void setLabels(List<DefaultAonTagIssueSelected> tags) {
+		
+		if ( tags.size() == 0 )
 			labelsHPanel.add(new Label("Etiquetas no asignadas"));
-
-		for (int x = 0; x < labels.length(); x++)
-			labelsHPanel.add(new Label(labels.get(x).getName()));
+		
+		for ( DefaultAonTagIssueSelected tag : tags)
+			labelsHPanel.add(new Label(tag.getName()));
 	}
 	
 	private void printComment(String type, Date createAt, String body) {		
@@ -154,13 +151,6 @@ public class IssueReadPanel extends Composite {
 		historialVPanel.add(grid);
 
 		
-	}
-	
-	private Date getFormatDateComment(String date) {
-		DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss.S");
-		Date dateAux = format.parse(date);
-		String dateAsString = DateTimeFormat.getFormat("dd-MM-yyyy HH:mm").format(dateAux);
-		return DateTimeFormat.getFormat("dd-MM-yyyy HH:mm").parse(dateAsString);
 	}
 
 	private void createCommentButton() {
