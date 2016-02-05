@@ -75,6 +75,9 @@ public class ItemBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			}
 			if (checkInDomain) {
 				Criteria criteria = new Criteria();
+				if (itemDB != null) {
+					criteria.addNotEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_ID), to.getId());
+				}
 				criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_BARCODE), to.getBarcode());
 				List<ITransferObject> itemList = itemBean.getList(criteria);
 				if (!itemList.isEmpty()) {
@@ -115,6 +118,9 @@ public class ItemBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			if (checkInDomain) {
 				IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 				Criteria criteria = new Criteria();
+				if (itemDB != null) {
+					criteria.addNotEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_ID), to.getId());
+				}
 				criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), to.getProduct().getId());
 				criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DETAIL), to.getDetail());
 		    	if (StringUtils.isNotEmpty(to.getDetail2())) {
@@ -142,6 +148,9 @@ public class ItemBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			if (checkInDomain) {
 				IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 				Criteria criteria = new Criteria();
+				if (itemDB != null) {
+					criteria.addNotEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_ID), to.getId());
+				}
 				criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), to.getProduct().getId());
 				criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER), to.getSerialNumber());
 				List<ITransferObject> itemList = itemBean.getList(criteria);

@@ -13,7 +13,8 @@
 			value="#{itemTo.product.lotable ? bundle.aon_lot_number : bundle.aon_serial_number}" />
 		<aon:inputText id="#{controller.pojoShortName}_serial_number" 
 			value="#{itemTo.serialNumber}" size="32" maxlength="32"
-			required="true" converter="aon.TrimStringConverter" />
+			required="true" onblur="toUpperCase(this);"
+			converter="aon.TrimStringConverter" />
 
 		<aon:outputLabel for="#{controller.pojoShortName}_serial_date"
 			value="#{itemTo.product.lotable ? bundle.aon_lot_date : bundle.aon_serial_date}" />
@@ -28,7 +29,8 @@
 			value="#{itemTo.product.category.detail}" />
 		<aon:inputText id="#{controller.pojoShortName}_product_detail" 
 			value="#{itemTo.detail}" size="32" maxlength="15"
-			required="#{itemTo.product.id != null}" converter="aon.TrimStringConverter" />
+			required="#{itemTo.product.id != null}" 
+			converter="aon.TrimStringConverter" />
 	</aon:if>
 
 	<aon:if test="#{itemTo.product.category != null and !empty itemTo.product.category.detail2}">
@@ -36,7 +38,8 @@
 			value="#{itemTo.product.category.detail2}" />
 		<aon:inputText id="#{controller.pojoShortName}_product_detail2" 
 			value="#{itemTo.detail2}" size="32" maxlength="15"
-			required="#{itemTo.product.id != null}" converter="aon.TrimStringConverter" />
+			required="#{itemTo.product.id != null}" 
+			converter="aon.TrimStringConverter" />
 	</aon:if>
 
 	<aon:if test="#{itemTo.product.category != null and !empty itemTo.product.category.detail3}">
@@ -44,7 +47,8 @@
 			value="#{itemTo.product.category.detail3}" />
 		<aon:inputText id="#{controller.pojoShortName}_product_detail3" 
 			value="#{itemTo.detail3}" size="32" maxlength="15"
-			required="#{itemTo.product.id != null}" converter="aon.TrimStringConverter" />
+			required="#{itemTo.product.id != null}" 
+			converter="aon.TrimStringConverter" />
 	</aon:if>
 
 	<aon:if test="#{aonConfiguration.bean.product.showBarcode}">
