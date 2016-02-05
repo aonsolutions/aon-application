@@ -268,7 +268,7 @@ public class DBMarketplace {
 					.from(IATTACH).leftOuterJoin(ITEM).on(IATTACH.ITEM.equal(ITEM.ID))
 					.where(IATTACH.DOMAIN.eq(domain.getId()))
 					.and(IATTACH.DESCRIPTION.equal(templateName))
-					.and(ITEM.ID.equal(product.getId()))
+					.and(ITEM.ID.equal(getBaseItemId(domain, login, product.getId())))
 					.fetchInto(IATTACH);
 			Attach attach = null;
 			if(result.isNotEmpty()){
@@ -284,6 +284,24 @@ public class DBMarketplace {
 		}
 	}
 	
+	public static Integer getBaseItemId(Domain domain, String login, Integer productId){
+		Integer itemId = null;
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
+			Record1<Integer> record = ctx.getDslContext()
+					.select(ITEM.ID)
+					.from(ITEM)
+					.where(ITEM.PRODUCT.eq(productId).and(ITEM.SERIAL_NUMBER.isNull()))
+					.fetchOne();
+			itemId = record.value1();
+		} finally {
+			if(ctx != null)
+				ctx.close();
+		}
+		return itemId;
+	}
+	
 	public static boolean acceptProductValues(Domain domain, String login, String templateName, EcommerceProduct ecommerceProduct, Attach attach){
 		byte[] data = null;
 		try {
@@ -297,11 +315,18 @@ public class DBMarketplace {
 			if(attach==null){
 				attach = new Attach();
 			}
+			
+			Integer productId = Integer.parseInt(ecommerceProduct.getProduct().getId());
+			Integer itemId = getBaseItemId(domain, login, productId);
+			
+			if(itemId==null){
+				throw new IllegalArgumentException("No se ha podido recuperar el producto base");
+			}
 			attach.setDomain(domain);
 			attach.setMimeType(MimeType.XML);
 			attach.setDescription(templateName);
 			attach.setAttachType(AttachType.ITEM);
-			attach.setAttachModule(Integer.parseInt(ecommerceProduct.getProduct().getId()));
+			attach.setAttachModule(itemId);
 			attach.setType(AttachmentType.ECOMMERCE_PRODUCT.value());
 			attach.setConfidential(false);
 			attach.setData(data);
