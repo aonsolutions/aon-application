@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -24,6 +25,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class IssueReadPanel extends Composite {
 
@@ -87,10 +89,12 @@ public class IssueReadPanel extends Composite {
 		setPriority(issue.getPriority());
 		setAsunto(issue.getTitle());
 		setLabel(issue.getLabels());
-		setBody(issue);
+		printComment(issue.getState(), issue.getCreateAt(), issue.getBody());		
 
-		for (int x = 0; x < issue.getIssueComments().length(); x++)
-			insertComment(issue.getIssueComments().get(x));
+		for (int x = 0; x < issue.getIssueComments().length(); x++) {
+			Date createAt = getFormatDateComment(issue.getIssueComments().get(x).getCreateAt());
+			printComment("COMENTADO", createAt, issue.getIssueComments().get(x).getBody());
+		}
 
 		userLogged.setText(issue.getUser().getName());
 
@@ -131,42 +135,32 @@ public class IssueReadPanel extends Composite {
 		for (int x = 0; x < labels.length(); x++)
 			labelsHPanel.add(new Label(labels.get(x).getName()));
 	}
-
-	private void setBody(IssueSelected issue) {
-		Grid grid = new Grid(2, 1);
-		Label label = new Label(
-				issue.getState() + " por " + issue.getUser().getLogin() + " el "
-						+ fmt.format(issue.getCreateAt()));
-		label.setStyleName(AON.AON_BOLD);
+	
+	private void printComment(String type, Date createAt, String body) {		
 		
+		int days = CalendarUtil.getDaysBetween(createAt, new Date());
+		Grid grid = new Grid(2,1);
+		Label label = new Label();
+		label.setText(type + " por " + issue.getUser().getName()
+				+ " el " + fmt.format(createAt) + " (hace " + days + ((days == 1) ? " d\u00EDas)" : " d\u00EDas)"));
+		label.setStyleName(AON.AON_BOLD);
+		label.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
+
 		TextArea textArea = getTextArea(new String(issue.getBody().replaceAll("--", "\n")));
 		grid.setWidget(0, 0, label);
 		grid.getRowFormatter().addStyleName(0, style.rowBackground());
 		grid.setWidget(1, 0, textArea);
 
 		historialVPanel.add(grid);
+
+		
 	}
-
-	private void insertComment(JsIssueComment comment) {
-		
+	
+	private Date getFormatDateComment(String date) {
 		DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss.S");
-		Date dateAux = format.parse(comment.getCreateAt());
+		Date dateAux = format.parse(date);
 		String dateAsString = DateTimeFormat.getFormat("dd-MM-yyyy HH:mm").format(dateAux);
-		Date date = DateTimeFormat.getFormat("dd-MM-yyyy HH:mm").parse(dateAsString);
-
-		Grid grid = new Grid(2, 1);
-		grid.setSize("100%", "100%");
-		Label label = new Label("COMENTADO por " + comment.getUser().getLogin()
-				+ " el " + fmt.format(date));
-
-		label.setStyleName(AON.AON_BOLD);
-		TextArea textArea = getTextArea(new String(comment.getBody().replaceAll("--", "\n")));
-
-		grid.setWidget(0, 0, label);
-		grid.getRowFormatter().addStyleName(0, style.rowBackground());
-		grid.setWidget(1, 0, textArea);
-		
-		historialVPanel.add(grid);
+		return DateTimeFormat.getFormat("dd-MM-yyyy HH:mm").parse(dateAsString);
 	}
 
 	private void createCommentButton() {
