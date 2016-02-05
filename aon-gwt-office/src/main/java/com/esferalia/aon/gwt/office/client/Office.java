@@ -80,6 +80,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	private User user;
 
 	private IssuePanel issuePanel;
+	private IssueReadPanel issueReadPanel;
+	 
 	private IssueSelected issueSelected;
 	private AonHub gitHub = new AonHub(GWT.getModuleBaseURL() + "api/");
 	private List<IssueSelected> openIssues;
@@ -403,9 +405,9 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	public void onSelectionTitle(IssueSelected issue) {
 		readIssuePanel.clear();
 		this.issueSelected = issue;
-		IssueReadPanel readPanel = new IssueReadPanel(issue);
-		readPanel.addListener(this);
-		readIssuePanel.add(readPanel);
+		issueReadPanel = new IssueReadPanel(issue);
+		issueReadPanel.addListener(this);
+		readIssuePanel.add(issueReadPanel);
 		returnButton.setEnabled(true);
 		showReadIssuePanel();
 	}
@@ -495,7 +497,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 					@Override
 					public void onSuccess(JsIssueComment result) {						
-						loadOpenIssues();
+						issueReadPanel.insertComment(result);
 					}
 				});
 	}

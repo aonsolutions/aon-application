@@ -68,9 +68,11 @@ public class IssueReadPanel extends Composite {
 	Button closedButton;
 	@UiField
 	Button commentButton;
+	
+	@UiField
+	TextArea commentTextArea;
 
-	private List<Listener> listeners;
-	private TextArea commentTextArea;
+	private List<Listener> listeners;	
 
 	private DateTimeFormat fmt = DateTimeFormat.getFormat("dd/MM/yyyy HH:mm");	
 	
@@ -145,7 +147,7 @@ public class IssueReadPanel extends Composite {
 		historialVPanel.add(grid);
 	}
 
-	private void insertComment(JsIssueComment comment) {
+	public void insertComment(JsIssueComment comment) {
 		
 		DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss.S");
 		Date dateAux = format.parse(comment.getCreateAt());
@@ -165,7 +167,6 @@ public class IssueReadPanel extends Composite {
 		grid.setWidget(1, 0, textArea);
 
 		historialVPanel.add(grid);
-
 	}
 	
 	private void createCommentTextArea() {

@@ -122,7 +122,6 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 					.format(date);
 			return DateTimeFormat.getFormat("dd-MM-yyyy HH:mm")
 					.parse(dateString);
-			// return timeFormat.parse(issue.getCreatedAt());
 		}
 
 		@Override

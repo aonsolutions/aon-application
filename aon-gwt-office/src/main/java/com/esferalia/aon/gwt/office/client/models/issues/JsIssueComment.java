@@ -24,12 +24,7 @@ public class JsIssueComment extends JavaScriptObject {
 		return this.user;
 	}-*/;
 
-	public final Date getCreatedAt() {
-		return DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT)
-				.parse(this.getCreatedAtString());
-	}
-
-	public final native String getCreatedAtString() /*-{
+	public final native String getCreateAt() /*-{
 		return this.created_at;
 	}-*/;
 

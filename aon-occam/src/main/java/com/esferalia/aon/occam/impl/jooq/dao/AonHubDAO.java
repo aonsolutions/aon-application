@@ -450,7 +450,7 @@ public class AonHubDAO {
 				notice.setStartDate(record.getValue(NOTICE.DATE));
 				User user = getUser(ctx, record.getValue(NOTICE.SENDER));
 				notice.setSender(user);
-				notice.setBody(record.getValue(NOTICE.SUBJECT));			
+				notice.setBody(record.getValue(NOTICE.SUBJECT).replaceAll("\n", "--"));			
 				comments.add(notice);
 			});
 		}

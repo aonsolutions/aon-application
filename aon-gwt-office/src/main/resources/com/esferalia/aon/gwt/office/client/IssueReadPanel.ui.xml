@@ -69,9 +69,10 @@
 					<g:Label styleName="{aonResources.css.aonBold} 
 		{style.title}"
 						ui:field="titleLabel" />
-					<g:FlowPanel ui:field="historialVPanel"
-						width="100%" height="100%" />
-
+					<g:FlowPanel ui:field="historialVPanel" width="100%"
+						height="100%" />
+					<g:TextArea visibleLines="5" characterWidth="10"
+						styleName="{style.options-text-area}" ui:field="commentTextArea" />
 					<g:Grid styleName="{aonResources.css.aonWidthAll}">
 						<g:row>
 							<g:customCell>
