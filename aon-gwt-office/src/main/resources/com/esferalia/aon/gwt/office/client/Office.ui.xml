@@ -107,7 +107,14 @@
 						</g:SimpleLayoutPanel>
 					</g:HTMLPanel>
 				</g:ResizeLayoutPanel>
-				<g:HorizontalPanel ui:field="readIssuePanel" />
+				
+				<g:ResizeLayoutPanel ui:field="readIssuePanel">
+					<g:HTMLPanel styleName="aon-scroll-area">
+						<g:SimpleLayoutPanel ui:field="readIssueLayoutPanel"
+							height="100%" />
+					</g:HTMLPanel>
+				</g:ResizeLayoutPanel>
+				
 			</g:DeckLayoutPanel>
 		</g:center>
 

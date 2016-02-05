@@ -36,8 +36,9 @@
 		</ui:style>
 
 	<g:ScrollPanel styleName="{style.scrollpanel-options}">
-		<g:VerticalPanel width="100%" height="100%">
-			<g:Grid styleName="aon-panelGrid-formatting" cellSpacing="10">
+		<g:VerticalPanel height="100%">
+			<g:Grid styleName="aon-panelGrid-formatting" cellSpacing="10"
+				height="100%">
 				<g:row>
 					<g:customCell styleName="{aonResources.css.aonPanelGridOdd}">
 						<g:Label styleName="aon-outputLabel" text="Remitente" />
@@ -60,43 +61,41 @@
 					</g:customCell>
 					<g:customCell styleName="{aonResources.css.aonPanelGridEven}">
 						<g:HorizontalPanel ui:field="labelsHPanel"
-							spacing="3" />
+							spacing="5" />
 					</g:customCell>
 				</g:row>
 			</g:Grid>
-			<g:ScrollPanel>
-				<g:VerticalPanel spacing="10" width="100%" height="100%">
-					<g:Label styleName="{aonResources.css.aonBold} 
+			<g:VerticalPanel spacing="10" width="100%" height="100%">
+				<g:Label styleName="{aonResources.css.aonBold} 
 		{style.title}"
-						ui:field="titleLabel" />
-					<g:FlowPanel ui:field="historialVPanel" width="100%"
-						height="100%" />
-					<g:TextArea visibleLines="5" characterWidth="10"
-						styleName="{style.options-text-area}" ui:field="commentTextArea" />
-					<g:Grid styleName="{aonResources.css.aonWidthAll}">
-						<g:row>
-							<g:customCell>
-								<g:HTMLPanel>
-									<div>
-										<g:InlineLabel styleName="{aonResources.css.aonBold}"
-											text="Usuario: " />
-										<g:InlineLabel ui:field="userLogged"
-											styleName="{aonResources.css.aonColorGreen}" />
-									</div>
-								</g:HTMLPanel>
-							</g:customCell>
-							<g:customCell>
-								<g:HTMLPanel>
-									<div class="{style.buttons}">
-										<g:Button ui:field="closedButton" text="Cerrar" />
-										<g:Button ui:field="commentButton" text="Comentar" />
-									</div>
-								</g:HTMLPanel>
-							</g:customCell>
-						</g:row>
-					</g:Grid>
-				</g:VerticalPanel>
-			</g:ScrollPanel>
+					ui:field="titleLabel" />
+				<g:FlowPanel ui:field="historialVPanel" width="100%"
+					height="100%" />
+				<g:TextArea visibleLines="5" characterWidth="10"
+					styleName="{style.options-text-area}" ui:field="commentTextArea" />
+				<g:Grid width="100%" height="100%">
+					<g:row>
+						<g:customCell>
+							<g:HTMLPanel height="100%" width="100%">
+								<div>
+									<g:InlineLabel styleName="{aonResources.css.aonBold}"
+										text="Usuario: " />
+									<g:InlineLabel ui:field="userLogged"
+										styleName="{aonResources.css.aonColorGreen}" />
+								</div>
+							</g:HTMLPanel>
+						</g:customCell>
+						<g:customCell>
+							<g:HTMLPanel height="100%" width="100%">
+								<div class="{style.buttons}">
+									<g:Button ui:field="closedButton" text="Cerrar" />
+									<g:Button ui:field="commentButton" text="Comentar" />
+								</div>
+							</g:HTMLPanel>
+						</g:customCell>
+					</g:row>
+				</g:Grid>
+			</g:VerticalPanel>
 		</g:VerticalPanel>
 	</g:ScrollPanel>
 </ui:UiBinder> 

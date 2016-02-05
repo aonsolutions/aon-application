@@ -38,6 +38,7 @@ import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ResizeLayoutPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -68,7 +69,9 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	@UiField
 	ResizeLayoutPanel dockOfficePanel;
 	@UiField
-	HorizontalPanel readIssuePanel;
+	SimpleLayoutPanel readIssueLayoutPanel;
+	@UiField
+	ResizeLayoutPanel readIssuePanel;
 	@UiField
 	IssueGrid dataGrid;
 
@@ -402,12 +405,12 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	// ******************************************************************
 
 	@Override
-	public void onSelectionTitle(IssueSelected issue) {
-		readIssuePanel.clear();
+	public void onSelectionTitle(IssueSelected issue) {		
 		this.issueSelected = issue;
 		issueReadPanel = new IssueReadPanel(issue);
 		issueReadPanel.addListener(this);
-		readIssuePanel.add(issueReadPanel);
+		readIssueLayoutPanel.clear();
+		readIssueLayoutPanel.add(issueReadPanel);
 		returnButton.setEnabled(true);
 		showReadIssuePanel();
 	}

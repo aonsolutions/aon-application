@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.google.gwt.core.client.GWT;
@@ -146,7 +145,7 @@ public class IssueReadPanel extends Composite {
 		label.setStyleName(AON.AON_BOLD);
 		label.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
 
-		TextArea textArea = getTextArea(new String(issue.getBody().replaceAll("--", "\n")));
+		TextArea textArea = getTextArea(new String(body.replaceAll("--", "\n")));
 		grid.setWidget(0, 0, label);
 		grid.getRowFormatter().addStyleName(0, style.rowBackground());
 		grid.setWidget(1, 0, textArea);
