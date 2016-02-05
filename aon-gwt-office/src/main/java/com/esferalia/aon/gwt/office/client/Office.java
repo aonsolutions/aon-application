@@ -81,7 +81,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	private IssuePanel issuePanel;
 	private IssueReadPanel issueReadPanel;
-	 
+
 	private IssueSelected issueSelected;
 	private AonHub gitHub = new AonHub(GWT.getModuleBaseURL() + "api/");
 	private List<IssueSelected> openIssues;
@@ -496,8 +496,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					}
 
 					@Override
-					public void onSuccess(JsIssueComment result) {						
-						issueReadPanel.insertComment(result);
+					public void onSuccess(JsIssueComment result) {
+						loadOpenIssues();
 					}
 				});
 	}

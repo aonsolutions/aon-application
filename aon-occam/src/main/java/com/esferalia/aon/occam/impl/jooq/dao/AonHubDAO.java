@@ -431,6 +431,7 @@ public class AonHubDAO {
 		User user = getUser(ctx, comment.getUserId());
 		comment.setSender(user);
 		comment.setId(noticeRecord.getValue(NOTICE.ID));
+		comment.setBody(noticeRecord.getValue(NOTICE.SUBJECT).replaceAll("\n", "--"));
 		return comment;
 	}
 	

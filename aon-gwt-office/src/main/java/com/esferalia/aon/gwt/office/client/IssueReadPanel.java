@@ -63,7 +63,7 @@ public class IssueReadPanel extends Composite {
 	Label priorityLabel;
 	@UiField
 	FlowPanel historialVPanel;
-
+	
 	@UiField
 	Button closedButton;
 	@UiField
@@ -72,7 +72,8 @@ public class IssueReadPanel extends Composite {
 	@UiField
 	TextArea commentTextArea;
 
-	private List<Listener> listeners;	
+	private List<Listener> listeners;
+	private IssueSelected issue;
 
 	private DateTimeFormat fmt = DateTimeFormat.getFormat("dd/MM/yyyy HH:mm");	
 	
@@ -80,7 +81,8 @@ public class IssueReadPanel extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 
 		this.listeners = new LinkedList<Listener>();
-
+		this.issue = issue;
+		
 		setCompany(issue.getCompany());
 		setPriority(issue.getPriority());
 		setAsunto(issue.getTitle());
@@ -94,13 +96,11 @@ public class IssueReadPanel extends Composite {
 
 		if (issue instanceof IssueGrid.IssueOpenLoadSelected) {
 			createClosedButton();
-			createCommentButton();
-			createCommentTextArea();
+			createCommentButton();			
 		} else if (issue instanceof IssueGrid.IssueClosedLoadSelected) {
 			commentButton.setVisible(false);
 			createReopenButton();
 		}
-
 	}
 
 	public void addListener(Listener listener) {
@@ -147,7 +147,7 @@ public class IssueReadPanel extends Composite {
 		historialVPanel.add(grid);
 	}
 
-	public void insertComment(JsIssueComment comment) {
+	private void insertComment(JsIssueComment comment) {
 		
 		DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss.S");
 		Date dateAux = format.parse(comment.getCreateAt());
@@ -165,14 +165,8 @@ public class IssueReadPanel extends Composite {
 		grid.setWidget(0, 0, label);
 		grid.getRowFormatter().addStyleName(0, style.rowBackground());
 		grid.setWidget(1, 0, textArea);
-
+		
 		historialVPanel.add(grid);
-	}
-	
-	private void createCommentTextArea() {
-		IssueReadPanel.this.commentTextArea = getTextArea("");
-		commentTextArea.setReadOnly(false);
-		historialVPanel.add(commentTextArea);
 	}
 
 	private void createCommentButton() {
