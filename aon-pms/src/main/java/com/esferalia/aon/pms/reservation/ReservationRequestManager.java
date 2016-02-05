@@ -659,7 +659,7 @@ System.out.println(message.toString());
 		reservation = (ProjectReservation)reservationBean.insert(reservation);
 
 		createReservationGuest(requestRoom.getReservationRequest(), reservation);
-		createReservationRoom(requestRoom, reservation, roomTariff, serviceItem);
+		createReservationRoomAndService(requestRoom, reservation, roomTariff, serviceItem);
 
 		Criteria criteria = new Criteria();
 		criteria.addNotEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), reservation.getId());
@@ -704,7 +704,7 @@ System.out.println(message.toString());
 		}
 	}
 
-	private void createReservationRoom(ReservationRequestRoom requestRoom, ProjectReservation reservation, Tariff roomTariff, Item serviceItem) 
+	private void createReservationRoomAndService(ReservationRequestRoom requestRoom, ProjectReservation reservation, Tariff roomTariff, Item serviceItem) 
 			throws ManagerBeanException {
 		if (roomTariff == null) {
 			roomTariff = getReservationUtils().obtainDefaultTariff();

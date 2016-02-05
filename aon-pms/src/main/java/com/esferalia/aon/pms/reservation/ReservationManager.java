@@ -158,7 +158,7 @@ public class ReservationManager implements IReservationConstants {
 						if (isInvalidCheckInDate(reservationType.getResGlobalInfo().getTimeSpan().getStart().getTime())) {
 							throw new ReservationException("Invalid Check-in Date", reservation.getCrsCode(), 381);
 						}
-						delay3s(reservation.getCreationDate());
+						delayForConcurrence(reservation);
 						if (isReservationRoomAssigned(reservation)) {
 							removeReservationRoomDetail(reservation, true);
 						}
@@ -716,12 +716,24 @@ public class ReservationManager implements IReservationConstants {
 		return (reservationList.size() > 0) ? (ProjectReservation)reservationList.get(0) : null;
 	}
 
-	private void delay3s(Date date) {
-		long timeToSleep = new Date().getTime() - date.getTime();
-		if (timeToSleep > 0 && timeToSleep < 3000) {
-			try {
-				Thread.sleep(timeToSleep);
-			} catch (InterruptedException e) {}
+	private void delayForConcurrence(ProjectReservation reservation) throws ManagerBeanException {
+		if (reservation.isSourceRequest()) {
+			IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
+			Criteria criteria = new Criteria();
+			String alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID;
+			criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), reservation.getId());
+			for (int i=0; i<30; i++) {
+				if (reservationServiceDetailBean.getCount(criteria) >= reservation.getNights()) {
+					break;
+				}
+			}
+		} else {
+			long timeToSleep = new Date().getTime() - reservation.getCreationDate().getTime();
+			if (timeToSleep > 0 && timeToSleep < 5000) {
+				try {
+					Thread.sleep(timeToSleep);
+				} catch (InterruptedException e) {}
+			}
 		}
 	}
 
