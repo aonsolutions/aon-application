@@ -27,6 +27,11 @@
 			text-align: right;
 		}
 		
+		.edit-button {
+			height: 16px;
+			width: 16px;
+		}
+		
 		.title {
 			font-size: 23px;
 			padding-bottom: 10px;

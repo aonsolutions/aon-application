@@ -40,6 +40,11 @@ public class OfficeImpl implements IOffice {
 			throws IllegalArgumentException {		
 		return AonHubDAO.createComment(ctx, headId, comment);
 	}
+	
+	@Override
+	public Notice editComment(AONContext ctx, Integer commentId, String body) {	
+		return AonHubDAO.editComment(ctx, commentId, body);
+	}
 
 	@Override
 	public Tag addNewTag(AONContext ctx, Tag tag)

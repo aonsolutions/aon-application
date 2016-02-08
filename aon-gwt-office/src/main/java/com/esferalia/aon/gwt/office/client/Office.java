@@ -406,7 +406,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	// ******************************************************************
 
 	@Override
-	public void onSelectionTitle(IssueSelected issue) {		
+	public void onSelectionTitle(IssueSelected issue) {
 		this.issueSelected = issue;
 		issueReadPanel = new IssueReadPanel(issue);
 		issueReadPanel.addListener(this);
@@ -486,7 +486,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	}
 
 	@Override
-	public void onIssueComment(String body, final Callback callback) {
+	public void onIssueCommentButtonClick(String body,
+			final Callback callback) {
 		IssueCommentValue value = new IssueCommentValue();
 		value.setBody(body);
 
@@ -501,10 +502,34 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 					@Override
 					public void onSuccess(JsIssueComment result) {
-						DefaultAonIssueComments comment = new DefaultAonIssueComments(result);
+						DefaultAonIssueComments comment = new DefaultAonIssueComments(
+								result);
 						issueSelected.addComment(result);
 						callback.onSucess(comment);
-						
+
+					}
+				});
+	}
+
+	@Override
+	public void onUpdateIssueComment(final Integer id, final String body,
+			final Callback callback) {
+		IssueCommentValue value = new IssueCommentValue();
+		value.setBody(body);
+
+		gitHub.editIssueComment(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), id, value,
+				new AsyncCallback<JsIssueComment>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onFailure(caught);
+					}
+
+					@Override
+					public void onSuccess(JsIssueComment result) {
+						DefaultAonIssueComments comment = issueSelected.editComment(result);
+						callback.onSucess(comment);
 					}
 				});
 	}

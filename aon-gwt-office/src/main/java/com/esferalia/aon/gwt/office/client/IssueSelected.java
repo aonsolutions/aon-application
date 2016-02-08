@@ -34,6 +34,8 @@ public interface IssueSelected {
 	
 	DefaultAonIssueComments addComment(JsIssueComment comment);
 	
+	DefaultAonIssueComments editComment(JsIssueComment comment);
+	
 	List<DefaultAonTagIssueSelected> getTags();
 	
 	List<DefaultAonIssueComments> getComments();

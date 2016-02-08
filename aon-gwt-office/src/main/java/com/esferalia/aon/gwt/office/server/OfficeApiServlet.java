@@ -440,6 +440,56 @@ public class OfficeApiServlet extends HttpServlet {
 			}
 		}
 	}
+	
+	private static class EditComment extends RegExpRequestHandler {
+		
+		HttpServletRequest req;
+		HttpServletResponse resp;
+		
+		public EditComment() {
+			super("/repos/(\\d+)/(.+)/issues/comments/(\\d+)");
+		}
+		
+		@Override
+		public void handler(HttpServletRequest req, HttpServletResponse resp)
+				throws ServletException, IOException {
+			
+			this.req = req;
+			this.resp = resp;
+			
+			Integer domain = null;
+			Integer commentId = null;
+			String domainName = "";
+			
+			try {
+				domain = getDomainId();
+				domainName = getDomainName();
+				commentId = Integer.parseInt(group(3));
+				
+			} catch (Exception ex) {
+				String ver = getRequestAction(req);
+				String[] actionArr = ver.split("/");
+				domain = Integer.parseInt(actionArr[2]);
+				domainName = actionArr[3];
+				commentId = Integer.parseInt(actionArr[6]);
+				
+			} finally {
+				editComment(domain, domainName, commentId);
+			}
+		}
+		
+		private void editComment(Integer domainId,
+				String domainName, Integer commentId) {
+			
+			try {
+				String object = getJsonObject(req);
+				JSONObject json = new JSONObject(object);				
+				jsonEditComment(resp, domainId, domainName, commentId, json.getString("body"));
+			} catch (Exception ex) {
+				System.out.println("Error al modificar comentario");
+			}
+		}
+	}
 
 	private static class GetRegistries extends RegExpRequestHandler {
 
@@ -668,7 +718,7 @@ public class OfficeApiServlet extends HttpServlet {
 			new GetUser(),
 			new GetRegistries(),
 			new GetAllIssuesRequestHandler(),
-			new ListAllLabels(),
+			new ListAllLabels()
 	};
 	
 	private static final HttpRequestHandler POST_HANDLERS[] = {
@@ -676,7 +726,8 @@ public class OfficeApiServlet extends HttpServlet {
 			new EditIssue(),
 			new CreateLabel(),
 			new UpdateLabel(),
-			new CreateComment()
+			new CreateComment(),
+			new EditComment()
 	};
 
 	private static final HttpRequestHandler DELETE_HANDLERS[] = {
@@ -1016,6 +1067,25 @@ public class OfficeApiServlet extends HttpServlet {
 			System.out
 					.println(ex.getMessage() + " " + ex.getLocalizedMessage());
 			pw.flush();
+		} finally {
+			if (pw != null)
+				pw.close();
+		}
+	}
+	
+	private static void jsonEditComment(HttpServletResponse resp, Integer domainId,
+			String domainName, Integer commentId, String body) {
+		
+		PrintWriter pw = null;
+		try {
+			pw = resp.getWriter();
+			Notice editComment = AON.editComment(domainId, domainName, 
+					AonServletUtils.getLoggedUser(), commentId, body);
+			pw.append(getComment(editComment));
+			pw.flush();
+			
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage() + " " + ex.getLocalizedMessage());
 		} finally {
 			if (pw != null)
 				pw.close();

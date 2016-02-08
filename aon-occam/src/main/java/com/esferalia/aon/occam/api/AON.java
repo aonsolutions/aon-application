@@ -2154,6 +2154,17 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static Notice editComment(Integer domainId, String domainName, String userName, Integer commentId, String body) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getOffice().editComment(ctx, commentId, body);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	public static Notice addNewNotice(Integer domainId, String domainName,
 			String userName, Notice notice) {

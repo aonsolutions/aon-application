@@ -27,7 +27,9 @@ public interface IOffice {
 			throws IllegalArgumentException;
 
 	public Notice createComment(AONContext ctx, Integer headId, Notice comment)
-			throws IllegalArgumentException;	
+			throws IllegalArgumentException;
+	
+	public Notice editComment(AONContext ctx, Integer commentId, String body);
 
 	public boolean deleteNotice(AONContext ctx, Integer id);
 

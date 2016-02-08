@@ -9,6 +9,7 @@ import java.util.Set;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
+import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.DateCell;
@@ -72,6 +73,19 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		public String getStateIconStyle() {			
 			return AON.AON_CSS.aonIconIssueOpen();
 		}
+		
+		@Override
+		public DefaultAonIssueComments editComment(JsIssueComment comment) {		
+			
+			for ( DefaultAonIssueComments aux : getComments()) {
+				
+				if ( aux.getId() == comment.getId()) {
+					getComments().remove(aux);				
+				}
+			}
+			
+			return new DefaultAonIssueComments(comment);
+		}
 	}
 
 	public static class IssueClosedLoadSelected
@@ -84,6 +98,11 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		@Override
 		public String getStateIconStyle() {
 			return AON.AON_CSS.aonIconIssueClosed();
+		}
+		
+		@Override
+		public DefaultAonIssueComments editComment(JsIssueComment comment) {			
+			return null;
 		}
 	}
 

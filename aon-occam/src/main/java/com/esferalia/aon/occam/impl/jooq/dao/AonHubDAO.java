@@ -82,11 +82,8 @@ public class AonHubDAO {
 				.set(NOTICE.NOTICE_, noticeRecord.getValue(NOTICE.ID))
 				.execute();
 
-		SelectConditionStep<Record1<Integer>> openId = ctx
-				.getDslContext()
-				.select(TAG.ID)
-				.from(TAG)
-				.where(TAG.DOMAIN.eq(0))
+		SelectConditionStep<Record1<Integer>> openId = ctx.getDslContext()
+				.select(TAG.ID).from(TAG).where(TAG.DOMAIN.eq(0))
 				.and(TAG.NAME.eq(NoticeStatus.OPEN.getValue())
 						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())));
 
@@ -152,7 +149,7 @@ public class AonHubDAO {
 							new java.sql.Timestamp((today).getTime()))
 					.execute();
 
-			//return buildNoticeById(ctx, notice.getId());
+			// return buildNoticeById(ctx, notice.getId());
 		} catch (Exception ex) {
 			System.out
 					.println(ex.getMessage() + " " + ex.getLocalizedMessage());
@@ -284,7 +281,8 @@ public class AonHubDAO {
 						.and(NOTICE.TYPE.eq(NoticeType.MESSAGE.value())))
 				.fetchOne().getValue(NOTICE.SUBJECT);
 
-		notice.setBody((body != null) ? body.replaceAll("\n", "--") : "Error al obtener el body");
+		notice.setBody((body != null) ? body.replaceAll("\n", "--")
+				: "Error al obtener el body");
 
 		Record priorityRecord = ctx.getDslContext()
 				.selectFrom(NOTICE_TAG.rightOuterJoin(TAG)
@@ -317,7 +315,7 @@ public class AonHubDAO {
 					Tag tag = buildTag(noticeTag);
 					notice.addTag(tag);
 				});
-		
+
 		getComents(ctx, noticeId, notice.getComments());
 
 		return notice;
@@ -367,20 +365,19 @@ public class AonHubDAO {
 				.select(TAG.ID).from(TAG).where(TAG.DOMAIN.eq(0))
 				.and(TAG.NAME.eq(NoticeStatus.CLOSED.getValue())
 						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())));
-		
-		Result<Record> record = ctx.getDslContext().select()
-				.from(NOTICE).rightOuterJoin(NOTICE_TAG).on(NOTICE_TAG.NOTICE.eq(NOTICE.ID))
+
+		Result<Record> record = ctx.getDslContext().select().from(NOTICE)
+				.rightOuterJoin(NOTICE_TAG).on(NOTICE_TAG.NOTICE.eq(NOTICE.ID))
 				.rightOuterJoin(TAG).on(NOTICE_TAG.TAG.eq(TAG.ID))
 				.where(NOTICE.DOMAIN.eq(ctx.getDomainId())
 						.and(NOTICE.NOTICE_.isNull())
 						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
 						.and(TAG.ID.eq(closedId))
 						.and(NOTICE_TAG.END_DATE.isNull()))
-				.orderBy(NOTICE.DATE.desc())
-				.fetch();
-		
-		if ( record != null )
-			
+				.orderBy(NOTICE.DATE.desc()).fetch();
+
+		if (record != null)
+
 			record.stream().forEach(result -> {
 				Notice notice = buildNotice(ctx, result);
 				notices.add(notice);
@@ -405,54 +402,81 @@ public class AonHubDAO {
 										NoticeStatus.DUPLICATED.getValue())))
 						.and(NOTICE.NOTICE_.isNull())
 						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value())))
-				.orderBy(NOTICE.DATE.desc())
-				.fetch().stream().forEach(record -> {
+				.orderBy(NOTICE.DATE.desc()).fetch().stream()
+				.forEach(record -> {
 
 					Notice notice = buildNotice(ctx, record);
 					notices.add(notice);
 				});
 		return notices;
 	}
-	
-	public static Notice createComment(AONContext ctx, Integer headId, Notice comment) {
-		
+
+	public static Notice createComment(AONContext ctx, Integer headId,
+			Notice comment) {
+
 		NoticeRecord noticeRecord = ctx.getDslContext().insertInto(NOTICE)
-		.set(NOTICE.DOMAIN, ctx.getDomainId())
-		.set(NOTICE.DATE,
-				new java.sql.Timestamp((new Date()).getTime()))
-		.set(NOTICE.SENDER, comment.getUserId())
-		.set(NOTICE.SUBJECT, comment.getBody())
-		.set(NOTICE.TYPE, NoticeType.COMENTARIO.value())
-		.set(NOTICE.NOTICE_, headId)
-		.set(NOTICE.STATUS, NoticeStatus.OPEN.value())
-		.set(NOTICE.PRIORITY, (byte) 0)
-		.returning().fetchOne();
-		
+				.set(NOTICE.DOMAIN, ctx.getDomainId())
+				.set(NOTICE.DATE,
+						new java.sql.Timestamp((new Date()).getTime()))
+				.set(NOTICE.SENDER, comment.getUserId())
+				.set(NOTICE.SUBJECT, comment.getBody())
+				.set(NOTICE.TYPE, NoticeType.COMENTARIO.value())
+				.set(NOTICE.NOTICE_, headId)
+				.set(NOTICE.STATUS, NoticeStatus.OPEN.value())
+				.set(NOTICE.PRIORITY, (byte) 0).returning().fetchOne();
+
 		User user = getUser(ctx, comment.getUserId());
+		comment.setId(noticeRecord.getValue(NOTICE.ID));
 		comment.setSender(user);
 		comment.setStartDate(noticeRecord.getValue(NOTICE.DATE));
 		comment.setId(noticeRecord.getValue(NOTICE.ID));
-		comment.setBody(noticeRecord.getValue(NOTICE.SUBJECT).replaceAll("\n", "--"));
+		comment.setBody(
+				noticeRecord.getValue(NOTICE.SUBJECT).replaceAll("\n", "--"));
 		return comment;
 	}
-	
-	public static void getComents(AONContext ctx, Integer headId, List<Notice> comments) {
+
+	public static Notice editComment(AONContext ctx, Integer commentId,
+			String body) {
+
+		ctx.getDslContext().update(NOTICE).set(NOTICE.SUBJECT, body)
+				.where(NOTICE.ID.eq(commentId)).execute();
 		
-		Result<NoticeRecord> result = ctx.getDslContext()
-		.selectFrom(NOTICE)		
-		.where(NOTICE.NOTICE_.eq(headId)
-				.and(NOTICE.TYPE.eq(NoticeType.COMENTARIO.value())))
-		.orderBy(NOTICE.DATE.asc())
-		.fetch();
+		NoticeRecord noticeRecord = ctx.getDslContext()
+					.selectFrom(NOTICE)
+					.where(NOTICE.ID.eq(commentId))
+					.fetchOne();
+		Notice comment = new Notice();
 		
-		if ( result != null ) {
+		if ( noticeRecord != null ) {
+			comment.setId(noticeRecord.getValue(NOTICE.ID));
+			comment.setDomain(noticeRecord.getValue(NOTICE.DOMAIN));
+			comment.setStartDate(noticeRecord.getValue(NOTICE.DATE));
+			User user = getUser(ctx, noticeRecord.getValue(NOTICE.SENDER));
+			comment.setSender(user);
+			comment.setBody(noticeRecord.getValue(NOTICE.SUBJECT).replaceAll("\n", "--"));
+		}
+		
+		return comment;
+	}
+
+	public static void getComents(AONContext ctx, Integer headId,
+			List<Notice> comments) {
+
+		Result<NoticeRecord> result = ctx.getDslContext().selectFrom(NOTICE)
+				.where(NOTICE.NOTICE_.eq(headId)
+						.and(NOTICE.TYPE.eq(NoticeType.COMENTARIO.value())))
+				.orderBy(NOTICE.DATE.asc()).fetch();
+
+		if (result != null) {
 			result.stream().forEach(record -> {
 				Notice notice = new Notice();
+				notice.setId(record.getValue(NOTICE.ID));
 				notice.setDomain(record.getValue(NOTICE.DOMAIN));
 				notice.setStartDate(record.getValue(NOTICE.DATE));
 				User user = getUser(ctx, record.getValue(NOTICE.SENDER));
 				notice.setSender(user);
-				notice.setBody(record.getValue(NOTICE.SUBJECT).replaceAll("\n", "--"));			
+				notice.setBody(
+						record.getValue(NOTICE.SUBJECT).replaceAll("\n", "--"));
 				comments.add(notice);
 			});
 		}
@@ -512,7 +536,7 @@ public class AonHubDAO {
 
 		NoticeRecord noticeRecord = ctx.getDslContext().selectFrom(NOTICE)
 				.where(NOTICE.ID.eq(id)).fetchOne();
-		
+
 		return buildNotice(ctx, noticeRecord);
 	}
 
