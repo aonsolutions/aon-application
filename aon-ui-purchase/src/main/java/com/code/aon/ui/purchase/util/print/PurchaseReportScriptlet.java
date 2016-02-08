@@ -83,6 +83,8 @@ public class PurchaseReportScriptlet extends JRDefaultScriptlet implements Seria
 				if(attach!=null){
 					EcommerceProduct ecommerceProduct = null;
 					ecommerceProduct = readXml(attach.getData());
+					// line below is for jasperreport print only
+					ecommerceProduct.getTemplate().setEcommerce(attach.getDescription());
 					ecommerceProduct.setProduct(new EcommerceProduct.Product());
 					ecommerceProduct.getProduct().setId(product.getId().toString());
 					ecommerceProduct.getProduct().setCode(product.getCode());

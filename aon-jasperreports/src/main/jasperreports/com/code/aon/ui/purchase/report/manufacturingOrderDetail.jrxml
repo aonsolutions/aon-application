@@ -303,8 +303,7 @@
 									<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$P{template}.getEcommerce()
-+ " " + $P{template}.getType()]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$P{template}.getEcommerce()]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:column width="188" uuid="9eb183c3-c472-4110-9da9-77de60dcde69">
@@ -373,8 +372,7 @@
 									<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$P{template}.getEcommerce()
-+ " " + $P{template}.getType()]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$P{template}.getEcommerce()]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:column width="188" uuid="6ab645b2-1f39-41cd-813f-b53163f2cf29">
@@ -423,9 +421,9 @@
 && $P{purchaseScriptlet_SCRIPTLET}.getValuesTemplate($F{item}.getProduct()).size()>2]]></printWhenExpression>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="ecommerce" uuid="dcb1c7d0-bee9-4d53-9c70-8142725361c2">
+					<datasetRun subDataset="ecommerce" uuid="396f5719-2c06-4940-89fc-80420ae7f23a">
 						<datasetParameter name="template">
-							<datasetParameterExpression><![CDATA[$P{purchaseScriptlet_SCRIPTLET}.getValuesTemplate($F{item}.getProduct()).get(1).getTemplate()]]></datasetParameterExpression>
+							<datasetParameterExpression><![CDATA[$P{purchaseScriptlet_SCRIPTLET}.getValuesTemplate($F{item}.getProduct()).get(2).getTemplate()]]></datasetParameterExpression>
 						</datasetParameter>
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{purchaseScriptlet_SCRIPTLET}.getValuesTemplate($F{item}.getProduct()).get(2).getProductData().getEcommerce())]]></dataSourceExpression>
 					</datasetRun>
@@ -443,8 +441,7 @@
 									<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$P{template}.getEcommerce()
-+ " " + $P{template}.getType()]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$P{template}.getEcommerce()]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:column width="188" uuid="50f1b167-0140-4ab9-807f-104767a1e8a4">
@@ -535,9 +532,9 @@
 && $P{purchaseScriptlet_SCRIPTLET}.getValuesTemplate($F{item}.getProduct()).size()>3]]></printWhenExpression>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="ecommerce" uuid="17d8d7cf-632f-4bdc-9fe3-f32e9349fdbe">
+					<datasetRun subDataset="ecommerce" uuid="265fa3c4-ad6a-4e24-b171-5d11e7957fcd">
 						<datasetParameter name="template">
-							<datasetParameterExpression><![CDATA[$P{purchaseScriptlet_SCRIPTLET}.getValuesTemplate($F{item}.getProduct()).get(1).getTemplate()]]></datasetParameterExpression>
+							<datasetParameterExpression><![CDATA[$P{purchaseScriptlet_SCRIPTLET}.getValuesTemplate($F{item}.getProduct()).get(3).getTemplate()]]></datasetParameterExpression>
 						</datasetParameter>
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{purchaseScriptlet_SCRIPTLET}.getValuesTemplate($F{item}.getProduct()).get(3).getProductData().getEcommerce())]]></dataSourceExpression>
 					</datasetRun>
@@ -555,8 +552,7 @@
 									<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$P{template}.getEcommerce()
-+ " " + $P{template}.getType()]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$P{template}.getEcommerce()]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:column width="188" uuid="288ef698-23b5-46b6-ae72-00f3e9045b60">
