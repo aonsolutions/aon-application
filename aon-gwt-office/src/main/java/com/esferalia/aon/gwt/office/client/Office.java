@@ -7,6 +7,7 @@ import java.util.Map;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.office.client.IssueReadPanel.Callback;
 import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
@@ -485,7 +486,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	}
 
 	@Override
-	public void onIssueComment(String body) {
+	public void onIssueComment(String body, final Callback callback) {
 		IssueCommentValue value = new IssueCommentValue();
 		value.setBody(body);
 
@@ -495,12 +496,15 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 					@Override
 					public void onFailure(Throwable caught) {
-						Window.alert("Error al crear el comentario");
+						callback.onFailure(caught);
 					}
 
 					@Override
 					public void onSuccess(JsIssueComment result) {
-						loadOpenIssues();
+						DefaultAonIssueComments comment = new DefaultAonIssueComments(result);
+						issueSelected.addComment(result);
+						callback.onSucess(comment);
+						
 					}
 				});
 	}

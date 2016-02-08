@@ -123,6 +123,14 @@ public abstract class DefaultAonIssueSelected implements IssueSelected {
 	}
 	
 	@Override
+	public DefaultAonIssueComments addComment(JsIssueComment comment) {
+		DefaultAonIssueComments newComment = new DefaultAonIssueComments(comment);
+		this.comments.add(newComment);
+		return newComment;
+		
+	}
+	
+	@Override
 	public List<DefaultAonIssueComments> getComments() {
 		return comments;
 	}

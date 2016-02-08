@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontStyle;
@@ -14,6 +15,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -25,12 +27,18 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class IssueReadPanel extends Composite {
+	
+	interface Callback {
+		
+		void onSucess(DefaultAonIssueComments comment);
+		void onFailure(Throwable caught);
+	}
 
 	interface Listener {
 
 		void onUpdateIssueState(String state);
 
-		void onIssueComment(String body);
+		void onIssueComment(String body, Callback callback);
 	}
 
 	interface GridStyle extends CssResource {
@@ -133,7 +141,7 @@ public class IssueReadPanel extends Composite {
 			labelsHPanel.add(new Label(tag.getName()));
 	}
 	
-	private void printComment(String type, Date createAt, String body) {		
+	public void printComment(String type, Date createAt, String body) {		
 		
 		int days = CalendarUtil.getDaysBetween(createAt, new Date());
 		Grid grid = new Grid(2,1);
@@ -149,8 +157,6 @@ public class IssueReadPanel extends Composite {
 		grid.setWidget(1, 0, textArea);
 
 		historialVPanel.add(grid);
-
-		
 	}
 
 	private void createCommentButton() {
@@ -186,7 +192,19 @@ public class IssueReadPanel extends Composite {
 
 	private void onCommentButtonClick() {
 		for (Listener listener : listeners)
-			listener.onIssueComment(commentTextArea.getValue());
+			listener.onIssueComment(commentTextArea.getValue(), new Callback() {
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert("Error en la gestion del comentario " + caught.getMessage());
+				}
+				
+				@Override
+				public void onSucess(DefaultAonIssueComments comment) {
+					printComment("COMENTADO", comment.getCreatedAt(), comment.getBody());
+					commentTextArea.setValue("");
+				}
+			});
 	}
 
 	private void onClosedButtonClick() {

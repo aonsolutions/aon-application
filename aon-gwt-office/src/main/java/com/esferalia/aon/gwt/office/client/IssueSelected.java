@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
+import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 
 public interface IssueSelected {
 
@@ -30,6 +31,8 @@ public interface IssueSelected {
 	Date getUpdatedAt();
 	
 	DefaultAonUserIssueSelected getUser();
+	
+	DefaultAonIssueComments addComment(JsIssueComment comment);
 	
 	List<DefaultAonTagIssueSelected> getTags();
 	
