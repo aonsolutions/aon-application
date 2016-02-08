@@ -36,7 +36,7 @@ public class IssueReadPanel extends Composite {
 
 	interface Listener {
 
-		void onUpdateIssueState(String state);
+		void onUpdateIssueState(String state);		
 
 		void onUpdateIssueComment(Integer id, String body, Callback callback);
 
@@ -158,10 +158,8 @@ public class IssueReadPanel extends Composite {
 
 		final Button editButton = new Button();
 		
-		if (issue instanceof IssueGrid.IssueOpenLoadSelected) {
-			editButton.setStyleName(AON.AON_ICON_EDIT_ADD);
-			editButton.addStyleName(AON.AON_ICON_CMD_BUTTON);
-		}
+		editButton.setStyleName(AON.AON_ICON_EDIT_ADD);
+		editButton.addStyleName(AON.AON_ICON_CMD_BUTTON);
 		editButton.addStyleName(style.editButton());
 
 		final TextArea textArea = getTextArea(
@@ -176,13 +174,13 @@ public class IssueReadPanel extends Composite {
 					onEditButtonClick(textArea, editButton);
 				else
 					onAcceptEditButtonClick(textArea, editButton);
-					
-				
 			}
 		});
+		
+		editButton.setVisible(false);
 
 		FlexTable flexTable = new FlexTable();
-		flexTable.setWidget(0, 0, label);
+		flexTable.setWidget(0, 0, label);		
 		flexTable.setWidget(0, 1, editButton);
 		flexTable.getFlexCellFormatter().setColSpan(1, 0, 2);
 		flexTable.setWidget(1, 0, textArea);
@@ -202,11 +200,8 @@ public class IssueReadPanel extends Composite {
 		label.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
 
 		final Button editButton = new Button();
-		
-		if ( editVisible) {
-			editButton.setStyleName(AON.AON_ICON_EDIT_ADD);
-			editButton.addStyleName(AON.AON_ICON_CMD_BUTTON);
-		}
+		editButton.setStyleName(AON.AON_ICON_EDIT_ADD);
+		editButton.addStyleName(AON.AON_ICON_CMD_BUTTON);
 		editButton.addStyleName(style.editButton());
 
 		final TextArea textArea = getTextArea(
@@ -225,6 +220,8 @@ public class IssueReadPanel extends Composite {
 				
 			}
 		});
+		
+		editButton.setVisible(editVisible);
 
 		FlexTable flexTable = new FlexTable();
 		flexTable.setWidget(0, 0, label);
