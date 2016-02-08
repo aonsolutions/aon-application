@@ -273,7 +273,18 @@ public class AonHubDAO {
 		notice.setSender(user);
 		notice.setTitle(record.getValue(NOTICE.SUBJECT));
 		notice.setRecipient(record.getValue(NOTICE.RECIPIENT));
-		notice.setStatus(record.getValue(TAG.NAME));
+		
+		Record statusRecord = ctx.getDslContext()
+				.selectFrom(NOTICE_TAG.rightOuterJoin(TAG)
+						.on(NOTICE_TAG.TAG.eq(TAG.ID)))
+				.where(NOTICE_TAG.NOTICE.eq(noticeId)
+						.and(NOTICE_TAG.END_DATE.isNull())
+						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value()))
+						.and(TAG.DOMAIN.eq(0)))
+				.fetchOne();
+		
+		if (statusRecord != null)
+			notice.setStatus(statusRecord.getValue(TAG.NAME));
 
 		String body = ctx.getDslContext().selectFrom(NOTICE)
 				.where(NOTICE.DOMAIN.eq(ctx.getDomainId())

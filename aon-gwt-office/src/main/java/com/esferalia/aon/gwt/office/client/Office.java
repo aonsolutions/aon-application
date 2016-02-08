@@ -37,7 +37,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ResizeLayoutPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
@@ -486,8 +485,32 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	}
 
 	@Override
+	public void onUpdateIssueBody(String title, String body,
+			final Callback<IssueSelected> callback) {
+		final IssueValue value = new IssueValue();
+		value.setBody(body);
+		value.setTitle(title);
+
+		gitHub.editIssue(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), issueSelected.getJsIssue(), value,
+				new AsyncCallback<JsIssue>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onFailure(caught);
+					}
+
+					@Override
+					public void onSuccess(JsIssue result) {
+						loadOpenIssues();
+					}
+				});
+
+	}
+
+	@Override
 	public void onIssueCommentButtonClick(String body,
-			final Callback callback) {
+			final Callback<DefaultAonIssueComments> callback) {
 		IssueCommentValue value = new IssueCommentValue();
 		value.setBody(body);
 
@@ -513,7 +536,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@Override
 	public void onUpdateIssueComment(final Integer id, final String body,
-			final Callback callback) {
+			final Callback<DefaultAonIssueComments> callback) {
 		IssueCommentValue value = new IssueCommentValue();
 		value.setBody(body);
 
@@ -528,7 +551,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 					@Override
 					public void onSuccess(JsIssueComment result) {
-						DefaultAonIssueComments comment = issueSelected.editComment(result);
+						DefaultAonIssueComments comment = issueSelected
+								.editComment(result);
 						callback.onSucess(comment);
 					}
 				});

@@ -27,20 +27,24 @@ import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class IssueReadPanel extends Composite {
 
-	interface Callback {
+	interface Callback<T> {
 
-		void onSucess(DefaultAonIssueComments comment);
+		void onSucess(T comment);
 
 		void onFailure(Throwable caught);
 	}
 
 	interface Listener {
+		
+		void onUpdateIssueBody(String title, String body, Callback<IssueSelected> callback);
 
-		void onUpdateIssueState(String state);		
+		void onUpdateIssueState(String state);
 
-		void onUpdateIssueComment(Integer id, String body, Callback callback);
+		void onUpdateIssueComment(Integer id, String body,
+				Callback<DefaultAonIssueComments> callback);
 
-		void onIssueCommentButtonClick(String body, Callback callback);
+		void onIssueCommentButtonClick(String body,
+				Callback<DefaultAonIssueComments> callback);
 	}
 
 	interface GridStyle extends CssResource {
@@ -99,10 +103,11 @@ public class IssueReadPanel extends Composite {
 		setPriority(issue.getPriority());
 		setAsunto(issue.getTitle());
 		setLabels(issue.getTags());
-		printBody(issue);		
+		printBody(issue);
 
 		for (DefaultAonIssueComments comment : issue.getComments()) {
-			printComment(comment, (issue instanceof IssueGrid.IssueOpenLoadSelected));
+			printComment(comment,
+					(issue instanceof IssueGrid.IssueOpenLoadSelected));
 		}
 
 		userLogged.setText(issue.getUser().getName());
@@ -145,19 +150,19 @@ public class IssueReadPanel extends Composite {
 		for (DefaultAonTagIssueSelected tag : tags)
 			labelsHPanel.add(new Label(tag.getName()));
 	}
-	
+
 	public void printBody(IssueSelected issue) {
-		
+
 		int days = CalendarUtil.getDaysBetween(issue.getCreateAt(), new Date());
 		Label label = new Label();
-		label.setText(issue.getState() + " por " + issue.getUser().getName() + " el "
-				+ fmt.format(issue.getCreateAt()) + " (hace " + days
+		label.setText(issue.getState() + " por " + issue.getUser().getName()
+				+ " el " + fmt.format(issue.getCreateAt()) + " (hace " + days
 				+ ((days == 1) ? " d\u00EDas)" : " d\u00EDas)"));
 		label.setStyleName(AON.AON_BOLD);
-		label.getElement().getStyle().setFontStyle(FontStyle.ITALIC);		
+		label.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
 
 		final Button editButton = new Button();
-		
+
 		editButton.setStyleName(AON.AON_ICON_EDIT_ADD);
 		editButton.addStyleName(AON.AON_ICON_CMD_BUTTON);
 		editButton.addStyleName(style.editButton());
@@ -166,21 +171,20 @@ public class IssueReadPanel extends Composite {
 				new String(issue.getBody().replaceAll("--", "\n")));
 		textArea.setName(String.valueOf(issue.getId()));
 		editButton.addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
-				
-				if ( editButton.getStyleName().contains(AON.AON_ICON_EDIT_ADD))
-					onEditButtonClick(textArea, editButton);
+
+				if (editButton.getStyleName().contains(AON.AON_ICON_EDIT_ADD))
+					onEditCommentButtonClick(textArea, editButton);
 				else
-					onAcceptEditButtonClick(textArea, editButton);
+					onAcceptEditBodyButtonClick(textArea, editButton);
 			}
 		});
-		
-		editButton.setVisible(false);
+		editButton.setVisible( issue instanceof IssueGrid.IssueOpenLoadSelected);
 
 		FlexTable flexTable = new FlexTable();
-		flexTable.setWidget(0, 0, label);		
+		flexTable.setWidget(0, 0, label);
 		flexTable.setWidget(0, 1, editButton);
 		flexTable.getFlexCellFormatter().setColSpan(1, 0, 2);
 		flexTable.setWidget(1, 0, textArea);
@@ -189,9 +193,11 @@ public class IssueReadPanel extends Composite {
 
 	}
 
-	public void printComment(DefaultAonIssueComments issueComment, boolean editVisible) {
+	public void printComment(DefaultAonIssueComments issueComment,
+			boolean editVisible) {
 
-		int days = CalendarUtil.getDaysBetween(issueComment.getCreatedAt(), new Date());
+		int days = CalendarUtil.getDaysBetween(issueComment.getCreatedAt(),
+				new Date());
 		Label label = new Label();
 		label.setText("COMENTADO por " + issue.getUser().getName() + " el "
 				+ fmt.format(issueComment.getCreatedAt()) + " (hace " + days
@@ -203,24 +209,24 @@ public class IssueReadPanel extends Composite {
 		editButton.setStyleName(AON.AON_ICON_EDIT_ADD);
 		editButton.addStyleName(AON.AON_ICON_CMD_BUTTON);
 		editButton.addStyleName(style.editButton());
+		editButton.setTitle("Editar comentario");
 
 		final TextArea textArea = getTextArea(
 				new String(issueComment.getBody().replaceAll("--", "\n")));
 		textArea.setName(String.valueOf(issueComment.getId()));
 		editButton.addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
-				
-				if ( editButton.getStyleName().contains(AON.AON_ICON_EDIT_ADD))
-					onEditButtonClick(textArea, editButton);
+
+				if (editButton.getStyleName().contains(AON.AON_ICON_EDIT_ADD))
+					onEditCommentButtonClick(textArea, editButton);
 				else
-					onAcceptEditButtonClick(textArea, editButton);
-					
-				
+					onAcceptEditCommentButtonClick(textArea, editButton);
+
 			}
 		});
-		
+
 		editButton.setVisible(editVisible);
 
 		FlexTable flexTable = new FlexTable();
@@ -266,20 +272,22 @@ public class IssueReadPanel extends Composite {
 
 	private void onCommentButtonClick() {
 		for (Listener listener : listeners)
-			listener.onIssueCommentButtonClick(commentTextArea.getValue(), new Callback() {
 
-				@Override
-				public void onFailure(Throwable caught) {
-					Window.alert("Error en la gestion del comentario "
-							+ caught.getMessage());
-				}
+			listener.onIssueCommentButtonClick(commentTextArea.getValue(),
+					new Callback<DefaultAonIssueComments>() {
 
-				@Override
-				public void onSucess(DefaultAonIssueComments comment) {
-					printComment(comment, true);
-					commentTextArea.setValue("");
-				}
-			});
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert("Error en la gestion del comentario "
+									+ caught.getMessage());
+						}
+
+						@Override
+						public void onSucess(DefaultAonIssueComments comment) {
+							printComment(comment, true);
+							commentTextArea.setValue("");
+						}
+					});
 	}
 
 	private void onClosedButtonClick() {
@@ -292,33 +300,53 @@ public class IssueReadPanel extends Composite {
 			listener.onUpdateIssueState(NoticeStatus.REOPEN.getValue());
 	}
 
-	private void onEditButtonClick(TextArea textArea, Button button) {
-		button.removeStyleName(AON.AON_ICON_EDIT_ADD);		
+	private void onEditCommentButtonClick(TextArea textArea, Button button) {
+		button.removeStyleName(AON.AON_ICON_EDIT_ADD);
 		button.addStyleName(AON.AON_ICON_ACCEPT);
 		textArea.setReadOnly(false);
 		textArea.setFocus(true);
 		textArea.selectAll();
 	}
-
-	private void onAcceptEditButtonClick(final TextArea textArea, final Button button) {
-
+	
+	private void onAcceptEditBodyButtonClick(final TextArea textArea, final Button button) {
+		
 		for (Listener listener : listeners)
-			listener.onUpdateIssueComment(Integer.parseInt(textArea.getName()), textArea.getValue(), new Callback() {
+			listener.onUpdateIssueBody(issue.getTitle(), textArea.getValue(), new Callback<IssueSelected>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					Window.alert("Error en la modificacion del comentario "
-							+ caught.getMessage());
+					Window.alert("Error al modificar el cuerpo del aviso " + caught.getMessage());
 				}
 
 				@Override
-				public void onSucess(DefaultAonIssueComments comment) {
-					button.removeStyleName(AON.AON_ICON_ACCEPT);
-					button.addStyleName(AON.AON_ICON_EDIT_ADD);
-					textArea.setValue(comment.getBody());
-					textArea.setReadOnly(true);					
+				public void onSucess(IssueSelected comment) {
+					
 				}
 			});
+	}
+
+	private void onAcceptEditCommentButtonClick(final TextArea textArea,
+			final Button button) {
+
+		for (Listener listener : listeners)
+			listener.onUpdateIssueComment(Integer.parseInt(textArea.getName()),
+					textArea.getValue(),
+					new Callback<DefaultAonIssueComments>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert("Error en la modificacion del comentario "
+									+ caught.getMessage());
+						}
+
+						@Override
+						public void onSucess(DefaultAonIssueComments comment) {							
+							button.removeStyleName(AON.AON_ICON_ACCEPT);
+							button.addStyleName(AON.AON_ICON_EDIT_ADD);
+							textArea.setValue(comment.getBody());
+							textArea.setReadOnly(true);
+						}
+					});
 	}
 
 	private TextArea getTextArea(String text) {
