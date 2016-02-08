@@ -251,10 +251,10 @@ public class SalaryEntryController implements Serializable {
 				entry = (AccountEntry) entryBean.insert(entry);
 				List<AccountEntryDetail> details = getAccountEntryDetails(entry);
 				insertEntryDetails(details);
-				loadAccountEntryController(entry);
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
+				loadAccountEntryController(entry);
 			} catch (Exception e) {
 				navigationKey = null;
 				try {
