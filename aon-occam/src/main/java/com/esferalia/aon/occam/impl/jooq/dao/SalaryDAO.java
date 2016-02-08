@@ -264,8 +264,13 @@ public class SalaryDAO {
 				.setEmployeeDocument(rootRecord.getValue(SALARY.EMPLOYEE_DOCUMENT))
 				.setTotalLiquid(rootRecord.getValue(SALARY.TOTAL_LIQUID))
 				.setTotalPayment(rootRecord.getValue(SALARY.TOTAL_PAYMENT))
+				.setTotalIrpf(rootRecord.getValue(SALARY.TOTAL_IRPF))
+				.setTotalDeduction(rootRecord.getValue(SALARY.TOTAL_DEDUCTION))
 				.setCommonContingenciesBase(rootRecord.getValue(SALARY.CGC_BASE))
 				.setProfessionalContingenciesBase(rootRecord.getValue(SALARY.CGP_BASE))
+				.setIrpfBase(rootRecord.getValue(SALARY.IRPF_BASE))
+				.setMoneyIrpfBase(rootRecord.getValue(SALARY.MONEY_IRPF_BASE))
+				.setInkindIrpfBase(rootRecord.getValue(SALARY.INKIND_IRPF_BASE))
 
 				.setTotalEnterprise(rootRecord.getValue(SALARY.TOTAL_ENTERPRISE))
 				.setTotalSSContributions(rootRecord.getValue(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS))				

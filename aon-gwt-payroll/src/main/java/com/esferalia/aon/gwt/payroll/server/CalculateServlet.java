@@ -28,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.function.Function;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -48,6 +49,7 @@ import com.esferalia.aon.gwt.payroll.shared.CalculateService;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
@@ -128,7 +130,34 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 		}
 
-		static class JooqSalarySaver extends JooqSalaryBuilder implements ISalaryBuilderExtended<ISalary> {
+		static class RoundSalaryBuilderExtended<T extends ISalary> extends RoundSalaryBuilder<T>
+				implements ISalaryBuilderExtended<T> {
+
+			public RoundSalaryBuilderExtended(ISalaryBuilderExtended<T> salaryBuilder, Function<Double, Double> f) {
+				super(salaryBuilder, f);
+			}
+
+			@Override
+			public void start() throws SalaryException {
+				((ISalaryBuilderExtended<T>) salaryBuilder).start();
+
+			}
+
+			@Override
+			public void finish() throws SalaryException {
+				((ISalaryBuilderExtended<T>) salaryBuilder).finish();
+
+			}
+
+			@Override
+			public void counterpart(ISQLSalary salary) throws SalaryException {
+				((ISalaryBuilderExtended<T>) salaryBuilder).counterpart(salary);
+			}
+
+		}
+
+		static class JooqSalarySaver<T extends ISalary> extends JooqSalaryBuilder<T>
+				implements ISalaryBuilderExtended<T> {
 
 			private boolean autoCommit;
 			private Connection connection;
@@ -237,7 +266,8 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			} else if (duplicate) {
 				builders.add(new JooqSalaryDuplicator(connection));
 			} else if (save) {
-				builders.add(new JooqSalarySaver(connection));
+				builders.add(new RoundSalaryBuilderExtended<Salary>(new JooqSalarySaver<Salary>(connection),
+						d -> Math.round(d * 1000.00) / 1000.00));
 			}
 
 			return new CompositeSalaryBuilderExtended(builders.toArray(new ISalaryBuilderExtended[builders.size()]));
@@ -564,8 +594,8 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 	}
 
 	private static boolean counter(ISQLContractSalaryCalculatorContext ctx, ISQLSalary salary) {
-		return ctx.getInt(SQLConstants.CONTRACT, ContractColumns.ID).equals(salary.getInt(SQLConstants.CONTRACT,
-				ContractColumns.ID));
+		return ctx.getInt(SQLConstants.CONTRACT, ContractColumns.ID)
+				.equals(salary.getInt(SQLConstants.CONTRACT, ContractColumns.ID));
 	}
 
 	private static boolean save(HttpServletRequest request) throws ParseException {

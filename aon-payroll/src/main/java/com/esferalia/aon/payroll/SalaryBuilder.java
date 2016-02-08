@@ -218,7 +218,7 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 	}
 
 	@Override
-	public void setSocialSecurityContributions(
+	public void setTotalSS(
 			Double socialSecurityContributions) {
 		this.salary.setSocialSecurityContributions(socialSecurityContributions);
 	}

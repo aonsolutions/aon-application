@@ -233,10 +233,10 @@ public class CompositeSalaryBuilder<E extends ISalary,T extends ISalaryBuilder<E
 	}
 
 	@Override
-	public void setSocialSecurityContributions(
+	public void setTotalSS(
 			Double socialSecurityContributions) {
 		for (ISalaryBuilder<E> builder : builders)
-			builder.setSocialSecurityContributions(socialSecurityContributions);
+			builder.setTotalSS(socialSecurityContributions);
 
 	}
 

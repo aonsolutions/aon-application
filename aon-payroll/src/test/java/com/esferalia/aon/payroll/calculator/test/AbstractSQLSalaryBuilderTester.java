@@ -47,7 +47,7 @@ public abstract class AbstractSQLSalaryBuilderTester<T extends ISalary> extends 
 	}
 	
 	@Override
-	public void setSocialSecurityContributions(
+	public void setTotalSS(
 			Double socialSecurityContributions) {
 		values.put(SalaryColumns.SOCIAL_SECURITY_CONTRIBUTIONS, socialSecurityContributions);
 	}

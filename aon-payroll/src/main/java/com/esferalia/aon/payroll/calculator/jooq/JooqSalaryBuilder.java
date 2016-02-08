@@ -66,7 +66,7 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.Variables;
 import com.esferalia.aon.salary.payment.IPayment;
 
-public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
+public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 
 	private static List<String> ALREADY_AT_SALARY = null;
 
@@ -100,7 +100,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
 	}
 
 	@Override
-	public ISalary getSalary() {
+	public T getSalary() {
 		return null;
 	}
 
@@ -318,7 +318,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder<ISalary> {
 	}
 
 	@Override
-	public void setSocialSecurityContributions(
+	public void setTotalSS(
 			Double socialSecurityContributions) {
 		insertMoreSalary = insertMoreSalary.set(
 				SALARY.SOCIAL_SECURITY_CONTRIBUTIONS,

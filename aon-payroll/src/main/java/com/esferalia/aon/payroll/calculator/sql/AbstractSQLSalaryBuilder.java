@@ -218,7 +218,7 @@ public abstract class AbstractSQLSalaryBuilder<T extends ISalary> implements ISa
 	}
 
 	@Override
-	public void setSocialSecurityContributions(
+	public void setTotalSS(
 			Double socialSecurityContributions) {
 		salary.setSocialSecurityContributions(socialSecurityContributions);
 	}

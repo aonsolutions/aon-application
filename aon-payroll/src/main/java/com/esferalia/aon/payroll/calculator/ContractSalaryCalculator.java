@@ -648,7 +648,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			}
 
 			salaryBuilder.setTotalIrpf(totalIrpf);
-			salaryBuilder.setSocialSecurityContributions(ssContributions);
+			salaryBuilder.setTotalSS(ssContributions);
 
 			salaryBuilder.setTotalDeduction(totalDeduction);
 			return totalDeduction;

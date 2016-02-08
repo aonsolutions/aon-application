@@ -87,16 +87,20 @@ public interface ISalaryBuilder<T extends ISalary> {
 	// ------------------------------------------------------------------------
 	// Totals
 
-	public void setTotalLiquid(Double totalLiquid);
 
-	public void setTotalPayment(Double totalPayment);
-
-	public void setTotalDeduction(Double totalDeduction);
+	public void setTotalSS(Double totalSS);
 
 	public void setTotalIrpf(Double totalIrpf);
 
-	public void setSocialSecurityContributions(
-			Double socialSecurityContributions);
+	//public void setTotalOther(Double totalSS);
+
+	//public void setTotalEmbargo(Double totalEmbargo);
+
+	public void setTotalDeduction(Double totalDeduction);
+
+	public void setTotalLiquid(Double totalLiquid);
+
+	public void setTotalPayment(Double totalPayment);
 
 	public void setTotalEnterprise(Double totalEnterprise);
 

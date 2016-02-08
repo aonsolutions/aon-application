@@ -141,6 +141,7 @@ import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports;
 import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports.A3Line;
@@ -3175,10 +3176,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			deleteSalaries(conn, draft.getDbId());
 
 		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(conn);
+		RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder,
+				d -> Math.round(d*1000.00)/1000.00);
 		jooqSalaryBuilder.setListener(new SalaryBuilderListener());
 		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(draft);
 		CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>> compositeSalaryBuilder = new CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>>(
-				salaryDraftBuilder, jooqSalaryBuilder);
+				salaryDraftBuilder, roundSalaryBuilder);
 
 		boolean autocommit = false;
 		try {

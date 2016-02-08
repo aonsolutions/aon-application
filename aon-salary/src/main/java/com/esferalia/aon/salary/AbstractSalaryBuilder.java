@@ -173,7 +173,7 @@ public abstract class AbstractSalaryBuilder<T extends ISalary> implements ISalar
 	}
 
 	@Override
-	public void setSocialSecurityContributions(
+	public void setTotalSS(
 			Double socialSecurityContributions) {
 
 	}

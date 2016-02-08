@@ -46,7 +46,7 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 
 public class Main {
 
-	public static class MainSalaryBuilder extends JooqSalaryBuilder {
+	public static class MainSalaryBuilder extends JooqSalaryBuilder<ISalary> {
 		
 		private List<Integer> olds ;
 		
@@ -438,7 +438,10 @@ public class Main {
 
 			MainSalaryBuilder salaryBuilder = cmd.hasOption(pretty.getLongOpt()) ? 
 					new PrettyMainSalaryBuilder(connection) : new  MainSalaryBuilder(connection);
-
+			
+			RoundSalaryBuilder<ISalary> roundSalaryBuilder = 
+					new RoundSalaryBuilder<ISalary>(salaryBuilder, d->Math.round(d*1000.00)/1000.00 );		
+					
 			Criteria criteria = new Criteria();
 			if (cmd.hasOption(ccc.getLongOpt()))
 				criteria.addEqualExpression(SQLConstants.ENTERPRISE_CCC + "."
@@ -455,7 +458,7 @@ public class Main {
 					connection, startDate, endDate, issueDate, criteria);
 
 			ContractSalaryCalculator<ISalary> calculator = new ContractSalaryCalculator<ISalary>(
-					salaryBuilder);
+					roundSalaryBuilder);
 
 			while (ctx.next()) {
 				try {
