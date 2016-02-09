@@ -13,6 +13,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.util.BankUtil;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
@@ -155,7 +156,11 @@ public class RegistryLoaderFactory {
 			}
 			bankAccount.setCheck(bankAccount.calculateIbanControlDigit());
 		}
-		rbank.setBankAccount(bankAccount);
+
+		if (bankAccount != null) {
+			rbank.setBankAccount(bankAccount);
+			BankUtil.fillBankAccountData(rbank);
+		}
 		return (RegistryBank) bean.insert(rbank);		
 	}
 

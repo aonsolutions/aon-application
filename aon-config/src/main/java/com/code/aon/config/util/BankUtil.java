@@ -35,9 +35,11 @@ public class BankUtil {
 					bac.setBankAlias((String)results[0]);
 					bac.setBic((String)results[1]);
 				}
-			} else {
+			}
+
+			if (StringUtils.isBlank(bac.getBic())) {
 				BankBic11 bankBic = BankBic11.getBankBic11(bac.getBankAccount().getBankCode());
-				if ( bankBic != null ) {
+				if (bankBic != null) {
 					bac.setBankAlias(StringUtils.left(bankBic.getDescription(), 25));
 					bac.setBic(bankBic.getBic());					
 				}
