@@ -90,7 +90,8 @@ public class AonHubDAO {
 		ctx.getDslContext().insertInto(NOTICE_TAG)
 				.set(NOTICE_TAG.NOTICE, noticeRecord.getValue(NOTICE.ID))
 				.set(NOTICE_TAG.START_DATE, noticeRecord.getValue(NOTICE.DATE))
-				.set(NOTICE_TAG.TAG, openId).execute();
+				.set(NOTICE_TAG.TAG, openId)
+				.execute();
 
 		Notice object = new Notice();
 		object.setId(noticeRecord.getValue(NOTICE.ID));
@@ -115,8 +116,8 @@ public class AonHubDAO {
 					.set(NOTICE_TAG.NOTICE, noticeRecord.getValue(NOTICE.ID))
 					.set(NOTICE_TAG.START_DATE,
 							noticeRecord.getValue(NOTICE.DATE))
-					.set(NOTICE_TAG.END_DATE,
-							noticeRecord.getValue(NOTICE.DATE))
+//					.set(NOTICE_TAG.END_DATE,
+//							noticeRecord.getValue(NOTICE.DATE))
 					.set(NOTICE_TAG.TAG, tag.getId()).execute();
 
 			object.addTag(tag);
@@ -165,8 +166,10 @@ public class AonHubDAO {
 					.where(NOTICE.ID.eq(notice.getId())).execute();
 
 			ctx.getDslContext().update(NOTICE)
-					.set(NOTICE.SUBJECT, notice.getBody())
-					.where(NOTICE.NOTICE_.eq(notice.getId())).execute();
+					.set(NOTICE.SUBJECT, notice.getBody())					
+					.where(NOTICE.NOTICE_.eq(notice.getId())
+							.and(NOTICE.TYPE.eq(NoticeType.MESSAGE.value())))
+					.execute();
 
 			return buildNoticeById(ctx, notice.getId());
 
