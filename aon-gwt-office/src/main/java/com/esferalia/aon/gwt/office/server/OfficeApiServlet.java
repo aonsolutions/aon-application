@@ -172,7 +172,6 @@ public class OfficeApiServlet extends HttpServlet {
 			try {
 
 				String object = getJsonObject(req);
-				System.out.println("Object: " + object);
 				JSONObject json = new JSONObject(object);
 
 				String userName = AonServletUtils.getLoggedUser();
@@ -243,7 +242,6 @@ public class OfficeApiServlet extends HttpServlet {
 				Integer domain, String domainName) {
 			try {
 				String object = getJsonObject(req);
-				System.out.println("Object: " + object);
 				JSONObject json = new JSONObject(object);
 
 				Notice notice = new Notice();
@@ -527,7 +525,6 @@ public class OfficeApiServlet extends HttpServlet {
 				String userName = AonServletUtils.getLoggedUser();
 				List<Registry> registries = AON.getRegistries(domainId,
 						domainName, userName);
-				System.out.println(registries.size());
 				pw = resp.getWriter();
 				pw.append('{');
 				pw.printf(String.format("\"message\":\"%s\",\r\n", "FOUNDED"));

@@ -10,6 +10,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -22,10 +24,12 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
-public class IssueReadPanel extends Composite {
+public class IssueReadPanel extends Composite
+		implements SelectionHandler<TreeItem> {
 
 	interface Callback<T> {
 
@@ -35,8 +39,9 @@ public class IssueReadPanel extends Composite {
 	}
 
 	interface Listener {
-		
-		void onUpdateIssueBody(String title, String body, Callback<IssueSelected> callback);
+
+		void onUpdateIssueBody(String title, String body,
+				Callback<IssueSelected> callback);
 
 		void onUpdateIssueState(String state);
 
@@ -144,11 +149,9 @@ public class IssueReadPanel extends Composite {
 
 	private void setLabels(List<DefaultAonTagIssueSelected> tags) {
 
-		if (tags.size() == 0)
-			labelsHPanel.add(new Label("Etiquetas no asignadas"));
-
-		for (DefaultAonTagIssueSelected tag : tags)
+		for (DefaultAonTagIssueSelected tag : tags) {
 			labelsHPanel.add(new Label(tag.getName()));
+		}
 	}
 
 	public void printBody(IssueSelected issue) {
@@ -181,7 +184,7 @@ public class IssueReadPanel extends Composite {
 					onAcceptEditBodyButtonClick(textArea, editButton);
 			}
 		});
-		editButton.setVisible( issue instanceof IssueGrid.IssueOpenLoadSelected);
+		editButton.setVisible(issue instanceof IssueGrid.IssueOpenLoadSelected);
 
 		FlexTable flexTable = new FlexTable();
 		flexTable.setWidget(0, 0, label);
@@ -237,6 +240,11 @@ public class IssueReadPanel extends Composite {
 
 		historialVPanel.add(flexTable);
 
+	}
+
+	@Override
+	public void onSelection(SelectionEvent<TreeItem> event) {
+		Window.alert("Selection");
 	}
 
 	private void createCommentButton() {
@@ -307,22 +315,26 @@ public class IssueReadPanel extends Composite {
 		textArea.setFocus(true);
 		textArea.selectAll();
 	}
-	
-	private void onAcceptEditBodyButtonClick(final TextArea textArea, final Button button) {
-		
+
+	private void onAcceptEditBodyButtonClick(final TextArea textArea,
+			final Button button) {
+
 		for (Listener listener : listeners)
-			listener.onUpdateIssueBody(issue.getTitle(), textArea.getValue(), new Callback<IssueSelected>() {
+			listener.onUpdateIssueBody(issue.getTitle(), textArea.getValue(),
+					new Callback<IssueSelected>() {
 
-				@Override
-				public void onFailure(Throwable caught) {
-					Window.alert("Error al modificar el cuerpo del aviso " + caught.getMessage());
-				}
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert(
+									"Error al modificar el cuerpo del aviso "
+											+ caught.getMessage());
+						}
 
-				@Override
-				public void onSucess(IssueSelected comment) {
-					
-				}
-			});
+						@Override
+						public void onSucess(IssueSelected comment) {
+
+						}
+					});
 	}
 
 	private void onAcceptEditCommentButtonClick(final TextArea textArea,
@@ -335,12 +347,13 @@ public class IssueReadPanel extends Composite {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							Window.alert("Error en la modificacion del comentario "
-									+ caught.getMessage());
+							Window.alert(
+									"Error en la modificacion del comentario "
+											+ caught.getMessage());
 						}
 
 						@Override
-						public void onSucess(DefaultAonIssueComments comment) {							
+						public void onSucess(DefaultAonIssueComments comment) {
 							button.removeStyleName(AON.AON_ICON_ACCEPT);
 							button.addStyleName(AON.AON_ICON_EDIT_ADD);
 							textArea.setValue(comment.getBody());
