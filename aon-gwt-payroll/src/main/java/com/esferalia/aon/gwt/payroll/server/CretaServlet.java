@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.security.GeneralSecurityException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import com.code.aon.google.apis.DriveUtils;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.occam.api.AON;
@@ -468,17 +470,23 @@ public class CretaServlet extends HttpServlet
 				.compareTo(toString(t1.getLiquidacion().getPeriodoDesde()));
 	}
 
+	private static String toString(net.aonsolutions.tgss.creta.jaxb.Fecha f) {
+		return String.format("%s-%02d-%02d", f.getAnho(), Integer.parseInt(f.getMes()), Integer.parseInt(f.getDia()));
+	}
+
 	private static String toString(net.aonsolutions.tgss.creta.jaxb.Periodo p) {
 		return String.format("%s-%02d", p.getAnho(), Integer.parseInt(p.getMes()));
 	}
 
-	private static String toJSON(net.aonsolutions.tgss.creta.jaxb.Liquidacion<?, ?, ?, ?> l) {
+	private static String toJSON(net.aonsolutions.tgss.creta.jaxb.Liquidacion<?, ?, ?, ?, ?> l) {
 
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(String.format("\"ccc\":\"%s%s%s\",", l.getCcc().getRegimen(), l.getCcc().getProvincia(),
 				l.getCcc().getNumero()));
 		buffer.append(String.format("\"from\":\"%s\",", toString(l.getPeriodoDesde())));
-		buffer.append(String.format("\"to\":\"%s\"", toString(l.getPeriodoDesde())));
+		buffer.append(String.format("\"to\":\"%s\",", toString(l.getPeriodoDesde())));
+		buffer.append(String.format("\"date\":\"%s\",", toString(l.getFechaHoraRecaudacion().getFechaRecaudacion())));
+		buffer.append(String.format("\"time\":\"%s\"", l.getFechaHoraRecaudacion().getHoraRecaudacion()));
 		return buffer.toString();
 	}
 
@@ -487,7 +495,7 @@ public class CretaServlet extends HttpServlet
 		buffer.append(errs.getError().stream().map(err -> String.format("{\"code\":\"%s\", \"msg\":\"%s\"}",
 				err.getCodigoErr(), safeEncode(err.getDescripcion()))).collect(Collectors.joining(",")));
 
-		errs.getError().stream().forEach(err -> System.out.println(err.getDescripcion()));
+//		errs.getError().stream().forEach(err -> System.out.println(err.getDescripcion()));
 
 		return buffer.toString();
 	}
@@ -540,14 +548,14 @@ public class CretaServlet extends HttpServlet
 	private static class UnknownDato extends Event<UnknownDato> {
 
 		private DatoSolicitado dato;
-		private Liquidacion<?, ?, ?, ?> liquidacion;
+		private Liquidacion<?, ?, ?, ?, ?> liquidacion;
 
 		public UnknownDato setDato(DatoSolicitado dato) {
 			this.dato = dato;
 			return this;
 		}
 
-		public UnknownDato setLiquidacion(Liquidacion<?, ?, ?, ?> liquidacion) {
+		public UnknownDato setLiquidacion(Liquidacion<?, ?, ?, ?, ?> liquidacion) {
 			this.liquidacion = liquidacion;
 			return this;
 		}
@@ -635,7 +643,7 @@ public class CretaServlet extends HttpServlet
 		// ------------------------------------------------------------- Errors
 
 		@Override
-		public void unknownDato(Liquidacion<?, ?, ?, ?> liquidacion, DatoSolicitado datoSolicitado,
+		public void unknownDato(Liquidacion<?, ?, ?, ?, ?> liquidacion, DatoSolicitado datoSolicitado,
 				LiquidacionBuilder liquidacionBuilder) {
 			boolean mandatory = "B".equalsIgnoreCase(datoSolicitado.getIndicadorObligatoriedad());
 			String message = String.format(
@@ -911,7 +919,9 @@ public class CretaServlet extends HttpServlet
 				p.getDomainProperty().eq(domainId)
 				.and(p.getTypeProperty().eq((byte)type.ordinal())), 
 				AttachType.REGISTRY
-				).stream();
+				)
+				.stream()
+				.filter(a -> checkData(a, login));
 		
 	}
 	
@@ -937,8 +947,10 @@ public class CretaServlet extends HttpServlet
 			// @formatter:off
 				rs
 				.map(r -> r.getLiquidacion().stream()
-				.map(l -> String.format("{\"name\":\"%s\",%s,\"errors\":[%s],\"employees\":[%s],\"file\":\"%s\"}\r\n",CretaService.File.RESPUESTA, toJSON(l), toJSON(l.getErrores()),toJSON(l.getLiquidacionMes().stream()), marshallAndEncode(r)))
-				.collect(Collectors.joining(",")))
+						.map(l -> String.format("{\"name\":\"%s\",%s,\"errors\":[%s],\"employees\":[%s],\"file\":\"%s\"}\r\n",CretaService.File.RESPUESTA, toJSON(l), toJSON(l.getErrores()),toJSON(l.getLiquidacionMes().stream()), marshallAndEncode(r)))
+						.collect(Collectors.joining(","))
+					)
+				.filter(s-> AonStringUtils.isNotBlank(s))
 				.collect(Collectors.joining(","))
 			// @formatter:on
 			);
@@ -1018,6 +1030,31 @@ public class CretaServlet extends HttpServlet
 			// @formatter:on
 			);
 			os.println(");");
+		
+	}
+	
+	private static boolean checkData(Attach attach, String login){
+		if ( attach.getDriveId() != null  ){
+			Domain domain = attach.getDomain() ;
+			try {
+				byte data [] =	
+				DriveUtils.getByteFile(
+						domain.getName(), 
+						domain.getId(), 
+						login, 
+						attach.getDriveId(), 
+						attach.getId());
+				attach.setData(data);
+				DriveUtils.deleteFile(domain.getName(), domain.getId(), login, attach.getDriveId());
+				attach.setDriveId(null);
+
+				AON.update(domain.getName(), domain.getId(), login, attach);
+			
+			} catch ( IOException | GeneralSecurityException e){
+				e.printStackTrace();
+			} 
+		}
+		return attach.getData() != null && attach.getData().length > 0;
 		
 	}
 	

@@ -325,7 +325,7 @@ public interface CretaService {
 
 		@Override
 		public final String getId() {
-			return getCCC() + getFrom();
+			return getCCC() + getFrom() ;
 		}
 		// ----------------------------------- JSNI (Native JavaScript Methods)
 
@@ -335,6 +335,14 @@ public interface CretaService {
 
 		public final native String getFrom() /*-{
 			return this.from;
+		}-*/;
+
+		public final native String getDate() /*-{
+			return this.date;
+		}-*/;
+
+		public final native String getTime() /*-{
+			return this.time;
 		}-*/;
 
 		public final native String getCCC() /*-{
@@ -348,6 +356,8 @@ public interface CretaService {
 		public final native String getName() /*-{
 			return this.name ? this.name : 'TRABAJADORES_TRAMOS';
 		}-*/;
+		
+
 	}
 
 	public static class JsTrabajadoresYTramos extends JsFile {

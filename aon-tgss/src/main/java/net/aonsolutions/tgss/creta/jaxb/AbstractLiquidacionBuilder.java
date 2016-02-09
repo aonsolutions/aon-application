@@ -6,7 +6,7 @@ import java.util.List;
 
 
 
-public abstract class AbstractLiquidacionBuilder<B extends AbstractLiquidacionBuilder<B,L,C,P>,L extends Liquidacion<?,C,P,?>, C extends CtaCot, P extends Periodo> {
+public abstract class AbstractLiquidacionBuilder<B extends AbstractLiquidacionBuilder<B,L,C,P>,L extends Liquidacion<?,C,P,?,?>, C extends CtaCot, P extends Periodo> {
 
 
 	private String ccc;

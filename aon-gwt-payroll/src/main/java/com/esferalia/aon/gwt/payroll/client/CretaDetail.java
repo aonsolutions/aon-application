@@ -273,10 +273,11 @@ public abstract class CretaDetail extends Composite {
 
 			respuestasMap = MainCreta.add(File.RESPUESTA, respuestas);
 
-			for (JsRespuesta jsRespuesta : respuestasMap.values())
+			for (JsRespuesta jsRespuesta : respuestasMap.values()) {
 				if (!contains(filtered, jsRespuesta)
 						&& hasTrabajadoresYTramos(jsRespuesta))
 					filtered.addAll(filter(Collections.singleton(jsRespuesta)));
+			}
 			
 			Collections.sort(filtered, JsFileComparator.newInstace());
 			

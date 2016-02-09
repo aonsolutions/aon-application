@@ -1278,6 +1278,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 								"gim");
 						MatchResult matchResult = regExp.exec(html);
 						
+						
 						JsArray<JsFile> trabajadoresYTramosArr = eval("("+matchResult.getGroup(1)+")");
 						JsFile trabajadoresYTramos [] = new JsFile[trabajadoresYTramosArr.length()];
 						for ( int i = 0; i < trabajadoresYTramos.length; i++ )
@@ -1286,8 +1287,10 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 						
 						JsArray<JsFile> respuestasArr = eval("("+matchResult.getGroup(3)+")");
 						JsFile respuestas [] = new JsFile[respuestasArr.length()];
+						
 						for ( int i = 0; i < respuestas.length; i++ )
 							respuestas[i] = respuestasArr.get(i);
+						
 						MainCreta.add(File.RESPUESTA, respuestas);
 						
 						cb.onSuccess(null);
@@ -1416,8 +1419,12 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			throw new UnsupportedOperationException();
 
 		Map<String, T> map = get(key);
-		for (T t : ts)
+		for (T t : ts) {
+			if ( isOlder(t, map.get(t.getId())) )
+				continue;
+			
 			map.put(t.getId(), t);
+		}
 
 		set(key, map.values());
 
@@ -1576,6 +1583,17 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		set(key, map.values());
 
 		return Collections.unmodifiableMap(map);
+	}
+	
+	private static boolean isOlder(JsFile f1, JsFile f2) {
+		if (f2 == null)
+			return true;
+		
+		int compare = f1.getDate().compareTo(f2.getDate());
+		if ( compare == 0 )
+			compare = f1.getTime().compareTo(f2.getTime());
+		
+		return compare < 0;
 	}
 
 }

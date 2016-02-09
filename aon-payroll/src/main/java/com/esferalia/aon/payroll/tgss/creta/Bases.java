@@ -402,7 +402,7 @@ public class Bases {
 				TramoBuilder tramoBuilder, boolean optional) {
 		};
 
-		default void unknownDato(Liquidacion<?, ?, ?, ?> liquidacion,
+		default void unknownDato(Liquidacion<?, ?, ?, ?, ?> liquidacion,
 				DatoSolicitado datoSolicitado,
 				LiquidacionBuilder liquidacionBuilder) {
 		};
@@ -493,7 +493,7 @@ public class Bases {
 		}
 
 		@Override
-		public void unknownDato(Liquidacion<?, ?, ?, ?> liquidacion,
+		public void unknownDato(Liquidacion<?, ?, ?, ?, ?> liquidacion,
 				DatoSolicitado datoSolicitado,
 				LiquidacionBuilder liquidacionBuilder) {
 			addDefault(datoSolicitado, liquidacion, liquidacionBuilder);
@@ -539,7 +539,7 @@ public class Bases {
 		}
 
 		private void addDefault(Dato datoSolicitado,
-				Liquidacion<?, ?, ?, ?> liquidacion,
+				Liquidacion<?, ?, ?, ?, ?> liquidacion,
 				LiquidacionBuilder liquidacionBuilder) {
 			if (defaults.containsKey(datoSolicitado.getCodigo())) {
 				String valor = defaults.get(datoSolicitado.getCodigo());
@@ -1232,14 +1232,14 @@ public class Bases {
 
 	private static <D extends DatoSolicitado> void bases(
 			BasesBuilder basesBuilder, AONContext ctx,
-			Liquidacion<?, ?, ?, ?> liquidacion, boolean aceptarBasesAnteriores,
+			Liquidacion<?, ?, ?, ?, ?> liquidacion, boolean aceptarBasesAnteriores,
 			BasesCallback... cbs) {
 		basesBuilder.addLiquidacion(
 				liquidacion(ctx, liquidacion, aceptarBasesAnteriores, cbs));
 	}
 
 	private static <D extends DatoSolicitado> net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion(
-			AONContext ctx, Liquidacion<?, ?, ?, ?> liquidacion,
+			AONContext ctx, Liquidacion<?, ?, ?, ?, ?> liquidacion,
 			boolean aceptarBasesAnteriores, BasesCallback... cbs) {
 		LiquidacionBuilder liquidacionBuilder = new LiquidacionBuilder()
 				.setAceptarBasesAnteriores(aceptarBasesAnteriores)
@@ -1299,7 +1299,7 @@ public class Bases {
 		return liquidacionBuilder.create();
 	}
 
-	private static void datosLiquidacion(Liquidacion<?, ?, ?, ?> liquidacion,
+	private static void datosLiquidacion(Liquidacion<?, ?, ?, ?, ?> liquidacion,
 			LiquidacionBuilder liquidacionBuilder, BasesCallback... cbs) {
 
 		DatosLiquidacion<DatoSolicitado> datosLiquidacion = liquidacion
@@ -1660,7 +1660,7 @@ public class Bases {
 		BasesBuilder builder = new BasesBuilder()
 				.setAutorizado(respuesta.getAutorizado());
 
-		for (Liquidacion<?, ?, ?, ?> liquidacion : respuesta.getLiquidacion())
+		for (Liquidacion<?, ?, ?, ?, ?> liquidacion : respuesta.getLiquidacion())
 			bases(builder, ctx, liquidacion, aceptarBasesAnteriores, cbs);
 
 		return builder.create();
@@ -1674,7 +1674,7 @@ public class Bases {
 
 		List<net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion> liquidaciones = new ArrayList<net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion>();
 
-		for (Liquidacion<?, ?, ?, ?> liquidacion : respuesta.getLiquidacion())
+		for (Liquidacion<?, ?, ?, ?, ?> liquidacion : respuesta.getLiquidacion())
 			liquidaciones.add(
 					liquidacion(ctx, liquidacion, aceptarBasesAnteriores, cbs));
 
