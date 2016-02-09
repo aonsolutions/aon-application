@@ -856,6 +856,10 @@ public class DriveUtils implements IBlobManager {
 						if(file.getType() == RegistryAttachmentType.LOGO.value()
 							|| file.getType() == RegistryAttachmentType.AON_TEMPLATES.value() 
 							|| file.getType() == RegistryAttachmentType.D2_DEPOSIT.value() 
+							
+							|| file.getType() == RegistryAttachmentType.CRETA_RESPUESTA.value() 
+							|| file.getType() == RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS.value() 
+							
 							|| file.getType() == RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value()){
 							return false;
 						}
@@ -1181,6 +1185,33 @@ public class DriveUtils implements IBlobManager {
 	}
 
 	/************************ Eliminar archivo **************************/
+
+	public static void deleteFile(String domainName, Integer domainId, String login, String fileId) {
+		Domain domain = AON.getDomain(domainName, domainId, login);
+		User user = new User().setLogin(login);
+		HashMap<Integer, DomainGserviceaccount> map = DBConsults.getServiceAccountMap(domain, user);
+		if(map.containsKey(domain.getId())){ 
+			try {
+				Drive drive = serviceInitialize(map.get(domain.getId()));
+				drive.files().delete(fileId).execute();
+			} catch (IOException | GeneralSecurityException e) {
+			} 
+		}
+		else if(domain.getParentId() != null && map.containsKey(domain.getParentId())){
+			try{
+				Drive drive = serviceInitialize(map.get(domain.getParentId()));
+				drive.files().delete(fileId).execute();
+			} catch (IOException | GeneralSecurityException e) {
+			}
+		}
+		else if(map.containsKey(0)){
+			try {
+				Drive drive = serviceInitialize(map.get(0));
+				drive.files().delete(fileId).execute();
+			} catch (IOException | GeneralSecurityException e) {
+			}
+		}
+	}
 
 	public static void deleteFile(Drive drive, String fileId) throws IOException {
 		drive.files().delete(fileId).execute();
