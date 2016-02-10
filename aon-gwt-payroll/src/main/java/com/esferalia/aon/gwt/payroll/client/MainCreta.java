@@ -1587,7 +1587,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	
 	private static boolean isOlder(JsFile f1, JsFile f2) {
 		if (f2 == null)
-			return true;
+			return false;
 		
 		int compare = f1.getDate().compareTo(f2.getDate());
 		if ( compare == 0 )
