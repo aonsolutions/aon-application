@@ -196,8 +196,6 @@ public class OfficeApiServlet extends HttpServlet {
 						String name = tags.getString(x);
 						Tag tag = AON.getTag(domain, domainName, userName,
 								name);
-						System.out.println("TagId: " + tag.getId() + "\nName: "
-								+ tag.getName() + "\nType: " + tag.getType());
 						notice.addTag(tag);
 					}
 				}

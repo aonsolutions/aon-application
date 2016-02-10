@@ -100,11 +100,10 @@ public class AonHubDAO {
 
 			object.setId(noticeRecord.getValue(NOTICE.ID));
 			object.setDomain(ctx.getDomainId());
-			object.setStartDate(today);
+			object.setStartDate(noticeRecord.getValue(NOTICE.DATE));
 			object.setSender(user);
 			object.setTitle(notice.getTitle());
 			object.setBody(notice.getBody());
-			// object.setBody(notice.getBody().replaceAll("\n", "--"));
 			object.setCompany(noticeRecord.getValue(NOTICE.COMPANY));
 			object.setSource(noticeRecord.getValue(NOTICE.SOURCE));
 			object.setStatus(NoticeStatus.OPEN.getValue());
@@ -316,9 +315,6 @@ public class AonHubDAO {
 			}
 			
 			notice.setBody(body);
-
-//			notice.setBody((body != null) ? body.replaceAll("\n", "--")
-//					: "Error al obtener el body");
 
 			Record priorityRecord = ctx.getDslContext()
 					.selectFrom(NOTICE_TAG.rightOuterJoin(TAG)

@@ -2,8 +2,8 @@ package com.esferalia.aon.gwt.office.client;
 
 import java.util.Date;
 
-import com.esferalia.aon.gwt.common.shared.Base64;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class DefaultAonIssueComments implements IssueCommentSelected {
@@ -18,7 +18,7 @@ public class DefaultAonIssueComments implements IssueCommentSelected {
 	public DefaultAonIssueComments(JsIssueComment comment) {
 		this.issueComment = comment;
 		this.timeFormat = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss.S");
-		this.body = Base64.decode(comment.getBody());
+		this.body = URL.decode(comment.getBody());
 		this.user = new DefaultAonUserIssueSelected(comment.getUser());
 	}
 	

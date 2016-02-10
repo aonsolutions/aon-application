@@ -364,6 +364,10 @@ public class IssueReadPanel extends Composite
 
 						@Override
 						public void onSucess(IssueSelected comment) {
+							button.removeStyleName(AON.AON_ICON_ACCEPT);
+							button.addStyleName(AON.AON_ICON_EDIT_ADD);
+							textArea.setValue(comment.getBody());
+							textArea.setReadOnly(true);
 
 						}
 					});

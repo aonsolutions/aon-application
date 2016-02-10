@@ -134,6 +134,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		loadRegistries();
 		loadLabels();
 		loadOpenIssues();
+		showDockOfficePanel();
 	}
 
 	private void loadRegistries() {
@@ -197,8 +198,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 							addOpenIssue(result.getData().get(x));
 					}
 				});
-
-		showDockOfficePanel();
 	}
 
 	private void loadClosedIssues() {
@@ -454,9 +453,10 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					@Override
 					public void onSuccess(JsIssue result) {
 						loadOpenIssues();
+						IssueSelected issue = new IssueGrid.IssueOpenLoadSelected(result);
+						onSelectionTitle(issue);
 					}
 				});
-
 	}
 
 	// ******************************************************************
@@ -480,6 +480,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					@Override
 					public void onSuccess(JsIssue result) {
 						loadOpenIssues();
+						showDockOfficePanel();
 					}
 				});
 
@@ -506,7 +507,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						loadOpenIssues();
 					}
 				});
-
 	}
 
 	@Override
