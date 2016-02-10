@@ -38,6 +38,12 @@
 								style="padding-right: 5px;padding-left: 18px"
 								styleClass="aon-bold aon-menu-icon aon-icon-alarm-pending" />					
 						</aon:if>
+						<aon:if test="#{company.helpdeskEnabled}">
+							<aon:commandLink id="menu-quickIssue" 
+								action="gwt_office"
+								title="C.A.U." value="&#160;"
+								styleClass="aon-menu-icon aon-icon-helpdesk" />
+						</aon:if>
 						<aon:commandLink id="showEmailWindow" 
 							styleClass="aon-menu-icon aon-icon-email"
 							title="#{bundle.webmail_send_email}" 
@@ -56,12 +62,6 @@
 		                        <aon:graphicImage title="#{bundle.aon_help}"
 		                        	value="#{aonResource.resolve['/images/aon-main-menu/aon-icon-help.png']}" />
 			                </f:facet>		
-			                <aon:if test="#{company.helpdeskEnabled}">
-			              		<aon:menuItem id="menu-quickIssue" 
-									action="gwt_office"
-									value="#{bundle.office_new_issue}"
-									iconClass="aon-icon-helpdesk" />
-							</aon:if>			                
 			                <aon:if test="#{aonConfiguration.bean.alarm.showList}">
 		                		<aon:menuItem id="alarm"
 									value="#{bundle.aon_alarm}"
