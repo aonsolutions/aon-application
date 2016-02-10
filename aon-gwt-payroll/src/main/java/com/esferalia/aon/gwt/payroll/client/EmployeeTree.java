@@ -742,7 +742,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		@Override
 		public boolean onAccept(CretaRequestDialog dialog) {
 
-			String tipo = "L00";
+			String tipo = dialog.getType();
 			Date month = dialog.getMonth();
 			int mes = month.getMonth() + 1;
 			int anyo = month.getYear() + 1900;

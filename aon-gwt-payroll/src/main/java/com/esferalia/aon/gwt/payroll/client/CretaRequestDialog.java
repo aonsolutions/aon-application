@@ -22,6 +22,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.LongBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -57,7 +58,9 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 	@UiField
 	Element previousBasesTR;
 
-
+	@UiField
+	ListBox typeListBox;
+	
 	@UiField
 	CheckBox previousBasesCheckBox;
 
@@ -115,10 +118,13 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 	
 	// ------------------------------------------------------------------------
 	
+	public String getType(){
+		return typeListBox.getSelectedValue();
+	}
+
 	public Date getMonth(){
 		return monthListBox.getSelected();
 	}
-	
 	
 	public Long getAuthorized() {
 		return authLongBox.getValue();
@@ -135,6 +141,7 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 	public String getDescription(CCC ccc) {
 		return ccc.getCode();
 	}
+	
 	// ------------------------------------------------------------------------
 	
 	public void download(String fileName,String url){

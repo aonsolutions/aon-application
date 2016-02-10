@@ -91,6 +91,17 @@
 						highLightStyles="aon-bold aon-black aon-icon-accept {style.monthListBox-item}"/>
 				</td>
 			</tr>
+			<tr>
+				<td class="{style.label}">
+					<g:Label text="Tipo de Liquidaci&oacute;n" />
+				</td>
+				<td class="{style.field}">
+					<g:ListBox styleName="aon-selectOneMenu" ui:field="typeListBox" >
+						<g:item value="L00">L00 Liquidaci&oacute;n normal en per&iacute;odo reglamentario de ingreso</g:item>	
+						<g:item value="L13">L13 Liquidaciones complementarias por vacaciones retribuidas y no disfrutadas</g:item>	
+					</g:ListBox>
+				</td>
+			</tr>
 			<tr ui:field="previousBasesTR" >
 				<td class="{style.label}">
 					<g:Label text="Aceptar Bases Anteriores" />
