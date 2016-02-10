@@ -380,7 +380,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		};
 		setColumnWidth(col++, 2, Unit.PCT);
 		
-		typeColumn = new Column<IssueSelected, String>(new TextCell()) {
+		typeColumn = new Column<IssueSelected, String>(new ClickableTextCell()) {
 
 			@Override
 			public String getValue(IssueSelected object) {
@@ -414,7 +414,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 				return object.getTitle();
 			}
 		};
-		setColumnWidth(col++, 60, Unit.PX);
+		setColumnWidth(col++, 80, Unit.PX);
 
 		labelsColumn = new Column<IssueSelected, String>(new ClickableTextCell()) {
 
@@ -448,7 +448,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 			}
 		};
 		
-		setColumnWidth(col++, 30, Unit.PX);
+		setColumnWidth(col++, 40, Unit.PX);
 		
 		createdAtColumn = new Column<IssueSelected, String>(new TextCell()) {
 			
@@ -466,7 +466,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 				}
 			}
 		};
-		setColumnWidth(col++, 60, Unit.PX);
+		setColumnWidth(col++, 20, Unit.PX);
 	}
 
 	public Set<IssueSelected> getSelectedObject() {
