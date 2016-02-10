@@ -339,7 +339,7 @@
 
 	<servlet>
 		<servlet-name>PrintFiles</servlet-name>
-		<servlet-class>com.code.aon.aio.servlet.viewer.PdfPrintServlet</servlet-class>
+		<servlet-class>com.esferalia.aon.gwt.viewer.server.PdfPrintServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>PrintFiles</servlet-name>
@@ -348,7 +348,7 @@
 
 	<servlet>
 		<servlet-name>openDocument2Image</servlet-name>
-		<servlet-class>com.code.aon.aio.servlet.viewer.OpenDocument2ImageServlet</servlet-class>
+		<servlet-class>com.esferalia.aon.gwt.viewer.server.OpenDocument2ImageServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>openDocument2Image</servlet-name>
@@ -357,7 +357,7 @@
 	
 	<servlet>
 		<servlet-name>openDocumentConverter</servlet-name>
-		<servlet-class>com.code.aon.aio.servlet.viewer.OpenDocumentConverterServlet</servlet-class>
+		<servlet-class>com.esferalia.aon.gwt.viewer.server.OpenDocumentConverterServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>openDocumentConverter</servlet-name>

@@ -14,7 +14,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.common.client.widget.Viewer;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.document.client.css.AonGwtDocumentResources;
 import com.esferalia.aon.gwt.document.shared.Category;
@@ -33,7 +32,11 @@ import com.esferalia.aon.gwt.document.shared.SearchInfo;
 import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.TagList;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
+import com.esferalia.aon.gwt.viewer.client.Viewer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
@@ -224,12 +227,12 @@ public class Documents extends Composite implements EntryPoint {
 
 		ScheduledCommand viewCommand = new ScheduledCommand() {
 			public void execute() {
-
-				
 				FileInfo object;
 				if(selFiles.size() == 1) object = selFiles.get(0);
 				else object= dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
-				getAsHTMl(object,dataGrid.getKeyboardSelectedRow(),selFiles.size()>1 ? selFiles : dataProvider.getList() );
+		
+				getViewer(object,dataGrid.getKeyboardSelectedRow(),selFiles.size()>1 ? selFiles : dataProvider.getList() );
+				//getAsHTMl(object,dataGrid.getKeyboardSelectedRow(),selFiles.size()>1 ? selFiles : dataProvider.getList() );
 			};
 		};		
 
@@ -273,27 +276,6 @@ public class Documents extends Composite implements EntryPoint {
 			};
 		};
 		
-
-		ScheduledCommand copyLinkCommand = new ScheduledCommand() {
-			public void execute() {
-
-				FileInfo object;
-				if(selFiles.size() == 1) object = selFiles.get(0);
-				else object= dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
-				idoc.copyLink(object,GWT.getModuleBaseURL(), new AsyncCallback<String>() {
-					
-					@Override
-					public void onSuccess(String result) {
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {}
-				});
-				
-				
-			};
-		};
-		
 		ScheduledCommand shareCommand = new ScheduledCommand() {
 			public void execute() {
 
@@ -316,7 +298,6 @@ public class Documents extends Composite implements EntryPoint {
 		private MenuItem editItem;
 		private MenuItem removeItem;
 		private MenuItem batchItem;
-		private MenuItem copyLinkItem;
 		private MenuItem shareItem;
 		private MenuItem downloadItem;
 		private MenuItem infoItem;
@@ -2996,7 +2977,8 @@ public class Documents extends Composite implements EntryPoint {
 			nameColumn.setFieldUpdater(new FieldUpdater<FileInfo, String>() {
 				@Override
 				public void update(int index, FileInfo object, String value) {
-					getAsHTMl(object,dataGrid.getKeyboardSelectedRow(),dataProvider.getList());
+					getViewer(object,dataGrid.getKeyboardSelectedRow(),dataProvider.getList());
+					//getAsHTMl(object,dataGrid.getKeyboardSelectedRow(),dataProvider.getList());
 				}
 				
 			});
@@ -3683,118 +3665,48 @@ public class Documents extends Composite implements EntryPoint {
 		});		
 	}
 	
-
-	private  void getAsHTMl(final FileInfo fileInfo, final Integer index, final List<FileInfo> viewList) {
-		
-		//viewList = multiple ? selFiles : dataProvider.getList();
-		
-		final Viewer viewer = new Viewer(DEFAULT_ZOOM){
-			
-			int viewerIndex = index;
-			FileInfo viewerFileInfo = fileInfo;
-			String icon;
-			@Override
-			protected void onNext() {
-				icon = viewerFileInfo.getIcon();
-				viewerFileInfo = viewList.get(++viewerIndex);
-				setPrevEnabled(true);
-				setNextEnabled(viewerIndex < (viewList.size() - 1));
-				onChange();
-			}
-			
-			@Override
-			protected void onPrev() {
-				icon = viewerFileInfo.getIcon();
-				viewerFileInfo = viewList.get(--viewerIndex);
-				setNextEnabled(true);
-				setPrevEnabled(viewerIndex > 0);
-				onChange();
-			}
-			
-			@Override
-			protected void onDownload() {
-				download(viewerFileInfo,false);
-			}
-			@Override
-			protected void onPrint() {	
-				print(viewerFileInfo);
-			}
-			@Override
-			protected void onShare() {
-				share(viewerFileInfo,false);
-			};
-			@Override
-			protected void onChange() {
-				showLoad();
-				removeOldIcon(icon);
-				setTitle(viewerFileInfo.getTitle(), viewerFileInfo.getIcon());
-				idoc.getAsHTML(getDomain(), viewerFileInfo, DEFAULT_ZOOM , new AsyncCallback<String>() {
-					@Override
-					public void onSuccess(String result) {
-						hideLoad();
-						setHTML(result);
-						show();
-					}
-					@Override
-					public void onFailure(Throwable caught) {
-						hideLoad();
-					}
-				});
-			}
-			@Override
-			protected void onZoomPlus(int zoom) {					
-				showLoad();
-				idoc.getAsHTML(getDomain(), viewerFileInfo, zoom , new AsyncCallback<String>() {
-					@Override
-					public void onSuccess(String result) {
-						hideLoad();
-						setHTML(result);	
-					}
-					@Override
-					public void onFailure(Throwable caught) {
-						hideLoad();
-					}
-				});
-			}
-			@Override
-			protected void onZoomMinus(int zoom) {	
-				showLoad();
-				idoc.getAsHTML(getDomain(), viewerFileInfo, zoom , new AsyncCallback<String>() {
-					@Override
-					public void onSuccess(String result) {
-						hideLoad();
-						setHTML(result);	
-					}
-					@Override
-					public void onFailure(Throwable caught) {
-						hideLoad();
-					}
-				});
-			}
-			
-		};
-		
-		
-		viewer.setTitle(fileInfo.getTitle(), fileInfo.getIcon());
-		viewer.setPrevEnabled(index > 0);
-		viewer.setNextEnabled(index < (viewList.size() -1 ));
-		viewer.show();
-		viewer.showLoad();
-		
-		idoc.getAsHTML(getDomain(), fileInfo, DEFAULT_ZOOM , new AsyncCallback<String>() {
-			@Override
-			public void onSuccess(String result) {
-				viewer.hideLoad();
-				viewer.setHTML(result);	
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				viewer.hideLoad();
-				
-			}
-		});
+	private void getViewer(final Attach attach, final Integer index, final LinkedList<Attach> attachList){
+		Viewer.getViewer(attach, index, attachList);
 	}
 	
+	private void getViewer(final FileInfo fileInfo) {
+		Attach attach = new Attach()
+				.setId(fileInfo.getFileId())
+				.setAttachType(AttachType.REGISTRY)
+				.setDescription(fileInfo.getTitle())
+				.setDomain(new Domain().setName(fileInfo.getDomain()).setId(fileInfo.getDomainId()))
+				.setDriveId(fileInfo.getDriveId())
+				.setIcon(fileInfo.getIcon())
+				.setMimeType(MimeType.values()[fileInfo.getMimetype()]);
+		
+		Viewer.getViewer(attach);
+	}
+	
+	private void getViewer(final FileInfo fileInfo, final Integer index, final List<FileInfo> viewList) {
+		Attach attach = new Attach()
+				.setId(fileInfo.getFileId())
+				.setAttachType(AttachType.REGISTRY)
+				.setDescription(fileInfo.getTitle())
+				.setDomain(new Domain().setName(fileInfo.getDomain()).setId(fileInfo.getDomainId()))
+				.setDriveId(fileInfo.getDriveId())
+				.setIcon(fileInfo.getIcon())
+				.setMimeType(MimeType.values()[fileInfo.getMimetype()]);
+		
+		LinkedList<Attach> attachList = new LinkedList<Attach>();
+		for (FileInfo fileInfo2 : viewList) {
+			attachList.add(new Attach()
+				.setId(fileInfo2.getFileId())
+				.setAttachType(AttachType.REGISTRY)
+				.setDescription(fileInfo2.getTitle())
+				.setDomain(new Domain().setName(fileInfo2.getDomain()).setId(fileInfo2.getDomainId()))
+				.setDriveId(fileInfo2.getDriveId())
+				.setIcon(fileInfo2.getIcon())
+				.setMimeType(MimeType.values()[fileInfo2.getMimetype()]));
+		}
+		
+		Viewer.getViewer(attach, index, attachList);
+	}
+
 	@UiHandler("reset")
 	void reset(ClickEvent event){
 		reset();
@@ -4844,9 +4756,12 @@ public class Documents extends Composite implements EntryPoint {
 			fileInfo.setFileId(jsFileInfo.getFileId());
 			fileInfo.setMimetype(jsFileInfo.getMimetype());
 			fileInfo.setDriveId(jsFileInfo.getDriveId());
+			fileInfo.setDomain(getDomain().getName());
+			fileInfo.setDomainId(getDomain().getId());
 			viewList.add(fileInfo);
 		}
-		getAsHTMl(viewList.get(index), index, viewList);
+		getViewer(viewList.get(index), index, viewList);
+		//getAsHTMl(viewList.get(index), index, viewList);
 	}
 
 

@@ -1,4 +1,4 @@
-package com.code.aon.aio.servlet.viewer.html2image;
+package com.esferalia.aon.gwt.viewer.server.html2Image;
 
 @SuppressWarnings("serial")
 public class RenderException extends RuntimeException {

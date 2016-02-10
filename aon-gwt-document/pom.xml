@@ -23,6 +23,7 @@
 					<webappDirectory>${project.build.outputDirectory}</webappDirectory>
 					<compileSourcesArtifacts>
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.common</compileSourcesArtifact>  
+					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.viewer</compileSourcesArtifact>  
 					  <compileSourcesArtifact>com.esferalia.aon:aon.occam</compileSourcesArtifact>
 					</compileSourcesArtifacts>
 				</configuration>
@@ -113,6 +114,19 @@
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.gwt.common</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+			<classifier>sources</classifier>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.gwt.viewer</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.gwt.viewer</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 			<classifier>sources</classifier>

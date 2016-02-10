@@ -1,4 +1,4 @@
-package com.code.aon.aio.servlet.viewer.html2image;
+package com.esferalia.aon.gwt.viewer.server.html2Image;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;

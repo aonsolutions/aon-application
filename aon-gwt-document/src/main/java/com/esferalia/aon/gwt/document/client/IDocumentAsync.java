@@ -59,8 +59,6 @@ public interface IDocumentAsync {
 	void searchFile(SearchInfo si, Vector<FileInfo> files,
 			Vector<FileInfo> allFiles, AsyncCallback<Vector<FileInfo>> callback);
 
-	void getAsHTML(Domain domain, FileInfo doc, int zoom, AsyncCallback<String> callback);
-
 	void drive(TreeMap<String, List<FileInfo>> folders,String id,AsyncCallback<TreeMap<String, List<FileInfo>>> callback);
 
 	void getRootId(AsyncCallback<String> callback);
@@ -110,9 +108,5 @@ public interface IDocumentAsync {
 	void selectedMenu(Domain domain, AsyncCallback<Void> callback);
 
 	void clearOuts(AsyncCallback<Void> callback);
-
-	
-
-
 
 }

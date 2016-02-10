@@ -1,4 +1,4 @@
-package com.code.aon.aio.servlet.viewer;
+package com.esferalia.aon.gwt.viewer.server;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -18,15 +18,14 @@ import org.artofsolving.jodconverter.document.DocumentFormatRegistry;
 import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
 import org.artofsolving.jodconverter.office.OfficeManager;
 
-import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.google.apis.DriveUtils;
-import com.code.aon.google.apis.Utils;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.server.io.AonFileUtils;
+
 
 public class PdfPrintServlet extends HttpServlet{
 
@@ -35,52 +34,47 @@ public class PdfPrintServlet extends HttpServlet{
 	private static final int DEFAULT_OFFICE_PORT = 2002;
 
 	@Override
-    protected void doGet(HttpServletRequest p_request, HttpServletResponse p_response)throws ServletException, IOException{
-        String driveId = p_request.getParameter("drive_id");
-        String fileId = p_request.getParameter("file_id");
-        String fileTitle = p_request.getParameter("title");
-        String mtype = p_request.getParameter("mimetype");
-        String domainId = p_request.getParameter("domain_id");
-        Integer domainID = Integer.parseInt(domainId);
-        String domainName = AonUtil.getDomainName();
-        Domain domain = new Domain().setName(domainName).setId(domainID);
-        String login = ""; //AonUtil.getRemoteUser();
-        User user = new User().setLogin(login);
-        Integer m = Integer.parseInt(mtype);
-        MimeType mt = MimeType.values()[m];
-        Integer idFile = Integer.parseInt(fileId);
-        String mimetype = MimeType.values()[m].getName();
-        Attach fi = null;
-        if (driveId != ""){
-        	byte[] b = DriveUtils.getByteFile(domain, user, driveId, idFile);
-        	fi = new Attach().setData(b).setDescription(fileTitle);
-        }
-        else if(fileId!=""){
-        	Integer id = Integer.parseInt(fileId);
-			fi = AON.getAttach(domain.getName(), domain.getId(), login, 
-					f -> f.getIdProperty().eq(id)
-					, AttachType.REGISTRY);
-        }
-        else return;
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException{
+
+		String driveId = !req.getParameter("drive_id").equals("null") ? req.getParameter("drive_id") : null;
+		Integer attachId = Integer.parseInt(req.getParameter("attach_id"));
+		AttachType attachType = AttachType.values()[Integer.parseInt(req.getParameter("attach_type"))];
+		String attachName = req.getParameter("attach_name");
+		MimeType mimeType = MimeType.values()[Integer.parseInt(req.getParameter("mimetype"))];
+		String domainName = req.getParameter("domain_name");
+		Integer domainId = Integer.parseInt(req.getParameter("domain_id"));
+		String login = "";
+		
+		Domain domain = AON.getDomain(domainName, domainId, login);
+		Attach attach = new Attach().setDomain(domain)
+				.setDescription(attachName)
+				.setDriveId(driveId)
+				.setId(attachId)
+				.setAttachType(attachType)
+				.setMimeType(mimeType);
+		
+		byte[] data = getData(attach, login);
+		
+		String md5 = AonFileUtils.getMD5Checksum(data);
+		
         File file ;
-		if (isOffice(mt)) {
-			file  = getPdfByeBuffer(fi.getId(),mt,fi.getData());
-			mimetype = MimeType.MIME_PDF.getName();
+		if (isOffice(mimeType)) {
+			file  = getPdfByeBuffer(md5, mimeType, data);
 		}
-		else file=Utils.InputStreamToFile(fi) ; /* however you choose to go about resolvingfilename */
+		else file= AonFileUtils.byteToFile( data, attachName); /* however you choose to go about resolvingfilename */
 
         long length = file.length();
         FileInputStream fis = new FileInputStream(file);
         
-        p_response.addHeader("Content-Disposition","inline; filename=\"" + file.getName() +"\"");
+        resp.addHeader("Content-Disposition","inline; filename=\"" + file.getName() +"\"");
         //p_response.setContentType("application/octet-stream");
-        p_response.setContentType(mimetype);
+        resp.setContentType(mimeType.getName());
 
         if (length > 0 && length <= Integer.MAX_VALUE);
-            p_response.setContentLength((int)length);
-        ServletOutputStream out = p_response.getOutputStream();
-        p_response.setBufferSize(32768);
-        int bufSize = p_response.getBufferSize();
+            resp.setContentLength((int)length);
+        ServletOutputStream out = resp.getOutputStream();
+        resp.setBufferSize(32768);
+        int bufSize = resp.getBufferSize();
         byte[] buffer = new byte[bufSize];
         BufferedInputStream bis = new BufferedInputStream(fis,bufSize);
         int bytes;
@@ -95,21 +89,21 @@ public class PdfPrintServlet extends HttpServlet{
     }
 	
 
-	private static File getPdfByeBuffer(Integer id, MimeType mimeType,
+	private static File getPdfByeBuffer(String md5, MimeType mimeType,
 			byte[] bytes) throws IOException {
 
 
 
 		String tmpDir = System.getProperty("java.io.tmpdir");
 
-		File inputFile = new File(tmpDir, id + "." + mimeType.getExtension());
+		File inputFile = new File(tmpDir, md5 + "." + mimeType.getExtension());
 
 		FileOutputStream inputFileOs = new FileOutputStream(inputFile);
 		inputFileOs.write(bytes);
 		inputFileOs.close();
 
-		File outputFile = new File(tmpDir, id + "."
-					+ MimeType.MIME_PDF.getExtension());
+		File outputFile = new File(tmpDir, md5 + "."
+					+ MimeType.PDF.getExtension());
 
 		convert(inputFile, outputFile);
 
@@ -144,9 +138,25 @@ public class PdfPrintServlet extends HttpServlet{
 	}
 	
 	private Boolean isOffice(MimeType m) {
-		return m.equals(MimeType.MIME_MS_EXCEL) || m.equals(MimeType.MIME_MS_EXCEL_2007) 
-				|| m.equals(MimeType.MIME_MS_POWER_POINT) || m.equals(MimeType.MIME_MS_POWER_POINT_2007)
-				|| m.equals(MimeType.MIME_MS_WORD) || m.equals(MimeType.MIME_MS_WORD_2007);
+		return m.equals(MimeType.MS_EXCEL) || m.equals(MimeType.MS_EXCEL_2007) 
+				|| m.equals(MimeType.MS_POWER_POINT) || m.equals(MimeType.MS_POWER_POINT_2007)
+				|| m.equals(MimeType.MS_WORD) || m.equals(MimeType.MS_WORD_2007);
 
+	}
+	
+	
+	public byte[] getData(Attach attach, String login){
+		byte[] b = "".getBytes();
+		if(attach.getDriveId() != null || 
+				(attach.getId() != null && attach.getAttachType() != null)){
+			Integer attachId = attach.getId();
+			if(attach.getDriveId() == null)
+				attach = AON.getAttach(attach.getDomain().getName(), attach.getDomain().getId(), login,
+						f-> f.getIdProperty().eq(attachId), attach.getAttachType());
+			if(attach.getDriveId() != null){
+				b = DriveUtils.getByteFile(attach, new User().setLogin(login));
+			} else if(attach.getData() != null) b = attach.getData();
+		}
+		return b;
 	}
 }

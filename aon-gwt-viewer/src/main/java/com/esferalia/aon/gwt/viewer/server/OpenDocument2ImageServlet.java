@@ -1,4 +1,4 @@
-package com.code.aon.aio.servlet.viewer;
+package com.esferalia.aon.gwt.viewer.server;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -7,9 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -23,23 +21,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.code.aon.aio.servlet.viewer.html2image.Html2Image;
-import com.code.aon.aio.servlet.viewer.html2image.ImageRenderer;
-import com.code.aon.google.apis.DriveUtils;
-import com.code.aon.google.apis.Utils;
-import com.code.aon.ui.google.apis.controller.GoogleDriveController;
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.gwt.viewer.server.html2Image.Html2Image;
+import com.esferalia.aon.gwt.viewer.server.html2Image.ImageRenderer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
-import com.google.api.services.drive.Drive;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
@@ -62,44 +51,6 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 	public static final String FORMAT_PARAM = "format";
 
 	private static Map<String, PDFFile> PDFS = new HashMap<String, PDFFile>();
-	
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		try {
-			String jsonData = req.getParameter("details");  
-			JSONObject jsonRequest = new JSONObject(jsonData);
-			
-			Attach attach = new Attach()
-					.setMd5(jsonRequest.getString("md5"))
-					.setDomain(AON.getDomain(jsonRequest.getString("domainName"),
-							jsonRequest.getInt("domainId"),""))
-					.setMimeType(MimeType.values()[(byte) jsonRequest.getInt("mimetype")])
-					.setId(jsonRequest.getInt("fileId"))
-					.setIsDrive(jsonRequest.getBoolean("isDrive"));
-			if(!jsonRequest.getString("driveId").equals("null"))
-				attach.setDriveId(jsonRequest.getString("driveId"));
-			
-			PDFFile pdfFile = getPDFFile(attach);
-			Integer page = pdfFile.getNumPages();
-		
-			resp.setContentType("application/json");
-			PrintWriter out = resp.getWriter();
-			JSONObject json = new JSONObject();
-		
-			json.put("page", page);
-			for(Integer i = 1; i<= page ; i++){
-				PDFPage pdfPage = pdfFile.getPage(i);
-				json.put("width"+i, pdfPage.getBBox().getWidth());
-				json.put("height"+i, pdfPage.getBBox().getHeight());
-			}
-			out.print(json.toString());
-			out.flush();
-		} catch (JSONException e) {
-			e.printStackTrace();
-		} catch (GeneralSecurityException e1) {
-			e1.printStackTrace();
-		}
-	}
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -153,23 +104,11 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 		
 		byte[] b = null;
 		MimeType mimetype = attach.getMimeType();
-		if(attach.getDriveId()!= null){
-			if(attach.getIsDrive()){ // Si entra con una cuenta de Google a la aplicación
-        		Drive drive = GoogleDriveController.dconnection;
-        		com.google.api.services.drive.model.File file = 
-        				DriveUtils.getFile(drive, attach.getDriveId());
-        		InputStream in = DriveUtils.downloadFile(drive, file);
-    			b = Utils.InputStreamToByte(in);
-			}
-			else b = DriveUtils.getByteFile(domain, user, attach.getDriveId(), attach.getId());
-		}
-		else {
-			Attach rattach =  AON.getAttach(domain.getName(), domain.getId(), login, 
-					filter -> filter.getIdProperty().eq(attach.getId())
-					,AttachType.REGISTRY);
-			b = rattach.getData();
-			if (mimetype ==null) mimetype = rattach.getMimeType();
-		}		
+		if(attach.getData() != null) 
+			b = attach.getData();
+		else if(attach.getDriveId()!= null)
+			b = DriveUtils.getByteFile(domain, user, attach.getDriveId(), attach.getId(), attach.getAttachType());
+		
 		return getPdfByeBuffer(attach.getMd5(), mimetype, b);
 	}
 
@@ -256,7 +195,6 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
   		ImageIO.write(bufferedImage, format, baos);
 		byte[] data = baos.toByteArray();
 		String md5 = AonFileUtils.getMD5Checksum(data);
-		System.out.println(md5);
 		if(md5.equals("968634550561b68ca4675b1ffe77fd6f")) error2Image(os);
 		else ImageIO.write(bufferedImage, format, os);
 		

@@ -1,21 +1,15 @@
 package com.esferalia.aon.gwt.document.server;
 
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.Date;
 import java.text.Collator;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -25,7 +19,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import javax.mail.BodyPart;
@@ -36,19 +29,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.faces.controller.IRichConstants;
 import com.code.aon.faces.controller.SelectedMenuController;
@@ -92,8 +75,8 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.About;
@@ -847,26 +830,6 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		return aux;
 	}
 	
-	//-------------------- Visualizar Archivo
-
-	private static final String ZOOM_PARAM = "zoom";
-	private static final String PAGE_PARAM = "page";
-
-	public String getAsHTML(Domain domain, FileInfo doc, int zoom) {
-		doc = setmd5(domain, doc);
-	
-		IDocument2HtmlConverter converter = 
-				getDocument2HtmlConverter(doc);
-		try {
-			ByteArrayOutputStream os = 
-					new ByteArrayOutputStream();
-			converter.transform(doc, os, zoom);
-			os.flush();
-			return os.toString();
-		} catch (Exception e) {
-			throw new IllegalArgumentException(e);
-		}
-	}
 	
 	public String copyLink(FileInfo doc,String l){
 		String link;
@@ -976,217 +939,9 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 			doc.setMd5(AonFileUtils.getMD5Checksum(b));
 		}
 		return doc;
-	}
+	}	
 	
 	
-	private IDocument2HtmlConverter getDocument2HtmlConverter(FileInfo document) {
-		
-		MimeType mimeType = MimeType.values()[document.getMimetype()];
-		return DOC2HTML_CONVERTERS.get(mimeType);
-		
-	}
-	
-	
-	public static final Map<MimeType, IDocument2HtmlConverter> DOC2HTML_CONVERTERS = 
-			new HashMap<MimeType, IDocument2HtmlConverter>(){
-				/**
-				 * 
-				 */
-				private static final long serialVersionUID = 1L;
-
-		{
-			put(MimeType.MIME_PDF, OpenDocument2HtmlConverter.INSTANCE );
-			put(MimeType.MIME_MS_WORD, OpenDocument2HtmlConverter.INSTANCE );
-			put(MimeType.MIME_MS_WORD_2007, OpenDocument2HtmlConverter.INSTANCE );
-			put(MimeType.MIME_MS_EXCEL, OpenDocument2HtmlConverter.INSTANCE );
-			put(MimeType.MIME_MS_EXCEL_2007, OpenDocument2HtmlConverter.INSTANCE );
-			put(MimeType.MIME_MS_POWER_POINT, OpenDocument2HtmlConverter.INSTANCE );
-			put(MimeType.MIME_MS_POWER_POINT_2007, OpenDocument2HtmlConverter.INSTANCE );
-			put(MimeType.MIME_HTML, Noop2HtmlConverter.INSTANCE );
-			put(MimeType.MIME_TXT, Noop2HtmlConverter.INSTANCE );
-
-			put(MimeType.MIME_BMP, Image2HtmlConverter.INSTANCE );
-			put(MimeType.MIME_JPEG, Image2HtmlConverter.INSTANCE );
-			put(MimeType.MIME_PNG, Image2HtmlConverter.INSTANCE );
-			put(MimeType.MIME_GIF, Image2HtmlConverter.INSTANCE );
-			
-			put(MimeType.MIME_ZIP, Zip2HtmlConverter.INSTANCE);
-		}
-	};
-	
-	
-	private static interface IDocument2HtmlConverter {
-		void transform(FileInfo doc, OutputStream os, int zoom) throws Exception;
-
-	}
-
-	
-	private static class Zip2HtmlConverter implements IDocument2HtmlConverter{
-		private static IDocument2HtmlConverter INSTANCE = new Zip2HtmlConverter();
-		
-		@Override
-		public void transform(FileInfo doc, OutputStream os, int zoom)
-				throws Exception {
-			User user = new User().setLogin("");
-			Domain domain = DBConsults.getDomain(new Domain().setName(doc.getDomain()).setId(doc.getDomainId()), user);		
-			PrintStream printStream = new PrintStream(os);
-			InputStream in = null;
-			if(doc.getDriveId() != null){ 
-				byte[] b = DriveUtils.getByteFile(domain, user, doc.getDriveId(), doc.getFileId());
-				in = new ByteArrayInputStream(b);
-			}
-			else {
-				Attach rattach = ViewerUtils.getRAttach(domain, user, doc.getFileId());
-				byte[] b = rattach.getData();				
-				in = new ByteArrayInputStream(b);
-			}
-			ZipInputStream zip = new ZipInputStream(in);
-			ZipEntry entry;
-			String html="<div class='page' style=' width:150%s; background-color:#FFF;border-radius: 5px 5px 5px 5px;'>"
-					+ "<table style='padding-top:10px; padding-bottom:5px;'>";
-			while (null != (entry=zip.getNextEntry()) ){
-				String icon = entry.isDirectory()?"aon-icon-google-drive-folder":"aon-icon-google-drive-unknown";
-				if(!entry.getName().substring(0,entry.getName().length()-1).contains("/")){
-					if(entry.isDirectory())
-						html = html + "<tr><td style='padding-left:5px;'><button onclick='alert(hola);' class='aon-editDataTable-button "+icon+"' style='padding-left: 20px;'>"+entry.getName()+"</button></td></tr>";
-					else{
-						html = html + "<tr><td style='padding-left:5px;'><span class='"+icon+"' style='padding-left: 20px;'>"+entry.getName()+"</span></td></tr>";
-					}
-				}
-			}
-			html = html + "</table></div>";
-			System.out.println(html);
-			printStream.printf(html,"%");
-		}
-
-	}
-	private static class OpenDocument2HtmlConverter implements IDocument2HtmlConverter {
-		
-		private static  IDocument2HtmlConverter INSTANCE = new OpenDocument2HtmlConverter();
-
-		@Override
-		public void transform(FileInfo doc, OutputStream os, int zoom) throws Exception {
-
-			PrintStream printStream = new PrintStream(os);
-			
-			JSONObject json = new JSONObject();
-			json.put("md5", doc.getMd5())
-				.put("domainName", doc.getDomain())
-				.put("domainId", doc.getDomainId())
-				.put("mimetype", doc.getMimetype())
-				.put("driveId", doc.getDriveId() != null ? doc.getDriveId() : "null")
-				.put("isDrive", doc.getIsDrive())
-				.put("fileId", doc.getFileId());
-			
-			JSONObject jsonResponse = sendPostHttpClient(json);
-			Integer page = (Integer) jsonResponse.get("page");
-			for(Integer i = 1; i<= page; i++){
-				double width = jsonResponse.getDouble("width"+i) * zoom / 100;
-				double height = jsonResponse.getDouble("height"+i) * zoom / 100;
-				
-				printStream.printf("<div class='page' style='width:%dpx;height:%dpx;'   ><img src='openDocument2Image/%s.png?%s=%d&%s=%d&id=%d'></img> </div>",
-						(long)width,
-						(long)height,
-						doc.getMd5(),
-						PAGE_PARAM, i,
-						ZOOM_PARAM, zoom,
-						doc.getFileId());
-			}
-			
-			
-			/*** pdf-renderer ***/
-			
-			/*
-		 	PDFFile pdfFile = OpenDocument2ImageServlet.getPDFFile(doc);
-			 
-			
-			for (int page = 1; page <= pdfFile.getNumPages(); page++) {
-				
-				PDFPage pdfPage = pdfFile.getPage(page);
-
-				// get the width and height for the doc at the default zoom
-				double width =  pdfPage.getBBox().getWidth() * zoom / 100 ;
-				double height = pdfPage.getBBox().getHeight() * zoom / 100 ;
-				
-				printStream.printf("<div class='page' style='width:%dpx;height:%dpx;'   ><img src='openDocument2Image/%s.png?%s=%d&%s=%d&id=%d'></img> </div>",
-						(long)width,
-						(long)height,
-						doc.getMd5(),
-						OpenDocument2ImageServlet.PAGE_PARAM,
-						page,
-						OpenDocument2ImageServlet.ZOOM_PARAM,
-						zoom,
-						doc.getFileId());
-			}*/
-			
-			/*** pdfbox ***/
-			/*
-			PDDocument pdfFile = OpenDocument2ImageServlet.getPDFFile2(doc);
-			for (int page = 1; page <= pdfFile.getNumberOfPages(); page++) {
-				//PDPage pdfPage = pdfFile.getPage(page-1);
-
-				double width =  300;//pdfPage.getBBox().getWidth() * zoom / 100 ;
-				double height = 300;//pdfPage.getBBox().getHeight() * zoom / 100 ;
-				
-				printStream.printf("<div class='page' style='width:%dpx;height:%dpx;'   ><img src='openDocument2Image/%s.png?%s=%d&%s=%d&id=%d'></img> </div>",
-						(long)width,
-						(long)height,
-						doc.getMd5(),
-						OpenDocument2ImageServlet.PAGE_PARAM,
-						page,
-						OpenDocument2ImageServlet.ZOOM_PARAM,
-						zoom,
-						doc.getFileId());	
-			}
-			*/
-		}
-	}
-
-	private static class Noop2HtmlConverter  extends  Document2HtmlConverter  {
-	
-		private static  IDocument2HtmlConverter INSTANCE = new Noop2HtmlConverter();
-	
-		@Override
-		void transform(InputStream is, OutputStream os) throws Exception {
-			int read ;
-			byte buffer [] = new byte [256];
-			while ( ( read = is.read(buffer)) == buffer.length ) {
-				os.write(buffer, 0, read);
-			}
-		}
-	}
-	private static class Image2HtmlConverter implements IDocument2HtmlConverter {
-	
-		private static  IDocument2HtmlConverter INSTANCE = new Image2HtmlConverter();
-
-		@Override
-		public void transform(FileInfo doc, OutputStream os, int zoom) throws Exception {
-		
-			PrintStream printStream = new PrintStream(os);
-		
-			MimeType mimeType = MimeType.values()[doc.getMimetype()];
-		
-			printStream.printf("<div class='page'  ><img src='openDocumentConverter/%s.%s?id=%d&domainName=%s&domainId=%d'></img> </div>",
-				doc.getMd5(),
-				mimeType.getExtension(),
-				doc.getFileId(),
-				doc.getDomain(),
-				doc.getDomainId());
-		}
-	}
-	private abstract static class Document2HtmlConverter implements IDocument2HtmlConverter{
-		@Override
-		public void transform(FileInfo doc, OutputStream os, int zoom) throws Exception {
-			Attach attach = AON.getAttach("", 1, "",
-					f -> f.getIdProperty().eq(doc.getFileId()), AttachType.REGISTRY);
-			
-			ByteArrayInputStream is = new ByteArrayInputStream(attach.getData());
-			transform(is, os);
-		}
-
-		abstract void transform(InputStream is, OutputStream os) throws Exception;
-	
-	}
 	static Integer size;
 
 	public Integer getSize() {
@@ -1195,45 +950,6 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 
 	public static void setSize(Integer sizea) {
 		size = sizea;
-	}
-
-	protected static JSONObject sendPostHttpClient(JSONObject json) {
-		try{
-			String url = "http://"+AonUtil.getDomainName()+"/openDocument2Image/";
-			HttpClientBuilder base = HttpClientBuilder.create();
-			HttpClient client = base.build();
-			HttpPost post = new HttpPost(url);
-			List<NameValuePair> urlParameters =  new ArrayList<NameValuePair>();
-			urlParameters.add(new BasicNameValuePair("details", json.toString()));
-			post.setEntity(new UrlEncodedFormEntity(urlParameters));
-			HttpResponse response = client.execute(post);
-			InputStream is = response.getEntity().getContent();
-			String jsonData = convertStreamToString(is);
-			return new JSONObject(jsonData);
-		} catch (IOException | JSONException e){
-			e.printStackTrace();
-		}
-		return new JSONObject();
-	}
-	
-	private static String convertStreamToString(InputStream is) {
-	    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-	    StringBuilder sb = new StringBuilder();
-	    String line = null;
-	    try {
-	        while ((line = reader.readLine()) != null) {
-	            sb.append(line + "\n");
-	        }
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    } finally {
-	        try {
-	            is.close();
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
-	    }
-	    return sb.toString();
 	}
 //-------------------- Administrar tags & categories
 
@@ -1368,7 +1084,7 @@ public MailAccountList getMailAccounts(Domain domain) {
 					FileInfo fileInfo = new FileInfo();
 					fileInfo.setData(baos.toByteArray());
 					fileInfo.setTitle("lote.zip");
-					fileInfo.setMimetype((byte) MimeType.MIME_ZIP.ordinal());
+					fileInfo.setMimetype((byte) MimeType.ZIP.ordinal());
 					files.add(fileInfo);
 				} catch (FileNotFoundException e1) {
 					e1.printStackTrace();
@@ -1390,7 +1106,7 @@ public MailAccountList getMailAccounts(Domain domain) {
 					aonFile.setFile(file);
 					aonFile.setData(fi.getData());
 					aonFile.setFileName(fi.getTitle());
-					aonFile.setMimeType(MimeType.get(fi.getMimeString()));
+					aonFile.setMimeType(com.code.aon.common.enumeration.MimeType.get(fi.getMimeString()));
 					mc.addAttachment(aonFile);
 				}
 
@@ -1451,7 +1167,7 @@ public MailAccountList getMailAccounts(Domain domain) {
 			FileInfo fileInfo = new FileInfo();
 			fileInfo.setData(baos.toByteArray());
 			fileInfo.setTitle("lote.zip");
-			fileInfo.setMimetype((byte) MimeType.MIME_ZIP.ordinal());
+			fileInfo.setMimetype((byte) MimeType.ZIP.ordinal());
 			files.add(fileInfo);
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -1471,7 +1187,7 @@ public MailAccountList getMailAccounts(Domain domain) {
 			aonFile.setFile(file);
 			aonFile.setData(fi.getData());
 			aonFile.setFileName(fi.getTitle());
-			aonFile.setMimeType(MimeType.get(fi.getMimeString()));
+			aonFile.setMimeType(com.code.aon.common.enumeration.MimeType.get(fi.getMimeString()));
 			BodyPart bodyPart = null;
 			try {
 				bodyPart = WebmailUtil.getBodyPart(aonFile);
