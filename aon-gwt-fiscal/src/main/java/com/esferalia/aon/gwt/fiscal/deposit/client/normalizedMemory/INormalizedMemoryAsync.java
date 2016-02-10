@@ -68,8 +68,6 @@ public interface INormalizedMemoryAsync {
 	void updateSchemaMemory(Boolean bool, Integer domainId, String key,
 			Integer year, AsyncCallback<Void> callback);
 
-	void viewer(Integer domainId, MemoryFiles mf, AsyncCallback<String> callback);
-
 	void isDigitalDeposit(Integer domainId, Integer year,
 			AsyncCallback<Boolean> callback);
 

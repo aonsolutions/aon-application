@@ -63,8 +63,6 @@ public interface INormalizedMemory extends RemoteService{
 	
 	public void updateSchemaMemory(Boolean bool, Integer domainId, String key, Integer year);
 	
-	public String viewer(Integer domainId, MemoryFiles mf);
-
 	public ArrayList<Enterprise> getParentEnterprises(String domainName, int domain, String query);
 	
 	public String[] getDepositExercises(Integer domainId);

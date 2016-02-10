@@ -6,7 +6,6 @@ import java.util.Vector;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.common.client.widget.Viewer;
 import com.esferalia.aon.gwt.fiscal.deposit.client.TreeNode;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryFiles;
 import com.esferalia.aon.occam.api.model.Enterprise;
@@ -344,13 +343,13 @@ public class MemoryDocuments extends PageAbs {
 		
 		
 		view.setStyleName("aon-finding-toolbar-item aon-icon-audit");
-		view.setEnabled(mf.getBool());
+		view.setEnabled(false);//mf.getBool());
 		view.addClickHandler(new ClickHandler() {
 			MemoryFiles mf = mfAux;
 			Integer row = rowAux;
 			@Override
 			public void onClick(ClickEvent event) {
-				getAsHTMl(mf, row-1, memoryFiles);
+				//getViewer(mf, row-1, memoryFiles);
 			}
 		});
 		
@@ -360,118 +359,5 @@ public class MemoryDocuments extends PageAbs {
 		panel.add(view);
 		tab.setWidget(row, col, panel);
 	}
-	
-	private static final int DEFAULT_ZOOM = 130;
-	
-	private  void getAsHTMl(MemoryFiles mf, final Integer index, final List<MemoryFiles> viewList) {
-		
-		//viewList = multiple ? selFiles : dataProvider.getList();
-		mfAux = mf;
-		final Viewer viewer = new Viewer(DEFAULT_ZOOM){
-			
-			int viewerIndex = index;
-			//FileInfo viewerFileInfo = fileInfo;
-			String icon;
-			MemoryFiles memoryFile = mfAux;
-			@Override
-			protected void onNext() {	
-				memoryFile = viewList.get(++viewerIndex);	
-				icon = memoryFile.getIcon(); 
-				setPrevEnabled(true);
-				setNextEnabled(viewerIndex < (viewList.size() - 1));
-				onChange();
-			}
-			
-			@Override
-			protected void onPrev() {
-				memoryFile = viewList.get(--viewerIndex);
-				icon = memoryFile.getIcon(); 
-				setNextEnabled(true);
-				setPrevEnabled(viewerIndex > 0);
-				onChange();
-			}
-			
-			@Override
-			protected void onDownload() {
-				//download(viewerFileInfo,false);
-			}
-			@Override
-			protected void onPrint() {	
-				//print(viewerFileInfo);
-			}
-			@Override
-			protected void onShare() {
-				//share(viewerFileInfo,false);
-			};
-			@Override
-			protected void onChange() {
-				showLoad();
-				removeOldIcon(icon);
-				setTitle(memoryFile.getName(), memoryFile.getIcon());
-				inma.viewer(enterprise.getDomain(), memoryFile , new AsyncCallback<String>() {
-					@Override
-					public void onSuccess(String result) {
-						hideLoad();
-						setHTML(result);
-						show();
-					}
-					@Override
-					public void onFailure(Throwable caught) {
-						hideLoad();
-					}
-				});
-			}
-			@Override
-			protected void onZoomPlus(int zoom) {					
-				showLoad();
-				inma.viewer(enterprise.getDomain(), memoryFile , new AsyncCallback<String>() {
-					@Override
-					public void onSuccess(String result) {
-						hideLoad();
-						setHTML(result);
-					}
-					@Override
-					public void onFailure(Throwable caught) {
-						hideLoad();
-					}
-				});
-			}
-			@Override
-			protected void onZoomMinus(int zoom) {	
-				showLoad();
-				inma.viewer(enterprise.getDomain(), memoryFile , new AsyncCallback<String>() {
-					@Override
-					public void onSuccess(String result) {
-						hideLoad();
-						setHTML(result);
-					}
-					@Override
-					public void onFailure(Throwable caught) {
-						hideLoad();
-					}
-				});
-			}
-			
-		};
-		viewer.setTitle(mf.getName(), mf.getIcon()); //TODO ICON 
-		viewer.setPrevEnabled(index > 0);
-		viewer.setNextEnabled(index < (viewList.size() -1 ));
-		viewer.show();
-		viewer.showLoad();
-		
-		inma.viewer(enterprise.getDomain(), mf , new AsyncCallback<String>() {
-			@Override
-			public void onSuccess(String result) {
-				viewer.hideLoad();
-				viewer.setHTML(result);
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				viewer.hideLoad();
-			}
-		});
-		
-	}
-	
-	
+
 }
