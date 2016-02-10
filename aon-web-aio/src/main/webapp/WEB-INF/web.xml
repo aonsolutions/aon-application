@@ -425,6 +425,26 @@
 		<url-pattern>/aon_gwt_office/Common</url-pattern>
 	</servlet-mapping>
 
+
+	<servlet>
+		<servlet-name>Viewer Servlet</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.viewer.server.ViewerImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Viewer Servlet</servlet-name>
+		<url-pattern>/aon_gwt_fiscal/Viewer</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Viewer Servlet</servlet-name>
+		<url-pattern>/aon_gwt_document/Viewer</url-pattern>
+	</servlet-mapping>
+		<servlet-mapping>
+		<servlet-name>Viewer Servlet</servlet-name>
+		<url-pattern>/aon_gwt_deposit/Viewer</url-pattern>
+	</servlet-mapping>
+	
+	
+	
 	<servlet>
 		<servlet-name>Fiscal Servlet</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.fiscal.server.FiscalServiceImpl</servlet-class>

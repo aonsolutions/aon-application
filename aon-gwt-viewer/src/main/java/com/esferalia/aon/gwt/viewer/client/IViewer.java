@@ -15,8 +15,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface IViewer extends RemoteService {
 	public String getAsHTML(Attach attach, int zoom);
 	
-	public String getData(Attach attach);
-	
 	public void share(String email, Attach attach);
 	
 	public void sendGmail(String to, String issue, String message, Attach attach);

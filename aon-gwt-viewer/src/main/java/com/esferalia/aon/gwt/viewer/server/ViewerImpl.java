@@ -16,8 +16,6 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import javax.servlet.annotation.WebServlet;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -44,7 +42,6 @@ import com.sun.pdfview.PDFPage;
  * The server side implementation of the RPC service.
  */
 @SuppressWarnings("serial")
-@WebServlet(name = "Viewer Servlet", urlPatterns = { "/aon_gwt_document/Viewer" })
 public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 
 	private static final String ZOOM_PARAM = "zoom";

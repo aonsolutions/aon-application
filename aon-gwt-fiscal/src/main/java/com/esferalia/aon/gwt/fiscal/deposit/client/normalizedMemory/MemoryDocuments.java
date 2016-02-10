@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
@@ -8,8 +9,13 @@ import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.fiscal.deposit.client.TreeNode;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryFiles;
+import com.esferalia.aon.gwt.viewer.client.Viewer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -343,13 +349,13 @@ public class MemoryDocuments extends PageAbs {
 		
 		
 		view.setStyleName("aon-finding-toolbar-item aon-icon-audit");
-		view.setEnabled(false);//mf.getBool());
+		view.setEnabled(mf.getBool());
 		view.addClickHandler(new ClickHandler() {
 			MemoryFiles mf = mfAux;
 			Integer row = rowAux;
 			@Override
 			public void onClick(ClickEvent event) {
-				//getViewer(mf, row-1, memoryFiles);
+				getViewer(mf, row-1, memoryFiles);
 			}
 		});
 		
@@ -359,5 +365,30 @@ public class MemoryDocuments extends PageAbs {
 		panel.add(view);
 		tab.setWidget(row, col, panel);
 	}
+	
+	private  void getViewer(MemoryFiles mf, final Integer index, final List<MemoryFiles> viewList) {
+		LinkedList<Attach> attachList = new LinkedList<Attach>();
+		for (MemoryFiles memoryFiles : viewList) {
+			attachList.add(new Attach().setId(memoryFiles.getId())
+					.setDescription(mf.getName())
+					.setMimeType(MimeType.values()[mf.getMimeTypeNumber()])
+					.setDomain(getDomain())
+					.setAttachType(AttachType.REGISTRY));
+		}
+		Viewer.getViewer(attachList.get(index), index, attachList);
+	}
 
+	public static native String getCurrentDomainName()
+	/*-{
+		return $wnd.getCurrentDomainName();
+	}-*/;
+
+	public static native int getCurrentDomain()
+	/*-{
+		return $wnd.getCurrentDomain();
+	}-*/;
+	
+	private Domain getDomain(){
+		return new Domain().setId(getCurrentDomain()).setName(getCurrentDomainName());
+	}
 }
