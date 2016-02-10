@@ -336,6 +336,56 @@ public class AttachmentImpl implements IAttachment{
 			AttachmentDAO.updateSepeAttachData(ctx, attach));
 	}
 	
+	//-------------------- DRIVE ID UPDATE
+	
+	@Override
+	public void updateContractAttachDriveId(AONContext ctx, Integer attach, String driveId) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateContractAttachDriveId(ctx, attach, driveId));
+	}
+
+	@Override
+	public void updateItemAttachDriveId(AONContext ctx, Integer attach, String driveId) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateItemAttachDriveId(ctx, attach, driveId));
+	}
+
+	@Override
+	public void updateInvoiceAttachDriveId(AONContext ctx, Integer attach, String driveId) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateInvoiceAttachDriveId(ctx, attach, driveId));
+	}
+
+	@Override
+	public void updateOfferAttachDriveId(AONContext ctx, Integer attach, String driveId) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateOfferAttachDriveId(ctx, attach, driveId));
+	}
+
+	@Override
+	public void updatePayrollAttachDriveId(AONContext ctx, Integer attach, String driveId) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updatePayrollAttachDriveId(ctx, attach, driveId));
+	}
+
+	@Override
+	public void updateProjectAttachDriveId(AONContext ctx, Integer attach, String driveId) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateProjectAttachDriveId(ctx, attach, driveId));
+	}
+
+	@Override
+	public void updateRegistryAttachDriveId(AONContext ctx, Integer attach, String driveId) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateRegistryAttachDriveId(ctx, attach, driveId));
+	}
+
+	@Override
+	public void updateSepeAttachDriveId(AONContext ctx, Integer attach, String driveId) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateSepeAttachDriveId(ctx, attach, driveId));
+	}
+	
 	//-------------------- DELETES
 	
 	@Override

@@ -607,6 +607,64 @@ public class AttachmentDAO {
 			.where(SEPE_BATCH_ATTACH.ID.eq(attach.getId()))
 			.execute();
 		}
+		
+	//-------------------- DRIVE ID UPDATE
+		
+			public static void updateContractAttachDriveId(AONContext ctx, Integer attachId, String driveId){
+				ctx.getDslContext().update(CONTRACT_ATTACH)
+					.set(CONTRACT_ATTACH.DRIVEID, driveId)
+				.where(CONTRACT_ATTACH.ID.eq(attachId))
+				.execute();
+			}
+			
+			public static void updateItemAttachDriveId(AONContext ctx, Integer attachId, String driveId){
+				ctx.getDslContext().update(IATTACH)
+					.set(IATTACH.DRIVEID,driveId)
+				.where(IATTACH.ID.eq(attachId))
+				.execute();
+			}
+
+			public static void updateInvoiceAttachDriveId(AONContext ctx, Integer attachId, String driveId){
+				ctx.getDslContext().update(INVOICE_ATTACH)
+					.set(INVOICE_ATTACH.DRIVEID, driveId)
+				.where(INVOICE_ATTACH.ID.eq(attachId))
+				.execute();
+			}
+
+			public static void updateOfferAttachDriveId(AONContext ctx, Integer attachId, String driveId){
+				ctx.getDslContext().update(OFFER_ATTACH)
+					.set(OFFER_ATTACH.DRIVEID, driveId)
+				.where(OFFER_ATTACH.ID.eq(attachId))
+				.execute();
+			}
+
+			public static void updatePayrollAttachDriveId(AONContext ctx, Integer attachId, String driveId){
+				ctx.getDslContext().update(PAYROLL_BATCH_ATTACH)
+					.set(PAYROLL_BATCH_ATTACH.DRIVEID, driveId)
+				.where(PAYROLL_BATCH_ATTACH.ID.eq(attachId))
+				.execute();
+			}
+
+			public static void updateProjectAttachDriveId(AONContext ctx, Integer attachId, String driveId){
+				ctx.getDslContext().update(PROJECT_ATTACH)
+						.set(PROJECT_ATTACH.DRIVEID, driveId)
+				.where(PROJECT_ATTACH.ID.eq(attachId))
+				.execute();
+			}
+
+			public static void updateRegistryAttachDriveId(AONContext ctx, Integer attachId, String driveId){
+				ctx.getDslContext().update(RATTACH)
+					.set(RATTACH.DRIVE_ID, driveId)
+				.where(RATTACH.ID.eq(attachId))
+				.execute();
+			}
+
+			public static void updateSepeAttachDriveId(AONContext ctx, Integer attachId, String driveId){
+				ctx.getDslContext().update(SEPE_BATCH_ATTACH)
+					.set(SEPE_BATCH_ATTACH.DRIVEID, driveId)
+				.where(SEPE_BATCH_ATTACH.ID.eq(attachId))
+				.execute();
+			}
 	
 	//-------------------- DELETES
 	

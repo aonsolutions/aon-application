@@ -360,4 +360,23 @@ public class AonFileUtils {
             }
         }
     }
+    
+    
+    public static byte[] inputStreamToByte(InputStream file) throws IOException{
+		byte[] data=AonIOUtils.toByteArray(file);
+		return data;	
+	}
+    
+    public static File inputStreamToFile(InputStream is, String name) throws IOException{
+		byte[] data = AonIOUtils.toByteArray(is);
+		File aux = new File("/tmp/" + name);
+		writeByteArrayToFile(aux, data);
+		return aux;
+	}
+    
+    public static File byteToFile(byte[] b, String name) throws IOException{
+    	File aux = new File("/tmp/" + name);
+		writeByteArrayToFile(aux, b);
+		return aux;
+    }
 }

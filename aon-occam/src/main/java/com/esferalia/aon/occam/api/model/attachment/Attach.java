@@ -52,6 +52,27 @@ public class Attach implements Serializable {
 		this.attachType = attachType;
 	}
 	
+	public Attach(Domain domain, Integer id, AttachType attachType, String name, MimeType mimetype){
+		this.domain = domain;
+		this.id = id;
+		this.attachType = attachType;
+		this.description = name;
+		this.mimeType = mimetype;
+	}
+	
+	public Attach(Domain domain, byte[] data, String name, MimeType mimetype){
+		this.domain = domain;
+		this.data = data;
+		this.description = name;
+		this.mimeType = mimetype;
+	}
+	
+	public Attach(Domain domain, String driveId, String name, MimeType mimetype){
+		this.domain = domain;
+		this.driveId = driveId;
+		this.description = name;
+		this.mimeType = mimetype;
+	}
 	//--------------------- Getters & Setters
 	
 	public AttachType getAttachType() {

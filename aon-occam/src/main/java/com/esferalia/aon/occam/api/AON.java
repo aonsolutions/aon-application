@@ -2516,6 +2516,35 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static void updateAttachDriveId(String domainName, Integer domainId,
+			String login, Integer attachId, String driveId, AttachType attachType) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+
+			if (attachType.equals(AttachType.REGISTRY))
+				getAttachment().updateRegistryAttachDriveId(ctx, attachId, driveId);
+			else if (attachType.equals(AttachType.CONTRACT))
+				getAttachment().updateContractAttachDriveId(ctx, attachId, driveId);
+			else if (attachType.equals(AttachType.INVOICE))
+				getAttachment().updateInvoiceAttachDriveId(ctx, attachId, driveId);
+			else if (attachType.equals(AttachType.ITEM))
+				getAttachment().updateItemAttachDriveId(ctx, attachId, driveId);
+			else if (attachType.equals(AttachType.OFFER))
+				getAttachment().updateOfferAttachDriveId(ctx, attachId, driveId);
+			else if (attachType.equals(AttachType.PAYROLL))
+				getAttachment().updatePayrollAttachDriveId(ctx, attachId, driveId);
+			else if (attachType.equals(AttachType.PROJECT))
+				getAttachment().updateProjectAttachDriveId(ctx, attachId, driveId);
+			else if (attachType.equals(AttachType.SEPE))
+				getAttachment().updateSepeAttachDriveId(ctx, attachId, driveId);
+
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	public static void delete(String domainName, Integer domainId, String login,
 			AttachFilter filter, AttachType attachType) {

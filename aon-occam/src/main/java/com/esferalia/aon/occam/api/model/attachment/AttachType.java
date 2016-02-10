@@ -19,4 +19,8 @@ public enum AttachType {
 	public String getName() {
 		return name;
 	}
+	
+	public Byte value(){
+		return (byte) ordinal();
+	}
 }
