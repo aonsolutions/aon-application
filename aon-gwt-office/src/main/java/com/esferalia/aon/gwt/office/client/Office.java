@@ -179,9 +179,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	private void loadOpenIssues() {
 
 		initOpenIssues();
-		openIssuesButton.setEnabled(false);
-		closedIssuesButton.setEnabled(true);
-
 		gitHub.getOpenIssues(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsIssue>>() {
 
@@ -216,8 +213,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						for (int x = 0; x < result.getData().length(); x++)
 							addCloseIssue(result.getData().get(x));
 					}
-				});
-		showDockOfficePanel();
+				});		
 	}
 
 	@Override
@@ -334,6 +330,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	private void addRegistry2List(JsRegistry jsRegistry) {
 		Registry registry = new Registry();
 		registry.setId(jsRegistry.getId());
+		registry.setAlias(jsRegistry.getAlias());
 		registry.setName(jsRegistry.getName());
 		registry.setDocument(jsRegistry.getDocument());
 
@@ -407,6 +404,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	public void onSelectionTitle(IssueSelected issue) {
 		this.issueSelected = issue;
 		IssueReadPanel issueReadPanel = new IssueReadPanel(issue);
+		issueReadPanel.setUser(user);
 		issueReadPanel.addListener(this);
 		readIssueLayoutPanel.clear();
 		readIssueLayoutPanel.add(issueReadPanel);

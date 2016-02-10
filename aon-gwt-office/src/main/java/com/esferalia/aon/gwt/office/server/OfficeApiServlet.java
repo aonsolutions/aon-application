@@ -202,7 +202,7 @@ public class OfficeApiServlet extends HttpServlet {
 
 				getCreateNotice(resp, domain, domainName, notice);
 
-			} catch (Exception ex) {				
+			} catch (Exception ex) {
 				System.out.println(ex.getMessage());
 			}
 		}
@@ -438,51 +438,52 @@ public class OfficeApiServlet extends HttpServlet {
 			}
 		}
 	}
-	
+
 	private static class EditComment extends RegExpRequestHandler {
-		
+
 		HttpServletRequest req;
 		HttpServletResponse resp;
-		
+
 		public EditComment() {
 			super("/repos/(\\d+)/(.+)/issues/comments/(\\d+)");
 		}
-		
+
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
-			
+
 			this.req = req;
 			this.resp = resp;
-			
+
 			Integer domain = null;
 			Integer commentId = null;
 			String domainName = "";
-			
+
 			try {
 				domain = getDomainId();
 				domainName = getDomainName();
 				commentId = Integer.parseInt(group(3));
-				
+
 			} catch (Exception ex) {
 				String ver = getRequestAction(req);
 				String[] actionArr = ver.split("/");
 				domain = Integer.parseInt(actionArr[2]);
 				domainName = actionArr[3];
 				commentId = Integer.parseInt(actionArr[6]);
-				
+
 			} finally {
 				editComment(domain, domainName, commentId);
 			}
 		}
-		
-		private void editComment(Integer domainId,
-				String domainName, Integer commentId) {
-			
+
+		private void editComment(Integer domainId, String domainName,
+				Integer commentId) {
+
 			try {
 				String object = getJsonObject(req);
-				JSONObject json = new JSONObject(object);				
-				jsonEditComment(resp, domainId, domainName, commentId, json.getString("body"));
+				JSONObject json = new JSONObject(object);
+				jsonEditComment(resp, domainId, domainName, commentId,
+						json.getString("body"));
 			} catch (Exception ex) {
 				System.out.println("Error al modificar comentario");
 			}
@@ -814,9 +815,10 @@ public class OfficeApiServlet extends HttpServlet {
 				String.valueOf(notice.getId())));
 		buffer.append(String.format("\"number\":%s,\r\n",
 				String.valueOf(notice.getId())));
-		buffer.append(
-				String.format("\"title\":\"%s\",\r\n", UriUtils.encode(notice.getTitle())));
-		buffer.append(String.format("\"body\":\"%s\",\r\n", UriUtils.encode(notice.getBody())));
+		buffer.append(String.format("\"title\":\"%s\",\r\n",
+				UriUtils.encode(notice.getTitle())));
+		buffer.append(String.format("\"body\":\"%s\",\r\n",
+				UriUtils.encode(notice.getBody())));
 		buffer.append(
 				String.format("\"state\":\"%s\",\r\n", notice.getStatus()));
 		buffer.append(String.format("\"company\":\"%s\",\r\n",
@@ -957,8 +959,9 @@ public class OfficeApiServlet extends HttpServlet {
 				buildUserSender(comment.getSender())));
 		buffer.append(String.format("\"created_at\":\"%s\",\r\n",
 				comment.getStartDate()));
-		buffer.append(String.format("\"body\":\"%s\"\r\n",
-				(comment.getBody() != null) ? UriUtils.encode(comment.getBody()) : ""));
+		buffer.append(
+				String.format("\"body\":\"%s\"\r\n", (comment.getBody() != null)
+						? UriUtils.encode(comment.getBody()) : ""));
 		buffer.append("}");
 
 		return buffer.toString();
@@ -1019,8 +1022,11 @@ public class OfficeApiServlet extends HttpServlet {
 		buffer.append("{\n");
 		buffer.append(String.format("\"id\":%s,\r\n",
 				String.valueOf(registry.getId())));
+		buffer.append(String.format("\"name\":\"%s\",\r\n",
+				(registry.getName() != null) ? registry.getName() : ""));
 		buffer.append(
-				String.format("\"name\":\"%s\",\r\n", registry.getName()));
+				String.format("\"alias\":\"%s\",\r\n", 
+						(registry.getAlias() != null) ? registry.getAlias() : ""));
 		buffer.append(String.format("\"document\":\"%s\"\r\n",
 				registry.getDocument()));
 		buffer.append("}");
@@ -1069,20 +1075,22 @@ public class OfficeApiServlet extends HttpServlet {
 				pw.close();
 		}
 	}
-	
-	private static void jsonEditComment(HttpServletResponse resp, Integer domainId,
-			String domainName, Integer commentId, String body) {
-		
+
+	private static void jsonEditComment(HttpServletResponse resp,
+			Integer domainId, String domainName, Integer commentId,
+			String body) {
+
 		PrintWriter pw = null;
 		try {
 			pw = resp.getWriter();
-			Notice editComment = AON.editComment(domainId, domainName, 
+			Notice editComment = AON.editComment(domainId, domainName,
 					AonServletUtils.getLoggedUser(), commentId, body);
 			pw.append(getComment(editComment));
 			pw.flush();
-			
+
 		} catch (Exception ex) {
-			System.out.println(ex.getMessage() + " " + ex.getLocalizedMessage());
+			System.out
+					.println(ex.getMessage() + " " + ex.getLocalizedMessage());
 		} finally {
 			if (pw != null)
 				pw.close();

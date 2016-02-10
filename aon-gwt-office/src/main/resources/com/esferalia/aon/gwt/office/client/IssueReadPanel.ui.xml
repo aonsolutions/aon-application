@@ -102,7 +102,7 @@
 							<g:HTMLPanel height="100%" width="100%">
 								<div class="{style.buttons}">
 									<g:Button ui:field="closedButton" text="Cerrar" />
-									<g:Button ui:field="commentButton" text="Comentar" />
+									<g:Button ui:field="commentButton" text="Comentar" enabled="false" />
 								</div>
 							</g:HTMLPanel>
 						</g:customCell>

@@ -69,7 +69,7 @@ public interface AonHubMessages extends Messages {
  	@DefaultMessage("Tipo Aviso")
 	String noticeType();
  	
- 	@DefaultMessage("Priority")
+ 	@DefaultMessage("Prioridad")
 	String priority();
 
  	@DefaultMessage("Usuario")

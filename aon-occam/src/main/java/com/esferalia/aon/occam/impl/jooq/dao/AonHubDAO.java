@@ -15,7 +15,6 @@ import java.util.List;
 import org.jooq.Cursor;
 import org.jooq.Record;
 import org.jooq.Record1;
-import org.jooq.Record3;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 
@@ -124,12 +123,12 @@ public class AonHubDAO {
 						.set(NOTICE_TAG.TAG, tag.getId()).execute();
 
 				object.addTag(tag);
-			}		
+			}
 
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
 		}
-		
+
 		return object;
 	}
 
@@ -263,7 +262,7 @@ public class AonHubDAO {
 	}
 
 	private static Notice buildNotice(AONContext ctx, Record record) {
-		
+
 		Notice notice = new Notice();
 		int noticeId = record.getValue(NOTICE.ID);
 		notice.setId(noticeId);
@@ -271,12 +270,13 @@ public class AonHubDAO {
 		notice.setStartDate(record.getValue(NOTICE.DATE));
 		notice.setCompany(record.getValue(NOTICE.COMPANY));
 		notice.setSource(record.getValue(NOTICE.SOURCE));
-		
+
 		try {
-			
+
 			User user = new User();
 			UserRecord userRecord = ctx.getDslContext().selectFrom(USER)
-					.where(USER.ID.eq(record.getValue(NOTICE.SENDER))).fetchOne();
+					.where(USER.ID.eq(record.getValue(NOTICE.SENDER)))
+					.fetchOne();
 			user.setId(userRecord.getValue(USER.ID));
 			user.setName(userRecord.getValue(USER.NAME));
 			user.setLogin(userRecord.getValue(USER.LOGIN));
@@ -305,15 +305,16 @@ public class AonHubDAO {
 
 				body = ctx.getDslContext().selectFrom(NOTICE)
 						.where(NOTICE.DOMAIN.eq(ctx.getDomainId())
-								.and(NOTICE.NOTICE_.eq(record.getValue(NOTICE.ID)))
-								.and(NOTICE.TYPE.eq(NoticeType.MESSAGE.value())))
-						.fetchOne().getValue(NOTICE.SUBJECT);				
-	
+								.and(NOTICE.NOTICE_
+										.eq(record.getValue(NOTICE.ID)))
+								.and(NOTICE.TYPE
+										.eq(NoticeType.MESSAGE.value())))
+						.fetchOne().getValue(NOTICE.SUBJECT);
 
 			} catch (Exception ex) {
 				body = "Error al obtener el cuerpo del mensaje";
 			}
-			
+
 			notice.setBody(body);
 
 			Record priorityRecord = ctx.getDslContext()
@@ -349,11 +350,11 @@ public class AonHubDAO {
 					});
 
 			getComents(ctx, noticeId, notice.getComments());
-			
+
 		} catch (Exception ex) {
 			System.err.println("Error: " + ex.getMessage());
 		}
-		
+
 		return notice;
 	}
 
@@ -460,8 +461,6 @@ public class AonHubDAO {
 				.set(NOTICE.NOTICE_, headId)
 				.set(NOTICE.STATUS, NoticeStatus.OPEN.value())
 				.set(NOTICE.PRIORITY, (byte) 0).returning().fetchOne();
-		
-		
 
 		User user = getUser(ctx, comment.getUserId());
 		comment.setId(noticeRecord.getValue(NOTICE.ID));
@@ -469,8 +468,8 @@ public class AonHubDAO {
 		comment.setStartDate(noticeRecord.getValue(NOTICE.DATE));
 		comment.setId(noticeRecord.getValue(NOTICE.ID));
 		comment.setBody(noticeRecord.getValue(NOTICE.SUBJECT));
-//		comment.setBody(
-//				noticeRecord.getValue(NOTICE.SUBJECT).replaceAll("\n", "--"));
+		// comment.setBody(
+		// noticeRecord.getValue(NOTICE.SUBJECT).replaceAll("\n", "--"));
 		return comment;
 	}
 
@@ -491,8 +490,8 @@ public class AonHubDAO {
 			User user = getUser(ctx, noticeRecord.getValue(NOTICE.SENDER));
 			comment.setSender(user);
 			comment.setBody(noticeRecord.getValue(NOTICE.SUBJECT));
-//			comment.setBody(noticeRecord.getValue(NOTICE.SUBJECT)
-//					.replaceAll("\n", "--"));
+			// comment.setBody(noticeRecord.getValue(NOTICE.SUBJECT)
+			// .replaceAll("\n", "--"));
 		}
 
 		return comment;
@@ -515,8 +514,8 @@ public class AonHubDAO {
 				User user = getUser(ctx, record.getValue(NOTICE.SENDER));
 				notice.setSender(user);
 				notice.setBody(record.getValue(NOTICE.SUBJECT));
-//				notice.setBody(
-//						record.getValue(NOTICE.SUBJECT).replaceAll("\n", "--"));
+				// notice.setBody(
+				// record.getValue(NOTICE.SUBJECT).replaceAll("\n", "--"));
 				comments.add(notice);
 			});
 		}
@@ -583,7 +582,7 @@ public class AonHubDAO {
 	public static List<Registry> getRegistries(AONContext ctx,
 			Integer parentDomain) {
 
-		Cursor<Record3<Integer, String, String>> cursor = null;
+		Cursor<Record> cursor = null;
 		List<Registry> registries = new LinkedList<Registry>();
 
 		try {
@@ -597,7 +596,7 @@ public class AonHubDAO {
 							.and(DOMAIN.PARENT.eq(parentDomain)));
 
 			cursor = ctx.getDslContext()
-					.select(REGISTRY.ID, REGISTRY.NAME, REGISTRY.DOCUMENT)
+					.select()
 					.from(REGISTRY.rightOuterJoin(CUSTOMER)
 							.on(REGISTRY.ID.eq(CUSTOMER.REGISTRY)))
 					.where(REGISTRY.DOMAIN.in(domainSelect))
@@ -607,6 +606,7 @@ public class AonHubDAO {
 				Registry reg = new Registry();
 				reg.setId(registry.getValue(REGISTRY.ID));
 				reg.setName(registry.getValue(REGISTRY.NAME));
+				reg.setAlias(registry.getValue(REGISTRY.ALIAS));
 				reg.setDocument(registry.getValue(REGISTRY.DOCUMENT));
 				registries.add(reg);
 			}

@@ -26,7 +26,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -91,7 +90,7 @@ public class IssuePanel extends CustomDialog {
 
 	public IssuePanel(User user) {
 		setCaption("Nueva Incidencia");
-		registrySuggest = new SuggestBox(registries);
+		registrySuggest = new SuggestBox(registries);		
 		setWidget(uiBinder.createAndBindUi(this));
 
 		setAnimationEnabled(true);
@@ -122,8 +121,8 @@ public class IssuePanel extends CustomDialog {
 
 	public void setRegistries(List<Registry> registries) {		
 		this.registryList = registries;
-		for ( Registry registry : registries ) {
-			this.registries.add(registry.getName());
+		for ( Registry registry : registries ) {			
+			this.registries.add(registry.getName());			
 		}
 	}
 	
@@ -314,8 +313,7 @@ public class IssuePanel extends CustomDialog {
 	
 	@UiHandler("registrySuggest")
 	void onSelectionValue(SelectionEvent<SuggestOracle.Suggestion> event) {
-		registry = event.getSelectedItem().getReplacementString();
-		
+		this.registry = event.getSelectedItem().getReplacementString();
 	}
 
 	private void onCreateNewIssue(Notice notice) {

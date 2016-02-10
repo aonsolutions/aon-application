@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.occam.api.model.office.User;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontStyle;
@@ -13,12 +14,16 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -108,20 +113,19 @@ public class IssueReadPanel extends Composite
 
 		this.listeners = new LinkedList<Listener>();
 		this.issue = issue;
-
+		
 		setCompany(issue.getCompany());
 		setType(issue.getType());
 		setPriority(issue.getPriority());
 		setAsunto(issue.getTitle());
 		setLabels(issue.getTags());
 		printBody(issue);
+		
 
 		for (DefaultAonIssueComments comment : issue.getComments()) {
 			printComment(comment,
 					(issue instanceof IssueGrid.IssueOpenLoadSelected));
-		}
-
-		userLogged.setText(issue.getUser().getName());
+		}		
 
 		if (issue instanceof IssueGrid.IssueOpenLoadSelected) {
 			createClosedButton();
@@ -132,6 +136,10 @@ public class IssueReadPanel extends Composite
 			createReopenButton();
 		}
 	}
+	
+	public void setUser(User user) {
+		userLogged.setText(user.getName());
+	}
 
 	public void addListener(Listener listener) {
 		listeners.add(listener);
@@ -140,7 +148,12 @@ public class IssueReadPanel extends Composite
 	public void removeListener(Listener listener) {
 		listeners.remove(listener);
 	}
-
+	
+	@UiHandler("commentTextArea")
+	void onKeyPressEvent(KeyUpEvent event) {
+		commentButton.setEnabled(commentTextArea.getValue().trim().isEmpty() == false);
+	}
+	
 	private void setCompany(String company) {
 		companyLabel.setText(company.toUpperCase());
 	}

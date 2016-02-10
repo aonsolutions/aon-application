@@ -7,6 +7,7 @@ import java.util.ListIterator;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
@@ -31,6 +32,7 @@ import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.cellview.client.TextHeader;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -49,8 +51,13 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 	public enum Columns {
 
-		STATE(""), OWNER("CREADO POR"), COMPANY("EMPRESA"), TITLE(
-				"ASUNTO"), LABELS("ETIQUETAS"), CREATED_AT("FECHA");
+		STATE(""),
+		TYPE("TIPO"),
+		COMPANY("EMPRESA"),
+		TITLE("ASUNTO"),
+		LABELS("ETIQUETAS"),
+		OWNER("CREADO POR"),
+		CREATED_AT("FECHA");
 
 		private String mensaje;
 
@@ -128,14 +135,16 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		private final Integer ROW_COUNT = 1;
 		private Header<String> stateHeader = new TextHeader(
 				Columns.STATE.getColumnName());
-		private Header<String> ownerHeader = new TextHeader(
-				Columns.OWNER.getColumnName());
+		private Header<String> typeHeader = new TextHeader(
+				Columns.TYPE.getColumnName());
 		private Header<String> companyHeader = new TextHeader(
 				Columns.COMPANY.getColumnName());
 		private Header<String> titleHeader = new TextHeader(
 				Columns.TITLE.getColumnName());
 		private Header<String> labelsHeader = new TextHeader(
 				Columns.LABELS.getColumnName());
+		private Header<String> ownerHeader = new TextHeader(
+				Columns.OWNER.getColumnName());
 		private Header<String> createdAtHeader = new TextHeader(
 				Columns.CREATED_AT.getColumnName());
 
@@ -162,15 +171,17 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 			tr = startRow().className(AON.AON_CSS.childCell());
 			buildHeader(tr, stateHeader, stateColumn, sortedColumn,
 					isSortAscending, false, false);
-			buildHeader(tr, ownerHeader, ownerColumn, sortedColumn,
+			buildHeader(tr, typeHeader, typeColumn, sortedColumn,
 					isSortAscending, false, false);
 			buildHeader(tr, companyHeader, companyColumn, sortedColumn,
 					isSortAscending, false, false);
-			buildHeader(tr, titleHeader, title, sortedColumn, isSortAscending,
+			buildHeader(tr, titleHeader, titleColumn, sortedColumn, isSortAscending,
 					false, false);
-			buildHeader(tr, labelsHeader, labels, sortedColumn, isSortAscending,
+			buildHeader(tr, labelsHeader, labelsColumn, sortedColumn, isSortAscending,
 					false, false);
-			buildHeader(tr, createdAtHeader, createdAt, sortedColumn,
+			buildHeader(tr, ownerHeader, ownerColumn, sortedColumn,
+					isSortAscending, false, false);
+			buildHeader(tr, createdAtHeader, createdAtColumn, sortedColumn,
 					isSortAscending, false, false);
 
 			tr.endTR();
@@ -238,38 +249,41 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 			td.title(rowValue.getState());
 			renderCell(td, createContext(col++), stateColumn, rowValue);
 			td.endTD();
-
+			
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
 			td.style().cursor(Cursor.POINTER);
 			td.className(AON.AON_CSS.aonDataTableTextColumn());
-			renderCell(td, createContext(col++), ownerColumn, rowValue);
+			renderCell(td, createContext(col++), typeColumn, rowValue);
 			td.endTD();
 
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
-			td.style().cursor(Cursor.POINTER);
 			td.className(AON.AON_CSS.aonDataTableTextColumn());
 			renderCell(td, createContext(col++), companyColumn, rowValue);
 			td.endTD();
 
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
-			td.style().cursor(Cursor.POINTER);
 			td.className(AON.AON_CSS.aonDataTableTextColumn());
-			renderCell(td, createContext(col++), title, rowValue);
+			renderCell(td, createContext(col++), titleColumn, rowValue);
 			td.endTD();
 
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_LEFT.getTextAlignString());
-			td.style().cursor(Cursor.POINTER);
-			renderCell(td, createContext(col++), labels, rowValue);
+			renderCell(td, createContext(col++), labelsColumn, rowValue);
 			td.endTD();
 
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
-			td.className(AON.AON_BOLD);
-			renderCell(td, createContext(col++), createdAt, rowValue);
+			td.className(AON.AON_CSS.aonDataTableTextColumn());
+			renderCell(td, createContext(col++), ownerColumn, rowValue);
+			td.endTD();
+
+			td = row.startTD().align(
+					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
+			td.className(AON.AON_BOLD);			
+			renderCell(td, createContext(col++), createdAtColumn, rowValue);
 			td.endTD();
 
 			row.endTR();
@@ -289,11 +303,12 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 	 */
 
 	private Column<IssueSelected, String> stateColumn;
-	private Column<IssueSelected, String> ownerColumn;
+	private Column<IssueSelected, String> typeColumn;
 	private Column<IssueSelected, String> companyColumn;
-	private Column<IssueSelected, String> title;
-	private Column<IssueSelected, String> labels;
-	private Column<IssueSelected, Date> createdAt;
+	private Column<IssueSelected, String> titleColumn;
+	private Column<IssueSelected, String> labelsColumn;
+	private Column<IssueSelected, String> ownerColumn;
+	private Column<IssueSelected, String> createdAtColumn;
 
 	public IssueGrid() {
 		super();
@@ -363,63 +378,45 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 				return object.getStateIconStyle();
 			}
 		};
-
 		setColumnWidth(col++, 2, Unit.PCT);
-
-		title = new Column<IssueSelected, String>(new ClickableTextCell()) {
-
-			@Override
-			public String getValue(IssueSelected object) {
-				return object.getTitle();
-			}
-		};
-
-		title.setFieldUpdater(new FieldUpdater<IssueSelected, String>() {
-
-			@Override
-			public void update(int index, IssueSelected object, String value) {
-				onSelectionTitle(object);
-			}
-
-		});
-		setColumnWidth(col++, 40, Unit.PX);
-
-		ownerColumn = new Column<IssueSelected, String>(new ClickableTextCell()) {
+		
+		typeColumn = new Column<IssueSelected, String>(new TextCell()) {
 
 			@Override
 			public String getValue(IssueSelected object) {
-				return object.getUser().getName();
+				return object.getType();
 			}
 		};
 		
-		ownerColumn.setFieldUpdater(new FieldUpdater<IssueSelected, String>() {
-
+		typeColumn.setFieldUpdater(new FieldUpdater<IssueSelected, String>() {
+			
 			@Override
 			public void update(int index, IssueSelected object, String value) {
 				onSelectionTitle(object);
 			}
 		});
-		
-		setColumnWidth(col++, 60, Unit.PX);
+		setColumnWidth(col++, 20, Unit.PX);
 
-		companyColumn = new Column<IssueSelected, String>(new ClickableTextCell()) {
+		companyColumn = new Column<IssueSelected, String>(new TextCell()) {
 
 			@Override
 			public String getValue(IssueSelected object) {
 				return object.getCompany();
 			}
 		};
+		setColumnWidth(col++, 40, Unit.PX);
+
 		
-		companyColumn.setFieldUpdater(new FieldUpdater<IssueSelected, String>() {
+		titleColumn = new Column<IssueSelected, String>(new TextCell()) {
 
 			@Override
-			public void update(int index, IssueSelected object, String value) {
-				onSelectionTitle(object);
+			public String getValue(IssueSelected object) {
+				return object.getTitle();
 			}
-		});
+		};
 		setColumnWidth(col++, 60, Unit.PX);
 
-		labels = new Column<IssueSelected, String>(new ClickableTextCell()) {
+		labelsColumn = new Column<IssueSelected, String>(new ClickableTextCell()) {
 
 			@Override
 			public String getValue(IssueSelected object) {
@@ -440,24 +437,36 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 				return buffer.toString();
 			}
 		};
-		
-		labels.setFieldUpdater(new FieldUpdater<IssueSelected, String>() {
+		setColumnWidth(col++, 40, Unit.PX);
+
+
+		ownerColumn = new Column<IssueSelected, String>(new ClickableTextCell()) {
 
 			@Override
-			public void update(int index, IssueSelected object, String value) {
-				onSelectionTitle(object);
-			}
-		});
-		setColumnWidth(col++, 60, Unit.PX);
-		
-		createdAt = new Column<IssueSelected, Date>(new DateCell()) {
-
-			@Override
-			public Date getValue(IssueSelected object) {				
-				return object.getCreateAt();
+			public String getValue(IssueSelected object) {
+				return object.getUser().getName();
 			}
 		};
-		setColumnWidth(col++, 40, Unit.PX);
+		
+		setColumnWidth(col++, 30, Unit.PX);
+		
+		createdAtColumn = new Column<IssueSelected, String>(new TextCell()) {
+			
+			@Override
+			public String getValue(IssueSelected object) {
+				int days = CalendarUtil.getDaysBetween(object.getCreateAt(), new Date());
+				
+				switch (days) {
+				case 0:
+					return "Hoy";
+				case 1:
+					return "Ayer";
+				default:
+					return AON.DATE_FORMAT.format(object.getCreateAt());
+				}
+			}
+		};
+		setColumnWidth(col++, 60, Unit.PX);
 	}
 
 	public Set<IssueSelected> getSelectedObject() {
