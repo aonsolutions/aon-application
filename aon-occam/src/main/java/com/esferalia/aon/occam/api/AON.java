@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -2167,7 +2168,7 @@ public class AON {
 	}
 
 	public static Notice addNewNotice(Integer domainId, String domainName,
-			String userName, Notice notice) {
+			String userName, Notice notice) throws UnsupportedEncodingException {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);

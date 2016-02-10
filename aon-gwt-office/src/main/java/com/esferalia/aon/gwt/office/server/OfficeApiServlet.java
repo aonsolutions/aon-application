@@ -21,11 +21,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.common.shared.Base64;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.office.User;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.google.gwt.safehtml.shared.UriUtils;
 
 /**
  * 
@@ -202,7 +204,7 @@ public class OfficeApiServlet extends HttpServlet {
 
 				getCreateNotice(resp, domain, domainName, notice);
 
-			} catch (Exception ex) {
+			} catch (Exception ex) {				
 				System.out.println(ex.getMessage());
 			}
 		}
@@ -815,8 +817,8 @@ public class OfficeApiServlet extends HttpServlet {
 		buffer.append(String.format("\"number\":%s,\r\n",
 				String.valueOf(notice.getId())));
 		buffer.append(
-				String.format("\"title\":\"%s\",\r\n", notice.getTitle()));
-		buffer.append(String.format("\"body\":\"%s\",\r\n", notice.getBody()));
+				String.format("\"title\":\"%s\",\r\n", UriUtils.encode(notice.getTitle())));
+		buffer.append(String.format("\"body\":\"%s\",\r\n", UriUtils.encode(notice.getBody())));
 		buffer.append(
 				String.format("\"state\":\"%s\",\r\n", notice.getStatus()));
 		buffer.append(String.format("\"company\":\"%s\",\r\n",
@@ -958,7 +960,7 @@ public class OfficeApiServlet extends HttpServlet {
 		buffer.append(String.format("\"created_at\":\"%s\",\r\n",
 				comment.getStartDate()));
 		buffer.append(String.format("\"body\":\"%s\"\r\n",
-				(comment.getBody() != null) ? comment.getBody() : ""));
+				(comment.getBody() != null) ? UriUtils.encode(comment.getBody()) : ""));
 		buffer.append("}");
 
 		return buffer.toString();

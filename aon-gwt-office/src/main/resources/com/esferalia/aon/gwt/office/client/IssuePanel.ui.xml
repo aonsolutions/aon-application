@@ -12,9 +12,9 @@
 		height: 99%;
 	}
 	
-	.options-text-area {
-		width: 600px;
+	.options-text-area {		
 		height: 200px;
+		resize: none;
 	}
 	
 	.form {
@@ -133,7 +133,7 @@
 				<tr>
 					<td colspan="3" class="{aonResources.css.aonPanelGridEven}">
 						<g:TextArea ui:field="commentTextArea" characterWidth="10"
-							visibleLines="9" styleName="{style.options-text-area}" />
+							visibleLines="9" width="97%" styleName="{style.options-text-area}" />
 					</td>
 				</tr>
 

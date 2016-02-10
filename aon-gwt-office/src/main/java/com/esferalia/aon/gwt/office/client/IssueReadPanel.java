@@ -10,6 +10,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -81,6 +84,8 @@ public class IssueReadPanel extends Composite
 	@UiField
 	HorizontalPanel labelsHPanel;
 	@UiField
+	Label typeLabel;
+	@UiField
 	Label priorityLabel;
 	@UiField
 	FlowPanel historialVPanel;
@@ -94,7 +99,7 @@ public class IssueReadPanel extends Composite
 	TextArea commentTextArea;
 
 	private List<Listener> listeners;
-	private IssueSelected issue;
+	private IssueSelected issue;	
 
 	private DateTimeFormat fmt = DateTimeFormat.getFormat("dd/MM/yyyy HH:mm");
 
@@ -105,6 +110,7 @@ public class IssueReadPanel extends Composite
 		this.issue = issue;
 
 		setCompany(issue.getCompany());
+		setType(issue.getType());
 		setPriority(issue.getPriority());
 		setAsunto(issue.getTitle());
 		setLabels(issue.getTags());
@@ -142,6 +148,10 @@ public class IssueReadPanel extends Composite
 	private void setAsunto(String asunto) {
 		this.titleLabel.setText(asunto.toUpperCase());
 	}
+	
+	private void setType(String type) {
+		this.typeLabel.setText(type);
+	}
 
 	private void setPriority(String priority) {
 		this.priorityLabel.setText(priority);
@@ -162,17 +172,19 @@ public class IssueReadPanel extends Composite
 				+ " el " + fmt.format(issue.getCreateAt()) + " (hace " + days
 				+ ((days == 1) ? " d\u00EDas)" : " d\u00EDas)"));
 		label.setStyleName(AON.AON_BOLD);
-		label.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
-
+		label.getElement().getStyle().setFontStyle(FontStyle.ITALIC);	
+		
 		final Button editButton = new Button();
 
 		editButton.setStyleName(AON.AON_ICON_EDIT_ADD);
 		editButton.addStyleName(AON.AON_ICON_CMD_BUTTON);
 		editButton.addStyleName(style.editButton());
 
-		final TextArea textArea = getTextArea(
-				new String(issue.getBody().replaceAll("--", "\n")));
+		final TextArea textArea = getTextArea(issue.getBody());
+//		final TextArea textArea = getTextArea(
+//				new String(issue.getBody().replaceAll("--", "\n")));
 		textArea.setName(String.valueOf(issue.getId()));
+		
 		editButton.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -213,20 +225,22 @@ public class IssueReadPanel extends Composite
 		editButton.addStyleName(AON.AON_ICON_CMD_BUTTON);
 		editButton.addStyleName(style.editButton());
 		editButton.setTitle("Editar comentario");
+		
+		final TextArea textArea = getTextArea(issueComment.getBody());
 
-		final TextArea textArea = getTextArea(
-				new String(issueComment.getBody().replaceAll("--", "\n")));
+//		final TextArea textArea = getTextArea(
+//				new String(issueComment.getBody().replaceAll("--", "\n")));
 		textArea.setName(String.valueOf(issueComment.getId()));
+		
 		editButton.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
 
 				if (editButton.getStyleName().contains(AON.AON_ICON_EDIT_ADD))
-					onEditCommentButtonClick(textArea, editButton);
+					onEditCommentButtonClick(textArea, editButton);					
 				else
 					onAcceptEditCommentButtonClick(textArea, editButton);
-
 			}
 		});
 
@@ -308,12 +322,30 @@ public class IssueReadPanel extends Composite
 			listener.onUpdateIssueState(NoticeStatus.REOPEN.getValue());
 	}
 
-	private void onEditCommentButtonClick(TextArea textArea, Button button) {
+	private void onEditCommentButtonClick(final TextArea textArea, final Button button) {
 		button.removeStyleName(AON.AON_ICON_EDIT_ADD);
 		button.addStyleName(AON.AON_ICON_ACCEPT);
 		textArea.setReadOnly(false);
 		textArea.setFocus(true);
 		textArea.selectAll();
+		
+
+		textArea.addKeyDownHandler(new KeyDownHandler() {
+			
+			@Override
+			public void onKeyDown(KeyDownEvent event) {
+				int keyCode = event.getNativeKeyCode();
+				if (keyCode == KeyCodes.KEY_ESCAPE)
+					onCancelEditComment(textArea, button);
+			}
+		});
+	}
+	
+	private void onCancelEditComment(TextArea textArea, Button button) {
+		button.removeStyleName(AON.AON_ICON_ACCEPT);
+		button.addStyleName(AON.AON_ICON_EDIT_ADD);	
+		textArea.setReadOnly(true);	
+		textArea.setFocus(false);
 	}
 
 	private void onAcceptEditBodyButtonClick(final TextArea textArea,

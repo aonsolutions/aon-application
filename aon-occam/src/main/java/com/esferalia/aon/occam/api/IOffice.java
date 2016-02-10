@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.office.Notice;
@@ -11,7 +12,7 @@ public interface IOffice {
 
 	public User getUser(AONContext ctx, Integer id);
 
-	public Notice addNewNotice(AONContext ctx, Notice notice);
+	public Notice addNewNotice(AONContext ctx, Notice notice) throws UnsupportedEncodingException;
 
 	public Notice editNotice(AONContext ctx, Notice notice);
 

@@ -62,7 +62,7 @@ public class Notice implements Serializable, HasId {
 		this.sender = sender;
 	}
 	
-	public void setTitle(String title) {
+	public void setTitle(String title) {		
 		this.title = title;
 	}
 	

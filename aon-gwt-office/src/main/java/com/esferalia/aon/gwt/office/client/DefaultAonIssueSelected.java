@@ -4,10 +4,12 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.gwt.common.shared.Base64;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
 public abstract class DefaultAonIssueSelected implements IssueSelected {
@@ -19,7 +21,10 @@ public abstract class DefaultAonIssueSelected implements IssueSelected {
 	private DefaultAonUserIssueSelected user;
 	private List<DefaultAonTagIssueSelected> tags;
 	private List<DefaultAonIssueComments> comments;
-
+	
+	private String title;
+	private String body;
+	
 	public DefaultAonIssueSelected(JsIssue issue) {
 		this.issue = issue;
 		this.timeFormat = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss.S");
@@ -28,6 +33,9 @@ public abstract class DefaultAonIssueSelected implements IssueSelected {
 		
 		this.tags = new LinkedList<DefaultAonTagIssueSelected>();
 		this.comments = new LinkedList<DefaultAonIssueComments>();
+		
+		this.title = URL.decode(issue.getTitle());
+		this.body = URL.decode(issue.getBody());
 		
 		initTagList(issue.getLabels());
 		initCommentList(issue.getIssueComments());
@@ -88,12 +96,14 @@ public abstract class DefaultAonIssueSelected implements IssueSelected {
 
 	@Override
 	public String getTitle() {
-		return issue.getTitle();
+		return this.title;
+//		return issue.getTitle();
 	}
 
 	@Override
 	public String getBody() {
-		return issue.getBody();
+		return this.body;
+//		return issue.getBody();
 	}
 
 	@Override

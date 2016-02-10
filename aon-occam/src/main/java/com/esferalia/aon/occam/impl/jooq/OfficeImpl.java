@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -63,7 +64,7 @@ public class OfficeImpl implements IOffice {
 	}
 
 	@Override
-	public Notice addNewNotice(AONContext ctx, Notice notice) {		
+	public Notice addNewNotice(AONContext ctx, Notice notice) throws UnsupportedEncodingException {		
 		return AonHubDAO.addNewNotice(ctx, notice);
 	}
 	
