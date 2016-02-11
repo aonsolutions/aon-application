@@ -246,6 +246,25 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	border-collapse: collapse;
 }
 
+.aon-gwt-office-dataTable {
+	width: 100%;
+	font-family: arial, verdana, "sans serif";
+	border: #ccc 1px solid;
+	border-collapse: collapse;
+}
+
+.aon-gwt-office-dataTable td {
+	padding-top: 1px;
+	padding-bottom: 1px;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	border: #ccc 1px solid;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+
 @sprite .aon-dataTable-header {
 	padding: 5px 1em;
 	height: 14.4px;
@@ -269,9 +288,6 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	padding-left: 0.5em;
 	padding-right: 0.5em;
 	border: #ccc 1px solid;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 
 .aon-wrap {
@@ -1528,6 +1544,18 @@ input:disabled+label {
 
 @sprite .aon-icon-issue-closed {
 	gwt-image: "aonIconIssueClosed";
+}
+
+@sprite .aon-icon-issue-reopened-blue {
+	gwt-image: "aonIconIssueReOpenedBlue";
+}
+
+@sprite .aon-icon-issue-reopened-break {
+	gwt-image: "aonIconIssueReOpenedBreak";
+}
+
+@sprite .aon-icon-issue-opened-green {
+	gwt-image: "aonIconIssueOpenedGreen";
 }
 
 .aon-tree-icon-node {

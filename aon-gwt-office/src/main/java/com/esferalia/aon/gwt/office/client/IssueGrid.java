@@ -17,6 +17,8 @@ import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.dom.builder.shared.TableCellBuilder;
 import com.google.gwt.dom.builder.shared.TableRowBuilder;
 import com.google.gwt.dom.client.Style.Cursor;
+import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.dom.client.Style.TextOverflow;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -243,8 +245,9 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 			TableCellBuilder td;
 
 			td = row.startTD().align(
-					HasHorizontalAlignment.ALIGN_RIGHT.getTextAlignString());
+					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
 			td.className(rowValue.getStateIconStyle());
+			td.className(AON.AON_CSS.aonDataTableIconColumn());
 			td.title(rowValue.getState());
 			renderCell(td, createContext(col++), stateColumn, rowValue);
 			td.endTD();
@@ -270,6 +273,8 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_LEFT.getTextAlignString());
+			td.style().overflow(Overflow.HIDDEN);
+			td.className(AON.AON_CSS.aonDataTableTextColumn());
 			renderCell(td, createContext(col++), labelsColumn, rowValue);
 			td.endTD();
 
@@ -281,7 +286,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
-			td.className(AON.AON_BOLD);			
+			td.className(AON.AON_BOLD);
 			renderCell(td, createContext(col++), createdAtColumn, rowValue);
 			td.endTD();
 
@@ -316,7 +321,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 		selectionModel = new MultiSelectionModel<IssueSelected>();
 
-		setStyleName(AON.AON_CSS.aonDataTable());
+		setStyleName(AON.AON_CSS.aonGwtOfficeDataTable());
 
 		setAutoHeaderRefreshDisabled(false);
 		initializeSelectionModel();
@@ -386,7 +391,6 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 				return object.getType();
 			}
 		};
-		
 		typeColumn.setFieldUpdater(new FieldUpdater<IssueSelected, String>() {
 			
 			@Override

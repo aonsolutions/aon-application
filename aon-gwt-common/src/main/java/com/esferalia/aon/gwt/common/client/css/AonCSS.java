@@ -247,9 +247,12 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-editDataTable-textColumn")
     String aonDataTableTextColumn();
 
+	@ClassName("aon-gwt-office-dataTable")
+    String aonGwtOfficeDataTable();
+	
 	@ClassName("aon-editDataTable-numberColumn")
-    String aonDataTableNumberColumn();
-
+    String aonDataTableNumberColumn();	
+	
 	@ClassName("aon-wrap")
 	String aonWrap();
 
@@ -891,6 +894,17 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-icon-issue-closed")
 	String aonIconIssueClosed();
+	
+	@ClassName("aon-icon-issue-opened-green")
+	String aonIconIssueOpenedGreen();
+	
+	@ClassName("aon-icon-issue-reopened-blue")
+	String aonIconIssueReOpenedBlue();
+	
+	@ClassName("aon-icon-issue-reopened-break")
+	String aonIconIssueReOpenedBreak();
+
+	
 	
 	@ClassName("aon-icon-title")
 	String aonIconTitle();
