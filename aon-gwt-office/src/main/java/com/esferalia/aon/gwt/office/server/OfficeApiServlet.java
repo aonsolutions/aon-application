@@ -895,11 +895,9 @@ public class OfficeApiServlet extends HttpServlet {
 		PrintWriter pw = null;
 		try {
 			pw = resp.getWriter();
-			AON.changeNoticeStatus(domainId, domainName,
+			Notice editNotice = AON.changeNoticeStatus(domainId, domainName,
 					AonServletUtils.getLoggedUser(), notice);
-			pw.append('{');
-			pw.append('}');
-			// pw.append(getNotice(editNotice));
+			 pw.append(getNotice(editNotice));
 			pw.flush();
 		} catch (Exception ex) {
 			System.out.println("Exception: " + ex.getMessage());

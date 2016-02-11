@@ -102,7 +102,7 @@ public class AonHubDAO {
 		return buildNoticeById(ctx, noticeRecord.getValue(NOTICE.ID));
 	}
 
-	public static void changeNoticeState(AONContext ctx, Notice notice) {
+	public static Notice changeNoticeState(AONContext ctx, Notice notice) {
 
 		try {
 
@@ -126,7 +126,7 @@ public class AonHubDAO {
 							new java.sql.Timestamp((today).getTime()))
 					.execute();
 
-			// return buildNoticeById(ctx, notice.getId());
+			return buildNoticeById(ctx, notice.getId());
 		} catch (Exception ex) {
 			System.out
 					.println(ex.getMessage() + " " + ex.getLocalizedMessage());

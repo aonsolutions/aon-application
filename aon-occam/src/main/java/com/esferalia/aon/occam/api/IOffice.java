@@ -15,7 +15,7 @@ public interface IOffice {
 
 	public Notice editNotice(AONContext ctx, Notice notice);
 
-	public void changeNoticeStatus(AONContext ctx, Notice notice);
+	public Notice changeNoticeStatus(AONContext ctx, Notice notice);
 
 	public List<Notice> getOpenNotices(AONContext ctx)
 			throws IllegalArgumentException;

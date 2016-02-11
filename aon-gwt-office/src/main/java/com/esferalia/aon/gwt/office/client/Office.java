@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.office.User;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -481,8 +482,12 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 					@Override
 					public void onSuccess(JsIssue result) {
-						loadOpenIssues();
-						showDockOfficePanel();
+						final IssueSelected issue;
+						if (result.getState().compareTo(NoticeStatus.REOPEN.getValue()) == 0)
+							issue = new IssueGrid.IssueOpenLoadSelected(result);
+						else
+							issue = new IssueGrid.IssueClosedLoadSelected(result);
+						onSelectionTitle(issue);
 					}
 				});
 
