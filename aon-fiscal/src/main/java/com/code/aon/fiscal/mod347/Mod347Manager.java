@@ -109,6 +109,7 @@ public class Mod347Manager {
 					+"  FROM finance f "
 					+" INNER JOIN  finance_tracking ft ON (ft.finance = f.id) "
 					+" WHERE f.invoice = ?"
+					+" AND ft.tracking_date BETWEEN ? AND ? "
 					+" AND ft.type IN (1,2) ",
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			Mod347 mod347 = params.getMod347();
@@ -244,6 +245,8 @@ public class Mod347Manager {
 						}
 					} else {
 						ps2.setInt(1,invoiceId);
+						ps2.setDate(2, new java.sql.Date( CommonUtil.getYearFirstDay(mod347.getYear()).getTime()));
+						ps2.setDate(3, new java.sql.Date( CommonUtil.getYearLastDay(mod347.getYear()).getTime()));
 						rs2 = ps2.executeQuery();
 						if (rs2.next()) {
 							double financeAmount = rs2.getDouble(FINANCE_AMOUNT_ALIAS);
