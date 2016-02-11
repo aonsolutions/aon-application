@@ -39,8 +39,9 @@ public class PdfPrintServlet extends HttpServlet{
 
 	@Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException{
-		
-		String driveId = !req.getParameter("drive_id").equals("null")
+
+		String driveId = req.getParameter("driveId") != null
+				&& !req.getParameter("drive_id").equals("null")
 				&& !req.getParameter("drive_id").equals("undefined") 
 				? req.getParameter("drive_id") : null;
 		Integer attachId = Integer.parseInt(req.getParameter("attach_id"));

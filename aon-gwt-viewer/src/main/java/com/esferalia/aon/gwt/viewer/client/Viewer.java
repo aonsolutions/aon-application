@@ -352,6 +352,7 @@ public abstract class Viewer extends PopupPanel {
 					}
 					@Override
 					public void onFailure(Throwable caught) {
+						print(caught.getMessage());
 						hideLoad();
 					}
 				});
@@ -368,6 +369,7 @@ public abstract class Viewer extends PopupPanel {
 					}
 					@Override
 					public void onFailure(Throwable caught) {
+						print(caught.getMessage());
 						hideLoad();
 					}
 				});
@@ -383,7 +385,9 @@ public abstract class Viewer extends PopupPanel {
 							hide();
 							VIEWER_IMPL.share(tb.getText(), viewerAttach, new AsyncCallback<Void>() {
 								@Override public void onSuccess(Void result) {}
-								@Override public void onFailure(Throwable caught) {}
+								@Override public void onFailure(Throwable caught) {
+									print(caught.getMessage());
+								}
 							});
 						} else if(isGmail){
 							TextBox tb1 = (TextBox) content.getWidget(0, 1);
@@ -392,7 +396,9 @@ public abstract class Viewer extends PopupPanel {
 							hide();
 							VIEWER_IMPL.sendGmail(tb1.getText(), tb2.getText(), ta.getText(), viewerAttach, new AsyncCallback<Void>() {
 								@Override public void onSuccess(Void result) {}
-								@Override public void onFailure(Throwable caught) {}
+								@Override public void onFailure(Throwable caught) {
+									print(caught.getMessage());
+								}
 							});						
 						} else if(isEmail){
 							ListBox lb = (ListBox) content.getWidget(0, 1);
@@ -402,7 +408,9 @@ public abstract class Viewer extends PopupPanel {
 							hide();
 							VIEWER_IMPL.sendEmail(attach.getDomain(), lb.getSelectedValue(), tb1.getText(), tb2.getText(), ta.getText(), viewerAttach, new AsyncCallback<Void>() {
 								@Override public void onSuccess(Void result) {}
-								@Override public void onFailure(Throwable caught) {}
+								@Override public void onFailure(Throwable caught) {
+									print(caught.getMessage());
+								}
 							});	
 						}
 					}
@@ -425,21 +433,6 @@ public abstract class Viewer extends PopupPanel {
 						+ "&domain_name=" + viewerAttach.getDomain().getName()
 						+ "&domain_id=" + viewerAttach.getDomain().getId();
 				PrintWindow.open(fileDownloadURL, "_blank", null);
-				/*
-				VIEWER_IMPL.getData(viewerAttach, new AsyncCallback<String>() {
-						
-					@Override
-					public void onSuccess(String result) {
-						String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_print/"
-								+ "?md5=" + result
-					            + "&mimetype=" + viewerAttach.getMimeType().value()
-					            + "&title="+viewerAttach.getDescription();
-						PrintWindow.open(fileDownloadURL, "_blank", null);
-					}
-						
-					@Override
-					public void onFailure(Throwable caught) {}
-				});*/
 			}
 			
 			@Override
@@ -471,21 +464,6 @@ public abstract class Viewer extends PopupPanel {
 						+ "&domain_name=" + viewerAttach.getDomain().getName()
 						+ "&domain_id=" + viewerAttach.getDomain().getId();
 				Window.open(fileDownloadURL, "_blank", null);
-				
-	/*	      VIEWER_IMPL.getData(viewerAttach, new AsyncCallback<String>() {
-					
-					@Override
-					public void onSuccess(String result) {
-						String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_viewer/"
-								+ "?md5=" + result
-				                + "&mimetype=" + viewerAttach.getMimeType().value()
-				                + "&title="+viewerAttach.getDescription();
-						Window.open(fileDownloadURL, "_blank", null);
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {}
-				});*/
 			}
 			
 			@Override
@@ -502,6 +480,7 @@ public abstract class Viewer extends PopupPanel {
 					}
 					@Override
 					public void onFailure(Throwable caught) {
+						print(caught.getMessage());
 						hideLoad();
 					}
 				});				
@@ -521,9 +500,18 @@ public abstract class Viewer extends PopupPanel {
 			}
 			@Override
 			public void onFailure(Throwable caught) {
+				print(caught.getMessage());
 				viewer.hideLoad();
 			}
 		});
 		return viewer;
+	}
+	
+	private static void print(String msg) {
+		final IViewerAsync VIEWER_IMPL = GWT.create(IViewer.class);
+		VIEWER_IMPL.print(msg, new AsyncCallback<Void>() {
+			@Override public void onSuccess(Void result) {}
+			@Override public void onFailure(Throwable caught) {}
+		});
 	}
 }

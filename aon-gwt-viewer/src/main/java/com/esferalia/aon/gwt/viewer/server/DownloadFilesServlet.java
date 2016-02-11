@@ -36,7 +36,8 @@ public class DownloadFilesServlet extends HttpServlet {
 		
 		String attachName = req.getParameter("attach_name");
 		MimeType mimeType = MimeType.values()[Integer.parseInt(req.getParameter("mimetype"))];
-		String driveId = !req.getParameter("drive_id").equals("null") 
+		String driveId = req.getParameter("driveId") != null
+				&& !req.getParameter("drive_id").equals("null") 
 				&& !req.getParameter("drive_id").equals("undefined")  
 				? req.getParameter("drive_id") : null;
 		Integer attachId = Integer.parseInt(req.getParameter("attach_id"));

@@ -36,7 +36,6 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
-import com.google.api.services.drive.model.File;
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
 
@@ -59,10 +58,12 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 		IDocument2HtmlConverter converter;
 		if(attach.getDriveId() != null || attach.getData() != null || 
 				(attach.getId() != null && attach.getAttachType() != null)){
-			Integer attachId = attach.getId();
-			if(attach.getDriveId() == null && attach.getData() == null)
+			
+			if(attach.getDriveId() == null && attach.getData() == null){
+				Integer attachId = attach.getId();
 				attach = AON.getAttach(attach.getDomain().getName(), attach.getDomain().getId(), "",
 						f-> f.getIdProperty().eq(attachId), attach.getAttachType());
+			}
 			if(attach.getMd5() == null) attach.setMd5(getMd5(attach));
 			converter = getDocument2HtmlConverter(attach);
 		} else converter = Error2HtmlConverter.INSTANCE; 
@@ -237,12 +238,10 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 	}
 	
 	public String getMd5(Attach attach){
-		if(attach.getDriveId() != null){
-        	File file = DriveUtils.getDriveFile(attach, new User().setLogin(""));
-        	return file.getMd5Checksum();
-		} else if(attach.getData() != null){
+		if(attach.getDriveId() != null)
+			return DriveUtils.getDriveFile(attach, getUser()).getMd5Checksum();
+		else if(attach.getData() != null)
 			return AonFileUtils.getMD5Checksum(attach.getData());
-		}
 		return "null";
 	}
 	
@@ -255,7 +254,7 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 				attach = AON.getAttach(attach.getDomain().getName(), attach.getDomain().getId(), "",
 						f-> f.getIdProperty().eq(attachId), attach.getAttachType());
 			if(attach.getDriveId() != null){
-				b = DriveUtils.getByteFile(attach, new User().setLogin(""));
+				b = DriveUtils.getByteFile(attach, getUser());
 			} else b = attach.getData();
 		}
 		String md5 = AonFileUtils.getMD5Checksum(b);
@@ -272,7 +271,7 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 				attach = AON.getAttach(attach.getDomain().getName(), attach.getDomain().getId(), "",
 						f-> f.getIdProperty().eq(attachId), attach.getAttachType());
 			if(attach.getDriveId() != null){
-				b = DriveUtils.getByteFile(attach, new User().setLogin(""));
+				b = DriveUtils.getByteFile(attach, getUser());
 			} else b = attach.getData();
 		}
 		return b;
@@ -280,7 +279,7 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 	
 	public void share(String email, Attach attach){	
 		try {
-			DriveUtils.setPermission(attach.getDomain(), new User().setLogin(""), attach, email);
+			DriveUtils.setPermission(attach.getDomain(), getUser(), attach, email);
 		} catch (IOException | GeneralSecurityException e) {
 			e.printStackTrace();
 		}
@@ -353,5 +352,13 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 				.setId(getUserID())
 				.setLogin(getUserLogin())
 				.setDomain(getUserDomainID());
+	}
+	
+	public void print(String msg){
+		System.out.println("+++++++++++++++ GWT VIEWER +++++++++++++++");
+		System.out.println();
+		System.out.println(msg);
+		System.out.println();
+		System.out.println("++++++++++++++++++++++++++++++++++++++++++");
 	}
 }

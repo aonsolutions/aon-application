@@ -23,4 +23,5 @@ public interface IViewer extends RemoteService {
 	
 	public LinkedList<MailAccount> getMailAccountList(Domain domain);
 	
+	public void print(String msg);
 }

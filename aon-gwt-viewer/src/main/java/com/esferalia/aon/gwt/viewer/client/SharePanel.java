@@ -72,8 +72,7 @@ public abstract class SharePanel extends PopupPanel {
 			gmailButton.removeStyleName("aon-dataTable-footerClass");
 			emailButton.removeStyleName("aon-dataTable-footerClass");
 			paintDrivePanel(attach);
-		}
-		else{
+		} else{
 			isDrive = false; isGmail = false; isEmail = true;
 			driveButton.setVisible(false);
 			driveButton.removeStyleName("aon-dataTable-footerClass");
@@ -116,10 +115,8 @@ public abstract class SharePanel extends PopupPanel {
 				paintEmailPanel(attach);
 			}
 		});
-		
 
 		acceptButton.setText("Compartir");
-
 		acceptButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -128,14 +125,12 @@ public abstract class SharePanel extends PopupPanel {
 		});
 
 		cancelButton.setText("Cancelar");
-
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				onCancel();
 			}
 		});
-		
 	}
 	
 	protected abstract void onAccept();
@@ -250,26 +245,12 @@ public abstract class SharePanel extends PopupPanel {
 				content.setWidget(3, 1, ta);				
 			}
 			
-			@Override
+			@Override 
 			public void onFailure(Throwable caught) {
-				// TODO Apéndice de método generado automáticamente
-				
+				print(caught.getMessage());
 			}
 		});
-				 
-		
-		
 	}
-
-	// ------------------------------------------------------------------------
-
-	// ------------------------------------------------------------------------
-	
-	// ------------------------------------------------------------------------
-
-	// -----------------------------------------------------------------------
-	
-	// ------------------------------------------------------------------------
 	
 	private static void reloadScrollBars() {
 		Document.get().getDocumentElement().getStyle().setOverflow(Overflow.AUTO);
@@ -279,5 +260,13 @@ public abstract class SharePanel extends PopupPanel {
 	private static void unloadScrollBars() {
 		Document.get().getDocumentElement().getStyle().setOverflow(Overflow.HIDDEN);
 		Document.get().getBody().setPropertyString("scroll", "no");
+	}
+	
+	private static void print(String msg) {
+		final IViewerAsync VIEWER_IMPL = GWT.create(IViewer.class);
+		VIEWER_IMPL.print(msg, new AsyncCallback<Void>() {
+			@Override public void onSuccess(Void result) {}
+			@Override public void onFailure(Throwable caught) {}
+		});
 	}
 }

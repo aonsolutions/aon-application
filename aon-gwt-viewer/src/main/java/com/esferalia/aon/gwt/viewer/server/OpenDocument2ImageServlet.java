@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.viewer.server.html2Image.Html2Image;
 import com.esferalia.aon.gwt.viewer.server.html2Image.ImageRenderer;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -99,7 +100,7 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 	}
 
 	private static ByteBuffer getPdfByeBuffer(Attach attach) throws IOException, GeneralSecurityException {
-		Domain domain = attach.getDomain();
+		Domain domain = AON.getDomain(attach.getDomain().getName(), attach.getDomain().getId(), "");
 		String login = ""; //AonServletUtils.getLoggedUser();
 		User user = new User().setLogin(login);
 		
@@ -178,8 +179,6 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 
 		// generate the image
 		
-		 
-	
 		Image image = pdfPage.getImage(
 			zoomWidth,  // width
 			zoomHeight, // height
@@ -198,7 +197,6 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 		String md5 = AonFileUtils.getMD5Checksum(data);
 		if(md5.equals("968634550561b68ca4675b1ffe77fd6f")) error2Image(os);
 		else ImageIO.write(bufferedImage, format, os);
-		
 	}
 	
 	private static void error2Image(OutputStream os) throws IOException {
@@ -209,7 +207,7 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 	            "</html>";
 	    ImageRenderer imageRenderer = Html2Image.fromHtml(html).getImageRenderer();
 	    BufferedImage bufferedImage = imageRenderer.getBufferedImage();
-	     ImageIO.write(bufferedImage, "png", os);
+	    ImageIO.write(bufferedImage, "png", os);
 	}
 
 	public static final long ONE_YEAR_MILLIS = 31363200000L;
