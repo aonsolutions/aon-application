@@ -2316,7 +2316,7 @@ public class FANWriter implements Serializable {
 							SalaryBonus bonus = (SalaryBonus) bonusList.get(0);
 							BonusType bonusType = obtainBonusType(bonus);
 							if(bonusType!=BonusType.CONTINUOUS_FORMATION){
-								cccErrors.add("- " + contract.getPerson().getFullName() + " no tiene definido el colectivo peculiaridad cotización");
+								cccErrors.add("- " + contract.getPerson().getFullName() + " no tiene definido el colectivo de peculiaridad de cotización");
 							}
 						}
 						
@@ -2354,6 +2354,31 @@ public class FANWriter implements Serializable {
 				}
 			}
 		} else if(liquidationType==LiquidationType.L13){
+			
+			for(EnterpriseCCC ccc: cccList){
+				cccErrors = new ArrayList<>();
+				List<ITransferObject> contractList = obtainContracts(ccc, getStartDate(), getEndDate());
+				
+//			******************************
+//			contratos activos > 0
+//			******************************
+				if(contractList==null || contractList.size()==0){
+					cccErrors.add("- No hay contratos activos");
+				}
+				for(ITransferObject _contract: contractList){
+					Contract contract= (Contract)_contract;
+					Integer days = getNotEnjoyedVacationDays(contract);
+					if(days==null || days<=0){
+						cccErrors.add("- " + contract.getPerson().getFullName() + " no tiene dias de vacaciones retribuidos y no disfrutados.");
+					}
+				}
+				if(cccErrors!=null && cccErrors.size()>0){
+					errors.add("Errores de " + ccc.getActivity().getEnterprise().getRegistry().getFullName() + " (" + PayrollUtils.getInstance().getRegimeCode(ccc)+ccc.getCcc() + "): ");
+					errors.addAll(cccErrors);
+					errors.add(".");
+				}
+			}
+			
 		}
 		
 		for(String error: errors){

@@ -1352,7 +1352,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 			edt.setIndicadorFactorTipo("T");
 			edt.setParteEnteraTipo(28);
 			edt.setParteDecimalFactorTipo(30000);
-			edt.setImporte((new Double(amount * 100)).intValue());
+			edt.setImporte((new Double(CommonUtil.round(amount * 100))).intValue());
 			edt.setSigno(" ");
 		}
 	}
@@ -1381,7 +1381,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 			edt.setIndicadorFactorTipo("T");
 			edt.setParteEnteraTipo(23);
 			edt.setParteDecimalFactorTipo(60000);
-			edt.setImporte((new Double(amount * 100)).intValue());
+			edt.setImporte((new Double(CommonUtil.round(amount * 100))).intValue());
 			edt.setSigno(" ");
 		}
 	}
@@ -1423,7 +1423,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 			edt.setIndicadorFactorTipo("T");
 			edt.setParteEnteraTipo(36);
 			edt.setParteDecimalFactorTipo(00000);
-			edt.setImporte((new Double(amount * 100)).intValue());
+			edt.setImporte((new Double(CommonUtil.round(amount * 100))).intValue());
 			edt.setSigno(" ");
 		}
 	}
@@ -1506,7 +1506,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 			edt.setClave(31);
 			edt.setCalificadorClave(null);
 			edt.setBase(null);
-			edt.setImporte((new Double(amount * 100)).intValue());
+			edt.setImporte((new Double(CommonUtil.round(amount * 100))).intValue());
 			edt.setSigno(" ");
 		}
 	}
@@ -1526,7 +1526,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 			EDT edt = emp.getEdtSegment("EDTCA32");
 			edt.setTipoElemento("CA");
 			edt.setClave(32);
-			edt.setImporte((new Double(amount * 100)).intValue());
+			edt.setImporte((new Double(CommonUtil.round(amount * 100))).intValue());
 			edt.setSigno(" ");
 		}
 	}
@@ -1560,7 +1560,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 			edt.setIndicadorFactorTipo("T");
 			edt.setParteEnteraTipo(0);
 			edt.setParteDecimalFactorTipo(0);
-			edt.setImporte((new Double(amount * 100)).intValue());
+			edt.setImporte((new Double(CommonUtil.round(amount * 100))).intValue());
 		}
 	}
 
@@ -1628,7 +1628,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 			edt.setIndicadorFactorTipo("T");
 			edt.setParteEnteraTipo(0);
 			edt.setParteDecimalFactorTipo(0);
-			edt.setImporte((new Double(amount * 100)).intValue());
+			edt.setImporte((new Double(CommonUtil.round(amount * 100))).intValue());
 		}
 	}
 
@@ -1681,7 +1681,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 			edt.setIndicadorFactorTipo(" ");
 			edt.setParteEnteraTipo(null);
 			edt.setParteDecimalFactorTipo(null);
-			edt.setImporte((new Double(amount * 100)).intValue());
+			edt.setImporte((new Double(CommonUtil.round(amount * 100))).intValue());
 		}
 	}
 

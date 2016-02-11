@@ -279,7 +279,7 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 //			edt.setIndicadorFactorTipo(" ");
 //			edt.setParteEnteraTipo(0);
 //			edt.setParteDecimalFactorTipo(0);
-//			edt.setImporte((new Double(amount * 100)).intValue());
+//			edt.setImporte((new Double(CommonUtil.round(amount * 100))).intValue());
 //			edt.setSigno(" ");
 //		}
 	}
@@ -329,7 +329,7 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 			edt.setIndicadorFactorTipo(" ");
 			// edt.setParteEnteraTipo(28);
 			// edt.setParteDecimalFactorTipo(30000);
-			edt.setImporte((new Double(amount * 100)).intValue());
+			edt.setImporte((new Double(CommonUtil.round(amount * 100))).intValue());
 		}
 	}
 	
@@ -369,7 +369,7 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 			edt.setIndicadorFactorTipo(" ");
 			// edt.setParteEnteraTipo(28);
 			// edt.setParteDecimalFactorTipo(30000);
-			edt.setImporte((new Double(amount * 100)).intValue());
+			edt.setImporte((new Double(CommonUtil.round(amount * 100))).intValue());
 		}
 	}
 	
