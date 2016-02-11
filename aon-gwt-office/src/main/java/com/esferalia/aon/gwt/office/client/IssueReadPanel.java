@@ -14,11 +14,9 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -194,8 +192,6 @@ public class IssueReadPanel extends Composite
 		editButton.addStyleName(style.editButton());
 
 		final TextArea textArea = getTextArea(issue.getBody());
-//		final TextArea textArea = getTextArea(
-//				new String(issue.getBody().replaceAll("--", "\n")));
 		textArea.setName(String.valueOf(issue.getId()));
 		
 		editButton.addClickHandler(new ClickHandler() {
@@ -227,7 +223,7 @@ public class IssueReadPanel extends Composite
 		int days = CalendarUtil.getDaysBetween(issueComment.getCreatedAt(),
 				new Date());
 		Label label = new Label();
-		label.setText("COMENTADO por " + issue.getUser().getName() + " el "
+		label.setText("COMENTADO por " + issueComment.getUser().getName() + " el "
 				+ fmt.format(issueComment.getCreatedAt()) + " (hace " + days
 				+ ((days == 1) ? " d\u00EDas)" : " d\u00EDas)"));
 		label.setStyleName(AON.AON_BOLD);
@@ -241,8 +237,6 @@ public class IssueReadPanel extends Composite
 		
 		final TextArea textArea = getTextArea(issueComment.getBody());
 
-//		final TextArea textArea = getTextArea(
-//				new String(issueComment.getBody().replaceAll("--", "\n")));
 		textArea.setName(String.valueOf(issueComment.getId()));
 		
 		editButton.addClickHandler(new ClickHandler() {
@@ -381,7 +375,6 @@ public class IssueReadPanel extends Composite
 							button.addStyleName(AON.AON_ICON_EDIT_ADD);
 							textArea.setValue(comment.getBody());
 							textArea.setReadOnly(true);
-
 						}
 					});
 	}

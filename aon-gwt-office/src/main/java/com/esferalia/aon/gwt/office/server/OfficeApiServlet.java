@@ -21,7 +21,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.gwt.common.shared.Base64;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -182,7 +181,11 @@ public class OfficeApiServlet extends HttpServlet {
 				notice.setTitle(json.getString("title"));
 				notice.setBody(json.getString("body"));
 				notice.setStatus(json.getString("state"));
-				notice.setUserId(Integer.parseInt(json.getString("sender")));
+				
+				User user = new User();
+				user.setId(Integer.parseInt(json.getString("sender")));
+				user.setDomain(domain);
+				notice.setSender(user);
 
 				if (json.isNull("company") == false) {
 					notice.setCompany(json.getString("company"));
@@ -429,7 +432,10 @@ public class OfficeApiServlet extends HttpServlet {
 				JSONObject json = new JSONObject(object);
 				Notice comment = new Notice();
 				comment.setDomain(domainId);
-				comment.setUserId(AonServletUtils.getRequestUserId(this.req));
+				
+				User user = new User();
+				user.setId(AonServletUtils.getRequestUserId(this.req));				
+				comment.setSender(user);				
 				comment.setBody(json.getString("body"));
 				jsonComment(resp, domainId, domainName, noticeHeadId, comment);
 

@@ -269,6 +269,9 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	padding-left: 0.5em;
 	padding-right: 0.5em;
 	border: #ccc 1px solid;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .aon-wrap {

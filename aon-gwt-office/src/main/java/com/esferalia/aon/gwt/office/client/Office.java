@@ -7,6 +7,7 @@ import java.util.Map;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.office.client.IssueGrid.IssueOpenLoadSelected;
 import com.esferalia.aon.gwt.office.client.IssueReadPanel.Callback;
 import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.JSON;
@@ -133,8 +134,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 		loadRegistries();
 		loadLabels();
-		loadOpenIssues();
-		showDockOfficePanel();
+		loadOpenIssues();		
 	}
 
 	private void loadRegistries() {
@@ -195,6 +195,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 							addOpenIssue(result.getData().get(x));
 					}
 				});
+		showDockOfficePanel();
 	}
 
 	private void loadClosedIssues() {
@@ -213,7 +214,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						for (int x = 0; x < result.getData().length(); x++)
 							addCloseIssue(result.getData().get(x));
 					}
-				});		
+				});	
+		showDockOfficePanel();
 	}
 
 	@Override
@@ -242,7 +244,11 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@UiHandler("returnButton")
 	void onReturnButtonClick(ClickEvent event) {
-		showDockOfficePanel();
+		if ( openIssuesButton.isEnabled() == false)
+			loadOpenIssues();
+		else
+			loadClosedIssues();
+		
 		returnButton.setEnabled(false);
 	}
 
@@ -250,14 +256,12 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	void onOpenIssuesButton(ClickEvent event) {
 		enabledIssuesButton();
 		loadOpenIssues();
-		showDockOfficePanel();
 	}
 
 	@UiHandler("closedIssuesButton")
 	void onClosedIssuesButton(ClickEvent event) {
 		enabledIssuesButton();
-		loadClosedIssues();
-		showDockOfficePanel();
+		loadClosedIssues();	
 	}
 
 	private void initEnabledIssuesButton() {
@@ -450,9 +454,9 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 					@Override
 					public void onSuccess(JsIssue result) {
-						loadOpenIssues();
 						IssueSelected issue = new IssueGrid.IssueOpenLoadSelected(result);
-						onSelectionTitle(issue);
+						openIssues.add(0, issue);
+						onSelectionTitle(issue);						
 					}
 				});
 	}
@@ -502,7 +506,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 					@Override
 					public void onSuccess(JsIssue result) {
-						loadOpenIssues();
+						IssueSelected issue = new IssueGrid.IssueOpenLoadSelected(result);
+						callback.onSucess(issue);
 					}
 				});
 	}
@@ -511,7 +516,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	public void onIssueCommentButtonClick(String body,
 			final Callback<DefaultAonIssueComments> callback) {
 		IssueCommentValue value = new IssueCommentValue();
-		value.setBody(body);
+		value.setBody(body);		
 
 		gitHub.createIssueComment(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), issueSelected.getJsIssue(), value,

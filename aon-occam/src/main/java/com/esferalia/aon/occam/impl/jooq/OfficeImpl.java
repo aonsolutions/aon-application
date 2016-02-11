@@ -64,7 +64,8 @@ public class OfficeImpl implements IOffice {
 	}
 
 	@Override
-	public Notice addNewNotice(AONContext ctx, Notice notice) throws UnsupportedEncodingException {		
+	public Notice addNewNotice(AONContext ctx, Notice notice) 
+			throws Exception {		
 		return AonHubDAO.addNewNotice(ctx, notice);
 	}
 	
