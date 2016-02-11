@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
@@ -87,7 +88,11 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 
 		addColumn(fullNameColumn, "C\u00F3digo de Cuenta de Cotizaci\u00F3n");
 		
-		monthListBox.setSelectedMonth(DateUtils.getFirstDayOfMonth());
+		
+		Date prevMonth = DateUtils.addMonths2Date(DateUtils.getFirstDayOfMonth(), -1); 
+		monthListBox.setLastMonth(prevMonth);
+		monthListBox.setSelectedMonth(prevMonth);
+		
 		
 		acceptButton.setEnabled(enableAccept());
 	}
