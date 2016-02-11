@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface IDocumentAsync {
@@ -108,5 +109,7 @@ public interface IDocumentAsync {
 	void selectedMenu(Domain domain, AsyncCallback<Void> callback);
 
 	void clearOuts(AsyncCallback<Void> callback);
+
+	void getAttachList(Vector<FileInfo> fileInfoList, AsyncCallback<LinkedList<Attach>> callback);
 
 }

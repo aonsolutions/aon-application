@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.document.client;
 
 import static com.esferalia.aon.gwt.common.client.AONEntryPoint.getParameter;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
@@ -230,8 +229,9 @@ public class Documents extends Composite implements EntryPoint {
 				FileInfo object;
 				if(selFiles.size() == 1) object = selFiles.get(0);
 				else object= dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
-		
-				getViewer(object,dataGrid.getKeyboardSelectedRow(),selFiles.size()>1 ? selFiles : dataProvider.getList() );
+				Vector<FileInfo> l = new Vector<FileInfo>();
+				l.addAll(dataProvider.getList());
+				getViewer(object,dataGrid.getKeyboardSelectedRow(),selFiles.size()>1 ? selFiles : l );
 				//getAsHTMl(object,dataGrid.getKeyboardSelectedRow(),selFiles.size()>1 ? selFiles : dataProvider.getList() );
 			};
 		};		
@@ -2977,7 +2977,9 @@ public class Documents extends Composite implements EntryPoint {
 			nameColumn.setFieldUpdater(new FieldUpdater<FileInfo, String>() {
 				@Override
 				public void update(int index, FileInfo object, String value) {
-					getViewer(object,dataGrid.getKeyboardSelectedRow(),dataProvider.getList());
+					Vector<FileInfo> v = new Vector<FileInfo>();
+					v.addAll(dataProvider.getList());
+					getViewer(object,dataGrid.getKeyboardSelectedRow(), v);
 					//getAsHTMl(object,dataGrid.getKeyboardSelectedRow(),dataProvider.getList());
 				}
 				
@@ -3682,7 +3684,21 @@ public class Documents extends Composite implements EntryPoint {
 		Viewer.getViewer(attach);
 	}
 	
-	private void getViewer(final FileInfo fileInfo, final Integer index, final List<FileInfo> viewList) {
+	private void getViewer(final FileInfo fileInfo, final Integer index, Vector<FileInfo> viewList) {
+		idoc.getAttachList(viewList, new AsyncCallback<LinkedList<Attach>>() {
+			
+			@Override
+			public void onSuccess(LinkedList<Attach> result) {
+				Viewer.getViewer(result.get(index), index, result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getMessage());
+			}
+		});
+		
+		/*
 		Attach attach = new Attach()
 				.setId(fileInfo.getFileId())
 				.setAttachType(AttachType.REGISTRY)
@@ -3702,9 +3718,8 @@ public class Documents extends Composite implements EntryPoint {
 				.setDriveId(fileInfo2.getDriveId())
 				.setIcon(fileInfo2.getIcon())
 				.setMimeType(MimeType.values()[fileInfo2.getMimetype()]));
-		}
-		
-		Viewer.getViewer(attach, index, attachList);
+		}	
+		Viewer.getViewer(attach, index, attachList);*/
 	}
 
 	@UiHandler("reset")
@@ -4747,7 +4762,7 @@ public class Documents extends Composite implements EntryPoint {
 	// ------------------------------------------------------------------------
 	
 	public void preview( int index, JsFileInfo [] files){
-		List<FileInfo> viewList = new ArrayList<FileInfo>(files.length);
+		Vector<FileInfo> viewList = new Vector<FileInfo>(files.length);
 		for (int i = 0; i < files.length; i++) {
 			FileInfo fileInfo = new FileInfo();
 			JsFileInfo jsFileInfo = files[i];

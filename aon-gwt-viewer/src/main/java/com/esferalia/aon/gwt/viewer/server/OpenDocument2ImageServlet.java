@@ -18,6 +18,7 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,7 +36,7 @@ import com.lowagie.text.pdf.PdfStamper;
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
 
-
+@WebServlet(name = "openDocument2Image", urlPatterns = {"/openDocument2Image/*"})
 public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 
 	/**

@@ -18,6 +18,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -75,6 +77,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
@@ -1389,4 +1392,24 @@ public Vector<FileInfo> insertFileMultiple(Domain domain, FileInfo fi) {
 		System.out.println(smc.size());
 		smc.get(domain.getId()).setLastMenuAction(null);
 	}
+	
+	public LinkedList<Attach>  getAttachList(Vector<FileInfo> fileInfoList){
+		return  fileInfoList.stream().map(new attachFiller()).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	private static class attachFiller implements Function<FileInfo, Attach> {
+		
+		@Override
+		public Attach apply(FileInfo r) {
+			return new Attach()
+					.setId(r.getFileId())
+					.setAttachType(AttachType.REGISTRY)
+					.setDescription(r.getTitle())
+					.setDomain(new Domain().setName(r.getDomain()).setId(r.getDomainId()))
+					.setDriveId(r.getDriveId())
+					.setIcon(r.getIcon())
+					.setMimeType(MimeType.values()[r.getMimetype()]);
+		}
+	}
+	
 }

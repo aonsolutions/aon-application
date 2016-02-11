@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -105,5 +106,7 @@ public interface IDocument extends RemoteService{
 	public void selectedMenu(Domain domain);
 	
 	public void clearOuts();
+	
+	public LinkedList<Attach>  getAttachList(Vector<FileInfo> fileInfoList);
 
 }

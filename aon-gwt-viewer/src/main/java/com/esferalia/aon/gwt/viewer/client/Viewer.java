@@ -378,9 +378,6 @@ public abstract class Viewer extends PopupPanel {
 				SharePanel sp = new SharePanel(viewerAttach) {
 					@Override
 					protected void onAccept() {
-						Window.alert("DRIVE "+ isDrive);
-						Window.alert("GMAIL "+ isGmail);
-						Window.alert("EMAIL "+ isEmail);
 						if(isDrive){
 							TextBox tb = (TextBox) content.getWidget(0, 1);
 							hide();
@@ -465,7 +462,6 @@ public abstract class Viewer extends PopupPanel {
 			
 			@Override
 			protected void onDownload() {
-				
 				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_viewer/"
 						+ "?drive_id=" + viewerAttach.getDriveId()
 						+ "&attach_id=" + viewerAttach.getId()
@@ -511,7 +507,6 @@ public abstract class Viewer extends PopupPanel {
 				});				
 			}
 		};
-		
 		viewer.setTitle(attach.getDescription(), Icon.icon(attach.getMimeType().getName()));
 		viewer.setPrevEnabled(index > 0);
 		viewer.setNextEnabled(index < (attachList.size() -1 ));

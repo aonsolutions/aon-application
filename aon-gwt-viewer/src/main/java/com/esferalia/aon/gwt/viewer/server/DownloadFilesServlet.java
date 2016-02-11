@@ -20,7 +20,10 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 
-@WebServlet(name = "DownloadViewer", urlPatterns = { "/aon_gwt_document/gwt_download_viewer/*" })
+@WebServlet(name = "DownloadViewer", urlPatterns = { 
+		"/aon_gwt_document/gwt_download_viewer/*" 
+		,"/aon_gwt_deposit/gwt_download_viewer/*" 
+		,"/aon_gwt_fiscal/gwt_download_viewer/*" })
 public class DownloadFilesServlet extends HttpServlet {
 
 	/**
@@ -31,11 +34,13 @@ public class DownloadFilesServlet extends HttpServlet {
 	@Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException{
 		
-		String driveId = !req.getParameter("drive_id").equals("null") ? req.getParameter("drive_id") : null;
-		Integer attachId = Integer.parseInt(req.getParameter("attach_id"));
-		AttachType attachType = AttachType.values()[Integer.parseInt(req.getParameter("attach_type"))];
 		String attachName = req.getParameter("attach_name");
 		MimeType mimeType = MimeType.values()[Integer.parseInt(req.getParameter("mimetype"))];
+		String driveId = !req.getParameter("drive_id").equals("null") 
+				&& !req.getParameter("drive_id").equals("undefined")  
+				? req.getParameter("drive_id") : null;
+		Integer attachId = Integer.parseInt(req.getParameter("attach_id"));
+		AttachType attachType = AttachType.values()[Integer.parseInt(req.getParameter("attach_type"))];
 		String domainName = req.getParameter("domain_name");
 		Integer domainId = Integer.parseInt(req.getParameter("domain_id"));
 		String login = "";
@@ -49,7 +54,6 @@ public class DownloadFilesServlet extends HttpServlet {
 				.setMimeType(mimeType);
 		
 		byte[] data = getData(attach, login);
-        
         
         File file= AonFileUtils.byteToFile(data, attachName);
         long length = file.length();

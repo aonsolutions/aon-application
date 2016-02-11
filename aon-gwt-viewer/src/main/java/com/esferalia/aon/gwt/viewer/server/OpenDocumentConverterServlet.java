@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +21,7 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
+@WebServlet(name = "openDocumentConverter", urlPatterns = {"/openDocumentConverter/*"})
 public class OpenDocumentConverterServlet extends HttpServlet {
 	/**
 	 * 

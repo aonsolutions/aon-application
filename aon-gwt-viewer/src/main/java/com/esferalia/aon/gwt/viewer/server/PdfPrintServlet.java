@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,7 +27,10 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 
-
+@WebServlet(name = "PrintFiles", urlPatterns = {
+		"/aon_gwt_document/gwt_print/*"
+		, "/aon_gwt_deposit/gwt_print/*"
+		, "/aon_gwt_fiscal/gwt_print/*"})
 public class PdfPrintServlet extends HttpServlet{
 
 	private static final long serialVersionUID = 1L;
@@ -35,8 +39,10 @@ public class PdfPrintServlet extends HttpServlet{
 
 	@Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException{
-
-		String driveId = !req.getParameter("drive_id").equals("null") ? req.getParameter("drive_id") : null;
+		
+		String driveId = !req.getParameter("drive_id").equals("null")
+				&& !req.getParameter("drive_id").equals("undefined") 
+				? req.getParameter("drive_id") : null;
 		Integer attachId = Integer.parseInt(req.getParameter("attach_id"));
 		AttachType attachType = AttachType.values()[Integer.parseInt(req.getParameter("attach_type"))];
 		String attachName = req.getParameter("attach_name");

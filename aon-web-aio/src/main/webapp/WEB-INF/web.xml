@@ -337,35 +337,6 @@
 		<url-pattern>/aon_gwt_document/gwt_download/*</url-pattern>
 	</servlet-mapping>
 
-	<servlet>
-		<servlet-name>PrintFiles</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.viewer.server.PdfPrintServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>PrintFiles</servlet-name>
-		<url-pattern>/aon_gwt_document/gwt_print/*</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>openDocument2Image</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.viewer.server.OpenDocument2ImageServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>openDocument2Image</servlet-name>
-		<url-pattern>/openDocument2Image/*</url-pattern>
-	</servlet-mapping>
-	
-	<servlet>
-		<servlet-name>openDocumentConverter</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.viewer.server.OpenDocumentConverterServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>openDocumentConverter</servlet-name>
-		<url-pattern>/openDocumentConverter/*</url-pattern>
-	</servlet-mapping>
-	
-
-
 	<!-- SignIn with Google Servlet -->
 	<servlet>
 		<servlet-name>OpenIDAuthServlet</servlet-name>
@@ -424,26 +395,6 @@
 		<servlet-name>Common Servlet</servlet-name>
 		<url-pattern>/aon_gwt_office/Common</url-pattern>
 	</servlet-mapping>
-
-
-	<servlet>
-		<servlet-name>Viewer Servlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.viewer.server.ViewerImpl</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Viewer Servlet</servlet-name>
-		<url-pattern>/aon_gwt_fiscal/Viewer</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>Viewer Servlet</servlet-name>
-		<url-pattern>/aon_gwt_document/Viewer</url-pattern>
-	</servlet-mapping>
-		<servlet-mapping>
-		<servlet-name>Viewer Servlet</servlet-name>
-		<url-pattern>/aon_gwt_deposit/Viewer</url-pattern>
-	</servlet-mapping>
-	
-	
 	
 	<servlet>
 		<servlet-name>Fiscal Servlet</servlet-name>
