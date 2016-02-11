@@ -174,6 +174,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 	private boolean helpdeskEnabled;
 	
+	private boolean dsiLoaderEnabled;
+	
 	private List<IControllerListener> listenerClasses;
 	
 	private Scope scope;
@@ -942,6 +944,14 @@ public class CompanyParentController extends BasicController implements ICompany
 		this.helpdeskEnabled = helpdeskEnabled;
 	}
 
+	public boolean isDsiLoaderEnabled() {
+		return dsiLoaderEnabled;
+	}
+	
+	public void setDsiLoaderEnabled(boolean dsiLoaderEnabled) {
+		this.dsiLoaderEnabled = dsiLoaderEnabled;
+	}
+
 	public void setHideHeaderContent( boolean value ) {
 		ConfigurationController cc = AonUtil.getConfigurationController();
 		cc.getProperties().put( ICommonConstants.HIDE_HEADER_LINKS, value );
@@ -1046,6 +1056,10 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 	public boolean obtainHelpdeskEnabled() throws ManagerBeanException {
 		return AppParamUtil.getValueAsBoolean(AppParam.AON_HELPDESK_ENABLED);
+	}
+	
+	public boolean obtainDsiLoaderEnabled() throws ManagerBeanException {
+		return AppParamUtil.getValueAsBoolean(AppParam.AON_DSI_LOADER_ENABLED);
 	}
 
 	private ReportPrintOption getReportPrintOptionValue(AppParam appParam) {

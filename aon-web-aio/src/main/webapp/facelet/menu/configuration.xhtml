@@ -333,37 +333,39 @@
 											</aon:div>
 										</aon:if>
 									</aon:if>
-									<aon:if test="#{aonRole.payroll}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="dsi_import" action="dsi_import_form"
-												title="#{bundle.dsi_import_module}">
-												<aon:outputText styleClass="aon-icon-dsi-gestion"
-													style="white-space: normal; margin-left: 5px; padding-left: 20px;"
-													value="" />
-												<aon:outputText value="#{bundle.dsi_import_module}" />
-											</aon:commandLink>
-										</aon:div>
-									</aon:if>
-									<aon:if test="#{!domainSwitcher.childDomain}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="boe_import" action="boe_import_form"
-												title="#{bundle.boe_import_module}">
-												<aon:outputText styleClass="aon-icon-aeat"
-													style="white-space: normal; margin-left: 5px; padding-left: 20px;"
-													value="" />
-												<aon:outputText value="#{bundle.boe_import_module}" />
-											</aon:commandLink>
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="zip_dsi_import" action="aonZipLoader_form"
-												actionListener="#{aonZipLoader.onStart}"
-												title="Carga de empresas DSI (formato ZIP)">
-												<aon:outputText styleClass="aon-icon-dsi-gestion"
-													style="white-space: normal; margin-left: 5px; padding-left: 20px;"
-													value="" />
-												<aon:outputText value="Carga de empresas DSI (formato ZIP)" />
-											</aon:commandLink>
-										</aon:div>
+									<aon:if test="#{company.dsiLoaderEnabled}">
+										<aon:if test="#{aonRole.payroll}">
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="dsi_import" action="dsi_import_form"
+													title="#{bundle.dsi_import_module}">
+													<aon:outputText styleClass="aon-icon-dsi-gestion"
+														style="white-space: normal; margin-left: 5px; padding-left: 20px;"
+														value="" />
+													<aon:outputText value="#{bundle.dsi_import_module}" />
+												</aon:commandLink>
+											</aon:div>
+										</aon:if>
+										<aon:if test="#{!domainSwitcher.childDomain}">
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="boe_import" action="boe_import_form"
+													title="#{bundle.boe_import_module}">
+													<aon:outputText styleClass="aon-icon-aeat"
+														style="white-space: normal; margin-left: 5px; padding-left: 20px;"
+														value="" />
+													<aon:outputText value="#{bundle.boe_import_module}" />
+												</aon:commandLink>
+											</aon:div>
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="zip_dsi_import" action="aonZipLoader_form"
+													actionListener="#{aonZipLoader.onStart}"
+													title="Carga de empresas DSI (formato ZIP)">
+													<aon:outputText styleClass="aon-icon-dsi-gestion"
+														style="white-space: normal; margin-left: 5px; padding-left: 20px;"
+														value="" />
+													<aon:outputText value="Carga de empresas DSI (formato ZIP)" />
+												</aon:commandLink>
+											</aon:div>
+										</aon:if>
 									</aon:if>
 								</aon:if>
 								<aon:if

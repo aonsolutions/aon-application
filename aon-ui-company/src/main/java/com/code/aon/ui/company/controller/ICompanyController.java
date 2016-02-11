@@ -79,6 +79,9 @@ public interface ICompanyController extends IController {
 	
 	boolean isHelpdeskEnabled();
 	void setHelpdeskEnabled(boolean helpdeskEnabled);
+
+	boolean isDsiLoaderEnabled();
+	void setDsiLoaderEnabled(boolean dsiLoaderEnabled);
 	
 	boolean obtainPrintHeader() throws ManagerBeanException;
 	boolean obtainPrintRecordData() throws ManagerBeanException;
@@ -101,6 +104,7 @@ public interface ICompanyController extends IController {
 	boolean obtainSmartCard() throws ManagerBeanException;
 	void searchCustomReportTemplate() throws ManagerBeanException;
 	boolean obtainHelpdeskEnabled() throws ManagerBeanException;
+	boolean obtainDsiLoaderEnabled() throws ManagerBeanException;
 
 	RegistryAddress getMainAddress();
 	void setPhone(RegistryMedia phone);

@@ -1,5 +1,6 @@
 package com.code.aon.ui.company.event;
 
+import static com.code.aon.common.enumeration.AppParam.AON_DSI_LOADER_ENABLED;
 import static com.code.aon.common.enumeration.AppParam.AON_HELPDESK_ENABLED;
 import static com.code.aon.common.enumeration.AppParam.APP_FPAYMENT_TEMPLATE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_ITEM_TAG_TEMPLATE_PARAM;
@@ -68,6 +69,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 			companyController.setItemTagBarcodePattern(companyController.obtainItemTagBarcodePattern());
 			companyController.setManufacturingOrderTemplateTag(companyController.obtainManufacturingOrderTemplateTag());
 			companyController.setHelpdeskEnabled(companyController.obtainHelpdeskEnabled());
+			companyController.setDsiLoaderEnabled(companyController.obtainDsiLoaderEnabled());
 			companyController.searchCustomReportTemplate();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
@@ -151,6 +153,9 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 
 		// Helpdesk Enabled
 		AppParamUtil.insertParameter(AON_HELPDESK_ENABLED, companyController.isHelpdeskEnabled());
+		
+		// DSI Loader Enabled
+		AppParamUtil.insertParameter(AON_DSI_LOADER_ENABLED, companyController.isDsiLoaderEnabled());
 		
 	}
 	
