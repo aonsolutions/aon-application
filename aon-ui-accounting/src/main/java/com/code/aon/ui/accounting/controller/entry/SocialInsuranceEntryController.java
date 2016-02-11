@@ -134,10 +134,10 @@ public class SocialInsuranceEntryController implements Serializable {
 				if (getEntry().isPaymentAdjustable()) {
 					adjust = adjustSocialInsuranceEntry(entry);
 				}
-				loadAccountEntryController(entry, adjust);
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
+				loadAccountEntryController(entry, adjust);
 			} catch (Exception e) {
 				navigationKey = null;
 				try {
