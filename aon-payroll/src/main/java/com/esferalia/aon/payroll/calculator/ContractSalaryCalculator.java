@@ -14,6 +14,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BA
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
@@ -37,6 +38,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.calculator.TaxCalculator.NotNowException;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
@@ -1065,6 +1067,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			throws SalaryException {
 		ExpressionContext expressionContext = ctx.getExpressionContext();
 		for ( String name : new String []{
+				TC2.getName(),
 				QUOTE_DAYS.getName(),
 				CGC_BASE.getName(), 
 				CGP_BASE.getName(),

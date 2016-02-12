@@ -63,6 +63,7 @@ import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.Variables;
 import com.esferalia.aon.salary.payment.IPayment;
 
@@ -554,20 +555,24 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 
 
 	private void addVariable(String name, ITimedVariable<?> variable) {
-		Period period = variable.getPeriod();
-		Object value = variable.getValue(period);
-		String expression = String.valueOf(value);
 
-		InsertSetStep<SalaryDataRecord> insertData = insertMoreData == null ? dslContext
-				.insertInto(SALARY_DATA) : insertMoreData.newRecord();
+		for ( Period period : Period.sub(variable.getPeriod(), variables.getPeriods(name))){
+			
+			Object value = variable.getValue(period);
+			String expression = String.valueOf(value);
 
-		insertMoreData = insertData.set(SALARY_DATA.DOMAIN, this.domainId)
-				.set(SALARY_DATA.SALARY, this.salaryId)
-				.set(SALARY_DATA.NAME, name)
-				.set(SALARY_DATA.EXPRESSION, expression)
-				.set(SALARY_DATA.START_DATE, toSqlDate(period.getStart()))
-				.set(SALARY_DATA.END_DATE, toSqlDate(period.getEnd()));
-
+			InsertSetStep<SalaryDataRecord> insertData = insertMoreData == null ? dslContext
+					.insertInto(SALARY_DATA) : insertMoreData.newRecord();
+	
+			insertMoreData = insertData.set(SALARY_DATA.DOMAIN, this.domainId)
+					.set(SALARY_DATA.SALARY, this.salaryId)
+					.set(SALARY_DATA.NAME, name)
+					.set(SALARY_DATA.EXPRESSION, expression)
+					.set(SALARY_DATA.START_DATE, toSqlDate(period.getStart()))
+					.set(SALARY_DATA.END_DATE, toSqlDate(period.getEnd()));
+			
+			variables.put(name, new TimedObject<Object>(value, period));
+		}
 	}
 
 	/**
@@ -606,10 +611,10 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 		if (isAlreadyAtSalary(name))
 			return false;
 		
-		if ( variables.get(name, var.getPeriod()) != null )
-			return false;
-		
-		variables.put(name, var);
+//		if ( variables.get(name, var.getPeriod()) != null )
+//			return false;
+//		
+//		variables.put(name, var);
 		
 		return true;
 	}
