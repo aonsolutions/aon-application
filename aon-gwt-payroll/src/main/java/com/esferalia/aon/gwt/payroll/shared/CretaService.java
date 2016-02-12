@@ -325,7 +325,7 @@ public interface CretaService {
 
 		@Override
 		public final String getId() {
-			return getCCC() + getFrom() ;
+			return getCCC() + getFrom() + getType() ;
 		}
 		// ----------------------------------- JSNI (Native JavaScript Methods)
 
@@ -343,6 +343,10 @@ public interface CretaService {
 
 		public final native String getTime() /*-{
 			return this.time;
+		}-*/;
+
+		public final native String getType() /*-{
+		return this.type ? this.type : 'L00';
 		}-*/;
 
 		public final native String getCCC() /*-{

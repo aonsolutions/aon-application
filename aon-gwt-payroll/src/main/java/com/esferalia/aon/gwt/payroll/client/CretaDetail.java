@@ -182,7 +182,7 @@ public abstract class CretaDetail extends Composite {
 
 			@Override
 			String getDescription(JsTrabajadoresYTramos jsTrabajadoresYTramos) {
-				return CretaDetail.this
+				return jsTrabajadoresYTramos.getType() + " " + CretaDetail.this
 						.getDescription(jsTrabajadoresYTramos.getCCC());
 			}
 

@@ -483,6 +483,7 @@ public class CretaServlet extends HttpServlet
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(String.format("\"ccc\":\"%s%s%s\",", l.getCcc().getRegimen(), l.getCcc().getProvincia(),
 				l.getCcc().getNumero()));
+		buffer.append(String.format("\"type\":\"%s\",", l.getTipo()));
 		buffer.append(String.format("\"from\":\"%s\",", toString(l.getPeriodoDesde())));
 		buffer.append(String.format("\"to\":\"%s\",", toString(l.getPeriodoDesde())));
 		buffer.append(String.format("\"date\":\"%s\",", toString(l.getFechaHoraRecaudacion().getFechaRecaudacion())));
@@ -689,12 +690,12 @@ public class CretaServlet extends HttpServlet
 		@Override
 		public void wrongContextVariable(Salary salary, ContextVariable var, Period p, String right, String wrong) {
 			if (right == null)
-				errors.add(new Event().setMessage(
+				warnings.add(new Event().setMessage(
 						format("%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecta. No se esperaba y es '%7$s'",
 								salary.getEmployeeName(), salary.getEmployeeDocument(), salary.getEmployeeSSNumber(),
 								var.getName(), p.getStart(), p.getEnd(), wrong)));
 			else
-				errors.add(new Event().setMessage(
+				warnings.add(new Event().setMessage(
 						format("%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecta. Se esperaba '%7$s' y es '%8$s'",
 								salary.getEmployeeName(), salary.getEmployeeDocument(), salary.getEmployeeSSNumber(),
 								var.getName(), p.getStart(), p.getEnd(), right, wrong)));
@@ -702,7 +703,7 @@ public class CretaServlet extends HttpServlet
 
 		@Override
 		public void noSuchContextVariable(Salary salary, ContextVariable var, Period p, String right) {
-			errors.add(new Event().setMessage(format(
+			warnings.add(new Event().setMessage(format(
 					"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) no encontrada. Se esperaba '%7$s'",
 					// salary.getEnterpriseName(),
 					salary.getEmployeeName(), salary.getEmployeeDocument(), salary.getEmployeeSSNumber(),
@@ -713,7 +714,7 @@ public class CretaServlet extends HttpServlet
 		@Override
 		public void ambigousContextVariable(Salary salary, ContextVariable var, Period p, String right,
 				String... wrongs) {
-			errors.add(new Event().setMessage(format(
+			warnings.add(new Event().setMessage(format(
 					"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) ambigua. Se esperaba '%7$s' y es %8$s",
 					// salary.getEnterpriseName(),
 					salary.getEmployeeName(), salary.getEmployeeDocument(), salary.getEmployeeSSNumber(),
