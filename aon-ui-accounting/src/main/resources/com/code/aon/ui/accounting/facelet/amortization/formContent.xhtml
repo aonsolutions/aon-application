@@ -85,7 +85,7 @@
 				<aon:outputLabel for="Amortization_amortizationType"
 					value="#{bundle.accounting_amortization_type}" />
 				<aon:selectOneMenu id="Amortization_amortizationType"
-					disabled=""
+					required="true"
 					value="#{amortization.to.amortizationType}"
 					reRender="fixedAssetAccount,accumulatedAccount,allocationAccount,percentage,AmortizationDetails"
 					ajaxSingle="true">
