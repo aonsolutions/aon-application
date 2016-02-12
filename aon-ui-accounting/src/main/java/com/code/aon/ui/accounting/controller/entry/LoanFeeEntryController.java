@@ -104,10 +104,10 @@ public class LoanFeeEntryController implements Serializable {
 				entry.setSecurityLevel(getEntry().getLoan().getSecurityLevel());
 				entry = (AccountEntry)entryBean.insert(entry);
 				insertEntryDetails(entry);
-				loadAccountEntryController(entry);
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
+				loadAccountEntryController(entry);
 			} catch (Exception e) {
 				try {
 					HibernateUtil.rollbackTransaction(sessionName);

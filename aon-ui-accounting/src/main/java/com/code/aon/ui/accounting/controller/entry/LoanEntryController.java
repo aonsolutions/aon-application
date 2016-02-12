@@ -115,10 +115,10 @@ public class LoanEntryController implements Serializable {
 				loanBean.insert(getLoan());
 				entry = (AccountEntry)entryBean.insert(entry);
 				insertEntryDetails(entry);
-				loadAccountEntryController(entry);
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
+				loadAccountEntryController(entry);
 			} catch (Exception e) {
 				navigationKey = null;
 				try {
