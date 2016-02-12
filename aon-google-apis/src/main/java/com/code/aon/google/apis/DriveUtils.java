@@ -55,12 +55,14 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.FileContent;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.InputStreamContent;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -605,7 +607,7 @@ public class DriveUtils implements IBlobManager {
 				}
 				if(file != null){
 					InputStream data = downloadFile(drive, file);
-					return Utils.InputStreamToByte(data);
+					return AonIOUtils.toByteArray(data);
 				}
 			} catch (IOException | GeneralSecurityException e) {
 				e.printStackTrace();
@@ -622,7 +624,7 @@ public class DriveUtils implements IBlobManager {
 				}
 				if(file != null){
 					InputStream data = downloadFile(drive, file);
-					return Utils.InputStreamToByte(data);
+					return AonIOUtils.toByteArray(data);
 				}
 			} catch (IOException | GeneralSecurityException e) {
 				e.printStackTrace();
@@ -639,7 +641,7 @@ public class DriveUtils implements IBlobManager {
 				}
 				if(file != null){
 					InputStream data = downloadFile(drive, file);
-					return Utils.InputStreamToByte(data);
+					return AonIOUtils.toByteArray(data);
 				}
 			} catch (IOException | GeneralSecurityException e) {
 				e.printStackTrace();
@@ -765,11 +767,22 @@ public class DriveUtils implements IBlobManager {
 				.setTitle(driveFile.getDescription())
 				.setMimeType(driveFile.getMimetype());
 		if(parents != null) fileAux.setParents(parents);
-
+		
 		FileContent mediaContent = new FileContent(driveFile.getMimetype(), file);
 		return drive.files().insert(fileAux, mediaContent).execute();
 	}
 
+	public static File insertFile(Drive drive, InputStream is,
+			DriveFile driveFile, List<ParentReference> parents) throws IOException{
+		File fileAux = new File()
+				.setTitle(driveFile.getDescription())
+				.setMimeType(driveFile.getMimetype());
+		if(parents != null) fileAux.setParents(parents);
+
+		InputStreamContent isc = new InputStreamContent(driveFile.getMimetype(), is);
+		return drive.files().insert(fileAux, isc).execute();
+	}
+	
 	public static File updateFile(FileInfo fileInfo) throws IOException, KeyStoreException, GeneralSecurityException {
 		Domain domain = getDomain();
 		File file = null;
@@ -787,13 +800,12 @@ public class DriveUtils implements IBlobManager {
 		file.setModifiedDate(new DateTime(new Date()));
 
 		// File's content.
-		java.io.File fileContent = Utils.InputStreamToFile(fileInfo);
-		FileContent mediaContent = new FileContent(file.getMimeType(),
-				fileContent);
+		ByteArrayInputStream bais = new ByteArrayInputStream(fileInfo.getData());
+		InputStreamContent isc = new InputStreamContent(file.getMimeType(), bais);
 
 		try {
 			file = client.files()
-					.update(fileInfo.getDriveId(), file, mediaContent)
+					.update(fileInfo.getDriveId(), file, isc)
 					.execute();
 			return file;
 		} catch (IOException e) {
@@ -801,7 +813,7 @@ public class DriveUtils implements IBlobManager {
 				DomainGserviceaccount g = DBConsults.getServiceAccount(domain, new User().setLogin(""));
 				Drive drive = DriveUtils.serviceInitializeOld(g);
 				file = drive.files()
-						.update(fileInfo.getDriveId(), file, mediaContent)
+						.update(fileInfo.getDriveId(), file, isc)
 						.execute();
 				return file;
 			} catch (IOException e1) {
@@ -897,7 +909,7 @@ public class DriveUtils implements IBlobManager {
 		// PRINCIPAL!!!!!!
 		
 		InputStream is = rattach.getData();
-		byte data [] = Utils.InputStreamToByte(is);
+		byte data [] = AonIOUtils.toByteArray(is);
 		is.close();
 		
 		FileInfo fileInfo = new FileInfo("registry", rattach.getType(),
@@ -1331,7 +1343,7 @@ public class DriveUtils implements IBlobManager {
 				}
 				if ( file != null ) {
 					data = downloadFile(drive, file);
-					return Utils.InputStreamToByte(data);
+					return AonIOUtils.toByteArray(data);
 				}
 			} catch (IOException e) {
 				LOGGER.error(e.getMessage(), e);					

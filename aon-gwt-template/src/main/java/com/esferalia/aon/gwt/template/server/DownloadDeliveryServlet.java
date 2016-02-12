@@ -4,9 +4,8 @@ import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 
 import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -63,7 +62,7 @@ public class DownloadDeliveryServlet extends HttpServlet {
         String description = p_request.getParameter("description");
         String code = p_request.getParameter("code");
         String category = p_request.getParameter("category");
-        //String tags1 = p_request.getParameter("tags");
+
         String vat = p_request.getParameter("vat");
         String retention = p_request.getParameter("retention");
         String purchaseAccount = p_request.getParameter("purchaseAccount");
@@ -88,7 +87,6 @@ public class DownloadDeliveryServlet extends HttpServlet {
         String profitPercent = p_request.getParameter("profitPercent");
         String price = p_request.getParameter("price");
         String itemStatuses = p_request.getParameter("itemStatuses");
-        //String supplierCode = p_request.getParameter("supplierCode");
         
     	String creationUser = p_request.getParameter("creationUser");
     	String creationDate1 = p_request.getParameter("creationDate1");
@@ -116,24 +114,15 @@ public class DownloadDeliveryServlet extends HttpServlet {
         }
         else return;
         
-        File f = new File("/tmp/"+name+".xml"); 
-        try {
-			org.apache.commons.io.FileUtils.writeByteArrayToFile(f,b);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
         TemplateInfo aux = null;
 		try {
-			aux = com.esferalia.aon.gwt.template.server.Utils.readxml(f);
+			aux = com.esferalia.aon.gwt.template.server.Utils.readxml(new ByteArrayInputStream(b));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-        File archivoXLS = new File(name + ".xls" );
-        if(archivoXLS.exists()) archivoXLS.delete();
-        archivoXLS.createNewFile();        
         HSSFWorkbook libro = new HSSFWorkbook();
-        FileOutputStream archivo = new FileOutputStream(archivoXLS);
+        ByteArrayOutputStream archivo = new ByteArrayOutputStream();
         HSSFSheet hoja = libro.createSheet("Plantilla 1");
         
         Integer columns = aux.getColumns().size();
@@ -401,7 +390,6 @@ public class DownloadDeliveryServlet extends HttpServlet {
 				e.printStackTrace();
 			}
         }
-        //TODO 
         
         Vector<ProductInfo> v =  DBProduct.getProducts(domainName,domainId,c, login);
 
@@ -449,15 +437,15 @@ public class DownloadDeliveryServlet extends HttpServlet {
         for(Integer h = 0; h< columns;h++){
         	hoja.autoSizeColumn(h);
         }
-        libro.write(archivo);        
+        libro.write(archivo); 
+        byte[] data = archivo.toByteArray();
         archivo.close();
         libro.close();
 
-        long length = archivoXLS.length();
-        FileInputStream fis = new FileInputStream(archivoXLS);
+        Integer length = data.length;
+        ByteArrayInputStream bais = new ByteArrayInputStream(data);
         
-        p_response.addHeader("Content-Disposition","attachment; filename=\"" + archivoXLS.getName() +"\"");
-        //p_response.setContentType("application/octet-stream");
+        p_response.addHeader("Content-Disposition","attachment; filename=\"" + name +".xls" +"\"");
         p_response.setContentType("application/msexcel");
 
         if (length > 0 && length <= Integer.MAX_VALUE);
@@ -466,14 +454,14 @@ public class DownloadDeliveryServlet extends HttpServlet {
         p_response.setBufferSize(32768);
         int bufSize = p_response.getBufferSize();
         byte[] buffer = new byte[bufSize];
-        BufferedInputStream bis = new BufferedInputStream(fis,bufSize);
+        BufferedInputStream bis = new BufferedInputStream(bais,bufSize);
         int bytes;
         while ((bytes = bis.read(buffer, 0, bufSize)) >= 0)
             out.write(buffer, 0, bytes);
         
         
         bis.close();
-        fis.close();
+        bais.close();
         out.flush();
         out.close();
     }

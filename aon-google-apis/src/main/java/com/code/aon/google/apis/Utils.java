@@ -1,10 +1,6 @@
 package com.code.aon.google.apis;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.Date;
@@ -20,16 +16,13 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.google.apis.jooq.DBCalendar;
 import com.code.aon.google.apis.jooq.DBConsults;
-import com.esferalia.aon.google.sql.AbstractSQL.Rattach;
 import com.esferalia.aon.occam.api.model.CommercialTracking;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.gmail.Gmail;
@@ -69,56 +62,6 @@ public class Utils{
 
 			return pswd;
 		}
-	}
-	
-	public static File InputStreamToFile(Rattach rattach) throws IOException{
-		byte[] data = IOUtils.toByteArray(rattach.getData());
-		File aux = new File("/tmp/" + rattach.getDescription() );
-		if(!aux.isDirectory())
-		org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
-		return aux;
-	}
-	
-	public static File InputStreamToFile(FileInfo fileInfo) throws IOException{
-		System.out.println(fileInfo.getData());
-		
-		byte[] data = fileInfo.getData();
-
-		File aux = new File("/tmp/"+ fileInfo.getTitle());		
-		
-		if(!aux.isDirectory())
-			//Apache commons
-			org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
-		
-		//Google Guava
-		//Files.write(data, aux);
-		
-		return aux;
-		
-	}
-	
-	public static File InputStreamToFile(Attach attach) throws IOException{
-		System.out.println(attach.getData());
-		byte[] data = attach.getData();
-		File aux = new File("/tmp/"+ attach.getDescription());		
-		if(!aux.isDirectory())
-			//Apache commons
-			org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
-		return aux;
-	}
-	
-	public static byte[] InputStreamToByte(InputStream file) throws IOException{
-		
-		byte[] data=IOUtils.toByteArray(file);
-		return data;
-		
-		
-		
-	}
-	
-	public static InputStream fileToInputStream(File file) throws FileNotFoundException{
-		InputStream is = new FileInputStream(file);
-		return is;
 	}
 
 	/************************************ QUICKSORT *********************************/
@@ -185,8 +128,7 @@ public class Utils{
 
 	/******************************* CHECK GMAIL *******************************/
 	
-	public static Boolean isGmail(String email) throws NamingException{
-		  
+	public static Boolean isGmail(String email) throws NamingException{ 
 		Integer pos= email.indexOf("@");
 		String username = email.substring(0, pos);
 		String hostname = email.substring(pos+1);
@@ -194,23 +136,18 @@ public class Utils{
 		int i=0;
 		if (attr!=null){
 			while(i<attr.size()){
-				
 				String a = (String) attr.get(i);
 				if(StringUtils.containsIgnoreCase(a, "google.com") || StringUtils.containsIgnoreCase(a, "googlemail.com")){
 					return true;
 				}
-				/*if (a.contains("google.com") || a.contains("googlemail.com")){
-					return true;
-				}*/
 				i++;
 			}
-		}
-		  
-		  return false;	  
-	  }
+		} 
+		return false;	  
+	}
 	  
 	  static Attribute doLookup( String hostName ) throws NamingException {
-	    Hashtable env = new Hashtable();
+	    Hashtable<String, String> env = new Hashtable<String, String>();
 	    env.put("java.naming.factory.initial",
 	            "com.sun.jndi.dns.DnsContextFactory");
 	    DirContext ictx = new InitialDirContext( env );
@@ -223,25 +160,15 @@ public class Utils{
 	  
 	  public static String toDay(Integer i){
 			String day="";
-			
 			switch (i) {
-			case 1:
-				day = "Lun.";break;
-			case 2:
-				day = "Mar.";break;
-			case 3:
-				day = "Mie.";break;
-			case 4:
-				day = "Jue.";break;
-			case 5:
-				day = "Vie.";break;
-			case 6:
-				day = "Sab.";break;
-			case 7:
-				day = "Dom.";break;
-
-			default:
-				break;
+			case 1: day = "Lun.";break;
+			case 2: day = "Mar.";break;
+			case 3: day = "Mie.";break;
+			case 4: day = "Jue.";break;
+			case 5: day = "Vie.";break;
+			case 6: day = "Sab.";break;
+			case 7: day = "Dom.";break;
+			default: break;
 			}
 			return day;
 		}
@@ -249,32 +176,19 @@ public class Utils{
 		public static String toMonth(String month){
 			String month2="";
 			switch (month) {
-			case "01":
-				month2 = "Ene.";break;
-			case "02":
-				month2 = "Feb.";break;
-			case "03":
-				month2 = "Mar.";break;
-			case "04":
-				month2 = "Abr.";break;
-			case "05":
-				month2 = "May.";break;
-			case "06":
-				month2 = "Jun.";break;
-			case "07":
-				month2 = "Jul.";break;
-			case "08":
-				month2 = "Ago.";break;
-			case "09":
-				month2 = "Sep.";break;
-			case "10":
-				month2 = "Oct.";break;
-			case "11":
-				month2 = "Nov.";break;
-			case "12":
-				month2 = "Dic.";break;
-			default:
-				break;
+			case "01": month2 = "Ene.";break;
+			case "02": month2 = "Feb.";break;
+			case "03": month2 = "Mar.";break;
+			case "04": month2 = "Abr.";break;
+			case "05": month2 = "May.";break;
+			case "06": month2 = "Jun.";break;
+			case "07": month2 = "Jul.";break;
+			case "08": month2 = "Ago.";break;
+			case "09": month2 = "Sep.";break;
+			case "10": month2 = "Oct.";break;
+			case "11": month2 = "Nov.";break;
+			case "12": month2 = "Dic.";break;
+			default: break;
 			}
 			return month2;
 		}
@@ -356,9 +270,6 @@ public class Utils{
 					
 				+ "</div></div>"
 				;
-			
-				String msg2 = "<div> <b>hola</b>agagas</div>";
-				//String msg = "<div class='aHl'><div class='aRb'><div id=':10m'><table class='cf aU9' cellpadding='0'><tbody><tr><td class='aRi'><div class='aU5'><span class='aRh'>Mar.</span><span class='aRg'>10</span><span class='aRj'>Mar.</span></div></td><td style='width:52%' class='aU4'><div class='aRo'>adgafga</div><div class='aRn'><a class='e' href='http://www.google.com/calendar/render?action=VIEW&amp;eid=cXBpc3JjOHU1bW90c2x0OXYxaWQ4cXB0bmMgYWliYW5lekBhb25zb2x1dGlvbnMuZXM&amp;ctok=YWliYW5lekBhb25zb2x1dGlvbnMuZXM' target='_blank'>Míralo en Google Calendar</a></div><table class='cf aU2'><tbody><tr><td class='aRk'>Cuándo</td><td id=':10p' class='aU6'>mar 10 de Mar 12pm – jue 19 de Mar de 2015 12pm (CET)</td></tr><tr><td class='aRk'>Ubicación</td><td id=':yp' class='aU6'>sgsa</td></tr><tr><td class='aRk'>Participantes</td><td id=':yg' class='aU6'><span class='cD'>procom-glo<wbr>bal4.aiban<wbr>ez.net*</span></td></tr></tbody></table><div class='aRm'><span id=':11t'><div id=':ym' class='T-I J-J5-Ji aQ9 T-I-ax7 T-I-Js-IF L3' role='button' tabindex='0'>Sí</div><div id=':10l' class='T-I J-J5-Ji aQ9 T-I-ax7 T-I-Js-Gs T-I-Js-IF L3' role='button' tabindex='0'>Quizás</div><div id=':x5' class='T-I J-J5-Ji aQ9 T-I-ax7 T-I-Js-Gs L3' role='buttontabindex='0'>No</div></span></div></td><td class='aRc'><div class='aQ3'><div class='aRo'>Agenda</div><div class='aRn'>mar 10 de Mar de 2015</div><table id=':zs' class='cf aU2' style='table-layout:auto'><tbody><tr class='aU0'><td class='aQ5' colspan='2'><i>No hay eventos anteriores.</i></td></tr><tr class='aQ6'><td class='aQ4'>12pm</td><td class='aQ5'>adgafga</td></tr><tr class='aU1'><td class='aQ5' colspan='2'><i>No hay eventos posteriores.</i></td></tr></tbody></table></div></td></tr></tbody></table></div></div></div>";
 				DomainGserviceaccount g = DBConsults.getServiceAccount(domain, new User().setLogin(""));
 				Gmail service = GmailUtils.serviceInitialize(g);
 			

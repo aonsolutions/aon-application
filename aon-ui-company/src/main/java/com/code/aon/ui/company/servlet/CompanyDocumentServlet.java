@@ -1,8 +1,7 @@
 package com.code.aon.ui.company.servlet;
 
 import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.sql.Connection;
 
@@ -28,7 +27,6 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.watson.server.io.AonFileUtils;
 
 public class CompanyDocumentServlet extends HttpServlet {
 
@@ -122,13 +120,11 @@ public class CompanyDocumentServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest req, HttpServletResponse res)throws ServletException, IOException {
 		Attach attach = getAttachment(req);
-		if ( attach != null ) {
-			File file = File.createTempFile(attach.getDescription(),"." + attach.getMimeType().getExtension());
-			AonFileUtils.writeByteArrayToFile(file, attach.getData());
-			long length = file.length();
-			FileInputStream fis = new FileInputStream(file);
+		if ( attach != null ) {			
+			Integer length = attach.getData().length;
+			ByteArrayInputStream bais = new ByteArrayInputStream(attach.getData());
 		       
-		    res.addHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
+		    res.addHeader("Content-Disposition","attachment; filename=\"" + attach.getDescription() +"\"");
 		    //p_response.setContentType("application/octet-stream");
 		    res.setContentType(attach.getMimeType().getName());
 
@@ -139,14 +135,14 @@ public class CompanyDocumentServlet extends HttpServlet {
 	        res.setBufferSize(32768);
 	        int bufSize = res.getBufferSize();
 	        byte[] buffer = new byte[bufSize];
-	        BufferedInputStream bis = new BufferedInputStream(fis,bufSize);
+	        BufferedInputStream bis = new BufferedInputStream(bais,bufSize);
 	        int bytes;
 	        while ((bytes = bis.read(buffer, 0, bufSize)) >= 0)
 	        	out.write(buffer, 0, bytes);
 		        	
 		        
 	        bis.close();
-	        fis.close();
+	        bais.close();
 	        out.flush();
 	        out.close();
 		}

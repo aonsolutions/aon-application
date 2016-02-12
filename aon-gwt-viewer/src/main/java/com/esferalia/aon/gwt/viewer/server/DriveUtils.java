@@ -105,7 +105,8 @@ public class DriveUtils {
 	}
 	
 	public static File getDriveFile(Attach attach, User user){
-		return getDriveFile(attach.getDomain(), user, attach.getDriveId(), attach.getId(), attach.getAttachType());
+		Domain domain = AON.getDomain(attach.getDomain().getName(), attach.getDomain().getId(), user.getLogin());
+		return getDriveFile(domain, user, attach.getDriveId(), attach.getId(), attach.getAttachType());
 	}
 	
 	public static byte[] getByteFile(Attach attach, User user){

@@ -1,9 +1,8 @@
 package com.esferalia.aon.gwt.document.server;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.FileInfo;
-import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBDrive;
 import com.code.aon.ui.google.apis.controller.GoogleDriveController;
 import com.code.aon.ui.util.AonUtil;
@@ -28,6 +26,7 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.document.jooq.DBConsults;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.google.api.services.drive.Drive;
 
 public class DownloadFilesServlet extends HttpServlet {
@@ -75,7 +74,7 @@ public class DownloadFilesServlet extends HttpServlet {
         					com.google.api.services.drive.model.File file =
         							DriveUtils.getFile(drive, fi2.getDriveId());
         					InputStream in = DriveUtils.downloadFile(drive, file);
-        	    			b = Utils.InputStreamToByte(in);
+        	    			b = AonIOUtils.toByteArray(in);
         				} else {
         					b = DriveUtils.getByteFile(domain, user, fi2.getDriveId(), fi2.getFileId());
         				}
@@ -113,7 +112,7 @@ public class DownloadFilesServlet extends HttpServlet {
 				com.google.api.services.drive.model.File file =
 						DriveUtils.getFile(drive, driveId);
 				InputStream in = DriveUtils.downloadFile(drive, file);
-    			b = Utils.InputStreamToByte(in);
+    			b = AonIOUtils.toByteArray(in);
         	}
         	else{
         		b = DriveUtils.getByteFile(domain, user, driveId, idFile);
@@ -127,13 +126,12 @@ public class DownloadFilesServlet extends HttpServlet {
 			fi = DBConsults.getDataAndName(domain, user, id);
         }
         else return;
-        
-        File file=Utils.InputStreamToFile(fi) ; /* however you choose to go about resolvingfilename */
+      
+        Integer length = fi.getData().length;
 
-        long length = file.length();
-        FileInputStream fis = new FileInputStream(file);
+        ByteArrayInputStream bais = new ByteArrayInputStream(fi.getData());
         
-        p_response.addHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"."+MimeType.values()[m].getExtension()+"\"");
+        p_response.addHeader("Content-Disposition","attachment; filename=\"" + fi.getTitle() +"."+MimeType.values()[m].getExtension()+"\"");
         //p_response.setContentType("application/octet-stream");
         p_response.setContentType(mimetype);
 
@@ -143,14 +141,14 @@ public class DownloadFilesServlet extends HttpServlet {
         p_response.setBufferSize(32768);
         int bufSize = p_response.getBufferSize();
         byte[] buffer = new byte[bufSize];
-        BufferedInputStream bis = new BufferedInputStream(fis,bufSize);
+        BufferedInputStream bis = new BufferedInputStream(bais,bufSize);
         int bytes;
         while ((bytes = bis.read(buffer, 0, bufSize)) >= 0)
             out.write(buffer, 0, bytes);
         
         
         bis.close();
-        fis.close();
+        bais.close();
         out.flush();
         out.close();
     }}

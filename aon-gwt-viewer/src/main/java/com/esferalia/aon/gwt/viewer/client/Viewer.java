@@ -352,7 +352,10 @@ public abstract class Viewer extends PopupPanel {
 					}
 					@Override
 					public void onFailure(Throwable caught) {
-						print(caught.getMessage());
+						String head = "com.esferalia.aon.gwt.viewer.client.Viewer"
+								+ " - getViewer(final Attach attach, final Integer index, final LinkedList<Attach> attachList)"
+								+ " - onZoomPlus - getAsHTML";
+						print(head, caught.getMessage());
 						hideLoad();
 					}
 				});
@@ -369,7 +372,10 @@ public abstract class Viewer extends PopupPanel {
 					}
 					@Override
 					public void onFailure(Throwable caught) {
-						print(caught.getMessage());
+						String head = "com.esferalia.aon.gwt.viewer.client.Viewer"
+								+ " - getViewer(final Attach attach, final Integer index, final LinkedList<Attach> attachList)"
+								+ " - onZoomMinus - getAsHTML";
+						print(head, caught.getMessage());
 						hideLoad();
 					}
 				});
@@ -386,7 +392,10 @@ public abstract class Viewer extends PopupPanel {
 							VIEWER_IMPL.share(tb.getText(), viewerAttach, new AsyncCallback<Void>() {
 								@Override public void onSuccess(Void result) {}
 								@Override public void onFailure(Throwable caught) {
-									print(caught.getMessage());
+									String head = "com.esferalia.aon.gwt.viewer.client.Viewer"
+											+ " - getViewer(final Attach attach, final Integer index, final LinkedList<Attach> attachList)"
+											+ " - onShare - share";
+									print(head, caught.getMessage());
 								}
 							});
 						} else if(isGmail){
@@ -397,7 +406,10 @@ public abstract class Viewer extends PopupPanel {
 							VIEWER_IMPL.sendGmail(tb1.getText(), tb2.getText(), ta.getText(), viewerAttach, new AsyncCallback<Void>() {
 								@Override public void onSuccess(Void result) {}
 								@Override public void onFailure(Throwable caught) {
-									print(caught.getMessage());
+									String head = "com.esferalia.aon.gwt.viewer.client.Viewer"
+											+ " - getViewer(final Attach attach, final Integer index, final LinkedList<Attach> attachList)"
+											+ " - onShare - sendGmail";
+									print(head, caught.getMessage());
 								}
 							});						
 						} else if(isEmail){
@@ -409,7 +421,10 @@ public abstract class Viewer extends PopupPanel {
 							VIEWER_IMPL.sendEmail(attach.getDomain(), lb.getSelectedValue(), tb1.getText(), tb2.getText(), ta.getText(), viewerAttach, new AsyncCallback<Void>() {
 								@Override public void onSuccess(Void result) {}
 								@Override public void onFailure(Throwable caught) {
-									print(caught.getMessage());
+									String head = "com.esferalia.aon.gwt.viewer.client.Viewer"
+											+ " - getViewer(final Attach attach, final Integer index, final LinkedList<Attach> attachList)"
+											+ " - onShare - sendEmail";
+									print(head, caught.getMessage());
 								}
 							});	
 						}
@@ -480,7 +495,10 @@ public abstract class Viewer extends PopupPanel {
 					}
 					@Override
 					public void onFailure(Throwable caught) {
-						print(caught.getMessage());
+						String head = "com.esferalia.aon.gwt.viewer.client.Viewer"
+								+ " - getViewer(final Attach attach, final Integer index, final LinkedList<Attach> attachList)"
+								+ " - onChange - getAsHTML";
+						print(head, caught.getMessage());
 						hideLoad();
 					}
 				});				
@@ -500,16 +518,19 @@ public abstract class Viewer extends PopupPanel {
 			}
 			@Override
 			public void onFailure(Throwable caught) {
-				print(caught.getMessage());
+				String head = "com.esferalia.aon.gwt.viewer.client.Viewer"
+						+ " - getViewer(final Attach attach, final Integer index, final LinkedList<Attach> attachList)"
+						+ " - getAsHTML";
+				print(head, caught.getMessage());
 				viewer.hideLoad();
 			}
 		});
 		return viewer;
 	}
 	
-	private static void print(String msg) {
+	private static void print(String head, String msg) {
 		final IViewerAsync VIEWER_IMPL = GWT.create(IViewer.class);
-		VIEWER_IMPL.print(msg, new AsyncCallback<Void>() {
+		VIEWER_IMPL.print(head, msg, new AsyncCallback<Void>() {
 			@Override public void onSuccess(Void result) {}
 			@Override public void onFailure(Throwable caught) {}
 		});

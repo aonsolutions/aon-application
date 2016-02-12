@@ -1,9 +1,7 @@
 package com.esferalia.aon.gwt.template.server;
 
 import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -29,6 +27,7 @@ import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 
 @WebServlet(name = "DownloadTemplates", urlPatterns = { "/aon_gwt_template/gwt_download/*" })
 public class DownloadTemplatesServlet extends HttpServlet {
@@ -61,24 +60,15 @@ public class DownloadTemplatesServlet extends HttpServlet {
         }
         else return;
         
-        File f = new File("/tmp/"+name+".xml"); 
-        try {
-			org.apache.commons.io.FileUtils.writeByteArrayToFile(f,b);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
         TemplateInfo aux = null;
 		try {
-			aux = com.esferalia.aon.gwt.template.server.Utils.readxml(f);
+			aux = com.esferalia.aon.gwt.template.server.Utils.readxml(new ByteArrayInputStream(b));
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-
-        File archivoXLS = new File(name + ".xls" );
-        if(archivoXLS.exists()) archivoXLS.delete();
-        archivoXLS.createNewFile();        
-        HSSFWorkbook libro = new HSSFWorkbook();
-        FileOutputStream archivo = new FileOutputStream(archivoXLS);
+		}   
+  
+		HSSFWorkbook libro = new HSSFWorkbook();
+        ByteArrayOutputStream archivo = new ByteArrayOutputStream();
         HSSFSheet hoja = libro.createSheet("Plantilla 1");
         Integer columns = aux.getColumns().size();
 
@@ -137,15 +127,15 @@ public class DownloadTemplatesServlet extends HttpServlet {
         for(Integer h = 0; h< columns;h++){
         	hoja.autoSizeColumn(h);
         }
-        libro.write(archivo);        
+        libro.write(archivo);       
+        byte[] data = archivo.toByteArray();
         archivo.close();
         libro.close();
 
-        long length = archivoXLS.length();
-        FileInputStream fis = new FileInputStream(archivoXLS);
+        Integer length = data.length;
+        ByteArrayInputStream bais = new ByteArrayInputStream(data);
         
-        p_response.addHeader("Content-Disposition","attachment; filename=\"" + archivoXLS.getName() +"\"");
-        //p_response.setContentType("application/octet-stream");
+        p_response.addHeader("Content-Disposition","attachment; filename=\"" + name + ".xls" +"\"");
         p_response.setContentType("application/msexcel");
 
         if (length > 0 && length <= Integer.MAX_VALUE);
@@ -154,18 +144,14 @@ public class DownloadTemplatesServlet extends HttpServlet {
         p_response.setBufferSize(32768);
         int bufSize = p_response.getBufferSize();
         byte[] buffer = new byte[bufSize];
-        BufferedInputStream bis = new BufferedInputStream(fis,bufSize);
+        BufferedInputStream bis = new BufferedInputStream(bais,bufSize);
         int bytes;
         while ((bytes = bis.read(buffer, 0, bufSize)) >= 0)
             out.write(buffer, 0, bytes);
         
-        
         bis.close();
-        fis.close();
+        bais.close();
         out.flush();
         out.close();
-        
-       //TODO probar --->  libro.close();
-
     }
-	}
+}

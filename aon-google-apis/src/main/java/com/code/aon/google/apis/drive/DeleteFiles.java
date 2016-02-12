@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.google.apis.DriveUtils;
-import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DBSync;
 import com.code.aon.pool.AonConnectionException;
@@ -30,6 +29,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
@@ -162,7 +162,7 @@ public class DeleteFiles {
 			else{
 				if(!f.getMimeType().equals("application/vnd.google-apps.folder")){
 					InputStream data = DriveUtils.downloadFile(drive, f);
-					insertBlobs(Utils.InputStreamToByte(data), f.getId(), domain, idAux);
+					insertBlobs(AonIOUtils.toByteArray(data), f.getId(), domain, idAux);
 				}
 				drive.files().delete(f.getId()).execute();
 		

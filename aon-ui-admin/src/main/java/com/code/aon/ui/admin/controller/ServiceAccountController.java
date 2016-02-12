@@ -22,6 +22,8 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.type.DomainType;
+import com.esferalia.aon.watson.server.io.AonFileUtils;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 public class ServiceAccountController extends BasicController {
 
@@ -164,14 +166,8 @@ public class ServiceAccountController extends BasicController {
 	}
 	
 	public void fileUploaded(UploadEvent event) throws IOException {
-		
 		setAonFile(AttachmentUtil.fileUploaded(event));
-		
-		Utils.InputStreamToByte(aonFile.openStream());
-		data =	Utils.InputStreamToByte(aonFile.openStream());
-		//setData(f);
-		//upload.setData(event.getUploadItem().getData());
-		
+		data =	AonIOUtils.toByteArray(aonFile.openStream());
 	}
 
 	public ServiceAccount getUpload() {

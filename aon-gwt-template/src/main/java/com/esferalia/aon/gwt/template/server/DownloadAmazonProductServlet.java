@@ -1,9 +1,8 @@
 package com.esferalia.aon.gwt.template.server;
 
 import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 
@@ -55,8 +54,7 @@ public class DownloadAmazonProductServlet extends HttpServlet{
 				.and(f.getTypeProperty().eq(RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value())),
 				AttachType.REGISTRY);
 		
-		File xlsFile = File.createTempFile("AmazonProducts"+domainId, ".xls");
-		FileOutputStream outFile = new FileOutputStream(xlsFile);
+		ByteArrayOutputStream outFile = new ByteArrayOutputStream();
 		
 		HSSFWorkbook book = new HSSFWorkbook();
 		HSSFSheet sheet = book.createSheet("Template");
@@ -97,16 +95,16 @@ public class DownloadAmazonProductServlet extends HttpServlet{
 				sheet.autoSizeColumn(h);
 			}	
 		}
-		book.write(outFile);        
+		book.write(outFile);    
+		byte[] data = outFile.toByteArray();
 		outFile.close();
 		book.close();
 		
 		
-		long length = xlsFile.length();
-		FileInputStream fis = new FileInputStream(xlsFile);
+		Integer length = data.length;
+		ByteArrayInputStream bais = new ByteArrayInputStream(data);
         
-        p_response.addHeader("Content-Disposition","attachment; filename=\"" + xlsFile.getName() +"\"");
-        //p_response.setContentType("application/octet-stream");
+        p_response.addHeader("Content-Disposition","attachment; filename=\"" + "AmazonProducts"+domainId + ".xls" +"\"");
         p_response.setContentType("application/msexcel");
 
         if (length > 0 && length <= Integer.MAX_VALUE);
@@ -115,15 +113,14 @@ public class DownloadAmazonProductServlet extends HttpServlet{
         p_response.setBufferSize(32768);
         int bufSize = p_response.getBufferSize();
         byte[] buffer = new byte[bufSize];
-        BufferedInputStream bis = new BufferedInputStream(fis,bufSize);
+        BufferedInputStream bis = new BufferedInputStream(bais,bufSize);
         int bytes;
         while ((bytes = bis.read(buffer, 0, bufSize)) >= 0)
             out.write(buffer, 0, bytes);
         
         bis.close();
-        fis.close();
+        bais.close();
         out.flush();
         out.close();
-        xlsFile.delete();
 	}
 }

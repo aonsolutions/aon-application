@@ -1,5 +1,9 @@
 package com.esferalia.aon.gwt.viewer.server;
 
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -16,6 +20,7 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import javax.imageio.ImageIO;
 import javax.servlet.annotation.WebServlet;
 
 import org.apache.http.NameValuePair;
@@ -54,17 +59,23 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 	
 	@Override
 	public String getAsHTML(Attach attach, int zoom) {
-		
+		System.out.println("VIEWER TRACE -> A - Llega al rpc servlet getAsHTML." );
 		IDocument2HtmlConverter converter;
+		System.out.println("VIEWER TRACE -> B - Continua.");
 		if(attach.getDriveId() != null || attach.getData() != null || 
 				(attach.getId() != null && attach.getAttachType() != null)){
-			
+			System.out.println("VIEWER TRACE -> C - driveId:"+ attach.getDriveId());
 			if(attach.getDriveId() == null && attach.getData() == null){
 				Integer attachId = attach.getId();
 				attach = AON.getAttach(attach.getDomain().getName(), attach.getDomain().getId(), "",
 						f-> f.getIdProperty().eq(attachId), attach.getAttachType());
 			}
-			if(attach.getMd5() == null) attach.setMd5(getMd5(attach));
+			System.out.println("VIEWER TRACE -> D - md5:"+ attach.getMd5());
+			if(attach.getMd5() == null) {
+				attach.setMd5(getMd5(attach));
+				System.out.println("VIEWER TRACE -> E - getMd5() : "+ attach.getMd5());
+			}
+			System.out.println("VIEWER TRACE -> F - mimeType : " +  attach.getMimeType());
 			converter = getDocument2HtmlConverter(attach);
 		} else converter = Error2HtmlConverter.INSTANCE; 
 	
@@ -74,6 +85,7 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 			os.flush();
 			return os.toString();
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -157,18 +169,31 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 			PDFFile pdfFile = OpenDocument2ImageServlet.getPDFFile(attach);
 			Integer page = pdfFile.getNumPages();
 			
-			for(Integer i = 1; i<= page; i++){
-				PDFPage pdfPage = pdfFile.getPage(i);
-				double width =  pdfPage.getBBox().getWidth() * zoom / 100;
-				double height = pdfPage.getBBox().getHeight() * zoom / 100;
+			Boolean error = pdf2ImageBool(pdfFile, os, page, "png", zoom);
+			
+			if(!error){
+				for(Integer i = 1; i<= page; i++){
+					PDFPage pdfPage = pdfFile.getPage(i);
+					double width =  pdfPage.getBBox().getWidth() * zoom / 100;
+					double height = pdfPage.getBBox().getHeight() * zoom / 100;
 				
-				printStream.printf("<div class='page' style='width:%dpx;height:%dpx;'   ><img src='openDocument2Image/%s.png?%s=%d&%s=%d&id=%d'></img> </div>",
+					printStream.printf("<div class='page' style='width:%dpx;height:%dpx;'   ><img src='openDocument2Image/%s.png?%s=%d&%s=%d&id=%d'></img> </div>",
 						(long)width,
 						(long)height,
 						attach.getMd5(),
 						PAGE_PARAM, i,
 						ZOOM_PARAM, zoom,
 						attach.getId());
+				}
+			} else {
+				String html="<div class='page' style=' width:150%s; background-color:#FFF;'>"
+						+ "<table style='padding-top:10px; padding-bottom:5px;'>";
+				String icon = "aon-icon-google-drive-unknown";
+				html = html + "<tr><td style='padding-left:5px;'><span> No es posible visualizar el archivo </span></td></tr>";
+				html = html + "<tr><td style='padding-left:5px;'><span class='"+icon+"' style='padding-left: 20px;'>"+attach.getDescription()+"</span></td></tr>";
+			
+				html = html + "</table></div>";
+				printStream.printf(html,"%");
 			}
 		}
 	}
@@ -354,8 +379,56 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 				.setDomain(getUserDomainID());
 	}
 	
-	public void print(String msg){
+	private static Boolean pdf2ImageBool(PDFFile pdffile, OutputStream os, int page,
+			String format, int zoom) throws IOException {
+
+		PDFPage pdfPage = pdffile.getPage(page);
+
+		// get the width and height for the doc at the default zoom
+		int width = (int) pdfPage.getBBox().getWidth();
+		int height = (int) pdfPage.getBBox().getHeight();
+
+		Rectangle rect = new Rectangle(0, 0, width, height);
+		int rotation = pdfPage.getRotation();
+		Rectangle rect1 = rect;
+		if (rotation == 90 || rotation == 270) {
+			rect1 = new Rectangle(0, 0, rect.height, rect.width);
+		}
+
+		int zoomWidth = rect.width * zoom / 100;
+		int zoomHeight = rect.height * zoom / 100;
+
+		BufferedImage bufferedImage = new BufferedImage(
+				zoomWidth,
+				zoomHeight, 
+				BufferedImage.TYPE_INT_RGB);
+
+		// generate the image
+		
+		Image image = pdfPage.getImage(
+			zoomWidth,  // width
+			zoomHeight, // height
+			rect1, 		// clip rect
+			null, 		// null for the ImageObserver
+			true, 		// fill background with white
+			true 		// block until drawing is done
+			);
+		
+		Graphics2D bufImageGraphics = 
+		bufferedImage.createGraphics();
+		bufImageGraphics.drawImage(image, 0, 0, null);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+  		ImageIO.write(bufferedImage, format, baos);
+		byte[] data = baos.toByteArray();
+		String md5 = AonFileUtils.getMD5Checksum(data);
+	
+		return md5.equals("968634550561b68ca4675b1ffe77fd6f");
+	}
+	
+	public void print(String head, String msg){
 		System.out.println("+++++++++++++++ GWT VIEWER +++++++++++++++");
+		System.out.println();
+		System.out.println(head);
 		System.out.println();
 		System.out.println(msg);
 		System.out.println();

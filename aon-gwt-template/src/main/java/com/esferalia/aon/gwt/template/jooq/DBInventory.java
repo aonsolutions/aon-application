@@ -10,7 +10,6 @@ import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import java.util.Vector;
 
 import org.jooq.Record1;
-import org.jooq.Record8;
 import org.jooq.Record9;
 import org.jooq.Result;
 

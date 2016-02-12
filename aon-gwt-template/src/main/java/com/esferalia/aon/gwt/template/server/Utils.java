@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.template.server;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Calendar;
@@ -38,11 +39,12 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class Utils {
 
+	@Deprecated
 	public static TemplateInfo readxml(File fXmlFile) throws ParserConfigurationException, SAXException, IOException {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(fXmlFile);
-	 
+
 		doc.getDocumentElement().normalize();
 	 	 
 		Element root = doc.getDocumentElement();
@@ -66,7 +68,65 @@ public class Utils {
 		return ti;
 	}
 	
+	public static TemplateInfo readxml(InputStream fXmlFile) throws ParserConfigurationException, SAXException, IOException {
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(fXmlFile);
+
+		doc.getDocumentElement().normalize();
+	 	 
+		Element root = doc.getDocumentElement();
+		String type = root.getAttribute("type");
+		
+		NodeList nList = doc.getElementsByTagName("column");
+	 
+		TemplateInfo ti = new TemplateInfo();
+		ti.sethasWarehouse(false);
+		Vector<String> columns = new Vector<String>();
+		for (int temp = 0; temp < nList.getLength(); temp++) {
+			String column = nList.item(temp).getTextContent();
+			if(column.equals("Almac\u00e9n Destino"))
+				ti.sethasWarehouse(true);
+			columns.add(column);
+		}
+		
+		ti.setType(type);
+		ti.setColumns(columns);
+		
+		return ti;
+	}
+	
+	@Deprecated
 	public static TemplateInfo readxmlWithVersion(File fXmlFile) throws ParserConfigurationException, SAXException, IOException {
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(fXmlFile);
+	 
+		doc.getDocumentElement().normalize();
+	 	 
+		Element root = doc.getDocumentElement();
+		String type = root.getAttribute("type");
+		String version = root.getAttribute("version");
+		
+		NodeList nList = doc.getElementsByTagName("column");
+	 
+		TemplateInfo ti = new TemplateInfo();
+		ti.sethasWarehouse(false);
+		Vector<String> columns = new Vector<String>();
+		for (int temp = 0; temp < nList.getLength(); temp++) {
+			String column = nList.item(temp).getTextContent();
+			if(column.equals("Almac\u00e9n Destino"))
+				ti.sethasWarehouse(true);
+			columns.add(column);
+		}
+		ti.setVersion(version);
+		ti.setType(type);
+		ti.setColumns(columns);
+		
+		return ti;
+	}
+	
+	public static TemplateInfo readxmlWithVersion(InputStream fXmlFile) throws ParserConfigurationException, SAXException, IOException {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(fXmlFile);

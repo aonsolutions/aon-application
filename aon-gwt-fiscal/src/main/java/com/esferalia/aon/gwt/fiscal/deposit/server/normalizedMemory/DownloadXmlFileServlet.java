@@ -36,7 +36,6 @@ public class DownloadXmlFileServlet extends HttpServlet {
 		
 		p_response.addHeader("Content-Disposition",
 				"inline; filename=\"DEPOSITO.zip\"");
-		// p_response.setContentType("application/octet-stream");
 		p_response.setContentType(MimeType.ZIP.getName());
 
 		String domain_id = p_request.getParameter("domain_id");
@@ -49,9 +48,7 @@ public class DownloadXmlFileServlet extends HttpServlet {
 		File f = DBConsults.getXmlFile(domain, domainId, year);
 		ZipOutputStream zos = null;
 		try {
-			
 			zos = makeZip(f, p_response.getOutputStream());
-			
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} catch (Exception ex) {
@@ -83,7 +80,6 @@ public class DownloadXmlFileServlet extends HttpServlet {
 		// fis.close();
 		// out.flush();
 		//
-		// // TODO probar ---> libro.close();
 
 	}
 

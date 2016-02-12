@@ -19,6 +19,7 @@ import com.code.aon.google.apis.Utils;
 import com.code.aon.oauth2.google.GoogleUser;
 import com.code.aon.oauth2.sessionInfo.SessionInfo;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
 
@@ -167,7 +168,7 @@ public class GoogleDriveController implements Serializable {
 		
 		response.setContentType(driveFile.getMimeType());
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + driveFile.getTitle() + "\";");
-		response.getOutputStream().write(Utils.InputStreamToByte(data));
+		response.getOutputStream().write(AonIOUtils.toByteArray(data));
 		response.flushBuffer();
 		ctx.responseComplete();
 		

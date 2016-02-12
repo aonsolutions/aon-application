@@ -347,7 +347,6 @@ public class Utils {
 		try {
 			b = writeXml(schema);
 		} catch (JAXBException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return b;
@@ -598,7 +597,6 @@ public class Utils {
 		try {
 			b = writeXml(schema);
 		} catch (JAXBException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return b;

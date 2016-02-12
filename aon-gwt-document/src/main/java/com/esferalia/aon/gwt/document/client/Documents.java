@@ -13,7 +13,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.document.client.css.AonGwtDocumentResources;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.CategoryList;
@@ -45,7 +44,6 @@ import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.dom.client.BodyElement;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
@@ -746,14 +744,7 @@ public class Documents extends Composite implements EntryPoint {
 			public void onFailure(Throwable caught) {}
 		});
 	}
-	public static void ensureGwtSelector() {
-		BodyElement body = com.google.gwt.dom.client.Document.get().getBody();
-		String className = body.getClassName();
-		if (StringUtils.isBlank(className)
-				|| (className.indexOf("gwt-Selector") == -1))
-			body.addClassName("gwt-Selector");
-
-	}
+	
 	
 	public static native String getCurrentDomainName()
 	/*-{
@@ -1059,9 +1050,7 @@ public class Documents extends Composite implements EntryPoint {
 						delFile.setVisible(false);
 						optionFile.setVisible(false);
 			    	}
-			   
 				}
-
 				
 			    if(BrowserEvents.CLICK.equals(event.getNativeEvent().getType())){
 			    	Integer relRow = event.getIndex() - dataGrid.getPageStart();
@@ -1084,6 +1073,7 @@ public class Documents extends Composite implements EntryPoint {
 			    			dataGrid.getSelectionModel().setSelected(object, false);
 			    		else dataGrid.getSelectionModel().setSelected(object, true);
 			    	}else if(event.getColumn() != 0){
+			    		dataGrid.getSelectionModel().setSelected(object, true);
 			    		for(Integer i = 0;i< dataProvider.getList().size();i++){
 			    			if(!dataProvider.getList().get(i).equals(object))
 			    				dataGrid.getSelectionModel().setSelected(dataProvider.getList().get(i), false);
@@ -1550,7 +1540,6 @@ public class Documents extends Composite implements EntryPoint {
 
 	@UiHandler("optionFile")
 	void option(ClickEvent event){
-		//TODO
 		FileInfo object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
 		selFiles = new Vector<FileInfo>();
 		Boolean lot = false;
@@ -2796,7 +2785,6 @@ public class Documents extends Composite implements EntryPoint {
 	}
 	
 	public void all(){
-		// TODO CHECK DOMAIN !!!!!!
 		newFile.setVisible(true); sConvenios.setVisible(false);
 		gestionLote.setVisible(false);
 		gestionDocs.setVisible(true);
@@ -2909,7 +2897,6 @@ public class Documents extends Composite implements EntryPoint {
 			dataProvider.addDataDisplay(dataGrid);
 			updateDatagridColumns();
 
-			//TODO CHEACK DOMAIN
 			dataGrid.redraw();
 		}
 
@@ -3278,7 +3265,7 @@ public class Documents extends Composite implements EntryPoint {
 					si.setCategory(null);
 				else
 					si.setCategory(s1);
-// TODO		
+
 				VerticalPanel vp = (VerticalPanel) grid.getWidget(5, 1);
 
 				Vector<String> v = new Vector<String>();

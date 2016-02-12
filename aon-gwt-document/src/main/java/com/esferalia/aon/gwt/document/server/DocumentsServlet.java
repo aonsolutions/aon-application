@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.document.server;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -81,6 +82,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.About;
 import com.google.api.services.drive.model.File;
@@ -767,13 +769,11 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		}
 		Drive drive = GoogleDriveController.dconnection;
 		byte[] b = getOut();
-		java.io.File aux = new java.io.File("/tmp/" + fi.getTitle());
-	
+
 		DriveFile file=new DriveFile("","", fi.getTitle(), getMimetype());
 		
 		try {
-			org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, b);
-			DriveUtils.insertFile(drive,aux, file,parents);
+			DriveUtils.insertFile(drive, new ByteArrayInputStream(b), file, parents);
 		} catch (IOException e) {
  			e.printStackTrace();
 		}
@@ -1067,8 +1067,7 @@ public MailAccountList getMailAccounts(Domain domain) {
 							com.google.api.services.drive.model.File f = d
 									.files().get(fi.getDriveId()).execute();
 							InputStream in = DriveUtils.downloadFile(d, f);
-							byte[] b = com.code.aon.google.apis.Utils
-									.InputStreamToByte(in);
+							byte[] b = AonIOUtils.toByteArray(in);
 							fi.setData(b);
 						} else if ((Integer) fi.getFileId() != null) {
 							com.code.aon.google.apis.FileInfo fi2 = DBConsults
@@ -1098,8 +1097,8 @@ public MailAccountList getMailAccounts(Domain domain) {
 				mc.initNewMsgFileList();
 				for (FileInfo fi : files) {
 					AonFile aonFile = new AonFile();
-					java.io.File file = new java.io.File("/tmp/"
-							+ fi.getTitle());
+					java.io.File file = new java.io.File("/tmp/" + fi.getTitle());
+					file.deleteOnExit();
 					try {
 						org.apache.commons.io.FileUtils.writeByteArrayToFile(
 								file, fi.getData());
@@ -1148,7 +1147,7 @@ public MailAccountList getMailAccounts(Domain domain) {
 		        		com.google.api.services.drive.model.File file = 
 		        				DriveUtils.getFile(drive, fi.getDriveId());
 		        		InputStream in = DriveUtils.downloadFile(drive, file);
-		    			b = com.code.aon.google.apis.Utils.InputStreamToByte(in);
+		    			b = AonIOUtils.toByteArray(in);
 					} else {
 						b = DriveUtils.getByteFile(domain, getUser(), fi.getDriveId(), fi.getFileId());
 					}
@@ -1181,6 +1180,7 @@ public MailAccountList getMailAccounts(Domain domain) {
 		for (FileInfo fi : files) {
 			AonFile aonFile = new AonFile();
 			java.io.File file = new java.io.File("/tmp/" + fi.getTitle());
+			file.deleteOnExit();
 			try {
 				org.apache.commons.io.FileUtils.writeByteArrayToFile(file,
 						fi.getData());

@@ -1,8 +1,7 @@
 package com.esferalia.aon.gwt.viewer.server;
 
 import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -18,7 +17,6 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.watson.server.io.AonFileUtils;
 
 @WebServlet(name = "DownloadViewer", urlPatterns = { 
 		"/aon_gwt_document/gwt_download_viewer/*" 
@@ -56,11 +54,10 @@ public class DownloadFilesServlet extends HttpServlet {
 		
 		byte[] data = getData(attach, login);
         
-        File file= AonFileUtils.byteToFile(data, attachName);
-        long length = file.length();
-        FileInputStream fis = new FileInputStream(file);
+        Integer length = data.length;
+        ByteArrayInputStream bais = new ByteArrayInputStream(data);
         
-        resp.addHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"."+mimeType.getExtension()+"\"");
+        resp.addHeader("Content-Disposition","attachment; filename=\"" + attach.getDescription() +"."+mimeType.getExtension()+"\"");
         //p_response.setContentType("application/octet-stream");
         resp.setContentType(mimeType.getName());
 
@@ -70,14 +67,14 @@ public class DownloadFilesServlet extends HttpServlet {
         resp.setBufferSize(32768);
         int bufSize = resp.getBufferSize();
         byte[] buffer = new byte[bufSize];
-        BufferedInputStream bis = new BufferedInputStream(fis,bufSize);
+        BufferedInputStream bis = new BufferedInputStream(bais,bufSize);
         int bytes;
         while ((bytes = bis.read(buffer, 0, bufSize)) >= 0)
             out.write(buffer, 0, bytes);
         
         
         bis.close();
-        fis.close();
+        bais.close();
         out.flush();
         out.close();
     }

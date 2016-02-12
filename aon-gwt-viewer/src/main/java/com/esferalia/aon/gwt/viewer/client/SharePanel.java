@@ -247,7 +247,10 @@ public abstract class SharePanel extends PopupPanel {
 			
 			@Override 
 			public void onFailure(Throwable caught) {
-				print(caught.getMessage());
+				String head = "com.esferalia.aon.gwt.viewer.client.SharePanel"
+						+ " - paintEmailPanel(Attach attach)"
+						+ " - getMailAccountList";
+				print(head, caught.getMessage());
 			}
 		});
 	}
@@ -262,9 +265,9 @@ public abstract class SharePanel extends PopupPanel {
 		Document.get().getBody().setPropertyString("scroll", "no");
 	}
 	
-	private static void print(String msg) {
+	private static void print(String head, String msg) {
 		final IViewerAsync VIEWER_IMPL = GWT.create(IViewer.class);
-		VIEWER_IMPL.print(msg, new AsyncCallback<Void>() {
+		VIEWER_IMPL.print(head, msg, new AsyncCallback<Void>() {
 			@Override public void onSuccess(Void result) {}
 			@Override public void onFailure(Throwable caught) {}
 		});

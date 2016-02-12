@@ -9,7 +9,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
-import java.io.File;
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -75,24 +75,18 @@ public class DBConsults {
 					ti.setId(r.value1());
 					ti.setName(r.value2());
 					ti.setMimetype(r.value3().intValue());
-					File f ;
+					byte[] b;
 					if(r.value4()!=null){
 						ti.setDriveId(r.value4());
 						//TODO GET FILE TO DRIVE SERVICE ACCOUNT!!!
-						f = null;
+						b = null;
 					}
-					else{
-						f = new File("/tmp/"+ti.getName()+".xml"); 
-						byte[] b = getXml(domain, user, ti.getId());
-						try {
-							org.apache.commons.io.FileUtils.writeByteArrayToFile(f,b);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+					else{ 
+						b = getXml(domain, user, ti.getId());
 					}
 					TemplateInfo aux = null;
 					try {
-						aux = Utils.readxml(f);
+						aux = Utils.readxml(new ByteArrayInputStream(b));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -109,24 +103,18 @@ public class DBConsults {
 					ti.setId(r.value1());
 					ti.setName(r.value2());
 					ti.setMimetype(r.value3().intValue());
-					File f ;
+					byte[] b;
 					if(r.value4()!=null){
 						ti.setDriveId(r.value4());
 						//TODO GET FILE TO DRIVE SERVICE ACCOUNT!!!
-						f = null;
+						b = null;
 					}
 					else{
-						f = new File("/tmp/"+ti.getName()+".xml"); 
-						byte[] b = getXml(domain, user, ti.getId());
-						try {
-							org.apache.commons.io.FileUtils.writeByteArrayToFile(f,b);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+						b = getXml(domain, user, ti.getId());
 					}
 					TemplateInfo aux = null;
 					try {
-						aux = Utils.readxml(f);
+						aux = Utils.readxml(new ByteArrayInputStream(b));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -137,16 +125,10 @@ public class DBConsults {
 				});
 				Boolean version = false;
 				if(recordDefault.isNotEmpty()){
-					File f = new File("/tmp/"+recordDefault.get(0).value2()+".xml"); 
 					byte[] b = getXml(domain, user, recordDefault.get(0).value1());
-					try {
-						org.apache.commons.io.FileUtils.writeByteArrayToFile(f,b);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
 					TemplateInfo aux = null;
 					try {
-						aux = Utils.readxmlWithVersion(f);
+						aux = Utils.readxmlWithVersion(new ByteArrayInputStream(b));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -291,24 +273,18 @@ public class DBConsults {
 					ti.setId(r.value1());
 					ti.setName(r.value2());
 					ti.setMimetype(r.value3().intValue());
-					File f ;
+					byte[] b;
 					if(r.value4()!=null){
 						ti.setDriveId(r.value4());
 						//TODO GET FILE TO DRIVE SERVICE ACCOUNT!!!
-						f = null;
+						b = null;
 					}
 					else{
-						f = new File("/tmp/"+ti.getName()+".xml"); 
-						byte[] b = getXml(domain, user, ti.getId());
-						try {
-							org.apache.commons.io.FileUtils.writeByteArrayToFile(f,b);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+						b = getXml(domain, user, ti.getId());
 					}
 					TemplateInfo aux = null;
 					try {
-						aux = Utils.readxml(f);
+						aux = Utils.readxml(new ByteArrayInputStream(b));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

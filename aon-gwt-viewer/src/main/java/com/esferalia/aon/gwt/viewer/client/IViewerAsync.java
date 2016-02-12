@@ -18,5 +18,5 @@ public interface IViewerAsync {
 
 	void getMailAccountList(Domain domain, AsyncCallback<LinkedList<MailAccount>> callback);
 
-	void print(String msg, AsyncCallback<Void> callback);
+	void print(String head, String msg, AsyncCallback<Void> callback);
 }

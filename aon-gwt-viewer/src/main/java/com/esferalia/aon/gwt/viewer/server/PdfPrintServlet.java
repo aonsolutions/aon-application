@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.viewer.server;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -26,6 +27,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @WebServlet(name = "PrintFiles", urlPatterns = {
 		"/aon_gwt_document/gwt_print/*"
@@ -64,17 +66,14 @@ public class PdfPrintServlet extends HttpServlet{
 		
 		String md5 = AonFileUtils.getMD5Checksum(data);
 		
-        File file ;
 		if (isOffice(mimeType)) {
-			file  = getPdfByeBuffer(md5, mimeType, data);
+			data = AonIOUtils.toByteArray(new FileInputStream(getPdfByeBuffer(md5, mimeType, data)));
 		}
-		else file= AonFileUtils.byteToFile( data, attachName); /* however you choose to go about resolvingfilename */
 
-        long length = file.length();
-        FileInputStream fis = new FileInputStream(file);
+        Integer length = data.length;
+        ByteArrayInputStream bais = new ByteArrayInputStream(data);
         
-        resp.addHeader("Content-Disposition","inline; filename=\"" + file.getName() +"\"");
-        //p_response.setContentType("application/octet-stream");
+        resp.addHeader("Content-Disposition","inline; filename=\"" + attach.getDescription() +"\"");
         resp.setContentType(mimeType.getName());
 
         if (length > 0 && length <= Integer.MAX_VALUE);
@@ -83,14 +82,14 @@ public class PdfPrintServlet extends HttpServlet{
         resp.setBufferSize(32768);
         int bufSize = resp.getBufferSize();
         byte[] buffer = new byte[bufSize];
-        BufferedInputStream bis = new BufferedInputStream(fis,bufSize);
+        BufferedInputStream bis = new BufferedInputStream(bais,bufSize);
         int bytes;
         while ((bytes = bis.read(buffer, 0, bufSize)) >= 0)
             out.write(buffer, 0, bytes);
         
         
         bis.close();
-        fis.close();
+        bais.close();
         out.flush();
         out.close();
     }
@@ -114,12 +113,7 @@ public class PdfPrintServlet extends HttpServlet{
 
 		convert(inputFile, outputFile);
 
-		//RandomAccessFile randomAccessFile = new RandomAccessFile(outputFile,
-		//"r");
-
-		//FileChannel fileChannel = randomAccessFile.getChannel();
-
-		return outputFile;//fileChannel.map(MapMode.READ_ONLY, 0, randomAccessFile.length());
+		return outputFile;
 	}
 	
 	protected static void convert(File inputFile, File outputFile) 
@@ -130,7 +124,7 @@ public class PdfPrintServlet extends HttpServlet{
 		
 		DefaultOfficeManagerConfiguration configuration = 
 				new DefaultOfficeManagerConfiguration();
-		// TODO Servlet params ???
+
 		configuration.setPortNumber(DEFAULT_OFFICE_PORT);
 		
 		OfficeManager officeManager = configuration.buildOfficeManager();

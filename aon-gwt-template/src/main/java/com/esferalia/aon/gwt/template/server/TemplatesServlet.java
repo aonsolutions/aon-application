@@ -1,9 +1,9 @@
 package com.esferalia.aon.gwt.template.server;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.Collator;
 import java.util.ArrayList;
@@ -81,7 +81,6 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
-import com.esferalia.aon.watson.server.io.AonFileUtils;
 
 
 
@@ -227,17 +226,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		
 		Iterator<Row> rowIterator;
 		try {
-			byte[] data = getOut();
-			File aux = new File("/tmp/products.xls");
-			AonFileUtils.writeByteArrayToFile(aux, data);
-			FileInputStream excel = null;
-			try {
-				excel = new FileInputStream(aux);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
+			byte[] data = getOut();			
+			ByteArrayInputStream bais = new ByteArrayInputStream(data);
 			
-			HSSFWorkbook workbook = new HSSFWorkbook(excel);
+			HSSFWorkbook workbook = new HSSFWorkbook(bais);
 			HSSFSheet sheet = workbook.getSheetAt(0);
 			rowCount  = sheet.getPhysicalNumberOfRows();
 			rowIterator = sheet.iterator();
@@ -264,16 +256,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		} catch (OfficeXmlFileException e){
 			try {
 				byte[] data = getOut();
-				File aux = new File("/tmp/products.xlsx");
-				AonFileUtils.writeByteArrayToFile(aux, data);
-				FileInputStream excel = null;
-				try {
-					excel = new FileInputStream(aux);
-				} catch (FileNotFoundException e1) {
-					e.printStackTrace();
-				}
+				ByteArrayInputStream bais = new ByteArrayInputStream(data);
 				
-				XSSFWorkbook workbook = new XSSFWorkbook(excel);
+				XSSFWorkbook workbook = new XSSFWorkbook(bais);
 				XSSFSheet sheet = workbook.getSheetAt(0);
 				rowCount  = sheet.getPhysicalNumberOfRows();
 				rowIterator = sheet.iterator();
@@ -2378,12 +2363,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		if(getOut() != null){
 			try{
 				byte[] data = getOut();
-				File aux = new File("/tmp/products.xls");
-				org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
-				FileInputStream excel = null;
-				excel = new FileInputStream(aux);	
-				HSSFWorkbook workbook= null;
-				workbook = new HSSFWorkbook(excel);
+				ByteArrayInputStream bais = new ByteArrayInputStream(data);
+				
+				HSSFWorkbook workbook = new HSSFWorkbook(bais);
 				HSSFSheet sheet = workbook.getSheetAt(0);
 				Integer size = sheet.getPhysicalNumberOfRows();
 				workbook.close();
@@ -2394,11 +2376,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			} catch (OfficeXmlFileException e){
 				try {
 					byte[] data = getOut();
-					File aux = new File("/tmp/products.xlsx");
-					org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
-					FileInputStream excel = null;
-					excel = new FileInputStream(aux);	
-					XSSFWorkbook workbook = new XSSFWorkbook(excel);
+					ByteArrayInputStream bais = new ByteArrayInputStream(data);
+					
+					XSSFWorkbook workbook = new XSSFWorkbook(bais);
 					XSSFSheet sheet = workbook.getSheetAt(0);
 					Integer size = sheet.getPhysicalNumberOfRows();
 					workbook.close();

@@ -62,33 +62,8 @@ public class DBConsults {
 				ctx.close();
 		}
 	}
-	
-	/*public static Boolean isDigitalDeposit(String domain, Integer domainId, Integer year) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain, domainId);
-
-			Record2<Integer, byte[]> record = ctx
-					.getDslContext()
-					.select(RATTACH.ID, RATTACH.DATA)
-					.from(RATTACH)
-					.join(REGISTRY)
-					.on(REGISTRY.ID.eq(RATTACH.REGISTRY))
-					.where(RATTACH.TYPE.eq((byte) 17))
-						.and(RATTACH.DOMAIN.eq(domainId))
-						.and(RATTACH.ATTACH_DATE.eq(newAttachDate(year)))
-					.fetchOne();
-
-			return record != null && record.value2() != null;
-
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}*/
 
 	// Devuelve el xml file d2
-
 	public static File getXmlFile(String domain, Integer domainId)
 			throws IOException {
 		AONContext ctx = null;
@@ -267,13 +242,10 @@ public class DBConsults {
 							.and(RATTACH.ATTACH_DATE.eq(newAttachDate(year)))
 							.orderBy(RATTACH.ID).limit(1).fetchOne();
 
-			File f = new File("/tmp/DEPOSITO.xml");
 			byte[] data;
 			Esquema schema = null;
 			if (record != null) {
 				data = record.value5();
-				String document = record.value6();
-				String name = record.value7();
 			} else {
 				Record3<Integer, String, String> reg = ctx
 						.getDslContext()
@@ -317,10 +289,8 @@ public class DBConsults {
 					.where(RATTACH.ID.eq(id))
 					.orderBy(RATTACH.ID).limit(1).fetchOne();
 
-			File f = new File("/tmp/DEPOSITO.xml");
 			byte[] data;
 			Esquema schema = null;
-
 			data = record.value5();
 
 			try {
@@ -391,7 +361,6 @@ public class DBConsults {
 							REGISTRY.ID.eq(ENTERPRISE.REGISTRY)))
 					.where(ENTERPRISE.DOMAIN.eq(domainId)).limit(1).fetchOne();
 			Integer registry = reg.value1();
-			String document = reg.value2();
 			String name = reg.value3();
 
 			ctx.getDslContext().delete(RATTACH)
@@ -573,7 +542,7 @@ public class DBConsults {
 	}
 
 	
-	public static File getMemoryFile(String domain, Integer domainId, Integer id, String name){
+	public static byte[] getMemoryFile(String domain, Integer domainId, Integer id, String name){
 		AONContext ctx = null;
 		try {
 			
@@ -585,20 +554,9 @@ public class DBConsults {
 					.where(RATTACH.ID.eq(id))
 					.fetch();		
 			
-		
-			byte[] data;
-			File file;
 			if(!record.isEmpty()){
 				if(record.get(0).value2() != null){
-					data = record.get(0).value2();
-					file = new File("/tmp/" + name );
-					if(!file.isDirectory())
-						try {
-							AonFileUtils.writeByteArrayToFile(file, data);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					return file;
+					return record.get(0).value2();
 				}
 			}
 			return null;
@@ -712,9 +670,9 @@ public class DBConsults {
 	
 	public static Date newAttachDate(Integer year){
 		if(year != null){
-			return new Date(year-1900, 11, 31);
+			return AonDateUtils.toSql(AonDateUtils.getDate(year, 11, 31));
 		}
-		return new Date(2014-1900, 11, 31);
+		return AonDateUtils.toSql(AonDateUtils.getDate(2015, 11, 31));
 	}
 	
 	public static String[] getDepositExercises(String domainName, Integer domainId, String login){

@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.template.server;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -41,11 +42,9 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 
 public class ConsumptionUtil {
-
 	
 	private static final String PDF = "pdf";
 	
-
     public static File generateConsumption(Domain domain, Vector<Warehouse> warehouses, String fileType, Boolean onlyNegative,
     		Boolean detail, Integer size, Integer fileId, String login) throws ServletException, IOException{
     
@@ -53,16 +52,10 @@ public class ConsumptionUtil {
         byte[] b = null ;
         User user = new User().setLogin(login);
         b = DBConsults.getTemplate(domain, user, fileId);
- 
-        File f = new File("/tmp/"+"consumo"+".xml"); 
-        try {
-			org.apache.commons.io.FileUtils.writeByteArrayToFile(f,b);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+       
         TemplateInfo aux = null;
 		try {
-			aux = com.esferalia.aon.gwt.template.server.Utils.readxml(f);
+			aux = com.esferalia.aon.gwt.template.server.Utils.readxml(new ByteArrayInputStream(b));
 			Vector<String> v = new Vector<String>();
 			Integer i = 0;
 			if(detail){

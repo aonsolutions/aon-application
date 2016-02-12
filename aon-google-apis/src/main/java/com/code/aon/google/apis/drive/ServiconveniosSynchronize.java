@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.google.api.client.http.FileContent;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.drive.Drive;
@@ -224,7 +225,7 @@ public class ServiconveniosSynchronize {
 			fi.setTitle(description);
 			Long size = file.length();
 			fi.setSize(size.intValue());
-			fi.setData(Utils.InputStreamToByte(fis2));
+			fi.setData(AonIOUtils.toByteArray(fis2));
 			
 			AONContext ctx = null;
 			try {
