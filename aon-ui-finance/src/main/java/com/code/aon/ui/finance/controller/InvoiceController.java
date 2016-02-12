@@ -1381,7 +1381,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			
 			IController controller = (IController) AonUtil.getRegisteredBean(AMORTIZATION_CONTROLLER_NAME);
 			((BasicController) controller).accept(event);
-			Amortization amortization = (Amortization) controller.getTo();
+			Amortization amortization = (Amortization)HibernateUtil.getSession(sessionName).merge(controller.getTo());
 			Invoice invoice = getInvoice();
 			IManagerBean bean = BeanManager.getManagerBean(AmortizationInvoice.class);
 			AmortizationInvoice ai = new AmortizationInvoice();
