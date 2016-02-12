@@ -18,6 +18,6 @@ UPDATE `system_data` SET `expression` = '(GRUPO_COTIZACION == \"01\") ? (23.60 -
 	AND `start_date` = '2016-01-01' AND `end_date` IS NULL;
 
 
-UPDATE `db_version` SET `version_number` = '8.42.0';
+UPDATE `db_version` SET `version_number` = '8.42.1';
 
 COMMIT;
