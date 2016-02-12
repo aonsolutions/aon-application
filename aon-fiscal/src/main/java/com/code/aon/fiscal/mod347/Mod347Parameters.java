@@ -25,6 +25,7 @@ public class Mod347Parameters implements Serializable {
 	private boolean excludeMod180Declared;
 	private boolean excludeMod190Declared;
 	private boolean groupedByNIF;
+	private boolean pendingAccrualPayment;
 	private String domainName;
 	
 	public Mod347Parameters(String domainName) {
@@ -46,6 +47,7 @@ public class Mod347Parameters implements Serializable {
 		setExcludeMod180Declared(true);
 		setExcludeMod190Declared(true);
 		setGroupedByNIF(true);
+		setPendingAccrualPayment(false);
 	}
 	
 	public String getDomainName() {
@@ -132,6 +134,14 @@ public class Mod347Parameters implements Serializable {
 	}
 	public void setGroupedByNIF(boolean gropupedByNIF) {
 		this.groupedByNIF = gropupedByNIF;
+	}
+
+	public boolean isPendingAccrualPayment() {
+		return pendingAccrualPayment;
+	}
+
+	public void setPendingAccrualPayment(boolean pendingAccrualPayment) {
+		this.pendingAccrualPayment = pendingAccrualPayment;
 	}
 
 	public boolean isExcludeMod180Declared() {

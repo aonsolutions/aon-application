@@ -44,6 +44,31 @@ public class Mod347Manager {
 	private static final String TRANSACTION_ALIAS = "transaction";
 
 	public Mod347 generateDetails(Mod347Parameters params) throws ManagerBeanException {
+		int year = params.getMod347().getYear();
+		Map<String,Mod347Detail> map = new TreeMap<String, Mod347Detail>();
+		
+		params.setPendingAccrualPayment(false);
+		generateDetails(params,map,year);
+		params.setPendingAccrualPayment(true);
+		generateDetails(params,map,year-1);		
+		
+		IManagerBean bean = BeanManager.getManagerBean(Mod347Detail.class);
+		double minAmount = params.getMod347().getMinimumAmount();
+		for (Mod347Detail detail : map.values()) {
+			double amount = detail.getAmount(); 
+			double previousAmount = detail.getPreviousAmount();
+			if ( (amount >= minAmount || amount <= ( minAmount * (-1))) 
+				|| 
+				 (detail.isPendingVatAccrual()
+					&& (previousAmount >= minAmount || previousAmount <= ( minAmount * (-1)))
+					&& CommonUtil.round(detail.getVatAccrualAmount()) != 0.0)) {
+				bean.insert(detail);
+			}
+		}
+		return params.getMod347();	
+	}
+	
+	private void generateDetails(Mod347Parameters params, Map<String,Mod347Detail> map, int year) throws ManagerBeanException {
 		StringBuilder buf = new StringBuilder();
 		buf.append("SELECT ELT(i.type+1, 'A', 'B', 'A') ").append(KEY_ALIAS)
 			.append(",i.id ").append(INVOICE_ID_ALIAS)
@@ -78,6 +103,8 @@ public class Mod347Manager {
 		ResultSet rs1 = null;
 		PreparedStatement ps2 = null;
 		ResultSet rs2 = null;
+		PreparedStatement ps3 = null;
+		ResultSet rs3 = null;
 		PreparedStatement ps180 = null;
 		ResultSet rs180 = null;
 		PreparedStatement ps190 = null;
@@ -112,16 +139,21 @@ public class Mod347Manager {
 					+" AND ft.tracking_date BETWEEN ? AND ? "
 					+" AND ft.type IN (1,2) ",
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			ps3 = conn.prepareStatement(
+					"SELECT  SUM( f.amount ) " + FINANCE_AMOUNT_ALIAS
+					+"  FROM finance f "
+					+" WHERE f.invoice = ?"
+					+" AND f.status IN (0,2) ",
+					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			Mod347 mod347 = params.getMod347();
 			ps = conn.prepareStatement(buf.toString(),
 				ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			ps.setInt(++i, DomainManager.getCurrentDomain());
-			ps.setDate(++i, new java.sql.Date( CommonUtil.getYearFirstDay(mod347.getYear()).getTime()));
-			ps.setDate(++i, new java.sql.Date( CommonUtil.getYearLastDay(mod347.getYear()).getTime()));
+			ps.setDate(++i, new java.sql.Date( CommonUtil.getYearFirstDay(year).getTime()));
+			ps.setDate(++i, new java.sql.Date( CommonUtil.getYearLastDay(year).getTime()));
 			Calendar c = Calendar.getInstance(); 
 			rs = ps.executeQuery();
-			Map<String,Mod347Detail> map = new TreeMap<String, Mod347Detail>();
 			while (rs.next()) {
 				Mod347Type key =  Mod347Type.valueOf(rs.getString( KEY_ALIAS ));
 				int invoiceId= rs.getInt( INVOICE_ID_ALIAS );
@@ -135,7 +167,6 @@ public class Mod347Manager {
 				Date date = params.isTaxDateEnabled()?rs.getDate(TAX_DATE_ALIAS):rs.getDate(ISSUE_DATE_ALIAS);
 				boolean vatAccrualPayment = rs.getBoolean(VAT_ACCRUAL_PAYMENT_ALIAS);
 				
-				
 				// (Sólo el destinatario de la operación).
 				// Se pondrá una "X" en este campo para identificar separadamente del resto las operaciones 
 				// en las que el sujeto pasivo sea el destinatario de la operación de acuerdo con lo establecido 
@@ -148,7 +179,7 @@ public class Mod347Manager {
 				
 				// Se excluyen los declarados en el modelo 180, si así se indica.
 				if ( retentionQuota > 0 && params.isExcludeMod180Declared()) {
-					ps180.setInt(1,mod347.getYear());
+					ps180.setInt(1,year);
 					ps180.setString(2,document);
 					rs180 = ps180.executeQuery();
 					int count = 0;
@@ -161,7 +192,7 @@ public class Mod347Manager {
 				
 				// Se excluyen los declarados en el modelo 190, si así se indica.
 				if ( included && retentionQuota > 0 && params.isExcludeMod190Declared()) {
-					ps190.setInt(1,mod347.getYear());
+					ps190.setInt(1,year);
 					ps190.setString(2,document);
 					rs190 = ps190.executeQuery();
 					int count = 0;
@@ -244,28 +275,52 @@ public class Mod347Manager {
 							detail.setFourthQuarterAmount(CommonUtil.round(detail.getFourthQuarterAmount() + amount));
 						}
 					} else {
-						ps2.setInt(1,invoiceId);
-						ps2.setDate(2, new java.sql.Date( CommonUtil.getYearFirstDay(mod347.getYear()).getTime()));
-						ps2.setDate(3, new java.sql.Date( CommonUtil.getYearLastDay(mod347.getYear()).getTime()));
-						rs2 = ps2.executeQuery();
-						if (rs2.next()) {
-							double financeAmount = rs2.getDouble(FINANCE_AMOUNT_ALIAS);
-							detail.setVatAccrualAmount(CommonUtil.round(detail.getVatAccrualAmount() + financeAmount));
+						if (!params.isPendingAccrualPayment()) {
+							// Estamos en el año actual. Se buscan los vtos. pagados o devueltos.
+							ps2.setInt(1,invoiceId);
+							ps2.setDate(2, new java.sql.Date( CommonUtil.getYearFirstDay(year).getTime()));
+							ps2.setDate(3, new java.sql.Date( CommonUtil.getYearLastDay(year).getTime()));
+							rs2 = ps2.executeQuery();
+							if (rs2.next()) {
+								double financeAmount = rs2.getDouble(FINANCE_AMOUNT_ALIAS);
+								detail.setVatAccrualAmount(CommonUtil.round(detail.getVatAccrualAmount() + financeAmount));
+							}
+							rs2.close();
+						} else {
+							// Estamos en el año anterior. Se buscan los vtos. pendientes.
+							ps3.setInt(1,invoiceId);
+							rs3 = ps3.executeQuery();
+							if (rs3.next()) {
+								double financeAmount = rs3.getDouble(FINANCE_AMOUNT_ALIAS);
+								detail.setVatAccrualAmount(CommonUtil.round(detail.getVatAccrualAmount() + financeAmount));
+								if (!detail.isPendingVatAccrual() && CommonUtil.round(financeAmount) != 0.0) {
+									detail.setPendingVatAccrual( true );
+								}
+							}
+							rs3.close();
+							// Estamos en el año anterior. Se buscan los vtos. pagados o devueltos en el año de la declaración.
+							ps2.setInt(1,invoiceId);
+							ps2.setDate(2, new java.sql.Date( CommonUtil.getYearFirstDay(year+1).getTime()));
+							ps2.setDate(3, new java.sql.Date( CommonUtil.getYearLastDay(year+1).getTime()));
+							rs2 = ps2.executeQuery();
+							if (rs2.next()) {
+								double financeAmount = rs2.getDouble(FINANCE_AMOUNT_ALIAS);
+								detail.setVatAccrualAmount(CommonUtil.round(detail.getVatAccrualAmount() + financeAmount));
+								if (!detail.isPendingVatAccrual() && CommonUtil.round(financeAmount) != 0.0) {
+									detail.setPendingVatAccrual( true );
+								}
+							}
+							rs2.close();
 						}
-						rs2.close();
 						
 					}
-					detail.setAmount(CommonUtil.round(detail.getAmount() + amount));
+					if (!params.isPendingAccrualPayment()) {
+						detail.setAmount(CommonUtil.round(detail.getAmount() + amount));
+					} else {
+						detail.setPreviousAmount(CommonUtil.round(detail.getPreviousAmount() + amount));
+					}
 				}
 			}
-			IManagerBean bean = BeanManager.getManagerBean(Mod347Detail.class);
-			for (Mod347Detail detail : map.values()) {
-				if ( detail.getAmount() >= params.getMod347().getMinimumAmount() 
-					|| detail.getAmount() <= (params.getMod347().getMinimumAmount()* (-1))) {
-					bean.insert(detail);
-				}
-			}
-			return mod347;	
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
 		} catch (AonConnectionException e) {
@@ -275,6 +330,8 @@ public class Mod347Manager {
 			DatabaseUtil.closeQuietly(ps180);
 			DatabaseUtil.closeQuietly(rs190);
 			DatabaseUtil.closeQuietly(ps190);
+			DatabaseUtil.closeQuietly(rs3);
+			DatabaseUtil.closeQuietly(ps3);
 			DatabaseUtil.closeQuietly(rs2);
 			DatabaseUtil.closeQuietly(ps2);
 			DatabaseUtil.closeQuietly(rs1);
@@ -286,6 +343,9 @@ public class Mod347Manager {
 	}
 
 	private void appendConditions(Mod347Parameters params, StringBuilder buf) {
+		if (params.isPendingAccrualPayment()) {
+			buf.append(" AND (i.vat_accrual_payment = 1)");
+		}
 		buf.append(" AND ( (i.type = 1 AND ( (i.transaction IN (0,4) AND it.percentage != 0)");
 		if (!params.isExcludeExports() ) {
 			buf.append(" OR (i.transaction IN (2,3) AND i.service = 0)");

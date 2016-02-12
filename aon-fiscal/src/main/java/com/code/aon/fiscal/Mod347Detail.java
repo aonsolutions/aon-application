@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.Country;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.fiscal.enumeration.Mod347Type;
 import com.code.aon.registry.RegistryDocument;
 import com.esferalia.aon.entity.master.Mod347DetailDB;
@@ -19,6 +20,8 @@ public class Mod347Detail extends Mod347DetailDB {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private boolean vatAccrualDataInitialized;
+	private boolean pendingVatAccrual;
+	private double previousAmount;
 	
 	@Transient
 	public Country getIntracommunityCountry() {
@@ -42,7 +45,21 @@ public class Mod347Detail extends Mod347DetailDB {
 	public void setVatAccrualDataInitialized(boolean vatAccrualDataInitialized) {
 		this.vatAccrualDataInitialized = vatAccrualDataInitialized;
 	}
-
+	@Transient
+	public boolean isPendingVatAccrual() {
+		return pendingVatAccrual;
+	}
+	public void setPendingVatAccrual(boolean pendingVatAccrual) {
+		this.pendingVatAccrual = pendingVatAccrual;
+	}
+	@Transient
+	public double getPreviousAmount() {
+		return previousAmount;
+	}
+	public void setPreviousAmount(double previousAmount) {
+		this.previousAmount = previousAmount;
+	}
+		
 	@Transient
 	public String getAddress() {
     	StringBuffer buf = new StringBuffer();
