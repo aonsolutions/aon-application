@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.41.0
+# Version: 8.42.0
 # Created by: girazu
-# Creation Date: 18/01/2016 18:00
+# Creation Date: 12/02/2016 12:25
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -254,9 +254,9 @@ CREATE TABLE `calendar` (
   `thursday_hours` double default '0' COMMENT 'Numero de horas laborables',
   `friday` tinyint(2) default '0' COMMENT 'Tipo de dia',
   `friday_hours` double default '0' COMMENT 'Numero de horas laborables',
-  `saturday` tinyint(2) default '0' COMMENT 'Tipo de dia',
+  `saturday` tinyint(2) default '1' COMMENT 'Tipo de dia',
   `saturday_hours` double default '0' COMMENT 'Numero de horas laborables',
-  `sunday` tinyint(2) default '0' COMMENT 'Tipo de dia',
+  `sunday` tinyint(2) default '1' COMMENT 'Tipo de dia',
   `sunday_hours` double default '0' COMMENT 'Numero de horas laborables',
   `generic` tinyint(1) default '1' COMMENT 'Indica si es editable o no',
   `calendar` int(4) default NULL COMMENT 'Calendario del que se hereda',
@@ -442,6 +442,27 @@ CREATE TABLE `academic_skill` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aptitudes Academicas';
 
 #
+# Structure for the `account_period` table : 
+#
+
+CREATE TABLE `account_period` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `name` char(16) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del periodo',
+  `initiation_date` date NOT NULL COMMENT 'Fecha de inicio del Ejercicio',
+  `deadline` date NOT NULL COMMENT 'Fecha final del Ejercicio',
+  `status` tinyint(2) default '0' COMMENT 'Estado del Ejercicio',
+  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `IDX_UNQ_ACCOUNT_PERIOD_DOMAIN_NAME` (`domain`,`name`),
+  KEY `IDX_ACCOUNT_PERIOD_DOMAIN` (`domain`),
+  CONSTRAINT `FK_ACCOUNT_PERIOD_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ejercicios Contables';
+
+#
 # Structure for the `cnae` table : 
 #
 
@@ -508,27 +529,6 @@ CREATE TABLE `enterprise_activity` (
   CONSTRAINT `FK_ENTERPRISE_ACTIVITY_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`),
   CONSTRAINT `FK_ENTERPRISE_ACTIVITY_IAE` FOREIGN KEY (`iae`) REFERENCES `iae` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades de Empresas';
-
-#
-# Structure for the `account_period` table : 
-#
-
-CREATE TABLE `account_period` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `name` char(16) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del periodo',
-  `initiation_date` date NOT NULL COMMENT 'Fecha de inicio del Ejercicio',
-  `deadline` date NOT NULL COMMENT 'Fecha final del Ejercicio',
-  `status` tinyint(2) default '0' COMMENT 'Estado del Ejercicio',
-  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
-  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
-  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
-  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `IDX_UNQ_ACCOUNT_PERIOD_DOMAIN_NAME` (`domain`,`name`),
-  KEY `IDX_ACCOUNT_PERIOD_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ACCOUNT_PERIOD_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ejercicios Contables';
 
 #
 # Structure for the `account_entry` table : 
@@ -5488,7 +5488,7 @@ CREATE TABLE `invoice_tax` (
   `surcharge_quota` double default '0' COMMENT 'Cuota de recargo de equivalencia del Detalle de la Factura',
   `vat_deduction_type` tinyint(2) default '0' COMMENT 'Tipo de deduccion del IVA',
   `withholding_type` tinyint(2) default '0' COMMENT 'Tipo de retencion',
-  `deductible_percent` double(15,3) default '100.000' COMMENT 'Porcentaje de deducibilidad',
+  `deductible_percent` double default '0' COMMENT 'Porcentaje de deducibilidad',
   `deductible_quota` double default '0' COMMENT 'Cuota deducible',
   PRIMARY KEY  (`id`),
   KEY `IDX_INVOICE_TAX_INVOICE_DETAIL` (`invoice_detail`),
@@ -6234,11 +6234,14 @@ CREATE TABLE `notice_tag` (
   `tag` int(4) NOT NULL COMMENT 'Identificador de la Etiqueta',
   `start_date` datetime NOT NULL COMMENT 'Fecha y hora de la apertura del Aviso',
   `end_date` datetime default NULL COMMENT 'Fecha y hora de cierre del Aviso',
+  `user` int(4) default NULL COMMENT 'Identificador del Usuario',
   PRIMARY KEY  (`id`),
   KEY `IDX_NOTICE_TAG_NOTICE` (`notice`),
   KEY `IDX_NOTICE_TAG_TAG` (`tag`),
+  KEY `IDX_NOTICE_TAG_USER` (`user`),
   CONSTRAINT `FK_NOTICE_TAG_NOTICE` FOREIGN KEY (`notice`) REFERENCES `notice` (`id`),
-  CONSTRAINT `FK_NOTICE_TAG_TAG` FOREIGN KEY (`tag`) REFERENCES `tag` (`id`)
+  CONSTRAINT `FK_NOTICE_TAG_TAG` FOREIGN KEY (`tag`) REFERENCES `tag` (`id`),
+  CONSTRAINT `FK_NOTICE_TAG_USER` FOREIGN KEY (`user`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Avisos y Etiquetas';
 
 #
@@ -8088,7 +8091,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.41.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.42.0');
 
 COMMIT;
 

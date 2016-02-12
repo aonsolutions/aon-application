@@ -153,6 +153,9 @@ public class InvoiceDetail extends InvoiceDetailDB implements ICalculable, IStoc
 				taxBreakDown.setTaxQuota(invoiceTax.getQuota());
 				taxBreakDown.setSurchargeQuota(invoiceTax.getSurchargeQuota());
 				taxBreakDown.setVatDeductionType(invoiceTax.getVatDeductionType());
+				taxBreakDown.setDeductibleBase(invoiceTax.getBase());
+				taxBreakDown.setDeductiblePercent(invoiceTax.getDeductiblePercent());
+				taxBreakDown.setDeductibleQuota(invoiceTax.getDeductibleQuota());
 				taxBreakDowns.add(taxBreakDown);
 			}
 		} catch (ManagerBeanException e) {

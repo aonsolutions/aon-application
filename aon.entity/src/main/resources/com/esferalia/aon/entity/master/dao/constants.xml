@@ -408,8 +408,8 @@
 	</bean>
 
 	<bean class="com.code.aon.product.ItemTariff" sqlName="item_tariff">
-		<alias names="id,item_id,price,profitPercent,tariff_id,tariff_name,type" />
-		<hibernate names="id,item.id,price,profitPercent,tariff.id,tariff.name,type" />
+		<alias names="id,item_id,item_product_id,item_serialNumber,price,profitPercent,tariff_id,tariff_name,type" />
+		<hibernate names="id,item.id,item.product.id,item.serialNumber,price,profitPercent,tariff.id,tariff.name,type" />
 	</bean>
 
 	<bean class="com.code.aon.product.Product" sqlName="product">
