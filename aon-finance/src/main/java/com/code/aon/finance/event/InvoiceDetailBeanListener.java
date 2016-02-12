@@ -231,25 +231,12 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 				}
 			}
 		}
-
 		invoiceTax.setBase(base);
 		invoiceTax.setPercentage(percentage);
 		invoiceTax.setQuota(quota);
 		invoiceTax.setSurcharge(surcharge);
 		invoiceTax.setSurchargeQuota(surchargeQuota);
-		if (tax.isVat()) {
-			if (invoiceDetail.getInvestAsset() != null && invoiceDetail.getInvestAsset().getId() != null) {
-				invoiceTax.setDeductiblePercent(invoiceDetail.getInvestAsset().getVatPercent());
-			} else {
-				invoiceTax.setDeductiblePercent(100);
-			}
-			if (invoiceTax.getQuota() != 0) {
-				invoiceTax.setDeductibleQuota(CommonUtil.round(invoiceTax.getQuota() * invoiceTax.getDeductiblePercent() / 100));
-			}
-		} else {
-			invoiceTax.setDeductiblePercent(0);
-			invoiceTax.setDeductibleQuota(0);
-		}
+
 		return invoiceTax;
 	}
 
