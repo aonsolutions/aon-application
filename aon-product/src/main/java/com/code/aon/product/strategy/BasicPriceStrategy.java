@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -169,6 +170,16 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 					Projection prjPrice = Projection.property(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_PRICE));
 					for (Object obj : itemTariffBean.getList(new ProjectionList(prjPrice), criteria)) {
 						return (Double)obj;
+					}
+
+					if (item.getProduct().isSerializable() && StringUtils.isNotBlank(item.getSerialNumber())) {
+						criteria = new Criteria();
+						criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_ITEM_PRODUCT_ID), item.getProduct().getId());
+						criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_TARIFF_ID), tariff.getId());
+						criteria.addOrder(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_ITEM_SERIAL_NUMBER));
+						for (Object obj : itemTariffBean.getList(new ProjectionList(prjPrice), criteria)) {
+							return (Double)obj;
+						}
 					}
 
 					calc.getDiscountExpression().setDiscountExpr(Double.toString(tariff.getDiscount()));
@@ -356,6 +367,15 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 			quota = CommonUtil.round(quota - 0.01);
 		}
 		return quota;
+	}
+
+	protected double obtainDeductibleQuota(TaxBreakDown taxBreakDown) {
+		return obtainDeductibleQuota(taxBreakDown.getBase(), taxBreakDown.getTaxPercent(), taxBreakDown.getDeductiblePercent());
+	}
+
+	protected double obtainDeductibleQuota(double base, double percentage, double deductiblePercentage) {
+		double quota = obtainQuota(base, percentage);
+		return CommonUtil.round(quota * deductiblePercentage / 100);
 	}
 
 }
