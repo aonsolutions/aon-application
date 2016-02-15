@@ -872,7 +872,7 @@ public class CretaServlet extends HttpServlet
 		if (attach != null) 
 			return; // already saved
 
-		Company  company = AON.getCompanyForDomain(domainName, domainId);
+		Company  company = AON.getCompanyForDomain(domainName, domainId, login);
 		
 
 		attach = new Attach(AttachType.REGISTRY);
