@@ -56,7 +56,7 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	private static void processZIPFiles(File parent, ZipInputStream zin,
+	private void processZIPFiles(File parent, ZipInputStream zin,
 			String domainName, int parentDomain, List<String> messages)
 			throws IOException {
 
@@ -95,16 +95,15 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements
 	
 				Domain domain = AON.insertDomain(domainName, parentDomain,
 						enterDocument, enterName, messages);
-				Company company = AON.getCompanyForDomain(domain.getName(),
-						domain.getId());
+				Company company = AON.getCompanyForDomain(domain.getName(),domain.getId(), getUserLogin());
 				int enterpriseID = company.getId();
 				mod200.setDomain(domain.getId());
 				mod200.setEnterprise(enterpriseID);
-				Mod2002013 mod2002013 = AON.getMod2002013ByYear(domain.getName(), domain.getId(), 2013);
+				Mod2002013 mod2002013 = AON.getMod2002013ByYear(domain.getName(), domain.getId(), getUserLogin(), 2013);
 				if (mod2002013 != null && mod2002013.getId() != null) {
 					messages.add("Modelo 200 ya creado en el ejercicio 2013, no se graba");
 				} else {
-					AON.saveMod2002013(domain.getName(), domain.getId(), mod200);
+					AON.saveMod2002013(domain.getName(), domain.getId(), getUserLogin(), mod200);
 					messages.add("Modelo 200 del ejercicio 2013 grabado.");
 				}
 				messages.add("");
