@@ -51,8 +51,8 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class DBConsults {
 	
-	private static boolean esta(Domain domain, FileInfo fi,Integer userId){
-		Integer[] userScopeArray = AON.getUserScopes(domain.getName(), domain.getId(), userId);
+	private static boolean esta(Domain domain, FileInfo fi,Integer userId,String userLogin){
+		Integer[] userScopeArray = AON.getUserScopes(domain.getName(), domain.getId(), userLogin, userId);
 		if(userScopeArray == null) return true;
 		for (Integer scope: userScopeArray) {
 			if(fi.getScope()!=null && fi.getScope().getId().equals(scope)) 
@@ -79,7 +79,7 @@ public class DBConsults {
 			vaux.addAll(s);
 			
 		} else if(user.getDomain().equals(domain.getId())){
-			Integer[] userScopeArray = AON.getUserScopes(domain.getName(), domain.getId(), user.getId());
+			Integer[] userScopeArray = AON.getUserScopes(domain.getName(), domain.getId(), user.getLogin(), user.getId());
 			//Todos los archivos del dominio actual con los ambitos del user (incluidos los arcivos con scope nulo).
 			LinkedList<FileInfo> s = AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(),
 					f -> f.getDomainProperty().eq(domain.getId())
@@ -94,7 +94,7 @@ public class DBConsults {
 		System.out.println(serverName);
 		System.out.println(domain.getName());
 		if(domain.getParentId() != null && domain.isEnableHeredity() && domain.getName().equals(serverName)){
-			Integer[] userScopeArray = AON.getUserScopes(domain.getName(), domain.getId(), user.getId());
+			Integer[] userScopeArray = AON.getUserScopes(domain.getName(), domain.getId(), user.getLogin(), user.getId());
 			//Todos los archivos del dominio padre con los ambitos del user (incluidos los archivos con scope nulo).
 			LinkedList<FileInfo> s = AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(),
 								f -> f.getDomainProperty().eq(domain.getParentId())
@@ -212,7 +212,7 @@ public class DBConsults {
 				}
 				for (Record18<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String, Integer, String, String, Integer, String, Timestamp, String, Timestamp> record : result) {
 					FileInfo fi = newFileInfo(ctx, domain, user, domain2,record);
-					if (!esta(domain, fi,user.getId())&&(!fi.getConfidential() || (confidential && fi.getConfidential()))){
+					if (!esta(domain, fi,user.getId(),user.getLogin())&&(!fi.getConfidential() || (confidential && fi.getConfidential()))){
 						filesGwt.add(fi);
 						if(fi.getDomain().equalsIgnoreCase(domain2) || fi.getIsParent())
 							if(domain.getName().equals(domain2))
