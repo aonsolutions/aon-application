@@ -428,9 +428,15 @@ public class Mod184DAO {
 		mod184.setDocument(params.getDocument());
 		mod184.setName(params.getName());
 		mod184.setYear(year);
+		mod184.setReceipt("1840000000001");
 		mod184.setAdministration((byte) (params.getAdministration() != null ? params.getAdministration() : 4));
-		mod184.setContactPerson(params.getContactPerson());
-		mod184.setContactPhone(params.getContactPhone());
+		mod184.setContactPerson(AonStringUtils.left(params.getContactPerson(),
+				FS_MODEL184.CONTACT_PERSON.getDataType().length()));
+		mod184.setContactPhone(AonStringUtils.left(params.getContactPhone(),
+				FS_MODEL184.CONTACT_PHONE.getDataType().length()));
+
+		
+		
 		mod184.setIncomes(new LinkedList<Mod184Income>());
 		mod184.setPartners(new LinkedList<Mod184Partner>());
 		return mod184;
