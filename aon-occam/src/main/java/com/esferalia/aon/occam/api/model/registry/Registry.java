@@ -2,18 +2,26 @@ package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
 
-@SuppressWarnings("serial")
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public class Registry implements Serializable{
-	String alias;
-	String document;
-	String documentCountry;
-	Byte documentType;
-	Integer domain;
-	Integer id;
-	String name;
-	String nationality;
-	Byte securityLevel;
-	Byte type;
+	
+	private static final long serialVersionUID = 9114564405091033572L;
+	
+	private String alias;
+	private String document;
+	private Country documentCountry;
+	private DocumentType documentType;
+	private Integer domain;
+	private Integer id;
+	private String name;
+	private Country nationality;
+	private SecurityLevel securityLevel;
+	private Byte type;
+	
 	public String getAlias() {
 		return alias;
 	}
@@ -28,17 +36,17 @@ public class Registry implements Serializable{
 		this.document = document;
 		return this;
 	}
-	public String getDocumentCountry() {
+	public Country getDocumentCountry() {
 		return documentCountry;
 	}
-	public Registry setDocumentCountry(String documentCountry) {
+	public Registry setDocumentCountry(Country documentCountry) {
 		this.documentCountry = documentCountry;
 		return this;
 	}
-	public Byte getDocumentType() {
+	public DocumentType getDocumentType() {
 		return documentType;
 	}
-	public Registry setDocumentType(Byte documentType) {
+	public Registry setDocumentType(DocumentType documentType) {
 		this.documentType = documentType;
 		return this;
 	}
@@ -63,18 +71,25 @@ public class Registry implements Serializable{
 		this.name = name;
 		return this;
 	}
-	public String getNationality() {
+	public Country getNationality() {
 		return nationality;
 	}
-	public Registry setNationality(String nationality) {
+	public Registry setNationality(Country nationality) {
 		this.nationality = nationality;
 		return this;
 	}
-	public Byte getSecurityLevel() {
+	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
-	public Registry setSecurityLevel(Byte securityLevel) {
+	public Registry setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
+		return this;
+	}
+	public boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
+	}
+	public Registry setConfidential(boolean confidential) {
+		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 		return this;
 	}
 	public Byte getType() {
@@ -85,5 +100,21 @@ public class Registry implements Serializable{
 		return this;
 	}
 	
+	public static String getFullDescription(Registry registry) {
+		return AonStringUtils.defaultIfEmpty(registry.getDocumentType().getDescription(), AonStringUtils.repeat(AonStringUtils.QUESTION, 3))
+				+ AonStringUtils.HYPHEN
+				+ AonStringUtils.defaultIfEmpty(registry.getDocumentCountry().getIso2(), AonStringUtils.repeat(AonStringUtils.QUESTION, 2)) 
+				+ AonStringUtils.SLASH
+				+ AonStringUtils.defaultIfEmpty(registry.getDocument(), AonStringUtils.repeat(AonStringUtils.QUESTION, 9))
+				+ AonStringUtils.SPACE
+				+ AonStringUtils.HYPHEN
+				+ AonStringUtils.SPACE
+				+ registry.getName()
+				+ AonStringUtils.SPACE
+				+ (AonStringUtils.isNotBlank(registry.getAlias())
+					?(AonStringUtils.SPACE + AonStringUtils.OPEN_PARENTHESIS + registry.getAlias() + AonStringUtils.CLOSE_PARENTHESIS)
+					:AonStringUtils.EMPTY)
+				;
+	}
 	
 }

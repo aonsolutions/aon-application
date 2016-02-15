@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.api;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -60,12 +59,9 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
-import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -78,7 +74,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.office.Notice;
@@ -90,6 +85,8 @@ import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.registry.Category;
+import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -227,11 +224,11 @@ public class AON {
 		}
 	}
 
-	public static Integer[] getUserScopes(String domainName, int domainId,
+	public static Integer[] getUserScopes(String domainName, int domainId, String login,
 			Integer userId) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getSecurity().getUserScopes(ctx, userId);
 		} finally {
 			if (ctx != null)
@@ -393,10 +390,10 @@ public class AON {
 	// --------------------- APPLICATION PARAMETERS
 
 	public static FiscalParameters getFiscalParameters(String domainName,
-			int domainId) {
+			int domainId, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId,login);
 			return getCommon().getFiscalParameters(ctx);
 		} finally {
 			if (ctx != null)
@@ -404,17 +401,16 @@ public class AON {
 		}
 	}
 
-	public static ApplicationParameter fetchApplicationParameter(AONContext ctx,
-			AppParam param) {
+	public static ApplicationParameter fetchApplicationParameter(AONContext ctx, AppParam param) {
 		return getCommon().fetchOne(ctx, param);
 	}
 
 	// --------------------------------- ENTERPRISE
-	public static ArrayList<Enterprise> getParentEnterprises(String domainName,
-			int domain, String query) {
+	public static LinkedList<Enterprise> getParentEnterprises(String domainName,
+			int domain, String login, String query) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain,login);
 			return getCommon().getParentEnterprises(ctx, query);
 		} finally {
 			if (ctx != null)
@@ -422,11 +418,10 @@ public class AON {
 		}
 	}
 
-	public static Enterprise getEnterprise(String domainName, int domain,
-			int id) {
+	public static Enterprise getEnterprise(String domainName, int domain, String login, int id) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain,login);
 			return getCommon().getEnterprise(ctx, id);
 		} finally {
 			if (ctx != null)
@@ -434,10 +429,10 @@ public class AON {
 		}
 	}
 
-	public static Company getCompanyForDomain(String domainName, int domainId) {
+	public static Company getCompanyForDomain(String domainName, int domainId, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getCommon().getCompany(ctx, domainId);
 		} finally {
 			if (ctx != null)
@@ -445,11 +440,11 @@ public class AON {
 		}
 	}
 
-	public static ArrayList<CompanyBank> getCompanyBanks(String domainName,
-			int domain, int enterprise) {
+	public static LinkedList<CompanyBank> getCompanyBanks(String domainName,
+			int domain, String login, int enterprise) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain,login);
 			return getCommon().getCompanyBanks(ctx, enterprise);
 		} finally {
 			if (ctx != null)
@@ -457,11 +452,11 @@ public class AON {
 		}
 	}
 
-	public static ArrayList<CompanyBank> getCompanyBanks(String domainName,
-			int domain) {
+	public static LinkedList<CompanyBank> getCompanyBanks(String domainName,
+			int domain,String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain, login);
 			return getCommon().getCompanyBanks(ctx);
 		} finally {
 			if (ctx != null)
@@ -508,10 +503,10 @@ public class AON {
 		}
 	}
 
-	public static List<String> getProductTags(String domainName, int domainId) {
+	public static List<String> getProductTags(String domainName, int domainId, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getCommon().getProductTags(ctx);
 		} finally {
 			if (ctx != null)
@@ -520,10 +515,10 @@ public class AON {
 	}
 
 	public static Map<Integer, String[]> getProductTagMap(String domainName,
-			int domainId) {
+			int domainId, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getCommon().getProductTagMap(ctx);
 		} finally {
 			if (ctx != null)
@@ -557,10 +552,10 @@ public class AON {
 	}
 
 	public static Account getAccount(String domainName, int domainId,
-			String code) {
+			String code,String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getAccount(ctx, code);
 		} finally {
 			if (ctx != null)
@@ -568,15 +563,12 @@ public class AON {
 		}
 	}
 
-	public static Stream<Account> getAccounts(String domainName, int domainId,
+	public static Stream<Account> getAccounts(String domainName, int domainId,String login, 
 			AccountFilter filter) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId,login);
 			return getAccounting().getAccounts(ctx, filter);
-		} catch (Throwable e) {
-			e.printStackTrace();
-			throw e;
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -915,7 +907,7 @@ public class AON {
 			int domain, int year, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain, login);
 			User user = getUser(domainName, domain, login);
 			return getFiscal().getFiscalPanel(ctx, domain, year, user.getId());
 		} finally {
@@ -929,7 +921,7 @@ public class AON {
 			int domain, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain, login);
 			User user = getUser(domainName, domain, login);
 			return getFiscal().getAllModels(ctx, domain, user.getId());
 		} finally {
@@ -942,127 +934,9 @@ public class AON {
 			int domain, int year, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain, login);
 			User user = getUser(domainName, domain, login);
 			return getFiscal().getAllModels(ctx, domain, year, user.getId());
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	// -------------------------- FISCAL ACTIVITIES
-	public static LinkedList<FiscalActivity> getFiscalActivities(
-			String domainName, int domainId) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
-			return getFiscal().getActivities(ctx, domainId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static FiscalActivity calculate(String domainName,
-			FiscalActivity fa) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, fa.getDomain());
-			return getFiscal().calculate(ctx, fa);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static FiscalActivity getFiscalActivity(String domainName,
-			int domainId, int id) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
-			return getFiscal().getActivity(ctx, id);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static FiscalActivity save(String domainName, FiscalActivity fa) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, fa.getDomain());
-			return getFiscal().save(ctx, fa);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static void delete(String domainName, FiscalActivity fa) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, fa.getDomain());
-			getFiscal().delete(ctx, fa);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static FiscalActivity getFiscalActivityFor(String domainName,
-			Epigraph epigraph, FiscalActivity fa) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, fa.getDomain());
-			return getFiscal().getActivityFor(ctx, epigraph, fa);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	// -------------------------- FISCAL MODELS
-	public static LinkedList<FiscalModel> getFiscalModels(String domainName,
-			int domainId) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
-			return getFiscal().getModels(ctx, domainId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static FiscalModel getFiscalModel(String domainName, int domainId,
-			int id) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
-			return getFiscal().getModel(ctx, id);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static FiscalModel save(String domainName, FiscalModel fm) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, fm.getDomain());
-			return getFiscal().save(ctx, fm);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static void delete(String domainName, FiscalModel fm) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, fm.getDomain());
-			getFiscal().delete(ctx, fm);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1114,6 +988,50 @@ public class AON {
 		}
 	}
 
+	public static Mod111 saveComments(String domainName, String user, Mod111 mod111) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod111.getDomain(),user);
+			return getFiscal().saveCommentsMod111(ctx, mod111);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Mod111 initializeForFinish(String domainName, String user, Mod111 mod111) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod111.getDomain(),user);
+			return getFiscal().initializeForFinishMod111(ctx, mod111);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod111 finish(String domainName, String user, Mod111 mod111) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod111.getDomain(),user);
+			return getFiscal().finishMod111(ctx, mod111);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod111 reopen(String domainName, String user, Mod111 mod111) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod111.getDomain(),user);
+			return getFiscal().reopenMod111(ctx, mod111);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static void deleteMod111(String domainName, String user, Mod111 mod111) {
 		AONContext ctx = null;
 		try {
@@ -1153,74 +1071,6 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domain,user);
 			return getFiscal().getMod111Info(ctx, mod111, key, infoKey);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	// ----------------------------------MODELO 131
-	public static LinkedList<Mod131> getMod131s(String domainName, int domainId,String user) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId,user);
-			return getFiscal().getMod131s(ctx, domainId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Mod131 getMod131(String domainName, int domainId,String user, int id) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId,user);
-			return getFiscal().getMod131(ctx, id);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Mod131 calculate(String domainName,String user, Mod131 mod131) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, mod131.getDomain(),user);
-			return getFiscal().calculateMod131(ctx, mod131);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Mod131 save(String domainName,String user, Mod131 mod131) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, mod131.getDomain(),user);
-			return getFiscal().saveMod131(ctx, mod131);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static void deleteMod131(String domainName,String user, Mod131 mod131) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, mod131.getDomain(),user);
-			getFiscal().deleteMod131(ctx, mod131);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Mod131 initializeMod131(String domainName, int domain,String user,
-			Mod131 mod131) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain,user);
-			return getFiscal().initializeMod131(ctx, mod131);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1564,10 +1414,10 @@ public class AON {
 
 	// ----------------------------------MODELO 200 - 2013
 	public static Mod2002013 initializeNewMod2002013(String domainName,
-			int domain, Mod2002013 mod200) {
+			int domain, String login,Mod2002013 mod200) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain, login);
 			return getFiscal().initializeNewMod2002013(ctx, mod200);
 		} finally {
 			if (ctx != null)
@@ -1575,11 +1425,11 @@ public class AON {
 		}
 	}
 
-	public static Mod2002013 initializeMod2002013(String domainName, int domain,
+	public static Mod2002013 initializeMod2002013(String domainName, int domain,String login,
 			Mod2002013 mod200) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain, login);
 			return getFiscal().initializeMod2002013(ctx, mod200);
 		} finally {
 			if (ctx != null)
@@ -1587,11 +1437,11 @@ public class AON {
 		}
 	}
 
-	public static Mod2002013 getMod2002013ByYear(String domainName, int domain,
+	public static Mod2002013 getMod2002013ByYear(String domainName, int domain,String login,
 			int year) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain, login);
 			return getFiscal().getMod2002013ByYear(ctx, year);
 		} finally {
 			if (ctx != null)
@@ -1599,11 +1449,11 @@ public class AON {
 		}
 	}
 
-	public static Mod2002013 getMod2002013ById(String domainName, int domain,
+	public static Mod2002013 getMod2002013ById(String domainName, int domain,String login,
 			int id) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain, login);
 			return getFiscal().getMod2002013ById(ctx, id);
 		} finally {
 			if (ctx != null)
@@ -1619,11 +1469,11 @@ public class AON {
 		return getFiscal().validateMod2002013(mod200);
 	}
 
-	public static Mod2002013 saveMod2002013(String domainName, int domain,
+	public static Mod2002013 saveMod2002013(String domainName, int domain,String login,
 			Mod2002013 mod200) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain, login);
 			return getFiscal().saveMod2002013(ctx, mod200);
 		} finally {
 			if (ctx != null)
@@ -1631,10 +1481,10 @@ public class AON {
 		}
 	}
 
-	public static void deleteMod2002013(String domainName, int domain, int id) {
+	public static void deleteMod2002013(String domainName, int domain,String login, int id) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain, login);
 			getFiscal().deleteMod2002013(ctx, id);
 		} finally {
 			if (ctx != null)
@@ -1651,7 +1501,7 @@ public class AON {
 			List<String> messages) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, parentDomain);
+			ctx = AONContext.getAONContext(domainName, parentDomain, null);
 			return getCommon().insertDomain(ctx, parentDomain, cifEnterprise,
 					nameEnterprise, messages);
 		} finally {
@@ -1661,11 +1511,11 @@ public class AON {
 	}
 
 	// ----------------------------------MODELO 200 - 2014
-	public static Mod2002014 createMod2002014(String domainName, int domain,
+	public static Mod2002014 createMod2002014(String domainName, int domain,String login,
 			int year) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain,login);
 			return getFiscal().createMod2002014(ctx, year);
 		} finally {
 			if (ctx != null)
@@ -1674,10 +1524,10 @@ public class AON {
 	}
 
 	public static Mod2002014 initializeNewMod2002014(String domainName,
-			int domain, Mod2002014 mod200) {
+			int domain,String login, Mod2002014 mod200) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain,login);
 			return getFiscal().initializeNewMod2002014(ctx, mod200);
 		} finally {
 			if (ctx != null)
@@ -1685,11 +1535,11 @@ public class AON {
 		}
 	}
 
-	public static Mod2002014 initializeMod2002014(String domainName, int domain,
+	public static Mod2002014 initializeMod2002014(String domainName, int domain,String login,
 			Mod2002014 mod200) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain,login);
 			return getFiscal().initializeMod2002014(ctx, mod200);
 		} finally {
 			if (ctx != null)
@@ -1697,11 +1547,11 @@ public class AON {
 		}
 	}
 
-	public static Mod2002014 getMod2002014ByYear(String domainName, int domain,
+	public static Mod2002014 getMod2002014ByYear(String domainName, int domain,String login,
 			int year) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain,login);
 			return getFiscal().getMod2002014ByYear(ctx, year);
 		} finally {
 			if (ctx != null)
@@ -1709,11 +1559,11 @@ public class AON {
 		}
 	}
 
-	public static Mod2002014 getMod2002014ById(String domainName, int domain,
+	public static Mod2002014 getMod2002014ById(String domainName, int domain,String login,
 			int id) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain,login);
 			return getFiscal().getMod2002014ById(ctx, id);
 		} finally {
 			if (ctx != null)
@@ -1729,11 +1579,11 @@ public class AON {
 		return getFiscal().validateMod2002014(mod200);
 	}
 
-	public static Mod2002014 saveMod2002014(String domainName, int domain,
+	public static Mod2002014 saveMod2002014(String domainName, int domain,String login,
 			Mod2002014 mod200) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain,login);
 			return getFiscal().saveMod2002014(ctx, mod200);
 		} finally {
 			if (ctx != null)
@@ -1741,10 +1591,10 @@ public class AON {
 		}
 	}
 
-	public static void deleteMod2002014(String domainName, int domain, int id) {
+	public static void deleteMod2002014(String domainName, int domain,String login, int id) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain,login);
 			getFiscal().deleteMod2002014(ctx, id);
 		} finally {
 			if (ctx != null)
@@ -1756,11 +1606,11 @@ public class AON {
 		return getFiscal().dumpAEATMod2002014(mod200);
 	}
 
-	public static Mod2002014 importMod2002013(String domainName, int domain,
+	public static Mod2002014 importMod2002013(String domainName, int domain,String login,
 			Mod2002014 mod200) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain);
+			ctx = AONContext.getAONContext(domainName, domain, login);
 			return getFiscal().importMod2002013(ctx, mod200);
 		} finally {
 			if (ctx != null)
@@ -1907,10 +1757,10 @@ public class AON {
 	// ********************************* FINANCE **
 	// ********************************************
 	public static Stream<InvoiceDetail> getInvoiceDetails(String domainName,
-			Integer domainId, InvoiceFilter filter) {
+			Integer domainId, String login, InvoiceFilter filter) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getFinance().getInvoiceDetails(ctx, filter);
 		} finally {
 			if (ctx != null)
@@ -2029,10 +1879,10 @@ public class AON {
 	// ****************************** MANAGEMENT **
 	// ********************************************
 	public static Stream<OfferDetail> getOfferDetails(String domainName,
-			Integer domainId, OfferFilter filter) {
+			Integer domainId, String login, OfferFilter filter) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getManagement().getOfferDetails(ctx, filter);
 		} finally {
 			if (ctx != null)
@@ -2963,6 +2813,24 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	// ********************************************
+	// ******************************** CREDITOR **
+	// ********************************************
+
+	public static Stream<Creditor> getBasicCreditors(String domainName, int domainId,String login, 
+			CreditorFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getBasicCreditors(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+
+	}
+	
 
 	// ********************************************
 	// ****************************** Commercial **
@@ -3171,5 +3039,4 @@ public class AON {
 		}
 	}
 
-	
 }

@@ -43,7 +43,7 @@ public class Model202TreeNode extends TreeNode<Mod202>  {
 
 	public void setLabel(Mod202 mod202) {
 		InlineLabel label = new InlineLabel();
-		label.setText(AON.MSG.fiscalPeriod(mod202.getPeriod())
+		label.setText(mod202.getPeriod().getDescription()
 				+ (mod202.isReplacement()? " - Sust.":"") 
 				);
 		label.addStyleName(AON.AON_CSS.aonTreeIconNode() );

@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 
 import com.esferalia.aon.occam.api.model.HasAudit;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
@@ -23,7 +24,7 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 	private int domain;
 	private String domainName;
 	private int year;
-	private Integer finance;
+	private Finance finance;
 	private FiscalModelType model;
 	private Period period;
 	private Administration administration;
@@ -100,10 +101,10 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		this.year = year;
 		return this;
 	}
-	public Integer getFinance() {
+	public Finance getFinance() {
 		return finance;
 	}
-	public FiscalModel setFinance(Integer finance) {
+	public FiscalModel setFinance(Finance finance) {
 		this.finance = finance;
 		return this;
 	}
@@ -115,6 +116,10 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		this.model = model;
 		return this;
 	}
+	public String getModelName() {
+		return getModel().getName(administration, period);
+	}
+	
 	@Override
 	public Period getPeriod() {
 		return period;
@@ -342,6 +347,18 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 	}
 	public void setIban(String iban) {
 		this.iban = iban;
+	}
+	public String getFinanceBankAlias() {
+		return (getFinance() != null?getFinance().getBankAlias():null);
+	}
+	public String getFinanceIban() {
+		return (getFinance() != null && getFinance().getBankAccount() != null)?getFinance().getBankAccount().getIban():null;
+	}
+	public String getFinanceMaskedIban() {
+		return (getFinance() != null && getFinance().getBankAccount() != null)?getFinance().getBankAccount().getMaskedIban():null;
+	}
+	public String getFinanceCCC() {
+		return (getFinance() != null && getFinance().getBankAccount() != null)?getFinance().getBankAccount().getCCC():null;
 	}
 	
 	public LinkedHashMap<String, FiscalModelDetail> getMap() {

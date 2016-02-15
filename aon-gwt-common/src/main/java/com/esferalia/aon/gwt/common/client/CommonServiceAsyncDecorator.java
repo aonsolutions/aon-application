@@ -1,11 +1,11 @@
 package com.esferalia.aon.gwt.common.client;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -30,10 +30,10 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	// -------------------------------------------------------------- PARAMS
 	@Override
 	public void getParentEnterprises(String domainName, int domain,
-			String query,AsyncCallback<ArrayList<Enterprise>> callback) {
+			String query,AsyncCallback<LinkedList<Enterprise>> callback) {
 		AON.start();
 		serviceAsync.getParentEnterprises(domainName, domain, query,  
-				new AsyncCallbackWrapper<ArrayList<Enterprise>>(callback));
+				new AsyncCallbackWrapper<LinkedList<Enterprise>>(callback));
 	}
 
 	@Override
@@ -46,17 +46,17 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 
 	@Override
 	public void getCompanyBanks(String domainName, int domain, int enterprise,
-			AsyncCallback<ArrayList<CompanyBank>> callback) {
+			AsyncCallback<LinkedList<CompanyBank>> callback) {
 		AON.start();
 		serviceAsync.getCompanyBanks(domainName, domain, enterprise,  
-				new AsyncCallbackWrapper<ArrayList<CompanyBank>>(callback));
+				new AsyncCallbackWrapper<LinkedList<CompanyBank>>(callback));
 	}
 	@Override
 	public void getCompanyBanks(String domainName, int domain,
-			AsyncCallback<ArrayList<CompanyBank>> callback){
+			AsyncCallback<LinkedList<CompanyBank>> callback){
 		AON.start();
 		serviceAsync.getCompanyBanks(domainName, domain,   
-				new AsyncCallbackWrapper<ArrayList<CompanyBank>>(callback));
+				new AsyncCallbackWrapper<LinkedList<CompanyBank>>(callback));
 	}
 
 	// -------------------------------------------------------------- ACCOUNT
@@ -74,6 +74,15 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.getAccounts(domainName, domain, query,   
 				new AsyncCallbackWrapper<LinkedList<Account>>(callback));
+	}
+
+	// -------------------------------------------------------------- CREDITOR
+	@Override
+	public void getBasicCreditors(String domainName, int domain, String query,
+			AsyncCallback<LinkedList<Creditor>> callback) {
+		AON.start();
+		serviceAsync.getBasicCreditors(domainName, domain, query,   
+				new AsyncCallbackWrapper<LinkedList<Creditor>>(callback));
 	}
 
 

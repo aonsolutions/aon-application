@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -61,43 +62,56 @@ public class AonFiscalFileUtils {
 	}
 	
 	public static String signedZero(Double value, int size) {
-		return signed(value, '0', size);	
+		return signed(value, '0', 'N', size);	
 	}
 	public static String signedZero(Double value, int size, int precision) {
-		return signed(value, '0', size,precision);
+		return signed(value, '0', 'N', size,precision);
 	}
 
 	public static String signedSpace(Double value, int size) {
-		return signed(value, ' ', size);	
+		return signed(value, ' ', 'N', size);	
 	}
 	public static String signedSpace(Double value, int size, int precision) {
-		return signed(value, ' ', size,precision);
-	}
-	public static String signed(Double value, char positive, int size) {
-		return signed(value, positive, size,2);
-	}
-	public static String signed(Double value, char positive, int size, int precision) {
-		if (value == null) return positive + zeros(size-1);
-		return (value < 0 ? 'N' : positive) + unsigned(value,(size - 1),precision);
+		return signed(value, ' ', 'N', size,precision);
 	}
 
-//	public static String signed(Double value, int size) {
-//		if (value == null) return zeros(size);
-//		return text( (value < 0 ? 'N' : '0') + unsigned(value,(size - 1)), size);
-//	}
-//	public static String signed(Double value, int size, int precision) {
-//		if (value == null) return zeros(size);
-//		return text( (value < 0 ? 'N' : '0') + unsigned(value,(size - 1),precision), size);
-//	}
+	public static String signed(Double value, int size) {
+		return signed(value, '0', '-', size);	
+	}
+	public static String signed(Double value, int size, int precision) {
+		return signed(value, '0', '-', size,precision);
+	}
+
+	public static String signed(Double value, char positive, char negative, int size) {
+		return signed(value, positive, negative, size,2);
+	}
+	public static String signed(Double value, char positive, char negative, int size, int precision) {
+		if (value == null) return positive + zeros(size-1);
+		return (value < 0 ? negative : positive) + unsigned(value,(size - 1),precision);
+	}
+
+	public static String unsigned(Integer value, int size, int precision) {
+		return unsigned((Double) (value==null?null:value.doubleValue()), size, precision);
+	}
+
+	public static String unsigned(Short value, int size, int precision) {
+		return unsigned((Double) (value==null?null:value.doubleValue()), size, precision);
+	}
+
+	public static String unsigned(Byte value, int size, int precision) {
+		return unsigned((Double) (value==null?null:value.doubleValue()), size, precision);
+	}
+
 	public static String unsigned(String value, int size, int precision) {
 		return unsigned(AonNumberUtils.todouble(value), size, precision);
 	}
 
-	public static String unsigned(double value, int size) {
+	public static String unsigned(Double value, int size) {
 		return unsigned(value, size, 2);		
 	}
 	
-	public static String unsigned(double value, int size, int precision) {
+	public static String unsigned(Double value, int size, int precision) {
+		if (value == null) return zeros(size);
 		Double d = Math.abs(value);
 		d = AonMathUtils.round(d * Math.pow(10, precision));
 		BigDecimal bg = BigDecimal.valueOf(d);
@@ -108,8 +122,7 @@ public class AonFiscalFileUtils {
 	}
 
 	public static String unsigned(Integer value, int size) {
-		if (value == null)
-			value = 0;
+		if (value == null) return zeros(size);
 		return text( AonStringUtils.leftPad(Integer.toString(value), size, '0'), size);
 	}
 
@@ -141,6 +154,35 @@ public class AonFiscalFileUtils {
 		return value?AEAT_MARK:AonStringUtils.SPACE;
 	}
 
+	public static String getProvinceName(Integer prov, int size) {
+		String name = null;
+		if (prov != null) {
+			Province p = Province.safeValueOf(prov);
+			if (p != null) {
+				name = p.getName();
+			}
+		}
+		return text(changeInvalidCharacters(name),size);
+	}
+	
+	
+	public static String getFileName(FiscalModel fs) {
+		String name = (fs.isEntity())
+				?AonStringUtils.trimToEmpty( fs.getName() )
+				:AonStringUtils.defaultIfBlank(
+						AonStringUtils.defaultIfBlank(fs.getName(), AonStringUtils.EMPTY)
+						+AonStringUtils.SPACE
+						+AonStringUtils.defaultIfBlank(fs.getSurname(), AonStringUtils.EMPTY)
+						,AonStringUtils.EMPTY); 
+		name = changeInvalidCharacters(name);
+		name = name.replaceAll("[^a-zA-Z0-9.-]", "_");
+		return  "Mod" + fs.getModel().getName(fs.getAdministration(), fs.getPeriod()) 
+				+ "_" + fs.getYear() 
+				+ "_" + fs.getPeriod().getName() 
+				+ AonStringUtils.prependIfMissing(name , "_");
+	}
+	
+	
 	public static void main(String[] args) {
 
 		int length = 20;
@@ -176,6 +218,10 @@ public class AonFiscalFileUtils {
 		};
 		for (Double d : values) {
 			Double db = d == null ? null : d * (-1);
+			System.out.println(unsigned( d, length) + " ----> " + d );	
+			System.out.println(unsigned( db,length) + " ----> " + db );
+			System.out.println(signed( d, length) + " ----> " + d );	
+			System.out.println(signed( db,length) + " ----> " + db );
 			System.out.println(signedZero( d, length) + " ----> " + d );	
 			System.out.println(signedZero( db,length) + " ----> " + db );
 			System.out.println(signedSpace( d, length) + " -S--> " + d );	
@@ -183,18 +229,9 @@ public class AonFiscalFileUtils {
 		}
 		System.out.println( AonStringUtils.repeat("*",length) );
 		
-		System.out.println(unsigned( 1, 1, 0) + " ----> " + 1 );
+		System.out.println(unsigned( 1.0, 1, 0) + " ----> " + 1 );
 		 
-	}
-	
-	public static String getProvinceName(Integer prov, int size) {
-		String name = null;
-		if (prov != null) {
-			Province p = Province.safeValueOf(prov);
-			if (p != null) {
-				name = p.getName();
-			}
-		}
-		return text(changeInvalidCharacters(name),size);
+		System.out.println( "MARA LUISA".replaceAll("[^a-zA-Z0-9.-]", "_"));
 	}
 }
+	

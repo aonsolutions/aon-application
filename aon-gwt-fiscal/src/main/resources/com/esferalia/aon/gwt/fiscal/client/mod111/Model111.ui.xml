@@ -38,17 +38,18 @@
 									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconExcel}" />
 								<g:Button ui:field="printPDFButton" text="{msg.draft}"
 									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconPdfPreview}" />
+
+								<g:Button ui:field="reopenButton" text="{msg.reopen}"
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconUnlock}" />
+								<g:Button ui:field="finalizeButton" text="{msg.finish}"
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconLock}" />
 <!-- 
-								<g:Button ui:field="printViaAeatButton" text="{msg.printViaAeat}"
-									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconAeat}" />
 								<g:Button ui:field="calculateButton"
 									styleName="aon-finding-toolbar-item aon-icon-calc" text="{msg.calculateAction}" />
 								<g:Button ui:field="calculateCheckButton"
 									styleName="aon-finding-toolbar-item" text="{msg.authomaticCalculation}" />
 								<g:Anchor ui:field="download" visible="false"/>							
  -->
-								<g:Button ui:field="generateFileButton" text="{msg.generateFile}" />
-								
 								<g:Button ui:field="auditButton" text="{msg.audit}" 
 									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconAudit}" />
 								<g:FlowPanel ui:field="formContainer"/>
@@ -73,15 +74,19 @@
 											<col style="width: auto; white-space: nowrap;" />
 											<col style="width: 280px;" />
 											<col style="width: 120px;" />
+											<col style="width: 150px;" />
 											<col style="width: 110px;" />
 										</colgroup>
 										<tr>
-											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap} {aonResources.css.aonFontBig} {aonResources.css.aonTextCenter}"
+											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap}"
 												rowspan="2">
-												<g:InlineLabel ui:field="documentLabel"/>
-												<g:InlineLabel text=" - "/>
-												<g:InlineLabel ui:field="nameLabel" />
-												<g:InlineLabel ui:field="surnameLabel" />
+												<g:FlowPanel styleName="{aonResources.css.aonFontBig} {aonResources.css.aonTextCenter}">
+													<g:InlineLabel ui:field="documentLabel" styleName="{aonResources.css.aonMarginRight}"/>
+													<g:InlineLabel text="-"/>
+													<g:InlineLabel ui:field="nameLabel" styleName="{aonResources.css.aonMarginLeft}"/>
+													<g:InlineLabel ui:field="surnameLabel" styleName="{aonResources.css.aonMarginLeft}"/>
+												</g:FlowPanel>
+												<g:FlowPanel ui:field="paymentInfo" styleName="{aonResources.css.aonFontSmall} {aonResources.css.aonTextRight}"/>
 											</td>
 											<td class="{aonResources.css.aonPanelGridEven}">
 												<g:Label ui:field="replacementLabel" />
@@ -90,7 +95,11 @@
 											<td class="{aonResources.css.aonPanelGridEven}">
 												<g:CheckBox ui:field="confidential" text="{msg.confidential}"/>
 											</td>
-											<td style="text-align: right;" class="{aonResources.css.aonPanelGridEven}">
+											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap}">
+												<g:Button ui:field="printViaAeatButton" text="{msg.printViaAeat}"
+													styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconAeat}" />
+											</td>
+											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonTextRight}">
 												<g:Button ui:field="commentsButton" text="{msg.comments}" 
 													styleName="{aonResources.css.aonIconCommandButton}"/>
 											</td>
@@ -105,7 +114,10 @@
 												<g:InlineLabel ui:field="dirtyLabel" 
 													styleName="{aonResources.css.aonColorRed}"/>
 											</td>
-											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap} {aonResources.css.aonFontSmall} {aonResources.css.aonTextCenter}">
+											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap}">
+												<g:Button ui:field="generateFileButton" text="{msg.generateFile}" />
+											</td>
+											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap} {aonResources.css.aonTextCenter}">
 												<g:Label ui:field="statusLabel" />
 											</td>
 										</tr>

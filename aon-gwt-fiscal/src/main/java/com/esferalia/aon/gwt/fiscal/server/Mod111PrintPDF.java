@@ -20,14 +20,12 @@ import org.artofsolving.jodconverter.office.OfficeManager;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.mod111.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod111.Model111ScriptProvider;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod111 PDF Print", urlPatterns = { "/aon_gwt_fiscal/Model111PrintPDF" })
@@ -54,18 +52,19 @@ public class Mod111PrintPDF extends HttpServlet {
 			for (IModelScript ms : Model111ScriptProvider.obtainScript(mod111)) {
 				action.accept(ms);
 			}
+			action.beforeFinalize();
 			action.finalize(output);
 			// --------------------------------------------------------------
 			
-			String modName = getPeriodName( mod111 );
+			String fileName = AonFiscalFileUtils.getFileName(mod111);
 			
-			inputFile = File.createTempFile("tmp", modName + "." + MimeType.MS_EXCEL.getExtension());
+			inputFile = File.createTempFile("tmp", fileName + "." + MimeType.MS_EXCEL.getExtension());
 			FileOutputStream inputFileOs = new FileOutputStream(inputFile);
 			AonIOUtils.write(output.toByteArray(), inputFileOs);
 			inputFileOs.flush();
 			inputFileOs.close();
 			
-			outputFile = File.createTempFile("tmp", modName + "." + MimeType.PDF.getExtension());
+			outputFile = File.createTempFile("tmp", fileName + "." + MimeType.PDF.getExtension());
 			DocumentFormatRegistry formatRegistry = new DefaultDocumentFormatRegistry();
 			officeManager = new DefaultOfficeManagerConfiguration()
 					.setPortNumber(DEFAULT_OFFICE_PORT)
@@ -75,7 +74,7 @@ public class Mod111PrintPDF extends HttpServlet {
 			converter.convert(inputFile, outputFile);
 
 			resp.setContentType(MimeType.PDF.getName());
-			resp.setHeader("Content-disposition", "attachment; filename=\"" + modName + ".pdf\";");
+			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".pdf\";");
 			AonIOUtils.copy(new FileInputStream(outputFile), resp.getOutputStream());
 			resp.flushBuffer();
 
@@ -88,17 +87,6 @@ public class Mod111PrintPDF extends HttpServlet {
 			if (officeManager != null) officeManager.stop();
 		}
 
-	}
-
-	private static String getPeriodName(FiscalModel fs) {
-		String name = AonStringUtils.trimToEmpty( fs.getName() );
-		name = AonFiscalFileUtils.changeInvalidCharacters(name);
-		name = name.replaceAll("[^a-zA-Z0-9.-]", "_");
-		return  "Mod" + fs.getModel().getName(fs.getAdministration(), fs.getPeriod()) 
-				+ "_" + fs.getYear() 
-				+ "_" + fs.getPeriod().getName() 
-				+ "_" + fs.getAdministration().toString() 
-				+ AonStringUtils.prependIfMissing(name , "_");
 	}
 
 }

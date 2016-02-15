@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Vector;
 
@@ -76,7 +76,7 @@ public interface INormalizedMemoryAsync {
 			AsyncCallback<Map<String, String>> callback);
 
 	void getParentEnterprises(String domainName, int domain, String query,
-			AsyncCallback<ArrayList<Enterprise>> callback);
+			AsyncCallback<LinkedList<Enterprise>> callback);
 
 	void getDepositExercises(Integer domainId, AsyncCallback<String[]> callback);
 

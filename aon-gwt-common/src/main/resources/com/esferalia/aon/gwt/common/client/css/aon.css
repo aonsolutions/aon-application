@@ -1637,11 +1637,13 @@ input:disabled+label {
 @sprite .aon-icon-check {
 	gwt-image: "aonIconCheck";
 	width: auto !important;
+	height: auto !important;
 }
 
 @sprite .aon-icon-checked {
 	gwt-image: "aonIconChecked";
 	width: auto !important;
+	height: auto !important;
 }
 
 @sprite .aon-icon-model {

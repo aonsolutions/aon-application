@@ -4,12 +4,10 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IFiscal;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
-import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -22,14 +20,11 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
-import com.esferalia.aon.occam.impl.jooq.dao.FiscalActivityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMatrixDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod111DAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod131DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod180DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod184DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod190DAO;
@@ -57,36 +52,6 @@ public class FiscalImpl implements IFiscal {
 		return FiscalMatrixDAO.getAllModels(ctx, domain, year, user);
 	}
 
-	// --------------------------------------------- [FISCAL ACTIVITIES]
-	@Override
-	public FiscalActivity calculate(AONContext ctx, FiscalActivity fa) {
-		return FiscalActivityDAO.calculate(ctx, fa);
-	}
-	@Override
-	public FiscalActivity save(AONContext ctx, FiscalActivity fa) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> FiscalActivityDAO.save(ctx, fa));
-	}
-	@Override
-	public void delete(AONContext ctx, FiscalActivity fa) {
-		ctx.getDslContext().transaction(
-				configuration -> FiscalActivityDAO.delete(ctx, fa));
-	}
-	@Override
-	public FiscalActivity getActivity(AONContext ctx, int id) {
-		return FiscalActivityDAO.getActivity(ctx, id);
-	}
-
-	@Override
-	public LinkedList<FiscalActivity> getActivities(AONContext ctx, int domainId) {
-		return FiscalActivityDAO.getActivities(ctx, domainId);
-	}
-
-	@Override
-	public FiscalActivity getActivityFor(AONContext ctx, Epigraph epigraph, FiscalActivity fa) {
-		return FiscalActivityDAO.getActivityFor(ctx, epigraph, fa);
-	}
-
 	// --------------------------------------------- [FISCAL MODELS]
 	@Override
 	public FiscalModel save(AONContext ctx, FiscalModel fm) {
@@ -100,15 +65,7 @@ public class FiscalImpl implements IFiscal {
 	}
 	@Override
 	public FiscalModel getModel(AONContext ctx, int id) {
-		return FiscalModelDAO.getModel(ctx, id);
-	}
-
-	@Override
-	public LinkedList<FiscalModel> getModels(AONContext ctx, int domain) {
-		LinkedList<FiscalModel> list = new LinkedList<FiscalModel>();
-		FiscalModelDAO.getModels(ctx, domain)
-			.forEach(list::add);
-		return list;
+		return FiscalModelDAO.getFiscalModel(ctx, id);
 	}
 
 	// ---------------------------------------------------- [MODELO 180]
@@ -337,12 +294,33 @@ public class FiscalImpl implements IFiscal {
 	}
 	@Override
 	public Mod111 saveMod111(AONContext ctx, Mod111 mod111) {
-		return Mod111DAO.saveMod111(ctx, mod111);
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod111DAO.saveMod111(ctx, mod111));		
 	}
-
+	@Override
+	public Mod111 saveCommentsMod111(AONContext ctx, Mod111 mod111) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod111DAO.saveCommentsMod111(ctx, mod111));		
+	}
+	@Override
+	public Mod111 initializeForFinishMod111(AONContext ctx, Mod111 mod111){
+		return Mod111DAO.initializeForFinish(ctx, mod111);
+	}
+	@Override
+	public Mod111 finishMod111(AONContext ctx, Mod111 mod111){
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod111DAO.finish(ctx, mod111));		
+	}
+	@Override
+	public Mod111 reopenMod111(AONContext ctx, Mod111 mod111){
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod111DAO.reopen(ctx, mod111));		
+	}
+	
 	@Override
 	public void deleteMod111(AONContext ctx, Mod111 mod111) {
-		Mod111DAO.delete(ctx, mod111);
+		ctx.getDslContext().transaction(
+				configuration -> Mod111DAO.delete(ctx, mod111));
 	}
 
 	@Override
@@ -357,37 +335,6 @@ public class FiscalImpl implements IFiscal {
 	@Override
 	public String getMod111Info(AONContext ctx, Mod111 mod111, Mod111Key key, Mod111KeyInfo infoKey) {
 		return Mod111DAO.getMod111Info(ctx,mod111,key,infoKey);
-	}
-
-	// ----------------------------------------------------------- [MODELO 131]
-	@Override
-	public Mod131 getMod131(AONContext ctx, int id) {
-		return Mod131DAO.getMod131(ctx, id);
-	}
-
-	public LinkedList<Mod131> getMod131s(AONContext ctx, int domain) {
-		LinkedList<Mod131> list = new LinkedList<Mod131>();
-		Mod131DAO.getMod131s(ctx, domain).forEach(list::add);
-		return list;
-	}
-	
-	@Override
-	public Mod131 calculateMod131(AONContext ctx, Mod131 mod131) {
-		return Mod131DAO.calculateMod131(ctx, mod131);
-	}
-	@Override
-	public Mod131 saveMod131(AONContext ctx, Mod131 mod131) {
-		return Mod131DAO.saveMod131(ctx, mod131);
-	}
-	
-	@Override
-	public void deleteMod131(AONContext ctx, Mod131 mod131) {
-		Mod131DAO.delete(ctx, mod131);
-	}
-
-	@Override
-	public Mod131 initializeMod131(AONContext ctx, Mod131 mod131) {
-		return Mod131DAO.initializeMod131(ctx,mod131);
 	}
 
 	// ----------------------------------------------------------- [MODELO 202]
@@ -408,12 +355,14 @@ public class FiscalImpl implements IFiscal {
 	}
 	@Override
 	public Mod202 saveMod202(AONContext ctx, Mod202 mod202) {
-		return Mod202DAO.saveMod202(ctx, mod202);
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod202DAO.saveMod202(ctx, mod202));
 	}
 
 	@Override
 	public void deleteMod202(AONContext ctx, Mod202 mod202) {
-		Mod202DAO.delete(ctx, mod202);
+		ctx.getDslContext().transaction(
+				configuration -> Mod202DAO.delete(ctx, mod202));
 	}
 
 	@Override

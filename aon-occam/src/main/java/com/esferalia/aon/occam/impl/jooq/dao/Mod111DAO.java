@@ -2,7 +2,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
-import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
@@ -23,15 +22,20 @@ import java.util.stream.Stream;
 import org.jooq.Record;
 import org.mvel2.MVEL;
 
-import com.esferalia.aon.jooq.tables.records.FsModelRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
+import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.Mod111DeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -205,7 +209,9 @@ public class Mod111DAO extends FiscalModelDAO {
 		,AR_C87B(Mod111Key.AR_C87
 			, (mod -> mod.isAraba() && mod.getYear() > 2015)
 			, null,null, "AR_C82-AR_C83+AR_C84+AR_C85")
-		
+		,AR_TIP(Mod111Key.AR_TIP
+			, (mod -> mod.isAraba() && mod.getYear() > 2015)
+			, null,null,null)
 		// *************************************************************************
 		// ************************************************************* BIZKAIA ***
 		// *************************************************************************
@@ -322,9 +328,8 @@ public class Mod111DAO extends FiscalModelDAO {
 			, (mod ->  mod.isBizkaia() && mod.getPeriod().isQuarterPeriod())
 			, null,null, "BZ_C23+BZ_C24+BZ_C25+BZ_C26+BZ_C27+BZ_C28+BZ_C29+BZ_C52+BZ_C30+BZ_C31+BZ_C32+BZ_C33")
 		
-		,BZ_C39T(Mod111Key.BZ_C39 , (mod -> mod.isBizkaia())
-			, null,null, "BZ_C36T")
-		
+		,BZ_C39T(Mod111Key.BZ_C39 , (mod -> mod.isBizkaia()), null,null, "BZ_C36T")
+		,BZ_TIP (Mod111Key.BZ_TIP , (mod -> mod.isBizkaia()), null,null,null)
 		// *************************************************************************
 		// **************************************************** COMMON TERRITORY ***
 		// *************************************************************************
@@ -398,7 +403,7 @@ public class Mod111DAO extends FiscalModelDAO {
 		,CT_C30(Mod111Key.CT_C30
 			, (mod -> mod.isAEAT())
 			, null,null, "CT_C28-CT_C29" )
-		
+		,CT_TIP (Mod111Key.CT_TIP , (mod -> mod.isAEAT()), null,null,null)
 		// *************************************************************************
 		// ************************************************************ GIPUZKOA ***
 		// *************************************************************************
@@ -489,7 +494,8 @@ public class Mod111DAO extends FiscalModelDAO {
 		,GP_C29(Mod111Key.GP_C29
 			, (mod -> mod.isGipuzkoa())
 			,null,null, "GP_C14+GP_C28" )
-
+		,GP_TIP (Mod111Key.GP_TIP , (mod -> mod.isGipuzkoa()), null,null,null)
+		
 		// *************************************************************************
 		// ************************************************************* NAVARRA ***
 		// *************************************************************************
@@ -498,6 +504,7 @@ public class Mod111DAO extends FiscalModelDAO {
 			, (mod,br) -> (br.isProfessional() || br.isTransportOperator() || br.isFarmer() || br.isSalaryRetention() || br.isSalaryInKindRetention()) 
 			, (ctx,mod,docs,br) -> mod.ensureDetail(Mod111Key.NF_A1).addAmount(br.getQuota())
 			,null)
+		,NF_TIP (Mod111Key.NF_TIP , (mod -> mod.isNavarra()), null,null,null)
 		;
 		
 		private Mod111Key key;
@@ -536,27 +543,21 @@ public class Mod111DAO extends FiscalModelDAO {
 	}
 
 	public static Stream<Mod111> getMod111s(AONContext ctx,int domain) {
-		return ctx.getDslContext().selectFrom(FS_MODEL)
-				.where(FS_MODEL.DOMAIN.eq(domain))
-				.and(FS_MODEL.MODEL.eq( FiscalModelType.M111.getValue() ))
-				.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.PERIOD.desc())
-				.fetch()
-				.stream()
-				.map( record -> Mod111DAO.map(new Mod111(),record));
+		return getModelRecords(ctx, domain,FiscalModelType.M111)
+				.map( record -> Mod111DAO.map(new Mod111(),record))
+				.peek(fm -> getModelDetails(ctx,fm).forEach( detail -> fm.put( detail)))
+				;
 	}
 	
 	public static Mod111 getMod111(AONContext ctx,int id) {
 		ctx.checkRead();
-		FsModelRecord record = ctx.getDslContext().selectFrom(FS_MODEL)
-			.where(FS_MODEL.ID.eq(id))
-			.fetchOne();
-		if (record != null) {
-			Mod111 mod111 = new Mod111(); 
-			populate(mod111,record);
-			fillModelDetails(ctx,mod111);
-			return mod111;
+		final Mod111 mod111 = getModelRecord(ctx, id)
+				.map(record -> FiscalModelDAO.map(new Mod111(), record));
+		if (mod111 != null) {
+			getModelDetails(ctx,mod111).forEach( detail -> mod111.put( detail));	
 		}
-		return null;
+		return mod111;
+		
 	}
 	
 	public static Mod111 saveMod111(AONContext ctx, Mod111 mod111) {
@@ -565,6 +566,11 @@ public class Mod111DAO extends FiscalModelDAO {
 		return getMod111(ctx, fm.getId());
 	}
 	
+	public static Mod111 saveCommentsMod111(AONContext ctx, Mod111 mod111) {
+		saveComments(ctx, mod111);
+		return mod111;
+	}
+
 	public static Mod111 calculateMod111(AONContext ctx, Mod111 mod111) {
 		LinkedHashMap<String, Object> mvelCtx = new LinkedHashMap<String, Object>();
 		for (String key : mod111.getMap().keySet()) {
@@ -784,4 +790,73 @@ public class Mod111DAO extends FiscalModelDAO {
 		c.add(Calendar.DAY_OF_MONTH, -1);
 		return c.getTime();
 	}
+	
+	public static Mod111 initializeForFinish(AONContext ctx,Mod111 mod111) {
+		
+		if (AonMathUtils.round( mod111.getResult() ) > 0) {
+			FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
+			Integer creditorId = params.getAdmonCreditor();
+			Creditor creditor = null;
+			if ( creditorId != null ) {
+				creditor = CreditorDAO
+						.getBasicCreditors(ctx, p -> p.getIdProperty().eq(creditorId))
+						.findFirst()
+						.orElse(null);
+			}
+			String concept = "Mod." + mod111.getModelName() 
+				+ " - " + mod111.getYear() 
+				+ " / " + mod111.getPeriod().getName( );
+
+			concept = AonStringUtils.abbreviate(concept, 32);
+			Finance finance = new Finance()
+					.setPayment(true)
+					.setRegistry(creditor!=null?creditor.getRegistry():null)
+					.setRegistryDocument(creditor!=null?creditor.getRegistry().getDocument():null)
+					.setRegistryDocumentCountry(creditor!=null?creditor.getRegistry().getDocumentCountry():null)
+					.setRegistryDocumentType(creditor!=null?creditor.getRegistry().getDocumentType():null)
+					.setRegistryName(creditor!=null?creditor.getRegistry().getName():null)
+					.setConfidential(mod111.isConfidential())
+					.setAmount(mod111.getResult())
+					.setFinanceStatus(FinanceStatus.PENDING)
+					.setDueDate(getPeriodEnd(mod111))
+					.setConcept(concept)
+					;
+			mod111.setFinance(finance);
+			if (mod111.isAEAT()) {
+				mod111.setDeclarationType(Mod111DeclarationType.DEPOSIT);
+			}
+		} else {
+			if (mod111.isAEAT()) {
+				mod111.setDeclarationType(Mod111DeclarationType.NEGATIVE);
+			}
+		}
+		return mod111;
+	}
+	public static Mod111 finish(AONContext ctx,Mod111 mod111) {
+		mod111.setStatus(FiscalStatus.FINISHED);
+		if (mod111.getDeclarationType() != null && mod111.getDeclarationType().mustCreateFinance()) {
+			mod111.getFinance().setFinanceStatus(FinanceStatus.PENDING);
+			mod111.getFinance().setDomain(mod111.getDomain());
+			Integer financeId = FinanceDAO.save(ctx, mod111.getFinance());
+			mod111.setFinance(mod111.getFinance().setId(financeId));	
+		} else {
+			mod111.setFinance(null);
+		}
+		return saveMod111(ctx, mod111);
+	}
+	
+	public static Mod111 reopen(AONContext ctx,Mod111 mod111) {
+		mod111.setDeclarationType(null);
+		mod111.setStatus(FiscalStatus.PENDING);
+		Finance finance = mod111.getFinance();
+		mod111.setFinance(null);
+		mod111 = saveMod111(ctx, mod111);
+		if (finance != null) {
+			FinanceDAO.delete(ctx, finance.getId());
+		}
+		return mod111;
+	}
+
+
 }
+

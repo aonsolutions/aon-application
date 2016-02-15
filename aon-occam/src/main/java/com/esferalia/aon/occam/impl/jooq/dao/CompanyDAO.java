@@ -11,7 +11,6 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -86,8 +85,8 @@ public class CompanyDAO {
 	private static Rmedia EMAIL = RMEDIA.as("rmedia_email");
 	private static Rmedia WEB = RMEDIA.as("rmedia_web");
 	
-	public static ArrayList<Enterprise> getParentEnterprises(AONContext ctx,EnterpriseFilter filter) {
-		ArrayList<Enterprise> list = new ArrayList<Enterprise>();
+	public static LinkedList<Enterprise> getParentEnterprises(AONContext ctx,EnterpriseFilter filter) {
+		LinkedList<Enterprise> list = new LinkedList<Enterprise>();
 		ctx.getDslContext().select(
 				ENTERPRISE.REGISTRY
 				,ENTERPRISE.DOMAIN
@@ -220,8 +219,8 @@ public class CompanyDAO {
 		return list;
 	}
 		
-	public static ArrayList<CompanyBank> getBanks(AONContext ctx,int enterprise) {
-		ArrayList<CompanyBank> list = new ArrayList<CompanyBank>();
+	public static LinkedList<CompanyBank> getBanks(AONContext ctx,int enterprise) {
+		LinkedList<CompanyBank> list = new LinkedList<CompanyBank>();
 		list.addAll(
 			ctx.getDslContext().select(RBANK.ID,RBANK.BANK_ACCOUNT,RBANK.BIC,RBANK.ALIAS)
 			.from(COMPANY)

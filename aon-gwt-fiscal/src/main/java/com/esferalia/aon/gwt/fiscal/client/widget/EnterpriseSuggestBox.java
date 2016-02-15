@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.widget;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -94,14 +94,14 @@ public class EnterpriseSuggestBox extends ResizeComposite implements
 			commonService.getParentEnterprises(getCurrentDomainName()
 					,getCurrentDomain()
 					,query
-					,new AsyncCallback<ArrayList<Enterprise>>() {
+					,new AsyncCallback<LinkedList<Enterprise>>() {
 
 						public void onFailure(Throwable caught) {
 							Window.alert("Error while getting suggestions.");
 						}
 
-						public void onSuccess(ArrayList<Enterprise> result) {
-							ArrayList<Suggestion> suggestions = new ArrayList<Suggestion>();
+						public void onSuccess(LinkedList<Enterprise> result) {
+							LinkedList<Suggestion> suggestions = new LinkedList<Suggestion>();
 							if (result != null) {
 								for (final Enterprise enterprise : result) {
 									suggestions.add(new EnterpriseSuggestion(enterprise));

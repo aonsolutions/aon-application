@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.stream.Stream;
 
-import com.esferalia.aon.jooq.tables.records.FsModelRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -35,17 +34,8 @@ public class Mod202DAO extends FiscalModelDAO {
 		
 	public static Mod202 getMod202(AONContext ctx,int id) {
 		ctx.checkRead();
-		FsModelRecord record = ctx.getDslContext().selectFrom(FS_MODEL)
-			.where(FS_MODEL.ID.eq(id))
-			.fetchOne();
-		if (record != null) {
-			Mod202 mod202 = new Mod202(); 
-			populate(mod202,record);
-			fillModelDetails(ctx,mod202);
-			onFillFiscalModel(mod202);
-			return mod202;
-		}
-		return null;
+		return  getModelRecord(ctx, id)
+				.map(record -> FiscalModelDAO.map(new Mod202(), record));
 	}
 	
 	public static Mod202 saveMod202(AONContext ctx, Mod202 mod202) {

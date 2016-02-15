@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.deposit.client;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Stack;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -98,9 +99,9 @@ public class Deposit implements EntryPoint {
 		toolbar.setVisible(false);
 				
 		inma.getParentEnterprises(getCurrentDomainName(),getCurrentDomain(),"%"
-				,new AsyncCallback<ArrayList<Enterprise>>() {
+				,new AsyncCallback<LinkedList<Enterprise>>() {
 					@Override
-					public void onSuccess(ArrayList<Enterprise> result) {
+					public void onSuccess(LinkedList<Enterprise> result) {
 						
 						if (result == null || result.size() == 0) {
 							PopupPanel box = DialogMessages.alertErrorWidget(AON.MSG.noData());
@@ -284,7 +285,7 @@ public class Deposit implements EntryPoint {
 			inma.getParentEnterprises(getCurrentDomainName()
 					,getCurrentDomain(),
 					query
-					,new AsyncCallback<ArrayList<Enterprise>>() {
+					,new AsyncCallback<LinkedList<Enterprise>>() {
 
 						public void onFailure(Throwable caught) {
 							PopupPanel box = DialogMessages
@@ -293,7 +294,7 @@ public class Deposit implements EntryPoint {
 							box.show();
 						}
 
-						public void onSuccess(ArrayList<Enterprise> result) {
+						public void onSuccess(LinkedList<Enterprise> result) {
 							ArrayList<Suggestion> suggestions = new ArrayList<Suggestion>();
 							if (result != null) {
 								for (final Enterprise enterprise : result) {

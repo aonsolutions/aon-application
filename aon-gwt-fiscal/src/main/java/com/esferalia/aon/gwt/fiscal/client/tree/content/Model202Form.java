@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.tree.content;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
@@ -10,8 +11,8 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox;
-import com.esferalia.aon.gwt.fiscal.client.tree.IFiscalTreeContent;
 import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree;
+import com.esferalia.aon.gwt.fiscal.client.tree.IFiscalTreeContent;
 import com.esferalia.aon.gwt.fiscal.client.tree.ITreeNodeCallback;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.TreeNode;
 import com.esferalia.aon.occam.api.model.CompanyBank;
@@ -965,13 +966,13 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 			FiscalTree.COMMON_SERVICE.getCompanyBanks(
 					FiscalTree.getCurrentDomainName(),
 					mod202.getDomain(),
-					new AsyncCallback<ArrayList<CompanyBank>>() {
+					new AsyncCallback<LinkedList<CompanyBank>>() {
 
 						public void onFailure(Throwable caught) {
 							Window.alert("Error while getting suggestions.");
 						}
 
-						public void onSuccess(ArrayList<CompanyBank> result) {
+						public void onSuccess(LinkedList<CompanyBank> result) {
 							ArrayList<Suggestion> suggestions = new ArrayList<Suggestion>();
 							if (result != null) {
 								for (final CompanyBank cb : result) {

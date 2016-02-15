@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Vector;
 
@@ -63,7 +63,7 @@ public interface INormalizedMemory extends RemoteService{
 	
 	public void updateSchemaMemory(Boolean bool, Integer domainId, String key, Integer year);
 	
-	public ArrayList<Enterprise> getParentEnterprises(String domainName, int domain, String query);
+	public LinkedList<Enterprise> getParentEnterprises(String domainName, int domain, String query);
 	
 	public String[] getDepositExercises(Integer domainId);
 }

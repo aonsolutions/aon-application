@@ -44,10 +44,12 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
@@ -121,10 +123,12 @@ public class InvoiceDAO {
 				,INVOICE.RDOCUMENT_TYPE
 				,INVOICE.RDOCUMENT_COUNTRY
 				,INVOICE.RNAME
+				,INVOICE.SECURITY_LEVEL
 				,GEOZONE.CODE
 				,GEOZONE.NAME
 				,RADDRESS.ZIP
 				,RADDRESS.CITY
+				,SCOPE.ID
 				,SCOPE.DESCRIPTION
 				,PROJECT.NAME
 				,INVOICE_DETAIL.LINE
@@ -187,6 +191,32 @@ public class InvoiceDAO {
 			.map(new FullInvoiceDetailFiller());
 	}
 	
+	public static class MinimalInvoiceFiller  implements Function<Record,Invoice> {
+
+		@Override
+		public Invoice apply(Record record) {
+			return new Invoice()
+					.setId(record.getValue(INVOICE.ID))
+					.setDomain(record.getValue(INVOICE.DOMAIN))
+					.setType(AonEnumUtils.enumValue(InvoiceType.class,record.getValue(INVOICE.TYPE)))
+					.setSeries(record.getValue(INVOICE.SERIES))
+					.setNumber(record.getValue(INVOICE.NUMBER))
+					.setReferenceCode(record.getValue(INVOICE.REFERENCE_CODE))
+					.setIssueDate(record.getValue(INVOICE.ISSUE_DATE))
+					.setTaxDate(record.getValue(INVOICE.TAX_DATE))
+					.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,record.getValue(INVOICE.SECURITY_LEVEL)))
+					.setRegistry(record.getValue(INVOICE.REGISTRY))
+					.setRegistryDocument(record.getValue(INVOICE.RDOCUMENT))
+					.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,record.getValue(INVOICE.RDOCUMENT_TYPE)))
+					.setRegistryDocumentCountry(Country.safeValueOf(record.getValue(INVOICE.RDOCUMENT_COUNTRY)))
+					.setRegistryName(record.getValue(INVOICE.RNAME))
+					.setScope(new Scope().setId(record.getValue(SCOPE.ID)))
+				;
+		}
+		
+	}
+	
+	
 	private static class FullInvoiceDetailFiller  implements Function<Record,InvoiceDetail> {
 
 		@Override
@@ -203,6 +233,8 @@ public class InvoiceDAO {
 					.setReferenceCode(record.getValue(INVOICE.REFERENCE_CODE))
 					.setIssueDate(record.getValue(INVOICE.ISSUE_DATE))
 					.setTaxDate(record.getValue(INVOICE.TAX_DATE))
+					.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,
+							record.getValue(INVOICE.SECURITY_LEVEL)))
 					.setRegistry(record.getValue(INVOICE.REGISTRY))
 					.setRegistryDocument(record.getValue(INVOICE.RDOCUMENT))
 					.setRegistryDocumentType(
@@ -216,8 +248,8 @@ public class InvoiceDAO {
 					.setRegistryProvince(record.getValue(GEOZONE.NAME))
 					.setRegistryTown(record.getValue(RADDRESS.CITY))
 					.setRegistryZIP(record.getValue(RADDRESS.ZIP))
-					.setScope(record.getValue(SCOPE.DESCRIPTION))						
-					)
+					.setScope(new Scope().setId(record.getValue(SCOPE.ID)).setDescription(record.getValue(SCOPE.DESCRIPTION)))
+				)
 				.setProject( record.getValue( PROJECT.NAME ))
 				.setLine(record.getValue( INVOICE_DETAIL.LINE ))
 				.setDescription(record.getValue( INVOICE_DETAIL.DESCRIPTION ))

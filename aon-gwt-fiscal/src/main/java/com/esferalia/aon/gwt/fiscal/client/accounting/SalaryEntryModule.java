@@ -118,10 +118,10 @@ public class SalaryEntryModule extends MainEntryPoint {
 		
 		banks.addItem(AON.MSG.pendingPayment(),"");
 		commonService.getCompanyBanks(getCurrentDomainName(), getCurrentDomain()
-				, new AsyncCallback<ArrayList<CompanyBank>>() {
+				, new AsyncCallback<LinkedList<CompanyBank>>() {
 			
 			@Override
-			public void onSuccess(ArrayList<CompanyBank> result) {
+			public void onSuccess(LinkedList<CompanyBank> result) {
 				for (CompanyBank cb :  result) {
 					banks.addItem(cb.getDisplay(), Integer.toString( cb.getId() ));
 				}

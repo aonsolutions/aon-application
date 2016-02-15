@@ -12,12 +12,9 @@ import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
-import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -30,7 +27,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -56,21 +52,6 @@ public interface FiscalService extends RemoteService {
 	// -------------------------------------------------------------- ACTIVITIES
 	LinkedList<Activity> getActivities(int activityGroup) throws AonCoreException;
 	
-	// ---------------------------------------------------------- FISCAL ACTIVITIES
-	FiscalActivity calculate(String domainName, FiscalActivity fa);
-	LinkedList<Epigraph> getModuleEpigraphs(int year);
-	LinkedList<FiscalActivity> getFiscalActivities(String domainName, int domain) throws AonCoreException;
-	FiscalActivity getFiscalActivity(String domainName, int domain, int id) throws AonCoreException;
-	FiscalActivity getFiscalActivityFor(String domainName,Epigraph epigraph, FiscalActivity fa);
-	FiscalActivity save(String domainName, FiscalActivity fa) throws AonCoreException;
-	void delete(String domainName, FiscalActivity fa) throws AonCoreException;
-	
-	// ---------------------------------------------------------- FISCAL MODEL
-	LinkedList<FiscalModel> getFiscalModels(String domainName, int domain) throws AonCoreException;
-	FiscalModel getFiscalModel(String domainName, int domain, int id) throws AonCoreException;
-	FiscalModel save(String domainName, FiscalModel fm) throws AonCoreException;
-	void delete(String domainName, FiscalModel fm) throws AonCoreException;
-
 	// ---------------------------------------------------------------MODELO 190
 	void deleteMod190(String domainName, int domain,Mod190 mod190) throws AonCoreException;
 	Mod190 saveMod190(String domainName, int domain,Mod190 mod190) throws AonCoreException;
@@ -121,19 +102,15 @@ public interface FiscalService extends RemoteService {
 	LinkedList<Mod111> getMod111s(String domainName, int domain) throws AonCoreException;
 	Mod111 calculateMod111(String domainName, Mod111 mod111) throws AonCoreException;
 	Mod111 saveMod111(String domainName, Mod111 mod111) throws AonCoreException;
+	Mod111 saveCommentsMod111(String domainName, Mod111 mod111) throws AonCoreException;
+	Mod111 initializeForFinishMod111(String domainName, Mod111 mod111) throws AonCoreException;
+	Mod111 finishMod111(String domainName, Mod111 mod111) throws AonCoreException;
+	Mod111 reopenMod111(String domainName, Mod111 mod111) throws AonCoreException;
 	void deleteMod111(String domainName, Mod111 mod111) throws AonCoreException;
 	Mod111 initializeMod111(String domainName, int domain, Mod111 mod111);
 	Mod111 createMod111(String domainName, int domain, Mod111 mod111) throws AonCoreException;
 	String getInfo(String domainName, int domain, Mod111 mod111, Mod111Key key, Mod111KeyInfo infoKey) throws AonCoreException;
 
-	// ---------------------------------------------------------------MODELO 131
-	Mod131 getMod131(String domainName, int domain, int id) throws AonCoreException;
-	LinkedList<Mod131> getMod131s(String domainName, int domain) throws AonCoreException;
-	Mod131 calculateMod131(String domainName, Mod131 mod131) throws AonCoreException;
-	Mod131 saveMod131(String domainName, Mod131 mod131) throws AonCoreException;
-	void deleteMod131(String domainName, Mod131 mod131) throws AonCoreException;
-	Mod131 initializeMod131(String domainName, int domain, Mod131 mod131) throws AonCoreException;
-	
 	// ---------------------------------------------------------------MODELO 202
 	Mod202 getMod202(String domainName, int domain, int id) throws AonCoreException;
 	LinkedList<Mod202> getMod202s(String domainName, int domain) throws AonCoreException;
@@ -181,16 +158,12 @@ public interface FiscalService extends RemoteService {
 			, AccountEntryParams params,int offset, int limit) throws AonCoreException;
 	AccountEntry getAccountEntry(String domainName,int domain, int id) throws AonCoreException;
 	AccountEntry save(String domainName,int domain, AccountEntry ae) throws AonCoreException;
-	LinkedList<AccountEntry> insertSalaryAccountEntries(String domainName,int domain
-			, Date from, Date to,String concept,Integer registryBank) throws AonCoreException;
-	LinkedList<AccountEntry> getSalaryAccountEntries(String domainName,int domain, Date from
-			, Date to) throws AonCoreException;
+	LinkedList<AccountEntry> insertSalaryAccountEntries(String domainName,int domain, Date from, Date to,String concept,Integer registryBank) throws AonCoreException;
+	LinkedList<AccountEntry> getSalaryAccountEntries(String domainName,int domain, Date from, Date to) throws AonCoreException;
 	void deleteAccountEntry(String domainName,int domain, Integer id) throws AonCoreException;
 	
 	// --------------------------------------------------------------- ACCOUNT STATEMENT
-	AccountStatementReport getAccountStatement(String domainName,int domain
-			, AccountStatementParams params) throws AonCoreException;	
-	LinkedList<AccountStatement> getAccountBalance(String domainName,int domain
-			, AccountStatementParams params) throws AonCoreException;
+	AccountStatementReport getAccountStatement(String domainName,int domain, AccountStatementParams params) throws AonCoreException;	
+	LinkedList<AccountStatement> getAccountBalance(String domainName,int domain, AccountStatementParams params) throws AonCoreException;
 
 }

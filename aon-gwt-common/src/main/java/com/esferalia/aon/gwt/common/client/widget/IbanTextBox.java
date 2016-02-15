@@ -10,6 +10,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
@@ -17,7 +18,7 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class IbanTextBox extends SimplePanel implements HasSelectionHandlers<Suggestion> {
+public class IbanTextBox extends SimplePanel implements HasSelectionHandlers<Suggestion>, HasEnabled {
 	
 	private static final AonResources AON_RESOURCES = GWT.create(AonResources.class);
 	
@@ -38,9 +39,11 @@ public class IbanTextBox extends SimplePanel implements HasSelectionHandlers<Sug
 		panel.addStyleName(AON_RESOURCES.css().aonInline());
 		this.add(panel);
 		iban1 = new SuggestBox(suggestOracle);
+		iban1.setStyleName(AON_RESOURCES.css().aonInputText());
 		iban1.setWidth("100px");
 		panel.add(iban1);
 		for (TextBox textBox : textBoxes ) {
+			textBox.setStyleName(AON_RESOURCES.css().aonInputText());
 			textBox.addStyleName(AON_RESOURCES.css().aonMarginLeft());
 			textBox.setMaxLength(4);
 			textBox.setVisibleLength(5);
@@ -74,6 +77,7 @@ public class IbanTextBox extends SimplePanel implements HasSelectionHandlers<Sug
 	}
 
 	public static class IbanSuggestion implements Suggestion {
+		
 		private IIbanContainer ibanContainer;
 
 		public IbanSuggestion(IIbanContainer ibanContainer) {
@@ -89,5 +93,24 @@ public class IbanTextBox extends SimplePanel implements HasSelectionHandlers<Sug
 		public String getReplacementString() {
 			return ibanContainer.getIBan();
 		}
+		
+		public IIbanContainer getIbanContainer() {
+			return ibanContainer;
+		}
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return iban1.isEnabled();
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		iban1.setEnabled(enabled);
+		iban2.setEnabled(enabled);
+		iban3.setEnabled(enabled);
+		iban4.setEnabled(enabled);
+		iban5.setEnabled(enabled);
+		iban6.setEnabled(enabled);
 	}
 }

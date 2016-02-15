@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.api;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,10 +12,10 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
-import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 
@@ -34,15 +33,10 @@ public interface ICommon {
 	// ENTERPRISE
 	// --------------------------------------------
 	public Enterprise getEnterprise(AONContext ctx, int id);
-
-	public ArrayList<Enterprise> getParentEnterprises(AONContext ctx,
-			String query);
-
-	public ArrayList<CompanyBank> getCompanyBanks(AONContext ctx, int enterprise);
-
+	public LinkedList<Enterprise> getParentEnterprises(AONContext ctx,String query);
+	public LinkedList<CompanyBank> getCompanyBanks(AONContext ctx, int enterprise);
 	public Company getCompany(AONContext ctx, int domain);
-
-	public ArrayList<CompanyBank> getCompanyBanks(AONContext ctx);
+	public LinkedList<CompanyBank> getCompanyBanks(AONContext ctx);
 
 	// --------------------------------------------
 	// WORKPLACE

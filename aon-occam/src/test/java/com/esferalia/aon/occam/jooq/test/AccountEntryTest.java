@@ -25,14 +25,14 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 public class AccountEntryTest {
 
 	private static AONContext ctx;
-	private static String DOMAIN_NAME = "aon.esferalia.com";
-	private static int DOMAIN_ID = 5;
+	private static String DOMAIN_NAME = "inelco-mac.ecastellano.dev";
+	private static int DOMAIN_ID = 400;
 	private static String USER = "jgarcia";
 	
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
 		Class.forName( org.gjt.mm.mysql.Driver.class.getName() );
-		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID, USER);
+		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID);
 	}
 	
 	// ACCOUNT ENTRY	
@@ -180,7 +180,6 @@ public class AccountEntryTest {
 //	}
 
 	@Test
-	@Ignore
 	public void testFetch() {
 		System.out.println(" ------- testFetch" );
 		Stream<AccountEntry> list = AON.getAccountEntries(ctx

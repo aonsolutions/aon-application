@@ -24,13 +24,14 @@ public class InvoiceReportTest {
 	private static AONContext ctx;
 	private static String DOMAIN_NAME = "sig.sig.ecastellano.dev";
 	private static Integer DOMAIN_ID = 5;
+	private static String LOGIN = "jgarcia";
 	
 	
 
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
 		Class.forName( org.gjt.mm.mysql.Driver.class.getName() );
-		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID);
+		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,LOGIN);
 	}
 	
 	@Test
@@ -52,7 +53,7 @@ public class InvoiceReportTest {
 		
 		System.out.println((scopes==null?"SCOPES NULL":"SCOPES NOT NULL"));
 		
-		AON.getInvoiceDetails(DOMAIN_NAME, DOMAIN_ID
+		AON.getInvoiceDetails(DOMAIN_NAME, DOMAIN_ID, LOGIN
 				,p -> {
 					Filter f = p.getDomainProperty().eq(DOMAIN_ID)
 							.and(p.getTypeProperty().in(types) )

@@ -23,5 +23,15 @@ public enum InvoiceTransactionType implements Serializable {
 	public String getDescription() {
 		return description;
 	}
-	
+
+	public static InvoiceTransactionType safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	public static InvoiceTransactionType safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i > InvoiceTransactionType.values().length) return null;
+		return InvoiceTransactionType.values()[i];
+	}
+
 }

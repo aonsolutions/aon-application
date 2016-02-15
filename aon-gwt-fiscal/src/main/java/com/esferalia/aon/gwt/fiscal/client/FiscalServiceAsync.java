@@ -12,12 +12,9 @@ import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
-import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -30,7 +27,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -49,26 +45,6 @@ public interface FiscalServiceAsync {
 			AsyncCallback<LinkedList<IFiscalModel>> callback);
 	void getAllModels(String domainName, int domain, int year,
 			AsyncCallback<LinkedList<IFiscalModel>> callback);
-
-	// ------------------------------------------------------ FISCAL ACTIVITIES
-	void calculate(String domainName, FiscalActivity fa,AsyncCallback<FiscalActivity> callback);
-	void getModuleEpigraphs(int year, AsyncCallback<LinkedList<Epigraph>> callback);
-	void getFiscalActivities(String domainName, int domain,
-			AsyncCallback<LinkedList<FiscalActivity>> callback);
-	void getFiscalActivity(String domainName, int domain, int id,
-			AsyncCallback<FiscalActivity> callback);
-	void getFiscalActivityFor(String domainName, Epigraph epigraph,
-			FiscalActivity fa, AsyncCallback<FiscalActivity> asyncCallback);
-	void save(String domainName, FiscalActivity fa,
-			AsyncCallback<FiscalActivity> callback);
-	void delete(String domainName, FiscalActivity fa,
-			AsyncCallback<Void> callback);
-	
-	// ------------------------------------------------------ FISCAL MODELS
-	void getFiscalModels(String domainName, int domain,AsyncCallback<LinkedList<FiscalModel>> callback);
-	void getFiscalModel(String domainName, int domain, int id,AsyncCallback<FiscalModel> callback);
-	void save(String domainName, FiscalModel fm,AsyncCallback<FiscalModel> callback);
-	void delete(String domainName, FiscalModel fm, AsyncCallback<Void> callback);
 
 	// -------------------------------------------------------------- ACTIVITIES
 	void getActivities(int activityGroup,
@@ -125,18 +101,14 @@ public interface FiscalServiceAsync {
 	void calculateMod111(String domainName, Mod111 mod111,AsyncCallback<Mod111> callback);
 	void deleteMod111(String currentDomainName, Mod111 mod111,AsyncCallback<Void> callback);
 	void saveMod111(String domainName, Mod111 mod111,AsyncCallback<Mod111> asyncCallback);
+	void saveCommentsMod111(String domainName, Mod111 mod111,AsyncCallback<Mod111> asyncCallback);
+	void initializeForFinishMod111(String domainName, Mod111 mod111,AsyncCallback<Mod111> asyncCallback);
+	void finishMod111(String domainName, Mod111 mod111,AsyncCallback<Mod111> asyncCallback);
+	void reopenMod111(String domainName, Mod111 mod111,AsyncCallback<Mod111> asyncCallback);
 	void initializeMod111(String domainName, int domain, Mod111 mod111,AsyncCallback<Mod111> asyncCallback);
 	void createMod111(String domainName, int domain, Mod111 mod111, AsyncCallback<Mod111> callback);
 	void getInfo(String domainName, int domain, Mod111 mod111, Mod111Key key, Mod111KeyInfo infoKey,AsyncCallback<String> callback);
 	
-	// ---------------------------------------------------------------MODELO 131
-	void getMod131(String domainName, int domain, int id,AsyncCallback<Mod131> callback);
-	void getMod131s(String domainName, int domain,AsyncCallback<LinkedList<Mod131>> callback);
-	void calculateMod131(String domainName, Mod131 mod131,AsyncCallback<Mod131> callback);
-	void saveMod131(String domainName, Mod131 mod131,AsyncCallback<Mod131> asyncCallback);
-	void deleteMod131(String currentDomainName, Mod131 mod131,AsyncCallback<Void> callback);
-	void initializeMod131(String domainName, int domain, Mod131 mod131,AsyncCallback<Mod131> asyncCallback);
-
 	// ---------------------------------------------------------------MODELO 202
 	void getMod202(String domainName, int domain, int id,AsyncCallback<Mod202> callback);
 	void getMod202s(String domainName, int domain,AsyncCallback<LinkedList<Mod202>> callback);

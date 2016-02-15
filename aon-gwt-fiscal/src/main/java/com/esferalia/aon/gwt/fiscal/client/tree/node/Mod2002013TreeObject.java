@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.tree.node;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -251,11 +250,11 @@ public class Mod2002013TreeObject implements Serializable {
 		});
 	}
 
-	public void getCompanyBanks(final AsyncCallback<ArrayList<CompanyBank>> callback) {
-		FiscalTree.COMMON_SERVICE.getCompanyBanks(domainName,domain,new AsyncCallback<ArrayList<CompanyBank>>() {
+	public void getCompanyBanks(final AsyncCallback<LinkedList<CompanyBank>> callback) {
+		FiscalTree.COMMON_SERVICE.getCompanyBanks(domainName,domain,new AsyncCallback<LinkedList<CompanyBank>>() {
 			
 			@Override
-			public void onSuccess(ArrayList<CompanyBank> result) {
+			public void onSuccess(LinkedList<CompanyBank> result) {
 				callback.onSuccess(result);
 			}
 			

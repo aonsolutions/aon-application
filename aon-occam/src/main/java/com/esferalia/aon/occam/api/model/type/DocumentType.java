@@ -23,4 +23,18 @@ public enum DocumentType implements Serializable {
 		return description;
 	}
 	
+	public byte value() {
+		return (byte) this.ordinal();
+	}
+	
+	public static DocumentType safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	public static DocumentType safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i > DocumentType.values().length) return null;
+		return DocumentType.values()[i];
+	}
+	
 }

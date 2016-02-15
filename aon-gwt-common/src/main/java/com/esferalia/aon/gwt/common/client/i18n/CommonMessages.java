@@ -8,7 +8,6 @@ import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.ActivityGroup;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
-import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.i18n.client.Messages;
 
@@ -163,27 +162,27 @@ public interface CommonMessages extends Messages {
 		})	
 	String fiscalModelDescriptionlong(@Select FiscalModelType f);
 
-	@DefaultMessage("-----")
-	@AlternateMessage(
-		{"M01"		,"Enero"
-		,"M02"		,"Febrero"
-		,"M03"		,"Marzo"
-		,"M04"		,"Abril"
-		,"M05"		,"Mayo"
-		,"M06"		,"Junio"
-		,"M07"		,"Julio"
-		,"M08"		,"Agosto"
-		,"M09"		,"Septiembre"
-		,"M10"		,"Octubre"
-		,"M11"		,"Noviembre"
-		,"M12"		,"Diciembre"
-		,"T1"		,"1\u00AA Trimestre"
-		,"T2"		,"2\u00AA Trimestre"
-		,"T3"		,"3\u00AA Trimestre"
-		,"T4"		,"4\u00AA Trimestre"
-		,"YEAR"		,"Anual"
-		})	
-	String fiscalPeriod(@Select Period f);
+//	@DefaultMessage("-----")
+//	@AlternateMessage(
+//		{"M01"		,"Enero"
+//		,"M02"		,"Febrero"
+//		,"M03"		,"Marzo"
+//		,"M04"		,"Abril"
+//		,"M05"		,"Mayo"
+//		,"M06"		,"Junio"
+//		,"M07"		,"Julio"
+//		,"M08"		,"Agosto"
+//		,"M09"		,"Septiembre"
+//		,"M10"		,"Octubre"
+//		,"M11"		,"Noviembre"
+//		,"M12"		,"Diciembre"
+//		,"T1"		,"1\u00AA Trimestre"
+//		,"T2"		,"2\u00AA Trimestre"
+//		,"T3"		,"3\u00AA Trimestre"
+//		,"T4"		,"4\u00AA Trimestre"
+//		,"YEAR"		,"Anual"
+//		})	
+//	String fiscalPeriod(@Select Period f);
 
 	@DefaultMessage("ESP")
 	String currencyCode();
@@ -291,6 +290,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("No se permite la modificaci\u00F3n/borrado de asientos autom\u00E1ticos.")
 	String automaticEntryWarning();
 
+	@DefaultMessage("No ha sido posible recuperar los bancos de la empresa ({0}) ")
+	String unableToShowCompanyBanks(String message);
+
 	@DefaultMessage("No ha sido posible mostrar los datos ({0}) ")
 	String unableToShowData(String message);
 	
@@ -305,6 +307,12 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("No se pudo guardar la declaraci\u00F3n. Causa: \n {0}")
 	String unableToSaveDeclaration(String cause);
+	
+	@DefaultMessage("No se pudo reabrir la declaraci\u00F3n. Causa: \n {0}")
+	String unableToReopenDeclaration(String message);	
+
+	@DefaultMessage("No se pudo finalizar la declaraci\u00F3n. Causa: \n {0}")
+	String unableToFinishDeclaration(String message);	
 
 	@DefaultMessage("No se pudo borrar la declaraci\u00F3n. Causa: \n {0}")
 	String unableToDeleteDeclaration(String message);
@@ -593,6 +601,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Estado")
 	String status();
+	
+	@DefaultMessage("Estado Vto.")
+	String financeStatus();
 
 	@DefaultMessage("Descripci\u00F3n")
 	String description();
@@ -1574,6 +1585,9 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Otras deducciones. Cuota l\u00EDquida positiva")
 	String otherDeductions();
+
+	@DefaultMessage("Deuda tributaria a ingresar")
+	String fiscalDebt();
 	
 	@DefaultMessage("Cuota del ejercicio a ingresar o a devolver")
 	String yearQuota();
@@ -2083,7 +2097,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Contrapartidas dinerarias o en especie")
 	String moneyInKindReturn();
 	
-	@DefaultMessage("N\u00AA de perceptores")
+	@DefaultMessage("N\u00BA de perceptores")
 	String receivers();
 
 	@DefaultMessage("Percepciones")
@@ -2518,7 +2532,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Folio")
 	String footer2Label5();
 	
-	@DefaultMessage("N\u00AA Hoja registral")
+	@DefaultMessage("N\u00BA Hoja registral")
 	String footer2Label6();
 	
 	@DefaultMessage("Fecha de cierre ejercicio social")
@@ -2557,7 +2571,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Otros Documentos")
 	String footer2Label18();
 	
-	@DefaultMessage("N\u00AA")
+	@DefaultMessage("N\u00BA")
 	String footer2Label19();
 	
 	@DefaultMessage("IDENTIFICACI\u00d3N DEL PRESENTANTE QUE HACE LA SOLICITUD")
@@ -2686,7 +2700,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Fecha de asiento")
 	String accountEntryDate();
 	
-	@DefaultMessage("N\u00AA de diario")
+	@DefaultMessage("N\u00BA de diario")
 	String journal();
 	
 	@DefaultMessage("Libro diario")
@@ -2813,4 +2827,12 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Otros gastos fiscalmente deducibles")
 	String otherTaxDeduction();
+	
+	@DefaultMessage("Acreedor")
+	String creditor();
+
+	@DefaultMessage("Acreedor no encontrado")
+	String creditorNotFound();
+
+	
 }

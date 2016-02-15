@@ -25,6 +25,9 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
 public class DBCalendar {
 	
@@ -200,13 +203,13 @@ public class DBCalendar {
 			return new Registry()
 					.setAlias(rr.getAlias())
 					.setDocument(rr.getDocument())
-					.setDocumentCountry(rr.getDocumentCountry())
-					.setDocumentType(rr.getDocumentType())
+					.setDocumentCountry(Country.safeValueOf(rr.getDocumentCountry()))
+					.setDocumentType(DocumentType.safeValueOf( rr.getDocumentType()))
 					.setDomain(rr.getDomain())
 					.setId(rr.getId())
 					.setName(rr.getName())
-					.setNationality(rr.getNationality())
-					.setSecurityLevel(rr.getSecurityLevel())
+					.setNationality(Country.safeValueOf(rr.getNationality()))
+					.setSecurityLevel(SecurityLevel.safeValueOf( rr.getSecurityLevel()))
 					.setType(rr.getType());
 		} finally {
 			if (ctx != null)

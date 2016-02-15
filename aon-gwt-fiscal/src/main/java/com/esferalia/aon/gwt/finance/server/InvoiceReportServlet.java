@@ -44,12 +44,13 @@ public class InvoiceReportServlet extends HttpServlet {
 			final Date toDate = (AonStringUtils.isNotBlank(toDateParam))
 					?DATE_FORMAT.parse(toDateParam)
 					:null;
-
+			String login = AonServletUtils.getRequestUser(req);
+					
 			InvoiceExcelAction action = new InvoiceExcelAction();
-			List<String> tags = AON.getProductTags(domainName, domainId);
+			List<String> tags = AON.getProductTags(domainName, domainId,login);
 			Map<Integer,String[]> productTags = null;
 			if (tags != null && tags.size() > 0) {
-				productTags = AON.getProductTagMap(domainName, domainId);	
+				productTags = AON.getProductTagMap(domainName, domainId,login);	
 			}
 			action.setTags(tags);
 			action.setProductTags(productTags);
@@ -71,12 +72,12 @@ public class InvoiceReportServlet extends HttpServlet {
 			Byte[] typ = new Byte[typesList.size()]; 
 			final Byte[] types = typesList.toArray(typ);
 			
-			String login = AonServletUtils.getRequestUser(req);
+			
 			User user = AON.getUser(domainName, domainId, login ); 
-			Integer[] scopes = AON.getUserScopes(domainName, domainId, user.getId());
+			Integer[] scopes = AON.getUserScopes(domainName, domainId,login, user.getId());
 			
 			
-			AON.getInvoiceDetails(domainName, domainId,
+			AON.getInvoiceDetails(domainName, domainId, login,
 					p -> {
 						Filter f = p.getDomainProperty().eq(domainId)
 							.and(p.getTypeProperty().in(types))

@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.tree.content.mod200_2013;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
@@ -243,13 +244,13 @@ public class Page14 extends PageAbs {
 		public void requestSuggestions(final Request request,
 				final Callback callback) {
 			mod200Object.getCompanyBanks ( 
-					new AsyncCallback<ArrayList<CompanyBank>>() {
+					new AsyncCallback<LinkedList<CompanyBank>>() {
 
 						public void onFailure(Throwable caught) {
 							Window.alert("Error while getting suggestions.");
 						}
 
-						public void onSuccess(ArrayList<CompanyBank> result) {
+						public void onSuccess(LinkedList<CompanyBank> result) {
 							ArrayList<Suggestion> suggestions = new ArrayList<Suggestion>();
 							if (result != null) {
 								for (final CompanyBank cb : result) {

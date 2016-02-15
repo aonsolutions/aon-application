@@ -14,6 +14,13 @@ public class AonValidationUtil {
     		
     }
 	
+    public static boolean isValidRequired(String value, boolean required) {
+    	return required
+    			?AonStringUtils.isNotEmpty(value)
+    			:AonStringUtils.isEmpty(value)
+    			;
+    		
+    }
     
 }
 

@@ -142,9 +142,9 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 		toolbar.addListener(this);
 		
 		COMMON_SERVICE.getParentEnterprises(getCurrentDomainName(),getCurrentDomain(),"%"
-				,new AsyncCallback<ArrayList<Enterprise>>() {
+				,new AsyncCallback<LinkedList<Enterprise>>() {
 					@Override
-					public void onSuccess(ArrayList<Enterprise> result) {
+					public void onSuccess(LinkedList<Enterprise> result) {
 						if (result == null || result.size() == 0) {
 							PopupPanel box = DialogMessages.alertErrorWidget(AON.MSG.noData());
 							box.center();
@@ -325,7 +325,7 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 			COMMON_SERVICE.getParentEnterprises(getCurrentDomainName()
 					,getCurrentDomain(),
 					query
-					,new AsyncCallback<ArrayList<Enterprise>>() {
+					,new AsyncCallback<LinkedList<Enterprise>>() {
 
 						public void onFailure(Throwable caught) {
 							PopupPanel box = DialogMessages
@@ -334,7 +334,7 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 							box.show();
 						}
 
-						public void onSuccess(ArrayList<Enterprise> result) {
+						public void onSuccess(LinkedList<Enterprise> result) {
 							ArrayList<Suggestion> suggestions = new ArrayList<Suggestion>();
 							if (result != null) {
 								for (final Enterprise enterprise : result) {

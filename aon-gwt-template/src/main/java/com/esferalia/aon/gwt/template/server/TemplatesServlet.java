@@ -2393,7 +2393,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 	
 	public Company getCompany(Domain domain){
-		return AON.getCompanyForDomain(domain.getName(), domain.getId());
+		return AON.getCompanyForDomain(domain.getName(), domain.getId(), getUserLogin());
 	}
 	
 	public List<Seller> getSellerList(Domain domain){

@@ -3,6 +3,11 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.ApplicationRole.APPLICATION_ROLE;
 import static com.esferalia.aon.jooq.tables.ApplicationUser.APPLICATION_USER;
 import static com.esferalia.aon.jooq.tables.ApplicationUserProfile.APPLICATION_USER_PROFILE;
+import static com.esferalia.aon.jooq.tables.Contact.CONTACT;
+import static com.esferalia.aon.jooq.tables.ContactData.CONTACT_DATA;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
+import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Profile.PROFILE;
@@ -10,23 +15,24 @@ import static com.esferalia.aon.jooq.tables.ProfileRole.PROFILE_ROLE;
 import static com.esferalia.aon.jooq.tables.Role.ROLE;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Signature.SIGNATURE;
+import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
-import static com.esferalia.aon.jooq.tables.Contact.CONTACT;
-import static com.esferalia.aon.jooq.tables.ContactData.CONTACT_DATA;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.jooq.Condition;
-import org.jooq.Record3;
+import org.jooq.Field;
+import org.jooq.Record;
 import org.jooq.Record5;
-import org.jooq.Result;
+import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.ContactData;
 import com.esferalia.aon.jooq.tables.records.ContactRecord;
 import com.esferalia.aon.jooq.tables.records.MailAccountRecord;
 import com.esferalia.aon.jooq.tables.records.ScopeRecord;
@@ -44,6 +50,7 @@ import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonRole;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class SecurityDAO {
@@ -175,16 +182,55 @@ public class SecurityDAO {
 		list.toArray(roles);
 		return roles;
 	}
+	
+	public static Condition getSecurityLevelCondition (AONContext ctx, String userLogin, Field<Byte> field) {
+		ctx.checkRead();
+		User user = getUser(ctx, userLogin);
+		if (user == null) {
+			throw new IllegalAccessError("Usario no encontrado.");
+		}
+		if (user.hasConfidentialityRole()) {
+			// Tiene el rol de confidencialidad por lo no hay que filtrar.
+			return DSL.trueCondition();
+		} else {
+			// No tiene el rol de confidencialidad, solo puede ver lo oficial.
+			return field.equal(SecurityLevel.OFFICIAL.value()); 
+		}
+		
+	}
+	
+	public static Condition getUserScopesCondition (AONContext ctx, String userLogin, Field<Integer> field) {
+		Integer[] scopes = getUserScopes(ctx,userLogin);
 
+		// No tiene scopes o tiene acceso a todo.
+		if (scopes == null) return DSL.trueCondition();
+		
+		Condition c = null;
+		for (Integer scope : scopes) {
+			c = c == null 
+				?field.eq(scope)
+				:c.or(field.eq(scope));
+		}
+		return c;
+	}
+
+	public static Integer[] getUserScopes (AONContext ctx, String userLogin) {
+		ctx.checkRead();
+		User user = getUser(ctx, userLogin);
+		if (user == null) {
+			throw new IllegalAccessError("Usario no encontrado.");
+		}
+		return getUserScopes(ctx, user.getId());
+	}
+	
 	public static Integer[] getUserScopes (AONContext ctx, Integer userId) {
 		ctx.checkRead();
 		User user = getUser(ctx, userId);
 		if (user == null) {
-			// ??
 			throw new IllegalAccessError("Usario no encontrado.");
 		}
-		// Es un usuario del dominio, por lo que es 
-		// consultar los scopes del dominio
+		// Es un usuario del dominio, por lo que hay que consultar los scopes del dominio
+		int dom = user.getDomain();
 		if ( user.getDomain() == ctx.getDomainId()) {
 			final List<Integer> list = new ArrayList<Integer>();
 			ctx.getDslContext()
@@ -201,17 +247,18 @@ public class SecurityDAO {
 		
 		// Comprabamos si es un usuario del dominio padre.
 		Domain domain = getDomain(ctx, ctx.getDomainId());
-		if ( user.getDomain() == domain.getParentId() ) {
-			// Se trata de un usuario del cominio padre, por 
+		int par = domain.getParentId();
+		if ( dom == par ) {
+			// Se trata de un usuario del dominio padre, por 
 			// lo que tiene acceso a todos los scopes, se devuelve 
 			// NULL, por lo que no hay que cruzar la tabla user_scope.
 			return null;
-		} else {
-			// NO DEBE PASAR. Es un usuario que no pertenece 
-			// al dominio en curso ni al dominio padre. 
-			// Si ha llegado aqui es un error.
-			throw new IllegalAccessError("Usario sin permisos.");
 		}
+		
+		// NO DEBE PASAR. 
+		// Es un usuario que no pertenece al dominio en curso ni al dominio padre. 
+		// Si ha llegado aqui es un error.
+		throw new IllegalAccessError("Usario sin permisos.");
 	}
 	
 	public static Scope getScope(AONContext ctx, Integer scopeId){
@@ -367,11 +414,109 @@ public class SecurityDAO {
 		}
 	}
 	
-	public static Integer[] getUserScopes(String domainName, int domainId,
-			Integer id) {
-		// TODO Auto-generated method stub
-		return null;
+//	public static Integer[] getUserScopes(String domainName, int domainId, Integer id) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+	
+	public static Scope getScopeFromRegistry(AONContext ctx, boolean payment, Integer registry) {
+		Scope scope = null;
+		if (payment) {
+			scope = getScopeFromCreditor(ctx, registry);
+			if (scope == null) {
+				scope = getScopeFromSupplier(ctx, registry);	
+			}
+		} else {
+			scope = getScopeFromCustomer(ctx, registry);
+		}
+		return scope;
 	}
-
+	
+	public static Scope getScopeFromCustomer(AONContext ctx, Integer id) {
+		Record record = ctx.getDslContext()
+			.select(SCOPE.fields())
+				.from(CUSTOMER)
+				.join(SCOPE).on(CUSTOMER.SCOPE.equal(SCOPE.ID))
+				.where(CUSTOMER.REGISTRY.equal(id))
+				.fetch()
+				.stream()
+				.findFirst()
+				.orElse(null);
+		return (record == null)
+			? null
+			: new Scope()
+				.setId(record.getValue(SCOPE.ID))
+				.setDomain(record.getValue(SCOPE.DOMAIN))
+				.setDescription(record.getValue(SCOPE.DESCRIPTION));
+	}
+	public static Scope getScopeFromSupplier(AONContext ctx, Integer id) {
+		Record record = ctx.getDslContext()
+			.select(SCOPE.fields())
+				.from(SUPPLIER)
+				.join(SCOPE).on(SUPPLIER.SCOPE.equal(SCOPE.ID))
+				.where(SUPPLIER.REGISTRY.equal(id))
+				.fetch()
+				.stream()
+				.findFirst()
+				.orElse(null);
+		return (record == null)
+			? null
+			: new Scope()
+				.setId(record.getValue(SCOPE.ID))
+				.setDomain(record.getValue(SCOPE.DOMAIN))
+				.setDescription(record.getValue(SCOPE.DESCRIPTION));
+	}
+	public static Scope getScopeFromCreditor(AONContext ctx, Integer id) {
+		Record record = ctx.getDslContext()
+			.select(SCOPE.fields())
+			   .from(CREDITOR)
+			   .join(SCOPE).on(CREDITOR.SCOPE.equal(SCOPE.ID))
+				.where(CREDITOR.REGISTRY.equal(id))
+			   .fetch()
+			   .stream()
+			   .findFirst()
+			   .orElse(null);
+		return (record == null)
+			? null
+			: new Scope()
+				.setId(record.getValue(SCOPE.ID))
+				.setDomain(record.getValue(SCOPE.DOMAIN))
+				.setDescription(record.getValue(SCOPE.DESCRIPTION));
+	}
+	
+	public static Scope getScopeFromContract(AONContext ctx, Date dueDate, Integer registry) {
+		Record record = ctx.getDslContext()
+				.select(SCOPE.fields())
+				   .from(CONTRACT)
+				   .join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
+				   .join(SCOPE).on(WORKPLACE.SCOPE.equal(SCOPE.ID))
+				   .where(CONTRACT.PERSON.equal(registry))
+				   .and(CONTRACT.END_DATE.isNull())
+				   .orderBy(CONTRACT.START_DATE.desc())
+				   .fetch()
+				   .stream()
+				   .findFirst()
+				   .orElse(null);
+		if (record == null) {
+			record = ctx.getDslContext()
+					.select(SCOPE.fields())
+					   .from(CONTRACT)
+					   .join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
+					   .join(SCOPE).on(WORKPLACE.SCOPE.equal(SCOPE.ID))
+					   .where(CONTRACT.PERSON.equal(registry))
+					   .orderBy(CONTRACT.START_DATE.desc(),CONTRACT.END_DATE.desc())
+					   .fetch()
+					   .stream()
+					   .findFirst()
+					   .orElse(null);			
+		}
+		return (record == null)
+				? null
+				: new Scope()
+					.setId(record.getValue(SCOPE.ID))
+					.setDomain(record.getValue(SCOPE.DOMAIN))
+					.setDescription(record.getValue(SCOPE.DESCRIPTION));
+		
+	}
 }
 

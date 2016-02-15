@@ -9,7 +9,6 @@ import com.esferalia.aon.gwt.fiscal.client.tree.content.EnterpriseYear;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasTreeItems;
@@ -20,39 +19,6 @@ public class FiscalModelsTreeNode extends TreeNode<EnterpriseYear> {
 	
 	public static abstract class TreeNodeFiscalModelTypes<T> extends TreeNodeTypes<T>{
 
-		public static TreeNodeFiscalModelTypes<FiscalModel> MODEL_GENERIC = new TreeNodeFiscalModelTypes<FiscalModel>() {
-			@Override
-			public TreeNode<FiscalModel> getInstance() {
-				return new GenericModelTreeNode();
-			}
-			@Override
-			public boolean accept(IFiscalModel fm) {
-				return (fm.getModel() != FiscalModelType.M131
-					 && fm.getModel() != FiscalModelType.M202);
-			}
-			@Override
-			public FiscalModel getFiscalModel(IFiscalModel fm) {
-				return map(fm);
-			}
-		};
-
-		public static TreeNodeFiscalModelTypes<Mod131> MODEL_131 = new TreeNodeFiscalModelTypes<Mod131>() {
-			@Override
-			public TreeNode<Mod131> getInstance() {
-				return new Model131TreeNode();
-			}
-			@Override
-			public boolean accept(IFiscalModel fm) {
-				return (fm.getModel() == FiscalModelType.M131);
-			}
-			@Override
-			public Mod131 getFiscalModel(IFiscalModel fm) {
-				Mod131 mod131 = new Mod131();
-				copy(fm, mod131);
-				return mod131;
-			}
-		};
-		
 		public static TreeNodeFiscalModelTypes<Mod2002013TreeObject> MODEL_200_2013 = new TreeNodeFiscalModelTypes<Mod2002013TreeObject>() {
 			@Override
 			public TreeNode<Mod2002013TreeObject> getInstance() {
@@ -110,25 +76,6 @@ public class FiscalModelsTreeNode extends TreeNode<EnterpriseYear> {
 		public abstract boolean accept(IFiscalModel fm);
 		public abstract T getFiscalModel(IFiscalModel fm);
 		
-		private static FiscalModel map(IFiscalModel fm) {
-			if (fm instanceof FiscalModel) return (FiscalModel) fm;
-			FiscalModel f = new FiscalModel();
-			f.setId(fm.getId());
-			f.setDomain(fm.getDomain());
-			f.setDomainName(fm.getDomainName());
-			f.setModel(fm.getModel());
-			f.setYear(fm.getYear());
-			f.setPeriod(fm.getPeriod());
-			f.setAdministration(fm.getAdministration());
-			f.setStatus(fm.getStatus());
-			f.setReplacement(fm.isReplacement());
-			f.setComplementary(fm.isComplementary());
-			f.setDocument(fm.getDocument());
-			f.setName(fm.getName());
-			f.setSurname(fm.getSurname());
-			return f;
-		}
-		
 		public static void copy(IFiscalModel from,FiscalModel to) {
 			to.setId(from.getId());
 			to.setAdministration(from.getAdministration());
@@ -145,7 +92,7 @@ public class FiscalModelsTreeNode extends TreeNode<EnterpriseYear> {
 		}
 		
 		static TreeNodeFiscalModelTypes<?>[] NODE_TYPES = new TreeNodeFiscalModelTypes<?>[]{
-			MODEL_131,MODEL_202	
+			MODEL_202	
 		};
 		
 	}
@@ -258,12 +205,6 @@ public class FiscalModelsTreeNode extends TreeNode<EnterpriseYear> {
 									}
 								});
             		    		parentNode.setState(true);
-//        					} else if (TreeNodeFiscalModelTypes.MODEL_111.accept(fm) ) {
-//    							TreeNodeFiscalModelTypes.MODEL_111.getInstance().render(parentNode, TreeNodeFiscalModelTypes.MODEL_111.getFiscalModel(fm));
-//        					} else if (TreeNodeFiscalModelTypes.MODEL_131.accept(fm) ) {
-//        						TreeNodeFiscalModelTypes.MODEL_131.getInstance().render(parentNode, TreeNodeFiscalModelTypes.MODEL_131.getFiscalModel(fm));
-//        					} else {
-//            					TreeNodeFiscalModelTypes.MODEL_GENERIC.getInstance().render(parentNode, TreeNodeFiscalModelTypes.MODEL_GENERIC.getFiscalModel(fm));
         					}
     					}
     				}

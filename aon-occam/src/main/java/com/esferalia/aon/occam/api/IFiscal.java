@@ -2,12 +2,10 @@ package com.esferalia.aon.occam.api;
 
 import java.util.LinkedList;
 
-import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
-import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -20,7 +18,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
 
@@ -30,19 +27,10 @@ public interface IFiscal {
 	public LinkedList<IFiscalModel> getAllModels(AONContext ctx,int domain,int user);
 	public LinkedList<IFiscalModel> getAllModels(AONContext ctx,int domain,int year,int user);
 	
-	// 			   FISCAL ACTIVITIES
-	public FiscalActivity calculate(AONContext ctx, FiscalActivity fa);
-	public FiscalActivity save(AONContext ctx, FiscalActivity fa);
-	public void delete(AONContext ctx, FiscalActivity fa);
-	public FiscalActivity getActivity(AONContext ctx, int id);
-	public LinkedList<FiscalActivity> getActivities(AONContext ctx, int domainId);
-	public FiscalActivity getActivityFor(AONContext ctx,Epigraph epigraph, FiscalActivity fa);
-
 	// 			   FISCAL MODEL
 	public FiscalModel save(AONContext ctx, FiscalModel fm);
 	public void delete(AONContext ctx, FiscalModel fm);
 	public FiscalModel getModel(AONContext ctx, int id);
-	public LinkedList<FiscalModel> getModels(AONContext ctx, int domainId);
 	
 	// 				   		  MOD180
 	public LinkedList<Mod180> getMod180s(AONContext ctx,int domain);
@@ -76,13 +64,13 @@ public interface IFiscal {
 
 	// 				   		  MOD390
 	public LinkedList<Mod390> getMod390s(AONContext ctx, int domain);
-	
+	// 2014
 	public Mod3902014 getMod3902014(AONContext ctx,Integer id);
 	public String getMod3902014XML(AONContext aonContext, int id);
 	public Mod3902014 saveMod3902014(AONContext ctx,Mod3902014 mod390);
 	public void deleteMod3902014(AONContext ctx,Mod3902014 mod390);
 	public Mod3902014 initializeMod3902014(AONContext ctx, int year);
-
+	// 2015
 	public Mod3902015 getMod3902015(AONContext ctx,Integer id);
 	public String getMod3902015XML(AONContext aonContext, int id);
 	public Mod3902015 saveMod3902015(AONContext ctx,Mod3902015 mod390);
@@ -94,17 +82,13 @@ public interface IFiscal {
 	public LinkedList<Mod111> getMod111s(AONContext ctx, int domain);
 	public Mod111 calculateMod111(AONContext ctx, Mod111 mod111);
 	public Mod111 saveMod111(AONContext ctx, Mod111 mod111);
+	public Mod111 saveCommentsMod111(AONContext ctx, Mod111 mod111);
+	public Mod111 initializeForFinishMod111(AONContext ctx, Mod111 mod111);
+	public Mod111 finishMod111(AONContext ctx, Mod111 mod111);
+	public Mod111 reopenMod111(AONContext ctx, Mod111 mod111);
 	public Mod111 initializeMod111(AONContext ctx, Mod111 mod111);
 	public Mod111 createMod111(AONContext ctx, Mod111 mod111);
 	public void deleteMod111(AONContext ctx, Mod111 mod111);
-
-	// 				   		  MOD131
-	public Mod131 getMod131(AONContext ctx, int id);
-	public LinkedList<Mod131> getMod131s(AONContext ctx, int domain);
-	public Mod131 calculateMod131(AONContext ctx, Mod131 mod131);
-	public Mod131 saveMod131(AONContext ctx, Mod131 mod131);
-	public void deleteMod131(AONContext ctx, Mod131 mod131);
-	public Mod131 initializeMod131(AONContext ctx, Mod131 mod131);
 
 	// 				   		  MOD202
 	public Mod202 getMod202(AONContext ctx, int id);
@@ -138,6 +122,7 @@ public interface IFiscal {
 	public String dumpAEATMod2002014(Mod2002014 mod200);
 	public Mod2002014 importMod2002013(AONContext ctx, Mod2002014 mod200);
 	public String getMod111Info(AONContext ctx, Mod111 mod111, Mod111Key key, Mod111KeyInfo infoKey);
+	
 	
 
 }

@@ -212,7 +212,7 @@ public abstract class Model111Base extends ResizeComposite implements RequiresRe
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
 				mod111.ensureDetail(key).setAmount(input.getValue());
-				if (input.isEnabled() && callback.isAuthomaticCalculationEnabled()) {
+				if (input.isEnabled()) {
 					calculateAndRefresh( mod111 );
 				}
 				callback.markAsDirty();
@@ -223,9 +223,7 @@ public abstract class Model111Base extends ResizeComposite implements RequiresRe
 	}
 	
 	private void paintInfoCol(int row, int col, final Mod111 mod111, final IModelScript script) {
-		if (script.getInfoKey() == null || script.getInfoKey() == Mod111KeyInfo.NONE) {
-			table.setWidget(row, col, new Label(""));	
-		} else {
+		if (script.getInfoKey() == Mod111KeyInfo.INVOICE || script.getInfoKey() == Mod111KeyInfo.SALARY) {
 			final Button button = new Button("");
 			button.setTitle(script.getInfoKey().getLabel());
 			button.setStyleName(AON.AON_CSS.aonIconCommandButton());
@@ -252,6 +250,8 @@ public abstract class Model111Base extends ResizeComposite implements RequiresRe
 				}
 			});
 			table.setWidget(row, col, button);
+		} else {
+			table.setWidget(row, col, new Label());	
 		}
 		
 	}

@@ -137,6 +137,10 @@ public class AonStringUtils {
 	public static final String PERCENT = "%";
 	public static final String ASTERISK = "*";
 	public static final String COLON = ":";
+	public static final String HYPHEN = "-";
+	public static final String QUESTION = "?";
+	public static final String BACKSLASH = "\\";
+	public static final String SLASH = "/";
 	public static final String EQUAL = "=";
 	public static final String OPEN_BRACKET = "[";
 	public static final String CLOSE_BRACKET = "]";
@@ -152,6 +156,7 @@ public class AonStringUtils {
 	public static final String SEVEN = "7";
 	public static final String EIGHT = "8";
 	public static final String NINE = "9";
+	public static final String CR_LF = "\r\n";
 	
 	/**
      * Eight-bit Unicode Transformation Format.
@@ -198,6 +203,7 @@ public class AonStringUtils {
 	 * </p>
 	 */
 	private static final int PAD_LIMIT = 8192;
+	
 	
 	
 

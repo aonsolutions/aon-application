@@ -103,6 +103,13 @@ public enum AonError implements Serializable{
 	,DUPLICATE_SERIAL_NUMBER("Ya existe el n\u00FAmero de serie {0}.")
 	,EMPTY_WORKPLACE("El Lugar de trabajo es un dato obligatorio, no puede estar vacio")
 
+	// --------------------------------------------- FINANCE
+	,FINANCE_AMOUNT_ZERO("El importe del vencimiento no puede ser cero.")	
+	,FINANCE_EMPTY_SCOPE("No es posible encontrar un \u00E1mbito v\u00E1lido para el vencimiento.")
+	,FINANCE_WRONG_IBAN_LENGTH("Longitud de IBAN incorrecta.")
+	,FINANCE_WRONG_ACCOUNT_BANK("Cuenta Bancaria incorrecta.")
+	,FINANCE_WRONG_IBAN("IBAN incorrecto.")
+	,DELETE_STATUS_WRONG("No se permite el borrado de vencimientos que no est\u00E9n pendientes.")
 	;
 	
 	

@@ -48,6 +48,21 @@ public class AONContext {
 	@Deprecated
 	public static AONContext getAONContext(String domainName, int domainId) {
 		try {
+			// ----------------------
+			// ----------------------
+//			System.out.println("[AON WARNING]");
+//			System.out.println("AONContext getAONContext(domainName,domainId) esta "
+//					+ "deprecado y sera borrado en el futuro. Usar "
+//					+ "AONContext getAONContext(domainName, domainId,user) "
+//					+ " con el fin de verificar si el usuario tiene permisos, scopes, etc ...");
+//			StackTraceElement[] stes = Thread.currentThread().getStackTrace();
+//			if (stes != null && stes.length > 2) {
+//				System.out.println();
+//				System.out.println("\tat " + stes[2]);
+//				System.out.println();
+//			}
+			// ----------------------
+			// ----------------------
 			return new AONContext(AonDataSource.getInstance().getConnection(
 					domainName), domainName, domainId, null);
 		} catch (AonConnectionException e) {

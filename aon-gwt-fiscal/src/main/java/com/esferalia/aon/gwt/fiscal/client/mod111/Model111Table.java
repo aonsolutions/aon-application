@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -17,7 +18,6 @@ import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class Model111Table extends CellTable<Mod111> {
-
 	private static final CellTable.Resources TABLE_STYLE = GWT.create(AonCellTable.class);
 	
 	public static final ProvidesKey<Mod111> MOD111_PROVIDES_KEY = new ProvidesKey<Mod111>() {
@@ -44,6 +44,8 @@ public class Model111Table extends CellTable<Mod111> {
 		addComplementaryColumn();
 		addDocumentColumn();
 		addNameColumn();
+		addAmountColumn();
+		addFinanceStatusColumn();
 		
 		model = new NoSelectionModel<Mod111>(MOD111_PROVIDES_KEY);
 		model.addSelectionChangeHandler( handler );
@@ -173,6 +175,33 @@ public class Model111Table extends CellTable<Mod111> {
 		};
 		this.addColumn(nameColumn, AON.MSG.name());
 		this.setColumnWidth(nameColumn, 100, Unit.PCT);
+	}	
+
+	private void addAmountColumn() {
+		final TextColumn<Mod111> amountColumn = new TextColumn<Mod111>() {
+			@Override
+			public String getValue(Mod111 mod111) {
+				return AON.FMT.format(mod111.getResult()) ;
+			}
+		};
+		this.addColumn(amountColumn, AON.MSG.result());
+		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
+		this.setColumnWidth(amountColumn, 120, Unit.PCT);
+	}	
+
+	private void addFinanceStatusColumn() {
+		final TextColumn<Mod111> financeStatusColumn = new TextColumn<Mod111>() {
+			@Override
+			public String getValue(Mod111 mod111) {
+				if (mod111.getFinance() != null && mod111.getFinance().getFinanceStatus() != null) {
+					return mod111.getFinance().getFinanceStatus().getDescription();
+				}
+				return AonStringUtils.EMPTY;
+			}
+		};
+		this.addColumn(financeStatusColumn, AON.MSG.financeStatus());
+		financeStatusColumn.setCellStyleNames(AON.AON_CSS.aonTextCenter());
+		this.setColumnWidth(financeStatusColumn, 120, Unit.PCT);
 	}	
 
 	public Mod111 getSelected() {

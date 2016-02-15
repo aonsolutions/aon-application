@@ -16,10 +16,10 @@ public enum Period implements Serializable {
 	M10(9,9,"10","Octubre"),
 	M11(10,10,"11","Noviembre"),
 	M12(11,11,"12","Diciembre"),
-	T1(0,2,"T1","1\u00AA Trim."),	//12
-	T2(3,5,"T2","2\u00AA Trim."),	//13
-	T3(6,8,"T3","3\u00AA Trim."),	//14
-	T4(9,11,"T4","4\u00AA Trim."),	//15
+	T1(0,2,"1T","1\u00BA Trim."),	//12
+	T2(3,5,"2T","2\u00BA Trim."),	//13
+	T3(6,8,"3T","3\u00BA Trim."),	//14
+	T4(9,11,"4T","4\u00BA Trim."),	//15
 	YEAR(0,11,"An","Anual"); //16
 	
  	private int startMonth;
@@ -37,12 +37,13 @@ public enum Period implements Serializable {
     public String getName() {
     	return name;
     }
-    public String getName(Administration admon) {
-    	if (admon == Administration.COMMON_TERRITORY) {
-    		if (this == T1) return "1T";
-    		if (this == T2) return "2T";
-    		if (this == T3) return "3T";
-    		if (this == T4) return "4T";
+    
+    public String getFormatName(Administration admon) {
+    	if (admon == Administration.GIPUZKOA) {
+    		if (this == T1) return "01";
+    		if (this == T2) return "02";
+    		if (this == T3) return "03";
+    		if (this == T4) return "04";
     	}
     	return name;
     }

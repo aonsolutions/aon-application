@@ -26,7 +26,7 @@ public enum Model111AEATScript implements IModelScript {
 	,R13 ("Contraprestaciones dinerarias o en especie"  ,new Mod111Key[]{Mod111Key.CT_C25,Mod111Key.CT_C26,Mod111Key.CT_C27},NONE)
 	,R14 ("Suma de retenciones e ingresos a cuenta",new Mod111Key[]{Mod111Key.CT_C28},COMPUTE)
 	,R15 ("A deducir. Resultados a ingresar de anteriores autoliquidaciones por el mismo concepto, ejercicio y periodo."
-				  ,new Mod111Key[]{Mod111Key.CT_C29},COMPUTE)
+				  ,new Mod111Key[]{Mod111Key.CT_C29},NONE)
 	,R16 ("Resultado a ingresar",new Mod111Key[]{Mod111Key.CT_C30},COMPUTE)
 	;
 	
@@ -50,7 +50,7 @@ public enum Model111AEATScript implements IModelScript {
 	}
 	@Override
 	public boolean isEnabled() {
-		return (getInfoKey() != COMPUTE);
+		return (getInfoKey() != null && getInfoKey() != COMPUTE);
 	}
 	@Override
 	public Mod111KeyInfo getInfoKey() {

@@ -43,6 +43,7 @@ public enum Mod111Key implements IFiscalModelKey {
 	,AR_C84("111-AR-29" ,  84)
 	,AR_C85("111-AR-30" ,  85)
 	,AR_C87("111-AR-31" ,  87)
+	,AR_TIP("111-AR-DT" ,  0)
 
 	// ---------------------------------------------------------------- BIZKAIA
 	,BZ_C01 ("111-BZ-01" ,  1)
@@ -81,10 +82,11 @@ public enum Mod111Key implements IFiscalModelKey {
 	,BZ_C11 ("111-BZ-34" , 11)
 	,BZ_C22 ("111-BZ-35" , 22)
 	,BZ_C33 ("111-BZ-36" , 33)
-	,BZ_C34T("111-BZ-T34", 11)
-	,BZ_C35T("111-BZ-T35", 22)
-	,BZ_C36T("111-BZ-T36", 33)
+	,BZ_C34T("111-BZ-T34", 34)
+	,BZ_C35T("111-BZ-T35", 35)
+	,BZ_C36T("111-BZ-T36", 36)
 	,BZ_C39 ("111-BZ-37" , 39)
+	,BZ_TIP ("111-BZ-DT" ,  0)
 
 	// ------------------------------------------------------- COMMON TERRITORY
 	,CT_C01("111-CT-01" ,  1)
@@ -117,6 +119,7 @@ public enum Mod111Key implements IFiscalModelKey {
 	,CT_C28("111-CT-28" , 28)
 	,CT_C29("111-CT-29" , 29)
 	,CT_C30("111-CT-30" , 30)
+	,CT_TIP("111-CT-DT" ,  0)
 
 	// -------------------------------------------------------------- GIPUZKOA
 	,GP_C01("111-GP-01" ,  1)
@@ -148,9 +151,11 @@ public enum Mod111Key implements IFiscalModelKey {
 	,GP_C27("111-GP-T27" , 27)
 	,GP_C28("111-GP-T28" , 28)
 	,GP_C29("111-GP-25" , 29)
+	,GP_TIP("111-GP-DT" ,  0)
 
 	// -------------------------------------------------------------- NAVARRA
-	,NF_A1("111-NF-A1"  ,  1)
+	,NF_A1 ("111-NF-A1"  ,  1)
+	,NF_TIP("111-NF-DT" ,  0)
 	;
 
 	private String value;

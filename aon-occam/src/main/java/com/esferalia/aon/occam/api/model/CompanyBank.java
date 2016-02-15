@@ -29,6 +29,7 @@ public class CompanyBank implements Serializable, IIbanContainer {
 		return this;
 	}
 	
+	@Override
 	public String getBic() {
 		return bic;
 	}
@@ -36,6 +37,7 @@ public class CompanyBank implements Serializable, IIbanContainer {
 		this.bic = bic;
 		return this;
 	}
+	@Override
 	public String getAlias() {
 		return alias;
 	}

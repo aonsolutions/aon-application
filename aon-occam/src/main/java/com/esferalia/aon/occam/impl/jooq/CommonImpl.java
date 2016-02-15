@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,10 +14,10 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
-import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
@@ -50,8 +49,7 @@ public class CommonImpl implements ICommon {
 	}
 
 	@Override
-	public ArrayList<Enterprise> getParentEnterprises(AONContext ctx,
-			String query) {
+	public LinkedList<Enterprise> getParentEnterprises(AONContext ctx, String query) {
 		return CompanyDAO.getParentEnterprises(ctx, p -> (p.getDomainProperty()
 				.eq(ctx.getDomainId()).or(p.getParentDomainProperty().eq(
 				ctx.getDomainId()))).and(p.getNameProperty().like(query)
@@ -60,12 +58,12 @@ public class CommonImpl implements ICommon {
 	}
 
 	@Override
-	public ArrayList<CompanyBank> getCompanyBanks(AONContext ctx, int enterprise) {
+	public LinkedList<CompanyBank> getCompanyBanks(AONContext ctx, int enterprise) {
 		return CompanyDAO.getBanks(ctx, enterprise);
 	}
 
 	@Override
-	public ArrayList<CompanyBank> getCompanyBanks(AONContext ctx) {
+	public LinkedList<CompanyBank> getCompanyBanks(AONContext ctx) {
 		Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
 		return CompanyDAO.getBanks(ctx, company.getId());
 	}

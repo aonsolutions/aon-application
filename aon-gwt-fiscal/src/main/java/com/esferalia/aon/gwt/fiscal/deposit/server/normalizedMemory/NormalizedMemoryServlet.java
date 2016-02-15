@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -381,7 +381,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		if (type.equals("Balance (I.S.)")) {
 			if (ejercicio.equals("2013")) {
 				Mod2002013 mod2002013 = com.esferalia.aon.occam.api.AON
-						.getMod2002013ByYear(domainName, domainId, 2013);
+						.getMod2002013ByYear(domainName, domainId, getUserLogin(), 2013);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002013toD2.fillBalance(ctx, mod2002013);
 
@@ -393,7 +393,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 				}
 			} else if (ejercicio.equals("2014")) {
 				Mod2002014 mod2002014 = com.esferalia.aon.occam.api.AON
-						.getMod2002014ByYear(domainName, domainId, 2014);
+						.getMod2002014ByYear(domainName, domainId, getUserLogin(), 2014);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002014toD2.fillBalance(ctx, mod2002014);
 
@@ -407,7 +407,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		} else if (type.equals("Perdidas y ganancias (I.S.)")) {
 			if (ejercicio.equals("2013")) {
 				Mod2002013 mod2002013 = com.esferalia.aon.occam.api.AON
-						.getMod2002013ByYear(domainName, domainId, 2013);
+						.getMod2002013ByYear(domainName, domainId, getUserLogin(), 2013);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002013toD2.fillPyg(ctx, mod2002013);
 
@@ -419,7 +419,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 				}
 			} else if (ejercicio.equals("2014")) {
 				Mod2002014 mod2002014 = com.esferalia.aon.occam.api.AON
-						.getMod2002014ByYear(domainName, domainId, 2014);
+						.getMod2002014ByYear(domainName, domainId, getUserLogin(), 2014);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002014toD2.fillPyg(ctx, mod2002014);
 
@@ -433,7 +433,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		} else if (type.equals("ECPN (I.S.)")) {
 			if (ejercicio.equals("2013")) {
 				Mod2002013 mod2002013 = com.esferalia.aon.occam.api.AON
-						.getMod2002013ByYear(domainName, domainId, 2013);
+						.getMod2002013ByYear(domainName, domainId, getUserLogin(), 2013);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002013toD2.fillEcpn(ctx, mod2002013);
 				Mod2002013toD2.fillEcpn2(ctx, mod2002013);
@@ -446,7 +446,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 				}
 			} else if (ejercicio.equals("2014")) {
 				Mod2002014 mod2002014 = com.esferalia.aon.occam.api.AON
-						.getMod2002014ByYear(domainName, domainId, 2014);
+						.getMod2002014ByYear(domainName, domainId, getUserLogin(), 2014);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002014toD2.fillEcpn(ctx, mod2002014);
 				Mod2002014toD2.fillEcpn2(ctx, mod2002014);
@@ -515,7 +515,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 			String type,Integer year) {
 		HttpServletRequest request = getThreadLocalRequest();
 		String domainName = AonServletUtils.getRequestDomainName(request);
-		Enterprise enterprise = AON.getEnterprise(domainName, domainId, id);
+		Enterprise enterprise = AON.getEnterprise(domainName, domainId, this.getUserLogin(), id);
 		byte[] b = Utils.CreateXml(enterprise, name, type, domainName, year);
 		DBConsults.insertDeposit(domainName, b, domainId, year, this.getUserLogin());
 		return getSchema(enterprise.getDocument(), domainId, false, year);
@@ -692,9 +692,9 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 
 	// -------------------------------------------------------------- ENTERPRISE
 	@Override
-	public ArrayList<Enterprise> getParentEnterprises(String domainName, int domain,
+	public LinkedList<Enterprise> getParentEnterprises(String domainName, int domain,
 			String query){
-		return AON.getParentEnterprises(domainName, domain, query);		
+		return AON.getParentEnterprises(domainName, domain, this.getUserLogin(), query);		
 	}
 
 }

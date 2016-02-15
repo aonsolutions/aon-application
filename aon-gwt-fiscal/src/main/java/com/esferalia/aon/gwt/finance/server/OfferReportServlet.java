@@ -45,11 +45,13 @@ public class OfferReportServlet extends HttpServlet {
 					?DATE_FORMAT.parse(toDateParam)
 					:null;
 
+			String login = AonServletUtils.getRequestUser(req);
+			
 			OfferExcelAction action = new OfferExcelAction();
-			List<String> tags = AON.getProductTags(domainName, domainId);
+			List<String> tags = AON.getProductTags(domainName, domainId, login);
 			Map<Integer,String[]> productTags = null;
 			if (tags != null && tags.size() > 0) {
-				productTags = AON.getProductTagMap(domainName, domainId);	
+				productTags = AON.getProductTagMap(domainName, domainId, login);	
 			}
 			action.setTags(tags);
 			action.setProductTags(productTags);
@@ -74,9 +76,8 @@ public class OfferReportServlet extends HttpServlet {
 			Byte[] typ = new Byte[typesList.size()]; 
 			final Byte[] types = typesList.toArray(typ);
 			
-			String login = AonServletUtils.getRequestUser(req);
 			User user = AON.getUser(domainName, domainId, login ); 
-			Integer[] scopes = AON.getUserScopes(domainName, domainId, user.getId());
+			Integer[] scopes = AON.getUserScopes(domainName, domainId,login, user.getId());
 			
 			final Byte[] sec = new Byte[user.hasConfidentialityRole()?2:1]; 
 			sec[0] = 0;
@@ -84,7 +85,7 @@ public class OfferReportServlet extends HttpServlet {
 				sec[1] = 1;	
 			}
 			
-			AON.getOfferDetails(domainName, domainId,
+			AON.getOfferDetails(domainName, domainId, login,
 					p -> {
 						Filter f = p.getDomainProperty().eq(domainId)
 							.and(p.getStatusProperty().in(types))

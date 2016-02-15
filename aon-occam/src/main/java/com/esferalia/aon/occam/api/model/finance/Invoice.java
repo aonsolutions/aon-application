@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Invoice implements Serializable {
@@ -25,6 +27,7 @@ public class Invoice implements Serializable {
 	private Date issueDate;
 	private Date taxDate;
 	private RectificationType rectificationType;
+	private SecurityLevel securityLevel;
 	private Integer rectificationInvoice;
 	private Integer registry;
 	private String registryDocument;
@@ -35,7 +38,7 @@ public class Invoice implements Serializable {
 	private String registryZIP;
 	private String registryProvinceCode;
 	private String registryProvince;
-	private String scope;
+	private Scope scope;
 	private InvoiceType type;
 	private InvoiceTransactionType transaction;
 	private boolean recorded;
@@ -190,10 +193,10 @@ public class Invoice implements Serializable {
 		this.registryProvince = registryProvince;
 		return this;
 	}
-	public String getScope() {
+	public Scope getScope() {
 		return scope;
 	}
-	public Invoice setScope(String scope) {
+	public Invoice setScope(Scope scope) {
 		this.scope = scope;
 		return this;
 	}
@@ -306,6 +309,20 @@ public class Invoice implements Serializable {
 	}
 	public Invoice setWithholdingData(InvoiceWithholding withholdingData) {
 		this.withholdingData = withholdingData;
+		return this;
+	}
+	public SecurityLevel getSecurityLevel() {
+		return securityLevel;
+	}
+	public Invoice setSecurityLevel(SecurityLevel securityLevel) {
+		this.securityLevel = securityLevel;
+		return this;
+	}
+	public boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
+	}
+	public Invoice setConfidential(boolean confidential) {
+		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 		return this;
 	}
 	

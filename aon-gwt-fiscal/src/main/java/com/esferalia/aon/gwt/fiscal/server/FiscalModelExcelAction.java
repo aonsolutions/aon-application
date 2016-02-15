@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.server;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -112,7 +113,7 @@ public class FiscalModelExcelAction extends AbsExcelAction {
 		printModelInfo();
 
 	}
-
+	
 	@Override
 	protected void headerRow() {
 
@@ -248,10 +249,30 @@ public class FiscalModelExcelAction extends AbsExcelAction {
 
 		sheet.addMergedRegion(new CellRangeAddress(rowCount, rowCount, 0, 7));
 		row = sheet.createRow(rowCount++);
-		CellUtil.createCell(row, 0, mod111.getDocument() + "-" + mod111.getName(), idCellStyle);
+		
+		String name = AonStringUtils.trim(
+				AonStringUtils.defaultIfBlank(mod111.getName(), AonStringUtils.EMPTY)
+				+AonStringUtils.SPACE
+				+AonStringUtils.defaultIfBlank(mod111.getSurname(), AonStringUtils.EMPTY));
+
+		CellUtil.createCell(row, 0, mod111.getDocument() + "-" + name , idCellStyle);
 
 		row = sheet.createRow(rowCount++);
-		
+	}
+	
+	public void beforeFinalize() {
+		if (mod111.isFinished()) {
+			String paymentInfo = "Resultado:" + DecimalFormat.getCurrencyInstance().format(mod111.getResult())
+					+ AonStringUtils.SPACE + (mod111.getDeclarationType()!=null?mod111.getDeclarationType().getDescription():AonStringUtils.EMPTY)
+					+ AonStringUtils.SPACE + AonStringUtils.trimToEmpty( mod111.getFinanceBankAlias())
+					+ AonStringUtils.SPACE + AonStringUtils.trimToEmpty( mod111.getFinanceMaskedIban())
+					;
+			row = sheet.createRow(rowCount++);
+			sheet.addMergedRegion(new CellRangeAddress(rowCount, rowCount, 0, 7));
+			row = sheet.createRow(rowCount++);
+			CellUtil.createCell(row, 0, paymentInfo , idCellStyle);
+			row = sheet.createRow(rowCount++);
+		}
 	}
 
 }
