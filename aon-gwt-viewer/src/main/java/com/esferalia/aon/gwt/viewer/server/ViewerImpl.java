@@ -106,8 +106,10 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 			put(MimeType.MS_EXCEL_2007, OpenDocument2HtmlConverter.INSTANCE );
 			put(MimeType.MS_POWER_POINT, OpenDocument2HtmlConverter.INSTANCE );
 			put(MimeType.MS_POWER_POINT_2007, OpenDocument2HtmlConverter.INSTANCE );
-			put(MimeType.HTML, Noop2HtmlConverter.INSTANCE );
-			put(MimeType.TXT, Noop2HtmlConverter.INSTANCE );
+			put(MimeType.HTML, Error2HtmlConverter.INSTANCE );
+			put(MimeType.TXT, Error2HtmlConverter.INSTANCE );
+			//put(MimeType.HTML, Noop2HtmlConverter.INSTANCE );
+			//put(MimeType.TXT, Noop2HtmlConverter.INSTANCE );
 
 			put(MimeType.BMP, Image2HtmlConverter.INSTANCE );
 			put(MimeType.JPEG, Image2HtmlConverter.INSTANCE );

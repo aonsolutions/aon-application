@@ -13,7 +13,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 import java.security.GeneralSecurityException;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -52,7 +51,7 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 	public static final String PAGE_PARAM = "page";
 	public static final String FORMAT_PARAM = "format";
 
-	private static Map<String, PDFFile> PDFS = new HashMap<String, PDFFile>();
+	private static ViewerCache<String, PDFFile> PDFS = new ViewerCache<String, PDFFile>(30);
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -87,16 +86,13 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 		os.flush();
 		
 	}
-
-
+	
 	protected static PDFFile getPDFFile(Attach attach) throws IOException, GeneralSecurityException{
-		PDFFile pdfFile = PDFS.get(attach.getMd5());
-		if (pdfFile == null) {
+		if(!PDFS.containsKey(attach.getMd5())){
 			ByteBuffer byteBuffer = getPdfByeBuffer(attach);
-			pdfFile = new PDFFile(byteBuffer);
-			PDFS.put(attach.getMd5(), pdfFile);
+			PDFS.put(attach.getMd5(), new PDFFile(byteBuffer));
 		}
-		return pdfFile;
+		return PDFS.get(attach.getMd5());
 	}
 
 	private static ByteBuffer getPdfByeBuffer(Attach attach) throws IOException, GeneralSecurityException {
