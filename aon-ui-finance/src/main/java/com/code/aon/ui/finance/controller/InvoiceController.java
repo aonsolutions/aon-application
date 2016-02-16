@@ -1379,15 +1379,14 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
 			
-			IController controller = (IController) AonUtil.getRegisteredBean(AMORTIZATION_CONTROLLER_NAME);
-			((BasicController) controller).accept(event);
-			Amortization amortization = (Amortization)HibernateUtil.getSession(sessionName).merge(controller.getTo());
-			Invoice invoice = getInvoice();
-			IManagerBean bean = BeanManager.getManagerBean(AmortizationInvoice.class);
-			AmortizationInvoice ai = new AmortizationInvoice();
-			ai.setAmortization(amortization);
-			ai.setInvoice(invoice);
-			bean.insert(ai);
+			BasicController controller = (BasicController)AonUtil.getRegisteredBean(AMORTIZATION_CONTROLLER_NAME);
+			controller.accept(event);
+			controller.getManagerBean().restoreNullSubPOJOs(controller.getTo());
+
+			AmortizationInvoice amortizationInvoice = new AmortizationInvoice();
+			amortizationInvoice.setAmortization((Amortization)controller.getTo());
+			amortizationInvoice.setInvoice(getInvoice());
+			BeanManager.getManagerBean(AmortizationInvoice.class).insert(amortizationInvoice);
 			
 			HibernateUtil.commitTransaction(sessionName);
 		} catch (Exception e) {
