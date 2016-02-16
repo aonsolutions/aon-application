@@ -3,7 +3,6 @@ package com.esferalia.aon.file.payroll.fan;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,56 +22,6 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private static Map<Integer, Double> reductionPercentByYear = new HashMap<Integer, Double>();
-	
-	private static Map<Integer, Double> reductionPercentByYear_it = new HashMap<Integer, Double>();
-	
-	static {
-		reductionPercentByYear = new HashMap<Integer, Double>();
-		reductionPercentByYear.put(2012, 15.95);
-		reductionPercentByYear.put(2013, 16.40);
-		reductionPercentByYear.put(2014, 16.85);
-		reductionPercentByYear.put(2015, 17.30);
-		reductionPercentByYear.put(2016, 17.75);
-		reductionPercentByYear.put(2017, 18.20);
-		reductionPercentByYear.put(2018, 18.65);
-		reductionPercentByYear.put(2019, 19.10);
-		reductionPercentByYear.put(2020, 19.55);
-		reductionPercentByYear.put(2021, 20.00);
-		reductionPercentByYear.put(2022, 20.24);
-		reductionPercentByYear.put(2023, 20.48);
-		reductionPercentByYear.put(2024, 20.72);
-		reductionPercentByYear.put(2025, 20.96);
-		reductionPercentByYear.put(2026, 21.20);
-		reductionPercentByYear.put(2027, 21.68);
-		reductionPercentByYear.put(2028, 22.16);
-		reductionPercentByYear.put(2029, 22.64);
-		reductionPercentByYear.put(2030, 23.12);
-		reductionPercentByYear.put(2031, 23.60);
-		
-		reductionPercentByYear_it = new HashMap<Integer, Double>();
-		reductionPercentByYear_it.put(2012, 13.20);
-		reductionPercentByYear_it.put(2013, 13.65);
-		reductionPercentByYear_it.put(2014, 14.10);
-		reductionPercentByYear_it.put(2015, 14.55);
-		reductionPercentByYear_it.put(2016, 15.00);
-		reductionPercentByYear_it.put(2017, 15.45);
-		reductionPercentByYear_it.put(2018, 15.90);
-		reductionPercentByYear_it.put(2019, 16.35);
-		reductionPercentByYear_it.put(2020, 16.80);
-		reductionPercentByYear_it.put(2021, 17.25);
-		reductionPercentByYear_it.put(2022, 17.49);
-		reductionPercentByYear_it.put(2023, 17.73);
-		reductionPercentByYear_it.put(2024, 17.97);
-		reductionPercentByYear_it.put(2025, 18.21);
-		reductionPercentByYear_it.put(2026, 18.45);
-		reductionPercentByYear_it.put(2027, 18.93);
-		reductionPercentByYear_it.put(2028, 19.41);
-		reductionPercentByYear_it.put(2029, 19.89);
-		reductionPercentByYear_it.put(2030, 20.37);
-		reductionPercentByYear_it.put(2031, 20.85);
-		
-	}
 	
 	@Override
 	public String getQuoteIndicator(List<ITransferObject> salaryDataList, Map<String, String> contractDataMap) {
@@ -241,18 +190,17 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 	 * @param cgcTotalEmployee
 	 * @param emp
 	 */
-	// TODO
-//	@Override
-//	public void createEDTCa01Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, EMP emp) {
-//		super.createEDTCa01Segment(cgcTotalEnterprise, cgcTotalEmployee, emp);
-//		
-//		// La cuota ya tiene el descuento de la reduccion SEA incluida desde el calculo
-//		// pero se debe indicar la cuota integra
-//		
-//		EDT edtCd29 = emp.getEdtSegment("EDTCD29");
-//		EDT edtCa01 = emp.getEdtSegment("EDTCA01");
-//		edtCa01.setImporte(edtCa01.getImporte() + edtCd29.getImporte());
-//	}
+	@Override
+	public void createEDTCa01Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, EMP emp) {
+		super.createEDTCa01Segment(cgcTotalEnterprise, cgcTotalEmployee, emp);
+		
+		// La cuota se calcula el descuento de la reduccion SEA incluida
+		// pero se debe indicar la cuota integra
+		
+		EDT edtCd29 = emp.getEdtSegment("EDTCD29");
+		EDT edtCa01 = emp.getEdtSegment("EDTCA01");
+		edtCa01.setImporte(edtCa01.getImporte() + edtCd29.getImporte());
+	}
 	
 	/**
 	13
@@ -402,9 +350,9 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 		amount += (emp.getEdt().containsKey("EDTCA01") && emp.getEdtSegment("EDTCA01").getImporte() != null ? emp.getEdtSegment("EDTCA01").getImporte() : 0);
 		amount += (emp.getEdt().containsKey("EDTCA02") ? emp.getEdtSegment("EDTCA02").getImporte() : 0);
 		amount -= (emp.getEdt().containsKey("EDTCA22") ? emp.getEdtSegment("EDTCA22").getImporte() : 0);
-		amount -= (emp.getEdt().containsKey("EDTCA29") ? emp.getEdtSegment("EDTCA29").getImporte() : 0);
+		amount -= (emp.getEdt().containsKey("EDTCD29") ? emp.getEdtSegment("EDTCD29").getImporte() : 0);
 		amount += (emp.getEdt().containsKey("EDTCA13") ? emp.getEdtSegment("EDTCA13").getImporte() : 0);
-
+		
 		EDT edt = emp.getEdtSegment("EDTTT10");
 		edt.setTipoElemento("TT");
 		edt.setClave(10);
