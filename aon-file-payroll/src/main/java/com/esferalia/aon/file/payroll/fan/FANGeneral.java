@@ -79,9 +79,16 @@ public class FANGeneral implements Serializable, IFanFactory {
 				return 30;
 			}
 		} else {
-			String weekHours = obtainWeekHours(salaryDataList, contractDataMap);
-			Double dayHours = (Double.parseDouble(NumberUtils.isNumber(weekHours)?weekHours:"0")/7);
+			String workedHours = obtainWorkedHours(salaryDataList);
 			long totalDays = getAvailableDays(startDate, endDate);
+			Double dayHours = 0.0;
+			
+			if(NumberUtils.isNumber(workedHours)){
+				dayHours = (Double.parseDouble(NumberUtils.isNumber(workedHours)?workedHours:"0")/totalDays);
+			} else {
+				String weekHours = obtainWeekHours(salaryDataList, contractDataMap);
+				dayHours = (Double.parseDouble(NumberUtils.isNumber(weekHours)?weekHours:"0")/7);
+			}
 			
 			if( startDate.before(contractStart) || (contractEnd!=null && endDate.after(contractEnd)) ){
 				Date start = startDate.before(contractStart)?contractStart:startDate;
@@ -137,6 +144,18 @@ public class FANGeneral implements Serializable, IFanFactory {
 		}
 		if(o==null || !NumberUtils.isNumber(o)){
 			return contractDataMap.get(ContextVariable.WEEK_HOURS.getName());
+		}
+		return o;
+	}
+	
+	private String obtainWorkedHours(List<ITransferObject> salaryDataList){
+		String o = null;
+		List<ITransferObject> list = salaryDataList;
+		for(ITransferObject to: list){
+			SalaryData sa = (SalaryData) to;
+			if(sa.getName().equals(ContextVariable.WORKED_HOURS.getName())){
+				o = sa.getExpression();
+			}
 		}
 		return o;
 	}
