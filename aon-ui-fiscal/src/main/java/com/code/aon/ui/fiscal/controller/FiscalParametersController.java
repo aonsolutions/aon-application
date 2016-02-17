@@ -223,6 +223,22 @@ public class FiscalParametersController implements IFiscalConstants, Serializabl
 		}
 		return adm; 
 	}
+	public boolean isAeat() {
+		return getDefaultAdministration() == null || getDefaultAdministration() == Administration.COMMON_TERRITORY;
+	}
+	public boolean isAraba() {
+		return getDefaultAdministration() == null || getDefaultAdministration() == Administration.ALAVA;
+	}
+	public boolean isBizkaia() {
+		return getDefaultAdministration() == null || getDefaultAdministration() == Administration.BIZKAIA;
+	}
+	public boolean isGipuzkoa() {
+		return getDefaultAdministration() == null || getDefaultAdministration() == Administration.GIPUZKOA;
+	}
+	public boolean isNavarra() {
+		return getDefaultAdministration() == null || getDefaultAdministration() == Administration.NAVARRA;
+	}
+	
 	public void setDefaultAdministration(Administration defaultAdministration) {
 		getParameters().get(FS_DEFAULT_ADMINISTRATION).setValue(defaultAdministration ==null?null:Integer.toString(defaultAdministration.ordinal()));
 	}

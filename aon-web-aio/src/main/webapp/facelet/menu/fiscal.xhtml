@@ -15,6 +15,314 @@
 			<aon:div styleClass="aon-scroll-area">		
 
 				<h:panelGrid columns="1" styleClass="aon-width-all" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-half, aon-vertical-align-top aon-width-half">
+					<aon:panelGroup>
+						<aon:panelGrid id="group_fiscal_vat_tax_statement_new"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-fiscal-header">
+							<f:facet name="header">
+								<h:panelGrid columns="#{fiscalParams.defaultAdministration==null?6:2}" style="width: 100%;height: 100%;"
+									columnClasses="aon-width-50,
+										#{fiscalParams.defaultAdministration==null
+											?'aon-width-50, aon-width-50, aon-width-50, aon-width-50, aon-width-auto'
+											:'aon-width-auto'}">
+									<aon:if test="#{fiscalParams.aeat}">
+										<h:outputLink target="_blank" value="http://www.aeat.es"
+											styleClass="aon-menu-fiscal-model aon-menu-icon-aeat"
+											style="display: inline-block; margin-right: 0px;"
+											title="#{bundle.aon_navigate_to_official_website}">
+											<h:graphicImage styleClass="aon-vertical-align-middle"
+												title="Agencia Tributaria"
+												url="#{aonResource.resolve['/images/aon-icon/aon-aeat.png']}" />
+										</h:outputLink>
+									</aon:if>
+									<aon:if test="#{fiscalParams.araba}">
+										<h:outputLink target="_blank" value="http://www.alava.net"
+											styleClass="aon-menu-fiscal-model aon-menu-icon-araba"
+											style="display: inline-block; margin-right: 0px;"
+											title="#{bundle.aon_navigate_to_official_website}">
+											<h:graphicImage styleClass="aon-vertical-align-middle"
+												title="Diputación Foral de Alava / Arabako Foru Aldundia"
+												url="#{aonResource.resolve['/images/aon-icon/aon-icon-araba.png']}" />
+										</h:outputLink>
+									</aon:if>
+									<aon:if test="#{fiscalParams.bizkaia}">
+										<h:outputLink target="_blank" value="http://www.bizkaia.net"
+											styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia"
+											style="display: inline-block; margin-right: 0px;"
+											title="#{bundle.aon_navigate_to_official_website}">
+											<h:graphicImage styleClass="aon-vertical-align-middle"
+												title="Diputación Foral de Bizkaia / Bizkaiako Foru Aldundia"
+												url="#{aonResource.resolve['/images/aon-icon/aon-icon-bizkaia.png']}" />
+										</h:outputLink>
+									</aon:if>
+									<aon:if test="#{fiscalParams.gipuzkoa}">
+										<h:outputLink target="_blank" value="http://www.gipuzkoa.net"
+											styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa"
+											style="display: inline-block; margin-right: 0px;"
+											title="#{bundle.aon_navigate_to_official_website}">
+											<h:graphicImage styleClass="aon-vertical-align-middle"
+												title="Diputación Foral de Gipuzkoa / Gipuzkoako Foru Aldundia"
+												url="#{aonResource.resolve['/images/aon-icon/aon-icon-gipuzkoa.png']}" />
+										</h:outputLink>
+									</aon:if>
+									<aon:if test="#{fiscalParams.navarra}">
+										<h:outputLink target="_blank" value="http://www.navarra.es"
+											styleClass="aon-menu-fiscal-model aon-menu-icon-navarra"
+											style="display: inline-block; margin-right: 0px;"
+											title="#{bundle.aon_navigate_to_official_website}">
+											<h:graphicImage styleClass="aon-vertical-align-middle"
+												title="Gobierno de Navarra / Nafarroako Gobernua"
+												url="#{aonResource.resolve['/images/aon-icon/aon-icon-navarra.png']}" />
+										</h:outputLink>
+									</aon:if>
+									<aon:outputText value="Modelos tributarios" styleClass="aon-padding-left"/>
+								</h:panelGrid>
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list aon-width-all">
+								<aon:if test="#{customize.snapshotVersion}">
+									<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+										<!-- *********************** [MODELO 303] 
+										<aon:div>
+											<aon:commandLink id="gwt_mod303-new" action="gwt_mod303-new" 
+												title="#{bundle.fiscal_model_303_module}" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="303"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="300"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="303"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="300/320"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="F69"/>
+												<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_303_module}" />
+											</aon:commandLink>
+										</aon:div> -->
+
+										<!-- *********************** [MODELO 310] 
+										<aon:div>
+											<aon:commandLink id="gwt_mod310-new" action="gwt_mod310-new" 
+												title="#{bundle.fiscal_model_310_module}" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="- - - -"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="310"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="310"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="310"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="- - - -"/>
+												<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_310_module}" />
+											</aon:commandLink>
+										</aon:div> -->
+
+										<!-- *********************** [MODELO 140] -->
+										<aon:div rendered="#{fiscalParams.bizkaia}">
+											<aon:commandLink id="gwt_mod140-new" action="gwt_mod140-new" 
+												title="#{bundle.fiscal_model_140_module}" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="- - - -"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="- - - -"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="140"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="- - - -"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="- - - -"/>
+												<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_140_module}" />
+											</aon:commandLink>
+										</aon:div>
+
+										<!-- *********************** [MODELO 340] 
+										<aon:div>
+											<aon:commandLink id="gwt_mod340-new" action="gwt_mod340-new" 
+												title="#{bundle.fiscal_model_340_module}" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="340"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="340"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="340"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="340"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="340"/>
+												<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_340_module}" />
+											</aon:commandLink>
+										</aon:div> -->
+
+										<!-- *********************** [MODELO 347] 
+										<aon:div>
+											<aon:commandLink id="gwt_mod347-new" action="gwt_mod347-new" 
+												title="#{bundle.fiscal_model_347_module}" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="347"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="347"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="347"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="347"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="347"/>
+												<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_347_module}" />
+											</aon:commandLink>
+										</aon:div> -->
+
+										<!-- *********************** [MODELO 349] 
+										<aon:div>
+											<aon:commandLink id="gwt_mod349-new" action="gwt_mod349-new" 
+												title="#{bundle.fiscal_model_349_module}" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="349"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="349"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="349"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="349"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="349"/>
+												<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_349_module}" />
+											</aon:commandLink>
+										</aon:div> -->
+
+										<!-- *********************** [MODELO 390] -->
+										<aon:div>									
+											<aon:commandLink id="gwt_mod390-new" action="gwt_mod390-new" 
+												title="#{bundle.fiscal_model_390_module}" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="390"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="- - - -"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="- - - -"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="- - - -"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="- - - -"/>
+												<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_390_module}" />
+											</aon:commandLink>
+										</aon:div>
+
+										<!-- *********************** [MODELO 111] -->
+										<aon:div  style="margin-top: 15px;">									
+											<aon:commandLink id="gwt_mod111" action="gwt_mod111" 
+												title="#{bundle.fiscal_model_111_module}" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="111"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="110/111"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="110/111"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="110/111"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="745/715"/>
+												<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_111_module}" />
+											</aon:commandLink>
+										</aon:div>
+										
+										<!-- *********************** [MODELO 115] 
+										<aon:div>									
+											<aon:commandLink id="gwt_mod115" action="gwt_mod115" 
+												title="#{bundle.fiscal_model_115_module}" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="115"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="115"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="115"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="115"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="759/760"/>
+												<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_115_module}" />
+											</aon:commandLink>
+										</aon:div> -->
+
+										<!-- *********************** [MODELO 123] 
+										<aon:div>									
+											<aon:commandLink id="gwt_mod123" action="gwt_mod123" 
+												title="#{bundle.fiscal_model_123_module}" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="123"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="123"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="123"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="123"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="716"/>
+												<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_123_module}" />
+											</aon:commandLink>
+										</aon:div> -->
+
+										<!-- *********************** [MODELO 130] 
+										<aon:div>									
+											<aon:commandLink id="gwt_mod130" action="gwt_mod130" 
+												title="#{bundle.fiscal_model_130_module}" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="130"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="- - - -"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="- - - -"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="- - - -"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="- - - -"/>
+												<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_130_module}" />
+											</aon:commandLink>
+										</aon:div> -->
+
+										<!-- *********************** [MODELO 131] 
+										<aon:div>									
+											<aon:commandLink id="gwt_mod131" action="gwt_mod131" 
+												title="#{bundle.fiscal_model_131_module}" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="131"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="- - - -"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="- - - -"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="- - - -"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="- - - -"/>
+												<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_131_module}" />
+											</aon:commandLink>
+										</aon:div> -->
+										
+										<!-- *********************** [MODELO 180] -->
+										<aon:div>									
+											<aon:commandLink id="gwt_mod180-new" action="gwt_mod180-new" 
+												title="#{bundle.fiscal_model_180_module}" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="180"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="180"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="180"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="180"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="180"/>
+												<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_180_module}" />
+											</aon:commandLink>
+										</aon:div>
+
+										<!-- *********************** [MODELO 184] -->
+										<aon:div>									
+											<aon:commandLink id="gwt_mod184-new" action="gwt_mod184-new" 
+												title="#{bundle.fiscal_model_184_module}" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="184"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="184"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="184"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="184"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="184"/>
+												<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_184_module}" />
+											</aon:commandLink>
+										</aon:div>
+
+										<!-- *********************** [MODELO 190] -->
+										<aon:div>									
+											<aon:commandLink id="gwt_mod190-new" action="gwt_mod190-new" 
+												title="#{bundle.fiscal_model_190_module}" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="190"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="190"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="190"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="190"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="190"/>
+												<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_190_module}" />
+											</aon:commandLink>
+										</aon:div>
+
+										<!-- *********************** [MODELO 202] -->
+										<aon:div>									
+											<aon:commandLink id="gwt_mod202-new" action="gwt_mod202-new" 
+												title="#{bundle.fiscal_model_202_module}" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="202"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="- - - -"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="- - - -"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="- - - -"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="- - - -"/>
+												<aon:outputText styleClass="aon-menu-fiscal-label" value="Impuesto Sociedades. Pago fraccionado." />
+											</aon:commandLink>
+										</aon:div>
+
+										<!-- *********************** [MODELO 200] -->
+										<aon:div>									
+											<aon:commandLink id="gwt_mod200-new" action="gwt_mod200-new" 
+												title="#{bundle.fiscal_model_200_module}" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="200"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="- - - -"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="- - - -"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="- - - -"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="- - - -"/>
+												<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_200_module}" />
+											</aon:commandLink>
+										</aon:div>
+
+										<!-- *********************** [MODELO 193] -->
+										<aon:div>									
+											<aon:commandLink id="gwt_mod193-new" action="gwt_mod193-new" 
+												title="#{bundle.fiscal_model_193_module}" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="193"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="193"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="193"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="193"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="193"/>
+												<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_193_module}" />
+											</aon:commandLink>
+										</aon:div>
+									</aon:if>
+								</aon:if>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:panelGroup>
+				</h:panelGrid>
+<!-- --> 								
+				<h:panelGrid columns="1" styleClass="aon-width-all" cellspacing="15"
 					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 					<aon:panelGroup>
 						<aon:panelGrid id="group_fiscal_vat_tax_statement"
@@ -118,21 +426,13 @@
 													<aon:outputText styleClass="aon-fiscal-link-box" value="115" />
 													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_115_module}" />
 												</aon:commandLink>
-<!-- 												
-											</aon:if>
- -->
-											
-											<aon:commandLink id="gwt_mod390"
-												action="gwt_mod390"
-												title="#{bundle.fiscal_model_390_module}">
-												<aon:outputText styleClass="aon-fiscal-link-box" value="390"  style="background-color: yellow;"/>
-												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-													style="margin-left: 5px; padding-left: 20px;" value="#{bundle.fiscal_model_390_module}" />
-											</aon:commandLink>
-
-<!--
-											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
- -->
+												<aon:commandLink id="gwt_mod390"
+													action="gwt_mod390"
+													title="#{bundle.fiscal_model_390_module}">
+													<aon:outputText styleClass="aon-fiscal-link-box" value="390"  style="background-color: yellow;"/>
+													<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+														style="margin-left: 5px; padding-left: 20px;" value="#{bundle.fiscal_model_390_module}" />
+												</aon:commandLink>
 												<aon:commandLink id="mod123" 
 													action="mod123_search"
 													actionListener="#{mod123.onEditSearch}"
@@ -149,12 +449,6 @@
 												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
 													style="margin-left: 5px; padding-left: 20px;" value="#{bundle.fiscal_model_180_module}"/>
 											</aon:commandLink>
-<!-- 
-											<aon:if test="#{domainSwitcher.domainManagementAvailable}">
-												<aon:outputText value="&#160;"/>
-											</aon:if>
- -->
-
 											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 												<aon:commandLink id="mod130" 
 													action="mod130_search"
@@ -259,31 +553,15 @@
 
 											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 												<aon:div styleClass="aon-direct-access-list-element">
-													<aon:commandLink id="invoice_series_breakdown"
-														action="gwt_invoiceSeriesBreakdown"
+													<aon:commandLink id="invoice_series_breakdown-old"
+														action="gwt_invoiceSeriesBreakdown-old"
 													value="Desglose de series de facturas" />
 												</aon:div>
 												
 												<aon:outputText value="&#160;"/>
 											</aon:if>
-										
-										
-										
-										<aon:if test="#{customize.snapshotVersion}">
-											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-												<aon:commandLink id="gwt_mod111"
-													action="gwt_mod111"
-													title="#{bundle.fiscal_model_111_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box" value="111" style="background-color: orange;"/>
-													<aon:outputText styleClass="aon-fiscal-link-label" value="  [BETA] #{bundle.fiscal_model_111_module}" />
-												</aon:commandLink>
-												
-												<aon:outputText value="&#160;"/>
-											</aon:if>
-										</aon:if>
-										
 							    </h:panelGrid>
-							     
+<!-- -->							     
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
@@ -360,6 +638,11 @@
 												action="reports_launcher"
 												actionListener="#{reportsLauncher.onReset}"
 												value="#{bundle.accounting_reports_launcher_module}" />
+										</aon:div>
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="invoice_series_breakdown"
+												action="gwt_invoiceSeriesBreakdown"
+											value="Desglose de series de facturas" />
 										</aon:div>
 									</aon:div>
 								</aon:panelGrid>

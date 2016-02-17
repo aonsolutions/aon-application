@@ -3251,3 +3251,96 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
  	.aon-icon-marketplace-generic{
  		background:transparent url(images/aon-icon/aon-icon-marketplace-generic.png) scroll left center no-repeat;
  	}
+
+.aon-fiscal-link-box-small{
+	border: 1px dotted #000000;
+    font-family: Monospace;
+    font-size: 0.9em;
+    font-weight: bold;
+    padding: 2px;
+    margin: 2px;
+    display: inline-block;
+    width: 50px;
+    color: white;
+}
+.aon-fiscal-row {
+	border: 1px dotted #CCCCCC;
+}
+.aon-fiscal-row:hover {
+	background-color: #e2f1f5;
+}
+
+.aon-menu-fiscal {
+	margin-top: 3px;
+	display: -webkit-flex; /* Safari */
+	display: flex;
+	align-items: center;
+	border-bottom: solid 1px #CCC;
+	padding-bottom: 2px;
+	padding-left: 17px;
+}
+.aon-menu-fiscal-model {
+	border-radius: 5px;
+    font-family: Monospace;
+    font-size: 11px;
+    padding: 2px 2px 2px 2px;
+    margin-right: 3px;
+    vertical-align: middle;
+    -webkit-flex-grow: 0; /* Safari 6.1+ */
+    -webkit-flex-shrink: 0; /* Safari 6.1+ */
+    -webkit-flex-basis: 50px; /* Safari 6.1+ */
+	flex-grow: 0;
+	flex-shrink: 0;
+	flex-basis: 50px;
+	width: 50px;
+    text-align: center;
+}
+.aon-menu-icon-aeat{
+	bbackground:transparent url(images/aon-icon/aon-aeat.png) scroll 2px center no-repeat;
+	color: #3a85c3;
+	border: 0.5px solid #3a85c3;
+}
+.aon-background-aeat {
+	background-color: #3a85c3;
+}
+.aon-menu-icon-araba{
+	bbackground: transparent url(images/aon-icon/aon-icon-araba.png) scroll 2px center no-repeat;
+	color: #A30C51;
+	border: 0.5px solid #A30C51;
+}
+.aon-background-araba {
+	background-color: #A30C51;
+}
+.aon-menu-icon-bizkaia{
+	bbackground:transparent url(images/aon-icon/aon-icon-bizkaia.png) scroll 2px center no-repeat;
+	color: #D70004;
+	border: 0.5px solid #D70004;
+}
+.aon-background-bizkaia {
+	background-color: #D70004;
+}
+.aon-menu-icon-gipuzkoa{
+	bbackground: transparent url(images/aon-icon/aon-icon-gipuzkoa.png) scroll 2px center no-repeat;
+	color: #A1C031;
+	border: 0.5px solid #A1C031;
+}
+.aon-background-gipuzkoa {
+	background-color: #A1C031;
+}
+.aon-menu-icon-navarra{
+	bbackground: transparent url(images/aon-icon/aon-icon-navarra.png) scroll 2px center no-repeat;
+	color: #da002a;
+	border: 0.5px solid #da002a;
+}
+.aon-background-navarra {
+	background-color: #da002a;
+}
+.aon-menu-fiscal-label {
+	background: transparent url("images/aon-icon/aon-ul-list.png") no-repeat scroll left center;
+	padding-left: 15px;
+	margin-left: 3px;
+	vertical-align: middle;
+	flex-flow: row wrap;
+    -webkit-flex-flow: row wrap; /* Safari 6.1+ */
+	width: auto;
+}
