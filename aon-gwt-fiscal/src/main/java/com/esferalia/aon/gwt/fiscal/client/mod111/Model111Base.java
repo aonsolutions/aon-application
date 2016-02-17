@@ -62,6 +62,10 @@ public abstract class Model111Base extends ResizeComposite implements RequiresRe
 		initWidget(container);
 	}
 	
+	protected IFiscalModelCallback<Mod111> getCallback() {
+		return callback;
+	}
+	
 	protected FlexTable getTable() {
 		return table;
 	}

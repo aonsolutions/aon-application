@@ -31,7 +31,7 @@ public enum Model715NavarraScript implements IModelScript {
 	}
 	@Override
 	public boolean isEnabled() {
-		return getInfoKey() == COMPUTE;
+		return getInfoKey() != COMPUTE;
 	}
 	@Override
 	public Mod111KeyInfo getInfoKey() {

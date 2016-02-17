@@ -44,6 +44,11 @@ public enum Period implements Serializable {
     		if (this == T2) return "02";
     		if (this == T3) return "03";
     		if (this == T4) return "04";
+    	} else if (admon == Administration.NAVARRA) {
+    		if (this == T1) return "1";
+    		if (this == T2) return "2";
+    		if (this == T3) return "3";
+    		if (this == T4) return "4";
     	}
     	return name;
     }

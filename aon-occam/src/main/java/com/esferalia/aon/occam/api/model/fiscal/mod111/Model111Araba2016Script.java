@@ -62,7 +62,7 @@ public enum Model111Araba2016Script implements IModelScript {
 	}
 	@Override
 	public boolean hasGraphicParticularity() {
-		return (this == R01 && this == R02 || this == R03);
+		return (this == R01 || this == R02 || this == R03);
 	}
 	
 	@Override

@@ -358,7 +358,7 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		return (getFinance() != null && getFinance().getBankAccount() != null)?getFinance().getBankAccount().getMaskedIban():null;
 	}
 	public String getFinanceCCC() {
-		return (getFinance() != null && getFinance().getBankAccount() != null)?getFinance().getBankAccount().getCCC():null;
+		return (getFinance() != null && getFinance().getBankAccount() != null)?getFinance().getBankAccount().getPureCCC():null;
 	}
 	
 	public LinkedHashMap<String, FiscalModelDetail> getMap() {

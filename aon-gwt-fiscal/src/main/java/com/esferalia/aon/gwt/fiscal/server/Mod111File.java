@@ -47,10 +47,10 @@ public class Mod111File extends HttpServlet {
 			ByteArrayInputStream in = new ByteArrayInputStream(output.toByteArray());
 			
 		    String fileName = AonFiscalFileUtils.getFileName(mod111);
-			
+		    MimeType mime = mod111.isAraba()?MimeType.XML:MimeType.TXT;
 		    resp.setCharacterEncoding("ISO-8859-1");
-			resp.setContentType(MimeType.TXT.getName());
-			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\";");
+			resp.setContentType(mime.getName());
+			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "." + mime.getExtension()+ "\";");
 			AonIOUtils.copy(in, resp.getOutputStream());
 			resp.flushBuffer();
 

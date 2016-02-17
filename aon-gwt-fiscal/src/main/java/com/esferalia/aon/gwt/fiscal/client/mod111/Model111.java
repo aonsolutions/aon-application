@@ -317,8 +317,7 @@ public class Model111 extends MainEntryPoint {
 		
 		generateFileButton.setStyleName(AON.AON_CSS.aonIconCommandButton());
 		generateFileButton.setVisible(!currentMod111.isNew());
-		generateFileButton.setEnabled(currentMod111.isFinished () &&
-				(currentMod111.isAEAT() || currentMod111.isGipuzkoa() || currentMod111.isBizkaia()));
+		generateFileButton.setEnabled(currentMod111.isFinished ());
 		generateFileButton.addStyleName(
 				generateFileButton.isEnabled()
 					?FiscalModelUtils.getAdministrationIcon(currentMod111.getAdministration())

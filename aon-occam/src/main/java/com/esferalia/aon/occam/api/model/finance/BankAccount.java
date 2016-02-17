@@ -169,6 +169,27 @@ public class BankAccount implements Serializable {
 		return sb.toString();
 	}	
 
+	public String getPureCCC() {
+		StringBuilder sb = new StringBuilder();
+		if (AonStringUtils.isNotBlank(getBban1())) {
+			sb.append(getBban1());
+		}
+		if (AonStringUtils.isNotBlank(getBban2())) {
+			sb.append(getBban2());
+		}
+		if (AonStringUtils.isNotBlank(getBban3())) {
+			sb.append(AonStringUtils.substring(getBban3(), 0, 2))
+			  .append(AonStringUtils.substring(getBban3(), 2, 4));
+		}
+		if (AonStringUtils.isNotBlank(getBban4())) {
+			sb.append(getBban4());
+		}
+		if (AonStringUtils.isNotBlank(getBban5())) {
+			sb.append(getBban5());
+		}
+		return sb.toString();
+	}	
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		if (getCountry() != null) {
