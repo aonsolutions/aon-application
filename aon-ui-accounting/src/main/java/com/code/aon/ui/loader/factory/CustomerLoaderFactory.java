@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.validator.EmailValidator;
+import org.apache.commons.validator.UrlValidator;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
@@ -172,10 +174,24 @@ public class CustomerLoaderFactory extends RegistryLoaderFactory implements ILoa
 				insertRegistryMedia(customer.getRegistry(),MediaType.FAX,loaded.getFax());
 			}
 			if (StringUtils.isNotBlank(loaded.getEmail())) {
-				insertRegistryMedia(customer.getRegistry(),MediaType.EMAIL, loaded.getEmail(),true,false,false);
+				if (EmailValidator.getInstance().isValid(loaded.getEmail())) {
+					insertRegistryMedia(customer.getRegistry(),MediaType.EMAIL,loaded.getEmail(),true,false,false);
+				} else {
+					insertRegistryMedia(customer.getRegistry(),MediaType.UNKNOWN,loaded.getEmail(),true,false,false);
+				}
 			}
 			if (StringUtils.isNotBlank(loaded.getWeb())) {
-				insertRegistryMedia(customer.getRegistry(),MediaType.WEB,loaded.getWeb());
+				String web = loaded.getWeb();
+				if (!StringUtils.startsWith(web, "http") ) {
+					web = "http://" + web;
+				}
+
+				UrlValidator validator = new UrlValidator();
+				if (validator.isValid(web)) {
+					insertRegistryMedia(customer.getRegistry(),MediaType.WEB,loaded.getWeb());
+				} else {
+					insertRegistryMedia(customer.getRegistry(),MediaType.UNKNOWN,loaded.getWeb());
+				}
 			}
 			if (StringUtils.isNotBlank(loaded.getSegmento())) {
 				insertRegistrySegment(customer.getRegistry(),loaded.getSegmento());
