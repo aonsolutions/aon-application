@@ -226,13 +226,13 @@ public class FANWriter implements Serializable {
 					}
 				}
 				if(salary!=null && contract.getRegimeType()!=SSRegimeType.SELF_EMPLOYED){
-					if(previousPerson==null || !previousPerson.equals(contract.getPerson().getId())){
-						tra = createTRARecord(contract, emp);
-						previousPerson = contract.getPerson().getId();
-						emp.getTrabajadores().add(tra);
-					}
 					List<DAT> datList = createDATRecords(contract);
 					if(datList!=null && datList.size()>0){
+						if(previousPerson==null || !previousPerson.equals(contract.getPerson().getId())){
+							tra = createTRARecord(contract, emp);
+							previousPerson = contract.getPerson().getId();
+							emp.getTrabajadores().add(tra);
+						}
 						tra.getDat().addAll(datList);
 						++totalContractSum;
 					}
@@ -422,9 +422,10 @@ public class FANWriter implements Serializable {
 			if(salary==null){
 				salary = getSalary(contract, SalaryType.SALARY);
 			}
-			if(salary!=null && salary.getCommonBase()!=null && salary.getCommonBase()>0.0d){
+			Integer notEnjoyedVacationDays = getNotEnjoyedVacationDays(contract);
+			if(salary!=null && notEnjoyedVacationDays!=null && notEnjoyedVacationDays>0){
 				List<ITransferObject> salaryDataList = PayrollUtils.getInstance().getSalaryDataList(salary, true);
-				createDATRecord(datList, contract, salaryDataList, null, getNotEnjoyedVacationDays(contract));
+				createDATRecord(datList, contract, salaryDataList, null, notEnjoyedVacationDays);
 			}
 		}
 		
@@ -2378,12 +2379,16 @@ public class FANWriter implements Serializable {
 				if(contractList==null || contractList.size()==0){
 					cccErrors.add("- No hay contratos activos");
 				}
+				
 				for(ITransferObject _contract: contractList){
 					Contract contract= (Contract)_contract;
-					Integer days = getNotEnjoyedVacationDays(contract);
-					if(days==null || days<=0){
-						cccErrors.add("- " + contract.getPerson().getFullName() + " no tiene dias de vacaciones retribuidos y no disfrutados. SE EXCLUYE.");
-					}
+					Salary salary = getSalary(contract, SalaryType.SETTLE);
+					if(salary!=null && salary.getId()!=null){
+						Integer days = getNotEnjoyedVacationDays(contract);
+						if(days==null || days<=0){
+							cccErrors.add("- " + contract.getPerson().getFullName() + " no tiene dias de vacaciones retribuidos y no disfrutados. SE EXCLUYE.");
+						}
+					} 
 				}
 				if(cccErrors!=null && cccErrors.size()>0){
 					errors.add("Errores de " + ccc.getActivity().getEnterprise().getRegistry().getFullName() + " (" + PayrollUtils.getInstance().getRegimeCode(ccc)+ccc.getCcc() + "): ");
