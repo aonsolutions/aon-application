@@ -151,6 +151,7 @@ public enum Mod111Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	CT_C28 ("111-CT-28"  ,false,1,true ,false,new Administration[]{Administration.COMMON_TERRITORY}),
 	CT_C29 ("111-CT-29"  ,false,1,false,false,new Administration[]{Administration.COMMON_TERRITORY}),
 	CT_C30 ("111-CT-30"  ,false,1,true ,false,new Administration[]{Administration.COMMON_TERRITORY}),
+	CT_TIP ("111-CT-DT"  ,true ,1,true ,false,new Administration[]{Administration.COMMON_TERRITORY}),
 
 	// GIPUZKOA
 	GP_H1  ("111-GP-H1"  ,true ,0,false,false,new Administration[]{Administration.GIPUZKOA}),

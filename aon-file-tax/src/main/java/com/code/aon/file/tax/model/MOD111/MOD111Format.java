@@ -13,10 +13,15 @@ public enum MOD111Format {
 			,Administration.NAVARRA
 			,MimeType.MIME_TXT
 			,Navarra2011MOD111Factory.class),
+	AEAT_2016(2016
+			,Administration.COMMON_TERRITORY
+			,MimeType.MIME_TXT
+			,Aeat2016MOD111Factory.class),
 	AEAT_2011(2011
 			,Administration.COMMON_TERRITORY
 			,MimeType.MIME_TXT
-			,Aeat2011MOD111Factory.class);
+			,Aeat2011MOD111Factory.class),
+	;
 
 	private Integer year;
 	private MimeType mimeType;

@@ -53,6 +53,7 @@ public class Declaration {
 	private String payInCash;
 	private String payInAccount;
 	private String ccc;
+	private String iban;
 	private String payMethod;
 	
 	private Map<String,Double> boxes = new HashMap<String, Double>();
@@ -201,6 +202,13 @@ public class Declaration {
 	public String getSurnameStart() {
 		return StringUtils.substring(getSurname(), 0, 4);
 	}
+	public String getAeatNameOrEmpy() {
+		return isPerson()?getName():"";
+	}
+	public String getAeatSurnameOrRazonSocial() {
+		return isPerson()?getSurname():getName();
+	}
+	
 	public String getFullName() {
 		return getSurname() + (StringUtils.isEmpty(getSurname())?"":' ') + getName();
 	}
@@ -300,6 +308,12 @@ public class Declaration {
 	}
 	public void setPayInAccount(String payInAccount) {
 		this.payInAccount = payInAccount;
+	}
+	public String getIban() {
+		return iban;
+	}
+	public void setIban(String iban) {
+		this.iban = iban;
 	}
 	public String getCcc() {
 		return ccc;

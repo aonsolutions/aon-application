@@ -138,18 +138,29 @@ public class MOD111Writer implements IFinanceConstants{
 		declaration.setPayInCash("X");
 		declaration.setPayInAccount(" ");
 		declaration.setCcc("");
+		declaration.setIban("");
 		declaration.setPayMethod("0");
 		Finance finance = fiscalModel.getFinance();
+		
 		if (finance != null) {
+			PayMethodType type = null;
 			if (finance.getPayMethod() != null) {
-				if (finance.getPayMethod().getType() != PayMethodType.CASH_BASIS) {
-					declaration.setPayInCash(" ");
-					declaration.setPayInAccount("X");
-					if (finance.getBankAccount() == null) {
-						throw new ManagerBeanException("Si la forma de pago no es efectivo, el banco no puede estar vacio.");
-					}
-					declaration.setCcc(finance.getBankAccount().getBban());
+				type = finance.getPayMethod().getType();	
+			} else {
+				if (finance.getBankAccount() != null && AonStringUtils.isNotBlank( finance.getBankAccount().getCCC())) {
+					type = PayMethodType.NEGOTIABLE_DOCUMENT;	
+				} else {
+					type = PayMethodType.CASH_BASIS;
 				}
+			}
+			if (type != PayMethodType.CASH_BASIS) {
+				declaration.setPayInCash(" ");
+				declaration.setPayInAccount("X");
+				if (finance.getBankAccount() == null) {
+					throw new ManagerBeanException("Si la forma de pago no es efectivo, el banco no puede estar vacio.");
+				}
+				declaration.setCcc(finance.getBankAccount().getBban());
+				declaration.setIban(finance.getBankAccount().getIban());
 			}
 		}
 		
@@ -192,11 +203,14 @@ public class MOD111Writer implements IFinanceConstants{
 		if (d <= 0) {
 			declaration.setPayMethod("0");
 			declaration.setDeclarationType("N");
+			declaration.setIban("");
 		} else {
 			if (StringUtils.isNotBlank(declaration.getCcc())) {
 				declaration.setDeclarationType("U");
 				declaration.setPayMethod("1");
-			} 
+			} else {
+				declaration.setIban("");	
+			}
 		}
 		declaration.setResult(d);
 		declaration.changeInvalidCharacters();
