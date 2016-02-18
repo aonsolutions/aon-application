@@ -152,7 +152,7 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		if (invoiceDetail.getItem() != null && invoiceDetail.getItem().getId() != null) {
 			invoiceDetail.setVatPercent(isVatIncluded() ? getVatPercent() : 0);
 			invoiceDetail.setSurchargePercent(invoice.isSurcharge() ? getSurchargePercent() : 0);
-			invoiceDetail.setRetentionPercent(!invoice.isRetentionFree() ? getRetentionPercent() : 0);
+			invoiceDetail.setRetentionPercent(!invoice.isRetentionFree() && invoice.isWithholding() ? getRetentionPercent() : 0);
 
 			if (workWithSalesPrice) {
 				ItemPricesManager pricesManager = new ItemPricesManager();
