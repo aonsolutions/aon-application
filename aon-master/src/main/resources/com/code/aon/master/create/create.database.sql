@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.42.1
+# Version: 8.42.2
 # Created by: girazu
-# Creation Date: 12/02/2016 12:25
+# Creation Date: 18/02/2016 17:40
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -733,6 +733,7 @@ CREATE TABLE `account_entry_fbatch` (
 CREATE TABLE `invest_asset` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `activity` int(4) default NULL COMMENT 'Identificador de la Actividad',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Bien',
   `type` tinyint(2) NOT NULL COMMENT 'Tipo de Bien',
   `regime` tinyint(2) NOT NULL COMMENT 'Regimen',
@@ -742,6 +743,8 @@ CREATE TABLE `invest_asset` (
   `retention_percent` double default '0' COMMENT 'Porcentaje de afectacion de imposicion directa',
   PRIMARY KEY  (`id`),
   KEY `IDX_INVEST_ASSET_DOMAIN` (`domain`),
+  KEY `IDX_INVEST_ASSET_ACTIVITY` (`activity`),
+  CONSTRAINT `FK_INVEST_ASSET_ACTIVITY` FOREIGN KEY (`activity`) REFERENCES `enterprise_activity` (`id`),
   CONSTRAINT `FK_INVEST_ASSET_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bienes afectos o de inversion';
 
@@ -8091,7 +8094,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.42.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.42.2');
 
 COMMIT;
 
