@@ -59,5 +59,10 @@ public class Mod202 extends FiscalModel implements Serializable {
 		} 
 		return getAmount(Mod202Key.C03);
 	}
+
+	@Override
+	public void setDeclarationType(String type) {
+		// Nothing
+	}
 	
 }

@@ -62,6 +62,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
+import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -99,6 +100,8 @@ import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
+import com.esferalia.aon.occam.api.model.type.Mod115Key;
+import com.esferalia.aon.occam.api.model.type.Mod115KeyInfo;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
@@ -1071,6 +1074,140 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domain,user);
 			return getFiscal().getMod111Info(ctx, mod111, key, infoKey);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	// ----------------------------------MODELO 115
+	public static LinkedList<Mod115> getMod115s(String domainName,int domainId, String user) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId,user);
+			return getFiscal().getMod115s(ctx, domainId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod115 getMod115(String domainName, int domainId, String user, int id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId,user);
+			return getFiscal().getMod115(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod115 calculate(String domainName, String user, Mod115 mod115) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod115.getDomain(),user);
+			return getFiscal().calculateMod115(ctx, mod115);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod115 save(String domainName, String user, Mod115 mod115) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod115.getDomain(),user);
+			return getFiscal().saveMod115(ctx, mod115);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod115 saveComments(String domainName, String user, Mod115 mod115) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod115.getDomain(),user);
+			return getFiscal().saveCommentsMod115(ctx, mod115);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Mod115 initializeForFinish(String domainName, String user, Mod115 mod115) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod115.getDomain(),user);
+			return getFiscal().initializeForFinishMod115(ctx, mod115);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod115 finish(String domainName, String user, Mod115 mod115) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod115.getDomain(),user);
+			return getFiscal().finishMod115(ctx, mod115);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod115 reopen(String domainName, String user, Mod115 mod115) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod115.getDomain(),user);
+			return getFiscal().reopenMod115(ctx, mod115);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static void deleteMod115(String domainName, String user, Mod115 mod115) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod115.getDomain(),user);
+			getFiscal().deleteMod115(ctx, mod115);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod115 initializeMod115(String domainName, int domain, String user,Mod115 mod115) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,user);
+			return getFiscal().initializeMod115(ctx, mod115);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod115 createMod115(String domainName, int domain, String user,Mod115 mod115) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,user);
+			return getFiscal().createMod115(ctx, mod115);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static String getMod115Info(String domainName, int domain, String user, Mod115 mod115, Mod115Key key,
+			Mod115KeyInfo infoKey) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,user);
+			return getFiscal().getMod115Info(ctx, mod115, key, infoKey);
 		} finally {
 			if (ctx != null)
 				ctx.close();

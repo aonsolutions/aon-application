@@ -29,13 +29,13 @@ public class Mod202DAO extends FiscalModelDAO {
 					.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.PERIOD.desc())
 					.fetch()
 					.stream()
-					.map( record -> Mod202DAO.map(new Mod202(),record));
+					.map( record -> map202(new Mod202(),record));
 		}
 		
 	public static Mod202 getMod202(AONContext ctx,int id) {
 		ctx.checkRead();
 		return  getModelRecord(ctx, id)
-				.map(record -> FiscalModelDAO.map(new Mod202(), record));
+				.map( record -> map202(new Mod202(),record));
 	}
 	
 	public static Mod202 saveMod202(AONContext ctx, Mod202 mod202) {

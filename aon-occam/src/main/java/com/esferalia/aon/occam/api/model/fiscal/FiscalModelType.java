@@ -52,16 +52,20 @@ public enum FiscalModelType implements Serializable{
 		return null;
 	}
 	public String getName(Administration admon, Period period) {
-		if (period.isQuarterPeriod() && (admon == Administration.ALAVA 
-			|| admon == Administration.BIZKAIA
-			|| admon == Administration.GIPUZKOA) ) {
-			return "110";
-		}
-		if (period.isQuarterPeriod() && admon == Administration.NAVARRA) {
-			return "715";
-		}
-		if (period.isMonthPeriod() && admon == Administration.NAVARRA) {
-			return "745";
+		if (this == M111) {
+			if (period.isQuarterPeriod() && (admon == Administration.ALAVA 
+				|| admon == Administration.BIZKAIA
+				|| admon == Administration.GIPUZKOA) ) {
+				return "110";
+			} else if (admon == Administration.NAVARRA) {
+				return (period.isMonthPeriod()?"745":"715");	
+			}
+		} else if (this == M115) {
+			if (admon == Administration.ALAVA) {
+				return "115-A";
+			} else  if (admon == Administration.NAVARRA) {
+				return (period.isMonthPeriod()?"760":"759");	
+			}
 		}
 		return name;
 	}

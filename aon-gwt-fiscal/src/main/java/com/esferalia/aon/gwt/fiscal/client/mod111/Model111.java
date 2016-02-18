@@ -13,10 +13,10 @@ import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.AuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.IbanTextBox.IbanSuggestion;
 import com.esferalia.aon.gwt.common.client.widget.CreditorBox;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox;
+import com.esferalia.aon.gwt.common.client.widget.IbanTextBox.IbanSuggestion;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
@@ -28,11 +28,14 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelIdentificationData;
+import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelProvidesKey;
+import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelTable;
+import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.IIbanContainer;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
@@ -64,7 +67,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
-import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -77,6 +79,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestOracle;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
@@ -104,16 +107,6 @@ public class Model111 extends MainEntryPoint {
 		void calculateAndRefresh(Mod111 mod111);
 	}
 	
-	protected static interface IFiscalModelCallback<T extends FiscalModel> {
-		T getFiscalModel();
-		void showErrorMsg(String msg);
-		boolean isFinished();
-		boolean isDirty();
-		void markAsDirty();
-		void identificationLabelChanged();
-		void showInfoPanel(String text);
-	}
-
 	private Mod111 currentMod111;
 	private boolean dirty;
 
@@ -141,7 +134,7 @@ public class Model111 extends MainEntryPoint {
 	Panel formContainer;
 
 	@UiField(provided = true)
-	Model111Table table;
+	FiscalModelTable<Mod111> table;
 
 	private int domain;
 
@@ -219,7 +212,7 @@ public class Model111 extends MainEntryPoint {
 		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 				
 
-		table = new Model111Table(new Mod111SelectionHandler());
+		table = new FiscalModelTable<Mod111>(new Mod111SelectionHandler(), new FiscalModelProvidesKey<Mod111>());
 
 		Widget ui = MODEL_111_BINDER.createAndBindUi(this);
 
@@ -436,7 +429,7 @@ public class Model111 extends MainEntryPoint {
 			}
 		};
 		
-		FiscalModelIdentificationData identificationData = new FiscalModelIdentificationData(callback);
+		FiscalModelIdentificationData<Mod111> identificationData = new FiscalModelIdentificationData<Mod111>(callback);
 		identificationContainer.setWidget( identificationData);
 		if (currentMod111.getAdministration() == Administration.COMMON_TERRITORY) {
 			declaration = new Model111AEAT(callback);

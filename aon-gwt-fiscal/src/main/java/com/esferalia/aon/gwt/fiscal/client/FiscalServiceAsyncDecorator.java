@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
+import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -31,6 +32,8 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
+import com.esferalia.aon.occam.api.model.type.Mod115Key;
+import com.esferalia.aon.occam.api.model.type.Mod115KeyInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
@@ -444,6 +447,103 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		
 	}
 	
+	// ---------------------------------------------------------------MODELO 115
+
+	@Override
+	public void getMod115(String domainName, int domain, int id,
+			AsyncCallback<Mod115> callback) {
+		AON.start();
+		fsa.getMod115(domainName, domain, id, new AsyncCallbackWrapper<Mod115>(
+				callback));
+	}
+
+	@Override
+	public void getMod115s(String domainName, int domain,
+			AsyncCallback<LinkedList<Mod115>> callback) {
+		AON.start();
+		fsa.getMod115s(domainName, domain,
+				new AsyncCallbackWrapper<LinkedList<Mod115>>(callback));
+	}
+
+	@Override
+	public void calculateMod115(String domainName, Mod115 mod115,
+			AsyncCallback<Mod115> callback) {
+		AON.start();
+		fsa.calculateMod115(domainName, mod115,
+				new AsyncCallbackWrapper<Mod115>(callback));
+	}
+
+	@Override
+	public void saveMod115(String domainName, Mod115 mod115,
+			AsyncCallback<Mod115> callback) {
+		AON.start();
+		fsa.saveMod115(domainName, mod115, new AsyncCallbackWrapper<Mod115>(
+				callback));
+	}
+	
+	@Override
+	public void saveCommentsMod115(String domainName, Mod115 mod115,
+			AsyncCallback<Mod115> callback) {
+		AON.start();
+		fsa.saveCommentsMod115(domainName, mod115, new AsyncCallbackWrapper<Mod115>(
+				callback));
+	}
+
+	@Override
+	public void initializeForFinishMod115(String domainName, Mod115 mod115,
+			AsyncCallback<Mod115> callback) {
+		AON.start();
+		fsa.initializeForFinishMod115(domainName, mod115, new AsyncCallbackWrapper<Mod115>(
+				callback));
+	}
+	
+	@Override
+	public void finishMod115(String domainName, Mod115 mod115,
+			AsyncCallback<Mod115> callback) {
+		AON.start();
+		fsa.finishMod115(domainName, mod115, new AsyncCallbackWrapper<Mod115>(
+				callback));
+	}
+	
+	@Override
+	public void reopenMod115(String domainName, Mod115 mod115,
+			AsyncCallback<Mod115> callback) {
+		AON.start();
+		fsa.reopenMod115(domainName, mod115, new AsyncCallbackWrapper<Mod115>(
+				callback));
+	}
+
+	@Override
+	public void initializeMod115(String domainName, int currentDomain,
+			Mod115 mod115, AsyncCallback<Mod115> callback) {
+		AON.start();
+		fsa.initializeMod115(domainName, currentDomain,mod115,new AsyncCallbackWrapper<Mod115>(callback));
+
+	}
+
+	@Override
+	public void createMod115(String domainName, int currentDomain,
+			Mod115 mod115, AsyncCallback<Mod115> callback) {
+		AON.start();
+		fsa.createMod115(domainName, currentDomain, mod115,new AsyncCallbackWrapper<Mod115>(callback));
+
+	}
+
+	@Override
+	public void deleteMod115(String domainName, Mod115 mod115,
+			AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.deleteMod115(domainName, mod115, new AsyncCallbackWrapper<Void>(
+				callback));
+	}
+	@Override
+	public void getInfo(String domainName, int domain, Mod115 mod115, Mod115Key key, Mod115KeyInfo infoKey,
+			AsyncCallback<String> callback) {
+		AON.start();
+		fsa.getInfo(domainName, domain, mod115, key, infoKey,new AsyncCallbackWrapper<String>(callback));
+		
+	}
+
 	// ---------------------------------------------------------------MODELO 202
 
 	@Override

@@ -1,10 +1,9 @@
-package com.esferalia.aon.gwt.fiscal.client.mod111;
+package com.esferalia.aon.gwt.fiscal.client.model;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model111.IFiscalModelCallback;
-import com.esferalia.aon.occam.api.model.fiscal.Mod111;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.google.gwt.core.client.GWT;
@@ -18,8 +17,9 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class FiscalModelIdentificationData extends ResizeComposite implements RequiresResize {
+public class FiscalModelIdentificationData<FM extends FiscalModel> extends ResizeComposite implements RequiresResize {
 
+	@SuppressWarnings("rawtypes")
 	interface FiscalModelIdentificationDataBinder extends UiBinder<Widget, FiscalModelIdentificationData> {}
 	
 	private static final FiscalModelIdentificationDataBinder DATA_BINDER = GWT
@@ -66,9 +66,9 @@ public class FiscalModelIdentificationData extends ResizeComposite implements Re
 	@UiField
 	TextBox zip;
 	
-	private IFiscalModelCallback<Mod111> callback;
+	private IFiscalModelCallback<FM> callback;
 	
-	public FiscalModelIdentificationData(IFiscalModelCallback<Mod111> callback) {
+	public FiscalModelIdentificationData(IFiscalModelCallback<FM> callback) {
 		this.callback = callback;
 		
 		Widget ui = DATA_BINDER.createAndBindUi(this);

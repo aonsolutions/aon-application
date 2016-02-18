@@ -21,14 +21,14 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
-import com.esferalia.aon.occam.api.model.fiscal.Mod111;
-import com.esferalia.aon.occam.api.model.fiscal.mod111.IModelScript;
-import com.esferalia.aon.occam.api.model.type.Mod111Key;
+import com.esferalia.aon.occam.api.model.fiscal.Mod115;
+import com.esferalia.aon.occam.api.model.fiscal.mod115.IModelScript;
+import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class FiscalModelExcelAction extends AbsExcelAction {
+public class Mod115ExcelAction extends AbsExcelAction {
 
 	protected static final XSSFColor ARABA_BG = new XSSFColor(new java.awt.Color(163, 12, 81));
 	protected static final XSSFColor BIZKAIA_BG = new XSSFColor(new java.awt.Color(215, 0, 4));
@@ -49,10 +49,10 @@ public class FiscalModelExcelAction extends AbsExcelAction {
 	
 	
 
-	private Mod111 mod111;
+	private Mod115 mod115;
 
-	public FiscalModelExcelAction(Mod111 mod111) {
-		this.mod111 = mod111;
+	public Mod115ExcelAction(Mod115 mod115) {
+		this.mod115 = mod115;
 	}
 
 	protected Font idFont;
@@ -108,7 +108,7 @@ public class FiscalModelExcelAction extends AbsExcelAction {
 		headerCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 		headerCellStyle.setFillForegroundColor(AON_BLUE);
 		headerCellStyle.setFont(headerFont);
-		headerCellStyle.setFillForegroundColor(COLORS[mod111.getAdministration().ordinal()]);
+		headerCellStyle.setFillForegroundColor(COLORS[mod115.getAdministration().ordinal()]);
 
 		printModelInfo();
 
@@ -126,27 +126,16 @@ public class FiscalModelExcelAction extends AbsExcelAction {
 
 		CellUtil.createCell(row, cellCount, "Concepto", headerCellStyle);
 		sheet.setColumnWidth(cellCount++, 8 * 256);
-		sheet.setColumnWidth(cellCount++, 45 * 256);
-		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
-		
+		sheet.setColumnWidth(cellCount++, 30 * 256);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 5));
+		cellCount = 6;
 		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
 		rightHeaderCellStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
 
-		CellUtil.createCell(row, cellCount, "N. Percep.", rightHeaderCellStyle);
-		sheet.setColumnWidth(cellCount++, 4 * 256);
-		sheet.setColumnWidth(cellCount++, 10 * 256);
-		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 2, 3));
-
-		CellUtil.createCell(row, cellCount, "Percepciones", rightHeaderCellStyle);
-		sheet.setColumnWidth(cellCount++, 4 * 256);
-		sheet.setColumnWidth(cellCount++, 10 * 256);
-		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 4, 5));
-
-		CellUtil.createCell(row, cellCount, "Ret. e Ingr. Cta.", rightHeaderCellStyle);
+		CellUtil.createCell(row, cellCount, "Importe", rightHeaderCellStyle);
 		sheet.setColumnWidth(cellCount++, 4 * 256);
 		sheet.setColumnWidth(cellCount++, 10 * 256);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 6, 7));
-
 	}
 
 	public void accept(IModelScript ms) {
@@ -172,38 +161,28 @@ public class FiscalModelExcelAction extends AbsExcelAction {
 		cell.setCellStyle(style);
 		cell.setCellValue(concept);
 		cell.setCellType(Cell.CELL_TYPE_STRING);
-		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));			
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 5));			
 		if (ms.getKeys() == null) {
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), cellCount - 1, 7));
 		} else {
-			if (ms.getKeys().length == 1) {
-				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), cellCount - 1, 5));
-				cellCount = 6;
-			} else if (ms.getKeys().length == 2) {
-				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), cellCount - 1, 3));
-				cellCount = 4;
-			} else {
-				cellCount = 2;
-			}
-			for (Mod111Key key : ms.getKeys()) {
-				Cell boxCell = addCell(AonStringUtils.leftPad(AonNumberUtils.toString(key.getBox()), 3, "0"));
-				boxCell.setCellType(Cell.CELL_TYPE_STRING);
-				boxCell.setCellStyle(boxCellStyle);
+			cellCount = 6;
+			Mod115Key key = ms.getKeys()[0];
+			Cell boxCell = addCell(AonStringUtils.leftPad(AonNumberUtils.toString(key.getBox()), 3, "0"));
+			boxCell.setCellType(Cell.CELL_TYPE_STRING);
+			boxCell.setCellStyle(boxCellStyle);
 
-				double amount = mod111.ensureDetail(key).getAmount();
-				cell = row.createCell(cellCount++);
-				style = workbook.createCellStyle();
-				style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
-				style.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
-				style.setVerticalAlignment(HSSFCellStyle.VERTICAL_BOTTOM);
-				style.setFont(ms.isEnabled() ? defaulFont : boldFont);
-				style.setBorderBottom(CellStyle.BORDER_THIN);
-				style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
-				cell.setCellStyle(style);
-				cell.setCellValue(amount);
-				cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-			}
-
+			double amount = mod115.ensureDetail(key).getAmount();
+			cell = row.createCell(cellCount++);
+			style = workbook.createCellStyle();
+			style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
+			style.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+			style.setVerticalAlignment(HSSFCellStyle.VERTICAL_BOTTOM);
+			style.setFont(ms.isEnabled() ? defaulFont : boldFont);
+			style.setBorderBottom(CellStyle.BORDER_THIN);
+			style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
+			cell.setCellStyle(style);
+			cell.setCellValue(amount);
+			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 		}
 	}
 
@@ -212,8 +191,8 @@ public class FiscalModelExcelAction extends AbsExcelAction {
 		cellCount = 0;
 
 		try {
-			InputStream inputStream = FiscalModelExcelAction.class.getResourceAsStream(
-					IMAGES[ mod111.getAdministration().ordinal()]);
+			InputStream inputStream = Mod115ExcelAction.class.getResourceAsStream(
+					IMAGES[ mod115.getAdministration().ordinal()]);
 			byte[] imageBytes = AonIOUtils.toByteArray(inputStream);
 			int pictureureIdx = workbook.addPicture(imageBytes, Workbook.PICTURE_TYPE_PNG);
 			inputStream.close();
@@ -233,16 +212,17 @@ public class FiscalModelExcelAction extends AbsExcelAction {
 		}
 		CellUtil.createCell(row, 0,"");
 		sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 0));
-		CellUtil.createCell(row, 1,"                          " +
-				"Retenciones e ingresos a cuenta. " + "Rendimientos del trabajo y de actividades econ\u00F3micas.",
+		CellUtil.createCell(row, 1,"Retenciones e ingresos a cuenta. " 
+				+ "Rentas o rendimientos procedentes del arrendamiento "
+				+ "o subarrendamiento de inmuebles urbanos.",
 				headerCellStyle);
 
-		CellUtil.createCell(row, 7, mod111.getModel().getName(mod111.getAdministration(), mod111.getPeriod()),
+		CellUtil.createCell(row, 7, mod115.getModel().getName(mod115.getAdministration(), mod115.getPeriod()),
 				headerCellStyle);
 		row = sheet.createRow(rowCount++);
-		CellUtil.createCell(row, 7, AonNumberUtils.toString(mod111.getYear()), headerCellStyle);
+		CellUtil.createCell(row, 7, AonNumberUtils.toString(mod115.getYear()), headerCellStyle);
 		row = sheet.createRow(rowCount++);
-		CellUtil.createCell(row, 7, mod111.getPeriod().getDescription(), headerCellStyle);
+		CellUtil.createCell(row, 7, mod115.getPeriod().getDescription(), headerCellStyle);
 		sheet.addMergedRegion(new CellRangeAddress(0, 2, 1, 6));
 
 		row = sheet.createRow(rowCount++);
@@ -251,21 +231,22 @@ public class FiscalModelExcelAction extends AbsExcelAction {
 		row = sheet.createRow(rowCount++);
 		
 		String name = AonStringUtils.trim(
-				AonStringUtils.defaultIfBlank(mod111.getName(), AonStringUtils.EMPTY)
+				AonStringUtils.defaultIfBlank(mod115.getName(), AonStringUtils.EMPTY)
 				+AonStringUtils.SPACE
-				+AonStringUtils.defaultIfBlank(mod111.getSurname(), AonStringUtils.EMPTY));
+				+AonStringUtils.defaultIfBlank(mod115.getSurname(), AonStringUtils.EMPTY));
 
-		CellUtil.createCell(row, 0, mod111.getDocument() + "-" + name , idCellStyle);
+		CellUtil.createCell(row, 0, mod115.getDocument() + "-" + name , idCellStyle);
 
 		row = sheet.createRow(rowCount++);
 	}
 	
 	public void beforeFinalize() {
-		if (mod111.isFinished()) {
-			String paymentInfo = "Resultado:" + DecimalFormat.getCurrencyInstance().format(mod111.getResult())
-					+ AonStringUtils.SPACE + (mod111.getDeclarationType()!=null?mod111.getDeclarationType().getDescription():AonStringUtils.EMPTY)
-					+ AonStringUtils.SPACE + AonStringUtils.trimToEmpty( mod111.getFinanceBankAlias())
-					+ AonStringUtils.SPACE + AonStringUtils.trimToEmpty( mod111.getFinanceMaskedIban())
+		if (mod115.isFinished()) {
+			DecimalFormat format = new DecimalFormat("#,##0.00");
+			String paymentInfo = "Resultado: " + format.format(mod115.getResult())
+					+ AonStringUtils.SPACE + (mod115.getDeclarationType()!=null?mod115.getDeclarationType().getDescription():AonStringUtils.EMPTY)
+					+ AonStringUtils.SPACE + AonStringUtils.trimToEmpty( mod115.getFinanceBankAlias())
+					+ AonStringUtils.SPACE + AonStringUtils.trimToEmpty( mod115.getFinanceMaskedIban())
 					;
 			row = sheet.createRow(rowCount++);
 			sheet.addMergedRegion(new CellRangeAddress(rowCount, rowCount, 0, 7));

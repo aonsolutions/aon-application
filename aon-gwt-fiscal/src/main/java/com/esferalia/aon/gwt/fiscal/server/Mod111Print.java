@@ -34,7 +34,7 @@ public class Mod111Print extends HttpServlet {
 			String user = AonServletUtils.getLoggedUser();
 			Mod111 mod111 = AON.getMod111(domainName, domainId, user,id);
 
-			FiscalModelExcelAction action = new FiscalModelExcelAction(mod111);
+			Mod111ExcelAction action = new Mod111ExcelAction(mod111);
 			action.initialize(mod111.getModel().getName(mod111.getAdministration(), mod111.getPeriod()));
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			

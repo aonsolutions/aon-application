@@ -84,8 +84,8 @@ public class Mod111PrintAEAT extends HttpServlet {
 				+"&EJF=" + mod111.getYear() 
 				+"&MOD=111";
 		// Validacion e impresion
-		//String request = "https://www2.agenciatributaria.gob.es/es13/l/zi21zilk0022";
-		String request = "https://www6.aeat.es/es13/l/zi22zilk0022";
+		String request = "https://www2.agenciatributaria.gob.es/es13/l/zi21zilk0022";
+//		String request = "https://www6.aeat.es/es13/l/zi22zilk0022";
 				
 //		String urlParameters = "HID=IE61110B" 
 //				+"&TIA" + mod111.getDeclarationType()
@@ -120,8 +120,8 @@ public class Mod111PrintAEAT extends HttpServlet {
 //				+"&EJF=" + mod111.getYear() 
 //				+"&MOD=111"
 //				+"&PRG=PTLINK9X";
-		
-		// Predeclaracion
+//		
+//		// Predeclaracion
 //		String request = "https://www2.agenciatributaria.gob.es/es13/l/zi21zilk0021";
 
 		URL url = new URL(request);

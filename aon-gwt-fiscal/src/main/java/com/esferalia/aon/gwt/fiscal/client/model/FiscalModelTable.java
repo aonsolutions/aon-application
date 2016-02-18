@@ -1,9 +1,9 @@
-package com.esferalia.aon.gwt.fiscal.client.mod111;
+package com.esferalia.aon.gwt.fiscal.client.model;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.occam.api.model.fiscal.Mod111;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.core.client.GWT;
@@ -17,20 +17,14 @@ import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
-public class Model111Table extends CellTable<Mod111> {
+public class FiscalModelTable<FM extends FiscalModel> extends CellTable<FM> {
 	private static final CellTable.Resources TABLE_STYLE = GWT.create(AonCellTable.class);
 	
-	public static final ProvidesKey<Mod111> MOD111_PROVIDES_KEY = new ProvidesKey<Mod111>() {
-		@Override
-		public Object getKey(Mod111 mod111) {
-			return mod111 == null ? null : mod111.getId();
-		}
-	};
 
-	private NoSelectionModel<Mod111> model;
+	private NoSelectionModel<FM> model;
 	
-	public Model111Table(SelectionChangeEvent.Handler handler) {
-		super(1,TABLE_STYLE,MOD111_PROVIDES_KEY);
+	public FiscalModelTable(SelectionChangeEvent.Handler handler, ProvidesKey<FM> providesKey) {
+		super(1,TABLE_STYLE, providesKey);
 		this.setKeyboardPagingPolicy(KeyboardPagingPolicy.CHANGE_PAGE);
 		this.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 		
@@ -47,17 +41,17 @@ public class Model111Table extends CellTable<Mod111> {
 		addAmountColumn();
 		addFinanceStatusColumn();
 		
-		model = new NoSelectionModel<Mod111>(MOD111_PROVIDES_KEY);
+		model = new NoSelectionModel<FM>(providesKey);
 		model.addSelectionChangeHandler( handler );
 		this.setSelectionModel(model);
 		this.setEmptyTableWidget(new HTML(AON.MSG.noData()));
 	}
 
 	private void addSelectorColumn() {
-		final Column<Mod111, ImageResource> selectorColumn = new Column<Mod111, ImageResource>(
+		final Column<FM, ImageResource> selectorColumn = new Column<FM, ImageResource>(
 				new ImageResourceCell()) {
 			@Override
-			public ImageResource getValue(Mod111 mod111) {
+			public ImageResource getValue(FM model) {
 				return AON.AON_RESOURCES.aonIconRowSelector();
 			}
 		};
@@ -66,10 +60,10 @@ public class Model111Table extends CellTable<Mod111> {
 	}
 
 	private void addYearColumn() {
-		final TextColumn<Mod111> yearColumn = new TextColumn<Mod111>() {
+		final TextColumn<FM> yearColumn = new TextColumn<FM>() {
 			@Override
-			public String getValue(Mod111 mod111) {
-				return Integer.toString(mod111.getYear());
+			public String getValue(FM model) {
+				return Integer.toString(model.getYear());
 			}
 		};
 		this.addColumn(yearColumn, AON.MSG.fiscalYear());
@@ -78,10 +72,10 @@ public class Model111Table extends CellTable<Mod111> {
 	}
 
 	private void addPeriodColumn() {
-		final TextColumn<Mod111> documentColumn = new TextColumn<Mod111>() {
+		final TextColumn<FM> documentColumn = new TextColumn<FM>() {
 			@Override
-			public String getValue(Mod111 mod111) {
-				return mod111.getPeriod().getDescription();
+			public String getValue(FM model) {
+				return model.getPeriod().getDescription();
 			}
 		};
 		this.addColumn(documentColumn, AON.MSG.period());
@@ -89,11 +83,11 @@ public class Model111Table extends CellTable<Mod111> {
 	}
 
 	private void addAdministrationColumn() {
-		final Column<Mod111, ImageResource> iconColumn = new Column<Mod111, ImageResource>(
+		final Column<FM, ImageResource> iconColumn = new Column<FM, ImageResource>(
 				new ImageResourceCell()) {
 			@Override
-			public ImageResource getValue(Mod111 mod111) {
-				return FiscalModelUtils.getAdministrationIconResource(mod111.getAdministration());
+			public ImageResource getValue(FM model) {
+				return FiscalModelUtils.getAdministrationIconResource(model.getAdministration());
 			}
 		};
 		this.addColumn(iconColumn, "A" );
@@ -101,10 +95,10 @@ public class Model111Table extends CellTable<Mod111> {
 	}
 	
 	private void addModelColumn() {
-		final TextColumn<Mod111> modelColumn = new TextColumn<Mod111>() {
+		final TextColumn<FM> modelColumn = new TextColumn<FM>() {
 			@Override
-			public String getValue(Mod111 mod111) {
-				return mod111.getModel().getName(mod111.getAdministration(), mod111.getPeriod());
+			public String getValue(FM model) {
+				return model.getModel().getName(model.getAdministration(), model.getPeriod());
 			}
 		};
 		this.addColumn(modelColumn, AON.MSG.model());
@@ -113,11 +107,11 @@ public class Model111Table extends CellTable<Mod111> {
 	}
 
 	private void addStatusColumn() {
-		final Column<Mod111, ImageResource> iconColumn = new Column<Mod111, ImageResource>(
+		final Column<FM, ImageResource> iconColumn = new Column<FM, ImageResource>(
 				new ImageResourceCell()) {
 			@Override
-			public ImageResource getValue(Mod111 mod111) {
-				return mod111.isFinished()
+			public ImageResource getValue(FM model) {
+				return model.isFinished()
 						?AON.AON_RESOURCES.aonIconLock()
 						:AON.AON_RESOURCES.aonIconUnlock();
 			}
@@ -127,11 +121,11 @@ public class Model111Table extends CellTable<Mod111> {
 	}
 	
 	private void addReplacementColumn() {
-		Column<Mod111, ImageResource> replacementColumn = new Column<Mod111, ImageResource>(
+		Column<FM, ImageResource> replacementColumn = new Column<FM, ImageResource>(
 				new ImageResourceCell()) {
 			@Override
-			public ImageResource getValue(Mod111 mod111) {
-				return mod111.isReplacement() ? AON.AON_RESOURCES.aonIconChecked()
+			public ImageResource getValue(FM model) {
+				return model.isReplacement() ? AON.AON_RESOURCES.aonIconChecked()
 						: AON.AON_RESOURCES.aonIconCheck();
 			}
 		};
@@ -141,11 +135,11 @@ public class Model111Table extends CellTable<Mod111> {
 	}
 
 	private void addComplementaryColumn() {
-		Column<Mod111, ImageResource> complementaryColumn = new Column<Mod111, ImageResource>(
+		Column<FM, ImageResource> complementaryColumn = new Column<FM, ImageResource>(
 				new ImageResourceCell()) {
 			@Override
-			public ImageResource getValue(Mod111 mod111) {
-				return mod111.isComplementary() 
+			public ImageResource getValue(FM model) {
+				return model.isComplementary() 
 					? AON.AON_RESOURCES.aonIconChecked()
 					: AON.AON_RESOURCES.aonIconCheck();
 			}
@@ -156,10 +150,10 @@ public class Model111Table extends CellTable<Mod111> {
 	}
 	
 	private void addDocumentColumn() {
-		final TextColumn<Mod111> documentColumn = new TextColumn<Mod111>() {
+		final TextColumn<FM> documentColumn = new TextColumn<FM>() {
 			@Override
-			public String getValue(Mod111 mod111) {
-				return mod111.getDocument();
+			public String getValue(FM model) {
+				return model.getDocument();
 			}
 		};
 		this.addColumn(documentColumn, AON.MSG.document());
@@ -167,10 +161,10 @@ public class Model111Table extends CellTable<Mod111> {
 	}
 
 	private void addNameColumn() {
-		final TextColumn<Mod111> nameColumn = new TextColumn<Mod111>() {
+		final TextColumn<FM> nameColumn = new TextColumn<FM>() {
 			@Override
-			public String getValue(Mod111 mod111) {
-				return mod111.getFullName();
+			public String getValue(FM model) {
+				return model.getFullName();
 			}
 		};
 		this.addColumn(nameColumn, AON.MSG.name());
@@ -178,10 +172,10 @@ public class Model111Table extends CellTable<Mod111> {
 	}	
 
 	private void addAmountColumn() {
-		final TextColumn<Mod111> amountColumn = new TextColumn<Mod111>() {
+		final TextColumn<FM> amountColumn = new TextColumn<FM>() {
 			@Override
-			public String getValue(Mod111 mod111) {
-				return AON.FMT.format(mod111.getResult()) ;
+			public String getValue(FM model) {
+				return AON.FMT.format(model.getResult()) ;
 			}
 		};
 		this.addColumn(amountColumn, AON.MSG.result());
@@ -190,21 +184,21 @@ public class Model111Table extends CellTable<Mod111> {
 	}	
 
 	private void addFinanceStatusColumn() {
-		final TextColumn<Mod111> financeStatusColumn = new TextColumn<Mod111>() {
+		final TextColumn<FM> financeStatusColumn = new TextColumn<FM>() {
 			@Override
-			public String getValue(Mod111 mod111) {
-				if (mod111.getFinance() != null && mod111.getFinance().getFinanceStatus() != null) {
-					return mod111.getFinance().getFinanceStatus().getDescription();
+			public String getValue(FM model) {
+				if (model.getFinance() != null && model.getFinance().getFinanceStatus() != null) {
+					return model.getFinance().getFinanceStatus().getDescription();
 				}
 				return AonStringUtils.EMPTY;
 			}
 		};
 		this.addColumn(financeStatusColumn, AON.MSG.financeStatus());
 		financeStatusColumn.setCellStyleNames(AON.AON_CSS.aonTextCenter());
-		this.setColumnWidth(financeStatusColumn, 120, Unit.PCT);
+		this.setColumnWidth(financeStatusColumn, 140, Unit.PCT);
 	}	
 
-	public Mod111 getSelected() {
+	public FM getSelected() {
 		return model.getLastSelectedObject();
 	}
 }

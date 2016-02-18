@@ -96,6 +96,13 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	<!-- =================== Mod115 ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_mod115</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mod115/gwt.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	<!-- =================== Deposit ========================== -->
 	<navigation-rule>
 		<navigation-case>

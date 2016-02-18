@@ -513,4 +513,11 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		return this;
 	}
 	
+	public void setDeclarationType(String type) {
+		// REDEFINE
+	}
+	public double getResult() {
+		// REDEFINE
+		return 0;
+	}
 }

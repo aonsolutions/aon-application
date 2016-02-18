@@ -64,7 +64,8 @@ public class Mod111 extends FiscalModel implements Serializable {
 	public void setDeclarationType(Mod111DeclarationType type) {
 		putDescription(getDeclarationTypeKey(),type == null? null : type.getValue());
 	}
-	
-	
-
+	@Override
+	public void setDeclarationType(String type) {
+		setDeclarationType( Mod111DeclarationType.safeValueOf(type));
+	}
 }

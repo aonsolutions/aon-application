@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
+import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -22,9 +23,12 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
+import com.esferalia.aon.occam.api.model.type.Mod115Key;
+import com.esferalia.aon.occam.api.model.type.Mod115KeyInfo;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMatrixDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod111DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.Mod115DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod180DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod184DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod190DAO;
@@ -335,6 +339,67 @@ public class FiscalImpl implements IFiscal {
 	@Override
 	public String getMod111Info(AONContext ctx, Mod111 mod111, Mod111Key key, Mod111KeyInfo infoKey) {
 		return Mod111DAO.getMod111Info(ctx,mod111,key,infoKey);
+	}
+
+	// ----------------------------------------------------------- [MODELO 115]
+	@Override
+	public Mod115 getMod115(AONContext ctx, int id) {
+		return Mod115DAO.getMod115(ctx, id);
+	}
+	@Override
+	public LinkedList<Mod115> getMod115s(AONContext ctx, int domain) {
+		LinkedList<Mod115> list = new LinkedList<Mod115>();
+		Mod115DAO.getMod115s(ctx, domain)
+			.forEach(list::add);
+		return list;
+	}
+	@Override
+	public Mod115 calculateMod115(AONContext ctx, Mod115 mod115) {
+		return Mod115DAO.calculateMod115(ctx, mod115);
+	}
+	@Override
+	public Mod115 saveMod115(AONContext ctx, Mod115 mod115) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod115DAO.saveMod115(ctx, mod115));		
+	}
+	@Override
+	public Mod115 saveCommentsMod115(AONContext ctx, Mod115 mod115) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod115DAO.saveCommentsMod115(ctx, mod115));		
+	}
+	@Override
+	public Mod115 initializeForFinishMod115(AONContext ctx, Mod115 mod115){
+		return Mod115DAO.initializeForFinish(ctx, mod115);
+	}
+	@Override
+	public Mod115 finishMod115(AONContext ctx, Mod115 mod115){
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod115DAO.finish(ctx, mod115));		
+	}
+	@Override
+	public Mod115 reopenMod115(AONContext ctx, Mod115 mod115){
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod115DAO.reopen(ctx, mod115));		
+	}
+	
+	@Override
+	public void deleteMod115(AONContext ctx, Mod115 mod115) {
+		ctx.getDslContext().transaction(
+				configuration -> Mod115DAO.delete(ctx, mod115));
+	}
+
+	@Override
+	public Mod115 initializeMod115(AONContext ctx, Mod115 mod115) {
+		return Mod115DAO.initializeMod115(ctx,mod115);
+	}
+
+	@Override
+	public Mod115 createMod115(AONContext ctx, Mod115 mod115) {
+		return Mod115DAO.createMod115(ctx,mod115);
+	}
+	@Override
+	public String getMod115Info(AONContext ctx, Mod115 mod115, Mod115Key key, Mod115KeyInfo infoKey) {
+		return Mod115DAO.getMod115Info(ctx,mod115,key,infoKey);
 	}
 
 	// ----------------------------------------------------------- [MODELO 202]

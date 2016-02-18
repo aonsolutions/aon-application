@@ -165,6 +165,7 @@ public enum Mod111Key implements IFiscalModelKey {
 		this.value = value;
 		this.box = box;
 	}
+	@Override
 	public String getValue() {
 		return value;
 	}

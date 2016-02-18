@@ -544,7 +544,7 @@ public class Mod111DAO extends FiscalModelDAO {
 
 	public static Stream<Mod111> getMod111s(AONContext ctx,int domain) {
 		return getModelRecords(ctx, domain,FiscalModelType.M111)
-				.map( record -> Mod111DAO.map(new Mod111(),record))
+				.map( record -> map111(new Mod111(),record))
 				.peek(fm -> getModelDetails(ctx,fm).forEach( detail -> fm.put( detail)))
 				;
 	}
@@ -552,7 +552,7 @@ public class Mod111DAO extends FiscalModelDAO {
 	public static Mod111 getMod111(AONContext ctx,int id) {
 		ctx.checkRead();
 		final Mod111 mod111 = getModelRecord(ctx, id)
-				.map(record -> FiscalModelDAO.map(new Mod111(), record));
+				.map( record -> map111(new Mod111(),record));
 		if (mod111 != null) {
 			getModelDetails(ctx,mod111).forEach( detail -> mod111.put( detail));	
 		}
@@ -846,7 +846,7 @@ public class Mod111DAO extends FiscalModelDAO {
 	}
 	
 	public static Mod111 reopen(AONContext ctx,Mod111 mod111) {
-		mod111.setDeclarationType(null);
+		mod111.setDeclarationType( (String) null);
 		mod111.setStatus(FiscalStatus.PENDING);
 		Finance finance = mod111.getFinance();
 		mod111.setFinance(null);

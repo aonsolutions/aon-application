@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
+import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -45,6 +46,8 @@ import com.esferalia.aon.occam.api.model.type.Activities.Type7Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.TypeActivity;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
+import com.esferalia.aon.occam.api.model.type.Mod115Key;
+import com.esferalia.aon.occam.api.model.type.Mod115KeyInfo;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.MOD2002014;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.XMLtoMod2002014;
 import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002014Import2013;
@@ -343,6 +346,70 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	public String getInfo(String domainName, int domain, Mod111 mod111, Mod111Key key, Mod111KeyInfo infoKey)
 			throws AonCoreException {
 		return AON.getMod111Info(domainName, domain, this.getUserLogin(), mod111, key, infoKey);
+		
+	}
+
+	// ---------------------------------------------------------------MODELO 115
+	@Override
+	public Mod115 getMod115(String domainName,
+			int domain,int id) throws AonCoreException {
+		return AON.getMod115(domainName, domain, this.getUserLogin(), id);
+	}
+
+	@Override
+	public LinkedList<Mod115> getMod115s(String domainName,
+			int domain) throws AonCoreException {
+		return AON.getMod115s(domainName, domain, this.getUserLogin());
+	}
+
+	@Override
+	public Mod115 calculateMod115(String domainName, Mod115 mod115) {
+		return AON.calculate(domainName, this.getUserLogin(), mod115);
+	}
+
+	@Override
+	public Mod115 saveMod115(String domainName, Mod115 mod115) {
+		return AON.save(domainName, this.getUserLogin(), mod115);
+	}
+
+	@Override
+	public Mod115 saveCommentsMod115(String domainName, Mod115 mod115) {
+		return AON.saveComments(domainName, this.getUserLogin(), mod115);
+	}
+
+	@Override
+	public Mod115 initializeForFinishMod115(String domainName, Mod115 mod115) {
+		return AON.initializeForFinish(domainName, this.getUserLogin(), mod115);
+	}
+
+	@Override
+	public Mod115 finishMod115(String domainName, Mod115 mod115) {
+		return AON.finish(domainName, this.getUserLogin(), mod115);
+	}
+
+	@Override
+	public Mod115 reopenMod115(String domainName, Mod115 mod115) {
+		return AON.reopen(domainName, this.getUserLogin(), mod115);
+	}
+
+	@Override
+	public Mod115 initializeMod115(String domainName, int domain, Mod115 mod115) {
+		return AON.initializeMod115(domainName, domain, this.getUserLogin(), mod115);
+	}
+
+	@Override
+	public Mod115 createMod115(String domainName, int domain, Mod115 mod115) {
+		return AON.createMod115(domainName, domain, this.getUserLogin(), mod115);
+	}
+
+	@Override
+	public void deleteMod115(String domainName, Mod115 mod115) {
+		AON.deleteMod115(domainName, this.getUserLogin(), mod115);
+	}
+	@Override
+	public String getInfo(String domainName, int domain, Mod115 mod115, Mod115Key key, Mod115KeyInfo infoKey)
+			throws AonCoreException {
+		return AON.getMod115Info(domainName, domain, this.getUserLogin(), mod115, key, infoKey);
 		
 	}
 
