@@ -23,6 +23,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
@@ -73,6 +74,8 @@ public class FinanceControllerListener extends ControllerAdapter {
 		controller.setPayment(finance.isPayment());
 		controller.setPayroll(finance.isPayroll());
 		try {
+			controller.setPurchase(BeanManager.getManagerBean(Creditor.class).get(finance.getRegistry().getId()) == null);
+
 			RegistryBank rBank = null;
 			if (StringUtils.isNotEmpty(finance.getBankAccount().getBban())) {
 				for (SelectItem item : controller.getAllBanks()) {
